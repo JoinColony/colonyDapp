@@ -28,7 +28,6 @@ import appLoadingContext from '~context/appLoadingState';
 
 import {
   ADMIN_DASHBOARD_ROUTE,
-  COLONY_ACTIONS_ROUTE,
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_HOME_ROUTE,
@@ -163,7 +162,6 @@ const Routes = () => {
           exact
           path={[
             COLONY_HOME_ROUTE,
-            COLONY_ACTIONS_ROUTE,
             COLONY_EVENTS_ROUTE,
             COLONY_EXTENSIONS_ROUTE,
           ]}

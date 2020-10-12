@@ -10,9 +10,9 @@ import { useColonyFromNameQuery } from '~data/index';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import {
-  COLONY_ACTIONS_ROUTE,
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
+  COLONY_HOME_ROUTE,
   NOT_FOUND_ROUTE,
 } from '~routes/index';
 import { useTransformer } from '~utils/hooks';
@@ -135,12 +135,12 @@ const ColonyHome = ({ match, location }: Props) => {
         </aside>
         <div className={styles.mainContent}>
           <Switch>
-            <Route path={COLONY_ACTIONS_ROUTE} component={() => <>Actions</>} />
             <Route path={COLONY_EVENTS_ROUTE} component={() => <>Events</>} />
             <Route
               path={COLONY_EXTENSIONS_ROUTE}
               component={() => <>Extensions</>}
             />
+            <Route path={COLONY_HOME_ROUTE} component={() => <>Actions</>} />
           </Switch>
         </div>
         <aside className={styles.rightAside}>
