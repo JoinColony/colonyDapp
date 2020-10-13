@@ -31,25 +31,9 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.createWalletSubtitle',
     defaultMessage: 'Create an Etherum wallet to join',
   },
-  trezorTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.trezorTitle',
-    defaultMessage: 'Trezor Hardware Wallet',
-  },
-  trezorSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.trezorSubtitle',
-    defaultMessage: 'Log in using the Trezor hardware wallet',
-  },
-  ledgerTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.ledgerTitle',
-    defaultMessage: 'Ledger Hardware Wallet',
-  },
   ganacheTitle: {
     id: 'users.ConnectWalletWizard.StepStart.ganacheTitle',
     defaultMessage: 'Ganache',
-  },
-  ledgerSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.ledgerSubtitle',
-    defaultMessage: 'Log in using the Ledger hardware wallet',
   },
   mnemonicTitle: {
     id: 'users.ConnectWalletWizard.StepStart.mnemonicTitle',
@@ -100,22 +84,6 @@ const options = [
     subtitle: MSG.mnemonicSubtitle,
     icon: 'wallet',
   },
-  // To be re-enabled for colonyDapp#1760
-  // @NOTE This is a hard-disable to prevent the options from showing up,
-  // until we get to re-enable them
-  //
-  // {
-  //   value: WALLET_SPECIFICS.LEDGER,
-  //   title: MSG.ledgerTitle,
-  //   subtitle: MSG.ledgerSubtitle,
-  //   icon: 'wallet',
-  // },
-  // {
-  //   value: WALLET_SPECIFICS.TREZOR,
-  //   title: MSG.trezorTitle,
-  //   subtitle: MSG.trezorSubtitle,
-  //   icon: 'wallet',
-  // },
 ];
 
 // process.env.DEV is set by the QA server in case we want to have a debug build. We don't have access to ganache then

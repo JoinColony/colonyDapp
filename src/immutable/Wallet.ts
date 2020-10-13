@@ -6,19 +6,16 @@ export enum WalletMethod {
   Create = 'Create',
   Ethereal = 'Ethereal',
   Ganache = 'Ganache',
-  Ledger = 'Ledger',
   /**
    * @NOTE Metamask and Ethereal are the only two wallet categories
    * that are a specific type as well
    */
   MetaMask = 'MetaMask',
   Mnemonic = 'Mnemonic',
-  Trezor = 'Trezor',
 }
 
 export enum WalletKind {
   Software = 'Software',
-  Hardware = 'Hardware',
   MetaMask = 'MetaMask',
   Ethereal = 'Ethereal',
 }
