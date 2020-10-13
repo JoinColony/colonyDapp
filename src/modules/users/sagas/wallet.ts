@@ -22,9 +22,6 @@ import { getProvider } from '../../core/sagas/utils';
 import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
 
 const walletOpenFunctions = {
-  // Disabled for now
-  // [WalletMethod.Ledger]: ledgerWallet,
-  // [WalletMethod.Trezor]: trezorWallet,
   [WalletMethod.Mnemonic]: purserOpenSoftwareWallet,
   [WalletMethod.MetaMask]: purserOpenMetaMaskWallet,
   [WalletMethod.Ganache]: purserOpenSoftwareWallet,
@@ -111,21 +108,6 @@ function* openMetamaskWallet() {
   return wallet;
 }
 
-// function* openHardwareWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-//   const { hardwareWalletChoice, method } = action.payload;
-//   const wallet = yield call(walletOpenFunctions[method], {
-//     /**
-//      * @todo : is 100 addresses really what we want?
-//      */
-//     addressCount: 100,
-//   });
-//   const selectedAddressIndex = wallet.otherAddresses.findIndex(
-//     (address) => address === hardwareWalletChoice,
-//   );
-//   wallet.setDefaultAddress(selectedAddressIndex);
-//   return wallet;
-// }
-
 function* openGanacheWallet({
   payload: { privateKey },
 }: Action<ActionTypes.WALLET_CREATE>) {
@@ -163,10 +145,6 @@ export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
       return yield call(createWallet, action);
     case WalletMethod.MetaMask:
       return yield call(openMetamaskWallet);
-    // case WalletMethod.Trezor:
-    //   return yield call(openHardwareWallet, action);
-    // case WalletMethod.Ledger:
-    //   return yield call(openHardwareWallet, action);
     case WalletMethod.Mnemonic:
       return yield call(openMnemonicWallet, action);
     case WalletMethod.Ethereal:

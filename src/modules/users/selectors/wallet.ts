@@ -24,10 +24,6 @@ export const walletKindSelector = createSelector(walletSelector, (wallet) => {
     case WalletMethod.Mnemonic: {
       return WalletKind.Software;
     }
-    case WalletMethod.Ledger:
-    case WalletMethod.Trezor: {
-      return WalletKind.Hardware;
-    }
     default: {
       return WalletKind.Software;
     }
