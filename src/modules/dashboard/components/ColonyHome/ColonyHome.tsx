@@ -8,6 +8,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useLoggedInUser } from '~data/helpers';
 import { useColonyFromNameQuery } from '~data/index';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
+import SubscribedColoniesList from '~dashboard/SubscribedColoniesList/SubscribedColoniesList';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import {
   COLONY_EVENTS_ROUTE,
@@ -127,7 +128,9 @@ const ColonyHome = ({ match, location }: Props) => {
 
   return (
     <div className={styles.main}>
-      <div className={styles.colonyList}>A</div>
+      <div className={styles.colonyList}>
+        <SubscribedColoniesList />
+      </div>
       <div className={styles.mainContentGrid}>
         <aside className={styles.leftAside}>
           <ColonyTitle colony={colony} />
