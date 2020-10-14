@@ -1,6 +1,6 @@
 import { eventChannel } from 'redux-saga';
 
-import { call, put, spawn, take, takeLatest, all } from 'redux-saga/effects';
+import { call, put, spawn, take } from 'redux-saga/effects';
 
 import {
   create as createSoftwareWallet,
@@ -16,54 +16,6 @@ import { WalletMethod } from '~immutable/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
-import { putError } from '~utils/saga/effects';
-
-import { getProvider } from '../../core/sagas/utils';
-import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
-
-const walletOpenFunctions = {
-  [WalletMethod.Mnemonic]: purserOpenSoftwareWallet,
-  [WalletMethod.MetaMask]: purserOpenMetaMaskWallet,
-  [WalletMethod.Ganache]: purserOpenSoftwareWallet,
-};
-
-function* fetchAddressBalance(address, provider) {
-  const checkSumedAddress = yield call(createAddress, address);
-  const balance = yield call(
-    [provider, provider.getBalance],
-    checkSumedAddress,
-  );
-  return {
-    address: checkSumedAddress,
-    balance,
-  };
-}
-
-function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
-  const { walletType } = action.payload;
-
-  try {
-    const { otherAddresses } = yield call(walletOpenFunctions[walletType], {
-      addressCount: HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT,
-    });
-
-    const provider = getProvider();
-
-    const addressesWithBalance = yield all(
-      otherAddresses.map((address) =>
-        call(fetchAddressBalance, address, provider),
-      ),
-    );
-
-    yield put<AllActions>({
-      type: ActionTypes.WALLET_FETCH_ACCOUNTS_SUCCESS,
-      payload: { allAddresses: addressesWithBalance },
-    });
-  } catch (err) {
-    return yield putError(ActionTypes.WALLET_FETCH_ACCOUNTS_ERROR, err);
-  }
-  return null;
-}
 
 function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { connectWalletMnemonic } = action.payload;
@@ -156,8 +108,4 @@ export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
         `Method ${method} is not recognized for getting a wallet`,
       );
   }
-}
-
-export function* setupWalletSagas() {
-  yield takeLatest(ActionTypes.WALLET_FETCH_ACCOUNTS, fetchAccounts);
 }
