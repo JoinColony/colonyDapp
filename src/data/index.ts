@@ -27,6 +27,7 @@ import {
   ProgramSubmissionsQuery,
   ProgramQuery,
   UserWithReputationQuery,
+  UserColoniesQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -71,7 +72,10 @@ export type Payouts =
 export type Notifications = UserNotificationsQuery['user']['notifications'];
 export type OneNotification = Notifications[number];
 
-export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
+export type AnyColonyProfile =
+  | FullColonyFragment
+  | ColonyProfileFragment
+  | UserColoniesQuery['user']['colonies'][number];
 export type Colony = FullColonyFragment;
 
 export type OneDomain = DomainFieldsFragment;

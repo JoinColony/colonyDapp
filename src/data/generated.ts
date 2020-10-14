@@ -2136,6 +2136,16 @@ export type ColonyProfileQueryVariables = Exact<{
 
 export type ColonyProfileQuery = { colony: ColonyProfileFragment };
 
+export type UserColoniesQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type UserColoniesQuery = { user: (
+    Pick<User, 'id' | 'colonyAddresses'>
+    & { colonies: Array<Pick<Colony, 'id' | 'avatarHash' | 'colonyAddress' | 'colonyName' | 'displayName'>> }
+  ) };
+
 export type UserColonyAddressesQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -5444,6 +5454,47 @@ export function useColonyProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ColonyProfileQueryHookResult = ReturnType<typeof useColonyProfileQuery>;
 export type ColonyProfileLazyQueryHookResult = ReturnType<typeof useColonyProfileLazyQuery>;
 export type ColonyProfileQueryResult = Apollo.QueryResult<ColonyProfileQuery, ColonyProfileQueryVariables>;
+export const UserColoniesDocument = gql`
+    query UserColonies($address: String!) {
+  user(address: $address) {
+    id
+    colonies {
+      id
+      avatarHash
+      colonyAddress
+      colonyName
+      displayName
+    }
+    colonyAddresses
+  }
+}
+    `;
+
+/**
+ * __useUserColoniesQuery__
+ *
+ * To run a query within a React component, call `useUserColoniesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserColoniesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserColoniesQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserColoniesQuery(baseOptions?: Apollo.QueryHookOptions<UserColoniesQuery, UserColoniesQueryVariables>) {
+        return Apollo.useQuery<UserColoniesQuery, UserColoniesQueryVariables>(UserColoniesDocument, baseOptions);
+      }
+export function useUserColoniesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserColoniesQuery, UserColoniesQueryVariables>) {
+          return Apollo.useLazyQuery<UserColoniesQuery, UserColoniesQueryVariables>(UserColoniesDocument, baseOptions);
+        }
+export type UserColoniesQueryHookResult = ReturnType<typeof useUserColoniesQuery>;
+export type UserColoniesLazyQueryHookResult = ReturnType<typeof useUserColoniesLazyQuery>;
+export type UserColoniesQueryResult = Apollo.QueryResult<UserColoniesQuery, UserColoniesQueryVariables>;
 export const UserColonyAddressesDocument = gql`
     query UserColonyAddresses($address: String!) {
   user(address: $address) {
