@@ -348,6 +348,20 @@ query ColonyProfile($address: String!) {
   }
 }
 
+query UserColonies($address: String!) {
+  user(address: $address) {
+    id
+    colonies {
+      id
+      avatarHash
+      colonyAddress
+      colonyName
+      displayName
+    }
+    colonyAddresses
+  }
+}
+
 query UserColonyAddresses($address: String!) {
   user(address: $address) {
     id
