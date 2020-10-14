@@ -45,6 +45,16 @@ import {
   UserQueryVariables,
   SubmissionStatus,
   RemoveLevelMutationResult,
+  UnsubscribeFromColonyMutationResult,
+  SubscribeToColonyMutationResult,
+  SetTaskSkillMutationResult,
+  CreateColonyMutationResult,
+  UserColonyAddressesQuery,
+  UserColonyAddressesQueryVariables,
+  UserColonyAddressesDocument,
+  UserColoniesQuery,
+  UserColoniesQueryVariables,
+  UserColoniesDocument,
 } from './generated';
 
 type Cache = typeof apolloCache;
@@ -399,8 +409,81 @@ const cacheUpdates = {
       }
     };
   },
+  createColony(walletAddress: Address) {
+    return (cache: Cache, { data }: CreateColonyMutationResult) => {
+      if (data && data.createColony) {
+        try {
+          const cacheData = cache.readQuery<
+            UserColonyAddressesQuery,
+            UserColonyAddressesQueryVariables
+          >({
+            query: UserColonyAddressesDocument,
+            variables: {
+              address: walletAddress,
+            },
+          });
+          if (cacheData) {
+            const existingColonyAddresses =
+              cacheData.user.colonyAddresses || [];
+            const colonyAddresses = [
+              ...existingColonyAddresses,
+              data.createColony.colonyAddress,
+            ];
+            cache.writeQuery<
+              UserColonyAddressesQuery,
+              UserColonyAddressesQueryVariables
+            >({
+              query: UserColonyAddressesDocument,
+              data: {
+                user: {
+                  ...cacheData.user,
+                  colonyAddresses,
+                },
+              },
+              variables: {
+                address: walletAddress,
+              },
+            });
+          }
+        } catch (e) {
+          log.verbose(e);
+          log.verbose(
+            'Not updating store - user colony addresses not loaded yet',
+          );
+        }
+        try {
+          const cacheData = cache.readQuery<
+            UserColoniesQuery,
+            UserColoniesQueryVariables
+          >({
+            query: UserColoniesDocument,
+            variables: { address: walletAddress },
+          });
+          if (cacheData) {
+            const existingColonies = cacheData.user.colonies || [];
+            const colonies = [...existingColonies, data.createColony];
+            cache.writeQuery<UserColoniesQuery, UserColoniesQueryVariables>({
+              query: UserColoniesDocument,
+              data: {
+                user: {
+                  ...cacheData.user,
+                  colonies,
+                },
+              },
+              variables: {
+                address: walletAddress,
+              },
+            });
+          }
+        } catch (e) {
+          log.verbose(e);
+          log.verbose('Not updating store - user colonies not loaded yet');
+        }
+      }
+    };
+  },
   unsubscribeFromColony(colonyAddress: Address) {
-    return (cache: Cache, { data }: any) => {
+    return (cache: Cache, { data }: UnsubscribeFromColonyMutationResult) => {
       try {
         const cacheData = cache.readQuery<
           ColonySubscribedUsersQuery,
@@ -448,7 +531,7 @@ const cacheUpdates = {
     };
   },
   subscribeToColony(colonyAddress: Address) {
-    return (cache: Cache, { data }: any) => {
+    return (cache: Cache, { data }: SubscribeToColonyMutationResult) => {
       try {
         const cacheData = cache.readQuery<
           ColonySubscribedUsersQuery,
@@ -516,7 +599,7 @@ const cacheUpdates = {
     };
   },
   setTaskSkill(draftId: string) {
-    return (cache: Cache, { data }: any) => {
+    return (cache: Cache, { data }: SetTaskSkillMutationResult) => {
       try {
         const cacheData = cache.readQuery<TaskQuery, TaskQueryVariables>({
           query: TaskDocument,

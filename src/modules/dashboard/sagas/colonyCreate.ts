@@ -25,14 +25,11 @@ import {
   CreateUserMutation,
   CreateUserDocument,
   CreateUserMutationVariables,
-  UserColonyAddressesDocument,
-  UserColonyAddressesQueryVariables,
-  UserColonyAddressesQuery,
+  cacheUpdates,
 } from '~data/index';
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import { createAddress } from '~utils/web3';
-import { log } from '~utils/debug';
 import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
 import { TxConfig } from '~types/index';
 
@@ -447,44 +444,7 @@ function* colonyCreate({
             tokenDecimals: DEFAULT_TOKEN_DECIMALS,
           },
         },
-        update: (cache) => {
-          try {
-            const cacheData = cache.readQuery<
-              UserColonyAddressesQuery,
-              UserColonyAddressesQueryVariables
-            >({
-              query: UserColonyAddressesDocument,
-              variables: {
-                address: walletAddress,
-              },
-            });
-            if (cacheData) {
-              const existingColonyAddresses =
-                cacheData.user.colonyAddresses || [];
-              const colonyAddresses = [
-                ...existingColonyAddresses,
-                colonyAddress,
-              ];
-              cache.writeQuery<
-                UserColonyAddressesQuery,
-                UserColonyAddressesQueryVariables
-              >({
-                query: UserColonyAddressesDocument,
-                data: {
-                  user: {
-                    ...cacheData.user,
-                    colonyAddresses,
-                  },
-                },
-                variables: {
-                  address: walletAddress,
-                },
-              });
-            }
-          } catch (e) {
-            log.error(e);
-          }
-        },
+        update: cacheUpdates.createColony(walletAddress),
       });
 
       if (createColony) {
