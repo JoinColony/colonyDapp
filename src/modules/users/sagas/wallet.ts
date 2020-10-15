@@ -17,13 +17,6 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
 
-function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-  const { connectWalletMnemonic } = action.payload;
-  return yield call(purserOpenSoftwareWallet, {
-    mnemonic: connectWalletMnemonic,
-  });
-}
-
 /**
  * Watch for changes in Metamask account, and log the user out when they happen.
  */
@@ -68,13 +61,6 @@ function* openGanacheWallet({
   });
 }
 
-function* createWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-  const { mnemonic } = action.payload;
-  return yield call(purserOpenSoftwareWallet, {
-    mnemonic,
-  });
-}
-
 function* createEtherealWallet() {
   /**
    * @NOTE It would be better if we could create a wallet that is not functional
@@ -93,12 +79,8 @@ function* createEtherealWallet() {
 export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { method } = action.payload;
   switch (method) {
-    case WalletMethod.Create:
-      return yield call(createWallet, action);
     case WalletMethod.MetaMask:
       return yield call(openMetamaskWallet);
-    case WalletMethod.Mnemonic:
-      return yield call(openMnemonicWallet, action);
     case WalletMethod.Ethereal:
       return yield call(createEtherealWallet);
     case WalletMethod.Ganache:
