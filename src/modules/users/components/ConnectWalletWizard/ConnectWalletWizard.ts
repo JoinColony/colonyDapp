@@ -5,7 +5,6 @@ import WizardTemplate from '~pages/WizardTemplate/WizardTemplate';
 import { WalletPopoverTemplate } from './ConnectWalletPopover';
 import StepStart from './StepStart';
 import StepMetaMask from './StepMetaMask';
-import StepMnemonic from './StepMnemonic';
 import StepGanache from './StepGanache';
 
 interface StepValues {
@@ -21,8 +20,6 @@ const stepFunction = (step: number, { method }: StepValues) => {
   switch (method) {
     case WalletMethod.MetaMask:
       return StepMetaMask;
-    case WalletMethod.Mnemonic:
-      return StepMnemonic;
     case WalletMethod.Ganache:
       return StepGanache;
     default:

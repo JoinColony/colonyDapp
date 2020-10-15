@@ -11,17 +11,14 @@ export enum WalletMethod {
    * that are a specific type as well
    */
   MetaMask = 'MetaMask',
-  Mnemonic = 'Mnemonic',
 }
 
 export enum WalletKind {
-  Software = 'Software',
   MetaMask = 'MetaMask',
   Ethereal = 'Ethereal',
 }
 
 export interface WalletProps {
-  availableAddresses?: Address[];
   currentAddress?: Address;
   isLoading?: boolean;
   walletType?: WalletMethod;
@@ -30,7 +27,6 @@ export interface WalletProps {
 export type WalletType = Readonly<WalletProps>;
 
 const defaultValues: DefaultValues<WalletProps> = {
-  availableAddresses: [],
   currentAddress: undefined,
   isLoading: false,
   walletType: WalletMethod.Create,

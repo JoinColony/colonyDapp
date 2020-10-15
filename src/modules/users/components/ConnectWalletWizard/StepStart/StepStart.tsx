@@ -35,17 +35,9 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.ganacheTitle',
     defaultMessage: 'Ganache',
   },
-  mnemonicTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.mnemonicTitle',
-    defaultMessage: 'Mnemonic Phrase',
-  },
   metaMaskSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.metaMaskSubtitle',
     defaultMessage: 'Requires MetaMask browser extension',
-  },
-  mnemonicSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.mnemonicSubtitle',
-    defaultMessage: 'Access with your mnemonic',
   },
   ganacheSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.ganacheSubtitle',
@@ -77,12 +69,6 @@ const options = [
     title: { id: 'wallet.metamask' },
     subtitle: MSG.metaMaskSubtitle,
     icon: 'metamask',
-  },
-  {
-    value: WalletMethod.Mnemonic,
-    title: MSG.mnemonicTitle,
-    subtitle: MSG.mnemonicSubtitle,
-    icon: 'wallet',
   },
 ];
 
