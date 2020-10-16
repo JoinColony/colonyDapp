@@ -7,8 +7,7 @@ import { isDev } from '~utils/debug';
 import Heading from '~core/Heading';
 import { Form } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
-import DecisionHub, { DecisionOption } from '~core/DecisionHub';
-import { CREATE_WALLET_ROUTE } from '~routes/index';
+import DecisionHub from '~core/DecisionHub';
 import styles from './StepStart.css';
 import { useAutoLogin } from '~utils/autoLogin';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -22,14 +21,6 @@ const MSG = defineMessages({
   subTitle: {
     id: 'users.ConnectWalletWizard.StepStart.subTitle',
     defaultMessage: `Each Colony account is accessed through an associated {networkName} wallet. You can use an existing wallet that you own, or create a new wallet below.`,
-  },
-  createWalletTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.createWalletTitle',
-    defaultMessage: 'Need a wallet? Let us help.',
-  },
-  createWalletSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.createWalletSubtitle',
-    defaultMessage: 'Create an Etherum wallet to join',
   },
   ganacheTitle: {
     id: 'users.ConnectWalletWizard.StepStart.ganacheTitle',
@@ -82,13 +73,6 @@ if (isDev && !process.env.DEV) {
   });
 }
 
-const createWalletOption = {
-  value: null,
-  title: MSG.createWalletTitle,
-  subtitle: MSG.createWalletSubtitle,
-  icon: 'hugging',
-};
-
 type Props = {
   simplified?: boolean;
 } & WizardProps<FormValues>;
@@ -134,14 +118,6 @@ const StepStart = ({ nextStep, wizardValues, simplified = false }: Props) => {
           </div>
         )}
         <DecisionHub name="method" options={options} />
-        <div className={styles.createWalletLink} data-test="createWalletLink">
-          <DecisionOption
-            appearance={{ theme: 'alt' }}
-            name="method"
-            option={createWalletOption}
-            link={CREATE_WALLET_ROUTE}
-          />
-        </div>
         {simplified && (
           <div className={styles.tosSimplified}>
             <Heading appearance={{ size: 'normal', weight: 'thin' }}>

@@ -26,10 +26,6 @@
   text-align: center;
 }
 
-.createWalletLink {
-  margin-top: 64px;
-}
-
 .autoLoginOverlay {
   display: flex;
   justify-content: center;
