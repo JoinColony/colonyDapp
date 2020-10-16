@@ -3,6 +3,5 @@ export const title: string;
 export const titleSimplified: string;
 export const subtitle: string;
 export const tosSimplified: string;
-export const createWalletLink: string;
 export const autoLoginOverlay: string;
 export const autoLoginSpinner: string;
