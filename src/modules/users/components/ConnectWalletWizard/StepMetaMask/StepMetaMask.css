@@ -15,7 +15,13 @@
 }
 
 .interactionPrompt {
-  composes: interactionPrompt from '../StepHardware/StepHardware.css';
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--grey-blue-1);
+}
+
+.interactionPrompt > div {
+  margin: 0;
 }
 
 .contentSimplified {
