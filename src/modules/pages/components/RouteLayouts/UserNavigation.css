@@ -54,3 +54,13 @@
   fill: navigationIconBlue;
   stroke: navigationIconBlue;
 }
+
+.connectWalletButton {
+  margin-right: 20px;
+  padding: 5px 11px 8px 11px;
+  border: 1px solid var(--temp-gery-blue-7);
+  border-radius: 2px;
+  background-color: transparent;
+  color: var(--temp-gery-blue-7);
+  cursor: pointer;
+}
