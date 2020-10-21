@@ -44,9 +44,6 @@ export default function* getNetworkClient() {
   if (process.env.NODE_ENV === 'development') {
     return yield call(getColonyNetworkClient, network, signer, {
       networkAddress: getLocalContractAddress('EtherRouter'),
-      oneTxPaymentFactoryAddress: getLocalContractAddress(
-        'OneTxPaymentFactory',
-      ),
     });
   }
 

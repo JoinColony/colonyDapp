@@ -6,9 +6,11 @@ import {
   ColonyClient,
   ContractClient,
   ColonyNetworkClient,
+  Extension,
   OneTxPaymentClient,
-  OneTxPaymentFactoryClient,
   TokenClient,
+  ExtensionClient,
+  ExtensionClients,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -22,6 +24,8 @@ export default class ColonyManager {
 
   colonyClients: Map<Address, Promise<ColonyClient>>;
 
+  extensionClients: Map<string, Promise<ExtensionClient>>;
+
   tokenClients: Map<Address, Promise<TokenClient>>;
 
   networkClient: ColonyNetworkClient;
@@ -32,6 +36,7 @@ export default class ColonyManager {
 
   constructor(networkClient: ColonyNetworkClient) {
     this.colonyClients = new Map();
+    this.extensionClients = new Map();
     this.tokenClients = new Map();
     this.networkClient = networkClient;
     this.provider = networkClient.provider;
@@ -52,7 +57,7 @@ export default class ColonyManager {
   }
 
   private async getColonyClient(
-    identifier?: AddressOrENSName,
+    identifier: AddressOrENSName,
   ): Promise<ColonyClient> {
     if (!(typeof identifier === 'string' && identifier.length)) {
       throw new Error('A colony address or ENS name must be provided');
@@ -62,9 +67,24 @@ export default class ColonyManager {
     return this.colonyClients.get(address) || this.setColonyClient(address);
   }
 
+  private async getColonyExtensionClient(
+    identifier: AddressOrENSName,
+    extensionName: keyof ExtensionClients,
+  ): Promise<ExtensionClient> {
+    const address = await this.resolveColonyIdentifier(identifier);
+    const key = `${address}-${extensionName}`;
+    let client = this.extensionClients.get(key);
+    if (!client) {
+      const colonyClient = await this.getColonyClient(identifier);
+      client = colonyClient.getExtensionClient(extensionName);
+      this.extensionClients.set(key, client);
+    }
+    return client;
+  }
+
   private async resolveColonyIdentifier(
     identifier: AddressOrENSName,
-  ): Promise<any> {
+  ): Promise<Address> {
     return isAddress(identifier)
       ? identifier
       : ens.getAddress(
@@ -99,10 +119,6 @@ export default class ColonyManager {
   ): Promise<TokenClient>;
 
   async getClient(
-    type: ClientType.OneTxPaymentFactoryClient,
-  ): Promise<OneTxPaymentFactoryClient>;
-
-  async getClient(
     type: ClientType.OneTxPaymentClient,
     identifier?: AddressOrENSName,
   ): Promise<OneTxPaymentClient>;
@@ -121,23 +137,23 @@ export default class ColonyManager {
         return this.networkClient;
       }
       case ClientType.ColonyClient: {
+        if (!identifier)
+          throw new Error('Need colony identifier to get ColonyClient');
         return this.getColonyClient(identifier);
       }
       case ClientType.TokenClient: {
+        if (!identifier)
+          throw new Error('Need colony identifier to get TokenClient');
         const colonyClient = await this.getColonyClient(identifier);
         return colonyClient.tokenClient;
       }
-      case ClientType.OneTxPaymentFactoryClient: {
-        return this.networkClient.oneTxPaymentFactoryClient;
-      }
       case ClientType.OneTxPaymentClient: {
-        const colonyClient = await this.getColonyClient(identifier);
-        if (!colonyClient.oneTxPaymentClient) {
-          throw new Error(
-            'OneTxPayment extension not installed on this colony',
-          );
-        }
-        return colonyClient.oneTxPaymentClient;
+        if (!identifier)
+          throw new Error('Need colony identifier to get OneTxPaymentClient');
+        return this.getColonyExtensionClient(
+          identifier,
+          Extension.OneTxPayment,
+        );
       }
       default: {
         throw new Error('A valid contract client type has to be specified');

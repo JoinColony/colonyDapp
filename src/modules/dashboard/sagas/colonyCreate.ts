@@ -2,6 +2,8 @@ import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import { all, call, fork, put } from 'redux-saga/effects';
 import {
+  getExtensionHash,
+  Extension,
   ClientType,
   ROOT_DOMAIN_ID,
   ColonyVersion,
@@ -118,11 +120,10 @@ function* getRecoveryInfo(recoveryAddress: string) {
     }
   }
 
-  const { oneTxPaymentFactoryClient } = networkClient;
-
   // eslint-disable-next-line max-len
-  const oneTxExtensionAddress = yield oneTxPaymentFactoryClient.deployedExtensions(
+  const oneTxExtensionAddress = yield networkClient.getExtensionInstallation(
     recoveryAddress,
+    getExtensionHash(Extension.OneTxPayment),
   );
 
   if (oneTxExtensionAddress !== AddressZero) {
@@ -270,7 +271,7 @@ function* colonyCreate({
     if (createColony) {
       yield createGroupedTransaction(createColony, {
         context: ClientType.NetworkClient,
-        methodName: 'createColony(address,uint256,string,string,bool)',
+        methodName: 'createColony(address,uint256,string)',
         ready: false,
       });
     }
@@ -293,8 +294,8 @@ function* colonyCreate({
 
     if (deployOneTx) {
       yield createGroupedTransaction(deployOneTx, {
-        context: ClientType.OneTxPaymentFactoryClient,
-        methodName: 'deployExtension',
+        context: ClientType.ColonyClient,
+        methodName: 'installExtension',
         ready: false,
       });
     }
@@ -392,10 +393,8 @@ function* colonyCreate({
       yield put(
         transactionAddParams(createColony.id, [
           tokenAddress,
-          ColonyVersion.BurgundyGlider,
+          ColonyVersion.CeruleanLightweightSpaceship,
           colonyName,
-          '',
-          true,
         ]),
       );
       yield put(transactionReady(createColony.id));
@@ -459,6 +458,7 @@ function* colonyCreate({
       [
         deployTokenAuthority,
         setTokenAuthority,
+        deployOneTx,
         setOneTxRoleAdministration,
         setOneTxRoleFunding,
       ]
@@ -502,19 +502,21 @@ function* colonyCreate({
       /*
        * Deploy OneTx
        */
-      yield put(transactionAddParams(deployOneTx.id, [colonyAddress]));
+      yield put(
+        transactionAddParams(deployOneTx.id, [
+          getExtensionHash(Extension.OneTxPayment),
+          1,
+        ]),
+      );
       yield put(transactionReady(deployOneTx.id));
 
-      const {
-        payload: {
-          eventData: {
-            ExtensionDeployed: { _extension: extensionAddress },
-          },
-        },
-      } = yield takeFrom(
-        deployOneTx.channel,
-        ActionTypes.TRANSACTION_SUCCEEDED,
+      yield takeFrom(deployOneTx.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+      const oneTxPaymentExtension = yield colonyManager.getClient(
+        ClientType.OneTxPaymentClient,
+        colonyAddress,
       );
+      const extensionAddress = oneTxPaymentExtension.address;
 
       /*
        * Set OneTx administration role
@@ -544,8 +546,6 @@ function* colonyCreate({
       );
       yield put(transactionReady(setOneTxRoleFunding.id));
 
-      // Re-initialize the colony-client to make sure we have included all the
-      // extensions
       yield colonyManager.setColonyClient(colonyAddress);
 
       yield takeFrom(
