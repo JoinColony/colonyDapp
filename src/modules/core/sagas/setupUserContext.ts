@@ -100,9 +100,7 @@ export default function* setupUserContext(
       },
     });
 
-    if (method !== WalletMethod.Create) {
-      yield call(setLastWallet, method, walletAddress);
-    }
+    yield call(setLastWallet, method, walletAddress);
 
     const colonyManager = yield call(getColonyManager);
     TEMP_setContext(ContextModule.ColonyManager, colonyManager);

@@ -69,7 +69,7 @@ const initialState = MockState({
       },
     },
     wallet: Wallet({
-      walletType: WalletMethod.Create,
+      walletType: WalletMethod.Ethereal,
     }),
     allUsers: ImmutableMap(),
   },
