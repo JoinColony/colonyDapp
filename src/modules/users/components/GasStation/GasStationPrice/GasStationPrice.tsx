@@ -7,7 +7,7 @@ import nanoid from 'nanoid';
 import * as yup from 'yup';
 import { Network } from '@colony/colony-js';
 
-import { TransactionType, WalletKind } from '~immutable/index';
+import { TransactionType } from '~immutable/index';
 import { RadioOption } from '~core/Fields/RadioGroup';
 import { getMainClasses } from '~utils/css';
 import { withId } from '~utils/actions';
@@ -29,8 +29,7 @@ import {
   transactionEstimateGas,
   transactionUpdateGas,
 } from '../../../../core/actionCreators';
-import { walletKindSelector } from '../../../selectors';
-import WalletInteraction from '../WalletInteraction';
+import MetaMaskWalletInteraction from '../MetaMaskWalletInteraction';
 
 import styles from './GasStationPrice.css';
 
@@ -120,7 +119,6 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
 
   const gasPrices = useSelector(gasPricesSelector);
   const { balance } = useLoggedInUser();
-  const walletKind = useSelector(walletKindSelector);
 
   const transform = useCallback(withId(id), [id]);
   const toggleSpeedMenu = useCallback(() => {
@@ -271,9 +269,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
       <div>
         <>
           {isNetworkCongested && <Alert text={MSG.networkCongestedWarning} />}
-          {walletKind !== WalletKind.Software && (
-            <WalletInteraction walletKind={walletKind} />
-          )}
+          <MetaMaskWalletInteraction />
           {insufficientFunds && (
             <Alert
               appearance={{ theme: 'danger', size: 'small' }}
