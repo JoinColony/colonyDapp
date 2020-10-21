@@ -13,11 +13,6 @@ export enum WalletMethod {
   MetaMask = 'MetaMask',
 }
 
-export enum WalletKind {
-  MetaMask = 'MetaMask',
-  Ethereal = 'Ethereal',
-}
-
 export interface WalletProps {
   currentAddress?: Address;
   isLoading?: boolean;

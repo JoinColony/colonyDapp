@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import Icon from '~core/Icon';
 import { GasStationPopover } from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 import { InboxIcon } from '~users/Inbox';
@@ -15,10 +14,6 @@ const MSG = defineMessages({
   dashboardTitle: {
     id: 'pages.NavigationWrapper.UserNavigation.dashboardTitle',
     defaultMessage: 'Go to your Dashboard',
-  },
-  walletTitle: {
-    id: 'pages.NavigationWrapper.UserNavigation.walletTitle',
-    defaultMessage: 'Go to your Wallet',
   },
   inboxTitle: {
     id: 'pages.NavigationWrapper.UserNavigation.inboxTitle',
@@ -54,7 +49,7 @@ const UserNavigation = () => {
                 isOpen ? styles.navigationItemActive : ''
               }`}
             >
-              <Icon name="wallet" title={MSG.walletTitle} />
+              something
             </div>
           </button>
         )}
