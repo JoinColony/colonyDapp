@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { GasStationPopover } from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
@@ -11,13 +11,13 @@ import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
 import styles from './UserNavigation.css';
 
 const MSG = defineMessages({
-  dashboardTitle: {
-    id: 'pages.NavigationWrapper.UserNavigation.dashboardTitle',
-    defaultMessage: 'Go to your Dashboard',
-  },
   inboxTitle: {
     id: 'pages.NavigationWrapper.UserNavigation.inboxTitle',
     defaultMessage: 'Go to your Inbox',
+  },
+  connectWallet: {
+    id: 'pages.NavigationWrapper.UserNavigation.connectWallet',
+    defaultMessage: 'Connect Wallet',
   },
 });
 
@@ -37,45 +37,41 @@ const UserNavigation = () => {
   return (
     <div className={styles.main}>
       <WalletComponent>
-        {({ isOpen, toggle, ref }) => (
+        {({ toggle, ref }) => (
           <button
             type="button"
-            className={styles.navigationItemButton}
+            className={styles.connectWalletButton}
             ref={ref}
             onClick={toggle}
           >
-            <div
-              className={`${styles.navigationItem} ${
-                isOpen ? styles.navigationItemActive : ''
-              }`}
-            >
-              something
-            </div>
+            <FormattedMessage {...MSG.connectWallet} />
           </button>
         )}
       </WalletComponent>
-      <InboxPopover notifications={notifications}>
-        {({ isOpen, toggle, ref }) => (
-          <button
-            type="button"
-            className={styles.navigationItemButton}
-            ref={ref}
-            onClick={toggle}
-          >
-            <div
-              className={`${styles.navigationItem} ${
-                isOpen ? styles.navigationItemActive : ''
-              }`}
+      {!ethereal && (
+        <InboxPopover notifications={notifications}>
+          {({ isOpen, toggle, ref }) => (
+            <button
+              type="button"
+              className={styles.navigationItemButton}
+              ref={ref}
+              onClick={toggle}
             >
-              <InboxIcon
-                activeClassName={styles.navigationItemActive}
-                notifications={notifications}
-                title={MSG.inboxTitle}
-              />
-            </div>
-          </button>
-        )}
-      </InboxPopover>
+              <div
+                className={`${styles.navigationItem} ${
+                  isOpen ? styles.navigationItemActive : ''
+                }`}
+              >
+                <InboxIcon
+                  activeClassName={styles.navigationItemActive}
+                  notifications={notifications}
+                  title={MSG.inboxTitle}
+                />
+              </div>
+            </button>
+          )}
+        </InboxPopover>
+      )}
       <AvatarDropdown />
     </div>
   );
