@@ -1,10 +1,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { DASHBOARD_ROUTE } from '~routes/index';
-
 import Icon from '~core/Icon';
-import NavLink from '~core/NavLink';
 import { GasStationPopover } from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 import { InboxIcon } from '~users/Inbox';
@@ -44,14 +41,6 @@ const UserNavigation = () => {
 
   return (
     <div className={styles.main}>
-      <NavLink
-        to={DASHBOARD_ROUTE}
-        className={styles.navigationItem}
-        activeClassName={styles.navigationItemActive}
-        data-test="goToDashboard"
-      >
-        <Icon name="home" title={MSG.dashboardTitle} />
-      </NavLink>
       <WalletComponent>
         {({ isOpen, toggle, ref }) => (
           <button
