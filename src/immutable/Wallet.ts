@@ -3,7 +3,6 @@ import { Record } from 'immutable';
 import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 export enum WalletMethod {
-  Create = 'Create',
   Ethereal = 'Ethereal',
   Ganache = 'Ganache',
   /**
@@ -24,7 +23,7 @@ export type WalletType = Readonly<WalletProps>;
 const defaultValues: DefaultValues<WalletProps> = {
   currentAddress: undefined,
   isLoading: false,
-  walletType: WalletMethod.Create,
+  walletType: WalletMethod.MetaMask,
 };
 
 export class WalletRecord extends Record<WalletProps>(defaultValues)
