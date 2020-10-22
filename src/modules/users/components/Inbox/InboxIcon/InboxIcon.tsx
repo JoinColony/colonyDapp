@@ -15,7 +15,6 @@ const MSG = defineMessages({
 
 interface Props {
   notifications: Notifications;
-  activeClassName?: string;
   title?: MessageDescriptor;
 }
 
