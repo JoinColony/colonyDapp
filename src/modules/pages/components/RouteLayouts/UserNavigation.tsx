@@ -64,17 +64,17 @@ const UserNavigation = () => {
           {({ isOpen, toggle, ref }) => (
             <button
               type="button"
-              className={styles.navigationItemButton}
+              className={styles.notificationsButton}
               ref={ref}
               onClick={toggle}
             >
               <div
-                className={`${styles.navigationItem} ${
-                  isOpen ? styles.navigationItemActive : ''
+                className={`${styles.notificationsIcon} ${
+                  isOpen ? styles.notificationsIconActive : ''
                 }`}
               >
                 <InboxIcon
-                  activeClassName={styles.navigationItemActive}
+                  activeClassName={styles.notificationsIconActive}
                   notifications={notifications}
                   title={MSG.inboxTitle}
                 />
