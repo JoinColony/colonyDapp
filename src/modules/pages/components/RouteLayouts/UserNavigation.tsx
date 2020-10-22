@@ -7,6 +7,7 @@ import { InboxIcon } from '~users/Inbox';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
 import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
+import MaskedAddress from '~core/MaskedAddress';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
@@ -28,7 +29,7 @@ const displayName = 'pages.NavigationWrapper.UserNavigation';
 const UserNavigation = () => {
   const { walletAddress, ethereal } = useLoggedInUser();
 
-  const WalletComponent = ethereal ? ConnectWalletPopover : GasStationPopover;
+  const WalletPopover = ethereal ? ConnectWalletPopover : GasStationPopover;
 
   const { data } = useUserNotificationsQuery({
     variables: { address: walletAddress },
@@ -43,22 +44,35 @@ const UserNavigation = () => {
           {DEFAULT_NETWORK_INFO.shortName}
         </div>
       )}
-      <WalletComponent>
-        {({ isOpen, toggle, ref }) => (
-          <button
-            type="button"
-            className={
-              isOpen
-                ? styles.connectWalletButtonActive
-                : styles.connectWalletButton
-            }
-            ref={ref}
-            onClick={toggle}
-          >
-            <FormattedMessage {...MSG.connectWallet} />
-          </button>
-        )}
-      </WalletComponent>
+      <WalletPopover>
+        {({ isOpen, toggle, ref }) =>
+          ethereal ? (
+            <button
+              type="button"
+              className={
+                isOpen
+                  ? styles.connectWalletButtonActive
+                  : styles.connectWalletButton
+              }
+              ref={ref}
+              onClick={toggle}
+            >
+              <FormattedMessage {...MSG.connectWallet} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={
+                isOpen ? styles.walletAddressActive : styles.walletAddress
+              }
+              ref={ref}
+              onClick={toggle}
+            >
+              <MaskedAddress address={walletAddress} />
+            </button>
+          )
+        }
+      </WalletPopover>
       {!ethereal && (
         <InboxPopover notifications={notifications}>
           {({ isOpen, toggle, ref }) => (
@@ -74,7 +88,6 @@ const UserNavigation = () => {
                 }`}
               >
                 <InboxIcon
-                  activeClassName={styles.notificationsIconActive}
                   notifications={notifications}
                   title={MSG.inboxTitle}
                 />

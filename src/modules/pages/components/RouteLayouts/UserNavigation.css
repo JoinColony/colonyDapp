@@ -33,10 +33,20 @@
 }
 
 .connectWalletButton {
+  /*
+   * @NOTE We need to do border sizing shenanigans due to how the border color
+   * is required by spec to have opacity.
+   *
+   * Otherwise, the two colors will overlap and it will lead to an unexpected border color.
+   *
+   * For this, we remove the border (and compensate the size with padding), while in the
+   * active class (the one that has a different colored border), we remove the extra padding
+   * and set the border
+   */
   margin-right: 25px;
   padding: 4px 9px 5px 9px;
   border: 1px solid var(--temp-grey-blue-7);
-  border-radius: 2px;
+  border-radius: var(--radius-tiny);
   background-color: transparent;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
@@ -60,4 +70,38 @@
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
   font-weight: var(--weight-bold);
   color: var(--grey-1);
+}
+
+.walletAddress {
+  /*
+   * @NOTE We need to do border sizing shenanigans due to how the border color
+   * is required by spec to have opacity.
+   *
+   * Otherwise, the two colors will overlap and it will lead to an unexpected border color.
+   *
+   * For this, we remove the border (and compensate the size with padding), while in the
+   * active class (the one that has a different colored border), we remove the extra padding
+   * and set the border
+   */
+  margin-right: 12px;
+  padding: 3px 9px 5px;
+  border: none;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  font-size: var(--size-tiny);
+  font-weight: 500;
+  color: var(--temp-grey-blue-7);
+  cursor: pointer;
+}
+
+.walletAddress:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  color: var(--colony-blue);
+}
+
+.walletAddressActive {
+  composes: walletAddress;
+  padding: 2px 8px 4px;
+  border: 1px solid var(--colony-blue);
+  color: var(--colony-blue);
 }
