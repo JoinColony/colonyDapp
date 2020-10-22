@@ -37,10 +37,14 @@ const UserNavigation = () => {
   return (
     <div className={styles.main}>
       <WalletComponent>
-        {({ toggle, ref }) => (
+        {({ isOpen, toggle, ref }) => (
           <button
             type="button"
-            className={styles.connectWalletButton}
+            className={
+              isOpen
+                ? styles.connectWalletButtonActive
+                : styles.connectWalletButton
+            }
             ref={ref}
             onClick={toggle}
           >
