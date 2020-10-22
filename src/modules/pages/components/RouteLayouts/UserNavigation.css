@@ -64,3 +64,12 @@
   color: var(--temp-gery-blue-7);
   cursor: pointer;
 }
+
+.connectWalletButtonActive {
+  composes: connectWalletButton;
+  padding: 6px 12px 9px 12px;
+  border: none;
+  border-color: color-mod(var(--temp-gery-blue-7) alpha(25%));
+  background-color: color-mod(var(--temp-gery-blue-7) alpha(25%));
+  color: var(--colony-blue);
+}
