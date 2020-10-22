@@ -8,6 +8,7 @@ export type TokenInfo = {
 
 export type NetworkInfo = {
   name: string;
+  shortName: string;
   description?: string;
   displayENSDomain?: string;
   /**
@@ -47,6 +48,7 @@ export const ETHER_TOKEN: TokenInfo = {
 
 export const XDAI_NETWORK: NetworkInfo = {
   name: 'xDai Chain',
+  shortName: 'xDai',
   displayENSDomain: 'joincolony.colonyxdai',
   blockExplorerName: 'Blockscout',
   tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
@@ -54,6 +56,7 @@ export const XDAI_NETWORK: NetworkInfo = {
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
   name: 'Ethereum',
+  shortName: 'ETH',
   blockExplorerName: 'Etherscan',
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://etherscan.io/tokens',
