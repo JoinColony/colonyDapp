@@ -8,6 +8,8 @@ import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
 import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
 
+import { DEFAULT_NETWORK_INFO } from '~constants';
+
 import styles from './UserNavigation.css';
 
 const MSG = defineMessages({
@@ -36,6 +38,11 @@ const UserNavigation = () => {
 
   return (
     <div className={styles.main}>
+      {!ethereal && (
+        <div className={styles.networkInfo}>
+          {DEFAULT_NETWORK_INFO.shortName}
+        </div>
+      )}
       <WalletComponent>
         {({ isOpen, toggle, ref }) => (
           <button

@@ -58,10 +58,11 @@
 .connectWalletButton {
   margin-right: 20px;
   padding: 5px 11px 8px 11px;
-  border: 1px solid var(--temp-gery-blue-7);
+  border: 1px solid var(--temp-grey-blue-7);
   border-radius: 2px;
   background-color: transparent;
-  color: var(--temp-gery-blue-7);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
   cursor: pointer;
 }
 
@@ -69,7 +70,16 @@
   composes: connectWalletButton;
   padding: 6px 12px 9px 12px;
   border: none;
-  border-color: color-mod(var(--temp-gery-blue-7) alpha(25%));
-  background-color: color-mod(var(--temp-gery-blue-7) alpha(25%));
+  border-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
   color: var(--colony-blue);
+}
+
+.networkInfo {
+  margin-right: 20px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
 }
