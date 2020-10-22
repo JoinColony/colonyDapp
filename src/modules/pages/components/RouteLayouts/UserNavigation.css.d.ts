@@ -6,3 +6,4 @@ export const navigationItemHealth: string;
 export const navigationItemActive: string;
 export const connectWalletButton: string;
 export const connectWalletButtonActive: string;
+export const networkInfo: string;
