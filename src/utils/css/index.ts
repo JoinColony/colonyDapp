@@ -37,3 +37,39 @@ export const getMainClasses = (
     .filter(Boolean);
   return [...styles, ...modifierClasses, ...stateClasses].join(' ');
 };
+
+export const removeValueUnits = (valueWithUnit: string): number => {
+  /*
+   * Taken from MDN: https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units
+   */
+  const measurementUnits = [
+    'cm',
+    'mm',
+    'Q',
+    'in',
+    'pc',
+    'pt',
+    'px',
+    'em',
+    'ex',
+    'ch',
+    'rem',
+    'lh',
+    'vw',
+    'vh',
+    'vmin',
+    'vmax',
+    /*
+     * Percent char is escaped for sanity
+     */
+    // eslint-disable-next-line no-useless-escape, prettier/prettier
+    '\%',
+  ];
+  return parseInt(
+    valueWithUnit.replace(
+      new RegExp(`(${measurementUnits.join('|')})$`, 'g'),
+      '',
+    ),
+    10,
+  );
+};
