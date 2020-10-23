@@ -150,7 +150,7 @@
     "ethereumjs-tx": "^2.1.2",
     "ethers": "^4.0.47",
     "format-number": "^3.0.0",
-    "formik": "2.1.4",
+    "formik": "2.2.1",
     "graphql-tag": "^2.10.1",
     "immutable": "^4.0.0-rc.12",
     "ipfs": "^0.43.1",
