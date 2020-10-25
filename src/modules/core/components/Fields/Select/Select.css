@@ -100,6 +100,10 @@
   font-weight: var(--weight-normal);
 }
 
+.widthContent {
+  width: min-content;
+}
+
 .widthFluid {
   width: 100%;
 }
