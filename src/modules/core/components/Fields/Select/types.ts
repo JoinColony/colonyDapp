@@ -7,7 +7,7 @@ export interface Appearance {
   alignOptions?: 'left' | 'center' | 'right';
   borderedOptions?: 'true' | 'false';
   theme?: 'default' | 'alt' | 'grey';
-  width?: 'fluid' | 'strict';
+  width?: 'content' | 'fluid' | 'strict';
 }
 
 export interface SelectOption {
