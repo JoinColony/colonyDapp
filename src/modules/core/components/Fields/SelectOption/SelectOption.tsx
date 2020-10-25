@@ -1,6 +1,8 @@
 import React, { KeyboardEvent, SyntheticEvent, useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 
+import { getMainClasses } from '~utils/css';
+
 import { SelectOption as SelectOptionType } from '../Select/types';
 
 import styles from './SelectOption.css';
@@ -13,6 +15,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  bordered?: boolean;
   checked: boolean;
   id: string;
   idx: number;
@@ -25,6 +28,7 @@ interface Props {
 const displayName = 'SelectOption';
 
 const SelectOption = ({
+  bordered,
   checked,
   id,
   idx,
@@ -61,7 +65,10 @@ const SelectOption = ({
       : option.label;
   return (
     <li
-      className={styles.main}
+      className={getMainClasses({}, styles, {
+        bordered: !!bordered,
+        isBasicLabel: !option.children,
+      })}
       aria-disabled={option.disabled}
       aria-selected={selected}
       id={id}

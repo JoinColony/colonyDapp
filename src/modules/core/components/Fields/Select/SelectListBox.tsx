@@ -51,6 +51,7 @@ const SelectListBox = ({
     >
       {options.map((option, idx) => (
         <SelectOption
+          bordered={appearance ? appearance.borderedOptions === 'true' : false}
           id={getOptionId(name, idx)}
           idx={idx}
           key={getOptionId(name, idx)}
