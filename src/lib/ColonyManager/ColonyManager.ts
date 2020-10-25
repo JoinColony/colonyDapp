@@ -10,7 +10,6 @@ import {
   OneTxPaymentClient,
   TokenClient,
   ExtensionClient,
-  ExtensionClients,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -69,7 +68,7 @@ export default class ColonyManager {
 
   private async getColonyExtensionClient(
     identifier: AddressOrENSName,
-    extensionName: keyof ExtensionClients,
+    extensionName: Extension,
   ): Promise<ExtensionClient> {
     const address = await this.resolveColonyIdentifier(identifier);
     const key = `${address}-${extensionName}`;
