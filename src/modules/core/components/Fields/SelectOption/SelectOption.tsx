@@ -72,11 +72,15 @@ const SelectOption = ({
       onMouseEnter={handleItemSelect}
     >
       <span title={label}>
-        {label}
-        {checked && (
-          <small className={styles.selectedHelpText}>
-            ({formatMessage(MSG.selectedLabelHelp)})
-          </small>
+        {option.children || (
+          <>
+            {label}
+            {checked && (
+              <small className={styles.selectedHelpText}>
+                ({formatMessage(MSG.selectedLabelHelp)})
+              </small>
+            )}
+          </>
         )}
       </span>
     </li>
