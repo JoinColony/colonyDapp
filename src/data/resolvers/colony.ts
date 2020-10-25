@@ -4,8 +4,10 @@ import { bigNumberify } from 'ethers/utils';
 import {
   ClientType,
   ColonyVersion,
+  Extension,
   getColonyRoles,
   TokenClientType,
+  extensions,
   getExtensionHash,
   ColonyClientV5,
 } from '@colony/colony-js';
@@ -560,6 +562,22 @@ export const colonyResolvers = ({
         return false;
       }
       return true;
+    },
+    async installedExtensions({ colonyAddress }) {
+      const promises = extensions.map((extensionName: Extension) =>
+        networkClient.getExtensionInstallation(
+          getExtensionHash(extensionName),
+          colonyAddress,
+        ),
+      );
+      const extensionAddresses = await Promise.all(promises);
+      return extensionAddresses
+        .map((address: Address, idx: number) => ({
+          __typename: 'ColonyExtension',
+          id: extensions[idx],
+          address,
+        }))
+        .filter(({ address }) => address !== AddressZero);
     },
   },
 });

@@ -212,6 +212,19 @@ query UserAddress($name: String!) {
   userAddress(name: $name) @client
 }
 
+This is most likely broken!
+
+query ColonyExtensions($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    installedExtensions @client {
+      id
+      address
+    }
+  }
+}
+
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id

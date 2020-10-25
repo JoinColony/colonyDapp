@@ -122,6 +122,11 @@ export default gql`
     domainId: String
   }
 
+  type ColonyExtension {
+    address: String!
+    id: String!
+  }
+
   extend type TaskPayout {
     token: Token!
   }
@@ -331,5 +336,6 @@ export default gql`
     events: [NetworkEvent!]!
     canMakePayment: Boolean!
     isDeploymentFinished: Boolean!
+    installedExtensions: [ColonyExtension!]!
   }
 `;
