@@ -1,5 +1,6 @@
 import React, {
   KeyboardEvent,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -73,6 +74,12 @@ interface Props {
   /** Status text */
   placeholder?: string | MessageDescriptor;
 
+  /** Render the actively selected option */
+  renderActiveOption?: (
+    activeOption: SelectOption | undefined,
+    activeOptionLabel: string,
+  ) => ReactNode;
+
   /** Status text */
   status?: string | MessageDescriptor;
 
@@ -95,6 +102,7 @@ const Select = ({
   onChange: onChangeCallback,
   options,
   placeholder,
+  renderActiveOption,
   status,
   statusValues,
 }: Props) => {
@@ -254,19 +262,28 @@ const Select = ({
     };
   }, [handleOutsideClick, isOpen]);
 
-  const activeOption = options[checkedOption];
-  const listboxId = `select-listbox-${id}`;
-  let activeOptionLabel;
-  if (activeOption) {
-    if (typeof activeOption.label === 'object') {
-      activeOptionLabel = formatMessage(
-        activeOption.label,
-        activeOption.labelValues,
-      );
-    } else {
-      activeOptionLabel = activeOption.label;
+  const activeOptionDisplay = useMemo<ReactNode>(() => {
+    const activeOption = options[checkedOption];
+    let activeOptionLabel;
+    if (activeOption) {
+      if (typeof activeOption.label === 'object') {
+        activeOptionLabel = formatMessage(
+          activeOption.label,
+          activeOption.labelValues,
+        );
+      } else {
+        activeOptionLabel = activeOption.label;
+      }
     }
-  }
+    const activeOptionLabelText = activeOptionLabel || placeholder;
+    if (renderActiveOption) {
+      return renderActiveOption(activeOption, activeOptionLabelText);
+    }
+    return <span>{activeOptionLabelText}</span>;
+  }, [checkedOption, formatMessage, options, placeholder, renderActiveOption]);
+
+  const listboxId = `select-listbox-${id}`;
+
   return (
     <div className={styles.main} ref={wrapperRef}>
       <InputLabel
@@ -299,9 +316,7 @@ const Select = ({
           name={name}
         >
           <div className={styles.selectInner}>
-            <div className={styles.activeOption}>
-              <span>{activeOptionLabel || placeholder}</span>
-            </div>
+            <div className={styles.activeOption}>{activeOptionDisplay}</div>
             <span className={styles.selectExpandContainer}>
               <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
             </span>
