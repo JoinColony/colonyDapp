@@ -1,6 +1,7 @@
+@value contentWidth: 460px;
 
 .main {
-  width: 460px;
+  width: contentWidth;
   text-align: left;
 }
 
