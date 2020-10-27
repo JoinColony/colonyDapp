@@ -12,7 +12,7 @@ import MaskedAddress from '~core/MaskedAddress';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 import { useSelector } from '~utils/hooks';
 
-import { DEFAULT_NETWORK_INFO } from '~constants';
+import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './UserNavigation.css';
 
@@ -25,12 +25,16 @@ const MSG = defineMessages({
     id: 'pages.NavigationWrapper.UserNavigation.connectWallet',
     defaultMessage: 'Connect Wallet',
   },
+  wrongNetworkAlert: {
+    id: 'pages.NavigationWrapper.UserNavigation.wrongNetworkAlert',
+    defaultMessage: 'Connected to wrong network',
+  },
 });
 
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
-  const { walletAddress, ethereal } = useLoggedInUser();
+  const { walletAddress, ethereal, networkId } = useLoggedInUser();
 
   const { data } = useUserNotificationsQuery({
     variables: { address: walletAddress },
@@ -47,14 +51,25 @@ const UserNavigation = () => {
     [transactionAndMessageGroups],
   );
 
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const userCanNavigate = !ethereal && isNetworkAllowed;
+
   return (
     <div className={styles.main}>
-      {!ethereal && (
-        <div className={styles.networkInfo}>
-          {DEFAULT_NETWORK_INFO.shortName}
+      {userCanNavigate && (
+        <div
+          className={styles.networkInfo}
+          title={isNetworkAllowed && ALLOWED_NETWORKS[networkId || 1].name}
+        >
+          {isNetworkAllowed && ALLOWED_NETWORKS[networkId || 1].shortName}
         </div>
       )}
-      {ethereal ? (
+      {!ethereal && !isNetworkAllowed && (
+        <div className={styles.wrongNetwork}>
+          <FormattedMessage {...MSG.wrongNetworkAlert} />
+        </div>
+      )}
+      {ethereal && (
         <ConnectWalletPopover>
           {({ isOpen, toggle, ref }) => (
             <button
@@ -71,7 +86,8 @@ const UserNavigation = () => {
             </button>
           )}
         </ConnectWalletPopover>
-      ) : (
+      )}
+      {userCanNavigate && (
         <GasStationPopover
           transactionAndMessageGroups={transactionAndMessageGroups}
         >
@@ -94,7 +110,7 @@ const UserNavigation = () => {
           )}
         </GasStationPopover>
       )}
-      {!ethereal && (
+      {userCanNavigate && (
         <InboxPopover notifications={notifications}>
           {({ isOpen, toggle, ref }) => (
             <button
