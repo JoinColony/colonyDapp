@@ -6,6 +6,7 @@ export default gql`
     username: String
     walletAddress: String
     ethereal: Boolean
+    networkId: Int
   }
 
   type LoggedInUser {
@@ -14,6 +15,7 @@ export default gql`
     username: String
     walletAddress: String!
     ethereal: Boolean!
+    networkId: Int
   }
 
   type DomainBalance {
