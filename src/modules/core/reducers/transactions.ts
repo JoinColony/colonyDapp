@@ -121,7 +121,8 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
       return state.mergeIn([CORE_TRANSACTIONS_LIST, id], payload);
       // Do we want an 'estimated' state for TX?
     }
-    case ActionTypes.TRANSACTION_SEND: {
+    case ActionTypes.TRANSACTION_SEND:
+    case ActionTypes.TRANSACTION_RETRY: {
       const {
         meta: { id },
       } = action;
