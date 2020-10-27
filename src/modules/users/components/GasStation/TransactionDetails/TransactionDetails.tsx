@@ -6,7 +6,7 @@ import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
 import { Appearance } from '../GasStationContent';
 import { GroupedTransaction } from '../TransactionCard';
 import GasStationClaimCard from '../GasStationClaimCard';
-import GasStationPrice from '../GasStationPrice';
+import GasStationControls from '../GasStationControls';
 import MetaMaskWalletInteraction from '../MetaMaskWalletInteraction';
 import TransactionBackToList from './TransactionBackToList';
 
@@ -50,7 +50,9 @@ const TransactionDetails = ({
         />
       </CardList>
       {showPrice(selectedTransaction) && (
-        <GasStationPrice transaction={selectedTransaction as TransactionType} />
+        <GasStationControls
+          transaction={selectedTransaction as TransactionType}
+        />
       )}
       {showInteraction(selectedTransaction) && <MetaMaskWalletInteraction />}
     </div>
