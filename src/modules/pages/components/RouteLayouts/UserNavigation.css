@@ -70,6 +70,15 @@
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
   font-weight: var(--weight-bold);
   color: var(--grey-1);
+  cursor: default;
+}
+
+.wrongNetwork {
+  composes: networkInfo;
+  padding: 4px 10px;
+  background-color: var(--danger);
+  font-size: 13px;
+  color: var(--colony-white);
 }
 
 .walletAddress {
