@@ -1,0 +1,9 @@
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+.controls {
+  margin-top: 10px;
+  text-align: right;
+}
