@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState, ReactElement } from 'react';
 
 import Popover, { PopoverChildFn } from '~core/Popover';
-
 import { usePrevious } from '~utils/hooks';
+
 import { removeValueUnits } from '~utils/css';
 
 import {
@@ -34,12 +34,14 @@ const GasStationPopover = ({
     transactionAndMessageGroups,
   ]);
   const prevTxCount: number | void = usePrevious(txCount);
+
   useEffect(() => {
     if (prevTxCount != null && txCount > prevTxCount) {
       setOpen(true);
       setTxNeedsSigning(true);
     }
   }, [txCount, prevTxCount, setTxNeedsSigning]);
+
   /*
    * @NOTE Offset Calculations
    * See: https://popper.js.org/docs/v2/modifiers/offset/
