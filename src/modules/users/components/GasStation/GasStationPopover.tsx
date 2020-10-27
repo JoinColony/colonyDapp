@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, ReactElement } from 'react';
 
-import Popover, { PopoverTriggerType } from '~core/Popover';
+import Popover, { PopoverChildFn } from '~core/Popover';
 
 import { usePrevious } from '~utils/hooks';
 import { removeValueUnits } from '~utils/css';
@@ -21,7 +21,7 @@ import { contentWidth } from './GasStationContent/GasStationContent.css';
 
 interface Props {
   transactionAndMessageGroups: TransactionOrMessageGroups;
-  children: ReactElement | PopoverTriggerType;
+  children: ReactElement | PopoverChildFn;
 }
 
 const GasStationPopover = ({
