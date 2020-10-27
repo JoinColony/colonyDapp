@@ -224,3 +224,8 @@ export const updateGasPrices = (gasPrices: GasPricesProps): AllActions => ({
   type: ActionTypes.GAS_PRICES_UPDATE,
   payload: gasPrices,
 });
+
+export const transactionSend = (id: string): AllActions => ({
+  type: ActionTypes.TRANSACTION_SEND,
+  meta: { id },
+});
