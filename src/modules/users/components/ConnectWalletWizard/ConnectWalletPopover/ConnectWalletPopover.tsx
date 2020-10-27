@@ -23,7 +23,7 @@ const ConnectWalletPopover = ({ children }: Props) => {
    * See: https://popper.js.org/docs/v2/modifiers/offset/
    *
    * Skidding:
-   * Half the width of the reference element plus the horizontal offset
+   * The Width of the reference element (width) plus the horizontal offset
    * Note that all skidding, for bottom aligned elements, needs to be negative.
    *
    * Distace:
