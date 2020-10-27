@@ -47,6 +47,12 @@ export const ETHER_TOKEN: TokenInfo = {
   decimals: 18,
 };
 
+export const GOERLI_TOKEN: TokenInfo = {
+  name: 'Goerli Ether',
+  symbol: 'GOETH',
+  decimals: 18,
+};
+
 export const XDAI_NETWORK: NetworkInfo = {
   name: 'xDai Chain',
   chainId: 100,
@@ -63,6 +69,21 @@ export const ETHEREUM_NETWORK: NetworkInfo = {
   blockExplorerName: 'Etherscan',
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://etherscan.io/tokens',
+};
+
+export const GOERLI_NETWORK: NetworkInfo = {
+  name: 'Goerli Testnet',
+  chainId: 5,
+  shortName: 'GTH',
+  blockExplorerName: 'Etherscan',
+  displayENSDomain: 'joincolony.eth',
+  tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
+};
+
+export const ALLOWED_NETWORKS = {
+  [XDAI_NETWORK.chainId]: XDAI_NETWORK,
+  [ETHEREUM_NETWORK.chainId]: ETHEREUM_NETWORK,
+  [GOERLI_NETWORK.chainId]: GOERLI_NETWORK,
 };
 
 export const DEFAULT_NETWORK_TOKEN =
