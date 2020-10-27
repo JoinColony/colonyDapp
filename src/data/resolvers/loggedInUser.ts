@@ -16,6 +16,7 @@ export const initialCache = {
     username: null,
     ethereal: true,
     networkId: 1,
+    isNetworkAllowed: true,
   },
 };
 
