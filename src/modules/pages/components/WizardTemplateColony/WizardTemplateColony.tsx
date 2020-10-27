@@ -1,13 +1,15 @@
 import React, { ReactNode, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { parseEther } from 'ethers/utils';
+import { Redirect } from 'react-router-dom';
 
 import Numeral from '~core/Numeral';
 import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
 import { HistoryNavigation } from '~pages/RouteLayouts';
 import { useLoggedInUser } from '~data/index';
-import { DEFAULT_NETWORK_TOKEN } from '~constants';
+import { DEFAULT_NETWORK_TOKEN, ALLOWED_NETWORKS } from '~constants';
+import { DASHBOARD_ROUTE } from '~routes/index';
 
 import styles from './WizardTemplateColony.css';
 
@@ -31,9 +33,15 @@ const WizardTemplateColony = ({
   previousStep,
   hideQR = false,
 }: Props) => {
-  const { balance, walletAddress } = useLoggedInUser();
+  const { balance, walletAddress, networkId } = useLoggedInUser();
   const customHandler = useCallback(() => previousStep(), [previousStep]);
   const ethBalance = parseEther(balance);
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
+  if (!isNetworkAllowed) {
+    return <Redirect to={DASHBOARD_ROUTE} />;
+  }
+
   return (
     <main className={styles.layoutMain}>
       <header className={styles.header}>
