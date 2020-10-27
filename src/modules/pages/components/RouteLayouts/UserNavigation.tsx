@@ -11,7 +11,6 @@ import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
 import MaskedAddress from '~core/MaskedAddress';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 import { useSelector } from '~utils/hooks';
-
 import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './UserNavigation.css';
