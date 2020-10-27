@@ -11,7 +11,7 @@
 
 .main {
   z-index: calc(var(--z-index-notification) + 1);
-  border-radius: var(--radius-small);
+  border-radius: var(--radius-normal);
   background-color: backgroundColor;
   color: var(--grey-4);
   box-shadow: 0 0 20px -2px var(--temp-grey-blue-4);
