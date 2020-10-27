@@ -1,6 +1,6 @@
 import React, { MouseEvent } from 'react';
 
-import { TRANSACTION_STATUSES, TransactionType } from '~immutable/index';
+import { TransactionType } from '~immutable/index';
 import CardList from '~core/CardList';
 import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
 import { Appearance } from '../GasStationContent';
@@ -8,11 +8,6 @@ import { GroupedTransaction } from '../TransactionCard';
 import GasStationClaimCard from '../GasStationClaimCard';
 import GasStationPrice from '../GasStationPrice';
 import TransactionBackToList from './TransactionBackToList';
-
-const showPrice = (tx?: TransactionType) =>
-  !!tx &&
-  (tx.status === TRANSACTION_STATUSES.READY ||
-    tx.status === TRANSACTION_STATUSES.FAILED);
 
 interface Props {
   /* If we are only showing the transaction details
@@ -45,9 +40,7 @@ const TransactionDetails = ({
           selectedTransactionIdx={selectedTransactionIdx}
         />
       </CardList>
-      {showPrice(selectedTransaction) && (
-        <GasStationPrice transaction={selectedTransaction as TransactionType} />
-      )}
+      <GasStationPrice transaction={selectedTransaction as TransactionType} />
     </div>
   );
 };
