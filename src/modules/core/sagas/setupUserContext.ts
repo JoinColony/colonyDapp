@@ -89,6 +89,12 @@ export default function* setupUserContext(
      */
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
+    let walletNetworkId = 1;
+    // @ts-ignore
+    if (window.web3) {
+      // @ts-ignore
+      walletNetworkId = window.web3.version.network;
+    }
     TEMP_setContext(ContextModule.Wallet, wallet);
 
     yield authenticate(wallet);
@@ -158,6 +164,7 @@ export default function* setupUserContext(
           username,
           walletAddress,
           ethereal: method === WalletMethod.Ethereal,
+          networkId: walletNetworkId,
         },
       },
     });
