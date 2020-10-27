@@ -7,4 +7,5 @@
   border-radius: 50%;
   background-color: var(--danger);
   content: '';
+  box-shadow: 0px 2px 11px var(--drop-shadow);
 }
