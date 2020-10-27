@@ -1,13 +1,22 @@
 import React, { MouseEvent } from 'react';
 
-import { TransactionType } from '~immutable/index';
+import { TRANSACTION_STATUSES, TransactionType } from '~immutable/index';
 import CardList from '~core/CardList';
 import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
 import { Appearance } from '../GasStationContent';
 import { GroupedTransaction } from '../TransactionCard';
 import GasStationClaimCard from '../GasStationClaimCard';
 import GasStationPrice from '../GasStationPrice';
+import MetaMaskWalletInteraction from '../MetaMaskWalletInteraction';
 import TransactionBackToList from './TransactionBackToList';
+
+const showPrice = (tx?: TransactionType) =>
+  !!tx &&
+  (tx.status === TRANSACTION_STATUSES.READY ||
+    tx.status === TRANSACTION_STATUSES.FAILED);
+
+const showInteraction = (tx?: TransactionType) =>
+  !!tx && tx.status !== TRANSACTION_STATUSES.SUCCEEDED;
 
 interface Props {
   /* If we are only showing the transaction details
@@ -40,7 +49,10 @@ const TransactionDetails = ({
           selectedTransactionIdx={selectedTransactionIdx}
         />
       </CardList>
-      <GasStationPrice transaction={selectedTransaction as TransactionType} />
+      {showPrice(selectedTransaction) && (
+        <GasStationPrice transaction={selectedTransaction as TransactionType} />
+      )}
+      {showInteraction(selectedTransaction) && <MetaMaskWalletInteraction />}
     </div>
   );
 };
