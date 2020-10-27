@@ -17,7 +17,6 @@ import {
   horizontalOffset,
   verticalOffset,
 } from './GasStationPopover.css';
-import { contentWidth } from './GasStationContent/GasStationContent.css';
 
 interface Props {
   transactionAndMessageGroups: TransactionOrMessageGroups;
@@ -47,11 +46,8 @@ const GasStationPopover = ({
    * See: https://popper.js.org/docs/v2/modifiers/offset/
    *
    * Skidding:
-   * Half the width of the content - half the width of the reference.
-   * This will get you aligned to the right side (this just for this instance,
-   * where alignment is at the bottom).
-   * From this we subtract the required offset size in pixels.
-   * Note that all skidding, for bottom alignment, needs to be negative.
+   * Half the width of the reference element plus the horizontal offset
+   * Note that all skidding, for bottom aligned elements, needs to be negative.
    *
    * Distace:
    * This is just the required offset in pixels. Since we are aligned at
@@ -60,9 +56,7 @@ const GasStationPopover = ({
    */
   const popoverOffset = useMemo(() => {
     const skid =
-      removeValueUnits(contentWidth) / 2 -
-      removeValueUnits(refWidth) / 2 -
-      removeValueUnits(horizontalOffset);
+      removeValueUnits(refWidth) / 2 + removeValueUnits(horizontalOffset);
     return [-1 * skid, removeValueUnits(verticalOffset)];
   }, []);
 
