@@ -1,10 +1,10 @@
 import React, { useState, ReactElement } from 'react';
 
-import Popover, { PopoverTriggerType } from '~core/Popover';
+import Popover, { PopoverChildFn } from '~core/Popover';
 import { ConnectWalletContent } from '../ConnectWalletWizard';
 
 interface Props {
-  children: ReactElement | PopoverTriggerType;
+  children: ReactElement | PopoverChildFn;
 }
 
 const ConnectWalletPopover = ({ children }: Props) => {
