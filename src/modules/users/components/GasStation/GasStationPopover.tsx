@@ -29,6 +29,7 @@ const GasStationPopover = ({
   transactionAndMessageGroups,
 }: Props) => {
   const [isOpen, setOpen] = useState(false);
+  const [txNeedsSigning, setTxNeedsSigning] = useState(false);
   const txCount = useMemo(() => transactionCount(transactionAndMessageGroups), [
     transactionAndMessageGroups,
   ]);
@@ -36,8 +37,9 @@ const GasStationPopover = ({
   useEffect(() => {
     if (prevTxCount != null && txCount > prevTxCount) {
       setOpen(true);
+      setTxNeedsSigning(true);
     }
-  }, [txCount, prevTxCount]);
+  }, [txCount, prevTxCount, setTxNeedsSigning]);
   /*
    * @NOTE Offset Calculations
    * See: https://popper.js.org/docs/v2/modifiers/offset/
@@ -68,13 +70,18 @@ const GasStationPopover = ({
       content={({ close }) => (
         <GasStationContent
           transactionAndMessageGroups={transactionAndMessageGroups}
+          autoOpenTransaction={txNeedsSigning}
+          setAutoOpenTransaction={setTxNeedsSigning}
           close={close}
         />
       )}
       placement="bottom"
       showArrow={false}
       isOpen={isOpen}
-      onClose={() => setOpen(false)}
+      onClose={() => {
+        setOpen(false);
+        setTxNeedsSigning(false);
+      }}
       popperProps={{
         modifiers: [
           {

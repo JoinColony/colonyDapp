@@ -44,6 +44,12 @@ interface Props {
   appearance: Appearance;
   close?: () => void;
   transactionAndMessageGroups: TransactionOrMessageGroups;
+  /*
+   * If we just created a transaction, auto open that transaction's details in
+   * the gas station for signing (this removes an extra click from the flow)
+   */
+  autoOpenTransaction?: boolean;
+  setAutoOpenTransaction?: (boolean) => void;
 }
 
 const displayName = 'users.GasStation.GasStationContent';
@@ -53,11 +59,16 @@ const GasStationContent = ({
   appearance,
   close,
   transactionAndMessageGroups,
+  autoOpenTransaction = false,
+  setAutoOpenTransaction = () => {},
 }: Props) => {
-  const [selectedGroupIdx, setSelectedGroupIdx] = useState<number>(-1);
+  const [selectedGroupIdx, setSelectedGroupIdx] = useState<number>(
+    autoOpenTransaction ? 0 : -1,
+  );
 
   const unselectTransactionGroup = () => {
     setSelectedGroupIdx(-1);
+    setAutoOpenTransaction(false);
   };
 
   const selectTransactionGroup = (idx: number) => {
