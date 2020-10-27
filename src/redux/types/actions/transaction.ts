@@ -79,4 +79,5 @@ export type TransactionActionTypes =
         deployedContractAddress?: string;
       },
       WithId
-    >;
+    >
+  | ActionTypeWithMeta<ActionTypes.TRANSACTION_RETRY, WithId>;
