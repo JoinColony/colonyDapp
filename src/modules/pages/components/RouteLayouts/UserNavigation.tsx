@@ -133,7 +133,7 @@ const UserNavigation = () => {
           )}
         </InboxPopover>
       )}
-      <AvatarDropdown />
+      <AvatarDropdown onlyLogout={!isNetworkAllowed} />
     </div>
   );
 };

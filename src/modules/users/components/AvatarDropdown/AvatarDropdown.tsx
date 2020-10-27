@@ -15,9 +15,13 @@ import styles, {
 
 const UserAvatar = HookedUserAvatar();
 
+interface Props {
+  onlyLogout?: boolean;
+}
+
 const displayName = 'users.AvatarDropdown';
 
-const AvatarDropdown = () => {
+const AvatarDropdown = ({ onlyLogout = false }: Props) => {
   const { username, walletAddress, ethereal } = useLoggedInUser();
 
   /*
@@ -46,6 +50,7 @@ const AvatarDropdown = () => {
           closePopover={close}
           username={username}
           walletConnected={!!walletAddress && !ethereal}
+          onlyLogout={onlyLogout}
         />
       )}
       trigger="click"
