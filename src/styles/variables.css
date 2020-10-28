@@ -9,6 +9,7 @@
   --violet: rgb(89, 100, 240);
   --pink: rgb(254, 94, 124);
   --golden: rgb(238, 179, 0); /* Think pending states (golden yellow) */
+  --dark: rgb(60, 68, 77); /* Used for colony name display (colony simplified) */
   --grey-dark: rgb(47, 47, 47);
   --grey-1: rgb(58, 58, 58);
   --grey-3: rgb(82, 84, 85);
