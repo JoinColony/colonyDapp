@@ -26,7 +26,13 @@
 
 .colonyAddress {
   margin-top: -2px;
+  width: 120px;
   font-size: 13px;
   font-weight: var(--weight-medium);
   color: addressColor;
+  cursor: pointer;
+}
+
+.copyAddressTooltip {
+  padding: 8px 4px;
 }
