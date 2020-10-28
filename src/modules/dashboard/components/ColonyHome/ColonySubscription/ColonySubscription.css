@@ -27,3 +27,23 @@
 .spinnerContainer {
   margin: 0 0 -3px 2px;
 }
+
+.menuIconContainer {
+  display: inline-block;
+  margin: 0 0 0 -4px;
+  vertical-align: bottom;
+  cursor: pointer;
+}
+
+.menuIcon {
+  display: block;
+  height: 16px;
+  width: 16px;
+  border-radius: var(--radius-normal);
+  fill: var(--temp-grey-13);
+}
+
+.menuIcon:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  fill: var(--colony-blue);
+}

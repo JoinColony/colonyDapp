@@ -2,6 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
+import Icon from '~core/Icon';
 import { Address } from '~types/index';
 import {
   useLoggedInUser,
@@ -21,6 +22,10 @@ const MSG = defineMessages({
   leaveColonyQuestion: {
     id: 'dashboard.ColonyHome.ColonySubscription.leaveColonyQuestion',
     defaultMessage: 'Leave?',
+  },
+  colonyMenuTitle: {
+    id: 'dashboard.ColonyHome.ColonySubscription.colonyMenuTitle',
+    defaultMessage: 'Colony Menu',
   },
 });
 
@@ -61,15 +66,27 @@ const ColonySubscription = ({ colonyAddress }: Props) => {
   return (
     <div className={styles.main}>
       {!isSubscribed && (
-        <button type="button" className={styles.joinColony}>
+        <button
+          type="button"
+          className={styles.joinColony}
+          onClick={() => subscribe}
+        >
           <FormattedMessage {...MSG.joinColony} />
         </button>
       )}
-      {loadingSubscribe || loadingUnsubscribe && (
-        <div className={styles.spinnerContainer}>
-          <SpinnerLoader appearance={{ theme: 'primary', size: 'small' }} />
-        </div>
-      )}
+      {loadingSubscribe ||
+        (loadingUnsubscribe && (
+          <div className={styles.spinnerContainer}>
+            <SpinnerLoader appearance={{ theme: 'primary', size: 'small' }} />
+          </div>
+        ))}
+      <div className={styles.menuIconContainer}>
+        <Icon
+          className={styles.menuIcon}
+          name="three-dots-row"
+          title={MSG.colonyMenuTitle}
+        />
+      </div>
     </div>
   );
 };
