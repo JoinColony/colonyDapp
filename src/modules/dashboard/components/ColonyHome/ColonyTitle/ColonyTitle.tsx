@@ -6,6 +6,7 @@ import { Colony } from '~data/index';
 import Heading from '~core/Heading';
 import MaskedAddress from '~core/MaskedAddress';
 import { Tooltip } from '~core/Popover';
+import ColonySubscription from '../ColonySubscription';
 
 import styles from './ColonyTitle.css';
 
@@ -84,6 +85,7 @@ const ColonyTitle = ({
             </div>
           </div>
         </Tooltip>
+        <ColonySubscription colonyAddress={colonyAddress} />
       </div>
     </div>
   );
