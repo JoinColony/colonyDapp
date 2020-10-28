@@ -31,7 +31,7 @@ type Props = {
 const displayName = 'dashboard.ColonyHome.ColonyTitle';
 
 const ColonyTitle = ({
-  colony: { displayName: colonyDisplayName, colonyName, colonyAddress },
+  colony: { displayName: colonyDisplayName, colonyName, colonyAddress }, colony,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
@@ -85,7 +85,7 @@ const ColonyTitle = ({
             </div>
           </div>
         </Tooltip>
-        <ColonySubscription colonyAddress={colonyAddress} />
+        <ColonySubscription colony={colony} />
       </div>
     </div>
   );

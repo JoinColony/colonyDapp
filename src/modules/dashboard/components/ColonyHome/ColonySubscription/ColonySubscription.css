@@ -11,7 +11,7 @@
   background: transparent;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: var(--colony-blue);
+  color: var(--dark-blue);
   cursor: pointer;
   outline: 0;
 }
