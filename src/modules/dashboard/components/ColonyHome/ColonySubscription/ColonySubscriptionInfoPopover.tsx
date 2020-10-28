@@ -16,8 +16,7 @@ const MSG = defineMessages({
     defaultMessage: 'Leave?',
   },
   nativeTokenTitle: {
-    id:
-      'dashboard.ColonyHome.ColonySubscriptionInfoPopover.nativeTokenTitle',
+    id: 'dashboard.ColonyHome.ColonySubscriptionInfoPopover.nativeTokenTitle',
     defaultMessage: 'NativeTokenAddress',
   },
 });
@@ -74,6 +73,23 @@ const ColonySubscriptionInfoPopover = ({
     trigger="click"
     showArrow={false}
     placement="right"
+    popperProps={{
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            /*
+             * @NOTE Values are set manual, exactly as the ones provided in the figma spec.
+             *
+             * There's no logic to how they are calculated, so next time you need
+             * to change them you'll either have to go by exact specs, or change
+             * them until it "feels right" :)
+             */
+            offset: [100, -10],
+          },
+        },
+      ],
+    }}
   >
     {children}
   </Popover>
