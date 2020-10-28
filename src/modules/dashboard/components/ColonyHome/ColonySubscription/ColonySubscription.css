@@ -1,0 +1,25 @@
+.main {
+  display: inline-block;
+  margin-left: -12px;
+}
+
+.joinColony {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--colony-blue);
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 2px 5px;
+  cursor: pointer;
+  border-radius: var(--radius-normal);
+  outline: 0;
+}
+
+.joinColony:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+}
+
+.joinColony:active {
+  color: var(--text);
+}
