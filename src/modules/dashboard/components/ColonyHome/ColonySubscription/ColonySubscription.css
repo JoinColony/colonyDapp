@@ -25,7 +25,8 @@
 }
 
 .spinnerContainer {
-  margin: 0 0 -3px 2px;
+  margin: 5px 0 0px 2px;
+  position: absolute;
 }
 
 .menuIconContainer {
