@@ -3,14 +3,15 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
-import { Address } from '~types/index';
 import {
   useLoggedInUser,
   useSubscribeToColonyMutation,
   useUnsubscribeFromColonyMutation,
   useUserColonyAddressesQuery,
   cacheUpdates,
+  Colony,
 } from '~data/index';
+import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
 
 import styles from './ColonySubscription.css';
 
@@ -19,10 +20,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonySubscription.joinColony',
     defaultMessage: 'Join',
   },
-  leaveColonyQuestion: {
-    id: 'dashboard.ColonyHome.ColonySubscription.leaveColonyQuestion',
-    defaultMessage: 'Leave?',
-  },
   colonyMenuTitle: {
     id: 'dashboard.ColonyHome.ColonySubscription.colonyMenuTitle',
     defaultMessage: 'Colony Menu',
@@ -30,10 +27,17 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
 }
 
-const ColonySubscription = ({ colonyAddress }: Props) => {
+const ColonySubscription = ({
+  colony: {
+    colonyAddress,
+    displayName: colonyDisplayName,
+    colonyName,
+    nativeTokenAddress,
+  },
+}: Props) => {
   const { username, walletAddress } = useLoggedInUser();
 
   const { data } = useUserColonyAddressesQuery({
@@ -65,28 +69,38 @@ const ColonySubscription = ({ colonyAddress }: Props) => {
 
   return (
     <div className={styles.main}>
-      {!isSubscribed && (
-        <button
-          type="button"
-          className={styles.joinColony}
-          onClick={() => subscribe}
-        >
-          <FormattedMessage {...MSG.joinColony} />
-        </button>
-      )}
-      {loadingSubscribe ||
+      {/* {loadingSubscribe ||
         (loadingUnsubscribe && (
           <div className={styles.spinnerContainer}>
             <SpinnerLoader appearance={{ theme: 'primary', size: 'small' }} />
           </div>
-        ))}
-      <div className={styles.menuIconContainer}>
-        <Icon
-          className={styles.menuIcon}
-          name="three-dots-row"
-          title={MSG.colonyMenuTitle}
-        />
-      </div>
+        ))} */}
+      {!isSubscribed && (
+        <button
+          type="button"
+          className={styles.joinColony}
+          onClick={() => subscribe()}
+        >
+          <FormattedMessage {...MSG.joinColony} />
+        </button>
+      )}
+      {isSubscribed && (
+        <ColonySubscriptionInfoPopover
+          colonyAddress={colonyAddress}
+          colonyDisplayName={colonyDisplayName || colonyName}
+          colonyName={colonyName}
+          nativeTokenAddress={nativeTokenAddress}
+          onUnsubscribe={() => unsubscribe()}
+        >
+          <div className={styles.menuIconContainer}>
+            <Icon
+              className={styles.menuIcon}
+              name="three-dots-row"
+              title={MSG.colonyMenuTitle}
+            />
+          </div>
+        </ColonySubscriptionInfoPopover>
+      )}
     </div>
   );
 };
