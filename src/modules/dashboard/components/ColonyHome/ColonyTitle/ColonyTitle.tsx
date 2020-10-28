@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import copyToClipboard from 'copy-to-clipboard';
 
 import { Colony } from '~data/index';
 import Heading from '~core/Heading';
@@ -15,7 +16,10 @@ const MSG = defineMessages({
   },
   copyAddressTooltip: {
     id: 'dashboard.ColonyHome.ColonyTitle.copyAddressTooltip',
-    defaultMessage: 'Click to copy colony address',
+    defaultMessage: `{valueIsCopied, select,
+      true {Copied}
+      false {Click to copy colony address}
+    }`,
   },
 });
 
@@ -28,6 +32,21 @@ const displayName = 'dashboard.ColonyHome.ColonyTitle';
 const ColonyTitle = ({
   colony: { displayName: colonyDisplayName, colonyName, colonyAddress },
 }: Props) => {
+  const [valueIsCopied, setValueIsCopied] = useState(false);
+  const userFeedbackTimer = useRef<any>(null);
+  const handleClipboardCopy = () => {
+    setValueIsCopied(true);
+    copyToClipboard(colonyAddress);
+    userFeedbackTimer.current = setTimeout(() => setValueIsCopied(false), 2000);
+  };
+  /*
+   * We need to wrap the call in a second function, since only the returned
+   * function gets called on unmount.
+   * The first one is only called on render.
+   */
+  useEffect(() => () => clearTimeout(userFeedbackTimer.current), [
+    userFeedbackTimer,
+  ]);
   return (
     <div className={styles.main}>
       <div className={styles.colonyTitle}>
@@ -46,11 +65,20 @@ const ColonyTitle = ({
           trigger="hover"
           content={
             <div className={styles.copyAddressTooltip}>
-              <FormattedMessage {...MSG.copyAddressTooltip} />
+              <FormattedMessage
+                {...MSG.copyAddressTooltip}
+                values={{ valueIsCopied }}
+              />
             </div>
           }
         >
-          <div className={styles.colonyAddress}>
+          <div
+            className={styles.colonyAddress}
+            onClick={handleClipboardCopy}
+            onKeyPress={handleClipboardCopy}
+            role="button"
+            tabIndex={0}
+          >
             <MaskedAddress address={colonyAddress} />
           </div>
         </Tooltip>
