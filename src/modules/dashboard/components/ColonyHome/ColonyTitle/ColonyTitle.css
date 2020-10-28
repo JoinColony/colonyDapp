@@ -43,6 +43,15 @@
   color: var(--colony-blue);
 }
 
+/*
+ * @NOTE This wrapper is used to better align where the tooltip shows up
+ * relative to the reference element (colonyAddress)
+ */
+.colonyAddressWrapper {
+  display: inline-block;
+  padding-right: 15px;
+}
+
 .copyAddressTooltip {
   padding: 8px 4px;
 }
