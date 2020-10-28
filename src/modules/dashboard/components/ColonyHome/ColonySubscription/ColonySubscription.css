@@ -4,15 +4,15 @@
 }
 
 .joinColony {
+  margin: 0;
+  padding: 2px 5px;
+  border-radius: var(--radius-normal);
+  border: none;
+  background: transparent;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
-  border: none;
-  background: transparent;
-  margin: 0;
-  padding: 2px 5px;
   cursor: pointer;
-  border-radius: var(--radius-normal);
   outline: 0;
 }
 
@@ -22,4 +22,8 @@
 
 .joinColony:active {
   color: var(--text);
+}
+
+.spinnerContainer {
+  margin: 0 0 -3px 2px;
 }
