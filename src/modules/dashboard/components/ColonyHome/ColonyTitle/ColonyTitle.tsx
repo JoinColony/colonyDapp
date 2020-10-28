@@ -72,14 +72,16 @@ const ColonyTitle = ({
             </div>
           }
         >
-          <div
-            className={styles.colonyAddress}
-            onClick={handleClipboardCopy}
-            onKeyPress={handleClipboardCopy}
-            role="button"
-            tabIndex={0}
-          >
-            <MaskedAddress address={colonyAddress} />
+          <div className={styles.colonyAddressWrapper}>
+            <div
+              className={styles.colonyAddress}
+              onClick={handleClipboardCopy}
+              onKeyPress={handleClipboardCopy}
+              role="button"
+              tabIndex={0}
+            >
+              <MaskedAddress address={colonyAddress} />
+            </div>
           </div>
         </Tooltip>
       </div>
