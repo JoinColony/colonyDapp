@@ -69,12 +69,12 @@ const ColonySubscription = ({
 
   return (
     <div className={styles.main}>
-      {/* {loadingSubscribe ||
+      {loadingSubscribe ||
         (loadingUnsubscribe && (
           <div className={styles.spinnerContainer}>
             <SpinnerLoader appearance={{ theme: 'primary', size: 'small' }} />
           </div>
-        ))} */}
+        ))}
       {!isSubscribed && (
         <button
           type="button"
