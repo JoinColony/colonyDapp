@@ -1,0 +1,32 @@
+/*
+ * @NOTE Unique color
+ */
+@value addressColor: rgb(118, 116, 139);
+
+.main {
+  display: block;
+}
+
+.colonyTitle {
+  padding-right: 40px;
+}
+
+.colonyTitle h3 {
+  /*
+   * @NOTE We can't compose from `inlineEllipsis` here since we're inside an
+   * element, not a component :(
+   */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--dark);
+  letter-spacing: 0px;
+  cursor: default;
+}
+
+.colonyAddress {
+  margin-top: -2px;
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  color: addressColor;
+}

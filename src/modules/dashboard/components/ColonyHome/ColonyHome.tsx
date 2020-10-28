@@ -20,6 +20,7 @@ import { useTransformer } from '~utils/hooks';
 import { getUserRolesForDomain } from '../../../transformers';
 
 import ColonyFunding from './ColonyFunding';
+import ColonyTitle from './ColonyTitle';
 
 import styles from './ColonyHome.css';
 
@@ -128,7 +129,7 @@ const ColonyHome = ({ match, location }: Props) => {
       <div className={styles.colonyList}>A</div>
       <div className={styles.mainContentGrid}>
         <aside className={styles.leftAside}>
-          {/* Put new colony home title display (#2268) here */}
+          <ColonyTitle colony={colony} />
           <div className={styles.leftAsideNav}>
             <ColonyNavigation />
           </div>
