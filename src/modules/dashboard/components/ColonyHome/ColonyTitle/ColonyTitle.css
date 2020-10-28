@@ -1,8 +1,3 @@
-/*
- * @NOTE Unique color
- */
-@value addressColor: rgb(118, 116, 139);
-
 .main {
   display: block;
 }
@@ -32,7 +27,7 @@
   font-size: 13px;
   font-weight: var(--weight-medium);
   text-align: center;
-  color: addressColor;
+  color: var(--temp-grey-13);
   cursor: pointer;
   user-select: none;
   outline: 0;
