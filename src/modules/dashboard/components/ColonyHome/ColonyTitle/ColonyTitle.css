@@ -25,16 +25,21 @@
 }
 
 .colonyAddress {
-  margin-top: -2px;
-  width: 120px;
+  margin: -2px 0 0 -3px;
+  padding: 3px 5px;
+  width: 110px;
+  border-radius: var(--radius-normal);
   font-size: 13px;
   font-weight: var(--weight-medium);
+  text-align: center;
   color: addressColor;
   cursor: pointer;
   user-select: none;
+  outline: 0;
 }
 
-.colonyAddress:active {
+.colonyAddress:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
   color: var(--colony-blue);
 }
 
