@@ -1,3 +1,7 @@
 .address {
   font-family: var(--family-techie);
 }
+
+.middleSection {
+  margin: 0 5px;
+}
