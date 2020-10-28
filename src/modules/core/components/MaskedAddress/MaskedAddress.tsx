@@ -24,16 +24,32 @@ interface Props {
    * String pattern to use when masking the address
    */
   mask?: string;
+
+  /*
+   * In some instances we want to show the full address
+   * Ironic, no? A full "masked" address :)
+   */
+  full?: boolean;
 }
 
-const MaskedAddress = ({ address, mask = '...' }: Props) => {
+const MaskedAddress = ({ address, mask = '...', full = false }: Props) => {
   const cutAddress: AddressElements | Error = splitAddress(address);
   if (cutAddress instanceof Error) {
     return <FormattedMessage {...MSG.wrongAddressFormat} />;
   }
+  if (!full) {
+    return (
+      <span className={styles.address}>
+        {`${cutAddress.header}${cutAddress.start}${mask}${cutAddress.end}`}
+      </span>
+    );
+  }
   return (
     <span className={styles.address}>
-      {`${cutAddress.header}${cutAddress.start}${mask}${cutAddress.end}`}
+      {cutAddress.header}
+      {cutAddress.start}
+      <span className={styles.middleSection}>{cutAddress.middle}</span>
+      {cutAddress.end}
     </span>
   );
 };
