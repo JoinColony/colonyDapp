@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
+import { SpinnerLoader } from '~core/Preloaders';
 import { Colony, useTokenBalancesForDomainsQuery } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -17,6 +18,10 @@ const MSG = defineMessages({
   manageFundsLink: {
     id: 'dashboard.ColonyTotalFunds.manageFundsLink',
     defaultMessage: 'Manage Funds',
+  },
+  loadingData: {
+    id: 'dashboard.ColonyTotalFunds.loadingData',
+    defaultMessage: 'Loading token information...',
   },
 });
 
@@ -56,7 +61,14 @@ const ColonyTotalFunds = ({
   }, [data, nativeTokenAddress]);
 
   if (!data || !nativeColonyToken || isLoadingTokenBalances) {
-    return null;
+    return (
+      <div className={styles.main}>
+        <SpinnerLoader appearance={{ size: 'small' }} />
+        <span className={styles.loadingText}>
+          <FormattedMessage {...MSG.loadingData} />
+        </span>
+      </div>
+    );
   }
 
   return (
