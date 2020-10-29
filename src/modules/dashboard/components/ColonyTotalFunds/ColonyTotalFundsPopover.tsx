@@ -74,7 +74,7 @@ const ColonyTotalFundsPopover = ({
       )}
       trigger="click"
       showArrow={false}
-      placement="right"
+      placement="bottom"
       popperProps={{
         modifiers: [
           {
@@ -87,7 +87,7 @@ const ColonyTotalFundsPopover = ({
                * to change them you'll either have to go by exact specs, or change
                * them until it "feels right" :)
                */
-              offset: [187, -80],
+              offset: [106, 4],
             },
           },
         ],
