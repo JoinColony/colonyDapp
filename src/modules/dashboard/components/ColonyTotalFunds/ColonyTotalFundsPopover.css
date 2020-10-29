@@ -1,12 +1,22 @@
+/*
+ * @NOTE Unique values
+ */
+@value entryHoverColor: rgb(238, 242, 245);
+
 .main {
   display: block;
-  padding: 10px;
-  min-width: 280px;
+  padding: 4px 0;
+  min-width: 250px;
   letter-spacing: 0.25px;
 }
 
 .main li {
-  margin: 0 0 16px 0;
+  margin: 0 0 0px 0;
+  padding: 8px 10px;
+}
+
+.main li:hover {
+  background-color: entryHoverColor;
 }
 
 .main li:last-child {
@@ -17,6 +27,7 @@
   display: block;
   margin: 0;
   padding: 0;
+  width: 100%;
   border: none;
   background-color: transparent;
   text-align: left;
@@ -29,25 +40,33 @@
   user-select: none;
 }
 
-.token:hover .tokenBalance, .token:hover .tokenName {
-  color: var(--primary);
+.tokenIconContainer {
+  margin-right: 17px;
+}
+
+.tokenInfoContainer {
+  flex: 1 0 auto;
 }
 
 .tokenIcon {
-  margin-right: 14px;
+  height: 27px;
+  width: 27px;
 }
 
 .tokenBalance {
-  display: block;
-  margin: -4px 0;
+  composes: inlineEllipsis from '~styles/text.css';
+  width: 150px;
+  float: right;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: var(--temp-grey-13);
+  letter-spacing: 0.25;
+}
+
+.tokenSymbol {
   font-size: var(--size-normal);
   font-weight: var(--weight-bold);
   color: var(--dark);
-}
-
-.tokenName {
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  color: var(--temp-grey-13);
-  letter-spacing: 0.5;
+  letter-spacing: 0.25;
 }
