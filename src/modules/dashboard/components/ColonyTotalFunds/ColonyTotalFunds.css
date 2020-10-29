@@ -1,3 +1,44 @@
+/*
+ * @NOTE Unique values
+ */
+@value tokenDisplaySymbolFontSize: 24px;
+@value tokenDisplayFontWeight: 300;
+
 .main {
   display: block;
+  margin-bottom: 50px; /* @NOTE This is temporary, remove when the other elements have been added */
+  letter-spacing: 0.5px;
+}
+
+.selectedToken {
+  display: block;
+  color: var(--dark);
+}
+
+.selectedTokenAmount {
+  font-size: var(--size-huge);
+  font-weight: tokenDisplayFontWeight;
+}
+
+.selectedTokenSymbol {
+  margin-left: 13px;
+  font-size: tokenDisplaySymbolFontSize;
+  font-weight: tokenDisplayFontWeight;
+  letter-spacing: 0.25px;
+}
+
+.totalBalanceCopy {
+  margin-top: 12px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-13);
+}
+
+.rightArrowDisplay {
+  display: inline-block;
+  margin: -8px 3px 0 15px;
+  vertical-align: middle;
+  font-size: var(--size-medium);
+  font-weight: var(--weight-bold);
+  color: var(--colony-blue);
 }
