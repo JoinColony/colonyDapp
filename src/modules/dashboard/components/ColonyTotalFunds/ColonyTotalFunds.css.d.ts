@@ -7,4 +7,5 @@ export const selectedTokenAmount: string;
 export const selectedTokenSymbol: string;
 export const totalBalanceCopy: string;
 export const rightArrowDisplay: string;
+export const caretIcon: string;
 export const caretContainer: string;
