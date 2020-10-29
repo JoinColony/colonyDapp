@@ -98,9 +98,10 @@ const ColonyTotalFunds = ({
             {currentToken.symbol}
             <span className={styles.caretContainer}>
               <Icon
+                className={styles.caretIcon}
                 name="caret-down-small"
                 title={MSG.tokenSelect}
-                appearance={{ size: 'medium' }}
+                // appearance={{ size: 'normal' }}
               />
             </span>
           </span>

@@ -1,7 +1,7 @@
 /*
  * @NOTE Unique values
  */
-@value tokenDisplaySymbolFontSize: 24px;
+@value tokenDisplaySymbolFontSize: 18px;
 @value tokenDisplayFontWeight: 300;
 
 .main {
@@ -31,7 +31,7 @@
 .selectedTokenSymbol {
   margin-left: 13px;
   font-size: tokenDisplaySymbolFontSize;
-  font-weight: tokenDisplayFontWeight;
+  font-weight: var(--weight-normal);
   letter-spacing: 0.25px;
   cursor: pointer;
   user-select: none;
@@ -58,8 +58,14 @@
   color: var(--colony-blue);
 }
 
+.caretIcon {
+  display: block;
+  height: 24px;
+  width: 24px;
+}
+
 .caretContainer {
   display: inline-block;
-  margin-left: -2px;
+  margin: 0 0 2px 3px;
   vertical-align: bottom;
 }
