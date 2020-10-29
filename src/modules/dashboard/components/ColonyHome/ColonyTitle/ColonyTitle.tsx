@@ -31,7 +31,8 @@ type Props = {
 const displayName = 'dashboard.ColonyHome.ColonyTitle';
 
 const ColonyTitle = ({
-  colony: { displayName: colonyDisplayName, colonyName, colonyAddress }, colony,
+  colony: { displayName: colonyDisplayName, colonyName, colonyAddress },
+  colony,
 }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const userFeedbackTimer = useRef<any>(null);
