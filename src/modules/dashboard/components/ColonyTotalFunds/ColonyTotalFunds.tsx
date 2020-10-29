@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
@@ -6,6 +6,7 @@ import Button from '~core/Button';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
 import { Colony, useTokenBalancesForDomainsQuery } from '~data/index';
+import { Address } from '~types/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
@@ -41,6 +42,9 @@ const displayName = 'dashboard.ColonyTotalFunds';
 const ColonyTotalFunds = ({
   colony: { colonyAddress, tokens: colonyTokens, nativeTokenAddress },
 }: Props) => {
+  const [currentTokenAddress, setCurrentTokenAddress] = useState<Address>(
+    nativeTokenAddress,
+  );
   const handleManageFunds = useCallback(
     // eslint-disable-next-line no-console
     () => console.log('Clicked! This should open the UAC manage funds modal'),
@@ -58,16 +62,16 @@ const ColonyTotalFunds = ({
     },
   });
 
-  const nativeColonyToken = useMemo(() => {
+  const currentToken = useMemo(() => {
     if (data && data.tokens) {
       return data.tokens.find(
-        ({ address: tokenAddress }) => tokenAddress === nativeTokenAddress,
+        ({ address: tokenAddress }) => tokenAddress === currentTokenAddress,
       );
     }
     return undefined;
-  }, [data, nativeTokenAddress]);
+  }, [data, currentTokenAddress]);
 
-  if (!data || !nativeColonyToken || isLoadingTokenBalances) {
+  if (!data || !currentToken || isLoadingTokenBalances) {
     return (
       <div className={styles.main}>
         <SpinnerLoader appearance={{ size: 'small' }} />
@@ -83,14 +87,15 @@ const ColonyTotalFunds = ({
       <div className={styles.selectedToken}>
         <Numeral
           className={styles.selectedTokenAmount}
-          unit={getTokenDecimalsWithFallback(nativeColonyToken.decimals)}
-          value={
-            nativeColonyToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
-          }
+          unit={getTokenDecimalsWithFallback(currentToken.decimals)}
+          value={currentToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount}
         />
-        <ColonyTotalFundsPopover tokens={data.tokens}>
+        <ColonyTotalFundsPopover
+          tokens={data.tokens}
+          onSelectToken={setCurrentTokenAddress}
+        >
           <span className={styles.selectedTokenSymbol}>
-            {nativeColonyToken.symbol}
+            {currentToken.symbol}
             <span className={styles.caretContainer}>
               <Icon
                 name="caret-down-small"

@@ -2,24 +2,35 @@
   display: block;
   padding: 10px;
   min-width: 280px;
-  font-weight: var(--weight-bold);
   letter-spacing: 0.25px;
+}
+
+.main li {
+  margin: 0 0 16px 0;
+}
+
+.main li:last-child {
+  margin-bottom: 0px;
+}
+
+.main button {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  text-align: left;
 }
 
 .token {
   display: flex;
   align-items: center;
-  margin: 0 0 16px 0;
   cursor: pointer;
   user-select: none;
 }
 
 .token:hover .tokenBalance, .token:hover .tokenName {
   color: var(--primary);
-}
-
-.token:last-child {
-  margin-bottom: 0px;
 }
 
 .tokenIcon {
@@ -30,11 +41,13 @@
   display: block;
   margin: -4px 0;
   font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
   color: var(--dark);
 }
 
 .tokenName {
   font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
   color: var(--temp-grey-13);
   letter-spacing: 0.5;
 }
