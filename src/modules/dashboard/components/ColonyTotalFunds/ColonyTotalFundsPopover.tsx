@@ -1,5 +1,4 @@
 import React, { ReactNode, Dispatch, SetStateAction } from 'react';
-import { defineMessages, useIntl } from 'react-intl';
 
 import Popover from '~core/Popover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
@@ -10,13 +9,6 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './ColonyTotalFundsPopover.css';
-
-const MSG = defineMessages({
-  unknownToken: {
-    id: 'dashboard.ColonyTotalFunds.ColonyTotalFundsPopover.unknownToken',
-    defaultMessage: 'unknownToken',
-  },
-});
 
 interface Props {
   onSelectToken?: Dispatch<SetStateAction<Address>>;
@@ -29,7 +21,6 @@ const ColonyTotalFundsPopover = ({
   onSelectToken,
   tokens,
 }: Props) => {
-  const { formatMessage } = useIntl();
   return tokens ? (
     <Popover
       content={({ close }) => (
@@ -46,24 +37,24 @@ const ColonyTotalFundsPopover = ({
                 }}
               >
                 <div className={styles.token}>
-                  <div className={styles.tokenIcon}>
+                  <div className={styles.tokenIconContainer}>
                     <TokenIcon
+                      className={styles.tokenIcon}
                       token={token}
                       name={token.name || token.address}
                     />
                   </div>
-                  <div>
+                  <div className={styles.tokenInfoContainer}>
+                    <span className={styles.tokenSymbol}>
+                      {token.symbol || '???'}
+                    </span>
                     <span className={styles.tokenBalance}>
                       <Numeral
                         unit={getTokenDecimalsWithFallback(token.decimals)}
                         value={
                           token.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
                         }
-                        suffix={` ${token.symbol}`}
                       />
-                    </span>
-                    <span className={styles.tokenName}>
-                      {token.name || formatMessage(MSG.unknownToken)}
                     </span>
                   </div>
                 </div>
