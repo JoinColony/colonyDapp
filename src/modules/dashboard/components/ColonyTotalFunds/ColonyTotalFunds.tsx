@@ -9,6 +9,8 @@ import { Colony, useTokenBalancesForDomainsQuery } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
+import ColonyTotalFundsPopover from './ColonyTotalFundsPopover';
+
 import styles from './ColonyTotalFunds.css';
 
 const MSG = defineMessages({
@@ -82,19 +84,22 @@ const ColonyTotalFunds = ({
         <Numeral
           className={styles.selectedTokenAmount}
           unit={getTokenDecimalsWithFallback(nativeColonyToken.decimals)}
-          value={nativeColonyToken.balances[0].amount}
+          value={
+            nativeColonyToken.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].amount
+          }
         />
-        <span className={styles.selectedTokenSymbol}>
-          {nativeColonyToken.symbol}
-          <span className={styles.caretContainer}>
-            <Icon
-              // className={styles.caret}
-              name="caret-down-small"
-              title={MSG.tokenSelect}
-              appearance={{ size: 'medium' }}
-            />
+        <ColonyTotalFundsPopover tokens={data.tokens}>
+          <span className={styles.selectedTokenSymbol}>
+            {nativeColonyToken.symbol}
+            <span className={styles.caretContainer}>
+              <Icon
+                name="caret-down-small"
+                title={MSG.tokenSelect}
+                appearance={{ size: 'medium' }}
+              />
+            </span>
           </span>
-        </span>
+        </ColonyTotalFundsPopover>
       </div>
       <div className={styles.totalBalanceCopy}>
         <FormattedMessage {...MSG.totalBalance} />
