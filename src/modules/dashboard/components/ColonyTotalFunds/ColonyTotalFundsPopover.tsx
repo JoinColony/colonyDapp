@@ -14,12 +14,14 @@ interface Props {
   onSelectToken?: Dispatch<SetStateAction<Address>>;
   tokens?: Colony['tokens'][0][];
   children?: ReactNode;
+  currentTokenAddress?: Address;
 }
 
 const ColonyTotalFundsPopover = ({
   children,
   onSelectToken,
   tokens,
+  currentTokenAddress,
 }: Props) => {
   return tokens ? (
     <Popover
@@ -44,7 +46,13 @@ const ColonyTotalFundsPopover = ({
                       name={token.name || token.address}
                     />
                   </div>
-                  <div className={styles.tokenInfoContainer}>
+                  <div
+                    className={
+                      token.address === currentTokenAddress
+                        ? styles.tokenInfoContainerActive
+                        : styles.tokenInfoContainer
+                    }
+                  >
                     <span className={styles.tokenSymbol}>
                       {token.symbol || '???'}
                     </span>

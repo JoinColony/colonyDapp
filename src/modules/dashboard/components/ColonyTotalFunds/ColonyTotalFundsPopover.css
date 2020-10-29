@@ -48,6 +48,18 @@
   flex: 1 0 auto;
 }
 
+.tokenInfoContainerActive {
+  composes: tokenInfoContainer;
+}
+
+.tokenInfoContainerActive .tokenBalance {
+  color: var(--primary);
+}
+
+.tokenInfoContainerActive .tokenSymbol {
+  color: var(--primary);
+}
+
 .tokenIcon {
   height: 27px;
   width: 27px;

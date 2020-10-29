@@ -93,6 +93,7 @@ const ColonyTotalFunds = ({
         <ColonyTotalFundsPopover
           tokens={data.tokens}
           onSelectToken={setCurrentTokenAddress}
+          currentTokenAddress={currentTokenAddress}
         >
           <span className={styles.selectedTokenSymbol}>
             {currentToken.symbol}
