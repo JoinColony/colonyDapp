@@ -33,6 +33,13 @@
   font-size: tokenDisplaySymbolFontSize;
   font-weight: tokenDisplayFontWeight;
   letter-spacing: 0.25px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.selectedTokenSymbol:hover {
+  color: var(--colony-blue);
+  fill: var(--colony-blue);
 }
 
 .totalBalanceCopy {
@@ -49,4 +56,10 @@
   font-size: var(--size-medium);
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
+}
+
+.caretContainer {
+  display: inline-block;
+  margin-left: -2px;
+  vertical-align: bottom;
 }

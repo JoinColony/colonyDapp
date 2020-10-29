@@ -4,6 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import { SpinnerLoader } from '~core/Preloaders';
+import Icon from '~core/Icon';
 import { Colony, useTokenBalancesForDomainsQuery } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -22,6 +23,10 @@ const MSG = defineMessages({
   loadingData: {
     id: 'dashboard.ColonyTotalFunds.loadingData',
     defaultMessage: 'Loading token information...',
+  },
+  tokenSelect: {
+    id: 'dashboard.ColonyTotalFunds.tokenSelect',
+    defaultMessage: 'Select Tokens',
   },
 });
 
@@ -81,6 +86,14 @@ const ColonyTotalFunds = ({
         />
         <span className={styles.selectedTokenSymbol}>
           {nativeColonyToken.symbol}
+          <span className={styles.caretContainer}>
+            <Icon
+              // className={styles.caret}
+              name="caret-down-small"
+              title={MSG.tokenSelect}
+              appearance={{ size: 'medium' }}
+            />
+          </span>
         </span>
       </div>
       <div className={styles.totalBalanceCopy}>
