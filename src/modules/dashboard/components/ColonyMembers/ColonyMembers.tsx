@@ -109,9 +109,30 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
                 showInfo
                 notSet={false}
                 popperProps={{
-                  placement: 'left',
+                  placement: 'bottom',
                   showArrow: false,
+                  /*
+                   * @NOTE This is the price we have to pay for the ability
+                   * to customize the Popor library, which is nested under the
+                   * Popover component, which is nested under UserInfo,
+                   * which is nested under UserAvatar
+                   */
                   children: () => null,
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        /*
+                         * @NOTE Values are set manual, exactly as the ones provided in the figma spec.
+                         *
+                         * There's no logic to how they are calculated, so next time you need
+                         * to change them you'll either have to go by exact specs, or change
+                         * them until it "feels right" :)
+                         */
+                        offset: [-208, -12],
+                      },
+                    },
+                  ],
                 }}
               />
             </li>
