@@ -49,6 +49,10 @@
   color: var(--temp-grey-13);
 }
 
+.totalBalanceCopy button {
+  outline: 0;
+}
+
 .rightArrowDisplay {
   display: inline-block;
   margin: -8px 3px 0 15px;

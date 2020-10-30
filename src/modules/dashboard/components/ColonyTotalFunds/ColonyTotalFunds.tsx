@@ -102,7 +102,6 @@ const ColonyTotalFunds = ({
                 className={styles.caretIcon}
                 name="caret-down-small"
                 title={MSG.tokenSelect}
-                // appearance={{ size: 'normal' }}
               />
             </span>
           </span>
