@@ -1,0 +1,9 @@
+
+.activeItem {
+  display: flex;
+  align-items: center;
+}
+
+.activeItemLabel {
+  margin-left: 8px;
+}
