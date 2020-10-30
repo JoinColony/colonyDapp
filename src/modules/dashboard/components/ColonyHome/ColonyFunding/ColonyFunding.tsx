@@ -74,7 +74,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   });
 
   return (
-    <div>
+    <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
         <FormattedMessage {...MSG.title} />
         {canMoveTokens && (
