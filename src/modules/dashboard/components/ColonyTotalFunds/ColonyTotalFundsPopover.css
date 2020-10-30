@@ -5,7 +5,9 @@
 
 .main {
   display: block;
+  max-height: 350px;
   min-width: 250px;
+  overflow-y: auto;
   letter-spacing: 0.25px;
 }
 
