@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 
 import NavLink from '~core/NavLink';
@@ -21,6 +21,7 @@ interface Props {
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
+const MAX_AVATARS = 15;
 
 const displayName = 'dashboard.ColonyMembers';
 
@@ -37,6 +38,22 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
       colonyAddress,
     },
   });
+
+  const avatarsDisplaySplitRules = useMemo(() => {
+    if (
+      !colonySubscribedUsers ||
+      !colonySubscribedUsers.colony.subscribedUsers.length
+    ) {
+      return 0;
+    }
+    const {
+      colony: { subscribedUsers },
+    } = colonySubscribedUsers;
+    if (subscribedUsers.length <= MAX_AVATARS) {
+      return subscribedUsers.length;
+    }
+    return MAX_AVATARS - 1;
+  }, [colonySubscribedUsers]);
 
   if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
     /*
@@ -64,22 +81,24 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
         />
       </NavLink>
       <ul className={styles.userAvatars}>
-        {(subscribedUsers as AnyUser[]).map((user) => (
-          <li className={styles.userAvatar} key={user.id}>
-            <UserAvatar
-              colonyAddress={colonyAddress}
-              address={user.profile.walletAddress}
-              user={user}
-              showInfo
-              notSet={false}
-              popperProps={{
-                placement: 'left',
-                showArrow: false,
-                children: () => null,
-              }}
-            />
-          </li>
-        ))}
+        {(subscribedUsers as AnyUser[])
+          .slice(0, avatarsDisplaySplitRules)
+          .map((user) => (
+            <li className={styles.userAvatar} key={user.id}>
+              <UserAvatar
+                colonyAddress={colonyAddress}
+                address={user.profile.walletAddress}
+                user={user}
+                showInfo
+                notSet={false}
+                popperProps={{
+                  placement: 'left',
+                  showArrow: false,
+                  children: () => null,
+                }}
+              />
+            </li>
+          ))}
       </ul>
     </div>
   );
