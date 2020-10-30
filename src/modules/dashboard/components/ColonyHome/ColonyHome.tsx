@@ -28,6 +28,7 @@ import ColonyTotalFunds from '../ColonyTotalFunds';
 import ColonyActions from '../ColonyActions';
 
 import styles from './ColonyHome.css';
+import DomainDropdown from '~dashboard/DomainDropdown';
 
 const MSG = defineMessages({
   loadingText: {
@@ -158,6 +159,9 @@ const ColonyHome = ({ match, location }: Props) => {
         </aside>
         <div className={styles.mainContent}>
           <ColonyTotalFunds colony={colony} />
+          <div className={styles.domainsDropdownContainer}>
+            <DomainDropdown colonyAddress={colony.colonyAddress} />
+          </div>
           <Switch>
             <Route path={COLONY_EVENTS_ROUTE} component={() => <>Events</>} />
             <Route
