@@ -1,3 +1,9 @@
+.main h4 {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
 .fundingButton {
   margin-left: 30px;
 }
