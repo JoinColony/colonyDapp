@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import { SpinnerLoader } from '~core/Preloaders';
+
 import { DASHBOARD_ROUTE } from '~routes/index';
 import { Colony, useColonySubscribedUsersQuery, AnyUser } from '~data/index';
 
@@ -12,7 +14,14 @@ import styles from './ColonyMembers.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ColonyMembers.title',
-    defaultMessage: 'Members ({count})',
+    defaultMessage: `Members{hasCounter, select,
+      true { ({count})}
+      false {}
+    }`,
+  },
+  loadingData: {
+    id: 'dashboard.ColonyMembers.loadingData',
+    defaultMessage: 'Loading members information...',
   },
 });
 
@@ -72,10 +81,19 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
   }, [colonySubscribedUsers]);
 
   if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
-    /*
-     * @TODO Add loading spinner
-     */
-    return <div className={styles.main} />;
+    return (
+      <div className={styles.main}>
+        <Heading
+          appearance={{ size: 'normal', weight: 'bold' }}
+          text={MSG.title}
+          textValues={{ hasCounter: false }}
+        />
+        <SpinnerLoader appearance={{ size: 'small' }} />
+        <span className={styles.loadingText}>
+          <FormattedMessage {...MSG.loadingData} />
+        </span>
+      </div>
+    );
   }
 
   const {
@@ -93,10 +111,10 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
         <Heading
           appearance={{ size: 'normal', weight: 'bold' }}
           text={MSG.title}
-          textValues={{ count: subscribedUsers.length }}
+          textValues={{ count: subscribedUsers.length, hasCounter: true }}
         />
       </NavLink>
-      <ul>
+      <ul className={styles.userAvatars}>
         {(subscribedUsers as AnyUser[])
           .slice(0, avatarsDisplaySplitRules)
           .map((user) => (

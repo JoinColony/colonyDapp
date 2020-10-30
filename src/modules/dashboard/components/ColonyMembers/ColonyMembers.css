@@ -1,18 +1,22 @@
 .main {
   display: block;
   margin-top: 40px;
-  max-width: 130px;
 }
 
 .main h4 {
+  display: inline-block;
   font-size: var(--size-smallish);
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
 }
 
-.main h4:hover, .main h4:active {
+.main a h4:hover, .main a h4:active {
   text-decoration: underline;
   color: var(--colony-blue);
+}
+
+.userAvatars {
+  max-width: 130px;
 }
 
 .userAvatar {
@@ -50,4 +54,12 @@
   color: var(--temp-grey-13);
   cursor: default;
   letter-spacing: var(--spacing-medium);
+}
+
+.loadingText {
+  display: inline-block;
+  margin: -8px 0 0 5px;
+  vertical-align: middle;
+  font-size: var(--size-small);
+  letter-spacing: initial;
 }
