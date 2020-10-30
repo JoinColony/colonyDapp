@@ -36,6 +36,8 @@ export type Props = ContentProps & {
   popperProps?: Omit<PopperProps, 'children'>;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
+  /** Show an arrow around on the side of the popover */
+  showArrow?: boolean;
 };
 
 const displayName = 'InfoPopover';
@@ -44,6 +46,7 @@ const InfoPopover = ({
   children,
   popperProps,
   trigger = 'click',
+  showArrow = true,
   ...contentProps
 }: Props) => {
   const renderContent = useMemo(() => {
@@ -79,6 +82,7 @@ const InfoPopover = ({
       content={renderContent}
       popperProps={popperProps}
       trigger={trigger}
+      showArrow={showArrow}
     >
       {children}
     </Popover>
