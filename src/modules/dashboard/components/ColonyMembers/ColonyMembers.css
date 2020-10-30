@@ -1,3 +1,33 @@
 .main {
   display: block;
+  margin-top: 40px;
+}
+
+.main h4 {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.main h4:hover, .main h4:active {
+  text-decoration: underline;
+  color: var(--colony-blue);
+}
+
+.userAvatars {}
+
+.userAvatar {
+  display: inline-block;
+  margin: 0 15px 15px 0;
+  border: 2px solid transparent;
+  border-radius: 50px;
+}
+
+.userAvatar figure {
+  height: 28px;
+  width: 28px;
+}
+
+.userAvatar:hover {
+  border-color: var(--primary);
 }
