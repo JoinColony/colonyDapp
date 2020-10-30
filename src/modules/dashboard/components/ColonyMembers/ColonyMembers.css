@@ -14,13 +14,19 @@
   color: var(--colony-blue);
 }
 
-.userAvatars {}
+.userAvatars {
+  max-width: 130px;
+}
 
 .userAvatar {
   display: inline-block;
   margin: 0 15px 15px 0;
   border: 2px solid transparent;
   border-radius: 50px;
+}
+
+.userAvatar:nth-child(3n+0) {
+  margin-right: 0px;
 }
 
 .userAvatar figure {
