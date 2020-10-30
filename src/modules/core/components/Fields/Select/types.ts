@@ -6,6 +6,7 @@ import { SimpleMessageValues } from '~types/index';
 export interface Appearance {
   alignOptions?: 'left' | 'center' | 'right';
   borderedOptions?: 'true' | 'false';
+  size?: 'medium' | 'mediumLarge' | 'large';
   theme?: 'default' | 'alt' | 'grey';
   width?: 'content' | 'fluid' | 'strict';
 }

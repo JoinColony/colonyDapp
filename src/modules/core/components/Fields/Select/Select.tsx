@@ -18,7 +18,6 @@ import {
   ESC,
   SimpleMessageValues,
   SPACE,
-  TAB,
   UP,
 } from '~types/index';
 
@@ -71,6 +70,9 @@ interface Props {
   /** Available `option`s for the select */
   options: SelectOption[];
 
+  /** Render at the bottom of the select list box */
+  optionsFooter?: ReactNode;
+
   /** Status text */
   placeholder?: string | MessageDescriptor;
 
@@ -101,6 +103,7 @@ const Select = ({
   name,
   onChange: onChangeCallback,
   options,
+  optionsFooter,
   placeholder,
   renderActiveOption,
   status,
@@ -191,14 +194,6 @@ const Select = ({
         // prevent page scroll when in view
         evt.preventDefault();
         goDown();
-        break;
-      }
-      case TAB: {
-        if (checkedOption === selectedOption || selectedOption === -1) {
-          // no change
-          close();
-        }
-        checkOption();
         break;
       }
       case ENTER: {
@@ -328,6 +323,7 @@ const Select = ({
             selectedOption={selectedOption}
             listboxId={listboxId}
             options={options}
+            optionsFooter={optionsFooter}
             onSelect={selectOption}
             onClick={checkOption}
             appearance={appearance}
