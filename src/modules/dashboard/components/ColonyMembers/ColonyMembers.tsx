@@ -5,7 +5,7 @@ import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { DASHBOARD_ROUTE } from '~routes/index';
-import { Colony, useLoggedInUser } from '~data/index';
+import { Colony, useColonySubscribedUsersQuery, AnyUser } from '~data/index';
 
 import styles from './ColonyMembers.css';
 
@@ -25,7 +25,30 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const displayName = 'dashboard.ColonyMembers';
 
 const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
-  const { walletAddress } = useLoggedInUser();
+  /*
+   * @TODO This will most likely be replaces with a request to the reputation
+   * oracle, in order to fetch the users sorted by reputation
+   */
+  const {
+    data: colonySubscribedUsers,
+    loading: loadingColonySubscribedUsers,
+  } = useColonySubscribedUsersQuery({
+    variables: {
+      colonyAddress,
+    },
+  });
+
+  if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
+    /*
+     * @TODO Add loading spinner
+     */
+    return <div className={styles.main} />;
+  }
+
+  const {
+    colony: { subscribedUsers },
+  } = colonySubscribedUsers;
+
   return (
     <div className={styles.main}>
       <NavLink
@@ -37,27 +60,26 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
         <Heading
           appearance={{ size: 'normal', weight: 'bold' }}
           text={MSG.title}
-          /*
-           * @TODO Put in actual count value
-           */
-          textValues={{ count: 33 }}
+          textValues={{ count: subscribedUsers.length }}
         />
       </NavLink>
       <ul className={styles.userAvatars}>
-        <li className={styles.userAvatar}>
-          <UserAvatar
-            colonyAddress={colonyAddress}
-            address={walletAddress}
-            // user={user}
-            showInfo
-            notSet={false}
-            popperProps={{
-              placement: 'left',
-              showArrow: false,
-              children: () => null,
-            }}
-          />
-        </li>
+        {(subscribedUsers as AnyUser[]).map((user) => (
+          <li className={styles.userAvatar} key={user.id}>
+            <UserAvatar
+              colonyAddress={colonyAddress}
+              address={user.profile.walletAddress}
+              user={user}
+              showInfo
+              notSet={false}
+              popperProps={{
+                placement: 'left',
+                showArrow: false,
+                children: () => null,
+              }}
+            />
+          </li>
+        ))}
       </ul>
     </div>
   );
