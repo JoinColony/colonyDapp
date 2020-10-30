@@ -215,13 +215,15 @@ export type ColonyTokensArgs = {
 };
 
 export type Domain = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
+  colony?: Maybe<Colony>;
   colonyAddress: Scalars['String'];
+  color?: Maybe<Scalars['Int']>;
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
   ethDomainId: Scalars['Int'];
   ethParentDomainId?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
   name: Scalars['String'];
-  colony?: Maybe<Colony>;
   parent?: Maybe<Domain>;
   tasks: Array<Task>;
 };
@@ -1413,7 +1415,7 @@ export type TokensFragment = (
 
 export type ColonyProfileFragment = Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>;
 
-export type DomainFieldsFragment = Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
+export type DomainFieldsFragment = Pick<Domain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
 export type FullColonyFragment = (
   Pick<Colony, 'isNativeTokenExternal' | 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
@@ -2272,7 +2274,7 @@ export type ColonyDomainsQueryVariables = Exact<{
 
 export type ColonyDomainsQuery = { colony: (
     Pick<Colony, 'id'>
-    & { domains: Array<Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> }
+    & { domains: Array<DomainFieldsFragment> }
   ) };
 
 export type ColonySuggestionsQueryVariables = Exact<{
@@ -2403,6 +2405,8 @@ export const TokensFragmentDoc = gql`
 export const DomainFieldsFragmentDoc = gql`
     fragment DomainFields on Domain {
   id
+  color @client
+  description @client
   ethDomainId
   name
   ethParentDomainId
@@ -5967,14 +5971,11 @@ export const ColonyDomainsDocument = gql`
   colony(address: $colonyAddress) {
     id
     domains {
-      id
-      ethDomainId
-      name
-      ethParentDomainId
+      ...DomainFields
     }
   }
 }
-    `;
+    ${DomainFieldsFragmentDoc}`;
 
 /**
  * __useColonyDomainsQuery__
