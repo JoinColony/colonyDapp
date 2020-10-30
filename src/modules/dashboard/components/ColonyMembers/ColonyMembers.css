@@ -1,6 +1,7 @@
 .main {
   display: block;
   margin-top: 40px;
+  max-width: 130px;
 }
 
 .main h4 {
@@ -14,10 +15,6 @@
   color: var(--colony-blue);
 }
 
-.userAvatars {
-  max-width: 130px;
-}
-
 .userAvatar {
   display: inline-block;
   margin: 0 15px 15px 0;
@@ -29,11 +26,28 @@
   margin-right: 0px;
 }
 
-.userAvatar figure {
-  height: 28px;
-  width: 28px;
+.userAvatar:nth-child(13), .userAvatar:nth-child(14), .userAvatar:nth-child(15) {
+  margin-bottom: 0px;
 }
 
 .userAvatar:hover {
   border-color: var(--primary);
+}
+
+.remaningAvatars {
+  display: inline-block;
+  margin: 0;
+  padding-top: 5px;
+  height: 30px;
+  width: 30px;
+  vertical-align: top;
+  border: 2px solid transparent;
+  border-radius: 50px;
+  background-color: var(--colony-white);
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  color: var(--temp-grey-13);
+  cursor: default;
+  letter-spacing: var(--spacing-medium);
 }

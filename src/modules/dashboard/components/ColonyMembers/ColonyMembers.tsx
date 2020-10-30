@@ -55,6 +55,22 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
     return MAX_AVATARS - 1;
   }, [colonySubscribedUsers]);
 
+  const remainingAvatarsCount = useMemo(() => {
+    if (
+      !colonySubscribedUsers ||
+      !colonySubscribedUsers.colony.subscribedUsers.length
+    ) {
+      return 0;
+    }
+    const {
+      colony: { subscribedUsers },
+    } = colonySubscribedUsers;
+    if (subscribedUsers.length <= MAX_AVATARS) {
+      return 0;
+    }
+    return subscribedUsers.length - MAX_AVATARS;
+  }, [colonySubscribedUsers]);
+
   if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
     /*
      * @TODO Add loading spinner
@@ -80,12 +96,13 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
           textValues={{ count: subscribedUsers.length }}
         />
       </NavLink>
-      <ul className={styles.userAvatars}>
+      <ul>
         {(subscribedUsers as AnyUser[])
           .slice(0, avatarsDisplaySplitRules)
           .map((user) => (
             <li className={styles.userAvatar} key={user.id}>
               <UserAvatar
+                size="xs"
                 colonyAddress={colonyAddress}
                 address={user.profile.walletAddress}
                 user={user}
@@ -99,6 +116,13 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
               />
             </li>
           ))}
+        {!!remainingAvatarsCount && (
+          <li className={styles.remaningAvatars}>
+            {remainingAvatarsCount < 99
+              ? remainingAvatarsCount
+              : `>${remainingAvatarsCount}`}
+          </li>
+        )}
       </ul>
     </div>
   );
