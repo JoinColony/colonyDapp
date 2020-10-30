@@ -10,6 +10,8 @@ import { useColonyFromNameQuery } from '~data/index';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList/SubscribedColoniesList';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import ColonyMembers from '~dashboard/ColonyMembers';
+
 import {
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
@@ -170,6 +172,7 @@ const ColonyHome = ({ match, location }: Props) => {
         </div>
         <aside className={styles.rightAside}>
           <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
+          <ColonyMembers colony={colony} />
         </aside>
       </div>
     </div>
