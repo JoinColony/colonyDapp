@@ -78,6 +78,12 @@ export default gql`
     version: Int!
   }
 
+  extend type Domain {
+    # TODO guarantee color (resolver will always return a color)
+    color: Int
+    description: String
+  }
+
   extend type TaskPayout {
     token: Token!
   }
