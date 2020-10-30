@@ -90,7 +90,7 @@
   /*
    * Fonts
    */
-  --family-primary: "Muli", sans-serif;
+  --family-primary: "MuliWeb", sans-serif;
   --text: color-mod(var(--grey-dark) alpha(70%));
   --text-dark: var(--colony-black);
   --text-invert: var(--colony-white);
