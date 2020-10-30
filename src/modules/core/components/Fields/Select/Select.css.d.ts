@@ -11,3 +11,6 @@ export const themeGrey: string;
 export const widthContent: string;
 export const widthFluid: string;
 export const widthStrict: string;
+export const sizeMedium: string;
+export const sizeMediumLarge: string;
+export const sizeLarge: string;
