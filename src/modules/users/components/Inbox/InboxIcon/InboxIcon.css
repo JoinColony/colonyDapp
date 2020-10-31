@@ -5,7 +5,7 @@
   width: 9px;
   position: absolute;
   border-radius: 50%;
-  background-color: var(--danger);
+  background-color: var(--pink);
   content: '';
   box-shadow: 0px 2px 11px var(--drop-shadow);
 }
