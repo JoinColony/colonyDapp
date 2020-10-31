@@ -32,7 +32,7 @@ const MaskedAddress = ({ address, mask = '...' }: Props) => {
     return <FormattedMessage {...MSG.wrongAddressFormat} />;
   }
   return (
-    <span className={styles.address}>
+    <span className={styles.address} title={address}>
       {`${cutAddress.header}${cutAddress.start}${mask}${cutAddress.end}`}
     </span>
   );
