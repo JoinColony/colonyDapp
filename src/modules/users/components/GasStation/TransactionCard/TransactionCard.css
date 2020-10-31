@@ -25,6 +25,14 @@
   padding-right: 15px;
 }
 
+/*
+ * @NOTE Hacky fix to properly align the transaction status ready counter
+ * In both the card view and the details view
+ */
+.summary span {
+  padding-top: 1px;
+}
+
 .description {
   flex: 1 1 auto;
 }
