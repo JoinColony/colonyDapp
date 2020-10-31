@@ -3,19 +3,6 @@
   margin-left: -12px;
 }
 
-.joinColony {
-  margin: 0;
-  padding: 2px 5px;
-  border-radius: var(--radius-normal);
-  border: none;
-  background: transparent;
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  color: var(--dark-blue);
-  cursor: pointer;
-  outline: 0;
-}
-
 .joinColony:hover {
   background-color: color-mod(var(--colony-blue) alpha(10%));
 }
