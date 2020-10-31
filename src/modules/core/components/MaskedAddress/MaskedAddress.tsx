@@ -39,13 +39,13 @@ const MaskedAddress = ({ address, mask = '...', full = false }: Props) => {
   }
   if (!full) {
     return (
-      <span className={styles.address}>
+      <span className={styles.address} title={address}>
         {`${cutAddress.header}${cutAddress.start}${mask}${cutAddress.end}`}
       </span>
     );
   }
   return (
-    <span className={styles.address}>
+    <span className={styles.address} title={address}>
       {cutAddress.header}
       {cutAddress.start}
       <span className={styles.middleSection}>{cutAddress.middle}</span>
