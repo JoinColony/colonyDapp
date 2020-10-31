@@ -80,10 +80,24 @@ export const GOERLI_NETWORK: NetworkInfo = {
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
 };
 
+/*
+ * @NOTE Local Network
+ * ChainId is manually set by us, since ganache randomizes it on each start
+ */
+export const GANACHE_NETWORK: NetworkInfo = {
+  name: 'Local Ganache Instance',
+  chainId: 13131313,
+  shortName: 'Ganache',
+  blockExplorerName: 'Noexplorer',
+  displayENSDomain: 'joincolony.eth',
+  tokenExplorerLink: 'http://localhost',
+};
+
 export const ALLOWED_NETWORKS = {
   [XDAI_NETWORK.chainId]: XDAI_NETWORK,
   [ETHEREUM_NETWORK.chainId]: ETHEREUM_NETWORK,
   [GOERLI_NETWORK.chainId]: GOERLI_NETWORK,
+  [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
 };
 
 export const DEFAULT_NETWORK_TOKEN =
