@@ -4,6 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Address } from '~types/index';
 import ENS from '~lib/ENS';
 import Popover from '~core/Popover';
+import Button from '~core/Button';
 import ColonyAvatar from '~core/ColonyAvatar';
 import MaskedAddress from '~core/MaskedAddress';
 
@@ -54,13 +55,14 @@ const ColonySubscriptionInfoPopover = ({
               <MaskedAddress address={colonyAddress} full />
             </span>
           </div>
-          <button
-            type="button"
-            className={styles.unsubscribeFromColony}
-            onClick={onUnsubscribe}
-          >
-            <FormattedMessage {...MSG.leaveColonyQuestion} />
-          </button>
+          <div className={styles.unsubscribeFromColony}>
+            <Button
+              appearance={{ theme: 'blue', size: 'small' }}
+              onClick={onUnsubscribe}
+            >
+              <FormattedMessage {...MSG.leaveColonyQuestion} />
+            </Button>
+          </div>
         </div>
         <span className={styles.nativeTokenTitle}>
           <FormattedMessage {...MSG.nativeTokenTitle} />

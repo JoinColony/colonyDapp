@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
+import Button from '~core/Button';
 import {
   useLoggedInUser,
   useSubscribeToColonyMutation,
@@ -76,13 +77,12 @@ const ColonySubscription = ({
           </div>
         ))}
       {!isSubscribed && (
-        <button
-          type="button"
-          className={styles.joinColony}
+        <Button
           onClick={() => subscribe()}
+          appearance={{ theme: 'blue', size: 'small' }}
         >
           <FormattedMessage {...MSG.joinColony} />
-        </button>
+        </Button>
       )}
       {isSubscribed && (
         <ColonySubscriptionInfoPopover
