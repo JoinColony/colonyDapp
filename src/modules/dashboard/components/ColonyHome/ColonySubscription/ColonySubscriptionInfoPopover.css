@@ -64,12 +64,4 @@
 .unsubscribeFromColony {
   display: block;
   align-self: flex-start;
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  font-size: var(--size-tiny);
-  font-weight: 600;
-  color: var(--dark-blue);
-  cursor: pointer;
 }
