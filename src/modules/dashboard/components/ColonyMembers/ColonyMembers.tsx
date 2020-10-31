@@ -157,9 +157,7 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
           ))}
         {!!remainingAvatarsCount && (
           <li className={styles.remaningAvatars}>
-            {remainingAvatarsCount < 99
-              ? remainingAvatarsCount
-              : `>${remainingAvatarsCount}`}
+            {remainingAvatarsCount < 99 ? remainingAvatarsCount : `>99`}
           </li>
         )}
       </ul>
