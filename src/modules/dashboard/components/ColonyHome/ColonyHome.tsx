@@ -21,6 +21,7 @@ import { getUserRolesForDomain } from '../../../transformers';
 
 import ColonyFunding from './ColonyFunding';
 import ColonyTitle from './ColonyTitle';
+import ColonyTotalFunds from '../ColonyTotalFunds';
 
 import styles from './ColonyHome.css';
 
@@ -135,6 +136,7 @@ const ColonyHome = ({ match, location }: Props) => {
           </div>
         </aside>
         <div className={styles.mainContent}>
+          <ColonyTotalFunds colony={colony} />
           <Switch>
             <Route path={COLONY_EVENTS_ROUTE} component={() => <>Events</>} />
             <Route

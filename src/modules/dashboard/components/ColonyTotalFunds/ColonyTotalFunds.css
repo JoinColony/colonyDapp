@@ -1,0 +1,76 @@
+/*
+ * @NOTE Unique values
+ */
+@value tokenDisplaySymbolFontSize: 18px;
+@value tokenDisplayFontWeight: 300;
+
+.main {
+  display: block;
+  margin-bottom: 50px; /* @NOTE This is temporary, remove when the other elements have been added */
+  letter-spacing: 0.5px;
+}
+
+.loadingText {
+  display: inline-block;
+  margin: -8px 0 0 5px;
+  vertical-align: middle;
+  font-size: var(--size-small);
+  letter-spacing: initial;
+}
+
+.selectedToken {
+  display: block;
+  color: var(--dark);
+}
+
+.selectedTokenAmount {
+  font-size: var(--size-huge);
+  font-weight: tokenDisplayFontWeight;
+}
+
+.selectedTokenSymbol {
+  composes: button from '~styles/reset.css';
+  margin-left: 13px;
+  font-size: tokenDisplaySymbolFontSize;
+  font-weight: var(--weight-normal);
+  letter-spacing: 0.25px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.selectedTokenSymbol:hover {
+  color: var(--colony-blue);
+  fill: var(--colony-blue);
+}
+
+.totalBalanceCopy {
+  margin-top: 12px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-13);
+}
+
+.totalBalanceCopy button {
+  outline: 0;
+}
+
+.rightArrowDisplay {
+  display: inline-block;
+  margin: -8px 3px 0 15px;
+  vertical-align: middle;
+  font-size: var(--size-medium);
+  font-weight: var(--weight-bold);
+  color: var(--colony-blue);
+}
+
+.caretIcon {
+  display: block;
+  height: 24px;
+  width: 24px;
+}
+
+.caretContainer {
+  display: inline-block;
+  margin: 0 0 2px 3px;
+  vertical-align: middle;
+}
