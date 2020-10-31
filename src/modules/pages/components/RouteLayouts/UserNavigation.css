@@ -13,6 +13,7 @@
   flex-grow: 0;
   margin-right: 15px;
   padding: 7px 9px 9px;
+  width: 36px;
   border-radius: 38px;
   text-align: center;
   cursor: pointer;
@@ -30,6 +31,19 @@
 .notificationsIconActive svg {
   fill: var(--colony-blue);
   stroke: var(--colony-blue);
+}
+
+.notificationsHighlight {
+  display: block;
+  margin: -20px -4px 0 0;
+  height: 9px;
+  width: 9px;
+  position: relative;
+  float: right;
+  border-radius: 50%;
+  background-color: var(--pink);
+  content: '';
+  box-shadow: 0px 2px 11px var(--drop-shadow);
 }
 
 .connectWalletButton {
