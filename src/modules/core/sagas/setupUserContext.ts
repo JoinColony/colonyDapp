@@ -89,12 +89,29 @@ export default function* setupUserContext(
      */
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
-    let walletNetworkId = 1;
+    let walletNetworkId = '1';
     // @ts-ignore
     if (window.web3) {
       // @ts-ignore
       walletNetworkId = window.web3.version.network;
     }
+    /*
+     * @NOTE Detecting Ganache via it's network id is a bit iffy
+     * It's randomized on start so we can reliably count on it.
+     *
+     * For that, if the chainId is bigger then 10k, we assume we're on
+     * ganache (on dev mode only), and set our own chainId to `13131313`
+     *
+     * We really need a better way of detecting ganache here, it will have to do
+     * for now
+     */
+    if (
+      process.env.NODE_ENV === 'development' &&
+      parseInt(walletNetworkId, 10) > 10000
+    ) {
+      walletNetworkId = '13131313';
+    }
+
     TEMP_setContext(ContextModule.Wallet, wallet);
 
     yield authenticate(wallet);
@@ -164,7 +181,7 @@ export default function* setupUserContext(
           username,
           walletAddress,
           ethereal: method === WalletMethod.Ethereal,
-          networkId: walletNetworkId,
+          networkId: parseInt(walletNetworkId, 10),
         },
       },
     });
