@@ -35,14 +35,7 @@ const CopyableAddress = ({
   const getAddress = useCallback(() => {
     const addressElements = splitAddress(address);
     if (full && !(addressElements instanceof Error)) {
-      return (
-        <div>
-          <span className={styles.boldAddress}>{addressElements.header}</span>
-          <span className={styles.boldAddress}>{addressElements.start}</span>
-          <span className={styles.address}>{addressElements.middle}</span>
-          <span className={styles.boldAddress}>{addressElements.end}</span>
-        </div>
-      );
+      return <MaskedAddress address={address} full />;
     }
     return <MaskedAddress address={address} />;
   }, [address, full]);
