@@ -7,8 +7,7 @@ import { isDev } from '~utils/debug';
 import Heading from '~core/Heading';
 import { Form } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
-import DecisionHub, { DecisionOption } from '~core/DecisionHub';
-import { CREATE_WALLET_ROUTE } from '~routes/index';
+import DecisionHub from '~core/DecisionHub';
 import styles from './StepStart.css';
 import { useAutoLogin } from '~utils/autoLogin';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -23,45 +22,13 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.subTitle',
     defaultMessage: `Each Colony account is accessed through an associated {networkName} wallet. You can use an existing wallet that you own, or create a new wallet below.`,
   },
-  createWalletTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.createWalletTitle',
-    defaultMessage: 'Need a wallet? Let us help.',
-  },
-  createWalletSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.createWalletSubtitle',
-    defaultMessage: 'Create an Etherum wallet to join',
-  },
-  trezorTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.trezorTitle',
-    defaultMessage: 'Trezor Hardware Wallet',
-  },
-  trezorSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.trezorSubtitle',
-    defaultMessage: 'Log in using the Trezor hardware wallet',
-  },
-  ledgerTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.ledgerTitle',
-    defaultMessage: 'Ledger Hardware Wallet',
-  },
   ganacheTitle: {
     id: 'users.ConnectWalletWizard.StepStart.ganacheTitle',
     defaultMessage: 'Ganache',
   },
-  ledgerSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.ledgerSubtitle',
-    defaultMessage: 'Log in using the Ledger hardware wallet',
-  },
-  mnemonicTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.mnemonicTitle',
-    defaultMessage: 'Mnemonic Phrase',
-  },
   metaMaskSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.metaMaskSubtitle',
     defaultMessage: 'Requires MetaMask browser extension',
-  },
-  mnemonicSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.mnemonicSubtitle',
-    defaultMessage: 'Access with your mnemonic',
   },
   ganacheSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.ganacheSubtitle',
@@ -94,28 +61,6 @@ const options = [
     subtitle: MSG.metaMaskSubtitle,
     icon: 'metamask',
   },
-  {
-    value: WalletMethod.Mnemonic,
-    title: MSG.mnemonicTitle,
-    subtitle: MSG.mnemonicSubtitle,
-    icon: 'wallet',
-  },
-  // To be re-enabled for colonyDapp#1760
-  // @NOTE This is a hard-disable to prevent the options from showing up,
-  // until we get to re-enable them
-  //
-  // {
-  //   value: WALLET_SPECIFICS.LEDGER,
-  //   title: MSG.ledgerTitle,
-  //   subtitle: MSG.ledgerSubtitle,
-  //   icon: 'wallet',
-  // },
-  // {
-  //   value: WALLET_SPECIFICS.TREZOR,
-  //   title: MSG.trezorTitle,
-  //   subtitle: MSG.trezorSubtitle,
-  //   icon: 'wallet',
-  // },
 ];
 
 // process.env.DEV is set by the QA server in case we want to have a debug build. We don't have access to ganache then
@@ -127,13 +72,6 @@ if (isDev && !process.env.DEV) {
     icon: 'wallet',
   });
 }
-
-const createWalletOption = {
-  value: null,
-  title: MSG.createWalletTitle,
-  subtitle: MSG.createWalletSubtitle,
-  icon: 'hugging',
-};
 
 type Props = {
   simplified?: boolean;
@@ -180,14 +118,6 @@ const StepStart = ({ nextStep, wizardValues, simplified = false }: Props) => {
           </div>
         )}
         <DecisionHub name="method" options={options} />
-        <div className={styles.createWalletLink} data-test="createWalletLink">
-          <DecisionOption
-            appearance={{ theme: 'alt' }}
-            name="method"
-            option={createWalletOption}
-            link={CREATE_WALLET_ROUTE}
-          />
-        </div>
         {simplified && (
           <div className={styles.tosSimplified}>
             <Heading appearance={{ size: 'normal', weight: 'thin' }}>

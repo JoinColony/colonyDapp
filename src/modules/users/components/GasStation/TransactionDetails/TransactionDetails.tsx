@@ -2,17 +2,20 @@ import React, { MouseEvent } from 'react';
 
 import { TRANSACTION_STATUSES, TransactionType } from '~immutable/index';
 import CardList from '~core/CardList';
-import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
+import { getActiveTransactionIdx } from '../transactionGroup';
 import { Appearance } from '../GasStationContent';
 import { GroupedTransaction } from '../TransactionCard';
-import GasStationClaimCard from '../GasStationClaimCard';
-import GasStationPrice from '../GasStationPrice';
+import GasStationControls from '../GasStationControls';
+import MetaMaskWalletInteraction from '../MetaMaskWalletInteraction';
 import TransactionBackToList from './TransactionBackToList';
 
 const showPrice = (tx?: TransactionType) =>
   !!tx &&
   (tx.status === TRANSACTION_STATUSES.READY ||
     tx.status === TRANSACTION_STATUSES.FAILED);
+
+const showInteraction = (tx?: TransactionType) =>
+  !!tx && tx.status !== TRANSACTION_STATUSES.SUCCEEDED;
 
 interface Props {
   /* If we are only showing the transaction details
@@ -33,12 +36,10 @@ const TransactionDetails = ({
   const { interactive } = appearance;
   const selectedTransactionIdx = getActiveTransactionIdx(transactionGroup) || 0;
   const selectedTransaction = transactionGroup[selectedTransactionIdx];
-  const groupKey = getGroupKey(transactionGroup);
   return (
     <div>
       {interactive && <TransactionBackToList onClose={onClose} />}
       <CardList appearance={{ numCols: '1' }}>
-        {groupKey === 'network.registerUserLabel' && <GasStationClaimCard />}
         <GroupedTransaction
           appearance={appearance}
           transactionGroup={transactionGroup}
@@ -46,8 +47,11 @@ const TransactionDetails = ({
         />
       </CardList>
       {showPrice(selectedTransaction) && (
-        <GasStationPrice transaction={selectedTransaction as TransactionType} />
+        <GasStationControls
+          transaction={selectedTransaction as TransactionType}
+        />
       )}
+      {showInteraction(selectedTransaction) && <MetaMaskWalletInteraction />}
     </div>
   );
 };

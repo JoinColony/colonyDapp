@@ -13,7 +13,6 @@ import Dashboard from '~dashboard/Dashboard';
 import Inbox from '~users/Inbox';
 import Wallet from '~dashboard/Wallet';
 import ConnectWalletWizard from '~users/ConnectWalletWizard';
-import CreateWalletWizard from '~users/CreateWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
@@ -34,7 +33,6 @@ import {
   CONNECT_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
-  CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
   INBOX_ROUTE,
   LEVEL_EDIT_ROUTE,
@@ -145,11 +143,6 @@ const Routes = () => {
           }}
         />
 
-        <AlwaysAccesibleRoute
-          path={CREATE_WALLET_ROUTE}
-          component={CreateWalletWizard}
-          layout={Plain}
-        />
         <AlwaysAccesibleRoute
           path={DASHBOARD_ROUTE}
           component={Dashboard}

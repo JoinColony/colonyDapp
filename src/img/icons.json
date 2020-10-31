@@ -32,7 +32,6 @@
     "forbidden-signal",
     "four-square",
     "graph-line",
-    "home",
     "line-arrow-circle",
     "lock",
     "no-task",
@@ -53,7 +52,6 @@
   ],
   "multiColorIcons": [
     "circle-check-primary",
-    "hugging",
     "metamask"
   ],
   "badges": [

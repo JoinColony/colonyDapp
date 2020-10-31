@@ -1314,6 +1314,7 @@ export type LoggedInUserInput = {
   username?: Maybe<Scalars['String']>;
   walletAddress?: Maybe<Scalars['String']>;
   ethereal?: Maybe<Scalars['Boolean']>;
+  networkId?: Maybe<Scalars['Int']>;
 };
 
 export type LoggedInUser = {
@@ -1322,6 +1323,7 @@ export type LoggedInUser = {
   username?: Maybe<Scalars['String']>;
   walletAddress: Scalars['String'];
   ethereal: Scalars['Boolean'];
+  networkId?: Maybe<Scalars['Int']>;
 };
 
 export type DomainBalance = {
@@ -1969,7 +1971,7 @@ export type TaskFeedEventsQuery = { task: (
 export type LoggedInUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username' | 'ethereal'> };
+export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'> };
 
 export type UserQueryVariables = Exact<{
   address: Scalars['String'];
@@ -4750,6 +4752,7 @@ export const LoggedInUserDocument = gql`
     balance
     username
     ethereal
+    networkId
   }
 }
     `;

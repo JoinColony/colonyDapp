@@ -1,98 +1,143 @@
-import React from 'react';
-import { defineMessages } from 'react-intl';
+import React, { useMemo } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { DASHBOARD_ROUTE } from '~routes/index';
-
-import Icon from '~core/Icon';
-import NavLink from '~core/NavLink';
 import { GasStationPopover } from '~users/GasStation';
+import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
-import { InboxIcon } from '~users/Inbox';
+import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
 import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
+import MaskedAddress from '~core/MaskedAddress';
+import { groupedTransactionsAndMessages } from '../../../core/selectors';
+import { useSelector } from '~utils/hooks';
+import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './UserNavigation.css';
 
 const MSG = defineMessages({
-  dashboardTitle: {
-    id: 'pages.NavigationWrapper.UserNavigation.dashboardTitle',
-    defaultMessage: 'Go to your Dashboard',
-  },
-  walletTitle: {
-    id: 'pages.NavigationWrapper.UserNavigation.walletTitle',
-    defaultMessage: 'Go to your Wallet',
-  },
   inboxTitle: {
     id: 'pages.NavigationWrapper.UserNavigation.inboxTitle',
     defaultMessage: 'Go to your Inbox',
+  },
+  connectWallet: {
+    id: 'pages.NavigationWrapper.UserNavigation.connectWallet',
+    defaultMessage: 'Connect Wallet',
+  },
+  wrongNetworkAlert: {
+    id: 'pages.NavigationWrapper.UserNavigation.wrongNetworkAlert',
+    defaultMessage: 'Connected to wrong network',
   },
 });
 
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
-  const { walletAddress, ethereal } = useLoggedInUser();
-
-  const WalletComponent = ethereal ? ConnectWalletPopover : GasStationPopover;
+  const { walletAddress, ethereal, networkId } = useLoggedInUser();
 
   const { data } = useUserNotificationsQuery({
     variables: { address: walletAddress },
   });
 
   const notifications = (data && data.user && data.user.notifications) || [];
+  const hasUnreadNotifications = notifications.some(
+    (notification) => !notification.read,
+  );
+
+  const transactionAndMessageGroups = useSelector(
+    groupedTransactionsAndMessages,
+  );
+
+  const readyTransactions = useMemo(
+    () => readyTransactionsCount(transactionAndMessageGroups),
+    [transactionAndMessageGroups],
+  );
+
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const userCanNavigate = !ethereal && isNetworkAllowed;
 
   return (
     <div className={styles.main}>
-      <NavLink
-        to={DASHBOARD_ROUTE}
-        className={styles.navigationItem}
-        activeClassName={styles.navigationItemActive}
-        data-test="goToDashboard"
-      >
-        <Icon name="home" title={MSG.dashboardTitle} />
-      </NavLink>
-      <WalletComponent>
-        {({ isOpen, toggle, ref }) => (
-          <button
-            type="button"
-            className={styles.navigationItemButton}
-            ref={ref}
-            onClick={toggle}
-          >
-            <div
-              className={`${styles.navigationItem} ${
-                isOpen ? styles.navigationItemActive : ''
-              }`}
+      {userCanNavigate && (
+        <div
+          className={styles.networkInfo}
+          title={isNetworkAllowed && ALLOWED_NETWORKS[networkId || 1].name}
+        >
+          {isNetworkAllowed && ALLOWED_NETWORKS[networkId || 1].shortName}
+        </div>
+      )}
+      {!ethereal && !isNetworkAllowed && (
+        <div className={styles.wrongNetwork}>
+          <FormattedMessage {...MSG.wrongNetworkAlert} />
+        </div>
+      )}
+      {ethereal && (
+        <ConnectWalletPopover>
+          {({ isOpen, toggle, ref }) => (
+            <button
+              type="button"
+              className={
+                isOpen
+                  ? styles.connectWalletButtonActive
+                  : styles.connectWalletButton
+              }
+              ref={ref}
+              onClick={toggle}
             >
-              <Icon name="wallet" title={MSG.walletTitle} />
-            </div>
-          </button>
-        )}
-      </WalletComponent>
-      <InboxPopover notifications={notifications}>
-        {({ isOpen, toggle, ref }) => (
-          <button
-            type="button"
-            className={styles.navigationItemButton}
-            ref={ref}
-            onClick={toggle}
-          >
-            <div
-              className={`${styles.navigationItem} ${
-                isOpen ? styles.navigationItemActive : ''
-              }`}
+              <FormattedMessage {...MSG.connectWallet} />
+            </button>
+          )}
+        </ConnectWalletPopover>
+      )}
+      {userCanNavigate && (
+        <GasStationPopover
+          transactionAndMessageGroups={transactionAndMessageGroups}
+        >
+          {({ isOpen, toggle, ref }) => (
+            <>
+              <button
+                type="button"
+                className={
+                  isOpen ? styles.walletAddressActive : styles.walletAddress
+                }
+                ref={ref}
+                onClick={toggle}
+              >
+                <MaskedAddress address={walletAddress} />
+              </button>
+              {readyTransactions >= 1 && (
+                <span className={styles.readyTransactionsCount}>
+                  {readyTransactions}
+                </span>
+              )}
+            </>
+          )}
+        </GasStationPopover>
+      )}
+      {userCanNavigate && (
+        <InboxPopover notifications={notifications}>
+          {({ isOpen, toggle, ref }) => (
+            <button
+              type="button"
+              className={styles.notificationsButton}
+              ref={ref}
+              onClick={toggle}
             >
-              <InboxIcon
-                activeClassName={styles.navigationItemActive}
-                notifications={notifications}
-                title={MSG.inboxTitle}
-              />
-            </div>
-          </button>
-        )}
-      </InboxPopover>
-      <AvatarDropdown />
+              <div
+                className={`${styles.notificationsIcon} ${
+                  isOpen ? styles.notificationsIconActive : ''
+                }`}
+              >
+                <Icon name="envelope" title={MSG.inboxTitle} />
+                {hasUnreadNotifications && (
+                  <span className={styles.notificationsHighlight} />
+                )}
+              </div>
+            </button>
+          )}
+        </InboxPopover>
+      )}
+      <AvatarDropdown onlyLogout={!isNetworkAllowed} />
     </div>
   );
 };
