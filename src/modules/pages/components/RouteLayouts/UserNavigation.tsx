@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { GasStationPopover } from '~users/GasStation';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
-import { InboxIcon } from '~users/Inbox';
+import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
 import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
@@ -40,6 +40,9 @@ const UserNavigation = () => {
   });
 
   const notifications = (data && data.user && data.user.notifications) || [];
+  const hasUnreadNotifications = notifications.some(
+    (notification) => !notification.read,
+  );
 
   const transactionAndMessageGroups = useSelector(
     groupedTransactionsAndMessages,
@@ -125,10 +128,10 @@ const UserNavigation = () => {
                   isOpen ? styles.notificationsIconActive : ''
                 }`}
               >
-                <InboxIcon
-                  notifications={notifications}
-                  title={MSG.inboxTitle}
-                />
+                <Icon name="envelope" title={MSG.inboxTitle} />
+                {hasUnreadNotifications && (
+                  <span className={styles.notificationsHighlight} />
+                )}
               </div>
             </button>
           )}
