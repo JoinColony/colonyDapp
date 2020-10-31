@@ -91,21 +91,23 @@ const UserNavigation = () => {
           transactionAndMessageGroups={transactionAndMessageGroups}
         >
           {({ isOpen, toggle, ref }) => (
-            <button
-              type="button"
-              className={
-                isOpen ? styles.walletAddressActive : styles.walletAddress
-              }
-              ref={ref}
-              onClick={toggle}
-            >
-              <MaskedAddress address={walletAddress} />
+            <>
+              <button
+                type="button"
+                className={
+                  isOpen ? styles.walletAddressActive : styles.walletAddress
+                }
+                ref={ref}
+                onClick={toggle}
+              >
+                <MaskedAddress address={walletAddress} />
+              </button>
               {readyTransactions >= 1 && (
                 <span className={styles.readyTransactionsCount}>
                   {readyTransactions}
                 </span>
               )}
-            </button>
+            </>
           )}
         </GasStationPopover>
       )}
