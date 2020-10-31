@@ -29,6 +29,7 @@
 }
 
 .selectedTokenSymbol {
+  composes: button from '~styles/reset.css';
   margin-left: 13px;
   font-size: tokenDisplaySymbolFontSize;
   font-weight: var(--weight-normal);
@@ -71,5 +72,5 @@
 .caretContainer {
   display: inline-block;
   margin: 0 0 2px 3px;
-  vertical-align: bottom;
+  vertical-align: middle;
 }

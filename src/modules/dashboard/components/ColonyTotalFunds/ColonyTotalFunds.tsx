@@ -95,7 +95,7 @@ const ColonyTotalFunds = ({
           onSelectToken={setCurrentTokenAddress}
           currentTokenAddress={currentTokenAddress}
         >
-          <span className={styles.selectedTokenSymbol}>
+          <button className={styles.selectedTokenSymbol} type="button">
             {currentToken.symbol}
             <span className={styles.caretContainer}>
               <Icon
@@ -104,7 +104,7 @@ const ColonyTotalFunds = ({
                 title={MSG.tokenSelect}
               />
             </span>
-          </span>
+          </button>
         </ColonyTotalFundsPopover>
       </div>
       <div className={styles.totalBalanceCopy}>
