@@ -54,9 +54,9 @@ const DomainSelectItem = ({
     [openUAC],
   );
   return (
-    <div className={styles.domainSelectItem}>
+    <div className={styles.main}>
       {typeof ethParentDomainId === 'number' && (
-        <div className={styles.domainSelectItemChildDomainIcon}>
+        <div className={styles.childDomainIcon}>
           <Icon
             appearance={{ size: 'small' }}
             name="return-arrow"
@@ -64,9 +64,9 @@ const DomainSelectItem = ({
           />
         </div>
       )}
-      <div className={styles.domainSelectItemMainContent}>
-        <div className={styles.domainSelectItemTitle}>
-          <div className={styles.domainSelectItemColor}>
+      <div className={styles.mainContent}>
+        <div className={styles.title}>
+          <div className={styles.color}>
             {/* TODO fallback color won't be needed after graphql
               typedef updated to reflect guaranteed color value */}
             <ColorTag color={color || Color.Black} />
@@ -76,14 +76,12 @@ const DomainSelectItem = ({
             text={name}
           />
           {ethDomainId === ROOT_DOMAIN_ID && (
-            <div className={styles.domainSelectItemRootText}>(Root)</div>
+            <div className={styles.rootText}>(Root)</div>
           )}
         </div>
         {description && (
           <div>
-            <Paragraph className={styles.domainSelectItemDescription}>
-              {description}
-            </Paragraph>
+            <Paragraph className={styles.description}>{description}</Paragraph>
           </div>
         )}
       </div>
