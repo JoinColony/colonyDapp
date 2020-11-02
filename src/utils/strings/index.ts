@@ -1,6 +1,5 @@
 import { addressNormalizer, addressValidator } from '@purser/core';
-import generate from 'nanoid/generate';
-import urlDictionary from 'nanoid/url';
+import { customAlphabet, urlAlphabet } from 'nanoid';
 
 import { Address } from '~types/index';
 
@@ -122,4 +121,4 @@ export const splitAddress = (address: Address): AddressElements | Error => {
 type RandomId = string;
 
 export const generateUrlFriendlyId = (): RandomId =>
-  generate(urlDictionary, 21);
+  customAlphabet(urlAlphabet, 21)();

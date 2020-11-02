@@ -1,5 +1,5 @@
 import React, { ReactNode, useRef } from 'react';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import { useField } from 'formik';
 import { MessageDescriptor } from 'react-intl';
 

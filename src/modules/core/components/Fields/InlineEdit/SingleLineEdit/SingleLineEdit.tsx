@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import { InputComponent } from '~core/Fields/Input';
 import { SimpleMessageValues } from '~types/index';

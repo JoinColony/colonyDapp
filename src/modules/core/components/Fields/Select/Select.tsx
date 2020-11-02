@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import { getMainClasses } from '~utils/css';
 import {

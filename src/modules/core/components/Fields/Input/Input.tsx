@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { CleaveOptions } from 'cleave.js/options';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import { SimpleMessageValues } from '~types/index';
 

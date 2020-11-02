@@ -1,4 +1,4 @@
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import { call, put, race, take } from 'redux-saga/effects';
 
 import { putError } from '~utils/saga/effects';

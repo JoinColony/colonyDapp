@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useState,
 } from 'react';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import { DialogType } from './types';
 
