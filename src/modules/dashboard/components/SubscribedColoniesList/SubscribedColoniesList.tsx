@@ -19,7 +19,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.SubscribedColoniesList';
 
 const SubscribedColoniesList = () => {
-  const { walletAddress } = useLoggedInUser();
+  const { ethereal, walletAddress } = useLoggedInUser();
   const { data } = useUserColoniesQuery({
     variables: { address: walletAddress },
   });
@@ -50,15 +50,17 @@ const SubscribedColoniesList = () => {
             );
           })}
       </div>
-      <div className={`${styles.item} ${styles.newColonyItem}`}>
-        <NavLink className={styles.itemLink} to={CREATE_COLONY_ROUTE}>
-          <Icon
-            className={styles.newColonyIcon}
-            name="circle-plus"
-            title={MSG.iconTitleCreateNewColony}
-          />
-        </NavLink>
-      </div>
+      {!ethereal && (
+        <div className={`${styles.item} ${styles.newColonyItem}`}>
+          <NavLink className={styles.itemLink} to={CREATE_COLONY_ROUTE}>
+            <Icon
+              className={styles.newColonyIcon}
+              name="circle-plus"
+              title={MSG.iconTitleCreateNewColony}
+            />
+          </NavLink>
+        </div>
+      )}
     </div>
   );
 };
