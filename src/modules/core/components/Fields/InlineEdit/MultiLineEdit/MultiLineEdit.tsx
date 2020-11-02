@@ -7,7 +7,7 @@ import {
   EditorState,
 } from 'draft-js';
 import { useField } from 'formik';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import 'draft-js/dist/Draft.css';
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'redux-react-hook';
 import { BigNumber, bigNumberify, parseEther } from 'ethers/utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import * as yup from 'yup';
 
 import { TransactionType, WalletKind } from '~immutable/index';

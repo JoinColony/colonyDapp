@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray, ArrayHelpers } from 'formik';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import { ItemDataType } from '~core/OmniPicker';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';

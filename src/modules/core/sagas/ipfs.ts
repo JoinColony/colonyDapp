@@ -1,5 +1,5 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, raceError } from '~utils/saga/effects';

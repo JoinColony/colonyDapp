@@ -2,7 +2,7 @@ import React, { ReactNode, RefObject, useState } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
 import cx from 'classnames';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';

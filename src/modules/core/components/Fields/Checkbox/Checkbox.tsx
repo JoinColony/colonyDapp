@@ -1,6 +1,6 @@
 import React, { ReactNode, SyntheticEvent, useState, useCallback } from 'react';
 import { MessageDescriptor } from 'react-intl';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import InputLabel from '~core/Fields/InputLabel';
 import asFieldArray from '~core/Fields/asFieldArray';

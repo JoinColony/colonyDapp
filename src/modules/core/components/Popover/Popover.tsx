@@ -11,7 +11,7 @@ import React, {
   SetStateAction,
   HTMLAttributes,
 } from 'react';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import { usePopper, PopperProps } from 'react-popper';
 import { Placement } from '@popperjs/core';
 import { Unionize } from 'utility-types';

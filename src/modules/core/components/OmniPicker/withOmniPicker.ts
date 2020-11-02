@@ -6,7 +6,7 @@ import {
   KeyboardEvent,
   MouseEvent,
 } from 'react';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import OmniPicker, { Props as OmniPickerProps } from './OmniPicker';
 import { OmniPickerData, WrappedComponentProps } from './types';

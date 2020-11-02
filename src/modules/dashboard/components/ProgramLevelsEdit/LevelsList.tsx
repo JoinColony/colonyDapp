@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import ListGroup, { ListGroupItem } from '~core/ListGroup';
 import {
