@@ -1,33 +1,34 @@
 
-.domainSelectItem {
+.main {
   display: flex;
   padding: 10px 0;
+  pointer-events: auto;
 }
 
-.domainSelectItemChildDomainIcon {
+.childDomainIcon {
   padding: 3px 10px 0 0;
 }
 
-.domainSelectItemTitle {
+.mainContent {
+  flex-grow: 1;
+}
+
+.title {
   display: flex;
   align-items: baseline;
 }
 
-.domainSelectItemColor {
+.color {
   flex-basis: 19px;
 }
 
-.domainSelectItemMainContent {
-  flex-grow: 1;
-}
-
-.domainSelectItemRootText {
+.rootText {
   padding-left: 10px;
   font-size: var(--size-tiny);
   color: var(--grey-5);
 }
 
-.domainSelectItemDescription {
+.description {
   font-size: var(--size-tiny);
   color: var(--grey-4);
 }
@@ -42,7 +43,7 @@
   transition: opacity 0.15s;
 }
 
-.domainSelectItem:hover,
+.main:hover .editButton,
 .editButton:focus-within {
   opacity: 1;
 }
