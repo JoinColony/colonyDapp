@@ -6,7 +6,7 @@
 
 .main {
   display: block;
-  margin-bottom: 50px; /* @NOTE This is temporary, remove when the other elements have been added */
+  margin-bottom: 32px;
   letter-spacing: 0.5px;
 }
 
