@@ -6,6 +6,7 @@ import { parse as parseQS } from 'query-string';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
+import Extensions, { ExtensionDetails } from '~dashboard/Extensions';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useColonyFromNameQuery } from '~data/index';
@@ -13,6 +14,7 @@ import { useColonyFromNameQuery } from '~data/index';
 import {
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
+  COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_HOME_ROUTE,
   NOT_FOUND_ROUTE,
 } from '~routes/index';
@@ -76,7 +78,25 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const filteredDomainId = domainIdFilter || COLONY_TOTAL_BALANCE_DOMAIN_ID;
 
-  const { data, error, loading } = useColonyFromNameQuery({
+  const {
+    data,
+    error,
+    loading,
+    /**
+     * @NOTE Hooking into the return variable value
+     *
+     * Since this is a client side query it's return value will never end up
+     * in the final result from the main query hook, either the value or the
+     * eventual error.
+     *
+     * For this we hook into the `address` value which will be set internally
+     * by the `@client` query so that we can act on it if we encounter an ENS
+     * error.
+     *
+     * Based on that error we can determine if the colony is registered or not.
+     */
+    variables: dataVariables,
+  } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
@@ -149,7 +169,19 @@ const ColonyHome = ({ match, location }: Props) => {
             />
             <Route
               path={COLONY_EXTENSIONS_ROUTE}
-              component={() => <>Extensions</>}
+              render={(props) => (
+                <Extensions {...props} colonyAddress={data.colonyAddress} />
+              )}
+            />
+            <Route
+              exact
+              path={COLONY_EXTENSION_DETAILS_ROUTE}
+              render={(props) => (
+                <ExtensionDetails
+                  {...props}
+                  colonyAddress={data.colonyAddress}
+                />
+              )}
             />
             <Route
               path={COLONY_HOME_ROUTE}

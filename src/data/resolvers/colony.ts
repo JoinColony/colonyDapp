@@ -10,6 +10,9 @@ import {
   extensions,
   getExtensionHash,
   ColonyClientV5,
+  getEvents,
+  getLogs,
+  getBlockTime,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -36,6 +39,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
 import { Color } from '~core/ColorTag';
+import extensionData from '~data/staticData/extensionData';
 
 import { getToken } from './token';
 import {
@@ -225,6 +229,22 @@ export const colonyResolvers = ({
   ipfsWithFallback,
 }: Required<Context>): Resolvers => ({
   Query: {
+    async colonyExtension(_, { colonyAddress, extensionId }) {
+      const extensionAddress = await networkClient.getExtensionInstallation(
+        getExtensionHash(extensionId),
+        colonyAddress,
+      );
+      if (extensionAddress === AddressZero) {
+        return null;
+      }
+      return {
+        __typename: 'ColonyExtension',
+        id: extensionAddress,
+        address: extensionAddress,
+        colonyAddress,
+        extensionId,
+      };
+    },
     async colonyAddress(_, { name }) {
       try {
         const address = await ens.getAddress(
@@ -564,9 +584,9 @@ export const colonyResolvers = ({
       return true;
     },
     async installedExtensions({ colonyAddress }) {
-      const promises = extensions.map((extensionName: Extension) =>
+      const promises = extensions.map((extensionId: Extension) =>
         networkClient.getExtensionInstallation(
-          getExtensionHash(extensionName),
+          getExtensionHash(extensionId),
           colonyAddress,
         ),
       );
@@ -574,10 +594,68 @@ export const colonyResolvers = ({
       return extensionAddresses
         .map((address: Address, idx: number) => ({
           __typename: 'ColonyExtension',
-          id: extensions[idx],
+          colonyAddress,
+          id: address,
+          extensionId: extensions[idx],
           address,
         }))
         .filter(({ address }) => address !== AddressZero);
+    },
+  },
+  ColonyExtension: {
+    async details({ address, extensionId }, { colonyAddress }) {
+      const extension = extensionData[extensionId];
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
+        throw new Error('Colony version too old');
+      }
+
+      const rolesFilter = colonyClient.filters.ColonyRoleSet(
+        address,
+        null,
+        null,
+        null,
+      );
+      const rolesEvents = await getEvents(colonyClient, rolesFilter);
+
+      const { neededColonyPermissions } = extension;
+      const missingPermissions = neededColonyPermissions.filter(
+        (neededRole) =>
+          !rolesEvents.find(({ values }) => values.role === neededRole),
+      );
+
+      const installFilter = networkClient.filters.ExtensionInstalled(
+        getExtensionHash(extensionId),
+        colonyAddress,
+        null,
+      );
+      const installLogs = await getLogs(networkClient, installFilter);
+      let installedBy = AddressZero;
+      let installedAt = 0;
+
+      if (
+        installLogs[0] &&
+        installLogs[0].transactionHash &&
+        installLogs[0].blockHash
+      ) {
+        const { blockHash, transactionHash } = installLogs[0];
+        const receipt = await networkClient.provider.getTransactionReceipt(
+          transactionHash,
+        );
+        installedBy = receipt.from || AddressZero;
+        const time = await getBlockTime(networkClient.provider, blockHash);
+        installedAt = time || 0;
+      }
+
+      return {
+        __typename: 'ColonyExtensionDetails',
+        enabled: !missingPermissions.length,
+        installedBy,
+        installedAt,
+      };
     },
   },
 });

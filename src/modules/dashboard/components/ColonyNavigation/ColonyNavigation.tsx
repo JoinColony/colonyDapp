@@ -17,10 +17,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
   },
-  comingSoonMessage: {
-    id: 'dashboard.ColonyNavigation.comingSoonMessage',
-    defaultMessage: 'Coming Soon',
-  },
 });
 
 const displayName = 'dashboard.ColonyNavigation';
@@ -54,8 +50,7 @@ const ColonyNavigation = () => {
         text: MSG.linkTextEvents,
       },
       {
-        disabled: true,
-        extra: MSG.comingSoonMessage,
+        exact: false,
         linkTo: `/colony/${colonyName}/extensions`,
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,

@@ -1,0 +1,30 @@
+.main {
+  height: 220px;
+  width: 250px;
+}
+
+.card {
+  display: block;
+  padding: 15px;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.headerIcon {
+  flex: 0 0 33px;
+}
+
+.version {
+  color: var(--grey-5);
+}
+
+.addButton {
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+}

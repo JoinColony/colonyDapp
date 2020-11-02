@@ -145,5 +145,11 @@
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
     "message.taskComment.title": "Task Comment",
-    "message.taskComment.description": "Sign this message to post your comment"
+    "message.taskComment.description": "Sign this message to post your comment",
+    "permission.6": "Administration",
+    "permission.2": "Arbitration",
+    "permission.3": "Architecture",
+    "permission.5": "Funding",
+    "permission.0": "Recovery",
+    "permission.1": "Root"
   }

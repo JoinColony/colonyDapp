@@ -125,6 +125,15 @@ export default gql`
   type ColonyExtension {
     address: String!
     id: String!
+    extensionId: String!
+    details(colonyAddress: String!): ColonyExtensionDetails!
+  }
+
+  type ColonyExtensionDetails {
+    enabled: Boolean!
+    deprecated: Boolean!
+    installedBy: String!
+    installedAt: Int!
   }
 
   extend type TaskPayout {
@@ -155,6 +164,10 @@ export default gql`
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
+    colonyExtension(
+      colonyAddress: String!
+      extensionId: String!
+    ): ColonyExtension
     colonyName(address: String!): String!
     colonyMembersWithReputation(
       colonyAddress: String!

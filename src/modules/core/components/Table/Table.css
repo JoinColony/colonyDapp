@@ -177,3 +177,17 @@
     border-bottom-right-radius: var(--radius-large);
   }
 }
+
+.themeLined {
+  & td {
+    padding: 10px 0;
+  }
+
+  & tr {
+    border-bottom: 1px solid var(--temp-grey-5);
+  }
+
+  & tr:first-child {
+    border-top: 1px solid var(--temp-grey-5);
+  }
+}

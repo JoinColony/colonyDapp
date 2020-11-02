@@ -8,6 +8,7 @@ import styles from './NavItem.css';
 
 interface Props {
   disabled?: boolean;
+  exact?: boolean;
   extra?: MessageDescriptor;
   linkTo: string;
   showDot?: boolean;
@@ -18,6 +19,7 @@ const displayName = 'dashboard.ColonyNavigation.NavItem';
 
 const NavItem = ({
   disabled = false,
+  exact = true,
   extra: extraProp,
   linkTo,
   showDot = false,
@@ -45,7 +47,7 @@ const NavItem = ({
       activeClassName={styles.active}
       aria-disabled={disabled}
       className={classNames.join(' ')}
-      exact
+      exact={exact}
       onKeyDown={handleLinkKeyDown}
       to={linkTo}
     >
