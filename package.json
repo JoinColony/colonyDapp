@@ -90,7 +90,7 @@
     "graphql": "^15.0.0",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.0.0",
-    "jest": "^25.5.2",
+    "jest": "^26.0.0",
     "jest-enzyme": "^7.0.2",
     "jest-sandbox": "^1.1.2",
     "lint-staged": "^10.2.1",
