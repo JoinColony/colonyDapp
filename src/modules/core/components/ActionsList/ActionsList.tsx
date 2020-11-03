@@ -1,8 +1,11 @@
 import React from 'react';
 
+import { Table, TableBody } from '~core/Table';
+import ActionsListItem from './ActionsListItem';
+
 import styles from './ActionsList.css';
 
-const displayName = 'Icon';
+const displayName = 'ActionsList';
 
 interface Props {
   /*
@@ -11,7 +14,21 @@ interface Props {
   items: any[];
 }
 
-const ActionsList = () => <div className={styles.main} />;
+const ActionsList = ({ items }: Props) => (
+  <div className={styles.main}>
+    <Table
+      data-test="dashboardTaskList"
+      appearance={{ theme: 'rounder' }}
+      scrollable
+    >
+      <TableBody>
+        {items.map((item) => (
+          <ActionsListItem key={item.key} item={item} />
+        ))}
+      </TableBody>
+    </Table>
+  </div>
+);
 
 ActionsList.displayName = displayName;
 
