@@ -1,10 +1,13 @@
 import React from 'react';
 
 import { TableRow, TableCell } from '~core/Table';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import styles from './ActionsListItem.css';
 
 const displayName = 'ActionsList.ActionsListItem';
+
+const UserAvatar = HookedUserAvatar();
 
 interface Props {
   /*
@@ -14,68 +17,22 @@ interface Props {
   handleOnClick?: () => void;
 }
 
-const ActionsListItem = ({ item, handleOnClick }: Props) => (
+const ActionsListItem = ({
+  item: { userAddress },
+  item,
+  handleOnClick,
+}: Props) => (
   <TableRow className={styles.main} onClick={handleOnClick}>
-    <TableCell>{item.userAddress}</TableCell>
+    <TableCell className={styles.avatar}>
+      {userAddress && (
+        <UserAvatar size="s" address={userAddress} notSet={false} />
+      )}
+    </TableCell>
     <TableCell>{item.title}</TableCell>
     <TableCell>{item.eventTopic}</TableCell>
     <TableCell>{item.date}</TableCell>
-    <TableCell>{item.domain}</TableCell>
+    <TableCell>{item.domain.name}</TableCell>
     <TableCell>{item.commentCount}</TableCell>
-    <TableCell>{item.status}</TableCell>
-    {/* <TableCell className={styles.taskDetails}>
-      <div>
-        <p className={styles.taskDetailsTitle}>{title || defaultTitle}</p>
-      </div>
-      {!!(reputation || commentCount) && (
-        <div className={styles.extraInfo}>
-          {!!reputation && (
-            <div className={styles.extraInfoItem}>
-              <span className={styles.taskDetailsReputation}>
-                <FormattedMessage
-                  {...MSG.reputation}
-                  values={{ reputation: reputation.toString() }}
-                />
-              </span>
-            </div>
-          )}
-          {commentCount && (
-            <div className={styles.commentCountItem}>
-              <Icon
-                appearance={{ size: 'extraTiny' }}
-                className={styles.commentCountIcon}
-                name="comment"
-                title={formatMessage(MSG.titleCommentCount, {
-                  commentCount,
-                  formattedCommentCount: formatNumber(commentCount),
-                })}
-              />
-              <AbbreviatedNumeral
-                formatOptions={{
-                  notation: 'compact',
-                }}
-                value={commentCount}
-                title={formatMessage(MSG.titleCommentCount, {
-                  commentCount,
-                  formattedCommentCount: formatNumber(commentCount),
-                })}
-              />
-            </div>
-          )}
-        </div>
-      )}
-    </TableCell>
-    <TableCell className={styles.taskPayouts}>
-      <PayoutsList
-        nativeTokenAddress={nativeTokenAddress}
-        payouts={payouts as Payouts}
-      />
-    </TableCell>
-    <TableCell className={styles.userAvatar}>
-      {assignedWorkerAddress && (
-        <UserAvatar size="s" address={assignedWorkerAddress} notSet={false} />
-      )}
-    </TableCell> */}
   </TableRow>
 );
 

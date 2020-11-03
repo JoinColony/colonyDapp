@@ -16,11 +16,7 @@ interface Props {
 
 const ActionsList = ({ items }: Props) => (
   <div className={styles.main}>
-    <Table
-      data-test="dashboardTaskList"
-      appearance={{ theme: 'rounder' }}
-      scrollable
-    >
+    <Table appearance={{ separators: 'none' }} className={styles.table}>
       <TableBody>
         {items.map((item) => (
           <ActionsListItem key={item.key} item={item} />

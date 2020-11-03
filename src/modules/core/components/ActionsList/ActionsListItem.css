@@ -1,3 +1,27 @@
+/*
+ * @NOTE Unique values
+ */
+@value mainTextSize: 13px;
+
 .main {
-  display: block;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1px;
+  padding: 26px 20px;
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+  font-size: mainTextSize;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+  box-shadow: 0px 2px 11px var(--drop-shadow);
+}
+
+.avatar {
+  padding-right: 15px;
+}
+
+.avatar figure {
+  height: 37px;
+  width: 37px;
 }
