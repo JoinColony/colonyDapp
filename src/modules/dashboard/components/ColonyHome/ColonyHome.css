@@ -28,3 +28,11 @@
 .rightAside {
   padding: 220px 5% 20px;
 }
+
+.actions {
+  display: block;
+}
+
+.events {
+  display: block;
+}
