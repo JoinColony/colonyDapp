@@ -52,6 +52,14 @@
   background-color: var(--colony-blue);
 }
 
+.stateYellow {
+  composes: status;
+}
+
+.stateYellow::before {
+  background-color: var(--golden);
+}
+
 .content {
   flex: 1 1 100%;
   min-width: 0;
@@ -62,7 +70,7 @@
 }
 
 .meta {
-  margin-top: 3px;
+  margin-top: 2px;
   font-size: var(--size-tiny);
   color: var(--temp-grey-blue-7);
 }

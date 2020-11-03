@@ -12,6 +12,7 @@ const UserAvatar = HookedUserAvatar();
 const STATUS = {
   1: 'red',
   2: 'blue',
+  3: 'yellow',
 };
 
 interface Props {
