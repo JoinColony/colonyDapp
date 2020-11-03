@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Table, TableBody } from '~core/Table';
 import ActionsListItem from './ActionsListItem';
 
 import styles from './ActionsList.css';
@@ -15,15 +14,15 @@ interface Props {
 }
 
 const ActionsList = ({ items }: Props) => (
-  <div className={styles.main}>
-    <Table appearance={{ separators: 'none' }} className={styles.table}>
-      <TableBody>
-        {items.map((item) => (
-          <ActionsListItem key={item.id} item={item} />
-        ))}
-      </TableBody>
-    </Table>
-  </div>
+  /*
+   * @NOTE This is a list, since this is the only way I could get a dynmic
+   * width text ellipsis to work reliably
+   */
+  <ul className={styles.main}>
+    {items.map((item) => (
+      <ActionsListItem key={item.key} item={item} />
+    ))}
+  </ul>
 );
 
 ActionsList.displayName = displayName;
