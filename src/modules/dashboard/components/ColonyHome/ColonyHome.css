@@ -10,7 +10,15 @@
 
 .mainContentGrid {
   display: grid;
-  grid-template-columns: 23% auto 26.5%;
+  overflow: hidden;
+
+  /*
+   * @NOTE Grid needs to have a max value for the center content section, otherwise
+   * anything that relies on overflow (think: text ellipsis) will not work.
+   *
+   * Value was arrived at from 100% - 23% - 26.5%
+   */
+  grid-template-columns: 23% minmax(auto, 50.5%) 26.5%;
 }
 
 .leftAside {
