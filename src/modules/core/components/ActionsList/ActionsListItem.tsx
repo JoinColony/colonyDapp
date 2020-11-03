@@ -3,9 +3,12 @@ import {
   FormattedDateParts,
   FormattedMessage,
   defineMessages,
+  useIntl,
 } from 'react-intl';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import { AbbreviatedNumeral } from '~core/Numeral';
+import Icon from '~core/Icon';
 import { getMainClasses } from '~utils/css';
 
 import styles from './ActionsListItem.css';
@@ -18,6 +21,13 @@ const MSG = defineMessages({
   domain: {
     id: 'ActionsList.ActionsListItem.domain',
     defaultMessage: 'Domain {domainId}',
+  },
+  titleCommentCount: {
+    id: 'ActionsList.ActionsListItem.titleCommentCount',
+    defaultMessage: `{formattedCommentCount} {commentCount, plural,
+      one {comment}
+      other {comments}
+    }`,
   },
 });
 
@@ -54,6 +64,7 @@ interface Props {
 }
 
 const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
+  const { formatMessage, formatNumber } = useIntl();
   return (
     <li
       className={getMainClasses({}, styles, { [STATUS[statusId]]: !!statusId })}
@@ -68,16 +79,14 @@ const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
           {item.title}
         </div>
         <div className={styles.meta}>
-          <span className={styles.date}>
-            <FormattedDateParts value={item.date} month="short" day="numeric">
-              {(parts) => (
-                <>
-                  <span className={styles.day}>{parts[2].value}</span>
-                  <span>{parts[0].value}</span>
-                </>
-              )}
-            </FormattedDateParts>
-          </span>
+          <FormattedDateParts value={item.date} month="short" day="numeric">
+            {(parts) => (
+              <>
+                <span className={styles.day}>{parts[2].value}</span>
+                <span>{parts[0].value}</span>
+              </>
+            )}
+          </FormattedDateParts>
           {item.domain && item.domain.id && (
             <span className={styles.domain}>
               {item.domain.name ? (
@@ -90,7 +99,29 @@ const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
               )}
             </span>
           )}
-          <span className={styles.commentCount}>{item.commentCount}</span>
+          {!!item.commentCount && (
+            <span className={styles.commentCount}>
+              <Icon
+                appearance={{ size: 'extraTiny' }}
+                className={styles.commentCountIcon}
+                name="comment"
+                title={formatMessage(MSG.titleCommentCount, {
+                  commentCount: item.commentCount,
+                  formattedCommentCount: formatNumber(item.commentCount),
+                })}
+              />
+              <AbbreviatedNumeral
+                formatOptions={{
+                  notation: 'compact',
+                }}
+                value={item.commentCount}
+                title={formatMessage(MSG.titleCommentCount, {
+                  commentCount: item.commentCount,
+                  formattedCommentCount: formatNumber(item.commentCount),
+                })}
+              />
+            </span>
+          )}
         </div>
       </div>
     </li>
