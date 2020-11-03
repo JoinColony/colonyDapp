@@ -162,11 +162,14 @@ const ColonyHome = ({ match, location }: Props) => {
               path={COLONY_EXTENSIONS_ROUTE}
               component={() => <>Extensions</>}
             />
-            <Route path={COLONY_HOME_ROUTE} component={() => (
-              <div className={styles.actions}>
-                <ColonyActions colony={colony} />
-              </div>
-            )} />
+            <Route
+              path={COLONY_HOME_ROUTE}
+              component={() => (
+                <div className={styles.actions}>
+                  <ColonyActions colony={colony} />
+                </div>
+              )}
+            />
           </Switch>
         </div>
         <aside className={styles.rightAside}>

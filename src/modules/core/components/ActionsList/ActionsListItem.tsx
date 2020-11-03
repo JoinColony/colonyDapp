@@ -9,6 +9,9 @@ import {
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
+import UserMention from '~core/UserMention';
+
+import TextDecorator from '~lib/TextDecorator';
 import { getMainClasses } from '~utils/css';
 
 import styles from './ActionsListItem.css';
@@ -65,6 +68,15 @@ interface Props {
 
 const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
+  const { Decorate } = new TextDecorator({
+    username: (text) => (
+      <UserMention
+        username={text.slice(1)}
+        to={`/user/${text.slice(1)}`}
+        hasLink
+      />
+    ),
+  });
   return (
     <li
       className={getMainClasses({}, styles, { [STATUS[statusId]]: !!statusId })}
@@ -76,7 +88,7 @@ const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
       </div>
       <div className={styles.content}>
         <div className={styles.title} title={item.title}>
-          {item.title}
+          <Decorate>{item.title}</Decorate>
         </div>
         <div className={styles.meta}>
           <FormattedDateParts value={item.date} month="short" day="numeric">
