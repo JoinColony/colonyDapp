@@ -19,7 +19,7 @@ const ActionsList = ({ items }: Props) => (
     <Table appearance={{ separators: 'none' }} className={styles.table}>
       <TableBody>
         {items.map((item) => (
-          <ActionsListItem key={item.key} item={item} />
+          <ActionsListItem key={item.id} item={item} />
         ))}
       </TableBody>
     </Table>

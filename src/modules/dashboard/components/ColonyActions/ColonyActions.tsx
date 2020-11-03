@@ -24,7 +24,7 @@ const MOCK_ACTIONS = [
       id: 2,
     },
     commentCount: 0,
-    status: 1,
+    statusId: 1,
   },
   {
     id: 2,
@@ -36,7 +36,7 @@ const MOCK_ACTIONS = [
       id: 3,
     },
     commentCount: 5,
-    status: 2,
+    statusId: 2,
   },
   {
     id: 3,

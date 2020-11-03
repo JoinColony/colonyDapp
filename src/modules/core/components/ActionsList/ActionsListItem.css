@@ -8,6 +8,7 @@
   align-items: center;
   margin-bottom: 1px;
   padding: 26px 20px;
+  max-height: 89px;
   border-radius: var(--radius-large);
   background-color: var(--colony-white);
   font-size: mainTextSize;
@@ -24,4 +25,30 @@
 .avatar figure {
   height: 37px;
   width: 37px;
+}
+
+.status::before {
+  display: block;
+  margin-left: -17px;
+  height: 81px;
+  width: 4px;
+  position: absolute;
+  border-radius: var(--radius-large);
+  content: '';
+}
+
+.stateRed {
+  composes: status;
+}
+
+.stateRed::before {
+  background-color: var(--pink);
+}
+
+.stateBlue {
+  composes: status;
+}
+
+.stateBlue::before {
+  background-color: var(--colony-blue);
 }
