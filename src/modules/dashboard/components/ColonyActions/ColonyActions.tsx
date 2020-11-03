@@ -49,6 +49,20 @@ const MOCK_ACTIONS = [
     },
     commentCount: 4,
   },
+  {
+    id: 4,
+    title:
+      // eslint-disable-next-line max-len
+      'A very very very long title, a very very very long title, a very very very long title, a very very very long title, a very very very long title, a very very very long title, a very very very long title, a very very very long title, a very very very long title',
+    date: 1604399689594,
+    userAddress: '0x27ff0c145e191c22c75cd123c679c3e1f58a4469',
+    domain: {
+      name: 'Third',
+      id: 4,
+    },
+    commentCount: 40,
+    statusId: 3,
+  },
 ];
 
 type Props = {

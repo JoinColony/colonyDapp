@@ -5,7 +5,6 @@
 
 .main {
   display: flex;
-  align-items: center;
   margin-bottom: 1px;
   padding: 26px 20px;
   max-height: 89px;
@@ -29,7 +28,7 @@
 
 .status::before {
   display: block;
-  margin-left: -17px;
+  margin: -22px 0 0 -17px;
   height: 81px;
   width: 4px;
   position: absolute;
@@ -51,4 +50,19 @@
 
 .stateBlue::before {
   background-color: var(--colony-blue);
+}
+
+.content {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.title {
+  composes: inlineEllipsis from '~styles/text.css';
+}
+
+.meta {
+  margin-top: 3px;
+  font-size: var(--size-tiny);
+  color: var(--temp-grey-blue-7);
 }

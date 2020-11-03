@@ -4,3 +4,6 @@ export const avatar: string;
 export const status: string;
 export const stateRed: string;
 export const stateBlue: string;
+export const content: string;
+export const title: string;
+export const meta: string;

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { TableRow, TableCell } from '~core/Table';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
 
@@ -23,27 +22,25 @@ interface Props {
   handleOnClick?: () => void;
 }
 
-const ActionsListItem = ({
-  item: { userAddress, statusId },
-  item,
-  handleOnClick,
-}: Props) => {
+const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
   return (
-    <TableRow
+    <li
       className={getMainClasses({}, styles, { [STATUS[statusId]]: !!statusId })}
-      onClick={handleOnClick}
     >
-      <TableCell className={styles.avatar}>
+      <div className={styles.avatar}>
         {userAddress && (
           <UserAvatar size="s" address={userAddress} notSet={false} />
         )}
-      </TableCell>
-      <TableCell>{item.title}</TableCell>
-      <TableCell>{item.eventTopic}</TableCell>
-      <TableCell>{item.date}</TableCell>
-      <TableCell>{item.domain.name}</TableCell>
-      <TableCell>{item.commentCount}</TableCell>
-    </TableRow>
+      </div>
+      <div className={styles.content}>
+        <div className={styles.title} title={item.title}>
+          {item.title}
+        </div>
+        <div className={styles.meta}>
+          {item.date} | {item.domain.name} | {item.commentCount}
+        </div>
+      </div>
+    </li>
   );
 };
 
