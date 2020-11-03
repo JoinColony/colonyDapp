@@ -1,5 +1,9 @@
 import React from 'react';
-import { FormattedDateParts } from 'react-intl';
+import {
+  FormattedDateParts,
+  FormattedMessage,
+  defineMessages,
+} from 'react-intl';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
@@ -9,6 +13,13 @@ import styles from './ActionsListItem.css';
 const displayName = 'ActionsList.ActionsListItem';
 
 const UserAvatar = HookedUserAvatar();
+
+const MSG = defineMessages({
+  domain: {
+    id: 'ActionsList.ActionsListItem.domain',
+    defaultMessage: 'Domain {domainId}',
+  },
+});
 
 /*
  * @NOTE This would be better served as an enum
@@ -28,6 +39,15 @@ const STATUS = {
 interface Props {
   /*
    * @TODO This should be a type of Events, Actions or Logs
+   *
+   * Item shoud be:
+   * id: string,
+   * userAddress: string,
+   * title?: string | messageDescriptor,
+   * date: Date,
+   * domain?: DomainType,
+   * commentCount?: number,
+   * statusId?: number
    */
   item: any;
   handleOnClick?: () => void;
@@ -58,7 +78,18 @@ const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
               )}
             </FormattedDateParts>
           </span>
-          <span className={styles.domain}>{item.domain.name}</span>
+          {item.domain && item.domain.id && (
+            <span className={styles.domain}>
+              {item.domain.name ? (
+                item.domain.name
+              ) : (
+                <FormattedMessage
+                  {...MSG.domain}
+                  values={{ domainId: item.domain.id }}
+                />
+              )}
+            </span>
+          )}
           <span className={styles.commentCount}>{item.commentCount}</span>
         </div>
       </div>

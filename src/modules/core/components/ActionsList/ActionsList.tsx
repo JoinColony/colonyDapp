@@ -20,7 +20,7 @@ const ActionsList = ({ items }: Props) => (
    */
   <ul className={styles.main}>
     {items.map((item) => (
-      <ActionsListItem key={item.key} item={item} />
+      <ActionsListItem key={item.id} item={item} />
     ))}
   </ul>
 );

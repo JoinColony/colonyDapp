@@ -31,10 +31,6 @@ const MOCK_ACTIONS = [
     title: 'Transfer 250000 xDai from #Dev to #Design',
     date: 1604399844229,
     userAddress: '0x9df24e73f40b2a911eb254a8825103723e13209c',
-    domain: {
-      name: 'Second domain',
-      id: 3,
-    },
     commentCount: 5,
     statusId: 2,
   },
