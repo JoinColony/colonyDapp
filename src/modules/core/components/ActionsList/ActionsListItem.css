@@ -70,9 +70,11 @@
 }
 
 .meta {
-  margin-top: 2px;
-  font-size: var(--size-tiny);
+  margin-top: 3px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-normal);
   color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-normal);
 }
 
 .separator::after {
@@ -86,6 +88,10 @@
 
 .date {
   composes: separator;
+}
+
+.day {
+  margin-right: 4px;
 }
 
 .domain {

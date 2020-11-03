@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormattedDateParts } from 'react-intl';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
@@ -47,7 +48,16 @@ const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
           {item.title}
         </div>
         <div className={styles.meta}>
-          <span className={styles.date}>{item.date}</span>
+          <span className={styles.date}>
+            <FormattedDateParts value={item.date} month="short" day="numeric">
+              {(parts) => (
+                <>
+                  <span className={styles.day}>{parts[2].value}</span>
+                  <span>{parts[0].value}</span>
+                </>
+              )}
+            </FormattedDateParts>
+          </span>
           <span className={styles.domain}>{item.domain.name}</span>
           <span className={styles.commentCount}>{item.commentCount}</span>
         </div>
