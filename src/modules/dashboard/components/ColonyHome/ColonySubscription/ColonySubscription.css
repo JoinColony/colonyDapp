@@ -28,7 +28,7 @@
   height: 16px;
   width: 16px;
   border-radius: var(--radius-normal);
-  fill: var(--temp-grey-13);
+  fill: var(--temp-grey-blue-7);
 }
 
 .menuIcon:hover {
