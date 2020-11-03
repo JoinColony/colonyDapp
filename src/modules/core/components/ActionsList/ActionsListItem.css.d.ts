@@ -8,3 +8,7 @@ export const stateYellow: string;
 export const content: string;
 export const title: string;
 export const meta: string;
+export const separator: string;
+export const date: string;
+export const domain: string;
+export const commentCount: string;

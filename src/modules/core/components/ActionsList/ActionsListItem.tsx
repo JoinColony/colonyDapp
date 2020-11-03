@@ -9,6 +9,15 @@ const displayName = 'ActionsList.ActionsListItem';
 
 const UserAvatar = HookedUserAvatar();
 
+/*
+ * @NOTE This would be better served as an enum
+ *
+ * But b/c statuses are passes in as number id, and since enum can't handle numeric names
+ * we have to rely on an plain Object here
+ *
+ * The only way I can see this working with an enum is to have some other form of
+ * identification for statuses
+ */
 const STATUS = {
   1: 'red',
   2: 'blue',
@@ -17,7 +26,7 @@ const STATUS = {
 
 interface Props {
   /*
-   * @TODO This should be an array of Events, Actions or Logs types
+   * @TODO This should be a type of Events, Actions or Logs
    */
   item: any;
   handleOnClick?: () => void;
@@ -38,7 +47,9 @@ const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
           {item.title}
         </div>
         <div className={styles.meta}>
-          {item.date} | {item.domain.name} | {item.commentCount}
+          <span className={styles.date}>{item.date}</span>
+          <span className={styles.domain}>{item.domain.name}</span>
+          <span className={styles.commentCount}>{item.commentCount}</span>
         </div>
       </div>
     </li>

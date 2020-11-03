@@ -74,3 +74,24 @@
   font-size: var(--size-tiny);
   color: var(--temp-grey-blue-7);
 }
+
+.separator::after {
+  display: inline-block;
+  margin: 0px 10px -2px;
+  height: 12px;
+  width: 1px;
+  background-color: var(--temp-grey-13);
+  content: '';
+}
+
+.date {
+  composes: separator;
+}
+
+.domain {
+  composes: separator;
+}
+
+.commentCount {
+  display: block;
+}
