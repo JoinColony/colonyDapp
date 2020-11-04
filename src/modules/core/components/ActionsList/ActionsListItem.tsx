@@ -6,6 +6,7 @@ import {
   useIntl,
 } from 'react-intl';
 
+import { bottom } from '@popperjs/core';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
@@ -100,7 +101,31 @@ const ActionsListItem = ({ item: { userAddress, status }, item }: Props) => {
     <li className={getMainClasses({}, styles, { [Status[status]]: !!status })}>
       <div className={styles.avatar}>
         {userAddress && (
-          <UserAvatar size="s" address={userAddress} notSet={false} />
+          <UserAvatar
+            size="s"
+            address={userAddress}
+            notSet={false}
+            showInfo
+            popperProps={{
+              showArrow: false,
+              placement: bottom,
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: popoverPlacement,
+                  },
+                },
+              ],
+              /*
+               * @NOTE This is the price we have to pay for the ability
+               * to customize the Popor library, which is nested under the
+               * Popover component, which is nested under UserInfo,
+               * which is nested under UserAvatar
+               */
+              children: () => null,
+            }}
+          />
         )}
       </div>
       <div className={styles.content}>
