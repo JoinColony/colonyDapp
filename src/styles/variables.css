@@ -42,6 +42,7 @@
   --temp-grey-blue-5: rgb(244, 238, 242); /* Used for user profile gradient start color */
   --temp-grey-blue-6: rgb(231, 242, 246); /* Used for user profile gradient end color */
   --temp-grey-blue-7: rgb(118, 116, 139); /* Used for the wallet connect button in the user navigation */
+  --temp-grey-blue-8: rgb(238, 242, 245); /* Used for the actions list hover background */
   --drop-shadow: rgba(62, 118, 244, 0.14);
 
   /*

@@ -17,6 +17,11 @@
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
   box-shadow: 0px 2px 11px var(--drop-shadow);
+  cursor: pointer;
+}
+
+.main:hover {
+  background-color: var(--temp-grey-blue-8);
 }
 
 .avatar {
