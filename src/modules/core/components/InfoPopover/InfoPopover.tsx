@@ -10,18 +10,18 @@ import TokenInfoPopover from './TokenInfoPopover';
 import UserInfoPopover from './UserInfoPopover';
 
 interface TokenContentProps {
-  isTokenNative: boolean;
-  token: AnyToken;
+  isTokenNative?: boolean;
+  token?: AnyToken;
 }
 
 interface BasicUserContentProps {
-  user: AnyUser;
+  user?: AnyUser;
 }
 
 interface MemberContentProps {
-  colonyAddress: Address;
-  domainId: number | undefined;
-  user: AnyUser;
+  colonyAddress?: Address;
+  domainId?: number | undefined;
+  user?: AnyUser;
 }
 
 type ContentProps =
