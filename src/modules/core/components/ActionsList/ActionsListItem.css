@@ -20,12 +20,20 @@
 }
 
 .avatar {
+  margin-top: -2px;
   padding-right: 15px;
+  cursor: pointer;
 }
 
 .avatar figure {
-  height: 37px;
-  width: 37px;
+  height: 41px;
+  width: 41px;
+  border: 2px solid transparent;
+  border-radius: 100%;
+}
+
+.avatar:hover figure {
+  border-color: var(--primary);
 }
 
 .status::before {
