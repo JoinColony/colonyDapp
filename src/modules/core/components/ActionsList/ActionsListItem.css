@@ -18,6 +18,7 @@
   letter-spacing: var(--spacing-medium);
   box-shadow: 0px 2px 11px var(--drop-shadow);
   cursor: pointer;
+  outline: 0;
 }
 
 .main:hover {
