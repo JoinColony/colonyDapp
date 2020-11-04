@@ -35,20 +35,10 @@ const MSG = defineMessages({
   },
 });
 
-/*
- * @NOTE This would be better served as an enum
- *
- * But b/c statuses are passes in as number id, and since enum can't handle numeric names
- * we have to rely on an plain Object here
- *
- * The only way I can see this working with an enum is to have some other form of
- * identification for statuses
- */
-const STATUS = {
-  1: 'red',
-  2: 'blue',
-  3: 'yellow',
-};
+export enum Status {
+  'needsAction' = 'red',
+  'needsAttention' = 'blue',
+}
 
 interface Props {
   /*
@@ -63,13 +53,13 @@ interface Props {
    * date: Date,
    * domain?: DomainType,
    * commentCount?: number,
-   * statusId?: number
+   * status?: number
    */
   item: any;
   handleOnClick?: () => void;
 }
 
-const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
+const ActionsListItem = ({ item: { userAddress, status }, item }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
 
   const popoverPlacement = useMemo(() => {
@@ -107,9 +97,7 @@ const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
   });
 
   return (
-    <li
-      className={getMainClasses({}, styles, { [STATUS[statusId]]: !!statusId })}
-    >
+    <li className={getMainClasses({}, styles, { [Status[status]]: !!status })}>
       <div className={styles.avatar}>
         {userAddress && (
           <UserAvatar size="s" address={userAddress} notSet={false} />

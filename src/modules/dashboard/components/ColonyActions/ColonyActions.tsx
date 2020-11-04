@@ -24,7 +24,7 @@ const MOCK_ACTIONS = [
       id: 2,
     },
     commentCount: 0,
-    statusId: 1,
+    status: 'needsAction',
   },
   {
     id: 2,
@@ -32,7 +32,6 @@ const MOCK_ACTIONS = [
     date: 1604399844229,
     userAddress: '0x9df24e73f40b2a911eb254a8825103723e13209c',
     commentCount: 5,
-    statusId: 2,
   },
   {
     id: 3,
@@ -44,6 +43,7 @@ const MOCK_ACTIONS = [
       id: 4,
     },
     commentCount: 4,
+    status: 'needsAttention',
   },
   {
     id: 4,
@@ -57,7 +57,6 @@ const MOCK_ACTIONS = [
       id: 4,
     },
     commentCount: 40,
-    statusId: 3,
   },
 ];
 
