@@ -10,6 +10,7 @@ import React, {
   Dispatch,
   SetStateAction,
   HTMLAttributes,
+  MouseEvent,
 } from 'react';
 import { nanoid } from 'nanoid';
 import { usePopper, PopperProps } from 'react-popper';
@@ -198,7 +199,14 @@ const Popover = ({
                 // onMouseLeave: close,
               },
               click: {
-                onClick: () => (isOpen ? close() : requestOpen()),
+                onClick: (event: MouseEvent) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  if (isOpen) {
+                    return close();
+                  }
+                  return requestOpen();
+                },
               },
               disabled: null,
             }[trigger]
