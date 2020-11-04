@@ -11,7 +11,6 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
 import UserMention from '~core/UserMention';
-import InfoPopover from '~core/InfoPopover';
 
 import TextDecorator from '~lib/TextDecorator';
 import { getMainClasses, removeValueUnits } from '~utils/css';
@@ -69,16 +68,12 @@ const ActionsListItem = ({ item: { userAddress, status }, item }: Props) => {
   }, []);
 
   const { Decorate } = new TextDecorator({
-    username: (text) => (
-      <InfoPopover
-        trigger="click"
-        showArrow={false}
-        /*
-         * @TODO Prefferably pass in the actual user object here, rather then just
-         * the wallet address
-         */
-        user={{ id: userAddress, profile: { walletAddress: userAddress } }}
+    username: (usernameWithAtSign) => (
+      <UserMention
+        username={usernameWithAtSign.slice(1)}
+        showInfo
         popperProps={{
+          showArrow: false,
           placement: 'bottom',
           modifiers: [
             {
@@ -88,12 +83,15 @@ const ActionsListItem = ({ item: { userAddress, status }, item }: Props) => {
               },
             },
           ],
+          /*
+           * @NOTE This is the price we have to pay for the ability
+           * to customize the Popor library, which is nested under the
+           * Popover component, which is nested under UserInfo,
+           * which is nested under UserAvatar
+           */
+          children: () => null,
         }}
-      >
-        <div className={styles.userMention}>
-          <UserMention username={text.slice(1)} />
-        </div>
-      </InfoPopover>
+      />
     ),
   });
 
