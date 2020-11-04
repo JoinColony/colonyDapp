@@ -27,7 +27,7 @@ interface Props {
   showInfo?: boolean;
 
   /** Passed on to the `Popper` component */
-  popperProps?: PopperProps & { showArrow?: boolean };
+  popperProps?: Omit<PopperProps, 'children'> & { showArrow?: boolean };
 }
 
 const UserMention = ({

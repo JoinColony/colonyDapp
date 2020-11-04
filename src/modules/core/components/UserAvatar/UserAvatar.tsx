@@ -26,7 +26,7 @@ interface BaseProps {
   notSet?: boolean;
 
   /** Passed on to the `Popper` component */
-  popperProps?: PopperProps & { showArrow?: boolean };
+  popperProps?: Omit<PopperProps, 'children'> & { showArrow?: boolean };
 
   /** If true the UserAvatar links to the user's profile */
   showLink?: boolean;

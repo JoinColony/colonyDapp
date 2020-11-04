@@ -83,13 +83,6 @@ const ActionsListItem = ({ item: { userAddress, status }, item }: Props) => {
               },
             },
           ],
-          /*
-           * @NOTE This is the price we have to pay for the ability
-           * to customize the Popor library, which is nested under the
-           * Popover component, which is nested under UserInfo,
-           * which is nested under UserAvatar
-           */
-          children: () => null,
         }}
       />
     ),
@@ -115,13 +108,6 @@ const ActionsListItem = ({ item: { userAddress, status }, item }: Props) => {
                   },
                 },
               ],
-              /*
-               * @NOTE This is the price we have to pay for the ability
-               * to customize the Popor library, which is nested under the
-               * Popover component, which is nested under UserInfo,
-               * which is nested under UserAvatar
-               */
-              children: () => null,
             }}
           />
         )}
