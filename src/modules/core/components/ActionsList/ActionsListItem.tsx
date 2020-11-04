@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   FormattedDateParts,
   FormattedMessage,
@@ -10,11 +10,12 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
 import UserMention from '~core/UserMention';
+import InfoPopover from '~core/InfoPopover';
 
 import TextDecorator from '~lib/TextDecorator';
-import { getMainClasses } from '~utils/css';
+import { getMainClasses, removeValueUnits } from '~utils/css';
 
-import styles from './ActionsListItem.css';
+import styles, { popoverWidth, popoverDistance } from './ActionsListItem.css';
 
 const displayName = 'ActionsList.ActionsListItem';
 
@@ -56,7 +57,9 @@ interface Props {
    * Item shoud be:
    * id: string,
    * userAddress: string,
+   * user?: AnyUser
    * title?: string | messageDescriptor,
+   * topic?: string
    * date: Date,
    * domain?: DomainType,
    * commentCount?: number,
@@ -68,15 +71,41 @@ interface Props {
 
 const ActionsListItem = ({ item: { userAddress, statusId }, item }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
+
+  const popoverPlacement = useMemo(() => {
+    const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
+    return [offsetSkid, removeValueUnits(popoverDistance)];
+  }, []);
+
   const { Decorate } = new TextDecorator({
     username: (text) => (
-      <UserMention
-        username={text.slice(1)}
-        to={`/user/${text.slice(1)}`}
-        hasLink
-      />
+      <InfoPopover
+        trigger="click"
+        showArrow={false}
+        /*
+         * @TODO Prefferably pass in the actual user object here, rather then just
+         * the wallet address
+         */
+        user={{ id: userAddress, profile: { walletAddress: userAddress } }}
+        popperProps={{
+          placement: 'bottom',
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: popoverPlacement,
+              },
+            },
+          ],
+        }}
+      >
+        <div className={styles.userMention}>
+          <UserMention username={text.slice(1)} />
+        </div>
+      </InfoPopover>
     ),
   });
+
   return (
     <li
       className={getMainClasses({}, styles, { [STATUS[statusId]]: !!statusId })}

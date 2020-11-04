@@ -1,4 +1,6 @@
 export const mainTextSize: string;
+export const popoverWidth: string;
+export const popoverDistance: string;
 export const main: string;
 export const avatar: string;
 export const status: string;
@@ -13,3 +15,4 @@ export const day: string;
 export const domain: string;
 export const commentCount: string;
 export const commentCountIcon: string;
+export const userMention: string;

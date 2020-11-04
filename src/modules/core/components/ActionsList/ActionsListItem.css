@@ -2,6 +2,8 @@
  * @NOTE Unique values
  */
 @value mainTextSize: 13px;
+@value popoverWidth: 400px;
+@value popoverDistance: 10px;
 
 .main {
   display: flex;
@@ -110,4 +112,9 @@
 
 .commentCountIcon svg {
   fill: color-mod(var(--dark) alpha(70%));
+}
+
+.userMention {
+  display: inline-block;
+  cursor: pointer;
 }
