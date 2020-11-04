@@ -26,6 +26,11 @@ const UserInfo = ({
       />
     )}
     {username && (
+      /*
+       * @NOTE Potential recurrsion loop here.
+       *
+       * Never pass `showInfo` to this instance of UserMention, otherwise you'll trigger it
+       */
       <p className={styles.userName}>
         <UserMention username={username} hasLink />
       </p>

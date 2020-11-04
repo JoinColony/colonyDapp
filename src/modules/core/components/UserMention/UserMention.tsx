@@ -6,7 +6,6 @@ import InfoPopover, { Props as InfoPopoverProps } from '~core/InfoPopover';
 
 import { useUserAddressFetcher } from '../../../users/hooks';
 import { useUserQuery } from '~data/index';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import styles from './UserMention.css';
 
@@ -45,9 +44,7 @@ const UserMention = ({
     showArrow: popperProps && popperProps.showArrow,
   };
 
-  const { userAddress, error: userAddressError } = useUserAddressFetcher(
-    username,
-  );
+  const { userAddress } = useUserAddressFetcher(username);
 
   const { data } = useUserQuery({
     variables: { address: userAddress || '' },
@@ -68,23 +65,14 @@ const UserMention = ({
       </span>
     );
 
-  if (!showInfo || !data || !data.user || userAddressError) {
+  if (!showInfo) {
     return renderUserMention();
   }
 
-  const { user } = data;
+  const { user } = data || {};
 
   return (
-    <InfoPopover
-      /*
-       * @NOTE Colony Address and Domain Id are just used to satify type
-       * requirements on InfoPopover, they are not actually used
-       */
-      colonyAddress=""
-      domainId={COLONY_TOTAL_BALANCE_DOMAIN_ID}
-      user={user}
-      {...popoverProps}
-    >
+    <InfoPopover user={user} {...popoverProps}>
       {renderUserMention()}
     </InfoPopover>
   );
