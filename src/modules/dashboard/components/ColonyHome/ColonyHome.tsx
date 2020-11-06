@@ -166,7 +166,7 @@ const ColonyHome = ({ match, location }: Props) => {
               path={COLONY_HOME_ROUTE}
               component={() => (
                 <div className={styles.actions}>
-                  <ColonyActions colony={colony} />
+                  <ColonyActions />
                 </div>
               )}
             />

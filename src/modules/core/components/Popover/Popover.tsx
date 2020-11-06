@@ -152,7 +152,7 @@ const Popover = ({
   }, [close, referenceElement, trigger]);
 
   const handleOutsideClick = useCallback(
-    (evt: MouseEvent) => {
+    (evt: Event) => {
       const targetInRefNode = (refNode: Element | null) => {
         return (
           evt.target instanceof Node && refNode && refNode.contains(evt.target)
