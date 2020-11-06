@@ -1,5 +1,5 @@
 .main {
-  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  composes: stretchHorizontal from '~styles/layout.css';
   display: grid;
   grid-template-columns: 50px auto;
 }
@@ -10,6 +10,13 @@
 
 .mainContentGrid {
   display: grid;
+
+  /*
+   * @NOTE On the below width calculations
+   * full view width, minus a little trick to disregrad the scrollback, minus
+   * the width of the left subscribed colonies list
+   */
+  max-width: calc((100vw - (100vw - 100%)) - 50px);
   overflow: hidden;
 
   /*
