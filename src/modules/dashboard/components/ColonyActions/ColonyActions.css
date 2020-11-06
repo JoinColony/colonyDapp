@@ -6,3 +6,8 @@
   display: inline-block;
   margin-bottom: 14px;
 }
+
+.controls {
+  margin-top: 22px;
+  text-align: center;
+}
