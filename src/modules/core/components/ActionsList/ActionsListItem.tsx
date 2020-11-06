@@ -45,13 +45,14 @@ interface Props {
   /*
    * @TODO This should be a type of Events, Actions or Logs
    *
-   * Item shoud be:
+   * Item shoud be something aling these lines:
+   *
    * id: string,
    * userAddress: string,
    * user?: AnyUser
    * title?: string | messageDescriptor,
    * topic?: string
-   * date: Date,
+   * createdAt: Date,
    * domain?: DomainType,
    * commentCount?: number,
    * status?: number
@@ -147,7 +148,11 @@ const ActionsListItem = ({
             <Decorate>{item.title}</Decorate>
           </div>
           <div className={styles.meta}>
-            <FormattedDateParts value={item.date} month="short" day="numeric">
+            <FormattedDateParts
+              value={item.createdAt}
+              month="short"
+              day="numeric"
+            >
               {(parts) => (
                 <>
                   <span className={styles.day}>{parts[2].value}</span>
