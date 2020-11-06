@@ -1,1 +1,1 @@
-export { default } from './ActionsList';
+export { default, ClickHandlerProps } from './ActionsList';
