@@ -59,8 +59,10 @@ When run individually, some processes might need an own terminal window.
 You can also run the whole stack and skip some commands, e.g.:
 
 ```bash
-npm run dev --skip-webpack
+npm run dev -- --skip-webpack
 ```
+
+**NOTE:** You need to pass in the extra `--` as the `--skip-<proces>` argument will get passed to an npm script, which in turn, will get passed along to a node script. Also a thing to keep in mind that if using `yarn`, it is not necessary to specify the extra `--` for the arguments to get passed through.
 
 Then run `webpack` individually, if you like:
 
