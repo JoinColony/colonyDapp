@@ -44,8 +44,10 @@
   max-width: 320px;
 }
 
-.domainsDropdownContainer {
-  max-width: 320px;
+.contentActionsPanel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .rightAside {

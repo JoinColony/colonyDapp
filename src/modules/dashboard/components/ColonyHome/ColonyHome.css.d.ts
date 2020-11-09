@@ -4,6 +4,6 @@ export const mainContentGrid: string;
 export const leftAside: string;
 export const leftAsideNav: string;
 export const mainContent: string;
-export const domainsDropdownContainer: string;
+export const contentActionsPanel: string;
 export const rightAside: string;
 export const events: string;
