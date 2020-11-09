@@ -1,22 +1,28 @@
 import React from 'react';
 import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
 import { useParams } from 'react-router';
-import { ColonyRole } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
-import { useColonyExtensionQuery } from '~data/index';
+import {
+  useColonyExtensionQuery,
+  useColonyRolesQuery,
+  useLoggedInUser,
+} from '~data/index';
 import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import CopyableAddress from '~core/CopyableAddress';
 import Tag from '~core/Tag';
-
-import styles from './ExtensionDetails.css';
-
+import HookedUserAvatar from '~users/HookedUserAvatar';
+import { useTransformer } from '~utils/hooks';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
-import HookedUserAvatar from '~users/HookedUserAvatar';
+
+import { getUserRolesForDomain } from '../../../transformers';
+
+import styles from './ExtensionDetails.css';
 import ExtensionActionButton from './ExtensionActionButton';
 
 const MSG = defineMessages({
@@ -82,12 +88,26 @@ interface Props {
 
 const ExtensionDetails = ({ colonyAddress }: Props) => {
   const { extensionId } = useParams();
+  const { walletAddress } = useLoggedInUser();
   const { data, loading } = useColonyExtensionQuery({
     variables: { colonyAddress, extensionId },
   });
+
+  const { data: colonyRolesData } = useColonyRolesQuery({
+    variables: { address: colonyAddress },
+  });
+
+  const rootUserRoles = useTransformer(getUserRolesForDomain, [
+    colonyRolesData && colonyRolesData.colony,
+    walletAddress,
+    ROOT_DOMAIN_ID,
+  ]);
+
   if (loading) {
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
   }
+
+  const canInstall = rootUserRoles.includes(ColonyRole.Root);
 
   const installedExtension = data ? data.colonyExtension : null;
   const extension = extensionData[extensionId];
@@ -170,6 +190,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
         <aside>
           <div className={styles.buttonWrapper}>
             <ExtensionActionButton
+              canInstall={canInstall}
               installedExtension={installedExtension}
               extension={extension}
             />

@@ -18,7 +18,6 @@ export interface ExtensionData {
   currentVersion: number;
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
-  neededUserPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
 }
 
@@ -105,7 +104,6 @@ const extensions: { [key: string]: ExtensionData } = {
     currentVersion: 1,
     createdAt: 1557698400000,
     neededColonyPermissions: [ColonyRole.Administration, ColonyRole.Funding],
-    neededUserPermissions: [ColonyRole.Root],
   },
   CoinMachine: {
     extensionId: Extension.CoinMachine,
@@ -114,7 +112,6 @@ const extensions: { [key: string]: ExtensionData } = {
     currentVersion: 1,
     createdAt: 1603915271852,
     neededColonyPermissions: [ColonyRole.Root],
-    neededUserPermissions: [ColonyRole.Root],
     initializationParams: [
       {
         title: MSG.coinMachinePurchaseTokenTitle,
@@ -154,7 +151,6 @@ const extensions: { [key: string]: ExtensionData } = {
     name: MSG.unknownName,
     description: MSG.unknownDescription,
     currentVersion: 0,
-    neededUserPermissions: [],
     neededColonyPermissions: [],
   },
 };

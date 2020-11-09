@@ -26,14 +26,16 @@ const MSG = defineMessages({
 // - Create saga to enable
 
 interface Props {
+  canInstall: boolean;
   installedExtension?: ColonyExtensionQuery['colonyExtension'] | null;
   extension: ExtensionData;
 }
 
-const ExtensionActionButton = ({ installedExtension }: Props) => {
+const ExtensionActionButton = ({ canInstall, installedExtension }: Props) => {
   if (!installedExtension) {
     return (
       <ActionButton
+        disabled={!canInstall}
         appearance={{ theme: 'primary', size: 'large' }}
         submit={ActionTypes.COLONY_EXTENSION_INSTALL}
         error={ActionTypes.COLONY_EXTENSION_INSTALL_ERROR}

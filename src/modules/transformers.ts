@@ -5,7 +5,7 @@ import {
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
-import { Colony } from '~data/index';
+import { AnyColonyWithRoles } from '~data/index';
 import { Address, UserRolesForDomain } from '~types/index';
 
 export const getRolesForUserAndDomain = (
@@ -22,7 +22,7 @@ export const getRolesForUserAndDomain = (
 };
 
 const getRolesForUserAndParentDomains = (
-  colony,
+  colony: AnyColonyWithRoles,
   userAddress: Address,
   domainId: number,
   roleSet = new Set<ColonyRole>(),
@@ -59,7 +59,7 @@ const getCombinedRolesForDomains = (
 };
 
 export const getAllUserRolesForDomain = (
-  colony,
+  { domains, roles }: AnyColonyWithRoles,
   domainId: number,
   excludeInherited = false,
 ): UserRolesForDomain[] => {
@@ -93,7 +93,7 @@ export const getAllUserRolesForDomain = (
 };
 
 export const getUserRolesForDomain = (
-  colony,
+  colony: AnyColonyWithRoles | undefined,
   userAddress: Address | undefined,
   domainId: number | undefined,
   excludeInherited = false,
@@ -114,14 +114,16 @@ export const getAllRootAccounts = (colony: Colony | undefined): Address[] => {
       ({ domains }) =>
         !!domains.find(
           ({ domainId, roles }) =>
-            domainId === ROOT_DOMAIN_ID &&
-            roles.includes((ColonyRole.Root as unknown) as string),
+            domainId === ROOT_DOMAIN_ID && roles.includes(ColonyRole.Root),
         ),
     )
     .map(({ address }) => address);
 };
 
-export const getAllUserRoles = (colony, userAddress: Address): ColonyRole[] => {
+export const getAllUserRoles = (
+  colony: AnyColonyWithRoles | undefined,
+  userAddress: Address,
+): ColonyRole[] => {
   if (!colony) return [] as ColonyRole[];
   const userRoles = colony.roles.find(({ address }) => address === userAddress);
   if (!userRoles) return [] as ColonyRole[];
