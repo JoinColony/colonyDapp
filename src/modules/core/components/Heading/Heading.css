@@ -29,6 +29,11 @@
   color: var(--grey-1);
 }
 
+.themeGrey {
+  composes: main;
+  color: var(--dark);
+}
+
 .themeInvert {
   composes: main;
   color: var(--text-invert);

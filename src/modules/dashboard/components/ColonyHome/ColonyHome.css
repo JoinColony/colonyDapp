@@ -44,6 +44,10 @@
   max-width: 320px;
 }
 
+.domainsDropdownContainer {
+  width: 320px;
+}
+
 .contentActionsPanel {
   display: flex;
   justify-content: space-between;

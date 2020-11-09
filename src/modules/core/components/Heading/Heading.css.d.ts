@@ -1,6 +1,7 @@
 export const main: string;
 export const themePrimary: string;
 export const themeDark: string;
+export const themeGrey: string;
 export const themeInvert: string;
 export const themeUppercase: string;
 export const marginNone: string;
