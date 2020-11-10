@@ -5,6 +5,7 @@ import { ActionButton } from '~core/Button';
 import { ColonyExtensionQuery } from '~data/index';
 import { ExtensionData } from '~data/staticData/extensionData';
 import { ActionTypes } from '~redux/index';
+import { Address } from '~types/index';
 
 const MSG = defineMessages({
   enable: {
@@ -27,11 +28,17 @@ const MSG = defineMessages({
 
 interface Props {
   canInstall: boolean;
-  installedExtension?: ColonyExtensionQuery['colonyExtension'] | null;
+  colonyAddress: Address;
   extension: ExtensionData;
+  installedExtension?: ColonyExtensionQuery['colonyExtension'] | null;
 }
 
-const ExtensionActionButton = ({ canInstall, installedExtension }: Props) => {
+const ExtensionActionButton = ({
+  canInstall,
+  colonyAddress,
+  extension,
+  installedExtension,
+}: Props) => {
   if (!installedExtension) {
     return (
       <ActionButton
@@ -40,6 +47,10 @@ const ExtensionActionButton = ({ canInstall, installedExtension }: Props) => {
         submit={ActionTypes.COLONY_EXTENSION_INSTALL}
         error={ActionTypes.COLONY_EXTENSION_INSTALL_ERROR}
         success={ActionTypes.COLONY_EXTENSION_INSTALL_SUCCESS}
+        values={{
+          colonyAddress,
+          extensionId: extension.extensionId,
+        }}
         text={MSG.install}
       />
     );
@@ -51,6 +62,10 @@ const ExtensionActionButton = ({ canInstall, installedExtension }: Props) => {
         submit={ActionTypes.COLONY_EXTENSION_ENABLE}
         error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
         success={ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS}
+        values={{
+          colonyAddress,
+          extensionId: extension.extensionId,
+        }}
         text={MSG.enable}
       />
     );

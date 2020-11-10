@@ -59,4 +59,15 @@ export type ColonyActionTypes =
       ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS,
       object,
       object
-    >;
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_INSTALL,
+      { colonyAddress: Address; extensionId: string },
+      WithKey
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_INSTALL_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_INSTALL_ERROR, object>;

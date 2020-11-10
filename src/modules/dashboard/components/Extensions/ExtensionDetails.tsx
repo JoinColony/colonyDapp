@@ -214,6 +214,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
           <div className={styles.buttonWrapper}>
             <ExtensionActionButton
               canInstall={canInstall}
+              colonyAddress={colonyAddress}
               installedExtension={installedExtension}
               extension={extension}
             />
@@ -231,7 +232,8 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
             </TableBody>
           </Table>
           {extension.uninstallable &&
-          !installedExtension?.details.deprecated ? (
+          installedExtension &&
+          !installedExtension.details.deprecated ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
                 dialog={ConfirmDialog}
@@ -248,7 +250,9 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
               />
             </div>
           ) : null}
-          {extension.uninstallable && installedExtension?.details.deprecated ? (
+          {extension.uninstallable &&
+          installedExtension &&
+          installedExtension.details.deprecated ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
                 dialog={ConfirmDialog}
