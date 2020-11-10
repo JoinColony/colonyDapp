@@ -47,6 +47,7 @@
   --drop-shadow: rgba(62, 118, 244, 0.14);
   --light-border: rgba(54, 54, 54, 0.15);
   --text-hover: rgb(76,93,255);
+  --text-disabled: rgb(194,204,204);
 
   /*
    * Gradients

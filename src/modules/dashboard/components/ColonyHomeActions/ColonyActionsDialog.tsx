@@ -70,7 +70,7 @@ const ColonyActionsDialog = ({
         <ColonyActionsItem title={MSG.createExpenditure} description={MSG.createExpenditureDesc} />
         <ColonyActionsItem title={MSG.manageFunds} description={MSG.manageFundsDesc} />
         <ColonyActionsItem title={MSG.manageDomains} description={MSG.manageDomainsDesc} />
-        <ColonyActionsItem title={MSG.smite} description={MSG.smiteDesc} />
+        <ColonyActionsItem title={MSG.smite} description={MSG.smiteDesc} disabled/>
         <ColonyActionsItem title={MSG.advanced} description={MSG.advancedDesc} />
       </div>
     </Dialog>
