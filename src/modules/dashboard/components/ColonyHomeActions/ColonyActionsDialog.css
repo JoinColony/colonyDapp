@@ -1,0 +1,20 @@
+.content {
+  padding-bottom: var(--pad-huge);
+}
+
+.header {
+  position: relative;
+  padding: 0 40px;
+  padding-top: var(--pad-huge);
+  padding-bottom: var(--pad-large);
+}
+
+.header:after {
+  content: "";
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--light-border);
+}
