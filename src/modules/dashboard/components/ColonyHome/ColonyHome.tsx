@@ -186,7 +186,12 @@ const ColonyHome = ({ match, location }: Props) => {
             <ColonyHomeActions />
           </div>
           <Switch>
-            <Route path={COLONY_EVENTS_ROUTE} component={ColonyEvents} />
+            <Route 
+              path={COLONY_EVENTS_ROUTE} 
+              component={() => (
+                <ColonyEvents colonyAddress={colony.colonyAddress} />
+              )}
+            />
             <Route
               path={COLONY_EXTENSIONS_ROUTE}
               component={() => <>Extensions</>}

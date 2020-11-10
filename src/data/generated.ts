@@ -186,6 +186,7 @@ export type Colony = {
   description?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   domains: Array<Domain>;
+  events: Array<Event>;
   founder?: Maybe<User>;
   founderAddress: Scalars['String'];
   guideline?: Maybe<Scalars['String']>;
@@ -402,14 +403,19 @@ export type UnlockNextLevelEvent = {
 export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent;
 
 export type Event = {
-  id: Scalars['String'];
-  type: EventType;
+  context: EventContext;
   createdAt: Scalars['DateTime'];
+  date: Scalars['Int'];
+  from?: Maybe<Scalars['String']>;
+  hash: Scalars['String'];
+  id: Scalars['String'];
   initiator?: Maybe<User>;
   initiatorAddress: Scalars['String'];
+  name: Scalars['String'];
   sourceId: Scalars['String'];
   sourceType: Scalars['String'];
-  context: EventContext;
+  to?: Maybe<Scalars['String']>;
+  type: EventType;
 };
 
 export type Notification = {
@@ -2147,6 +2153,16 @@ export type ColonyTransfersQueryVariables = Exact<{
 export type ColonyTransfersQuery = { colony: (
     Pick<Colony, 'id' | 'colonyAddress'>
     & { transfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>>, unclaimedTransfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>> }
+  ) };
+
+export type ColonyEventsQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyEventsQuery = { colony: (
+    Pick<Colony, 'id' | 'colonyAddress'>
+    & { events: Array<Pick<Event, 'from' | 'to' | 'date' | 'name' | 'hash'>> }
   ) };
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{
@@ -5481,6 +5497,47 @@ export function useColonyTransfersLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type ColonyTransfersQueryHookResult = ReturnType<typeof useColonyTransfersQuery>;
 export type ColonyTransfersLazyQueryHookResult = ReturnType<typeof useColonyTransfersLazyQuery>;
 export type ColonyTransfersQueryResult = Apollo.QueryResult<ColonyTransfersQuery, ColonyTransfersQueryVariables>;
+export const ColonyEventsDocument = gql`
+    query ColonyEvents($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    events @client {
+      from
+      to
+      date
+      name
+      hash
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyEventsQuery__
+ *
+ * To run a query within a React component, call `useColonyEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyEventsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyEventsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyEventsQuery, ColonyEventsQueryVariables>) {
+        return Apollo.useQuery<ColonyEventsQuery, ColonyEventsQueryVariables>(ColonyEventsDocument, baseOptions);
+      }
+export function useColonyEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyEventsQuery, ColonyEventsQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyEventsQuery, ColonyEventsQueryVariables>(ColonyEventsDocument, baseOptions);
+        }
+export type ColonyEventsQueryHookResult = ReturnType<typeof useColonyEventsQuery>;
+export type ColonyEventsLazyQueryHookResult = ReturnType<typeof useColonyEventsLazyQuery>;
+export type ColonyEventsQueryResult = Apollo.QueryResult<ColonyEventsQuery, ColonyEventsQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {

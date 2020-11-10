@@ -75,6 +75,14 @@ export default gql`
     token: String!
   }
 
+  type Event {
+    to: String
+    from: String
+    date: Int!
+    hash: String!
+    name: String!
+  }
+
   extend type Colony {
     canMintNativeToken: Boolean!
     canUnlockNativeToken: Boolean!
@@ -84,6 +92,7 @@ export default gql`
     roles: [UserRoles!]!
     tokens(addresses: [String!]): [Token!]!
     transfers: [Transfer!]!
+    events: [Event!]!
     unclaimedTransfers: [Transfer!]!
     version: Int!
   }

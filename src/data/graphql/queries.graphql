@@ -327,6 +327,20 @@ query ColonyTransfers($address: String!) {
   }
 }
 
+query ColonyEvents($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    events @client {
+      from
+      to
+      date
+      name
+      hash
+    }
+  }
+}
+
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id

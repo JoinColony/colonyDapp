@@ -7,8 +7,83 @@ import {
 import { bigNumberify } from 'ethers/utils';
 import { HashZero } from 'ethers/constants';
 
-import { Transfer } from '~data/index';
+import { Transfer, Event } from '~data/index';
 import { notUndefined } from '~utils/arrays';
+
+// TODO Find better place for it..
+const FILTERS = [
+  "ColonyBootstrapped",
+  "ColonyFundsClaimed",
+  "ColonyFundsMovedBetweenFundingPots",
+  "ColonyInitialised",
+  "ColonyRewardInverseSet",
+  "ColonyRoleSet",
+  "ColonyUpgraded",
+  "DomainAdded",
+  "ExpenditureAdded",
+  "ExpenditureCancelled",
+  "ExpenditureFinalized",
+  "ExpenditurePayoutSet",
+  "ExpenditureRecipientSet",
+  "ExpenditureSkillSet",
+  "ExpenditureTransferred",
+  "FundingPotAdded",
+  "PaymentAdded",
+  "PayoutClaimed",
+  "RecoveryRoleSet",
+  "RewardPayoutClaimed",
+  "RewardPayoutCycleEnded",
+  "RewardPayoutCycleStarted",
+  "TaskAdded",
+  "TaskBriefSet",
+  "TaskCanceled",
+  "TaskCompleted",
+  "TaskDeliverableSubmitted",
+  "TaskDueDateSet",
+  "TaskFinalized",
+  "TaskPayoutSet",
+  "TaskRoleUserSet",
+  "TaskSkillSet",
+  "TaskWorkRatingRevealed"
+]
+
+export const getColonyAllEvents = async (
+  colonyClient: ColonyClient,
+): Promise<Event[]> => {
+  const { provider } = colonyClient;
+
+  const allEventsLogs = await FILTERS.reduce(async (acc, filter) => {
+    const logs = await getLogs(
+      colonyClient,
+      colonyClient.filters[filter]()
+    )
+    return [...(await acc), ...logs]
+  }, Promise.resolve([]))
+  
+  const events = await Promise.all(
+    allEventsLogs.map(async (log) => {
+      const event = colonyClient.interface.parseLog(log);
+      const date = log.blockHash
+        ? await getBlockTime(provider, log.blockHash)
+        : 0;
+
+      const tx = log.transactionHash
+        ? await provider.getTransaction(log.transactionHash)
+        : undefined;
+
+      return {
+        __typename: 'Event',
+        ...event,
+        date,
+        from: (tx && tx.from) || null,
+        hash: log.transactionHash || HashZero,
+        to: colonyClient.address,
+      };
+    }),
+  );
+
+  return events;
+}
 
 export const getColonyFundsClaimedTransfers = async (
   colonyClient: ColonyClient,
