@@ -2,9 +2,10 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
-import Dialog, { DialogSection, DialogProps } from '~core/Dialog';
+import Dialog, { DialogProps } from '~core/Dialog';
 import Heading from '~core/Heading';
 import ColonyActionsItem from './ColonyActionsItem';
+import styles from './ColonyActionsDialog.css';
 
 const MSG = defineMessages({
   title: {
@@ -45,7 +46,7 @@ const MSG = defineMessages({
   },
   advanced: {
     id: 'dashboard.ColonyHomeActions.ColonyActionsDialog.advanced',
-    defaultMessage: 'Smite',
+    defaultMessage: 'Advanced',
   },
   advancedDesc: {
     id: 'dashboard.ColonyHomeActions.ColonyActionsDialog.advancedDesc',
@@ -59,19 +60,19 @@ const ColonyActionsDialog = ({
 
   return (
     <Dialog cancel={cancel}>
-      <DialogSection>
+      <div className={styles.header}>
         <Heading
           appearance={{ margin: 'none', size: 'medium', weight: 'bold', theme: 'grey' }}
           text={MSG.title}
         />
-      </DialogSection>
-      <DialogSection>
+      </div>
+      <div className={styles.content}>
         <ColonyActionsItem title={MSG.createExpenditure} description={MSG.createExpenditureDesc} />
         <ColonyActionsItem title={MSG.manageFunds} description={MSG.manageFundsDesc} />
         <ColonyActionsItem title={MSG.manageDomains} description={MSG.manageDomainsDesc} />
         <ColonyActionsItem title={MSG.smite} description={MSG.smiteDesc} />
         <ColonyActionsItem title={MSG.advanced} description={MSG.advancedDesc} />
-      </DialogSection>
+      </div>
     </Dialog>
   );
 };

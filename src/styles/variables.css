@@ -20,6 +20,7 @@
   --grey-blue-1: rgb(232, 236, 245);
   --grey-blue-2: rgb(244, 246, 250);
   --grey-blue-3: rgb(246, 246, 246);
+  --light-blue: rgb(238,242,245);
 
   /*
    * We really need to cleanup the greys, as they're growing larger and larger by the day
@@ -44,6 +45,8 @@
   --temp-grey-blue-7: rgb(118, 116, 139); /* Used for the wallet connect button in the user navigation */
   --temp-grey-blue-8: rgb(238, 242, 245); /* Used for the actions list hover background */
   --drop-shadow: rgba(62, 118, 244, 0.14);
+  --light-border: rgba(54, 54, 54, 0.15);
+  --text-hover: rgb(76,93,255);
 
   /*
    * Gradients
