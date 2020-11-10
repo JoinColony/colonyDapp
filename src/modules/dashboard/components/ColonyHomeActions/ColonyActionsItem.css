@@ -12,7 +12,7 @@
   font-weight: var(--weight-bold);
 }
 
-.content {
+.content, .disabled {
   position: relative;
   display: flex;
   align-items: center;
@@ -21,7 +21,7 @@
   cursor: pointer;
 }
 
-.content:after {
+.content:after, .disabled:after {
   content: "";
   position: absolute;
   left: 40px;
@@ -29,6 +29,11 @@
   bottom: 0;
   height: 1px;
   background-color: var(--light-border);
+}
+
+.disabled .title,
+.disabled .description {
+  color: var(--text-disabled);
 }
 
 .content:hover {
@@ -42,4 +47,17 @@
 .icon svg {
   fill: var(--dark);
   opacity: 0.7;
+}
+
+.coming {
+  display: flex;
+  align-items: center;
+  background-color: var(--light-blue);
+  border-radius: var(--radius-normal);
+  padding: 0 8px;
+  height: 20px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-13);
+  margin-left: 5px;
 }
