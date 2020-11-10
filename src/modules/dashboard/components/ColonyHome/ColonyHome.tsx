@@ -162,7 +162,7 @@ const ColonyHome = ({ match, location }: Props) => {
           <ColonyTotalFunds colony={colony} />
           <div className={styles.contentActionsPanel}>
             <div className={styles.domainsDropdownContainer}>
-              <DomainDropdown  colonyAddress={colony.colonyAddress} />
+              <DomainDropdown colonyAddress={colony.colonyAddress} />
             </div>
             <ColonyHomeActions />
           </div>
