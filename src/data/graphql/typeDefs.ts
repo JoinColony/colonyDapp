@@ -132,6 +132,7 @@ export default gql`
   type ColonyExtensionDetails {
     enabled: Boolean!
     deprecated: Boolean!
+    initialized: Boolean!
     installedBy: String!
     installedAt: Int!
   }

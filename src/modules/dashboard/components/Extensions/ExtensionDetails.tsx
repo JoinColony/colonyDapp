@@ -12,6 +12,7 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
+import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import CopyableAddress from '~core/CopyableAddress';
 import Tag from '~core/Tag';
@@ -19,11 +20,13 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useTransformer } from '~utils/hooks';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
+import { ActionTypes } from '~redux/index';
 
 import { getUserRolesForDomain } from '../../../transformers';
 
 import styles from './ExtensionDetails.css';
 import ExtensionActionButton from './ExtensionActionButton';
+import { ConfirmDialog } from '~core/Dialog';
 
 const MSG = defineMessages({
   title: {
@@ -77,6 +80,26 @@ const MSG = defineMessages({
   permissionsNeeded: {
     id: 'dashboard.Extensions.ExtensionDetails.permissionsNeeded',
     defaultMessage: 'Permissions the extension needs in the colony:',
+  },
+  buttonUninstall: {
+    id: 'dashboard.Extensions.ExtensionDetails.buttonUninstall',
+    defaultMessage: 'Uninstall',
+  },
+  confirmDeprecate: {
+    id: 'dashboard.Extensions.ExtensionDetails.confirmDeprecate',
+    defaultMessage: 'Yes, deprecate extension',
+  },
+  textDeprecate: {
+    id: 'dashboard.Extensions.ExtensionDetails.textDeprecate',
+    defaultMessage: `This extension is currently active and it will be deprecated, not uninstalled immediately.`,
+  },
+  confirmUninstall: {
+    id: 'dashboard.Extensions.ExtensionDetails.confirmUninstall',
+    defaultMessage: 'Yes, uninstall extension',
+  },
+  textUninstall: {
+    id: 'dashboard.Extensions.ExtensionDetails.textUninstall',
+    defaultMessage: 'Do you really want to uninstall this extension?',
   },
 });
 
@@ -207,6 +230,41 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
               ))}
             </TableBody>
           </Table>
+          {extension.uninstallable &&
+          !installedExtension?.details.deprecated ? (
+            <div className={styles.buttonUninstall}>
+              <DialogActionButton
+                dialog={ConfirmDialog}
+                dialogProps={{
+                  confirmButtonText: MSG.confirmDeprecate,
+                  children: <FormattedMessage {...MSG.textDeprecate} />,
+                }}
+                appearance={{ theme: 'blue' }}
+                submit={ActionTypes.COLONY_EXTENSION_DEPRECATE}
+                error={ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR}
+                success={ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS}
+                text={MSG.buttonUninstall}
+                values={{ colonyAddress }}
+              />
+            </div>
+          ) : null}
+          {extension.uninstallable && installedExtension?.details.deprecated ? (
+            <div className={styles.buttonUninstall}>
+              <DialogActionButton
+                dialog={ConfirmDialog}
+                dialogProps={{
+                  confirmButtonText: MSG.confirmUninstall,
+                  children: <FormattedMessage {...MSG.textUninstall} />,
+                }}
+                appearance={{ theme: 'blue' }}
+                submit={ActionTypes.COLONY_EXTENSION_UNINSTALL}
+                error={ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR}
+                success={ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS}
+                text={MSG.buttonUninstall}
+                values={{ colonyAddress }}
+              />
+            </div>
+          ) : null}
           <div className={styles.permissions}>
             <Heading
               appearance={{ size: 'normal' }}

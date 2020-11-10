@@ -244,7 +244,9 @@ query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
     address
     extensionId
     details(colonyAddress: $colonyAddress) {
+      deprecated
       enabled
+      initialized
       installedBy
       installedAt
     }

@@ -650,9 +650,30 @@ export const colonyResolvers = ({
         installedAt = time || 0;
       }
 
+      const extensionClient = await colonyClient.getExtensionClient(
+        extensionId,
+      );
+
+      const deprecated = await extensionClient.getDeprecated();
+
+      // If no initializationParams are present it does not need initialization
+      // and will set to be true by default
+      let initialized = !extension.initializationParams;
+      if (!initialized) {
+        // Otherwise we look for the presence of an initialization event
+        const intializedFilter = extensionClient.filters.ExtensionInitialised();
+        const initializedEvents = await getEvents(
+          extensionClient,
+          intializedFilter,
+        );
+        initialized = !!initializedEvents.length;
+      }
+
       return {
         __typename: 'ColonyExtensionDetails',
+        deprecated,
         enabled: !missingPermissions.length,
+        initialized,
         installedBy,
         installedAt,
       };

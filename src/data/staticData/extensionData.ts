@@ -19,6 +19,7 @@ export interface ExtensionData {
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
+  uninstallable: boolean;
 }
 
 const MSG = defineMessages({
@@ -104,6 +105,7 @@ const extensions: { [key: string]: ExtensionData } = {
     currentVersion: 1,
     createdAt: 1557698400000,
     neededColonyPermissions: [ColonyRole.Administration, ColonyRole.Funding],
+    uninstallable: false,
   },
   CoinMachine: {
     extensionId: Extension.CoinMachine,
@@ -144,6 +146,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 10,
       },
     ],
+    uninstallable: true,
   },
   Unknown: {
     extensionId: 'Unknown',
@@ -152,6 +155,7 @@ const extensions: { [key: string]: ExtensionData } = {
     description: MSG.unknownDescription,
     currentVersion: 0,
     neededColonyPermissions: [],
+    uninstallable: false,
   },
 };
 

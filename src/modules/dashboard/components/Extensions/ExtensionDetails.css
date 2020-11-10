@@ -35,3 +35,8 @@
 .permissions {
   margin-top: 30px;
 }
+
+.buttonUninstall {
+  margin-top: 10px;
+  text-align: right;
+}
