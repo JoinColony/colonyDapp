@@ -1,6 +1,6 @@
 import React from 'react';
-import Icon from '~core/Icon';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import Icon from '~core/Icon';
 import Paragraph from '~core/Paragraph';
 import styles from './ColonyActionsItem.css';
 
@@ -14,15 +14,10 @@ const MSG = defineMessages({
   coming: {
     id: 'dashboard.ColonyHomeActions.ColonyActionsItem.coming',
     defaultMessage: 'Coming',
-  }
+  },
 });
 
-const ColonyActionsItem = ({
-  title,
-  description,
-  disabled,
-}: Props) => {
-
+const ColonyActionsItem = ({ title, description, disabled }: Props) => {
   return (
     <div className={`${disabled ? styles.disabled : styles.content}`}>
       <div>
@@ -34,10 +29,14 @@ const ColonyActionsItem = ({
           />
           <FormattedMessage {...title} />
           {disabled && (
-            <Paragraph className={styles.coming}><FormattedMessage {...MSG.coming} /></Paragraph>
+            <Paragraph className={styles.coming}>
+              <FormattedMessage {...MSG.coming} />
+            </Paragraph>
           )}
         </Paragraph>
-        <Paragraph className={styles.description}><FormattedMessage {...description} /></Paragraph>
+        <Paragraph className={styles.description}>
+          <FormattedMessage {...description} />
+        </Paragraph>
       </div>
       {!disabled && (
         <div className={styles.icon}>
