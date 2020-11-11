@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { useRouteMatch, useHistory, useParams } from 'react-router';
 
-import Button, { ActionButton } from '~core/Button';
+import Button, { ActionButton, IconButton } from '~core/Button';
 import { ColonyExtensionQuery } from '~data/index';
 import { ExtensionData } from '~data/staticData/extensionData';
 import { ActionTypes } from '~redux/index';
@@ -19,14 +19,6 @@ const MSG = defineMessages({
     defaultMessage: 'Install',
   },
 });
-// - Do not show button if installed and enabling is not possible/necessary
-// - Do not show button if not uninstallable
-// - Do not show button if user does not have the permission to install/enable
-// next steps:
-// Button text and action depending on install and enabled status
-// - Create saga to install
-// - Create modal for initialisation params
-// - Create saga to enable
 
 interface Props {
   canInstall: boolean;
@@ -49,12 +41,13 @@ const ExtensionActionButton = ({
     history.push(`/colony/${colonyName}/extensions/${extensionId}/setup`);
   }, [colonyName, extensionId, history]);
 
-  if (!canInstall) return null;
+  if (!canInstall || onSetupRoute) return null;
 
   if (!installedExtension) {
     return (
       <ActionButton
         appearance={{ theme: 'primary', size: 'large' }}
+        button={IconButton}
         submit={ActionTypes.COLONY_EXTENSION_INSTALL}
         error={ActionTypes.COLONY_EXTENSION_INSTALL_ERROR}
         success={ActionTypes.COLONY_EXTENSION_INSTALL_SUCCESS}
@@ -66,12 +59,27 @@ const ExtensionActionButton = ({
       />
     );
   }
-  // @TODO if no init options, directly create txs
-  if (!onSetupRoute && !installedExtension.details.enabled) {
+
+  if (!installedExtension.details.initialized) {
     return (
       <Button
         appearance={{ theme: 'primary', size: 'large' }}
         onClick={handleEnableButtonClick}
+        text={MSG.enable}
+      />
+    );
+  }
+  if (installedExtension.details.missingPermissions.length) {
+    return (
+      <ActionButton
+        button={IconButton}
+        submit={ActionTypes.COLONY_EXTENSION_ENABLE}
+        error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
+        success={ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS}
+        values={{
+          colonyAddress,
+          extensionId: extension.extensionId,
+        }}
         text={MSG.enable}
       />
     );

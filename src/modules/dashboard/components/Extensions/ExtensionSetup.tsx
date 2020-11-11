@@ -3,11 +3,13 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams } from 'react-router';
 
-import { IconButton } from '~core/Button';
+import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
 import { ActionTypes } from '~redux/index';
+import { ColonyExtension } from '~data/index';
 import { ExtensionData } from '~data/staticData/extensionData';
+import { mergePayload } from '~utils/actions';
 import { Address } from '~types/index';
 
 import styles from './ExtensionSetup.css';
@@ -26,22 +28,25 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionSetup.description',
     defaultMessage: `Enabling this extension requires additional parameters. These parameters can not be changed after enabling it. To do that you have to uninstall the extension, install and enable it again with new parameters.`,
   },
+  descriptionMissingPermissions: {
+    id: 'dashboard.Extensions.ExtensionSetup.descriptionMissingPermissions',
+    defaultMessage: `This Extension needs certain permissions in the Colony. Click here to set them.`,
+  },
+  setPermissions: {
+    id: 'dashboard.Extensions.ExtensionSetup.setPermissions',
+    defaultMessage: 'Set permissions',
+  },
 });
 
 interface Props {
   colonyAddress: Address;
   extension: ExtensionData;
+  installedExtension: ColonyExtension;
 }
-// @TODO needed
-/* {/1* transform={transform} *1/} */
-/* values={{ */
-/*   colonyAddress, */
-/*   extensionId: extension.extensionId, */
-/* }} */
-
 const ExtensionSetup = ({
-  /* colonyAddress, */
+  colonyAddress,
   extension: { initializationParams },
+  installedExtension,
 }: Props) => {
   const { colonyName, extensionId } = useParams();
   const history = useHistory();
@@ -50,7 +55,39 @@ const ExtensionSetup = ({
     history.replace(`/colony/${colonyName}/extensions/${extensionId}`);
   }, [history, colonyName, extensionId]);
 
-  if (!initializationParams || !initializationParams.length) return null;
+  const transform = useCallback(mergePayload({ colonyAddress, extensionId }), [
+    colonyAddress,
+    extensionId,
+  ]);
+
+  // This is a special case that should not happen. Used to recover the
+  // missing permission transactions
+  if (
+    installedExtension.details.initialized &&
+    installedExtension.details.missingPermissions.length
+  ) {
+    return (
+      <div className={styles.main}>
+        <Heading
+          appearance={{ size: 'medium', margin: 'none' }}
+          text={MSG.title}
+        />
+        <FormattedMessage {...MSG.descriptionMissingPermissions} />
+
+        <div className={styles.inputContainer}>
+          <ActionButton
+            submit={ActionTypes.COLONY_EXTENSION_ENABLE}
+            error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
+            success={ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS}
+            transform={transform}
+            text={MSG.setPermissions}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (!initializationParams) return null;
 
   return (
     <ActionForm
@@ -60,6 +97,7 @@ const ExtensionSetup = ({
       error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
       success={ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS}
       onSuccess={handleFormSuccess}
+      transform={transform}
     >
       {({ handleSubmit, isSubmitting, isValid }: FormikProps<object>) => (
         <div className={styles.main}>

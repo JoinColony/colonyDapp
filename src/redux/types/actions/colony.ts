@@ -71,10 +71,32 @@ export type ColonyActionTypes =
       object
     >
   | ErrorActionType<ActionTypes.COLONY_EXTENSION_INSTALL_ERROR, object>
-  | UniqueActionType<ActionTypes.COLONY_EXTENSION_ENABLE, object, WithKey>
+  | UniqueActionType<ActionTypes.COLONY_EXTENSION_ENABLE, any, WithKey>
   | UniqueActionType<
       ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS,
       object,
       object
     >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_ENABLE_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_ENABLE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_DEPRECATE,
+      { colonyAddress: Address; extensionId: string },
+      WithKey
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_UNINSTALL,
+      { colonyAddress: Address; extensionId: string },
+      WithKey
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>;

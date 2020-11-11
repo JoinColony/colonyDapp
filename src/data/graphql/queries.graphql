@@ -245,10 +245,10 @@ query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
     extensionId
     details(colonyAddress: $colonyAddress) {
       deprecated
-      enabled
       initialized
       installedBy
       installedAt
+      missingPermissions
     }
   }
 }

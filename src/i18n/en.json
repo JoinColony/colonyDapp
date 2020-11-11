@@ -141,6 +141,10 @@
     "transaction.ColonyClient.removeRecoveryRole.description": "Remove role from ({ 0 })",
     "transaction.ColonyClient.setRootRole.title": "{1, select, true { Add root role } false { Remove root role } }",
     "transaction.ColonyClient.setRootRole.description": "{1, select, true { Give role to ({ address }) } false { Remove role from ({ address }) } }",
+    "transaction.group.enableExtension.title": "Enable Colony Extension",
+    "transaction.group.enableExtension.description": "Enable Colony Extension",
+    "transaction.CoinMachineClient.initialise.title": "Initialize CoinMachine Extension",
+    "transaction.ColonyClient.setUserRolesWithProofs.title": "Set user permissions",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",

@@ -57,6 +57,12 @@ export function* getTxChannel(id: string) {
   return yield actionChannel(filterUniqueAction(id), buffers.fixed());
 }
 
+export interface ChannelDefinition {
+  channel: Channel<any>;
+  index: number;
+  id: string;
+}
+
 export function* createTransactionChannels(
   batchId: string,
   ids: string[],

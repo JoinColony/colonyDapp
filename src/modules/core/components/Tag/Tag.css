@@ -26,6 +26,12 @@
   color: white;
 }
 
+.themeDanger {
+  composes: baseStyles;
+  background-color: var(--danger);
+  color: white;
+}
+
 .main {
   composes: themeLight;
 }

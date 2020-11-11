@@ -1,6 +1,12 @@
 import React from 'react';
 import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
-import { useParams, Switch, Route, useRouteMatch } from 'react-router';
+import {
+  useParams,
+  Switch,
+  Route,
+  useRouteMatch,
+  Redirect,
+} from 'react-router';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
@@ -32,6 +38,7 @@ import { getUserRolesForDomain } from '../../../transformers';
 import styles from './ExtensionDetails.css';
 import ExtensionActionButton from './ExtensionActionButton';
 import ExtensionSetup from './ExtensionSetup';
+import ExtensionStatus from './ExtensionStatus';
 
 const MSG = defineMessages({
   title: {
@@ -41,14 +48,6 @@ const MSG = defineMessages({
   buttonAdd: {
     id: 'dashboard.Extensions.ExtensionDetails.buttonAdd',
     defaultMessage: 'Add',
-  },
-  tagInstalled: {
-    id: 'dashboard.Extensions.ExtensionDetails.tagInstalled',
-    defaultMessage: 'Installed',
-  },
-  tagNotInstalled: {
-    id: 'dashboard.Extensions.ExtensionDetails.tagNotInstalled',
-    defaultMessage: 'Not installed',
   },
   status: {
     id: 'dashboard.Extensions.ExtensionDetails.status',
@@ -151,9 +150,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
     tableData = [
       {
         label: MSG.status,
-        value: (
-          <Tag appearance={{ theme: 'primary' }} text={MSG.tagInstalled} />
-        ),
+        value: <ExtensionStatus installedExtension={installedExtension} />,
       },
       {
         label: MSG.installedBy,
@@ -191,7 +188,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
     tableData = [
       {
         label: MSG.status,
-        value: <Tag text={MSG.tagNotInstalled} />,
+        value: <ExtensionStatus installedExtension={installedExtension} />,
       },
       {
         label: MSG.dateCreated,
@@ -238,12 +235,23 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
           <Route
             exact
             path={COLONY_EXTENSION_SETUP_ROUTE}
-            component={() => (
-              <ExtensionSetup
-                extension={extension}
-                colonyAddress={colonyAddress}
-              />
-            )}
+            component={() => {
+              if (
+                !canInstall ||
+                !installedExtension ||
+                (installedExtension.details.initialized &&
+                  !installedExtension.details.missingPermissions.length)
+              ) {
+                return <Redirect to={extensionUrl} />;
+              }
+              return (
+                <ExtensionSetup
+                  extension={extension}
+                  installedExtension={installedExtension}
+                  colonyAddress={colonyAddress}
+                />
+              );
+            }}
           />
         </Switch>
         <aside>
@@ -267,7 +275,8 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
               ))}
             </TableBody>
           </Table>
-          {extension.uninstallable &&
+          {canInstall &&
+          extension.uninstallable &&
           installedExtension &&
           !installedExtension.details.deprecated ? (
             <div className={styles.buttonUninstall}>
@@ -282,11 +291,12 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
                 error={ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR}
                 success={ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS}
                 text={MSG.buttonUninstall}
-                values={{ colonyAddress }}
+                values={{ colonyAddress, extensionId }}
               />
             </div>
           ) : null}
-          {extension.uninstallable &&
+          {canInstall &&
+          extension.uninstallable &&
           installedExtension &&
           installedExtension.details.deprecated ? (
             <div className={styles.buttonUninstall}>
@@ -301,7 +311,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
                 error={ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR}
                 success={ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS}
                 text={MSG.buttonUninstall}
-                values={{ colonyAddress }}
+                values={{ colonyAddress, extensionId }}
               />
             </div>
           ) : null}

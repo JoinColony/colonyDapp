@@ -661,10 +661,11 @@ export const colonyResolvers = ({
       let initialized = !extension.initializationParams;
       if (!initialized) {
         // Otherwise we look for the presence of an initialization event
-        const intializedFilter = extensionClient.filters.ExtensionInitialised();
+        // eslint-disable-next-line max-len
+        const initializedFilter = extensionClient.filters.ExtensionInitialised();
         const initializedEvents = await getEvents(
           extensionClient,
-          intializedFilter,
+          initializedFilter,
         );
         initialized = !!initializedEvents.length;
       }
@@ -672,7 +673,7 @@ export const colonyResolvers = ({
       return {
         __typename: 'ColonyExtensionDetails',
         deprecated,
-        enabled: !missingPermissions.length,
+        missingPermissions,
         initialized,
         installedBy,
         installedAt,
