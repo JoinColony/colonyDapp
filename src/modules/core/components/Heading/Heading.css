@@ -29,7 +29,7 @@
   color: var(--grey-1);
 }
 
-.themeGrey {
+.themeDark {
   composes: main;
   color: var(--dark);
 }

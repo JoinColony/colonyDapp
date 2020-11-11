@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import Icon from '~core/Icon';
 import Paragraph from '~core/Paragraph';
-import styles from './ColonyActionsItem.css';
+import styles from './ColonyActionsDialogItem.css';
 
 interface Props {
   title: object;
@@ -12,12 +12,12 @@ interface Props {
 
 const MSG = defineMessages({
   coming: {
-    id: 'dashboard.ColonyHomeActions.ColonyActionsItem.coming',
+    id: 'dashboard.ColonyActionsDialog.ColonyActionsDialogItem.coming',
     defaultMessage: 'Coming',
   },
 });
 
-const ColonyActionsItem = ({ title, description, disabled }: Props) => {
+const ColonyActionsDialogItem = ({ title, description, disabled }: Props) => {
   return (
     <div className={`${disabled ? styles.disabled : styles.content}`}>
       <div>
@@ -29,9 +29,9 @@ const ColonyActionsItem = ({ title, description, disabled }: Props) => {
           />
           <FormattedMessage {...title} />
           {disabled && (
-            <Paragraph className={styles.coming}>
+            <span className={styles.coming}>
               <FormattedMessage {...MSG.coming} />
-            </Paragraph>
+            </span>
           )}
         </Paragraph>
         <Paragraph className={styles.description}>
@@ -51,4 +51,4 @@ const ColonyActionsItem = ({ title, description, disabled }: Props) => {
   );
 };
 
-export default ColonyActionsItem;
+export default ColonyActionsDialogItem;

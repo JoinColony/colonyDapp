@@ -1,3 +1,5 @@
+@value blueHover: rgb(76,93,255);
+
 .title {
   display: flex;
   align-items: center;
@@ -28,7 +30,7 @@
   right: 40px;
   bottom: 0;
   height: 1px;
-  background-color: var(--light-border);
+  background-color: color-mod(var(--grey-2) alpha(15%));
 }
 
 .disabled .title,
@@ -37,11 +39,11 @@
 }
 
 .content:hover {
-  background-color: var(--light-blue);
+  background-color: var(--colony-light-blue);
 }
 
 .content:hover .title {
-  color: var(--text-hover);
+  color: blueHover;
 }
 
 .icon svg {
@@ -52,7 +54,7 @@
 .coming {
   display: flex;
   align-items: center;
-  background-color: var(--light-blue);
+  background-color: var(--colony-light-blue);
   border-radius: var(--radius-normal);
   padding: 0 8px;
   height: 20px;
