@@ -54,7 +54,12 @@
     "tag",
     "three-dots-row",
     "unlock",
-    "wallet"
+    "wallet",
+    "expenditure",
+    "funds",
+    "domains",
+    "smite",
+    "advanced"
   ],
   "multiColorIcons": [
     "circle-check-primary",

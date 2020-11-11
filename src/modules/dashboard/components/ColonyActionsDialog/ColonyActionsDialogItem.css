@@ -46,9 +46,15 @@
   color: blueHover;
 }
 
-.icon svg {
+.iconCaret svg {
   fill: var(--dark);
   opacity: 0.7;
+}
+
+.iconTitle {
+  display: flex;
+  align-items: center;
+  margin-right: 5px;
 }
 
 .coming {
@@ -63,3 +69,4 @@
   color: var(--temp-grey-13);
   margin-left: 5px;
 }
+
