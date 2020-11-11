@@ -10,6 +10,7 @@ import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { useUserLazy, useTokenQuery, ColonyTransaction } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import TransactionDetails from './TransactionDetails';
 
@@ -22,7 +23,7 @@ const MSG = defineMessages({
   },
   buttonEtherscan: {
     id: 'admin.TransactionList.TransactionListItem.buttonEtherscan',
-    defaultMessage: 'Etherscan',
+    defaultMessage: '{blockExplorerName}',
   },
   incomingTransactionTitle: {
     id: 'admin.TransactionList.TransactionListItem.incomingTransactionTitle',
@@ -141,11 +142,17 @@ const TransactionListItem = ({
               className={styles.customButton}
               hash={transaction.hash}
               text={MSG.buttonEtherscan}
+              textValues={{
+                blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
+              }}
             />
             <TransactionLink
               className={styles.mobileLink}
               hash={transaction.hash}
               text={MSG.buttonEtherscan}
+              textValues={{
+                blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
+              }}
             />
           </div>
         )}

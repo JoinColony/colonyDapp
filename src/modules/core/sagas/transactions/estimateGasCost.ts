@@ -1,5 +1,6 @@
 import { call, put } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
+import { Network } from '@colony/colony-js';
 
 import { ActionTypes, Action } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -12,6 +13,8 @@ import {
   transactionEstimateError,
 } from '../../actionCreators';
 import { getGasPrices } from '../utils';
+
+import { DEFAULT_NETWORK } from '~constants';
 
 /*
  * @area: including a bit of buffer on the gas sent can be a good thing.
@@ -43,12 +46,21 @@ export default function* estimateGasCost({
       .div(SAFE_GAS_LIMIT_MULTIPLIER)
       .add(estimatedGas);
 
-    const { network, suggested } = yield call(getGasPrices);
+    const { network, suggested, fixed } = yield call(getGasPrices);
+
+    let gasPrice = suggested || network;
+
+    /**
+     * Setting gas price on local to 0 for the fun of it
+     */
+    if (DEFAULT_NETWORK === Network.Local || DEFAULT_NETWORK === Network.Xdai) {
+      gasPrice = fixed;
+    }
 
     yield put(
       transactionUpdateGas(id, {
         gasLimit: suggestedGasLimit.toString(),
-        gasPrice: suggested || network,
+        gasPrice,
       }),
     );
   } catch (error) {

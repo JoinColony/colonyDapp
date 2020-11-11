@@ -10,7 +10,7 @@ import { Address, ENSName } from '~types/index';
 import { createAddress, isAddress } from '~utils/web3';
 
 const COLONY_NETWORK_ENS_NAME =
-  process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth';
+  process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.colonyxdai';
 const EXTERNAL_PREFIX = '$';
 
 class ENS {
@@ -77,7 +77,7 @@ class ENS {
     }
 
     // eslint-disable-next-line max-len
-    const ensName = await networkClient.lookupRegisteredENSDomainWithGoerliPatch(
+    const ensName = await networkClient.lookupRegisteredENSDomainWithNetworkPatches(
       address,
     );
 
@@ -100,7 +100,7 @@ class ENS {
     return !address;
   }
 
-  /* Returns an Ethereum address, when given the human-readable name */
+  /* Returns an xDai Chain address, when given the human-readable name */
   async getAddress(
     domain: string,
     networkClient: ColonyNetworkClient,

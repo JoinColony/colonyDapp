@@ -4,20 +4,21 @@ import { AddressZero } from 'ethers/constants';
 import { ClientType, ColonyClient } from '@colony/colony-js';
 
 import { Context, ContextModule } from '~context/index';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  DEFAULT_NETWORK_TOKEN,
+} from '~constants';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
 import { Address } from '~types/index';
 import { createAddress, isAddress } from '~utils/web3';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-const ETHER_INFO = Object.freeze({
+const TOKEN_INFO = Object.freeze({
   id: AddressZero,
   address: AddressZero,
-  name: 'Ether',
-  symbol: 'ETH',
-  decimals: 18,
   verified: true,
   iconHash: '',
+  ...DEFAULT_NETWORK_TOKEN,
 });
 
 // Token data is used a lot and never change. They require a custom cache
@@ -64,7 +65,7 @@ const getTokenData = async (
     return {
       __typename: 'Token',
       verified: true,
-      ...ETHER_INFO,
+      ...TOKEN_INFO,
     };
   }
 

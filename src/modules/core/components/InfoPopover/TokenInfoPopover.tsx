@@ -5,6 +5,7 @@ import CopyableAddress from '~core/CopyableAddress';
 import TokenLink from '~core/TokenLink';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyToken } from '~data/index';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import styles from './InfoPopover.css';
 
@@ -15,7 +16,7 @@ const MSG = defineMessages({
   },
   viewOnEtherscan: {
     id: 'InfoPopover.TokenInfoPopover.viewOnEtherscan',
-    defaultMessage: 'View on Etherscan',
+    defaultMessage: 'View on {blockExplorerName}',
   },
 });
 
@@ -56,7 +57,13 @@ const TokenInfoPopover = ({ token, isTokenNative }: Props) => {
         )}
       </div>
       <div className={styles.section}>
-        <TokenLink tokenAddress={address} text={MSG.viewOnEtherscan} />
+        <TokenLink
+          tokenAddress={address}
+          text={MSG.viewOnEtherscan}
+          textValues={{
+            blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
+          }}
+        />
       </div>
     </div>
   );

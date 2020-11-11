@@ -1,10 +1,9 @@
 import { MessageDescriptor } from 'react-intl';
 import React from 'react';
 
-import { DEFAULT_NETWORK } from '~constants';
 import ExternalLink from '~core/ExternalLink';
 import { SimpleMessageValues } from '~types/index';
-import { getEtherscanLink } from '~utils/external';
+import { getBlockExplorerLink } from '~utils/external';
 
 interface Props {
   /*
@@ -16,9 +15,6 @@ interface Props {
   /** Address of the token to link to */
   tokenAddress: string;
 
-  /** Optionally override current network */
-  network?: string;
-
   /** A string or a `messageDescriptor` that make up the link's text. Defaults to `tokenAddress`. */
   text?: MessageDescriptor | string;
 
@@ -28,17 +24,10 @@ interface Props {
 
 const displayName = 'TokenLink';
 
-const TokenLink = ({
-  className,
-  tokenAddress,
-  network = DEFAULT_NETWORK,
-  text,
-  textValues,
-}: Props) => (
+const TokenLink = ({ className, tokenAddress, text, textValues }: Props) => (
   <ExternalLink
     className={className}
-    href={getEtherscanLink({
-      network,
+    href={getBlockExplorerLink({
       linkType: 'token',
       addressOrHash: tokenAddress,
     })}

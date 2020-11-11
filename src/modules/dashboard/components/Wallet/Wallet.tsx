@@ -9,6 +9,7 @@ import QRCode from '~core/QRCode';
 import WalletLink from '~core/WalletLink';
 import TokenList from '~admin/Tokens/TokenList';
 import { useLoggedInUser, useUserTokensQuery } from '~data/index';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import UserTokenEditDialog from './UserTokenEditDialog';
 
@@ -33,7 +34,7 @@ const MSG = defineMessages({
   },
   linkText: {
     id: 'dashboard.Wallet.linkText',
-    defaultMessage: 'View your transactions on Etherscan {link}',
+    defaultMessage: 'View your transactions on {blockExplorerName} {link}',
   },
   linkEditToken: {
     id: 'dashboard.Wallet.linkEditToken',
@@ -99,6 +100,7 @@ const Wallet = () => {
                   text={MSG.linkViewTransactions}
                 />
               ),
+              blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
             }}
           />
         </p>

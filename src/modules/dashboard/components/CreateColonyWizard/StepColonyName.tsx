@@ -17,6 +17,7 @@ import {
   ColonyAddressQuery,
   ColonyAddressQueryVariables,
 } from '~data/index';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import styles from './StepColonyName.css';
 
@@ -69,11 +70,7 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'users.CreateColonyWizard.StepColonyName.tooltip',
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
-  },
-  tooltipColonyCreationDisabled: {
-    id: 'users.CreateColonyWizard.StepColonyName.tooltipColonyCreationDisabled',
-    defaultMessage: `Due to the extraordinarily high Ethereum gas prices, we’ve decided to disable colony creation to prevent new users from incurring unexpectedly high costs. A new and improved Colony V2 will be available on xDai soon!`,
+    defaultMessage: `We use ENS to create a .{displayENSDomain} subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
   },
 });
 
@@ -83,14 +80,6 @@ const validationSchema = yup.object({
   colonyName: yup.string().required().ensAddress(),
   displayName: yup.string().required(),
 });
-
-/**
- * @NOTE Colony Creation DISABLED due to high gas costs
- *
- * Please remove this and re-enable when the time comes, or when we deploy this
- * to xDai
- */
-const DISABLE_COLONY_CREATION_DUE_TO_HIGH_GAS_COSTS = true;
 
 const StepColonyName = ({
   wizardForm,
@@ -213,7 +202,8 @@ const StepColonyName = ({
                 appearance={{ theme: 'fat' }}
                 name="colonyName"
                 data-test="claimColonyNameInput"
-                extensionString=".colony.joincolony.eth"
+                // eslint-disable-next-line max-len
+                extensionString={`.colony.${DEFAULT_NETWORK_INFO.displayENSDomain}`}
                 label={MSG.label}
                 status={normalized !== colonyName ? MSG.statusText : undefined}
                 formattingOptions={{ lowercase: true }}
@@ -223,7 +213,13 @@ const StepColonyName = ({
                     placement="right"
                     content={
                       <div className={styles.tooltipContent}>
-                        <FormattedMessage {...MSG.tooltip} />
+                        <FormattedMessage
+                          {...MSG.tooltip}
+                          values={{
+                            displayENSDomain:
+                              DEFAULT_NETWORK_INFO.displayENSDomain,
+                          }}
+                        />
                       </div>
                     }
                   >
@@ -238,30 +234,14 @@ const StepColonyName = ({
                 }
               />
               <div className={styles.buttons}>
-                <Tooltip
-                  content={
-                    <div className={styles.tooltipContent}>
-                      <FormattedMessage
-                        {...MSG.tooltipColonyCreationDisabled}
-                      />
-                    </div>
-                  }
-                >
-                  <div>
-                    <Button
-                      appearance={{ theme: 'primary', size: 'large' }}
-                      type="submit"
-                      data-test="claimColonyNameConfirm"
-                      disabled={
-                        DISABLE_COLONY_CREATION_DUE_TO_HIGH_GAS_COSTS ||
-                        !isValid ||
-                        (!dirty && !stepCompleted)
-                      }
-                      loading={isSubmitting}
-                      text={MSG.continue}
-                    />
-                  </div>
-                </Tooltip>
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  type="submit"
+                  data-test="claimColonyNameConfirm"
+                  disabled={!isValid || (!dirty && !stepCompleted)}
+                  loading={isSubmitting}
+                  text={MSG.continue}
+                />
               </div>
             </div>
           </section>

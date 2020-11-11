@@ -4,7 +4,7 @@
   "engines": {
     "node": ">=12.19.0 <13"
   },
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -128,7 +128,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.0.2",
-    "@colony/colony-js": "^2.0.2",
+    "@colony/colony-js": "^2.1.0-xdai.3",
     "@colony/redux-promise-listener": "^1.2.0",
     "@formatjs/intl-pluralrules": "^1.5.7",
     "@formatjs/intl-relativetimeformat": "^4.5.14",

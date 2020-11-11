@@ -13,6 +13,7 @@ import {
   TokenQuery,
   TokenQueryVariables,
 } from '~data/index';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import styles from './StepSelectToken.css';
 
@@ -27,7 +28,7 @@ const MSG = defineMessages({
   },
   hint: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.hint',
-    defaultMessage: 'You can find them here: https://etherscan.io/tokens',
+    defaultMessage: 'You can find them here: {tokenExplorerLink}',
   },
   preview: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.preview',
@@ -61,7 +62,12 @@ const getStatusText = (isLoading: boolean, tokenData?: OneToken) => {
   }
   return tokenData
     ? { status: MSG.preview, statusValues: tokenData }
-    : { status: MSG.hint };
+    : {
+        status: MSG.hint,
+        statusValues: {
+          tokenExplorerLink: DEFAULT_NETWORK_INFO.tokenExplorerLink,
+        },
+      };
 };
 
 const displayName = 'dashboard.CreateColonyWizard.TokenSelector';

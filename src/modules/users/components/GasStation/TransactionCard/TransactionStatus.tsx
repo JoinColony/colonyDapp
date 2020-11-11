@@ -7,6 +7,7 @@ import { Tooltip } from '~core/Popover';
 import TransactionLink from '~core/TransactionLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import styles from './TransactionStatus.css';
 
@@ -23,6 +24,10 @@ const MSG = defineMessages({
       } to sign}
       other {Can't report any status}
     }`,
+  },
+  transactionBlockExplorer: {
+    id: 'users.GasStationPopover.TransactionStatus.transactionBlockExplorer',
+    defaultMessage: '{blockExplorerName}',
   },
 });
 
@@ -49,7 +54,10 @@ const TransactionStatus = ({
       <TransactionLink
         className={styles.interaction}
         hash={hash}
-        text="Etherscan"
+        text={MSG.transactionBlockExplorer}
+        textValues={{
+          blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
+        }}
       />
     )}
     <Tooltip

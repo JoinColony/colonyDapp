@@ -1,4 +1,5 @@
 import { BigNumber, formatUnits } from 'ethers/utils';
+import { Network } from '@colony/colony-js';
 
 import { DEFAULT_NETWORK } from '~constants';
 
@@ -15,7 +16,7 @@ interface EthUsdResponse {
   };
 }
 
-interface EtherscanLinkProps {
+interface BlockExplorerLinkProps {
   network?: string;
   linkType?: 'address' | 'tx' | 'token';
   addressOrHash: string;
@@ -35,6 +36,19 @@ export const getEthToUsd = (ethValue: BigNumber): Promise<number | void> => {
   const cachedEthUsdTimestamp =
     localStorage.getItem(ETH_USD_TIMESTAMP_KEY) || null;
   const currentTimestamp = new Date().getTime();
+
+  /**
+   * Since the xDai token is "stable", it will always have parity to 1 USD
+   */
+  if (DEFAULT_NETWORK === Network.Xdai) {
+    return new Promise((resolve) => {
+      localStorage.setItem(ETH_USD_KEY, '1');
+      localStorage.setItem(ETH_USD_TIMESTAMP_KEY, currentTimestamp.toString());
+      return resolve(
+        parseFloat(formatUnits(ethValue, 'ether')) * parseFloat('1'),
+      );
+    });
+  }
 
   if (cachedEthUsd && cachedEthUsdTimestamp) {
     /*
@@ -72,16 +86,27 @@ export const getEthToUsd = (ethValue: BigNumber): Promise<number | void> => {
     .catch(console.warn);
 };
 
-export const getEtherscanLink = ({
+export const getBlockExplorerLink = ({
   network = DEFAULT_NETWORK,
   linkType = 'address',
   addressOrHash,
-}: EtherscanLinkProps): string => {
+}: BlockExplorerLinkProps): string => {
   if (!addressOrHash) {
     return '';
   }
+  if (network === Network.Local) {
+    return '#';
+  }
+  if (network === Network.Xdai) {
+    const xdaiLinkType = linkType === 'token' ? 'address' : linkType;
+    /**
+     * Using a network string template here since in the future we might wanna
+     * support xdai's test networks as well (eg: sokol)
+     */
+    return `https://blockscout.com/poa/${network}/${xdaiLinkType}/${addressOrHash}`;
+  }
   const tld = network === 'tobalaba' ? 'com' : 'io';
   const networkSubdomain =
-    network === 'homestead' || network === 'mainnet' ? '' : `${network}.`;
+    network === 'homestead' || network === Network.Mainnet ? '' : `${network}.`;
   return `https://${networkSubdomain}etherscan.${tld}/${linkType}/${addressOrHash}`;
 };

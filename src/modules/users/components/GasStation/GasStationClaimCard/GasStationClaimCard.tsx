@@ -5,6 +5,7 @@ import { bigNumberify } from 'ethers/utils';
 import Card from '~core/Card';
 import Heading from '~core/Heading';
 import { useLoggedInUser } from '~data/index';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import styles from './GasStationClaimCard.css';
 
@@ -17,7 +18,7 @@ const MSG = defineMessages({
   bodyText: {
     id: 'users.GasStation.GasStationClaimCard.bodyText',
     defaultMessage: `This is your wallet. You’ll use it to sign transactions
-and pay transaction fees to the Ethereum blockchain. Click confirm below to
+and pay transaction fees to {networkName}. Click confirm below to
 sign your first transaction and finish setting up your account.`,
   },
 });
@@ -59,7 +60,10 @@ const GasStationClaimCard = ({ numberOfSteps = 3 }: Props) => {
             : numberOfSteps,
         }}
       />
-      <FormattedMessage {...MSG.bodyText} />
+      <FormattedMessage
+        {...MSG.bodyText}
+        values={{ networkName: DEFAULT_NETWORK_INFO.name }}
+      />
     </Card>
   );
 };
