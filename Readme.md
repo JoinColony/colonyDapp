@@ -118,3 +118,5 @@ To run unit tests you have the following npm script:
 ```bash
 npm run test
 ```
+
+Twemoji graphics made by Twitter and other contributors, licensed under CC-BY 4.0: https://creativecommons.org/licenses/by/4.0/

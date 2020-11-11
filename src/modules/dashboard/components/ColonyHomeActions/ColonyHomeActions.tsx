@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from '~core/Button';
 import { defineMessages } from 'react-intl';
+import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
 import { useDialog } from '~core/Dialog';
 

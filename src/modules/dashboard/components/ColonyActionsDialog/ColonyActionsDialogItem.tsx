@@ -18,17 +18,18 @@ const MSG = defineMessages({
   },
 });
 
-const ColonyActionsDialogItem = ({ title, description, disabled, icon }: Props) => {
+const ColonyActionsDialogItem = ({
+  title,
+  description,
+  disabled,
+  icon,
+}: Props) => {
   return (
     <div className={`${disabled ? styles.disabled : styles.content}`}>
       <div>
         <Paragraph className={styles.title}>
           <span className={styles.iconTitle}>
-            <Icon
-              appearance={{ size: 'small' }}
-              name={icon}
-              title={title}
-            />
+            <Icon appearance={{ size: 'small' }} name={icon} title={title} />
           </span>
           <FormattedMessage {...title} />
           {disabled && (
