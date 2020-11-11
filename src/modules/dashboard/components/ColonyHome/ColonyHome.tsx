@@ -13,8 +13,9 @@ import { useColonyFromNameQuery } from '~data/index';
 
 import {
   COLONY_EVENTS_ROUTE,
-  COLONY_EXTENSIONS_ROUTE,
   COLONY_EXTENSION_DETAILS_ROUTE,
+  COLONY_EXTENSION_SETUP_ROUTE,
+  COLONY_EXTENSIONS_ROUTE,
   COLONY_HOME_ROUTE,
   NOT_FOUND_ROUTE,
 } from '~routes/index';
@@ -175,7 +176,10 @@ const ColonyHome = ({ match, location }: Props) => {
             />
             <Route
               exact
-              path={COLONY_EXTENSION_DETAILS_ROUTE}
+              path={[
+                COLONY_EXTENSION_DETAILS_ROUTE,
+                COLONY_EXTENSION_SETUP_ROUTE,
+              ]}
               render={(props) => (
                 <ExtensionDetails
                   {...props}

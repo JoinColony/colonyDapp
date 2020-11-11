@@ -1,13 +1,16 @@
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
+import * as yup from 'yup';
 
 import { Address } from '~types/index';
 
-interface ExtensionInitParams {
+export interface ExtensionInitParams {
   title: string | MessageDescriptor;
   description: string | MessageDescriptor;
   defaultValue: string | number;
+  paramName: string;
+  validation: object;
 }
 
 export interface ExtensionData {
@@ -116,31 +119,43 @@ const extensions: { [key: string]: ExtensionData } = {
     neededColonyPermissions: [ColonyRole.Root],
     initializationParams: [
       {
+        paramName: 'purchaseToken',
+        validation: yup.string().required(),
+        defaultValue: AddressZero,
         title: MSG.coinMachinePurchaseTokenTitle,
         description: MSG.coinMachinePurchaseTokenDescription,
-        defaultValue: AddressZero,
       },
       {
+        paramName: 'periodLength',
+        validation: yup.number().required(),
         title: MSG.coinMachinePeriodLengthTitle,
         description: MSG.coinMachinePeriodLengthDescription,
         defaultValue: 3600,
       },
       {
+        paramName: 'windowSize',
+        validation: yup.number().required(),
         title: MSG.coinMachineWindowSizeTitle,
         description: MSG.coinMachineWindowSizeDescription,
         defaultValue: 8,
       },
       {
+        paramName: 'targetPerPeriod',
+        validation: yup.number().required(),
         title: MSG.coinMachineTargetPerPeriodTitle,
         description: MSG.coinMachineTargetPerPeriodDescription,
         defaultValue: 10,
       },
       {
+        paramName: 'maxPerPeriod',
+        validation: yup.number().required(),
         title: MSG.coinMachineMaxPerPeriodTitle,
         description: MSG.coinMachineMaxPerPeriodDescription,
         defaultValue: 10,
       },
       {
+        paramName: 'startingPrice',
+        validation: yup.number().required(),
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
         defaultValue: 10,

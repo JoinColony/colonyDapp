@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+import { useRouteMatch, useHistory, useParams } from 'react-router';
 
-import { ActionButton } from '~core/Button';
+import Button, { ActionButton } from '~core/Button';
 import { ColonyExtensionQuery } from '~data/index';
 import { ExtensionData } from '~data/staticData/extensionData';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
+import { COLONY_EXTENSION_SETUP_ROUTE } from '~routes/index';
 
 const MSG = defineMessages({
   enable: {
@@ -39,10 +41,19 @@ const ExtensionActionButton = ({
   extension,
   installedExtension,
 }: Props) => {
+  const history = useHistory();
+  const { colonyName, extensionId } = useParams();
+  const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
+
+  const handleEnableButtonClick = useCallback(() => {
+    history.push(`/colony/${colonyName}/extensions/${extensionId}/setup`);
+  }, [colonyName, extensionId, history]);
+
+  if (!canInstall) return null;
+
   if (!installedExtension) {
     return (
       <ActionButton
-        disabled={!canInstall}
         appearance={{ theme: 'primary', size: 'large' }}
         submit={ActionTypes.COLONY_EXTENSION_INSTALL}
         error={ActionTypes.COLONY_EXTENSION_INSTALL_ERROR}
@@ -55,17 +66,12 @@ const ExtensionActionButton = ({
       />
     );
   }
-  if (!installedExtension.details.enabled) {
+  // @TODO if no init options, directly create txs
+  if (!onSetupRoute && !installedExtension.details.enabled) {
     return (
-      <ActionButton
+      <Button
         appearance={{ theme: 'primary', size: 'large' }}
-        submit={ActionTypes.COLONY_EXTENSION_ENABLE}
-        error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
-        success={ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS}
-        values={{
-          colonyAddress,
-          extensionId: extension.extensionId,
-        }}
+        onClick={handleEnableButtonClick}
         text={MSG.enable}
       />
     );

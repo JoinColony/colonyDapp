@@ -70,4 +70,11 @@ export type ColonyActionTypes =
       object,
       object
     >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_INSTALL_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_INSTALL_ERROR, object>
+  | UniqueActionType<ActionTypes.COLONY_EXTENSION_ENABLE, object, WithKey>
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_ENABLE_ERROR, object>;

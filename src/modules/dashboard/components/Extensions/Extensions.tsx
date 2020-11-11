@@ -65,30 +65,40 @@ const Extensions = ({ colonyAddress }: Props) => {
       <BreadCrumb elements={[MSG.title]} />
       <FormattedMessage {...MSG.description} />
       <hr />
-      <div>
-        <Heading
-          tagName="h3"
-          appearance={{ size: 'normal', margin: 'small' }}
-          text={MSG.installedExtensions}
-        />
-        <CardList>
-          {installedExtensionsData.map((extension) => (
-            <ExtensionCard key={extension.extensionId} extension={extension} />
-          ))}
-        </CardList>
-      </div>
-      <div className={styles.availableExtensionsWrapper}>
-        <Heading
-          tagName="h3"
-          appearance={{ size: 'normal', margin: 'small' }}
-          text={MSG.availableExtensions}
-        />
-        <CardList>
-          {availableExtensionsData.map((extension) => (
-            <ExtensionCard key={extension.extensionId} extension={extension} />
-          ))}
-        </CardList>
-      </div>
+      {installedExtensionsData.length ? (
+        <div>
+          <Heading
+            tagName="h3"
+            appearance={{ size: 'normal', margin: 'small' }}
+            text={MSG.installedExtensions}
+          />
+          <CardList>
+            {installedExtensionsData.map((extension) => (
+              <ExtensionCard
+                key={extension.extensionId}
+                extension={extension}
+              />
+            ))}
+          </CardList>
+        </div>
+      ) : null}
+      {availableExtensionsData.length ? (
+        <div className={styles.availableExtensionsWrapper}>
+          <Heading
+            tagName="h3"
+            appearance={{ size: 'normal', margin: 'small' }}
+            text={MSG.availableExtensions}
+          />
+          <CardList>
+            {availableExtensionsData.map((extension) => (
+              <ExtensionCard
+                key={extension.extensionId}
+                extension={extension}
+              />
+            ))}
+          </CardList>
+        </div>
+      ) : null}
     </div>
   );
 };

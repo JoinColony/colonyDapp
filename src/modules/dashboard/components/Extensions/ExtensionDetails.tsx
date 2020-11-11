@@ -1,9 +1,9 @@
 import React from 'react';
 import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
-import { useParams } from 'react-router';
+import { useParams, Switch, Route, useRouteMatch } from 'react-router';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import BreadCrumb from '~core/BreadCrumb';
+import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import {
   useColonyExtensionQuery,
@@ -21,12 +21,17 @@ import { useTransformer } from '~utils/hooks';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
+import { ConfirmDialog } from '~core/Dialog';
+import {
+  COLONY_EXTENSION_DETAILS_ROUTE,
+  COLONY_EXTENSION_SETUP_ROUTE,
+} from '~routes/index';
 
 import { getUserRolesForDomain } from '../../../transformers';
 
 import styles from './ExtensionDetails.css';
 import ExtensionActionButton from './ExtensionActionButton';
-import { ConfirmDialog } from '~core/Dialog';
+import ExtensionSetup from './ExtensionSetup';
 
 const MSG = defineMessages({
   title: {
@@ -101,6 +106,10 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionDetails.textUninstall',
     defaultMessage: 'Do you really want to uninstall this extension?',
   },
+  setup: {
+    id: 'dashboard.Extensions.ExtensionDetails.setup',
+    defaultMessage: 'Setup',
+  },
 });
 
 const UserAvatar = HookedUserAvatar();
@@ -110,7 +119,8 @@ interface Props {
 }
 
 const ExtensionDetails = ({ colonyAddress }: Props) => {
-  const { extensionId } = useParams();
+  const { colonyName, extensionId } = useParams();
+  const match = useRouteMatch();
   const { walletAddress } = useLoggedInUser();
   const { data, loading } = useColonyExtensionQuery({
     variables: { colonyAddress, extensionId },
@@ -197,19 +207,45 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
       },
     ];
   }
+  const extensionUrl = `/colony/${colonyName}/extensions/${extensionId}`;
+  const breadCrumbs: Crumb[] = [
+    [MSG.title, `/colony/${colonyName}/extensions`],
+    [extension.name, match.url === extensionUrl ? '' : extensionUrl],
+  ];
+  if (match.path === COLONY_EXTENSION_SETUP_ROUTE) {
+    breadCrumbs.push(MSG.setup);
+  }
   return (
     <div className={styles.main}>
-      <BreadCrumb elements={[MSG.title, extension.name]} />
+      <BreadCrumb elements={breadCrumbs} />
       <hr />
       <div className={styles.content}>
-        <div>
-          <Heading
-            tagName="h3"
-            appearance={{ size: 'medium', margin: 'small' }}
-            text={extension.name}
+        <Switch>
+          <Route
+            exact
+            path={COLONY_EXTENSION_DETAILS_ROUTE}
+            component={() => (
+              <div>
+                <Heading
+                  tagName="h3"
+                  appearance={{ size: 'medium', margin: 'small' }}
+                  text={extension.name}
+                />
+                <FormattedMessage {...extension.description} />
+              </div>
+            )}
           />
-          <FormattedMessage {...extension.description} />
-        </div>
+          <Route
+            exact
+            path={COLONY_EXTENSION_SETUP_ROUTE}
+            component={() => (
+              <ExtensionSetup
+                extension={extension}
+                colonyAddress={colonyAddress}
+              />
+            )}
+          />
+        </Switch>
         <aside>
           <div className={styles.buttonWrapper}>
             <ExtensionActionButton

@@ -1,0 +1,12 @@
+.main {
+  max-width: 600px;
+}
+
+.input {
+  margin-top: 50px;
+  max-width: 450px;
+}
+
+.inputContainer {
+  margin-bottom: 50px;
+}
