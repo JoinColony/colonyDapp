@@ -1,9 +1,17 @@
 import React from 'react';
 import Button from '~core/Button';
-import ColonyActionsDialog from './ColonyActionsDialog';
+import { defineMessages } from 'react-intl';
+import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
 import { useDialog } from '~core/Dialog';
 
-const displayName = 'dashboard.ColonyHomeActions';
+const displayName = 'dashboard.ColonyHomeCreateActionsButton';
+
+const MSG = defineMessages({
+  newAction: {
+    id: 'dashboard.ColonyHomeActions.newAction',
+    defaultMessage: 'New Action',
+  },
+});
 
 const ColonyHomeActions = () => {
   const openDialog = useDialog(ColonyActionsDialog);
@@ -11,7 +19,7 @@ const ColonyHomeActions = () => {
   return (
     <Button
       appearance={{ theme: 'primary', size: 'large' }}
-      text={{ id: 'button.action' }}
+      text={MSG.newAction}
       onClick={() => openDialog()}
     />
   );

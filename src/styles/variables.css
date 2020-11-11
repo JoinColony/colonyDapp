@@ -4,6 +4,7 @@
   --colony-white: rgb(251, 251, 251);
   --colony-black: rgb(31, 35, 39);
   --colony-blue: rgb(79, 93, 255);
+  --colony-light-blue: rgb(238, 242, 245);
   --dark-blue: rgb(69, 85, 230);
   --sky-blue: rgb(90, 145, 255);
   --danger: rgb(248, 43, 101); /* user mentions color */
@@ -13,6 +14,7 @@
   --dark: rgb(60, 68, 77); /* Used for colony name display (colony simplified) */
   --grey-dark: rgb(47, 47, 47);
   --grey-1: rgb(58, 58, 58);
+  --grey-2: rgb(54, 54, 54);
   --grey-3: rgb(82, 84, 85);
   --grey-4: rgb(124, 124, 124);
   --grey-5: rgb(173, 186, 189);
@@ -20,7 +22,6 @@
   --grey-blue-1: rgb(232, 236, 245);
   --grey-blue-2: rgb(244, 246, 250);
   --grey-blue-3: rgb(246, 246, 246);
-  --light-blue: rgb(238,242,245);
 
   /*
    * We really need to cleanup the greys, as they're growing larger and larger by the day
@@ -45,8 +46,6 @@
   --temp-grey-blue-7: rgb(118, 116, 139); /* Used for the wallet connect button in the user navigation */
   --temp-grey-blue-8: rgb(238, 242, 245); /* Used for the actions list hover background */
   --drop-shadow: rgba(62, 118, 244, 0.14);
-  --light-border: rgba(54, 54, 54, 0.15);
-  --text-hover: rgb(76,93,255);
   --text-disabled: rgb(194,204,204);
 
   /*
