@@ -100,16 +100,31 @@ const ColonyHome = ({ match, location }: Props) => {
   const colonyDomains = data && data.colony && data.colony.domains;
   const reverseENSAddress = dataVariables && dataVariables.address;
 
+  /*
+   * @NOTE Disabled until we're done with domain filters to prevent lint errors
+   * when pushing downstream rebased branches
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const filteredDomain = colonyDomains
     ? colonyDomains.find(({ ethDomainId }) => ethDomainId === filteredDomainId)
     : undefined;
 
+  /*
+   * @NOTE Disabled until we're done with domain filters to prevent lint errors
+   * when pushing downstream rebased branches
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const currentDomainUserRoles = useTransformer(getUserRolesForDomain, [
     data && data.colony,
     walletAddress,
     filteredDomainId || ROOT_DOMAIN_ID,
   ]);
 
+  /*
+   * @NOTE Disabled until we're done with domain filters to prevent lint errors
+   * when pushing downstream rebased branches
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const rootUserRoles = useTransformer(getUserRolesForDomain, [
     data && data.colony,
     walletAddress,
