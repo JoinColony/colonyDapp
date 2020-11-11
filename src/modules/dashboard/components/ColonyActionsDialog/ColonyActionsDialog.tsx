@@ -74,23 +74,28 @@ const ColonyActionsDialog = ({ cancel }: DialogProps) => {
         <ColonyActionsDialogItem
           title={MSG.createExpenditure}
           description={MSG.createExpenditureDesc}
+          icon="expenditure"
         />
         <ColonyActionsDialogItem
           title={MSG.manageFunds}
           description={MSG.manageFundsDesc}
+          icon="funds"
         />
         <ColonyActionsDialogItem
           title={MSG.manageDomains}
           description={MSG.manageDomainsDesc}
+          icon="domains"
         />
         <ColonyActionsDialogItem
           title={MSG.smite}
           description={MSG.smiteDesc}
+          icon="smite"
           disabled
         />
         <ColonyActionsDialogItem
           title={MSG.advanced}
           description={MSG.advancedDesc}
+          icon="advanced"
         />
       </div>
     </Dialog>
