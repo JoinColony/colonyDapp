@@ -186,7 +186,7 @@ export type Colony = {
   description?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   domains: Array<Domain>;
-  events: Array<Event>;
+  events: Array<NetworkEvent>;
   founder?: Maybe<User>;
   founderAddress: Scalars['String'];
   guideline?: Maybe<Scalars['String']>;
@@ -403,22 +403,14 @@ export type UnlockNextLevelEvent = {
 export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent;
 
 export type Event = {
-  context: EventContext;
-  createdAt: Scalars['DateTime'];
-  date: Scalars['Int'];
-  domain?: Maybe<Scalars['String']>;
-  from?: Maybe<Scalars['String']>;
-  hash: Scalars['String'];
   id: Scalars['String'];
+  type: EventType;
+  createdAt: Scalars['DateTime'];
   initiator?: Maybe<User>;
   initiatorAddress: Scalars['String'];
-  name: Scalars['String'];
   sourceId: Scalars['String'];
   sourceType: Scalars['String'];
-  to?: Maybe<Scalars['String']>;
-  topic?: Maybe<Scalars['String']>;
-  type: EventType;
-  userAddress?: Maybe<Scalars['String']>;
+  context: EventContext;
 };
 
 export type Notification = {
@@ -1413,6 +1405,17 @@ export type Transfer = {
   token: Scalars['String'];
 };
 
+export type NetworkEvent = {
+  to?: Maybe<Scalars['String']>;
+  from?: Maybe<Scalars['String']>;
+  date: Scalars['Int'];
+  hash: Scalars['String'];
+  name: Scalars['String'];
+  topic?: Maybe<Scalars['String']>;
+  userAddress?: Maybe<Scalars['String']>;
+  domain?: Maybe<Scalars['String']>;
+};
+
 export type PayoutsFragment = { payouts: Array<(
     Pick<TaskPayout, 'amount' | 'tokenAddress'>
     & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
@@ -2165,7 +2168,7 @@ export type ColonyEventsQueryVariables = Exact<{
 
 export type ColonyEventsQuery = { colony: (
     Pick<Colony, 'id' | 'colonyAddress'>
-    & { events: Array<Pick<Event, 'from' | 'to' | 'date' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domain'>> }
+    & { events: Array<Pick<NetworkEvent, 'from' | 'to' | 'date' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domain'>> }
   ) };
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{

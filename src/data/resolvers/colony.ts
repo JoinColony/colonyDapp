@@ -11,7 +11,7 @@ import {
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
 import { Context } from '~context/index';
-import { Transfer, Event } from '~data/index';
+import { Transfer, NetworkEvent } from '~data/index';
 
 import { getToken } from './token';
 import {
@@ -136,7 +136,7 @@ export const colonyResolvers = ({
         __typename: 'UserRoles',
       }));
     },
-    async events({ colonyAddress }): Promise<Event[]> {
+    async events({ colonyAddress }): Promise<NetworkEvent[]> {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,

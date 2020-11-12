@@ -75,7 +75,7 @@ export default gql`
     token: String!
   }
 
-  type Event {
+  type NetworkEvent {
     to: String
     from: String
     date: Int!
@@ -95,7 +95,7 @@ export default gql`
     roles: [UserRoles!]!
     tokens(addresses: [String!]): [Token!]!
     transfers: [Transfer!]!
-    events: [Event!]!
+    events: [NetworkEvent!]!
     unclaimedTransfers: [Transfer!]!
     version: Int!
   }

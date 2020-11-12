@@ -7,7 +7,7 @@ import {
 import { bigNumberify } from 'ethers/utils';
 import { HashZero } from 'ethers/constants';
 
-import { Transfer, Event } from '~data/index';
+import { Transfer, NetworkEvent } from '~data/index';
 import { notUndefined } from '~utils/arrays';
 
 // Find better place for it..
@@ -49,7 +49,7 @@ const FILTERS = [
 
 export const getColonyAllEvents = async (
   colonyClient: ColonyClient,
-): Promise<Event[]> => {
+): Promise<NetworkEvent[]> => {
   const { provider } = colonyClient;
 
   const allEventsLogs = await FILTERS.reduce(async (acc, filter) => {
@@ -75,7 +75,7 @@ export const getColonyAllEvents = async (
         : undefined;
 
       return {
-        __typename: 'Event',
+        __typename: 'NetworkEvent',
         ...event,
         date,
         from: (tx && tx.from) || null,
