@@ -9,7 +9,7 @@
   display: flex;
   margin-bottom: 1px;
   padding: 26px 20px;
-  max-height: 89px;
+  height: 89px;
   border-radius: var(--radius-large);
   background-color: var(--colony-white);
   font-size: mainTextSize;
