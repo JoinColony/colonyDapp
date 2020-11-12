@@ -1,0 +1,51 @@
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 1px;
+  padding: 30px 20px;
+  height: 89px;
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+  box-shadow: 0px 2px 11px var(--drop-shadow);
+  cursor: pointer;
+  outline: 0;
+}
+
+.button {
+  composes: themePrimary from '~core/Button/Button.css';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 100px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  margin-right: auto;
+  min-width: 143px;
+}
+
+.amount {
+  margin-right: 26px;
+  font-size: var(--size-medium);
+  color: var(--dark);
+}
+
+.date {
+  font-size: var(--size-small);
+  color: var(--temp-grey-blue-7);
+}
+
+.date span:first-child {
+  margin-right: 4px;
+}
+
+.sender {
+  margin-bottom: 2px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}

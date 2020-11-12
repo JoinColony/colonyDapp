@@ -1,0 +1,12 @@
+@value titleTextSize: 13px;
+
+.main {
+  margin-bottom: 30px;
+}
+
+.title {
+  margin-bottom: 10px;
+  font-size: titleTextSize;
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
