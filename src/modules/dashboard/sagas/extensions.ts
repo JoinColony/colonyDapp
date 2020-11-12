@@ -1,13 +1,11 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import {
   ClientType,
-  // ColonyRole,
   getExtensionHash,
-  // ROOT_DOMAIN_ID,
+  ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { putError, takeFrom } from '~utils/saga/effects';
 import {
   ColonyExtensionQuery,
   ColonyExtensionQueryVariables,
@@ -15,6 +13,8 @@ import {
 } from '~data/index';
 import extensionData from '~data/staticData/extensionData';
 import { ContextModule, TEMP_getContext } from '~context/index';
+import { putError, takeFrom } from '~utils/saga/effects';
+import { intArrayToBytes32 } from '~utils/web3';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 
@@ -104,7 +104,7 @@ function* colonyExtensionEnable({
     }
 
     const {
-      // address,
+      address,
       details: { initialized, missingPermissions },
     } = data.colonyExtension;
 
@@ -126,18 +126,18 @@ function* colonyExtensionEnable({
     }
 
     if (missingPermissions.length) {
-      // @TODO get the bytes32roles somehow
-      // yield fork(createTransaction, setPermissionChannelName, {
-      //   context: ClientType.ColonyClient,
-      //   methodName: 'setUserRolesWithProofs',
-      //   identifier: colonyAddress,
-      //   params: [address, ROOT_DOMAIN_ID, bytes32Roles],
-      //   group: {
-      //     key: 'enableExtension',
-      //     id: meta.id,
-      //     index: 1,
-      //   },
-      // });
+      const bytes32Roles = intArrayToBytes32(missingPermissions);
+      yield fork(createTransaction, setPermissionChannelName, {
+        context: ClientType.ColonyClient,
+        methodName: 'setUserRolesWithProofs',
+        identifier: colonyAddress,
+        params: [address, ROOT_DOMAIN_ID, bytes32Roles],
+        group: {
+          key: 'enableExtension',
+          id: meta.id,
+          index: 1,
+        },
+      });
     }
 
     yield takeFrom(setPermissionChannel, ActionTypes.TRANSACTION_SUCCEEDED);
@@ -204,7 +204,7 @@ function* colonyExtensionUninstall({
       context: ClientType.ColonyClient,
       methodName: 'uninstallExtension',
       identifier: colonyAddress,
-      params: [getExtensionHash(extensionId), true],
+      params: [getExtensionHash(extensionId)],
     });
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
