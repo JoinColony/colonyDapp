@@ -45,7 +45,6 @@ export const MOCK_ACTIONS = [
   },
   {
     id: 11,
-    title: 'Create new Domain #BDSM',
     createdAt: 1604399689594,
     userAddress: '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
     domain: {
