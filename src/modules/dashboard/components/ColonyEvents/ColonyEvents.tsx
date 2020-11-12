@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useColonyEventsQuery } from '~data/index';
+
 import { Address } from '~types/index';
 import ActionsList from '~core/ActionsList';
+import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
 
 const displayName = 'dashboard.ColonyEvents';
 
@@ -17,10 +19,9 @@ const ColonyEvents = ({ colonyAddress }: Props) => {
   const { data, error } = useColonyEventsQuery({
     variables: { address: colonyAddress },
   });
+  if (error) console.warn(error);
 
   const [events, setEvents] = useState([]);
-
-  if (error) console.warn(error);
 
   useEffect(() => {
     if (data && data.colony.events) {
@@ -30,6 +31,7 @@ const ColonyEvents = ({ colonyAddress }: Props) => {
 
   return (
     <div>
+      <UnclaimedTransfers colonyAddress={colonyAddress} />
       <ActionsList items={events} />
     </div>
   );
