@@ -1,5 +1,5 @@
 .main {
-  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  composes: stretchHorizontal from '~styles/layout.css';
   display: grid;
   grid-template-columns: 50px auto;
 }
@@ -10,7 +10,22 @@
 
 .mainContentGrid {
   display: grid;
-  grid-template-columns: 23% auto 26.5%;
+
+  /*
+   * @NOTE On the below width calculations
+   * full view width, minus a little trick to disregrad the scrollback, minus
+   * the width of the left subscribed colonies list
+   */
+  max-width: calc((100vw - (100vw - 100%)) - 50px);
+  overflow: hidden;
+
+  /*
+   * @NOTE Grid needs to have a max value for the center content section, otherwise
+   * anything that relies on overflow (think: text ellipsis) will not work.
+   *
+   * Value was arrived at from 100% - 23% - 26.5%
+   */
+  grid-template-columns: 23% minmax(auto, 50.5%) 26.5%;
 }
 
 .leftAside {
@@ -22,9 +37,13 @@
 }
 
 .mainContent {
-  padding: 90px 0 20px;
+  padding: 90px 0 40px;
 }
 
 .rightAside {
-  padding: 220px 5% 20px;
+  padding: 220px 5% 20px 80px;
+}
+
+.events {
+  display: block;
 }

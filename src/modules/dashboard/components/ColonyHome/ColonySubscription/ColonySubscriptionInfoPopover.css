@@ -3,7 +3,7 @@
   min-width: 380px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: var(--temp-grey-13);
+  color: var(--temp-grey-blue-7);
 }
 
 .colonyDetails {
@@ -11,7 +11,7 @@
   align-items: center;
   margin: 0 0 15px 0;
   padding: 0 0 10px 0;
-  border-bottom: 1px solid color-mod(var(--temp-grey-13) alpha(15%));
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .colonyAvatar {
@@ -53,7 +53,7 @@
 
 .nativeTokenTitle {
   composes: colonyInfoItem;
-  color: color-mod(var(--temp-grey-13) alpha(85%));
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .nativeTokenAddress {

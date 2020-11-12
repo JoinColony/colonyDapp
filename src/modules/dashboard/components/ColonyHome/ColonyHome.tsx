@@ -23,6 +23,7 @@ import { getUserRolesForDomain } from '../../../transformers';
 import ColonyFunding from './ColonyFunding';
 import ColonyTitle from './ColonyTitle';
 import ColonyTotalFunds from '../ColonyTotalFunds';
+import ColonyActions from '../ColonyActions';
 
 import styles from './ColonyHome.css';
 
@@ -161,7 +162,10 @@ const ColonyHome = ({ match, location }: Props) => {
               path={COLONY_EXTENSIONS_ROUTE}
               component={() => <>Extensions</>}
             />
-            <Route path={COLONY_HOME_ROUTE} component={() => <>Actions</>} />
+            <Route
+              path={COLONY_HOME_ROUTE}
+              component={() => <ColonyActions />}
+            />
           </Switch>
         </div>
         <aside className={styles.rightAside}>

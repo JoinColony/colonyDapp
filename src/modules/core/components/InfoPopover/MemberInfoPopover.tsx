@@ -21,7 +21,7 @@ import styles from './InfoPopover.css';
 interface Props {
   colonyAddress: Address;
   domainId?: number;
-  user: AnyUser;
+  user?: AnyUser;
 }
 
 const MSG = defineMessages({
@@ -49,7 +49,11 @@ const MSG = defineMessages({
 
 const displayName = 'InfoPopover.MemberInfoPopover';
 
-const MemberInfoPopover = ({ colonyAddress, domainId, user }: Props) => {
+const MemberInfoPopover = ({
+  colonyAddress,
+  domainId,
+  user = { id: '', profile: { walletAddress: '' } },
+}: Props) => {
   const { formatMessage } = useIntl();
   const {
     profile: { walletAddress },
@@ -92,9 +96,11 @@ const MemberInfoPopover = ({ colonyAddress, domainId, user }: Props) => {
 
   return (
     <div className={styles.main}>
-      <div className={styles.section}>
-        <UserInfo user={user} />
-      </div>
+      {user && user.profile && user.profile.walletAddress && (
+        <div className={styles.section}>
+          <UserInfo user={user} />
+        </div>
+      )}
       <div className={styles.section}>
         <div className={styles.reputation}>
           <div className={styles.reputationHeading}>

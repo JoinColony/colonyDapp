@@ -34,7 +34,7 @@
   --temp-grey-8: rgb(52, 55, 56);
   --temp-grey-11: rgb(136, 136, 136); /* Used for the text color of time for the 'CardActivity' items */
   --temp-grey-12: rgb(152, 164, 193); /* Used for Drag & Drop placeholder */
-  --temp-grey-13: rgb(118, 116, 139); /* Used for the colony home address display -- this is really getting out of hand */
+  --temp-grey-13: rgb(227, 224, 227); /* Used for separator background */
   --temp-grey-blue-1: rgb(242, 246, 246); /* Used for the background-color of comments ('CardActivity' comment items) */
   --temp-grey-blue-2: rgb(209, 214, 215); /* Used for the border of attachments preview ('CardActivity' attachment items) */
   --temp-grey-blue-3: rgb(251, 252, 253); /* Used for the board list item ('BordListItem' hover clickable) */
@@ -42,6 +42,7 @@
   --temp-grey-blue-5: rgb(244, 238, 242); /* Used for user profile gradient start color */
   --temp-grey-blue-6: rgb(231, 242, 246); /* Used for user profile gradient end color */
   --temp-grey-blue-7: rgb(118, 116, 139); /* Used for the wallet connect button in the user navigation */
+  --temp-grey-blue-8: rgb(238, 242, 245); /* Used for the actions list hover background */
   --drop-shadow: rgba(62, 118, 244, 0.14);
 
   /*
