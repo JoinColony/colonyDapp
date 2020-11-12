@@ -406,6 +406,7 @@ export type Event = {
   context: EventContext;
   createdAt: Scalars['DateTime'];
   date: Scalars['Int'];
+  domain?: Maybe<Scalars['String']>;
   from?: Maybe<Scalars['String']>;
   hash: Scalars['String'];
   id: Scalars['String'];
@@ -415,7 +416,9 @@ export type Event = {
   sourceId: Scalars['String'];
   sourceType: Scalars['String'];
   to?: Maybe<Scalars['String']>;
+  topic?: Maybe<Scalars['String']>;
   type: EventType;
+  userAddress?: Maybe<Scalars['String']>;
 };
 
 export type Notification = {
@@ -2162,7 +2165,7 @@ export type ColonyEventsQueryVariables = Exact<{
 
 export type ColonyEventsQuery = { colony: (
     Pick<Colony, 'id' | 'colonyAddress'>
-    & { events: Array<Pick<Event, 'from' | 'to' | 'date' | 'name' | 'hash'>> }
+    & { events: Array<Pick<Event, 'from' | 'to' | 'date' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domain'>> }
   ) };
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{
@@ -5508,6 +5511,9 @@ export const ColonyEventsDocument = gql`
       date
       name
       hash
+      topic
+      userAddress
+      domain
     }
   }
 }

@@ -81,6 +81,9 @@ export default gql`
     date: Int!
     hash: String!
     name: String!
+    topic: String
+    userAddress: String
+    domain: String
   }
 
   extend type Colony {

@@ -1,20 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { defineMessages } from 'react-intl';
 import { useColonyEventsQuery } from '~data/index';
 import { Address } from '~types/index';
+import ActionsList from '~core/ActionsList';
 
 const displayName = 'dashboard.ColonyEvents';
+
+const MSG = defineMessages({
+  loadingText: {
+    id: 'dashboard.ColonyEvents.loadingText',
+    defaultMessage: 'Loading Events',
+  },
+});
 
 interface Props {
   colonyAddress: Address;
 }
 
+const formatColonyEvents = (events) => {
+  return events;
+}
+
 const ColonyEvents = ({ colonyAddress }: Props) => {
-  const { data: transactionsData, error } = useColonyEventsQuery({
+  const { data, error } = useColonyEventsQuery({
     variables: { address: colonyAddress },
   });
-  console.log(transactionsData);
 
-  return <div>Events</div>;
+  const [events, setEvents] = useState([]);
+
+  if (error) console.warn(error);
+
+  useEffect(() => {
+    if (data && data.colony.events) {
+      setEvents(formatColonyEvents(data.colony.events));
+    }
+  }, [data]);
+
+  return (
+    <div>
+      <ActionsList
+        items={events}
+      />
+    </div>
+  );
 };
 
 ColonyEvents.displayName = displayName;

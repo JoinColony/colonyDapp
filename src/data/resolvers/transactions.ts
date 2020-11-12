@@ -67,17 +67,25 @@ export const getColonyAllEvents = async (
         ? await getBlockTime(provider, log.blockHash)
         : 0;
 
+      const {
+        values: { user, domainId },
+      } = event;
+
+      const domain = domainId ? bigNumberify(domainId._hex).toString() : null;
+
       const tx = log.transactionHash
         ? await provider.getTransaction(log.transactionHash)
         : undefined;
 
-      return {
+        return {
         __typename: 'Event',
         ...event,
         date,
         from: (tx && tx.from) || null,
         hash: log.transactionHash || HashZero,
         to: colonyClient.address,
+        domain,
+        userAddress: user || null,
       };
     }),
   );
