@@ -164,11 +164,7 @@ const ColonyHome = ({ match, location }: Props) => {
             />
             <Route
               path={COLONY_HOME_ROUTE}
-              component={() => (
-                <div className={styles.actions}>
-                  <ColonyActions />
-                </div>
-              )}
+              component={() => <ColonyActions />}
             />
           </Switch>
         </div>

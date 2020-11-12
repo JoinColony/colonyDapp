@@ -5,5 +5,4 @@ export const leftAside: string;
 export const leftAsideNav: string;
 export const mainContent: string;
 export const rightAside: string;
-export const actions: string;
 export const events: string;
