@@ -17,9 +17,17 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionStatus.missingPermissions',
     defaultMessage: 'Missing permissions',
   },
+  deprecated: {
+    id: 'dashboard.Extensions.ExtensionStatus.deprecated',
+    defaultMessage: 'Deprecated',
+  },
   enabled: {
     id: 'dashboard.Extensions.ExtensionStatus.enabled',
     defaultMessage: 'Enabled',
+  },
+  notEnabled: {
+    id: 'dashboard.Extensions.ExtensionStatus.notEnabled',
+    defaultMessage: 'Not enabled',
   },
 });
 
@@ -33,8 +41,13 @@ const ExtensionStatus = ({ installedExtension }: Props) => {
 
   if (!installedExtension) {
     status = MSG.notInstalled;
+  } else if (!installedExtension.details.initialized) {
+    status = MSG.notEnabled;
   } else if (installedExtension.details.missingPermissions.length) {
     status = MSG.missingPermissions;
+    theme = 'danger';
+  } else if (installedExtension.details.deprecated) {
+    status = MSG.deprecated;
     theme = 'danger';
   } else if (installedExtension.details.initialized) {
     status = MSG.enabled;
