@@ -17,8 +17,11 @@ const displayName = 'InfoPopover.UserInfoPopover';
 const UserInfoPopover = ({ user, userNotAvailable = false }: Props) => (
   <div className={styles.main}>
     <div className={styles.section}>
-      {userNotAvailable && <UserInfoNotAvailable />}
-      {!userNotAvailable && user && <UserInfo user={user} />}
+      {!userNotAvailable && user ? (
+        <UserInfo user={user} />
+      ) : (
+        <UserInfoNotAvailable />
+      )}
     </div>
   </div>
 );
