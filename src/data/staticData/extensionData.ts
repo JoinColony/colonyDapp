@@ -32,7 +32,7 @@ const MSG = defineMessages({
   },
   oneTxPaymentDescription: {
     id: 'extensions.OneTxPayment.description',
-    defaultMessage: 'Lorem Lorem Löffelstiel',
+    defaultMessage: 'Pay a single account one type of token',
   },
   coinMachineName: {
     id: 'extensions.CoinMachine.name',
@@ -40,7 +40,7 @@ const MSG = defineMessages({
   },
   coinMachineDescription: {
     id: 'extensions.CoinMachine.description',
-    defaultMessage: 'Lorem Lorem Löffelstiel',
+    defaultMessage: 'A simple way to continually sell tokens',
   },
   coinMachinePurchaseTokenTitle: {
     id: 'extensions.CoinMachine.param.purchaseToken.title',
@@ -104,7 +104,7 @@ const extensions: { [key: string]: ExtensionData } = {
   OneTxPayment: {
     extensionId: Extension.OneTxPayment,
     name: MSG.oneTxPaymentName,
-    description: MSG.coinMachineDescription,
+    description: MSG.oneTxPaymentDescription,
     currentVersion: 1,
     createdAt: 1557698400000,
     neededColonyPermissions: [ColonyRole.Administration, ColonyRole.Funding],

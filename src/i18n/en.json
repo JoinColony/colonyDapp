@@ -145,6 +145,11 @@
     "transaction.group.enableExtension.description": "Enable Colony Extension",
     "transaction.CoinMachineClient.initialise.title": "Initialize CoinMachine Extension",
     "transaction.ColonyClient.setUserRolesWithProofs.title": "Set user permissions",
+    "transaction.ColonyClient.setUserRolesWithProofs.description": "Set user permissions",
+    "transaction.ColonyClient.uninstallExtension.title": "Uninstall Colony Extension",
+    "transaction.ColonyClient.uninstallExtension.description": "Uninstall Colony Extension",
+    "transaction.ColonyClient.deprecateExtension.title": "Deprecate Colony Extension",
+    "transaction.ColonyClient.deprecateExtension.description": "Deprecate Colony Extension",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
