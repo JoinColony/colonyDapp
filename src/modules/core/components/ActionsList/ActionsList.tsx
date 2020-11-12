@@ -24,9 +24,9 @@ interface Props {
 
 const ActionsList = ({ items, handleItemClick }: Props) => (
   <ul className={styles.main}>
-    {items.map((item) => (
+    {items.map((item, i) => (
       <ActionsListItem
-        key={item.id}
+        key={item.id || i}
         item={item}
         handleOnClick={handleItemClick}
       />
