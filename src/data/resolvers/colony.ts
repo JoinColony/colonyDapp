@@ -13,6 +13,7 @@ import {
   getEvents,
   getLogs,
   getBlockTime,
+  ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -613,18 +614,20 @@ export const colonyResolvers = ({
         throw new Error('Colony version too old');
       }
 
-      const rolesFilter = colonyClient.filters.ColonyRoleSet(
-        address,
-        null,
-        null,
-        null,
-      );
-      const rolesEvents = await getEvents(colonyClient, rolesFilter);
-
       const { neededColonyPermissions } = extension;
-      const missingPermissions = neededColonyPermissions.filter(
-        (neededRole) =>
-          !rolesEvents.find(({ values }) => values.role === neededRole),
+      const roleCheckPromises = neededColonyPermissions.map(async (role) => {
+        const hasRole = await colonyClient.hasUserRole(
+          address,
+          ROOT_DOMAIN_ID,
+          role,
+        );
+        if (!hasRole) return role;
+        return null;
+      });
+
+      const roleCheckResults = await Promise.all(roleCheckPromises);
+      const missingPermissions = roleCheckResults.filter(
+        (role) => role !== null,
       );
 
       const installFilter = networkClient.filters.ExtensionInstalled(
