@@ -142,9 +142,7 @@ export const colonyResolvers = ({
         colonyAddress,
       );
 
-      const events = await getColonyAllEvents(
-        colonyClient,
-      );
+      const events = await getColonyAllEvents(colonyClient);
 
       return events;
     },

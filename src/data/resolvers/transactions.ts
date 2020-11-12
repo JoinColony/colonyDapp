@@ -10,42 +10,42 @@ import { HashZero } from 'ethers/constants';
 import { Transfer, Event } from '~data/index';
 import { notUndefined } from '~utils/arrays';
 
-// TODO Find better place for it..
+// Find better place for it..
 const FILTERS = [
-  "ColonyBootstrapped",
-  "ColonyFundsClaimed",
-  "ColonyFundsMovedBetweenFundingPots",
-  "ColonyInitialised",
-  "ColonyRewardInverseSet",
-  "ColonyRoleSet",
-  "ColonyUpgraded",
-  "DomainAdded",
-  "ExpenditureAdded",
-  "ExpenditureCancelled",
-  "ExpenditureFinalized",
-  "ExpenditurePayoutSet",
-  "ExpenditureRecipientSet",
-  "ExpenditureSkillSet",
-  "ExpenditureTransferred",
-  "FundingPotAdded",
-  "PaymentAdded",
-  "PayoutClaimed",
-  "RecoveryRoleSet",
-  "RewardPayoutClaimed",
-  "RewardPayoutCycleEnded",
-  "RewardPayoutCycleStarted",
-  "TaskAdded",
-  "TaskBriefSet",
-  "TaskCanceled",
-  "TaskCompleted",
-  "TaskDeliverableSubmitted",
-  "TaskDueDateSet",
-  "TaskFinalized",
-  "TaskPayoutSet",
-  "TaskRoleUserSet",
-  "TaskSkillSet",
-  "TaskWorkRatingRevealed"
-]
+  'ColonyBootstrapped',
+  'ColonyFundsClaimed',
+  'ColonyFundsMovedBetweenFundingPots',
+  'ColonyInitialised',
+  'ColonyRewardInverseSet',
+  'ColonyRoleSet',
+  'ColonyUpgraded',
+  'DomainAdded',
+  'ExpenditureAdded',
+  'ExpenditureCancelled',
+  'ExpenditureFinalized',
+  'ExpenditurePayoutSet',
+  'ExpenditureRecipientSet',
+  'ExpenditureSkillSet',
+  'ExpenditureTransferred',
+  'FundingPotAdded',
+  'PaymentAdded',
+  'PayoutClaimed',
+  'RecoveryRoleSet',
+  'RewardPayoutClaimed',
+  'RewardPayoutCycleEnded',
+  'RewardPayoutCycleStarted',
+  'TaskAdded',
+  'TaskBriefSet',
+  'TaskCanceled',
+  'TaskCompleted',
+  'TaskDeliverableSubmitted',
+  'TaskDueDateSet',
+  'TaskFinalized',
+  'TaskPayoutSet',
+  'TaskRoleUserSet',
+  'TaskSkillSet',
+  'TaskWorkRatingRevealed',
+];
 
 export const getColonyAllEvents = async (
   colonyClient: ColonyClient,
@@ -53,13 +53,10 @@ export const getColonyAllEvents = async (
   const { provider } = colonyClient;
 
   const allEventsLogs = await FILTERS.reduce(async (acc, filter) => {
-    const logs = await getLogs(
-      colonyClient,
-      colonyClient.filters[filter]()
-    )
-    return [...(await acc), ...logs]
-  }, Promise.resolve([]))
-  
+    const logs = await getLogs(colonyClient, colonyClient.filters[filter]());
+    return [...(await acc), ...logs];
+  }, Promise.resolve([]));
+
   const events = await Promise.all(
     allEventsLogs.map(async (log) => {
       const event = colonyClient.interface.parseLog(log);
@@ -71,13 +68,13 @@ export const getColonyAllEvents = async (
         values: { user, domainId },
       } = event;
 
-      const domain = domainId ? bigNumberify(domainId._hex).toString() : null;
+      const domain = domainId ? bigNumberify(domainId._hex).toString() : null; // eslint-disable-line no-underscore-dangle
 
       const tx = log.transactionHash
         ? await provider.getTransaction(log.transactionHash)
         : undefined;
 
-        return {
+      return {
         __typename: 'Event',
         ...event,
         date,
@@ -91,7 +88,7 @@ export const getColonyAllEvents = async (
   );
 
   return events;
-}
+};
 
 export const getColonyFundsClaimedTransfers = async (
   colonyClient: ColonyClient,

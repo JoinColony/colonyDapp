@@ -1,17 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { defineMessages } from 'react-intl';
 import { useColonyEventsQuery } from '~data/index';
 import { Address } from '~types/index';
 import ActionsList from '~core/ActionsList';
 
 const displayName = 'dashboard.ColonyEvents';
-
-const MSG = defineMessages({
-  loadingText: {
-    id: 'dashboard.ColonyEvents.loadingText',
-    defaultMessage: 'Loading Events',
-  },
-});
 
 interface Props {
   colonyAddress: Address;
@@ -19,7 +11,7 @@ interface Props {
 
 const formatColonyEvents = (events) => {
   return events;
-}
+};
 
 const ColonyEvents = ({ colonyAddress }: Props) => {
   const { data, error } = useColonyEventsQuery({
@@ -38,9 +30,7 @@ const ColonyEvents = ({ colonyAddress }: Props) => {
 
   return (
     <div>
-      <ActionsList
-        items={events}
-      />
+      <ActionsList items={events} />
     </div>
   );
 };
