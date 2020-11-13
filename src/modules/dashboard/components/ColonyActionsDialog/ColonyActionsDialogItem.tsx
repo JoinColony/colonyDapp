@@ -14,7 +14,7 @@ interface Props {
 const MSG = defineMessages({
   coming: {
     id: 'dashboard.ColonyActionsDialog.ColonyActionsDialogItem.coming',
-    defaultMessage: 'Coming',
+    defaultMessage: 'Coming soon',
   },
 });
 

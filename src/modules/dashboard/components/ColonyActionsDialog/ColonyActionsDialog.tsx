@@ -89,7 +89,7 @@ const ColonyActionsDialog = ({ cancel }: DialogProps) => {
         <ColonyActionsDialogItem
           title={MSG.smite}
           description={MSG.smiteDesc}
-          icon="emoji-fire"
+          icon="emoji-firebolt"
           disabled
         />
         <ColonyActionsDialogItem
