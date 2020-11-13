@@ -30,8 +30,11 @@
     "emoji-bag-money-sign",
     "emoji-building",
     "emoji-crane",
+    "emoji-fire",
     "emoji-gold-coin",
     "emoji-judge",
+    "emoji-money-wings",
+    "emoji-smiley-nerd",
     "empty-task",
     "envelope",
     "file",
@@ -54,12 +57,7 @@
     "tag",
     "three-dots-row",
     "unlock",
-    "wallet",
-    "expenditure",
-    "funds",
-    "domains",
-    "smite",
-    "advanced"
+    "wallet"
   ],
   "multiColorIcons": [
     "circle-check-primary",
