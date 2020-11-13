@@ -74,28 +74,28 @@ const ColonyActionsDialog = ({ cancel }: DialogProps) => {
         <ColonyActionsDialogItem
           title={MSG.createExpenditure}
           description={MSG.createExpenditureDesc}
-          icon="expenditure"
+          icon="emoji-bag-money-sign"
         />
         <ColonyActionsDialogItem
           title={MSG.manageFunds}
           description={MSG.manageFundsDesc}
-          icon="funds"
+          icon="emoji-money-wings"
         />
         <ColonyActionsDialogItem
           title={MSG.manageDomains}
           description={MSG.manageDomainsDesc}
-          icon="domains"
+          icon="emoji-crane"
         />
         <ColonyActionsDialogItem
           title={MSG.smite}
           description={MSG.smiteDesc}
-          icon="smite"
+          icon="emoji-fire"
           disabled
         />
         <ColonyActionsDialogItem
           title={MSG.advanced}
           description={MSG.advancedDesc}
-          icon="advanced"
+          icon="emoji-smiley-nerd"
         />
       </div>
     </Dialog>
