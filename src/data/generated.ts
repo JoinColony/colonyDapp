@@ -1408,7 +1408,7 @@ export type Transfer = {
 export type NetworkEvent = {
   to?: Maybe<Scalars['String']>;
   from?: Maybe<Scalars['String']>;
-  date: Scalars['Int'];
+  createdAt: Scalars['Int'];
   hash: Scalars['String'];
   name: Scalars['String'];
   topic?: Maybe<Scalars['String']>;
@@ -2168,7 +2168,7 @@ export type ColonyEventsQueryVariables = Exact<{
 
 export type ColonyEventsQuery = { colony: (
     Pick<Colony, 'id' | 'colonyAddress'>
-    & { events: Array<Pick<NetworkEvent, 'from' | 'to' | 'date' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domain'>> }
+    & { events: Array<Pick<NetworkEvent, 'from' | 'to' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domain'>> }
   ) };
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{
@@ -5511,7 +5511,7 @@ export const ColonyEventsDocument = gql`
     events @client {
       from
       to
-      date
+      createdAt
       name
       hash
       topic

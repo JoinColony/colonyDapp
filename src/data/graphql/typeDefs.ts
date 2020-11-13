@@ -78,7 +78,7 @@ export default gql`
   type NetworkEvent {
     to: String
     from: String
-    date: Int!
+    createdAt: Int!
     hash: String!
     name: String!
     topic: String
