@@ -129,13 +129,6 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
                 popperProps={{
                   placement: 'bottom',
                   showArrow: false,
-                  /*
-                   * @NOTE This is the price we have to pay for the ability
-                   * to customize the Popor library, which is nested under the
-                   * Popover component, which is nested under UserInfo,
-                   * which is nested under UserAvatar
-                   */
-                  children: () => null,
                   modifiers: [
                     {
                       name: 'offset',
