@@ -19,6 +19,9 @@ import {
   NetworkContractsInput,
   SetNetworkContractsMutation,
   SetNetworkContractsMutationVariables,
+  UpdateNetworkContractsMutation,
+  UpdateNetworkContractsMutationVariables,
+  UpdateNetworkContractsDocument,
 } from './index';
 import { SetNetworkContractsDocument } from './generated';
 
@@ -102,7 +105,7 @@ export function* refetchUserNotifications(walletAddress: string) {
 }
 
 /*
- * Hook to access the Network Contracts resolver in React components
+ * Hooks to access the Network Contracts resolver in React components
  */
 export const useNetworkContracts = () => {
   const {
@@ -116,7 +119,7 @@ export const useNetworkContracts = () => {
 };
 
 /*
- * Network Contracts saga, to be used when initializing the app
+ * Network Contracts saga helpers, to be used when initializing the app
  */
 export function* setNetworkContracts(input: NetworkContractsInput) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -126,6 +129,24 @@ export function* setNetworkContracts(input: NetworkContractsInput) {
   >({
     mutation: SetNetworkContractsDocument,
     variables: { input },
+  });
+  const {
+    data: { setNetworkContracts: networkContracts },
+  } = result as {
+    data: {
+      setNetworkContracts: SetNetworkContractsMutation['setNetworkContracts'];
+    };
+  };
+  return networkContracts;
+}
+
+export function* updateNetworkContracts() {
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const result = yield apolloClient.mutate<
+    UpdateNetworkContractsMutation,
+    UpdateNetworkContractsMutationVariables
+  >({
+    mutation: UpdateNetworkContractsDocument,
   });
   const {
     data: { networkContracts },
