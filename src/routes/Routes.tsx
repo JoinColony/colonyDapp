@@ -17,20 +17,28 @@ import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
 import LevelEdit from '~dashboard/LevelEdit';
-import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
+import {
+  NavBar,
+  Plain,
+  SimpleNav,
+  SubscribedColonies,
+  Default,
+} from '~pages/RouteLayouts/index';
 import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
 
+import appLoadingContext from '~context/appLoadingState';
+import ColonyFunding from '~dashboard/ColonyFunding';
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import appLoadingContext from '~context/appLoadingState';
 
 import {
   ADMIN_DASHBOARD_ROUTE,
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
+  COLONY_FUNDING_ROUTE,
   COLONY_HOME_ROUTE,
   CONNECT_ROUTE,
   CREATE_COLONY_ROUTE,
@@ -163,10 +171,18 @@ const Routes = () => {
             COLONY_EXTENSIONS_ROUTE,
           ]}
           component={ColonyHome}
-          layout={Default}
-          routeProps={{
-            hasBackLink: false,
-          }}
+          layout={SubscribedColonies}
+          routeProps={{ hasBackLink: false }}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={COLONY_FUNDING_ROUTE}
+          component={ColonyFunding}
+          layout={SubscribedColonies}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+          })}
         />
         <AlwaysAccesibleRoute
           exact

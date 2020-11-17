@@ -1,15 +1,15 @@
-import { FormikBag } from 'formik';
 import React, { DependencyList, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import * as yup from 'yup';
-import moveDecimal from 'move-decimal-point';
 import { bigNumberify } from 'ethers/utils';
+import { FormikBag } from 'formik';
+import moveDecimal from 'move-decimal-point';
+import * as yup from 'yup';
 
-import { Address } from '~types/index';
 import { ActionForm } from '~core/Fields';
-import { pipe, mapPayload, mergePayload, withKey } from '~utils/actions';
-import { ActionTypes } from '~redux/index';
 import { ColonyTokens, OneToken } from '~data/index';
+import { ActionTypes } from '~redux/index';
+import { Address } from '~types/index';
+import { pipe, mapPayload, mergePayload, withKey } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 const MSG = defineMessages({
@@ -31,6 +31,7 @@ interface Props {
 }
 
 const validationSchema = yup.object().shape({
+  justification: yup.string(),
   mintAmount: yup
     .number()
     .required(() => MSG.errorAmountRequired)
@@ -60,6 +61,7 @@ const TokenMintForm = ({
   return (
     <ActionForm
       initialValues={{
+        justification: '',
         mintAmount: 0,
       }}
       validationSchema={validationSchema}

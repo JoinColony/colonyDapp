@@ -2,18 +2,18 @@ import { FormikProps } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { Address } from '~types/index';
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Input } from '~core/Fields';
+import { Input, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
 import { ColonyTokens } from '~data/index';
-
-import TokenMintForm from './TokenMintForm';
+import { Address } from '~types/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-import styles from '~admin/Tokens/TokenMintDialog.css';
+import TokenMintForm from './TokenMintForm';
+
+import styles from './TokenMintDialog.css';
 
 const MSG = defineMessages({
   title: {
@@ -29,6 +29,10 @@ const MSG = defineMessages({
     id: 'admin.Tokens.TokenMintDialog.amountLabel',
     defaultMessage: 'Amount',
   },
+  justificationLabel: {
+    id: 'admin.Tokens.TokenMintDialog.amountLabel',
+    defaultMessage: `Explain why you're minting more tokens (optional)`,
+  },
   buttonCancel: {
     id: 'admin.Tokens.TokenMintDialog.buttonCancel',
     defaultMessage: 'Cancel',
@@ -40,6 +44,7 @@ const MSG = defineMessages({
 });
 
 interface FormValues {
+  justification: string;
   mintAmount: number;
 }
 
@@ -97,6 +102,9 @@ const TokenMintDialog = ({
                 {symbol}
               </span>
             </div>
+          </DialogSection>
+          <DialogSection>
+            <Textarea label={MSG.justificationLabel} name="justification" />
           </DialogSection>
           <DialogSection appearance={{ align: 'right' }}>
             <Button

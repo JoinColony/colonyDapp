@@ -54,6 +54,10 @@
   outline: 0;
 }
 
+.manageFundsLink {
+  color: var(--colony-blue);
+}
+
 .rightArrowDisplay {
   display: inline-block;
   margin: -8px 3px 0 15px;

@@ -23,10 +23,6 @@ export interface NavigationItem {
   content: ReactNode;
 }
 
-interface State {
-  tabIndex: number;
-}
-
 interface Props {
   /*
    * Array of `NavigationItem` object to render into vertical tab format

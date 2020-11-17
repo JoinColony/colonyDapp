@@ -1,11 +1,6 @@
 .main {
-  composes: stretchHorizontal from '~styles/layout.css';
   display: grid;
-  grid-template-columns: auto;
-}
-
-.mainContentGrid {
-  display: grid;
+  margin-top: -80px;
 
   /*
    * @NOTE On the below width calculations
