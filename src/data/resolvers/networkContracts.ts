@@ -2,6 +2,13 @@ import { Resolvers } from '@apollo/client';
 
 import { NetworkContractsDocument } from '../generated';
 
+export const initialCache = {
+  networkContracts: {
+    __typename: 'NetworkContracts',
+    version: null,
+  },
+};
+
 export const networkContractsResolvers = (): Resolvers => ({
   Mutation: {
     setNetworkContracts: (_root, { input }, { cache }) => {

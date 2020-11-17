@@ -28,6 +28,7 @@ import {
   ProgramQuery,
   UserWithReputationQuery,
   UserColoniesQuery,
+  NetworkContractsDocument,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -38,12 +39,19 @@ import { domainResolvers } from './resolvers/domain';
 import { userResolvers } from './resolvers/user';
 import { tokenResolvers } from './resolvers/token';
 import { taskResolvers } from './resolvers/task';
-import { networkContractsResolvers } from './resolvers/networkContracts';
+import {
+  networkContractsResolvers,
+  initialCache as networkContracts,
+} from './resolvers/networkContracts';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
 // Initialize cache
 apolloCache.writeQuery({ query: LoggedInUserDocument, data: loggedInUser });
+apolloCache.writeQuery({
+  query: NetworkContractsDocument,
+  data: networkContracts,
+});
 
 export { default as cache } from './cache';
 export { default as cacheUpdates } from './cacheUpdates';
