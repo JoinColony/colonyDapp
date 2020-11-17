@@ -1,5 +1,6 @@
 import { Resolvers } from '@apollo/client';
 
+import { Context } from '~context/index';
 import { NetworkContractsDocument } from '../generated';
 
 export const initialCache = {
@@ -10,14 +11,32 @@ export const initialCache = {
   },
 };
 
-export const networkContractsResolvers = (): Resolvers => ({
+export const networkContractsResolvers = ({
+  colonyManager: { networkClient },
+}: Required<Context>): Resolvers => ({
   Mutation: {
-    setNetworkContracts: (_root, { input }, { cache }) => {
+    async setNetworkContracts(_root, { input }, { cache }) {
       const { networkContracts } = cache.readQuery({
         query: NetworkContractsDocument,
       });
       const changedData = {
         networkContracts: { ...networkContracts, ...input },
+      };
+      cache.writeQuery({ query: NetworkContractsDocument, data: changedData });
+      return changedData.networkContracts;
+    },
+    async updateNetworkContracts(_root, _, { cache }) {
+      const { networkContracts } = cache.readQuery({
+        query: NetworkContractsDocument,
+      });
+      const version = await networkClient.getCurrentColonyVersion();
+      const feeInverse = await networkClient.getFeeInverse();
+      const changedData = {
+        networkContracts: {
+          ...networkContracts,
+          version: version.toString(),
+          feeInverse: feeInverse.toString(),
+        },
       };
       cache.writeQuery({ query: NetworkContractsDocument, data: changedData });
       return changedData.networkContracts;

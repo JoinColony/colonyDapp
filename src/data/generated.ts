@@ -755,6 +755,7 @@ export type Mutation = {
   subscribeToColony?: Maybe<User>;
   unassignWorker?: Maybe<Task>;
   unsubscribeFromColony?: Maybe<User>;
+  updateNetworkContracts: NetworkContracts;
 };
 
 
@@ -1936,6 +1937,11 @@ export type SetNetworkContractsMutationVariables = Exact<{
 
 
 export type SetNetworkContractsMutation = { setNetworkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
+export type UpdateNetworkContractsMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UpdateNetworkContractsMutation = { updateNetworkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
 
 export type TaskQueryVariables = Exact<{
   id: Scalars['String'];
@@ -4601,6 +4607,38 @@ export function useSetNetworkContractsMutation(baseOptions?: Apollo.MutationHook
 export type SetNetworkContractsMutationHookResult = ReturnType<typeof useSetNetworkContractsMutation>;
 export type SetNetworkContractsMutationResult = Apollo.MutationResult<SetNetworkContractsMutation>;
 export type SetNetworkContractsMutationOptions = Apollo.BaseMutationOptions<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>;
+export const UpdateNetworkContractsDocument = gql`
+    mutation UpdateNetworkContracts {
+  updateNetworkContracts @client {
+    version
+    feeInverse
+  }
+}
+    `;
+export type UpdateNetworkContractsMutationFn = Apollo.MutationFunction<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>;
+
+/**
+ * __useUpdateNetworkContractsMutation__
+ *
+ * To run a mutation, you first call `useUpdateNetworkContractsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateNetworkContractsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateNetworkContractsMutation, { data, loading, error }] = useUpdateNetworkContractsMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUpdateNetworkContractsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>) {
+        return Apollo.useMutation<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>(UpdateNetworkContractsDocument, baseOptions);
+      }
+export type UpdateNetworkContractsMutationHookResult = ReturnType<typeof useUpdateNetworkContractsMutation>;
+export type UpdateNetworkContractsMutationResult = Apollo.MutationResult<UpdateNetworkContractsMutation>;
+export type UpdateNetworkContractsMutationOptions = Apollo.BaseMutationOptions<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
