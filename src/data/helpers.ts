@@ -14,6 +14,8 @@ import {
   UserNotificationsDocument,
   UserNotificationsQuery,
   UserNotificationsQueryVariables,
+  useNetworkContractsQuery,
+  NetworkContractsQuery,
 } from './index';
 
 const getMinimalUser = (address: string): UserQuery['user'] => ({
@@ -94,3 +96,17 @@ export function* refetchUserNotifications(walletAddress: string) {
     fetchPolicy: 'network-only',
   });
 }
+
+/*
+ * Hook to access the Network Contracts resolver in React components
+ */
+export const useNetworkContracts = () => {
+  const {
+    data: { networkContracts },
+  } = useNetworkContractsQuery() as {
+    data: {
+      networkContracts: NetworkContractsQuery['networkContracts'];
+    };
+  };
+  return networkContracts;
+};
