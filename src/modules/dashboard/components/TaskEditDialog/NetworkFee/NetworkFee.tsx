@@ -5,8 +5,8 @@ import moveDecimal from 'move-decimal-point';
 
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
-import { useSelector } from '~utils/hooks';
-import { networkFeeInverseSelector } from '../../../../core/selectors';
+import { useNetworkContracts } from '~data/index';
+
 import styles from './NetworkFee.css';
 
 const MSG = defineMessages({
@@ -38,7 +38,8 @@ interface Props {
 const displayName = 'dashboard.Task.Payout.NetworkFee';
 
 const NetworkFee = ({ amount, decimals, symbol }: Props) => {
-  const networkFeeInverse = useSelector(networkFeeInverseSelector);
+  const { feeInverse } = useNetworkContracts();
+  const networkFeeInverse = parseInt(feeInverse || '0', 10);
   const metaColonyFee = useMemo(() => {
     const amountBn = bigNumberify(moveDecimal(amount, decimals));
     if (amountBn.isZero() || networkFeeInverse === 1) {
