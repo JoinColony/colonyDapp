@@ -4,7 +4,7 @@ import {
   defineMessages,
   FormattedDateParts,
 } from 'react-intl';
-import { useTokenQuery, ColonyTransaction } from '~data/index';
+import { useTokenQuery, ColonyTransaction, useUsernameQuery } from '~data/index';
 import { mergePayload } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { ActionButton } from '~core/Button';
@@ -45,15 +45,21 @@ const UnclaimedTransfersItem = ({
     variables: { address: tokenAddress },
   });
 
+  const { data: usernameData } = useUsernameQuery({
+    variables: { address: senderAddress || '' },
+  });
+
   const transform = useCallback(mergePayload({ colonyAddress, tokenAddress }), [
     colonyAddress,
     tokenAddress,
   ]);
 
-  // @TODO: use proper preloader
   if (!tokenData) return null;
 
   const { token } = tokenData;
+
+  const username = usernameData && usernameData.username;
+  const description = null; // Will be support in after network upgrade to v5
 
   return (
     <li>
@@ -80,12 +86,12 @@ const UnclaimedTransfersItem = ({
               <FormattedMessage
                 {...MSG.from}
                 values={{
-                  sender: <MaskedAddress address={senderAddress} />,
+                  sender: username || <MaskedAddress address={senderAddress} />,
                 }}
               />
             )}
           </div>
-          <span>Poker’s debt</span>
+          {description && <span>Poker’s debt</span>}
         </div>
         <div className={styles.amountWrapper}>
           <Numeral
