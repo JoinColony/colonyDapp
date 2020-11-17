@@ -2,17 +2,21 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { useSelector, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
-import { Colony, useLoggedInUser, useSystemInfoQuery } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useSystemInfoQuery,
+  useNetworkContracts,
+} from '~data/index';
 
 import { getUserRolesForDomain } from '../../../transformers';
-import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded } from '../../../dashboard/checks';
 import UnlockTokenDialog from './UnlockTokenDialog';
@@ -103,8 +107,8 @@ const ProfileAdvanced = ({
   colony,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
-  const networkVersion = useSelector(networkVersionSelector);
   const { data } = useSystemInfoQuery();
+  const { version: networkVersion } = useNetworkContracts();
 
   const rootRoles = useTransformer(getUserRolesForDomain, [
     colony,
@@ -136,7 +140,10 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
           values={{ colonyAddress }}
-          disabled={!networkVersion || !canBeUpgraded(colony, networkVersion)}
+          disabled={
+            !networkVersion ||
+            !canBeUpgraded(colony, parseInt(networkVersion, 10))
+          }
         />
       </section>
       <section className={styles.section}>
