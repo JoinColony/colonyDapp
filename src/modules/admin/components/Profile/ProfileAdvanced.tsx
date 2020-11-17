@@ -47,10 +47,6 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileAdvanced.labelId',
     defaultMessage: 'Colony ID',
   },
-  buttonUpdate: {
-    id: 'admin.Profile.ProfileAdvanced.buttonUpdate',
-    defaultMessage: 'Upgrade',
-  },
   buttonRecoveryMode: {
     id: 'admin.Profile.ProfileAdvanced.buttonRecoveryMode',
     defaultMessage: 'Turn on Recovery mode',
@@ -134,7 +130,7 @@ const ProfileAdvanced = ({
         </div>
         <DialogActionButton
           appearance={{ theme: 'primary', size: 'large' }}
-          text={MSG.buttonUpdate}
+          text={{ id: 'button.upgrade' }}
           dialog={NetworkContractUpgradeDialog}
           submit={ActionTypes.COLONY_VERSION_UPGRADE}
           success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
