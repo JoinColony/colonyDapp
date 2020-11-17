@@ -1,11 +1,4 @@
-import {
-  call,
-  fork,
-  put,
-  takeEvery,
-  takeLatest,
-  select,
-} from 'redux-saga/effects';
+import { call, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -17,12 +10,12 @@ import {
   ColonyDocument,
   ColonyQuery,
   ColonyQueryVariables,
+  getNetworkContracts,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
-import { networkVersionSelector } from '../../core/selectors';
 
 function* colonyAvatarUpload({
   meta,
@@ -123,7 +116,7 @@ function* colonyUpgradeContract({
 }: Action<ActionTypes.COLONY_VERSION_UPGRADE>) {
   const txChannel = yield call(getTxChannel, meta.id);
 
-  const newVersion = yield select(networkVersionSelector);
+  const { version: newVersion } = yield getNetworkContracts();
 
   try {
     yield fork(createTransaction, meta.id, {
