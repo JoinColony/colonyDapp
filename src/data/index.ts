@@ -38,6 +38,7 @@ import { domainResolvers } from './resolvers/domain';
 import { userResolvers } from './resolvers/user';
 import { tokenResolvers } from './resolvers/token';
 import { taskResolvers } from './resolvers/task';
+import { networkContractsResolvers } from './resolvers/networkContracts';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
@@ -54,6 +55,7 @@ export const resolvers: ResolverFactory[] = [
   userResolvers,
   taskResolvers,
   tokenResolvers,
+  networkContractsResolvers,
 ];
 
 // export all the generated types and helpers
