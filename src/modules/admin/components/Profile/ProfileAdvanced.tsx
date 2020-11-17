@@ -7,7 +7,7 @@ import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
-import UpgradeContractDialog from '~admin/UpgradeContractDialog';
+import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
 import { Colony, useLoggedInUser, useSystemInfoQuery } from '~data/index';
 
@@ -131,7 +131,7 @@ const ProfileAdvanced = ({
         <DialogActionButton
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.buttonUpdate}
-          dialog={UpgradeContractDialog}
+          dialog={NetworkContractUpgradeDialog}
           submit={ActionTypes.COLONY_VERSION_UPGRADE}
           success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
