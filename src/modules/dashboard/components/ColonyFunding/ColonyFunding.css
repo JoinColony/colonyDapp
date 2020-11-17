@@ -1,0 +1,16 @@
+
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 0 20px 20px;
+  min-height: 100%;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  padding-left: 21.25%;
+}
