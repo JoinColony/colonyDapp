@@ -11,6 +11,7 @@ import { ActionButton } from '~core/Button';
 import MaskedAddress from '~core/MaskedAddress';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import Icon from '~core/Icon';
 
 import styles from './UnclaimedTransfersItem.css';
 
@@ -57,6 +58,22 @@ const UnclaimedTransfersItem = ({
   return (
     <li>
       <div className={styles.content}>
+        <div className={styles.date}>
+          <FormattedDateParts value={date} month="short" day="numeric">
+            {(parts) => (
+              <>
+                <span>{parts[2].value}</span>
+                <span>{parts[0].value}</span>
+              </>
+            )}
+          </FormattedDateParts>
+        </div>
+        <Icon
+          appearance={{ size: 'medium' }}
+          className={styles.arrowIcon}
+          name="circle-arrow-down"
+          title="comment"
+        />
         <div className={styles.details}>
           <div className={styles.sender}>
             {senderAddress && (
@@ -68,23 +85,17 @@ const UnclaimedTransfersItem = ({
               />
             )}
           </div>
-          <div className={styles.date}>
-            <FormattedDateParts value={date} month="short" day="numeric">
-              {(parts) => (
-                <>
-                  <span>{parts[2].value}</span>
-                  <span>{parts[0].value}</span>
-                </>
-              )}
-            </FormattedDateParts>
-          </div>
+          <span>Poker’s debt</span>
         </div>
-        <Numeral
-          value={amount}
-          unit={getTokenDecimalsWithFallback(token.decimals)}
-          suffix={` ${token.symbol}`}
-          className={styles.amount}
-        />
+        <div className={styles.amountWrapper}>
+          <Numeral
+            value={amount}
+            unit={getTokenDecimalsWithFallback(token.decimals)}
+            suffix={` ${token.symbol}`}
+            className={styles.amount}
+          />
+          <span>~ 0.1 USD</span>
+        </div>
         <ActionButton
           text={MSG.buttonClaim}
           className={styles.button}

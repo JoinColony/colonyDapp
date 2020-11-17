@@ -1,3 +1,5 @@
+@value spaceBetween: 26px;
+
 .content {
   display: flex;
   align-items: center;
@@ -21,31 +23,58 @@
   width: 100px;
 }
 
+.amount {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+}
+
+.amountWrapper,
+.date,
 .details {
   display: flex;
   flex-direction: column;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.details {
   margin-right: auto;
   min-width: 143px;
 }
 
-.amount {
-  margin-right: 26px;
-  font-size: var(--size-medium);
-  color: var(--dark);
+.amountWrapper {
+  align-items: flex-end;
+  margin-right: spaceBetween;
 }
 
 .date {
-  font-size: var(--size-small);
-  color: var(--temp-grey-blue-7);
+  align-items: center;
+  margin-right: spaceBetween;
+  text-transform: uppercase;
 }
 
 .date span:first-child {
-  margin-right: 4px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-normal);
+  color: var(--dark);
 }
 
 .sender {
   margin-bottom: 2px;
   font-size: var(--size-normal);
-  font-weight: var(--weight-bold);
+  font-weight: 600;
   color: var(--dark);
+}
+
+.arrowIcon {
+  flex: 0 0 26px;
+  margin-right: spaceBetween;
+  height: 26px;
+  width: 26px;
+}
+
+.arrowIcon svg {
+  fill: color-mod(var(--dark) alpha(65%));
 }
