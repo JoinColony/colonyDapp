@@ -4,7 +4,11 @@ import {
   defineMessages,
   FormattedDateParts,
 } from 'react-intl';
-import { useTokenQuery, ColonyTransaction, useUsernameQuery } from '~data/index';
+import {
+  useTokenQuery,
+  ColonyTransaction,
+  useUsernameQuery,
+} from '~data/index';
 import { mergePayload } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { ActionButton } from '~core/Button';
@@ -12,6 +16,7 @@ import MaskedAddress from '~core/MaskedAddress';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Icon from '~core/Icon';
+import EthUsd from '~core/EthUsd';
 
 import styles from './UnclaimedTransfersItem.css';
 
@@ -57,10 +62,9 @@ const UnclaimedTransfersItem = ({
   if (!tokenData) return null;
 
   const { token } = tokenData;
-
+  const isEth = token.symbol === 'ETH';
   const username = usernameData && usernameData.username;
   const description = null; // Will be support in after network upgrade to v5
-
   return (
     <li>
       <div className={styles.content}>
@@ -100,7 +104,7 @@ const UnclaimedTransfersItem = ({
             suffix={` ${token.symbol}`}
             className={styles.amount}
           />
-          <span>~ 0.1 USD</span>
+          {isEth && <EthUsd value={amount} unit="wei" />}
         </div>
         <ActionButton
           text={MSG.buttonClaim}
