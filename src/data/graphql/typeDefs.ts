@@ -19,11 +19,11 @@ export default gql`
   }
 
   input NetworkContractsInput {
-    version: Int
+    version: String
   }
 
   type NetworkContracts {
-    version: Int
+    version: String
   }
 
   type DomainBalance {

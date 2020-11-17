@@ -1336,11 +1336,11 @@ export type LoggedInUser = {
 };
 
 export type NetworkContractsInput = {
-  version?: Maybe<Scalars['Int']>;
+  version?: Maybe<Scalars['String']>;
 };
 
 export type NetworkContracts = {
-  version?: Maybe<Scalars['Int']>;
+  version?: Maybe<Scalars['String']>;
 };
 
 export type DomainBalance = {
