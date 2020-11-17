@@ -118,16 +118,14 @@ export const useNetworkContracts = () => {
 /*
  * Network Contracts saga, to be used when initializing the app
  */
-export function* setNetworkContractsVersion({
-  version,
-}: NetworkContractsInput) {
+export function* setNetworkContracts(input: NetworkContractsInput) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const result = yield apolloClient.mutate<
     SetNetworkContractsMutation,
     SetNetworkContractsMutationVariables
   >({
     mutation: SetNetworkContractsDocument,
-    variables: { input: { version } },
+    variables: { input },
   });
   const {
     data: { networkContracts },
