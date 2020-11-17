@@ -3,17 +3,27 @@ import React from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import Icon from '~core/Icon';
 import { Tooltip } from '../Popover';
-import styles from './Permission.css'
+import styles from './Permission.css';
+import { permissionsObject } from './permissions';
 
 interface Props {
-  /** Icon name for permission label */
-  icon: string;
+  /** Permission name */
+  permission:
+    | 'root'
+    | 'administration'
+    | 'architecture'
+    | 'funding'
+    | 'arbitration'
+    | 'recovery';
+
+  /** Icon name for permission label. If empy, default will be taken from permission object */
+  icon?: string;
 
   /** Whether or not the permission is inherited. If `true`, will add * asterisk to permission name. */
   inherited?: boolean;
 
-  /** Permission name */
-  name: MessageDescriptor | string;
+  /** Permission name. If empty, default will be taken from permissions object */
+  name?: MessageDescriptor | string;
 
   /** Optional info message about permission being inherited. */
   infoMessage?: MessageDescriptor | string;
@@ -21,9 +31,22 @@ interface Props {
 
 const displayName = 'Permission';
 
-const Permission = ({ icon, inherited = false, name, infoMessage }: Props) => {
+const Permission = ({
+  permission,
+  icon,
+  inherited = false,
+  name,
+  infoMessage,
+}: Props) => {
   const { formatMessage } = useIntl();
-  const permissionName = typeof name === 'string' ? name : formatMessage(name);
+  const permissionDefaults = permissionsObject[permission];
+  const permissionName = name || permissionDefaults.label;
+  const permissionIcon = icon || permissionDefaults.icon;
+
+  const translatedName =
+    typeof permissionName === 'string'
+      ? permissionName
+      : formatMessage(permissionName);
   const tooltipText =
     typeof infoMessage === 'string'
       ? infoMessage
@@ -36,9 +59,14 @@ const Permission = ({ icon, inherited = false, name, infoMessage }: Props) => {
       trigger={inherited && infoMessage ? 'hover' : 'disabled'}
     >
       <div className={styles.wrapper}>
-        <Icon appearance={{ size: 'extraTiny' }} className={styles.icon} name={icon} title={name} />
+        <Icon
+          appearance={{ size: 'extraTiny' }}
+          className={styles.icon}
+          name={permissionIcon}
+          title={translatedName}
+        />
         <span className={styles.label}>
-          {permissionName}
+          {translatedName}
           {inherited && '*'}
         </span>
       </div>
