@@ -16,7 +16,9 @@ import {
   UserNotificationsQueryVariables,
   useNetworkContractsQuery,
   NetworkContractsQuery,
+  NetworkContractsQueryVariables,
   NetworkContractsInput,
+  NetworkContractsDocument,
   SetNetworkContractsMutation,
   SetNetworkContractsMutationVariables,
   UpdateNetworkContractsMutation,
@@ -135,6 +137,22 @@ export function* setNetworkContracts(input: NetworkContractsInput) {
   } = result as {
     data: {
       setNetworkContracts: SetNetworkContractsMutation['setNetworkContracts'];
+    };
+  };
+  return networkContracts;
+}
+
+export function* getNetworkContracts() {
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const result = yield apolloClient.query<
+    NetworkContractsQuery,
+    NetworkContractsQueryVariables
+  >({ query: NetworkContractsDocument });
+  const {
+    data: { networkContracts },
+  } = result as {
+    data: {
+      networkContracts: NetworkContractsQuery['networkContracts'];
     };
   };
   return networkContracts;
