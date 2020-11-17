@@ -8,3 +8,5 @@ export const domainsDropdownContainer: string;
 export const contentActionsPanel: string;
 export const rightAside: string;
 export const events: string;
+export const upgradeBannerContainer: string;
+export const upgradeBanner: string;
