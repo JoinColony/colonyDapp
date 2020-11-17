@@ -16,7 +16,11 @@ import {
   UserNotificationsQueryVariables,
   useNetworkContractsQuery,
   NetworkContractsQuery,
+  NetworkContractsInput,
+  SetNetworkContractsMutation,
+  SetNetworkContractsMutationVariables,
 } from './index';
+import { SetNetworkContractsDocument } from './generated';
 
 const getMinimalUser = (address: string): UserQuery['user'] => ({
   id: address,
@@ -110,3 +114,27 @@ export const useNetworkContracts = () => {
   };
   return networkContracts;
 };
+
+/*
+ * Network Contracts saga, to be used when initializing the app
+ */
+export function* setNetworkContractsVersion({
+  version,
+}: NetworkContractsInput) {
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const result = yield apolloClient.mutate<
+    SetNetworkContractsMutation,
+    SetNetworkContractsMutationVariables
+  >({
+    mutation: SetNetworkContractsDocument,
+    variables: { input: { version } },
+  });
+  const {
+    data: { networkContracts },
+  } = result as {
+    data: {
+      networkContracts: NetworkContractsQuery['networkContracts'];
+    };
+  };
+  return networkContracts;
+}
