@@ -8,9 +8,10 @@ import { getMainClasses } from '~utils/css';
 import styles from './Alert.css';
 
 interface Appearance {
-  borderRadius?: 'small' | 'medium' | 'large' | 'round';
+  borderRadius?: 'small' | 'medium' | 'large' | 'round' | 'none';
   theme?: 'primary' | 'info' | 'danger';
   size?: 'small';
+  margin?: 'none' | 'normal';
 }
 
 interface Props {
@@ -36,7 +37,7 @@ interface Props {
 const displayName = 'Alert';
 
 const Alert = ({
-  appearance = { theme: 'danger' },
+  appearance = { theme: 'danger', margin: 'normal' },
   onAlertDismissed: callback,
   isDismissible = false,
   children,
