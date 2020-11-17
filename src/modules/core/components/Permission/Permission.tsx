@@ -3,6 +3,7 @@ import React from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import Icon from '~core/Icon';
 import { Tooltip } from '../Popover';
+import styles from './Permission.css'
 
 interface Props {
   /** Icon name for permission label */
@@ -30,16 +31,16 @@ const Permission = ({ icon, inherited = false, name, infoMessage }: Props) => {
 
   return (
     <Tooltip
-      placement="left"
+      placement="bottom"
       content={tooltipText || null}
       trigger={inherited && infoMessage ? 'hover' : 'disabled'}
     >
-      <div>
-        <span>
+      <div className={styles.wrapper}>
+        <Icon appearance={{ size: 'extraTiny' }} className={styles.icon} name={icon} title={name} />
+        <span className={styles.label}>
           {permissionName}
           {inherited && '*'}
         </span>
-        <Icon appearance={{ size: 'normal' }} name={icon} title={name} />
       </div>
     </Tooltip>
   );

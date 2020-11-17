@@ -1,0 +1,26 @@
+.wrapper {
+  display: inline-block;
+  border: 1px solid var(--temp-grey-blue-7);
+  border-radius: 5px;
+  padding: 1px 5px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.label {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+  vertical-align: top;
+}
+
+.icon {
+  display: inline-block;
+  height: 12px;
+  width: 12px;
+  margin: 2px 5px 0 0;
+}
+
+.icon svg {
+  vertical-align: top;
+}
