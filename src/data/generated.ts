@@ -742,6 +742,7 @@ export type Mutation = {
   sendWorkInvite?: Maybe<Task>;
   setColonyTokens?: Maybe<Colony>;
   setLoggedInUser: LoggedInUser;
+  setNetworkContracts: NetworkContracts;
   setSuggestionStatus?: Maybe<Suggestion>;
   setTaskDescription?: Maybe<Task>;
   setTaskDomain?: Maybe<Task>;
@@ -947,6 +948,11 @@ export type MutationSetLoggedInUserArgs = {
 };
 
 
+export type MutationSetNetworkContractsArgs = {
+  input?: Maybe<NetworkContractsInput>;
+};
+
+
 export type MutationSetSuggestionStatusArgs = {
   input: SetSuggestionStatusInput;
 };
@@ -1056,6 +1062,7 @@ export type Query = {
   domain: Domain;
   level: Level;
   loggedInUser: LoggedInUser;
+  networkContracts: NetworkContracts;
   program: Program;
   systemInfo: SystemInfo;
   task: Task;
@@ -1326,6 +1333,14 @@ export type LoggedInUser = {
   walletAddress: Scalars['String'];
   ethereal: Scalars['Boolean'];
   networkId?: Maybe<Scalars['Int']>;
+};
+
+export type NetworkContractsInput = {
+  version?: Maybe<Scalars['Int']>;
+};
+
+export type NetworkContracts = {
+  version?: Maybe<Scalars['Int']>;
 };
 
 export type DomainBalance = {
@@ -1913,6 +1928,13 @@ export type AcceptLevelTaskSubmissionMutationVariables = Exact<{
 
 export type AcceptLevelTaskSubmissionMutation = { acceptLevelTaskSubmission?: Maybe<Pick<Submission, 'id' | 'status'>> };
 
+export type SetNetworkContractsMutationVariables = Exact<{
+  input: NetworkContractsInput;
+}>;
+
+
+export type SetNetworkContractsMutation = { setNetworkContracts: Pick<NetworkContracts, 'version'> };
+
 export type TaskQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -2321,6 +2343,11 @@ export type SystemInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SystemInfoQuery = { systemInfo: Pick<SystemInfo, 'version'> };
+
+export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version'> };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -4539,6 +4566,38 @@ export function useAcceptLevelTaskSubmissionMutation(baseOptions?: Apollo.Mutati
 export type AcceptLevelTaskSubmissionMutationHookResult = ReturnType<typeof useAcceptLevelTaskSubmissionMutation>;
 export type AcceptLevelTaskSubmissionMutationResult = Apollo.MutationResult<AcceptLevelTaskSubmissionMutation>;
 export type AcceptLevelTaskSubmissionMutationOptions = Apollo.BaseMutationOptions<AcceptLevelTaskSubmissionMutation, AcceptLevelTaskSubmissionMutationVariables>;
+export const SetNetworkContractsDocument = gql`
+    mutation SetNetworkContracts($input: NetworkContractsInput!) {
+  setNetworkContracts(input: $input) @client {
+    version
+  }
+}
+    `;
+export type SetNetworkContractsMutationFn = Apollo.MutationFunction<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>;
+
+/**
+ * __useSetNetworkContractsMutation__
+ *
+ * To run a mutation, you first call `useSetNetworkContractsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetNetworkContractsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setNetworkContractsMutation, { data, loading, error }] = useSetNetworkContractsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetNetworkContractsMutation(baseOptions?: Apollo.MutationHookOptions<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>) {
+        return Apollo.useMutation<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>(SetNetworkContractsDocument, baseOptions);
+      }
+export type SetNetworkContractsMutationHookResult = ReturnType<typeof useSetNetworkContractsMutation>;
+export type SetNetworkContractsMutationResult = Apollo.MutationResult<SetNetworkContractsMutation>;
+export type SetNetworkContractsMutationOptions = Apollo.BaseMutationOptions<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
@@ -6158,3 +6217,35 @@ export function useSystemInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type SystemInfoQueryHookResult = ReturnType<typeof useSystemInfoQuery>;
 export type SystemInfoLazyQueryHookResult = ReturnType<typeof useSystemInfoLazyQuery>;
 export type SystemInfoQueryResult = Apollo.QueryResult<SystemInfoQuery, SystemInfoQueryVariables>;
+export const NetworkContractsDocument = gql`
+    query NetworkContracts {
+  networkContracts @client {
+    version
+  }
+}
+    `;
+
+/**
+ * __useNetworkContractsQuery__
+ *
+ * To run a query within a React component, call `useNetworkContractsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNetworkContractsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNetworkContractsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNetworkContractsQuery(baseOptions?: Apollo.QueryHookOptions<NetworkContractsQuery, NetworkContractsQueryVariables>) {
+        return Apollo.useQuery<NetworkContractsQuery, NetworkContractsQueryVariables>(NetworkContractsDocument, baseOptions);
+      }
+export function useNetworkContractsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NetworkContractsQuery, NetworkContractsQueryVariables>) {
+          return Apollo.useLazyQuery<NetworkContractsQuery, NetworkContractsQueryVariables>(NetworkContractsDocument, baseOptions);
+        }
+export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContractsQuery>;
+export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
+export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
