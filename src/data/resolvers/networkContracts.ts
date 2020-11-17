@@ -35,6 +35,10 @@ export const networkContractsResolvers = ({
         networkContracts: {
           ...networkContracts,
           version: version.toString(),
+          /*
+           * Network fee inverse as defined by the ColonyNetwork contract.
+           * If the current fee is 1%, this will be `100`.
+           */
           feeInverse: feeInverse.toString(),
         },
       };
