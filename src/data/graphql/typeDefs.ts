@@ -20,10 +20,12 @@ export default gql`
 
   input NetworkContractsInput {
     version: String
+    feeInverse: String
   }
 
   type NetworkContracts {
     version: String
+    feeInverse: String
   }
 
   type DomainBalance {

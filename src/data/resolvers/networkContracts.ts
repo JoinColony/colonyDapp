@@ -6,6 +6,7 @@ export const initialCache = {
   networkContracts: {
     __typename: 'NetworkContracts',
     version: null,
+    feeInverse: null,
   },
 };
 

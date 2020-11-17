@@ -564,5 +564,6 @@ query SystemInfo {
 query NetworkContracts {
   networkContracts @client {
     version
+    feeInverse
   }
 }

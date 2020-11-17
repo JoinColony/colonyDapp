@@ -1337,10 +1337,12 @@ export type LoggedInUser = {
 
 export type NetworkContractsInput = {
   version?: Maybe<Scalars['String']>;
+  feeInverse?: Maybe<Scalars['String']>;
 };
 
 export type NetworkContracts = {
   version?: Maybe<Scalars['String']>;
+  feeInverse?: Maybe<Scalars['String']>;
 };
 
 export type DomainBalance = {
@@ -1933,7 +1935,7 @@ export type SetNetworkContractsMutationVariables = Exact<{
 }>;
 
 
-export type SetNetworkContractsMutation = { setNetworkContracts: Pick<NetworkContracts, 'version'> };
+export type SetNetworkContractsMutation = { setNetworkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
 
 export type TaskQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2347,7 +2349,7 @@ export type SystemInfoQuery = { systemInfo: Pick<SystemInfo, 'version'> };
 export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version'> };
+export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -4570,6 +4572,7 @@ export const SetNetworkContractsDocument = gql`
     mutation SetNetworkContracts($input: NetworkContractsInput!) {
   setNetworkContracts(input: $input) @client {
     version
+    feeInverse
   }
 }
     `;
@@ -6221,6 +6224,7 @@ export const NetworkContractsDocument = gql`
     query NetworkContracts {
   networkContracts @client {
     version
+    feeInverse
   }
 }
     `;
