@@ -3,7 +3,7 @@ import React from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import Icon from '~core/Icon';
 import { Tooltip } from '../Popover';
-import styles from './Permission.css';
+import styles from './PermissionsLabel.css';
 import { permissionsObject } from './permissions';
 import { ColonyRole } from '@colony/colony-js'
 
@@ -24,9 +24,9 @@ interface Props {
   infoMessage?: MessageDescriptor | string;
 }
 
-const displayName = 'Permission';
+const displayName = 'PermissionsLabel';
 
-const Permission = ({
+const PermissionsLabel = ({
   permission,
   icon,
   inherited = false,
@@ -79,6 +79,6 @@ const Permission = ({
   );
 };
 
-Permission.displayName = displayName;
+PermissionsLabel.displayName = displayName;
 
-export default Permission;
+export default PermissionsLabel;
