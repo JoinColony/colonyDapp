@@ -332,14 +332,7 @@ query ColonyEvents($address: String!) {
     id
     colonyAddress
     events @client {
-      fromAddress
-      toAddress
-      createdAt
-      name
-      hash
-      topic
-      userAddress
-      domainId
+      ...FullNetworkEvent
     }
   }
 }
