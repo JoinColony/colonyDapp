@@ -51,7 +51,7 @@ const Permission = ({
     <Tooltip
       placement="top"
       content={tooltipText || null}
-      trigger={inherited && infoMessage ? 'hover' : 'disabled'}
+      trigger={infoMessage ? 'hover' : 'disabled'}
       popperProps={{
         modifiers: [
           {
@@ -63,7 +63,7 @@ const Permission = ({
         ],
      }}
     >
-      <div className={styles.wrapper}>
+      <div className={`${styles.wrapper} ${!infoMessage && styles.noPointer}`}>
         <Icon
           appearance={{ size: 'extraTiny' }}
           className={styles.icon}
