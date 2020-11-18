@@ -17,6 +17,7 @@ import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Icon from '~core/Icon';
 import EthUsd from '~core/EthUsd';
+import { tokenIsETH } from '../../../core/checks';
 
 import styles from './UnclaimedTransfersItem.css';
 
@@ -62,7 +63,6 @@ const UnclaimedTransfersItem = ({
   if (!tokenData) return null;
 
   const { token } = tokenData;
-  const isEth = token.symbol === 'ETH';
   const username = usernameData && usernameData.username;
   const description = null; // Will be support in after network upgrade to v5
   return (
@@ -104,7 +104,7 @@ const UnclaimedTransfersItem = ({
             suffix={` ${token.symbol}`}
             className={styles.amount}
           />
-          {isEth && <EthUsd value={amount} unit="wei" />}
+          {tokenIsETH(token) && <EthUsd value={amount} unit="wei" />}
         </div>
         <ActionButton
           text={MSG.buttonClaim}
