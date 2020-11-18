@@ -49,9 +49,19 @@ const Permission = ({
 
   return (
     <Tooltip
-      placement="bottom"
+      placement="top"
       content={tooltipText || null}
       trigger={inherited && infoMessage ? 'hover' : 'disabled'}
+      popperProps={{
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset: [0, 8],
+            },
+          },
+        ],
+     }}
     >
       <div className={styles.wrapper}>
         <Icon
