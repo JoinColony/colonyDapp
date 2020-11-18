@@ -61,10 +61,16 @@ const ColonyEvents = ({ colonyAddress }: Props) => {
     }
   }, [data]);
 
-  const filteredEvents = useMemo(() => immutableSort(events, sort), [
-    events,
-    sort,
-  ]);
+  const filteredEvents = useMemo(
+    () =>
+      immutableSort(events, sort).map((event) => {
+        return {
+          ...event,
+          userAddress: event.userAddress || event.fromAddress,
+        };
+      }),
+    [events, sort],
+  );
 
   return (
     <div>
@@ -85,9 +91,7 @@ const ColonyEvents = ({ colonyAddress }: Props) => {
           />
         </div>
       </Form>
-      {loading ? <SpinnerLoader /> : (
-        <ActionsList items={filteredEvents} />
-      )}
+      {loading ? <SpinnerLoader /> : <ActionsList items={filteredEvents} />}
     </div>
   );
 };
