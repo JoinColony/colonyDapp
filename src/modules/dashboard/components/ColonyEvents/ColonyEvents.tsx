@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
-import { useColonyEventsQuery } from '~data/index';
+import { useColonyEventsQuery, NetworkEvent } from '~data/index';
 
 import { Address } from '~types/index';
 import ActionsList from '~core/ActionsList';
@@ -21,7 +21,7 @@ interface Props {
 }
 
 // Implement formating based on Event Type (or in resolver)
-const formatColonyEvents = (events) => {
+const formatColonyEvents = (events: NetworkEvent[]) => {
   return events;
 };
 
@@ -38,7 +38,7 @@ const ColonyEvents = ({ colonyAddress }: Props) => {
   });
   if (error) console.warn(error);
 
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<NetworkEvent[]>([]);
   const [eventsFilter, setEventsFilter] = useState<string>(
     EventFilterOptions.NEWEST,
   );
