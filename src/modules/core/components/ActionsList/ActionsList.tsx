@@ -2,6 +2,7 @@ import React from 'react';
 
 import ActionsListItem from './ActionsListItem';
 import { Address } from '~types/index';
+import { nanoid } from 'nanoid';
 
 import styles from './ActionsList.css';
 
@@ -24,9 +25,9 @@ interface Props {
 
 const ActionsList = ({ items, handleItemClick }: Props) => (
   <ul className={styles.main}>
-    {items.map((item, i) => (
+    {items.map((item) => (
       <ActionsListItem
-        key={item.id || i}
+        key={item.id || nanoid()}
         item={item}
         handleOnClick={handleItemClick}
       />

@@ -68,7 +68,8 @@ export const getColonyAllEvents = async (
         values: { user, domainId },
       } = event;
 
-      const domain = domainId ? bigNumberify(domainId._hex).toString() : null; // eslint-disable-line no-underscore-dangle
+      // eslint-disable-next-line no-underscore-dangle
+      const domain = domainId ? bigNumberify(domainId._hex).toString() : null;
 
       const tx = log.transactionHash
         ? await provider.getTransaction(log.transactionHash)
