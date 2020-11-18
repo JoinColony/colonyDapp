@@ -1,0 +1,84 @@
+import React from 'react';
+
+import { MessageDescriptor, useIntl } from 'react-intl';
+import { ColonyRole } from '@colony/colony-js';
+import Icon from '~core/Icon';
+import { Tooltip } from '../Popover';
+import styles from './PermissionsLabel.css';
+import { permissionsObject } from './permissions';
+
+interface Props {
+  /** Permission name */
+  permission: ColonyRole;
+
+  /** Icon name for permission label. If empy, default will be taken from permission object */
+  icon?: string;
+
+  /** Whether or not the permission is inherited. If `true`, will add * asterisk to permission name. */
+  inherited?: boolean;
+
+  /** Permission name. If empty, default will be taken from permissions object */
+  name?: MessageDescriptor | string;
+
+  /** Optional info message about permission being inherited. */
+  infoMessage?: MessageDescriptor | string;
+}
+
+const displayName = 'PermissionsLabel';
+
+const PermissionsLabel = ({
+  permission,
+  icon,
+  inherited = false,
+  name,
+  infoMessage,
+}: Props) => {
+  const { formatMessage } = useIntl();
+  const permissionDefaults = permissionsObject[permission];
+  const permissionName = name || permissionDefaults.label;
+  const permissionIcon = icon || permissionDefaults.icon;
+
+  const translatedName =
+    typeof permissionName === 'string'
+      ? permissionName
+      : formatMessage(permissionName);
+  const tooltipText =
+    typeof infoMessage === 'string'
+      ? infoMessage
+      : infoMessage && formatMessage(infoMessage);
+
+  return (
+    <Tooltip
+      placement="top"
+      content={tooltipText || null}
+      trigger={infoMessage ? 'hover' : 'disabled'}
+      popperProps={{
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset: [0, 8],
+            },
+          },
+        ],
+      }}
+    >
+      <div className={`${styles.wrapper} ${!infoMessage && styles.noPointer}`}>
+        <Icon
+          appearance={{ size: 'extraTiny' }}
+          className={styles.icon}
+          name={permissionIcon}
+          title={translatedName}
+        />
+        <span className={styles.label}>
+          {translatedName}
+          {inherited && '*'}
+        </span>
+      </div>
+    </Tooltip>
+  );
+};
+
+PermissionsLabel.displayName = displayName;
+
+export default PermissionsLabel;
