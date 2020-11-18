@@ -7,6 +7,10 @@
   cursor: pointer;
 }
 
+.noPointer {
+  cursor: default;
+}
+
 .label {
   vertical-align: top;
   font-size: var(--size-tiny);
