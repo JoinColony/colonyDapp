@@ -1413,7 +1413,7 @@ export type NetworkEvent = {
   name: Scalars['String'];
   topic?: Maybe<Scalars['String']>;
   userAddress?: Maybe<Scalars['String']>;
-  domain?: Maybe<Scalars['String']>;
+  domainId?: Maybe<Scalars['String']>;
 };
 
 export type PayoutsFragment = { payouts: Array<(
@@ -2168,7 +2168,7 @@ export type ColonyEventsQueryVariables = Exact<{
 
 export type ColonyEventsQuery = { colony: (
     Pick<Colony, 'id' | 'colonyAddress'>
-    & { events: Array<Pick<NetworkEvent, 'from' | 'to' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domain'>> }
+    & { events: Array<Pick<NetworkEvent, 'from' | 'to' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domainId'>> }
   ) };
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{
@@ -5516,7 +5516,7 @@ export const ColonyEventsDocument = gql`
       hash
       topic
       userAddress
-      domain
+      domainId
     }
   }
 }

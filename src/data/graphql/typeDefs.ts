@@ -83,7 +83,7 @@ export default gql`
     name: String!
     topic: String
     userAddress: String
-    domain: String
+    domainId: String
   }
 
   extend type Colony {

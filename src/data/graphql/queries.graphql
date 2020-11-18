@@ -339,7 +339,7 @@ query ColonyEvents($address: String!) {
       hash
       topic
       userAddress
-      domain
+      domainId
     }
   }
 }

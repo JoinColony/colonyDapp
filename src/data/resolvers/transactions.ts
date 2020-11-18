@@ -81,7 +81,7 @@ export const getColonyAllEvents = async (
         from: (tx && tx.from) || null,
         hash: log.transactionHash || HashZero,
         to: colonyClient.address,
-        domain,
+        domainId: domain,
         userAddress: user || null,
       };
     }),
