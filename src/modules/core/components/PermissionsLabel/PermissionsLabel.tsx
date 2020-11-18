@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { MessageDescriptor, useIntl } from 'react-intl';
+import { ColonyRole } from '@colony/colony-js';
 import Icon from '~core/Icon';
 import { Tooltip } from '../Popover';
 import styles from './PermissionsLabel.css';
 import { permissionsObject } from './permissions';
-import { ColonyRole } from '@colony/colony-js'
 
 interface Props {
   /** Permission name */
@@ -61,7 +61,7 @@ const PermissionsLabel = ({
             },
           },
         ],
-     }}
+      }}
     >
       <div className={`${styles.wrapper} ${!infoMessage && styles.noPointer}`}>
         <Icon
