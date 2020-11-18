@@ -1,8 +1,8 @@
 import React from 'react';
 
+import { nanoid } from 'nanoid';
 import ActionsListItem from './ActionsListItem';
 import { Address } from '~types/index';
-import { nanoid } from 'nanoid';
 
 import styles from './ActionsList.css';
 

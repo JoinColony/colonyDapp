@@ -62,7 +62,6 @@ const ColonyEvents = ({ colonyAddress }: Props) => {
 
   const filteredEvents = useMemo(() => immutableSort(events, sort), [
     events,
-    eventsFilter,
     sort,
   ]);
 
