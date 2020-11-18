@@ -78,9 +78,9 @@ export const getColonyAllEvents = async (
         __typename: 'NetworkEvent',
         ...event,
         createdAt: date,
-        from: (tx && tx.from) || null,
+        fromAddress: (tx && tx.from) || null,
         hash: log.transactionHash || HashZero,
-        to: colonyClient.address,
+        toAddress: colonyClient.address,
         domainId: domain,
         userAddress: user || null,
       };

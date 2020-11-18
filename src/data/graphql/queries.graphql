@@ -332,8 +332,8 @@ query ColonyEvents($address: String!) {
     id
     colonyAddress
     events @client {
-      from
-      to
+      fromAddress
+      toAddress
       createdAt
       name
       hash
