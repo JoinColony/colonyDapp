@@ -64,7 +64,7 @@ const UnclaimedTransfersItem = ({
 
   const { token } = tokenData;
   const username = usernameData && usernameData.username;
-  const description = null; // Will be support in after network upgrade to v5
+  const description = null; // Will be support after network upgrade to v5
   return (
     <li>
       <div className={styles.content}>
@@ -95,7 +95,7 @@ const UnclaimedTransfersItem = ({
               />
             )}
           </div>
-          {description && <span>Poker’s debt</span>}
+          {description && <span>{description}</span>}
         </div>
         <div className={styles.amountWrapper}>
           <Numeral

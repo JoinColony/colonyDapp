@@ -5,6 +5,7 @@ import { useColonyEventsQuery, NetworkEvent } from '~data/index';
 import { Address } from '~types/index';
 import ActionsList from '~core/ActionsList';
 import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
+import { SpinnerLoader } from '~core/Preloaders';
 import { Select, Form } from '~core/Fields';
 import {
   EventFilterOptions,
@@ -33,7 +34,7 @@ const MSG = defineMessages({
 });
 
 const ColonyEvents = ({ colonyAddress }: Props) => {
-  const { data, error } = useColonyEventsQuery({
+  const { data, error, loading } = useColonyEventsQuery({
     variables: { address: colonyAddress },
   });
   if (error) console.warn(error);
@@ -84,7 +85,9 @@ const ColonyEvents = ({ colonyAddress }: Props) => {
           />
         </div>
       </Form>
-      <ActionsList items={filteredEvents} />
+      {loading ? <SpinnerLoader /> : (
+        <ActionsList items={filteredEvents} />
+      )}
     </div>
   );
 };
