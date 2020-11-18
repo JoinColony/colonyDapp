@@ -4,7 +4,7 @@
   position: relative;
   overflow-y: auto;
   background: var(--gradient-default);
-  grid-template-columns: 50px auto;
+  grid-template-columns: 50px calc(100% - 50px);
 }
 
 .colonyList {

@@ -1,22 +1,8 @@
 .main {
   display: grid;
   margin-top: -80px;
-
-  /*
-   * @NOTE On the below width calculations
-   * full view width, minus a little trick to disregrad the scrollback, minus
-   * the width of the left subscribed colonies list
-   */
-  max-width: calc(100vw - (100vw - 100%));
   overflow: hidden;
-
-  /*
-   * @NOTE Grid needs to have a max value for the center content section, otherwise
-   * anything that relies on overflow (think: text ellipsis) will not work.
-   *
-   * Value was arrived at from 100% - 23% - 26.5%
-   */
-  grid-template-columns: 23% minmax(auto, 50.5%) 26.5%;
+  grid-template-columns: 23% 50.5% 26.5%;
 }
 
 .leftAside {
