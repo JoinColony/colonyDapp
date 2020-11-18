@@ -10,13 +10,13 @@ import ColorTag, { Color } from '~core/ColorTag';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Paragraph from '~core/Paragraph';
-import { ColonyDomainsQuery } from '~data/index';
+import { OneDomain } from '~data/index';
 import { ENTER } from '~types/index';
 
 import styles from './DomainSelectItem.css';
 
 interface Props {
-  domain: ColonyDomainsQuery['colony']['domains'][number];
+  domain: OneDomain;
 }
 
 const displayName = 'dashboard.DomainDropdown.DomainSelectItem';
