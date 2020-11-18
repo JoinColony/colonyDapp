@@ -1,5 +1,6 @@
-import { defineMessages } from 'react-intl';
-import { ColonyRole } from '@colony/colony-js'
+import { defineMessages, MessageDescriptor } from 'react-intl';
+
+import { ColonyRole } from '@colony/colony-js';
 
 const MSG = defineMessages({
   rootLabel: {
@@ -28,7 +29,15 @@ const MSG = defineMessages({
   },
 });
 
-export const permissionsObject = {
+export type PermissionDefaults = {
+  label: MessageDescriptor;
+  icon: string;
+};
+export type PermissionsObject = {
+  [colonyRole: number]: PermissionDefaults;
+};
+
+export const permissionsObject: PermissionsObject = {
   [ColonyRole.Root]: {
     label: MSG.rootLabel,
     icon: 'emoji-gold-coin',
