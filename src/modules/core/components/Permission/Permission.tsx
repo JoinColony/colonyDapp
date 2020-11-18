@@ -5,16 +5,11 @@ import Icon from '~core/Icon';
 import { Tooltip } from '../Popover';
 import styles from './Permission.css';
 import { permissionsObject } from './permissions';
+import { ColonyRole } from '@colony/colony-js'
 
 interface Props {
   /** Permission name */
-  permission:
-    | 'root'
-    | 'administration'
-    | 'architecture'
-    | 'funding'
-    | 'arbitration'
-    | 'recovery';
+  permission: ColonyRole;
 
   /** Icon name for permission label. If empy, default will be taken from permission object */
   icon?: string;

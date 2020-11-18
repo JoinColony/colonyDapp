@@ -1,4 +1,5 @@
 import { defineMessages } from 'react-intl';
+import { ColonyRole } from '@colony/colony-js'
 
 const MSG = defineMessages({
   rootLabel: {
@@ -28,27 +29,27 @@ const MSG = defineMessages({
 });
 
 export const permissionsObject = {
-  root: {
+  [ColonyRole.Root]: {
     label: MSG.rootLabel,
     icon: 'emoji-gold-coin',
   },
-  administration: {
+  [ColonyRole.Administration]: {
     label: MSG.administrationLabel,
     icon: 'emoji-building',
   },
-  architecture: {
+  [ColonyRole.Architecture]: {
     label: MSG.architectureLabel,
     icon: 'emoji-crane',
   },
-  funding: {
+  [ColonyRole.Funding]: {
     label: MSG.fundingLabel,
     icon: 'emoji-bag-money-sign',
   },
-  arbitration: {
+  [ColonyRole.Arbitration]: {
     label: MSG.arbitrationLabel,
     icon: 'emoji-judge',
   },
-  recovery: {
+  [ColonyRole.Recovery]: {
     label: MSG.recoveryLabel,
     icon: 'emoji-alarm-lamp',
   },
