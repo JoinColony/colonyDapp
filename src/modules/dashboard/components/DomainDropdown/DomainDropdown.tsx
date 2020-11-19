@@ -39,12 +39,15 @@ const allDomainsColor: Color = Color.Yellow;
 const displayName = 'dashboard.DomainDropdown';
 
 const DomainDropdown = ({ colonyAddress, filteredDomainId }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedDomain, setSelectedDomain] = useState<number>(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSubmit = useCallback((values: FormValues) => {
     // do stuff
+    // eslint-disable-next-line no-console
     console.log(values);
   }, []);
 
@@ -64,7 +67,9 @@ const DomainDropdown = ({ colonyAddress, filteredDomainId }: Props) => {
       const domain = data.colony.domains.find(
         ({ ethDomainId }) => Number(domainId) === ethDomainId,
       );
-      // TODO Shouldn't have to check typeof domain.color once its return value is guaranteed via graphqlq typedefs
+      /*
+       * @TODO Shouldn't have to check typeof domain.color once its return value is guaranteed via graphqlq typedefs
+       */
       return domain && typeof domain.color === 'number'
         ? domain.color
         : defaultColor;
