@@ -26,11 +26,6 @@
 
 .themeDark {
   composes: main;
-  color: var(--grey-1);
-}
-
-.themeDark {
-  composes: main;
   color: var(--dark);
 }
 
