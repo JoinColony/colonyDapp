@@ -12,14 +12,7 @@ import { useField } from 'formik';
 import { nanoid } from 'nanoid';
 
 import { getMainClasses } from '~utils/css';
-import {
-  DOWN,
-  ENTER,
-  ESC,
-  SimpleMessageValues,
-  SPACE,
-  UP,
-} from '~types/index';
+import { DOWN, ENTER, ESC, SimpleMessageValues, SPACE, UP } from '~types/index';
 
 import SelectListBox from './SelectListBox';
 import { Appearance, SelectOption } from './types';
