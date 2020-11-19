@@ -90,6 +90,8 @@ fragment ColonyProfile on Colony {
 
 fragment DomainFields on Domain {
   id
+  color @client
+  description @client
   ethDomainId
   name
   ethParentDomainId

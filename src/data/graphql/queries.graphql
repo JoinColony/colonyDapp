@@ -508,10 +508,7 @@ query ColonyDomains($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id
     domains {
-      id
-      ethDomainId
-      name
-      ethParentDomainId
+      ...DomainFields
     }
   }
 }

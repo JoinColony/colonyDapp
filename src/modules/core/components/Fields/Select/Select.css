@@ -36,8 +36,13 @@
   stroke: var(--grey-4);
 }
 
-.select[aria-expanded="true"] i {
+.select[aria-expanded="true"] .selectExpandContainer i {
   transform: rotate(180deg);
+}
+
+.select[aria-expanded="true"] .selectExpandContainer i svg {
+  fill: var(--colony-blue);
+  stroke: var(--colony-blue);
 }
 
 .selectExpandContainer {
@@ -56,8 +61,13 @@
   white-space: nowrap;
 }
 
-.select[aria-expanded="true"] .activeOption, .select[aria-expanded="true"]:focus {
-  color: var(--sky-blue);
+.select[aria-expanded="true"] .activeOption,
+.select[aria-expanded="true"]:focus {
+  color: var(--colony-blue);
+}
+
+.select[aria-expanded="false"]:focus {
+  outline-color: var(--colony-blue);
 }
 
 /* themes */
@@ -74,16 +84,15 @@
 
 .themeAlt {
   composes: baseSelect;
-  padding: 5px 0 5px 5px;
+  padding: 10px 0;
   border: none;
   border-radius: var(--radius-normal);
   background-color: transparent;
-  font-size: var(--size-small);
-  outline: none;
 }
 
-.themeAlt.select[aria-expanded="true"], .themeAlt:focus {
-  background-color: var(--temp-grey-5);
+.themeAlt:active,
+.themeAlt[aria-expanded="true"]:focus {
+  outline: none;
 }
 
 .themeGrey {
@@ -100,10 +109,31 @@
   font-weight: var(--weight-normal);
 }
 
+.widthContent {
+  width: min-content;
+}
+
 .widthFluid {
   width: 100%;
 }
 
 .widthStrict {
   width: 100px;
+}
+
+/* sizes */
+
+.sizeMedium,
+.baseSelect.sizeMedium {
+  font-size: var(--size-medium);
+}
+
+.sizeMediumLarge,
+.baseSelect.sizeMediumLarge {
+  font-size: var(--size-medium-l);
+}
+
+.sizeLarge,
+.baseSelect.sizeLarge {
+  font-size: var(--size-large);
 }

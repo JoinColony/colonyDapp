@@ -40,6 +40,10 @@
   padding: 90px 0 40px;
 }
 
+.domainsDropdownContainer {
+  max-width: 320px;
+}
+
 .rightAside {
   padding: 220px 5% 20px 80px;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { getMainClasses } from '~utils/css';
 
@@ -14,6 +14,7 @@ interface Props {
   checkedOption: number;
   listboxId: string;
   options: SelectOptionType[];
+  optionsFooter?: ReactNode;
   selectedOption: number;
   name: string;
   onSelect: (idx: number) => void;
@@ -27,6 +28,7 @@ const SelectListBox = ({
   appearance,
   listboxId,
   options,
+  optionsFooter,
   selectedOption,
   checkedOption,
   onSelect,
@@ -42,8 +44,10 @@ const SelectListBox = ({
       )
     : -1;
   return (
+    // We're safe to disable this eslint rule - if this were a standard listbox (as opposed to collapsible, as it is now) we'd want this element to be tabbable
+    // eslint-disable-next-line jsx-a11y/aria-activedescendant-has-tabindex
     <ul
-      tabIndex={0}
+      tabIndex={-1}
       className={getMainClasses(appearance, styles)}
       role="listbox"
       aria-activedescendant={getOptionId(name, activeDescendantIdx)}
@@ -51,6 +55,7 @@ const SelectListBox = ({
     >
       {options.map((option, idx) => (
         <SelectOption
+          bordered={appearance ? appearance.borderedOptions === 'true' : false}
           id={getOptionId(name, idx)}
           idx={idx}
           key={getOptionId(name, idx)}
@@ -61,6 +66,7 @@ const SelectListBox = ({
           onClick={onClick}
         />
       ))}
+      {optionsFooter}
     </ul>
   );
 };
