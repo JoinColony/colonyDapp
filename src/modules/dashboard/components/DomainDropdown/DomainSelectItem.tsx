@@ -31,7 +31,10 @@ const DomainSelectItem = ({
   },
 }: Props) => {
   const openUAC = useCallback(() => {
-    // fixme open UAC here
+    /*
+     * @fixme open UAC here
+     */
+    // eslint-disable-next-line no-alert
     alert('Open UAC');
   }, []);
 
@@ -67,8 +70,10 @@ const DomainSelectItem = ({
       <div className={styles.mainContent}>
         <div className={styles.title}>
           <div className={styles.color}>
-            {/* TODO fallback color won't be needed after graphql
-              typedef updated to reflect guaranteed color value */}
+            {/*
+             * @TODO fallback color won't be needed after graphql
+             * typedef updated to reflect guaranteed color value
+             */}
             <ColorTag color={color || Color.Black} />
           </div>
           <Heading

@@ -19,6 +19,7 @@ const CreateDomainButton = () => {
   const handleClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (evt) => {
       evt.stopPropagation();
+      // eslint-disable-next-line no-alert
       alert('Open UAC');
     },
     [],
