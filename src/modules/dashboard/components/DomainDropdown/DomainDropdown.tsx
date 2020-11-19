@@ -48,7 +48,7 @@ const DomainDropdown = ({ colonyAddress, filteredDomainId }: Props) => {
     console.log(values);
   }, []);
 
-  const { data, error, loading } = useColonyDomainsQuery({
+  const { data } = useColonyDomainsQuery({
     variables: { colonyAddress },
   });
 
