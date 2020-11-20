@@ -64,9 +64,8 @@ const MSG = defineMessages({
   },
   upgradeRequired: {
     id: `dashboard.ColonyHome.upgradeRequired`,
-    defaultMessage:
-      /* eslint-disable-next-line max-len */
-      'This colony uses a version of the network that is no longer supported. You must upgrade to continue using this application.',
+    defaultMessage: `This colony uses a version of the network that is no
+      longer supported. You must upgrade to continue using this application.`,
   },
 });
 
