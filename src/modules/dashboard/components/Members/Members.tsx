@@ -1,16 +1,14 @@
-import React, { FC } from 'react';
+import React, { FC, useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
 import { ROLES_COMMUNITY } from '~constants';
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
-import {
-  useColonySubscribedUsersQuery,
-  AnyUser,
-  Colony,
-} from '~data/index';
+import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
 import { sortObjectsBy } from '~utils/arrays';
 import { useTransformer } from '~utils/hooks';
+import { getAllUserRolesForDomain } from '../../../transformers';
 
 import { getCommunityRoles } from '../../../transformers';
 
@@ -27,19 +25,17 @@ interface Props {
   colony: Colony;
 }
 
-enum Roles {
-  Founder = 'founder',
-  Admin = 'admin',
-  Member = 'member',
-}
-
-type CommunityUser = AnyUser & {
-  communityRole: Roles;
+type Member = AnyUser & {
+  roles: ColonyRole[];
+  directRoles: ColonyRole[];
 };
 
 const displayName = 'dashboard.Members';
 
 const Members = ({ colony }: Props) => {
+  const [selectedDomainId, setSelectedDomainId] = useState<number>(
+    ROOT_DOMAIN_ID,
+  );
   const {
     data: colonySubscribedUsers,
     loading: loadingColonySubscribedUsers,
@@ -48,8 +44,6 @@ const Members = ({ colony }: Props) => {
       colonyAddress: colony.colonyAddress,
     },
   });
-
-  const communityRoles = useTransformer(getCommunityRoles, [colony]);
 
   if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
     return (
@@ -66,53 +60,47 @@ const Members = ({ colony }: Props) => {
     colony: { subscribedUsers },
   } = colonySubscribedUsers;
 
-  const communityUsers: CommunityUser[] = subscribedUsers
-    .map((user) => {
-      const {
-        profile: { walletAddress: userAddress },
-      } = user;
-      let communityRole = Roles.Member;
-      if (communityRoles.founder === userAddress) {
-        communityRole = Roles.Founder;
-      }
-      if (
-        communityRoles.admins.find(
-          (adminAddress) => adminAddress === userAddress,
-        )
-      ) {
-        communityRole = Roles.Admin;
-      }
-      return {
-        ...user,
-        communityRole,
-      };
-    })
-    .sort(
-      sortObjectsBy({
-        name: 'communityRole',
-        compareFn: (role) => {
-          if (role === Roles.Founder) {
-            return -1;
-          }
-          if (role === Roles.Member) {
-            return 1;
-          }
-          return 0;
-        },
-      }),
-    );
+  const domainRoles = useTransformer(getAllUserRolesForDomain, [
+    colony,
+    selectedDomainId,
+  ]);
 
+  const directDomainRoles = useTransformer(getAllUserRolesForDomain, [
+    colony,
+    selectedDomainId,
+    true,
+  ]);
+
+  const members: Member[]  = useMemo(
+    () =>
+      domainRoles
+        .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
+        .filter(({ roles }) => !!roles.length)
+        .map(({ address, roles }) => {
+          const directUserRoles = directDomainRoles.find(
+            ({ address: userAddress }) => userAddress === address,
+          );
+          const user = subscribedUsers.find(
+            ({profile: { walletAddress: userAddress }}) => userAddress === address,
+          );
+          return {
+            ...user,
+            roles,
+            directRoles: directUserRoles ? directUserRoles.roles : [],
+          };
+        }),
+    [directDomainRoles, domainRoles],
+  );
+  console.log(members);
   return (
     <div className={styles.main}>
-      <MembersList<CommunityUser>
+      <MembersList<Member>
         colonyAddress={colony.colonyAddress}
-        extraItemContent={({ communityRole }) => (
-          <span className={styles.communityRole}>
-            <FormattedMessage id={ROLES_COMMUNITY[communityRole]} />
-          </span>
+        extraItemContent={({ roles }) => (
+          <span className={styles.communityRole}>{roles[0]}</span>
         )}
         domainId={undefined}
-        users={communityUsers}
+        users={members}
       />
     </div>
   );
