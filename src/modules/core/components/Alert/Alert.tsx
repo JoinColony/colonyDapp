@@ -11,7 +11,7 @@ interface Appearance {
   borderRadius?: 'small' | 'medium' | 'large' | 'round' | 'none';
   theme?: 'primary' | 'info' | 'danger';
   size?: 'small';
-  margin?: 'none' | 'normal';
+  margin?: 'none' | 'default';
 }
 
 interface Props {
@@ -37,7 +37,7 @@ interface Props {
 const displayName = 'Alert';
 
 const Alert = ({
-  appearance = { theme: 'danger', margin: 'normal' },
+  appearance = { theme: 'danger', margin: 'default' },
   onAlertDismissed: callback,
   isDismissible = false,
   children,
