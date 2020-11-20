@@ -3,12 +3,10 @@ import { Record, Map as ImmutableMap } from 'immutable';
 import {
   Connection,
   ConnectionRecord,
-  FetchableData,
   FetchableDataRecord,
   FetchableDataType,
   GasPrices,
   GasPricesRecord,
-  NetworkRecord,
 } from '~immutable/index';
 
 import {
@@ -16,7 +14,6 @@ import {
   CORE_GAS_PRICES,
   CORE_IPFS_DATA,
   CORE_MESSAGES,
-  CORE_NETWORK,
   CORE_TRANSACTIONS,
 } from '../constants';
 import { CoreTransactions, CoreTransactionsRecord } from './CoreTransactions';
@@ -34,7 +31,6 @@ type CoreStateProps = {
   [CORE_GAS_PRICES]: GasPricesRecord;
   [CORE_IPFS_DATA]: IpfsDataType;
   [CORE_MESSAGES]: CoreMessagesRecord;
-  [CORE_NETWORK]: FetchableDataRecord<NetworkRecord>;
   [CORE_TRANSACTIONS]: CoreTransactionsRecord;
 };
 
@@ -43,6 +39,5 @@ export class CoreStateRecord extends Record<CoreStateProps>({
   [CORE_GAS_PRICES]: GasPrices(),
   [CORE_IPFS_DATA]: ImmutableMap() as IpfsDataType,
   [CORE_MESSAGES]: CoreMessages(),
-  [CORE_NETWORK]: FetchableData(),
   [CORE_TRANSACTIONS]: CoreTransactions(),
 }) {}

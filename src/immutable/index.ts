@@ -5,7 +5,6 @@ export * from './Connection';
 export * from './FetchableData';
 export * from './GasPrices';
 export * from './Message';
-export * from './Network';
 export * from './TaskRating';
 export * from './TaskMetadata';
 export * from './TaskUser';

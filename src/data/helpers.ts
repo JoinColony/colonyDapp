@@ -14,7 +14,18 @@ import {
   UserNotificationsDocument,
   UserNotificationsQuery,
   UserNotificationsQueryVariables,
+  useNetworkContractsQuery,
+  NetworkContractsQuery,
+  NetworkContractsQueryVariables,
+  NetworkContractsInput,
+  NetworkContractsDocument,
+  SetNetworkContractsMutation,
+  SetNetworkContractsMutationVariables,
+  UpdateNetworkContractsMutation,
+  UpdateNetworkContractsMutationVariables,
+  UpdateNetworkContractsDocument,
 } from './index';
+import { SetNetworkContractsDocument } from './generated';
 
 const getMinimalUser = (address: string): UserQuery['user'] => ({
   id: address,
@@ -93,4 +104,74 @@ export function* refetchUserNotifications(walletAddress: string) {
     variables: { address: walletAddress },
     fetchPolicy: 'network-only',
   });
+}
+
+/*
+ * Hooks to access the Network Contracts resolver in React components
+ */
+export const useNetworkContracts = () => {
+  const {
+    data: { networkContracts },
+  } = useNetworkContractsQuery() as {
+    data: {
+      networkContracts: NetworkContractsQuery['networkContracts'];
+    };
+  };
+  return networkContracts;
+};
+
+/*
+ * Network Contracts saga helpers, to be used when initializing the app
+ */
+export function* setNetworkContracts(input: NetworkContractsInput) {
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const result = yield apolloClient.mutate<
+    SetNetworkContractsMutation,
+    SetNetworkContractsMutationVariables
+  >({
+    mutation: SetNetworkContractsDocument,
+    variables: { input },
+  });
+  const {
+    data: { setNetworkContracts: networkContracts },
+  } = result as {
+    data: {
+      setNetworkContracts: SetNetworkContractsMutation['setNetworkContracts'];
+    };
+  };
+  return networkContracts;
+}
+
+export function* getNetworkContracts() {
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const result = yield apolloClient.query<
+    NetworkContractsQuery,
+    NetworkContractsQueryVariables
+  >({ query: NetworkContractsDocument });
+  const {
+    data: { networkContracts },
+  } = result as {
+    data: {
+      networkContracts: NetworkContractsQuery['networkContracts'];
+    };
+  };
+  return networkContracts;
+}
+
+export function* updateNetworkContracts() {
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const result = yield apolloClient.mutate<
+    UpdateNetworkContractsMutation,
+    UpdateNetworkContractsMutationVariables
+  >({
+    mutation: UpdateNetworkContractsDocument,
+  });
+  const {
+    data: { networkContracts },
+  } = result as {
+    data: {
+      networkContracts: NetworkContractsQuery['networkContracts'];
+    };
+  };
+  return networkContracts;
 }

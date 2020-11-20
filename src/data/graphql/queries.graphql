@@ -560,3 +560,10 @@ query SystemInfo {
     version
   }
 }
+
+query NetworkContracts {
+  networkContracts @client {
+    version
+    feeInverse
+  }
+}

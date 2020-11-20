@@ -4,7 +4,6 @@ import { DomainActionTypes } from './domain';
 import { GasPricesActionTypes } from './gasPrices';
 import { IpfsActionTypes } from './ipfs';
 import { MultisigActionTypes } from './multisig';
-import { NetworkActionTypes } from './network';
 import { TaskActionTypes } from './task';
 import { TokenActionTypes } from './token';
 import { TransactionActionTypes } from './transaction';
@@ -99,7 +98,6 @@ export type AllActions =
   | GasPricesActionTypes
   | IpfsActionTypes
   | MultisigActionTypes
-  | NetworkActionTypes
   | TaskActionTypes
   | TokenActionTypes
   | TransactionActionTypes

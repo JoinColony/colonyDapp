@@ -1,16 +1,25 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { useLoggedInUser } from '~data/helpers';
-import { useColonyFromNameQuery } from '~data/index';
+import Alert from '~core/Alert';
+import { DialogActionButton } from '~core/Button';
+import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList/SubscribedColoniesList';
-import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyMembers from '~dashboard/ColonyMembers';
+import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
+
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { ActionTypes } from '~redux/index';
+import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
+import { useLoggedInUser } from '~data/helpers';
+import { useTransformer } from '~utils/hooks';
+import { getUserRolesForDomain } from '../../../transformers';
+import { hasRoot } from '../../../users/checks';
+import { canBeUpgraded } from '../../checks';
 
 import {
   COLONY_EVENTS_ROUTE,
@@ -18,9 +27,6 @@ import {
   COLONY_HOME_ROUTE,
   NOT_FOUND_ROUTE,
 } from '~routes/index';
-import { useTransformer } from '~utils/hooks';
-
-import { getUserRolesForDomain } from '../../../transformers';
 
 import ColonyFunding from './ColonyFunding';
 import ColonyTitle from './ColonyTitle';
@@ -56,6 +62,11 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.noFilter',
     defaultMessage: 'All Transactions in Colony',
   },
+  upgradeRequired: {
+    id: `dashboard.ColonyHome.upgradeRequired`,
+    defaultMessage: `This colony uses a version of the network that is no
+      longer supported. You must upgrade to continue using this application.`,
+  },
 });
 
 type Props = RouteChildrenProps<{ colonyName: string }>;
@@ -70,6 +81,7 @@ const ColonyHome = ({ match, location }: Props) => {
   }
   const { colonyName } = match.params;
   const { walletAddress } = useLoggedInUser();
+  const { version: networkVersion } = useNetworkContracts();
 
   const { domainFilter } = parseQS(location.search) as {
     domainFilter: string | undefined;
@@ -125,11 +137,6 @@ const ColonyHome = ({ match, location }: Props) => {
     filteredDomainId || ROOT_DOMAIN_ID,
   ]);
 
-  /*
-   * @NOTE Disabled until we're done with domain filters to prevent lint errors
-   * when pushing downstream rebased branches
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const rootUserRoles = useTransformer(getUserRolesForDomain, [
     data && data.colony,
     walletAddress,
@@ -145,6 +152,17 @@ const ColonyHome = ({ match, location }: Props) => {
   }
 
   const { colony } = data;
+  const canUpgradeColony = hasRoot(rootUserRoles);
+  /*
+   * @NOTE As a future upgrade, we can have a mapping where we keep track of
+   * past and current network versions so that we can control, more granularly,
+   * which versions *must* be upgraded, and which can function as-is, even with
+   * an older version
+   */
+  const mustUpgradeColony = canBeUpgraded(
+    data.colony,
+    parseInt(networkVersion || '0', 10),
+  );
 
   return (
     <div className={styles.main}>
@@ -183,6 +201,31 @@ const ColonyHome = ({ match, location }: Props) => {
           <ColonyMembers colony={colony} />
         </aside>
       </div>
+      {mustUpgradeColony && (
+        <div className={styles.upgradeBannerContainer}>
+          <Alert
+            appearance={{
+              theme: 'danger',
+              margin: 'none',
+              borderRadius: 'none',
+            }}
+          >
+            <div className={styles.upgradeBanner}>
+              <FormattedMessage {...MSG.upgradeRequired} />
+            </div>
+            <DialogActionButton
+              appearance={{ theme: 'primary', size: 'medium' }}
+              text={{ id: 'button.upgrade' }}
+              dialog={NetworkContractUpgradeDialog}
+              submit={ActionTypes.COLONY_VERSION_UPGRADE}
+              success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
+              error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
+              values={{ colonyAddress: data.colonyAddress }}
+              disabled={!canUpgradeColony}
+            />
+          </Alert>
+        </div>
+      )}
     </div>
   );
 };

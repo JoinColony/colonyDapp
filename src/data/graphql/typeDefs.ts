@@ -18,6 +18,16 @@ export default gql`
     networkId: Int
   }
 
+  input NetworkContractsInput {
+    version: String
+    feeInverse: String
+  }
+
+  type NetworkContracts {
+    version: String
+    feeInverse: String
+  }
+
   type DomainBalance {
     id: Int!
     domainId: Int!
@@ -112,10 +122,13 @@ export default gql`
       domainId: Int
     ): String!
     username(address: String!): String!
+    networkContracts: NetworkContracts!
   }
 
   extend type Mutation {
     setLoggedInUser(input: LoggedInUserInput): LoggedInUser!
     clearLoggedInUser: LoggedInUser!
+    setNetworkContracts(input: NetworkContractsInput): NetworkContracts!
+    updateNetworkContracts: NetworkContracts!
   }
 `;

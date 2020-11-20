@@ -20,6 +20,7 @@ import {
   LoggedInUserQuery,
   LoggedInUserQueryVariables,
   LoggedInUserDocument,
+  updateNetworkContracts,
 } from '~data/index';
 
 import setupResolvers from '~context/setupResolvers';
@@ -30,7 +31,6 @@ import ENS from '../../../lib/ENS';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
-import setupNetworkSagas from './network';
 import { getGasPrices, getColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
@@ -41,7 +41,6 @@ function* setupContextDependentSagas() {
     call(setupAdminSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
-    call(setupNetworkSagas),
     /**
      * We've loaded all the context sagas, so we can proceed with redering
      * all the app's routes
@@ -139,6 +138,11 @@ export default function* setupUserContext(
      * but we then do not wait for a return value (which will never come).
      */
     yield fork(setupContextDependentSagas);
+
+    /*
+     * Get the network contract values from the resolver
+     */
+    yield updateNetworkContracts();
 
     // Start a forked task to listen for user balance events
     yield fork(setupUserBalanceListener, walletAddress);

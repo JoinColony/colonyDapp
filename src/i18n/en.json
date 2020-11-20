@@ -35,6 +35,7 @@
     "button.next": "Next",
     "button.save": "Save",
     "button.modify": "Modify",
+    "button.upgrade": "Upgrade",
     "input.resetText": "Cancel",
     "label.amount": "Amount",
     "label.name": "Name",
