@@ -8,6 +8,7 @@ import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Task from '~dashboard/Task';
+import ColonyMembers from '~dashboard/ColonyMembers';
 import FourOFour from '~dashboard/FourOFour';
 import Inbox from '~users/Inbox';
 import Wallet from '~dashboard/Wallet';
@@ -41,6 +42,7 @@ import {
   USER_ROUTE,
   WALLET_ROUTE,
   LANDING_PAGE_ROUTE,
+  MEMBERS_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -206,6 +208,16 @@ const Routes = () => {
           path={TASK_ROUTE}
           component={Task}
           layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={MEMBERS_ROUTE}
+          component={ColonyMembers}
+          layout={SimpleNav}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,

@@ -1,65 +1,26 @@
+
 .main {
-  display: block;
-  margin-top: 40px;
+  composes: stretchHorizontal from '~styles/layout.css';
+  display: grid;
+  grid-template-columns: 50px auto;
 }
 
-.main h4 {
-  display: inline-block;
-  font-size: var(--size-smallish);
-  color: var(--dark);
-  letter-spacing: var(--spacing-medium);
+.mainContentGrid {
+  display: grid;
+  max-width: calc((100vw - (100vw - 100%)) - 50px);
+  overflow: hidden;
+  grid-template-columns: auto 26.5%;
 }
 
-.main a h4:hover, .main a h4:active {
-  text-decoration: underline;
-  color: var(--colony-blue);
+.mainContent {
+  padding: 90px 0 40px;
+  margin-left: calc(26.5% + 50px);
 }
 
-.userAvatars {
-  max-width: 130px;
+.rightAside {
+  padding: 220px 5% 20px 80px;
 }
 
-.userAvatar {
-  display: inline-block;
-  margin: 0 15px 15px 0;
-  border: 2px solid transparent;
-  border-radius: 50px;
-}
-
-.userAvatar:nth-child(3n+0) {
-  margin-right: 0px;
-}
-
-.userAvatar:nth-child(13), .userAvatar:nth-child(14), .userAvatar:nth-child(15) {
-  margin-bottom: 0px;
-}
-
-.userAvatar:hover {
-  border-color: var(--primary);
-}
-
-.remaningAvatars {
-  display: inline-block;
-  margin: 0;
-  padding-top: 5px;
-  height: 30px;
-  width: 30px;
-  vertical-align: top;
-  border: 2px solid transparent;
-  border-radius: 50px;
-  background-color: var(--colony-white);
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  text-align: center;
-  color: var(--temp-grey-13);
-  cursor: default;
-  letter-spacing: var(--spacing-medium);
-}
-
-.loadingText {
-  display: inline-block;
-  margin: -8px 0 0 5px;
-  vertical-align: middle;
-  font-size: var(--size-small);
-  letter-spacing: initial;
+.colonyList {
+  border-right: 1px solid rgb(227, 224, 227);
 }

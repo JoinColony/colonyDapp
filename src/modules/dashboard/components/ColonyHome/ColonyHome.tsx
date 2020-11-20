@@ -9,7 +9,7 @@ import { DialogActionButton } from '~core/Button';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
-import ColonyMembers from '~dashboard/ColonyMembers';
+import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
