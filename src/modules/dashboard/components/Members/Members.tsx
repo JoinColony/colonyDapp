@@ -1,4 +1,4 @@
-import React, { FC, useState, useMemo } from 'react';
+import React, { FC, useState, useMemo, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
@@ -9,6 +9,8 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRolesForDomain } from '../../../transformers';
 import UserPermissions from '~admin/Permissions/UserPermissions';
 import Heading from '~core/Heading';
+import { Select, Form } from '~core/Fields';
+import sortBy from 'lodash/sortBy';
 
 import styles from './Members.css';
 
@@ -23,6 +25,10 @@ const MSG = defineMessages({
       root {}
       other {: #{domainLabel}}
     }`,
+  },
+  labelFilter: {
+    id: 'dashboard.Members.labelFilter',
+    defaultMessage: 'Filter',
   },
 });
 
@@ -60,6 +66,14 @@ const Members = ({ colony }: Props) => {
     selectedDomainId,
     true,
   ]);
+
+  const domainSelectOptions = sortBy(
+    colony.domains.map(({ ethDomainId, name }) => ({
+      value: ethDomainId.toString(),
+      label: name,
+    })),
+    ['value'],
+  );
 
   const domainRolesArray = useMemo(
     () =>
@@ -112,6 +126,11 @@ const Members = ({ colony }: Props) => {
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
   );
 
+  const setFieldValue = useCallback(
+    (value) => setSelectedDomainId(parseInt(value, 10)),
+    [setSelectedDomainId],
+  );
+
   return (
     <div className={styles.main}>
       <div className={styles.titleContainer}>
@@ -122,6 +141,22 @@ const Members = ({ colony }: Props) => {
           }}
           appearance={{ size: 'medium', theme: 'dark' }}
         />
+        <Form
+          initialValues={{ filter: ROOT_DOMAIN_ID.toString() }}
+          onSubmit={() => {}}
+        >
+          <Select
+            appearance={{
+              alignOptions: 'right',
+              theme: 'alt',
+            }}
+            elementOnly
+            label={MSG.labelFilter}
+            name="filter"
+            onChange={setFieldValue}
+            options={domainSelectOptions}
+          />
+        </Form>
       </div>
       <MembersList<Member>
         colonyAddress={colony.colonyAddress}
