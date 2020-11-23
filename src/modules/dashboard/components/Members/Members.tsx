@@ -92,7 +92,7 @@ const Members = ({ colony }: Props) => {
         }),
     [directDomainRoles, domainRoles],
   );
-  console.log(members);
+
   return (
     <div className={styles.main}>
       <MembersList<Member>

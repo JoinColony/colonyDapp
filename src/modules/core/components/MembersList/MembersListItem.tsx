@@ -2,12 +2,24 @@ import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
-import { AnyUser } from '~data/index';
+import { defineMessages } from 'react-intl';
+import { AnyUser, useUserReputationQuery, useTokenInfoLazyQuery } from '~data/index';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
+import MaskedAddress from '~core/MaskedAddress';
+import Numeral from '~core/Numeral';
+import { useTokenInfo } from '~utils/hooks/use-token-info';
+import Icon from '~core/Icon';
 
 import styles from './MembersListItem.css';
+
+const MSG = defineMessages({
+  starReputationTitle: {
+    id: 'MembersList.MembersListItem.starReputationTitle',
+    defaultMessage: `User reputation value: {reputation}`,
+  },
+});
 
 interface Props<U> {
   extraItemContent?: (user: U) => ReactNode;
@@ -34,6 +46,15 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
   const {
     profile: { displayName, username, walletAddress },
   } = user;
+
+  const {
+    data: userReputationData,
+  } = useUserReputationQuery({
+    variables: { address: walletAddress, colonyAddress, domainId },
+  });
+
+  // Refactor MemberInfoPopover to use this hook if works fine after reputation tests
+  const { tokenInfoData } = useTokenInfo();
 
   const handleRowClick = useCallback(() => {
     if (onRowClick) {
@@ -67,9 +88,44 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={onRowClick ? 0 : undefined}
       >
+        {userReputationData && tokenInfoData && (
+          <div className={styles.reputationSection}>
+            <Icon
+              name="star"
+              appearance={{ size: "extraTiny" }}
+              className={styles.icon}
+              title={MSG.starReputationTitle}
+              titleValues={{
+                reputation: userReputationData.userReputation,
+              }}
+            />
+            <Numeral
+              className={styles.reputation}
+              appearance={{ theme: 'primary'}}
+              value={userReputationData.userReputation}
+              unit={tokenInfoData.tokenInfo.decimals}
+            />
+          </div>
+        )}
+        <div className={styles.reputationSection}>
+          <Icon
+            name="star"
+            appearance={{ size: "extraTiny" }}
+            className={styles.icon}
+            title={MSG.starReputationTitle}
+            titleValues={{
+              reputation: 30,
+            }}
+          />
+          <Numeral
+            className={styles.reputation}
+            appearance={{ theme: 'primary'}}
+            value={30}
+          />
+        </div>
         <div className={styles.section}>
           <UserAvatar
-            size="xs"
+            size="s"
             colonyAddress={colonyAddress}
             address={walletAddress}
             user={user}
@@ -90,7 +146,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             </span>
           )}
           <span className={styles.address}>
-            <span>{walletAddress}</span>
+            <MaskedAddress address={walletAddress} />
           </span>
         </div>
         {renderedExtraItemContent && (
