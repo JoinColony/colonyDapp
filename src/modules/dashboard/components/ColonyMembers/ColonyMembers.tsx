@@ -5,6 +5,7 @@ import Members from '~dashboard/Members';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList/SubscribedColoniesList';
 import { useColonyFromNameQuery } from '~data/index';
 import styles from './ColonyMembers.css';
+import { TokenInfoProvider } from '~utils/hooks/use-token-info';
 
 const displayName = 'dashboard.ColonyMembers';
 
@@ -25,7 +26,9 @@ const ColonyMembers = () => {
       <div className={styles.mainContentGrid}>
         <div className={styles.mainContent}>
           {colonyData && colonyData.colony && (
-            <Members colony={colonyData.colony} />
+            <TokenInfoProvider colonyAddress={colonyData.colony.colonyAddress}>
+              <Members colony={colonyData.colony} />
+            </TokenInfoProvider>
           )}
         </div>
         <aside className={styles.rightAside}>Edit permissions</aside>
