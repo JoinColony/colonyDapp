@@ -1,17 +1,12 @@
 import React, { FC, useState, useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
-import { ROLES_COMMUNITY } from '~constants';
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
-import { sortObjectsBy } from '~utils/arrays';
 import { useTransformer } from '~utils/hooks';
-import {
-  getAllUserRolesForDomain,
-  getCommunityRoles,
-} from '../../../transformers';
+import { getAllUserRolesForDomain } from '../../../transformers';
 import UserPermissions from '~admin/Permissions/UserPermissions';
 import Heading from '~core/Heading';
 
@@ -55,6 +50,35 @@ const Members = ({ colony }: Props) => {
     },
   });
 
+  const domainRoles = useTransformer(getAllUserRolesForDomain, [
+    colony,
+    selectedDomainId,
+  ]);
+
+  const directDomainRoles = useTransformer(getAllUserRolesForDomain, [
+    colony,
+    selectedDomainId,
+    true,
+  ]);
+
+  const domainRolesArray = useMemo(
+    () =>
+      domainRoles
+        .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
+        .filter(({ roles }) => !!roles.length)
+        .map(({ address, roles }) => {
+          const directUserRoles = directDomainRoles.find(
+            ({ address: userAddress }) => userAddress === address,
+          );
+          return {
+            userAddress: address,
+            roles,
+            directRoles: directUserRoles ? directUserRoles.roles : [],
+          };
+        }),
+    [directDomainRoles, domainRoles],
+  );
+
   if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
     return (
       <div className={styles.main}>
@@ -70,43 +94,22 @@ const Members = ({ colony }: Props) => {
     colony: { subscribedUsers },
   } = colonySubscribedUsers;
 
-  const domainRoles = useTransformer(getAllUserRolesForDomain, [
-    colony,
-    selectedDomainId,
-  ]);
-
-  const directDomainRoles = useTransformer(getAllUserRolesForDomain, [
-    colony,
-    selectedDomainId,
-    true,
-  ]);
+  const members: Member[] = subscribedUsers.map((user) => {
+    const {
+      profile: { walletAddress },
+    } = user;
+    const domainRole = domainRolesArray.find(
+      (rolesObject) => rolesObject.userAddress === walletAddress,
+    );
+    return {
+      ...user,
+      roles: domainRole ? domainRole.roles : [],
+      directRoles: domainRole ? domainRole.directRoles : [],
+    };
+  });
 
   const selectedDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
-  );
-
-  // Something wrong with types here
-  // @ts-ignore
-  const members: Member[] = useMemo(
-    () =>
-      domainRoles
-        .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
-        .filter(({ roles }) => !!roles.length)
-        .map(({ address, roles }) => {
-          const directUserRoles = directDomainRoles.find(
-            ({ address: userAddress }) => userAddress === address,
-          );
-          const user = subscribedUsers.find(
-            ({ profile: { walletAddress: userAddress } }) =>
-              userAddress === address,
-          );
-          return {
-            ...user,
-            roles,
-            directRoles: directUserRoles ? directUserRoles.roles : [],
-          };
-        }),
-    [directDomainRoles, domainRoles],
   );
 
   return (

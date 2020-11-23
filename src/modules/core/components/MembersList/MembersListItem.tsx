@@ -3,11 +3,7 @@ import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
-import {
-  AnyUser,
-  useUserReputationQuery,
-  useTokenInfoLazyQuery,
-} from '~data/index';
+import { AnyUser, useUserReputationQuery } from '~data/index';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';

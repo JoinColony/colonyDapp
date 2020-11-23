@@ -26,16 +26,11 @@ export const TokenInfoProvider = ({ children, colonyAddress }: Props) => (
 export const useTokenInfo = () => {
   const { colonyAddress } = useContext(TokenInfoContext);
 
-  const {
-    data: nativeTokenAddressData,
-  } = useColonyNativeTokenQuery({
+  const { data: nativeTokenAddressData } = useColonyNativeTokenQuery({
     variables: { address: colonyAddress || '' },
   });
 
-  const [
-    fetchTokenInfo,
-    { data: tokenInfoData },
-  ] = useTokenInfoLazyQuery();
+  const [fetchTokenInfo, { data: tokenInfoData }] = useTokenInfoLazyQuery();
 
   useEffect(() => {
     if (nativeTokenAddressData) {
