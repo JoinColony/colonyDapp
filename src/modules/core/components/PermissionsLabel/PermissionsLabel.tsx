@@ -22,6 +22,10 @@ interface Props {
 
   /** Optional info message about permission being inherited. */
   infoMessage?: MessageDescriptor | string;
+
+  /** Where or not we should show only icon or icon with title */
+  /** We could consider implement it with Appearance object, but i feel its not yet time for it */
+  minimal?: boolean;
 }
 
 const displayName = 'PermissionsLabel';
@@ -32,6 +36,7 @@ const PermissionsLabel = ({
   inherited = false,
   name,
   infoMessage,
+  minimal = false,
 }: Props) => {
   const { formatMessage } = useIntl();
   const permissionDefaults = permissionsObject[permission];
@@ -49,7 +54,7 @@ const PermissionsLabel = ({
 
   return (
     <Tooltip
-      placement="top"
+      placement="top-start"
       content={tooltipText || null}
       trigger={infoMessage ? 'hover' : 'disabled'}
       popperProps={{
@@ -57,7 +62,7 @@ const PermissionsLabel = ({
           {
             name: 'offset',
             options: {
-              offset: [0, 8],
+              offset: [-8, 8],
             },
           },
         ],
@@ -70,10 +75,12 @@ const PermissionsLabel = ({
           name={permissionIcon}
           title={translatedName}
         />
-        <span className={styles.label}>
-          {translatedName}
-          {inherited && '*'}
-        </span>
+        {!minimal && (
+          <span className={styles.label}>
+            {translatedName}
+            {inherited && '*'}
+          </span>
+        )}
       </div>
     </Tooltip>
   );

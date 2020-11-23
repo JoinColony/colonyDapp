@@ -5,7 +5,6 @@
   align-items: center;
   overflow-y: auto;
   max-width: 700px;
-  padding: 0 var(--pad-large);
 }
 
 .section {
@@ -49,6 +48,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 30px;
 }
 
 .reputationSection svg {

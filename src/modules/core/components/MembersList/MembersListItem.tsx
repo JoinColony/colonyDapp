@@ -107,22 +107,6 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             />
           </div>
         )}
-        <div className={styles.reputationSection}>
-          <Icon
-            name="star"
-            appearance={{ size: "extraTiny" }}
-            className={styles.icon}
-            title={MSG.starReputationTitle}
-            titleValues={{
-              reputation: 30,
-            }}
-          />
-          <Numeral
-            className={styles.reputation}
-            appearance={{ theme: 'primary'}}
-            value={30}
-          />
-        </div>
         <div className={styles.section}>
           <UserAvatar
             size="s"
@@ -150,7 +134,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
           </span>
         </div>
         {renderedExtraItemContent && (
-          <div className={styles.section}>{renderedExtraItemContent}</div>
+          <div>{renderedExtraItemContent}</div>
         )}
       </div>
     </ListGroupItem>
