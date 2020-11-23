@@ -9,6 +9,7 @@ import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
 import { sortObjectsBy } from '~utils/arrays';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRolesForDomain } from '../../../transformers';
+import UserPermissions from '~admin/Permissions/UserPermissions';
 
 import { getCommunityRoles } from '../../../transformers';
 
@@ -96,8 +97,11 @@ const Members = ({ colony }: Props) => {
     <div className={styles.main}>
       <MembersList<Member>
         colonyAddress={colony.colonyAddress}
-        extraItemContent={({ roles }) => (
-          <span className={styles.communityRole}>{roles[0]}</span>
+        extraItemContent={({ roles, directRoles }) => (
+          <UserPermissions
+            roles={roles}
+            directRoles={directRoles}
+          />
         )}
         domainId={undefined}
         users={members}
