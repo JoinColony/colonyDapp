@@ -3,8 +3,8 @@
 .main {
   display: flex;
   align-items: center;
-  overflow-y: auto;
   max-width: 700px;
+  overflow-y: auto;
 }
 
 .section {
@@ -38,10 +38,10 @@
 }
 
 .reputation {
+  margin-left: 4px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: reputationColor;
-  margin-left: 4px;
 }
 
 .reputationSection {

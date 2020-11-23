@@ -88,6 +88,7 @@
   border: none;
   border-radius: var(--radius-normal);
   background-color: transparent;
+  outline: 0;
 }
 
 .themeAlt:active,

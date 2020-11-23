@@ -20,11 +20,11 @@
 }
 
 .label {
+  margin-left: 5px;
   vertical-align: top;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
-  margin-left: 5px;
 }
 
 .icon {

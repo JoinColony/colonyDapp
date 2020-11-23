@@ -18,7 +18,9 @@
 }
 
 .rightAside {
-  padding: 220px 5% 20px 80px;
+  display: flex;
+  justify-content: center;
+  padding: 200px 0 20px 50px;
 }
 
 .colonyList {

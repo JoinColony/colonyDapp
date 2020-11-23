@@ -2,6 +2,7 @@ import React, { FC, useState, useMemo, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
+import sortBy from 'lodash/sortBy';
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
@@ -10,7 +11,6 @@ import { getAllUserRolesForDomain } from '../../../transformers';
 import UserPermissions from '~admin/Permissions/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
-import sortBy from 'lodash/sortBy';
 
 import styles from './Members.css';
 
@@ -75,6 +75,11 @@ const Members = ({ colony }: Props) => {
     ['value'],
   );
 
+  const setFieldValue = useCallback(
+    (value) => setSelectedDomainId(parseInt(value, 10)),
+    [setSelectedDomainId],
+  );
+
   const domainRolesArray = useMemo(
     () =>
       domainRoles
@@ -124,11 +129,6 @@ const Members = ({ colony }: Props) => {
 
   const selectedDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
-  );
-
-  const setFieldValue = useCallback(
-    (value) => setSelectedDomainId(parseInt(value, 10)),
-    [setSelectedDomainId],
   );
 
   return (
