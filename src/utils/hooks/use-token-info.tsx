@@ -1,12 +1,9 @@
 import React, { createContext, useContext, useEffect, ReactNode } from 'react';
-import {
-  useColonyNativeTokenQuery,
-  useTokenInfoLazyQuery,
-} from '~data/index';
+import { useColonyNativeTokenQuery, useTokenInfoLazyQuery } from '~data/index';
 import { Address } from '~types/index';
 
-export type TokenInfo = {  
-  colonyAddress: string;    
+export type TokenInfo = {
+  colonyAddress: string;
 };
 
 const TokenInfoContext = createContext<Partial<TokenInfo>>({});
@@ -16,13 +13,10 @@ export type Props = {
   colonyAddress: Address;
 };
 
-export const TokenInfoProvider = ({
-  children,
-  colonyAddress,
-}: Props) => (
+export const TokenInfoProvider = ({ children, colonyAddress }: Props) => (
   <TokenInfoContext.Provider
     value={{
-      colonyAddress
+      colonyAddress,
     }}
   >
     {children}
@@ -34,14 +28,13 @@ export const useTokenInfo = () => {
 
   const {
     data: nativeTokenAddressData,
-    loading: loadingNativeTokenAddress,
   } = useColonyNativeTokenQuery({
-    variables: { address: colonyAddress || "" },
+    variables: { address: colonyAddress || '' },
   });
 
   const [
     fetchTokenInfo,
-    { data: tokenInfoData, loading: loadingTokenInfoData },
+    { data: tokenInfoData },
   ] = useTokenInfoLazyQuery();
 
   useEffect(() => {

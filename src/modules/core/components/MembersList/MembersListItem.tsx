@@ -1,9 +1,13 @@
 import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 
+import { defineMessages } from 'react-intl';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
-import { defineMessages } from 'react-intl';
-import { AnyUser, useUserReputationQuery, useTokenInfoLazyQuery } from '~data/index';
+import {
+  AnyUser,
+  useUserReputationQuery,
+  useTokenInfoLazyQuery,
+} from '~data/index';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
@@ -47,9 +51,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     profile: { displayName, username, walletAddress },
   } = user;
 
-  const {
-    data: userReputationData,
-  } = useUserReputationQuery({
+  const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId },
   });
 
@@ -92,7 +94,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
           <div className={styles.reputationSection}>
             <Icon
               name="star"
-              appearance={{ size: "extraTiny" }}
+              appearance={{ size: 'extraTiny' }}
               className={styles.icon}
               title={MSG.starReputationTitle}
               titleValues={{
@@ -101,7 +103,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             />
             <Numeral
               className={styles.reputation}
-              appearance={{ theme: 'primary'}}
+              appearance={{ theme: 'primary' }}
               value={userReputationData.userReputation}
               unit={tokenInfoData.tokenInfo.decimals}
             />
@@ -133,9 +135,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             <MaskedAddress address={walletAddress} />
           </span>
         </div>
-        {renderedExtraItemContent && (
-          <div>{renderedExtraItemContent}</div>
-        )}
+        {renderedExtraItemContent && <div>{renderedExtraItemContent}</div>}
       </div>
     </ListGroupItem>
   );
