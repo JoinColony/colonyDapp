@@ -15,3 +15,4 @@ export const USER_ROUTE = '/user/:username';
 export const WALLET_ROUTE = '/wallet';
 export const ADMIN_DASHBOARD_ROUTE = `${COLONY_HOME_ROUTE}/admin`;
 export const NOT_FOUND_ROUTE = '/404';
+export const LANDING_PAGE_ROUTE = '/landing';

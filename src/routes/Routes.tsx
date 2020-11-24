@@ -9,7 +9,6 @@ import CreateUserWizard from '~dashboard/CreateUserWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Task from '~dashboard/Task';
 import FourOFour from '~dashboard/FourOFour';
-import Dashboard from '~dashboard/Dashboard';
 import Inbox from '~users/Inbox';
 import Wallet from '~dashboard/Wallet';
 import ConnectWalletWizard from '~users/ConnectWalletWizard';
@@ -20,6 +19,7 @@ import LevelEdit from '~dashboard/LevelEdit';
 import { NavBar, Plain, SimpleNav } from '~pages/RouteLayouts/index';
 import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import LadingPage from '~pages/LandingPage';
 
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -33,7 +33,6 @@ import {
   CONNECT_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
-  DASHBOARD_ROUTE,
   INBOX_ROUTE,
   LEVEL_EDIT_ROUTE,
   NOT_FOUND_ROUTE,
@@ -41,6 +40,7 @@ import {
   USER_EDIT_ROUTE,
   USER_ROUTE,
   WALLET_ROUTE,
+  LANDING_PAGE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -97,7 +97,7 @@ const Routes = () => {
         <Route
           exact
           path="/"
-          render={() => <Redirect to={DASHBOARD_ROUTE} />}
+          render={() => <Redirect to={LANDING_PAGE_ROUTE} />}
         />
         <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
 
@@ -144,8 +144,8 @@ const Routes = () => {
         />
 
         <AlwaysAccesibleRoute
-          path={DASHBOARD_ROUTE}
-          component={Dashboard}
+          path={LANDING_PAGE_ROUTE}
+          component={LadingPage}
           layout={SimpleNav}
           routeProps={{
             hasBackLink: false,
