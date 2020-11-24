@@ -18,7 +18,7 @@ import styles from './TokenEditDialog.css';
 const MSG = defineMessages({
   title: {
     id: 'core.TokenEditDialog.title',
-    defaultMessage: 'Edit Tokens',
+    defaultMessage: 'Manage tokens',
   },
   errorAddingToken: {
     id: 'core.TokenEditDialog.errorAddingToken',
@@ -92,9 +92,25 @@ const TokenEditDialog = ({
     <Dialog cancel={cancel}>
       <DialogSection>
         <Heading
-          appearance={{ margin: 'none', size: 'medium' }}
+          appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}
           text={MSG.title}
         />
+      </DialogSection>
+      <DialogSection>
+        {tokens.length > 0 ? (
+          <div className={styles.tokenChoiceContainer}>
+            {tokens.map((token) => (
+              <TokenItem
+                key={token.address}
+                nativeTokenAddress={nativeTokenAddress}
+                removeTokenFn={removeTokenFn}
+                token={token}
+              />
+            ))}
+          </div>
+        ) : (
+          <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
+        )}
       </DialogSection>
       <DialogSection appearance={{ border: 'top' }}>
         <Form
@@ -116,22 +132,6 @@ const TokenEditDialog = ({
             </>
           )}
         </Form>
-      </DialogSection>
-      <DialogSection appearance={{ border: 'top' }}>
-        {tokens.length > 0 ? (
-          <div className={styles.tokenChoiceContainer}>
-            {tokens.map((token) => (
-              <TokenItem
-                key={token.address}
-                nativeTokenAddress={nativeTokenAddress}
-                removeTokenFn={removeTokenFn}
-                token={token}
-              />
-            ))}
-          </div>
-        ) : (
-          <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
-        )}
       </DialogSection>
       <DialogSection appearance={{ align: 'right' }}>
         <Button
