@@ -10,49 +10,14 @@ import { HashZero } from 'ethers/constants';
 import { Transfer, NetworkEvent } from '~data/index';
 import { notUndefined } from '~utils/arrays';
 
-// Find better place for it..
-const FILTERS = [
-  'ColonyBootstrapped',
-  'ColonyFundsClaimed',
-  'ColonyFundsMovedBetweenFundingPots',
-  'ColonyInitialised',
-  'ColonyRewardInverseSet',
-  'ColonyRoleSet',
-  'ColonyUpgraded',
-  'DomainAdded',
-  'ExpenditureAdded',
-  'ExpenditureCancelled',
-  'ExpenditureFinalized',
-  'ExpenditurePayoutSet',
-  'ExpenditureRecipientSet',
-  'ExpenditureSkillSet',
-  'ExpenditureTransferred',
-  'FundingPotAdded',
-  'PaymentAdded',
-  'PayoutClaimed',
-  'RecoveryRoleSet',
-  'RewardPayoutClaimed',
-  'RewardPayoutCycleEnded',
-  'RewardPayoutCycleStarted',
-  'TaskAdded',
-  'TaskBriefSet',
-  'TaskCanceled',
-  'TaskCompleted',
-  'TaskDeliverableSubmitted',
-  'TaskDueDateSet',
-  'TaskFinalized',
-  'TaskPayoutSet',
-  'TaskRoleUserSet',
-  'TaskSkillSet',
-  'TaskWorkRatingRevealed',
-];
-
 export const getColonyAllEvents = async (
   colonyClient: ColonyClient,
 ): Promise<NetworkEvent[]> => {
-  const { provider } = colonyClient;
+  const { provider, filters } = colonyClient;
 
-  const allEventsLogs = await FILTERS.reduce(async (acc, filter) => {
+  const eventFilters = Object.keys(filters).filter((key) => !key.includes('('));
+
+  const allEventsLogs = await eventFilters.reduce(async (acc, filter) => {
     const logs = await getLogs(colonyClient, colonyClient.filters[filter]());
     return [...(await acc), ...logs];
   }, Promise.resolve([]));

@@ -23,17 +23,23 @@ interface Props {
   handleItemClick?: (handlerProps: ClickHandlerProps) => void;
 }
 
-const ActionsList = ({ items, handleItemClick }: Props) => (
-  <ul className={styles.main}>
-    {items.map((item) => (
-      <ActionsListItem
-        key={item.id || nanoid()}
-        item={item}
-        handleOnClick={handleItemClick}
-      />
-    ))}
-  </ul>
-);
+const ActionsList = ({ items, handleItemClick }: Props) => {
+  const createKey = (value) => {
+    return value + nanoid();
+  };
+
+  return (
+    <ul className={styles.main}>
+      {items.map((item) => (
+        <ActionsListItem
+          key={item.id || createKey(item.hash || item.name)}
+          item={item}
+          handleOnClick={handleItemClick}
+        />
+      ))}
+    </ul>
+  );
+};
 
 ActionsList.displayName = displayName;
 
