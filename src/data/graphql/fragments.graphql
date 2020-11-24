@@ -418,3 +418,14 @@ fragment TaskEvent on Event {
   ...EventFields
   ...EventContext
 }
+
+fragment FullNetworkEvent on NetworkEvent {
+  fromAddress
+  toAddress
+  createdAt
+  name
+  hash
+  topic
+  userAddress
+  domainId
+}

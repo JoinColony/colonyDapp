@@ -139,3 +139,7 @@
   display: inline-block;
   cursor: pointer;
 }
+
+.stateNoPointer {
+  cursor: default;
+}

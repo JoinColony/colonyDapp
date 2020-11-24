@@ -16,3 +16,4 @@ export const domain: string;
 export const commentCount: string;
 export const commentCountIcon: string;
 export const userMention: string;
+export const stateNoPointer: string;

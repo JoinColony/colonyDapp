@@ -32,6 +32,7 @@ import ColonyFunding from './ColonyFunding';
 import ColonyTitle from './ColonyTitle';
 import ColonyTotalFunds from '../ColonyTotalFunds';
 import ColonyActions from '../ColonyActions';
+import ColonyEvents from '../ColonyEvents';
 
 import styles from './ColonyHome.css';
 import DomainDropdown from '~dashboard/DomainDropdown';
@@ -185,7 +186,12 @@ const ColonyHome = ({ match, location }: Props) => {
             <ColonyHomeActions />
           </div>
           <Switch>
-            <Route path={COLONY_EVENTS_ROUTE} component={() => <>Events</>} />
+            <Route
+              path={COLONY_EVENTS_ROUTE}
+              component={() => (
+                <ColonyEvents colonyAddress={colony.colonyAddress} />
+              )}
+            />
             <Route
               path={COLONY_EXTENSIONS_ROUTE}
               component={() => <>Extensions</>}

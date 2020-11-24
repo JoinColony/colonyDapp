@@ -7,6 +7,7 @@ import {
   ColonyQuery,
   ColonyTasksQuery,
   ColonyTransfersQuery,
+  ColonyEventsQuery,
   DomainFieldsFragment,
   FullColonyFragment,
   LoggedInUserDocument,
@@ -93,6 +94,8 @@ export type Colony = FullColonyFragment;
 export type OneDomain = DomainFieldsFragment;
 
 export type ColonyTransaction = ColonyTransfersQuery['colony']['transfers'][number];
+
+export type ColonyEvent = ColonyEventsQuery['colony']['events'][number];
 
 export type OneSuggestion = ColonySuggestionsQuery['colony']['suggestions'][number];
 

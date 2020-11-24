@@ -11,13 +11,14 @@ import {
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
 import { Context } from '~context/index';
-import { Transfer } from '~data/index';
+import { Transfer, NetworkEvent } from '~data/index';
 
 import { getToken } from './token';
 import {
   getColonyFundsClaimedTransfers,
   getPayoutClaimedTransfers,
   getColonyUnclaimedTransfers,
+  getColonyAllEvents,
 } from './transactions';
 
 export const colonyResolvers = ({
@@ -134,6 +135,16 @@ export const colonyResolvers = ({
         })),
         __typename: 'UserRoles',
       }));
+    },
+    async events({ colonyAddress }): Promise<NetworkEvent[]> {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+
+      const events = await getColonyAllEvents(colonyClient);
+
+      return events;
     },
     async transfers({ colonyAddress }): Promise<Transfer[]> {
       const colonyClient = await colonyManager.getClient(

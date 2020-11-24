@@ -73,7 +73,7 @@ interface Props {
 const ActionsListItem = ({
   item: { id, userAddress, status, topic, domainId },
   item,
-  handleOnClick = () => undefined,
+  handleOnClick,
 }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
 
@@ -83,7 +83,7 @@ const ActionsListItem = ({
   }, []);
 
   const handleSyntheticEvent = useCallback(
-    () => handleOnClick({ id, userAddress, topic, domainId }),
+    () => handleOnClick && handleOnClick({ id, userAddress, topic, domainId }),
     [handleOnClick, id, userAddress, topic, domainId],
   );
 
@@ -126,7 +126,10 @@ const ActionsListItem = ({
          */
         role="button"
         tabIndex={0}
-        className={getMainClasses({}, styles, { [Status[status]]: !!status })}
+        className={getMainClasses({}, styles, {
+          noPointer: !handleOnClick,
+          [Status[status]]: !!status,
+        })}
         onClick={handleSyntheticEvent}
         onKeyPress={handleSyntheticEvent}
       >
