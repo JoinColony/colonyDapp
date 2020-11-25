@@ -16,7 +16,6 @@
 .domainPotBalance {
   font-size: var(--size-small);
   font-weight: 600;
-  color: #76748B;
 }
 
 .domainSelects {
@@ -26,14 +25,10 @@
 }
 
 .transferIcon {
-  width: 26px;
-  height: 26px;
-  justify-self: center;
   align-self: center;
+  height: 26px;
+  width: 26px;
   position: relative;
   top: -7px;
-
-  & svg {
-    fill: #76748B;
-  }
+  justify-self: center;
 }

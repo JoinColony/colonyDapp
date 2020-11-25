@@ -54,7 +54,7 @@ const MSG = defineMessages({
   },
   reason: {
     id: 'admin.Tokens.TransferFundsDialogForm.reason',
-    defaultMessage: 'Explain why you’re transferring these funds (optional)'
+    defaultMessage: 'Explain why you’re transferring these funds (optional)',
   },
   domainTokenAmount: {
     id: 'admin.Tokens.TransferFundsDialogForm.domainTokenAmount',
@@ -164,14 +164,13 @@ const TransferFundsDialogForm = ({
     }
   }, [colonyAddress, tokenAddress, fromDomain, toDomain, loadTokenBalances]);
 
-  const [fromDomainTokenBalance, toDomainTokenBalance] = useMemo(() => {
+  const [fromDomainTokenBalance] = useMemo(() => {
     const token =
       tokenBalancesData &&
       tokenBalancesData.tokens.find(({ address }) => address === tokenAddress);
     const from = getBalanceFromToken(token, fromDomain);
-    const to = getBalanceFromToken(token, toDomain);
-    return [from, to];
-  }, [fromDomain, toDomain, tokenAddress, tokenBalancesData]);
+    return [from];
+  }, [fromDomain, tokenAddress, tokenBalancesData]);
 
   // Perform form validations
   useEffect(() => {
@@ -236,7 +235,11 @@ const TransferFundsDialogForm = ({
       <DialogSection>
         <div className={styles.domainSelects}>
           <div>
-            <Select options={domainOptions} label={MSG.from} name="fromDomain" />
+            <Select
+              options={domainOptions}
+              label={MSG.from}
+              name="fromDomain"
+            />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
                 <FormattedMessage
@@ -259,17 +262,16 @@ const TransferFundsDialogForm = ({
                   }}
                 />
               </div>
-            )}            
+            )}
           </div>
-          <Icon 
+          <Icon
             className={styles.transferIcon}
             name="circle-arrow-back"
             title="Transfer"
             appearance={{ size: 'medium' }}
           />
-          <Select options={domainOptions} label={MSG.to} name="toDomain" />          
+          <Select options={domainOptions} label={MSG.to} name="toDomain" />
         </div>
-
       </DialogSection>
       <DialogSection>
         <div className={styles.tokenAmount}>

@@ -25,7 +25,6 @@ import TokenList from './TokenList';
 import ColonyTokenEditDialog from './ColonyTokenEditDialog';
 import TokenMintDialog from './TokenMintDialog';
 
-
 import styles from './Tokens.css';
 
 const MSG = defineMessages({
