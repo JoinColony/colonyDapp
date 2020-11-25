@@ -32,6 +32,28 @@ addProcess('truffle', () =>
   })
 );
 
+/*
+ * For all future readers of this file:
+ * This is not the actual oracle from the colonyNetwork, this is just a mocked
+ * version that we use for testing reputation queries locally
+ */
+addProcess('oracle', async () => {
+  const mockOracleProcess = spawn('npm', ['start'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/mock-oracle'),
+    stdio: 'pipe',
+  });
+  if (args.foreground) {
+    mockOracleProcess.stdout.pipe(process.stdout);
+    mockOracleProcess.stderr.pipe(process.stderr);
+  }
+  mockOracleProcess.on('error', e => {
+    mockOracleProcess.kill();
+    reject(e);
+  });
+  await waitOn({ resources: ['tcp:3001'] });
+  return mockOracleProcess;
+});
+
 addProcess('db', async () => {
   const dbProcess = spawn('npm', ['run', 'db:start'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
@@ -121,6 +143,7 @@ const startAll = async () => {
     if (`skip-${process.name}` in args) return promise;
     return promise
       .then(() => {
+        console.log(); // New line before logging the process start
         console.info(`Starting ${process.name}...`);
         return process.startFn();
       })
