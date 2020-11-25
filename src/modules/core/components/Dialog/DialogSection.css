@@ -4,6 +4,14 @@
   padding: 20px 30px;
 }
 
+.themeHeading {
+  padding: 36px 20px 20px;
+}
+
+.themeSidePadding {
+  padding: 0 20px;
+}
+
 .alignRight {
   text-align: right;
 }
