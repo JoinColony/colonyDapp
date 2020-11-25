@@ -1,4 +1,4 @@
-export { default as TokensMoveDialog } from '../../../dashboard/components/TokensMoveDialog';
+export { default as TransferFundsDialog } from '../../../dashboard/components/TransferFundsDialog';
 export { default } from './Tokens';
 export { default as ColonyTokenEditDialog } from './ColonyTokenEditDialog';
 export { default as TokenMintForm } from './TokenMintForm';

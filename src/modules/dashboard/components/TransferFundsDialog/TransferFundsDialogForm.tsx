@@ -27,52 +27,53 @@ import {
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
-import styles from './TokensMoveDialogForm.css';
-import { FormValues } from './TokensMoveDialog';
+import styles from './TransferFundsDialogForm.css';
+import { FormValues } from './TransferFundsDialog';
+import Icon from '~core/Icon';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.Tokens.TokensMoveDialogForm.title',
-    defaultMessage: 'Move Funds',
+    id: 'admin.Tokens.TransferFundsDialogForm.title',
+    defaultMessage: 'Transfer Funds',
   },
   from: {
-    id: 'admin.Tokens.TokensMoveDialogForm.from',
+    id: 'admin.Tokens.TransferFundsDialogForm.from',
     defaultMessage: 'From',
   },
   to: {
-    id: 'admin.Tokens.TokensMoveDialogForm.to',
+    id: 'admin.Tokens.TransferFundsDialogForm.to',
     defaultMessage: 'To',
   },
   amount: {
-    id: 'admin.Tokens.TokensMoveDialogForm.amount',
+    id: 'admin.Tokens.TransferFundsDialogForm.amount',
     defaultMessage: 'Amount',
   },
   token: {
-    id: 'admin.Tokens.TokensMoveDialogForm.address',
+    id: 'admin.Tokens.TransferFundsDialogForm.address',
     defaultMessage: 'Token',
   },
   domainTokenAmount: {
-    id: 'admin.Tokens.TokensMoveDialogForm.domainTokenAmount',
-    defaultMessage: 'Amount: {amount} {symbol}',
+    id: 'admin.Tokens.TransferFundsDialogForm.domainTokenAmount',
+    defaultMessage: 'Available: {amount} {symbol}',
   },
   noAmount: {
-    id: 'admin.Tokens.TokensMoveDialogForm.noAmount',
+    id: 'admin.Tokens.TransferFundsDialogForm.noAmount',
     defaultMessage: 'Amount must be greater than zero',
   },
   noBalance: {
-    id: 'admin.Tokens.TokensMoveDialogForm.noBalance',
+    id: 'admin.Tokens.TransferFundsDialogForm.noBalance',
     defaultMessage: 'Insufficient balance in from domain pot',
   },
   noPermissionFrom: {
-    id: 'admin.Tokens.TokensMoveDialogForm.noPermissionFrom',
+    id: 'admin.Tokens.TransferFundsDialogForm.noPermissionFrom',
     defaultMessage: 'No permission in from domain',
   },
   noPermissionTo: {
-    id: 'admin.Tokens.TokensMoveDialogForm.noPermissionTo',
+    id: 'admin.Tokens.TransferFundsDialogForm.noPermissionTo',
     defaultMessage: 'No permission in to domain',
   },
   samePot: {
-    id: 'admin.Tokens.TokensMoveDialogForm.samePot',
+    id: 'admin.Tokens.TransferFundsDialogForm.samePot',
     defaultMessage: 'Cannot move to same domain pot',
   },
 });
@@ -82,7 +83,7 @@ interface Props {
   colony: Colony;
 }
 
-const TokensMoveDialogForm = ({
+const TransferFundsDialogForm = ({
   cancel,
   colony,
   colony: { colonyAddress, domains, tokens },
@@ -229,56 +230,42 @@ const TokensMoveDialogForm = ({
         />
       </DialogSection>
       <DialogSection>
-        <Select options={domainOptions} label={MSG.from} name="fromDomain" />
-        {!!tokenAddress && (
-          <div className={styles.domainPotBalance}>
-            <FormattedMessage
-              {...MSG.domainTokenAmount}
-              values={{
-                amount: (
-                  <Numeral
-                    appearance={{
-                      size: 'small',
-                      theme: 'grey',
-                    }}
-                    value={fromDomainTokenBalance || 0}
-                    unit={getTokenDecimalsWithFallback(
-                      selectedToken && selectedToken.decimals,
-                    )}
-                    truncate={3}
-                  />
-                ),
-                symbol: (selectedToken && selectedToken.symbol) || '???',
-              }}
-            />
+        <div className={styles.domainSelects}>
+          <div>
+            <Select options={domainOptions} label={MSG.from} name="fromDomain" />
+            {!!tokenAddress && (
+              <div className={styles.domainPotBalance}>
+                <FormattedMessage
+                  {...MSG.domainTokenAmount}
+                  values={{
+                    amount: (
+                      <Numeral
+                        appearance={{
+                          size: 'small',
+                          theme: 'grey',
+                        }}
+                        value={fromDomainTokenBalance || 0}
+                        unit={getTokenDecimalsWithFallback(
+                          selectedToken && selectedToken.decimals,
+                        )}
+                        truncate={3}
+                      />
+                    ),
+                    symbol: (selectedToken && selectedToken.symbol) || '???',
+                  }}
+                />
+              </div>
+            )}            
           </div>
-        )}
-      </DialogSection>
-      <DialogSection>
-        <Select options={domainOptions} label={MSG.to} name="toDomain" />
-        {values.toDomain !== undefined && !!values.tokenAddress && (
-          <div className={styles.domainPotBalance}>
-            <FormattedMessage
-              {...MSG.domainTokenAmount}
-              values={{
-                amount: (
-                  <Numeral
-                    appearance={{
-                      size: 'small',
-                      theme: 'grey',
-                    }}
-                    value={toDomainTokenBalance || 0}
-                    unit={getTokenDecimalsWithFallback(
-                      selectedToken && selectedToken.decimals,
-                    )}
-                    truncate={3}
-                  />
-                ),
-                symbol: (selectedToken && selectedToken.symbol) || '???',
-              }}
-            />
-          </div>
-        )}
+          <Icon 
+            className={styles.transferIcon}
+            name="circle-arrow-back"
+            title="Transfer"
+            appearance={{ size: 'medium' }}
+          />
+          <Select options={domainOptions} label={MSG.to} name="toDomain" />          
+        </div>
+
       </DialogSection>
       <DialogSection>
         <div className={styles.tokenAmount}>
@@ -342,6 +329,6 @@ const TokensMoveDialogForm = ({
   );
 };
 
-TokensMoveDialogForm.displayName = 'admin.Tokens.TokensMoveDialogForm';
+TransferFundsDialogForm.displayName = 'admin.Tokens.TransferFundsDialogForm';
 
-export default TokensMoveDialogForm;
+export default TransferFundsDialogForm;

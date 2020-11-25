@@ -19,7 +19,7 @@ import { useTransformer } from '~utils/hooks';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
-import TokensMoveDialog from '../../../dashboard/components/TokensMoveDialog';
+import TransferFundsDialog from '../../../dashboard/components/TransferFundsDialog';
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 import ColonyTokenEditDialog from './ColonyTokenEditDialog';
@@ -74,7 +74,7 @@ const Tokens = ({
 
   const openTokenEditDialog = useDialog(ColonyTokenEditDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
-  const openTokensMoveDialog = useDialog(TokensMoveDialog);
+  const openTransferFundsDialog = useDialog(TransferFundsDialog);
 
   const rootRoles = useTransformer(getUserRolesForDomain, [
     colony,
@@ -147,13 +147,13 @@ const Tokens = ({
       });
     }
   }, [openTokenMintDialog, nativeToken, colonyAddress]);
-  const handleMoveTokens = useCallback(
+  const handleTransferFunds = useCallback(
     () =>
-      openTokensMoveDialog({
+      openTransferFundsDialog({
         colonyAddress,
         toDomain: selectedDomain,
       }),
-    [colonyAddress, openTokensMoveDialog, selectedDomain],
+    [colonyAddress, openTransferFundsDialog, selectedDomain],
   );
 
   return (
@@ -206,7 +206,7 @@ const Tokens = ({
               <Button
                 text={MSG.navItemMoveTokens}
                 appearance={{ theme: 'blue' }}
-                onClick={handleMoveTokens}
+                onClick={handleTransferFunds}
               />
             </li>
           )}
