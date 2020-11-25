@@ -19,11 +19,12 @@ import { useTransformer } from '~utils/hooks';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
+import TokensMoveDialog from '../../../dashboard/components/TokensMoveDialog';
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 import ColonyTokenEditDialog from './ColonyTokenEditDialog';
 import TokenMintDialog from './TokenMintDialog';
-import TokensMoveDialog from './TokensMoveDialog';
+
 
 import styles from './Tokens.css';
 
