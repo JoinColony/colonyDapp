@@ -10,7 +10,7 @@ import { AddressZero } from 'ethers/constants';
 import { useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, FormStatus } from '~core/Fields';
+import { Select, Input, FormStatus, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
 import {
   useLoggedInUser,
@@ -51,6 +51,10 @@ const MSG = defineMessages({
   token: {
     id: 'admin.Tokens.TransferFundsDialogForm.address',
     defaultMessage: 'Token',
+  },
+  reason: {
+    id: 'admin.Tokens.TransferFundsDialogForm.reason',
+    defaultMessage: 'Explain why you’re transferring these funds (optional)'
   },
   domainTokenAmount: {
     id: 'admin.Tokens.TransferFundsDialogForm.domainTokenAmount',
@@ -310,6 +314,13 @@ const TransferFundsDialogForm = ({
             </div>
           )}
         </div>
+      </DialogSection>
+      <DialogSection>
+        <Textarea
+          appearance={{ theme: 'fat', resizable: 'vertical' }}
+          label={MSG.reason}
+          name="reason"
+        />
       </DialogSection>
       <DialogSection appearance={{ align: 'right' }}>
         <Button
