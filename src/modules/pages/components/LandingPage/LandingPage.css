@@ -26,6 +26,15 @@
   height: 100%;
 }
 
+.title {
+  margin-bottom: 22px;
+}
+
+.title h3 {
+  font-weight: var(--weight-normal);
+  letter-spacing: var(--spacing-normal);
+}
+
 .item {
   margin-bottom: 9px;
   border: 1px solid color-mod(var(--colony-blue) alpha(25%));
