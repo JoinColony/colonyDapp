@@ -1,3 +1,59 @@
 .main {
-  display: block;
+  display: flex;
+  height: 100%;
+}
+
+.coloniesList {
+  flex: 0 0 auto;
+  width: 50px;
+  border-right: 1px solid var(--temp-grey-13);
+}
+
+.contentWrapper {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.content {
+  /*
+   * @NOTE Center vertically and horizontally
+   * Man... back in the IE6 days this was a pain to actually get working
+   * Now, it's just flex with two declaration. How far we've come...
+   */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.item {
+  margin-bottom: 9px;
+  padding: 10px 12px 7px;
+  width: 340px;
+  border: 1px solid color-mod(var(--colony-blue) alpha(25%));
+  border-radius: var(--radius-tiny);
+  background-color: color-mod(var(--colony-blue) alpha(5%));
+  cursor: pointer;
+}
+
+.item:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+}
+
+.item:last-child {
+  margin-bottom: 0px;
+}
+
+.newColonyIcon {
+  display: inline-block;
+  margin: 0 15px 3px 0;
+  height: 26px;
+  width: 26px;
+  vertical-align: middle;
+}
+
+.itemTitle {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
 }
