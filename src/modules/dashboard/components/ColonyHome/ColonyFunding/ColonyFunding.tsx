@@ -6,7 +6,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
-import { TokensMoveDialog } from '~admin/Tokens';
+import { TransferFundsDialog } from '~admin/Tokens';
 import {
   useLoggedInUser,
   Colony,
@@ -41,7 +41,7 @@ const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
 const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   const { walletAddress } = useLoggedInUser();
-  const openDialog = useDialog(TokensMoveDialog);
+  const openDialog = useDialog(TransferFundsDialog);
 
   const canMoveTokens = useMemo(
     () => canMoveTokensCheck(colony.roles, walletAddress),
