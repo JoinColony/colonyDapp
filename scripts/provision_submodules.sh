@@ -5,9 +5,6 @@ while [ $# -gt 0 ]; do
     --skip-colony-network-build)
       SKIP_COLONY_NETWORK_BUILD=true
       ;;
-    --skip-pinning-service-build)
-      SKIP_PINNING_SERVICE_BUILD=true
-      ;;
     --skip-server-build)
       SKIP_SERVER_BUILD=true
       ;;
@@ -55,7 +52,6 @@ fi
 
 if [ "$SKIP_SERVER_BUILD" != true ]
 then
-    # Build pinning service
     log "Building '${SERVER}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${SERVER}"
     cp .env.example .env
