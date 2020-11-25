@@ -8,7 +8,6 @@ export const LEVEL_EDIT_ROUTE = `${PROGRAM_ROUTE}/level/:levelId/edit`;
 export const TASK_ROUTE = `${COLONY_HOME_ROUTE}/task/:draftId`;
 export const CREATE_COLONY_ROUTE = '/create-colony';
 export const CREATE_USER_ROUTE = '/create-user';
-export const DASHBOARD_ROUTE = '/dashboard';
 export const INBOX_ROUTE = '/inbox';
 export const USER_EDIT_ROUTE = '/edit-profile';
 export const USER_ROUTE = '/user/:username';
