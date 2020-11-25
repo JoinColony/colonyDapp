@@ -5,6 +5,3 @@
 [submodule "src/lib/colonyServer"]
 	path = src/lib/colonyServer
 	url = https://github.com/JoinColony/colonyServer.git
-[submodule "src/lib/mock-reputation-miner"]
-	path = src/lib/mock-reputation-miner
-	url = git@github.com:JoinColony/mock-reputation-miner.git
