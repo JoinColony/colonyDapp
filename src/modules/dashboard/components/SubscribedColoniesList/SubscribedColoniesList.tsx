@@ -1,11 +1,11 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import ColonyAvatar from '~core/ColonyAvatar';
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
 import { useLoggedInUser, useUserColoniesQuery } from '~data/index';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import styles from './SubscribedColoniesList.css';
 
@@ -15,6 +15,8 @@ const MSG = defineMessages({
     defaultMessage: 'Create New Colony',
   },
 });
+
+const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 const displayName = 'dashboard.SubscribedColoniesList';
 
