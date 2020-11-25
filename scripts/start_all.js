@@ -140,11 +140,14 @@ addProcess('webpack', () =>
 const pids = {};
 const startAll = async () => {
   const startSerial = processes.reduce((promise, process) => {
-    if (`skip-${process.name}` in args) return promise;
+    if (`skip-${process.name}` in args) {
+      console.info(chalk.yellow(`Skipping ${process.name}`));
+      return promise;
+    };
     return promise
       .then(() => {
         console.log(); // New line before logging the process start
-        console.info(`Starting ${process.name}...`);
+        console.info(chalk.bold.green(`Starting ${process.name}...`));
         return process.startFn();
       })
       .then(proc => {
@@ -161,7 +164,8 @@ const startAll = async () => {
     process.exit(1);
   }
 
-  console.info(chalk.greenBright('Stack started successfully.'));
+  console.log(); // New line
+  console.info(chalk.bold.green('Stack started successfully.'));
 };
 
 process.on('SIGINT', () => {
