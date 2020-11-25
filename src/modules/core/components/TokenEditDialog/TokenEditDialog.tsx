@@ -1,16 +1,19 @@
-import React, { useCallback } from 'react';
-import { FormikProps, FormikHelpers } from 'formik';
+import React, { useCallback, useState } from 'react';
+import { FormikProps, FormikHelpers, FormikBag } from 'formik';
+
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
+import { $PropertyType } from 'utility-types';
 import * as yup from 'yup';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { Form, Input, Textarea } from '~core/Fields';
+import { Form, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
-import { AnyToken } from '~data/index';
+import { AnyToken, OneToken } from '~data/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
 import Paragraph from '~core/Paragraph';
+import TokenSelector from '~dashboard/CreateColonyWizard/TokenSelector';
 
 import TokenItem from './TokenItem/index';
 
@@ -47,8 +50,8 @@ const MSG = defineMessages({
   },
   notListedToken: {
     id: 'core.TokenEditDialog.notListedToken',
-    defaultMessage: `If token is not listed above, please add any ERC20 compatibile token contract address below.`
-  }
+    defaultMessage: `If token is not listed above, please add any ERC20 compatibile token contract address below.`,
+  },
 });
 
 interface Props {
@@ -59,6 +62,9 @@ interface Props {
   removeTokenFn: (address: Address) => Promise<any>;
   tokens: AnyToken[];
 }
+
+type Bag = FormikBag<object, FormValues>;
+type SetFieldValue = $PropertyType<Bag, 'setFieldValue'>;
 
 interface FormValues {
   tokenAddress: Address;
@@ -71,7 +77,7 @@ const validationSchema = yup.object({
     .address()
     // @todo validate against entering a duplicate address
     .required(),
-  description: yup.string().nullable(),
+  tokenSymbol: yup.string().max(6),
 });
 
 const TokenEditDialog = ({
@@ -83,6 +89,11 @@ const TokenEditDialog = ({
   removeTokenFn,
 }: Props) => {
   const { formatMessage } = useIntl();
+  const [tokenData, setTokenData] = useState<OneToken | undefined>();
+
+  const handleTokenSelect = (token: OneToken) => {
+    setTokenData(token);
+  };
 
   const handleSubmit = useCallback(
     async (
@@ -92,12 +103,13 @@ const TokenEditDialog = ({
       try {
         await addTokenFn(createAddress(tokenAddress));
         resetForm();
+        close();
       } catch (e) {
         setFieldError('tokenAddress', formatMessage(MSG.errorAddingToken));
         setSubmitting(false);
       }
     },
-    [addTokenFn, formatMessage],
+    [addTokenFn, formatMessage, close],
   );
   return (
     <Dialog cancel={cancel}>
@@ -131,13 +143,24 @@ const TokenEditDialog = ({
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
-        {({ isSubmitting, isValid, dirty }: FormikProps<FormValues>) => (
+        {({
+          isSubmitting,
+          isValid,
+          dirty,
+          values,
+        }: FormikProps<FormValues>) => (
           <>
             <DialogSection>
               <Paragraph className={styles.description}>
                 <FormattedMessage {...MSG.notListedToken} />
               </Paragraph>
-              <Input label={MSG.fieldLabel} name="tokenAddress" appearance={{ colorSchema: "grey" }} />
+              <TokenSelector
+                tokenAddress={values.tokenAddress}
+                onTokenSelect={(token: OneToken) => handleTokenSelect(token)}
+                tokenData={tokenData}
+                label={MSG.fieldLabel}
+                appearance={{ colorSchema: 'grey' }}
+              />
               <div className={styles.textarea}>
                 <Textarea
                   appearance={{

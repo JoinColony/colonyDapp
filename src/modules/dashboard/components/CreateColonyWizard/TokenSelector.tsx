@@ -3,7 +3,6 @@ import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { useApolloClient } from '@apollo/client';
 
 import { Input } from '~core/Fields';
-import Button from '~core/Button';
 import { log } from '~utils/debug';
 import { Appearance } from '~core/Fields/Input/Input';
 import { usePrevious } from '~utils/hooks';
@@ -146,7 +145,8 @@ const TokenSelector = ({
     handleGetTokenError,
   ]);
 
-  const labelText = label && typeof label === 'object' ? formatMessage(label) : label;
+  const labelText =
+    label && typeof label === 'object' ? formatMessage(label) : label;
 
   return (
     /**

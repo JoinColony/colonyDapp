@@ -13,5 +13,5 @@
 }
 
 .textarea {
-  margin-top: marginSize;
+  margin-top: calc(marginSize * 2);
 }
