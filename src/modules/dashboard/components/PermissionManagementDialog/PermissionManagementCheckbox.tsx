@@ -6,7 +6,7 @@ import { Checkbox } from '~core/Fields';
 import Heading from '~core/Heading';
 import Popover from '~core/Popover';
 
-import styles from './PermissionCheckbox.css';
+import styles from './PermissionManagementCheckbox.css';
 
 const MSG = defineMessages({
   roleWithAsterisk: {
@@ -53,7 +53,7 @@ interface Props {
 
 const displayName = 'admin.Permissions.PermissionCheckbox';
 
-const PermissionCheckbox = ({ asterisk, disabled, role }: Props) => {
+const PermissionManagementCheckbox = ({ asterisk, disabled, role }: Props) => {
   const roleNameMessage = { id: `role.${role}` };
   const roleDescriptionMessage = useMemo(
     () =>
@@ -121,6 +121,6 @@ const PermissionCheckbox = ({ asterisk, disabled, role }: Props) => {
   );
 };
 
-PermissionCheckbox.displayName = displayName;
+PermissionManagementCheckbox.displayName = displayName;
 
-export default PermissionCheckbox;
+export default PermissionManagementCheckbox;

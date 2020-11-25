@@ -18,18 +18,18 @@ import {
   getUserRolesForDomain,
   getAllRootAccounts,
 } from '../../../transformers';
-import PermissionForm from './PermissionForm';
+import PermissionManagementForm from './PermissionManagementForm';
 import { availableRoles } from './constants';
 
-import styles from './ColonyPermissionsDialog.css';
+import styles from './PermissionsManagementDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.ColonyPermissionsEditDialog.title',
+    id: 'admin.PermissionManagementDialog.title',
     defaultMessage: 'Edit user roles in {domain}',
   },
   selectUser: {
-    id: 'admin.ColonyPermissionsEditDialog.selectUser',
+    id: 'admin.PermissionManagementDialog.selectUser',
     defaultMessage: 'Selected Member',
   },
 });
@@ -42,7 +42,7 @@ interface Props {
   userAddress: Address;
 }
 
-const ColonyPermissionsEditDialog = ({
+const PermissionManagementDialog = ({
   colonyAddress,
   cancel,
   close,
@@ -144,7 +144,7 @@ const ColonyPermissionsEditDialog = ({
                     : userAddress}
                 </UserInfo>
               </div>
-              <PermissionForm
+              <PermissionManagementForm
                 currentUserRoles={currentUserRoles}
                 domainId={domainId}
                 rootAccounts={rootAccounts}
@@ -172,7 +172,7 @@ const ColonyPermissionsEditDialog = ({
   );
 };
 
-ColonyPermissionsEditDialog.displayName =
-  'admin.Permissions.ColonyPermissionsEditDialog';
+PermissionManagementDialog.displayName =
+  'admin.Permissions.PermissionManagementDialog';
 
-export default ColonyPermissionsEditDialog;
+export default PermissionManagementDialog;

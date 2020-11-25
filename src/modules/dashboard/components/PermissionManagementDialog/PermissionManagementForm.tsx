@@ -6,7 +6,7 @@ import { Address } from '~types/index';
 import { InputLabel } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
 
-import PermissionCheckbox from './PermissionCheckbox';
+import PermissionManagementCheckbox from './PermissionManagementCheckbox';
 import { availableRoles } from './constants';
 
 import styles from './PermissionForm.css';
@@ -38,7 +38,7 @@ interface Props {
   userInheritedRoles: ColonyRole[];
 }
 
-const PermissionForm = ({
+const PermissionManagementForm = ({
   currentUserRoles,
   domainId,
   rootAccounts,
@@ -84,7 +84,7 @@ const PermissionForm = ({
           !userDirectRoles.includes(role) && userInheritedRoles.includes(role);
         return (
           <div key={role} className={styles.permissionChoiceContainer}>
-            <PermissionCheckbox
+            <PermissionManagementCheckbox
               disabled={!canRoleBeSet(role) || roleIsInherited}
               role={role}
               asterisk={roleIsInherited}
@@ -106,4 +106,4 @@ const PermissionForm = ({
   );
 };
 
-export default PermissionForm;
+export default PermissionManagementForm;

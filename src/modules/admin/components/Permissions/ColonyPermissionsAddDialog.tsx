@@ -27,10 +27,11 @@ import {
   getAllRootAccounts,
   getUserRolesForDomain,
 } from '../../../transformers';
-import { availableRoles } from './constants';
-import PermissionForm from './PermissionForm';
-
-import styles from './ColonyPermissionsDialog.css';
+import {
+  PermissionManagementForm,
+  availableRoles,
+  styles,
+} from '../../../dashboard/components/PermissionManagementDialog';
 
 const MSG = defineMessages({
   errorNoUserGiven: {
@@ -187,7 +188,7 @@ const ColonyPermissionsAddDialog = ({
                     renderAvatar={supRenderAvatar}
                   />
                 </div>
-                <PermissionForm
+                <PermissionManagementForm
                   currentUserRoles={currentUserRoles}
                   domainId={domainId}
                   rootAccounts={rootAccounts}
