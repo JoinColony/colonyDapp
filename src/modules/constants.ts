@@ -109,3 +109,8 @@ export const DEFAULT_NETWORK_INFO =
   DEFAULT_NETWORK === Network.Xdai || DEFAULT_NETWORK === Network.XdaiFork
     ? XDAI_NETWORK
     : ETHEREUM_NETWORK;
+
+/*
+ * @TODO Actually determine which colony this will be
+ */
+export const COLONY_TO_EXPLORE = '0xEaBE562C979679DC4023dD23e8C6aa782448c2E7';

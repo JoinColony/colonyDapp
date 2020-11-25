@@ -28,8 +28,6 @@
 
 .item {
   margin-bottom: 9px;
-  padding: 10px 12px 7px;
-  width: 340px;
   border: 1px solid color-mod(var(--colony-blue) alpha(25%));
   border-radius: var(--radius-tiny);
   background-color: color-mod(var(--colony-blue) alpha(5%));
@@ -44,7 +42,13 @@
   margin-bottom: 0px;
 }
 
-.newColonyIcon {
+.itemLink {
+  display: block;
+  padding: 10px 12px 7px;
+  width: 340px;
+}
+
+.itemIcon {
   display: inline-block;
   margin: 0 15px 3px 0;
   height: 26px;

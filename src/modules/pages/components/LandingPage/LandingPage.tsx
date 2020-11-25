@@ -4,8 +4,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import { CREATE_COLONY_ROUTE } from '~routes/index';
+import { useColonyQuery } from '~data/index';
+import { COLONY_TO_EXPLORE } from '~constants';
 
 import styles from './LandingPage.css';
 
@@ -14,35 +17,72 @@ const MSG = defineMessages({
     id: 'pages.LandingPage.createColony',
     defaultMessage: 'Create a colony',
   },
+  exploreColony: {
+    id: 'pages.LandingPage.exploreColony',
+    defaultMessage: 'Explore the {colonyName} colony',
+  },
 });
+
+const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 const displayName = 'pages.LandingPage';
 
-const LandingPage = () => (
-  <div className={styles.main}>
-    <div className={styles.coloniesList}>
-      <SubscribedColoniesList />
-    </div>
-    <div className={styles.contentWrapper}>
-      <div className={styles.content}>
-        <ul>
-          <li className={styles.item}>
-            <NavLink className={styles.itemLink} to={CREATE_COLONY_ROUTE}>
-              <Icon
-                className={styles.newColonyIcon}
-                name="circle-plus"
-                title={MSG.createColony}
-              />
-              <span className={styles.itemTitle}>
-                <FormattedMessage {...MSG.createColony} />
-              </span>
-            </NavLink>
-          </li>
-        </ul>
+const LandingPage = () => {
+  const { data: colonyData } = useColonyQuery({
+    variables: { address: COLONY_TO_EXPLORE },
+  });
+
+  return (
+    <div className={styles.main}>
+      <div className={styles.coloniesList}>
+        <SubscribedColoniesList />
+      </div>
+      <div className={styles.contentWrapper}>
+        <div className={styles.content}>
+          <ul>
+            <li className={styles.item}>
+              <NavLink to={CREATE_COLONY_ROUTE} className={styles.itemLink}>
+                <Icon
+                  className={styles.itemIcon}
+                  name="circle-plus"
+                  title={MSG.createColony}
+                />
+                <span className={styles.itemTitle}>
+                  <FormattedMessage {...MSG.createColony} />
+                </span>
+              </NavLink>
+            </li>
+            {colonyData && colonyData.colony && (
+              <li className={styles.item}>
+                <NavLink
+                  to={`/colony/${colonyData.colony.colonyName}`}
+                  className={styles.itemLink}
+                >
+                  <ColonyAvatar
+                    className={styles.itemIcon}
+                    colonyAddress={colonyData.colony.colonyAddress}
+                    colony={colonyData.colony}
+                    size="xl"
+                  />
+                  <span className={styles.itemTitle}>
+                    <FormattedMessage
+                      {...MSG.exploreColony}
+                      values={{
+                        colonyName:
+                          colonyData.colony.displayName ||
+                          colonyData.colony.colonyName,
+                      }}
+                    />
+                  </span>
+                </NavLink>
+              </li>
+            )}
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 LandingPage.displayName = displayName;
 
