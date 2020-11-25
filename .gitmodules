@@ -5,3 +5,9 @@
 [submodule "src/lib/colonyServer"]
 	path = src/lib/colonyServer
 	url = https://github.com/JoinColony/colonyServer.git
+[submodule "mock-oracle"]
+	path = mock-oracle
+	url = git@github.com:JoinColony/mock-oracle.git
+[submodule "src/lib/mock-oracle"]
+	path = src/lib/mock-oracle
+	url = git@github.com:JoinColony/mock-oracle.git

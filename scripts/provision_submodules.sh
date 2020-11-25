@@ -8,8 +8,8 @@ while [ $# -gt 0 ]; do
     --skip-server-build)
       SKIP_SERVER_BUILD=true
       ;;
-    --skip-reputation-build)
-      SKIP_REPUTATION_BUILD=true
+    --skip-oracle-build)
+      SKIP_ORACLE_BUILD=true
       ;;
     *)
       echo "Invalid argument: $1"
@@ -23,7 +23,7 @@ LIB_PATH="src/lib"
 
 NETWORK="colonyNetwork"
 SERVER="colonyServer"
-REPUTATION="mock-reputation-miner"
+ORACLE="mock-oracle"
 
 ROOT_PATH=$(pwd)
 
@@ -65,13 +65,13 @@ then
 fi
 
 # Mock reputation miner
-if [ "$SKIP_REPUTATION_BUILD" != true ]
+if [ "$SKIP_ORACLE_BUILD" != true ]
 then
-    log "Building the '${REPUTATION}' submodule"
-    cd "${ROOT_PATH}/${LIB_PATH}/${REPUTATION}"
-    log "Generating the '${REPUTATION}' submodule .env file"
+    log "Building the '${ORACLE}' submodule"
+    cd "${ROOT_PATH}/${LIB_PATH}/${ORACLE}"
+    log "Generating the '${ORACLE}' submodule .env file"
     printf "PORT=3001\nHOST=0.0.0.0\nGANACHE_ACCOUNTS_PATH=../colonyNetwork/ganache-accounts.json" >> .env
-    log "Installing the '${REPUTATION}' submodule node_modules"
+    log "Installing the '${ORACLE}' submodule node_modules"
     npm install
     cd ${ROOT_PATH}
 fi
