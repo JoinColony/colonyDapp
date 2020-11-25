@@ -12,7 +12,7 @@
 }
 
 .tokenChoiceSymbol {
+  margin: 0 10px;
   font-size: var(--size-small);
   color: var(--temp-grey-blue-7);
-  margin: 0 10px;
 }

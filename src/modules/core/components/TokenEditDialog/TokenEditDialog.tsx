@@ -1,15 +1,16 @@
 import React, { useCallback } from 'react';
 import { FormikProps, FormikHelpers } from 'formik';
-import { defineMessages, useIntl } from 'react-intl';
+import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { Form, Input } from '~core/Fields';
+import { Form, Input, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
 import { AnyToken } from '~data/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
+import Paragraph from '~core/Paragraph';
 
 import TokenItem from './TokenItem/index';
 
@@ -26,20 +27,28 @@ const MSG = defineMessages({
   },
   fieldLabel: {
     id: 'core.TokenEditDialog.fieldLabel',
-    defaultMessage: 'Enter a valid token address',
+    defaultMessage: 'Contract address',
   },
-  buttonAddToken: {
-    id: 'core.TokenEditDialog.buttonAddToken',
-    defaultMessage: 'Add Token',
+  textareaLabel: {
+    id: 'core.TokenEditDialog.textareaLabel',
+    defaultMessage: 'Explain why you’re making these changes (optional)',
   },
-  buttonDone: {
-    id: 'core.TokenEditDialog.buttonDone',
-    defaultMessage: 'Done',
+  buttonCancel: {
+    id: 'core.TokenEditDialog.buttonCancel',
+    defaultMessage: 'Cancel',
+  },
+  buttonConfirm: {
+    id: 'core.TokenEditDialog.buttonConfirm',
+    defaultMessage: 'Confirm',
   },
   noTokensText: {
     id: 'core.TokenEditDialog.noTokensText',
     defaultMessage: `It looks no tokens have been added yet. Get started using the form above.`,
   },
+  notListedToken: {
+    id: 'core.TokenEditDialog.notListedToken',
+    defaultMessage: `If token is not listed above, please add any ERC20 compatibile token contract address below.`
+  }
 });
 
 interface Props {
@@ -53,6 +62,7 @@ interface Props {
 
 interface FormValues {
   tokenAddress: Address;
+  description?: string;
 }
 
 const validationSchema = yup.object({
@@ -61,6 +71,7 @@ const validationSchema = yup.object({
     .address()
     // @todo validate against entering a duplicate address
     .required(),
+  description: yup.string().nullable(),
 });
 
 const TokenEditDialog = ({
@@ -90,13 +101,13 @@ const TokenEditDialog = ({
   );
   return (
     <Dialog cancel={cancel}>
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'heading' }}>
         <Heading
           appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}
           text={MSG.title}
         />
       </DialogSection>
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
         {tokens.length > 0 ? (
           <div className={styles.tokenChoiceContainer}>
             {tokens.map((token) => (
@@ -112,34 +123,50 @@ const TokenEditDialog = ({
           <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
         )}
       </DialogSection>
-      <DialogSection appearance={{ border: 'top' }}>
-        <Form
-          initialValues={{
-            tokenAddress: '',
-          }}
-          onSubmit={handleSubmit}
-          validationSchema={validationSchema}
-        >
-          {({ isSubmitting, isValid, dirty }: FormikProps<FormValues>) => (
-            <>
-              <Input label={MSG.fieldLabel} name="tokenAddress" />
+      <Form
+        initialValues={{
+          tokenAddress: '',
+          description: '',
+        }}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+      >
+        {({ isSubmitting, isValid, dirty }: FormikProps<FormValues>) => (
+          <>
+            <DialogSection>
+              <Paragraph className={styles.description}>
+                <FormattedMessage {...MSG.notListedToken} />
+              </Paragraph>
+              <Input label={MSG.fieldLabel} name="tokenAddress" appearance={{ colorSchema: "grey" }} />
+              <div className={styles.textarea}>
+                <Textarea
+                  appearance={{
+                    colorSchema: 'grey',
+                    resizable: 'vertical',
+                  }}
+                  label={MSG.textareaLabel}
+                  name="description"
+                  maxLength={4000}
+                />
+              </div>
+            </DialogSection>
+            <DialogSection appearance={{ align: 'right' }}>
               <Button
-                disabled={!isValid || isSubmitting || !dirty}
+                appearance={{ theme: 'secondary', size: 'large' }}
+                text={MSG.buttonCancel}
+                onClick={close}
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                text={MSG.buttonConfirm}
                 loading={isSubmitting}
-                text={MSG.buttonAddToken}
+                disabled={!isValid || isSubmitting || !dirty}
                 type="submit"
               />
-            </>
-          )}
-        </Form>
-      </DialogSection>
-      <DialogSection appearance={{ align: 'right' }}>
-        <Button
-          appearance={{ theme: 'primary', size: 'large' }}
-          text={MSG.buttonDone}
-          onClick={close}
-        />
-      </DialogSection>
+            </DialogSection>
+          </>
+        )}
+      </Form>
     </Dialog>
   );
 };

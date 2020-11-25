@@ -1,4 +1,17 @@
+@value marginSize: 16px;
+
 .tokenChoiceContainer {
   max-height: 250px;
   overflow: auto;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.description {
+  margin-bottom: marginSize;
+  font-size: var(--size-normal);
+  color: var(--dark);
+}
+
+.textarea {
+  margin-top: marginSize;
 }

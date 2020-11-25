@@ -30,7 +30,7 @@ const TokenItem = ({ nativeTokenAddress, removeTokenFn, token }: Props) => {
   return (
     <div className={styles.main}>
       <div className={styles.tokenChoice}>
-        <TokenIcon token={token} name={token.name || undefined} size="xs"/>
+        <TokenIcon token={token} name={token.name || undefined} size="xs" />
         <span className={styles.tokenChoiceSymbol}>
           <Heading
             text={token.symbol || token.name || MSG.unknownToken}

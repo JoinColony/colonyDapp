@@ -34,8 +34,8 @@
 }
 
 .colorSchemaGrey .labelText {
-  color: var(--dark);
   font-weight: var(--weight-bold);
+  color: var(--dark);
 }
 
 .error, .help {
