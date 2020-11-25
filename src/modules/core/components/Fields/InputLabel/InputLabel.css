@@ -3,8 +3,8 @@
   margin-bottom: 6px;
   width: 100%;
   position: relative;
-  font-size: var(--size-small);
-  font-weight: 600;
+  font-size: var(--size-smallish);
+  font-weight: 700;
   text-align: left;
   line-height: calc(var(--size-small) + 2px);
 }
@@ -31,6 +31,11 @@
 
 .colorSchemaDark .labelText {
   color: var(--grey-5);
+}
+
+.colorSchemaGrey .labelText {
+  color: var(--dark);
+  font-weight: var(--weight-bold);
 }
 
 .error, .help {

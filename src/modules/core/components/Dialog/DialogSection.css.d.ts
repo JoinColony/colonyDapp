@@ -1,5 +1,7 @@
 export const borderColor: string;
 export const main: string;
+export const themeHeading: string;
+export const themeSidePadding: string;
 export const alignRight: string;
 export const alignCenter: string;
 export const borderNone: string;
