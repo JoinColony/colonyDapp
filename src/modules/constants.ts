@@ -110,7 +110,4 @@ export const DEFAULT_NETWORK_INFO =
     ? XDAI_NETWORK
     : ETHEREUM_NETWORK;
 
-/*
- * @TODO Actually determine which colony this will be
- */
-export const COLONY_TO_EXPLORE = '0xEaBE562C979679DC4023dD23e8C6aa782448c2E7';
+export const METACOLONY_ENS = 'meta';

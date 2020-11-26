@@ -8,8 +8,8 @@ import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import Heading from '~core/Heading';
 
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { useColonyQuery } from '~data/index';
-import { COLONY_TO_EXPLORE } from '~constants';
+import { useColonyFromNameQuery } from '~data/index';
+import { METACOLONY_ENS } from '~constants';
 
 import styles from './LandingPage.css';
 
@@ -24,7 +24,7 @@ const MSG = defineMessages({
   },
   exploreColony: {
     id: 'pages.LandingPage.exploreColony',
-    defaultMessage: 'Explore the {colonyName} colony',
+    defaultMessage: 'Explore the Metacolony',
   },
 });
 
@@ -33,8 +33,8 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 const displayName = 'pages.LandingPage';
 
 const LandingPage = () => {
-  const { data: colonyData } = useColonyQuery({
-    variables: { address: COLONY_TO_EXPLORE },
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: METACOLONY_ENS, address: '' },
   });
 
   return (
@@ -67,7 +67,7 @@ const LandingPage = () => {
               {colonyData && colonyData.colony && (
                 <li className={styles.item}>
                   <NavLink
-                    to={`/colony/${colonyData.colony.colonyName}`}
+                    to={`/colony/${METACOLONY_ENS}`}
                     className={styles.itemLink}
                   >
                     <ColonyAvatar
