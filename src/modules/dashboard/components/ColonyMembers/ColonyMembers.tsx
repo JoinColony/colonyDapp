@@ -6,7 +6,6 @@ import Heading from '~core/Heading';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { DASHBOARD_ROUTE } from '~routes/index';
 import { Colony, useColonySubscribedUsersQuery, AnyUser } from '~data/index';
 
 import styles from './ColonyMembers.css';
@@ -106,7 +105,7 @@ const ColonyMembers = ({ colony: { colonyAddress } }: Props) => {
         /*
          * @TODO Put in the Community route, once that is created in DEV-13
          */
-        to={DASHBOARD_ROUTE}
+        to="#"
       >
         <Heading
           appearance={{ size: 'normal', weight: 'bold' }}

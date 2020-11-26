@@ -109,3 +109,5 @@ export const DEFAULT_NETWORK_INFO =
   DEFAULT_NETWORK === Network.Xdai || DEFAULT_NETWORK === Network.XdaiFork
     ? XDAI_NETWORK
     : ETHEREUM_NETWORK;
+
+export const METACOLONY_ENS = 'meta';

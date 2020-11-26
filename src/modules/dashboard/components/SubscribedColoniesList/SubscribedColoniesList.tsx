@@ -1,11 +1,11 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import ColonyAvatar from '~core/ColonyAvatar';
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
 import { useLoggedInUser, useUserColoniesQuery } from '~data/index';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import styles from './SubscribedColoniesList.css';
 
@@ -16,10 +16,12 @@ const MSG = defineMessages({
   },
 });
 
+const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
+
 const displayName = 'dashboard.SubscribedColoniesList';
 
 const SubscribedColoniesList = () => {
-  const { ethereal, walletAddress } = useLoggedInUser();
+  const { walletAddress } = useLoggedInUser();
   const { data } = useUserColoniesQuery({
     variables: { address: walletAddress },
   });
@@ -50,17 +52,15 @@ const SubscribedColoniesList = () => {
             );
           })}
       </div>
-      {!ethereal && (
-        <div className={`${styles.item} ${styles.newColonyItem}`}>
-          <NavLink className={styles.itemLink} to={CREATE_COLONY_ROUTE}>
-            <Icon
-              className={styles.newColonyIcon}
-              name="circle-plus"
-              title={MSG.iconTitleCreateNewColony}
-            />
-          </NavLink>
-        </div>
-      )}
+      <div className={`${styles.item} ${styles.newColonyItem}`}>
+        <NavLink className={styles.itemLink} to={CREATE_COLONY_ROUTE}>
+          <Icon
+            className={styles.newColonyIcon}
+            name="circle-plus"
+            title={MSG.iconTitleCreateNewColony}
+          />
+        </NavLink>
+      </div>
     </div>
   );
 };

@@ -5,7 +5,7 @@
 }
 
 .colonyList {
-  border-right: 1px solid rgb(227, 224, 227);
+  border-right: 1px solid var(--temp-grey-13);
 }
 
 .mainContentGrid {

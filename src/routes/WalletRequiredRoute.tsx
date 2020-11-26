@@ -12,7 +12,7 @@ import { RouteComponentProps } from '~pages/RouteLayouts';
 
 import {
   CREATE_USER_ROUTE,
-  DASHBOARD_ROUTE,
+  LANDING_PAGE_ROUTE,
   CONNECT_ROUTE,
   CREATE_COLONY_ROUTE,
 } from './routeConstants';
@@ -78,7 +78,7 @@ const WalletRequiredRoute = ({
              * This is the case when you enter the app using the /connect route
              */
             if (path === CONNECT_ROUTE) {
-              return <Redirect to={DASHBOARD_ROUTE} />;
+              return <Redirect to={LANDING_PAGE_ROUTE} />;
             }
             /**
              * We've connected, have a profile, and no redirect available.

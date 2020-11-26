@@ -9,7 +9,7 @@ import Heading from '~core/Heading';
 import { useSelector } from '~utils/hooks';
 import { log } from '~utils/debug';
 import ENS from '~lib/ENS';
-import { DASHBOARD_ROUTE } from '~routes/index';
+import { LANDING_PAGE_ROUTE } from '~routes/index';
 
 import GasStationContent from '../../../users/components/GasStation/GasStationContent';
 import { groupedTransactions } from '../../../core/selectors';
@@ -101,7 +101,7 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
     getGroupKey(newestGroup) === 'group.createColony'
   ) {
     if (recover) {
-      return <Redirect to={DASHBOARD_ROUTE} />;
+      return <Redirect to={LANDING_PAGE_ROUTE} />;
     }
     const normalizedColonyName = ENS.normalizeAsText(colonyName);
     // This should never happen

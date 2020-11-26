@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import { Redirect } from 'react-router-dom';
 
-import { DASHBOARD_ROUTE } from '~routes/index';
+import { LANDING_PAGE_ROUTE } from '~routes/index';
 import { useSelector } from '~utils/hooks';
 import { useLoggedInUser } from '~data/index';
 
@@ -30,7 +30,7 @@ const StepConfirmTransaction = () => {
   const transactionGroups = useSelector(groupedTransactions);
 
   if (username) {
-    return <Redirect to={DASHBOARD_ROUTE} />;
+    return <Redirect to={LANDING_PAGE_ROUTE} />;
   }
 
   const colonyTransaction = findTransactionGroupByKey(

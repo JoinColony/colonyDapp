@@ -8,7 +8,7 @@ import Alert from '~core/Alert';
 import { DialogActionButton } from '~core/Button';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
-import SubscribedColoniesList from '~dashboard/SubscribedColoniesList/SubscribedColoniesList';
+import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
 import ColonyMembers from '~dashboard/ColonyMembers';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 
