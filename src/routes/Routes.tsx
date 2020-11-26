@@ -166,7 +166,7 @@ const Routes = () => {
             COLONY_EXTENSIONS_ROUTE,
           ]}
           component={ColonyHome}
-          layout={SimpleNav}
+          layout={SubscribedColonies}
           routeProps={{
             hasBackLink: false,
           }}
