@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
@@ -83,11 +83,16 @@ const ColonyHome = ({ match, location }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
-  const { domainFilter } = parseQS(location.search) as {
+  const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
     domainFilter: string | undefined;
   };
-  const filteredDomainId = domainFilter
-    ? parseInt(domainFilter, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID
+
+  const [domainIdFilter, setDomainIdFilter] = useState<number>(
+    Number(queryDomainFilterId),
+  );
+
+  const filteredDomainId = domainIdFilter
+    ? domainIdFilter || COLONY_TOTAL_BALANCE_DOMAIN_ID
     : COLONY_TOTAL_BALANCE_DOMAIN_ID;
 
   const {
@@ -177,7 +182,11 @@ const ColonyHome = ({ match, location }: Props) => {
           <ColonyTotalFunds colony={colony} />
           <div className={styles.contentActionsPanel}>
             <div className={styles.domainsDropdownContainer}>
-              <DomainDropdown colonyAddress={colony.colonyAddress} />
+              <DomainDropdown
+                filteredDomainId={filteredDomainId}
+                colonyAddress={colony.colonyAddress}
+                onDomainChange={setDomainIdFilter}
+              />
             </div>
             <ColonyHomeActions />
           </div>
