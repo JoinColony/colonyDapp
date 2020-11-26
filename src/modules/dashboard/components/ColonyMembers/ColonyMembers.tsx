@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 
 import Members from '~dashboard/Members';
-import SubscribedColoniesList from '~dashboard/SubscribedColoniesList/SubscribedColoniesList';
 import { useColonyFromNameQuery } from '~data/index';
 import styles from './ColonyMembers.css';
 import { TokenInfoProvider } from '~utils/hooks/use-token-info';
@@ -29,9 +28,6 @@ const ColonyMembers = () => {
 
   return (
     <div className={styles.main}>
-      <div className={styles.colonyList}>
-        <SubscribedColoniesList />
-      </div>
       <div className={styles.mainContentGrid}>
         <div className={styles.mainContent}>
           {colonyData && colonyData.colony && (
