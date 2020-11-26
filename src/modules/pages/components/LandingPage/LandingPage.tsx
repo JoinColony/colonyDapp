@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
 import NavLink from '~core/NavLink';
 import Icon from '~core/Icon';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
@@ -39,59 +38,52 @@ const LandingPage = () => {
 
   return (
     <div className={styles.main}>
-      <div className={styles.coloniesList}>
-        <SubscribedColoniesList />
-      </div>
-      <div className={styles.contentWrapper}>
-        <div className={styles.content}>
-          <div>
-            <div className={styles.title}>
-              <Heading
-                text={MSG.callToAction}
-                appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-              />
-            </div>
-            <ul>
-              <li className={styles.item}>
-                <NavLink to={CREATE_COLONY_ROUTE} className={styles.itemLink}>
-                  <Icon
-                    className={styles.itemIcon}
-                    name="circle-plus"
-                    title={MSG.createColony}
-                  />
-                  <span className={styles.itemTitle}>
-                    <FormattedMessage {...MSG.createColony} />
-                  </span>
-                </NavLink>
-              </li>
-              {colonyData && colonyData.colony && (
-                <li className={styles.item}>
-                  <NavLink
-                    to={`/colony/${METACOLONY_ENS}`}
-                    className={styles.itemLink}
-                  >
-                    <ColonyAvatar
-                      className={styles.itemIcon}
-                      colonyAddress={colonyData.colony.colonyAddress}
-                      colony={colonyData.colony}
-                      size="xl"
-                    />
-                    <span className={styles.itemTitle}>
-                      <FormattedMessage
-                        {...MSG.exploreColony}
-                        values={{
-                          colonyName:
-                            colonyData.colony.displayName ||
-                            colonyData.colony.colonyName,
-                        }}
-                      />
-                    </span>
-                  </NavLink>
-                </li>
-              )}
-            </ul>
-          </div>
+      <div>
+        <div className={styles.title}>
+          <Heading
+            text={MSG.callToAction}
+            appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+          />
         </div>
+        <ul>
+          <li className={styles.item}>
+            <NavLink to={CREATE_COLONY_ROUTE} className={styles.itemLink}>
+              <Icon
+                className={styles.itemIcon}
+                name="circle-plus"
+                title={MSG.createColony}
+              />
+              <span className={styles.itemTitle}>
+                <FormattedMessage {...MSG.createColony} />
+              </span>
+            </NavLink>
+          </li>
+          {colonyData && colonyData.colony && (
+            <li className={styles.item}>
+              <NavLink
+                to={`/colony/${METACOLONY_ENS}`}
+                className={styles.itemLink}
+              >
+                <ColonyAvatar
+                  className={styles.itemIcon}
+                  colonyAddress={colonyData.colony.colonyAddress}
+                  colony={colonyData.colony}
+                  size="xl"
+                />
+                <span className={styles.itemTitle}>
+                  <FormattedMessage
+                    {...MSG.exploreColony}
+                    values={{
+                      colonyName:
+                        colonyData.colony.displayName ||
+                        colonyData.colony.colonyName,
+                    }}
+                  />
+                </span>
+              </NavLink>
+            </li>
+          )}
+        </ul>
       </div>
     </div>
   );
