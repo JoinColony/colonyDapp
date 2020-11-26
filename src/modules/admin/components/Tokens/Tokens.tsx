@@ -135,9 +135,8 @@ const Tokens = ({
     () =>
       openTokenEditDialog({
         colonyAddress,
-        nativeTokenAddress,
       }),
-    [openTokenEditDialog, colonyAddress, nativeTokenAddress],
+    [openTokenEditDialog, colonyAddress],
   );
   const handleMintTokens = useCallback(() => {
     if (nativeToken) {

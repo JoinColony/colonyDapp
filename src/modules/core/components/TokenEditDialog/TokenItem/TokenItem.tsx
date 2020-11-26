@@ -4,12 +4,8 @@ import { defineMessages } from 'react-intl';
 import Heading from '~core/Heading';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyToken } from '~data/index';
-import { Address } from '~types/index';
-
-import { tokenIsETH } from '../../../checks';
 
 import styles from './TokenItem.css';
-import Button from '~core/Button';
 
 const MSG = defineMessages({
   unknownToken: {
@@ -19,14 +15,10 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  nativeTokenAddress?: Address;
-  removeTokenFn: (address: Address) => void;
   token: AnyToken;
 }
 
-const TokenItem = ({ nativeTokenAddress, removeTokenFn, token }: Props) => {
-  const canRemoveToken =
-    nativeTokenAddress !== token.address && !tokenIsETH(token);
+const TokenItem = ({ token }: Props) => {
   return (
     <div className={styles.main}>
       <div className={styles.tokenChoice}>
@@ -39,15 +31,6 @@ const TokenItem = ({ nativeTokenAddress, removeTokenFn, token }: Props) => {
           {(!!token.symbol && token.name) || token.address}
         </span>
       </div>
-      {canRemoveToken && (
-        <div>
-          <Button
-            appearance={{ theme: 'dangerLink' }}
-            text={{ id: 'button.remove' }}
-            onClick={() => removeTokenFn(token.address)}
-          />
-        </div>
-      )}
     </div>
   );
 };

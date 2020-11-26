@@ -70,12 +70,7 @@ const validationSchema = yup.object({
   tokenSymbol: yup.string().max(6),
 });
 
-const TokenEditDialog = ({
-  addTokenFn,
-  tokens = [],
-  cancel,
-  close,
-}: Props) => {
+const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
   const { formatMessage } = useIntl();
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
 
@@ -111,10 +106,7 @@ const TokenEditDialog = ({
         {tokens.length > 0 ? (
           <div className={styles.tokenChoiceContainer}>
             {tokens.map((token) => (
-              <TokenItem
-                key={token.address}
-                token={token}
-              />
+              <TokenItem key={token.address} token={token} />
             ))}
           </div>
         ) : (

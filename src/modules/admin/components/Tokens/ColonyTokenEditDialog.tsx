@@ -15,15 +15,9 @@ interface Props {
   colonyAddress: Address;
   cancel: () => void;
   close: () => void;
-  nativeTokenAddress: Address;
 }
 
-const ColonyTokenEditDialog = ({
-  colonyAddress,
-  nativeTokenAddress,
-  cancel,
-  close,
-}: Props) => {
+const ColonyTokenEditDialog = ({ colonyAddress, cancel, close }: Props) => {
   const [setColonyTokensMutation] = useSetColonyTokensMutation({
     refetchQueries: [
       {
@@ -54,27 +48,12 @@ const ColonyTokenEditDialog = ({
     [colonyAddress, colonyTokens, setColonyTokensMutation],
   );
 
-  const removeToken = useCallback(
-    (tokenAddressToRemove: Address) => {
-      const newAddresses = colonyTokens
-        .filter((token) => !tokenIsETH(token))
-        .filter(({ address }) => address !== tokenAddressToRemove)
-        .map(({ address }) => address);
-      return setColonyTokensMutation({
-        variables: { input: { colonyAddress, tokenAddresses: newAddresses } },
-      });
-    },
-    [colonyAddress, colonyTokens, setColonyTokensMutation],
-  );
-
   return (
     <TokenEditDialog
       cancel={cancel}
       close={close}
       tokens={colonyTokens}
-      nativeTokenAddress={nativeTokenAddress}
       addTokenFn={addToken}
-      removeTokenFn={removeToken}
     />
   );
 };
