@@ -54,9 +54,10 @@ const PermissionsLabel = ({
 
   return (
     <Tooltip
-      placement="top-start"
+      placement="top"
       content={tooltipText || null}
       trigger={infoMessage ? 'hover' : 'disabled'}
+      showArrow={false}
       popperProps={{
         modifiers: [
           {

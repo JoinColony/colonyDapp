@@ -217,7 +217,7 @@ const Routes = () => {
           exact
           path={MEMBERS_ROUTE}
           component={ColonyMembers}
-          layout={SimpleNav}
+          layout={NavBar}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
