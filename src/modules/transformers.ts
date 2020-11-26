@@ -1,5 +1,4 @@
 import { bigNumberify } from 'ethers/utils';
-import { AddressZero } from 'ethers/constants';
 import {
   ColonyRole,
   ColonyRoles,
@@ -133,39 +132,6 @@ export const getAllUserRoles = (
       return allUserRoles;
     }, new Set<ColonyRole>()),
   );
-};
-
-/*
- * @NOTE Internal use only
- */
-const getLegacyFounder = (colony: Colony): Address => {
-  const rootDomainRoles = getAllUserRolesForDomain(colony, ROOT_DOMAIN_ID);
-  const found = rootDomainRoles.find(({ roles }) => {
-    return (
-      roles.includes(ColonyRole.Root) &&
-      roles.includes(ColonyRole.Administration) &&
-      roles.includes(ColonyRole.Architecture) &&
-      roles.includes(ColonyRole.Funding)
-    );
-  });
-  return found ? found.address : AddressZero;
-};
-
-/*
- * @NOTE Internal use only
- */
-const getLegacyAdmins = (
-  colony: Colony,
-  domainId: number = ROOT_DOMAIN_ID,
-  founderAddress: Address,
-): Address[] => {
-  const rootDomainRoles = getAllUserRolesForDomain(colony, domainId);
-  return rootDomainRoles
-    .filter(
-      ({ address, roles }) =>
-        address !== founderAddress && roles.includes(ColonyRole.Administration),
-    )
-    .map(({ address }) => address);
 };
 
 export const getLevelTotalPayouts = (
