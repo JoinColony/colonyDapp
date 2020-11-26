@@ -88,6 +88,12 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
       >
         {userReputationData && tokenInfoData && (
           <div className={styles.reputationSection}>
+            <Numeral
+              className={styles.reputation}
+              appearance={{ theme: 'primary' }}
+              value={userReputationData.userReputation}
+              unit={tokenInfoData.tokenInfo.decimals}
+            />
             <Icon
               name="star"
               appearance={{ size: 'extraTiny' }}
@@ -96,12 +102,6 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
               titleValues={{
                 reputation: userReputationData.userReputation,
               }}
-            />
-            <Numeral
-              className={styles.reputation}
-              appearance={{ theme: 'primary' }}
-              value={userReputationData.userReputation}
-              unit={tokenInfoData.tokenInfo.decimals}
             />
           </div>
         )}

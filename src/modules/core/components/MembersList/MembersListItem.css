@@ -37,7 +37,7 @@
 }
 
 .reputation {
-  margin-left: 4px;
+  margin-right: 4px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: reputationColor;
