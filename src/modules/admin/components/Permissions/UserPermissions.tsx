@@ -1,6 +1,7 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
+import PermissionsLabel from '~core/PermissionsLabel';
+import { permissionsObject } from '~core/PermissionsLabel/permissions';
 
 import styles from './UserPermissions.css';
 
@@ -24,14 +25,22 @@ const UserPermissions = ({ roles, directRoles }: Props) => {
       }
       return 0;
     });
-
+  const [headRole, ...restRoles] = sortedRoles;
   return (
     <div className={styles.main}>
-      {sortedRoles.map((role) => (
-        <span className={styles.permission} key={role}>
-          <FormattedMessage id={`role.${role}`} />
-          {!directRoles.includes(role) ? '*' : null}
-        </span>
+      <PermissionsLabel
+        permission={headRole}
+        key={headRole}
+        inherited={!directRoles.includes(headRole)}
+      />
+      {restRoles.map((role) => (
+        <PermissionsLabel
+          permission={role}
+          key={role}
+          inherited={!directRoles.includes(role)}
+          infoMessage={permissionsObject[role].infoMessage}
+          minimal
+        />
       ))}
     </div>
   );

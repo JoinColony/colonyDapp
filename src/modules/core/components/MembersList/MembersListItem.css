@@ -1,3 +1,5 @@
+@value reputationColor: rgb(255, 176, 0);
+
 .main {
   display: flex;
   align-items: center;
@@ -29,5 +31,36 @@
 .address {
   display: block;
   width: 100%;
-  font-size: var(--size-small);
+  font-size: var(--size-normal);
+  font-weight: 500;
+  color: var(--temp-grey-blue-7);
+}
+
+.reputation {
+  margin-right: 4px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: reputationColor;
+}
+
+.reputationSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 30px;
+}
+
+.reputationSection svg {
+  fill: transparent;
+  stroke-width: 3px;
+  stroke: reputationColor;
+}
+
+.icon {
+  height: 12px;
+  width: 12px;
+}
+
+.icon svg {
+  vertical-align: top;
 }

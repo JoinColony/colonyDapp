@@ -1,5 +1,4 @@
 import { bigNumberify } from 'ethers/utils';
-import { AddressZero } from 'ethers/constants';
 import {
   ColonyRole,
   ColonyRoles,
@@ -133,58 +132,6 @@ export const getAllUserRoles = (
       return allUserRoles;
     }, new Set<ColonyRole>()),
   );
-};
-
-/*
- * @NOTE Internal use only
- */
-const getLegacyFounder = (colony: Colony): Address => {
-  const rootDomainRoles = getAllUserRolesForDomain(colony, ROOT_DOMAIN_ID);
-  const found = rootDomainRoles.find(({ roles }) => {
-    return (
-      roles.includes(ColonyRole.Root) &&
-      roles.includes(ColonyRole.Administration) &&
-      roles.includes(ColonyRole.Architecture) &&
-      roles.includes(ColonyRole.Funding)
-    );
-  });
-  return found ? found.address : AddressZero;
-};
-
-/*
- * @NOTE Internal use only
- */
-const getLegacyAdmins = (
-  colony: Colony,
-  domainId: number = ROOT_DOMAIN_ID,
-  founderAddress: Address,
-): Address[] => {
-  const rootDomainRoles = getAllUserRolesForDomain(colony, domainId);
-  return rootDomainRoles
-    .filter(
-      ({ address, roles }) =>
-        address !== founderAddress && roles.includes(ColonyRole.Administration),
-    )
-    .map(({ address }) => address);
-};
-
-/*
- * @NOTE This differs from the above transformer as it considers roles in any domain (root + subdomains)
- * to be an admin role
- */
-export const getCommunityRoles = (
-  colony: Colony,
-): { founder: Address; admins: Address[] } => {
-  const founder = getLegacyFounder(colony);
-  const admins = colony.domains.reduce((adminSet, { ethDomainId }) => {
-    const currentDomainAdmins = getLegacyAdmins(colony, ethDomainId, founder);
-    currentDomainAdmins.forEach((address) => adminSet.add(address));
-    return adminSet;
-  }, new Set<string>());
-  return {
-    founder,
-    admins: Array.from(admins),
-  };
 };
 
 export const getLevelTotalPayouts = (

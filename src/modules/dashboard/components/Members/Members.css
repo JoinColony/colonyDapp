@@ -77,3 +77,11 @@
 .unsubscribedIcon {
   background-color: var(--temp-grey-12);
 }
+
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  border-bottom: 1px solid var(--temp-grey-13);
+}
