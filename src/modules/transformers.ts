@@ -168,25 +168,6 @@ const getLegacyAdmins = (
     .map(({ address }) => address);
 };
 
-/*
- * @NOTE This differs from the above transformer as it considers roles in any domain (root + subdomains)
- * to be an admin role
- */
-export const getCommunityRoles = (
-  colony: Colony,
-): { founder: Address; admins: Address[] } => {
-  const founder = getLegacyFounder(colony);
-  const admins = colony.domains.reduce((adminSet, { ethDomainId }) => {
-    const currentDomainAdmins = getLegacyAdmins(colony, ethDomainId, founder);
-    currentDomainAdmins.forEach((address) => adminSet.add(address));
-    return adminSet;
-  }, new Set<string>());
-  return {
-    founder,
-    admins: Array.from(admins),
-  };
-};
-
 export const getLevelTotalPayouts = (
   levelSteps: PersistentTasks,
 ): {
