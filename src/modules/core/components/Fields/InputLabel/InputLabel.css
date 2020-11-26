@@ -4,7 +4,7 @@
   width: 100%;
   position: relative;
   font-size: var(--size-smallish);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   text-align: left;
   line-height: calc(var(--size-small) + 2px);
 }

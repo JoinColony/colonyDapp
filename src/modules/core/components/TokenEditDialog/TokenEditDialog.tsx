@@ -36,14 +36,6 @@ const MSG = defineMessages({
     id: 'core.TokenEditDialog.textareaLabel',
     defaultMessage: 'Explain why you’re making these changes (optional)',
   },
-  buttonCancel: {
-    id: 'core.TokenEditDialog.buttonCancel',
-    defaultMessage: 'Cancel',
-  },
-  buttonConfirm: {
-    id: 'core.TokenEditDialog.buttonConfirm',
-    defaultMessage: 'Confirm',
-  },
   noTokensText: {
     id: 'core.TokenEditDialog.noTokensText',
     defaultMessage: `It looks no tokens have been added yet. Get started using the form above.`,
@@ -58,8 +50,6 @@ interface Props {
   addTokenFn: (address: Address) => Promise<any>;
   cancel: () => void;
   close: () => void;
-  nativeTokenAddress?: Address;
-  removeTokenFn: (address: Address) => Promise<any>;
   tokens: AnyToken[];
 }
 
@@ -83,10 +73,8 @@ const validationSchema = yup.object({
 const TokenEditDialog = ({
   addTokenFn,
   tokens = [],
-  nativeTokenAddress,
   cancel,
   close,
-  removeTokenFn,
 }: Props) => {
   const { formatMessage } = useIntl();
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
@@ -125,8 +113,6 @@ const TokenEditDialog = ({
             {tokens.map((token) => (
               <TokenItem
                 key={token.address}
-                nativeTokenAddress={nativeTokenAddress}
-                removeTokenFn={removeTokenFn}
                 token={token}
               />
             ))}
@@ -176,12 +162,12 @@ const TokenEditDialog = ({
             <DialogSection appearance={{ align: 'right' }}>
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}
-                text={MSG.buttonCancel}
+                text={{ id: 'button.cancel' }}
                 onClick={close}
               />
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
-                text={MSG.buttonConfirm}
+                text={{ id: 'button.confirm' }}
                 loading={isSubmitting}
                 disabled={!isValid || isSubmitting || !dirty}
                 type="submit"

@@ -101,6 +101,7 @@
 
 .weightMedium {
   font-weight: var(--weight-bold);
+  letter-spacing: var(--spacing-medium);
 }
 
 .weightBold {
