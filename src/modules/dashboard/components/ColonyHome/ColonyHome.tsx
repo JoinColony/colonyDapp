@@ -203,7 +203,7 @@ const ColonyHome = ({ match, location }: Props) => {
           <ColonyMembers colony={colony} />
         </aside>
       </div>
-      {mustUpgradeColony && (
+      {!!mustUpgradeColony && (
         <div className={styles.upgradeBannerContainer}>
           <Alert
             appearance={{
