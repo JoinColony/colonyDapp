@@ -1,19 +1,16 @@
 
 .main {
   composes: stretchHorizontal from '~styles/layout.css';
-  display: grid;
-  grid-template-columns: 50px auto;
 }
 
 .mainContentGrid {
-  display: grid;
-  max-width: calc((100vw - (100vw - 100%)) - 50px);
-  overflow: hidden;
-  grid-template-columns: auto 26.5%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .mainContent {
-  margin-left: calc(26.5% + 50px);
+  flex: 1;
+  margin-left: 26.5%;
   padding: 90px 0 40px;
 }
 
@@ -21,4 +18,5 @@
   display: flex;
   justify-content: center;
   padding: 200px 0 20px 50px;
+  width: 26.5%;
 }

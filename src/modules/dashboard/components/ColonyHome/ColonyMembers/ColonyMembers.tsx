@@ -105,7 +105,7 @@ const ColonyMembers = ({ colony: { colonyAddress, colonyName } }: Props) => {
         /*
          * @TODO Put in the Community route, once that is created in DEV-13
          */
-        to="#"
+        to={`/colony/${colonyName}/members`}
       >
         <Heading
           appearance={{ size: 'normal', weight: 'bold' }}
