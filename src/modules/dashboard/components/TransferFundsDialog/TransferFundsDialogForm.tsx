@@ -33,51 +33,53 @@ import Icon from '~core/Icon';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.Tokens.TransferFundsDialogForm.title',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.title',
     defaultMessage: 'Transfer Funds',
   },
   from: {
-    id: 'admin.Tokens.TransferFundsDialogForm.from',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.from',
     defaultMessage: 'From',
   },
   to: {
-    id: 'admin.Tokens.TransferFundsDialogForm.to',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.to',
     defaultMessage: 'To',
   },
   amount: {
-    id: 'admin.Tokens.TransferFundsDialogForm.amount',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.amount',
     defaultMessage: 'Amount',
   },
   token: {
-    id: 'admin.Tokens.TransferFundsDialogForm.address',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.address',
     defaultMessage: 'Token',
   },
   reason: {
-    id: 'admin.Tokens.TransferFundsDialogForm.reason',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.reason',
     defaultMessage: 'Explain why you’re transferring these funds (optional)',
   },
   domainTokenAmount: {
-    id: 'admin.Tokens.TransferFundsDialogForm.domainTokenAmount',
+    id:
+      'dashboard.TransferFundsDialog.TransferFundsDialogForm.domainTokenAmount',
     defaultMessage: 'Available: {amount} {symbol}',
   },
   noAmount: {
-    id: 'admin.Tokens.TransferFundsDialogForm.noAmount',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.noAmount',
     defaultMessage: 'Amount must be greater than zero',
   },
   noBalance: {
-    id: 'admin.Tokens.TransferFundsDialogForm.noBalance',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.noBalance',
     defaultMessage: 'Insufficient balance in from domain pot',
   },
   noPermissionFrom: {
-    id: 'admin.Tokens.TransferFundsDialogForm.noPermissionFrom',
+    id:
+      'dashboard.TransferFundsDialog.TransferFundsDialogForm.noPermissionFrom',
     defaultMessage: 'No permission in from domain',
   },
   noPermissionTo: {
-    id: 'admin.Tokens.TransferFundsDialogForm.noPermissionTo',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.noPermissionTo',
     defaultMessage: 'No permission in to domain',
   },
   samePot: {
-    id: 'admin.Tokens.TransferFundsDialogForm.samePot',
+    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.samePot',
     defaultMessage: 'Cannot move to same domain pot',
   },
 });
@@ -164,12 +166,12 @@ const TransferFundsDialogForm = ({
     }
   }, [colonyAddress, tokenAddress, fromDomain, toDomain, loadTokenBalances]);
 
-  const [fromDomainTokenBalance] = useMemo(() => {
+  const fromDomainTokenBalance = useMemo(() => {
     const token =
       tokenBalancesData &&
       tokenBalancesData.tokens.find(({ address }) => address === tokenAddress);
     const from = getBalanceFromToken(token, fromDomain);
-    return [from];
+    return from;
   }, [fromDomain, tokenAddress, tokenBalancesData]);
 
   // Perform form validations
@@ -230,6 +232,7 @@ const TransferFundsDialogForm = ({
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
           text={MSG.title}
+          className={styles.title}
         />
       </DialogSection>
       <DialogSection>
@@ -239,6 +242,7 @@ const TransferFundsDialogForm = ({
               options={domainOptions}
               label={MSG.from}
               name="fromDomain"
+              appearance={{ theme: 'grey' }}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -270,7 +274,12 @@ const TransferFundsDialogForm = ({
             title="Transfer"
             appearance={{ size: 'medium' }}
           />
-          <Select options={domainOptions} label={MSG.to} name="toDomain" />
+          <Select
+            options={domainOptions}
+            label={MSG.to}
+            name="toDomain"
+            appearance={{ theme: 'grey' }}
+          />
         </div>
       </DialogSection>
       <DialogSection>
@@ -279,7 +288,11 @@ const TransferFundsDialogForm = ({
             <Input
               label={MSG.amount}
               name="amount"
-              appearance={{ theme: 'minimal', align: 'right' }}
+              appearance={{
+                theme: 'minimal',
+                align: 'right',
+                colorSchema: 'grey',
+              }}
               formattingOptions={{
                 delimiter: ',',
                 numeral: true,
@@ -295,7 +308,7 @@ const TransferFundsDialogForm = ({
               options={tokenOptions}
               name="tokenAddress"
               elementOnly
-              appearance={{ alignOptions: 'right', theme: 'default' }}
+              appearance={{ alignOptions: 'right', theme: 'grey' }}
             />
           </div>
           {values.tokenAddress === AddressZero && (
@@ -318,11 +331,13 @@ const TransferFundsDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection>
-        <Textarea
-          appearance={{ theme: 'fat', resizable: 'vertical' }}
-          label={MSG.reason}
-          name="reason"
-        />
+        <div className={styles.textAreaSection}>
+          <Textarea
+            appearance={{ resizable: 'vertical', colorSchema: 'grey' }}
+            label={MSG.reason}
+            name="reason"
+          />
+        </div>
       </DialogSection>
       <DialogSection appearance={{ align: 'right' }}>
         <Button
@@ -342,6 +357,7 @@ const TransferFundsDialogForm = ({
   );
 };
 
-TransferFundsDialogForm.displayName = 'admin.Tokens.TransferFundsDialogForm';
+TransferFundsDialogForm.displayName =
+  'dashboard.TransferFundsDialog.TransferFundsDialogForm';
 
 export default TransferFundsDialogForm;

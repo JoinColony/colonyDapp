@@ -16,6 +16,7 @@
 .domainPotBalance {
   font-size: var(--size-small);
   font-weight: 600;
+  color: var(--temp-grey-blue-7);
 }
 
 .domainSelects {
@@ -31,4 +32,21 @@
   position: relative;
   top: -7px;
   justify-self: center;
+
+  & svg {
+    fill: var(--temp-grey-blue-7);
+  }
+}
+
+.title {
+  font-size: 18px;
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.tokenAmount label,
+.domainSelects label,
+.textAreaSection label {
+  font-size: 13px;
+  color: var(--dark);
 }

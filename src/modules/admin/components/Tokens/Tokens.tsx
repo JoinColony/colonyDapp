@@ -9,6 +9,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
+import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 
 import {
   useLoggedInUser,
@@ -19,7 +20,6 @@ import { useTransformer } from '~utils/hooks';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
-import TransferFundsDialog from '../../../dashboard/components/TransferFundsDialog';
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 import ColonyTokenEditDialog from './ColonyTokenEditDialog';

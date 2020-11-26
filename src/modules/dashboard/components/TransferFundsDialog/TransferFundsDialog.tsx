@@ -108,6 +108,6 @@ const TransferFundsDialog = ({
   );
 };
 
-TransferFundsDialog.displayName = 'admin.Tokens.TransferFundsDialog';
+TransferFundsDialog.displayName = 'dashboard.TransferFundsDialog';
 
 export default TransferFundsDialog;
