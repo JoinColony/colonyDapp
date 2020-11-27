@@ -1,5 +1,7 @@
 import { Network } from '@colony/colony-js';
 
+import { Color } from '~core/ColorTag';
+
 export type TokenInfo = {
   name: string;
   symbol: string;
@@ -111,3 +113,11 @@ export const DEFAULT_NETWORK_INFO =
     : ETHEREUM_NETWORK;
 
 export const METACOLONY_ENS = 'meta';
+
+export const ALLDOMAINS_DOMAIN_SELECTION = {
+  id: String(COLONY_TOTAL_BALANCE_DOMAIN_ID),
+  color: Color.Yellow,
+  ethDomainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  name: 'All Domains',
+  ethParentDomainId: null,
+};

@@ -7,7 +7,10 @@ import React, {
 } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  ALLDOMAINS_DOMAIN_SELECTION,
+} from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
 import { Form, Select, SelectOption } from '~core/Fields';
 import { useColonyDomainsQuery } from '~data/index';
@@ -106,17 +109,7 @@ const DomainDropdown = ({
 
   const options = useMemo<ComponentProps<typeof Select>['options']>(() => {
     const allDomainsOption: SelectOption = {
-      children: (
-        <DomainSelectItem
-          domain={{
-            id: '0',
-            color: allDomainsColor,
-            ethDomainId: 0,
-            name: 'All Domains',
-            ethParentDomainId: null,
-          }}
-        />
-      ),
+      children: <DomainSelectItem domain={ALLDOMAINS_DOMAIN_SELECTION} />,
       label: { id: 'domain.all' },
       value: '0',
     };
