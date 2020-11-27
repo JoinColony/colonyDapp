@@ -7,9 +7,9 @@ import { useLoggedInUser } from '~data/index';
 import { getMainClasses } from '~utils/css';
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
-import HistoryNavigation from './HistoryNavigation';
-import UserNavigation from './UserNavigation';
-import { RouteComponentProps } from './index';
+import HistoryNavigation from '../HistoryNavigation';
+import UserNavigation from '../UserNavigation';
+import { RouteComponentProps } from '~pages/RouteLayouts';
 
 import styles from './NavBar.css';
 
