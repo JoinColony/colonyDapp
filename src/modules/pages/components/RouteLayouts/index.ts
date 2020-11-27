@@ -38,4 +38,9 @@ export interface RouteComponentProps {
    * Setting this will  the theme classes
    */
   className?: string;
+
+  /*
+   * If set, display the subscribed colonies left sidebar
+   */
+  hasSubscribedColonies?: boolean;
 }
