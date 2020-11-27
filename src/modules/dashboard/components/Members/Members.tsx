@@ -2,6 +2,7 @@ import React, { FC, useState, useMemo, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
+import { useParams } from 'react-router-dom';
 
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -57,8 +58,23 @@ type Member = AnyUser & {
 const displayName = 'dashboard.Members';
 
 const Members = ({ colony: { colonyAddress }, colony }: Props) => {
+  const { domainId } = useParams<{
+    domainId: string;
+  }>();
+
   const [selectedDomainId, setSelectedDomainId] = useState<number>(
-    COLONY_TOTAL_BALANCE_DOMAIN_ID,
+    /*
+     * @NOTE DomainId param sanitization
+     *
+     * We don't actually need to worry about sanitizing the domainId that's
+     * coming in from the params.
+     * The value that reaches us through the hook is being processes by `react-router`
+     * and will always be a string.
+     *
+     * So if we can change that string into a number, we use it as domain, otherwise
+     * we fall back to the "All Domains" selection
+     */
+    parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
   const {
