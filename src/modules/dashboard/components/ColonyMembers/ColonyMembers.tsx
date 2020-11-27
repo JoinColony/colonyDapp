@@ -5,7 +5,6 @@ import { defineMessages } from 'react-intl';
 import Members from '~dashboard/Members';
 import { useColonyFromNameQuery } from '~data/index';
 import styles from './ColonyMembers.css';
-import { TokenInfoProvider } from '~utils/hooks/useTokenInfo';
 import Button from '~core/Button';
 
 const displayName = 'dashboard.ColonyMembers';
@@ -31,9 +30,7 @@ const ColonyMembers = () => {
       <div className={styles.mainContentGrid}>
         <div className={styles.mainContent}>
           {colonyData && colonyData.colony && (
-            <TokenInfoProvider colonyAddress={colonyData.colony.colonyAddress}>
-              <Members colony={colonyData.colony} />
-            </TokenInfoProvider>
+            <Members colony={colonyData.colony} />
           )}
         </div>
         <aside className={styles.rightAside}>

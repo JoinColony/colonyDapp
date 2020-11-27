@@ -1,18 +1,17 @@
 import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 
 import { defineMessages } from 'react-intl';
+import { AddressZero } from 'ethers/constants';
+import { bigNumberify } from 'ethers/utils';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
 import { AnyUser, useUserReputationQuery, useUser } from '~data/index';
-import { AddressZero } from 'ethers/constants';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
 import MaskedAddress from '~core/MaskedAddress';
 import Numeral from '~core/Numeral';
-import { useTokenInfo } from '~utils/hooks/useTokenInfo';
 import Icon from '~core/Icon';
-import { bigNumberify } from 'ethers/utils';
 
 import styles from './MembersListItem.css';
 
@@ -33,7 +32,7 @@ interface Props<U> {
 }
 
 interface Reputation {
-  userReputation: string,
+  userReputation: string;
 }
 
 enum ZeroValue {
@@ -45,7 +44,10 @@ type PercentageReputationType = ZeroValue | number | null;
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const calculatePercentageReputation = (userReputation?: Reputation, totalReputation?: Reputation): PercentageReputationType => {
+const calculatePercentageReputation = (
+  userReputation?: Reputation,
+  totalReputation?: Reputation,
+): PercentageReputationType => {
   if (!userReputation || !totalReputation) return null;
   const userReputationNumber = bigNumberify(userReputation.userReputation);
   const totalReputationNumber = bigNumberify(totalReputation.userReputation);
@@ -57,11 +59,7 @@ const calculatePercentageReputation = (userReputation?: Reputation, totalReputat
     return ZeroValue.Zero;
   }
 
-  if (
-    userReputationNumber
-      .mul(reputationSafeguard)
-      .lt(totalReputationNumber)
-  ) {
+  if (userReputationNumber.mul(reputationSafeguard).lt(totalReputationNumber)) {
     return ZeroValue.NearZero;
   }
 
@@ -70,8 +68,8 @@ const calculatePercentageReputation = (userReputation?: Reputation, totalReputat
     .div(totalReputationNumber)
     .toNumber();
 
-    return reputation / 10 ** DECIMAL_PLACES;
-}
+  return reputation / 10 ** DECIMAL_PLACES;
+};
 
 const componentDisplayName = 'MembersList.MembersListItem';
 
@@ -98,9 +96,10 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     variables: { address: AddressZero, colonyAddress, domainId },
   });
 
-  const userPercentageReputation = calculatePercentageReputation(userReputationData, totalReputationData);
-  // Refactor MemberInfoPopover to use this hook if works fine after reputation tests
-  const { tokenInfoData } = useTokenInfo();
+  const userPercentageReputation = calculatePercentageReputation(
+    userReputationData,
+    totalReputationData,
+  );
 
   const handleRowClick = useCallback(() => {
     if (onRowClick) {
@@ -141,8 +140,10 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
         {userPercentageReputation && (
           <div className={styles.reputationSection}>
             {userPercentageReputation === ZeroValue.NearZero ? (
-              <div className={styles.reputation}>{userPercentageReputation}%</div>
-            ): (
+              <div className={styles.reputation}>
+                {userPercentageReputation}%
+              </div>
+            ) : (
               <Numeral
                 className={styles.reputation}
                 appearance={{ theme: 'primary' }}
