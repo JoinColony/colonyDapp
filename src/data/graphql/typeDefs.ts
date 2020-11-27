@@ -125,6 +125,10 @@ export default gql`
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
     colonyName(address: String!): String!
+    colonyMembersWithReputation(
+      colonyAddress: String!
+      domainId: Int
+    ): [String!]
     token(address: String!): Token!
     tokens(addresses: [String!]): [Token!]!
     userAddress(name: String!): String!

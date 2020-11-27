@@ -1060,6 +1060,7 @@ export type Program = {
 export type Query = {
   colony: Colony;
   colonyAddress: Scalars['String'];
+  colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   domain: Domain;
   level: Level;
@@ -1085,6 +1086,12 @@ export type QueryColonyArgs = {
 
 export type QueryColonyAddressArgs = {
   name: Scalars['String'];
+};
+
+
+export type QueryColonyMembersWithReputationArgs = {
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1524,6 +1531,8 @@ export type TaskEventFragment = (
   EventFieldsFragment
   & EventContextFragment
 );
+
+export type FullNetworkEventFragment = Pick<NetworkEvent, 'fromAddress' | 'toAddress' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domainId'>;
 
 export type AssignWorkerMutationVariables = Exact<{
   input: AssignWorkerInput;
@@ -2168,7 +2177,7 @@ export type ColonyEventsQueryVariables = Exact<{
 
 export type ColonyEventsQuery = { colony: (
     Pick<Colony, 'id' | 'colonyAddress'>
-    & { events: Array<Pick<NetworkEvent, 'fromAddress' | 'toAddress' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domainId'>> }
+    & { events: Array<FullNetworkEventFragment> }
   ) };
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{
@@ -2296,6 +2305,14 @@ export type ColonySubscribedUsersQuery = { colony: (
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )> }
   ) };
+
+export type ColonyMembersWithReputationQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
 
 export type DomainQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -2820,6 +2837,18 @@ export const TaskEventFragmentDoc = gql`
 }
     ${EventFieldsFragmentDoc}
 ${EventContextFragmentDoc}`;
+export const FullNetworkEventFragmentDoc = gql`
+    fragment FullNetworkEvent on NetworkEvent {
+  fromAddress
+  toAddress
+  createdAt
+  name
+  hash
+  topic
+  userAddress
+  domainId
+}
+    `;
 export const AssignWorkerDocument = gql`
     mutation AssignWorker($input: AssignWorkerInput!) {
   assignWorker(input: $input) {
@@ -5509,18 +5538,11 @@ export const ColonyEventsDocument = gql`
     id
     colonyAddress
     events @client {
-      fromAddress
-      toAddress
-      createdAt
-      name
-      hash
-      topic
-      userAddress
-      domainId
+      ...FullNetworkEvent
     }
   }
 }
-    `;
+    ${FullNetworkEventFragmentDoc}`;
 
 /**
  * __useColonyEventsQuery__
@@ -6021,6 +6043,38 @@ export function useColonySubscribedUsersLazyQuery(baseOptions?: Apollo.LazyQuery
 export type ColonySubscribedUsersQueryHookResult = ReturnType<typeof useColonySubscribedUsersQuery>;
 export type ColonySubscribedUsersLazyQueryHookResult = ReturnType<typeof useColonySubscribedUsersLazyQuery>;
 export type ColonySubscribedUsersQueryResult = Apollo.QueryResult<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>;
+export const ColonyMembersWithReputationDocument = gql`
+    query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
+  colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+}
+    `;
+
+/**
+ * __useColonyMembersWithReputationQuery__
+ *
+ * To run a query within a React component, call `useColonyMembersWithReputationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyMembersWithReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyMembersWithReputationQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useColonyMembersWithReputationQuery(baseOptions?: Apollo.QueryHookOptions<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>) {
+        return Apollo.useQuery<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>(ColonyMembersWithReputationDocument, baseOptions);
+      }
+export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>(ColonyMembersWithReputationDocument, baseOptions);
+        }
+export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
+export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
+export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
 export const DomainDocument = gql`
     query Domain($colonyAddress: String!, $ethDomainId: Int!) {
   domain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
