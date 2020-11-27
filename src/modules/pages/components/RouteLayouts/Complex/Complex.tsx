@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 
 import { RouteComponentProps } from '~pages/RouteLayouts';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
-import SimpleNav from './SimpleNav';
+import SimpleNav from '../SimpleNav';
 
 import styles from './Complex.css';
 
