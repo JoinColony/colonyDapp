@@ -1,16 +1,21 @@
 import React, { FC, useState, useMemo, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-
-import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
+import { ColonyRole } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
+
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
-import { useTransformer } from '~utils/hooks';
-import { getAllUserRolesForDomain } from '../../../transformers';
 import UserPermissions from '~admin/Permissions/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
+
+import { getAllUserRolesForDomain } from '../../../transformers';
+import { useTransformer } from '~utils/hooks';
+import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  ALLDOMAINS_DOMAIN_SELECTION,
+} from '~constants';
 
 import styles from './Members.css';
 
@@ -23,7 +28,7 @@ const MSG = defineMessages({
     id: 'dashboard.Members.title',
     defaultMessage: `Members{domainLabel, select,
       root {}
-      other {: #{domainLabel}}
+      other {: {domainLabel}}
     }`,
   },
   labelFilter: {
@@ -45,7 +50,7 @@ const displayName = 'dashboard.Members';
 
 const Members = ({ colony }: Props) => {
   const [selectedDomainId, setSelectedDomainId] = useState<number>(
-    ROOT_DOMAIN_ID,
+    COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
   const {
     data: colonySubscribedUsers,
@@ -68,10 +73,12 @@ const Members = ({ colony }: Props) => {
   ]);
 
   const domainSelectOptions = sortBy(
-    colony.domains.map(({ ethDomainId, name }) => ({
-      value: ethDomainId.toString(),
-      label: name,
-    })),
+    [...colony.domains, ALLDOMAINS_DOMAIN_SELECTION].map(
+      ({ ethDomainId, name }) => ({
+        value: ethDomainId.toString(),
+        label: name,
+      }),
+    ),
     ['value'],
   );
 
@@ -80,23 +87,24 @@ const Members = ({ colony }: Props) => {
     [setSelectedDomainId],
   );
 
-  const domainRolesArray = useMemo(
-    () =>
-      domainRoles
-        .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
-        .filter(({ roles }) => !!roles.length)
-        .map(({ address, roles }) => {
-          const directUserRoles = directDomainRoles.find(
-            ({ address: userAddress }) => userAddress === address,
-          );
-          return {
-            userAddress: address,
-            roles,
-            directRoles: directUserRoles ? directUserRoles.roles : [],
-          };
-        }),
-    [directDomainRoles, domainRoles],
-  );
+  const domainRolesArray = useMemo(() => {
+    if (selectedDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
+      return [];
+    }
+    return domainRoles
+      .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
+      .filter(({ roles }) => !!roles.length)
+      .map(({ address, roles }) => {
+        const directUserRoles = directDomainRoles.find(
+          ({ address: userAddress }) => userAddress === address,
+        );
+        return {
+          userAddress: address,
+          roles,
+          directRoles: directUserRoles ? directUserRoles.roles : [],
+        };
+      });
+  }, [directDomainRoles, domainRoles, selectedDomainId]);
 
   if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
     return (
@@ -137,12 +145,14 @@ const Members = ({ colony }: Props) => {
         <Heading
           text={MSG.title}
           textValues={{
-            domainLabel: selectedDomain ? selectedDomain.name : undefined,
+            domainLabel: selectedDomain
+              ? selectedDomain.name
+              : ALLDOMAINS_DOMAIN_SELECTION.name,
           }}
           appearance={{ size: 'medium', theme: 'dark' }}
         />
         <Form
-          initialValues={{ filter: ROOT_DOMAIN_ID.toString() }}
+          initialValues={{ filter: COLONY_TOTAL_BALANCE_DOMAIN_ID.toString() }}
           onSubmit={() => {}}
         >
           <Select
