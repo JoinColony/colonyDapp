@@ -54,6 +54,14 @@ const ColonyMembers = ({
     },
   });
 
+  const membersPageRoute = useMemo(() => {
+    const baseRoute = `/colony/${colonyName}/members`;
+    if (currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
+      return baseRoute;
+    }
+    return `${baseRoute}/${currentDomainId}`;
+  }, [currentDomainId, colonyName]);
+
   const avatarsDisplaySplitRules = useMemo(() => {
     if (!members || !members.colonyMembersWithReputation?.length) {
       return 0;
@@ -111,12 +119,7 @@ const ColonyMembers = ({
 
   return (
     <div className={styles.main}>
-      <NavLink
-        /*
-         * @TODO Put in the Community route, once that is created in DEV-13
-         */
-        to={`/colony/${colonyName}/members`}
-      >
+      <NavLink to={membersPageRoute}>
         <Heading
           appearance={{ size: 'normal', weight: 'bold' }}
           text={MSG.title}
