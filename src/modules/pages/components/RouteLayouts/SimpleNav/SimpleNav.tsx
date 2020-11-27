@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 
-import { RouteComponentProps } from '../index';
+import { RouteComponentProps } from '~pages/RouteLayouts';
 import UserNavigation from '../UserNavigation';
 
 import styles from './SimpleNav.css';
