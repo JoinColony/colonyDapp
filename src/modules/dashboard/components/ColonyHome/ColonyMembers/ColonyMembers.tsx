@@ -33,16 +33,17 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   currentDomainId?: number;
+  maxAvatars?: number;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: true });
-const MAX_AVATARS = 15;
 
 const displayName = 'dashboard.ColonyHome.ColonyMembers';
 
 const ColonyMembers = ({
   colony: { colonyAddress, colonyName },
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  maxAvatars = 15,
 }: Props) => {
   const {
     data: members,
@@ -67,22 +68,22 @@ const ColonyMembers = ({
       return 0;
     }
 
-    if (members.colonyMembersWithReputation.length <= MAX_AVATARS) {
+    if (members.colonyMembersWithReputation.length <= maxAvatars) {
       return members.colonyMembersWithReputation.length;
     }
-    return MAX_AVATARS - 1;
-  }, [members]);
+    return maxAvatars - 1;
+  }, [members, maxAvatars]);
 
   const remainingAvatarsCount = useMemo(() => {
     if (!members || !members.colonyMembersWithReputation?.length) {
       return 0;
     }
 
-    if (members.colonyMembersWithReputation.length <= MAX_AVATARS) {
+    if (members.colonyMembersWithReputation.length <= maxAvatars) {
       return 0;
     }
-    return members.colonyMembersWithReputation.length - MAX_AVATARS;
-  }, [members]);
+    return members.colonyMembersWithReputation.length - maxAvatars;
+  }, [members, maxAvatars]);
 
   if (loadingColonyMembersWithReputation) {
     return (
