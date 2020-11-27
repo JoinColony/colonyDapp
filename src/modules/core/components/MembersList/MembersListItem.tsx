@@ -9,7 +9,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
 import MaskedAddress from '~core/MaskedAddress';
 import Numeral from '~core/Numeral';
-import { useTokenInfo } from '~utils/hooks/use-token-info';
+import { useTokenInfo } from '~utils/hooks';
 import Icon from '~core/Icon';
 
 import styles from './MembersListItem.css';
