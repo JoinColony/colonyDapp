@@ -4,16 +4,16 @@ import { RouteComponentProps } from '~pages/RouteLayouts';
 import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
 import SimpleNav from './SimpleNav';
 
-import styles from './SubscribedColonies.css';
+import styles from './Complex.css';
 
 interface Props {
   children: ReactNode;
   routeProps?: RouteComponentProps;
 }
 
-const displayName = 'pages.SubscribedColonies';
+const displayName = 'pages.Complex';
 
-const SubscribedColonies = ({ children }: Props) => (
+const Complex = ({ children }: Props) => (
   <SimpleNav>
     <div className={styles.main}>
       <div className={styles.coloniesList}>
@@ -24,6 +24,6 @@ const SubscribedColonies = ({ children }: Props) => (
   </SimpleNav>
 );
 
-SubscribedColonies.displayName = displayName;
+Complex.displayName = displayName;
 
-export default SubscribedColonies;
+export default Complex;
