@@ -6,7 +6,9 @@ import Heading from '~core/Heading';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { Colony, useColonySubscribedUsersQuery, AnyUser } from '~data/index';
+import { Colony, useColonyMembersWithReputationQuery } from '~data/index';
+import { Address } from '~types/index';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import styles from './ColonyMembers.css';
 
@@ -22,64 +24,59 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMembers.loadingData',
     defaultMessage: 'Loading members information...',
   },
+  reputationFetchFailed: {
+    id: 'dashboard.ColonyHome.ColonyMembers.reputationFetchFailed',
+    defaultMessage: "Failed to fetch the colony's members",
+  },
 });
 
 interface Props {
   colony: Colony;
+  currentDomainId?: number;
 }
 
-const UserAvatar = HookedUserAvatar({ fetchUser: false });
+const UserAvatar = HookedUserAvatar({ fetchUser: true });
 const MAX_AVATARS = 15;
 
 const displayName = 'dashboard.ColonyHome.ColonyMembers';
 
-const ColonyMembers = ({ colony: { colonyAddress, colonyName } }: Props) => {
-  /*
-   * @TODO This will most likely be replaces with a request to the reputation
-   * oracle, in order to fetch the users sorted by reputation
-   */
+const ColonyMembers = ({
+  colony: { colonyAddress, colonyName },
+  currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
+}: Props) => {
   const {
-    data: colonySubscribedUsers,
-    loading: loadingColonySubscribedUsers,
-  } = useColonySubscribedUsersQuery({
+    data: members,
+    loading: loadingColonyMembersWithReputation,
+  } = useColonyMembersWithReputationQuery({
     variables: {
       colonyAddress,
+      domainId: currentDomainId,
     },
   });
 
   const avatarsDisplaySplitRules = useMemo(() => {
-    if (
-      !colonySubscribedUsers ||
-      !colonySubscribedUsers.colony.subscribedUsers.length
-    ) {
+    if (!members || !members.colonyMembersWithReputation?.length) {
       return 0;
     }
-    const {
-      colony: { subscribedUsers },
-    } = colonySubscribedUsers;
-    if (subscribedUsers.length <= MAX_AVATARS) {
-      return subscribedUsers.length;
+
+    if (members.colonyMembersWithReputation.length <= MAX_AVATARS) {
+      return members.colonyMembersWithReputation.length;
     }
     return MAX_AVATARS - 1;
-  }, [colonySubscribedUsers]);
+  }, [members]);
 
   const remainingAvatarsCount = useMemo(() => {
-    if (
-      !colonySubscribedUsers ||
-      !colonySubscribedUsers.colony.subscribedUsers.length
-    ) {
+    if (!members || !members.colonyMembersWithReputation?.length) {
       return 0;
     }
-    const {
-      colony: { subscribedUsers },
-    } = colonySubscribedUsers;
-    if (subscribedUsers.length <= MAX_AVATARS) {
-      return 0;
-    }
-    return subscribedUsers.length - MAX_AVATARS;
-  }, [colonySubscribedUsers]);
 
-  if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
+    if (members.colonyMembersWithReputation.length <= MAX_AVATARS) {
+      return 0;
+    }
+    return members.colonyMembersWithReputation.length - MAX_AVATARS;
+  }, [members]);
+
+  if (loadingColonyMembersWithReputation) {
     return (
       <div className={styles.main}>
         <Heading
@@ -95,9 +92,22 @@ const ColonyMembers = ({ colony: { colonyAddress, colonyName } }: Props) => {
     );
   }
 
-  const {
-    colony: { subscribedUsers },
-  } = colonySubscribedUsers;
+  if (!members || !members.colonyMembersWithReputation) {
+    return (
+      <div className={styles.main}>
+        <Heading
+          appearance={{ size: 'normal', weight: 'bold' }}
+          text={MSG.title}
+          textValues={{ hasCounter: false }}
+        />
+        <span className={styles.loadingText}>
+          <FormattedMessage {...MSG.reputationFetchFailed} />
+        </span>
+      </div>
+    );
+  }
+
+  const { colonyMembersWithReputation } = members;
 
   return (
     <div className={styles.main}>
@@ -110,19 +120,21 @@ const ColonyMembers = ({ colony: { colonyAddress, colonyName } }: Props) => {
         <Heading
           appearance={{ size: 'normal', weight: 'bold' }}
           text={MSG.title}
-          textValues={{ count: subscribedUsers.length, hasCounter: true }}
+          textValues={{
+            count: colonyMembersWithReputation.length,
+            hasCounter: true,
+          }}
         />
       </NavLink>
       <ul className={styles.userAvatars}>
-        {(subscribedUsers as AnyUser[])
+        {(colonyMembersWithReputation as Address[])
           .slice(0, avatarsDisplaySplitRules)
-          .map((user) => (
-            <li className={styles.userAvatar} key={user.id}>
+          .map((userAddress: Address) => (
+            <li className={styles.userAvatar} key={userAddress}>
               <UserAvatar
                 size="xs"
                 colonyAddress={colonyAddress}
-                address={user.profile.walletAddress}
-                user={user}
+                address={userAddress}
                 showInfo
                 notSet={false}
                 popperProps={{

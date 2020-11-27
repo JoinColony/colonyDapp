@@ -209,7 +209,7 @@ const ColonyHome = ({ match, location }: Props) => {
         </div>
         <aside className={styles.rightAside}>
           <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
-          <ColonyMembers colony={colony} />
+          <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
         </aside>
       </div>
       {!!mustUpgradeColony && (
