@@ -12,7 +12,33 @@
   }
 }
 
-.titleContainer {
-  margin-top: 35px;
-  margin-bottom: 32px;
+.singleUserContainer {
+  margin-top: 20px;
+  margin-bottom: 48px;
+
+  & label {
+    margin-bottom: 15px;
+    color: var(--dark);
+  }
+
+  & > div {
+    padding-left: 0;
+  }
+}
+
+.domainSelectContainer {
+  margin-bottom: 25px;
+
+  & label {
+    color: var(--dark);
+  }
+}
+
+.permissionChoiceContainer {
+  margin-bottom: 50px;
+  border-top: 1px solid rgba(54, 54, 54, 0.15);
+}
+
+.dialogFooterSection {
+  text-align: right;
 }

@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 
 import Members from '~dashboard/Members';
 import { useColonyFromNameQuery } from '~data/index';
-import styles from './ColonyMembers.css';
+import { TokenInfoProvider } from '~utils/hooks/use-token-info';
 import Button from '~core/Button';
+import { useDialog } from '~core/Dialog';
+
+import PermissionManagementDialog from '../PermissionManagementDialog';
+
+import styles from './ColonyMembers.css';
 
 const displayName = 'dashboard.ColonyMembers';
 
@@ -25,6 +30,14 @@ const ColonyMembers = () => {
     variables: { name: colonyName, address: '' },
   });
 
+  const openPermissionManagementDialog = useDialog(PermissionManagementDialog);
+
+  const handlePermissionManagementDialog = useCallback(() => {
+    openPermissionManagementDialog({
+      colonyAddress: colonyData?.colony.colonyAddress || '',
+    });
+  }, [openPermissionManagementDialog, colonyData]);
+
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
@@ -34,7 +47,11 @@ const ColonyMembers = () => {
           )}
         </div>
         <aside className={styles.rightAside}>
-          <Button appearance={{ theme: 'blue' }} text={MSG.editPermissions} />
+          <Button
+            appearance={{ theme: 'blue' }}
+            text={MSG.editPermissions}
+            onClick={handlePermissionManagementDialog}
+          />
         </aside>
       </div>
     </div>

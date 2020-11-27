@@ -1,10 +1,22 @@
 .permissionChoice {
   display: flex;
   align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(54, 54, 54, 0.15);
+  color: var(--temp-grey-blue-7);
 }
 
 .permissionChoiceDescription {
-  padding-left: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 15px;
+  font-size: var(--size-tiny);
+  line-height: 18px;
+
+  & span {
+    font-size: 9px;
+  }
 }
 
 .popoverContent {

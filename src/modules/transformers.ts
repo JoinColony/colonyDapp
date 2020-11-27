@@ -60,10 +60,12 @@ const getCombinedRolesForDomains = (
 };
 
 export const getAllUserRolesForDomain = (
-  { domains, roles }: Colony,
+  colony: Colony | undefined,
   domainId: number,
   excludeInherited = false,
 ): UserRolesForDomain[] => {
+  if (!colony) return [];
+  const { domains, roles } = colony;
   let domain = domains.find(({ ethDomainId }) => ethDomainId === domainId);
   if (!domain) return [];
   if (excludeInherited) {

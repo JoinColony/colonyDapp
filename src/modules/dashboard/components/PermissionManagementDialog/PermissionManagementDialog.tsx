@@ -1,86 +1,124 @@
 import { FormikProps } from 'formik';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
+import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
 
-import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { useTransformer } from '~utils/hooks';
+import { ItemDataType } from '~core/OmniPicker';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import Dialog, { DialogSection } from '~core/Dialog';
-import { ActionForm, InputLabel } from '~core/Fields';
+import Dialog from '~core/Dialog';
+import { ActionForm } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
-import UserInfo from '~users/UserInfo';
-import { useColonyQuery, useLoggedInUser, useUser } from '~data/index';
+import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
+import HookedUserAvatar from '~users/HookedUserAvatar';
+import {
+  useColonyQuery,
+  useLoggedInUser,
+  useColonySubscribedUsersQuery,
+  useUser,
+  AnyUser,
+} from '~data/index';
 
 import {
   getUserRolesForDomain,
   getAllRootAccounts,
+  getAllUserRolesForDomain,
 } from '../../../transformers';
 import PermissionManagementForm from './PermissionManagementForm';
 import { availableRoles } from './constants';
 
-import styles from './PermissionsManagementDialog.css';
+import styles from './PermissionManagementDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.PermissionManagementDialog.title',
-    defaultMessage: 'Edit user roles in {domain}',
+    id: 'dashboard.PermissionManagementDialog.title',
+    defaultMessage: 'Permissions',
   },
   selectUser: {
-    id: 'admin.PermissionManagementDialog.selectUser',
-    defaultMessage: 'Selected Member',
+    id: 'dashboard.PermissionManagementDialog.selectUser',
+    defaultMessage: 'Member',
   },
 });
 
 interface Props {
   cancel: () => void;
   close: () => void;
-  domainId: number;
-  colonyAddress: Address;
-  userAddress: Address;
+  colonyAddress: string;
 }
+
+type Member = AnyUser & {
+  roles: ColonyRole[];
+  directRoles: ColonyRole[];
+};
+
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
+const supRenderAvatar = (address: string, item: ItemDataType<AnyUser>) => (
+  <UserAvatar address={address} user={item} size="xs" notSet={false} />
+);
 
 const PermissionManagementDialog = ({
   colonyAddress,
   cancel,
   close,
-  domainId,
-  userAddress,
 }: Props) => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
 
-  const user = useUser(userAddress);
+  const loggedInUser = useUser(loggedInUserWalletAddress);
+
+  const [selectedUser, setSelectedUser] = useState<AnyUser>(loggedInUser);
+
+  const [selectedDomainId, setSelectedDomainId] = useState<number>(
+    ROOT_DOMAIN_ID,
+  );
+
+  const { data: colonySubscribedUsers } = useColonySubscribedUsersQuery({
+    variables: {
+      colonyAddress,
+    },
+  });
+
   const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
   });
 
   const currentUserRoles = useTransformer(getUserRolesForDomain, [
-    colonyData && colonyData.colony,
+    colonyData?.colony,
     // CURRENT USER!
-    walletAddress,
-    domainId,
+    loggedInUserWalletAddress,
+    selectedDomainId,
   ]);
 
   const userDirectRoles = useTransformer(getUserRolesForDomain, [
-    colonyData && colonyData.colony,
+    colonyData?.colony,
     // USER TO SET PERMISSIONS FOR!
-    userAddress,
-    domainId,
+    selectedUser.profile.walletAddress,
+    selectedDomainId,
     true,
   ]);
 
   const userInheritedRoles = useTransformer(getUserRolesForDomain, [
-    colonyData && colonyData.colony,
+    colonyData?.colony,
     // USER TO SET PERMISSIONS FOR!
-    userAddress,
-    domainId,
+    selectedUser.profile.walletAddress,
+    selectedDomainId,
   ]);
 
-  const rootAccounts = useTransformer(getAllRootAccounts, [
-    colonyData && colonyData.colony,
+  const domainRoles = useTransformer(getAllUserRolesForDomain, [
+    colonyData?.colony,
+    selectedDomainId,
   ]);
+
+  const directDomainRoles = useTransformer(getAllUserRolesForDomain, [
+    colonyData?.colony,
+    selectedDomainId,
+    true,
+  ]);
+
+  const rootAccounts = useTransformer(getAllRootAccounts, [colonyData?.colony]);
 
   const transform = useCallback(
     pipe(
@@ -97,26 +135,62 @@ const PermissionManagementDialog = ({
       })),
       mergePayload({ colonyAddress }),
     ),
-    [colonyAddress, domainId],
+    [colonyAddress, selectedDomainId],
+  );
+
+  const domainRolesArray = useMemo(
+    () =>
+      domainRoles
+        .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
+        .filter(({ roles }) => !!roles.length)
+        .map(({ address, roles }) => {
+          const directUserRoles = directDomainRoles.find(
+            ({ address: userAddress }) => userAddress === address,
+          );
+          return {
+            userAddress: address,
+            roles,
+            directRoles: directUserRoles ? directUserRoles.roles : [],
+          };
+        }),
+    [directDomainRoles, domainRoles],
   );
 
   const domain =
     colonyData &&
     colonyData.colony.domains.find(
-      ({ ethDomainId }) => ethDomainId === domainId,
+      ({ ethDomainId }) => ethDomainId === selectedDomainId,
     );
+
+  const {
+    colony: { subscribedUsers },
+  } = colonySubscribedUsers;
+
+  const members: Member[] = subscribedUsers.map((user) => {
+    const {
+      profile: { walletAddress },
+    } = user;
+    const domainRole = domainRolesArray.find(
+      (rolesObject) => rolesObject.userAddress === walletAddress,
+    );
+    return {
+      ...user,
+      roles: domainRole ? domainRole.roles : [],
+      directRoles: domainRole ? domainRole.directRoles : [],
+    };
+  });
 
   return (
     <Dialog cancel={cancel}>
-      {!userAddress || !colonyData || !domain ? (
+      {!selectedUser.profile.walletAddress || !colonyData || !domain ? (
         <SpinnerLoader />
       ) : (
         <ActionForm
           enableReinitialize
           initialValues={{
-            domainId,
+            user: selectedUser,
+            domainId: selectedDomainId.toString(),
             roles: userDirectRoles,
-            userAddress,
           }}
           onSuccess={close}
           submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
@@ -127,31 +201,30 @@ const PermissionManagementDialog = ({
           {({ isSubmitting }: FormikProps<any>) => (
             <div className={styles.dialogContainer}>
               <Heading
-                appearance={{ size: 'medium', margin: 'none' }}
+                appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
                 text={MSG.title}
                 textValues={{ domain: domain && domain.name }}
               />
-              <div className={styles.titleContainer}>
-                <InputLabel label={MSG.selectUser} />
-                <UserInfo
-                  colonyAddress={colonyAddress}
-                  userAddress={userAddress}
-                  user={user}
-                  placeholder={MSG.selectUser}
-                >
-                  {user && user.profile
-                    ? user.profile.displayName || user.profile.username
-                    : userAddress}
-                </UserInfo>
+              <div className={styles.singleUserContainer}>
+                <SingleUserPicker
+                  data={members}
+                  label={MSG.selectUser}
+                  name="user"
+                  filter={filterUserSelection}
+                  onSelected={setSelectedUser}
+                  renderAvatar={supRenderAvatar}
+                />
               </div>
               <PermissionManagementForm
                 currentUserRoles={currentUserRoles}
-                domainId={domainId}
+                domainId={selectedDomainId}
                 rootAccounts={rootAccounts}
                 userDirectRoles={userDirectRoles}
                 userInheritedRoles={userInheritedRoles}
+                colonyDomains={colonyData.colony.domains}
+                onDomainSelected={setSelectedDomainId}
               />
-              <DialogSection appearance={{ align: 'right' }}>
+              <div className={styles.dialogFooterSection}>
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
                   onClick={cancel}
@@ -163,7 +236,7 @@ const PermissionManagementDialog = ({
                   text={{ id: 'button.confirm' }}
                   type="submit"
                 />
-              </DialogSection>
+              </div>
             </div>
           )}
         </ActionForm>
@@ -173,6 +246,6 @@ const PermissionManagementDialog = ({
 };
 
 PermissionManagementDialog.displayName =
-  'admin.Permissions.PermissionManagementDialog';
+  'dashboard.Permissions.PermissionManagementDialog';
 
 export default PermissionManagementDialog;

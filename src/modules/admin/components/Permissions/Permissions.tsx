@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { Address } from '~types/index';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
 import { Table, TableBody, TableCell } from '~core/Table';
@@ -14,7 +13,6 @@ import { useTransformer } from '~utils/hooks';
 import { Colony } from '~data/index';
 
 import { getAllUserRolesForDomain } from '../../../transformers';
-import PermissionManagementDialog from '../../../dashboard/components/PermissionManagementDialog';
 import UserListItem from '../UserListItem';
 import UserPermissions from './UserPermissions';
 import ColonyPermissionsAddDialog from './ColonyPermissionsAddDialog';
@@ -61,7 +59,6 @@ const Permissions = ({ colony: { colonyAddress, domains }, colony }: Props) => {
   );
 
   const openPermissionsAddDialog = useDialog(ColonyPermissionsAddDialog);
-  const openPermissionsEditDialog = useDialog(PermissionManagementDialog);
 
   const domainRoles = useTransformer(getAllUserRolesForDomain, [
     colony,
@@ -93,16 +90,6 @@ const Permissions = ({ colony: { colonyAddress, domains }, colony }: Props) => {
       domainId: selectedDomainId,
     });
   }, [openPermissionsAddDialog, colonyAddress, selectedDomainId]);
-
-  const handleEditPermissions = useCallback(
-    (userAddress: Address) =>
-      openPermissionsEditDialog({
-        colonyAddress,
-        domainId: selectedDomainId,
-        userAddress,
-      }),
-    [openPermissionsEditDialog, colonyAddress, selectedDomainId],
-  );
 
   const domainRolesArray = useMemo(
     () =>
@@ -163,7 +150,6 @@ const Permissions = ({ colony: { colonyAddress, domains }, colony }: Props) => {
                   <UserListItem
                     address={userAddress}
                     key={userAddress}
-                    onClick={handleEditPermissions}
                     showDisplayName
                     showMaskedAddress
                     showUsername

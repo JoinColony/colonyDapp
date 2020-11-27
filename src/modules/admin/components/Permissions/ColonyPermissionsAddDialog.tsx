@@ -2,6 +2,7 @@ import { FormikProps } from 'formik';
 import { useQuery } from '@apollo/client';
 import React, { useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
@@ -73,6 +74,9 @@ const ColonyPermissionsAddDialog = ({
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const [selectedUserAddress, setSelectedUserAddress] = useState<string>();
+  const [selectedDomainId, setSelectedDomainId] = useState<number>(
+    ROOT_DOMAIN_ID,
+  );
 
   const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
@@ -156,7 +160,7 @@ const ColonyPermissionsAddDialog = ({
         <ActionForm
           enableReinitialize
           initialValues={{
-            domainId,
+            domainId: selectedDomainId.toString(),
             roles: userInheritedRoles,
             user,
           }}
@@ -174,7 +178,7 @@ const ColonyPermissionsAddDialog = ({
                   text={MSG.title}
                   textValues={{ domain: domain && domain.name }}
                 />
-                <div className={styles.titleContainer}>
+                <div>
                   <InputLabel label={MSG.selectUser} />
                   <SingleUserPicker
                     appearance={{ width: 'wide' }}
@@ -194,6 +198,8 @@ const ColonyPermissionsAddDialog = ({
                   rootAccounts={rootAccounts}
                   userDirectRoles={userDirectRoles}
                   userInheritedRoles={userInheritedRoles}
+                  colonyDomains={colonyData.colony.domains}
+                  onDomainSelected={setSelectedDomainId}
                 />
                 <DialogSection appearance={{ align: 'right' }}>
                   <Button

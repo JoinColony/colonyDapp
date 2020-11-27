@@ -1,4 +1,4 @@
-export { default as styles } from './PermissionsManagementDialog.css';
+export { default as styles } from './PermissionManagementDialog.css';
 
 export { availableRoles } from './constants';
 

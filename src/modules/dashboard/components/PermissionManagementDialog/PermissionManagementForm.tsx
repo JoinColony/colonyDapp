@@ -1,34 +1,32 @@
 import React, { useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import sortBy from 'lodash/sortBy';
 
 import { Address } from '~types/index';
-import { InputLabel } from '~core/Fields';
-import ExternalLink from '~core/ExternalLink';
+import { DomainFieldsFragment } from '~data/generated';
+import { InputLabel, Textarea, Select } from '~core/Fields';
 
 import PermissionManagementCheckbox from './PermissionManagementCheckbox';
 import { availableRoles } from './constants';
 
-import styles from './PermissionForm.css';
+import styles from './PermissionManagementDialog.css';
 
 const MSG = defineMessages({
+  domain: {
+    id: 'dashboard.PermissionManagementDialog.PermissionManagementForm.domain',
+    defaultMessage: 'Domain',
+  },
   permissionsLabel: {
-    id: 'admin.ColonyPermissionEditDialog.permissionsLabel',
+    id: `dashboard
+      .PermissionManagementDialog.PermissionManagementForm.permissionsLabel`,
     defaultMessage: 'Permissions',
   },
-  permissionInParent: {
-    id: 'admin.ColonyPermissionEditDialog.permissionInParent',
-    defaultMessage: '*Permission granted via parent domain. {learnMore}',
-  },
-  learnMore: {
-    id: 'admin.ColonyPermissionEditDialog.learnMore',
-    defaultMessage: 'Learn more',
+  reason: {
+    id: 'dashboard.PermissionManagementDialog.PermissionManagementForm.reason',
+    defaultMessage: 'Explain why you’re creating this motion (optional)',
   },
 });
-
-const DOMAINS_HELP_URL =
-  // eslint-disable-next-line max-len
-  'https://help.colony.io/hc/en-us/articles/360024588993-What-are-the-permissions-in-a-colony-';
 
 interface Props {
   currentUserRoles: ColonyRole[];
@@ -36,6 +34,8 @@ interface Props {
   rootAccounts: Address[];
   userDirectRoles: ColonyRole[];
   userInheritedRoles: ColonyRole[];
+  colonyDomains: DomainFieldsFragment[];
+  onDomainSelected: (domain: number) => void;
 }
 
 const PermissionManagementForm = ({
@@ -44,6 +44,8 @@ const PermissionManagementForm = ({
   rootAccounts,
   userDirectRoles,
   userInheritedRoles,
+  colonyDomains,
+  onDomainSelected,
 }: Props) => {
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(
@@ -76,32 +78,55 @@ const PermissionManagementForm = ({
     [currentUserRoles, domainId, rootAccounts, userDirectRoles],
   );
 
+  const domainSelectOptions = sortBy(
+    colonyDomains.map(({ ethDomainId, name }) => ({
+      value: ethDomainId.toString(),
+      label: name,
+    })),
+    ['value'],
+  );
+
+  const handleDomainChange = useCallback(
+    (value: string) => onDomainSelected(Number(value)),
+    [onDomainSelected],
+  );
+
   return (
     <>
-      <InputLabel label={MSG.permissionsLabel} />
-      {availableRoles.map((role) => {
-        const roleIsInherited =
-          !userDirectRoles.includes(role) && userInheritedRoles.includes(role);
-        return (
-          <div key={role} className={styles.permissionChoiceContainer}>
+      <div className={styles.domainSelectContainer}>
+        <Select
+          options={domainSelectOptions}
+          label={MSG.domain}
+          name="domainId"
+          appearance={{ theme: 'grey' }}
+          onChange={handleDomainChange}
+        />
+      </div>
+      <InputLabel
+        label={MSG.permissionsLabel}
+        appearance={{ colorSchema: 'grey' }}
+      />
+      <div className={styles.permissionChoiceContainer}>
+        {availableRoles.map((role) => {
+          const roleIsInherited =
+            !userDirectRoles.includes(role) &&
+            userInheritedRoles.includes(role);
+          return (
             <PermissionManagementCheckbox
+              key={role}
               disabled={!canRoleBeSet(role) || roleIsInherited}
               role={role}
               asterisk={roleIsInherited}
+              domainId={domainId}
             />
-          </div>
-        );
-      })}
-      <p className={styles.parentPermissionTip}>
-        <FormattedMessage
-          {...MSG.permissionInParent}
-          values={{
-            learnMore: (
-              <ExternalLink text={MSG.learnMore} href={DOMAINS_HELP_URL} />
-            ),
-          }}
-        />
-      </p>
+          );
+        })}
+      </div>
+      <Textarea
+        appearance={{ resizable: 'vertical', colorSchema: 'grey' }}
+        label={MSG.reason}
+        name="reason"
+      />
     </>
   );
 };

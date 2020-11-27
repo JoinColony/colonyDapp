@@ -1,47 +1,54 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import { ColonyRole } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Checkbox } from '~core/Fields';
-import Heading from '~core/Heading';
 import Popover from '~core/Popover';
+import PermissionsLabel from '~core/PermissionsLabel';
 
 import styles from './PermissionManagementCheckbox.css';
 
+const idBase =
+  'dashboard.PermissionManagementDialog.PermissionManagementCheckbox';
+
 const MSG = defineMessages({
   roleWithAsterisk: {
-    id: 'admin.ColonyPermissionEditDialog.roleWithAsterisk',
+    id: `${idBase}.roleWithAsterisk`,
     defaultMessage: '{role}{asterisk, select, true {*} false {} }',
   },
   roleDescription0: {
-    id: 'admin.ColonyPermissionEditDialog.roleDescriptionRecovery',
-    defaultMessage: 'Put the Colony into recovery mode.',
+    id: `${idBase}.roleDescriptionRecovery`,
+    defaultMessage:
+      'Disable colony in emergency, update storage, and approvee reactivation',
   },
   roleDescription1: {
-    id: 'admin.ColonyPermissionEditDialog.roleDescriptionRoot',
-    defaultMessage:
-      'The highest permission, control all aspects of running a colony.',
+    id: `${idBase}.roleDescriptionRoot`,
+    defaultMessage: 'Take actions effecting the colony as a whole.',
   },
   roleDescription2: {
-    id: 'admin.ColonyPermissionEditDialog.roleDescriptionArbitration',
+    id: `${idBase}.roleDescriptionArbitration`,
     defaultMessage: 'Coming soon...',
   },
   roleDescription3: {
-    id: 'admin.ColonyPermissionEditDialog.roleDescriptionArchitecture',
-    defaultMessage: `Set the administration, funding, and architecture roles in any subdomain.`,
+    id: `${idBase}.roleDescriptionArchitecture`,
+    defaultMessage: `Set permissions in the active domain, and any subdomain.`,
   },
   // We don't have architecture_subdomain (which would be 4)
   roleDescription5: {
-    id: 'admin.ColonyPermissionEditDialog.roleDescriptionFunding',
-    defaultMessage: 'Fund tasks and transfer funds between domains.',
+    id: `${idBase}.roleDescriptionFunding`,
+    defaultMessage: 'Fund expenditures and transfer funds between domains.',
   },
   roleDescription6: {
-    id: 'admin.ColonyPermissionEditDialog.roleDescriptionAdministration',
-    defaultMessage: 'Create and manage new tasks.',
+    id: `${idBase}.roleDescriptionAdministration`,
+    defaultMessage: 'Create and manage expenditures.',
   },
   tooltipNoPermissionsText: {
-    id: 'admin.Permissions.PermissionCheckbox.tooltipNoPermissionsText',
+    id: `${idBase}.tooltipNoPermissionsText`,
     defaultMessage: 'You do not have permission to set the {roleName} role.',
+  },
+  tooltipNoRootDomainSelected: {
+    id: `${idBase}.tooltipNoRootDomainSelected`,
+    defaultMessage: 'Switch domain to #Root to set the root role.',
   },
 });
 
@@ -49,11 +56,17 @@ interface Props {
   asterisk: boolean;
   disabled: boolean;
   role: ColonyRole;
+  domainId: number;
 }
 
 const displayName = 'admin.Permissions.PermissionCheckbox';
 
-const PermissionManagementCheckbox = ({ asterisk, disabled, role }: Props) => {
+const PermissionManagementCheckbox = ({
+  asterisk,
+  disabled,
+  role,
+  domainId,
+}: Props) => {
   const roleNameMessage = { id: `role.${role}` };
   const roleDescriptionMessage = useMemo(
     () =>
@@ -66,6 +79,8 @@ const PermissionManagementCheckbox = ({ asterisk, disabled, role }: Props) => {
 
   const { formatMessage } = useIntl();
 
+  const formattedRole = formatMessage(roleNameMessage);
+
   const checkboxContent = useMemo(
     () => (
       <Checkbox
@@ -75,27 +90,22 @@ const PermissionManagementCheckbox = ({ asterisk, disabled, role }: Props) => {
         disabled={disabled}
       >
         <span className={styles.permissionChoiceDescription}>
-          <Heading
-            text={MSG.roleWithAsterisk}
-            textValues={{
-              role: formatMessage(roleNameMessage),
-              asterisk: !!asterisk,
-            }}
-            appearance={{ size: 'small', margin: 'none' }}
+          <PermissionsLabel
+            permission={role}
+            name={formattedRole}
+            inherited={asterisk}
           />
           <FormattedMessage {...roleDescriptionMessage} />
         </span>
       </Checkbox>
     ),
-    [
-      asterisk,
-      disabled,
-      formatMessage,
-      role,
-      roleDescriptionMessage,
-      roleNameMessage,
-    ],
+    [asterisk, disabled, role, roleDescriptionMessage, formattedRole],
   );
+
+  const tooltipText =
+    domainId !== ROOT_DOMAIN_ID && formattedRole === 'Root'
+      ? MSG.tooltipNoRootDomainSelected
+      : MSG.tooltipNoPermissionsText;
 
   return disabled ? (
     <Popover
@@ -103,7 +113,7 @@ const PermissionManagementCheckbox = ({ asterisk, disabled, role }: Props) => {
       content={() => (
         <div className={styles.popoverContent}>
           <FormattedMessage
-            {...MSG.tooltipNoPermissionsText}
+            {...tooltipText}
             values={{ roleName: formatMessage(roleNameMessage).toLowerCase() }}
           />
         </div>
