@@ -6,7 +6,7 @@ import { SimpleMessageValues } from '~types/index';
 export { default as NavBar } from './NavBar';
 export { default as SimpleNav } from './SimpleNav';
 export { default as Plain } from './Plain';
-export { default as Complex } from './Complex';
+export { default as Default } from './Default';
 
 // Use with caution
 export { default as HistoryNavigation } from './HistoryNavigation';

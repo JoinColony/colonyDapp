@@ -6,16 +6,16 @@ import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
 import SimpleNav from '../SimpleNav';
 import HistoryNavigation from '../HistoryNavigation';
 
-import styles from './Complex.css';
+import styles from './Default.css';
 
 interface Props {
   children: ReactNode;
   routeProps?: RouteComponentProps;
 }
 
-const displayName = 'pages.Complex';
+const displayName = 'pages.Default';
 
-const Complex = ({
+const Default = ({
   children,
   routeProps: {
     hasBackLink = true,
@@ -57,6 +57,6 @@ const Complex = ({
   );
 };
 
-Complex.displayName = displayName;
+Default.displayName = displayName;
 
-export default Complex;
+export default Default;
