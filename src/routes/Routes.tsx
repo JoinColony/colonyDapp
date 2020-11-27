@@ -217,10 +217,11 @@ const Routes = () => {
           exact
           path={MEMBERS_ROUTE}
           component={ColonyMembers}
-          layout={NavBar}
+          layout={Complex}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: true,
           })}
         />
       </Switch>
