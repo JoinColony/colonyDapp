@@ -38,12 +38,18 @@ interface Props {
    * a custom handler can be used i.e. switching to another wizard step
    */
   customHandler?: () => boolean;
+
+  /*
+   * If set, overwrite the default main className
+   */
+  className?: string;
 }
 
 const HistoryNavigation = ({
   backRoute,
   backText,
   backTextValues,
+  className,
   customHandler,
 }: Props) => {
   const { formatMessage } = useIntl();
@@ -70,7 +76,7 @@ const HistoryNavigation = ({
   }
   const iconText = formatMessage(MSG.backHistoryLink);
   return (
-    <div className={styles.main}>
+    <div className={className || styles.main}>
       {backRoute ? (
         <NavLink to={backRoute} className={styles.back}>
           <Icon

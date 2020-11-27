@@ -17,7 +17,7 @@ import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
 import LevelEdit from '~dashboard/LevelEdit';
-import { NavBar, Plain, SimpleNav } from '~pages/RouteLayouts/index';
+import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
 import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
@@ -148,7 +148,7 @@ const Routes = () => {
         <AlwaysAccesibleRoute
           path={LANDING_PAGE_ROUTE}
           component={LadingPage}
-          layout={SimpleNav}
+          layout={Default}
           routeProps={{
             hasBackLink: false,
           }}
@@ -161,7 +161,7 @@ const Routes = () => {
             COLONY_EXTENSIONS_ROUTE,
           ]}
           component={ColonyHome}
-          layout={SimpleNav}
+          layout={Default}
           routeProps={{
             hasBackLink: false,
           }}
@@ -217,10 +217,11 @@ const Routes = () => {
           exact
           path={MEMBERS_ROUTE}
           component={ColonyMembers}
-          layout={NavBar}
+          layout={Default}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: false,
           })}
         />
       </Switch>

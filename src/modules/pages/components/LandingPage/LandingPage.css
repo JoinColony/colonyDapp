@@ -1,20 +1,4 @@
 .main {
-  display: flex;
-  height: 100%;
-}
-
-.coloniesList {
-  flex: 0 0 auto;
-  width: 50px;
-  border-right: 1px solid var(--temp-grey-13);
-}
-
-.contentWrapper {
-  flex: 1 1 auto;
-  width: 100%;
-}
-
-.content {
   /*
    * @NOTE Center vertically and horizontally
    * Man... back in the IE6 days this was a pain to actually get working

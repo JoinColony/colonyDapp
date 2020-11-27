@@ -8,7 +8,6 @@ import Alert from '~core/Alert';
 import { DialogActionButton } from '~core/Button';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
-import SubscribedColoniesList from '~dashboard/SubscribedColoniesList';
 import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 
@@ -167,9 +166,6 @@ const ColonyHome = ({ match, location }: Props) => {
 
   return (
     <div className={styles.main}>
-      <div className={styles.colonyList}>
-        <SubscribedColoniesList />
-      </div>
       <div className={styles.mainContentGrid}>
         <aside className={styles.leftAside}>
           <ColonyTitle colony={colony} />
@@ -207,7 +203,7 @@ const ColonyHome = ({ match, location }: Props) => {
           <ColonyMembers colony={colony} />
         </aside>
       </div>
-      {mustUpgradeColony && (
+      {!!mustUpgradeColony && (
         <div className={styles.upgradeBannerContainer}>
           <Alert
             appearance={{

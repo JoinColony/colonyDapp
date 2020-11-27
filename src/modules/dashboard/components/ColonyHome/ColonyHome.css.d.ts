@@ -1,5 +1,4 @@
 export const main: string;
-export const colonyList: string;
 export const mainContentGrid: string;
 export const leftAside: string;
 export const leftAsideNav: string;
