@@ -1,5 +1,5 @@
 import React, { FC, useState, useMemo, useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 
@@ -38,6 +38,10 @@ const MSG = defineMessages({
   labelFilter: {
     id: 'dashboard.Members.labelFilter',
     defaultMessage: 'Filter',
+  },
+  failedToFetch: {
+    id: 'dashboard.Members.failedToFetch',
+    defaultMessage: "Could not fetch the colony's members",
   },
 });
 
@@ -155,10 +159,6 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
     );
   }
 
-  /*
-   * @TODO Handle data not loaded case
-   */
-
   const members: Member[] = skelethonUsers.map((user) => {
     const {
       profile: { walletAddress },
@@ -206,14 +206,18 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
           />
         </Form>
       </div>
-      <MembersList<Member>
-        colonyAddress={colony.colonyAddress}
-        extraItemContent={({ roles, directRoles }) => (
-          <UserPermissions roles={roles} directRoles={directRoles} />
-        )}
-        domainId={selectedDomainId}
-        users={members}
-      />
+      {skelethonUsers.length ? (
+        <MembersList<Member>
+          colonyAddress={colony.colonyAddress}
+          extraItemContent={({ roles, directRoles }) => (
+            <UserPermissions roles={roles} directRoles={directRoles} />
+          )}
+          domainId={selectedDomainId}
+          users={members}
+        />
+      ) : (
+        <FormattedMessage {...MSG.failedToFetch} />
+      )}
     </div>
   );
 };
