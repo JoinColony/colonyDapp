@@ -28,11 +28,13 @@ const UserPermissions = ({ roles, directRoles }: Props) => {
   const [headRole, ...restRoles] = sortedRoles;
   return (
     <div className={styles.main}>
-      <PermissionsLabel
-        permission={headRole}
-        key={headRole}
-        inherited={!directRoles.includes(headRole)}
-      />
+      {headRole && (
+        <PermissionsLabel
+          permission={headRole}
+          key={headRole}
+          inherited={!directRoles.includes(headRole)}
+        />
+      )}
       {restRoles.map((role) => (
         <PermissionsLabel
           permission={role}
