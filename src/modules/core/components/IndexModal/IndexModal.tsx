@@ -4,24 +4,25 @@ import { MessageDescriptor } from 'react-intl';
 import Dialog, { DialogProps } from '~core/Dialog';
 import Heading from '~core/Heading';
 import styles from './IndexModal.css';
+import IndexModalItem from './IndexModalItem';
 
 const displayName = 'core.IndexModal';
 
 interface Items {
-  title: MessageDescriptor,
-  description: MessageDescriptor,
-  icon: string,
-  comingSoon?: boolean,
+  title: MessageDescriptor;
+  description: MessageDescriptor;
+  icon: string;
+  comingSoon?: boolean;
   onClick?: () => void;
 }
 
 interface Props extends DialogProps {
   items: Items[];
-  title: string;
+  title: MessageDescriptor;
   back?: () => void;
 }
 
-const IndexModal = ({ title, cancel }: Props) => {
+const IndexModal = ({ title, cancel, items }: Props) => {
   return (
     <Dialog cancel={cancel}>
       <div className={styles.header}>
@@ -36,6 +37,12 @@ const IndexModal = ({ title, cancel }: Props) => {
         />
       </div>
       <div className={styles.content}>
+        {items.map(item => (
+          <IndexModalItem
+            {...item}
+            key={item.icon}
+          />
+        ))}
       </div>
     </Dialog>
   );

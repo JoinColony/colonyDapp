@@ -1,10 +1,8 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import Dialog, { DialogProps } from '~core/Dialog';
-import Heading from '~core/Heading';
-import ColonyActionsDialogItem from './ColonyActionsDialogItem';
-import styles from './ColonyActionsDialog.css';
+import { DialogProps } from '~core/Dialog';
+import IndexModal from '~core/IndexModal';
 
 const MSG = defineMessages({
   title: {
@@ -56,49 +54,42 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ColonyActionsDialog';
 
-const ColonyActionsDialog = ({ cancel }: DialogProps) => {
+const ColonyActionsDialog = ({ cancel, close }: DialogProps) => {
+  const items = [
+    {
+      title: MSG.createExpenditure,
+      description: MSG.createExpenditureDesc,
+      icon: "emoji-bag-money-sign",
+    },
+    {
+      title: MSG.manageFunds,
+      description: MSG.manageFundsDesc,
+      icon: "emoji-money-wings",
+    },
+    {
+      title: MSG.manageDomains,
+      description: MSG.manageDomainsDesc,
+      icon: "emoji-crane",
+    },
+    {
+      title: MSG.smite,
+      description: MSG.smiteDesc,
+      icon: "emoji-firebolt",
+      comingSoon: true,
+    },
+    {
+      title: MSG.advanced,
+      description: MSG.advancedDesc,
+      icon: "emoji-smiley-nerd",
+    },
+  ]
   return (
-    <Dialog cancel={cancel}>
-      <div className={styles.header}>
-        <Heading
-          appearance={{
-            margin: 'none',
-            size: 'medium',
-            weight: 'bold',
-            theme: 'dark',
-          }}
-          text={MSG.title}
-        />
-      </div>
-      <div className={styles.content}>
-        <ColonyActionsDialogItem
-          title={MSG.createExpenditure}
-          description={MSG.createExpenditureDesc}
-          icon="emoji-bag-money-sign"
-        />
-        <ColonyActionsDialogItem
-          title={MSG.manageFunds}
-          description={MSG.manageFundsDesc}
-          icon="emoji-money-wings"
-        />
-        <ColonyActionsDialogItem
-          title={MSG.manageDomains}
-          description={MSG.manageDomainsDesc}
-          icon="emoji-crane"
-        />
-        <ColonyActionsDialogItem
-          title={MSG.smite}
-          description={MSG.smiteDesc}
-          icon="emoji-firebolt"
-          disabled
-        />
-        <ColonyActionsDialogItem
-          title={MSG.advanced}
-          description={MSG.advancedDesc}
-          icon="emoji-smiley-nerd"
-        />
-      </div>
-    </Dialog>
+    <IndexModal
+      cancel={cancel}
+      close={close}
+      title={MSG.title}
+      items={items}
+    />
   );
 };
 
