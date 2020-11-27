@@ -81,6 +81,8 @@ const PermissionManagementDialog = ({
     },
   });
 
+  const subscribedUsers = colonySubscribedUsers?.colony.subscribedUsers || [];
+
   const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
   });
@@ -161,10 +163,6 @@ const PermissionManagementDialog = ({
     colonyData.colony.domains.find(
       ({ ethDomainId }) => ethDomainId === selectedDomainId,
     );
-
-  const {
-    colony: { subscribedUsers },
-  } = colonySubscribedUsers;
 
   const members: Member[] = subscribedUsers.map((user) => {
     const {
