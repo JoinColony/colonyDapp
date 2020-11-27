@@ -1,6 +1,6 @@
 import React, { FC, useState, useMemo, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import { ColonyRole } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 
 import MembersList from '~core/MembersList';
@@ -11,7 +11,11 @@ import { Select, Form } from '~core/Fields';
 
 import { getAllUserRolesForDomain } from '../../../transformers';
 import { useTransformer } from '~utils/hooks';
-import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
+import {
+  AnyUser,
+  Colony,
+  useColonyMembersWithReputationQuery,
+} from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   ALLDOMAINS_DOMAIN_SELECTION,
@@ -48,27 +52,64 @@ type Member = AnyUser & {
 
 const displayName = 'dashboard.Members';
 
-const Members = ({ colony }: Props) => {
+const Members = ({ colony: { colonyAddress }, colony }: Props) => {
   const [selectedDomainId, setSelectedDomainId] = useState<number>(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
+
   const {
-    data: colonySubscribedUsers,
-    loading: loadingColonySubscribedUsers,
-  } = useColonySubscribedUsersQuery({
+    data,
+    loading: loadingColonyMembers,
+  } = useColonyMembersWithReputationQuery({
     variables: {
-      colonyAddress: colony.colonyAddress,
+      colonyAddress,
+      domainId: selectedDomainId,
     },
   });
 
+  /*
+   * @NOTE Skelethon Users Array
+   *
+   * This is just  an array of user "profiles" that only contain the user's address.
+   * This will be passed down to `MembersListItem` where the final component will do
+   * the actual "full" profile fetching.
+   *
+   * We had to resort to this because otherwise we run into hook callback "hell" while
+   * trying to fetch user profiles in a queue for an array of addresses.
+   *
+   * The opposite is also not possible, to fetch all profiles at once using a query, since
+   * this time we need only the members in the colony that have reputation, and that comes
+   * from the reputation oracle, which will just return us a list of addresses (which can
+   * or cannot be subscribers to the colony).
+   */
+  const skelethonUsers = useMemo(() => {
+    if (!data || !data.colonyMembersWithReputation) {
+      return [];
+    }
+    return data.colonyMembersWithReputation.map((walletAddress) => ({
+      id: walletAddress,
+      profile: { walletAddress },
+    }));
+  }, [data]);
+
   const domainRoles = useTransformer(getAllUserRolesForDomain, [
     colony,
-    selectedDomainId,
+    /*
+     * If we have "All Domains" selected show the same permissions as on "Root"
+     */
+    selectedDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
+      ? ROOT_DOMAIN_ID
+      : selectedDomainId,
   ]);
 
   const directDomainRoles = useTransformer(getAllUserRolesForDomain, [
     colony,
-    selectedDomainId,
+    /*
+     * If we have "All Domains" selected show the same permissions as on "Root"
+     */
+    selectedDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
+      ? ROOT_DOMAIN_ID
+      : selectedDomainId,
     true,
   ]);
 
@@ -88,9 +129,6 @@ const Members = ({ colony }: Props) => {
   );
 
   const domainRolesArray = useMemo(() => {
-    if (selectedDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
-      return [];
-    }
     return domainRoles
       .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
       .filter(({ roles }) => !!roles.length)
@@ -104,9 +142,9 @@ const Members = ({ colony }: Props) => {
           directRoles: directUserRoles ? directUserRoles.roles : [],
         };
       });
-  }, [directDomainRoles, domainRoles, selectedDomainId]);
+  }, [directDomainRoles, domainRoles]);
 
-  if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
+  if (loadingColonyMembers) {
     return (
       <div className={styles.main}>
         <SpinnerLoader
@@ -117,11 +155,11 @@ const Members = ({ colony }: Props) => {
     );
   }
 
-  const {
-    colony: { subscribedUsers },
-  } = colonySubscribedUsers;
+  /*
+   * @TODO Handle data not loaded case
+   */
 
-  const members: Member[] = subscribedUsers.map((user) => {
+  const members: Member[] = skelethonUsers.map((user) => {
     const {
       profile: { walletAddress },
     } = user;
@@ -152,7 +190,7 @@ const Members = ({ colony }: Props) => {
           appearance={{ size: 'medium', theme: 'dark' }}
         />
         <Form
-          initialValues={{ filter: COLONY_TOTAL_BALANCE_DOMAIN_ID.toString() }}
+          initialValues={{ filter: selectedDomainId.toString() }}
           onSubmit={() => {}}
         >
           <Select
@@ -173,7 +211,7 @@ const Members = ({ colony }: Props) => {
         extraItemContent={({ roles, directRoles }) => (
           <UserPermissions roles={roles} directRoles={directRoles} />
         )}
-        domainId={undefined}
+        domainId={selectedDomainId}
         users={members}
       />
     </div>
