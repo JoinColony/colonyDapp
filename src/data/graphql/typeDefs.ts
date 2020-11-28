@@ -23,6 +23,7 @@ export default gql`
     from: String
     to: String
     status: Int
+    event: NetworkEvent!
   }
 
   input NetworkContractsInput {
@@ -146,7 +147,7 @@ export default gql`
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!
-    transaction(transactionHash: String!): Transaction!
+    transaction(transactionHash: String!, colonyAddress: String!): Transaction!
   }
 
   extend type Mutation {

@@ -1139,6 +1139,7 @@ export type QueryTokensArgs = {
 
 export type QueryTransactionArgs = {
   transactionHash: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1355,6 +1356,7 @@ export type Transaction = {
   from?: Maybe<Scalars['String']>;
   to?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['Int']>;
+  event: NetworkEvent;
 };
 
 export type NetworkContractsInput = {
@@ -2411,10 +2413,14 @@ export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, '
 
 export type TransactionQueryVariables = Exact<{
   transactionHash: Scalars['String'];
+  colonyAddress: Scalars['String'];
 }>;
 
 
-export type TransactionQuery = { transaction: Pick<Transaction, 'hash' | 'from' | 'to' | 'status'> };
+export type TransactionQuery = { transaction: (
+    Pick<Transaction, 'hash' | 'from' | 'to' | 'status'>
+    & { event: FullNetworkEventFragment }
+  ) };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -6432,15 +6438,18 @@ export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContra
 export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
 export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
 export const TransactionDocument = gql`
-    query Transaction($transactionHash: String!) {
-  transaction(transactionHash: $transactionHash) @client {
+    query Transaction($transactionHash: String!, $colonyAddress: String!) {
+  transaction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
     hash
     from
     to
     status
+    event {
+      ...FullNetworkEvent
+    }
   }
 }
-    `;
+    ${FullNetworkEventFragmentDoc}`;
 
 /**
  * __useTransactionQuery__
@@ -6455,6 +6464,7 @@ export const TransactionDocument = gql`
  * const { data, loading, error } = useTransactionQuery({
  *   variables: {
  *      transactionHash: // value for 'transactionHash'
+ *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */

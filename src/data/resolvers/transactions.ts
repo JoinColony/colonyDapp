@@ -218,8 +218,15 @@ export const transactionResolvers = ({
   colonyManager: { networkClient },
 }: Required<Context>): Resolvers => ({
   Query: {
-    async transaction(_, { transactionHash }) {
+    async transaction(_, { transactionHash, colonyAddress }) {
       const { provider } = networkClient;
+      const colonyClient = await networkClient.getColonyClient(colonyAddress);
+      /*
+       * @TODO Optimze! Optimize! Optimize!
+       * We need to find a way to fetch specific events related to transaction
+       * As the way it's currently implement is not scalable at all...
+       */
+      const colonyEvents = await getColonyAllEvents(colonyClient);
       const {
         transactionHash: hash,
         from,
@@ -235,6 +242,10 @@ export const transactionResolvers = ({
         from,
         to,
         status,
+        event: colonyEvents.find(
+          ({ hash: eventTransactionHash }) =>
+            eventTransactionHash === transactionHash,
+        ),
       };
     },
   },
