@@ -581,3 +581,10 @@ query NetworkContracts {
     feeInverse
   }
 }
+
+query Transaction($transactionHash: String!) {
+  transaction(transactionHash: $transactionHash) @client {
+    hash
+    from
+  }
+}

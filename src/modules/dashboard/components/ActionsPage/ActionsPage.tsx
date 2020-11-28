@@ -7,6 +7,7 @@ import TransactionHash from './TransactionHash';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
 
+import { useTransactionQuery } from '~data/index';
 import { STATUS } from './types';
 
 import styles from './ActionsPage.css';
@@ -25,6 +26,11 @@ const ActionsPage = () => {
     transactionHash?: string;
   }>();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data } = useTransactionQuery({
+    variables: { transactionHash: transactionHash || '' },
+  });
+
   const { Decorate } = new TextDecorator({
     username: (usernameWithAtSign) => (
       <UserMention username={usernameWithAtSign.slice(1)} />
@@ -37,7 +43,12 @@ const ActionsPage = () => {
         <div className={styles.content}>
           <Heading
             text={MSG.genericAction}
-            textValues={{ user: <Decorate>@username</Decorate> }}
+            textValues={{
+              /*
+               * @TODO Add proper username
+               */
+              user: <Decorate key="@username">@username</Decorate>,
+            }}
             appearance={{
               size: 'medium',
               weight: 'medium',

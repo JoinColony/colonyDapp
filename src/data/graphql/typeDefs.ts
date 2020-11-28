@@ -18,6 +18,11 @@ export default gql`
     networkId: Int
   }
 
+  type Transaction {
+    hash: String
+    from: String
+  }
+
   input NetworkContractsInput {
     version: String
     feeInverse: String
@@ -139,6 +144,7 @@ export default gql`
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!
+    transaction(transactionHash: String!): Transaction!
   }
 
   extend type Mutation {
