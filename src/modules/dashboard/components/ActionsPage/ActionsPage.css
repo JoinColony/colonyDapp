@@ -1,3 +1,31 @@
 .main {
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  /*
+   * @NOTE On specs
+   *
+   * The specs designed this for 1440. On this resolution it looks exactly as spec'd.
+   * But as you widen the view port more and more the offset will blur out more and more
+   * and it will start to look centered (due to the percentage margins).
+   *
+   * This is not a bug, this is by design.
+   */
+  margin: 90px 13.19% 90px 24.3%;
+  width: 900px;
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.main h3 {
+  line-height: 24px;
+}
+
+.content {
+  margin-top: 17px;
+  width: 460px;
+}
+
+.details {
+  width: 340px;
 }
