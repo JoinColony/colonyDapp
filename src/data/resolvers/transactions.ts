@@ -220,10 +220,21 @@ export const transactionResolvers = ({
   Query: {
     async transaction(_, { transactionHash }) {
       const { provider } = networkClient;
-      const { hash, from } = await provider.getTransaction(transactionHash);
+      const {
+        transactionHash: hash,
+        from,
+        to,
+        /*
+         * @NOTE I have no idea if we can rely on the `status` return values
+         * as that is only available for post-byznatium forks
+         */
+        status,
+      } = await provider.getTransactionReceipt(transactionHash);
       return {
         hash,
         from,
+        to,
+        status,
       };
     },
   },

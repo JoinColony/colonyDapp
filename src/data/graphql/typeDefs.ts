@@ -21,6 +21,8 @@ export default gql`
   type Transaction {
     hash: String
     from: String
+    to: String
+    status: Int
   }
 
   input NetworkContractsInput {

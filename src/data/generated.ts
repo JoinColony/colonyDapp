@@ -1353,6 +1353,8 @@ export type LoggedInUser = {
 export type Transaction = {
   hash?: Maybe<Scalars['String']>;
   from?: Maybe<Scalars['String']>;
+  to?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['Int']>;
 };
 
 export type NetworkContractsInput = {
@@ -2412,7 +2414,7 @@ export type TransactionQueryVariables = Exact<{
 }>;
 
 
-export type TransactionQuery = { transaction: Pick<Transaction, 'hash' | 'from'> };
+export type TransactionQuery = { transaction: Pick<Transaction, 'hash' | 'from' | 'to' | 'status'> };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -6434,6 +6436,8 @@ export const TransactionDocument = gql`
   transaction(transactionHash: $transactionHash) @client {
     hash
     from
+    to
+    status
   }
 }
     `;

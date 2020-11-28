@@ -586,5 +586,7 @@ query Transaction($transactionHash: String!) {
   transaction(transactionHash: $transactionHash) @client {
     hash
     from
+    to
+    status
   }
 }
