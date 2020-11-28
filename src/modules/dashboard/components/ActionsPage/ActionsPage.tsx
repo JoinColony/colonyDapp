@@ -23,7 +23,7 @@ const MSG = defineMessages({
   genericAction: {
     id: 'dashboard.ActionsPage.genericAction',
     defaultMessage: `{name, select,
-      false {Generic Action}
+      false {Unknown Transaction}
       other {{name}}
     } {user, select,
       false {}
@@ -200,7 +200,6 @@ const ActionsPage = () => {
           {/*
            * @TODO Add in DEV-45
            */}
-          Details component goes here
         </div>
       </div>
     </div>

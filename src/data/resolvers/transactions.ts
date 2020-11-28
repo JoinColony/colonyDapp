@@ -242,10 +242,11 @@ export const transactionResolvers = ({
         from,
         to,
         status,
-        event: colonyEvents.find(
-          ({ hash: eventTransactionHash }) =>
-            eventTransactionHash === transactionHash,
-        ),
+        event:
+          colonyEvents.find(
+            ({ hash: eventTransactionHash }) =>
+              eventTransactionHash === transactionHash,
+          ) || null,
       };
     },
   },
