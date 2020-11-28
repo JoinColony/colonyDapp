@@ -7,6 +7,8 @@ import TransactionHash from './TransactionHash';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import Button from '~core/Button';
+import NakedMoleImage from '../../../../img/naked-mole.svg';
 
 import {
   useTransactionLazyQuery,
@@ -33,6 +35,14 @@ const MSG = defineMessages({
   loading: {
     id: 'dashboard.ActionsPage.loading',
     defaultMessage: `Loading Transaction`,
+  },
+  transactionNotFound: {
+    id: 'dashboard.ActionsPage.transactionNotFound',
+    defaultMessage: `Ooops, transaction not found`,
+  },
+  returnToColony: {
+    id: 'dashboard.ActionsPage.returnToColony',
+    defaultMessage: `Return to colony`,
   },
 });
 
@@ -141,20 +151,44 @@ const ActionsPage = () => {
     ),
   });
 
-  if (!isTransactionFormat(transactionHash)) {
-    return <div>Not a valid transaction</div>;
-  }
-
-  if (
-    !colonyName ||
-    (reverseENSAddress as SuperSpecificColonyAddress) instanceof Error ||
-    transactionDataError
-  ) {
-    return <Redirect to={NOT_FOUND_ROUTE} />;
+  if (!isTransactionFormat(transactionHash) || transactionDataError) {
+    return (
+      <div className={styles.main}>
+        <div className={styles.notFoundContainer}>
+          <NakedMoleImage />
+          <Heading
+            text={MSG.transactionNotFound}
+            appearance={{
+              size: 'medium',
+              weight: 'medium',
+              theme: 'dark',
+            }}
+          />
+          <Button
+            title={MSG.returnToColony}
+            text={MSG.returnToColony}
+            linkTo={`/colony/${colonyName}`}
+            appearance={{
+              theme: 'primary',
+              size: 'large',
+            }}
+          />
+          <div className={styles.divider} />
+          <TransactionHash transactionHash={transactionHash || ''} />
+        </div>
+      </div>
+    );
   }
 
   if (transactionDataLoading || userDataLoading || !transactionData) {
     return <LoadingTemplate loadingText={MSG.loading} />;
+  }
+
+  if (
+    !colonyName ||
+    (reverseENSAddress as SuperSpecificColonyAddress) instanceof Error
+  ) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   const {
@@ -186,13 +220,13 @@ const ActionsPage = () => {
             }}
           />
           {!event && hash && (
-            /*
-             * @TODO This will only be shown if the transaction is not an "action"
-             * So we'll need a way to determine that via events
-             */
             <TransactionHash
               transactionHash={hash}
-              status={status && STATUS_MAP[status]}
+              /*
+               * @NOTE Otherwise it interprets 0 as false, rather then a index
+               * Typecasting it doesn't work as well
+               */
+              status={typeof status === 'number' && STATUS_MAP[status]}
             />
           )}
         </div>

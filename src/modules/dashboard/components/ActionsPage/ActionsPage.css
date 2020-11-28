@@ -40,3 +40,29 @@
 .details {
   width: 340px;
 }
+
+.notFoundContainer {
+  margin: 180px auto 0 auto;
+  width: 340px;
+  text-align: center;
+}
+
+.notFoundContainer svg {
+  /*
+   * @NOTE Image is +260px larger than the container
+   * -130px centers the image with the rest of the elements
+   */
+  margin: 0 0 20px -130px;
+  width: 600px;
+}
+
+.notFoundContainer h3 {
+  line-height: 24px;
+}
+
+.divider {
+  margin: 40px 0 30px;
+  height: 1px;
+  width: 100%;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
