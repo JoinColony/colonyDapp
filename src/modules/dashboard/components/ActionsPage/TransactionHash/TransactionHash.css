@@ -1,0 +1,39 @@
+@value transactionShadow: inset 0px 2px 4px color-mod(black alpha(7%));
+
+.main {
+  display: flex;
+  margin-bottom: 20px;
+  padding: 10px 60px 0 27px;
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 8px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.transactionHash {
+  margin-bottom: 8px;
+  padding: 11px;
+  border-radius: var(--radius-normal);
+  border: 1px solid var(--temp-grey-blue-4);
+  background-color: color-mod(var(--temp-grey-blue-4) alpha(33%));
+  font-family: var(--family-techie);
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+  box-shadow: transactionShadow;
+}
+
+.status {
+  flex: 0 0 auto;
+}
+
+.transaction {
+  flex: 1 1 auto;
+  padding: 2px 0 0 6px;
+}

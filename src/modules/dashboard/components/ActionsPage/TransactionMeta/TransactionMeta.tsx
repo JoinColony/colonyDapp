@@ -4,6 +4,7 @@ import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
+import { STATUS } from '../types';
 
 import styles from './TransactionMeta.css';
 
@@ -27,13 +28,7 @@ const displayName = 'dashboard.ActionsPage.TransactionMeta';
 interface Props {
   createdAt?: Date;
   transactionHash?: string;
-  /*
-   * @NOTE Maybe we need to create a general enum for tx states
-   *
-   * But we won't know until everything is done
-   * But if that's the case, we need to change this to that enum.
-   */
-  status?: 'failed' | 'pending';
+  status?: STATUS;
 }
 
 const TransactionMeta = ({ createdAt, transactionHash, status }: Props) => (
