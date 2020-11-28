@@ -1,0 +1,44 @@
+.main {
+  display: inline-block;
+
+  /*
+   * @NOTE This is a bit hacky
+   *
+   * This basically adds a small wrapper so that the tooltip displays with the
+   * proper margin, and with the nicely placed arrow.
+   *
+   * We really need to fix that arrow, as it's getting hard and harder to work with.
+   */
+  padding: 8px 0;
+  width: 26px;
+}
+
+.statusTheme {
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: var(--colony-blue);
+  cursor: default;
+}
+
+.tooltip {
+  padding: 8px 4px;
+}
+
+.themeFailed {
+  composes: statusTheme;
+  background-color: var(--pink);
+}
+
+.themePending {
+  composes: statusTheme;
+  background-color: var(--golden);
+}
+
+.themeSucceeded {
+  composes: statusTheme;
+  border-radius: 0;
+  background-color: var(--primary);
+  transform: rotate(45deg);
+}
