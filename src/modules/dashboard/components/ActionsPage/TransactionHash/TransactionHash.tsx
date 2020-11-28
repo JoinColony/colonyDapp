@@ -34,6 +34,7 @@ const TransactionHash = ({
         <TransactionMeta
           transactionHash={transactionHash}
           createdAt={new Date()}
+          status={status === STATUS.Failed ? status : undefined}
         />
       )}
     </div>
