@@ -1,0 +1,36 @@
+.main {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.items {
+  display: inline-block;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--grey-dark) alpha(65%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.items::after {
+  display: inline-block;
+  margin: 0 12px;
+  height: 12px;
+  width: 1px;
+  vertical-align: bottom;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
+  content: '';
+}
+
+.items:last-child::after {
+  display: none;
+}
+
+.blockscoutLink {
+  color: color-mod(var(--grey-dark) alpha(65%));
+}
+
+.blockscoutLink:hover {
+  text-decoration: underline;
+  color: var(--colony-blue);
+}
