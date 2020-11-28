@@ -6,6 +6,7 @@ import Heading from '~core/Heading';
 import TransactionHash from './TransactionHash';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
+import LoadingTemplate from '~pages/LoadingTemplate';
 
 import { useTransactionLazyQuery, useUserLazyQuery } from '~data/index';
 import { isTransactionFormat } from '~utils/web3';
@@ -20,6 +21,10 @@ const MSG = defineMessages({
       false {}
       other {by {user}}
     }`,
+  },
+  loading: {
+    id: 'dashboard.ActionsPage.loading',
+    defaultMessage: `Loading Transaction`,
   },
 });
 
@@ -46,10 +51,13 @@ const ActionsPage = () => {
 
   const [
     fetchTransction,
-    { data: transactionData },
+    { data: transactionData, loading: transactionDataLoading },
   ] = useTransactionLazyQuery();
 
-  const [fetchUser, { data: userData }] = useUserLazyQuery();
+  const [
+    fetchUser,
+    { data: userData, loading: userDataLoading },
+  ] = useUserLazyQuery();
 
   useEffect(() => {
     if (transactionHash && isTransactionFormat(transactionHash)) {
@@ -79,6 +87,10 @@ const ActionsPage = () => {
 
   if (!isTransactionFormat(transactionHash) || !transactionData) {
     return <div>Not a valid transaction</div>;
+  }
+
+  if (transactionDataLoading || userDataLoading) {
+    return <LoadingTemplate loadingText={MSG.loading} />;
   }
 
   const {
