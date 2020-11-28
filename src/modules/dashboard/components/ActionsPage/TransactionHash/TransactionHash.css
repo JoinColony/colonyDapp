@@ -28,6 +28,7 @@
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
   box-shadow: transactionShadow;
+  overflow-wrap: break-word;
 }
 
 .status {
