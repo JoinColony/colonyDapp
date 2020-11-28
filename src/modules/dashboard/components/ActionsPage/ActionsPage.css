@@ -1,4 +1,11 @@
 .main {
+  padding: 90px 0;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+
+.container {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -12,13 +19,17 @@
    *
    * This is not a bug, this is by design.
    */
-  margin: 90px 13.19% 90px 24.3%;
+  margin: 0 13.19% 0 24.3%;
   width: 900px;
   border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .main h3 {
   line-height: 24px;
+}
+
+.main h3 span {
+  font-size: var(--size-medium-l);
 }
 
 .content {
