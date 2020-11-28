@@ -44,6 +44,7 @@ import {
   networkContractsResolvers,
   initialCache as networkContracts,
 } from './resolvers/networkContracts';
+import { transactionResolvers } from './resolvers/transactions';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
@@ -65,6 +66,7 @@ export const resolvers: ResolverFactory[] = [
   taskResolvers,
   tokenResolvers,
   networkContractsResolvers,
+  transactionResolvers,
 ];
 
 // export all the generated types and helpers

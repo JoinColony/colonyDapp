@@ -6,9 +6,11 @@ import {
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { HashZero } from 'ethers/constants';
+import { Resolvers } from '@apollo/client';
 
 import { Transfer, NetworkEvent } from '~data/index';
 import { notUndefined } from '~utils/arrays';
+import { Context } from '~context/index';
 
 export const getColonyAllEvents = async (
   colonyClient: ColonyClient,
@@ -211,3 +213,18 @@ export const getColonyUnclaimedTransfers = async (
 
   return transfers.filter(notUndefined);
 };
+
+export const transactionResolvers = ({
+  colonyManager: { networkClient },
+}: Required<Context>): Resolvers => ({
+  Query: {
+    async transaction(_, { transactionHash }) {
+      const { provider } = networkClient;
+      const { hash, from } = await provider.getTransaction(transactionHash);
+      return {
+        hash,
+        from,
+      };
+    },
+  },
+});
