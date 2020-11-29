@@ -3,11 +3,12 @@ import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
-import TransactionHash from './TransactionHash';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Button from '~core/Button';
+import TransactionHash, { Hash } from './TransactionHash';
+
 import NakedMoleImage from '../../../../img/naked-mole.svg';
 
 import {
@@ -174,7 +175,9 @@ const ActionsPage = () => {
             }}
           />
           <div className={styles.divider} />
-          <TransactionHash transactionHash={transactionHash || ''} />
+          <div className={styles.hashWrapper}>
+            <Hash transactionHash={transactionHash || ''} />
+          </div>
         </div>
       </div>
     );
