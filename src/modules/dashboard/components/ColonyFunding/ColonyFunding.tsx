@@ -61,12 +61,10 @@ const ColonyFunding = ({ match }: Props) => {
         label: { id: 'domain.all' },
       },
       ...sortBy(
-        Object.entries(domains || {})
-          .sort()
-          .map(([domainId, { name }]) => ({
-            label: name,
-            value: domainId.toString(),
-          })),
+        domains.map(({ ethDomainId, name }) => ({
+          label: name,
+          value: ethDomainId.toString(),
+        })),
         ['value'],
       ),
     ];
