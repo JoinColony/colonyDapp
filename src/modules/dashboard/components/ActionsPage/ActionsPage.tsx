@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import TransactionHash from './TransactionHash';
@@ -22,8 +22,8 @@ import { NOT_FOUND_ROUTE } from '~routes/index';
 import styles from './ActionsPage.css';
 
 const MSG = defineMessages({
-  genericAction: {
-    id: 'dashboard.ActionsPage.genericAction',
+  actionTitle: {
+    id: 'dashboard.ActionsPage.actionTitle',
     defaultMessage: `{name, select,
       false {Unknown Transaction}
       other {{name}}
@@ -199,26 +199,27 @@ const ActionsPage = () => {
     <div className={styles.main}>
       <div className={styles.container}>
         <div className={styles.content}>
-          <Heading
-            text={MSG.genericAction}
-            textValues={{
-              user: (() => {
-                if (userData && userData.user && userData.user.profile) {
-                  const { username, walletAddress } = userData.user.profile;
-                  return (
-                    <Decorate key={walletAddress}>{`@${username}`}</Decorate>
-                  );
-                }
-                return false;
-              })(),
-              name: event ? event.name : false,
-            }}
-            appearance={{
-              size: 'medium',
-              weight: 'medium',
-              theme: 'dark',
-            }}
-          />
+          {/*
+           * @NOTE Can't use `Heading` here since it uses `formmatedMessage` internally
+           * for message descriptors, and that doesn't support our complex text values
+           */}
+          <h1 className={styles.heading}>
+            <FormattedMessage
+              {...MSG.actionTitle}
+              values={{
+                user: (() => {
+                  if (userData && userData.user && userData.user.profile) {
+                    const { username, walletAddress } = userData.user.profile;
+                    return (
+                      <Decorate key={walletAddress}>{`@${username}`}</Decorate>
+                    );
+                  }
+                  return false;
+                })(),
+                name: event ? event.name : false,
+              }}
+            />
+          </h1>
           {!event && hash && (
             <TransactionHash
               transactionHash={hash}
