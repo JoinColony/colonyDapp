@@ -24,7 +24,7 @@ interface Props {
   token: ColonyTokens[0] | UserTokens[0];
 }
 
-const displayName = 'admin.Tokens.TokenCard';
+const displayName = 'dashboard.TokenCard';
 
 const MSG = defineMessages({
   nativeToken: {
@@ -32,7 +32,7 @@ const MSG = defineMessages({
     defaultMessage: ' (Native Token)',
   },
   unknownToken: {
-    id: 'admin.TokenCard.unknownToken',
+    id: 'dashboard.TokenCard.unknownToken',
     defaultMessage: 'Unknown Token',
   },
 });

@@ -8,9 +8,9 @@ import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ProfileEdit from '~admin/Profile/ProfileEdit';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
-import Tokens from '~admin/Tokens';
 import Domains from '~admin/Domains';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
+import TokenCardList from '~dashboard/TokenCardList';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { useTransformer } from '~utils/hooks';
 import { Colony, useColonyFromNameQuery, useLoggedInUser } from '~data/index';
@@ -77,7 +77,7 @@ const navigationItems = (
   const tokensTab = {
     id: 2,
     title: MSG.tabTokens,
-    content: <Tokens colony={colony} />,
+    content: <TokenCardList tokens={colony.tokens} />,
   };
   const domainsTab = {
     id: 3,

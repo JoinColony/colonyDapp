@@ -2,12 +2,12 @@ import React from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import CardList from '~core/CardList';
-import { Address } from '~types/index';
 import { ColonyTokens, UserTokens } from '~data/index';
+import { Address } from '~types/index';
 
-import TokenCard from './TokenCard';
-import styles from './TokenList.css';
-import { SpinnerLoader } from '~core/Preloaders';
+import TokenCard from '../TokenCard';
+
+import styles from './TokenCardList.css';
 
 type ValidCols = 'auto' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
@@ -21,23 +21,20 @@ type ColonyOrUserToken = ColonyTokens[0] | UserTokens[0];
 interface Props {
   appearance?: Appearance;
   domainId?: number | string;
-  isLoading: boolean;
   nativeTokenAddress?: Address;
   tokens: ColonyOrUserToken[];
 }
 
-const displayName = 'admin.Tokens.TokenList';
+const displayName = 'dashboard.TokenCardList';
 
-const TokenList = ({
+const TokenCardList = ({
   appearance,
   domainId = ROOT_DOMAIN_ID,
-  isLoading,
   nativeTokenAddress,
   tokens,
 }: Props) => (
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
-      {isLoading && <SpinnerLoader appearance={{ size: 'large' }} />}
       {tokens.map((token) => (
         <div key={token.address}>
           {'balances' in token && (
@@ -56,6 +53,6 @@ const TokenList = ({
   </div>
 );
 
-TokenList.displayName = displayName;
+TokenCardList.displayName = displayName;
 
-export default TokenList;
+export default TokenCardList;
