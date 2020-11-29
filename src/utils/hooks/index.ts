@@ -17,8 +17,6 @@ import { getMainClasses } from '~utils/css';
 
 import { RootStateRecord } from '../../modules/state';
 
-export { useTokenInfo, TokenInfoProvider } from './useTokenInfo';
-
 interface DataFetcher<S> {
   select: S;
   fetch: (...fetchArgs: any[]) => Action<any>;
