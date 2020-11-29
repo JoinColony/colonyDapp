@@ -66,13 +66,17 @@ export type ColonyActionTypes =
     >
   | UniqueActionType<
       ActionTypes.COLONY_MINT_TOKENS,
-      { colonyAddress: Address; amount: BigNumber },
+      {
+        colonyAddress: Address;
+        amount: BigNumber;
+        justification?: string;
+      },
       WithKey
     >
   | ErrorActionType<ActionTypes.COLONY_MINT_TOKENS_ERROR, WithKey>
   | UniqueActionType<
       ActionTypes.COLONY_MINT_TOKENS_SUCCESS,
-      { amount: BigNumber },
+      { amount: BigNumber; justification?: string },
       WithKey
     >
   | UniqueActionType<ActionTypes.COLONY_MINT_TOKENS_SUBMITTED, object, object>
