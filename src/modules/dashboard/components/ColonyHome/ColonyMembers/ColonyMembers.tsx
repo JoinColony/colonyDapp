@@ -55,13 +55,11 @@ const ColonyMembers = ({
     },
   });
 
-  const membersPageRoute = useMemo(() => {
-    const baseRoute = `/colony/${colonyName}/members`;
-    if (currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
-      return baseRoute;
-    }
-    return `${baseRoute}/${currentDomainId}`;
-  }, [currentDomainId, colonyName]);
+  const BASE_MEMBERS_ROUTE = `/colony/${colonyName}/members`;
+  const membersPageRoute =
+    currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
+      ? BASE_MEMBERS_ROUTE
+      : `${BASE_MEMBERS_ROUTE}/${currentDomainId}`;
 
   const avatarsDisplaySplitRules = useMemo(() => {
     if (!members || !members.colonyMembersWithReputation?.length) {
