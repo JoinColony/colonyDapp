@@ -110,7 +110,7 @@ export const colonyResolvers = ({
        * Let say that then, a user aquires some reputation, which, after a time, decays back to zero.
        * That user will be returned in the below query.
        *
-       * Maybe at some point we want to consider filering them out.
+       * Maybe at some point we want to consider filtering them out.
        * But that's for another time.
        */
       return getColonyMembersWithReputation(

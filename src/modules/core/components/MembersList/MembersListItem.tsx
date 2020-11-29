@@ -75,6 +75,10 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     [extraItemContent, user],
   );
 
+  const {
+    profile: { displayName, username },
+  } = userProfile;
+
   return (
     <ListGroupItem>
       {/* Disable, as `role` is conditional */}
@@ -119,20 +123,14 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
           />
         </div>
         <div className={styles.usernameSection}>
-          {userProfile.profile.displayName && (
-            <span
-              className={styles.displayName}
-              title={userProfile.profile.displayName}
-            >
-              {userProfile.profile.displayName}
+          {displayName && (
+            <span className={styles.displayName} title={displayName}>
+              {displayName}
             </span>
           )}
-          {userProfile.profile.username && (
+          {username && (
             <span className={styles.username}>
-              <UserMention
-                hasLink={false}
-                username={userProfile.profile.username}
-              />
+              <UserMention hasLink={false} username={username} />
             </span>
           )}
           <span className={styles.address}>
