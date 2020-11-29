@@ -5,7 +5,7 @@ import { defineMessages } from 'react-intl';
 import Members from '~dashboard/Members';
 import { useColonyFromNameQuery } from '~data/index';
 import styles from './ColonyMembers.css';
-import { TokenInfoProvider } from '~utils/hooks';
+import { TokenInfoProvider } from '~utils/hooks/useTokenInfo';
 import Button from '~core/Button';
 
 const displayName = 'dashboard.ColonyMembers';

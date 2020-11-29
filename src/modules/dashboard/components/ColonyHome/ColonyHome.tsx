@@ -91,9 +91,7 @@ const ColonyHome = ({ match, location }: Props) => {
     Number(queryDomainFilterId),
   );
 
-  const filteredDomainId = domainIdFilter
-    ? domainIdFilter || COLONY_TOTAL_BALANCE_DOMAIN_ID
-    : COLONY_TOTAL_BALANCE_DOMAIN_ID;
+  const filteredDomainId = domainIdFilter || COLONY_TOTAL_BALANCE_DOMAIN_ID;
 
   const {
     data,
@@ -125,6 +123,12 @@ const ColonyHome = ({ match, location }: Props) => {
   /*
    * @NOTE Disabled until we're done with domain filters to prevent lint errors
    * when pushing downstream rebased branches
+   *
+   * I initially was tempted to remove this, as we don't actually need domain data,
+   * just the Id, then I remembered we need to display the domain description in
+   * the sidebar, and it's a good idea to just pass it down from here.
+   *
+   * Anyway this is still needed for DEV-58
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const filteredDomain = colonyDomains
