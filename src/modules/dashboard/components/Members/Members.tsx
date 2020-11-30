@@ -193,6 +193,17 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
   );
 
+  /*
+   * NOTE If we can't find the domain based on the current selected doamain id,
+   * it means that it doesn't exist.
+   * We then fall back to the to the "All Domains" selection
+   *
+   * Another alternative would be to redirect here to the /colony/members route
+   * but that has the annoying side-effect of flickering the loading spinner
+   * a couple of times on the page
+   */
+  const { ethDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID } = selectedDomain || {};
+
   return (
     <div className={styles.main}>
       <div className={styles.titleContainer}>
@@ -206,7 +217,7 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
           appearance={{ size: 'medium', theme: 'dark' }}
         />
         <Form
-          initialValues={{ filter: selectedDomainId.toString() }}
+          initialValues={{ filter: ethDomainId.toString() }}
           onSubmit={() => {}}
         >
           <Select
@@ -228,7 +239,7 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
           extraItemContent={({ roles, directRoles }) => (
             <UserPermissions roles={roles} directRoles={directRoles} />
           )}
-          domainId={selectedDomainId}
+          domainId={ethDomainId}
           users={members}
         />
       ) : (
