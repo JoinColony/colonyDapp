@@ -59,37 +59,32 @@ const ColonyActionsDialog = ({ cancel, close }: DialogProps) => {
     {
       title: MSG.createExpenditure,
       description: MSG.createExpenditureDesc,
-      icon: "emoji-bag-money-sign",
+      icon: 'emoji-bag-money-sign',
     },
     {
       title: MSG.manageFunds,
       description: MSG.manageFundsDesc,
-      icon: "emoji-money-wings",
+      icon: 'emoji-money-wings',
     },
     {
       title: MSG.manageDomains,
       description: MSG.manageDomainsDesc,
-      icon: "emoji-crane",
+      icon: 'emoji-crane',
     },
     {
       title: MSG.smite,
       description: MSG.smiteDesc,
-      icon: "emoji-firebolt",
+      icon: 'emoji-firebolt',
       comingSoon: true,
     },
     {
       title: MSG.advanced,
       description: MSG.advancedDesc,
-      icon: "emoji-smiley-nerd",
+      icon: 'emoji-smiley-nerd',
     },
-  ]
+  ];
   return (
-    <IndexModal
-      cancel={cancel}
-      close={close}
-      title={MSG.title}
-      items={items}
-    />
+    <IndexModal cancel={cancel} close={close} title={MSG.title} items={items} />
   );
 };
 

@@ -27,7 +27,13 @@ const IndexModalItem = ({
   comingSoon,
 }: Props) => {
   return (
-    <div className={`${comingSoon ? styles.disabled : styles.content}`} onClick={onClick}>
+    <div
+      className={`${comingSoon ? styles.disabled : styles.content}`}
+      onClick={onClick}
+      role="button"
+      onKeyPress={onClick}
+      tabIndex={0}
+    >
       <div>
         <Paragraph className={styles.title}>
           <span className={styles.iconTitle}>
