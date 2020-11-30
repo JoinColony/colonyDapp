@@ -46,8 +46,9 @@ const ColonyNavigation = () => {
         text: MSG.linkTextEvents,
       },
       {
+        disabled: true,
         extra: MSG.linkExtraExtensions,
-        linkTo: `/colony/${colonyName}/admin`,
+        linkTo: `/colony/${colonyName}/extensions`,
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,
       },
