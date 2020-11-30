@@ -228,27 +228,58 @@ export const transactionResolvers = ({
     async transaction(_, { transactionHash, colonyAddress }) {
       const { provider } = networkClient;
       const colonyClient = await networkClient.getColonyClient(colonyAddress);
-      const {
-        transactionHash: hash,
-        from,
-        to,
-        status,
-        logs,
-      } = await provider.getTransactionReceipt(transactionHash);
-      const events = logs
-        ?.map((log) => colonyClient.interface.parseLog(log))
-        /*
-         * If the above parser find events that are not part of the colony client
-         * it will return them as `null` so we filter them out
-         */
-        .filter((log) => !!log)
-        .map(({ name, values, topic }) => ({ name, values, topic }));
+
+      /*
+       * Try to get the transaction receipt. If the transaction is mined, you'll
+       * get a return from this call, otherwise, it's null.
+       */
+      const transactionReceipt = await provider.getTransactionReceipt(
+        transactionHash,
+      );
+
+      if (transactionReceipt) {
+        const {
+          transactionHash: hash,
+          from,
+          to,
+          status,
+          logs,
+        } = transactionReceipt;
+        const events = logs
+          ?.map((log) => colonyClient.interface.parseLog(log))
+          /*
+           * If the above parser find events that are not part of the colony client
+           * it will return them as `null` so we filter them out
+           */
+          .filter((log) => !!log)
+          .map(({ name, values, topic }) => ({ name, values, topic }));
+        return {
+          hash,
+          from,
+          to,
+          status,
+          events,
+        };
+      }
+
+      /*
+       * If we don't have a receipt, just get the transaction
+       * This means the transaction is currently mining, so we mark it as "pending"
+       *
+       * We won't have logs until the transaction is mined, so that means we need to
+       * add the transaction as "Unknown"
+       *
+       * Maybe we should inferr something from whether or not the `from` or `to`
+       * addressses have a user profile created. But that might be error prone.
+       */
+      const { hash, from, to } = await provider.getTransaction(transactionHash);
+
       return {
         hash,
         from,
         to,
-        status,
-        events,
+        status: 2,
+        events: null,
       };
     },
   },

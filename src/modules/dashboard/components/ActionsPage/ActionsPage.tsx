@@ -65,18 +65,10 @@ type SuperSpecificColonyAddress = string | Error;
 
 const displayName = 'dashboard.ActionsPage';
 
-/*
- * @TODO We need a decent way of detecting pending transaction
- *
- * Currently we only get these two states back from the chanin, and even so
- * we only get it for post-byzantium forks
- *
- * I think there's a way of looking at the value of `blockNumber` but I need
- * to look into it further
- */
 const STATUS_MAP = {
   0: STATUS.Failed,
   1: STATUS.Succeeded,
+  2: STATUS.Pending,
 };
 
 const ActionsPage = () => {
@@ -265,14 +257,16 @@ const ActionsPage = () => {
               status={typeof status === 'number' && STATUS_MAP[status]}
             />
           )}
-          <ul>
-            <b>Events for the tx:</b>
-            {events.map(({ name, topic }) => (
-              <li key={topic || ''}>
-                {name} - {topic}
-              </li>
-            ))}
-          </ul>
+          {events && (
+            <ul>
+              <b>Events for the tx:</b>
+              {events.map(({ name, topic }) => (
+                <li key={topic || ''}>
+                  {name} - {topic}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className={styles.details}>
           {/*
