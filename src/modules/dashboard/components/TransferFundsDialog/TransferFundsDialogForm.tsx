@@ -82,6 +82,11 @@ const MSG = defineMessages({
     id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.samePot',
     defaultMessage: 'Cannot move to same domain pot',
   },
+  transferIconTitle: {
+    id:
+      'dashboard.TransferFundsDialog.TransferFundsDialogForm.transferIconTitle',
+    defaultMessage: 'Transfer',
+  },
 });
 
 interface Props {
@@ -271,7 +276,7 @@ const TransferFundsDialogForm = ({
           <Icon
             className={styles.transferIcon}
             name="circle-arrow-back"
-            title="Transfer"
+            title={MSG.transferIconTitle}
             appearance={{ size: 'medium' }}
           />
           <Select
@@ -291,7 +296,6 @@ const TransferFundsDialogForm = ({
               appearance={{
                 theme: 'minimal',
                 align: 'right',
-                colorSchema: 'grey',
               }}
               formattingOptions={{
                 delimiter: ',',
@@ -336,6 +340,7 @@ const TransferFundsDialogForm = ({
             appearance={{ resizable: 'vertical', colorSchema: 'grey' }}
             label={MSG.reason}
             name="reason"
+            maxLength={4000}
           />
         </div>
       </DialogSection>

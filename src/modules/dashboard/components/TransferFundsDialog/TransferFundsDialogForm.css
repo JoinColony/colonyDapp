@@ -32,14 +32,14 @@
   position: relative;
   top: -7px;
   justify-self: center;
+}
 
-  & svg {
-    fill: var(--temp-grey-blue-7);
-  }
+.transferIcon svg {
+  fill: var(--temp-grey-blue-7);
 }
 
 .title {
-  font-size: 18px;
+  font-size: var(--size-medium-l);
   line-height: 24px;
   color: var(--dark);
 }
@@ -47,6 +47,6 @@
 .tokenAmount label,
 .domainSelects label,
 .textAreaSection label {
-  font-size: 13px;
+  font-size: var(--size-smallish);
   color: var(--dark);
 }
