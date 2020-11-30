@@ -4,9 +4,9 @@ import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 import { useParams } from 'react-router-dom';
 
+import { AddressZero } from 'ethers/constants';
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
-import { AddressZero } from 'ethers/constants';
 import UserPermissions from '~admin/Permissions/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
@@ -17,7 +17,7 @@ import {
   AnyUser,
   Colony,
   useColonyMembersWithReputationQuery,
-  useUserReputationQuery
+  useUserReputationQuery,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,

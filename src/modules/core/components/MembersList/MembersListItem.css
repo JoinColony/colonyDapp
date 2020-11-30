@@ -43,12 +43,17 @@
   color: reputationColor;
 }
 
-.reputationSection {
+.reputationSection,
+.noReputation {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: 30px;
   width: 65px;
+}
+
+.noReputation {
+  color: reputationColor;
 }
 
 .reputationSection svg {

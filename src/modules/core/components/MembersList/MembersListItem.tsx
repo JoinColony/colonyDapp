@@ -19,6 +19,10 @@ const MSG = defineMessages({
     id: 'MembersList.MembersListItem.starReputationTitle',
     defaultMessage: `User reputation value: {reputation}`,
   },
+  starNoReputationTitle: {
+    id: 'MembersList.MembersListItem.starNoReputationTitle',
+    defaultMessage: `User has no reputation`,
+  },
 });
 
 interface Reputation {
@@ -137,13 +141,15 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={onRowClick ? 0 : undefined}
       >
-        {userPercentageReputation && (
-          <div className={styles.reputationSection}>
-            {userPercentageReputation === ZeroValue.NearZero ? (
-              <div className={styles.reputation}>
-                {userPercentageReputation}%
-              </div>
-            ) : (
+        <div className={styles.reputationSection}>
+          {!userPercentageReputation && (
+            <div className={styles.reputation}>— %</div>
+          )}
+          {userPercentageReputation === ZeroValue.NearZero && (
+            <div className={styles.reputation}>{userPercentageReputation}%</div>
+          )}
+          {userPercentageReputation &&
+            userPercentageReputation !== ZeroValue.NearZero && (
               <Numeral
                 className={styles.reputation}
                 appearance={{ theme: 'primary' }}
@@ -151,17 +157,20 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
                 suffix="%"
               />
             )}
-            <Icon
-              name="star"
-              appearance={{ size: 'extraTiny' }}
-              className={styles.icon}
-              title={MSG.starReputationTitle}
-              titleValues={{
-                reputation: userPercentageReputation,
-              }}
-            />
-          </div>
-        )}
+          <Icon
+            name="star"
+            appearance={{ size: 'extraTiny' }}
+            className={styles.icon}
+            title={
+              userPercentageReputation
+                ? MSG.starReputationTitle
+                : MSG.starNoReputationTitle
+            }
+            titleValues={{
+              reputation: userPercentageReputation,
+            }}
+          />
+        </div>
         <div className={styles.section}>
           <UserAvatar
             size="s"
