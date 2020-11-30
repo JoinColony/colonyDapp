@@ -7,4 +7,5 @@ export const username: string;
 export const address: string;
 export const reputation: string;
 export const reputationSection: string;
+export const noReputation: string;
 export const icon: string;

@@ -1,6 +1,7 @@
 import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 
 import { defineMessages } from 'react-intl';
+import { bigNumberify } from 'ethers/utils';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
 import { AnyUser, useUserReputationQuery, useUser } from '~data/index';
@@ -9,7 +10,6 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
 import MaskedAddress from '~core/MaskedAddress';
 import Numeral from '~core/Numeral';
-import { useTokenInfo } from '~utils/hooks/useTokenInfo';
 import Icon from '~core/Icon';
 
 import styles from './MembersListItem.css';
@@ -19,7 +19,15 @@ const MSG = defineMessages({
     id: 'MembersList.MembersListItem.starReputationTitle',
     defaultMessage: `User reputation value: {reputation}`,
   },
+  starNoReputationTitle: {
+    id: 'MembersList.MembersListItem.starNoReputationTitle',
+    defaultMessage: `User has no reputation`,
+  },
 });
+
+interface Reputation {
+  userReputation: string;
+}
 
 interface Props<U> {
   extraItemContent?: (user: U) => ReactNode;
@@ -28,9 +36,46 @@ interface Props<U> {
   showUserInfo: boolean;
   domainId: number | undefined;
   user: U;
+  totalReputation: Reputation | undefined;
 }
 
+enum ZeroValue {
+  Zero = '0',
+  NearZero = '~0',
+}
+
+type PercentageReputationType = ZeroValue | number | null;
+
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
+const calculatePercentageReputation = (
+  decimalPlaces: number,
+  userReputation?: Reputation,
+  totalReputation?: Reputation,
+): PercentageReputationType => {
+  if (!userReputation || !totalReputation) return null;
+  const userReputationNumber = bigNumberify(userReputation.userReputation);
+  const totalReputationNumber = bigNumberify(totalReputation.userReputation);
+
+  const reputationSafeguard = bigNumberify(100).pow(decimalPlaces);
+
+  if (userReputationNumber.isZero()) {
+    return ZeroValue.Zero;
+  }
+
+  if (userReputationNumber.mul(reputationSafeguard).lt(totalReputationNumber)) {
+    return ZeroValue.NearZero;
+  }
+
+  const reputation = userReputationNumber
+    .mul(reputationSafeguard)
+    .div(totalReputationNumber)
+    .toNumber();
+
+  return reputation / 10 ** decimalPlaces;
+};
+
+const DECIMAL_PLACES = 2;
 
 const componentDisplayName = 'MembersList.MembersListItem';
 
@@ -42,6 +87,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     onRowClick,
     showUserInfo,
     user,
+    totalReputation,
   } = props;
   const {
     profile: { walletAddress },
@@ -53,8 +99,11 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     variables: { address: walletAddress, colonyAddress, domainId },
   });
 
-  // Refactor MemberInfoPopover to use this hook if works fine after reputation tests
-  const { tokenInfoData } = useTokenInfo();
+  const userPercentageReputation = calculatePercentageReputation(
+    DECIMAL_PLACES,
+    userReputationData,
+    totalReputation,
+  );
 
   const handleRowClick = useCallback(() => {
     if (onRowClick) {
@@ -92,25 +141,36 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={onRowClick ? 0 : undefined}
       >
-        {userReputationData && tokenInfoData && (
-          <div className={styles.reputationSection}>
-            <Numeral
-              className={styles.reputation}
-              appearance={{ theme: 'primary' }}
-              value={userReputationData.userReputation}
-              unit={tokenInfoData.tokenInfo.decimals}
-            />
-            <Icon
-              name="star"
-              appearance={{ size: 'extraTiny' }}
-              className={styles.icon}
-              title={MSG.starReputationTitle}
-              titleValues={{
-                reputation: userReputationData.userReputation,
-              }}
-            />
-          </div>
-        )}
+        <div className={styles.reputationSection}>
+          {!userPercentageReputation && (
+            <div className={styles.reputation}>— %</div>
+          )}
+          {userPercentageReputation === ZeroValue.NearZero && (
+            <div className={styles.reputation}>{userPercentageReputation}%</div>
+          )}
+          {userPercentageReputation &&
+            userPercentageReputation !== ZeroValue.NearZero && (
+              <Numeral
+                className={styles.reputation}
+                appearance={{ theme: 'primary' }}
+                value={userPercentageReputation}
+                suffix="%"
+              />
+            )}
+          <Icon
+            name="star"
+            appearance={{ size: 'extraTiny' }}
+            className={styles.icon}
+            title={
+              userPercentageReputation
+                ? MSG.starReputationTitle
+                : MSG.starNoReputationTitle
+            }
+            titleValues={{
+              reputation: userPercentageReputation,
+            }}
+          />
+        </div>
         <div className={styles.section}>
           <UserAvatar
             size="s"
