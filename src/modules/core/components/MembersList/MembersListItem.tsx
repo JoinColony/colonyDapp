@@ -1,7 +1,6 @@
 import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 
 import { defineMessages } from 'react-intl';
-import { AddressZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
@@ -22,6 +21,10 @@ const MSG = defineMessages({
   },
 });
 
+interface Reputation {
+  userReputation: string;
+}
+
 interface Props<U> {
   extraItemContent?: (user: U) => ReactNode;
   colonyAddress: Address;
@@ -29,10 +32,7 @@ interface Props<U> {
   showUserInfo: boolean;
   domainId: number | undefined;
   user: U;
-}
-
-interface Reputation {
-  userReputation: string;
+  totalReputation: Reputation;
 }
 
 enum ZeroValue {
@@ -81,6 +81,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     onRowClick,
     showUserInfo,
     user,
+    totalReputation
   } = props;
   const {
     profile: { walletAddress },
@@ -92,13 +93,9 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     variables: { address: walletAddress, colonyAddress, domainId },
   });
 
-  const { data: totalReputationData } = useUserReputationQuery({
-    variables: { address: AddressZero, colonyAddress, domainId },
-  });
-
   const userPercentageReputation = calculatePercentageReputation(
     userReputationData,
-    totalReputationData,
+    totalReputation,
   );
 
   const handleRowClick = useCallback(() => {
