@@ -3,13 +3,13 @@ import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
-import { AnyUser, useUserReputationQuery } from '~data/index';
+import { AnyUser, useUserReputationQuery, useUser } from '~data/index';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
 import MaskedAddress from '~core/MaskedAddress';
 import Numeral from '~core/Numeral';
-import { useTokenInfo } from '~utils/hooks/use-token-info';
+import { useTokenInfo } from '~utils/hooks/useTokenInfo';
 import Icon from '~core/Icon';
 
 import styles from './MembersListItem.css';
@@ -44,8 +44,10 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     user,
   } = props;
   const {
-    profile: { displayName, username, walletAddress },
+    profile: { walletAddress },
   } = user;
+
+  const userProfile = useUser(walletAddress);
 
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId },
@@ -72,6 +74,10 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     () => (extraItemContent ? extraItemContent(user) : null),
     [extraItemContent, user],
   );
+
+  const {
+    profile: { displayName, username },
+  } = userProfile;
 
   return (
     <ListGroupItem>
@@ -110,7 +116,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             size="s"
             colonyAddress={colonyAddress}
             address={walletAddress}
-            user={user}
+            user={userProfile}
             showInfo={!onRowClick || showUserInfo}
             domainId={domainId}
             notSet={false}

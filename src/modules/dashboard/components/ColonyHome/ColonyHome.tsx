@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
@@ -83,12 +83,15 @@ const ColonyHome = ({ match, location }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
-  const { domainFilter } = parseQS(location.search) as {
+  const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
     domainFilter: string | undefined;
   };
-  const filteredDomainId = domainFilter
-    ? parseInt(domainFilter, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID
-    : COLONY_TOTAL_BALANCE_DOMAIN_ID;
+
+  const [domainIdFilter, setDomainIdFilter] = useState<number>(
+    Number(queryDomainFilterId),
+  );
+
+  const filteredDomainId = domainIdFilter || COLONY_TOTAL_BALANCE_DOMAIN_ID;
 
   const {
     data,
@@ -120,6 +123,12 @@ const ColonyHome = ({ match, location }: Props) => {
   /*
    * @NOTE Disabled until we're done with domain filters to prevent lint errors
    * when pushing downstream rebased branches
+   *
+   * I initially was tempted to remove this, as we don't actually need domain data,
+   * just the Id, then I remembered we need to display the domain description in
+   * the sidebar, and it's a good idea to just pass it down from here.
+   *
+   * Anyway this is still needed for DEV-58
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const filteredDomain = colonyDomains
@@ -177,7 +186,11 @@ const ColonyHome = ({ match, location }: Props) => {
           <ColonyTotalFunds colony={colony} />
           <div className={styles.contentActionsPanel}>
             <div className={styles.domainsDropdownContainer}>
-              <DomainDropdown colonyAddress={colony.colonyAddress} />
+              <DomainDropdown
+                filteredDomainId={filteredDomainId}
+                colonyAddress={colony.colonyAddress}
+                onDomainChange={setDomainIdFilter}
+              />
             </div>
             <ColonyHomeActions />
           </div>
@@ -200,7 +213,7 @@ const ColonyHome = ({ match, location }: Props) => {
         </div>
         <aside className={styles.rightAside}>
           <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
-          <ColonyMembers colony={colony} />
+          <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
         </aside>
       </div>
       {!!mustUpgradeColony && (

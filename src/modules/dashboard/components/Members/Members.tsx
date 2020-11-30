@@ -1,16 +1,26 @@
 import React, { FC, useState, useMemo, useCallback } from 'react';
-import { defineMessages } from 'react-intl';
-
-import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
+import { useParams } from 'react-router-dom';
+
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
-import { useTransformer } from '~utils/hooks';
-import { getAllUserRolesForDomain } from '../../../transformers';
 import UserPermissions from '~admin/Permissions/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
+
+import { getAllUserRolesForDomain } from '../../../transformers';
+import { useTransformer } from '~utils/hooks';
+import {
+  AnyUser,
+  Colony,
+  useColonyMembersWithReputationQuery,
+} from '~data/index';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  ALLDOMAINS_DOMAIN_SELECTION,
+} from '~constants';
 
 import styles from './Members.css';
 
@@ -23,12 +33,16 @@ const MSG = defineMessages({
     id: 'dashboard.Members.title',
     defaultMessage: `Members{domainLabel, select,
       root {}
-      other {: #{domainLabel}}
+      other {: {domainLabel}}
     }`,
   },
   labelFilter: {
     id: 'dashboard.Members.labelFilter',
     defaultMessage: 'Filter',
+  },
+  failedToFetch: {
+    id: 'dashboard.Members.failedToFetch',
+    defaultMessage: "Could not fetch the colony's members",
   },
 });
 
@@ -43,35 +57,105 @@ type Member = AnyUser & {
 
 const displayName = 'dashboard.Members';
 
-const Members = ({ colony }: Props) => {
+const Members = ({ colony: { colonyAddress }, colony }: Props) => {
+  const { domainId } = useParams<{
+    domainId: string;
+  }>();
+
   const [selectedDomainId, setSelectedDomainId] = useState<number>(
-    ROOT_DOMAIN_ID,
+    /*
+     * @NOTE DomainId param sanitization
+     *
+     * We don't actually need to worry about sanitizing the domainId that's
+     * coming in from the params.
+     * The value that reaches us through the hook is being processes by `react-router`
+     * and will always be a string.
+     *
+     * So if we can change that string into a number, we use it as domain, otherwise
+     * we fall back to the "All Domains" selection
+     */
+    parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
+
+  const selectedDomain = colony.domains.find(
+    ({ ethDomainId }) => ethDomainId === selectedDomainId,
+  );
+
+  /*
+   * NOTE If we can't find the domain based on the current selected doamain id,
+   * it means that it doesn't exist.
+   * We then fall back to the to the "All Domains" selection
+   *
+   * Another alternative would be to redirect here to the /colony/members route
+   * but that has the annoying side-effect of flickering the loading spinner
+   * a couple of times on the page
+   */
+  const { ethDomainId: currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID } =
+    selectedDomain || {};
+
   const {
-    data: colonySubscribedUsers,
-    loading: loadingColonySubscribedUsers,
-  } = useColonySubscribedUsersQuery({
+    data,
+    loading: loadingColonyMembers,
+  } = useColonyMembersWithReputationQuery({
     variables: {
-      colonyAddress: colony.colonyAddress,
+      colonyAddress,
+      domainId: currentDomainId,
     },
   });
 
+  /*
+   * @NOTE Skelethon Users Array
+   *
+   * This is just  an array of user "profiles" that only contain the user's address.
+   * This will be passed down to `MembersListItem` where the final component will do
+   * the actual "full" profile fetching.
+   *
+   * We had to resort to this because otherwise we run into hook callback "hell" while
+   * trying to fetch user profiles in a queue for an array of addresses.
+   *
+   * The opposite is also not possible, to fetch all profiles at once using a query, since
+   * this time we need only the members in the colony that have reputation, and that comes
+   * from the reputation oracle, which will just return us a list of addresses (which can
+   * or cannot be subscribers to the colony).
+   */
+  const skelethonUsers = useMemo(() => {
+    if (!data || !data.colonyMembersWithReputation) {
+      return [];
+    }
+    return data.colonyMembersWithReputation.map((walletAddress) => ({
+      id: walletAddress,
+      profile: { walletAddress },
+    }));
+  }, [data]);
+
   const domainRoles = useTransformer(getAllUserRolesForDomain, [
     colony,
-    selectedDomainId,
+    /*
+     * If we have "All Domains" selected show the same permissions as on "Root"
+     */
+    currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
+      ? ROOT_DOMAIN_ID
+      : currentDomainId,
   ]);
 
   const directDomainRoles = useTransformer(getAllUserRolesForDomain, [
     colony,
-    selectedDomainId,
+    /*
+     * If we have "All Domains" selected show the same permissions as on "Root"
+     */
+    currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
+      ? ROOT_DOMAIN_ID
+      : currentDomainId,
     true,
   ]);
 
   const domainSelectOptions = sortBy(
-    colony.domains.map(({ ethDomainId, name }) => ({
-      value: ethDomainId.toString(),
-      label: name,
-    })),
+    [...colony.domains, ALLDOMAINS_DOMAIN_SELECTION].map(
+      ({ ethDomainId, name }) => ({
+        value: ethDomainId.toString(),
+        label: name,
+      }),
+    ),
     ['value'],
   );
 
@@ -80,25 +164,23 @@ const Members = ({ colony }: Props) => {
     [setSelectedDomainId],
   );
 
-  const domainRolesArray = useMemo(
-    () =>
-      domainRoles
-        .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
-        .filter(({ roles }) => !!roles.length)
-        .map(({ address, roles }) => {
-          const directUserRoles = directDomainRoles.find(
-            ({ address: userAddress }) => userAddress === address,
-          );
-          return {
-            userAddress: address,
-            roles,
-            directRoles: directUserRoles ? directUserRoles.roles : [],
-          };
-        }),
-    [directDomainRoles, domainRoles],
-  );
+  const domainRolesArray = useMemo(() => {
+    return domainRoles
+      .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
+      .filter(({ roles }) => !!roles.length)
+      .map(({ address, roles }) => {
+        const directUserRoles = directDomainRoles.find(
+          ({ address: userAddress }) => userAddress === address,
+        );
+        return {
+          userAddress: address,
+          roles,
+          directRoles: directUserRoles ? directUserRoles.roles : [],
+        };
+      });
+  }, [directDomainRoles, domainRoles]);
 
-  if (!colonySubscribedUsers || loadingColonySubscribedUsers) {
+  if (loadingColonyMembers) {
     return (
       <div className={styles.main}>
         <SpinnerLoader
@@ -109,11 +191,7 @@ const Members = ({ colony }: Props) => {
     );
   }
 
-  const {
-    colony: { subscribedUsers },
-  } = colonySubscribedUsers;
-
-  const members: Member[] = subscribedUsers.map((user) => {
+  const members: Member[] = skelethonUsers.map((user) => {
     const {
       profile: { walletAddress },
     } = user;
@@ -127,22 +205,20 @@ const Members = ({ colony }: Props) => {
     };
   });
 
-  const selectedDomain = colony.domains.find(
-    ({ ethDomainId }) => ethDomainId === selectedDomainId,
-  );
-
   return (
     <div className={styles.main}>
       <div className={styles.titleContainer}>
         <Heading
           text={MSG.title}
           textValues={{
-            domainLabel: selectedDomain ? selectedDomain.name : undefined,
+            domainLabel: selectedDomain
+              ? selectedDomain.name
+              : ALLDOMAINS_DOMAIN_SELECTION.name,
           }}
           appearance={{ size: 'medium', theme: 'dark' }}
         />
         <Form
-          initialValues={{ filter: ROOT_DOMAIN_ID.toString() }}
+          initialValues={{ filter: currentDomainId.toString() }}
           onSubmit={() => {}}
         >
           <Select
@@ -158,14 +234,18 @@ const Members = ({ colony }: Props) => {
           />
         </Form>
       </div>
-      <MembersList<Member>
-        colonyAddress={colony.colonyAddress}
-        extraItemContent={({ roles, directRoles }) => (
-          <UserPermissions roles={roles} directRoles={directRoles} />
-        )}
-        domainId={undefined}
-        users={members}
-      />
+      {skelethonUsers.length ? (
+        <MembersList<Member>
+          colonyAddress={colony.colonyAddress}
+          extraItemContent={({ roles, directRoles }) => (
+            <UserPermissions roles={roles} directRoles={directRoles} />
+          )}
+          domainId={currentDomainId}
+          users={members}
+        />
+      ) : (
+        <FormattedMessage {...MSG.failedToFetch} />
+      )}
     </div>
   );
 };

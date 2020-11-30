@@ -7,7 +7,10 @@ import React, {
 } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import {
+  COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  ALLDOMAINS_DOMAIN_SELECTION,
+} from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
 import { Form, Select, SelectOption } from '~core/Fields';
 import { useColonyDomainsQuery } from '~data/index';
@@ -32,24 +35,31 @@ interface FormValues {
 interface Props {
   colonyAddress: Address;
   filteredDomainId?: number;
+  onDomainChange?: (domainId: number) => any;
 }
 
 const allDomainsColor: Color = Color.Yellow;
 
 const displayName = 'dashboard.DomainDropdown';
 
-const DomainDropdown = ({ colonyAddress, filteredDomainId }: Props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedDomain, setSelectedDomain] = useState<number>(
+const DomainDropdown = ({
+  colonyAddress,
+  filteredDomainId,
+  onDomainChange,
+}: Props) => {
+  const [, setSelectedDomain] = useState<number>(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSubmit = useCallback((values: FormValues) => {
-    // do stuff
-    // eslint-disable-next-line no-console
-    console.log(values);
-  }, []);
+  const handleSubmit = useCallback(
+    (domainId: number) => {
+      if (onDomainChange) {
+        return onDomainChange(domainId);
+      }
+      return null;
+    },
+    [onDomainChange],
+  );
 
   const { data } = useColonyDomainsQuery({
     variables: { colonyAddress },
@@ -99,17 +109,7 @@ const DomainDropdown = ({ colonyAddress, filteredDomainId }: Props) => {
 
   const options = useMemo<ComponentProps<typeof Select>['options']>(() => {
     const allDomainsOption: SelectOption = {
-      children: (
-        <DomainSelectItem
-          domain={{
-            id: '0',
-            color: allDomainsColor,
-            ethDomainId: 0,
-            name: 'All Domains',
-            ethParentDomainId: null,
-          }}
-        />
-      ),
+      children: <DomainSelectItem domain={ALLDOMAINS_DOMAIN_SELECTION} />,
       label: { id: 'domain.all' },
       value: '0',
     };
@@ -146,7 +146,10 @@ const DomainDropdown = ({ colonyAddress, filteredDomainId }: Props) => {
         elementOnly
         label={MSG.labelDomainFilter}
         name="filteredDomainId"
-        onChange={(val) => setSelectedDomain(Number(val))}
+        onChange={(val) => {
+          setSelectedDomain(Number(val));
+          handleSubmit(Number(val));
+        }}
         options={options}
         optionsFooter={<CreateDomainButton />}
         renderActiveOption={renderActiveOption}

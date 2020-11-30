@@ -11,7 +11,15 @@ import {
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
 import { Context } from '~context/index';
-import { Transfer, NetworkEvent } from '~data/index';
+import {
+  Transfer,
+  NetworkEvent,
+  ColonySubscribedUsersQuery,
+  ColonySubscribedUsersQueryVariables,
+  ColonySubscribedUsersDocument,
+} from '~data/index';
+import ColonyManager from '~lib/ColonyManager';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import { getToken } from './token';
 import {
@@ -21,10 +29,33 @@ import {
   getColonyAllEvents,
 } from './transactions';
 
+type ReputationOracleAddresses = Address[];
+
+const getColonyMembersWithReputation = async (
+  colonyManager: ColonyManager,
+  colonyAddress: Address,
+  domainId: number,
+): Promise<ReputationOracleAddresses> => {
+  const colonyClient = await colonyManager.getClient(
+    ClientType.ColonyClient,
+    colonyAddress,
+  );
+  const { skillId } = await colonyClient.getDomain(domainId);
+  /*
+   * @TODO This is coming from colonyJS as I forgot to adjust the proper types when
+   * creating this common extension.
+   * I'll put in a PR to fix this at some point
+   */
+  // @ts-ignore
+  const { addresses } = await colonyClient.getMembersReputation(skillId);
+  return addresses || [];
+};
+
 export const colonyResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
   ens,
+  apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
     async colonyAddress(_, { name }) {
@@ -48,6 +79,45 @@ export const colonyResolvers = ({
     async colonyName(_, { address }) {
       const domain = await ens.getDomain(address, networkClient);
       return ENS.stripDomainParts('colony', domain);
+    },
+    async colonyMembersWithReputation(
+      _,
+      {
+        colonyAddress,
+        domainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
+      }: { colonyAddress: Address; domainId: number },
+    ) {
+      if (domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
+        const subscribedMembers = await apolloClient.query<
+          ColonySubscribedUsersQuery,
+          ColonySubscribedUsersQueryVariables
+        >({
+          query: ColonySubscribedUsersDocument,
+          variables: {
+            colonyAddress,
+          },
+        });
+        return subscribedMembers.data?.colony.subscribedUsers.map(
+          ({ profile: { walletAddress } }) => walletAddress,
+        );
+      }
+      /*
+       * @NOTE About zero reputation an decay
+       *
+       * Initially a user has 0 reputation in the colony.
+       * By default that user won't be returned in the below query.
+       *
+       * Let say that then, a user aquires some reputation, which, after a time, decays back to zero.
+       * That user will be returned in the below query.
+       *
+       * Maybe at some point we want to consider filtering them out.
+       * But that's for another time.
+       */
+      return getColonyMembersWithReputation(
+        colonyManager,
+        colonyAddress,
+        domainId,
+      );
     },
   },
   Colony: {
