@@ -7,6 +7,8 @@ import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Button from '~core/Button';
+import CopyableAddress from '~core/CopyableAddress';
+
 import TransactionHash, { Hash } from './TransactionHash';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';
@@ -15,6 +17,7 @@ import {
   useTransactionLazyQuery,
   useUserLazyQuery,
   useColonyFromNameQuery,
+  useUser,
 } from '~data/index';
 import { isTransactionFormat } from '~utils/web3';
 import { STATUS } from './types';
@@ -102,7 +105,7 @@ const ActionsPage = () => {
     variables: { address: '', name: colonyName },
   });
 
-  const reverseENSAddress = dataVariables && dataVariables.address;
+  const reverseENSAddress = dataVariables?.address;
 
   const [
     fetchTransction,
@@ -122,8 +125,7 @@ const ActionsPage = () => {
     if (
       transactionHash &&
       isTransactionFormat(transactionHash) &&
-      colonyData &&
-      colonyData.colony
+      colonyData?.colony
     ) {
       fetchTransction({
         variables: {
@@ -135,16 +137,14 @@ const ActionsPage = () => {
   }, [fetchTransction, transactionHash, colonyData]);
 
   useEffect(() => {
-    if (
-      transactionData &&
-      transactionData.transaction &&
-      transactionData.transaction.from
-    ) {
+    if (transactionData?.transaction?.from) {
       fetchUser({
         variables: { address: transactionData.transaction.from },
       });
     }
   }, [fetchUser, transactionData]);
+
+  const fallbackUserData = useUser(transactionData?.transaction?.from || '');
 
   const { Decorate } = new TextDecorator({
     username: (usernameWithAtSign) => (
@@ -211,10 +211,29 @@ const ActionsPage = () => {
               {...MSG.actionTitle}
               values={{
                 user: (() => {
-                  if (userData && userData.user && userData.user.profile) {
-                    const { username, walletAddress } = userData.user.profile;
+                  /*
+                   * @NOTE Using a fallback profile allows us to display a user's address
+                   * if he doesn't have a colony profile yet
+                   */
+                  const {
+                    profile: { username, walletAddress },
+                  } = userData?.user || fallbackUserData;
+
+                  if (username && walletAddress) {
                     return (
                       <Decorate key={walletAddress}>{`@${username}`}</Decorate>
+                    );
+                  }
+                  if (walletAddress) {
+                    return (
+                      /*
+                       * @NOTE This might not exist in the final title copy in this format
+                       * but most likely we'll have "some" iteration of this for which we'll
+                       * use this as base
+                       */
+                      <span className={styles.addressInTitle}>
+                        <CopyableAddress>{walletAddress}</CopyableAddress>
+                      </span>
                     );
                   }
                   return false;

@@ -6,3 +6,4 @@ export const details: string;
 export const notFoundContainer: string;
 export const divider: string;
 export const hashWrapper: string;
+export const addressInTitle: string;

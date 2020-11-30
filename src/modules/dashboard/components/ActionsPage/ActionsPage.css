@@ -75,3 +75,9 @@
 .hashWrapper {
   text-align: left;
 }
+
+.addressInTitle div {
+  display: inline-block;
+  font-size: var(--size-medium);
+  color: color-mod(var(--dark) alpha(90%));
+}
