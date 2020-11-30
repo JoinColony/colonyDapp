@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -152,6 +152,41 @@ const ActionsPage = () => {
     ),
   });
 
+  const titleDynamicValues = useMemo(
+    () => ({
+      user: (() => {
+        /*
+         * @NOTE Using a fallback profile allows us to display a user's address
+         * if he doesn't have a colony profile yet
+         */
+        const {
+          profile: { username, walletAddress },
+        } = userData?.user || fallbackUserData;
+
+        if (username && walletAddress) {
+          return <Decorate key={walletAddress}>{`@${username}`}</Decorate>;
+        }
+        if (walletAddress) {
+          return (
+            /*
+             * @NOTE This might not exist in the final title copy in this format
+             * but most likely we'll have "some" iteration of this for which we'll
+             * use this as base
+             */
+            <span className={styles.addressInTitle}>
+              <CopyableAddress>{walletAddress}</CopyableAddress>
+            </span>
+          );
+        }
+        return false;
+      })(),
+      name: transactionData?.transaction?.event
+        ? transactionData.transaction.event.name
+        : false,
+    }),
+    [transactionData, fallbackUserData, userData],
+  );
+
   if (!isTransactionFormat(transactionHash) || transactionDataError) {
     return (
       <div className={styles.main}>
@@ -209,37 +244,7 @@ const ActionsPage = () => {
           <h1 className={styles.heading}>
             <FormattedMessage
               {...MSG.actionTitle}
-              values={{
-                user: (() => {
-                  /*
-                   * @NOTE Using a fallback profile allows us to display a user's address
-                   * if he doesn't have a colony profile yet
-                   */
-                  const {
-                    profile: { username, walletAddress },
-                  } = userData?.user || fallbackUserData;
-
-                  if (username && walletAddress) {
-                    return (
-                      <Decorate key={walletAddress}>{`@${username}`}</Decorate>
-                    );
-                  }
-                  if (walletAddress) {
-                    return (
-                      /*
-                       * @NOTE This might not exist in the final title copy in this format
-                       * but most likely we'll have "some" iteration of this for which we'll
-                       * use this as base
-                       */
-                      <span className={styles.addressInTitle}>
-                        <CopyableAddress>{walletAddress}</CopyableAddress>
-                      </span>
-                    );
-                  }
-                  return false;
-                })(),
-                name: event ? event.name : false,
-              }}
+              values={titleDynamicValues}
             />
           </h1>
           {!event && hash && (
