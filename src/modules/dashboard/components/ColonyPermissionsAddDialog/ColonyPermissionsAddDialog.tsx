@@ -31,8 +31,8 @@ import {
 import {
   PermissionManagementForm,
   availableRoles,
-  styles,
-} from '../../../dashboard/components/PermissionManagementDialog';
+} from '../PermissionManagementDialog';
+import styles from '../PermissionManagementDialog/PermissionManagementDialog.css';
 
 const MSG = defineMessages({
   errorNoUserGiven: {

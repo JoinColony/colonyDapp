@@ -13,10 +13,10 @@
   padding-left: 15px;
   font-size: var(--size-tiny);
   line-height: 18px;
+}
 
-  & span {
-    font-size: 9px;
-  }
+.permissionChoiceDescription span {
+  font-size: 9px;
 }
 
 .popoverContent {

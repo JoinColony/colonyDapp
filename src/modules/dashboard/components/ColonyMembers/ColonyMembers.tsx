@@ -4,7 +4,6 @@ import { defineMessages } from 'react-intl';
 
 import Members from '~dashboard/Members';
 import { useColonyFromNameQuery } from '~data/index';
-import { TokenInfoProvider } from '~utils/hooks/use-token-info';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 
