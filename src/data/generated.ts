@@ -1351,12 +1351,18 @@ export type LoggedInUser = {
   networkId?: Maybe<Scalars['Int']>;
 };
 
+export type ParsedEvent = {
+  name?: Maybe<Scalars['String']>;
+  topic?: Maybe<Scalars['String']>;
+  values?: Maybe<Scalars['String']>;
+};
+
 export type Transaction = {
   hash?: Maybe<Scalars['String']>;
   from?: Maybe<Scalars['String']>;
   to?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['Int']>;
-  event: NetworkEvent;
+  events: Array<ParsedEvent>;
 };
 
 export type NetworkContractsInput = {
@@ -2419,7 +2425,7 @@ export type TransactionQueryVariables = Exact<{
 
 export type TransactionQuery = { transaction: (
     Pick<Transaction, 'hash' | 'from' | 'to' | 'status'>
-    & { event: FullNetworkEventFragment }
+    & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values'>> }
   ) };
 
 export const PayoutsFragmentDoc = gql`
@@ -6444,12 +6450,14 @@ export const TransactionDocument = gql`
     from
     to
     status
-    event {
-      ...FullNetworkEvent
+    events {
+      name
+      topic
+      values
     }
   }
 }
-    ${FullNetworkEventFragmentDoc}`;
+    `;
 
 /**
  * __useTransactionQuery__

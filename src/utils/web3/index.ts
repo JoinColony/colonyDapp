@@ -68,7 +68,7 @@ export const isTransactionFormat = (
   return !!potentialTransactionHash.match(hexStringRegex);
 };
 
-export const getTopicToEventsMap = (eventsList: Events): EventsMap => {
+export const getColonyTopicToEventsMap = (eventsList: Events): EventsMap => {
   const eventsMap = {};
   Object.keys(eventsList)
     .filter((key) => !key.includes('('))

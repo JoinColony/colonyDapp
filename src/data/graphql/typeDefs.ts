@@ -18,12 +18,18 @@ export default gql`
     networkId: Int
   }
 
+  type ParsedEvent {
+    name: String
+    topic: String
+    values: String
+  }
+
   type Transaction {
     hash: String
     from: String
     to: String
     status: Int
-    event: NetworkEvent!
+    events: [ParsedEvent!]!
   }
 
   input NetworkContractsInput {

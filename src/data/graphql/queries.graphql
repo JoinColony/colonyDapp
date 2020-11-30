@@ -588,8 +588,10 @@ query Transaction($transactionHash: String!, $colonyAddress: String!) {
     from
     to
     status
-    event {
-      ...FullNetworkEvent
+    events {
+      name
+      topic
+      values
     }
   }
 }

@@ -12,6 +12,13 @@ import { Transfer, NetworkEvent } from '~data/index';
 import { notUndefined } from '~utils/arrays';
 import { Context } from '~context/index';
 
+interface ParsedLog {
+  name: string;
+  signature: string;
+  topic: string;
+  values: Record<string, any>;
+}
+
 export const getColonyAllEvents = async (
   colonyClient: ColonyClient,
 ): Promise<NetworkEvent[]> => {
@@ -221,32 +228,27 @@ export const transactionResolvers = ({
     async transaction(_, { transactionHash, colonyAddress }) {
       const { provider } = networkClient;
       const colonyClient = await networkClient.getColonyClient(colonyAddress);
-      /*
-       * @TODO Optimze! Optimize! Optimize!
-       * We need to find a way to fetch specific events related to transaction
-       * As the way it's currently implement is not scalable at all...
-       */
-      const colonyEvents = await getColonyAllEvents(colonyClient);
       const {
         transactionHash: hash,
         from,
         to,
-        /*
-         * @NOTE I have no idea if we can rely on the `status` return values
-         * as that is only available for post-byznatium forks
-         */
         status,
+        logs,
       } = await provider.getTransactionReceipt(transactionHash);
+      const events = logs
+        ?.map((log) => colonyClient.interface.parseLog(log))
+        /*
+         * If the above parser find events that are not part of the colony client
+         * it will return them as `null` so we filter them out
+         */
+        .filter((log) => !!log)
+        .map(({ name, values, topic }) => ({ name, values, topic }));
       return {
         hash,
         from,
         to,
         status,
-        event:
-          colonyEvents.find(
-            ({ hash: eventTransactionHash }) =>
-              eventTransactionHash === transactionHash,
-          ) || null,
+        events,
       };
     },
   },

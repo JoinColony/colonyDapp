@@ -180,9 +180,17 @@ const ActionsPage = () => {
         }
         return false;
       })(),
-      name: transactionData?.transaction?.event
-        ? transactionData.transaction.event.name
-        : false,
+      name: (() => {
+        if (transactionData?.transaction?.events?.length) {
+          const { events } = transactionData.transaction;
+          /*
+           * Display the first event as the page title
+           * We might need to change this in the future
+           */
+          return events[0].name;
+        }
+        return false;
+      })(),
     }),
     [transactionData, fallbackUserData, userData],
   );
@@ -230,7 +238,7 @@ const ActionsPage = () => {
   }
 
   const {
-    transaction: { hash, status, event },
+    transaction: { hash, status, events },
   } = transactionData;
 
   return (
@@ -247,7 +255,7 @@ const ActionsPage = () => {
               values={titleDynamicValues}
             />
           </h1>
-          {!event && hash && (
+          {!events && hash && (
             <TransactionHash
               transactionHash={hash}
               /*
@@ -257,6 +265,14 @@ const ActionsPage = () => {
               status={typeof status === 'number' && STATUS_MAP[status]}
             />
           )}
+          <ul>
+            <b>Events for the tx:</b>
+            {events.map(({ name, topic }) => (
+              <li key={topic || ''}>
+                {name} - {topic}
+              </li>
+            ))}
+          </ul>
         </div>
         <div className={styles.details}>
           {/*
