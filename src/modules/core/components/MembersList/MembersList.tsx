@@ -6,7 +6,6 @@ import { Address } from '~types/index';
 
 import MembersListItem from './MembersListItem';
 
-
 interface Reputation {
   userReputation: string;
 }
@@ -18,7 +17,7 @@ interface Props<U> {
   showUserInfo?: boolean;
   domainId: number | undefined;
   users: U[];
-  totalReputation: Reputation;
+  totalReputation: Reputation | undefined;
 }
 
 const displayName = 'MembersList';

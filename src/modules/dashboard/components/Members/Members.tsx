@@ -6,10 +6,10 @@ import { useParams } from 'react-router-dom';
 
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
+import { AddressZero } from 'ethers/constants';
 import UserPermissions from '~admin/Permissions/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
-import { AddressZero } from 'ethers/constants';
 
 import { getAllUserRolesForDomain } from '../../../transformers';
 import { useTransformer } from '~utils/hooks';
@@ -131,7 +131,11 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
   }, [data]);
 
   const { data: totalReputationData } = useUserReputationQuery({
-    variables: { address: AddressZero, colonyAddress: colony.colonyAddress, domainId: selectedDomainId },
+    variables: {
+      address: AddressZero,
+      colonyAddress: colony.colonyAddress,
+      domainId: selectedDomainId,
+    },
   });
 
   const domainRoles = useTransformer(getAllUserRolesForDomain, [

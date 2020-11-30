@@ -32,7 +32,7 @@ interface Props<U> {
   showUserInfo: boolean;
   domainId: number | undefined;
   user: U;
-  totalReputation: Reputation;
+  totalReputation: Reputation | undefined;
 }
 
 enum ZeroValue {
@@ -45,15 +45,15 @@ type PercentageReputationType = ZeroValue | number | null;
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const calculatePercentageReputation = (
+  decimalPlaces: number,
   userReputation?: Reputation,
   totalReputation?: Reputation,
 ): PercentageReputationType => {
   if (!userReputation || !totalReputation) return null;
   const userReputationNumber = bigNumberify(userReputation.userReputation);
   const totalReputationNumber = bigNumberify(totalReputation.userReputation);
-  const DECIMAL_PLACES = 2;
 
-  const reputationSafeguard = bigNumberify(100).pow(DECIMAL_PLACES);
+  const reputationSafeguard = bigNumberify(100).pow(decimalPlaces);
 
   if (userReputationNumber.isZero()) {
     return ZeroValue.Zero;
@@ -68,8 +68,10 @@ const calculatePercentageReputation = (
     .div(totalReputationNumber)
     .toNumber();
 
-  return reputation / 10 ** DECIMAL_PLACES;
+  return reputation / 10 ** decimalPlaces;
 };
+
+const DECIMAL_PLACES = 2;
 
 const componentDisplayName = 'MembersList.MembersListItem';
 
@@ -81,7 +83,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     onRowClick,
     showUserInfo,
     user,
-    totalReputation
+    totalReputation,
   } = props;
   const {
     profile: { walletAddress },
@@ -94,6 +96,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
   });
 
   const userPercentageReputation = calculatePercentageReputation(
+    DECIMAL_PLACES,
     userReputationData,
     totalReputation,
   );
