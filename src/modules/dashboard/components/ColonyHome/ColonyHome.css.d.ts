@@ -1,4 +1,5 @@
 export const main: string;
+export const mainContentGrid: string;
 export const leftAside: string;
 export const leftAsideNav: string;
 export const mainContent: string;
