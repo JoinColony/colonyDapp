@@ -17,13 +17,7 @@ import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
 import LevelEdit from '~dashboard/LevelEdit';
-import {
-  NavBar,
-  Plain,
-  SimpleNav,
-  SubscribedColonies,
-  Default,
-} from '~pages/RouteLayouts/index';
+import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
 import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
@@ -171,14 +165,14 @@ const Routes = () => {
             COLONY_EXTENSIONS_ROUTE,
           ]}
           component={ColonyHome}
-          layout={SubscribedColonies}
+          layout={Default}
           routeProps={{ hasBackLink: false }}
         />
         <AlwaysAccesibleRoute
           exact
           path={COLONY_FUNDING_ROUTE}
           component={ColonyFunding}
-          layout={SubscribedColonies}
+          layout={Default}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
