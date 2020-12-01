@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { nanoid } from 'nanoid';
 import Heading from '~core/Heading';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
@@ -10,6 +11,7 @@ import Button from '~core/Button';
 import CopyableAddress from '~core/CopyableAddress';
 
 import TransactionHash, { Hash } from './TransactionHash';
+import ActionsPageEvent from './ActionsPageEvent';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';
 
@@ -233,6 +235,10 @@ const ActionsPage = () => {
     transaction: { hash, status, events, createdAt },
   } = transactionData;
 
+  const createKey = (topic) => {
+    return topic + nanoid();
+  };
+
   return (
     <div className={styles.main}>
       <div className={styles.container}>
@@ -259,14 +265,16 @@ const ActionsPage = () => {
             />
           )}
           {!!events?.length && (
-            <ul>
+            <div>
               <b>Events for the tx:</b>
-              {events.map(({ name, topic }) => (
-                <li key={topic || ''}>
-                  {name} - {topic}
-                </li>
+              {events.map((event) => (
+                <ActionsPageEvent
+                  event={event}
+                  userProfile={userData?.user?.profile}
+                  key={createKey(event.topic)}
+                />
               ))}
-            </ul>
+            </div>
           )}
         </div>
         <div className={styles.details}>
