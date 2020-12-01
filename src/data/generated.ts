@@ -1072,6 +1072,7 @@ export type Query = {
   token: Token;
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
+  transaction: Transaction;
   user: User;
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
@@ -1133,6 +1134,12 @@ export type QueryTokenInfoArgs = {
 
 export type QueryTokensArgs = {
   addresses?: Maybe<Array<Scalars['String']>>;
+};
+
+
+export type QueryTransactionArgs = {
+  transactionHash: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1342,6 +1349,21 @@ export type LoggedInUser = {
   walletAddress: Scalars['String'];
   ethereal: Scalars['Boolean'];
   networkId?: Maybe<Scalars['Int']>;
+};
+
+export type ParsedEvent = {
+  name?: Maybe<Scalars['String']>;
+  topic?: Maybe<Scalars['String']>;
+  values?: Maybe<Scalars['String']>;
+};
+
+export type Transaction = {
+  hash?: Maybe<Scalars['String']>;
+  from?: Maybe<Scalars['String']>;
+  to?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['Int']>;
+  events: Array<ParsedEvent>;
+  createdAt?: Maybe<Scalars['Int']>;
 };
 
 export type NetworkContractsInput = {
@@ -2395,6 +2417,17 @@ export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
+export type TransactionQueryVariables = Exact<{
+  transactionHash: Scalars['String'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type TransactionQuery = { transaction: (
+    Pick<Transaction, 'hash' | 'from' | 'to' | 'status' | 'createdAt'>
+    & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values'>> }
+  ) };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -6411,3 +6444,46 @@ export function useNetworkContractsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContractsQuery>;
 export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
 export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
+export const TransactionDocument = gql`
+    query Transaction($transactionHash: String!, $colonyAddress: String!) {
+  transaction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
+    hash
+    from
+    to
+    status
+    events {
+      name
+      topic
+      values
+    }
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useTransactionQuery__
+ *
+ * To run a query within a React component, call `useTransactionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionQuery({
+ *   variables: {
+ *      transactionHash: // value for 'transactionHash'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useTransactionQuery(baseOptions?: Apollo.QueryHookOptions<TransactionQuery, TransactionQueryVariables>) {
+        return Apollo.useQuery<TransactionQuery, TransactionQueryVariables>(TransactionDocument, baseOptions);
+      }
+export function useTransactionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionQuery, TransactionQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionQuery, TransactionQueryVariables>(TransactionDocument, baseOptions);
+        }
+export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
+export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
+export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;

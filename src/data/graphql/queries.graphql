@@ -581,3 +581,18 @@ query NetworkContracts {
     feeInverse
   }
 }
+
+query Transaction($transactionHash: String!, $colonyAddress: String!) {
+  transaction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
+    hash
+    from
+    to
+    status
+    events {
+      name
+      topic
+      values
+    }
+    createdAt
+  }
+}

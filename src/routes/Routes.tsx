@@ -21,6 +21,7 @@ import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
 import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
+import ActionsPage from '~dashboard/ActionsPage';
 
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -43,6 +44,7 @@ import {
   WALLET_ROUTE,
   LANDING_PAGE_ROUTE,
   MEMBERS_ROUTE,
+  ACTIONS_PAGE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -222,6 +224,16 @@ const Routes = () => {
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
             hasSubscribedColonies: false,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={ACTIONS_PAGE_ROUTE}
+          component={ActionsPage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: '',
+            backRoute: `/colony/${colonyName}`,
           })}
         />
       </Switch>

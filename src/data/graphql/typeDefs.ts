@@ -18,6 +18,21 @@ export default gql`
     networkId: Int
   }
 
+  type ParsedEvent {
+    name: String
+    topic: String
+    values: String
+  }
+
+  type Transaction {
+    hash: String
+    from: String
+    to: String
+    status: Int
+    events: [ParsedEvent!]!
+    createdAt: Int
+  }
+
   input NetworkContractsInput {
     version: String
     feeInverse: String
@@ -139,6 +154,7 @@ export default gql`
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!
+    transaction(transactionHash: String!, colonyAddress: String!): Transaction!
   }
 
   extend type Mutation {

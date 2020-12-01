@@ -45,3 +45,13 @@ export type Unit =
   | 'mether'
   | 'gether'
   | 'tether';
+
+export const isTransactionFormat = (
+  potentialTransactionHash?: string,
+): boolean => {
+  const hexStringRegex = /^0x([A-Fa-f0-9]{64})$/;
+  if (!potentialTransactionHash) {
+    return false;
+  }
+  return !!potentialTransactionHash.match(hexStringRegex);
+};
