@@ -2,15 +2,13 @@ import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import {
-  ColonyTokenEditDialog,
-  TokenMintDialog,
-  TokensMoveDialog,
-} from '~admin/Tokens';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { Colony, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
+import TransferFundsDialog from '~dashboard/TransferFundsDialog';
+import ColonyTokenEditDialog from '~dashboard/ColonyTokenEditDialog';
+import TokenMintDialog from '~dashboard/TokenMintDialog';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
@@ -48,7 +46,7 @@ const ColonyFundingMenu = ({
 
   const openTokenEditDialog = useDialog(ColonyTokenEditDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
-  const openTokensMoveDialog = useDialog(TokensMoveDialog);
+  const openTokensMoveDialog = useDialog(TransferFundsDialog);
 
   const rootRoles = useTransformer(getUserRolesForDomain, [
     colony,
