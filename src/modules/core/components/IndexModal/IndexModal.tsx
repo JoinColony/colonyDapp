@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  MessageDescriptor,
-  FormattedMessage,
-} from 'react-intl';
+import { MessageDescriptor, FormattedMessage } from 'react-intl';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import Heading from '~core/Heading';
