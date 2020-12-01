@@ -9,6 +9,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
+import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 
 import {
   useLoggedInUser,
@@ -23,7 +24,6 @@ import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 import ColonyTokenEditDialog from './ColonyTokenEditDialog';
 import TokenMintDialog from './TokenMintDialog';
-import TokensMoveDialog from './TokensMoveDialog';
 
 import styles from './Tokens.css';
 
@@ -73,7 +73,7 @@ const Tokens = ({
 
   const openTokenEditDialog = useDialog(ColonyTokenEditDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
-  const openTokensMoveDialog = useDialog(TokensMoveDialog);
+  const openTransferFundsDialog = useDialog(TransferFundsDialog);
 
   const rootRoles = useTransformer(getUserRolesForDomain, [
     colony,
@@ -146,13 +146,13 @@ const Tokens = ({
       });
     }
   }, [openTokenMintDialog, nativeToken, colonyAddress]);
-  const handleMoveTokens = useCallback(
+  const handleTransferFunds = useCallback(
     () =>
-      openTokensMoveDialog({
+      openTransferFundsDialog({
         colonyAddress,
         toDomain: selectedDomain,
       }),
-    [colonyAddress, openTokensMoveDialog, selectedDomain],
+    [colonyAddress, openTransferFundsDialog, selectedDomain],
   );
 
   return (
@@ -205,7 +205,7 @@ const Tokens = ({
               <Button
                 text={MSG.navItemMoveTokens}
                 appearance={{ theme: 'blue' }}
-                onClick={handleMoveTokens}
+                onClick={handleTransferFunds}
               />
             </li>
           )}

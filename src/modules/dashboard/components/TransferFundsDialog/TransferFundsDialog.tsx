@@ -12,7 +12,7 @@ import { ActionForm } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useColonyQuery } from '~data/index';
 
-import DialogForm from './TokensMoveDialogForm';
+import DialogForm from './TransferFundsDialogForm';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 export interface FormValues {
@@ -29,7 +29,7 @@ interface Props {
   toDomain?: number;
 }
 
-const TokensMoveDialog = ({
+const TransferFundsDialog = ({
   colonyAddress,
   toDomain,
   cancel,
@@ -108,6 +108,6 @@ const TokensMoveDialog = ({
   );
 };
 
-TokensMoveDialog.displayName = 'admin.Tokens.TokensMoveDialog';
+TransferFundsDialog.displayName = 'dashboard.TransferFundsDialog';
 
-export default TokensMoveDialog;
+export default TransferFundsDialog;
