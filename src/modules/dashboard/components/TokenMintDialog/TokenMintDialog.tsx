@@ -20,11 +20,6 @@ const MSG = defineMessages({
     id: 'admin.Tokens.TokenMintDialog.dialogTitle',
     defaultMessage: 'Mint new tokens',
   },
-  descriptionText: {
-    id: 'admin.Tokens.TokenMintDialog.descriptionText',
-    defaultMessage: `The tokens you mint can be assigned to tasks.
-      Only the Colony Owner can mint new tokens.`,
-  },
   amountLabel: {
     id: 'admin.Tokens.TokenMintDialog.amountLabel',
     defaultMessage: 'Amount',
@@ -70,23 +65,15 @@ const TokenMintDialog = ({
     >
       {({ handleSubmit, isSubmitting, isValid }: FormikProps<FormValues>) => (
         <>
-          <DialogSection>
+          <DialogSection appearance={{ theme: 'heading' }}>
             <Heading
-              appearance={{ size: 'medium', margin: 'none' }}
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
               text={MSG.title}
             />
           </DialogSection>
-          <DialogSection>
-            <Heading
-              appearance={{
-                margin: 'double',
-                size: 'normal',
-                weight: 'thin',
-              }}
-              text={MSG.descriptionText}
-            />
+          <DialogSection appearance={{ theme: 'sidePadding' }}>
             <div className={styles.inputContainer}>
-              <div className={styles.input}>
+              <div className={styles.inputComponent}>
                 <Input
                   appearance={{ theme: 'minimal' }}
                   formattingOptions={{
@@ -103,8 +90,18 @@ const TokenMintDialog = ({
               </span>
             </div>
           </DialogSection>
-          <DialogSection>
-            <Textarea label={MSG.justificationLabel} name="justification" />
+          <DialogSection appearance={{ theme: 'sidePadding' }}>
+            <div className={styles.annotation}>
+              <Textarea
+                appearance={{
+                  colorSchema: 'grey',
+                  resizable: 'vertical',
+                }}
+                label={MSG.justificationLabel}
+                name="annotation"
+                maxLength={4000}
+              />
+            </div>
           </DialogSection>
           <DialogSection appearance={{ align: 'right' }}>
             <Button

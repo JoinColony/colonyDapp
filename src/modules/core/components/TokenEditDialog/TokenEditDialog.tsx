@@ -1,8 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { FormikProps, FormikHelpers, FormikBag } from 'formik';
+import { FormikProps, FormikHelpers } from 'formik';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
-import { $PropertyType } from 'utility-types';
 import * as yup from 'yup';
 
 import Button from '~core/Button';
@@ -52,9 +51,6 @@ interface Props {
   close: () => void;
   tokens: AnyToken[];
 }
-
-type Bag = FormikBag<object, FormValues>;
-type SetFieldValue = $PropertyType<Bag, 'setFieldValue'>;
 
 interface FormValues {
   tokenAddress: Address;
