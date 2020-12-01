@@ -103,7 +103,7 @@ const ColonyFunding = ({ match }: Props) => {
               <Select
                 appearance={{
                   alignOptions: 'right',
-                  width: 'strict',
+                  width: 'content',
                   theme: 'alt',
                 }}
                 elementOnly

@@ -1,14 +1,10 @@
 
 .main {
-  display: flex;
   display: grid;
-  padding: 22px 0 0 22px;
-
-  /* @fixme use correct height / growth here */
+  margin: 100px 0 0 0;
   height: calc(100% - 100px);
-
-  /* @fixme find better way to set these widths - select wallet on this screen to see it change */
-  grid-template-columns: auto minmax(48%, 700px) auto;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) 700px minmax(0, 1fr);
 }
 
 .titleContainer {
@@ -17,17 +13,17 @@
   align-items: baseline;
   margin-bottom: 35px;
   border-bottom: 1px solid var(--temp-grey-5);
+}
 
-  & h3 {
-    /*
-     * @NOTE We can't compose from `inlineEllipsis` here since we're inside an
-     * element, not a component :(
-     */
-    width: calc(100% - 150px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.titleContainer h3 {
+  /*
+    * @NOTE We can't compose from `inlineEllipsis` here since we're inside an
+    * element, not a component :(
+    */
+  width: calc(100% - 150px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .content {
@@ -40,9 +36,9 @@
 }
 
 .banner {
-  margin-top: 35px;
+  margin: 40px 0;
 }
 
 .aside {
-  padding: 75px 36%;
+  padding: 75px 0 0 150px;
 }
