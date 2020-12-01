@@ -50,7 +50,7 @@ const TransactionMeta = ({ createdAt, transactionHash, status }: Props) => (
         />
       </li>
     )}
-    {status && (
+    {status && status !== STATUS.Succeeded && (
       <li className={styles.items}>
         <FormattedMessage {...MSG.transactionStatus} values={{ status }} />
       </li>
