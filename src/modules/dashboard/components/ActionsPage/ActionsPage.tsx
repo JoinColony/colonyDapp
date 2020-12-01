@@ -10,6 +10,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import Button from '~core/Button';
 import CopyableAddress from '~core/CopyableAddress';
 
+import ActionsPageFeed from '../ActionsPageFeed';
 import TransactionHash, { Hash } from './TransactionHash';
 import ActionsPageEvent from './ActionsPageEvent';
 import ActionsPageFeedItem from './ActionsPageFeedItem';
@@ -291,6 +292,7 @@ const ActionsPage = () => {
                     Now shut up and take my money.`}
                     key={createKey(event.topic)}
                   />
+                  <ActionsPageFeed transactionHash={transactionHash} />
                 </>
               ))}
             </div>
