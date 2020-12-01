@@ -14,16 +14,19 @@
   color: var(--temp-grey-13);
 }
 
-.content, .disabled {
+.main {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: var(--pad-medium) 40px;
   position: relative;
+}
+
+.main:not(.stateDisabled) {
   cursor: pointer;
 }
 
-.content::after, .disabled::after {
+.main::after {
   height: 1px;
   position: absolute;
   right: 40px;
@@ -33,16 +36,16 @@
   content: "";
 }
 
-.disabled .title,
-.disabled .description {
+.stateDisabled .title,
+.stateDisabled .description {
   color: var(--text-disabled);
 }
 
-.content:hover {
+.main:hover:not(.stateDisabled) {
   background-color: var(--colony-light-blue);
 }
 
-.content:hover .title {
+.main:hover:not(.stateDisabled) .title {
   color: blueHover;
 }
 

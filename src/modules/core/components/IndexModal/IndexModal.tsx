@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   MessageDescriptor,
-  defineMessages,
   FormattedMessage,
 } from 'react-intl';
 
@@ -27,13 +26,6 @@ interface Props extends DialogProps {
   title: MessageDescriptor;
   back?: () => void;
 }
-
-const MSG = defineMessages({
-  backButton: {
-    id: 'core.IndexModal.backButton',
-    defaultMessage: 'Back',
-  },
-});
 
 const IndexModal = ({ title, cancel, items, back }: Props) => {
   return (
@@ -62,9 +54,9 @@ const IndexModal = ({ title, cancel, items, back }: Props) => {
             <Icon
               appearance={{ size: 'normal' }}
               name="caret-left"
-              title={MSG.backButton}
+              title={{ id: 'button.back' }}
             />
-            <FormattedMessage {...MSG.backButton} />
+            <FormattedMessage id="button.back" />
           </Button>
         )}
       </div>

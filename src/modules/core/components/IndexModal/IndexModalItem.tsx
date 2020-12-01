@@ -3,6 +3,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import Icon from '~core/Icon';
 import Paragraph from '~core/Paragraph';
 import styles from './IndexModalItem.css';
+import { getMainClasses } from '~utils/css';
 
 interface Props {
   title: object;
@@ -28,7 +29,7 @@ const IndexModalItem = ({
 }: Props) => {
   return (
     <div
-      className={`${comingSoon ? styles.disabled : styles.content}`}
+      className={getMainClasses({}, styles, { disabled: !!comingSoon })}
       onClick={onClick}
       role="button"
       onKeyPress={onClick}
