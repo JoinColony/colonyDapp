@@ -15,7 +15,7 @@
 
 .domainPotBalance {
   font-size: var(--size-small);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
 }
 
