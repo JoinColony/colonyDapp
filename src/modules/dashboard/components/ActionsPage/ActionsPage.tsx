@@ -9,6 +9,8 @@ import UserMention from '~core/UserMention';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Button from '~core/Button';
 import CopyableAddress from '~core/CopyableAddress';
+import ActionsPageFeed from '~dashboard/ActionsPageFeed';
+import ActionsPageComment from '~dashboard/ActionsPageComment';
 
 import ActionsPageFeed from '../ActionsPageFeed';
 import TransactionHash, { Hash } from './TransactionHash';
@@ -293,6 +295,10 @@ const ActionsPage = () => {
                     key={createKey(event.topic)}
                   />
                   <ActionsPageFeed transactionHash={transactionHash} />
+                  <ActionsPageComment
+                    transactionHash={transactionHash}
+                    colonyAddress={colonyData?.colony.colonyAddress}
+                  />
                 </>
               ))}
             </div>
