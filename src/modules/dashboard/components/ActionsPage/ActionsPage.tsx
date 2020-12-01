@@ -247,7 +247,7 @@ const ActionsPage = () => {
               values={titleDynamicValues}
             />
           </h1>
-          {!events && hash && (
+          {!events?.length && hash && (
             <TransactionHash
               transactionHash={hash}
               /*
@@ -257,7 +257,7 @@ const ActionsPage = () => {
               status={typeof status === 'number' && STATUS_MAP[status]}
             />
           )}
-          {events && (
+          {!!events?.length && (
             <ul>
               <b>Events for the tx:</b>
               {events.map(({ name, topic }) => (
