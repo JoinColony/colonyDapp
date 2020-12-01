@@ -9,7 +9,7 @@ import Button from '~core/Button';
 import { Input } from '~core/Fields';
 import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
-import { TokenMintForm } from '~admin/Tokens';
+import TokenMintForm from '~dashboard/TokenMintDialog/TokenMintForm';
 import { useTokenQuery } from '~data/index';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
