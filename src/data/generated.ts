@@ -2015,6 +2015,13 @@ export type AcceptLevelTaskSubmissionMutationVariables = Exact<{
 
 export type AcceptLevelTaskSubmissionMutation = { acceptLevelTaskSubmission?: Maybe<Pick<Submission, 'id' | 'status'>> };
 
+export type SendTransactionMessageMutationVariables = Exact<{
+  input: SendTransactionMessageInput;
+}>;
+
+
+export type SendTransactionMessageMutation = Pick<Mutation, 'sendTransactionMessage'>;
+
 export type SetNetworkContractsMutationVariables = Exact<{
   input: NetworkContractsInput;
 }>;
@@ -4728,6 +4735,36 @@ export function useAcceptLevelTaskSubmissionMutation(baseOptions?: Apollo.Mutati
 export type AcceptLevelTaskSubmissionMutationHookResult = ReturnType<typeof useAcceptLevelTaskSubmissionMutation>;
 export type AcceptLevelTaskSubmissionMutationResult = Apollo.MutationResult<AcceptLevelTaskSubmissionMutation>;
 export type AcceptLevelTaskSubmissionMutationOptions = Apollo.BaseMutationOptions<AcceptLevelTaskSubmissionMutation, AcceptLevelTaskSubmissionMutationVariables>;
+export const SendTransactionMessageDocument = gql`
+    mutation SendTransactionMessage($input: SendTransactionMessageInput!) {
+  sendTransactionMessage(input: $input)
+}
+    `;
+export type SendTransactionMessageMutationFn = Apollo.MutationFunction<SendTransactionMessageMutation, SendTransactionMessageMutationVariables>;
+
+/**
+ * __useSendTransactionMessageMutation__
+ *
+ * To run a mutation, you first call `useSendTransactionMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendTransactionMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendTransactionMessageMutation, { data, loading, error }] = useSendTransactionMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendTransactionMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendTransactionMessageMutation, SendTransactionMessageMutationVariables>) {
+        return Apollo.useMutation<SendTransactionMessageMutation, SendTransactionMessageMutationVariables>(SendTransactionMessageDocument, baseOptions);
+      }
+export type SendTransactionMessageMutationHookResult = ReturnType<typeof useSendTransactionMessageMutation>;
+export type SendTransactionMessageMutationResult = Apollo.MutationResult<SendTransactionMessageMutation>;
+export type SendTransactionMessageMutationOptions = Apollo.BaseMutationOptions<SendTransactionMessageMutation, SendTransactionMessageMutationVariables>;
 export const SetNetworkContractsDocument = gql`
     mutation SetNetworkContracts($input: NetworkContractsInput!) {
   setNetworkContracts(input: $input) @client {
