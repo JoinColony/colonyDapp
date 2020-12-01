@@ -28,14 +28,6 @@ const MSG = defineMessages({
     id: 'admin.Tokens.TokenMintDialog.amountLabel',
     defaultMessage: `Explain why you're minting more tokens (optional)`,
   },
-  buttonCancel: {
-    id: 'admin.Tokens.TokenMintDialog.buttonCancel',
-    defaultMessage: 'Cancel',
-  },
-  buttonConfirm: {
-    id: 'admin.Tokens.TokenMintDialog.buttonConfirm',
-    defaultMessage: 'Confirm',
-  },
 });
 
 interface FormValues {
@@ -107,12 +99,12 @@ const TokenMintDialog = ({
             <Button
               appearance={{ theme: 'secondary', size: 'large' }}
               onClick={cancel}
-              text={MSG.buttonCancel}
+              text={{ id: 'button.back' }}
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
               onClick={() => handleSubmit()}
-              text={MSG.buttonConfirm}
+              text={{ id: 'button.confirm' }}
               loading={isSubmitting}
               disabled={!isValid}
             />
