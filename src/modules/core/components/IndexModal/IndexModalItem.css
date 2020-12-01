@@ -11,19 +11,22 @@
 .description {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: var(--temp-grey-13);
+  color: var(--temp-grey-blue-7);
 }
 
-.content, .disabled {
+.main {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: var(--pad-medium) 40px;
   position: relative;
+}
+
+.main:not(.stateDisabled) {
   cursor: pointer;
 }
 
-.content::after, .disabled::after {
+.main::after, .main:hover:not(.stateDisabled)::before {
   height: 1px;
   position: absolute;
   right: 40px;
@@ -33,16 +36,25 @@
   content: "";
 }
 
-.disabled .title,
-.disabled .description {
+.stateDisabled .title,
+.stateDisabled .description {
   color: var(--text-disabled);
 }
 
-.content:hover {
-  background-color: var(--colony-light-blue);
+.main:hover:not(.stateDisabled) {
+  background-color: var(--temp-grey-blue-8);
 }
 
-.content:hover .title {
+.main:hover:not(.stateDisabled)::after {
+  background-color: var(--temp-grey-blue-8);
+}
+
+.main:hover:not(.stateDisabled)::before {
+  top: -1px;
+  background-color: var(--temp-grey-blue-8);
+}
+
+.main:hover:not(.stateDisabled) .title {
   color: blueHover;
 }
 
@@ -55,6 +67,10 @@
   display: flex;
   align-items: center;
   margin-right: 5px;
+}
+
+.main:hover:not(.stateDisabled) svg {
+  fill: blueHover;
 }
 
 .coming {

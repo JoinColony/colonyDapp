@@ -2,37 +2,46 @@ import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import Icon from '~core/Icon';
 import Paragraph from '~core/Paragraph';
-import styles from './ColonyActionsDialogItem.css';
+import styles from './IndexModalItem.css';
+import { getMainClasses } from '~utils/css';
 
 interface Props {
   title: object;
   description: object;
-  disabled?: boolean;
+  comingSoon?: boolean;
   icon: string;
+  onClick?: () => void;
 }
 
 const MSG = defineMessages({
   coming: {
-    id: 'dashboard.ColonyActionsDialog.ColonyActionsDialogItem.coming',
+    id: 'core.IndexModal.IndexModalItem.coming',
     defaultMessage: 'Coming soon',
   },
 });
 
-const ColonyActionsDialogItem = ({
+const IndexModalItem = ({
   title,
   description,
-  disabled,
   icon,
+  onClick,
+  comingSoon,
 }: Props) => {
   return (
-    <div className={`${disabled ? styles.disabled : styles.content}`}>
+    <div
+      className={getMainClasses({}, styles, { disabled: !!comingSoon })}
+      onClick={onClick}
+      role="button"
+      onKeyPress={onClick}
+      tabIndex={0}
+    >
       <div>
         <Paragraph className={styles.title}>
           <span className={styles.iconTitle}>
             <Icon appearance={{ size: 'small' }} name={icon} title={title} />
           </span>
           <FormattedMessage {...title} />
-          {disabled && (
+          {comingSoon && (
             <span className={styles.coming}>
               <FormattedMessage {...MSG.coming} />
             </span>
@@ -42,7 +51,7 @@ const ColonyActionsDialogItem = ({
           <FormattedMessage {...description} />
         </Paragraph>
       </div>
-      {!disabled && (
+      {!comingSoon && (
         <div className={styles.iconCaret}>
           <Icon
             appearance={{ size: 'medium' }}
@@ -55,4 +64,4 @@ const ColonyActionsDialogItem = ({
   );
 };
 
-export default ColonyActionsDialogItem;
+export default IndexModalItem;
