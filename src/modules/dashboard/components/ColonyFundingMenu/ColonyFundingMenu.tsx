@@ -87,33 +87,30 @@ const ColonyFundingMenu = ({
 
   return (
     <ul className={styles.main}>
-      {canMoveTokens && (
-        <li>
-          <Button
-            text={MSG.navItemMoveTokens}
-            appearance={{ theme: 'blue' }}
-            onClick={handleMoveTokens}
-          />
-        </li>
-      )}
-      {canMintNativeToken && (
-        <li>
-          <Button
-            text={MSG.navItemMintNewTokens}
-            appearance={{ theme: 'blue' }}
-            onClick={handleMintTokens}
-          />
-        </li>
-      )}
-      {canEdit && (
-        <li>
-          <Button
-            text={MSG.navItemManageTokens}
-            appearance={{ theme: 'blue' }}
-            onClick={handleEditTokens}
-          />
-        </li>
-      )}
+      <li>
+        <Button
+          text={MSG.navItemMoveTokens}
+          appearance={{ theme: 'blue' }}
+          onClick={handleMoveTokens}
+          disabled={!canMoveTokens}
+        />
+      </li>
+      <li>
+        <Button
+          text={MSG.navItemMintNewTokens}
+          appearance={{ theme: 'blue' }}
+          onClick={handleMintTokens}
+          disabled={!canMintNativeToken}
+        />
+      </li>
+      <li>
+        <Button
+          text={MSG.navItemManageTokens}
+          appearance={{ theme: 'blue' }}
+          onClick={handleEditTokens}
+          disabled={!canEdit}
+        />
+      </li>
     </ul>
   );
 };
