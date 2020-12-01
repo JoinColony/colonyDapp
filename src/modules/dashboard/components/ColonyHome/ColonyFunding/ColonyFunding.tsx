@@ -6,7 +6,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
-import { TransferFundsDialog } from '~admin/Tokens';
+import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import {
   useLoggedInUser,
   Colony,
