@@ -155,6 +155,9 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
           },
           {
             "name": "UnlockNextLevelEvent"
+          },
+          {
+            "name": "TransactionMessageEvent"
           }
         ]
       }
@@ -400,7 +403,14 @@ export type UnlockNextLevelEvent = {
   submissionId: Scalars['String'];
 };
 
-export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent;
+export type TransactionMessageEvent = {
+  type: EventType;
+  transactionHash: Scalars['String'];
+  message: Scalars['String'];
+  colonyAddress: Scalars['String'];
+};
+
+export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent | TransactionMessageEvent;
 
 export type Event = {
   id: Scalars['String'];
@@ -702,6 +712,12 @@ export type RemoveProgramInput = {
   id: Scalars['String'];
 };
 
+export type SendTransactionMessageInput = {
+  transactionHash: Scalars['String'];
+  message: Scalars['String'];
+  colonyAddress: Scalars['String'];
+};
+
 export type Mutation = {
   acceptLevelTaskSubmission?: Maybe<Submission>;
   addUpvoteToSuggestion?: Maybe<Suggestion>;
@@ -740,6 +756,7 @@ export type Mutation = {
   reorderLevelSteps?: Maybe<Level>;
   reorderProgramLevels?: Maybe<Program>;
   sendTaskMessage: Scalars['Boolean'];
+  sendTransactionMessage: Scalars['Boolean'];
   sendWorkInvite?: Maybe<Task>;
   setColonyTokens?: Maybe<Colony>;
   setLoggedInUser: LoggedInUser;
@@ -935,6 +952,11 @@ export type MutationSendTaskMessageArgs = {
 };
 
 
+export type MutationSendTransactionMessageArgs = {
+  input: SendTransactionMessageInput;
+};
+
+
 export type MutationSendWorkInviteArgs = {
   input: SendWorkInviteInput;
 };
@@ -1073,6 +1095,7 @@ export type Query = {
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
   transaction: Transaction;
+  transactionMessages: TransactionMessages;
   user: User;
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
@@ -1140,6 +1163,11 @@ export type QueryTokensArgs = {
 export type QueryTransactionArgs = {
   transactionHash: Scalars['String'];
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryTransactionMessagesArgs = {
+  transactionHash: Scalars['String'];
 };
 
 
@@ -1325,8 +1353,14 @@ export enum EventType {
   SetTaskTitle = 'SetTaskTitle',
   TaskMessage = 'TaskMessage',
   UnassignWorker = 'UnassignWorker',
-  UnlockNextLevel = 'UnlockNextLevel'
+  UnlockNextLevel = 'UnlockNextLevel',
+  TransactionMessage = 'TransactionMessage'
 }
+
+export type TransactionMessages = {
+  transactionHash: Scalars['String'];
+  messages: Array<Event>;
+};
 
 export enum CacheControlScope {
   Public = 'PUBLIC',
@@ -1555,6 +1589,13 @@ export type TaskEventFragment = (
 );
 
 export type FullNetworkEventFragment = Pick<NetworkEvent, 'fromAddress' | 'toAddress' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domainId'>;
+
+export type TransactionEventContextFragment = { context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress'> };
+
+export type TransactionMessageFragment = (
+  EventFieldsFragment
+  & TransactionEventContextFragment
+);
 
 export type AssignWorkerMutationVariables = Exact<{
   input: AssignWorkerInput;
@@ -2429,6 +2470,16 @@ export type TransactionQuery = { transaction: (
     & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values'>> }
   ) };
 
+export type TransactionMessagesQueryVariables = Exact<{
+  transactionHash: Scalars['String'];
+}>;
+
+
+export type TransactionMessagesQuery = { transactionMessages: (
+    Pick<TransactionMessages, 'transactionHash'>
+    & { messages: Array<TransactionMessageFragment> }
+  ) };
+
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
   payouts {
@@ -2882,6 +2933,25 @@ export const FullNetworkEventFragmentDoc = gql`
   domainId
 }
     `;
+export const TransactionEventContextFragmentDoc = gql`
+    fragment TransactionEventContext on Event {
+  context {
+    ... on TransactionMessageEvent {
+      type
+      transactionHash
+      message
+      colonyAddress
+    }
+  }
+}
+    `;
+export const TransactionMessageFragmentDoc = gql`
+    fragment TransactionMessage on Event {
+  ...EventFields
+  ...TransactionEventContext
+}
+    ${EventFieldsFragmentDoc}
+${TransactionEventContextFragmentDoc}`;
 export const AssignWorkerDocument = gql`
     mutation AssignWorker($input: AssignWorkerInput!) {
   assignWorker(input: $input) {
@@ -6487,3 +6557,39 @@ export function useTransactionLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
 export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
 export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;
+export const TransactionMessagesDocument = gql`
+    query TransactionMessages($transactionHash: String!) {
+  transactionMessages(transactionHash: $transactionHash) {
+    transactionHash
+    messages {
+      ...TransactionMessage
+    }
+  }
+}
+    ${TransactionMessageFragmentDoc}`;
+
+/**
+ * __useTransactionMessagesQuery__
+ *
+ * To run a query within a React component, call `useTransactionMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionMessagesQuery({
+ *   variables: {
+ *      transactionHash: // value for 'transactionHash'
+ *   },
+ * });
+ */
+export function useTransactionMessagesQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
+        return Apollo.useQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
+      }
+export function useTransactionMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
+        }
+export type TransactionMessagesQueryHookResult = ReturnType<typeof useTransactionMessagesQuery>;
+export type TransactionMessagesLazyQueryHookResult = ReturnType<typeof useTransactionMessagesLazyQuery>;
+export type TransactionMessagesQueryResult = Apollo.QueryResult<TransactionMessagesQuery, TransactionMessagesQueryVariables>;

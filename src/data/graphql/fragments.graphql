@@ -429,3 +429,19 @@ fragment FullNetworkEvent on NetworkEvent {
   userAddress
   domainId
 }
+
+fragment TransactionEventContext on Event {
+    context {
+    ... on TransactionMessageEvent {
+      type
+      transactionHash
+      message
+      colonyAddress
+    }
+  }
+}
+
+fragment TransactionMessage on Event {
+  ...EventFields
+  ...TransactionEventContext
+}

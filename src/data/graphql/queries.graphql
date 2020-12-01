@@ -596,3 +596,12 @@ query Transaction($transactionHash: String!, $colonyAddress: String!) {
     createdAt
   }
 }
+
+query TransactionMessages($transactionHash: String!) {
+  transactionMessages(transactionHash: $transactionHash) {
+    transactionHash
+    messages {
+    	...TransactionMessage
+    }
+  }
+}
