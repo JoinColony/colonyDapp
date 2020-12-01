@@ -26,7 +26,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ActionsPage.TransactionMeta';
 
 interface Props {
-  createdAt?: Date;
+  createdAt?: number;
   transactionHash?: string;
   status?: STATUS;
 }
@@ -35,7 +35,7 @@ const TransactionMeta = ({ createdAt, transactionHash, status }: Props) => (
   <ul className={styles.main}>
     {createdAt && (
       <li className={styles.items}>
-        <TimeRelative value={createdAt} />
+        <TimeRelative value={new Date(createdAt)} />
       </li>
     )}
     {transactionHash && (

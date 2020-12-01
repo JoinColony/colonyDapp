@@ -1363,6 +1363,7 @@ export type Transaction = {
   to?: Maybe<Scalars['String']>;
   status?: Maybe<Scalars['Int']>;
   events: Array<ParsedEvent>;
+  createdAt?: Maybe<Scalars['Int']>;
 };
 
 export type NetworkContractsInput = {
@@ -2424,7 +2425,7 @@ export type TransactionQueryVariables = Exact<{
 
 
 export type TransactionQuery = { transaction: (
-    Pick<Transaction, 'hash' | 'from' | 'to' | 'status'>
+    Pick<Transaction, 'hash' | 'from' | 'to' | 'status' | 'createdAt'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values'>> }
   ) };
 
@@ -6455,6 +6456,7 @@ export const TransactionDocument = gql`
       topic
       values
     }
+    createdAt
   }
 }
     `;

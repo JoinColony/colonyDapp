@@ -244,6 +244,7 @@ export const transactionResolvers = ({
           to,
           status,
           logs,
+          blockHash,
         } = transactionReceipt;
         const events = logs
           ?.map((log) => colonyClient.interface.parseLog(log))
@@ -253,12 +254,22 @@ export const transactionResolvers = ({
            */
           .filter((log) => !!log)
           .map(({ name, values, topic }) => ({ name, values, topic }));
+        /*
+         * Get the block time in ms
+         *
+         * If we don't find a time for the current tx (which shouldn't happen actually)
+         * we fallback to 0, which is 1/1/1970 :)
+         */
+        const createdAt = blockHash
+          ? await getBlockTime(provider, blockHash)
+          : 0;
         return {
           hash,
           from,
           to,
           status,
           events,
+          createdAt,
         };
       }
 
@@ -280,6 +291,13 @@ export const transactionResolvers = ({
         to,
         status: 2,
         events: null,
+        /*
+         * Since this is a pending transaction, and we can't get the blockHash anyway,
+         * we just set it to "now" as that is mostly true anyway (unless the tx takes
+         * a very long time to mine) -- but this is a limitation of operating w/o a
+         * server
+         */
+        createdAt: Date.now(),
       };
     },
   },

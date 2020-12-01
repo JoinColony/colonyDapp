@@ -15,12 +15,14 @@ interface Props {
   transactionHash: string;
   status?: STATUS;
   showMeta?: boolean;
+  createdAt?: number;
 }
 
 const TransactionHash = ({
   transactionHash,
   status,
   showMeta = true,
+  createdAt = Date.now(),
 }: Props) => (
   <div className={getMainClasses({}, styles, { showStatus: !!status })}>
     {status && (
@@ -33,7 +35,7 @@ const TransactionHash = ({
       {showMeta && (
         <TransactionMeta
           transactionHash={transactionHash}
-          createdAt={new Date()}
+          createdAt={createdAt}
           status={status}
         />
       )}

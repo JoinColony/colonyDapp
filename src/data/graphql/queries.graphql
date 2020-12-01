@@ -593,5 +593,6 @@ query Transaction($transactionHash: String!, $colonyAddress: String!) {
       topic
       values
     }
+    createdAt
   }
 }

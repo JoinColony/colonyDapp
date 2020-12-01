@@ -230,7 +230,7 @@ const ActionsPage = () => {
   }
 
   const {
-    transaction: { hash, status, events },
+    transaction: { hash, status, events, createdAt },
   } = transactionData;
 
   return (
@@ -255,6 +255,7 @@ const ActionsPage = () => {
                * Typecasting it doesn't work as well
                */
               status={typeof status === 'number' && STATUS_MAP[status]}
+              createdAt={createdAt || Date.now()}
             />
           )}
           {!!events?.length && (

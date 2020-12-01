@@ -30,6 +30,7 @@ export default gql`
     to: String
     status: Int
     events: [ParsedEvent!]!
+    createdAt: Int
   }
 
   input NetworkContractsInput {
