@@ -1,18 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, KeyboardEvent, SyntheticEvent } from 'react';
 import * as yup from 'yup';
 import { FormikProps, FormikBag } from 'formik';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { Form, Input } from '~core/Fields';
-import Button from '~core/Button';
+import { Form, TextareaAutoresize } from '~core/Fields';
 
 import {
   useSendTransactionMessageMutation,
   TransactionMessagesDocument,
   TransactionQueryVariables,
-  useLoggedInUser,
 } from '~data/index';
-import { Address } from '~types/index';
+import { Address, ENTER } from '~types/index';
 
 import styles from './ActionsPageComment.css';
 
@@ -23,10 +21,32 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPageComment.commentInputPlaceholder',
     defaultMessage: 'What would you like to say?',
   },
+  commentInstuctions: {
+    id: 'dashboard.ActionsPageComment.commentInstuctions',
+    defaultMessage: `{sendCombo} to send {newLineCombo} for a new line`,
+  },
+  sendCombo: {
+    id: 'dashboard.ActionsPageComment.sendCombo',
+    defaultMessage: `{isMac, select,
+      true {⌘}
+      other {Ctrl}
+    }+Return`,
+  },
+  newLineCombo: {
+    id: 'dashboard.ActionsPageComment.newLineCombo',
+    defaultMessage: 'Return',
+  },
 });
 
+/*
+ * This a poor man's way of detecting the Mac os platform (even though
+ * it has a bit of future proofing baked in), but it's a good alternative for
+ * now, until we have time to come back and make a proper detector.
+ */
+const isMac: boolean = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
 const validationSchema = yup.object().shape({
-  message: yup.string().trim().min(1).required(),
+  message: yup.string().trim().min(3).required(),
 });
 
 type FormValues = {
@@ -38,9 +58,23 @@ interface Props {
   colonyAddress: Address;
 }
 
-const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
-  const { username, ethereal } = useLoggedInUser();
+const handleKeyboardSubmit = (
+  capturedEvent: KeyboardEvent<any>,
+  callback: (e: SyntheticEvent<any>) => any,
+) => {
+  const { key, ctrlKey, metaKey } = capturedEvent;
 
+  /*
+   * The meta key is interpreted on MacOS as the command ⌘ key
+   */
+  if ((ctrlKey || metaKey) && key === ENTER) {
+    capturedEvent.preventDefault();
+    return callback(capturedEvent);
+  }
+  return false;
+};
+
+const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
   const [sendTransactionMessage] = useSendTransactionMessageMutation();
 
   const onSubmit = useCallback(
@@ -63,31 +97,48 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
     [transactionHash, colonyAddress, sendTransactionMessage],
   );
 
-  const canSendMessage = !!username && !ethereal;
-
   return (
     <div className={styles.main}>
       <Form
         initialValues={{ message: '' }}
         validationSchema={validationSchema}
         onSubmit={onSubmit}
+        validateOnMount
       >
-        {({ isSubmitting, isValid }: FormikProps<FormValues>) => (
-          <>
-            <Input
+        {({ isSubmitting, isValid, handleSubmit }: FormikProps<FormValues>) => (
+          <div className={styles.commentBox}>
+            <TextareaAutoresize
               elementOnly
               label={MSG.commentInputPlaceholder}
               name="message"
               placeholder={MSG.commentInputPlaceholder}
-              disabled={!canSendMessage || isSubmitting}
+              minRows={1}
+              maxRows={6}
+              onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
             />
-            <Button
-              loading={isSubmitting}
-              disabled={!canSendMessage || isSubmitting || !isValid}
-              text={{ id: 'button.submit' }}
-              type="submit"
-            />
-          </>
+            {isValid && (
+              <div className={styles.sendInstructions}>
+                <FormattedMessage
+                  {...MSG.commentInstuctions}
+                  values={{
+                    sendCombo: (
+                      <b>
+                        <FormattedMessage
+                          {...MSG.sendCombo}
+                          values={{ isMac }}
+                        />
+                      </b>
+                    ),
+                    newLineCombo: (
+                      <b>
+                        <FormattedMessage {...MSG.newLineCombo} />
+                      </b>
+                    ),
+                  }}
+                />
+              </div>
+            )}
+          </div>
         )}
       </Form>
     </div>
