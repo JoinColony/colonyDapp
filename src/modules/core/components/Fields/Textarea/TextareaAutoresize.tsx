@@ -26,6 +26,9 @@ interface Props
   /** Appearance object */
   appearance?: Appearance;
 
+  /** If set, it will allow the element to be focused when mounted */
+  autoFocus?: boolean;
+
   /** Is the input disabled */
   disabled?: boolean;
 
