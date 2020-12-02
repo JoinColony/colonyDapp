@@ -14,32 +14,15 @@
 }
 
 .domainPotBalance {
-  font-size: var(--size-small);
+  font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
+  text-align: right;
   color: var(--temp-grey-blue-7);
-}
-
-.domainSelects {
-  display: grid;
-  width: 100%;
-  grid-template-columns: calc(50% - 25px) 50px calc(50% - 25px);
-}
-
-.transferIcon {
-  align-self: center;
-  height: 26px;
-  width: 26px;
-  position: relative;
-  top: -7px;
-  justify-self: center;
-}
-
-.transferIcon svg {
-  fill: var(--temp-grey-blue-7);
 }
 
 .title {
   font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
   line-height: 24px;
   color: var(--dark);
 }
@@ -49,4 +32,18 @@
 .textAreaSection label {
   font-size: var(--size-smallish);
   color: var(--dark);
+}
+
+.tokenAmount input {
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+}
+
+.singleUserContainer label {
+  margin-bottom: 15px;
+  color: var(--dark);
+}
+
+.singleUserContainer > div {
+  padding-left: 0;
 }

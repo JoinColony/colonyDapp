@@ -62,7 +62,7 @@ const MSG = defineMessages({
   domainTokenAmount: {
     id:
       'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.domainTokenAmount',
-    defaultMessage: 'Available: {amount} {symbol}',
+    defaultMessage: 'Available Funds: {amount} {symbol}',
   },
   noAmount: {
     id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noAmount',
@@ -226,7 +226,7 @@ const CreatePaymentDialogForm = ({
               options={domainOptions}
               label={MSG.from}
               name="fromDomain"
-              appearance={{ theme: 'grey' }}
+              appearance={{ theme: 'grey', width: 'fluid' }}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -255,34 +255,34 @@ const CreatePaymentDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection>
-        <SingleUserPicker
-          appearance={{ width: 'wide' }}
-          data={subscribedUsers}
-          label={MSG.to}
-          name="user"
-          filter={filterUserSelection}
-          renderAvatar={supRenderAvatar}
-        />
+        <div className={styles.singleUserContainer}>
+          <SingleUserPicker
+            appearance={{ width: 'wide' }}
+            data={subscribedUsers}
+            label={MSG.to}
+            name="user"
+            filter={filterUserSelection}
+            renderAvatar={supRenderAvatar}
+          />
+        </div>
       </DialogSection>
       <DialogSection>
         <div className={styles.tokenAmount}>
-          <div>
-            <Input
-              label={MSG.amount}
-              name="amount"
-              appearance={{
-                theme: 'minimal',
-                align: 'right',
-              }}
-              formattingOptions={{
-                delimiter: ',',
-                numeral: true,
-                numeralDecimalScale: getTokenDecimalsWithFallback(
-                  selectedToken && selectedToken.decimals,
-                ),
-              }}
-            />
-          </div>
+          <Input
+            label={MSG.amount}
+            name="amount"
+            appearance={{
+              theme: 'minimal',
+              align: 'right',
+            }}
+            formattingOptions={{
+              delimiter: ',',
+              numeral: true,
+              numeralDecimalScale: getTokenDecimalsWithFallback(
+                selectedToken && selectedToken.decimals,
+              ),
+            }}
+          />
           <div className={styles.tokenAmountSelect}>
             <Select
               label={MSG.token}
@@ -321,7 +321,7 @@ const CreatePaymentDialogForm = ({
           />
         </div>
       </DialogSection>
-      <DialogSection appearance={{ align: 'right' }}>
+      <DialogSection appearance={{ align: 'right', background: 'grey' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
           onClick={cancel}
