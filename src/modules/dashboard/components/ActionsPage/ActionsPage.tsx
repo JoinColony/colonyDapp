@@ -12,6 +12,7 @@ import CopyableAddress from '~core/CopyableAddress';
 
 import TransactionHash, { Hash } from './TransactionHash';
 import ActionsPageEvent from './ActionsPageEvent';
+import ActionsPageFeedItem from './ActionsPageFeedItem';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';
 
@@ -265,16 +266,33 @@ const ActionsPage = () => {
             />
           )}
           {!!events?.length && (
-            <div style={{width: "460px"}}>
+            <div style={{ width: '460px' }}>
               {/* temp fixed width, we should handle this in page layout */}
               <b>Events for the tx:</b>
               {events.map((event) => (
-                <ActionsPageEvent
-                  event={event}
-                  transactionHash={hash}
-                  createdAt={createdAt || Date.now()}
-                  key={createKey(event.topic)}
-                />
+                <>
+                  <ActionsPageFeedItem
+                    createdAt={Date.now()}
+                    username="Harley"
+                    annotation
+                    comment={`Luke has big plans and the rebellion needs 
+                    these funds. I had to ‘Force’ this, I just had to!`}
+                    key={createKey(event.topic)}
+                  />
+                  <ActionsPageEvent
+                    event={event}
+                    transactionHash={hash}
+                    createdAt={createdAt || Date.now()}
+                    key={createKey(event.topic)}
+                  />
+                  <ActionsPageFeedItem
+                    createdAt={Date.now()}
+                    username="Luke"
+                    comment={`Oh hell yes, I’m all about this. 
+                    Now shut up and take my money.`}
+                    key={createKey(event.topic)}
+                  />
+                </>
               ))}
             </div>
           )}

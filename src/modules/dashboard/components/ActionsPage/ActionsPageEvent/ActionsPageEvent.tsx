@@ -22,7 +22,7 @@ interface Props {
   createdAt?: number;
 }
 
-const ActionsPageEvent = ({ event, createdAt, transactionHash }: Props) => {
+const ActionsPageEvent = ({ createdAt, transactionHash }: Props) => {
   // Mocked roles - Please make me smarter
   const roles = [1, 2, 3];
   const directRoles = [1, 2, 3];
@@ -35,25 +35,27 @@ const ActionsPageEvent = ({ event, createdAt, transactionHash }: Props) => {
 
   return (
     <div className={styles.main}>
-      <div><span className={styles.rect}/></div>
+      <div className={styles.rectContainer}>
+        <span className={styles.rect} />
+      </div>
       <div className={styles.content}>
         <div className={styles.text}>
           <FormattedMessage
             {...MSG.eventTitle}
             values={{
-              from: (
-                <Decorate>@Harley</Decorate>
-              ),
-              to: (
-                <Decorate>@Luke</Decorate>
-              ),
-              value: "25,000 xDAI",
-              team: "Dev",
+              from: <Decorate>@Harley</Decorate>,
+              to: <Decorate>@Luke</Decorate>,
+              value: '25,000 xDAI',
+              team: 'Dev',
             }}
           />
         </div>
         <div className={styles.details}>
-          <UserPermissions roles={roles} directRoles={directRoles} appearance={{ padding: 'none' }} />
+          <UserPermissions
+            roles={roles}
+            directRoles={directRoles}
+            appearance={{ padding: 'none' }}
+          />
           {transactionHash && (
             <TransactionMeta
               transactionHash={transactionHash}
