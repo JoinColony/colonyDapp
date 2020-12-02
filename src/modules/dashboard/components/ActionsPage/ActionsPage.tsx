@@ -266,8 +266,7 @@ const ActionsPage = () => {
             />
           )}
           {!!events?.length && (
-            <div style={{ width: '460px' }}>
-              {/* temp fixed width, we should handle this in page layout */}
+            <div>
               <b>Events for the tx:</b>
               {events.map((event) => (
                 <>
