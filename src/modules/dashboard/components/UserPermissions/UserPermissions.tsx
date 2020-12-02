@@ -16,7 +16,7 @@ interface Props {
   appearance?: Appearance;
 }
 
-const displayName = 'admin.Permissions.UserPermissions';
+const displayName = 'dashboard.UserPermissions';
 
 const UserPermissions = ({ roles, directRoles, appearance }: Props) => {
   const sortedRoles = roles

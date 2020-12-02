@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ParsedEvent } from '~data/index';
 import TransactionMeta from '../TransactionMeta';
 import styles from './ActionsPageEvent.css';
-import UserPermissions from '~admin/Permissions/UserPermissions';
+import UserPermissions from '~dashboard/UserPermissions';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
 
