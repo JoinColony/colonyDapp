@@ -1,0 +1,32 @@
+.main {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  width: 100%;
+}
+
+.rect {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: var(--primary);
+  transform: rotate(135deg);
+  margin-right: var(--pad-large);
+}
+
+.details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  margin-left: -8px;
+}
+
+.content {
+  flex: 1;
+}
+
+.text {
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
+}

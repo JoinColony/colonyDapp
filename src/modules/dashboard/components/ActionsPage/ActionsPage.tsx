@@ -265,12 +265,14 @@ const ActionsPage = () => {
             />
           )}
           {!!events?.length && (
-            <div>
+            <div style={{width: "460px"}}>
+              {/* temp fixed width, we should handle this in page layout */}
               <b>Events for the tx:</b>
               {events.map((event) => (
                 <ActionsPageEvent
                   event={event}
-                  userProfile={userData?.user?.profile}
+                  transactionHash={hash}
+                  createdAt={createdAt || Date.now()}
                   key={createKey(event.topic)}
                 />
               ))}

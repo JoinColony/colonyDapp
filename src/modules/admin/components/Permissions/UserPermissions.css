@@ -1,6 +1,5 @@
 
 .main {
-  margin-left: auto;
   padding: 0 30px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
@@ -9,4 +8,8 @@
 
 .main > div {
   margin-left: 8px;
+}
+
+.paddingNone {
+  padding: 0;
 }
