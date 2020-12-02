@@ -8,12 +8,12 @@ import styles from './ActionsPageFeed.css';
 const displayName = 'dashboard.ActionsPageFeed';
 
 interface Props {
-  transactionHash?: string;
+  transactionHash: string;
 }
 
 const ActionsPageFeed = ({ transactionHash }: Props) => {
   const { data, loading, error } = useTransactionMessagesQuery({
-    variables: { transactionHash: transactionHash || '' },
+    variables: { transactionHash },
   });
 
   if (error) {

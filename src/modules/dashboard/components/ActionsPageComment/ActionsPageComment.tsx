@@ -1,40 +1,48 @@
 import React, { useCallback } from 'react';
-// import * as yup from 'yup';
+import * as yup from 'yup';
 import { FormikProps, FormikBag } from 'formik';
+import { defineMessages } from 'react-intl';
+
+import { Form, Input } from '~core/Fields';
+import Button from '~core/Button';
 
 import {
   useSendTransactionMessageMutation,
   TransactionMessagesDocument,
   TransactionQueryVariables,
+  useLoggedInUser,
 } from '~data/index';
-import { Form, Input } from '~core/Fields';
-import Button from '~core/Button';
+import { Address } from '~types/index';
 
 import styles from './ActionsPageComment.css';
 
 const displayName = 'dashboard.ActionsPageComment';
+
+const MSG = defineMessages({
+  commentInputPlaceholder: {
+    id: 'dashboard.ActionsPageComment.commentInputPlaceholder',
+    defaultMessage: 'What would you like to say?',
+  },
+});
+
+const validationSchema = yup.object().shape({
+  message: yup.string().trim().min(1).required(),
+});
 
 type FormValues = {
   message: string;
 };
 
 interface Props {
-  transactionHash?: string;
-  /*
-   * @TODO Add Address Type
-   */
-  colonyAddress?: string;
+  transactionHash: string;
+  colonyAddress: Address;
 }
 
-// const validationSchema = yup.object().shape({
-//   comment: yup.string().trim().min(1).required(),
-// });
+const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
+  const { username, ethereal } = useLoggedInUser();
 
-const ActionsPageComment = ({
-  transactionHash = '',
-  colonyAddress = '',
-}: Props) => {
   const [sendTransactionMessage] = useSendTransactionMessageMutation();
+
   const onSubmit = useCallback(
     ({ message }: FormValues, { resetForm }: FormikBag<object, FormValues>) =>
       sendTransactionMessage({
@@ -55,40 +63,29 @@ const ActionsPageComment = ({
     [transactionHash, colonyAddress, sendTransactionMessage],
   );
 
+  const canSendMessage = !!username && !ethereal;
+
   return (
     <div className={styles.main}>
       <Form
         initialValues={{ message: '' }}
-        // validationSchema={validationSchema}
+        validationSchema={validationSchema}
         onSubmit={onSubmit}
-        // validateOnMount
       >
         {({ isSubmitting, isValid }: FormikProps<FormValues>) => (
           <>
             <Input
               elementOnly
-              label="Transaction Message"
-              // label={isMac ? MSG.placeholderMac : MSG.placeholderWinNix}
+              label={MSG.commentInputPlaceholder}
               name="message"
-              /*
-               * @NOTE We need two message descriptors here, and can't just use
-               * selectors, since the placeholder prop doesn't support passing over
-               * message descriptors values
-               */
-              // placeholder={isMac ? MSG.placeholderMac : MSG.placeholderWinNix}
-              // appearance={{ colorSchema: 'transparent' }}
-              // minRows={3}
-              // maxRows={8}
-              // onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
-              // disabled={!username || isSubmitting}
+              placeholder={MSG.commentInputPlaceholder}
+              disabled={!canSendMessage || isSubmitting}
             />
-            {/* <div className={styles.commentControls}> */}
             <Button
               loading={isSubmitting}
-              disabled={!isValid}
+              disabled={!canSendMessage || isSubmitting || !isValid}
               text={{ id: 'button.submit' }}
               type="submit"
-              // style={{ width: styles.wideButton }}
             />
           </>
         )}

@@ -12,7 +12,6 @@ import CopyableAddress from '~core/CopyableAddress';
 import ActionsPageFeed from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 
-import ActionsPageFeed from '../ActionsPageFeed';
 import TransactionHash, { Hash } from './TransactionHash';
 import ActionsPageEvent from './ActionsPageEvent';
 import ActionsPageFeedItem from './ActionsPageFeedItem';
@@ -296,11 +295,15 @@ const ActionsPage = () => {
                     Now shut up and take my money.`}
                     key={createKey(event.topic)}
                   />
-                  <ActionsPageFeed transactionHash={transactionHash} />
-                  <ActionsPageComment
-                    transactionHash={transactionHash}
-                    colonyAddress={colonyData?.colony.colonyAddress}
-                  />
+                  {transactionHash && (
+                    <>
+                      <ActionsPageFeed transactionHash={transactionHash} />
+                      <ActionsPageComment
+                        transactionHash={transactionHash}
+                        colonyAddress={colonyData?.colony.colonyAddress}
+                      />
+                    </>
+                  )}
                 </>
               ))}
             </div>
