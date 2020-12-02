@@ -60,6 +60,10 @@ const ExtensionActionButton = ({
     );
   }
 
+  if (installedExtension.details.deprecated) {
+    return null;
+  }
+
   if (!installedExtension.details.initialized) {
     return (
       <Button

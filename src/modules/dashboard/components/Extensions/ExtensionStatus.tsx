@@ -46,16 +46,20 @@ const ExtensionStatus = ({ installedExtension }: Props) => {
   } else if (installedExtension.details.missingPermissions.length) {
     status = MSG.missingPermissions;
     theme = 'danger';
-  } else if (installedExtension.details.deprecated) {
-    status = MSG.deprecated;
-    theme = 'danger';
   } else if (installedExtension.details.initialized) {
     status = MSG.enabled;
     theme = 'primary';
   } else {
     status = MSG.installed;
   }
-  return <Tag appearance={{ theme }} text={status} />;
+  return (
+    <>
+      <Tag appearance={{ theme }} text={status} />
+      {installedExtension && installedExtension.details.deprecated ? (
+        <Tag appearance={{ theme: 'danger' }} text={MSG.deprecated} />
+      ) : null}
+    </>
+  );
 };
 
 ExtensionStatus.displayName = 'dashboard.Extensions.ExtensionStatus';
