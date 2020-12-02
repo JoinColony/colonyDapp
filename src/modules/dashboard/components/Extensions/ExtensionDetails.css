@@ -7,8 +7,16 @@
   grid-template-columns: auto 35%;
 }
 
+.headerLine {
+  margin: 20px 0 12px 0;
+}
+
+.extensionText {
+  padding-top: 42px;
+}
+
 .buttonWrapper {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   text-align: right;
 }
 
@@ -23,9 +31,9 @@
 }
 
 .installedBy {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: right;
+  justify-content: flex-end;
 }
 
 .installedByAddress {

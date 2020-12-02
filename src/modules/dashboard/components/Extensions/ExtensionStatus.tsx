@@ -43,6 +43,7 @@ const ExtensionStatus = ({ installedExtension }: Props) => {
     status = MSG.notInstalled;
   } else if (!installedExtension.details.initialized) {
     status = MSG.notEnabled;
+    theme = 'golden';
   } else if (installedExtension.details.missingPermissions.length) {
     status = MSG.missingPermissions;
     theme = 'danger';

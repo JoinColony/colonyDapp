@@ -14,13 +14,13 @@ const SingleCrumb = ({ crumbText, crumbLink, lastCrumb }: Props) => {
   if (lastCrumb) {
     return (
       <div className={styles.elementLast} title={crumbText}>
-        <b className={styles.breadCrumble}>
+        <span className={styles.breadCrumble}>
           {crumbLink ? (
             <NavLink to={crumbLink}>{crumbText}</NavLink>
           ) : (
             crumbText
           )}
-        </b>
+        </span>
       </div>
     );
   }

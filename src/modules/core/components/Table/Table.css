@@ -180,7 +180,8 @@
 
 .themeLined {
   & td {
-    padding: 10px 0;
+    height: 44px;
+    vertical-align: middle;
   }
 
   & tr {

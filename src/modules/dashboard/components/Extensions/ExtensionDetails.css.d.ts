@@ -1,5 +1,7 @@
 export const main: string;
 export const content: string;
+export const headerLine: string;
+export const extensionText: string;
 export const buttonWrapper: string;
 export const cellLabel: string;
 export const cellData: string;

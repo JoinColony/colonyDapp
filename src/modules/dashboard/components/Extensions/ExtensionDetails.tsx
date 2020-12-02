@@ -215,14 +215,14 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
   return (
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
-      <hr />
+      <hr className={styles.headerLine} />
       <div className={styles.content}>
         <Switch>
           <Route
             exact
             path={COLONY_EXTENSION_DETAILS_ROUTE}
             component={() => (
-              <div>
+              <div className={styles.extensionText}>
                 <Heading
                   tagName="h3"
                   appearance={{ size: 'medium', margin: 'small' }}

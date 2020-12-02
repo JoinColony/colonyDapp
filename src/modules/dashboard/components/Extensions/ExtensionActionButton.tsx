@@ -46,7 +46,7 @@ const ExtensionActionButton = ({
   if (!installedExtension) {
     return (
       <ActionButton
-        appearance={{ theme: 'primary', size: 'large' }}
+        appearance={{ theme: 'primary', size: 'medium' }}
         button={IconButton}
         submit={ActionTypes.COLONY_EXTENSION_INSTALL}
         error={ActionTypes.COLONY_EXTENSION_INSTALL_ERROR}
