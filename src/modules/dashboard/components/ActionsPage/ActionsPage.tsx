@@ -82,6 +82,8 @@ const ActionsPage = () => {
     colonyName: string;
   }>();
 
+  const { username: currentUserName, ethereal } = useLoggedInUser();
+
   const {
     data: colonyData,
     /**
@@ -269,7 +271,7 @@ const ActionsPage = () => {
               createdAt={createdAt}
             />
           )}
-          {!!events?.length && (
+            {!!events?.length && (
             <div>
               <b>Events for the tx:</b>
               {events.map((event) => (
@@ -298,10 +300,16 @@ const ActionsPage = () => {
                   {transactionHash && (
                     <>
                       <ActionsPageFeed transactionHash={transactionHash} />
-                      <ActionsPageComment
-                        transactionHash={transactionHash}
-                        colonyAddress={colonyData?.colony.colonyAddress}
-                      />
+                      {/*
+                       *  @NOTE A user can comment only if he has a wallet connected
+                       * and a registered user profile
+                       */}
+                      {currentUserName && !ethereal && (
+                        <ActionsPageComment
+                          transactionHash={transactionHash}
+                          colonyAddress={colonyAddress}
+                        />
+                      )}
                     </>
                   )}
                 </>
