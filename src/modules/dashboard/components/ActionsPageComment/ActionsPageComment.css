@@ -26,3 +26,27 @@
 .commentBox textarea:active {
   border: 1px solid var(--primary);
 }
+
+.sendInstructions {
+  margin-top: 5px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: var(--temp-grey-0);
+  opacity: 0;
+  transition: opacity 0.2s linear;
+}
+
+.sendInstructions b {
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.sendInstructions b:last-child {
+  margin-left: 15px;
+}
+
+.sendInstructionsFadeIn {
+  composes: sendInstructions;
+  opacity: 1;
+}

@@ -116,28 +116,29 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
               maxRows={6}
               onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
             />
-            {isValid && (
-              <div className={styles.sendInstructions}>
-                <FormattedMessage
-                  {...MSG.commentInstuctions}
-                  values={{
-                    sendCombo: (
-                      <b>
-                        <FormattedMessage
-                          {...MSG.sendCombo}
-                          values={{ isMac }}
-                        />
-                      </b>
-                    ),
-                    newLineCombo: (
-                      <b>
-                        <FormattedMessage {...MSG.newLineCombo} />
-                      </b>
-                    ),
-                  }}
-                />
-              </div>
-            )}
+            <div
+              className={
+                isValid
+                  ? styles.sendInstructionsFadeIn
+                  : styles.sendInstructions
+              }
+            >
+              <FormattedMessage
+                {...MSG.commentInstuctions}
+                values={{
+                  sendCombo: (
+                    <b>
+                      <FormattedMessage {...MSG.sendCombo} values={{ isMac }} />
+                    </b>
+                  ),
+                  newLineCombo: (
+                    <b>
+                      <FormattedMessage {...MSG.newLineCombo} />
+                    </b>
+                  ),
+                }}
+              />
+            </div>
           </div>
         )}
       </Form>
