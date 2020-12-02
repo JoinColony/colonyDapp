@@ -21,13 +21,13 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import CopyableAddress from '~core/CopyableAddress';
-import Tag from '~core/Tag';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useTransformer } from '~utils/hooks';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
 import { ConfirmDialog } from '~core/Dialog';
+import PermissionsLabel from '~core/PermissionsLabel';
 import {
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
@@ -322,11 +322,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
               text={MSG.permissionsNeeded}
             />
             {extension.neededColonyPermissions.map((permission: ColonyRole) => (
-              <Tag
-                key={permission}
-                appearance={{ theme: 'golden' }}
-                text={{ id: `permission.${permission}` }}
-              />
+              <PermissionsLabel key={permission} permission={permission} />
             ))}
           </div>
         </aside>
