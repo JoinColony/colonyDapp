@@ -22,16 +22,17 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
+import {
+  PermissionManagementForm,
+  availableRoles,
+} from '~dashboard/PermissionManagementDialog';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import {
   getAllRootAccounts,
   getUserRolesForDomain,
 } from '../../../transformers';
-import {
-  PermissionManagementForm,
-  availableRoles,
-} from '../PermissionManagementDialog';
+
 import styles from '../PermissionManagementDialog/PermissionManagementDialog.css';
 
 const MSG = defineMessages({

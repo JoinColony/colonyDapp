@@ -22,9 +22,11 @@ const MSG = defineMessages({
       .PermissionManagementDialog.PermissionManagementForm.permissionsLabel`,
     defaultMessage: 'Permissions',
   },
-  reason: {
-    id: 'dashboard.PermissionManagementDialog.PermissionManagementForm.reason',
-    defaultMessage: 'Explain why you’re creating this motion (optional)',
+  annotation: {
+    id:
+      // eslint-disable-next-line max-len
+      'dashboard.PermissionManagementDialog.PermissionManagementForm.annotation',
+    defaultMessage: 'Explain why you’re making these changes (optional)',
   },
 });
 
@@ -124,8 +126,9 @@ const PermissionManagementForm = ({
       </div>
       <Textarea
         appearance={{ resizable: 'vertical', colorSchema: 'grey' }}
-        label={MSG.reason}
-        name="reason"
+        label={MSG.annotation}
+        name="annotation"
+        maxLength={4000}
       />
     </>
   );

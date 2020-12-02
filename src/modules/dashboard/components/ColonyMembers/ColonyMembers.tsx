@@ -6,8 +6,7 @@ import Members from '~dashboard/Members';
 import { useColonyFromNameQuery } from '~data/index';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
-
-import PermissionManagementDialog from '../PermissionManagementDialog';
+import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
 
 import styles from './ColonyMembers.css';
 

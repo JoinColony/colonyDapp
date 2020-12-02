@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Checkbox } from '~core/Fields';
-import Popover from '~core/Popover';
 import PermissionsLabel from '~core/PermissionsLabel';
 
 import styles from './PermissionManagementCheckbox.css';
@@ -97,53 +96,48 @@ const PermissionManagementCheckbox = ({
 
   const formattedRole = formatMessage(roleNameMessage);
 
-  const checkboxContent = useMemo(
-    () => (
-      <Checkbox
-        className={styles.permissionChoice}
-        value={role}
-        name="roles"
-        disabled={disabled}
-      >
-        <span className={styles.permissionChoiceDescription}>
-          <PermissionsLabel
-            permission={role}
-            name={formattedRole}
-            inherited={asterisk}
-          />
-          <FormattedMessage {...roleDescriptionMessage} />
-        </span>
-      </Checkbox>
-    ),
-    [asterisk, disabled, role, roleDescriptionMessage, formattedRole],
-  );
-
   const tooltipText =
     domainId !== ROOT_DOMAIN_ID && formattedRole === 'Root'
       ? MSG.tooltipNoRootDomainSelected
       : MSG.tooltipNoPermissionsText;
 
-  return disabled ? (
-    <Popover
-      appearance={{ theme: 'dark' }}
-      content={() => (
-        <div className={styles.popoverContent}>
-          <FormattedMessage
-            {...tooltipText}
-            values={{ roleName: formatMessage(roleNameMessage).toLowerCase() }}
-          />
-        </div>
-      )}
-      placement="bottom"
+  const formattedTooltipText = formatMessage(tooltipText, {
+    roleName: formattedRole.toLowerCase(),
+  });
+
+  return (
+    <Checkbox
+      className={styles.permissionChoice}
+      value={role}
+      name="roles"
+      disabled={disabled}
+      tooltipText={formattedTooltipText}
+      tooltipPopperProps={{
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset: [130, 10],
+            },
+          },
+          {
+            name: 'preventOverflow',
+            options: {
+              mainAxis: false,
+            },
+          },
+        ],
+      }}
     >
-      {({ close, open, ref }) => (
-        <div ref={ref} onMouseEnter={open} onMouseLeave={close}>
-          {checkboxContent}
-        </div>
-      )}
-    </Popover>
-  ) : (
-    <>{checkboxContent}</>
+      <span className={styles.permissionChoiceDescription}>
+        <PermissionsLabel
+          permission={role}
+          name={formattedRole}
+          inherited={asterisk}
+        />
+        <FormattedMessage {...roleDescriptionMessage} />
+      </span>
+    </Checkbox>
   );
 };
 
