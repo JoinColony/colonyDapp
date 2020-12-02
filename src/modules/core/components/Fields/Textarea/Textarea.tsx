@@ -53,6 +53,8 @@ export interface Props {
   status?: string | MessageDescriptor;
   /** Status text values for intl interpolation */
   statusValues?: SimpleMessageValues;
+  /** Disabled status of Textarea */
+  disabled?: boolean;
 }
 
 const displayName = 'Textarea';
@@ -73,6 +75,7 @@ const Textarea = ({
   placeholderValues,
   status,
   statusValues,
+  disabled,
 }: Props) => {
   const { formatMessage } = useIntl();
   const [id] = useState(idProp || nanoid());
@@ -109,6 +112,8 @@ const Textarea = ({
           placeholder={placeholder}
           ref={innerRef}
           value={value}
+          aria-disabled={disabled}
+          disabled={disabled}
         />
         {maxLength && (
           <span

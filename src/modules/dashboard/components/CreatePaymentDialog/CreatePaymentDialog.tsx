@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
 import { bigNumberify } from 'ethers/utils';
 import { useQuery } from '@apollo/client';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { pipe, mapPayload, withKey } from '~utils/actions';
 import { Address } from '~types/index';
@@ -11,7 +12,12 @@ import { ActionTypes } from '~redux/index';
 import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useColonyQuery, ColonySubscribedUsersDocument } from '~data/index';
+import {
+  useColonyQuery,
+  ColonySubscribedUsersDocument,
+  useLoggedInUser,
+  useUser,
+} from '~data/index';
 
 import DialogForm from './CreatePaymentDialogForm';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -38,6 +44,10 @@ const CreatePaymentDialog = ({ colonyAddress, cancel, close }: Props) => {
     tokenAddress: yup.string().required(),
     reason: yup.string().max(90),
   });
+
+  const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
+
+  const loggedInUser = useUser(loggedInUserWalletAddress);
 
   const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
@@ -81,8 +91,8 @@ const CreatePaymentDialog = ({ colonyAddress, cancel, close }: Props) => {
   return (
     <ActionForm
       initialValues={{
-        fromDomain: undefined,
-        toAssignee: undefined,
+        fromDomain: ROOT_DOMAIN_ID.toString(),
+        toAssignee: loggedInUser,
         amount: '',
         tokenAddress: nativeTokenAddress,
         reason: '',

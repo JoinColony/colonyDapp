@@ -209,6 +209,10 @@ const CreatePaymentDialogForm = ({
     setErrors,
   ]);
 
+  const userHasPermission =
+    userHasRole(fromDomainRoles, ColonyRole.Funding) &&
+    userHasRole(fromDomainRoles, ColonyRole.Administration);
+
   return (
     <>
       <FormStatus status={status} />
@@ -227,6 +231,7 @@ const CreatePaymentDialogForm = ({
               label={MSG.from}
               name="fromDomain"
               appearance={{ theme: 'grey', width: 'fluid' }}
+              disabled={userHasPermission}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -260,9 +265,10 @@ const CreatePaymentDialogForm = ({
             appearance={{ width: 'wide' }}
             data={subscribedUsers}
             label={MSG.to}
-            name="user"
+            name="toAssignee"
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
+            disabled={userHasPermission}
           />
         </div>
       </DialogSection>
@@ -282,6 +288,7 @@ const CreatePaymentDialogForm = ({
                 selectedToken && selectedToken.decimals,
               ),
             }}
+            disabled={userHasPermission}
           />
           <div className={styles.tokenAmountSelect}>
             <Select
@@ -290,6 +297,7 @@ const CreatePaymentDialogForm = ({
               name="tokenAddress"
               elementOnly
               appearance={{ alignOptions: 'right', theme: 'grey' }}
+              disabled={userHasPermission}
             />
           </div>
           {values.tokenAddress === AddressZero && (
@@ -318,6 +326,7 @@ const CreatePaymentDialogForm = ({
             label={MSG.reason}
             name="reason"
             maxLength={4000}
+            disabled={userHasPermission}
           />
         </div>
       </DialogSection>
