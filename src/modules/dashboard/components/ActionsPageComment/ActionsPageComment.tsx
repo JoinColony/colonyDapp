@@ -1,4 +1,9 @@
-import React, { useCallback, KeyboardEvent, SyntheticEvent } from 'react';
+import React, {
+  useCallback,
+  KeyboardEvent,
+  SyntheticEvent,
+  useRef,
+} from 'react';
 import * as yup from 'yup';
 import { FormikProps, FormikBag } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
@@ -76,10 +81,15 @@ const handleKeyboardSubmit = (
 };
 
 const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
+  const commentBoxRef = useRef(null);
+
   const [sendTransactionMessage] = useSendTransactionMessageMutation();
 
   const onSubmit = useCallback(
-    ({ message }: FormValues, { resetForm }: FormikBag<object, FormValues>) =>
+    (
+      { message }: FormValues,
+      { resetForm, setFieldError }: FormikBag<object, FormValues>,
+    ) =>
       sendTransactionMessage({
         variables: {
           input: {
@@ -94,7 +104,19 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
             variables: { transactionHash } as TransactionQueryVariables,
           },
         ],
-      }).then(() => resetForm()),
+      }).then(() => {
+        /*
+         * @NOTE We need to both reset and invalidate the form after reset
+         * otherwise the `isValid` status never changes, and since we hook
+         * into it to display the submission controls copy, we need that
+         * to be invalid after submitting.
+         *
+         * When you start to change the field again (ie: start typing) the
+         * validator runs again and clears out the error
+         */
+        resetForm({});
+        setFieldError('messsage', '');
+      }),
     [transactionHash, colonyAddress, sendTransactionMessage],
   );
 
@@ -105,9 +127,10 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
         validationSchema={validationSchema}
         onSubmit={onSubmit}
         validateOnMount
+        validateOnBlur
       >
         {({ isSubmitting, isValid, handleSubmit }: FormikProps<FormValues>) => (
-          <div className={styles.commentBox}>
+          <div className={styles.commentBox} ref={commentBoxRef}>
             <TextareaAutoresize
               elementOnly
               label={MSG.commentInputPlaceholder}
@@ -117,7 +140,6 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
               maxRows={6}
               onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
               disabled={isSubmitting}
-              autoFocus
             />
             {isSubmitting && (
               <div className={styles.submitting}>
