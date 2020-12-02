@@ -1,3 +1,4 @@
 export const inputContainer: string;
-export const input: string;
+export const inputComponent: string;
 export const nativeToken: string;
+export const annotation: string;

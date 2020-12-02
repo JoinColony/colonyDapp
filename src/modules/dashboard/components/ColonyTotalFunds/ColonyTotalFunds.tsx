@@ -1,13 +1,13 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Numeral from '~core/Numeral';
-import Button from '~core/Button';
-import { SpinnerLoader } from '~core/Preloaders';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Icon from '~core/Icon';
+import Link from '~core/Link';
+import Numeral from '~core/Numeral';
+import { SpinnerLoader } from '~core/Preloaders';
 import { Colony, useTokenBalancesForDomainsQuery } from '~data/index';
 import { Address } from '~types/index';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import ColonyTotalFundsPopover from './ColonyTotalFundsPopover';
@@ -40,15 +40,15 @@ type Props = {
 const displayName = 'dashboard.ColonyTotalFunds';
 
 const ColonyTotalFunds = ({
-  colony: { colonyAddress, tokens: colonyTokens, nativeTokenAddress },
+  colony: {
+    colonyAddress,
+    colonyName,
+    tokens: colonyTokens,
+    nativeTokenAddress,
+  },
 }: Props) => {
   const [currentTokenAddress, setCurrentTokenAddress] = useState<Address>(
     nativeTokenAddress,
-  );
-  const handleManageFunds = useCallback(
-    // eslint-disable-next-line no-console
-    () => console.log('Clicked! This should open the UAC manage funds modal'),
-    [],
   );
 
   const {
@@ -109,13 +109,13 @@ const ColonyTotalFunds = ({
       </div>
       <div className={styles.totalBalanceCopy}>
         <FormattedMessage {...MSG.totalBalance} />
-        <Button
-          appearance={{ theme: 'blue', size: 'small' }}
-          onClick={handleManageFunds}
+        <Link
+          className={styles.manageFundsLink}
+          to={`/colony/${colonyName}/funds`}
         >
           <span className={styles.rightArrowDisplay}>→</span>
           <FormattedMessage {...MSG.manageFundsLink} />
-        </Button>
+        </Link>
       </div>
     </div>
   );

@@ -27,7 +27,7 @@
 .tokenSymbol {
   margin-left: 15px;
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--grey-dark);
 }
 

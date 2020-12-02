@@ -23,14 +23,16 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
 
+import appLoadingContext from '~context/appLoadingState';
+import ColonyFunding from '~dashboard/ColonyFunding';
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import appLoadingContext from '~context/appLoadingState';
 
 import {
   ADMIN_DASHBOARD_ROUTE,
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
+  COLONY_FUNDING_ROUTE,
   COLONY_HOME_ROUTE,
   CONNECT_ROUTE,
   CREATE_COLONY_ROUTE,
@@ -164,9 +166,18 @@ const Routes = () => {
           ]}
           component={ColonyHome}
           layout={Default}
-          routeProps={{
-            hasBackLink: false,
-          }}
+          routeProps={{ hasBackLink: false }}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={COLONY_FUNDING_ROUTE}
+          component={ColonyFunding}
+          layout={Default}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: false,
+          })}
         />
         <AlwaysAccesibleRoute
           exact

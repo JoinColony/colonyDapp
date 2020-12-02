@@ -5,11 +5,11 @@ import MaskedAddress from '~core/MaskedAddress';
 import { Address } from '~types/index';
 import { splitAddress } from '~utils/strings';
 
-import styles from './FundingBanner.css';
+import styles from './ColonyFundingBanner.css';
 
 const MSG = defineMessages({
   tipText: {
-    id: 'admin.Tokens.FundingBanner.tipText',
+    id: 'dashboard.ColonyFundingBanner.tipText',
     defaultMessage: `Tip: to fund your colony, send tokens to your colony's address:`,
   },
 });
@@ -18,9 +18,9 @@ interface Props {
   colonyAddress: Address;
 }
 
-const displayName = 'admin.Tokens.FundingBanner';
+const displayName = 'dashboard.ColonyFundingBanner';
 
-const FundingBanner = ({ colonyAddress }: Props) => {
+const ColonyFundingBanner = ({ colonyAddress }: Props) => {
   const formattedAddress = useMemo(() => {
     const addressElements = splitAddress(colonyAddress);
     if (!(addressElements instanceof Error)) {
@@ -46,6 +46,6 @@ const FundingBanner = ({ colonyAddress }: Props) => {
   );
 };
 
-FundingBanner.displayName = displayName;
+ColonyFundingBanner.displayName = displayName;
 
-export default FundingBanner;
+export default ColonyFundingBanner;
