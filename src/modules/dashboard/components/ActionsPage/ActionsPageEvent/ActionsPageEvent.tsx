@@ -23,7 +23,7 @@ interface Props {
 }
 
 const ActionsPageEvent = ({ createdAt, transactionHash }: Props) => {
-  // Mocked roles - Please make me smarter
+  // @TODO Mocked roles - Please make me smarter
   const roles = [1, 2, 3];
   const directRoles = [1, 2, 3];
 
