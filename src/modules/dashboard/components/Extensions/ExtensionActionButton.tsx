@@ -67,7 +67,7 @@ const ExtensionActionButton = ({
   if (!installedExtension.details.initialized) {
     return (
       <Button
-        appearance={{ theme: 'primary', size: 'large' }}
+        appearance={{ theme: 'primary', size: 'medium' }}
         onClick={handleEnableButtonClick}
         text={MSG.enable}
       />

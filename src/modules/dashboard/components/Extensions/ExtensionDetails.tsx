@@ -89,6 +89,10 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionDetails.buttonUninstall',
     defaultMessage: 'Uninstall',
   },
+  buttonDeprecate: {
+    id: 'dashboard.Extensions.ExtensionDetails.buttonDeprecate',
+    defaultMessage: 'Deprecate',
+  },
   confirmDeprecate: {
     id: 'dashboard.Extensions.ExtensionDetails.confirmDeprecate',
     defaultMessage: 'Yes, deprecate extension',
@@ -290,7 +294,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
                 submit={ActionTypes.COLONY_EXTENSION_DEPRECATE}
                 error={ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR}
                 success={ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS}
-                text={MSG.buttonUninstall}
+                text={MSG.buttonDeprecate}
                 values={{ colonyAddress, extensionId }}
               />
             </div>

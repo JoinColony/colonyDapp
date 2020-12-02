@@ -1,7 +1,7 @@
 import { FormikProps } from 'formik';
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams, Redirect } from 'react-router';
 
 import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm } from '~core/Fields';
@@ -59,6 +59,14 @@ const ExtensionSetup = ({
     colonyAddress,
     extensionId,
   ]);
+
+  if (
+    installedExtension.details.deprecated ||
+    (installedExtension.details.initialized &&
+      !installedExtension.details.missingPermissions.length)
+  ) {
+    return <Redirect to={`/colony/${colonyName}/extensions/${extensionId}`} />;
+  }
 
   // This is a special case that should not happen. Used to recover the
   // missing permission transactions
