@@ -4,6 +4,7 @@ import { FormikProps, FormikBag } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Form, TextareaAutoresize } from '~core/Fields';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import {
   useSendTransactionMessageMutation,
@@ -115,7 +116,14 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
               minRows={1}
               maxRows={6}
               onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
+              disabled={isSubmitting}
+              autoFocus
             />
+            {isSubmitting && (
+              <div className={styles.submitting}>
+                <SpinnerLoader />
+              </div>
+            )}
             <div
               className={
                 isValid

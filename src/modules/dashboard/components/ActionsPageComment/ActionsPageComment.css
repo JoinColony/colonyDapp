@@ -27,6 +27,11 @@
   border: 1px solid var(--primary);
 }
 
+.commentBox textarea:disabled {
+  border: 1px solid color-mod(var(--temp-grey-4) alpha(50%));
+  background-color: color-mod(var(--temp-grey-4) alpha(10%));
+}
+
 .sendInstructions {
   margin-top: 5px;
   font-size: var(--size-tiny);
@@ -49,4 +54,12 @@
 .sendInstructionsFadeIn {
   composes: sendInstructions;
   opacity: 1;
+}
+
+.submitting {
+  display: inline-block;
+  margin-top: -20px;
+  padding-right: 3px;
+  position: relative;
+  float: right;
 }
