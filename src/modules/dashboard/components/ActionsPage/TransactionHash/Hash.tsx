@@ -17,18 +17,19 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ActionsPage.TransactionHash.Hash';
 
 interface Props {
-  transactionHash: string;
+  transactionHash?: string;
   title?: MessageDescriptor;
 }
 
-const Hash = ({ transactionHash, title = MSG.fallbackTitle }: Props) => (
-  <>
-    <p className={styles.title}>
-      <FormattedMessage {...title} />
-    </p>
-    <div className={styles.transactionHash}>{transactionHash}</div>
-  </>
-);
+const Hash = ({ transactionHash, title = MSG.fallbackTitle }: Props) =>
+  transactionHash ? (
+    <>
+      <p className={styles.title}>
+        <FormattedMessage {...title} />
+      </p>
+      <div className={styles.transactionHash}>{transactionHash}</div>
+    </>
+  ) : null;
 
 Hash.displayName = displayName;
 

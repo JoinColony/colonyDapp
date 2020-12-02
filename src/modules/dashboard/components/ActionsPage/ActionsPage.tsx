@@ -180,12 +180,14 @@ const ActionsPage = () => {
       })(),
       name: (() => {
         if (transactionData?.transaction?.events?.length) {
-          const { events } = transactionData.transaction;
+          const {
+            events: [event],
+          } = transactionData.transaction;
           /*
            * Display the first event as the page title
            * We might need to change this in the future
            */
-          return events[0].name;
+          return event.name;
         }
         return false;
       })(),
@@ -217,7 +219,7 @@ const ActionsPage = () => {
           />
           <div className={styles.divider} />
           <div className={styles.hashWrapper}>
-            <Hash transactionHash={transactionHash || ''} />
+            <Hash transactionHash={transactionHash} />
           </div>
         </div>
       </div>
@@ -265,7 +267,7 @@ const ActionsPage = () => {
                * Typecasting it doesn't work as well
                */
               status={typeof status === 'number' && STATUS_MAP[status]}
-              createdAt={createdAt || Date.now()}
+              createdAt={createdAt}
             />
           )}
           {!!events?.length && (

@@ -25,12 +25,12 @@ export default gql`
   }
 
   type Transaction {
-    hash: String
-    from: String
-    to: String
-    status: Int
+    hash: String!
+    from: String!
+    to: String!
+    status: Int!
     events: [ParsedEvent!]!
-    createdAt: Int
+    createdAt: Int!
   }
 
   input NetworkContractsInput {

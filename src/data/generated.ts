@@ -1392,12 +1392,12 @@ export type ParsedEvent = {
 };
 
 export type Transaction = {
-  hash?: Maybe<Scalars['String']>;
-  from?: Maybe<Scalars['String']>;
-  to?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['Int']>;
+  hash: Scalars['String'];
+  from: Scalars['String'];
+  to: Scalars['String'];
+  status: Scalars['Int'];
   events: Array<ParsedEvent>;
-  createdAt?: Maybe<Scalars['Int']>;
+  createdAt: Scalars['Int'];
 };
 
 export type NetworkContractsInput = {
