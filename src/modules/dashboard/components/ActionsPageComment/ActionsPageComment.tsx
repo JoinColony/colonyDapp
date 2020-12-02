@@ -81,7 +81,7 @@ const handleKeyboardSubmit = (
 };
 
 const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
-  const commentBoxRef = useRef(null);
+  const commentBoxRef = useRef<HTMLInputElement>(null);
 
   const [sendTransactionMessage] = useSendTransactionMessageMutation();
 
@@ -116,6 +116,7 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
          */
         resetForm({});
         setFieldError('messsage', '');
+        commentBoxRef?.current?.scrollIntoView({ behavior: 'smooth' });
       }),
     [transactionHash, colonyAddress, sendTransactionMessage],
   );
