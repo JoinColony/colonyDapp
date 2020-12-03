@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
-import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
+import { Redirect, Route, RouteChildrenProps, Switch, useParams } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -142,6 +142,23 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const { processedColony: colony } = data;
 
+  const ColonyActionControls = ({ children }: { children?: ReactChild }) => (
+    <>
+      <ColonyTotalFunds colony={colony} />
+      <div className={styles.contentActionsPanel}>
+        <div className={styles.domainsDropdownContainer}>
+          <DomainDropdown
+            filteredDomainId={filteredDomainId}
+            onDomainChange={setDomainIdFilter}
+            colony={colony}
+          />
+        </div>
+        <ColonyHomeActions colony={colony} />
+      </div>
+      {children}
+    </>
+  );
+
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
@@ -152,22 +169,21 @@ const ColonyHome = ({ match, location }: Props) => {
           </div>
         </aside>
         <div className={styles.mainContent}>
-          <ColonyTotalFunds colony={colony} />
-          <div className={styles.contentActionsPanel}>
-            <div className={styles.domainsDropdownContainer}>
-              <DomainDropdown
-                filteredDomainId={filteredDomainId}
-                onDomainChange={setDomainIdFilter}
-                colony={colony}
-              />
-            </div>
-            <ColonyHomeActions colony={colony} />
-          </div>
+          {/*
+           * @TODO Refactor route layout
+           *
+           * This whole setup is kinda iffy / a bit fragile. I think we will be
+           * be better served if we refactor it into a self-standing `ColonyNavigation`
+           * component to which we just feed an array of data (like we used to have
+           * for the admin left side navigation)
+           */}
           <Switch>
             <Route
               path={COLONY_EVENTS_ROUTE}
               component={() => (
-                <ColonyEvents colony={colony} ethDomainId={domainIdFilter} />
+                <ColonyActionControls>
+                  <ColonyEvents colony={colony} ethDomainId={domainIdFilter} />
+                </ColonyActionControls>
               )}
             />
             <Route
@@ -192,7 +208,9 @@ const ColonyHome = ({ match, location }: Props) => {
             <Route
               path={COLONY_HOME_ROUTE}
               component={() => (
-                <ColonyActions colony={colony} ethDomainId={domainIdFilter} />
+                <ColonyActionControls>
+                  <ColonyActions colony={colony} ethDomainId={domainIdFilter} />
+                </ColonyActionControls>
               )}
             />
           </Switch>
