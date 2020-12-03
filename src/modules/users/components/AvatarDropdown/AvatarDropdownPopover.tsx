@@ -59,6 +59,7 @@ interface Props {
   closePopover: () => void;
   username?: string | null;
   walletConnected?: boolean;
+  onlyLogout?: boolean;
 }
 
 const displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
@@ -67,6 +68,7 @@ const AvatarDropdownPopover = ({
   closePopover,
   username,
   walletConnected = false,
+  onlyLogout = false,
 }: Props) => {
   const renderUserSection = useCallback(() => {
     return (
@@ -148,10 +150,16 @@ const AvatarDropdownPopover = ({
 
   return (
     <DropdownMenu onClick={closePopover}>
-      {renderUserSection()}
-      {renderColonySection()}
-      {renderHelperSection()}
-      {renderMetaSection()}
+      {!onlyLogout ? (
+        <>
+          {renderUserSection()}
+          {renderColonySection()}
+          {renderHelperSection()}
+          {renderMetaSection()}
+        </>
+      ) : (
+        <>{renderMetaSection()}</>
+      )}
     </DropdownMenu>
   );
 };

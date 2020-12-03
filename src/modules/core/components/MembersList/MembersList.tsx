@@ -6,6 +6,10 @@ import { Address } from '~types/index';
 
 import MembersListItem from './MembersListItem';
 
+interface Reputation {
+  userReputation: string;
+}
+
 interface Props<U> {
   colonyAddress: Address;
   extraItemContent?: (user: U) => ReactNode;
@@ -13,6 +17,7 @@ interface Props<U> {
   showUserInfo?: boolean;
   domainId: number | undefined;
   users: U[];
+  totalReputation: Reputation | undefined;
 }
 
 const displayName = 'MembersList';
@@ -24,6 +29,7 @@ const MembersList = <U extends AnyUser = AnyUser>({
   showUserInfo = true,
   domainId,
   users,
+  totalReputation,
 }: Props<U>) => (
   <ListGroup>
     {users.map((user) => (
@@ -35,6 +41,7 @@ const MembersList = <U extends AnyUser = AnyUser>({
         showUserInfo={showUserInfo}
         domainId={domainId}
         user={user}
+        totalReputation={totalReputation}
       />
     ))}
   </ListGroup>

@@ -1,0 +1,40 @@
+@value primaryPadding: 60px;
+@value secondaryPadding: 40px;
+
+.content {
+  padding-bottom: primaryPadding;
+}
+
+.header {
+  padding: primaryPadding secondaryPadding var(--pad-large) secondaryPadding;
+  position: relative;
+}
+
+.header::after {
+  height: 1px;
+  position: absolute;
+  right: 40px;
+  bottom: 0;
+  left: 40px;
+  background-color: color-mod(var(--grey-2) alpha(15%));
+  content: "";
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  margin-top: 23px;
+  margin-left: 35px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(65%));
+  cursor: pointer;
+  outline: none;
+}
+
+.backButton svg {
+  fill: color-mod(var(--dark) alpha(65%));
+}

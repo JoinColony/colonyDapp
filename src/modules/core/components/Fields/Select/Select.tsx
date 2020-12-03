@@ -1,5 +1,6 @@
 import React, {
   KeyboardEvent,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -11,15 +12,7 @@ import { useField } from 'formik';
 import { nanoid } from 'nanoid';
 
 import { getMainClasses } from '~utils/css';
-import {
-  DOWN,
-  ENTER,
-  ESC,
-  SimpleMessageValues,
-  SPACE,
-  TAB,
-  UP,
-} from '~types/index';
+import { DOWN, ENTER, ESC, SimpleMessageValues, SPACE, UP } from '~types/index';
 
 import SelectListBox from './SelectListBox';
 import { Appearance, SelectOption } from './types';
@@ -70,8 +63,17 @@ interface Props {
   /** Available `option`s for the select */
   options: SelectOption[];
 
+  /** Render at the bottom of the select list box */
+  optionsFooter?: ReactNode;
+
   /** Status text */
   placeholder?: string | MessageDescriptor;
+
+  /** Render the actively selected option */
+  renderActiveOption?: (
+    activeOption: SelectOption | undefined,
+    activeOptionLabel: string,
+  ) => ReactNode;
 
   /** Status text */
   status?: string | MessageDescriptor;
@@ -94,7 +96,9 @@ const Select = ({
   name,
   onChange: onChangeCallback,
   options,
+  optionsFooter,
   placeholder,
+  renderActiveOption,
   status,
   statusValues,
 }: Props) => {
@@ -185,14 +189,6 @@ const Select = ({
         goDown();
         break;
       }
-      case TAB: {
-        if (checkedOption === selectedOption || selectedOption === -1) {
-          // no change
-          close();
-        }
-        checkOption();
-        break;
-      }
       case ENTER: {
         // Do not submit form
         evt.preventDefault();
@@ -254,19 +250,28 @@ const Select = ({
     };
   }, [handleOutsideClick, isOpen]);
 
-  const activeOption = options[checkedOption];
-  const listboxId = `select-listbox-${id}`;
-  let activeOptionLabel;
-  if (activeOption) {
-    if (typeof activeOption.label === 'object') {
-      activeOptionLabel = formatMessage(
-        activeOption.label,
-        activeOption.labelValues,
-      );
-    } else {
-      activeOptionLabel = activeOption.label;
+  const activeOptionDisplay = useMemo<ReactNode>(() => {
+    const activeOption = options[checkedOption];
+    let activeOptionLabel;
+    if (activeOption) {
+      if (typeof activeOption.label === 'object') {
+        activeOptionLabel = formatMessage(
+          activeOption.label,
+          activeOption.labelValues,
+        );
+      } else {
+        activeOptionLabel = activeOption.label;
+      }
     }
-  }
+    const activeOptionLabelText = activeOptionLabel || placeholder;
+    if (renderActiveOption) {
+      return renderActiveOption(activeOption, activeOptionLabelText);
+    }
+    return <span>{activeOptionLabelText}</span>;
+  }, [checkedOption, formatMessage, options, placeholder, renderActiveOption]);
+
+  const listboxId = `select-listbox-${id}`;
+
   return (
     <div className={styles.main} ref={wrapperRef}>
       <InputLabel
@@ -299,9 +304,7 @@ const Select = ({
           name={name}
         >
           <div className={styles.selectInner}>
-            <div className={styles.activeOption}>
-              <span>{activeOptionLabel || placeholder}</span>
-            </div>
+            <div className={styles.activeOption}>{activeOptionDisplay}</div>
             <span className={styles.selectExpandContainer}>
               <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
             </span>
@@ -313,6 +316,7 @@ const Select = ({
             selectedOption={selectedOption}
             listboxId={listboxId}
             options={options}
+            optionsFooter={optionsFooter}
             onSelect={selectOption}
             onClick={checkOption}
             appearance={appearance}

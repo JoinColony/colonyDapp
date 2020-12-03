@@ -105,8 +105,8 @@ function* taskFinalize({
       methodName: 'makePaymentFundedFromDomainWithProofs',
       identifier: colonyAddress,
       params: [
-        workerAddress,
-        token,
+        [workerAddress],
+        [token],
         bigNumberify(moveDecimal(amount, decimals)),
         domainId,
         skillId || 0,

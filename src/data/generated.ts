@@ -186,6 +186,7 @@ export type Colony = {
   description?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   domains: Array<Domain>;
+  events: Array<NetworkEvent>;
   founder?: Maybe<User>;
   founderAddress: Scalars['String'];
   guideline?: Maybe<Scalars['String']>;
@@ -215,13 +216,15 @@ export type ColonyTokensArgs = {
 };
 
 export type Domain = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
+  colony?: Maybe<Colony>;
   colonyAddress: Scalars['String'];
+  color?: Maybe<Scalars['Int']>;
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
   ethDomainId: Scalars['Int'];
   ethParentDomainId?: Maybe<Scalars['Int']>;
+  id: Scalars['String'];
   name: Scalars['String'];
-  colony?: Maybe<Colony>;
   parent?: Maybe<Domain>;
   tasks: Array<Task>;
 };
@@ -740,6 +743,7 @@ export type Mutation = {
   sendWorkInvite?: Maybe<Task>;
   setColonyTokens?: Maybe<Colony>;
   setLoggedInUser: LoggedInUser;
+  setNetworkContracts: NetworkContracts;
   setSuggestionStatus?: Maybe<Suggestion>;
   setTaskDescription?: Maybe<Task>;
   setTaskDomain?: Maybe<Task>;
@@ -752,6 +756,7 @@ export type Mutation = {
   subscribeToColony?: Maybe<User>;
   unassignWorker?: Maybe<Task>;
   unsubscribeFromColony?: Maybe<User>;
+  updateNetworkContracts: NetworkContracts;
 };
 
 
@@ -945,6 +950,11 @@ export type MutationSetLoggedInUserArgs = {
 };
 
 
+export type MutationSetNetworkContractsArgs = {
+  input?: Maybe<NetworkContractsInput>;
+};
+
+
 export type MutationSetSuggestionStatusArgs = {
   input: SetSuggestionStatusInput;
 };
@@ -1050,16 +1060,19 @@ export type Program = {
 export type Query = {
   colony: Colony;
   colonyAddress: Scalars['String'];
+  colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   domain: Domain;
   level: Level;
   loggedInUser: LoggedInUser;
+  networkContracts: NetworkContracts;
   program: Program;
   systemInfo: SystemInfo;
   task: Task;
   token: Token;
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
+  transaction: Transaction;
   user: User;
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
@@ -1074,6 +1087,12 @@ export type QueryColonyArgs = {
 
 export type QueryColonyAddressArgs = {
   name: Scalars['String'];
+};
+
+
+export type QueryColonyMembersWithReputationArgs = {
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1115,6 +1134,12 @@ export type QueryTokenInfoArgs = {
 
 export type QueryTokensArgs = {
   addresses?: Maybe<Array<Scalars['String']>>;
+};
+
+
+export type QueryTransactionArgs = {
+  transactionHash: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1314,6 +1339,7 @@ export type LoggedInUserInput = {
   username?: Maybe<Scalars['String']>;
   walletAddress?: Maybe<Scalars['String']>;
   ethereal?: Maybe<Scalars['Boolean']>;
+  networkId?: Maybe<Scalars['Int']>;
 };
 
 export type LoggedInUser = {
@@ -1322,6 +1348,32 @@ export type LoggedInUser = {
   username?: Maybe<Scalars['String']>;
   walletAddress: Scalars['String'];
   ethereal: Scalars['Boolean'];
+  networkId?: Maybe<Scalars['Int']>;
+};
+
+export type ParsedEvent = {
+  name?: Maybe<Scalars['String']>;
+  topic?: Maybe<Scalars['String']>;
+  values?: Maybe<Scalars['String']>;
+};
+
+export type Transaction = {
+  hash?: Maybe<Scalars['String']>;
+  from?: Maybe<Scalars['String']>;
+  to?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['Int']>;
+  events: Array<ParsedEvent>;
+  createdAt?: Maybe<Scalars['Int']>;
+};
+
+export type NetworkContractsInput = {
+  version?: Maybe<Scalars['String']>;
+  feeInverse?: Maybe<Scalars['String']>;
+};
+
+export type NetworkContracts = {
+  version?: Maybe<Scalars['String']>;
+  feeInverse?: Maybe<Scalars['String']>;
 };
 
 export type DomainBalance = {
@@ -1382,6 +1434,17 @@ export type Transfer = {
   token: Scalars['String'];
 };
 
+export type NetworkEvent = {
+  toAddress?: Maybe<Scalars['String']>;
+  fromAddress?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Int'];
+  hash: Scalars['String'];
+  name: Scalars['String'];
+  topic?: Maybe<Scalars['String']>;
+  userAddress?: Maybe<Scalars['String']>;
+  domainId?: Maybe<Scalars['String']>;
+};
+
 export type PayoutsFragment = { payouts: Array<(
     Pick<TaskPayout, 'amount' | 'tokenAddress'>
     & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
@@ -1411,7 +1474,7 @@ export type TokensFragment = (
 
 export type ColonyProfileFragment = Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>;
 
-export type DomainFieldsFragment = Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
+export type DomainFieldsFragment = Pick<Domain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
 export type FullColonyFragment = (
   Pick<Colony, 'isNativeTokenExternal' | 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
@@ -1490,6 +1553,8 @@ export type TaskEventFragment = (
   EventFieldsFragment
   & EventContextFragment
 );
+
+export type FullNetworkEventFragment = Pick<NetworkEvent, 'fromAddress' | 'toAddress' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domainId'>;
 
 export type AssignWorkerMutationVariables = Exact<{
   input: AssignWorkerInput;
@@ -1909,6 +1974,18 @@ export type AcceptLevelTaskSubmissionMutationVariables = Exact<{
 
 export type AcceptLevelTaskSubmissionMutation = { acceptLevelTaskSubmission?: Maybe<Pick<Submission, 'id' | 'status'>> };
 
+export type SetNetworkContractsMutationVariables = Exact<{
+  input: NetworkContractsInput;
+}>;
+
+
+export type SetNetworkContractsMutation = { setNetworkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
+export type UpdateNetworkContractsMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UpdateNetworkContractsMutation = { updateNetworkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
 export type TaskQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -1969,7 +2046,7 @@ export type TaskFeedEventsQuery = { task: (
 export type LoggedInUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username' | 'ethereal'> };
+export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username' | 'ethereal' | 'networkId'> };
 
 export type UserQueryVariables = Exact<{
   address: Scalars['String'];
@@ -2115,6 +2192,16 @@ export type ColonyTransfersQuery = { colony: (
     & { transfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>>, unclaimedTransfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>> }
   ) };
 
+export type ColonyEventsQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyEventsQuery = { colony: (
+    Pick<Colony, 'id' | 'colonyAddress'>
+    & { events: Array<FullNetworkEventFragment> }
+  ) };
+
 export type TokenBalancesForDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   tokenAddresses: Array<Scalars['String']>;
@@ -2133,6 +2220,16 @@ export type ColonyProfileQueryVariables = Exact<{
 
 
 export type ColonyProfileQuery = { colony: ColonyProfileFragment };
+
+export type UserColoniesQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type UserColoniesQuery = { user: (
+    Pick<User, 'id' | 'colonyAddresses'>
+    & { colonies: Array<Pick<Colony, 'id' | 'avatarHash' | 'colonyAddress' | 'colonyName' | 'displayName'>> }
+  ) };
 
 export type UserColonyAddressesQueryVariables = Exact<{
   address: Scalars['String'];
@@ -2231,6 +2328,14 @@ export type ColonySubscribedUsersQuery = { colony: (
     )> }
   ) };
 
+export type ColonyMembersWithReputationQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
+
 export type DomainQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   ethDomainId: Scalars['Int'];
@@ -2260,7 +2365,7 @@ export type ColonyDomainsQueryVariables = Exact<{
 
 export type ColonyDomainsQuery = { colony: (
     Pick<Colony, 'id'>
-    & { domains: Array<Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> }
+    & { domains: Array<DomainFieldsFragment> }
   ) };
 
 export type ColonySuggestionsQueryVariables = Exact<{
@@ -2307,6 +2412,22 @@ export type SystemInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SystemInfoQuery = { systemInfo: Pick<SystemInfo, 'version'> };
+
+export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
+export type TransactionQueryVariables = Exact<{
+  transactionHash: Scalars['String'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type TransactionQuery = { transaction: (
+    Pick<Transaction, 'hash' | 'from' | 'to' | 'status' | 'createdAt'>
+    & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values'>> }
+  ) };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -2391,6 +2512,8 @@ export const TokensFragmentDoc = gql`
 export const DomainFieldsFragmentDoc = gql`
     fragment DomainFields on Domain {
   id
+  color @client
+  description @client
   ethDomainId
   name
   ethParentDomainId
@@ -2747,6 +2870,18 @@ export const TaskEventFragmentDoc = gql`
 }
     ${EventFieldsFragmentDoc}
 ${EventContextFragmentDoc}`;
+export const FullNetworkEventFragmentDoc = gql`
+    fragment FullNetworkEvent on NetworkEvent {
+  fromAddress
+  toAddress
+  createdAt
+  name
+  hash
+  topic
+  userAddress
+  domainId
+}
+    `;
 export const AssignWorkerDocument = gql`
     mutation AssignWorker($input: AssignWorkerInput!) {
   assignWorker(input: $input) {
@@ -4523,6 +4658,71 @@ export function useAcceptLevelTaskSubmissionMutation(baseOptions?: Apollo.Mutati
 export type AcceptLevelTaskSubmissionMutationHookResult = ReturnType<typeof useAcceptLevelTaskSubmissionMutation>;
 export type AcceptLevelTaskSubmissionMutationResult = Apollo.MutationResult<AcceptLevelTaskSubmissionMutation>;
 export type AcceptLevelTaskSubmissionMutationOptions = Apollo.BaseMutationOptions<AcceptLevelTaskSubmissionMutation, AcceptLevelTaskSubmissionMutationVariables>;
+export const SetNetworkContractsDocument = gql`
+    mutation SetNetworkContracts($input: NetworkContractsInput!) {
+  setNetworkContracts(input: $input) @client {
+    version
+    feeInverse
+  }
+}
+    `;
+export type SetNetworkContractsMutationFn = Apollo.MutationFunction<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>;
+
+/**
+ * __useSetNetworkContractsMutation__
+ *
+ * To run a mutation, you first call `useSetNetworkContractsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetNetworkContractsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setNetworkContractsMutation, { data, loading, error }] = useSetNetworkContractsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetNetworkContractsMutation(baseOptions?: Apollo.MutationHookOptions<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>) {
+        return Apollo.useMutation<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>(SetNetworkContractsDocument, baseOptions);
+      }
+export type SetNetworkContractsMutationHookResult = ReturnType<typeof useSetNetworkContractsMutation>;
+export type SetNetworkContractsMutationResult = Apollo.MutationResult<SetNetworkContractsMutation>;
+export type SetNetworkContractsMutationOptions = Apollo.BaseMutationOptions<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>;
+export const UpdateNetworkContractsDocument = gql`
+    mutation UpdateNetworkContracts {
+  updateNetworkContracts @client {
+    version
+    feeInverse
+  }
+}
+    `;
+export type UpdateNetworkContractsMutationFn = Apollo.MutationFunction<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>;
+
+/**
+ * __useUpdateNetworkContractsMutation__
+ *
+ * To run a mutation, you first call `useUpdateNetworkContractsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateNetworkContractsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateNetworkContractsMutation, { data, loading, error }] = useUpdateNetworkContractsMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUpdateNetworkContractsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>) {
+        return Apollo.useMutation<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>(UpdateNetworkContractsDocument, baseOptions);
+      }
+export type UpdateNetworkContractsMutationHookResult = ReturnType<typeof useUpdateNetworkContractsMutation>;
+export type UpdateNetworkContractsMutationResult = Apollo.MutationResult<UpdateNetworkContractsMutation>;
+export type UpdateNetworkContractsMutationOptions = Apollo.BaseMutationOptions<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
@@ -4750,6 +4950,7 @@ export const LoggedInUserDocument = gql`
     balance
     username
     ethereal
+    networkId
   }
 }
     `;
@@ -5364,6 +5565,43 @@ export function useColonyTransfersLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type ColonyTransfersQueryHookResult = ReturnType<typeof useColonyTransfersQuery>;
 export type ColonyTransfersLazyQueryHookResult = ReturnType<typeof useColonyTransfersLazyQuery>;
 export type ColonyTransfersQueryResult = Apollo.QueryResult<ColonyTransfersQuery, ColonyTransfersQueryVariables>;
+export const ColonyEventsDocument = gql`
+    query ColonyEvents($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    events @client {
+      ...FullNetworkEvent
+    }
+  }
+}
+    ${FullNetworkEventFragmentDoc}`;
+
+/**
+ * __useColonyEventsQuery__
+ *
+ * To run a query within a React component, call `useColonyEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyEventsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyEventsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyEventsQuery, ColonyEventsQueryVariables>) {
+        return Apollo.useQuery<ColonyEventsQuery, ColonyEventsQueryVariables>(ColonyEventsDocument, baseOptions);
+      }
+export function useColonyEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyEventsQuery, ColonyEventsQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyEventsQuery, ColonyEventsQueryVariables>(ColonyEventsDocument, baseOptions);
+        }
+export type ColonyEventsQueryHookResult = ReturnType<typeof useColonyEventsQuery>;
+export type ColonyEventsLazyQueryHookResult = ReturnType<typeof useColonyEventsLazyQuery>;
+export type ColonyEventsQueryResult = Apollo.QueryResult<ColonyEventsQuery, ColonyEventsQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
@@ -5441,6 +5679,47 @@ export function useColonyProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ColonyProfileQueryHookResult = ReturnType<typeof useColonyProfileQuery>;
 export type ColonyProfileLazyQueryHookResult = ReturnType<typeof useColonyProfileLazyQuery>;
 export type ColonyProfileQueryResult = Apollo.QueryResult<ColonyProfileQuery, ColonyProfileQueryVariables>;
+export const UserColoniesDocument = gql`
+    query UserColonies($address: String!) {
+  user(address: $address) {
+    id
+    colonies {
+      id
+      avatarHash
+      colonyAddress
+      colonyName
+      displayName
+    }
+    colonyAddresses
+  }
+}
+    `;
+
+/**
+ * __useUserColoniesQuery__
+ *
+ * To run a query within a React component, call `useUserColoniesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserColoniesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserColoniesQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserColoniesQuery(baseOptions?: Apollo.QueryHookOptions<UserColoniesQuery, UserColoniesQueryVariables>) {
+        return Apollo.useQuery<UserColoniesQuery, UserColoniesQueryVariables>(UserColoniesDocument, baseOptions);
+      }
+export function useUserColoniesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserColoniesQuery, UserColoniesQueryVariables>) {
+          return Apollo.useLazyQuery<UserColoniesQuery, UserColoniesQueryVariables>(UserColoniesDocument, baseOptions);
+        }
+export type UserColoniesQueryHookResult = ReturnType<typeof useUserColoniesQuery>;
+export type UserColoniesLazyQueryHookResult = ReturnType<typeof useUserColoniesLazyQuery>;
+export type UserColoniesQueryResult = Apollo.QueryResult<UserColoniesQuery, UserColoniesQueryVariables>;
 export const UserColonyAddressesDocument = gql`
     query UserColonyAddresses($address: String!) {
   user(address: $address) {
@@ -5797,6 +6076,38 @@ export function useColonySubscribedUsersLazyQuery(baseOptions?: Apollo.LazyQuery
 export type ColonySubscribedUsersQueryHookResult = ReturnType<typeof useColonySubscribedUsersQuery>;
 export type ColonySubscribedUsersLazyQueryHookResult = ReturnType<typeof useColonySubscribedUsersLazyQuery>;
 export type ColonySubscribedUsersQueryResult = Apollo.QueryResult<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>;
+export const ColonyMembersWithReputationDocument = gql`
+    query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
+  colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+}
+    `;
+
+/**
+ * __useColonyMembersWithReputationQuery__
+ *
+ * To run a query within a React component, call `useColonyMembersWithReputationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyMembersWithReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyMembersWithReputationQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useColonyMembersWithReputationQuery(baseOptions?: Apollo.QueryHookOptions<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>) {
+        return Apollo.useQuery<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>(ColonyMembersWithReputationDocument, baseOptions);
+      }
+export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>(ColonyMembersWithReputationDocument, baseOptions);
+        }
+export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
+export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
+export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
 export const DomainDocument = gql`
     query Domain($colonyAddress: String!, $ethDomainId: Int!) {
   domain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
@@ -5913,14 +6224,11 @@ export const ColonyDomainsDocument = gql`
   colony(address: $colonyAddress) {
     id
     domains {
-      id
-      ethDomainId
-      name
-      ethParentDomainId
+      ...DomainFields
     }
   }
 }
-    `;
+    ${DomainFieldsFragmentDoc}`;
 
 /**
  * __useColonyDomainsQuery__
@@ -6103,3 +6411,79 @@ export function useSystemInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type SystemInfoQueryHookResult = ReturnType<typeof useSystemInfoQuery>;
 export type SystemInfoLazyQueryHookResult = ReturnType<typeof useSystemInfoLazyQuery>;
 export type SystemInfoQueryResult = Apollo.QueryResult<SystemInfoQuery, SystemInfoQueryVariables>;
+export const NetworkContractsDocument = gql`
+    query NetworkContracts {
+  networkContracts @client {
+    version
+    feeInverse
+  }
+}
+    `;
+
+/**
+ * __useNetworkContractsQuery__
+ *
+ * To run a query within a React component, call `useNetworkContractsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNetworkContractsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNetworkContractsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNetworkContractsQuery(baseOptions?: Apollo.QueryHookOptions<NetworkContractsQuery, NetworkContractsQueryVariables>) {
+        return Apollo.useQuery<NetworkContractsQuery, NetworkContractsQueryVariables>(NetworkContractsDocument, baseOptions);
+      }
+export function useNetworkContractsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NetworkContractsQuery, NetworkContractsQueryVariables>) {
+          return Apollo.useLazyQuery<NetworkContractsQuery, NetworkContractsQueryVariables>(NetworkContractsDocument, baseOptions);
+        }
+export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContractsQuery>;
+export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
+export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
+export const TransactionDocument = gql`
+    query Transaction($transactionHash: String!, $colonyAddress: String!) {
+  transaction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
+    hash
+    from
+    to
+    status
+    events {
+      name
+      topic
+      values
+    }
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useTransactionQuery__
+ *
+ * To run a query within a React component, call `useTransactionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionQuery({
+ *   variables: {
+ *      transactionHash: // value for 'transactionHash'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useTransactionQuery(baseOptions?: Apollo.QueryHookOptions<TransactionQuery, TransactionQueryVariables>) {
+        return Apollo.useQuery<TransactionQuery, TransactionQueryVariables>(TransactionDocument, baseOptions);
+      }
+export function useTransactionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionQuery, TransactionQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionQuery, TransactionQueryVariables>(TransactionDocument, baseOptions);
+        }
+export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
+export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
+export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;

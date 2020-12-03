@@ -1,0 +1,37 @@
+.main {
+  display: inline-block;
+  margin-left: -12px;
+}
+
+.joinColony:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+}
+
+.joinColony:active {
+  color: var(--text);
+}
+
+.spinnerContainer {
+  margin: 5px 0 0px 2px;
+  position: absolute;
+}
+
+.menuIconContainer {
+  display: inline-block;
+  margin: 0 0 0 -4px;
+  vertical-align: bottom;
+  cursor: pointer;
+}
+
+.menuIcon {
+  display: block;
+  height: 16px;
+  width: 16px;
+  border-radius: var(--radius-normal);
+  fill: var(--temp-grey-blue-7);
+}
+
+.menuIcon:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  fill: var(--colony-blue);
+}

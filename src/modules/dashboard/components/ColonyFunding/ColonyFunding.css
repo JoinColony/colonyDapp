@@ -1,0 +1,44 @@
+
+.main {
+  display: grid;
+  margin: 100px 0 0 0;
+  height: calc(100% - 100px);
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) 700px minmax(0, 1fr);
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 35px;
+  border-bottom: 1px solid var(--temp-grey-5);
+}
+
+.titleContainer h3 {
+  /*
+    * @NOTE We can't compose from `inlineEllipsis` here since we're inside an
+    * element, not a component :(
+    */
+  width: calc(100% - 150px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  min-height: 0;
+  grid-column-start: 2;
+}
+
+.banner {
+  margin: 40px 0;
+}
+
+.aside {
+  padding: 75px 0 0 150px;
+}

@@ -6,7 +6,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
-import { TokensMoveDialog } from '~admin/Tokens';
+import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import {
   useLoggedInUser,
   Colony,
@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
   title: {
     id: 'dashboard.ColonyHome.ColonyFunding.title',
-    defaultMessage: 'Available Funding',
+    defaultMessage: 'Available funds',
   },
 });
 
@@ -41,7 +41,7 @@ const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
 const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   const { walletAddress } = useLoggedInUser();
-  const openDialog = useDialog(TokensMoveDialog);
+  const openDialog = useDialog(TransferFundsDialog);
 
   const canMoveTokens = useMemo(
     () => canMoveTokensCheck(colony.roles, walletAddress),
@@ -74,7 +74,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   });
 
   return (
-    <div>
+    <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
         <FormattedMessage {...MSG.title} />
         {canMoveTokens && (

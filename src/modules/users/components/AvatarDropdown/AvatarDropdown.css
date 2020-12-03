@@ -1,5 +1,8 @@
+@value refWidth: 63px;
+@value horizontalOffset: 20px;
+@value verticalOffset: 19px;
+
 .avatarButton {
-  margin: 7px;
   padding: 0;
   border: 0;
   background: transparent;

@@ -7,7 +7,7 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import QRCode from '~core/QRCode';
 import WalletLink from '~core/WalletLink';
-import TokenList from '~admin/Tokens/TokenList';
+import TokenCardList from '~dashboard/TokenCardList';
 import { useLoggedInUser, useUserTokensQuery } from '~data/index';
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
@@ -49,7 +49,7 @@ const MSG = defineMessages({
 const Wallet = () => {
   const { walletAddress } = useLoggedInUser();
   const openDialog = useDialog(UserTokenEditDialog);
-  const { data: userTokensData, loading: loadingTokens } = useUserTokensQuery({
+  const { data: userTokensData } = useUserTokensQuery({
     variables: { address: walletAddress },
   });
   const tokens = userTokensData ? userTokensData.user.tokens : [];
@@ -72,11 +72,7 @@ const Wallet = () => {
             </CopyableAddress>
           </div>
         </div>
-        <TokenList
-          isLoading={loadingTokens}
-          tokens={tokens}
-          appearance={{ numCols: '3' }}
-        />
+        <TokenCardList tokens={tokens} appearance={{ numCols: '3' }} />
       </main>
       <aside className={styles.sidebar}>
         <p className={styles.helpText}>

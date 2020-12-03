@@ -1,5 +1,7 @@
 import { Network } from '@colony/colony-js';
 
+import { Color } from '~core/ColorTag';
+
 export type TokenInfo = {
   name: string;
   symbol: string;
@@ -8,6 +10,8 @@ export type TokenInfo = {
 
 export type NetworkInfo = {
   name: string;
+  chainId: number;
+  shortName: string;
   description?: string;
   displayENSDomain?: string;
   /**
@@ -45,8 +49,16 @@ export const ETHER_TOKEN: TokenInfo = {
   decimals: 18,
 };
 
+export const GOERLI_TOKEN: TokenInfo = {
+  name: 'Goerli Ether',
+  symbol: 'GOETH',
+  decimals: 18,
+};
+
 export const XDAI_NETWORK: NetworkInfo = {
   name: 'xDai Chain',
+  chainId: 100,
+  shortName: 'xDai',
   displayENSDomain: 'joincolony.colonyxdai',
   blockExplorerName: 'Blockscout',
   tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
@@ -54,9 +66,40 @@ export const XDAI_NETWORK: NetworkInfo = {
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
   name: 'Ethereum',
+  chainId: 1,
+  shortName: 'ETH',
   blockExplorerName: 'Etherscan',
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://etherscan.io/tokens',
+};
+
+export const GOERLI_NETWORK: NetworkInfo = {
+  name: 'Goerli Testnet',
+  chainId: 5,
+  shortName: 'GTH',
+  blockExplorerName: 'Etherscan',
+  displayENSDomain: 'joincolony.eth',
+  tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
+};
+
+/*
+ * @NOTE Local Network
+ * ChainId is manually set by us, since ganache randomizes it on each start
+ */
+export const GANACHE_NETWORK: NetworkInfo = {
+  name: 'Local Ganache Instance',
+  chainId: 13131313,
+  shortName: 'Ganache',
+  blockExplorerName: 'Noexplorer',
+  displayENSDomain: 'joincolony.eth',
+  tokenExplorerLink: 'http://localhost',
+};
+
+export const ALLOWED_NETWORKS = {
+  [XDAI_NETWORK.chainId]: XDAI_NETWORK,
+  [ETHEREUM_NETWORK.chainId]: ETHEREUM_NETWORK,
+  [GOERLI_NETWORK.chainId]: GOERLI_NETWORK,
+  [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
 };
 
 export const DEFAULT_NETWORK_TOKEN =
@@ -68,3 +111,13 @@ export const DEFAULT_NETWORK_INFO =
   DEFAULT_NETWORK === Network.Xdai || DEFAULT_NETWORK === Network.XdaiFork
     ? XDAI_NETWORK
     : ETHEREUM_NETWORK;
+
+export const METACOLONY_ENS = 'meta';
+
+export const ALLDOMAINS_DOMAIN_SELECTION = {
+  id: String(COLONY_TOTAL_BALANCE_DOMAIN_ID),
+  color: Color.Yellow,
+  ethDomainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  name: 'All Domains',
+  ethParentDomainId: null,
+};

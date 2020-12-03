@@ -2,19 +2,26 @@ import React from 'react';
 
 import { AnyUser } from '~data/index';
 
-import styles from './InfoPopover.css';
 import UserInfo from './UserInfo';
+import UserInfoNotAvailable from './UserInfoNotAvailable';
+
+import styles from './InfoPopover.css';
 
 interface Props {
-  user: AnyUser;
+  user?: AnyUser;
+  userNotAvailable?: boolean;
 }
 
 const displayName = 'InfoPopover.UserInfoPopover';
 
-const UserInfoPopover = ({ user }: Props) => (
+const UserInfoPopover = ({ user, userNotAvailable = false }: Props) => (
   <div className={styles.main}>
     <div className={styles.section}>
-      <UserInfo user={user} />
+      {!userNotAvailable && user ? (
+        <UserInfo user={user} />
+      ) : (
+        <UserInfoNotAvailable />
+      )}
     </div>
   </div>
 );

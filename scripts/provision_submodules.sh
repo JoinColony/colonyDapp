@@ -5,11 +5,11 @@ while [ $# -gt 0 ]; do
     --skip-colony-network-build)
       SKIP_COLONY_NETWORK_BUILD=true
       ;;
-    --skip-pinning-service-build)
-      SKIP_PINNING_SERVICE_BUILD=true
-      ;;
     --skip-server-build)
       SKIP_SERVER_BUILD=true
+      ;;
+    --skip-oracle-build)
+      SKIP_ORACLE_BUILD=true
       ;;
     *)
       echo "Invalid argument: $1"
@@ -23,6 +23,7 @@ LIB_PATH="src/lib"
 
 NETWORK="colonyNetwork"
 SERVER="colonyServer"
+ORACLE="mock-oracle"
 
 ROOT_PATH=$(pwd)
 
@@ -48,18 +49,29 @@ then
     # Build network
     log "Building '${NETWORK}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${NETWORK}"
-    $YARN
+    $YARN --pure-lockfile
     DISABLE_DOCKER=true $YARN provision:token:contracts
     cd ${ROOT_PATH}
 fi
 
 if [ "$SKIP_SERVER_BUILD" != true ]
 then
-    # Build pinning service
     log "Building '${SERVER}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${SERVER}"
     cp .env.example .env
     mkdir -p mongo-data
+    npm install
+    cd ${ROOT_PATH}
+fi
+
+# Mock reputation miner
+if [ "$SKIP_ORACLE_BUILD" != true ]
+then
+    log "Building the '${ORACLE}' submodule"
+    cd "${ROOT_PATH}/${LIB_PATH}/${ORACLE}"
+    log "Generating the '${ORACLE}' submodule .env file"
+    printf "PORT=3001\nHOST=0.0.0.0\nGANACHE_ACCOUNTS_PATH=../colonyNetwork/ganache-accounts.json" >> .env
+    log "Installing the '${ORACLE}' submodule node_modules"
     npm install
     cd ${ROOT_PATH}
 fi

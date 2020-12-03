@@ -1,0 +1,67 @@
+.main {
+  padding: 20px;
+  min-width: 380px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.colonyDetails {
+  display: flex;
+  align-items: center;
+  margin: 0 0 15px 0;
+  padding: 0 0 10px 0;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.colonyAvatar {
+  display: block;
+  margin-right: 16px;
+}
+
+.colonyAvatar figure {
+  height: 37px;
+  width: 37px;
+}
+
+.colonyInfo {
+  display: block;
+  margin-right: 16px;
+  width: 320px;
+}
+
+.colonyInfoItem {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.colonyInfoTitle {
+  composes: colonyInfoItem;
+  composes: inlineEllipsis from '~styles/text.css';
+  color: var(--dark);
+}
+
+.colonyInfoAddress {
+  composes: colonyInfoItem;
+  font-weight: var(--weight-medium);
+}
+
+.colonyInfoENS {
+  composes: colonyInfoItem;
+  color: var(--danger);
+}
+
+.nativeTokenTitle {
+  composes: colonyInfoItem;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.nativeTokenAddress {
+  composes: colonyInfoAddress;
+  margin: 0;
+}
+
+.unsubscribeFromColony {
+  display: block;
+  align-self: flex-start;
+}

@@ -58,3 +58,15 @@
 .borderRadiusRound {
   border-radius: 50px;
 }
+
+.borderRadiusNone {
+  border-radius: 0;
+}
+
+.marginDefault {
+  margin: 10px 0;
+}
+
+.marginNone {
+  margin: 0;
+}

@@ -1,50 +1,72 @@
-@value wideButton: 160px;
-
 .main {
-  padding: 11px 18px 16px 18px;
-}
-
-.grid {
-  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  composes: stretchHorizontal from '~styles/layout.css';
   display: grid;
-  grid-template-columns: 300px minmax(360px, auto) minmax(275px, 300px);
-  grid-template-rows: auto 1fr;
-  column-gap: 80px;
+  grid-template-columns: auto;
 }
 
-.colonyInfo {
-  z-index: var(--z-index-nav);
-  grid-column: 1;
-  grid-row: 1;
+.mainContentGrid {
+  display: grid;
+
+  /*
+   * @NOTE On the below width calculations
+   * full view width, minus a little trick to disregrad the scrollback, minus
+   * the width of the left subscribed colonies list
+   */
+  max-width: calc(100vw - (100vw - 100%));
+  overflow: hidden;
+
+  /*
+   * @NOTE Grid needs to have a max value for the center content section, otherwise
+   * anything that relies on overflow (think: text ellipsis) will not work.
+   *
+   * Value was arrived at from 100% - 23% - 26.5%
+   */
+  grid-template-columns: 23% minmax(auto, 50.5%) 26.5%;
 }
 
-.metaContainer {
-  padding-bottom: 17px;
+.leftAside {
+  padding: 17px 7% 20px 25%;
 }
 
-.content {
-  padding-top: 70px;
-  height: 100%;
-  grid-column: 2;
-  grid-row: 1;
+.leftAsideNav {
+  margin-top: 53px;
 }
 
-.noTasks {
-  margin-bottom: 30px;
-  max-width: 420px;
-  font-size: var(--size-medium-l);
-  line-height: 2em;
+.mainContent {
+  padding: 90px 0 40px;
 }
 
-.breadCrumbContainer {
-  margin-bottom: 16px;
-  margin-left: 10px;
+.domainsDropdownContainer {
+  width: 320px;
 }
 
-.sidebar {
+.contentActionsPanel {
   display: flex;
   justify-content: space-between;
-  margin-top: 160px;
-  grid-column: 3;
-  grid-row: 1;
+  align-items: center;
+}
+
+.rightAside {
+  padding: 220px 5% 20px 80px;
+}
+
+.events {
+  display: block;
+}
+
+.upgradeBannerContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  font-weight: var(--weight-bold);
+  text-align: center;
+}
+
+.upgradeBannerContainer button {
+  margin-top: -38px;
+  float: right;
+}
+
+.upgradeBanner {
+  padding: 15px 0;
 }

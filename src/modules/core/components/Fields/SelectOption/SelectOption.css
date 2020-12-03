@@ -1,10 +1,8 @@
 .main {
   padding: 0 30px 0 15px;
-  height: 32px;
   overflow: hidden;
   font-weight: var(--weight-bold);
   text-overflow: ellipsis;
-  line-height: 32px;
   white-space: nowrap;
   color: var(--grey-1);
   cursor: pointer;
@@ -35,4 +33,13 @@
 .selectedHelpText {
   padding-left: 5px;
   font-weight: var(--weight-normal);
+}
+
+.stateBordered + .stateBordered {
+  border-top: 1px solid var(--grey-blue-0);
+}
+
+.stateIsBasicLabel {
+  min-height: 32px;
+  line-height: 32px;
 }

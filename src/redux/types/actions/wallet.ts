@@ -1,5 +1,4 @@
 import { WalletMethod } from '~immutable/index';
-import { Address } from '~types/index';
 import {
   ActionType,
   ActionTypeWithPayload,
@@ -13,11 +12,8 @@ export type WalletActionTypes =
   | UniqueActionType<
       ActionTypes.WALLET_CREATE,
       {
-        connectWalletMnemonic?: string;
-        hardwareWalletChoice?: string;
         keystore?: string;
         method: WalletMethod;
-        mnemonic?: string;
         password?: string;
         privateKey?: string;
       },
@@ -30,17 +26,4 @@ export type WalletActionTypes =
       }
     >
   | ErrorActionType<ActionTypes.WALLET_CREATE_ERROR, object>
-  | ActionTypeWithPayload<
-      ActionTypes.WALLET_FETCH_ACCOUNTS,
-      {
-        walletType: WalletMethod;
-      }
-    >
-  | ErrorActionType<ActionTypes.WALLET_FETCH_ACCOUNTS_ERROR, object>
-  | ActionTypeWithPayload<
-      ActionTypes.WALLET_FETCH_ACCOUNTS_SUCCESS,
-      {
-        allAddresses: Address[];
-      }
-    >
   | ActionType<ActionTypes.USER_CONTEXT_SETUP_SUCCESS>;

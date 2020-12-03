@@ -90,6 +90,8 @@ fragment ColonyProfile on Colony {
 
 fragment DomainFields on Domain {
   id
+  color @client
+  description @client
   ethDomainId
   name
   ethParentDomainId
@@ -415,4 +417,15 @@ fragment EventContext on Event {
 fragment TaskEvent on Event {
   ...EventFields
   ...EventContext
+}
+
+fragment FullNetworkEvent on NetworkEvent {
+  fromAddress
+  toAddress
+  createdAt
+  name
+  hash
+  topic
+  userAddress
+  domainId
 }

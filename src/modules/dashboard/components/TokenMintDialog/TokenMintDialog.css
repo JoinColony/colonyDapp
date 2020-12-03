@@ -1,0 +1,26 @@
+.inputContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.inputComponent {
+  flex-grow: 1;
+}
+
+.inputComponent input {
+  text-align: right;
+}
+
+.inputComponent label {
+  color: var(--dark);
+}
+
+.nativeToken {
+  padding: 0 50px 0 20px;
+}
+
+.annotation {
+  margin-top: 30px;
+}

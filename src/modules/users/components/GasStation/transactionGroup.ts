@@ -107,3 +107,22 @@ export const isTxGroup = (txOrMessageGroup: TransactionOrMessageGroup) =>
    * the `context` prop will be set to `undefined`. Typescript will be happy this way
    */
   Object.prototype.hasOwnProperty.call(txOrMessageGroup[0], 'context');
+
+// Get count of all transactions that need signing
+export const readyTransactionsCount = (
+  txOrMessageGroups: TransactionOrMessageGroups,
+) => {
+  let readyTransactions = 0;
+  txOrMessageGroups.map((txOrMessageGroup) =>
+    txOrMessageGroup.map((txOrMessage) => {
+      if (
+        txOrMessage.status === TRANSACTION_STATUSES.READY ||
+        txOrMessage.status === TRANSACTION_STATUSES.PENDING
+      ) {
+        readyTransactions += 1;
+      }
+      return false;
+    }),
+  );
+  return readyTransactions;
+};

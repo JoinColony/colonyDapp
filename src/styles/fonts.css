@@ -14,25 +14,37 @@
     url('../fonts/IBMPlexMono-Regular.woff2') format('woff2');
 }
 
+/*
+ * @NOTE This was renamed to MuliWeb due to naming rights issues
+ * Please keep it as it is for the foreseeable future
+ */
 @font-face {
-  font-family: Muli;
+  font-family: MuliWeb;
   src:
-    url('../fonts/muli-webfont.woff2') format('woff2'),
-    url('../fonts/muli-webfont.woff') format('woff');
+    url('../fonts/muliweb.woff2') format('woff2'),
+    url('../fonts/muliweb.woff') format('woff');
 }
 
 @font-face {
-  font-family: Muli;
+  font-family: MuliWeb;
   font-style: italic;
   src:
-    url('../fonts/muli-italic-webfont.woff2') format('woff2'),
-    url('../fonts/muli-italic-webfont.woff') format('woff');
+    url('../fonts/muliweb-italic.woff2') format('woff2'),
+    url('../fonts/muliweb-italic.woff') format('woff');
 }
 
 @font-face {
-  font-family: Muli;
+  font-family: MuliWeb;
+  font-weight: 300;
+  src:
+    url('../fonts/muliweb-light.woff2') format('woff2'),
+    url('../fonts/muliweb-light.woff') format('woff');
+}
+
+@font-face {
+  font-family: MuliWeb;
   font-weight: 700;
   src:
-    url('../fonts/muli-bold-webfont.woff2') format('woff2'),
-    url('../fonts/muli-bold-webfont.woff') format('woff');
+    url('../fonts/muliweb-bold.woff2') format('woff2'),
+    url('../fonts/muliweb-bold.woff') format('woff');
 }

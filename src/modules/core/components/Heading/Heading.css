@@ -26,7 +26,7 @@
 
 .themeDark {
   composes: main;
-  color: var(--grey-1);
+  color: var(--dark);
 }
 
 .themeInvert {
@@ -101,6 +101,7 @@
 
 .weightMedium {
   font-weight: var(--weight-bold);
+  letter-spacing: var(--spacing-medium);
 }
 
 .weightBold {

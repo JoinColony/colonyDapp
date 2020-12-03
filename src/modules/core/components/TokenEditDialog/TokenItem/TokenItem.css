@@ -8,9 +8,11 @@
 .tokenChoice {
   display: flex;
   align-items: center;
-  margin: 20px 0;
+  margin: 8px 0;
 }
 
 .tokenChoiceSymbol {
   margin: 0 10px;
+  font-size: var(--size-small);
+  color: var(--temp-grey-blue-7);
 }

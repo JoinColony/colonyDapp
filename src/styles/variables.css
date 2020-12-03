@@ -3,14 +3,18 @@
   --secondary: rgb(0, 230, 196); /* greenish primary color */
   --colony-white: rgb(251, 251, 251);
   --colony-black: rgb(31, 35, 39);
-  --colony-blue: rgb(76, 93, 255);
+  --colony-blue: rgb(79, 93, 255);
+  --colony-light-blue: rgb(238, 242, 245);
+  --dark-blue: rgb(69, 85, 230);
   --sky-blue: rgb(90, 145, 255);
-  --pink: rgb(248, 43, 101); /* user mentions color */
+  --danger: rgb(248, 43, 101); /* user mentions color */
   --violet: rgb(89, 100, 240);
-  --danger: rgb(254, 94, 124);
+  --pink: rgb(254, 94, 124);
   --golden: rgb(238, 179, 0); /* Think pending states (golden yellow) */
+  --dark: rgb(60, 68, 77); /* Used for colony name display (colony simplified) */
   --grey-dark: rgb(47, 47, 47);
   --grey-1: rgb(58, 58, 58);
+  --grey-2: rgb(54, 54, 54);
   --grey-3: rgb(82, 84, 85);
   --grey-4: rgb(124, 124, 124);
   --grey-5: rgb(173, 186, 189);
@@ -18,6 +22,11 @@
   --grey-blue-1: rgb(232, 236, 245);
   --grey-blue-2: rgb(244, 246, 250);
   --grey-blue-3: rgb(246, 246, 246);
+
+  /*
+   * We really need to cleanup the greys, as they're growing larger and larger by the day
+   * Maybe get a count of all the colors from product and try to go from there ...
+   */
   --temp-grey-0: rgb(195, 204, 205);
   --temp-grey-1: rgb(188, 197, 216);
   --temp-grey-2: rgb(46, 50, 53);
@@ -27,13 +36,17 @@
   --temp-grey-8: rgb(52, 55, 56);
   --temp-grey-11: rgb(136, 136, 136); /* Used for the text color of time for the 'CardActivity' items */
   --temp-grey-12: rgb(152, 164, 193); /* Used for Drag & Drop placeholder */
+  --temp-grey-13: rgb(227, 224, 227); /* Used for separator background */
   --temp-grey-blue-1: rgb(242, 246, 246); /* Used for the background-color of comments ('CardActivity' comment items) */
   --temp-grey-blue-2: rgb(209, 214, 215); /* Used for the border of attachments preview ('CardActivity' attachment items) */
   --temp-grey-blue-3: rgb(251, 252, 253); /* Used for the board list item ('BordListItem' hover clickable) */
   --temp-grey-blue-4: rgb(200, 214, 247); /* Used for some box shadows */
   --temp-grey-blue-5: rgb(244, 238, 242); /* Used for user profile gradient start color */
   --temp-grey-blue-6: rgb(231, 242, 246); /* Used for user profile gradient end color */
+  --temp-grey-blue-7: rgb(118, 116, 139); /* Used for the wallet connect button in the user navigation */
+  --temp-grey-blue-8: rgb(238, 242, 245); /* Used for the actions list hover background */
   --drop-shadow: rgba(62, 118, 244, 0.14);
+  --text-disabled: rgb(194, 204, 204);
 
   /*
    * Gradients
@@ -81,7 +94,7 @@
   /*
    * Fonts
    */
-  --family-primary: "Muli", sans-serif;
+  --family-primary: "MuliWeb", sans-serif;
   --text: color-mod(var(--grey-dark) alpha(70%));
   --text-dark: var(--colony-black);
   --text-invert: var(--colony-white);
@@ -90,6 +103,7 @@
   --size-unreadable: 10px;
   --size-tiny: 11px;
   --size-small: 12px;
+  --size-smallish: 13px; /* This shows up more and more in Colony Simplified */
   --size-normal: 14px;
   --size-medium: 16px;
   --size-medium-l: 18px;

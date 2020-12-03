@@ -1,0 +1,52 @@
+.tokenAmount {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto 100px;
+}
+
+.tokenAmountSelect {
+  align-self: center;
+  margin-left: 20px;
+}
+
+.tokenAmountUsd {
+  justify-self: right;
+}
+
+.domainPotBalance {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.domainSelects {
+  display: grid;
+  width: 100%;
+  grid-template-columns: calc(50% - 25px) 50px calc(50% - 25px);
+}
+
+.transferIcon {
+  align-self: center;
+  height: 26px;
+  width: 26px;
+  position: relative;
+  top: -7px;
+  justify-self: center;
+}
+
+.transferIcon svg {
+  fill: var(--temp-grey-blue-7);
+}
+
+.title {
+  font-size: var(--size-medium-l);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.tokenAmount label,
+.domainSelects label,
+.textAreaSection label {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}

@@ -26,7 +26,7 @@ interface BaseProps {
   notSet?: boolean;
 
   /** Passed on to the `Popper` component */
-  popperProps?: PopperProps;
+  popperProps?: Omit<PopperProps, 'children'> & { showArrow?: boolean };
 
   /** If true the UserAvatar links to the user's profile */
   showLink?: boolean;
@@ -71,6 +71,7 @@ const UserAvatar = ({
     popperProps,
     trigger: showInfo ? 'click' : 'disabled',
     user,
+    showArrow: popperProps && popperProps.showArrow,
   };
   if ('colonyAddress' in rest) {
     const { colonyAddress, domainId } = rest;

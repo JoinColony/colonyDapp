@@ -8,10 +8,9 @@ import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ProfileEdit from '~admin/Profile/ProfileEdit';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
-import Tokens from '~admin/Tokens';
 import Domains from '~admin/Domains';
-import Permissions from '~admin/Permissions';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
+import TokenCardList from '~dashboard/TokenCardList';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { useTransformer } from '~utils/hooks';
 import { Colony, useColonyFromNameQuery, useLoggedInUser } from '~data/index';
@@ -43,10 +42,6 @@ const MSG = defineMessages({
   tabDomains: {
     id: 'dashboard.Admin.tabDomains',
     defaultMessage: 'Domains',
-  },
-  tabPermissions: {
-    id: 'dashboard.Admin.tabPermissions',
-    defaultMessage: 'Permissions',
   },
   tabProfile: {
     id: 'dashboard.Admin.tabProfile',
@@ -82,7 +77,7 @@ const navigationItems = (
   const tokensTab = {
     id: 2,
     title: MSG.tabTokens,
-    content: <Tokens colony={colony} />,
+    content: <TokenCardList tokens={colony.tokens} />,
   };
   const domainsTab = {
     id: 3,
@@ -94,11 +89,6 @@ const navigationItems = (
     title: MSG.tabAdvanced,
     content: <ProfileAdvanced colony={colony} />,
   };
-  const permissionsTab = {
-    id: 4,
-    title: MSG.tabPermissions,
-    content: <Permissions colony={colony} />,
-  };
 
   /*
    * @NOTE Root role needs have access to the colony's management
@@ -108,12 +98,10 @@ const navigationItems = (
   }
 
   /*
-   * @NOTE Architecture role can create new domains and change permissions
-   * But what exact permissions can be changed is handled by the component
+   * @NOTE Architecture role can create new domains
    */
   if (canArchitect(allRoles)) {
     items.push(domainsTab);
-    items.push(permissionsTab);
   }
 
   /*

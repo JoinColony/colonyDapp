@@ -6,6 +6,7 @@ import { SimpleMessageValues } from '~types/index';
 export { default as NavBar } from './NavBar';
 export { default as SimpleNav } from './SimpleNav';
 export { default as Plain } from './Plain';
+export { default as Default } from './Default';
 
 // Use with caution
 export { default as HistoryNavigation } from './HistoryNavigation';
@@ -37,4 +38,9 @@ export interface RouteComponentProps {
    * Setting this will  the theme classes
    */
   className?: string;
+
+  /*
+   * If set, display the subscribed colonies left sidebar
+   */
+  hasSubscribedColonies?: boolean;
 }

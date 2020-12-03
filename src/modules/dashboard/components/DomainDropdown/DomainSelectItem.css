@@ -1,0 +1,49 @@
+
+.main {
+  display: flex;
+  padding: 10px 0;
+  pointer-events: auto;
+}
+
+.childDomainIcon {
+  padding: 3px 10px 0 0;
+}
+
+.mainContent {
+  flex-grow: 1;
+}
+
+.title {
+  display: flex;
+  align-items: baseline;
+}
+
+.color {
+  flex-basis: 19px;
+}
+
+.rootText {
+  padding-left: 10px;
+  font-size: var(--size-tiny);
+  color: var(--grey-5);
+}
+
+.description {
+  font-size: var(--size-tiny);
+  color: var(--grey-4);
+}
+
+.editButtonCol {
+  flex-basis: 60px;
+  text-align: right;
+}
+
+.editButton {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.main:hover .editButton,
+.editButton:focus-within {
+  opacity: 1;
+}

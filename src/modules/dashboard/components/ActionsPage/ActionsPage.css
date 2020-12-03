@@ -1,0 +1,83 @@
+.main {
+  padding: 90px 0;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+}
+
+.container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  /*
+   * @NOTE On specs
+   *
+   * The specs designed this for 1440. On this resolution it looks exactly as spec'd.
+   * But as you widen the view port more and more the offset will blur out more and more
+   * and it will start to look centered (due to the percentage margins).
+   *
+   * This is not a bug, this is by design.
+   */
+  margin: 0 13.19% 0 24.3%;
+  width: 900px;
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.heading {
+  margin-bottom: 20px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.heading span {
+  font-size: var(--size-medium-l);
+}
+
+.content {
+  margin-top: 17px;
+  width: 460px;
+}
+
+.details {
+  width: 340px;
+}
+
+.notFoundContainer {
+  margin: 180px auto 0 auto;
+  width: 340px;
+  text-align: center;
+}
+
+.notFoundContainer svg {
+  /*
+   * @NOTE Image is +260px larger than the container
+   * -130px centers the image with the rest of the elements
+   */
+  margin: 0 0 20px -130px;
+  width: 600px;
+}
+
+.notFoundContainer h3 {
+  line-height: 24px;
+}
+
+.divider {
+  margin: 40px 0 30px;
+  height: 1px;
+  width: 100%;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.hashWrapper {
+  text-align: left;
+}
+
+.addressInTitle div {
+  display: inline-block;
+  font-size: var(--size-medium);
+  color: color-mod(var(--dark) alpha(90%));
+}

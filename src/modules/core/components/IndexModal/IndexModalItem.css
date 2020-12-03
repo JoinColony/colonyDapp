@@ -1,0 +1,87 @@
+@value blueHover: rgb(76, 93, 255);
+
+.title {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.description {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--pad-medium) 40px;
+  position: relative;
+}
+
+.main:not(.stateDisabled) {
+  cursor: pointer;
+}
+
+.main::after, .main:hover:not(.stateDisabled)::before {
+  height: 1px;
+  position: absolute;
+  right: 40px;
+  bottom: 0;
+  left: 40px;
+  background-color: color-mod(var(--grey-2) alpha(15%));
+  content: "";
+}
+
+.stateDisabled .title,
+.stateDisabled .description {
+  color: var(--text-disabled);
+}
+
+.main:hover:not(.stateDisabled) {
+  background-color: var(--temp-grey-blue-8);
+}
+
+.main:hover:not(.stateDisabled)::after {
+  background-color: var(--temp-grey-blue-8);
+}
+
+.main:hover:not(.stateDisabled)::before {
+  top: -1px;
+  background-color: var(--temp-grey-blue-8);
+}
+
+.main:hover:not(.stateDisabled) .title {
+  color: blueHover;
+}
+
+.iconCaret svg {
+  fill: var(--dark);
+  opacity: 0.7;
+}
+
+.iconTitle {
+  display: flex;
+  align-items: center;
+  margin-right: 5px;
+}
+
+.main:hover:not(.stateDisabled) svg {
+  fill: blueHover;
+}
+
+.coming {
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
+  padding: 0 8px;
+  height: 20px;
+  border-radius: var(--radius-normal);
+  background-color: var(--colony-light-blue);
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-13);
+}

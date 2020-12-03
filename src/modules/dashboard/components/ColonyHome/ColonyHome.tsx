@@ -1,33 +1,41 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import RecoveryModeAlert from '~admin/RecoveryModeAlert';
-import Transactions from '~admin/Transactions';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import BreadCrumb from '~core/BreadCrumb';
-import Heading from '~core/Heading';
-import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
-import Community from '~dashboard/Community';
-import LevelDashboard from '~dashboard/LevelDashboard';
-import Program from '~dashboard/Program';
-import Suggestions from '~dashboard/Suggestions';
-import { useLoggedInUser } from '~data/helpers';
-import { useColonyFromNameQuery } from '~data/index';
+import Alert from '~core/Alert';
+import { DialogActionButton } from '~core/Button';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { NOT_FOUND_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE } from '~routes/index';
-import { capitalize } from '~utils/strings';
-import { useTransformer } from '~utils/hooks';
+import ColonyNavigation from '~dashboard/ColonyNavigation';
+import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
+import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { ActionTypes } from '~redux/index';
+import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
+import { useLoggedInUser } from '~data/helpers';
+import { useTransformer } from '~utils/hooks';
 import { getUserRolesForDomain } from '../../../transformers';
-import { canAdminister, canArchitect, hasRoot } from '../../../users/checks';
+import { hasRoot } from '../../../users/checks';
+import { canBeUpgraded } from '../../checks';
+
+import {
+  COLONY_EVENTS_ROUTE,
+  COLONY_EXTENSIONS_ROUTE,
+  COLONY_HOME_ROUTE,
+  NOT_FOUND_ROUTE,
+} from '~routes/index';
 
 import ColonyFunding from './ColonyFunding';
+import ColonyTitle from './ColonyTitle';
+import ColonyTotalFunds from '../ColonyTotalFunds';
+import ColonyActions from '../ColonyActions';
+import ColonyEvents from '../ColonyEvents';
+
 import styles from './ColonyHome.css';
-import ColonyMeta from './ColonyMeta';
-import TabContribute from './TabContribute';
+import DomainDropdown from '~dashboard/DomainDropdown';
+import ColonyHomeActions from '~dashboard/ColonyHomeActions';
 
 const MSG = defineMessages({
   loadingText: {
@@ -54,18 +62,12 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.noFilter',
     defaultMessage: 'All Transactions in Colony',
   },
+  upgradeRequired: {
+    id: `dashboard.ColonyHome.upgradeRequired`,
+    defaultMessage: `This colony uses a version of the network that is no
+      longer supported. You must upgrade to continue using this application.`,
+  },
 });
-
-/**
- * @NOTE These values need to appear in the order the actual tabs are rendered
- * as we use them to infer the default active tab
- */
-enum TabName {
-  TasksTab = 'tasks',
-  SuggestionsTab = 'suggestions',
-  CommunityTab = 'community',
-  TransactionsTab = 'transactions',
-}
 
 type Props = RouteChildrenProps<{ colonyName: string }>;
 
@@ -78,20 +80,18 @@ const ColonyHome = ({ match, location }: Props) => {
     );
   }
   const { colonyName } = match.params;
-  const { walletAddress, username } = useLoggedInUser();
+  const { walletAddress } = useLoggedInUser();
+  const { version: networkVersion } = useNetworkContracts();
 
-  const { domainFilter, tabSelect = '' } = parseQS(location.search) as {
+  const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
     domainFilter: string | undefined;
-    tabSelect: TabName | undefined;
   };
-  const filteredDomainId = domainFilter
-    ? parseInt(domainFilter, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID
-    : COLONY_TOTAL_BALANCE_DOMAIN_ID;
 
-  const defaultActiveTab =
-    TabName[`${capitalize(tabSelect)}Tab`] || TabName.TasksTab;
+  const [domainIdFilter, setDomainIdFilter] = useState<number>(
+    Number(queryDomainFilterId),
+  );
 
-  const [activeTab, setActiveTab] = useState<TabName>(defaultActiveTab);
+  const filteredDomainId = domainIdFilter || COLONY_TOTAL_BALANCE_DOMAIN_ID;
 
   const {
     data,
@@ -120,10 +120,26 @@ const ColonyHome = ({ match, location }: Props) => {
   const colonyDomains = data && data.colony && data.colony.domains;
   const reverseENSAddress = dataVariables && dataVariables.address;
 
+  /*
+   * @NOTE Disabled until we're done with domain filters to prevent lint errors
+   * when pushing downstream rebased branches
+   *
+   * I initially was tempted to remove this, as we don't actually need domain data,
+   * just the Id, then I remembered we need to display the domain description in
+   * the sidebar, and it's a good idea to just pass it down from here.
+   *
+   * Anyway this is still needed for DEV-58
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const filteredDomain = colonyDomains
     ? colonyDomains.find(({ ethDomainId }) => ethDomainId === filteredDomainId)
     : undefined;
 
+  /*
+   * @NOTE Disabled until we're done with domain filters to prevent lint errors
+   * when pushing downstream rebased branches
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const currentDomainUserRoles = useTransformer(getUserRolesForDomain, [
     data && data.colony,
     walletAddress,
@@ -136,24 +152,6 @@ const ColonyHome = ({ match, location }: Props) => {
     ROOT_DOMAIN_ID,
   ]);
 
-  const crumbs = useMemo(() => {
-    switch (filteredDomainId) {
-      case 0:
-        return [{ id: 'domain.all' }];
-
-      case 1:
-        return [{ id: 'domain.root' }];
-
-      default:
-        if (!colonyDomains || !colonyDomains.length) {
-          return [{ id: 'domain.root' }];
-        }
-        return filteredDomain
-          ? [{ id: 'domain.root' }, filteredDomain.name]
-          : [{ id: 'domain.root' }];
-    }
-  }, [colonyDomains, filteredDomain, filteredDomainId]);
-
   if (!colonyName || (reverseENSAddress as any) instanceof Error) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
@@ -163,88 +161,86 @@ const ColonyHome = ({ match, location }: Props) => {
   }
 
   const { colony } = data;
-
-  const canCreateTask = canAdminister(currentDomainUserRoles) && !!username;
-
-  const noFilter = (
-    <Heading
-      text={MSG.noFilter}
-      appearance={{ size: 'tiny', margin: 'small' }}
-    />
+  const canUpgradeColony = hasRoot(rootUserRoles);
+  /*
+   * @NOTE As a future upgrade, we can have a mapping where we keep track of
+   * past and current network versions so that we can control, more granularly,
+   * which versions *must* be upgraded, and which can function as-is, even with
+   * an older version
+   */
+  const mustUpgradeColony = canBeUpgraded(
+    data.colony,
+    parseInt(networkVersion || '0', 10),
   );
 
   return (
     <div className={styles.main}>
-      <div className={styles.grid}>
-        <aside className={styles.colonyInfo}>
-          <div className={styles.metaContainer}>
-            <ColonyMeta
-              colony={colony}
-              canAdminister={
-                !colony.isInRecoveryMode &&
-                (canAdminister(rootUserRoles) || canArchitect(rootUserRoles))
-              }
-              filteredDomainId={filteredDomainId}
-            />
+      <div className={styles.mainContentGrid}>
+        <aside className={styles.leftAside}>
+          <ColonyTitle colony={colony} />
+          <div className={styles.leftAsideNav}>
+            <ColonyNavigation />
           </div>
         </aside>
-        <main className={styles.content}>
+        <div className={styles.mainContent}>
+          <ColonyTotalFunds colony={colony} />
+          <div className={styles.contentActionsPanel}>
+            <div className={styles.domainsDropdownContainer}>
+              <DomainDropdown
+                filteredDomainId={filteredDomainId}
+                colonyAddress={colony.colonyAddress}
+                onDomainChange={setDomainIdFilter}
+              />
+            </div>
+            <ColonyHomeActions />
+          </div>
           <Switch>
-            <Route exact path={PROGRAM_ROUTE}>
-              <Program colony={colony} />
-            </Route>
-            <Route exact path={LEVEL_ROUTE}>
-              <LevelDashboard colony={colony} />
-            </Route>
-            <Route>
-              <div className={styles.breadCrumbContainer}>
-                {crumbs && <BreadCrumb elements={crumbs} />}
-              </div>
-              <Tabs defaultIndex={Object.values(TabName).indexOf(activeTab)}>
-                <TabList
-                  extra={
-                    activeTab === TabName.TransactionsTab ? noFilter : null
-                  }
-                >
-                  <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
-                    <FormattedMessage {...MSG.tabContribute} />
-                  </Tab>
-                  <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
-                    <FormattedMessage {...MSG.tabSuggestions} />
-                  </Tab>
-                  <Tab onClick={() => setActiveTab(TabName.CommunityTab)}>
-                    <FormattedMessage {...MSG.tabCommunity} />
-                  </Tab>
-                  <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
-                    <FormattedMessage {...MSG.tabTransactions} />
-                  </Tab>
-                </TabList>
-                <TabPanel>
-                  <TabContribute
-                    canCreateTask={canCreateTask}
-                    colony={colony}
-                    filteredDomainId={filteredDomainId}
-                    showQrCode={hasRoot(rootUserRoles)}
-                  />
-                </TabPanel>
-                <TabPanel>
-                  <Suggestions colony={colony} domainId={filteredDomainId} />
-                </TabPanel>
-                <TabPanel>
-                  <Community colony={colony} />
-                </TabPanel>
-                <TabPanel>
-                  <Transactions colonyAddress={colony.colonyAddress} />
-                </TabPanel>
-              </Tabs>
-            </Route>
+            <Route
+              path={COLONY_EVENTS_ROUTE}
+              component={() => (
+                <ColonyEvents colonyAddress={colony.colonyAddress} />
+              )}
+            />
+            <Route
+              path={COLONY_EXTENSIONS_ROUTE}
+              component={() => <>Extensions</>}
+            />
+            <Route
+              path={COLONY_HOME_ROUTE}
+              component={() => <ColonyActions />}
+            />
           </Switch>
-        </main>
-        <aside className={styles.sidebar}>
+        </div>
+        <aside className={styles.rightAside}>
           <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
+          <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
         </aside>
-        {colony.isInRecoveryMode && <RecoveryModeAlert />}
       </div>
+      {!!mustUpgradeColony && (
+        <div className={styles.upgradeBannerContainer}>
+          <Alert
+            appearance={{
+              theme: 'danger',
+              margin: 'none',
+              borderRadius: 'none',
+            }}
+          >
+            <div className={styles.upgradeBanner}>
+              <FormattedMessage {...MSG.upgradeRequired} />
+            </div>
+            <DialogActionButton
+              appearance={{ theme: 'primary', size: 'medium' }}
+              text={{ id: 'button.upgrade' }}
+              dialog={NetworkContractUpgradeDialog}
+              submit={ActionTypes.COLONY_VERSION_UPGRADE}
+              success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
+              error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
+              values={{ colonyAddress: data.colonyAddress }}
+              disabled={!canUpgradeColony}
+            />
+          </Alert>
+        </div>
+      )}
     </div>
   );
 };

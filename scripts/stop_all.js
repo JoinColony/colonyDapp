@@ -28,7 +28,8 @@ const teardown = async () => {
     return console.log('PID file not found. Please close the processes manually.');
   }
   await Promise.all(Object.keys(pids).map(name => killPromise(name, pids[name])));
-  console.info(chalk.greenBright('Teardown done.'));
+  console.log(); // New line
+  console.info(chalk.bold.green('Teardown done.'));
   process.exit(0);
 };
 

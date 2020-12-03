@@ -1,0 +1,13 @@
+.wrapper {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  position: relative;
+  overflow-y: auto;
+  background: var(--gradient-default);
+}
+
+.nav {
+  padding: 22px 20px 0 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+}

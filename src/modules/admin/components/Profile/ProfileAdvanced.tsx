@@ -2,17 +2,21 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { useSelector, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
-import UpgradeContractDialog from '~admin/UpgradeContractDialog';
+import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
-import { Colony, useLoggedInUser, useSystemInfoQuery } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useSystemInfoQuery,
+  useNetworkContracts,
+} from '~data/index';
 
 import { getUserRolesForDomain } from '../../../transformers';
-import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded } from '../../../dashboard/checks';
 import UnlockTokenDialog from './UnlockTokenDialog';
@@ -42,10 +46,6 @@ const MSG = defineMessages({
   labelId: {
     id: 'admin.Profile.ProfileAdvanced.labelId',
     defaultMessage: 'Colony ID',
-  },
-  buttonUpdate: {
-    id: 'admin.Profile.ProfileAdvanced.buttonUpdate',
-    defaultMessage: 'Upgrade',
   },
   buttonRecoveryMode: {
     id: 'admin.Profile.ProfileAdvanced.buttonRecoveryMode',
@@ -103,8 +103,8 @@ const ProfileAdvanced = ({
   colony,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
-  const networkVersion = useSelector(networkVersionSelector);
   const { data } = useSystemInfoQuery();
+  const { version: networkVersion } = useNetworkContracts();
 
   const rootRoles = useTransformer(getUserRolesForDomain, [
     colony,
@@ -130,13 +130,16 @@ const ProfileAdvanced = ({
         </div>
         <DialogActionButton
           appearance={{ theme: 'primary', size: 'large' }}
-          text={MSG.buttonUpdate}
-          dialog={UpgradeContractDialog}
+          text={{ id: 'button.upgrade' }}
+          dialog={NetworkContractUpgradeDialog}
           submit={ActionTypes.COLONY_VERSION_UPGRADE}
           success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
           values={{ colonyAddress }}
-          disabled={!networkVersion || !canBeUpgraded(colony, networkVersion)}
+          disabled={
+            !networkVersion ||
+            !canBeUpgraded(colony, parseInt(networkVersion, 10))
+          }
         />
       </section>
       <section className={styles.section}>

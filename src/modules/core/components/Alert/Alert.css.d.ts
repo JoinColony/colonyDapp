@@ -8,3 +8,6 @@ export const borderRadiusSmall: string;
 export const borderRadiusMedium: string;
 export const borderRadiusLarge: string;
 export const borderRadiusRound: string;
+export const borderRadiusNone: string;
+export const marginDefault: string;
+export const marginNone: string;

@@ -144,6 +144,7 @@ query LoggedInUser {
     balance
     username
     ethereal
+    networkId
   }
 }
 
@@ -326,6 +327,16 @@ query ColonyTransfers($address: String!) {
   }
 }
 
+query ColonyEvents($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    events @client {
+      ...FullNetworkEvent
+    }
+  }
+}
+
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id
@@ -344,6 +355,20 @@ query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!
 query ColonyProfile($address: String!) {
   colony(address: $address) {
     ...ColonyProfile
+  }
+}
+
+query UserColonies($address: String!) {
+  user(address: $address) {
+    id
+    colonies {
+      id
+      avatarHash
+      colonyAddress
+      colonyName
+      displayName
+    }
+    colonyAddresses
   }
 }
 
@@ -460,6 +485,10 @@ query ColonySubscribedUsers($colonyAddress: String!) {
   }
 }
 
+query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
+  colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+}
+
 query Domain($colonyAddress: String!, $ethDomainId: Int!) {
   domain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
     id
@@ -493,10 +522,7 @@ query ColonyDomains($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id
     domains {
-      id
-      ethDomainId
-      name
-      ethParentDomainId
+      ...DomainFields
     }
   }
 }
@@ -546,5 +572,27 @@ query UserBadges($address: String!, $colonyAddress: String!) {
 query SystemInfo {
   systemInfo {
     version
+  }
+}
+
+query NetworkContracts {
+  networkContracts @client {
+    version
+    feeInverse
+  }
+}
+
+query Transaction($transactionHash: String!, $colonyAddress: String!) {
+  transaction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
+    hash
+    from
+    to
+    status
+    events {
+      name
+      topic
+      values
+    }
+    createdAt
   }
 }

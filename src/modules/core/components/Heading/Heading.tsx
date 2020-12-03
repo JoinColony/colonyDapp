@@ -9,7 +9,7 @@ import styles from './Heading.css';
 const displayName = 'Heading';
 
 type Appearance = {
-  theme?: 'primary' | 'dark' | 'invert' | 'uppercase';
+  theme?: 'primary' | 'dark' | 'invert' | 'uppercase' | 'grey';
   margin?: 'none' | 'small' | 'double';
   size: 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge';
   weight?: 'thin' | 'medium' | 'bold';

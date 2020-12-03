@@ -8,41 +8,45 @@ import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Task from '~dashboard/Task';
+import ColonyMembers from '~dashboard/ColonyMembers';
 import FourOFour from '~dashboard/FourOFour';
-import Dashboard from '~dashboard/Dashboard';
 import Inbox from '~users/Inbox';
 import Wallet from '~dashboard/Wallet';
 import ConnectWalletWizard from '~users/ConnectWalletWizard';
-import CreateWalletWizard from '~users/CreateWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
 import LevelEdit from '~dashboard/LevelEdit';
-import { NavBar, Plain, SimpleNav } from '~pages/RouteLayouts/index';
+import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
 import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import LadingPage from '~pages/LandingPage';
+import ActionsPage from '~dashboard/ActionsPage';
 
+import appLoadingContext from '~context/appLoadingState';
+import ColonyFunding from '~dashboard/ColonyFunding';
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import appLoadingContext from '~context/appLoadingState';
 
 import {
-  CONNECT_ROUTE,
+  ADMIN_DASHBOARD_ROUTE,
+  COLONY_EVENTS_ROUTE,
+  COLONY_EXTENSIONS_ROUTE,
+  COLONY_FUNDING_ROUTE,
   COLONY_HOME_ROUTE,
+  CONNECT_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
+  INBOX_ROUTE,
   LEVEL_EDIT_ROUTE,
   NOT_FOUND_ROUTE,
-  PROGRAM_ROUTE,
   TASK_ROUTE,
-  CREATE_WALLET_ROUTE,
-  DASHBOARD_ROUTE,
-  ADMIN_DASHBOARD_ROUTE,
-  INBOX_ROUTE,
   USER_EDIT_ROUTE,
   USER_ROUTE,
   WALLET_ROUTE,
-  LEVEL_ROUTE,
+  LANDING_PAGE_ROUTE,
+  MEMBERS_ROUTE,
+  ACTIONS_PAGE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -99,7 +103,7 @@ const Routes = () => {
         <Route
           exact
           path="/"
-          render={() => <Redirect to={DASHBOARD_ROUTE} />}
+          render={() => <Redirect to={LANDING_PAGE_ROUTE} />}
         />
         <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
 
@@ -146,26 +150,34 @@ const Routes = () => {
         />
 
         <AlwaysAccesibleRoute
-          path={CREATE_WALLET_ROUTE}
-          component={CreateWalletWizard}
-          layout={Plain}
-        />
-        <AlwaysAccesibleRoute
-          path={DASHBOARD_ROUTE}
-          component={Dashboard}
-          layout={SimpleNav}
+          path={LANDING_PAGE_ROUTE}
+          component={LadingPage}
+          layout={Default}
           routeProps={{
             hasBackLink: false,
           }}
         />
         <AlwaysAccesibleRoute
           exact
-          path={[COLONY_HOME_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE]}
+          path={[
+            COLONY_HOME_ROUTE,
+            COLONY_EVENTS_ROUTE,
+            COLONY_EXTENSIONS_ROUTE,
+          ]}
           component={ColonyHome}
-          layout={SimpleNav}
-          routeProps={{
-            hasBackLink: false,
-          }}
+          layout={Default}
+          routeProps={{ hasBackLink: false }}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={COLONY_FUNDING_ROUTE}
+          component={ColonyFunding}
+          layout={Default}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: false,
+          })}
         />
         <AlwaysAccesibleRoute
           exact
@@ -211,6 +223,27 @@ const Routes = () => {
           layout={NavBar}
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={MEMBERS_ROUTE}
+          component={ColonyMembers}
+          layout={Default}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: false,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={ACTIONS_PAGE_ROUTE}
+          component={ActionsPage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: '',
             backRoute: `/colony/${colonyName}`,
           })}
         />

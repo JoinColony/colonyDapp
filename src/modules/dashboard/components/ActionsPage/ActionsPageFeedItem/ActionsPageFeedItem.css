@@ -1,0 +1,37 @@
+
+.main {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  padding: 16px 16px 16px 0;
+  width: 100%;
+  border-radius: var(--radius-large);
+}
+
+.stateAnnotation {
+  background-color: color-mod(var(--primary) alpha(6%));
+}
+
+.avatar {
+  display: flex;
+  justify-content: center;
+  width: 60px;
+}
+
+.details {
+  display: flex;
+  align-items: center;
+}
+
+.details > span {
+  margin-right: 6px;
+}
+
+.content {
+  flex: 1;
+}
+
+.text {
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
+}

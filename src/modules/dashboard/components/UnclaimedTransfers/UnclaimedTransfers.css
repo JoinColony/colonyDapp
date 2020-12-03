@@ -1,0 +1,10 @@
+.main {
+  margin-bottom: 30px;
+}
+
+.title {
+  margin-bottom: 10px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}

@@ -1,0 +1,25 @@
+
+.main {
+  composes: button from '~styles/reset.css';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 0;
+  width: 100%;
+  border-top: 1px solid var(--grey-blue-0);
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+}
+
+.main:focus {
+  outline: var(--colony-blue) auto 1px;
+}
+
+.buttonPartIcon {
+  /* Fixes vertical alignment - without this, the icon's parent is too tall, resulting in a top-aligned icon */
+  height: 18px;
+}
+
+.buttonPart {
+  margin: 0px 5px;
+}

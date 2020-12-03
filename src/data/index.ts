@@ -7,6 +7,7 @@ import {
   ColonyQuery,
   ColonyTasksQuery,
   ColonyTransfersQuery,
+  ColonyEventsQuery,
   DomainFieldsFragment,
   FullColonyFragment,
   LoggedInUserDocument,
@@ -27,30 +28,45 @@ import {
   ProgramSubmissionsQuery,
   ProgramQuery,
   UserWithReputationQuery,
+  UserColoniesQuery,
+  NetworkContractsDocument,
 } from './generated';
 import {
   loggedInUserResolvers,
   initialCache as loggedInUser,
 } from './resolvers/loggedInUser';
 import { colonyResolvers } from './resolvers/colony';
+import { domainResolvers } from './resolvers/domain';
 import { userResolvers } from './resolvers/user';
 import { tokenResolvers } from './resolvers/token';
 import { taskResolvers } from './resolvers/task';
+import {
+  networkContractsResolvers,
+  initialCache as networkContracts,
+} from './resolvers/networkContracts';
+import { transactionResolvers } from './resolvers/transactions';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
 // Initialize cache
 apolloCache.writeQuery({ query: LoggedInUserDocument, data: loggedInUser });
+apolloCache.writeQuery({
+  query: NetworkContractsDocument,
+  data: networkContracts,
+});
 
 export { default as cache } from './cache';
 export { default as cacheUpdates } from './cacheUpdates';
 export { default as typeDefs } from './graphql/typeDefs';
 export const resolvers: ResolverFactory[] = [
   colonyResolvers,
+  domainResolvers,
   loggedInUserResolvers,
   userResolvers,
   taskResolvers,
   tokenResolvers,
+  networkContractsResolvers,
+  transactionResolvers,
 ];
 
 // export all the generated types and helpers
@@ -71,12 +87,17 @@ export type Payouts =
 export type Notifications = UserNotificationsQuery['user']['notifications'];
 export type OneNotification = Notifications[number];
 
-export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
+export type AnyColonyProfile =
+  | FullColonyFragment
+  | ColonyProfileFragment
+  | UserColoniesQuery['user']['colonies'][number];
 export type Colony = FullColonyFragment;
 
 export type OneDomain = DomainFieldsFragment;
 
 export type ColonyTransaction = ColonyTransfersQuery['colony']['transfers'][number];
+
+export type ColonyEvent = ColonyEventsQuery['colony']['events'][number];
 
 export type OneSuggestion = ColonySuggestionsQuery['colony']['suggestions'][number];
 

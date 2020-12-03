@@ -1,11 +1,5 @@
-import { networkSelector, ipfsDataSelector } from './selectors';
-import { fetchNetwork, fetchIpfsData } from './actionCreators';
-
-// This is currently unused
-export const networkFetcher = Object.freeze({
-  select: networkSelector,
-  fetch: fetchNetwork,
-});
+import { ipfsDataSelector } from './selectors';
+import { fetchIpfsData } from './actionCreators';
 
 export const ipfsDataFetcher = Object.freeze({
   select: ipfsDataSelector,

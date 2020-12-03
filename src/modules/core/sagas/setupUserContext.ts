@@ -20,6 +20,7 @@ import {
   LoggedInUserQuery,
   LoggedInUserQueryVariables,
   LoggedInUserDocument,
+  updateNetworkContracts,
 } from '~data/index';
 
 import setupResolvers from '~context/setupResolvers';
@@ -30,7 +31,6 @@ import ENS from '../../../lib/ENS';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
-import setupNetworkSagas from './network';
 import { getGasPrices, getColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
@@ -41,7 +41,6 @@ function* setupContextDependentSagas() {
     call(setupAdminSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
-    call(setupNetworkSagas),
     /**
      * We've loaded all the context sagas, so we can proceed with redering
      * all the app's routes
@@ -89,6 +88,29 @@ export default function* setupUserContext(
      */
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
+    let walletNetworkId = '1';
+    // @ts-ignore
+    if (window.web3) {
+      // @ts-ignore
+      walletNetworkId = window.web3.version.network;
+    }
+    /*
+     * @NOTE Detecting Ganache via it's network id is a bit iffy
+     * It's randomized on start so we can reliably count on it.
+     *
+     * For that, if the chainId is bigger then 10k, we assume we're on
+     * ganache (on dev mode only), and set our own chainId to `13131313`
+     *
+     * We really need a better way of detecting ganache here, it will have to do
+     * for now
+     */
+    if (
+      process.env.NODE_ENV === 'development' &&
+      parseInt(walletNetworkId, 10) > 10000
+    ) {
+      walletNetworkId = '13131313';
+    }
+
     TEMP_setContext(ContextModule.Wallet, wallet);
 
     yield authenticate(wallet);
@@ -100,9 +122,7 @@ export default function* setupUserContext(
       },
     });
 
-    if (method !== WalletMethod.Create) {
-      yield call(setLastWallet, method, walletAddress);
-    }
+    yield call(setLastWallet, method, walletAddress);
 
     const colonyManager = yield call(getColonyManager);
     TEMP_setContext(ContextModule.ColonyManager, colonyManager);
@@ -118,6 +138,11 @@ export default function* setupUserContext(
      * but we then do not wait for a return value (which will never come).
      */
     yield fork(setupContextDependentSagas);
+
+    /*
+     * Get the network contract values from the resolver
+     */
+    yield updateNetworkContracts();
 
     // Start a forked task to listen for user balance events
     yield fork(setupUserBalanceListener, walletAddress);
@@ -160,6 +185,7 @@ export default function* setupUserContext(
           username,
           walletAddress,
           ethereal: method === WalletMethod.Ethereal,
+          networkId: parseInt(walletNetworkId, 10),
         },
       },
     });

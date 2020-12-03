@@ -24,9 +24,7 @@
 .contentContainerPopup {
   display: flex;
   flex-direction: column;
-  padding-top: 17px;
-  max-height: 446px;
-  width: 477px;
+  width: 480px;
 }
 
 .inboxHeadingFull {
@@ -38,8 +36,12 @@
 .inboxHeadingPopover {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  padding: 0 13px 0 13px;
+  align-items: center;
+  padding: 24px 13px 20px;
+}
+
+.inboxHeadingPopover button {
+  margin-top: -5px;
 }
 
 .inboxFooter {

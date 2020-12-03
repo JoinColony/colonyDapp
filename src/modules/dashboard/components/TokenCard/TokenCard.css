@@ -1,0 +1,70 @@
+@value headerFooterHeights: 35px;
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+}
+
+.cardHeading {
+  display: flex;
+  align-items: center;
+  height: headerFooterHeights;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  margin-right: 6px;
+}
+
+.iconContainer img {
+  max-height: 36px;
+  max-width: 36px;
+}
+
+.tokenSymbol {
+  margin-left: 15px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--grey-dark);
+}
+
+.nativeTokenText {
+  color: var(--grey-3);
+}
+
+.balanceContent {
+  display: flex;
+  justify-content: center;
+  margin-top: calc(headerFooterHeights / 2);
+  font-size: var(--size-medium-l);
+}
+
+.balanceNumeral {
+  font-size: var(--size-medium-l);
+}
+
+.balanceNotPositive {
+  composes: balanceContent;
+  color: var(--pink);
+}
+
+.cardFooter {
+  composes: marginBottomMedium from '~styles/layout.css';
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: headerFooterHeights;
+  font-weight: var(--weight-thin);
+  color: var(--grey-3);
+}
+
+.ethUsdText {
+  font-weight: var(--weight-bold);
+}
+
+.cardFooter span {
+  font-size: var(--size-small);
+}

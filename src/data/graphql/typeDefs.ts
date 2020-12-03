@@ -6,6 +6,7 @@ export default gql`
     username: String
     walletAddress: String
     ethereal: Boolean
+    networkId: Int
   }
 
   type LoggedInUser {
@@ -14,6 +15,32 @@ export default gql`
     username: String
     walletAddress: String!
     ethereal: Boolean!
+    networkId: Int
+  }
+
+  type ParsedEvent {
+    name: String
+    topic: String
+    values: String
+  }
+
+  type Transaction {
+    hash: String
+    from: String
+    to: String
+    status: Int
+    events: [ParsedEvent!]!
+    createdAt: Int
+  }
+
+  input NetworkContractsInput {
+    version: String
+    feeInverse: String
+  }
+
+  type NetworkContracts {
+    version: String
+    feeInverse: String
   }
 
   type DomainBalance {
@@ -63,6 +90,17 @@ export default gql`
     token: String!
   }
 
+  type NetworkEvent {
+    toAddress: String
+    fromAddress: String
+    createdAt: Int!
+    hash: String!
+    name: String!
+    topic: String
+    userAddress: String
+    domainId: String
+  }
+
   extend type Colony {
     canMintNativeToken: Boolean!
     canUnlockNativeToken: Boolean!
@@ -72,8 +110,15 @@ export default gql`
     roles: [UserRoles!]!
     tokens(addresses: [String!]): [Token!]!
     transfers: [Transfer!]!
+    events: [NetworkEvent!]!
     unclaimedTransfers: [Transfer!]!
     version: Int!
+  }
+
+  extend type Domain {
+    # TODO guarantee color (resolver will always return a color)
+    color: Int
+    description: String
   }
 
   extend type TaskPayout {
@@ -95,6 +140,10 @@ export default gql`
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
     colonyName(address: String!): String!
+    colonyMembersWithReputation(
+      colonyAddress: String!
+      domainId: Int
+    ): [String!]
     token(address: String!): Token!
     tokens(addresses: [String!]): [Token!]!
     userAddress(name: String!): String!
@@ -104,10 +153,14 @@ export default gql`
       domainId: Int
     ): String!
     username(address: String!): String!
+    networkContracts: NetworkContracts!
+    transaction(transactionHash: String!, colonyAddress: String!): Transaction!
   }
 
   extend type Mutation {
     setLoggedInUser(input: LoggedInUserInput): LoggedInUser!
     clearLoggedInUser: LoggedInUser!
+    setNetworkContracts(input: NetworkContractsInput): NetworkContracts!
+    updateNetworkContracts: NetworkContracts!
   }
 `;

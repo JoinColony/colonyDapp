@@ -1,7 +1,3 @@
-/*
- * Unique color so far. If used again, please move to `variables`
- */
-@value navigationIconBlue: rgb(5, 81, 253);
 
 .main {
   display: inline-flex;
@@ -9,48 +5,140 @@
   text-align: left;
 }
 
-.navigationItem {
+.notificationsButton {
+  composes: button from '~styles/reset.css';
+}
+
+.notificationsIcon {
   flex-grow: 0;
-  margin-right: 12px;
-  padding: 0 10px 5px 10px;
-  border-radius: var(--radius-tiny);
+  margin-right: 15px;
+  padding: 7px 9px 9px;
+  width: 36px;
+  border-radius: 38px;
   text-align: center;
   cursor: pointer;
 }
 
-.navigationItemButton {
-  composes: button from '~styles/reset.css';
+.notificationsIcon:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
 }
 
-.navigationItem:hover {
-  background-color: var(--temp-grey-6);
+.notificationsIcon:hover svg {
+  fill: var(--colony-blue);
+  stroke: var(--colony-blue);
 }
 
-.navigationItem:hover svg {
-  fill: navigationIconBlue;
-  stroke: navigationIconBlue;
+.notificationsIconActive svg {
+  fill: var(--colony-blue);
+  stroke: var(--colony-blue);
 }
 
-.navigationItem i {
-  padding: 8px 0;
+.notificationsHighlight {
+  display: block;
+  margin: -20px -4px 0 0;
+  height: 9px;
+  width: 9px;
+  position: relative;
+  float: right;
+  border-radius: 50%;
+  background-color: var(--pink);
+  content: '';
+  box-shadow: 0px 2px 11px var(--drop-shadow);
 }
 
-.navigationItemHealth {
-  composes: navigationItem;
-  padding: 0;
-}
-
-.navigationItemHealth:hover svg {
-  fill: var(--text);
-  stroke: var(--text);
-}
-
-.navigationItemHealth button {
-  padding: 8px 10px 0px 10px;
+.connectWalletButton {
+  /*
+   * @NOTE We need to do border sizing shenanigans due to how the border color
+   * is required by spec to have opacity.
+   *
+   * Otherwise, the two colors will overlap and it will lead to an unexpected border color.
+   *
+   * For this, we remove the border (and compensate the size with padding), while in the
+   * active class (the one that has a different colored border), we remove the extra padding
+   * and set the border
+   */
+  margin-right: 25px;
+  padding: 4px 9px 5px 9px;
+  border: 1px solid var(--temp-grey-blue-7);
+  border-radius: var(--radius-tiny);
+  background-color: transparent;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
   cursor: pointer;
 }
 
-.navigationItemActive svg {
-  fill: navigationIconBlue;
-  stroke: navigationIconBlue;
+.connectWalletButtonActive {
+  composes: connectWalletButton;
+  padding: 5px 10px 6px 10px;
+  border: none;
+  border-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
+  color: var(--colony-blue);
+}
+
+.networkInfo {
+  margin-right: 20px;
+  padding: 2px 7px 4px;
+  border-radius: 4px;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  font-weight: var(--weight-bold);
+  color: var(--grey-1);
+  cursor: default;
+}
+
+.wrongNetwork {
+  composes: networkInfo;
+  padding: 4px 10px;
+  background-color: var(--danger);
+  font-size: 13px;
+  color: var(--colony-white);
+}
+
+.walletAddress {
+  /*
+   * @NOTE We need to do border sizing shenanigans due to how the border color
+   * is required by spec to have opacity.
+   *
+   * Otherwise, the two colors will overlap and it will lead to an unexpected border color.
+   *
+   * For this, we remove the border (and compensate the size with padding), while in the
+   * active class (the one that has a different colored border), we remove the extra padding
+   * and set the border
+   */
+  margin-right: 12px;
+  padding: 2px 9px 3px;
+  border: none;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  color: var(--temp-grey-blue-7);
+  cursor: pointer;
+}
+
+.walletAddress:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  color: var(--colony-blue);
+}
+
+.walletAddressActive {
+  composes: walletAddress;
+  padding: 1px 8px 2px;
+  border: 1px solid var(--colony-blue);
+  color: var(--colony-blue);
+}
+
+.readyTransactionsCount {
+  margin: -27px 0 0 -22px;
+  padding-top: 2px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 50px;
+  background-color: var(--pink);
+  font-size: var(--size-tiny);
+  font-weight: 600;
+  text-align: center;
+  color: var(--colony-white);
+  box-shadow: 0px 2px 11px var(--drop-shadow);
 }

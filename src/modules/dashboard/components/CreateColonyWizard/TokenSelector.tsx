@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState, ReactNode } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { useApolloClient } from '@apollo/client';
 
 import { Input } from '~core/Fields';
-import Button from '~core/Button';
 import { log } from '~utils/debug';
+import { Appearance } from '~core/Fields/Input/Input';
 import { usePrevious } from '~utils/hooks';
 import { isAddress } from '~utils/web3';
 import {
@@ -14,8 +14,6 @@ import {
   TokenQueryVariables,
 } from '~data/index';
 import { DEFAULT_NETWORK_INFO } from '~constants';
-
-import styles from './StepSelectToken.css';
 
 const MSG = defineMessages({
   inputLabel: {
@@ -32,7 +30,7 @@ const MSG = defineMessages({
   },
   preview: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.preview',
-    defaultMessage: 'Token Preview: {name} ({symbol})',
+    defaultMessage: '{name} ({symbol})',
   },
   statusLoading: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.statusLoading',
@@ -48,6 +46,8 @@ interface Props {
   tokenAddress: string;
   onTokenSelect: (arg0: OneToken | null | void) => any;
   tokenData?: OneToken;
+  label?: string | MessageDescriptor;
+  appearance?: Appearance;
 
   /** Extra node to render on the top right in the label */
   extra?: ReactNode;
@@ -77,8 +77,11 @@ const TokenSelector = ({
   onTokenSelect,
   tokenData,
   extra,
+  label,
+  appearance,
 }: Props) => {
   const apolloClient = useApolloClient();
+  const { formatMessage } = useIntl();
   const getToken = useCallback(async () => {
     const { data } = await apolloClient.query<TokenQuery, TokenQueryVariables>({
       query: TokenDocument,
@@ -142,20 +145,20 @@ const TokenSelector = ({
     handleGetTokenError,
   ]);
 
+  const labelText =
+    label && typeof label === 'object' ? formatMessage(label) : label;
+
   return (
     /**
      * @todo Define custom input component for token addresses
      */
-    <div className={styles.main}>
+    <div>
       <Input
         name="tokenAddress"
-        label={MSG.inputLabel}
-        extra={
-          extra || (
-            <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
-          )
-        }
+        label={labelText || MSG.inputLabel}
+        extra={extra}
         {...getStatusText(isLoading, tokenData)}
+        appearance={appearance}
       />
     </div>
   );

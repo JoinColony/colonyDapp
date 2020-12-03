@@ -17,7 +17,7 @@ import {
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
 import { useLoggedInUser, useUser, useEditUserMutation } from '~data/index';
-import { DASHBOARD_ROUTE } from '~routes/index';
+import { LANDING_PAGE_ROUTE } from '~routes/index';
 
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
 import Sidebar from './Sidebar';
@@ -86,7 +86,7 @@ const UserProfileEdit = () => {
   }
 
   if (ethereal) {
-    return <Redirect to={DASHBOARD_ROUTE} />;
+    return <Redirect to={LANDING_PAGE_ROUTE} />;
   }
 
   return (

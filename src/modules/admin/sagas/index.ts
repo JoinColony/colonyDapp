@@ -75,7 +75,7 @@ function* colonyClaimToken({
 }
 
 function* colonyMintTokens({
-  payload: { amount, colonyAddress },
+  payload: { amount, colonyAddress, justification },
   meta,
 }: Action<ActionTypes.COLONY_MINT_TOKENS>) {
   let txChannel;
@@ -178,7 +178,7 @@ function* colonyMintTokens({
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_MINT_TOKENS_SUCCESS,
-      payload: { amount: mintedAmount },
+      payload: { amount: mintedAmount, justification },
       meta,
     });
   } catch (error) {
