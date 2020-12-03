@@ -2,7 +2,6 @@
 .main {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 8px;
   padding: 16px 16px 16px 0;
   width: 100%;
   border-radius: var(--radius-large);
@@ -29,9 +28,21 @@
 
 .content {
   flex: 1;
+  margin-top: -2px;
+}
+
+.content ul {
+  margin-top: -2px;
 }
 
 .text {
   font-size: var(--size-normal);
   color: var(--temp-grey-blue-7);
+}
+
+.username {
+  composes: inlineEllipsis from '~styles/text.css';
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
 }
