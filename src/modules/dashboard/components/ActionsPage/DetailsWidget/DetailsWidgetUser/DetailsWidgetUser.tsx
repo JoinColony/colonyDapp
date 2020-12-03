@@ -6,19 +6,14 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
 import styles from './DetailsWidgetUser.css';
 
-
 const displayName = 'dashboard.ActionsPage.DetailsWidget.DetailsWidgetUser';
 
-
 interface Props {
-  username?: string,
-  walletAddress: Address,
+  username?: string;
+  walletAddress: Address;
 }
 
-const DetailsWidgetUser = ({
-  walletAddress,
-  username,
-}: Props) => {
+const DetailsWidgetUser = ({ walletAddress, username }: Props) => {
   const { Decorate } = new TextDecorator({
     username: (usernameWithAtSign) => (
       <UserMention username={usernameWithAtSign.slice(1)} />

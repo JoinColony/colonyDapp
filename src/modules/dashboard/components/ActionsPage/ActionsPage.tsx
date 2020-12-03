@@ -14,8 +14,11 @@ import ActionsPageFeed, {
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 import MultisigWidget from './MultisigWidget';
-import DetailsWidget, { ActionTypes, DetailsWidgetUser, DetailsWidgetTeam } from './DetailsWidget';
-
+import DetailsWidget, {
+  ActionTypes,
+  DetailsWidgetUser,
+  DetailsWidgetTeam,
+} from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';
@@ -258,6 +261,23 @@ const ActionsPage = () => {
     profile: { walletAddress },
   } = userData?.user || fallbackUserData;
 
+  const colonyAddress = colonyData?.colony?.colonyAddress || null;
+  const defailsWidgetFrom = colonyAddress ? (
+    <DetailsWidgetTeam
+      domainId={2}
+      colonyAddress={colonyAddress}
+    />
+  ) : null;
+
+  const walletAddress = transactionData?.transaction?.from || null;
+
+  const defailsWidgetTo = walletAddress ? (
+    <DetailsWidgetUser
+      username="luke"
+      walletAddress={walletAddress}
+    />
+  ) : null;
+
   return (
     <div className={styles.main}>
       <div className={styles.container}>
@@ -336,8 +356,8 @@ const ActionsPage = () => {
           <DetailsWidget
             domainId={1}
             actionType={ActionTypes.PAYMENT}
-            from={<DetailsWidgetTeam domainId={2} colonyAddress={colonyData?.colony?.colonyAddress}/>}
-            to={<DetailsWidgetUser username="luke" walletAddress={transactionData?.transaction?.from}/>}
+            from={defailsWidgetFrom}
+            to={defailsWidgetTo}
             colonyAddress={colonyData?.colony?.colonyAddress}
           />
         </div>

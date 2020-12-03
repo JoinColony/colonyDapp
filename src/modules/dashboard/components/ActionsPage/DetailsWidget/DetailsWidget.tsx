@@ -1,7 +1,6 @@
 import React, { ReactNode, useState, useEffect } from 'react';
-import { getMainClasses } from '~utils/css';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useColonyDomainsQuery, Domain, AnyToken } from '~data/index';
+import { useColonyDomainsQuery, AnyToken, Domain } from '~data/index';
 import { Address } from '~types/index';
 import ColorTag from '~core/ColorTag';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -70,9 +69,9 @@ const DetailsWidget = ({
   to,
   amount,
   token,
-  colonyAddress
+  colonyAddress,
 }: Props) => {
-  const [domain, setDomain] = useState<Domain>();
+  const [activeTeam, setActiveTeam] = useState<Domain | undefined>();;
 
   const { data } = useColonyDomainsQuery({
     variables: { colonyAddress: colonyAddress || '' },
@@ -84,70 +83,52 @@ const DetailsWidget = ({
         ({ ethDomainId }) => Number(domainId) === ethDomainId,
       );
       if (domain) {
-        // Any idea why TS is complaning here? 
-        setDomain(domain);
+        // Any idea why TS is complaning here?
+        setActiveTeam(domain);
       }
     }
   }, [data, domainId]);
   return (
     <div>
-      {domain && (
+      {activeTeam && (
         <div className={styles.item}>
           <div className={styles.label}>
-            <FormattedMessage
-              {...MSG.activeTeam}
-            />
+            <FormattedMessage {...MSG.activeTeam} />
           </div>
           <div className={styles.value}>
-            {domain.color && (
-              <ColorTag color={domain.color} />
-            )}
-            {` ${domain.name}`}
+            {activeTeam.color && <ColorTag color={activeTeam.color} />}
+            {` ${activeTeam?.name}`}
           </div>
         </div>
       )}
       <div className={styles.item}>
         <div className={styles.label}>
-          <FormattedMessage
-            {...MSG.actionType}
-          />
+          <FormattedMessage {...MSG.actionType} />
         </div>
         <div className={styles.value}>
-          <FormattedMessage
-            {...MSG[actionType]}
-          />
+          <FormattedMessage {...MSG[actionType]} />
         </div>
       </div>
       {from && (
         <div className={styles.item}>
           <div className={styles.label}>
-            <FormattedMessage
-              {...MSG.from}
-            />
+            <FormattedMessage {...MSG.from} />
           </div>
-          <div className={styles.value}>
-            {from}
-          </div>
+          <div className={styles.value}>{from}</div>
         </div>
       )}
       {to && (
-      <div className={styles.item}>
-        <div className={styles.label}>
-          <FormattedMessage
-            {...MSG.to}
-          />
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.to} />
+          </div>
+          <div className={styles.value}>{to}</div>
         </div>
-        <div className={styles.value}>
-          {to}
-        </div>
-      </div>
       )}
       {token && amount && (
         <div className={styles.item}>
           <div className={styles.label}>
-            <FormattedMessage
-              {...MSG.value}
-            />
+            <FormattedMessage {...MSG.value} />
           </div>
           <div className={styles.value}>
             <Numeral
