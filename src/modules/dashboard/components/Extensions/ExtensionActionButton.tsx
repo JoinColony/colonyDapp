@@ -1,13 +1,12 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import { useRouteMatch, useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 
 import Button, { ActionButton, IconButton } from '~core/Button';
 import { ColonyExtensionQuery } from '~data/index';
 import { ExtensionData } from '~data/staticData/extensionData';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
-import { COLONY_EXTENSION_SETUP_ROUTE } from '~routes/index';
 
 const MSG = defineMessages({
   enable: {
@@ -21,27 +20,25 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  canInstall: boolean;
   colonyAddress: Address;
   extension: ExtensionData;
   installedExtension?: ColonyExtensionQuery['colonyExtension'] | null;
 }
 
 const ExtensionActionButton = ({
-  canInstall,
   colonyAddress,
   extension,
   installedExtension,
 }: Props) => {
   const history = useHistory();
-  const { colonyName, extensionId } = useParams();
-  const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
+  const { colonyName, extensionId } = useParams<{
+    colonyName: string;
+    extensionId: string;
+  }>();
 
   const handleEnableButtonClick = useCallback(() => {
     history.push(`/colony/${colonyName}/extensions/${extensionId}/setup`);
   }, [colonyName, extensionId, history]);
-
-  if (!canInstall || onSetupRoute) return null;
 
   if (!installedExtension) {
     return (

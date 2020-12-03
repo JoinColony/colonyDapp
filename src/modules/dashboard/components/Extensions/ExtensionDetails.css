@@ -21,8 +21,17 @@
   width: 340px;
 }
 
+.extensionDetails .headerLine {
+  margin: 46px 0 0 -80px;
+}
+
+.extensionDetails table tr:first-child {
+  border-top-color: transparent;
+}
+
 .buttonWrapper {
-  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--temp-grey-5);
   text-align: right;
 }
 

@@ -12,7 +12,7 @@
    * the width of the left subscribed colonies list
    */
   max-width: calc(100vw - (100vw - 100%));
-  grid-template-columns: [left] minmax(0, 1fr) [content] minmax(700px, 2fr) [sidebar] minmax(0, 1fr);
+  grid-template-columns: [left] minmax(0, 1fr) [content] minmax(700px, 2fr) [sidebar] minmax(180px, 1fr);
   column-gap: 80px;
 }
 
@@ -25,7 +25,7 @@
    * @NOTE Span the content over the last two columns of the grid
    * I have no idea this existed. This is super cool!
    */
-  grid-column: 2 / 4;
+  grid-column: content / sidebar;
 }
 
 .leftAside {

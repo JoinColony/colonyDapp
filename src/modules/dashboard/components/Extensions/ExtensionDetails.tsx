@@ -122,8 +122,12 @@ interface Props {
 }
 
 const ExtensionDetails = ({ colonyAddress }: Props) => {
-  const { colonyName, extensionId } = useParams();
+  const { colonyName, extensionId } = useParams<{
+    colonyName: string;
+    extensionId: string;
+  }>();
   const match = useRouteMatch();
+  const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
   const { walletAddress } = useLoggedInUser();
   const { data, loading } = useColonyExtensionQuery({
     variables: { colonyAddress, extensionId },
@@ -243,9 +247,8 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
               component={() => {
                 if (
                   !canInstall ||
-                  !installedExtension ||
-                  (installedExtension.details.initialized &&
-                    !installedExtension.details.missingPermissions.length)
+                  (installedExtension?.details.initialized &&
+                    !installedExtension?.details.missingPermissions.length)
                 ) {
                   return <Redirect to={extensionUrl} />;
                 }
@@ -263,14 +266,19 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
       </div>
       <aside>
         <div className={styles.extensionDetails}>
-          <div className={styles.buttonWrapper}>
-            <ExtensionActionButton
-              canInstall={canInstall}
-              colonyAddress={colonyAddress}
-              installedExtension={installedExtension}
-              extension={extension}
-            />
-          </div>
+          <hr className={styles.headerLine} />
+          {!onSetupRoute &&
+            canInstall &&
+            (!installedExtension?.details.initialized ||
+              !!installedExtension?.details.missingPermissions.length) && (
+              <div className={styles.buttonWrapper}>
+                <ExtensionActionButton
+                  colonyAddress={colonyAddress}
+                  installedExtension={installedExtension}
+                  extension={extension}
+                />
+              </div>
+            )}
           <Table appearance={{ theme: 'lined' }}>
             <TableBody>
               {tableData.map(({ label, value }) => (
@@ -285,8 +293,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
           </Table>
           {canInstall &&
           extension.uninstallable &&
-          installedExtension &&
-          !installedExtension.details.deprecated ? (
+          !installedExtension?.details.deprecated ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
                 dialog={ConfirmDialog}
@@ -305,8 +312,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
           ) : null}
           {canInstall &&
           extension.uninstallable &&
-          installedExtension &&
-          installedExtension.details.deprecated ? (
+          installedExtension?.details.deprecated ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
                 dialog={ConfirmDialog}
