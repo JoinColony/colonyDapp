@@ -1,6 +1,11 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import { getMainClasses } from '~utils/css';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useColonyDomainsQuery, Domain, AnyToken } from '~data/index';
+import { Address } from '~types/index';
+import ColorTag, { Color } from '~core/ColorTag';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import Numeral from '~core/Numeral';
 
 import styles from './DetailsWidget.css';
 
@@ -27,35 +32,65 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.value',
     defaultMessage: 'Value',
   },
+  paymentActionType: {
+    id: 'dashboard.ActionsPage.DetailsWidget.paymentActionType',
+    defaultMessage: 'Payment',
+  },
+  transferFundsActionType: {
+    id: 'dashboard.ActionsPage.DetailsWidget.transferFundsActionType',
+    defaultMessage: 'Transfer Funds',
+  },
+  recoveryModeActionType: {
+    id: 'dashboard.ActionsPage.DetailsWidget.recoveryModeActionType',
+    defaultMessage: 'Recovery Mode',
+  },
 });
 
-// @TODO we need to add here all possible action types
+// @TODO we need to add here all possible action types, we need also icons
 export enum ActionTypes {
-  PAYMENT = 'PAYMENT',
-  TRANSFER_FUNDS = 'TRANSFER_FUNDS',
-  RECORVERY_MODE = 'RECORVERY_MODE',
+  PAYMENT = 'paymentActionType',
+  TRANSFER_FUNDS = 'transferFundsActionType',
+  RECORVERY_MODE = 'recoveryModeActionType',
 }
 
 interface Props {
-  activeTeam?: string;
+  domainId?: number;
   actionType: ActionTypes;
-  from: ReactNode;
-  to: ReactNode;
-  amount: string;
-  token: string;
+  from?: ReactNode;
+  to?: ReactNode;
+  amount?: number;
+  token?: AnyToken;
+  colonyAddress?: Address;
 }
 
 const DetailsWidget = ({
-  activeTeam,
+  domainId,
   actionType,
   from,
   to,
   amount,
   token,
+  colonyAddress
 }: Props) => {
+  const [domain, setDomain] = useState<Domain | undefined>();
+
+  const { data } = useColonyDomainsQuery({
+    variables: { colonyAddress: colonyAddress || '' },
+  });
+
+  useEffect(() => {
+    if (data) {
+      const domain = data.colony.domains.find(
+        ({ ethDomainId }) => Number(domainId) === ethDomainId,
+      );
+      if (domain) {
+        setDomain(domain);
+      }
+    }
+  }, [data, domainId]);
   return (
     <div>
-      {activeTeam && (
+      {domain && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage
@@ -63,6 +98,10 @@ const DetailsWidget = ({
             />
           </div>
           <div className={styles.value}>
+            {domain.color && (
+              <ColorTag color={domain.color} />
+            )}
+            {` ${domain.name}`}
           </div>
         </div>
       )}
@@ -73,18 +112,24 @@ const DetailsWidget = ({
           />
         </div>
         <div className={styles.value}>
-        </div>
-      </div>
-      <div className={styles.item}>
-        <div className={styles.label}>
           <FormattedMessage
-            {...MSG.from}
+            {...MSG[actionType]}
           />
         </div>
-        <div className={styles.value}>
-          {from}
-        </div>
       </div>
+      {from && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage
+              {...MSG.from}
+            />
+          </div>
+          <div className={styles.value}>
+            {from}
+          </div>
+        </div>
+      )}
+      {to && (
       <div className={styles.item}>
         <div className={styles.label}>
           <FormattedMessage
@@ -95,15 +140,23 @@ const DetailsWidget = ({
           {to}
         </div>
       </div>
-      <div className={styles.item}>
-        <div className={styles.label}>
-          <FormattedMessage
-            {...MSG.value}
-          />
+      )}
+      {token && amount && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage
+              {...MSG.value}
+            />
+          </div>
+          <div className={styles.value}>
+            <Numeral
+              value={amount}
+              unit={getTokenDecimalsWithFallback(token.decimals)}
+              suffix={` ${token.symbol}`}
+            />
+          </div>
         </div>
-        <div className={styles.value}>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
