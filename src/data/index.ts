@@ -146,8 +146,6 @@ export type AnyTokens = (
 // Almost all tokens with 'address' and 'iconHash'
 export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken;
 
-export type NetworkEvent = ParsedEvent;
-
 export type TransactionMessage = TransactionMessageFragment;
 
-export type EventOrMessage = NetworkEvent | TransactionMessage;
+export type EventOrMessage = ParsedEvent | TransactionMessage;

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { useTransactionMessagesQuery, NetworkEvent } from '~data/index';
+import { useTransactionMessagesQuery, ParsedEvent } from '~data/index';
 import { getActionsPageFeedItems } from '../../../transformers';
 import { ActionsPageFeedItem as ActionsPageFeedItemType } from '~types/index';
 
@@ -15,7 +15,7 @@ const displayName = 'dashboard.ActionsPageFeed';
 
 interface Props {
   transactionHash: string;
-  networkEvents?: NetworkEvent[];
+  networkEvents?: ParsedEvent[];
 }
 
 const ActionsPageFeed = ({ transactionHash, networkEvents }: Props) => {

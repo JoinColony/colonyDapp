@@ -18,7 +18,7 @@ interface Props {
   comment?: string;
   walletAddress: Address;
   annotation?: boolean;
-  createdAt?: Date;
+  createdAt?: Date | number;
 }
 
 const ActionsPageFeedItem = ({
