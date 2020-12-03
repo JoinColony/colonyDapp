@@ -4,6 +4,8 @@ import { useParams } from 'react-router';
 
 import NavItem from './NavItem';
 
+import styles from './ColonyNavigation.css';
+
 const MSG = defineMessages({
   linkTextActions: {
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextActions',
@@ -60,7 +62,7 @@ const ColonyNavigation = () => {
   );
 
   return (
-    <nav role="navigation">
+    <nav role="navigation" className={styles.main}>
       {items.map((itemProps) => (
         <NavItem key={itemProps.linkTo} {...itemProps} />
       ))}

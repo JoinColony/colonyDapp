@@ -1,5 +1,5 @@
 .main {
-  composes: stretchHorizontal, stretchVertical from '~styles/layout.css';
+  composes: stretch from '~styles/layout.css';
 
   /* display: grid;
   grid-template-columns: auto; */
@@ -15,23 +15,17 @@
    * the width of the left subscribed colonies list
    */
   max-width: calc(100vw - (100vw - 100%));
-  overflow: hidden;
-  grid-template-columns: minmax(0, 1fr) minmax(700px, 900px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(700px, 2fr) minmax(0, 1fr);
   column-gap: 80px;
 }
 
 .leftAside {
+  padding-top: 60px;
   text-align: right;
-
-  /* padding: 17px 7% 20px 25%; */
-}
-
-.leftAsideNav {
-  /* margin-top: 53px; */
 }
 
 .mainContent {
-  /* padding: 90px 0 40px; */
+  padding-top: 30px;
 }
 
 .domainsDropdownContainer {
@@ -51,9 +45,8 @@
 }
 
 .rightAside {
+  padding-top: 155px;
   text-align: left;
-
-  /* padding: 220px 5% 20px 80px; */
 }
 
 .events {

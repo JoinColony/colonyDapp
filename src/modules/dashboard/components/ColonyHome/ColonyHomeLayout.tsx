@@ -1,12 +1,7 @@
 import React, { ReactChild } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-// import copyToClipboard from 'copy-to-clipboard';
 
 import { Colony } from '~data/index';
-// import Heading from '~core/Heading';
-// import MaskedAddress from '~core/MaskedAddress';
-// import { Tooltip } from '~core/Popover';
-// import ColonySubscription from '../ColonySubscription';
 import Alert from '~core/Alert';
 import { DialogActionButton } from '~core/Button';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
@@ -66,11 +61,7 @@ const ColonyHomeLayout = ({
     <ColonyTitle colony={colony} />
     <div className={styles.mainContentGrid}>
       <aside className={styles.leftAside}>
-        {showNavigation && (
-          <div className={styles.leftAsideNav}>
-            <ColonyNavigation />
-          </div>
-        )}
+        {showNavigation && <ColonyNavigation />}
       </aside>
       <div className={styles.mainContent}>
         {showControls && (
