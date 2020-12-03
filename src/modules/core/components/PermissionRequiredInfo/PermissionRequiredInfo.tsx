@@ -9,7 +9,7 @@ import styles from './PermissionRequiredInfo.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.title',
+    id: 'PermissionRequiredInfo.title',
     defaultMessage: 'You need the following permission(s)',
   },
 });
