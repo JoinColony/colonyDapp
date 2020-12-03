@@ -174,12 +174,9 @@ const CreatePaymentDialogForm = ({
     return from;
   }, [fromDomain, tokenAddress, tokenBalancesData]);
 
-  // Perform form validations
   useEffect(() => {
     const errors: {
       amount?: any;
-      fromDomain?: any;
-      toDomain?: any;
     } = {};
 
     if (!selectedToken || !(amount && amount.length)) {
