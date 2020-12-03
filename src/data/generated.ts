@@ -1386,9 +1386,9 @@ export type LoggedInUser = {
 };
 
 export type ParsedEvent = {
-  name?: Maybe<Scalars['String']>;
-  topic?: Maybe<Scalars['String']>;
-  values?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  topic: Scalars['String'];
+  values: Scalars['String'];
 };
 
 export type Transaction = {

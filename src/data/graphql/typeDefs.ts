@@ -19,9 +19,9 @@ export default gql`
   }
 
   type ParsedEvent {
-    name: String
-    topic: String
-    values: String
+    name: String!
+    topic: String!
+    values: String!
   }
 
   type Transaction {
