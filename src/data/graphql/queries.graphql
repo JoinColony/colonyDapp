@@ -592,6 +592,8 @@ query Transaction($transactionHash: String!, $colonyAddress: String!) {
       name
       topic
       values
+      createdAt
+      from
     }
     createdAt
   }

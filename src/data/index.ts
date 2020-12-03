@@ -30,6 +30,7 @@ import {
   UserWithReputationQuery,
   UserColoniesQuery,
   NetworkContractsDocument,
+  TransactionMessageFragment,
   ParsedEvent,
 } from './generated';
 import {
@@ -146,3 +147,7 @@ export type AnyTokens = (
 export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken;
 
 export type NetworkEvent = ParsedEvent;
+
+export type TransactionMessage = TransactionMessageFragment;
+
+export type EventOrMessage = NetworkEvent | TransactionMessage;

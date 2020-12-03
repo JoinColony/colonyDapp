@@ -165,7 +165,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-    
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -1389,6 +1389,8 @@ export type ParsedEvent = {
   name: Scalars['String'];
   topic: Scalars['String'];
   values: Scalars['String'];
+  createdAt: Scalars['Int'];
+  from: Scalars['String'];
 };
 
 export type Transaction = {
@@ -2474,7 +2476,7 @@ export type TransactionQueryVariables = Exact<{
 
 export type TransactionQuery = { transaction: (
     Pick<Transaction, 'hash' | 'from' | 'to' | 'status' | 'createdAt'>
-    & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values'>> }
+    & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values' | 'createdAt' | 'from'>> }
   ) };
 
 export type TransactionMessagesQueryVariables = Exact<{
@@ -6562,6 +6564,8 @@ export const TransactionDocument = gql`
       name
       topic
       values
+      createdAt
+      from
     }
     createdAt
   }

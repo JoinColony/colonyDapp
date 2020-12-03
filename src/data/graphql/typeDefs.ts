@@ -22,6 +22,8 @@ export default gql`
     name: String!
     topic: String!
     values: String!
+    createdAt: Int!
+    from: String!
   }
 
   type Transaction {

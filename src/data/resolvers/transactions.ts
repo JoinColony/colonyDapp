@@ -246,14 +246,6 @@ export const transactionResolvers = ({
           logs,
           blockHash,
         } = transactionReceipt;
-        const events = logs
-          ?.map((log) => colonyClient.interface.parseLog(log))
-          /*
-           * If the above parser find events that are not part of the colony client
-           * it will return them as `null` so we filter them out
-           */
-          .filter((log) => !!log)
-          .map(({ name, values, topic }) => ({ name, values, topic }));
         /*
          * Get the block time in ms
          *
@@ -263,6 +255,20 @@ export const transactionResolvers = ({
         const createdAt = blockHash
           ? await getBlockTime(provider, blockHash)
           : 0;
+        const events = logs
+          ?.map((log) => colonyClient.interface.parseLog(log))
+          /*
+           * If the above parser find events that are not part of the colony client
+           * it will return them as `null` so we filter them out
+           */
+          .filter((log) => !!log)
+          .map(({ name, values, topic }) => ({
+            from,
+            name,
+            values,
+            topic,
+            createdAt,
+          }));
         return {
           hash,
           from,
