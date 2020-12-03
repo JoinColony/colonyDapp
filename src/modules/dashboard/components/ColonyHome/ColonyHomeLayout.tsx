@@ -59,7 +59,7 @@ const ColonyHomeLayout = ({
 }: Props) => (
   <div className={styles.main}>
     <ColonyTitle colony={colony} />
-    <div className={styles.mainContentGrid}>
+    <div className={showSidebar ? styles.mainContentGrid : styles.minimalGrid}>
       <aside className={styles.leftAside}>
         {showNavigation && <ColonyNavigation />}
       </aside>

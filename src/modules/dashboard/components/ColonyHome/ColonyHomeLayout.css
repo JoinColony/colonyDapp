@@ -19,6 +19,23 @@
   column-gap: 80px;
 }
 
+.minimalGrid {
+  composes: mainContentGrid;
+
+  /*
+   * @NOTE Compensate for the 3-column grid gap
+   */
+  margin-right: 160px;
+  grid-template-columns: minmax(0, 1fr) minmax(700px, 3fr);
+}
+
+.minimalGrid .mainContent {
+  /*
+   * @NOTE Reclaim width lost compensating for the 3-column grid gap
+   */
+  margin-right: -80px;
+}
+
 .leftAside {
   padding-top: 60px;
   text-align: right;
