@@ -225,7 +225,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
       <div>
         <BreadCrumb elements={breadCrumbs} />
         <hr className={styles.headerLine} />
-        <div className={styles.content}>
+        <div>
           <Switch>
             <Route
               exact
@@ -252,12 +252,14 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
                 ) {
                   return <Redirect to={extensionUrl} />;
                 }
-                return (
+                return installedExtension ? (
                   <ExtensionSetup
                     extension={extension}
                     installedExtension={installedExtension}
                     colonyAddress={colonyAddress}
                   />
+                ) : (
+                  <Redirect to={extensionUrl} />
                 );
               }}
             />

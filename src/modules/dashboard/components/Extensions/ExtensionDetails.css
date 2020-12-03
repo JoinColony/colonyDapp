@@ -4,11 +4,6 @@
   grid-template-columns: minmax(460px, 2fr) minmax(340px, 1fr);
 }
 
-.extension {
-  display: grid;
-  grid-template-columns: auto 35%;
-}
-
 .headerLine {
   margin: 20px 0 12px 0;
 }

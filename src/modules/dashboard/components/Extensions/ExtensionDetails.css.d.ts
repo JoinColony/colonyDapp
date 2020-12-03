@@ -1,5 +1,4 @@
 export const main: string;
-export const extension: string;
 export const headerLine: string;
 export const extensionText: string;
 export const extensionDetails: string;
