@@ -63,12 +63,14 @@ const ColonyHomeLayout = ({
   onDomainChange = () => null,
 }: Props) => (
   <div className={styles.main}>
+    <ColonyTitle colony={colony} />
     <div className={styles.mainContentGrid}>
       <aside className={styles.leftAside}>
-        <ColonyTitle colony={colony} />
-        <div className={styles.leftAsideNav}>
-          {showNavigation && <ColonyNavigation />}
-        </div>
+        {showNavigation && (
+          <div className={styles.leftAsideNav}>
+            <ColonyNavigation />
+          </div>
+        )}
       </aside>
       <div className={styles.mainContent}>
         {showControls && (

@@ -1,11 +1,13 @@
 .main {
-  composes: stretchHorizontal from '~styles/layout.css';
-  display: grid;
-  grid-template-columns: auto;
+  composes: stretchHorizontal, stretchVertical from '~styles/layout.css';
+
+  /* display: grid;
+  grid-template-columns: auto; */
 }
 
 .mainContentGrid {
   display: grid;
+  margin: 0 80px;
 
   /*
    * @NOTE On the below width calculations
@@ -14,26 +16,22 @@
    */
   max-width: calc(100vw - (100vw - 100%));
   overflow: hidden;
-
-  /*
-   * @NOTE Grid needs to have a max value for the center content section, otherwise
-   * anything that relies on overflow (think: text ellipsis) will not work.
-   *
-   * Value was arrived at from 100% - 23% - 26.5%
-   */
-  grid-template-columns: 23% minmax(auto, 50.5%) 26.5%;
+  grid-template-columns: minmax(0, 1fr) minmax(700px, 900px) minmax(0, 1fr);
+  column-gap: 80px;
 }
 
 .leftAside {
-  padding: 17px 7% 20px 25%;
+  text-align: right;
+
+  /* padding: 17px 7% 20px 25%; */
 }
 
 .leftAsideNav {
-  margin-top: 53px;
+  /* margin-top: 53px; */
 }
 
 .mainContent {
-  padding: 90px 0 40px;
+  /* padding: 90px 0 40px; */
 }
 
 .domainsDropdownContainer {
@@ -53,7 +51,9 @@
 }
 
 .rightAside {
-  padding: 220px 5% 20px 80px;
+  text-align: left;
+
+  /* padding: 220px 5% 20px 80px; */
 }
 
 .events {
