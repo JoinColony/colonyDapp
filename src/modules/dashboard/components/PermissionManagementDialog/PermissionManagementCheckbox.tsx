@@ -117,13 +117,13 @@ const PermissionManagementCheckbox = ({
           {
             name: 'offset',
             options: {
-              offset: [130, 10],
+              offset: [0, 12],
             },
           },
           {
             name: 'preventOverflow',
             options: {
-              mainAxis: false,
+              padding: 14,
             },
           },
         ],
