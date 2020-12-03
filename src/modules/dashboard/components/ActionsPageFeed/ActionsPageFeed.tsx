@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import { useTransactionMessagesQuery } from '~data/index';
+
+import { useTransactionMessagesQuery, NetworkEvent } from '~data/index';
+import { getActionsPageFeedItems } from '../../../transformers';
+import { ActionsPageFeedItem as ActionsPageFeedItemType } from '~types/index';
+
+import ActionsPageFeedItem from './ActionsPageFeedItem';
+import ActionsPageEvent from './ActionsPageEvent';
 
 import styles from './ActionsPageFeed.css';
 
@@ -9,12 +15,22 @@ const displayName = 'dashboard.ActionsPageFeed';
 
 interface Props {
   transactionHash: string;
+  networkEvents?: NetworkEvent[];
 }
 
-const ActionsPageFeed = ({ transactionHash }: Props) => {
+const ActionsPageFeed = ({ transactionHash, networkEvents }: Props) => {
   const { data, loading, error } = useTransactionMessagesQuery({
     variables: { transactionHash },
   });
+
+  const feedItems = useMemo(
+    () =>
+      getActionsPageFeedItems(
+        networkEvents,
+        data?.transactionMessages.messages,
+      ),
+    [networkEvents, data],
+  );
 
   if (error) {
     return null;
@@ -27,22 +43,44 @@ const ActionsPageFeed = ({ transactionHash }: Props) => {
     </div>;
   }
 
-  if (data?.transactionMessages) {
-    const {
-      transactionMessages: { messages },
-    } = data;
+  const getFeedComponent = ({
+    type,
+    id,
+    name,
+    message,
+    from,
+    createdAt,
+  }: ActionsPageFeedItemType) => {
+    switch (type) {
+      case 'message': {
+        return (
+          <li key={id}>
+            <ActionsPageFeedItem
+              createdAt={createdAt}
+              comment={message}
+              walletAddress={from}
+            />
+          </li>
+        );
+      }
+      case 'event': {
+        return (
+          <li key={id}>
+            <ActionsPageEvent
+              createdAt={createdAt}
+              transactionHash={transactionHash}
+              eventName={name}
+            />
+          </li>
+        );
+      }
+      default: {
+        return null;
+      }
+    }
+  };
 
-    return (
-      <ul className={styles.main}>
-        {!!messages?.length &&
-          messages.map(({ sourceId, context: { message } }) => (
-            <li key={sourceId}>{message}</li>
-          ))}
-      </ul>
-    );
-  }
-
-  return null;
+  return <ul className={styles.main}>{feedItems.map(getFeedComponent)}</ul>;
 };
 
 ActionsPageFeed.displayName = displayName;
