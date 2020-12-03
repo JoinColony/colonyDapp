@@ -91,7 +91,6 @@ const Input = ({
   placeholderValues,
   status,
   statusValues,
-  disabled,
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();
