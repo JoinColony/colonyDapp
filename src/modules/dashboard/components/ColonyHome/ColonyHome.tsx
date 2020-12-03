@@ -4,12 +4,15 @@ import { Redirect, Route, RouteChildrenProps, Switch, useParams } from 'react-ro
 import { parse as parseQS } from 'query-string';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
-import ColonyNavigation from '~dashboard/ColonyHome/ColonyNavigation';
-import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
 import Extensions, { ExtensionDetails } from '~dashboard/Extensions';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useColonyFromNameQuery } from '~data/index';
+
+import ColonyActions from '~dashboard/ColonyActions';
+import ColonyEvents from '~dashboard/ColonyEvents';
+
+import ColonyHomeLayout from './ColonyHomeLayout';
 
 import {
   COLONY_EVENTS_ROUTE,
@@ -20,39 +23,10 @@ import {
   NOT_FOUND_ROUTE,
 } from '~routes/index';
 
-import ColonyFunding from './ColonyFunding';
-import ColonyTitle from './ColonyTitle';
-import ColonyDomainDescription from './ColonyDomainDescription';
-import ColonyTotalFunds from '../ColonyTotalFunds';
-import ColonyActions from '../ColonyActions';
-import ColonyEvents from '../ColonyEvents';
-import ColonyUpgrade from './ColonyUpgrade';
-import ColonyFinishDeployment from './ColonyFinishDeployment';
-
-import styles from './ColonyHome.css';
-import DomainDropdown from '~dashboard/DomainDropdown';
-import ColonyHomeActions from '~dashboard/ColonyHomeActions';
-
 const MSG = defineMessages({
   loadingText: {
     id: 'dashboard.ColonyHome.loadingText',
     defaultMessage: 'Loading Colony',
-  },
-  tabContribute: {
-    id: 'dashboard.ColonyHome.tabContribute',
-    defaultMessage: 'Tasks',
-  },
-  tabTransactions: {
-    id: 'dashboard.ColonyHome.tabTransactions',
-    defaultMessage: 'Transactions',
-  },
-  tabCommunity: {
-    id: 'dashboard.ColonyHome.tabCommunity',
-    defaultMessage: 'Community',
-  },
-  noFilter: {
-    id: 'dashboard.ColonyHome.noFilter',
-    defaultMessage: 'All Transactions in Colony',
   },
 });
 
@@ -141,92 +115,66 @@ const ColonyHome = ({ match, location }: Props) => {
   }
 
   const { processedColony: colony } = data;
-
-  const ColonyActionControls = ({ children }: { children?: ReactChild }) => (
-    <>
-      <ColonyTotalFunds colony={colony} />
-      <div className={styles.contentActionsPanel}>
-        <div className={styles.domainsDropdownContainer}>
-          <DomainDropdown
-            filteredDomainId={filteredDomainId}
-            onDomainChange={setDomainIdFilter}
-            colony={colony}
-          />
-        </div>
-        <ColonyHomeActions colony={colony} />
-      </div>
-      {children}
-    </>
-  );
+  const { colonyAddress } = colony;
 
   return (
-    <div className={styles.main}>
-      <div className={styles.mainContentGrid}>
-        <aside className={styles.leftAside}>
-          <ColonyTitle colony={colony} />
-          <div className={styles.leftAsideNav}>
-            <ColonyNavigation />
-          </div>
-        </aside>
-        <div className={styles.mainContent}>
-          {/*
-           * @TODO Refactor route layout
-           *
-           * This whole setup is kinda iffy / a bit fragile. I think we will be
-           * be better served if we refactor it into a self-standing `ColonyNavigation`
-           * component to which we just feed an array of data (like we used to have
-           * for the admin left side navigation)
-           */}
-          <Switch>
-            <Route
-              path={COLONY_EVENTS_ROUTE}
-              component={() => (
-                <ColonyActionControls>
-                  <ColonyEvents colony={colony} ethDomainId={domainIdFilter} />
-                </ColonyActionControls>
-              )}
-            />
-            <Route
-              path={COLONY_EXTENSIONS_ROUTE}
-              render={(props) => (
-                <Extensions {...props} colonyAddress={data.colonyAddress} />
-              )}
-            />
-            <Route
-              exact
-              path={[
-                COLONY_EXTENSION_DETAILS_ROUTE,
-                COLONY_EXTENSION_SETUP_ROUTE,
-              ]}
-              render={(props) => (
-                <ExtensionDetails
-                  {...props}
-                  colonyAddress={data.colonyAddress}
-                />
-              )}
-            />
-            <Route
-              path={COLONY_HOME_ROUTE}
-              component={() => (
-                <ColonyActionControls>
-                  <ColonyActions colony={colony} ethDomainId={domainIdFilter} />
-                </ColonyActionControls>
-              )}
-            />
-          </Switch>
-        </div>
-        <aside className={styles.rightAside}>
-          <ColonyDomainDescription
+  return (
+    <Switch>
+      <Route
+        path={COLONY_EVENTS_ROUTE}
+        component={() => (
+          <ColonyHomeLayout
             colony={colony}
-            currentDomainId={filteredDomainId}
-          />
-          <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
-          <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
-        </aside>
-      </div>
-      <ColonyUpgrade colony={colony} />
-      <ColonyFinishDeployment colony={colony} />
-    </div>
+            filteredDomainId={filteredDomainId}
+            onDomainChange={setDomainIdFilter}
+          >
+            <ColonyEvents colony={colony} ethDomainId={domainIdFilter} />
+          </ColonyHomeLayout>
+        )}
+      />
+      <Route
+        exact
+        path={COLONY_EXTENSIONS_ROUTE}
+        render={(props) => (
+          <ColonyHomeLayout
+            colony={colony}
+            filteredDomainId={filteredDomainId}
+            onDomainChange={setDomainIdFilter}
+            showControls={false}
+            showSidebar={false}
+          >
+            <Extensions {...props} colonyAddress={colonyAddress} />
+          </ColonyHomeLayout>
+        )}
+      />
+      <Route
+        exact
+        path={[COLONY_EXTENSION_DETAILS_ROUTE, COLONY_EXTENSION_SETUP_ROUTE]}
+        render={(props) => (
+          <ColonyHomeLayout
+            colony={colony}
+            filteredDomainId={filteredDomainId}
+            onDomainChange={setDomainIdFilter}
+            showControls={false}
+            showSidebar={false}
+          >
+            <ExtensionDetails {...props} colonyAddress={colonyAddress} />
+          </ColonyHomeLayout>
+        )}
+      />
+      <Route
+        path={COLONY_HOME_ROUTE}
+        component={() => (
+          <ColonyHomeLayout
+            colony={colony}
+            filteredDomainId={filteredDomainId}
+            onDomainChange={setDomainIdFilter}
+          >
+            <ColonyActions colony={colony} ethDomainId={domainIdFilter} />
+          </ColonyHomeLayout>
+        )}
+      />
+    </Switch>
   );
 };
 
