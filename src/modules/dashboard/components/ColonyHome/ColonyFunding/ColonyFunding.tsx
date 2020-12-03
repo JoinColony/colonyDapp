@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyVersion } from '@colony/colony-js';
 
@@ -7,7 +7,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
-
+import NavLink from '~core/NavLink';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import {
   useLoggedInUser,
@@ -89,8 +89,12 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   return (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
-        <FormattedMessage {...MSG.title} />
-        {canMoveFunds && (
+        <NavLink to={`/colony/${colonyName}/funds`}>
+          <Heading appearance={{ size: 'normal', weight: 'bold' }}>
+            <FormattedMessage {...MSG.title} />
+          </Heading>
+        </NavLink>
+        {canMoveTokens && (
           <span className={styles.fundingButton}>
             <Button
               appearance={{ theme: 'blue' }}

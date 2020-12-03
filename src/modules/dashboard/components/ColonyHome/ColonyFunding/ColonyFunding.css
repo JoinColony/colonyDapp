@@ -4,8 +4,9 @@
   letter-spacing: var(--spacing-medium);
 }
 
-.fundingButton {
-  margin-left: 30px;
+.main a h4:hover, .main a h4:active {
+  text-decoration: underline;
+  color: var(--colony-blue);
 }
 
 .tokenBalance {
