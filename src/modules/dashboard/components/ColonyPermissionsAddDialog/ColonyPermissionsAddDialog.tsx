@@ -2,6 +2,7 @@ import { FormikProps } from 'formik';
 import { useQuery } from '@apollo/client';
 import React, { useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
@@ -21,16 +22,18 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
+import {
+  PermissionManagementForm,
+  availableRoles,
+} from '~dashboard/PermissionManagementDialog';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import {
   getAllRootAccounts,
   getUserRolesForDomain,
 } from '../../../transformers';
-import { availableRoles } from './constants';
-import PermissionForm from './PermissionForm';
 
-import styles from './ColonyPermissionsDialog.css';
+import styles from '../PermissionManagementDialog/PermissionManagementDialog.css';
 
 const MSG = defineMessages({
   errorNoUserGiven: {
@@ -72,6 +75,9 @@ const ColonyPermissionsAddDialog = ({
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const [selectedUserAddress, setSelectedUserAddress] = useState<string>();
+  const [selectedDomainId, setSelectedDomainId] = useState<number>(
+    ROOT_DOMAIN_ID,
+  );
 
   const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
@@ -155,7 +161,7 @@ const ColonyPermissionsAddDialog = ({
         <ActionForm
           enableReinitialize
           initialValues={{
-            domainId,
+            domainId: selectedDomainId.toString(),
             roles: userInheritedRoles,
             user,
           }}
@@ -173,7 +179,7 @@ const ColonyPermissionsAddDialog = ({
                   text={MSG.title}
                   textValues={{ domain: domain && domain.name }}
                 />
-                <div className={styles.titleContainer}>
+                <div>
                   <InputLabel label={MSG.selectUser} />
                   <SingleUserPicker
                     appearance={{ width: 'wide' }}
@@ -187,12 +193,14 @@ const ColonyPermissionsAddDialog = ({
                     renderAvatar={supRenderAvatar}
                   />
                 </div>
-                <PermissionForm
+                <PermissionManagementForm
                   currentUserRoles={currentUserRoles}
                   domainId={domainId}
                   rootAccounts={rootAccounts}
                   userDirectRoles={userDirectRoles}
                   userInheritedRoles={userInheritedRoles}
+                  colonyDomains={colonyData.colony.domains}
+                  onDomainSelected={setSelectedDomainId}
                 />
                 <DialogSection appearance={{ align: 'right' }}>
                   <Button

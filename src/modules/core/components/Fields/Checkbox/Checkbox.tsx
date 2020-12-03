@@ -1,8 +1,16 @@
-import React, { ReactNode, SyntheticEvent, useState, useCallback } from 'react';
+import React, {
+  ReactNode,
+  SyntheticEvent,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import { MessageDescriptor } from 'react-intl';
 import { nanoid } from 'nanoid';
+import { PopperProps } from 'react-popper';
 
 import InputLabel from '~core/Fields/InputLabel';
+import { Tooltip } from '~core/Popover';
 import asFieldArray from '~core/Fields/asFieldArray';
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
@@ -39,6 +47,10 @@ interface Props {
   onChange?: Function;
   /** Input field value */
   value: string;
+  /**  Text for the checkbox tooltip */
+  tooltipText?: string;
+  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
+  tooltipPopperProps?: Omit<PopperProps, 'children'>;
   /** @ignore injected by `asFieldArray` */
   form: { [s: string]: any };
   /** @ignore injected by `asFieldArray` */
@@ -65,6 +77,8 @@ const Checkbox = ({
   push,
   remove,
   value,
+  tooltipText,
+  tooltipPopperProps,
 }: Props) => {
   const [inputId] = useState<string>(nanoid());
 
@@ -89,8 +103,9 @@ const Checkbox = ({
     disabled,
   });
   const classNames = className ? `${mainClasses} ${className}` : mainClasses;
-  return (
-    <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
+
+  const checkboxInputContent = useMemo(
+    () => (
       <>
         <input
           id={inputId}
@@ -105,19 +120,41 @@ const Checkbox = ({
         <span className={styles.checkbox}>
           <span className={styles.checkmark} />
         </span>
-        {!elementOnly && !!label ? (
-          <InputLabel
-            inputId={inputId}
-            label={label}
-            labelValues={labelValues}
-            help={help}
-            helpValues={helpValues}
-            appearance={{ direction: 'horizontal' }}
-          />
-        ) : (
-          label || children
-        )}
       </>
+    ),
+    [disabled, handleOnChange, inputId, isChecked, name],
+  );
+
+  return (
+    <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
+      {disabled && tooltipText ? (
+        <Tooltip
+          darkTheme
+          content={tooltipText}
+          placement="bottom"
+          popperProps={tooltipPopperProps}
+        >
+          {({ close, open, ref }) => (
+            <div ref={ref} onMouseEnter={open} onMouseLeave={close}>
+              {checkboxInputContent}
+            </div>
+          )}
+        </Tooltip>
+      ) : (
+        checkboxInputContent
+      )}
+      {!elementOnly && !!label ? (
+        <InputLabel
+          inputId={inputId}
+          label={label}
+          labelValues={labelValues}
+          help={help}
+          helpValues={helpValues}
+          appearance={{ direction: 'horizontal' }}
+        />
+      ) : (
+        label || children
+      )}
     </label>
   );
 };
