@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { nanoid } from 'nanoid';
 import Heading from '~core/Heading';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
@@ -10,6 +11,8 @@ import Button from '~core/Button';
 import CopyableAddress from '~core/CopyableAddress';
 
 import TransactionHash, { Hash } from './TransactionHash';
+import ActionsPageEvent from './ActionsPageEvent';
+import ActionsPageFeedItem from './ActionsPageFeedItem';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';
 
@@ -233,6 +236,10 @@ const ActionsPage = () => {
     transaction: { hash, status, events, createdAt },
   } = transactionData;
 
+  const createKey = (topic) => {
+    return topic + nanoid();
+  };
+
   return (
     <div className={styles.main}>
       <div className={styles.container}>
@@ -259,14 +266,34 @@ const ActionsPage = () => {
             />
           )}
           {!!events?.length && (
-            <ul>
+            <div>
               <b>Events for the tx:</b>
-              {events.map(({ name, topic }) => (
-                <li key={topic || ''}>
-                  {name} - {topic}
-                </li>
+              {events.map((event) => (
+                <>
+                  <ActionsPageFeedItem
+                    createdAt={Date.now()}
+                    username="Harley"
+                    annotation
+                    comment={`Luke has big plans and the rebellion needs 
+                    these funds. I had to ‘Force’ this, I just had to!`}
+                    key={createKey(event.topic)}
+                  />
+                  <ActionsPageEvent
+                    event={event}
+                    transactionHash={hash}
+                    createdAt={createdAt || Date.now()}
+                    key={createKey(event.topic)}
+                  />
+                  <ActionsPageFeedItem
+                    createdAt={Date.now()}
+                    username="Luke"
+                    comment={`Oh hell yes, I’m all about this. 
+                    Now shut up and take my money.`}
+                    key={createKey(event.topic)}
+                  />
+                </>
               ))}
-            </ul>
+            </div>
           )}
         </div>
         <div className={styles.details}>

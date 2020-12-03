@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { AddressZero } from 'ethers/constants';
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
-import UserPermissions from '~admin/Permissions/UserPermissions';
+import UserPermissions from '~dashboard/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
 

@@ -2,17 +2,23 @@ import React from 'react';
 import { ColonyRole } from '@colony/colony-js';
 import PermissionsLabel from '~core/PermissionsLabel';
 import { permissionsObject } from '~core/PermissionsLabel/permissions';
+import { getMainClasses } from '~utils/css';
 
 import styles from './UserPermissions.css';
+
+interface Appearance {
+  padding: 'none';
+}
 
 interface Props {
   roles: ColonyRole[];
   directRoles: ColonyRole[];
+  appearance?: Appearance;
 }
 
-const displayName = 'admin.Permissions.UserPermissions';
+const displayName = 'dashboard.UserPermissions';
 
-const UserPermissions = ({ roles, directRoles }: Props) => {
+const UserPermissions = ({ roles, directRoles, appearance }: Props) => {
   const sortedRoles = roles
     .filter(
       (role) =>
@@ -27,7 +33,7 @@ const UserPermissions = ({ roles, directRoles }: Props) => {
     });
   const [headRole, ...restRoles] = sortedRoles;
   return (
-    <div className={styles.main}>
+    <div className={getMainClasses(appearance, styles)}>
       {headRole && (
         <PermissionsLabel
           permission={headRole}
