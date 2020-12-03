@@ -67,7 +67,9 @@ const ColonyHome = ({ match, location }: Props) => {
     );
   }
 
-  const { colonyName } = match.params;
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
 
   const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
     domainFilter: string | undefined;
