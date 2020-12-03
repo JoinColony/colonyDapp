@@ -72,7 +72,7 @@ const DetailsWidget = ({
   token,
   colonyAddress
 }: Props) => {
-  const [domain, setDomain] = useState<Domain | undefined>();
+  const [domain, setDomain] = useState<Domain>();
 
   const { data } = useColonyDomainsQuery({
     variables: { colonyAddress: colonyAddress || '' },
@@ -84,6 +84,7 @@ const DetailsWidget = ({
         ({ ethDomainId }) => Number(domainId) === ethDomainId,
       );
       if (domain) {
+        // Any idea why TS is complaning here? 
         setDomain(domain);
       }
     }

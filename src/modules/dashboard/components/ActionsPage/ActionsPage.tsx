@@ -14,6 +14,7 @@ import ActionsPageFeed, {
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 import MultisigWidget from './MultisigWidget';
+import DetailsWidget, { ActionTypes } from './DetailsWidget';
 
 import TransactionHash, { Hash } from './TransactionHash';
 
@@ -332,6 +333,13 @@ const ActionsPage = () => {
               }}
             />
           </MultisigWidget>
+          <DetailsWidget
+            domainId={1}
+            actionType={ActionTypes.PAYMENT}
+            from={<div>#dev</div>}
+            to={<div>#design</div>}
+            colonyAddress={colonyData?.colony?.colonyAddress}
+          />
         </div>
       </div>
     </div>
