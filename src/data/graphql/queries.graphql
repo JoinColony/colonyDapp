@@ -592,7 +592,18 @@ query Transaction($transactionHash: String!, $colonyAddress: String!) {
       name
       topic
       values
+      createdAt
+      from
     }
     createdAt
+  }
+}
+
+query TransactionMessages($transactionHash: String!) {
+  transactionMessages(transactionHash: $transactionHash) {
+    transactionHash
+    messages {
+    	...TransactionMessage
+    }
   }
 }

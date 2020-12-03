@@ -19,18 +19,20 @@ export default gql`
   }
 
   type ParsedEvent {
-    name: String
-    topic: String
-    values: String
+    name: String!
+    topic: String!
+    values: String!
+    createdAt: Int!
+    from: String!
   }
 
   type Transaction {
-    hash: String
-    from: String
-    to: String
-    status: Int
+    hash: String!
+    from: String!
+    to: String!
+    status: Int!
     events: [ParsedEvent!]!
-    createdAt: Int
+    createdAt: Int!
   }
 
   input NetworkContractsInput {

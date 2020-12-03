@@ -30,6 +30,8 @@ import {
   UserWithReputationQuery,
   UserColoniesQuery,
   NetworkContractsDocument,
+  TransactionMessageFragment,
+  ParsedEvent,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -143,3 +145,7 @@ export type AnyTokens = (
 
 // Almost all tokens with 'address' and 'iconHash'
 export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken;
+
+export type TransactionMessage = TransactionMessageFragment;
+
+export type EventOrMessage = ParsedEvent | TransactionMessage;

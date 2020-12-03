@@ -460,6 +460,10 @@ mutation AcceptLevelTaskSubmission($input: AcceptLevelTaskSubmissionInput!) {
   }
 }
 
+mutation SendTransactionMessage($input: SendTransactionMessageInput!) {
+  sendTransactionMessage(input: $input)
+}
+
 # Network Contracts
 
 mutation SetNetworkContracts($input: NetworkContractsInput!) {

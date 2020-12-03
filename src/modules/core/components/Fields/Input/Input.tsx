@@ -68,10 +68,14 @@ export interface Props extends Omit<InputComponentProps, 'placeholder'> {
 
   /** Status text values for intl interpolation */
   statusValues?: SimpleMessageValues;
+
+  /** Set the input field to a disabled state */
+  disabled?: boolean;
 }
 
 const Input = ({
   appearance = {},
+  disabled,
   elementOnly,
   extensionString,
   extra,
@@ -105,6 +109,7 @@ const Input = ({
     innerRef,
     name,
     placeholder,
+    disabled,
     ...inputFieldProps,
   };
 

@@ -1,28 +1,22 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
-import { ParsedEvent } from '~data/index';
-import TransactionMeta from '../TransactionMeta';
-import styles from './ActionsPageEvent.css';
+
+import { TransactionMeta } from '~dashboard/ActionsPage';
 import UserPermissions from '~dashboard/UserPermissions';
-import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
 
-const displayName = 'dashboard.ActionsPage.ActionsPageEvent';
+import TextDecorator from '~lib/TextDecorator';
 
-const MSG = defineMessages({
-  eventTitle: {
-    id: 'dashboard.ActionsPage.ActionsPageEvent.eventTitle',
-    defaultMessage: `{from} paid {value} from {team} to {to}.`,
-  },
-});
+import styles from './ActionsPageEvent.css';
+
+const displayName = 'dashboard.ActionsPageFeed.ActionsPageEvent';
 
 interface Props {
-  event: ParsedEvent;
-  transactionHash?: string | null;
-  createdAt?: number;
+  eventName?: string;
+  transactionHash: string;
+  createdAt: Date;
 }
 
-const ActionsPageEvent = ({ createdAt, transactionHash }: Props) => {
+const ActionsPageEvent = ({ createdAt, transactionHash, eventName }: Props) => {
   // @TODO Mocked roles - Please make me smarter
   const roles = [1, 2, 3];
   const directRoles = [1, 2, 3];
@@ -40,15 +34,7 @@ const ActionsPageEvent = ({ createdAt, transactionHash }: Props) => {
       </div>
       <div className={styles.content}>
         <div className={styles.text}>
-          <FormattedMessage
-            {...MSG.eventTitle}
-            values={{
-              from: <Decorate>@Harley</Decorate>,
-              to: <Decorate>@Luke</Decorate>,
-              value: '25,000 xDAI',
-              team: 'Dev',
-            }}
-          />
+          {eventName && <Decorate>{eventName}</Decorate>}
         </div>
         <div className={styles.details}>
           <UserPermissions

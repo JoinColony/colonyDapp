@@ -26,7 +26,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ActionsPage.TransactionMeta';
 
 interface Props {
-  createdAt?: number;
+  createdAt?: number | Date;
   transactionHash?: string;
   status?: STATUS;
 }

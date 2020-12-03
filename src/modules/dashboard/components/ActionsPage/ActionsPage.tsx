@@ -2,17 +2,18 @@ import React, { useEffect, useMemo } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { nanoid } from 'nanoid';
 import Heading from '~core/Heading';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Button from '~core/Button';
 import CopyableAddress from '~core/CopyableAddress';
+import ActionsPageFeed, {
+  ActionsPageFeedItem,
+} from '~dashboard/ActionsPageFeed';
+import ActionsPageComment from '~dashboard/ActionsPageComment';
 
 import TransactionHash, { Hash } from './TransactionHash';
-import ActionsPageEvent from './ActionsPageEvent';
-import ActionsPageFeedItem from './ActionsPageFeedItem';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';
 
@@ -21,6 +22,7 @@ import {
   useUserLazyQuery,
   useColonyFromNameQuery,
   useUser,
+  useLoggedInUser,
 } from '~data/index';
 import { isTransactionFormat } from '~utils/web3';
 import { STATUS } from './types';
@@ -79,6 +81,8 @@ const ActionsPage = () => {
     transactionHash?: string;
     colonyName: string;
   }>();
+
+  const { username: currentUserName, ethereal } = useLoggedInUser();
 
   const {
     data: colonyData,
@@ -177,12 +181,14 @@ const ActionsPage = () => {
       })(),
       name: (() => {
         if (transactionData?.transaction?.events?.length) {
-          const { events } = transactionData.transaction;
+          const {
+            events: [event],
+          } = transactionData.transaction;
           /*
            * Display the first event as the page title
            * We might need to change this in the future
            */
-          return events[0].name;
+          return event.name;
         }
         return false;
       })(),
@@ -214,14 +220,19 @@ const ActionsPage = () => {
           />
           <div className={styles.divider} />
           <div className={styles.hashWrapper}>
-            <Hash transactionHash={transactionHash || ''} />
+            <Hash transactionHash={transactionHash} />
           </div>
         </div>
       </div>
     );
   }
 
-  if (transactionDataLoading || userDataLoading || !transactionData) {
+  if (
+    transactionDataLoading ||
+    userDataLoading ||
+    !transactionData ||
+    !colonyData
+  ) {
     return <LoadingTemplate loadingText={MSG.loading} />;
   }
 
@@ -236,9 +247,13 @@ const ActionsPage = () => {
     transaction: { hash, status, events, createdAt },
   } = transactionData;
 
-  const createKey = (topic) => {
-    return topic + nanoid();
-  };
+  const {
+    colony: { colonyAddress },
+  } = colonyData;
+
+  const {
+    profile: { walletAddress },
+  } = userData?.user || fallbackUserData;
 
   return (
     <div className={styles.main}>
@@ -262,38 +277,39 @@ const ActionsPage = () => {
                * Typecasting it doesn't work as well
                */
               status={typeof status === 'number' && STATUS_MAP[status]}
-              createdAt={createdAt || Date.now()}
+              createdAt={createdAt}
             />
           )}
-          {!!events?.length && (
-            <div>
-              <b>Events for the tx:</b>
-              {events.map((event) => (
-                <>
-                  <ActionsPageFeedItem
-                    createdAt={Date.now()}
-                    username="Harley"
-                    annotation
-                    comment={`Luke has big plans and the rebellion needs 
+          <ActionsPageFeedItem
+            createdAt={Date.now()}
+            walletAddress={walletAddress}
+            annotation
+            comment={`Luke has big plans and the rebellion needs
                     these funds. I had to ‘Force’ this, I just had to!`}
-                    key={createKey(event.topic)}
-                  />
-                  <ActionsPageEvent
-                    event={event}
-                    transactionHash={hash}
-                    createdAt={createdAt || Date.now()}
-                    key={createKey(event.topic)}
-                  />
-                  <ActionsPageFeedItem
-                    createdAt={Date.now()}
-                    username="Luke"
-                    comment={`Oh hell yes, I’m all about this. 
-                    Now shut up and take my money.`}
-                    key={createKey(event.topic)}
-                  />
-                </>
-              ))}
-            </div>
+          />
+          {transactionHash && (
+            <>
+              <ActionsPageFeed
+                transactionHash={transactionHash}
+                /*
+                 * @NOTE If in the future they will not be needed on this page
+                 * specifically, consider moving loading of the network events
+                 * directly in the feed, that way, we can load it separately
+                 * while still displaying something to the user
+                 */
+                networkEvents={events}
+              />
+              {/*
+               *  @NOTE A user can comment only if he has a wallet connected
+               * and a registered user profile
+               */}
+              {currentUserName && !ethereal && (
+                <ActionsPageComment
+                  transactionHash={transactionHash}
+                  colonyAddress={colonyAddress}
+                />
+              )}
+            </>
           )}
         </div>
         <div className={styles.details}>

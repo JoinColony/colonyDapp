@@ -429,3 +429,29 @@ fragment FullNetworkEvent on NetworkEvent {
   userAddress
   domainId
 }
+
+# @NOTE About the TransactionEventContext fragment
+#
+# This is exactly the same as the other EventContext fragment, just with the
+# transaction event context set in
+#
+# This is because we will remove the other ones at some point and this needs
+# to stay at least for longer then the normal Event ones.
+#
+# This makes cleanup later on easier
+
+fragment TransactionEventContext on Event {
+    context {
+    ... on TransactionMessageEvent {
+      type
+      transactionHash
+      message
+      colonyAddress
+    }
+  }
+}
+
+fragment TransactionMessage on Event {
+  ...EventFields
+  ...TransactionEventContext
+}

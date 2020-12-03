@@ -94,3 +94,13 @@ export interface UserRolesForDomain {
   domainId: number;
   roles: ColonyRole[];
 }
+
+export interface ActionsPageFeedItem {
+  id: string;
+  name?: string;
+  type: string;
+  values?: object; // We really need to find a better way to type this
+  message?: string;
+  from: Address;
+  createdAt: Date;
+}
