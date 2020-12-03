@@ -6,20 +6,20 @@ import NavItem from './NavItem';
 
 const MSG = defineMessages({
   linkTextActions: {
-    id: 'dashboard.ColonyNavigation.linkTextActions',
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextActions',
     defaultMessage: 'Actions',
   },
   linkTextEvents: {
-    id: 'dashboard.ColonyNavigation.linkTextEvents',
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextEvents',
     defaultMessage: 'Events',
   },
   linkTextExtensions: {
-    id: 'dashboard.ColonyNavigation.linkTextExtensions',
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
   },
 });
 
-const displayName = 'dashboard.ColonyNavigation';
+const displayName = 'dashboard.ColonyHome.ColonyNavigation';
 
 const ColonyNavigation = () => {
   const { colonyName } = useParams<{ colonyName: string }>();

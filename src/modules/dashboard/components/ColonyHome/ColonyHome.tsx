@@ -4,7 +4,7 @@ import { Redirect, Route, RouteChildrenProps, Switch, useParams } from 'react-ro
 import { parse as parseQS } from 'query-string';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
-import ColonyNavigation from '~dashboard/ColonyNavigation';
+import ColonyNavigation from '~dashboard/ColonyHome/ColonyNavigation';
 import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
 import Extensions, { ExtensionDetails } from '~dashboard/Extensions';
 

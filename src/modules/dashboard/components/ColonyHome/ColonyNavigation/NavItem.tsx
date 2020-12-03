@@ -15,7 +15,7 @@ interface Props {
   text: MessageDescriptor;
 }
 
-const displayName = 'dashboard.ColonyNavigation.NavItem';
+const displayName = 'dashboard.ColonyHome.ColonyNavigation.NavItem';
 
 const NavItem = ({
   disabled = false,
