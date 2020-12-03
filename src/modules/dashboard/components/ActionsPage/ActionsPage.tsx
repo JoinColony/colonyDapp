@@ -14,7 +14,7 @@ import ActionsPageFeed, {
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 import MultisigWidget from './MultisigWidget';
-import DetailsWidget, { ActionTypes } from './DetailsWidget';
+import DetailsWidget, { ActionTypes, DetailsWidgetUser, DetailsWidgetTeam } from './DetailsWidget';
 
 import TransactionHash, { Hash } from './TransactionHash';
 
@@ -336,8 +336,8 @@ const ActionsPage = () => {
           <DetailsWidget
             domainId={1}
             actionType={ActionTypes.PAYMENT}
-            from={<div>#dev</div>}
-            to={<div>#design</div>}
+            from={<DetailsWidgetTeam domainId={2} colonyAddress={colonyData?.colony?.colonyAddress}/>}
+            to={<DetailsWidgetUser username="luke" walletAddress={transactionData?.transaction?.from}/>}
             colonyAddress={colonyData?.colony?.colonyAddress}
           />
         </div>

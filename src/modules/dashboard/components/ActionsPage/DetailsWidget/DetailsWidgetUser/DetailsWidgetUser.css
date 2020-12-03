@@ -1,0 +1,15 @@
+.main {
+  display: flex;
+  align-items: center;
+}
+
+.address {
+  font-weight: var(--weight-bold);
+  font-size: var(--size-smallish);
+  color: var(--temp-grey-blue-7);
+  margin-left: 8px;
+}
+
+.username {
+  margin-left: 8px;
+}

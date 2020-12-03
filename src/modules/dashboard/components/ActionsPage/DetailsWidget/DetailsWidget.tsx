@@ -3,7 +3,7 @@ import { getMainClasses } from '~utils/css';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useColonyDomainsQuery, Domain, AnyToken } from '~data/index';
 import { Address } from '~types/index';
-import ColorTag, { Color } from '~core/ColorTag';
+import ColorTag from '~core/ColorTag';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 
