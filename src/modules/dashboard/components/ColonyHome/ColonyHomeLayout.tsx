@@ -81,11 +81,13 @@ const ColonyHomeLayout = ({
         )}
         {children}
       </div>
-      {showSidebar && (
+      {showSidebar ? (
         <aside className={styles.rightAside}>
           <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
           <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
         </aside>
+      ) : (
+        <aside />
       )}
     </div>
     {!!mustUpgradeColony && (

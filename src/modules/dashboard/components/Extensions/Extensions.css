@@ -1,5 +1,19 @@
 .main {
-  max-width: 1000px;
+  display: grid;
+  grid-template-columns: minmax(700px, 2fr) minmax(340px, 1fr);
+  column-gap: 80px;
+}
+
+.content {
+  display: block;
+}
+
+/*
+ * @NOTE We don't realy use the sidebar here, it's just easier this way
+ * to properly align the grid with the one on the details page
+ */
+.sidebar {
+  display: block;
 }
 
 .availableExtensionsWrapper {

@@ -218,47 +218,51 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
   }
   return (
     <div className={styles.main}>
-      <BreadCrumb elements={breadCrumbs} />
-      <hr className={styles.headerLine} />
-      <div className={styles.content}>
-        <Switch>
-          <Route
-            exact
-            path={COLONY_EXTENSION_DETAILS_ROUTE}
-            component={() => (
-              <div className={styles.extensionText}>
-                <Heading
-                  tagName="h3"
-                  appearance={{ size: 'medium', margin: 'small' }}
-                  text={extension.name}
-                />
-                <FormattedMessage {...extension.description} />
-              </div>
-            )}
-          />
-          <Route
-            exact
-            path={COLONY_EXTENSION_SETUP_ROUTE}
-            component={() => {
-              if (
-                !canInstall ||
-                !installedExtension ||
-                (installedExtension.details.initialized &&
-                  !installedExtension.details.missingPermissions.length)
-              ) {
-                return <Redirect to={extensionUrl} />;
-              }
-              return (
-                <ExtensionSetup
-                  extension={extension}
-                  installedExtension={installedExtension}
-                  colonyAddress={colonyAddress}
-                />
-              );
-            }}
-          />
-        </Switch>
-        <aside>
+      <div>
+        <BreadCrumb elements={breadCrumbs} />
+        <hr className={styles.headerLine} />
+        <div className={styles.content}>
+          <Switch>
+            <Route
+              exact
+              path={COLONY_EXTENSION_DETAILS_ROUTE}
+              component={() => (
+                <div className={styles.extensionText}>
+                  <Heading
+                    tagName="h3"
+                    appearance={{ size: 'medium', margin: 'small' }}
+                    text={extension.name}
+                  />
+                  <FormattedMessage {...extension.description} />
+                </div>
+              )}
+            />
+            <Route
+              exact
+              path={COLONY_EXTENSION_SETUP_ROUTE}
+              component={() => {
+                if (
+                  !canInstall ||
+                  !installedExtension ||
+                  (installedExtension.details.initialized &&
+                    !installedExtension.details.missingPermissions.length)
+                ) {
+                  return <Redirect to={extensionUrl} />;
+                }
+                return (
+                  <ExtensionSetup
+                    extension={extension}
+                    installedExtension={installedExtension}
+                    colonyAddress={colonyAddress}
+                  />
+                );
+              }}
+            />
+          </Switch>
+        </div>
+      </div>
+      <aside>
+        <div className={styles.extensionDetails}>
           <div className={styles.buttonWrapper}>
             <ExtensionActionButton
               canInstall={canInstall}
@@ -329,8 +333,8 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
               <PermissionsLabel key={permission} permission={permission} />
             ))}
           </div>
-        </aside>
-      </div>
+        </div>
+      </aside>
     </div>
   );
 };

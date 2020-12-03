@@ -1,8 +1,10 @@
 .main {
   composes: main from "./Extensions.css";
+  margin-right: 100px;
+  grid-template-columns: minmax(460px, 2fr) minmax(340px, 1fr);
 }
 
-.content {
+.extension {
   display: grid;
   grid-template-columns: auto 35%;
 }
@@ -13,6 +15,10 @@
 
 .extensionText {
   padding-top: 42px;
+}
+
+.extensionDetails {
+  width: 340px;
 }
 
 .buttonWrapper {

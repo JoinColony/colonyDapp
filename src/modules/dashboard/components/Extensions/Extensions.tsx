@@ -62,43 +62,46 @@ const Extensions = ({ colonyAddress }: Props) => {
     }));
   return (
     <div className={styles.main}>
-      <BreadCrumb elements={[MSG.title]} />
-      <FormattedMessage {...MSG.description} />
-      <hr />
-      {installedExtensionsData.length ? (
-        <div>
-          <Heading
-            tagName="h3"
-            appearance={{ size: 'normal', margin: 'small' }}
-            text={MSG.installedExtensions}
-          />
-          <CardList>
-            {installedExtensionsData.map((extension) => (
-              <ExtensionCard
-                key={extension.extensionId}
-                extension={extension}
-              />
-            ))}
-          </CardList>
-        </div>
-      ) : null}
-      {availableExtensionsData.length ? (
-        <div className={styles.availableExtensionsWrapper}>
-          <Heading
-            tagName="h3"
-            appearance={{ size: 'normal', margin: 'small' }}
-            text={MSG.availableExtensions}
-          />
-          <CardList>
-            {availableExtensionsData.map((extension) => (
-              <ExtensionCard
-                key={extension.extensionId}
-                extension={extension}
-              />
-            ))}
-          </CardList>
-        </div>
-      ) : null}
+      <div className={styles.content}>
+        <BreadCrumb elements={[MSG.title]} />
+        <FormattedMessage {...MSG.description} />
+        <hr />
+        {installedExtensionsData.length ? (
+          <div>
+            <Heading
+              tagName="h3"
+              appearance={{ size: 'normal', margin: 'small' }}
+              text={MSG.installedExtensions}
+            />
+            <CardList>
+              {installedExtensionsData.map((extension) => (
+                <ExtensionCard
+                  key={extension.extensionId}
+                  extension={extension}
+                />
+              ))}
+            </CardList>
+          </div>
+        ) : null}
+        {availableExtensionsData.length ? (
+          <div className={styles.availableExtensionsWrapper}>
+            <Heading
+              tagName="h3"
+              appearance={{ size: 'normal', margin: 'small' }}
+              text={MSG.availableExtensions}
+            />
+            <CardList>
+              {availableExtensionsData.map((extension) => (
+                <ExtensionCard
+                  key={extension.extensionId}
+                  extension={extension}
+                />
+              ))}
+            </CardList>
+          </div>
+        ) : null}
+      </div>
+      <div className={styles.sidebar} />
     </div>
   );
 };
