@@ -6,3 +6,4 @@ export const title: string;
 export const domainSelects: string;
 export const textAreaSection: string;
 export const singleUserContainer: string;
+export const noPermissionFromMessage: string;

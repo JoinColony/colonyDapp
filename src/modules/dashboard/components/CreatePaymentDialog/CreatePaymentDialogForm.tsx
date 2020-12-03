@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import { FormikProps } from 'formik';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
@@ -8,12 +8,14 @@ import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import { useTransformer } from '~utils/hooks';
+import PermissionsLabel from '~core/PermissionsLabel';
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import {
   useLoggedInUser,
@@ -75,7 +77,9 @@ const MSG = defineMessages({
   noPermissionFrom: {
     id:
       'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noPermissionFrom',
-    defaultMessage: 'No permission in from domain',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'You do not have the {firstRoleRequired} and {secondRoleRequired} permissions required to take this action.',
   },
 });
 
@@ -103,6 +107,8 @@ const CreatePaymentDialogForm = ({
   status,
   values,
 }: Props & FormikProps<FormValues>) => {
+  const { formatMessage } = useIntl();
+
   const { tokenAddress, amount } = values;
   const fromDomain = values.fromDomain
     ? parseInt(values.fromDomain, 10)
@@ -195,10 +201,6 @@ const CreatePaymentDialogForm = ({
       }
     }
 
-    if (fromDomain && !userHasRole(fromDomainRoles, ColonyRole.Funding)) {
-      errors.fromDomain = MSG.noPermissionFrom;
-    }
-
     setErrors(errors);
   }, [
     amount,
@@ -209,9 +211,20 @@ const CreatePaymentDialogForm = ({
     setErrors,
   ]);
 
+  const userHasFundingPermission = userHasRole(
+    fromDomainRoles,
+    ColonyRole.Funding,
+  );
+  const userHasAdministrationPermission = userHasRole(
+    fromDomainRoles,
+    ColonyRole.Administration,
+  );
   const userHasPermission =
-    userHasRole(fromDomainRoles, ColonyRole.Funding) &&
-    userHasRole(fromDomainRoles, ColonyRole.Administration);
+    userHasFundingPermission && userHasAdministrationPermission;
+  const requiredRoles: ColonyRole[] = [
+    ColonyRole.Funding,
+    ColonyRole.Administration,
+  ];
 
   return (
     <>
@@ -223,6 +236,11 @@ const CreatePaymentDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
+      {!userHasPermission && (
+        <DialogSection>
+          <PermissionRequiredInfo requiredRoles={requiredRoles} />
+        </DialogSection>
+      )}
       <DialogSection>
         <div className={styles.domainSelects}>
           <div>
@@ -231,7 +249,7 @@ const CreatePaymentDialogForm = ({
               label={MSG.from}
               name="fromDomain"
               appearance={{ theme: 'grey', width: 'fluid' }}
-              disabled={userHasPermission}
+              disabled={!userHasPermission}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -268,7 +286,7 @@ const CreatePaymentDialogForm = ({
             name="toAssignee"
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
-            disabled={userHasPermission}
+            disabled={!userHasPermission}
           />
         </div>
       </DialogSection>
@@ -288,7 +306,7 @@ const CreatePaymentDialogForm = ({
                 selectedToken && selectedToken.decimals,
               ),
             }}
-            disabled={userHasPermission}
+            disabled={!userHasPermission}
           />
           <div className={styles.tokenAmountSelect}>
             <Select
@@ -297,7 +315,7 @@ const CreatePaymentDialogForm = ({
               name="tokenAddress"
               elementOnly
               appearance={{ alignOptions: 'right', theme: 'grey' }}
-              disabled={userHasPermission}
+              disabled={!userHasPermission}
             />
           </div>
           {values.tokenAddress === AddressZero && (
@@ -326,10 +344,35 @@ const CreatePaymentDialogForm = ({
             label={MSG.reason}
             name="reason"
             maxLength={4000}
-            disabled={userHasPermission}
+            disabled={!userHasPermission}
           />
         </div>
       </DialogSection>
+      {!userHasPermission && (
+        <DialogSection>
+          <span className={styles.noPermissionFromMessage}>
+            <FormattedMessage
+              {...MSG.noPermissionFrom}
+              values={{
+                firstRoleRequired: (
+                  <PermissionsLabel
+                    permission={ColonyRole.Funding}
+                    name={formatMessage({ id: `role.${ColonyRole.Funding}` })}
+                  />
+                ),
+                secondRoleRequired: (
+                  <PermissionsLabel
+                    permission={ColonyRole.Administration}
+                    name={formatMessage({
+                      id: `role.${ColonyRole.Administration}`,
+                    })}
+                  />
+                ),
+              }}
+            />
+          </span>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', background: 'grey' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}

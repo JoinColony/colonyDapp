@@ -47,3 +47,10 @@
 .singleUserContainer > div {
   padding-left: 0;
 }
+
+.noPermissionFromMessage {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}

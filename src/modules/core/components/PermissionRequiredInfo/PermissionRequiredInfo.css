@@ -1,0 +1,55 @@
+.title {
+  margin-bottom: 6px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.requiredPermissionSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.section {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  padding: 15px 0;
+  border-top: 1px solid var(--temp-grey-blue-7);
+  border-bottom: 1px solid var(--temp-grey-blue-7);
+}
+
+.sectionLabel {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.labelIcon {
+  margin-left: 8px;
+  height: 16px;
+  width: 16px;
+  fill: var(--temp-grey-1);
+}
+
+.permissionList {
+  display: flex;
+  margin-left: auto;
+}
+
+.listItem {
+  margin-right: 10px;
+}
+
+.listItem:last-child {
+  margin-right: 0;
+}
+
+.errorIcon {
+  margin-left: 13px;
+  height: 17px;
+  width: 17px;
+  fill: var(--danger);
+}
