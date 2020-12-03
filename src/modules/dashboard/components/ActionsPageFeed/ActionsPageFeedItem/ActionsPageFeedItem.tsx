@@ -1,5 +1,5 @@
 import React from 'react';
-import TransactionMeta from '../TransactionMeta';
+import TransactionMeta from '../../ActionsPage/TransactionMeta';
 import { Address } from '~types/index';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
@@ -8,7 +8,7 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './ActionsPageFeedItem.css';
 
-const displayName = 'dashboard.ActionsPage.ActionsPageFeedItem';
+const displayName = 'dashboard.ActionsPageFeed.ActionsPageFeedItem';
 
 interface Props {
   comment: string;

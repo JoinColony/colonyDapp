@@ -1,17 +1,17 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ParsedEvent } from '~data/index';
-import TransactionMeta from '../TransactionMeta';
+import TransactionMeta from '../../ActionsPage/TransactionMeta';
 import styles from './ActionsPageEvent.css';
 import UserPermissions from '~dashboard/UserPermissions';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
 
-const displayName = 'dashboard.ActionsPage.ActionsPageEvent';
+const displayName = 'dashboard.ActionsPageFeed.ActionsPageEvent';
 
 const MSG = defineMessages({
   eventTitle: {
-    id: 'dashboard.ActionsPage.ActionsPageEvent.eventTitle',
+    id: 'dashboard.ActionsPageFeed.ActionsPageEvent.eventTitle',
     defaultMessage: `{from} paid {value} from {team} to {to}.`,
   },
 });
