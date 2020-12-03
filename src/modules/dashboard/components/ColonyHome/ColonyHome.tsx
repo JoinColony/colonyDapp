@@ -118,7 +118,6 @@ const ColonyHome = ({ match, location }: Props) => {
   const { colonyAddress } = colony;
 
   return (
-  return (
     <Switch>
       <Route
         path={COLONY_EVENTS_ROUTE}
