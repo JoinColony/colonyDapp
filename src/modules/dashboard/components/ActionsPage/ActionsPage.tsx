@@ -261,17 +261,11 @@ const ActionsPage = () => {
   } = userData?.user || fallbackUserData;
 
   const defailsWidgetFrom = colonyAddress ? (
-    <DetailsWidgetTeam
-      domainId={2}
-      colonyAddress={colonyAddress}
-    />
+    <DetailsWidgetTeam domainId={2} colonyAddress={colonyAddress} />
   ) : null;
 
   const defailsWidgetTo = walletAddress ? (
-    <DetailsWidgetUser
-      username="luke"
-      walletAddress={walletAddress}
-    />
+    <DetailsWidgetUser walletAddress={walletAddress} />
   ) : null;
 
   return (

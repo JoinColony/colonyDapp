@@ -8,8 +8,8 @@
 
 .value, .label {
   font-size: var(--size-smallish);
-  letter-spacing: var(--spacing-medium);
   font-weight: var(--weight-bold);
+  letter-spacing: var(--spacing-medium);
 }
 
 .label {
