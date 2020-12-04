@@ -65,7 +65,7 @@ const DetailsWidget = ({
   token,
   colonyAddress,
 }: Props) => {
-  const [activeTeam, setActiveTeam] = useState<OneDomain | undefined>();;
+  const [activeTeam, setActiveTeam] = useState<OneDomain | undefined>();
 
   const { data } = useColonyDomainsQuery({
     variables: { colonyAddress: colonyAddress || '' },

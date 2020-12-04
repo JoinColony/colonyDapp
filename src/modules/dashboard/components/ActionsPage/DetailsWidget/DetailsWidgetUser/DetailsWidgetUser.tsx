@@ -1,6 +1,4 @@
 import React from 'react';
-import TextDecorator from '~lib/TextDecorator';
-import UserMention from '~core/UserMention';
 import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
@@ -14,19 +12,14 @@ interface Props {
 }
 
 const DetailsWidgetUser = ({ walletAddress, username }: Props) => {
-  const { Decorate } = new TextDecorator({
-    username: (usernameWithAtSign) => (
-      <UserMention username={usernameWithAtSign.slice(1)} />
-    ),
-  });
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
   return (
     <div className={styles.main}>
-      <UserAvatar size="s" address={walletAddress || ''} />
+      <UserAvatar size="s" notSet={false} address={walletAddress || ''} />
       {username && (
         <div className={styles.username}>
-          <Decorate key={walletAddress}>{`@${username}`}</Decorate>
+          @{username}
         </div>
       )}
       <div className={styles.address}>

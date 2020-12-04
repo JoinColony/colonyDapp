@@ -351,7 +351,7 @@ const ActionsPage = () => {
           </MultisigWidget>
           <DetailsWidget
             domainId={1}
-            actionType={ActionTypes.PAYMENT}
+            actionType={ColonyActionTypes.PAYMENT}
             from={defailsWidgetFrom}
             to={defailsWidgetTo}
             colonyAddress={colonyData?.colony?.colonyAddress}
