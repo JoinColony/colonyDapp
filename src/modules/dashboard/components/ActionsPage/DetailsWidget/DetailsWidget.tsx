@@ -5,6 +5,7 @@ import { Address } from '~types/index';
 import ColorTag from '~core/ColorTag';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
+import { ColonyActionTypes } from '../types';
 
 import styles from './DetailsWidget.css';
 
@@ -45,16 +46,9 @@ const MSG = defineMessages({
   },
 });
 
-// @TODO we need to add here all possible action types, we need also icons
-export enum ActionTypes {
-  PAYMENT = 'paymentActionType',
-  TRANSFER_FUNDS = 'transferFundsActionType',
-  RECORVERY_MODE = 'recoveryModeActionType',
-}
-
 interface Props {
   domainId?: number;
-  actionType: ActionTypes;
+  actionType: ColonyActionTypes;
   from?: ReactNode;
   to?: ReactNode;
   amount?: number;

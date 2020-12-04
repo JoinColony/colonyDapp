@@ -15,7 +15,6 @@ import ActionsPageFeed, {
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget, {
-  ActionTypes,
   DetailsWidgetUser,
   DetailsWidgetTeam,
 } from './DetailsWidget';
@@ -31,7 +30,7 @@ import {
   useLoggedInUser,
 } from '~data/index';
 import { isTransactionFormat } from '~utils/web3';
-import { STATUS } from './types';
+import { STATUS, ColonyActionTypes } from './types';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import styles from './ActionsPage.css';
@@ -261,15 +260,12 @@ const ActionsPage = () => {
     profile: { walletAddress },
   } = userData?.user || fallbackUserData;
 
-  const colonyAddress = colonyData?.colony?.colonyAddress || null;
   const defailsWidgetFrom = colonyAddress ? (
     <DetailsWidgetTeam
       domainId={2}
       colonyAddress={colonyAddress}
     />
   ) : null;
-
-  const walletAddress = transactionData?.transaction?.from || null;
 
   const defailsWidgetTo = walletAddress ? (
     <DetailsWidgetUser
