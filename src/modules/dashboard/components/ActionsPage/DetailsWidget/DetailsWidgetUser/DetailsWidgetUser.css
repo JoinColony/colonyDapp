@@ -8,6 +8,7 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
+  cursor: pointer;
 }
 
 .username {

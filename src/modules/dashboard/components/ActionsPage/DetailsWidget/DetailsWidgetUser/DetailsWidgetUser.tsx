@@ -4,6 +4,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
 import styles from './DetailsWidgetUser.css';
 import { useUser } from '~data/index';
+import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 
 const displayName = 'dashboard.ActionsPage.DetailsWidget.DetailsWidgetUser';
 
@@ -20,9 +21,11 @@ const DetailsWidgetUser = ({ walletAddress }: Props) => {
     <div className={styles.main}>
       <UserAvatar size="s" notSet={false} address={walletAddress || ''} />
       {username && <div className={styles.username}>@{username}</div>}
-      <div className={styles.address}>
-        <MaskedAddress address={walletAddress} />
-      </div>
+      <InvisibleCopyableAddress address={walletAddress}>
+        <div className={styles.address}>
+          <MaskedAddress address={walletAddress} />
+        </div>
+      </InvisibleCopyableAddress>
     </div>
   );
 };
