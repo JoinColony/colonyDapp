@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Address } from '~types/index';
-import { useColonyDomainsQuery, Domain } from '~data/index';
+import { useColonyDomainsQuery, OneDomain } from '~data/index';
 import ColorTag from '~core/ColorTag';
 
 const displayName = 'dashboard.ActionsPage.DetailsWidget.DetailsWidgetTeam';
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const DetailsWidgetTeam = ({ domainId, colonyAddress }: Props) => {
-  const [team, setTeam] = useState<Domain | undefined>();
+  const [team, setTeam] = useState<OneDomain | undefined>();
 
   const { data } = useColonyDomainsQuery({
     variables: { colonyAddress: colonyAddress || '' },

@@ -1,6 +1,6 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useColonyDomainsQuery, AnyToken, Domain } from '~data/index';
+import { useColonyDomainsQuery, AnyToken, OneDomain } from '~data/index';
 import { Address } from '~types/index';
 import ColorTag from '~core/ColorTag';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -71,7 +71,7 @@ const DetailsWidget = ({
   token,
   colonyAddress,
 }: Props) => {
-  const [activeTeam, setActiveTeam] = useState<Domain | undefined>();;
+  const [activeTeam, setActiveTeam] = useState<OneDomain | undefined>();;
 
   const { data } = useColonyDomainsQuery({
     variables: { colonyAddress: colonyAddress || '' },
