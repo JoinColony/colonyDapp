@@ -20,7 +20,7 @@
 }
 
 .colonyAddress {
-  margin: -2px 0 0 -3px;
+  margin-right: 15px;
   padding: 3px 5px;
   width: 110px;
   border-radius: var(--radius-normal);
@@ -36,17 +36,4 @@
 .colonyAddress:hover {
   background-color: color-mod(var(--colony-blue) alpha(10%));
   color: var(--colony-blue);
-}
-
-/*
- * @NOTE This wrapper is used to better align where the tooltip shows up
- * relative to the reference element (colonyAddress)
- */
-.colonyAddressWrapper {
-  display: inline-block;
-  padding-right: 15px;
-}
-
-.copyAddressTooltip {
-  padding: 8px 4px;
 }
