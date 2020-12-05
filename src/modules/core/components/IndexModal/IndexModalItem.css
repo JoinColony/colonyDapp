@@ -1,3 +1,5 @@
+@value mellowYellow: rgb(255, 176, 0);
+
 .title {
   display: flex;
   align-items: center;
@@ -76,7 +78,7 @@
 }
 
 .coming {
-  margin-left: 5px;
+  margin-left: 8px;
   padding: 2px 8px 0;
   height: 20px;
   border-radius: var(--radius-normal);
@@ -84,4 +86,13 @@
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
+}
+
+.iconWarning svg {
+  fill: mellowYellow;
+  cursor: pointer;
+}
+
+.main:hover:not(.stateDisabled) .iconWarning svg {
+  fill: mellowYellow;
 }

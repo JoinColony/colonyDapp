@@ -1,16 +1,17 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+
 import Icon from '~core/Icon';
 import Paragraph from '~core/Paragraph';
-import styles from './IndexModalItem.css';
+
 import { getMainClasses } from '~utils/css';
+import { ItemShape } from './IndexModal';
+
+import styles from './IndexModalItem.css';
+
 
 interface Props {
-  title: object;
-  description: object;
-  comingSoon?: boolean;
-  icon: string;
-  onClick?: () => void;
+  item: ItemShape;
 }
 
 const MSG = defineMessages({
@@ -21,11 +22,16 @@ const MSG = defineMessages({
 });
 
 const IndexModalItem = ({
-  title,
-  description,
-  icon,
-  onClick,
-  comingSoon,
+  item: {
+    title,
+    description,
+    icon,
+    onClick,
+    comingSoon = false,
+    permissionRequired = false,
+    permissionInfoText,
+    permissionInfoTextValues,
+  },
 }: Props) => {
   return (
     <div
@@ -51,7 +57,16 @@ const IndexModalItem = ({
           <FormattedMessage {...description} />
         </Paragraph>
       </div>
-      {!comingSoon && (
+      {!comingSoon && permissionRequired && (
+        <div className={styles.iconWarning}>
+          <Icon
+            appearance={{ size: 'medium' }}
+            name="triangle-warning"
+            title={title}
+          />
+        </div>
+      )}
+      {!comingSoon && !permissionRequired && (
         <div className={styles.iconCaret}>
           <Icon
             appearance={{ size: 'medium' }}
