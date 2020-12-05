@@ -58,6 +58,11 @@ export type SimpleMessageValues = Record<string, PrimitiveType>;
  */
 export type ComplexMessageValues = Record<string, ReactNode>;
 
+/**
+ * For messages that contain both JSX and Primitive values - use with FormattedMessage directly
+ */
+export type UniversalMessageValues = Record<string, PrimitiveType | ReactNode>;
+
 export type MethodParam = string | BigNumberish | boolean;
 export type MethodParams = (MethodParam | MethodParam[])[];
 
