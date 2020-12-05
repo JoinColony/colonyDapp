@@ -20,7 +20,7 @@ const MSG = defineMessages({
   },
   description: {
     id: 'dashboard.Extensions.description',
-    defaultMessage: 'Extend the functionality of your Colony with extensions',
+    defaultMessage: 'Extend the functionality of your colony with extensions',
   },
   installedExtensions: {
     id: 'dashboard.Extensions.installedExtensions',
@@ -63,7 +63,9 @@ const Extensions = ({ colonyAddress }: Props) => {
     <div className={styles.main}>
       <div className={styles.content}>
         <BreadCrumb elements={[MSG.title]} appearance={{ theme: 'dark' }} />
-        <FormattedMessage {...MSG.description} />
+        <p className={styles.description}>
+          <FormattedMessage {...MSG.description} />
+        </p>
         <hr />
         {installedExtensionsData.length ? (
           <>
