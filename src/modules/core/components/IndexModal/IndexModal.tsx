@@ -3,12 +3,15 @@ import { MessageDescriptor, FormattedMessage } from 'react-intl';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import Heading from '~core/Heading';
-import styles from './IndexModal.css';
 import IndexModalItem from './IndexModalItem';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 
-const displayName = 'core.IndexModal';
+import { SimpleMessageValues } from '~types/index';
+
+import styles from './IndexModal.css';
+
+const displayName = 'IndexModal';
 
 interface Items {
   title: MessageDescriptor;
@@ -16,6 +19,9 @@ interface Items {
   icon: string;
   comingSoon?: boolean;
   onClick?: () => void;
+  permissionRequired?: boolean;
+  permissionInfoText?: MessageDescriptor;
+  permissionInfoTextValues?: SimpleMessageValues;
 }
 
 interface Props extends DialogProps {
