@@ -28,6 +28,22 @@ const MSG = defineMessages({
     id: 'dashboard.ExpendituresDialog.paymentPermissionsList',
     defaultMessage: 'administration and funding',
   },
+  taskTitle: {
+    id: 'dashboard.ExpendituresDialog.taskTitle',
+    defaultMessage: 'Task',
+  },
+  taskDescription: {
+    id: 'dashboard.ExpendituresDialog.taskDescription',
+    defaultMessage: 'Commission some work and who will manage its delivery.',
+  },
+  recurringTitle: {
+    id: 'dashboard.ExpendituresDialog.recurringTitle',
+    defaultMessage: 'Task',
+  },
+  recurringDescription: {
+    id: 'dashboard.ExpendituresDialog.recurringDescription',
+    defaultMessage: 'For regular payments like salaries.',
+  },
 });
 
 type Props = DialogProps & WizardDialogType<object>;
@@ -39,7 +55,7 @@ const ExpendituresDialog = ({ cancel, close, callStep }: Props) => {
     {
       title: MSG.paymentTitle,
       description: MSG.paymentDescription,
-      icon: 'emoji-bag-money-sign',
+      icon: 'emoji-dollar-stack',
       permissionRequired: true,
       permissionInfoText: MSG.paymentPermissionsText,
       permissionInfoTextValues: {
@@ -47,16 +63,16 @@ const ExpendituresDialog = ({ cancel, close, callStep }: Props) => {
       },
     },
     {
-      title: MSG.paymentTitle,
-      description: MSG.paymentDescription,
-      icon: 'emoji-bag-money-sign',
+      title: MSG.taskTitle,
+      description: MSG.taskDescription,
+      icon: 'emoji-superman',
       comingSoon: true,
       permissionRequired: true,
     },
     {
-      title: MSG.paymentTitle,
-      description: MSG.paymentDescription,
-      icon: 'emoji-bag-money-sign',
+      title: MSG.recurringTitle,
+      description: MSG.recurringDescription,
+      icon: 'emoji-calendar',
       comingSoon: true,
     },
   ];
