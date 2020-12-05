@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { extensions } from '@colony/colony-js';
 
 import BreadCrumb from '~core/BreadCrumb';
-import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 import { useColonyExtensionsQuery } from '~data/index';
 import { Address } from '~types/index';
@@ -67,21 +66,21 @@ const Extensions = ({ colonyAddress }: Props) => {
         <FormattedMessage {...MSG.description} />
         <hr />
         {installedExtensionsData.length ? (
-          <div>
+          <>
             <Heading
               tagName="h3"
               appearance={{ size: 'normal', margin: 'small' }}
               text={MSG.installedExtensions}
             />
-            <CardList>
+            <div>
               {installedExtensionsData.map((extension) => (
                 <ExtensionCard
                   key={extension.extensionId}
                   extension={extension}
                 />
               ))}
-            </CardList>
-          </div>
+            </div>
+          </>
         ) : null}
         {availableExtensionsData.length ? (
           <div className={styles.availableExtensionsWrapper}>
@@ -90,14 +89,14 @@ const Extensions = ({ colonyAddress }: Props) => {
               appearance={{ size: 'normal', margin: 'small' }}
               text={MSG.availableExtensions}
             />
-            <CardList>
+            <div>
               {availableExtensionsData.map((extension) => (
                 <ExtensionCard
                   key={extension.extensionId}
                   extension={extension}
                 />
               ))}
-            </CardList>
+            </div>
           </div>
         ) : null}
       </div>
