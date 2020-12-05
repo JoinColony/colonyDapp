@@ -7,3 +7,4 @@ export const iconCaret: string;
 export const iconTitle: string;
 export const coming: string;
 export const iconWarning: string;
+export const tooltip: string;

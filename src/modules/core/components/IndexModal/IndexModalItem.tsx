@@ -3,12 +3,12 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 
 import Icon from '~core/Icon';
 import Paragraph from '~core/Paragraph';
+import { Tooltip } from '~core/Popover';
 
 import { getMainClasses } from '~utils/css';
 import { ItemShape } from './IndexModal';
 
 import styles from './IndexModalItem.css';
-
 
 interface Props {
   item: ItemShape;
@@ -58,13 +58,37 @@ const IndexModalItem = ({
         </Paragraph>
       </div>
       {!comingSoon && permissionRequired && (
-        <div className={styles.iconWarning}>
-          <Icon
-            appearance={{ size: 'medium' }}
-            name="triangle-warning"
-            title={title}
-          />
-        </div>
+        <Tooltip
+          /*
+           * @NOTE About tooltip placement
+           *
+           * Due to the way the core Dialog styles apply position: relative, it
+           * will always "force" the tooltip to render inside the bounds of the
+           * dialog itself.
+           *
+           * This means that even if the tooltip is set to render to the right of
+           * the element, if it exceeds the bounds of the dialog, like in this case,
+           * it will be forced to be re-rendered to the left.
+           *
+           * This is a limitation of our current Dialog core component, and we'll
+           * need some heavy duty refactoring in order to make it play nicely with
+           * the Popover / Tooltip component.
+           */
+          placement="right"
+          trigger="hover"
+          content={
+            <div className={styles.tooltip}>
+              <FormattedMessage
+                {...permissionInfoText}
+                values={permissionInfoTextValues}
+              />
+            </div>
+          }
+        >
+          <div className={styles.iconWarning}>
+            <Icon name="triangle-warning" title={title} />
+          </div>
+        </Tooltip>
       )}
       {!comingSoon && !permissionRequired && (
         <div className={styles.iconCaret}>

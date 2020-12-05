@@ -88,11 +88,24 @@
   color: var(--temp-grey-blue-7);
 }
 
+.iconWarning {
+  margin-top: -5px;
+  padding-left: 15px;
+  position: static;
+}
+
 .iconWarning svg {
   fill: mellowYellow;
+  stroke: none;
   cursor: pointer;
 }
 
 .main:hover:not(.stateDisabled) .iconWarning svg {
   fill: mellowYellow;
+  stroke: none;
+}
+
+.tooltip {
+  padding: 8px 4px;
+  max-width: 200px;
 }
