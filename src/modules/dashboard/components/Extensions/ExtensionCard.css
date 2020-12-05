@@ -1,13 +1,13 @@
 @value lineHeight from './Extensions.css';
 
 .main {
-  display: inline-block;
+  display: block;
   margin: 0 20px 20px 0;
   height: 220px;
   width: 220px;
 }
 
-.main:nth-child(3) {
+.main:nth-child(3n) {
   margin-right: 0;
 }
 

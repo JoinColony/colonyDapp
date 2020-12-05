@@ -40,3 +40,9 @@
   line-height: lineHeight;
   letter-spacing: var(--spacing-medium);
 }
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}

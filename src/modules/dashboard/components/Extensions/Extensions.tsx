@@ -74,7 +74,7 @@ const Extensions = ({ colonyAddress }: Props) => {
               appearance={{ size: 'normal', margin: 'small' }}
               text={MSG.installedExtensions}
             />
-            <div>
+            <div className={styles.cards}>
               {installedExtensionsData.map((extension) => (
                 <ExtensionCard
                   key={extension.extensionId}
@@ -91,7 +91,7 @@ const Extensions = ({ colonyAddress }: Props) => {
               appearance={{ size: 'normal', margin: 'small' }}
               text={MSG.availableExtensions}
             />
-            <div>
+            <div className={styles.cards}>
               {availableExtensionsData.map((extension) => (
                 <ExtensionCard
                   key={extension.extensionId}
