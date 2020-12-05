@@ -34,7 +34,7 @@ const ExtensionCard = ({ extension }: Props) => {
             <div>
               <Heading
                 tagName="h4"
-                appearance={{ size: 'normal', margin: 'none' }}
+                appearance={{ size: 'normal', margin: 'none', theme: 'dark' }}
                 text={extension.name}
               />
               <span className={styles.version}>
@@ -42,7 +42,9 @@ const ExtensionCard = ({ extension }: Props) => {
               </span>
             </div>
           </div>
-          <FormattedMessage {...extension.description} />
+          <div className={styles.cardDescription}>
+            <FormattedMessage {...extension.description} />
+          </div>
         </Card>
       </Link>
     </div>

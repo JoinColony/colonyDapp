@@ -1,4 +1,4 @@
-@value lineHeight: 18px;
+@value lineHeight from './Extensions.css';
 
 .main {
   display: inline-block;
@@ -33,7 +33,6 @@
 
 .header h4 {
   line-height: lineHeight;
-  color: var(--dark);
   letter-spacing: var(--spacing-normal);
 }
 
@@ -54,4 +53,8 @@
   position: absolute;
   right: 15px;
   bottom: 15px;
+}
+
+.cardDescription {
+  composes: multiLineEllipsis from '~styles/text.css';
 }
