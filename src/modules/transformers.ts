@@ -5,8 +5,8 @@ import {
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
-import { AnyColonyWithRoles } from '~data/index';
-import { Address, UserRolesForDomain } from '~types/index';
+import { PersistentTasks, AnyColonyWithRoles, Colony } from '~data/index';
+import { Address, UserRolesForDomain, ActionsPageFeedItem } from '~types/index';
 
 export const getRolesForUserAndDomain = (
   roles: ColonyRoles,
@@ -59,7 +59,7 @@ const getCombinedRolesForDomains = (
 };
 
 export const getAllUserRolesForDomain = (
-  colony: AnyColonyWithRoles,
+  colony: Colony | undefined,
   domainId: number,
   excludeInherited = false,
 ): UserRolesForDomain[] => {
