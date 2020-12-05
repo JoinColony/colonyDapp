@@ -4,6 +4,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { DialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
+import { WizardDialogType } from '~utils/hooks';
+
 const MSG = defineMessages({
   dialogHeader: {
     id: 'dashboard.ExpendituresDialog.dialogHeader',
@@ -28,9 +30,11 @@ const MSG = defineMessages({
   },
 });
 
+type Props = DialogProps & WizardDialogType<object>;
+
 const displayName = 'dashboard.ExpendituresDialog';
 
-const ExpendituresDialog = ({ cancel, close }: DialogProps) => {
+const ExpendituresDialog = ({ cancel, close, callStep }: Props) => {
   const items = [
     {
       title: MSG.paymentTitle,
@@ -62,6 +66,7 @@ const ExpendituresDialog = ({ cancel, close }: DialogProps) => {
       close={close}
       title={MSG.dialogHeader}
       items={items}
+      back={() => callStep('dashboard.ColonyActionsDialog')}
     />
   );
 };

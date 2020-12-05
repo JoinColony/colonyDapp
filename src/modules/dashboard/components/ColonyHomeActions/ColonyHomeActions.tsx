@@ -2,7 +2,8 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
-import { useDialog } from '~core/Dialog';
+import ExpendituresDialog from '~dashboard/ExpendituresDialog';
+import { useNaiveBranchingDialogWizard } from '~utils/hooks';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -14,13 +15,16 @@ const MSG = defineMessages({
 });
 
 const ColonyHomeActions = () => {
-  const openDialog = useDialog(ColonyActionsDialog);
+  const startWizardFlow = useNaiveBranchingDialogWizard([
+    { component: ColonyActionsDialog },
+    { component: ExpendituresDialog },
+  ]);
 
   return (
     <Button
       appearance={{ theme: 'primary', size: 'large' }}
       text={MSG.newAction}
-      onClick={() => openDialog()}
+      onClick={() => startWizardFlow('dashboard.ColonyActionsDialog')}
     />
   );
 };
