@@ -1,3 +1,8 @@
+.main {
+  display: flex;
+  overflow: hidden;
+}
+
 .breadCrumble {
   font-size: var(--size-medium-l);
 }
@@ -11,13 +16,17 @@
   flex: 1 1 auto;
 }
 
-.crumbContainer {
-  display: flex;
-  overflow: hidden;
-}
-
 .arrow {
   display: inline-block;
   padding: 3px 5px;
   vertical-align: top;
+}
+
+.themeDefault {
+  composes: main;
+}
+
+.themeDark {
+  composes: main;
+  color: var(--dark);
 }

@@ -1,23 +1,32 @@
 import React, { Fragment } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 
+import { getMainClasses } from '~utils/css';
+
 import styles from './BreadCrumb.css';
 import SingleCrumb from './SingleCrumb';
 
 type CrumbText = string | MessageDescriptor;
 export type Crumb = CrumbText | [CrumbText, string];
 
+type Appearance = {
+  theme?: 'default' | 'dark';
+};
+
 interface Props {
+  /** Appearance object */
+  appearance?: Appearance;
+
   /** BreadCrumb hierarchy. Last element will be bold text */
   elements: Crumb[];
 }
 
 const displayName = 'core.BreadCrumb';
 
-const BreadCrumb = ({ elements }: Props) => {
+const BreadCrumb = ({ elements, appearance }: Props) => {
   const { formatMessage } = useIntl();
   return (
-    <div className={styles.crumbContainer}>
+    <div className={getMainClasses(appearance, styles)}>
       {elements.map((crumb, i) => {
         let crumbLink: string;
         let crumbText: string;
