@@ -59,7 +59,7 @@ const getCombinedRolesForDomains = (
 };
 
 export const getAllUserRolesForDomain = (
-  { domains, roles }: AnyColonyWithRoles,
+  colony: AnyColonyWithRoles,
   domainId: number,
   excludeInherited = false,
 ): UserRolesForDomain[] => {
@@ -106,7 +106,9 @@ export const getUserRolesForDomain = (
 };
 
 /* Gets all account addresses that have the ROOT role in the ROOT_DOMAIN */
-export const getAllRootAccounts = (colony: Colony | undefined): Address[] => {
+export const getAllRootAccounts = (
+  colony: AnyColonyWithRoles | undefined,
+): Address[] => {
   if (!colony) return [];
 
   return colony.roles
