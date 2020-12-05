@@ -17,6 +17,8 @@ interface Props {
   close: () => void;
 }
 
+const displayName = 'dashboard.ColonyTokenEditDialog';
+
 const ColonyTokenEditDialog = ({ colonyAddress, cancel, close }: Props) => {
   const [setColonyTokensMutation] = useSetColonyTokensMutation({
     refetchQueries: [
@@ -57,5 +59,7 @@ const ColonyTokenEditDialog = ({ colonyAddress, cancel, close }: Props) => {
     />
   );
 };
+
+ColonyTokenEditDialog.displayName = displayName;
 
 export default ColonyTokenEditDialog;
