@@ -1,3 +1,5 @@
+@value lineHeight: 18px;
+
 .main {
   height: 220px;
   width: 250px;
@@ -5,22 +7,36 @@
 
 .card {
   display: block;
-  padding: 15px;
+  padding: 16px 20px;
   height: 100%;
+  line-height: lineHeight;
+  color: var(--dark);
+  letter-spacing: 0.1px;
 }
 
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin: 10px 0 18px 0;
+}
+
+.header h4 {
+  line-height: lineHeight;
+  color: var(--dark);
+  letter-spacing: var(--spacing-normal);
 }
 
 .headerIcon {
   flex: 0 0 33px;
+  align-self: start;
+  padding-top: 2px;
 }
 
 .version {
-  color: var(--grey-5);
+  display: block;
+  font-size: var(--size-tiny);
+  color: color-mod(var(--dark) alpha(50%));
+  opacity: 0.85;
 }
 
 .addButton {

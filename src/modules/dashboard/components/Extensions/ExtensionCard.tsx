@@ -16,14 +16,20 @@ interface Props {
 }
 
 const ExtensionCard = ({ extension }: Props) => {
-  const { colonyName } = useParams();
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
   return (
     <div className={styles.main}>
       <Link to={`/colony/${colonyName}/extensions/${extension.extensionId}`}>
         <Card className={styles.card}>
           <div className={styles.header}>
             <div className={styles.headerIcon}>
-              <Icon name="colony-logo" title={extension.name} />
+              <Icon
+                name="colony-logo"
+                title={extension.name}
+                appearance={{ size: 'small' }}
+              />
             </div>
             <div>
               <Heading

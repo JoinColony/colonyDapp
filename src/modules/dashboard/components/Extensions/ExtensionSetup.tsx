@@ -48,7 +48,10 @@ const ExtensionSetup = ({
   extension: { initializationParams },
   installedExtension,
 }: Props) => {
-  const { colonyName, extensionId } = useParams();
+  const { colonyName, extensionId } = useParams<{
+    colonyName: string;
+    extensionId: string;
+  }>();
   const history = useHistory();
 
   const handleFormSuccess = useCallback(() => {
