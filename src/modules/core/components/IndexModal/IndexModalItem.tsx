@@ -16,10 +16,17 @@ interface Props {
 
 const MSG = defineMessages({
   coming: {
-    id: 'core.IndexModal.IndexModalItem.coming',
+    id: 'IndexModal.IndexModalItem.coming',
     defaultMessage: 'Coming soon',
   },
+  permissionsMessageFallback: {
+    id: 'IndexModal.IndexModalItem.permissionsMessageFallback',
+    defaultMessage: `You must have the required permissions in the
+      relevant domains, in order to take this action`,
+  },
 });
+
+const displayName = 'IndexModal.IndexModalItem';
 
 const IndexModalItem = ({
   item: {
@@ -29,7 +36,7 @@ const IndexModalItem = ({
     onClick,
     comingSoon = false,
     permissionRequired = false,
-    permissionInfoText,
+    permissionInfoText = MSG.permissionsMessageFallback,
     permissionInfoTextValues,
   },
 }: Props) => {
@@ -102,5 +109,7 @@ const IndexModalItem = ({
     </div>
   );
 };
+
+IndexModalItem.displayName = displayName;
 
 export default IndexModalItem;
