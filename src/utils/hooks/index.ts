@@ -85,6 +85,11 @@ type MaybeFetchedData<T extends undefined | null | { record: any }> = T extends
     : T['record']
   : T;
 
+export {
+  default as useNaiveBranchingDialogWizard,
+  WizardDialogType,
+} from './naiveBranchingDialogWizardHook';
+
 /* Used in cases where we need to memoize the transformed output of any data.
  * Transform function has to be pure, obviously
  */
