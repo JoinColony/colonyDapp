@@ -33,10 +33,6 @@ const MSG = defineMessages({
     id: 'users.AvatarDropdown.AvatarDropdownPopover.link.createColony',
     defaultMessage: 'Create a Colony',
   },
-  requestFeatures: {
-    id: 'users.AvatarDropdown.AvatarDropdownPopover.link.requestFeatures',
-    defaultMessage: 'Request Features',
-  },
   reportBugs: {
     id: 'users.AvatarDropdown.AvatarDropdownPopover.link.reportBugs',
     defaultMessage: 'Report Bugs',
@@ -110,12 +106,6 @@ const AvatarDropdownPopover = ({
 
   const renderHelperSection = () => (
     <DropdownMenuSection separator>
-      <DropdownMenuItem>
-        <NavLink
-          to="/colony/beta?tabSelect=suggestions"
-          text={MSG.requestFeatures}
-        />
-      </DropdownMenuItem>
       <DropdownMenuItem>
         <ExternalLink
           href="https://github.com/JoinColony/colonyDapp/issues"
