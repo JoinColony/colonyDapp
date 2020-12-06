@@ -202,7 +202,6 @@ export type Colony = {
   programs: Array<Program>;
   roles: Array<UserRoles>;
   subscribedUsers: Array<User>;
-  suggestions: Array<Suggestion>;
   taskIds: Array<Scalars['String']>;
   tasks: Array<Task>;
   tokenAddresses: Array<Scalars['String']>;
@@ -602,29 +601,6 @@ export type SetUserTokensInput = {
   tokenAddresses: Array<Scalars['String']>;
 };
 
-export type CreateSuggestionInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
-export type SetSuggestionStatusInput = {
-  id: Scalars['String'];
-  status: SuggestionStatus;
-};
-
-export type AddUpvoteToSuggestionInput = {
-  id: Scalars['String'];
-};
-
-export type RemoveUpvoteFromSuggestionInput = {
-  id: Scalars['String'];
-};
-
-export type CreateTaskFromSuggestionInput = {
-  id: Scalars['String'];
-};
-
 export type CreateLevelTaskSubmissionInput = {
   levelId: Scalars['String'];
   persistentTaskId: Scalars['String'];
@@ -720,7 +696,6 @@ export type SendTransactionMessageInput = {
 
 export type Mutation = {
   acceptLevelTaskSubmission?: Maybe<Submission>;
-  addUpvoteToSuggestion?: Maybe<Suggestion>;
   assignWorker?: Maybe<Task>;
   cancelTask?: Maybe<Task>;
   clearLoggedInUser: LoggedInUser;
@@ -730,9 +705,7 @@ export type Mutation = {
   createLevelTask?: Maybe<PersistentTask>;
   createLevelTaskSubmission?: Maybe<Submission>;
   createProgram?: Maybe<Program>;
-  createSuggestion?: Maybe<Suggestion>;
   createTask?: Maybe<Task>;
-  createTaskFromSuggestion?: Maybe<Task>;
   createUser?: Maybe<User>;
   createWorkRequest?: Maybe<Task>;
   editColonyProfile?: Maybe<Colony>;
@@ -752,7 +725,6 @@ export type Mutation = {
   removeProgram?: Maybe<Program>;
   removeTaskPayout?: Maybe<Task>;
   removeTaskSkill?: Maybe<Task>;
-  removeUpvoteFromSuggestion?: Maybe<Suggestion>;
   reorderLevelSteps?: Maybe<Level>;
   reorderProgramLevels?: Maybe<Program>;
   sendTaskMessage: Scalars['Boolean'];
@@ -761,7 +733,6 @@ export type Mutation = {
   setColonyTokens?: Maybe<Colony>;
   setLoggedInUser: LoggedInUser;
   setNetworkContracts: NetworkContracts;
-  setSuggestionStatus?: Maybe<Suggestion>;
   setTaskDescription?: Maybe<Task>;
   setTaskDomain?: Maybe<Task>;
   setTaskDueDate?: Maybe<Task>;
@@ -779,11 +750,6 @@ export type Mutation = {
 
 export type MutationAcceptLevelTaskSubmissionArgs = {
   input: AcceptLevelTaskSubmissionInput;
-};
-
-
-export type MutationAddUpvoteToSuggestionArgs = {
-  input: AddUpvoteToSuggestionInput;
 };
 
 
@@ -827,18 +793,8 @@ export type MutationCreateProgramArgs = {
 };
 
 
-export type MutationCreateSuggestionArgs = {
-  input: CreateSuggestionInput;
-};
-
-
 export type MutationCreateTaskArgs = {
   input: CreateTaskInput;
-};
-
-
-export type MutationCreateTaskFromSuggestionArgs = {
-  input: CreateTaskFromSuggestionInput;
 };
 
 
@@ -932,11 +888,6 @@ export type MutationRemoveTaskSkillArgs = {
 };
 
 
-export type MutationRemoveUpvoteFromSuggestionArgs = {
-  input: RemoveUpvoteFromSuggestionInput;
-};
-
-
 export type MutationReorderLevelStepsArgs = {
   input: ReorderLevelStepsInput;
 };
@@ -974,11 +925,6 @@ export type MutationSetLoggedInUserArgs = {
 
 export type MutationSetNetworkContractsArgs = {
   input?: Maybe<NetworkContractsInput>;
-};
-
-
-export type MutationSetSuggestionStatusArgs = {
-  input: SetSuggestionStatusInput;
 };
 
 
@@ -1216,26 +1162,6 @@ export type ProgramSubmission = {
   levelId: Scalars['String'];
   level: Level;
   submission: Submission;
-};
-
-export enum SuggestionStatus {
-  Open = 'Open',
-  NotPlanned = 'NotPlanned',
-  Accepted = 'Accepted',
-  Deleted = 'Deleted'
-}
-
-export type Suggestion = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  colonyAddress: Scalars['String'];
-  creatorAddress: Scalars['String'];
-  creator: User;
-  ethDomainId: Scalars['Int'];
-  status: SuggestionStatus;
-  title: Scalars['String'];
-  taskId?: Maybe<Scalars['String']>;
-  upvotes: Array<Scalars['String']>;
 };
 
 export type TaskPayout = {
