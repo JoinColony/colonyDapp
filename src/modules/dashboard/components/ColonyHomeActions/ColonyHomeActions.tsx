@@ -16,8 +16,20 @@ const MSG = defineMessages({
 
 const ColonyHomeActions = () => {
   const startWizardFlow = useNaiveBranchingDialogWizard([
-    { component: ColonyActionsDialog },
-    { component: ExpendituresDialog },
+    {
+      component: ColonyActionsDialog,
+      props: { nextStepExpenditure: 'dashboard.ExpendituresDialog' },
+    },
+    {
+      component: ExpendituresDialog,
+      props: {
+        /*
+         * @TODO Next step dialog doesn't exist yet, it will be added in #2309
+         */
+        nextStep: 'dashboard.CreatePaymentDialog',
+        prevStep: 'dashboard.ColonyActionsDialog',
+      },
+    },
   ]);
 
   return (

@@ -46,11 +46,16 @@ const MSG = defineMessages({
   },
 });
 
-type Props = DialogProps & WizardDialogType<object>;
+interface CustomWizardDialogProps {
+  nextStep: string;
+  prevStep: string;
+}
+
+type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 
 const displayName = 'dashboard.ExpendituresDialog';
 
-const ExpendituresDialog = ({ cancel, close, callStep }: Props) => {
+const ExpendituresDialog = ({ cancel, close, callStep, prevStep }: Props) => {
   const items = [
     {
       title: MSG.paymentTitle,
@@ -82,7 +87,7 @@ const ExpendituresDialog = ({ cancel, close, callStep }: Props) => {
       close={close}
       title={MSG.dialogHeader}
       items={items}
-      back={() => callStep('dashboard.ColonyActionsDialog')}
+      back={() => callStep(prevStep)}
     />
   );
 };

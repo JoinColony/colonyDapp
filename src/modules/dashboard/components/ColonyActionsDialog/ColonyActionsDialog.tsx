@@ -54,17 +54,26 @@ const MSG = defineMessages({
   },
 });
 
-type Props = DialogProps & WizardDialogType<object>;
+interface CustomWizardDialogProps {
+  nextStepExpenditure: string;
+}
+
+type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 
 const displayName = 'dashboard.ColonyActionsDialog';
 
-const ColonyActionsDialog = ({ cancel, close, callStep }: Props) => {
+const ColonyActionsDialog = ({
+  cancel,
+  close,
+  callStep,
+  nextStepExpenditure,
+}: Props) => {
   const items = [
     {
       title: MSG.createExpenditure,
       description: MSG.createExpenditureDesc,
       icon: 'emoji-bag-money-sign',
-      onClick: () => callStep('dashboard.ExpendituresDialog'),
+      onClick: () => callStep(nextStepExpenditure),
     },
     {
       title: MSG.manageFunds,
