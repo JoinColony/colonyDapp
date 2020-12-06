@@ -118,26 +118,6 @@ fragment FullColony on Colony {
   isNativeTokenLocked @client
 }
 
-fragment SuggestionFields on Suggestion {
-  id
-  createdAt
-  colonyAddress
-  creatorAddress
-  creator {
-    id
-    profile {
-      displayName
-      username
-      walletAddress
-    }
-  }
-  ethDomainId
-  status
-  title
-  taskId
-  upvotes
-}
-
 fragment ProgramFields on Program {
   id
   createdAt
