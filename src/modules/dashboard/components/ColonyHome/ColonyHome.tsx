@@ -192,7 +192,7 @@ const ColonyHome = ({ match, location }: Props) => {
                 onDomainChange={setDomainIdFilter}
               />
             </div>
-            <ColonyHomeActions />
+            <ColonyHomeActions colony={colony} />
           </div>
           <Switch>
             <Route

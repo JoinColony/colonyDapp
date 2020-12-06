@@ -4,7 +4,10 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { DialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
-import { WizardDialogType } from '~utils/hooks';
+import { WizardDialogType, useTransformer } from '~utils/hooks';
+import { useLoggedInUser, Colony } from '~data/index';
+import { getAllUserRoles } from '../../../transformers';
+import { canArchitect, canFund } from '../../../users/checks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -49,19 +52,34 @@ const MSG = defineMessages({
 interface CustomWizardDialogProps {
   nextStep: string;
   prevStep: string;
+  colony: Colony;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 
 const displayName = 'dashboard.ExpendituresDialog';
 
-const ExpendituresDialog = ({ cancel, close, callStep, prevStep }: Props) => {
+const ExpendituresDialog = ({
+  cancel,
+  close,
+  callStep,
+  prevStep,
+  colony,
+}: Props) => {
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canCreatePayment =
+    hasRegisteredProfile && canArchitect(allUserRoles) && canFund(allUserRoles);
+
   const items = [
     {
       title: MSG.paymentTitle,
       description: MSG.paymentDescription,
       icon: 'emoji-dollar-stack',
-      permissionRequired: true,
+      permissionRequired: !canCreatePayment,
       permissionInfoText: MSG.paymentPermissionsText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
