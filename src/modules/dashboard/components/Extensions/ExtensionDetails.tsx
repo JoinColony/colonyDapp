@@ -303,7 +303,8 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
           </Table>
           {canInstall &&
           extension.uninstallable &&
-          !installedExtension?.details.deprecated ? (
+          installedExtension &&
+          !installedExtension.details.deprecated ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
                 dialog={ConfirmDialog}
