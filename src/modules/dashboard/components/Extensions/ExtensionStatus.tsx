@@ -32,10 +32,14 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  deprecatedOnly?: boolean;
   installedExtension?: ColonyExtension | null;
 }
 
-const ExtensionStatus = ({ installedExtension }: Props) => {
+const ExtensionStatus = ({
+  deprecatedOnly = false,
+  installedExtension,
+}: Props) => {
   let status;
   let theme;
 
@@ -55,7 +59,7 @@ const ExtensionStatus = ({ installedExtension }: Props) => {
   }
   return (
     <>
-      <Tag appearance={{ theme }} text={status} />
+      {!deprecatedOnly ? <Tag appearance={{ theme }} text={status} /> : null}
       {installedExtension && installedExtension.details.deprecated ? (
         <Tag appearance={{ theme: 'danger' }} text={MSG.deprecated} />
       ) : null}

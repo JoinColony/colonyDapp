@@ -6,3 +6,4 @@ export const headerIcon: string;
 export const version: string;
 export const addButton: string;
 export const cardDescription: string;
+export const status: string;

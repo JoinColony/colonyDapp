@@ -14,6 +14,7 @@ import ColonyFunding from './ColonyFunding';
 import ColonyTitle from './ColonyTitle';
 import ColonyNavigation from './ColonyNavigation';
 import ColonyMembers from './ColonyMembers';
+import ColonyExtensions from './ColonyExtensions';
 
 import { ActionTypes } from '~redux/index';
 
@@ -85,6 +86,7 @@ const ColonyHomeLayout = ({
         <aside className={styles.rightAside}>
           <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
           <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
+          <ColonyExtensions colony={colony} />
         </aside>
       ) : (
         <aside />

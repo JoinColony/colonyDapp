@@ -234,6 +234,13 @@ query ColonyExtensions($address: String!) {
       id
       extensionId
       address
+      details(colonyAddress: $address) {
+        deprecated
+        initialized
+        installedBy
+        installedAt
+        missingPermissions
+      }
     }
   }
 }

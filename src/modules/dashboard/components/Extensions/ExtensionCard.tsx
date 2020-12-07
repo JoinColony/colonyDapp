@@ -9,13 +9,16 @@ import Heading from '~core/Heading';
 import styles from './ExtensionCard.css';
 
 import { ExtensionData } from '~data/staticData/extensionData';
+import { ColonyExtension } from '~data/index';
 import Link from '~core/Link';
+import ExtensionStatus from './ExtensionStatus';
 
 interface Props {
   extension: ExtensionData;
+  installedExtension?: ColonyExtension;
 }
 
-const ExtensionCard = ({ extension }: Props) => {
+const ExtensionCard = ({ extension, installedExtension }: Props) => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
@@ -45,6 +48,11 @@ const ExtensionCard = ({ extension }: Props) => {
           <div className={styles.cardDescription}>
             <FormattedMessage {...extension.descriptionShort} />
           </div>
+          {installedExtension ? (
+            <div className={styles.status}>
+              <ExtensionStatus installedExtension={installedExtension} />
+            </div>
+          ) : null}
         </Card>
       </Link>
     </div>

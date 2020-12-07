@@ -75,10 +75,11 @@ const Extensions = ({ colonyAddress }: Props) => {
               text={MSG.installedExtensions}
             />
             <div className={styles.cards}>
-              {installedExtensionsData.map((extension) => (
+              {installedExtensionsData.map((extension, idx) => (
                 <ExtensionCard
                   key={extension.extensionId}
                   extension={extension}
+                  installedExtension={installedExtensions[idx]}
                 />
               ))}
             </div>

@@ -1,0 +1,74 @@
+import React from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
+
+import Heading from '~core/Heading';
+import { Colony, useColonyExtensionsQuery } from '~data/index';
+import { SpinnerLoader } from '~core/Preloaders';
+import extensionData from '~data/staticData/extensionData';
+
+import styles from './ColonyExtensions.css';
+import NavLink from '~core/NavLink';
+import ExtensionStatus from '~dashboard/Extensions/ExtensionStatus';
+
+const MSG = defineMessages({
+  title: {
+    id: 'dashboard.ColonyHome.ColonyExtensions.title',
+    defaultMessage: 'Enabled extensions',
+  },
+});
+
+interface Props {
+  colony: Colony;
+}
+
+const displayName = 'dashboard.ColonyHome.ColonyExtensions';
+
+const ColonyFunding = ({ colony: { colonyName, colonyAddress } }: Props) => {
+  const { data, loading } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
+
+  if (loading) {
+    return <SpinnerLoader />;
+  }
+
+  return (
+    <div className={styles.main}>
+      <Heading appearance={{ size: 'normal', weight: 'bold' }}>
+        <FormattedMessage {...MSG.title} />
+      </Heading>
+      {data && !loading ? (
+        <ul>
+          {data.colony.installedExtensions
+            .filter(
+              (extension) =>
+                extension.details.initialized &&
+                !extension.details.missingPermissions.length,
+            )
+            .map((extension) => {
+              const { address, extensionId } = extension;
+              return (
+                <li key={address} className={styles.extension}>
+                  <NavLink
+                    className={styles.invisibleLink}
+                    to={`/colony/${colonyName}/extensions/${extensionId}`}
+                    text={extensionData[extensionId].name}
+                  />
+                  <ExtensionStatus
+                    installedExtension={extension}
+                    deprecatedOnly
+                  />
+                </li>
+              );
+            })}
+        </ul>
+      ) : (
+        <SpinnerLoader />
+      )}
+    </div>
+  );
+};
+
+ColonyFunding.displayName = displayName;
+
+export default ColonyFunding;
