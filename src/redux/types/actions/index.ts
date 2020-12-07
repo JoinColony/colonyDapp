@@ -115,3 +115,9 @@ export type Action<T extends AllActions['type']> = Extract<
 export type ActionTypeString = AllActions['type'];
 
 export type TakeFilter = (action: AllActions) => boolean;
+
+export type MetaWithHistory<M> = {
+  history?: {
+    push: <A>(route: A) => void;
+  };
+} & M;
