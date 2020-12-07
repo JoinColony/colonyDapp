@@ -181,7 +181,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
       },
       {
         label: MSG.versionInstalled,
-        value: `v${extension.currentVersion}`,
+        value: `v.${extension.currentVersion}`,
       },
       {
         label: MSG.contractAddress,
@@ -204,7 +204,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
       },
       {
         label: MSG.latestVersion,
-        value: `v${extension.currentVersion}`,
+        value: `v.${extension.currentVersion}`,
       },
       {
         label: MSG.developer,

@@ -62,7 +62,7 @@ const Extensions = ({ colonyAddress }: Props) => {
   return (
     <div className={styles.main}>
       <div className={styles.content}>
-        <BreadCrumb elements={[MSG.title]} appearance={{ theme: 'dark' }} />
+        <BreadCrumb elements={[MSG.title]} />
         <p className={styles.description}>
           <FormattedMessage {...MSG.description} />
         </p>

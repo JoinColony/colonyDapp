@@ -16,7 +16,9 @@ const SingleCrumb = ({ crumbText, crumbLink, lastCrumb }: Props) => {
       <div className={styles.elementLast} title={crumbText}>
         <span className={styles.breadCrumble}>
           {crumbLink ? (
-            <NavLink to={crumbLink}>{crumbText}</NavLink>
+            <NavLink className={styles.invisibleLink} to={crumbLink}>
+              {crumbText}
+            </NavLink>
           ) : (
             crumbText
           )}
@@ -27,7 +29,13 @@ const SingleCrumb = ({ crumbText, crumbLink, lastCrumb }: Props) => {
   return (
     <div className={styles.element} title={crumbText}>
       <span className={styles.breadCrumble}>
-        {crumbLink ? <NavLink to={crumbLink}>{crumbText}</NavLink> : crumbText}
+        {crumbLink ? (
+          <NavLink className={styles.invisibleLink} to={crumbLink}>
+            {crumbText}
+          </NavLink>
+        ) : (
+          crumbText
+        )}
       </span>
       <span className={styles.arrow}>&gt;</span>
     </div>
