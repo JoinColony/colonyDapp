@@ -1,4 +1,4 @@
-@value blueHover: rgb(76, 93, 255);
+@value mellowYellow: rgb(255, 176, 0);
 
 .title {
   display: flex;
@@ -20,6 +20,10 @@
   align-items: center;
   padding: var(--pad-medium) 40px;
   position: relative;
+}
+
+.stateDisabled {
+  outline: 0;
 }
 
 .main:not(.stateDisabled) {
@@ -55,7 +59,7 @@
 }
 
 .main:hover:not(.stateDisabled) .title {
-  color: blueHover;
+  color: var(--colony-blue);
 }
 
 .iconCaret svg {
@@ -70,18 +74,38 @@
 }
 
 .main:hover:not(.stateDisabled) svg {
-  fill: blueHover;
+  fill: var(--colony-blue);
 }
 
 .coming {
-  display: flex;
-  align-items: center;
-  margin-left: 5px;
-  padding: 0 8px;
+  margin-left: 8px;
+  padding: 2px 8px 0;
   height: 20px;
   border-radius: var(--radius-normal);
-  background-color: var(--colony-light-blue);
+  background-color: var(--grey-blue-2);
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: var(--temp-grey-13);
+  color: var(--temp-grey-blue-7);
+}
+
+.iconWarning {
+  margin-top: -5px;
+  padding-left: 15px;
+  position: static;
+}
+
+.iconWarning svg {
+  fill: mellowYellow;
+  stroke: none;
+  cursor: pointer;
+}
+
+.main:hover:not(.stateDisabled) .iconWarning svg {
+  fill: mellowYellow;
+  stroke: none;
+}
+
+.tooltip {
+  padding: 8px 4px;
+  max-width: 200px;
 }

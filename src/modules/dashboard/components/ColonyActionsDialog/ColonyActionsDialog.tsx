@@ -4,6 +4,8 @@ import { defineMessages } from 'react-intl';
 import { DialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
+import { WizardDialogType } from '~utils/hooks';
+
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ColonyActionsDialog.title',
@@ -52,14 +54,26 @@ const MSG = defineMessages({
   },
 });
 
+interface CustomWizardDialogProps {
+  nextStepExpenditure: string;
+}
+
+type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+
 const displayName = 'dashboard.ColonyActionsDialog';
 
-const ColonyActionsDialog = ({ cancel, close }: DialogProps) => {
+const ColonyActionsDialog = ({
+  cancel,
+  close,
+  callStep,
+  nextStepExpenditure,
+}: Props) => {
   const items = [
     {
       title: MSG.createExpenditure,
       description: MSG.createExpenditureDesc,
       icon: 'emoji-bag-money-sign',
+      onClick: () => callStep(nextStepExpenditure),
     },
     {
       title: MSG.manageFunds,

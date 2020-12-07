@@ -1,8 +1,12 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
-import { useDialog } from '~core/Dialog';
+import ExpendituresDialog from '~dashboard/ExpendituresDialog';
+
+import { useNaiveBranchingDialogWizard } from '~utils/hooks';
+import { Colony } from '~data/index';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -13,14 +17,34 @@ const MSG = defineMessages({
   },
 });
 
-const ColonyHomeActions = () => {
-  const openDialog = useDialog(ColonyActionsDialog);
+interface Props {
+  colony: Colony;
+}
+
+const ColonyHomeActions = ({ colony }: Props) => {
+  const startWizardFlow = useNaiveBranchingDialogWizard([
+    {
+      component: ColonyActionsDialog,
+      props: { nextStepExpenditure: 'dashboard.ExpendituresDialog' },
+    },
+    {
+      component: ExpendituresDialog,
+      props: {
+        /*
+         * @TODO Next step dialog doesn't exist yet, it will be added in #2309
+         */
+        nextStep: 'dashboard.CreatePaymentDialog',
+        prevStep: 'dashboard.ColonyActionsDialog',
+        colony,
+      },
+    },
+  ]);
 
   return (
     <Button
       appearance={{ theme: 'primary', size: 'large' }}
       text={MSG.newAction}
-      onClick={() => openDialog()}
+      onClick={() => startWizardFlow('dashboard.ColonyActionsDialog')}
     />
   );
 };
