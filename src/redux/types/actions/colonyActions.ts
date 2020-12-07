@@ -3,7 +3,12 @@ import { BigNumber } from 'ethers/utils';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 
-import { ErrorActionType, UniqueActionType } from './index';
+import {
+  ErrorActionType,
+  UniqueActionType,
+  ActionTypeWithMeta,
+  MetaWithHistory,
+} from './index';
 
 /*
  * @NOTE About naming
@@ -14,14 +19,19 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
       {
         colonyAddress: Address;
+        colonyName?: string;
         recipientAddress: Address;
-        amount: BigNumber;
+        domainId: number;
+        singlePayment: {
+          amount: BigNumber;
+          tokenAddress: Address;
+          decimals: number;
+        };
       },
-      object
+      MetaWithHistory<object>
     >
   | ErrorActionType<ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR, object>
-  | UniqueActionType<
+  | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
-      object,
-      object
+      MetaWithHistory<object>
     >;
