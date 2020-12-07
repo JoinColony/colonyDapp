@@ -1,11 +1,14 @@
 import { MessageDescriptor, useIntl } from 'react-intl';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { SimpleMessageValues } from '~types/index';
 
 import styles from './ExternalLink.css';
 
 interface Props {
+  /** Render a react-node into the link */
+  children?: ReactNode;
+
   /** The page it should link to */
   href: string;
 
@@ -27,12 +30,19 @@ interface Props {
   title?: string;
 }
 
-const ExternalLink = ({ href, text, textValues, className, title }: Props) => {
+const ExternalLink = ({
+  children,
+  href,
+  text,
+  textValues,
+  className,
+  title,
+}: Props) => {
   const { formatMessage } = useIntl();
   // eslint-disable-next-line max-len
   const typeOfText =
     typeof text == 'string' ? text : text && formatMessage(text, textValues);
-  const linkText = typeOfText || href;
+  const linkText = children || typeOfText || href;
   return (
     <a
       className={className || styles.main}

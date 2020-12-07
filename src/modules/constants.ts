@@ -25,6 +25,7 @@ export type NetworkInfo = {
    * link programatically: `getBlockExplorerLink()`
    */
   tokenExplorerLink?: string;
+  contractAddressLink: string;
 };
 
 export const DEFAULT_NETWORK = process.env.NETWORK || Network.Goerli;
@@ -37,62 +38,82 @@ export enum ROLES_COMMUNITY {
   member = 'role.member',
 }
 
-export const XDAI_TOKEN: TokenInfo = {
+const XDAI_TOKEN: TokenInfo = {
   name: 'XDAI Token',
   symbol: 'XDAI',
   decimals: 18,
 };
 
-export const ETHER_TOKEN: TokenInfo = {
+const ETHER_TOKEN: TokenInfo = {
   name: 'Ether',
   symbol: 'ETH',
   decimals: 18,
 };
 
-export const GOERLI_TOKEN: TokenInfo = {
+const GOERLI_TOKEN: TokenInfo = {
   name: 'Goerli Ether',
   symbol: 'GOETH',
   decimals: 18,
 };
 
-export const XDAI_NETWORK: NetworkInfo = {
+const XDAI_NETWORK: NetworkInfo = {
   name: 'xDai Chain',
   chainId: 100,
   shortName: 'xDai',
   displayENSDomain: 'joincolony.colonyxdai',
   blockExplorerName: 'Blockscout',
   tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
+  contractAddressLink: 'https://blockscout.com/poa/xdai/address',
 };
 
-export const ETHEREUM_NETWORK: NetworkInfo = {
+const ETHEREUM_NETWORK: NetworkInfo = {
   name: 'Ethereum',
   chainId: 1,
   shortName: 'ETH',
   blockExplorerName: 'Etherscan',
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://etherscan.io/tokens',
+  contractAddressLink: 'https://etherscan.io/address',
 };
 
-export const GOERLI_NETWORK: NetworkInfo = {
+const GOERLI_NETWORK: NetworkInfo = {
   name: 'Goerli Testnet',
   chainId: 5,
   shortName: 'GTH',
   blockExplorerName: 'Etherscan',
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
+  contractAddressLink: 'https://goerli.etherscan.io/address',
 };
 
 /*
  * @NOTE Local Network
  * ChainId is manually set by us, since ganache randomizes it on each start
  */
-export const GANACHE_NETWORK: NetworkInfo = {
+const GANACHE_NETWORK: NetworkInfo = {
   name: 'Local Ganache Instance',
   chainId: 13131313,
   shortName: 'Ganache',
   blockExplorerName: 'Noexplorer',
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'http://localhost',
+  contractAddressLink: 'http://localhost',
+};
+
+export const NETWORK_DATA: { [key: string]: NetworkInfo } = {
+  [Network.Local]: GANACHE_NETWORK,
+  [Network.Xdai]: XDAI_NETWORK,
+  [Network.XdaiFork]: XDAI_NETWORK,
+  [Network.Goerli]: GOERLI_NETWORK,
+  [Network.Mainnet]: ETHEREUM_NETWORK,
+};
+
+export const TOKEN_DATA = {
+  [Network.Local]: ETHER_TOKEN,
+  [Network.Xdai]: XDAI_TOKEN,
+  [Network.XdaiFork]: XDAI_TOKEN,
+  [Network.Goerli]: GOERLI_TOKEN,
+  [Network.Mainnet]: ETHER_TOKEN,
 };
 
 export const ALLOWED_NETWORKS = {
@@ -102,15 +123,9 @@ export const ALLOWED_NETWORKS = {
   [GANACHE_NETWORK.chainId]: GANACHE_NETWORK,
 };
 
-export const DEFAULT_NETWORK_TOKEN =
-  DEFAULT_NETWORK === Network.Xdai || DEFAULT_NETWORK === Network.XdaiFork
-    ? XDAI_TOKEN
-    : ETHER_TOKEN;
+export const DEFAULT_NETWORK_TOKEN = TOKEN_DATA[DEFAULT_NETWORK];
 
-export const DEFAULT_NETWORK_INFO =
-  DEFAULT_NETWORK === Network.Xdai || DEFAULT_NETWORK === Network.XdaiFork
-    ? XDAI_NETWORK
-    : ETHEREUM_NETWORK;
+export const DEFAULT_NETWORK_INFO = NETWORK_DATA[DEFAULT_NETWORK];
 
 export const METACOLONY_ENS = 'meta';
 

@@ -20,7 +20,6 @@ import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
-import CopyableAddress from '~core/CopyableAddress';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useTransformer } from '~utils/hooks';
 import extensionData from '~data/staticData/extensionData';
@@ -28,10 +27,12 @@ import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
 import { ConfirmDialog } from '~core/Dialog';
 import PermissionsLabel from '~core/PermissionsLabel';
+import ExternalLink from '~core/ExternalLink';
 import {
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
 } from '~routes/index';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import { getUserRolesForDomain } from '../../../transformers';
 
@@ -151,6 +152,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
 
   const installedExtension = data ? data.colonyExtension : null;
   const extension = extensionData[extensionId];
+  const { contractAddressLink } = DEFAULT_NETWORK_INFO;
 
   let tableData;
 
@@ -185,7 +187,13 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
       },
       {
         label: MSG.contractAddress,
-        value: <CopyableAddress>{installedExtension.address}</CopyableAddress>,
+        value: (
+          <ExternalLink
+            href={`${contractAddressLink}/${installedExtension.address}`}
+          >
+            <MaskedAddress address={installedExtension.address} />
+          </ExternalLink>
+        ),
       },
       {
         label: MSG.developer,
