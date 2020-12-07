@@ -26,6 +26,7 @@
 
 .buttonWrapper {
   padding: 8px 0;
+  height: 48px;
   border-bottom: 1px solid var(--temp-grey-5);
   text-align: right;
 }

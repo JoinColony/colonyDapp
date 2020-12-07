@@ -94,21 +94,21 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionDetails.buttonDeprecate',
     defaultMessage: 'Deprecate',
   },
-  confirmDeprecate: {
-    id: 'dashboard.Extensions.ExtensionDetails.confirmDeprecate',
-    defaultMessage: 'Yes, deprecate extension',
+  headingDeprecate: {
+    id: 'dashboard.Extensions.ExtensionDetails.headingDeprecate',
+    defaultMessage: 'Deprecate extension',
   },
   textDeprecate: {
     id: 'dashboard.Extensions.ExtensionDetails.textDeprecate',
-    defaultMessage: `This extension is currently active and it will be deprecated, not uninstalled immediately.`,
+    defaultMessage: `This extension must first be deprecated if you wish to uninstall it. After deprecation, any actions using this extension already ongoing may be completed, but it will no longer be possible to create new actions requiring this extension. Are you sure you wish to proceed?`,
   },
-  confirmUninstall: {
-    id: 'dashboard.Extensions.ExtensionDetails.confirmUninstall',
-    defaultMessage: 'Yes, uninstall extension',
+  headingUninstall: {
+    id: 'dashboard.Extensions.ExtensionDetails.headingUninstall',
+    defaultMessage: 'Uninstall extension',
   },
   textUninstall: {
     id: 'dashboard.Extensions.ExtensionDetails.textUninstall',
-    defaultMessage: 'Do you really want to uninstall this extension?',
+    defaultMessage: `This extension is currently deprecated, and may be uninstalled. Doing so will remove it from the colony and any processes requiring it will no longer work. Are you sure you wish to proceed?`,
   },
   setup: {
     id: 'dashboard.Extensions.ExtensionDetails.setup',
@@ -277,18 +277,18 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
       <aside>
         <div className={styles.extensionDetails}>
           <hr className={styles.headerLine} />
-          {!onSetupRoute &&
-            canInstall &&
-            (!installedExtension?.details.initialized ||
-              !!installedExtension?.details.missingPermissions.length) && (
-              <div className={styles.buttonWrapper}>
+          <div className={styles.buttonWrapper}>
+            {!onSetupRoute &&
+              canInstall &&
+              (!installedExtension?.details.initialized ||
+                !!installedExtension?.details.missingPermissions.length) && (
                 <ExtensionActionButton
                   colonyAddress={colonyAddress}
                   installedExtension={installedExtension}
                   extension={extension}
                 />
-              </div>
-            )}
+              )}
+          </div>
           <Table appearance={{ theme: 'lined' }}>
             <TableBody>
               {tableData.map(({ label, value }) => (
@@ -308,7 +308,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
               <DialogActionButton
                 dialog={ConfirmDialog}
                 dialogProps={{
-                  confirmButtonText: MSG.confirmDeprecate,
+                  heading: MSG.headingDeprecate,
                   children: <FormattedMessage {...MSG.textDeprecate} />,
                 }}
                 appearance={{ theme: 'blue' }}
@@ -327,7 +327,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
               <DialogActionButton
                 dialog={ConfirmDialog}
                 dialogProps={{
-                  confirmButtonText: MSG.confirmUninstall,
+                  heading: MSG.headingUninstall,
                   children: <FormattedMessage {...MSG.textUninstall} />,
                 }}
                 appearance={{ theme: 'blue' }}

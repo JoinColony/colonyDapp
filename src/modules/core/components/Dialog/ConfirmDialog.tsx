@@ -19,14 +19,6 @@ const MSG = defineMessages({
     id: 'ConfirmDialog.defaultText',
     defaultMessage: 'Are you sure?',
   },
-  defaultCancelButton: {
-    id: 'ConfirmDialog.defaultCancelButton',
-    defaultMessage: 'Cancel',
-  },
-  defaultConfirmButton: {
-    id: 'ConfirmDialog.defaultConfirmButton',
-    defaultMessage: 'OK',
-  },
 });
 
 interface Appearance {
@@ -51,8 +43,8 @@ const ConfirmDialog = ({
   close,
   heading = MSG.defaultHeading,
   children,
-  cancelButtonText = MSG.defaultCancelButton,
-  confirmButtonText = MSG.defaultConfirmButton,
+  cancelButtonText = { id: 'button.cancel' },
+  confirmButtonText = { id: 'button.confirm' },
   appearance,
   onClick = () => close(null),
 }: Props) => (
