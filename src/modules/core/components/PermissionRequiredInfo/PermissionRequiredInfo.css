@@ -17,8 +17,8 @@
   flex-grow: 1;
   align-items: center;
   padding: 15px 0;
-  border-top: 1px solid var(--temp-grey-blue-7);
-  border-bottom: 1px solid var(--temp-grey-blue-7);
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .sectionLabel {
@@ -29,9 +29,11 @@
 
 .labelIcon {
   margin-left: 8px;
-  height: 16px;
-  width: 16px;
+}
+
+.labelIcon svg {
   fill: var(--temp-grey-1);
+  stroke: var(--colony-white);
 }
 
 .permissionList {
@@ -47,9 +49,17 @@
   margin-right: 0;
 }
 
-.errorIcon {
+.requiredPermissionSection > i {
   margin-left: 13px;
-  height: 17px;
-  width: 17px;
   fill: var(--danger);
+}
+
+.tooltipText {
+  max-width: 195px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+}
+
+.tooltipText:first-child {
+  margin-bottom: 15px;
 }

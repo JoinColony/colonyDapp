@@ -8,7 +8,6 @@ interface Appearance {
   theme?: 'heading' | 'sidePadding';
   align?: 'center' | 'right';
   border?: 'top' | 'bottom' | 'none';
-  background?: 'grey';
 }
 
 interface Props {

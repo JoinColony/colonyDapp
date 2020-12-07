@@ -5,6 +5,7 @@ import moveDecimal from 'move-decimal-point';
 import { bigNumberify } from 'ethers/utils';
 import { useQuery } from '@apollo/client';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { defineMessages } from 'react-intl';
 
 import { pipe, mapPayload, withKey } from '~utils/actions';
 import { Address } from '~types/index';
@@ -12,22 +13,28 @@ import { ActionTypes } from '~redux/index';
 import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
-import {
-  useColonyQuery,
-  ColonySubscribedUsersDocument,
-  useLoggedInUser,
-  useUser,
-} from '~data/index';
+import { useColonyQuery, ColonySubscribedUsersDocument } from '~data/index';
 
 import DialogForm from './CreatePaymentDialogForm';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
+const MSG = defineMessages({
+  noAmount: {
+    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noAmount',
+    defaultMessage: 'Amount must be greater than zero',
+  },
+  noBalance: {
+    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noBalance',
+    defaultMessage: 'Insufficient balance in from domain pot',
+  },
+});
 
 export interface FormValues {
   fromDomain?: string;
   toAssignee?: string;
   amount: string;
   tokenAddress?: Address;
-  reason?: string;
+  annotation?: string;
 }
 
 interface Props {
@@ -40,14 +47,13 @@ const CreatePaymentDialog = ({ colonyAddress, cancel, close }: Props) => {
   const validationSchema = yup.object().shape({
     fromDomain: yup.number().required(),
     toAssignee: yup.number().required(),
-    amount: yup.string().required(),
+    amount: yup
+      .string()
+      .required()
+      .min(0.01, () => MSG.noAmount),
     tokenAddress: yup.string().required(),
-    reason: yup.string().max(90),
+    annotation: yup.string().max(4000),
   });
-
-  const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
-
-  const loggedInUser = useUser(loggedInUserWalletAddress);
 
   const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
@@ -92,10 +98,10 @@ const CreatePaymentDialog = ({ colonyAddress, cancel, close }: Props) => {
     <ActionForm
       initialValues={{
         fromDomain: ROOT_DOMAIN_ID.toString(),
-        toAssignee: loggedInUser,
+        toAssignee: undefined,
         amount: '',
         tokenAddress: nativeTokenAddress,
-        reason: '',
+        annotation: '',
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.MOVE_FUNDS_BETWEEN_POTS}

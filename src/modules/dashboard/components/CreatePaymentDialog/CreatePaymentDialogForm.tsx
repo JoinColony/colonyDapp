@@ -1,18 +1,19 @@
 import React, { useMemo, useEffect } from 'react';
 import { FormikProps } from 'formik';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
+import { Address } from '~types/index';
 import { useTransformer } from '~utils/hooks';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, FormStatus, Textarea } from '~core/Fields';
+import { Select, Input, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
@@ -57,8 +58,8 @@ const MSG = defineMessages({
     id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.address',
     defaultMessage: 'Token',
   },
-  reason: {
-    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.reason',
+  annotation: {
+    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.annotation',
     defaultMessage: 'Explain why you’re making this payment (optional)',
   },
   domainTokenAmount: {
@@ -91,7 +92,7 @@ interface Props {
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const supRenderAvatar = (address: string, item: ItemDataType<AnyUser>) => (
+const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
 
@@ -104,11 +105,8 @@ const CreatePaymentDialogForm = ({
   isSubmitting,
   isValid,
   setErrors,
-  status,
   values,
 }: Props & FormikProps<FormValues>) => {
-  const { formatMessage } = useIntl();
-
   const { tokenAddress, amount } = values;
   const fromDomain = values.fromDomain
     ? parseInt(values.fromDomain, 10)
@@ -170,8 +168,7 @@ const CreatePaymentDialogForm = ({
     const token =
       tokenBalancesData &&
       tokenBalancesData.tokens.find(({ address }) => address === tokenAddress);
-    const from = getBalanceFromToken(token, fromDomain);
-    return from;
+    return token && getBalanceFromToken(token, fromDomain);
   }, [fromDomain, tokenAddress, tokenBalancesData]);
 
   useEffect(() => {
@@ -188,9 +185,7 @@ const CreatePaymentDialogForm = ({
           getTokenDecimalsWithFallback(selectedToken.decimals),
         ),
       );
-      if (!convertedAmount.eq(0)) {
-        errors.amount = MSG.noAmount;
-      } else if (
+      if (
         fromDomainTokenBalance &&
         fromDomainTokenBalance.lt(convertedAmount)
       ) {
@@ -225,7 +220,6 @@ const CreatePaymentDialogForm = ({
 
   return (
     <>
-      <FormStatus status={status} />
       <DialogSection>
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
@@ -338,8 +332,8 @@ const CreatePaymentDialogForm = ({
         <div className={styles.textAreaSection}>
           <Textarea
             appearance={{ resizable: 'vertical', colorSchema: 'grey' }}
-            label={MSG.reason}
-            name="reason"
+            label={MSG.annotation}
+            name="annotation"
             maxLength={4000}
             disabled={!userHasPermission}
           />
@@ -354,15 +348,13 @@ const CreatePaymentDialogForm = ({
                 firstRoleRequired: (
                   <PermissionsLabel
                     permission={ColonyRole.Funding}
-                    name={formatMessage({ id: `role.${ColonyRole.Funding}` })}
+                    name={{ id: `role.${ColonyRole.Funding}` }}
                   />
                 ),
                 secondRoleRequired: (
                   <PermissionsLabel
                     permission={ColonyRole.Administration}
-                    name={formatMessage({
-                      id: `role.${ColonyRole.Administration}`,
-                    })}
+                    name={{ id: `role.${ColonyRole.Administration}` }}
                   />
                 ),
               }}
@@ -370,7 +362,7 @@ const CreatePaymentDialogForm = ({
           </span>
         </DialogSection>
       )}
-      <DialogSection appearance={{ align: 'right', background: 'grey' }}>
+      <DialogSection appearance={{ align: 'right' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
           onClick={cancel}

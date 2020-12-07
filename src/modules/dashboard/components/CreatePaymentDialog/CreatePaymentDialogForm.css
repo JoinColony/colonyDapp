@@ -54,3 +54,7 @@
   line-height: 18px;
   color: var(--danger);
 }
+
+.noPermissionFromMessage > div {
+  vertical-align: bottom;
+}

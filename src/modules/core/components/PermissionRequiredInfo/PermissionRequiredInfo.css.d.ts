@@ -5,4 +5,4 @@ export const sectionLabel: string;
 export const labelIcon: string;
 export const permissionList: string;
 export const listItem: string;
-export const errorIcon: string;
+export const tooltipText: string;
