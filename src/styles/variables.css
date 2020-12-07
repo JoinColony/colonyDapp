@@ -22,6 +22,8 @@
   --grey-blue-1: rgb(232, 236, 245);
   --grey-blue-2: rgb(244, 246, 250);
   --grey-blue-3: rgb(246, 246, 246);
+  --action-secondary: rgb(76, 93, 255);
+
 
   /*
    * We really need to cleanup the greys, as they're growing larger and larger by the day
