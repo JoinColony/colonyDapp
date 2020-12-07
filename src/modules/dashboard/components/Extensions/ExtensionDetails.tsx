@@ -245,7 +245,7 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
                     appearance={{ size: 'medium', margin: 'small' }}
                     text={extension.name}
                   />
-                  <FormattedMessage {...extension.description} />
+                  <FormattedMessage {...extension.descriptionLong} />
                 </div>
               )}
             />

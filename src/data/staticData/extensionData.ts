@@ -17,7 +17,8 @@ export interface ExtensionData {
   address?: Address;
   extensionId: Extension | 'Unknown';
   name: string | MessageDescriptor;
-  description: string | MessageDescriptor;
+  descriptionShort: string | MessageDescriptor;
+  descriptionLong: string | MessageDescriptor;
   currentVersion: number;
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
@@ -30,17 +31,25 @@ const MSG = defineMessages({
     id: 'extensions.OneTxPayment.name',
     defaultMessage: 'One Transaction Payment',
   },
-  oneTxPaymentDescription: {
+  oneTxPaymentDescriptionShort: {
     id: 'extensions.OneTxPayment.description',
-    defaultMessage: 'Pay a single account one type of token',
+    defaultMessage: 'Pay a single account one type of token.',
+  },
+  oneTxPaymentDescriptionLong: {
+    id: 'extensions.OneTxPayment.descriptionLong',
+    defaultMessage: 'Pay a single account one type of token.',
   },
   coinMachineName: {
     id: 'extensions.CoinMachine.name',
     defaultMessage: 'Coin Machine',
   },
-  coinMachineDescription: {
-    id: 'extensions.CoinMachine.description',
-    defaultMessage: 'A simple way to continually sell tokens',
+  coinMachineDescriptionShort: {
+    id: 'extensions.CoinMachine.descriptionShort',
+    defaultMessage: 'A simple way to continually sell tokens.',
+  },
+  coinMachineDescriptionLong: {
+    id: 'extensions.CoinMachine.descriptionLong',
+    defaultMessage: 'A simple way to continually sell tokens.',
   },
   coinMachinePurchaseTokenTitle: {
     id: 'extensions.CoinMachine.param.purchaseToken.title',
@@ -104,7 +113,8 @@ const extensions: { [key: string]: ExtensionData } = {
   OneTxPayment: {
     extensionId: Extension.OneTxPayment,
     name: MSG.oneTxPaymentName,
-    description: MSG.oneTxPaymentDescription,
+    descriptionShort: MSG.oneTxPaymentDescriptionShort,
+    descriptionLong: MSG.oneTxPaymentDescriptionLong,
     currentVersion: 1,
     createdAt: 1557698400000,
     neededColonyPermissions: [ColonyRole.Administration, ColonyRole.Funding],
@@ -113,7 +123,8 @@ const extensions: { [key: string]: ExtensionData } = {
   CoinMachine: {
     extensionId: Extension.CoinMachine,
     name: MSG.coinMachineName,
-    description: MSG.coinMachineDescription,
+    descriptionShort: MSG.coinMachineDescriptionShort,
+    descriptionLong: MSG.coinMachineDescriptionLong,
     currentVersion: 1,
     createdAt: 1603915271852,
     neededColonyPermissions: [ColonyRole.Root],
@@ -167,7 +178,8 @@ const extensions: { [key: string]: ExtensionData } = {
     extensionId: 'Unknown',
     createdAt: 0,
     name: MSG.unknownName,
-    description: MSG.unknownDescription,
+    descriptionShort: MSG.unknownDescription,
+    descriptionLong: MSG.unknownDescription,
     currentVersion: 0,
     neededColonyPermissions: [],
     uninstallable: false,

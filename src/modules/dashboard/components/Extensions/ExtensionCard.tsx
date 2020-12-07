@@ -43,7 +43,7 @@ const ExtensionCard = ({ extension }: Props) => {
             </div>
           </div>
           <div className={styles.cardDescription}>
-            <FormattedMessage {...extension.description} />
+            <FormattedMessage {...extension.descriptionShort} />
           </div>
         </Card>
       </Link>
