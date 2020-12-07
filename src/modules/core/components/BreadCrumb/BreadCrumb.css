@@ -9,7 +9,7 @@
 }
 
 .invisibleLink:hover {
-  opacity: 50%;
+  color: color-mod(var(--dark) alpha(50%));
 }
 
 .breadCrumble {
