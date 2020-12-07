@@ -84,7 +84,7 @@
     "transaction.TokenClient.unlock.description": "Unlock Token",
 
     "transaction.OneTxPaymentClient.makePaymentFundedFromDomainWithProofs.title": "Expenditure Payment",
-    "transaction.OneTxPaymentClient.makePaymentFundedFromDomainWithProofs.description": "Using the One Tx Payment Extension",
+    "transaction.OneTxPaymentClient.makePaymentFundedFromDomainWithProofs.description": "Expenditure Payment",
 
     "transaction.ColonyClient.upgrade.title": "Update Colony",
     "transaction.ColonyClient.upgrade.description": "Update Colony",
