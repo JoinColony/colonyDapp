@@ -17,64 +17,73 @@ import { createTransaction, getTxChannel } from '../../core/sagas';
 function* createPaymentAction({
   payload: {
     colonyAddress,
-    draftId,
-    workerAddress,
+    colonyName,
+    recipientAddress,
     domainId,
-    skillId,
-    payouts,
+    singlePayment,
+  },
+  meta: {
+    id: metaId,
+    /*
+     * @NOTE About the react router history object
+     *
+     * Apparently this is considered a best practice when needing to change
+     * the route from inside a redux saga, to pass in the history object from
+     * the component itself.
+     *
+     * See:
+     * https://reactrouter.com/web/guides/deep-redux-integration
+     */
+    history,
   },
   meta,
-}: Action<ActionTypes.TASK_FINALIZE>) {
+}: Action<ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT>) {
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-    const colonyClient = yield colonyManager.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
-    );
 
-    if (!workerAddress)
-      throw new Error(`Worker not assigned for task ${draftId}`);
-    if (!domainId) throw new Error(`Domain not set for task ${draftId}`);
-    if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
-    const {
-      amount,
-      token: { address: token, decimals },
-    } = payouts[0];
+    /*
+     * @TODO Add back checks for the various payload values
+     */
+    // if (!workerAddress)
+    //   throw new Error(`Worker not assigned for task ${draftId}`);
+    // if (!domainId) throw new Error(`Domain not set for task ${draftId}`);
+    // if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
 
-    const txChannel = yield call(getTxChannel, meta.id);
-    yield fork(createTransaction, meta.id, {
+    const { amount, tokenAddress, decimals = 18 } = singlePayment;
+
+    const txChannel = yield call(getTxChannel, metaId);
+
+    yield fork(createTransaction, metaId, {
       context: ClientType.OneTxPaymentClient,
       methodName: 'makePaymentFundedFromDomainWithProofs',
       identifier: colonyAddress,
       params: [
-        [workerAddress],
-        [token],
-        bigNumberify(moveDecimal(amount, decimals)),
+        [recipientAddress],
+        [tokenAddress],
+        [bigNumberify(moveDecimal(amount, decimals))],
         domainId,
-        skillId || 0,
+        /*
+         * NOTE Always make the payment in the global skill 0
+         * This will make it so that the user only receives reputation in the
+         * above domain, but none in the skill itself.
+         */
+        0,
       ],
     });
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
-
     const {
-      payload: {
-        receipt: { logs },
-      },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+      payload: { hash: txHash },
+    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
 
-    // We need to manually parse the logs as the events are not emitted on the OneTxPayment contract
-    const events = logs.map((log) => colonyClient.interface.parseLog(log));
-    const potAddedEvent = events.find((evt) => evt.name === 'FundingPotAdded');
+    /*
+     * Maybe redirect to the action page here, since we already have a hash ?
+     */
 
-    if (!potAddedEvent) {
-      throw new Error('No corresponding potId found. Can not finalize task');
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (history && colonyName) {
+      yield call(history.push, `/colony/${colonyName}/tx/${txHash}`);
     }
-
-    const {
-      values: { fundingPotId },
-    } = potAddedEvent;
 
     // Refetch token balances for the domains involved
     yield apolloClient.query<
@@ -84,7 +93,7 @@ function* createPaymentAction({
       query: TokenBalancesForDomainsDocument,
       variables: {
         colonyAddress,
-        tokenAddresses: [token],
+        tokenAddresses: [tokenAddress],
         /*
          * @NOTE Also update the value in "All Domains"
          */
@@ -97,16 +106,22 @@ function* createPaymentAction({
     });
 
     yield put<AllActions>({
-      type: ActionTypes.TASK_FINALIZE_SUCCESS,
-      payload: { potId: fundingPotId.toNumber(), draftId },
+      type: ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
       meta,
     });
   } catch (error) {
-    return yield putError(ActionTypes.TASK_FINALIZE_ERROR, error, meta);
+    return yield putError(
+      ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR,
+      error,
+      meta,
+    );
   }
   return null;
 }
 
 export default function* tasksSagas() {
-  yield takeEvery(ActionTypes.TASK_FINALIZE, createPaymentAction);
+  yield takeEvery(
+    ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
+    createPaymentAction,
+  );
 }
