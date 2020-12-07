@@ -16,7 +16,7 @@ interface Props {
 
 const MSG = defineMessages({
   copyAddressTooltip: {
-    id: 'core.InvisibleCopyableAddress.copyAddressTooltip',
+    id: 'InvisibleCopyableAddress.copyAddressTooltip',
     defaultMessage: `{copied, select,
       true {Copied}
       false {Click to copy colony address}

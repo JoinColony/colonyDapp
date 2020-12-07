@@ -8,5 +8,5 @@ export enum STATUS {
 export enum ColonyActionTypes {
   PAYMENT = 'paymentActionType',
   TRANSFER_FUNDS = 'transferFundsActionType',
-  RECORVERY_MODE = 'recoveryModeActionType',
+  RECORVERY_MODE = 'recorveryModeActionType',
 }
