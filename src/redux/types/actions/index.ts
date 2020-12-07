@@ -1,4 +1,5 @@
 import { ColonyActionTypes } from './colony';
+import { ColonyActionsActionTypes } from './colonyActions';
 import { ConnectionActionTypes } from './connection';
 import { DomainActionTypes } from './domain';
 import { GasPricesActionTypes } from './gasPrices';
@@ -93,6 +94,7 @@ export interface ErrorActionType<T extends string, M>
  */
 export type AllActions =
   | ColonyActionTypes
+  | ColonyActionsActionTypes
   | ConnectionActionTypes
   | DomainActionTypes
   | GasPricesActionTypes
