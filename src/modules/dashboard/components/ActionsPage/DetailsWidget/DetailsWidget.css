@@ -1,0 +1,26 @@
+
+.wrapper {
+  margin-top: 55px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 45px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.value, .label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--spacing-medium);
+}
+
+.label {
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.value {
+  color: color-mod(var(--dark) alpha(85%));
+}

@@ -9,12 +9,13 @@ import UserMention from '~core/UserMention';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Button from '~core/Button';
 import CopyableAddress from '~core/CopyableAddress';
+import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 import MultisigWidget from './MultisigWidget';
-
+import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';
@@ -27,7 +28,7 @@ import {
   useLoggedInUser,
 } from '~data/index';
 import { isTransactionFormat } from '~utils/web3';
-import { STATUS } from './types';
+import { STATUS, ColonyActionTypes } from './types';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import styles from './ActionsPage.css';
@@ -257,6 +258,14 @@ const ActionsPage = () => {
     profile: { walletAddress },
   } = userData?.user || fallbackUserData;
 
+  const detailsWidgetFrom = colonyAddress ? (
+    <DetailsWidgetTeam domainId={2} colonyAddress={colonyAddress} />
+  ) : null;
+
+  const detailsWidgetTo = walletAddress ? (
+    <DetailsWidgetUser walletAddress={walletAddress} />
+  ) : null;
+
   return (
     <div className={styles.main}>
       <div className={styles.container}>
@@ -332,6 +341,13 @@ const ActionsPage = () => {
               }}
             />
           </MultisigWidget>
+          <DetailsWidget
+            domainId={1}
+            actionType={ColonyActionTypes.PAYMENT}
+            from={detailsWidgetFrom}
+            to={detailsWidgetTo}
+            colonyAddress={colonyData?.colony?.colonyAddress}
+          />
         </div>
       </div>
     </div>
