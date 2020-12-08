@@ -1,3 +1,5 @@
+@value defaultDotBackground: rgb(255, 176, 0);
+
 .wrapper {
   margin-top: 20px;
 }
@@ -10,7 +12,7 @@
   position: relative;
   float: right;
   border-radius: 50%;
-  background-color: rgb(255, 176, 0, 1);
+  background-color: defaultDotBackground;
 }
 
 .statusApproved {

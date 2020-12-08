@@ -1,3 +1,4 @@
+export const defaultDotBackground: string;
 export const wrapper: string;
 export const status: string;
 export const statusApproved: string;
