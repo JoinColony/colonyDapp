@@ -17,6 +17,7 @@ interface Props {
 const DetailsWidgetUser = ({ walletAddress }: Props) => {
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
   const userProfile = useUser(walletAddress);
+  const userDisplayName = userProfile?.profile?.displayName;
   const username = userProfile?.profile?.username;
 
   return (
@@ -27,7 +28,11 @@ const DetailsWidgetUser = ({ walletAddress }: Props) => {
         address={walletAddress || ''}
         showInfo
       />
-      {username && <div className={styles.username}>@{username}</div>}
+      {(userDisplayName || username) && (
+        <div className={styles.username}>
+          {userDisplayName || `@${username}`}
+        </div>
+      )}
       <InvisibleCopyableAddress address={walletAddress}>
         <div className={styles.address}>
           <MaskedAddress address={walletAddress} />
