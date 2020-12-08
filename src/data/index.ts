@@ -20,7 +20,6 @@ import {
   UserQuery,
   UserTasksQuery,
   UserTokensQuery,
-  ColonySuggestionsQuery,
   ColonyProgramsQuery,
   LevelQuery,
   ProgramLevelsQuery,
@@ -100,8 +99,6 @@ export type OneDomain = DomainFieldsFragment;
 export type ColonyTransaction = ColonyTransfersQuery['colony']['transfers'][number];
 
 export type ColonyEvent = ColonyEventsQuery['colony']['events'][number];
-
-export type OneSuggestion = ColonySuggestionsQuery['colony']['suggestions'][number];
 
 export type ColonyPrograms = ColonyProgramsQuery['colony']['programs'];
 export type OneProgram =

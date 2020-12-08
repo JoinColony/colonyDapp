@@ -1,6 +1,6 @@
 import { ColonyRole } from '@colony/colony-js';
 
-import { AnyTask, Colony, OneSuggestion } from '~data/index';
+import { AnyTask, Colony } from '~data/index';
 import { TaskUserType } from '~immutable/index';
 import { Address } from '~types/index';
 import { hasRoot, canAdminister, canFund } from '../users/checks';
@@ -123,12 +123,3 @@ export const canFinalizeTask = (task: AnyTask, roles: ColonyRole[]) =>
   canFund(roles);
 
 export const canRecoverColony = hasRoot;
-
-/*
- * Suggestions
- */
-
-export const hasUpvotedSuggestion = (
-  upvotes: OneSuggestion['upvotes'],
-  userAddress: Address,
-) => upvotes.includes(userAddress);

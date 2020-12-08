@@ -309,40 +309,6 @@ mutation EditDomain($input: EditDomainNameInput!) {
   }
 }
 
-mutation CreateSuggestion($input: CreateSuggestionInput!) {
-  createSuggestion(input: $input) {
-    ...SuggestionFields
-  }
-}
-
-mutation SetSuggestionStatus($input: SetSuggestionStatusInput!) {
-  setSuggestionStatus(input: $input) {
-    id
-    status
-    taskId
-  }
-}
-
-mutation AddUpvoteToSuggestion($input: AddUpvoteToSuggestionInput!) {
-  addUpvoteToSuggestion(input: $input) {
-    id
-    upvotes
-  }
-}
-
-mutation RemoveUpvoteFromSuggestion($input: RemoveUpvoteFromSuggestionInput!) {
-  removeUpvoteFromSuggestion(input: $input) {
-    id
-    upvotes
-  }
-}
-
-mutation CreateTaskFromSuggestion($input: CreateTaskFromSuggestionInput!) {
-  createTaskFromSuggestion(input: $input) {
-    ...CreateTaskFields
-  }
-}
-
 mutation CreateProgram($input: CreateProgramInput!) {
   createProgram(input: $input) {
     ...ProgramFields

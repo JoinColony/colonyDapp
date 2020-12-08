@@ -46,10 +46,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.tabContribute',
     defaultMessage: 'Tasks',
   },
-  tabSuggestions: {
-    id: 'dashboard.ColonyHome.tabSuggestions',
-    defaultMessage: 'Suggestions',
-  },
   tabTransactions: {
     id: 'dashboard.ColonyHome.tabTransactions',
     defaultMessage: 'Transactions',
