@@ -260,11 +260,11 @@ const ActionsPage = () => {
     profile: { walletAddress },
   } = userData?.user || fallbackUserData;
 
-  const defailsWidgetFrom = colonyAddress ? (
+  const detailsWidgetFrom = colonyAddress ? (
     <DetailsWidgetTeam domainId={2} colonyAddress={colonyAddress} />
   ) : null;
 
-  const defailsWidgetTo = walletAddress ? (
+  const detailsWidgetTo = walletAddress ? (
     <DetailsWidgetUser walletAddress={walletAddress} />
   ) : null;
 
@@ -346,8 +346,8 @@ const ActionsPage = () => {
           <DetailsWidget
             domainId={1}
             actionType={ColonyActionTypes.PAYMENT}
-            from={defailsWidgetFrom}
-            to={defailsWidgetTo}
+            from={detailsWidgetFrom}
+            to={detailWidgetTo}
             colonyAddress={colonyData?.colony?.colonyAddress}
           />
         </div>
