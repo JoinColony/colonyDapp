@@ -10,6 +10,9 @@ import {
   ColonyExtensionQuery,
   ColonyExtensionQueryVariables,
   ColonyExtensionDocument,
+  ColonyExtensionsQuery,
+  ColonyExtensionsQueryVariables,
+  ColonyExtensionsDocument,
 } from '~data/index';
 import extensionData from '~data/staticData/extensionData';
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -30,6 +33,16 @@ function* refreshExtension(colonyAddress: string, extensionId: string) {
       fetchPolicy: 'network-only',
     },
   );
+  yield apolloClient.query<
+    ColonyExtensionsQuery,
+    ColonyExtensionsQueryVariables
+  >({
+    query: ColonyExtensionsDocument,
+    variables: {
+      address: colonyAddress,
+    },
+    fetchPolicy: 'network-only',
+  });
 }
 
 function* colonyExtensionInstall({
