@@ -1,10 +1,12 @@
 import React from 'react';
-import { Address } from '~types/index';
+
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
-import styles from './DetailsWidgetUser.css';
-import { useUser } from '~data/index';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
+import { useUser } from '~data/index';
+import { Address } from '~types/index';
+
+import styles from './DetailsWidgetUser.css';
 
 const displayName = 'dashboard.ActionsPage.DetailsWidget.DetailsWidgetUser';
 

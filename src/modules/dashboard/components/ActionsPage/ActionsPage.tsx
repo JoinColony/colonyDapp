@@ -347,7 +347,7 @@ const ActionsPage = () => {
             domainId={1}
             actionType={ColonyActionTypes.PAYMENT}
             from={detailsWidgetFrom}
-            to={detailWidgetTo}
+            to={detailsWidgetTo}
             colonyAddress={colonyData?.colony?.colonyAddress}
           />
         </div>
