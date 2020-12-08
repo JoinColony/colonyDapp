@@ -1,10 +1,11 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useColonyDomainsQuery, AnyToken, OneDomain } from '~data/index';
+
 import { Address } from '~types/index';
 import ColorTag from '~core/ColorTag';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { useColonyDomainsQuery, AnyToken, OneDomain } from '~data/index';
 import { ColonyActionTypes } from '../types';
 
 import styles from './DetailsWidget.css';
