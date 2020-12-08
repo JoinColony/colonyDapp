@@ -83,7 +83,7 @@ const DetailsWidget = ({
     }
   }, [data, domainId]);
   return (
-    <div>
+    <div className={styles.wrapper}>
       {activeTeam && (
         <div className={styles.item}>
           <div className={styles.label}>
