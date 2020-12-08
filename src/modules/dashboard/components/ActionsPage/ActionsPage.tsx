@@ -9,15 +9,13 @@ import UserMention from '~core/UserMention';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Button from '~core/Button';
 import CopyableAddress from '~core/CopyableAddress';
+import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 import MultisigWidget from './MultisigWidget';
-import DetailsWidget, {
-  DetailsWidgetUser,
-  DetailsWidgetTeam,
-} from './DetailsWidget';
+import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';

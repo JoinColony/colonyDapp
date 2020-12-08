@@ -8,7 +8,7 @@ import { Address } from '~types/index';
 
 import styles from './DetailsWidgetUser.css';
 
-const displayName = 'dashboard.ActionsPage.DetailsWidget.DetailsWidgetUser';
+const displayName = 'DetailsWidgetUser';
 
 interface Props {
   walletAddress: Address;
@@ -21,7 +21,12 @@ const DetailsWidgetUser = ({ walletAddress }: Props) => {
 
   return (
     <div className={styles.main}>
-      <UserAvatar size="s" notSet={false} address={walletAddress || ''} showInfo />
+      <UserAvatar
+        size="s"
+        notSet={false}
+        address={walletAddress || ''}
+        showInfo
+      />
       {username && <div className={styles.username}>@{username}</div>}
       <InvisibleCopyableAddress address={walletAddress}>
         <div className={styles.address}>
