@@ -76,7 +76,7 @@ const ColonyHomeLayout = ({
                   onDomainChange={onDomainChange}
                 />
               </div>
-              <ColonyHomeActions />
+              <ColonyHomeActions colony={colony} />
             </div>
           </>
         )}
