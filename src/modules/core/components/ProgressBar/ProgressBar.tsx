@@ -22,12 +22,14 @@ const ProgressBar = ({ value = 0, max = 100 }: Props) => {
   const { formatMessage } = useIntl();
   const titleText = formatMessage(MSG.titleProgress, { value, max });
   return (
-    <progress
-      className={styles.main}
-      value={value}
-      max={max}
-      title={titleText}
-    />
+    <div className={styles.wrapper}>
+      <progress
+        className={styles.main}
+        value={value}
+        max={max}
+        title={titleText}
+      />
+    </div>
   );
 };
 

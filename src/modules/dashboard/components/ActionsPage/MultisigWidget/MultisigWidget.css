@@ -1,0 +1,60 @@
+@value defaultDotBackground: rgb(255, 176, 0);
+
+.wrapper {
+  margin-top: 20px;
+}
+
+.status {
+  display: block;
+  margin-top: -6px;
+  height: 7px;
+  width: 7px;
+  position: relative;
+  float: right;
+  border-radius: 50%;
+  background-color: defaultDotBackground;
+}
+
+.statusApproved {
+  background-color: var(--primary);
+}
+
+.avatars {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -6px;
+  margin-bottom: 10px;
+}
+
+.avatars > div {
+  margin: 0 6px 10px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 13px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.title > div {
+  margin: 0 10px;
+}
+
+.progressBarLabel {
+  margin-bottom: 4px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}

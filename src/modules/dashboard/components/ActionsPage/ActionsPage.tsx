@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { ColonyRole } from '@colony/colony-js';
 import Heading from '~core/Heading';
 import TextDecorator from '~lib/TextDecorator';
 import UserMention from '~core/UserMention';
@@ -12,6 +13,7 @@ import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
+import MultisigWidget from './MultisigWidget';
 
 import TransactionHash, { Hash } from './TransactionHash';
 
@@ -313,9 +315,23 @@ const ActionsPage = () => {
           )}
         </div>
         <div className={styles.details}>
-          {/*
-           * @TODO Add in DEV-45
-           */}
+          <MultisigWidget
+            // Mocking for now
+            membersAllowedForApproval={Array.from(
+              Array(10),
+              () => walletAddress,
+            )}
+            requiredNumber={4}
+            requiredPermission={ColonyRole.Recovery}
+          >
+            <Button
+              text={{ id: 'button.approve' }}
+              appearance={{
+                theme: 'primary',
+                size: 'medium',
+              }}
+            />
+          </MultisigWidget>
         </div>
       </div>
     </div>
