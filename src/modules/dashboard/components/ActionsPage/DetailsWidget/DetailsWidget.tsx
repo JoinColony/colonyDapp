@@ -78,7 +78,6 @@ const DetailsWidget = ({
         ({ ethDomainId }) => Number(domainId) === ethDomainId,
       );
       if (domain) {
-        // Any idea why TS is complaning here?
         setActiveTeam(domain);
       }
     }
