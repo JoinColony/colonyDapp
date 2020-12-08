@@ -14,8 +14,8 @@ import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
-import InputStorageWidget from '~dashboard/InputStorageWidget';
 
+import InputStorageWidget from './InputStorageWidget';
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';

@@ -24,7 +24,6 @@
   --grey-blue-3: rgb(246, 246, 246);
   --action-secondary: rgb(76, 93, 255);
 
-
   /*
    * We really need to cleanup the greys, as they're growing larger and larger by the day
    * Maybe get a count of all the colors from product and try to go from there ...

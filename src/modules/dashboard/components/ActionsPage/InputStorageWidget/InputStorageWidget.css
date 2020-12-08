@@ -1,5 +1,6 @@
 .widgetForm {
   margin-top: 20px;
+  margin-bottom: 55px;
   position: relative;
 }
 
@@ -37,7 +38,12 @@
 }
 
 .formFooter button {
+  margin-top: 5px;
   padding: 2px 29px;
   font-size: var(--size-small);
   line-height: 18px;
+}
+
+.inputStorageSlotContainer > div {
+  margin-bottom: 0;
 }
