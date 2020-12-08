@@ -8,7 +8,7 @@
 
 .main {
   width: 560px;
-  border-radius: var(--radius-large);
+  border-radius: var(--radius-normal);
   background-color: var(--colony-white);
 }
 
