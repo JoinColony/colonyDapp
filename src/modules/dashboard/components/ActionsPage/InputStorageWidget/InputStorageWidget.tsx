@@ -21,27 +21,27 @@ const CURRENT_VALUE_PLACEHOLDER =
 
 const MSG = defineMessages({
   inputStorageSlot: {
-    id: 'dashboard.InputStorageWidget.InputStorageWidgetForm.inputStorageSlot',
+    id: 'dashboard.ActionsPage.InputStorageWidget.inputStorageSlot',
     defaultMessage: 'Input storage lot',
   },
   inputNewValue: {
-    id: 'dashboard.InputStorageWidget.InputStorageWidgetForm.inputNewValue',
+    id: 'dashboard.ActionsPage.InputStorageWidget.inputNewValue',
     defaultMessage: 'Input new value',
   },
   currentValueLabel: {
-    id: 'dashboard.InputStorageWidget.InputStorageWidgetForm.currentValueLabel',
+    id: 'dashboard.ActionsPage.InputStorageWidget.currentValueLabel',
     defaultMessage: 'Current value:',
   },
   currentValue: {
-    id: 'dashboard.InputStorageWidget.InputStorageWidgetForm.currentValue',
+    id: 'dashboard.ActionsPage.InputStorageWidget.currentValue',
     defaultMessage: '{currentValue}',
   },
   token: {
-    id: 'dashboard.InputStorageWidget.InputStorageWidgetForm.address',
+    id: 'dashboard.ActionsPage.InputStorageWidget.address',
     defaultMessage: 'Token',
   },
   learnMoreLink: {
-    id: 'dashboard.InputStorageWidget.InputStorageWidgetForm.learnMoreLink',
+    id: 'dashboard.ActionsPage.InputStorageWidget.learnMoreLink',
     defaultMessage: 'Learn more',
   },
 });
@@ -115,6 +115,6 @@ const InputStorageWidget = () => {
   );
 };
 
-InputStorageWidget.displayName = 'dashboard.InputStorageWidget';
+InputStorageWidget.displayName = 'dashboard.ActionsPage.InputStorageWidget';
 
 export default InputStorageWidget;
