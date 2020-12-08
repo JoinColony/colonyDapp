@@ -20,7 +20,6 @@ import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
-import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useTransformer } from '~utils/hooks';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
@@ -28,6 +27,7 @@ import { ActionTypes } from '~redux/index';
 import { ConfirmDialog } from '~core/Dialog';
 import PermissionsLabel from '~core/PermissionsLabel';
 import ExternalLink from '~core/ExternalLink';
+import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import {
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
@@ -116,8 +116,6 @@ const MSG = defineMessages({
   },
 });
 
-const UserAvatar = HookedUserAvatar();
-
 interface Props {
   colonyAddress: Address;
 }
@@ -166,14 +164,9 @@ const ExtensionDetails = ({ colonyAddress }: Props) => {
         label: MSG.installedBy,
         value: (
           <span className={styles.installedBy}>
-            <UserAvatar
-              address={installedExtension.details.installedBy}
-              size="xs"
-              notSet={false}
+            <DetailsWidgetUser
+              walletAddress={installedExtension.details.installedBy}
             />
-            <span className={styles.installedByAddress}>
-              <MaskedAddress address={installedExtension.details.installedBy} />
-            </span>
           </span>
         ),
       },
