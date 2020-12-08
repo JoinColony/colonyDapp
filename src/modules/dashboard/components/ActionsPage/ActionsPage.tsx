@@ -328,7 +328,7 @@ const ActionsPage = () => {
               text={{ id: 'button.approve' }}
               appearance={{
                 theme: 'primary',
-                size: 'large',
+                size: 'medium',
               }}
             />
           </MultisigWidget>
