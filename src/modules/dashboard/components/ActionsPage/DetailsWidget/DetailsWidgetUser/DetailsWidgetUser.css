@@ -6,6 +6,7 @@
 .address {
   margin-left: 8px;
   font-size: var(--size-smallish);
+  line-height: 1;
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
   cursor: pointer;
@@ -14,6 +15,7 @@
 .username {
   margin-left: 8px;
   font-size: var(--size-normal);
+  line-height: 1;
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
