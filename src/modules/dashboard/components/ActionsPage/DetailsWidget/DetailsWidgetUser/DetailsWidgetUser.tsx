@@ -19,7 +19,7 @@ const DetailsWidgetUser = ({ walletAddress }: Props) => {
 
   return (
     <div className={styles.main}>
-      <UserAvatar size="s" notSet={false} address={walletAddress || ''} />
+      <UserAvatar size="s" notSet={false} address={walletAddress || ''} showInfo />
       {username && <div className={styles.username}>@{username}</div>}
       <InvisibleCopyableAddress address={walletAddress}>
         <div className={styles.address}>
