@@ -25,7 +25,7 @@
     "jsx": "react",
     "lib": [
       "dom",
-      "es2018"
+      "es2019",
     ],
     "module": "commonjs",
     "moduleResolution": "node",
