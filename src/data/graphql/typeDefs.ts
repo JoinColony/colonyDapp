@@ -24,6 +24,7 @@ export default gql`
     values: String!
     createdAt: Int!
     from: String!
+    emmitedBy: String!
   }
 
   type Transaction {

@@ -3,6 +3,7 @@ import {
   FundingPotAssociatedType,
   getBlockTime,
   getLogs,
+  ClientType,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { HashZero } from 'ethers/constants';
@@ -11,13 +12,6 @@ import { Resolvers } from '@apollo/client';
 import { Transfer, NetworkEvent } from '~data/index';
 import { notUndefined } from '~utils/arrays';
 import { Context } from '~context/index';
-
-interface ParsedLog {
-  name: string;
-  signature: string;
-  topic: string;
-  values: Record<string, any>;
-}
 
 export const getColonyAllEvents = async (
   colonyClient: ColonyClient,
@@ -223,11 +217,26 @@ export const getColonyUnclaimedTransfers = async (
 
 export const transactionResolvers = ({
   colonyManager: { networkClient },
+  colonyManager,
 }: Required<Context>): Resolvers => ({
   Query: {
     async transaction(_, { transactionHash, colonyAddress }) {
       const { provider } = networkClient;
-      const colonyClient = await networkClient.getColonyClient(colonyAddress);
+
+      /*
+       * Get all clients from all extensions enabled in the cololony
+       */
+      const clientsInstancesArray = (
+        await Promise.all(
+          Object.values(ClientType).map(async (clientType) => {
+            try {
+              return await colonyManager.getClient(clientType, colonyAddress);
+            } catch (error) {
+              return undefined;
+            }
+          }),
+        )
+      ).filter((clientType) => !!clientType);
 
       /*
        * Try to get the transaction receipt. If the transaction is mined, you'll
@@ -246,29 +255,56 @@ export const transactionResolvers = ({
           logs,
           blockHash,
         } = transactionReceipt;
+
         /*
          * Get the block time in ms
          *
-         * If we don't find a time for the current tx (which shouldn't happen actually)
          * we fallback to 0, which is 1/1/1970 :)
+         * If we don't find a time for the current tx (which shouldn't happen actually)
          */
         const createdAt = blockHash
           ? await getBlockTime(provider, blockHash)
           : 0;
-        const events = logs
-          ?.map((log) => colonyClient.interface.parseLog(log))
+
+        /*
+         * Parse all logs with all clients to generate all the possible events
+         */
+        const events = clientsInstancesArray
+          .map((clientType) => {
+            const type = clientType?.clientType;
+            return logs
+              ?.map((log) => {
+                const parsedLog = clientType?.interface.parseLog(log);
+                if (parsedLog) {
+                  const { name, values, topic } = parsedLog;
+                  return {
+                    from,
+                    name,
+                    values,
+                    topic,
+                    createdAt,
+                    emmitedBy: type,
+                  };
+                }
+                return null;
+              })
+              .filter((log) => !!log);
+          })
           /*
-           * If the above parser find events that are not part of the colony client
-           * it will return them as `null` so we filter them out
+           * @NOTE Even with the target lib changed to es2019 TS is being a little bitch
+           * and crying about Array.flat() not existing. It does and it works.
+           *
+           * TS is just over-reacting. Also, apparently this is a known thing.
            */
-          .filter((log) => !!log)
-          .map(({ name, values, topic }) => ({
-            from,
-            name,
-            values,
-            topic,
-            createdAt,
-          }));
+          // @ts-ignore
+          .flat();
+
+        // console.log('RAW Logs', logs);
+        // console.log(
+        //   'PARSED Logs',
+        //   logs?.map((log) => colonyClient.interface.parseLog(log)),
+        // );
+        // console.log('ONETX PARSED Logs', logs?.map(log => oneTXClient.interface.parseLog(log)))
         return {
           hash,
           from,

@@ -585,6 +585,7 @@ query Transaction($transactionHash: String!, $colonyAddress: String!) {
       values
       createdAt
       from
+      emmitedBy
     }
     createdAt
   }

@@ -1317,6 +1317,7 @@ export type ParsedEvent = {
   values: Scalars['String'];
   createdAt: Scalars['Int'];
   from: Scalars['String'];
+  emmitedBy: Scalars['String'];
 };
 
 export type Transaction = {
@@ -2349,7 +2350,7 @@ export type TransactionQueryVariables = Exact<{
 
 export type TransactionQuery = { transaction: (
     Pick<Transaction, 'hash' | 'from' | 'to' | 'status' | 'createdAt'>
-    & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values' | 'createdAt' | 'from'>> }
+    & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values' | 'createdAt' | 'from' | 'emmitedBy'>> }
   ) };
 
 export type TransactionMessagesQueryVariables = Exact<{
@@ -6218,6 +6219,7 @@ export const TransactionDocument = gql`
       values
       createdAt
       from
+      emmitedBy
     }
     createdAt
   }
