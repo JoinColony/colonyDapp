@@ -33,7 +33,7 @@
 
 .labelIcon svg {
   fill: var(--temp-grey-1);
-  stroke: var(--colony-white);
+  stroke: unset;
 }
 
 .permissionList {

@@ -86,7 +86,7 @@ const PermissionRequiredInfo = ({ requiredRoles }: Props) => {
                 onMouseLeave={close}
                 className={styles.labelIcon}
               >
-                <Icon name="question-mark" title="" />
+                <Icon name="question-mark" title={MSG.title} />
               </div>
             )}
           </Tooltip>

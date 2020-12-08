@@ -34,8 +34,9 @@ import {
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
-import styles from './CreatePaymentDialogForm.css';
 import { FormValues } from './CreatePaymentDialog';
+
+import styles from './CreatePaymentDialogForm.css';
 
 const MSG = defineMessages({
   title: {
@@ -283,22 +284,24 @@ const CreatePaymentDialogForm = ({
       </DialogSection>
       <DialogSection>
         <div className={styles.tokenAmount}>
-          <Input
-            label={MSG.amount}
-            name="amount"
-            appearance={{
-              theme: 'minimal',
-              align: 'right',
-            }}
-            formattingOptions={{
-              delimiter: ',',
-              numeral: true,
-              numeralDecimalScale: getTokenDecimalsWithFallback(
-                selectedToken && selectedToken.decimals,
-              ),
-            }}
-            disabled={!userHasPermission}
-          />
+          <div className={styles.tokenAmountInputContainer}>
+            <Input
+              label={MSG.amount}
+              name="amount"
+              appearance={{
+                theme: 'minimal',
+                align: 'right',
+              }}
+              formattingOptions={{
+                delimiter: ',',
+                numeral: true,
+                numeralDecimalScale: getTokenDecimalsWithFallback(
+                  selectedToken && selectedToken.decimals,
+                ),
+              }}
+              disabled={!userHasPermission}
+            />
+          </div>
           <div className={styles.tokenAmountSelect}>
             <Select
               label={MSG.token}
@@ -368,6 +371,9 @@ const CreatePaymentDialogForm = ({
           onClick={cancel}
           text={{ id: 'button.back' }}
         />
+        {/**
+         * @TODO: Add validation for when colony doesn't have the OneTxPayment extension enabled
+         */}
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
