@@ -47,6 +47,12 @@
   }
 }
 
+.main:disabled,
+.main[aria-disabled="true"],
+.main[aria-busy="true"] {
+  background-color: var(--temp-grey-0);
+}
+
 .main[aria-invalid="true"] {
   border-color: var(--danger);
 }

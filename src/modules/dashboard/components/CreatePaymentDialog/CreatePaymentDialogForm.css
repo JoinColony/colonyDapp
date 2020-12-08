@@ -1,0 +1,62 @@
+.tokenAmount {
+  display: flex;
+}
+
+.tokenAmountSelect {
+  align-self: center;
+  margin-left: 20px;
+}
+
+.tokenAmountUsd {
+  justify-self: right;
+}
+
+.domainPotBalance {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: var(--temp-grey-blue-7);
+}
+
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.tokenAmount label,
+.domainSelects label,
+.textAreaSection label {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}
+
+.tokenAmount input {
+  font-weight: var(--weight-normal);
+  color: var(--dark);
+}
+
+.tokenAmountInputContainer {
+  width: 100%;
+}
+
+.singleUserContainer label {
+  margin-bottom: 15px;
+  color: var(--dark);
+}
+
+.singleUserContainer > div {
+  padding-left: 0;
+}
+
+.noPermissionFromMessage {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}
+
+.noPermissionFromMessage > div {
+  vertical-align: bottom;
+}
