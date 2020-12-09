@@ -13,7 +13,17 @@ export const getActionType = (parsedEvents) => {
     return ColonyActions.Generic;
   }
   const [firstEvent] = parsedEvents;
-  if (firstEvent.name === ColonyAndExtensionsEvents.OneTxPaymentMade) {
+  const paymentAddedEvent = parsedEvents.find(
+    (event) => event?.name === ColonyAndExtensionsEvents.PaymentAdded,
+  );
+  const payoutClaimedEvent = parsedEvents.find(
+    (event) => event?.name === ColonyAndExtensionsEvents.PayoutClaimed,
+  );
+  if (
+    firstEvent.name === ColonyAndExtensionsEvents.OneTxPaymentMade &&
+    !!paymentAddedEvent &&
+    payoutClaimedEvent
+  ) {
     return ColonyActions.Payment;
   }
   return ColonyActions.Generic;
