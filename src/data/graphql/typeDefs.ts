@@ -20,20 +20,20 @@ export default gql`
 
   type ParsedEvent {
     name: String!
-    topic: String!
     values: String!
     createdAt: Int!
-    from: String!
     emmitedBy: String!
   }
 
-  type Transaction {
+  type ColonyAction {
     hash: String!
-    from: String!
-    to: String!
+    transactionInitiator: String!
+    fromDomain: Int!
+    recipient: String!
     status: Int!
     events: [ParsedEvent!]!
     createdAt: Int!
+    actionType: String!
   }
 
   input NetworkContractsInput {
@@ -157,7 +157,10 @@ export default gql`
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!
-    transaction(transactionHash: String!, colonyAddress: String!): Transaction!
+    colonyAction(
+      transactionHash: String!
+      colonyAddress: String!
+    ): ColonyAction!
   }
 
   extend type Mutation {

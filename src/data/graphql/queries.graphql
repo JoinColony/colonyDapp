@@ -573,21 +573,21 @@ query NetworkContracts {
   }
 }
 
-query Transaction($transactionHash: String!, $colonyAddress: String!) {
-  transaction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
+query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
+  colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
     hash
-    from
-    to
+    transactionInitiator
+    fromDomain
+    recipient
     status
     events {
       name
-      topic
       values
       createdAt
-      from
       emmitedBy
     }
     createdAt
+    actionType
   }
 }
 
