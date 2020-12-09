@@ -6,12 +6,14 @@ import {
   ClientType,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
-import { HashZero } from 'ethers/constants';
+import { HashZero, AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
 import { Transfer, NetworkEvent } from '~data/index';
 import { notUndefined } from '~utils/arrays';
+import { getPaymentDetails, getActionType } from '~utils/events';
 import { Context } from '~context/index';
+import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 
 export const getColonyAllEvents = async (
   colonyClient: ColonyClient,
@@ -215,12 +217,12 @@ export const getColonyUnclaimedTransfers = async (
   return transfers.filter(notUndefined);
 };
 
-export const transactionResolvers = ({
+export const colonyActionsResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
 }: Required<Context>): Resolvers => ({
   Query: {
-    async transaction(_, { transactionHash, colonyAddress }) {
+    async colonyAction(_, { transactionHash, colonyAddress }) {
       const { provider } = networkClient;
 
       /*
@@ -239,6 +241,13 @@ export const transactionResolvers = ({
       ).filter((clientType) => !!clientType);
 
       /*
+       * Get the colony client specifically
+       */
+      const colonyClient = clientsInstancesArray.find(
+        (client) => client?.clientType === ClientType.ColonyClient,
+      );
+
+      /*
        * Try to get the transaction receipt. If the transaction is mined, you'll
        * get a return from this call, otherwise, it's null.
        */
@@ -249,11 +258,10 @@ export const transactionResolvers = ({
       if (transactionReceipt) {
         const {
           transactionHash: hash,
-          from,
-          to,
           status,
           logs,
           blockHash,
+          from,
         } = transactionReceipt;
 
         /*
@@ -283,12 +291,10 @@ export const transactionResolvers = ({
                 const type = clientType?.clientType;
                 const potentialParsedLog = clientType?.interface.parseLog(log);
                 if (potentialParsedLog) {
-                  const { name, values, topic } = potentialParsedLog;
+                  const { name, values } = potentialParsedLog;
                   return {
-                    from,
                     name,
                     values,
-                    topic,
                     createdAt,
                     emmitedBy: type,
                   };
@@ -300,13 +306,41 @@ export const transactionResolvers = ({
           })
           .reverse();
 
+        let recipient = AddressZero;
+        let fromDomain = 1;
+        let paymentDetails;
+
+        const actionType = getActionType(reverseSortedEvents);
+
+        if (actionType === ColonyActions.Payment) {
+          const paymentEvent = reverseSortedEvents?.find(
+            (event) => event?.name === ColonyAndExtensionsEvents.PaymentAdded,
+          );
+          const { paymentId } = paymentEvent?.values;
+          paymentDetails = await getPaymentDetails(
+            paymentId,
+            colonyClient as ColonyClient,
+          );
+          fromDomain = bigNumberify(paymentDetails.domainId).toNumber();
+          recipient = paymentDetails.recipient;
+        }
+
         return {
           hash,
-          from,
-          to,
+          /*
+           * @TODO this needs to be replaced with a value that is going to come
+           * from the `OneTxPaymentMade` event, which is not currently implemented
+           *
+           * So for now we are just using the `from` address. This should not make
+           * it into production, as relying on it is error-prone.
+           */
+          transactionInitiator: from,
+          fromDomain,
+          recipient,
           status,
           events: reverseSortedEvents,
           createdAt,
+          actionType,
         };
       }
 
@@ -320,11 +354,11 @@ export const transactionResolvers = ({
        * Maybe we should inferr something from whether or not the `from` or `to`
        * addressses have a user profile created. But that might be error prone.
        */
-      const { hash, from, to } = await provider.getTransaction(transactionHash);
+      const { hash, to } = await provider.getTransaction(transactionHash);
 
       return {
         hash,
-        from,
+        fromDomain: 1,
         to,
         status: 2,
         events: null,
@@ -335,6 +369,7 @@ export const transactionResolvers = ({
          * server
          */
         createdAt: Date.now(),
+        actionType: ColonyActions.Generic,
       };
     },
   },
