@@ -45,7 +45,7 @@ import {
   networkContractsResolvers,
   initialCache as networkContracts,
 } from './resolvers/networkContracts';
-import { colonyActionsResolvers } from './resolvers/transactions';
+import { colonyActionsResolvers } from './resolvers/colonyActions';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
