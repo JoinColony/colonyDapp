@@ -47,8 +47,7 @@
 }
 
 .tokenAmount label,
-.domainSelects label,
-.textAreaSection label {
+.domainSelects label {
   font-size: var(--size-smallish);
   color: var(--dark);
 }

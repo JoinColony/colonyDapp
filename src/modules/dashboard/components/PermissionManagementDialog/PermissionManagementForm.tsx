@@ -5,7 +5,7 @@ import sortBy from 'lodash/sortBy';
 
 import { Address } from '~types/index';
 import { DomainFieldsFragment } from '~data/generated';
-import { InputLabel, Textarea, Select } from '~core/Fields';
+import { InputLabel, Select, Annotations } from '~core/Fields';
 
 import PermissionManagementCheckbox from './PermissionManagementCheckbox';
 import { availableRoles } from './constants';
@@ -124,12 +124,7 @@ const PermissionManagementForm = ({
           );
         })}
       </div>
-      <Textarea
-        appearance={{ resizable: 'vertical', colorSchema: 'grey' }}
-        label={MSG.annotation}
-        name="annotation"
-        maxLength={4000}
-      />
+      <Annotations label={MSG.annotation} name="annotation" />
     </>
   );
 };
