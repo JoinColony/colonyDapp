@@ -14,7 +14,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import {
   useSendTransactionMessageMutation,
   TransactionMessagesDocument,
-  TransactionQueryVariables,
+  ColonyActionQueryVariables,
 } from '~data/index';
 import { Address, ENTER } from '~types/index';
 
@@ -101,7 +101,7 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
         refetchQueries: [
           {
             query: TransactionMessagesDocument,
-            variables: { transactionHash } as TransactionQueryVariables,
+            variables: { transactionHash } as ColonyActionQueryVariables,
           },
         ],
       }).then(() => {
