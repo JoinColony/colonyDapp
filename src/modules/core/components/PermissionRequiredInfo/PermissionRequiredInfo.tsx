@@ -19,15 +19,15 @@ const MSG = defineMessages({
   },
   tooltipTextFirstParagraph: {
     id: 'PermissionRequiredInfo.tooltipTextFirstParagraph',
-    defaultMessage: `Colony has six permission classes which can be assigned 
-      to any Ethereum address: Funding, Administration, Arbitration, 
+    defaultMessage: `Colony has six permission classes which can be assigned
+      to any Ethereum address: Funding, Administration, Arbitration,
       Architecture, Root, and Recovery.`,
   },
   tooltipTextSecondParagraph: {
     id: 'PermissionRequiredInfo.tooltipTextSecondParagraph',
-    defaultMessage: `Permissions are assigned at the domain level. 
-      If an account is granted a permission in a domain, 
-      it also has that same permission in all of that 
+    defaultMessage: `Permissions are assigned at the domain level.
+      If an account is granted a permission in a domain,
+      it also has that same permission in all of that
       domain’s subdomains.`,
   },
 });
@@ -42,14 +42,14 @@ const displayName = 'PermissionRequiredInfo';
 const PermissionRequiredInfo = ({ requiredRoles }: Props) => {
   const { formatMessage } = useIntl();
   const tooltipText = (
-    <>
+    <div className={styles.tooltipContent}>
       <p className={styles.tooltipText}>
         <FormattedMessage {...MSG.tooltipTextFirstParagraph} />
       </p>
       <p className={styles.tooltipText}>
         <FormattedMessage {...MSG.tooltipTextSecondParagraph} />
       </p>
-    </>
+    </div>
   );
 
   return (
@@ -64,21 +64,7 @@ const PermissionRequiredInfo = ({ requiredRoles }: Props) => {
           <p className={styles.sectionLabel}>
             <FormattedMessage {...MSG.sectionLabel} />
           </p>
-          <Tooltip
-            darkTheme
-            content={tooltipText}
-            placement="right"
-            popperProps={{
-              modifiers: [
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [120, 12],
-                  },
-                },
-              ],
-            }}
-          >
+          <Tooltip darkTheme content={tooltipText} placement="right">
             {({ close, open, ref }) => (
               <div
                 ref={ref}
@@ -93,9 +79,8 @@ const PermissionRequiredInfo = ({ requiredRoles }: Props) => {
 
           <div className={styles.permissionList}>
             {requiredRoles.map((role) => (
-              <div className={styles.listItem}>
+              <div className={styles.listItem} key={`permission.${role}`}>
                 <PermissionsLabel
-                  key={`permission.${role}`}
                   permission={role}
                   name={formatMessage({ id: `role.${role}` })}
                 />

@@ -29,6 +29,7 @@
 
 .labelIcon {
   margin-left: 8px;
+  width: 32px;
 }
 
 .labelIcon svg {
@@ -62,4 +63,9 @@
 
 .tooltipText:first-child {
   margin-bottom: 15px;
+}
+
+.tooltipContent {
+  padding: 8px 4px;
+  max-width: 200px;
 }

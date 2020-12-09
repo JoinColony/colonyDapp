@@ -6,3 +6,4 @@ export const labelIcon: string;
 export const permissionList: string;
 export const listItem: string;
 export const tooltipText: string;
+export const tooltipContent: string;
