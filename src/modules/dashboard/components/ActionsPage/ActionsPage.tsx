@@ -1,29 +1,27 @@
 import React, { useEffect, useMemo } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
-
 import { ColonyRole } from '@colony/colony-js';
-import Heading from '~core/Heading';
+
 import TextDecorator from '~lib/TextDecorator';
+import Heading from '~core/Heading';
 import UserMention from '~core/UserMention';
-import LoadingTemplate from '~pages/LoadingTemplate';
 import Button from '~core/Button';
 import CopyableAddress from '~core/CopyableAddress';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
+import LoadingTemplate from '~pages/LoadingTemplate';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
-
 import InputStorageWidget from './InputStorageWidget';
+
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
 
-import NakedMoleImage from '../../../../img/naked-mole.svg';
-
 import {
-  useTransactionLazyQuery,
+  useColonyActionLazyQuery,
   useUserLazyQuery,
   useColonyFromNameQuery,
   useUser,
@@ -34,6 +32,7 @@ import { STATUS, ColonyActionTypes } from './types';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import styles from './ActionsPage.css';
+import NakedMoleImage from '../../../../img/naked-mole.svg';
 
 const MSG = defineMessages({
   actionTitle: {
@@ -114,11 +113,11 @@ const ActionsPage = () => {
   const [
     fetchTransction,
     {
-      data: transactionData,
-      loading: transactionDataLoading,
-      error: transactionDataError,
+      data: colonyActionData,
+      loading: colonyActionLoading,
+      error: colonyActionError,
     },
-  ] = useTransactionLazyQuery();
+  ] = useColonyActionLazyQuery();
 
   const [
     fetchUser,
@@ -141,14 +140,18 @@ const ActionsPage = () => {
   }, [fetchTransction, transactionHash, colonyData]);
 
   useEffect(() => {
-    if (transactionData?.transaction?.from) {
+    if (colonyActionData?.colonyAction?.transactionInitiator) {
       fetchUser({
-        variables: { address: transactionData.transaction.from },
+        variables: {
+          address: colonyActionData.colonyAction.transactionInitiator,
+        },
       });
     }
-  }, [fetchUser, transactionData]);
+  }, [fetchUser, colonyActionData]);
 
-  const fallbackUserData = useUser(transactionData?.transaction?.from || '');
+  const fallbackUserData = useUser(
+    colonyActionData?.colonyAction?.transactionInitiator || '',
+  );
 
   const { Decorate } = new TextDecorator({
     username: (usernameWithAtSign) => (
@@ -185,10 +188,10 @@ const ActionsPage = () => {
         return false;
       })(),
       name: (() => {
-        if (transactionData?.transaction?.events?.length) {
+        if (colonyActionData?.colonyAction?.events?.length) {
           const {
             events: [event],
-          } = transactionData.transaction;
+          } = colonyActionData.colonyAction;
           /*
            * Display the first event as the page title
            * We might need to change this in the future
@@ -198,10 +201,10 @@ const ActionsPage = () => {
         return false;
       })(),
     }),
-    [transactionData, fallbackUserData, userData],
+    [colonyActionData, fallbackUserData, userData],
   );
 
-  if (!isTransactionFormat(transactionHash) || transactionDataError) {
+  if (!isTransactionFormat(transactionHash) || colonyActionError) {
     return (
       <div className={styles.main}>
         <div className={styles.notFoundContainer}>
@@ -233,9 +236,9 @@ const ActionsPage = () => {
   }
 
   if (
-    transactionDataLoading ||
+    colonyActionLoading ||
     userDataLoading ||
-    !transactionData ||
+    !colonyActionData ||
     !colonyData
   ) {
     return <LoadingTemplate loadingText={MSG.loading} />;
@@ -249,8 +252,8 @@ const ActionsPage = () => {
   }
 
   const {
-    transaction: { hash, status, events, createdAt },
-  } = transactionData;
+    colonyAction: { hash, status, events, createdAt },
+  } = colonyActionData;
 
   const {
     colony: { colonyAddress },
