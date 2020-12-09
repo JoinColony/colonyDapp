@@ -96,23 +96,38 @@ export const colonyActionsResolvers = ({
           })
           .reverse();
 
-        let recipient = AddressZero;
-        let fromDomain = 1;
+        const payment = {
+          recipient: AddressZero,
+          fromDomain: 1,
+          amount: '0',
+          tokenAddress: AddressZero,
+        };
         let paymentDetails;
 
         const actionType = getActionType(reverseSortedEvents);
 
         if (actionType === ColonyActions.Payment) {
-          const paymentEvent = reverseSortedEvents?.find(
+          /*
+           * If the action is a `Payment` type event, it will most definetly have
+           * these two events already, so we don't need to bother checking for
+           * their existance
+           */
+          const paymentAddedEvent = reverseSortedEvents?.find(
             (event) => event?.name === ColonyAndExtensionsEvents.PaymentAdded,
           );
-          const { paymentId } = paymentEvent?.values;
+          const payoutClaimedEvent = reverseSortedEvents?.find(
+            (event) => event?.name === ColonyAndExtensionsEvents.PayoutClaimed,
+          );
+          const { paymentId } = paymentAddedEvent?.values;
           paymentDetails = await getPaymentDetails(
             paymentId,
             colonyClient as ColonyClient,
           );
-          fromDomain = bigNumberify(paymentDetails.domainId).toNumber();
-          recipient = paymentDetails.recipient;
+          const { amount, token } = payoutClaimedEvent?.values;
+          payment.fromDomain = bigNumberify(paymentDetails.domainId).toNumber();
+          payment.recipient = paymentDetails.recipient;
+          payment.amount = bigNumberify(amount).toString();
+          payment.tokenAddress = token;
         }
 
         return {
@@ -125,12 +140,11 @@ export const colonyActionsResolvers = ({
            * it into production, as relying on it is error-prone.
            */
           transactionInitiator: from,
-          fromDomain,
-          recipient,
           status,
           events: reverseSortedEvents,
           createdAt,
           actionType,
+          ...payment,
         };
       }
 

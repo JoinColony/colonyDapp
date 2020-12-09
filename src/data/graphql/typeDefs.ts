@@ -34,6 +34,8 @@ export default gql`
     events: [ParsedEvent!]!
     createdAt: Int!
     actionType: String!
+    amount: String!
+    tokenAddress: String!
   }
 
   input NetworkContractsInput {
