@@ -380,6 +380,7 @@ const CreatePaymentDialogForm = ({
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
           disabled={!isValid}
+          style={{ width: styles.wideButton }}
         />
       </DialogSection>
     </>

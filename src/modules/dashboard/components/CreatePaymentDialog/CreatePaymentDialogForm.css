@@ -1,3 +1,5 @@
+@value wideButton: 160px;
+
 .tokenAmount {
   display: flex;
 }

@@ -239,6 +239,7 @@ const PermissionManagementDialog = ({
                   loading={isSubmitting}
                   text={{ id: 'button.confirm' }}
                   type="submit"
+                  style={{ width: styles.wideButton }}
                 />
               </DialogSection>
             </div>

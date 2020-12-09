@@ -218,6 +218,7 @@ const ColonyPermissionsAddDialog = ({
                     text={{ id: 'button.confirm' }}
                     disabled={!selectedUserAddress}
                     type="submit"
+                    style={{ width: styles.wideButton }}
                   />
                 </DialogSection>
               </div>

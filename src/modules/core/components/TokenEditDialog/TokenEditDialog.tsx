@@ -159,6 +159,7 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
                 loading={isSubmitting}
                 disabled={!isValid || isSubmitting || !dirty}
                 type="submit"
+                style={{ width: styles.wideButton }}
               />
             </DialogSection>
           </>
