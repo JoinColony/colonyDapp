@@ -267,16 +267,23 @@ export const transactionResolvers = ({
           : 0;
 
         /*
-         * Parse all logs with all clients to generate all the possible events
+         * @NOTE Parse all logs with all clients to generate all the possible events
+         * This is the second iteration of this implementation.
+         *
+         * It is less perfomant than just iterating over the clientsInstancesArray and
+         * then just passing it the logs array to process, but this way allows us to
+         * preseve the position of each event as it was originally emmited by the contracts.
+         *
+         * This way we can use that index position to inferr the action type from them
          */
-        const events = clientsInstancesArray
-          .map((clientType) => {
-            const type = clientType?.clientType;
-            return logs
-              ?.map((log) => {
-                const parsedLog = clientType?.interface.parseLog(log);
-                if (parsedLog) {
-                  const { name, values, topic } = parsedLog;
+        const reverseSortedEvents = logs
+          ?.map((log) => {
+            const [parsedLog] = clientsInstancesArray
+              .map((clientType) => {
+                const type = clientType?.clientType;
+                const potentialParsedLog = clientType?.interface.parseLog(log);
+                if (potentialParsedLog) {
+                  const { name, values, topic } = potentialParsedLog;
                   return {
                     from,
                     name,
@@ -288,29 +295,17 @@ export const transactionResolvers = ({
                 }
                 return null;
               })
-              .filter((log) => !!log);
+              .filter((potentialLog) => !!potentialLog);
+            return parsedLog;
           })
-          /*
-           * @NOTE Even with the target lib changed to es2019 TS is being a little bitch
-           * and crying about Array.flat() not existing. It does and it works.
-           *
-           * TS is just over-reacting. Also, apparently this is a known thing.
-           */
-          // @ts-ignore
-          .flat();
+          .reverse();
 
-        // console.log('RAW Logs', logs);
-        // console.log(
-        //   'PARSED Logs',
-        //   logs?.map((log) => colonyClient.interface.parseLog(log)),
-        // );
-        // console.log('ONETX PARSED Logs', logs?.map(log => oneTXClient.interface.parseLog(log)))
         return {
           hash,
           from,
           to,
           status,
-          events,
+          events: reverseSortedEvents,
           createdAt,
         };
       }
