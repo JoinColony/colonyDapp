@@ -2,11 +2,11 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
+import FriendlyUserName from '~core/FriendlyUserName';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
 import UserPermissions from '~dashboard/UserPermissions';
 
 import { AnyUser } from '~data/index';
-import { getFriendlyName } from '../../../../users/transformers';
 import { PaymentDetails } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 
@@ -51,12 +51,12 @@ const ActionsPageEvent = ({
               eventName,
               initiator: (
                 <span className={styles.decoratedUser}>
-                  {getFriendlyName(initiator)}
+                  <FriendlyUserName user={initiator as AnyUser} />
                 </span>
               ),
               recipient: (
                 <span className={styles.decoratedUser}>
-                  {getFriendlyName(recipient)}
+                  <FriendlyUserName user={recipient as AnyUser} />
                 </span>
               ),
               /*

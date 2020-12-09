@@ -7,6 +7,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Numeral from '~core/Numeral';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
+import FriendlyUserName from '~core/FriendlyUserName';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
@@ -31,7 +32,6 @@ import { STATUS } from './types';
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
-import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './ActionsPage.css';
 import NakedMoleImage from '../../../../img/naked-mole.svg';
@@ -293,7 +293,7 @@ const ActionsPage = () => {
                 actionType,
                 recipient: (
                   <span className={styles.titleDecoration}>
-                    {getFriendlyName(recipientProfileWithFallback)}
+                    <FriendlyUserName user={recipientProfileWithFallback} />
                   </span>
                 ),
                 amount: (
@@ -329,7 +329,7 @@ const ActionsPage = () => {
             transactionHash={transactionHash as string}
             networkEvents={events}
             initiator={initiatorProfileWithFallback}
-            recipient={initiatorProfileWithFallback}
+            recipient={recipientProfileWithFallback}
             payment={{
               amount,
               symbol,
