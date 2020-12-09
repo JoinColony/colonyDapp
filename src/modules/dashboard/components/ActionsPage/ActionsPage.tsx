@@ -28,8 +28,9 @@ import {
   useLoggedInUser,
 } from '~data/index';
 import { isTransactionFormat } from '~utils/web3';
-import { STATUS, ColonyActionTypes } from './types';
+import { STATUS } from './types';
 import { NOT_FOUND_ROUTE } from '~routes/index';
+import { ColonyActions } from '~types/index';
 
 import styles from './ActionsPage.css';
 import NakedMoleImage from '../../../../img/naked-mole.svg';
@@ -252,7 +253,7 @@ const ActionsPage = () => {
   }
 
   const {
-    colonyAction: { hash, status, events, createdAt },
+    colonyAction: { hash, status, events, createdAt, actionType },
   } = colonyActionData;
 
   const {
@@ -329,31 +330,35 @@ const ActionsPage = () => {
           )}
         </div>
         <div className={styles.details}>
-          <InputStorageWidget />
-          <MultisigWidget
-            // Mocking for now
-            membersAllowedForApproval={Array.from(
-              Array(10),
-              () => walletAddress,
-            )}
-            requiredNumber={4}
-            requiredPermission={ColonyRole.Recovery}
-          >
-            <Button
-              text={{ id: 'button.approve' }}
-              appearance={{
-                theme: 'primary',
-                size: 'medium',
-              }}
+          {actionType === ColonyActions.Recovery && (
+            <InputStorageWidget />
+            <MultisigWidget
+              // Mocking for now
+              membersAllowedForApproval={Array.from(
+                Array(10),
+                () => walletAddress,
+              )}
+              requiredNumber={4}
+              requiredPermission={ColonyRole.Recovery}
+            >
+              <Button
+                text={{ id: 'button.approve' }}
+                appearance={{
+                  theme: 'primary',
+                  size: 'medium',
+                }}
+              />
+            </MultisigWidget>
+          )}
+          {actionType === ColonyActions.Payment && (
+            <DetailsWidget
+              domainId={1}
+              actionType={actionType as ColonyActions}
+              from={detailsWidgetFrom}
+              to={detailsWidgetTo}
+              colonyAddress={colonyData?.colony?.colonyAddress}
             />
-          </MultisigWidget>
-          <DetailsWidget
-            domainId={1}
-            actionType={ColonyActionTypes.PAYMENT}
-            from={detailsWidgetFrom}
-            to={detailsWidgetTo}
-            colonyAddress={colonyData?.colony?.colonyAddress}
-          />
+          )}
         </div>
       </div>
     </div>

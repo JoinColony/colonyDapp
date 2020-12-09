@@ -1,12 +1,12 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { Address } from '~types/index';
 import ColorTag from '~core/ColorTag';
 import Numeral from '~core/Numeral';
+
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useColonyDomainsQuery, AnyToken, OneDomain } from '~data/index';
-import { ColonyActionTypes } from '../types';
+import { Address, ColonyActions } from '~types/index';
 
 import styles from './DetailsWidget.css';
 
@@ -33,23 +33,19 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.value',
     defaultMessage: 'Value',
   },
-  paymentActionType: {
-    id: 'dashboard.ActionsPage.DetailsWidget.paymentActionType',
-    defaultMessage: 'Payment',
-  },
-  transferFundsActionType: {
-    id: 'dashboard.ActionsPage.DetailsWidget.transferFundsActionType',
-    defaultMessage: 'Transfer Funds',
-  },
-  recoveryModeActionType: {
-    id: 'dashboard.ActionsPage.DetailsWidget.recoveryModeActionType',
-    defaultMessage: 'Recovery Mode',
+  actionTypesTitles: {
+    id: 'dashboard.ActionsPage.DetailsWidget.actionTypesTitles',
+    defaultMessage: `{actionType, select,
+      Payment {Payment}
+      Recovery {Recovery Mode}
+      other {Generic Action}
+    }`,
   },
 });
 
 interface Props {
   domainId?: number;
-  actionType: ColonyActionTypes;
+  actionType: ColonyActions;
   from?: ReactNode;
   to?: ReactNode;
   amount?: number;
@@ -83,7 +79,7 @@ const DetailsWidget = ({
     }
   }, [data, domainId]);
   return (
-    <div className={styles.wrapper}>
+    <div>
       {activeTeam && (
         <div className={styles.item}>
           <div className={styles.label}>
@@ -100,7 +96,10 @@ const DetailsWidget = ({
           <FormattedMessage {...MSG.actionType} />
         </div>
         <div className={styles.value}>
-          <FormattedMessage {...MSG[actionType]} />
+          <FormattedMessage
+            {...MSG.actionTypesTitles}
+            values={{ actionType }}
+          />
         </div>
       </div>
       {from && (
