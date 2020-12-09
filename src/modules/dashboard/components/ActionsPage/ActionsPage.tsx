@@ -351,24 +351,26 @@ const ActionsPage = () => {
         </div>
         <div className={styles.details}>
           {actionType === ColonyActions.Recovery ? (
-            <InputStorageWidget />
-            <MultisigWidget
-              // Mocking for now
-              membersAllowedForApproval={Array.from(
-                Array(10),
-                () => initiatorWalletAddress,
-              )}
-              requiredNumber={4}
-              requiredPermission={ColonyRole.Recovery}
-            >
-              <Button
-                text={{ id: 'button.approve' }}
-                appearance={{
-                  theme: 'primary',
-                  size: 'medium',
-                }}
-              />
-            </MultisigWidget>
+            <>
+              <InputStorageWidget />
+              <MultisigWidget
+                // Mocking for now
+                membersAllowedForApproval={Array.from(
+                  Array(10),
+                  () => initiatorWalletAddress,
+                )}
+                requiredNumber={4}
+                requiredPermission={ColonyRole.Recovery}
+              >
+                <Button
+                  text={{ id: 'button.approve' }}
+                  appearance={{
+                    theme: 'primary',
+                    size: 'medium',
+                  }}
+                />
+              </MultisigWidget>
+            </>
           ) : (
             <DetailsWidget
               domainId={1}
