@@ -5,19 +5,8 @@
   width: 100%;
 }
 
-.rect {
-  display: block;
-  margin-top: 8px;
-  height: 10px;
-  width: 10px;
-  background-color: var(--primary);
-  transform: rotate(135deg);
-}
-
-.rectContainer {
-  display: flex;
-  justify-content: center;
-  width: 60px;
+.status {
+  margin: 0 9px 0 25px;
 }
 
 .details {

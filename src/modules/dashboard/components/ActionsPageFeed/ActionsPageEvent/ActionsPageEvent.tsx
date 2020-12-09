@@ -2,13 +2,14 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
-import { TransactionMeta } from '~dashboard/ActionsPage';
+import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
 import UserPermissions from '~dashboard/UserPermissions';
 
 import { AnyUser } from '~data/index';
 import { getFriendlyName } from '../../../../users/transformers';
 import { PaymentDetails } from '../ActionsPageFeed';
 import EventMSG from '../messages';
+import { STATUS } from '../../ActionsPage/types';
 
 import styles from './ActionsPageEvent.css';
 
@@ -40,8 +41,8 @@ const ActionsPageEvent = ({
 
   return (
     <div className={styles.main}>
-      <div className={styles.rectContainer}>
-        <span className={styles.rect} />
+      <div className={styles.status}>
+        <TransactionStatus status={STATUS.Succeeded} showTooltip={false} />
       </div>
       <div className={styles.content}>
         <div className={styles.text}>
