@@ -37,6 +37,11 @@
 
 .themeSucceeded {
   composes: statusTheme;
+  background-color: var(--primary);
+}
+
+.themeSystemMessage {
+  composes: statusTheme;
   border-radius: 0;
   background-color: var(--primary);
   transform: rotate(45deg);

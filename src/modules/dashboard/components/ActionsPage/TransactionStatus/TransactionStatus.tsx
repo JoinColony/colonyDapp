@@ -24,12 +24,13 @@ const displayName = 'dashboard.ActionsPage.TransactionStatus';
 
 interface Props {
   status: STATUS;
+  showTooltip?: boolean;
 }
 
-const TransactionStatus = ({ status }: Props) => (
+const TransactionStatus = ({ status, showTooltip = true }: Props) => (
   <Tooltip
     placement="right"
-    trigger="hover"
+    trigger={showTooltip ? 'hover' : 'disabled'}
     content={
       <div className={styles.tooltip}>
         <FormattedMessage {...MSG.transactionStatus} values={{ status }} />
