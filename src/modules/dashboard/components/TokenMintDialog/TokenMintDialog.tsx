@@ -95,7 +95,7 @@ const TokenMintDialog = ({
               />
             </div>
           </DialogSection>
-          <DialogSection appearance={{ align: 'right' }}>
+          <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
             <Button
               appearance={{ theme: 'secondary', size: 'large' }}
               onClick={cancel}

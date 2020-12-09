@@ -9,7 +9,7 @@ import { useTransformer } from '~utils/hooks';
 import { ItemDataType } from '~core/OmniPicker';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import Dialog from '~core/Dialog';
+import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
@@ -198,31 +198,37 @@ const PermissionManagementDialog = ({
         >
           {({ isSubmitting }: FormikProps<any>) => (
             <div className={styles.dialogContainer}>
-              <Heading
-                appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-                text={MSG.title}
-                textValues={{ domain: domain && domain.name }}
-              />
-              <div className={styles.singleUserContainer}>
-                <SingleUserPicker
-                  data={members}
-                  label={MSG.selectUser}
-                  name="user"
-                  filter={filterUserSelection}
-                  onSelected={setSelectedUser}
-                  renderAvatar={supRenderAvatar}
+              <DialogSection appearance={{ theme: 'heading' }}>
+                <Heading
+                  appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+                  text={MSG.title}
+                  textValues={{ domain: domain && domain.name }}
                 />
-              </div>
-              <PermissionManagementForm
-                currentUserRoles={currentUserRoles}
-                domainId={selectedDomainId}
-                rootAccounts={rootAccounts}
-                userDirectRoles={userDirectRoles}
-                userInheritedRoles={userInheritedRoles}
-                colonyDomains={colonyData.colony.domains}
-                onDomainSelected={setSelectedDomainId}
-              />
-              <div className={styles.dialogFooterSection}>
+              </DialogSection>
+              <DialogSection appearance={{ theme: 'sidePadding' }}>
+                <div className={styles.singleUserContainer}>
+                  <SingleUserPicker
+                    data={members}
+                    label={MSG.selectUser}
+                    name="user"
+                    filter={filterUserSelection}
+                    onSelected={setSelectedUser}
+                    renderAvatar={supRenderAvatar}
+                  />
+                </div>
+              </DialogSection>
+              <DialogSection appearance={{ theme: 'sidePadding' }}>
+                <PermissionManagementForm
+                  currentUserRoles={currentUserRoles}
+                  domainId={selectedDomainId}
+                  rootAccounts={rootAccounts}
+                  userDirectRoles={userDirectRoles}
+                  userInheritedRoles={userInheritedRoles}
+                  colonyDomains={colonyData.colony.domains}
+                  onDomainSelected={setSelectedDomainId}
+                />
+              </DialogSection>
+              <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
                   onClick={cancel}
@@ -234,7 +240,7 @@ const PermissionManagementDialog = ({
                   text={{ id: 'button.confirm' }}
                   type="submit"
                 />
-              </div>
+              </DialogSection>
             </div>
           )}
         </ActionForm>

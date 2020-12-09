@@ -1,7 +1,3 @@
-.dialogContainer {
-  padding: 27px 19px 17px 19px;
-}
-
 .dialogContainer h3 {
   /*
    * @NOTE We can't compose from `inlineEllipsis` here since we're inside an

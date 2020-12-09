@@ -147,7 +147,7 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
                 />
               </div>
             </DialogSection>
-            <DialogSection appearance={{ align: 'right' }}>
+            <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}
                 text={{ id: 'button.cancel' }}
