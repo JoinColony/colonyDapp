@@ -10,6 +10,7 @@ export { default as Select, SelectOption } from './Select';
 export { default as Textarea, TextareaAutoresize } from './Textarea';
 export { default as Radio } from './Radio';
 export { default as RadioGroup } from './RadioGroup';
+export { default as Annotations } from './Annotations';
 
 export { default as asFieldArray } from './asFieldArray';
 
