@@ -1,10 +1,16 @@
 import React from 'react';
+import { FormattedMessage } from 'react-intl';
+import { bigNumberify } from 'ethers/utils';
 
+import Numeral from '~core/Numeral';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import UserPermissions from '~dashboard/UserPermissions';
-import UserMention from '~core/UserMention';
 
-import TextDecorator from '~lib/TextDecorator';
+import { AnyUser } from '~data/index';
+import { ColonyAndExtensionsEvents } from '~types/index';
+import { getFriendlyName } from '../../../../users/transformers';
+import { PaymentDetails } from '../ActionsPageFeed';
+import EventMSG from '../messages';
 
 import styles from './ActionsPageEvent.css';
 
@@ -12,20 +18,28 @@ const displayName = 'dashboard.ActionsPageFeed.ActionsPageEvent';
 
 interface Props {
   eventName?: string;
+  eventValues?: Record<string, any>;
   transactionHash: string;
   createdAt: Date;
+  initiator?: AnyUser;
+  recipient?: AnyUser;
+  payment?: PaymentDetails;
+  emmitedBy?: string;
 }
 
-const ActionsPageEvent = ({ createdAt, transactionHash, eventName }: Props) => {
+const ActionsPageEvent = ({
+  createdAt,
+  transactionHash,
+  eventName,
+  initiator,
+  recipient,
+  payment,
+  emmitedBy,
+  eventValues,
+}: Props) => {
   // @TODO Mocked roles - Please make me smarter
   const roles = [1, 2, 3];
   const directRoles = [1, 2, 3];
-
-  const { Decorate } = new TextDecorator({
-    username: (usernameWithAtSign) => (
-      <UserMention username={usernameWithAtSign.slice(1)} />
-    ),
-  });
 
   return (
     <div className={styles.main}>
@@ -34,7 +48,47 @@ const ActionsPageEvent = ({ createdAt, transactionHash, eventName }: Props) => {
       </div>
       <div className={styles.content}>
         <div className={styles.text}>
-          {eventName && <Decorate>{eventName}</Decorate>}
+          <FormattedMessage
+            {...EventMSG.eventTitle}
+            values={{
+              eventName,
+              initiator: (
+                <span className={styles.decoratedUser}>
+                  {getFriendlyName(initiator)}
+                </span>
+              ),
+              recipient: (
+                <span className={styles.decoratedUser}>
+                  {getFriendlyName(recipient)}
+                </span>
+              ),
+              /*
+               * @NOTE At some point with the help of events we'll be able to get
+               * an actual payment name, rather than an id
+               */
+              payment:
+                eventName === ColonyAndExtensionsEvents.PaymentAdded
+                  ? bigNumberify(eventValues?.paymentId).toNumber()
+                  : 1,
+              amount: (
+                <Numeral
+                  value={payment?.amount || '0'}
+                  /*
+                   * @NOTE We don't need to call `getTokenDecimalsWithFallback` since
+                   * we already did that when passing down the prop
+                   */
+                  unit={payment?.decimals}
+                />
+              ),
+              tokenSymbol: <span>{payment?.symbol || '???'}</span>,
+              eventNameDecorated: (
+                <span className={styles.highlight}>{eventName}</span>
+              ),
+              clientOrExtensionType: (
+                <span className={styles.highlight}>{emmitedBy}</span>
+              ),
+            }}
+          />
         </div>
         <div className={styles.details}>
           <UserPermissions

@@ -36,3 +36,13 @@
   font-size: var(--size-normal);
   color: var(--temp-grey-blue-7);
 }
+
+.highlight {
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.decoratedUser {
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
