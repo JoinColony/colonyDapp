@@ -1,13 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
-import TextDecorator from '~lib/TextDecorator';
 import Heading from '~core/Heading';
-import UserMention from '~core/UserMention';
 import Button from '~core/Button';
-import CopyableAddress from '~core/CopyableAddress';
+import Numeral from '~core/Numeral';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ActionsPageFeed, {
@@ -16,36 +14,28 @@ import ActionsPageFeed, {
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 import InputStorageWidget from './InputStorageWidget';
 
-import MultisigWidget from './MultisigWidget';
-import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
-import TransactionHash, { Hash } from './TransactionHash';
-
 import {
   useColonyActionLazyQuery,
   useUserLazyQuery,
   useColonyFromNameQuery,
   useUser,
   useLoggedInUser,
+  useTokenInfoLazyQuery,
 } from '~data/index';
 import { isTransactionFormat } from '~utils/web3';
 import { STATUS } from './types';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions } from '~types/index';
 
+import MultisigWidget from './MultisigWidget';
+import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
+import TransactionHash, { Hash } from './TransactionHash';
+import ActionsMSG from './messages';
+
 import styles from './ActionsPage.css';
 import NakedMoleImage from '../../../../img/naked-mole.svg';
 
 const MSG = defineMessages({
-  actionTitle: {
-    id: 'dashboard.ActionsPage.actionTitle',
-    defaultMessage: `{name, select,
-      false {Unknown Transaction}
-      other {{name}}
-    } {user, select,
-      false {}
-      other {by {user}}
-    }`,
-  },
   loading: {
     id: 'dashboard.ActionsPage.loading',
     defaultMessage: `Loading Transaction`,
@@ -125,6 +115,11 @@ const ActionsPage = () => {
     { data: userData, loading: userDataLoading },
   ] = useUserLazyQuery();
 
+  const [
+    fetchTokenInfo,
+    { data: tokenData, loading: loadingTokenData },
+  ] = useTokenInfoLazyQuery();
+
   useEffect(() => {
     if (
       transactionHash &&
@@ -141,68 +136,25 @@ const ActionsPage = () => {
   }, [fetchTransction, transactionHash, colonyData]);
 
   useEffect(() => {
-    if (colonyActionData?.colonyAction?.transactionInitiator) {
+    if (colonyActionData?.colonyAction?.recipient) {
+      const { recipient } = colonyActionData?.colonyAction;
       fetchUser({
         variables: {
-          address: colonyActionData.colonyAction.transactionInitiator,
+          address: recipient,
         },
       });
     }
   }, [fetchUser, colonyActionData]);
 
+  useEffect(() => {
+    if (colonyActionData?.colonyAction?.tokenAddress) {
+      const { tokenAddress } = colonyActionData?.colonyAction;
+      fetchTokenInfo({ variables: { address: tokenAddress } });
+    }
+  }, [fetchTokenInfo, colonyActionData]);
+
   const fallbackUserData = useUser(
-    colonyActionData?.colonyAction?.transactionInitiator || '',
-  );
-
-  const { Decorate } = new TextDecorator({
-    username: (usernameWithAtSign) => (
-      <UserMention username={usernameWithAtSign.slice(1)} />
-    ),
-  });
-
-  const titleDynamicValues = useMemo(
-    () => ({
-      user: (() => {
-        /*
-         * @NOTE Using a fallback profile allows us to display a user's address
-         * if he doesn't have a colony profile yet
-         */
-        const {
-          profile: { username, walletAddress },
-        } = userData?.user || fallbackUserData;
-
-        if (username && walletAddress) {
-          return <Decorate key={walletAddress}>{`@${username}`}</Decorate>;
-        }
-        if (walletAddress) {
-          return (
-            /*
-             * @NOTE This might not exist in the final title copy in this format
-             * but most likely we'll have "some" iteration of this for which we'll
-             * use this as base
-             */
-            <span className={styles.addressInTitle}>
-              <CopyableAddress>{walletAddress}</CopyableAddress>
-            </span>
-          );
-        }
-        return false;
-      })(),
-      name: (() => {
-        if (colonyActionData?.colonyAction?.events?.length) {
-          const {
-            events: [event],
-          } = colonyActionData.colonyAction;
-          /*
-           * Display the first event as the page title
-           * We might need to change this in the future
-           */
-          return event.name;
-        }
-        return false;
-      })(),
-    }),
-    [colonyActionData, fallbackUserData, userData],
+    colonyActionData?.colonyAction?.recipient || '',
   );
 
   if (!isTransactionFormat(transactionHash) || colonyActionError) {
@@ -239,8 +191,10 @@ const ActionsPage = () => {
   if (
     colonyActionLoading ||
     userDataLoading ||
+    loadingTokenData ||
     !colonyActionData ||
-    !colonyData
+    !colonyData ||
+    !tokenData
   ) {
     return <LoadingTemplate loadingText={MSG.loading} />;
   }
@@ -253,7 +207,7 @@ const ActionsPage = () => {
   }
 
   const {
-    colonyAction: { hash, status, events, createdAt, actionType },
+    colonyAction: { hash, status, events, createdAt, actionType, amount },
   } = colonyActionData;
 
   const {
@@ -261,8 +215,12 @@ const ActionsPage = () => {
   } = colonyData;
 
   const {
-    profile: { walletAddress },
+    profile: { displayName: userDisplayName, username, walletAddress },
   } = userData?.user || fallbackUserData;
+
+  const {
+    tokenInfo: { decimals, symbol },
+  } = tokenData;
 
   const detailsWidgetFrom = colonyAddress ? (
     <DetailsWidgetTeam domainId={2} colonyAddress={colonyAddress} />
@@ -282,8 +240,17 @@ const ActionsPage = () => {
            */}
           <h1 className={styles.heading}>
             <FormattedMessage
-              {...MSG.actionTitle}
-              values={titleDynamicValues}
+              {...ActionsMSG.actionTitle}
+              values={{
+                actionType,
+                recipient: (
+                  <span className={styles.titleDecoration}>
+                    {userDisplayName || `@${username}` || walletAddress}
+                  </span>
+                ),
+                amount: <Numeral value={amount} unit={decimals} />,
+                tokenSymbol: <span>{symbol}</span>,
+              }}
             />
           </h1>
           {!events?.length && hash && (

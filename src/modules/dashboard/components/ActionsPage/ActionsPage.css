@@ -82,3 +82,7 @@
   font-size: var(--size-medium);
   color: color-mod(var(--dark) alpha(90%));
 }
+
+.titleDecoration {
+  color: var(--pink);
+}
