@@ -6,8 +6,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { getMainClasses } from '~utils/css';
 import TextDecorator from '~lib/TextDecorator';
-import { Address } from '~types/index';
-import { useUser } from '~data/index';
+import { AnyUser } from '~data/index';
 import { getFriendlyName } from '../../../../users/transformers';
 
 import styles from './ActionsPageFeedItem.css';
@@ -16,14 +15,16 @@ const displayName = 'dashboard.ActionsPageFeed.ActionsPageFeedItem';
 
 interface Props {
   comment?: string;
-  walletAddress: Address;
+  user?: AnyUser;
   annotation?: boolean;
   createdAt?: Date | number;
 }
 
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
 const ActionsPageFeedItem = ({
   comment,
-  walletAddress,
+  user,
   createdAt,
   annotation = false,
 }: Props) => {
@@ -32,17 +33,12 @@ const ActionsPageFeedItem = ({
       <UserMention username={usernameWithAtSign.slice(1)} />
     ),
   });
-
-  const UserAvatar = HookedUserAvatar({ fetchUser: false });
-
-  const user = useUser(walletAddress);
-
   return (
     <div className={getMainClasses({}, styles, { annotation })}>
       <div className={styles.avatar}>
         <UserAvatar
           size="xs"
-          address={walletAddress}
+          address={user?.profile.walletAddress || ''}
           user={user}
           showInfo
           notSet={false}
