@@ -8,7 +8,6 @@ import UserPermissions from '~dashboard/UserPermissions';
 import { AnyUser } from '~data/index';
 import { getFriendlyName } from '../../../../users/transformers';
 import { PaymentDetails } from '../ActionsPageFeed';
-import EventMSG from '../messages';
 import { STATUS } from '../../ActionsPage/types';
 
 import styles from './ActionsPageEvent.css';
@@ -47,7 +46,7 @@ const ActionsPageEvent = ({
       <div className={styles.content}>
         <div className={styles.text}>
           <FormattedMessage
-            {...EventMSG.eventTitle}
+            id="event.title"
             values={{
               eventName,
               initiator: (

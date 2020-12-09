@@ -31,7 +31,6 @@ import { STATUS } from './types';
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
-import ActionsMSG from './messages';
 import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './ActionsPage.css';
@@ -289,7 +288,7 @@ const ActionsPage = () => {
            */}
           <h1 className={styles.heading}>
             <FormattedMessage
-              {...ActionsMSG.actionTitle}
+              id="action.title"
               values={{
                 actionType,
                 recipient: (
