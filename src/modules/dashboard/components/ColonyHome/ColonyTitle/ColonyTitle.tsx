@@ -14,6 +14,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyTitle.fallbackColonyName',
     defaultMessage: 'Unknown Colony',
   },
+  copyMessage: {
+    id: 'dashboard.ColonyHome.ColonyTitle.copyMessage',
+    defaultMessage: 'Click to copy colony address',
+  },
 });
 
 type Props = {
@@ -40,7 +44,10 @@ const ColonyTitle = ({
       </div>
       <div>
         {colonyAddress && (
-          <InvisibleCopyableAddress address={colonyAddress}>
+          <InvisibleCopyableAddress
+            address={colonyAddress}
+            copyMessage={MSG.copyMessage}
+          >
             <div className={styles.colonyAddress}>
               <MaskedAddress address={colonyAddress} />
             </div>

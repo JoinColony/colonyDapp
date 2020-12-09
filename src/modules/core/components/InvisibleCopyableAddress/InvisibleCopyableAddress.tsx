@@ -1,5 +1,10 @@
 import React, { ReactNode, useState, useEffect } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+  useIntl,
+} from 'react-intl';
 
 import copyToClipboard from 'copy-to-clipboard';
 import { Address } from '~types/index';
@@ -12,6 +17,8 @@ interface Props {
   children: ReactNode;
   /** Address to display and copy */
   address: Address;
+  /** Text which will display in tooltip when hovering on address */
+  copyMessage?: MessageDescriptor;
 }
 
 const MSG = defineMessages({
@@ -19,15 +26,25 @@ const MSG = defineMessages({
     id: 'InvisibleCopyableAddress.copyAddressTooltip',
     defaultMessage: `{copied, select,
       true {Copied}
-      false {Click to copy colony address}
+      false {{tooltipMessage}}
     }`,
+  },
+  copyMessage: {
+    id: 'InvisibleCopyableAddress.copyMessage',
+    defaultMessage: 'Click to copy address',
   },
 });
 
 const displayName = 'InvisibleCopyableAddress';
 
-const InvisibleCopyableAddress = ({ children, address }: Props) => {
+const InvisibleCopyableAddress = ({
+  children,
+  address,
+  copyMessage,
+}: Props) => {
   const [copied, setCopied] = useState(false);
+  const { formatMessage } = useIntl();
+
   const handleClipboardCopy = () => {
     setCopied(true);
     copyToClipboard(address);
@@ -42,14 +59,19 @@ const InvisibleCopyableAddress = ({ children, address }: Props) => {
       clearTimeout(timeout);
     };
   }, [copied]);
-
+  const tooltipMessage =
+    (copyMessage && formatMessage(copyMessage)) ||
+    formatMessage(MSG.copyMessage);
   return (
     <Tooltip
       placement="right"
       trigger="hover"
       content={
         <div className={styles.copyAddressTooltip}>
-          <FormattedMessage {...MSG.copyAddressTooltip} values={{ copied }} />
+          <FormattedMessage
+            {...MSG.copyAddressTooltip}
+            values={{ copied, tooltipMessage }}
+          />
         </div>
       }
     >
