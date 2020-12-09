@@ -22,15 +22,17 @@ import {
   useLoggedInUser,
   useTokenInfoLazyQuery,
 } from '~data/index';
-import { isTransactionFormat } from '~utils/web3';
-import { STATUS } from './types';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions } from '~types/index';
+import { isTransactionFormat } from '~utils/web3';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { STATUS } from './types';
 
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
 import ActionsMSG from './messages';
+import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './ActionsPage.css';
 import NakedMoleImage from '../../../../img/naked-mole.svg';
@@ -111,8 +113,13 @@ const ActionsPage = () => {
   ] = useColonyActionLazyQuery();
 
   const [
-    fetchUser,
-    { data: userData, loading: userDataLoading },
+    fetchRecipientProfile,
+    { data: recipientProfile, loading: repicientProfileLoading },
+  ] = useUserLazyQuery();
+
+  const [
+    fetchInitiatorProfile,
+    { data: initiatorProfile, loading: initiatorProfileLoading },
   ] = useUserLazyQuery();
 
   const [
@@ -136,15 +143,23 @@ const ActionsPage = () => {
   }, [fetchTransction, transactionHash, colonyData]);
 
   useEffect(() => {
-    if (colonyActionData?.colonyAction?.recipient) {
-      const { recipient } = colonyActionData?.colonyAction;
-      fetchUser({
+    if (colonyActionData?.colonyAction) {
+      const {
+        recipient,
+        transactionInitiator,
+      } = colonyActionData?.colonyAction;
+      fetchRecipientProfile({
         variables: {
           address: recipient,
         },
       });
+      fetchInitiatorProfile({
+        variables: {
+          address: transactionInitiator,
+        },
+      });
     }
-  }, [fetchUser, colonyActionData]);
+  }, [fetchRecipientProfile, fetchInitiatorProfile, colonyActionData]);
 
   useEffect(() => {
     if (colonyActionData?.colonyAction?.tokenAddress) {
@@ -153,8 +168,12 @@ const ActionsPage = () => {
     }
   }, [fetchTokenInfo, colonyActionData]);
 
-  const fallbackUserData = useUser(
+  const fallbackRecipientProfile = useUser(
     colonyActionData?.colonyAction?.recipient || '',
+  );
+
+  const fallbackInitiatorProfile = useUser(
+    colonyActionData?.colonyAction?.transactionInitiator || '',
   );
 
   if (!isTransactionFormat(transactionHash) || colonyActionError) {
@@ -190,7 +209,8 @@ const ActionsPage = () => {
 
   if (
     colonyActionLoading ||
-    userDataLoading ||
+    repicientProfileLoading ||
+    initiatorProfileLoading ||
     loadingTokenData ||
     !colonyActionData ||
     !colonyData ||
@@ -206,18 +226,47 @@ const ActionsPage = () => {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
+  /*
+   * Colony Action
+   */
+
   const {
-    colonyAction: { hash, status, events, createdAt, actionType, amount },
+    colonyAction: {
+      hash,
+      status,
+      events,
+      createdAt,
+      actionType,
+      amount,
+      fromDomain,
+    },
   } = colonyActionData;
 
+  /*
+   * Colony
+   */
   const {
     colony: { colonyAddress },
   } = colonyData;
 
+  /*
+   * Users, both initiator and recipient
+   */
+  const recipientProfileWithFallback =
+    recipientProfile?.user || fallbackRecipientProfile;
   const {
-    profile: { displayName: userDisplayName, username, walletAddress },
-  } = userData?.user || fallbackUserData;
+    profile: { walletAddress: recipientWalletAddress },
+  } = recipientProfileWithFallback;
 
+  const initiatorProfileWithFallback =
+    initiatorProfile?.user || fallbackInitiatorProfile;
+  const {
+    profile: { walletAddress: initiatorWalletAddress },
+  } = initiatorProfileWithFallback;
+
+  /*
+   * Token
+   */
   const {
     tokenInfo: { decimals, symbol },
   } = tokenData;
@@ -226,8 +275,8 @@ const ActionsPage = () => {
     <DetailsWidgetTeam domainId={2} colonyAddress={colonyAddress} />
   ) : null;
 
-  const detailsWidgetTo = walletAddress ? (
-    <DetailsWidgetUser walletAddress={walletAddress} />
+  const detailsWidgetTo = recipientWalletAddress ? (
+    <DetailsWidgetUser walletAddress={recipientWalletAddress} />
   ) : null;
 
   return (
@@ -245,11 +294,16 @@ const ActionsPage = () => {
                 actionType,
                 recipient: (
                   <span className={styles.titleDecoration}>
-                    {userDisplayName || `@${username}` || walletAddress}
+                    {getFriendlyName(recipientProfileWithFallback)}
                   </span>
                 ),
-                amount: <Numeral value={amount} unit={decimals} />,
-                tokenSymbol: <span>{symbol}</span>,
+                amount: (
+                  <Numeral
+                    value={amount}
+                    unit={getTokenDecimalsWithFallback(decimals)}
+                  />
+                ),
+                tokenSymbol: <span>{symbol || '???'}</span>,
               }}
             />
           </h1>
@@ -266,44 +320,43 @@ const ActionsPage = () => {
           )}
           <ActionsPageFeedItem
             createdAt={Date.now()}
-            walletAddress={walletAddress}
+            user={initiatorProfileWithFallback}
             annotation
             comment={`Luke has big plans and the rebellion needs
                     these funds. I had to ‘Force’ this, I just had to!`}
           />
-          {transactionHash && (
-            <>
-              <ActionsPageFeed
-                transactionHash={transactionHash}
-                /*
-                 * @NOTE If in the future they will not be needed on this page
-                 * specifically, consider moving loading of the network events
-                 * directly in the feed, that way, we can load it separately
-                 * while still displaying something to the user
-                 */
-                networkEvents={events}
-              />
-              {/*
-               *  @NOTE A user can comment only if he has a wallet connected
-               * and a registered user profile
-               */}
-              {currentUserName && !ethereal && (
-                <ActionsPageComment
-                  transactionHash={transactionHash}
-                  colonyAddress={colonyAddress}
-                />
-              )}
-            </>
+          <ActionsPageFeed
+            actionType={actionType}
+            transactionHash={transactionHash as string}
+            networkEvents={events}
+            initiator={initiatorProfileWithFallback}
+            recipient={initiatorProfileWithFallback}
+            payment={{
+              amount,
+              symbol,
+              decimals: getTokenDecimalsWithFallback(decimals),
+              fromDomain,
+            }}
+          />
+          {/*
+           *  @NOTE A user can comment only if he has a wallet connected
+           * and a registered user profile
+           */}
+          {currentUserName && !ethereal && (
+            <ActionsPageComment
+              transactionHash={transactionHash as string}
+              colonyAddress={colonyAddress}
+            />
           )}
         </div>
         <div className={styles.details}>
-          {actionType === ColonyActions.Recovery && (
+          {actionType === ColonyActions.Recovery ? (
             <InputStorageWidget />
             <MultisigWidget
               // Mocking for now
               membersAllowedForApproval={Array.from(
                 Array(10),
-                () => walletAddress,
+                () => initiatorWalletAddress,
               )}
               requiredNumber={4}
               requiredPermission={ColonyRole.Recovery}
@@ -316,8 +369,7 @@ const ActionsPage = () => {
                 }}
               />
             </MultisigWidget>
-          )}
-          {actionType === ColonyActions.Payment && (
+          ) : (
             <DetailsWidget
               domainId={1}
               actionType={actionType as ColonyActions}

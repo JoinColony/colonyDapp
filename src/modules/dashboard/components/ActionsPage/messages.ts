@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 import { defineMessages } from 'react-intl';
 
 import { ColonyActions } from '~types/index';
