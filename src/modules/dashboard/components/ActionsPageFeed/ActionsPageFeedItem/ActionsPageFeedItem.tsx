@@ -15,7 +15,7 @@ const displayName = 'dashboard.ActionsPageFeed.ActionsPageFeedItem';
 
 interface Props {
   comment?: string;
-  user?: AnyUser;
+  user?: AnyUser | null;
   annotation?: boolean;
   createdAt?: Date | number;
 }
@@ -39,14 +39,16 @@ const ActionsPageFeedItem = ({
         <UserAvatar
           size="xs"
           address={user?.profile.walletAddress || ''}
-          user={user}
+          user={user as AnyUser}
           showInfo
           notSet={false}
         />
       </div>
       <div className={styles.content}>
         <div className={styles.details}>
-          <span className={styles.username}>{getFriendlyName(user)}</span>
+          <span className={styles.username}>
+            {getFriendlyName(user as AnyUser)}
+          </span>
           {createdAt && <TransactionMeta createdAt={createdAt} />}
         </div>
         <div className={styles.text}>

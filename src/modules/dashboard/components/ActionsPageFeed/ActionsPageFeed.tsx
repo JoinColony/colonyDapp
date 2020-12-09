@@ -61,12 +61,12 @@ const ActionsPageFeed = ({ transactionHash, networkEvents }: Props) => {
         </li>
       ))}
       {data?.transactionMessages.messages.map(
-        ({ initiatorAddress, createdAt, sourceId, context: { message } }) => (
+        ({ initiator, createdAt, sourceId, context: { message } }) => (
           <li key={sourceId}>
             <ActionsPageFeedItem
               createdAt={createdAt}
               comment={message}
-              walletAddress={initiatorAddress}
+              user={initiator}
             />
           </li>
         ),
