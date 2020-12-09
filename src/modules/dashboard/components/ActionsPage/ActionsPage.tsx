@@ -14,6 +14,8 @@ import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
+
+import InputStorageWidget from './InputStorageWidget';
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
@@ -324,6 +326,7 @@ const ActionsPage = () => {
           )}
         </div>
         <div className={styles.details}>
+          <InputStorageWidget />
           <MultisigWidget
             // Mocking for now
             membersAllowedForApproval={Array.from(
