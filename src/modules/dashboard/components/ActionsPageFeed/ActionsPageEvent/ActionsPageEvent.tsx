@@ -1,13 +1,11 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { bigNumberify } from 'ethers/utils';
 
 import Numeral from '~core/Numeral';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import UserPermissions from '~dashboard/UserPermissions';
 
 import { AnyUser } from '~data/index';
-import { ColonyAndExtensionsEvents } from '~types/index';
 import { getFriendlyName } from '../../../../users/transformers';
 import { PaymentDetails } from '../ActionsPageFeed';
 import EventMSG from '../messages';
@@ -35,7 +33,6 @@ const ActionsPageEvent = ({
   recipient,
   payment,
   emmitedBy,
-  eventValues,
 }: Props) => {
   // @TODO Mocked roles - Please make me smarter
   const roles = [1, 2, 3];
@@ -66,10 +63,7 @@ const ActionsPageEvent = ({
                * @NOTE At some point with the help of events we'll be able to get
                * an actual payment name, rather than an id
                */
-              payment:
-                eventName === ColonyAndExtensionsEvents.PaymentAdded
-                  ? bigNumberify(eventValues?.paymentId).toNumber()
-                  : 1,
+              paymentId: payment?.fromDomain || 1,
               amount: (
                 <Numeral
                   value={payment?.amount || '0'}

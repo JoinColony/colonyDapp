@@ -8,7 +8,7 @@ const MSG = defineMessages({
   eventTitle: {
     id: 'dashboard.ActionsPage.eventTitle',
     defaultMessage: `{eventName, select,
-      ${ColonyAndExtensionsEvents.PaymentAdded} {{initiator} created {payment} to pay {amount} {tokenSymbol} to {recipient}}
+      ${ColonyAndExtensionsEvents.PaymentAdded} {{initiator} paid {amount} {tokenSymbol} from {paymentId} to {recipient}}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
   },
