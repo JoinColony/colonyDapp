@@ -86,7 +86,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  cancel: () => void;
+  back: () => void;
   colony: Colony;
   subscribedUsers: AnyUser[];
 }
@@ -98,7 +98,7 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
 );
 
 const CreatePaymentDialogForm = ({
-  cancel,
+  back,
   colony,
   colony: { colonyAddress, domains, tokens },
   subscribedUsers,
@@ -109,8 +109,8 @@ const CreatePaymentDialogForm = ({
   values,
 }: Props & FormikProps<FormValues>) => {
   const { tokenAddress, amount } = values;
-  const fromDomain = values.fromDomain
-    ? parseInt(values.fromDomain, 10)
+  const domainId = values.domainId
+    ? parseInt(values.domainId, 10)
     : ROOT_DOMAIN_ID;
 
   const selectedToken = useMemo(
@@ -132,7 +132,7 @@ const CreatePaymentDialogForm = ({
   const fromDomainRoles = useTransformer(getUserRolesForDomain, [
     colony,
     walletAddress,
-    fromDomain,
+    domainId,
   ]);
 
   const domainOptions = useMemo(
@@ -159,25 +159,25 @@ const CreatePaymentDialogForm = ({
         variables: {
           colonyAddress,
           tokenAddresses: [tokenAddress],
-          domainIds: [fromDomain],
+          domainIds: [domainId],
         },
       });
     }
-  }, [colonyAddress, tokenAddress, fromDomain, loadTokenBalances]);
+  }, [colonyAddress, tokenAddress, domainId, loadTokenBalances]);
 
   const fromDomainTokenBalance = useMemo(() => {
     const token =
       tokenBalancesData &&
       tokenBalancesData.tokens.find(({ address }) => address === tokenAddress);
-    return token && getBalanceFromToken(token, fromDomain);
-  }, [fromDomain, tokenAddress, tokenBalancesData]);
+    return token && getBalanceFromToken(token, domainId);
+  }, [domainId, tokenAddress, tokenBalancesData]);
 
   useEffect(() => {
     const errors: {
       amount?: any;
     } = {};
 
-    if (!selectedToken || !(amount && amount.length)) {
+    if (!selectedToken || !amount) {
       errors.amount = undefined; // silent error
     } else {
       const convertedAmount = bigNumberify(
@@ -197,7 +197,7 @@ const CreatePaymentDialogForm = ({
     setErrors(errors);
   }, [
     amount,
-    fromDomain,
+    domainId,
     fromDomainRoles,
     fromDomainTokenBalance,
     selectedToken,
@@ -239,7 +239,7 @@ const CreatePaymentDialogForm = ({
             <Select
               options={domainOptions}
               label={MSG.from}
-              name="fromDomain"
+              name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
               disabled={!userHasPermission}
             />
@@ -275,7 +275,7 @@ const CreatePaymentDialogForm = ({
             appearance={{ width: 'wide' }}
             data={subscribedUsers}
             label={MSG.to}
-            name="toAssignee"
+            name="recipient"
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
             disabled={!userHasPermission}
@@ -322,9 +322,7 @@ const CreatePaymentDialogForm = ({
                    * Just entering the decimal point will pass it through to EthUsd
                    * and that will try to fetch the balance for, which, obviously, will fail
                    */
-                  values.amount && values.amount.length && values.amount !== '.'
-                    ? values.amount
-                    : 0
+                  values.amount && values.amount !== '.' ? values.amount : '0'
                 }
               />
             </div>
@@ -364,7 +362,7 @@ const CreatePaymentDialogForm = ({
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={cancel}
+          onClick={back}
           text={{ id: 'button.back' }}
         />
         {/**

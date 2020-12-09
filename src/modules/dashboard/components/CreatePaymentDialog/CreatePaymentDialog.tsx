@@ -1,22 +1,22 @@
 import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
-import moveDecimal from 'move-decimal-point';
-import { bigNumberify } from 'ethers/utils';
 import { useQuery } from '@apollo/client';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
+import { useHistory } from 'react-router-dom';
 
-import { pipe, mapPayload, withKey } from '~utils/actions';
+import Dialog, { DialogProps } from '~core/Dialog';
+import { ActionForm } from '~core/Fields';
+
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import Dialog from '~core/Dialog';
-import { ActionForm } from '~core/Fields';
-import { SpinnerLoader } from '~core/Preloaders';
-import { useColonyQuery, ColonySubscribedUsersDocument } from '~data/index';
+import { ColonySubscribedUsersDocument, Colony } from '~data/index';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { pipe, withMeta, mapPayload } from '~utils/actions';
+import { WizardDialogType } from '~utils/hooks';
 
 import DialogForm from './CreatePaymentDialogForm';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 const MSG = defineMessages({
   noAmount: {
@@ -30,23 +30,43 @@ const MSG = defineMessages({
 });
 
 export interface FormValues {
-  fromDomain?: string;
-  toAssignee?: string;
+  domainId: string;
+  recipient: Address;
   amount: string;
-  tokenAddress?: Address;
-  annotation?: string;
+  tokenAddress: Address;
+  annotation: string;
 }
 
-interface Props {
-  cancel: () => void;
-  close: (params: object) => void;
-  colonyAddress: Address;
+interface CustomWizardDialogProps {
+  prevStep: string;
+  colony: Colony;
 }
 
-const CreatePaymentDialog = ({ colonyAddress, cancel, close }: Props) => {
+type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+
+const displayName = 'dashboard.CreatePaymentDialog';
+
+const CreatePaymentDialog = ({
+  colony: { tokens = [], colonyAddress, nativeTokenAddress, colonyName },
+  colony,
+  callStep,
+  prevStep,
+  cancel,
+  close,
+}: Props) => {
+  const history = useHistory();
+
   const validationSchema = yup.object().shape({
-    fromDomain: yup.number().required(),
-    toAssignee: yup.number().required(),
+    domainId: yup.number().required(),
+    recipient: yup
+      .object()
+      .shape({
+        profile: yup.object().shape({
+          walletAddress: yup.string().required(),
+        }),
+      })
+      .nullable()
+      .default(null),
     amount: yup
       .string()
       .required()
@@ -55,70 +75,71 @@ const CreatePaymentDialog = ({ colonyAddress, cancel, close }: Props) => {
     annotation: yup.string().max(4000),
   });
 
-  const { data: colonyData } = useColonyQuery({
-    variables: { address: colonyAddress },
-  });
-
   const { data: subscribedUsersData } = useQuery(
     ColonySubscribedUsersDocument,
     { variables: { colonyAddress } },
   );
 
-  const tokens = (colonyData && colonyData.colony.tokens) || [];
-  const nativeTokenAddress = colonyData && colonyData.colony.nativeTokenAddress;
-
   const transform = useCallback(
     pipe(
       mapPayload((payload) => {
+        const {
+          amount,
+          tokenAddress,
+          domainId,
+          recipient: {
+            profile: { walletAddress },
+          },
+        } = payload;
+
         // Find the selected token's decimals
         const selectedToken = tokens.find(
-          (token) => token.address === payload.tokenAddress,
+          (token) => token.address === tokenAddress,
         );
         const decimals = getTokenDecimalsWithFallback(
           selectedToken && selectedToken.decimals,
         );
 
-        // Convert amount string with decimals to BigInt (eth to wei)
-        const amount = bigNumberify(moveDecimal(payload.amount, decimals));
-
         return {
-          ...payload,
+          colonyName,
           colonyAddress,
-          amount,
-          fromDomain: parseInt(payload.fromDomain, 10),
-          toAssignee: parseInt(payload.toAssignee, 10),
+          recipientAddress: walletAddress,
+          domainId,
+          singlePayment: {
+            tokenAddress,
+            amount,
+            decimals,
+          },
         };
       }),
-      withKey(colonyAddress),
+      withMeta({ history }),
     ),
-    [colonyAddress, tokens],
+    [],
   );
 
   return (
     <ActionForm
       initialValues={{
-        fromDomain: ROOT_DOMAIN_ID.toString(),
-        toAssignee: undefined,
-        amount: '',
+        domainId: ROOT_DOMAIN_ID.toString(),
+        recipient: undefined,
+        amount: undefined,
         tokenAddress: nativeTokenAddress,
-        annotation: '',
+        annotation: undefined,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.MOVE_FUNDS_BETWEEN_POTS}
-      error={ActionTypes.MOVE_FUNDS_BETWEEN_POTS_ERROR}
-      // Close dialog immediately to give way for GasStation
-      success={ActionTypes.MOVE_FUNDS_BETWEEN_POTS}
-      onSuccess={close}
+      submit={ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT}
+      error={ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR}
+      success={ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS}
       transform={transform}
+      onSuccess={close}
     >
       {(formValues: FormikProps<FormValues>) => {
-        if (!colonyData) return <SpinnerLoader />;
         return (
           <Dialog cancel={cancel}>
             <DialogForm
               {...formValues}
-              colony={colonyData.colony}
-              cancel={cancel}
+              colony={colony}
+              back={() => callStep(prevStep)}
               subscribedUsers={subscribedUsersData.colony.subscribedUsers}
             />
           </Dialog>
@@ -128,6 +149,6 @@ const CreatePaymentDialog = ({ colonyAddress, cancel, close }: Props) => {
   );
 };
 
-CreatePaymentDialog.displayName = 'dashboard.CreatePaymentDialog';
+CreatePaymentDialog.displayName = displayName;
 
 export default CreatePaymentDialog;
