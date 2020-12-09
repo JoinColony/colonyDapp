@@ -13,6 +13,7 @@ export * from './keyTypes';
 export * from './DefaultValues';
 export * from './RecordToJS';
 export * from './context';
+export * from './colonyActions';
 
 export type WithKey = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
