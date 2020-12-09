@@ -112,11 +112,12 @@
 }
 
 .themeGrid {
-  background-color: rgb(249, 250, 250);
+  margin-bottom: 7px;
+  padding: 10px 14px;
   border: 1px solid var(--temp-grey-blue-4);
+  background-color: rgb(249, 250, 250);
   box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.15);
   outline-color: var(--primary);
-  padding: 10px 14px;
 }
 
 .themeGrid[aria-expanded="false"]:focus {

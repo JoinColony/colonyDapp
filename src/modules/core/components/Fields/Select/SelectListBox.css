@@ -40,13 +40,13 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  padding: 10px;
   width: 108px;
+  border: 1px solid rgb(241, 242, 245);
+  border-radius: var(--radius-normal);
   background-color: rgb(255, 255, 255);
-  border: 1px solid #F1F2F5;
   box-sizing: border-box;
   box-shadow: var(--box-shadow-medium);
-  border-radius: var(--radius-normal);
-  padding: 10px;
 }
 
 .themeGrid li {
