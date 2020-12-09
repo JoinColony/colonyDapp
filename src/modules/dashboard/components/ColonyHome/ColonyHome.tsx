@@ -5,7 +5,9 @@ import { parse as parseQS } from 'query-string';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Alert from '~core/Alert';
+import { Color } from '~core/ColorTag';
 import { DialogActionButton } from '~core/Button';
+import ColorSelect from '~core/ColorSelect';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
@@ -78,6 +80,9 @@ const ColonyHome = ({ match, location }: Props) => {
   const { colonyName } = match.params;
   const { walletAddress } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
+  // This is just for testing
+  const [selectedColor, setSelectedColor] = useState<Color>(Color.Yellow);
+  const onColorChange = (color: Color) => setSelectedColor(color);
 
   const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
     domainFilter: string | undefined;
@@ -168,7 +173,6 @@ const ColonyHome = ({ match, location }: Props) => {
     data.colony,
     parseInt(networkVersion || '0', 10),
   );
-
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
@@ -180,6 +184,11 @@ const ColonyHome = ({ match, location }: Props) => {
         </aside>
         <div className={styles.mainContent}>
           <ColonyTotalFunds colony={colony} />
+
+          <ColorSelect
+            activeOption={selectedColor}
+            onColorChange={onColorChange}
+          />
           <div className={styles.contentActionsPanel}>
             <div className={styles.domainsDropdownContainer}>
               <DomainDropdown
