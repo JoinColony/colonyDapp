@@ -1,4 +1,5 @@
 @value marginSize: 16px;
+@value wideButton: 160px;
 
 .tokenChoiceContainer {
   max-height: 250px;

@@ -8,14 +8,14 @@
 
 .main {
   width: 560px;
-  border-radius: var(--radius-large);
+  border-radius: var(--radius-normal);
   background-color: var(--colony-white);
 }
 
 .dialogOuterActions {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 5px;
+  margin-bottom: 12px;
 }
 
 .closeIconButton {

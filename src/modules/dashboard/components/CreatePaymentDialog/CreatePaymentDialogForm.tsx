@@ -221,7 +221,7 @@ const CreatePaymentDialogForm = ({
 
   return (
     <>
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'heading' }}>
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
           text={MSG.title}
@@ -365,7 +365,7 @@ const CreatePaymentDialogForm = ({
           </span>
         </DialogSection>
       )}
-      <DialogSection appearance={{ align: 'right' }}>
+      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
           onClick={cancel}
@@ -380,6 +380,7 @@ const CreatePaymentDialogForm = ({
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
           disabled={!isValid}
+          style={{ width: styles.wideButton }}
         />
       </DialogSection>
     </>

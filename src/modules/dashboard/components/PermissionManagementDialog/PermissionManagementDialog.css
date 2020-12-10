@@ -1,6 +1,4 @@
-.dialogContainer {
-  padding: 27px 19px 17px 19px;
-}
+@value wideButton: 160px;
 
 .dialogContainer h3 {
   /*

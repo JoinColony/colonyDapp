@@ -1,3 +1,4 @@
+export const wideButton: string;
 export const tokenAmount: string;
 export const tokenAmountSelect: string;
 export const tokenAmountUsd: string;

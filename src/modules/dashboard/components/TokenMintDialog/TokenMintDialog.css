@@ -1,3 +1,5 @@
+@value wideButton: 160px;
+
 .inputContainer {
   display: flex;
   align-items: center;

@@ -1,3 +1,4 @@
+export const wideButton: string;
 export const inputContainer: string;
 export const inputComponent: string;
 export const nativeToken: string;

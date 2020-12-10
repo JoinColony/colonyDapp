@@ -174,12 +174,14 @@ const ColonyPermissionsAddDialog = ({
           {({ isSubmitting }: FormikProps<any>) => {
             return (
               <div className={styles.dialogContainer}>
-                <Heading
-                  appearance={{ size: 'medium', margin: 'none' }}
-                  text={MSG.title}
-                  textValues={{ domain: domain && domain.name }}
-                />
-                <div>
+                <DialogSection appearance={{ theme: 'heading' }}>
+                  <Heading
+                    appearance={{ size: 'medium', margin: 'none' }}
+                    text={MSG.title}
+                    textValues={{ domain: domain && domain.name }}
+                  />
+                </DialogSection>
+                <DialogSection appearance={{ theme: 'sidePadding' }}>
                   <InputLabel label={MSG.selectUser} />
                   <SingleUserPicker
                     appearance={{ width: 'wide' }}
@@ -192,17 +194,19 @@ const ColonyPermissionsAddDialog = ({
                     onSelected={updateSelectedUser}
                     renderAvatar={supRenderAvatar}
                   />
-                </div>
-                <PermissionManagementForm
-                  currentUserRoles={currentUserRoles}
-                  domainId={domainId}
-                  rootAccounts={rootAccounts}
-                  userDirectRoles={userDirectRoles}
-                  userInheritedRoles={userInheritedRoles}
-                  colonyDomains={colonyData.colony.domains}
-                  onDomainSelected={setSelectedDomainId}
-                />
-                <DialogSection appearance={{ align: 'right' }}>
+                </DialogSection>
+                <DialogSection appearance={{ theme: 'sidePadding' }}>
+                  <PermissionManagementForm
+                    currentUserRoles={currentUserRoles}
+                    domainId={domainId}
+                    rootAccounts={rootAccounts}
+                    userDirectRoles={userDirectRoles}
+                    userInheritedRoles={userInheritedRoles}
+                    colonyDomains={colonyData.colony.domains}
+                    onDomainSelected={setSelectedDomainId}
+                  />
+                </DialogSection>
+                <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
                   <Button
                     appearance={{ theme: 'secondary', size: 'large' }}
                     onClick={cancel}
@@ -214,6 +218,7 @@ const ColonyPermissionsAddDialog = ({
                     text={{ id: 'button.confirm' }}
                     disabled={!selectedUserAddress}
                     type="submit"
+                    style={{ width: styles.wideButton }}
                   />
                 </DialogSection>
               </div>

@@ -233,7 +233,7 @@ const TransferFundsDialogForm = ({
   return (
     <>
       <FormStatus status={status} />
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'heading' }}>
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
           text={MSG.title}
@@ -344,7 +344,7 @@ const TransferFundsDialogForm = ({
           />
         </div>
       </DialogSection>
-      <DialogSection appearance={{ align: 'right' }}>
+      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
           onClick={cancel}
@@ -356,6 +356,7 @@ const TransferFundsDialogForm = ({
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
           disabled={!isValid}
+          style={{ width: styles.wideButton }}
         />
       </DialogSection>
     </>
