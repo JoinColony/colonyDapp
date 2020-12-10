@@ -1,12 +1,15 @@
-import React, { ReactNode, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import ColorTag from '~core/ColorTag';
 import Numeral from '~core/Numeral';
+import DetailsWidgetUser from '~core/DetailsWidgetUser';
 
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { useColonyDomainsQuery, AnyToken, OneDomain } from '~data/index';
-import { Address, ColonyActions } from '~types/index';
+import { Colony, AnyUser } from '~data/index';
+import { ColonyActions } from '~types/index';
+import { PaymentDetails } from '../../ActionsPageFeed/ActionsPageFeed';
+
+import DetailsWidgetTeam from './DetailsWidgetTeam';
 
 import styles from './DetailsWidget.css';
 
@@ -44,50 +47,48 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  domainId?: number;
+  activeDomainId?: number;
   actionType: ColonyActions;
-  from?: ReactNode;
-  to?: ReactNode;
-  amount?: number;
-  token?: AnyToken;
-  colonyAddress?: Address;
+  recipient?: AnyUser;
+  colony: Colony;
+  payment?: PaymentDetails;
 }
 
 const DetailsWidget = ({
-  domainId,
+  activeDomainId,
   actionType,
-  from,
-  to,
-  amount,
-  token,
-  colonyAddress,
+  recipient,
+  colony,
+  payment,
 }: Props) => {
-  const [activeTeam, setActiveTeam] = useState<OneDomain | undefined>();
-
-  const { data } = useColonyDomainsQuery({
-    variables: { colonyAddress: colonyAddress || '' },
-  });
-
-  useEffect(() => {
-    if (data) {
-      const domain = data.colony.domains.find(
-        ({ ethDomainId }) => Number(domainId) === ethDomainId,
+  const activeDomain = useMemo(() => {
+    if (colony?.domains) {
+      return colony?.domains?.find(
+        ({ ethDomainId }) => ethDomainId === activeDomainId,
       );
-      if (domain) {
-        setActiveTeam(domain);
-      }
     }
-  }, [data, domainId]);
+    return null;
+  }, [colony, activeDomainId]);
+
+  const paymentDomain = useMemo(() => {
+    if (payment?.fromDomain) {
+      return colony?.domains?.find(
+        ({ ethDomainId }) => ethDomainId === payment.fromDomain,
+      );
+    }
+    return null;
+  }, [colony, payment]);
+
   return (
     <div>
-      {activeTeam && (
+      {activeDomain && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.activeTeam} />
           </div>
           <div className={styles.value}>
-            {activeTeam.color && <ColorTag color={activeTeam.color} />}
-            {` ${activeTeam?.name}`}
+            {activeDomain.color && <ColorTag color={activeDomain.color} />}
+            {` ${activeDomain.name}`}
           </div>
         </div>
       )}
@@ -102,32 +103,42 @@ const DetailsWidget = ({
           />
         </div>
       </div>
-      {from && (
+      {paymentDomain && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.from} />
           </div>
-          <div className={styles.value}>{from}</div>
+          <div className={styles.value}>
+            <DetailsWidgetTeam domain={paymentDomain} />
+          </div>
         </div>
       )}
-      {to && (
+      {recipient && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.to} />
           </div>
-          <div className={styles.value}>{to}</div>
+          <div className={styles.value}>
+            <DetailsWidgetUser
+              walletAddress={recipient.profile.walletAddress}
+            />
+          </div>
         </div>
       )}
-      {token && amount && (
+      {payment && payment.amount && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.value} />
           </div>
           <div className={styles.value}>
             <Numeral
-              value={amount}
-              unit={getTokenDecimalsWithFallback(token.decimals)}
-              suffix={` ${token.symbol}`}
+              value={payment.amount}
+              /*
+               * @NOTE We don't need to call `getTokenDecimalsWithFallback` since
+               * we already did that when passing down the prop
+               */
+              unit={payment.decimals}
+              suffix={` ${payment.symbol}`}
             />
           </div>
         </div>

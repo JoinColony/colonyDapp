@@ -6,7 +6,6 @@ import { ColonyRole } from '@colony/colony-js';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Numeral from '~core/Numeral';
-import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import FriendlyUserName from '~core/FriendlyUserName';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ActionsPageFeed, {
@@ -30,7 +29,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { STATUS } from './types';
 
 import MultisigWidget from './MultisigWidget';
-import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
+import DetailsWidget from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
 
 import styles from './ActionsPage.css';
@@ -253,10 +252,6 @@ const ActionsPage = () => {
    */
   const recipientProfileWithFallback =
     recipientProfile?.user || fallbackRecipientProfile;
-  const {
-    profile: { walletAddress: recipientWalletAddress },
-  } = recipientProfileWithFallback;
-
   const initiatorProfileWithFallback =
     initiatorProfile?.user || fallbackInitiatorProfile;
   const {
@@ -269,14 +264,6 @@ const ActionsPage = () => {
   const {
     tokenInfo: { decimals, symbol },
   } = tokenData;
-
-  const detailsWidgetFrom = colonyAddress ? (
-    <DetailsWidgetTeam domainId={2} colonyAddress={colonyAddress} />
-  ) : null;
-
-  const detailsWidgetTo = recipientWalletAddress ? (
-    <DetailsWidgetUser walletAddress={recipientWalletAddress} />
-  ) : null;
 
   return (
     <div className={styles.main}>
@@ -375,11 +362,16 @@ const ActionsPage = () => {
             </>
           ) : (
             <DetailsWidget
-              domainId={1}
+              activeDomainId={1}
               actionType={actionType as ColonyActions}
-              from={detailsWidgetFrom}
-              to={detailsWidgetTo}
-              colonyAddress={colonyData?.colony?.colonyAddress}
+              recipient={recipientProfileWithFallback}
+              colony={colonyData?.colony}
+              payment={{
+                amount,
+                symbol,
+                decimals: getTokenDecimalsWithFallback(decimals),
+                fromDomain,
+              }}
             />
           )}
         </div>
