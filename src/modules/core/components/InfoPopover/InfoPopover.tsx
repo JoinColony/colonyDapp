@@ -63,11 +63,6 @@ const InfoPopover = ({
         />
       );
     }
-    /*
-     * @TODO Refactor TokenInfo in the same way UserInfo was
-     *
-     * To be able to display the popover, even if the token data is not available
-     */
     if ('token' in contentProps && typeof contentProps.token !== 'undefined') {
       const { isTokenNative, token } = contentProps;
       return <TokenInfoPopover token={token} isTokenNative={!!isTokenNative} />;
