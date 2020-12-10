@@ -10,8 +10,18 @@ import styles from './FriendlyUserName.css';
 const displayName = 'FriendlyUserName';
 
 interface Props {
+  /*
+   * The user object to display
+   */
   user: AnyUser;
+  /*
+   * Whether to show a masked address or a full one
+   */
   maskedAddress?: boolean;
+  /*
+   * Whether to apply the "shrink tech font by 1px" logic
+   */
+  autoShrinkAddress?: boolean;
 }
 
 const FriendlyUserName = ({
@@ -19,6 +29,7 @@ const FriendlyUserName = ({
     profile: { displayName: userDisplayName, username, walletAddress },
   },
   maskedAddress = true,
+  autoShrinkAddress = false,
 }: Props) => {
   const addressRef = useRef<HTMLElement>(null);
 
@@ -38,12 +49,12 @@ const FriendlyUserName = ({
    * size to be 1px smaller than the rest of the text
    */
   useEffect(() => {
-    if (addressRef?.current) {
+    if (autoShrinkAddress && addressRef?.current) {
       const computedStyles = getComputedStyle(addressRef.current);
       const inheritedFontSize = removeValueUnits(computedStyles.fontSize);
       addressRef.current.style.fontSize = `${inheritedFontSize - 1}px`;
     }
-  }, [addressRef]);
+  }, [addressRef, autoShrinkAddress]);
   return (
     <div className={styles.main}>
       {userDisplayName || (username && `@${username}`) || (

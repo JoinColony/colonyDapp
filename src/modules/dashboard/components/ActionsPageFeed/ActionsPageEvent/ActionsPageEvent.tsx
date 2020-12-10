@@ -51,12 +51,18 @@ const ActionsPageEvent = ({
               eventName,
               initiator: (
                 <span className={styles.decoratedUser}>
-                  <FriendlyUserName user={initiator as AnyUser} />
+                  <FriendlyUserName
+                    user={initiator as AnyUser}
+                    autoShrinkAddress
+                  />
                 </span>
               ),
               recipient: (
                 <span className={styles.decoratedUser}>
-                  <FriendlyUserName user={recipient as AnyUser} />
+                  <FriendlyUserName
+                    user={recipient as AnyUser}
+                    autoShrinkAddress
+                  />
                 </span>
               ),
               /*
