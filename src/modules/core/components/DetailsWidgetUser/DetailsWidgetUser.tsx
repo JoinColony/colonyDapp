@@ -25,6 +25,7 @@ const DetailsWidgetUser = ({ walletAddress }: Props) => {
       <UserAvatar
         size="s"
         notSet={false}
+        user={userProfile}
         address={walletAddress || ''}
         showInfo
       />
