@@ -42,12 +42,29 @@ function* createPaymentAction({
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     /*
-     * @TODO Add back checks for the various payload values
+     * Validate the required values for the payment
      */
-    // if (!workerAddress)
-    //   throw new Error(`Worker not assigned for task ${draftId}`);
-    // if (!domainId) throw new Error(`Domain not set for task ${draftId}`);
-    // if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
+    if (!recipientAddress) {
+      throw new Error('Recipient not assigned for OneTxPayment transaction');
+    }
+    if (!domainId) {
+      throw new Error('Domain not set for OneTxPayment transaction');
+    }
+    if (!singlePayment) {
+      throw new Error('Payment details not set for OneTxPayment transaction');
+    } else {
+      if (!singlePayment.amount) {
+        throw new Error('Payment amount not set for OneTxPayment transaction');
+      }
+      if (!singlePayment.tokenAddress) {
+        throw new Error('Payment token not set for OneTxPayment transaction');
+      }
+      if (!singlePayment.decimals) {
+        throw new Error(
+          'Payment token decimals not set for OneTxPayment transaction',
+        );
+      }
+    }
 
     const { amount, tokenAddress, decimals = 18 } = singlePayment;
 
@@ -75,12 +92,11 @@ function* createPaymentAction({
       payload: { hash: txHash },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
 
-    /*
-     * Maybe redirect to the action page here, since we already have a hash ?
-     */
-
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
+    /*
+     * Redirect the user to the actions page
+     */
     if (history && colonyName) {
       yield call(history.push, `/colony/${colonyName}/tx/${txHash}`);
     }
