@@ -11,6 +11,9 @@ while [ $# -gt 0 ]; do
     --skip-oracle-build)
       SKIP_ORACLE_BUILD=true
       ;;
+    --skip-subgraph-build)
+      SKIP_SUBGRAPH_BUILD=true
+      ;;
     *)
       echo "Invalid argument: $1"
       exit 1
@@ -24,6 +27,7 @@ LIB_PATH="src/lib"
 NETWORK="colonyNetwork"
 SERVER="colonyServer"
 ORACLE="mock-oracle"
+SUBGRAPH="subgraph"
 
 ROOT_PATH=$(pwd)
 
@@ -36,6 +40,15 @@ log() {
   # Weights
   BOLD=`tput bold`
   echo "${GREEN}${BOLD}$1${NC}"
+}
+
+warn() {
+  # Colors
+  RED=`tput setaf 1`
+  NC=`tput sgr0`
+  # Weights
+  BOLD=`tput bold`
+  echo "${RED}${BOLD}$1${NC}"
 }
 
 cp .env.example .env
@@ -72,6 +85,18 @@ then
     log "Generating the '${ORACLE}' submodule .env file"
     printf "PORT=3001\nHOST=0.0.0.0\nGANACHE_ACCOUNTS_PATH=../colonyNetwork/ganache-accounts.json" >> .env
     log "Installing the '${ORACLE}' submodule node_modules"
+    npm install
+    cd ${ROOT_PATH}
+fi
+
+# Subgraph
+if [ "$SKIP_SUBGRAPH_BUILD" != true ]
+then
+    warn "If this is your first time installing, @graphprotocol/graph-ts will take a long time"
+    echo
+    log "Building the '${SUBGRAPH}' submodule"
+    cd "${ROOT_PATH}/${LIB_PATH}/${SUBGRAPH}"
+    log "Installing the '${SUBGRAPH}' submodule node_modules"
     npm install
     cd ${ROOT_PATH}
 fi
