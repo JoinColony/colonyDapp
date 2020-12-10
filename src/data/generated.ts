@@ -1329,6 +1329,7 @@ export type ColonyAction = {
   actionType: Scalars['String'];
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
+  activeDomain: Scalars['Int'];
 };
 
 export type NetworkContractsInput = {
@@ -2351,7 +2352,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'transactionInitiator' | 'fromDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress'>
+    Pick<ColonyAction, 'hash' | 'transactionInitiator' | 'fromDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'activeDomain'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
@@ -6226,6 +6227,7 @@ export const ColonyActionDocument = gql`
     actionType
     amount
     tokenAddress
+    activeDomain
   }
 }
     `;

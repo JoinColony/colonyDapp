@@ -36,6 +36,7 @@ export default gql`
     actionType: String!
     amount: String!
     tokenAddress: String!
+    activeDomain: Int!
   }
 
   input NetworkContractsInput {
