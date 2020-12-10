@@ -3,11 +3,7 @@ import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
-import {
-  getPaymentDetails,
-  getActionType,
-  getActiveDomain,
-} from '~utils/events';
+import { getPaymentDetails, getActionType } from '~utils/events';
 import { Context } from '~context/index';
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 
@@ -107,7 +103,6 @@ export const colonyActionsResolvers = ({
           tokenAddress: AddressZero,
         };
         let paymentDetails;
-        let activeDomain = 1;
 
         const actionType = getActionType(reverseSortedEvents);
 
@@ -123,24 +118,12 @@ export const colonyActionsResolvers = ({
           const payoutClaimedEvent = reverseSortedEvents?.find(
             (event) => event?.name === ColonyAndExtensionsEvents.PayoutClaimed,
           );
-          const fundsMovedEvent = reverseSortedEvents?.find(
-            (event) =>
-              event?.name ===
-              ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
-          );
           const { paymentId } = paymentAddedEvent?.values;
           paymentDetails = await getPaymentDetails(
             paymentId,
             colonyClient as ColonyClient,
           );
           const { amount, token } = payoutClaimedEvent?.values;
-          const { fromPot: activeDomainFundingPotId } = fundsMovedEvent?.values;
-          activeDomain = bigNumberify(
-            await getActiveDomain(
-              activeDomainFundingPotId,
-              colonyClient as ColonyClient,
-            ),
-          ).toNumber();
           payment.fromDomain = bigNumberify(paymentDetails.domainId).toNumber();
           payment.recipient = paymentDetails.recipient;
           payment.amount = bigNumberify(amount).toString();
@@ -161,7 +144,6 @@ export const colonyActionsResolvers = ({
           events: reverseSortedEvents,
           createdAt,
           actionType,
-          activeDomain,
           ...payment,
         };
       }

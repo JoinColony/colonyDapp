@@ -165,7 +165,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-
+    
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -1329,7 +1329,6 @@ export type ColonyAction = {
   actionType: Scalars['String'];
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
-  activeDomain: Scalars['Int'];
 };
 
 export type NetworkContractsInput = {
@@ -2352,7 +2351,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'transactionInitiator' | 'fromDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'activeDomain'>
+    Pick<ColonyAction, 'hash' | 'transactionInitiator' | 'fromDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
@@ -6227,7 +6226,6 @@ export const ColonyActionDocument = gql`
     actionType
     amount
     tokenAddress
-    activeDomain
   }
 }
     `;

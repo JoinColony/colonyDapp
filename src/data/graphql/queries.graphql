@@ -590,7 +590,6 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     actionType
     amount
     tokenAddress
-    activeDomain
   }
 }
 

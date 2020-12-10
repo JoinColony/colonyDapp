@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
-import ColorTag from '~core/ColorTag';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
@@ -48,7 +47,6 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  activeDomainId?: number;
   actionType: ColonyActions;
   recipient?: AnyUser;
   colony: Colony;
@@ -62,22 +60,12 @@ const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
 };
 
 const DetailsWidget = ({
-  activeDomainId,
   actionType = ColonyActions.Generic,
   recipient,
   colony,
   payment,
 }: Props) => {
   const { formatMessage } = useIntl();
-
-  const activeDomain = useMemo(() => {
-    if (colony?.domains) {
-      return colony?.domains?.find(
-        ({ ethDomainId }) => ethDomainId === activeDomainId,
-      );
-    }
-    return null;
-  }, [colony, activeDomainId]);
 
   const paymentDomain = useMemo(() => {
     if (payment?.fromDomain) {
@@ -90,17 +78,6 @@ const DetailsWidget = ({
 
   return (
     <div>
-      {activeDomain && (
-        <div className={styles.item}>
-          <div className={styles.label}>
-            <FormattedMessage {...MSG.activeTeam} />
-          </div>
-          <div className={styles.value}>
-            {activeDomain.color && <ColorTag color={activeDomain.color} />}
-            {` ${activeDomain.name}`}
-          </div>
-        </div>
-      )}
       <div className={styles.item}>
         <div className={styles.label}>
           <FormattedMessage {...MSG.actionType} />
