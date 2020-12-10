@@ -50,14 +50,6 @@ const InfoPopover = ({
   ...contentProps
 }: Props) => {
   const renderContent = useMemo(() => {
-    /**
-     * Use exhaustive checks to satisfy both TS & graphql (each in their own way)
-     */
-    /*
-     * @TODO Refactor MemberInfo in the same way UserInfo was
-     *
-     * To be able to display the popover, even if the data is not available
-     */
     if (
       'colonyAddress' in contentProps &&
       typeof contentProps.colonyAddress !== 'undefined'
