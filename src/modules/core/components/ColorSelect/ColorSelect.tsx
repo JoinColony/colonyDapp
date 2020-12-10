@@ -69,7 +69,7 @@ const ColorSelect = ({ disabled, activeOption, onColorChange }: Props) => {
       }}
       onSubmit={() => {}}
     >
-      <div className={styles.wrapper}>
+      <div className={styles.main}>
         <Select
           appearance={{
             theme: 'grid',
