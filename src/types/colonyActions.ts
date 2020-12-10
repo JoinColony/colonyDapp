@@ -5,6 +5,7 @@ export enum ColonyActions {
 }
 
 export enum ColonyAndExtensionsEvents {
+  Generic = 'Generic',
   ColonyFundsMovedBetweenFundingPots = 'ColonyFundsMovedBetweenFundingPots',
   FundingPotAdded = 'FundingPotAdded',
   PaymentAdded = 'PaymentAdded',

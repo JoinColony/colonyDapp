@@ -129,7 +129,7 @@ const DetailsWidget = ({
                * we already did that when passing down the prop
                */
               unit={payment.decimals}
-              suffix={` ${payment.symbol}`}
+              suffix={` ${payment.symbol || '???'}`}
             />
           </div>
         </div>
