@@ -65,7 +65,7 @@ const ColorSelect = ({ disabled, activeOption, onColorChange }: Props) => {
   return (
     <Form<FormValues>
       initialValues={{
-        activeColor: activeOption || Color.Yellow,
+        activeColor: `${activeOption || Color.Yellow}`,
       }}
       onSubmit={() => {}}
     >

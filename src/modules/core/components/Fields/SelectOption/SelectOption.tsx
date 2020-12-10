@@ -63,6 +63,7 @@ const SelectOption = ({
     typeof option.label === 'object'
       ? formatMessage(option.label, option.labelValues)
       : option.label;
+
   return (
     <li
       className={getMainClasses({}, styles, {
@@ -77,6 +78,7 @@ const SelectOption = ({
       onClick={handleItemClick}
       onKeyPress={handleItemKeyPress}
       onMouseEnter={handleItemSelect}
+      data-checked={checked}
     >
       <span title={label}>
         {option.children || (
