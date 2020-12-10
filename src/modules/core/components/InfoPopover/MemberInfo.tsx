@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Badge from '~core/Badge';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   AnyUser,
-  useUserBadgesQuery,
   useUserReputationQuery,
   useColonyNativeTokenQuery,
   useTokenInfoLazyQuery,
@@ -54,7 +52,6 @@ const MemberInfo = ({
   domainId,
   user = { id: '', profile: { walletAddress: '' } },
 }: Props) => {
-  const { formatMessage } = useIntl();
   const {
     profile: { walletAddress },
   } = user;
@@ -79,10 +76,6 @@ const MemberInfo = ({
     variables: { address: walletAddress, colonyAddress, domainId },
   });
 
-  const { data } = useUserBadgesQuery({
-    variables: { address: walletAddress, colonyAddress },
-  });
-
   useEffect(() => {
     if (nativeTokenAddressData) {
       const {
@@ -91,8 +84,6 @@ const MemberInfo = ({
       fetchTokenInfo({ variables: { address: nativeTokenAddress } });
     }
   }, [fetchTokenInfo, nativeTokenAddressData]);
-
-  const completedLevels = data ? data.user.completedLevels : [];
 
   return (
     <div className={styles.main}>
@@ -129,31 +120,6 @@ const MemberInfo = ({
           <FormattedMessage tagName="i" {...MSG.errorReputation} />
         )}
       </div>
-      {completedLevels.length > 0 && (
-        <div className={styles.section}>
-          <Heading
-            appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
-            text={MSG.achievementsHeading}
-          />
-          <div className={styles.badges}>
-            {completedLevels.map(
-              ({ achievement, id, title, program: { title: programTitle } }) =>
-                achievement &&
-                title && (
-                  <Badge
-                    key={id}
-                    size="xs"
-                    name={achievement}
-                    title={formatMessage(MSG.achievementTitleText, {
-                      title,
-                      programTitle,
-                    })}
-                  />
-                ),
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
