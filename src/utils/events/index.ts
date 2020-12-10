@@ -8,6 +8,11 @@ export const getPaymentDetails = async (
   colonyClient?: ColonyClient,
 ) => colonyClient?.getPayment(paymentId);
 
+export const getActiveDomain = async (
+  fundingPotId: BigNumberish,
+  colonyClient?: ColonyClient,
+) => colonyClient?.getDomainFromFundingPot(fundingPotId);
+
 export const getActionType = (parsedEvents) => {
   if (!parsedEvents || !parsedEvents.length) {
     return ColonyActions.Generic;
@@ -22,7 +27,7 @@ export const getActionType = (parsedEvents) => {
   if (
     firstEvent.name === ColonyAndExtensionsEvents.OneTxPaymentMade &&
     !!paymentAddedEvent &&
-    payoutClaimedEvent
+    !!payoutClaimedEvent
   ) {
     return ColonyActions.Payment;
   }
