@@ -11,3 +11,6 @@
 [submodule "src/lib/mock-oracle"]
 	path = src/lib/mock-oracle
 	url = git@github.com:JoinColony/mock-oracle.git
+[submodule "src/lib/subgraph"]
+	path = src/lib/subgraph
+	url = git@github.com:JoinColony/subgraph.git
