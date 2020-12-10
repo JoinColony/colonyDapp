@@ -1,14 +1,17 @@
-import React, { useState, useEffect, ComponentType } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AddressZero } from 'ethers/constants';
 
 import Avatar from '~core/Avatar';
 import { useDataFetcher } from '~utils/hooks';
 import { AnyToken } from '~data/index';
+import { Address } from '~types/index';
+import Icon from '~core/Icon';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
-interface ImageType {
-  default: string | (() => ComponentType<any>);
+interface Response {
+  url: string;
+  ok: boolean;
 }
 
 interface Props {
@@ -23,16 +26,27 @@ interface Props {
 
   /** Optional name for the icon title */
   name?: string;
+
+  /** If provided than icon is display instead of Avatar */
+  iconName?: string;
 }
 
-const loadTokenImages = async (logo): Promise<ImageType> =>
-  import(
-    /* webpackMode: "eager" */ `../../../../../node_modules/eth-contract-metadata/images/${logo}`
-  );
+const TOKEN_LOGOS_REPO_URL =
+  'https://raw.githubusercontent.com/trustwallet' +
+  '/assets/master/blockchains/ethereum/';
+
+const loadTokenImages = async (address: Address): Promise<Response> => {
+  let tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}${address}/logo.png`;
+  if (address === AddressZero) {
+    tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}info/logo.png`;
+  }
+  return fetch(tokenImageUrl);
+};
 
 const HookedTokenIcon = ({
   name,
   token: { iconHash, address },
+  iconName,
   ...props
 }: Props) => {
   const [tokenImage, setTokenImage] = useState<string | undefined>();
@@ -42,14 +56,37 @@ const HookedTokenIcon = ({
     [iconHash],
   );
 
+  useEffect(() => {
+    const loadTokenLogo = async () => {
+      if (address && !iconName) {
+        const response = await loadTokenImages(address);
+        if (!response.ok) {
+          return;
+        }
+        setTokenImage(response.url);
+      }
+    };
+    loadTokenLogo();
+  }, [address, iconName]);
+
   return (
-    <Avatar
-      avatarURL={tokenImage || ipfsIcon || undefined}
-      placeholderIcon="circle-close"
-      seed={address}
-      title={name || address}
-      {...props}
-    />
+    <>
+      {iconName ? (
+        <Icon
+          appearance={{ size: 'medium' }}
+          name={iconName}
+          title={iconName}
+        />
+      ) : (
+        <Avatar
+          avatarURL={tokenImage || ipfsIcon || undefined}
+          placeholderIcon="circle-close"
+          seed={address}
+          title={name || address}
+          {...props}
+        />
+      )}
+    </>
   );
 };
 
