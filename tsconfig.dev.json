@@ -10,6 +10,8 @@
   "exclude": [
     "node_modules",
     "src/lib/colonyNetwork",
-    "src/lib/colonyServer"
+    "src/lib/colonyServer",
+    "src/lib/mock-oracle",
+    "src/lib/subgraph"
   ]
 }

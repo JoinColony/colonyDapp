@@ -5,3 +5,5 @@ webpack.*
 src/data/generated.ts
 src/lib/colonyNetwork
 src/lib/colonyServer
+src/lib/mock-oracle
+src/lib/subgraph
