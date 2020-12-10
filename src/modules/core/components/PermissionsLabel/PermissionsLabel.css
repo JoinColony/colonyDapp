@@ -1,4 +1,4 @@
-.wrapper {
+.main {
   display: inline-block;
   padding: 1px 5px;
   height: 20px;
@@ -11,11 +11,11 @@
   border-color: var(--primary);
 }
 
-.noPointer {
+.stateNoPointer {
   cursor: default;
 }
 
-.noPointer:hover {
+.stateNoPointer:hover {
   border-color: var(--temp-grey-blue-7);
 }
 
