@@ -86,7 +86,6 @@ const config = {
         loader: 'file-loader',
         include: [
           path.resolve('src'),
-          path.resolve('node_modules', 'eth-contract-metadata', 'images'),
         ],
         options: {
           esModule: false,
@@ -124,18 +123,9 @@ const config = {
           },
         ],
       },
-      /*
-       * Only parse svg images from the `eth-contract-metadata` package.
-       */
       {
         test: /\.svg$/,
         include: [
-          path.resolve(
-            __dirname,
-            'node_modules',
-            'eth-contract-metadata',
-            'images',
-          ),
           path.resolve(__dirname, 'src', 'img', 'tokens'),
         ],
         use: [
