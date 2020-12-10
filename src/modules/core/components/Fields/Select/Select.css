@@ -120,6 +120,10 @@
   outline-color: var(--primary);
 }
 
+.themeGrid > div {
+  align-items: flex-start;
+}
+
 .themeGrid[aria-expanded="false"]:focus {
   outline-color: var(--primary);
 }

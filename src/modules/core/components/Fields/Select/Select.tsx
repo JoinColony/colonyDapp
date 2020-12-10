@@ -124,9 +124,6 @@ const Select = ({
   const close = useCallback(() => {
     setIsOpen(false);
     setSelectedOption(-1);
-    if (comboboxRef.current) {
-      comboboxRef.current.focus();
-    }
   }, []);
 
   const handleOutsideClick = useCallback(

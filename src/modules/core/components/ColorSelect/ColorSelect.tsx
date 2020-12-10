@@ -44,7 +44,7 @@ const ColorSelect = ({ disabled, activeOption, onColorChange }: Props) => {
   const renderActiveOption = useCallback<
     (option: SelectOption | undefined, label: string) => ReactNode
   >(() => {
-    return <ColorTag color={activeOption || Color.Yellow} />;
+    return <ColorTag color={activeOption} />;
   }, [activeOption]);
 
   const options = useMemo<ComponentProps<typeof Select>['options']>(() => {
@@ -65,7 +65,7 @@ const ColorSelect = ({ disabled, activeOption, onColorChange }: Props) => {
   return (
     <Form<FormValues>
       initialValues={{
-        activeColor: `${activeOption || Color.Yellow}`,
+        activeColor: activeOption,
       }}
       onSubmit={() => {}}
     >
