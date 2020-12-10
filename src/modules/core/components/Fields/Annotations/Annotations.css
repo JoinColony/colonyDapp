@@ -1,0 +1,4 @@
+.container label {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}

@@ -13,7 +13,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, Textarea } from '~core/Fields';
+import { Select, Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
@@ -332,15 +332,11 @@ const CreatePaymentDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection>
-        <div className={styles.textAreaSection}>
-          <Textarea
-            appearance={{ resizable: 'vertical', colorSchema: 'grey' }}
-            label={MSG.annotation}
-            name="annotation"
-            maxLength={4000}
-            disabled={!userHasPermission}
-          />
-        </div>
+        <Annotations
+          label={MSG.annotation}
+          name="annotation"
+          disabled={!userHasPermission}
+        />
       </DialogSection>
       {!userHasPermission && (
         <DialogSection>

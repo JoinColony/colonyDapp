@@ -5,7 +5,7 @@ import { defineMessages } from 'react-intl';
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Input, Textarea } from '~core/Fields';
+import { Annotations, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import { ColonyTokens } from '~data/index';
 import { Address } from '~types/index';
@@ -84,15 +84,7 @@ const TokenMintDialog = ({
           </DialogSection>
           <DialogSection appearance={{ theme: 'sidePadding' }}>
             <div className={styles.annotation}>
-              <Textarea
-                appearance={{
-                  colorSchema: 'grey',
-                  resizable: 'vertical',
-                }}
-                label={MSG.justificationLabel}
-                name="annotation"
-                maxLength={4000}
-              />
+              <Annotations label={MSG.justificationLabel} name="annotation" />
             </div>
           </DialogSection>
           <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
