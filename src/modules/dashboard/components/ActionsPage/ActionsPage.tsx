@@ -237,6 +237,7 @@ const ActionsPage = () => {
       actionType,
       amount,
       fromDomain,
+      activeDomain,
     },
   } = colonyActionData;
 
@@ -362,7 +363,7 @@ const ActionsPage = () => {
             </>
           ) : (
             <DetailsWidget
-              activeDomainId={1}
+              activeDomainId={activeDomain}
               actionType={actionType as ColonyActions}
               recipient={recipientProfileWithFallback}
               colony={colonyData?.colony}
