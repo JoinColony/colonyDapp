@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
 import ColorTag from '~core/ColorTag';
 import Numeral from '~core/Numeral';
+import Icon from '~core/Icon';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
 
 import { Colony, AnyUser } from '~data/index';
@@ -54,13 +55,21 @@ interface Props {
   payment?: PaymentDetails;
 }
 
+const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
+  [ColonyActions.Payment]: 'emoji-dollar-stack',
+  [ColonyActions.Recovery]: 'emoji-alarm-lamp',
+  [ColonyActions.Generic]: 'circle-check-primary',
+};
+
 const DetailsWidget = ({
   activeDomainId,
-  actionType,
+  actionType = ColonyActions.Generic,
   recipient,
   colony,
   payment,
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   const activeDomain = useMemo(() => {
     if (colony?.domains) {
       return colony?.domains?.find(
@@ -97,6 +106,11 @@ const DetailsWidget = ({
           <FormattedMessage {...MSG.actionType} />
         </div>
         <div className={styles.value}>
+          <Icon
+            title={formatMessage(MSG.actionTypesTitles, { actionType })}
+            appearance={{ size: 'small' }}
+            name={ACTION_TYPES_ICONS_MAP[actionType]}
+          />
           <FormattedMessage
             {...MSG.actionTypesTitles}
             values={{ actionType }}
