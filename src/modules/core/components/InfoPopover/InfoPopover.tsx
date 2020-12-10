@@ -50,14 +50,6 @@ const InfoPopover = ({
   ...contentProps
 }: Props) => {
   const renderContent = useMemo(() => {
-    /**
-     * Use exhaustive checks to satisfy both TS & graphql (each in their own way)
-     */
-    /*
-     * @TODO Refactor MemberInfo in the same way UserInfo was
-     *
-     * To be able to display the popover, even if the data is not available
-     */
     if (
       'colonyAddress' in contentProps &&
       typeof contentProps.colonyAddress !== 'undefined'
@@ -71,11 +63,6 @@ const InfoPopover = ({
         />
       );
     }
-    /*
-     * @TODO Refactor TokenInfo in the same way UserInfo was
-     *
-     * To be able to display the popover, even if the token data is not available
-     */
     if ('token' in contentProps && typeof contentProps.token !== 'undefined') {
       const { isTokenNative, token } = contentProps;
       return <TokenInfoPopover token={token} isTokenNative={!!isTokenNative} />;
