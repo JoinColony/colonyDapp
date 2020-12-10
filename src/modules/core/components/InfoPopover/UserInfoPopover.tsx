@@ -3,7 +3,7 @@ import React from 'react';
 import { AnyUser } from '~data/index';
 
 import UserInfo from './UserInfo';
-import UserInfoNotAvailable from './UserInfoNotAvailable';
+import NotAvailableMessage from './NotAvailableMessage';
 
 import styles from './InfoPopover.css';
 
@@ -20,7 +20,7 @@ const UserInfoPopover = ({ user, userNotAvailable = false }: Props) => (
       {!userNotAvailable && user ? (
         <UserInfo user={user} />
       ) : (
-        <UserInfoNotAvailable />
+        <NotAvailableMessage notAvailableDataName="User" />
       )}
     </div>
   </div>

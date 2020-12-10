@@ -5,7 +5,7 @@ import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 
 import MemberInfo from './MemberInfo';
-import UserInfoNotAvailable from './UserInfoNotAvailable';
+import NotAvailableMessage from './NotAvailableMessage';
 
 import styles from './InfoPopover.css';
 
@@ -28,7 +28,7 @@ const MemberInfoPopover = ({ colonyAddress, domainId, user }: Props) => {
         />
       ) : (
         <div className={styles.section}>
-          <UserInfoNotAvailable />
+          <NotAvailableMessage notAvailableDataName="Member" />
         </div>
       )}
     </>
