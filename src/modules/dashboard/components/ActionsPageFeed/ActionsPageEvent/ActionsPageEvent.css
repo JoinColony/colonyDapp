@@ -11,8 +11,7 @@
 
 .details {
   display: flex;
-  margin-top: 8px;
-  margin-left: -8px;
+  margin: 8px 0 0 -5px;
 }
 
 .content {

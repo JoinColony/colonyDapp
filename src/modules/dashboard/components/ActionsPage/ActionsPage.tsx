@@ -308,7 +308,7 @@ const ActionsPage = () => {
             />
           )}
           <ActionsPageFeedItem
-            createdAt={Date.now()}
+            createdAt={createdAt}
             user={initiatorProfileWithFallback}
             annotation
             comment={`Luke has big plans and the rebellion needs
