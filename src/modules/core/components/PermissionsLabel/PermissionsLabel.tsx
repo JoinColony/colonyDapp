@@ -12,7 +12,7 @@ import { getMainClasses } from '~utils/css';
 import styles from './PermissionsLabel.css';
 
 interface Appearance {
-  position: 'top' | 'bottom';
+  theme: 'default' | 'simple' | 'white';
 }
 
 interface Props {
@@ -68,11 +68,13 @@ const PermissionsLabel = ({
     <Tooltip
       placement="top"
       content={
-        infoMessage && infoMessage === 'string' ? (
-          infoMessage
-        ) : (
-          <FormattedMessage {...infoMessage} values={infoMessageValues} />
-        )
+        <div className={styles.tooltip}>
+          {infoMessage && infoMessage === 'string' ? (
+            infoMessage
+          ) : (
+            <FormattedMessage {...infoMessage} values={infoMessageValues} />
+          )}
+        </div>
       }
       trigger={infoMessage ? 'hover' : 'disabled'}
       showArrow={false}
