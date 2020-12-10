@@ -1,7 +1,12 @@
 import { BigNumberish } from 'ethers/utils';
-import { ColonyClient } from '@colony/colony-js';
+import { ColonyClient, ClientType } from '@colony/colony-js';
 
-import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
+import ColonyManagerClass from '~lib/ColonyManager';
+import {
+  ColonyActions,
+  ColonyAndExtensionsEvents,
+  Address,
+} from '~types/index';
 
 export const getPaymentDetails = async (
   paymentId: BigNumberish,
@@ -27,4 +32,24 @@ export const getActionType = (parsedEvents) => {
     return ColonyActions.Payment;
   }
   return ColonyActions.Generic;
+};
+
+export const getAllAvailableClients = async (
+  colonyAddress?: Address,
+  colonyManager?: ColonyManagerClass,
+) => {
+  if (colonyAddress && colonyManager) {
+    return (
+      await Promise.all(
+        Object.values(ClientType).map(async (clientType) => {
+          try {
+            return await colonyManager.getClient(clientType, colonyAddress);
+          } catch (error) {
+            return undefined;
+          }
+        }),
+      )
+    ).filter((clientType) => !!clientType);
+  }
+  return [];
 };
