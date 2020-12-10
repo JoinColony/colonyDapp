@@ -51,11 +51,7 @@ const ActionsPageFeed = ({
     }
     if (actionType === ColonyActions.Payment) {
       return networkEvents.filter(
-        /*
-         * @NOTE This should actually filter by the `ColonyAndExtensionsEvents.OneTxPaymentMade` event
-         * But that doesn't (yet) provide values, so we rely on `PaymentAdded` for the time being
-         */
-        ({ name }) => name === ColonyAndExtensionsEvents.PaymentAdded,
+        ({ name }) => name === ColonyAndExtensionsEvents.OneTxPaymentMade,
       );
     }
     return networkEvents;
