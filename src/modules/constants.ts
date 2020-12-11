@@ -121,3 +121,7 @@ export const ALLDOMAINS_DOMAIN_SELECTION = {
   name: 'All Domains',
   ethParentDomainId: null,
 };
+
+export const TOKEN_LOGOS_REPO_URL =
+  'https://raw.githubusercontent.com/trustwallet' +
+  '/assets/master/blockchains/ethereum/';

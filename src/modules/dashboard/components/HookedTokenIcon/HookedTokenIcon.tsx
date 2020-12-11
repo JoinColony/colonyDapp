@@ -1,15 +1,19 @@
-import React, { useState, useEffect, ComponentType } from 'react';
-import mapping from 'eth-contract-metadata';
+import React, { useState, useEffect } from 'react';
+
 import { AddressZero } from 'ethers/constants';
+import { TOKEN_LOGOS_REPO_URL } from '~constants';
 
 import Avatar from '~core/Avatar';
 import { useDataFetcher } from '~utils/hooks';
 import { AnyToken } from '~data/index';
+import { Address } from '~types/index';
+import Icon from '~core/Icon';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
-interface ImageType {
-  default: string | (() => ComponentType<any>);
+interface Response {
+  url: string;
+  ok: boolean;
 }
 
 interface Props {
@@ -24,76 +28,63 @@ interface Props {
 
   /** Optional name for the icon title */
   name?: string;
+
+  /** If provided than icon is display instead of Avatar */
+  iconName?: string;
+
+  /** If true logo fetching wont be fire */
+  dontFetch?: boolean;
 }
 
-const checkSVG = (fileName: string) =>
-  fileName &&
-  fileName.substring(fileName.length - 3, fileName.length) === 'svg';
-
-const loadTokenImages = async (logo): Promise<ImageType> =>
-  import(
-    /* webpackMode: "eager" */ `../../../../../node_modules/eth-contract-metadata/images/${logo}`
-  );
+const loadTokenImages = async (address: Address): Promise<Response> => {
+  let tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}${address}/logo.png`;
+  if (address === AddressZero) {
+    tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}info/logo.png`;
+  }
+  return fetch(tokenImageUrl);
+};
 
 const HookedTokenIcon = ({
   name,
   token: { iconHash, address },
+  iconName,
+  dontFetch,
   ...props
 }: Props) => {
   const [tokenImage, setTokenImage] = useState<string | undefined>();
-  const [tokenSVG, setTokenSVG] = useState<ImageType['default'] | undefined>();
   const { data: ipfsIcon } = useDataFetcher(
     ipfsDataFetcher,
     [iconHash as string], // Technically a bug, shouldn't need type override
     [iconHash],
   );
 
-  /* Here we will pick the right solution to show
-   *  the token icons depending from if they are png or svg or a blockie
-   *  case 1: if it's a .png we can just pass through the tokenImage
-   *  case 2: it's an svg and we just import it manually
-   *  case 3: there's no data about the token icon and we show a blockie
-   *  case 4: if there's an ipfsHash show the concerning image
-   */
-
   useEffect(() => {
-    const checkAndLoadImages = async () => {
-      if (ipfsIcon || tokenImage || tokenSVG) {
-        return;
-      }
-
-      const metaData = mapping[address];
-
-      if (metaData) {
-        const response = await loadTokenImages(metaData.logo);
-        if (response) {
-          if (checkSVG(metaData.logo)) {
-            setTokenSVG(response.default);
-          } else {
-            setTokenImage(response.default as string);
-          }
+    const loadTokenLogo = async () => {
+      if (!dontFetch && address && !iconName) {
+        const response = await loadTokenImages(address);
+        if (!response.ok) {
+          return;
         }
-      }
-      if (address === AddressZero) {
-        const response = await import(
-          /* webpackMode: "eager" */ `../../../../img/tokens/ether.svg`
-        );
-        setTokenSVG(response.default);
+        setTokenImage(response.url);
       }
     };
-    checkAndLoadImages();
-  }, [ipfsIcon, tokenImage, setTokenImage, address, tokenSVG]);
+    loadTokenLogo();
+  }, [address, iconName, dontFetch]);
 
   return (
-    <Avatar
-      avatarURL={tokenImage || ipfsIcon || undefined}
-      placeholderIcon="circle-close"
-      seed={address}
-      title={name || address}
-      {...props}
-    >
-      {tokenSVG}
-    </Avatar>
+    <>
+      {iconName ? (
+        <Icon name={iconName} title={name || address} {...props} />
+      ) : (
+        <Avatar
+          avatarURL={tokenImage || ipfsIcon || undefined}
+          placeholderIcon="circle-close"
+          seed={address}
+          title={name || address}
+          {...props}
+        />
+      )}
+    </>
   );
 };
 
