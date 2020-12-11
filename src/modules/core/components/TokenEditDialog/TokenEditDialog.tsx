@@ -3,6 +3,7 @@ import { FormikProps, FormikHelpers } from 'formik';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { AddressZero } from 'ethers/constants';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
@@ -47,6 +48,7 @@ const MSG = defineMessages({
 
 interface Props {
   addTokenFn: (address: Address) => Promise<any>;
+  updateTokens: (addresses: Address[]) => Promise<any>;
   cancel: () => void;
   close: () => void;
   tokens: AnyToken[];
@@ -55,18 +57,17 @@ interface Props {
 interface FormValues {
   tokenAddress: Address;
   description?: string;
+  tokenAddresses: Address[];
 }
 
 const validationSchema = yup.object({
   tokenAddress: yup
     .string()
-    .address()
-    // @todo validate against entering a duplicate address
-    .required(),
+    .address(),
   tokenSymbol: yup.string().max(6),
 });
 
-const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
+const TokenEditDialog = ({ addTokenFn, updateTokens, tokens = [], cancel, close }: Props) => {
   const { formatMessage } = useIntl();
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
 
@@ -76,11 +77,17 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
 
   const handleSubmit = useCallback(
     async (
-      { tokenAddress }: FormValues,
+      {tokenAddress, tokenAddresses}: FormValues,
       { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
     ) => {
+      let addresses = tokenAddresses;
+      if (tokenAddress && !tokenAddresses.includes(tokenAddress)) {
+        addresses.push(tokenAddress);
+      }
+      addresses = addresses.map(address => createAddress(address)).filter(address => address !== AddressZero);
       try {
-        await addTokenFn(createAddress(tokenAddress));
+        // await addTokenFn(createAddress(tokenAddress));
+        await updateTokens(addresses);
         resetForm();
         close();
       } catch (e) {
@@ -98,21 +105,11 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
           text={MSG.title}
         />
       </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        {tokens.length > 0 ? (
-          <div className={styles.tokenChoiceContainer}>
-            {tokens.map((token) => (
-              <TokenItem key={token.address} token={token} />
-            ))}
-          </div>
-        ) : (
-          <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
-        )}
-      </DialogSection>
       <Form
         initialValues={{
           tokenAddress: '',
           description: '',
+          tokenAddresses: tokens.map(token => token.address),
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
@@ -124,6 +121,17 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
           values,
         }: FormikProps<FormValues>) => (
           <>
+            <DialogSection appearance={{ theme: 'sidePadding' }}>
+              {tokens.length > 0 ? (
+                <div className={styles.tokenChoiceContainer}>
+                  {tokens.map((token) => (
+                    <TokenItem key={token.address} token={token} />
+                  ))}
+                </div>
+              ) : (
+                <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
+              )}
+            </DialogSection>
             <DialogSection>
               <Paragraph className={styles.description}>
                 <FormattedMessage {...MSG.notListedToken} />
