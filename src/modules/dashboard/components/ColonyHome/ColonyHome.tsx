@@ -168,7 +168,6 @@ const ColonyHome = ({ match, location }: Props) => {
     data.colony,
     parseInt(networkVersion || '0', 10),
   );
-
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>

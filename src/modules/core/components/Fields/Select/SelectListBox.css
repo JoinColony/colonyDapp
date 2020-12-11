@@ -36,6 +36,27 @@
   box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.07);
 }
 
+.themeGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 10px;
+  width: 108px;
+  border: 1px solid rgb(241, 242, 245);
+  border-radius: var(--radius-normal);
+  background-color: rgb(255, 255, 255);
+  box-sizing: border-box;
+  box-shadow: var(--box-shadow-medium);
+}
+
+.themeGrid li {
+  padding: 0 5px;
+}
+
+.themeGrid li[data-checked="true"] > span > div > div {
+  border: 1px solid var(--primary);
+}
+
 /* alignOptions */
 .alignOptionsLeft {
   left: 0;

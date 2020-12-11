@@ -104,7 +104,6 @@ const Select = ({
 }: Props) => {
   const [id] = useState<string>(idProp || nanoid());
   const [, { error, value }, { setValue }] = useField(name);
-  const comboboxRef = useRef<HTMLButtonElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
 
@@ -124,9 +123,6 @@ const Select = ({
   const close = useCallback(() => {
     setIsOpen(false);
     setSelectedOption(-1);
-    if (comboboxRef.current) {
-      comboboxRef.current.focus();
-    }
   }, []);
 
   const handleOutsideClick = useCallback(
@@ -296,7 +292,6 @@ const Select = ({
           aria-disabled={disabled}
           id={id}
           tabIndex={0}
-          ref={comboboxRef}
           onClick={toggle}
           onKeyUp={handleKeyUp}
           onKeyDown={handleKeyDown}
