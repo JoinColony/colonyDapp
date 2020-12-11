@@ -3,6 +3,7 @@ import { isEmpty } from 'lodash';
 
 import { AnyToken } from '~data/index';
 
+import TokenInfo from './TokenInfo';
 import NotAvailableMessage from './NotAvailableMessage';
 
 import styles from './InfoPopover.css';
@@ -17,8 +18,8 @@ const displayName = 'InfoPopover.TokenInfoPopover';
 const TokenInfoPopover = ({ token, isTokenNative }: Props) => {
   return (
     <>
-      {!isEmpty(token) ? (
-        <TokenInfoPopover token={token} isTokenNative={isTokenNative} />
+      {!isEmpty(token) && token ? (
+        <TokenInfo token={token} isTokenNative={isTokenNative} />
       ) : (
         <div className={styles.section}>
           <NotAvailableMessage notAvailableDataName="Token" />
