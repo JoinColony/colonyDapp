@@ -54,12 +54,23 @@ const ColonyTokenManagementDialog = ({
     [colonyAddress, colonyTokens, setColonyTokensMutation],
   );
 
+
+  const updateTokens = useCallback(
+    (updatedAddresses: Address[]) => {
+      return setColonyTokensMutation({
+        variables: { input: { colonyAddress, tokenAddresses: updatedAddresses } },
+      });
+    },
+    [colonyAddress, colonyTokens, setColonyTokensMutation],
+  );
+
   return (
     <TokenEditDialog
       cancel={cancel}
       close={close}
       tokens={colonyTokens}
       addTokenFn={addToken}
+      updateTokens={updateTokens}
     />
   );
 };
