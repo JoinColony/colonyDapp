@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+
 import { AddressZero } from 'ethers/constants';
+import { TOKEN_LOGOS_REPO_URL } from '~constants';
 
 import Avatar from '~core/Avatar';
 import { useDataFetcher } from '~utils/hooks';
@@ -29,11 +31,10 @@ interface Props {
 
   /** If provided than icon is display instead of Avatar */
   iconName?: string;
-}
 
-const TOKEN_LOGOS_REPO_URL =
-  'https://raw.githubusercontent.com/trustwallet' +
-  '/assets/master/blockchains/ethereum/';
+  /** If true logo fetching wont be fire */
+  dontFetch?: boolean;
+}
 
 const loadTokenImages = async (address: Address): Promise<Response> => {
   let tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}${address}/logo.png`;
@@ -47,6 +48,7 @@ const HookedTokenIcon = ({
   name,
   token: { iconHash, address },
   iconName,
+  dontFetch,
   ...props
 }: Props) => {
   const [tokenImage, setTokenImage] = useState<string | undefined>();
@@ -58,7 +60,7 @@ const HookedTokenIcon = ({
 
   useEffect(() => {
     const loadTokenLogo = async () => {
-      if (address && !iconName) {
+      if (!dontFetch && address && !iconName) {
         const response = await loadTokenImages(address);
         if (!response.ok) {
           return;
@@ -72,11 +74,7 @@ const HookedTokenIcon = ({
   return (
     <>
       {iconName ? (
-        <Icon
-          appearance={{ size: 'medium' }}
-          name={iconName}
-          title={iconName}
-        />
+        <Icon name={iconName} title={name || address} {...props} />
       ) : (
         <Avatar
           avatarURL={tokenImage || ipfsIcon || undefined}
