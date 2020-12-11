@@ -14,6 +14,9 @@ while [ $# -gt 0 ]; do
     --skip-subgraph-build)
       SKIP_SUBGRAPH_BUILD=true
       ;;
+    --skip-graph-node-build)
+      SKIP_GRAPH_NODE_BUILD=true
+      ;;
     *)
       echo "Invalid argument: $1"
       exit 1
@@ -28,6 +31,7 @@ NETWORK="colonyNetwork"
 SERVER="colonyServer"
 ORACLE="mock-oracle"
 SUBGRAPH="subgraph"
+GRAPH_NODE="graph-node"
 
 ROOT_PATH=$(pwd)
 
@@ -97,6 +101,16 @@ then
     log "Building the '${SUBGRAPH}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${SUBGRAPH}"
     log "Installing the '${SUBGRAPH}' submodule node_modules"
+    npm install
+    cd ${ROOT_PATH}
+fi
+
+# Graph Node
+if [ "$SKIP_GRAPH_NODE_BUILD" != true ]
+then
+    log "Building the '${GRAPH_NODE}' submodule"
+    cd "${ROOT_PATH}/${LIB_PATH}/${GRAPH_NODE}"
+    log "Installing the '${GRAPH_NODE}' submodule node_modules"
     npm install
     cd ${ROOT_PATH}
 fi
