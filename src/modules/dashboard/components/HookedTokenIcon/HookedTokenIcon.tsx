@@ -69,7 +69,7 @@ const HookedTokenIcon = ({
       }
     };
     loadTokenLogo();
-  }, [address, iconName]);
+  }, [address, iconName, dontFetch]);
 
   return (
     <>
