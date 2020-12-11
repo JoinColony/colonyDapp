@@ -7,7 +7,7 @@ import { useDialog } from '~core/Dialog';
 import { Colony, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
-import ColonyTokenEditDialog from '~dashboard/ColonyTokenEditDialog';
+import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
 import TokenMintDialog from '~dashboard/TokenMintDialog';
 
 import { getUserRolesForDomain } from '../../../transformers';
@@ -44,7 +44,7 @@ const ColonyFundingMenu = ({
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
 
-  const openTokenEditDialog = useDialog(ColonyTokenEditDialog);
+  const openTokenManagementDialog = useDialog(ColonyTokenManagementDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
   const openTokensMoveDialog = useDialog(TransferFundsDialog);
 
@@ -61,10 +61,10 @@ const ColonyFundingMenu = ({
 
   const handleEditTokens = useCallback(
     () =>
-      openTokenEditDialog({
+      openTokenManagementDialog({
         colonyAddress,
       }),
-    [openTokenEditDialog, colonyAddress],
+    [openTokenManagementDialog, colonyAddress],
   );
   const handleMintTokens = useCallback(() => {
     const nativeToken =
