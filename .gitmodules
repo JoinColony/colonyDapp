@@ -14,3 +14,6 @@
 [submodule "src/lib/subgraph"]
 	path = src/lib/subgraph
 	url = git@github.com:JoinColony/subgraph.git
+[submodule "src/lib/graph-node"]
+	path = src/lib/graph-node
+	url = git@github.com:graphprotocol/graph-node.git
