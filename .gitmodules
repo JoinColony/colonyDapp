@@ -1,7 +1,7 @@
 [submodule "src/lib/colonyNetwork"]
 	path = src/lib/colonyNetwork
 	url = https://github.com/JoinColony/colonyNetwork.git
-	branch = develop
+	branch = maint/the-graph-events-onetxpayment
 [submodule "src/lib/colonyServer"]
 	path = src/lib/colonyServer
 	url = https://github.com/JoinColony/colonyServer.git
