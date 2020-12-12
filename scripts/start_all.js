@@ -317,7 +317,7 @@ const startAll = async () => {
     );
   if (!pids.webpack) {
     getStaticDevResouce('webpack').map(({ desc, res }) =>
-      console.log(`* ${desc} (after you start 'webpack'):`, chalk.greenBright(res)),
+      console.log(chalk.dim(`* ${desc} (after you start 'webpack'):`), chalk.gray(res)),
     );
   }
   console.log(); // New line
