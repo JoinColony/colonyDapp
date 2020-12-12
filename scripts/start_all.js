@@ -11,9 +11,9 @@ const fetchRetry = require('@adobe/node-fetch-retry');
 
 const startGanache = require('./start_ganache');
 const deployContracts = require('./deploy_contracts');
-const setupGraphNode = require('./setup_graph_node');
 
 const { PID_FILE } = require('./paths');
+const { getStaticDevResouce } = require('./utils');
 
 const processes = [];
 
@@ -303,6 +303,25 @@ const startAll = async () => {
 
   console.log(); // New line
   console.info(chalk.bold.green('Stack started successfully.'));
+
+  console.log(); // New line
+  console.log('------------------------------------------------------------');
+  console.log(); // New line
+  console.log(chalk.bold('Available Dev Resources:'));
+  console.log(); // New line
+  Object.keys(pids)
+    .map(pidName => getStaticDevResouce(pidName)
+      .map(({ desc, res }) =>
+        console.log(`* ${desc}:`, chalk.greenBright(res)),
+      ),
+    );
+  if (!pids.webpack) {
+    getStaticDevResouce('webpack').map(({ desc, res }) =>
+      console.log(`* ${desc} (after you start 'webpack'):`, chalk.greenBright(res)),
+    );
+  }
+  console.log(); // New line
+  console.log('------------------------------------------------------------');
 };
 
 process.on('SIGINT', () => {
