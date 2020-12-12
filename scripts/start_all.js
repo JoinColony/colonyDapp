@@ -117,27 +117,6 @@ addProcess('server', async () => {
   return serverProcess;
 });
 
-addProcess('webpack', () =>
-  new Promise((resolve, reject) => {
-    let webpackArgs = ['run', 'webpack'];
-    const webpackProcess = spawn('npm', webpackArgs, {
-      cwd: path.resolve(__dirname, '..'),
-      stdio: 'pipe',
-    });
-    webpackProcess.stdout.on('data', chunk => {
-      if (chunk.includes('Compiled successfully')) resolve(webpackProcess);
-    });
-    if (args.foreground) {
-      webpackProcess.stdout.pipe(process.stdout);
-      webpackProcess.stderr.pipe(process.stderr);
-    }
-    webpackProcess.on('error', e => {
-      webpackProcess.kill();
-      reject(e);
-    });
-  })
-);
-
 addProcess('graph-node', async () => {
   await new Promise(resolve => {
     console.log(); // New line
@@ -187,6 +166,112 @@ addProcess('graph-node', async () => {
 
   return graphNodeProcess;
 });
+
+addProcess('subgraph', async () => {
+
+  /*
+   * Wait for the
+   */
+  await fetchRetry('http://localhost:8000', {
+    retryOptions: {
+      /*
+       * Max try time of 5 minutes
+       * If it's not up by now we should just give up...
+       */
+      retryMaxDuration: 300000,  // 5m retry max duration
+      /*
+       * Wait a second before retrying
+       */
+      retryInitialDelay: 5000,
+      /*
+       * Don't backoff, just keep hammering
+       */
+      retryBackoff: 1.0
+    }
+  });
+
+  await new Promise((resolve, reject) => {
+    const codeGenProcess = spawn('npm', ['run', 'codegen'], {
+      cwd: path.resolve(__dirname, '..', 'src/lib/subgraph'),
+    });
+
+    console.log(); // New line
+    console.log('Generating subgraph types and schema ...');
+
+    if (args.foreground) {
+      codeGenProcess.stdout.pipe(process.stdout);
+      codeGenProcess.stderr.pipe(process.stderr);
+    }
+
+    codeGenProcess.on('exit', errorCode => {
+      if (errorCode) {
+        return reject(new Error(`Codegen process exited with code ${errorCode}`));
+      }
+      resolve();
+    });
+  });
+
+  await new Promise((resolve, reject) => {
+    const createLocalProcess = spawn('npm', ['run', 'create-local'], {
+      cwd: path.resolve(__dirname, '..', 'src/lib/subgraph'),
+    });
+
+    console.log(); // New line
+    console.log('Creating a local subgraph instance ...');
+
+    if (args.foreground) {
+      createLocalProcess.stdout.pipe(process.stdout);
+      createLocalProcess.stderr.pipe(process.stderr);
+    }
+
+    createLocalProcess.on('exit', errorCode => {
+      if (errorCode) {
+        return reject(new Error(`Create local process exited with code ${errorCode}`));
+      }
+      resolve();
+    });
+  });
+
+  const deployLocalProcess = spawn('npm', ['run', 'deploy-local'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/subgraph'),
+  });
+
+  console.log(); // New line
+  console.log('Deploying the local subgraph instance ...');
+
+  if (args.foreground) {
+    deployLocalProcess.stdout.pipe(process.stdout);
+    deployLocalProcess.stderr.pipe(process.stderr);
+  }
+
+  deployLocalProcess.on('error', error => {
+    deployLocalProcess.kill();
+    reject(error);
+  });
+
+  return deployLocalProcess;
+});
+
+addProcess('webpack', () =>
+  new Promise((resolve, reject) => {
+    let webpackArgs = ['run', 'webpack'];
+    const webpackProcess = spawn('npm', webpackArgs, {
+      cwd: path.resolve(__dirname, '..'),
+      stdio: 'pipe',
+    });
+    webpackProcess.stdout.on('data', chunk => {
+      if (chunk.includes('Compiled successfully')) resolve(webpackProcess);
+    });
+    if (args.foreground) {
+      webpackProcess.stdout.pipe(process.stdout);
+      webpackProcess.stderr.pipe(process.stderr);
+    }
+    webpackProcess.on('error', e => {
+      webpackProcess.kill();
+      reject(e);
+    });
+  })
+);
 
 const pids = {};
 const startAll = async () => {
