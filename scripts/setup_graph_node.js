@@ -1,7 +1,5 @@
-const chalk = require('chalk');
 const path = require('path');
 const os = require('os');
-const { exec } = require("child_process");
 const fs = require('fs');
 const yaml = require('js-yaml');
 
@@ -32,16 +30,13 @@ try {
   /*
    * Write the docker config object values
    */
-  dockerComposeConfig.services['graph-node'].extra_hosts = [`host.docker.internal:${localNetworkInterfaces.join(':')}`];
+  dockerComposeConfig.services['graph-node'].environment.ethereum = `mainnet:http://${localNetworkInterfaces[0]}:8545`;
   /*
    * Write the docker compose yaml back
    */
-  fs.writeFileSync(`${GRAPH_NODE_DOCKER_PATH}/${DOCKER_COMPOSE_CONFIG}`, yaml.safeDump(dockerComposeConfig), { encoding: 'utf8'});
-} catch (e) {
-  console.log(e);
+  fs.writeFileSync(`${GRAPH_NODE_DOCKER_PATH}/${DOCKER_COMPOSE_CONFIG}`, yaml.safeDump(dockerComposeConfig), { encoding: 'utf8' });
+} catch (error) {
+
+  console.log(error);
+
 }
-
-console.log();
-console.info('Removing docker compose \'data\' folder. We need', chalk.bold.red('ROOT'), 'permissions to accomplish this.');
-exec('sudo rm -r ./data', { cwd: GRAPH_NODE_DOCKER_PATH })
-
