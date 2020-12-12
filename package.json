@@ -9,7 +9,8 @@
   "main": "index.js",
   "scripts": {
     "contracts:deploy": "scripts/deploy_contracts.js",
-    "dev": "scripts/start_all.js --foreground",
+    "dev": "scripts/start_all.js --foreground --skip-graph-node --skip-subgraph",
+    "dev:heavy": "scripts/start_all.js --foreground",
     "ganache": "scripts/start_ganache.js",
     "graphql:generate": "graphql-codegen --config codegen.yml",
     "lint": "eslint --fix 'src/**/*.{ts,tsx}'",

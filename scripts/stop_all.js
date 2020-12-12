@@ -71,11 +71,17 @@ const teardown = async () => {
   }
   await Promise.all(Object.keys(pids).map(name => killPromise(name, pids[name])));
 
-  console.log();
-  console.log('Taking down "graph-node"\'s docker instances...');
-  console.log(chalk.yellowBright('Note that this might take longer, depending on your machine,'));
-  console.log(chalk.yellowBright('and might finish after the node process has existed.'));
-  await downWithDockerCompose()
+  /*
+   * We only need cleanup if the start script also started graph-node
+   * This happed, most likely, by starting the "heavy" dev script
+   */
+  if (!!pids['graph-node']) {
+    console.log();
+    console.log('Taking down "graph-node"\'s docker instances...');
+    console.log(chalk.yellowBright('Note that this might take longer, depending on your machine,'));
+    console.log(chalk.yellowBright('and might finish after the node process has existed.'));
+    await downWithDockerCompose();
+  }
 };
 
 teardown().then(() => {

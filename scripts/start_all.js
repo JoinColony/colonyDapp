@@ -122,9 +122,10 @@ addProcess('graph-node', async () => {
     console.log(); // New line
     console.log('Cleaning up the old graph-node docker data folder. For this we need', chalk.bold.red('ROOT'), 'permissions');
     sudo.exec(`rm -Rf ${path.resolve(__dirname, '..', 'src/lib/graph-node/docker/data')}`, {},
-      function (error, stdout, stderr) {
-        if (error) throw error;
-        console.log('stdout: ' + stdout);
+      function (error) {
+        if (error) {
+          throw new Error(`graph-node cleanup process failed: ${error}`);
+        };
         resolve();
       }
     );
