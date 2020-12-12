@@ -13,7 +13,7 @@ const startGanache = require('./start_ganache');
 const deployContracts = require('./deploy_contracts');
 
 const { PID_FILE } = require('./paths');
-const { getStaticDevResouce } = require('./utils');
+const { getStaticDevResource } = require('./utils');
 
 const processes = [];
 
@@ -310,13 +310,13 @@ const startAll = async () => {
   console.log(chalk.bold('Available Dev Resources:'));
   console.log(); // New line
   Object.keys(pids)
-    .map(pidName => getStaticDevResouce(pidName)
+    .map(pidName => getStaticDevResource(pidName)
       .map(({ desc, res }) =>
         console.log(`* ${desc}:`, chalk.greenBright(res)),
       ),
     );
   if (!pids.webpack) {
-    getStaticDevResouce('webpack').map(({ desc, res }) =>
+    getStaticDevResource('webpack').map(({ desc, res }) =>
       console.log(chalk.dim(`* ${desc} (after you start 'webpack'):`), chalk.gray(res)),
     );
   }
