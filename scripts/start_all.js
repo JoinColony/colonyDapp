@@ -6,9 +6,12 @@ const waitOn = require('wait-on');
 const fs = require('fs');
 const args = require('minimist')(process.argv);
 const chalk = require('chalk');
+var sudo = require('sudo-prompt');
+const fetchRetry = require('@adobe/node-fetch-retry');
 
 const startGanache = require('./start_ganache');
 const deployContracts = require('./deploy_contracts');
+const setupGraphNode = require('./setup_graph_node');
 
 const { PID_FILE } = require('./paths');
 
@@ -121,7 +124,6 @@ addProcess('webpack', () =>
       cwd: path.resolve(__dirname, '..'),
       stdio: 'pipe',
     });
-    setTimeout(() => console.info('Reticulating splines...'), 3000);
     webpackProcess.stdout.on('data', chunk => {
       if (chunk.includes('Compiled successfully')) resolve(webpackProcess);
     });
@@ -136,6 +138,55 @@ addProcess('webpack', () =>
   })
 );
 
+addProcess('graph-node', async () => {
+  await new Promise(resolve => {
+    console.log(); // New line
+    console.log('Cleaning up the old graph-node docker data folder. For this we need', chalk.bold.red('ROOT'), 'permissions');
+    sudo.exec(`rm -Rf ${path.resolve(__dirname, '..', 'src/lib/graph-node/docker/data')}`, {},
+      function (error, stdout, stderr) {
+        if (error) throw error;
+        console.log('stdout: ' + stdout);
+        resolve();
+      }
+    );
+  })
+  await new Promise((resolve, reject) => {
+    const setupProcess = spawn('node', ['./setup_graph_node.js'], {
+      cwd: path.resolve(__dirname),
+    });
+
+    console.log(); // New line
+    console.log('Setting up docker-compose with the local environment ...');
+
+    if (args.foreground) {
+      setupProcess.stdout.pipe(process.stdout);
+      setupProcess.stderr.pipe(process.stderr);
+    }
+
+    setupProcess.on('exit', errorCode => {
+      if (errorCode) {
+        return reject(new Error(`Setup process exited with code ${errorCode}`));
+      }
+      resolve();
+    });
+  });
+
+  const graphNodeProcess = spawn('docker-compose', ['up'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/graph-node/docker'),
+  });
+
+  if (args.foreground) {
+    graphNodeProcess.stdout.pipe(process.stdout);
+    graphNodeProcess.stderr.pipe(process.stderr);
+  }
+
+  graphNodeProcess.on('error', e => {
+    graphNodeProcess.kill();
+    reject(e);
+  });
+
+  return graphNodeProcess;
+});
 
 const pids = {};
 const startAll = async () => {
