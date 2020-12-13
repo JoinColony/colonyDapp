@@ -124,10 +124,12 @@ export const colonyActionsResolvers = ({
             colonyClient as ColonyClient,
           );
           const { amount, token } = payoutClaimedEvent?.values;
-          payment.fromDomain = bigNumberify(paymentDetails.domainId).toNumber();
-          payment.recipient = paymentDetails.recipient;
-          payment.amount = bigNumberify(amount).toString();
-          payment.tokenAddress = token;
+          payment.fromDomain = bigNumberify(
+            paymentDetails?.domainId || 1,
+          ).toNumber();
+          payment.recipient = paymentDetails?.recipient || AddressZero;
+          payment.amount = bigNumberify(amount || '0').toString();
+          payment.tokenAddress = token || AddressZero;
         }
 
         return {
