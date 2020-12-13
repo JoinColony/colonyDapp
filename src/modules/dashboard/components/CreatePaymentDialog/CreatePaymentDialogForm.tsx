@@ -1,6 +1,10 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { FormikProps } from 'formik';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
@@ -105,9 +109,14 @@ const CreatePaymentDialogForm = ({
   handleSubmit,
   isSubmitting,
   isValid,
-  setErrors,
   values,
 }: Props & FormikProps<FormValues>) => {
+  /*
+   * Custom error state tracking
+   */
+  const [customAmountError, setCustomAmountError] = useState<
+    MessageDescriptor | string | undefined
+  >(undefined);
   const { tokenAddress, amount } = values;
   const domainId = values.domainId
     ? parseInt(values.domainId, 10)
@@ -169,17 +178,18 @@ const CreatePaymentDialogForm = ({
     const token =
       tokenBalancesData &&
       tokenBalancesData.tokens.find(({ address }) => address === tokenAddress);
-    return token && getBalanceFromToken(token, domainId);
+    if (token) {
+      /*
+       * Reset our custom error state, since we changed the domain
+       */
+      setCustomAmountError(undefined);
+      return getBalanceFromToken(token, domainId);
+    }
+    return null;
   }, [domainId, tokenAddress, tokenBalancesData]);
 
   useEffect(() => {
-    const errors: {
-      amount?: any;
-    } = {};
-
-    if (!selectedToken || !amount) {
-      errors.amount = undefined; // silent error
-    } else {
+    if (selectedToken && amount) {
       const convertedAmount = bigNumberify(
         moveDecimal(
           amount,
@@ -188,20 +198,36 @@ const CreatePaymentDialogForm = ({
       );
       if (
         fromDomainTokenBalance &&
-        fromDomainTokenBalance.lt(convertedAmount)
+        (fromDomainTokenBalance.lt(convertedAmount) ||
+          fromDomainTokenBalance.isZero())
       ) {
-        errors.amount = MSG.noBalance;
+        /*
+         * @NOTE On custom, parallel, in-component error handling
+         *
+         * We need to keep track of a separate error state, since we are doing
+         * custom validation (checking if a domain has enough funds), alongside
+         * using a validationSchema.
+         *
+         * This makes it so that even if we manual set the error, it will get
+         * overwritten instantly when the next Formik State update triggers, making
+         * it basically impossible for us to manually put the Form into an error
+         * state.
+         *
+         * See: https://github.com/formium/formik/issues/706
+         *
+         * Because of this, we keep our own error state that runs in parallel
+         * to Formik's error state.
+         */
+        setCustomAmountError(MSG.noBalance);
       }
     }
-
-    setErrors(errors);
   }, [
     amount,
     domainId,
     fromDomainRoles,
     fromDomainTokenBalance,
     selectedToken,
-    setErrors,
+    setCustomAmountError,
   ]);
 
   const userHasFundingPermission = userHasRole(
@@ -300,6 +326,11 @@ const CreatePaymentDialogForm = ({
                 ),
               }}
               disabled={!userHasPermission}
+              /*
+               * Force the input component into an error state
+               * This is needed for our custom error state to work
+               */
+              forcedFieldError={customAmountError}
             />
           </div>
           <div className={styles.tokenAmountSelect}>
@@ -373,7 +404,11 @@ const CreatePaymentDialogForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid}
+          /*
+           * Disable Form submissions if either the form is invalid, or
+           * if our custom state was triggered.
+           */
+          disabled={!isValid || !!customAmountError}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

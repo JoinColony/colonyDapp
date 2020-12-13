@@ -62,7 +62,7 @@ const CreatePaymentDialog = ({
       .object()
       .shape({
         profile: yup.object().shape({
-          walletAddress: yup.string().required(),
+          walletAddress: yup.string().address().required(),
         }),
       })
       .nullable()
@@ -70,9 +70,8 @@ const CreatePaymentDialog = ({
     amount: yup
       .number()
       .required()
-      // .min(0.01, () => MSG.amountZero),
       .moreThan(0, () => MSG.amountZero),
-    tokenAddress: yup.string().required(),
+    tokenAddress: yup.string().address().required(),
     annotation: yup.string().max(4000),
   });
 
