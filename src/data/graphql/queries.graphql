@@ -576,7 +576,7 @@ query NetworkContracts {
 query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
     hash
-    transactionInitiator
+    actionInitiator
     fromDomain
     recipient
     status

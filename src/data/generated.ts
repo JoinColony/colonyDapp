@@ -1320,7 +1320,7 @@ export type ParsedEvent = {
 
 export type ColonyAction = {
   hash: Scalars['String'];
-  transactionInitiator: Scalars['String'];
+  actionInitiator: Scalars['String'];
   fromDomain: Scalars['Int'];
   recipient: Scalars['String'];
   status: Scalars['Int'];
@@ -2351,7 +2351,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'transactionInitiator' | 'fromDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
@@ -6212,7 +6212,7 @@ export const ColonyActionDocument = gql`
     query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
     hash
-    transactionInitiator
+    actionInitiator
     fromDomain
     recipient
     status

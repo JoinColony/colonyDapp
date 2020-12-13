@@ -27,7 +27,7 @@ export default gql`
 
   type ColonyAction {
     hash: String!
-    transactionInitiator: String!
+    actionInitiator: String!
     fromDomain: Int!
     recipient: String!
     status: Int!

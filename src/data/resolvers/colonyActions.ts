@@ -139,7 +139,7 @@ export const colonyActionsResolvers = ({
            * So for now we are just using the `from` address. This should not make
            * it into production, as relying on it is error-prone.
            */
-          transactionInitiator: from,
+          actionInitiator: from,
           status,
           events: reverseSortedEvents,
           createdAt,

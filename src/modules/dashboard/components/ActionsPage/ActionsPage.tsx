@@ -142,10 +142,7 @@ const ActionsPage = () => {
 
   useEffect(() => {
     if (colonyActionData?.colonyAction) {
-      const {
-        recipient,
-        transactionInitiator,
-      } = colonyActionData?.colonyAction;
+      const { recipient, actionInitiator } = colonyActionData?.colonyAction;
       fetchRecipientProfile({
         variables: {
           address: recipient,
@@ -153,7 +150,7 @@ const ActionsPage = () => {
       });
       fetchInitiatorProfile({
         variables: {
-          address: transactionInitiator,
+          address: actionInitiator,
         },
       });
     }
@@ -171,7 +168,7 @@ const ActionsPage = () => {
   );
 
   const fallbackInitiatorProfile = useUser(
-    colonyActionData?.colonyAction?.transactionInitiator || '',
+    colonyActionData?.colonyAction?.actionInitiator || '',
   );
 
   if (!isTransactionFormat(transactionHash) || colonyActionError) {
