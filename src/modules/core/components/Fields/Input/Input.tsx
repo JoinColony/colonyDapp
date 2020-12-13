@@ -71,6 +71,21 @@ export interface Props extends Omit<InputComponentProps, 'placeholder'> {
 
   /** Set the input field to a disabled state */
   disabled?: boolean;
+
+  /*
+   * Force the input component into an error state.
+   *
+   * This is to circumvent a issue in Formik where the fieldErrors object
+   * gets constantly overwritten, so you cannot actually do custom validaton,
+   * while also having a validationSchema declared.
+   *
+   * Note that this is visual only, it doesn't actually hook into the Form's state,
+   * this just "makes" the input field look like it has an error.
+   * Any error states need to be maintained externally of this.
+   *
+   * See: https://github.com/formium/formik/issues/706
+   */
+  forcedFieldError?: MessageDescriptor | string;
 }
 
 const Input = ({
@@ -91,6 +106,7 @@ const Input = ({
   placeholderValues,
   status,
   statusValues,
+  forcedFieldError,
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();
@@ -103,7 +119,7 @@ const Input = ({
 
   const inputProps: InputComponentProps = {
     appearance,
-    'aria-invalid': !!error,
+    'aria-invalid': !!error || !!forcedFieldError,
     formattingOptions,
     id,
     innerRef,
@@ -144,7 +160,7 @@ const Input = ({
           appearance={appearance}
           status={status}
           statusValues={statusValues}
-          error={error}
+          error={error || forcedFieldError}
         />
       )}
     </div>
