@@ -19,8 +19,8 @@ import { WizardDialogType } from '~utils/hooks';
 import DialogForm from './CreatePaymentDialogForm';
 
 const MSG = defineMessages({
-  noAmount: {
-    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noAmount',
+  amountZero: {
+    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.amountZero',
     defaultMessage: 'Amount must be greater than zero',
   },
   noBalance: {
@@ -68,9 +68,10 @@ const CreatePaymentDialog = ({
       .nullable()
       .default(null),
     amount: yup
-      .string()
+      .number()
       .required()
-      .min(0.01, () => MSG.noAmount),
+      // .min(0.01, () => MSG.amountZero),
+      .moreThan(0, () => MSG.amountZero),
     tokenAddress: yup.string().required(),
     annotation: yup.string().max(4000),
   });
