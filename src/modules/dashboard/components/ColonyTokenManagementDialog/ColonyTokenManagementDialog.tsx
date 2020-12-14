@@ -10,8 +10,6 @@ import {
 import { Address } from '~types/index';
 import tokensList from './tokenlist.json';
 
-import { tokenIsETH } from '../../../core/checks';
-
 interface Props {
   colonyAddress: Address;
   cancel: () => void;
@@ -43,10 +41,12 @@ const ColonyTokenManagementDialog = ({
   const updateTokens = useCallback(
     (updatedAddresses: Address[]) => {
       return setColonyTokensMutation({
-        variables: { input: { colonyAddress, tokenAddresses: updatedAddresses } },
+        variables: {
+          input: { colonyAddress, tokenAddresses: updatedAddresses },
+        },
       });
     },
-    [colonyAddress, colonyTokens, setColonyTokensMutation],
+    [colonyAddress, setColonyTokensMutation],
   );
 
   return (
@@ -55,7 +55,9 @@ const ColonyTokenManagementDialog = ({
       close={close}
       tokens={colonyTokens}
       updateTokens={updateTokens}
-      tokensList={process.env.NODE_ENV === 'development' ? [] : tokensList.tokens}
+      tokensList={
+        process.env.NODE_ENV === 'development' ? [] : tokensList.tokens
+      }
       nativeTokenAddress={data?.colony?.nativeTokenAddress}
     />
   );

@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { FormikProps, FormikHelpers } from 'formik';
 
-import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { AddressZero } from 'ethers/constants';
 
@@ -65,14 +65,18 @@ interface FormValues {
 }
 
 const validationSchema = yup.object({
-  tokenAddress: yup
-    .string()
-    .address(),
+  tokenAddress: yup.string().address(),
   tokenSymbol: yup.string().max(6),
 });
 
-const TokenEditDialog = ({ updateTokens, tokens = [], cancel, close, tokensList = [], nativeTokenAddress }: Props) => {
-  const { formatMessage } = useIntl();
+const TokenEditDialog = ({
+  updateTokens,
+  tokens = [],
+  cancel,
+  close,
+  tokensList = [],
+  nativeTokenAddress,
+}: Props) => {
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
 
   const handleTokenSelect = (token: OneToken) => {
@@ -88,7 +92,9 @@ const TokenEditDialog = ({ updateTokens, tokens = [], cancel, close, tokensList 
       if (tokenAddress && !tokenAddresses.includes(tokenAddress)) {
         addresses.push(tokenAddress);
       }
-      addresses = addresses.map(address => createAddress(address)).filter(address => address !== AddressZero);
+      addresses = addresses
+        .map((address) => createAddress(address))
+        .filter((address) => address !== AddressZero);
       try {
         await updateTokens(addresses);
         resetForm();
@@ -98,7 +104,7 @@ const TokenEditDialog = ({ updateTokens, tokens = [], cancel, close, tokensList 
         setSubmitting(false);
       }
     },
-    [updateTokens, formatMessage, close],
+    [updateTokens, close],
   );
 
   const allTokens = useMemo(() => {
@@ -117,7 +123,7 @@ const TokenEditDialog = ({ updateTokens, tokens = [], cancel, close, tokensList 
         initialValues={{
           tokenAddress: '',
           description: '',
-          tokenAddresses: tokens.map(token => token.address),
+          tokenAddresses: tokens.map((token) => token.address),
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
@@ -133,15 +139,21 @@ const TokenEditDialog = ({ updateTokens, tokens = [], cancel, close, tokensList 
               {allTokens.length > 0 ? (
                 <div className={styles.tokenChoiceContainer}>
                   {allTokens.map((token) => (
-                    <TokenItem 
+                    <TokenItem
                       key={token.address}
                       token={token}
-                      disabled={token.address === nativeTokenAddress || token.address === AddressZero}
+                      disabled={
+                        token.address === nativeTokenAddress ||
+                        token.address === AddressZero
+                      }
                     />
                   ))}
                 </div>
               ) : (
-                <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
+                <Heading
+                  appearance={{ size: 'normal' }}
+                  text={MSG.noTokensText}
+                />
               )}
             </DialogSection>
             <DialogSection>
