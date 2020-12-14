@@ -52,7 +52,6 @@
 
 .requiredPermissionSection > i {
   margin-left: 13px;
-  fill: var(--danger);
 }
 
 .tooltipText {

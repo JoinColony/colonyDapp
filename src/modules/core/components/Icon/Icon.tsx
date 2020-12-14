@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from 'react';
+import React, { HTMLAttributes, useCallback } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 
 import { SimpleMessageValues } from '~types/index';
@@ -60,7 +60,7 @@ const multiColorIcons = getIcons(multiColorIconNames);
 const Icon = ({
   appearance = { size: 'normal', theme: 'primary' },
   className,
-  viewBox: viewBoxOverride = '0 0 30 30',
+  viewBox,
   name,
   title,
   titleValues,
@@ -75,6 +75,27 @@ const Icon = ({
   const iconHref = typeof icon === 'object' ? `#${icon.default.id}` : icon;
   const iconTitle =
     typeof title === 'object' ? formatMessage(title, titleValues) : title;
+  const getViewBox = useCallback(() => {
+    switch (appearance.size) {
+      case 'extraTiny':
+        return '0 0 12 12';
+      case 'tiny':
+        return '0 0 14 14';
+      case 'small':
+        return '0 0 16 16';
+      case 'normal':
+        return '0 0 18 18';
+      case 'medium':
+        return '0 0 28 28';
+      case 'large':
+        return '0 0 42 42';
+      case 'huge':
+        return '0 0 64 64';
+      default:
+        return '0 0 30 30';
+    }
+  }, [appearance]);
+  const viewBoxOverride = viewBox || getViewBox();
   return (
     <i
       title={iconTitle}

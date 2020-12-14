@@ -89,9 +89,9 @@ const PermissionRequiredInfo = ({ requiredRoles }: Props) => {
           </div>
         </div>
         <Icon
-          name="circle-close"
+          name="circle-close-error"
           title="Error"
-          appearance={{ size: 'medium' }}
+          appearance={{ size: 'normal' }}
         />
       </div>
     </div>
