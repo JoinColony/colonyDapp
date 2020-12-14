@@ -5,7 +5,7 @@ import { ColonyActions } from '~types/index';
 const actionsMessageDescriptors = {
   'action.title': `{actionType, select,
       ${ColonyActions.Payment} {Pay {recipient} {amount} {tokenSymbol}}
-      other {Some other title}
+      other {Generic action we don't have information about}
     }`,
 };
 

@@ -4,6 +4,7 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
+import TransactionLink from '~core/TransactionLink';
 
 import { Colony, AnyUser } from '~data/index';
 import { ColonyActions } from '~types/index';
@@ -36,6 +37,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.value',
     defaultMessage: 'Value',
   },
+  transactionHash: {
+    id: 'dashboard.ActionsPage.DetailsWidget.transactionHash',
+    defaultMessage: 'Transaction Hash',
+  },
   actionTypesTitles: {
     id: 'dashboard.ActionsPage.DetailsWidget.actionTypesTitles',
     defaultMessage: `{actionType, select,
@@ -51,6 +56,7 @@ interface Props {
   recipient?: AnyUser;
   colony: Colony;
   payment?: PaymentDetails;
+  transactionHash?: string;
 }
 
 const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
@@ -64,6 +70,7 @@ const DetailsWidget = ({
   recipient,
   colony,
   payment,
+  transactionHash,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -75,6 +82,19 @@ const DetailsWidget = ({
     }
     return null;
   }, [colony, payment]);
+
+  const showFullDetails = actionType !== ColonyActions.Generic;
+
+  const shortenedHash = useMemo(() => {
+    if (!showFullDetails && transactionHash) {
+      const transactionStart = transactionHash.substring(0, 6);
+      const transactionEnd = transactionHash.substring(
+        transactionHash.length - 4,
+      );
+      return `${transactionStart}...${transactionEnd}`;
+    }
+    return undefined;
+  }, [transactionHash, showFullDetails]);
 
   return (
     <div>
@@ -94,7 +114,7 @@ const DetailsWidget = ({
           />
         </div>
       </div>
-      {paymentDomain && (
+      {paymentDomain && showFullDetails && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.from} />
@@ -104,7 +124,7 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {recipient && (
+      {recipient && showFullDetails && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.to} />
@@ -116,7 +136,7 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {payment && payment.amount && (
+      {payment?.amount && showFullDetails && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.value} />
@@ -130,6 +150,21 @@ const DetailsWidget = ({
                */
               unit={payment.decimals}
               suffix={` ${payment.symbol || '???'}`}
+            />
+          </div>
+        </div>
+      )}
+      {!!shortenedHash && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.transactionHash} />
+          </div>
+          <div className={styles.value}>
+            <TransactionLink
+              className={styles.transactionHashLink}
+              hash={transactionHash as string}
+              text={shortenedHash}
+              title={transactionHash}
             />
           </div>
         </div>

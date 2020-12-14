@@ -304,13 +304,15 @@ const ActionsPage = () => {
               createdAt={createdAt}
             />
           )}
-          <ActionsPageFeedItem
-            createdAt={createdAt}
-            user={initiatorProfileWithFallback}
-            annotation
-            comment={`Luke has big plans and the rebellion needs
+          {actionType !== ColonyActions.Generic && (
+            <ActionsPageFeedItem
+              createdAt={createdAt}
+              user={initiatorProfileWithFallback}
+              annotation
+              comment={`Luke has big plans and the rebellion needs
                     these funds. I had to ‘Force’ this, I just had to!`}
-          />
+            />
+          )}
           <ActionsPageFeed
             actionType={actionType}
             transactionHash={transactionHash as string}
@@ -362,6 +364,7 @@ const ActionsPage = () => {
               actionType={actionType as ColonyActions}
               recipient={recipientProfileWithFallback}
               colony={colonyData?.colony}
+              transactionHash={transactionHash}
               payment={{
                 amount,
                 symbol,
