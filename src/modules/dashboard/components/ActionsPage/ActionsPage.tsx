@@ -1,51 +1,41 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
-
 import { ColonyRole } from '@colony/colony-js';
+
 import Heading from '~core/Heading';
-import TextDecorator from '~lib/TextDecorator';
-import UserMention from '~core/UserMention';
-import LoadingTemplate from '~pages/LoadingTemplate';
 import Button from '~core/Button';
-import CopyableAddress from '~core/CopyableAddress';
-import DetailsWidgetUser from '~core/DetailsWidgetUser';
+import Numeral from '~core/Numeral';
+import FriendlyUserName from '~core/FriendlyUserName';
+import LoadingTemplate from '~pages/LoadingTemplate';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
-
 import InputStorageWidget from './InputStorageWidget';
-import MultisigWidget from './MultisigWidget';
-import DetailsWidget, { DetailsWidgetTeam } from './DetailsWidget';
-import TransactionHash, { Hash } from './TransactionHash';
-
-import NakedMoleImage from '../../../../img/naked-mole.svg';
 
 import {
-  useTransactionLazyQuery,
+  useColonyActionLazyQuery,
   useUserLazyQuery,
   useColonyFromNameQuery,
   useUser,
   useLoggedInUser,
+  useTokenInfoLazyQuery,
 } from '~data/index';
-import { isTransactionFormat } from '~utils/web3';
-import { STATUS, ColonyActionTypes } from './types';
 import { NOT_FOUND_ROUTE } from '~routes/index';
+import { ColonyActions } from '~types/index';
+import { isTransactionFormat } from '~utils/web3';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { STATUS } from './types';
+
+import MultisigWidget from './MultisigWidget';
+import DetailsWidget from './DetailsWidget';
+import TransactionHash, { Hash } from './TransactionHash';
 
 import styles from './ActionsPage.css';
+import NakedMoleImage from '../../../../img/naked-mole.svg';
 
 const MSG = defineMessages({
-  actionTitle: {
-    id: 'dashboard.ActionsPage.actionTitle',
-    defaultMessage: `{name, select,
-      false {Unknown Transaction}
-      other {{name}}
-    } {user, select,
-      false {}
-      other {by {user}}
-    }`,
-  },
   loading: {
     id: 'dashboard.ActionsPage.loading',
     defaultMessage: `Loading Transaction`,
@@ -114,16 +104,26 @@ const ActionsPage = () => {
   const [
     fetchTransction,
     {
-      data: transactionData,
-      loading: transactionDataLoading,
-      error: transactionDataError,
+      data: colonyActionData,
+      loading: colonyActionLoading,
+      error: colonyActionError,
     },
-  ] = useTransactionLazyQuery();
+  ] = useColonyActionLazyQuery();
 
   const [
-    fetchUser,
-    { data: userData, loading: userDataLoading },
+    fetchRecipientProfile,
+    { data: recipientProfile, loading: repicientProfileLoading },
   ] = useUserLazyQuery();
+
+  const [
+    fetchInitiatorProfile,
+    { data: initiatorProfile, loading: initiatorProfileLoading },
+  ] = useUserLazyQuery();
+
+  const [
+    fetchTokenInfo,
+    { data: tokenData, loading: loadingTokenData },
+  ] = useTokenInfoLazyQuery();
 
   useEffect(() => {
     if (
@@ -141,67 +141,37 @@ const ActionsPage = () => {
   }, [fetchTransction, transactionHash, colonyData]);
 
   useEffect(() => {
-    if (transactionData?.transaction?.from) {
-      fetchUser({
-        variables: { address: transactionData.transaction.from },
+    if (colonyActionData?.colonyAction) {
+      const { recipient, actionInitiator } = colonyActionData?.colonyAction;
+      fetchRecipientProfile({
+        variables: {
+          address: recipient,
+        },
+      });
+      fetchInitiatorProfile({
+        variables: {
+          address: actionInitiator,
+        },
       });
     }
-  }, [fetchUser, transactionData]);
+  }, [fetchRecipientProfile, fetchInitiatorProfile, colonyActionData]);
 
-  const fallbackUserData = useUser(transactionData?.transaction?.from || '');
+  useEffect(() => {
+    if (colonyActionData?.colonyAction?.tokenAddress) {
+      const { tokenAddress } = colonyActionData?.colonyAction;
+      fetchTokenInfo({ variables: { address: tokenAddress } });
+    }
+  }, [fetchTokenInfo, colonyActionData]);
 
-  const { Decorate } = new TextDecorator({
-    username: (usernameWithAtSign) => (
-      <UserMention username={usernameWithAtSign.slice(1)} />
-    ),
-  });
-
-  const titleDynamicValues = useMemo(
-    () => ({
-      user: (() => {
-        /*
-         * @NOTE Using a fallback profile allows us to display a user's address
-         * if he doesn't have a colony profile yet
-         */
-        const {
-          profile: { username, walletAddress },
-        } = userData?.user || fallbackUserData;
-
-        if (username && walletAddress) {
-          return <Decorate key={walletAddress}>{`@${username}`}</Decorate>;
-        }
-        if (walletAddress) {
-          return (
-            /*
-             * @NOTE This might not exist in the final title copy in this format
-             * but most likely we'll have "some" iteration of this for which we'll
-             * use this as base
-             */
-            <span className={styles.addressInTitle}>
-              <CopyableAddress>{walletAddress}</CopyableAddress>
-            </span>
-          );
-        }
-        return false;
-      })(),
-      name: (() => {
-        if (transactionData?.transaction?.events?.length) {
-          const {
-            events: [event],
-          } = transactionData.transaction;
-          /*
-           * Display the first event as the page title
-           * We might need to change this in the future
-           */
-          return event.name;
-        }
-        return false;
-      })(),
-    }),
-    [transactionData, fallbackUserData, userData],
+  const fallbackRecipientProfile = useUser(
+    colonyActionData?.colonyAction?.recipient || '',
   );
 
-  if (!isTransactionFormat(transactionHash) || transactionDataError) {
+  const fallbackInitiatorProfile = useUser(
+    colonyActionData?.colonyAction?.actionInitiator || '',
+  );
+
+  if (!isTransactionFormat(transactionHash) || colonyActionError) {
     return (
       <div className={styles.main}>
         <div className={styles.notFoundContainer}>
@@ -233,10 +203,13 @@ const ActionsPage = () => {
   }
 
   if (
-    transactionDataLoading ||
-    userDataLoading ||
-    !transactionData ||
-    !colonyData
+    colonyActionLoading ||
+    repicientProfileLoading ||
+    initiatorProfileLoading ||
+    loadingTokenData ||
+    !colonyActionData ||
+    !colonyData ||
+    !tokenData
   ) {
     return <LoadingTemplate loadingText={MSG.loading} />;
   }
@@ -248,25 +221,46 @@ const ActionsPage = () => {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  const {
-    transaction: { hash, status, events, createdAt },
-  } = transactionData;
+  /*
+   * Colony Action
+   */
 
+  const {
+    colonyAction: {
+      hash,
+      status,
+      events,
+      createdAt,
+      actionType,
+      amount,
+      fromDomain,
+    },
+  } = colonyActionData;
+
+  /*
+   * Colony
+   */
   const {
     colony: { colonyAddress },
   } = colonyData;
 
+  /*
+   * Users, both initiator and recipient
+   */
+  const recipientProfileWithFallback =
+    recipientProfile?.user || fallbackRecipientProfile;
+  const initiatorProfileWithFallback =
+    initiatorProfile?.user || fallbackInitiatorProfile;
   const {
-    profile: { walletAddress },
-  } = userData?.user || fallbackUserData;
+    profile: { walletAddress: initiatorWalletAddress },
+  } = initiatorProfileWithFallback;
 
-  const detailsWidgetFrom = colonyAddress ? (
-    <DetailsWidgetTeam domainId={2} colonyAddress={colonyAddress} />
-  ) : null;
-
-  const detailsWidgetTo = walletAddress ? (
-    <DetailsWidgetUser walletAddress={walletAddress} />
-  ) : null;
+  /*
+   * Token
+   */
+  const {
+    tokenInfo: { decimals, symbol },
+  } = tokenData;
 
   return (
     <div className={styles.main}>
@@ -278,8 +272,25 @@ const ActionsPage = () => {
            */}
           <h1 className={styles.heading}>
             <FormattedMessage
-              {...MSG.actionTitle}
-              values={titleDynamicValues}
+              id="action.title"
+              values={{
+                actionType,
+                recipient: (
+                  <span className={styles.titleDecoration}>
+                    <FriendlyUserName
+                      user={recipientProfileWithFallback}
+                      autoShrinkAddress
+                    />
+                  </span>
+                ),
+                amount: (
+                  <Numeral
+                    value={amount}
+                    unit={getTokenDecimalsWithFallback(decimals)}
+                  />
+                ),
+                tokenSymbol: <span>{symbol || '???'}</span>,
+              }}
             />
           </h1>
           {!events?.length && hash && (
@@ -293,64 +304,75 @@ const ActionsPage = () => {
               createdAt={createdAt}
             />
           )}
-          <ActionsPageFeedItem
-            createdAt={Date.now()}
-            walletAddress={walletAddress}
-            annotation
-            comment={`Luke has big plans and the rebellion needs
+          {actionType !== ColonyActions.Generic && (
+            <ActionsPageFeedItem
+              createdAt={createdAt}
+              user={initiatorProfileWithFallback}
+              annotation
+              comment={`Luke has big plans and the rebellion needs
                     these funds. I had to ‘Force’ this, I just had to!`}
+            />
+          )}
+          <ActionsPageFeed
+            actionType={actionType}
+            transactionHash={transactionHash as string}
+            networkEvents={events}
+            initiator={initiatorProfileWithFallback}
+            recipient={recipientProfileWithFallback}
+            payment={{
+              amount,
+              symbol,
+              decimals: getTokenDecimalsWithFallback(decimals),
+              fromDomain,
+            }}
           />
-          {transactionHash && (
-            <>
-              <ActionsPageFeed
-                transactionHash={transactionHash}
-                /*
-                 * @NOTE If in the future they will not be needed on this page
-                 * specifically, consider moving loading of the network events
-                 * directly in the feed, that way, we can load it separately
-                 * while still displaying something to the user
-                 */
-                networkEvents={events}
-              />
-              {/*
-               *  @NOTE A user can comment only if he has a wallet connected
-               * and a registered user profile
-               */}
-              {currentUserName && !ethereal && (
-                <ActionsPageComment
-                  transactionHash={transactionHash}
-                  colonyAddress={colonyAddress}
-                />
-              )}
-            </>
+          {/*
+           *  @NOTE A user can comment only if he has a wallet connected
+           * and a registered user profile
+           */}
+          {currentUserName && !ethereal && (
+            <ActionsPageComment
+              transactionHash={transactionHash as string}
+              colonyAddress={colonyAddress}
+            />
           )}
         </div>
         <div className={styles.details}>
-          <InputStorageWidget />
-          <MultisigWidget
-            // Mocking for now
-            membersAllowedForApproval={Array.from(
-              Array(10),
-              () => walletAddress,
-            )}
-            requiredNumber={4}
-            requiredPermission={ColonyRole.Recovery}
-          >
-            <Button
-              text={{ id: 'button.approve' }}
-              appearance={{
-                theme: 'primary',
-                size: 'medium',
+          {actionType === ColonyActions.Recovery ? (
+            <>
+              <InputStorageWidget />
+              <MultisigWidget
+                // Mocking for now
+                membersAllowedForApproval={Array.from(
+                  Array(10),
+                  () => initiatorWalletAddress,
+                )}
+                requiredNumber={4}
+                requiredPermission={ColonyRole.Recovery}
+              >
+                <Button
+                  text={{ id: 'button.approve' }}
+                  appearance={{
+                    theme: 'primary',
+                    size: 'medium',
+                  }}
+                />
+              </MultisigWidget>
+            </>
+          ) : (
+            <DetailsWidget
+              actionType={actionType as ColonyActions}
+              recipient={recipientProfileWithFallback}
+              colony={colonyData?.colony}
+              transactionHash={transactionHash}
+              payment={{
+                amount,
+                symbol,
+                decimals: getTokenDecimalsWithFallback(decimals),
+                fromDomain,
               }}
             />
-          </MultisigWidget>
-          <DetailsWidget
-            domainId={1}
-            actionType={ColonyActionTypes.PAYMENT}
-            from={detailsWidgetFrom}
-            to={detailsWidgetTo}
-            colonyAddress={colonyData?.colony?.colonyAddress}
-          />
+          )}
         </div>
       </div>
     </div>

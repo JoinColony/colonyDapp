@@ -41,12 +41,6 @@ const getColonyMembersWithReputation = async (
     colonyAddress,
   );
   const { skillId } = await colonyClient.getDomain(domainId);
-  /*
-   * @TODO This is coming from colonyJS as I forgot to adjust the proper types when
-   * creating this common extension.
-   * I'll put in a PR to fix this at some point
-   */
-  // @ts-ignore
   const { addresses } = await colonyClient.getMembersReputation(skillId);
   return addresses || [];
 };

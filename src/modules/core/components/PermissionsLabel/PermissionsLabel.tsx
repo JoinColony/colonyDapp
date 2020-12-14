@@ -1,13 +1,24 @@
 import React from 'react';
-
-import { MessageDescriptor, useIntl } from 'react-intl';
+import { MessageDescriptor, useIntl, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
+
 import Icon from '~core/Icon';
 import { Tooltip } from '../Popover';
-import styles from './PermissionsLabel.css';
 import { permissionsObject } from './permissions';
 
+import { UniversalMessageValues } from '~types/index';
+import { getMainClasses } from '~utils/css';
+
+import styles from './PermissionsLabel.css';
+
+interface Appearance {
+  theme: 'default' | 'simple' | 'white';
+}
+
 interface Props {
+  /** Appearance object */
+  appearance?: Appearance;
+
   /** Permission name */
   permission: ColonyRole;
 
@@ -23,6 +34,9 @@ interface Props {
   /** Optional info message about permission being inherited. */
   infoMessage?: MessageDescriptor | string;
 
+  /** Optional info message about permission being inherited. */
+  infoMessageValues?: UniversalMessageValues;
+
   /** Where or not we should show only icon or icon with title */
   /** We could consider implement it with Appearance object, but i feel its not yet time for it */
   minimal?: boolean;
@@ -36,7 +50,9 @@ const PermissionsLabel = ({
   inherited = false,
   name,
   infoMessage,
+  infoMessageValues,
   minimal = false,
+  appearance,
 }: Props) => {
   const { formatMessage } = useIntl();
   const permissionDefaults = permissionsObject[permission];
@@ -47,15 +63,19 @@ const PermissionsLabel = ({
     typeof permissionName === 'string'
       ? permissionName
       : formatMessage(permissionName);
-  const tooltipText =
-    typeof infoMessage === 'string'
-      ? infoMessage
-      : infoMessage && formatMessage(infoMessage);
 
   return (
     <Tooltip
       placement="top"
-      content={tooltipText || null}
+      content={
+        <div className={styles.tooltip}>
+          {infoMessage && infoMessage === 'string' ? (
+            infoMessage
+          ) : (
+            <FormattedMessage {...infoMessage} values={infoMessageValues} />
+          )}
+        </div>
+      }
       trigger={infoMessage ? 'hover' : 'disabled'}
       showArrow={false}
       popperProps={{
@@ -69,7 +89,11 @@ const PermissionsLabel = ({
         ],
       }}
     >
-      <div className={`${styles.wrapper} ${!infoMessage && styles.noPointer}`}>
+      <div
+        className={getMainClasses(appearance, styles, {
+          noPointer: !infoMessage,
+        })}
+      >
         <Icon
           appearance={{ size: 'extraTiny' }}
           className={styles.icon}

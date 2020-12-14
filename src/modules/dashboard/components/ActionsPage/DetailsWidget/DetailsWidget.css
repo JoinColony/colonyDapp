@@ -1,8 +1,4 @@
 
-.wrapper {
-  margin-top: 55px;
-}
-
 .item {
   display: flex;
   justify-content: space-between;
@@ -23,4 +19,20 @@
 
 .value {
   color: color-mod(var(--dark) alpha(85%));
+}
+
+.value i {
+  display: inline-block;
+  margin: -3px 6px 0 0;
+  vertical-align: middle;
+}
+
+.transactionHashLink {
+  font-family: var(--family-techie);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.transactionHashLink:hover {
+  text-decoration: underline;
+  color: var(--sky-blue);
 }

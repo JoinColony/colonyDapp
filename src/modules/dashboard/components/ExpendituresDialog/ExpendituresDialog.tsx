@@ -65,6 +65,7 @@ const ExpendituresDialog = ({
   callStep,
   prevStep,
   colony,
+  nextStep,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -84,6 +85,7 @@ const ExpendituresDialog = ({
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
       },
+      onClick: () => callStep(nextStep),
     },
     {
       title: MSG.taskTitle,

@@ -9,6 +9,8 @@ import layout from '~styles/layout.css';
 import { DialogProvider } from '~core/Dialog';
 
 import messages from './i18n/en.json';
+import actionMessages from './i18n/en-actions';
+import eventsMessages from './i18n/en-events';
 import Routes from './routes';
 import apolloClient from './context/apolloClient';
 
@@ -25,7 +27,11 @@ interface Props {
 }
 
 const App = ({ store }: Props) => (
-  <IntlProvider locale="en" defaultLocale="en" messages={messages}>
+  <IntlProvider
+    locale="en"
+    defaultLocale="en"
+    messages={{ ...messages, ...actionMessages, ...eventsMessages }}
+  >
     <ApolloProvider client={apolloClient}>
       <StoreContext.Provider value={store}>
         <ReduxProvider store={store}>

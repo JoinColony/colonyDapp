@@ -13,6 +13,7 @@ export * from './keyTypes';
 export * from './DefaultValues';
 export * from './RecordToJS';
 export * from './context';
+export * from './colonyActions';
 
 export type WithKey = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -98,14 +99,4 @@ export interface UserRolesForDomain {
   address: string;
   domainId: number;
   roles: ColonyRole[];
-}
-
-export interface ActionsPageFeedItem {
-  id: string;
-  name?: string;
-  type: string;
-  values?: object; // We really need to find a better way to type this
-  message?: string;
-  from: Address;
-  createdAt: Date;
 }

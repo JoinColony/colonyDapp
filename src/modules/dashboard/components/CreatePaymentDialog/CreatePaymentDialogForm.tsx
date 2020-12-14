@@ -1,6 +1,10 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { FormikProps } from 'formik';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
@@ -86,7 +90,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  cancel: () => void;
+  back: () => void;
   colony: Colony;
   subscribedUsers: AnyUser[];
 }
@@ -98,19 +102,24 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
 );
 
 const CreatePaymentDialogForm = ({
-  cancel,
+  back,
   colony,
   colony: { colonyAddress, domains, tokens },
   subscribedUsers,
   handleSubmit,
   isSubmitting,
   isValid,
-  setErrors,
   values,
 }: Props & FormikProps<FormValues>) => {
+  /*
+   * Custom error state tracking
+   */
+  const [customAmountError, setCustomAmountError] = useState<
+    MessageDescriptor | string | undefined
+  >(undefined);
   const { tokenAddress, amount } = values;
-  const fromDomain = values.fromDomain
-    ? parseInt(values.fromDomain, 10)
+  const domainId = values.domainId
+    ? parseInt(values.domainId, 10)
     : ROOT_DOMAIN_ID;
 
   const selectedToken = useMemo(
@@ -132,7 +141,7 @@ const CreatePaymentDialogForm = ({
   const fromDomainRoles = useTransformer(getUserRolesForDomain, [
     colony,
     walletAddress,
-    fromDomain,
+    domainId,
   ]);
 
   const domainOptions = useMemo(
@@ -159,27 +168,28 @@ const CreatePaymentDialogForm = ({
         variables: {
           colonyAddress,
           tokenAddresses: [tokenAddress],
-          domainIds: [fromDomain],
+          domainIds: [domainId],
         },
       });
     }
-  }, [colonyAddress, tokenAddress, fromDomain, loadTokenBalances]);
+  }, [colonyAddress, tokenAddress, domainId, loadTokenBalances]);
 
   const fromDomainTokenBalance = useMemo(() => {
     const token =
       tokenBalancesData &&
       tokenBalancesData.tokens.find(({ address }) => address === tokenAddress);
-    return token && getBalanceFromToken(token, fromDomain);
-  }, [fromDomain, tokenAddress, tokenBalancesData]);
+    if (token) {
+      /*
+       * Reset our custom error state, since we changed the domain
+       */
+      setCustomAmountError(undefined);
+      return getBalanceFromToken(token, domainId);
+    }
+    return null;
+  }, [domainId, tokenAddress, tokenBalancesData]);
 
   useEffect(() => {
-    const errors: {
-      amount?: any;
-    } = {};
-
-    if (!selectedToken || !(amount && amount.length)) {
-      errors.amount = undefined; // silent error
-    } else {
+    if (selectedToken && amount) {
       const convertedAmount = bigNumberify(
         moveDecimal(
           amount,
@@ -188,20 +198,36 @@ const CreatePaymentDialogForm = ({
       );
       if (
         fromDomainTokenBalance &&
-        fromDomainTokenBalance.lt(convertedAmount)
+        (fromDomainTokenBalance.lt(convertedAmount) ||
+          fromDomainTokenBalance.isZero())
       ) {
-        errors.amount = MSG.noBalance;
+        /*
+         * @NOTE On custom, parallel, in-component error handling
+         *
+         * We need to keep track of a separate error state, since we are doing
+         * custom validation (checking if a domain has enough funds), alongside
+         * using a validationSchema.
+         *
+         * This makes it so that even if we manual set the error, it will get
+         * overwritten instantly when the next Formik State update triggers, making
+         * it basically impossible for us to manually put the Form into an error
+         * state.
+         *
+         * See: https://github.com/formium/formik/issues/706
+         *
+         * Because of this, we keep our own error state that runs in parallel
+         * to Formik's error state.
+         */
+        setCustomAmountError(MSG.noBalance);
       }
     }
-
-    setErrors(errors);
   }, [
     amount,
-    fromDomain,
+    domainId,
     fromDomainRoles,
     fromDomainTokenBalance,
     selectedToken,
-    setErrors,
+    setCustomAmountError,
   ]);
 
   const userHasFundingPermission = userHasRole(
@@ -239,7 +265,7 @@ const CreatePaymentDialogForm = ({
             <Select
               options={domainOptions}
               label={MSG.from}
-              name="fromDomain"
+              name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
               disabled={!userHasPermission}
             />
@@ -275,7 +301,7 @@ const CreatePaymentDialogForm = ({
             appearance={{ width: 'wide' }}
             data={subscribedUsers}
             label={MSG.to}
-            name="toAssignee"
+            name="recipient"
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
             disabled={!userHasPermission}
@@ -300,6 +326,11 @@ const CreatePaymentDialogForm = ({
                 ),
               }}
               disabled={!userHasPermission}
+              /*
+               * Force the input component into an error state
+               * This is needed for our custom error state to work
+               */
+              forcedFieldError={customAmountError}
             />
           </div>
           <div className={styles.tokenAmountSelect}>
@@ -322,9 +353,7 @@ const CreatePaymentDialogForm = ({
                    * Just entering the decimal point will pass it through to EthUsd
                    * and that will try to fetch the balance for, which, obviously, will fail
                    */
-                  values.amount && values.amount.length && values.amount !== '.'
-                    ? values.amount
-                    : 0
+                  values.amount && values.amount !== '.' ? values.amount : '0'
                 }
               />
             </div>
@@ -364,7 +393,7 @@ const CreatePaymentDialogForm = ({
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={cancel}
+          onClick={back}
           text={{ id: 'button.back' }}
         />
         {/**
@@ -375,7 +404,11 @@ const CreatePaymentDialogForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid}
+          /*
+           * Disable Form submissions if either the form is invalid, or
+           * if our custom state was triggered.
+           */
+          disabled={!isValid || !!customAmountError}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

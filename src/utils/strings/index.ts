@@ -1,6 +1,8 @@
 import { addressNormalizer, addressValidator } from '@purser/core';
 import { customAlphabet, urlAlphabet } from 'nanoid';
 
+import { isTransactionFormat } from '~utils/web3';
+
 import { Address } from '~types/index';
 
 const HTTP_PROTOCOL = 'http://';
@@ -114,6 +116,26 @@ export const splitAddress = (address: Address): AddressElements | Error => {
     };
   } catch (caughtError) {
     return caughtError;
+  }
+};
+
+export const splitTransactionHash = (
+  transactionHash: string,
+): AddressElements | undefined => {
+  try {
+    isTransactionFormat(transactionHash);
+    const HEX_HEADER = '0x';
+    const addressStart: string = transactionHash.slice(2, 6);
+    const addressMiddle: string = transactionHash.slice(4, -4);
+    const addressEnd: string = transactionHash.slice(-4);
+    return {
+      header: HEX_HEADER,
+      start: `${addressStart}`,
+      middle: `${addressMiddle}`,
+      end: addressEnd,
+    };
+  } catch (caughtError) {
+    return undefined;
   }
 };
 

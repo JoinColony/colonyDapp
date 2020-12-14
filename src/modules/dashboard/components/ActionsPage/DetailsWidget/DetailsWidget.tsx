@@ -1,12 +1,17 @@
-import React, { ReactNode, useState, useEffect } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useMemo } from 'react';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
-import { Address } from '~types/index';
-import ColorTag from '~core/ColorTag';
 import Numeral from '~core/Numeral';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { useColonyDomainsQuery, AnyToken, OneDomain } from '~data/index';
-import { ColonyActionTypes } from '../types';
+import Icon from '~core/Icon';
+import DetailsWidgetUser from '~core/DetailsWidgetUser';
+import TransactionLink from '~core/TransactionLink';
+
+import { Colony, AnyUser } from '~data/index';
+import { ColonyActions } from '~types/index';
+import { PaymentDetails } from '../../ActionsPageFeed/ActionsPageFeed';
+import { splitTransactionHash } from '~utils/strings';
+
+import DetailsWidgetTeam from './DetailsWidgetTeam';
 
 import styles from './DetailsWidget.css';
 
@@ -33,102 +38,130 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.value',
     defaultMessage: 'Value',
   },
-  paymentActionType: {
-    id: 'dashboard.ActionsPage.DetailsWidget.paymentActionType',
-    defaultMessage: 'Payment',
+  transactionHash: {
+    id: 'dashboard.ActionsPage.DetailsWidget.transactionHash',
+    defaultMessage: 'Transaction Hash',
   },
-  transferFundsActionType: {
-    id: 'dashboard.ActionsPage.DetailsWidget.transferFundsActionType',
-    defaultMessage: 'Transfer Funds',
-  },
-  recoveryModeActionType: {
-    id: 'dashboard.ActionsPage.DetailsWidget.recoveryModeActionType',
-    defaultMessage: 'Recovery Mode',
+  actionTypesTitles: {
+    id: 'dashboard.ActionsPage.DetailsWidget.actionTypesTitles',
+    defaultMessage: `{actionType, select,
+      Payment {Payment}
+      Recovery {Recovery Mode}
+      other {Generic Action}
+    }`,
   },
 });
 
 interface Props {
-  domainId?: number;
-  actionType: ColonyActionTypes;
-  from?: ReactNode;
-  to?: ReactNode;
-  amount?: number;
-  token?: AnyToken;
-  colonyAddress?: Address;
+  actionType: ColonyActions;
+  recipient?: AnyUser;
+  colony: Colony;
+  payment?: PaymentDetails;
+  transactionHash?: string;
 }
 
+const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
+  [ColonyActions.Payment]: 'emoji-dollar-stack',
+  [ColonyActions.Recovery]: 'emoji-alarm-lamp',
+  [ColonyActions.Generic]: 'circle-check-primary',
+};
+
 const DetailsWidget = ({
-  domainId,
-  actionType,
-  from,
-  to,
-  amount,
-  token,
-  colonyAddress,
+  actionType = ColonyActions.Generic,
+  recipient,
+  colony,
+  payment,
+  transactionHash,
 }: Props) => {
-  const [activeTeam, setActiveTeam] = useState<OneDomain | undefined>();
+  const { formatMessage } = useIntl();
 
-  const { data } = useColonyDomainsQuery({
-    variables: { colonyAddress: colonyAddress || '' },
-  });
-
-  useEffect(() => {
-    if (data) {
-      const domain = data.colony.domains.find(
-        ({ ethDomainId }) => Number(domainId) === ethDomainId,
+  const paymentDomain = useMemo(() => {
+    if (payment?.fromDomain) {
+      return colony?.domains?.find(
+        ({ ethDomainId }) => ethDomainId === payment.fromDomain,
       );
-      if (domain) {
-        setActiveTeam(domain);
-      }
     }
-  }, [data, domainId]);
+    return null;
+  }, [colony, payment]);
+
+  const showFullDetails = actionType !== ColonyActions.Generic;
+
+  const splitHash = splitTransactionHash(transactionHash as string);
+  let shortenedHash;
+  if (splitHash && !showFullDetails) {
+    const { header, start, end } = splitHash;
+    shortenedHash = `${header}${start}...${end}`;
+  }
+
   return (
-    <div className={styles.wrapper}>
-      {activeTeam && (
-        <div className={styles.item}>
-          <div className={styles.label}>
-            <FormattedMessage {...MSG.activeTeam} />
-          </div>
-          <div className={styles.value}>
-            {activeTeam.color && <ColorTag color={activeTeam.color} />}
-            {` ${activeTeam?.name}`}
-          </div>
-        </div>
-      )}
+    <div>
       <div className={styles.item}>
         <div className={styles.label}>
           <FormattedMessage {...MSG.actionType} />
         </div>
         <div className={styles.value}>
-          <FormattedMessage {...MSG[actionType]} />
+          <Icon
+            title={formatMessage(MSG.actionTypesTitles, { actionType })}
+            appearance={{ size: 'small' }}
+            name={ACTION_TYPES_ICONS_MAP[actionType]}
+          />
+          <FormattedMessage
+            {...MSG.actionTypesTitles}
+            values={{ actionType }}
+          />
         </div>
       </div>
-      {from && (
+      {paymentDomain && showFullDetails && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.from} />
           </div>
-          <div className={styles.value}>{from}</div>
+          <div className={styles.value}>
+            <DetailsWidgetTeam domain={paymentDomain} />
+          </div>
         </div>
       )}
-      {to && (
+      {recipient && showFullDetails && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.to} />
           </div>
-          <div className={styles.value}>{to}</div>
+          <div className={styles.value}>
+            <DetailsWidgetUser
+              walletAddress={recipient.profile.walletAddress}
+            />
+          </div>
         </div>
       )}
-      {token && amount && (
+      {payment?.amount && showFullDetails && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.value} />
           </div>
           <div className={styles.value}>
             <Numeral
-              value={amount}
-              unit={getTokenDecimalsWithFallback(token.decimals)}
-              suffix={` ${token.symbol}`}
+              value={payment.amount}
+              /*
+               * @NOTE We don't need to call `getTokenDecimalsWithFallback` since
+               * we already did that when passing down the prop
+               */
+              unit={payment.decimals}
+              suffix={` ${payment.symbol || '???'}`}
+            />
+          </div>
+        </div>
+      )}
+      {!!shortenedHash && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.transactionHash} />
+          </div>
+          <div className={styles.value}>
+            <TransactionLink
+              className={styles.transactionHashLink}
+              hash={transactionHash as string}
+              text={shortenedHash}
+              title={transactionHash}
             />
           </div>
         </div>

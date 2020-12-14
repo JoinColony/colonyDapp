@@ -5,10 +5,9 @@ import {
   DomainRoles,
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
-import { nanoid } from 'nanoid';
 
 import { PersistentTasks, Colony } from '~data/index';
-import { Address, UserRolesForDomain, ActionsPageFeedItem } from '~types/index';
+import { Address, UserRolesForDomain } from '~types/index';
 
 export const getRolesForUserAndDomain = (
   roles: ColonyRoles,
@@ -164,39 +163,3 @@ export const getLevelTotalPayouts = (
   }, {});
   return Object.values(levelTotalPayouts);
 };
-
-/*
- * @NOTE On typechecking the arguments
- * Although we have types for them, TS is being too whiny about creating this
- * union type, so in the interest of time I've removed them for now
- */
-export const getActionsPageFeedItems = (
-  networkEvents: any[] = [],
-  transactionMessages: any[] = [],
-): ActionsPageFeedItem[] =>
-  [...networkEvents, ...transactionMessages]
-    .map((unformattedItem) => {
-      const {
-        name,
-        sourceType,
-        context = { message: '' },
-        values = {},
-        from,
-        initiatorAddress,
-        sourceId,
-        createdAt,
-      } = unformattedItem;
-      return {
-        id: sourceId || nanoid(),
-        name,
-        type: sourceType === 'db' ? 'message' : 'event',
-        values,
-        message: context?.message,
-        from: from || initiatorAddress,
-        createdAt: new Date(createdAt),
-      };
-    })
-    .sort(
-      ({ createdAt: createdAtFirst }, { createdAt: createdAtSecond }) =>
-        createdAtFirst.getTime() - createdAtSecond.getTime(),
-    );

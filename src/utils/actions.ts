@@ -33,6 +33,11 @@ export const withId = (id: string) => (action: any) => ({
   meta: { ...action.meta, id },
 });
 
+export const withMeta = (meta: object) => (action: any) => ({
+  ...action,
+  meta: { ...action.meta, ...meta },
+});
+
 export const filterUniqueAction = (id: string, type?: string) => (
   action: any,
 ): boolean =>

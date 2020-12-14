@@ -4,6 +4,7 @@ import { defineMessages } from 'react-intl';
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
 import ExpendituresDialog from '~dashboard/ExpendituresDialog';
+import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
 import { Colony } from '~data/index';
@@ -30,12 +31,16 @@ const ColonyHomeActions = ({ colony }: Props) => {
     {
       component: ExpendituresDialog,
       props: {
-        /*
-         * @TODO Next step dialog doesn't exist yet, it will be added in #2309
-         */
         nextStep: 'dashboard.CreatePaymentDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
+      },
+    },
+    {
+      component: CreatePaymentDialog,
+      props: {
+        colony,
+        prevStep: 'dashboard.ExpendituresDialog',
       },
     },
   ]);

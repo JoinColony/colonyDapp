@@ -6,9 +6,8 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { getMainClasses } from '~utils/css';
 import TextDecorator from '~lib/TextDecorator';
-import { Address } from '~types/index';
-import { useUser } from '~data/index';
-import { getFriendlyName } from '../../../../users/transformers';
+import { AnyUser } from '~data/index';
+import FriendlyUserName from '~core/FriendlyUserName';
 
 import styles from './ActionsPageFeedItem.css';
 
@@ -16,14 +15,16 @@ const displayName = 'dashboard.ActionsPageFeed.ActionsPageFeedItem';
 
 interface Props {
   comment?: string;
-  walletAddress: Address;
+  user?: AnyUser | null;
   annotation?: boolean;
   createdAt?: Date | number;
 }
 
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
 const ActionsPageFeedItem = ({
   comment,
-  walletAddress,
+  user,
   createdAt,
   annotation = false,
 }: Props) => {
@@ -32,25 +33,22 @@ const ActionsPageFeedItem = ({
       <UserMention username={usernameWithAtSign.slice(1)} />
     ),
   });
-
-  const UserAvatar = HookedUserAvatar({ fetchUser: false });
-
-  const user = useUser(walletAddress);
-
   return (
     <div className={getMainClasses({}, styles, { annotation })}>
       <div className={styles.avatar}>
         <UserAvatar
           size="xs"
-          address={walletAddress}
-          user={user}
+          address={user?.profile.walletAddress || ''}
+          user={user as AnyUser}
           showInfo
           notSet={false}
         />
       </div>
       <div className={styles.content}>
         <div className={styles.details}>
-          <span className={styles.username}>{getFriendlyName(user)}</span>
+          <span className={styles.username}>
+            <FriendlyUserName user={user as AnyUser} />
+          </span>
           {createdAt && <TransactionMeta createdAt={createdAt} />}
         </div>
         <div className={styles.text}>

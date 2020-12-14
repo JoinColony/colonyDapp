@@ -1027,6 +1027,7 @@ export type Program = {
 
 export type Query = {
   colony: Colony;
+  colonyAction: ColonyAction;
   colonyAddress: Scalars['String'];
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
@@ -1040,7 +1041,6 @@ export type Query = {
   token: Token;
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
-  transaction: Transaction;
   transactionMessages: TransactionMessages;
   user: User;
   userAddress: Scalars['String'];
@@ -1051,6 +1051,12 @@ export type Query = {
 
 export type QueryColonyArgs = {
   address: Scalars['String'];
+};
+
+
+export type QueryColonyActionArgs = {
+  transactionHash: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1103,12 +1109,6 @@ export type QueryTokenInfoArgs = {
 
 export type QueryTokensArgs = {
   addresses?: Maybe<Array<Scalars['String']>>;
-};
-
-
-export type QueryTransactionArgs = {
-  transactionHash: Scalars['String'];
-  colonyAddress: Scalars['String'];
 };
 
 
@@ -1313,19 +1313,22 @@ export type LoggedInUser = {
 
 export type ParsedEvent = {
   name: Scalars['String'];
-  topic: Scalars['String'];
   values: Scalars['String'];
   createdAt: Scalars['Int'];
-  from: Scalars['String'];
+  emmitedBy: Scalars['String'];
 };
 
-export type Transaction = {
+export type ColonyAction = {
   hash: Scalars['String'];
-  from: Scalars['String'];
-  to: Scalars['String'];
+  actionInitiator: Scalars['String'];
+  fromDomain: Scalars['Int'];
+  recipient: Scalars['String'];
   status: Scalars['Int'];
   events: Array<ParsedEvent>;
   createdAt: Scalars['Int'];
+  actionType: Scalars['String'];
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
 };
 
 export type NetworkContractsInput = {
@@ -2341,15 +2344,15 @@ export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
 
-export type TransactionQueryVariables = Exact<{
+export type ColonyActionQueryVariables = Exact<{
   transactionHash: Scalars['String'];
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type TransactionQuery = { transaction: (
-    Pick<Transaction, 'hash' | 'from' | 'to' | 'status' | 'createdAt'>
-    & { events: Array<Pick<ParsedEvent, 'name' | 'topic' | 'values' | 'createdAt' | 'from'>> }
+export type ColonyActionQuery = { colonyAction: (
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress'>
+    & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
 export type TransactionMessagesQueryVariables = Exact<{
@@ -6205,51 +6208,54 @@ export function useNetworkContractsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContractsQuery>;
 export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
 export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
-export const TransactionDocument = gql`
-    query Transaction($transactionHash: String!, $colonyAddress: String!) {
-  transaction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
+export const ColonyActionDocument = gql`
+    query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
+  colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
     hash
-    from
-    to
+    actionInitiator
+    fromDomain
+    recipient
     status
     events {
       name
-      topic
       values
       createdAt
-      from
+      emmitedBy
     }
     createdAt
+    actionType
+    amount
+    tokenAddress
   }
 }
     `;
 
 /**
- * __useTransactionQuery__
+ * __useColonyActionQuery__
  *
- * To run a query within a React component, call `useTransactionQuery` and pass it any options that fit your needs.
- * When your component renders, `useTransactionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useColonyActionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyActionQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useTransactionQuery({
+ * const { data, loading, error } = useColonyActionQuery({
  *   variables: {
  *      transactionHash: // value for 'transactionHash'
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-export function useTransactionQuery(baseOptions?: Apollo.QueryHookOptions<TransactionQuery, TransactionQueryVariables>) {
-        return Apollo.useQuery<TransactionQuery, TransactionQueryVariables>(TransactionDocument, baseOptions);
+export function useColonyActionQuery(baseOptions?: Apollo.QueryHookOptions<ColonyActionQuery, ColonyActionQueryVariables>) {
+        return Apollo.useQuery<ColonyActionQuery, ColonyActionQueryVariables>(ColonyActionDocument, baseOptions);
       }
-export function useTransactionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionQuery, TransactionQueryVariables>) {
-          return Apollo.useLazyQuery<TransactionQuery, TransactionQueryVariables>(TransactionDocument, baseOptions);
+export function useColonyActionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyActionQuery, ColonyActionQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyActionQuery, ColonyActionQueryVariables>(ColonyActionDocument, baseOptions);
         }
-export type TransactionQueryHookResult = ReturnType<typeof useTransactionQuery>;
-export type TransactionLazyQueryHookResult = ReturnType<typeof useTransactionLazyQuery>;
-export type TransactionQueryResult = Apollo.QueryResult<TransactionQuery, TransactionQueryVariables>;
+export type ColonyActionQueryHookResult = ReturnType<typeof useColonyActionQuery>;
+export type ColonyActionLazyQueryHookResult = ReturnType<typeof useColonyActionLazyQuery>;
+export type ColonyActionQueryResult = Apollo.QueryResult<ColonyActionQuery, ColonyActionQueryVariables>;
 export const TransactionMessagesDocument = gql`
     query TransactionMessages($transactionHash: String!) {
   transactionMessages(transactionHash: $transactionHash) {
