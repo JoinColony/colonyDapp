@@ -9,8 +9,6 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 
-import { tokenIsETH } from '../../../core/checks';
-
 interface Props {
   cancel: () => void;
   close: () => void;
@@ -33,19 +31,13 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
 
   const userTokens = (data && data.user.tokens) || [];
 
-  const addToken = useCallback(
-    (newTokenAddress: Address) => {
-      const newAddresses = [
-        ...userTokens
-          .filter((token) => !tokenIsETH(token))
-          .map(({ address }) => address),
-        newTokenAddress,
-      ];
+  const updateTokens = useCallback(
+    (updatedAddresses: Address[]) => {
       return setUserTokensMutation({
-        variables: { input: { tokenAddresses: newAddresses } },
+        variables: { input: { tokenAddresses: updatedAddresses } },
       });
     },
-    [setUserTokensMutation, userTokens],
+    [userTokens, setUserTokensMutation],
   );
 
   return (
@@ -53,7 +45,7 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
       cancel={cancel}
       close={close}
       tokens={userTokens}
-      addTokenFn={addToken}
+      updateTokens={updateTokens}
     />
   );
 };

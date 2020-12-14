@@ -53,7 +53,7 @@ interface Props {
   // Colony tokens
   tokens: AnyToken[];
   // Token list from json file. Not supported on local env
-  tokensList: AnyToken[];
+  tokensList?: AnyToken[];
   // Colony native token addresss
   nativeTokenAddress?: Address;
 }
