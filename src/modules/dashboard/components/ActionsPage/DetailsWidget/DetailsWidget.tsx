@@ -63,6 +63,7 @@ interface Props {
 const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
   [ColonyActions.Payment]: 'emoji-dollar-stack',
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
+  [ColonyActions.MoveFunds]: 'emoji-world-globe',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
