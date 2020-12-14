@@ -20,9 +20,14 @@ interface Props {
    * Don't abuse it!
    */
   className?: string;
+
+  /*
+   * Show a title over the element, on hover. This is browser native.
+   */
+  title?: string;
 }
 
-const ExternalLink = ({ href, text, textValues, className }: Props) => {
+const ExternalLink = ({ href, text, textValues, className, title }: Props) => {
   const { formatMessage } = useIntl();
   // eslint-disable-next-line max-len
   const typeOfText =
@@ -34,6 +39,7 @@ const ExternalLink = ({ href, text, textValues, className }: Props) => {
       href={href}
       target="_blank"
       rel="noreferrer noopener"
+      title={title}
     >
       {linkText}
     </a>

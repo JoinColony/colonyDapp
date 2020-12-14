@@ -20,11 +20,22 @@ interface Props {
 
   /** Values for text (react-intl interpolation) */
   textValues?: SimpleMessageValues;
+
+  /*
+   * Show a title over the element, on hover. This is browser native.
+   */
+  title?: string;
 }
 
 const displayName = 'TransactionLink';
 
-const TransactionLink = ({ className, hash, text, textValues }: Props) => (
+const TransactionLink = ({
+  className,
+  hash,
+  text,
+  textValues,
+  title,
+}: Props) => (
   <ExternalLink
     className={className}
     href={getBlockExplorerLink({
@@ -33,6 +44,7 @@ const TransactionLink = ({ className, hash, text, textValues }: Props) => (
     })}
     text={text || hash}
     textValues={textValues}
+    title={title}
   />
 );
 
