@@ -9,6 +9,7 @@ import TransactionLink from '~core/TransactionLink';
 import { Colony, AnyUser } from '~data/index';
 import { ColonyActions } from '~types/index';
 import { PaymentDetails } from '../../ActionsPageFeed/ActionsPageFeed';
+import { splitTransactionHash } from '~utils/strings';
 
 import DetailsWidgetTeam from './DetailsWidgetTeam';
 
@@ -85,16 +86,12 @@ const DetailsWidget = ({
 
   const showFullDetails = actionType !== ColonyActions.Generic;
 
-  const shortenedHash = useMemo(() => {
-    if (!showFullDetails && transactionHash) {
-      const transactionStart = transactionHash.substring(0, 6);
-      const transactionEnd = transactionHash.substring(
-        transactionHash.length - 4,
-      );
-      return `${transactionStart}...${transactionEnd}`;
-    }
-    return undefined;
-  }, [transactionHash, showFullDetails]);
+  const splitHash = splitTransactionHash(transactionHash as string);
+  let shortenedHash;
+  if (splitHash && !showFullDetails) {
+    const { header, start, end } = splitHash;
+    shortenedHash = `${header}${start}...${end}`;
+  }
 
   return (
     <div>
