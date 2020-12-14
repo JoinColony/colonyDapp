@@ -54,7 +54,7 @@ const ActionsPageFeed = ({
         ({ name }) => name === ColonyAndExtensionsEvents.OneTxPaymentMade,
       );
     }
-    return networkEvents;
+    return [];
   }, [actionType, networkEvents]);
 
   if (error) {
