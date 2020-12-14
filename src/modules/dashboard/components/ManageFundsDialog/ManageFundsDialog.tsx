@@ -45,7 +45,7 @@ const MSG = defineMessages({
   },
   manageTokensDescription: {
     id: 'dashboard.ManageFundsDialog.manageTokensDescription',
-    defaultMessage: "Set what % of the colony's revenue should go to members.",
+    defaultMessage: 'Add or remove tokens you want the colony to recognize.',
   },
   rewardPayoutTitle: {
     id: 'dashboard.ManageFundsDialog.rewardPayoutTitle',
