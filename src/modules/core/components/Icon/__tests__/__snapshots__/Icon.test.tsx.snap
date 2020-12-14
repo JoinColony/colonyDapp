@@ -10,7 +10,7 @@ exports[`Icon component Renders initial component 1`] = `
     title="The Greatest Icon Ever"
   >
     <svg
-      viewBox="0 0 30 30"
+      viewBox="0 0 18 18"
     >
       <use
         xlinkHref="#undefined"
@@ -35,7 +35,7 @@ exports[`Icon component Works with MessageDescriptors 1`] = `
     title="The Greatest Icon Ever"
   >
     <svg
-      viewBox="0 0 30 30"
+      viewBox="0 0 18 18"
     >
       <use
         xlinkHref="#undefined"

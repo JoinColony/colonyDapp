@@ -92,7 +92,7 @@ const Icon = ({
       case 'huge':
         return '0 0 64 64';
       default:
-        return '0 0 30 30';
+        return '0 0 18 18';
     }
   }, [appearance]);
   const viewBoxOverride = viewBox || getViewBox();
