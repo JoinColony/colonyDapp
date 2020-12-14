@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { FormikProps, FormikHelpers } from 'formik';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
@@ -47,11 +47,15 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  addTokenFn: (address: Address) => Promise<any>;
   updateTokens: (addresses: Address[]) => Promise<any>;
   cancel: () => void;
   close: () => void;
+  // Colony tokens
   tokens: AnyToken[];
+  // Token list from json file. Not supported on local env
+  tokensList: AnyToken[];
+  // Colony native token addresss
+  nativeTokenAddress?: Address;
 }
 
 interface FormValues {
@@ -67,7 +71,7 @@ const validationSchema = yup.object({
   tokenSymbol: yup.string().max(6),
 });
 
-const TokenEditDialog = ({ addTokenFn, updateTokens, tokens = [], cancel, close }: Props) => {
+const TokenEditDialog = ({ updateTokens, tokens = [], cancel, close, tokensList = [], nativeTokenAddress }: Props) => {
   const { formatMessage } = useIntl();
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
 
@@ -77,8 +81,8 @@ const TokenEditDialog = ({ addTokenFn, updateTokens, tokens = [], cancel, close 
 
   const handleSubmit = useCallback(
     async (
-      {tokenAddress, tokenAddresses}: FormValues,
-      { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
+      { tokenAddress, tokenAddresses }: FormValues,
+      { resetForm, setSubmitting }: FormikHelpers<FormValues>,
     ) => {
       let addresses = tokenAddresses;
       if (tokenAddress && !tokenAddresses.includes(tokenAddress)) {
@@ -86,17 +90,21 @@ const TokenEditDialog = ({ addTokenFn, updateTokens, tokens = [], cancel, close 
       }
       addresses = addresses.map(address => createAddress(address)).filter(address => address !== AddressZero);
       try {
-        // await addTokenFn(createAddress(tokenAddress));
         await updateTokens(addresses);
         resetForm();
         close();
       } catch (e) {
-        setFieldError('tokenAddress', formatMessage(MSG.errorAddingToken));
+        // @TODO what errors we can expect.. how to distinct between field or checkbox error
         setSubmitting(false);
       }
     },
-    [addTokenFn, formatMessage, close],
+    [updateTokens, formatMessage, close],
   );
+
+  const allTokens = useMemo(() => {
+    return [...tokens, ...tokensList];
+  }, [tokens, tokensList]);
+
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ theme: 'heading' }}>
@@ -122,10 +130,14 @@ const TokenEditDialog = ({ addTokenFn, updateTokens, tokens = [], cancel, close 
         }: FormikProps<FormValues>) => (
           <>
             <DialogSection appearance={{ theme: 'sidePadding' }}>
-              {tokens.length > 0 ? (
+              {allTokens.length > 0 ? (
                 <div className={styles.tokenChoiceContainer}>
-                  {tokens.map((token) => (
-                    <TokenItem key={token.address} token={token} />
+                  {allTokens.map((token) => (
+                    <TokenItem 
+                      key={token.address}
+                      token={token}
+                      disabled={token.address === nativeTokenAddress || token.address === AddressZero}
+                    />
                   ))}
                 </div>
               ) : (

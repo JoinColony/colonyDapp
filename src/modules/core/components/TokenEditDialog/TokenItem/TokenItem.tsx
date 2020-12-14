@@ -17,13 +17,14 @@ const MSG = defineMessages({
 
 interface Props {
   token: AnyToken;
+  disabled?: boolean;
 }
 
-const TokenItem = ({ token }: Props) => {
+const TokenItem = ({ token, disabled = false }: Props) => {
   return (
     <div className={styles.main}>
       <div className={styles.tokenChoice}>
-        <Checkbox name="tokenAddresses" value={token.address} className={styles.checkbox} />
+        <Checkbox name="tokenAddresses" value={token.address} className={styles.checkbox} disabled={disabled} />
         <TokenIcon token={token} name={token.name || undefined} size="xs" />
         <span className={styles.tokenChoiceSymbol}>
           <Heading

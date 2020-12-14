@@ -8,6 +8,7 @@ import {
   ColonyTokensQueryVariables,
 } from '~data/index';
 import { Address } from '~types/index';
+import tokensList from './tokenlist.json';
 
 import { tokenIsETH } from '../../../core/checks';
 
@@ -39,22 +40,6 @@ const ColonyTokenManagementDialog = ({
 
   const colonyTokens = (data && data.colony.tokens) || [];
 
-  const addToken = useCallback(
-    (newTokenAddress: Address) => {
-      const newAddresses = [
-        ...colonyTokens
-          .filter((token) => !tokenIsETH(token))
-          .map(({ address }) => address),
-        newTokenAddress,
-      ];
-      return setColonyTokensMutation({
-        variables: { input: { colonyAddress, tokenAddresses: newAddresses } },
-      });
-    },
-    [colonyAddress, colonyTokens, setColonyTokensMutation],
-  );
-
-
   const updateTokens = useCallback(
     (updatedAddresses: Address[]) => {
       return setColonyTokensMutation({
@@ -69,8 +54,9 @@ const ColonyTokenManagementDialog = ({
       cancel={cancel}
       close={close}
       tokens={colonyTokens}
-      addTokenFn={addToken}
       updateTokens={updateTokens}
+      tokensList={process.env.NODE_ENV === 'development' ? [] : tokensList.tokens}
+      nativeTokenAddress={data?.colony?.nativeTokenAddress}
     />
   );
 };
