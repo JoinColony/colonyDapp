@@ -92,9 +92,13 @@ const TokenEditDialog = ({
       if (tokenAddress && !tokenAddresses.includes(tokenAddress)) {
         addresses.push(tokenAddress);
       }
-      addresses = addresses
-        .map((address) => createAddress(address))
-        .filter((address) => address !== AddressZero);
+      addresses = [
+        ...new Set(
+          addresses
+            .map((address) => createAddress(address))
+            .filter((address) => address !== AddressZero),
+        ),
+      ];
       try {
         await updateTokens(addresses);
         resetForm();
