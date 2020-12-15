@@ -3,8 +3,9 @@ import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
 import { bigNumberify } from 'ethers/utils';
+import { useHistory } from 'react-router-dom';
 
-import { pipe, mapPayload, withKey } from '~utils/actions';
+import { pipe, mapPayload, withMeta } from '~utils/actions';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import Dialog from '~core/Dialog';
@@ -35,6 +36,8 @@ const TransferFundsDialog = ({
   cancel,
   close,
 }: Props) => {
+  const history = useHistory();
+
   const validationSchema = yup.object().shape({
     fromDomain: yup.number().required(),
     toDomain: yup.number().required(),
@@ -51,29 +54,37 @@ const TransferFundsDialog = ({
 
   const transform = useCallback(
     pipe(
-      mapPayload((payload) => {
-        // Find the selected token's decimals
-        const selectedToken = tokens.find(
-          (token) => token.address === payload.tokenAddress,
-        );
-        const decimals = getTokenDecimalsWithFallback(
-          selectedToken && selectedToken.decimals,
-        );
+      mapPayload(
+        ({
+          tokenAddress,
+          amount: transferAmount,
+          fromDomain,
+          toDomain: recipientDomain,
+        }) => {
+          // Find the selected token's decimals
+          const selectedToken = tokens.find(
+            (token) => token.address === tokenAddress,
+          );
+          const decimals = getTokenDecimalsWithFallback(
+            selectedToken && selectedToken.decimals,
+          );
 
-        // Convert amount string with decimals to BigInt (eth to wei)
-        const amount = bigNumberify(moveDecimal(payload.amount, decimals));
+          // Convert amount string with decimals to BigInt (eth to wei)
+          const amount = bigNumberify(moveDecimal(transferAmount, decimals));
 
-        return {
-          ...payload,
-          colonyAddress,
-          amount,
-          fromDomain: parseInt(payload.fromDomain, 10),
-          toDomain: parseInt(payload.toDomain, 10),
-        };
-      }),
-      withKey(colonyAddress),
+          return {
+            colonyAddress,
+            colonyName: colonyData?.colony?.colonyName,
+            fromDomainId: parseInt(fromDomain, 10),
+            toDomainId: parseInt(recipientDomain, 10),
+            amount,
+            tokenAddress,
+          };
+        },
+      ),
+      withMeta({ history }),
     ),
-    [colonyAddress, tokens],
+    [],
   );
 
   return (
@@ -85,10 +96,9 @@ const TransferFundsDialog = ({
         tokenAddress: nativeTokenAddress,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.MOVE_FUNDS_BETWEEN_POTS}
-      error={ActionTypes.MOVE_FUNDS_BETWEEN_POTS_ERROR}
-      // Close dialog immediately to give way for GasStation
-      success={ActionTypes.MOVE_FUNDS_BETWEEN_POTS}
+      submit={ActionTypes.COLONY_ACTION_MOVE_FUNDS}
+      error={ActionTypes.COLONY_ACTION_MOVE_FUNDS_ERROR}
+      success={ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS}
       onSuccess={close}
       transform={transform}
     >

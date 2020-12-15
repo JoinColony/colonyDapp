@@ -34,4 +34,21 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_MOVE_FUNDS,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        tokenAddress: Address;
+        fromDomainId: number;
+        toDomainId: number;
+        amount: BigNumber;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_MOVE_FUNDS_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS,
+      MetaWithHistory<object>
     >;
