@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
+import camelcase from 'camelcase';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -238,6 +239,7 @@ const ActionsPage = () => {
       actionType,
       amount,
       fromDomain,
+      toDomain,
     },
   } = colonyActionData;
 
@@ -245,7 +247,7 @@ const ActionsPage = () => {
    * Colony
    */
   const {
-    colony: { colonyAddress },
+    colony: { colonyAddress, domains },
   } = colonyData;
 
   /*
@@ -286,7 +288,13 @@ const ActionsPage = () => {
             <FormattedMessage
               id="action.title"
               values={{
-                actionType,
+                /*
+                 * @NOTE We need to convert the action type name into a forced camel-case string
+                 *
+                 * This is because it might have a name that contains spaces, and ReactIntl really
+                 * doesn't like that...
+                 */
+                actionType: camelcase(actionType),
                 recipient: (
                   <span className={styles.titleDecoration}>
                     <FriendlyUserName
@@ -302,6 +310,8 @@ const ActionsPage = () => {
                   />
                 ),
                 tokenSymbol: <span>{symbol || '???'}</span>,
+                fromDomain: domains[fromDomain].name,
+                toDomain: domains[toDomain].name,
               }}
             />
           </h1>
