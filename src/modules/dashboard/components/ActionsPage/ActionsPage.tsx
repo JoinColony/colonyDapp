@@ -28,14 +28,14 @@ import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { STATUS } from './types';
 
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
+import { STATUS_MAP } from './staticMaps';
 
-import styles from './ActionsPage.css';
 import NakedMoleImage from '../../../../img/naked-mole.svg';
+import styles from './ActionsPage.css';
 
 const MSG = defineMessages({
   loading: {
@@ -70,12 +70,6 @@ const MSG = defineMessages({
 type SuperSpecificColonyAddress = string | Error;
 
 const displayName = 'dashboard.ActionsPage';
-
-const STATUS_MAP = {
-  0: STATUS.Failed,
-  1: STATUS.Succeeded,
-  2: STATUS.Pending,
-};
 
 const ActionsPage = () => {
   const { transactionHash, colonyName } = useParams<{

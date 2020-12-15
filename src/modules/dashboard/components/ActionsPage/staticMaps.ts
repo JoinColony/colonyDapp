@@ -1,6 +1,8 @@
 import { ColonyRole } from '@colony/colony-js';
 import { ColonyAndExtensionsEvents, ColonyActions } from '~types/index';
 
+import { STATUS } from './types';
+
 type EventRolesMap = Partial<
   {
     [key in ColonyAndExtensionsEvents]: ColonyRole[];
@@ -24,4 +26,10 @@ export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
   [ColonyActions.MoveFunds]: 'emoji-world-globe',
   [ColonyActions.Generic]: 'circle-check-primary',
+};
+
+export const STATUS_MAP = {
+  0: STATUS.Failed,
+  1: STATUS.Succeeded,
+  2: STATUS.Pending,
 };
