@@ -10,7 +10,7 @@ import {
   TokenBalancesForDomainsQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { putError, takeFrom } from '~utils/saga/effects';
+import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 
@@ -95,11 +95,8 @@ function* createPaymentAction({
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    /*
-     * Redirect the user to the actions page
-     */
-    if (history && colonyName) {
-      yield call(history.push, `/colony/${colonyName}/tx/${txHash}`);
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
 
     // Refetch token balances for the domains involved
@@ -191,11 +188,8 @@ function* createMoveFundsAction({
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    /*
-     * Redirect the user to the actions page
-     */
-    if (history && colonyName) {
-      yield call(history.push, `/colony/${colonyName}/tx/${txHash}`);
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
 
     // Refetch token balances for the domains involved
