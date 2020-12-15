@@ -120,9 +120,10 @@ const DetailsWidget = ({
             <FormattedMessage {...MSG.toRecipient} />
           </div>
           <div className={styles.value}>
-            {values?.toDomain ? (
+            {values?.toDomain && actionType === ColonyActions.MoveFunds && (
               <DetailsWidgetTeam domain={values.toDomain} />
-            ) : (
+            )}
+            {recipient && actionType === ColonyActions.Payment && (
               <DetailsWidgetUser
                 walletAddress={recipient?.profile.walletAddress as string}
               />
