@@ -31,6 +31,12 @@ export const getActionType = (parsedEvents) => {
   ) {
     return ColonyActions.Payment;
   }
+  if (
+    firstEvent.name ===
+    ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots
+  ) {
+    return ColonyActions.MoveFunds;
+  }
   return ColonyActions.Generic;
 };
 
