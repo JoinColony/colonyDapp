@@ -96,7 +96,7 @@ export const colonyActionsResolvers = ({
           })
           .reverse();
 
-        const payment = {
+        const values = {
           recipient: AddressZero,
           fromDomain: 1,
           toDomain: 1,
@@ -125,12 +125,12 @@ export const colonyActionsResolvers = ({
             colonyClient as ColonyClient,
           );
           const { amount, token } = payoutClaimedEvent?.values;
-          payment.fromDomain = bigNumberify(
+          values.fromDomain = bigNumberify(
             paymentDetails?.domainId || 1,
           ).toNumber();
-          payment.recipient = paymentDetails?.recipient || AddressZero;
-          payment.amount = bigNumberify(amount || '0').toString();
-          payment.tokenAddress = token || AddressZero;
+          values.recipient = paymentDetails?.recipient || AddressZero;
+          values.amount = bigNumberify(amount || '0').toString();
+          values.tokenAddress = token || AddressZero;
         }
 
         if (actionType === ColonyActions.MoveFunds) {
@@ -140,10 +140,10 @@ export const colonyActionsResolvers = ({
               ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
           );
           const { amount, fromPot, toPot, token } = moveFundsEvent?.values;
-          payment.fromDomain = fromPot;
-          payment.toDomain = toPot;
-          payment.tokenAddress = token || AddressZero;
-          payment.amount = bigNumberify(amount || '0').toString();
+          values.fromDomain = fromPot;
+          values.toDomain = toPot;
+          values.tokenAddress = token || AddressZero;
+          values.amount = bigNumberify(amount || '0').toString();
         }
 
         return {
@@ -160,7 +160,7 @@ export const colonyActionsResolvers = ({
           events: reverseSortedEvents,
           createdAt,
           actionType,
-          ...payment,
+          ...values,
         };
       }
 
