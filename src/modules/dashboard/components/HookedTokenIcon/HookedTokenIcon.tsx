@@ -14,6 +14,7 @@ import { ipfsDataFetcher } from '../../../core/fetchers';
 interface Response {
   url: string;
   ok: boolean;
+  blob: any;
 }
 
 interface Props {
@@ -44,6 +45,16 @@ const loadTokenImages = async (address: Address): Promise<Response> => {
   return fetch(tokenImageUrl);
 };
 
+const getBase64image = (blob): Promise<any> => {
+  return new Promise((resolve) => {
+    const fileReader = new FileReader();
+    fileReader.onload = function () {
+      return resolve(fileReader.result);
+    };
+    fileReader.readAsDataURL(blob);
+  });
+};
+
 const HookedTokenIcon = ({
   name,
   token: { iconHash, address },
@@ -57,16 +68,25 @@ const HookedTokenIcon = ({
     [iconHash as string], // Technically a bug, shouldn't need type override
     [iconHash],
   );
+
   useEffect(() => {
     const loadTokenLogo = async () => {
-      const icon = localStorage.getItem(address);
-      console.log(icon);
+      const image = localStorage.getItem(address);
+      if (image) {
+        setTokenImage(image);
+        return;
+      }
+
       if (!dontFetch && address && !iconName) {
         const response = await loadTokenImages(address);
-        if (!response.ok) {
-          return;
+        if (response.ok) {
+          const blob = await response.blob();
+          const base64image = await getBase64image(blob);
+          if (base64image) {
+            localStorage.setItem(address, base64image);
+            setTokenImage(base64image);
+          }
         }
-        setTokenImage(response.url);
       }
     };
     loadTokenLogo();
