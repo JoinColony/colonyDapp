@@ -5,6 +5,8 @@ import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
 import ExpendituresDialog from '~dashboard/ExpendituresDialog';
 import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
+import ManageFundsDialog from '~dashboard/ManageFundsDialog';
+import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
 import { Colony } from '~data/index';
@@ -26,7 +28,10 @@ const ColonyHomeActions = ({ colony }: Props) => {
   const startWizardFlow = useNaiveBranchingDialogWizard([
     {
       component: ColonyActionsDialog,
-      props: { nextStepExpenditure: 'dashboard.ExpendituresDialog' },
+      props: {
+        nextStepExpenditure: 'dashboard.ExpendituresDialog',
+        nextStepManageFunds: 'dashboard.ManageFundsDialog',
+      },
     },
     {
       component: ExpendituresDialog,
@@ -41,6 +46,21 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         colony,
         prevStep: 'dashboard.ExpendituresDialog',
+      },
+    },
+    {
+      component: ManageFundsDialog,
+      props: {
+        nextStep: 'dashboard.TransferFundsDialog',
+        prevStep: 'dashboard.ColonyActionsDialog',
+        colony,
+      },
+    },
+    {
+      component: TransferFundsDialog,
+      props: {
+        prevStep: 'dashboard.ManageFundsDialog',
+        colonyAddress: colony.colonyAddress,
       },
     },
   ]);
