@@ -48,7 +48,7 @@ const HookedTokenIcon = ({
   name,
   token: { iconHash, address },
   iconName,
-  dontFetch,
+  dontFetch = process.env.NODE_ENV === 'development',
   ...props
 }: Props) => {
   const [tokenImage, setTokenImage] = useState<string | undefined>();
@@ -57,9 +57,10 @@ const HookedTokenIcon = ({
     [iconHash as string], // Technically a bug, shouldn't need type override
     [iconHash],
   );
-
   useEffect(() => {
     const loadTokenLogo = async () => {
+      const icon = localStorage.getItem(address);
+      console.log(icon);
       if (!dontFetch && address && !iconName) {
         const response = await loadTokenImages(address);
         if (!response.ok) {
