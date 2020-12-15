@@ -1,11 +1,30 @@
 import { ColonyClient, getBlockTime, ClientType } from '@colony/colony-js';
-import { bigNumberify } from 'ethers/utils';
+import { bigNumberify, BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
 import { getPaymentDetails, getActionType, getDomainId } from '~utils/events';
 import { Context } from '~context/index';
-import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ColonyActions,
+  ColonyAndExtensionsEvents,
+  Address,
+} from '~types/index';
+
+interface EventValue {
+  paymentId: BigNumberish;
+  amount: BigNumberish;
+  token: Address;
+  fromPot: BigNumberish;
+  toPot: BigNumberish;
+}
+
+export interface ProcessedEvent {
+  name: ColonyAndExtensionsEvents;
+  values: EventValue;
+  createdAt: number;
+  emmitedBy: ClientType;
+}
 
 export const colonyActionsResolvers = ({
   colonyManager: { networkClient },
@@ -87,14 +106,14 @@ export const colonyActionsResolvers = ({
                     values,
                     createdAt,
                     emmitedBy: type,
-                  };
+                  } as ProcessedEvent;
                 }
                 return null;
               })
               .filter((potentialLog) => !!potentialLog);
             return parsedLog;
           })
-          .reverse();
+          .reverse() as ProcessedEvent[];
 
         const values = {
           recipient: AddressZero,

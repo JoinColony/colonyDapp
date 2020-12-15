@@ -8,6 +8,7 @@ import {
   Address,
 } from '~types/index';
 import { ParsedEvent } from '~data/index';
+import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 import {
   ACTIONS_EVENTS,
@@ -27,14 +28,16 @@ export const getDomainId = async (
 /*
  * Main logic for detecting a action type based on an array of "required" events
  */
-export const getActionType = (parsedEvents): ColonyActions => {
+export const getActionType = (
+  processedEvents: ProcessedEvent[],
+): ColonyActions => {
   const potentialActions = {};
   Object.values(EVENTS_REQUIRED_FOR_ACTION).map(
     (eventsWithPositions, index) => {
       /*
        * Filter the events by just the "required" ones
        */
-      const filteredParsedEvents = parsedEvents.filter(({ name }) =>
+      const filteredParsedEvents = processedEvents.filter(({ name }) =>
         eventsWithPositions?.includes(name),
       );
       /*
