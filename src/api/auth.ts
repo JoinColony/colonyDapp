@@ -16,16 +16,56 @@ const postRequest = async (path: string, data: object) => {
   return response.json();
 };
 
-export const setToken = (walletAddress: string, token: string) =>
-  localStorage.setItem(`${TOKEN_STORAGE}-${walletAddress}`, token);
-export const getToken = (walletAddress: string) =>
-  localStorage.getItem(`${TOKEN_STORAGE}-${walletAddress}`);
-export const clearToken = (walletAddress: string) =>
+export const setToken = (walletAddress: string, token: string) => {
+  const storedTokens = localStorage.getItem(TOKEN_STORAGE);
+
+  if (storedTokens) {
+    const parsedStoredTokens = JSON.parse(storedTokens);
+
+    parsedStoredTokens[`${TOKEN_STORAGE}-${walletAddress}`] = token;
+
+    localStorage.setItem(TOKEN_STORAGE, JSON.stringify(parsedStoredTokens));
+  }
+};
+
+export const getToken = (walletAddress: string) => {
+  const storedTokens = localStorage.getItem(TOKEN_STORAGE);
+
+  if (storedTokens) {
+    const parsedStoredTokens = JSON.parse(storedTokens);
+
+    return parsedStoredTokens[`${TOKEN_STORAGE}-${walletAddress}`];
+  }
+
+  return null;
+};
+
+export const clearToken = (walletAddress: string) => {
   localStorage.removeItem(`${TOKEN_STORAGE}-${walletAddress}`);
+  const storedTokens = localStorage.getItem(TOKEN_STORAGE);
+
+  if (storedTokens) {
+    const parsedStoredTokens = JSON.parse(storedTokens);
+
+    delete parsedStoredTokens[`${TOKEN_STORAGE}-${walletAddress}`];
+
+    localStorage.setItem(TOKEN_STORAGE, JSON.stringify(parsedStoredTokens));
+  }
+};
+
+export const setTokenStorage = () =>
+  localStorage.setItem(TOKEN_STORAGE, JSON.stringify({}));
 
 export const authenticate = async (wallet) => {
   try {
+    const hasTokenStorageSet = !!localStorage.getItem(TOKEN_STORAGE);
+
+    if (!hasTokenStorageSet) {
+      setTokenStorage();
+    }
+
     const token = getToken(wallet.address);
+
     if (token) {
       const tokenData = jwtDecode(token);
       if (
