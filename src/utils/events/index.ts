@@ -1,5 +1,6 @@
-import { BigNumberish } from 'ethers/utils';
 import { ColonyClient, ClientType } from '@colony/colony-js';
+import { BigNumberish, bigNumberify } from 'ethers/utils';
+import { AddressZero } from 'ethers/constants';
 
 import ColonyManagerClass from '~lib/ColonyManager';
 import {
@@ -15,10 +16,13 @@ import {
   EVENTS_REQUIRED_FOR_ACTION,
 } from '~dashboard/ActionsPage';
 
-export const getPaymentDetails = async (
-  paymentId: BigNumberish,
-  colonyClient?: ColonyClient,
-) => colonyClient?.getPayment(paymentId);
+interface ActionValues {
+  recipient: Address;
+  amount: string;
+  tokenAddress: Address;
+  fromDomain: number;
+  toDomain: number;
+}
 
 export const getDomainId = async (
   fundingPotId: BigNumberish,
@@ -106,3 +110,70 @@ export const getEventsForActions = (
     ?.map((event) => events.filter(({ name }) => name === event))
     .flat(),
 ];
+
+export const getPaymentActionValues = async (
+  processedEvents: ProcessedEvent[],
+  colonyClient: ColonyClient,
+): Promise<Partial<ActionValues>> => {
+  /*
+   * Get the additional events to fetch values from
+   *
+   * We don't have to worry about these events existing, as long as this
+   * is an action event, these events will exist
+   */
+  const paymentAddedEvent = processedEvents.find(
+    (event) => event?.name === ColonyAndExtensionsEvents.PaymentAdded,
+  ) as ProcessedEvent;
+  const payoutClaimedEvent = processedEvents.find(
+    (event) => event?.name === ColonyAndExtensionsEvents.PayoutClaimed,
+  ) as ProcessedEvent;
+  /*
+   * Get the payment details from the payment id
+   */
+  const { paymentId } = paymentAddedEvent?.values;
+  const paymentDetails = await colonyClient.getPayment(paymentId);
+  const fromDomain = bigNumberify(paymentDetails?.domainId || 1).toNumber();
+  const recipient = paymentDetails?.recipient || AddressZero;
+  /*
+   * Fetch the values that are present directly in the events values
+   */
+  const { amount: paymentAmount, token } = payoutClaimedEvent?.values;
+  const amount = bigNumberify(paymentAmount || '0').toString();
+  const tokenAddress = token || AddressZero;
+
+  return {
+    amount,
+    tokenAddress,
+    fromDomain,
+    recipient,
+  };
+};
+
+export const getActionValues = async (
+  processedEvents: ProcessedEvent[],
+  colonyClient: ColonyClient,
+  actionType: ColonyActions,
+): Promise<ActionValues> => {
+  const fallbackValues = {
+    recipient: AddressZero,
+    fromDomain: 1,
+    toDomain: 1,
+    amount: '0',
+    tokenAddress: AddressZero,
+  };
+  switch (actionType) {
+    case ColonyActions.Payment: {
+      const paymentActionValues = await getPaymentActionValues(
+        processedEvents,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...paymentActionValues,
+      };
+    }
+    default: {
+      return fallbackValues;
+    }
+  }
+};
