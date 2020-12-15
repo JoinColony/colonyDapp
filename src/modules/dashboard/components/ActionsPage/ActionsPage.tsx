@@ -268,6 +268,31 @@ const ActionsPage = () => {
     tokenInfo: { decimals, symbol },
   } = tokenData;
 
+  /*
+   * @NOTE We need to convert the action type name into a forced camel-case string
+   *
+   * This is because it might have a name that contains spaces, and ReactIntl really
+   * doesn't like that...
+   */
+  const actionAndEventValues = {
+    actionType: camelcase(actionType),
+    recipient: (
+      <span className={styles.titleDecoration}>
+        <FriendlyUserName
+          user={recipientProfileWithFallback}
+          autoShrinkAddress
+        />
+      </span>
+    ),
+    amount: (
+      <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
+    ),
+    tokenSymbol: <span>{symbol || '???'}</span>,
+    decimals: getTokenDecimalsWithFallback(decimals),
+    fromDomain: domains[fromDomain],
+    toDomain: domains[toDomain],
+  };
+
   return (
     <div className={styles.main}>
       {actionType === ColonyActions.Recovery && (
@@ -288,30 +313,9 @@ const ActionsPage = () => {
             <FormattedMessage
               id="action.title"
               values={{
-                /*
-                 * @NOTE We need to convert the action type name into a forced camel-case string
-                 *
-                 * This is because it might have a name that contains spaces, and ReactIntl really
-                 * doesn't like that...
-                 */
-                actionType: camelcase(actionType),
-                recipient: (
-                  <span className={styles.titleDecoration}>
-                    <FriendlyUserName
-                      user={recipientProfileWithFallback}
-                      autoShrinkAddress
-                    />
-                  </span>
-                ),
-                amount: (
-                  <Numeral
-                    value={amount}
-                    unit={getTokenDecimalsWithFallback(decimals)}
-                  />
-                ),
-                tokenSymbol: <span>{symbol || '???'}</span>,
-                fromDomain: domains[fromDomain].name,
-                toDomain: domains[toDomain].name,
+                ...actionAndEventValues,
+                fromDomain: actionAndEventValues.fromDomain.name,
+                toDomain: actionAndEventValues.toDomain.name,
               }}
             />
           </h1>
@@ -339,14 +343,7 @@ const ActionsPage = () => {
             actionType={actionType}
             transactionHash={transactionHash as string}
             networkEvents={events}
-            initiator={initiatorProfileWithFallback}
-            recipient={recipientProfileWithFallback}
-            payment={{
-              amount,
-              symbol,
-              decimals: getTokenDecimalsWithFallback(decimals),
-              fromDomain,
-            }}
+            values={actionAndEventValues}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
@@ -385,14 +382,8 @@ const ActionsPage = () => {
             <DetailsWidget
               actionType={actionType as ColonyActions}
               recipient={recipientProfileWithFallback}
-              colony={colonyData?.colony}
               transactionHash={transactionHash}
-              payment={{
-                amount,
-                symbol,
-                decimals: getTokenDecimalsWithFallback(decimals),
-                fromDomain,
-              }}
+              values={actionAndEventValues}
             />
           )}
         </div>

@@ -3,14 +3,11 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 import { nanoid } from 'nanoid';
 
-import Numeral from '~core/Numeral';
-import FriendlyUserName from '~core/FriendlyUserName';
 import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
-import { AnyUser } from '~data/index';
 import { ColonyAndExtensionsEvents } from '~types/index';
 
-import { PaymentDetails } from '../ActionsPageFeed';
+import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 
 import styles from './ActionsPageEvent.css';
@@ -34,9 +31,7 @@ interface Props {
   eventValues?: Record<string, any>;
   transactionHash: string;
   createdAt: Date;
-  initiator?: AnyUser;
-  recipient?: AnyUser;
-  payment?: PaymentDetails;
+  values?: EventValues;
   emmitedBy?: string;
 }
 
@@ -59,9 +54,7 @@ const ActionsPageEvent = ({
   createdAt,
   transactionHash,
   eventName = ColonyAndExtensionsEvents.Generic,
-  initiator,
-  recipient,
-  payment,
+  values,
   emmitedBy,
 }: Props) => {
   /*
@@ -90,42 +83,10 @@ const ActionsPageEvent = ({
           <FormattedMessage
             id="event.title"
             values={{
+              ...values,
+              fromDomain: values?.fromDomain.name,
+              toDomain: values?.toDomain.name,
               eventName,
-              initiator: (
-                <span className={styles.decoratedUser}>
-                  <FriendlyUserName
-                    user={initiator as AnyUser}
-                    autoShrinkAddress
-                  />
-                </span>
-              ),
-              recipient: (
-                <span className={styles.decoratedUser}>
-                  <FriendlyUserName
-                    user={recipient as AnyUser}
-                    autoShrinkAddress
-                  />
-                </span>
-              ),
-              /*
-               * @NOTE At some point with the help of events we'll be able to get
-               * an actual payment name, rather than an id
-               */
-              paymentId: payment?.fromDomain || 1,
-              amount: (
-                <Numeral
-                  value={payment?.amount || '0'}
-                  /*
-                   * @NOTE We don't need to call `getTokenDecimalsWithFallback` since
-                   * we already did that when passing down the prop
-                   */
-                  unit={payment?.decimals}
-                />
-              ),
-              tokenSymbol: <span>{payment?.symbol || '???'}</span>,
-              eventNameDecorated: (
-                <span className={styles.highlight}>{eventName}</span>
-              ),
               clientOrExtensionType: (
                 <span className={styles.highlight}>{emmitedBy}</span>
               ),
