@@ -29,6 +29,7 @@ export default gql`
     hash: String!
     actionInitiator: String!
     fromDomain: Int!
+    toDomain: Int!
     recipient: String!
     status: Int!
     events: [ParsedEvent!]!

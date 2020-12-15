@@ -99,6 +99,7 @@ export const colonyActionsResolvers = ({
         const payment = {
           recipient: AddressZero,
           fromDomain: 1,
+          toDomain: 1,
           amount: '0',
           tokenAddress: AddressZero,
         };
@@ -130,6 +131,19 @@ export const colonyActionsResolvers = ({
           payment.recipient = paymentDetails?.recipient || AddressZero;
           payment.amount = bigNumberify(amount || '0').toString();
           payment.tokenAddress = token || AddressZero;
+        }
+
+        if (actionType === ColonyActions.MoveFunds) {
+          const moveFundsEvent = reverseSortedEvents?.find(
+            (event) =>
+              event?.name ===
+              ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
+          );
+          const { amount, fromPot, toPot, token } = moveFundsEvent?.values;
+          payment.fromDomain = fromPot;
+          payment.toDomain = toPot;
+          payment.tokenAddress = token || AddressZero;
+          payment.amount = bigNumberify(amount || '0').toString();
         }
 
         return {
