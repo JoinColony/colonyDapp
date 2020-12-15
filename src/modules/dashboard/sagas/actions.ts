@@ -164,14 +164,35 @@ function* createMoveFundsAction({
       ClientType.ColonyClient,
       colonyAddress,
     );
+
+    /*
+     * Validate the required values for the payment
+     */
+    if (!fromDomainId) {
+      throw new Error(
+        'Source domain not set for oveFundsBetweenPots transaction',
+      );
+    }
+    if (!toDomainId) {
+      throw new Error(
+        'Recipient domain not set for MoveFundsBetweenPots transaction',
+      );
+    }
+    if (!amount) {
+      throw new Error(
+        'Payment amount not set for MoveFundsBetweenPots transaction',
+      );
+    }
+    if (!tokenAddress) {
+      throw new Error(
+        'Payment token not set for MoveFundsBetweenPots transaction',
+      );
+    }
+
     const [{ fundingPotId: fromPot }, { fundingPotId: toPot }] = yield all([
       call([colonyClient, colonyClient.getDomain], fromDomainId),
       call([colonyClient, colonyClient.getDomain], toDomainId),
     ]);
-
-    /*
-     * @TODO Validate values
-     */
 
     txChannel = yield call(getTxChannel, metaId);
 
