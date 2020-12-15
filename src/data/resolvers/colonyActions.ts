@@ -1,9 +1,8 @@
 import { ColonyClient, getBlockTime, ClientType } from '@colony/colony-js';
-import { bigNumberify, BigNumberish } from 'ethers/utils';
-import { AddressZero } from 'ethers/constants';
+import { BigNumberish } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
 
-import { getActionType, getDomainId, getActionValues } from '~utils/events';
+import { getActionType, getActionValues } from '~utils/events';
 import { Context } from '~context/index';
 import {
   ColonyActions,
@@ -115,36 +114,7 @@ export const colonyActionsResolvers = ({
           })
           .reverse() as ProcessedEvent[];
 
-        const values = {
-          recipient: AddressZero,
-          fromDomain: 1,
-          toDomain: 1,
-          amount: '0',
-          tokenAddress: AddressZero,
-        };
-
         const actionType = getActionType(reverseSortedEvents);
-
-        if (actionType === ColonyActions.MoveFunds) {
-          const moveFundsEvent = reverseSortedEvents?.find(
-            (event) =>
-              event?.name ===
-              ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
-          );
-          const { amount, fromPot, toPot, token } = moveFundsEvent?.values;
-          const fromDomain = await getDomainId(
-            fromPot,
-            colonyClient as ColonyClient,
-          );
-          const toDomain = await getDomainId(
-            toPot,
-            colonyClient as ColonyClient,
-          );
-          values.fromDomain = bigNumberify(fromDomain || '1').toNumber();
-          values.toDomain = bigNumberify(toDomain || '1').toNumber();
-          values.tokenAddress = token || AddressZero;
-          values.amount = bigNumberify(amount || '0').toString();
-        }
 
         const actionValues = await getActionValues(
           reverseSortedEvents,
@@ -166,7 +136,6 @@ export const colonyActionsResolvers = ({
           events: reverseSortedEvents,
           createdAt,
           actionType,
-          ...values,
           ...actionValues,
         };
       }
@@ -183,6 +152,9 @@ export const colonyActionsResolvers = ({
        */
       const { hash, from } = await provider.getTransaction(transactionHash);
 
+      /*
+       * This basically fetches the fallback values
+       */
       const pendingActionValues = await getActionValues(
         [],
         colonyClient as ColonyClient,

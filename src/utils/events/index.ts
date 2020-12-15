@@ -1,5 +1,5 @@
 import { ColonyClient, ClientType } from '@colony/colony-js';
-import { BigNumberish, bigNumberify } from 'ethers/utils';
+import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
 import ColonyManagerClass from '~lib/ColonyManager';
@@ -23,11 +23,6 @@ interface ActionValues {
   fromDomain: number;
   toDomain: number;
 }
-
-export const getDomainId = async (
-  fundingPotId: BigNumberish,
-  colonyClient?: ColonyClient,
-) => colonyClient?.getDomainFromFundingPot(fundingPotId);
 
 /*
  * Main logic for detecting a action type based on an array of "required" events
@@ -111,7 +106,7 @@ export const getEventsForActions = (
     .flat(),
 ];
 
-export const getPaymentActionValues = async (
+const getPaymentActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
 ): Promise<Partial<ActionValues>> => {
@@ -122,30 +117,70 @@ export const getPaymentActionValues = async (
    * is an action event, these events will exist
    */
   const paymentAddedEvent = processedEvents.find(
-    (event) => event?.name === ColonyAndExtensionsEvents.PaymentAdded,
+    ({ name }) => name === ColonyAndExtensionsEvents.PaymentAdded,
   ) as ProcessedEvent;
   const payoutClaimedEvent = processedEvents.find(
-    (event) => event?.name === ColonyAndExtensionsEvents.PayoutClaimed,
+    ({ name }) => name === ColonyAndExtensionsEvents.PayoutClaimed,
   ) as ProcessedEvent;
+
   /*
    * Get the payment details from the payment id
    */
-  const { paymentId } = paymentAddedEvent?.values;
+  const {
+    values: { paymentId },
+  } = paymentAddedEvent;
   const paymentDetails = await colonyClient.getPayment(paymentId);
-  const fromDomain = bigNumberify(paymentDetails?.domainId || 1).toNumber();
-  const recipient = paymentDetails?.recipient || AddressZero;
+  const fromDomain = bigNumberify(paymentDetails.domainId || 1).toNumber();
+  const recipient = paymentDetails.recipient || AddressZero;
+
   /*
-   * Fetch the values that are present directly in the events values
+   * Fetch the rest of the values that are present directly in the events
    */
-  const { amount: paymentAmount, token } = payoutClaimedEvent?.values;
-  const amount = bigNumberify(paymentAmount || '0').toString();
-  const tokenAddress = token || AddressZero;
+  const {
+    values: { amount: paymentAmount, token },
+  } = payoutClaimedEvent;
 
   return {
-    amount,
-    tokenAddress,
+    amount: bigNumberify(paymentAmount || '0').toString(),
+    tokenAddress: token || AddressZero,
     fromDomain,
     recipient,
+  };
+};
+
+const getMoveFundsActionValues = async (
+  processedEvents: ProcessedEvent[],
+  colonyClient: ColonyClient,
+): Promise<Partial<ActionValues>> => {
+  /*
+   * Get the move funds event to fetch values from
+   *
+   * We don't have to worry about the event existing, as long as this
+   * is an move funds event, these events will exist
+   */
+  const moveFundsEvent = processedEvents.find(
+    ({ name }) =>
+      name === ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
+  ) as ProcessedEvent;
+
+  /*
+   * Fetch the rest of the values that are present directly in the event
+   */
+  const {
+    values: { amount, fromPot, toPot, token },
+  } = moveFundsEvent;
+
+  /*
+   * Fetch the domain ids from their respective pot ids
+   */
+  const fromDomain = await colonyClient.getDomainFromFundingPot(fromPot);
+  const toDomain = await colonyClient.getDomainFromFundingPot(toPot);
+
+  return {
+    amount: bigNumberify(amount || '0').toString(),
+    tokenAddress: token || AddressZero,
+    fromDomain: bigNumberify(fromDomain || '1').toNumber(),
+    toDomain: bigNumberify(toDomain || '1').toNumber(),
   };
 };
 
@@ -170,6 +205,16 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...paymentActionValues,
+      };
+    }
+    case ColonyActions.MoveFunds: {
+      const moveFundsActionValues = await getMoveFundsActionValues(
+        processedEvents,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...moveFundsActionValues,
       };
     }
     default: {
