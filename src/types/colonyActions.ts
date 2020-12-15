@@ -2,7 +2,7 @@ export enum ColonyActions {
   Generic = 'Generic',
   Payment = 'Payment',
   Recovery = 'Recovery',
-  MoveFunds = 'Move Funds',
+  MoveFunds = 'MoveFunds',
 }
 
 export enum ColonyAndExtensionsEvents {

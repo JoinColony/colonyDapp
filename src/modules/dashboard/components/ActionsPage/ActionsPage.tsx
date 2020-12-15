@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
-import camelcase from 'camelcase';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -270,7 +269,7 @@ const ActionsPage = () => {
    * doesn't like that...
    */
   const actionAndEventValues = {
-    actionType: camelcase(actionType),
+    actionType,
     initiator: (
       <span className={styles.titleDecoration}>
         <FriendlyUserName
