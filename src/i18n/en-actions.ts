@@ -14,6 +14,11 @@ const actionsMessageDescriptors = {
       )} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
       other {Generic action we don't have information about}
     }`,
+  'action.type': `{actionType, select,
+      ${camelcase(ColonyActions.Payment)} {Payment}
+      ${camelcase(ColonyActions.MoveFunds)} {Move Funds}
+      other {Generic}
+    }`,
 };
 
 export default actionsMessageDescriptors;

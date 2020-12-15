@@ -41,15 +41,6 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.transactionHash',
     defaultMessage: 'Transaction Hash',
   },
-  actionTypesTitles: {
-    id: 'dashboard.ActionsPage.DetailsWidget.actionTypesTitles',
-    defaultMessage: `{actionType, select,
-      payment {Payment}
-      recovery {Recovery Mode}
-      moveFunds {Move Funds}
-      other {Generic Action}
-    }`,
-  },
 });
 
 interface Props {
@@ -98,14 +89,17 @@ const DetailsWidget = ({
         </div>
         <div className={styles.value}>
           <Icon
-            title={formatMessage(MSG.actionTypesTitles, {
-              actionType: values?.actionType,
-            })}
+            title={formatMessage(
+              { id: 'action.type' },
+              {
+                actionType: values?.actionType,
+              },
+            )}
             appearance={{ size: 'small' }}
             name={ACTION_TYPES_ICONS_MAP[actionType]}
           />
           <FormattedMessage
-            {...MSG.actionTypesTitles}
+            id="action.type"
             /*
              * @NOTE We need to use the action type value that was converted to
              * camelCase since ReactIntl doesn't like keys that are composed
