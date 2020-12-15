@@ -47,6 +47,9 @@ type RolesMap = Partial<
  */
 const ROLES_MAP: RolesMap = {
   [ColonyAndExtensionsEvents.OneTxPaymentMade]: [ColonyRole.Administration],
+  [ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots]: [
+    ColonyRole.Funding,
+  ],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 

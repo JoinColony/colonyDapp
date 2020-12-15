@@ -30,7 +30,6 @@ export interface EventValues {
 interface Props {
   transactionHash: string;
   networkEvents?: ParsedEvent[];
-  initiator?: AnyUser;
   recipient?: AnyUser;
   values?: EventValues;
   actionType?: string;
@@ -57,6 +56,12 @@ const ActionsPageFeed = ({
     if (actionType === ColonyActions.Payment) {
       return networkEvents.filter(
         ({ name }) => name === ColonyAndExtensionsEvents.OneTxPaymentMade,
+      );
+    }
+    if (actionType === ColonyActions.MoveFunds) {
+      return networkEvents.filter(
+        ({ name }) =>
+          name === ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
       );
     }
     return [];

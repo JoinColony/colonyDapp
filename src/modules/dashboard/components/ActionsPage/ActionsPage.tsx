@@ -276,6 +276,14 @@ const ActionsPage = () => {
    */
   const actionAndEventValues = {
     actionType: camelcase(actionType),
+    initiator: (
+      <span className={styles.titleDecoration}>
+        <FriendlyUserName
+          user={initiatorProfileWithFallback}
+          autoShrinkAddress
+        />
+      </span>
+    ),
     recipient: (
       <span className={styles.titleDecoration}>
         <FriendlyUserName

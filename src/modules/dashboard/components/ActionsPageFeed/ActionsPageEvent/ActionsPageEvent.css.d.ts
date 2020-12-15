@@ -4,7 +4,6 @@ export const details: string;
 export const content: string;
 export const text: string;
 export const highlight: string;
-export const decoratedUser: string;
 export const roles: string;
 export const meta: string;
 export const tooltipIcon: string;
