@@ -1,5 +1,5 @@
 import { ColonyRole } from '@colony/colony-js';
-import { ColonyAndExtensionsEvents } from '~types/index';
+import { ColonyAndExtensionsEvents, ColonyActions } from '~types/index';
 
 type EventRolesMap = Partial<
   {
@@ -17,4 +17,11 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
     ColonyRole.Funding,
   ],
   [ColonyAndExtensionsEvents.Generic]: [],
+};
+
+export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
+  [ColonyActions.Payment]: 'emoji-dollar-stack',
+  [ColonyActions.Recovery]: 'emoji-alarm-lamp',
+  [ColonyActions.MoveFunds]: 'emoji-world-globe',
+  [ColonyActions.Generic]: 'circle-check-primary',
 };

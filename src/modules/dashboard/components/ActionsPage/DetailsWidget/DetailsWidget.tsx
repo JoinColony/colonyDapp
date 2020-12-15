@@ -7,8 +7,9 @@ import TransactionLink from '~core/TransactionLink';
 
 import { AnyUser } from '~data/index';
 import { ColonyActions } from '~types/index';
-import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { splitTransactionHash } from '~utils/strings';
+import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
+import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
 import DetailsWidgetTeam from './DetailsWidgetTeam';
 
@@ -49,13 +50,6 @@ interface Props {
   values?: EventValues;
   transactionHash?: string;
 }
-
-const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
-  [ColonyActions.Payment]: 'emoji-dollar-stack',
-  [ColonyActions.Recovery]: 'emoji-alarm-lamp',
-  [ColonyActions.MoveFunds]: 'emoji-world-globe',
-  [ColonyActions.Generic]: 'circle-check-primary',
-};
 
 const DetailsWidget = ({
   actionType = ColonyActions.Generic,
