@@ -37,12 +37,14 @@ export interface FormValues {
 }
 
 interface CustomWizardDialogProps {
-  prevStep: string;
+  prevStep?: string;
   colony: Colony;
   fromDomain?: number;
 }
 
-type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+type Props = DialogProps &
+  Partial<WizardDialogType<object>> &
+  CustomWizardDialogProps;
 
 const displayName = 'dashboard.TransferFundsDialog';
 
@@ -122,7 +124,7 @@ const TransferFundsDialog = ({
           <DialogForm
             {...formValues}
             colony={colony}
-            back={() => callStep(prevStep)}
+            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
           />
         </Dialog>
       )}
