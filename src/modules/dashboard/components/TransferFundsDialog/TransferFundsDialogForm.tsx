@@ -74,10 +74,6 @@ const MSG = defineMessages({
       'dashboard.TransferFundsDialog.TransferFundsDialogForm.noPermissionFrom',
     defaultMessage: 'No permission in from domain',
   },
-  noPermissionTo: {
-    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.noPermissionTo',
-    defaultMessage: 'No permission in to domain',
-  },
   samePot: {
     id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.samePot',
     defaultMessage: 'Cannot move to same domain pot',
@@ -90,12 +86,12 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  cancel: () => void;
+  back: () => void;
   colony: Colony;
 }
 
 const TransferFundsDialogForm = ({
-  cancel,
+  back,
   colony,
   colony: { colonyAddress, domains, tokens },
   handleSubmit,
@@ -106,12 +102,11 @@ const TransferFundsDialogForm = ({
   values,
 }: Props & FormikProps<FormValues>) => {
   const { tokenAddress, amount } = values;
+
   const fromDomain = values.fromDomain
     ? parseInt(values.fromDomain, 10)
     : ROOT_DOMAIN_ID;
-  const toDomain = values.toDomain
-    ? parseInt(values.toDomain, 10)
-    : ROOT_DOMAIN_ID;
+  const toDomain = values.toDomain ? parseInt(values.toDomain, 10) : undefined;
 
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
@@ -133,12 +128,6 @@ const TransferFundsDialogForm = ({
     colony,
     walletAddress,
     fromDomain,
-  ]);
-
-  const toDomainRoles = useTransformer(getUserRolesForDomain, [
-    colony,
-    walletAddress,
-    toDomain,
   ]);
 
   const domainOptions = useMemo(
@@ -165,7 +154,7 @@ const TransferFundsDialogForm = ({
         variables: {
           colonyAddress,
           tokenAddresses: [tokenAddress],
-          domainIds: [fromDomain, toDomain],
+          domainIds: [fromDomain, toDomain || ROOT_DOMAIN_ID],
         },
       });
     }
@@ -175,9 +164,20 @@ const TransferFundsDialogForm = ({
     const token =
       tokenBalancesData &&
       tokenBalancesData.tokens.find(({ address }) => address === tokenAddress);
-    const from = getBalanceFromToken(token, fromDomain);
-    return from;
+    return getBalanceFromToken(token, fromDomain);
   }, [fromDomain, tokenAddress, tokenBalancesData]);
+
+  const toDomainTokenBalance = useMemo(() => {
+    if (toDomain) {
+      const token =
+        tokenBalancesData &&
+        tokenBalancesData.tokens.find(
+          ({ address }) => address === tokenAddress,
+        );
+      return getBalanceFromToken(token, toDomain);
+    }
+    return undefined;
+  }, [toDomain, tokenAddress, tokenBalancesData]);
 
   // Perform form validations
   useEffect(() => {
@@ -210,10 +210,6 @@ const TransferFundsDialogForm = ({
       errors.fromDomain = MSG.noPermissionFrom;
     }
 
-    if (toDomain && !userHasRole(toDomainRoles, ColonyRole.Funding)) {
-      errors.toDomain = MSG.noPermissionTo;
-    }
-
     if (toDomain !== undefined && toDomain === fromDomain) {
       errors.toDomain = MSG.samePot;
     }
@@ -227,7 +223,6 @@ const TransferFundsDialogForm = ({
     selectedToken,
     setErrors,
     toDomain,
-    toDomainRoles,
   ]);
 
   return (
@@ -279,12 +274,37 @@ const TransferFundsDialogForm = ({
             title={MSG.transferIconTitle}
             appearance={{ size: 'medium' }}
           />
-          <Select
-            options={domainOptions}
-            label={MSG.to}
-            name="toDomain"
-            appearance={{ theme: 'grey' }}
-          />
+          <div>
+            <Select
+              options={domainOptions}
+              label={MSG.to}
+              name="toDomain"
+              appearance={{ theme: 'grey' }}
+            />
+            {!!tokenAddress && toDomainTokenBalance && (
+              <div className={styles.domainPotBalance}>
+                <FormattedMessage
+                  {...MSG.domainTokenAmount}
+                  values={{
+                    amount: (
+                      <Numeral
+                        appearance={{
+                          size: 'small',
+                          theme: 'grey',
+                        }}
+                        value={toDomainTokenBalance || 0}
+                        unit={getTokenDecimalsWithFallback(
+                          selectedToken && selectedToken.decimals,
+                        )}
+                        truncate={3}
+                      />
+                    ),
+                    symbol: (selectedToken && selectedToken.symbol) || '???',
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </DialogSection>
       <DialogSection>
@@ -325,9 +345,7 @@ const TransferFundsDialogForm = ({
                    * Just entering the decimal point will pass it through to EthUsd
                    * and that will try to fetch the balance for, which, obviously, will fail
                    */
-                  values.amount && values.amount.length && values.amount !== '.'
-                    ? values.amount
-                    : 0
+                  values.amount && values.amount !== '.' ? values.amount : '0'
                 }
               />
             </div>
@@ -340,7 +358,7 @@ const TransferFundsDialogForm = ({
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={cancel}
+          onClick={back}
           text={{ id: 'button.back' }}
         />
         <Button
