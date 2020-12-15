@@ -7,6 +7,9 @@ import {
   ColonyAndExtensionsEvents,
   Address,
 } from '~types/index';
+import { ParsedEvent } from '~data/index';
+
+import { ACTIONS_EVENTS } from '~dashboard/ActionsPage';
 
 export const getPaymentDetails = async (
   paymentId: BigNumberish,
@@ -64,3 +67,15 @@ export const getAllAvailableClients = async (
   }
   return [];
 };
+
+/*
+ * Get the events to list on the action's page, based on a map
+ */
+export const getEventsForActions = (
+  events: ParsedEvent[],
+  actionType: ColonyActions,
+): ParsedEvent[] => [
+  ...(ACTIONS_EVENTS[actionType] as ColonyAndExtensionsEvents[])
+    ?.map((event) => events.filter(({ name }) => name === event))
+    .flat(),
+];
