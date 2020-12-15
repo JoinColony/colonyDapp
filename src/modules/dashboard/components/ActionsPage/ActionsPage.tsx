@@ -333,7 +333,9 @@ const ActionsPage = () => {
                * @NOTE Otherwise it interprets 0 as false, rather then a index
                * Typecasting it doesn't work as well
                */
-              status={typeof status === 'number' && STATUS_MAP[status]}
+              status={
+                typeof status === 'number' ? STATUS_MAP[status] : undefined
+              }
               createdAt={createdAt}
             />
           )}

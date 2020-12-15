@@ -3,13 +3,15 @@ import { nanoid } from 'nanoid';
 
 import { SpinnerLoader } from '~core/Preloaders';
 
+import { getEventsForActions } from '~utils/events';
+
 import {
   useTransactionMessagesQuery,
   ParsedEvent,
   AnyUser,
   OneDomain,
 } from '~data/index';
-import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
+import { ColonyActions } from '~types/index';
 
 import ActionsPageFeedItem from './ActionsPageFeedItem';
 import ActionsPageEvent from './ActionsPageEvent';
@@ -50,19 +52,8 @@ const ActionsPageFeed = ({
   });
 
   const filteredEvents = useMemo(() => {
-    if (!networkEvents?.length) {
-      return [];
-    }
-    if (actionType === ColonyActions.Payment) {
-      return networkEvents.filter(
-        ({ name }) => name === ColonyAndExtensionsEvents.OneTxPaymentMade,
-      );
-    }
-    if (actionType === ColonyActions.MoveFunds) {
-      return networkEvents.filter(
-        ({ name }) =>
-          name === ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
-      );
+    if (networkEvents) {
+      return getEventsForActions(networkEvents, actionType as ColonyActions);
     }
     return [];
   }, [actionType, networkEvents]);
