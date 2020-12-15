@@ -3,7 +3,7 @@ import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
-import { getPaymentDetails, getActionType } from '~utils/events';
+import { getPaymentDetails, getActionType, getDomainId } from '~utils/events';
 import { Context } from '~context/index';
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 
@@ -140,8 +140,16 @@ export const colonyActionsResolvers = ({
               ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
           );
           const { amount, fromPot, toPot, token } = moveFundsEvent?.values;
-          values.fromDomain = fromPot;
-          values.toDomain = toPot;
+          const fromDomain = await getDomainId(
+            fromPot,
+            colonyClient as ColonyClient,
+          );
+          const toDomain = await getDomainId(
+            toPot,
+            colonyClient as ColonyClient,
+          );
+          values.fromDomain = bigNumberify(fromDomain || '1').toNumber();
+          values.toDomain = bigNumberify(toDomain || '1').toNumber();
           values.tokenAddress = token || AddressZero;
           values.amount = bigNumberify(amount || '0').toString();
         }

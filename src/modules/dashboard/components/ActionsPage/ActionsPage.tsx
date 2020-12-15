@@ -22,6 +22,7 @@ import {
   useUser,
   useLoggedInUser,
   useTokenInfoLazyQuery,
+  OneDomain,
 } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions } from '~types/index';
@@ -297,8 +298,12 @@ const ActionsPage = () => {
     ),
     tokenSymbol: <span>{symbol || '???'}</span>,
     decimals: getTokenDecimalsWithFallback(decimals),
-    fromDomain: domains[fromDomain],
-    toDomain: domains[toDomain],
+    fromDomain: domains.find(
+      ({ ethDomainId }) => ethDomainId === fromDomain,
+    ) as OneDomain,
+    toDomain: domains.find(
+      ({ ethDomainId }) => ethDomainId === toDomain,
+    ) as OneDomain,
   };
 
   return (
