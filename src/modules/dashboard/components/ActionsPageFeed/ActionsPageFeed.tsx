@@ -71,6 +71,9 @@ const ActionsPageFeed = ({
     return null;
   }
 
+  /*
+   * @TODO Add proper loader
+   */
   if (loading || !data?.transactionMessages) {
     <div className={styles.main}>
       <SpinnerLoader />
