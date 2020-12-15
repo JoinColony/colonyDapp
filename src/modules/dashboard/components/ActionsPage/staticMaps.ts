@@ -55,3 +55,20 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
 };
+
+/*
+ * Which events are required to present, and in which order, for a transaction
+ * to be of a certain action type
+ *
+ * **Be Warned**: The position of the events in the array matters!
+ */
+export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
+  [ColonyActions.Payment]: [
+    ColonyAndExtensionsEvents.OneTxPaymentMade,
+    ColonyAndExtensionsEvents.PayoutClaimed,
+    ColonyAndExtensionsEvents.PaymentAdded,
+  ],
+  [ColonyActions.MoveFunds]: [
+    ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
+  ],
+};

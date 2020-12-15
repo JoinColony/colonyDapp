@@ -9,7 +9,10 @@ import {
 } from '~types/index';
 import { ParsedEvent } from '~data/index';
 
-import { ACTIONS_EVENTS } from '~dashboard/ActionsPage';
+import {
+  ACTIONS_EVENTS,
+  EVENTS_REQUIRED_FOR_ACTION,
+} from '~dashboard/ActionsPage';
 
 export const getPaymentDetails = async (
   paymentId: BigNumberish,
@@ -21,31 +24,52 @@ export const getDomainId = async (
   colonyClient?: ColonyClient,
 ) => colonyClient?.getDomainFromFundingPot(fundingPotId);
 
-export const getActionType = (parsedEvents) => {
-  if (!parsedEvents || !parsedEvents.length) {
-    return ColonyActions.Generic;
-  }
-  const [firstEvent] = parsedEvents;
-  const paymentAddedEvent = parsedEvents.find(
-    (event) => event?.name === ColonyAndExtensionsEvents.PaymentAdded,
+/*
+ * Main logic for detecting a action type based on an array of "required" events
+ */
+export const getActionType = (parsedEvents): ColonyActions => {
+  const potentialActions = {};
+  Object.values(EVENTS_REQUIRED_FOR_ACTION).map(
+    (eventsWithPositions, index) => {
+      /*
+       * Filter the events by just the "required" ones
+       */
+      const filteredParsedEvents = parsedEvents.filter(({ name }) =>
+        eventsWithPositions?.includes(name),
+      );
+      /*
+       * Add to the potential actions object, both the key
+       * and the reduced truthy/falsy value
+       */
+      potentialActions[
+        Object.keys(EVENTS_REQUIRED_FOR_ACTION)[index]
+      ] = eventsWithPositions
+        ?.map((eventName, eventIndex) => {
+          /*
+           * Check the existance of the event
+           */
+          if (filteredParsedEvents[eventIndex]) {
+            /*
+             * Check the correct position in the events chain
+             */
+            return filteredParsedEvents[eventIndex].name === eventName;
+          }
+          return false;
+        })
+        /*
+         * Reduce the array of boleans to a single value
+         */
+        .every((event) => !!event);
+      return null;
+    },
   );
-  const payoutClaimedEvent = parsedEvents.find(
-    (event) => event?.name === ColonyAndExtensionsEvents.PayoutClaimed,
+  /*
+   * Check if we have a possible action (the first object key that is true)
+   */
+  const [potentialAction] = Object.keys(potentialActions).filter(
+    (actionName) => potentialActions[actionName],
   );
-  if (
-    firstEvent.name === ColonyAndExtensionsEvents.OneTxPaymentMade &&
-    !!paymentAddedEvent &&
-    !!payoutClaimedEvent
-  ) {
-    return ColonyActions.Payment;
-  }
-  if (
-    firstEvent.name ===
-    ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots
-  ) {
-    return ColonyActions.MoveFunds;
-  }
-  return ColonyActions.Generic;
+  return (potentialAction as ColonyActions) || ColonyActions.Generic;
 };
 
 export const getAllAvailableClients = async (
@@ -75,7 +99,7 @@ export const getEventsForActions = (
   events: ParsedEvent[],
   actionType: ColonyActions,
 ): ParsedEvent[] => [
-  ...(ACTIONS_EVENTS[actionType] as ColonyAndExtensionsEvents[])
+  ...((ACTIONS_EVENTS[actionType] as ColonyAndExtensionsEvents[]) || [])
     ?.map((event) => events.filter(({ name }) => name === event))
     .flat(),
 ];
