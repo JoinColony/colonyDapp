@@ -13,6 +13,11 @@ export const getPaymentDetails = async (
   colonyClient?: ColonyClient,
 ) => colonyClient?.getPayment(paymentId);
 
+export const getDomainId = async (
+  fundingPotId: BigNumberish,
+  colonyClient?: ColonyClient,
+) => colonyClient?.getDomainFromFundingPot(fundingPotId);
+
 export const getActionType = (parsedEvents) => {
   if (!parsedEvents || !parsedEvents.length) {
     return ColonyActions.Generic;
