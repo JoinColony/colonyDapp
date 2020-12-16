@@ -100,6 +100,7 @@ const TransferFundsDialogForm = ({
   setErrors,
   status,
   values,
+  validateForm,
 }: Props & FormikProps<FormValues>) => {
   const { tokenAddress, amount } = values;
 
@@ -183,42 +184,37 @@ const TransferFundsDialogForm = ({
   useEffect(() => {
     const errors: {
       amount?: any;
-      fromDomain?: any;
       toDomain?: any;
     } = {};
 
-    if (!selectedToken || !(amount && amount.length)) {
-      errors.amount = undefined; // silent error
-    } else {
-      const convertedAmount = bigNumberify(
-        moveDecimal(
-          amount,
-          getTokenDecimalsWithFallback(selectedToken.decimals),
-        ),
-      );
-      if (!convertedAmount.eq(0)) {
-        errors.amount = MSG.noAmount;
-      } else if (
-        fromDomainTokenBalance &&
-        fromDomainTokenBalance.lt(convertedAmount)
-      ) {
-        errors.amount = MSG.noBalance;
-      }
+    if (
+      !selectedToken ||
+      !(amount && amount.length) ||
+      !fromDomainTokenBalance
+    ) {
+      return setErrors(errors); // silent error
     }
 
-    if (fromDomain && !userHasRole(fromDomainRoles, ColonyRole.Funding)) {
-      errors.fromDomain = MSG.noPermissionFrom;
+    const convertedAmount = bigNumberify(
+      moveDecimal(amount, getTokenDecimalsWithFallback(selectedToken.decimals)),
+    );
+
+    if (convertedAmount.isZero()) {
+      errors.amount = MSG.noBalance;
+    }
+
+    if (fromDomainTokenBalance.lt(convertedAmount)) {
+      errors.amount = MSG.noBalance;
     }
 
     if (toDomain !== undefined && toDomain === fromDomain) {
       errors.toDomain = MSG.samePot;
     }
 
-    setErrors(errors);
+    return setErrors(errors);
   }, [
     amount,
     fromDomain,
-    fromDomainRoles,
     fromDomainTokenBalance,
     selectedToken,
     setErrors,
@@ -243,6 +239,7 @@ const TransferFundsDialogForm = ({
               label={MSG.from}
               name="fromDomain"
               appearance={{ theme: 'grey' }}
+              onChange={() => validateForm()}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -280,6 +277,7 @@ const TransferFundsDialogForm = ({
               label={MSG.to}
               name="toDomain"
               appearance={{ theme: 'grey' }}
+              onChange={() => validateForm()}
             />
             {!!tokenAddress && toDomainTokenBalance && (
               <div className={styles.domainPotBalance}>
