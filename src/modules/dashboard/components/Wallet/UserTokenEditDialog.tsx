@@ -37,7 +37,7 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
         variables: { input: { tokenAddresses: updatedAddresses } },
       });
     },
-    [userTokens, setUserTokensMutation],
+    [setUserTokensMutation],
   );
 
   return (
