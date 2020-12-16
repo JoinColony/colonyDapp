@@ -84,29 +84,6 @@ const messages = defineMessages({
     defaultMessage:
       'Your first transaction is complete! Your username is {user}. Enjoy colony 🎉',
   },
-  // structured work notifications
-  notificationLevelTaskAccepted: {
-    id: 'dashboard.Inbox.InboxItem.notificationLevelTaskAccepted',
-    defaultMessage: `{user} accepted {persistentTask} in {program}.{submissionPayout, select,
-      null {}
-      other { You received {submissionPayout}.}
-    }`,
-  },
-  notificationLevelTaskSubmitted: {
-    id: 'dashboard.Inbox.InboxItem.notificationLevelTaskSubmitted',
-    defaultMessage: '{user} submitted {persistentTask} in {program}.',
-  },
-  notificationUserEnrolled: {
-    id: 'dashboard.Inbox.InboxItem.notificationUserEnrolled',
-    defaultMessage: '{user} joined {program}.',
-  },
-  notificationNextLevelUnlocked: {
-    id: 'dashboard.Inbox.InboxItem.notificationNextLevelUnlocked',
-    defaultMessage: `You completed {level} in {program} and earned an achievement!{nextLevel, select,
-      null {}
-      other { You've unlocked {nextLevel}.}
-    }`,
-  },
   // payments notifications
   notificationWorkerAssigned: {
     id: 'dashboard.Inbox.InboxItem.notificationWorkerAssigned',

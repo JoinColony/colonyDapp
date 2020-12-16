@@ -1,1 +1,0 @@
-export const emptyText: string;

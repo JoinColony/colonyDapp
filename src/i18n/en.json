@@ -49,9 +49,6 @@
 
     "wallet.metamask": "MetaMask",
 
-    "program.untitled": "Untitled Program",
-    "level.untitled": "Untitled Level",
-    "levelStep.untitled": "Untitled Task",
     "task.untitled": "Untitled Task",
 
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",

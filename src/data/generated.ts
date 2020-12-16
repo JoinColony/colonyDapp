@@ -88,9 +88,6 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
         "name": "EventContext",
         "possibleTypes": [
           {
-            "name": "AcceptLevelTaskSubmissionEvent"
-          },
-          {
             "name": "AssignWorkerEvent"
           },
           {
@@ -103,13 +100,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
             "name": "CreateTaskEvent"
           },
           {
-            "name": "CreateLevelTaskSubmissionEvent"
-          },
-          {
             "name": "CreateWorkRequestEvent"
-          },
-          {
-            "name": "EnrollUserInProgramEvent"
           },
           {
             "name": "FinalizeTaskEvent"
@@ -154,9 +145,6 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
             "name": "UnassignWorkerEvent"
           },
           {
-            "name": "UnlockNextLevelEvent"
-          },
-          {
             "name": "TransactionMessageEvent"
           }
         ]
@@ -199,7 +187,6 @@ export type Colony = {
   isNativeTokenLocked: Scalars['Boolean'];
   nativeToken: Token;
   nativeTokenAddress: Scalars['String'];
-  programs: Array<Program>;
   roles: Array<UserRoles>;
   subscribedUsers: Array<User>;
   suggestions: Array<Suggestion>;
@@ -371,38 +358,6 @@ export type NewUserEvent = {
   type: EventType;
 };
 
-export type AcceptLevelTaskSubmissionEvent = {
-  type: EventType;
-  acceptedBy: Scalars['String'];
-  levelId: Scalars['String'];
-  payouts: Array<TaskPayout>;
-  persistentTaskId: Scalars['String'];
-  programId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
-export type CreateLevelTaskSubmissionEvent = {
-  type: EventType;
-  programId: Scalars['String'];
-  persistentTaskId: Scalars['String'];
-  levelId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
-export type EnrollUserInProgramEvent = {
-  type: EventType;
-  programId: Scalars['String'];
-};
-
-export type UnlockNextLevelEvent = {
-  type: EventType;
-  levelId: Scalars['String'];
-  nextLevelId?: Maybe<Scalars['String']>;
-  persistentTaskId: Scalars['String'];
-  programId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
 export type TransactionMessageEvent = {
   type: EventType;
   transactionHash: Scalars['String'];
@@ -410,7 +365,7 @@ export type TransactionMessageEvent = {
   colonyAddress: Scalars['String'];
 };
 
-export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent | TransactionMessageEvent;
+export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | TransactionMessageEvent;
 
 export type Event = {
   id: Scalars['String'];
@@ -427,27 +382,6 @@ export type Notification = {
   id: Scalars['String'];
   event: Event;
   read: Scalars['Boolean'];
-};
-
-export enum LevelStatus {
-  Active = 'Active',
-  Deleted = 'Deleted'
-}
-
-export type Level = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  creatorAddress: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  achievement?: Maybe<Scalars['String']>;
-  numRequiredSteps?: Maybe<Scalars['Int']>;
-  programId: Scalars['String'];
-  program: Program;
-  stepIds: Array<Scalars['String']>;
-  steps: Array<PersistentTask>;
-  status: LevelStatus;
-  unlocked: Scalars['Boolean'];
 };
 
 export type CreateUserInput = {

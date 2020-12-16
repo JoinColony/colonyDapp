@@ -118,85 +118,6 @@ fragment FullColony on Colony {
   isNativeTokenLocked @client
 }
 
-fragment ProgramFields on Program {
-  id
-  createdAt
-  creatorAddress
-  colonyAddress
-  description
-  enrolled
-  enrolledUserAddresses
-  levels {
-    id
-    achievement
-    description
-    numRequiredSteps
-    programId
-    stepIds
-    steps {
-      ...PersistentTaskFields
-    }
-    status
-    title
-  }
-  levelIds
-  status
-  title
-}
-
-fragment LevelFields on Level {
-  id
-  achievement
-  createdAt
-  creatorAddress
-  description
-  numRequiredSteps
-  programId
-  status
-  stepIds
-  steps {
-    ...PersistentTaskFields
-  }
-  title
-}
-
-fragment ProgramSubmissionFields on ProgramSubmission {
-  id
-  level {
-    id
-    title
-  }
-  submission {
-    id
-    createdAt
-    creator {
-      id
-      profile {
-        avatarHash
-        displayName
-        username
-        walletAddress
-      }
-    }
-    task {
-      id
-      colonyAddress
-      description
-      ethSkillId
-      title
-      domain {
-        id
-        ethDomainId
-        name
-      }
-      ...PersistentTaskPayouts
-    }
-    status
-    statusChangedAt
-    submission
-  }
-}
-
 fragment SubmissionFields on Submission {
   id
   createdAt
@@ -246,25 +167,6 @@ fragment EventFields on Event {
 
 fragment EventContext on Event {
     context {
-    ... on AcceptLevelTaskSubmissionEvent {
-      acceptedBy
-      levelId
-      payouts {
-        amount
-        tokenAddress
-        token @client {
-          id
-          address
-          decimals
-          name
-          symbol
-        }
-      }
-      persistentTaskId
-      programId
-      submissionId
-      type
-    }
     ... on AssignWorkerEvent {
       taskId
       type
@@ -276,13 +178,6 @@ fragment EventContext on Event {
       type
       colonyAddress
     }
-    ... on CreateLevelTaskSubmissionEvent {
-      levelId
-      persistentTaskId
-      programId
-      submissionId
-      type
-    }
     ... on CreateTaskEvent {
       colonyAddress
       ethDomainId
@@ -293,10 +188,6 @@ fragment EventContext on Event {
       taskId
       type
       colonyAddress
-    }
-    ... on EnrollUserInProgramEvent {
-      programId
-      type
     }
     ... on FinalizeTaskEvent {
       taskId
@@ -382,14 +273,6 @@ fragment EventContext on Event {
       type
       ethDomainId
       colonyAddress
-    }
-    ... on UnlockNextLevelEvent {
-      levelId
-      nextLevelId
-      persistentTaskId
-      programId
-      submissionId
-      type
     }
   }
 }
