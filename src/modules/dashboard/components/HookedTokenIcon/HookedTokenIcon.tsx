@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Network } from '@colony/colony-js';
 
 import { AddressZero } from 'ethers/constants';
-import { TOKEN_LOGOS_REPO_URL } from '~constants';
+import { TOKEN_LOGOS_REPO_URL, DEFAULT_NETWORK } from '~constants';
 
 import Avatar from '~core/Avatar';
 import { useDataFetcher } from '~utils/hooks';
@@ -50,7 +51,7 @@ const HookedTokenIcon = ({
   name,
   token: { iconHash, address },
   iconName,
-  dontFetch = process.env.NODE_ENV === 'development',
+  dontFetch = DEFAULT_NETWORK !== Network.Mainnet,
   ...props
 }: Props) => {
   const [tokenImage, setTokenImage] = useState<string | undefined>();
@@ -68,7 +69,7 @@ const HookedTokenIcon = ({
         return;
       }
 
-      if (address && !iconName) {
+      if (!dontFetch && address && !iconName) {
         const response = await loadTokenImages(address);
         if (response.ok) {
           const blob = await response.blob();
