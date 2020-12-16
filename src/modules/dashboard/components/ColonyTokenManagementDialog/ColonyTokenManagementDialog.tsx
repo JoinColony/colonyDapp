@@ -3,15 +3,15 @@ import React, { useCallback } from 'react';
 import TokenEditDialog from '~core/TokenEditDialog';
 import {
   useSetColonyTokensMutation,
-  useColonyTokensQuery,
   ColonyTokensDocument,
   ColonyTokensQueryVariables,
+  Colony
 } from '~data/index';
 import { Address } from '~types/index';
 import tokensList from './tokenlist.json';
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
   cancel: () => void;
   close: () => void;
 }
@@ -19,10 +19,12 @@ interface Props {
 const displayName = 'dashboard.ColonyTokenManagementDialog';
 
 const ColonyTokenManagementDialog = ({
-  colonyAddress,
+  colony,
   cancel,
   close,
 }: Props) => {
+  const colonyAddress = colony.colonyAddress;
+
   const [setColonyTokensMutation] = useSetColonyTokensMutation({
     refetchQueries: [
       {
@@ -32,11 +34,7 @@ const ColonyTokenManagementDialog = ({
     ],
   });
 
-  const { data } = useColonyTokensQuery({
-    variables: { address: colonyAddress },
-  });
-
-  const colonyTokens = (data && data.colony.tokens) || [];
+  const colonyTokens = colony.tokens || [];
 
   const updateTokens = useCallback(
     (updatedAddresses: Address[]) => {
@@ -58,7 +56,7 @@ const ColonyTokenManagementDialog = ({
       tokensList={
         process.env.NODE_ENV === 'development' ? [] : tokensList.tokens
       }
-      nativeTokenAddress={data?.colony?.nativeTokenAddress}
+      nativeTokenAddress={colony.nativeTokenAddress}
     />
   );
 };

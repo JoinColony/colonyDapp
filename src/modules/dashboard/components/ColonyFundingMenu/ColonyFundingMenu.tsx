@@ -62,9 +62,9 @@ const ColonyFundingMenu = ({
   const handleEditTokens = useCallback(
     () =>
       openTokenManagementDialog({
-        colonyAddress,
+        colony,
       }),
-    [openTokenManagementDialog, colonyAddress],
+    [openTokenManagementDialog, colony],
   );
   const handleMintTokens = useCallback(() => {
     const nativeToken =
