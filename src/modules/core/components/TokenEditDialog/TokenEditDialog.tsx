@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { FormikProps, FormikHelpers } from 'formik';
 
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import * as yup from 'yup';
 import { AddressZero } from 'ethers/constants';
 
@@ -77,6 +77,7 @@ const TokenEditDialog = ({
   nativeTokenAddress,
 }: Props) => {
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
+  const { formatMessage } = useIntl();
 
   const handleTokenSelect = (token: OneToken) => {
     setTokenData(token);
@@ -85,7 +86,7 @@ const TokenEditDialog = ({
   const handleSubmit = useCallback(
     async (
       { tokenAddress, tokenAddresses }: FormValues,
-      { resetForm, setSubmitting }: FormikHelpers<FormValues>,
+      { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
     ) => {
       let addresses = tokenAddresses;
       if (tokenAddress && !tokenAddresses.includes(tokenAddress)) {
@@ -103,7 +104,7 @@ const TokenEditDialog = ({
         resetForm();
         close();
       } catch (e) {
-        // @TODO what errors we can expect.. how to distinct between field or checkbox error
+        setFieldError('tokenAddress', formatMessage(MSG.errorAddingToken));
         setSubmitting(false);
       }
     },
