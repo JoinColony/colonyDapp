@@ -66,7 +66,6 @@ interface FormValues {
 
 const validationSchema = yup.object({
   tokenAddress: yup.string().address(),
-  tokenSymbol: yup.string().max(6),
 });
 
 const TokenEditDialog = ({
