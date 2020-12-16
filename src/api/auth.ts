@@ -16,8 +16,15 @@ const postRequest = async (path: string, data: object) => {
   return response.json();
 };
 
+export const setTokenStorage = () =>
+  localStorage.setItem(TOKEN_STORAGE, JSON.stringify({}));
+
 export const setToken = (walletAddress: string, token: string) => {
   const storedTokens = localStorage.getItem(TOKEN_STORAGE);
+
+  if (!storedTokens) {
+    setTokenStorage();
+  }
 
   if (storedTokens) {
     const parsedStoredTokens = JSON.parse(storedTokens);
@@ -41,7 +48,6 @@ export const getToken = (walletAddress: string) => {
 };
 
 export const clearToken = (walletAddress: string) => {
-  localStorage.removeItem(`${TOKEN_STORAGE}-${walletAddress}`);
   const storedTokens = localStorage.getItem(TOKEN_STORAGE);
 
   if (storedTokens) {
@@ -53,17 +59,8 @@ export const clearToken = (walletAddress: string) => {
   }
 };
 
-export const setTokenStorage = () =>
-  localStorage.setItem(TOKEN_STORAGE, JSON.stringify({}));
-
 export const authenticate = async (wallet) => {
   try {
-    const hasTokenStorageSet = !!localStorage.getItem(TOKEN_STORAGE);
-
-    if (!hasTokenStorageSet) {
-      setTokenStorage();
-    }
-
     const token = getToken(wallet.address);
 
     if (token) {
