@@ -5,7 +5,7 @@ import {
   useSetColonyTokensMutation,
   ColonyTokensDocument,
   ColonyTokensQueryVariables,
-  Colony
+  Colony,
 } from '~data/index';
 import { Address } from '~types/index';
 import getTokenList from './getTokenList';
@@ -18,12 +18,8 @@ interface Props {
 
 const displayName = 'dashboard.ColonyTokenManagementDialog';
 
-const ColonyTokenManagementDialog = ({
-  colony,
-  cancel,
-  close,
-}: Props) => {
-  const colonyAddress = colony.colonyAddress;
+const ColonyTokenManagementDialog = ({ colony, cancel, close }: Props) => {
+  const { colonyAddress } = colony;
 
   const [setColonyTokensMutation] = useSetColonyTokensMutation({
     refetchQueries: [
