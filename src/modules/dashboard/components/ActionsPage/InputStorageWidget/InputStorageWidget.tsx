@@ -59,9 +59,9 @@ const InputStorageWidget = () => {
         inputNewValue: '',
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.MOVE_FUNDS_BETWEEN_POTS} // @TODO: Add in correct ActionTypes
-      error={ActionTypes.MOVE_FUNDS_BETWEEN_POTS_ERROR}
-      success={ActionTypes.MOVE_FUNDS_BETWEEN_POTS}
+      submit={ActionTypes.COLONY_ACTION_GENERIC} // @TODO: Add in correct ActionTypes
+      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
     >
       {(formValues: FormikProps<FormValues>) => {
         return (

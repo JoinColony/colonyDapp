@@ -8,6 +8,7 @@ import {
   UniqueActionType,
   ActionTypeWithMeta,
   MetaWithHistory,
+  ActionType,
 } from './index';
 
 /*
@@ -15,6 +16,9 @@ import {
  * I couldn't come up with anything better, as we already have ColonyActionTypes :(
  */
 export type ColonyActionsActionTypes =
+  | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC>
+  | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_SUCCESS>
+  | ErrorActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_ERROR, object>
   | UniqueActionType<
       ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
       {
