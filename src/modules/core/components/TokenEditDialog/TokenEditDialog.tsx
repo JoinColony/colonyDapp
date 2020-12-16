@@ -169,7 +169,7 @@ const TokenEditDialog = ({
                 onTokenSelect={(token: OneToken) => handleTokenSelect(token)}
                 tokenData={tokenData}
                 label={MSG.fieldLabel}
-                appearance={{ colorSchema: 'grey' }}
+                appearance={{ colorSchema: 'grey', theme: 'fat' }}
               />
               <div className={styles.textarea}>
                 <Textarea

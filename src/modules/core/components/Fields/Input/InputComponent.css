@@ -36,6 +36,7 @@
   height: 45px;
   font-size: var(--size-medium);
   line-height: 45px;
+  font-weight: var(--weight-bold);
 
   &::placeholder {
     font-weight: var(--weight-bold);
