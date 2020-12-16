@@ -39,6 +39,8 @@ interface Props {
   dontFetch?: boolean;
 }
 
+const ICON_STORAGE = 'tokenImages';
+
 const loadTokenImages = async (address: Address): Promise<Response> => {
   let tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}${address}/logo.png`;
   if (address === AddressZero) {
@@ -63,10 +65,14 @@ const HookedTokenIcon = ({
 
   useEffect(() => {
     const loadTokenLogo = async () => {
-      const image = localStorage.getItem(address);
-      if (image) {
-        setTokenImage(image);
-        return;
+      const imagesStorage = localStorage.getItem(ICON_STORAGE);
+      const parsedImagesStorage = imagesStorage && JSON.parse(imagesStorage);
+      if (parsedImagesStorage) {
+        const image = parsedImagesStorage[address];
+        if (image) {
+          setTokenImage(image);
+          return;
+        }
       }
 
       if (!dontFetch && address && !iconName) {
@@ -75,7 +81,18 @@ const HookedTokenIcon = ({
           const blob = await response.blob();
           const base64image = await getBase64image(blob);
           if (base64image) {
-            localStorage.setItem(address, base64image);
+            if (parsedImagesStorage) {
+              parsedImagesStorage[address] = base64image;
+              localStorage.setItem(
+                ICON_STORAGE,
+                JSON.stringify(parsedImagesStorage),
+              );
+            } else {
+              localStorage.setItem(
+                ICON_STORAGE,
+                JSON.stringify({ [address]: base64image }),
+              );
+            }
             setTokenImage(base64image);
           }
         }
