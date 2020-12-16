@@ -8,6 +8,7 @@ import { useDataFetcher } from '~utils/hooks';
 import { AnyToken } from '~data/index';
 import { Address } from '~types/index';
 import Icon from '~core/Icon';
+import { getBase64image } from '~utils/dataReader';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
@@ -45,16 +46,6 @@ const loadTokenImages = async (address: Address): Promise<Response> => {
   return fetch(tokenImageUrl);
 };
 
-const getBase64image = (blob): Promise<any> => {
-  return new Promise((resolve) => {
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-      return resolve(fileReader.result);
-    };
-    fileReader.readAsDataURL(blob);
-  });
-};
-
 const HookedTokenIcon = ({
   name,
   token: { iconHash, address },
@@ -77,7 +68,7 @@ const HookedTokenIcon = ({
         return;
       }
 
-      if (!dontFetch && address && !iconName) {
+      if (address && !iconName) {
         const response = await loadTokenImages(address);
         if (response.ok) {
           const blob = await response.blob();
