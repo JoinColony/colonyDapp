@@ -102,7 +102,7 @@ export interface UserRolesForDomain {
 }
 
 export interface FixedToken {
-  chainId?: number;
+  chainId: number;
   address: Address;
   symbol: string;
   name: string;
