@@ -8,7 +8,7 @@ import {
   Colony
 } from '~data/index';
 import { Address } from '~types/index';
-import tokensList from './tokenlist.json';
+import getTokenList from './getTokenList';
 
 interface Props {
   colony: Colony;
@@ -53,9 +53,7 @@ const ColonyTokenManagementDialog = ({
       close={close}
       tokens={colonyTokens}
       updateTokens={updateTokens}
-      tokensList={
-        process.env.NODE_ENV === 'development' ? [] : tokensList.tokens
-      }
+      tokensList={getTokenList}
       nativeTokenAddress={colony.nativeTokenAddress}
     />
   );
