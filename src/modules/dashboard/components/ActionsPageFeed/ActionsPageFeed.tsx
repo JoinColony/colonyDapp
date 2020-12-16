@@ -1,5 +1,6 @@
 import React, { useState, useMemo, ReactElement } from 'react';
 import { nanoid } from 'nanoid';
+import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
 
@@ -19,6 +20,13 @@ import ActionsPageEvent from './ActionsPageEvent';
 import styles from './ActionsPageFeed.css';
 
 const displayName = 'dashboard.ActionsPageFeed';
+
+const MSG = defineMessages({
+  loading: {
+    id: 'dashboard.ActionsPageFeed.loading',
+    defaultMessage: 'Loading action page feed',
+  },
+});
 
 export interface EventValues {
   actionType: string;
@@ -62,14 +70,15 @@ const ActionsPageFeed = ({
     return null;
   }
 
-  /*
-   * @TODO Add proper loader
-   */
   if (loading || !data?.transactionMessages) {
-    <div className={styles.main}>
-      <SpinnerLoader />
-      <span>Loading Action Events and Messages</span>
-    </div>;
+    return (
+      <div className={styles.loading}>
+        <SpinnerLoader />
+        <span className={styles.loaderMessage}>
+          <FormattedMessage {...MSG.loading} />
+        </span>
+      </div>
+    );
   }
 
   /*
