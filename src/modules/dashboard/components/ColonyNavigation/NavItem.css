@@ -18,7 +18,7 @@
 
 .text {
   font-size: var(--size-normal);
-  color: var(--text-dark);
+  color: var(--dark);
 }
 
 .main:hover .text,
