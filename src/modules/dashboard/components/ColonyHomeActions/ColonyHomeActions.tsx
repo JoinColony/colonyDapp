@@ -126,6 +126,13 @@ const ColonyHomeActions = ({ colony }: Props) => {
         colony,
       },
     },
+    {
+      component: TokenMintDialog,
+      props: {
+        prevStep: 'dashboard.ManageFundsDialog',
+        colony,
+      },
+    },
   ]);
 
   return (
