@@ -61,7 +61,7 @@ export type ColonyActionsActionTypes =
       {
         colonyAddress: Address;
         colonyName?: string;
-        who: Address;
+        nativeTokenAddress: Address;
         amount: BigNumber;
       },
       MetaWithHistory<object>

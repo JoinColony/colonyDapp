@@ -245,7 +245,7 @@ function* createMintTokensAction({
   payload: {
     colonyAddress,
     colonyName,
-    who,
+    nativeTokenAddress,
     amount,
   },
   meta: {
@@ -288,6 +288,18 @@ function* createMintTokensAction({
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
+
+    yield apolloClient.query<
+        TokenBalancesForDomainsQuery,
+        TokenBalancesForDomainsQueryVariables
+      >({
+        query: TokenBalancesForDomainsDocument,
+        variables: {
+          colonyAddress,
+          tokenAddresses: [nativeTokenAddress],
+        },
+        fetchPolicy: 'network-only',
+      });
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
