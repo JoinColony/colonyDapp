@@ -1,4 +1,11 @@
-import { TaskDocument, TaskQuery, TaskQueryVariables } from '~data/index';
+import {
+  ColonyTasksDocument,
+  ColonyTasksQuery,
+  ColonyTasksQueryVariables,
+  TaskDocument,
+  TaskQuery,
+  TaskQueryVariables,
+} from '~data/index';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
 
@@ -7,6 +14,7 @@ import {
   ColonySubscribedUsersDocument,
   ColonySubscribedUsersQuery,
   ColonySubscribedUsersQueryVariables,
+  CreateTaskMutationResult,
   UserDocument,
   UserQuery,
   UserQueryVariables,
@@ -25,6 +33,41 @@ import {
 type Cache = typeof apolloCache;
 
 const cacheUpdates = {
+  createTask(colonyAddress: Address) {
+    return (cache: Cache, { data }: CreateTaskMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<
+          ColonyTasksQuery,
+          ColonyTasksQueryVariables
+        >({
+          query: ColonyTasksDocument,
+          variables: {
+            address: colonyAddress,
+          },
+        });
+        const createTaskData = data && data.createTask;
+        if (cacheData && createTaskData) {
+          const existingTasks = cacheData.colony.tasks || [];
+          const tasks = [...existingTasks, createTaskData];
+          cache.writeQuery<ColonyTasksQuery, ColonyTasksQueryVariables>({
+            query: ColonyTasksDocument,
+            data: {
+              colony: {
+                ...cacheData.colony,
+                tasks,
+              },
+            },
+            variables: {
+              address: colonyAddress,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - colony tasks not loaded yet');
+      }
+    };
+  },
   createColony(walletAddress: Address) {
     return (cache: Cache, { data }: CreateColonyMutationResult) => {
       if (data && data.createColony) {
