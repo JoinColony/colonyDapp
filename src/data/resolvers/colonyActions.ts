@@ -16,6 +16,7 @@ interface EventValue {
   token: Address;
   fromPot: BigNumberish;
   toPot: BigNumberish;
+  who: Address;
 }
 
 export interface ProcessedEvent {
