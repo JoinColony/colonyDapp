@@ -5,6 +5,7 @@ export enum ColonyActions {
   Payment = 'Payment',
   Recovery = 'Recovery',
   MoveFunds = 'MoveFunds',
+  MintTokens = 'MintTokens',
 }
 
 export enum ColonyAndExtensionsEvents {
@@ -15,6 +16,7 @@ export enum ColonyAndExtensionsEvents {
   PayoutClaimed = 'PayoutClaimed',
   OneTxPaymentMade = 'OneTxPaymentMade',
   Transfer = 'Transfer',
+  TokensMinted = 'TokensMinted',
 }
 
 export interface FormattedAction {
