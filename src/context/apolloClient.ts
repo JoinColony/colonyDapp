@@ -1,4 +1,4 @@
-import { ApolloClient, createHttpLink } from '@apollo/client';
+import { ApolloClient, createHttpLink, ApolloLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
 import { cache, typeDefs } from '~data/index';
@@ -8,6 +8,10 @@ import { getToken } from '../api/auth';
 
 const httpLink = createHttpLink({
   uri: `${process.env.SERVER_ENDPOINT}/graphql`,
+});
+
+const subgraphHttpLink = createHttpLink({
+  uri: `${process.env.SUBGRAPH_ENDPOINT}/graphql`,
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -25,7 +29,11 @@ const authLink = setContext((_, { headers }) => {
 });
 
 export default new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: ApolloLink.split(
+    (operation) => operation.getContext().endpoint === 'subgraph',
+    subgraphHttpLink,
+    authLink.concat(httpLink),
+  ),
   cache,
   typeDefs,
   // All resolvers are added via addResolvers
