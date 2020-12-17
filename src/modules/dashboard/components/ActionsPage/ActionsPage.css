@@ -5,6 +5,11 @@
   background-color: white;
 }
 
+.recoveryTag {
+  background-color: var(--pink);
+  color: rgb(249, 250, 250);
+}
+
 .container {
   display: flex;
   align-items: flex-start;

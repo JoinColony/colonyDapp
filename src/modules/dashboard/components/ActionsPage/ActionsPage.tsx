@@ -264,6 +264,8 @@ const ActionsPage = () => {
 
   return (
     <div className={styles.main}>
+      <p className={styles.recoveryTag}>Recovery</p>
+      {actionType === ColonyActions.Recovery && <p>Recovery</p>}
       <div className={styles.container}>
         <div className={styles.content}>
           {/*
