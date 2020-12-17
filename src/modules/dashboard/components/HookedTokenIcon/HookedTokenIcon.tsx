@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { Network } from '@colony/colony-js';
 
 import { AddressZero } from 'ethers/constants';
-import { TOKEN_LOGOS_REPO_URL } from '~constants';
+import { TOKEN_LOGOS_REPO_URL, DEFAULT_NETWORK } from '~constants';
 
 import Avatar from '~core/Avatar';
 import { useDataFetcher } from '~utils/hooks';
 import { AnyToken } from '~data/index';
 import { Address } from '~types/index';
 import Icon from '~core/Icon';
+import { getBase64image } from '~utils/dataReader';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 interface Response {
   url: string;
   ok: boolean;
+  blob: any;
 }
 
 interface Props {
@@ -36,6 +39,8 @@ interface Props {
   dontFetch?: boolean;
 }
 
+const ICON_STORAGE = 'tokenImages';
+
 const loadTokenImages = async (address: Address): Promise<Response> => {
   let tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}${address}/logo.png`;
   if (address === AddressZero) {
@@ -48,7 +53,7 @@ const HookedTokenIcon = ({
   name,
   token: { iconHash, address },
   iconName,
-  dontFetch,
+  dontFetch = DEFAULT_NETWORK !== Network.Mainnet,
   ...props
 }: Props) => {
   const [tokenImage, setTokenImage] = useState<string | undefined>();
@@ -60,12 +65,37 @@ const HookedTokenIcon = ({
 
   useEffect(() => {
     const loadTokenLogo = async () => {
-      if (!dontFetch && address && !iconName) {
-        const response = await loadTokenImages(address);
-        if (!response.ok) {
+      const imagesStorage = localStorage.getItem(ICON_STORAGE);
+      const parsedImagesStorage = imagesStorage && JSON.parse(imagesStorage);
+      if (parsedImagesStorage) {
+        const image = parsedImagesStorage[address];
+        if (image) {
+          setTokenImage(image);
           return;
         }
-        setTokenImage(response.url);
+      }
+
+      if (!dontFetch && address && !iconName) {
+        const response = await loadTokenImages(address);
+        if (response.ok) {
+          const blob = await response.blob();
+          const base64image = await getBase64image(blob);
+          if (base64image) {
+            if (parsedImagesStorage) {
+              parsedImagesStorage[address] = base64image;
+              localStorage.setItem(
+                ICON_STORAGE,
+                JSON.stringify(parsedImagesStorage),
+              );
+            } else {
+              localStorage.setItem(
+                ICON_STORAGE,
+                JSON.stringify({ [address]: base64image }),
+              );
+            }
+            setTokenImage(base64image);
+          }
+        }
       }
     };
     loadTokenLogo();
