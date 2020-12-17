@@ -1,4 +1,3 @@
-import { bigNumberify } from 'ethers/utils';
 import {
   ColonyRole,
   ColonyRoles,
@@ -6,7 +5,7 @@ import {
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
-import { PersistentTasks, Colony } from '~data/index';
+import { Colony } from '~data/index';
 import { Address, UserRolesForDomain } from '~types/index';
 
 export const getRolesForUserAndDomain = (
@@ -134,32 +133,4 @@ export const getAllUserRoles = (
       return allUserRoles;
     }, new Set<ColonyRole>()),
   );
-};
-
-export const getLevelTotalPayouts = (
-  levelSteps: PersistentTasks,
-): {
-  address: Address;
-  amount: string;
-  symbol: string;
-}[] => {
-  const levelTotalPayouts = levelSteps.reduce((prev, { payouts }) => {
-    const current = prev;
-    payouts.forEach(({ amount, token: { address, symbol } }) => {
-      if (!current[address]) {
-        const currentPayout = {
-          amount,
-          address,
-          symbol,
-        };
-        current[address] = currentPayout;
-      } else {
-        const prevAmountBn = bigNumberify(current[address].amount);
-        const summedAmountBn = bigNumberify(amount).add(prevAmountBn);
-        current[address].amount = summedAmountBn.toString();
-      }
-    });
-    return current;
-  }, {});
-  return Object.values(levelTotalPayouts);
 };

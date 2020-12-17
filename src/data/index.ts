@@ -12,7 +12,6 @@ import {
   FullColonyFragment,
   LoggedInUserDocument,
   PayoutsFragment,
-  PersistentTaskPayoutsFragment,
   TaskQuery,
   TokenBalancesForDomainsQuery,
   TokenQuery,
@@ -78,9 +77,7 @@ export type AnyTask =
   | ColonyTasksQuery['colony']['tasks'][number]
   | UserTasksQuery['user']['tasks'][number];
 
-export type Payouts =
-  | PayoutsFragment['payouts']
-  | PersistentTaskPayoutsFragment['payouts'];
+export type Payouts = PayoutsFragment['payouts'];
 
 export type Notifications = UserNotificationsQuery['user']['notifications'];
 export type OneNotification = Notifications[number];

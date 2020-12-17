@@ -12,20 +12,6 @@ fragment Payouts on Task {
   }
 }
 
-fragment PersistentTaskPayouts on PersistentTask {
-  payouts {
-    amount
-    tokenAddress
-    token @client {
-      id
-      address
-      decimals
-      name
-      symbol
-    }
-  }
-}
-
 fragment CreateTaskFields on Task {
   id
   ...Payouts
@@ -127,25 +113,6 @@ fragment SubmissionFields on Submission {
   status
   statusChangedAt
   submission
-}
-
-fragment PersistentTaskFields on PersistentTask {
-  id
-  colonyAddress
-  createdAt
-  creatorAddress
-  currentUserSubmission {
-    ...SubmissionFields
-  }
-  description
-  ethDomainId
-  ethSkillId
-  ...PersistentTaskPayouts
-  status
-  submissions {
-    ...SubmissionFields
-  }
-  title
 }
 
 fragment EventFields on Event {

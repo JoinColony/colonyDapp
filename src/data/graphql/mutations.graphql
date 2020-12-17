@@ -309,25 +309,6 @@ mutation EditDomain($input: EditDomainNameInput!) {
   }
 }
 
-mutation EditPersistentTask($input: EditPersistentTaskInput!) {
-  editPersistentTask(input: $input) {
-    id
-    description
-    ethDomainId
-    ethSkillId
-    ...PersistentTaskPayouts
-    title
-  }
-}
-
-mutation CreateLevelTaskSubmission($input: CreateLevelTaskSubmissionInput!) {
-  createLevelTaskSubmission(input: $input) {
-    id
-    status
-    submission
-  }
-}
-
 mutation EditSubmission($input: EditSubmissionInput!) {
   editSubmission(input: $input) {
     id

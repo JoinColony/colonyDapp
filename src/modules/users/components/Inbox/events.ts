@@ -6,7 +6,6 @@ const notificationsToEventsMapping = {
    * we only get notifications created (currently) for these
    * Note: these have to match the corresponding keys in `messages.ts`
    */
-  [EventType.AcceptLevelTaskSubmission]: 'notificationLevelTaskAccepted',
   [EventType.AssignWorker]: 'notificationWorkerAssigned',
   [EventType.NewUser]: 'notificationUserClaimedProfile',
   [EventType.CreateTask]: 'notificationTaskCreated',
@@ -19,7 +18,6 @@ const notificationsToEventsMapping = {
   [EventType.SetTaskPayout]: 'notificationTaskPayoutSet',
   [EventType.RemoveTaskPayout]: 'notificationTaskPayoutRemove',
   [EventType.CancelTask]: 'notificationTaskCancel',
-  [EventType.UnlockNextLevel]: 'notificationNextLevelUnlocked',
 };
 
 export const transformNotificationEventNames = (eventName: string): string =>
