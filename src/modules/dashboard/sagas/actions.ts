@@ -241,10 +241,70 @@ function* createMoveFundsAction({
   }
 }
 
+function* createMintTokensAction({
+  payload: {
+    colonyAddress,
+    colonyName,
+    who,
+    amount,
+  },
+  meta: {
+    id: metaId,
+    history,
+  },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_MINT_TOKENS>) {
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+
+    const colonyClient: ColonyClient = yield colonyManager.getClient(
+      ClientType.ColonyClient,
+      colonyAddress,
+    );
+
+    if (!amount) {
+      throw new Error(
+        'Amount to mint not set for mintTokens transaction',
+      );
+    }
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    yield fork(createTransaction, metaId, {
+      context: ClientType.ColonyClient,
+      methodName: 'mintTokens',
+      identifier: colonyAddress,
+      params: [amount],
+    });
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
+      meta,
+    });
+  } catch (caughtError) {
+    putError(ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR, caughtError, meta);
+  } finally {
+    txChannel.close();
+  }
+}
+
 export default function* tasksSagas() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
     createPaymentAction,
   );
   yield takeEvery(ActionTypes.COLONY_ACTION_MOVE_FUNDS, createMoveFundsAction);
+  yield takeEvery(ActionTypes.COLONY_ACTION_MINT_TOKENS, createMintTokensAction);
 }
