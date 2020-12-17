@@ -30,7 +30,11 @@ const authLink = setContext((_, { headers }) => {
 
 export default new ApolloClient({
   link: ApolloLink.split(
-    (operation) => operation.getContext().endpoint === 'subgraph',
+    /*
+     * Only send the queries that start with 'Subgraph' to
+     * the `subgraphHttpLink` endpoint
+     */
+    ({ operationName }) => operationName.startsWith('Subgraph'),
     subgraphHttpLink,
     authLink.concat(httpLink),
   ),

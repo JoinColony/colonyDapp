@@ -605,9 +605,11 @@ query TransactionMessages($transactionHash: String!) {
 
 # The Graph
 #
-#
+# @NOTE All queries meant for the subgraph should be prepended with `Subgraph`
+# otherwise they will be sent to our own graphql server
+# Prepending them with `Subgraph` allows the client to decide what endpoint to use
 
-query PaymentActions {
+query SubgraphPaymentActions {
   oneTxPayments {
     id
     agent

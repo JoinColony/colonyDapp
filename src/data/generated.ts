@@ -2416,10 +2416,10 @@ export type TransactionMessagesQuery = { transactionMessages: (
     & { messages: Array<TransactionMessageFragment> }
   ) };
 
-export type PaymentActionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type SubgraphPaymentActionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PaymentActionsQuery = { oneTxPayments: Array<(
+export type SubgraphPaymentActionsQuery = { oneTxPayments: Array<(
     Pick<OneTxPayment, 'id' | 'agent'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
@@ -6367,8 +6367,8 @@ export function useTransactionMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type TransactionMessagesQueryHookResult = ReturnType<typeof useTransactionMessagesQuery>;
 export type TransactionMessagesLazyQueryHookResult = ReturnType<typeof useTransactionMessagesLazyQuery>;
 export type TransactionMessagesQueryResult = Apollo.QueryResult<TransactionMessagesQuery, TransactionMessagesQueryVariables>;
-export const PaymentActionsDocument = gql`
-    query PaymentActions {
+export const SubgraphPaymentActionsDocument = gql`
+    query SubgraphPaymentActions {
   oneTxPayments {
     id
     agent
@@ -6402,26 +6402,26 @@ export const PaymentActionsDocument = gql`
     `;
 
 /**
- * __usePaymentActionsQuery__
+ * __useSubgraphPaymentActionsQuery__
  *
- * To run a query within a React component, call `usePaymentActionsQuery` and pass it any options that fit your needs.
- * When your component renders, `usePaymentActionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubgraphPaymentActionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphPaymentActionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = usePaymentActionsQuery({
+ * const { data, loading, error } = useSubgraphPaymentActionsQuery({
  *   variables: {
  *   },
  * });
  */
-export function usePaymentActionsQuery(baseOptions?: Apollo.QueryHookOptions<PaymentActionsQuery, PaymentActionsQueryVariables>) {
-        return Apollo.useQuery<PaymentActionsQuery, PaymentActionsQueryVariables>(PaymentActionsDocument, baseOptions);
+export function useSubgraphPaymentActionsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphPaymentActionsQuery, SubgraphPaymentActionsQueryVariables>) {
+        return Apollo.useQuery<SubgraphPaymentActionsQuery, SubgraphPaymentActionsQueryVariables>(SubgraphPaymentActionsDocument, baseOptions);
       }
-export function usePaymentActionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PaymentActionsQuery, PaymentActionsQueryVariables>) {
-          return Apollo.useLazyQuery<PaymentActionsQuery, PaymentActionsQueryVariables>(PaymentActionsDocument, baseOptions);
+export function useSubgraphPaymentActionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphPaymentActionsQuery, SubgraphPaymentActionsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphPaymentActionsQuery, SubgraphPaymentActionsQueryVariables>(SubgraphPaymentActionsDocument, baseOptions);
         }
-export type PaymentActionsQueryHookResult = ReturnType<typeof usePaymentActionsQuery>;
-export type PaymentActionsLazyQueryHookResult = ReturnType<typeof usePaymentActionsLazyQuery>;
-export type PaymentActionsQueryResult = Apollo.QueryResult<PaymentActionsQuery, PaymentActionsQueryVariables>;
+export type SubgraphPaymentActionsQueryHookResult = ReturnType<typeof useSubgraphPaymentActionsQuery>;
+export type SubgraphPaymentActionsLazyQueryHookResult = ReturnType<typeof useSubgraphPaymentActionsLazyQuery>;
+export type SubgraphPaymentActionsQueryResult = Apollo.QueryResult<SubgraphPaymentActionsQuery, SubgraphPaymentActionsQueryVariables>;
