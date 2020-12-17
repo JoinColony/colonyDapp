@@ -105,6 +105,7 @@ const TransferFundsDialogForm = ({
   status,
   values,
   validateForm,
+  errors,
 }: Props & FormikProps<FormValues>) => {
   const { tokenAddress, amount } = values;
 
@@ -201,17 +202,19 @@ const TransferFundsDialogForm = ({
 
   // Perform form validations
   useEffect(() => {
-    const errors: {
+    const customValidationErrors: {
       amount?: any;
       toDomain?: any;
-    } = {};
+    } = {
+      ...errors,
+    };
 
     if (
       !selectedToken ||
       !(amount && amount.length) ||
       !fromDomainTokenBalance
     ) {
-      return setErrors(errors); // silent error
+      return setErrors(customValidationErrors); // silent error
     }
 
     const convertedAmount = bigNumberify(
@@ -219,19 +222,20 @@ const TransferFundsDialogForm = ({
     );
 
     if (convertedAmount.isZero()) {
-      errors.amount = MSG.noBalance;
+      customValidationErrors.amount = MSG.noBalance;
     }
 
     if (fromDomainTokenBalance.lt(convertedAmount)) {
-      errors.amount = MSG.noBalance;
+      customValidationErrors.amount = MSG.noBalance;
     }
 
     if (toDomainId !== undefined && toDomainId === fromDomainId) {
-      errors.toDomain = MSG.samePot;
+      customValidationErrors.toDomain = MSG.samePot;
     }
 
-    return setErrors(errors);
+    return setErrors(customValidationErrors);
   }, [
+    errors,
     amount,
     fromDomainId,
     fromDomainTokenBalance,
@@ -251,9 +255,11 @@ const TransferFundsDialogForm = ({
         />
       </DialogSection>
       {!userHasPermissions && (
-        <DialogSection>
-          <PermissionRequiredInfo requiredRoles={requiredRoles} />
-        </DialogSection>
+        <div className={styles.permissionsRequired}>
+          <DialogSection>
+            <PermissionRequiredInfo requiredRoles={requiredRoles} />
+          </DialogSection>
+        </div>
       )}
       <DialogSection>
         <div className={styles.domainSelects}>
@@ -305,7 +311,7 @@ const TransferFundsDialogForm = ({
               onChange={() => validateForm()}
               disabled={!userHasPermissions}
             />
-            {!!tokenAddress && toDomainTokenBalance && (
+            {!!tokenAddress && toDomainTokenBalance && !errors.toDomain && (
               <div className={styles.domainPotBalance}>
                 <FormattedMessage
                   {...MSG.domainTokenAmount}
