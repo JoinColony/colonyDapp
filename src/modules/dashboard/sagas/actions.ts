@@ -232,7 +232,6 @@ function* createMoveFundsAction({
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS,
-      // payload: { colonyAddress, tokenAddress, fromPot, toPot, amount },
       meta,
     });
   } catch (caughtError) {
