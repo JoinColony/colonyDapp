@@ -1035,6 +1035,7 @@ export type Query = {
   level: Level;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
+  oneTxPayments: Array<OneTxPayment>;
   program: Program;
   systemInfo: SystemInfo;
   task: Task;
@@ -1409,6 +1410,55 @@ export type NetworkEvent = {
   topic?: Maybe<Scalars['String']>;
   userAddress?: Maybe<Scalars['String']>;
   domainId?: Maybe<Scalars['String']>;
+};
+
+export type ActionsFilter = {
+  payment_contains?: Maybe<Scalars['String']>;
+};
+
+export type SubgraphBlock = {
+  id: Scalars['String'];
+  timestamp: Scalars['String'];
+};
+
+export type SubgraphTransaction = {
+  id: Scalars['String'];
+  block: SubgraphBlock;
+};
+
+export type SubgraphToken = {
+  id: Scalars['String'];
+  symbol: Scalars['String'];
+  decimals: Scalars['String'];
+};
+
+export type SubgraphDomain = {
+  domainChainId: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type SubgraphFundingPotPayout = {
+  id: Scalars['String'];
+  amount: Scalars['String'];
+  token: SubgraphToken;
+};
+
+export type SubgraphFundingPot = {
+  id: Scalars['String'];
+  fundingPotPayouts: Array<SubgraphFundingPotPayout>;
+};
+
+export type SubgraphPayment = {
+  to: Scalars['String'];
+  domain: SubgraphDomain;
+  fundingPot: SubgraphFundingPot;
+};
+
+export type OneTxPayment = {
+  id: Scalars['String'];
+  agent: Scalars['String'];
+  transaction: SubgraphTransaction;
+  payment: SubgraphPayment;
 };
 
 export type PayoutsFragment = { payouts: Array<(
@@ -2365,6 +2415,29 @@ export type TransactionMessagesQuery = { transactionMessages: (
     Pick<TransactionMessages, 'transactionHash'>
     & { messages: Array<TransactionMessageFragment> }
   ) };
+
+export type PaymentActionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PaymentActionsQuery = { oneTxPayments: Array<(
+    Pick<OneTxPayment, 'id' | 'agent'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
+    ), payment: (
+      Pick<SubgraphPayment, 'to'>
+      & { domain: (
+        Pick<SubgraphDomain, 'name'>
+        & { ethDomainId: SubgraphDomain['domainChainId'] }
+      ), fundingPot: { fundingPotPayouts: Array<(
+          Pick<SubgraphFundingPotPayout, 'id' | 'amount'>
+          & { token: (
+            Pick<SubgraphToken, 'symbol' | 'decimals'>
+            & { address: SubgraphToken['id'] }
+          ) }
+        )> } }
+    ) }
+  )> };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -6294,3 +6367,61 @@ export function useTransactionMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type TransactionMessagesQueryHookResult = ReturnType<typeof useTransactionMessagesQuery>;
 export type TransactionMessagesLazyQueryHookResult = ReturnType<typeof useTransactionMessagesLazyQuery>;
 export type TransactionMessagesQueryResult = Apollo.QueryResult<TransactionMessagesQuery, TransactionMessagesQueryVariables>;
+export const PaymentActionsDocument = gql`
+    query PaymentActions {
+  oneTxPayments {
+    id
+    agent
+    transaction {
+      id
+      block {
+        id
+        timestamp
+      }
+    }
+    payment {
+      to
+      domain {
+        ethDomainId: domainChainId
+        name
+      }
+      fundingPot {
+        fundingPotPayouts {
+          id
+          token {
+            address: id
+            symbol
+            decimals
+          }
+          amount
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __usePaymentActionsQuery__
+ *
+ * To run a query within a React component, call `usePaymentActionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePaymentActionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePaymentActionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePaymentActionsQuery(baseOptions?: Apollo.QueryHookOptions<PaymentActionsQuery, PaymentActionsQueryVariables>) {
+        return Apollo.useQuery<PaymentActionsQuery, PaymentActionsQueryVariables>(PaymentActionsDocument, baseOptions);
+      }
+export function usePaymentActionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PaymentActionsQuery, PaymentActionsQueryVariables>) {
+          return Apollo.useLazyQuery<PaymentActionsQuery, PaymentActionsQueryVariables>(PaymentActionsDocument, baseOptions);
+        }
+export type PaymentActionsQueryHookResult = ReturnType<typeof usePaymentActionsQuery>;
+export type PaymentActionsLazyQueryHookResult = ReturnType<typeof usePaymentActionsLazyQuery>;
+export type PaymentActionsQueryResult = Apollo.QueryResult<PaymentActionsQuery, PaymentActionsQueryVariables>;

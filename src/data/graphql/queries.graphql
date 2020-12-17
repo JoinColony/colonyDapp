@@ -602,3 +602,39 @@ query TransactionMessages($transactionHash: String!) {
     }
   }
 }
+
+# The Graph
+#
+#
+
+query PaymentActions {
+  oneTxPayments {
+    id
+    agent
+    transaction {
+      id
+      block {
+        id
+        timestamp
+      }
+    }
+    payment {
+      to
+      domain {
+        ethDomainId: domainChainId
+        name
+      }
+      fundingPot {
+        fundingPotPayouts {
+          id
+          token {
+            address: id
+            symbol
+            decimals
+          }
+          amount
+        }
+      }
+    }
+  }
+}

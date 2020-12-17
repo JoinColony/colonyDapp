@@ -172,4 +172,61 @@ export default gql`
     setNetworkContracts(input: NetworkContractsInput): NetworkContracts!
     updateNetworkContracts: NetworkContracts!
   }
+
+  # The Graph
+  #
+  #
+
+  input ActionsFilter {
+    payment_contains: String
+  }
+
+  type SubgraphBlock {
+    id: String!
+    timestamp: String!
+  }
+
+  type SubgraphTransaction {
+    id: String!
+    block: SubgraphBlock!
+  }
+
+  type SubgraphToken {
+    id: String!
+    symbol: String!
+    decimals: String!
+  }
+
+  type SubgraphDomain {
+    domainChainId: String!
+    name: String!
+  }
+
+  type SubgraphFundingPotPayout {
+    id: String!
+    amount: String!
+    token: SubgraphToken!
+  }
+
+  type SubgraphFundingPot {
+    id: String!
+    fundingPotPayouts: [SubgraphFundingPotPayout!]!
+  }
+
+  type SubgraphPayment {
+    to: String!
+    domain: SubgraphDomain!
+    fundingPot: SubgraphFundingPot!
+  }
+
+  type OneTxPayment {
+    id: String!
+    agent: String!
+    transaction: SubgraphTransaction!
+    payment: SubgraphPayment!
+  }
+
+  extend type Query {
+    oneTxPayments: [OneTxPayment!]!
+  }
 `;
