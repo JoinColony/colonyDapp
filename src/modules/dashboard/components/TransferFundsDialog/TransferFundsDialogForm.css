@@ -54,10 +54,12 @@
 }
 
 .permissionsRequired {
-  margin-top: 0;
+  margin-top: -15px;
 }
 
 .permissionsError {
+  display: block;
+  margin-top: -30px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--pink);
