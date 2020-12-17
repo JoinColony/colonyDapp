@@ -6,8 +6,20 @@
 }
 
 .recoveryTag {
+  padding: 4.5px 8px;
+  height: 20px;
+  width: 69px;
+  position: absolute;
+  top: 129px;
+  left: 24.3%;
+  border-radius: 5px;
   background-color: var(--pink);
-  color: rgb(249, 250, 250);
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  line-height: var(--size-tiny);
+  color: var(--text-invert);
+  letter-spacing: var(--spacing-medium);
 }
 
 .container {
