@@ -68,6 +68,7 @@ const MSG = defineMessages({
 
 interface CustomWizardDialogProps {
   nextStep: string;
+  nextStepMintTokens: string;
   prevStep: string;
   colony: Colony;
 }
@@ -83,6 +84,7 @@ const ManageFundsDialog = ({
   prevStep,
   colony,
   nextStep,
+  nextStepMintTokens,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -107,6 +109,7 @@ const ManageFundsDialog = ({
       title: MSG.mintTokensTitle,
       description: MSG.mintTokensDescription,
       icon: 'emoji-seed-sprout',
+      onClick: () => callStep(nextStepMintTokens),
     },
     {
       title: MSG.manageTokensTitle,

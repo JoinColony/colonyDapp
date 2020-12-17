@@ -1,5 +1,6 @@
 import React, { DependencyList, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+import { useHistory } from 'react-router-dom';
 import { bigNumberify } from 'ethers/utils';
 import { FormikBag } from 'formik';
 import moveDecimal from 'move-decimal-point';
@@ -9,7 +10,7 @@ import { ActionForm } from '~core/Fields';
 import { ColonyTokens, OneToken } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
-import { pipe, mapPayload, mergePayload, withKey } from '~utils/actions';
+import { pipe, mapPayload, mergePayload, withMeta } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 const MSG = defineMessages({
@@ -26,6 +27,7 @@ const MSG = defineMessages({
 interface Props {
   children?: any;
   colonyAddress: Address;
+  colonyName: string;
   nativeToken: ColonyTokens[0] | OneToken;
   onSuccess?: (result: any, bag: FormikBag<any, any>, values: any) => void;
 }
@@ -41,21 +43,33 @@ const validationSchema = yup.object().shape({
 const TokenMintForm = ({
   children,
   onSuccess,
-  nativeToken: { decimals },
+  nativeToken: { decimals, address },
   colonyAddress,
+  colonyName,
 }: Props) => {
+  const history = useHistory();
+
   const transform = useCallback(
     pipe(
-      mapPayload(({ mintAmount: inputAmount }) => ({
-        // shift by the token's decimals (or default of 18)
-        amount: bigNumberify(
-          moveDecimal(inputAmount, getTokenDecimalsWithFallback(decimals)),
-        ),
-      })),
-      withKey(colonyAddress),
-      mergePayload({ colonyAddress }),
+      mapPayload(
+        ({
+          mintAmount: inputAmount,
+        }) => {
+          // Find the selected token's decimals
+          const amount = bigNumberify(
+            moveDecimal(inputAmount, getTokenDecimalsWithFallback(decimals)),
+          )
+          return {
+            colonyAddress,
+            colonyName,
+            nativeTokenAddress: address,
+            amount,
+          };
+        },
+      ),
+      withMeta({ history }),
     ),
-    [decimals, colonyAddress] as DependencyList,
+    [],
   );
 
   return (
@@ -65,9 +79,9 @@ const TokenMintForm = ({
         mintAmount: 0,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_MINT_TOKENS}
-      error={ActionTypes.COLONY_MINT_TOKENS_ERROR}
-      success={ActionTypes.COLONY_MINT_TOKENS_SUBMITTED}
+      submit={ActionTypes.COLONY_ACTION_MINT_TOKENS}
+      error={ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR}
+      success={ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS}
       onSuccess={onSuccess}
       transform={transform}
     >
