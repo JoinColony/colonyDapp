@@ -82,7 +82,6 @@ module.exports = {
     {
       name: 'Data Display',
       components: [
-        './src/modules/core/components/ActivityFeed/ActivityFeed.tsx',
         './src/modules/core/components/Assignment/Assignment.tsx',
         './src/modules/core/components/BreadCrumb/BreadCrumb.tsx',
         './src/modules/core/components/Card/Card.tsx',

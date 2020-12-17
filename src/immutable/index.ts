@@ -1,6 +1,5 @@
 export * from './utils/index';
 
-export * from './ActivityFeedItem';
 export * from './Connection';
 export * from './FetchableData';
 export * from './GasPrices';
