@@ -77,7 +77,9 @@ const TokenEditDialog = ({
   nativeTokenAddress,
 }: Props) => {
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
-  const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(false);
+  const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
+    false,
+  );
   const { formatMessage } = useIntl();
 
   const handleTokenSelect = (token: OneToken) => {
@@ -86,7 +88,7 @@ const TokenEditDialog = ({
 
   const handleTokenSelectError = (hasError: boolean) => {
     setTokenSelectorHasError(hasError);
-  }
+  };
 
   const handleSubmit = useCallback(
     async (
@@ -136,6 +138,7 @@ const TokenEditDialog = ({
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
+        validateOnChange={false}
       >
         {({
           isSubmitting,
@@ -172,6 +175,7 @@ const TokenEditDialog = ({
               <TokenSelector
                 tokenAddress={values.tokenAddress}
                 onTokenSelect={(token: OneToken) => handleTokenSelect(token)}
+                onTokenSelectError={handleTokenSelectError}
                 tokenData={tokenData}
                 label={MSG.fieldLabel}
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}
@@ -198,7 +202,9 @@ const TokenEditDialog = ({
                 appearance={{ theme: 'primary', size: 'large' }}
                 text={{ id: 'button.confirm' }}
                 loading={isSubmitting}
-                disabled={!isValid || isSubmitting || !dirty || tokenSelectorHasError}
+                disabled={
+                  !isValid || isSubmitting || !dirty || tokenSelectorHasError
+                }
                 type="submit"
                 style={{ width: styles.wideButton }}
               />
