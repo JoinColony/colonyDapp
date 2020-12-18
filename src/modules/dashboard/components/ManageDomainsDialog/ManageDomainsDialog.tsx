@@ -6,25 +6,32 @@ import IndexModal from '~core/IndexModal';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.ColonyManageDomainsDialog.title',
+    id: 'dashboard.ManageDomainsDialog.title',
     defaultMessage: 'Manage domains',
   },
   creatNewDomain: {
-    id: 'dashboard.ColonyManageDomainsDialog.creatNewDomain',
+    id: 'dashboard.ManageDomainsDialog.creatNewDomain',
     defaultMessage: 'Create new domain',
   },
-  editNemDomain: {
-    id: 'dashboard.ColonyManageDomainsDialog.editNemDomain',
+  editDomain: {
+    id: 'dashboard.ManageDomainsDialog.editDomain',
     defaultMessage: 'Edit domain',
   },
 });
 
-const ColonyManageDomainsDialog = ({ cancel, close }: DialogProps) => {
+const displayName = 'dashboard.ManageDomainsDialog';
+
+const ManageDomainsDialog = ({ cancel, close }: DialogProps) => {
   const items = [
     {
       title: MSG.creatNewDomain,
       description: MSG.creatNewDomain,
-      icon: '',
+      icon: 'emoji-crane',
+    },
+    {
+      title: MSG.editDomain,
+      description: MSG.editDomain,
+      icon: 'pencil-note',
     },
   ];
 
@@ -33,4 +40,6 @@ const ColonyManageDomainsDialog = ({ cancel, close }: DialogProps) => {
   );
 };
 
-export default ColonyManageDomainsDialog;
+ManageDomainsDialog.displayName = displayName;
+
+export default ManageDomainsDialog;
