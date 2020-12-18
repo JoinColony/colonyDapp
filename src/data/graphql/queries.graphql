@@ -609,8 +609,8 @@ query TransactionMessages($transactionHash: String!) {
 # otherwise they will be sent to our own graphql server
 # Prepending them with `Subgraph` allows the client to decide what endpoint to use
 
-query SubgraphPaymentActions {
-  oneTxPayments {
+query SubgraphPaymentActions($colonyAddress: String!) {
+  oneTxPayments(where: { payment_contains: $colonyAddress }) {
     id
     agent
     transaction {

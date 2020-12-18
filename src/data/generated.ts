@@ -1088,6 +1088,11 @@ export type QueryLevelArgs = {
 };
 
 
+export type QueryOneTxPaymentsArgs = {
+  where: ActionsFilter;
+};
+
+
 export type QueryProgramArgs = {
   id: Scalars['String'];
 };
@@ -2416,7 +2421,9 @@ export type TransactionMessagesQuery = { transactionMessages: (
     & { messages: Array<TransactionMessageFragment> }
   ) };
 
-export type SubgraphPaymentActionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type SubgraphPaymentActionsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
 
 
 export type SubgraphPaymentActionsQuery = { oneTxPayments: Array<(
@@ -6368,8 +6375,8 @@ export type TransactionMessagesQueryHookResult = ReturnType<typeof useTransactio
 export type TransactionMessagesLazyQueryHookResult = ReturnType<typeof useTransactionMessagesLazyQuery>;
 export type TransactionMessagesQueryResult = Apollo.QueryResult<TransactionMessagesQuery, TransactionMessagesQueryVariables>;
 export const SubgraphPaymentActionsDocument = gql`
-    query SubgraphPaymentActions {
-  oneTxPayments {
+    query SubgraphPaymentActions($colonyAddress: String!) {
+  oneTxPayments(where: {payment_contains: $colonyAddress}) {
     id
     agent
     transaction {
@@ -6413,6 +6420,7 @@ export const SubgraphPaymentActionsDocument = gql`
  * @example
  * const { data, loading, error } = useSubgraphPaymentActionsQuery({
  *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */

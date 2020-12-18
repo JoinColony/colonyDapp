@@ -227,6 +227,6 @@ export default gql`
   }
 
   extend type Query {
-    oneTxPayments: [OneTxPayment!]!
+    oneTxPayments(where: ActionsFilter!): [OneTxPayment!]!
   }
 `;
