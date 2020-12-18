@@ -108,7 +108,7 @@ const TokenEditDialog = ({
         setSubmitting(false);
       }
     },
-    [updateTokens, close],
+    [updateTokens, formatMessage, close],
   );
 
   const allTokens = useMemo(() => {
