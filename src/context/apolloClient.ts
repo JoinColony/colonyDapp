@@ -11,7 +11,7 @@ const httpLink = createHttpLink({
 });
 
 const subgraphHttpLink = createHttpLink({
-  uri: `${process.env.SUBGRAPH_ENDPOINT}/graphql`,
+  uri: process.env.SUBGRAPH_ENDPOINT,
 });
 
 const authLink = setContext((_, { headers }) => {
