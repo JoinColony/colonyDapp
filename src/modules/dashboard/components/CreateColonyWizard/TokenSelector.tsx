@@ -15,6 +15,8 @@ import {
 } from '~data/index';
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
+import styles from './TokenSelector.css';
+
 const MSG = defineMessages({
   inputLabel: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.label',
@@ -160,7 +162,7 @@ const TokenSelector = ({
     /**
      * @todo Define custom input component for token addresses
      */
-    <div>
+    <div className={styles.inputWrapper}>
       <Input
         name="tokenAddress"
         label={labelText || MSG.inputLabel}

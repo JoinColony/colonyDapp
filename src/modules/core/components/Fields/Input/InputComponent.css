@@ -35,7 +35,6 @@
   composes: main;
   height: 45px;
   font-size: var(--size-medium);
-  font-weight: var(--weight-bold);
   line-height: 45px;
 
   &::placeholder {
