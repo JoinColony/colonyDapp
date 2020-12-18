@@ -184,15 +184,11 @@ const getMoveFundsActionValues = async (
   };
 };
 
-
 const getMintTokensActionValues = async (
   processedEvents: ProcessedEvent[],
-  colonyClient: ColonyClient,
 ): Promise<Partial<ActionValues>> => {
-
   const mintTokensEvent = processedEvents.find(
-    ({ name }) =>
-      name === ColonyAndExtensionsEvents.TokensMinted,
+    ({ name }) => name === ColonyAndExtensionsEvents.TokensMinted,
   ) as ProcessedEvent;
 
   const {

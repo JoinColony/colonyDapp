@@ -243,32 +243,16 @@ function* createMoveFundsAction({
 }
 
 function* createMintTokensAction({
-  payload: {
-    colonyAddress,
-    colonyName,
-    nativeTokenAddress,
-    amount,
-  },
-  meta: {
-    id: metaId,
-    history,
-  },
+  payload: { colonyAddress, colonyName, nativeTokenAddress, amount },
+  meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_MINT_TOKENS>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-
-    const colonyClient: ColonyClient = yield colonyManager.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
-    );
 
     if (!amount) {
-      throw new Error(
-        'Amount to mint not set for mintTokens transaction',
-      );
+      throw new Error('Amount to mint not set for mintTokens transaction');
     }
 
     txChannel = yield call(getTxChannel, metaId);
@@ -317,7 +301,10 @@ function* createMintTokensAction({
     yield put(transactionReady(mintTokens.id));
     const {
       payload: { hash: txHash },
-    } = yield takeFrom(mintTokens.channel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+    } = yield takeFrom(
+      mintTokens.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
     yield takeFrom(mintTokens.channel, ActionTypes.TRANSACTION_SUCCEEDED);
     yield put(transactionReady(claimColonyFunds.id));
     yield takeFrom(claimColonyFunds.channel, ActionTypes.TRANSACTION_SUCCEEDED);
@@ -327,16 +314,16 @@ function* createMintTokensAction({
     }
 
     yield apolloClient.query<
-        TokenBalancesForDomainsQuery,
-        TokenBalancesForDomainsQueryVariables
-      >({
-        query: TokenBalancesForDomainsDocument,
-        variables: {
-          colonyAddress,
-          tokenAddresses: [nativeTokenAddress],
-        },
-        fetchPolicy: 'network-only',
-      });
+      TokenBalancesForDomainsQuery,
+      TokenBalancesForDomainsQueryVariables
+    >({
+      query: TokenBalancesForDomainsDocument,
+      variables: {
+        colonyAddress,
+        tokenAddresses: [nativeTokenAddress],
+      },
+      fetchPolicy: 'network-only',
+    });
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
@@ -355,5 +342,8 @@ export default function* tasksSagas() {
     createPaymentAction,
   );
   yield takeEvery(ActionTypes.COLONY_ACTION_MOVE_FUNDS, createMoveFundsAction);
-  yield takeEvery(ActionTypes.COLONY_ACTION_MINT_TOKENS, createMintTokensAction);
+  yield takeEvery(
+    ActionTypes.COLONY_ACTION_MINT_TOKENS,
+    createMintTokensAction,
+  );
 }

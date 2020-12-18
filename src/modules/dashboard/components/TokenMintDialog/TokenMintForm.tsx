@@ -1,4 +1,4 @@
-import React, { DependencyList, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 import { bigNumberify } from 'ethers/utils';
@@ -9,8 +9,7 @@ import * as yup from 'yup';
 import { ActionForm } from '~core/Fields';
 import { ColonyTokens, OneToken, Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
-import { pipe, mapPayload, mergePayload, withMeta } from '~utils/actions';
+import { pipe, mapPayload, withMeta } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 const MSG = defineMessages({
@@ -44,28 +43,23 @@ const TokenMintForm = ({
   onSuccess,
   nativeToken: { decimals, address },
   colony: { colonyAddress, colonyName },
-  colony
 }: Props) => {
   const history = useHistory();
 
   const transform = useCallback(
     pipe(
-      mapPayload(
-        ({
-          mintAmount: inputAmount,
-        }) => {
-          // Find the selected token's decimals
-          const amount = bigNumberify(
-            moveDecimal(inputAmount, getTokenDecimalsWithFallback(decimals)),
-          )
-          return {
-            colonyAddress,
-            colonyName,
-            nativeTokenAddress: address,
-            amount,
-          };
-        },
-      ),
+      mapPayload(({ mintAmount: inputAmount }) => {
+        // Find the selected token's decimals
+        const amount = bigNumberify(
+          moveDecimal(inputAmount, getTokenDecimalsWithFallback(decimals)),
+        );
+        return {
+          colonyAddress,
+          colonyName,
+          nativeTokenAddress: address,
+          amount,
+        };
+      }),
       withMeta({ history }),
     ),
     [],

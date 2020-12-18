@@ -117,7 +117,9 @@ const ManageFundsDialog = ({
       permissionRequired: !canMintNativeToken,
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
-        permissionsList: <FormattedMessage {...MSG.mintTokensPermissionsList} />,
+        permissionsList: (
+          <FormattedMessage {...MSG.mintTokensPermissionsList} />
+        ),
       },
       onClick: () => callStep(nextStepMintTokens),
     },

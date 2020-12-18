@@ -10,12 +10,10 @@ import { Annotations, Input } from '~core/Fields';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
 import { Colony, useLoggedInUser } from '~data/index';
-import { Address } from '~types/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
-
 
 import TokenMintForm from './TokenMintForm';
 
@@ -60,18 +58,17 @@ const TokenMintDialog = ({
   callStep,
   prevStep,
 }: Props) => {
-
   const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
-  const userHasPermissions = true && hasRoot(allUserRoles);
+  const userHasPermissions = canMintNativeToken && hasRoot(allUserRoles);
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
   const nativeToken =
     tokens && tokens.find(({ address }) => address === nativeTokenAddress);
 
-  const {name, symbol, decimals} = nativeToken;
+  const { name, symbol, decimals } = nativeToken;
   return (
     <Dialog cancel={cancel}>
       <TokenMintForm
@@ -100,7 +97,9 @@ const TokenMintDialog = ({
                     formattingOptions={{
                       numeral: true,
                       numeralPositiveOnly: true,
-                      numeralDecimalScale: getTokenDecimalsWithFallback(decimals),
+                      numeralDecimalScale: getTokenDecimalsWithFallback(
+                        decimals,
+                      ),
                     }}
                     label={MSG.amountLabel}
                     name="mintAmount"
@@ -114,13 +113,19 @@ const TokenMintDialog = ({
             </DialogSection>
             <DialogSection appearance={{ theme: 'sidePadding' }}>
               <div className={styles.annotation}>
-                <Annotations label={MSG.justificationLabel} name="annotation" disabled={!userHasPermissions} />
+                <Annotations
+                  label={MSG.justificationLabel}
+                  name="annotation"
+                  disabled={!userHasPermissions}
+                />
               </div>
             </DialogSection>
             <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={prevStep && callStep ? () => callStep(prevStep) : undefined}
+                onClick={
+                  prevStep && callStep ? () => callStep(prevStep) : undefined
+                }
                 text={{ id: 'button.back' }}
               />
               <Button
@@ -136,7 +141,7 @@ const TokenMintDialog = ({
         )}
       </TokenMintForm>
     </Dialog>
-  )
+  );
 };
 
 TokenMintDialog.displayName = displayName;
