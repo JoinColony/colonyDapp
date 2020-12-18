@@ -65,7 +65,7 @@ const TokenMintDialog = ({
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
-  const userHasPermissions = canMintNativeToken && hasRoot(allUserRoles);
+  const userHasPermissions = true && hasRoot(allUserRoles);
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
   const nativeToken =

@@ -75,6 +75,10 @@ const DetailsWidget = ({
   const Amount = () => values?.amount as ReactElement;
   const Symbol = () => values?.tokenSymbol as ReactElement;
 
+  // @TODO We need to find a better way of handling for which actions we want display which fields
+  const showFromDomain = !ColonyActions.MintTokens && values?.fromDomain && showFullDetails;
+  const showToDomain = !ColonyActions.MintTokens && (values?.toDomain || recipient) && showFullDetails;
+
   return (
     <div>
       <div className={styles.item}>
@@ -104,7 +108,7 @@ const DetailsWidget = ({
           />
         </div>
       </div>
-      {values?.fromDomain && showFullDetails && (
+      {showFromDomain && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.fromDomain} />
@@ -114,7 +118,7 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {(values?.toDomain || recipient) && showFullDetails && (
+      {showToDomain && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.toRecipient} />
