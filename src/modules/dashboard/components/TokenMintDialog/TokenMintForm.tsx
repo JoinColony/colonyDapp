@@ -7,7 +7,7 @@ import moveDecimal from 'move-decimal-point';
 import * as yup from 'yup';
 
 import { ActionForm } from '~core/Fields';
-import { ColonyTokens, OneToken } from '~data/index';
+import { ColonyTokens, OneToken, Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { pipe, mapPayload, mergePayload, withMeta } from '~utils/actions';
@@ -26,8 +26,7 @@ const MSG = defineMessages({
 
 interface Props {
   children?: any;
-  colonyAddress: Address;
-  colonyName: string;
+  colony: Colony;
   nativeToken: ColonyTokens[0] | OneToken;
   onSuccess?: (result: any, bag: FormikBag<any, any>, values: any) => void;
 }
@@ -44,8 +43,8 @@ const TokenMintForm = ({
   children,
   onSuccess,
   nativeToken: { decimals, address },
-  colonyAddress,
-  colonyName,
+  colony: { colonyAddress, colonyName },
+  colony
 }: Props) => {
   const history = useHistory();
 

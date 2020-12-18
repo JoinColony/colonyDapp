@@ -7,7 +7,7 @@ import IndexModal from '~core/IndexModal';
 import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { useLoggedInUser, Colony } from '~data/index';
 import { getAllUserRoles } from '../../../transformers';
-import { canFund } from '../../../users/checks';
+import { canFund, hasRoot } from '../../../users/checks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -22,8 +22,8 @@ const MSG = defineMessages({
     id: 'dashboard.ManageFundsDialog.transferFundsDescription',
     defaultMessage: 'Move funds between domais.',
   },
-  moveFundsPermissionsText: {
-    id: 'dashboard.ManageFundsDialog.moveFundsPermissionsText',
+  permissionsListText: {
+    id: 'dashboard.ManageFundsDialog.permissionsListText',
     defaultMessage: `You must have the {permissionsList} permissions in the
       relevant domains, in order to take this action`,
   },
@@ -38,6 +38,10 @@ const MSG = defineMessages({
   mintTokensDescription: {
     id: 'dashboard.ManageFundsDialog.mintTokensDescription',
     defaultMessage: 'Need more tokens? Cook up a batch here.',
+  },
+  mintTokensPermissionsList: {
+    id: 'dashboard.ManageFundsDialog.mintTokensPermissionsList',
+    defaultMessage: 'root',
   },
   manageTokensTitle: {
     id: 'dashboard.ManageFundsDialog.manageTokensTitle',
@@ -92,6 +96,7 @@ const ManageFundsDialog = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
+  const canMintNativeToken = colony.canMintNativeToken && hasRoot(allUserRoles);
 
   const items = [
     {
@@ -99,7 +104,7 @@ const ManageFundsDialog = ({
       description: MSG.transferFundsDescription,
       icon: 'emoji-world-globe',
       permissionRequired: !canMoveFunds,
-      permissionInfoText: MSG.moveFundsPermissionsText,
+      permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
       },
@@ -109,6 +114,11 @@ const ManageFundsDialog = ({
       title: MSG.mintTokensTitle,
       description: MSG.mintTokensDescription,
       icon: 'emoji-seed-sprout',
+      permissionRequired: !canMintNativeToken,
+      permissionInfoText: MSG.permissionsListText,
+      permissionInfoTextValues: {
+        permissionsList: <FormattedMessage {...MSG.mintTokensPermissionsList} />,
+      },
       onClick: () => callStep(nextStepMintTokens),
     },
     {
