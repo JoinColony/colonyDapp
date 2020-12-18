@@ -2429,7 +2429,7 @@ export type SubgraphPaymentActionsQueryVariables = Exact<{
 export type SubgraphPaymentActionsQuery = { oneTxPayments: Array<(
     Pick<OneTxPayment, 'id' | 'agent'>
     & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
+      { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
     ), payment: (
       Pick<SubgraphPayment, 'to'>
@@ -6380,7 +6380,7 @@ export const SubgraphPaymentActionsDocument = gql`
     id
     agent
     transaction {
-      id
+      hash: id
       block {
         id
         timestamp

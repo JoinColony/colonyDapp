@@ -31,6 +31,7 @@ import {
   NetworkContractsDocument,
   TransactionMessageFragment,
   ParsedEvent,
+  SubgraphPaymentActionsQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -148,3 +149,5 @@ export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken | FixedToken;
 export type TransactionMessage = TransactionMessageFragment;
 
 export type EventOrMessage = ParsedEvent | TransactionMessage;
+
+export type SubgraphActions = SubgraphPaymentActionsQuery;
