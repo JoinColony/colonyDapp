@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
 import Heading from '~core/Heading';
@@ -76,8 +76,6 @@ const STATUS_MAP = {
 };
 
 const ActionsPage = () => {
-  const { formatMessage } = useIntl();
-
   const { transactionHash, colonyName } = useParams<{
     transactionHash?: string;
     colonyName: string;
@@ -271,7 +269,9 @@ const ActionsPage = () => {
   return (
     <div className={styles.main}>
       {actionType === ColonyActions.Recovery && (
-        <p className={styles.recoveryTag}>{formatMessage(MSG.recoveryTag)}</p>
+        <p className={styles.recoveryTag}>
+          <FormattedMessage {...MSG.recoveryTag} />
+        </p>
       )}
       <div className={styles.container}>
         <div className={styles.content}>
