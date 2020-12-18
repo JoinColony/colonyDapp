@@ -77,11 +77,16 @@ const TokenEditDialog = ({
   nativeTokenAddress,
 }: Props) => {
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
+  const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(false);
   const { formatMessage } = useIntl();
 
   const handleTokenSelect = (token: OneToken) => {
     setTokenData(token);
   };
+
+  const handleTokenSelectError = (hasError: boolean) => {
+    setTokenSelectorHasError(hasError);
+  }
 
   const handleSubmit = useCallback(
     async (
@@ -193,7 +198,7 @@ const TokenEditDialog = ({
                 appearance={{ theme: 'primary', size: 'large' }}
                 text={{ id: 'button.confirm' }}
                 loading={isSubmitting}
-                disabled={!isValid || isSubmitting || !dirty}
+                disabled={!isValid || isSubmitting || !dirty || tokenSelectorHasError}
                 type="submit"
                 style={{ width: styles.wideButton }}
               />

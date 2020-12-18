@@ -45,6 +45,7 @@ const MSG = defineMessages({
 interface Props {
   tokenAddress: string;
   onTokenSelect: (arg0: OneToken | null | void) => any;
+  onTokenSelectError?: (arg: boolean) => any;
   tokenData?: OneToken;
   label?: string | MessageDescriptor;
   appearance?: Appearance;
@@ -75,6 +76,7 @@ const displayName = 'dashboard.CreateColonyWizard.TokenSelector';
 const TokenSelector = ({
   tokenAddress,
   onTokenSelect,
+  onTokenSelectError,
   tokenData,
   extra,
   label,
@@ -101,6 +103,9 @@ const TokenSelector = ({
         return;
       }
       onTokenSelect(token);
+      if (onTokenSelectError) {
+        onTokenSelectError(false);
+      }
     },
     [onTokenSelect],
   );
@@ -109,6 +114,9 @@ const TokenSelector = ({
     (error: Error) => {
       setLoading(false);
       onTokenSelect(null);
+      if (onTokenSelectError) {
+        onTokenSelectError(true);
+      }
       log.error(error);
     },
     [onTokenSelect],
