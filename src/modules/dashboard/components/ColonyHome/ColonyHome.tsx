@@ -13,10 +13,15 @@ import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialo
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { ActionTypes } from '~redux/index';
-import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
+import {
+  useColonyFromNameQuery,
+  useNetworkContracts,
+  useSubgraphPaymentActionsQuery,
+} from '~data/index';
 import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
 import { getUserRolesForDomain } from '../../../transformers';
+import { getActionsListData } from '../../transformers';
 import { hasRoot } from '../../../users/checks';
 import { canBeUpgraded } from '../../checks';
 
@@ -113,8 +118,19 @@ const ColonyHome = ({ match, location }: Props) => {
 
   if (error) console.error(error);
 
+  const { data: paymentActions } = useSubgraphPaymentActionsQuery({
+    variables: {
+      /*
+       * @TODO Find a way to btter handle address normalization
+       */
+      colonyAddress: data?.colony?.colonyAddress?.toLowerCase() || '',
+    },
+  });
+
   const colonyDomains = data && data.colony && data.colony.domains;
   const reverseENSAddress = dataVariables && dataVariables.address;
+
+  const actions = useTransformer(getActionsListData, [paymentActions]);
 
   /*
    * @NOTE Disabled until we're done with domain filters to prevent lint errors
@@ -202,7 +218,9 @@ const ColonyHome = ({ match, location }: Props) => {
             />
             <Route
               path={COLONY_HOME_ROUTE}
-              component={() => <ColonyActions />}
+              component={() => (
+                <ColonyActions actions={actions} colony={data.colony} />
+              )}
             />
           </Switch>
         </div>

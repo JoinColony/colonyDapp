@@ -181,6 +181,9 @@ const ActionsListItem = ({
                     />
                   </span>
                 ),
+                /*
+                 * @TODO Add user mention popover back in
+                 */
                 recipient: (
                   <span className={styles.titleDecoration}>
                     <FriendlyUserName

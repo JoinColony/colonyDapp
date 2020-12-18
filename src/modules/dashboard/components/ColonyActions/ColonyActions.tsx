@@ -5,7 +5,6 @@ import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
 import { Select, Form } from '~core/Fields';
-import Button from '~core/Button';
 
 import { Colony } from '~data/index';
 import {
@@ -31,8 +30,6 @@ import styles from './ColonyActions.css';
  * commentCount?: number,
  * status?: number
  */
-import { MOCK_ACTIONS } from './mockData';
-
 const MSG = defineMessages({
   labelFilter: {
     id: 'dashboard.ColonyActions.labelFilter',
@@ -58,21 +55,15 @@ type Props = {
    * Via the domains dropdown from #2288
    */
   ethDomainId?: number;
+  actions: any[];
 };
-
-const ITEMS_PER_PAGE = 10;
 
 const displayName = 'dashboard.ColonyActions';
 
-const ColonyActions = () => {
+const ColonyActions = ({ colony, actions }) => {
   const [actionsFilter, setActionsFilter] = useState<string>(
     ActionFilterOptions.ENDING_SOONEST,
   );
-  /*
-   * @NOTE See below about the mock visual infini-loader and the reasoning behind it
-   */
-  const [fakeFetchingData, setFakeFetchingData] = useState<boolean>(false);
-  const [mockDataPager, setMockDataPager] = useState<number>(1);
 
   const filter = useCallback(() => {
     switch (actionsFilter) {
@@ -98,11 +89,11 @@ const ColonyActions = () => {
   const filteredActionsData: any[] = useMemo(
     () =>
       filter
-        ? immutableSort(MOCK_ACTIONS, sort).filter((mockAction) =>
+        ? immutableSort(actions, sort).filter((mockAction) =>
             mockAction ? filter() : true,
           )
-        : MOCK_ACTIONS,
-    [filter, sort],
+        : actions,
+    [filter, sort, actions],
   );
 
   /*
@@ -124,25 +115,6 @@ const ColonyActions = () => {
     [],
   );
 
-  /*
-   * @TODO This fake infini-loader is for display purpouses only at this point in time
-   *
-   * I have no idea how or where we'll get the actual data from, so in order to make
-   * a "true" infini-loader, we'll need to somehow split the data we fetch
-   * (maybe by block time).
-   * If the above is not an option, we'll just remove it outright (that's why
-   * I didn't bake it in ActionsList by default)
-   *
-   * In the mean time, we'll just split the mock data visually.
-   */
-  const fakeFetchMoreData = useCallback(() => {
-    setFakeFetchingData(true);
-    setTimeout(() => {
-      setMockDataPager(mockDataPager + 1);
-      setFakeFetchingData(false);
-    }, 1500);
-  }, [setFakeFetchingData, mockDataPager, setMockDataPager]);
-
   return (
     <div className={styles.main}>
       <Form
@@ -162,19 +134,10 @@ const ColonyActions = () => {
         </div>
       </Form>
       <ActionsList
-        items={filteredActionsData.slice(0, mockDataPager * ITEMS_PER_PAGE)}
+        items={filteredActionsData}
         handleItemClick={handleActionRedirect}
+        colony={colony}
       />
-      {mockDataPager * ITEMS_PER_PAGE < MOCK_ACTIONS.length && (
-        <div className={styles.controls}>
-          <Button
-            appearance={{ size: 'medium', theme: 'primary' }}
-            onClick={fakeFetchMoreData}
-            text={MSG.loadMore}
-            loading={fakeFetchingData}
-          />
-        </div>
-      )}
     </div>
   );
 };
