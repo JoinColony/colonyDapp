@@ -13,6 +13,7 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createTransaction, getTxChannel } from '../../core/sagas';
+import { transactionReady } from '../../core/actionCreators';
 
 function* createPaymentAction({
   payload: {
@@ -272,18 +273,54 @@ function* createMintTokensAction({
 
     txChannel = yield call(getTxChannel, metaId);
 
-    yield fork(createTransaction, metaId, {
+    // setup batch ids and channels
+    const batchKey = 'mintTokens';
+    const mintTokens = {
+      id: `${metaId}-mintTokens`,
+      channel: yield call(getTxChannel, `${metaId}-mintTokens`),
+    };
+    const claimColonyFunds = {
+      id: `${metaId}-claimColonyFunds`,
+      channel: yield call(getTxChannel, `${metaId}-claimColonyFunds`),
+    };
+
+    // create transactions
+    yield fork(createTransaction, mintTokens.id, {
       context: ClientType.ColonyClient,
       methodName: 'mintTokens',
       identifier: colonyAddress,
       params: [amount],
+      group: {
+        key: batchKey,
+        id: meta.id,
+        index: 0,
+      },
+      ready: false,
+    });
+    yield fork(createTransaction, claimColonyFunds.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'claimColonyFunds',
+      identifier: colonyAddress,
+      params: [nativeTokenAddress],
+      group: {
+        key: batchKey,
+        id: meta.id,
+        index: 1,
+      },
+      ready: false,
     });
 
+    yield takeFrom(mintTokens.channel, ActionTypes.TRANSACTION_CREATED);
+    yield takeFrom(claimColonyFunds.channel, ActionTypes.TRANSACTION_CREATED);
+    yield put({ type: ActionTypes.COLONY_ACTION_MINT_TOKENS_SUBMITTED });
+
+    yield put(transactionReady(mintTokens.id));
     const {
       payload: { hash: txHash },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
-
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+    } = yield takeFrom(mintTokens.channel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+    yield takeFrom(mintTokens.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield put(transactionReady(claimColonyFunds.id));
+    yield takeFrom(claimColonyFunds.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);

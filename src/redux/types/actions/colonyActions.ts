@@ -67,6 +67,7 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | ErrorActionType<ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR, object>
+  | UniqueActionType<ActionTypes.COLONY_ACTION_MINT_TOKENS_SUBMITTED, object, object>
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
       MetaWithHistory<object>
