@@ -1,8 +1,9 @@
 import React from 'react';
-
 import { nanoid } from 'nanoid';
+
+import { Colony } from '~data/index';
+
 import ActionsListItem from './ActionsListItem';
-import { Address } from '~types/index';
 
 import styles from './ActionsList.css';
 
@@ -10,9 +11,7 @@ const displayName = 'ActionsList';
 
 export interface ClickHandlerProps {
   id: string;
-  userAddress: Address;
-  topic?: string;
-  domainId?: number;
+  transactionHash: string;
 }
 
 interface Props {
@@ -20,10 +19,11 @@ interface Props {
    * @TODO This should be an array of Events, Actions or Logs types
    */
   items: any[];
+  colony: Colony;
   handleItemClick?: (handlerProps: ClickHandlerProps) => void;
 }
 
-const ActionsList = ({ items, handleItemClick }: Props) => {
+const ActionsList = ({ items, handleItemClick, colony }: Props) => {
   const createKey = (value) => {
     return value + nanoid();
   };
@@ -35,6 +35,7 @@ const ActionsList = ({ items, handleItemClick }: Props) => {
           key={item.id || createKey(item.hash || item.name)}
           item={item}
           handleOnClick={handleItemClick}
+          colony={colony}
         />
       ))}
     </ul>

@@ -6,14 +6,16 @@ import {
   useIntl,
 } from 'react-intl';
 
-import { bottom } from '@popperjs/core';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { AbbreviatedNumeral } from '~core/Numeral';
+import Numeral, { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
-import UserMention from '~core/UserMention';
+import FriendlyUserName from '~core/FriendlyUserName';
 
-import TextDecorator from '~lib/TextDecorator';
 import { getMainClasses, removeValueUnits } from '~utils/css';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { useUser, Colony } from '~data/index';
+import { createAddress } from '~utils/web3';
+
 import { ClickHandlerProps } from './ActionsList';
 
 import styles, { popoverWidth, popoverDistance } from './ActionsListItem.css';
@@ -67,15 +69,45 @@ interface Props {
    * status?: number
    */
   item: any;
+  colony: Colony;
   handleOnClick?: (handlerProps: ClickHandlerProps) => void;
 }
 
 const ActionsListItem = ({
-  item: { id, userAddress, status, topic, domainId },
-  item,
+  item: {
+    id,
+    actionType,
+    initiator,
+    recipient,
+    amount,
+    symbol,
+    decimals,
+    fromDomain: fromDomainId,
+    toDomain: toDomainId,
+    transactionHash,
+    createdAt,
+    commentCount = 0,
+  },
+  // item,
+  colony,
   handleOnClick,
 }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
+
+  /*
+   * @TODO createAddress is just temporary
+   * Address checksum / normalization needs to be fixed on the
+   * subgraph side
+   */
+  const initiatorUserProfile = useUser(createAddress(initiator));
+  const recipientUserProfile = useUser(createAddress(recipient));
+
+  const fromDomain = colony.domains.find(
+    ({ ethDomainId }) => ethDomainId === parseInt(fromDomainId, 10),
+  );
+  const toDomain = colony.domains.find(
+    ({ ethDomainId }) => ethDomainId === parseInt(toDomainId, 10),
+  );
 
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
@@ -83,30 +115,9 @@ const ActionsListItem = ({
   }, []);
 
   const handleSyntheticEvent = useCallback(
-    () => handleOnClick && handleOnClick({ id, userAddress, topic, domainId }),
-    [handleOnClick, id, userAddress, topic, domainId],
+    () => handleOnClick && handleOnClick({ id, transactionHash }),
+    [handleOnClick, id, transactionHash],
   );
-
-  const { Decorate } = new TextDecorator({
-    username: (usernameWithAtSign) => (
-      <UserMention
-        username={usernameWithAtSign.slice(1)}
-        showInfo
-        popperProps={{
-          showArrow: false,
-          placement: 'bottom',
-          modifiers: [
-            {
-              name: 'offset',
-              options: {
-                offset: popoverPlacement,
-              },
-            },
-          ],
-        }}
-      />
-    ),
-  });
 
   return (
     <li>
@@ -128,21 +139,22 @@ const ActionsListItem = ({
         tabIndex={0}
         className={getMainClasses({}, styles, {
           noPointer: !handleOnClick,
-          [Status[status]]: !!status,
+          // [Status[status]]: !!status,
         })}
         onClick={handleSyntheticEvent}
         onKeyPress={handleSyntheticEvent}
       >
         <div className={styles.avatar}>
-          {userAddress && (
+          {initiator && (
             <UserAvatar
               size="s"
-              address={userAddress}
+              address={initiator}
+              user={initiatorUserProfile}
               notSet={false}
               showInfo
               popperProps={{
                 showArrow: false,
-                placement: bottom,
+                placement: 'bottom',
                 modifiers: [
                   {
                     name: 'offset',
@@ -156,19 +168,42 @@ const ActionsListItem = ({
           )}
         </div>
         <div className={styles.content}>
-          <div className={styles.title} title={item.title}>
-            {item.title ? (
-              <Decorate>{item.title}</Decorate>
-            ) : (
-              <FormattedMessage {...MSG.genericActionTitle} />
-            )}
+          <div className={styles.title}>
+            <FormattedMessage
+              id="action.title"
+              values={{
+                actionType,
+                initiator: (
+                  <span className={styles.titleDecoration}>
+                    <FriendlyUserName
+                      user={initiatorUserProfile}
+                      autoShrinkAddress
+                    />
+                  </span>
+                ),
+                recipient: (
+                  <span className={styles.titleDecoration}>
+                    <FriendlyUserName
+                      user={recipientUserProfile}
+                      autoShrinkAddress
+                    />
+                  </span>
+                ),
+                amount: (
+                  <Numeral
+                    value={amount}
+                    unit={getTokenDecimalsWithFallback(decimals)}
+                  />
+                ),
+                tokenSymbol: symbol,
+                decimals: getTokenDecimalsWithFallback(decimals),
+                fromDomain: fromDomain?.name || '',
+                toDomain: toDomain?.name || '',
+              }}
+            />
           </div>
           <div className={styles.meta}>
-            <FormattedDateParts
-              value={item.createdAt}
-              month="short"
-              day="numeric"
-            >
+            <FormattedDateParts value={createdAt} month="short" day="numeric">
               {(parts) => (
                 <>
                   <span className={styles.day}>{parts[2].value}</span>
@@ -176,37 +211,37 @@ const ActionsListItem = ({
                 </>
               )}
             </FormattedDateParts>
-            {item.domain && item.domain.id && (
+            {fromDomain && (
               <span className={styles.domain}>
-                {item.domain.name ? (
-                  item.domain.name
+                {fromDomain.name ? (
+                  fromDomain.name
                 ) : (
                   <FormattedMessage
                     {...MSG.domain}
-                    values={{ domainId: item.domain.id }}
+                    values={{ domainId: fromDomain.id }}
                   />
                 )}
               </span>
             )}
-            {!!item.commentCount && (
+            {!!commentCount && (
               <span className={styles.commentCount}>
                 <Icon
                   appearance={{ size: 'extraTiny' }}
                   className={styles.commentCountIcon}
                   name="comment"
                   title={formatMessage(MSG.titleCommentCount, {
-                    commentCount: item.commentCount,
-                    formattedCommentCount: formatNumber(item.commentCount),
+                    commentCount,
+                    formattedCommentCount: formatNumber(commentCount),
                   })}
                 />
                 <AbbreviatedNumeral
                   formatOptions={{
                     notation: 'compact',
                   }}
-                  value={item.commentCount}
+                  value={commentCount}
                   title={formatMessage(MSG.titleCommentCount, {
-                    commentCount: item.commentCount,
-                    formattedCommentCount: formatNumber(item.commentCount),
+                    commentCount,
+                    formattedCommentCount: formatNumber(commentCount),
                   })}
                 />
               </span>
