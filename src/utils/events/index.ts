@@ -201,7 +201,7 @@ const getMintTokensActionValues = async (
 
   return {
     amount: bigNumberify(amount || '0').toString(),
-    tokenAddress: who,
+    recipient: who,
   };
 };
 
