@@ -5,6 +5,7 @@ import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
 import ExpendituresDialog from '~dashboard/ExpendituresDialog';
 import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
+import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 
@@ -31,6 +32,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         nextStepExpenditure: 'dashboard.ExpendituresDialog',
         nextStepManageFunds: 'dashboard.ManageFundsDialog',
+        nextStepManageDomains: 'dashboard.ManageDomainsDialog',
       },
     },
     {
@@ -60,6 +62,13 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: TransferFundsDialog,
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
+        colony,
+      },
+    },
+    {
+      component: ManageDomainsDialog,
+      props: {
+        prevStep: 'dashboard.ColonyActionsDialog',
         colony,
       },
     },
