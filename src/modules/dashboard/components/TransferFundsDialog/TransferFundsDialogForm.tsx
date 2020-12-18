@@ -355,6 +355,7 @@ const TransferFundsDialogForm = ({
                 ),
               }}
               disabled={!userHasPermissions}
+              onChange={() => validateForm()}
             />
           </div>
           <div className={styles.tokenAmountSelect}>

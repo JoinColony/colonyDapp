@@ -116,9 +116,9 @@ const TransferFundsDialog = ({
       submit={ActionTypes.COLONY_ACTION_MOVE_FUNDS}
       error={ActionTypes.COLONY_ACTION_MOVE_FUNDS_ERROR}
       success={ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS}
-      validateOnChange={false}
       onSuccess={close}
       transform={transform}
+      validateOnChange
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
