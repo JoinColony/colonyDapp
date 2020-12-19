@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
 import ActionsList, {
@@ -43,6 +43,17 @@ const MSG = defineMessages({
   loadMore: {
     id: 'dashboard.ColonyActions.loadMore',
     defaultMessage: 'Load More',
+  },
+  noActionsFound: {
+    id: 'dashboard.ColonyActions.noActionsFound',
+    defaultMessage: `The colony did not create any actions yet.
+      {isDevMode, select,
+        true {
+          {break}
+          This likely happended because you didn't start the Subgraph service
+        }
+        other {}
+      }`,
   },
 });
 
@@ -92,8 +103,8 @@ const ColonyActions = ({ colony, actions }: Props) => {
   const filteredActionsData: any[] = useMemo(
     () =>
       filter
-        ? immutableSort(actions, sort).filter((mockAction) =>
-            mockAction ? filter() : true,
+        ? immutableSort(actions, sort).filter((action) =>
+            action ? filter() : true,
           )
         : actions,
     [filter, sort, actions],
@@ -107,27 +118,41 @@ const ColonyActions = ({ colony, actions }: Props) => {
 
   return (
     <div className={styles.main}>
-      <Form
-        initialValues={{ filter: ActionFilterOptions.ENDING_SOONEST }}
-        onSubmit={() => undefined}
-      >
-        <div className={styles.filter}>
-          <Select
-            appearance={{ alignOptions: 'left', theme: 'alt' }}
-            elementOnly
-            label={MSG.labelFilter}
-            name="filter"
-            options={ActionFilterSelectOptions}
-            onChange={setActionsFilter}
-            placeholder={MSG.placeholderFilter}
+      {actions?.length ? (
+        <>
+          <Form
+            initialValues={{ filter: ActionFilterOptions.ENDING_SOONEST }}
+            onSubmit={() => undefined}
+          >
+            <div className={styles.filter}>
+              <Select
+                appearance={{ alignOptions: 'left', theme: 'alt' }}
+                elementOnly
+                label={MSG.labelFilter}
+                name="filter"
+                options={ActionFilterSelectOptions}
+                onChange={setActionsFilter}
+                placeholder={MSG.placeholderFilter}
+              />
+            </div>
+          </Form>
+          <ActionsList
+            items={filteredActionsData}
+            handleItemClick={handleActionRedirect}
+            colony={colony}
+          />
+        </>
+      ) : (
+        <div className={styles.emptyState}>
+          <FormattedMessage
+            {...MSG.noActionsFound}
+            values={{
+              isDevMode: process.env.NODE_ENV === 'development',
+              break: <br />,
+            }}
           />
         </div>
-      </Form>
-      <ActionsList
-        items={filteredActionsData}
-        handleItemClick={handleActionRedirect}
-        colony={colony}
-      />
+      )}
     </div>
   );
 };
