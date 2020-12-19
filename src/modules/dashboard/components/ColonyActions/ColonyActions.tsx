@@ -10,7 +10,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
-  useSubgraphPaymentActionsQuery,
+  useSubgraphActionsQuery,
   useTransactionMessagesCountQuery,
 } from '~data/index';
 import {
@@ -98,10 +98,11 @@ const ColonyActions = ({
   const {
     data: paymentActions,
     loading: paymentActionsLoading,
-  } = useSubgraphPaymentActionsQuery({
+  } = useSubgraphActionsQuery({
     variables: {
       /*
        * @TODO Find a way to better handle address normalization
+       * Maybe this will/should be fixed on the subgraph's side ?
        */
       colonyAddress: colonyAddress?.toLowerCase(),
     },
@@ -111,12 +112,7 @@ const ColonyActions = ({
     data: commentCount,
     loading: commentCountLoading,
   } = useTransactionMessagesCountQuery({
-    variables: {
-      /*
-       * @TODO Find a way to btter handle address normalization
-       */
-      colonyAddress,
-    },
+    variables: { colonyAddress },
   });
 
   const actions = useTransformer(getActionsListData, [

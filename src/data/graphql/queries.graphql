@@ -618,7 +618,7 @@ query TransactionMessagesCount($colonyAddress: String!) {
 # otherwise they will be sent to our own graphql server
 # Prepending them with `Subgraph` allows the client to decide what endpoint to use
 
-query SubgraphPaymentActions($colonyAddress: String!) {
+query SubgraphActions($colonyAddress: String!) {
   # @TODO Pagination
   # See the schema for the correct filters we need to pass in for pagination
   oneTxPayments(where: { payment_contains: $colonyAddress }) {
