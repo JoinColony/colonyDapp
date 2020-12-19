@@ -7,7 +7,11 @@ import ActionsList, {
 } from '~core/ActionsList';
 import { Select, Form } from '~core/Fields';
 
-import { Colony, useSubgraphPaymentActionsQuery } from '~data/index';
+import {
+  Colony,
+  useSubgraphPaymentActionsQuery,
+  useTransactionMessagesCountQuery,
+} from '~data/index';
 import {
   ActionFilterOptions,
   ActionFilterSelectOptions,
@@ -89,13 +93,25 @@ const ColonyActions = ({
   const { data: paymentActions } = useSubgraphPaymentActionsQuery({
     variables: {
       /*
-       * @TODO Find a way to btter handle address normalization
+       * @TODO Find a way to better handle address normalization
        */
-      colonyAddress: colonyAddress?.toLowerCase() || '',
+      colonyAddress: colonyAddress?.toLowerCase(),
     },
   });
 
-  const actions = useTransformer(getActionsListData, [paymentActions]);
+  const { data: commentCount } = useTransactionMessagesCountQuery({
+    variables: {
+      /*
+       * @TODO Find a way to btter handle address normalization
+       */
+      colonyAddress,
+    },
+  });
+
+  const actions = useTransformer(getActionsListData, [
+    paymentActions,
+    commentCount?.transactionMessagesCount,
+  ]);
 
   const filter = useCallback(() => {
     switch (actionsFilter) {
