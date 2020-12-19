@@ -165,7 +165,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-    
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -202,6 +202,7 @@ export type Colony = {
   programs: Array<Program>;
   roles: Array<UserRoles>;
   subscribedUsers: Array<User>;
+  suggestions: Array<Suggestion>;
   taskIds: Array<Scalars['String']>;
   tasks: Array<Task>;
   tokenAddresses: Array<Scalars['String']>;
@@ -601,6 +602,29 @@ export type SetUserTokensInput = {
   tokenAddresses: Array<Scalars['String']>;
 };
 
+export type CreateSuggestionInput = {
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  title: Scalars['String'];
+};
+
+export type SetSuggestionStatusInput = {
+  id: Scalars['String'];
+  status: SuggestionStatus;
+};
+
+export type AddUpvoteToSuggestionInput = {
+  id: Scalars['String'];
+};
+
+export type RemoveUpvoteFromSuggestionInput = {
+  id: Scalars['String'];
+};
+
+export type CreateTaskFromSuggestionInput = {
+  id: Scalars['String'];
+};
+
 export type CreateLevelTaskSubmissionInput = {
   levelId: Scalars['String'];
   persistentTaskId: Scalars['String'];
@@ -696,6 +720,7 @@ export type SendTransactionMessageInput = {
 
 export type Mutation = {
   acceptLevelTaskSubmission?: Maybe<Submission>;
+  addUpvoteToSuggestion?: Maybe<Suggestion>;
   assignWorker?: Maybe<Task>;
   cancelTask?: Maybe<Task>;
   clearLoggedInUser: LoggedInUser;
@@ -705,7 +730,9 @@ export type Mutation = {
   createLevelTask?: Maybe<PersistentTask>;
   createLevelTaskSubmission?: Maybe<Submission>;
   createProgram?: Maybe<Program>;
+  createSuggestion?: Maybe<Suggestion>;
   createTask?: Maybe<Task>;
+  createTaskFromSuggestion?: Maybe<Task>;
   createUser?: Maybe<User>;
   createWorkRequest?: Maybe<Task>;
   editColonyProfile?: Maybe<Colony>;
@@ -725,6 +752,7 @@ export type Mutation = {
   removeProgram?: Maybe<Program>;
   removeTaskPayout?: Maybe<Task>;
   removeTaskSkill?: Maybe<Task>;
+  removeUpvoteFromSuggestion?: Maybe<Suggestion>;
   reorderLevelSteps?: Maybe<Level>;
   reorderProgramLevels?: Maybe<Program>;
   sendTaskMessage: Scalars['Boolean'];
@@ -733,6 +761,7 @@ export type Mutation = {
   setColonyTokens?: Maybe<Colony>;
   setLoggedInUser: LoggedInUser;
   setNetworkContracts: NetworkContracts;
+  setSuggestionStatus?: Maybe<Suggestion>;
   setTaskDescription?: Maybe<Task>;
   setTaskDomain?: Maybe<Task>;
   setTaskDueDate?: Maybe<Task>;
@@ -750,6 +779,11 @@ export type Mutation = {
 
 export type MutationAcceptLevelTaskSubmissionArgs = {
   input: AcceptLevelTaskSubmissionInput;
+};
+
+
+export type MutationAddUpvoteToSuggestionArgs = {
+  input: AddUpvoteToSuggestionInput;
 };
 
 
@@ -793,8 +827,18 @@ export type MutationCreateProgramArgs = {
 };
 
 
+export type MutationCreateSuggestionArgs = {
+  input: CreateSuggestionInput;
+};
+
+
 export type MutationCreateTaskArgs = {
   input: CreateTaskInput;
+};
+
+
+export type MutationCreateTaskFromSuggestionArgs = {
+  input: CreateTaskFromSuggestionInput;
 };
 
 
@@ -888,6 +932,11 @@ export type MutationRemoveTaskSkillArgs = {
 };
 
 
+export type MutationRemoveUpvoteFromSuggestionArgs = {
+  input: RemoveUpvoteFromSuggestionInput;
+};
+
+
 export type MutationReorderLevelStepsArgs = {
   input: ReorderLevelStepsInput;
 };
@@ -925,6 +974,11 @@ export type MutationSetLoggedInUserArgs = {
 
 export type MutationSetNetworkContractsArgs = {
   input?: Maybe<NetworkContractsInput>;
+};
+
+
+export type MutationSetSuggestionStatusArgs = {
+  input: SetSuggestionStatusInput;
 };
 
 
@@ -1043,6 +1097,7 @@ export type Query = {
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
   transactionMessages: TransactionMessages;
+  transactionMessagesCount: TransactionMessagesCount;
   user: User;
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
@@ -1123,6 +1178,11 @@ export type QueryTransactionMessagesArgs = {
 };
 
 
+export type QueryTransactionMessagesCountArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+
 export type QueryUserArgs = {
   address: Scalars['String'];
 };
@@ -1168,6 +1228,26 @@ export type ProgramSubmission = {
   levelId: Scalars['String'];
   level: Level;
   submission: Submission;
+};
+
+export enum SuggestionStatus {
+  Open = 'Open',
+  NotPlanned = 'NotPlanned',
+  Accepted = 'Accepted',
+  Deleted = 'Deleted'
+}
+
+export type Suggestion = {
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  colonyAddress: Scalars['String'];
+  creatorAddress: Scalars['String'];
+  creator: User;
+  ethDomainId: Scalars['Int'];
+  status: SuggestionStatus;
+  title: Scalars['String'];
+  taskId?: Maybe<Scalars['String']>;
+  upvotes: Array<Scalars['String']>;
 };
 
 export type TaskPayout = {
@@ -1292,6 +1372,15 @@ export enum EventType {
 export type TransactionMessages = {
   transactionHash: Scalars['String'];
   messages: Array<Event>;
+};
+
+export type TransactionCount = {
+  transactionHash: Scalars['String'];
+  count: Scalars['Int'];
+};
+
+export type TransactionMessagesCount = {
+  colonyTransactionMessages: Array<TransactionCount>;
 };
 
 export enum CacheControlScope {
@@ -2420,6 +2509,13 @@ export type TransactionMessagesQuery = { transactionMessages: (
     Pick<TransactionMessages, 'transactionHash'>
     & { messages: Array<TransactionMessageFragment> }
   ) };
+
+export type TransactionMessagesCountQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
 
 export type SubgraphPaymentActionsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -6374,6 +6470,42 @@ export function useTransactionMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type TransactionMessagesQueryHookResult = ReturnType<typeof useTransactionMessagesQuery>;
 export type TransactionMessagesLazyQueryHookResult = ReturnType<typeof useTransactionMessagesLazyQuery>;
 export type TransactionMessagesQueryResult = Apollo.QueryResult<TransactionMessagesQuery, TransactionMessagesQueryVariables>;
+export const TransactionMessagesCountDocument = gql`
+    query TransactionMessagesCount($colonyAddress: String!) {
+  transactionMessagesCount(colonyAddress: $colonyAddress) {
+    colonyTransactionMessages {
+      transactionHash
+      count
+    }
+  }
+}
+    `;
+
+/**
+ * __useTransactionMessagesCountQuery__
+ *
+ * To run a query within a React component, call `useTransactionMessagesCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionMessagesCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionMessagesCountQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useTransactionMessagesCountQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
+        return Apollo.useQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
+      }
+export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
+        }
+export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
+export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
+export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
 export const SubgraphPaymentActionsDocument = gql`
     query SubgraphPaymentActions($colonyAddress: String!) {
   oneTxPayments(where: {payment_contains: $colonyAddress}) {

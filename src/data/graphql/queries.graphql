@@ -603,6 +603,15 @@ query TransactionMessages($transactionHash: String!) {
   }
 }
 
+query TransactionMessagesCount($colonyAddress: String!) {
+  transactionMessagesCount(colonyAddress: $colonyAddress) {
+    colonyTransactionMessages {
+      transactionHash
+      count
+    }
+  }
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`
