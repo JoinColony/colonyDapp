@@ -37,15 +37,6 @@ const MSG = defineMessages({
       other {comments}
     }`,
   },
-  /*
-   * @NOTE To be used when the action or event that's passed in, doesn't have
-   * a title value.
-   * This should not happen in the wild
-   */
-  genericActionTitle: {
-    id: 'ActionsList.ActionsListItem.genericActionTitle',
-    defaultMessage: `Generic Action`,
-  },
 });
 
 export enum Status {
