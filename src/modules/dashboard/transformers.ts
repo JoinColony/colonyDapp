@@ -75,7 +75,13 @@ export const getActionsListData = (
     );
     return null;
   });
-  return formattedActions.sort(
-    ({ createdAt: first }, { createdAt: second }) => second - first,
-  );
+  /*
+   * @NOTE Sort the list with new items first
+   *
+   * Since the query returns the actions list sorted chronologhical by default
+   * we just need to reverse it.
+   *
+   * This is much faster than sorting this by the `createdAt` prop
+   */
+  return formattedActions.reverse();
 };
