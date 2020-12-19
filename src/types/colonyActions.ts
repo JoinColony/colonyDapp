@@ -1,3 +1,5 @@
+import { Address } from './index';
+
 export enum ColonyActions {
   Generic = 'Generic',
   Payment = 'Payment',
@@ -13,4 +15,20 @@ export enum ColonyAndExtensionsEvents {
   PayoutClaimed = 'PayoutClaimed',
   OneTxPaymentMade = 'OneTxPaymentMade',
   Transfer = 'Transfer',
+}
+
+export interface FormattedAction {
+  id: string;
+  actionType: ColonyActions;
+  initiator: Address;
+  recipient: Address;
+  amount: string;
+  tokenAddress: Address;
+  symbol: string;
+  decimals: string;
+  fromDomain: string;
+  toDomain: string;
+  transactionHash: string;
+  createdAt: Date;
+  commentCount: number;
 }
