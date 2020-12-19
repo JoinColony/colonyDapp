@@ -7,12 +7,14 @@ import ActionsList, {
 } from '~core/ActionsList';
 import { Select, Form } from '~core/Fields';
 
-import { Colony } from '~data/index';
+import { Colony, useSubgraphPaymentActionsQuery } from '~data/index';
 import {
   ActionFilterOptions,
   ActionFilterSelectOptions,
 } from '../shared/actionsFilter';
 import { immutableSort } from '~utils/arrays';
+import { getActionsListData } from '../../transformers';
+import { useTransformer } from '~utils/hooks';
 
 import styles from './ColonyActions.css';
 
@@ -67,17 +69,33 @@ type Props = {
    * Via the domains dropdown from #2288
    */
   ethDomainId?: number;
-  actions: any[];
 };
 
 const displayName = 'dashboard.ColonyActions';
 
-const ColonyActions = ({ colony, actions }: Props) => {
+const ColonyActions = ({
+  colony: { colonyAddress, colonyName },
+  colony,
+}: Props) => {
   const [actionsFilter, setActionsFilter] = useState<string>(
     ActionFilterOptions.ENDING_SOONEST,
   );
 
   const history = useHistory();
+
+  /*
+   * @TODO Add loading state
+   */
+  const { data: paymentActions } = useSubgraphPaymentActionsQuery({
+    variables: {
+      /*
+       * @TODO Find a way to btter handle address normalization
+       */
+      colonyAddress: colonyAddress?.toLowerCase() || '',
+    },
+  });
+
+  const actions = useTransformer(getActionsListData, [paymentActions]);
 
   const filter = useCallback(() => {
     switch (actionsFilter) {
@@ -112,8 +130,8 @@ const ColonyActions = ({ colony, actions }: Props) => {
 
   const handleActionRedirect = useCallback(
     ({ transactionHash }: RedirectHandlerProps) =>
-      history.push(`/colony/${colony.colonyName}/tx/${transactionHash}`),
-    [colony, history],
+      history.push(`/colony/${colonyName}/tx/${transactionHash}`),
+    [colonyName, history],
   );
 
   return (
@@ -147,6 +165,13 @@ const ColonyActions = ({ colony, actions }: Props) => {
           <FormattedMessage
             {...MSG.noActionsFound}
             values={{
+              /*
+               * @TODO Maybe make this check smarter?
+               *
+               * By injecting a env var when starting dev:heavy and actually
+               * knowing if the subgraph process was started, rather then
+               * just guessing...
+               */
               isDevMode: process.env.NODE_ENV === 'development',
               break: <br />,
             }}
