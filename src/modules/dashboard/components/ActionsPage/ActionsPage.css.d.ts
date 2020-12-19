@@ -1,5 +1,6 @@
 export const main: string;
 export const recoveryTag: string;
+export const dividerTop: string;
 export const container: string;
 export const heading: string;
 export const content: string;
