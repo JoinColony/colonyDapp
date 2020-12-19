@@ -115,4 +115,4 @@ export type TransactionsMessagesCount = TransactionMessagesCountQuery['transacti
 
 export type EventOrMessage = ParsedEvent | TransactionMessage;
 
-export type SubgraphActions = SubgraphActionsQuery;
+export type SubgraphActions = SubgraphPaymentActionsQuery;

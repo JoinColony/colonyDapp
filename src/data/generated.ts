@@ -4871,12 +4871,22 @@ export function useColonyProfileQuery(baseOptions?: Apollo.QueryHookOptions<Colo
 export function useColonyProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyProfileQuery, ColonyProfileQueryVariables>) {
           return Apollo.useLazyQuery<ColonyProfileQuery, ColonyProfileQueryVariables>(ColonyProfileDocument, baseOptions);
         }
+<<<<<<< HEAD
 export type ColonyProfileQueryHookResult = ReturnType<typeof useColonyProfileQuery>;
 export type ColonyProfileLazyQueryHookResult = ReturnType<typeof useColonyProfileLazyQuery>;
 export type ColonyProfileQueryResult = Apollo.QueryResult<ColonyProfileQuery, ColonyProfileQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   subscribedUsers(colonyAddress: $colonyAddress) {
+=======
+export type SubgraphActionsQueryHookResult = ReturnType<typeof useSubgraphActionsQuery>;
+export type SubgraphActionsLazyQueryHookResult = ReturnType<typeof useSubgraphActionsLazyQuery>;
+export type SubgraphActionsQueryResult = Apollo.QueryResult<SubgraphActionsQuery, SubgraphActionsQueryVariables>;
+<<<<<<< HEAD
+export const SubgraphDomainsDocument = gql`
+    query SubgraphDomains($colonyAddress: String!) {
+  domains(where: {colonyAddress: $colonyAddress}) {
+>>>>>>> Add: `TransactionMessagesCount` query
     id
     profile {
       avatarHash
@@ -4942,6 +4952,14 @@ export function useColonyMembersWithReputationQuery(baseOptions?: Apollo.QueryHo
 export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>) {
           return Apollo.useLazyQuery<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>(ColonyMembersWithReputationDocument, baseOptions);
         }
+<<<<<<< HEAD
 export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
+=======
+export type SubgraphSingleDomainQueryHookResult = ReturnType<typeof useSubgraphSingleDomainQuery>;
+export type SubgraphSingleDomainLazyQueryHookResult = ReturnType<typeof useSubgraphSingleDomainLazyQuery>;
+export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>;
+=======
+>>>>>>> Add: `TransactionMessagesCount` query
+>>>>>>> Add: `TransactionMessagesCount` query
