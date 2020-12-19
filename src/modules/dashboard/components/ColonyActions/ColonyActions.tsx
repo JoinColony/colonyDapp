@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
@@ -92,12 +92,10 @@ const ColonyActions = ({
 
   const history = useHistory();
 
-  /*
-   * @TODO Add loading state
-   */
   const {
     data: paymentActions,
     loading: paymentActionsLoading,
+    stopPolling: stopPaymentActionsPolling,
   } = useSubgraphActionsQuery({
     variables: {
       /*
@@ -106,19 +104,53 @@ const ColonyActions = ({
        */
       colonyAddress: colonyAddress?.toLowerCase(),
     },
+    pollInterval: 1000,
   });
 
   const {
     data: commentCount,
     loading: commentCountLoading,
+    stopPolling: stopCommentCountPolling,
   } = useTransactionMessagesCountQuery({
     variables: { colonyAddress },
+    pollInterval: 1000,
   });
 
   const actions = useTransformer(getActionsListData, [
     paymentActions,
     commentCount?.transactionMessagesCount,
   ]);
+
+  /*
+   * @NOTE This is why we can't have nice things
+   *
+   * This is needed since "The Graph" doesn't support GraphQL subsriptions.
+   * Tis means that we can't fetch new data properly.
+   *
+   * (without invalidating the cache, making the full network fetch again,
+   * then displaying the new data, all the while triggering all the re-renders
+   * possible and all the loading states -- try it, it looks horrible)
+   *
+   * Instead, I've opted to set a polling interval of 1 second, and in the event
+   * the user lingers too much on this page, stop the interval after 2 minutes.
+   *
+   * This is dangerous, especially on low power devices, but it's the only viable
+   * way we have currently of making the app "more interactive".
+   *
+   * This could easily be solved by "The Graph" supporting subscriptions, but
+   * sadly that's not on the horizon yet.
+   *
+   * Another avenue we can explore is making our own blockchain listener, and
+   * when it sees an action being created (using topics mapping) then trigger
+   * a new query fetch -- but this is a whole can of worms onto itself.
+   */
+  useEffect(() => {
+    const idleFailsafe = 60 * 1000 * 2; // 2 mins
+    setTimeout(() => {
+      stopPaymentActionsPolling();
+      stopCommentCountPolling();
+    }, idleFailsafe);
+  }, [stopPaymentActionsPolling, stopCommentCountPolling]);
 
   const filter = useCallback(() => {
     switch (actionsFilter) {
