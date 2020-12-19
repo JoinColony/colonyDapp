@@ -1,24 +1,24 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
-import { useColonyEventsQuery, NetworkEvent } from '~data/index';
 
-import { Address } from '~types/index';
 import ActionsList from '~core/ActionsList';
 import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Select, Form } from '~core/Fields';
+
 import {
   EventFilterOptions,
   EventFilterSelectOptions,
 } from '../shared/eventsFilter';
 import { immutableSort } from '~utils/arrays';
+import { Colony, useColonyEventsQuery, NetworkEvent } from '~data/index';
 
 import styles from './ColonyEvents.css';
 
 const displayName = 'dashboard.ColonyEvents';
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
 }
 
 // Implement formating based on Event Type (or in resolver)
@@ -33,7 +33,7 @@ const MSG = defineMessages({
   },
 });
 
-const ColonyEvents = ({ colonyAddress }: Props) => {
+const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
   const { data, error, loading } = useColonyEventsQuery({
     variables: { address: colonyAddress },
   });
@@ -91,7 +91,11 @@ const ColonyEvents = ({ colonyAddress }: Props) => {
           />
         </div>
       </Form>
-      {loading ? <SpinnerLoader /> : <ActionsList items={filteredEvents} />}
+      {loading ? (
+        <SpinnerLoader />
+      ) : (
+        <ActionsList items={filteredEvents} colony={colony} />
+      )}
     </div>
   );
 };

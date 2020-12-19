@@ -208,9 +208,7 @@ const ColonyHome = ({ match, location }: Props) => {
           <Switch>
             <Route
               path={COLONY_EVENTS_ROUTE}
-              component={() => (
-                <ColonyEvents colonyAddress={colony.colonyAddress} />
-              )}
+              component={() => <ColonyEvents colony={data.colony} />}
             />
             <Route
               path={COLONY_EXTENSIONS_ROUTE}
