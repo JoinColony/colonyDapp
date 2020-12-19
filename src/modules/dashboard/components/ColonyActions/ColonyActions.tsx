@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
+import { useHistory } from 'react-router-dom';
 
 import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
@@ -60,10 +61,12 @@ type Props = {
 
 const displayName = 'dashboard.ColonyActions';
 
-const ColonyActions = ({ colony, actions }) => {
+const ColonyActions = ({ colony, actions }: Props) => {
   const [actionsFilter, setActionsFilter] = useState<string>(
     ActionFilterOptions.ENDING_SOONEST,
   );
+
+  const history = useHistory();
 
   const filter = useCallback(() => {
     switch (actionsFilter) {
@@ -96,23 +99,10 @@ const ColonyActions = ({ colony, actions }) => {
     [filter, sort, actions],
   );
 
-  /*
-   * @TODO This callback should handle what happends when clicking on an
-   * item in the actions list.
-   *
-   * It should, in theory, redirect to a route that will render the full page
-   * action
-   *
-   * This will only happen when UAC lands
-   */
   const handleActionRedirect = useCallback(
-    ({ id }: RedirectHandlerProps) =>
-      // eslint-disable-next-line no-console
-      console.log(
-        'This will redirect to the specific action item route whn UAC lands',
-        id,
-      ),
-    [],
+    ({ transactionHash }: RedirectHandlerProps) =>
+      history.push(`/colony/${colony.colonyName}/tx/${transactionHash}`),
+    [colony, history],
   );
 
   return (
