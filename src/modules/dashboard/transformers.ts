@@ -1,4 +1,4 @@
-import { AddressZero } from 'ethers/constants';
+import { AddressZero, HashZero } from 'ethers/constants';
 
 import { SubgraphActions, TransactionsMessagesCount } from '~data/index';
 import { ColonyActions } from '~types/index';
@@ -23,14 +23,16 @@ export const getActionsListData = (
             decimals: '18',
             fromDomain: '1',
             toDomain: '1',
-            transactionHash: unformattedAction.transaction.hash,
-            /*
-             * @TODO Wire up proper date value once the transaction block
-             * query has been fixed
-             */
+            transactionHash: HashZero,
             createdAt: new Date(),
             commentCount: 0,
           };
+          const {
+            transaction: {
+              hash,
+              block: { timestamp },
+            },
+          } = unformattedAction;
           const transactionComments =
             /*
              * @NOTE Had to disable this as prettier was being too whiny
@@ -40,8 +42,7 @@ export const getActionsListData = (
              */
             // disable-next-list prettier/prettier
             transactionsCommentsCount?.colonyTransactionMessages?.find(
-              ({ transactionHash }) =>
-                transactionHash === formatedAction.transactionHash,
+              ({ transactionHash }) => transactionHash === hash,
             );
           if (subgraphActionType === 'oneTxPayments') {
             const {
@@ -69,6 +70,16 @@ export const getActionsListData = (
           if (transactionsCommentsCount && transactionComments) {
             formatedAction.commentCount = transactionComments.count;
           }
+          if (timestamp) {
+            formatedAction.createdAt = new Date(
+              /*
+               * @NOTE blocktime is expressed in seconds, and we need milliseconds
+               * to instantiate the correct Date object
+               */
+              parseInt(`${timestamp}000`, 10),
+            );
+          }
+          formatedAction.transactionHash = hash;
           return formatedAction;
         },
       ),
