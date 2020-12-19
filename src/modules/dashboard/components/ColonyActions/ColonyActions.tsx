@@ -6,6 +6,7 @@ import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
 import { Select, Form } from '~core/Fields';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -61,6 +62,10 @@ const MSG = defineMessages({
         other {}
       }`,
   },
+  loading: {
+    id: 'dashboard.ColonyActions.loading',
+    defaultMessage: `Loading Actions`,
+  },
 });
 
 type Props = {
@@ -90,7 +95,10 @@ const ColonyActions = ({
   /*
    * @TODO Add loading state
    */
-  const { data: paymentActions } = useSubgraphPaymentActionsQuery({
+  const {
+    data: paymentActions,
+    loading: paymentActionsLoading,
+  } = useSubgraphPaymentActionsQuery({
     variables: {
       /*
        * @TODO Find a way to better handle address normalization
@@ -99,7 +107,10 @@ const ColonyActions = ({
     },
   });
 
-  const { data: commentCount } = useTransactionMessagesCountQuery({
+  const {
+    data: commentCount,
+    loading: commentCountLoading,
+  } = useTransactionMessagesCountQuery({
     variables: {
       /*
        * @TODO Find a way to btter handle address normalization
@@ -149,6 +160,22 @@ const ColonyActions = ({
       history.push(`/colony/${colonyName}/tx/${transactionHash}`),
     [colonyName, history],
   );
+
+  if (
+    paymentActionsLoading ||
+    commentCountLoading ||
+    !paymentActions ||
+    !commentCount
+  ) {
+    return (
+      <div className={styles.loadingSpinner}>
+        <SpinnerLoader
+          loadingText={MSG.loading}
+          appearance={{ theme: 'primary', size: 'massive' }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.main}>
