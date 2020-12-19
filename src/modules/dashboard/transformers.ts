@@ -1,9 +1,12 @@
 import { AddressZero } from 'ethers/constants';
 
-import { SubgraphActions } from '~data/index';
+import { SubgraphActions, TransactionsMessagesCount } from '~data/index';
 import { ColonyActions } from '~types/index';
 
-export const getActionsListData = (unformattedActions?: SubgraphActions) => {
+export const getActionsListData = (
+  unformattedActions?: SubgraphActions,
+  transactionsCommentsCount?: TransactionsMessagesCount,
+) => {
   let formattedActions = [];
   Object.keys(unformattedActions || {}).map((subgraphActionType) => {
     formattedActions = formattedActions.concat(
@@ -26,7 +29,20 @@ export const getActionsListData = (unformattedActions?: SubgraphActions) => {
              * query has been fixed
              */
             createdAt: new Date(),
+            commentCount: 0,
           };
+          const transactionComments =
+            /*
+             * @NOTE Had to disable this as prettier was being too whiny
+             * and all suggestions it made broke the style rules
+             *
+             * This sadly happens from time to time...
+             */
+            // disable-next-list prettier/prettier
+            transactionsCommentsCount?.colonyTransactionMessages?.find(
+              ({ transactionHash }) =>
+                transactionHash === formatedAction.transactionHash,
+            );
           if (subgraphActionType === 'oneTxPayments') {
             const {
               payment: {
@@ -49,6 +65,9 @@ export const getActionsListData = (unformattedActions?: SubgraphActions) => {
             formatedAction.tokenAddress = tokenAddress;
             formatedAction.symbol = symbol;
             formatedAction.decimals = decimals;
+          }
+          if (transactionsCommentsCount && transactionComments) {
+            formatedAction.commentCount = transactionComments.count;
           }
           return formatedAction;
         },
