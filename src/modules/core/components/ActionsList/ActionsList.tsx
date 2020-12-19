@@ -1,7 +1,7 @@
 import React from 'react';
-import { nanoid } from 'nanoid';
 
 import { Colony } from '~data/index';
+import { FormattedAction } from '~types/index';
 
 import ActionsListItem from './ActionsListItem';
 
@@ -15,32 +15,23 @@ export interface ClickHandlerProps {
 }
 
 interface Props {
-  /*
-   * @TODO This should be an array of Events, Actions or Logs types
-   */
-  items: any[];
+  items: FormattedAction[];
   colony: Colony;
   handleItemClick?: (handlerProps: ClickHandlerProps) => void;
 }
 
-const ActionsList = ({ items, handleItemClick, colony }: Props) => {
-  const createKey = (value) => {
-    return value + nanoid();
-  };
-
-  return (
-    <ul className={styles.main}>
-      {items.map((item) => (
-        <ActionsListItem
-          key={item.id || createKey(item.hash || item.name)}
-          item={item}
-          handleOnClick={handleItemClick}
-          colony={colony}
-        />
-      ))}
-    </ul>
-  );
-};
+const ActionsList = ({ items, handleItemClick, colony }: Props) => (
+  <ul className={styles.main}>
+    {items.map((item) => (
+      <ActionsListItem
+        key={item.id}
+        item={item}
+        handleOnClick={handleItemClick}
+        colony={colony}
+      />
+    ))}
+  </ul>
+);
 
 ActionsList.displayName = displayName;
 

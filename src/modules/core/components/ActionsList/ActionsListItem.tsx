@@ -15,6 +15,7 @@ import { getMainClasses, removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useUser, Colony } from '~data/index';
 import { createAddress } from '~utils/web3';
+import { FormattedAction } from '~types/index';
 
 import { ClickHandlerProps } from './ActionsList';
 
@@ -53,22 +54,7 @@ export enum Status {
 }
 
 interface Props {
-  /*
-   * @TODO This should be a type of Events, Actions or Logs
-   *
-   * Item shoud be something aling these lines:
-   *
-   * id: string,
-   * userAddress: string,
-   * user?: AnyUser
-   * title?: string | messageDescriptor,
-   * topic?: string
-   * createdAt: Date,
-   * domain?: DomainType,
-   * commentCount?: number,
-   * status?: number
-   */
-  item: any;
+  item: FormattedAction;
   colony: Colony;
   handleOnClick?: (handlerProps: ClickHandlerProps) => void;
 }

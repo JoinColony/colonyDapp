@@ -20,24 +20,10 @@ import {
 import { immutableSort } from '~utils/arrays';
 import { getActionsListData } from '../../transformers';
 import { useTransformer } from '~utils/hooks';
+import { FormattedAction } from '~types/index';
 
 import styles from './ColonyActions.css';
 
-/*
- * @TODO Replace with actual data (fetch from events most likely?)
- *
- * Item shoud be something aling these lines:
- *
- * id: string,
- * userAddress: string,
- * user?: AnyUser
- * title?: string | messageDescriptor,
- * topic?: string
- * createdAt: Date,
- * domain?: DomainType,
- * commentCount?: number,
- * status?: number
- */
 const MSG = defineMessages({
   labelFilter: {
     id: 'dashboard.ColonyActions.labelFilter',
@@ -69,9 +55,6 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  /*
-   * @NOTE Needed for fetching the actual actions data
-   */
   colony: Colony;
   /*
    * @NOTE Needed for filtering based on domain
@@ -164,16 +147,19 @@ const ColonyActions = ({
     }
   }, [actionsFilter]);
 
-  const sort = useCallback((first: any, second: any) => {
-    if (!(first && second)) return 0;
+  const sort = useCallback(
+    (first: FormattedAction, second: FormattedAction) => {
+      if (!(first && second)) return 0;
 
-    const sortingOrderOption = 'desc';
-    return sortingOrderOption === 'desc'
-      ? second.createdAt - first.createdAt
-      : first.createdAt - second.createdAt;
-  }, []);
+      const sortingOrderOption = 'desc';
+      return sortingOrderOption === 'desc'
+        ? second.createdAt.getTime() - first.createdAt.getTime()
+        : first.createdAt.getTime() - second.createdAt.getTime();
+    },
+    [],
+  );
 
-  const filteredActionsData: any[] = useMemo(
+  const filteredActionsData: FormattedAction[] = useMemo(
     () =>
       filter
         ? immutableSort(actions, sort).filter((action) =>

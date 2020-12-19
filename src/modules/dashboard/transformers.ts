@@ -1,12 +1,12 @@
 import { AddressZero, HashZero } from 'ethers/constants';
 
 import { SubgraphActions, TransactionsMessagesCount } from '~data/index';
-import { ColonyActions } from '~types/index';
+import { ColonyActions, FormattedAction } from '~types/index';
 
 export const getActionsListData = (
   unformattedActions?: SubgraphActions,
   transactionsCommentsCount?: TransactionsMessagesCount,
-) => {
+): FormattedAction[] => {
   let formattedActions = [];
   Object.keys(unformattedActions || {}).map((subgraphActionType) => {
     formattedActions = formattedActions.concat(
