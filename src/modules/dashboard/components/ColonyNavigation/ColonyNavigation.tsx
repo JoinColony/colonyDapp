@@ -17,8 +17,8 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
   },
-  linkExtraExtensions: {
-    id: 'dashboard.ColonyNavigation.linkExtraExtensions',
+  comingSoonMessage: {
+    id: 'dashboard.ColonyNavigation.comingSoonMessage',
     defaultMessage: 'Coming Soon',
   },
 });
@@ -28,9 +28,17 @@ const displayName = 'dashboard.ColonyNavigation';
 const ColonyNavigation = () => {
   const { colonyName } = useParams<{ colonyName: string }>();
 
-  // @TODO actually determine these
+  /*
+   * @TODO actually determine these
+   * This can be easily inferred from the subgraph queries
+   *
+   * But for that we need to store the "current" count either in redux or
+   * in local storage... or maybe a local resolver?
+   *
+   * Problem is I couldn't get @client resolvers to work with subgrap queries :(
+   */
   const hasNewActions = false;
-  const hasNewEvents = true;
+  const hasNewEvents = false;
   const hasNewExtensions = false;
 
   const items = useMemo<ComponentProps<typeof NavItem>[]>(
@@ -41,13 +49,20 @@ const ColonyNavigation = () => {
         text: MSG.linkTextActions,
       },
       {
+        /*
+         * @NOTE Disabled until we find a way to fetch them from the
+         * subgraph. The current way of fetching them from chain is
+         * sub-optimal and slow
+         */
+        disabled: true,
+        extra: MSG.comingSoonMessage,
         linkTo: `/colony/${colonyName}/events`,
         showDot: hasNewEvents,
         text: MSG.linkTextEvents,
       },
       {
         disabled: true,
-        extra: MSG.linkExtraExtensions,
+        extra: MSG.comingSoonMessage,
         linkTo: `/colony/${colonyName}/extensions`,
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,
