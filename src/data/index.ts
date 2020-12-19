@@ -31,7 +31,7 @@ import {
   NetworkContractsDocument,
   TransactionMessageFragment,
   ParsedEvent,
-  SubgraphPaymentActionsQuery,
+  SubgraphActionsQuery,
   TransactionMessagesCountQuery,
 } from './generated';
 import {
@@ -152,4 +152,4 @@ export type TransactionsMessagesCount = TransactionMessagesCountQuery['transacti
 
 export type EventOrMessage = ParsedEvent | TransactionMessage;
 
-export type SubgraphActions = SubgraphPaymentActionsQuery;
+export type SubgraphActions = SubgraphActionsQuery;
