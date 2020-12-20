@@ -1,10 +1,6 @@
 import { defineMessages } from 'react-intl';
 
 const FILTER_MSG = defineMessages({
-  endingSoonest: {
-    id: 'dashboard.actionsFilter.endingSoonest',
-    defaultMessage: 'Ending Soonest',
-  },
   newest: {
     id: 'dashboard.actionsFilter.newest',
     defaultMessage: 'Newest',
@@ -16,7 +12,6 @@ const FILTER_MSG = defineMessages({
 });
 
 export enum ActionFilterOptions {
-  ENDING_SOONEST = 'ENDING_SOONEST',
   NEWEST = 'NEWEST',
   HAVE_ACTIVITY = 'HAVE_ACTIVITY',
 }
@@ -24,10 +19,6 @@ export enum ActionFilterOptions {
 export type ActionFilterOptionType = ActionFilterOptions[keyof ActionFilterOptions];
 
 export const ActionFilterSelectOptions = [
-  {
-    label: FILTER_MSG.endingSoonest,
-    value: ActionFilterOptions.ENDING_SOONEST,
-  },
   {
     label: FILTER_MSG.newest,
     value: ActionFilterOptions.NEWEST,

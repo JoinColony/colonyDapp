@@ -70,7 +70,7 @@ const ColonyActions = ({
   colony,
 }: Props) => {
   const [actionsFilter, setActionsFilter] = useState<string>(
-    ActionFilterOptions.ENDING_SOONEST,
+    ActionFilterOptions.NEWEST,
   );
 
   const history = useHistory();
@@ -137,7 +137,6 @@ const ColonyActions = ({
 
   const filter = useCallback(() => {
     switch (actionsFilter) {
-      case ActionFilterOptions.ENDING_SOONEST:
       case ActionFilterOptions.NEWEST:
       case ActionFilterOptions.HAVE_ACTIVITY:
         return true;
@@ -196,7 +195,7 @@ const ColonyActions = ({
       {actions?.length ? (
         <>
           <Form
-            initialValues={{ filter: ActionFilterOptions.ENDING_SOONEST }}
+            initialValues={{ filter: ActionFilterOptions.NEWEST }}
             onSubmit={() => undefined}
           >
             <div className={styles.filter}>
