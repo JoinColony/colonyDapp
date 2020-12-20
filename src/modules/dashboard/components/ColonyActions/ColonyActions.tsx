@@ -135,10 +135,12 @@ const ColonyActions = ({
   }, [stopPaymentActionsPolling, stopCommentCountPolling]);
 
   const actionsSort = useCallback(
-    (first, second) => {
+    (first: FormattedAction, second: FormattedAction) => {
       switch (actionsSortOption) {
         case ActionsSortOptions.NEWEST:
           return second.createdAt.getTime() - first.createdAt.getTime();
+        case ActionsSortOptions.OLDEST:
+          return first.createdAt.getTime() - second.createdAt.getTime();
         case ActionsSortOptions.HAVE_ACTIVITY:
           return second.commentCount - first.commentCount;
         default:

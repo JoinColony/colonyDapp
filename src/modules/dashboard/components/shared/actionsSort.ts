@@ -5,6 +5,10 @@ const FILTER_MSG = defineMessages({
     id: 'dashboard.ActionsSort.newest',
     defaultMessage: 'Newest',
   },
+  oldest: {
+    id: 'dashboard.ActionsSort.oldest',
+    defaultMessage: 'Oldest',
+  },
   haveActivity: {
     id: 'dashboard.ActionsSort.haveActivity',
     defaultMessage: 'Activity',
@@ -13,6 +17,7 @@ const FILTER_MSG = defineMessages({
 
 export enum ActionsSortOptions {
   NEWEST = 'NEWEST',
+  OLDEST = 'OLDEST',
   HAVE_ACTIVITY = 'HAVE_ACTIVITY',
 }
 
@@ -22,6 +27,10 @@ export const ActionsSortSelectOptions = [
   {
     label: FILTER_MSG.newest,
     value: ActionsSortOptions.NEWEST,
+  },
+  {
+    label: FILTER_MSG.oldest,
+    value: ActionsSortOptions.OLDEST,
   },
   {
     label: FILTER_MSG.haveActivity,
