@@ -14,10 +14,9 @@ import {
   useTransactionMessagesCountQuery,
 } from '~data/index';
 import {
-  ActionFilterOptions,
-  ActionFilterSelectOptions,
-} from '../shared/actionsFilter';
-import { immutableSort } from '~utils/arrays';
+  ActionsSortOptions,
+  ActionsSortSelectOptions,
+} from '../shared/actionsSort';
 import { getActionsListData } from '../../transformers';
 import { useTransformer } from '~utils/hooks';
 import { FormattedAction } from '~types/index';
@@ -69,8 +68,8 @@ const ColonyActions = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
-  const [actionsFilter, setActionsFilter] = useState<string>(
-    ActionFilterOptions.NEWEST,
+  const [actionsSortOption, setActionsSortOption] = useState<string>(
+    ActionsSortOptions.NEWEST,
   );
 
   const history = useHistory();
@@ -135,37 +134,23 @@ const ColonyActions = ({
     }, idleFailsafe);
   }, [stopPaymentActionsPolling, stopCommentCountPolling]);
 
-  const filter = useCallback(() => {
-    switch (actionsFilter) {
-      case ActionFilterOptions.NEWEST:
-      case ActionFilterOptions.HAVE_ACTIVITY:
-        return true;
-
-      default:
-        return true;
-    }
-  }, [actionsFilter]);
-
-  const sort = useCallback(
-    (first: FormattedAction, second: FormattedAction) => {
-      if (!(first && second)) return 0;
-
-      const sortingOrderOption = 'desc';
-      return sortingOrderOption === 'desc'
-        ? second.createdAt.getTime() - first.createdAt.getTime()
-        : first.createdAt.getTime() - second.createdAt.getTime();
+  const actionsSort = useCallback(
+    (first, second) => {
+      switch (actionsSortOption) {
+        case ActionsSortOptions.NEWEST:
+          return second.createdAt.getTime() - first.createdAt.getTime();
+        case ActionsSortOptions.HAVE_ACTIVITY:
+          return second.commentCount - first.commentCount;
+        default:
+          return 0;
+      }
     },
-    [],
+    [actionsSortOption],
   );
 
-  const filteredActionsData: FormattedAction[] = useMemo(
-    () =>
-      filter
-        ? immutableSort(actions, sort).filter((action) =>
-            action ? filter() : true,
-          )
-        : actions,
-    [filter, sort, actions],
+  const sortedActionsData: FormattedAction[] = useMemo(
+    () => actions.sort(actionsSort),
+    [actionsSort, actions],
   );
 
   const handleActionRedirect = useCallback(
@@ -192,10 +177,10 @@ const ColonyActions = ({
 
   return (
     <div className={styles.main}>
-      {actions?.length ? (
+      {sortedActionsData?.length ? (
         <>
           <Form
-            initialValues={{ filter: ActionFilterOptions.NEWEST }}
+            initialValues={{ filter: ActionsSortOptions.NEWEST }}
             onSubmit={() => undefined}
           >
             <div className={styles.filter}>
@@ -204,14 +189,14 @@ const ColonyActions = ({
                 elementOnly
                 label={MSG.labelFilter}
                 name="filter"
-                options={ActionFilterSelectOptions}
-                onChange={setActionsFilter}
+                options={ActionsSortSelectOptions}
+                onChange={setActionsSortOption}
                 placeholder={MSG.placeholderFilter}
               />
             </div>
           </Form>
           <ActionsList
-            items={filteredActionsData}
+            items={sortedActionsData}
             handleItemClick={handleActionRedirect}
             colony={colony}
           />
