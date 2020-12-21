@@ -268,15 +268,12 @@ const ActionsPage = () => {
 
   return (
     <div className={styles.main}>
-      <div className={styles.container}>
-        <p className={styles.recoveryTag}>
-          <FormattedMessage {...MSG.recoveryTag} />
-        </p>
-      </div>
       {actionType === ColonyActions.Recovery && (
-        <p className={styles.recoveryTag}>
-          <FormattedMessage {...MSG.recoveryTag} />
-        </p>
+        <div className={styles.container}>
+          <p className={styles.recoveryTag}>
+            <FormattedMessage {...MSG.recoveryTag} />
+          </p>
+        </div>
       )}
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
