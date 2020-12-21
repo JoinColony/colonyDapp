@@ -8,6 +8,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots} {{initiator} transferred {amount} {tokenSymbol} from the {fromDomain} to the {toDomain}}
       ${ColonyAndExtensionsEvents.TokensMinted} {{initiator} minted {amount} {tokenSymbol} to {recipient}}
       ${ColonyAndExtensionsEvents.DomainAdded} {{initiator} added Team: {fromDomain}}
+      ${ColonyAndExtensionsEvents.ColonyUpgraded} {This colony has upgraded to {newVersion}}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
 };
