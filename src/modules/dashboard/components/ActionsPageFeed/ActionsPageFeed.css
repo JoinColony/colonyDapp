@@ -1,3 +1,15 @@
 .main {
   display: block;
 }
+
+.loading {
+  composes: main;
+  margin-top: 30px;
+}
+
+.loaderMessage {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: top;
+  font-size: var(--size-small);
+}

@@ -1,15 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { ReactElement } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
-import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import TransactionLink from '~core/TransactionLink';
 
-import { Colony, AnyUser } from '~data/index';
+import { AnyUser } from '~data/index';
 import { ColonyActions } from '~types/index';
-import { PaymentDetails } from '../../ActionsPageFeed/ActionsPageFeed';
 import { splitTransactionHash } from '~utils/strings';
+import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
+import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
 import DetailsWidgetTeam from './DetailsWidgetTeam';
 
@@ -26,12 +26,12 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.actionType',
     defaultMessage: 'Action Type',
   },
-  from: {
-    id: 'dashboard.ActionsPage.DetailsWidget.from',
+  fromDomain: {
+    id: 'dashboard.ActionsPage.DetailsWidget.fromDomain',
     defaultMessage: 'From',
   },
-  to: {
-    id: 'dashboard.ActionsPage.DetailsWidget.to',
+  toRecipient: {
+    id: 'dashboard.ActionsPage.DetailsWidget.toRecipient',
     defaultMessage: 'To',
   },
   value: {
@@ -42,47 +42,22 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.transactionHash',
     defaultMessage: 'Transaction Hash',
   },
-  actionTypesTitles: {
-    id: 'dashboard.ActionsPage.DetailsWidget.actionTypesTitles',
-    defaultMessage: `{actionType, select,
-      Payment {Payment}
-      Recovery {Recovery Mode}
-      other {Generic Action}
-    }`,
-  },
 });
 
 interface Props {
   actionType: ColonyActions;
   recipient?: AnyUser;
-  colony: Colony;
-  payment?: PaymentDetails;
+  values?: EventValues;
   transactionHash?: string;
 }
-
-const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
-  [ColonyActions.Payment]: 'emoji-dollar-stack',
-  [ColonyActions.Recovery]: 'emoji-alarm-lamp',
-  [ColonyActions.Generic]: 'circle-check-primary',
-};
 
 const DetailsWidget = ({
   actionType = ColonyActions.Generic,
   recipient,
-  colony,
-  payment,
+  values,
   transactionHash,
 }: Props) => {
   const { formatMessage } = useIntl();
-
-  const paymentDomain = useMemo(() => {
-    if (payment?.fromDomain) {
-      return colony?.domains?.find(
-        ({ ethDomainId }) => ethDomainId === payment.fromDomain,
-      );
-    }
-    return null;
-  }, [colony, payment]);
 
   const showFullDetails = actionType !== ColonyActions.Generic;
 
@@ -93,6 +68,13 @@ const DetailsWidget = ({
     shortenedHash = `${header}${start}...${end}`;
   }
 
+  /*
+   * @NOTE These were already being passed along as React Components, all we
+   * are doing here is wrapping them in a function call so we can render them
+   */
+  const Amount = () => values?.amount as ReactElement;
+  const Symbol = () => values?.tokenSymbol as ReactElement;
+
   return (
     <div>
       <div className={styles.item}>
@@ -101,53 +83,61 @@ const DetailsWidget = ({
         </div>
         <div className={styles.value}>
           <Icon
-            title={formatMessage(MSG.actionTypesTitles, { actionType })}
+            title={formatMessage(
+              { id: 'action.type' },
+              {
+                actionType: values?.actionType,
+              },
+            )}
             appearance={{ size: 'small' }}
             name={ACTION_TYPES_ICONS_MAP[actionType]}
           />
           <FormattedMessage
-            {...MSG.actionTypesTitles}
-            values={{ actionType }}
+            id="action.type"
+            /*
+             * @NOTE We need to use the action type value that was converted to
+             * camelCase since ReactIntl doesn't like keys that are composed
+             * of two separate strings (apparently you can't pass it just a plain
+             * string with spaces...)
+             */
+            values={{ actionType: values?.actionType }}
           />
         </div>
       </div>
-      {paymentDomain && showFullDetails && (
+      {values?.fromDomain && showFullDetails && (
         <div className={styles.item}>
           <div className={styles.label}>
-            <FormattedMessage {...MSG.from} />
+            <FormattedMessage {...MSG.fromDomain} />
           </div>
           <div className={styles.value}>
-            <DetailsWidgetTeam domain={paymentDomain} />
+            <DetailsWidgetTeam domain={values.fromDomain} />
           </div>
         </div>
       )}
-      {recipient && showFullDetails && (
+      {(values?.toDomain || recipient) && showFullDetails && (
         <div className={styles.item}>
           <div className={styles.label}>
-            <FormattedMessage {...MSG.to} />
+            <FormattedMessage {...MSG.toRecipient} />
           </div>
           <div className={styles.value}>
-            <DetailsWidgetUser
-              walletAddress={recipient.profile.walletAddress}
-            />
+            {values?.toDomain && actionType === ColonyActions.MoveFunds && (
+              <DetailsWidgetTeam domain={values.toDomain} />
+            )}
+            {recipient && actionType === ColonyActions.Payment && (
+              <DetailsWidgetUser
+                walletAddress={recipient?.profile.walletAddress as string}
+              />
+            )}
           </div>
         </div>
       )}
-      {payment?.amount && showFullDetails && (
+      {values?.amount && showFullDetails && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.value} />
           </div>
           <div className={styles.value}>
-            <Numeral
-              value={payment.amount}
-              /*
-               * @NOTE We don't need to call `getTokenDecimalsWithFallback` since
-               * we already did that when passing down the prop
-               */
-              unit={payment.decimals}
-              suffix={` ${payment.symbol || '???'}`}
-            />
+            <Amount /> <Symbol />
           </div>
         </div>
       )}

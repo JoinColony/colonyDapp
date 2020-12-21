@@ -53,13 +53,13 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   const handleMoveTokens = useCallback(
     () =>
       openDialog({
-        colonyAddress,
-        toDomain:
+        colony,
+        fromDomain:
           currentDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID
             ? currentDomainId
             : undefined,
       }),
-    [openDialog, colonyAddress, currentDomainId],
+    [openDialog, colony, currentDomainId],
   );
 
   const {

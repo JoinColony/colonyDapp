@@ -21,19 +21,20 @@ import {
   useUser,
   useLoggedInUser,
   useTokenInfoLazyQuery,
+  OneDomain,
 } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { STATUS } from './types';
 
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget from './DetailsWidget';
 import TransactionHash, { Hash } from './TransactionHash';
+import { STATUS_MAP } from './staticMaps';
 
-import styles from './ActionsPage.css';
 import NakedMoleImage from '../../../../img/naked-mole.svg';
+import styles from './ActionsPage.css';
 
 const MSG = defineMessages({
   loading: {
@@ -68,12 +69,6 @@ const MSG = defineMessages({
 type SuperSpecificColonyAddress = string | Error;
 
 const displayName = 'dashboard.ActionsPage';
-
-const STATUS_MAP = {
-  0: STATUS.Failed,
-  1: STATUS.Succeeded,
-  2: STATUS.Pending,
-};
 
 const ActionsPage = () => {
   const { transactionHash, colonyName } = useParams<{
@@ -238,6 +233,7 @@ const ActionsPage = () => {
       actionType,
       amount,
       fromDomain,
+      toDomain,
     },
   } = colonyActionData;
 
@@ -245,7 +241,7 @@ const ActionsPage = () => {
    * Colony
    */
   const {
-    colony: { colonyAddress },
+    colony: { colonyAddress, domains },
   } = colonyData;
 
   /*
@@ -265,6 +261,43 @@ const ActionsPage = () => {
   const {
     tokenInfo: { decimals, symbol },
   } = tokenData;
+
+  /*
+   * @NOTE We need to convert the action type name into a forced camel-case string
+   *
+   * This is because it might have a name that contains spaces, and ReactIntl really
+   * doesn't like that...
+   */
+  const actionAndEventValues = {
+    actionType,
+    initiator: (
+      <span className={styles.titleDecoration}>
+        <FriendlyUserName
+          user={initiatorProfileWithFallback}
+          autoShrinkAddress
+        />
+      </span>
+    ),
+    recipient: (
+      <span className={styles.titleDecoration}>
+        <FriendlyUserName
+          user={recipientProfileWithFallback}
+          autoShrinkAddress
+        />
+      </span>
+    ),
+    amount: (
+      <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
+    ),
+    tokenSymbol: <span>{symbol || '???'}</span>,
+    decimals: getTokenDecimalsWithFallback(decimals),
+    fromDomain: domains.find(
+      ({ ethDomainId }) => ethDomainId === fromDomain,
+    ) as OneDomain,
+    toDomain: domains.find(
+      ({ ethDomainId }) => ethDomainId === toDomain,
+    ) as OneDomain,
+  };
 
   return (
     <div className={styles.main}>
@@ -286,22 +319,9 @@ const ActionsPage = () => {
             <FormattedMessage
               id="action.title"
               values={{
-                actionType,
-                recipient: (
-                  <span className={styles.titleDecoration}>
-                    <FriendlyUserName
-                      user={recipientProfileWithFallback}
-                      autoShrinkAddress
-                    />
-                  </span>
-                ),
-                amount: (
-                  <Numeral
-                    value={amount}
-                    unit={getTokenDecimalsWithFallback(decimals)}
-                  />
-                ),
-                tokenSymbol: <span>{symbol || '???'}</span>,
+                ...actionAndEventValues,
+                fromDomain: actionAndEventValues.fromDomain.name,
+                toDomain: actionAndEventValues.toDomain.name,
               }}
             />
           </h1>
@@ -312,7 +332,9 @@ const ActionsPage = () => {
                * @NOTE Otherwise it interprets 0 as false, rather then a index
                * Typecasting it doesn't work as well
                */
-              status={typeof status === 'number' && STATUS_MAP[status]}
+              status={
+                typeof status === 'number' ? STATUS_MAP[status] : undefined
+              }
               createdAt={createdAt}
             />
           )}
@@ -329,14 +351,7 @@ const ActionsPage = () => {
             actionType={actionType}
             transactionHash={transactionHash as string}
             networkEvents={events}
-            initiator={initiatorProfileWithFallback}
-            recipient={recipientProfileWithFallback}
-            payment={{
-              amount,
-              symbol,
-              decimals: getTokenDecimalsWithFallback(decimals),
-              fromDomain,
-            }}
+            values={actionAndEventValues}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
@@ -375,14 +390,8 @@ const ActionsPage = () => {
             <DetailsWidget
               actionType={actionType as ColonyActions}
               recipient={recipientProfileWithFallback}
-              colony={colonyData?.colony}
               transactionHash={transactionHash}
-              payment={{
-                amount,
-                symbol,
-                decimals: getTokenDecimalsWithFallback(decimals),
-                fromDomain,
-              }}
+              values={actionAndEventValues}
             />
           )}
         </div>

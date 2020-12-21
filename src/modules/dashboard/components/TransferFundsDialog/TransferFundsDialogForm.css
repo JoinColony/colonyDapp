@@ -16,6 +16,7 @@
 }
 
 .domainPotBalance {
+  margin-top: -15px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
@@ -32,7 +33,7 @@
   height: 26px;
   width: 26px;
   position: relative;
-  top: -7px;
+  top: 0;
   justify-self: center;
 }
 
@@ -50,4 +51,20 @@
 .domainSelects label {
   font-size: var(--size-smallish);
   color: var(--dark);
+}
+
+.permissionsRequired {
+  margin-top: -15px;
+}
+
+.permissionsError {
+  display: block;
+  margin-top: -30px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.permissionsError div {
+  vertical-align: middle;
 }

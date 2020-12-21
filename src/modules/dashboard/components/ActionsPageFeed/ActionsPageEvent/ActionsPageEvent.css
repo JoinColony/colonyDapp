@@ -28,11 +28,6 @@
   color: var(--dark);
 }
 
-.decoratedUser {
-  font-weight: var(--weight-bold);
-  color: var(--pink);
-}
-
 .roles {
   margin-right: 10px;
 }

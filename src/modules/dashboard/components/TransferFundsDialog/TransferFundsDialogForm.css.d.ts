@@ -6,3 +6,5 @@ export const domainPotBalance: string;
 export const domainSelects: string;
 export const transferIcon: string;
 export const title: string;
+export const permissionsRequired: string;
+export const permissionsError: string;

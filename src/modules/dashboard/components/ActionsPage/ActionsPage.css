@@ -107,5 +107,6 @@
 }
 
 .titleDecoration {
+  font-weight: var(--weight-bold);
   color: var(--pink);
 }

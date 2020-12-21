@@ -12,6 +12,9 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import PermissionsLabel from '~core/PermissionsLabel';
+
 import {
   useLoggedInUser,
   useTokenBalancesForDomainsLazyQuery,
@@ -72,11 +75,8 @@ const MSG = defineMessages({
   noPermissionFrom: {
     id:
       'dashboard.TransferFundsDialog.TransferFundsDialogForm.noPermissionFrom',
-    defaultMessage: 'No permission in from domain',
-  },
-  noPermissionTo: {
-    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.noPermissionTo',
-    defaultMessage: 'No permission in to domain',
+    defaultMessage: `You need the {permissionLabel} permission in {domainName}
+      to take this action`,
   },
   samePot: {
     id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.samePot',
@@ -90,12 +90,12 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  cancel: () => void;
+  back?: () => void;
   colony: Colony;
 }
 
 const TransferFundsDialogForm = ({
-  cancel,
+  back,
   colony,
   colony: { colonyAddress, domains, tokens },
   handleSubmit,
@@ -104,14 +104,20 @@ const TransferFundsDialogForm = ({
   setErrors,
   status,
   values,
+  validateForm,
+  errors,
 }: Props & FormikProps<FormValues>) => {
   const { tokenAddress, amount } = values;
-  const fromDomain = values.fromDomain
+
+  const fromDomainId = values.fromDomain
     ? parseInt(values.fromDomain, 10)
     : ROOT_DOMAIN_ID;
-  const toDomain = values.toDomain
+  const fromDomain = domains.find(
+    ({ ethDomainId }) => ethDomainId === fromDomainId,
+  );
+  const toDomainId = values.toDomain
     ? parseInt(values.toDomain, 10)
-    : ROOT_DOMAIN_ID;
+    : undefined;
 
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
@@ -132,14 +138,12 @@ const TransferFundsDialogForm = ({
   const fromDomainRoles = useTransformer(getUserRolesForDomain, [
     colony,
     walletAddress,
-    fromDomain,
+    fromDomainId,
   ]);
 
-  const toDomainRoles = useTransformer(getUserRolesForDomain, [
-    colony,
-    walletAddress,
-    toDomain,
-  ]);
+  const userHasPermissions = userHasRole(fromDomainRoles, ColonyRole.Funding);
+
+  const requiredRoles: ColonyRole[] = [ColonyRole.Funding];
 
   const domainOptions = useMemo(
     () =>
@@ -165,69 +169,79 @@ const TransferFundsDialogForm = ({
         variables: {
           colonyAddress,
           tokenAddresses: [tokenAddress],
-          domainIds: [fromDomain, toDomain],
+          domainIds: [fromDomainId, toDomainId || ROOT_DOMAIN_ID],
         },
       });
     }
-  }, [colonyAddress, tokenAddress, fromDomain, toDomain, loadTokenBalances]);
+  }, [
+    colonyAddress,
+    tokenAddress,
+    fromDomainId,
+    toDomainId,
+    loadTokenBalances,
+  ]);
 
   const fromDomainTokenBalance = useMemo(() => {
     const token =
       tokenBalancesData &&
       tokenBalancesData.tokens.find(({ address }) => address === tokenAddress);
-    const from = getBalanceFromToken(token, fromDomain);
-    return from;
-  }, [fromDomain, tokenAddress, tokenBalancesData]);
+    return getBalanceFromToken(token, fromDomainId);
+  }, [fromDomainId, tokenAddress, tokenBalancesData]);
+
+  const toDomainTokenBalance = useMemo(() => {
+    if (toDomainId) {
+      const token =
+        tokenBalancesData &&
+        tokenBalancesData.tokens.find(
+          ({ address }) => address === tokenAddress,
+        );
+      return getBalanceFromToken(token, toDomainId);
+    }
+    return undefined;
+  }, [toDomainId, tokenAddress, tokenBalancesData]);
 
   // Perform form validations
   useEffect(() => {
-    const errors: {
+    const customValidationErrors: {
       amount?: any;
-      fromDomain?: any;
       toDomain?: any;
-    } = {};
+    } = {
+      ...errors,
+    };
 
-    if (!selectedToken || !(amount && amount.length)) {
-      errors.amount = undefined; // silent error
-    } else {
-      const convertedAmount = bigNumberify(
-        moveDecimal(
-          amount,
-          getTokenDecimalsWithFallback(selectedToken.decimals),
-        ),
-      );
-      if (!convertedAmount.eq(0)) {
-        errors.amount = MSG.noAmount;
-      } else if (
-        fromDomainTokenBalance &&
-        fromDomainTokenBalance.lt(convertedAmount)
-      ) {
-        errors.amount = MSG.noBalance;
-      }
+    if (
+      !selectedToken ||
+      !(amount && amount.length) ||
+      !fromDomainTokenBalance
+    ) {
+      return setErrors(customValidationErrors); // silent error
     }
 
-    if (fromDomain && !userHasRole(fromDomainRoles, ColonyRole.Funding)) {
-      errors.fromDomain = MSG.noPermissionFrom;
+    const convertedAmount = bigNumberify(
+      moveDecimal(amount, getTokenDecimalsWithFallback(selectedToken.decimals)),
+    );
+
+    if (convertedAmount.isZero()) {
+      customValidationErrors.amount = MSG.noBalance;
     }
 
-    if (toDomain && !userHasRole(toDomainRoles, ColonyRole.Funding)) {
-      errors.toDomain = MSG.noPermissionTo;
+    if (fromDomainTokenBalance.lt(convertedAmount)) {
+      customValidationErrors.amount = MSG.noBalance;
     }
 
-    if (toDomain !== undefined && toDomain === fromDomain) {
-      errors.toDomain = MSG.samePot;
+    if (toDomainId !== undefined && toDomainId === fromDomainId) {
+      customValidationErrors.toDomain = MSG.samePot;
     }
 
-    setErrors(errors);
+    return setErrors(customValidationErrors);
   }, [
+    errors,
     amount,
-    fromDomain,
-    fromDomainRoles,
+    fromDomainId,
     fromDomainTokenBalance,
     selectedToken,
     setErrors,
-    toDomain,
-    toDomainRoles,
+    toDomainId,
   ]);
 
   return (
@@ -240,6 +254,13 @@ const TransferFundsDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
+      {!userHasPermissions && (
+        <div className={styles.permissionsRequired}>
+          <DialogSection>
+            <PermissionRequiredInfo requiredRoles={requiredRoles} />
+          </DialogSection>
+        </div>
+      )}
       <DialogSection>
         <div className={styles.domainSelects}>
           <div>
@@ -248,6 +269,8 @@ const TransferFundsDialogForm = ({
               label={MSG.from}
               name="fromDomain"
               appearance={{ theme: 'grey' }}
+              onChange={() => validateForm()}
+              disabled={!userHasPermissions}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -279,12 +302,39 @@ const TransferFundsDialogForm = ({
             title={MSG.transferIconTitle}
             appearance={{ size: 'medium' }}
           />
-          <Select
-            options={domainOptions}
-            label={MSG.to}
-            name="toDomain"
-            appearance={{ theme: 'grey' }}
-          />
+          <div>
+            <Select
+              options={domainOptions}
+              label={MSG.to}
+              name="toDomain"
+              appearance={{ theme: 'grey' }}
+              onChange={() => validateForm()}
+              disabled={!userHasPermissions}
+            />
+            {!!tokenAddress && toDomainTokenBalance && !errors.toDomain && (
+              <div className={styles.domainPotBalance}>
+                <FormattedMessage
+                  {...MSG.domainTokenAmount}
+                  values={{
+                    amount: (
+                      <Numeral
+                        appearance={{
+                          size: 'small',
+                          theme: 'grey',
+                        }}
+                        value={toDomainTokenBalance || 0}
+                        unit={getTokenDecimalsWithFallback(
+                          selectedToken && selectedToken.decimals,
+                        )}
+                        truncate={3}
+                      />
+                    ),
+                    symbol: (selectedToken && selectedToken.symbol) || '???',
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </DialogSection>
       <DialogSection>
@@ -304,6 +354,8 @@ const TransferFundsDialogForm = ({
                   selectedToken && selectedToken.decimals,
                 ),
               }}
+              disabled={!userHasPermissions}
+              onChange={() => validateForm()}
             />
           </div>
           <div className={styles.tokenAmountSelect}>
@@ -313,6 +365,7 @@ const TransferFundsDialogForm = ({
               name="tokenAddress"
               elementOnly
               appearance={{ alignOptions: 'right', theme: 'grey' }}
+              disabled={!userHasPermissions}
             />
           </div>
           {values.tokenAddress === AddressZero && (
@@ -325,9 +378,7 @@ const TransferFundsDialogForm = ({
                    * Just entering the decimal point will pass it through to EthUsd
                    * and that will try to fetch the balance for, which, obviously, will fail
                    */
-                  values.amount && values.amount.length && values.amount !== '.'
-                    ? values.amount
-                    : 0
+                  values.amount && values.amount !== '.' ? values.amount : '0'
                 }
               />
             </div>
@@ -335,20 +386,44 @@ const TransferFundsDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection>
-        <Annotations label={MSG.annotation} name="annotation" />
-      </DialogSection>
-      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={cancel}
-          text={{ id: 'button.back' }}
+        <Annotations
+          label={MSG.annotation}
+          name="annotation"
+          disabled={!userHasPermissions}
         />
+      </DialogSection>
+      {!userHasPermissions && (
+        <DialogSection>
+          <span className={styles.permissionsError}>
+            <FormattedMessage
+              {...MSG.noPermissionFrom}
+              values={{
+                permissionLabel: (
+                  <PermissionsLabel
+                    permission={ColonyRole.Funding}
+                    name={{ id: `role.${ColonyRole.Funding}` }}
+                  />
+                ),
+                domainName: fromDomain?.name,
+              }}
+            />
+          </span>
+        </DialogSection>
+      )}
+      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
+        {back && (
+          <Button
+            appearance={{ theme: 'secondary', size: 'large' }}
+            onClick={back}
+            text={{ id: 'button.back' }}
+          />
+        )}
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid}
+          disabled={!isValid || !userHasPermissions}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

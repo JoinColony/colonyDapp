@@ -20,11 +20,11 @@ import DialogForm from './CreatePaymentDialogForm';
 
 const MSG = defineMessages({
   amountZero: {
-    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.amountZero',
+    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialog.amountZero',
     defaultMessage: 'Amount must be greater than zero',
   },
   noBalance: {
-    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noBalance',
+    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialog.noBalance',
     defaultMessage: 'Insufficient balance in from domain pot',
   },
 });
@@ -133,18 +133,16 @@ const CreatePaymentDialog = ({
       transform={transform}
       onSuccess={close}
     >
-      {(formValues: FormikProps<FormValues>) => {
-        return (
-          <Dialog cancel={cancel}>
-            <DialogForm
-              {...formValues}
-              colony={colony}
-              back={() => callStep(prevStep)}
-              subscribedUsers={subscribedUsersData.colony.subscribedUsers}
-            />
-          </Dialog>
-        );
-      }}
+      {(formValues: FormikProps<FormValues>) => (
+        <Dialog cancel={cancel}>
+          <DialogForm
+            {...formValues}
+            colony={colony}
+            back={() => callStep(prevStep)}
+            subscribedUsers={subscribedUsersData.colony.subscribedUsers}
+          />
+        </Dialog>
+      )}
     </ActionForm>
   );
 };

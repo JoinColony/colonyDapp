@@ -1,11 +1,29 @@
 import { ColonyClient, getBlockTime, ClientType } from '@colony/colony-js';
-import { bigNumberify } from 'ethers/utils';
-import { AddressZero } from 'ethers/constants';
+import { BigNumberish } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
 
-import { getPaymentDetails, getActionType } from '~utils/events';
+import { getActionType, getActionValues } from '~utils/events';
 import { Context } from '~context/index';
-import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ColonyActions,
+  ColonyAndExtensionsEvents,
+  Address,
+} from '~types/index';
+
+interface EventValue {
+  paymentId: BigNumberish;
+  amount: BigNumberish;
+  token: Address;
+  fromPot: BigNumberish;
+  toPot: BigNumberish;
+}
+
+export interface ProcessedEvent {
+  name: ColonyAndExtensionsEvents;
+  values: EventValue;
+  createdAt: number;
+  emmitedBy: ClientType;
+}
 
 export const colonyActionsResolvers = ({
   colonyManager: { networkClient },
@@ -87,56 +105,28 @@ export const colonyActionsResolvers = ({
                     values,
                     createdAt,
                     emmitedBy: type,
-                  };
+                  } as ProcessedEvent;
                 }
                 return null;
               })
               .filter((potentialLog) => !!potentialLog);
             return parsedLog;
           })
-          .reverse();
-
-        const payment = {
-          recipient: AddressZero,
-          fromDomain: 1,
-          amount: '0',
-          tokenAddress: AddressZero,
-        };
-        let paymentDetails;
+          .reverse() as ProcessedEvent[];
 
         const actionType = getActionType(reverseSortedEvents);
 
-        if (actionType === ColonyActions.Payment) {
-          /*
-           * If the action is a `Payment` type event, it will most definetly have
-           * these two events already, so we don't need to bother checking for
-           * their existance
-           */
-          const paymentAddedEvent = reverseSortedEvents?.find(
-            (event) => event?.name === ColonyAndExtensionsEvents.PaymentAdded,
-          );
-          const payoutClaimedEvent = reverseSortedEvents?.find(
-            (event) => event?.name === ColonyAndExtensionsEvents.PayoutClaimed,
-          );
-          const { paymentId } = paymentAddedEvent?.values;
-          paymentDetails = await getPaymentDetails(
-            paymentId,
-            colonyClient as ColonyClient,
-          );
-          const { amount, token } = payoutClaimedEvent?.values;
-          payment.fromDomain = bigNumberify(
-            paymentDetails?.domainId || 1,
-          ).toNumber();
-          payment.recipient = paymentDetails?.recipient || AddressZero;
-          payment.amount = bigNumberify(amount || '0').toString();
-          payment.tokenAddress = token || AddressZero;
-        }
+        const actionValues = await getActionValues(
+          reverseSortedEvents,
+          colonyClient as ColonyClient,
+          actionType,
+        );
 
         return {
           hash,
           /*
            * @TODO this needs to be replaced with a value that is going to come
-           * from the `OneTxPaymentMade` event, which is not currently implemented
+           * from the `agent` value prop in events, which is not currently implemented
            *
            * So for now we are just using the `from` address. This should not make
            * it into production, as relying on it is error-prone.
@@ -146,7 +136,7 @@ export const colonyActionsResolvers = ({
           events: reverseSortedEvents,
           createdAt,
           actionType,
-          ...payment,
+          ...actionValues,
         };
       }
 
@@ -160,12 +150,20 @@ export const colonyActionsResolvers = ({
        * Maybe we should inferr something from whether or not the `from` or `to`
        * addressses have a user profile created. But that might be error prone.
        */
-      const { hash, to } = await provider.getTransaction(transactionHash);
+      const { hash, from } = await provider.getTransaction(transactionHash);
+
+      /*
+       * This basically fetches the fallback values
+       */
+      const pendingActionValues = await getActionValues(
+        [],
+        colonyClient as ColonyClient,
+        ColonyActions.Generic,
+      );
 
       return {
         hash,
-        fromDomain: 1,
-        to,
+        actionInitiator: from,
         status: 2,
         events: null,
         /*
@@ -176,6 +174,7 @@ export const colonyActionsResolvers = ({
          */
         createdAt: Date.now(),
         actionType: ColonyActions.Generic,
+        ...pendingActionValues,
       };
     },
   },

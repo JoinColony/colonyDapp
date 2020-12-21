@@ -1322,6 +1322,7 @@ export type ColonyAction = {
   hash: Scalars['String'];
   actionInitiator: Scalars['String'];
   fromDomain: Scalars['Int'];
+  toDomain: Scalars['Int'];
   recipient: Scalars['String'];
   status: Scalars['Int'];
   events: Array<ParsedEvent>;
@@ -2351,7 +2352,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
@@ -6214,6 +6215,7 @@ export const ColonyActionDocument = gql`
     hash
     actionInitiator
     fromDomain
+    toDomain
     recipient
     status
     events {

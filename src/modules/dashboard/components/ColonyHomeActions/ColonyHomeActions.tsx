@@ -60,7 +60,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: TransferFundsDialog,
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
-        colonyAddress: colony.colonyAddress,
+        colony,
       },
     },
   ]);

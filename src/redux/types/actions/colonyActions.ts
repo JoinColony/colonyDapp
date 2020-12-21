@@ -8,6 +8,7 @@ import {
   UniqueActionType,
   ActionTypeWithMeta,
   MetaWithHistory,
+  ActionType,
 } from './index';
 
 /*
@@ -15,6 +16,9 @@ import {
  * I couldn't come up with anything better, as we already have ColonyActionTypes :(
  */
 export type ColonyActionsActionTypes =
+  | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC>
+  | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_SUCCESS>
+  | ErrorActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_ERROR, object>
   | UniqueActionType<
       ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
       {
@@ -33,5 +37,22 @@ export type ColonyActionsActionTypes =
   | ErrorActionType<ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_MOVE_FUNDS,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        tokenAddress: Address;
+        fromDomainId: number;
+        toDomainId: number;
+        amount: BigNumber;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_MOVE_FUNDS_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS,
       MetaWithHistory<object>
     >;

@@ -1,5 +1,5 @@
-import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType, ColonyClient, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -12,9 +12,6 @@ import {
   EditDomainMutation,
   EditDomainMutationVariables,
   EditDomainDocument,
-  TokenBalancesForDomainsDocument,
-  TokenBalancesForDomainsQuery,
-  TokenBalancesForDomainsQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { log } from '~utils/debug';
@@ -166,68 +163,7 @@ function* domainEdit({
   return null;
 }
 
-function* moveFundsBetweenPots({
-  payload: { colonyAddress, fromDomain, toDomain, amount, tokenAddress },
-  meta,
-}: Action<ActionTypes.MOVE_FUNDS_BETWEEN_POTS>) {
-  let txChannel;
-  try {
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-
-    txChannel = yield call(getTxChannel, meta.id);
-
-    const colonyClient: ColonyClient = yield colonyManager.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
-    );
-    const [{ fundingPotId: fromPot }, { fundingPotId: toPot }] = yield all([
-      call([colonyClient, colonyClient.getDomain], fromDomain),
-      call([colonyClient, colonyClient.getDomain], toDomain),
-    ]);
-
-    yield fork(createTransaction, meta.id, {
-      context: ClientType.ColonyClient,
-      methodName: 'moveFundsBetweenPotsWithProofs',
-      identifier: colonyAddress,
-      params: [fromPot, toPot, amount, tokenAddress],
-    });
-
-    // Replace with TRANSACTION_CREATED if
-    // you want the saga to be done as soon as the tx is created
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    // Refetch token balances for the domains involved
-    yield apolloClient.query<
-      TokenBalancesForDomainsQuery,
-      TokenBalancesForDomainsQueryVariables
-    >({
-      query: TokenBalancesForDomainsDocument,
-      variables: {
-        colonyAddress,
-        tokenAddresses: [tokenAddress],
-        domainIds: [fromDomain, toDomain],
-      },
-      // Force resolvers to update, as query resolvers are only updated on a cache miss
-      // See #4: https://www.apollographql.com/docs/link/links/state/#resolvers
-      // Also: https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy
-      fetchPolicy: 'network-only',
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.MOVE_FUNDS_BETWEEN_POTS_SUCCESS,
-      payload: { colonyAddress, tokenAddress, fromPot, toPot, amount },
-      meta,
-    });
-  } catch (caughtError) {
-    putError(ActionTypes.MOVE_FUNDS_BETWEEN_POTS_ERROR, caughtError, meta);
-  } finally {
-    txChannel.close();
-  }
-}
-
 export default function* domainSagas() {
   yield takeEvery(ActionTypes.DOMAIN_CREATE, domainCreate);
   yield takeEvery(ActionTypes.DOMAIN_EDIT, domainEdit);
-  yield takeEvery(ActionTypes.MOVE_FUNDS_BETWEEN_POTS, moveFundsBetweenPots);
 }

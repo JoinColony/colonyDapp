@@ -79,10 +79,10 @@ const ColonyFundingMenu = ({
   const handleMoveTokens = useCallback(
     () =>
       openTokensMoveDialog({
-        colonyAddress,
-        toDomain: selectedDomainId,
+        colony,
+        fromDomain: selectedDomainId,
       }),
-    [colonyAddress, openTokensMoveDialog, selectedDomainId],
+    [colony, openTokensMoveDialog, selectedDomainId],
   );
 
   return (
