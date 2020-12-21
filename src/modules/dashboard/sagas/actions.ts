@@ -14,6 +14,10 @@ import {
   SubgraphActionsQuery,
   SubgraphActionsQueryVariables,
   SubgraphActionsDocument,
+  ColonyQuery,
+  ColonyQueryVariables,
+  ColonyDocument,
+  getNetworkContracts,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -564,6 +568,70 @@ function* createMintTokensAction({
     }
   } catch (caughtError) {
     putError(ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR, caughtError, meta);
+  } finally {
+    txChannel.close();
+  }
+}
+    
+function* createVersionUpgradeAction({
+  payload: {
+    colonyAddress,
+    colonyName
+  },
+  meta: {
+    id: metaId,
+    history,
+  },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_VERSION_UPGRADE>) {
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+
+    const colonyClient: ColonyClient = yield colonyManager.getClient(
+      ClientType.ColonyClient,
+      colonyAddress,
+    );
+
+    const { version: newVersion } = yield getNetworkContracts();
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    yield fork(createTransaction, metaId, {
+      context: ClientType.ColonyClient,
+      methodName: 'upgrade',
+      identifier: colonyAddress,
+      params: [newVersion],
+    });
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
+
+    yield apolloClient.query<
+      ColonyQuery,
+      ColonyQueryVariables
+    >({
+      query: ColonyDocument,
+      variables: {
+        colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,
+      meta,
+    });
+  } catch (caughtError) {
+    putError(ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR, caughtError, meta);
   } finally {
     txChannel.close();
   }
