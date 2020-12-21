@@ -53,6 +53,7 @@ const ManageDomainsDialog = ({
   close,
   callStep,
   prevStep,
+  nextStep,
   colony,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -72,6 +73,7 @@ const ManageDomainsDialog = ({
       permissionInfoTextValues: {
         permissionRequired: <FormattedMessage {...MSG.domainPermissionsList} />,
       },
+      onClick: () => callStep(nextStep),
     },
     {
       title: MSG.editDomainTitle,
