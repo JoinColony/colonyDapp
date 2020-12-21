@@ -42,6 +42,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
+  [ColonyAndExtensionsEvents.ColonyUpgraded]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -54,6 +55,7 @@ export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
   [ColonyActions.MoveFunds]: 'emoji-world-globe',
   [ColonyActions.MintTokens]: 'emoji-seed-sprout',
   [ColonyActions.CreateDomain]: 'emoji-crane',
+  [ColonyActions.VersionUpgrade]: 'emoji-strong-person',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -76,6 +78,9 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   ],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
   [ColonyActions.CreateDomain]: [ColonyAndExtensionsEvents.DomainAdded],
+  [ColonyActions.VersionUpgrade]: [
+    ColonyAndExtensionsEvents.ColonyUpgraded,
+  ],
 };
 
 /*
@@ -128,5 +133,8 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   [ColonyActions.CreateDomain]: [
     ActionPageDetails.Domain,
     ActionPageDetails.Description,
+  ],
+  [ColonyActions.VersionUpgrade]: [
+    ColonyAndExtensionsEvents.ColonyUpgraded,
   ],
 };
