@@ -24,6 +24,8 @@ interface EventValue {
   fromPot: BigNumberish;
   toPot: BigNumberish;
   who: Address;
+  oldVersion: string;
+  newVersion: string;
 }
 
 export interface ProcessedEvent {

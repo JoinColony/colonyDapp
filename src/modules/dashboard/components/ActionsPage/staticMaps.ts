@@ -81,6 +81,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.VersionUpgrade]: [
     ColonyAndExtensionsEvents.ColonyUpgraded,
   ],
+  [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
 };
 
 /*
@@ -137,4 +138,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   [ColonyActions.VersionUpgrade]: [
     ColonyAndExtensionsEvents.ColonyUpgraded,
   ],
+  [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
 };
