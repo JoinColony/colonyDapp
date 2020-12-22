@@ -1,0 +1,302 @@
+[
+  {
+    "address": "0xb7d311e2eb55f2f68a9440da38e7989210b9a05e",
+    "decimals": 18,
+    "name": "STAKE on xDai",
+    "symbol": "STAKE"
+  },
+  {
+    "address": "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83",
+    "decimals": 6,
+    "name": "USD//C on xDai",
+    "symbol": "USDC"
+  },
+  {
+    "address": "0xe2e73a1c69ecf83f464efce6a5be353a37ca09b2",
+    "decimals": 18,
+    "name": "ChainLink Token on xDai",
+    "symbol": "LINK"
+  },
+  {
+    "address": "0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1",
+    "decimals": 18,
+    "name": "Wrapped Ether on xDai",
+    "symbol": "WETH"
+  },
+  {
+    "address": "0x2977893f4c04bfbd6efc68d0e46598d27810d3db",
+    "decimals": 18,
+    "name": "Bidao on xDai",
+    "symbol": "BID"
+  },
+  {
+    "address": "0x479e32cdff5f216f93060700c711d1cc8e811a6b",
+    "decimals": 18,
+    "name": "Trips on xDai",
+    "symbol": "TRIPS"
+  },
+  {
+    "address": "0x8e5bbbb09ed1ebde8674cda39a0c169401db4252",
+    "decimals": 8,
+    "name": "Wrapped BTC on xDai",
+    "symbol": "WBTC"
+  },
+  {
+    "address": "0x4537e328bf7e4efa29d05caea260d7fe26af9d74",
+    "decimals": 18,
+    "name": "Uniswap on xDai",
+    "symbol": "UNI"
+  },
+  {
+    "address": "0xd9fa47e33d4ff7a1aca489de1865ac36c042b07a",
+    "decimals": 8,
+    "name": "HEX on xDai",
+    "symbol": "HEX"
+  },
+  {
+    "address": "0xd3b93ff74e43ba9568e5019b38addb804fef719b",
+    "decimals": 8,
+    "name": "UniBright on xDai",
+    "symbol": "UBT"
+  },
+  {
+    "address": "0x0a9446f538288124e0c67425e3ff513203a98ce0",
+    "decimals": 18,
+    "name": "ToiletPaper.Finance on xDai",
+    "symbol": "YFTP"
+  },
+  {
+    "address": "0x4ecaba5870353805a9f068101a40e0f32ed605c6",
+    "decimals": 6,
+    "name": "Tether USD on xDai",
+    "symbol": "USDT"
+  },
+  {
+    "address": "0x524b969793a64a602342d89bc2789d43a016b13a",
+    "decimals": 18,
+    "name": "Donut on xDai",
+    "symbol": "DONUT"
+  },
+  {
+    "address": "0x44fa8e6f47987339850636f88629646662444217",
+    "decimals": 18,
+    "name": "Dai Stablecoin on xDai",
+    "symbol": "DAI"
+  },
+  {
+    "address": "0xc1b42bdb485deb24c74f58399288d7915a726c1d",
+    "decimals": 18,
+    "name": "EthLend Token on xDai",
+    "symbol": "LEND"
+  },
+  {
+    "address": "0xbf65bfcb5da067446cee6a706ba3fe2fb1a9fdfd",
+    "decimals": 18,
+    "name": "yearn.finance on xDai",
+    "symbol": "YFI"
+  },
+  {
+    "address": "0x0da1a02cdf84c44021671d183d616925164e08aa",
+    "decimals": 18,
+    "name": "Republic Token on xDai",
+    "symbol": "REN"
+  },
+  {
+    "address": "0xda623b1bc7ea3edbbc69ae229334e6d46a8aa307",
+    "decimals": 18,
+    "name": "Kitten on xDai",
+    "symbol": "MEW"
+  },
+  {
+    "address": "0x14411aeca652f5131834bf0c8ff581b5ddf3bc03",
+    "decimals": 18,
+    "name": "coin_artist on xDai",
+    "symbol": "COIN"
+  },
+  {
+    "address": "0x437a044fb4693890e61d2c1c88e3718e928b8e90",
+    "decimals": 18,
+    "name": "Aragon Network Token on xDai",
+    "symbol": "ANT"
+  },
+  {
+    "address": "0x5fe9885226677f3eb5c9ad8ab6c421b4ea38535d",
+    "decimals": 4,
+    "name": "JOON on xDai",
+    "symbol": "JOON"
+  },
+  {
+    "address": "0xdf6ff92bfdc1e8be45177dc1f4845d391d3ad8fd",
+    "decimals": 18,
+    "name": "Compound on xDai",
+    "symbol": "COMP"
+  },
+  {
+    "address": "0xdf613af6b44a31299e48131e9347f034347e2f00",
+    "decimals": 18,
+    "name": "Aave Token on xDai",
+    "symbol": "AAVE"
+  },
+  {
+    "address": "0x6a8cb6714b1ee5b471a7d2ec4302cb4f5ff25ec2",
+    "decimals": 18,
+    "name": "Energy Web Token Bridged on xDai",
+    "symbol": "EWTB"
+  },
+  {
+    "address": "0x3a00e08544d589e19a8e7d97d0294331341cdbf6",
+    "decimals": 18,
+    "name": "Synthetix Network Token on xDai",
+    "symbol": "SNX"
+  },
+  {
+    "address": "0x1534fb3e82849314360c267fe20df3901a2ed3f9",
+    "decimals": 18,
+    "name": "Kyber Network Crystal on xDai",
+    "symbol": "KNC"
+  },
+  {
+    "address": "0xfd4e5f45ea24ec50c4db4367380b014875caf219",
+    "decimals": 18,
+    "name": "XY Oracle on xDai",
+    "symbol": "XYO"
+  },
+  {
+    "address": "0x309bc6dbcbfb9c84d26fdf65e8924367efccbdb9",
+    "decimals": 18,
+    "name": "OM Token on xDai",
+    "symbol": "OM"
+  },
+  {
+    "address": "0xd51e1ddd116fff9a71c1b8feeb58113afa2b4d93",
+    "decimals": 9,
+    "name": "AMIS on xDai",
+    "symbol": "AMIS"
+  },
+  {
+    "address": "0x8395f7123ba3ffad52e7414433d825931c81c879",
+    "decimals": 18,
+    "name": "OMGToken on xDai",
+    "symbol": "OMG"
+  },
+  {
+    "address": "0x5f2852afd20c39849f6f56f4102b8c29ee141add",
+    "decimals": 8,
+    "name": "renZEC on xDai",
+    "symbol": "renZEC"
+  },
+  {
+    "address": "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+    "decimals": 18,
+    "name": "Gnosis Token on xDai",
+    "symbol": "GNO"
+  },
+  {
+    "address": "0x985e144eb355273c4b4d51e448b68b657f482e26",
+    "decimals": 18,
+    "name": "POA ERC20 on Foundation on xDai",
+    "symbol": "POA20"
+  },
+  {
+    "address": "0x5f7d0574776890c720d79c0e495c9406a39008b4",
+    "decimals": 18,
+    "name": "Bee on xDai",
+    "symbol": "XBEE"
+  },
+  {
+    "address": "0x7da0bfe9d26c5b64c7580c04bb1425364273e4b0",
+    "decimals": 18,
+    "name": "Concentrated Voting Power on xDai",
+    "symbol": "CVP"
+  },
+  {
+    "address": "0xde1e70ed71936e4c249a7d43e550f0b99fccddfc",
+    "decimals": 18,
+    "name": "FalconSwap Token on xDai",
+    "symbol": "FSW"
+  },
+  {
+    "address": "0x0905ab807f8fd040255f0cf8fa14756c1d824931",
+    "decimals": 18,
+    "name": "OWL on xDAI",
+    "symbol": "xOWL"
+  },
+  {
+    "address": "0x7a7d81657a1a66b38a6ca2565433a9873c6913b2",
+    "decimals": 8,
+    "name": "Enigma on xDai",
+    "symbol": "ENG"
+  },
+  {
+    "address": "0x79cf2029717e2e78c8927f65f079ab8da21781ee",
+    "decimals": 18,
+    "name": "LUKSO Token on xDai",
+    "symbol": "LYXe"
+  },
+  {
+    "address": "0x4accf43c858ac40555fe1ddf5806bcbc1612a4c3",
+    "decimals": 18,
+    "name": "TriniSwap on xDai",
+    "symbol": "TRINI"
+  },
+  {
+    "address": "0x7838796b6802b18d7ef58fc8b757705d6c9d12b3",
+    "decimals": 18,
+    "name": "Decentraland MANA on xDai",
+    "symbol": "MANA"
+  },
+  {
+    "address": "0x2995d1317dcd4f0ab89f4ae60f3f020a4f17c7ce",
+    "decimals": 18,
+    "name": "SushiToken on xDai",
+    "symbol": "SUSHI"
+  },
+  {
+    "address": "0x860182180e146300df38aab8d328c6e80bec9547",
+    "decimals": 18,
+    "name": "UniTrade on xDai",
+    "symbol": "TRADE"
+  },
+  {
+    "address": "0xdfc20ae04ed70bd9c7d720f449eedae19f659d65",
+    "decimals": 18,
+    "name": "Badger on xDai",
+    "symbol": "BADGER"
+  },
+  {
+    "address": "0x699d001ef13b15335193bc5fad6cfc6747eee8be",
+    "decimals": 9,
+    "name": "Base Protocol on xDai",
+    "symbol": "BASE"
+  },
+  {
+    "address": "0xb1950fb2c9c0cbc8553578c67db52aa110a93393",
+    "decimals": 18,
+    "name": "Synth sUSD on xDai",
+    "symbol": "sUSD"
+  },
+  {
+    "address": "0x743a991365ba94bfc90ad0002cad433c7a33cb4a",
+    "decimals": 4,
+    "name": "AirSwap Token on xDai",
+    "symbol": "AST"
+  },
+  {
+    "address": "0x0acd91f92fe07606ab51ea97d8521e29d110fd09",
+    "decimals": 4,
+    "name": "Celsius on xDai",
+    "symbol": "CEL"
+  },
+  {
+    "address": "0x7ea8af7301b763451b7fb25f8fc2406819a7e36f",
+    "decimals": 18,
+    "name": "Phala on xDai",
+    "symbol": "PHA"
+  },
+  {
+    "address": "0x4be85acc1cd711f403dc7bde9e6cadfc5a94744b",
+    "decimals": 18,
+    "name": "Rarible on xDai",
+    "symbol": "RARI"
+  }
+]

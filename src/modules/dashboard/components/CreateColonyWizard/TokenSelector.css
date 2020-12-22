@@ -1,0 +1,4 @@
+.inputWrapper > div > div > input {
+  font-family: var(--family-techie);
+  font-weight: var(--weight-medium);
+}

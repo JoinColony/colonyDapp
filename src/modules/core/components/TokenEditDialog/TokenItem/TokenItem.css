@@ -16,3 +16,8 @@
   font-size: var(--size-small);
   color: var(--temp-grey-blue-7);
 }
+
+.checkbox {
+  margin-right: 10px;
+  margin-top: 5px;
+}

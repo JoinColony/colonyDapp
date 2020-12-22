@@ -46,6 +46,7 @@ import {
   initialCache as networkContracts,
 } from './resolvers/networkContracts';
 import { colonyActionsResolvers } from './resolvers/colonyActions';
+import { FixedToken } from '../types';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
@@ -138,10 +139,11 @@ export type AnyTokens = (
   | ColonyTokens[number]
   | UserTokens[number]
   | OneToken
+  | FixedToken
 )[];
 
 // Almost all tokens with 'address' and 'iconHash'
-export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken;
+export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken | FixedToken;
 
 export type TransactionMessage = TransactionMessageFragment;
 

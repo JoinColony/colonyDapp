@@ -1,0 +1,26 @@
+[
+  {
+      "address":"0xc401689851982E32ca94dD2f70b4f1992aFc72b9",
+      "symbol":"ATPK",
+      "name":"ATP Token",
+      "decimals":18
+  },
+  {
+      "address":"0x31E5C2aCD7dC0A6b55c43438127c070C4eEc138f",
+      "symbol":"FRESH",
+      "name":"Fresh Token",
+      "decimals":18
+  },
+  {
+      "address":"0xC5861B53F023c57981E74fE6bd9fbcb72c6fC69b",
+      "symbol":"STK",
+      "name":"Shiny Token",
+      "decimals":18
+  },
+  {
+      "address":"0xf03FEcf3073DA01f83F1b5CA30ACC2Fa8c3cA51d",
+      "symbol":"POPTK",
+      "name":"Popular Token",
+      "decimals":18
+  }
+]

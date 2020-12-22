@@ -1,8 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { FormikProps, FormikHelpers } from 'formik';
 
-import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import * as yup from 'yup';
+import { AddressZero } from 'ethers/constants';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
@@ -46,41 +47,67 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  addTokenFn: (address: Address) => Promise<any>;
+  updateTokens: (addresses: Address[]) => Promise<any>;
   cancel: () => void;
   close: () => void;
+  // Colony tokens
   tokens: AnyToken[];
+  // Token list from json file. Not supported on local env
+  tokensList?: AnyToken[];
+  // Colony native token addresss
+  nativeTokenAddress?: Address;
 }
 
 interface FormValues {
   tokenAddress: Address;
   description?: string;
+  tokenAddresses: Address[];
 }
 
 const validationSchema = yup.object({
-  tokenAddress: yup
-    .string()
-    .address()
-    // @todo validate against entering a duplicate address
-    .required(),
-  tokenSymbol: yup.string().max(6),
+  tokenAddress: yup.string().address(),
 });
 
-const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
-  const { formatMessage } = useIntl();
+const TokenEditDialog = ({
+  updateTokens,
+  tokens = [],
+  cancel,
+  close,
+  tokensList = [],
+  nativeTokenAddress,
+}: Props) => {
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
+  const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
+    false,
+  );
+  const { formatMessage } = useIntl();
 
   const handleTokenSelect = (token: OneToken) => {
     setTokenData(token);
   };
 
+  const handleTokenSelectError = (hasError: boolean) => {
+    setTokenSelectorHasError(hasError);
+  };
+
   const handleSubmit = useCallback(
     async (
-      { tokenAddress }: FormValues,
+      { tokenAddress, tokenAddresses }: FormValues,
       { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
     ) => {
+      let addresses = tokenAddresses;
+      if (tokenAddress && !tokenAddresses.includes(tokenAddress)) {
+        addresses.push(tokenAddress);
+      }
+      addresses = [
+        ...new Set(
+          addresses
+            .map((address) => createAddress(address))
+            .filter((address) => address !== AddressZero),
+        ),
+      ];
       try {
-        await addTokenFn(createAddress(tokenAddress));
+        await updateTokens(addresses);
         resetForm();
         close();
       } catch (e) {
@@ -88,8 +115,13 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
         setSubmitting(false);
       }
     },
-    [addTokenFn, formatMessage, close],
+    [updateTokens, formatMessage, close],
   );
+
+  const allTokens = useMemo(() => {
+    return [...tokens, ...tokensList];
+  }, [tokens, tokensList]);
+
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ theme: 'heading' }}>
@@ -98,24 +130,15 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
           text={MSG.title}
         />
       </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        {tokens.length > 0 ? (
-          <div className={styles.tokenChoiceContainer}>
-            {tokens.map((token) => (
-              <TokenItem key={token.address} token={token} />
-            ))}
-          </div>
-        ) : (
-          <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
-        )}
-      </DialogSection>
       <Form
         initialValues={{
           tokenAddress: '',
           description: '',
+          tokenAddresses: tokens.map((token) => token.address),
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
+        validateOnChange={false}
       >
         {({
           isSubmitting,
@@ -124,6 +147,27 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
           values,
         }: FormikProps<FormValues>) => (
           <>
+            <DialogSection appearance={{ theme: 'sidePadding' }}>
+              {allTokens.length > 0 ? (
+                <div className={styles.tokenChoiceContainer}>
+                  {allTokens.map((token) => (
+                    <TokenItem
+                      key={token.address}
+                      token={token}
+                      disabled={
+                        token.address === nativeTokenAddress ||
+                        token.address === AddressZero
+                      }
+                    />
+                  ))}
+                </div>
+              ) : (
+                <Heading
+                  appearance={{ size: 'normal' }}
+                  text={MSG.noTokensText}
+                />
+              )}
+            </DialogSection>
             <DialogSection>
               <Paragraph className={styles.description}>
                 <FormattedMessage {...MSG.notListedToken} />
@@ -131,9 +175,10 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
               <TokenSelector
                 tokenAddress={values.tokenAddress}
                 onTokenSelect={(token: OneToken) => handleTokenSelect(token)}
+                onTokenSelectError={handleTokenSelectError}
                 tokenData={tokenData}
                 label={MSG.fieldLabel}
-                appearance={{ colorSchema: 'grey' }}
+                appearance={{ colorSchema: 'grey', theme: 'fat' }}
               />
               <div className={styles.textarea}>
                 <Textarea
@@ -157,7 +202,9 @@ const TokenEditDialog = ({ addTokenFn, tokens = [], cancel, close }: Props) => {
                 appearance={{ theme: 'primary', size: 'large' }}
                 text={{ id: 'button.confirm' }}
                 loading={isSubmitting}
-                disabled={!isValid || isSubmitting || !dirty}
+                disabled={
+                  !isValid || isSubmitting || !dirty || tokenSelectorHasError
+                }
                 type="submit"
                 style={{ width: styles.wideButton }}
               />
