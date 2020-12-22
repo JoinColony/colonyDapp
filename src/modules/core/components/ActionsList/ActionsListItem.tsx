@@ -65,7 +65,6 @@ const ActionsListItem = ({
     createdAt,
     commentCount = 0,
   },
-  // item,
   colony,
   handleOnClick,
 }: Props) => {
@@ -116,7 +115,6 @@ const ActionsListItem = ({
         tabIndex={0}
         className={getMainClasses({}, styles, {
           noPointer: !handleOnClick,
-          // [Status[status]]: !!status,
         })}
         onClick={handleSyntheticEvent}
         onKeyPress={handleSyntheticEvent}
