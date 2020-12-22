@@ -8,11 +8,7 @@ import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
-import {
-  Colony,
-  useLoggedInUser,
-  useSystemInfoQuery,
-} from '~data/index';
+import { Colony, useLoggedInUser, useSystemInfoQuery } from '~data/index';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { canEnterRecoveryMode } from '../../../users/checks';
@@ -89,7 +85,6 @@ const ProfileAdvanced = ({
   colony: {
     colonyAddress,
     id,
-    version,
     canUnlockNativeToken,
     isNativeTokenLocked,
   },

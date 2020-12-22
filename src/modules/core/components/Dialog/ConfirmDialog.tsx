@@ -56,7 +56,7 @@ const ConfirmDialog = ({
   confirmButtonText = MSG.defaultConfirmButton,
   appearance,
   disabled = false,
-  onClick = () => close(null)
+  onClick = () => close(null),
 }: Props) => (
   <Dialog cancel={cancel}>
     <DialogSection appearance={{ border: 'bottom' }}>

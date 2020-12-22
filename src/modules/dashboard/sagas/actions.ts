@@ -574,25 +574,13 @@ function* createMintTokensAction({
 }
     
 function* createVersionUpgradeAction({
-  payload: {
-    colonyAddress,
-    colonyName
-  },
-  meta: {
-    id: metaId,
-    history,
-  },
+  payload: { colonyAddress, colonyName },
+  meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_VERSION_UPGRADE>) {
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-
-    const colonyClient: ColonyClient = yield colonyManager.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
-    );
 
     const { version: newVersion } = yield getNetworkContracts();
 
@@ -615,10 +603,7 @@ function* createVersionUpgradeAction({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
 
-    yield apolloClient.query<
-      ColonyQuery,
-      ColonyQueryVariables
-    >({
+    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
       query: ColonyDocument,
       variables: {
         colonyAddress,
@@ -631,7 +616,11 @@ function* createVersionUpgradeAction({
       meta,
     });
   } catch (caughtError) {
-    putError(ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR, caughtError, meta);
+    putError(
+      ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR,
+      caughtError,
+      meta,
+    );
   } finally {
     txChannel.close();
   }
@@ -814,4 +803,5 @@ export default function* tasksSagas() {
     createMintTokensAction,
   );
   yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_CREATE, createDomainAction);
+  yield takeEvery(ActionTypes.COLONY_ACTION_VERSION_UPGRADE, createVersionUpgradeAction);
 }
