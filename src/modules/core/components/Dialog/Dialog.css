@@ -7,7 +7,7 @@
 }
 
 .main {
-  width: 560px;
+  width: 500px;
   border-radius: var(--radius-normal);
   background-color: var(--colony-white);
 }
@@ -15,7 +15,7 @@
 .dialogOuterActions {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
 .closeIconButton {
