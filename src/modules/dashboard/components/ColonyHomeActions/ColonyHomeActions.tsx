@@ -93,8 +93,8 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ColonyActionsDialog',
         nextStepRecovery: 'dashboard.RecoveryModeDialog',
-        nextStepUpgrade: 'dashboard.NetworkContractUpgradeDialog',
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
+        nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
         colony,
       },
     },
