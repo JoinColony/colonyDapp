@@ -1,37 +1,27 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { defineMessages } from 'react-intl';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import { useHistory } from 'react-router-dom';
 
 import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
 import { Select, Form } from '~core/Fields';
-import Button from '~core/Button';
+import { SpinnerLoader } from '~core/Preloaders';
 
-import { Colony } from '~data/index';
 import {
-  ActionFilterOptions,
-  ActionFilterSelectOptions,
-} from '../shared/actionsFilter';
-import { immutableSort } from '~utils/arrays';
+  Colony,
+  useSubgraphActionsQuery,
+  useTransactionMessagesCountQuery,
+} from '~data/index';
+import {
+  ActionsSortOptions,
+  ActionsSortSelectOptions,
+} from '../shared/actionsSort';
+import { getActionsListData } from '../../transformers';
+import { useTransformer } from '~utils/hooks';
+import { FormattedAction } from '~types/index';
 
 import styles from './ColonyActions.css';
-
-/*
- * @TODO Replace with actual data (fetch from events most likely?)
- *
- * Item shoud be something aling these lines:
- *
- * id: string,
- * userAddress: string,
- * user?: AnyUser
- * title?: string | messageDescriptor,
- * topic?: string
- * createdAt: Date,
- * domain?: DomainType,
- * commentCount?: number,
- * status?: number
- */
-import { MOCK_ACTIONS } from './mockData';
 
 const MSG = defineMessages({
   labelFilter: {
@@ -46,12 +36,24 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyActions.loadMore',
     defaultMessage: 'Load More',
   },
+  noActionsFound: {
+    id: 'dashboard.ColonyActions.noActionsFound',
+    defaultMessage: `The colony did not create any actions yet.
+      {isDevMode, select,
+        true {
+          {break}
+          This likely happended because you didn't start the Subgraph service
+        }
+        other {}
+      }`,
+  },
+  loading: {
+    id: 'dashboard.ColonyActions.loading',
+    defaultMessage: `Loading Actions`,
+  },
 });
 
 type Props = {
-  /*
-   * @NOTE Needed for fetching the actual actions data
-   */
   colony: Colony;
   /*
    * @NOTE Needed for filtering based on domain
@@ -60,118 +62,162 @@ type Props = {
   ethDomainId?: number;
 };
 
-const ITEMS_PER_PAGE = 10;
-
 const displayName = 'dashboard.ColonyActions';
 
-const ColonyActions = () => {
-  const [actionsFilter, setActionsFilter] = useState<string>(
-    ActionFilterOptions.ENDING_SOONEST,
-  );
-  /*
-   * @NOTE See below about the mock visual infini-loader and the reasoning behind it
-   */
-  const [fakeFetchingData, setFakeFetchingData] = useState<boolean>(false);
-  const [mockDataPager, setMockDataPager] = useState<number>(1);
-
-  const filter = useCallback(() => {
-    switch (actionsFilter) {
-      case ActionFilterOptions.ENDING_SOONEST:
-      case ActionFilterOptions.NEWEST:
-      case ActionFilterOptions.HAVE_ACTIVITY:
-        return true;
-
-      default:
-        return true;
-    }
-  }, [actionsFilter]);
-
-  const sort = useCallback((first: any, second: any) => {
-    if (!(first && second)) return 0;
-
-    const sortingOrderOption = 'desc';
-    return sortingOrderOption === 'desc'
-      ? second.createdAt - first.createdAt
-      : first.createdAt - second.createdAt;
-  }, []);
-
-  const filteredActionsData: any[] = useMemo(
-    () =>
-      filter
-        ? immutableSort(MOCK_ACTIONS, sort).filter((mockAction) =>
-            mockAction ? filter() : true,
-          )
-        : MOCK_ACTIONS,
-    [filter, sort],
+const ColonyActions = ({
+  colony: { colonyAddress, colonyName },
+  colony,
+}: Props) => {
+  const [actionsSortOption, setActionsSortOption] = useState<string>(
+    ActionsSortOptions.NEWEST,
   );
 
-  /*
-   * @TODO This callback should handle what happends when clicking on an
-   * item in the actions list.
-   *
-   * It should, in theory, redirect to a route that will render the full page
-   * action
-   *
-   * This will only happen when UAC lands
-   */
-  const handleActionRedirect = useCallback(
-    ({ id }: RedirectHandlerProps) =>
-      // eslint-disable-next-line no-console
-      console.log(
-        'This will redirect to the specific action item route whn UAC lands',
-        id,
-      ),
-    [],
-  );
+  const history = useHistory();
+
+  const {
+    data: paymentActions,
+    loading: paymentActionsLoading,
+    stopPolling: stopPaymentActionsPolling,
+  } = useSubgraphActionsQuery({
+    variables: {
+      /*
+       * @TODO Find a way to better handle address normalization
+       * Maybe this will/should be fixed on the subgraph's side ?
+       */
+      colonyAddress: colonyAddress?.toLowerCase(),
+    },
+    pollInterval: 1000,
+  });
+
+  const {
+    data: commentCount,
+    loading: commentCountLoading,
+    stopPolling: stopCommentCountPolling,
+  } = useTransactionMessagesCountQuery({
+    variables: { colonyAddress },
+    pollInterval: 1000,
+  });
+
+  const actions = useTransformer(getActionsListData, [
+    paymentActions,
+    commentCount?.transactionMessagesCount,
+  ]);
 
   /*
-   * @TODO This fake infini-loader is for display purpouses only at this point in time
+   * @NOTE This is why we can't have nice things
    *
-   * I have no idea how or where we'll get the actual data from, so in order to make
-   * a "true" infini-loader, we'll need to somehow split the data we fetch
-   * (maybe by block time).
-   * If the above is not an option, we'll just remove it outright (that's why
-   * I didn't bake it in ActionsList by default)
+   * This is needed since "The Graph" doesn't support GraphQL subsriptions.
+   * Tis means that we can't fetch new data properly.
    *
-   * In the mean time, we'll just split the mock data visually.
+   * (without invalidating the cache, making the full network fetch again,
+   * then displaying the new data, all the while triggering all the re-renders
+   * possible and all the loading states -- try it, it looks horrible)
+   *
+   * Instead, I've opted to set a polling interval of 1 second, and in the event
+   * the user lingers too much on this page, stop the interval after 2 minutes.
+   *
+   * This is dangerous, especially on low power devices, but it's the only viable
+   * way we have currently of making the app "more interactive".
+   *
+   * This could easily be solved by "The Graph" supporting subscriptions, but
+   * sadly that's not on the horizon yet.
+   *
+   * Another avenue we can explore is making our own blockchain listener, and
+   * when it sees an action being created (using topics mapping) then trigger
+   * a new query fetch -- but this is a whole can of worms onto itself.
    */
-  const fakeFetchMoreData = useCallback(() => {
-    setFakeFetchingData(true);
+  useEffect(() => {
+    const idleFailsafe = 60 * 1000 * 2; // 2 mins
     setTimeout(() => {
-      setMockDataPager(mockDataPager + 1);
-      setFakeFetchingData(false);
-    }, 1500);
-  }, [setFakeFetchingData, mockDataPager, setMockDataPager]);
+      stopPaymentActionsPolling();
+      stopCommentCountPolling();
+    }, idleFailsafe);
+  }, [stopPaymentActionsPolling, stopCommentCountPolling]);
+
+  const actionsSort = useCallback(
+    (first: FormattedAction, second: FormattedAction) => {
+      switch (actionsSortOption) {
+        case ActionsSortOptions.NEWEST:
+          return second.createdAt.getTime() - first.createdAt.getTime();
+        case ActionsSortOptions.OLDEST:
+          return first.createdAt.getTime() - second.createdAt.getTime();
+        case ActionsSortOptions.HAVE_ACTIVITY:
+          return second.commentCount - first.commentCount;
+        default:
+          return 0;
+      }
+    },
+    [actionsSortOption],
+  );
+
+  const sortedActionsData: FormattedAction[] = useMemo(
+    () => actions.sort(actionsSort),
+    [actionsSort, actions],
+  );
+
+  const handleActionRedirect = useCallback(
+    ({ transactionHash }: RedirectHandlerProps) =>
+      history.push(`/colony/${colonyName}/tx/${transactionHash}`),
+    [colonyName, history],
+  );
+
+  if (
+    paymentActionsLoading ||
+    commentCountLoading ||
+    !paymentActions ||
+    !commentCount
+  ) {
+    return (
+      <div className={styles.loadingSpinner}>
+        <SpinnerLoader
+          loadingText={MSG.loading}
+          appearance={{ theme: 'primary', size: 'massive' }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.main}>
-      <Form
-        initialValues={{ filter: ActionFilterOptions.ENDING_SOONEST }}
-        onSubmit={() => undefined}
-      >
-        <div className={styles.filter}>
-          <Select
-            appearance={{ alignOptions: 'left', theme: 'alt' }}
-            elementOnly
-            label={MSG.labelFilter}
-            name="filter"
-            options={ActionFilterSelectOptions}
-            onChange={setActionsFilter}
-            placeholder={MSG.placeholderFilter}
+      {sortedActionsData?.length ? (
+        <>
+          <Form
+            initialValues={{ filter: ActionsSortOptions.NEWEST }}
+            onSubmit={() => undefined}
+          >
+            <div className={styles.filter}>
+              <Select
+                appearance={{ alignOptions: 'left', theme: 'alt' }}
+                elementOnly
+                label={MSG.labelFilter}
+                name="filter"
+                options={ActionsSortSelectOptions}
+                onChange={setActionsSortOption}
+                placeholder={MSG.placeholderFilter}
+              />
+            </div>
+          </Form>
+          <ActionsList
+            items={sortedActionsData}
+            handleItemClick={handleActionRedirect}
+            colony={colony}
           />
-        </div>
-      </Form>
-      <ActionsList
-        items={filteredActionsData.slice(0, mockDataPager * ITEMS_PER_PAGE)}
-        handleItemClick={handleActionRedirect}
-      />
-      {mockDataPager * ITEMS_PER_PAGE < MOCK_ACTIONS.length && (
-        <div className={styles.controls}>
-          <Button
-            appearance={{ size: 'medium', theme: 'primary' }}
-            onClick={fakeFetchMoreData}
-            text={MSG.loadMore}
-            loading={fakeFetchingData}
+        </>
+      ) : (
+        <div className={styles.emptyState}>
+          <FormattedMessage
+            {...MSG.noActionsFound}
+            values={{
+              /*
+               * @TODO Maybe make this check smarter?
+               *
+               * By injecting a env var when starting dev:heavy and actually
+               * knowing if the subgraph process was started, rather then
+               * just guessing...
+               */
+              isDevMode: process.env.NODE_ENV === 'development',
+              break: <br />,
+            }}
           />
         </div>
       )}

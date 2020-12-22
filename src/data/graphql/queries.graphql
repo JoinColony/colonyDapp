@@ -602,3 +602,52 @@ query TransactionMessages($transactionHash: String!) {
     }
   }
 }
+
+query TransactionMessagesCount($colonyAddress: String!) {
+  transactionMessagesCount(colonyAddress: $colonyAddress) {
+    colonyTransactionMessages {
+      transactionHash
+      count
+    }
+  }
+}
+
+# The Graph
+#
+# @NOTE All queries meant for the subgraph should be prepended with `Subgraph`
+# otherwise they will be sent to our own graphql server
+# Prepending them with `Subgraph` allows the client to decide what endpoint to use
+
+query SubgraphActions($colonyAddress: String!) {
+  # @TODO Pagination
+  # See the schema for the correct filters we need to pass in for pagination
+  oneTxPayments(where: { payment_contains: $colonyAddress }) {
+    id
+    agent
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    payment {
+      to
+      domain {
+        ethDomainId: domainChainId
+        name
+      }
+      fundingPot {
+        fundingPotPayouts {
+          id
+          token {
+            address: id
+            symbol
+            decimals
+          }
+          amount
+        }
+      }
+    }
+  }
+}

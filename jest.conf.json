@@ -42,13 +42,19 @@
     "testPathIgnorePatterns": [
         "node_modules",
         "src/lib/colonyNetwork",
-        "src/lib/colonyServer"
+        "src/lib/colonyServer",
+        "src/lib/mock-oracle",
+        "src/lib/subgraph",
+        "src/lib/graph-node"
     ],
     "coveragePathIgnorePatterns": [
         "node_modules",
         "src/data",
         "src/lib/colonyNetwork",
-        "src/lib/colonyServer"
+        "src/lib/colonyServer",
+        "src/lib/mock-oracle",
+        "src/lib/subgraph",
+        "src/lib/graph-node"
     ],
     "globals": {
         "ts-jest": {

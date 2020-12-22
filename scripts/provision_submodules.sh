@@ -11,6 +11,12 @@ while [ $# -gt 0 ]; do
     --skip-oracle-build)
       SKIP_ORACLE_BUILD=true
       ;;
+    --skip-subgraph-build)
+      SKIP_SUBGRAPH_BUILD=true
+      ;;
+    --skip-graph-node-build)
+      SKIP_GRAPH_NODE_BUILD=true
+      ;;
     *)
       echo "Invalid argument: $1"
       exit 1
@@ -20,10 +26,13 @@ done
 
 # Paths
 LIB_PATH="src/lib"
+ENV_FILE="./.env"
 
 NETWORK="colonyNetwork"
 SERVER="colonyServer"
 ORACLE="mock-oracle"
+SUBGRAPH="subgraph"
+GRAPH_NODE="graph-node"
 
 ROOT_PATH=$(pwd)
 
@@ -38,7 +47,35 @@ log() {
   echo "${GREEN}${BOLD}$1${NC}"
 }
 
-cp .env.example .env
+warn() {
+  # Colors
+  RED=`tput setaf 3`
+  NC=`tput sgr0`
+  # Weights
+  BOLD=`tput bold`
+  echo
+  echo "${RED}${BOLD}$1${NC}"
+  echo
+}
+
+err() {
+  # Colors
+  RED=`tput setaf 1`
+  NC=`tput sgr0`
+  # Weights
+  BOLD=`tput bold`
+  echo
+  echo "${RED}${BOLD}$1${NC}"
+  echo
+}
+
+# Setup the dapp's env file
+if [ -f "$ENV_FILE" ]; then
+    warn "The Dapp .env file already exists, skipping generating it"
+else
+    log "Generating the \"Dapp's\" submodule .env file"
+    cp .env.example .env
+fi
 
 # Update / re-pull submodules
 log "Initialize submodule libs"
@@ -52,6 +89,8 @@ then
     $YARN --pure-lockfile
     DISABLE_DOCKER=true $YARN provision:token:contracts
     cd ${ROOT_PATH}
+else
+    warn "Skipping '${NETWORK}' submodule provision"
 fi
 
 if [ "$SKIP_SERVER_BUILD" != true ]
@@ -62,6 +101,8 @@ then
     mkdir -p mongo-data
     npm install
     cd ${ROOT_PATH}
+else
+    warn "Skipping '${SERVER}' submodule provision"
 fi
 
 # Mock reputation miner
@@ -74,4 +115,31 @@ then
     log "Installing the '${ORACLE}' submodule node_modules"
     npm install
     cd ${ROOT_PATH}
+else
+    warn "Skipping '${ORACLE}' submodule provision"
+fi
+
+# Subgraph
+if [ "$SKIP_SUBGRAPH_BUILD" != true ]
+then
+    err "If this is your first time installing, \"@graphprotocol/graph-ts\" will take a long time"
+    log "Building the '${SUBGRAPH}' submodule"
+    cd "${ROOT_PATH}/${LIB_PATH}/${SUBGRAPH}"
+    log "Installing the '${SUBGRAPH}' submodule node_modules"
+    npm install
+    cd ${ROOT_PATH}
+else
+    warn "Skipping '${SUBGRAPH}' submodule provision"
+fi
+
+# Graph Node
+if [ "$SKIP_GRAPH_NODE_BUILD" != true ]
+then
+    log "Building the '${GRAPH_NODE}' submodule"
+    cd "${ROOT_PATH}/${LIB_PATH}/${GRAPH_NODE}"
+    log "Installing the '${GRAPH_NODE}' submodule node_modules"
+    npm install
+    cd ${ROOT_PATH}
+else
+    warn "Skipping '${GRAPH_NODE}' submodule provision"
 fi

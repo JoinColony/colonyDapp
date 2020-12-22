@@ -92,8 +92,66 @@ const getDappModules = (searchPath = DAPP_MODULES) => {
   );
 };
 
+/*
+ * Returns an array of resource key paris (endspoints, urls, sockets) based
+ * on an input process name (process names corespond to the pid names from
+ * the start-all script)
+ *
+ * Would be nice if this would generate these values dynamically, but that's
+ * alot of time we can't afford right now to sink into this.
+ */
+const getStaticDevResource = (processName) => {
+  switch (processName) {
+    case 'ganache': {
+      return [
+        { desc: 'Ganache RPC Endpoint', res: 'http://0.0.0.0:8545' },
+        { desc: 'Ganache Accounts Key File', res: 'src/lib/colonyNetwork/ganache-accounts.json' },
+      ];
+    }
+    case 'truffle': {
+      return [
+        { desc: 'Currently Deployed EtherRouter Address:', res: 'src/lib/colonyNetwork/etherrouter-address.json' },
+      ];
+    }
+    case 'oracle': {
+      return [
+        { desc: 'Mock Oracle API Endpoint', res: 'http://0.0.0.0:3001' },
+      ];
+    }
+    case 'db': {
+      return [
+        { desc: 'MongoDB Server', res: 'mongodb://localhost:27018' },
+        { desc: 'MongoDB Database name', res: 'colonyServer' },
+      ];
+    }
+    case 'server': {
+      return [
+        { desc: 'Colony Server GraphQL Playground', res: 'http://0.0.0.0:3000/graphql' },
+      ];
+    }
+    case 'graph-node': {
+      return [
+        { desc: 'Postgres Server', res: 'postgres://0.0.0.0:5432' },
+        { desc: 'Postgres Database name', res: 'graph-node' },
+        { desc: 'IPFS Gateway WebUI', res: 'http://0.0.0.0:5001/webui' },
+        { desc: 'Colony Subgraph GraphQL Playground', res: 'http://0.0.0.0:8000/subgraphs/name/joinColony/subgraph/graphql' },
+        { desc: 'The Graph Subgraph Metrics', res: 'http://0.0.0.0:8040' },
+      ];
+    }
+    case 'webpack': {
+      return [
+        { desc: 'Colony Dapp', res: 'http://0.0.0.0:9090' },
+      ];
+    }
+    default: {
+      return [];
+    }
+  }
+};
+
 module.exports = {
   shell,
   generateWebpackAlias,
   getDappModules,
+  getStaticDevResource,
 };

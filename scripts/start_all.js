@@ -6,11 +6,14 @@ const waitOn = require('wait-on');
 const fs = require('fs');
 const args = require('minimist')(process.argv);
 const chalk = require('chalk');
+var sudo = require('sudo-prompt');
+const fetchRetry = require('@adobe/node-fetch-retry');
 
 const startGanache = require('./start_ganache');
 const deployContracts = require('./deploy_contracts');
 
 const { PID_FILE } = require('./paths');
+const { getStaticDevResource } = require('./utils');
 
 const processes = [];
 
@@ -46,9 +49,13 @@ addProcess('oracle', async () => {
     mockOracleProcess.stdout.pipe(process.stdout);
     mockOracleProcess.stderr.pipe(process.stderr);
   }
-  mockOracleProcess.on('error', e => {
+  mockOracleProcess.on('error', error => {
     mockOracleProcess.kill();
-    reject(e);
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
   });
   await waitOn({ resources: ['tcp:3001'] });
   return mockOracleProcess;
@@ -108,10 +115,159 @@ addProcess('server', async () => {
   }
   serverProcess.on('error', e => {
     serverProcess.kill();
-    reject(e);
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
   });
   await waitOn({ resources: ['tcp:3000'] });
   return serverProcess;
+});
+
+addProcess('graph-node', async () => {
+  await new Promise(resolve => {
+    console.log(); // New line
+    console.log('Cleaning up the old graph-node docker data folder. For this we need', chalk.bold.red('ROOT'), 'permissions');
+    sudo.exec(`rm -Rf ${path.resolve(__dirname, '..', 'src/lib/graph-node/docker/data')}`, {},
+      function (error) {
+        if (error) {
+          throw new Error(`graph-node cleanup process failed: ${error}`);
+        };
+        resolve();
+      }
+    );
+  });
+
+  await new Promise((resolve, reject) => {
+    const setupProcess = spawn('node', ['./setup_graph_node.js'], {
+      cwd: path.resolve(__dirname),
+    });
+
+    console.log(); // New line
+    console.log('Setting up docker-compose with the local environment ...');
+
+    if (args.foreground) {
+      setupProcess.stdout.pipe(process.stdout);
+      setupProcess.stderr.pipe(process.stderr);
+    }
+
+    setupProcess.on('exit', errorCode => {
+      if (errorCode) {
+        return reject(new Error(`Setup process exited with code ${errorCode}`));
+      }
+      resolve();
+    });
+  });
+
+  const graphNodeProcess = spawn('docker-compose', ['up'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/graph-node/docker'),
+  });
+
+  if (args.foreground) {
+    graphNodeProcess.stdout.pipe(process.stdout);
+    graphNodeProcess.stderr.pipe(process.stderr);
+  }
+
+  graphNodeProcess.on('error', error => {
+    graphNodeProcess.kill();
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
+  });
+
+  return graphNodeProcess;
+});
+
+addProcess('subgraph', async () => {
+
+  /*
+   * Wait for the
+   */
+  await fetchRetry('http://localhost:8000', {
+    retryOptions: {
+      /*
+       * Max try time of 5 minutes
+       * If it's not up by now we should just give up...
+       */
+      retryMaxDuration: 300000,  // 5m retry max duration
+      /*
+       * Wait a second before retrying
+       */
+      retryInitialDelay: 5000,
+      /*
+       * Don't backoff, just keep hammering
+       */
+      retryBackoff: 1.0
+    }
+  });
+
+  await new Promise((resolve, reject) => {
+    const codeGenProcess = spawn('npm', ['run', 'codegen'], {
+      cwd: path.resolve(__dirname, '..', 'src/lib/subgraph'),
+    });
+
+    console.log(); // New line
+    console.log('Generating subgraph types and schema ...');
+
+    if (args.foreground) {
+      codeGenProcess.stdout.pipe(process.stdout);
+      codeGenProcess.stderr.pipe(process.stderr);
+    }
+
+    codeGenProcess.on('exit', errorCode => {
+      if (errorCode) {
+        return reject(new Error(`Codegen process exited with code ${errorCode}`));
+      }
+      resolve();
+    });
+  });
+
+  await new Promise((resolve, reject) => {
+    const createLocalProcess = spawn('npm', ['run', 'create-local'], {
+      cwd: path.resolve(__dirname, '..', 'src/lib/subgraph'),
+    });
+
+    console.log(); // New line
+    console.log('Creating a local subgraph instance ...');
+
+    if (args.foreground) {
+      createLocalProcess.stdout.pipe(process.stdout);
+      createLocalProcess.stderr.pipe(process.stderr);
+    }
+
+    createLocalProcess.on('exit', errorCode => {
+      if (errorCode) {
+        return reject(new Error(`Create local process exited with code ${errorCode}`));
+      }
+      resolve();
+    });
+  });
+
+  const deployLocalProcess = spawn('npm', ['run', 'deploy-local'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/subgraph'),
+  });
+
+  console.log(); // New line
+  console.log('Deploying the local subgraph instance ...');
+
+  if (args.foreground) {
+    deployLocalProcess.stdout.pipe(process.stdout);
+    deployLocalProcess.stderr.pipe(process.stderr);
+  }
+
+  deployLocalProcess.on('error', error => {
+    deployLocalProcess.kill();
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
+  });
+
+  return deployLocalProcess;
 });
 
 addProcess('webpack', () =>
@@ -121,7 +277,6 @@ addProcess('webpack', () =>
       cwd: path.resolve(__dirname, '..'),
       stdio: 'pipe',
     });
-    setTimeout(() => console.info('Reticulating splines...'), 3000);
     webpackProcess.stdout.on('data', chunk => {
       if (chunk.includes('Compiled successfully')) resolve(webpackProcess);
     });
@@ -129,13 +284,16 @@ addProcess('webpack', () =>
       webpackProcess.stdout.pipe(process.stdout);
       webpackProcess.stderr.pipe(process.stderr);
     }
-    webpackProcess.on('error', e => {
+    webpackProcess.on('error', error => {
       webpackProcess.kill();
-      reject(e);
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
     });
   })
 );
-
 
 const pids = {};
 const startAll = async () => {
@@ -166,6 +324,25 @@ const startAll = async () => {
 
   console.log(); // New line
   console.info(chalk.bold.green('Stack started successfully.'));
+
+  console.log(); // New line
+  console.log('------------------------------------------------------------');
+  console.log(); // New line
+  console.log(chalk.bold('Available Dev Resources:'));
+  console.log(); // New line
+  Object.keys(pids)
+    .map(pidName => getStaticDevResource(pidName)
+      .map(({ desc, res }) =>
+        console.log(`* ${desc}:`, chalk.greenBright(res)),
+      ),
+    );
+  if (!pids.webpack) {
+    getStaticDevResource('webpack').map(({ desc, res }) =>
+      console.log(chalk.dim(`* ${desc} (after you start 'webpack'):`), chalk.gray(res)),
+    );
+  }
+  console.log(); // New line
+  console.log('------------------------------------------------------------');
 };
 
 process.on('SIGINT', () => {
