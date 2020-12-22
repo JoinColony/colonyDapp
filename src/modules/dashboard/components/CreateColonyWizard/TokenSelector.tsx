@@ -109,7 +109,7 @@ const TokenSelector = ({
         onTokenSelectError(false);
       }
     },
-    [onTokenSelect],
+    [onTokenSelect, onTokenSelectError],
   );
 
   const handleGetTokenError = useCallback(
@@ -121,7 +121,7 @@ const TokenSelector = ({
       }
       log.error(error);
     },
-    [onTokenSelect],
+    [onTokenSelect, onTokenSelectError],
   );
 
   const prevTokenAddress = usePrevious(tokenAddress);
