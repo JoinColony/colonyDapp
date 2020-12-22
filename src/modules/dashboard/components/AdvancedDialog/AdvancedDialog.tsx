@@ -5,9 +5,11 @@ import { DialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
-import { useLoggedInUser, Colony } from '~data/index';
+import { useLoggedInUser, Colony, useNetworkContracts } from '~data/index';
+
 import { getAllUserRoles } from '../../../transformers';
 import { canEnterRecoveryMode, hasRoot } from '../../../users/checks';
+import { canBeUpgraded } from '../../../dashboard/checks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -75,8 +77,8 @@ const MSG = defineMessages({
 interface CustomWizardDialogProps {
   nextStepRecovery: string;
   nextStepEditDetails: string;
+  nextStepVersionUpgrade: string;
   prevStep: string;
-  nextStepUpgrade: string;
   colony: Colony;
 }
 
@@ -90,8 +92,8 @@ const AdvancedDialog = ({
   callStep,
   prevStep,
   nextStepRecovery,
-  nextStepUpgrade,
   nextStepEditDetails,
+  nextStepVersionUpgrade,
   colony,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -103,6 +105,9 @@ const AdvancedDialog = ({
 
   const canEnterRecovery =
     hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
+  const { version: networkVersion } = useNetworkContracts();
+
+  const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles) && networkVersion && canBeUpgraded(colony, parseInt(networkVersion, 10));
 
   const items = [
     {
@@ -130,7 +135,7 @@ const AdvancedDialog = ({
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
       },
-      onClick: () => callStep(nextStepUpgrade),
+      onClick: () => callStep(nextStepVersionUpgrade),
     },
     {
       title: MSG.editColonyDetailsTitle,
