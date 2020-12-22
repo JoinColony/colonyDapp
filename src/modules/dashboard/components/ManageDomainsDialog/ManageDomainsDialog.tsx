@@ -1,10 +1,14 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { DialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
-import { WizardDialogType } from '~utils/hooks';
+import { Colony, useLoggedInUser } from '~data/index';
+import { WizardDialogType, useTransformer } from '~utils/hooks';
+
+import { getAllUserRoles } from '../../../transformers';
+import { canArchitect } from '../../../users/checks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -28,28 +32,55 @@ const MSG = defineMessages({
     id: 'dashboard.ManageDomainsDialog.editDomainDescription',
     defaultMessage: `Need to repurpose domain? Here's the place to do it.`,
   },
+  domainPermissionsList: {
+    id: 'dashboard.ManageDomainsDialog.domainPermissionsList',
+    defaultMessage: 'administration',
+  },
 });
 
 interface CustomWizardDialogueProps {
   nextStep: string;
   prevStep: string;
+  colony: Colony;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogueProps;
 
 const displayName = 'dashboard.ManageDomainsDialog';
 
-const ManageDomainsDialog = ({ cancel, close, callStep, prevStep }: Props) => {
+const ManageDomainsDialog = ({
+  cancel,
+  close,
+  callStep,
+  prevStep,
+  colony,
+}: Props) => {
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canCreateEditDomain =
+    hasRegisteredProfile && canArchitect(allUserRoles);
+
   const items = [
     {
       title: MSG.createNewDomainTitle,
       description: MSG.createNewDomainDescription,
       icon: 'emoji-crane',
+      permissionRequired: !canCreateEditDomain,
+      permissionInfoTextValues: {
+        permissionRequired: <FormattedMessage {...MSG.domainPermissionsList} />,
+      },
     },
     {
       title: MSG.editDomainTitle,
       description: MSG.editDomainDescription,
-      icon: 'pencil-note',
+      icon: 'emoji-pencil-note',
+      permissionRequired: !canCreateEditDomain,
+      permissionInfoTextValues: {
+        permissionRequired: <FormattedMessage {...MSG.domainPermissionsList} />,
+      },
     },
   ];
 
