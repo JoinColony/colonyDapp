@@ -70,6 +70,10 @@
   margin-right: 8px;
 }
 
+.reputationHeading h4 {
+  color: var(--temp-grey-blue-7);
+}
+
 .badges {
   display: flex;
   align-items: center;
@@ -89,4 +93,8 @@
 
 .nativeTokenMessage {
   margin-top: 6px;
+}
+
+.reputationError {
+  color: var(--danger);
 }

@@ -88,7 +88,12 @@ const MemberInfo = ({
         <div className={styles.reputation}>
           <div className={styles.reputationHeading}>
             <Heading
-              appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
+              appearance={{
+                margin: 'none',
+                size: 'normal',
+                theme: 'grey',
+                weight: 'bold',
+              }}
               text={MSG.headingReputation}
             />
           </div>
@@ -109,7 +114,9 @@ const MemberInfo = ({
           </>
         )}
         {errorReputation && (
-          <FormattedMessage tagName="i" {...MSG.errorReputation} />
+          <p className={styles.reputationError}>
+            <FormattedMessage {...MSG.errorReputation} />
+          </p>
         )}
       </div>
     </div>
