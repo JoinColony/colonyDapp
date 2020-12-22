@@ -95,8 +95,11 @@ export type ColonyActionsActionTypes =
     >
   | UniqueActionType<
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
-      { colonyAddress: Address },
-      object
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+      },
+      MetaWithHistory<object>
     >
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,

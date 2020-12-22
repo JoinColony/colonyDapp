@@ -606,7 +606,7 @@ function* createVersionUpgradeAction({
     yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
       query: ColonyDocument,
       variables: {
-        colonyAddress,
+        address: colonyAddress,
       },
       fetchPolicy: 'network-only',
     });
@@ -803,5 +803,8 @@ export default function* tasksSagas() {
     createMintTokensAction,
   );
   yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_CREATE, createDomainAction);
-  yield takeEvery(ActionTypes.COLONY_ACTION_VERSION_UPGRADE, createVersionUpgradeAction);
+  yield takeEvery(
+    ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
+    createVersionUpgradeAction,
+  );
 }

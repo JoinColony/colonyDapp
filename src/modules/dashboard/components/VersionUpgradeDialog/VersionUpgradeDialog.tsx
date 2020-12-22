@@ -1,10 +1,6 @@
 import React, { useCallback } from 'react';
 
-import {
-  pipe,
-  mergePayload,
-  withKey,
-} from '~utils/actions';
+import { pipe, mergePayload, withKey } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';

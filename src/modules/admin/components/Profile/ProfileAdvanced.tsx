@@ -82,12 +82,7 @@ interface Props {
 }
 
 const ProfileAdvanced = ({
-  colony: {
-    colonyAddress,
-    id,
-    canUnlockNativeToken,
-    isNativeTokenLocked,
-  },
+  colony: { colonyAddress, id, canUnlockNativeToken, isNativeTokenLocked },
   colony,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
