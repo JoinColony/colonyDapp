@@ -27,6 +27,8 @@ interface ActionValues {
   tokenAddress: Address;
   fromDomain: number;
   toDomain: number;
+  oldVersion?: string;
+  newVersion?: string;
 }
 
 /*
