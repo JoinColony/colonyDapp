@@ -49,9 +49,13 @@ addProcess('oracle', async () => {
     mockOracleProcess.stdout.pipe(process.stdout);
     mockOracleProcess.stderr.pipe(process.stderr);
   }
-  mockOracleProcess.on('error', e => {
+  mockOracleProcess.on('error', error => {
     mockOracleProcess.kill();
-    reject(e);
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
   });
   await waitOn({ resources: ['tcp:3001'] });
   return mockOracleProcess;
@@ -111,7 +115,11 @@ addProcess('server', async () => {
   }
   serverProcess.on('error', e => {
     serverProcess.kill();
-    reject(e);
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
   });
   await waitOn({ resources: ['tcp:3000'] });
   return serverProcess;
@@ -129,7 +137,8 @@ addProcess('graph-node', async () => {
         resolve();
       }
     );
-  })
+  });
+
   await new Promise((resolve, reject) => {
     const setupProcess = spawn('node', ['./setup_graph_node.js'], {
       cwd: path.resolve(__dirname),
@@ -160,9 +169,13 @@ addProcess('graph-node', async () => {
     graphNodeProcess.stderr.pipe(process.stderr);
   }
 
-  graphNodeProcess.on('error', e => {
+  graphNodeProcess.on('error', error => {
     graphNodeProcess.kill();
-    reject(e);
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
   });
 
   return graphNodeProcess;
@@ -247,7 +260,11 @@ addProcess('subgraph', async () => {
 
   deployLocalProcess.on('error', error => {
     deployLocalProcess.kill();
-    reject(error);
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
   });
 
   return deployLocalProcess;
@@ -267,9 +284,13 @@ addProcess('webpack', () =>
       webpackProcess.stdout.pipe(process.stdout);
       webpackProcess.stderr.pipe(process.stderr);
     }
-    webpackProcess.on('error', e => {
+    webpackProcess.on('error', error => {
       webpackProcess.kill();
-      reject(e);
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
     });
   })
 );

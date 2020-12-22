@@ -22,7 +22,7 @@ try {
    */
   const networkInterfaces = os.networkInterfaces();
   const localNetworkInterfaces = [];
-  Object.keys(networkInterfaces).map(inteface => networkInterfaces[inteface].map(({ internal, family, address }) => {
+  Object.keys(networkInterfaces).map(interface => networkInterfaces[interface].map(({ internal, family, address }) => {
     if (!internal && family === 'IPv4') {
       localNetworkInterfaces.push(address);
     }
@@ -37,6 +37,6 @@ try {
   fs.writeFileSync(`${GRAPH_NODE_DOCKER_PATH}/${DOCKER_COMPOSE_CONFIG}`, yaml.safeDump(dockerComposeConfig), { encoding: 'utf8' });
 } catch (error) {
 
-  console.log(error);
+  console.error(error);
 
 }
