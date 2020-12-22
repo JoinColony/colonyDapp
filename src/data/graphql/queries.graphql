@@ -599,3 +599,26 @@ query ColonySubscribedUsers($colonyAddress: String!) {
 query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
 }
+
+query SubgraphEvents($colonyAddress: String!) {
+  # @TODO Pagination
+  # See the schema for the correct filters we need to pass in for pagination
+  events(where: { associatedColony_contains: $colonyAddress }) {
+    id,
+    transaction {
+      block {
+        timestamp
+      }
+    }
+    destinationAddress: address
+    colony: associatedColony {
+      colonyAddress: id,
+      colonyName: ensName,
+      id: colonyChainId,
+      nativeTokenAddress: token
+    }
+    eventType: name
+    keys: argNames
+    values: args
+  }
+}
