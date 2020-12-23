@@ -35,7 +35,7 @@ const validationSchema = yup.object().shape({
   mintAmount: yup
     .number()
     .required(() => MSG.errorAmountRequired)
-    .min(0.000000000000000001, () => MSG.errorAmountMin),
+    .moreThan(0, () => MSG.errorAmountMin),
 });
 
 const TokenMintForm = ({
