@@ -57,6 +57,7 @@ const MSG = defineMessages({
 interface CustomWizardDialogProps {
   nextStepExpenditure: string;
   nextStepManageFunds: string;
+  nextStepManageDomains: string;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -69,6 +70,7 @@ const ColonyActionsDialog = ({
   callStep,
   nextStepExpenditure,
   nextStepManageFunds,
+  nextStepManageDomains,
 }: Props) => {
   const items = [
     {
@@ -87,6 +89,7 @@ const ColonyActionsDialog = ({
       title: MSG.manageDomains,
       description: MSG.manageDomainsDesc,
       icon: 'emoji-crane',
+      onClick: () => callStep(nextStepManageDomains),
     },
     {
       title: MSG.smite,
