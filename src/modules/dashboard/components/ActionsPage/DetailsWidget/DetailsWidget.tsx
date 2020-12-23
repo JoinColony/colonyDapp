@@ -9,7 +9,7 @@ import { AnyUser } from '~data/index';
 import { ColonyActions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
-import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
+import { ACTION_TYPES_ICONS_MAP, DETAILS_FOR_ACTION, ActionPageDetails } from '../../ActionsPage/staticMaps';
 
 import DetailsWidgetTeam from './DetailsWidgetTeam';
 
@@ -75,13 +75,10 @@ const DetailsWidget = ({
   const Amount = () => values?.amount as ReactElement;
   const Symbol = () => values?.tokenSymbol as ReactElement;
 
-  // @TODO We need to find a better way of handling for which actions we want display which fields
-  const showFromDomain =
-    !ColonyActions.MintTokens && values?.fromDomain && showFullDetails;
-  const showToDomain =
-    !ColonyActions.MintTokens &&
-    (values?.toDomain || recipient) &&
-    showFullDetails;
+  const showFromDomain = DETAILS_FOR_ACTION[ActionPageDetails.fromDomain].includes(actionType);
+  const showToRecipient = DETAILS_FOR_ACTION[ActionPageDetails.toRecipient].includes(actionType);
+  const showToDomain = DETAILS_FOR_ACTION[ActionPageDetails.toDomain].includes(actionType);
+  const showAmount = DETAILS_FOR_ACTION[ActionPageDetails.amount].includes(actionType);
 
   return (
     <div>
@@ -112,28 +109,26 @@ const DetailsWidget = ({
           />
         </div>
       </div>
-      {showFromDomain && (
+      {(showFromDomain && values?.fromDomain) && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.fromDomain} />
           </div>
           <div className={styles.value}>
-            {values?.toDomain && (
-              <DetailsWidgetTeam domain={values.fromDomain} />
-            )}
+            <DetailsWidgetTeam domain={values.fromDomain} />
           </div>
         </div>
       )}
-      {showToDomain && (
+      {(showToRecipient || showToDomain) && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.toRecipient} />
           </div>
           <div className={styles.value}>
-            {values?.toDomain && actionType === ColonyActions.MoveFunds && (
+            {values?.toDomain && showToDomain && (
               <DetailsWidgetTeam domain={values.toDomain} />
             )}
-            {recipient && actionType === ColonyActions.Payment && (
+            {recipient && showToRecipient && (
               <DetailsWidgetUser
                 walletAddress={recipient?.profile.walletAddress as string}
               />
@@ -141,7 +136,7 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {values?.amount && showFullDetails && (
+      {values?.amount && showAmount && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.value} />
