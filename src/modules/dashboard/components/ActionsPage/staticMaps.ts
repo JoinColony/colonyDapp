@@ -99,15 +99,11 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ColonyActions.Payment,
     ColonyActions.MoveFunds,
   ],
-  [ActionPageDetails.toDomain]: [
-    ColonyActions.MoveFunds,
-  ],
-  [ActionPageDetails.toRecipient]: [
-    ColonyActions.Payment,
-  ],
+  [ActionPageDetails.toDomain]: [ColonyActions.MoveFunds],
+  [ActionPageDetails.toRecipient]: [ColonyActions.Payment],
   [ActionPageDetails.amount]: [
     ColonyActions.Payment,
     ColonyActions.MoveFunds,
-    ColonyActions.MintTokens
+    ColonyActions.MintTokens,
   ],
 };

@@ -276,7 +276,7 @@ function* createMintTokensAction({
       params: [amount],
       group: {
         key: batchKey,
-        id: meta.id,
+        id: metaId,
         index: 0,
       },
       ready: false,
@@ -288,7 +288,7 @@ function* createMintTokensAction({
       params: [nativeTokenAddress],
       group: {
         key: batchKey,
-        id: meta.id,
+        id: metaId,
         index: 1,
       },
       ready: false,

@@ -38,7 +38,7 @@ interface Props {
 const displayName = 'dashboard.ColonyFundingMenu';
 
 const ColonyFundingMenu = ({
-  colony: { colonyAddress, canMintNativeToken, nativeTokenAddress, tokens },
+  colony: { canMintNativeToken },
   colony,
   selectedDomainId,
 }: Props) => {
@@ -68,9 +68,9 @@ const ColonyFundingMenu = ({
   );
   const handleMintTokens = useCallback(() => {
     openTokenMintDialog({
-      colony
+      colony,
     });
-  }, [colony]);
+  }, [colony, openTokenMintDialog]);
   const handleMoveTokens = useCallback(
     () =>
       openTokensMoveDialog({
