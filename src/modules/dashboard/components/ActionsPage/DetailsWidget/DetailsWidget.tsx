@@ -118,7 +118,9 @@ const DetailsWidget = ({
             <FormattedMessage {...MSG.fromDomain} />
           </div>
           <div className={styles.value}>
-            <DetailsWidgetTeam domain={values.fromDomain} />
+            {values?.toDomain && (
+              <DetailsWidgetTeam domain={values.fromDomain} />
+            )}
           </div>
         </div>
       )}

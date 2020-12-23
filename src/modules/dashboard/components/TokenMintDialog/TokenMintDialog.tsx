@@ -68,7 +68,6 @@ const TokenMintDialog = ({
   const nativeToken =
     tokens && tokens.find(({ address }) => address === nativeTokenAddress);
 
-  const { name, symbol, decimals } = nativeToken;
   return (
     <Dialog cancel={cancel}>
       <TokenMintForm
@@ -98,7 +97,7 @@ const TokenMintDialog = ({
                       numeral: true,
                       numeralPositiveOnly: true,
                       numeralDecimalScale: getTokenDecimalsWithFallback(
-                        decimals,
+                        nativeToken?.decimals,
                       ),
                     }}
                     label={MSG.amountLabel}
@@ -106,8 +105,11 @@ const TokenMintDialog = ({
                     disabled={!userHasPermissions}
                   />
                 </div>
-                <span className={styles.nativeToken} title={name || undefined}>
-                  {symbol}
+                <span
+                  className={styles.nativeToken}
+                  title={nativeToken?.name || undefined}
+                >
+                  {nativeToken?.symbol}
                 </span>
               </div>
             </DialogSection>

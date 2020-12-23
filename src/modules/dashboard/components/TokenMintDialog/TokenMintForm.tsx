@@ -26,7 +26,7 @@ const MSG = defineMessages({
 interface Props {
   children?: any;
   colony: Colony;
-  nativeToken: ColonyTokens[0] | OneToken;
+  nativeToken?: ColonyTokens[0] | OneToken;
   onSuccess?: (result: any, bag: FormikBag<any, any>, values: any) => void;
 }
 
@@ -41,7 +41,7 @@ const validationSchema = yup.object().shape({
 const TokenMintForm = ({
   children,
   onSuccess,
-  nativeToken: { decimals, address },
+  nativeToken,
   colony: { colonyAddress, colonyName },
 }: Props) => {
   const history = useHistory();
@@ -51,12 +51,15 @@ const TokenMintForm = ({
       mapPayload(({ mintAmount: inputAmount }) => {
         // Find the selected token's decimals
         const amount = bigNumberify(
-          moveDecimal(inputAmount, getTokenDecimalsWithFallback(decimals)),
+          moveDecimal(
+            inputAmount,
+            getTokenDecimalsWithFallback(nativeToken?.decimals),
+          ),
         );
         return {
           colonyAddress,
           colonyName,
-          nativeTokenAddress: address,
+          nativeTokenAddress: nativeToken?.address,
           amount,
         };
       }),

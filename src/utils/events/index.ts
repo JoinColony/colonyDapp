@@ -186,10 +186,13 @@ const getMoveFundsActionValues = async (
 
 const getMintTokensActionValues = async (
   processedEvents: ProcessedEvent[],
+  colonyClient: ColonyClient,
 ): Promise<Partial<ActionValues>> => {
   const mintTokensEvent = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.TokensMinted,
   ) as ProcessedEvent;
+
+  const tokenAddress = await colonyClient.getToken();
 
   const {
     values: { who, amount },
@@ -198,6 +201,7 @@ const getMintTokensActionValues = async (
   return {
     amount: bigNumberify(amount || '0').toString(),
     recipient: who,
+    tokenAddress,
   };
 };
 
