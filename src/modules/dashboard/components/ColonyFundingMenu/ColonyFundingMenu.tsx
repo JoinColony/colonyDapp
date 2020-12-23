@@ -67,15 +67,10 @@ const ColonyFundingMenu = ({
     [openTokenManagementDialog, colony],
   );
   const handleMintTokens = useCallback(() => {
-    const nativeToken =
-      tokens && tokens.find(({ address }) => address === nativeTokenAddress);
-    if (nativeToken) {
-      openTokenMintDialog({
-        nativeToken,
-        colonyAddress,
-      });
-    }
-  }, [colonyAddress, nativeTokenAddress, openTokenMintDialog, tokens]);
+    openTokenMintDialog({
+      colony
+    });
+  }, [colony]);
   const handleMoveTokens = useCallback(
     () =>
       openTokensMoveDialog({
