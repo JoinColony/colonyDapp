@@ -1,0 +1,9 @@
+.displayFlex {
+  display: flex;
+  align-items: center;
+}
+
+.domainName {
+  margin-right: 18px;
+  width: 100%;
+}
