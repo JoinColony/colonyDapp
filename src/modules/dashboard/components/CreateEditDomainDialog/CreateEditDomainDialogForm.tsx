@@ -65,6 +65,7 @@ const CreateEditDomainDialogForm = ({
           label={MSG.purpose}
           name="purpose"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
+          maxLength={90}
         />
       </DialogSection>
       <DialogSection>

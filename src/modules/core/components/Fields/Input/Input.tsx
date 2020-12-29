@@ -107,6 +107,7 @@ const Input = ({
   status,
   statusValues,
   forcedFieldError,
+  maxLength,
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();
@@ -126,6 +127,7 @@ const Input = ({
     name,
     placeholder,
     disabled,
+    maxLength,
     ...inputFieldProps,
   };
 
