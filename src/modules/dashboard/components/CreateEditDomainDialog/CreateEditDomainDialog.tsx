@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
+import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 
@@ -18,6 +19,7 @@ export interface FormValues {
 
 interface CustomWizardDialogProps {
   prevStep: string;
+  colony: Colony;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -29,6 +31,7 @@ const CreateEditDomainDialog = ({
   prevStep,
   cancel,
   close,
+  colony,
 }: Props) => {
   const validationSchema = yup.object().shape({
     domainName: yup.string().required(),
@@ -51,7 +54,11 @@ const CreateEditDomainDialog = ({
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
-          <DialogForm {...formValues} back={() => callStep(prevStep)} />
+          <DialogForm
+            {...formValues}
+            back={() => callStep(prevStep)}
+            colony={colony}
+          />
         </Dialog>
       )}
     </ActionForm>
