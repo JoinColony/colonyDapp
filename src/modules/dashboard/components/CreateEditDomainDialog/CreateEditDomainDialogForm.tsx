@@ -57,7 +57,7 @@ const CreateEditDomainDialogForm = ({
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
             />
           </div>
-          <ColorSelect activeOption={Color.LightPink} />
+          <ColorSelect activeOption={Color.LightPink} alignOptions="right" />
         </div>
       </DialogSection>
       <DialogSection>

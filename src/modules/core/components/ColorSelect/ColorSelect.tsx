@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, ReactNode, ComponentProps } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { Select, SelectOption, Form } from '~core/Fields';
+import { Appearance, Select, SelectOption, Form } from '~core/Fields';
 import ColorTag, { Color } from '~core/ColorTag';
 
 import styles from './ColorSelect.css';
@@ -26,11 +26,18 @@ interface Props {
 
   /** Callback function, called after value is changed */
   onColorChange?: (color: Color) => any;
+
+  alignOptions?: Appearance['alignOptions'];
 }
 
 const displayName = 'ColorSelect';
 
-const ColorSelect = ({ disabled, activeOption, onColorChange }: Props) => {
+const ColorSelect = ({
+  disabled,
+  activeOption,
+  onColorChange,
+  alignOptions,
+}: Props) => {
   const onChange = useCallback(
     (color: Color) => {
       if (onColorChange) {
@@ -73,6 +80,7 @@ const ColorSelect = ({ disabled, activeOption, onColorChange }: Props) => {
         <Select
           appearance={{
             theme: 'grid',
+            alignOptions,
           }}
           elementOnly
           label={MSG.labelColorSelect}
