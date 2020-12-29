@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages } from 'react-intl';
 
@@ -40,6 +40,8 @@ const CreateEditDomainDialogForm = ({
   back,
   handleSubmit,
 }: Props & FormikProps<FormValues>) => {
+  const [domainColor, setDomainColor] = useState(Color.LightPink);
+
   return (
     <>
       <DialogSection>
@@ -57,7 +59,11 @@ const CreateEditDomainDialogForm = ({
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
             />
           </div>
-          <ColorSelect activeOption={Color.LightPink} alignOptions="right" />
+          <ColorSelect
+            activeOption={domainColor}
+            alignOptions="right"
+            onColorChange={setDomainColor}
+          />
         </div>
       </DialogSection>
       <DialogSection>
