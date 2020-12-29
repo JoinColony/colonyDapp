@@ -28,7 +28,7 @@
 }
 
 .main:disabled {
-  cursor: not-allowed;
+  background-color: var(--temp-grey-0);
 }
 
 .themeFat {
