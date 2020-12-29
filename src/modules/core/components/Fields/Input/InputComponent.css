@@ -153,3 +153,18 @@
   color: inherit;
   box-shadow: none;
 }
+
+.positionRelative {
+  position: relative;
+}
+
+.characterCounter {
+  composes: sizeSmall;
+  position: absolute;
+  top: 14px;
+  right: 7px;
+}
+
+.paddingRightExtra {
+  padding-right: 45px;
+}

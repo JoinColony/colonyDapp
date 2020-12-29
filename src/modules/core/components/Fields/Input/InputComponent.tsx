@@ -36,8 +36,6 @@ export interface Props
   innerRef?: RefObject<any> | ((ref: HTMLInputElement | null) => void);
 }
 
-const displayName = 'InputComponent';
-
 const InputComponent = ({
   appearance,
   formattingOptions,
@@ -50,9 +48,13 @@ const InputComponent = ({
   contentEditable,
   draggable,
   spellCheck,
+  maxLength,
+  value,
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
 }: Props) => {
+  const length = value ? value.toString().length : 0;
+
   const handleCleaveChange = useCallback(
     (evt: ChangeEvent<CleaveHTMLInputElement>): void => {
       // We are reassigning the value here as cleave just adds a `rawValue` prop
@@ -89,17 +91,36 @@ const InputComponent = ({
       />
     );
   }
-  return (
+
+  return !maxLength ? (
     <input
       className={getMainClasses(appearance, styles)}
       onChange={onChange}
       placeholder={placeholder}
       ref={innerRef}
+      maxLength={maxLength}
       {...props}
     />
+  ) : (
+    <div className={styles.positionRelative}>
+      <input
+        className={getMainClasses(
+          { paddingRight: 'extra', ...appearance },
+          styles,
+        )}
+        onChange={onChange}
+        placeholder={placeholder}
+        ref={innerRef}
+        maxLength={maxLength}
+        {...props}
+      />
+      {maxLength && (
+        <span className={styles.characterCounter}>
+          {length}/{maxLength}
+        </span>
+      )}
+    </div>
   );
 };
-
-InputComponent.displayName = displayName;
 
 export default InputComponent;
