@@ -25,7 +25,8 @@ const MSG = defineMessages({
   },
   managePermissionsDescription: {
     id: 'dashboard.AdvancedDialog.managePermissionsDescription',
-    defaultMessage: 'Set permissions for trusted colony members. Use with caution!',
+    defaultMessage:
+      'Set permissions for trusted colony members. Use with caution!',
   },
   recoveryTitle: {
     id: 'dashboard.AdvancedDialog.recoveryTitle',
@@ -41,7 +42,8 @@ const MSG = defineMessages({
   },
   upgradeDescription: {
     id: 'dashboard.AdvancedDialog.upgradeDescription',
-    defaultMessage: 'New colony network version available? Get your colony’s swole on here.',
+    defaultMessage:
+      'New colony network version available? Get your colony’s swole on here.',
   },
   upgradePermissionsList: {
     id: 'dashboard.AdvancedDialog.upgradePermissionsList',
@@ -53,8 +55,7 @@ const MSG = defineMessages({
   },
   editColonyDetailsDescription: {
     id: 'dashboard.AdvancedDialog.editColonyDetailsDescription',
-    defaultMessage:
-      "Change your colony’s logo and name here.",
+    defaultMessage: 'Change your colony’s logo and name here.',
   },
   makeArbitraryTransactionTitle: {
     id: 'dashboard.AdvancedDialog.makeArbitraryTransactionTitle',
@@ -62,7 +63,8 @@ const MSG = defineMessages({
   },
   makeArbitraryTransactionDescription: {
     id: 'dashboard.AdvancedDialog.makeArbitraryTransactionDescription',
-    defaultMessage: "Want to interact with DeFi, or govern an external smart contract?",
+    defaultMessage:
+      'Want to interact with DeFi, or govern an external smart contract?',
   },
 });
 
@@ -82,7 +84,6 @@ const AdvancedDialog = ({
   callStep,
   prevStep,
   colony,
-  nextStep,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
 
@@ -94,7 +95,6 @@ const AdvancedDialog = ({
       title: MSG.managePermissionsTitle,
       description: MSG.managePermissionsDescription,
       icon: 'emoji-building',
-      onClick: () => callStep(nextStep),
     },
     {
       title: MSG.recoveryTitle,
