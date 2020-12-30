@@ -58,6 +58,7 @@ interface CustomWizardDialogProps {
   nextStepExpenditure: string;
   nextStepManageFunds: string;
   nextStepManageDomains: string;
+  nextStepAdvanced: string;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -71,6 +72,7 @@ const ColonyActionsDialog = ({
   nextStepExpenditure,
   nextStepManageFunds,
   nextStepManageDomains,
+  nextStepAdvanced,
 }: Props) => {
   const items = [
     {
@@ -101,6 +103,7 @@ const ColonyActionsDialog = ({
       title: MSG.advanced,
       description: MSG.advancedDesc,
       icon: 'emoji-smiley-nerd',
+      onClick: () => callStep(nextStepAdvanced),
     },
   ];
   return (

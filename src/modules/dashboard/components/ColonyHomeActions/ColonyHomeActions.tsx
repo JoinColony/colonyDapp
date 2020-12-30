@@ -8,6 +8,7 @@ import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
 import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
+import AdvancedDialog from '~dashboard/AdvancedDialog';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
 import { Colony } from '~data/index';
@@ -33,6 +34,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStepExpenditure: 'dashboard.ExpendituresDialog',
         nextStepManageFunds: 'dashboard.ManageFundsDialog',
         nextStepManageDomains: 'dashboard.ManageDomainsDialog',
+        nextStepAdvanced: 'dashboard.AdvancedDialog',
       },
     },
     {
@@ -67,6 +69,13 @@ const ColonyHomeActions = ({ colony }: Props) => {
     },
     {
       component: ManageDomainsDialog,
+      props: {
+        prevStep: 'dashboard.ColonyActionsDialog',
+        colony,
+      },
+    },
+    {
+      component: AdvancedDialog,
       props: {
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
