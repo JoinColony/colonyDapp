@@ -20,6 +20,7 @@ export interface FormValues {
 interface CustomWizardDialogProps {
   prevStep: string;
   colony: Colony;
+  id?: string;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -32,6 +33,7 @@ const CreateEditDomainDialog = ({
   cancel,
   close,
   colony,
+  id,
 }: Props) => {
   const validationSchema = yup.object().shape({
     domainName: yup.string().required(),
@@ -58,6 +60,7 @@ const CreateEditDomainDialog = ({
             {...formValues}
             back={() => callStep(prevStep)}
             colony={colony}
+            id={id}
           />
         </Dialog>
       )}

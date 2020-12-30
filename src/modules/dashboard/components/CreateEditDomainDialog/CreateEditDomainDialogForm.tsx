@@ -22,9 +22,14 @@ import { FormValues } from './CreateEditDomainDialog';
 import styles from './CreateEditDomainDialogForm.css';
 
 const MSG = defineMessages({
-  title: {
-    id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.title',
+  titleCreate: {
+    id:
+      'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleCreate',
     defaultMessage: 'Create a new domain',
+  },
+  titleEdit: {
+    id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleEdit',
+    defaultMessage: 'Edit domain details',
   },
   name: {
     id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.name',
@@ -44,19 +49,21 @@ const MSG = defineMessages({
       'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noPermissionFrom',
     defaultMessage:
       // eslint-disable-next-line max-len
-      'You do not have the {roleRequired} permission required to take this action.',
+      'You need the {roleRequired} permission in {domain} to take this action.',
   },
 });
 
 interface Props {
   back: () => void;
   colony: Colony;
+  id?: string;
 }
 
 const CreateEditDomainDialogForm = ({
   back,
   colony,
   handleSubmit,
+  id,
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
 
@@ -73,12 +80,12 @@ const CreateEditDomainDialogForm = ({
       <DialogSection>
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
-          text={MSG.title}
+          text={id === undefined ? MSG.titleCreate : MSG.titleEdit}
         />
       </DialogSection>
       {!canCreateEditDomain && (
         <DialogSection>
-          <PermissionRequiredInfo requiredRoles={[ColonyRole.Administration]} />
+          <PermissionRequiredInfo requiredRoles={[ColonyRole.Architecture]} />
         </DialogSection>
       )}
       <DialogSection>
@@ -123,10 +130,12 @@ const CreateEditDomainDialogForm = ({
               values={{
                 roleRequired: (
                   <PermissionsLabel
-                    permission={ColonyRole.Administration}
-                    name={{ id: `role.${ColonyRole.Administration}` }}
+                    permission={ColonyRole.Architecture}
+                    name={{ id: `role.${ColonyRole.Architecture}` }}
                   />
                 ),
+                // placeholder for now, needs to be a variable
+                domain: 'Root',
               }}
             />
           </span>
