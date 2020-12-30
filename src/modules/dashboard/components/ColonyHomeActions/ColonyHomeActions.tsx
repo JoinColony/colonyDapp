@@ -10,6 +10,7 @@ import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import AdvancedDialog from '~dashboard/AdvancedDialog';
+import RecoveryModeDialog from '~dashboard/RecoveryModeDialog';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
 import { Colony } from '~data/index';
@@ -87,7 +88,14 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: AdvancedDialog,
       props: {
         prevStep: 'dashboard.ColonyActionsDialog',
+        nextStepRecovery: 'dashboard.RecoveryModeDialog',
         colony,
+      },
+    },
+    {
+      component: RecoveryModeDialog,
+      props: {
+        prevStep: 'dashboard.AdvancedDialog',
       },
     },
   ]);

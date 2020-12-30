@@ -69,7 +69,7 @@ const MSG = defineMessages({
 });
 
 interface CustomWizardDialogProps {
-  nextStep: string;
+  nextStepRecovery: string;
   prevStep: string;
   colony: Colony;
 }
@@ -83,6 +83,7 @@ const AdvancedDialog = ({
   close,
   callStep,
   prevStep,
+  nextStepRecovery,
   colony,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
@@ -100,6 +101,7 @@ const AdvancedDialog = ({
       title: MSG.recoveryTitle,
       description: MSG.recoveryDescription,
       icon: 'emoji-alarm-lamp',
+      onClick: () => callStep(nextStepRecovery),
     },
     {
       title: MSG.upgradeTitle,
