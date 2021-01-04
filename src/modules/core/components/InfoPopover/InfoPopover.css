@@ -98,3 +98,8 @@
 .reputationError {
   color: var(--danger);
 }
+
+.etherscanLink {
+  font-weight: var(--weight-bold);
+  color: var(--colony-blue);
+}

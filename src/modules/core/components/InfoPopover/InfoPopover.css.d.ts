@@ -9,3 +9,4 @@ export const badges: string;
 export const symbol: string;
 export const nativeTokenMessage: string;
 export const reputationError: string;
+export const etherscanLink: string;
