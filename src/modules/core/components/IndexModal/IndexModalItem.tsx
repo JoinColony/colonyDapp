@@ -100,8 +100,8 @@ const IndexModalItem = ({
       {!comingSoon && !permissionRequired && (
         <div className={styles.iconCaret}>
           <Icon
-            appearance={{ size: 'normal' }}
-            name="caret-right"
+            appearance={{ size: 'extraTiny' }}
+            name="caret-right-small"
             title={title}
           />
         </div>
