@@ -83,6 +83,7 @@ const ManageDomainsDialog = ({
       permissionInfoTextValues: {
         permissionRequired: <FormattedMessage {...MSG.domainPermissionsList} />,
       },
+      onClick: () => callStep(nextStep),
     },
   ];
 

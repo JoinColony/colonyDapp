@@ -134,8 +134,8 @@ const CreateEditDomainDialogForm = ({
                     name={{ id: `role.${ColonyRole.Architecture}` }}
                   />
                 ),
-                // placeholder for now, needs to be a variable
-                domain: 'Root',
+                // placeholder for now, needs to be actual domain when `Edit` is done
+                domain: id === undefined ? 'Root' : 'DOMAIN PLACEHOLDER',
               }}
             />
           </span>
