@@ -1,7 +1,12 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
-import { ConfirmDialog } from '~core/Dialog';
+import Dialog, { DialogProps } from '~core/Dialog';
+import { ActionForm } from '~core/Fields';
+
+import { ActionTypes } from '~redux/index';
+import { WizardDialogType } from '~utils/hooks';
 
 const MSG = defineMessages({
   title: {
@@ -27,24 +32,34 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.RecoveryModeDialog';
-
-interface Props {
-  cancel: () => void;
-  close: () => void;
+interface CustomWizardDialogProps {
+  prevStep: string;
 }
 
-const RecoveryModeDialog = ({ cancel, close }: Props) => (
-  <ConfirmDialog
-    appearance={{ theme: 'danger' }}
-    cancel={cancel}
-    close={close}
-    heading={MSG.title}
-    confirmButtonText="Confirm"
-  >
-    <FormattedMessage {...MSG.description1} />
-  </ConfirmDialog>
-);
+type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+
+const displayName = 'dashboard.RecoveryModeDialog';
+
+const RecoveryModeDialog = ({ cancel, close }: Props) => {
+  const validationSchema = yup.object().shape({
+    annotation: yup.string().max(4000),
+  });
+
+  return (
+    <ActionForm
+      initialValues={{
+        annotation: undefined,
+      }}
+      submit={ActionTypes.COLONY_RECOVERY_MODE_ENTER}
+      error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
+      success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
+      validationSchema={validationSchema}
+      onSuccess={close}
+    >
+      <Dialog cancel={cancel}>{MSG.title}</Dialog>
+    </ActionForm>
+  );
+};
 
 RecoveryModeDialog.displayName = displayName;
 
