@@ -57,7 +57,7 @@
 .baseInput {
   flex: 1 1 0;
   margin-left: 10px;
-  max-width: 340px;
+  max-width: 305px;
   vertical-align: baseline;
   border: none;
   border-bottom: 1px solid var(--colony-black);
