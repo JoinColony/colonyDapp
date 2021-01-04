@@ -3,7 +3,7 @@
 .tokenAmount {
   display: grid;
   width: 100%;
-  grid-template-columns: auto 100px;
+  grid-template-columns: auto 120px;
 }
 
 .tokenAmountSelect {
