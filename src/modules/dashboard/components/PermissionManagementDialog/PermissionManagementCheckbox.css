@@ -12,6 +12,7 @@
   align-items: flex-start;
   padding-left: 15px;
   font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
   line-height: 18px;
 }
 
