@@ -574,7 +574,7 @@ function* createMintTokensAction({
 }
     
 function* createVersionUpgradeAction({
-  payload: { colonyAddress, colonyName },
+  payload: { colonyAddress, colonyName, version },
   meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_VERSION_UPGRADE>) {
@@ -582,7 +582,13 @@ function* createVersionUpgradeAction({
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
-    const { version: newVersion } = yield getNetworkContracts();
+    const { version: newestVersion } = yield getNetworkContracts();
+    const nextVersion = parseInt(version) + 1;
+    if (nextVersion > parseInt(newestVersion)) {
+      throw new Error(
+        'Colony has the newest version',
+      );
+    }
 
     txChannel = yield call(getTxChannel, metaId);
 
@@ -590,7 +596,7 @@ function* createVersionUpgradeAction({
       context: ClientType.ColonyClient,
       methodName: 'upgrade',
       identifier: colonyAddress,
-      params: [newVersion],
+      params: [nextVersion],
     });
 
     const {
@@ -598,7 +604,6 @@ function* createVersionUpgradeAction({
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }

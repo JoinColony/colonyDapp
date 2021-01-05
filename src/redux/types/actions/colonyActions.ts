@@ -97,6 +97,7 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
       {
         colonyAddress: Address;
+        version: number;
         colonyName?: string;
       },
       MetaWithHistory<object>
