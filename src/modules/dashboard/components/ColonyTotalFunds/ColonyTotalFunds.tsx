@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -62,6 +62,10 @@ const ColonyTotalFunds = ({
     },
   });
 
+  useEffect(() => {
+    setCurrentTokenAddress(nativeTokenAddress);
+  }, [nativeTokenAddress]);
+
   const currentToken = useMemo(() => {
     if (data && data.tokens) {
       return data.tokens.find(
@@ -70,7 +74,6 @@ const ColonyTotalFunds = ({
     }
     return undefined;
   }, [data, currentTokenAddress]);
-
   if (!data || !currentToken || isLoadingTokenBalances) {
     return (
       <div className={styles.main}>
