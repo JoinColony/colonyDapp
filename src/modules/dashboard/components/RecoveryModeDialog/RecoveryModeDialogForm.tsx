@@ -25,13 +25,13 @@ const MSG = defineMessages({
   description1: {
     id: 'admin.RecoveryModeDialog.RecoveryModeDialogForm.description1',
     defaultMessage: `If you believe that something dangerous is happening in
-    your colony (e.g. it is under attack),recovery mode will disable the colony
-    and prevent further activity undtil the issue has been overcome.`,
+    your colony (e.g. it is under attack), recovery mode will disable the colony
+    and prevent further activity until the issue has been overcome.`,
   },
   description2: {
     id: 'admin.RecoveryModeDialog.RecoveryModeDialogForm.description2',
     defaultMessage: `
-    Leaving recovery reuqires the approval of a majority of members
+    Leaving recovery requires the approval of a majority of members
     holding the {roleRequired} permission. <a>Learn more.</a>`,
   },
   annotation: {
@@ -102,7 +102,11 @@ const RecoveryModeDialogForm = ({ back, colony }: Props) => {
         </div>
       </DialogSection>
       <DialogSection>
-        <Annotations label={MSG.annotation} name="annotations" />
+        <Annotations
+          label={MSG.annotation}
+          name="annotations"
+          disabled={!userHasPermission}
+        />
       </DialogSection>
       {!userHasPermission && (
         <DialogSection>
