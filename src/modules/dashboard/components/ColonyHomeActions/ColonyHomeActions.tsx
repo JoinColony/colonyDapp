@@ -96,6 +96,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: RecoveryModeDialog,
       props: {
         prevStep: 'dashboard.AdvancedDialog',
+        colony,
       },
     },
   ]);
