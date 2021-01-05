@@ -45,7 +45,9 @@ const MSG = defineMessages({
     defaultMessage: 'Explain why you’re creating this domain',
   },
   noPermission: {
-    id: 'dashboard.CreatePaymentDialog.CreateEditDomainDialogForm.noPermission',
+    id:
+      // eslint-disable-next-line max-len
+      'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.noPermission',
     defaultMessage:
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
