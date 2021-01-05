@@ -4,9 +4,9 @@ import { defineMessages } from 'react-intl';
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
 import ExpendituresDialog from '~dashboard/ExpendituresDialog';
-import CreateEditDomainDialog from '~dashboard/CreateEditDomainDialog';
 import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
 import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
+
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import AdvancedDialog from '~dashboard/AdvancedDialog';
@@ -72,12 +72,12 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: ManageDomainsDialog,
       props: {
         prevStep: 'dashboard.ColonyActionsDialog',
-        nextStep: 'dashboard.CreateEditDomainDialog',
+        nextStep: 'dashboard.ManageDomainsDialog',
         colony,
       },
     },
     {
-      component: CreateEditDomainDialog,
+      component: ManageDomainsDialog,
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,

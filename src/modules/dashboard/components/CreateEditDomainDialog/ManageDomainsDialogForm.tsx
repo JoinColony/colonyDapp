@@ -18,34 +18,32 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '../../../transformers';
 import { canArchitect } from '../../../users/checks';
 
-import { FormValues } from './CreateEditDomainDialog';
-import styles from './CreateEditDomainDialogForm.css';
+import { FormValues } from './ManageDomainsDialog';
+import styles from './ManageDomainsDialogForm.css';
 
 const MSG = defineMessages({
   titleCreate: {
-    id:
-      'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleCreate',
+    id: 'dashboard.ManageDomainsDialog.ManageDomainsDialogForm.titleCreate',
     defaultMessage: 'Create a new domain',
   },
   titleEdit: {
-    id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleEdit',
+    id: 'dashboard.ManageDomainsDialog.ManageDomainsDialogForm.titleEdit',
     defaultMessage: 'Edit domain details',
   },
   name: {
-    id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.name',
+    id: 'dashboard.ManageDomainsDialog.ManageDomainsDialogForm.name',
     defaultMessage: 'Domain name',
   },
   purpose: {
-    id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.name',
+    id: 'dashboard.ManageDomainsDialog.ManageDomainsDialogForm.name',
     defaultMessage: 'What is the purpose of this domain?',
   },
   annotation: {
-    id:
-      'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.annotation',
+    id: 'dashboard.ManageDomainsDialog.ManageDomainsDialogForm.annotation',
     defaultMessage: 'Explain why you’re creating this domain',
   },
   noPermission: {
-    id: 'dashboard.CreatePaymentDialog.CreateEditDomainDialogForm.noPermission',
+    id: 'dashboard.ManageDomainsDialog.ManageDomainsDialogForm.noPermission',
     defaultMessage:
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
@@ -58,7 +56,7 @@ interface Props {
   id?: string;
 }
 
-const CreateEditDomainDialogForm = ({
+const ManageDomainsDialogForm = ({
   back,
   colony,
   handleSubmit,
@@ -157,4 +155,4 @@ const CreateEditDomainDialogForm = ({
   );
 };
 
-export default CreateEditDomainDialogForm;
+export default ManageDomainsDialogForm;
