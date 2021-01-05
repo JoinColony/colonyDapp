@@ -9,6 +9,6 @@ export const sizeSmall: string;
 export const colorSchemaGrey: string;
 export const colorSchemaDark: string;
 export const colorSchemaTransparent: string;
-export const positionRelative: string;
+export const inputContainer: string;
 export const characterCounter: string;
 export const paddingRightExtra: string;

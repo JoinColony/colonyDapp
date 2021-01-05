@@ -98,11 +98,10 @@ const InputComponent = ({
       onChange={onChange}
       placeholder={placeholder}
       ref={innerRef}
-      maxLength={maxLength}
       {...props}
     />
   ) : (
-    <div className={styles.positionRelative}>
+    <div className={styles.inputContainer}>
       <input
         className={getMainClasses(
           { paddingRight: 'extra', ...appearance },

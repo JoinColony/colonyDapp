@@ -1,6 +1,13 @@
-.displayFlex {
+.nameAndColorContainer {
   display: flex;
   align-items: center;
+}
+
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
 }
 
 .domainName {

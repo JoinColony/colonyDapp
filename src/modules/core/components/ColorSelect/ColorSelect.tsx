@@ -27,7 +27,7 @@ interface Props {
   /** Callback function, called after value is changed */
   onColorChange?: (color: Color) => any;
 
-  alignOptions?: Appearance['alignOptions'];
+  appearance?: Appearance;
 }
 
 const displayName = 'ColorSelect';
@@ -36,7 +36,7 @@ const ColorSelect = ({
   disabled,
   activeOption,
   onColorChange,
-  alignOptions,
+  appearance,
 }: Props) => {
   const onChange = useCallback(
     (color: Color) => {
@@ -80,7 +80,7 @@ const ColorSelect = ({
         <Select
           appearance={{
             theme: 'grid',
-            alignOptions,
+            alignOptions: appearance?.alignOptions,
           }}
           elementOnly
           label={MSG.labelColorSelect}

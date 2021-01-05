@@ -44,9 +44,8 @@ const MSG = defineMessages({
       'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.annotation',
     defaultMessage: 'Explain why you’re creating this domain',
   },
-  noPermissionFrom: {
-    id:
-      'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noPermissionFrom',
+  noPermission: {
+    id: 'dashboard.CreatePaymentDialog.CreateEditDomainDialogForm.noPermission',
     defaultMessage:
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
@@ -81,6 +80,7 @@ const CreateEditDomainDialogForm = ({
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
           text={id === undefined ? MSG.titleCreate : MSG.titleEdit}
+          className={styles.title}
         />
       </DialogSection>
       {!canCreateEditDomain && (
@@ -89,7 +89,7 @@ const CreateEditDomainDialogForm = ({
         </DialogSection>
       )}
       <DialogSection>
-        <div className={styles.displayFlex}>
+        <div className={styles.nameAndColorContainer}>
           <div className={styles.domainName}>
             <Input
               label={MSG.name}
@@ -100,7 +100,7 @@ const CreateEditDomainDialogForm = ({
           </div>
           <ColorSelect
             activeOption={domainColor}
-            alignOptions="right"
+            appearance={{ alignOptions: 'right' }}
             onColorChange={setDomainColor}
             disabled={!canCreateEditDomain}
           />
@@ -111,7 +111,6 @@ const CreateEditDomainDialogForm = ({
           label={MSG.purpose}
           name="purpose"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          maxLength={90}
           disabled={!canCreateEditDomain}
         />
       </DialogSection>
@@ -126,7 +125,7 @@ const CreateEditDomainDialogForm = ({
         <DialogSection>
           <span className={styles.noPermissionFromMessage}>
             <FormattedMessage
-              {...MSG.noPermissionFrom}
+              {...MSG.noPermission}
               values={{
                 roleRequired: (
                   <PermissionsLabel
