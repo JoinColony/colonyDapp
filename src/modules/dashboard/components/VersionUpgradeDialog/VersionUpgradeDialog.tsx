@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 
-import { pipe, mergePayload, withKey } from '~utils/actions';
+import { pipe, mergePayload, withMeta } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -23,17 +24,22 @@ type Props = DialogProps &
 const displayName = 'dashboard.VersionUpgradeDialog';
 
 const VersionUpgradeDialog = ({
-  colony: { colonyAddress },
+  colony: { colonyAddress, version, colonyName },
   colony,
   cancel,
   close,
 }: Props) => {
-  const transform = useCallback(
-    pipe(withKey(colonyAddress), mergePayload({ colonyAddress })),
-    [colonyAddress],
-  );
-  const { version: networkVersion } = useNetworkContracts();
+  const history = useHistory();
 
+  const transform = useCallback(
+    pipe(
+      mergePayload({ colonyAddress, version, colonyName }),
+      withMeta({ history }),
+    ),
+    [colonyAddress, version, colonyName],
+  );
+
+  const { version: networkVersion } = useNetworkContracts();
   return (
     <ActionForm
       initialValues={{}}

@@ -583,11 +583,9 @@ function* createVersionUpgradeAction({
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     const { version: newestVersion } = yield getNetworkContracts();
-    const nextVersion = parseInt(version) + 1;
-    if (nextVersion > parseInt(newestVersion)) {
-      throw new Error(
-        'Colony has the newest version',
-      );
+    const nextVersion = parseInt(version, 10) + 1;
+    if (nextVersion > parseInt(newestVersion, 10)) {
+      throw new Error('Colony has the newest version');
     }
 
     txChannel = yield call(getTxChannel, metaId);
