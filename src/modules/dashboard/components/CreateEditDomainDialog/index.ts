@@ -1,1 +1,1 @@
-export { default } from './ManageDomainsDialog';
+export { default } from './CreateEditDomainDialog';

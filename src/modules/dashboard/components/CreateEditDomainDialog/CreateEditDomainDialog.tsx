@@ -9,7 +9,7 @@ import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 
-import DialogForm from './ManageDomainsDialogForm';
+import DialogForm from './CreateEditDomainDialogForm';
 
 export interface FormValues {
   domainName: string;
@@ -25,9 +25,9 @@ interface CustomWizardDialogProps {
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 
-const displayName = 'dashboard.ManageDomainsDialog';
+const displayName = 'dashboard.CreateEditDomainDialog';
 
-const ManageDomainsDialog = ({
+const CreateEditDomainDialog = ({
   callStep,
   prevStep,
   cancel,
@@ -68,6 +68,6 @@ const ManageDomainsDialog = ({
   );
 };
 
-ManageDomainsDialog.displayName = displayName;
+CreateEditDomainDialog.displayName = displayName;
 
-export default ManageDomainsDialog;
+export default CreateEditDomainDialog;
