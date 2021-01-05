@@ -1,46 +1,36 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { FormikProps } from 'formik';
 import * as yup from 'yup';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
+import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 
-const MSG = defineMessages({
-  title: {
-    id: 'admin.RecoveryModeDialog.title',
-    defaultMessage: 'Enter Recovery mode',
-  },
-  description1: {
-    id: 'admin.RecoveryModeDialog.description1',
-    defaultMessage: `If you believe that something dangerous is happening in
-    your colony (e.g. it is under attack),recovery mode will disable the colony
-    and prevent further activity undtil the issue has been overcome.`,
-  },
-  description2: {
-    id: 'admin.RecoveryModeDialog.description2',
-    defaultMessage: `
-    Leaving recovery reuqires the approval of a majority of members
-    holding the {roleRequires} permission`,
-  },
-  annotation: {
-    id: 'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.annotation',
-    defaultMessage:
-      'Explain why you’re putting this colony into recovery mode (optional)',
-  },
-});
+import DialogForm from './RecoveryModeDialogForm';
+
+export interface FormValues {
+  annotation: string;
+}
 
 interface CustomWizardDialogProps {
   prevStep: string;
+  colony: Colony;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 
 const displayName = 'dashboard.RecoveryModeDialog';
 
-const RecoveryModeDialog = ({ cancel, close }: Props) => {
+const RecoveryModeDialog = ({
+  cancel,
+  close,
+  callStep,
+  prevStep,
+  colony,
+}: Props) => {
   const validationSchema = yup.object().shape({
     annotation: yup.string().max(4000),
   });
@@ -56,7 +46,15 @@ const RecoveryModeDialog = ({ cancel, close }: Props) => {
       validationSchema={validationSchema}
       onSuccess={close}
     >
-      <Dialog cancel={cancel}>{MSG.title}</Dialog>
+      {(formValues: FormikProps<FormValues>) => (
+        <Dialog cancel={cancel}>
+          <DialogForm
+            {...formValues}
+            colony={colony}
+            back={() => callStep(prevStep)}
+          />
+        </Dialog>
+      )}
     </ActionForm>
   );
 };
