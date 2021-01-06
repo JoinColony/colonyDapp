@@ -113,6 +113,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
     // Don't track the metadata event, as not all domains might have it
     ColonyAndExtensionsEvents.DomainAdded,
   ],
+  [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
 };
 
 /*
