@@ -113,7 +113,7 @@ const RecoveryModeDialogForm = ({ back, colony }: Props) => {
       </DialogSection>
       {!userHasPermission && (
         <DialogSection>
-          <div className={styles.permissionLabel}>
+          <div className={styles.noPermissionMessage}>
             <FormattedMessage
               {...MSG.noPermission}
               values={{
