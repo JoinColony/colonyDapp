@@ -6,7 +6,7 @@ export { default as FieldSet } from './FieldSet';
 export { default as Input } from './Input';
 export { default as InputLabel } from './InputLabel';
 export { default as InputStatus } from './InputStatus';
-export { default as Select, SelectOption } from './Select';
+export { default as Select, Appearance, SelectOption } from './Select';
 export { default as Textarea, TextareaAutoresize } from './Textarea';
 export { default as Radio } from './Radio';
 export { default as RadioGroup } from './RadioGroup';

@@ -40,8 +40,11 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  margin-top: 7px;
   padding: 10px;
   width: 108px;
+  position: absolute;
+  z-index: var(--z-index-positioning);
   border: 1px solid rgb(241, 242, 245);
   border-radius: var(--radius-normal);
   background-color: rgb(255, 255, 255);
