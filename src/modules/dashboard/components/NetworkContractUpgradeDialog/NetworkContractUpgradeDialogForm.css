@@ -1,0 +1,17 @@
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.noPermissionFromMessage {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}
+
+.noPermissionFromMessage > div {
+  vertical-align: bottom;
+}

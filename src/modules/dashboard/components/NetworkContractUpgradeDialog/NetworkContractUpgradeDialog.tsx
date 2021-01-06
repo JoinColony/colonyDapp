@@ -1,41 +1,60 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { FormikProps } from 'formik';
+import * as yup from 'yup';
 
-import { ConfirmDialog } from '~core/Dialog';
+import Dialog, { DialogProps } from '~core/Dialog';
+import { ActionForm } from '~core/Fields';
 
-const MSG = defineMessages({
-  title: {
-    id: 'dashboard.NetworkContractUpgradeDialog.title',
-    defaultMessage: 'Upgrade Colony Contract Version',
-  },
-  description: {
-    id: 'dashboard.NetworkContractUpgradeDialog.description',
-    defaultMessage: `
-      You are about to upgrade your Colony's contract to the latest version`,
-  },
-  upgradeButton: {
-    id: 'dashboard.NetworkContractUpgradeDialog.upgradeButton',
-    defaultMessage: 'Upgrade Contract Version',
-  },
-});
+import { Colony } from '~data/index';
+import { ActionTypes } from '~redux/index';
+import { WizardDialogType } from '~utils/hooks';
+
+import DialogForm from './NetworkContractUpgradeDialogForm';
+
+export interface FormValues {
+  annotation: string;
+}
+
+interface CustomWizardDialogProps {
+  prevStep: string;
+  colony: Colony;
+}
+
+type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 
 const displayName = 'dashboard.NetworkContractUpgradeDialog';
 
-interface Props {
-  cancel: () => void;
-  close: () => void;
-}
-
-const NetworkContractUpgradeDialog = ({ cancel, close }: Props) => (
-  <ConfirmDialog
-    cancel={cancel}
-    close={close}
-    heading={MSG.title}
-    confirmButtonText={MSG.upgradeButton}
-  >
-    <FormattedMessage {...MSG.description} />
-  </ConfirmDialog>
-);
+const NetworkContractUpgradeDialog = ({
+  cancel,
+  close,
+  callStep,
+  prevStep,
+  colony,
+}: Props) => {
+  const validationSchema = yup.object().shape({});
+  return (
+    <ActionForm
+      initialValues={{
+        annotation: undefined,
+      }}
+      submit={ActionTypes.COLONY_VERSION_UPGRADE}
+      error={ActionTypes.COLONY_VERSION_UPGRADE}
+      success={ActionTypes.COLONY_VERSION_UPGRADE}
+      validationSchema={validationSchema}
+      onSuccess={close}
+    >
+      {(formValues: FormikProps<FormValues>) => (
+        <Dialog cancel={cancel}>
+          <DialogForm
+            {...formValues}
+            colony={colony}
+            back={() => callStep(prevStep)}
+          />
+        </Dialog>
+      )}
+    </ActionForm>
+  );
+};
 
 NetworkContractUpgradeDialog.displayName = displayName;
 
