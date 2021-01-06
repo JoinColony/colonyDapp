@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
+import { FormikProps } from 'formik';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
@@ -16,6 +17,7 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '../../../transformers';
 import { canEnterRecoveryMode } from '../../../users/checks';
 
+import { FormValues } from './RecoveryModeDialog';
 import styles from './RecoveryModeDialogForm.css';
 
 const MSG = defineMessages({
@@ -55,7 +57,12 @@ interface Props {
   colony: Colony;
 }
 
-const RecoveryModeDialogForm = ({ back, colony }: Props) => {
+const RecoveryModeDialogForm = ({
+  back,
+  colony,
+  handleSubmit,
+  isSubmitting,
+}: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
@@ -139,6 +146,9 @@ const RecoveryModeDialogForm = ({ back, colony }: Props) => {
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={{ id: 'button.confirm' }}
+          onClick={() => handleSubmit()}
+          loading={isSubmitting}
+          disabled={!userHasPermission}
         />
       </DialogSection>
     </>
