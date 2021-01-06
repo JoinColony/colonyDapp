@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import CopyableAddress from '~core/CopyableAddress';
 import TokenLink from '~core/TokenLink';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyToken } from '~data/index';
@@ -47,7 +48,7 @@ const TokenInfo = ({ token, isTokenNative }: Props) => {
           </p>
         )}
         <div title={address} className={styles.address}>
-          {address}
+          <CopyableAddress full>{address}</CopyableAddress>
         </div>
         {isTokenNative && (
           <p className={styles.nativeTokenMessage}>
