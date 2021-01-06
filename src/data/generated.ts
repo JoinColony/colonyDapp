@@ -685,8 +685,17 @@ export type Query = {
   colonyDomain: ProcessedDomain;
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
+<<<<<<< HEAD
+=======
+  domain: Domain;
+<<<<<<< HEAD
+>>>>>>> Regenerate: graphql after rebase
   domains: Array<SubgraphDomain>;
   events: Array<SubgraphEvent>;
+=======
+  events: Array<SubgraphColonyEvent>;
+  level: Level;
+>>>>>>> Regenerate: graphql after rebase
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
   oneTxPayments: Array<OneTxPayment>;
@@ -739,8 +748,27 @@ export type QueryColonyNameArgs = {
 };
 
 
+<<<<<<< HEAD
+=======
+export type QueryDomainArgs = {
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+};
+
+
+<<<<<<< HEAD
+>>>>>>> Regenerate: graphql after rebase
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
+=======
+export type QueryEventsArgs = {
+  where: EventsFilter;
+};
+
+
+export type QueryLevelArgs = {
+  id: Scalars['String'];
+>>>>>>> Regenerate: graphql after rebase
 };
 
 
@@ -1093,12 +1121,15 @@ export type ActionsFilter = {
 
 export type EventsFilter = {
   associatedColony_contains?: Maybe<Scalars['String']>;
+<<<<<<< HEAD
   name_in?: Maybe<Array<Scalars['String']>>;
 };
 
 export type ByColonyFilter = {
   colonyAddress: Scalars['String'];
   domainChainId?: Maybe<Scalars['Int']>;
+=======
+>>>>>>> Regenerate: graphql after rebase
 };
 
 export type SubgraphBlock = {
@@ -1159,9 +1190,14 @@ export type SubgraphColonyMetadata = {
 
 export type SubgraphColony = {
   id: Scalars['String'];
+<<<<<<< HEAD
   colonyChainId: Scalars['String'];
   address: Scalars['String'];
   ensName: Scalars['String'];
+=======
+<<<<<<< HEAD
+  token: SubgraphToken;
+>>>>>>> Regenerate: graphql after rebase
   metadata: Scalars['String'];
   metadataHistory: Array<SubgraphColonyMetadata>;
   token: SubgraphToken;
@@ -1177,6 +1213,14 @@ export type SubgraphEvent = {
   associatedColony: SubgraphColony;
 };
 
+=======
+  ensName: Scalars['String'];
+  colonyChainId: Scalars['String'];
+  token: Scalars['String'];
+  domains: Array<SubgraphDomain>;
+};
+
+>>>>>>> Regenerate: graphql after rebase
 export type OneTxPayment = {
   id: Scalars['String'];
   agent: Scalars['String'];
@@ -1184,6 +1228,7 @@ export type OneTxPayment = {
   payment: SubgraphPayment;
 };
 
+<<<<<<< HEAD
 export type ProcessedDomain = {
   id: Scalars['String'];
   color: Scalars['Int'];
@@ -1243,6 +1288,16 @@ export type ProcessedColony = {
   transfers: Array<Transfer>;
   unclaimedTransfers: Array<Transfer>;
   events: Array<NetworkEvent>;
+=======
+export type SubgraphColonyEvent = {
+  id: Scalars['String'];
+  transaction: SubgraphTransaction;
+  address: Scalars['String'];
+  associatedColony: SubgraphColony;
+  name: Scalars['String'];
+  argNames: Array<Scalars['String']>;
+  args: Array<Scalars['String']>;
+>>>>>>> Regenerate: graphql after rebase
 };
 
 export type PayoutsFragment = { payouts: Array<(
@@ -1975,6 +2030,17 @@ export type ColonyMembersWithReputationQueryVariables = Exact<{
 
 
 export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
+
+export type SubgraphEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphEventsQuery = { events: Array<(
+    Pick<SubgraphColonyEvent, 'id'>
+    & { destinationAddress: SubgraphColonyEvent['address'], eventType: SubgraphColonyEvent['name'], keys: SubgraphColonyEvent['argNames'], values: SubgraphColonyEvent['args'] }
+    & { transaction: { block: Pick<SubgraphBlock, 'timestamp'> }, colony: { colonyAddress: SubgraphColony['id'], colonyName: SubgraphColony['ensName'], id: SubgraphColony['colonyChainId'], nativeTokenAddress: SubgraphColony['token'] } }
+  )> };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -4883,6 +4949,7 @@ export type SubgraphActionsQueryHookResult = ReturnType<typeof useSubgraphAction
 export type SubgraphActionsLazyQueryHookResult = ReturnType<typeof useSubgraphActionsLazyQuery>;
 export type SubgraphActionsQueryResult = Apollo.QueryResult<SubgraphActionsQuery, SubgraphActionsQueryVariables>;
 <<<<<<< HEAD
+<<<<<<< HEAD
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {
@@ -4920,26 +4987,89 @@ export function useColonySubscribedUsersQuery(baseOptions?: Apollo.QueryHookOpti
 export function useColonySubscribedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>) {
           return Apollo.useLazyQuery<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>(ColonySubscribedUsersDocument, baseOptions);
         }
+<<<<<<< HEAD
 export type ColonySubscribedUsersQueryHookResult = ReturnType<typeof useColonySubscribedUsersQuery>;
 export type ColonySubscribedUsersLazyQueryHookResult = ReturnType<typeof useColonySubscribedUsersLazyQuery>;
 export type ColonySubscribedUsersQueryResult = Apollo.QueryResult<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>;
 export const ColonyMembersWithReputationDocument = gql`
     query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+=======
+export type SubgraphDomainsQueryHookResult = ReturnType<typeof useSubgraphDomainsQuery>;
+export type SubgraphDomainsLazyQueryHookResult = ReturnType<typeof useSubgraphDomainsLazyQuery>;
+export type SubgraphDomainsQueryResult = Apollo.QueryResult<SubgraphDomainsQuery, SubgraphDomainsQueryVariables>;
+export const SubgraphSingleDomainDocument = gql`
+    query SubgraphSingleDomain($colonyAddress: String!, $domainId: Int!) {
+  domains(where: {colonyAddress: $colonyAddress, domainChainId: $domainId}) {
+    id
+    domainChainId
+    parent {
+      id
+      domainChainId
+    }
+    name
+    colonyAddress
+    metadata
+    metadataHistory {
+      id
+      metadata
+    }
+=======
+export const SubgraphEventsDocument = gql`
+    query SubgraphEvents($colonyAddress: String!) {
+  events(where: {associatedColony_contains: $colonyAddress}) {
+    id
+    transaction {
+      block {
+        timestamp
+      }
+    }
+    destinationAddress: address
+    colony: associatedColony {
+      colonyAddress: id
+      colonyName: ensName
+      id: colonyChainId
+      nativeTokenAddress: token
+    }
+    eventType: name
+    keys: argNames
+    values: args
+>>>>>>> Regenerate: graphql after rebase
+  }
+>>>>>>> Regenerate: graphql after rebase
 }
     `;
 
 /**
+<<<<<<< HEAD
  * __useColonyMembersWithReputationQuery__
  *
  * To run a query within a React component, call `useColonyMembersWithReputationQuery` and pass it any options that fit your needs.
  * When your component renders, `useColonyMembersWithReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+=======
+<<<<<<< HEAD
+ * __useSubgraphSingleDomainQuery__
+ *
+ * To run a query within a React component, call `useSubgraphSingleDomainQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphSingleDomainQuery` returns an object from Apollo Client that contains loading, error, and data properties
+=======
+ * __useSubgraphEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+>>>>>>> Regenerate: graphql after rebase
+>>>>>>> Regenerate: graphql after rebase
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
+<<<<<<< HEAD
  * const { data, loading, error } = useColonyMembersWithReputationQuery({
+=======
+<<<<<<< HEAD
+ * const { data, loading, error } = useSubgraphSingleDomainQuery({
+>>>>>>> Regenerate: graphql after rebase
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      domainId: // value for 'domainId'
@@ -4962,4 +5092,24 @@ export type SubgraphSingleDomainLazyQueryHookResult = ReturnType<typeof useSubgr
 export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>;
 =======
 >>>>>>> Add: `TransactionMessagesCount` query
+<<<<<<< HEAD
 >>>>>>> Add: `TransactionMessagesCount` query
+=======
+=======
+ * const { data, loading, error } = useSubgraphEventsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useSubgraphEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphEventsQuery, SubgraphEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphEventsQuery, SubgraphEventsQueryVariables>(SubgraphEventsDocument, baseOptions);
+      }
+export function useSubgraphEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphEventsQuery, SubgraphEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphEventsQuery, SubgraphEventsQueryVariables>(SubgraphEventsDocument, baseOptions);
+        }
+export type SubgraphEventsQueryHookResult = ReturnType<typeof useSubgraphEventsQuery>;
+export type SubgraphEventsLazyQueryHookResult = ReturnType<typeof useSubgraphEventsLazyQuery>;
+export type SubgraphEventsQueryResult = Apollo.QueryResult<SubgraphEventsQuery, SubgraphEventsQueryVariables>;
+>>>>>>> Regenerate: graphql after rebase
+>>>>>>> Regenerate: graphql after rebase
