@@ -523,6 +523,8 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     amount
     tokenAddress
     annotationHash
+    newVersion
+    oldVersion
   }
 }
 
