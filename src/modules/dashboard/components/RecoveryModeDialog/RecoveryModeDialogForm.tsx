@@ -6,6 +6,7 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
+import Link from '~core/Link';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 
@@ -22,14 +23,17 @@ const MSG = defineMessages({
     id: 'admin.RecoveryModeDialog.RecoveryModeDialogForm.title',
     defaultMessage: 'Enter Recovery mode',
   },
-  description1: {
-    id: 'admin.RecoveryModeDialog.RecoveryModeDialogForm.description1',
+  recoveryModeDescription: {
+    id:
+      'admin.RecoveryModeDialog.RecoveryModeDialogForm.recoveryModeDescription',
     defaultMessage: `If you believe that something dangerous is happening in
     your colony (e.g. it is under attack), recovery mode will disable the colony
     and prevent further activity until the issue has been overcome.`,
   },
-  description2: {
-    id: 'admin.RecoveryModeDialog.RecoveryModeDialogForm.description2',
+  leavingRecoveryModeDescription: {
+    id:
+      // eslint-disable-next-line max-len
+      'admin.RecoveryModeDialog.RecoveryModeDialogForm.leavingRecoveryModeDescription',
     defaultMessage: `
     Leaving recovery requires the approval of a majority of members
     holding the {roleRequired} permission. <a>Learn more.</a>`,
@@ -41,9 +45,8 @@ const MSG = defineMessages({
   },
   noPermission: {
     id: 'dashboard.RecoveryModeDialog.RecoveryModeDialogForm.noPermission',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'You do not have the {roleRequired} permission required to take this action.',
+    defaultMessage: `You do not have the {roleRequired} permission required
+      to take this action.`,
   },
 });
 
@@ -77,12 +80,12 @@ const RecoveryModeDialogForm = ({ back, colony }: Props) => {
         </DialogSection>
       )}
       <DialogSection>
-        <FormattedMessage {...MSG.description1} />
+        <FormattedMessage {...MSG.recoveryModeDescription} />
       </DialogSection>
       <DialogSection>
         <div className={styles.permissionLabel}>
           <FormattedMessage
-            {...MSG.description2}
+            {...MSG.leavingRecoveryModeDescription}
             values={{
               roleRequired: (
                 <PermissionsLabel
@@ -93,9 +96,9 @@ const RecoveryModeDialogForm = ({ back, colony }: Props) => {
                 />
               ),
               a: (chunks) => (
-                <a href="/" target="_blank" className={styles.link}>
+                <Link href="/" to="/" target="_blank" className={styles.link}>
                   {chunks}
-                </a>
+                </Link>
               ),
             }}
           />
