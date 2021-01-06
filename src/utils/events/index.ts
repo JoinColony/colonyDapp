@@ -27,8 +27,8 @@ interface ActionValues {
   tokenAddress: Address;
   fromDomain: number;
   toDomain: number;
-  oldVersion?: string;
-  newVersion?: string;
+  oldVersion: string;
+  newVersion: string;
 }
 
 /*
@@ -300,6 +300,8 @@ export const getActionValues = async (
     toDomain: 1,
     amount: '0',
     tokenAddress: AddressZero,
+    newVersion: '0',
+    oldVersion: '0',
   };
   switch (actionType) {
     case ColonyActions.Payment: {

@@ -35,8 +35,8 @@ export interface EventValues {
   decimals: number;
   fromDomain: OneDomain;
   toDomain: OneDomain;
-  oldVersion?: string;
-  newVersion?: string;
+  oldVersion: string;
+  newVersion: string;
 }
 
 interface Props {

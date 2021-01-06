@@ -572,7 +572,7 @@ function* createMintTokensAction({
     txChannel.close();
   }
 }
-    
+
 function* createVersionUpgradeAction({
   payload: { colonyAddress, colonyName, version },
   meta: { id: metaId, history },
