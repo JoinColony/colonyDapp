@@ -5,13 +5,13 @@
   color: var(--dark);
 }
 
-.noPermissionFromMessage {
+.noPermissionMessage {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   line-height: 18px;
   color: var(--danger);
 }
 
-.noPermissionFromMessage > div {
+.noPermissionMessage > div {
   vertical-align: bottom;
 }

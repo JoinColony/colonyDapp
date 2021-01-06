@@ -31,7 +31,10 @@ const NetworkContractUpgradeDialog = ({
   prevStep,
   colony,
 }: Props) => {
-  const validationSchema = yup.object().shape({});
+  const validationSchema = yup.object().shape({
+    annotation: yup.string().max(4000),
+  });
+
   return (
     <ActionForm
       initialValues={{

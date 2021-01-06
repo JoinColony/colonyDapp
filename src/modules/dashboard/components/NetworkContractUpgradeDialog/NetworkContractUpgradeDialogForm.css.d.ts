@@ -1,2 +1,2 @@
 export const title: string;
-export const noPermissionFromMessage: string;
+export const noPermissionMessage: string;
