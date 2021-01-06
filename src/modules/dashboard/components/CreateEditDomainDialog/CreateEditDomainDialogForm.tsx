@@ -78,7 +78,7 @@ const CreateEditDomainDialogForm = ({
 
   return (
     <>
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'heading' }}>
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
           text={id === undefined ? MSG.titleCreate : MSG.titleEdit}
