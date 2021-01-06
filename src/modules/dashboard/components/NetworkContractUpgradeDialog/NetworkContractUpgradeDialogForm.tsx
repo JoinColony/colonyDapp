@@ -10,7 +10,7 @@ import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 
-import { Colony, useLoggedInUser } from '~data/index';
+import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 
 import { getAllUserRoles } from '../../../transformers';
@@ -49,6 +49,7 @@ interface Props {
 const NetworkContractUpgradeDialogForm = ({
   back,
   colony,
+  colony: { version },
   handleSubmit,
   isSubmitting,
 }: Props & FormikProps<FormValues>) => {
@@ -59,9 +60,11 @@ const NetworkContractUpgradeDialogForm = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles);
 
+  const { version: newVersion } = useNetworkContracts();
+
   return (
     <>
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'heading' }}>
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
           text={MSG.title}
@@ -73,6 +76,10 @@ const NetworkContractUpgradeDialogForm = ({
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Root]} />
         </DialogSection>
       )}
+      <DialogSection>
+        <p>Current version: {version}</p>
+        <p>New version: {newVersion}</p>
+      </DialogSection>
       <DialogSection>
         <Annotations
           label={MSG.annotation}
