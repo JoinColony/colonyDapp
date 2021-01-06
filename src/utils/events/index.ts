@@ -284,8 +284,8 @@ const getVersionUpgradeActionValues = async (
   } = versionUpgradeEvent;
 
   return {
-    oldVersion: bigNumberify(oldVersion).toString(),
-    newVersion: bigNumberify(newVersion).toString(),
+    oldVersion: bigNumberify(oldVersion || '0').toString(),
+    newVersion: bigNumberify(newVersion || '0').toString(),
   };
 };
 
