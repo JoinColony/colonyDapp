@@ -19,6 +19,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
   },
+  comingSoonMessage: {
+    id: 'dashboard.ColonyNavigation.comingSoonMessage',
+    defaultMessage: 'Coming Soon',
+  },
 });
 
 const displayName = 'dashboard.ColonyHome.ColonyNavigation';
