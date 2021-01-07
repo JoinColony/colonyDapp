@@ -26,6 +26,18 @@ const MSG = defineMessages({
       'dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.title',
     defaultMessage: 'Upgrade Colony',
   },
+  currentVersion: {
+    id:
+      // eslint-disable-next-line max-len
+      'dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.currentVersion',
+    defaultMessage: 'Current version',
+  },
+  newVersion: {
+    id:
+      // eslint-disable-next-line max-len
+      'dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.newVersion',
+    defaultMessage: 'New version',
+  },
   annotation: {
     id:
       // eslint-disable-next-line max-len
@@ -77,8 +89,16 @@ const NetworkContractUpgradeDialogForm = ({
         </DialogSection>
       )}
       <DialogSection>
-        <p>Current version: {version}</p>
-        <p>New version: {newVersion}</p>
+        <div className={styles.contractVersionLine}>
+          <FormattedMessage {...MSG.currentVersion} />
+          <div className={styles.contractVersionNumber}>{version}</div>
+        </div>
+        <div className={styles.contractVersionLine}>
+          <FormattedMessage {...MSG.newVersion} />
+          <div className={styles.contractVersionNumber}>
+            {newVersion === null ? version : newVersion}
+          </div>
+        </div>
       </DialogSection>
       <DialogSection>
         <Annotations

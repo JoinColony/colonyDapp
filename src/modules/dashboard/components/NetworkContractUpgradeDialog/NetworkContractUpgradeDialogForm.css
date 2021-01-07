@@ -15,3 +15,16 @@
 .noPermissionMessage > div {
   vertical-align: bottom;
 }
+
+.contractVersionLine {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+  margin: 0 80px;
+  padding: 15px 0;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.contractVersionNumber {
+  color: var(--dark);
+}
