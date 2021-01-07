@@ -104,17 +104,6 @@ fragment FullColony on Colony {
   isNativeTokenLocked @client
 }
 
-fragment SubmissionFields on Submission {
-  id
-  createdAt
-  task {
-    id
-  }
-  status
-  statusChangedAt
-  submission
-}
-
 fragment EventFields on Event {
   createdAt
   initiator {

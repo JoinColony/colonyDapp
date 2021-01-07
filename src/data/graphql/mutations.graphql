@@ -309,14 +309,6 @@ mutation EditDomain($input: EditDomainNameInput!) {
   }
 }
 
-mutation EditSubmission($input: EditSubmissionInput!) {
-  editSubmission(input: $input) {
-    id
-    status
-    submission
-  }
-}
-
 mutation SendTransactionMessage($input: SendTransactionMessageInput!) {
   sendTransactionMessage(input: $input)
 }
