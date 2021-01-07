@@ -24,7 +24,7 @@ type ActionsEventsMap = Partial<
 
 type ActionsDetailsMap = Partial<
   {
-    [key in ActionPageDetails]: ColonyActions[];
+    [key in ColonyActions]: ActionPageDetails[];
   }
 >;
 
