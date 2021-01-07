@@ -296,7 +296,6 @@ function* createMintTokensAction({
 
     yield takeFrom(mintTokens.channel, ActionTypes.TRANSACTION_CREATED);
     yield takeFrom(claimColonyFunds.channel, ActionTypes.TRANSACTION_CREATED);
-    yield put({ type: ActionTypes.COLONY_ACTION_MINT_TOKENS_SUBMITTED });
 
     yield put(transactionReady(mintTokens.id));
     const {
