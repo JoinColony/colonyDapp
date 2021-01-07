@@ -79,18 +79,10 @@ const DetailsWidget = ({
   const Amount = () => values?.amount as ReactElement;
   const Symbol = () => values?.tokenSymbol as ReactElement;
 
-  const showFromDomain = DETAILS_FOR_ACTION[
-    ActionPageDetails.FromDomain
-  ]?.includes(actionType);
-  const showToRecipient = DETAILS_FOR_ACTION[
-    ActionPageDetails.ToRecipient
-  ]?.includes(actionType);
-  const showToDomain = DETAILS_FOR_ACTION[ActionPageDetails.ToDomain]?.includes(
-    actionType,
-  );
-  const showAmount = DETAILS_FOR_ACTION[ActionPageDetails.Amount]?.includes(
-    actionType,
-  );
+  const showFromDomain = DETAILS_FOR_ACTION[actionType]?.includes(ActionPageDetails.FromDomain);
+  const showToRecipient = DETAILS_FOR_ACTION[actionType]?.includes(ActionPageDetails.ToRecipient);
+  const showToDomain = DETAILS_FOR_ACTION[actionType]?.includes(ActionPageDetails.ToDomain);
+  const showAmount = DETAILS_FOR_ACTION[actionType]?.includes(ActionPageDetails.Amount);
 
   return (
     <div>

@@ -95,15 +95,17 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
  */
 
 export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
-  [ActionPageDetails.FromDomain]: [
-    ColonyActions.Payment,
-    ColonyActions.MoveFunds,
+  [ColonyActions.Payment]: [
+    ActionPageDetails.FromDomain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.Amount
   ],
-  [ActionPageDetails.ToDomain]: [ColonyActions.MoveFunds],
-  [ActionPageDetails.ToRecipient]: [ColonyActions.Payment],
-  [ActionPageDetails.Amount]: [
-    ColonyActions.Payment,
-    ColonyActions.MoveFunds,
-    ColonyActions.MintTokens,
+  [ColonyActions.MoveFunds]: [
+    ActionPageDetails.FromDomain,
+    ActionPageDetails.ToDomain,
+    ActionPageDetails.Amount
+  ],
+  [ColonyActions.MintTokens]: [
+    ActionPageDetails.Amount
   ],
 };
