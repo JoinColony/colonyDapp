@@ -1,0 +1,29 @@
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.permissionLabel > div {
+  vertical-align: bottom;
+}
+
+.noPermissionMessage {
+  composes: permissionLabel;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}
+
+.link {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--sky-blue);
+}
+
+.leavingRecoveryMessage {
+  composes: permissionLabel;
+  padding-bottom: 20px;
+}

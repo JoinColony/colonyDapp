@@ -7,7 +7,7 @@ import IndexModal from '~core/IndexModal';
 import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { useLoggedInUser, Colony } from '~data/index';
 import { getAllUserRoles } from '../../../transformers';
-import { hasRoot } from '../../../users/checks';
+import { canEnterRecoveryMode, hasRoot } from '../../../users/checks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -35,6 +35,10 @@ const MSG = defineMessages({
   recoveryDescription: {
     id: 'dashboard.AdvancedDialog.recoveryDescription',
     defaultMessage: 'Disable your colony in case of emergency.',
+  },
+  recoveryPermissionsList: {
+    id: 'dashboard.AdvancedDialog.recoveryPermissionsList',
+    defaultMessage: 'recovery',
   },
   upgradeTitle: {
     id: 'dashboard.AdvancedDialog.upgradeTitle',
@@ -69,7 +73,7 @@ const MSG = defineMessages({
 });
 
 interface CustomWizardDialogProps {
-  nextStep: string;
+  nextStepRecovery: string;
   prevStep: string;
   colony: Colony;
 }
@@ -83,12 +87,18 @@ const AdvancedDialog = ({
   close,
   callStep,
   prevStep,
+  nextStepRecovery,
   colony,
 }: Props) => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+
+  const hasRegisteredProfile = !!username && !ethereal;
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-  const canUpgradeVersion = hasRoot(allUserRoles);
+  const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const canEnterRecovery =
+    hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
 
   const items = [
     {
@@ -100,6 +110,12 @@ const AdvancedDialog = ({
       title: MSG.recoveryTitle,
       description: MSG.recoveryDescription,
       icon: 'emoji-alarm-lamp',
+      onClick: () => callStep(nextStepRecovery),
+      permissionRequired: !canEnterRecovery,
+      permissionInfoText: MSG.permissionsText,
+      permissionInfoTextValues: {
+        permissionsList: <FormattedMessage {...MSG.recoveryPermissionsList} />,
+      },
     },
     {
       title: MSG.upgradeTitle,
