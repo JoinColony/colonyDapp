@@ -9,7 +9,7 @@ import {
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import Numeral, { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
-import FriendlyUserName from '~core/FriendlyUserName';
+import FriendlyName from '~core/FriendlyName';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -150,7 +150,7 @@ const ActionsListItem = ({
                 actionType,
                 initiator: (
                   <span className={styles.titleDecoration}>
-                    <FriendlyUserName
+                    <FriendlyName
                       user={initiatorUserProfile}
                       autoShrinkAddress
                     />
@@ -161,7 +161,7 @@ const ActionsListItem = ({
                  */
                 recipient: (
                   <span className={styles.titleDecoration}>
-                    <FriendlyUserName
+                    <FriendlyName
                       user={recipientUserProfile}
                       autoShrinkAddress
                     />

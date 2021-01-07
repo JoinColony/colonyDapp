@@ -2,12 +2,12 @@ import React, { useRef, useEffect } from 'react';
 
 import MaskedAddress from '~core/MaskedAddress';
 
-import { AnyUser } from '~data/index';
+import { AnyUser, useColonyQuery } from '~data/index';
 import { removeValueUnits } from '~utils/css';
 
-import styles from './FriendlyUserName.css';
+import styles from './FriendlyName.css';
 
-const displayName = 'FriendlyUserName';
+const displayName = 'FriendlyName';
 
 interface Props {
   /*
@@ -24,7 +24,7 @@ interface Props {
   autoShrinkAddress?: boolean;
 }
 
-const FriendlyUserName = ({
+const FriendlyName = ({
   user: {
     profile: { displayName: userDisplayName, username, walletAddress },
   },
@@ -32,6 +32,10 @@ const FriendlyUserName = ({
   autoShrinkAddress = false,
 }: Props) => {
   const addressRef = useRef<HTMLElement>(null);
+  
+  const { data: colonyData } = useColonyQuery({
+    variables: { address: walletAddress || '' },
+  });
 
   /*
    * @NOTE On touching element styles manually
@@ -57,7 +61,7 @@ const FriendlyUserName = ({
   }, [addressRef, autoShrinkAddress]);
   return (
     <div className={styles.main}>
-      {userDisplayName || (username && `@${username}`) || (
+      {userDisplayName || (username && `@${username}`) || colonyData?.colony.colonyName || (
         <MaskedAddress
           address={walletAddress}
           full={!maskedAddress}
@@ -68,6 +72,6 @@ const FriendlyUserName = ({
   );
 };
 
-FriendlyUserName.displayName = displayName;
+FriendlyName.displayName = displayName;
 
-export default FriendlyUserName;
+export default FriendlyName;
