@@ -4,10 +4,10 @@ import { ColonyAndExtensionsEvents, ColonyActions } from '~types/index';
 import { STATUS } from './types';
 
 export enum ActionPageDetails {
-  fromDomain = 'fromDomain',
-  toDomain = 'toDomain',
-  toRecipient = 'toRecipient',
-  amount = 'amount',
+  FromDomain = 'FromDomain',
+  ToDomain = 'ToDomain',
+  ToRecipient = 'ToRecipient',
+  Amount = 'Amount',
 }
 
 type EventRolesMap = Partial<
@@ -95,13 +95,13 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
  */
 
 export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
-  [ActionPageDetails.fromDomain]: [
+  [ActionPageDetails.FromDomain]: [
     ColonyActions.Payment,
     ColonyActions.MoveFunds,
   ],
-  [ActionPageDetails.toDomain]: [ColonyActions.MoveFunds],
-  [ActionPageDetails.toRecipient]: [ColonyActions.Payment],
-  [ActionPageDetails.amount]: [
+  [ActionPageDetails.ToDomain]: [ColonyActions.MoveFunds],
+  [ActionPageDetails.ToRecipient]: [ColonyActions.Payment],
+  [ActionPageDetails.Amount]: [
     ColonyActions.Payment,
     ColonyActions.MoveFunds,
     ColonyActions.MintTokens,
