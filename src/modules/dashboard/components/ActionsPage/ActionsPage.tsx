@@ -272,18 +272,12 @@ const ActionsPage = () => {
     actionType,
     initiator: (
       <span className={styles.titleDecoration}>
-        <FriendlyName
-          user={initiatorProfileWithFallback}
-          autoShrinkAddress
-        />
+        <FriendlyName user={initiatorProfileWithFallback} autoShrinkAddress />
       </span>
     ),
     recipient: (
       <span className={styles.titleDecoration}>
-        <FriendlyName
-          user={recipientProfileWithFallback}
-          autoShrinkAddress
-        />
+        <FriendlyName user={recipientProfileWithFallback} autoShrinkAddress />
       </span>
     ),
     amount: (

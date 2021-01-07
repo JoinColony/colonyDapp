@@ -98,14 +98,12 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   [ColonyActions.Payment]: [
     ActionPageDetails.FromDomain,
     ActionPageDetails.ToRecipient,
-    ActionPageDetails.Amount
+    ActionPageDetails.Amount,
   ],
   [ColonyActions.MoveFunds]: [
     ActionPageDetails.FromDomain,
     ActionPageDetails.ToDomain,
-    ActionPageDetails.Amount
+    ActionPageDetails.Amount,
   ],
-  [ColonyActions.MintTokens]: [
-    ActionPageDetails.Amount
-  ],
+  [ColonyActions.MintTokens]: [ActionPageDetails.Amount],
 };

@@ -32,7 +32,7 @@ const FriendlyName = ({
   autoShrinkAddress = false,
 }: Props) => {
   const addressRef = useRef<HTMLElement>(null);
-  
+
   const { data: colonyData } = useColonyQuery({
     variables: { address: walletAddress || '' },
   });
@@ -61,13 +61,15 @@ const FriendlyName = ({
   }, [addressRef, autoShrinkAddress]);
   return (
     <div className={styles.main}>
-      {userDisplayName || (username && `@${username}`) || colonyData?.colony.colonyName || (
-        <MaskedAddress
-          address={walletAddress}
-          full={!maskedAddress}
-          ref={addressRef}
-        />
-      )}
+      {userDisplayName ||
+        (username && `@${username}`) ||
+        colonyData?.colony.colonyName || (
+          <MaskedAddress
+            address={walletAddress}
+            full={!maskedAddress}
+            ref={addressRef}
+          />
+        )}
     </div>
   );
 };

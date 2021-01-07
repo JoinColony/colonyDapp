@@ -10,9 +10,7 @@ import { ColonyActions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { getDetailsForAction } from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
-import {
-  ACTION_TYPES_ICONS_MAP,
-} from '../../ActionsPage/staticMaps';
+import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
 import DetailsWidgetTeam from './DetailsWidgetTeam';
 
