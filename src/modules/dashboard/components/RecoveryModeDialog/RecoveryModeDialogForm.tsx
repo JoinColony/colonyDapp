@@ -7,7 +7,6 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
-import Link from '~core/Link';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 
@@ -22,12 +21,13 @@ import styles from './RecoveryModeDialogForm.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.RecoveryModeDialog.RecoveryModeDialogForm.title',
+    id: 'dashboard.RecoveryModeDialog.RecoveryModeDialogForm.title',
     defaultMessage: 'Enter Recovery mode',
   },
   recoveryModeDescription: {
     id:
-      'admin.RecoveryModeDialog.RecoveryModeDialogForm.recoveryModeDescription',
+      // eslint-disable-next-line max-len
+      'dashboard.RecoveryModeDialog.RecoveryModeDialogForm.recoveryModeDescription',
     defaultMessage: `If you believe that something dangerous is happening in
     your colony (e.g. it is under attack), recovery mode will disable the colony
     and prevent further activity until the issue has been overcome.`,
@@ -35,7 +35,7 @@ const MSG = defineMessages({
   leavingRecoveryModeDescription: {
     id:
       // eslint-disable-next-line max-len
-      'admin.RecoveryModeDialog.RecoveryModeDialogForm.leavingRecoveryModeDescription',
+      'dashboard.RecoveryModeDialog.RecoveryModeDialogForm.leavingRecoveryModeDescription',
     defaultMessage: `
     Leaving recovery requires the approval of a majority of members
     holding the {roleRequired} permission. <a>Learn more.</a>`,
@@ -89,8 +89,8 @@ const RecoveryModeDialogForm = ({
       <DialogSection>
         <FormattedMessage {...MSG.recoveryModeDescription} />
       </DialogSection>
-      <DialogSection>
-        <div className={styles.permissionLabel}>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.leavingRecoveryMessage}>
           <FormattedMessage
             {...MSG.leavingRecoveryModeDescription}
             values={{
@@ -103,9 +103,15 @@ const RecoveryModeDialogForm = ({
                 />
               ),
               a: (chunks) => (
-                <Link href="/" to="/" target="_blank" className={styles.link}>
+                <a
+                  // eslint-disable-next-line max-len
+                  href="https://help.colony.io/docs/en/how-to-turn-off-recovery-mode"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.link}
+                >
                   {chunks}
-                </Link>
+                </a>
               ),
             }}
           />
@@ -114,7 +120,7 @@ const RecoveryModeDialogForm = ({
       <DialogSection>
         <Annotations
           label={MSG.annotation}
-          name="annotations"
+          name="annotation"
           disabled={!userHasPermission}
         />
       </DialogSection>
