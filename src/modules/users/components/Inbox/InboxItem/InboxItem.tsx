@@ -102,9 +102,6 @@ const InboxItem = ({
   // We might have more than just the worker as the target in the future
   const { workerAddress: targetUserAddress = '' } =
     'workerAddress' in context ? context : {};
-  const { payouts = undefined } = 'payouts' in context ? context : {};
-  // only support one payout for now
-  const payout = payouts && payouts[0];
   const { taskId = '' } = 'taskId' in context ? context : {};
   const { colonyAddress = undefined } =
     'colonyAddress' in context ? context : {};
@@ -227,13 +224,6 @@ const InboxItem = ({
                       value
                     ),
                   ),
-                  submissionPayout: makeInboxDetail(payout, (value) => (
-                    <Numeral
-                      suffix={` ${payout ? payout.token.symbol : ''}`}
-                      integerSeparator=""
-                      value={value.amount}
-                    />
-                  )),
                   task: makeInboxDetail(taskTitle, (value) =>
                     colonyName && taskId ? (
                       <Link to={`/colony/${colonyName}/task/${taskId}`}>
