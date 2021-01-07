@@ -78,7 +78,6 @@ const TransferFundsDialog = ({
           fromDomain: sourceDomain,
           toDomain,
         }) => {
-          // Find the selected token's decimals
           const selectedToken = tokens.find(
             (token) => token.address === tokenAddress,
           );

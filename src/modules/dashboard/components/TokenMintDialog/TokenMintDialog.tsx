@@ -28,7 +28,7 @@ const MSG = defineMessages({
 });
 
 export interface FormValues {
-  justification: string;
+  annotation: string;
   mintAmount: number;
 }
 
@@ -44,7 +44,7 @@ type Props = DialogProps &
 const displayName = 'dashboard.TokenMintDialog';
 
 const validationSchema = yup.object().shape({
-  justification: yup.string(),
+  annotation: yup.string(),
   mintAmount: yup
     .number()
     .required(() => MSG.errorAmountRequired)
@@ -89,7 +89,7 @@ const TokenMintDialog = ({
   return (
     <ActionForm
       initialValues={{
-        justification: '',
+        annotation: '',
         mintAmount: 0,
       }}
       validationSchema={validationSchema}

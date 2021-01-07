@@ -29,8 +29,8 @@ const MSG = defineMessages({
     id: 'admin.Tokens.TokenMintDialog.amountLabel',
     defaultMessage: 'Amount',
   },
-  justificationLabel: {
-    id: 'admin.Tokens.TokenMintDialog.amountLabel',
+  annotationLabel: {
+    id: 'admin.Tokens.TokenMintDialog.annotationLabel',
     defaultMessage: `Explain why you're minting more tokens (optional)`,
   },
 });
@@ -98,7 +98,7 @@ const TokenMintForm = ({
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.annotation}>
           <Annotations
-            label={MSG.justificationLabel}
+            label={MSG.annotationLabel}
             name="annotation"
             disabled={!userHasPermissions}
           />
