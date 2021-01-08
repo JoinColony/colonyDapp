@@ -74,6 +74,7 @@ const MSG = defineMessages({
 
 interface CustomWizardDialogProps {
   nextStepRecovery: string;
+  nextStepEditDetails: string;
   prevStep: string;
   nextStepUpgrade: string;
   colony: Colony;
@@ -90,6 +91,7 @@ const AdvancedDialog = ({
   prevStep,
   nextStepRecovery,
   nextStepUpgrade,
+  nextStepEditDetails,
   colony,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -97,7 +99,7 @@ const AdvancedDialog = ({
   const hasRegisteredProfile = !!username && !ethereal;
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-  const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles);
+  const hasRootPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const canEnterRecovery =
     hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
@@ -123,7 +125,7 @@ const AdvancedDialog = ({
       title: MSG.upgradeTitle,
       description: MSG.upgradeDescription,
       icon: 'emoji-strong-person',
-      permissionRequired: !canUpgradeVersion,
+      permissionRequired: !hasRootPermission,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
@@ -134,6 +136,12 @@ const AdvancedDialog = ({
       title: MSG.editColonyDetailsTitle,
       description: MSG.editColonyDetailsDescription,
       icon: 'emoji-edit-tools',
+      permissionRequired: !hasRootPermission,
+      permissionInfoText: MSG.permissionsText,
+      permissionInfoTextValues: {
+        permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
+      },
+      onClick: () => callStep(nextStepEditDetails),
     },
     {
       title: MSG.makeArbitraryTransactionTitle,
