@@ -1,17 +1,21 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 import { FormikProps } from 'formik';
 
+import AvatarUploader from '~core/AvatarUploader';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Annotations, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import ColonyAvatarUploader from '~admin/Profile/ColonyAvatarUploader';
 
 import { useLoggedInUser, Colony } from '~data/index';
-import { useTransformer } from '~utils/hooks';
+import { ActionTypes } from '~redux/index';
+import { pipe, withKey, mergePayload } from '~utils/actions';
+import { useAsyncFunction, useTransformer } from '~utils/hooks';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -27,6 +31,17 @@ const MSG = defineMessages({
   name: {
     id: 'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.name',
     defaultMessage: 'Colony name',
+  },
+  logo: {
+    id: 'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.logo',
+    defaultMessage: 'Colony Logo (Optional)',
+  },
+  permittedFormat: {
+    id:
+      // eslint-disable-next-line max-len
+      'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.permittedFormat',
+    defaultMessage:
+      'Permitted format: .png or .svg (at least 250px, up to 1MB)',
   },
   annotation: {
     id:
@@ -48,9 +63,22 @@ interface Props {
   colony: Colony;
 }
 
+const uploadActions = {
+  submit: ActionTypes.COLONY_AVATAR_UPLOAD,
+  success: ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
+  error: ActionTypes.COLONY_AVATAR_UPLOAD_ERROR,
+};
+
+const removeActions = {
+  submit: ActionTypes.COLONY_AVATAR_REMOVE,
+  success: ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS,
+  error: ActionTypes.COLONY_AVATAR_REMOVE_ERROR,
+};
+
 const EditColonyDetailsDialogForm = ({
   back,
   colony,
+  colony: { colonyAddress },
   handleSubmit,
   isSubmitting,
 }: Props & FormikProps<FormValues>) => {
@@ -61,6 +89,14 @@ const EditColonyDetailsDialogForm = ({
   const hasRegisteredProfile = !!username && !ethereal;
 
   const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const transform = useCallback(
+    pipe(withKey(colonyAddress), mergePayload({ colonyAddress })),
+    [colonyAddress],
+  );
+
+  const upload = useAsyncFunction({ ...uploadActions, transform }) as any;
+  const remove = useAsyncFunction({ ...removeActions, transform }) as any;
 
   return (
     <>
@@ -76,6 +112,16 @@ const EditColonyDetailsDialogForm = ({
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Root]} />
         </DialogSection>
       )}
+      <DialogSection>
+        <ColonyAvatarUploader colony={colony} />
+        <AvatarUploader
+          label={MSG.logo}
+          upload={upload}
+          remove={remove}
+          placeholder={<div>placeholder</div>}
+        />
+        <FormattedMessage {...MSG.permittedFormat} />
+      </DialogSection>
       <DialogSection>
         <Input
           label={MSG.name}
