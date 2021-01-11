@@ -10,7 +10,6 @@ import { Annotations, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import ColonyAvatarUploader from '~admin/Profile/ColonyAvatarUploader';
 
 import { useLoggedInUser, Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -35,6 +34,16 @@ const MSG = defineMessages({
   logo: {
     id: 'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.logo',
     defaultMessage: 'Colony Logo (Optional)',
+  },
+  dragBrowse: {
+    id:
+      // eslint-disable-next-line max-len
+      'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.dragBrowse',
+    defaultMessage: 'Drag or {browse}',
+  },
+  browse: {
+    id: 'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.browse',
+    defaultMessage: 'browse',
   },
   permittedFormat: {
     id:
@@ -113,14 +122,32 @@ const EditColonyDetailsDialogForm = ({
         </DialogSection>
       )}
       <DialogSection>
-        <ColonyAvatarUploader colony={colony} />
         <AvatarUploader
           label={MSG.logo}
           upload={upload}
           remove={remove}
-          placeholder={<div>placeholder</div>}
+          placeholder={
+            <div className={styles.logoPlaceholder}>
+              <div className={styles.smallText}>
+                <FormattedMessage
+                  {...MSG.dragBrowse}
+                  values={{
+                    browse: (
+                      <Button
+                        text={MSG.browse}
+                        appearance={{ theme: 'blue' }}
+                        onClick={upload}
+                      />
+                    ),
+                  }}
+                />
+              </div>
+            </div>
+          }
         />
-        <FormattedMessage {...MSG.permittedFormat} />
+        <p className={styles.smallText}>
+          <FormattedMessage {...MSG.permittedFormat} />
+        </p>
       </DialogSection>
       <DialogSection>
         <Input

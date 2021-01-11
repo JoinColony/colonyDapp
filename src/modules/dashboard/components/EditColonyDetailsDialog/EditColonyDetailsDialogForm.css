@@ -5,6 +5,21 @@
   color: var(--dark);
 }
 
+.logoPlaceholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.smallText {
+  font-size: var(--size-small);
+}
+
+.tinyText {
+  font-size: var(--size-tiny);
+}
+
 .permissionLabel > div {
   vertical-align: bottom;
 }
