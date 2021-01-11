@@ -1086,6 +1086,7 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   domain: Domain;
+  events: Array<SubgraphEvent>;
   level: Level;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
@@ -1135,6 +1136,11 @@ export type QueryColonyNameArgs = {
 export type QueryDomainArgs = {
   colonyAddress: Scalars['String'];
   ethDomainId: Scalars['Int'];
+};
+
+
+export type QueryEventsArgs = {
+  where: EventsFilter;
 };
 
 
@@ -1510,6 +1516,10 @@ export type ActionsFilter = {
   payment_contains?: Maybe<Scalars['String']>;
 };
 
+export type EventsFilter = {
+  associatedColony_contains?: Maybe<Scalars['String']>;
+};
+
 export type SubgraphBlock = {
   id: Scalars['String'];
   timestamp: Scalars['String'];
@@ -1546,6 +1556,22 @@ export type SubgraphPayment = {
   to: Scalars['String'];
   domain: SubgraphDomain;
   fundingPot: SubgraphFundingPot;
+};
+
+export type SubgraphColony = {
+  id: Scalars['String'];
+  token: SubgraphToken;
+  metadata: Scalars['String'];
+  domains: Array<SubgraphDomain>;
+};
+
+export type SubgraphEvent = {
+  id: Scalars['String'];
+  transaction: SubgraphTransaction;
+  address: Scalars['String'];
+  name: Scalars['String'];
+  args: Scalars['String'];
+  associatedColony: SubgraphColony;
 };
 
 export type OneTxPayment = {
@@ -2540,6 +2566,12 @@ export type SubgraphActionsQuery = { oneTxPayments: Array<(
           ) }
         )> } }
     ) }
+  )>, events: Array<(
+    Pick<SubgraphEvent, 'id' | 'args' | 'address' | 'name'>
+    & { transaction: (
+      { hash: SubgraphTransaction['id'] }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
+    ), associatedColony: { token: Pick<SubgraphToken, 'decimals' | 'symbol'> } }
   )> };
 
 export const PayoutsFragmentDoc = gql`
@@ -6536,6 +6568,25 @@ export const SubgraphActionsDocument = gql`
         }
       }
     }
+  }
+  events(where: {associatedColony_contains: $colonyAddress}) {
+    id
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    associatedColony {
+      token {
+        decimals
+        symbol
+      }
+    }
+    args
+    address
+    name
   }
 }
     `;

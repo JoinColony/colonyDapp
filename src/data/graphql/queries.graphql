@@ -650,4 +650,23 @@ query SubgraphActions($colonyAddress: String!) {
       }
     }
   }
+  events(where: { associatedColony_contains: $colonyAddress }) {
+    id
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    associatedColony {
+      token {
+        decimals
+        symbol
+      }
+    }
+    args
+    address
+    name
+  }
 }

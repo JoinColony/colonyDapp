@@ -181,6 +181,10 @@ export default gql`
     payment_contains: String
   }
 
+   input EventsFilter {
+    associatedColony_contains: String
+  }
+
   type SubgraphBlock {
     id: String!
     timestamp: String!
@@ -219,6 +223,22 @@ export default gql`
     fundingPot: SubgraphFundingPot!
   }
 
+  type SubgraphColony {
+    id: String!
+    token: SubgraphToken!
+    metadata: String!
+    domains: [SubgraphDomain!]!
+  }
+
+  type SubgraphEvent {
+    id: String!
+    transaction: SubgraphTransaction!
+    address: String!
+    name: String!
+    args: String!
+    associatedColony: SubgraphColony!
+  }
+
   type OneTxPayment {
     id: String!
     agent: String!
@@ -228,5 +248,6 @@ export default gql`
 
   extend type Query {
     oneTxPayments(where: ActionsFilter!): [OneTxPayment!]!
+    events(where: EventsFilter!): [SubgraphEvent!]!
   }
 `;
