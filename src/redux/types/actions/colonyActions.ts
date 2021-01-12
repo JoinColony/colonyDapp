@@ -31,6 +31,7 @@ export type ColonyActionsActionTypes =
           tokenAddress: Address;
           decimals: number;
         };
+        annotationMessage?: string;
       },
       MetaWithHistory<object>
     >
