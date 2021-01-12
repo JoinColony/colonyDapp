@@ -11,6 +11,7 @@ import ManageFundsDialog from '~dashboard/ManageFundsDialog';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import AdvancedDialog from '~dashboard/AdvancedDialog';
 import RecoveryModeDialog from '~dashboard/RecoveryModeDialog';
+import TokenMintDialog from '~dashboard/TokenMintDialog';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
 import { Colony } from '~data/index';
@@ -58,6 +59,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: ManageFundsDialog,
       props: {
         nextStep: 'dashboard.TransferFundsDialog',
+        nextStepMintTokens: 'dashboard.TokenMintDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
       },
@@ -96,6 +98,13 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: RecoveryModeDialog,
       props: {
         prevStep: 'dashboard.AdvancedDialog',
+        colony,
+      },
+    },
+    {
+      component: TokenMintDialog,
+      props: {
+        prevStep: 'dashboard.ManageFundsDialog',
         colony,
       },
     },

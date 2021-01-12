@@ -1,78 +1,125 @@
-import React, { DependencyList, useCallback } from 'react';
+import React from 'react';
+import { FormikProps } from 'formik';
 import { defineMessages } from 'react-intl';
-import { bigNumberify } from 'ethers/utils';
-import { FormikBag } from 'formik';
-import moveDecimal from 'move-decimal-point';
-import * as yup from 'yup';
 
-import { ActionForm } from '~core/Fields';
-import { ColonyTokens, OneToken } from '~data/index';
-import { ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
-import { pipe, mapPayload, mergePayload, withKey } from '~utils/actions';
+import { ColonyRole } from '@colony/colony-js';
+
+import Button from '~core/Button';
+import { Input, Annotations } from '~core/Fields';
+import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
+import DialogSection from '~core/Dialog/DialogSection';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { useTransformer } from '~utils/hooks';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import Heading from '~core/Heading';
+
+import { getAllUserRoles } from '../../../transformers';
+import { hasRoot } from '../../../users/checks';
+
+import { FormValues } from './TokenMintDialog';
+
+import styles from './TokenMintForm.css';
 
 const MSG = defineMessages({
-  errorAmountMin: {
-    id: 'admin.Tokens.TokenMintDialog.errorAmountMin',
-    defaultMessage: 'Please enter an amount greater than 0.',
+  title: {
+    id: 'admin.Tokens.TokenMintDialog.dialogTitle',
+    defaultMessage: 'Mint new tokens',
   },
-  errorAmountRequired: {
-    id: 'admin.Tokens.TokenMintDialog.errorAmountRequired',
-    defaultMessage: 'Please enter an amount.',
+  amountLabel: {
+    id: 'admin.Tokens.TokenMintDialog.amountLabel',
+    defaultMessage: 'Amount',
+  },
+  annotationLabel: {
+    id: 'admin.Tokens.TokenMintDialog.annotationLabel',
+    defaultMessage: `Explain why you're minting more tokens (optional)`,
   },
 });
 
 interface Props {
-  children?: any;
-  colonyAddress: Address;
-  nativeToken: ColonyTokens[0] | OneToken;
-  onSuccess?: (result: any, bag: FormikBag<any, any>, values: any) => void;
+  colony: Colony;
+  back?: () => void;
+  nativeToken?: ColonyTokens[0] | OneToken;
 }
 
-const validationSchema = yup.object().shape({
-  justification: yup.string(),
-  mintAmount: yup
-    .number()
-    .required(() => MSG.errorAmountRequired)
-    .min(0.000000000000000001, () => MSG.errorAmountMin),
-});
-
 const TokenMintForm = ({
-  children,
-  onSuccess,
-  nativeToken: { decimals },
-  colonyAddress,
-}: Props) => {
-  const transform = useCallback(
-    pipe(
-      mapPayload(({ mintAmount: inputAmount }) => ({
-        // shift by the token's decimals (or default of 18)
-        amount: bigNumberify(
-          moveDecimal(inputAmount, getTokenDecimalsWithFallback(decimals)),
-        ),
-      })),
-      withKey(colonyAddress),
-      mergePayload({ colonyAddress }),
-    ),
-    [decimals, colonyAddress] as DependencyList,
-  );
+  colony: { canMintNativeToken },
+  colony,
+  back,
+  isSubmitting,
+  isValid,
+  handleSubmit,
+  nativeToken,
+}: Props & FormikProps<FormValues>) => {
+  const { walletAddress } = useLoggedInUser();
+
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const userHasPermissions = canMintNativeToken && hasRoot(allUserRoles);
+  const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
   return (
-    <ActionForm
-      initialValues={{
-        justification: '',
-        mintAmount: 0,
-      }}
-      validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_MINT_TOKENS}
-      error={ActionTypes.COLONY_MINT_TOKENS_ERROR}
-      success={ActionTypes.COLONY_MINT_TOKENS_SUBMITTED}
-      onSuccess={onSuccess}
-      transform={transform}
-    >
-      {children}
-    </ActionForm>
+    <>
+      <DialogSection appearance={{ theme: 'heading' }}>
+        <Heading
+          appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+          text={MSG.title}
+        />
+      </DialogSection>
+      {!userHasPermissions && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <PermissionRequiredInfo requiredRoles={requiredRoles} />
+        </DialogSection>
+      )}
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.inputContainer}>
+          <div className={styles.inputComponent}>
+            <Input
+              appearance={{ theme: 'minimal' }}
+              formattingOptions={{
+                numeral: true,
+                numeralPositiveOnly: true,
+                numeralDecimalScale: getTokenDecimalsWithFallback(
+                  nativeToken?.decimals,
+                ),
+              }}
+              label={MSG.amountLabel}
+              name="mintAmount"
+              disabled={!userHasPermissions}
+            />
+          </div>
+          <span
+            className={styles.nativeToken}
+            title={nativeToken?.name || undefined}
+          >
+            {nativeToken?.symbol}
+          </span>
+        </div>
+      </DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.annotation}>
+          <Annotations
+            label={MSG.annotationLabel}
+            name="annotation"
+            disabled={!userHasPermissions}
+          />
+        </div>
+      </DialogSection>
+      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
+        <Button
+          appearance={{ theme: 'secondary', size: 'large' }}
+          onClick={back}
+          text={{ id: 'button.back' }}
+        />
+        <Button
+          appearance={{ theme: 'primary', size: 'large' }}
+          onClick={() => handleSubmit()}
+          text={{ id: 'button.confirm' }}
+          loading={isSubmitting}
+          disabled={!isValid || !userHasPermissions}
+          style={{ width: styles.wideButton }}
+        />
+      </DialogSection>
+    </>
   );
 };
 

@@ -184,6 +184,27 @@ const getMoveFundsActionValues = async (
   };
 };
 
+const getMintTokensActionValues = async (
+  processedEvents: ProcessedEvent[],
+  colonyClient: ColonyClient,
+): Promise<Partial<ActionValues>> => {
+  const mintTokensEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.TokensMinted,
+  ) as ProcessedEvent;
+
+  const tokenAddress = await colonyClient.getToken();
+
+  const {
+    values: { who, amount },
+  } = mintTokensEvent;
+
+  return {
+    amount: bigNumberify(amount || '0').toString(),
+    recipient: who,
+    tokenAddress,
+  };
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -215,6 +236,16 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...moveFundsActionValues,
+      };
+    }
+    case ColonyActions.MintTokens: {
+      const mintTokensActionValues = await getMintTokensActionValues(
+        processedEvents,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...mintTokensActionValues,
       };
     }
     default: {

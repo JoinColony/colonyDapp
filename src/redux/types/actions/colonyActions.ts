@@ -55,4 +55,19 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_MINT_TOKENS,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        nativeTokenAddress: Address;
+        amount: BigNumber;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
+      MetaWithHistory<object>
     >;

@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
@@ -64,22 +63,6 @@ export type ColonyActionTypes =
       object,
       object
     >
-  | UniqueActionType<
-      ActionTypes.COLONY_MINT_TOKENS,
-      {
-        colonyAddress: Address;
-        amount: BigNumber;
-        justification?: string;
-      },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_MINT_TOKENS_ERROR, WithKey>
-  | UniqueActionType<
-      ActionTypes.COLONY_MINT_TOKENS_SUCCESS,
-      { amount: BigNumber; justification?: string },
-      WithKey
-    >
-  | UniqueActionType<ActionTypes.COLONY_MINT_TOKENS_SUBMITTED, object, object>
   | UniqueActionType<
       ActionTypes.COLONY_RECOVERY_MODE_ENTER,
       { colonyAddress: Address },

@@ -6,7 +6,7 @@ import { ColonyRole } from '@colony/colony-js';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Numeral from '~core/Numeral';
-import FriendlyUserName from '~core/FriendlyUserName';
+import FriendlyName from '~core/FriendlyName';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
@@ -272,17 +272,15 @@ const ActionsPage = () => {
     actionType,
     initiator: (
       <span className={styles.titleDecoration}>
-        <FriendlyUserName
-          user={initiatorProfileWithFallback}
-          autoShrinkAddress
-        />
+        <FriendlyName user={initiatorProfileWithFallback} autoShrinkAddress />
       </span>
     ),
     recipient: (
       <span className={styles.titleDecoration}>
-        <FriendlyUserName
+        <FriendlyName
           user={recipientProfileWithFallback}
           autoShrinkAddress
+          colony={colonyData?.colony}
         />
       </span>
     ),

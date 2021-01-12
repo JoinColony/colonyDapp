@@ -1,113 +1,118 @@
 import { FormikProps } from 'formik';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
+import { useHistory } from 'react-router-dom';
+import { bigNumberify } from 'ethers/utils';
+import moveDecimal from 'move-decimal-point';
 
-import Button from '~core/Button';
-import Dialog from '~core/Dialog';
-import DialogSection from '~core/Dialog/DialogSection';
-import { Annotations, Input } from '~core/Fields';
-import Heading from '~core/Heading';
-import { ColonyTokens } from '~data/index';
-import { Address } from '~types/index';
+import Dialog, { DialogProps } from '~core/Dialog';
+import { ActionForm } from '~core/Fields';
+import { ActionTypes } from '~redux/index';
+import { pipe, mapPayload, withMeta } from '~utils/actions';
+import { Colony } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { WizardDialogType } from '~utils/hooks';
 
 import TokenMintForm from './TokenMintForm';
 
-import styles from './TokenMintDialog.css';
-
 const MSG = defineMessages({
-  title: {
-    id: 'admin.Tokens.TokenMintDialog.dialogTitle',
-    defaultMessage: 'Mint new tokens',
+  errorAmountMin: {
+    id: 'admin.Tokens.TokenMintDialog.errorAmountMin',
+    defaultMessage: 'Please enter an amount greater than 0.',
   },
-  amountLabel: {
-    id: 'admin.Tokens.TokenMintDialog.amountLabel',
-    defaultMessage: 'Amount',
-  },
-  justificationLabel: {
-    id: 'admin.Tokens.TokenMintDialog.amountLabel',
-    defaultMessage: `Explain why you're minting more tokens (optional)`,
+  errorAmountRequired: {
+    id: 'admin.Tokens.TokenMintDialog.errorAmountRequired',
+    defaultMessage: 'Please enter an amount.',
   },
 });
 
-interface FormValues {
-  justification: string;
+export interface FormValues {
+  annotation: string;
   mintAmount: number;
 }
 
-interface Props {
-  cancel: () => void;
-  close: () => void;
-  nativeToken: ColonyTokens[0];
-  colonyAddress: Address;
+interface CustomWizardDialogProps {
+  prevStep?: string;
+  colony: Colony;
 }
 
+type Props = DialogProps &
+  Partial<WizardDialogType<object>> &
+  CustomWizardDialogProps;
+
+const displayName = 'dashboard.TokenMintDialog';
+
+const validationSchema = yup.object().shape({
+  annotation: yup.string(),
+  mintAmount: yup
+    .number()
+    .required(() => MSG.errorAmountRequired)
+    .moreThan(0, () => MSG.errorAmountMin),
+});
+
 const TokenMintDialog = ({
-  colonyAddress,
+  colony: { nativeTokenAddress, tokens = [], colonyAddress, colonyName },
+  colony,
   cancel,
   close,
-  nativeToken: { name, symbol, decimals },
-  nativeToken,
-}: Props) => (
-  <Dialog cancel={cancel}>
-    <TokenMintForm
-      colonyAddress={colonyAddress}
-      nativeToken={nativeToken}
-      onSuccess={close}
-    >
-      {({ handleSubmit, isSubmitting, isValid }: FormikProps<FormValues>) => (
-        <>
-          <DialogSection appearance={{ theme: 'heading' }}>
-            <Heading
-              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-              text={MSG.title}
-            />
-          </DialogSection>
-          <DialogSection appearance={{ theme: 'sidePadding' }}>
-            <div className={styles.inputContainer}>
-              <div className={styles.inputComponent}>
-                <Input
-                  appearance={{ theme: 'minimal' }}
-                  formattingOptions={{
-                    numeral: true,
-                    numeralPositiveOnly: true,
-                    numeralDecimalScale: getTokenDecimalsWithFallback(decimals),
-                  }}
-                  label={MSG.amountLabel}
-                  name="mintAmount"
-                />
-              </div>
-              <span className={styles.nativeToken} title={name || undefined}>
-                {symbol}
-              </span>
-            </div>
-          </DialogSection>
-          <DialogSection appearance={{ theme: 'sidePadding' }}>
-            <div className={styles.annotation}>
-              <Annotations label={MSG.justificationLabel} name="annotation" />
-            </div>
-          </DialogSection>
-          <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-            <Button
-              appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={cancel}
-              text={{ id: 'button.back' }}
-            />
-            <Button
-              appearance={{ theme: 'primary', size: 'large' }}
-              onClick={() => handleSubmit()}
-              text={{ id: 'button.confirm' }}
-              loading={isSubmitting}
-              disabled={!isValid}
-              style={{ width: styles.wideButton }}
-            />
-          </DialogSection>
-        </>
-      )}
-    </TokenMintForm>
-  </Dialog>
-);
+  callStep,
+  prevStep,
+}: Props) => {
+  const history = useHistory();
 
-TokenMintDialog.displayName = 'admin.Tokens.TokenMintDialog';
+  const nativeToken =
+    tokens && tokens.find(({ address }) => address === nativeTokenAddress);
+
+  const transform = useCallback(
+    pipe(
+      mapPayload(({ mintAmount: inputAmount }) => {
+        // Find the selected token's decimals
+        const amount = bigNumberify(
+          moveDecimal(
+            inputAmount,
+            getTokenDecimalsWithFallback(nativeToken?.decimals),
+          ),
+        );
+        return {
+          colonyAddress,
+          colonyName,
+          nativeTokenAddress: nativeToken?.address,
+          amount,
+        };
+      }),
+      withMeta({ history }),
+    ),
+    [],
+  );
+
+  return (
+    <ActionForm
+      initialValues={{
+        annotation: '',
+        mintAmount: 0,
+      }}
+      validationSchema={validationSchema}
+      submit={ActionTypes.COLONY_ACTION_MINT_TOKENS}
+      error={ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR}
+      success={ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS}
+      onSuccess={close}
+      transform={transform}
+    >
+      {(formValues: FormikProps<FormValues>) => (
+        <Dialog cancel={cancel}>
+          <TokenMintForm
+            {...formValues}
+            colony={colony}
+            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
+            nativeToken={nativeToken}
+          />
+        </Dialog>
+      )}
+    </ActionForm>
+  );
+};
+
+TokenMintDialog.displayName = displayName;
 
 export default TokenMintDialog;

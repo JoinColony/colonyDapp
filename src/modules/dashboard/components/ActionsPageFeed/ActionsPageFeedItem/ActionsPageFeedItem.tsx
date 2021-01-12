@@ -7,7 +7,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
 import TextDecorator from '~lib/TextDecorator';
 import { AnyUser } from '~data/index';
-import FriendlyUserName from '~core/FriendlyUserName';
+import FriendlyName from '~core/FriendlyName';
 
 import styles from './ActionsPageFeedItem.css';
 
@@ -47,7 +47,7 @@ const ActionsPageFeedItem = ({
       <div className={styles.content}>
         <div className={styles.details}>
           <span className={styles.username}>
-            <FriendlyUserName user={user as AnyUser} />
+            <FriendlyName user={user as AnyUser} />
           </span>
           {createdAt && <TransactionMeta createdAt={createdAt} />}
         </div>

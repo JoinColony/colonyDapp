@@ -8,6 +8,7 @@ import TransactionLink from '~core/TransactionLink';
 import { AnyUser } from '~data/index';
 import { ColonyActions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
+import { getDetailsForAction } from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
@@ -74,6 +75,7 @@ const DetailsWidget = ({
    */
   const Amount = () => values?.amount as ReactElement;
   const Symbol = () => values?.tokenSymbol as ReactElement;
+  const detailsForAction = getDetailsForAction(actionType);
 
   return (
     <div>
@@ -104,7 +106,7 @@ const DetailsWidget = ({
           />
         </div>
       </div>
-      {values?.fromDomain && showFullDetails && (
+      {detailsForAction.FromDomain && values?.fromDomain && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.fromDomain} />
@@ -114,16 +116,16 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {(values?.toDomain || recipient) && showFullDetails && (
+      {(detailsForAction.ToRecipient || detailsForAction.ToDomain) && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.toRecipient} />
           </div>
           <div className={styles.value}>
-            {values?.toDomain && actionType === ColonyActions.MoveFunds && (
+            {values?.toDomain && detailsForAction.ToDomain && (
               <DetailsWidgetTeam domain={values.toDomain} />
             )}
-            {recipient && actionType === ColonyActions.Payment && (
+            {recipient && detailsForAction.ToRecipient && (
               <DetailsWidgetUser
                 walletAddress={recipient?.profile.walletAddress as string}
               />
@@ -131,7 +133,7 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {values?.amount && showFullDetails && (
+      {values?.amount && detailsForAction.Amount && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.value} />

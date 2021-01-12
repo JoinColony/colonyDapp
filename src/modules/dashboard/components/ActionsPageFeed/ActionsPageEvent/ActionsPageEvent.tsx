@@ -18,10 +18,12 @@ const MSG = defineMessages({
   rolesTooltip: {
     id: 'dashboard.ActionsPageFeed.ActionsPageEvent.rolesTooltip',
     defaultMessage: `{icon} {role, select,
+      1 {This permission allows modify colony-wide parameters, upgrade the
+        colony and manage permissions in Root Domain.}
       6 {This permission allows an account to manipulate payments (tasks) in
         their domain and to raise disputes.}
-      other {This is a generic placeholder for a perssions type.
-        You should not be sseing this}
+      other {This is a generic placeholder for a permissions type.
+        You should not be seeing this}
     }`,
   },
 });
