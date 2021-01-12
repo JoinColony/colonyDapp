@@ -9,7 +9,7 @@
 
 .coloniesList {
   flex: 0 0 auto;
-  width: 50px;
+  width: 60px;
   border-right: 1px solid var(--temp-grey-13);
 }
 
