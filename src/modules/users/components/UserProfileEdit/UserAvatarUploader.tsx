@@ -45,6 +45,7 @@ const UserAvatarUploader = ({ user }: Props) => {
   return (
     <AvatarUploader
       label={MSG.uploaderLabel}
+      hasButtons
       placeholder={
         <UserAvatar
           address={user.profile.walletAddress}

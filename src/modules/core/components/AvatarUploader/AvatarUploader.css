@@ -6,6 +6,13 @@
   border-radius: 50%;
 }
 
+.dropzoneNoButtonsVariant {
+  height: 77px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(200, 214, 245, 0.33);
+}
+
 .filesContainer {
   height: 100%;
   width: 100%;

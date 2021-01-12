@@ -122,7 +122,12 @@ const EditColonyDetailsDialogForm = ({
         </DialogSection>
       )}
       <DialogSection>
-        <AvatarUploader label={MSG.logo} upload={upload} remove={remove} />
+        <AvatarUploader
+          hasButtons={false}
+          label={MSG.logo}
+          upload={upload}
+          remove={remove}
+        />
         <p className={styles.smallText}>
           <FormattedMessage {...MSG.permittedFormat} />
         </p>

@@ -51,6 +51,8 @@ interface Props {
 
   /** Used to control the state of the remove button (don't fire the remove action if not avatar is set) */
   isSet?: boolean;
+
+  hasButtons: boolean;
 }
 
 const AvatarUploader = ({
@@ -60,6 +62,7 @@ const AvatarUploader = ({
   placeholder,
   remove,
   upload,
+  hasButtons,
   isSet = true,
 }: Props) => {
   const dropzoneRef = useRef<{ open: () => void }>();
@@ -77,13 +80,18 @@ const AvatarUploader = ({
     </div>
   );
 
+  const noButtonStyles = {
+    ...styles,
+    dropzone: styles.dropzoneNoButtonsVariant,
+  };
+
   // Formik is used for state and error handling through FileUpload, nothing else
   return (
     <Formik onSubmit={() => {}} initialValues={{ avatarUploader: [] }}>
       <form>
         <FileUpload
           elementOnly={elementOnly}
-          classNames={styles}
+          classNames={hasButtons ? styles : noButtonStyles}
           dropzoneOptions={{
             accept: ACCEPTED_MIME_TYPES,
             maxSize: ACCEPTED_MAX_FILE_SIZE,
@@ -99,20 +107,22 @@ const AvatarUploader = ({
         >
           {renderOverlay()}
         </FileUpload>
-        <div className={styles.buttonContainer}>
-          <Button
-            appearance={{ theme: 'danger' }}
-            text={{ id: 'button.remove' }}
-            onClick={remove}
-            disabled={!isSet}
-            data-test="avatarUploaderRemove"
-          />
-          <Button
-            text={{ id: 'button.choose' }}
-            onClick={choose}
-            data-test="avatarUploaderChoose"
-          />
-        </div>
+        {hasButtons && (
+          <div className={styles.buttonContainer}>
+            <Button
+              appearance={{ theme: 'danger' }}
+              text={{ id: 'button.remove' }}
+              onClick={remove}
+              disabled={!isSet}
+              data-test="avatarUploaderRemove"
+            />
+            <Button
+              text={{ id: 'button.choose' }}
+              onClick={choose}
+              data-test="avatarUploaderChoose"
+            />
+          </div>
+        )}
       </form>
     </Formik>
   );
