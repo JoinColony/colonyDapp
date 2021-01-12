@@ -20,11 +20,16 @@
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
-  margin: 0 80px;
-  padding: 15px 0;
-  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  padding: 15px 80px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
 }
 
 .contractVersionNumber {
   color: var(--dark);
+}
+
+.divider {
+  margin: 0 80px;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
