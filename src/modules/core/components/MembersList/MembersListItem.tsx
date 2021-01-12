@@ -4,11 +4,11 @@ import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
+import CopyableAddress from '~core/CopyableAddress';
 import { AnyUser, useUserReputationQuery, useUser } from '~data/index';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
-import MaskedAddress from '~core/MaskedAddress';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
 
@@ -193,9 +193,9 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
               <UserMention hasLink={false} username={username} />
             </span>
           )}
-          <span className={styles.address}>
-            <MaskedAddress address={walletAddress} />
-          </span>
+          <div className={styles.address}>
+            <CopyableAddress>{colonyAddress}</CopyableAddress>
+          </div>
         </div>
         {renderedExtraItemContent && <div>{renderedExtraItemContent}</div>}
       </div>
