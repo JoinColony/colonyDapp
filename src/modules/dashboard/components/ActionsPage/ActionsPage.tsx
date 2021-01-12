@@ -277,7 +277,11 @@ const ActionsPage = () => {
     ),
     recipient: (
       <span className={styles.titleDecoration}>
-        <FriendlyName user={recipientProfileWithFallback} autoShrinkAddress />
+        <FriendlyName
+          user={recipientProfileWithFallback}
+          autoShrinkAddress
+          colony={colonyData?.colony}
+        />
       </span>
     ),
     amount: (

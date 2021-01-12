@@ -2,7 +2,8 @@ import React, { useRef, useEffect } from 'react';
 
 import MaskedAddress from '~core/MaskedAddress';
 
-import { AnyUser, useColonyQuery } from '~data/index';
+import { AnyUser, Colony } from '~data/index';
+
 import { removeValueUnits } from '~utils/css';
 
 import styles from './FriendlyName.css';
@@ -22,6 +23,10 @@ interface Props {
    * Whether to apply the "shrink tech font by 1px" logic
    */
   autoShrinkAddress?: boolean;
+  /*
+   * Colony object to display in case of wallet address is equal to colony address
+   */
+  colony?: Colony;
 }
 
 const FriendlyName = ({
@@ -30,13 +35,15 @@ const FriendlyName = ({
   },
   maskedAddress = true,
   autoShrinkAddress = false,
+  colony,
 }: Props) => {
   const addressRef = useRef<HTMLElement>(null);
 
-  const { data: colonyData } = useColonyQuery({
-    variables: { address: walletAddress || '' },
-  });
-
+  const isColonyAddress = colony && walletAddress === colony.colonyAddress;
+  const colonyName =
+    isColonyAddress &&
+    isColonyAddress &&
+    (colony?.displayName || colony?.colonyName);
   /*
    * @NOTE On touching element styles manually
    * The "tech" font we user renders a bit larger than our display font while
@@ -61,15 +68,13 @@ const FriendlyName = ({
   }, [addressRef, autoShrinkAddress]);
   return (
     <div className={styles.main}>
-      {userDisplayName ||
-        (username && `@${username}`) ||
-        colonyData?.colony.colonyName || (
-          <MaskedAddress
-            address={walletAddress}
-            full={!maskedAddress}
-            ref={addressRef}
-          />
-        )}
+      {userDisplayName || (username && `@${username}`) || colonyName || (
+        <MaskedAddress
+          address={walletAddress}
+          full={!maskedAddress}
+          ref={addressRef}
+        />
+      )}
     </div>
   );
 };
