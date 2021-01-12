@@ -10,6 +10,7 @@ import { Annotations, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import { useLoggedInUser, Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -67,6 +68,8 @@ const MSG = defineMessages({
   },
 });
 
+const ColonyAvatar = HookedColonyAvatar({ fetchColony: true });
+
 interface Props {
   back: () => void;
   colony: Colony;
@@ -87,7 +90,7 @@ const removeActions = {
 const EditColonyDetailsDialogForm = ({
   back,
   colony,
-  colony: { colonyAddress },
+  colony: { colonyAddress, avatarHash },
   handleSubmit,
   isSubmitting,
 }: Props & FormikProps<FormValues>) => {
@@ -127,6 +130,14 @@ const EditColonyDetailsDialogForm = ({
           label={MSG.logo}
           upload={upload}
           remove={remove}
+          placeholder={
+            <ColonyAvatar
+              colony={colony}
+              colonyAddress={colonyAddress}
+              size="s"
+            />
+          }
+          isSet={!!avatarHash}
         />
         <p className={styles.smallText}>
           <FormattedMessage {...MSG.permittedFormat} />
