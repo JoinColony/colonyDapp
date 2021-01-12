@@ -110,7 +110,7 @@ const NetworkContractUpgradeDialogForm = ({
         />
       </DialogSection>
       {!canUpgradeVersion && (
-        <DialogSection>
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>
             <FormattedMessage
               {...MSG.noPermissionText}
