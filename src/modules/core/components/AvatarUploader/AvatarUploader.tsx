@@ -41,7 +41,7 @@ interface Props {
   help?: string | MessageDescriptor;
 
   /** Placeholder to render when not uploading */
-  placeholder: ReactNode;
+  placeholder?: ReactNode;
 
   /** Function to handle removal of the avatar (should set avatarURL to null from outside) */
   remove: (...args: any[]) => Promise<any>;

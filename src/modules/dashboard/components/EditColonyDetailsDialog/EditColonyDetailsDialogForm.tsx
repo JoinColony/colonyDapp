@@ -122,29 +122,7 @@ const EditColonyDetailsDialogForm = ({
         </DialogSection>
       )}
       <DialogSection>
-        <AvatarUploader
-          label={MSG.logo}
-          upload={upload}
-          remove={remove}
-          placeholder={
-            <div className={styles.logoPlaceholder}>
-              <div className={styles.smallText}>
-                <FormattedMessage
-                  {...MSG.dragBrowse}
-                  values={{
-                    browse: (
-                      <Button
-                        text={MSG.browse}
-                        appearance={{ theme: 'blue' }}
-                        onClick={upload}
-                      />
-                    ),
-                  }}
-                />
-              </div>
-            </div>
-          }
-        />
+        <AvatarUploader label={MSG.logo} upload={upload} remove={remove} />
         <p className={styles.smallText}>
           <FormattedMessage {...MSG.permittedFormat} />
         </p>
