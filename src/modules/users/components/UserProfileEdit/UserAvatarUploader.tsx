@@ -51,6 +51,7 @@ const UserAvatarUploader = ({ user }: Props) => {
           address={user.profile.walletAddress}
           user={user}
           size="xl"
+          notSet={false}
         />
       }
       upload={upload}
