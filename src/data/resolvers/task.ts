@@ -42,6 +42,7 @@ const finalizeTaskWithTxHash = async (
     null,
     null,
     null,
+    null,
   );
   const payoutClaimedLogs = await getLogs(colonyClient, payoutClaimedFilter);
   const claimedLogForTask = payoutClaimedLogs.find(
@@ -105,6 +106,7 @@ export const taskResolvers = ({
       }
       if (existingEthPotId) {
         const payoutClaimedFilter = colonyClient.filters.PayoutClaimed(
+          null,
           existingEthPotId,
           null,
           null,

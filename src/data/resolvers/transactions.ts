@@ -61,7 +61,7 @@ export const getColonyFundsClaimedTransfers = async (
 ): Promise<Transfer[]> => {
   const { provider } = colonyClient;
 
-  const filter = colonyClient.filters.ColonyFundsClaimed(null, null, null);
+  const filter = colonyClient.filters.ColonyFundsClaimed(null, null, null, null);
   const logs = await getLogs(colonyClient, filter);
 
   const transfers = await Promise.all(
@@ -102,7 +102,7 @@ export const getPayoutClaimedTransfers = async (
   colonyClient: ColonyClient,
 ): Promise<Transfer[]> => {
   const { provider } = colonyClient;
-  const filter = colonyClient.filters.PayoutClaimed(null, null, null);
+  const filter = colonyClient.filters.PayoutClaimed(null, null, null, null);
   const logs = await getLogs(colonyClient, filter);
 
   const transfers = await Promise.all(
@@ -147,6 +147,7 @@ export const getColonyUnclaimedTransfers = async (
   const { provider } = colonyClient;
   const { tokenClient } = colonyClient;
   const claimedTransferFilter = colonyClient.filters.ColonyFundsClaimed(
+    null,
     null,
     null,
     null,
