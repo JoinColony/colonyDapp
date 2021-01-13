@@ -124,8 +124,8 @@ const CreateEditDomainDialogForm = ({
         />
       </DialogSection>
       {!canCreateEditDomain && (
-        <DialogSection>
-          <span className={styles.noPermissionFromMessage}>
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
             <FormattedMessage
               {...MSG.noPermission}
               values={{
@@ -139,7 +139,7 @@ const CreateEditDomainDialogForm = ({
                 domain: id === undefined ? 'Root' : 'DOMAIN PLACEHOLDER',
               }}
             />
-          </span>
+          </div>
         </DialogSection>
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>

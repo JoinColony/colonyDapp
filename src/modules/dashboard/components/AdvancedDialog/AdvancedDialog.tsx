@@ -75,6 +75,7 @@ const MSG = defineMessages({
 interface CustomWizardDialogProps {
   nextStepRecovery: string;
   prevStep: string;
+  nextStepUpgrade: string;
   colony: Colony;
 }
 
@@ -88,6 +89,7 @@ const AdvancedDialog = ({
   callStep,
   prevStep,
   nextStepRecovery,
+  nextStepUpgrade,
   colony,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -126,6 +128,7 @@ const AdvancedDialog = ({
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
       },
+      onClick: () => callStep(nextStepUpgrade),
     },
     {
       title: MSG.editColonyDetailsTitle,

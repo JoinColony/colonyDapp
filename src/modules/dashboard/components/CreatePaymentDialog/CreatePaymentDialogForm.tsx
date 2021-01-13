@@ -368,8 +368,8 @@ const CreatePaymentDialogForm = ({
         />
       </DialogSection>
       {!userHasPermission && (
-        <DialogSection>
-          <span className={styles.noPermissionFromMessage}>
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
             <FormattedMessage
               {...MSG.noPermissionFrom}
               values={{
@@ -387,7 +387,7 @@ const CreatePaymentDialogForm = ({
                 ),
               }}
             />
-          </span>
+          </div>
         </DialogSection>
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
