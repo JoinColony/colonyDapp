@@ -264,15 +264,10 @@ export const getAnnotation = async (
    * I need, at some point, to investigate what's up
    */
   // @ts-ignore
-  const filter = colonyClient.filters.Annotation(null, null);
+  const filter = colonyClient.filters.Annotation(agent, transactionHash);
   const allColonyAnnotationLogs = await getLogs(colonyClient, filter);
   const allColonyParseAnnotations = allColonyAnnotationLogs.map(
     (annotationLog) => colonyClient.interface.parseLog(annotationLog),
   );
-  return allColonyParseAnnotations
-    .filter(({ values: { txHash } }) => txHash === transactionHash)
-    .filter(
-      ({ values: { agent: annotationAgent } }) => annotationAgent === agent,
-    )
-    .pop();
+  return allColonyParseAnnotations.pop();
 };
