@@ -27,3 +27,22 @@ export const getDetailsForAction = (
     };
   }, {});
 };
+
+export const getValuesForActionType = (
+  args: string,
+  actionType: ColonyActions,
+): any => {
+  const argsObj = JSON.parse(args);
+  switch (actionType) {
+    case ColonyActions.MintTokens: {
+      return {
+        initiator: argsObj.agent,
+        recipient: argsObj.who,
+        amount: argsObj.amount
+      }
+    }
+    default: {
+      return {};
+    }
+  }
+};
