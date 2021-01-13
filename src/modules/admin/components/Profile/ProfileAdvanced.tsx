@@ -7,7 +7,7 @@ import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
-import RecoveryModeDialog from '~admin/RecoveryModeDialog';
+import RecoveryModeDialog from '~dashboard/RecoveryModeDialog';
 import { Colony, useLoggedInUser, useSystemInfoQuery } from '~data/index';
 
 import { getUserRolesForDomain } from '../../../transformers';
