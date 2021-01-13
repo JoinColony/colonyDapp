@@ -1,23 +1,8 @@
 import { Address } from '~types/index';
-import { OneDomain } from '~data/index';
-import { ActionType, ErrorActionType, UniqueActionType } from './index';
+import { ErrorActionType, UniqueActionType } from './index';
 import { ActionTypes } from '../../index';
 
 export type DomainActionTypes =
-  | UniqueActionType<
-      ActionTypes.DOMAIN_CREATE,
-      { colonyAddress: Address; domainName: string; parentDomainId?: number },
-      object
-    >
-  | ErrorActionType<ActionTypes.DOMAIN_CREATE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.DOMAIN_CREATE_SUCCESS,
-      { colonyAddress: string; domain: OneDomain },
-      object
-    >
-  | ActionType<ActionTypes.DOMAIN_CREATE_TX>
-  | ErrorActionType<ActionTypes.DOMAIN_CREATE_TX_ERROR, object>
-  | ActionType<ActionTypes.DOMAIN_CREATE_TX_SUCCESS>
   | UniqueActionType<
       ActionTypes.DOMAIN_EDIT,
       {
