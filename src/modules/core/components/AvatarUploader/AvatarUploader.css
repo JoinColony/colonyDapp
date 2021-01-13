@@ -24,6 +24,18 @@
   outline: none;
 }
 
+.dropzoneNoButtonsVariant > button:visited[aria-busy="false"] {
+  outline: none;
+}
+
+.dropzoneNoButtonsVariant > button:disabled[aria-busy="false"] {
+  color: var(--temp-grey-4);
+}
+
+.disabled {
+  background-color: var(--temp-grey-0);
+}
+
 .filesContainer {
   height: 100%;
   width: 100%;

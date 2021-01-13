@@ -51,6 +51,7 @@ interface Props {
     dropzoneAccept?: string;
     dropzoneReject?: string;
     filesContainer?: string;
+    disabled?: string;
   };
   /** Options for the dropzone provider */
   dropzoneOptions?: DropzoneOptions;
@@ -176,7 +177,10 @@ const FileUpload = ({
   }, [children, dropzoneState]);
 
   const dropzoneClassName = useMemo(() => {
-    const classes = [classNames.dropzone];
+    const classes = [
+      classNames.dropzone,
+      ...(disabled ? [classNames.disabled] : []),
+    ];
     if (isDragAccept) {
       classes.push(classNames.dropzoneAccept);
     } else if (isDragReject) {
@@ -187,6 +191,8 @@ const FileUpload = ({
     classNames.dropzone,
     classNames.dropzoneAccept,
     classNames.dropzoneReject,
+    classNames.disabled,
+    disabled,
     isDragAccept,
     isDragReject,
   ]);
