@@ -1518,6 +1518,7 @@ export type ActionsFilter = {
 
 export type EventsFilter = {
   associatedColony_contains?: Maybe<Scalars['String']>;
+  name_in?: Maybe<Array<Scalars['String']>>;
 };
 
 export type SubgraphBlock = {
@@ -6569,7 +6570,7 @@ export const SubgraphActionsDocument = gql`
       }
     }
   }
-  events(where: {associatedColony_contains: $colonyAddress}) {
+  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)"]}) {
     id
     transaction {
       hash: id

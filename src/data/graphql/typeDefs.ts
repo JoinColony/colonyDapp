@@ -183,6 +183,7 @@ export default gql`
 
    input EventsFilter {
     associatedColony_contains: String
+    name_in: [String!]
   }
 
   type SubgraphBlock {
