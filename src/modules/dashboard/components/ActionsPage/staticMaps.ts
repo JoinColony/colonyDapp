@@ -136,7 +136,4 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Domain,
     ActionPageDetails.Description,
   ],
-  [ColonyActions.VersionUpgrade]: [
-    ColonyAndExtensionsEvents.ColonyUpgraded,
-  ],
 };

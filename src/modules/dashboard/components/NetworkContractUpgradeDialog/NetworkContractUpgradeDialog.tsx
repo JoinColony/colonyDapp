@@ -38,7 +38,6 @@ const NetworkContractUpgradeDialog = ({
   colony,
   colony: { colonyAddress, version, colonyName },
 }: Props) => {
-
   const history = useHistory();
 
   const transform = useCallback(

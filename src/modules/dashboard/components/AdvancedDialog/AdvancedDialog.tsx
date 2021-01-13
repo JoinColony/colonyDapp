@@ -107,7 +107,11 @@ const AdvancedDialog = ({
     hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
   const { version: networkVersion } = useNetworkContracts();
 
-  const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles) && networkVersion && canBeUpgraded(colony, parseInt(networkVersion, 10));
+  const canUpgradeVersion =
+    hasRegisteredProfile &&
+    hasRoot(allUserRoles) &&
+    networkVersion &&
+    canBeUpgraded(colony, parseInt(networkVersion, 10));
 
   const items = [
     {
