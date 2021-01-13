@@ -2,12 +2,18 @@ import { AddressZero, HashZero } from 'ethers/constants';
 
 import { SubgraphActions, TransactionsMessagesCount } from '~data/index';
 import { ColonyActions, FormattedAction } from '~types/index';
+import {
+  ACTIONS_EVENTS,
+} from '~dashboard/ActionsPage/staticMaps';
+import { getValuesForActionType } from '~utils/colonyActions';
+
 
 export const getActionsListData = (
   unformattedActions?: SubgraphActions,
   transactionsCommentsCount?: TransactionsMessagesCount,
 ): FormattedAction[] => {
   let formattedActions = [];
+
   Object.keys(unformattedActions || {}).map((subgraphActionType) => {
     formattedActions = formattedActions.concat(
       (unformattedActions || {})[subgraphActionType].map(
@@ -15,7 +21,7 @@ export const getActionsListData = (
           const formatedAction = {
             id: unformattedAction.id,
             actionType: ColonyActions.Generic,
-            initiator: unformattedAction.agent,
+            initiator: AddressZero,
             recipient: AddressZero,
             amount: '0',
             tokenAddress: AddressZero,
@@ -66,6 +72,7 @@ export const getActionsListData = (
             formatedAction.tokenAddress = tokenAddress;
             formatedAction.symbol = symbol;
             formatedAction.decimals = decimals;
+            formatedAction.initiator = unformattedAction.agent;
           }
           if (transactionsCommentsCount && transactionComments) {
             formatedAction.commentCount = transactionComments.count;
@@ -78,6 +85,23 @@ export const getActionsListData = (
                */
               parseInt(`${timestamp}000`, 10),
             );
+          }
+          if (subgraphActionType === 'events') {
+            const {
+              args,
+              associatedColony: { token: {address: tokenAddress, symbol, decimals}},
+              name,
+            } = unformattedAction;
+            const actionEvent = Object.entries(ACTIONS_EVENTS).find(el => el[1].includes(unformattedAction.name.split("(")[0]))
+            formatedAction.actionType = actionEvent[0];
+            formatedAction.tokenAddress = tokenAddress;
+            formatedAction.symbol = symbol;
+            formatedAction.decimals = decimals;
+            const actionTypeValues = getValuesForActionType(args, actionEvent[0]);
+            const actionTypeKeys = Object.keys(actionTypeValues);
+            actionTypeKeys.forEach(key => {
+              formatedAction[key] = actionTypeValues[key];
+            })
           }
           formatedAction.transactionHash = hash;
           return formatedAction;
