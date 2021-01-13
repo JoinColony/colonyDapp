@@ -2,11 +2,8 @@ import { AddressZero, HashZero } from 'ethers/constants';
 
 import { SubgraphActions, TransactionsMessagesCount } from '~data/index';
 import { ColonyActions, FormattedAction } from '~types/index';
-import {
-  ACTIONS_EVENTS,
-} from '~dashboard/ActionsPage/staticMaps';
+import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
-
 
 export const getActionsListData = (
   unformattedActions?: SubgraphActions,
@@ -89,19 +86,26 @@ export const getActionsListData = (
           if (subgraphActionType === 'events') {
             const {
               args,
-              associatedColony: { token: {address: tokenAddress, symbol, decimals}},
+              associatedColony: {
+                token: { address: tokenAddress, symbol, decimals },
+              },
               name,
             } = unformattedAction;
-            const actionEvent = Object.entries(ACTIONS_EVENTS).find(el => el[1].includes(unformattedAction.name.split("(")[0]))
-            formatedAction.actionType = actionEvent[0];
+            const actionEvent = Object.entries(ACTIONS_EVENTS).find((el) =>
+              el[1]?.includes(name.split('(')[0]),
+            );
+            const actionType =
+              (actionEvent && (actionEvent[0] as ColonyActions)) ||
+              ColonyActions.Generic;
+            formatedAction.actionType = actionType;
             formatedAction.tokenAddress = tokenAddress;
             formatedAction.symbol = symbol;
             formatedAction.decimals = decimals;
-            const actionTypeValues = getValuesForActionType(args, actionEvent[0]);
+            const actionTypeValues = getValuesForActionType(args, actionType);
             const actionTypeKeys = Object.keys(actionTypeValues);
-            actionTypeKeys.forEach(key => {
+            actionTypeKeys.forEach((key) => {
               formatedAction[key] = actionTypeValues[key];
-            })
+            });
           }
           formatedAction.transactionHash = hash;
           return formatedAction;

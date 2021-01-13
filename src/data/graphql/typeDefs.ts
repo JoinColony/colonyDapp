@@ -181,7 +181,7 @@ export default gql`
     payment_contains: String
   }
 
-   input EventsFilter {
+  input EventsFilter {
     associatedColony_contains: String
     name_in: [String!]
   }
