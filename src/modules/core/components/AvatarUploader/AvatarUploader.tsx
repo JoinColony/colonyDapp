@@ -53,6 +53,8 @@ interface Props {
   isSet?: boolean;
 
   hasButtons: boolean;
+
+  disabled?: boolean;
 }
 
 const AvatarUploader = ({
@@ -63,6 +65,7 @@ const AvatarUploader = ({
   remove,
   upload,
   hasButtons,
+  disabled,
   isSet = true,
 }: Props) => {
   const dropzoneRef = useRef<{ open: () => void }>();
@@ -95,6 +98,7 @@ const AvatarUploader = ({
           dropzoneOptions={{
             accept: ACCEPTED_MIME_TYPES,
             maxSize: ACCEPTED_MAX_FILE_SIZE,
+            disabled,
           }}
           label={label}
           help={help}

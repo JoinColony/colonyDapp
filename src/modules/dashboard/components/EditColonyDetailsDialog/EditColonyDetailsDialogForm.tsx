@@ -126,16 +126,27 @@ const EditColonyDetailsDialogForm = ({
       )}
       <DialogSection>
         <AvatarUploader
+          disabled={!userHasPermission}
           hasButtons={false}
           label={MSG.logo}
           upload={upload}
           remove={remove}
           placeholder={
-            <ColonyAvatar
-              colony={colony}
-              colonyAddress={colonyAddress}
-              size="s"
-            />
+            <>
+              <ColonyAvatar
+                colony={colony}
+                colonyAddress={colonyAddress}
+                size="s"
+              />
+              <Button
+                appearance={{ theme: 'blue' }}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  remove();
+                }}
+                text={{ id: 'button.remove' }}
+              />
+            </>
           }
           isSet={!!avatarHash}
         />
