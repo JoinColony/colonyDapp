@@ -107,6 +107,7 @@ export const taskResolvers = ({
       if (existingEthPotId) {
         const payoutClaimedFilter = colonyClient.filters.PayoutClaimed(
           null,
+          // @ts-ignore
           existingEthPotId,
           null,
           null,

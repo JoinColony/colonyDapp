@@ -61,7 +61,12 @@ export const getColonyFundsClaimedTransfers = async (
 ): Promise<Transfer[]> => {
   const { provider } = colonyClient;
 
-  const filter = colonyClient.filters.ColonyFundsClaimed(null, null, null, null);
+  const filter = colonyClient.filters.ColonyFundsClaimed(
+    null,
+    null,
+    null,
+    null,
+  );
   const logs = await getLogs(colonyClient, filter);
 
   const transfers = await Promise.all(
