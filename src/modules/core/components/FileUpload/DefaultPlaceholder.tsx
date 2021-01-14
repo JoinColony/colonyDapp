@@ -16,19 +16,27 @@ const MSG = defineMessages({
 
 const displayName = 'FileUpload.DefaultPlaceholder';
 
-const DefaultPlaceholder = () => (
-  <div className={styles.placeholderText}>
+interface Props {
+  disabled?: boolean;
+}
+
+const DefaultPlaceholder = ({ disabled }: Props) => (
+  <p
+    className={
+      disabled ? styles.placeholderTextDisabled : styles.placeholderText
+    }
+  >
     <FormattedMessage
       {...MSG.dropzoneText}
       values={{
         browse: (
-          <span className={styles.browseButton}>
+          <span className={disabled ? '' : styles.browseButton}>
             <FormattedMessage {...MSG.dropzoneTextBrowseAction} />
           </span>
         ),
       }}
     />
-  </div>
+  </p>
 );
 
 DefaultPlaceholder.displayName = displayName;

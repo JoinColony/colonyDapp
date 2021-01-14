@@ -40,6 +40,11 @@
   cursor: pointer;
 }
 
+.placeholderTextDisabled {
+  composes: placeholderText;
+  color: var(--temp-grey-4);
+}
+
 .filesContainer {
   height: 100%;
   width: 100%;
