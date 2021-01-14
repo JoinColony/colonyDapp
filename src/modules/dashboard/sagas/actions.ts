@@ -1,7 +1,7 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
-import { ClientType, ColonyClient } from '@colony/colony-js';
+import { ClientType, ColonyClient, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -524,6 +524,52 @@ function* createMintTokensAction({
   }
 }
 
+function* createDomainAction({
+  payload: {
+    colonyAddress,
+    domainName,
+    domainColor,
+    domainPurpose,
+    annotation,
+    parentId = ROOT_DOMAIN_ID,
+  },
+  meta: { id: metaId, history },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_DOMAIN_CREATE>) {
+  /*
+   * Validate the required values for the payment
+   */
+  if (!domainName) {
+    throw new Error('A domain name is required to create a new domain');
+  }
+
+  const txChannel = yield call(getTxChannel, meta.id);
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'addDomainWithProofs',
+      identifier: colonyAddress,
+      params: [parentDomainId],
+    });
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
+      meta,
+    });
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_DOMAIN_CREATE_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* tasksSagas() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
@@ -534,4 +580,5 @@ export default function* tasksSagas() {
     ActionTypes.COLONY_ACTION_MINT_TOKENS,
     createMintTokensAction,
   );
+  yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_CREATE, createDomainAction);
 }
