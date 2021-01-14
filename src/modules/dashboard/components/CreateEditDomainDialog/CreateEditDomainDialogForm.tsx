@@ -58,6 +58,8 @@ interface Props {
   back: () => void;
   colony: Colony;
   id?: string;
+  isSubmitting;
+  isValid;
 }
 
 const CreateEditDomainDialogForm = ({
@@ -65,6 +67,8 @@ const CreateEditDomainDialogForm = ({
   colony,
   handleSubmit,
   id,
+  isSubmitting,
+  isValid,
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
 
@@ -95,7 +99,7 @@ const CreateEditDomainDialogForm = ({
           <div className={styles.domainName}>
             <Input
               label={MSG.name}
-              name="name"
+              name="domainName"
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
               disabled={!canCreateEditDomain}
             />
@@ -105,13 +109,14 @@ const CreateEditDomainDialogForm = ({
             appearance={{ alignOptions: 'right' }}
             onColorChange={setDomainColor}
             disabled={!canCreateEditDomain}
+            name="domainColor"
           />
         </div>
       </DialogSection>
       <DialogSection>
         <Input
           label={MSG.purpose}
-          name="purpose"
+          name="domainPurpose"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={!canCreateEditDomain}
         />
@@ -152,7 +157,8 @@ const CreateEditDomainDialogForm = ({
           text={{ id: 'button.confirm' }}
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
-          disabled={!canCreateEditDomain}
+          loading={isSubmitting}
+          disabled={!canCreateEditDomain || !isValid}
         />
       </DialogSection>
     </>
