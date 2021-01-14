@@ -37,16 +37,6 @@ const MSG = defineMessages({
     id: 'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.logo',
     defaultMessage: 'Colony Logo (Optional)',
   },
-  dragBrowse: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.dragBrowse',
-    defaultMessage: 'Drag or {browse}',
-  },
-  browse: {
-    id: 'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.browse',
-    defaultMessage: 'browse',
-  },
   permittedFormat: {
     id:
       // eslint-disable-next-line max-len

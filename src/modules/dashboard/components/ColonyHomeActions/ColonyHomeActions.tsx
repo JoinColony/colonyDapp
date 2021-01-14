@@ -137,4 +137,6 @@ const ColonyHomeActions = ({ colony }: Props) => {
   );
 };
 
+export default ColonyHomeActions;
+
 ColonyHomeActions.displayName = displayName;
