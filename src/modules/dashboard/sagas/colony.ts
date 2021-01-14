@@ -38,6 +38,14 @@ function* colonyAvatarUpload({
       meta,
       payload: { hash: ipfsHash },
     });
+
+    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
+      query: ColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
   }
@@ -61,6 +69,14 @@ function* colonyAvatarRemove({
       type: ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS,
       meta,
       payload: undefined,
+    });
+
+    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
+      query: ColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_AVATAR_REMOVE_ERROR, error, meta);
