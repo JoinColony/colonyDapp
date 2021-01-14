@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, ReactNode, ComponentProps } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { Appearance, Select, SelectOption, Form } from '~core/Fields';
+import { Appearance, Select, SelectOption } from '~core/Fields';
 import ColorTag, { Color } from '~core/ColorTag';
 
 import styles from './ColorSelect.css';
@@ -12,10 +12,6 @@ const MSG = defineMessages({
     defaultMessage: 'Select color',
   },
 });
-
-interface FormValues {
-  activeColor: Color;
-}
 
 interface Props {
   /** Should `select` be disabled */
@@ -28,6 +24,11 @@ interface Props {
   onColorChange?: (color: Color) => any;
 
   appearance?: Appearance;
+
+  /*
+   * Name of the form element
+   */
+  name?: string;
 }
 
 const displayName = 'ColorSelect';
@@ -37,6 +38,7 @@ const ColorSelect = ({
   activeOption,
   onColorChange,
   appearance,
+  name = 'color',
 }: Props) => {
   const onChange = useCallback(
     (color: Color) => {
@@ -70,30 +72,23 @@ const ColorSelect = ({
   }, []);
 
   return (
-    <Form<FormValues>
-      initialValues={{
-        activeColor: activeOption,
-      }}
-      onSubmit={() => {}}
-    >
-      <div className={styles.main}>
-        <Select
-          appearance={{
-            theme: 'grid',
-            alignOptions: appearance?.alignOptions,
-          }}
-          elementOnly
-          label={MSG.labelColorSelect}
-          name="activeColor"
-          onChange={(val) => {
-            onChange(Number(val));
-          }}
-          options={options}
-          renderActiveOption={renderActiveOption}
-          disabled={disabled}
-        />
-      </div>
-    </Form>
+    <div className={styles.main}>
+      <Select
+        appearance={{
+          theme: 'grid',
+          alignOptions: appearance?.alignOptions,
+        }}
+        elementOnly
+        label={MSG.labelColorSelect}
+        name={name}
+        onChange={(val) => {
+          onChange(Number(val));
+        }}
+        options={options}
+        renderActiveOption={renderActiveOption}
+        disabled={disabled}
+      />
+    </div>
   );
 };
 
