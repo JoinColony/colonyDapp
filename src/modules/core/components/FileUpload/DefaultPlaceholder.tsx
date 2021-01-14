@@ -21,7 +21,7 @@ interface Props {
 }
 
 const DefaultPlaceholder = ({ disabled }: Props) => (
-  <p
+  <div
     className={
       disabled ? styles.placeholderTextDisabled : styles.placeholderText
     }
@@ -36,7 +36,7 @@ const DefaultPlaceholder = ({ disabled }: Props) => (
         ),
       }}
     />
-  </p>
+  </div>
 );
 
 DefaultPlaceholder.displayName = displayName;
