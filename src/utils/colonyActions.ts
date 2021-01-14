@@ -1,4 +1,4 @@
-import { ColonyActions } from '~types/index';
+import { ColonyActions, FormattedAction } from '~types/index';
 
 import {
   DETAILS_FOR_ACTION,
@@ -8,6 +8,12 @@ import {
 type DetailsValuesMap = Partial<
   {
     [key in ActionPageDetails]: boolean;
+  }
+>;
+
+type ValuesForActionTypesMap = Partial<
+  {
+    [key in keyof FormattedAction]: FormattedAction[key];
   }
 >;
 
@@ -26,4 +32,26 @@ export const getDetailsForAction = (
       ),
     };
   }, {});
+};
+
+/*
+ * Get values for action type based on action type
+ */
+export const getValuesForActionType = (
+  args: string,
+  actionType: ColonyActions,
+): ValuesForActionTypesMap => {
+  const argsObj = JSON.parse(args);
+  switch (actionType) {
+    case ColonyActions.MintTokens: {
+      return {
+        initiator: argsObj.agent,
+        recipient: argsObj.who,
+        amount: argsObj.amount,
+      };
+    }
+    default: {
+      return {};
+    }
+  }
 };

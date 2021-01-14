@@ -76,7 +76,11 @@ const ActionsListItem = ({
    * subgraph side
    */
   const initiatorUserProfile = useUser(createAddress(initiator));
-  const recipientUserProfile = useUser(createAddress(recipient));
+  const recipientAddress = createAddress(recipient);
+  const isColonyAddress = recipientAddress === colony.colonyAddress;
+  const fallbackRecipientProfile = useUser(
+    isColonyAddress ? '' : recipientAddress,
+  );
 
   const fromDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === parseInt(fromDomainId, 10),
@@ -162,8 +166,9 @@ const ActionsListItem = ({
                 recipient: (
                   <span className={styles.titleDecoration}>
                     <FriendlyName
-                      user={recipientUserProfile}
+                      user={fallbackRecipientProfile}
                       autoShrinkAddress
+                      colony={colony}
                     />
                   </span>
                 ),

@@ -650,4 +650,22 @@ query SubgraphActions($colonyAddress: String!) {
       }
     }
   }
+  events(where: { associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)"] }) {
+    id
+    transaction {
+      hash: id
+      block {
+        timestamp
+      }
+    }
+    associatedColony {
+      token {
+        decimals
+        symbol
+      }
+    }
+    args
+    address # Address of the contract that emitted the event
+    name
+  }
 }
