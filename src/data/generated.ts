@@ -1431,7 +1431,7 @@ export type ColonyAction = {
   actionType: Scalars['String'];
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
-  annotationHash: Scalars['String'];
+  annotationHash?: Maybe<Scalars['String']>;
 };
 
 export type NetworkContractsInput = {

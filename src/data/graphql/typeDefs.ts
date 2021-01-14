@@ -37,7 +37,7 @@ export default gql`
     actionType: String!
     amount: String!
     tokenAddress: String!
-    annotationHash: String!
+    annotationHash: String
   }
 
   input NetworkContractsInput {
