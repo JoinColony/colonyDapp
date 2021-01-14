@@ -655,7 +655,6 @@ query SubgraphActions($colonyAddress: String!) {
     transaction {
       hash: id
       block {
-        id
         timestamp
       }
     }
@@ -666,7 +665,7 @@ query SubgraphActions($colonyAddress: String!) {
       }
     }
     args
-    address
+    address # Address of the contract that emitted the event
     name
   }
 }
