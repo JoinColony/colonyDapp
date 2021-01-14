@@ -7,6 +7,7 @@ import AvatarUploader from '~core/AvatarUploader';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Annotations, Input } from '~core/Fields';
+import { DefaultPlaceholder } from '~core/FileUpload';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
@@ -138,14 +139,19 @@ const EditColonyDetailsDialogForm = ({
                 colonyAddress={colonyAddress}
                 size="s"
               />
-              <Button
-                appearance={{ theme: 'blue' }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  remove();
-                }}
-                text={{ id: 'button.remove' }}
-              />
+              {avatarHash !== null ? (
+                <Button
+                  appearance={{ theme: 'blue' }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    remove();
+                  }}
+                  text={{ id: 'button.remove' }}
+                  disabled={!userHasPermission}
+                />
+              ) : (
+                <DefaultPlaceholder disabled={!userHasPermission} />
+              )}
             </>
           }
           isSet={!!avatarHash}
