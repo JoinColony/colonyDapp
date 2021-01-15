@@ -19,7 +19,10 @@ import {
 } from '../shared/actionsSort';
 import { getActionsListData } from '../../transformers';
 import { useTransformer } from '~utils/hooks';
-import { FormattedAction } from '~types/index';
+import {
+  ColonyActions as ColonyActionTypes,
+  FormattedAction,
+} from '~types/index';
 
 import styles from './ColonyActions.css';
 
@@ -38,7 +41,7 @@ const MSG = defineMessages({
   },
   noActionsFound: {
     id: 'dashboard.ColonyActions.noActionsFound',
-    defaultMessage: `The colony did not create any actions yet.
+    defaultMessage: `There are no actions yet.
       {isDevMode, select,
         true {
           {break}
@@ -104,11 +107,20 @@ const ColonyActions = ({
     commentCount?.transactionMessagesCount,
   ]);
 
+  /* Needs to be tested when all action types are wirde up & reflected in the list */
   const filteredActions = useMemo(
     () =>
       !ethDomainId
         ? actions
-        : actions.filter((action) => Number(action.fromDomain) === ethDomainId),
+        : actions.filter(
+            (action) =>
+              Number(action.fromDomain) === ethDomainId ||
+              /* when no specific domain in the action it is displayed in Root */
+              (ethDomainId === 1 && action.fromDomain === undefined) ||
+              /* when transfering funds the list shows both sender & recipient */
+              (action.actionType === ColonyActionTypes.MoveFunds &&
+                Number(action.toDomain) === ethDomainId),
+          ),
     [ethDomainId, actions],
   );
 
