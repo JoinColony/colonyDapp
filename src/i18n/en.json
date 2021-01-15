@@ -83,6 +83,8 @@
     "transaction.TokenClient.unlock.title": "Unlock Token",
     "transaction.TokenClient.unlock.description": "Unlock Token",
 
+    "transaction.group.paymentAction.title": "Expenditure Payment",
+    "transaction.group.paymentAction.description": "Expenditure Payment",
     "transaction.OneTxPaymentClient.makePaymentFundedFromDomainWithProofs.title": "Expenditure Payment",
     "transaction.OneTxPaymentClient.makePaymentFundedFromDomainWithProofs.description": "Expenditure Payment",
 
@@ -100,6 +102,8 @@
     "transaction.ColonyClient.addDomainWithProofs.description": "Create Domain",
     "transaction.ColonyClient.moveFundsBetweenPotsWithProofs.title": "Move Funds Between Pots",
     "transaction.ColonyClient.moveFundsBetweenPotsWithProofs.description": "Move Token from one domain pot to another",
+    "transaction.ColonyClient.annotateTransaction.title": "Annotate Transaction",
+    "transaction.ColonyClient.annotateTransaction.description": "Annotate Transaction",
 
     "transaction.group.setRoles.title": "Set roles",
     "transaction.group.setRoles.description": "Sign the transactions required to set the selected roles.",

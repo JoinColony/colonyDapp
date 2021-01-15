@@ -234,6 +234,7 @@ const ActionsPage = () => {
       amount,
       fromDomain,
       toDomain,
+      annotationHash,
     },
   } = colonyActionData;
 
@@ -336,13 +337,12 @@ const ActionsPage = () => {
               createdAt={createdAt}
             />
           )}
-          {actionType !== ColonyActions.Generic && (
+          {actionType !== ColonyActions.Generic && annotationHash && (
             <ActionsPageFeedItem
               createdAt={createdAt}
               user={initiatorProfileWithFallback}
               annotation
-              comment={`Luke has big plans and the rebellion needs
-                    these funds. I had to ‘Force’ this, I just had to!`}
+              comment={annotationHash}
             />
           )}
           <ActionsPageFeed

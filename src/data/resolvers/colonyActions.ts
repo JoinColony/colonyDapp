@@ -1,8 +1,13 @@
-import { ColonyClient, getBlockTime, ClientType } from '@colony/colony-js';
+import {
+  ColonyClient,
+  getBlockTime,
+  ClientType,
+  ColonyClientV5,
+} from '@colony/colony-js';
 import { BigNumberish } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
 
-import { getActionType, getActionValues } from '~utils/events';
+import { getActionType, getActionValues, getAnnotation } from '~utils/events';
 import { Context } from '~context/index';
 import {
   ColonyActions,
@@ -123,6 +128,12 @@ export const colonyActionsResolvers = ({
           actionType,
         );
 
+        const annotation = await getAnnotation(
+          from as string,
+          hash as string,
+          colonyClient as ColonyClientV5,
+        );
+
         return {
           hash,
           /*
@@ -137,6 +148,7 @@ export const colonyActionsResolvers = ({
           events: reverseSortedEvents,
           createdAt,
           actionType,
+          annotationHash: annotation ? annotation?.values?.metadata : null,
           ...actionValues,
         };
       }
@@ -175,6 +187,7 @@ export const colonyActionsResolvers = ({
          */
         createdAt: Date.now(),
         actionType: ColonyActions.Generic,
+        annotationMetadata: null,
         ...pendingActionValues,
       };
     },

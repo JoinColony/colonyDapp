@@ -90,6 +90,7 @@ const CreatePaymentDialog = ({
           recipient: {
             profile: { walletAddress },
           },
+          annotation: annotationMessage,
         } = payload;
 
         const selectedToken = tokens.find(
@@ -109,6 +110,7 @@ const CreatePaymentDialog = ({
             amount,
             decimals,
           },
+          annotationMessage,
         };
       }),
       withMeta({ history }),

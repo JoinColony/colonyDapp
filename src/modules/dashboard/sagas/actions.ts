@@ -13,7 +13,11 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createTransaction, getTxChannel } from '../../core/sagas';
-import { transactionReady } from '../../core/actionCreators';
+import { ipfsUpload } from '../../core/sagas/ipfs';
+import {
+  transactionReady,
+  transactionAddParams,
+} from '../../core/actionCreators';
 
 function* createPaymentAction({
   payload: {
@@ -22,6 +26,7 @@ function* createPaymentAction({
     recipientAddress,
     domainId,
     singlePayment,
+    annotationMessage,
   },
   meta: {
     id: metaId,
@@ -70,9 +75,32 @@ function* createPaymentAction({
 
     const { amount, tokenAddress, decimals = 18 } = singlePayment;
 
+    let ipfsHash = null;
+    if (annotationMessage) {
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
     txChannel = yield call(getTxChannel, metaId);
 
-    yield fork(createTransaction, metaId, {
+    /*
+     * setup batch ids and channels
+     */
+    const batchKey = 'paymentAction';
+    const paymentAction = {
+      id: `${metaId}-paymentAction`,
+      channel: yield call(getTxChannel, `${metaId}-paymentAction`),
+    };
+    const annotatePaymentAction = {
+      id: `${metaId}-annotatePaymentAction`,
+      channel: yield call(getTxChannel, `${metaId}-annotatePaymentAction`),
+    };
+
+    yield fork(createTransaction, paymentAction.id, {
       context: ClientType.OneTxPaymentClient,
       methodName: 'makePaymentFundedFromDomainWithProofs',
       identifier: colonyAddress,
@@ -88,13 +116,59 @@ function* createPaymentAction({
          */
         0,
       ],
+      group: {
+        key: batchKey,
+        id: metaId,
+        index: 0,
+      },
+      ready: false,
     });
+
+    if (annotationMessage) {
+      yield fork(createTransaction, annotatePaymentAction.id, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        group: {
+          key: batchKey,
+          id: metaId,
+          index: 1,
+        },
+        ready: false,
+      });
+    }
+
+    yield takeFrom(paymentAction.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotatePaymentAction.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    yield put(transactionReady(paymentAction.id));
 
     const {
       payload: { hash: txHash },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+    } = yield takeFrom(
+      paymentAction.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+    yield takeFrom(paymentAction.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+    if (annotationMessage) {
+      yield put(
+        transactionAddParams(annotatePaymentAction.id, [txHash, ipfsHash]),
+      );
+
+      yield put(transactionReady(annotatePaymentAction.id));
+
+      yield takeFrom(
+        annotatePaymentAction.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
 
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
