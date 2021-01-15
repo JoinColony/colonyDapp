@@ -67,6 +67,7 @@ const displayName = 'dashboard.ColonyActions';
 const ColonyActions = ({
   colony: { colonyAddress, colonyName },
   colony,
+  ethDomainId,
 }: Props) => {
   const [actionsSortOption, setActionsSortOption] = useState<string>(
     ActionsSortOptions.NEWEST,
@@ -102,6 +103,14 @@ const ColonyActions = ({
     paymentActions,
     commentCount?.transactionMessagesCount,
   ]);
+
+  const filteredActions = useMemo(
+    () =>
+      !ethDomainId
+        ? actions
+        : actions.filter((action) => Number(action.fromDomain) === ethDomainId),
+    [ethDomainId, actions],
+  );
 
   /*
    * @NOTE This is why we can't have nice things
@@ -151,8 +160,8 @@ const ColonyActions = ({
   );
 
   const sortedActionsData: FormattedAction[] = useMemo(
-    () => actions.sort(actionsSort),
-    [actionsSort, actions],
+    () => filteredActions.sort(actionsSort),
+    [actionsSort, filteredActions],
   );
 
   const handleActionRedirect = useCallback(

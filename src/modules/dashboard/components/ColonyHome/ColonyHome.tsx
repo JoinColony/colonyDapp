@@ -200,7 +200,12 @@ const ColonyHome = ({ match, location }: Props) => {
             />
             <Route
               path={COLONY_HOME_ROUTE}
-              component={() => <ColonyActions colony={data.colony} />}
+              component={() => (
+                <ColonyActions
+                  colony={data.colony}
+                  ethDomainId={domainIdFilter}
+                />
+              )}
             />
           </Switch>
         </div>
