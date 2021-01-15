@@ -2,6 +2,7 @@ import { ApolloClient, Resolvers } from '@apollo/client';
 import {
   ClientType,
   ColonyClient,
+  ColonyClientV5,
   ColonyRole,
   getLogs,
   getColonyRoles,
@@ -88,10 +89,10 @@ export const taskResolvers = ({
       _,
       { client },
     ) {
-      const colonyClient = await colonyManager.getClient(
+      const colonyClient = (await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
-      );
+      )) as ColonyClientV5;
       let existingEthPotId = ethPotId;
       // The task was marked as finalized but is "pending" (only has the tx hash)
       // We try to finalize it properly
@@ -107,7 +108,6 @@ export const taskResolvers = ({
       if (existingEthPotId) {
         const payoutClaimedFilter = colonyClient.filters.PayoutClaimed(
           null,
-          // @ts-ignore
           existingEthPotId,
           null,
           null,

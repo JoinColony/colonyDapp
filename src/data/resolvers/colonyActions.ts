@@ -1,4 +1,9 @@
-import { ColonyClient, getBlockTime, ClientType } from '@colony/colony-js';
+import {
+  ColonyClient,
+  getBlockTime,
+  ClientType,
+  ColonyClientV5,
+} from '@colony/colony-js';
 import { BigNumberish } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
 
@@ -126,7 +131,7 @@ export const colonyActionsResolvers = ({
         const annotation = await getAnnotation(
           from as string,
           hash as string,
-          colonyClient as ColonyClient,
+          colonyClient as ColonyClientV5,
         );
 
         return {
