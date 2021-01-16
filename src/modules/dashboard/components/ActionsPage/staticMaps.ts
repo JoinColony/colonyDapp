@@ -38,6 +38,8 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
     ColonyRole.Funding,
   ],
   [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
+  [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
+  [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -49,6 +51,7 @@ export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
   [ColonyActions.MoveFunds]: 'emoji-world-globe',
   [ColonyActions.MintTokens]: 'emoji-seed-sprout',
+  [ColonyActions.CreateDomain]: 'emoji-crane',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -70,6 +73,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
+  [ColonyActions.CreateDomain]: [ColonyAndExtensionsEvents.DomainAdded],
 };
 
 /*
@@ -88,6 +92,12 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
+  [ColonyActions.CreateDomain]: [
+    // Don't track the metadata event, as not all domains might have it
+    ColonyAndExtensionsEvents.FundingPotAdded,
+    ColonyAndExtensionsEvents.DomainAdded,
+    ColonyAndExtensionsEvents.SkillAdded,
+  ],
 };
 
 /*
@@ -106,4 +116,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Amount,
   ],
   [ColonyActions.MintTokens]: [ActionPageDetails.Amount],
+  [ColonyActions.CreateDomain]: [ActionPageDetails.FromDomain],
 };
