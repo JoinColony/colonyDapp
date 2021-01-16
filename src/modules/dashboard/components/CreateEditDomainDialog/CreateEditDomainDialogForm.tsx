@@ -124,7 +124,7 @@ const CreateEditDomainDialogForm = ({
       <DialogSection>
         <Annotations
           label={MSG.annotation}
-          name="annotation"
+          name="annotationMessage"
           disabled={!canCreateEditDomain}
         />
       </DialogSection>

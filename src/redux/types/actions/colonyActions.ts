@@ -21,10 +21,11 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_DOMAIN_CREATE,
       {
         colonyAddress: Address;
+        colonyName?: string;
         domainName: string;
         domainColor?: Color;
         domainPurpose?: string;
-        annotation?: string;
+        annotationMessage?: string;
         parentId?: number;
       },
       MetaWithHistory<object>

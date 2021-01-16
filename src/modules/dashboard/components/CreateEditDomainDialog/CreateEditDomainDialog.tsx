@@ -18,7 +18,7 @@ export interface FormValues {
   domainName: string;
   domainColor?: Color;
   domainPurpose?: string;
-  annotation?: string;
+  annotationMessage?: string;
 }
 
 interface CustomWizardDialogProps {
@@ -37,7 +37,7 @@ const CreateEditDomainDialog = ({
   cancel,
   close,
   colony,
-  colony: { colonyAddress },
+  colony: { colonyAddress, colonyName },
   id,
 }: Props) => {
   const history = useHistory();
@@ -46,13 +46,14 @@ const CreateEditDomainDialog = ({
     domainName: yup.string().required(),
     domainColor: yup.string(),
     domainPurpose: yup.string(),
-    annotation: yup.string().max(4000),
+    annotationMessage: yup.string().max(4000),
   });
 
   const transform = useCallback(
     pipe(
       mapPayload((payload) => ({
         colonyAddress,
+        colonyName,
         ...payload,
       })),
       withMeta({ history }),
@@ -66,7 +67,7 @@ const CreateEditDomainDialog = ({
         domainName: undefined,
         domainColor: Color.Pink,
         domainPurpose: undefined,
-        annotation: undefined,
+        annotationMessage: undefined,
       }}
       submit={ActionTypes.COLONY_ACTION_DOMAIN_CREATE}
       error={ActionTypes.COLONY_ACTION_DOMAIN_CREATE_ERROR}
