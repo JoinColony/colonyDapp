@@ -527,32 +527,129 @@ function* createMintTokensAction({
 function* createDomainAction({
   payload: {
     colonyAddress,
+    colonyName,
     domainName,
     domainColor,
     domainPurpose,
-    annotation,
+    annotationMessage,
     parentId = ROOT_DOMAIN_ID,
   },
   meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_DOMAIN_CREATE>) {
-  /*
-   * Validate the required values for the payment
-   */
-  if (!domainName) {
-    throw new Error('A domain name is required to create a new domain');
-  }
-
-  const txChannel = yield call(getTxChannel, meta.id);
+  let txChannel;
   try {
-    yield fork(createTransaction, meta.id, {
+    /*
+     * Validate the required values for the payment
+     */
+    if (!domainName) {
+      throw new Error('A domain name is required to create a new domain');
+    }
+
+    /*
+     * Upload domain metadata to IPFS
+     */
+    let domainMetadataIpfsHash = null;
+    if (annotationMessage) {
+      domainMetadataIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          domainName,
+          domainColor,
+          domainPurpose,
+        }),
+      );
+    }
+
+    /*
+     * Upload domain metadata to IPFS
+     */
+    let annotationMessageIpfsHash = null;
+    if (annotationMessage) {
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'createDomainAction';
+    const {
+      createDomainAction: createDomain,
+      annotateCreateDomainAction: annotateCreateDomain,
+    } = yield createTransactionChannels(metaId, [
+      'createDomainAction',
+      'annotateCreateDomainAction',
+    ]);
+
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: batchKey,
+          id: metaId,
+          index,
+        },
+      });
+
+    yield createGroupTransaction(createDomain, {
       context: ClientType.ColonyClient,
       methodName: 'addDomainWithProofs',
       identifier: colonyAddress,
-      params: [parentDomainId],
+      params: [parentId, domainMetadataIpfsHash],
+      ready: false,
     });
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+    if (annotationMessage) {
+      yield createGroupTransaction(annotateCreateDomain, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        ready: false,
+      });
+    }
+
+    yield takeFrom(createDomain.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateCreateDomain.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    yield put(transactionReady(createDomain.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      createDomain.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+    yield takeFrom(createDomain.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(
+        transactionAddParams(annotateCreateDomain.id, [
+          txHash,
+          annotationMessageIpfsHash,
+        ]),
+      );
+
+      yield put(transactionReady(annotateCreateDomain.id));
+
+      yield takeFrom(
+        annotateCreateDomain.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
