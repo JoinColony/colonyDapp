@@ -107,16 +107,27 @@ const DomainDropdown = ({
     if (!colony) {
       return [allDomainsOption];
     }
+    const sortByDomainId = (
+      { ethDomainId: firstDomainId },
+      { ethDomainId: secondDomainId },
+    ) => firstDomainId - secondDomainId;
     return [
       allDomainsOption,
-      ...colony.domains.map((domain) => {
-        const { ethDomainId, name } = domain;
-        return {
-          children: <DomainSelectItem domain={domain} />,
-          label: name,
-          value: `${ethDomainId}`,
-        };
-      }),
+      ...colony.domains
+        /*
+         * While this looks like an array, it's not a "true" one (this is the result from the subgraph query)
+         * So we must first convert it to an array in order to sort it
+         */
+        .slice(0)
+        .sort(sortByDomainId)
+        .map((domain) => {
+          const { ethDomainId, name } = domain;
+          return {
+            children: <DomainSelectItem domain={domain} />,
+            label: name,
+            value: `${ethDomainId}`,
+          };
+        }),
     ];
   }, [colony]);
 
