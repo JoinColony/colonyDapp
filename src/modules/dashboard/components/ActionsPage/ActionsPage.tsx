@@ -22,6 +22,7 @@ import {
   useLoggedInUser,
   useTokenInfoLazyQuery,
   OneDomain,
+  useColonySingleDomainQuery,
 } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions } from '~types/index';
@@ -124,6 +125,11 @@ const ActionsPage = () => {
     { data: tokenData, loading: loadingTokenData },
   ] = useTokenInfoLazyQuery();
 
+  // const [
+  //   fetchFromDomain,
+  //   { data: fromDomainFallback, loading: fromDomainLoading },
+  // ] = useDomainLazyQuery();
+
   useEffect(() => {
     if (
       transactionHash &&
@@ -169,6 +175,27 @@ const ActionsPage = () => {
   const fallbackInitiatorProfile = useUser(
     colonyActionData?.colonyAction?.actionInitiator || '',
   );
+
+  /*
+   * There's a weird edge case where Apollo's caches screws with us and doesn't
+   * fetch the latest domain (maybe network lag?)
+   *
+   * So we fetch the known existent domain manually and set it as a fallback
+   *
+   * This way the actions page will always be able to display a domain
+   */
+  const { data: fallbackFromDomain } = useColonySingleDomainQuery({
+    variables: {
+      colonyAddress: colonyData?.colony.colonyAddress.toLowerCase() || '',
+      domainId: colonyActionData?.colonyAction?.fromDomain || 0,
+    },
+  });
+  const { data: fallbackToDomain } = useColonySingleDomainQuery({
+    variables: {
+      colonyAddress: colonyData?.colony.colonyAddress.toLowerCase() || '',
+      domainId: colonyActionData?.colonyAction?.toDomain || 0,
+    },
+  });
 
   if (!isTransactionFormat(transactionHash) || colonyActionError) {
     return (
@@ -290,12 +317,14 @@ const ActionsPage = () => {
     ),
     tokenSymbol: <span>{symbol || '???'}</span>,
     decimals: getTokenDecimalsWithFallback(decimals),
-    fromDomain: domains.find(
-      ({ ethDomainId }) => ethDomainId === fromDomain,
-    ) as OneDomain,
-    toDomain: domains.find(
-      ({ ethDomainId }) => ethDomainId === toDomain,
-    ) as OneDomain,
+    fromDomain:
+      (domains.find(
+        ({ ethDomainId }) => ethDomainId === fromDomain,
+      ) as OneDomain) || fallbackFromDomain?.colonyDomain,
+    toDomain:
+      (domains.find(
+        ({ ethDomainId }) => ethDomainId === toDomain,
+      ) as OneDomain) || fallbackToDomain?.colonyDomain,
   };
 
   return (
