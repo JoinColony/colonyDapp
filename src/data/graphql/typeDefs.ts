@@ -123,9 +123,14 @@ export default gql`
   }
 
   extend type Domain {
-    # TODO guarantee color (resolver will always return a color)
     color: Int
     description: String
+    id: String!
+    color: Int!
+    description: String!
+    ethDomainId: Int!
+    name: String!
+    ethParentDomainId: Int!
   }
 
   extend type TaskPayout {
@@ -151,6 +156,7 @@ export default gql`
       colonyAddress: String!
       domainId: Int
     ): [String!]
+    colonyDomain(colonyAddress: String!, domainId: Int!): Domain!
     token(address: String!): Token!
     tokens(addresses: [String!]): [Token!]!
     userAddress(name: String!): String!
@@ -189,6 +195,7 @@ export default gql`
 
   input ByColonyFilter {
     colonyAddress: String!
+    domainChainId: Int
   }
 
   type SubgraphBlock {

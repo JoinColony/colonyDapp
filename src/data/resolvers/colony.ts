@@ -20,6 +20,9 @@ import {
   SubgraphDomainsQuery,
   SubgraphDomainsQueryVariables,
   SubgraphDomainsDocument,
+  SubgraphSingleDomainQuery,
+  SubgraphSingleDomainQueryVariables,
+  SubgraphSingleDomainDocument,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -117,6 +120,40 @@ export const colonyResolvers = ({
         colonyAddress,
         domainId,
       );
+    },
+    async colonyDomain(_, { colonyAddress, domainId }) {
+      const { data } = await apolloClient.query<
+        SubgraphSingleDomainQuery,
+        SubgraphSingleDomainQueryVariables
+      >({
+        query: SubgraphSingleDomainDocument,
+        variables: {
+          /*
+           * Subgraph addresses are not checksummed
+           */
+          colonyAddress: colonyAddress.toLowerCase(),
+          domainId,
+        },
+        fetchPolicy: 'network-only',
+      });
+      if (data?.domains) {
+        const [singleDomain] = data.domains;
+        const lastMetadata = singleDomain.metadataHistory.slice(-1).pop();
+        const ipfsHash = singleDomain.metadata || lastMetadata?.metadata || '';
+        const metadataString = await ipfs.getString(ipfsHash as string);
+        const metadata = JSON.parse(metadataString || '{}');
+        return {
+          ...singleDomain,
+          ethDomainId: parseInt(singleDomain.domainChainId, 10),
+          ethParentDomainId: singleDomain.parent
+            ? parseInt(singleDomain.parent.domainChainId, 10)
+            : null,
+          name: metadata?.domainName || singleDomain.name,
+          color: parseInt(metadata?.domainColor || Color.LightPink, 10),
+          description: metadata?.domainPurpose || null,
+        };
+      }
+      return null;
     },
   },
   Colony: {
