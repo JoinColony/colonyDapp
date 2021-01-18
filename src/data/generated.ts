@@ -2118,8 +2118,8 @@ export const TokensFragmentDoc = gql`
 export const DomainFieldsFragmentDoc = gql`
     fragment DomainFields on Domain {
   id
-  color @client
-  description @client
+  color
+  description
   ethDomainId
   name
   ethParentDomainId

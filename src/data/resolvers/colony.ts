@@ -23,6 +23,7 @@ import {
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { Color } from '~core/ColorTag';
 
 import { getToken } from './token';
 import {
@@ -131,6 +132,7 @@ export const colonyResolvers = ({
            */
           colonyAddress: colonyAddress.toLowerCase(),
         },
+        fetchPolicy: 'network-only',
       });
       if (data?.domains) {
         return Promise.all(
@@ -146,6 +148,8 @@ export const colonyResolvers = ({
                 ? parseInt(domain.parent.domainChainId, 10)
                 : null,
               name: metadata?.domainName || domain.name,
+              color: parseInt(metadata?.domainColor || Color.Pink, 10),
+              description: metadata?.domainPurpose || null,
             };
           }),
         );
