@@ -11,6 +11,9 @@ import {
   ColonyFromNameDocument,
   ColonyFromNameQuery,
   ColonyFromNameQueryVariables,
+  SubgraphActionsQuery,
+  SubgraphActionsQueryVariables,
+  SubgraphActionsDocument,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -197,6 +200,17 @@ function* createPaymentAction({
       fetchPolicy: 'network-only',
     });
 
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
       meta,
@@ -366,6 +380,17 @@ function* createMoveFundsAction({
       fetchPolicy: 'network-only',
     });
 
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS,
       meta,
@@ -508,6 +533,17 @@ function* createMintTokensAction({
       variables: {
         colonyAddress,
         tokenAddresses: [nativeTokenAddress],
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
       },
       fetchPolicy: 'network-only',
     });
@@ -659,6 +695,17 @@ function* createDomainAction({
         fetchPolicy: 'network-only',
       },
     );
+
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+      },
+      fetchPolicy: 'network-only',
+    });
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
