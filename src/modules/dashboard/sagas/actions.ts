@@ -550,16 +550,14 @@ function* createDomainAction({
      * Upload domain metadata to IPFS
      */
     let domainMetadataIpfsHash = null;
-    if (annotationMessage) {
-      domainMetadataIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          domainName,
-          domainColor,
-          domainPurpose,
-        }),
-      );
-    }
+    domainMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        domainName,
+        domainColor,
+        domainPurpose,
+      }),
+    );
 
     /*
      * Upload domain metadata to IPFS
