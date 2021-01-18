@@ -163,20 +163,18 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {detailsForAction.Description && (
+      {detailsForAction.Description && values?.fromDomain?.description && (
         <div className={styles.domainDescriptionItem}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.domainDescription} />
           </div>
           <div className={styles.value}>
-            {values?.fromDomain && (
-              <div
-                className={styles.domainDescription}
-                title={values.fromDomain.description || ''}
-              >
-                {values.fromDomain.description}
-              </div>
-            )}
+            <div
+              className={styles.domainDescription}
+              title={values.fromDomain.description || ''}
+            >
+              {values.fromDomain.description}
+            </div>
           </div>
         </div>
       )}
