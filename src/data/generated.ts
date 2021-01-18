@@ -5100,7 +5100,7 @@ export const SubgraphActionsDocument = gql`
       }
     }
   }
-  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)"]}) {
+  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)"]}) {
     id
     transaction {
       hash: id
