@@ -319,8 +319,8 @@ const ActionsPage = () => {
               id="action.title"
               values={{
                 ...actionAndEventValues,
-                fromDomain: actionAndEventValues.fromDomain.name,
-                toDomain: actionAndEventValues.toDomain.name,
+                fromDomain: actionAndEventValues.fromDomain?.name,
+                toDomain: actionAndEventValues.toDomain?.name,
               }}
             />
           </h1>

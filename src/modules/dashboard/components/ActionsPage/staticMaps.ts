@@ -8,6 +8,8 @@ export enum ActionPageDetails {
   ToDomain = 'ToDomain',
   ToRecipient = 'ToRecipient',
   Amount = 'Amount',
+  Domain = 'Domain',
+  Description = 'Description',
 }
 
 type EventRolesMap = Partial<
@@ -94,9 +96,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
   [ColonyActions.CreateDomain]: [
     // Don't track the metadata event, as not all domains might have it
-    ColonyAndExtensionsEvents.FundingPotAdded,
     ColonyAndExtensionsEvents.DomainAdded,
-    ColonyAndExtensionsEvents.SkillAdded,
   ],
 };
 
@@ -116,5 +116,8 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Amount,
   ],
   [ColonyActions.MintTokens]: [ActionPageDetails.Amount],
-  [ColonyActions.CreateDomain]: [ActionPageDetails.FromDomain],
+  [ColonyActions.CreateDomain]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Description,
+  ],
 };

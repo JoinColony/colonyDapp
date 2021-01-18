@@ -148,7 +148,7 @@ export const colonyResolvers = ({
                 ? parseInt(domain.parent.domainChainId, 10)
                 : null,
               name: metadata?.domainName || domain.name,
-              color: parseInt(metadata?.domainColor || Color.Pink, 10),
+              color: parseInt(metadata?.domainColor || Color.LightPink, 10),
               description: metadata?.domainPurpose || null,
             };
           }),

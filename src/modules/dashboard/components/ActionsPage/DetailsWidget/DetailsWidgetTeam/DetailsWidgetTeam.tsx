@@ -10,7 +10,7 @@ interface Props {
 
 const DetailsWidgetTeam = ({ domain }: Props) => (
   <div>
-    {domain.color && <ColorTag color={domain.color} />}
+    <ColorTag color={domain?.color || 0} />
     {` ${domain?.name}`}
   </div>
 );

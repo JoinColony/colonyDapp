@@ -653,6 +653,11 @@ function* createDomainAction({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
 
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
+      meta,
+    });
+
     /*
      * Update the colony object cache
      */
@@ -663,11 +668,6 @@ function* createDomainAction({
         fetchPolicy: 'network-only',
       },
     );
-
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
-      meta,
-    });
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_ACTION_DOMAIN_CREATE_ERROR,
