@@ -1,0 +1,24 @@
+.main {
+  margin-bottom: 40px;
+}
+
+.name {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+}
+
+.name span {
+  margin-left: 10px;
+}
+
+.description {
+  composes: multiLineEllipsis from '~styles/text.css';
+  margin-top: 15px;
+  width: 220px;
+  font-size: var(--size-normal);
+  word-break: break-all;
+  color: var(--dark: rgb(60, 68, 77));
+  -webkit-line-clamp: 5;
+}

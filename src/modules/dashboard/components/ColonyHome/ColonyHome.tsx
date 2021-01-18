@@ -29,6 +29,7 @@ import {
 
 import ColonyFunding from './ColonyFunding';
 import ColonyTitle from './ColonyTitle';
+import ColonyDomainDescription from './ColonyDomainDescription';
 import ColonyTotalFunds from '../ColonyTotalFunds';
 import ColonyActions from '../ColonyActions';
 import ColonyEvents from '../ColonyEvents';
@@ -210,6 +211,10 @@ const ColonyHome = ({ match, location }: Props) => {
           </Switch>
         </div>
         <aside className={styles.rightAside}>
+          <ColonyDomainDescription
+            colony={colony}
+            currentDomainId={filteredDomainId}
+          />
           <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
           <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
         </aside>
