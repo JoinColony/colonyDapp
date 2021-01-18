@@ -13,7 +13,7 @@ import styles from './CreateDomainButton.css';
 const MSG = defineMessages({
   buttonCreateNewDomain: {
     id: 'dashboard.DomainDropdown.CreateDomainButton.buttonCreateNewDomain',
-    defaultMessage: 'Create new domain',
+    defaultMessage: 'Create new team',
   },
 });
 

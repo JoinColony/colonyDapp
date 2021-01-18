@@ -118,7 +118,7 @@ export const ALLDOMAINS_DOMAIN_SELECTION = {
   id: String(COLONY_TOTAL_BALANCE_DOMAIN_ID),
   color: Color.Yellow,
   ethDomainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  name: 'All Domains',
+  name: 'All Teams',
   ethParentDomainId: null,
 };
 

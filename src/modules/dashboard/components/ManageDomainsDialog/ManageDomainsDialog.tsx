@@ -13,24 +13,24 @@ import { canArchitect } from '../../../users/checks';
 const MSG = defineMessages({
   dialogHeader: {
     id: 'dashboard.ManageDomainsDialog.dialogHeader',
-    defaultMessage: 'Manage domains',
+    defaultMessage: 'Manage teams',
   },
   createNewDomainTitle: {
     id: 'dashboard.ManageDomainsDialog.createNewDomainTitle',
-    defaultMessage: 'Create new domain',
+    defaultMessage: 'Create new team',
   },
   createNewDomainDescription: {
     id: 'dashboard.ManageDomainsDialog.createNewDomainDescription',
     defaultMessage:
-      'Teams, departments, circles: domains let you froup types of activity.',
+      'Domains, departments, circles: teams let you froup types of activity.',
   },
   editDomainTitle: {
     id: 'dashboard.ManageDomainsDialog.editDomainTitle',
-    defaultMessage: 'Edit domain',
+    defaultMessage: 'Edit team',
   },
   editDomainDescription: {
     id: 'dashboard.ManageDomainsDialog.editDomainDescription',
-    defaultMessage: `Need to repurpose domain? Here's the place to do it.`,
+    defaultMessage: `Need to repurpose a team? Here's the place to do it.`,
   },
   domainPermissionsList: {
     id: 'dashboard.ManageDomainsDialog.domainPermissionsList',

@@ -22,7 +22,7 @@ const MSG = defineMessages({
   permissionsMessageFallback: {
     id: 'IndexModal.IndexModalItem.permissionsMessageFallback',
     defaultMessage: `You must have the required permissions in the
-      relevant domains, in order to take this action`,
+      relevant teams, in order to take this action`,
   },
 });
 

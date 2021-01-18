@@ -25,24 +25,24 @@ const MSG = defineMessages({
   titleCreate: {
     id:
       'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleCreate',
-    defaultMessage: 'Create a new domain',
+    defaultMessage: 'Create a new team',
   },
   titleEdit: {
     id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleEdit',
-    defaultMessage: 'Edit domain details',
+    defaultMessage: 'Edit team details',
   },
   name: {
     id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.name',
-    defaultMessage: 'Domain name',
+    defaultMessage: 'Team name',
   },
   purpose: {
     id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.name',
-    defaultMessage: 'What is the purpose of this domain?',
+    defaultMessage: 'What is the purpose of this team?',
   },
   annotation: {
     id:
       'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.annotation',
-    defaultMessage: 'Explain why you’re creating this domain',
+    defaultMessage: 'Explain why you’re creating this team',
   },
   noPermission: {
     id:

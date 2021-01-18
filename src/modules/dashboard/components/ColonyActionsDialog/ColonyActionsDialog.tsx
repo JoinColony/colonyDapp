@@ -29,11 +29,11 @@ const MSG = defineMessages({
   },
   manageDomains: {
     id: 'dashboard.ColonyActionsDialog.manageDomains',
-    defaultMessage: 'Manage Domains',
+    defaultMessage: 'Manage Teams',
   },
   manageDomainsDesc: {
     id: 'dashboard.ColonyActionsDialog.manageDomainsDesc',
-    defaultMessage: 'Need more structure? Need to change a domain name?',
+    defaultMessage: 'Need more structure? Need to change a team name?',
   },
   smite: {
     id: 'dashboard.ColonyActionsDialog.smite',

@@ -17,7 +17,7 @@ const MSG = defineMessages({
   permissionsText: {
     id: 'dashboard.AdvancedDialog.permissionsText',
     defaultMessage: `You must have the {permissionsList} permissions in the
-      relevant domains, in order to take this action`,
+      relevant teams, in order to take this action`,
   },
   managePermissionsTitle: {
     id: 'dashboard.AdvancedDialog.managePermissionsTitle',
