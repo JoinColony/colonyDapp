@@ -799,6 +799,7 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   domain: Domain;
+  domains: Array<SubgraphDomain>;
   events: Array<SubgraphEvent>;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
@@ -847,6 +848,11 @@ export type QueryColonyNameArgs = {
 export type QueryDomainArgs = {
   colonyAddress: Scalars['String'];
   ethDomainId: Scalars['Int'];
+};
+
+
+export type QueryDomainsArgs = {
+  where: ByColonyFilter;
 };
 
 
@@ -1189,6 +1195,10 @@ export type EventsFilter = {
   name_in?: Maybe<Array<Scalars['String']>>;
 };
 
+export type ByColonyFilter = {
+  colonyAddress: Scalars['String'];
+};
+
 export type SubgraphBlock = {
   id: Scalars['String'];
   timestamp: Scalars['String'];
@@ -1205,9 +1215,20 @@ export type SubgraphToken = {
   decimals: Scalars['String'];
 };
 
+export type SubgraphDomainMetadata = {
+  id: Scalars['String'];
+  metadata: Scalars['String'];
+  transaction: SubgraphTransaction;
+};
+
 export type SubgraphDomain = {
+  id: Scalars['String'];
   domainChainId: Scalars['String'];
   name: Scalars['String'];
+  parent?: Maybe<SubgraphDomain>;
+  colonyAddress: Scalars['String'];
+  metadata?: Maybe<Scalars['String']>;
+  metadataHistory: Array<Maybe<SubgraphDomainMetadata>>;
 };
 
 export type SubgraphFundingPotPayout = {
@@ -2002,6 +2023,16 @@ export type SubgraphActionsQuery = { oneTxPayments: Array<(
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'timestamp'> }
     ), associatedColony: { token: Pick<SubgraphToken, 'decimals' | 'symbol'> } }
+  )> };
+
+export type SubgraphDomainsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphDomainsQuery = { domains: Array<(
+    Pick<SubgraphDomain, 'id' | 'domainChainId' | 'name' | 'colonyAddress' | 'metadata'>
+    & { parent?: Maybe<Pick<SubgraphDomain, 'id'>>, metadataHistory: Array<Maybe<Pick<SubgraphDomainMetadata, 'id' | 'metadata'>>> }
   )> };
 
 export const PayoutsFragmentDoc = gql`
@@ -5117,3 +5148,47 @@ export function useSubgraphActionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type SubgraphActionsQueryHookResult = ReturnType<typeof useSubgraphActionsQuery>;
 export type SubgraphActionsLazyQueryHookResult = ReturnType<typeof useSubgraphActionsLazyQuery>;
 export type SubgraphActionsQueryResult = Apollo.QueryResult<SubgraphActionsQuery, SubgraphActionsQueryVariables>;
+export const SubgraphDomainsDocument = gql`
+    query SubgraphDomains($colonyAddress: String!) {
+  domains(where: {colonyAddress: $colonyAddress}) {
+    id
+    domainChainId
+    parent {
+      id
+    }
+    name
+    colonyAddress
+    metadata
+    metadataHistory {
+      id
+      metadata
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphDomainsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphDomainsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useSubgraphDomainsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphDomainsQuery, SubgraphDomainsQueryVariables>) {
+        return Apollo.useQuery<SubgraphDomainsQuery, SubgraphDomainsQueryVariables>(SubgraphDomainsDocument, baseOptions);
+      }
+export function useSubgraphDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphDomainsQuery, SubgraphDomainsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphDomainsQuery, SubgraphDomainsQueryVariables>(SubgraphDomainsDocument, baseOptions);
+        }
+export type SubgraphDomainsQueryHookResult = ReturnType<typeof useSubgraphDomainsQuery>;
+export type SubgraphDomainsLazyQueryHookResult = ReturnType<typeof useSubgraphDomainsLazyQuery>;
+export type SubgraphDomainsQueryResult = Apollo.QueryResult<SubgraphDomainsQuery, SubgraphDomainsQueryVariables>;

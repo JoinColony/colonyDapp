@@ -187,6 +187,10 @@ export default gql`
     name_in: [String!]
   }
 
+  input ByColonyFilter {
+    colonyAddress: String!
+  }
+
   type SubgraphBlock {
     id: String!
     timestamp: String!
@@ -203,9 +207,20 @@ export default gql`
     decimals: String!
   }
 
+  type SubgraphDomainMetadata {
+    id: String!
+    metadata: String!
+    transaction: SubgraphTransaction!
+  }
+
   type SubgraphDomain {
+    id: String!
     domainChainId: String!
     name: String!
+    parent: SubgraphDomain
+    colonyAddress: String!
+    metadata: String
+    metadataHistory: [SubgraphDomainMetadata]!
   }
 
   type SubgraphFundingPotPayout {
@@ -255,5 +270,6 @@ export default gql`
       where: ActionsFilter!
     ): [OneTxPayment!]!
     events(where: EventsFilter!): [SubgraphEvent!]!
+    domains(where: ByColonyFilter!): [SubgraphDomain!]!
   }
 `;
