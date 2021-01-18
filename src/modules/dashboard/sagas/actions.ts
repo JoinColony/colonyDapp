@@ -177,10 +177,6 @@ function* createPaymentAction({
       );
     }
 
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
-
     // Refetch token balances for the domains involved
     yield apolloClient.query<
       TokenBalancesForDomainsQuery,
@@ -205,6 +201,10 @@ function* createPaymentAction({
       type: ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (error) {
     putError(ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR, error, meta);
   } finally {
@@ -349,10 +349,6 @@ function* createMoveFundsAction({
       );
     }
 
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
-
     // Refetch token balances for the domains involved
     yield apolloClient.query<
       TokenBalancesForDomainsQuery,
@@ -374,6 +370,10 @@ function* createMoveFundsAction({
       type: ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (caughtError) {
     putError(ActionTypes.COLONY_ACTION_MOVE_FUNDS_ERROR, caughtError, meta);
   } finally {
@@ -500,10 +500,6 @@ function* createMintTokensAction({
       );
     }
 
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
-
     yield apolloClient.query<
       TokenBalancesForDomainsQuery,
       TokenBalancesForDomainsQueryVariables
@@ -520,6 +516,10 @@ function* createMintTokensAction({
       type: ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (caughtError) {
     putError(ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR, caughtError, meta);
   } finally {
@@ -649,15 +649,6 @@ function* createDomainAction({
       );
     }
 
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
-
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
-      meta,
-    });
-
     /*
      * Update the colony object cache
      */
@@ -668,6 +659,15 @@ function* createDomainAction({
         fetchPolicy: 'network-only',
       },
     );
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
+      meta,
+    });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_ACTION_DOMAIN_CREATE_ERROR,
