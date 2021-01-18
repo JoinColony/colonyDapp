@@ -22,7 +22,7 @@ export interface FormValues {
 }
 
 interface CustomWizardDialogProps {
-  prevStep: string;
+  prevStep?: string;
   colony: Colony;
   id?: string;
 }
@@ -80,7 +80,7 @@ const CreateEditDomainDialog = ({
         <Dialog cancel={cancel}>
           <DialogForm
             {...formValues}
-            back={() => callStep(prevStep)}
+            back={prevStep ? () => callStep(prevStep) : undefined}
             colony={colony}
             id={id}
           />

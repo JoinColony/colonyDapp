@@ -55,7 +55,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  back: () => void;
+  back?: () => void;
   colony: Colony;
   id?: string;
   isSubmitting;
@@ -148,11 +148,13 @@ const CreateEditDomainDialogForm = ({
         </DialogSection>
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          text={{ id: 'button.back' }}
-          onClick={back}
-          appearance={{ theme: 'secondary', size: 'large' }}
-        />
+        {back && (
+          <Button
+            text={{ id: 'button.back' }}
+            onClick={back}
+            appearance={{ theme: 'secondary', size: 'large' }}
+          />
+        )}
         <Button
           text={{ id: 'button.confirm' }}
           appearance={{ theme: 'primary', size: 'large' }}
