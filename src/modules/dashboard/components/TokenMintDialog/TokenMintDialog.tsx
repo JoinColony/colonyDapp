@@ -44,7 +44,7 @@ type Props = DialogProps &
 const displayName = 'dashboard.TokenMintDialog';
 
 const validationSchema = yup.object().shape({
-  annotation: yup.string(),
+  annotation: yup.string().max(4000),
   mintAmount: yup
     .number()
     .required(() => MSG.errorAmountRequired)
@@ -66,21 +66,24 @@ const TokenMintDialog = ({
 
   const transform = useCallback(
     pipe(
-      mapPayload(({ mintAmount: inputAmount }) => {
-        // Find the selected token's decimals
-        const amount = bigNumberify(
-          moveDecimal(
-            inputAmount,
-            getTokenDecimalsWithFallback(nativeToken?.decimals),
-          ),
-        );
-        return {
-          colonyAddress,
-          colonyName,
-          nativeTokenAddress: nativeToken?.address,
-          amount,
-        };
-      }),
+      mapPayload(
+        ({ mintAmount: inputAmount, annotation: annotationMessage }) => {
+          // Find the selected token's decimals
+          const amount = bigNumberify(
+            moveDecimal(
+              inputAmount,
+              getTokenDecimalsWithFallback(nativeToken?.decimals),
+            ),
+          );
+          return {
+            colonyAddress,
+            colonyName,
+            nativeTokenAddress: nativeToken?.address,
+            amount,
+            annotationMessage,
+          };
+        },
+      ),
       withMeta({ history }),
     ),
     [],
