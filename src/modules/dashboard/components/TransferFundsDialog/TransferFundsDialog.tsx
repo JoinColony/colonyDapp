@@ -34,6 +34,7 @@ export interface FormValues {
   toDomain?: string;
   amount: string;
   tokenAddress?: Address;
+  annotation: string;
 }
 
 interface CustomWizardDialogProps {
@@ -67,6 +68,7 @@ const TransferFundsDialog = ({
       .required()
       .moreThan(0, () => MSG.amountZero),
     tokenAddress: yup.string().address().required(),
+    annotation: yup.string().max(4000),
   });
 
   const transform = useCallback(
@@ -77,6 +79,7 @@ const TransferFundsDialog = ({
           amount: transferAmount,
           fromDomain: sourceDomain,
           toDomain,
+          annotation: annotationMessage,
         }) => {
           const selectedToken = tokens.find(
             (token) => token.address === tokenAddress,
@@ -95,6 +98,7 @@ const TransferFundsDialog = ({
             toDomainId: parseInt(toDomain, 10),
             amount,
             tokenAddress,
+            annotationMessage,
           };
         },
       ),
@@ -110,6 +114,7 @@ const TransferFundsDialog = ({
         toDomain: undefined,
         amount: '',
         tokenAddress: nativeTokenAddress,
+        annotation: undefined,
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.COLONY_ACTION_MOVE_FUNDS}
