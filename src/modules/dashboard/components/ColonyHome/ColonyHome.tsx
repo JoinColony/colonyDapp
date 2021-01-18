@@ -183,8 +183,8 @@ const ColonyHome = ({ match, location }: Props) => {
             <div className={styles.domainsDropdownContainer}>
               <DomainDropdown
                 filteredDomainId={filteredDomainId}
-                colonyAddress={colony.colonyAddress}
                 onDomainChange={setDomainIdFilter}
+                colony={data.colony}
               />
             </div>
             <ColonyHomeActions colony={colony} />

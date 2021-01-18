@@ -13,8 +13,7 @@ import {
 } from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
 import { Form, Select, SelectOption } from '~core/Fields';
-import { useColonyDomainsQuery } from '~data/index';
-import { Address } from '~types/index';
+import { Colony } from '~data/index';
 
 import CreateDomainButton from './CreateDomainButton';
 import DomainSelectItem from './DomainSelectItem';
@@ -33,9 +32,9 @@ interface FormValues {
 }
 
 interface Props {
-  colonyAddress: Address;
   filteredDomainId?: number;
   onDomainChange?: (domainId: number) => any;
+  colony: Colony;
 }
 
 const allDomainsColor: Color = Color.Yellow;
@@ -43,9 +42,9 @@ const allDomainsColor: Color = Color.Yellow;
 const displayName = 'dashboard.DomainDropdown';
 
 const DomainDropdown = ({
-  colonyAddress,
   filteredDomainId,
   onDomainChange,
+  colony,
 }: Props) => {
   const [, setSelectedDomain] = useState<number>(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -61,20 +60,16 @@ const DomainDropdown = ({
     [onDomainChange],
   );
 
-  const { data } = useColonyDomainsQuery({
-    variables: { colonyAddress },
-  });
-
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
       const defaultColor: Color = Color.LightPink;
       if (domainId === '0') {
         return allDomainsColor;
       }
-      if (!data || !domainId) {
+      if (!colony || !domainId) {
         return defaultColor;
       }
-      const domain = data.colony.domains.find(
+      const domain = colony.domains.find(
         ({ ethDomainId }) => Number(domainId) === ethDomainId,
       );
       /*
@@ -84,7 +79,7 @@ const DomainDropdown = ({
         ? domain.color
         : defaultColor;
     },
-    [data],
+    [colony],
   );
 
   const renderActiveOption = useCallback<
@@ -109,12 +104,12 @@ const DomainDropdown = ({
       label: { id: 'domain.all' },
       value: '0',
     };
-    if (!data) {
+    if (!colony) {
       return [allDomainsOption];
     }
     return [
       allDomainsOption,
-      ...data.colony.domains.map((domain) => {
+      ...colony.domains.map((domain) => {
         const { ethDomainId, name } = domain;
         return {
           children: <DomainSelectItem domain={domain} />,
@@ -123,7 +118,7 @@ const DomainDropdown = ({
         };
       }),
     ];
-  }, [data]);
+  }, [colony]);
 
   return (
     <Form<FormValues>
@@ -147,7 +142,7 @@ const DomainDropdown = ({
           handleSubmit(Number(val));
         }}
         options={options}
-        optionsFooter={<CreateDomainButton />}
+        optionsFooter={<CreateDomainButton colony={colony} />}
         renderActiveOption={renderActiveOption}
       />
     </Form>
