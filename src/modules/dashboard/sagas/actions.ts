@@ -217,6 +217,7 @@ function* createMoveFundsAction({
     toDomainId,
     amount,
     tokenAddress,
+    annotationMessage,
   },
   meta: {
     id: metaId,
@@ -273,7 +274,24 @@ function* createMoveFundsAction({
       call([colonyClient, colonyClient.getDomain], toDomainId),
     ]);
 
+    let ipfsHash = null;
+    if (annotationMessage) {
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
     txChannel = yield call(getTxChannel, metaId);
+
+    // setup batch ids and channels
+    const batchKey = 'moveFunds';
+    const annotateMoveFunds = {
+      id: `${metaId}-annotateMoveFunds`,
+      channel: yield call(getTxChannel, `${metaId}-annotateMoveFunds`),
+    };
 
     yield fork(createTransaction, metaId, {
       context: ClientType.ColonyClient,
@@ -282,11 +300,44 @@ function* createMoveFundsAction({
       params: [fromPot, toPot, amount, tokenAddress],
     });
 
+    if (annotationMessage) {
+      yield fork(createTransaction, annotateMoveFunds.id, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        group: {
+          key: batchKey,
+          id: metaId,
+          index: 1,
+        },
+        ready: false,
+      });
+    }
+
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateMoveFunds.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
     const {
       payload: { hash: txHash },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(transactionAddParams(annotateMoveFunds.id, [txHash, ipfsHash]));
+
+      yield put(transactionReady(annotateMoveFunds.id));
+
+      yield takeFrom(
+        annotateMoveFunds.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
 
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
