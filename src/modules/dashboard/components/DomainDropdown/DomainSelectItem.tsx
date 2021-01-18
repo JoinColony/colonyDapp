@@ -23,7 +23,7 @@ const displayName = 'dashboard.DomainDropdown.DomainSelectItem';
 
 const DomainSelectItem = ({
   domain: {
-    color = Color.Black,
+    color = Color.LightPink,
     description,
     ethDomainId,
     ethParentDomainId,
@@ -74,7 +74,7 @@ const DomainSelectItem = ({
              * @TODO fallback color won't be needed after graphql
              * typedef updated to reflect guaranteed color value
              */}
-            <ColorTag color={color || Color.Black} />
+            <ColorTag color={color || Color.LightPink} />
           </div>
           <Heading
             appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
@@ -85,9 +85,9 @@ const DomainSelectItem = ({
           )}
         </div>
         {description && (
-          <div>
-            <Paragraph className={styles.description}>{description}</Paragraph>
-          </div>
+          <Paragraph className={styles.description} title={description}>
+            {description}
+          </Paragraph>
         )}
       </div>
       <div className={styles.editButtonCol}>

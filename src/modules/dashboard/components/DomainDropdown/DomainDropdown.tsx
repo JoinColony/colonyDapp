@@ -67,7 +67,7 @@ const DomainDropdown = ({
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
-      const defaultColor: Color = Color.Black;
+      const defaultColor: Color = Color.LightPink;
       if (domainId === '0') {
         return allDomainsColor;
       }
@@ -95,11 +95,7 @@ const DomainDropdown = ({
       const color = getDomainColor(value);
       return (
         <div className={styles.activeItem}>
-          {color && (
-            <>
-              <ColorTag color={color} />{' '}
-            </>
-          )}
+          <ColorTag color={color} />{' '}
           <div className={styles.activeItemLabel}>{label}</div>
         </div>
       );

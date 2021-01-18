@@ -29,7 +29,10 @@
 }
 
 .description {
+  composes: inlineEllipsis from '~styles/text.css';
+  width: 200px;
   font-size: var(--size-tiny);
+  white-space: nowrap;
   color: var(--grey-4);
 }
 
