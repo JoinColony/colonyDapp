@@ -18,11 +18,16 @@ import { log } from '~utils/debug';
 /*
  * Effect to take a specific action from a channel.
  */
-export const takeFrom = (channel: Channel<any>, type: string) =>
+export const takeFrom = (channel: Channel<any>, type: string | string[]) =>
   call(function* takeFromSaga() {
     while (true) {
       const action = yield take(channel);
-      if (action.type === type) return action;
+      if (
+        (Array.isArray(type) && type.includes(action.type)) ||
+        action.type === type
+      ) {
+        return action;
+      }
     }
   });
 

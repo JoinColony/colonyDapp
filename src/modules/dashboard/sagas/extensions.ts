@@ -19,7 +19,11 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { intArrayToBytes32 } from '~utils/web3';
 
-import { createTransaction, getTxChannel } from '../../core/sagas';
+import {
+  createTransaction,
+  getTxChannel,
+  waitForTxResult,
+} from '../../core/sagas';
 
 function* refreshExtension(colonyAddress: string, extensionId: string) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -67,9 +71,7 @@ function* colonyExtensionInstall({
       meta,
     });
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    yield call(refreshExtension, colonyAddress, extensionId);
+    yield waitForTxResult(txChannel);
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_EXTENSION_INSTALL_ERROR,
@@ -77,6 +79,8 @@ function* colonyExtensionInstall({
       meta,
     );
   } finally {
+    yield call(refreshExtension, colonyAddress, extensionId);
+
     txChannel.close();
   }
   return null;
@@ -153,16 +157,17 @@ function* colonyExtensionEnable({
       });
     }
 
-    yield takeFrom(setPermissionChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    yield call(refreshExtension, colonyAddress, extensionId);
+    yield waitForTxResult(initChannel);
+    yield waitForTxResult(setPermissionChannel);
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_EXTENSION_INSTALL_ERROR,
+      ActionTypes.COLONY_EXTENSION_ENABLE_ERROR,
       error,
       meta,
     );
   } finally {
+    yield call(refreshExtension, colonyAddress, extensionId);
+
     initChannel.close();
     setPermissionChannel.close();
   }
@@ -191,9 +196,7 @@ function* colonyExtensionDeprecate({
       meta,
     });
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    yield call(refreshExtension, colonyAddress, extensionId);
+    yield waitForTxResult(txChannel);
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR,
@@ -201,6 +204,8 @@ function* colonyExtensionDeprecate({
       meta,
     );
   } finally {
+    yield call(refreshExtension, colonyAddress, extensionId);
+
     txChannel.close();
   }
   return null;
@@ -228,9 +233,7 @@ function* colonyExtensionUninstall({
       meta,
     });
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    yield call(refreshExtension, colonyAddress, extensionId);
+    yield waitForTxResult(txChannel);
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR,
@@ -238,6 +241,8 @@ function* colonyExtensionUninstall({
       meta,
     );
   } finally {
+    yield call(refreshExtension, colonyAddress, extensionId);
+
     txChannel.close();
   }
   return null;
