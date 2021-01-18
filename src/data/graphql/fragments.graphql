@@ -87,7 +87,7 @@ fragment FullColony on Colony {
   ...ColonyProfile
   ...Tokens
   isNativeTokenExternal
-  domains {
+  domains @client {
     ...DomainFields
   }
   roles @client {

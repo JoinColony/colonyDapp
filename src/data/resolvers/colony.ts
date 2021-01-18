@@ -17,6 +17,9 @@ import {
   ColonySubscribedUsersQuery,
   ColonySubscribedUsersQueryVariables,
   ColonySubscribedUsersDocument,
+  SubgraphDomainsQuery,
+  SubgraphDomainsQueryVariables,
+  SubgraphDomainsDocument,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -50,6 +53,7 @@ export const colonyResolvers = ({
   colonyManager,
   ens,
   apolloClient,
+  ipfs,
 }: Required<Context>): Resolvers => ({
   Query: {
     async colonyAddress(_, { name }) {
@@ -115,6 +119,39 @@ export const colonyResolvers = ({
     },
   },
   Colony: {
+    async domains({ colonyAddress }) {
+      const { data } = await apolloClient.query<
+        SubgraphDomainsQuery,
+        SubgraphDomainsQueryVariables
+      >({
+        query: SubgraphDomainsDocument,
+        variables: {
+          /*
+           * Subgraph addresses are not checksummed
+           */
+          colonyAddress: colonyAddress.toLowerCase(),
+        },
+      });
+      if (data?.domains) {
+        return Promise.all(
+          data.domains.map(async (domain) => {
+            const lastMetadata = domain.metadataHistory.slice(-1).pop();
+            const ipfsHash = domain.metadata || lastMetadata?.metadata || '';
+            const metadataString = await ipfs.getString(ipfsHash as string);
+            const metadata = JSON.parse(metadataString || '{}');
+            return {
+              ...domain,
+              ethDomainId: parseInt(domain.domainChainId, 10),
+              ethParentDomainId: domain.parent
+                ? parseInt(domain.parent.domainChainId, 10)
+                : null,
+              name: metadata?.domainName || domain.name,
+            };
+          }),
+        );
+      }
+      return [];
+    },
     async canMintNativeToken({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,

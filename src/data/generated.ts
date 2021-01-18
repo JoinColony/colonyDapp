@@ -2032,7 +2032,7 @@ export type SubgraphDomainsQueryVariables = Exact<{
 
 export type SubgraphDomainsQuery = { domains: Array<(
     Pick<SubgraphDomain, 'id' | 'domainChainId' | 'name' | 'colonyAddress' | 'metadata'>
-    & { parent?: Maybe<Pick<SubgraphDomain, 'id'>>, metadataHistory: Array<Maybe<Pick<SubgraphDomainMetadata, 'id' | 'metadata'>>> }
+    & { parent?: Maybe<Pick<SubgraphDomain, 'id' | 'domainChainId'>>, metadataHistory: Array<Maybe<Pick<SubgraphDomainMetadata, 'id' | 'metadata'>>> }
   )> };
 
 export const PayoutsFragmentDoc = gql`
@@ -2130,7 +2130,7 @@ export const FullColonyFragmentDoc = gql`
   ...ColonyProfile
   ...Tokens
   isNativeTokenExternal
-  domains {
+  domains @client {
     ...DomainFields
   }
   roles @client {
@@ -5155,6 +5155,7 @@ export const SubgraphDomainsDocument = gql`
     domainChainId
     parent {
       id
+      domainChainId
     }
     name
     colonyAddress
