@@ -120,6 +120,7 @@ export const ALLDOMAINS_DOMAIN_SELECTION = {
   ethDomainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
   name: 'All Teams',
   ethParentDomainId: null,
+  description: '',
 };
 
 export const TOKEN_LOGOS_REPO_URL =

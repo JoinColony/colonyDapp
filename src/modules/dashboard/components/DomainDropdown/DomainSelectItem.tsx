@@ -13,10 +13,12 @@ import Paragraph from '~core/Paragraph';
 import { OneDomain } from '~data/index';
 import { ENTER } from '~types/index';
 
+import { ALLDOMAINS_DOMAIN_SELECTION } from '~constants';
+
 import styles from './DomainSelectItem.css';
 
 interface Props {
-  domain: OneDomain;
+  domain: OneDomain | typeof ALLDOMAINS_DOMAIN_SELECTION;
 }
 
 const displayName = 'dashboard.DomainDropdown.DomainSelectItem';
