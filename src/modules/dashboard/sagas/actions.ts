@@ -8,6 +8,9 @@ import {
   TokenBalancesForDomainsDocument,
   TokenBalancesForDomainsQuery,
   TokenBalancesForDomainsQueryVariables,
+  ColonyFromNameDocument,
+  ColonyFromNameQuery,
+  ColonyFromNameQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -539,6 +542,7 @@ function* createDomainAction({
 }: Action<ActionTypes.COLONY_ACTION_DOMAIN_CREATE>) {
   let txChannel;
   try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     /*
      * Validate the required values for the payment
      */
@@ -648,6 +652,17 @@ function* createDomainAction({
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
+
+    /*
+     * Update the colony object cache
+     */
+    yield apolloClient.query<ColonyFromNameQuery, ColonyFromNameQueryVariables>(
+      {
+        query: ColonyFromNameDocument,
+        variables: { name: colonyName || '', address: colonyAddress },
+        fetchPolicy: 'network-only',
+      },
+    );
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
