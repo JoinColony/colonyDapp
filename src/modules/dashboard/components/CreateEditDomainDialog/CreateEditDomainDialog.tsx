@@ -65,7 +65,7 @@ const CreateEditDomainDialog = ({
     <ActionForm
       initialValues={{
         domainName: undefined,
-        domainColor: Color.Pink,
+        domainColor: Color.LightPink,
         domainPurpose: undefined,
         annotationMessage: undefined,
       }}
