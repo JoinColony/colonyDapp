@@ -47,4 +47,5 @@
   composes: multiLineEllipsis from '~styles/text.css';
   width: 190px;
   text-align: right;
+  word-break: break-all;
 }
