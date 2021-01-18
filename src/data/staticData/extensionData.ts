@@ -77,11 +77,11 @@ const MSG = defineMessages({
   },
   coinMachineTargetPerPeriodTitle: {
     id: 'extensions.CoinMachine.param.targetPerPeriod.title',
-    defaultMessage: 'Period Length',
+    defaultMessage: 'Target Per Period',
   },
   coinMachineTargetPerPeriodDescription: {
     id: 'extensions.CoinMachine.param.targetPerPeriod.description',
-    defaultMessage: 'How long in seconds each period of the sale should last',
+    defaultMessage: 'The number of tokens to aim to sell per period',
   },
   coinMachineMaxPerPeriodTitle: {
     id: 'extensions.CoinMachine.param.maxPerPeriod.title',
