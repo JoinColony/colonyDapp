@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from 'react';
+import React, { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { EventType } from '../types';
@@ -10,7 +10,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   useColonyNameQuery,
-  useDomainQuery,
+  useColonySingleDomainQuery,
   useLoggedInUser,
   useMarkNotificationAsReadMutation,
   useTokenQuery,
@@ -132,8 +132,12 @@ const InboxItem = ({
     variables: { address: tokenAddress },
   });
 
-  const { data: domainData } = useDomainQuery({
-    variables: { colonyAddress: colonyAddress || '', ethDomainId },
+  const { data: programData } = useProgramQuery({
+    variables: { id: programId || '' },
+  });
+
+  const { data: domainData } = useColonySingleDomainQuery({
+    variables: { colonyAddress: colonyAddress || '', domainId: ethDomainId },
   });
 
   const initiatorFriendlyName = !initiatorUser
@@ -167,7 +171,7 @@ const InboxItem = ({
   const colonyName = colonyNameData && colonyNameData.colonyName;
   const token = tokenData && tokenData.token;
   const taskTitle = taskData && taskData.task && taskData.task.title;
-  const domainName = domainData && domainData.domain.name;
+  const domainName = domainData && domainData.colonyDomain.name;
 
   return (
     <TableRow onClick={markAsRead}>
