@@ -1,0 +1,9 @@
+.loadMoreButton {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.loadMoreButton button {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+}
