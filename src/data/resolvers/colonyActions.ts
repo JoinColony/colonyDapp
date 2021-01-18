@@ -16,6 +16,8 @@ import {
 } from '~types/index';
 
 interface EventValue {
+  agent: Address;
+  domainId: BigNumberish;
   paymentId: BigNumberish;
   amount: BigNumberish;
   token: Address;

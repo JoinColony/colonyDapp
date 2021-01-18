@@ -210,6 +210,26 @@ const getMintTokensActionValues = async (
   };
 };
 
+const getCreateDomainActionValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const domainAddedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.DomainAdded,
+  ) as ProcessedEvent;
+
+  const domainAction: {
+    fromDomain: number;
+    actionInitiator?: string;
+  } = {
+    fromDomain: parseInt(domainAddedEvent.values.domainId.toString(), 10),
+  };
+
+  if (domainAddedEvent.values.agent) {
+    domainAction.actionInitiator = domainAddedEvent.values.agent;
+  }
+  return domainAction;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -251,6 +271,15 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...mintTokensActionValues,
+      };
+    }
+    case ColonyActions.CreateDomain: {
+      const createDomainActionValues = await getCreateDomainActionValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...createDomainActionValues,
       };
     }
     default: {
