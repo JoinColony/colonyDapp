@@ -122,6 +122,7 @@ const EditColonyDetailsDialogForm = ({
           label={MSG.logo}
           upload={upload}
           remove={remove}
+          labelAppearance={{ colorSchema: 'grey' }}
           placeholder={
             <>
               <ColonyAvatar
@@ -156,6 +157,7 @@ const EditColonyDetailsDialogForm = ({
           name="name"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={!userHasPermission}
+          maxLength={25}
         />
       </DialogSection>
       <DialogSection>

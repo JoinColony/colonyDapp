@@ -33,18 +33,18 @@ function* colonyAvatarUpload({
       variables: { input: { colonyAddress, avatarHash: ipfsHash } },
     });
 
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
-      meta,
-      payload: { hash: ipfsHash },
-    });
-
     yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
       query: ColonyDocument,
       variables: {
         address: colonyAddress,
       },
       fetchPolicy: 'network-only',
+    });
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
+      meta,
+      payload: { hash: ipfsHash },
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
@@ -65,11 +65,6 @@ function* colonyAvatarRemove({
       mutation: EditColonyProfileDocument,
       variables: { input: { colonyAddress, avatarHash: null } },
     });
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS,
-      meta,
-      payload: undefined,
-    });
 
     yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
       query: ColonyDocument,
@@ -77,6 +72,12 @@ function* colonyAvatarRemove({
         address: colonyAddress,
       },
       fetchPolicy: 'network-only',
+    });
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS,
+      meta,
+      payload: undefined,
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_AVATAR_REMOVE_ERROR, error, meta);

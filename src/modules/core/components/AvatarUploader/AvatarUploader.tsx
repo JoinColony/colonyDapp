@@ -7,6 +7,8 @@ import {
 
 import { Formik } from 'formik';
 
+import { Appearance } from '~core/Fields/Input/InputComponent';
+
 import styles from './AvatarUploader.css';
 
 import FileUpload, { FileReaderFile } from '../FileUpload';
@@ -55,6 +57,8 @@ interface Props {
   hasButtons: boolean;
 
   disabled?: boolean;
+
+  labelAppearance?: Appearance;
 }
 
 const AvatarUploader = ({
@@ -67,6 +71,7 @@ const AvatarUploader = ({
   hasButtons,
   disabled,
   isSet = true,
+  labelAppearance,
 }: Props) => {
   const dropzoneRef = useRef<{ open: () => void }>();
 
@@ -101,6 +106,7 @@ const AvatarUploader = ({
             disabled,
           }}
           label={label}
+          labelAppearance={labelAppearance}
           help={help}
           maxFilesLimit={1}
           name="avatarUploader"
