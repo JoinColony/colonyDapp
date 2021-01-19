@@ -228,14 +228,23 @@ const getMintTokensActionValues = async (
   const tokenAddress = await colonyClient.getToken();
 
   const {
-    values: { who, amount },
+    values: { who, amount, agent },
   } = mintTokensEvent;
 
-  return {
+  const tokensMintedValues: {
+    amount: string;
+    tokenAddress: Address;
+    actionInitiator?: string;
+    recipient: Address;
+  } = {
     amount: bigNumberify(amount || '0').toString(),
     recipient: who,
     tokenAddress,
   };
+  if (agent) {
+    tokensMintedValues.actionInitiator = agent;
+  }
+  return tokensMintedValues;
 };
 
 const getCreateDomainActionValues = async (
