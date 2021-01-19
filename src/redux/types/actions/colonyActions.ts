@@ -64,8 +64,12 @@ export type ColonyActionsActionTypes =
       {
         colonyAddress: Address;
         colonyName: string;
+        colonyDisplayName: string;
         colonyAvatarHash?: string;
         annotationMessage?: string;
+        /*
+         * @TODO I think this will also store the subscribed-to tokens list
+         */
       },
       MetaWithHistory<object>
     >
