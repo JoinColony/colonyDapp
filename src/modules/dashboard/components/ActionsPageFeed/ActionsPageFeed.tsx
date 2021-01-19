@@ -37,6 +37,7 @@ export interface EventValues {
   toDomain: OneDomain;
   oldVersion: string;
   newVersion: string;
+  colonyName: string | ReactElement;
 }
 
 interface Props {

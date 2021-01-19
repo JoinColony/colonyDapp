@@ -429,6 +429,7 @@ const ActionsPage = () => {
               recipient={recipientProfileWithFallback}
               transactionHash={transactionHash}
               values={actionAndEventValues}
+              colony={colonyData.colony}
             />
           )}
         </div>
