@@ -1996,7 +1996,7 @@ export type SubgraphActionsQuery = { oneTxPayments: Array<(
     Pick<SubgraphEvent, 'id' | 'args' | 'address' | 'name'>
     & { transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'timestamp'> }
     ), associatedColony: { token: Pick<SubgraphToken, 'decimals' | 'symbol'> } }
   )> };
 
@@ -5070,7 +5070,6 @@ export const SubgraphActionsDocument = gql`
     transaction {
       hash: id
       block {
-        id
         timestamp
       }
     }
