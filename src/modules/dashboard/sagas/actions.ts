@@ -95,14 +95,14 @@ function* createPaymentAction({
      * setup batch ids and channels
      */
     const batchKey = 'paymentAction';
-    const paymentAction = {
-      id: `${metaId}-paymentAction`,
-      channel: yield call(getTxChannel, `${metaId}-paymentAction`),
-    };
-    const annotatePaymentAction = {
-      id: `${metaId}-annotatePaymentAction`,
-      channel: yield call(getTxChannel, `${metaId}-annotatePaymentAction`),
-    };
+
+    const {
+      paymentAction,
+      annotatePaymentAction,
+    } = yield createTransactionChannels(metaId, [
+      'paymentAction',
+      'annotatePaymentAction',
+    ]);
 
     yield fork(createTransaction, paymentAction.id, {
       context: ClientType.OneTxPaymentClient,
@@ -288,12 +288,16 @@ function* createMoveFundsAction({
 
     // setup batch ids and channels
     const batchKey = 'moveFunds';
-    const annotateMoveFunds = {
-      id: `${metaId}-annotateMoveFunds`,
-      channel: yield call(getTxChannel, `${metaId}-annotateMoveFunds`),
-    };
 
-    yield fork(createTransaction, metaId, {
+    const {
+      moveFunds,
+      annotateMoveFunds,
+    } = yield createTransactionChannels(metaId, [
+      'moveFunds',
+      'annotateMoveFunds',
+    ]);
+
+    yield fork(createTransaction, moveFunds.id, {
       context: ClientType.ColonyClient,
       methodName: 'moveFundsBetweenPotsWithProofs',
       identifier: colonyAddress,
@@ -324,9 +328,12 @@ function* createMoveFundsAction({
 
     const {
       payload: { hash: txHash },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+    } = yield takeFrom(
+      moveFunds.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(moveFunds.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
       yield put(transactionAddParams(annotateMoveFunds.id, [txHash, ipfsHash]));
