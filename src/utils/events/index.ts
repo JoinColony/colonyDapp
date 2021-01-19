@@ -121,6 +121,9 @@ const getPaymentActionValues = async (
    * We don't have to worry about these events existing, as long as this
    * is an action event, these events will exist
    */
+  const oneTxPaymentEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.OneTxPaymentMade,
+  ) as ProcessedEvent;
   const paymentAddedEvent = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.PaymentAdded,
   ) as ProcessedEvent;
@@ -134,23 +137,38 @@ const getPaymentActionValues = async (
   const {
     values: { paymentId },
   } = paymentAddedEvent;
-  const paymentDetails = await colonyClient.getPayment(paymentId);
-  const fromDomain = bigNumberify(paymentDetails.domainId || 1).toNumber();
-  const recipient = paymentDetails.recipient || AddressZero;
-
   /*
    * Fetch the rest of the values that are present directly in the events
    */
   const {
     values: { amount: paymentAmount, token },
   } = payoutClaimedEvent;
+  /*
+   * Get the agent value
+   */
+  const {
+    values: { agent },
+  } = oneTxPaymentEvent;
 
-  return {
+  const paymentDetails = await colonyClient.getPayment(paymentId);
+  const fromDomain = bigNumberify(paymentDetails.domainId || 1).toNumber();
+  const recipient = paymentDetails.recipient || AddressZero;
+  const paymentActionValues: {
+    amount: string;
+    tokenAddress: Address;
+    fromDomain: number;
+    recipient: Address;
+    actionInitiator?: string;
+  } = {
     amount: bigNumberify(paymentAmount || '0').toString(),
     tokenAddress: token || AddressZero,
     fromDomain,
     recipient,
   };
+  if (agent) {
+    paymentActionValues.actionInitiator = agent;
+  }
+  return paymentActionValues;
 };
 
 const getMoveFundsActionValues = async (
