@@ -84,6 +84,7 @@ const EditColonyDetailsDialogForm = ({
   colony: { colonyAddress, avatarHash },
   handleSubmit,
   isSubmitting,
+  isValid,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -154,7 +155,7 @@ const EditColonyDetailsDialogForm = ({
       <DialogSection>
         <Input
           label={MSG.name}
-          name="name"
+          name="colonyDisplayName"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={!userHasPermission}
           maxLength={25}
@@ -163,7 +164,7 @@ const EditColonyDetailsDialogForm = ({
       <DialogSection>
         <Annotations
           label={MSG.annotation}
-          name="annotation"
+          name="annotationMessage"
           disabled={!userHasPermission}
         />
       </DialogSection>
@@ -197,7 +198,7 @@ const EditColonyDetailsDialogForm = ({
           text={{ id: 'button.confirm' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
-          disabled={!userHasPermission}
+          disabled={!userHasPermission || !isValid}
         />
       </DialogSection>
     </>
