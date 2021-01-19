@@ -12,7 +12,11 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { createTransaction, getTxChannel } from '../../core/sagas';
+import {
+  createTransaction,
+  createTransactionChannels,
+  getTxChannel,
+} from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import {
   transactionReady,
@@ -349,18 +353,16 @@ function* createMintTokensAction({
 
     // setup batch ids and channels
     const batchKey = 'mintTokens';
-    const mintTokens = {
-      id: `${metaId}-mintTokens`,
-      channel: yield call(getTxChannel, `${metaId}-mintTokens`),
-    };
-    const claimColonyFunds = {
-      id: `${metaId}-claimColonyFunds`,
-      channel: yield call(getTxChannel, `${metaId}-claimColonyFunds`),
-    };
-    const annotateMintTokens = {
-      id: `${metaId}-annotateMintTokens`,
-      channel: yield call(getTxChannel, `${metaId}-annotateMintTokens`),
-    };
+
+    const {
+      mintTokens,
+      claimColonyFunds,
+      annotateMintTokens,
+    } = yield createTransactionChannels(metaId, [
+      'mintTokens',
+      'claimColonyFunds',
+      'annotateMintTokens',
+    ]);
 
     // create transactions
     yield fork(createTransaction, mintTokens.id, {
