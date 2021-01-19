@@ -85,6 +85,8 @@
     "transaction.OneTxPaymentClient.makePaymentFundedFromDomainWithProofs.title": "Expenditure Payment",
     "transaction.OneTxPaymentClient.makePaymentFundedFromDomainWithProofs.description": "Expenditure Payment",
 
+    "transaction.group.moveFunds.title": "Transfer Funds",
+    "transaction.group.moveFunds.description": "Move Funds Between Domains",
     "transaction.ColonyClient.upgrade.title": "Update Colony",
     "transaction.ColonyClient.upgrade.description": "Update Colony",
     "transaction.ColonyClient.enterRecoveryMode.title": "Enter Recovery mode",
