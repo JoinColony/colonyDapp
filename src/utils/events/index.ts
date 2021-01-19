@@ -190,7 +190,7 @@ const getMoveFundsActionValues = async (
    * Fetch the rest of the values that are present directly in the event
    */
   const {
-    values: { amount, fromPot, toPot, token },
+    values: { amount, fromPot, toPot, token, agent },
   } = moveFundsEvent;
 
   /*
@@ -199,12 +199,22 @@ const getMoveFundsActionValues = async (
   const fromDomain = await colonyClient.getDomainFromFundingPot(fromPot);
   const toDomain = await colonyClient.getDomainFromFundingPot(toPot);
 
-  return {
+  const moveFundsActionValues: {
+    amount: string;
+    tokenAddress: Address;
+    fromDomain: number;
+    toDomain: number;
+    actionInitiator?: string;
+  } = {
     amount: bigNumberify(amount || '0').toString(),
     tokenAddress: token || AddressZero,
     fromDomain: bigNumberify(fromDomain || '1').toNumber(),
     toDomain: bigNumberify(toDomain || '1').toNumber(),
   };
+  if (agent) {
+    moveFundsActionValues.actionInitiator = agent;
+  }
+  return moveFundsActionValues;
 };
 
 const getMintTokensActionValues = async (
