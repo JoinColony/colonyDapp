@@ -70,7 +70,11 @@ const ActionsPageEvent = ({
       <div className={styles.content}>
         <div className={styles.text}>
           <FormattedMessage
-            id="event.title"
+            id={
+              eventName === ColonyAndExtensionsEvents.ColonyMetadata
+                ? `event.${ColonyAndExtensionsEvents.ColonyMetadata}title`
+                : 'event.title'
+            }
             values={{
               ...values,
               fromDomain: values?.fromDomain?.name,

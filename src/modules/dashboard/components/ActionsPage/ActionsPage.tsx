@@ -267,13 +267,15 @@ const ActionsPage = () => {
       annotationHash,
       newVersion,
       oldVersion,
+      colonyDisplayName,
+      colonyAvatarHash,
     },
   } = colonyActionData;
   /*
    * Colony
    */
   const {
-    colony: { colonyAddress, domains },
+    colony: { colonyAddress, domains, displayName: fallbackColonyDisplayName },
   } = colonyData;
 
   /*
@@ -331,6 +333,8 @@ const ActionsPage = () => {
       ) as OneDomain) || fallbackToDomain?.colonyDomain,
     newVersion,
     oldVersion,
+    colonyName: <span>{colonyDisplayName || fallbackColonyDisplayName}</span>,
+    logoChanged: !!colonyAvatarHash,
   };
 
   return (
