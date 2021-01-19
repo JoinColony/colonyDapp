@@ -418,58 +418,6 @@ query ColonyTasks($address: String!) {
   }
 }
 
-query ColonyPrograms($address: String!) {
-  colony(address: $address) {
-    id
-    programs {
-      ...ProgramFields
-    }
-  }
-}
-
-query Program($id: String!) {
-  program(id: $id) {
-    ...ProgramFields
-  }
-}
-
-query ProgramLevels($id: String!) {
-  program(id: $id) {
-    id
-    levelIds
-    levels {
-      ...LevelFields
-    }
-  }
-}
-
-query Level($id: String!) {
-  level(id: $id) {
-    ...LevelFields
-    unlocked
-  }
-}
-
-query ProgramLevelsWithUnlocked($id: String!) {
-  program(id: $id) {
-    id
-    levelIds
-    levels {
-      ...LevelFields
-      unlocked
-    }
-  }
-}
-
-query ProgramSubmissions($id: String!) {
-  program(id: $id) {
-    id
-    submissions {
-      ...ProgramSubmissionFields
-    }
-  }
-}
-
 query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id
@@ -542,20 +490,6 @@ query UserNotifications($address: String!) {
         ...EventContext
       }
       read
-    }
-  }
-}
-
-query UserBadges($address: String!, $colonyAddress: String!) {
-  user(address: $address) {
-    id
-    completedLevels(colonyAddress: $colonyAddress) {
-      id
-      achievement
-      title
-      program {
-        title
-      }
     }
   }
 }

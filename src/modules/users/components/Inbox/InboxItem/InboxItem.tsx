@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useMemo } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { EventType } from '../types';
@@ -16,12 +16,9 @@ import {
   useTokenQuery,
   useUserQuery,
   useTaskQuery,
-  useProgramQuery,
   OneNotification,
   UserNotificationsDocument,
 } from '~data/index';
-
-import { useLevelAfter } from '../../../../dashboard/hooks/useLevelAfter';
 
 import { getFriendlyName, getUsername } from '../../../transformers';
 import { transformNotificationEventNames } from '../events';
@@ -105,9 +102,6 @@ const InboxItem = ({
   // We might have more than just the worker as the target in the future
   const { workerAddress: targetUserAddress = '' } =
     'workerAddress' in context ? context : {};
-  const { payouts = undefined } = 'payouts' in context ? context : {};
-  // only support one payout for now
-  const payout = payouts && payouts[0];
   const { taskId = '' } = 'taskId' in context ? context : {};
   const { colonyAddress = undefined } =
     'colonyAddress' in context ? context : {};
@@ -115,10 +109,6 @@ const InboxItem = ({
   const { tokenAddress = '' } = 'tokenAddress' in context ? context : {};
   const { amount = undefined } = 'amount' in context ? context : {};
   const { message = undefined } = 'message' in context ? context : {};
-  const { programId = undefined } = 'programId' in context ? context : {};
-  const { levelId = undefined } = 'levelId' in context ? context : {};
-  const { persistentTaskId = undefined } =
-    'persistentTaskId' in context ? context : {};
   /*
    * @NOTE On Perfomance
    * Trying to fetch query data directly, even if it fails (empty variable passed along) has better
@@ -140,10 +130,6 @@ const InboxItem = ({
 
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },
-  });
-
-  const { data: programData } = useProgramQuery({
-    variables: { id: programId || '' },
   });
 
   const { data: domainData } = useDomainQuery({
@@ -181,21 +167,6 @@ const InboxItem = ({
   const colonyName = colonyNameData && colonyNameData.colonyName;
   const token = tokenData && tokenData.token;
   const taskTitle = taskData && taskData.task && taskData.task.title;
-  const program = programData && programData.program;
-  const programTitle = program && program.title;
-  const level = useMemo(
-    () =>
-      program && program.levels.find((levelItem) => levelItem.id === levelId),
-    [levelId, program],
-  );
-  const levelTitle = level && level.title;
-  const nextLevel = useLevelAfter(program, levelId);
-  const nextLevelTitle = nextLevel && nextLevel.title;
-  const persistentTask = useMemo(
-    () => level && level.steps.find((step) => step.id === persistentTaskId),
-    [level, persistentTaskId],
-  );
-  const persistentTaskTitle = persistentTask && persistentTask.title;
   const domainName = domainData && domainData.domain.name;
 
   return (
@@ -246,8 +217,6 @@ const InboxItem = ({
                   ),
                   comment: makeInboxDetail(message),
                   domainName: makeInboxDetail(domainName),
-                  level: makeInboxDetail(levelTitle),
-                  nextLevel: makeInboxDetail(nextLevelTitle),
                   otherUser: makeInboxDetail(targetUserFriendlyName, (value) =>
                     targetUserUsername ? (
                       <Link to={`/user/${targetUserUsername}`}>{value}</Link>
@@ -255,15 +224,6 @@ const InboxItem = ({
                       value
                     ),
                   ),
-                  submissionPayout: makeInboxDetail(payout, (value) => (
-                    <Numeral
-                      suffix={` ${payout ? payout.token.symbol : ''}`}
-                      integerSeparator=""
-                      value={value.amount}
-                    />
-                  )),
-                  persistentTask: makeInboxDetail(persistentTaskTitle),
-                  program: makeInboxDetail(programTitle),
                   task: makeInboxDetail(taskTitle, (value) =>
                     colonyName && taskId ? (
                       <Link to={`/colony/${colonyName}/task/${taskId}`}>

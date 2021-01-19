@@ -16,9 +16,8 @@ import ConnectWalletWizard from '~users/ConnectWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
-import LevelEdit from '~dashboard/LevelEdit';
 import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
-import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
+import { ColonyBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
@@ -38,7 +37,6 @@ import {
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
   INBOX_ROUTE,
-  LEVEL_EDIT_ROUTE,
   NOT_FOUND_ROUTE,
   TASK_ROUTE,
   USER_EDIT_ROUTE,
@@ -187,16 +185,6 @@ const Routes = () => {
           routeProps={({ colonyName }) => ({
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
-          })}
-        />
-        <AlwaysAccesibleRoute
-          exact
-          path={LEVEL_EDIT_ROUTE}
-          component={LevelEdit}
-          layout={NavBar}
-          routeProps={({ colonyName, programId }) => ({
-            backText: ProgramBackText,
-            backRoute: `/colony/${colonyName}/program/${programId}`,
           })}
         />
         <AlwaysAccesibleRoute

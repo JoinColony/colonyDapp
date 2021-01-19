@@ -88,9 +88,6 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
         "name": "EventContext",
         "possibleTypes": [
           {
-            "name": "AcceptLevelTaskSubmissionEvent"
-          },
-          {
             "name": "AssignWorkerEvent"
           },
           {
@@ -103,13 +100,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
             "name": "CreateTaskEvent"
           },
           {
-            "name": "CreateLevelTaskSubmissionEvent"
-          },
-          {
             "name": "CreateWorkRequestEvent"
-          },
-          {
-            "name": "EnrollUserInProgramEvent"
           },
           {
             "name": "FinalizeTaskEvent"
@@ -154,9 +145,6 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
             "name": "UnassignWorkerEvent"
           },
           {
-            "name": "UnlockNextLevelEvent"
-          },
-          {
             "name": "TransactionMessageEvent"
           }
         ]
@@ -199,7 +187,6 @@ export type Colony = {
   isNativeTokenLocked: Scalars['Boolean'];
   nativeToken: Token;
   nativeTokenAddress: Scalars['String'];
-  programs: Array<Program>;
   roles: Array<UserRoles>;
   subscribedUsers: Array<User>;
   suggestions: Array<Suggestion>;
@@ -371,38 +358,6 @@ export type NewUserEvent = {
   type: EventType;
 };
 
-export type AcceptLevelTaskSubmissionEvent = {
-  type: EventType;
-  acceptedBy: Scalars['String'];
-  levelId: Scalars['String'];
-  payouts: Array<TaskPayout>;
-  persistentTaskId: Scalars['String'];
-  programId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
-export type CreateLevelTaskSubmissionEvent = {
-  type: EventType;
-  programId: Scalars['String'];
-  persistentTaskId: Scalars['String'];
-  levelId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
-export type EnrollUserInProgramEvent = {
-  type: EventType;
-  programId: Scalars['String'];
-};
-
-export type UnlockNextLevelEvent = {
-  type: EventType;
-  levelId: Scalars['String'];
-  nextLevelId?: Maybe<Scalars['String']>;
-  persistentTaskId: Scalars['String'];
-  programId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
 export type TransactionMessageEvent = {
   type: EventType;
   transactionHash: Scalars['String'];
@@ -410,7 +365,7 @@ export type TransactionMessageEvent = {
   colonyAddress: Scalars['String'];
 };
 
-export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent | TransactionMessageEvent;
+export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | TransactionMessageEvent;
 
 export type Event = {
   id: Scalars['String'];
@@ -427,27 +382,6 @@ export type Notification = {
   id: Scalars['String'];
   event: Event;
   read: Scalars['Boolean'];
-};
-
-export enum LevelStatus {
-  Active = 'Active',
-  Deleted = 'Deleted'
-}
-
-export type Level = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  creatorAddress: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  achievement?: Maybe<Scalars['String']>;
-  numRequiredSteps?: Maybe<Scalars['Int']>;
-  programId: Scalars['String'];
-  program: Program;
-  stepIds: Array<Scalars['String']>;
-  steps: Array<PersistentTask>;
-  status: LevelStatus;
-  unlocked: Scalars['Boolean'];
 };
 
 export type CreateUserInput = {
@@ -625,91 +559,9 @@ export type CreateTaskFromSuggestionInput = {
   id: Scalars['String'];
 };
 
-export type CreateLevelTaskSubmissionInput = {
-  levelId: Scalars['String'];
-  persistentTaskId: Scalars['String'];
-  submission: Scalars['String'];
-};
-
-export type EditSubmissionInput = {
-  id: Scalars['String'];
-  submission: Scalars['String'];
-};
-
-export type AcceptLevelTaskSubmissionInput = {
-  levelId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
-export type CreateLevelTaskInput = {
-  levelId: Scalars['String'];
-};
-
-export type RemoveLevelTaskInput = {
-  id: Scalars['String'];
-  levelId: Scalars['String'];
-};
-
 export type Payout = {
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
-};
-
-export type EditPersistentTaskInput = {
-  id: Scalars['String'];
-  ethDomainId?: Maybe<Scalars['Int']>;
-  ethSkillId?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  payouts?: Maybe<Array<Payout>>;
-};
-
-export type CreateLevelInput = {
-  programId: Scalars['String'];
-};
-
-export type EditLevelInput = {
-  id: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  achievement?: Maybe<Scalars['String']>;
-  numRequiredSteps?: Maybe<Scalars['Int']>;
-};
-
-export type ReorderLevelStepsInput = {
-  id: Scalars['String'];
-  stepIds: Array<Scalars['String']>;
-};
-
-export type RemoveLevelInput = {
-  id: Scalars['String'];
-};
-
-export type CreateProgramInput = {
-  colonyAddress: Scalars['String'];
-};
-
-export type EnrollInProgramInput = {
-  id: Scalars['String'];
-};
-
-export type EditProgramInput = {
-  id: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-};
-
-export type ReorderProgramLevelsInput = {
-  id: Scalars['String'];
-  levelIds: Array<Scalars['String']>;
-};
-
-export type PublishProgramInput = {
-  id: Scalars['String'];
-};
-
-export type RemoveProgramInput = {
-  id: Scalars['String'];
 };
 
 export type SendTransactionMessageInput = {
@@ -719,17 +571,12 @@ export type SendTransactionMessageInput = {
 };
 
 export type Mutation = {
-  acceptLevelTaskSubmission?: Maybe<Submission>;
   addUpvoteToSuggestion?: Maybe<Suggestion>;
   assignWorker?: Maybe<Task>;
   cancelTask?: Maybe<Task>;
   clearLoggedInUser: LoggedInUser;
   createColony?: Maybe<Colony>;
   createDomain?: Maybe<Domain>;
-  createLevel?: Maybe<Level>;
-  createLevelTask?: Maybe<PersistentTask>;
-  createLevelTaskSubmission?: Maybe<Submission>;
-  createProgram?: Maybe<Program>;
   createSuggestion?: Maybe<Suggestion>;
   createTask?: Maybe<Task>;
   createTaskFromSuggestion?: Maybe<Task>;
@@ -737,24 +584,13 @@ export type Mutation = {
   createWorkRequest?: Maybe<Task>;
   editColonyProfile?: Maybe<Colony>;
   editDomainName?: Maybe<Domain>;
-  editLevel?: Maybe<Level>;
-  editPersistentTask?: Maybe<PersistentTask>;
-  editProgram?: Maybe<Program>;
-  editSubmission?: Maybe<Submission>;
   editUser?: Maybe<User>;
-  enrollInProgram?: Maybe<Program>;
   finalizeTask?: Maybe<Task>;
   markAllNotificationsAsRead: Scalars['Boolean'];
   markNotificationAsRead: Scalars['Boolean'];
-  publishProgram?: Maybe<Program>;
-  removeLevel?: Maybe<Level>;
-  removeLevelTask?: Maybe<PersistentTask>;
-  removeProgram?: Maybe<Program>;
   removeTaskPayout?: Maybe<Task>;
   removeTaskSkill?: Maybe<Task>;
   removeUpvoteFromSuggestion?: Maybe<Suggestion>;
-  reorderLevelSteps?: Maybe<Level>;
-  reorderProgramLevels?: Maybe<Program>;
   sendTaskMessage: Scalars['Boolean'];
   sendTransactionMessage: Scalars['Boolean'];
   sendWorkInvite?: Maybe<Task>;
@@ -774,11 +610,6 @@ export type Mutation = {
   unassignWorker?: Maybe<Task>;
   unsubscribeFromColony?: Maybe<User>;
   updateNetworkContracts: NetworkContracts;
-};
-
-
-export type MutationAcceptLevelTaskSubmissionArgs = {
-  input: AcceptLevelTaskSubmissionInput;
 };
 
 
@@ -804,26 +635,6 @@ export type MutationCreateColonyArgs = {
 
 export type MutationCreateDomainArgs = {
   input: CreateDomainInput;
-};
-
-
-export type MutationCreateLevelArgs = {
-  input: CreateLevelInput;
-};
-
-
-export type MutationCreateLevelTaskArgs = {
-  input: CreateLevelTaskInput;
-};
-
-
-export type MutationCreateLevelTaskSubmissionArgs = {
-  input: CreateLevelTaskSubmissionInput;
-};
-
-
-export type MutationCreateProgramArgs = {
-  input: CreateProgramInput;
 };
 
 
@@ -862,33 +673,8 @@ export type MutationEditDomainNameArgs = {
 };
 
 
-export type MutationEditLevelArgs = {
-  input: EditLevelInput;
-};
-
-
-export type MutationEditPersistentTaskArgs = {
-  input: EditPersistentTaskInput;
-};
-
-
-export type MutationEditProgramArgs = {
-  input: EditProgramInput;
-};
-
-
-export type MutationEditSubmissionArgs = {
-  input: EditSubmissionInput;
-};
-
-
 export type MutationEditUserArgs = {
   input: EditUserInput;
-};
-
-
-export type MutationEnrollInProgramArgs = {
-  input: EnrollInProgramInput;
 };
 
 
@@ -899,26 +685,6 @@ export type MutationFinalizeTaskArgs = {
 
 export type MutationMarkNotificationAsReadArgs = {
   input: MarkNotificationAsReadInput;
-};
-
-
-export type MutationPublishProgramArgs = {
-  input: PublishProgramInput;
-};
-
-
-export type MutationRemoveLevelArgs = {
-  input: RemoveLevelInput;
-};
-
-
-export type MutationRemoveLevelTaskArgs = {
-  input: RemoveLevelTaskInput;
-};
-
-
-export type MutationRemoveProgramArgs = {
-  input: RemoveProgramInput;
 };
 
 
@@ -934,16 +700,6 @@ export type MutationRemoveTaskSkillArgs = {
 
 export type MutationRemoveUpvoteFromSuggestionArgs = {
   input: RemoveUpvoteFromSuggestionInput;
-};
-
-
-export type MutationReorderLevelStepsArgs = {
-  input: ReorderLevelStepsInput;
-};
-
-
-export type MutationReorderProgramLevelsArgs = {
-  input: ReorderProgramLevelsInput;
 };
 
 
@@ -1036,49 +792,6 @@ export type MutationUnsubscribeFromColonyArgs = {
   input: UnsubscribeFromColonyInput;
 };
 
-export enum PersistentTaskStatus {
-  Active = 'Active',
-  Closed = 'Closed',
-  Deleted = 'Deleted'
-}
-
-export type PersistentTask = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  colonyAddress: Scalars['String'];
-  creatorAddress: Scalars['String'];
-  ethDomainId?: Maybe<Scalars['Int']>;
-  domain?: Maybe<Domain>;
-  ethSkillId?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  payouts: Array<TaskPayout>;
-  submissions: Array<Submission>;
-  status: PersistentTaskStatus;
-  currentUserSubmission?: Maybe<Submission>;
-};
-
-export enum ProgramStatus {
-  Draft = 'Draft',
-  Active = 'Active',
-  Deleted = 'Deleted'
-}
-
-export type Program = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  creatorAddress: Scalars['String'];
-  colonyAddress: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  levelIds: Array<Scalars['String']>;
-  levels: Array<Level>;
-  enrolledUserAddresses: Array<Scalars['String']>;
-  enrolled: Scalars['Boolean'];
-  status: ProgramStatus;
-  submissions: Array<ProgramSubmission>;
-};
-
 export type Query = {
   colony: Colony;
   colonyAction: ColonyAction;
@@ -1087,11 +800,9 @@ export type Query = {
   colonyName: Scalars['String'];
   domain: Domain;
   events: Array<SubgraphEvent>;
-  level: Level;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
   oneTxPayments: Array<OneTxPayment>;
-  program: Program;
   systemInfo: SystemInfo;
   task: Task;
   token: Token;
@@ -1144,18 +855,8 @@ export type QueryEventsArgs = {
 };
 
 
-export type QueryLevelArgs = {
-  id: Scalars['String'];
-};
-
-
 export type QueryOneTxPaymentsArgs = {
   where: ActionsFilter;
-};
-
-
-export type QueryProgramArgs = {
-  id: Scalars['String'];
 };
 
 
@@ -1208,32 +909,6 @@ export type QueryUserReputationArgs = {
 
 export type QueryUsernameArgs = {
   address: Scalars['String'];
-};
-
-export enum SubmissionStatus {
-  Open = 'Open',
-  Accepted = 'Accepted',
-  Rejected = 'Rejected',
-  Deleted = 'Deleted'
-}
-
-export type Submission = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  creatorAddress: Scalars['String'];
-  creator: User;
-  persistentTaskId: Scalars['String'];
-  submission: Scalars['String'];
-  status: SubmissionStatus;
-  statusChangedAt?: Maybe<Scalars['DateTime']>;
-  task: PersistentTask;
-};
-
-export type ProgramSubmission = {
-  id: Scalars['String'];
-  levelId: Scalars['String'];
-  level: Level;
-  submission: Submission;
 };
 
 export enum SuggestionStatus {
@@ -1308,7 +983,6 @@ export type SystemInfo = {
 export type User = {
   colonies: Array<Colony>;
   colonyAddresses: Array<Scalars['String']>;
-  completedLevels: Array<Level>;
   createdAt: Scalars['DateTime'];
   id: Scalars['String'];
   notifications: Array<Notification>;
@@ -1319,11 +993,6 @@ export type User = {
   tokenAddresses: Array<Scalars['String']>;
   tokenTransfers: Array<Transfer>;
   tokens: Array<Token>;
-};
-
-
-export type UserCompletedLevelsArgs = {
-  colonyAddress: Scalars['String'];
 };
 
 
@@ -1349,14 +1018,11 @@ export type UserProfile = {
 
 
 export enum EventType {
-  AcceptLevelTaskSubmission = 'AcceptLevelTaskSubmission',
   AssignWorker = 'AssignWorker',
   CancelTask = 'CancelTask',
   CreateDomain = 'CreateDomain',
-  CreateLevelTaskSubmission = 'CreateLevelTaskSubmission',
   CreateTask = 'CreateTask',
   CreateWorkRequest = 'CreateWorkRequest',
-  EnrollUserInProgram = 'EnrollUserInProgram',
   FinalizeTask = 'FinalizeTask',
   NewUser = 'NewUser',
   RemoveTaskPayout = 'RemoveTaskPayout',
@@ -1371,7 +1037,6 @@ export enum EventType {
   SetTaskTitle = 'SetTaskTitle',
   TaskMessage = 'TaskMessage',
   UnassignWorker = 'UnassignWorker',
-  UnlockNextLevel = 'UnlockNextLevel',
   TransactionMessage = 'TransactionMessage'
 }
 
@@ -1588,11 +1253,6 @@ export type PayoutsFragment = { payouts: Array<(
     & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
   )> };
 
-export type PersistentTaskPayoutsFragment = { payouts: Array<(
-    Pick<TaskPayout, 'amount' | 'tokenAddress'>
-    & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
-  )> };
-
 export type CreateTaskFieldsFragment = (
   Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'commentCount' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
   & { assignedWorker?: Maybe<(
@@ -1624,45 +1284,6 @@ export type FullColonyFragment = (
   & TokensFragment
 );
 
-export type ProgramFieldsFragment = (
-  Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'description' | 'enrolled' | 'enrolledUserAddresses' | 'levelIds' | 'status' | 'title'>
-  & { levels: Array<(
-    Pick<Level, 'id' | 'achievement' | 'description' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>
-    & { steps: Array<PersistentTaskFieldsFragment> }
-  )> }
-);
-
-export type LevelFieldsFragment = (
-  Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>
-  & { steps: Array<PersistentTaskFieldsFragment> }
-);
-
-export type ProgramSubmissionFieldsFragment = (
-  Pick<ProgramSubmission, 'id'>
-  & { level: Pick<Level, 'id' | 'title'>, submission: (
-    Pick<Submission, 'id' | 'createdAt' | 'status' | 'statusChangedAt' | 'submission'>
-    & { creator: (
-      Pick<User, 'id'>
-      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    ), task: (
-      Pick<PersistentTask, 'id' | 'colonyAddress' | 'description' | 'ethSkillId' | 'title'>
-      & { domain?: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'name'>> }
-      & PersistentTaskPayoutsFragment
-    ) }
-  ) }
-);
-
-export type SubmissionFieldsFragment = (
-  Pick<Submission, 'id' | 'createdAt' | 'status' | 'statusChangedAt' | 'submission'>
-  & { task: Pick<PersistentTask, 'id'> }
-);
-
-export type PersistentTaskFieldsFragment = (
-  Pick<PersistentTask, 'id' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'ethDomainId' | 'ethSkillId' | 'status' | 'title'>
-  & { currentUserSubmission?: Maybe<SubmissionFieldsFragment>, submissions: Array<SubmissionFieldsFragment> }
-  & PersistentTaskPayoutsFragment
-);
-
 export type EventFieldsFragment = (
   Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
   & { initiator?: Maybe<(
@@ -1671,13 +1292,7 @@ export type EventFieldsFragment = (
   )> }
 );
 
-export type EventContextFragment = { context: (
-    Pick<AcceptLevelTaskSubmissionEvent, 'acceptedBy' | 'levelId' | 'persistentTaskId' | 'programId' | 'submissionId' | 'type'>
-    & { payouts: Array<(
-      Pick<TaskPayout, 'amount' | 'tokenAddress'>
-      & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
-    )> }
-  ) | Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<CreateDomainEvent, 'type' | 'ethDomainId' | 'colonyAddress'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateLevelTaskSubmissionEvent, 'levelId' | 'persistentTaskId' | 'programId' | 'submissionId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<EnrollUserInProgramEvent, 'programId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SetTaskPendingEvent, 'taskId' | 'type' | 'colonyAddress' | 'txHash'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type' | 'colonyAddress'> | Pick<TaskMessageEvent, 'colonyAddress' | 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<UnlockNextLevelEvent, 'levelId' | 'nextLevelId' | 'persistentTaskId' | 'programId' | 'submissionId' | 'type'> };
+export type EventContextFragment = { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<CreateDomainEvent, 'type' | 'ethDomainId' | 'colonyAddress'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<FinalizeTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SetTaskPendingEvent, 'taskId' | 'type' | 'colonyAddress' | 'txHash'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type' | 'colonyAddress'> | Pick<TaskMessageEvent, 'colonyAddress' | 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> };
 
 export type TaskEventFragment = (
   EventFieldsFragment
@@ -1958,123 +1573,6 @@ export type EditDomainMutationVariables = Exact<{
 
 
 export type EditDomainMutation = { editDomainName?: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
-
-export type CreateProgramMutationVariables = Exact<{
-  input: CreateProgramInput;
-}>;
-
-
-export type CreateProgramMutation = { createProgram?: Maybe<ProgramFieldsFragment> };
-
-export type EditProgramMutationVariables = Exact<{
-  input: EditProgramInput;
-}>;
-
-
-export type EditProgramMutation = { editProgram?: Maybe<Pick<Program, 'id' | 'description' | 'title'>> };
-
-export type RemoveProgramMutationVariables = Exact<{
-  input: RemoveProgramInput;
-}>;
-
-
-export type RemoveProgramMutation = { removeProgram?: Maybe<Pick<Program, 'id' | 'status'>> };
-
-export type PublishProgramMutationVariables = Exact<{
-  input: PublishProgramInput;
-}>;
-
-
-export type PublishProgramMutation = { publishProgram?: Maybe<Pick<Program, 'id' | 'status'>> };
-
-export type EnrollInProgramMutationVariables = Exact<{
-  input: EnrollInProgramInput;
-}>;
-
-
-export type EnrollInProgramMutation = { enrollInProgram?: Maybe<(
-    Pick<Program, 'id' | 'enrolled' | 'enrolledUserAddresses'>
-    & { levels: Array<Pick<Level, 'id' | 'unlocked'>> }
-  )> };
-
-export type CreateLevelMutationVariables = Exact<{
-  input: CreateLevelInput;
-}>;
-
-
-export type CreateLevelMutation = { createLevel?: Maybe<(
-    Pick<Level, 'unlocked'>
-    & LevelFieldsFragment
-  )> };
-
-export type EditLevelMutationVariables = Exact<{
-  input: EditLevelInput;
-}>;
-
-
-export type EditLevelMutation = { editLevel?: Maybe<LevelFieldsFragment> };
-
-export type RemoveLevelMutationVariables = Exact<{
-  input: RemoveLevelInput;
-}>;
-
-
-export type RemoveLevelMutation = { removeLevel?: Maybe<Pick<Level, 'id' | 'status'>> };
-
-export type ReorderProgramLevelsMutationVariables = Exact<{
-  input: ReorderProgramLevelsInput;
-}>;
-
-
-export type ReorderProgramLevelsMutation = { reorderProgramLevels?: Maybe<(
-    Pick<Program, 'id' | 'levelIds'>
-    & { levels: Array<Pick<Level, 'id'>> }
-  )> };
-
-export type CreateLevelTaskMutationVariables = Exact<{
-  input: CreateLevelTaskInput;
-}>;
-
-
-export type CreateLevelTaskMutation = { createLevelTask?: Maybe<PersistentTaskFieldsFragment> };
-
-export type RemoveLevelTaskMutationVariables = Exact<{
-  input: RemoveLevelTaskInput;
-}>;
-
-
-export type RemoveLevelTaskMutation = { removeLevelTask?: Maybe<Pick<PersistentTask, 'id' | 'status'>> };
-
-export type EditPersistentTaskMutationVariables = Exact<{
-  input: EditPersistentTaskInput;
-}>;
-
-
-export type EditPersistentTaskMutation = { editPersistentTask?: Maybe<(
-    Pick<PersistentTask, 'id' | 'description' | 'ethDomainId' | 'ethSkillId' | 'title'>
-    & PersistentTaskPayoutsFragment
-  )> };
-
-export type CreateLevelTaskSubmissionMutationVariables = Exact<{
-  input: CreateLevelTaskSubmissionInput;
-}>;
-
-
-export type CreateLevelTaskSubmissionMutation = { createLevelTaskSubmission?: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
-
-export type EditSubmissionMutationVariables = Exact<{
-  input: EditSubmissionInput;
-}>;
-
-
-export type EditSubmissionMutation = { editSubmission?: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
-
-export type AcceptLevelTaskSubmissionMutationVariables = Exact<{
-  input: AcceptLevelTaskSubmissionInput;
-}>;
-
-
-export type AcceptLevelTaskSubmissionMutation = { acceptLevelTaskSubmission?: Maybe<Pick<Submission, 'id' | 'status'>> };
 
 export type SendTransactionMessageMutationVariables = Exact<{
   input: SendTransactionMessageInput;
@@ -2364,66 +1862,6 @@ export type ColonyTasksQuery = { colony: (
     )> }
   ) };
 
-export type ColonyProgramsQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyProgramsQuery = { colony: (
-    Pick<Colony, 'id'>
-    & { programs: Array<ProgramFieldsFragment> }
-  ) };
-
-export type ProgramQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type ProgramQuery = { program: ProgramFieldsFragment };
-
-export type ProgramLevelsQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type ProgramLevelsQuery = { program: (
-    Pick<Program, 'id' | 'levelIds'>
-    & { levels: Array<LevelFieldsFragment> }
-  ) };
-
-export type LevelQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type LevelQuery = { level: (
-    Pick<Level, 'unlocked'>
-    & LevelFieldsFragment
-  ) };
-
-export type ProgramLevelsWithUnlockedQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type ProgramLevelsWithUnlockedQuery = { program: (
-    Pick<Program, 'id' | 'levelIds'>
-    & { levels: Array<(
-      Pick<Level, 'unlocked'>
-      & LevelFieldsFragment
-    )> }
-  ) };
-
-export type ProgramSubmissionsQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type ProgramSubmissionsQuery = { program: (
-    Pick<Program, 'id'>
-    & { submissions: Array<ProgramSubmissionFieldsFragment> }
-  ) };
-
 export type ColonySubscribedUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -2493,20 +1931,6 @@ export type UserNotificationsQuery = { user: (
     )> }
   ) };
 
-export type UserBadgesQueryVariables = Exact<{
-  address: Scalars['String'];
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type UserBadgesQuery = { user: (
-    Pick<User, 'id'>
-    & { completedLevels: Array<(
-      Pick<Level, 'id' | 'achievement' | 'title'>
-      & { program: Pick<Program, 'title'> }
-    )> }
-  ) };
-
 export type SystemInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2572,7 +1996,7 @@ export type SubgraphActionsQuery = { oneTxPayments: Array<(
     Pick<SubgraphEvent, 'id' | 'args' | 'address' | 'name'>
     & { transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'timestamp'> }
     ), associatedColony: { token: Pick<SubgraphToken, 'decimals' | 'symbol'> } }
   )> };
 
@@ -2690,136 +2114,6 @@ export const FullColonyFragmentDoc = gql`
     ${ColonyProfileFragmentDoc}
 ${TokensFragmentDoc}
 ${DomainFieldsFragmentDoc}`;
-export const SubmissionFieldsFragmentDoc = gql`
-    fragment SubmissionFields on Submission {
-  id
-  createdAt
-  task {
-    id
-  }
-  status
-  statusChangedAt
-  submission
-}
-    `;
-export const PersistentTaskPayoutsFragmentDoc = gql`
-    fragment PersistentTaskPayouts on PersistentTask {
-  payouts {
-    amount
-    tokenAddress
-    token @client {
-      id
-      address
-      decimals
-      name
-      symbol
-    }
-  }
-}
-    `;
-export const PersistentTaskFieldsFragmentDoc = gql`
-    fragment PersistentTaskFields on PersistentTask {
-  id
-  colonyAddress
-  createdAt
-  creatorAddress
-  currentUserSubmission {
-    ...SubmissionFields
-  }
-  description
-  ethDomainId
-  ethSkillId
-  ...PersistentTaskPayouts
-  status
-  submissions {
-    ...SubmissionFields
-  }
-  title
-}
-    ${SubmissionFieldsFragmentDoc}
-${PersistentTaskPayoutsFragmentDoc}`;
-export const ProgramFieldsFragmentDoc = gql`
-    fragment ProgramFields on Program {
-  id
-  createdAt
-  creatorAddress
-  colonyAddress
-  description
-  enrolled
-  enrolledUserAddresses
-  levels {
-    id
-    achievement
-    description
-    numRequiredSteps
-    programId
-    stepIds
-    steps {
-      ...PersistentTaskFields
-    }
-    status
-    title
-  }
-  levelIds
-  status
-  title
-}
-    ${PersistentTaskFieldsFragmentDoc}`;
-export const LevelFieldsFragmentDoc = gql`
-    fragment LevelFields on Level {
-  id
-  achievement
-  createdAt
-  creatorAddress
-  description
-  numRequiredSteps
-  programId
-  status
-  stepIds
-  steps {
-    ...PersistentTaskFields
-  }
-  title
-}
-    ${PersistentTaskFieldsFragmentDoc}`;
-export const ProgramSubmissionFieldsFragmentDoc = gql`
-    fragment ProgramSubmissionFields on ProgramSubmission {
-  id
-  level {
-    id
-    title
-  }
-  submission {
-    id
-    createdAt
-    creator {
-      id
-      profile {
-        avatarHash
-        displayName
-        username
-        walletAddress
-      }
-    }
-    task {
-      id
-      colonyAddress
-      description
-      ethSkillId
-      title
-      domain {
-        id
-        ethDomainId
-        name
-      }
-      ...PersistentTaskPayouts
-    }
-    status
-    statusChangedAt
-    submission
-  }
-}
-    ${PersistentTaskPayoutsFragmentDoc}`;
 export const EventFieldsFragmentDoc = gql`
     fragment EventFields on Event {
   createdAt
@@ -2841,25 +2135,6 @@ export const EventFieldsFragmentDoc = gql`
 export const EventContextFragmentDoc = gql`
     fragment EventContext on Event {
   context {
-    ... on AcceptLevelTaskSubmissionEvent {
-      acceptedBy
-      levelId
-      payouts {
-        amount
-        tokenAddress
-        token @client {
-          id
-          address
-          decimals
-          name
-          symbol
-        }
-      }
-      persistentTaskId
-      programId
-      submissionId
-      type
-    }
     ... on AssignWorkerEvent {
       taskId
       type
@@ -2871,13 +2146,6 @@ export const EventContextFragmentDoc = gql`
       type
       colonyAddress
     }
-    ... on CreateLevelTaskSubmissionEvent {
-      levelId
-      persistentTaskId
-      programId
-      submissionId
-      type
-    }
     ... on CreateTaskEvent {
       colonyAddress
       ethDomainId
@@ -2888,10 +2156,6 @@ export const EventContextFragmentDoc = gql`
       taskId
       type
       colonyAddress
-    }
-    ... on EnrollUserInProgramEvent {
-      programId
-      type
     }
     ... on FinalizeTaskEvent {
       taskId
@@ -2977,14 +2241,6 @@ export const EventContextFragmentDoc = gql`
       type
       ethDomainId
       colonyAddress
-    }
-    ... on UnlockNextLevelEvent {
-      levelId
-      nextLevelId
-      persistentTaskId
-      programId
-      submissionId
-      type
     }
   }
 }
@@ -4132,513 +3388,6 @@ export function useEditDomainMutation(baseOptions?: Apollo.MutationHookOptions<E
 export type EditDomainMutationHookResult = ReturnType<typeof useEditDomainMutation>;
 export type EditDomainMutationResult = Apollo.MutationResult<EditDomainMutation>;
 export type EditDomainMutationOptions = Apollo.BaseMutationOptions<EditDomainMutation, EditDomainMutationVariables>;
-export const CreateProgramDocument = gql`
-    mutation CreateProgram($input: CreateProgramInput!) {
-  createProgram(input: $input) {
-    ...ProgramFields
-  }
-}
-    ${ProgramFieldsFragmentDoc}`;
-export type CreateProgramMutationFn = Apollo.MutationFunction<CreateProgramMutation, CreateProgramMutationVariables>;
-
-/**
- * __useCreateProgramMutation__
- *
- * To run a mutation, you first call `useCreateProgramMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateProgramMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createProgramMutation, { data, loading, error }] = useCreateProgramMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateProgramMutation(baseOptions?: Apollo.MutationHookOptions<CreateProgramMutation, CreateProgramMutationVariables>) {
-        return Apollo.useMutation<CreateProgramMutation, CreateProgramMutationVariables>(CreateProgramDocument, baseOptions);
-      }
-export type CreateProgramMutationHookResult = ReturnType<typeof useCreateProgramMutation>;
-export type CreateProgramMutationResult = Apollo.MutationResult<CreateProgramMutation>;
-export type CreateProgramMutationOptions = Apollo.BaseMutationOptions<CreateProgramMutation, CreateProgramMutationVariables>;
-export const EditProgramDocument = gql`
-    mutation EditProgram($input: EditProgramInput!) {
-  editProgram(input: $input) {
-    id
-    description
-    title
-  }
-}
-    `;
-export type EditProgramMutationFn = Apollo.MutationFunction<EditProgramMutation, EditProgramMutationVariables>;
-
-/**
- * __useEditProgramMutation__
- *
- * To run a mutation, you first call `useEditProgramMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditProgramMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editProgramMutation, { data, loading, error }] = useEditProgramMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useEditProgramMutation(baseOptions?: Apollo.MutationHookOptions<EditProgramMutation, EditProgramMutationVariables>) {
-        return Apollo.useMutation<EditProgramMutation, EditProgramMutationVariables>(EditProgramDocument, baseOptions);
-      }
-export type EditProgramMutationHookResult = ReturnType<typeof useEditProgramMutation>;
-export type EditProgramMutationResult = Apollo.MutationResult<EditProgramMutation>;
-export type EditProgramMutationOptions = Apollo.BaseMutationOptions<EditProgramMutation, EditProgramMutationVariables>;
-export const RemoveProgramDocument = gql`
-    mutation RemoveProgram($input: RemoveProgramInput!) {
-  removeProgram(input: $input) {
-    id
-    status
-  }
-}
-    `;
-export type RemoveProgramMutationFn = Apollo.MutationFunction<RemoveProgramMutation, RemoveProgramMutationVariables>;
-
-/**
- * __useRemoveProgramMutation__
- *
- * To run a mutation, you first call `useRemoveProgramMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveProgramMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeProgramMutation, { data, loading, error }] = useRemoveProgramMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useRemoveProgramMutation(baseOptions?: Apollo.MutationHookOptions<RemoveProgramMutation, RemoveProgramMutationVariables>) {
-        return Apollo.useMutation<RemoveProgramMutation, RemoveProgramMutationVariables>(RemoveProgramDocument, baseOptions);
-      }
-export type RemoveProgramMutationHookResult = ReturnType<typeof useRemoveProgramMutation>;
-export type RemoveProgramMutationResult = Apollo.MutationResult<RemoveProgramMutation>;
-export type RemoveProgramMutationOptions = Apollo.BaseMutationOptions<RemoveProgramMutation, RemoveProgramMutationVariables>;
-export const PublishProgramDocument = gql`
-    mutation PublishProgram($input: PublishProgramInput!) {
-  publishProgram(input: $input) {
-    id
-    status
-  }
-}
-    `;
-export type PublishProgramMutationFn = Apollo.MutationFunction<PublishProgramMutation, PublishProgramMutationVariables>;
-
-/**
- * __usePublishProgramMutation__
- *
- * To run a mutation, you first call `usePublishProgramMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePublishProgramMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [publishProgramMutation, { data, loading, error }] = usePublishProgramMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function usePublishProgramMutation(baseOptions?: Apollo.MutationHookOptions<PublishProgramMutation, PublishProgramMutationVariables>) {
-        return Apollo.useMutation<PublishProgramMutation, PublishProgramMutationVariables>(PublishProgramDocument, baseOptions);
-      }
-export type PublishProgramMutationHookResult = ReturnType<typeof usePublishProgramMutation>;
-export type PublishProgramMutationResult = Apollo.MutationResult<PublishProgramMutation>;
-export type PublishProgramMutationOptions = Apollo.BaseMutationOptions<PublishProgramMutation, PublishProgramMutationVariables>;
-export const EnrollInProgramDocument = gql`
-    mutation EnrollInProgram($input: EnrollInProgramInput!) {
-  enrollInProgram(input: $input) {
-    id
-    enrolled
-    enrolledUserAddresses
-    levels {
-      id
-      unlocked
-    }
-  }
-}
-    `;
-export type EnrollInProgramMutationFn = Apollo.MutationFunction<EnrollInProgramMutation, EnrollInProgramMutationVariables>;
-
-/**
- * __useEnrollInProgramMutation__
- *
- * To run a mutation, you first call `useEnrollInProgramMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEnrollInProgramMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [enrollInProgramMutation, { data, loading, error }] = useEnrollInProgramMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useEnrollInProgramMutation(baseOptions?: Apollo.MutationHookOptions<EnrollInProgramMutation, EnrollInProgramMutationVariables>) {
-        return Apollo.useMutation<EnrollInProgramMutation, EnrollInProgramMutationVariables>(EnrollInProgramDocument, baseOptions);
-      }
-export type EnrollInProgramMutationHookResult = ReturnType<typeof useEnrollInProgramMutation>;
-export type EnrollInProgramMutationResult = Apollo.MutationResult<EnrollInProgramMutation>;
-export type EnrollInProgramMutationOptions = Apollo.BaseMutationOptions<EnrollInProgramMutation, EnrollInProgramMutationVariables>;
-export const CreateLevelDocument = gql`
-    mutation CreateLevel($input: CreateLevelInput!) {
-  createLevel(input: $input) {
-    ...LevelFields
-    unlocked
-  }
-}
-    ${LevelFieldsFragmentDoc}`;
-export type CreateLevelMutationFn = Apollo.MutationFunction<CreateLevelMutation, CreateLevelMutationVariables>;
-
-/**
- * __useCreateLevelMutation__
- *
- * To run a mutation, you first call `useCreateLevelMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateLevelMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createLevelMutation, { data, loading, error }] = useCreateLevelMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateLevelMutation(baseOptions?: Apollo.MutationHookOptions<CreateLevelMutation, CreateLevelMutationVariables>) {
-        return Apollo.useMutation<CreateLevelMutation, CreateLevelMutationVariables>(CreateLevelDocument, baseOptions);
-      }
-export type CreateLevelMutationHookResult = ReturnType<typeof useCreateLevelMutation>;
-export type CreateLevelMutationResult = Apollo.MutationResult<CreateLevelMutation>;
-export type CreateLevelMutationOptions = Apollo.BaseMutationOptions<CreateLevelMutation, CreateLevelMutationVariables>;
-export const EditLevelDocument = gql`
-    mutation EditLevel($input: EditLevelInput!) {
-  editLevel(input: $input) {
-    ...LevelFields
-  }
-}
-    ${LevelFieldsFragmentDoc}`;
-export type EditLevelMutationFn = Apollo.MutationFunction<EditLevelMutation, EditLevelMutationVariables>;
-
-/**
- * __useEditLevelMutation__
- *
- * To run a mutation, you first call `useEditLevelMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditLevelMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editLevelMutation, { data, loading, error }] = useEditLevelMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useEditLevelMutation(baseOptions?: Apollo.MutationHookOptions<EditLevelMutation, EditLevelMutationVariables>) {
-        return Apollo.useMutation<EditLevelMutation, EditLevelMutationVariables>(EditLevelDocument, baseOptions);
-      }
-export type EditLevelMutationHookResult = ReturnType<typeof useEditLevelMutation>;
-export type EditLevelMutationResult = Apollo.MutationResult<EditLevelMutation>;
-export type EditLevelMutationOptions = Apollo.BaseMutationOptions<EditLevelMutation, EditLevelMutationVariables>;
-export const RemoveLevelDocument = gql`
-    mutation RemoveLevel($input: RemoveLevelInput!) {
-  removeLevel(input: $input) {
-    id
-    status
-  }
-}
-    `;
-export type RemoveLevelMutationFn = Apollo.MutationFunction<RemoveLevelMutation, RemoveLevelMutationVariables>;
-
-/**
- * __useRemoveLevelMutation__
- *
- * To run a mutation, you first call `useRemoveLevelMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveLevelMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeLevelMutation, { data, loading, error }] = useRemoveLevelMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useRemoveLevelMutation(baseOptions?: Apollo.MutationHookOptions<RemoveLevelMutation, RemoveLevelMutationVariables>) {
-        return Apollo.useMutation<RemoveLevelMutation, RemoveLevelMutationVariables>(RemoveLevelDocument, baseOptions);
-      }
-export type RemoveLevelMutationHookResult = ReturnType<typeof useRemoveLevelMutation>;
-export type RemoveLevelMutationResult = Apollo.MutationResult<RemoveLevelMutation>;
-export type RemoveLevelMutationOptions = Apollo.BaseMutationOptions<RemoveLevelMutation, RemoveLevelMutationVariables>;
-export const ReorderProgramLevelsDocument = gql`
-    mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {
-  reorderProgramLevels(input: $input) {
-    id
-    levelIds
-    levels {
-      id
-    }
-  }
-}
-    `;
-export type ReorderProgramLevelsMutationFn = Apollo.MutationFunction<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>;
-
-/**
- * __useReorderProgramLevelsMutation__
- *
- * To run a mutation, you first call `useReorderProgramLevelsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useReorderProgramLevelsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [reorderProgramLevelsMutation, { data, loading, error }] = useReorderProgramLevelsMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useReorderProgramLevelsMutation(baseOptions?: Apollo.MutationHookOptions<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>) {
-        return Apollo.useMutation<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>(ReorderProgramLevelsDocument, baseOptions);
-      }
-export type ReorderProgramLevelsMutationHookResult = ReturnType<typeof useReorderProgramLevelsMutation>;
-export type ReorderProgramLevelsMutationResult = Apollo.MutationResult<ReorderProgramLevelsMutation>;
-export type ReorderProgramLevelsMutationOptions = Apollo.BaseMutationOptions<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>;
-export const CreateLevelTaskDocument = gql`
-    mutation CreateLevelTask($input: CreateLevelTaskInput!) {
-  createLevelTask(input: $input) {
-    ...PersistentTaskFields
-  }
-}
-    ${PersistentTaskFieldsFragmentDoc}`;
-export type CreateLevelTaskMutationFn = Apollo.MutationFunction<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>;
-
-/**
- * __useCreateLevelTaskMutation__
- *
- * To run a mutation, you first call `useCreateLevelTaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateLevelTaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createLevelTaskMutation, { data, loading, error }] = useCreateLevelTaskMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateLevelTaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>) {
-        return Apollo.useMutation<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>(CreateLevelTaskDocument, baseOptions);
-      }
-export type CreateLevelTaskMutationHookResult = ReturnType<typeof useCreateLevelTaskMutation>;
-export type CreateLevelTaskMutationResult = Apollo.MutationResult<CreateLevelTaskMutation>;
-export type CreateLevelTaskMutationOptions = Apollo.BaseMutationOptions<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>;
-export const RemoveLevelTaskDocument = gql`
-    mutation RemoveLevelTask($input: RemoveLevelTaskInput!) {
-  removeLevelTask(input: $input) {
-    id
-    status
-  }
-}
-    `;
-export type RemoveLevelTaskMutationFn = Apollo.MutationFunction<RemoveLevelTaskMutation, RemoveLevelTaskMutationVariables>;
-
-/**
- * __useRemoveLevelTaskMutation__
- *
- * To run a mutation, you first call `useRemoveLevelTaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveLevelTaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeLevelTaskMutation, { data, loading, error }] = useRemoveLevelTaskMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useRemoveLevelTaskMutation(baseOptions?: Apollo.MutationHookOptions<RemoveLevelTaskMutation, RemoveLevelTaskMutationVariables>) {
-        return Apollo.useMutation<RemoveLevelTaskMutation, RemoveLevelTaskMutationVariables>(RemoveLevelTaskDocument, baseOptions);
-      }
-export type RemoveLevelTaskMutationHookResult = ReturnType<typeof useRemoveLevelTaskMutation>;
-export type RemoveLevelTaskMutationResult = Apollo.MutationResult<RemoveLevelTaskMutation>;
-export type RemoveLevelTaskMutationOptions = Apollo.BaseMutationOptions<RemoveLevelTaskMutation, RemoveLevelTaskMutationVariables>;
-export const EditPersistentTaskDocument = gql`
-    mutation EditPersistentTask($input: EditPersistentTaskInput!) {
-  editPersistentTask(input: $input) {
-    id
-    description
-    ethDomainId
-    ethSkillId
-    ...PersistentTaskPayouts
-    title
-  }
-}
-    ${PersistentTaskPayoutsFragmentDoc}`;
-export type EditPersistentTaskMutationFn = Apollo.MutationFunction<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>;
-
-/**
- * __useEditPersistentTaskMutation__
- *
- * To run a mutation, you first call `useEditPersistentTaskMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditPersistentTaskMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editPersistentTaskMutation, { data, loading, error }] = useEditPersistentTaskMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useEditPersistentTaskMutation(baseOptions?: Apollo.MutationHookOptions<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>) {
-        return Apollo.useMutation<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>(EditPersistentTaskDocument, baseOptions);
-      }
-export type EditPersistentTaskMutationHookResult = ReturnType<typeof useEditPersistentTaskMutation>;
-export type EditPersistentTaskMutationResult = Apollo.MutationResult<EditPersistentTaskMutation>;
-export type EditPersistentTaskMutationOptions = Apollo.BaseMutationOptions<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>;
-export const CreateLevelTaskSubmissionDocument = gql`
-    mutation CreateLevelTaskSubmission($input: CreateLevelTaskSubmissionInput!) {
-  createLevelTaskSubmission(input: $input) {
-    id
-    status
-    submission
-  }
-}
-    `;
-export type CreateLevelTaskSubmissionMutationFn = Apollo.MutationFunction<CreateLevelTaskSubmissionMutation, CreateLevelTaskSubmissionMutationVariables>;
-
-/**
- * __useCreateLevelTaskSubmissionMutation__
- *
- * To run a mutation, you first call `useCreateLevelTaskSubmissionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateLevelTaskSubmissionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createLevelTaskSubmissionMutation, { data, loading, error }] = useCreateLevelTaskSubmissionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateLevelTaskSubmissionMutation(baseOptions?: Apollo.MutationHookOptions<CreateLevelTaskSubmissionMutation, CreateLevelTaskSubmissionMutationVariables>) {
-        return Apollo.useMutation<CreateLevelTaskSubmissionMutation, CreateLevelTaskSubmissionMutationVariables>(CreateLevelTaskSubmissionDocument, baseOptions);
-      }
-export type CreateLevelTaskSubmissionMutationHookResult = ReturnType<typeof useCreateLevelTaskSubmissionMutation>;
-export type CreateLevelTaskSubmissionMutationResult = Apollo.MutationResult<CreateLevelTaskSubmissionMutation>;
-export type CreateLevelTaskSubmissionMutationOptions = Apollo.BaseMutationOptions<CreateLevelTaskSubmissionMutation, CreateLevelTaskSubmissionMutationVariables>;
-export const EditSubmissionDocument = gql`
-    mutation EditSubmission($input: EditSubmissionInput!) {
-  editSubmission(input: $input) {
-    id
-    status
-    submission
-  }
-}
-    `;
-export type EditSubmissionMutationFn = Apollo.MutationFunction<EditSubmissionMutation, EditSubmissionMutationVariables>;
-
-/**
- * __useEditSubmissionMutation__
- *
- * To run a mutation, you first call `useEditSubmissionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditSubmissionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editSubmissionMutation, { data, loading, error }] = useEditSubmissionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useEditSubmissionMutation(baseOptions?: Apollo.MutationHookOptions<EditSubmissionMutation, EditSubmissionMutationVariables>) {
-        return Apollo.useMutation<EditSubmissionMutation, EditSubmissionMutationVariables>(EditSubmissionDocument, baseOptions);
-      }
-export type EditSubmissionMutationHookResult = ReturnType<typeof useEditSubmissionMutation>;
-export type EditSubmissionMutationResult = Apollo.MutationResult<EditSubmissionMutation>;
-export type EditSubmissionMutationOptions = Apollo.BaseMutationOptions<EditSubmissionMutation, EditSubmissionMutationVariables>;
-export const AcceptLevelTaskSubmissionDocument = gql`
-    mutation AcceptLevelTaskSubmission($input: AcceptLevelTaskSubmissionInput!) {
-  acceptLevelTaskSubmission(input: $input) {
-    id
-    status
-  }
-}
-    `;
-export type AcceptLevelTaskSubmissionMutationFn = Apollo.MutationFunction<AcceptLevelTaskSubmissionMutation, AcceptLevelTaskSubmissionMutationVariables>;
-
-/**
- * __useAcceptLevelTaskSubmissionMutation__
- *
- * To run a mutation, you first call `useAcceptLevelTaskSubmissionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAcceptLevelTaskSubmissionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [acceptLevelTaskSubmissionMutation, { data, loading, error }] = useAcceptLevelTaskSubmissionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAcceptLevelTaskSubmissionMutation(baseOptions?: Apollo.MutationHookOptions<AcceptLevelTaskSubmissionMutation, AcceptLevelTaskSubmissionMutationVariables>) {
-        return Apollo.useMutation<AcceptLevelTaskSubmissionMutation, AcceptLevelTaskSubmissionMutationVariables>(AcceptLevelTaskSubmissionDocument, baseOptions);
-      }
-export type AcceptLevelTaskSubmissionMutationHookResult = ReturnType<typeof useAcceptLevelTaskSubmissionMutation>;
-export type AcceptLevelTaskSubmissionMutationResult = Apollo.MutationResult<AcceptLevelTaskSubmissionMutation>;
-export type AcceptLevelTaskSubmissionMutationOptions = Apollo.BaseMutationOptions<AcceptLevelTaskSubmissionMutation, AcceptLevelTaskSubmissionMutationVariables>;
 export const SendTransactionMessageDocument = gql`
     mutation SendTransactionMessage($input: SendTransactionMessageInput!) {
   sendTransactionMessage(input: $input)
@@ -5831,220 +4580,6 @@ export function useColonyTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type ColonyTasksQueryHookResult = ReturnType<typeof useColonyTasksQuery>;
 export type ColonyTasksLazyQueryHookResult = ReturnType<typeof useColonyTasksLazyQuery>;
 export type ColonyTasksQueryResult = Apollo.QueryResult<ColonyTasksQuery, ColonyTasksQueryVariables>;
-export const ColonyProgramsDocument = gql`
-    query ColonyPrograms($address: String!) {
-  colony(address: $address) {
-    id
-    programs {
-      ...ProgramFields
-    }
-  }
-}
-    ${ProgramFieldsFragmentDoc}`;
-
-/**
- * __useColonyProgramsQuery__
- *
- * To run a query within a React component, call `useColonyProgramsQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyProgramsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyProgramsQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyProgramsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyProgramsQuery, ColonyProgramsQueryVariables>) {
-        return Apollo.useQuery<ColonyProgramsQuery, ColonyProgramsQueryVariables>(ColonyProgramsDocument, baseOptions);
-      }
-export function useColonyProgramsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyProgramsQuery, ColonyProgramsQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyProgramsQuery, ColonyProgramsQueryVariables>(ColonyProgramsDocument, baseOptions);
-        }
-export type ColonyProgramsQueryHookResult = ReturnType<typeof useColonyProgramsQuery>;
-export type ColonyProgramsLazyQueryHookResult = ReturnType<typeof useColonyProgramsLazyQuery>;
-export type ColonyProgramsQueryResult = Apollo.QueryResult<ColonyProgramsQuery, ColonyProgramsQueryVariables>;
-export const ProgramDocument = gql`
-    query Program($id: String!) {
-  program(id: $id) {
-    ...ProgramFields
-  }
-}
-    ${ProgramFieldsFragmentDoc}`;
-
-/**
- * __useProgramQuery__
- *
- * To run a query within a React component, call `useProgramQuery` and pass it any options that fit your needs.
- * When your component renders, `useProgramQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProgramQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useProgramQuery(baseOptions?: Apollo.QueryHookOptions<ProgramQuery, ProgramQueryVariables>) {
-        return Apollo.useQuery<ProgramQuery, ProgramQueryVariables>(ProgramDocument, baseOptions);
-      }
-export function useProgramLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProgramQuery, ProgramQueryVariables>) {
-          return Apollo.useLazyQuery<ProgramQuery, ProgramQueryVariables>(ProgramDocument, baseOptions);
-        }
-export type ProgramQueryHookResult = ReturnType<typeof useProgramQuery>;
-export type ProgramLazyQueryHookResult = ReturnType<typeof useProgramLazyQuery>;
-export type ProgramQueryResult = Apollo.QueryResult<ProgramQuery, ProgramQueryVariables>;
-export const ProgramLevelsDocument = gql`
-    query ProgramLevels($id: String!) {
-  program(id: $id) {
-    id
-    levelIds
-    levels {
-      ...LevelFields
-    }
-  }
-}
-    ${LevelFieldsFragmentDoc}`;
-
-/**
- * __useProgramLevelsQuery__
- *
- * To run a query within a React component, call `useProgramLevelsQuery` and pass it any options that fit your needs.
- * When your component renders, `useProgramLevelsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProgramLevelsQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useProgramLevelsQuery(baseOptions?: Apollo.QueryHookOptions<ProgramLevelsQuery, ProgramLevelsQueryVariables>) {
-        return Apollo.useQuery<ProgramLevelsQuery, ProgramLevelsQueryVariables>(ProgramLevelsDocument, baseOptions);
-      }
-export function useProgramLevelsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProgramLevelsQuery, ProgramLevelsQueryVariables>) {
-          return Apollo.useLazyQuery<ProgramLevelsQuery, ProgramLevelsQueryVariables>(ProgramLevelsDocument, baseOptions);
-        }
-export type ProgramLevelsQueryHookResult = ReturnType<typeof useProgramLevelsQuery>;
-export type ProgramLevelsLazyQueryHookResult = ReturnType<typeof useProgramLevelsLazyQuery>;
-export type ProgramLevelsQueryResult = Apollo.QueryResult<ProgramLevelsQuery, ProgramLevelsQueryVariables>;
-export const LevelDocument = gql`
-    query Level($id: String!) {
-  level(id: $id) {
-    ...LevelFields
-    unlocked
-  }
-}
-    ${LevelFieldsFragmentDoc}`;
-
-/**
- * __useLevelQuery__
- *
- * To run a query within a React component, call `useLevelQuery` and pass it any options that fit your needs.
- * When your component renders, `useLevelQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLevelQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useLevelQuery(baseOptions?: Apollo.QueryHookOptions<LevelQuery, LevelQueryVariables>) {
-        return Apollo.useQuery<LevelQuery, LevelQueryVariables>(LevelDocument, baseOptions);
-      }
-export function useLevelLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LevelQuery, LevelQueryVariables>) {
-          return Apollo.useLazyQuery<LevelQuery, LevelQueryVariables>(LevelDocument, baseOptions);
-        }
-export type LevelQueryHookResult = ReturnType<typeof useLevelQuery>;
-export type LevelLazyQueryHookResult = ReturnType<typeof useLevelLazyQuery>;
-export type LevelQueryResult = Apollo.QueryResult<LevelQuery, LevelQueryVariables>;
-export const ProgramLevelsWithUnlockedDocument = gql`
-    query ProgramLevelsWithUnlocked($id: String!) {
-  program(id: $id) {
-    id
-    levelIds
-    levels {
-      ...LevelFields
-      unlocked
-    }
-  }
-}
-    ${LevelFieldsFragmentDoc}`;
-
-/**
- * __useProgramLevelsWithUnlockedQuery__
- *
- * To run a query within a React component, call `useProgramLevelsWithUnlockedQuery` and pass it any options that fit your needs.
- * When your component renders, `useProgramLevelsWithUnlockedQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProgramLevelsWithUnlockedQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useProgramLevelsWithUnlockedQuery(baseOptions?: Apollo.QueryHookOptions<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>) {
-        return Apollo.useQuery<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>(ProgramLevelsWithUnlockedDocument, baseOptions);
-      }
-export function useProgramLevelsWithUnlockedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>) {
-          return Apollo.useLazyQuery<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>(ProgramLevelsWithUnlockedDocument, baseOptions);
-        }
-export type ProgramLevelsWithUnlockedQueryHookResult = ReturnType<typeof useProgramLevelsWithUnlockedQuery>;
-export type ProgramLevelsWithUnlockedLazyQueryHookResult = ReturnType<typeof useProgramLevelsWithUnlockedLazyQuery>;
-export type ProgramLevelsWithUnlockedQueryResult = Apollo.QueryResult<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>;
-export const ProgramSubmissionsDocument = gql`
-    query ProgramSubmissions($id: String!) {
-  program(id: $id) {
-    id
-    submissions {
-      ...ProgramSubmissionFields
-    }
-  }
-}
-    ${ProgramSubmissionFieldsFragmentDoc}`;
-
-/**
- * __useProgramSubmissionsQuery__
- *
- * To run a query within a React component, call `useProgramSubmissionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useProgramSubmissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProgramSubmissionsQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useProgramSubmissionsQuery(baseOptions?: Apollo.QueryHookOptions<ProgramSubmissionsQuery, ProgramSubmissionsQueryVariables>) {
-        return Apollo.useQuery<ProgramSubmissionsQuery, ProgramSubmissionsQueryVariables>(ProgramSubmissionsDocument, baseOptions);
-      }
-export function useProgramSubmissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProgramSubmissionsQuery, ProgramSubmissionsQueryVariables>) {
-          return Apollo.useLazyQuery<ProgramSubmissionsQuery, ProgramSubmissionsQueryVariables>(ProgramSubmissionsDocument, baseOptions);
-        }
-export type ProgramSubmissionsQueryHookResult = ReturnType<typeof useProgramSubmissionsQuery>;
-export type ProgramSubmissionsLazyQueryHookResult = ReturnType<typeof useProgramSubmissionsLazyQuery>;
-export type ProgramSubmissionsQueryResult = Apollo.QueryResult<ProgramSubmissionsQuery, ProgramSubmissionsQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
@@ -6312,48 +4847,6 @@ export function useUserNotificationsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type UserNotificationsQueryHookResult = ReturnType<typeof useUserNotificationsQuery>;
 export type UserNotificationsLazyQueryHookResult = ReturnType<typeof useUserNotificationsLazyQuery>;
 export type UserNotificationsQueryResult = Apollo.QueryResult<UserNotificationsQuery, UserNotificationsQueryVariables>;
-export const UserBadgesDocument = gql`
-    query UserBadges($address: String!, $colonyAddress: String!) {
-  user(address: $address) {
-    id
-    completedLevels(colonyAddress: $colonyAddress) {
-      id
-      achievement
-      title
-      program {
-        title
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useUserBadgesQuery__
- *
- * To run a query within a React component, call `useUserBadgesQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserBadgesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserBadgesQuery({
- *   variables: {
- *      address: // value for 'address'
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useUserBadgesQuery(baseOptions?: Apollo.QueryHookOptions<UserBadgesQuery, UserBadgesQueryVariables>) {
-        return Apollo.useQuery<UserBadgesQuery, UserBadgesQueryVariables>(UserBadgesDocument, baseOptions);
-      }
-export function useUserBadgesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserBadgesQuery, UserBadgesQueryVariables>) {
-          return Apollo.useLazyQuery<UserBadgesQuery, UserBadgesQueryVariables>(UserBadgesDocument, baseOptions);
-        }
-export type UserBadgesQueryHookResult = ReturnType<typeof useUserBadgesQuery>;
-export type UserBadgesLazyQueryHookResult = ReturnType<typeof useUserBadgesLazyQuery>;
-export type UserBadgesQueryResult = Apollo.QueryResult<UserBadgesQuery, UserBadgesQueryVariables>;
 export const SystemInfoDocument = gql`
     query SystemInfo {
   systemInfo {
@@ -6577,7 +5070,6 @@ export const SubgraphActionsDocument = gql`
     transaction {
       hash: id
       block {
-        id
         timestamp
       }
     }

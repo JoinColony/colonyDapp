@@ -23,14 +23,6 @@ interface Props {
 }
 
 const MSG = defineMessages({
-  achievementsHeading: {
-    id: 'InfoPopover.MemberInfoPopover.MemberInfo.achievementsHeading',
-    defaultMessage: 'Achievements',
-  },
-  achievementTitleText: {
-    id: 'InfoPopover.MemberInfoPopover.MemberInfo.achievementTitleText',
-    defaultMessage: '{title} achievement earned in {programTitle}',
-  },
   headingReputation: {
     id: 'InfoPopover.MemberInfoPopover.MemberInfo.headingReputation',
     defaultMessage: 'Reputation',

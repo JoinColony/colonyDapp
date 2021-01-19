@@ -12,7 +12,6 @@ import {
   FullColonyFragment,
   LoggedInUserDocument,
   PayoutsFragment,
-  PersistentTaskPayoutsFragment,
   TaskQuery,
   TokenBalancesForDomainsQuery,
   TokenQuery,
@@ -20,12 +19,6 @@ import {
   UserQuery,
   UserTasksQuery,
   UserTokensQuery,
-  ColonyProgramsQuery,
-  LevelQuery,
-  ProgramLevelsQuery,
-  ProgramLevelsWithUnlockedQuery,
-  ProgramSubmissionsQuery,
-  ProgramQuery,
   UserWithReputationQuery,
   UserColoniesQuery,
   NetworkContractsDocument,
@@ -84,9 +77,7 @@ export type AnyTask =
   | ColonyTasksQuery['colony']['tasks'][number]
   | UserTasksQuery['user']['tasks'][number];
 
-export type Payouts =
-  | PayoutsFragment['payouts']
-  | PersistentTaskPayoutsFragment['payouts'];
+export type Payouts = PayoutsFragment['payouts'];
 
 export type Notifications = UserNotificationsQuery['user']['notifications'];
 export type OneNotification = Notifications[number];
@@ -102,30 +93,6 @@ export type OneDomain = DomainFieldsFragment;
 export type ColonyTransaction = ColonyTransfersQuery['colony']['transfers'][number];
 
 export type ColonyEvent = ColonyEventsQuery['colony']['events'][number];
-
-export type ColonyPrograms = ColonyProgramsQuery['colony']['programs'];
-export type OneProgram =
-  | ColonyProgramsQuery['colony']['programs'][number]
-  | ProgramQuery['program'];
-
-export type ProgramLevels =
-  | OneProgram['levels']
-  | ProgramLevelsQuery['program']['levels'];
-export type OneLevel = ProgramLevels[number] | LevelQuery['level'];
-
-export type LevelsWithUnlocked = ProgramLevelsWithUnlockedQuery['program']['levels'];
-export type OneLevelWithUnlocked =
-  | LevelsWithUnlocked[number]
-  | LevelQuery['level'];
-
-export type PersistentTasks = LevelQuery['level']['steps'];
-export type OnePersistentTask = PersistentTasks[number];
-
-export type Submissions = ProgramSubmissionsQuery['program']['submissions'];
-export type OneSubmission = Submissions[0];
-
-export type ProgramSubmissions = ProgramSubmissionsQuery['program']['submissions'];
-export type OneProgramSubmission = ProgramSubmissions[0];
 
 export type OneToken = TokenQuery['token'];
 export type ColonyTokens = ColonyQuery['colony']['tokens'];
