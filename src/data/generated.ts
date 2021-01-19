@@ -5134,7 +5134,11 @@ export const SubgraphActionsDocument = gql`
       }
     }
   }
+<<<<<<< HEAD
   events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)"]}) {
+=======
+  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "ColonyMetadata(address,string)"]}) {
+>>>>>>> Add: subpgraph colony metadata events
     id
     transaction {
       hash: id

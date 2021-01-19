@@ -443,6 +443,15 @@ query ColonySingleDomain($colonyAddress: String!, $domainId: Int!) {
   }
 }
 
+# query Domain($colonyAddress: String!, $ethDomainId: Int!) {
+#   domain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
+#     id
+#     ethDomainId
+#     name
+#     ethParentDomainId
+#   }
+# }
+
 query Token($address: String!) {
   token(address: $address) @client {
     id
@@ -586,7 +595,7 @@ query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
       }
     }
   }
-  events(where: { associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)"] }) {
+  events(where: { associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)"] }) {
     id
     transaction {
       hash: id
