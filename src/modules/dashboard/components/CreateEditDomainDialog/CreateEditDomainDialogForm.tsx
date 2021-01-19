@@ -102,7 +102,7 @@ const CreateEditDomainDialogForm = ({
               name="domainName"
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
               disabled={!canCreateEditDomain}
-              maxLength={25}
+              maxLength={20}
             />
           </div>
           <ColorSelect
