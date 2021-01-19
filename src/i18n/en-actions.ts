@@ -10,6 +10,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.MintTokens} {Mint {amount} {tokenSymbol}}
       ${ColonyActions.CreateDomain} {New team: {fromDomain}}
       ${ColonyActions.VersionUpgrade} {Upgrade Colony!}
+      ${ColonyActions.ColonyEdit} {Colony details changed}
       other {Generic action we don't have information about}
     }`,
   'action.type': `{actionType, select,
@@ -19,6 +20,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.MintTokens} {Mint Tokens}
       ${ColonyActions.CreateDomain} {Create Team}
       ${ColonyActions.VersionUpgrade} {Version Upgrade}
+      ${ColonyActions.ColonyEdit} {Colony Edit}
       other {Generic}
     }`,
 };

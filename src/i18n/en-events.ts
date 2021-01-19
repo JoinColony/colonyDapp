@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-
 import { ColonyAndExtensionsEvents } from '~types/index';
 
 const eventsMessageDescriptors = {
@@ -11,6 +10,13 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.ColonyUpgraded} {This colony has upgraded to {newVersion}}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
+  /*
+   * This needs to be declared separely since we can't nest select declarations
+   */
+  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}title`]: `{logoChanged, select,
+    true {{initiator} changed this colony's name to {colonyName} and logo}
+    false {{initiator} changed this colony's name to {colonyName}}
+  }`,
 };
 
 export default eventsMessageDescriptors;
