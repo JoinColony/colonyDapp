@@ -2,6 +2,7 @@ import { Address } from './index';
 
 export enum ColonyActions {
   Generic = 'Generic',
+  WrongColony = 'WrongColony',
   Payment = 'Payment',
   Recovery = 'Recovery',
   MoveFunds = 'MoveFunds',
