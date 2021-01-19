@@ -40,6 +40,8 @@ export default gql`
     annotationHash: String
     oldVersion: String!
     newVersion: String!
+    colonyDisplayName: String!
+    colonyAvatarHash: String!
   }
 
   input NetworkContractsInput {

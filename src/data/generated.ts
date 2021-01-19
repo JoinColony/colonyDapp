@@ -1112,8 +1112,13 @@ export type ColonyAction = {
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
   annotationHash?: Maybe<Scalars['String']>;
+<<<<<<< HEAD
   oldVersion: Scalars['String'];
   newVersion: Scalars['String'];
+=======
+  colonyDisplayName: Scalars['String'];
+  colonyAvatarHash: Scalars['String'];
+>>>>>>> Refactor: `ColonyAction` query to properly return values
 };
 
 export type NetworkContractsInput = {
@@ -1981,7 +1986,11 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
+<<<<<<< HEAD
     Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion'>
+=======
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'colonyDisplayName' | 'colonyAvatarHash'>
+>>>>>>> Refactor: `ColonyAction` query to properly return values
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
@@ -4985,8 +4994,13 @@ export const ColonyActionDocument = gql`
     amount
     tokenAddress
     annotationHash
+<<<<<<< HEAD
     newVersion
     oldVersion
+=======
+    colonyDisplayName
+    colonyAvatarHash
+>>>>>>> Refactor: `ColonyAction` query to properly return values
   }
 }
     `;
