@@ -94,6 +94,15 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
+  /*
+   * We track both configurations of this action (with metadata and without)
+   * This allows us to treat events with just `DomainMetadata` emmited as being
+   * the domain edited action
+   */
+  [ColonyActions.CreateDomain]: [
+    ColonyAndExtensionsEvents.DomainMetadata,
+    ColonyAndExtensionsEvents.DomainAdded,
+  ],
   [ColonyActions.CreateDomain]: [
     // Don't track the metadata event, as not all domains might have it
     ColonyAndExtensionsEvents.DomainAdded,
