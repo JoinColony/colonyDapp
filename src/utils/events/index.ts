@@ -20,6 +20,7 @@ import {
   ACTIONS_EVENTS,
   EVENTS_REQUIRED_FOR_ACTION,
 } from '~dashboard/ActionsPage';
+import ipfs from '../../context/ipfsNodeContext';
 
 interface ActionValues {
   recipient: Address;
@@ -301,6 +302,38 @@ const getVersionUpgradeActionValues = async (
   };
 };
 
+const getColonyEditActionValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const mintTokensEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.ColonyMetadata,
+  ) as ProcessedEvent;
+
+  const {
+    address,
+    values: { agent, metadata },
+  } = mintTokensEvent;
+
+  const ipfsData = await ipfs.getString(metadata);
+  const { colonyDisplayName, colonyAvatarHash = null } = JSON.parse(ipfsData);
+
+  const colonyEditValues: {
+    address: Address;
+    actionInitiator?: string;
+    colonyDisplayName: string;
+    colonyAvatarHash?: string;
+  } = {
+    address,
+    colonyDisplayName,
+    colonyAvatarHash,
+  };
+
+  if (agent) {
+    colonyEditValues.actionInitiator = agent;
+  }
+  return colonyEditValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -365,6 +398,19 @@ export const getActionValues = async (
         ...versionUpgradeActionValues,
       };
     }
+    case ColonyActions.ColonyEdit: {
+      const colonyEditActionValues = await getColonyEditActionValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...colonyEditActionValues,
+      };
+    }
+    default: {
+      return fallbackValues;
+    }
+  }
     default: {
       return fallbackValues;
     }

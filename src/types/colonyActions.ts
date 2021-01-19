@@ -9,6 +9,7 @@ export enum ColonyActions {
   MintTokens = 'MintTokens',
   CreateDomain = 'CreateDomain',
   VersionUpgrade = 'VersionUpgrade',
+  ColonyEdit = 'ColonyEdit',
 }
 
 export enum ColonyAndExtensionsEvents {
@@ -24,6 +25,7 @@ export enum ColonyAndExtensionsEvents {
   DomainAdded = 'DomainAdded',
   DomainMetadata = 'DomainMetadata',
   ColonyUpgraded = 'ColonyUpgraded',
+  ColonyMetadata = 'ColonyMetadata',
 }
 
 export interface FormattedAction {

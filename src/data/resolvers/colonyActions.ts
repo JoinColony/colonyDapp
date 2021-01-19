@@ -28,6 +28,7 @@ interface EventValue {
   who: Address;
   oldVersion: string;
   newVersion: string;
+  metadata: string;
 }
 
 export interface ProcessedEvent {
@@ -112,12 +113,14 @@ export const colonyActionsResolvers = ({
                 const type = clientType?.clientType;
                 const potentialParsedLog = clientType?.interface.parseLog(log);
                 if (potentialParsedLog) {
+                  const { address } = log;
                   const { name, values } = potentialParsedLog;
                   return {
                     name,
                     values,
                     createdAt,
                     emmitedBy: type,
+                    address,
                   } as ProcessedEvent;
                 }
                 return null;
@@ -184,6 +187,8 @@ export const colonyActionsResolvers = ({
           createdAt,
           actionType,
           annotationHash: annotation ? annotation?.values?.metadata : null,
+          colonyDisplayName: null,
+          colonyAvatarHash: null,
           ...actionValues,
         };
       }
