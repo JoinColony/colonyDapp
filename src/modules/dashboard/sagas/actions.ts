@@ -864,12 +864,164 @@ function* createDomainAction({
 }
 
 function* editColonyAction({
+  payload: { colonyAddress, colonyName, colonyDisplayName, annotationMessage },
+  meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_EDIT_COLONY>) {
-  yield put<AllActions>({
-    type: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
-    meta,
-  });
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    /*
+     * Validate the required values for the payment
+     */
+    if (!colonyDisplayName) {
+      throw new Error('A colony name is required in order to edit the colony');
+    }
+
+    /*
+     * Upload colony metadata to IPFS
+     */
+    let colonyMetadataIpfsHash = null;
+    colonyMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        colonyName,
+        colonyDisplayName,
+        /*
+         * @TODO This needs to **not** overwrite the current tokens list
+         * But this can be done only after we fetch the colony's data from the
+         * subgraph
+         */
+        colonyTokens: [],
+      }),
+    );
+
+    /*
+     * Upload annotation metadata to IPFS
+     */
+    let annotationMessageIpfsHash = null;
+    if (annotationMessage) {
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'editColonyAction';
+    const {
+      editColonyAction: editColony,
+      annotateEditColonyAction: annotateEditColony,
+    } = yield createTransactionChannels(metaId, [
+      'editColonyAction',
+      'annotateEditColonyAction',
+    ]);
+
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: batchKey,
+          id: metaId,
+          index,
+        },
+      });
+
+    yield createGroupTransaction(editColony, {
+      context: ClientType.ColonyClient,
+      methodName: 'editColony',
+      identifier: colonyAddress,
+      params: [colonyMetadataIpfsHash],
+      ready: false,
+    });
+
+    if (annotationMessage) {
+      yield createGroupTransaction(annotateEditColony, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        ready: false,
+      });
+    }
+
+    yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateEditColony.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    yield put(transactionReady(editColony.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      editColony.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+    yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(
+        transactionAddParams(annotateEditColony.id, [
+          txHash,
+          annotationMessageIpfsHash,
+        ]),
+      );
+
+      yield put(transactionReady(annotateEditColony.id));
+
+      yield takeFrom(
+        annotateEditColony.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
+
+    /*
+     * Update the colony object cache
+     */
+    yield apolloClient.query<ColonyFromNameQuery, ColonyFromNameQueryVariables>(
+      {
+        query: ColonyFromNameDocument,
+        variables: { name: colonyName || '', address: colonyAddress },
+        fetchPolicy: 'network-only',
+      },
+    );
+
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
+      meta,
+    });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
 }
 
 export default function* tasksSagas() {
