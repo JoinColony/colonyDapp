@@ -19,9 +19,6 @@ import {
   SubgraphActionsQuery,
   SubgraphActionsQueryVariables,
   SubgraphActionsDocument,
-  ColonyQuery,
-  ColonyQueryVariables,
-  ColonyDocument,
   getNetworkContracts,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -866,6 +863,15 @@ function* createDomainAction({
   return null;
 }
 
+function* editColonyAction({
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_EDIT_COLONY>) {
+  yield put<AllActions>({
+    type: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
+    meta,
+  });
+}
+
 export default function* tasksSagas() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
@@ -881,4 +887,5 @@ export default function* tasksSagas() {
     ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
     createVersionUpgradeAction,
   );
+  yield takeEvery(ActionTypes.COLONY_ACTION_EDIT_COLONY, editColonyAction);
 }
