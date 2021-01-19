@@ -125,11 +125,6 @@ const ActionsPage = () => {
     { data: tokenData, loading: loadingTokenData },
   ] = useTokenInfoLazyQuery();
 
-  // const [
-  //   fetchFromDomain,
-  //   { data: fromDomainFallback, loading: fromDomainLoading },
-  // ] = useDomainLazyQuery();
-
   useEffect(() => {
     if (
       transactionHash &&
@@ -184,13 +179,19 @@ const ActionsPage = () => {
    *
    * This way the actions page will always be able to display a domain
    */
-  const { data: fallbackFromDomain } = useColonySingleDomainQuery({
+  const {
+    data: fallbackFromDomain,
+    loading: loadingFallbackFromDomain,
+  } = useColonySingleDomainQuery({
     variables: {
       colonyAddress: colonyData?.colony.colonyAddress.toLowerCase() || '',
       domainId: colonyActionData?.colonyAction?.fromDomain || 0,
     },
   });
-  const { data: fallbackToDomain } = useColonySingleDomainQuery({
+  const {
+    data: fallbackToDomain,
+    loading: loadingFallbackToDomain,
+  } = useColonySingleDomainQuery({
     variables: {
       colonyAddress: colonyData?.colony.colonyAddress.toLowerCase() || '',
       domainId: colonyActionData?.colonyAction?.toDomain || 0,
@@ -233,6 +234,8 @@ const ActionsPage = () => {
     repicientProfileLoading ||
     initiatorProfileLoading ||
     loadingTokenData ||
+    loadingFallbackFromDomain ||
+    loadingFallbackToDomain ||
     !colonyActionData ||
     !colonyData ||
     !tokenData
