@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Alert from '~core/Alert';
-import { DialogActionButton } from '~core/Button';
+import Button from '~core/Button';
+import { useDialog } from '~core/Dialog';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
@@ -79,6 +80,7 @@ const ColonyHome = ({ match, location }: Props) => {
   const { colonyName } = match.params;
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
+  const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
 
   const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
     domainFilter: string | undefined;
@@ -145,6 +147,16 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const allUserRoles = useTransformer(getAllUserRoles, [data?.colony, walletAddress]);
 
+  const handleUpgradeColony = useCallback(() => {
+    if (!data || !data.colony) {
+      return;
+    }
+    openUpgradeVersionDialog({
+      colony: data.colony,
+    });
+  }, [data?.colony]);
+
+
   if (!colonyName || (reverseENSAddress as any) instanceof Error) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
@@ -152,8 +164,8 @@ const ColonyHome = ({ match, location }: Props) => {
   if (!data || !data.colonyAddress || !data.colony) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
-
   const { colony } = data;
+
   const hasRegisteredProfile = !!username && !ethereal;
   const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
   /*
@@ -235,17 +247,10 @@ const ColonyHome = ({ match, location }: Props) => {
             <div className={styles.upgradeBanner}>
               <FormattedMessage {...MSG.upgradeRequired} />
             </div>
-            <DialogActionButton
+            <Button
               appearance={{ theme: 'primary', size: 'medium' }}
               text={{ id: 'button.upgrade' }}
-              dialog={NetworkContractUpgradeDialog}
-              dialogProps={{
-                colony,
-              }}
-              submit={ActionTypes.COLONY_VERSION_UPGRADE}
-              success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
-              error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
-              values={{ colonyAddress: data.colonyAddress }}
+              onClick={handleUpgradeColony}
               disabled={!canUpgradeColony}
             />
           </Alert>
