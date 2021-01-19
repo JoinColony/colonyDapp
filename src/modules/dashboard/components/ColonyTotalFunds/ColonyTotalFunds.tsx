@@ -45,12 +45,13 @@ const ColonyTotalFunds = ({
     colonyName,
     tokens: colonyTokens,
     nativeTokenAddress,
+    version,
   },
 }: Props) => {
   const [currentTokenAddress, setCurrentTokenAddress] = useState<Address>(
     nativeTokenAddress,
   );
-
+  const isSupportedColonyVersion = parseInt(version || '0', 10) >= 5;
   const {
     data,
     loading: isLoadingTokenBalances,
@@ -112,13 +113,15 @@ const ColonyTotalFunds = ({
       </div>
       <div className={styles.totalBalanceCopy}>
         <FormattedMessage {...MSG.totalBalance} />
-        <Link
-          className={styles.manageFundsLink}
-          to={`/colony/${colonyName}/funds`}
-        >
-          <span className={styles.rightArrowDisplay}>→</span>
-          <FormattedMessage {...MSG.manageFundsLink} />
-        </Link>
+        {isSupportedColonyVersion && (
+          <Link
+            className={styles.manageFundsLink}
+            to={`/colony/${colonyName}/funds`}
+          >
+            <span className={styles.rightArrowDisplay}>→</span>
+            <FormattedMessage {...MSG.manageFundsLink} />
+          </Link>
+        )}
       </div>
     </div>
   );

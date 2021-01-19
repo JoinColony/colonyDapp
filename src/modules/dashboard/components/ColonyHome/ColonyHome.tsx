@@ -163,9 +163,12 @@ const ColonyHome = ({ match, location }: Props) => {
    * an older version
    */
   const mustUpgradeColony = canBeUpgraded(
-    data.colony,
+    colony,
     parseInt(networkVersion || '0', 10),
   );
+
+  const isSupportedColonyVersion = parseInt(colony.version || '0', 10) >= 5;
+
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
@@ -178,14 +181,18 @@ const ColonyHome = ({ match, location }: Props) => {
         <div className={styles.mainContent}>
           <ColonyTotalFunds colony={colony} />
           <div className={styles.contentActionsPanel}>
-            <div className={styles.domainsDropdownContainer}>
-              <DomainDropdown
-                filteredDomainId={filteredDomainId}
-                onDomainChange={setDomainIdFilter}
-                colony={data.colony}
-              />
-            </div>
-            <ColonyHomeActions colony={colony} />
+            {isSupportedColonyVersion && (
+              <>
+                <div className={styles.domainsDropdownContainer}>
+                  <DomainDropdown
+                    filteredDomainId={filteredDomainId}
+                    onDomainChange={setDomainIdFilter}
+                    colony={data.colony}
+                  />
+                </div>
+                <ColonyHomeActions colony={colony} />
+              </>
+            )}
           </div>
           <Switch>
             <Route

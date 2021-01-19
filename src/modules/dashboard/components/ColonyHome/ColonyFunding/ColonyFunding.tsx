@@ -72,7 +72,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
       tokenAddresses: colonyTokens.map(({ address }) => address),
     },
   });
-
+  const isSupportedColonyVersion = parseInt(colony.version || '0', 10) >= 5;
   return (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
@@ -83,6 +83,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
               appearance={{ theme: 'blue' }}
               onClick={handleMoveTokens}
               text={MSG.buttonFund}
+              disabled={!isSupportedColonyVersion}
             />
           </span>
         )}
