@@ -12,7 +12,11 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { createTransaction, getTxChannel } from '../../core/sagas';
+import {
+  createTransaction,
+  createTransactionChannels,
+  getTxChannel,
+} from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import {
   transactionReady,
@@ -317,7 +321,13 @@ function* createMoveFundsAction({
 }
 
 function* createMintTokensAction({
-  payload: { colonyAddress, colonyName, nativeTokenAddress, amount },
+  payload: {
+    colonyAddress,
+    colonyName,
+    nativeTokenAddress,
+    amount,
+    annotationMessage,
+  },
   meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_MINT_TOKENS>) {
@@ -329,18 +339,30 @@ function* createMintTokensAction({
       throw new Error('Amount to mint not set for mintTokens transaction');
     }
 
+    let ipfsHash = null;
+    if (annotationMessage) {
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
     txChannel = yield call(getTxChannel, metaId);
 
     // setup batch ids and channels
     const batchKey = 'mintTokens';
-    const mintTokens = {
-      id: `${metaId}-mintTokens`,
-      channel: yield call(getTxChannel, `${metaId}-mintTokens`),
-    };
-    const claimColonyFunds = {
-      id: `${metaId}-claimColonyFunds`,
-      channel: yield call(getTxChannel, `${metaId}-claimColonyFunds`),
-    };
+
+    const {
+      mintTokens,
+      claimColonyFunds,
+      annotateMintTokens,
+    } = yield createTransactionChannels(metaId, [
+      'mintTokens',
+      'claimColonyFunds',
+      'annotateMintTokens',
+    ]);
 
     // create transactions
     yield fork(createTransaction, mintTokens.id, {
@@ -368,10 +390,32 @@ function* createMintTokensAction({
       ready: false,
     });
 
+    if (annotationMessage) {
+      yield fork(createTransaction, annotateMintTokens.id, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        group: {
+          key: batchKey,
+          id: metaId,
+          index: 1,
+        },
+        ready: false,
+      });
+    }
+
     yield takeFrom(mintTokens.channel, ActionTypes.TRANSACTION_CREATED);
     yield takeFrom(claimColonyFunds.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateMintTokens.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
 
     yield put(transactionReady(mintTokens.id));
+
     const {
       payload: { hash: txHash },
     } = yield takeFrom(
@@ -381,6 +425,19 @@ function* createMintTokensAction({
     yield takeFrom(mintTokens.channel, ActionTypes.TRANSACTION_SUCCEEDED);
     yield put(transactionReady(claimColonyFunds.id));
     yield takeFrom(claimColonyFunds.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(
+        transactionAddParams(annotateMintTokens.id, [txHash, ipfsHash]),
+      );
+
+      yield put(transactionReady(annotateMintTokens.id));
+
+      yield takeFrom(
+        annotateMintTokens.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
 
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);

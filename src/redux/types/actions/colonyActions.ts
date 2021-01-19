@@ -64,6 +64,7 @@ export type ColonyActionsActionTypes =
         colonyName?: string;
         nativeTokenAddress: Address;
         amount: BigNumber;
+        annotationMessage?: string;
       },
       MetaWithHistory<object>
     >
