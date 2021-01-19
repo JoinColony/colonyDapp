@@ -96,6 +96,10 @@
     "transaction.ColonyClient.annotateTransaction.title": "Annotate Transaction",
     "transaction.ColonyClient.annotateTransaction.description": "Annotate Transaction",
 
+    "transaction.group.editColonyAction.title": "Edit Colony Details",
+    "transaction.group.editColonyAction.description": "Edit Colony Details",
+    "transaction.ColonyClient.editColony.title": "Edit Colony Details",
+    "transaction.ColonyClient.editColony.description": "Edit Colony Details",
     "transaction.group.moveFunds.title": "Transfer Funds",
     "transaction.group.moveFunds.description": "Move Funds Between Domains",
     "transaction.ColonyClient.upgrade.title": "Colony Version Upgrade",
