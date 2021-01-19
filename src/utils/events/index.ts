@@ -254,15 +254,18 @@ const getCreateDomainActionValues = async (
     ({ name }) => name === ColonyAndExtensionsEvents.DomainAdded,
   ) as ProcessedEvent;
 
+  const {
+    values: { agent },
+  } = domainAddedEvent;
+
   const domainAction: {
     fromDomain: number;
     actionInitiator?: string;
   } = {
     fromDomain: parseInt(domainAddedEvent.values.domainId.toString(), 10),
   };
-
-  if (domainAddedEvent.values.agent) {
-    domainAction.actionInitiator = domainAddedEvent.values.agent;
+  if (agent) {
+    domainAction.actionInitiator = agent;
   }
   return domainAction;
 };
