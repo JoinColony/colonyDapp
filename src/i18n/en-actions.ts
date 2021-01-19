@@ -4,7 +4,7 @@ import { ColonyActions } from '~types/index';
 
 const actionsMessageDescriptors = {
   'action.title': `{actionType, select,
-      ${ColonyActions.WrongColony} {This action belongs to a different Colony}
+      ${ColonyActions.WrongColony} {Unknown Action}
       ${ColonyActions.Payment} {Pay {recipient} {amount} {tokenSymbol}}
       ${ColonyActions.MoveFunds} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
       ${ColonyActions.MintTokens} {Mint {amount} {tokenSymbol}}
@@ -13,7 +13,7 @@ const actionsMessageDescriptors = {
       other {Generic action we don't have information about}
     }`,
   'action.type': `{actionType, select,
-      ${ColonyActions.WrongColony} {Wrong Colony}
+      ${ColonyActions.WrongColony} {Not part of the Colony}
       ${ColonyActions.Payment} {Payment}
       ${ColonyActions.MoveFunds} {Move Funds}
       ${ColonyActions.MintTokens} {Mint Tokens}
