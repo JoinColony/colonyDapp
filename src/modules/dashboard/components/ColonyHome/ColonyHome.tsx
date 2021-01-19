@@ -16,7 +16,7 @@ import { ActionTypes } from '~redux/index';
 import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
 import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
-import { getUserRolesForDomain } from '../../../transformers';
+import { getUserRolesForDomain, getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
 import { canBeUpgraded } from '../../checks';
 
@@ -77,7 +77,7 @@ const ColonyHome = ({ match, location }: Props) => {
     );
   }
   const { colonyName } = match.params;
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
   const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
@@ -143,11 +143,7 @@ const ColonyHome = ({ match, location }: Props) => {
     filteredDomainId || ROOT_DOMAIN_ID,
   ]);
 
-  const rootUserRoles = useTransformer(getUserRolesForDomain, [
-    data && data.colony,
-    walletAddress,
-    ROOT_DOMAIN_ID,
-  ]);
+  const allUserRoles = useTransformer(getAllUserRoles, [data?.colony, walletAddress]);
 
   if (!colonyName || (reverseENSAddress as any) instanceof Error) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
@@ -158,7 +154,8 @@ const ColonyHome = ({ match, location }: Props) => {
   }
 
   const { colony } = data;
-  const canUpgradeColony = hasRoot(rootUserRoles);
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
   /*
    * @NOTE As a future upgrade, we can have a mapping where we keep track of
    * past and current network versions so that we can control, more granularly,
@@ -235,6 +232,9 @@ const ColonyHome = ({ match, location }: Props) => {
               appearance={{ theme: 'primary', size: 'medium' }}
               text={{ id: 'button.upgrade' }}
               dialog={NetworkContractUpgradeDialog}
+              dialogProps={{
+                colony,
+              }}
               submit={ActionTypes.COLONY_VERSION_UPGRADE}
               success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
               error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}

@@ -65,7 +65,7 @@ const NetworkContractUpgradeDialog = ({
           <DialogForm
             {...formValues}
             colony={colony}
-            back={() => callStep(prevStep)}
+            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
           />
         </Dialog>
       )}

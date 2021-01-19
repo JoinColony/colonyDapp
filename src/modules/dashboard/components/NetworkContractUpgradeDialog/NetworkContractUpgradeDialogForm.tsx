@@ -54,7 +54,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  back: () => void;
+  back?: () => void;
   colony: Colony;
 }
 
@@ -127,11 +127,13 @@ const NetworkContractUpgradeDialogForm = ({
         </DialogSection>
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={back}
-          text={{ id: 'button.back' }}
-        />
+        {back && (
+          <Button
+            appearance={{ theme: 'secondary', size: 'large' }}
+            onClick={back}
+            text={{ id: 'button.back' }}
+          />
+        )}
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={{ id: 'button.confirm' }}
