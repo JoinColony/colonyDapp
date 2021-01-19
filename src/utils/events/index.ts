@@ -29,6 +29,7 @@ interface ActionValues {
   toDomain: number;
   oldVersion: string;
   newVersion: string;
+  address: Address;
 }
 
 /*
@@ -149,6 +150,7 @@ const getPaymentActionValues = async (
    * Get the agent value
    */
   const {
+    address,
     values: { agent },
   } = oneTxPaymentEvent;
 
@@ -161,11 +163,13 @@ const getPaymentActionValues = async (
     fromDomain: number;
     recipient: Address;
     actionInitiator?: string;
+    address: Address;
   } = {
     amount: bigNumberify(paymentAmount || '0').toString(),
     tokenAddress: token || AddressZero,
     fromDomain,
     recipient,
+    address,
   };
   if (agent) {
     paymentActionValues.actionInitiator = agent;
@@ -192,6 +196,7 @@ const getMoveFundsActionValues = async (
    * Fetch the rest of the values that are present directly in the event
    */
   const {
+    address,
     values: { amount, fromPot, toPot, token, agent },
   } = moveFundsEvent;
 
@@ -207,11 +212,13 @@ const getMoveFundsActionValues = async (
     fromDomain: number;
     toDomain: number;
     actionInitiator?: string;
+    address: Address;
   } = {
     amount: bigNumberify(amount || '0').toString(),
     tokenAddress: token || AddressZero,
     fromDomain: bigNumberify(fromDomain || '1').toNumber(),
     toDomain: bigNumberify(toDomain || '1').toNumber(),
+    address,
   };
   if (agent) {
     moveFundsActionValues.actionInitiator = agent;
@@ -230,6 +237,7 @@ const getMintTokensActionValues = async (
   const tokenAddress = await colonyClient.getToken();
 
   const {
+    address,
     values: { who, amount, agent },
   } = mintTokensEvent;
 
@@ -238,10 +246,12 @@ const getMintTokensActionValues = async (
     tokenAddress: Address;
     actionInitiator?: string;
     recipient: Address;
+    address: Address;
   } = {
     amount: bigNumberify(amount || '0').toString(),
     recipient: who,
     tokenAddress,
+    address,
   };
   if (agent) {
     tokensMintedValues.actionInitiator = agent;
@@ -283,6 +293,8 @@ const getVersionUpgradeActionValues = async (
     values: { oldVersion, newVersion },
   } = versionUpgradeEvent;
 
+  // @TODO return address from here
+  const
   return {
     oldVersion: bigNumberify(oldVersion || '0').toString(),
     newVersion: bigNumberify(newVersion || '0').toString(),
@@ -302,6 +314,7 @@ export const getActionValues = async (
     tokenAddress: AddressZero,
     newVersion: '0',
     oldVersion: '0',
+    address: AddressZero,
   };
   switch (actionType) {
     case ColonyActions.Payment: {
