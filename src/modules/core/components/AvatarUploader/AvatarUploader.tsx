@@ -7,6 +7,8 @@ import {
 
 import { Formik } from 'formik';
 
+import { Appearance } from '~core/Fields/Input/InputComponent';
+
 import styles from './AvatarUploader.css';
 
 import FileUpload, { FileReaderFile } from '../FileUpload';
@@ -26,7 +28,7 @@ const MSG = defineMessages({
   },
 });
 
-export const ACCEPTED_MIME_TYPES: string[] = ['image/png', 'image/jpeg'];
+export const ACCEPTED_MIME_TYPES: string[] = ['image/png', 'image/svg'];
 
 export const ACCEPTED_MAX_FILE_SIZE = 2097152; // 2MB
 
@@ -41,7 +43,7 @@ interface Props {
   help?: string | MessageDescriptor;
 
   /** Placeholder to render when not uploading */
-  placeholder: ReactNode;
+  placeholder?: ReactNode;
 
   /** Function to handle removal of the avatar (should set avatarURL to null from outside) */
   remove: (...args: any[]) => Promise<any>;
@@ -51,6 +53,12 @@ interface Props {
 
   /** Used to control the state of the remove button (don't fire the remove action if not avatar is set) */
   isSet?: boolean;
+
+  hasButtons: boolean;
+
+  disabled?: boolean;
+
+  labelAppearance?: Appearance;
 }
 
 const AvatarUploader = ({
@@ -60,7 +68,10 @@ const AvatarUploader = ({
   placeholder,
   remove,
   upload,
+  hasButtons,
+  disabled,
   isSet = true,
+  labelAppearance,
 }: Props) => {
   const dropzoneRef = useRef<{ open: () => void }>();
 
@@ -77,18 +88,25 @@ const AvatarUploader = ({
     </div>
   );
 
+  const noButtonStyles = {
+    ...styles,
+    dropzone: styles.dropzoneNoButtonsVariant,
+  };
+
   // Formik is used for state and error handling through FileUpload, nothing else
   return (
     <Formik onSubmit={() => {}} initialValues={{ avatarUploader: [] }}>
       <form>
         <FileUpload
           elementOnly={elementOnly}
-          classNames={styles}
+          classNames={hasButtons ? styles : noButtonStyles}
           dropzoneOptions={{
             accept: ACCEPTED_MIME_TYPES,
             maxSize: ACCEPTED_MAX_FILE_SIZE,
+            disabled,
           }}
           label={label}
+          labelAppearance={labelAppearance}
           help={help}
           maxFilesLimit={1}
           name="avatarUploader"
@@ -99,20 +117,22 @@ const AvatarUploader = ({
         >
           {renderOverlay()}
         </FileUpload>
-        <div className={styles.buttonContainer}>
-          <Button
-            appearance={{ theme: 'danger' }}
-            text={{ id: 'button.remove' }}
-            onClick={remove}
-            disabled={!isSet}
-            data-test="avatarUploaderRemove"
-          />
-          <Button
-            text={{ id: 'button.choose' }}
-            onClick={choose}
-            data-test="avatarUploaderChoose"
-          />
-        </div>
+        {hasButtons && (
+          <div className={styles.buttonContainer}>
+            <Button
+              appearance={{ theme: 'danger' }}
+              text={{ id: 'button.remove' }}
+              onClick={remove}
+              disabled={!isSet}
+              data-test="avatarUploaderRemove"
+            />
+            <Button
+              text={{ id: 'button.choose' }}
+              onClick={choose}
+              data-test="avatarUploaderChoose"
+            />
+          </div>
+        )}
       </form>
     </Formik>
   );

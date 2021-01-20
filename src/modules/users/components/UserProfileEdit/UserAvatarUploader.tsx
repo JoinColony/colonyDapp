@@ -11,7 +11,7 @@ import { ActionTypes } from '~redux/index';
 const MSG = defineMessages({
   uploaderLabel: {
     id: 'users.UserProfileEdit.UserAvatarUploader',
-    defaultMessage: 'At least 250x250px, up to 2MB',
+    defaultMessage: 'At least 250x250px, up to 2MB, .png or .svg',
   },
 });
 
@@ -45,11 +45,13 @@ const UserAvatarUploader = ({ user }: Props) => {
   return (
     <AvatarUploader
       label={MSG.uploaderLabel}
+      hasButtons
       placeholder={
         <UserAvatar
           address={user.profile.walletAddress}
           user={user}
           size="xl"
+          notSet={false}
         />
       }
       upload={upload}

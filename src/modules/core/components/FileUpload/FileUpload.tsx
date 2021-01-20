@@ -12,6 +12,7 @@ import { getIn } from 'formik';
 import { compose } from 'recompose';
 
 import { AsFieldArrayEnhancedProps } from '~core/Fields/asFieldArray';
+import { Appearance } from '~core/Fields/Input/InputComponent';
 import { SimpleMessageValues } from '~types/index';
 import { withForwardingRef, ForwardedRefProps } from '~utils/hoc';
 
@@ -51,6 +52,7 @@ interface Props {
     dropzoneAccept?: string;
     dropzoneReject?: string;
     filesContainer?: string;
+    disabled?: string;
   };
   /** Options for the dropzone provider */
   dropzoneOptions?: DropzoneOptions;
@@ -84,6 +86,8 @@ interface Props {
   status?: string | MessageDescriptor;
   /** Function to handle the actual uploading of the file */
   upload: UploadFn;
+
+  labelAppearance?: Appearance;
 }
 
 const validateFile: ValidateFileFn = (value) =>
@@ -111,6 +115,7 @@ const FileUpload = ({
   renderPlaceholder = <DefaultPlaceholder />,
   status,
   upload,
+  labelAppearance,
 }: AsFieldArrayEnhancedProps<Props> & ForwardedRefProps) => {
   const files = useMemo(() => getIn(values, name) || [], [name, values]);
   const fileErrors = useMemo(() => getIn(errors, name) || [], [errors, name]);
@@ -176,7 +181,10 @@ const FileUpload = ({
   }, [children, dropzoneState]);
 
   const dropzoneClassName = useMemo(() => {
-    const classes = [classNames.dropzone];
+    const classes = [
+      classNames.dropzone,
+      ...(disabled ? [classNames.disabled] : []),
+    ];
     if (isDragAccept) {
       classes.push(classNames.dropzoneAccept);
     } else if (isDragReject) {
@@ -187,6 +195,8 @@ const FileUpload = ({
     classNames.dropzone,
     classNames.dropzoneAccept,
     classNames.dropzoneReject,
+    classNames.disabled,
+    disabled,
     isDragAccept,
     isDragReject,
   ]);
@@ -199,6 +209,7 @@ const FileUpload = ({
     <div className={classNames.main} id={id}>
       {!elementOnly && label && (
         <InputLabel
+          appearance={labelAppearance}
           label={label}
           help={help}
           labelValues={labelValues}

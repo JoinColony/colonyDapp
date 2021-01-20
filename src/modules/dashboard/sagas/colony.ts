@@ -33,6 +33,14 @@ function* colonyAvatarUpload({
       variables: { input: { colonyAddress, avatarHash: ipfsHash } },
     });
 
+    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
+      query: ColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
       meta,
@@ -57,6 +65,15 @@ function* colonyAvatarRemove({
       mutation: EditColonyProfileDocument,
       variables: { input: { colonyAddress, avatarHash: null } },
     });
+
+    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
+      query: ColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS,
       meta,

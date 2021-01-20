@@ -26,6 +26,7 @@
 }
 
 .placeholderText {
+  margin-right: 20px;
   font-weight: var(--weight-bold);
   text-align: center;
 }
@@ -38,6 +39,11 @@
   font-weight: inherit;
   color: var(--sky-blue);
   cursor: pointer;
+}
+
+.placeholderTextDisabled {
+  composes: placeholderText;
+  color: var(--temp-grey-4);
 }
 
 .filesContainer {

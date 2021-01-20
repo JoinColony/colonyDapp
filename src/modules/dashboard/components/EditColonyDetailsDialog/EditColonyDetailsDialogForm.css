@@ -1,0 +1,34 @@
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.logoPlaceholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.smallText {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+}
+
+.tinyText {
+  font-size: var(--size-tiny);
+}
+
+.permissionLabel > div {
+  vertical-align: bottom;
+}
+
+.noPermissionMessage {
+  composes: permissionLabel;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}

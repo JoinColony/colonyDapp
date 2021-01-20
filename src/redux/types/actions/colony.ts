@@ -104,4 +104,11 @@ export type ColonyActionTypes =
       object
     >
   | UniqueActionType<ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS, object, object>
-  | ErrorActionType<ActionTypes.COLONY_VERSION_UPGRADE_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_VERSION_UPGRADE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_EDIT_DETAILS,
+      { colonyAddress: Address },
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EDIT_DETAILS_ERROR, object>
+  | UniqueActionType<ActionTypes.COLONY_EDIT_DETAILS_SUCCESS, object, object>;

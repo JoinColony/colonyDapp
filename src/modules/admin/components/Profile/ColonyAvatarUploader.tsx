@@ -53,6 +53,7 @@ const ColonyAvatarUploader = ({ colony: { colonyAddress }, colony }: Props) => {
     <AvatarUploader
       label={MSG.labelProfilePicture}
       help={MSG.labelUploader}
+      hasButtons
       placeholder={
         <ColonyAvatar
           /*
