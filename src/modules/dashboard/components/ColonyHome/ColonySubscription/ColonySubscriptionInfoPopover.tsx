@@ -1,12 +1,13 @@
 import React, { ReactNode } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { Address } from '~types/index';
-import ENS from '~lib/ENS';
 import Popover from '~core/Popover';
 import Button from '~core/Button';
-import ColonyAvatar from '~core/ColonyAvatar';
 import MaskedAddress from '~core/MaskedAddress';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
+
+import ENS from '~lib/ENS';
+import { Colony } from '~data/index';
 
 import styles from './ColonySubscriptionInfoPopover.css';
 
@@ -22,21 +23,18 @@ const MSG = defineMessages({
   },
 });
 
+const ColonyAvatar = HookedColonyAvatar({ fetchColony: true });
+
 interface Props {
-  colonyAddress: Address;
-  colonyDisplayName: string;
-  colonyName: string;
-  nativeTokenAddress: Address;
+  colony: Colony;
   onUnsubscribe?: () => void;
   children?: ReactNode;
 }
 
 const ColonySubscriptionInfoPopover = ({
   children,
-  colonyAddress,
-  colonyDisplayName,
-  colonyName,
-  nativeTokenAddress,
+  colony: { colonyAddress, displayName, colonyName, nativeTokenAddress },
+  colony,
   onUnsubscribe = () => {},
 }: Props) => (
   <Popover
@@ -44,10 +42,14 @@ const ColonySubscriptionInfoPopover = ({
       <div className={styles.main}>
         <div className={styles.colonyDetails}>
           <div className={styles.colonyAvatar}>
-            <ColonyAvatar colonyAddress={colonyAddress} size="s" />
+            <ColonyAvatar
+              colonyAddress={colonyAddress}
+              colony={colony}
+              size="s"
+            />
           </div>
           <div className={styles.colonyInfo}>
-            <span className={styles.colonyInfoTitle}>{colonyDisplayName}</span>
+            <span className={styles.colonyInfoTitle}>{displayName}</span>
             <span className={styles.colonyInfoENS}>
               {ENS.getFullDomain('colony', colonyName)}
             </span>
