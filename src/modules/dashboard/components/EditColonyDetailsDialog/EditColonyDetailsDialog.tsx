@@ -14,8 +14,9 @@ import { pipe, withMeta, mapPayload } from '~utils/actions';
 import DialogForm from './EditColonyDetailsDialogForm';
 
 export interface FormValues {
-  name: string;
-  annotation: string;
+  colonyDisplayName: string;
+  colonyAvatarImage: string;
+  annotationMessage: string;
 }
 
 interface CustomWizardDialogProps {
@@ -38,6 +39,7 @@ const EditColonyDetailsDialog = ({
   const history = useHistory();
 
   const validationSchema = yup.object().shape({
+    colonyAvatarImage: yup.string(),
     colonyDisplayName: yup.string().required(),
     annotationMessage: yup.string().max(4000),
   });
@@ -58,6 +60,7 @@ const EditColonyDetailsDialog = ({
     <ActionForm
       initialValues={{
         colonyDisplayName: undefined,
+        colonyAvatarImage: undefined,
         annotationMessage: undefined,
       }}
       submit={ActionTypes.COLONY_ACTION_EDIT_COLONY}
