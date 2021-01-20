@@ -1000,6 +1000,8 @@ function* editColonyAction({
       query: SubgraphActionsDocument,
       variables: {
         colonyAddress: colonyAddress.toLocaleLowerCase(),
+        first: 1,
+        skip: 0,
       },
       fetchPolicy: 'network-only',
     });
