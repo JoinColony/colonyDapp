@@ -856,6 +856,8 @@ export type QueryEventsArgs = {
 
 
 export type QueryOneTxPaymentsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
   where: ActionsFilter;
 };
 
@@ -1970,6 +1972,8 @@ export type TransactionMessagesCountQueryVariables = Exact<{
 export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
 
 export type SubgraphActionsQueryVariables = Exact<{
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
 
@@ -5035,8 +5039,8 @@ export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTrans
 export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
 export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
 export const SubgraphActionsDocument = gql`
-    query SubgraphActions($colonyAddress: String!) {
-  oneTxPayments(where: {payment_contains: $colonyAddress}) {
+    query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
+  oneTxPayments(skip: $skip, first: $first, where: {payment_contains: $colonyAddress}) {
     id
     agent
     transaction {
@@ -5098,6 +5102,8 @@ export const SubgraphActionsDocument = gql`
  * @example
  * const { data, loading, error } = useSubgraphActionsQuery({
  *   variables: {
+ *      skip: // value for 'skip'
+ *      first: // value for 'first'
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });

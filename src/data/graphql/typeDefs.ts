@@ -249,7 +249,11 @@ export default gql`
   }
 
   extend type Query {
-    oneTxPayments(where: ActionsFilter!): [OneTxPayment!]!
+    oneTxPayments(
+      skip: Int!
+      first: Int!
+      where: ActionsFilter!
+    ): [OneTxPayment!]!
     events(where: EventsFilter!): [SubgraphEvent!]!
   }
 `;

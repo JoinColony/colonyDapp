@@ -6,6 +6,7 @@ import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
 import { Select, Form } from '~core/Fields';
+import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import {
@@ -34,10 +35,6 @@ const MSG = defineMessages({
   placeholderFilter: {
     id: 'dashboard.ColonyActions.placeholderFilter',
     defaultMessage: 'Filter',
-  },
-  loadMore: {
-    id: 'dashboard.ColonyActions.loadMore',
-    defaultMessage: 'Load More',
   },
   noActionsFound: {
     id: 'dashboard.ColonyActions.noActionsFound',
@@ -76,6 +73,10 @@ const ColonyActions = ({
     ActionsSortOptions.NEWEST,
   );
 
+  const [dataPage, setDataPage] = useState<number>(1);
+
+  const ITEMS_PER_PAGE = 10;
+
   const history = useHistory();
 
   const {
@@ -84,6 +85,8 @@ const ColonyActions = ({
     stopPolling: stopPaymentActionsPolling,
   } = useSubgraphActionsQuery({
     variables: {
+      skip: 0,
+      first: 100,
       /*
        * @TODO Find a way to better handle address normalization
        * Maybe this will/should be fixed on the subgraph's side ?
@@ -123,6 +126,10 @@ const ColonyActions = ({
           ),
     [ethDomainId, actions],
   );
+
+  const handleDataPagination = useCallback(() => {
+    setDataPage(dataPage + 1);
+  }, [dataPage]);
 
   /*
    * @NOTE This is why we can't have nice things
@@ -176,6 +183,11 @@ const ColonyActions = ({
     [actionsSort, filteredActions],
   );
 
+  const paginatedActionData: FormattedAction[] = useMemo(
+    () => sortedActionsData.slice(0, ITEMS_PER_PAGE * dataPage),
+    [ITEMS_PER_PAGE, dataPage, sortedActionsData],
+  );
+
   const handleActionRedirect = useCallback(
     ({ transactionHash }: RedirectHandlerProps) =>
       history.push(`/colony/${colonyName}/tx/${transactionHash}`),
@@ -219,10 +231,16 @@ const ColonyActions = ({
             </div>
           </Form>
           <ActionsList
-            items={sortedActionsData}
+            items={paginatedActionData}
             handleItemClick={handleActionRedirect}
             colony={colony}
           />
+          {ITEMS_PER_PAGE * dataPage < actions.length && (
+            <LoadMoreButton
+              onClick={handleDataPagination}
+              isLoadingData={paymentActionsLoading}
+            />
+          )}
         </>
       ) : (
         <div className={styles.emptyState}>
