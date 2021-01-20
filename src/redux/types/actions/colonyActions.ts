@@ -49,6 +49,7 @@ export type ColonyActionsActionTypes =
         fromDomainId: number;
         toDomainId: number;
         amount: BigNumber;
+        annotationMessage?: string;
       },
       MetaWithHistory<object>
     >

@@ -95,14 +95,14 @@ function* createPaymentAction({
      * setup batch ids and channels
      */
     const batchKey = 'paymentAction';
-    const paymentAction = {
-      id: `${metaId}-paymentAction`,
-      channel: yield call(getTxChannel, `${metaId}-paymentAction`),
-    };
-    const annotatePaymentAction = {
-      id: `${metaId}-annotatePaymentAction`,
-      channel: yield call(getTxChannel, `${metaId}-annotatePaymentAction`),
-    };
+
+    const {
+      paymentAction,
+      annotatePaymentAction,
+    } = yield createTransactionChannels(metaId, [
+      'paymentAction',
+      'annotatePaymentAction',
+    ]);
 
     yield fork(createTransaction, paymentAction.id, {
       context: ClientType.OneTxPaymentClient,
@@ -217,6 +217,7 @@ function* createMoveFundsAction({
     toDomainId,
     amount,
     tokenAddress,
+    annotationMessage,
   },
   meta: {
     id: metaId,
@@ -273,20 +274,77 @@ function* createMoveFundsAction({
       call([colonyClient, colonyClient.getDomain], toDomainId),
     ]);
 
+    let ipfsHash = null;
+    if (annotationMessage) {
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
     txChannel = yield call(getTxChannel, metaId);
 
-    yield fork(createTransaction, metaId, {
+    // setup batch ids and channels
+    const batchKey = 'moveFunds';
+
+    const {
+      moveFunds,
+      annotateMoveFunds,
+    } = yield createTransactionChannels(metaId, [
+      'moveFunds',
+      'annotateMoveFunds',
+    ]);
+
+    yield fork(createTransaction, moveFunds.id, {
       context: ClientType.ColonyClient,
       methodName: 'moveFundsBetweenPotsWithProofs',
       identifier: colonyAddress,
       params: [fromPot, toPot, amount, tokenAddress],
     });
 
+    if (annotationMessage) {
+      yield fork(createTransaction, annotateMoveFunds.id, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        group: {
+          key: batchKey,
+          id: metaId,
+          index: 1,
+        },
+        ready: false,
+      });
+    }
+
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateMoveFunds.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
     const {
       payload: { hash: txHash },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+    } = yield takeFrom(
+      moveFunds.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(moveFunds.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(transactionAddParams(annotateMoveFunds.id, [txHash, ipfsHash]));
+
+      yield put(transactionReady(annotateMoveFunds.id));
+
+      yield takeFrom(
+        annotateMoveFunds.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
 
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
