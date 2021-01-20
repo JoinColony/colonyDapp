@@ -8,7 +8,11 @@ import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { useLoggedInUser, Colony } from '~data/index';
 
 import { getAllUserRoles } from '../../../transformers';
-import { canEnterRecoveryMode, hasRoot } from '../../../users/checks';
+import {
+  canEnterRecoveryMode,
+  hasRoot,
+  canArchitect,
+} from '../../../users/checks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -28,6 +32,10 @@ const MSG = defineMessages({
     id: 'dashboard.AdvancedDialog.managePermissionsDescription',
     defaultMessage:
       'Set permissions for trusted colony members. Use with caution!',
+  },
+  managePermissionsPermissionList: {
+    id: 'dashboard.AdvancedDialog.managePermissionsPermissionList',
+    defaultMessage: 'architecture',
   },
   recoveryTitle: {
     id: 'dashboard.AdvancedDialog.recoveryTitle',
@@ -107,12 +115,22 @@ const AdvancedDialog = ({
   const canEnterRecovery =
     hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
 
+  const canEnterPermissionManagement =
+    hasRegisteredProfile && canArchitect(allUserRoles);
+
   const items = [
     {
       title: MSG.managePermissionsTitle,
       description: MSG.managePermissionsDescription,
       icon: 'emoji-building',
       onClick: () => callStep(nextStepPermissionManagement),
+      permissionRequired: !canEnterPermissionManagement,
+      permissionInfoText: MSG.permissionsText,
+      permissionInfoTextValues: {
+        permissionsList: (
+          <FormattedMessage {...MSG.managePermissionsPermissionList} />
+        ),
+      },
     },
     {
       title: MSG.recoveryTitle,
