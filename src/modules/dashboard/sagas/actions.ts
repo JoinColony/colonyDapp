@@ -864,7 +864,13 @@ function* createDomainAction({
 }
 
 function* editColonyAction({
-  payload: { colonyAddress, colonyName, colonyDisplayName, annotationMessage },
+  payload: {
+    colonyAddress,
+    colonyName,
+    colonyDisplayName,
+    colonyAvatarImage,
+    annotationMessage,
+  },
   meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_EDIT_COLONY>) {
@@ -881,12 +887,24 @@ function* editColonyAction({
     /*
      * Upload colony metadata to IPFS
      */
+    let colonyAvatarIpfsHash = null;
+    if (colonyAvatarImage) {
+      colonyAvatarIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify(colonyAvatarImage),
+      );
+    }
+
+    /*
+     * Upload colony metadata to IPFS
+     */
     let colonyMetadataIpfsHash = null;
     colonyMetadataIpfsHash = yield call(
       ipfsUpload,
       JSON.stringify({
         colonyName,
         colonyDisplayName,
+        colonyAvatarHash: colonyAvatarImage ? colonyAvatarIpfsHash : undefined,
         /*
          * @TODO This needs to **not** overwrite the current tokens list
          * But this can be done only after we fetch the colony's data from the
