@@ -32,8 +32,9 @@ export const ActionsSortSelectOptions = [
     label: FILTER_MSG.oldest,
     value: ActionsSortOptions.OLDEST,
   },
-  {
-    label: FILTER_MSG.haveActivity,
-    value: ActionsSortOptions.HAVE_ACTIVITY,
-  },
+  /* temporarily disabling sorting by activity as this is not available yet */
+  // {
+  //   label: FILTER_MSG.haveActivity,
+  //   value: ActionsSortOptions.HAVE_ACTIVITY,
+  // },
 ];
