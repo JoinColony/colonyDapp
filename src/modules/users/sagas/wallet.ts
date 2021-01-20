@@ -6,11 +6,7 @@ import {
   create as createSoftwareWallet,
   open as purserOpenSoftwareWallet,
 } from '@purser/software';
-import {
-  accountChangeHook,
-  open as purserOpenMetaMaskWallet,
-  MetaMaskInpageProvider,
-} from '@purser/metamask';
+import { open as purserOpenMetaMaskWallet } from '@purser/metamask';
 
 import { WalletMethod } from '~immutable/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -22,18 +18,19 @@ import { createAddress } from '~utils/web3';
  */
 function* metaMaskWatch(walletAddress: Address) {
   const channel = eventChannel((emit) => {
-    accountChangeHook(({ selectedAddress }: MetaMaskInpageProvider) => {
-      if (selectedAddress) emit(createAddress(selectedAddress));
-    });
-    return () => {
-      // @todo Nicer unsubscribe once supported in purser-metamask
+    /*
+     * @NOTE This exists as it's injected by metamask, just that TS doesn't
+     * know about it
+     */
+    // @ts-ignore
+    if (window.ethereum) {
       // @ts-ignore
-      if (window.web3) {
-        // @ts-ignore
-        // eslint-disable-next-line no-underscore-dangle
-        window.web3.currentProvider.publicConfigStore._events.update.pop();
-      }
-    };
+      window.ethereum.on('accountsChanged', (accounts) => {
+        const [newlySelectedAddress] = accounts;
+        emit(createAddress(newlySelectedAddress));
+      });
+    }
+    return () => null;
   });
   let previousAddress = walletAddress;
   while (true) {
