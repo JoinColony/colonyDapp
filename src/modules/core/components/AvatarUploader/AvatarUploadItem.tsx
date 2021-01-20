@@ -19,6 +19,7 @@ const AvatarUploadItem = ({
   name,
   reset,
   upload,
+  handleError,
 }: UploadItemComponentProps) => {
   const [
     ,
@@ -47,8 +48,8 @@ const AvatarUploadItem = ({
     let readFile;
     try {
       readFile = await read();
-      setValue({ ...value, preview: readFile.data });
-      await upload(readFile);
+      const uploadedFile = await upload(readFile);
+      setValue({ ...value, preview: readFile.data, uploaded: uploadedFile });
     } catch (e) {
       log(e);
 
@@ -65,9 +66,11 @@ const AvatarUploadItem = ({
     if (file && !error && !uploaded) {
       uploadFile();
     }
+    if (error && handleError) {
+      handleError({ ...value, file });
+    }
     // Only on first render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleError, file, error, uploadFile, uploaded, value]);
 
   return (
     <div className={styles.main}>
