@@ -6,7 +6,11 @@ import {
   create as createSoftwareWallet,
   open as purserOpenSoftwareWallet,
 } from '@purser/software';
-import { open as purserOpenMetaMaskWallet } from '@purser/metamask';
+import {
+  open as purserOpenMetaMaskWallet,
+  accountChangeHook,
+  chainChangeHook,
+} from '@purser/metamask';
 
 import { WalletMethod } from '~immutable/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -18,19 +22,21 @@ import { createAddress } from '~utils/web3';
  */
 function* metaMaskWatch(walletAddress: Address) {
   const channel = eventChannel((emit) => {
-    /*
-     * @NOTE This exists as it's injected by metamask, just that TS doesn't
-     * know about it
-     */
-    // @ts-ignore
-    if (window.ethereum) {
-      // @ts-ignore
-      window.ethereum.on('accountsChanged', (accounts) => {
-        const [newlySelectedAddress] = accounts;
-        emit(createAddress(newlySelectedAddress));
-      });
-    }
+    accountChangeHook((addresses): void => {
+      const [selectedAddress] = addresses;
+      if (selectedAddress) {
+        return emit(createAddress(selectedAddress));
+      }
+      return undefined;
+    });
     return () => null;
+  });
+  /*
+   * @TODO Make this smart at some point by allowing the chain to change
+   * w/o needing to refresh the page
+   */
+  chainChangeHook((): void => {
+    return window.location.reload();
   });
   let previousAddress = walletAddress;
   while (true) {
