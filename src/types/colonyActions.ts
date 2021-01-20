@@ -11,6 +11,7 @@ export enum ColonyActions {
   VersionUpgrade = 'VersionUpgrade',
   ColonyEdit = 'ColonyEdit',
   EditDomain = 'EditDomain',
+  SetUserRoles = 'SetUserRoles',
 }
 
 export enum ColonyAndExtensionsEvents {
@@ -32,6 +33,7 @@ export enum ColonyAndExtensionsEvents {
   ColonyInitialised = 'ColonyInitialised',
   ColonyBootstrapped = 'ColonyBootstrapped',
   ColonyFundsClaimed = 'ColonyFundsClaimed',
+  ColonyRoleSet = 'ColonyRoleSet',
   RewardPayoutCycleStarted = 'RewardPayoutCycleStarted',
   RewardPayoutCycleEnded = 'RewardPayoutCycleEnded',
   RewardPayoutClaimed = 'RewardPayoutClaimed',
