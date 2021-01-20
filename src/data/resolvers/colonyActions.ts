@@ -154,10 +154,20 @@ export const colonyActionsResolvers = ({
           throw new Error('Transaction is not a Colony Action');
         }
         /*
-         * If the address is not equal to the current colony, it means that it's still an action,
-         * but it was created by a different colony
+         * If the address is not equal to the current colony, or of it's installed extensions, it means that it's still
+         * an action, but it was created by a different colony
          */
-        if (actionValues.address !== colonyAddress) {
+        if (
+          !clientsInstancesArray.find(
+            /*
+             * Yes there is an address prop on an instantiated client
+             * But apparently TS is deciding to be stupid here and I really
+             * don't have the patience to deal with it's bs
+             */
+            // @ts-ignore
+            ({ address }) => address === actionValues.address,
+          )
+        ) {
           actionType = ColonyActions.WrongColony;
           events = [];
         }
