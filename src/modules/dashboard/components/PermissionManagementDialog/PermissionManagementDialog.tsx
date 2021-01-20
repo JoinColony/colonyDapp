@@ -32,6 +32,8 @@ import { availableRoles } from './constants';
 
 import styles from './PermissionManagementDialog.css';
 
+const displayName = 'dashboard.PermissionManagementDialog';
+
 const MSG = defineMessages({
   title: {
     id: 'dashboard.PermissionManagementDialog.title',
@@ -252,7 +254,6 @@ const PermissionManagementDialog = ({
   );
 };
 
-PermissionManagementDialog.displayName =
-  'dashboard.Permissions.PermissionManagementDialog';
+PermissionManagementDialog.displayName = displayName;
 
 export default PermissionManagementDialog;

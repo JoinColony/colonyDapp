@@ -74,6 +74,7 @@ const MSG = defineMessages({
 });
 
 interface CustomWizardDialogProps {
+  nextStepPermissionManagement: string;
   nextStepRecovery: string;
   nextStepEditDetails: string;
   nextStepVersionUpgrade: string;
@@ -90,6 +91,7 @@ const AdvancedDialog = ({
   close,
   callStep,
   prevStep,
+  nextStepPermissionManagement,
   nextStepRecovery,
   nextStepEditDetails,
   nextStepVersionUpgrade,
@@ -110,6 +112,7 @@ const AdvancedDialog = ({
       title: MSG.managePermissionsTitle,
       description: MSG.managePermissionsDescription,
       icon: 'emoji-building',
+      onClick: () => callStep(nextStepPermissionManagement),
     },
     {
       title: MSG.recoveryTitle,
