@@ -158,7 +158,7 @@ const EditColonyDetailsDialogForm = ({
           name="colonyDisplayName"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={!userHasPermission}
-          maxLength={25}
+          maxLength={20}
         />
       </DialogSection>
       <DialogSection>
