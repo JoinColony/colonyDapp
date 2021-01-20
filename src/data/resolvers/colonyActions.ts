@@ -137,12 +137,15 @@ export const colonyActionsResolvers = ({
           colonyClient as ColonyClient,
           actionType,
         );
-
-        const annotation = await getAnnotation(
-          from as string,
-          hash as string,
-          colonyClient as ColonyClientV5,
-        );
+        const clientVersion = await colonyClient?.version();
+        let annotation;
+        if (clientVersion.toString() === '5') {
+          annotation = await getAnnotation(
+            from as string,
+            hash as string,
+            colonyClient as ColonyClientV5,
+          );
+        }
 
         return {
           hash,

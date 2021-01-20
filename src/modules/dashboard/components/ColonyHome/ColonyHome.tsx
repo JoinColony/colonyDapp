@@ -13,7 +13,6 @@ import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { ActionTypes } from '~redux/index';
 import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
 import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
@@ -145,7 +144,10 @@ const ColonyHome = ({ match, location }: Props) => {
     filteredDomainId || ROOT_DOMAIN_ID,
   ]);
 
-  const allUserRoles = useTransformer(getAllUserRoles, [data?.colony, walletAddress]);
+  const allUserRoles = useTransformer(getAllUserRoles, [
+    data?.colony,
+    walletAddress,
+  ]);
 
   const handleUpgradeColony = useCallback(() => {
     if (!data || !data.colony) {
@@ -154,8 +156,7 @@ const ColonyHome = ({ match, location }: Props) => {
     openUpgradeVersionDialog({
       colony: data.colony,
     });
-  }, [data?.colony]);
-
+  }, [data, openUpgradeVersionDialog]);
 
   if (!colonyName || (reverseENSAddress as any) instanceof Error) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
@@ -179,7 +180,7 @@ const ColonyHome = ({ match, location }: Props) => {
     parseInt(networkVersion || '0', 10),
   );
 
-  const isSupportedColonyVersion = parseInt(colony.version || '0', 10) >= 5;
+  const isSupportedColonyVersion = colony.version >= 5;
 
   return (
     <div className={styles.main}>

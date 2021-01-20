@@ -51,7 +51,7 @@ const ColonyTotalFunds = ({
   const [currentTokenAddress, setCurrentTokenAddress] = useState<Address>(
     nativeTokenAddress,
   );
-  const isSupportedColonyVersion = parseInt(version || '0', 10) >= 5;
+  const isSupportedColonyVersion = version >= 5;
   const {
     data,
     loading: isLoadingTokenBalances,

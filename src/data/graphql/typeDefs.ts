@@ -38,8 +38,8 @@ export default gql`
     amount: String!
     tokenAddress: String!
     annotationHash: String
-    oldVersion: String
-    newVersion: String
+    oldVersion: String!
+    newVersion: String!
   }
 
   input NetworkContractsInput {

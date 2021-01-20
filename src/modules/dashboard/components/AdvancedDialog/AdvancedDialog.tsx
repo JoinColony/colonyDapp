@@ -145,7 +145,7 @@ const AdvancedDialog = ({
       title: MSG.editColonyDetailsTitle,
       description: MSG.editColonyDetailsDescription,
       icon: 'emoji-edit-tools',
-      permissionRequired: !hasRootPermission,
+      permissionRequired: !canUpgradeVersion,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,

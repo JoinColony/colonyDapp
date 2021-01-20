@@ -88,6 +88,9 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
         "name": "EventContext",
         "possibleTypes": [
           {
+            "name": "AcceptLevelTaskSubmissionEvent"
+          },
+          {
             "name": "AssignWorkerEvent"
           },
           {
@@ -100,7 +103,13 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
             "name": "CreateTaskEvent"
           },
           {
+            "name": "CreateLevelTaskSubmissionEvent"
+          },
+          {
             "name": "CreateWorkRequestEvent"
+          },
+          {
+            "name": "EnrollUserInProgramEvent"
           },
           {
             "name": "FinalizeTaskEvent"
@@ -145,6 +154,9 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
             "name": "UnassignWorkerEvent"
           },
           {
+            "name": "UnlockNextLevelEvent"
+          },
+          {
             "name": "TransactionMessageEvent"
           }
         ]
@@ -187,6 +199,7 @@ export type Colony = {
   isNativeTokenLocked: Scalars['Boolean'];
   nativeToken: Token;
   nativeTokenAddress: Scalars['String'];
+  programs: Array<Program>;
   roles: Array<UserRoles>;
   subscribedUsers: Array<User>;
   suggestions: Array<Suggestion>;
@@ -358,6 +371,38 @@ export type NewUserEvent = {
   type: EventType;
 };
 
+export type AcceptLevelTaskSubmissionEvent = {
+  type: EventType;
+  acceptedBy: Scalars['String'];
+  levelId: Scalars['String'];
+  payouts: Array<TaskPayout>;
+  persistentTaskId: Scalars['String'];
+  programId: Scalars['String'];
+  submissionId: Scalars['String'];
+};
+
+export type CreateLevelTaskSubmissionEvent = {
+  type: EventType;
+  programId: Scalars['String'];
+  persistentTaskId: Scalars['String'];
+  levelId: Scalars['String'];
+  submissionId: Scalars['String'];
+};
+
+export type EnrollUserInProgramEvent = {
+  type: EventType;
+  programId: Scalars['String'];
+};
+
+export type UnlockNextLevelEvent = {
+  type: EventType;
+  levelId: Scalars['String'];
+  nextLevelId?: Maybe<Scalars['String']>;
+  persistentTaskId: Scalars['String'];
+  programId: Scalars['String'];
+  submissionId: Scalars['String'];
+};
+
 export type TransactionMessageEvent = {
   type: EventType;
   transactionHash: Scalars['String'];
@@ -365,7 +410,7 @@ export type TransactionMessageEvent = {
   colonyAddress: Scalars['String'];
 };
 
-export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | TransactionMessageEvent;
+export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent | TransactionMessageEvent;
 
 export type Event = {
   id: Scalars['String'];
@@ -382,6 +427,27 @@ export type Notification = {
   id: Scalars['String'];
   event: Event;
   read: Scalars['Boolean'];
+};
+
+export enum LevelStatus {
+  Active = 'Active',
+  Deleted = 'Deleted'
+}
+
+export type Level = {
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creatorAddress: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  achievement?: Maybe<Scalars['String']>;
+  numRequiredSteps?: Maybe<Scalars['Int']>;
+  programId: Scalars['String'];
+  program: Program;
+  stepIds: Array<Scalars['String']>;
+  steps: Array<PersistentTask>;
+  status: LevelStatus;
+  unlocked: Scalars['Boolean'];
 };
 
 export type CreateUserInput = {
@@ -559,9 +625,91 @@ export type CreateTaskFromSuggestionInput = {
   id: Scalars['String'];
 };
 
+export type CreateLevelTaskSubmissionInput = {
+  levelId: Scalars['String'];
+  persistentTaskId: Scalars['String'];
+  submission: Scalars['String'];
+};
+
+export type EditSubmissionInput = {
+  id: Scalars['String'];
+  submission: Scalars['String'];
+};
+
+export type AcceptLevelTaskSubmissionInput = {
+  levelId: Scalars['String'];
+  submissionId: Scalars['String'];
+};
+
+export type CreateLevelTaskInput = {
+  levelId: Scalars['String'];
+};
+
+export type RemoveLevelTaskInput = {
+  id: Scalars['String'];
+  levelId: Scalars['String'];
+};
+
 export type Payout = {
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
+};
+
+export type EditPersistentTaskInput = {
+  id: Scalars['String'];
+  ethDomainId?: Maybe<Scalars['Int']>;
+  ethSkillId?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  payouts?: Maybe<Array<Payout>>;
+};
+
+export type CreateLevelInput = {
+  programId: Scalars['String'];
+};
+
+export type EditLevelInput = {
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  achievement?: Maybe<Scalars['String']>;
+  numRequiredSteps?: Maybe<Scalars['Int']>;
+};
+
+export type ReorderLevelStepsInput = {
+  id: Scalars['String'];
+  stepIds: Array<Scalars['String']>;
+};
+
+export type RemoveLevelInput = {
+  id: Scalars['String'];
+};
+
+export type CreateProgramInput = {
+  colonyAddress: Scalars['String'];
+};
+
+export type EnrollInProgramInput = {
+  id: Scalars['String'];
+};
+
+export type EditProgramInput = {
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
+export type ReorderProgramLevelsInput = {
+  id: Scalars['String'];
+  levelIds: Array<Scalars['String']>;
+};
+
+export type PublishProgramInput = {
+  id: Scalars['String'];
+};
+
+export type RemoveProgramInput = {
+  id: Scalars['String'];
 };
 
 export type SendTransactionMessageInput = {
@@ -571,12 +719,17 @@ export type SendTransactionMessageInput = {
 };
 
 export type Mutation = {
+  acceptLevelTaskSubmission?: Maybe<Submission>;
   addUpvoteToSuggestion?: Maybe<Suggestion>;
   assignWorker?: Maybe<Task>;
   cancelTask?: Maybe<Task>;
   clearLoggedInUser: LoggedInUser;
   createColony?: Maybe<Colony>;
   createDomain?: Maybe<Domain>;
+  createLevel?: Maybe<Level>;
+  createLevelTask?: Maybe<PersistentTask>;
+  createLevelTaskSubmission?: Maybe<Submission>;
+  createProgram?: Maybe<Program>;
   createSuggestion?: Maybe<Suggestion>;
   createTask?: Maybe<Task>;
   createTaskFromSuggestion?: Maybe<Task>;
@@ -584,13 +737,24 @@ export type Mutation = {
   createWorkRequest?: Maybe<Task>;
   editColonyProfile?: Maybe<Colony>;
   editDomainName?: Maybe<Domain>;
+  editLevel?: Maybe<Level>;
+  editPersistentTask?: Maybe<PersistentTask>;
+  editProgram?: Maybe<Program>;
+  editSubmission?: Maybe<Submission>;
   editUser?: Maybe<User>;
+  enrollInProgram?: Maybe<Program>;
   finalizeTask?: Maybe<Task>;
   markAllNotificationsAsRead: Scalars['Boolean'];
   markNotificationAsRead: Scalars['Boolean'];
+  publishProgram?: Maybe<Program>;
+  removeLevel?: Maybe<Level>;
+  removeLevelTask?: Maybe<PersistentTask>;
+  removeProgram?: Maybe<Program>;
   removeTaskPayout?: Maybe<Task>;
   removeTaskSkill?: Maybe<Task>;
   removeUpvoteFromSuggestion?: Maybe<Suggestion>;
+  reorderLevelSteps?: Maybe<Level>;
+  reorderProgramLevels?: Maybe<Program>;
   sendTaskMessage: Scalars['Boolean'];
   sendTransactionMessage: Scalars['Boolean'];
   sendWorkInvite?: Maybe<Task>;
@@ -610,6 +774,11 @@ export type Mutation = {
   unassignWorker?: Maybe<Task>;
   unsubscribeFromColony?: Maybe<User>;
   updateNetworkContracts: NetworkContracts;
+};
+
+
+export type MutationAcceptLevelTaskSubmissionArgs = {
+  input: AcceptLevelTaskSubmissionInput;
 };
 
 
@@ -635,6 +804,26 @@ export type MutationCreateColonyArgs = {
 
 export type MutationCreateDomainArgs = {
   input: CreateDomainInput;
+};
+
+
+export type MutationCreateLevelArgs = {
+  input: CreateLevelInput;
+};
+
+
+export type MutationCreateLevelTaskArgs = {
+  input: CreateLevelTaskInput;
+};
+
+
+export type MutationCreateLevelTaskSubmissionArgs = {
+  input: CreateLevelTaskSubmissionInput;
+};
+
+
+export type MutationCreateProgramArgs = {
+  input: CreateProgramInput;
 };
 
 
@@ -673,8 +862,33 @@ export type MutationEditDomainNameArgs = {
 };
 
 
+export type MutationEditLevelArgs = {
+  input: EditLevelInput;
+};
+
+
+export type MutationEditPersistentTaskArgs = {
+  input: EditPersistentTaskInput;
+};
+
+
+export type MutationEditProgramArgs = {
+  input: EditProgramInput;
+};
+
+
+export type MutationEditSubmissionArgs = {
+  input: EditSubmissionInput;
+};
+
+
 export type MutationEditUserArgs = {
   input: EditUserInput;
+};
+
+
+export type MutationEnrollInProgramArgs = {
+  input: EnrollInProgramInput;
 };
 
 
@@ -685,6 +899,26 @@ export type MutationFinalizeTaskArgs = {
 
 export type MutationMarkNotificationAsReadArgs = {
   input: MarkNotificationAsReadInput;
+};
+
+
+export type MutationPublishProgramArgs = {
+  input: PublishProgramInput;
+};
+
+
+export type MutationRemoveLevelArgs = {
+  input: RemoveLevelInput;
+};
+
+
+export type MutationRemoveLevelTaskArgs = {
+  input: RemoveLevelTaskInput;
+};
+
+
+export type MutationRemoveProgramArgs = {
+  input: RemoveProgramInput;
 };
 
 
@@ -700,6 +934,16 @@ export type MutationRemoveTaskSkillArgs = {
 
 export type MutationRemoveUpvoteFromSuggestionArgs = {
   input: RemoveUpvoteFromSuggestionInput;
+};
+
+
+export type MutationReorderLevelStepsArgs = {
+  input: ReorderLevelStepsInput;
+};
+
+
+export type MutationReorderProgramLevelsArgs = {
+  input: ReorderProgramLevelsInput;
 };
 
 
@@ -792,6 +1036,49 @@ export type MutationUnsubscribeFromColonyArgs = {
   input: UnsubscribeFromColonyInput;
 };
 
+export enum PersistentTaskStatus {
+  Active = 'Active',
+  Closed = 'Closed',
+  Deleted = 'Deleted'
+}
+
+export type PersistentTask = {
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  colonyAddress: Scalars['String'];
+  creatorAddress: Scalars['String'];
+  ethDomainId?: Maybe<Scalars['Int']>;
+  domain?: Maybe<Domain>;
+  ethSkillId?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  payouts: Array<TaskPayout>;
+  submissions: Array<Submission>;
+  status: PersistentTaskStatus;
+  currentUserSubmission?: Maybe<Submission>;
+};
+
+export enum ProgramStatus {
+  Draft = 'Draft',
+  Active = 'Active',
+  Deleted = 'Deleted'
+}
+
+export type Program = {
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creatorAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  levelIds: Array<Scalars['String']>;
+  levels: Array<Level>;
+  enrolledUserAddresses: Array<Scalars['String']>;
+  enrolled: Scalars['Boolean'];
+  status: ProgramStatus;
+  submissions: Array<ProgramSubmission>;
+};
+
 export type Query = {
   colony: Colony;
   colonyAction: ColonyAction;
@@ -802,9 +1089,11 @@ export type Query = {
   domain: Domain;
   domains: Array<SubgraphDomain>;
   events: Array<SubgraphEvent>;
+  level: Level;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
   oneTxPayments: Array<OneTxPayment>;
+  program: Program;
   systemInfo: SystemInfo;
   task: Task;
   token: Token;
@@ -868,10 +1157,20 @@ export type QueryEventsArgs = {
 };
 
 
+export type QueryLevelArgs = {
+  id: Scalars['String'];
+};
+
+
 export type QueryOneTxPaymentsArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  first?: Maybe<Scalars['Int']>;
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
   where: ActionsFilter;
+};
+
+
+export type QueryProgramArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -924,6 +1223,32 @@ export type QueryUserReputationArgs = {
 
 export type QueryUsernameArgs = {
   address: Scalars['String'];
+};
+
+export enum SubmissionStatus {
+  Open = 'Open',
+  Accepted = 'Accepted',
+  Rejected = 'Rejected',
+  Deleted = 'Deleted'
+}
+
+export type Submission = {
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creatorAddress: Scalars['String'];
+  creator: User;
+  persistentTaskId: Scalars['String'];
+  submission: Scalars['String'];
+  status: SubmissionStatus;
+  statusChangedAt?: Maybe<Scalars['DateTime']>;
+  task: PersistentTask;
+};
+
+export type ProgramSubmission = {
+  id: Scalars['String'];
+  levelId: Scalars['String'];
+  level: Level;
+  submission: Submission;
 };
 
 export enum SuggestionStatus {
@@ -998,6 +1323,7 @@ export type SystemInfo = {
 export type User = {
   colonies: Array<Colony>;
   colonyAddresses: Array<Scalars['String']>;
+  completedLevels: Array<Level>;
   createdAt: Scalars['DateTime'];
   id: Scalars['String'];
   notifications: Array<Notification>;
@@ -1008,6 +1334,11 @@ export type User = {
   tokenAddresses: Array<Scalars['String']>;
   tokenTransfers: Array<Transfer>;
   tokens: Array<Token>;
+};
+
+
+export type UserCompletedLevelsArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1033,11 +1364,14 @@ export type UserProfile = {
 
 
 export enum EventType {
+  AcceptLevelTaskSubmission = 'AcceptLevelTaskSubmission',
   AssignWorker = 'AssignWorker',
   CancelTask = 'CancelTask',
   CreateDomain = 'CreateDomain',
+  CreateLevelTaskSubmission = 'CreateLevelTaskSubmission',
   CreateTask = 'CreateTask',
   CreateWorkRequest = 'CreateWorkRequest',
+  EnrollUserInProgram = 'EnrollUserInProgram',
   FinalizeTask = 'FinalizeTask',
   NewUser = 'NewUser',
   RemoveTaskPayout = 'RemoveTaskPayout',
@@ -1052,6 +1386,7 @@ export enum EventType {
   SetTaskTitle = 'SetTaskTitle',
   TaskMessage = 'TaskMessage',
   UnassignWorker = 'UnassignWorker',
+  UnlockNextLevel = 'UnlockNextLevel',
   TransactionMessage = 'TransactionMessage'
 }
 
@@ -1112,8 +1447,8 @@ export type ColonyAction = {
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
   annotationHash?: Maybe<Scalars['String']>;
-  oldVersion?: Maybe<Scalars['String']>;
-  newVersion?: Maybe<Scalars['String']>;
+  oldVersion: Scalars['String'];
+  newVersion: Scalars['String'];
 };
 
 export type NetworkContractsInput = {

@@ -18,11 +18,13 @@ export interface FormValues {
 }
 
 interface CustomWizardDialogProps {
-  prevStep: string;
+  prevStep?: string;
   colony: Colony;
 }
 
-type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+type Props = DialogProps &
+  Partial<WizardDialogType<object>> &
+  CustomWizardDialogProps;
 
 const displayName = 'dashboard.NetworkContractUpgradeDialog';
 

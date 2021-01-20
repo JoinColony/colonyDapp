@@ -10,7 +10,6 @@ import {
   ColonyDocument,
   ColonyQuery,
   ColonyQueryVariables,
-  getNetworkContracts,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
