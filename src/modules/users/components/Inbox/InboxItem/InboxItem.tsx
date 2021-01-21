@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useMemo } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { EventType } from '../types';
@@ -130,10 +130,6 @@ const InboxItem = ({
 
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },
-  });
-
-  const { data: programData } = useProgramQuery({
-    variables: { id: programId || '' },
   });
 
   const { data: domainData } = useColonySingleDomainQuery({

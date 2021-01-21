@@ -207,6 +207,8 @@ function* createPaymentAction({
       query: SubgraphActionsDocument,
       variables: {
         colonyAddress: colonyAddress.toLocaleLowerCase(),
+        skip: 0,
+        first: 1,
       },
       fetchPolicy: 'network-only',
     });
@@ -387,6 +389,8 @@ function* createMoveFundsAction({
       query: SubgraphActionsDocument,
       variables: {
         colonyAddress: colonyAddress.toLocaleLowerCase(),
+        skip: 0,
+        first: 1,
       },
       fetchPolicy: 'network-only',
     });
@@ -544,6 +548,8 @@ function* createMintTokensAction({
       query: SubgraphActionsDocument,
       variables: {
         colonyAddress: colonyAddress.toLocaleLowerCase(),
+        skip: 0,
+        first: 1,
       },
       fetchPolicy: 'network-only',
     });
@@ -703,6 +709,8 @@ function* createDomainAction({
       query: SubgraphActionsDocument,
       variables: {
         colonyAddress: colonyAddress.toLocaleLowerCase(),
+        skip: 0,
+        first: 1,
       },
       fetchPolicy: 'network-only',
     });

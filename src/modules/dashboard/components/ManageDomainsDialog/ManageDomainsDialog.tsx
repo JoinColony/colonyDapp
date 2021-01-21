@@ -22,7 +22,7 @@ const MSG = defineMessages({
   createNewDomainDescription: {
     id: 'dashboard.ManageDomainsDialog.createNewDomainDescription',
     defaultMessage:
-      'Domains, departments, circles: teams let you froup types of activity.',
+      'Domains, departments, circles: teams let you group types of activity.',
   },
   editDomainTitle: {
     id: 'dashboard.ManageDomainsDialog.editDomainTitle',
