@@ -44,16 +44,14 @@ const NetworkContractUpgradeDialog = ({
 
   const transform = useCallback(
     pipe(
-      mapPayload(
-        ({ annotation: annotationMessage }) => {
-          return {
-            colonyAddress,
-            colonyName,
-            version,
-            annotationMessage,
-          };
-        },
-      ),
+      mapPayload(({ annotation: annotationMessage }) => {
+        return {
+          colonyAddress,
+          colonyName,
+          version,
+          annotationMessage,
+        };
+      }),
       mergePayload({ colonyAddress, version, colonyName }),
       withMeta({ history }),
     ),

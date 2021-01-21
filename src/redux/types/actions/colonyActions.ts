@@ -99,6 +99,7 @@ export type ColonyActionsActionTypes =
         colonyAddress: Address;
         version: string;
         colonyName?: string;
+        annotationMessage?: string;
       },
       MetaWithHistory<object>
     >
