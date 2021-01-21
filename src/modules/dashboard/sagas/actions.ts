@@ -581,6 +581,7 @@ function* createVersionUpgradeAction({
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
     const { version: newestVersion } = yield getNetworkContracts();
     const currentVersion = parseInt(version, 10);
@@ -605,13 +606,10 @@ function* createVersionUpgradeAction({
 
     const batchKey = 'upgrade';
 
-    const {
-      upgrade,
-      annotateUpgrade,
-    } = yield createTransactionChannels(metaId, [
-      'upgrade',
-      'annotateUpgrade',
-    ]);
+    const { upgrade, annotateUpgrade } = yield createTransactionChannels(
+      metaId,
+      ['upgrade', 'annotateUpgrade'],
+    );
 
     yield fork(createTransaction, upgrade.id, {
       context: ClientType.ColonyClient,
@@ -644,10 +642,7 @@ function* createVersionUpgradeAction({
     yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_CREATED);
 
     if (supportAnnotation) {
-      yield takeFrom(
-        annotateUpgrade.channel,
-        ActionTypes.TRANSACTION_CREATED,
-      );
+      yield takeFrom(annotateUpgrade.channel, ActionTypes.TRANSACTION_CREATED);
     }
 
     yield put(transactionReady(upgrade.id));
@@ -659,9 +654,7 @@ function* createVersionUpgradeAction({
     yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (supportAnnotation) {
-      yield put(
-        transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]),
-      );
+      yield put(transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]));
 
       yield put(transactionReady(annotateUpgrade.id));
 
@@ -682,6 +675,8 @@ function* createVersionUpgradeAction({
       },
       fetchPolicy: 'network-only',
     });
+
+    yield colonyManager.setColonyClient(colonyAddress);
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,
