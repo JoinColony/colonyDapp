@@ -192,7 +192,7 @@ const ColonyActions = ({
             handleItemClick={handleActionRedirect}
             colony={colony}
           />
-          {ITEMS_PER_PAGE * dataPage < actions.length && (
+          {ITEMS_PER_PAGE * dataPage < sortedActionsData.length && (
             <LoadMoreButton
               onClick={handleDataPagination}
               isLoadingData={paymentActionsLoading}
