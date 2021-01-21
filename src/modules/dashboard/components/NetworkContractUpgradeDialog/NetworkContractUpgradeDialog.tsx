@@ -3,7 +3,7 @@ import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 
-import { pipe, mergePayload, withMeta } from '~utils/actions';
+import { pipe, mergePayload, withMeta, mapPayload } from '~utils/actions';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
@@ -44,6 +44,16 @@ const NetworkContractUpgradeDialog = ({
 
   const transform = useCallback(
     pipe(
+      mapPayload(
+        ({ annotation: annotationMessage }) => {
+          return {
+            colonyAddress,
+            colonyName,
+            version,
+            annotationMessage,
+          };
+        },
+      ),
       mergePayload({ colonyAddress, version, colonyName }),
       withMeta({ history }),
     ),

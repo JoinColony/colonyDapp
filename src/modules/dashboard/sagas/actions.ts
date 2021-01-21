@@ -574,7 +574,7 @@ function* createMintTokensAction({
 }
 
 function* createVersionUpgradeAction({
-  payload: { colonyAddress, colonyName, version },
+  payload: { colonyAddress, colonyName, version, annotationMessage },
   meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_VERSION_UPGRADE>) {
@@ -583,25 +583,94 @@ function* createVersionUpgradeAction({
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     const { version: newestVersion } = yield getNetworkContracts();
-    const nextVersion = parseInt(version, 10) + 1;
+    const currentVersion = parseInt(version, 10);
+    const nextVersion = currentVersion + 1;
     if (nextVersion > parseInt(newestVersion, 10)) {
       throw new Error('Colony has the newest version');
     }
 
+    const supportAnnotation = currentVersion >= 5 && annotationMessage;
+
+    let ipfsHash = null;
+    if (supportAnnotation) {
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
     txChannel = yield call(getTxChannel, metaId);
 
-    yield fork(createTransaction, metaId, {
+    const batchKey = 'upgrade';
+
+    const {
+      upgrade,
+      annotateUpgrade,
+    } = yield createTransactionChannels(metaId, [
+      'upgrade',
+      'annotateUpgrade',
+    ]);
+
+    yield fork(createTransaction, upgrade.id, {
       context: ClientType.ColonyClient,
       methodName: 'upgrade',
       identifier: colonyAddress,
       params: [nextVersion],
+      group: {
+        key: batchKey,
+        id: metaId,
+        index: 0,
+      },
+      ready: false,
     });
+
+    if (supportAnnotation) {
+      yield fork(createTransaction, annotateUpgrade.id, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        group: {
+          key: batchKey,
+          id: metaId,
+          index: 1,
+        },
+        ready: false,
+      });
+    }
+
+    yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_CREATED);
+
+    if (supportAnnotation) {
+      yield takeFrom(
+        annotateUpgrade.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    yield put(transactionReady(upgrade.id));
 
     const {
       payload: { hash: txHash },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+    } = yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_HASH_RECEIVED);
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (supportAnnotation) {
+      yield put(
+        transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]),
+      );
+
+      yield put(transactionReady(annotateUpgrade.id));
+
+      yield takeFrom(
+        annotateUpgrade.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
+
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
