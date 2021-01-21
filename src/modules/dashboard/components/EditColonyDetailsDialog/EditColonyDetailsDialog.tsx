@@ -33,7 +33,7 @@ const EditColonyDetailsDialog = ({
   close,
   callStep,
   prevStep,
-  colony: { colonyAddress, colonyName },
+  colony: { colonyAddress, colonyName, displayName: colonyDisplayName },
   colony,
 }: Props) => {
   const history = useHistory();
@@ -59,7 +59,7 @@ const EditColonyDetailsDialog = ({
   return (
     <ActionForm
       initialValues={{
-        colonyDisplayName: undefined,
+        colonyDisplayName,
         colonyAvatarImage: undefined,
         annotationMessage: undefined,
       }}
