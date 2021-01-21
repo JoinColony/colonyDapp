@@ -123,8 +123,6 @@ export default gql`
   }
 
   extend type Domain {
-    color: Int
-    description: String
     id: String!
     color: Int!
     description: String!
