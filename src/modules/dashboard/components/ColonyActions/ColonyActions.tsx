@@ -145,9 +145,9 @@ const ColonyActions = ({
     [actionsSort, filteredActions],
   );
 
-  const paginatedActionData: FormattedAction[] = useMemo(
-    () => sortedActionsData.slice(0, ITEMS_PER_PAGE * dataPage),
-    [ITEMS_PER_PAGE, dataPage, sortedActionsData],
+  const paginatedActionData: FormattedAction[] = sortedActionsData.slice(
+    0,
+    ITEMS_PER_PAGE * dataPage,
   );
 
   const handleActionRedirect = useCallback(
