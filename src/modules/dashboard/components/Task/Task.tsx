@@ -168,7 +168,7 @@ const Task = () => {
   } = data || {};
 
   const userRoles = useTransformer(getUserRolesForDomain, [
-    colonyData && colonyData.colony,
+    colonyData && colonyData.processedColony,
     walletAddress,
     ethDomainId,
   ]);
@@ -203,7 +203,7 @@ const Task = () => {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  const { colony } = colonyData;
+  const { processedColony: colony } = colonyData;
   const canEdit = canEditTask(task, userRoles);
 
   return (
