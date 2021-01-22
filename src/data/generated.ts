@@ -762,7 +762,7 @@ export type Query = {
   networkContracts: NetworkContracts;
   oneTxPayments: Array<OneTxPayment>;
   processedColony: ProcessedColony;
-  subscribedUsers: Array<Maybe<User>>;
+  subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   task: Task;
   tempDomain: TempDomain;
@@ -2121,10 +2121,10 @@ export type ColonySubscribedUsersQueryVariables = Exact<{
 }>;
 
 
-export type ColonySubscribedUsersQuery = { subscribedUsers: Array<Maybe<(
+export type ColonySubscribedUsersQuery = { subscribedUsers: Array<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-  )>> };
+  )> };
 
 export type ColonyMembersWithReputationQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
