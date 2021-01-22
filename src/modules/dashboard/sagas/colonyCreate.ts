@@ -21,13 +21,9 @@ import {
   ColonyProfileDocument,
   ColonyProfileQuery,
   ColonyProfileQueryVariables,
-  CreateColonyDocument,
-  CreateColonyMutation,
-  CreateColonyMutationVariables,
   CreateUserMutation,
   CreateUserDocument,
   CreateUserMutationVariables,
-  cacheUpdates,
 } from '~data/index';
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
@@ -151,7 +147,6 @@ function* colonyCreate({
     recover: recoveryAddress,
     tokenAddress: givenTokenAddress,
     tokenChoice,
-    tokenIcon,
     tokenName: givenTokenName,
     tokenSymbol: givenTokenSymbol,
     username: givenUsername,
@@ -423,28 +418,8 @@ function* colonyCreate({
 
     if (!recoveryAddress || (recoveryInfo && !recoveryInfo.isProfileCreated)) {
       /*
-       * Create the colony in the Mongo Database
+       * @TODO Send a the colony metadata along with the create colony transaction
        */
-      yield apolloClient.mutate<
-        CreateColonyMutation,
-        CreateColonyMutationVariables
-      >({
-        mutation: CreateColonyDocument,
-        variables: {
-          input: {
-            colonyAddress,
-            colonyName,
-            displayName,
-            tokenAddress,
-            tokenIsExternal: !createToken,
-            tokenName,
-            tokenSymbol,
-            tokenIconHash: tokenIcon,
-            tokenDecimals: DEFAULT_TOKEN_DECIMALS,
-          },
-        },
-        update: cacheUpdates.createColony(walletAddress),
-      });
 
       if (createColony) {
         yield put(transactionLoadRelated(createColony.id, false));
