@@ -105,6 +105,8 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
     },
   });
 
+  console.log('colony members w reputation', data)
+
   /*
    * @NOTE Skelethon Users Array
    *

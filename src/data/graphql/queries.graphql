@@ -517,12 +517,12 @@ query ProcessedColony($address: String!) {
   }
 }
 
-# query ColonyNativeToken($address: String!) {
-#   colony(address: $address) {
-#     id
-#     nativeTokenAddress
-#   }
-# }
+query ColonyNativeToken($address: String!) {
+  processedColony(address: $address) @client {
+    id
+    nativeTokenAddress
+  }
+}
 
 # query ColonyTransfers($address: String!) {
 #   colony(address: $address) {
@@ -569,20 +569,17 @@ query ProcessedColony($address: String!) {
 #   }
 # }
 
-# query ColonySubscribedUsers($colonyAddress: String!) {
-#   colony(address: $colonyAddress) {
-#     id
-#     subscribedUsers {
-#       id
-#       profile {
-#         avatarHash
-#         displayName
-#         username
-#         walletAddress
-#       }
-#     }
-#   }
-# }
+query ColonySubscribedUsers($colonyAddress: String!) {
+  subscribedUsers(colonyAddress: $colonyAddress) {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
 
 query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client

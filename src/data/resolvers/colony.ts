@@ -156,7 +156,12 @@ export const colonyResolvers = ({
             colonyAddress,
           },
         });
-        return subscribedMembers.data?.colony.subscribedUsers.map(
+        return subscribedMembers.data?.subscribedUsers.map(
+          /*
+           * The profile object exists and it's even defined in the types
+           * Just TS deciding to be a jerk
+           */
+          // @ts-ignore
           ({ profile: { walletAddress } }) => walletAddress,
         );
       }

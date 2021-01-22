@@ -762,6 +762,7 @@ export type Query = {
   networkContracts: NetworkContracts;
   oneTxPayments: Array<OneTxPayment>;
   processedColony: ProcessedColony;
+  subscribedUsers: Array<Maybe<User>>;
   systemInfo: SystemInfo;
   task: Task;
   tempDomain: TempDomain;
@@ -839,6 +840,11 @@ export type QueryOneTxPaymentsArgs = {
 
 export type QueryProcessedColonyArgs = {
   address: Scalars['String'];
+};
+
+
+export type QuerySubscribedUsersArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -2072,6 +2078,23 @@ export type ProcessedColonyQueryVariables = Exact<{
 
 
 export type ProcessedColonyQuery = { processedColony: FullColonyFragment };
+
+export type ColonyNativeTokenQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyNativeTokenQuery = { processedColony: Pick<ProcessedColony, 'id' | 'nativeTokenAddress'> };
+
+export type ColonySubscribedUsersQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type ColonySubscribedUsersQuery = { subscribedUsers: Array<Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+  )>> };
 
 export type ColonyMembersWithReputationQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -5059,6 +5082,79 @@ export function useProcessedColonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type ProcessedColonyQueryHookResult = ReturnType<typeof useProcessedColonyQuery>;
 export type ProcessedColonyLazyQueryHookResult = ReturnType<typeof useProcessedColonyLazyQuery>;
 export type ProcessedColonyQueryResult = Apollo.QueryResult<ProcessedColonyQuery, ProcessedColonyQueryVariables>;
+export const ColonyNativeTokenDocument = gql`
+    query ColonyNativeToken($address: String!) {
+  processedColony(address: $address) @client {
+    id
+    nativeTokenAddress
+  }
+}
+    `;
+
+/**
+ * __useColonyNativeTokenQuery__
+ *
+ * To run a query within a React component, call `useColonyNativeTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyNativeTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyNativeTokenQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyNativeTokenQuery(baseOptions?: Apollo.QueryHookOptions<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>) {
+        return Apollo.useQuery<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>(ColonyNativeTokenDocument, baseOptions);
+      }
+export function useColonyNativeTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>(ColonyNativeTokenDocument, baseOptions);
+        }
+export type ColonyNativeTokenQueryHookResult = ReturnType<typeof useColonyNativeTokenQuery>;
+export type ColonyNativeTokenLazyQueryHookResult = ReturnType<typeof useColonyNativeTokenLazyQuery>;
+export type ColonyNativeTokenQueryResult = Apollo.QueryResult<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>;
+export const ColonySubscribedUsersDocument = gql`
+    query ColonySubscribedUsers($colonyAddress: String!) {
+  subscribedUsers(colonyAddress: $colonyAddress) {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonySubscribedUsersQuery__
+ *
+ * To run a query within a React component, call `useColonySubscribedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonySubscribedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonySubscribedUsersQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useColonySubscribedUsersQuery(baseOptions?: Apollo.QueryHookOptions<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>) {
+        return Apollo.useQuery<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>(ColonySubscribedUsersDocument, baseOptions);
+      }
+export function useColonySubscribedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>) {
+          return Apollo.useLazyQuery<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>(ColonySubscribedUsersDocument, baseOptions);
+        }
+export type ColonySubscribedUsersQueryHookResult = ReturnType<typeof useColonySubscribedUsersQuery>;
+export type ColonySubscribedUsersLazyQueryHookResult = ReturnType<typeof useColonySubscribedUsersLazyQuery>;
+export type ColonySubscribedUsersQueryResult = Apollo.QueryResult<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>;
 export const ColonyMembersWithReputationDocument = gql`
     query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
