@@ -32,7 +32,7 @@ const ColonyMembers = () => {
 
   const handlePermissionManagementDialog = useCallback(() => {
     openPermissionManagementDialog({
-      colonyAddress: colonyData?.colony.colonyAddress || '',
+      colonyAddress: colonyData?.processedColony.colonyAddress || '',
     });
   }, [openPermissionManagementDialog, colonyData]);
 
@@ -40,8 +40,8 @@ const ColonyMembers = () => {
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
         <div className={styles.mainContent}>
-          {colonyData && colonyData.colony && (
-            <Members colony={colonyData.colony} />
+          {colonyData && colonyData.processedColony && (
+            <Members colony={colonyData.processedColony} />
           )}
         </div>
         <aside className={styles.rightAside}>
