@@ -235,6 +235,7 @@ export default gql`
 
   type SubgraphFundingPotPayout {
     id: String!
+    tokenAddress: String!
     amount: String!
     token: SubgraphToken!
   }

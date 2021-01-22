@@ -1203,6 +1203,7 @@ export type SubgraphDomain = {
 
 export type SubgraphFundingPotPayout = {
   id: Scalars['String'];
+  tokenAddress: Scalars['String'];
   amount: Scalars['String'];
   token: SubgraphToken;
 };
@@ -5018,5 +5019,11 @@ export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.Laz
 export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
+<<<<<<< HEAD
 >>>>>>> Refactor: colony resolver into processedColony resolver
+<<<<<<< HEAD
 >>>>>>> Refactor: colony resolver into processedColony resolver
+=======
+=======
+>>>>>>> Refactor: add `getProcessedColony` resolvers helper
+>>>>>>> Refactor: add `getProcessedColony` resolvers helper

@@ -29,8 +29,10 @@ import {
   TempDomainsQuery,
   TempDomainsQueryVariables,
   TempDomainsDocument,
+  SubgraphColony,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
+import IPFSNode from '~lib/ipfs';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createAddress } from '~utils/web3';
 import { Color } from '~core/ColorTag';
@@ -57,6 +59,54 @@ const getColonyMembersWithReputation = async (
   const { skillId } = await colonyClient.getDomain(domainId);
   const { addresses } = await colonyClient.getMembersReputation(skillId);
   return addresses || [];
+};
+
+export const getProcessedColony = async (
+  subgraphColony,
+  colonyAddress: Address,
+  ipfs: IPFSNode,
+) => {
+  const { colonyChainId, ensName, metadata, token } = subgraphColony;
+  let displayName = null;
+  let avatarURL = null;
+  let avatarHash = null;
+
+  /*
+   * Fetch the colony's metadata
+   */
+  const ipfsMetadata = await ipfs.getString(metadata);
+  if (ipfsMetadata) {
+    const { colonyDisplayName = null, colonyAvatarHash = null } = JSON.parse(
+      ipfsMetadata || '{}',
+    );
+    displayName = colonyDisplayName;
+    avatarHash = colonyAvatarHash;
+
+    /*
+     * Fetch the colony's avatar
+     */
+    const ipfsAvatar = await ipfs.getString(colonyAvatarHash);
+    if (ipfsAvatar) {
+      const colonyAvatar = JSON.parse(ipfsAvatar || '');
+      avatarURL = colonyAvatar;
+    }
+  }
+
+  return {
+    __typename: 'ProcessedColony',
+    id: parseInt(colonyChainId, 10),
+    colonyName: ENS.stripDomainParts('colony', ensName),
+    colonyAddress,
+    displayName,
+    avatarHash,
+    avatarURL,
+    nativeTokenAddress: token?.tokenAddress
+      ? createAddress(token.tokenAddress)
+      : null,
+    tokenAddresses: token?.tokenAddress
+      ? [createAddress(token.tokenAddress)]
+      : [],
+  };
 };
 
 export const colonyResolvers = ({
@@ -175,51 +225,9 @@ export const colonyResolvers = ({
           },
           fetchPolicy: 'network-only',
         });
-        if (data?.colony) {
-          const {
-            colonyChainId,
-            ensName,
-            metadata,
-            token: { tokenAddress },
-          } = data.colony;
-          let displayName = null;
-          let avatarURL = null;
-          let avatarHash = null;
-
-          /*
-           * Fetch the colony's metadata
-           */
-          const ipfsMetadata = await ipfs.getString(metadata);
-          if (ipfsMetadata) {
-            const {
-              colonyDisplayName = null,
-              colonyAvatarHash = null,
-            } = JSON.parse(ipfsMetadata || '{}');
-            displayName = colonyDisplayName;
-            avatarHash = colonyAvatarHash;
-
-            /*
-             * Fetch the colony's avatar
-             */
-            const ipfsAvatar = await ipfs.getString(colonyAvatarHash);
-            if (ipfsAvatar) {
-              const colonyAvatar = JSON.parse(ipfsAvatar || '');
-              avatarURL = colonyAvatar;
-            }
-          }
-
-          return {
-            __typename: 'ProcessedColony',
-            id: parseInt(colonyChainId, 10),
-            colonyName: ENS.stripDomainParts('colony', ensName),
-            colonyAddress: address,
-            displayName,
-            avatarHash,
-            avatarURL,
-            nativeTokenAddress: createAddress(tokenAddress),
-            tokenAddresses: [createAddress(tokenAddress)],
-          };
-        }
+        return data?.colony
+          ? await getProcessedColony(data.colony, address, ipfs)
+          : null;
       } catch (error) {
         console.error(error);
         return {};
@@ -263,7 +271,7 @@ export const colonyResolvers = ({
           }),
         );
       }
-      return [];
+      return null;
     },
     // eslint-disable-next-line consistent-return
     async domains({ colonyAddress }) {
@@ -286,9 +294,10 @@ export const colonyResolvers = ({
             description: null,
           }));
         }
+        return null;
       } catch (error) {
         console.error(error);
-        return {};
+        return null;
       }
     },
     // colonyAddress({ id }) {
@@ -373,11 +382,9 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-
       if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
         throw new Error(`Not supported in this version of Colony`);
       }
-
       const roles = await getColonyRoles(colonyClient);
       return roles.map((userRoles) => ({
         ...userRoles,

@@ -21,6 +21,7 @@ import {
 } from '~data/index';
 
 import { getToken } from './token';
+import { getProcessedColony } from './colony';
 
 const getUserReputation = async (
   colonyManager: ColonyManager,
@@ -162,7 +163,6 @@ export const userResolvers = ({
         }),
       );
     },
-    // eslint-disable-next-line consistent-return
     async processedColonies({ colonyAddresses }) {
       try {
         const userColonies: Array<{
@@ -178,8 +178,6 @@ export const userResolvers = ({
           query: SubgraphColoniesDocument,
           fetchPolicy: 'network-only',
         });
-        // console.log(all);
-        // console.log(data);
         if (data?.colonies) {
           colonyAddresses.map((colonyAddress) => {
             const subscribedColony = ((data?.colonies as unknown) as Array<{
@@ -194,50 +192,15 @@ export const userResolvers = ({
             return null;
           });
           return Promise.all(
-            userColonies.map(
-              async ({ colonyChainId, ensName, metadata, id }) => {
-                let displayName = null;
-                let avatarURL = null;
-                let avatarHash = null;
-
-                /*
-                 * Fetch the colony's metadata
-                 */
-                const ipfsMetadata = await ipfs.getString(metadata);
-                if (ipfsMetadata) {
-                  const {
-                    colonyDisplayName = null,
-                    colonyAvatarHash = null,
-                  } = JSON.parse(ipfsMetadata || '{}');
-                  displayName = colonyDisplayName;
-                  avatarHash = colonyAvatarHash;
-
-                  /*
-                   * Fetch the colony's avatar
-                   */
-                  const ipfsAvatar = await ipfs.getString(colonyAvatarHash);
-                  if (ipfsAvatar) {
-                    const colonyAvatar = JSON.parse(ipfsAvatar || '');
-                    avatarURL = colonyAvatar;
-                  }
-                }
-
-                return {
-                  __typename: 'ProcessedColony',
-                  id: parseInt(colonyChainId, 10),
-                  colonyName: ENS.stripDomainParts('colony', ensName),
-                  colonyAddress: createAddress(id),
-                  displayName,
-                  avatarHash,
-                  avatarURL,
-                };
-              },
+            userColonies.map(async (colony) =>
+              getProcessedColony(colony, createAddress(colony.id), ipfs),
             ),
           );
         }
+        return null;
       } catch (error) {
         console.error(error);
-        return {};
+        return null;
       }
     },
   },
