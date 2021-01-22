@@ -13,11 +13,17 @@ export default new InMemoryCache({
         profile: {
           merge: false,
         },
+        processedColonies: {
+          merge: false,
+        },
       },
     },
     Query: {
       fields: {
         subscribedUsers: {
+          merge: false,
+        },
+        colonyMembersWithReputation: {
           merge: false,
         },
       },

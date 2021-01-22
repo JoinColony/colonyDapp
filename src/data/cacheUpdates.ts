@@ -13,6 +13,12 @@ import {
   UnsubscribeFromColonyMutationResult,
   SubscribeToColonyMutationResult,
   SetTaskSkillMutationResult,
+  UserColoniesQuery,
+  UserColoniesQueryVariables,
+  UserColoniesDocument,
+  ColonyMembersWithReputationQuery,
+  ColonyMembersWithReputationQueryVariables,
+  ColonyMembersWithReputationDocument,
 } from './generated';
 
 type Cache = typeof apolloCache;
@@ -20,6 +26,107 @@ type Cache = typeof apolloCache;
 const cacheUpdates = {
   unsubscribeFromColony(colonyAddress: Address) {
     return (cache: Cache, { data }: UnsubscribeFromColonyMutationResult) => {
+      try {
+        if (data?.unsubscribeFromColony) {
+          const {
+            id: unsubscribedUserWalletAddress,
+          } = data.unsubscribeFromColony;
+          const cacheData = cache.readQuery<
+            ColonyMembersWithReputationQuery,
+            ColonyMembersWithReputationQueryVariables
+          >({
+            query: ColonyMembersWithReputationDocument,
+            variables: {
+              colonyAddress,
+              /*
+               * We only care about the "All Domains" entry here, since this is
+               * the only one that displays all the subscribed colony members
+               *
+               * The other, actual domains, show all users that have reputation,
+               * iregardless of wheter they're subscribed to the colony or not
+               */
+              domainId: 0,
+            },
+          });
+          if (cacheData?.colonyMembersWithReputation) {
+            const { colonyMembersWithReputation } = cacheData;
+            // eslint-disable-next-line max-len
+            const updatedUsersWithReputationList = colonyMembersWithReputation.filter(
+              (userAddress) => !(userAddress === unsubscribedUserWalletAddress),
+            );
+            cache.writeQuery<
+              ColonyMembersWithReputationQuery,
+              ColonyMembersWithReputationQueryVariables
+            >({
+              query: ColonyMembersWithReputationDocument,
+              data: {
+                colonyMembersWithReputation: updatedUsersWithReputationList,
+              },
+              variables: {
+                colonyAddress,
+                domainId: 0,
+              },
+            });
+          }
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose(
+          'Cannot update the colony subscriptions cache - not loaded yet',
+        );
+      }
+      /*
+       * Update the list of colonies the user is subscribed to
+       * This is in use in the subscribed colonies component(s)
+       */
+      try {
+        if (data?.unsubscribeFromColony) {
+          const {
+            id: unsubscribedUserWalletAddress,
+          } = data.unsubscribeFromColony;
+          const cacheData = cache.readQuery<
+            UserColoniesQuery,
+            UserColoniesQueryVariables
+          >({
+            query: UserColoniesDocument,
+            variables: {
+              address: unsubscribedUserWalletAddress,
+            },
+          });
+          if (cacheData?.user?.processedColonies) {
+            const {
+              user: { processedColonies },
+              user,
+            } = cacheData;
+            const updatedSubscribedColonies = processedColonies.filter(
+              (subscribedColony) =>
+                !(subscribedColony?.colonyAddress === colonyAddress),
+            );
+            cache.writeQuery<UserColoniesQuery, UserColoniesQueryVariables>({
+              query: UserColoniesDocument,
+              data: {
+                user: {
+                  ...user,
+                  processedColonies: updatedSubscribedColonies,
+                },
+              },
+              variables: {
+                address: unsubscribedUserWalletAddress,
+              },
+            });
+          }
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose(
+          'Cannot update the colony subscriptions cache - not loaded yet',
+        );
+      }
+      /*
+       * Update the list of colony subscribed users
+       * This is in use in the User Picker (right now we're only using that in
+       * the permissions Dialog)
+       */
       try {
         const cacheData = cache.readQuery<
           ColonySubscribedUsersQuery,
@@ -53,7 +160,7 @@ const cacheUpdates = {
           >({
             query: ColonySubscribedUsersDocument,
             data: {
-              ...cacheData.subscribedUsers,
+              ...cacheData,
               subscribedUsers: updatedColonySubscription,
             },
             variables: {
