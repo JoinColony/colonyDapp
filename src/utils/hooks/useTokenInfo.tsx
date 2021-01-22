@@ -35,7 +35,7 @@ export const useTokenInfo = () => {
   useEffect(() => {
     if (nativeTokenAddressData) {
       const {
-        colony: { nativeTokenAddress },
+        processedColony: { nativeTokenAddress },
       } = nativeTokenAddressData;
       fetchTokenInfo({ variables: { address: nativeTokenAddress } });
     }
