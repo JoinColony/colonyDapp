@@ -563,11 +563,11 @@ query ColonyNativeToken($address: String!) {
 #   }
 # }
 
-# query ColonyProfile($address: String!) {
-#   colony(address: $address) {
-#     ...ColonyProfile
-#   }
-# }
+query ColonyProfile($address: String!) {
+  processedColony(address: $address) @client {
+    ...ColonyProfile
+  }
+}
 
 query ColonySubscribedUsers($colonyAddress: String!) {
   subscribedUsers(colonyAddress: $colonyAddress) {

@@ -28,8 +28,8 @@ const ColonyGridItem = ({ colonyAddress }: Props) => {
   }
 
   const {
-    colony: { colonyName, displayName },
-    colony,
+    processedColony: { colonyName, displayName },
+    processedColony: colony,
   } = data;
 
   return (
