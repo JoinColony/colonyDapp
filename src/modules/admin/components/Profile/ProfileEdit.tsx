@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
@@ -14,7 +14,7 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ENS from '~lib/ENS';
-import { useEditColonyProfileMutation, Colony } from '~data/index';
+import { Colony } from '~data/index';
 import ColonyAvatarUploader from './ColonyAvatarUploader';
 
 import styles from './ProfileEdit.css';
@@ -82,29 +82,7 @@ interface Props {
 }
 
 const ProfileEdit = ({ colony }: Props) => {
-  const {
-    colonyAddress,
-    colonyName,
-    description,
-    displayName,
-    guideline,
-    nativeTokenAddress,
-    website,
-  } = colony;
-
-  const [editColony] = useEditColonyProfileMutation();
-  const onSubmit = useCallback(
-    (profile: FormValues) =>
-      editColony({
-        variables: {
-          input: {
-            ...profile,
-            colonyAddress,
-          },
-        },
-      }),
-    [colonyAddress, editColony],
-  );
+  const { colonyAddress, colonyName, displayName, nativeTokenAddress } = colony;
 
   return (
     <div className={styles.main}>
@@ -118,12 +96,9 @@ const ProfileEdit = ({ colony }: Props) => {
         <main className={styles.content}>
           <Form
             initialValues={{
-              description: description || undefined,
               displayName: displayName || undefined,
-              guideline: guideline || undefined,
-              website: website || undefined,
             }}
-            onSubmit={onSubmit}
+            onSubmit={() => {}}
             validationSchema={validationSchema}
           >
             {({ status, isSubmitting }) => (

@@ -122,13 +122,13 @@ const AdminDashboard = ({
   const { walletAddress } = useLoggedInUser();
 
   const rootUserRoles = useTransformer(getUserRolesForDomain, [
-    colonyData && colonyData.colony,
+    colonyData && colonyData.processedColony,
     walletAddress,
     ROOT_DOMAIN_ID,
   ]);
 
   const allUserRoles = useTransformer(getAllUserRoles, [
-    colonyData && colonyData.colony,
+    colonyData && colonyData.processedColony,
     walletAddress,
   ]);
 
@@ -148,7 +148,7 @@ const AdminDashboard = ({
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
-  const { colony } = colonyData;
+  const { processedColony: colony } = colonyData;
 
   return (
     <div className={styles.main}>
