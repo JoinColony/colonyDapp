@@ -12,7 +12,7 @@ import { useTransformer } from '~utils/hooks';
 import {
   ColonySubscribedUsersDocument,
   AnyUser,
-  useColonyQuery,
+  useProcessedColonyQuery,
   useLoggedInUser,
   useUserLazy,
 } from '~data/index';
@@ -79,19 +79,19 @@ const ColonyPermissionsAddDialog = ({
     ROOT_DOMAIN_ID,
   );
 
-  const { data: colonyData } = useColonyQuery({
+  const { data: colonyData } = useProcessedColonyQuery({
     variables: { address: colonyAddress },
   });
 
   const currentUserRoles = useTransformer(getUserRolesForDomain, [
-    colonyData && colonyData.colony,
+    colonyData && colonyData.processedColony,
     // CURRENT USER!
     walletAddress,
     domainId,
   ]);
 
   const userDirectRoles = useTransformer(getUserRolesForDomain, [
-    colonyData && colonyData.colony,
+    colonyData && colonyData.processedColony,
     // USER TO SET PERMISSIONS FOR!
     selectedUserAddress,
     domainId,
@@ -99,14 +99,14 @@ const ColonyPermissionsAddDialog = ({
   ]);
 
   const userInheritedRoles = useTransformer(getUserRolesForDomain, [
-    colonyData && colonyData.colony,
+    colonyData && colonyData.processedColony,
     // USER TO SET PERMISSIONS FOR!
     selectedUserAddress,
     domainId,
   ]);
 
   const rootAccounts = useTransformer(getAllRootAccounts, [
-    colonyData && colonyData.colony,
+    colonyData && colonyData.processedColony,
   ]);
 
   const updateSelectedUser = useCallback(
@@ -146,7 +146,7 @@ const ColonyPermissionsAddDialog = ({
   const user = useUserLazy(selectedUserAddress);
   const domain =
     colonyData &&
-    colonyData.colony.domains.find(
+    colonyData.processedColony.domains.find(
       ({ ethDomainId }) => ethDomainId === domainId,
     );
 
@@ -202,7 +202,7 @@ const ColonyPermissionsAddDialog = ({
                     rootAccounts={rootAccounts}
                     userDirectRoles={userDirectRoles}
                     userInheritedRoles={userInheritedRoles}
-                    colonyDomains={colonyData.colony.domains}
+                    colonyDomains={colonyData.processedColony.domains}
                     onDomainSelected={setSelectedDomainId}
                   />
                 </DialogSection>
