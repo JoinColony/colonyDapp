@@ -167,46 +167,7 @@ export type Scalars = {
   Upload: any;
 };
 
-export type Colony = {
-  avatarHash?: Maybe<Scalars['String']>;
-  canMintNativeToken: Scalars['Boolean'];
-  canUnlockNativeToken: Scalars['Boolean'];
-  colonyAddress: Scalars['String'];
-  colonyName: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  description?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
-  domains: Array<Domain>;
-  events: Array<NetworkEvent>;
-  founder?: Maybe<User>;
-  founderAddress: Scalars['String'];
-  guideline?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  isInRecoveryMode: Scalars['Boolean'];
-  isNativeTokenExternal: Scalars['Boolean'];
-  isNativeTokenLocked: Scalars['Boolean'];
-  nativeToken: Token;
-  nativeTokenAddress: Scalars['String'];
-  roles: Array<UserRoles>;
-  subscribedUsers: Array<User>;
-  suggestions: Array<Suggestion>;
-  taskIds: Array<Scalars['String']>;
-  tasks: Array<Task>;
-  tokenAddresses: Array<Scalars['String']>;
-  tokens: Array<Token>;
-  transfers: Array<Transfer>;
-  unclaimedTransfers: Array<Transfer>;
-  version: Scalars['Int'];
-  website?: Maybe<Scalars['String']>;
-};
-
-
-export type ColonyTokensArgs = {
-  addresses?: Maybe<Array<Scalars['String']>>;
-};
-
 export type Domain = {
-  colony?: Maybe<Colony>;
   colonyAddress: Scalars['String'];
   color: Scalars['Int'];
   createdAt: Scalars['DateTime'];
@@ -575,14 +536,12 @@ export type Mutation = {
   assignWorker?: Maybe<Task>;
   cancelTask?: Maybe<Task>;
   clearLoggedInUser: LoggedInUser;
-  createColony?: Maybe<Colony>;
   createDomain?: Maybe<Domain>;
   createSuggestion?: Maybe<Suggestion>;
   createTask?: Maybe<Task>;
   createTaskFromSuggestion?: Maybe<Task>;
   createUser?: Maybe<User>;
   createWorkRequest?: Maybe<Task>;
-  editColonyProfile?: Maybe<Colony>;
   editDomainName?: Maybe<Domain>;
   editUser?: Maybe<User>;
   finalizeTask?: Maybe<Task>;
@@ -594,7 +553,6 @@ export type Mutation = {
   sendTaskMessage: Scalars['Boolean'];
   sendTransactionMessage: Scalars['Boolean'];
   sendWorkInvite?: Maybe<Task>;
-  setColonyTokens?: Maybe<Colony>;
   setLoggedInUser: LoggedInUser;
   setNetworkContracts: NetworkContracts;
   setSuggestionStatus?: Maybe<Suggestion>;
@@ -628,11 +586,6 @@ export type MutationCancelTaskArgs = {
 };
 
 
-export type MutationCreateColonyArgs = {
-  input: CreateColonyInput;
-};
-
-
 export type MutationCreateDomainArgs = {
   input: CreateDomainInput;
 };
@@ -660,11 +613,6 @@ export type MutationCreateUserArgs = {
 
 export type MutationCreateWorkRequestArgs = {
   input: CreateWorkRequestInput;
-};
-
-
-export type MutationEditColonyProfileArgs = {
-  input: EditColonyProfileInput;
 };
 
 
@@ -715,11 +663,6 @@ export type MutationSendTransactionMessageArgs = {
 
 export type MutationSendWorkInviteArgs = {
   input: SendWorkInviteInput;
-};
-
-
-export type MutationSetColonyTokensArgs = {
-  input: SetColonyTokensInput;
 };
 
 
@@ -793,7 +736,8 @@ export type MutationUnsubscribeFromColonyArgs = {
 };
 
 export type Query = {
-  colony: Colony;
+  colonies: SubgraphColony;
+  colony: SubgraphColony;
   colonyAction: ColonyAction;
   colonyAddress: Scalars['String'];
   colonyDomain: Domain;
@@ -805,8 +749,10 @@ export type Query = {
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
   oneTxPayments: Array<OneTxPayment>;
+  processedColony: ProcessedColony;
   systemInfo: SystemInfo;
   task: Task;
+  tempDomains: Array<Domain>;
   token: Token;
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
@@ -820,7 +766,7 @@ export type Query = {
 
 
 export type QueryColonyArgs = {
-  address: Scalars['String'];
+  id: Scalars['String'];
 };
 
 
@@ -875,8 +821,18 @@ export type QueryOneTxPaymentsArgs = {
 };
 
 
+export type QueryProcessedColonyArgs = {
+  address: Scalars['String'];
+};
+
+
 export type QueryTaskArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryTempDomainsArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -956,7 +912,6 @@ export type Task = {
   assignedWorker?: Maybe<User>;
   assignedWorkerAddress?: Maybe<Scalars['String']>;
   cancelledAt?: Maybe<Scalars['DateTime']>;
-  colony: Colony;
   colonyAddress: Scalars['String'];
   commentCount: Scalars['Int'];
   createdAt: Scalars['DateTime'];
@@ -996,11 +951,11 @@ export type SystemInfo = {
 };
 
 export type User = {
-  colonies: Array<Colony>;
   colonyAddresses: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['String'];
   notifications: Array<Notification>;
+  processedColonies: Array<Maybe<ProcessedColony>>;
   profile: UserProfile;
   reputation: Scalars['String'];
   taskIds: Array<Scalars['String']>;
@@ -1263,10 +1218,19 @@ export type SubgraphPayment = {
   fundingPot: SubgraphFundingPot;
 };
 
+export type SubgraphColonyMetadata = {
+  id: Scalars['String'];
+  metadata: Scalars['String'];
+};
+
 export type SubgraphColony = {
   id: Scalars['String'];
-  token: SubgraphToken;
+  colonyChainId: Scalars['String'];
+  address: Scalars['String'];
+  ensName: Scalars['String'];
   metadata: Scalars['String'];
+  metadataHistory: Array<Maybe<SubgraphColonyMetadata>>;
+  token: SubgraphToken;
   domains: Array<SubgraphDomain>;
 };
 
@@ -1286,6 +1250,59 @@ export type OneTxPayment = {
   payment: SubgraphPayment;
 };
 
+export type ProcessedDomain = {
+  id: Scalars['String'];
+  color: Scalars['Int'];
+  description?: Maybe<Scalars['String']>;
+  ethDomainId: Scalars['Int'];
+  name: Scalars['String'];
+  ethParentDomainId?: Maybe<Scalars['Int']>;
+};
+
+export type ProcessedRoleDomain = {
+  domainId: Scalars['String'];
+  roles: Scalars['String'];
+};
+
+export type ProcessedRoles = {
+  address: Scalars['String'];
+  domains: Array<ProcessedRoleDomain>;
+};
+
+export type ProcessedTokenBalances = {
+  domainId: Scalars['String'];
+  amount: Scalars['String'];
+};
+
+export type ProcessedTokens = {
+  id: Scalars['String'];
+  address: Scalars['String'];
+  iconHash: Scalars['String'];
+  decimals: Scalars['Int'];
+  name: Scalars['String'];
+  symbol: Scalars['String'];
+  balances: Array<ProcessedTokenBalances>;
+};
+
+
+export type ProcessedTokensBalancesArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+export type ProcessedColony = {
+  id: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  colonyName: Scalars['String'];
+  displayName?: Maybe<Scalars['String']>;
+  avatarHash?: Maybe<Scalars['String']>;
+  avatarURL?: Maybe<Scalars['String']>;
+  nativeTokenAddress: Scalars['String'];
+  tokenAddresses: Array<Maybe<Scalars['String']>>;
+  domains: Array<ProcessedDomain>;
+  roles: Array<ProcessedRoles>;
+  tokens: Array<ProcessedTokens>;
+};
+
 export type PayoutsFragment = { payouts: Array<(
     Pick<TaskPayout, 'amount' | 'tokenAddress'>
     & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
@@ -1296,27 +1313,26 @@ export type CreateTaskFieldsFragment = (
   & { assignedWorker?: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash'> }
-  )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
+  )>, events: Array<Pick<Event, 'id' | 'type'>> }
   & PayoutsFragment
 );
 
 export type TokensFragment = (
-  Pick<Colony, 'nativeTokenAddress' | 'tokenAddresses'>
+  Pick<ProcessedColony, 'nativeTokenAddress' | 'tokenAddresses'>
   & { tokens: Array<(
-    Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
-    & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
+    Pick<ProcessedTokens, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
+    & { balances: Array<Pick<ProcessedTokenBalances, 'domainId' | 'amount'>> }
   )> }
 );
 
-export type ColonyProfileFragment = Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>;
+export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
-export type DomainFieldsFragment = Pick<Domain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
+export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>;
 
 export type FullColonyFragment = (
-  Pick<Colony, 'isNativeTokenExternal' | 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
-  & { domains: Array<DomainFieldsFragment>, roles: Array<(
-    Pick<UserRoles, 'address'>
-    & { domains: Array<Pick<DomainRoles, 'domainId' | 'roles'>> }
+  { domains: Array<DomainFieldsFragment>, roles: Array<(
+    Pick<ProcessedRoles, 'address'>
+    & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
   )> }
   & ColonyProfileFragment
   & TokensFragment
@@ -1551,27 +1567,6 @@ export type SetUserTokensMutationVariables = Exact<{
 
 export type SetUserTokensMutation = { setUserTokens?: Maybe<Pick<User, 'id' | 'tokenAddresses'>> };
 
-export type SetColonyTokensMutationVariables = Exact<{
-  input: SetColonyTokensInput;
-}>;
-
-
-export type SetColonyTokensMutation = { setColonyTokens?: Maybe<Pick<Colony, 'id' | 'tokenAddresses'>> };
-
-export type CreateColonyMutationVariables = Exact<{
-  input: CreateColonyInput;
-}>;
-
-
-export type CreateColonyMutation = { createColony?: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
-
-export type EditColonyProfileMutationVariables = Exact<{
-  input: EditColonyProfileInput;
-}>;
-
-
-export type EditColonyProfileMutation = { editColonyProfile?: Maybe<Pick<Colony, 'id' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
-
 export type MarkNotificationAsReadMutationVariables = Exact<{
   input: MarkNotificationAsReadInput;
 }>;
@@ -1641,7 +1636,7 @@ export type TaskQuery = { task: (
     & { assignedWorker?: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>, creator: (
+    )>, creator: (
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     ), events: Array<Pick<Event, 'id' | 'type'>>, workInvites: Array<(
@@ -1667,13 +1662,7 @@ export type TaskToEditQuery = { task: (
     )>, workRequests: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, colony: (
-      Pick<Colony, 'id' | 'nativeTokenAddress' | 'tokenAddresses'>
-      & { subscribedUsers: Array<(
-        Pick<User, 'id'>
-        & { profile: Pick<UserProfile, 'displayName' | 'walletAddress' | 'username' | 'avatarHash'> }
-      )>, tokens: Array<Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'>> }
-    ) }
+    )> }
     & PayoutsFragment
   ) };
 
@@ -1736,7 +1725,7 @@ export type UserTasksQuery = { user: (
       & { assignedWorker?: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
+      )>, events: Array<Pick<Event, 'id' | 'type'>> }
       & PayoutsFragment
     )> }
   ) };
@@ -1765,88 +1754,6 @@ export type UserAddressQueryVariables = Exact<{
 
 export type UserAddressQuery = Pick<Query, 'userAddress'>;
 
-export type ColonyFromNameQueryVariables = Exact<{
-  name: Scalars['String'];
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyFromNameQuery = (
-  Pick<Query, 'colonyAddress'>
-  & { colony: FullColonyFragment }
-);
-
-export type ColonyNameQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyNameQuery = Pick<Query, 'colonyName'>;
-
-export type ColonyAddressQueryVariables = Exact<{
-  name: Scalars['String'];
-}>;
-
-
-export type ColonyAddressQuery = Pick<Query, 'colonyAddress'>;
-
-export type ColonyQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyQuery = { colony: FullColonyFragment };
-
-export type ColonyTokensQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyTokensQuery = { colony: (
-    Pick<Colony, 'id'>
-    & TokensFragment
-  ) };
-
-export type ColonyNativeTokenQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyNativeTokenQuery = { colony: Pick<Colony, 'id' | 'nativeTokenAddress'> };
-
-export type ColonyRolesQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyRolesQuery = { colony: (
-    Pick<Colony, 'id' | 'colonyAddress'>
-    & { roles: Array<(
-      Pick<UserRoles, 'address'>
-      & { domains: Array<Pick<DomainRoles, 'domainId' | 'roles'>> }
-    )> }
-  ) };
-
-export type ColonyTransfersQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyTransfersQuery = { colony: (
-    Pick<Colony, 'id' | 'colonyAddress'>
-    & { transfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>>, unclaimedTransfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>> }
-  ) };
-
-export type ColonyEventsQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyEventsQuery = { colony: (
-    Pick<Colony, 'id' | 'colonyAddress'>
-    & { events: Array<FullNetworkEventFragment> }
-  ) };
-
 export type TokenBalancesForDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   tokenAddresses: Array<Scalars['String']>;
@@ -1859,13 +1766,6 @@ export type TokenBalancesForDomainsQuery = { tokens: Array<(
     & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
   )> };
 
-export type ColonyProfileQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyProfileQuery = { colony: ColonyProfileFragment };
-
 export type UserColoniesQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -1873,7 +1773,7 @@ export type UserColoniesQueryVariables = Exact<{
 
 export type UserColoniesQuery = { user: (
     Pick<User, 'id' | 'colonyAddresses'>
-    & { colonies: Array<Pick<Colony, 'id' | 'avatarHash' | 'colonyAddress' | 'colonyName' | 'displayName'>> }
+    & { processedColonies: Array<Maybe<Pick<ProcessedColony, 'id' | 'avatarHash' | 'avatarURL' | 'colonyAddress' | 'colonyName' | 'displayName'>>> }
   ) };
 
 export type UserColonyAddressesQueryVariables = Exact<{
@@ -1883,6 +1783,7 @@ export type UserColonyAddressesQueryVariables = Exact<{
 
 export type UserColonyAddressesQuery = { user: Pick<User, 'id' | 'colonyAddresses'> };
 
+<<<<<<< HEAD
 export type ColonyTasksQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -1928,6 +1829,14 @@ export type ColonySingleDomainQueryVariables = Exact<{
 
 
 export type ColonySingleDomainQuery = { colonyDomain: DomainFieldsFragment };
+=======
+export type TempDomainsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type TempDomainsQuery = { tempDomains: Array<Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> };
+>>>>>>> Refactor: colony resolver into processedColony resolver
 
 export type TokenQueryVariables = Exact<{
   address: Scalars['String'];
@@ -1942,16 +1851,6 @@ export type TokenInfoQueryVariables = Exact<{
 
 
 export type TokenInfoQuery = { tokenInfo: Pick<TokenInfo, 'decimals' | 'name' | 'symbol' | 'iconHash'> };
-
-export type ColonyDomainsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type ColonyDomainsQuery = { colony: (
-    Pick<Colony, 'id'>
-    & { domains: Array<DomainFieldsFragment> }
-  ) };
 
 export type UserNotificationsQueryVariables = Exact<{
   address: Scalars['String'];
@@ -2044,11 +1943,59 @@ export type SubgraphActionsQuery = { oneTxPayments: Array<(
     ), associatedColony: { token: Pick<SubgraphToken, 'decimals' | 'symbol'> } }
   )> };
 
+<<<<<<< HEAD
 export type SubgraphDomainsQueryVariables = Exact<{
+=======
+export type ColonyNameQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyNameQuery = Pick<Query, 'colonyName'>;
+
+export type ColonyAddressQueryVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type ColonyAddressQuery = Pick<Query, 'colonyAddress'>;
+
+export type SubgraphColonyQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type SubgraphColonyQuery = { colony: (
+    Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
+    & { metadataHistory: Array<Maybe<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>>, token: (
+      Pick<SubgraphToken, 'decimals' | 'symbol'>
+      & { tokenAddress: SubgraphToken['id'] }
+    ) }
+  ) };
+
+export type SubgraphColoniesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SubgraphColoniesQuery = { colonies: Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'> };
+
+export type ColonyFromNameQueryVariables = Exact<{
+  name: Scalars['String'];
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyFromNameQuery = (
+  Pick<Query, 'colonyAddress'>
+  & { processedColony: FullColonyFragment }
+);
+
+export type ColonyDomainsQueryVariables = Exact<{
+>>>>>>> Refactor: colony resolver into processedColony resolver
   colonyAddress: Scalars['String'];
 }>;
 
 
+<<<<<<< HEAD
 export type SubgraphDomainsQuery = { domains: Array<(
     Pick<SubgraphDomain, 'id' | 'domainChainId' | 'name' | 'colonyAddress' | 'metadata'>
     & { parent?: Maybe<Pick<SubgraphDomain, 'id' | 'domainChainId'>>, metadataHistory: Array<Maybe<Pick<SubgraphDomainMetadata, 'id' | 'metadata'>>> }
@@ -2064,6 +2011,27 @@ export type SubgraphSingleDomainQuery = { domains: Array<(
     Pick<SubgraphDomain, 'id' | 'domainChainId' | 'name' | 'colonyAddress' | 'metadata'>
     & { parent?: Maybe<Pick<SubgraphDomain, 'id' | 'domainChainId'>>, metadataHistory: Array<Maybe<Pick<SubgraphDomainMetadata, 'id' | 'metadata'>>> }
   )> };
+=======
+export type ColonyDomainsQuery = { processedColony: (
+    Pick<ProcessedColony, 'id'>
+    & { domains: Array<DomainFieldsFragment> }
+  ) };
+
+export type ProcessedColonyQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ProcessedColonyQuery = { processedColony: FullColonyFragment };
+
+export type ColonyMembersWithReputationQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
+>>>>>>> Refactor: colony resolver into processedColony resolver
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -2092,12 +2060,15 @@ export const CreateTaskFieldsFragmentDoc = gql`
   }
   assignedWorkerAddress
   cancelledAt
+<<<<<<< HEAD
   colony {
     id
     colonyName
     displayName
     nativeTokenAddress
   }
+=======
+>>>>>>> Refactor: colony resolver into processedColony resolver
   colonyAddress
   commentCount @client
   createdAt
@@ -2116,6 +2087,7 @@ export const CreateTaskFieldsFragmentDoc = gql`
 }
     ${PayoutsFragmentDoc}`;
 export const ColonyProfileFragmentDoc = gql`
+<<<<<<< HEAD
     fragment ColonyProfile on Colony {
   id
   colonyAddress
@@ -2125,10 +2097,19 @@ export const ColonyProfileFragmentDoc = gql`
   displayName
   guideline
   website
+=======
+    fragment ColonyProfile on ProcessedColony {
+  id
+  colonyAddress
+  colonyName
+  displayName
+  avatarHash
+  avatarURL
+>>>>>>> Refactor: colony resolver into processedColony resolver
 }
     `;
 export const TokensFragmentDoc = gql`
-    fragment Tokens on Colony {
+    fragment Tokens on ProcessedColony {
   nativeTokenAddress
   tokenAddresses
   tokens @client {
@@ -2146,7 +2127,7 @@ export const TokensFragmentDoc = gql`
 }
     `;
 export const DomainFieldsFragmentDoc = gql`
-    fragment DomainFields on Domain {
+    fragment DomainFields on ProcessedDomain {
   id
   color
   description
@@ -2156,10 +2137,13 @@ export const DomainFieldsFragmentDoc = gql`
 }
     `;
 export const FullColonyFragmentDoc = gql`
-    fragment FullColony on Colony {
+    fragment FullColony on ProcessedColony {
   ...ColonyProfile
   ...Tokens
+<<<<<<< HEAD
   isNativeTokenExternal
+=======
+>>>>>>> Refactor: colony resolver into processedColony resolver
   domains @client {
     ...DomainFields
   }
@@ -2170,11 +2154,6 @@ export const FullColonyFragmentDoc = gql`
       roles
     }
   }
-  version @client
-  canMintNativeToken @client
-  canUnlockNativeToken @client
-  isInRecoveryMode @client
-  isNativeTokenLocked @client
 }
     ${ColonyProfileFragmentDoc}
 ${TokensFragmentDoc}
@@ -3148,116 +3127,6 @@ export function useSetUserTokensMutation(baseOptions?: Apollo.MutationHookOption
 export type SetUserTokensMutationHookResult = ReturnType<typeof useSetUserTokensMutation>;
 export type SetUserTokensMutationResult = Apollo.MutationResult<SetUserTokensMutation>;
 export type SetUserTokensMutationOptions = Apollo.BaseMutationOptions<SetUserTokensMutation, SetUserTokensMutationVariables>;
-export const SetColonyTokensDocument = gql`
-    mutation SetColonyTokens($input: SetColonyTokensInput!) {
-  setColonyTokens(input: $input) {
-    id
-    tokenAddresses
-  }
-}
-    `;
-export type SetColonyTokensMutationFn = Apollo.MutationFunction<SetColonyTokensMutation, SetColonyTokensMutationVariables>;
-
-/**
- * __useSetColonyTokensMutation__
- *
- * To run a mutation, you first call `useSetColonyTokensMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSetColonyTokensMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [setColonyTokensMutation, { data, loading, error }] = useSetColonyTokensMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSetColonyTokensMutation(baseOptions?: Apollo.MutationHookOptions<SetColonyTokensMutation, SetColonyTokensMutationVariables>) {
-        return Apollo.useMutation<SetColonyTokensMutation, SetColonyTokensMutationVariables>(SetColonyTokensDocument, baseOptions);
-      }
-export type SetColonyTokensMutationHookResult = ReturnType<typeof useSetColonyTokensMutation>;
-export type SetColonyTokensMutationResult = Apollo.MutationResult<SetColonyTokensMutation>;
-export type SetColonyTokensMutationOptions = Apollo.BaseMutationOptions<SetColonyTokensMutation, SetColonyTokensMutationVariables>;
-export const CreateColonyDocument = gql`
-    mutation CreateColony($input: CreateColonyInput!) {
-  createColony(input: $input) {
-    id
-    colonyAddress
-    colonyName
-    avatarHash
-    description
-    displayName
-    guideline
-    website
-  }
-}
-    `;
-export type CreateColonyMutationFn = Apollo.MutationFunction<CreateColonyMutation, CreateColonyMutationVariables>;
-
-/**
- * __useCreateColonyMutation__
- *
- * To run a mutation, you first call `useCreateColonyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateColonyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createColonyMutation, { data, loading, error }] = useCreateColonyMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateColonyMutation(baseOptions?: Apollo.MutationHookOptions<CreateColonyMutation, CreateColonyMutationVariables>) {
-        return Apollo.useMutation<CreateColonyMutation, CreateColonyMutationVariables>(CreateColonyDocument, baseOptions);
-      }
-export type CreateColonyMutationHookResult = ReturnType<typeof useCreateColonyMutation>;
-export type CreateColonyMutationResult = Apollo.MutationResult<CreateColonyMutation>;
-export type CreateColonyMutationOptions = Apollo.BaseMutationOptions<CreateColonyMutation, CreateColonyMutationVariables>;
-export const EditColonyProfileDocument = gql`
-    mutation EditColonyProfile($input: EditColonyProfileInput!) {
-  editColonyProfile(input: $input) {
-    id
-    colonyName
-    avatarHash
-    description
-    displayName
-    guideline
-    website
-  }
-}
-    `;
-export type EditColonyProfileMutationFn = Apollo.MutationFunction<EditColonyProfileMutation, EditColonyProfileMutationVariables>;
-
-/**
- * __useEditColonyProfileMutation__
- *
- * To run a mutation, you first call `useEditColonyProfileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditColonyProfileMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editColonyProfileMutation, { data, loading, error }] = useEditColonyProfileMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useEditColonyProfileMutation(baseOptions?: Apollo.MutationHookOptions<EditColonyProfileMutation, EditColonyProfileMutationVariables>) {
-        return Apollo.useMutation<EditColonyProfileMutation, EditColonyProfileMutationVariables>(EditColonyProfileDocument, baseOptions);
-      }
-export type EditColonyProfileMutationHookResult = ReturnType<typeof useEditColonyProfileMutation>;
-export type EditColonyProfileMutationResult = Apollo.MutationResult<EditColonyProfileMutation>;
-export type EditColonyProfileMutationOptions = Apollo.BaseMutationOptions<EditColonyProfileMutation, EditColonyProfileMutationVariables>;
 export const MarkNotificationAsReadDocument = gql`
     mutation MarkNotificationAsRead($input: MarkNotificationAsReadInput!) {
   markNotificationAsRead(input: $input)
@@ -3564,14 +3433,6 @@ export const TaskDocument = gql`
     }
     assignedWorkerAddress
     cancelledAt
-    colony {
-      id
-      colonyAddress
-      colonyName
-      avatarHash
-      displayName
-      nativeTokenAddress
-    }
     colonyAddress
     commentCount @client
     createdAt
@@ -3667,27 +3528,6 @@ export const TaskToEditDocument = gql`
         displayName
         username
         walletAddress
-      }
-    }
-    colony {
-      id
-      nativeTokenAddress
-      subscribedUsers {
-        id
-        profile {
-          displayName
-          walletAddress
-          username
-          avatarHash
-        }
-      }
-      tokenAddresses
-      tokens @client {
-        id
-        address
-        decimals
-        name
-        symbol
       }
     }
   }
@@ -3939,12 +3779,6 @@ export const UserTasksDocument = gql`
       }
       assignedWorkerAddress
       cancelledAt
-      colony {
-        id
-        colonyName
-        displayName
-        nativeTokenAddress
-      }
       colonyAddress
       commentCount @client
       createdAt
@@ -4095,338 +3929,6 @@ export function useUserAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type UserAddressQueryHookResult = ReturnType<typeof useUserAddressQuery>;
 export type UserAddressLazyQueryHookResult = ReturnType<typeof useUserAddressLazyQuery>;
 export type UserAddressQueryResult = Apollo.QueryResult<UserAddressQuery, UserAddressQueryVariables>;
-export const ColonyFromNameDocument = gql`
-    query ColonyFromName($name: String!, $address: String!) {
-  colonyAddress(name: $name) @client @export(as: "address")
-  colony(address: $address) {
-    ...FullColony
-  }
-}
-    ${FullColonyFragmentDoc}`;
-
-/**
- * __useColonyFromNameQuery__
- *
- * To run a query within a React component, call `useColonyFromNameQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyFromNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyFromNameQuery({
- *   variables: {
- *      name: // value for 'name'
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyFromNameQuery(baseOptions?: Apollo.QueryHookOptions<ColonyFromNameQuery, ColonyFromNameQueryVariables>) {
-        return Apollo.useQuery<ColonyFromNameQuery, ColonyFromNameQueryVariables>(ColonyFromNameDocument, baseOptions);
-      }
-export function useColonyFromNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyFromNameQuery, ColonyFromNameQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyFromNameQuery, ColonyFromNameQueryVariables>(ColonyFromNameDocument, baseOptions);
-        }
-export type ColonyFromNameQueryHookResult = ReturnType<typeof useColonyFromNameQuery>;
-export type ColonyFromNameLazyQueryHookResult = ReturnType<typeof useColonyFromNameLazyQuery>;
-export type ColonyFromNameQueryResult = Apollo.QueryResult<ColonyFromNameQuery, ColonyFromNameQueryVariables>;
-export const ColonyNameDocument = gql`
-    query ColonyName($address: String!) {
-  colonyName(address: $address) @client
-}
-    `;
-
-/**
- * __useColonyNameQuery__
- *
- * To run a query within a React component, call `useColonyNameQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyNameQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyNameQuery(baseOptions?: Apollo.QueryHookOptions<ColonyNameQuery, ColonyNameQueryVariables>) {
-        return Apollo.useQuery<ColonyNameQuery, ColonyNameQueryVariables>(ColonyNameDocument, baseOptions);
-      }
-export function useColonyNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyNameQuery, ColonyNameQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyNameQuery, ColonyNameQueryVariables>(ColonyNameDocument, baseOptions);
-        }
-export type ColonyNameQueryHookResult = ReturnType<typeof useColonyNameQuery>;
-export type ColonyNameLazyQueryHookResult = ReturnType<typeof useColonyNameLazyQuery>;
-export type ColonyNameQueryResult = Apollo.QueryResult<ColonyNameQuery, ColonyNameQueryVariables>;
-export const ColonyAddressDocument = gql`
-    query ColonyAddress($name: String!) {
-  colonyAddress(name: $name) @client
-}
-    `;
-
-/**
- * __useColonyAddressQuery__
- *
- * To run a query within a React component, call `useColonyAddressQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyAddressQuery({
- *   variables: {
- *      name: // value for 'name'
- *   },
- * });
- */
-export function useColonyAddressQuery(baseOptions?: Apollo.QueryHookOptions<ColonyAddressQuery, ColonyAddressQueryVariables>) {
-        return Apollo.useQuery<ColonyAddressQuery, ColonyAddressQueryVariables>(ColonyAddressDocument, baseOptions);
-      }
-export function useColonyAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyAddressQuery, ColonyAddressQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyAddressQuery, ColonyAddressQueryVariables>(ColonyAddressDocument, baseOptions);
-        }
-export type ColonyAddressQueryHookResult = ReturnType<typeof useColonyAddressQuery>;
-export type ColonyAddressLazyQueryHookResult = ReturnType<typeof useColonyAddressLazyQuery>;
-export type ColonyAddressQueryResult = Apollo.QueryResult<ColonyAddressQuery, ColonyAddressQueryVariables>;
-export const ColonyDocument = gql`
-    query Colony($address: String!) {
-  colony(address: $address) {
-    ...FullColony
-  }
-}
-    ${FullColonyFragmentDoc}`;
-
-/**
- * __useColonyQuery__
- *
- * To run a query within a React component, call `useColonyQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyQuery(baseOptions?: Apollo.QueryHookOptions<ColonyQuery, ColonyQueryVariables>) {
-        return Apollo.useQuery<ColonyQuery, ColonyQueryVariables>(ColonyDocument, baseOptions);
-      }
-export function useColonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyQuery, ColonyQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyQuery, ColonyQueryVariables>(ColonyDocument, baseOptions);
-        }
-export type ColonyQueryHookResult = ReturnType<typeof useColonyQuery>;
-export type ColonyLazyQueryHookResult = ReturnType<typeof useColonyLazyQuery>;
-export type ColonyQueryResult = Apollo.QueryResult<ColonyQuery, ColonyQueryVariables>;
-export const ColonyTokensDocument = gql`
-    query ColonyTokens($address: String!) {
-  colony(address: $address) {
-    id
-    ...Tokens
-  }
-}
-    ${TokensFragmentDoc}`;
-
-/**
- * __useColonyTokensQuery__
- *
- * To run a query within a React component, call `useColonyTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyTokensQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyTokensQuery(baseOptions?: Apollo.QueryHookOptions<ColonyTokensQuery, ColonyTokensQueryVariables>) {
-        return Apollo.useQuery<ColonyTokensQuery, ColonyTokensQueryVariables>(ColonyTokensDocument, baseOptions);
-      }
-export function useColonyTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyTokensQuery, ColonyTokensQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyTokensQuery, ColonyTokensQueryVariables>(ColonyTokensDocument, baseOptions);
-        }
-export type ColonyTokensQueryHookResult = ReturnType<typeof useColonyTokensQuery>;
-export type ColonyTokensLazyQueryHookResult = ReturnType<typeof useColonyTokensLazyQuery>;
-export type ColonyTokensQueryResult = Apollo.QueryResult<ColonyTokensQuery, ColonyTokensQueryVariables>;
-export const ColonyNativeTokenDocument = gql`
-    query ColonyNativeToken($address: String!) {
-  colony(address: $address) {
-    id
-    nativeTokenAddress
-  }
-}
-    `;
-
-/**
- * __useColonyNativeTokenQuery__
- *
- * To run a query within a React component, call `useColonyNativeTokenQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyNativeTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyNativeTokenQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyNativeTokenQuery(baseOptions?: Apollo.QueryHookOptions<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>) {
-        return Apollo.useQuery<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>(ColonyNativeTokenDocument, baseOptions);
-      }
-export function useColonyNativeTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>(ColonyNativeTokenDocument, baseOptions);
-        }
-export type ColonyNativeTokenQueryHookResult = ReturnType<typeof useColonyNativeTokenQuery>;
-export type ColonyNativeTokenLazyQueryHookResult = ReturnType<typeof useColonyNativeTokenLazyQuery>;
-export type ColonyNativeTokenQueryResult = Apollo.QueryResult<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>;
-export const ColonyRolesDocument = gql`
-    query ColonyRoles($address: String!) {
-  colony(address: $address) {
-    id
-    colonyAddress
-    roles @client {
-      address
-      domains {
-        domainId
-        roles
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useColonyRolesQuery__
- *
- * To run a query within a React component, call `useColonyRolesQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyRolesQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyRolesQuery(baseOptions?: Apollo.QueryHookOptions<ColonyRolesQuery, ColonyRolesQueryVariables>) {
-        return Apollo.useQuery<ColonyRolesQuery, ColonyRolesQueryVariables>(ColonyRolesDocument, baseOptions);
-      }
-export function useColonyRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyRolesQuery, ColonyRolesQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyRolesQuery, ColonyRolesQueryVariables>(ColonyRolesDocument, baseOptions);
-        }
-export type ColonyRolesQueryHookResult = ReturnType<typeof useColonyRolesQuery>;
-export type ColonyRolesLazyQueryHookResult = ReturnType<typeof useColonyRolesLazyQuery>;
-export type ColonyRolesQueryResult = Apollo.QueryResult<ColonyRolesQuery, ColonyRolesQueryVariables>;
-export const ColonyTransfersDocument = gql`
-    query ColonyTransfers($address: String!) {
-  colony(address: $address) {
-    id
-    colonyAddress
-    transfers @client {
-      amount
-      hash
-      colonyAddress
-      date
-      from
-      hash
-      incoming
-      to
-      token
-    }
-    unclaimedTransfers @client {
-      amount
-      hash
-      colonyAddress
-      date
-      from
-      hash
-      incoming
-      to
-      token
-    }
-  }
-}
-    `;
-
-/**
- * __useColonyTransfersQuery__
- *
- * To run a query within a React component, call `useColonyTransfersQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyTransfersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyTransfersQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyTransfersQuery(baseOptions?: Apollo.QueryHookOptions<ColonyTransfersQuery, ColonyTransfersQueryVariables>) {
-        return Apollo.useQuery<ColonyTransfersQuery, ColonyTransfersQueryVariables>(ColonyTransfersDocument, baseOptions);
-      }
-export function useColonyTransfersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyTransfersQuery, ColonyTransfersQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyTransfersQuery, ColonyTransfersQueryVariables>(ColonyTransfersDocument, baseOptions);
-        }
-export type ColonyTransfersQueryHookResult = ReturnType<typeof useColonyTransfersQuery>;
-export type ColonyTransfersLazyQueryHookResult = ReturnType<typeof useColonyTransfersLazyQuery>;
-export type ColonyTransfersQueryResult = Apollo.QueryResult<ColonyTransfersQuery, ColonyTransfersQueryVariables>;
-export const ColonyEventsDocument = gql`
-    query ColonyEvents($address: String!) {
-  colony(address: $address) {
-    id
-    colonyAddress
-    events @client {
-      ...FullNetworkEvent
-    }
-  }
-}
-    ${FullNetworkEventFragmentDoc}`;
-
-/**
- * __useColonyEventsQuery__
- *
- * To run a query within a React component, call `useColonyEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyEventsQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyEventsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyEventsQuery, ColonyEventsQueryVariables>) {
-        return Apollo.useQuery<ColonyEventsQuery, ColonyEventsQueryVariables>(ColonyEventsDocument, baseOptions);
-      }
-export function useColonyEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyEventsQuery, ColonyEventsQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyEventsQuery, ColonyEventsQueryVariables>(ColonyEventsDocument, baseOptions);
-        }
-export type ColonyEventsQueryHookResult = ReturnType<typeof useColonyEventsQuery>;
-export type ColonyEventsLazyQueryHookResult = ReturnType<typeof useColonyEventsLazyQuery>;
-export type ColonyEventsQueryResult = Apollo.QueryResult<ColonyEventsQuery, ColonyEventsQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
@@ -4471,46 +3973,14 @@ export function useTokenBalancesForDomainsLazyQuery(baseOptions?: Apollo.LazyQue
 export type TokenBalancesForDomainsQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsQuery>;
 export type TokenBalancesForDomainsLazyQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsLazyQuery>;
 export type TokenBalancesForDomainsQueryResult = Apollo.QueryResult<TokenBalancesForDomainsQuery, TokenBalancesForDomainsQueryVariables>;
-export const ColonyProfileDocument = gql`
-    query ColonyProfile($address: String!) {
-  colony(address: $address) {
-    ...ColonyProfile
-  }
-}
-    ${ColonyProfileFragmentDoc}`;
-
-/**
- * __useColonyProfileQuery__
- *
- * To run a query within a React component, call `useColonyProfileQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyProfileQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyProfileQuery(baseOptions?: Apollo.QueryHookOptions<ColonyProfileQuery, ColonyProfileQueryVariables>) {
-        return Apollo.useQuery<ColonyProfileQuery, ColonyProfileQueryVariables>(ColonyProfileDocument, baseOptions);
-      }
-export function useColonyProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyProfileQuery, ColonyProfileQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyProfileQuery, ColonyProfileQueryVariables>(ColonyProfileDocument, baseOptions);
-        }
-export type ColonyProfileQueryHookResult = ReturnType<typeof useColonyProfileQuery>;
-export type ColonyProfileLazyQueryHookResult = ReturnType<typeof useColonyProfileLazyQuery>;
-export type ColonyProfileQueryResult = Apollo.QueryResult<ColonyProfileQuery, ColonyProfileQueryVariables>;
 export const UserColoniesDocument = gql`
     query UserColonies($address: String!) {
   user(address: $address) {
     id
-    colonies {
+    processedColonies @client {
       id
       avatarHash
+      avatarURL
       colonyAddress
       colonyName
       displayName
@@ -4579,6 +4049,7 @@ export function useUserColonyAddressesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type UserColonyAddressesQueryHookResult = ReturnType<typeof useUserColonyAddressesQuery>;
 export type UserColonyAddressesLazyQueryHookResult = ReturnType<typeof useUserColonyAddressesLazyQuery>;
 export type UserColonyAddressesQueryResult = Apollo.QueryResult<UserColonyAddressesQuery, UserColonyAddressesQueryVariables>;
+<<<<<<< HEAD
 export const ColonyTasksDocument = gql`
     query ColonyTasks($address: String!) {
   colony(address: $address) {
@@ -4723,20 +4194,37 @@ export const ColonySingleDomainDocument = gql`
     query ColonySingleDomain($colonyAddress: String!, $domainId: Int!) {
   colonyDomain(colonyAddress: $colonyAddress, domainId: $domainId) @client {
     ...DomainFields
+=======
+export const TempDomainsDocument = gql`
+    query TempDomains($colonyAddress: String!) {
+  tempDomains(colonyAddress: $colonyAddress) {
+    id
+    ethDomainId
+    name
+    ethParentDomainId
+>>>>>>> Refactor: colony resolver into processedColony resolver
   }
 }
     ${DomainFieldsFragmentDoc}`;
 
 /**
+<<<<<<< HEAD
  * __useColonySingleDomainQuery__
  *
  * To run a query within a React component, call `useColonySingleDomainQuery` and pass it any options that fit your needs.
  * When your component renders, `useColonySingleDomainQuery` returns an object from Apollo Client that contains loading, error, and data properties
+=======
+ * __useTempDomainsQuery__
+ *
+ * To run a query within a React component, call `useTempDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTempDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+>>>>>>> Refactor: colony resolver into processedColony resolver
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
+<<<<<<< HEAD
  * const { data, loading, error } = useColonySingleDomainQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
@@ -4753,6 +4241,23 @@ export function useColonySingleDomainLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type ColonySingleDomainQueryHookResult = ReturnType<typeof useColonySingleDomainQuery>;
 export type ColonySingleDomainLazyQueryHookResult = ReturnType<typeof useColonySingleDomainLazyQuery>;
 export type ColonySingleDomainQueryResult = Apollo.QueryResult<ColonySingleDomainQuery, ColonySingleDomainQueryVariables>;
+=======
+ * const { data, loading, error } = useTempDomainsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useTempDomainsQuery(baseOptions?: Apollo.QueryHookOptions<TempDomainsQuery, TempDomainsQueryVariables>) {
+        return Apollo.useQuery<TempDomainsQuery, TempDomainsQueryVariables>(TempDomainsDocument, baseOptions);
+      }
+export function useTempDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TempDomainsQuery, TempDomainsQueryVariables>) {
+          return Apollo.useLazyQuery<TempDomainsQuery, TempDomainsQueryVariables>(TempDomainsDocument, baseOptions);
+        }
+export type TempDomainsQueryHookResult = ReturnType<typeof useTempDomainsQuery>;
+export type TempDomainsLazyQueryHookResult = ReturnType<typeof useTempDomainsLazyQuery>;
+export type TempDomainsQueryResult = Apollo.QueryResult<TempDomainsQuery, TempDomainsQueryVariables>;
+>>>>>>> Refactor: colony resolver into processedColony resolver
 export const TokenDocument = gql`
     query Token($address: String!) {
   token(address: $address) @client {
@@ -4827,42 +4332,6 @@ export function useTokenInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type TokenInfoQueryHookResult = ReturnType<typeof useTokenInfoQuery>;
 export type TokenInfoLazyQueryHookResult = ReturnType<typeof useTokenInfoLazyQuery>;
 export type TokenInfoQueryResult = Apollo.QueryResult<TokenInfoQuery, TokenInfoQueryVariables>;
-export const ColonyDomainsDocument = gql`
-    query ColonyDomains($colonyAddress: String!) {
-  colony(address: $colonyAddress) {
-    id
-    domains {
-      ...DomainFields
-    }
-  }
-}
-    ${DomainFieldsFragmentDoc}`;
-
-/**
- * __useColonyDomainsQuery__
- *
- * To run a query within a React component, call `useColonyDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyDomainsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useColonyDomainsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyDomainsQuery, ColonyDomainsQueryVariables>) {
-        return Apollo.useQuery<ColonyDomainsQuery, ColonyDomainsQueryVariables>(ColonyDomainsDocument, baseOptions);
-      }
-export function useColonyDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyDomainsQuery, ColonyDomainsQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyDomainsQuery, ColonyDomainsQueryVariables>(ColonyDomainsDocument, baseOptions);
-        }
-export type ColonyDomainsQueryHookResult = ReturnType<typeof useColonyDomainsQuery>;
-export type ColonyDomainsLazyQueryHookResult = ReturnType<typeof useColonyDomainsLazyQuery>;
-export type ColonyDomainsQueryResult = Apollo.QueryResult<ColonyDomainsQuery, ColonyDomainsQueryVariables>;
 export const UserNotificationsDocument = gql`
     query UserNotifications($address: String!) {
   user(address: $address) {
@@ -5186,6 +4655,7 @@ export function useSubgraphActionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type SubgraphActionsQueryHookResult = ReturnType<typeof useSubgraphActionsQuery>;
 export type SubgraphActionsLazyQueryHookResult = ReturnType<typeof useSubgraphActionsLazyQuery>;
 export type SubgraphActionsQueryResult = Apollo.QueryResult<SubgraphActionsQuery, SubgraphActionsQueryVariables>;
+<<<<<<< HEAD
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {
@@ -5197,25 +4667,111 @@ export const SubgraphDomainsDocument = gql`
     }
     name
     colonyAddress
-    metadata
-    metadataHistory {
-      id
-      metadata
-    }
-  }
+=======
+export const ColonyNameDocument = gql`
+    query ColonyName($address: String!) {
+  colonyName(address: $address) @client
 }
     `;
 
 /**
- * __useSubgraphDomainsQuery__
+ * __useColonyNameQuery__
  *
- * To run a query within a React component, call `useSubgraphDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useColonyNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
+ * const { data, loading, error } = useColonyNameQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyNameQuery(baseOptions?: Apollo.QueryHookOptions<ColonyNameQuery, ColonyNameQueryVariables>) {
+        return Apollo.useQuery<ColonyNameQuery, ColonyNameQueryVariables>(ColonyNameDocument, baseOptions);
+      }
+export function useColonyNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyNameQuery, ColonyNameQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyNameQuery, ColonyNameQueryVariables>(ColonyNameDocument, baseOptions);
+        }
+export type ColonyNameQueryHookResult = ReturnType<typeof useColonyNameQuery>;
+export type ColonyNameLazyQueryHookResult = ReturnType<typeof useColonyNameLazyQuery>;
+export type ColonyNameQueryResult = Apollo.QueryResult<ColonyNameQuery, ColonyNameQueryVariables>;
+export const ColonyAddressDocument = gql`
+    query ColonyAddress($name: String!) {
+  colonyAddress(name: $name) @client
+}
+    `;
+
+/**
+ * __useColonyAddressQuery__
+ *
+ * To run a query within a React component, call `useColonyAddressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyAddressQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useColonyAddressQuery(baseOptions?: Apollo.QueryHookOptions<ColonyAddressQuery, ColonyAddressQueryVariables>) {
+        return Apollo.useQuery<ColonyAddressQuery, ColonyAddressQueryVariables>(ColonyAddressDocument, baseOptions);
+      }
+export function useColonyAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyAddressQuery, ColonyAddressQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyAddressQuery, ColonyAddressQueryVariables>(ColonyAddressDocument, baseOptions);
+        }
+export type ColonyAddressQueryHookResult = ReturnType<typeof useColonyAddressQuery>;
+export type ColonyAddressLazyQueryHookResult = ReturnType<typeof useColonyAddressLazyQuery>;
+export type ColonyAddressQueryResult = Apollo.QueryResult<ColonyAddressQuery, ColonyAddressQueryVariables>;
+export const SubgraphColonyDocument = gql`
+    query SubgraphColony($address: String!) {
+  colony(id: $address) {
+    id
+    colonyChainId
+    ensName
+>>>>>>> Refactor: colony resolver into processedColony resolver
+    metadata
+    metadataHistory {
+      id
+      metadata
+    }
+<<<<<<< HEAD
+=======
+    token {
+      tokenAddress: id
+      decimals
+      symbol
+    }
+>>>>>>> Refactor: colony resolver into processedColony resolver
+  }
+}
+    `;
+
+/**
+<<<<<<< HEAD
+ * __useSubgraphDomainsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+=======
+ * __useSubgraphColonyQuery__
+ *
+ * To run a query within a React component, call `useSubgraphColonyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphColonyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+>>>>>>> Refactor: colony resolver into processedColony resolver
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+<<<<<<< HEAD
  * const { data, loading, error } = useSubgraphDomainsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
@@ -5256,18 +4812,190 @@ export const SubgraphSingleDomainDocument = gql`
  *
  * To run a query within a React component, call `useSubgraphSingleDomainQuery` and pass it any options that fit your needs.
  * When your component renders, `useSubgraphSingleDomainQuery` returns an object from Apollo Client that contains loading, error, and data properties
+=======
+ * const { data, loading, error } = useSubgraphColonyQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useSubgraphColonyQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphColonyQuery, SubgraphColonyQueryVariables>) {
+        return Apollo.useQuery<SubgraphColonyQuery, SubgraphColonyQueryVariables>(SubgraphColonyDocument, baseOptions);
+      }
+export function useSubgraphColonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphColonyQuery, SubgraphColonyQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphColonyQuery, SubgraphColonyQueryVariables>(SubgraphColonyDocument, baseOptions);
+        }
+export type SubgraphColonyQueryHookResult = ReturnType<typeof useSubgraphColonyQuery>;
+export type SubgraphColonyLazyQueryHookResult = ReturnType<typeof useSubgraphColonyLazyQuery>;
+export type SubgraphColonyQueryResult = Apollo.QueryResult<SubgraphColonyQuery, SubgraphColonyQueryVariables>;
+export const SubgraphColoniesDocument = gql`
+    query SubgraphColonies {
+  colonies {
+    id
+    colonyChainId
+    ensName
+    metadata
+  }
+}
+    `;
+
+/**
+ * __useSubgraphColoniesQuery__
+ *
+ * To run a query within a React component, call `useSubgraphColoniesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphColoniesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
+ * const { data, loading, error } = useSubgraphColoniesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSubgraphColoniesQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphColoniesQuery, SubgraphColoniesQueryVariables>) {
+        return Apollo.useQuery<SubgraphColoniesQuery, SubgraphColoniesQueryVariables>(SubgraphColoniesDocument, baseOptions);
+      }
+export function useSubgraphColoniesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphColoniesQuery, SubgraphColoniesQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphColoniesQuery, SubgraphColoniesQueryVariables>(SubgraphColoniesDocument, baseOptions);
+        }
+export type SubgraphColoniesQueryHookResult = ReturnType<typeof useSubgraphColoniesQuery>;
+export type SubgraphColoniesLazyQueryHookResult = ReturnType<typeof useSubgraphColoniesLazyQuery>;
+export type SubgraphColoniesQueryResult = Apollo.QueryResult<SubgraphColoniesQuery, SubgraphColoniesQueryVariables>;
+export const ColonyFromNameDocument = gql`
+    query ColonyFromName($name: String!, $address: String!) {
+  colonyAddress(name: $name) @client @export(as: "address")
+  processedColony(address: $address) @client {
+    ...FullColony
+  }
+}
+    ${FullColonyFragmentDoc}`;
+
+/**
+ * __useColonyFromNameQuery__
+ *
+ * To run a query within a React component, call `useColonyFromNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyFromNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyFromNameQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyFromNameQuery(baseOptions?: Apollo.QueryHookOptions<ColonyFromNameQuery, ColonyFromNameQueryVariables>) {
+        return Apollo.useQuery<ColonyFromNameQuery, ColonyFromNameQueryVariables>(ColonyFromNameDocument, baseOptions);
+      }
+export function useColonyFromNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyFromNameQuery, ColonyFromNameQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyFromNameQuery, ColonyFromNameQueryVariables>(ColonyFromNameDocument, baseOptions);
+        }
+export type ColonyFromNameQueryHookResult = ReturnType<typeof useColonyFromNameQuery>;
+export type ColonyFromNameLazyQueryHookResult = ReturnType<typeof useColonyFromNameLazyQuery>;
+export type ColonyFromNameQueryResult = Apollo.QueryResult<ColonyFromNameQuery, ColonyFromNameQueryVariables>;
+export const ColonyDomainsDocument = gql`
+    query ColonyDomains($colonyAddress: String!) {
+  processedColony(address: $colonyAddress) @client {
+    id
+    domains @client {
+      ...DomainFields
+    }
+  }
+}
+    ${DomainFieldsFragmentDoc}`;
+
+/**
+ * __useColonyDomainsQuery__
+ *
+ * To run a query within a React component, call `useColonyDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyDomainsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useColonyDomainsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyDomainsQuery, ColonyDomainsQueryVariables>) {
+        return Apollo.useQuery<ColonyDomainsQuery, ColonyDomainsQueryVariables>(ColonyDomainsDocument, baseOptions);
+      }
+export function useColonyDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyDomainsQuery, ColonyDomainsQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyDomainsQuery, ColonyDomainsQueryVariables>(ColonyDomainsDocument, baseOptions);
+        }
+export type ColonyDomainsQueryHookResult = ReturnType<typeof useColonyDomainsQuery>;
+export type ColonyDomainsLazyQueryHookResult = ReturnType<typeof useColonyDomainsLazyQuery>;
+export type ColonyDomainsQueryResult = Apollo.QueryResult<ColonyDomainsQuery, ColonyDomainsQueryVariables>;
+export const ProcessedColonyDocument = gql`
+    query ProcessedColony($address: String!) {
+  processedColony(address: $address) @client {
+    ...FullColony
+  }
+}
+    ${FullColonyFragmentDoc}`;
+
+/**
+ * __useProcessedColonyQuery__
+ *
+ * To run a query within a React component, call `useProcessedColonyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProcessedColonyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProcessedColonyQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useProcessedColonyQuery(baseOptions?: Apollo.QueryHookOptions<ProcessedColonyQuery, ProcessedColonyQueryVariables>) {
+        return Apollo.useQuery<ProcessedColonyQuery, ProcessedColonyQueryVariables>(ProcessedColonyDocument, baseOptions);
+      }
+export function useProcessedColonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProcessedColonyQuery, ProcessedColonyQueryVariables>) {
+          return Apollo.useLazyQuery<ProcessedColonyQuery, ProcessedColonyQueryVariables>(ProcessedColonyDocument, baseOptions);
+        }
+export type ProcessedColonyQueryHookResult = ReturnType<typeof useProcessedColonyQuery>;
+export type ProcessedColonyLazyQueryHookResult = ReturnType<typeof useProcessedColonyLazyQuery>;
+export type ProcessedColonyQueryResult = Apollo.QueryResult<ProcessedColonyQuery, ProcessedColonyQueryVariables>;
+export const ColonyMembersWithReputationDocument = gql`
+    query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
+  colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+}
+    `;
+
+/**
+ * __useColonyMembersWithReputationQuery__
+ *
+ * To run a query within a React component, call `useColonyMembersWithReputationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyMembersWithReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+>>>>>>> Refactor: colony resolver into processedColony resolver
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+<<<<<<< HEAD
  * const { data, loading, error } = useSubgraphSingleDomainQuery({
+=======
+ * const { data, loading, error } = useColonyMembersWithReputationQuery({
+>>>>>>> Refactor: colony resolver into processedColony resolver
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      domainId: // value for 'domainId'
  *   },
  * });
  */
+<<<<<<< HEAD
 export function useSubgraphSingleDomainQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>) {
         return Apollo.useQuery<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>(SubgraphSingleDomainDocument, baseOptions);
       }
@@ -5276,4 +5004,19 @@ export function useSubgraphSingleDomainLazyQuery(baseOptions?: Apollo.LazyQueryH
         }
 export type SubgraphSingleDomainQueryHookResult = ReturnType<typeof useSubgraphSingleDomainQuery>;
 export type SubgraphSingleDomainLazyQueryHookResult = ReturnType<typeof useSubgraphSingleDomainLazyQuery>;
+<<<<<<< HEAD
 export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>;
+=======
+export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>;
+=======
+export function useColonyMembersWithReputationQuery(baseOptions?: Apollo.QueryHookOptions<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>) {
+        return Apollo.useQuery<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>(ColonyMembersWithReputationDocument, baseOptions);
+      }
+export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>(ColonyMembersWithReputationDocument, baseOptions);
+        }
+export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
+export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
+export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
+>>>>>>> Refactor: colony resolver into processedColony resolver
+>>>>>>> Refactor: colony resolver into processedColony resolver

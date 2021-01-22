@@ -23,9 +23,16 @@ import {
   SubgraphSingleDomainQuery,
   SubgraphSingleDomainQueryVariables,
   SubgraphSingleDomainDocument,
+  SubgraphColonyQuery,
+  SubgraphColonyQueryVariables,
+  SubgraphColonyDocument,
+  TempDomainsQuery,
+  TempDomainsQueryVariables,
+  TempDomainsDocument,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { createAddress } from '~utils/web3';
 import { Color } from '~core/ColorTag';
 
 import { getToken } from './token';
@@ -155,9 +162,74 @@ export const colonyResolvers = ({
       }
       return null;
     },
+    // eslint-disable-next-line consistent-return
+    async processedColony(_, { address }) {
+      try {
+        const { data } = await apolloClient.query<
+          SubgraphColonyQuery,
+          SubgraphColonyQueryVariables
+        >({
+          query: SubgraphColonyDocument,
+          variables: {
+            address: address.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+        if (data?.colony) {
+          const {
+            colonyChainId,
+            ensName,
+            metadata,
+            token: { tokenAddress },
+          } = data.colony;
+          let displayName = null;
+          let avatarURL = null;
+          let avatarHash = null;
+
+          /*
+           * Fetch the colony's metadata
+           */
+          const ipfsMetadata = await ipfs.getString(metadata);
+          if (ipfsMetadata) {
+            const {
+              colonyDisplayName = null,
+              colonyAvatarHash = null,
+            } = JSON.parse(ipfsMetadata || '{}');
+            displayName = colonyDisplayName;
+            avatarHash = colonyAvatarHash;
+
+            /*
+             * Fetch the colony's avatar
+             */
+            const ipfsAvatar = await ipfs.getString(colonyAvatarHash);
+            if (ipfsAvatar) {
+              const colonyAvatar = JSON.parse(ipfsAvatar || '');
+              avatarURL = colonyAvatar;
+            }
+          }
+
+          return {
+            __typename: 'ProcessedColony',
+            id: parseInt(colonyChainId, 10),
+            colonyName: ENS.stripDomainParts('colony', ensName),
+            colonyAddress: address,
+            displayName,
+            avatarHash,
+            avatarURL,
+            nativeTokenAddress: createAddress(tokenAddress),
+            tokenAddresses: [createAddress(tokenAddress)],
+          };
+        }
+      } catch (error) {
+        console.error(error);
+        return {};
+      }
+    },
   },
-  Colony: {
+  ProcessedColony: {
+    // These are the domains coming from the subgraph
     async domains({ colonyAddress }) {
+      const 
       const { data } = await apolloClient.query<
         SubgraphDomainsQuery,
         SubgraphDomainsQueryVariables
@@ -193,44 +265,82 @@ export const colonyResolvers = ({
       }
       return [];
     },
-    async canMintNativeToken({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-      // fetch whether the user is allowed to mint tokens via the colony
-      let canMintNativeToken = true;
+    // eslint-disable-next-line consistent-return
+    async domains({ colonyAddress }) {
       try {
-        await colonyClient.estimate.mintTokens(bigNumberify(1));
+        const { data } = await apolloClient.query<
+          TempDomainsQuery,
+          TempDomainsQueryVariables
+        >({
+          query: TempDomainsDocument,
+          variables: {
+            colonyAddress,
+          },
+          fetchPolicy: 'network-only',
+        });
+        if (data?.tempDomains) {
+          return data.tempDomains.map((domain) => ({
+            ...domain,
+            __typename: 'ProcessedDomain',
+            color: 0,
+            description: null,
+          }));
+        }
       } catch (error) {
-        canMintNativeToken = false;
+        console.error(error);
+        return {};
       }
-      return canMintNativeToken;
     },
-    async isInRecoveryMode({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-      return colonyClient.isInRecoveryMode();
-    },
-    async isNativeTokenLocked({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-      let isNativeTokenLocked: boolean;
-      try {
-        const locked = await colonyClient.tokenClient.locked();
-        isNativeTokenLocked = locked;
-      } catch (error) {
-        isNativeTokenLocked = false;
-      }
-      return isNativeTokenLocked;
-    },
-    async nativeToken({ nativeTokenAddress }, _, { client }) {
-      return getToken({ colonyManager, client }, nativeTokenAddress);
-    },
+    // colonyAddress({ id }) {
+    //   return createAddress(id);
+    // },
+    // id({ colonyChainId }) {
+    //   return parseInt(colonyChainId, 10);
+    // },
+    // colonyName({ ensName }) {
+    //   return ENS.stripDomainParts('colony', ensName);
+    // },
+    // avatarHash({ metadata }) {
+    //   return metadata;
+    // },
+    //   async canMintNativeToken({ colonyAddress }) {
+    //     const colonyClient = await colonyManager.getClient(
+    //       ClientType.ColonyClient,
+    //       colonyAddress,
+    //     );
+    //     // fetch whether the user is allowed to mint tokens via the colony
+    //     let canMintNativeToken = true;
+    //     try {
+    //       await colonyClient.estimate.mintTokens(bigNumberify(1));
+    //     } catch (error) {
+    //       canMintNativeToken = false;
+    //     }
+    //     return canMintNativeToken;
+    //   },
+    //   async isInRecoveryMode({ colonyAddress }) {
+    //     const colonyClient = await colonyManager.getClient(
+    //       ClientType.ColonyClient,
+    //       colonyAddress,
+    //     );
+    //     return colonyClient.isInRecoveryMode();
+    //   },
+    //   async isNativeTokenLocked({ colonyAddress }) {
+    //     const colonyClient = await colonyManager.getClient(
+    //       ClientType.ColonyClient,
+    //       colonyAddress,
+    //     );
+    //     let isNativeTokenLocked: boolean;
+    //     try {
+    //       const locked = await colonyClient.tokenClient.locked();
+    //       isNativeTokenLocked = locked;
+    //     } catch (error) {
+    //       isNativeTokenLocked = false;
+    //     }
+    //     return isNativeTokenLocked;
+    //   },
+    //   async nativeToken({ nativeTokenAddress }, _, { client }) {
+    //     return getToken({ colonyManager, client }, nativeTokenAddress);
+    //   },
     async tokens(
       { tokenAddresses }: { tokenAddresses: Address[] },
       _,
@@ -242,22 +352,22 @@ export const colonyResolvers = ({
         ),
       );
     },
-    async canUnlockNativeToken({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-      const { tokenClient } = colonyClient;
-      if (tokenClient.tokenClientType === TokenClientType.Colony) {
-        try {
-          await tokenClient.estimate.unlock();
-        } catch (error) {
-          return false;
-        }
-        return true;
-      }
-      return false;
-    },
+    //   async canUnlockNativeToken({ colonyAddress }) {
+    //     const colonyClient = await colonyManager.getClient(
+    //       ClientType.ColonyClient,
+    //       colonyAddress,
+    //     );
+    //     const { tokenClient } = colonyClient;
+    //     if (tokenClient.tokenClientType === TokenClientType.Colony) {
+    //       try {
+    //         await tokenClient.estimate.unlock();
+    //       } catch (error) {
+    //         return false;
+    //       }
+    //       return true;
+    //     }
+    //     return false;
+    //   },
     async roles({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
@@ -278,88 +388,78 @@ export const colonyResolvers = ({
         __typename: 'UserRoles',
       }));
     },
-    async events({ colonyAddress }): Promise<NetworkEvent[]> {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-
-      const events = await getColonyAllEvents(colonyClient);
-
-      return events;
-    },
-    async transfers({ colonyAddress }): Promise<Transfer[]> {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-
-      // eslint-disable-next-line max-len
-      const colonyFundsClaimedTransactions = await getColonyFundsClaimedTransfers(
-        colonyClient,
-      );
-
-      const payoutClaimedTransactions = await getPayoutClaimedTransfers(
-        colonyClient,
-      );
-
-      return [
-        ...colonyFundsClaimedTransactions,
-        ...payoutClaimedTransactions,
-      ].sort((a, b) => b.date - a.date);
-    },
-    async unclaimedTransfers({ colonyAddress }): Promise<Transfer[]> {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-
-      // eslint-disable-next-line max-len
-      const colonyUnclaimedTransfers = await getColonyUnclaimedTransfers(
-        colonyClient,
-      );
-
-      // Get ether balance and add a fake transaction if there's any unclaimed
-      const colonyEtherBalance = await colonyClient.provider.getBalance(
-        colonyAddress,
-      );
-      // eslint-disable-next-line max-len
-      const colonyNonRewardsPotsTotal = await colonyClient.getNonRewardPotsTotal(
-        AddressZero,
-      );
-      const colonyRewardsPotTotal = await colonyClient.getFundingPotBalance(
-        0,
-        AddressZero,
-      );
-
-      const unclaimedEther = colonyEtherBalance
-        .sub(colonyNonRewardsPotsTotal)
-        .sub(colonyRewardsPotTotal);
-
-      if (unclaimedEther.gt(0)) {
-        colonyUnclaimedTransfers.push({
-          // @ts-ignore
-          __typename: 'Transfer',
-          amount: unclaimedEther.toString(),
-          colonyAddress,
-          date: new Date().getTime(),
-          from: AddressZero,
-          hash: HashZero,
-          incoming: true,
-          to: colonyClient.address,
-          token: AddressZero,
-        });
-      }
-
-      return colonyUnclaimedTransfers;
-    },
-    async version({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-      const version = await colonyClient.version();
-      return version.toString();
-    },
+    //   async events({ colonyAddress }): Promise<NetworkEvent[]> {
+    //     const colonyClient = await colonyManager.getClient(
+    //       ClientType.ColonyClient,
+    //       colonyAddress,
+    //     );
+    //     const events = await getColonyAllEvents(colonyClient);
+    //     return events;
+    //   },
+    //   async transfers({ colonyAddress }): Promise<Transfer[]> {
+    //     const colonyClient = await colonyManager.getClient(
+    //       ClientType.ColonyClient,
+    //       colonyAddress,
+    //     );
+    //     // eslint-disable-next-line max-len
+    //     const colonyFundsClaimedTransactions = await getColonyFundsClaimedTransfers(
+    //       colonyClient,
+    //     );
+    //     const payoutClaimedTransactions = await getPayoutClaimedTransfers(
+    //       colonyClient,
+    //     );
+    //     return [
+    //       ...colonyFundsClaimedTransactions,
+    //       ...payoutClaimedTransactions,
+    //     ].sort((a, b) => b.date - a.date);
+    //   },
+    //   async unclaimedTransfers({ colonyAddress }): Promise<Transfer[]> {
+    //     const colonyClient = await colonyManager.getClient(
+    //       ClientType.ColonyClient,
+    //       colonyAddress,
+    //     );
+    //     // eslint-disable-next-line max-len
+    //     const colonyUnclaimedTransfers = await getColonyUnclaimedTransfers(
+    //       colonyClient,
+    //     );
+    //     // Get ether balance and add a fake transaction if there's any unclaimed
+    //     const colonyEtherBalance = await colonyClient.provider.getBalance(
+    //       colonyAddress,
+    //     );
+    //     // eslint-disable-next-line max-len
+    //     const colonyNonRewardsPotsTotal = await colonyClient.getNonRewardPotsTotal(
+    //       AddressZero,
+    //     );
+    //     const colonyRewardsPotTotal = await colonyClient.getFundingPotBalance(
+    //       0,
+    //       AddressZero,
+    //     );
+    //     const unclaimedEther = colonyEtherBalance
+    //       .sub(colonyNonRewardsPotsTotal)
+    //       .sub(colonyRewardsPotTotal);
+    //     if (unclaimedEther.gt(0)) {
+    //       colonyUnclaimedTransfers.push({
+    //         // @ts-ignore
+    //         __typename: 'Transfer',
+    //         amount: unclaimedEther.toString(),
+    //         colonyAddress,
+    //         date: new Date().getTime(),
+    //         from: AddressZero,
+    //         hash: HashZero,
+    //         incoming: true,
+    //         to: colonyClient.address,
+    //         token: AddressZero,
+    //       });
+    //     }
+    //     return colonyUnclaimedTransfers;
+    //   },
+    //   async version({ colonyAddress }) {
+    //     const colonyClient = await colonyManager.getClient(
+    //       ClientType.ColonyClient,
+    //       colonyAddress,
+    //     );
+    //     const version = await colonyClient.version();
+    //     return version.toString();
+    //   },
   },
 });

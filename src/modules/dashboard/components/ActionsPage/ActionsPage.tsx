@@ -129,12 +129,12 @@ const ActionsPage = () => {
     if (
       transactionHash &&
       isTransactionFormat(transactionHash) &&
-      colonyData?.colony
+      colonyData?.processedColony
     ) {
       fetchTransction({
         variables: {
           transactionHash,
-          colonyAddress: colonyData.colony.colonyAddress,
+          colonyAddress: colonyData.processedColony.colonyAddress,
         },
       });
     }
@@ -275,7 +275,11 @@ const ActionsPage = () => {
    * Colony
    */
   const {
-    colony: { colonyAddress, domains, displayName: fallbackColonyDisplayName },
+    processedColony: {
+      colonyAddress,
+      domains,
+      displayName: fallbackColonyDisplayName,
+    },
   } = colonyData;
 
   /*
@@ -314,7 +318,7 @@ const ActionsPage = () => {
         <FriendlyName
           user={recipientProfileWithFallback}
           autoShrinkAddress
-          colony={colonyData?.colony}
+          colony={colonyData?.processedColony}
         />
       </span>
     ),
@@ -429,7 +433,7 @@ const ActionsPage = () => {
               recipient={recipientProfileWithFallback}
               transactionHash={transactionHash}
               values={actionAndEventValues}
-              colony={colonyData.colony}
+              colony={colonyData.processedColony}
             />
           )}
         </div>

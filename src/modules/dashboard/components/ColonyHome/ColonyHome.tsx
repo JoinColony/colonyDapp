@@ -115,7 +115,8 @@ const ColonyHome = ({ match, location }: Props) => {
 
   if (error) console.error(error);
 
-  const colonyDomains = data && data.colony && data.colony.domains;
+  const colonyDomains =
+    data && data.processedColony && data.processedColony.domains;
   const reverseENSAddress = dataVariables && dataVariables.address;
 
   /*
@@ -139,7 +140,7 @@ const ColonyHome = ({ match, location }: Props) => {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const currentDomainUserRoles = useTransformer(getUserRolesForDomain, [
-    data && data.colony,
+    data && data.processedColony,
     walletAddress,
     filteredDomainId || ROOT_DOMAIN_ID,
   ]);
@@ -162,10 +163,11 @@ const ColonyHome = ({ match, location }: Props) => {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  if (!data || !data.colonyAddress || !data.colony) {
+  if (!data || !data.colonyAddress || !data.processedColony) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
-  const { colony } = data;
+
+  const { processedColony: colony } = data;
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
@@ -176,7 +178,7 @@ const ColonyHome = ({ match, location }: Props) => {
    * an older version
    */
   const mustUpgradeColony = canBeUpgraded(
-    colony,
+    data.processedColony,
     parseInt(networkVersion || '0', 10),
   );
 
@@ -204,7 +206,7 @@ const ColonyHome = ({ match, location }: Props) => {
           <Switch>
             <Route
               path={COLONY_EVENTS_ROUTE}
-              component={() => <ColonyEvents colony={data.colony} />}
+              component={() => <ColonyEvents colony={colony} />}
             />
             <Route
               path={COLONY_EXTENSIONS_ROUTE}
@@ -213,10 +215,7 @@ const ColonyHome = ({ match, location }: Props) => {
             <Route
               path={COLONY_HOME_ROUTE}
               component={() => (
-                <ColonyActions
-                  colony={data.colony}
-                  ethDomainId={domainIdFilter}
-                />
+                <ColonyActions colony={colony} ethDomainId={domainIdFilter} />
               )}
             />
           </Switch>

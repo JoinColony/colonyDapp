@@ -112,19 +112,19 @@ export default gql`
     domainId: String
   }
 
-  extend type Colony {
-    canMintNativeToken: Boolean!
-    canUnlockNativeToken: Boolean!
-    isInRecoveryMode: Boolean!
-    isNativeTokenLocked: Boolean!
-    nativeToken: Token!
-    roles: [UserRoles!]!
-    tokens(addresses: [String!]): [Token!]!
-    transfers: [Transfer!]!
-    events: [NetworkEvent!]!
-    unclaimedTransfers: [Transfer!]!
-    version: Int!
-  }
+  # extend type Colony {
+  #   canMintNativeToken: Boolean!
+  #   canUnlockNativeToken: Boolean!
+  #   isInRecoveryMode: Boolean!
+  #   isNativeTokenLocked: Boolean!
+  #   nativeToken: Token!
+  #   roles: [UserRoles!]!
+  #   tokens(addresses: [String!]): [Token!]!
+  #   transfers: [Transfer!]!
+  #   events: [NetworkEvent!]!
+  #   unclaimedTransfers: [Transfer!]!
+  #   version: Int!
+  # }
 
   extend type Domain {
     id: String!
@@ -148,6 +148,7 @@ export default gql`
     reputation(colonyAddress: String!, domainId: Int): String!
     tokens: [Token!]!
     tokenTransfers: [Transfer!]!
+    processedColonies: [ProcessedColony]!
   }
 
   extend type Query {
@@ -249,10 +250,19 @@ export default gql`
     fundingPot: SubgraphFundingPot!
   }
 
+  type SubgraphColonyMetadata {
+    id: String!
+    metadata: String!
+  }
+
   type SubgraphColony {
     id: String!
-    token: SubgraphToken!
+    colonyChainId: String!
+    address: String!
+    ensName: String!
     metadata: String!
+    metadataHistory: [SubgraphColonyMetadata]!
+    token: SubgraphToken!
     domains: [SubgraphDomain!]!
   }
 
@@ -280,5 +290,60 @@ export default gql`
     ): [OneTxPayment!]!
     events(where: EventsFilter!): [SubgraphEvent!]!
     domains(where: ByColonyFilter!): [SubgraphDomain!]!
+    colony(id: String!): SubgraphColony!
+    colonies: SubgraphColony!
+    processedColony(address: String!): ProcessedColony!
+  }
+
+  #
+  # Processed Colony
+  #
+
+  type ProcessedDomain {
+    id: String!
+    color: Int!
+    description: String
+    ethDomainId: Int!
+    name: String!
+    ethParentDomainId: Int
+  }
+
+  type ProcessedRoleDomain {
+    domainId: String!
+    roles: String!
+  }
+
+  type ProcessedRoles {
+    address: String!
+    domains: [ProcessedRoleDomain!]!
+  }
+
+  type ProcessedTokenBalances {
+    domainId: String!
+    amount: String!
+  }
+
+  type ProcessedTokens {
+    id: String!
+    address: String!
+    iconHash: String!
+    decimals: Int!
+    name: String!
+    symbol: String!
+    balances(colonyAddress: String!): [ProcessedTokenBalances!]!
+  }
+
+  type ProcessedColony {
+    id: Int!
+    colonyAddress: String!
+    colonyName: String!
+    displayName: String
+    avatarHash: String
+    avatarURL: String
+    nativeTokenAddress: String!
+    tokenAddresses: [String]!
+    domains: [ProcessedDomain!]!
+    roles: [ProcessedRoles!]!
+    tokens: [ProcessedTokens!]!
   }
 `;

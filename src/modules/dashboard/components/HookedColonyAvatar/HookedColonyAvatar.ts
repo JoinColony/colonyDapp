@@ -1,7 +1,7 @@
 import ColonyAvatar, { Props as ColonyAvatarProps } from '~core/ColonyAvatar';
 import { useDataFetcher } from '~utils/hooks';
 import { withHooks } from '~utils/hoc';
-import { AnyColonyProfile, useColonyQuery } from '~data/index';
+import { AnyColonyProfile, useProcessedColonyQuery } from '~data/index';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
@@ -16,9 +16,11 @@ export default withHooks<
   };
 
   if (fetchColony) {
-    const { data } = useColonyQuery({ variables: { address: colonyAddress } });
+    const { data } = useProcessedColonyQuery({
+      variables: { address: colonyAddress },
+    });
     if (data) {
-      result.colony = data.colony;
+      result.colony = data.processedColony;
     }
   }
   const avatarHash = result.colony ? result.colony.avatarHash : undefined;

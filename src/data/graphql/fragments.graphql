@@ -23,12 +23,12 @@ fragment CreateTaskFields on Task {
   }
   assignedWorkerAddress
   cancelledAt
-  colony {
-    id
-    colonyName
-    displayName
-    nativeTokenAddress
-  }
+  # colony {
+  #   id
+  #   colonyName
+  #   displayName
+  #   nativeTokenAddress
+  # }
   colonyAddress
   commentCount @client
   createdAt
@@ -46,7 +46,7 @@ fragment CreateTaskFields on Task {
   txHash
 }
 
-fragment Tokens on Colony {
+fragment Tokens on ProcessedColony {
   nativeTokenAddress
   tokenAddresses
   tokens @client {
@@ -63,30 +63,28 @@ fragment Tokens on Colony {
   }
 }
 
-fragment ColonyProfile on Colony {
-  id
-  colonyAddress
-  colonyName
-  avatarHash
-  description
-  displayName
-  guideline
-  website
+fragment DomainFields on ProcessedDomain {
+    id
+    color
+    description
+    ethDomainId
+    name
+    ethParentDomainId
 }
 
-fragment DomainFields on Domain {
-  id
-  color
-  description
-  ethDomainId
-  name
-  ethParentDomainId
+fragment ColonyProfile on ProcessedColony {
+    id
+    colonyAddress
+    colonyName
+    displayName
+    avatarHash,
+    avatarURL
 }
 
-fragment FullColony on Colony {
+fragment FullColony on ProcessedColony {
   ...ColonyProfile
   ...Tokens
-  isNativeTokenExternal
+  # isNativeTokenExternal @client //
   domains @client {
     ...DomainFields
   }
@@ -97,11 +95,11 @@ fragment FullColony on Colony {
       roles
     }
   }
-  version @client
-  canMintNativeToken @client
-  canUnlockNativeToken @client
-  isInRecoveryMode @client
-  isNativeTokenLocked @client
+  # version @client
+  # # canMintNativeToken @client //
+  # canUnlockNativeToken @client
+  # isInRecoveryMode @client
+  # isNativeTokenLocked @client
 }
 
 fragment EventFields on Event {
