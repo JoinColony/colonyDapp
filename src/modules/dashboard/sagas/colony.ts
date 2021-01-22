@@ -7,9 +7,9 @@ import {
   EditColonyProfileDocument,
   EditColonyProfileMutation,
   EditColonyProfileMutationVariables,
-  ColonyDocument,
-  ColonyQuery,
-  ColonyQueryVariables,
+  ProcessedColonyDocument,
+  ProcessedColonyQuery,
+  ProcessedColonyQueryVariables,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
@@ -24,16 +24,11 @@ function* colonyAvatarUpload({
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const ipfsHash = yield call(ipfsUpload, data);
 
-    yield apolloClient.mutate<
-      EditColonyProfileMutation,
-      EditColonyProfileMutationVariables
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
     >({
-      mutation: EditColonyProfileDocument,
-      variables: { input: { colonyAddress, avatarHash: ipfsHash } },
-    });
-
-    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
-      query: ColonyDocument,
+      query: ProcessedColonyDocument,
       variables: {
         address: colonyAddress,
       },
@@ -57,16 +52,12 @@ function* colonyAvatarRemove({
 }: Action<ActionTypes.COLONY_AVATAR_REMOVE>) {
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-    yield apolloClient.mutate<
-      EditColonyProfileMutation,
-      EditColonyProfileMutationVariables
-    >({
-      mutation: EditColonyProfileDocument,
-      variables: { input: { colonyAddress, avatarHash: null } },
-    });
 
-    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
-      query: ColonyDocument,
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
       variables: {
         address: colonyAddress,
       },
@@ -108,11 +99,15 @@ function* colonyRecoveryModeEnter({
 
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
-    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
-      query: ColonyDocument,
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
       variables: {
         address: colonyAddress,
       },
+      fetchPolicy: 'network-only',
     });
   } catch (error) {
     return yield putError(
@@ -148,11 +143,15 @@ function* colonyNativeTokenUnlock({
 
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
-    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
-      query: ColonyDocument,
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
       variables: {
         address: colonyAddress,
       },
+      fetchPolicy: 'network-only',
     });
   } catch (error) {
     return yield putError(
