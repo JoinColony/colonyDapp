@@ -346,5 +346,10 @@ export default gql`
     domains: [ProcessedDomain!]!
     roles: [ProcessedRoles!]!
     tokens: [ProcessedTokens!]!
+    version: String!
+    canMintNativeToken: Boolean!
+    canUnlockNativeToken: Boolean!
+    isInRecoveryMode: Boolean!
+    isNativeTokenLocked: Boolean!
   }
 `;

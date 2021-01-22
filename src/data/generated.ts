@@ -1302,6 +1302,11 @@ export type ProcessedColony = {
   domains: Array<ProcessedDomain>;
   roles: Array<ProcessedRoles>;
   tokens: Array<ProcessedTokens>;
+  version: Scalars['String'];
+  canMintNativeToken: Scalars['Boolean'];
+  canUnlockNativeToken: Scalars['Boolean'];
+  isInRecoveryMode: Scalars['Boolean'];
+  isNativeTokenLocked: Scalars['Boolean'];
 };
 
 export type PayoutsFragment = { payouts: Array<(
@@ -1331,7 +1336,8 @@ export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'descr
 export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>;
 
 export type FullColonyFragment = (
-  { domains: Array<DomainFieldsFragment>, roles: Array<(
+  Pick<ProcessedColony, 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
+  & { domains: Array<DomainFieldsFragment>, roles: Array<(
     Pick<ProcessedRoles, 'address'>
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
   )> }
@@ -2155,6 +2161,11 @@ export const FullColonyFragmentDoc = gql`
       roles
     }
   }
+  version @client
+  canMintNativeToken @client
+  canUnlockNativeToken @client
+  isInRecoveryMode @client
+  isNativeTokenLocked @client
 }
     ${ColonyProfileFragmentDoc}
 ${TokensFragmentDoc}
@@ -5018,6 +5029,7 @@ export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.Laz
         }
 export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
+<<<<<<< HEAD
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
 <<<<<<< HEAD
 >>>>>>> Refactor: colony resolver into processedColony resolver
@@ -5026,4 +5038,10 @@ export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMe
 =======
 =======
 >>>>>>> Refactor: add `getProcessedColony` resolvers helper
+<<<<<<< HEAD
 >>>>>>> Refactor: add `getProcessedColony` resolvers helper
+=======
+=======
+export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
+>>>>>>> Add: `processedColony` resolver token related fields
+>>>>>>> Add: `processedColony` resolver token related fields

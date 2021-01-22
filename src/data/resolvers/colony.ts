@@ -221,7 +221,14 @@ export const colonyResolvers = ({
         >({
           query: SubgraphColonyDocument,
           variables: {
-            address: address.toLowerCase(),
+            /*
+             * First convert it a string since in cases where the network name
+             * cannot be found via ENS it will throw an error
+             *
+             * Converting this to string basically converts the error object into
+             * a string form
+             */
+            address: address.toString().toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
@@ -300,56 +307,44 @@ export const colonyResolvers = ({
         return null;
       }
     },
-    // colonyAddress({ id }) {
-    //   return createAddress(id);
-    // },
-    // id({ colonyChainId }) {
-    //   return parseInt(colonyChainId, 10);
-    // },
-    // colonyName({ ensName }) {
-    //   return ENS.stripDomainParts('colony', ensName);
-    // },
-    // avatarHash({ metadata }) {
-    //   return metadata;
-    // },
-    //   async canMintNativeToken({ colonyAddress }) {
-    //     const colonyClient = await colonyManager.getClient(
-    //       ClientType.ColonyClient,
-    //       colonyAddress,
-    //     );
-    //     // fetch whether the user is allowed to mint tokens via the colony
-    //     let canMintNativeToken = true;
-    //     try {
-    //       await colonyClient.estimate.mintTokens(bigNumberify(1));
-    //     } catch (error) {
-    //       canMintNativeToken = false;
-    //     }
-    //     return canMintNativeToken;
-    //   },
-    //   async isInRecoveryMode({ colonyAddress }) {
-    //     const colonyClient = await colonyManager.getClient(
-    //       ClientType.ColonyClient,
-    //       colonyAddress,
-    //     );
-    //     return colonyClient.isInRecoveryMode();
-    //   },
-    //   async isNativeTokenLocked({ colonyAddress }) {
-    //     const colonyClient = await colonyManager.getClient(
-    //       ClientType.ColonyClient,
-    //       colonyAddress,
-    //     );
-    //     let isNativeTokenLocked: boolean;
-    //     try {
-    //       const locked = await colonyClient.tokenClient.locked();
-    //       isNativeTokenLocked = locked;
-    //     } catch (error) {
-    //       isNativeTokenLocked = false;
-    //     }
-    //     return isNativeTokenLocked;
-    //   },
-    //   async nativeToken({ nativeTokenAddress }, _, { client }) {
-    //     return getToken({ colonyManager, client }, nativeTokenAddress);
-    //   },
+    async canMintNativeToken({ colonyAddress }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      // fetch whether the user is allowed to mint tokens via the colony
+      let canMintNativeToken = true;
+      try {
+        await colonyClient.estimate.mintTokens(bigNumberify(1));
+      } catch (error) {
+        canMintNativeToken = false;
+      }
+      return canMintNativeToken;
+    },
+    async isInRecoveryMode({ colonyAddress }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      return colonyClient.isInRecoveryMode();
+    },
+    async isNativeTokenLocked({ colonyAddress }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      let isNativeTokenLocked: boolean;
+      try {
+        const locked = await colonyClient.tokenClient.locked();
+        isNativeTokenLocked = locked;
+      } catch (error) {
+        isNativeTokenLocked = false;
+      }
+      return isNativeTokenLocked;
+    },
+    async nativeToken({ nativeTokenAddress }, _, { client }) {
+      return getToken({ colonyManager, client }, nativeTokenAddress);
+    },
     async tokens(
       { tokenAddresses }: { tokenAddresses: Address[] },
       _,
@@ -361,22 +356,22 @@ export const colonyResolvers = ({
         ),
       );
     },
-    //   async canUnlockNativeToken({ colonyAddress }) {
-    //     const colonyClient = await colonyManager.getClient(
-    //       ClientType.ColonyClient,
-    //       colonyAddress,
-    //     );
-    //     const { tokenClient } = colonyClient;
-    //     if (tokenClient.tokenClientType === TokenClientType.Colony) {
-    //       try {
-    //         await tokenClient.estimate.unlock();
-    //       } catch (error) {
-    //         return false;
-    //       }
-    //       return true;
-    //     }
-    //     return false;
-    //   },
+    async canUnlockNativeToken({ colonyAddress }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      const { tokenClient } = colonyClient;
+      if (tokenClient.tokenClientType === TokenClientType.Colony) {
+        try {
+          await tokenClient.estimate.unlock();
+        } catch (error) {
+          return false;
+        }
+        return true;
+      }
+      return false;
+    },
     async roles({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
@@ -460,13 +455,13 @@ export const colonyResolvers = ({
     //     }
     //     return colonyUnclaimedTransfers;
     //   },
-    //   async version({ colonyAddress }) {
-    //     const colonyClient = await colonyManager.getClient(
-    //       ClientType.ColonyClient,
-    //       colonyAddress,
-    //     );
-    //     const version = await colonyClient.version();
-    //     return version.toString();
-    //   },
+    async version({ colonyAddress }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      const version = await colonyClient.version();
+      return version.toString();
+    },
   },
 });

@@ -95,11 +95,11 @@ fragment FullColony on ProcessedColony {
       roles
     }
   }
-  # version @client
-  # # canMintNativeToken @client //
-  # canUnlockNativeToken @client
-  # isInRecoveryMode @client
-  # isNativeTokenLocked @client
+  version @client
+  canMintNativeToken @client
+  canUnlockNativeToken @client
+  isInRecoveryMode @client
+  isNativeTokenLocked @client
 }
 
 fragment EventFields on Event {
