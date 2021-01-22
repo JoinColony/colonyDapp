@@ -34,6 +34,7 @@ import {
   transactionReady,
   transactionAddParams,
 } from '../../core/actionCreators';
+import { updateColonyDisplayCache } from './utils';
 
 function* createPaymentAction({
   payload: {
@@ -1023,6 +1024,17 @@ function* editColonyAction({
       },
       fetchPolicy: 'network-only',
     });
+
+    /*
+     * Update apollo's cache for the current colony to reflect the recently
+     * made changes
+     */
+    yield updateColonyDisplayCache(
+      colonyAddress,
+      colonyDisplayName,
+      colonyAvatarIpfsHash,
+      colonyAvatarImage as string | null,
+    );
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
