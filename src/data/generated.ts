@@ -153,7 +153,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-    
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -4249,7 +4249,7 @@ export const SubgraphActionsDocument = gql`
       }
     }
   }
-  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)"]}) {
+  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)]}) {
     id
     transaction {
       hash: id

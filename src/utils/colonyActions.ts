@@ -69,6 +69,14 @@ export const getValuesForActionType = (
         initiator: argsObj.agent,
       };
     }
+    case ColonyActions.MoveFunds: {
+      return {
+        amount: argsObj.amount,
+        fromDomain: argsObj.fromPot,
+        toDomain: argsObj.toPot,
+        initiator: argsObj.agent,
+      };
+    }
     default: {
       return {};
     }
