@@ -296,7 +296,7 @@ export default gql`
   }
 
   type ProcessedRoleDomain {
-    domainId: String!
+    domainId: Int!
     roles: String!
   }
 
@@ -306,14 +306,14 @@ export default gql`
   }
 
   type ProcessedTokenBalances {
-    domainId: String!
+    domainId: Int!
     amount: String!
   }
 
   type ProcessedTokens {
     id: String!
     address: String!
-    iconHash: String!
+    iconHash: String
     decimals: Int!
     name: String!
     symbol: String!

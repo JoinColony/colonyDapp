@@ -23,12 +23,6 @@ fragment CreateTaskFields on Task {
   }
   assignedWorkerAddress
   cancelledAt
-  # colony {
-  #   id
-  #   colonyName
-  #   displayName
-  #   nativeTokenAddress
-  # }
   colonyAddress
   commentCount @client
   createdAt

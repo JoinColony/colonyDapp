@@ -1294,7 +1294,7 @@ export type ProcessedDomain = {
 };
 
 export type ProcessedRoleDomain = {
-  domainId: Scalars['String'];
+  domainId: Scalars['Int'];
   roles: Scalars['String'];
 };
 
@@ -1304,14 +1304,14 @@ export type ProcessedRoles = {
 };
 
 export type ProcessedTokenBalances = {
-  domainId: Scalars['String'];
+  domainId: Scalars['Int'];
   amount: Scalars['String'];
 };
 
 export type ProcessedTokens = {
   id: Scalars['String'];
   address: Scalars['String'];
-  iconHash: Scalars['String'];
+  iconHash?: Maybe<Scalars['String']>;
   decimals: Scalars['Int'];
   name: Scalars['String'];
   symbol: Scalars['String'];
