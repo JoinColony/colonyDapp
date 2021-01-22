@@ -58,7 +58,7 @@ const LandingPage = () => {
               </span>
             </NavLink>
           </li>
-          {colonyData && colonyData.colony && (
+          {colonyData && colonyData.processedColony && (
             <li className={styles.item}>
               <NavLink
                 to={`/colony/${METACOLONY_ENS}`}
@@ -66,8 +66,8 @@ const LandingPage = () => {
               >
                 <ColonyAvatar
                   className={styles.itemIcon}
-                  colonyAddress={colonyData.colony.colonyAddress}
-                  colony={colonyData.colony}
+                  colonyAddress={colonyData.processedColony.colonyAddress}
+                  colony={colonyData.processedColony}
                   size="xl"
                 />
                 <span className={styles.itemTitle}>
@@ -75,8 +75,8 @@ const LandingPage = () => {
                     {...MSG.exploreColony}
                     values={{
                       colonyName:
-                        colonyData.colony.displayName ||
-                        colonyData.colony.colonyName,
+                        colonyData.processedColony.displayName ||
+                        colonyData.processedColony.colonyName,
                     }}
                   />
                 </span>
