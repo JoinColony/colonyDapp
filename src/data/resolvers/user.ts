@@ -13,7 +13,12 @@ import ENS from '~lib/ENS';
 import ColonyManager from '~lib/ColonyManager';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
-import { Transfer } from '~data/index';
+import {
+  Transfer,
+  SubgraphColoniesQuery,
+  SubgraphColoniesQueryVariables,
+  SubgraphColoniesDocument,
+} from '~data/index';
 
 import { getToken } from './token';
 
@@ -39,6 +44,8 @@ export const userResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
   ens,
+  apolloClient,
+  ipfs,
 }: Required<Context>): Resolvers => ({
   Query: {
     async userAddress(_, { name }): Promise<Address> {
@@ -154,6 +161,84 @@ export const userResolvers = ({
           };
         }),
       );
+    },
+    // eslint-disable-next-line consistent-return
+    async processedColonies({ colonyAddresses }) {
+      try {
+        const userColonies: Array<{
+          colonyChainId: string;
+          ensName: string;
+          metadata: string;
+          id: string;
+        }> = [];
+        const { data } = await apolloClient.query<
+          SubgraphColoniesQuery,
+          SubgraphColoniesQueryVariables
+        >({
+          query: SubgraphColoniesDocument,
+          fetchPolicy: 'network-only',
+        });
+        // console.log(all);
+        // console.log(data);
+        if (data?.colonies) {
+          colonyAddresses.map((colonyAddress) => {
+            const subscribedColony = ((data?.colonies as unknown) as Array<{
+              id: string;
+              colonyChainId: string;
+              ensName: string;
+              metadata: string;
+            }>).find(({ id }) => id === colonyAddress.toLowerCase());
+            if (subscribedColony) {
+              userColonies.push(subscribedColony);
+            }
+            return null;
+          });
+          return Promise.all(
+            userColonies.map(
+              async ({ colonyChainId, ensName, metadata, id }) => {
+                let displayName = null;
+                let avatarURL = null;
+                let avatarHash = null;
+
+                /*
+                 * Fetch the colony's metadata
+                 */
+                const ipfsMetadata = await ipfs.getString(metadata);
+                if (ipfsMetadata) {
+                  const {
+                    colonyDisplayName = null,
+                    colonyAvatarHash = null,
+                  } = JSON.parse(ipfsMetadata || '{}');
+                  displayName = colonyDisplayName;
+                  avatarHash = colonyAvatarHash;
+
+                  /*
+                   * Fetch the colony's avatar
+                   */
+                  const ipfsAvatar = await ipfs.getString(colonyAvatarHash);
+                  if (ipfsAvatar) {
+                    const colonyAvatar = JSON.parse(ipfsAvatar || '');
+                    avatarURL = colonyAvatar;
+                  }
+                }
+
+                return {
+                  __typename: 'ProcessedColony',
+                  id: parseInt(colonyChainId, 10),
+                  colonyName: ENS.stripDomainParts('colony', ensName),
+                  colonyAddress: createAddress(id),
+                  displayName,
+                  avatarHash,
+                  avatarURL,
+                };
+              },
+            ),
+          );
+        }
+      } catch (error) {
+        console.error(error);
+        return {};
+      }
     },
   },
 });
