@@ -1,11 +1,4 @@
-import {
-  ColonyTasksDocument,
-  ColonyTasksQuery,
-  ColonyTasksQueryVariables,
-  TaskDocument,
-  TaskQuery,
-  TaskQueryVariables,
-} from '~data/index';
+import { TaskDocument, TaskQuery, TaskQueryVariables } from '~data/index';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
 
@@ -14,133 +7,17 @@ import {
   ColonySubscribedUsersDocument,
   ColonySubscribedUsersQuery,
   ColonySubscribedUsersQueryVariables,
-  CreateTaskMutationResult,
   UserDocument,
   UserQuery,
   UserQueryVariables,
   UnsubscribeFromColonyMutationResult,
   SubscribeToColonyMutationResult,
   SetTaskSkillMutationResult,
-  CreateColonyMutationResult,
-  UserColonyAddressesQuery,
-  UserColonyAddressesQueryVariables,
-  UserColonyAddressesDocument,
-  UserColoniesQuery,
-  UserColoniesQueryVariables,
-  UserColoniesDocument,
 } from './generated';
 
 type Cache = typeof apolloCache;
 
 const cacheUpdates = {
-  createTask(colonyAddress: Address) {
-    return (cache: Cache, { data }: CreateTaskMutationResult) => {
-      try {
-        const cacheData = cache.readQuery<
-          ColonyTasksQuery,
-          ColonyTasksQueryVariables
-        >({
-          query: ColonyTasksDocument,
-          variables: {
-            address: colonyAddress,
-          },
-        });
-        const createTaskData = data && data.createTask;
-        if (cacheData && createTaskData) {
-          const existingTasks = cacheData.colony.tasks || [];
-          const tasks = [...existingTasks, createTaskData];
-          cache.writeQuery<ColonyTasksQuery, ColonyTasksQueryVariables>({
-            query: ColonyTasksDocument,
-            data: {
-              colony: {
-                ...cacheData.colony,
-                tasks,
-              },
-            },
-            variables: {
-              address: colonyAddress,
-            },
-          });
-        }
-      } catch (e) {
-        log.verbose(e);
-        log.verbose('Not updating store - colony tasks not loaded yet');
-      }
-    };
-  },
-  createColony(walletAddress: Address) {
-    return (cache: Cache, { data }: CreateColonyMutationResult) => {
-      if (data && data.createColony) {
-        try {
-          const cacheData = cache.readQuery<
-            UserColonyAddressesQuery,
-            UserColonyAddressesQueryVariables
-          >({
-            query: UserColonyAddressesDocument,
-            variables: {
-              address: walletAddress,
-            },
-          });
-          if (cacheData) {
-            const existingColonyAddresses =
-              cacheData.user.colonyAddresses || [];
-            const colonyAddresses = [
-              ...existingColonyAddresses,
-              data.createColony.colonyAddress,
-            ];
-            cache.writeQuery<
-              UserColonyAddressesQuery,
-              UserColonyAddressesQueryVariables
-            >({
-              query: UserColonyAddressesDocument,
-              data: {
-                user: {
-                  ...cacheData.user,
-                  colonyAddresses,
-                },
-              },
-              variables: {
-                address: walletAddress,
-              },
-            });
-          }
-        } catch (e) {
-          log.verbose(e);
-          log.verbose(
-            'Not updating store - user colony addresses not loaded yet',
-          );
-        }
-        try {
-          const cacheData = cache.readQuery<
-            UserColoniesQuery,
-            UserColoniesQueryVariables
-          >({
-            query: UserColoniesDocument,
-            variables: { address: walletAddress },
-          });
-          if (cacheData) {
-            const existingColonies = cacheData.user.colonies || [];
-            const colonies = [...existingColonies, data.createColony];
-            cache.writeQuery<UserColoniesQuery, UserColoniesQueryVariables>({
-              query: UserColoniesDocument,
-              data: {
-                user: {
-                  ...cacheData.user,
-                  colonies,
-                },
-              },
-              variables: {
-                address: walletAddress,
-              },
-            });
-          }
-        } catch (e) {
-          log.verbose(e);
-          log.verbose('Not updating store - user colonies not loaded yet');
-        }
-      }
-    };
-  },
   unsubscribeFromColony(colonyAddress: Address) {
     return (cache: Cache, { data }: UnsubscribeFromColonyMutationResult) => {
       try {
@@ -157,8 +34,13 @@ const cacheUpdates = {
           const {
             id: unsubscribedUserWalletAddress,
           } = data.unsubscribeFromColony;
-          const { subscribedUsers } = cacheData.colony;
+          const { subscribedUsers } = cacheData;
           const updatedColonySubscription = subscribedUsers.filter(
+            /*
+             * Prop `id` does exist, it's just that TS doesn't recognize for
+             * some reason
+             */
+            // @ts-ignore
             ({ id: userWalletAddress }) =>
               /*
                * Remove the unsubscribed user from the subscribers array
@@ -171,10 +53,8 @@ const cacheUpdates = {
           >({
             query: ColonySubscribedUsersDocument,
             data: {
-              colony: {
-                ...cacheData.colony,
-                subscribedUsers: updatedColonySubscription,
-              },
+              ...cacheData.subscribedUsers,
+              subscribedUsers: updatedColonySubscription,
             },
             variables: {
               colonyAddress,
@@ -203,7 +83,7 @@ const cacheUpdates = {
         });
         if (cacheData && data && data.subscribeToColony) {
           const { id: subscribedUserWalletAddress } = data.subscribeToColony;
-          const { subscribedUsers } = cacheData.colony;
+          const { subscribedUsers } = cacheData;
           /*
            * The subscribed to colony mutation, only returns the user wallet address,
            * but we also need the user's profile to update the subscribers array
@@ -238,10 +118,8 @@ const cacheUpdates = {
             >({
               query: ColonySubscribedUsersDocument,
               data: {
-                colony: {
-                  ...cacheData.colony,
-                  subscribedUsers: updatedColonySubscription,
-                },
+                ...cacheData.subscribedUsers,
+                subscribedUsers: updatedColonySubscription,
               },
               variables: {
                 colonyAddress,

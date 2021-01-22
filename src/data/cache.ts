@@ -5,5 +5,22 @@ export default new InMemoryCache({
     DomainBalance: {
       keyFields: ['colonyAddress', 'address', 'domainId'],
     },
+    User: {
+      fields: {
+        colonyAddresses: {
+          merge: false,
+        },
+        profile: {
+          merge: false,
+        },
+      },
+    },
+    Query: {
+      fields: {
+        subscribedUsers: {
+          merge: false,
+        },
+      },
+    },
   },
 });
