@@ -11,9 +11,9 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError } from '~utils/saga/effects';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
-  ColonyRolesQuery,
-  ColonyRolesQueryVariables,
-  ColonyRolesDocument,
+  ProcessedColonyQuery,
+  ProcessedColonyQueryVariables,
+  ProcessedColonyDocument,
 } from '~data/index';
 
 import { createTransaction } from '../../core/sagas';
@@ -129,8 +129,11 @@ function* colonyDomainUserRolesSet({
       ),
     );
     // Refresh the colony roles in cache
-    yield apolloClient.query<ColonyRolesQuery, ColonyRolesQueryVariables>({
-      query: ColonyRolesDocument,
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
       variables: {
         address: colonyAddress,
       },
