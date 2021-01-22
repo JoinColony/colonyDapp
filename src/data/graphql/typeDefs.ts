@@ -112,20 +112,6 @@ export default gql`
     domainId: String
   }
 
-  # extend type Colony {
-  #   canMintNativeToken: Boolean!
-  #   canUnlockNativeToken: Boolean!
-  #   isInRecoveryMode: Boolean!
-  #   isNativeTokenLocked: Boolean!
-  #   nativeToken: Token!
-  #   roles: [UserRoles!]!
-  #   tokens(addresses: [String!]): [Token!]!
-  #   transfers: [Transfer!]!
-  #   events: [NetworkEvent!]!
-  #   unclaimedTransfers: [Transfer!]!
-  #   version: Int!
-  # }
-
   extend type Domain {
     id: String!
     color: Int!
@@ -351,5 +337,8 @@ export default gql`
     canUnlockNativeToken: Boolean!
     isInRecoveryMode: Boolean!
     isNativeTokenLocked: Boolean!
+    transfers: [Transfer!]!
+    unclaimedTransfers: [Transfer!]!
+    events: [NetworkEvent!]!
   }
 `;

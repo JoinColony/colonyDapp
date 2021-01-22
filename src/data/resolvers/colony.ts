@@ -29,7 +29,6 @@ import {
   TempDomainsQuery,
   TempDomainsQueryVariables,
   TempDomainsDocument,
-  SubgraphColony,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
 import IPFSNode from '~lib/ipfs';
@@ -395,71 +394,71 @@ export const colonyResolvers = ({
         __typename: 'UserRoles',
       }));
     },
-    //   async events({ colonyAddress }): Promise<NetworkEvent[]> {
-    //     const colonyClient = await colonyManager.getClient(
-    //       ClientType.ColonyClient,
-    //       colonyAddress,
-    //     );
-    //     const events = await getColonyAllEvents(colonyClient);
-    //     return events;
-    //   },
-    //   async transfers({ colonyAddress }): Promise<Transfer[]> {
-    //     const colonyClient = await colonyManager.getClient(
-    //       ClientType.ColonyClient,
-    //       colonyAddress,
-    //     );
-    //     // eslint-disable-next-line max-len
-    //     const colonyFundsClaimedTransactions = await getColonyFundsClaimedTransfers(
-    //       colonyClient,
-    //     );
-    //     const payoutClaimedTransactions = await getPayoutClaimedTransfers(
-    //       colonyClient,
-    //     );
-    //     return [
-    //       ...colonyFundsClaimedTransactions,
-    //       ...payoutClaimedTransactions,
-    //     ].sort((a, b) => b.date - a.date);
-    //   },
-    //   async unclaimedTransfers({ colonyAddress }): Promise<Transfer[]> {
-    //     const colonyClient = await colonyManager.getClient(
-    //       ClientType.ColonyClient,
-    //       colonyAddress,
-    //     );
-    //     // eslint-disable-next-line max-len
-    //     const colonyUnclaimedTransfers = await getColonyUnclaimedTransfers(
-    //       colonyClient,
-    //     );
-    //     // Get ether balance and add a fake transaction if there's any unclaimed
-    //     const colonyEtherBalance = await colonyClient.provider.getBalance(
-    //       colonyAddress,
-    //     );
-    //     // eslint-disable-next-line max-len
-    //     const colonyNonRewardsPotsTotal = await colonyClient.getNonRewardPotsTotal(
-    //       AddressZero,
-    //     );
-    //     const colonyRewardsPotTotal = await colonyClient.getFundingPotBalance(
-    //       0,
-    //       AddressZero,
-    //     );
-    //     const unclaimedEther = colonyEtherBalance
-    //       .sub(colonyNonRewardsPotsTotal)
-    //       .sub(colonyRewardsPotTotal);
-    //     if (unclaimedEther.gt(0)) {
-    //       colonyUnclaimedTransfers.push({
-    //         // @ts-ignore
-    //         __typename: 'Transfer',
-    //         amount: unclaimedEther.toString(),
-    //         colonyAddress,
-    //         date: new Date().getTime(),
-    //         from: AddressZero,
-    //         hash: HashZero,
-    //         incoming: true,
-    //         to: colonyClient.address,
-    //         token: AddressZero,
-    //       });
-    //     }
-    //     return colonyUnclaimedTransfers;
-    //   },
+    async events({ colonyAddress }): Promise<NetworkEvent[]> {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      const events = await getColonyAllEvents(colonyClient);
+      return events;
+    },
+    async transfers({ colonyAddress }): Promise<Transfer[]> {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      // eslint-disable-next-line max-len
+      const colonyFundsClaimedTransactions = await getColonyFundsClaimedTransfers(
+        colonyClient,
+      );
+      const payoutClaimedTransactions = await getPayoutClaimedTransfers(
+        colonyClient,
+      );
+      return [
+        ...colonyFundsClaimedTransactions,
+        ...payoutClaimedTransactions,
+      ].sort((a, b) => b.date - a.date);
+    },
+    async unclaimedTransfers({ colonyAddress }): Promise<Transfer[]> {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      // eslint-disable-next-line max-len
+      const colonyUnclaimedTransfers = await getColonyUnclaimedTransfers(
+        colonyClient,
+      );
+      // Get ether balance and add a fake transaction if there's any unclaimed
+      const colonyEtherBalance = await colonyClient.provider.getBalance(
+        colonyAddress,
+      );
+      // eslint-disable-next-line max-len
+      const colonyNonRewardsPotsTotal = await colonyClient.getNonRewardPotsTotal(
+        AddressZero,
+      );
+      const colonyRewardsPotTotal = await colonyClient.getFundingPotBalance(
+        0,
+        AddressZero,
+      );
+      const unclaimedEther = colonyEtherBalance
+        .sub(colonyNonRewardsPotsTotal)
+        .sub(colonyRewardsPotTotal);
+      if (unclaimedEther.gt(0)) {
+        colonyUnclaimedTransfers.push({
+          // @ts-ignore
+          __typename: 'Transfer',
+          amount: unclaimedEther.toString(),
+          colonyAddress,
+          date: new Date().getTime(),
+          from: AddressZero,
+          hash: HashZero,
+          incoming: true,
+          to: colonyClient.address,
+          token: AddressZero,
+        });
+      }
+      return colonyUnclaimedTransfers;
+    },
     async version({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,

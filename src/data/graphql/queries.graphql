@@ -1,5 +1,3 @@
-# import './fragments.graphql'
-
 query Task($id: String!) {
   task(id: $id) {
     id
@@ -524,44 +522,44 @@ query ColonyNativeToken($address: String!) {
   }
 }
 
-# query ColonyTransfers($address: String!) {
-#   colony(address: $address) {
-#     id
-#     colonyAddress
-#     transfers @client {
-#       amount
-#       hash
-#       colonyAddress
-#       date
-#       from
-#       hash
-#       incoming
-#       to
-#       token
-#     }
-#     unclaimedTransfers @client {
-#       amount
-#       hash
-#       colonyAddress
-#       date
-#       from
-#       hash
-#       incoming
-#       to
-#       token
-#     }
-#   }
-# }
+query ColonyTransfers($address: String!) {
+  processedColony(address: $address) {
+    id
+    colonyAddress
+    transfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+    unclaimedTransfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+  }
+}
 
-# query ColonyEvents($address: String!) {
-#   colony(address: $address) {
-#     id
-#     colonyAddress
-#     events @client {
-#       ...FullNetworkEvent
-#     }
-#   }
-# }
+query ColonyEvents($address: String!) {
+  processedColony(address: $address) {
+    id
+    colonyAddress
+    events @client {
+      ...FullNetworkEvent
+    }
+  }
+}
 
 query ColonyProfile($address: String!) {
   processedColony(address: $address) @client {
