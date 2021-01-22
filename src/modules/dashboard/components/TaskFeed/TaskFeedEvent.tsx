@@ -14,8 +14,8 @@ import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 import {
   useUser,
   useTokenQuery,
-  useColonyQuery,
-  useColonySingleDomainQuery,
+  useProcessedColonyQuery,
+  useTempDomainQuery,
   AnyUser,
   EventType,
   TaskEventFragment,
@@ -178,13 +178,13 @@ const TaskFeedEventDomainSet = ({
   domainId,
 }: EventProps<SetTaskDomainEvent>) => {
   const { formatMessage } = useIntl();
-  const { data } = useColonySingleDomainQuery({
-    variables: { colonyAddress, domainId: ethDomainId },
+  const { data } = useTempDomainQuery({
+    variables: { colonyAddress, ethDomainId },
   });
   const domainName =
     ethDomainId === ROOT_DOMAIN_ID
       ? formatMessage(MSG.rootDomain)
-      : data && data.colonyDomain && data.colonyDomain.name;
+      : data && data.tempDomain && data.tempDomain.name;
   return (
     <FormattedMessage
       {...MSG.domainSet}
@@ -274,12 +274,13 @@ const TaskFeedEventPayoutSet = ({
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },
   });
-  const { data: colonyData } = useColonyQuery({
+  const { data: colonyData } = useProcessedColonyQuery({
     variables: { address: colonyAddress },
   });
   const { decimals = DEFAULT_TOKEN_DECIMALS, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
-  const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
+  const { nativeTokenAddress = '' } =
+    (colonyData && colonyData.processedColony) || {};
   if (!tokenData) {
     return <SpinnerLoader />;
   }

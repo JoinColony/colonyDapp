@@ -167,6 +167,7 @@ export type Scalars = {
   Upload: any;
 };
 
+<<<<<<< HEAD
 export type Domain = {
   colonyAddress: Scalars['String'];
   color: Scalars['Int'];
@@ -175,8 +176,16 @@ export type Domain = {
   ethDomainId: Scalars['Int'];
   ethParentDomainId: Scalars['Int'];
   id: Scalars['String'];
+=======
+export type TempDomain = {
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  ethParentDomainId?: Maybe<Scalars['Int']>;
+>>>>>>> Add: `TempDomain` query and resolvers
   name: Scalars['String'];
-  parent?: Maybe<Domain>;
+  parent?: Maybe<TempDomain>;
   tasks: Array<Task>;
 };
 
@@ -536,13 +545,13 @@ export type Mutation = {
   assignWorker?: Maybe<Task>;
   cancelTask?: Maybe<Task>;
   clearLoggedInUser: LoggedInUser;
-  createDomain?: Maybe<Domain>;
+  createDomain?: Maybe<TempDomain>;
   createSuggestion?: Maybe<Suggestion>;
   createTask?: Maybe<Task>;
   createTaskFromSuggestion?: Maybe<Task>;
   createUser?: Maybe<User>;
   createWorkRequest?: Maybe<Task>;
-  editDomainName?: Maybe<Domain>;
+  editDomainName?: Maybe<TempDomain>;
   editUser?: Maybe<User>;
   finalizeTask?: Maybe<Task>;
   markAllNotificationsAsRead: Scalars['Boolean'];
@@ -743,8 +752,11 @@ export type Query = {
   colonyDomain: Domain;
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
+<<<<<<< HEAD
   domain: Domain;
   domains: Array<SubgraphDomain>;
+=======
+>>>>>>> Add: `TempDomain` query and resolvers
   events: Array<SubgraphEvent>;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
@@ -752,7 +764,8 @@ export type Query = {
   processedColony: ProcessedColony;
   systemInfo: SystemInfo;
   task: Task;
-  tempDomains: Array<Domain>;
+  tempDomain: TempDomain;
+  tempDomains: Array<TempDomain>;
   token: Token;
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
@@ -798,6 +811,7 @@ export type QueryColonyNameArgs = {
 };
 
 
+<<<<<<< HEAD
 export type QueryDomainArgs = {
   colonyAddress: Scalars['String'];
   ethDomainId: Scalars['Int'];
@@ -809,6 +823,8 @@ export type QueryDomainsArgs = {
 };
 
 
+=======
+>>>>>>> Add: `TempDomain` query and resolvers
 export type QueryEventsArgs = {
   where: EventsFilter;
 };
@@ -828,6 +844,12 @@ export type QueryProcessedColonyArgs = {
 
 export type QueryTaskArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryTempDomainArgs = {
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
 };
 
 
@@ -918,7 +940,7 @@ export type Task = {
   creator: User;
   creatorAddress: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  domain: Domain;
+  domain: TempDomain;
   dueDate?: Maybe<Scalars['DateTime']>;
   ethDomainId: Scalars['Int'];
   ethPotId?: Maybe<Scalars['Int']>;
@@ -1153,6 +1175,11 @@ export type NetworkEvent = {
   topic?: Maybe<Scalars['String']>;
   userAddress?: Maybe<Scalars['String']>;
   domainId?: Maybe<Scalars['String']>;
+};
+
+export type Domain = {
+  color?: Maybe<Scalars['Int']>;
+  description?: Maybe<Scalars['String']>;
 };
 
 export type ActionsFilter = {
@@ -1605,14 +1632,14 @@ export type CreateDomainMutationVariables = Exact<{
 }>;
 
 
-export type CreateDomainMutation = { createDomain?: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
+export type CreateDomainMutation = { createDomain?: Maybe<Pick<TempDomain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
 
 export type EditDomainMutationVariables = Exact<{
   input: EditDomainNameInput;
 }>;
 
 
-export type EditDomainMutation = { editDomainName?: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
+export type EditDomainMutation = { editDomainName?: Maybe<Pick<TempDomain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
 
 export type SendTransactionMessageMutationVariables = Exact<{
   input: SendTransactionMessageInput;
@@ -1791,6 +1818,7 @@ export type UserColonyAddressesQueryVariables = Exact<{
 export type UserColonyAddressesQuery = { user: Pick<User, 'id' | 'colonyAddresses'> };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export type ColonyTasksQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -1837,13 +1865,27 @@ export type ColonySingleDomainQueryVariables = Exact<{
 
 export type ColonySingleDomainQuery = { colonyDomain: DomainFieldsFragment };
 =======
+=======
+export type TempDomainQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+}>;
+
+
+export type TempDomainQuery = { tempDomain: Pick<TempDomain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'> };
+
+>>>>>>> Add: `TempDomain` query and resolvers
 export type TempDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
 
 
+<<<<<<< HEAD
 export type TempDomainsQuery = { tempDomains: Array<Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> };
 >>>>>>> Refactor: colony resolver into processedColony resolver
+=======
+export type TempDomainsQuery = { tempDomains: Array<Pick<TempDomain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> };
+>>>>>>> Add: `TempDomain` query and resolvers
 
 export type TokenQueryVariables = Exact<{
   address: Scalars['String'];
@@ -4062,6 +4104,7 @@ export type UserColonyAddressesQueryHookResult = ReturnType<typeof useUserColony
 export type UserColonyAddressesLazyQueryHookResult = ReturnType<typeof useUserColonyAddressesLazyQuery>;
 export type UserColonyAddressesQueryResult = Apollo.QueryResult<UserColonyAddressesQuery, UserColonyAddressesQueryVariables>;
 <<<<<<< HEAD
+<<<<<<< HEAD
 export const ColonyTasksDocument = gql`
     query ColonyTasks($address: String!) {
   colony(address: $address) {
@@ -4181,11 +4224,30 @@ export const ColonyMembersWithReputationDocument = gql`
  *
  * To run a query within a React component, call `useColonyMembersWithReputationQuery` and pass it any options that fit your needs.
  * When your component renders, `useColonyMembersWithReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+=======
+export const TempDomainDocument = gql`
+    query TempDomain($colonyAddress: String!, $ethDomainId: Int!) {
+  tempDomain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
+    id
+    ethDomainId
+    name
+    ethParentDomainId
+  }
+}
+    `;
+
+/**
+ * __useTempDomainQuery__
+ *
+ * To run a query within a React component, call `useTempDomainQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTempDomainQuery` returns an object from Apollo Client that contains loading, error, and data properties
+>>>>>>> Add: `TempDomain` query and resolvers
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
+<<<<<<< HEAD
  * const { data, loading, error } = useColonyMembersWithReputationQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
@@ -4207,6 +4269,24 @@ export const ColonySingleDomainDocument = gql`
   colonyDomain(colonyAddress: $colonyAddress, domainId: $domainId) @client {
     ...DomainFields
 =======
+=======
+ * const { data, loading, error } = useTempDomainQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      ethDomainId: // value for 'ethDomainId'
+ *   },
+ * });
+ */
+export function useTempDomainQuery(baseOptions?: Apollo.QueryHookOptions<TempDomainQuery, TempDomainQueryVariables>) {
+        return Apollo.useQuery<TempDomainQuery, TempDomainQueryVariables>(TempDomainDocument, baseOptions);
+      }
+export function useTempDomainLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TempDomainQuery, TempDomainQueryVariables>) {
+          return Apollo.useLazyQuery<TempDomainQuery, TempDomainQueryVariables>(TempDomainDocument, baseOptions);
+        }
+export type TempDomainQueryHookResult = ReturnType<typeof useTempDomainQuery>;
+export type TempDomainLazyQueryHookResult = ReturnType<typeof useTempDomainLazyQuery>;
+export type TempDomainQueryResult = Apollo.QueryResult<TempDomainQuery, TempDomainQueryVariables>;
+>>>>>>> Add: `TempDomain` query and resolvers
 export const TempDomainsDocument = gql`
     query TempDomains($colonyAddress: String!) {
   tempDomains(colonyAddress: $colonyAddress) {

@@ -15,14 +15,6 @@ query Task($id: String!) {
     }
     assignedWorkerAddress
     cancelledAt
-    # colony {
-    #   id
-    #   colonyAddress
-    #   colonyName
-    #   avatarHash
-    #   displayName
-    #   nativeTokenAddress
-    # }
     colonyAddress
     commentCount @client
     createdAt
@@ -93,27 +85,6 @@ query TaskToEdit($id: String!) {
         walletAddress
       }
     }
-    # colony {
-    #   id
-    #   nativeTokenAddress
-    #   subscribedUsers {
-    #     id
-    #     profile {
-    #       displayName
-    #       walletAddress
-    #       username
-    #       avatarHash
-    #     }
-    #   }
-    #   tokenAddresses
-    #   tokens @client {
-    #     id
-    #     address
-    #     decimals
-    #     name
-    #     symbol
-    #   }
-    # }
   }
 }
 
@@ -200,12 +171,6 @@ query UserTasks($address: String!) {
       }
       assignedWorkerAddress
       cancelledAt
-      # colony {
-      #   id
-      #   colonyName
-      #   displayName
-      #   nativeTokenAddress
-      # }
       colonyAddress
       commentCount @client
       createdAt
@@ -286,14 +251,15 @@ query UserColonyAddresses($address: String!) {
   }
 }
 
-# query Domain($colonyAddress: String!, $ethDomainId: Int!) {
-#   domain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
-#     id
-#     ethDomainId
-#     name
-#     ethParentDomainId
-#   }
-# }
+# Change to tempDomain -- needs server counterpart
+query TempDomain($colonyAddress: String!, $ethDomainId: Int!) {
+  tempDomain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
+    id
+    ethDomainId
+    name
+    ethParentDomainId
+  }
+}
 
 query TempDomains($colonyAddress: String!) {
   tempDomains(colonyAddress: $colonyAddress) {
@@ -407,8 +373,6 @@ query TransactionMessagesCount($colonyAddress: String!) {
 # Prepending them with `Subgraph` allows the client to decide what endpoint to use
 
 query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
-  # @TODO Pagination
-  # See the schema for the correct filters we need to pass in for pagination
   oneTxPayments(skip: $skip, first: $first, where: { payment_contains: $colonyAddress }) {
     id
     agent
@@ -553,31 +517,10 @@ query ProcessedColony($address: String!) {
   }
 }
 
-# query ColonyTokens($address: String!) {
-#   colony(address: $address) {
-#     id
-#     ...Tokens
-#   }
-# }
-
 # query ColonyNativeToken($address: String!) {
 #   colony(address: $address) {
 #     id
 #     nativeTokenAddress
-#   }
-# }
-
-# query ColonyRoles($address: String!) {
-#   colony(address: $address) {
-#     id
-#     colonyAddress
-#     roles @client {
-#       address
-#       domains {
-#         domainId
-#         roles
-#       }
-#     }
 #   }
 # }
 
@@ -626,7 +569,6 @@ query ProcessedColony($address: String!) {
 #   }
 # }
 
-# ### ufff ?
 # query ColonySubscribedUsers($colonyAddress: String!) {
 #   colony(address: $colonyAddress) {
 #     id

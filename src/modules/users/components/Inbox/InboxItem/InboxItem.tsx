@@ -10,7 +10,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   useColonyNameQuery,
-  useColonySingleDomainQuery,
+  useTempDomainQuery,
   useLoggedInUser,
   useMarkNotificationAsReadMutation,
   useTokenQuery,
@@ -132,8 +132,8 @@ const InboxItem = ({
     variables: { address: tokenAddress },
   });
 
-  const { data: domainData } = useColonySingleDomainQuery({
-    variables: { colonyAddress: colonyAddress || '', domainId: ethDomainId },
+  const { data: domainData } = useTempDomainQuery({
+    variables: { colonyAddress: colonyAddress || '', ethDomainId },
   });
 
   const initiatorFriendlyName = !initiatorUser
@@ -167,7 +167,7 @@ const InboxItem = ({
   const colonyName = colonyNameData && colonyNameData.colonyName;
   const token = tokenData && tokenData.token;
   const taskTitle = taskData && taskData.task && taskData.task.title;
-  const domainName = domainData && domainData.colonyDomain.name;
+  const domainName = domainData && domainData.tempDomain.name;
 
   return (
     <TableRow onClick={markAsRead}>

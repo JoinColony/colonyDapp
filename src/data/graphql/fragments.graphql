@@ -84,7 +84,6 @@ fragment ColonyProfile on ProcessedColony {
 fragment FullColony on ProcessedColony {
   ...ColonyProfile
   ...Tokens
-  # isNativeTokenExternal @client //
   domains @client {
     ...DomainFields
   }
