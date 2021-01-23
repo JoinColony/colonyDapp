@@ -15,7 +15,7 @@ import {
   useUser,
   useTokenQuery,
   useProcessedColonyQuery,
-  useTempDomainQuery,
+  useColonySingleDomainQuery,
   AnyUser,
   EventType,
   TaskEventFragment,
@@ -178,13 +178,13 @@ const TaskFeedEventDomainSet = ({
   domainId,
 }: EventProps<SetTaskDomainEvent>) => {
   const { formatMessage } = useIntl();
-  const { data } = useTempDomainQuery({
-    variables: { colonyAddress, ethDomainId },
+  const { data } = useColonySingleDomainQuery({
+    variables: { colonyAddress, domainId: ethDomainId },
   });
   const domainName =
     ethDomainId === ROOT_DOMAIN_ID
       ? formatMessage(MSG.rootDomain)
-      : data && data.tempDomain && data.tempDomain.name;
+      : data && data.colonyDomain && data.colonyDomain.name;
   return (
     <FormattedMessage
       {...MSG.domainSet}

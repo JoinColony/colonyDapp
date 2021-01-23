@@ -237,38 +237,6 @@ mutation SetUserTokens($input: SetUserTokensInput!) {
   }
 }
 
-# mutation SetColonyTokens($input: SetColonyTokensInput!) {
-#   setColonyTokens(input: $input) {
-#     id
-#     tokenAddresses
-#   }
-# }
-
-# mutation CreateColony($input: CreateColonyInput!) {
-#   createColony(input: $input) {
-#     id
-#     colonyAddress
-#     colonyName
-#     avatarHash
-#     description
-#     displayName
-#     guideline
-#     website
-#   }
-# }
-
-# mutation EditColonyProfile($input: EditColonyProfileInput!) {
-#   editColonyProfile(input: $input) {
-#     id
-#     colonyName
-#     avatarHash
-#     description
-#     displayName
-#     guideline
-#     website
-#   }
-# }
-
 mutation MarkNotificationAsRead($input: MarkNotificationAsReadInput!) {
   markNotificationAsRead(input: $input)
 }
@@ -288,24 +256,6 @@ mutation UnsubscribeFromColony($input: UnsubscribeFromColonyInput!) {
   unsubscribeFromColony(input: $input) {
     id
     colonyAddresses
-  }
-}
-
-mutation CreateDomain($input: CreateDomainInput!) {
-  createDomain(input: $input) {
-    id
-    ethDomainId
-    ethParentDomainId
-    name
-  }
-}
-
-mutation EditDomain($input: EditDomainNameInput!) {
-  editDomainName(input: $input) {
-    id
-    ethDomainId
-    ethParentDomainId
-    name
   }
 }
 

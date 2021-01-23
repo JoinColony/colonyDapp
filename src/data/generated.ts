@@ -167,17 +167,6 @@ export type Scalars = {
   Upload: any;
 };
 
-export type TempDomain = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  ethParentDomainId?: Maybe<Scalars['Int']>;
-  name: Scalars['String'];
-  parent?: Maybe<TempDomain>;
-  tasks: Array<Task>;
-};
-
 export type TaskEvent = {
   type: EventType;
   taskId: Scalars['String'];
@@ -473,13 +462,6 @@ export type SendTaskMessageInput = {
   message: Scalars['String'];
 };
 
-export type CreateDomainInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  ethParentDomainId?: Maybe<Scalars['Int']>;
-  name: Scalars['String'];
-};
-
 export type EditDomainNameInput = {
   colonyAddress: Scalars['String'];
   ethDomainId: Scalars['Int'];
@@ -534,13 +516,11 @@ export type Mutation = {
   assignWorker?: Maybe<Task>;
   cancelTask?: Maybe<Task>;
   clearLoggedInUser: LoggedInUser;
-  createDomain?: Maybe<TempDomain>;
   createSuggestion?: Maybe<Suggestion>;
   createTask?: Maybe<Task>;
   createTaskFromSuggestion?: Maybe<Task>;
   createUser?: Maybe<User>;
   createWorkRequest?: Maybe<Task>;
-  editDomainName?: Maybe<TempDomain>;
   editUser?: Maybe<User>;
   finalizeTask?: Maybe<Task>;
   markAllNotificationsAsRead: Scalars['Boolean'];
@@ -584,11 +564,6 @@ export type MutationCancelTaskArgs = {
 };
 
 
-export type MutationCreateDomainArgs = {
-  input: CreateDomainInput;
-};
-
-
 export type MutationCreateSuggestionArgs = {
   input: CreateSuggestionInput;
 };
@@ -611,11 +586,6 @@ export type MutationCreateUserArgs = {
 
 export type MutationCreateWorkRequestArgs = {
   input: CreateWorkRequestInput;
-};
-
-
-export type MutationEditDomainNameArgs = {
-  input: EditDomainNameInput;
 };
 
 
@@ -750,8 +720,6 @@ export type Query = {
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   task: Task;
-  tempDomain: TempDomain;
-  tempDomains: Array<TempDomain>;
   token: Token;
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
@@ -826,17 +794,6 @@ export type QuerySubscribedUsersArgs = {
 
 export type QueryTaskArgs = {
   id: Scalars['String'];
-};
-
-
-export type QueryTempDomainArgs = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-};
-
-
-export type QueryTempDomainsArgs = {
-  colonyAddress: Scalars['String'];
 };
 
 
@@ -922,7 +879,6 @@ export type Task = {
   creator: User;
   creatorAddress: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  domain: TempDomain;
   dueDate?: Maybe<Scalars['DateTime']>;
   ethDomainId: Scalars['Int'];
   ethPotId?: Maybe<Scalars['Int']>;
@@ -1605,20 +1561,6 @@ export type UnsubscribeFromColonyMutationVariables = Exact<{
 
 
 export type UnsubscribeFromColonyMutation = { unsubscribeFromColony?: Maybe<Pick<User, 'id' | 'colonyAddresses'>> };
-
-export type CreateDomainMutationVariables = Exact<{
-  input: CreateDomainInput;
-}>;
-
-
-export type CreateDomainMutation = { createDomain?: Maybe<Pick<TempDomain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
-
-export type EditDomainMutationVariables = Exact<{
-  input: EditDomainNameInput;
-}>;
-
-
-export type EditDomainMutation = { editDomainName?: Maybe<Pick<TempDomain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
 
 export type SendTransactionMessageMutationVariables = Exact<{
   input: SendTransactionMessageInput;
@@ -3230,76 +3172,6 @@ export function useUnsubscribeFromColonyMutation(baseOptions?: Apollo.MutationHo
 export type UnsubscribeFromColonyMutationHookResult = ReturnType<typeof useUnsubscribeFromColonyMutation>;
 export type UnsubscribeFromColonyMutationResult = Apollo.MutationResult<UnsubscribeFromColonyMutation>;
 export type UnsubscribeFromColonyMutationOptions = Apollo.BaseMutationOptions<UnsubscribeFromColonyMutation, UnsubscribeFromColonyMutationVariables>;
-export const CreateDomainDocument = gql`
-    mutation CreateDomain($input: CreateDomainInput!) {
-  createDomain(input: $input) {
-    id
-    ethDomainId
-    ethParentDomainId
-    name
-  }
-}
-    `;
-export type CreateDomainMutationFn = Apollo.MutationFunction<CreateDomainMutation, CreateDomainMutationVariables>;
-
-/**
- * __useCreateDomainMutation__
- *
- * To run a mutation, you first call `useCreateDomainMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDomainMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createDomainMutation, { data, loading, error }] = useCreateDomainMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreateDomainMutation, CreateDomainMutationVariables>) {
-        return Apollo.useMutation<CreateDomainMutation, CreateDomainMutationVariables>(CreateDomainDocument, baseOptions);
-      }
-export type CreateDomainMutationHookResult = ReturnType<typeof useCreateDomainMutation>;
-export type CreateDomainMutationResult = Apollo.MutationResult<CreateDomainMutation>;
-export type CreateDomainMutationOptions = Apollo.BaseMutationOptions<CreateDomainMutation, CreateDomainMutationVariables>;
-export const EditDomainDocument = gql`
-    mutation EditDomain($input: EditDomainNameInput!) {
-  editDomainName(input: $input) {
-    id
-    ethDomainId
-    ethParentDomainId
-    name
-  }
-}
-    `;
-export type EditDomainMutationFn = Apollo.MutationFunction<EditDomainMutation, EditDomainMutationVariables>;
-
-/**
- * __useEditDomainMutation__
- *
- * To run a mutation, you first call `useEditDomainMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditDomainMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editDomainMutation, { data, loading, error }] = useEditDomainMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useEditDomainMutation(baseOptions?: Apollo.MutationHookOptions<EditDomainMutation, EditDomainMutationVariables>) {
-        return Apollo.useMutation<EditDomainMutation, EditDomainMutationVariables>(EditDomainDocument, baseOptions);
-      }
-export type EditDomainMutationHookResult = ReturnType<typeof useEditDomainMutation>;
-export type EditDomainMutationResult = Apollo.MutationResult<EditDomainMutation>;
-export type EditDomainMutationOptions = Apollo.BaseMutationOptions<EditDomainMutation, EditDomainMutationVariables>;
 export const SendTransactionMessageDocument = gql`
     mutation SendTransactionMessage($input: SendTransactionMessageInput!) {
   sendTransactionMessage(input: $input)
