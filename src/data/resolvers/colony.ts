@@ -83,24 +83,44 @@ export const getProcessedColony = async (
   try {
     ipfsMetadata = await ipfs.getString(ipfsHash);
   } catch (error) {
-    console.error('Could not fetch colony metadata', ipfsHash);
+    console.error(
+      `Could not fetch IPFS metadata for colony:`,
+      ensName,
+      'with hash:',
+      metadata,
+    );
   }
 
-  if (ipfsMetadata) {
-    const { colonyDisplayName = null, colonyAvatarHash = null } = JSON.parse(
-      ipfsMetadata || '{}',
-    );
-    displayName = colonyDisplayName;
-    avatarHash = colonyAvatarHash;
+  try {
+    if (ipfsMetadata) {
+      const { colonyDisplayName = null, colonyAvatarHash = null } = JSON.parse(
+        ipfsMetadata,
+      );
+      displayName = colonyDisplayName;
+      avatarHash = colonyAvatarHash;
 
-    /*
-     * Fetch the colony's avatar
-     */
-    try {
-      avatarURL = await ipfs.getString(colonyAvatarHash);
-    } catch (error) {
-      console.error('Could not fetch colony avatar', avatarURL);
+      /*
+       * Fetch the colony's avatar
+       */
+      try {
+        avatarURL = await ipfs.getString(colonyAvatarHash);
+      } catch (error) {
+        console.error('Could not fetch colony avatar', avatarURL);
+        console.error(
+          `Could not parse IPFS avatar for colony:`,
+          ensName,
+          'with hash:',
+          colonyAvatarHash,
+        );
+      }
     }
+  } catch (error) {
+    console.error(
+      `Could not parse IPFS metadata for colony:`,
+      ensName,
+      'with object:',
+      ipfsMetadata,
+    );
   }
 
   return {
@@ -143,19 +163,33 @@ export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
   try {
     ipfsMetadata = await ipfs.getString(ipfsHash);
   } catch (error) {
-    console.error('Could not fetch domain metadata', ipfsHash);
+    console.error(
+      `Could not fetch IPFS metadata for domain:`,
+      domainName,
+      'with hash:',
+      metadata,
+    );
   }
 
-  if (ipfsMetadata) {
-    const {
-      domainName: metadataDomainName = null,
-      domainColor = null,
-      domainPurpose = null,
-    } = JSON.parse(ipfsMetadata || '{}');
+  try {
+    if (ipfsMetadata) {
+      const {
+        domainName: metadataDomainName = null,
+        domainColor = null,
+        domainPurpose = null,
+      } = JSON.parse(ipfsMetadata);
 
-    name = metadataDomainName;
-    color = domainColor;
-    description = domainPurpose;
+      name = metadataDomainName;
+      color = domainColor;
+      description = domainPurpose;
+    }
+  } catch (error) {
+    console.error(
+      `Could not parse IPFS metadata for domain:`,
+      domainChainId,
+      'with object:',
+      ipfsMetadata,
+    );
   }
 
   return {
