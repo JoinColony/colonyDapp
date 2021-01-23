@@ -77,6 +77,13 @@ else
     cp .env.example .env
 fi
 
+# For the submodules that we don't track  changes for, make sure to remove the existing
+# forder first, otherwise the git submodule update won't work
+if [ -f "${ROOT_PATH}/${LIB_PATH}/${SUBGRAPH}/subgraph.yaml" ]; then
+  log "Removing the '${SUBGRAPH}' submodule folder"
+  rm -Rf "${ROOT_PATH}/${LIB_PATH}/${SUBGRAPH}"
+fi
+
 # Update / re-pull submodules
 log "Initialize submodule libs"
 git submodule update --init --recursive

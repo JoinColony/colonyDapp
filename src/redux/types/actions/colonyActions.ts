@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers/utils';
 
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
+import { Color } from '~core/ColorTag';
 
 import {
   ErrorActionType,
@@ -16,6 +17,24 @@ import {
  * I couldn't come up with anything better, as we already have ColonyActionTypes :(
  */
 export type ColonyActionsActionTypes =
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_DOMAIN_CREATE,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        domainName: string;
+        domainColor?: Color;
+        domainPurpose?: string;
+        annotationMessage?: string;
+        parentId?: number;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_DOMAIN_CREATE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
+      MetaWithHistory<object>
+    >
   | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC>
   | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_SUCCESS>
   | ErrorActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_ERROR, object>

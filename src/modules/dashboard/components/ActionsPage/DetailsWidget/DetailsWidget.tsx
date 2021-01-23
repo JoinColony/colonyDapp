@@ -43,6 +43,14 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.transactionHash',
     defaultMessage: 'Transaction Hash',
   },
+  domain: {
+    id: 'dashboard.ActionsPage.DetailsWidget.domain',
+    defaultMessage: 'Team',
+  },
+  domainDescription: {
+    id: 'dashboard.ActionsPage.DetailsWidget.domainDescription',
+    defaultMessage: 'Team Purpouse',
+  },
 });
 
 interface Props {
@@ -140,6 +148,33 @@ const DetailsWidget = ({
           </div>
           <div className={styles.value}>
             <Amount /> <Symbol />
+          </div>
+        </div>
+      )}
+      {detailsForAction.Domain && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.domain} />
+          </div>
+          <div className={styles.value}>
+            {values?.fromDomain && (
+              <DetailsWidgetTeam domain={values.fromDomain} />
+            )}
+          </div>
+        </div>
+      )}
+      {detailsForAction.Description && values?.fromDomain?.description && (
+        <div className={styles.domainDescriptionItem}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.domainDescription} />
+          </div>
+          <div className={styles.value}>
+            <div
+              className={styles.domainDescription}
+              title={values.fromDomain.description || ''}
+            >
+              {values.fromDomain.description}
+            </div>
           </div>
         </div>
       )}

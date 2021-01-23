@@ -50,6 +50,12 @@ export const getValuesForActionType = (
         amount: argsObj.amount,
       };
     }
+    case ColonyActions.CreateDomain: {
+      return {
+        initiator: argsObj.agent,
+        fromDomain: argsObj.domainId,
+      };
+    }
     default: {
       return {};
     }

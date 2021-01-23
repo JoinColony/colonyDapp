@@ -73,8 +73,8 @@ const ActionsPageEvent = ({
             id="event.title"
             values={{
               ...values,
-              fromDomain: values?.fromDomain.name,
-              toDomain: values?.toDomain.name,
+              fromDomain: values?.fromDomain?.name,
+              toDomain: values?.toDomain?.name,
               eventName,
               clientOrExtensionType: (
                 <span className={styles.highlight}>{emmitedBy}</span>

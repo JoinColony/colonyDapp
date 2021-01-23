@@ -8,7 +8,6 @@ import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ProfileEdit from '~admin/Profile/ProfileEdit';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
-import Domains from '~admin/Domains';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import TokenCardList from '~dashboard/TokenCardList';
 import VerticalNavigation from '~pages/VerticalNavigation';
@@ -38,10 +37,6 @@ const MSG = defineMessages({
   colonySettings: {
     id: 'dashboard.Admin.colonySettings',
     defaultMessage: 'Colony Settings',
-  },
-  tabDomains: {
-    id: 'dashboard.Admin.tabDomains',
-    defaultMessage: 'Domains',
   },
   tabProfile: {
     id: 'dashboard.Admin.tabProfile',
@@ -79,11 +74,6 @@ const navigationItems = (
     title: MSG.tabTokens,
     content: <TokenCardList tokens={colony.tokens} />,
   };
-  const domainsTab = {
-    id: 3,
-    title: MSG.tabDomains,
-    content: <Domains colony={colony} />,
-  };
   const advancedTab = {
     id: 5,
     title: MSG.tabAdvanced,
@@ -95,13 +85,6 @@ const navigationItems = (
    */
   if (hasRoot(rootRoles) || canAdminister(rootRoles)) {
     items.push(profileTab);
-  }
-
-  /*
-   * @NOTE Architecture role can create new domains
-   */
-  if (canArchitect(allRoles)) {
-    items.push(domainsTab);
   }
 
   /*

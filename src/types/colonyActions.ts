@@ -6,6 +6,7 @@ export enum ColonyActions {
   Recovery = 'Recovery',
   MoveFunds = 'MoveFunds',
   MintTokens = 'MintTokens',
+  CreateDomain = 'CreateDomain',
 }
 
 export enum ColonyAndExtensionsEvents {
@@ -17,6 +18,9 @@ export enum ColonyAndExtensionsEvents {
   OneTxPaymentMade = 'OneTxPaymentMade',
   Transfer = 'Transfer',
   TokensMinted = 'TokensMinted',
+  SkillAdded = 'SkillAdded',
+  DomainAdded = 'DomainAdded',
+  DomainMetadata = 'DomainMetadata',
 }
 
 export interface FormattedAction {

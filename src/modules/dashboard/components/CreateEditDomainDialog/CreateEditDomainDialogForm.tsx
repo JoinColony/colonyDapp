@@ -25,24 +25,24 @@ const MSG = defineMessages({
   titleCreate: {
     id:
       'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleCreate',
-    defaultMessage: 'Create a new domain',
+    defaultMessage: 'Create a new team',
   },
   titleEdit: {
     id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleEdit',
-    defaultMessage: 'Edit domain details',
+    defaultMessage: 'Edit team details',
   },
   name: {
     id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.name',
-    defaultMessage: 'Domain name',
+    defaultMessage: 'Team name',
   },
   purpose: {
     id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.name',
-    defaultMessage: 'What is the purpose of this domain?',
+    defaultMessage: 'What is the purpose of this team?',
   },
   annotation: {
     id:
       'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.annotation',
-    defaultMessage: 'Explain why you’re creating this domain',
+    defaultMessage: 'Explain why you’re creating this team',
   },
   noPermission: {
     id:
@@ -55,9 +55,11 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  back: () => void;
+  back?: () => void;
   colony: Colony;
   id?: string;
+  isSubmitting;
+  isValid;
 }
 
 const CreateEditDomainDialogForm = ({
@@ -65,6 +67,8 @@ const CreateEditDomainDialogForm = ({
   colony,
   handleSubmit,
   id,
+  isSubmitting,
+  isValid,
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
 
@@ -95,9 +99,10 @@ const CreateEditDomainDialogForm = ({
           <div className={styles.domainName}>
             <Input
               label={MSG.name}
-              name="name"
+              name="domainName"
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
               disabled={!canCreateEditDomain}
+              maxLength={20}
             />
           </div>
           <ColorSelect
@@ -105,21 +110,23 @@ const CreateEditDomainDialogForm = ({
             appearance={{ alignOptions: 'right' }}
             onColorChange={setDomainColor}
             disabled={!canCreateEditDomain}
+            name="domainColor"
           />
         </div>
       </DialogSection>
       <DialogSection>
         <Input
           label={MSG.purpose}
-          name="purpose"
+          name="domainPurpose"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
           disabled={!canCreateEditDomain}
+          maxLength={90}
         />
       </DialogSection>
       <DialogSection>
         <Annotations
           label={MSG.annotation}
-          name="annotation"
+          name="annotationMessage"
           disabled={!canCreateEditDomain}
         />
       </DialogSection>
@@ -143,16 +150,19 @@ const CreateEditDomainDialogForm = ({
         </DialogSection>
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          text={{ id: 'button.back' }}
-          onClick={back}
-          appearance={{ theme: 'secondary', size: 'large' }}
-        />
+        {back && (
+          <Button
+            text={{ id: 'button.back' }}
+            onClick={back}
+            appearance={{ theme: 'secondary', size: 'large' }}
+          />
+        )}
         <Button
           text={{ id: 'button.confirm' }}
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
-          disabled={!canCreateEditDomain}
+          loading={isSubmitting}
+          disabled={!canCreateEditDomain || !isValid}
         />
       </DialogSection>
     </>

@@ -25,10 +25,10 @@ const MSG = defineMessages({
   },
   tooltipTextSecondParagraph: {
     id: 'PermissionRequiredInfo.tooltipTextSecondParagraph',
-    defaultMessage: `Permissions are assigned at the domain level.
-      If an account is granted a permission in a domain,
+    defaultMessage: `Permissions are assigned at the team level.
+      If an account is granted a permission in a team,
       it also has that same permission in all of that
-      domain’s subdomains.`,
+      team’s subteams.`,
   },
 });
 

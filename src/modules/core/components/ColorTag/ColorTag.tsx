@@ -3,9 +3,9 @@ import React from 'react';
 import styles from './ColorTag.css';
 
 export enum Color {
+  LightPink,
   Pink,
   Black,
-  LightPink,
   EmeraldGreen,
   Blue,
   Yellow,

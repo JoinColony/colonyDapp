@@ -25,7 +25,7 @@ const MSG = defineMessages({
   paymentPermissionsText: {
     id: 'dashboard.ExpendituresDialog.paymentPermissionsText',
     defaultMessage: `You must have the {permissionsList} permissions in the
-      relevant domains, in order to take this action`,
+      relevant teams, in order to take this action`,
   },
   paymentPermissionsList: {
     id: 'dashboard.ExpendituresDialog.paymentPermissionsList',

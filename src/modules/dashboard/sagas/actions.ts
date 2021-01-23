@@ -1,13 +1,19 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
-import { ClientType, ColonyClient } from '@colony/colony-js';
+import { ClientType, ColonyClient, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   TokenBalancesForDomainsDocument,
   TokenBalancesForDomainsQuery,
   TokenBalancesForDomainsQueryVariables,
+  ColonyFromNameDocument,
+  ColonyFromNameQuery,
+  ColonyFromNameQueryVariables,
+  SubgraphActionsQuery,
+  SubgraphActionsQueryVariables,
+  SubgraphActionsDocument,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -174,10 +180,6 @@ function* createPaymentAction({
       );
     }
 
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
-
     // Refetch token balances for the domains involved
     yield apolloClient.query<
       TokenBalancesForDomainsQuery,
@@ -198,10 +200,27 @@ function* createPaymentAction({
       fetchPolicy: 'network-only',
     });
 
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+        skip: 0,
+        first: 1,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (error) {
     putError(ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR, error, meta);
   } finally {
@@ -346,10 +365,6 @@ function* createMoveFundsAction({
       );
     }
 
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
-
     // Refetch token balances for the domains involved
     yield apolloClient.query<
       TokenBalancesForDomainsQuery,
@@ -367,10 +382,27 @@ function* createMoveFundsAction({
       fetchPolicy: 'network-only',
     });
 
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+        skip: 0,
+        first: 1,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (caughtError) {
     putError(ActionTypes.COLONY_ACTION_MOVE_FUNDS_ERROR, caughtError, meta);
   } finally {
@@ -497,10 +529,6 @@ function* createMintTokensAction({
       );
     }
 
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
-
     yield apolloClient.query<
       TokenBalancesForDomainsQuery,
       TokenBalancesForDomainsQueryVariables
@@ -513,15 +541,198 @@ function* createMintTokensAction({
       fetchPolicy: 'network-only',
     });
 
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+        skip: 0,
+        first: 1,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (caughtError) {
     putError(ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR, caughtError, meta);
   } finally {
     txChannel.close();
   }
+}
+
+function* createDomainAction({
+  payload: {
+    colonyAddress,
+    colonyName,
+    domainName,
+    domainColor,
+    domainPurpose,
+    annotationMessage,
+    parentId = ROOT_DOMAIN_ID,
+  },
+  meta: { id: metaId, history },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_DOMAIN_CREATE>) {
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    /*
+     * Validate the required values for the payment
+     */
+    if (!domainName) {
+      throw new Error('A domain name is required to create a new domain');
+    }
+
+    /*
+     * Upload domain metadata to IPFS
+     */
+    let domainMetadataIpfsHash = null;
+    domainMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        domainName,
+        domainColor,
+        domainPurpose,
+      }),
+    );
+
+    /*
+     * Upload domain metadata to IPFS
+     */
+    let annotationMessageIpfsHash = null;
+    if (annotationMessage) {
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'createDomainAction';
+    const {
+      createDomainAction: createDomain,
+      annotateCreateDomainAction: annotateCreateDomain,
+    } = yield createTransactionChannels(metaId, [
+      'createDomainAction',
+      'annotateCreateDomainAction',
+    ]);
+
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: batchKey,
+          id: metaId,
+          index,
+        },
+      });
+
+    yield createGroupTransaction(createDomain, {
+      context: ClientType.ColonyClient,
+      methodName: 'addDomainWithProofs',
+      identifier: colonyAddress,
+      params: [parentId, domainMetadataIpfsHash],
+      ready: false,
+    });
+
+    if (annotationMessage) {
+      yield createGroupTransaction(annotateCreateDomain, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        ready: false,
+      });
+    }
+
+    yield takeFrom(createDomain.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateCreateDomain.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    yield put(transactionReady(createDomain.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      createDomain.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+    yield takeFrom(createDomain.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(
+        transactionAddParams(annotateCreateDomain.id, [
+          txHash,
+          annotationMessageIpfsHash,
+        ]),
+      );
+
+      yield put(transactionReady(annotateCreateDomain.id));
+
+      yield takeFrom(
+        annotateCreateDomain.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
+
+    /*
+     * Update the colony object cache
+     */
+    yield apolloClient.query<ColonyFromNameQuery, ColonyFromNameQueryVariables>(
+      {
+        query: ColonyFromNameDocument,
+        variables: { name: colonyName || '', address: colonyAddress },
+        fetchPolicy: 'network-only',
+      },
+    );
+
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+        skip: 0,
+        first: 1,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
+      meta,
+    });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_DOMAIN_CREATE_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
 }
 
 export default function* tasksSagas() {
@@ -534,4 +745,5 @@ export default function* tasksSagas() {
     ActionTypes.COLONY_ACTION_MINT_TOKENS,
     createMintTokensAction,
   );
+  yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_CREATE, createDomainAction);
 }

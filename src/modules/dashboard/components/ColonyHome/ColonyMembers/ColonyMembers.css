@@ -51,7 +51,7 @@
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   text-align: center;
-  color: var(--temp-grey-13);
+  color: var(--temp-grey-blue-7);
   cursor: default;
   letter-spacing: var(--spacing-medium);
 }

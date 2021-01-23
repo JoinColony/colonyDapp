@@ -16,6 +16,8 @@ import {
 } from '~types/index';
 
 interface EventValue {
+  agent: Address;
+  domainId: BigNumberish;
   paymentId: BigNumberish;
   amount: BigNumberish;
   token: Address;
@@ -118,7 +120,13 @@ export const colonyActionsResolvers = ({
               .filter((potentialLog) => !!potentialLog);
             return parsedLog;
           })
-          .reverse() as ProcessedEvent[];
+          .reverse()
+          /*
+           * Events list needs to be filtered one more time since in the case
+           * of events created by the network resolver they will show up undefined
+           * as well as we cannot parse them with any client we can instantiate
+           */
+          .filter((log) => !!log) as ProcessedEvent[];
 
         const actionType = getActionType(reverseSortedEvents);
 

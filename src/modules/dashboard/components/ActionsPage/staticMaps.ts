@@ -8,6 +8,8 @@ export enum ActionPageDetails {
   ToDomain = 'ToDomain',
   ToRecipient = 'ToRecipient',
   Amount = 'Amount',
+  Domain = 'Domain',
+  Description = 'Description',
 }
 
 type EventRolesMap = Partial<
@@ -38,6 +40,8 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
     ColonyRole.Funding,
   ],
   [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
+  [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
+  [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -49,6 +53,7 @@ export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
   [ColonyActions.MoveFunds]: 'emoji-world-globe',
   [ColonyActions.MintTokens]: 'emoji-seed-sprout',
+  [ColonyActions.CreateDomain]: 'emoji-crane',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -70,6 +75,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
+  [ColonyActions.CreateDomain]: [ColonyAndExtensionsEvents.DomainAdded],
 };
 
 /*
@@ -88,6 +94,19 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
+  /*
+   * We track both configurations of this action (with metadata and without)
+   * This allows us to treat events with just `DomainMetadata` emmited as being
+   * the domain edited action
+   */
+  [ColonyActions.CreateDomain]: [
+    ColonyAndExtensionsEvents.DomainMetadata,
+    ColonyAndExtensionsEvents.DomainAdded,
+  ],
+  [ColonyActions.CreateDomain]: [
+    // Don't track the metadata event, as not all domains might have it
+    ColonyAndExtensionsEvents.DomainAdded,
+  ],
 };
 
 /*
@@ -106,4 +125,8 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Amount,
   ],
   [ColonyActions.MintTokens]: [ActionPageDetails.Amount],
+  [ColonyActions.CreateDomain]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Description,
+  ],
 };

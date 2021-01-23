@@ -121,6 +121,9 @@ const getPaymentActionValues = async (
    * We don't have to worry about these events existing, as long as this
    * is an action event, these events will exist
    */
+  const oneTxPaymentEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.OneTxPaymentMade,
+  ) as ProcessedEvent;
   const paymentAddedEvent = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.PaymentAdded,
   ) as ProcessedEvent;
@@ -134,23 +137,38 @@ const getPaymentActionValues = async (
   const {
     values: { paymentId },
   } = paymentAddedEvent;
-  const paymentDetails = await colonyClient.getPayment(paymentId);
-  const fromDomain = bigNumberify(paymentDetails.domainId || 1).toNumber();
-  const recipient = paymentDetails.recipient || AddressZero;
-
   /*
    * Fetch the rest of the values that are present directly in the events
    */
   const {
     values: { amount: paymentAmount, token },
   } = payoutClaimedEvent;
+  /*
+   * Get the agent value
+   */
+  const {
+    values: { agent },
+  } = oneTxPaymentEvent;
 
-  return {
+  const paymentDetails = await colonyClient.getPayment(paymentId);
+  const fromDomain = bigNumberify(paymentDetails.domainId || 1).toNumber();
+  const recipient = paymentDetails.recipient || AddressZero;
+  const paymentActionValues: {
+    amount: string;
+    tokenAddress: Address;
+    fromDomain: number;
+    recipient: Address;
+    actionInitiator?: string;
+  } = {
     amount: bigNumberify(paymentAmount || '0').toString(),
     tokenAddress: token || AddressZero,
     fromDomain,
     recipient,
   };
+  if (agent) {
+    paymentActionValues.actionInitiator = agent;
+  }
+  return paymentActionValues;
 };
 
 const getMoveFundsActionValues = async (
@@ -172,7 +190,7 @@ const getMoveFundsActionValues = async (
    * Fetch the rest of the values that are present directly in the event
    */
   const {
-    values: { amount, fromPot, toPot, token },
+    values: { amount, fromPot, toPot, token, agent },
   } = moveFundsEvent;
 
   /*
@@ -181,12 +199,22 @@ const getMoveFundsActionValues = async (
   const fromDomain = await colonyClient.getDomainFromFundingPot(fromPot);
   const toDomain = await colonyClient.getDomainFromFundingPot(toPot);
 
-  return {
+  const moveFundsActionValues: {
+    amount: string;
+    tokenAddress: Address;
+    fromDomain: number;
+    toDomain: number;
+    actionInitiator?: string;
+  } = {
     amount: bigNumberify(amount || '0').toString(),
     tokenAddress: token || AddressZero,
     fromDomain: bigNumberify(fromDomain || '1').toNumber(),
     toDomain: bigNumberify(toDomain || '1').toNumber(),
   };
+  if (agent) {
+    moveFundsActionValues.actionInitiator = agent;
+  }
+  return moveFundsActionValues;
 };
 
 const getMintTokensActionValues = async (
@@ -200,14 +228,46 @@ const getMintTokensActionValues = async (
   const tokenAddress = await colonyClient.getToken();
 
   const {
-    values: { who, amount },
+    values: { who, amount, agent },
   } = mintTokensEvent;
 
-  return {
+  const tokensMintedValues: {
+    amount: string;
+    tokenAddress: Address;
+    actionInitiator?: string;
+    recipient: Address;
+  } = {
     amount: bigNumberify(amount || '0').toString(),
     recipient: who,
     tokenAddress,
   };
+  if (agent) {
+    tokensMintedValues.actionInitiator = agent;
+  }
+  return tokensMintedValues;
+};
+
+const getCreateDomainActionValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const domainAddedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.DomainAdded,
+  ) as ProcessedEvent;
+
+  const {
+    values: { agent },
+  } = domainAddedEvent;
+
+  const domainAction: {
+    fromDomain: number;
+    actionInitiator?: string;
+  } = {
+    fromDomain: parseInt(domainAddedEvent.values.domainId.toString(), 10),
+  };
+  if (agent) {
+    domainAction.actionInitiator = agent;
+  }
+  return domainAction;
 };
 
 export const getActionValues = async (
@@ -251,6 +311,15 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...mintTokensActionValues,
+      };
+    }
+    case ColonyActions.CreateDomain: {
+      const createDomainActionValues = await getCreateDomainActionValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...createDomainActionValues,
       };
     }
     default: {

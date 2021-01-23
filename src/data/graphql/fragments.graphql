@@ -76,8 +76,8 @@ fragment ColonyProfile on Colony {
 
 fragment DomainFields on Domain {
   id
-  color @client
-  description @client
+  color
+  description
   ethDomainId
   name
   ethParentDomainId
@@ -87,7 +87,7 @@ fragment FullColony on Colony {
   ...ColonyProfile
   ...Tokens
   isNativeTokenExternal
-  domains {
+  domains @client {
     ...DomainFields
   }
   roles @client {

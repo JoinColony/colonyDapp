@@ -17,9 +17,16 @@ import {
   ColonySubscribedUsersQuery,
   ColonySubscribedUsersQueryVariables,
   ColonySubscribedUsersDocument,
+  SubgraphDomainsQuery,
+  SubgraphDomainsQueryVariables,
+  SubgraphDomainsDocument,
+  SubgraphSingleDomainQuery,
+  SubgraphSingleDomainQueryVariables,
+  SubgraphSingleDomainDocument,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { Color } from '~core/ColorTag';
 
 import { getToken } from './token';
 import {
@@ -50,6 +57,7 @@ export const colonyResolvers = ({
   colonyManager,
   ens,
   apolloClient,
+  ipfs,
 }: Required<Context>): Resolvers => ({
   Query: {
     async colonyAddress(_, { name }) {
@@ -113,8 +121,78 @@ export const colonyResolvers = ({
         domainId,
       );
     },
+    async colonyDomain(_, { colonyAddress, domainId }) {
+      const { data } = await apolloClient.query<
+        SubgraphSingleDomainQuery,
+        SubgraphSingleDomainQueryVariables
+      >({
+        query: SubgraphSingleDomainDocument,
+        variables: {
+          /*
+           * Subgraph addresses are not checksummed
+           */
+          colonyAddress: colonyAddress.toLowerCase(),
+          domainId,
+        },
+        fetchPolicy: 'network-only',
+      });
+      if (data?.domains) {
+        const [singleDomain] = data.domains;
+        const lastMetadata = singleDomain.metadataHistory.slice(-1).pop();
+        const ipfsHash = singleDomain.metadata || lastMetadata?.metadata || '';
+        const metadataString = await ipfs.getString(ipfsHash as string);
+        const metadata = JSON.parse(metadataString || '{}');
+        return {
+          ...singleDomain,
+          ethDomainId: parseInt(singleDomain.domainChainId, 10),
+          ethParentDomainId: singleDomain.parent
+            ? parseInt(singleDomain.parent.domainChainId, 10)
+            : null,
+          name: metadata?.domainName || singleDomain.name,
+          color: parseInt(metadata?.domainColor || Color.LightPink, 10),
+          description: metadata?.domainPurpose || null,
+        };
+      }
+      return null;
+    },
   },
   Colony: {
+    async domains({ colonyAddress }) {
+      const { data } = await apolloClient.query<
+        SubgraphDomainsQuery,
+        SubgraphDomainsQueryVariables
+      >({
+        query: SubgraphDomainsDocument,
+        variables: {
+          /*
+           * Subgraph addresses are not checksummed
+           */
+          colonyAddress: colonyAddress.toLowerCase(),
+        },
+        fetchPolicy: 'network-only',
+      });
+      if (data?.domains) {
+        return Promise.all(
+          data.domains.map(async (domain) => {
+            const lastMetadata = domain.metadataHistory.slice(-1).pop();
+            const ipfsHash = domain.metadata || lastMetadata?.metadata || '';
+            const metadataString = await ipfs.getString(ipfsHash as string);
+            const metadata = JSON.parse(metadataString || '{}');
+            return {
+              ...domain,
+              ethDomainId: parseInt(domain.domainChainId, 10),
+              ethParentDomainId: domain.parent
+                ? parseInt(domain.parent.domainChainId, 10)
+                : null,
+              name: metadata?.domainName || domain.name,
+              color: parseInt(metadata?.domainColor || Color.LightPink, 10),
+              description: metadata?.domainPurpose || null,
+            };
+          }),
+        );
+      }
+      return [];
+    },
     async canMintNativeToken({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,

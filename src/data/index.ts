@@ -32,7 +32,6 @@ import {
   initialCache as loggedInUser,
 } from './resolvers/loggedInUser';
 import { colonyResolvers } from './resolvers/colony';
-import { domainResolvers } from './resolvers/domain';
 import { userResolvers } from './resolvers/user';
 import { tokenResolvers } from './resolvers/token';
 import { taskResolvers } from './resolvers/task';
@@ -57,7 +56,6 @@ export { default as cacheUpdates } from './cacheUpdates';
 export { default as typeDefs } from './graphql/typeDefs';
 export const resolvers: ResolverFactory[] = [
   colonyResolvers,
-  domainResolvers,
   loggedInUserResolvers,
   userResolvers,
   taskResolvers,
