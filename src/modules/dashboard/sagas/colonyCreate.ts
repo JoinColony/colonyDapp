@@ -41,6 +41,7 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
+import { ipfsUpload } from '../../core/sagas/ipfs';
 
 interface ChannelDefinition {
   channel: Channel<any>;
@@ -269,7 +270,7 @@ function* colonyCreate({
     if (createColony) {
       yield createGroupedTransaction(createColony, {
         context: ClientType.NetworkClient,
-        methodName: 'createColony(address,uint256,string)',
+        methodName: 'createColony(address,uint256,string,string)',
         ready: false,
       });
     }
@@ -388,11 +389,22 @@ function* colonyCreate({
     let colonyAddress = recoveryInfo && recoveryInfo.colonyAddress;
 
     if (createColony) {
+      const colonyMetadataIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          colonyName,
+          colonyDisplayName: displayName,
+          colonyAvatarHash: null,
+          colonyTokens: [],
+        }),
+      );
+
       yield put(
         transactionAddParams(createColony.id, [
           tokenAddress,
           ColonyVersion.CeruleanLightweightSpaceship,
           colonyName,
+          colonyMetadataIpfsHash,
         ]),
       );
       yield put(transactionReady(createColony.id));
@@ -420,10 +432,6 @@ function* colonyCreate({
     }
 
     if (!recoveryAddress || (recoveryInfo && !recoveryInfo.isProfileCreated)) {
-      /*
-       * @TODO Send a the colony metadata along with the create colony transaction
-       */
-
       if (createColony) {
         yield put(transactionLoadRelated(createColony.id, false));
       }

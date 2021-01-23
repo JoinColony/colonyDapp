@@ -64,6 +64,8 @@
     "transaction.NetworkClient.deployToken.description": "Create Token",
     "transaction.NetworkClient.createColony(address,uint256,string).title": "Create Colony",
     "transaction.NetworkClient.createColony(address,uint256,string).description": "Create Colony",
+    "transaction.NetworkClient.createColony(address,uint256,string,string).title": "Create Colony",
+    "transaction.NetworkClient.createColony(address,uint256,string,string).description": "Create Colony",
     "transaction.ColonyClient.registerColonyLabel.title": "Create Colony Name",
     "transaction.ColonyClient.registerColonyLabel.description": "Create Colony Name",
     "transaction.ColonyClient.deployTokenAuthority.title": "Deploy Token Authority",

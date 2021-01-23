@@ -905,7 +905,7 @@ function* editColonyAction({
       JSON.stringify({
         colonyName,
         colonyDisplayName,
-        colonyAvatarHash: colonyAvatarImage ? colonyAvatarIpfsHash : undefined,
+        colonyAvatarHash: colonyAvatarImage ? colonyAvatarIpfsHash : null,
         /*
          * @TODO This needs to **not** overwrite the current tokens list
          * But this can be done only after we fetch the colony's data from the
