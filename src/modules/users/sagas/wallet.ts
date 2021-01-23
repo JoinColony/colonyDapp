@@ -7,9 +7,9 @@ import {
   open as purserOpenSoftwareWallet,
 } from '@purser/software';
 import {
-  accountChangeHook,
   open as purserOpenMetaMaskWallet,
-  MetaMaskInpageProvider,
+  accountChangeHook,
+  chainChangeHook,
 } from '@purser/metamask';
 
 import { WalletMethod } from '~immutable/index';
@@ -22,18 +22,21 @@ import { createAddress } from '~utils/web3';
  */
 function* metaMaskWatch(walletAddress: Address) {
   const channel = eventChannel((emit) => {
-    accountChangeHook(({ selectedAddress }: MetaMaskInpageProvider) => {
-      if (selectedAddress) emit(createAddress(selectedAddress));
-    });
-    return () => {
-      // @todo Nicer unsubscribe once supported in purser-metamask
-      // @ts-ignore
-      if (window.web3) {
-        // @ts-ignore
-        // eslint-disable-next-line no-underscore-dangle
-        window.web3.currentProvider.publicConfigStore._events.update.pop();
+    accountChangeHook((addresses): void => {
+      const [selectedAddress] = addresses;
+      if (selectedAddress) {
+        return emit(createAddress(selectedAddress));
       }
-    };
+      return undefined;
+    });
+    return () => null;
+  });
+  /*
+   * @TODO Make this smart at some point by allowing the chain to change
+   * w/o needing to refresh the page
+   */
+  chainChangeHook((): void => {
+    return window.location.reload();
   });
   let previousAddress = walletAddress;
   while (true) {

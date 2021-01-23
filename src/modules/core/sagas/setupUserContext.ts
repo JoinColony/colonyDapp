@@ -90,9 +90,9 @@ export default function* setupUserContext(
     const walletAddress = createAddress(wallet.address);
     let walletNetworkId = '1';
     // @ts-ignore
-    if (window.web3) {
+    if (window.ethereum) {
       // @ts-ignore
-      walletNetworkId = window.web3.version.network;
+      walletNetworkId = window.ethereum.networkVersion;
     }
     /*
      * @NOTE Detecting Ganache via it's network id is a bit iffy
