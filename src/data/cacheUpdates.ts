@@ -23,6 +23,7 @@ import {
   ProcessedColonyQueryVariables,
   ProcessedColonyDocument,
 } from './generated';
+import { ContextModule, TEMP_getContext } from '~context/index';
 
 type Cache = typeof apolloCache;
 
@@ -184,7 +185,8 @@ const cacheUpdates = {
     };
   },
   subscribeToColony(colonyAddress: Address) {
-    return (cache: Cache, { data }: SubscribeToColonyMutationResult) => {
+    return async (cache: Cache, { data }: SubscribeToColonyMutationResult) => {
+      const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
       /*
        * Update the list of subscribed user, with reputation, but only for the
        * "All Domains" selection
@@ -257,15 +259,29 @@ const cacheUpdates = {
               user: { processedColonies },
               user,
             } = cacheData;
-            const newlySubscribedColony = cache.readQuery<
-              ProcessedColonyQuery,
-              ProcessedColonyQueryVariables
-            >({
-              query: ProcessedColonyDocument,
-              variables: {
-                address: colonyAddress,
-              },
-            });
+            let newlySubscribedColony;
+            try {
+              newlySubscribedColony = cache.readQuery<
+                ProcessedColonyQuery,
+                ProcessedColonyQueryVariables
+              >({
+                query: ProcessedColonyDocument,
+                variables: {
+                  address: colonyAddress,
+                },
+              });
+            } catch (error) {
+              const newColonyQuery = await apolloClient.query<
+                ProcessedColonyQuery,
+                ProcessedColonyQueryVariables
+              >({
+                query: ProcessedColonyDocument,
+                variables: {
+                  address: colonyAddress,
+                },
+              });
+              newlySubscribedColony = newColonyQuery?.data;
+            }
             if (newlySubscribedColony?.processedColony) {
               const updatedSubscribedColonies = [
                 ...processedColonies,

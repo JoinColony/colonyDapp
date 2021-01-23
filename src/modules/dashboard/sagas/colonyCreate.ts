@@ -27,6 +27,7 @@ import {
   SubscribeToColonyDocument,
   SubscribeToColonyMutation,
   SubscribeToColonyMutationVariables,
+  cacheUpdates,
 } from '~data/index';
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
@@ -436,28 +437,6 @@ function* colonyCreate({
         yield put(transactionLoadRelated(createColony.id, false));
       }
     }
-
-    /*
-     * Manually subscribe the user to the colony
-     *
-     * @NOTE That this just subscribes the user to a particular address, as we
-     * don't have the capability any more, to check if that address is a valid
-     * colony, on the server side
-     *
-     * However, we do know that his colony actually exists, since we just
-     * created it :)
-     */
-
-    yield apolloClient.mutate<
-      SubscribeToColonyMutation,
-      SubscribeToColonyMutationVariables
-    >({
-      mutation: SubscribeToColonyDocument,
-      variables: {
-        input: { colonyAddress },
-      },
-    });
-
     /*
      * Add a colonyAddress identifier to all pending transactions.
      */
@@ -559,6 +538,38 @@ function* colonyCreate({
         setOneTxRoleFunding.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
+
+      /*
+       * Manually subscribe the user to the colony
+       *
+       * @NOTE That this just subscribes the user to a particular address, as we
+       * don't have the capability any more, to check if that address is a valid
+       * colony, on the server side
+       *
+       * However, we do know that his colony actually exists, since we just
+       * created it, but be **WARNED** that his is race condition!!
+       *
+       * We just skirt around it by calling this mutation after the whole batch
+       * of transactions have been sent, assuming that by that time, the subgraph
+       * had time to ingest the new block in which the colony was created.
+       *
+       * However, due to various network conditions, this might not be case, and
+       * the colony might not exist still.
+       *
+       * It's not a super-huge deal breaker, as a page refresh will solve it,
+       * and the colony is still usable, just that it doesn't provide _that_
+       * nice of a user experience.
+       */
+      yield apolloClient.mutate<
+        SubscribeToColonyMutation,
+        SubscribeToColonyMutationVariables
+      >({
+        mutation: SubscribeToColonyDocument,
+        variables: {
+          input: { colonyAddress },
+        },
+        update: cacheUpdates.subscribeToColony(colonyAddress),
+      });
     }
     return null;
   } catch (error) {
