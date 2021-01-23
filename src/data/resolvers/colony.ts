@@ -72,6 +72,7 @@ export const getProcessedColony = async (
   let displayName: string | null = null;
   let avatarURL: string | null = null;
   let avatarHash: string | null = null;
+  let tokenAddresses: Array<Address> = [];
 
   const prevIpfsHash = metadataHistory.slice(-1).pop();
   const ipfsHash = metadata || prevIpfsHash?.metadata || null;
@@ -93,11 +94,14 @@ export const getProcessedColony = async (
 
   try {
     if (ipfsMetadata) {
-      const { colonyDisplayName = null, colonyAvatarHash = null } = JSON.parse(
-        ipfsMetadata,
-      );
+      const {
+        colonyDisplayName = null,
+        colonyAvatarHash = null,
+        colonyTokens = [],
+      } = JSON.parse(ipfsMetadata);
       displayName = colonyDisplayName;
       avatarHash = colonyAvatarHash;
+      tokenAddresses = colonyTokens;
 
       /*
        * Fetch the colony's avatar
@@ -135,7 +139,7 @@ export const getProcessedColony = async (
       ? createAddress(token.tokenAddress)
       : null,
     tokenAddresses: token?.tokenAddress
-      ? [createAddress(token.tokenAddress)]
+      ? [...tokenAddresses, token.tokenAddress].map(createAddress)
       : [],
   };
 };
@@ -400,11 +404,18 @@ export const colonyResolvers = ({
       _,
       { client },
     ) {
-      return Promise.all(
-        ['0x0', ...tokenAddresses].map((tokenAddress) =>
-          getToken({ colonyManager, client }, tokenAddress),
-        ),
+      const tokens = await Promise.all(
+        ['0x0', ...tokenAddresses].map(async (tokenAddress) => {
+          try {
+            return getToken({ colonyManager, client }, tokenAddress);
+          } catch (error) {
+            console.error('Could not fetch Colony token:', tokenAddress);
+            console.error(error);
+            return undefined;
+          }
+        }),
       );
+      return tokens.filter((token) => !!token);
     },
     async canUnlockNativeToken({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
