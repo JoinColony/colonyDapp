@@ -131,14 +131,29 @@ export const getActionsListData = (
    */
   return formattedActions.filter(
     ({ initiator, actionType }: FormattedAction) => {
-      const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-      if (
-        colonyManager?.networkClient &&
-        actionType === ColonyActions.ColonyEdit
-      ) {
-        return initiator !== colonyManager.networkClient.address.toLowerCase();
+      /*
+       * @NOTE This is wrapped inside a try/catch block since if the user logs out,
+       * for a brief moment the colony manager won't exist
+       *
+       * If that's at the same time as this filter runs, it will error out, so we
+       * prevent that by just returning an empty list
+       *
+       * How I **hate** race conditions
+       */
+      try {
+        const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+        if (
+          colonyManager?.networkClient &&
+          actionType === ColonyActions.ColonyEdit
+        ) {
+          return (
+            initiator !== colonyManager.networkClient.address.toLowerCase()
+          );
+        }
+        return true;
+      } catch (error) {
+        return false;
       }
-      return true;
     },
   );
 };
