@@ -249,7 +249,9 @@ query UserColonyAddresses($address: String!) {
   }
 }
 
-# Change to tempDomain -- needs server counterpart
+#
+# @TODO Replace with subgraph domain
+#
 query TempDomain($colonyAddress: String!, $ethDomainId: Int!) {
   tempDomain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
     id
@@ -259,6 +261,9 @@ query TempDomain($colonyAddress: String!, $ethDomainId: Int!) {
   }
 }
 
+#
+# @TODO Replace with subgraph domain
+#
 query TempDomains($colonyAddress: String!) {
   tempDomains(colonyAddress: $colonyAddress) {
     id
@@ -400,7 +405,13 @@ query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
       }
     }
   }
-  events(where: { associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)"] }) {
+  events(where: {
+    associatedColony_contains: $colonyAddress,
+    name_in: [
+      "TokensMinted(address,address,uint256)",
+      "DomainAdded(address,uint256)",
+      "ColonyMetadata(address,string)"
+    ] }) {
     id
     transaction {
       hash: id
