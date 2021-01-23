@@ -175,6 +175,7 @@ export default gql`
 
   input ByColonyFilter {
     colonyAddress: String!
+    domainChainId: Int
   }
 
   type SubgraphBlock {

@@ -167,7 +167,7 @@ const InboxItem = ({
   const colonyName = colonyNameData && colonyNameData.colonyName;
   const token = tokenData && tokenData.token;
   const taskTitle = taskData && taskData.task && taskData.task.title;
-  const domainName = domainData && domainData.colonyDomain.name;
+  const domainName = domainData?.colonyDomain?.name;
 
   return (
     <TableRow onClick={markAsRead}>

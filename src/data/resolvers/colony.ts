@@ -62,19 +62,28 @@ export const getProcessedColony = async (
   colonyAddress: Address,
   ipfs: IPFSNode,
 ) => {
-  const { colonyChainId, ensName, metadata, token } = subgraphColony;
+  const {
+    colonyChainId,
+    ensName,
+    metadata,
+    token,
+    metadataHistory = [],
+  } = subgraphColony;
   let displayName: string | null = null;
   let avatarURL: string | null = null;
   let avatarHash: string | null = null;
+
+  const prevIpfsHash = metadataHistory.slice(-1).pop();
+  const ipfsHash = metadata || prevIpfsHash?.metadata || null;
 
   /*
    * Fetch the colony's metadata
    */
   let ipfsMetadata: string | null = null;
   try {
-    ipfsMetadata = await ipfs.getString(metadata);
+    ipfsMetadata = await ipfs.getString(ipfsHash);
   } catch (error) {
-    console.error('Could not fetch colony metadata', metadata);
+    console.error('Could not fetch colony metadata', ipfsHash);
   }
 
   if (ipfsMetadata) {
@@ -114,7 +123,7 @@ export const getProcessedColony = async (
 export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
   const {
     metadata,
-    metadataHistory,
+    metadataHistory = [],
     id,
     domainChainId,
     parent,
