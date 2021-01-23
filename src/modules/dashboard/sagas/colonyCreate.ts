@@ -24,6 +24,9 @@ import {
   CreateUserMutation,
   CreateUserDocument,
   CreateUserMutationVariables,
+  SubscribeToColonyDocument,
+  SubscribeToColonyMutation,
+  SubscribeToColonyMutationVariables,
 } from '~data/index';
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
@@ -425,6 +428,27 @@ function* colonyCreate({
         yield put(transactionLoadRelated(createColony.id, false));
       }
     }
+
+    /*
+     * Manually subscribe the user to the colony
+     *
+     * @NOTE That this just subscribes the user to a particular address, as we
+     * don't have the capability any more, to check if that address is a valid
+     * colony, on the server side
+     *
+     * However, we do know that his colony actually exists, since we just
+     * created it :)
+     */
+
+    yield apolloClient.mutate<
+      SubscribeToColonyMutation,
+      SubscribeToColonyMutationVariables
+    >({
+      mutation: SubscribeToColonyDocument,
+      variables: {
+        input: { colonyAddress },
+      },
+    });
 
     /*
      * Add a colonyAddress identifier to all pending transactions.
