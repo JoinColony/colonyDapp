@@ -1,7 +1,9 @@
+import { bigNumberify } from 'ethers/utils';
+import { ClientType } from '@colony/colony-js';
+
 import { TaskDocument, TaskQuery, TaskQueryVariables } from '~data/index';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
-
 import apolloCache from './cache';
 import {
   ColonySubscribedUsersDocument,
@@ -419,6 +421,50 @@ const cacheUpdates = {
       } catch (e) {
         log.verbose(e);
         log.verbose('Not updating store - task not loaded yet');
+      }
+    };
+  },
+  setCanMintNativeToken() {
+    return async (cache: Cache) => {
+      try {
+        const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+        const [
+          colonyAddress,
+        ] = colonyManager.colonyClients.entries().next().value;
+        const colonyClient = await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        );
+        let canMintNativeToken = true;
+        try {
+          await colonyClient.estimate.mintTokens(bigNumberify(1));
+        } catch (error) {
+          canMintNativeToken = false;
+        }
+
+        const data = cache.readQuery<
+          ProcessedColonyQuery,
+          ProcessedColonyQueryVariables
+        >({
+          query: ProcessedColonyDocument,
+          variables: {
+            address: colonyAddress,
+          },
+        });
+
+        if (data?.processedColony) {
+          cache.modify({
+            id: cache.identify(data.processedColony),
+            fields: {
+              canMintNativeToken: () => canMintNativeToken,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose(
+          'Not updating store - processed colony cache not loaded yet',
+        );
       }
     };
   },
