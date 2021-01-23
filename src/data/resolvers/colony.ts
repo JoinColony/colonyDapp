@@ -118,9 +118,9 @@ export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
     id,
     domainChainId,
     parent,
-    domainName,
+    name: domainName,
   } = subgraphDomain;
-  let name: string | null = domainName;
+  let name: string | null = null;
   let color: string | null = null;
   let description: string | null = null;
 
@@ -150,12 +150,13 @@ export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
   }
 
   return {
+    __typename: 'ProcessedDomain',
     id,
     ethDomainId: parseInt(domainChainId, 10),
     ethParentDomainId: parent?.domainChainId
       ? parseInt(parent.domainChainId, 10)
       : null,
-    name,
+    name: name || domainName,
     color: color ? parseInt(color, 10) : Color.LightPink,
     description,
   };

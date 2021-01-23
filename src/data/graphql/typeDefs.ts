@@ -112,15 +112,6 @@ export default gql`
     domainId: String
   }
 
-  extend type Domain {
-    id: String!
-    color: Int!
-    description: String!
-    ethDomainId: Int!
-    name: String!
-    ethParentDomainId: Int!
-  }
-
   extend type TaskPayout {
     token: Token!
   }
@@ -145,7 +136,7 @@ export default gql`
       colonyAddress: String!
       domainId: Int
     ): [String!]
-    colonyDomain(colonyAddress: String!, domainId: Int!): Domain!
+    colonyDomain(colonyAddress: String!, domainId: Int!): ProcessedDomain!
     token(address: String!): Token!
     tokens(addresses: [String!]): [Token!]!
     userAddress(name: String!): String!
@@ -184,7 +175,6 @@ export default gql`
 
   input ByColonyFilter {
     colonyAddress: String!
-    domainChainId: Int
   }
 
   type SubgraphBlock {

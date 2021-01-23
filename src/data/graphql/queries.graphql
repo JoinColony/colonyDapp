@@ -425,24 +425,6 @@ query SubgraphDomains($colonyAddress: String!) {
   }
 }
 
-query SubgraphSingleDomain($colonyAddress: String!, $domainId: Int!) {
-  domains(where: { colonyAddress: $colonyAddress, domainChainId: $domainId }) {
-    id
-    domainChainId
-    parent {
-      id
-      domainChainId
-    }
-    name
-    colonyAddress
-    metadata
-    metadataHistory {
-      id
-      metadata
-    }
-  }
-}
-
 query ColonyName($address: String!) {
   colonyName(address: $address) @client
 }
@@ -492,6 +474,12 @@ query ColonyDomains($colonyAddress: String!) {
     domains @client {
       ...DomainFields
     }
+  }
+}
+
+query ColonySingleDomain($colonyAddress: String!, $domainId: Int!) {
+  colonyDomain(colonyAddress: $colonyAddress, domainId: $domainId) @client {
+    ...DomainFields
   }
 }
 
