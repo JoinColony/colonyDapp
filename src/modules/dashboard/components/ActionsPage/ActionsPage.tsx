@@ -184,7 +184,8 @@ const ActionsPage = () => {
     loading: loadingFallbackFromDomain,
   } = useColonySingleDomainQuery({
     variables: {
-      colonyAddress: colonyData?.colony.colonyAddress.toLowerCase() || '',
+      colonyAddress:
+        colonyData?.processedColony.colonyAddress.toLowerCase() || '',
       domainId: colonyActionData?.colonyAction?.fromDomain || 0,
     },
   });
@@ -193,7 +194,8 @@ const ActionsPage = () => {
     loading: loadingFallbackToDomain,
   } = useColonySingleDomainQuery({
     variables: {
-      colonyAddress: colonyData?.colony.colonyAddress.toLowerCase() || '',
+      colonyAddress:
+        colonyData?.processedColony.colonyAddress.toLowerCase() || '',
       domainId: colonyActionData?.colonyAction?.toDomain || 0,
     },
   });

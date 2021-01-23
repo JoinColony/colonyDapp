@@ -268,13 +268,16 @@ const getCreateDomainActionValues = async (
   ) as ProcessedEvent;
 
   const {
+    address,
     values: { agent },
   } = domainAddedEvent;
 
   const domainAction: {
+    address: Address;
     fromDomain: number;
     actionInitiator?: string;
   } = {
+    address,
     fromDomain: parseInt(domainAddedEvent.values.domainId.toString(), 10),
   };
   if (agent) {
