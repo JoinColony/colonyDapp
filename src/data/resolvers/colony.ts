@@ -26,9 +26,6 @@ import {
   SubgraphColonyQuery,
   SubgraphColonyQueryVariables,
   SubgraphColonyDocument,
-  TempDomainsQuery,
-  TempDomainsQueryVariables,
-  TempDomainsDocument,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
 import IPFSNode from '~lib/ipfs';
@@ -66,9 +63,9 @@ export const getProcessedColony = async (
   ipfs: IPFSNode,
 ) => {
   const { colonyChainId, ensName, metadata, token } = subgraphColony;
-  let displayName = null;
-  let avatarURL = null;
-  let avatarHash = null;
+  let displayName: string | null = null;
+  let avatarURL: string | null = null;
+  let avatarHash: string | null = null;
 
   /*
    * Fetch the colony's metadata
@@ -90,10 +87,10 @@ export const getProcessedColony = async (
     /*
      * Fetch the colony's avatar
      */
-    const ipfsAvatar = await ipfs.getString(colonyAvatarHash);
-    if (ipfsAvatar) {
-      const colonyAvatar = JSON.parse(ipfsAvatar || '');
-      avatarURL = colonyAvatar;
+    try {
+      avatarURL = await ipfs.getString(colonyAvatarHash);
+    } catch (error) {
+      console.error('Could not fetch colony avatar', avatarURL);
     }
   }
 
@@ -111,6 +108,56 @@ export const getProcessedColony = async (
     tokenAddresses: token?.tokenAddress
       ? [createAddress(token.tokenAddress)]
       : [],
+  };
+};
+
+export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
+  const {
+    metadata,
+    metadataHistory,
+    id,
+    domainChainId,
+    parent,
+    domainName,
+  } = subgraphDomain;
+  let name: string | null = domainName;
+  let color: string | null = null;
+  let description: string | null = null;
+
+  const prevIpfsHash = metadataHistory.slice(-1).pop();
+  const ipfsHash = metadata || prevIpfsHash?.metadata || null;
+
+  /*
+   * Fetch the domains's metadata
+   */
+  let ipfsMetadata: string | null = null;
+  try {
+    ipfsMetadata = await ipfs.getString(ipfsHash);
+  } catch (error) {
+    console.error('Could not fetch domain metadata', ipfsHash);
+  }
+
+  if (ipfsMetadata) {
+    const {
+      domainName: metadataDomainName = null,
+      domainColor = null,
+      domainPurpose = null,
+    } = JSON.parse(ipfsMetadata || '{}');
+
+    name = metadataDomainName;
+    color = domainColor;
+    description = domainPurpose;
+  }
+
+  return {
+    id,
+    ethDomainId: parseInt(domainChainId, 10),
+    ethParentDomainId: parent?.domainChainId
+      ? parseInt(parent.domainChainId, 10)
+      : null,
+    name,
+    color: color ? parseInt(color, 10) : Color.LightPink,
+    description,
   };
 };
 
@@ -205,24 +252,10 @@ export const colonyResolvers = ({
       });
       if (data?.domains) {
         const [singleDomain] = data.domains;
-        const lastMetadata = singleDomain.metadataHistory.slice(-1).pop();
-        const ipfsHash = singleDomain.metadata || lastMetadata?.metadata || '';
-        const metadataString = await ipfs.getString(ipfsHash as string);
-        const metadata = JSON.parse(metadataString || '{}');
-        return {
-          ...singleDomain,
-          ethDomainId: parseInt(singleDomain.domainChainId, 10),
-          ethParentDomainId: singleDomain.parent
-            ? parseInt(singleDomain.parent.domainChainId, 10)
-            : null,
-          name: metadata?.domainName || singleDomain.name,
-          color: parseInt(metadata?.domainColor || Color.LightPink, 10),
-          description: metadata?.domainPurpose || null,
-        };
+        return singleDomain ? getProcessedDomain(singleDomain, ipfs) : null;
       }
       return null;
     },
-    // eslint-disable-next-line consistent-return
     async processedColony(_, { address }) {
       try {
         const { data } = await apolloClient.query<
@@ -247,69 +280,32 @@ export const colonyResolvers = ({
           : null;
       } catch (error) {
         console.error(error);
-        return {};
+        return null;
       }
     },
   },
   ProcessedColony: {
-    // These are the domains coming from the subgraph
-    async domains({ colonyAddress }) {
-      const 
-      const { data } = await apolloClient.query<
-        SubgraphDomainsQuery,
-        SubgraphDomainsQueryVariables
-      >({
-        query: SubgraphDomainsDocument,
-        variables: {
-          /*
-           * Subgraph addresses are not checksummed
-           */
-          colonyAddress: colonyAddress.toLowerCase(),
-        },
-        fetchPolicy: 'network-only',
-      });
-      if (data?.domains) {
-        return Promise.all(
-          data.domains.map(async (domain) => {
-            const lastMetadata = domain.metadataHistory.slice(-1).pop();
-            const ipfsHash = domain.metadata || lastMetadata?.metadata || '';
-            const metadataString = await ipfs.getString(ipfsHash as string);
-            const metadata = JSON.parse(metadataString || '{}');
-            return {
-              ...domain,
-              ethDomainId: parseInt(domain.domainChainId, 10),
-              ethParentDomainId: domain.parent
-                ? parseInt(domain.parent.domainChainId, 10)
-                : null,
-              name: metadata?.domainName || domain.name,
-              color: parseInt(metadata?.domainColor || Color.LightPink, 10),
-              description: metadata?.domainPurpose || null,
-            };
-          }),
-        );
-      }
-      return null;
-    },
-    // eslint-disable-next-line consistent-return
     async domains({ colonyAddress }) {
       try {
         const { data } = await apolloClient.query<
-          TempDomainsQuery,
-          TempDomainsQueryVariables
+          SubgraphDomainsQuery,
+          SubgraphDomainsQueryVariables
         >({
-          query: TempDomainsDocument,
+          query: SubgraphDomainsDocument,
           variables: {
-            colonyAddress,
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
-        if (data?.tempDomains) {
-          return data.tempDomains.map((domain) => ({
-            ...domain,
-            __typename: 'ProcessedDomain',
-            color: 0,
-            description: null,
-          }));
+        if (data?.domains) {
+          return Promise.all(
+            data.domains.map(async (domain) =>
+              getProcessedDomain(domain, ipfs),
+            ),
+          );
         }
         return null;
       } catch (error) {

@@ -1806,21 +1806,6 @@ export type UserColonyAddressesQueryVariables = Exact<{
 
 export type UserColonyAddressesQuery = { user: Pick<User, 'id' | 'colonyAddresses'> };
 
-export type TempDomainQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-}>;
-
-
-export type TempDomainQuery = { tempDomain: Pick<TempDomain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'> };
-
-export type TempDomainsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type TempDomainsQuery = { tempDomains: Array<Pick<TempDomain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> };
-
 export type TokenQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -4055,79 +4040,6 @@ export function useUserColonyAddressesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type UserColonyAddressesQueryHookResult = ReturnType<typeof useUserColonyAddressesQuery>;
 export type UserColonyAddressesLazyQueryHookResult = ReturnType<typeof useUserColonyAddressesLazyQuery>;
 export type UserColonyAddressesQueryResult = Apollo.QueryResult<UserColonyAddressesQuery, UserColonyAddressesQueryVariables>;
-export const TempDomainDocument = gql`
-    query TempDomain($colonyAddress: String!, $ethDomainId: Int!) {
-  tempDomain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
-    id
-    ethDomainId
-    name
-    ethParentDomainId
-  }
-}
-    `;
-
-/**
- * __useTempDomainQuery__
- *
- * To run a query within a React component, call `useTempDomainQuery` and pass it any options that fit your needs.
- * When your component renders, `useTempDomainQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTempDomainQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      ethDomainId: // value for 'ethDomainId'
- *   },
- * });
- */
-export function useTempDomainQuery(baseOptions?: Apollo.QueryHookOptions<TempDomainQuery, TempDomainQueryVariables>) {
-        return Apollo.useQuery<TempDomainQuery, TempDomainQueryVariables>(TempDomainDocument, baseOptions);
-      }
-export function useTempDomainLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TempDomainQuery, TempDomainQueryVariables>) {
-          return Apollo.useLazyQuery<TempDomainQuery, TempDomainQueryVariables>(TempDomainDocument, baseOptions);
-        }
-export type TempDomainQueryHookResult = ReturnType<typeof useTempDomainQuery>;
-export type TempDomainLazyQueryHookResult = ReturnType<typeof useTempDomainLazyQuery>;
-export type TempDomainQueryResult = Apollo.QueryResult<TempDomainQuery, TempDomainQueryVariables>;
-export const TempDomainsDocument = gql`
-    query TempDomains($colonyAddress: String!) {
-  tempDomains(colonyAddress: $colonyAddress) {
-    id
-    ethDomainId
-    name
-    ethParentDomainId
-  }
-}
-    `;
-
-/**
- * __useTempDomainsQuery__
- *
- * To run a query within a React component, call `useTempDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTempDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTempDomainsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useTempDomainsQuery(baseOptions?: Apollo.QueryHookOptions<TempDomainsQuery, TempDomainsQueryVariables>) {
-        return Apollo.useQuery<TempDomainsQuery, TempDomainsQueryVariables>(TempDomainsDocument, baseOptions);
-      }
-export function useTempDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TempDomainsQuery, TempDomainsQueryVariables>) {
-          return Apollo.useLazyQuery<TempDomainsQuery, TempDomainsQueryVariables>(TempDomainsDocument, baseOptions);
-        }
-export type TempDomainsQueryHookResult = ReturnType<typeof useTempDomainsQuery>;
-export type TempDomainsLazyQueryHookResult = ReturnType<typeof useTempDomainsLazyQuery>;
-export type TempDomainsQueryResult = Apollo.QueryResult<TempDomainsQuery, TempDomainsQueryVariables>;
 export const TokenDocument = gql`
     query Token($address: String!) {
   token(address: $address) @client {

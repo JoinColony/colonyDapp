@@ -58,21 +58,21 @@ fragment Tokens on ProcessedColony {
 }
 
 fragment DomainFields on ProcessedDomain {
-    id
-    color
-    description
-    ethDomainId
-    name
-    ethParentDomainId
+  id
+  color
+  description
+  ethDomainId
+  name
+  ethParentDomainId
 }
 
 fragment ColonyProfile on ProcessedColony {
-    id
-    colonyAddress
-    colonyName
-    displayName
-    avatarHash,
-    avatarURL
+  id
+  colonyAddress
+  colonyName
+  displayName
+  avatarHash,
+  avatarURL
 }
 
 fragment FullColony on ProcessedColony {
