@@ -66,6 +66,7 @@ export type ColonyActionsActionTypes =
         colonyName: string;
         colonyDisplayName: string;
         colonyAvatarImage?: string;
+        colonyTokens?: Address[];
         annotationMessage?: string;
         /*
          * @TODO I think this will also store the subscribed-to tokens list

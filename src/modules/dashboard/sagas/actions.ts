@@ -870,6 +870,7 @@ function* editColonyAction({
     colonyName,
     colonyDisplayName,
     colonyAvatarImage,
+    colonyTokens = [],
     annotationMessage,
   },
   meta: { id: metaId, history },
@@ -878,10 +879,11 @@ function* editColonyAction({
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
     /*
      * Validate the required values for the payment
      */
-    if (!colonyDisplayName) {
+    if (!colonyDisplayName && !colonyTokens) {
       throw new Error('A colony name is required in order to edit the colony');
     }
 
@@ -906,12 +908,7 @@ function* editColonyAction({
         colonyName,
         colonyDisplayName,
         colonyAvatarHash: colonyAvatarImage ? colonyAvatarIpfsHash : null,
-        /*
-         * @TODO This needs to **not** overwrite the current tokens list
-         * But this can be done only after we fetch the colony's data from the
-         * subgraph
-         */
-        colonyTokens: [],
+        colonyTokens,
       }),
     );
 
