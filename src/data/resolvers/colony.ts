@@ -73,7 +73,13 @@ export const getProcessedColony = async (
   /*
    * Fetch the colony's metadata
    */
-  const ipfsMetadata = await ipfs.getString(metadata);
+  let ipfsMetadata: string | null = null;
+  try {
+    ipfsMetadata = await ipfs.getString(metadata);
+  } catch (error) {
+    console.error('Could not fetch colony metadata', metadata);
+  }
+
   if (ipfsMetadata) {
     const { colonyDisplayName = null, colonyAvatarHash = null } = JSON.parse(
       ipfsMetadata || '{}',
