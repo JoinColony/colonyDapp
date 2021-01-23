@@ -456,6 +456,11 @@ const cacheUpdates = {
           cache.modify({
             id: cache.identify(data.processedColony),
             fields: {
+              /*
+               * @TODO Most likely we'll have to do this cache update for
+               * the `canUnlockNativeToken`  and `isNativeTokenLocked`
+               * fields at some point
+               */
               canMintNativeToken: () => canMintNativeToken,
             },
           });
