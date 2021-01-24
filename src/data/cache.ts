@@ -38,5 +38,12 @@ export default new InMemoryCache({
         },
       },
     },
+    Event: {
+      fields: {
+        associatedColony: {
+          merge: false,
+        },
+      },
+    },
   },
 });
