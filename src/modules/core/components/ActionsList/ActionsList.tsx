@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Colony } from '~data/index';
-import { FormattedAction } from '~types/index';
 
 import ActionsListItem from './ActionsListItem';
 
@@ -15,12 +14,18 @@ export interface ClickHandlerProps {
 }
 
 interface Props {
-  items: FormattedAction[];
+  items;
   colony: Colony;
   handleItemClick?: (handlerProps: ClickHandlerProps) => void;
+  messageDescriptorId?: string;
 }
 
-const ActionsList = ({ items, handleItemClick, colony }: Props) => (
+const ActionsList = ({
+  items,
+  handleItemClick,
+  colony,
+  messageDescriptorId = 'action.title',
+}: Props) => (
   <ul className={styles.main}>
     {items.map((item) => (
       <ActionsListItem
@@ -28,6 +33,7 @@ const ActionsList = ({ items, handleItemClick, colony }: Props) => (
         item={item}
         handleOnClick={handleItemClick}
         colony={colony}
+        messageDescriptorId={messageDescriptorId}
       />
     ))}
   </ul>

@@ -7,6 +7,8 @@ import {
 } from 'react-intl';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
+
 import Numeral, { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
 import FriendlyName from '~core/FriendlyName';
@@ -15,7 +17,6 @@ import { getMainClasses, removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useUser, Colony } from '~data/index';
 import { createAddress } from '~utils/web3';
-import { FormattedAction } from '~types/index';
 
 import { ClickHandlerProps } from './ActionsList';
 
@@ -24,6 +25,7 @@ import styles, { popoverWidth, popoverDistance } from './ActionsListItem.css';
 const displayName = 'ActionsList.ActionsListItem';
 
 const UserAvatar = HookedUserAvatar();
+const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 const MSG = defineMessages({
   domain: {
@@ -45,28 +47,36 @@ export enum Status {
 }
 
 interface Props {
-  item: FormattedAction;
+  item;
   colony: Colony;
   handleOnClick?: (handlerProps: ClickHandlerProps) => void;
+  messageDescriptorId: string;
 }
 
 const ActionsListItem = ({
   item: {
     id,
     actionType,
+    eventName,
     initiator,
+    agent,
+    colonyAddress,
     recipient,
-    amount,
-    symbol,
-    decimals,
-    fromDomain: fromDomainId,
-    toDomain: toDomainId,
+    amount = '',
+    symbol = '',
+    decimals = '',
+    fromDomain: fromDomainId = '0',
+    toDomain: toDomainId = '0',
     transactionHash,
     createdAt,
     commentCount = 0,
+    displayValues = '',
+    values = {},
   },
   colony,
+  colony: { tokens, nativeTokenAddress },
   handleOnClick,
+  messageDescriptorId = 'action.title',
 }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
 
@@ -75,8 +85,16 @@ const ActionsListItem = ({
    * Address checksum / normalization needs to be fixed on the
    * subgraph side
    */
-  const initiatorUserProfile = useUser(createAddress(initiator));
-  const recipientAddress = createAddress(recipient);
+  const initiatorUserProfile = useUser(
+    initiator ? createAddress(initiator) : '',
+  );
+  const agentUserProfile = useUser(agent ? createAddress(agent) : '');
+  const eventRecipient = values?.recipient
+    ? createAddress(values.recipient)
+    : null;
+  const recipientAddress = recipient
+    ? createAddress(recipient)
+    : null || eventRecipient || colonyAddress;
   const isColonyAddress = recipientAddress === colony.colonyAddress;
   const fallbackRecipientProfile = useUser(
     isColonyAddress ? '' : recipientAddress,
@@ -93,6 +111,19 @@ const ActionsListItem = ({
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
     return [offsetSkid, removeValueUnits(popoverDistance)];
   }, []);
+
+  /*
+   * Maybe a better idea would be to fetch each single token. as that would be
+   * more robust, but it would also make the page more heavy
+   */
+  const eventToken = tokens.find(
+    ({ address }) =>
+      address === (values?.token ? createAddress(values?.token) : null),
+  );
+
+  const colonyNativeToken = tokens.find(
+    ({ address }) => address === nativeTokenAddress,
+  );
 
   const handleSyntheticEvent = useCallback(
     () => handleOnClick && handleOnClick({ id, transactionHash }),
@@ -124,7 +155,7 @@ const ActionsListItem = ({
         onKeyPress={handleSyntheticEvent}
       >
         <div className={styles.avatar}>
-          {initiator && (
+          {initiator && !agent && (
             <UserAvatar
               size="s"
               address={initiator}
@@ -145,19 +176,49 @@ const ActionsListItem = ({
               }}
             />
           )}
+          {agent && (
+            <UserAvatar
+              size="s"
+              address={agent}
+              user={agentUserProfile}
+              notSet={false}
+              showInfo
+              popperProps={{
+                showArrow: false,
+                placement: 'bottom',
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: popoverPlacement,
+                    },
+                  },
+                ],
+              }}
+            />
+          )}
+          {colonyAddress && !agent && !initiator && (
+            <ColonyAvatar size="s" colonyAddress={colonyAddress} />
+          )}
         </div>
         <div className={styles.content}>
           <div className={styles.title}>
             <FormattedMessage
-              id="action.title"
+              id={messageDescriptorId}
               values={{
                 actionType,
+                eventName,
                 initiator: (
                   <span className={styles.titleDecoration}>
                     <FriendlyName
                       user={initiatorUserProfile}
                       autoShrinkAddress
                     />
+                  </span>
+                ),
+                agent: (
+                  <span className={styles.titleDecoration}>
+                    <FriendlyName user={agentUserProfile} autoShrinkAddress />
                   </span>
                 ),
                 /*
@@ -174,14 +235,23 @@ const ActionsListItem = ({
                 ),
                 amount: (
                   <Numeral
-                    value={amount}
+                    value={
+                      amount || values?.amount || values?.payoutRemainder || 0
+                    }
                     unit={getTokenDecimalsWithFallback(decimals)}
                   />
                 ),
-                tokenSymbol: symbol,
+                tokenSymbol:
+                  symbol || eventToken?.symbol || colonyNativeToken?.symbol,
                 decimals: getTokenDecimalsWithFallback(decimals),
                 fromDomain: fromDomain?.name || '',
                 toDomain: toDomain?.name || '',
+                displayValues,
+                fundingPot: values?.fundingPotId,
+                metadata: values?.metadata || '',
+                transactionHash: values?.txHash || '',
+                tokenAddress: values?.token || '',
+                paymentId: values?.paymentId || '',
               }}
             />
           </div>
