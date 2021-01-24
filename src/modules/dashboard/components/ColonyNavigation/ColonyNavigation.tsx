@@ -49,13 +49,6 @@ const ColonyNavigation = () => {
         text: MSG.linkTextActions,
       },
       {
-        /*
-         * @NOTE Disabled until we find a way to fetch them from the
-         * subgraph. The current way of fetching them from chain is
-         * sub-optimal and slow
-         */
-        disabled: true,
-        extra: MSG.comingSoonMessage,
         linkTo: `/colony/${colonyName}/events`,
         showDot: hasNewEvents,
         text: MSG.linkTextEvents,
