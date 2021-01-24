@@ -25,7 +25,6 @@ const updateTokensAction = {
 
 const ColonyTokenManagementDialog = ({
   colony: {
-    tokens = [],
     colonyAddress,
     colonyName,
     displayName: colonyDisplayName,
@@ -61,10 +60,9 @@ const ColonyTokenManagementDialog = ({
     <TokenEditDialog
       cancel={cancel}
       close={close}
-      tokens={tokens}
+      colony={colony}
       updateTokens={updateTokens}
       tokensList={getTokenList}
-      nativeTokenAddress={colony.nativeTokenAddress}
     />
   );
 };

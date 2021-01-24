@@ -1,19 +1,26 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { FormikProps, FormikHelpers } from 'formik';
-
+import { ColonyRole } from '@colony/colony-js';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import * as yup from 'yup';
 import { AddressZero } from 'ethers/constants';
+import isEqual from 'lodash/isEqual';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { Form, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
-import { AnyToken, OneToken } from '~data/index';
-import { Address } from '~types/index';
-import { createAddress } from '~utils/web3';
 import Paragraph from '~core/Paragraph';
 import TokenSelector from '~dashboard/CreateColonyWizard/TokenSelector';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import PermissionsLabel from '~core/PermissionsLabel';
+
+import { AnyToken, OneToken, useLoggedInUser, Colony } from '~data/index';
+import { Address } from '~types/index';
+import { createAddress } from '~utils/web3';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '../../../transformers';
+import { hasRoot } from '../../../users/checks';
 
 import TokenItem from './TokenItem/index';
 
@@ -44,6 +51,11 @@ const MSG = defineMessages({
     id: 'core.TokenEditDialog.notListedToken',
     defaultMessage: `If token is not listed above, please add any ERC20 compatibile token contract address below.`,
   },
+  noPermission: {
+    id: 'core.TokenEditDialog.noPermission',
+    defaultMessage: `You do not have the {roleRequired} permission required
+      to take this action.`,
+  },
 });
 
 interface Props {
@@ -53,17 +65,14 @@ interface Props {
   }) => Promise<any>;
   cancel: () => void;
   close: () => void;
-  // Colony tokens
-  tokens: AnyToken[];
   // Token list from json file. Not supported on local env
   tokensList?: AnyToken[];
-  // Colony native token addresss
-  nativeTokenAddress?: Address;
+  colony: Colony;
 }
 
 interface FormValues {
   tokenAddress?: Address;
-  tokenAddresses?: Address[];
+  selectedTokenAddresses?: Address[];
   annotationMessage?: string;
 }
 
@@ -74,12 +83,14 @@ const validationSchema = yup.object({
 
 const TokenEditDialog = ({
   updateTokens,
-  tokens = [],
   cancel,
   close,
   tokensList = [],
-  nativeTokenAddress,
+  colony: { tokens = [], nativeTokenAddress, tokenAddresses },
+  colony,
 }: Props) => {
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
   const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
     false,
@@ -94,13 +105,27 @@ const TokenEditDialog = ({
     setTokenSelectorHasError(hasError);
   };
 
+  const hasTokensListChanged = ({
+    selectedTokenAddresses,
+    tokenAddress,
+  }: FormValues) =>
+    !!tokenAddress ||
+    !isEqual(
+      [AddressZero, ...tokenAddresses].sort(),
+      selectedTokenAddresses?.sort(),
+    );
+
   const handleSubmit = useCallback(
     async (
-      { tokenAddress, tokenAddresses = [], annotationMessage }: FormValues,
+      {
+        tokenAddress,
+        selectedTokenAddresses = [],
+        annotationMessage,
+      }: FormValues,
       { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
     ) => {
-      let addresses = tokenAddresses;
-      if (tokenAddress && !tokenAddresses.includes(tokenAddress)) {
+      let addresses = selectedTokenAddresses;
+      if (tokenAddress && !selectedTokenAddresses.includes(tokenAddress)) {
         addresses.push(tokenAddress);
       }
       addresses = [
@@ -130,15 +155,21 @@ const TokenEditDialog = ({
     [updateTokens, formatMessage, close, nativeTokenAddress],
   );
 
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const userHasPermissions = hasRegisteredProfile && hasRoot(allUserRoles);
+  const requiredRoles: ColonyRole[] = [ColonyRole.Root];
+
   const allTokens = useMemo(() => {
-    return [...tokens, ...tokensList].filter(
+    return [...tokens, ...(userHasPermissions ? tokensList : [])].filter(
       ({ address: firstTokenAddress }, index, mergedTokens) =>
         mergedTokens.findIndex(
           ({ address: secondTokenAddress }) =>
             secondTokenAddress === firstTokenAddress,
         ) === index,
     );
-  }, [tokens, tokensList]);
+  }, [tokens, tokensList, userHasPermissions]);
 
   return (
     <Dialog cancel={cancel}>
@@ -148,22 +179,22 @@ const TokenEditDialog = ({
           text={MSG.title}
         />
       </DialogSection>
+      {!userHasPermissions && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <PermissionRequiredInfo requiredRoles={requiredRoles} />
+        </DialogSection>
+      )}
       <Form
         initialValues={{
           tokenAddress: undefined,
-          tokenAddresses: tokens.map((token) => token.address),
+          selectedTokenAddresses: tokens.map((token) => token.address),
           annotationMessage: undefined,
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
         validateOnChange={false}
       >
-        {({
-          isSubmitting,
-          isValid,
-          dirty,
-          values,
-        }: FormikProps<FormValues>) => (
+        {({ isSubmitting, isValid, values }: FormikProps<FormValues>) => (
           <>
             <DialogSection appearance={{ theme: 'sidePadding' }}>
               {allTokens.length > 0 ? (
@@ -173,6 +204,7 @@ const TokenEditDialog = ({
                       key={token.address}
                       token={token}
                       disabled={
+                        !userHasPermissions ||
                         token.address === nativeTokenAddress ||
                         token.address === AddressZero
                       }
@@ -197,15 +229,35 @@ const TokenEditDialog = ({
                 tokenData={tokenData}
                 label={MSG.fieldLabel}
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}
+                disabled={!userHasPermissions}
               />
               <div className={styles.textarea}>
                 <Annotations
                   label={MSG.textareaLabel}
                   name="annotationMessage"
-                  // disabled={!userHasPermissions}
+                  disabled={!userHasPermissions}
                 />
               </div>
             </DialogSection>
+            {!userHasPermissions && (
+              <DialogSection appearance={{ theme: 'sidePadding' }}>
+                <div className={styles.noPermissionMessage}>
+                  <FormattedMessage
+                    {...MSG.noPermission}
+                    values={{
+                      roleRequired: (
+                        <PermissionsLabel
+                          permission={ColonyRole.Root}
+                          name={{
+                            id: `role.${ColonyRole.Root}`,
+                          }}
+                        />
+                      ),
+                    }}
+                  />
+                </div>
+              </DialogSection>
+            )}
             <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}
@@ -217,7 +269,10 @@ const TokenEditDialog = ({
                 text={{ id: 'button.confirm' }}
                 loading={isSubmitting}
                 disabled={
-                  !isValid || isSubmitting || !dirty || tokenSelectorHasError
+                  tokenSelectorHasError ||
+                  !isValid ||
+                  !userHasPermissions ||
+                  !hasTokensListChanged(values)
                 }
                 type="submit"
                 style={{ width: styles.wideButton }}
