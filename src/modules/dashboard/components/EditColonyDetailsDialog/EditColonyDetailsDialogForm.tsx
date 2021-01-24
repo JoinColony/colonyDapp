@@ -75,11 +75,11 @@ interface Props {
 const EditColonyDetailsDialogForm = ({
   back,
   colony,
-  colony: { colonyAddress, avatarHash },
+  colony: { colonyAddress, avatarHash, avatarURL, displayName },
   handleSubmit,
   isSubmitting,
   isValid,
-  values: { colonyAvatarImage },
+  values: { colonyAvatarImage, colonyDisplayName },
   setFieldValue,
 }: Props & FormikProps<FormValues>) => {
   const [showUploadedAvatar, setShowUploadedAvatar] = useState(false);
@@ -124,6 +124,9 @@ const EditColonyDetailsDialogForm = ({
   const handleFileReadError = async () => {
     setAvatarFileError(true);
   };
+
+  const canValuesBeUpdate = () =>
+    displayName !== colonyDisplayName || avatarURL || colonyAvatarImage;
 
   return (
     <>
@@ -247,7 +250,12 @@ const EditColonyDetailsDialogForm = ({
           text={{ id: 'button.confirm' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
-          disabled={!userHasPermission || !isValid || avatarFileError}
+          disabled={
+            !userHasPermission ||
+            !isValid ||
+            avatarFileError ||
+            !canValuesBeUpdate()
+          }
         />
       </DialogSection>
     </>

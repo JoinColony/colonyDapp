@@ -1,18 +1,22 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { nanoid } from 'nanoid';
 import findLastIndex from 'lodash/findLastIndex';
 
 import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
-import { ColonyAndExtensionsEvents, Address } from '~types/index';
+import { ColonyAndExtensionsEvents } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
-import { ColonyAction, useSubgraphColonyMetadataQuery } from '~data/index';
+import {
+  ColonyAction,
+  useSubgraphColonyMetadataQuery,
+  Colony,
+} from '~data/index';
 import {
   getSpecificActionValuesCheck,
   sortMetdataHistory,
@@ -46,7 +50,7 @@ interface Props {
   values?: EventValues;
   emmitedBy?: string;
   actionData: ColonyAction;
-  colonyAddress: Address;
+  colony: Colony;
 }
 
 const ActionsPageEvent = ({
@@ -56,7 +60,8 @@ const ActionsPageEvent = ({
   values,
   emmitedBy,
   actionData,
-  colonyAddress,
+  colony: { colonyAddress },
+  colony,
 }: Props) => {
   let metadataJSON;
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
@@ -81,6 +86,9 @@ const ActionsPageEvent = ({
     return eventsToIdsMap;
   });
 
+  /*
+   * @TODO Just fetch it from the colony
+   */
   const colonyMetadataHistory = useSubgraphColonyMetadataQuery({
     variables: {
       address: colonyAddress.toLowerCase(),
@@ -130,6 +138,12 @@ const ActionsPageEvent = ({
         if (prevMetdata) {
           setMetdataIpfsHash(prevMetdata.metadata);
           if (metadataJSON) {
+            /*
+             * If we have a metadata json, parse into the expected values and then
+             * compare them agains the ones from the current action
+             *
+             * This should be the default case for a colony with metadata history
+             */
             return getSpecificActionValuesCheck(
               eventName as ColonyAndExtensionsEvents,
               actionData,
@@ -139,7 +153,8 @@ const ActionsPageEvent = ({
         }
       }
       /*
-       * We don't have a previous metadata entry
+       * We don't have a previous metadata entry, so fall back to the current
+       * action's values
        */
       const { colonyDisplayName, colonyAvatarHash, colonyTokens } = actionData;
       return {
@@ -148,14 +163,20 @@ const ActionsPageEvent = ({
         tokensChanged: !!colonyTokens.length,
       };
     }
+    /*
+     * Default fallback, just use the current colony's values
+     */
+    const {
+      displayName: colonyDisplayName,
+      avatarHash,
+      tokenAddresses,
+    } = colony;
     return {
-      nameChanged: false,
-      logoChanged: false,
-      tokensChanged: false,
+      nameChanged: !!colonyDisplayName,
+      logoChanged: !!avatarHash,
+      tokensChanged: !!tokenAddresses?.length,
     };
-  }, [colonyMetadataHistory, actionData, metadataJSON, eventName]);
-
-  console.log(getColonyMetadataChecks);
+  }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
 
   return (
     <div className={styles.main}>
