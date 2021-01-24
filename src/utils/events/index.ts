@@ -115,6 +115,11 @@ export const getEventsForActions = (
     .flat(),
 ];
 
+export const formatEventName = (
+  rawEventName: string,
+): ColonyAndExtensionsEvents =>
+  rawEventName.split('(')[0] as ColonyAndExtensionsEvents;
+
 const getPaymentActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
