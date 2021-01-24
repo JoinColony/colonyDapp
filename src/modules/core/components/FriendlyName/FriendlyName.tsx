@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { AddressZero } from 'ethers/constants';
 
 import MaskedAddress from '~core/MaskedAddress';
 
@@ -14,7 +15,7 @@ interface Props {
   /*
    * The user object to display
    */
-  user: AnyUser;
+  user?: AnyUser;
   /*
    * Whether to show a masked address or a full one
    */
@@ -30,20 +31,42 @@ interface Props {
 }
 
 const FriendlyName = ({
-  user: {
-    profile: { displayName: userDisplayName, username, walletAddress },
-  },
+  user,
   maskedAddress = true,
   autoShrinkAddress = false,
   colony,
 }: Props) => {
   const addressRef = useRef<HTMLElement>(null);
+  let colonyDisplay: string | undefined | null = '';
+  let userDisplay: string | undefined | null = '';
+  let colonyDisplayAddress: string | undefined | null = '';
+  let userDisplayAddress: string | undefined | null = '';
 
-  const isColonyAddress = colony && walletAddress === colony.colonyAddress;
-  const colonyName =
-    isColonyAddress &&
-    isColonyAddress &&
-    (colony?.displayName || colony?.colonyName);
+  if (user?.profile) {
+    const {
+      profile: { username, displayName: userDisplayName, walletAddress },
+    } = user;
+    userDisplay = userDisplayName || username;
+    if (walletAddress !== AddressZero) {
+      userDisplayAddress = walletAddress;
+    }
+  }
+
+  if (colony) {
+    const {
+      colonyName,
+      displayName: colonyDisplayName,
+      colonyAddress,
+    } = colony;
+    colonyDisplay = colonyDisplayName || colonyName;
+    if (colonyAddress !== AddressZero) {
+      colonyDisplayAddress = colonyAddress;
+    }
+  }
+
+  // const isColonyAddress = colony && walletAddress === colony.colonyAddress;
+  // const colonyName =
+  //   isColonyAddress && (colony?.displayName || colony?.colonyName || c);
   /*
    * @NOTE On touching element styles manually
    * The "tech" font we user renders a bit larger than our display font while
@@ -68,9 +91,9 @@ const FriendlyName = ({
   }, [addressRef, autoShrinkAddress]);
   return (
     <div className={styles.main}>
-      {userDisplayName || (username && `@${username}`) || colonyName || (
+      {userDisplay || colonyDisplay || (
         <MaskedAddress
-          address={walletAddress}
+          address={userDisplayAddress || colonyDisplayAddress}
           full={!maskedAddress}
           ref={addressRef}
         />
