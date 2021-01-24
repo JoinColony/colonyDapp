@@ -1895,7 +1895,7 @@ export type SubgraphColonyQueryVariables = Exact<{
 
 export type SubgraphColonyQuery = { colony: (
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
-    & { metadataHistory: Array<Maybe<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>>, token: (
+    & { token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
     ) }
@@ -4499,10 +4499,6 @@ export const SubgraphColonyDocument = gql`
     colonyChainId
     ensName
     metadata
-    metadataHistory {
-      id
-      metadata
-    }
     token {
       tokenAddress: id
       decimals

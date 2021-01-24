@@ -458,10 +458,6 @@ query SubgraphColony($address: String!) {
     colonyChainId
     ensName
     metadata
-    metadataHistory {
-      id
-      metadata
-    }
     token {
       tokenAddress: id
       decimals
@@ -505,7 +501,6 @@ query SubgraphColonyMetadata($address: String!) {
     }
   }
 }
-
 
 query ColonyFromName($name: String!, $address: String!) {
   colonyAddress(name: $name) @client @export(as: "address")
