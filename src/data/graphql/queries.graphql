@@ -488,6 +488,25 @@ query SubgraphColonies {
   }
 }
 
+query SubgraphColonyMetadata($address: String!) {
+  colony(id: $address) {
+    id
+    colonyChainId
+    metadata
+    metadataHistory {
+      id
+      metadata
+      transaction {
+        id
+        block {
+          timestamp
+        }
+      }
+    }
+  }
+}
+
+
 query ColonyFromName($name: String!, $address: String!) {
   colonyAddress(name: $name) @client @export(as: "address")
   # NOTE: This calls SubgraphColony internally

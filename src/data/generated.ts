@@ -1186,6 +1186,7 @@ export type SubgraphPayment = {
 export type SubgraphColonyMetadata = {
   id: Scalars['String'];
   metadata: Scalars['String'];
+  transaction: SubgraphTransaction;
 };
 
 export type SubgraphColony = {
@@ -1909,6 +1910,22 @@ export type SubgraphColoniesQuery = { colonies: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
     ) }
+  ) };
+
+export type SubgraphColonyMetadataQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type SubgraphColonyMetadataQuery = { colony: (
+    Pick<SubgraphColony, 'id' | 'colonyChainId' | 'metadata'>
+    & { metadataHistory: Array<Maybe<(
+      Pick<SubgraphColonyMetadata, 'id' | 'metadata'>
+      & { transaction: (
+        Pick<SubgraphTransaction, 'id'>
+        & { block: Pick<SubgraphBlock, 'timestamp'> }
+      ) }
+    )>> }
   ) };
 
 export type ColonyFromNameQueryVariables = Exact<{
@@ -4564,6 +4581,51 @@ export function useSubgraphColoniesLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type SubgraphColoniesQueryHookResult = ReturnType<typeof useSubgraphColoniesQuery>;
 export type SubgraphColoniesLazyQueryHookResult = ReturnType<typeof useSubgraphColoniesLazyQuery>;
 export type SubgraphColoniesQueryResult = Apollo.QueryResult<SubgraphColoniesQuery, SubgraphColoniesQueryVariables>;
+export const SubgraphColonyMetadataDocument = gql`
+    query SubgraphColonyMetadata($address: String!) {
+  colony(id: $address) {
+    id
+    colonyChainId
+    metadata
+    metadataHistory {
+      id
+      metadata
+      transaction {
+        id
+        block {
+          timestamp
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphColonyMetadataQuery__
+ *
+ * To run a query within a React component, call `useSubgraphColonyMetadataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphColonyMetadataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphColonyMetadataQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useSubgraphColonyMetadataQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphColonyMetadataQuery, SubgraphColonyMetadataQueryVariables>) {
+        return Apollo.useQuery<SubgraphColonyMetadataQuery, SubgraphColonyMetadataQueryVariables>(SubgraphColonyMetadataDocument, baseOptions);
+      }
+export function useSubgraphColonyMetadataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphColonyMetadataQuery, SubgraphColonyMetadataQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphColonyMetadataQuery, SubgraphColonyMetadataQueryVariables>(SubgraphColonyMetadataDocument, baseOptions);
+        }
+export type SubgraphColonyMetadataQueryHookResult = ReturnType<typeof useSubgraphColonyMetadataQuery>;
+export type SubgraphColonyMetadataLazyQueryHookResult = ReturnType<typeof useSubgraphColonyMetadataLazyQuery>;
+export type SubgraphColonyMetadataQueryResult = Apollo.QueryResult<SubgraphColonyMetadataQuery, SubgraphColonyMetadataQueryVariables>;
 export const ColonyFromNameDocument = gql`
     query ColonyFromName($name: String!, $address: String!) {
   colonyAddress(name: $name) @client @export(as: "address")

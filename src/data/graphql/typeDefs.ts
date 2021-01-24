@@ -232,6 +232,7 @@ export default gql`
   type SubgraphColonyMetadata {
     id: String!
     metadata: String!
+    transaction: SubgraphTransaction!
   }
 
   type SubgraphColony {
