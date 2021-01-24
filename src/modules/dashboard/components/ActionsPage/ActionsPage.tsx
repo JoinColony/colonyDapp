@@ -399,6 +399,7 @@ const ActionsPage = () => {
             networkEvents={events}
             values={actionAndEventValues}
             actionData={colonyActionData.colonyAction}
+            colonyAddress={colonyAddress}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected

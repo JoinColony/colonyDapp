@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { nanoid } from 'nanoid';
+import findLastIndex from 'lodash/findLastIndex';
 
 import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
-import { ColonyAndExtensionsEvents } from '~types/index';
+import { ColonyAndExtensionsEvents, Address } from '~types/index';
+import { useDataFetcher } from '~utils/hooks';
+import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
-import { ColonyAction } from '~data/index';
-import { getSpecificActionValuesCheck } from '~utils/colonyActions';
+import { ColonyAction, useSubgraphColonyMetadataQuery } from '~data/index';
+import {
+  getSpecificActionValuesCheck,
+  sortMetdataHistory,
+  parseColonyMetadata,
+  getColonyMetadataMessageDescriptorsIds,
+} from '~utils/colonyActions';
 
 import styles from './ActionsPageEvent.css';
 
@@ -38,6 +46,7 @@ interface Props {
   values?: EventValues;
   emmitedBy?: string;
   actionData: ColonyAction;
+  colonyAddress: Address;
 }
 
 const ActionsPageEvent = ({
@@ -47,7 +56,13 @@ const ActionsPageEvent = ({
   values,
   emmitedBy,
   actionData,
+  colonyAddress,
 }: Props) => {
+  let metadataJSON;
+  const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
+    undefined,
+  );
+
   /*
    * @NOTE See nanoId's docs about the reasoning for this
    * https://github.com/ai/nanoid#react
@@ -66,8 +81,81 @@ const ActionsPageEvent = ({
     return eventsToIdsMap;
   });
 
-  console.log(values);
-  console.log(actionData);
+  const colonyMetadataHistory = useSubgraphColonyMetadataQuery({
+    variables: {
+      address: colonyAddress.toLowerCase(),
+    },
+  });
+
+  /*
+   * Fetch a historic metadata hash using IPFS
+   */
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { data: ipfsMetadata } = useDataFetcher(
+      ipfsDataFetcher,
+      [metdataIpfsHash as string],
+      [metdataIpfsHash],
+    );
+    metadataJSON = ipfsMetadata;
+  } catch (error) {
+    // silent error
+  }
+
+  /*
+   * Determine if the current medata is different from the previous one,
+   * and in what way
+   */
+  const getColonyMetadataChecks = useMemo(() => {
+    if (
+      eventName === ColonyAndExtensionsEvents.ColonyMetadata &&
+      !!colonyMetadataHistory?.data?.colony &&
+      !!actionData
+    ) {
+      const {
+        data: {
+          colony: { metadataHistory },
+        },
+      } = colonyMetadataHistory;
+      const sortedMetdataHistory = sortMetdataHistory(metadataHistory);
+      const currentMedataIndex = findLastIndex(
+        sortedMetdataHistory,
+        ({ transaction: { id: hash } }) => hash === actionData.hash,
+      );
+      /*
+       * We have a previous metadata entry
+       */
+      if (currentMedataIndex > 0) {
+        const prevMetdata = sortedMetdataHistory[currentMedataIndex - 1];
+        if (prevMetdata) {
+          setMetdataIpfsHash(prevMetdata.metadata);
+          if (metadataJSON) {
+            return getSpecificActionValuesCheck(
+              eventName as ColonyAndExtensionsEvents,
+              actionData,
+              parseColonyMetadata(metadataJSON),
+            );
+          }
+        }
+      }
+      /*
+       * We don't have a previous metadata entry
+       */
+      const { colonyDisplayName, colonyAvatarHash, colonyTokens } = actionData;
+      return {
+        nameChanged: !!colonyDisplayName,
+        logoChanged: !!colonyAvatarHash,
+        tokensChanged: !!colonyTokens.length,
+      };
+    }
+    return {
+      nameChanged: false,
+      logoChanged: false,
+      tokensChanged: false,
+    };
+  }, [colonyMetadataHistory, actionData, metadataJSON, eventName]);
+
+  console.log(getColonyMetadataChecks);
 
   return (
     <div className={styles.main}>
@@ -79,7 +167,10 @@ const ActionsPageEvent = ({
           <FormattedMessage
             id={
               eventName === ColonyAndExtensionsEvents.ColonyMetadata
-                ? `event.${ColonyAndExtensionsEvents.ColonyMetadata}title`
+                ? getColonyMetadataMessageDescriptorsIds(
+                    ColonyAndExtensionsEvents.ColonyMetadata,
+                    getColonyMetadataChecks,
+                  )
                 : 'event.title'
             }
             values={{
@@ -87,12 +178,13 @@ const ActionsPageEvent = ({
               fromDomain: values?.fromDomain?.name,
               toDomain: values?.toDomain?.name,
               eventName,
+              /*
+               * Usefull if a event isn't found or doesn't have a message descriptor
+               */
+              eventNameDecorated: <b>{eventName}</b>,
               clientOrExtensionType: (
                 <span className={styles.highlight}>{emmitedBy}</span>
               ),
-              ...(eventName === ColonyAndExtensionsEvents.ColonyMetadata
-                ? getSpecificActionValuesCheck(eventName, actionData)
-                : {}),
             }}
           />
         </div>
