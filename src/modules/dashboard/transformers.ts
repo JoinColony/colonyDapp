@@ -1,10 +1,16 @@
 import { AddressZero, HashZero } from 'ethers/constants';
 
-import { SubgraphActions, TransactionsMessagesCount } from '~data/index';
-import { ColonyActions, FormattedAction } from '~types/index';
+import {
+  SubgraphActions,
+  SubgraphEvents,
+  TransactionsMessagesCount,
+} from '~data/index';
+import { ColonyActions, FormattedAction, FormattedEvent } from '~types/index';
 import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
 import { TEMP_getContext, ContextModule } from '~context/index';
+import { createAddress } from '~utils/web3';
+import { formatEventName } from '~utils/events';
 
 export const getActionsListData = (
   unformattedActions?: SubgraphActions,
@@ -157,3 +163,36 @@ export const getActionsListData = (
     },
   );
 };
+
+export const getEventsListData = (
+  unformattedEvents?: SubgraphEvents,
+): FormattedEvent[] =>
+  unformattedEvents?.events
+    .map((event) => {
+      if (event) {
+        const {
+          id,
+          associatedColony: { colonyAddress },
+          transaction: {
+            hash,
+            block: { timestamp },
+          },
+          name,
+          args,
+        } = event;
+        const values = JSON.parse(args);
+        return {
+          id,
+          agent: values.agent ? createAddress(values.agent) : null,
+          eventName: formatEventName(name),
+          transactionHash: hash,
+          colonyAddress: createAddress(colonyAddress),
+          createdAt: new Date(parseInt(`${timestamp}000`, 10)),
+          values,
+          displayValues: args,
+          fromDomain: values?.domainId || null,
+        };
+      }
+      return undefined;
+    })
+    .filter((existingValue) => !!existingValue) as FormattedEvent[];

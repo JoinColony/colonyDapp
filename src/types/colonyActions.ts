@@ -124,3 +124,14 @@ export interface FormattedAction {
   createdAt: Date;
   commentCount: number;
 }
+
+export interface FormattedEvent {
+  id: string;
+  eventName: ColonyAndExtensionsEvents;
+  colonyAddress: Address;
+  agent: Address | null;
+  transactionHash: string;
+  createdAt: Date;
+  values: { [key: string]: string };
+  displayValues: string;
+}

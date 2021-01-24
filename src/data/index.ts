@@ -25,6 +25,7 @@ import {
   SubgraphActionsQuery,
   TransactionMessagesCountQuery,
   ProcessedColonyQuery,
+  SubgraphEventsQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -116,3 +117,5 @@ export type TransactionsMessagesCount = TransactionMessagesCountQuery['transacti
 export type EventOrMessage = ParsedEvent | TransactionMessage;
 
 export type SubgraphActions = SubgraphActionsQuery;
+
+export type SubgraphEvents = SubgraphEventsQuery;

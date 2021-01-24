@@ -601,7 +601,7 @@ query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
 }
 
 query SubgraphEvents($colonyAddress: String!) {
-    events(where: { associatedColony: $colonyAddress }) {
+  events(where: { associatedColony: $colonyAddress }) {
     id
     address
     associatedColony {
