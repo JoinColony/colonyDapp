@@ -86,9 +86,6 @@ const ActionsPageEvent = ({
     return eventsToIdsMap;
   });
 
-  /*
-   * @TODO Just fetch it from the colony
-   */
   const colonyMetadataHistory = useSubgraphColonyMetadataQuery({
     variables: {
       address: colonyAddress.toLowerCase(),

@@ -32,19 +32,28 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
   const userTokens = (data && data.user.tokens) || [];
 
   const updateTokens = useCallback(
-    (updatedAddresses: Address[]) => {
+    ({ tokenAddresses }) => {
       return setUserTokensMutation({
-        variables: { input: { tokenAddresses: updatedAddresses } },
+        variables: { input: { tokenAddresses } },
       });
     },
     [setUserTokensMutation],
   );
 
   return (
+    /*
+     * @TODO This needs to be checked but most likely it doesn work
+     * This is because we changed the logic for the TokenEditDilog which now
+     * only supports colonies
+     *
+     * Most likely we'll have to retrieve the old Token Edit Dialog, just for
+     * the user and wire it up for launch
+     */
+    // @ts-ignore
     <TokenEditDialog
       cancel={cancel}
       close={close}
-      tokens={userTokens}
+      tokensList={userTokens}
       updateTokens={updateTokens}
     />
   );
