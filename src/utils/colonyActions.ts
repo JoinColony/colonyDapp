@@ -1,3 +1,6 @@
+import sortBy from 'lodash/sortBy';
+import isEqual from 'lodash/isEqual';
+
 import {
   ColonyActions,
   ColonyAndExtensionsEvents,
@@ -72,6 +75,67 @@ export const getValuesForActionType = (
   }
 };
 
+export const getColonyMetadataMessageDescriptorsIds = (
+  actionType: ColonyAndExtensionsEvents,
+  { nameChanged, logoChanged, tokensChanged }: { [key: string]: boolean },
+) => {
+  if (actionType === ColonyAndExtensionsEvents.ColonyMetadata) {
+    if (nameChanged && logoChanged) {
+      return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.nameLogo`;
+    }
+    if (nameChanged) {
+      return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.name`;
+    }
+    if (logoChanged) {
+      return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.logo`;
+    }
+    if (tokensChanged) {
+      return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.tokens`;
+    }
+  }
+  return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`;
+};
+
+export const parseColonyMetadata = (
+  jsonMetadata: string,
+): {
+  colonyDisplayName: string | null;
+  colonyAvatarHash: string | null;
+  colonyTokens: string[] | null;
+} => {
+  try {
+    if (jsonMetadata) {
+      const {
+        colonyDisplayName = null,
+        colonyAvatarHash = null,
+        colonyTokens = [],
+      } = JSON.parse(jsonMetadata);
+      return {
+        colonyDisplayName,
+        colonyAvatarHash,
+        colonyTokens,
+      };
+    }
+  } catch (error) {
+    console.error('Could not parse colony ipfs json blob', jsonMetadata);
+    console.error(error);
+  }
+  return {
+    colonyDisplayName: null,
+    colonyAvatarHash: null,
+    colonyTokens: [],
+  };
+};
+
+export const sortMetdataHistory = (colonyMetadata) =>
+  sortBy(colonyMetadata, [
+    ({
+      transaction: {
+        block: { timestamp },
+      },
+    }) => new Date(parseInt(`${timestamp}000`, 10)).getTime(),
+  ]);
+
 /*
  * Generates various checks based on action data and type
  *
@@ -82,12 +146,33 @@ export const getValuesForActionType = (
  */
 export const getSpecificActionValuesCheck = (
   actionType: ColonyAndExtensionsEvents,
-  actionData: ColonyAction,
+  {
+    colonyDisplayName: currentColonyDisplayName,
+    colonyAvatarHash: currentColonyAvatarHash,
+    colonyTokens: currentColonyTokens,
+  }: ColonyAction,
+  {
+    colonyDisplayName: prevColonyDisplayName,
+    colonyAvatarHash: prevColonyAvatarHash,
+    colonyTokens: prevColonyTokens,
+  }: {
+    colonyDisplayName: string | null;
+    colonyAvatarHash: string | null;
+    colonyTokens: string[] | null;
+  },
 ): { [key: string]: boolean } => {
   switch (actionType) {
     case ColonyAndExtensionsEvents.ColonyMetadata: {
+      const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
+      const logoChanged = prevColonyAvatarHash !== currentColonyAvatarHash;
+      const tokensChanged = !isEqual(
+        prevColonyTokens ? prevColonyTokens.sort() : [],
+        currentColonyTokens.sort(),
+      );
       return {
-        logoChanged: true,
+        nameChanged,
+        logoChanged,
+        tokensChanged,
       };
     }
     default: {
