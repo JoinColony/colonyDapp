@@ -9,6 +9,8 @@ import { ColonyAndExtensionsEvents } from '~types/index';
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
+import { ColonyAction } from '~data/index';
+import { getSpecificActionValuesCheck } from '~utils/colonyActions';
 
 import styles from './ActionsPageEvent.css';
 
@@ -35,6 +37,7 @@ interface Props {
   createdAt: Date;
   values?: EventValues;
   emmitedBy?: string;
+  actionData: ColonyAction;
 }
 
 const ActionsPageEvent = ({
@@ -43,6 +46,7 @@ const ActionsPageEvent = ({
   eventName = ColonyAndExtensionsEvents.Generic,
   values,
   emmitedBy,
+  actionData,
 }: Props) => {
   /*
    * @NOTE See nanoId's docs about the reasoning for this
@@ -61,6 +65,9 @@ const ActionsPageEvent = ({
     });
     return eventsToIdsMap;
   });
+
+  console.log(values);
+  console.log(actionData);
 
   return (
     <div className={styles.main}>
@@ -83,6 +90,9 @@ const ActionsPageEvent = ({
               clientOrExtensionType: (
                 <span className={styles.highlight}>{emmitedBy}</span>
               ),
+              ...(eventName === ColonyAndExtensionsEvents.ColonyMetadata
+                ? getSpecificActionValuesCheck(eventName, actionData)
+                : {}),
             }}
           />
         </div>

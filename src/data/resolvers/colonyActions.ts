@@ -199,6 +199,7 @@ export const colonyActionsResolvers = ({
           annotationHash: annotation ? annotation?.values?.metadata : null,
           colonyDisplayName: null,
           colonyAvatarHash: null,
+          colonyTokens: [],
           ...actionValues,
         };
       }
@@ -238,6 +239,9 @@ export const colonyActionsResolvers = ({
         createdAt: Date.now(),
         actionType: ColonyActions.Generic,
         annotationMetadata: null,
+        colonyDisplayName: null,
+        colonyAvatarHash: null,
+        colonyTokens: [],
         ...pendingActionValues,
       };
     },

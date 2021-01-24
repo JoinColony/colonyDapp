@@ -1033,7 +1033,11 @@ export type ColonyAction = {
 =======
   colonyDisplayName: Scalars['String'];
   colonyAvatarHash: Scalars['String'];
+<<<<<<< HEAD
 >>>>>>> Refactor: `ColonyAction` query to properly return values
+=======
+  colonyTokens: Array<Maybe<Scalars['String']>>;
+>>>>>>> Add: colony actions resolvers return tokens data
 };
 
 export type NetworkContractsInput = {
@@ -1787,10 +1791,14 @@ export type ColonyActionQueryVariables = Exact<{
 
 export type ColonyActionQuery = { colonyAction: (
 <<<<<<< HEAD
+<<<<<<< HEAD
     Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion'>
 =======
     Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'colonyDisplayName' | 'colonyAvatarHash'>
 >>>>>>> Refactor: `ColonyAction` query to properly return values
+=======
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens'>
+>>>>>>> Add: colony actions resolvers return tokens data
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
@@ -4128,7 +4136,11 @@ export const ColonyActionDocument = gql`
 =======
     colonyDisplayName
     colonyAvatarHash
+<<<<<<< HEAD
 >>>>>>> Refactor: `ColonyAction` query to properly return values
+=======
+    colonyTokens
+>>>>>>> Add: colony actions resolvers return tokens data
   }
 }
     `;

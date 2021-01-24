@@ -1,4 +1,9 @@
-import { ColonyActions, FormattedAction } from '~types/index';
+import {
+  ColonyActions,
+  ColonyAndExtensionsEvents,
+  FormattedAction,
+} from '~types/index';
+import { ColonyAction } from '~data/index';
 
 import {
   DETAILS_FOR_ACTION,
@@ -63,6 +68,32 @@ export const getValuesForActionType = (
     }
     default: {
       return {};
+    }
+  }
+};
+
+/*
+ * Generates various checks based on action data and type
+ *
+ * This is to be used to generate super-specific message desciptors based on
+ * logic checks.
+ *
+ * Currently only used for the colony metadata changed action
+ */
+export const getSpecificActionValuesCheck = (
+  actionType: ColonyAndExtensionsEvents,
+  actionData: ColonyAction,
+): { [key: string]: boolean } => {
+  switch (actionType) {
+    case ColonyAndExtensionsEvents.ColonyMetadata: {
+      return {
+        logoChanged: true,
+      };
+    }
+    default: {
+      return {
+        hasValues: false,
+      };
     }
   }
 };

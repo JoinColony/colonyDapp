@@ -324,6 +324,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     oldVersion
     colonyDisplayName
     colonyAvatarHash
+    colonyTokens
   }
 }
 

@@ -318,17 +318,23 @@ const getColonyEditActionValues = async (
   } = mintTokensEvent;
 
   const ipfsData = await ipfs.getString(metadata);
-  const { colonyDisplayName, colonyAvatarHash = null } = JSON.parse(ipfsData);
+  const {
+    colonyDisplayName = null,
+    colonyAvatarHash = null,
+    colonyTokens = [],
+  } = JSON.parse(ipfsData);
 
   const colonyEditValues: {
     address: Address;
     actionInitiator?: string;
     colonyDisplayName: string;
     colonyAvatarHash?: string;
+    colonyTokens?: string[];
   } = {
     address,
     colonyDisplayName,
     colonyAvatarHash,
+    colonyTokens,
   };
 
   if (agent) {
