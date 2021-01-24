@@ -165,9 +165,14 @@ export const getSpecificActionValuesCheck = (
     case ColonyAndExtensionsEvents.ColonyMetadata: {
       const nameChanged = prevColonyDisplayName !== currentColonyDisplayName;
       const logoChanged = prevColonyAvatarHash !== currentColonyAvatarHash;
+      /*
+       * Tokens arrays might come from a subgraph query, in which case
+       * they're not really "arrays", so we have to create a new instace of
+       * them in order to sort and compare
+       */
       const tokensChanged = !isEqual(
-        prevColonyTokens ? prevColonyTokens.sort() : [],
-        currentColonyTokens.sort(),
+        prevColonyTokens ? prevColonyTokens.slice(0).sort() : [],
+        currentColonyTokens.slice(0).sort(),
       );
       return {
         nameChanged,
