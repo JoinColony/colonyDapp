@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormikProps } from 'formik';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ColonyRole } from '@colony/colony-js';
 
@@ -12,6 +12,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useTransformer } from '~utils/hooks';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
+import PermissionsLabel from '~core/PermissionsLabel';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -22,16 +23,21 @@ import styles from './TokenMintForm.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.Tokens.TokenMintDialog.dialogTitle',
+    id: 'dashboard.TokenMintDialog.TokenMintForm.dialogTitle',
     defaultMessage: 'Mint new tokens',
   },
   amountLabel: {
-    id: 'admin.Tokens.TokenMintDialog.amountLabel',
+    id: 'dashboard.TokenMintDialog.TokenMintForm.amountLabel',
     defaultMessage: 'Amount',
   },
   annotationLabel: {
-    id: 'admin.Tokens.TokenMintDialog.annotationLabel',
+    id: 'dashboard.TokenMintDialog.TokenMintForm.annotationLabel',
     defaultMessage: `Explain why you're minting more tokens (optional)`,
+  },
+  noPermission: {
+    id: 'dashboard.TokenMintDialog.TokenMintForm.noPermission',
+    defaultMessage: `You do not have the {roleRequired} permission required
+      to take this action.`,
   },
 });
 
@@ -104,6 +110,25 @@ const TokenMintForm = ({
           />
         </div>
       </DialogSection>
+      {!userHasPermissions && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionMessage}>
+            <FormattedMessage
+              {...MSG.noPermission}
+              values={{
+                roleRequired: (
+                  <PermissionsLabel
+                    permission={ColonyRole.Root}
+                    name={{
+                      id: `role.${ColonyRole.Root}`,
+                    }}
+                  />
+                ),
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}

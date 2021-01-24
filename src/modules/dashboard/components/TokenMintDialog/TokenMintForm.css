@@ -26,3 +26,15 @@
 .annotation {
   margin-top: 30px;
 }
+
+.noPermissionMessage {
+  margin-bottom: 20px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}
+
+.noPermissionMessage > div {
+  vertical-align: bottom;
+}
