@@ -278,6 +278,7 @@ const ActionsPage = () => {
    */
   const {
     processedColony: { colonyAddress, domains },
+    processedColony,
   } = colonyData;
 
   /*
@@ -316,7 +317,7 @@ const ActionsPage = () => {
         <FriendlyName
           user={recipientProfileWithFallback}
           autoShrinkAddress
-          colony={colonyData?.processedColony}
+          colony={processedColony}
         />
       </span>
     ),
@@ -338,7 +339,7 @@ const ActionsPage = () => {
     colonyName: (
       <FriendlyName
         colony={{
-          ...colonyData?.processedColony,
+          ...processedColony,
           ...(colonyDisplayName ? { displayName: colonyDisplayName } : {}),
         }}
         autoShrinkAddress
@@ -399,7 +400,7 @@ const ActionsPage = () => {
             networkEvents={events}
             values={actionAndEventValues}
             actionData={colonyActionData.colonyAction}
-            colonyAddress={colonyAddress}
+            colony={processedColony}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
