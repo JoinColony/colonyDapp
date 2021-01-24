@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+
 import { ColonyAndExtensionsEvents } from '~types/index';
 
 const eventsMessageDescriptors = {
@@ -18,6 +19,22 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.logo`]: `{initiator} changed this colony's logo`,
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.tokens`]: `{initiator} changed this colony's tokens`,
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`]: `{initiator} changed this colony's metadata, but the values are the same`,
+  'eventList.event': `{eventName, select,
+      ${ColonyAndExtensionsEvents.DomainAdded} {{agent} added Team: {fromDomain}}
+      ${ColonyAndExtensionsEvents.DomainMetadata} {{agent} changed Team {fromDomain} metdata to {metadata}}
+      ${ColonyAndExtensionsEvents.Annotation} {{agent} annotated transaction {transactionHash} with {metadata}}
+      ${ColonyAndExtensionsEvents.FundingPotAdded} {Funding pot {fundingPot} added}
+      ${ColonyAndExtensionsEvents.ColonyInitialised} {{agent} created a colony with token {tokenSymbol} ({tokenAddress})}
+      ${ColonyAndExtensionsEvents.OneTxPaymentMade} {{agent} created an OneTx payment}
+      ${ColonyAndExtensionsEvents.TokensMinted} {{agent} minted {amount} {tokenSymbol}}
+      ${ColonyAndExtensionsEvents.ColonyFundsClaimed} {{agent} claimed {amount} {tokenSymbol} for colony}
+      ${ColonyAndExtensionsEvents.PaymentAdded} {{agent} added payment with id {paymentId}}
+      ${ColonyAndExtensionsEvents.PaymentRecipientSet} {{agent} added {recipient} as recipient to payment {paymentId}}
+      ${ColonyAndExtensionsEvents.PaymentPayoutSet} {{agent} added {amount} {tokenSymbol} as payout to payment {paymentId}}
+      ${ColonyAndExtensionsEvents.PaymentFinalized} {{agent} finalized payment with id {paymentId}}
+      ${ColonyAndExtensionsEvents.PayoutClaimed} {{agent} claimed a payout of {amount} {tokenSymbol} from funding pot {fundingPot}}
+      other {{eventName} emmited with values: {displayValues}}
+    }`,
 };
 
 export default eventsMessageDescriptors;
