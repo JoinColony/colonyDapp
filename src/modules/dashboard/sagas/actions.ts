@@ -883,7 +883,7 @@ function* editColonyAction({
     /*
      * Validate the required values for the payment
      */
-    if (!colonyDisplayName && !colonyTokens) {
+    if (!colonyDisplayName && colonyDisplayName !== null) {
       throw new Error('A colony name is required in order to edit the colony');
     }
 

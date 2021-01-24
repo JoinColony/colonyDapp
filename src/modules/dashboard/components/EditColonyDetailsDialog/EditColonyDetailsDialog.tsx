@@ -33,7 +33,13 @@ const EditColonyDetailsDialog = ({
   close,
   callStep,
   prevStep,
-  colony: { colonyAddress, colonyName, displayName: colonyDisplayName },
+  colony: {
+    colonyAddress,
+    colonyName,
+    displayName: colonyDisplayName,
+    tokenAddresses,
+    nativeTokenAddress,
+  },
   colony,
 }: Props) => {
   const history = useHistory();
@@ -49,6 +55,9 @@ const EditColonyDetailsDialog = ({
       mapPayload((payload) => ({
         colonyAddress,
         colonyName,
+        colonyTokens: tokenAddresses.filter(
+          (tokenAddres) => tokenAddres !== nativeTokenAddress,
+        ),
         ...payload,
       })),
       withMeta({ history }),

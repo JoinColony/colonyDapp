@@ -7,7 +7,7 @@ import { AddressZero } from 'ethers/constants';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { Form, Textarea } from '~core/Fields';
+import { Form, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import { AnyToken, OneToken } from '~data/index';
 import { Address } from '~types/index';
@@ -47,7 +47,10 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  updateTokens: (addresses: Address[]) => Promise<any>;
+  updateTokens: (payload: {
+    tokenAddresses: Address[];
+    annotationMessage?: string;
+  }) => Promise<any>;
   cancel: () => void;
   close: () => void;
   // Colony tokens
@@ -59,13 +62,14 @@ interface Props {
 }
 
 interface FormValues {
-  tokenAddress: Address;
-  description?: string;
-  tokenAddresses: Address[];
+  tokenAddress?: Address;
+  tokenAddresses?: Address[];
+  annotationMessage?: string;
 }
 
 const validationSchema = yup.object({
   tokenAddress: yup.string().address(),
+  annotation: yup.string().max(4000),
 });
 
 const TokenEditDialog = ({
@@ -92,7 +96,7 @@ const TokenEditDialog = ({
 
   const handleSubmit = useCallback(
     async (
-      { tokenAddress, tokenAddresses }: FormValues,
+      { tokenAddress, tokenAddresses = [], annotationMessage }: FormValues,
       { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
     ) => {
       let addresses = tokenAddresses;
@@ -103,11 +107,19 @@ const TokenEditDialog = ({
         ...new Set(
           addresses
             .map((address) => createAddress(address))
-            .filter((address) => address !== AddressZero),
+            .filter((address) => {
+              if (address === AddressZero) {
+                return false;
+              }
+              if (address === nativeTokenAddress) {
+                return false;
+              }
+              return true;
+            }),
         ),
       ];
       try {
-        await updateTokens(addresses);
+        await updateTokens({ tokenAddresses: addresses, annotationMessage });
         resetForm();
         close();
       } catch (e) {
@@ -115,11 +127,17 @@ const TokenEditDialog = ({
         setSubmitting(false);
       }
     },
-    [updateTokens, formatMessage, close],
+    [updateTokens, formatMessage, close, nativeTokenAddress],
   );
 
   const allTokens = useMemo(() => {
-    return [...tokens, ...tokensList];
+    return [...tokens, ...tokensList].filter(
+      ({ address: firstTokenAddress }, index, mergedTokens) =>
+        mergedTokens.findIndex(
+          ({ address: secondTokenAddress }) =>
+            secondTokenAddress === firstTokenAddress,
+        ) === index,
+    );
   }, [tokens, tokensList]);
 
   return (
@@ -132,9 +150,9 @@ const TokenEditDialog = ({
       </DialogSection>
       <Form
         initialValues={{
-          tokenAddress: '',
-          description: '',
+          tokenAddress: undefined,
           tokenAddresses: tokens.map((token) => token.address),
+          annotationMessage: undefined,
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
@@ -173,7 +191,7 @@ const TokenEditDialog = ({
                 <FormattedMessage {...MSG.notListedToken} />
               </Paragraph>
               <TokenSelector
-                tokenAddress={values.tokenAddress}
+                tokenAddress={values.tokenAddress as string}
                 onTokenSelect={(token: OneToken) => handleTokenSelect(token)}
                 onTokenSelectError={handleTokenSelectError}
                 tokenData={tokenData}
@@ -181,14 +199,10 @@ const TokenEditDialog = ({
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}
               />
               <div className={styles.textarea}>
-                <Textarea
-                  appearance={{
-                    colorSchema: 'grey',
-                    resizable: 'vertical',
-                  }}
+                <Annotations
                   label={MSG.textareaLabel}
-                  name="description"
-                  maxLength={4000}
+                  name="annotationMessage"
+                  // disabled={!userHasPermissions}
                 />
               </div>
             </DialogSection>
