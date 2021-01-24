@@ -1114,6 +1114,7 @@ export type ActionsFilter = {
 
 export type EventsFilter = {
   associatedColony_contains?: Maybe<Scalars['String']>;
+  associatedColony?: Maybe<Scalars['String']>;
   name_in?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -1182,6 +1183,7 @@ export type SubgraphColony = {
   id: Scalars['String'];
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   colonyChainId: Scalars['String'];
   address: Scalars['String'];
   ensName: Scalars['String'];
@@ -1189,6 +1191,9 @@ export type SubgraphColony = {
 <<<<<<< HEAD
 =======
 >>>>>>> Regenerate: graphql hooks after rebase
+=======
+  colonyChainId: Scalars['String'];
+>>>>>>> Add: subgraph events query
   token: SubgraphToken;
 >>>>>>> Regenerate: graphql after rebase
   metadata: Scalars['String'];
@@ -2018,6 +2023,19 @@ export type ColonyMembersWithReputationQueryVariables = Exact<{
 
 
 export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
+
+export type SubgraphEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphEventsQuery = { events: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { associatedColony: { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }, transaction: (
+      { hash: SubgraphTransaction['id'] }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
+    ) }
+  )> };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -5053,6 +5071,7 @@ export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMe
 export type SubgraphSingleDomainQueryHookResult = ReturnType<typeof useSubgraphSingleDomainQuery>;
 export type SubgraphSingleDomainLazyQueryHookResult = ReturnType<typeof useSubgraphSingleDomainLazyQuery>;
 <<<<<<< HEAD
+<<<<<<< HEAD
 export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>;
 =======
 >>>>>>> Add: `TransactionMessagesCount` query
@@ -5060,6 +5079,41 @@ export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleD
 >>>>>>> Add: `TransactionMessagesCount` query
 =======
 =======
+=======
+export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>;
+export const SubgraphEventsDocument = gql`
+    query SubgraphEvents($colonyAddress: String!) {
+  events(where: {associatedColony: $colonyAddress}) {
+    id
+    address
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+    }
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    name
+    args
+  }
+}
+    `;
+
+/**
+ * __useSubgraphEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+>>>>>>> Add: subgraph events query
  * const { data, loading, error } = useSubgraphEventsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
@@ -5074,9 +5128,13 @@ export function useSubgraphEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
         }
 export type SubgraphEventsQueryHookResult = ReturnType<typeof useSubgraphEventsQuery>;
 export type SubgraphEventsLazyQueryHookResult = ReturnType<typeof useSubgraphEventsLazyQuery>;
+<<<<<<< HEAD
 export type SubgraphEventsQueryResult = Apollo.QueryResult<SubgraphEventsQuery, SubgraphEventsQueryVariables>;
 >>>>>>> Regenerate: graphql after rebase
 >>>>>>> Regenerate: graphql after rebase
 =======
 export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>;
 >>>>>>> Regenerate: graphql hooks after rebase
+=======
+export type SubgraphEventsQueryResult = Apollo.QueryResult<SubgraphEventsQuery, SubgraphEventsQueryVariables>;
+>>>>>>> Add: subgraph events query

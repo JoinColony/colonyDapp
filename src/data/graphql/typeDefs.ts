@@ -171,6 +171,7 @@ export default gql`
 
   input EventsFilter {
     associatedColony_contains: String
+    associatedColony: String
     name_in: [String!]
   }
 
