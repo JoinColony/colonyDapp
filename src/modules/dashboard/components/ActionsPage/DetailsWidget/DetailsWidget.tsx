@@ -70,7 +70,6 @@ const DetailsWidget = ({
   recipient,
   values,
   transactionHash,
-  colony: { displayName: colonyDisplayName },
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -184,14 +183,12 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {detailsForAction.Name && (
+      {detailsForAction.Name && values?.colonyName && (
         <div className={styles.item}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.colonyName} />
           </div>
-          <div className={styles.value}>
-            {values?.colonyName || colonyDisplayName}
-          </div>
+          <div className={styles.value}>{values.colonyName}</div>
         </div>
       )}
       {!!shortenedHash && (

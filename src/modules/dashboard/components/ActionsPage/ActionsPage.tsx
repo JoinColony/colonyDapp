@@ -270,18 +270,14 @@ const ActionsPage = () => {
       newVersion,
       oldVersion,
       colonyDisplayName,
-      colonyAvatarHash,
     },
   } = colonyActionData;
+
   /*
    * Colony
    */
   const {
-    processedColony: {
-      colonyAddress,
-      domains,
-      displayName: fallbackColonyDisplayName,
-    },
+    processedColony: { colonyAddress, domains },
   } = colonyData;
 
   /*
@@ -339,8 +335,15 @@ const ActionsPage = () => {
       ) as OneDomain) || fallbackToDomain?.colonyDomain,
     newVersion,
     oldVersion,
-    colonyName: <span>{colonyDisplayName || fallbackColonyDisplayName}</span>,
-    logoChanged: !!colonyAvatarHash,
+    colonyName: (
+      <FriendlyName
+        colony={{
+          ...colonyData?.processedColony,
+          ...(colonyDisplayName ? { displayName: colonyDisplayName } : {}),
+        }}
+        autoShrinkAddress
+      />
+    ),
   };
 
   return (
