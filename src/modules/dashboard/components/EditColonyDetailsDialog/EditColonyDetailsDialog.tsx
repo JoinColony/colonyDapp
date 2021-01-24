@@ -37,6 +37,7 @@ const EditColonyDetailsDialog = ({
     colonyAddress,
     colonyName,
     displayName: colonyDisplayName,
+    avatarURL,
     tokenAddresses,
     nativeTokenAddress,
   },
@@ -45,21 +46,32 @@ const EditColonyDetailsDialog = ({
   const history = useHistory();
 
   const validationSchema = yup.object().shape({
-    colonyAvatarImage: yup.string(),
+    colonyAvatarImage: yup.string().nullable(),
     colonyDisplayName: yup.string().required(),
     annotationMessage: yup.string().max(4000),
   });
 
   const transform = useCallback(
     pipe(
-      mapPayload((payload) => ({
-        colonyAddress,
-        colonyName,
-        colonyTokens: tokenAddresses.filter(
-          (tokenAddres) => tokenAddres !== nativeTokenAddress,
-        ),
-        ...payload,
-      })),
+      mapPayload(
+        ({
+          colonyAvatarImage,
+          colonyDisplayName: payloadDisplayName,
+          annotationMessage,
+        }) => ({
+          colonyAddress,
+          colonyName,
+          colonyDisplayName: payloadDisplayName,
+          colonyAvatarImage:
+            typeof colonyAvatarImage === 'string' || colonyAvatarImage === null
+              ? colonyAvatarImage
+              : avatarURL,
+          colonyTokens: tokenAddresses.filter(
+            (tokenAddres) => tokenAddres !== nativeTokenAddress,
+          ),
+          annotationMessage,
+        }),
+      ),
       withMeta({ history }),
     ),
     [],
@@ -68,7 +80,7 @@ const EditColonyDetailsDialog = ({
   return (
     <ActionForm
       initialValues={{
-        colonyDisplayName,
+        colonyDisplayName: colonyDisplayName || colonyName,
         colonyAvatarImage: undefined,
         annotationMessage: undefined,
       }}

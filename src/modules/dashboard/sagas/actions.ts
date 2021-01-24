@@ -19,6 +19,9 @@ import {
   SubgraphActionsQuery,
   SubgraphActionsQueryVariables,
   SubgraphActionsDocument,
+  SubgraphColonyMetadataQuery,
+  SubgraphColonyMetadataQueryVariables,
+  SubgraphColonyMetadataDocument,
   getNetworkContracts,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -1018,6 +1021,21 @@ function* editColonyAction({
         colonyAddress: colonyAddress.toLocaleLowerCase(),
         first: 1,
         skip: 0,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    /*
+     * Re-fetch colony metadata history so we have the new values to compare agaist
+     * This could have also been a cache update since we have all ifps hashes locally
+     */
+    yield apolloClient.query<
+      SubgraphColonyMetadataQuery,
+      SubgraphColonyMetadataQueryVariables
+    >({
+      query: SubgraphColonyMetadataDocument,
+      variables: {
+        address: colonyAddress.toLocaleLowerCase(),
       },
       fetchPolicy: 'network-only',
     });

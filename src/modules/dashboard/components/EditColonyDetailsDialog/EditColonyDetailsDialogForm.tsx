@@ -103,17 +103,15 @@ const EditColonyDetailsDialogForm = ({
   const handleFileRead = async (file) => {
     if (file) {
       const base64image = file.data;
-      setFieldValue('colonyAvatarImage', base64image);
+      setFieldValue('colonyAvatarImage', String(base64image));
       setShowUploadedAvatar(true);
-      return base64image;
+      return String(base64image);
     }
-    return undefined;
+    return '';
   };
 
   const handleFileRemove = async () => {
-    if (colonyAvatarImage) {
-      setFieldValue('colonyAvatarImage', undefined);
-    }
+    setFieldValue('colonyAvatarImage', null);
     setShowUploadedAvatar(true);
   };
 
@@ -126,7 +124,17 @@ const EditColonyDetailsDialogForm = ({
   };
 
   const canValuesBeUpdate = () =>
-    displayName !== colonyDisplayName || avatarURL || colonyAvatarImage;
+    /*
+     * If the newly set name is different from the existing one
+     */
+    displayName !== colonyDisplayName ||
+    /*
+     * If the newly set image is differnet from the existing one but only if
+     * - it's a truthy (default form value)
+     * - it's not null (it has been specifically removed by the user)
+     */
+    ((!!colonyAvatarImage || colonyAvatarImage === null) &&
+      avatarURL !== colonyAvatarImage);
 
   return (
     <>
