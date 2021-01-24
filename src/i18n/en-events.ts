@@ -13,10 +13,11 @@ const eventsMessageDescriptors = {
   /*
    * This needs to be declared separely since we can't nest select declarations
    */
-  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}title`]: `{logoChanged, select,
-    true {{initiator} changed this colony's name to {colonyName} and logo}
-    false {{initiator} changed this colony's name to {colonyName}}
-  }`,
+  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.nameLogo`]: `{initiator} changed this colony's name to {colonyName} and it's logo`,
+  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.name`]: `{initiator} changed this colony's name to {colonyName}`,
+  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.logo`]: `{initiator} changed this colony's logo`,
+  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.tokens`]: `{initiator} changed this colony's tokens`,
+  [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`]: `{initiator} changed this colony's metadata`,
 };
 
 export default eventsMessageDescriptors;
