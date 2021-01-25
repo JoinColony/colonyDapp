@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  ColonyVersion,
+} from '@colony/colony-js';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
@@ -73,7 +76,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
     },
   });
 
-  const isSupportedColonyVersion = colony.version >= 5;
+  const isSupportedColonyVersion = colony.version >= ColonyVersion.CeruleanLightweightSpaceship;
   return (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>

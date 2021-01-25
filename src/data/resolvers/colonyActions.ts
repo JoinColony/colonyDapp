@@ -3,6 +3,7 @@ import {
   getBlockTime,
   ClientType,
   ColonyClientV5,
+  ColonyVersion,
 } from '@colony/colony-js';
 import { BigNumberish } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
@@ -139,7 +140,7 @@ export const colonyActionsResolvers = ({
         );
         const clientVersion = await colonyClient?.version();
         let annotation;
-        if (clientVersion.toString() === '5') {
+        if (clientVersion === ColonyVersion.CeruleanLightweightSpaceship) {
           annotation = await getAnnotation(
             from as string,
             hash as string,

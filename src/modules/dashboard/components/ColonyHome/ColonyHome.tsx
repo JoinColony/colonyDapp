@@ -180,8 +180,6 @@ const ColonyHome = ({ match, location }: Props) => {
     parseInt(networkVersion || '0', 10),
   );
 
-  const isSupportedColonyVersion = colony.version >= 5;
-
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
