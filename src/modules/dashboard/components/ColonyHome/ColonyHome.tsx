@@ -194,18 +194,14 @@ const ColonyHome = ({ match, location }: Props) => {
         <div className={styles.mainContent}>
           <ColonyTotalFunds colony={colony} />
           <div className={styles.contentActionsPanel}>
-            {isSupportedColonyVersion && (
-              <>
-                <div className={styles.domainsDropdownContainer}>
-                  <DomainDropdown
-                    filteredDomainId={filteredDomainId}
-                    onDomainChange={setDomainIdFilter}
-                    colony={data.colony}
-                  />
-                </div>
-                <ColonyHomeActions colony={colony} />
-              </>
-            )}
+            <div className={styles.domainsDropdownContainer}>
+              <DomainDropdown
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+                colony={data.colony}
+              />
+            </div>
+            <ColonyHomeActions colony={colony} />
           </div>
           <Switch>
             <Route

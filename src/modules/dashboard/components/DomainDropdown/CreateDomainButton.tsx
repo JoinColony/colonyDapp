@@ -43,9 +43,9 @@ const CreateDomainButton = ({ colony }: Props) => {
   );
 
   const text = formatMessage(MSG.buttonCreateNewDomain);
-
+  const isSupportedColonyVersion = colony.version >= 5;
   return (
-    <button className={styles.main} onClick={handleClick} type="button">
+    <button className={styles.main} onClick={handleClick} type="button" disabled={!isSupportedColonyVersion}>
       <div className={`${styles.buttonPartIcon} ${styles.buttonPart}`}>
         <Icon name="circle-plus" title={text} />
       </div>

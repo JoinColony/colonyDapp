@@ -134,12 +134,13 @@ const ColonyHomeActions = ({ colony }: Props) => {
       },
     },
   ]);
-
+  const isSupportedColonyVersion = colony.version >= 5;
   return (
     <Button
       appearance={{ theme: 'primary', size: 'large' }}
       text={MSG.newAction}
       onClick={() => startWizardFlow('dashboard.ColonyActionsDialog')}
+      disabled={!isSupportedColonyVersion}
     />
   );
 };
