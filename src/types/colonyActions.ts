@@ -10,6 +10,7 @@ export enum ColonyActions {
   CreateDomain = 'CreateDomain',
   VersionUpgrade = 'VersionUpgrade',
   ColonyEdit = 'ColonyEdit',
+  EditDomain = 'EditDomain',
 }
 
 export enum ColonyAndExtensionsEvents {
