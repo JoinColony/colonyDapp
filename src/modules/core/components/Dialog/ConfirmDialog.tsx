@@ -36,6 +36,7 @@ interface Appearance {
 interface Props {
   cancel: () => void;
   close: (val: any) => void;
+  onClick?: () => void;
 
   /** Appearance object */
   appearance?: Appearance;
@@ -43,6 +44,7 @@ interface Props {
   children?: ReactNode;
   cancelButtonText?: string | MessageDescriptor;
   confirmButtonText?: string | MessageDescriptor;
+  disabled?: boolean;
 }
 
 const ConfirmDialog = ({
@@ -53,6 +55,8 @@ const ConfirmDialog = ({
   cancelButtonText = MSG.defaultCancelButton,
   confirmButtonText = MSG.defaultConfirmButton,
   appearance,
+  disabled = false,
+  onClick = () => close(null)
 }: Props) => (
   <Dialog cancel={cancel}>
     <DialogSection appearance={{ border: 'bottom' }}>
@@ -73,8 +77,9 @@ const ConfirmDialog = ({
           size: 'large',
         }}
         autoFocus
-        onClick={() => close(null)}
+        onClick={onClick}
         text={confirmButtonText}
+        disabled={disabled}
       />
     </DialogSection>
   </Dialog>
