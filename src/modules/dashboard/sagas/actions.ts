@@ -334,6 +334,12 @@ function* createMoveFundsAction({
       methodName: 'moveFundsBetweenPotsWithProofs',
       identifier: colonyAddress,
       params: [fromPot, toPot, amount, tokenAddress],
+      group: {
+        key: batchKey,
+        id: metaId,
+        index: 0,
+      },
+      ready: false,
     });
 
     if (annotationMessage) {
@@ -351,12 +357,15 @@ function* createMoveFundsAction({
       });
     }
 
+    yield takeFrom(moveFunds.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
         annotateMoveFunds.channel,
         ActionTypes.TRANSACTION_CREATED,
       );
     }
+
+    yield put(transactionReady(moveFunds.id));
 
     const {
       payload: { hash: txHash },
