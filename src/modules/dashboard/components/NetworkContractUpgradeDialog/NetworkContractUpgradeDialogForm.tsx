@@ -15,6 +15,7 @@ import { useTransformer } from '~utils/hooks';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
+import { canBeUpgraded } from '../../../dashboard/checks';
 
 import { FormValues } from './NetworkContractUpgradeDialog';
 import styles from './NetworkContractUpgradeDialogForm.css';
@@ -70,7 +71,11 @@ const NetworkContractUpgradeDialogForm = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles);
+  const canUpgradeVersion =
+    hasRegisteredProfile &&
+    hasRoot(allUserRoles) &&
+    version &&
+    canBeUpgraded(colony, parseInt(version, 10));
 
   const { version: newVersion } = useNetworkContracts();
 

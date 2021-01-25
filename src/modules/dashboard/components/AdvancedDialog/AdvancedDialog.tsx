@@ -9,7 +9,6 @@ import { useLoggedInUser, Colony, useNetworkContracts } from '~data/index';
 
 import { getAllUserRoles } from '../../../transformers';
 import { canEnterRecoveryMode, hasRoot } from '../../../users/checks';
-import { canBeUpgraded } from '../../../dashboard/checks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -107,11 +106,7 @@ const AdvancedDialog = ({
     hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
   const { version: networkVersion } = useNetworkContracts();
 
-  const canUpgradeVersion =
-    hasRegisteredProfile &&
-    hasRoot(allUserRoles) &&
-    networkVersion &&
-    canBeUpgraded(colony, parseInt(networkVersion, 10));
+  const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const items = [
     {
