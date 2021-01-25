@@ -78,9 +78,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   ],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
   [ColonyActions.CreateDomain]: [ColonyAndExtensionsEvents.DomainAdded],
-  [ColonyActions.VersionUpgrade]: [
-    ColonyAndExtensionsEvents.ColonyUpgraded,
-  ],
+  [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
   [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
 };
 
