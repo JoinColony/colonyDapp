@@ -1,8 +1,6 @@
 import React, { MouseEventHandler, useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import {
-  ColonyVersion,
-} from '@colony/colony-js';
+import { ColonyVersion } from '@colony/colony-js';
 
 import Icon from '~core/Icon';
 import { useDialog } from '~core/Dialog';
@@ -46,9 +44,15 @@ const CreateDomainButton = ({ colony }: Props) => {
   );
 
   const text = formatMessage(MSG.buttonCreateNewDomain);
-  const isSupportedColonyVersion = colony.version >= ColonyVersion.CeruleanLightweightSpaceship;
+  const isSupportedColonyVersion =
+    colony.version >= ColonyVersion.CeruleanLightweightSpaceship;
   return (
-    <button className={styles.main} onClick={handleClick} type="button" disabled={!isSupportedColonyVersion}>
+    <button
+      className={styles.main}
+      onClick={handleClick}
+      type="button"
+      disabled={!isSupportedColonyVersion}
+    >
       <div className={`${styles.buttonPartIcon} ${styles.buttonPart}`}>
         <Icon name="circle-plus" title={text} />
       </div>

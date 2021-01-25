@@ -5,7 +5,7 @@ import { DialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
-import { useLoggedInUser, Colony, useNetworkContracts } from '~data/index';
+import { useLoggedInUser, Colony } from '~data/index';
 
 import { getAllUserRoles } from '../../../transformers';
 import { canEnterRecoveryMode, hasRoot } from '../../../users/checks';
@@ -104,7 +104,6 @@ const AdvancedDialog = ({
 
   const canEnterRecovery =
     hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
-  const { version: networkVersion } = useNetworkContracts();
 
   const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles);
 

@@ -71,13 +71,14 @@ const NetworkContractUpgradeDialogForm = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
+
+  const { version: newVersion } = useNetworkContracts();
+
   const canUpgradeVersion =
     hasRegisteredProfile &&
     hasRoot(allUserRoles) &&
     version &&
-    canBeUpgraded(colony, parseInt(version, 10));
-
-  const { version: newVersion } = useNetworkContracts();
+    canBeUpgraded(colony, parseInt(newVersion || '0', 10));
 
   return (
     <>

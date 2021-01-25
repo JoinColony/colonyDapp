@@ -1,8 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import {
-  ColonyVersion,
-} from '@colony/colony-js';
+import { ColonyVersion } from '@colony/colony-js';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Icon from '~core/Icon';
@@ -54,7 +52,8 @@ const ColonyTotalFunds = ({
   const [currentTokenAddress, setCurrentTokenAddress] = useState<Address>(
     nativeTokenAddress,
   );
-  const isSupportedColonyVersion = version >= ColonyVersion.CeruleanLightweightSpaceship;
+  const isSupportedColonyVersion =
+    version >= ColonyVersion.CeruleanLightweightSpaceship;
   const {
     data,
     loading: isLoadingTokenBalances,

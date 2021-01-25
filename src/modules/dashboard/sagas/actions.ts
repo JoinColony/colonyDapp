@@ -1,7 +1,12 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
-import { ClientType, ColonyClient, ROOT_DOMAIN_ID, ColonyVersion } from '@colony/colony-js';
+import {
+  ClientType,
+  ColonyClient,
+  ROOT_DOMAIN_ID,
+  ColonyVersion,
+} from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -590,7 +595,9 @@ function* createVersionUpgradeAction({
       throw new Error('Colony has the newest version');
     }
 
-    const supportAnnotation = currentVersion >= ColonyVersion.CeruleanLightweightSpaceship && annotationMessage;
+    const supportAnnotation =
+      currentVersion >= ColonyVersion.CeruleanLightweightSpaceship &&
+      annotationMessage;
 
     let ipfsHash = null;
     if (supportAnnotation) {

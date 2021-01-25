@@ -1,8 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import {
-  ColonyVersion,
-} from '@colony/colony-js';
+import { ColonyVersion } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
@@ -137,7 +135,8 @@ const ColonyHomeActions = ({ colony }: Props) => {
       },
     },
   ]);
-  const isSupportedColonyVersion = colony.version >= ColonyVersion.CeruleanLightweightSpaceship;
+  const isSupportedColonyVersion =
+    colony.version >= ColonyVersion.CeruleanLightweightSpaceship;
   return (
     <Button
       appearance={{ theme: 'primary', size: 'large' }}
