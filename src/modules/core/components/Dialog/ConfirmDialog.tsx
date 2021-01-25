@@ -44,7 +44,6 @@ interface Props {
   children?: ReactNode;
   cancelButtonText?: string | MessageDescriptor;
   confirmButtonText?: string | MessageDescriptor;
-  disabled?: boolean;
 }
 
 const ConfirmDialog = ({
@@ -55,7 +54,6 @@ const ConfirmDialog = ({
   cancelButtonText = MSG.defaultCancelButton,
   confirmButtonText = MSG.defaultConfirmButton,
   appearance,
-  disabled = false,
   onClick = () => close(null),
 }: Props) => (
   <Dialog cancel={cancel}>
@@ -79,7 +77,6 @@ const ConfirmDialog = ({
         autoFocus
         onClick={onClick}
         text={confirmButtonText}
-        disabled={disabled}
       />
     </DialogSection>
   </Dialog>
