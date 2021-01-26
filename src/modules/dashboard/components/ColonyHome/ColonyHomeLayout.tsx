@@ -15,6 +15,7 @@ import ColonyTitle from './ColonyTitle';
 import ColonyNavigation from './ColonyNavigation';
 import ColonyMembers from './ColonyMembers';
 import ColonyExtensions from './ColonyExtensions';
+import ColonyDomainDescription from './ColonyDomainDescription';
 
 import { ActionTypes } from '~redux/index';
 
@@ -72,8 +73,8 @@ const ColonyHomeLayout = ({
               <div className={styles.domainsDropdownContainer}>
                 <DomainDropdown
                   filteredDomainId={filteredDomainId}
-                  colonyAddress={colonyAddress}
                   onDomainChange={onDomainChange}
+                  colony={colony}
                 />
               </div>
               <ColonyHomeActions colony={colony} />
@@ -84,6 +85,10 @@ const ColonyHomeLayout = ({
       </div>
       {showSidebar ? (
         <aside className={styles.rightAside}>
+          <ColonyDomainDescription
+            colony={colony}
+            currentDomainId={filteredDomainId}
+          />
           <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
           <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
           <ColonyExtensions colony={colony} />
