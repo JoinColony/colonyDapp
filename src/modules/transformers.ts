@@ -5,8 +5,8 @@ import {
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
-import { PersistentTasks, AnyColonyWithRoles, Colony } from '~data/index';
-import { Address, UserRolesForDomain, ActionsPageFeedItem } from '~types/index';
+import { AnyColonyWithRoles, Colony } from '~data/index';
+import { Address, UserRolesForDomain } from '~types/index';
 
 export const getRolesForUserAndDomain = (
   roles: ColonyRoles,
