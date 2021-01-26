@@ -133,10 +133,7 @@ const TokenEditDialog = ({
           addresses
             .map((address) => createAddress(address))
             .filter((address) => {
-              if (address === AddressZero) {
-                return false;
-              }
-              if (address === nativeTokenAddress) {
+              if (address === AddressZero || address === nativeTokenAddress) {
                 return false;
               }
               return true;
