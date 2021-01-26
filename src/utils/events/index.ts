@@ -294,15 +294,25 @@ const getVersionUpgradeActionValues = async (
   ) as ProcessedEvent;
 
   const {
-    values: { oldVersion, newVersion },
+    address,
+    values: { oldVersion, newVersion, agent },
   } = versionUpgradeEvent;
 
-  // @TODO return address from here
-  const
-  return {
+  const colonyContractUpgradeValues: {
+    address: Address;
+    actionInitiator?: string;
+    oldVersion: string;
+    newVersion: string;
+  } = {
+    address,
     oldVersion: bigNumberify(oldVersion || '0').toString(),
     newVersion: bigNumberify(newVersion || '0').toString(),
   };
+
+  if (agent) {
+    colonyContractUpgradeValues.actionInitiator = agent;
+  }
+  return colonyContractUpgradeValues;
 };
 
 const getColonyEditActionValues = async (
@@ -416,10 +426,6 @@ export const getActionValues = async (
         ...colonyEditActionValues,
       };
     }
-    default: {
-      return fallbackValues;
-    }
-  }
     default: {
       return fallbackValues;
     }
