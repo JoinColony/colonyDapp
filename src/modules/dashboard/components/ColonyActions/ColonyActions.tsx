@@ -91,6 +91,23 @@ const ColonyActions = ({
     },
   });
 
+  /* filtering at this level as it is more performant
+  & we reduce the number of events passing through transformers */
+  const uniqueEvents = useMemo(
+    () =>
+      /* additional check for types to work */
+      data === undefined
+        ? []
+        : data.events.filter(
+            (action) =>
+              !data?.oneTxPayments.some(
+                (paymentAction) =>
+                  paymentAction.transaction?.hash === action.transaction.hash,
+              ),
+          ),
+    [data],
+  );
+
   const {
     data: commentCount,
     loading: commentCountLoading,
@@ -99,28 +116,17 @@ const ColonyActions = ({
   });
 
   const actions = useTransformer(getActionsListData, [
-    data,
+    /* additional check for types to work */
+    data === undefined ? data : { ...data, events: uniqueEvents },
     commentCount?.transactionMessagesCount,
   ]);
-
-  const uniqueActions = actions.filter(
-    (action) =>
-      !(
-        action.actionType === ColonyActionTypes.MoveFunds &&
-        actions.some(
-          (innerAction: FormattedAction) =>
-            innerAction.actionType === ColonyActionTypes.Payment &&
-            action.transactionHash === innerAction.transactionHash,
-        )
-      ),
-  );
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */
   const filteredActions = useMemo(
     () =>
       !ethDomainId
-        ? uniqueActions
-        : uniqueActions.filter(
+        ? actions
+        : actions.filter(
             (action) =>
               Number(action.fromDomain) === ethDomainId ||
               /* when no specific domain in the action it is displayed in Root */
@@ -129,7 +135,7 @@ const ColonyActions = ({
               (action.actionType === ColonyActionTypes.MoveFunds &&
                 Number(action.toDomain) === ethDomainId),
           ),
-    [ethDomainId, uniqueActions],
+    [ethDomainId, actions],
   );
 
   const handleDataPagination = useCallback(() => {
