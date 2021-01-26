@@ -74,9 +74,10 @@ const NetworkContractUpgradeDialogForm = ({
 
   const { version: newVersion } = useNetworkContracts();
 
+  const hasRootPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+
   const canUpgradeVersion =
-    hasRegisteredProfile &&
-    hasRoot(allUserRoles) &&
+    hasRootPermission &&
     version &&
     canBeUpgraded(colony, parseInt(newVersion || '0', 10));
 
@@ -89,7 +90,7 @@ const NetworkContractUpgradeDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
-      {!canUpgradeVersion && (
+      {!hasRootPermission && (
         <DialogSection>
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Root]} />
         </DialogSection>
@@ -115,7 +116,7 @@ const NetworkContractUpgradeDialogForm = ({
           disabled={!canUpgradeVersion}
         />
       </DialogSection>
-      {!canUpgradeVersion && (
+      {!hasRootPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>
             <FormattedMessage
