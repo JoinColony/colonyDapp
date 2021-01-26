@@ -99,6 +99,14 @@ const MSG = defineMessages({
     id: 'extensions.CoinMachine.param.startingPriceTitle.description',
     defaultMessage: `The sale price to start at, expressed in units of the Purchase Token per token being sold, as a WAD`,
   },
+  coinMachineTokensToSellTitle: {
+    id: 'extensions.CoinMachine.param.tokensToSell.title',
+    defaultMessage: 'TokensToSell',
+  },
+  coinMachineTokensToSellDescription: {
+    id: 'extensions.CoinMachine.param.tokensToSell.description',
+    defaultMessage: `The maximum number of tokens that are going to be sold during the entire lifecycle of this contract`,
+  },
   unknownName: {
     id: 'extensions.Unknown.name',
     defaultMessage: 'Unknown Extension',
@@ -163,6 +171,13 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineMaxPerPeriodTitle,
         description: MSG.coinMachineMaxPerPeriodDescription,
         defaultValue: 10,
+      },
+      {
+        paramName: 'tokensToSell',
+        validation: yup.number().required(),
+        title: MSG.coinMachineTokensToSellTitle,
+        description: MSG.coinMachineTokensToSellDescription,
+        defaultValue: 10000,
       },
       {
         paramName: 'startingPrice',
