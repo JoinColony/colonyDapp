@@ -103,12 +103,24 @@ const ColonyActions = ({
     commentCount?.transactionMessagesCount,
   ]);
 
+  const uniqueActions = actions.filter(
+    (action) =>
+      !(
+        action.actionType === ColonyActionTypes.MoveFunds &&
+        actions.some(
+          (innerAction: FormattedAction) =>
+            innerAction.actionType === ColonyActionTypes.Payment &&
+            action.transactionHash === innerAction.transactionHash,
+        )
+      ),
+  );
+
   /* Needs to be tested when all action types are wirde up & reflected in the list */
   const filteredActions = useMemo(
     () =>
       !ethDomainId
-        ? actions
-        : actions.filter(
+        ? uniqueActions
+        : uniqueActions.filter(
             (action) =>
               Number(action.fromDomain) === ethDomainId ||
               /* when no specific domain in the action it is displayed in Root */
@@ -117,7 +129,7 @@ const ColonyActions = ({
               (action.actionType === ColonyActionTypes.MoveFunds &&
                 Number(action.toDomain) === ethDomainId),
           ),
-    [ethDomainId, actions],
+    [ethDomainId, uniqueActions],
   );
 
   const handleDataPagination = useCallback(() => {
