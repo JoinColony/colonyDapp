@@ -27,6 +27,8 @@ interface ActionValues {
   tokenAddress: Address;
   fromDomain: number;
   toDomain: number;
+  oldVersion: string;
+  newVersion: string;
 }
 
 /*
@@ -270,6 +272,23 @@ const getCreateDomainActionValues = async (
   return domainAction;
 };
 
+const getVersionUpgradeActionValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const versionUpgradeEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.ColonyUpgraded,
+  ) as ProcessedEvent;
+
+  const {
+    values: { oldVersion, newVersion },
+  } = versionUpgradeEvent;
+
+  return {
+    oldVersion: bigNumberify(oldVersion || '0').toString(),
+    newVersion: bigNumberify(newVersion || '0').toString(),
+  };
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -281,6 +300,8 @@ export const getActionValues = async (
     toDomain: 1,
     amount: '0',
     tokenAddress: AddressZero,
+    newVersion: '0',
+    oldVersion: '0',
   };
   switch (actionType) {
     case ColonyActions.Payment: {
@@ -320,6 +341,15 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...createDomainActionValues,
+      };
+    }
+    case ColonyActions.VersionUpgrade: {
+      const versionUpgradeActionValues = await getVersionUpgradeActionValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...versionUpgradeActionValues,
       };
     }
     default: {

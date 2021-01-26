@@ -1,7 +1,12 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
-import { ClientType, ColonyClient, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import {
+  ClientType,
+  ColonyClient,
+  ROOT_DOMAIN_ID,
+  ColonyVersion,
+} from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -14,6 +19,10 @@ import {
   SubgraphActionsQuery,
   SubgraphActionsQueryVariables,
   SubgraphActionsDocument,
+  ColonyQuery,
+  ColonyQueryVariables,
+  ColonyDocument,
+  getNetworkContracts,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -569,6 +578,128 @@ function* createMintTokensAction({
   }
 }
 
+function* createVersionUpgradeAction({
+  payload: { colonyAddress, colonyName, version, annotationMessage },
+  meta: { id: metaId, history },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_VERSION_UPGRADE>) {
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+
+    const { version: newestVersion } = yield getNetworkContracts();
+    const currentVersion = parseInt(version, 10);
+    const nextVersion = currentVersion + 1;
+    if (nextVersion > parseInt(newestVersion, 10)) {
+      throw new Error('Colony has the newest version');
+    }
+
+    const supportAnnotation =
+      currentVersion >= ColonyVersion.CeruleanLightweightSpaceship &&
+      annotationMessage;
+
+    let ipfsHash = null;
+    if (supportAnnotation) {
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'upgrade';
+
+    const { upgrade, annotateUpgrade } = yield createTransactionChannels(
+      metaId,
+      ['upgrade', 'annotateUpgrade'],
+    );
+
+    yield fork(createTransaction, upgrade.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'upgrade',
+      identifier: colonyAddress,
+      params: [nextVersion],
+      group: {
+        key: batchKey,
+        id: metaId,
+        index: 0,
+      },
+      ready: false,
+    });
+
+    if (supportAnnotation) {
+      yield fork(createTransaction, annotateUpgrade.id, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        group: {
+          key: batchKey,
+          id: metaId,
+          index: 1,
+        },
+        ready: false,
+      });
+    }
+
+    yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_CREATED);
+
+    if (supportAnnotation) {
+      yield takeFrom(annotateUpgrade.channel, ActionTypes.TRANSACTION_CREATED);
+    }
+
+    yield put(transactionReady(upgrade.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+
+    yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (supportAnnotation) {
+      yield put(transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]));
+
+      yield put(transactionReady(annotateUpgrade.id));
+
+      yield takeFrom(
+        annotateUpgrade.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
+
+    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
+      query: ColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield colonyManager.setColonyClient(colonyAddress);
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,
+      meta,
+    });
+  } catch (caughtError) {
+    putError(
+      ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR,
+      caughtError,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+}
+
 function* createDomainAction({
   payload: {
     colonyAddress,
@@ -746,4 +877,8 @@ export default function* tasksSagas() {
     createMintTokensAction,
   );
   yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_CREATE, createDomainAction);
+  yield takeEvery(
+    ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
+    createVersionUpgradeAction,
+  );
 }

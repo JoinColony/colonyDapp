@@ -15,6 +15,7 @@ import { useTransformer } from '~utils/hooks';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
+import { canBeUpgraded } from '../../../dashboard/checks';
 
 import { FormValues } from './NetworkContractUpgradeDialog';
 import styles from './NetworkContractUpgradeDialogForm.css';
@@ -54,7 +55,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  back: () => void;
+  back?: () => void;
   colony: Colony;
 }
 
@@ -70,9 +71,15 @@ const NetworkContractUpgradeDialogForm = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const { version: newVersion } = useNetworkContracts();
+
+  const hasRootPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const canUpgradeVersion =
+    hasRootPermission &&
+    version &&
+    canBeUpgraded(colony, parseInt(newVersion || '0', 10));
 
   return (
     <>
@@ -83,7 +90,7 @@ const NetworkContractUpgradeDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
-      {!canUpgradeVersion && (
+      {!hasRootPermission && (
         <DialogSection>
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Root]} />
         </DialogSection>
@@ -109,7 +116,7 @@ const NetworkContractUpgradeDialogForm = ({
           disabled={!canUpgradeVersion}
         />
       </DialogSection>
-      {!canUpgradeVersion && (
+      {!hasRootPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>
             <FormattedMessage
@@ -127,11 +134,13 @@ const NetworkContractUpgradeDialogForm = ({
         </DialogSection>
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          appearance={{ theme: 'secondary', size: 'large' }}
-          onClick={back}
-          text={{ id: 'button.back' }}
-        />
+        {back && (
+          <Button
+            appearance={{ theme: 'secondary', size: 'large' }}
+            onClick={back}
+            text={{ id: 'button.back' }}
+          />
+        )}
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={{ id: 'button.confirm' }}

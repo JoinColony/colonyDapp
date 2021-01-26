@@ -36,6 +36,7 @@ interface Appearance {
 interface Props {
   cancel: () => void;
   close: (val: any) => void;
+  onClick?: () => void;
 
   /** Appearance object */
   appearance?: Appearance;
@@ -53,6 +54,7 @@ const ConfirmDialog = ({
   cancelButtonText = MSG.defaultCancelButton,
   confirmButtonText = MSG.defaultConfirmButton,
   appearance,
+  onClick = () => close(null),
 }: Props) => (
   <Dialog cancel={cancel}>
     <DialogSection appearance={{ border: 'bottom' }}>
@@ -73,7 +75,7 @@ const ConfirmDialog = ({
           size: 'large',
         }}
         autoFocus
-        onClick={() => close(null)}
+        onClick={onClick}
         text={confirmButtonText}
       />
     </DialogSection>

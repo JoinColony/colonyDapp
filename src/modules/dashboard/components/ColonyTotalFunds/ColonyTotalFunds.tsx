@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { ColonyVersion } from '@colony/colony-js';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Icon from '~core/Icon';
@@ -45,12 +46,14 @@ const ColonyTotalFunds = ({
     colonyName,
     tokens: colonyTokens,
     nativeTokenAddress,
+    version,
   },
 }: Props) => {
   const [currentTokenAddress, setCurrentTokenAddress] = useState<Address>(
     nativeTokenAddress,
   );
-
+  const isSupportedColonyVersion =
+    version >= ColonyVersion.CeruleanLightweightSpaceship;
   const {
     data,
     loading: isLoadingTokenBalances,
@@ -112,13 +115,15 @@ const ColonyTotalFunds = ({
       </div>
       <div className={styles.totalBalanceCopy}>
         <FormattedMessage {...MSG.totalBalance} />
-        <Link
-          className={styles.manageFundsLink}
-          to={`/colony/${colonyName}/funds`}
-        >
-          <span className={styles.rightArrowDisplay}>→</span>
-          <FormattedMessage {...MSG.manageFundsLink} />
-        </Link>
+        {isSupportedColonyVersion && (
+          <Link
+            className={styles.manageFundsLink}
+            to={`/colony/${colonyName}/funds`}
+          >
+            <span className={styles.rightArrowDisplay}>→</span>
+            <FormattedMessage {...MSG.manageFundsLink} />
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -92,4 +92,19 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
       MetaWithHistory<object>
-    >;
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
+      {
+        colonyAddress: Address;
+        version: string;
+        colonyName?: string;
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR, object>;

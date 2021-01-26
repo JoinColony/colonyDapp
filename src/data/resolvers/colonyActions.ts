@@ -3,6 +3,7 @@ import {
   getBlockTime,
   ClientType,
   ColonyClientV5,
+  ColonyVersion,
 } from '@colony/colony-js';
 import { BigNumberish } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
@@ -24,6 +25,8 @@ interface EventValue {
   fromPot: BigNumberish;
   toPot: BigNumberish;
   who: Address;
+  oldVersion: string;
+  newVersion: string;
 }
 
 export interface ProcessedEvent {
@@ -135,12 +138,15 @@ export const colonyActionsResolvers = ({
           colonyClient as ColonyClient,
           actionType,
         );
-
-        const annotation = await getAnnotation(
-          from as string,
-          hash as string,
-          colonyClient as ColonyClientV5,
-        );
+        const clientVersion = await colonyClient?.version();
+        let annotation;
+        if (clientVersion === ColonyVersion.CeruleanLightweightSpaceship) {
+          annotation = await getAnnotation(
+            from as string,
+            hash as string,
+            colonyClient as ColonyClientV5,
+          );
+        }
 
         return {
           hash,

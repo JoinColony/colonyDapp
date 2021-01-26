@@ -10,7 +10,6 @@ import {
   ColonyDocument,
   ColonyQuery,
   ColonyQueryVariables,
-  getNetworkContracts,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
@@ -127,52 +126,6 @@ function* colonyRecoveryModeEnter({
   return null;
 }
 
-function* colonyUpgradeContract({
-  payload: { colonyAddress },
-  meta,
-}: Action<ActionTypes.COLONY_VERSION_UPGRADE>) {
-  const txChannel = yield call(getTxChannel, meta.id);
-
-  const { version: newVersion } = yield getNetworkContracts();
-
-  try {
-    yield fork(createTransaction, meta.id, {
-      context: ClientType.ColonyClient,
-      methodName: 'upgrade',
-      identifier: colonyAddress,
-      params: [newVersion],
-    });
-
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
-
-    yield put({
-      type: ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS,
-      meta,
-    });
-
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-
-    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
-      query: ColonyDocument,
-      variables: {
-        address: colonyAddress,
-      },
-      fetchPolicy: 'network-only',
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_VERSION_UPGRADE_ERROR,
-      error,
-      meta,
-    );
-  } finally {
-    txChannel.close();
-  }
-  return null;
-}
-
 function* colonyNativeTokenUnlock({
   meta,
   payload: { colonyAddress },
@@ -222,7 +175,6 @@ export default function* colonySagas() {
     ActionTypes.COLONY_RECOVERY_MODE_ENTER,
     colonyRecoveryModeEnter,
   );
-  yield takeEvery(ActionTypes.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
 
   /*
    * Note that the following actions use `takeLatest` because they are

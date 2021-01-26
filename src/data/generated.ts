@@ -153,7 +153,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-
+    
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -869,8 +869,8 @@ export type QueryEventsArgs = {
 
 
 export type QueryOneTxPaymentsArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  first?: Maybe<Scalars['Int']>;
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
   where: ActionsFilter;
 };
 
@@ -1112,6 +1112,8 @@ export type ColonyAction = {
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
   annotationHash?: Maybe<Scalars['String']>;
+  oldVersion: Scalars['String'];
+  newVersion: Scalars['String'];
 };
 
 export type NetworkContractsInput = {
@@ -1979,7 +1981,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
@@ -4983,6 +4985,8 @@ export const ColonyActionDocument = gql`
     amount
     tokenAddress
     annotationHash
+    newVersion
+    oldVersion
   }
 }
     `;

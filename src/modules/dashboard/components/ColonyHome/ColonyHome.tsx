@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Alert from '~core/Alert';
-import { DialogActionButton } from '~core/Button';
+import Button from '~core/Button';
+import { useDialog } from '~core/Dialog';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { ActionTypes } from '~redux/index';
 import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
 import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
-import { getUserRolesForDomain } from '../../../transformers';
+import { getUserRolesForDomain, getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
 import { canBeUpgraded } from '../../checks';
 
@@ -77,8 +77,9 @@ const ColonyHome = ({ match, location }: Props) => {
     );
   }
   const { colonyName } = match.params;
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
+  const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
 
   const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
     domainFilter: string | undefined;
@@ -143,11 +144,19 @@ const ColonyHome = ({ match, location }: Props) => {
     filteredDomainId || ROOT_DOMAIN_ID,
   ]);
 
-  const rootUserRoles = useTransformer(getUserRolesForDomain, [
-    data && data.colony,
+  const allUserRoles = useTransformer(getAllUserRoles, [
+    data?.colony,
     walletAddress,
-    ROOT_DOMAIN_ID,
   ]);
+
+  const handleUpgradeColony = useCallback(() => {
+    if (!data || !data.colony) {
+      return;
+    }
+    openUpgradeVersionDialog({
+      colony: data.colony,
+    });
+  }, [data, openUpgradeVersionDialog]);
 
   if (!colonyName || (reverseENSAddress as any) instanceof Error) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
@@ -156,9 +165,10 @@ const ColonyHome = ({ match, location }: Props) => {
   if (!data || !data.colonyAddress || !data.colony) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
-
   const { colony } = data;
-  const canUpgradeColony = hasRoot(rootUserRoles);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
   /*
    * @NOTE As a future upgrade, we can have a mapping where we keep track of
    * past and current network versions so that we can control, more granularly,
@@ -166,9 +176,10 @@ const ColonyHome = ({ match, location }: Props) => {
    * an older version
    */
   const mustUpgradeColony = canBeUpgraded(
-    data.colony,
+    colony,
     parseInt(networkVersion || '0', 10),
   );
+
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
@@ -231,14 +242,10 @@ const ColonyHome = ({ match, location }: Props) => {
             <div className={styles.upgradeBanner}>
               <FormattedMessage {...MSG.upgradeRequired} />
             </div>
-            <DialogActionButton
+            <Button
               appearance={{ theme: 'primary', size: 'medium' }}
               text={{ id: 'button.upgrade' }}
-              dialog={NetworkContractUpgradeDialog}
-              submit={ActionTypes.COLONY_VERSION_UPGRADE}
-              success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
-              error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
-              values={{ colonyAddress: data.colonyAddress }}
+              onClick={handleUpgradeColony}
               disabled={!canUpgradeColony}
             />
           </Alert>

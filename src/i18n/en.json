@@ -98,8 +98,10 @@
 
     "transaction.group.moveFunds.title": "Transfer Funds",
     "transaction.group.moveFunds.description": "Move Funds Between Domains",
-    "transaction.ColonyClient.upgrade.title": "Update Colony",
-    "transaction.ColonyClient.upgrade.description": "Update Colony",
+    "transaction.ColonyClient.upgrade.title": "Colony Version Upgrade",
+    "transaction.ColonyClient.upgrade.description": "Colony Version Upgrade",
+    "transaction.group.upgrade.title": "Colony Version Upgrade",
+    "transaction.group.upgrade.description": "Colony Version Upgrade",
     "transaction.ColonyClient.enterRecoveryMode.title": "Enter Recovery mode",
     "transaction.ColonyClient.enterRecoveryMode.description": "Enter Recovery mode",
     "transaction.ColonyClient.claimColonyFunds.title": "Claim Pending Transactions",

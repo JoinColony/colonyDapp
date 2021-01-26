@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
+import { useHistory } from 'react-router-dom';
 
+import { pipe, mergePayload, withMeta, mapPayload } from '~utils/actions';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
@@ -16,13 +18,19 @@ export interface FormValues {
 }
 
 interface CustomWizardDialogProps {
-  prevStep: string;
+  prevStep?: string;
   colony: Colony;
 }
 
-type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+type Props = DialogProps &
+  Partial<WizardDialogType<object>> &
+  CustomWizardDialogProps;
 
 const displayName = 'dashboard.NetworkContractUpgradeDialog';
+
+const validationSchema = yup.object().shape({
+  annotation: yup.string().max(4000),
+});
 
 const NetworkContractUpgradeDialog = ({
   cancel,
@@ -30,20 +38,36 @@ const NetworkContractUpgradeDialog = ({
   callStep,
   prevStep,
   colony,
+  colony: { colonyAddress, version, colonyName },
 }: Props) => {
-  const validationSchema = yup.object().shape({
-    annotation: yup.string().max(4000),
-  });
+  const history = useHistory();
+
+  const transform = useCallback(
+    pipe(
+      mapPayload(({ annotation: annotationMessage }) => {
+        return {
+          colonyAddress,
+          colonyName,
+          version,
+          annotationMessage,
+        };
+      }),
+      mergePayload({ colonyAddress, version, colonyName }),
+      withMeta({ history }),
+    ),
+    [colonyAddress, version, colonyName],
+  );
 
   return (
     <ActionForm
       initialValues={{
         annotation: undefined,
       }}
-      submit={ActionTypes.COLONY_VERSION_UPGRADE}
-      error={ActionTypes.COLONY_VERSION_UPGRADE}
-      success={ActionTypes.COLONY_VERSION_UPGRADE}
+      submit={ActionTypes.COLONY_ACTION_VERSION_UPGRADE}
+      error={ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR}
+      success={ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS}
       validationSchema={validationSchema}
+      transform={transform}
       onSuccess={close}
     >
       {(formValues: FormikProps<FormValues>) => (
@@ -51,7 +75,7 @@ const NetworkContractUpgradeDialog = ({
           <DialogForm
             {...formValues}
             colony={colony}
-            back={() => callStep(prevStep)}
+            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
           />
         </Dialog>
       )}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { ColonyVersion } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
@@ -93,8 +94,8 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ColonyActionsDialog',
         nextStepRecovery: 'dashboard.RecoveryModeDialog',
-        nextStepUpgrade: 'dashboard.NetworkContractUpgradeDialog',
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
+        nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
         colony,
       },
     },
@@ -126,13 +127,22 @@ const ColonyHomeActions = ({ colony }: Props) => {
         colony,
       },
     },
+    {
+      component: TokenMintDialog,
+      props: {
+        prevStep: 'dashboard.ManageFundsDialog',
+        colony,
+      },
+    },
   ]);
-
+  const isSupportedColonyVersion =
+    colony.version >= ColonyVersion.CeruleanLightweightSpaceship;
   return (
     <Button
       appearance={{ theme: 'primary', size: 'large' }}
       text={MSG.newAction}
       onClick={() => startWizardFlow('dashboard.ColonyActionsDialog')}
+      disabled={!isSupportedColonyVersion}
     />
   );
 };

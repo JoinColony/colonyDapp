@@ -265,9 +265,10 @@ const ActionsPage = () => {
       fromDomain,
       toDomain,
       annotationHash,
+      newVersion,
+      oldVersion,
     },
   } = colonyActionData;
-
   /*
    * Colony
    */
@@ -328,6 +329,8 @@ const ActionsPage = () => {
       (domains.find(
         ({ ethDomainId }) => ethDomainId === toDomain,
       ) as OneDomain) || fallbackToDomain?.colonyDomain,
+    newVersion,
+    oldVersion,
   };
 
   return (
