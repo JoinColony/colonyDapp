@@ -344,18 +344,6 @@ export type EditUserInput = {
   website?: Maybe<Scalars['String']>;
 };
 
-export type CreateColonyInput = {
-  colonyAddress: Scalars['String'];
-  colonyName: Scalars['String'];
-  displayName: Scalars['String'];
-  tokenAddress: Scalars['String'];
-  tokenName: Scalars['String'];
-  tokenSymbol: Scalars['String'];
-  tokenDecimals: Scalars['Int'];
-  tokenIsExternal: Scalars['Boolean'];
-  tokenIconHash?: Maybe<Scalars['String']>;
-};
-
 export type CreateTaskInput = {
   colonyAddress: Scalars['String'];
   ethDomainId: Scalars['Int'];
@@ -436,15 +424,6 @@ export type FinalizeTaskInput = {
   ethPotId: Scalars['Int'];
 };
 
-export type EditColonyProfileInput = {
-  colonyAddress: Scalars['String'];
-  avatarHash?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
-  guideline?: Maybe<Scalars['String']>;
-  website?: Maybe<Scalars['String']>;
-};
-
 export type SubscribeToColonyInput = {
   colonyAddress: Scalars['String'];
 };
@@ -466,11 +445,6 @@ export type EditDomainNameInput = {
   colonyAddress: Scalars['String'];
   ethDomainId: Scalars['Int'];
   name: Scalars['String'];
-};
-
-export type SetColonyTokensInput = {
-  tokenAddresses: Array<Maybe<Scalars['String']>>;
-  colonyAddress: Scalars['String'];
 };
 
 export type SetUserTokensInput = {
@@ -1027,17 +1001,11 @@ export type ColonyAction = {
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
   annotationHash?: Maybe<Scalars['String']>;
-<<<<<<< HEAD
   oldVersion: Scalars['String'];
   newVersion: Scalars['String'];
-=======
   colonyDisplayName: Scalars['String'];
   colonyAvatarHash: Scalars['String'];
-<<<<<<< HEAD
->>>>>>> Refactor: `ColonyAction` query to properly return values
-=======
   colonyTokens: Array<Maybe<Scalars['String']>>;
->>>>>>> Add: colony actions resolvers return tokens data
 };
 
 export type NetworkContractsInput = {
@@ -1791,15 +1759,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-<<<<<<< HEAD
-<<<<<<< HEAD
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion'>
-=======
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'colonyDisplayName' | 'colonyAvatarHash'>
->>>>>>> Refactor: `ColonyAction` query to properly return values
-=======
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens'>
->>>>>>> Add: colony actions resolvers return tokens data
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
@@ -4147,17 +4107,11 @@ export const ColonyActionDocument = gql`
     amount
     tokenAddress
     annotationHash
-<<<<<<< HEAD
     newVersion
     oldVersion
-=======
     colonyDisplayName
     colonyAvatarHash
-<<<<<<< HEAD
->>>>>>> Refactor: `ColonyAction` query to properly return values
-=======
     colonyTokens
->>>>>>> Add: colony actions resolvers return tokens data
   }
 }
     `;
@@ -4982,23 +4936,6 @@ export const ColonyMembersWithReputationDocument = gql`
  *   },
  * });
  */
-<<<<<<< HEAD
-<<<<<<< HEAD
-export function useSubgraphSingleDomainQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>) {
-        return Apollo.useQuery<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>(SubgraphSingleDomainDocument, baseOptions);
-      }
-export function useSubgraphSingleDomainLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>(SubgraphSingleDomainDocument, baseOptions);
-        }
-export type SubgraphSingleDomainQueryHookResult = ReturnType<typeof useSubgraphSingleDomainQuery>;
-export type SubgraphSingleDomainLazyQueryHookResult = ReturnType<typeof useSubgraphSingleDomainLazyQuery>;
-<<<<<<< HEAD
-export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>;
-=======
-export type SubgraphSingleDomainQueryResult = Apollo.QueryResult<SubgraphSingleDomainQuery, SubgraphSingleDomainQueryVariables>;
-=======
-=======
->>>>>>> Regenerate: graphql hooks after pulling in domain logic
 export function useColonyMembersWithReputationQuery(baseOptions?: Apollo.QueryHookOptions<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>) {
         return Apollo.useQuery<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>(ColonyMembersWithReputationDocument, baseOptions);
       }
@@ -5007,23 +4944,4 @@ export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.Laz
         }
 export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
-<<<<<<< HEAD
-<<<<<<< HEAD
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
-<<<<<<< HEAD
->>>>>>> Refactor: colony resolver into processedColony resolver
-<<<<<<< HEAD
->>>>>>> Refactor: colony resolver into processedColony resolver
-=======
-=======
->>>>>>> Refactor: add `getProcessedColony` resolvers helper
-<<<<<<< HEAD
->>>>>>> Refactor: add `getProcessedColony` resolvers helper
-=======
-=======
-export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
->>>>>>> Add: `processedColony` resolver token related fields
->>>>>>> Add: `processedColony` resolver token related fields
-=======
-export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
->>>>>>> Regenerate: graphql hooks after pulling in domain logic
