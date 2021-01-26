@@ -105,8 +105,6 @@ const AdvancedDialog = ({
   const canEnterRecovery =
     hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
 
-  const canUpgradeVersion = hasRegisteredProfile && hasRoot(allUserRoles);
-
   const items = [
     {
       title: MSG.managePermissionsTitle,
@@ -139,7 +137,7 @@ const AdvancedDialog = ({
       title: MSG.editColonyDetailsTitle,
       description: MSG.editColonyDetailsDescription,
       icon: 'emoji-edit-tools',
-      permissionRequired: !canUpgradeVersion,
+      permissionRequired: !hasRootPermission,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
