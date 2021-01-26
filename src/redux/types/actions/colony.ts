@@ -6,24 +6,6 @@ import { ActionType, ErrorActionType, UniqueActionType } from './index';
 
 export type ColonyActionTypes =
   | UniqueActionType<
-      ActionTypes.COLONY_AVATAR_REMOVE,
-      { user: Address; colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_AVATAR_REMOVE_ERROR, WithKey>
-  | UniqueActionType<ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS, void, WithKey>
-  | UniqueActionType<
-      ActionTypes.COLONY_AVATAR_UPLOAD,
-      { colonyAddress: Address; data: string },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_AVATAR_UPLOAD_ERROR, WithKey>
-  | UniqueActionType<
-      ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
-      { hash: string },
-      WithKey
-    >
-  | UniqueActionType<
       ActionTypes.COLONY_CLAIM_TOKEN,
       { tokenAddress: Address; colonyAddress: Address },
       object
