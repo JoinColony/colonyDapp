@@ -318,14 +318,14 @@ const getVersionUpgradeActionValues = async (
 const getColonyEditActionValues = async (
   processedEvents: ProcessedEvent[],
 ): Promise<Partial<ActionValues>> => {
-  const mintTokensEvent = processedEvents.find(
+  const colonyMetadataEvent = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.ColonyMetadata,
   ) as ProcessedEvent;
 
   const {
     address,
     values: { agent, metadata },
-  } = mintTokensEvent;
+  } = colonyMetadataEvent;
 
   const ipfsData = await ipfs.getString(metadata);
   const {
