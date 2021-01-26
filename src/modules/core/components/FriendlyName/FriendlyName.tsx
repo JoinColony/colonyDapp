@@ -64,9 +64,6 @@ const FriendlyName = ({
     }
   }
 
-  // const isColonyAddress = colony && walletAddress === colony.colonyAddress;
-  // const colonyName =
-  //   isColonyAddress && (colony?.displayName || colony?.colonyName || c);
   /*
    * @NOTE On touching element styles manually
    * The "tech" font we user renders a bit larger than our display font while
