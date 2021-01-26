@@ -126,7 +126,7 @@ export default gql`
     reputation(colonyAddress: String!, domainId: Int): String!
     tokens: [Token!]!
     tokenTransfers: [Transfer!]!
-    processedColonies: [ProcessedColony]!
+    processedColonies: [ProcessedColony!]!
   }
 
   extend type Query {
@@ -241,7 +241,7 @@ export default gql`
     address: String!
     ensName: String!
     metadata: String!
-    metadataHistory: [SubgraphColonyMetadata]!
+    metadataHistory: [SubgraphColonyMetadata!]!
     token: SubgraphToken!
     domains: [SubgraphDomain!]!
   }

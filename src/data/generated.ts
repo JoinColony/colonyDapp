@@ -889,7 +889,7 @@ export type User = {
   createdAt: Scalars['DateTime'];
   id: Scalars['String'];
   notifications: Array<Notification>;
-  processedColonies: Array<Maybe<ProcessedColony>>;
+  processedColonies: Array<ProcessedColony>;
   profile: UserProfile;
   reputation: Scalars['String'];
   taskIds: Array<Scalars['String']>;
@@ -1163,7 +1163,7 @@ export type SubgraphColony = {
   address: Scalars['String'];
   ensName: Scalars['String'];
   metadata: Scalars['String'];
-  metadataHistory: Array<Maybe<SubgraphColonyMetadata>>;
+  metadataHistory: Array<SubgraphColonyMetadata>;
   token: SubgraphToken;
   domains: Array<SubgraphDomain>;
 };
@@ -1702,7 +1702,7 @@ export type UserColoniesQueryVariables = Exact<{
 
 export type UserColoniesQuery = { user: (
     Pick<User, 'id' | 'colonyAddresses'>
-    & { processedColonies: Array<Maybe<Pick<ProcessedColony, 'id' | 'avatarHash' | 'avatarURL' | 'colonyAddress' | 'colonyName' | 'displayName'>>> }
+    & { processedColonies: Array<Pick<ProcessedColony, 'id' | 'avatarHash' | 'avatarURL' | 'colonyAddress' | 'colonyName' | 'displayName'>> }
   ) };
 
 export type UserColonyAddressesQueryVariables = Exact<{
@@ -1866,7 +1866,7 @@ export type SubgraphColoniesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type SubgraphColoniesQuery = { colonies: (
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
-    & { metadataHistory: Array<Maybe<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>>, token: (
+    & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
     ) }
@@ -1879,13 +1879,13 @@ export type SubgraphColonyMetadataQueryVariables = Exact<{
 
 export type SubgraphColonyMetadataQuery = { colony: (
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'metadata'>
-    & { metadataHistory: Array<Maybe<(
+    & { metadataHistory: Array<(
       Pick<SubgraphColonyMetadata, 'id' | 'metadata'>
       & { transaction: (
         Pick<SubgraphTransaction, 'id'>
         & { block: Pick<SubgraphBlock, 'timestamp'> }
       ) }
-    )>> }
+    )> }
   ) };
 
 export type ColonyFromNameQueryVariables = Exact<{
