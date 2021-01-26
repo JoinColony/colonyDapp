@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Alert from '~core/Alert';
 import Button from '~core/Button';
@@ -16,7 +15,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
 import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
-import { getUserRolesForDomain, getAllUserRoles } from '../../../transformers';
+import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
 import { canBeUpgraded } from '../../checks';
 
@@ -115,35 +114,7 @@ const ColonyHome = ({ match, location }: Props) => {
 
   if (error) console.error(error);
 
-  const colonyDomains =
-    data && data.processedColony && data.processedColony.domains;
   const reverseENSAddress = dataVariables && dataVariables.address;
-
-  /*
-   * @NOTE Disabled until we're done with domain filters to prevent lint errors
-   * when pushing downstream rebased branches
-   *
-   * I initially was tempted to remove this, as we don't actually need domain data,
-   * just the Id, then I remembered we need to display the domain description in
-   * the sidebar, and it's a good idea to just pass it down from here.
-   *
-   * Anyway this is still needed for DEV-58
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const filteredDomain = colonyDomains
-    ? colonyDomains.find(({ ethDomainId }) => ethDomainId === filteredDomainId)
-    : undefined;
-
-  /*
-   * @NOTE Disabled until we're done with domain filters to prevent lint errors
-   * when pushing downstream rebased branches
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const currentDomainUserRoles = useTransformer(getUserRolesForDomain, [
-    data && data.processedColony,
-    walletAddress,
-    filteredDomainId || ROOT_DOMAIN_ID,
-  ]);
 
   const allUserRoles = useTransformer(getAllUserRoles, [
     data?.processedColony,
