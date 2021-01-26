@@ -165,12 +165,6 @@ export const userResolvers = ({
     },
     async processedColonies({ colonyAddresses }) {
       try {
-        const userColonies: Array<{
-          colonyChainId: string;
-          ensName: string;
-          metadata: string;
-          id: string;
-        }> = [];
         const { data } = await apolloClient.query<
           SubgraphColoniesQuery,
           SubgraphColoniesQueryVariables
@@ -179,7 +173,12 @@ export const userResolvers = ({
           fetchPolicy: 'network-only',
         });
         if (data?.colonies) {
-          colonyAddresses.map((colonyAddress) => {
+          const userColonies: Array<{
+            colonyChainId: string;
+            ensName: string;
+            metadata: string;
+            id: string;
+          }> = colonyAddresses.reduce((colonies, colonyAddress) => {
             const subscribedColony = ((data?.colonies as unknown) as Array<{
               id: string;
               colonyChainId: string;
@@ -187,10 +186,10 @@ export const userResolvers = ({
               metadata: string;
             }>).find(({ id }) => id === colonyAddress.toLowerCase());
             if (subscribedColony) {
-              userColonies.push(subscribedColony);
+              colonies.push(subscribedColony);
             }
-            return null;
-          });
+            return colonies;
+          }, []);
           return Promise.all(
             userColonies.map(async (colony) =>
               getProcessedColony(colony, createAddress(colony.id), ipfs),
