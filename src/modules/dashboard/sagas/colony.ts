@@ -4,9 +4,6 @@ import { ClientType } from '@colony/colony-js';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import {
-  EditColonyProfileDocument,
-  EditColonyProfileMutation,
-  EditColonyProfileMutationVariables,
   ProcessedColonyDocument,
   ProcessedColonyQuery,
   ProcessedColonyQueryVariables,

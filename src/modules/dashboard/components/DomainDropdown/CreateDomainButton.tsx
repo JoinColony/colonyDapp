@@ -45,7 +45,7 @@ const CreateDomainButton = ({ colony }: Props) => {
 
   const text = formatMessage(MSG.buttonCreateNewDomain);
   const isSupportedColonyVersion =
-    colony.version >= ColonyVersion.CeruleanLightweightSpaceship;
+    parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
   return (
     <button
       className={styles.main}

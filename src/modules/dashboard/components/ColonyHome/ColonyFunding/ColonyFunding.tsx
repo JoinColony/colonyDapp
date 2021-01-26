@@ -75,7 +75,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   });
 
   const isSupportedColonyVersion =
-    colony.version >= ColonyVersion.CeruleanLightweightSpaceship;
+    parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
   return (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>

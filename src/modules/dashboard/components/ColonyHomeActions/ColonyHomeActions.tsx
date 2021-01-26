@@ -138,7 +138,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
     },
   ]);
   const isSupportedColonyVersion =
-    colony.version >= ColonyVersion.CeruleanLightweightSpaceship;
+    parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
   return (
     <Button
       appearance={{ theme: 'primary', size: 'large' }}

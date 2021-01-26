@@ -146,16 +146,16 @@ const ColonyHome = ({ match, location }: Props) => {
   ]);
 
   const allUserRoles = useTransformer(getAllUserRoles, [
-    data?.colony,
+    data?.processedColony,
     walletAddress,
   ]);
 
   const handleUpgradeColony = useCallback(() => {
-    if (!data || !data.colony) {
+    if (!data || !data.processedColony) {
       return;
     }
     openUpgradeVersionDialog({
-      colony: data.colony,
+      colony: data.processedColony,
     });
   }, [data, openUpgradeVersionDialog]);
 

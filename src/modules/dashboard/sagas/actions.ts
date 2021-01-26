@@ -19,6 +19,9 @@ import {
   SubgraphActionsQuery,
   SubgraphActionsQueryVariables,
   SubgraphActionsDocument,
+  ProcessedColonyQuery,
+  ProcessedColonyQueryVariables,
+  ProcessedColonyDocument,
   SubgraphColonyMetadataQuery,
   SubgraphColonyMetadataQueryVariables,
   SubgraphColonyMetadataDocument,
@@ -672,12 +675,11 @@ function* createVersionUpgradeAction({
       );
     }
 
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
-
-    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
-      query: ColonyDocument,
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
       variables: {
         address: colonyAddress,
       },
@@ -690,6 +692,10 @@ function* createVersionUpgradeAction({
       type: ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (caughtError) {
     putError(
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR,
