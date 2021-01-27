@@ -35,6 +35,24 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
       MetaWithHistory<object>
     >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_DOMAIN_EDIT,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        domainName: string;
+        domainColor?: Color;
+        domainPurpose?: string;
+        annotationMessage?: string;
+        domainId: number;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_DOMAIN_EDIT_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_DOMAIN_EDIT_SUCCESS,
+      MetaWithHistory<object>
+  >
   | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC>
   | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_SUCCESS>
   | ErrorActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_ERROR, object>
