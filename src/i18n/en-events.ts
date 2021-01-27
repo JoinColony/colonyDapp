@@ -8,6 +8,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots} {{initiator} transferred {amount} {tokenSymbol} from the {fromDomain} to {toDomain}}
       ${ColonyAndExtensionsEvents.TokensMinted} {{initiator} minted {amount} {tokenSymbol} to {recipient}}
       ${ColonyAndExtensionsEvents.DomainAdded} {{initiator} added Team: {fromDomain}}
+      ${ColonyAndExtensionsEvents.DomainMetadata} {{initiator} changed {fromDomain} teams's from}
       ${ColonyAndExtensionsEvents.ColonyUpgraded} {This colony has upgraded to {newVersion}}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
@@ -36,6 +37,14 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.ColonyMetadata} {{agent} changed Colony metadata to {metadata}}
       other {{eventName} emmited with values: {displayValues}}
     }`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.all`]: `{{initiator} changed {fromDomain} teams's name, description, color from {oldName}, {oldDescription}, {oldColor} to {newName}, {newDescription}, {newColor}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.nameDescription`]: `{{initiator} changed {fromDomain} teams's name and description from {oldName}, {oldDescription} to {newName}, {newDescription}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.nameColor`]: `{{initiator} changed {fromDomain} teams's name and color from {oldName}, {oldColor} to {newName}, {newColor}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.descriptionColor`]: `{{initiator} changed {fromDomain} teams's description and color from {oldDescription}, {oldColor} to {newDescription}, {newColor}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.description`]: `{{initiator} changed {fromDomain} teams's description from {oldDescription} to {newDescription}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.name`]: `{{initiator} changed {fromDomain} teams's name from {oldName} to {newName}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.color`]: `{{initiator} changed {fromDomain} teams's color from {oldColor} to {newColor}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`]: `{initiator} changed this domain, but values are the same`,
 };
 
 export default eventsMessageDescriptors;
