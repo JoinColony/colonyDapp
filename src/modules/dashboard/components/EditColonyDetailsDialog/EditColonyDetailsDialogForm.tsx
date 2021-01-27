@@ -123,7 +123,7 @@ const EditColonyDetailsDialogForm = ({
     setAvatarFileError(true);
   };
 
-  const canValuesBeUpdate = () =>
+  const canValuesBeUpdate =
     /*
      * If the newly set name is different from the existing one
      */
@@ -262,7 +262,7 @@ const EditColonyDetailsDialogForm = ({
             !userHasPermission ||
             !isValid ||
             avatarFileError ||
-            !canValuesBeUpdate()
+            !canValuesBeUpdate
           }
         />
       </DialogSection>
