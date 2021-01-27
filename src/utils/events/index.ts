@@ -23,6 +23,8 @@ import {
 } from '~dashboard/ActionsPage';
 import ipfs from '../../context/ipfsNodeContext';
 
+import ipfs from '../../context/ipfsNodeContext';
+
 interface ActionValues {
   recipient: Address;
   amount: string;
@@ -359,6 +361,42 @@ const getColonyEditActionValues = async (
   return colonyEditValues;
 };
 
+const getEditDomainActionValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const domainMetadataEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.DomainMetadata,
+  ) as ProcessedEvent;
+
+  const {
+    values: { agent, domainId, metadata },
+  } = domainMetadataEvent;
+
+  const ipfsData = await ipfs.getString(metadata);
+  const {
+    domainName = null,
+    domainPurpose = null,
+    domainColor = null,
+  } = JSON.parse(ipfsData);
+
+  const domainMetadataValues: {
+    fromDomain: number;
+    actionInitiator?: string;
+    domainPurpose?: string;
+    domainName: string;
+    domainColor?: string;
+  } = {
+    fromDomain: parseInt(domainId.toString(), 10),
+    domainName,
+    domainPurpose,
+    domainColor,
+  };
+  if (agent) {
+    domainMetadataValues.actionInitiator = agent;
+  }
+  return domainMetadataValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -412,6 +450,15 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...createDomainActionValues,
+      };
+    }
+    case ColonyActions.EditDomain: {
+      const editDomainActionValues = await getEditDomainActionValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...editDomainActionValues,
       };
     }
     case ColonyActions.VersionUpgrade: {
