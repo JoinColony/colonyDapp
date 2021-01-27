@@ -12,6 +12,7 @@ import {
   ColonyActions,
   ColonyAndExtensionsEvents,
   Address,
+  FormattedAction,
 } from '~types/index';
 import { ParsedEvent } from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
@@ -456,4 +457,36 @@ export const getAnnotation = async (
     (annotationLog) => colonyClient.interface.parseLog(annotationLog),
   );
   return allColonyParseAnnotations.pop();
+};
+
+export const getDomainsforMoveFundsActions = async (
+  colonyAddress: string,
+  actions: FormattedAction[],
+  colonyManager: any,
+) => {
+  const colonyClient = await colonyManager.getClient(
+    ClientType.ColonyClient,
+    colonyAddress,
+  );
+
+  return Promise.all(
+    actions.map(async (action) => {
+      if (action.actionType !== ColonyActions.MoveFunds) {
+        return action;
+      }
+
+      const fromDomain = await colonyClient.getDomainFromFundingPot(
+        action.fromDomain,
+      );
+      const toDomain = await colonyClient.getDomainFromFundingPot(
+        action.toDomain,
+      );
+
+      return {
+        ...action,
+        fromDomain: bigNumberify(fromDomain).toString(),
+        toDomain: bigNumberify(toDomain).toString(),
+      };
+    }),
+  );
 };
