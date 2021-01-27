@@ -11,6 +11,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.CreateDomain} {New team: {fromDomain}}
       ${ColonyActions.VersionUpgrade} {Upgrade Colony!}
       ${ColonyActions.ColonyEdit} {Colony details changed}
+      ${ColonyActions.EditDomain} {{fromDomain} team details edited}
       other {Generic action we don't have information about}
     }`,
   'action.type': `{actionType, select,
@@ -21,6 +22,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.CreateDomain} {Create Team}
       ${ColonyActions.VersionUpgrade} {Version Upgrade}
       ${ColonyActions.ColonyEdit} {Colony Edit}
+      ${ColonyActions.EditDomain} {Edit Team}
       other {Generic}
     }`,
 };
