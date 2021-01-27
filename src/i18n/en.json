@@ -92,8 +92,12 @@
     "transaction.ColonyClient.mintTokens.description": "Mint New Tokens",
     "transaction.group.createDomainAction.title": "Create Domain",
     "transaction.group.createDomainAction.description": "Create Domain",
+    "transaction.group.editDomainAction.title": "Edit Domain",
+    "transaction.group.editDomainAction.description": "Edit Domain",
     "transaction.ColonyClient.addDomainWithProofs.title": "Create Domain",
     "transaction.ColonyClient.addDomainWithProofs.description": "Create Domain",
+    "transaction.ColonyClient.editDomainWithProofs.title": "Edit Domain",
+    "transaction.ColonyClient.editDomainWithProofs.description": "Edit Domain",
 
     "transaction.ColonyClient.annotateTransaction.title": "Annotate Transaction",
     "transaction.ColonyClient.annotateTransaction.description": "Annotate Transaction",
