@@ -40,6 +40,7 @@ const MSG = defineMessages({
 
 interface CustomWizardDialogueProps {
   nextStep: string;
+  nextStepEdit: string;
   prevStep: string;
   colony: Colony;
 }
@@ -54,6 +55,7 @@ const ManageDomainsDialog = ({
   callStep,
   prevStep,
   nextStep,
+  nextStepEdit,
   colony,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -83,7 +85,7 @@ const ManageDomainsDialog = ({
       permissionInfoTextValues: {
         permissionRequired: <FormattedMessage {...MSG.domainPermissionsList} />,
       },
-      onClick: () => callStep(nextStep),
+      onClick: () => callStep(nextStepEdit),
     },
   ];
 

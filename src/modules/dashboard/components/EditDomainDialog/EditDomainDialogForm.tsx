@@ -1,0 +1,215 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import { ColonyRole } from '@colony/colony-js';
+import { FormikProps } from 'formik';
+import { FormattedMessage, defineMessages } from 'react-intl';
+import sortBy from 'lodash/sortBy';
+
+import Button from '~core/Button';
+import ColorSelect from '~core/ColorSelect';
+import { Color } from '~core/ColorTag';
+import DialogSection from '~core/Dialog/DialogSection';
+import { Input, Annotations, Select } from '~core/Fields';
+import Heading from '~core/Heading';
+import PermissionsLabel from '~core/PermissionsLabel';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+
+import { Colony, useLoggedInUser } from '~data/index';
+import { useTransformer } from '~utils/hooks';
+
+import { getAllUserRoles } from '../../../transformers';
+import { canArchitect } from '../../../users/checks';
+
+import { FormValues } from './EditDomainDialog';
+import styles from './EditDomainDialogForm.css';
+
+const MSG = defineMessages({
+  titleEdit: {
+    id: 'dashboard.EditDomainDialog.EditDomainDialogForm.titleEdit',
+    defaultMessage: 'Edit team details',
+  },
+  name: {
+    id: 'dashboard.EditDomainDialog.EditDomainDialogForm.name',
+    defaultMessage: 'Team name',
+  },
+  domain: {
+    id: 'dashboard.EditDomainDialog.EditDomainDialogForm.domain',
+    defaultMessage: 'Select domain',
+  },
+  purpose: {
+    id: 'dashboard.EditDomainDialog.EditDomainDialogForm.name',
+    defaultMessage: 'What is the purpose of this team?',
+  },
+  annotation: {
+    id:
+      'dashboard.EditDomainDialog.EditDomainDialogForm.annotation',
+    defaultMessage: 'Explain why you’re editing this team',
+  },
+  noPermission: {
+    id:
+      // eslint-disable-next-line max-len
+      'dashboard.EditDomainDialog.EditDomainDialogForm.noPermission',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'You need the {roleRequired} permission in {domain} to take this action.',
+  },
+});
+
+interface Props {
+  back?: () => void;
+  colony: Colony;
+  id?: string;
+  isSubmitting;
+  isValid;
+}
+
+const EditDomainDialogForm = ({
+  back,
+  colony,
+  colony: { domains },
+  handleSubmit,
+  id,
+  isSubmitting,
+  isValid,
+  setFieldValue,
+  values: { domainId },
+}: Props & FormikProps<FormValues>) => {
+  const [domainColor, setDomainColor] = useState(Color.LightPink);
+
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const canEditDomain =
+    hasRegisteredProfile && canArchitect(allUserRoles);
+
+  const domainOptions = useMemo(
+    () =>
+      sortBy(
+        domains.map(({ name, ethDomainId }) => ({
+          value: ethDomainId.toString(),
+          label: name,
+        })),
+        ['value'],
+      ),
+
+    [domains],
+  );
+
+  const handleDomainChange = (selectedDomainId) => {
+    const selectedDomain = domains.find(domain => domain.ethDomainId.toString() === selectedDomainId);
+    if (selectedDomain) {
+      setFieldValue('domainColor', selectedDomain.color || undefined);
+      setFieldValue('domainName', selectedDomain.name || undefined);
+      setFieldValue('domainPurpose', selectedDomain.description || undefined);
+      setDomainColor(selectedDomain.color);
+    }
+  };
+  useEffect(() => {
+    if (domainId) {
+      handleDomainChange(domainId);
+    }
+  }, []);
+
+  return (
+    <>
+      <DialogSection appearance={{ theme: 'heading' }}>
+        <Heading
+          appearance={{ size: 'medium', margin: 'none' }}
+          text={MSG.titleEdit}
+          className={styles.title}
+        />
+      </DialogSection>
+      {!canEditDomain && (
+        <DialogSection>
+          <PermissionRequiredInfo requiredRoles={[ColonyRole.Architecture]} />
+        </DialogSection>
+      )}
+      <DialogSection>
+        <div className={styles.nameAndColorContainer}>
+          <div className={styles.domainName}>
+            <Select
+              options={domainOptions}
+              label={MSG.domain}
+              onChange={handleDomainChange}
+              name="domainId"
+              appearance={{ theme: 'grey', width: 'fluid' }}
+              disabled={!canEditDomain}
+            />
+          </div>
+          <ColorSelect
+            activeOption={domainColor}
+            appearance={{ alignOptions: 'right' }}
+            onColorChange={setDomainColor}
+            disabled={!canEditDomain}
+            name="domainColor"
+          />
+        </div>
+      </DialogSection>
+      <DialogSection>
+        <div className={styles.nameAndColorContainer}>
+          <div className={styles.domainName}>
+            <Input
+              label={MSG.name}
+              name="domainName"
+              appearance={{ colorSchema: 'grey', theme: 'fat' }}
+              disabled={!canEditDomain}
+              maxLength={20}
+            />
+          </div>
+        </div>
+      </DialogSection>
+      <DialogSection>
+        <Input
+          label={MSG.purpose}
+          name="domainPurpose"
+          appearance={{ colorSchema: 'grey', theme: 'fat' }}
+          disabled={!canEditDomain}
+          maxLength={90}
+        />
+      </DialogSection>
+      <DialogSection>
+        <Annotations
+          label={MSG.annotation}
+          name="annotationMessage"
+          disabled={!canEditDomain}
+        />
+      </DialogSection>
+      {!canEditDomain && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
+            <FormattedMessage
+              {...MSG.noPermission}
+              values={{
+                roleRequired: (
+                  <PermissionsLabel
+                    permission={ColonyRole.Architecture}
+                    name={{ id: `role.${ColonyRole.Architecture}` }}
+                  />
+                ),
+                domain: 'domainName',
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
+      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
+        {back && (
+          <Button
+            text={{ id: 'button.back' }}
+            onClick={back}
+            appearance={{ theme: 'secondary', size: 'large' }}
+          />
+        )}
+        <Button
+          text={{ id: 'button.confirm' }}
+          appearance={{ theme: 'primary', size: 'large' }}
+          onClick={() => handleSubmit()}
+          loading={isSubmitting}
+          disabled={!canEditDomain || !isValid}
+        />
+      </DialogSection>
+    </>
+  );
+};
+
+export default EditDomainDialogForm;
