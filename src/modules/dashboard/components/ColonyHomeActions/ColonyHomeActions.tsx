@@ -105,6 +105,13 @@ const ColonyHomeActions = ({ colony }: Props) => {
       },
     },
     {
+      component: EditDomainDialog,
+      props: {
+        prevStep: 'dashboard.ManageDomainsDialog',
+        colony,
+      },
+    },
+    {
       component: AdvancedDialog,
       props: {
         prevStep: 'dashboard.ColonyActionsDialog',
