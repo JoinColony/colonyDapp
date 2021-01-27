@@ -428,47 +428,49 @@ const cacheUpdates = {
     return async (cache: Cache) => {
       try {
         const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-        const [
-          colonyAddress,
-        ] = colonyManager.colonyClients.entries().next().value;
-        const colonyClient = await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
-        );
-        let canMintNativeToken = true;
-        try {
-          await colonyClient.estimate.mintTokens(bigNumberify(1));
-        } catch (error) {
-          canMintNativeToken = false;
-        }
+        if (colonyManager?.colonyClients?.entries()?.next()?.value) {
+          const [
+            colonyAddress,
+          ] = colonyManager.colonyClients.entries().next().value;
+          const colonyClient = await colonyManager.getClient(
+            ClientType.ColonyClient,
+            colonyAddress,
+          );
+          let canMintNativeToken = true;
+          try {
+            await colonyClient.estimate.mintTokens(bigNumberify(1));
+          } catch (error) {
+            canMintNativeToken = false;
+          }
 
-        const data = cache.readQuery<
-          ProcessedColonyQuery,
-          ProcessedColonyQueryVariables
-        >({
-          query: ProcessedColonyDocument,
-          variables: {
-            address: colonyAddress,
-          },
-        });
-
-        if (data?.processedColony) {
-          cache.modify({
-            id: cache.identify(data.processedColony),
-            fields: {
-              /*
-               * @TODO Most likely we'll have to do this cache update for
-               * the `canUnlockNativeToken`  and `isNativeTokenLocked`
-               * fields at some point
-               */
-              canMintNativeToken: () => canMintNativeToken,
+          const data = cache.readQuery<
+            ProcessedColonyQuery,
+            ProcessedColonyQueryVariables
+          >({
+            query: ProcessedColonyDocument,
+            variables: {
+              address: colonyAddress,
             },
           });
+
+          if (data?.processedColony) {
+            cache.modify({
+              id: cache.identify(data.processedColony),
+              fields: {
+                /*
+                 * @TODO Most likely we'll have to do this cache update for
+                 * the `canUnlockNativeToken`  and `isNativeTokenLocked`
+                 * fields at some point
+                 */
+                canMintNativeToken: () => canMintNativeToken,
+              },
+            });
+          }
         }
       } catch (e) {
         log.verbose(e);
         log.verbose(
-          'Not updating store - processed colony cache not loaded yet',
+          'Not updating store - cannot set mint native tokens caches',
         );
       }
     };
