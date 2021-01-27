@@ -44,6 +44,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.ColonyUpgraded]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.ColonyMetadata]: [ColonyRole.Root],
+  [ColonyAndExtensionsEvents.DomainMetadata]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
