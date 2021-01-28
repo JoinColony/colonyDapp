@@ -93,6 +93,7 @@ const ColonyHome = ({ match, location }: Props) => {
   const {
     data,
     error,
+    loading,
     /**
      * @NOTE Hooking into the return variable value
      *
@@ -111,6 +112,10 @@ const ColonyHome = ({ match, location }: Props) => {
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
+
+  console.log('fetching error?', error)
+  console.log('loading signal', loading)
+  console.log('returned data', data)
 
   if (error) console.error(error);
 
