@@ -1,14 +1,16 @@
 import { ApolloClient as ApolloClientClass } from '@apollo/client';
 import { PurserWallet } from '@purser/core';
 
-import ColonyManagerClass from '../lib/ColonyManager';
+import ColonyManagerClass from '~lib/ColonyManager';
 
-import ENSClass from '../lib/ENS';
-import IPFSNode from '../lib/ipfs';
+import ENSClass from '~lib/ENS';
+import IPFSNode from '~lib/ipfs';
+import PinataClass from '~lib/pinata';
 
 import ipfsNode from './ipfsNodeContext';
 import ens from './ensContext';
 import apolloClient from './apolloClient';
+import pinataClient from './pinataClient';
 
 export enum ContextModule {
   Wallet = 'wallet',
@@ -16,6 +18,7 @@ export enum ContextModule {
   IPFS = 'ipfs',
   ApolloClient = 'apolloClient',
   ENS = 'ens',
+  Pinata = 'pinataClient',
 }
 
 export interface Context {
@@ -25,6 +28,7 @@ export interface Context {
   [ContextModule.ApolloClient]?: ApolloClientClass<object>;
   [ContextModule.IPFS]?: IPFSNode;
   [ContextModule.ENS]?: ENSClass;
+  [ContextModule.Pinata]?: PinataClass;
 }
 
 /* Eventually the whole context will live in the newContext (not in sagas anymore). This becomes more important as we move away from redux and redux-saga entirely */
@@ -34,6 +38,7 @@ const TEMP_newContext: Context = {
   [ContextModule.ENS]: ens,
   [ContextModule.IPFS]: ipfsNode,
   [ContextModule.Wallet]: undefined,
+  [ContextModule.Pinata]: pinataClient,
 };
 
 export const TEMP_setContext = <K extends keyof Context>(
