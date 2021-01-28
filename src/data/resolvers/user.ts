@@ -46,7 +46,7 @@ export const userResolvers = ({
   colonyManager,
   ens,
   apolloClient,
-  ipfs,
+  ipfsWithFallback,
 }: Required<Context>): Resolvers => ({
   Query: {
     async userAddress(_, { name }): Promise<Address> {
@@ -192,7 +192,11 @@ export const userResolvers = ({
           }, []);
           return Promise.all(
             userColonies.map(async (colony) =>
-              getProcessedColony(colony, createAddress(colony.id), ipfs),
+              getProcessedColony(
+                colony,
+                createAddress(colony.id),
+                ipfsWithFallback,
+              ),
             ),
           );
         }

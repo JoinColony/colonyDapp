@@ -10,7 +10,7 @@ import {
 
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
-import { Context } from '~context/index';
+import { Context, IpfsWithFallbackSkeleton } from '~context/index';
 import {
   Transfer,
   ColonySubscribedUsersQuery,
@@ -27,7 +27,7 @@ import {
   SubgraphColonyDocument,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
-import IPFSNode from '~lib/ipfs';
+
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createAddress } from '~utils/web3';
 import { Color } from '~core/ColorTag';
@@ -58,7 +58,7 @@ const getColonyMembersWithReputation = async (
 export const getProcessedColony = async (
   subgraphColony,
   colonyAddress: Address,
-  ipfs: IPFSNode,
+  ipfs: IpfsWithFallbackSkeleton,
 ) => {
   const {
     colonyChainId,
@@ -142,7 +142,10 @@ export const getProcessedColony = async (
   };
 };
 
-export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
+export const getProcessedDomain = async (
+  subgraphDomain,
+  ipfs: IpfsWithFallbackSkeleton,
+) => {
   const {
     metadata,
     metadataHistory = [],
@@ -212,7 +215,7 @@ export const colonyResolvers = ({
   colonyManager,
   ens,
   apolloClient,
-  ipfs,
+  ipfsWithFallback,
 }: Required<Context>): Resolvers => ({
   Query: {
     async colonyAddress(_, { name }) {
@@ -298,7 +301,9 @@ export const colonyResolvers = ({
       });
       if (data?.domains) {
         const [singleDomain] = data.domains;
-        return singleDomain ? getProcessedDomain(singleDomain, ipfs) : null;
+        return singleDomain
+          ? getProcessedDomain(singleDomain, ipfsWithFallback)
+          : null;
       }
       return null;
     },
@@ -322,7 +327,7 @@ export const colonyResolvers = ({
           fetchPolicy: 'network-only',
         });
         return data?.colony
-          ? await getProcessedColony(data.colony, address, ipfs)
+          ? await getProcessedColony(data.colony, address, ipfsWithFallback)
           : null;
       } catch (error) {
         console.error(error);
@@ -349,7 +354,7 @@ export const colonyResolvers = ({
         if (data?.domains) {
           return Promise.all(
             data.domains.map(async (domain) =>
-              getProcessedDomain(domain, ipfs),
+              getProcessedDomain(domain, ipfsWithFallback),
             ),
           );
         }
