@@ -6,4 +6,5 @@ export enum Context {
   WALLET = 'wallet',
   APP_LOADING = 'appLoadingState',
   PINATA_CLIENT = 'pinataClient',
+  IPFS_WITH_FALLBACK = 'ipfsWithFallback',
 }
