@@ -34,7 +34,7 @@ function* ipfsDataUpload({
   payload: { ipfsData },
 }: Action<ActionTypes.IPFS_DATA_UPLOAD>) {
   try {
-    const ipfs = TEMP_getContext(ContextModule.IPFS);
+    const ipfs = TEMP_getContext(ContextModule.IPFSWithFallback);
 
     const ipfsHash = yield call([ipfs, ipfs.addString], ipfsData);
 
@@ -54,7 +54,8 @@ function* ipfsDataFetch({
   payload: { ipfsHash },
 }: Action<ActionTypes.IPFS_DATA_FETCH>) {
   try {
-    const ipfs = TEMP_getContext(ContextModule.IPFS);
+    const ipfs = TEMP_getContext(ContextModule.IPFSWithFallback);
+
     const ipfsData = yield call([ipfs, ipfs.getString], ipfsHash);
 
     yield put<AllActions>({

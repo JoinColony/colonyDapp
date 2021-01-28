@@ -5,12 +5,9 @@ import ColonyManagerClass from '~lib/ColonyManager';
 
 import ENSClass from '~lib/ENS';
 
-import ipfsNode from './ipfsNodeContext';
 import ens from './ensContext';
 import apolloClient from './apolloClient';
-import pinataClient from './pinataClient';
-
-import getIPFSWithFallback from './getIPFSWithFallback';
+import ipfsWithFallback from './ipfsWithFallbackContext';
 
 export enum ContextModule {
   Wallet = 'wallet',
@@ -23,8 +20,8 @@ export enum ContextModule {
 }
 
 export interface IpfsWithFallbackSkeleton {
-  getString: (hash: string) => Promise<string> | Promise<string | null>;
-  addString: (hash: string) => Promise<string> | Promise<string | null>;
+  getString: (hash: string) => Promise<any>;
+  addString: (hash: string) => Promise<any>;
 }
 
 export interface Context {
@@ -42,7 +39,7 @@ const TEMP_newContext: Context = {
   [ContextModule.ColonyManager]: undefined,
   [ContextModule.ENS]: ens,
   [ContextModule.Wallet]: undefined,
-  [ContextModule.IPFSWithFallback]: getIPFSWithFallback(ipfsNode, pinataClient),
+  [ContextModule.IPFSWithFallback]: ipfsWithFallback,
 };
 
 export const TEMP_setContext = <K extends keyof Context>(
