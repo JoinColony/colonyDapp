@@ -133,12 +133,17 @@ const ColonyActions = ({
   ]);
 
   useEffect(() => {
-    getDomainsforMoveFundsActions(colonyAddress, actions, colonyManager).then(
-      (result) => {
-        setFormattedActions(result);
-      },
-    );
-  }, [actions, colonyAddress, colonyManager]);
+    if (
+      formattedActions.length === 0 ||
+      actions?.length !== formattedActions.length
+    ) {
+      getDomainsforMoveFundsActions(
+        colonyAddress,
+        actions,
+        colonyManager,
+      ).then((result) => setFormattedActions(result));
+    }
+  }, [actions, colonyAddress, colonyManager, formattedActions]);
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */
   const filteredActions = useMemo(
