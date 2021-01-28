@@ -113,10 +113,6 @@ const ColonyHome = ({ match, location }: Props) => {
     variables: { name: colonyName, address: '' },
   });
 
-  console.log('fetching error?', error)
-  console.log('loading signal', loading)
-  console.log('returned data', data)
-
   if (error) console.error(error);
 
   const reverseENSAddress = dataVariables && dataVariables.address;
@@ -135,12 +131,17 @@ const ColonyHome = ({ match, location }: Props) => {
     });
   }, [data, openUpgradeVersionDialog]);
 
-  if (!colonyName || (reverseENSAddress as any) instanceof Error) {
-    return <Redirect to={NOT_FOUND_ROUTE} />;
+  if (loading) {
+    return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (!data || !data.colonyAddress || !data.processedColony) {
-    return <LoadingTemplate loadingText={MSG.loadingText} />;
+  if (
+    !colonyName ||
+    (reverseENSAddress as any) instanceof Error ||
+    error ||
+    !data?.processedColony
+  ) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   const { processedColony: colony } = data;
