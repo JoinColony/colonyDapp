@@ -43,6 +43,9 @@ export default gql`
     colonyDisplayName: String!
     colonyAvatarHash: String!
     colonyTokens: [String]!
+    domainName: String!
+    domainPurpose: String!
+    domainColor: String!
   }
 
   input NetworkContractsInput {

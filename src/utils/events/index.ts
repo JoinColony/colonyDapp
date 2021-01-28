@@ -369,6 +369,7 @@ const getEditDomainActionValues = async (
   ) as ProcessedEvent;
 
   const {
+    address,
     values: { agent, domainId, metadata },
   } = domainMetadataEvent;
 
@@ -380,12 +381,14 @@ const getEditDomainActionValues = async (
   } = JSON.parse(ipfsData);
 
   const domainMetadataValues: {
+    address: Address;
     fromDomain: number;
     actionInitiator?: string;
     domainPurpose?: string;
     domainName: string;
     domainColor?: string;
   } = {
+    address,
     fromDomain: parseInt(domainId.toString(), 10),
     domainName,
     domainPurpose,

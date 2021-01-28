@@ -203,6 +203,9 @@ export const colonyActionsResolvers = ({
           colonyDisplayName: null,
           colonyAvatarHash: null,
           colonyTokens: [],
+          domainName: null,
+          domainPurpose: null,
+          domainColor: null,
           ...actionValues,
         };
       }

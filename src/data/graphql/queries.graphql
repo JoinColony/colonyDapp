@@ -325,6 +325,9 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     colonyDisplayName
     colonyAvatarHash
     colonyTokens
+    domainName
+    domainPurpose
+    domainColor
   }
 }
 
