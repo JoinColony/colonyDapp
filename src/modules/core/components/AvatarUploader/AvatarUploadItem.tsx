@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useField } from 'formik';
 import { UploadItemComponentProps } from '~core/FileUpload/types';
-import { log } from '~utils/debug';
 
 import styles from './AvatarUploadItem.css';
 
@@ -51,8 +50,7 @@ const AvatarUploadItem = ({
       const uploadedFile = await upload(readFile);
       setValue({ ...value, preview: readFile.data, uploaded: uploadedFile });
     } catch (e) {
-      log(e);
-
+      console.error(e);
       /**
        * @todo Improve error modes for uploading avatars.
        */
