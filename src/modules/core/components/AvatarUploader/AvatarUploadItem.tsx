@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useField } from 'formik';
 import { UploadItemComponentProps } from '~core/FileUpload/types';
-import { log } from '~utils/debug';
 
 import styles from './AvatarUploadItem.css';
 
@@ -19,6 +18,7 @@ const AvatarUploadItem = ({
   name,
   reset,
   upload,
+  handleError,
 }: UploadItemComponentProps) => {
   const [
     ,
@@ -47,11 +47,10 @@ const AvatarUploadItem = ({
     let readFile;
     try {
       readFile = await read();
-      setValue({ ...value, preview: readFile.data });
-      await upload(readFile);
+      const uploadedFile = await upload(readFile);
+      setValue({ ...value, preview: readFile.data, uploaded: uploadedFile });
     } catch (e) {
-      log(e);
-
+      console.error(e);
       /**
        * @todo Improve error modes for uploading avatars.
        */
@@ -65,9 +64,11 @@ const AvatarUploadItem = ({
     if (file && !error && !uploaded) {
       uploadFile();
     }
+    if (error && handleError) {
+      handleError({ ...value, file });
+    }
     // Only on first render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleError, file, error, uploadFile, uploaded, value]);
 
   return (
     <div className={styles.main}>

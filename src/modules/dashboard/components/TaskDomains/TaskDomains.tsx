@@ -78,8 +78,8 @@ const TaskDomains = ({
 
   const domainList = useMemo(
     () =>
-      data && data.colony
-        ? data.colony.domains.map(({ ethDomainId: id, name }) => ({
+      data?.processedColony
+        ? data?.processedColony?.domains.map(({ ethDomainId: id, name }) => ({
             id,
             name,
             disabled: false,

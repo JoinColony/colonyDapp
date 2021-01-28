@@ -31,14 +31,7 @@ interface Props {
   colony: Colony;
 }
 
-const ColonySubscription = ({
-  colony: {
-    colonyAddress,
-    displayName: colonyDisplayName,
-    colonyName,
-    nativeTokenAddress,
-  },
-}: Props) => {
+const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
 
   const { data } = useUserColonyAddressesQuery({
@@ -86,10 +79,7 @@ const ColonySubscription = ({
       )}
       {isSubscribed && (
         <ColonySubscriptionInfoPopover
-          colonyAddress={colonyAddress}
-          colonyDisplayName={colonyDisplayName || colonyName}
-          colonyName={colonyName}
-          nativeTokenAddress={nativeTokenAddress}
+          colony={colony}
           onUnsubscribe={() => unsubscribe()}
         >
           <div className={styles.menuIconContainer}>

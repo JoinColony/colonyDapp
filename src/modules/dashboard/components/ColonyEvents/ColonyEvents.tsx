@@ -56,8 +56,8 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
   );
 
   useEffect(() => {
-    if (data && data.colony.events) {
-      setEvents(formatColonyEvents(data.colony.events));
+    if (data && data.processedColony.events) {
+      setEvents(formatColonyEvents(data.processedColony.events));
     }
   }, [data]);
 

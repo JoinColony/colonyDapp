@@ -1,5 +1,3 @@
-# import './fragments.graphql'
-
 query Task($id: String!) {
   task(id: $id) {
     id
@@ -15,14 +13,6 @@ query Task($id: String!) {
     }
     assignedWorkerAddress
     cancelledAt
-    colony {
-      id
-      colonyAddress
-      colonyName
-      avatarHash
-      displayName
-      nativeTokenAddress
-    }
     colonyAddress
     commentCount @client
     createdAt
@@ -91,27 +81,6 @@ query TaskToEdit($id: String!) {
         displayName
         username
         walletAddress
-      }
-    }
-    colony {
-      id
-      nativeTokenAddress
-      subscribedUsers {
-        id
-        profile {
-          displayName
-          walletAddress
-          username
-          avatarHash
-        }
-      }
-      tokenAddresses
-      tokens @client {
-        id
-        address
-        decimals
-        name
-        symbol
       }
     }
   }
@@ -200,12 +169,6 @@ query UserTasks($address: String!) {
       }
       assignedWorkerAddress
       cancelledAt
-      colony {
-        id
-        colonyName
-        displayName
-        nativeTokenAddress
-      }
       colonyAddress
       commentCount @client
       createdAt
@@ -249,94 +212,6 @@ query UserAddress($name: String!) {
   userAddress(name: $name) @client
 }
 
-query ColonyFromName($name: String!, $address: String!) {
-  colonyAddress(name: $name) @client @export(as: "address")
-  colony(address: $address) {
-    ...FullColony
-  }
-}
-
-query ColonyName($address: String!) {
-  colonyName(address: $address) @client
-}
-
-query ColonyAddress($name: String!) {
-  colonyAddress(name: $name) @client
-}
-
-query Colony($address: String!) {
-  colony(address: $address) {
-    ...FullColony
-  }
-}
-
-query ColonyTokens($address: String!) {
-  colony(address: $address) {
-    id
-    ...Tokens
-  }
-}
-
-query ColonyNativeToken($address: String!) {
-  colony(address: $address) {
-    id
-    nativeTokenAddress
-  }
-}
-
-query ColonyRoles($address: String!) {
-  colony(address: $address) {
-    id
-    colonyAddress
-    roles @client {
-      address
-      domains {
-        domainId
-        roles
-      }
-    }
-  }
-}
-
-query ColonyTransfers($address: String!) {
-  colony(address: $address) {
-    id
-    colonyAddress
-    transfers @client {
-      amount
-      hash
-      colonyAddress
-      date
-      from
-      hash
-      incoming
-      to
-      token
-    }
-    unclaimedTransfers @client {
-      amount
-      hash
-      colonyAddress
-      date
-      from
-      hash
-      incoming
-      to
-      token
-    }
-  }
-}
-
-query ColonyEvents($address: String!) {
-  colony(address: $address) {
-    id
-    colonyAddress
-    events @client {
-      ...FullNetworkEvent
-    }
-  }
-}
-
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id
@@ -352,18 +227,13 @@ query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!
   }
 }
 
-query ColonyProfile($address: String!) {
-  colony(address: $address) {
-    ...ColonyProfile
-  }
-}
-
 query UserColonies($address: String!) {
   user(address: $address) {
     id
-    colonies {
+    processedColonies @client {
       id
       avatarHash
+      avatarURL
       colonyAddress
       colonyName
       displayName
@@ -376,70 +246,6 @@ query UserColonyAddresses($address: String!) {
   user(address: $address) {
     id
     colonyAddresses
-  }
-}
-
-query ColonyTasks($address: String!) {
-  colony(address: $address) {
-    id
-    tasks {
-      id
-      ...Payouts
-      assignedWorker {
-        id
-        profile {
-          avatarHash
-        }
-      }
-      assignedWorkerAddress
-      cancelledAt
-      colony {
-        id
-        colonyName
-        displayName
-        nativeTokenAddress
-      }
-      colonyAddress
-      commentCount @client
-      createdAt
-      creatorAddress
-      dueDate
-      ethDomainId
-      ethSkillId
-      events {
-        id
-        type
-      }
-      finalizedAt
-      title
-      workRequestAddresses
-      txHash
-    }
-  }
-}
-
-query ColonySubscribedUsers($colonyAddress: String!) {
-  colony(address: $colonyAddress) {
-    id
-    subscribedUsers {
-      id
-      profile {
-        avatarHash
-        displayName
-        username
-        walletAddress
-      }
-    }
-  }
-}
-
-query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
-  colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
-}
-
-query ColonySingleDomain($colonyAddress: String!, $domainId: Int!) {
-  colonyDomain(colonyAddress: $colonyAddress, domainId: $domainId) @client {
-    ...DomainFields
   }
 }
 
@@ -460,15 +266,6 @@ query TokenInfo($address: String!) {
     name
     symbol
     iconHash
-  }
-}
-
-query ColonyDomains($colonyAddress: String!) {
-  colony(address: $colonyAddress) {
-    id
-    domains {
-      ...DomainFields
-    }
   }
 }
 
@@ -525,6 +322,9 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     annotationHash
     newVersion
     oldVersion
+    colonyDisplayName
+    colonyAvatarHash
+    colonyTokens
   }
 }
 
@@ -553,8 +353,6 @@ query TransactionMessagesCount($colonyAddress: String!) {
 # Prepending them with `Subgraph` allows the client to decide what endpoint to use
 
 query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
-  # @TODO Pagination
-  # See the schema for the correct filters we need to pass in for pagination
   oneTxPayments(skip: $skip, first: $first, where: { payment_contains: $colonyAddress }) {
     id
     agent
@@ -584,7 +382,13 @@ query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
       }
     }
   }
-  events(where: { associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)"] }) {
+  events(where: {
+    associatedColony_contains: $colonyAddress,
+    name_in: [
+      "TokensMinted(address,address,uint256)",
+      "DomainAdded(address,uint256)",
+      "ColonyMetadata(address,string)"
+    ] }) {
     id
     transaction {
       hash: id
@@ -638,4 +442,160 @@ query SubgraphSingleDomain($colonyAddress: String!, $domainId: Int!) {
       metadata
     }
   }
+}
+
+query ColonyName($address: String!) {
+  colonyName(address: $address) @client
+}
+
+query ColonyAddress($name: String!) {
+  colonyAddress(name: $name) @client
+}
+
+query SubgraphColony($address: String!) {
+  colony(id: $address) {
+    id
+    colonyChainId
+    ensName
+    metadata
+    token {
+      tokenAddress: id
+      decimals
+      symbol
+    }
+  }
+}
+
+query SubgraphColonies {
+  colonies {
+    id
+    colonyChainId
+    ensName
+    metadata
+    metadataHistory {
+      id
+      metadata
+    }
+    token {
+      tokenAddress: id
+      decimals
+      symbol
+    }
+  }
+}
+
+query SubgraphColonyMetadata($address: String!) {
+  colony(id: $address) {
+    id
+    colonyChainId
+    metadata
+    metadataHistory {
+      id
+      metadata
+      transaction {
+        id
+        block {
+          timestamp
+        }
+      }
+    }
+  }
+}
+
+query ColonyFromName($name: String!, $address: String!) {
+  colonyAddress(name: $name) @client @export(as: "address")
+  # NOTE: This calls SubgraphColony internally
+  processedColony(address: $address) @client {
+    ...FullColony
+  }
+}
+
+query ColonyDomains($colonyAddress: String!) {
+  processedColony(address: $colonyAddress) @client {
+    id
+    domains @client {
+      ...DomainFields
+    }
+  }
+}
+
+query ColonySingleDomain($colonyAddress: String!, $domainId: Int!) {
+  colonyDomain(colonyAddress: $colonyAddress, domainId: $domainId) @client {
+    ...DomainFields
+  }
+}
+
+query ProcessedColony($address: String!) {
+  # NOTE: This calls SubgraphColony internally
+  processedColony(address: $address) @client {
+    ...FullColony
+  }
+}
+
+query ColonyNativeToken($address: String!) {
+  processedColony(address: $address) @client {
+    id
+    nativeTokenAddress
+  }
+}
+
+query ColonyTransfers($address: String!) {
+  processedColony(address: $address) {
+    id
+    colonyAddress
+    transfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+    unclaimedTransfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+  }
+}
+
+query ColonyEvents($address: String!) {
+  processedColony(address: $address) {
+    id
+    colonyAddress
+    events @client {
+      ...FullNetworkEvent
+    }
+  }
+}
+
+query ColonyProfile($address: String!) {
+  processedColony(address: $address) @client {
+    ...ColonyProfile
+  }
+}
+
+query ColonySubscribedUsers($colonyAddress: String!) {
+  subscribedUsers(colonyAddress: $colonyAddress) {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+
+query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
+  colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
 }

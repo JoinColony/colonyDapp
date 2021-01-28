@@ -71,7 +71,7 @@ const MemberInfo = ({
   useEffect(() => {
     if (nativeTokenAddressData) {
       const {
-        colony: { nativeTokenAddress },
+        processedColony: { nativeTokenAddress },
       } = nativeTokenAddressData;
       fetchTokenInfo({ variables: { address: nativeTokenAddress } });
     }

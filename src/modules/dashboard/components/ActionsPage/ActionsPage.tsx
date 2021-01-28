@@ -129,12 +129,12 @@ const ActionsPage = () => {
     if (
       transactionHash &&
       isTransactionFormat(transactionHash) &&
-      colonyData?.colony
+      colonyData?.processedColony
     ) {
       fetchTransction({
         variables: {
           transactionHash,
-          colonyAddress: colonyData.colony.colonyAddress,
+          colonyAddress: colonyData.processedColony.colonyAddress,
         },
       });
     }
@@ -184,7 +184,8 @@ const ActionsPage = () => {
     loading: loadingFallbackFromDomain,
   } = useColonySingleDomainQuery({
     variables: {
-      colonyAddress: colonyData?.colony.colonyAddress.toLowerCase() || '',
+      colonyAddress:
+        colonyData?.processedColony.colonyAddress.toLowerCase() || '',
       domainId: colonyActionData?.colonyAction?.fromDomain || 0,
     },
   });
@@ -193,7 +194,8 @@ const ActionsPage = () => {
     loading: loadingFallbackToDomain,
   } = useColonySingleDomainQuery({
     variables: {
-      colonyAddress: colonyData?.colony.colonyAddress.toLowerCase() || '',
+      colonyAddress:
+        colonyData?.processedColony.colonyAddress.toLowerCase() || '',
       domainId: colonyActionData?.colonyAction?.toDomain || 0,
     },
   });
@@ -267,13 +269,16 @@ const ActionsPage = () => {
       annotationHash,
       newVersion,
       oldVersion,
+      colonyDisplayName,
     },
   } = colonyActionData;
+
   /*
    * Colony
    */
   const {
-    colony: { colonyAddress, domains },
+    processedColony: { colonyAddress, domains },
+    processedColony,
   } = colonyData;
 
   /*
@@ -312,7 +317,7 @@ const ActionsPage = () => {
         <FriendlyName
           user={recipientProfileWithFallback}
           autoShrinkAddress
-          colony={colonyData?.colony}
+          colony={processedColony}
         />
       </span>
     ),
@@ -331,6 +336,15 @@ const ActionsPage = () => {
       ) as OneDomain) || fallbackToDomain?.colonyDomain,
     newVersion,
     oldVersion,
+    colonyName: (
+      <FriendlyName
+        colony={{
+          ...processedColony,
+          ...(colonyDisplayName ? { displayName: colonyDisplayName } : {}),
+        }}
+        autoShrinkAddress
+      />
+    ),
   };
 
   return (
@@ -385,6 +399,8 @@ const ActionsPage = () => {
             transactionHash={transactionHash as string}
             networkEvents={events}
             values={actionAndEventValues}
+            actionData={colonyActionData.colonyAction}
+            colony={processedColony}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
@@ -425,6 +441,7 @@ const ActionsPage = () => {
               recipient={recipientProfileWithFallback}
               transactionHash={transactionHash}
               values={actionAndEventValues}
+              colony={colonyData.processedColony}
             />
           )}
         </div>

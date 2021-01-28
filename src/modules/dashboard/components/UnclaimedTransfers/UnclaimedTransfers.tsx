@@ -28,13 +28,13 @@ const UnclaimedTransfers = ({ colonyAddress }: Props) => {
 
   return (
     <>
-      {data && data.colony.unclaimedTransfers.length ? (
+      {data && data.processedColony.unclaimedTransfers.length ? (
         <div className={styles.main}>
           <div className={styles.title}>
             <FormattedMessage {...MSG.title} />
           </div>
           <ul>
-            {data.colony.unclaimedTransfers.map((transaction) => (
+            {data.processedColony.unclaimedTransfers.map((transaction) => (
               <UnclaimedTransfersItem
                 transaction={transaction}
                 key={transaction.hash}

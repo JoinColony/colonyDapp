@@ -4,3 +4,4 @@ export const smallText: string;
 export const tinyText: string;
 export const permissionLabel: string;
 export const noPermissionMessage: string;
+export const avatarUploadError: string;

@@ -60,6 +60,26 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
+      ActionTypes.COLONY_ACTION_EDIT_COLONY,
+      {
+        colonyAddress: Address;
+        colonyName: string;
+        colonyDisplayName: string;
+        colonyAvatarImage?: string;
+        colonyTokens?: Address[];
+        annotationMessage?: string;
+        /*
+         * @TODO I think this will also store the subscribed-to tokens list
+         */
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
       ActionTypes.COLONY_ACTION_MOVE_FUNDS,
       {
         colonyAddress: Address;

@@ -140,7 +140,7 @@ const CreatePaymentDialog = ({
             {...formValues}
             colony={colony}
             back={() => callStep(prevStep)}
-            subscribedUsers={subscribedUsersData.colony.subscribedUsers}
+            subscribedUsers={subscribedUsersData.subscribedUsers}
           />
         </Dialog>
       )}

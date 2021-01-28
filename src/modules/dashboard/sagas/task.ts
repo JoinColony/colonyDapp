@@ -9,7 +9,6 @@ import {
   CreateTaskMutationResult,
   CreateTaskMutation,
   CreateTaskMutationVariables,
-  cacheUpdates,
   TokenBalancesForDomainsDocument,
   TokenBalancesForDomainsQuery,
   TokenBalancesForDomainsQueryVariables,
@@ -43,7 +42,6 @@ function* taskCreate({
           ethDomainId,
         },
       },
-      update: cacheUpdates.createTask(colonyAddress),
     });
 
     if (!data || !data.createTask) throw new Error('Could not create task');

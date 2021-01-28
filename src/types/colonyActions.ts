@@ -2,12 +2,14 @@ import { Address } from './index';
 
 export enum ColonyActions {
   Generic = 'Generic',
+  WrongColony = 'WrongColony',
   Payment = 'Payment',
   Recovery = 'Recovery',
   MoveFunds = 'MoveFunds',
   MintTokens = 'MintTokens',
   CreateDomain = 'CreateDomain',
   VersionUpgrade = 'VersionUpgrade',
+  ColonyEdit = 'ColonyEdit',
 }
 
 export enum ColonyAndExtensionsEvents {
@@ -23,6 +25,7 @@ export enum ColonyAndExtensionsEvents {
   DomainAdded = 'DomainAdded',
   DomainMetadata = 'DomainMetadata',
   ColonyUpgraded = 'ColonyUpgraded',
+  ColonyMetadata = 'ColonyMetadata',
 }
 
 export interface FormattedAction {

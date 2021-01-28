@@ -4,8 +4,6 @@ import apolloCache from './cache';
 
 import {
   ColonyProfileFragment,
-  ColonyQuery,
-  ColonyTasksQuery,
   ColonyTransfersQuery,
   ColonyEventsQuery,
   DomainFieldsFragment,
@@ -26,6 +24,7 @@ import {
   ParsedEvent,
   SubgraphActionsQuery,
   TransactionMessagesCountQuery,
+  ProcessedColonyQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -72,7 +71,6 @@ export type AnyUser = UserQuery['user'] | UserWithReputationQuery['user'];
 
 export type AnyTask =
   | TaskQuery['task']
-  | ColonyTasksQuery['colony']['tasks'][number]
   | UserTasksQuery['user']['tasks'][number];
 
 export type Payouts = PayoutsFragment['payouts'];
@@ -83,17 +81,17 @@ export type OneNotification = Notifications[number];
 export type AnyColonyProfile =
   | FullColonyFragment
   | ColonyProfileFragment
-  | UserColoniesQuery['user']['colonies'][number];
+  | UserColoniesQuery['user']['processedColonies'][number];
 export type Colony = FullColonyFragment;
 
 export type OneDomain = DomainFieldsFragment;
 
-export type ColonyTransaction = ColonyTransfersQuery['colony']['transfers'][number];
+export type ColonyTransaction = ColonyTransfersQuery['processedColony']['transfers'][number];
 
-export type ColonyEvent = ColonyEventsQuery['colony']['events'][number];
+export type ColonyEvent = ColonyEventsQuery['processedColony']['events'][number];
 
 export type OneToken = TokenQuery['token'];
-export type ColonyTokens = ColonyQuery['colony']['tokens'];
+export type ColonyTokens = ProcessedColonyQuery['processedColony']['tokens'];
 export type UserTokens = UserTokensQuery['user']['tokens'];
 // All tokens with either 'balance' or 'balances'
 export type TokenWithBalances =

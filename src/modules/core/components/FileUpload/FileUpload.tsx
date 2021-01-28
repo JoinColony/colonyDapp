@@ -86,6 +86,8 @@ interface Props {
   status?: string | MessageDescriptor;
   /** Function to handle the actual uploading of the file */
   upload: UploadFn;
+  /** Function to handle an upload error from the outside */
+  handleError?: (...args: any[]) => Promise<any>;
 
   labelAppearance?: Appearance;
 }
@@ -115,6 +117,7 @@ const FileUpload = ({
   renderPlaceholder = <DefaultPlaceholder />,
   status,
   upload,
+  handleError,
   labelAppearance,
 }: AsFieldArrayEnhancedProps<Props> & ForwardedRefProps) => {
   const files = useMemo(() => getIn(values, name) || [], [name, values]);
@@ -234,6 +237,7 @@ const FileUpload = ({
                 reset={resetForm}
                 upload={upload}
                 validate={validateFile}
+                handleError={handleError}
               />
             ))}
           </div>

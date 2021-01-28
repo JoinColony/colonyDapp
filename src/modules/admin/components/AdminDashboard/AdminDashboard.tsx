@@ -6,9 +6,7 @@ import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import ProfileEdit from '~admin/Profile/ProfileEdit';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
-import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import TokenCardList from '~dashboard/TokenCardList';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { useTransformer } from '~utils/hooks';
@@ -16,12 +14,7 @@ import { Colony, useColonyFromNameQuery, useLoggedInUser } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import { getAllUserRoles, getUserRolesForDomain } from '../../../transformers';
-import {
-  canArchitect,
-  hasRoot,
-  canFund,
-  canAdminister,
-} from '../../../users/checks';
+import { canArchitect, canFund, canAdminister } from '../../../users/checks';
 
 import styles from './AdminDashboard.css';
 
@@ -64,28 +57,11 @@ const navigationItems = (
 ): NavigationItem[] => {
   const items = [] as NavigationItem[];
 
-  const profileTab = {
-    id: 1,
-    title: MSG.tabProfile,
-    content: <ProfileEdit colony={colony} />,
-  };
   const tokensTab = {
     id: 2,
     title: MSG.tabTokens,
     content: <TokenCardList tokens={colony.tokens} />,
   };
-  const advancedTab = {
-    id: 5,
-    title: MSG.tabAdvanced,
-    content: <ProfileAdvanced colony={colony} />,
-  };
-
-  /*
-   * @NOTE Root role needs have access to the colony's management
-   */
-  if (hasRoot(rootRoles) || canAdminister(rootRoles)) {
-    items.push(profileTab);
-  }
 
   /*
    * @NOTE Funding role can just transfer funds between *available* domains
@@ -93,14 +69,6 @@ const navigationItems = (
    */
   if (canFund(allRoles)) {
     items.push(tokensTab);
-  }
-
-  /*
-   * @NOTE Root role needs have access to the colony's management
-   * This needs to be the last call, so that we have the required tab sorting
-   */
-  if (hasRoot(rootRoles)) {
-    items.push(advancedTab);
   }
 
   return items;
@@ -122,13 +90,13 @@ const AdminDashboard = ({
   const { walletAddress } = useLoggedInUser();
 
   const rootUserRoles = useTransformer(getUserRolesForDomain, [
-    colonyData && colonyData.colony,
+    colonyData && colonyData.processedColony,
     walletAddress,
     ROOT_DOMAIN_ID,
   ]);
 
   const allUserRoles = useTransformer(getAllUserRoles, [
-    colonyData && colonyData.colony,
+    colonyData && colonyData.processedColony,
     walletAddress,
   ]);
 
@@ -148,7 +116,7 @@ const AdminDashboard = ({
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
-  const { colony } = colonyData;
+  const { processedColony: colony } = colonyData;
 
   return (
     <div className={styles.main}>

@@ -44,7 +44,6 @@ const InputComponent = ({
   placeholder,
   /* eslint-disable @typescript-eslint/no-unused-vars */
   // Cleave TS defs don't expect/allow these
-  defaultValue,
   contentEditable,
   draggable,
   spellCheck,
@@ -98,6 +97,7 @@ const InputComponent = ({
       onChange={onChange}
       placeholder={placeholder}
       ref={innerRef}
+      defaultValue={value}
       {...props}
     />
   ) : (
@@ -111,6 +111,7 @@ const InputComponent = ({
         placeholder={placeholder}
         ref={innerRef}
         maxLength={maxLength}
+        defaultValue={value}
         {...props}
       />
       {maxLength && (

@@ -315,13 +315,14 @@ const TaskEditDialog = ({
     );
   }
 
+  /*
+   * @NOTE This file will be removed anyway, this is just to keep the linters happy
+   */
+  const subscribedUsers = [];
+  const tokens = [];
+
   const {
-    task: {
-      assignedWorker,
-      colony: { subscribedUsers, tokens },
-      payouts: initialPayouts,
-      workRequests,
-    },
+    task: { assignedWorker, payouts: initialPayouts, workRequests },
   } = data;
   const users = [...workRequests, ...subscribedUsers];
 

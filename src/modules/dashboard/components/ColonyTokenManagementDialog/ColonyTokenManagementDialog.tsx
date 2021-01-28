@@ -1,13 +1,12 @@
 import React, { useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import TokenEditDialog from '~core/TokenEditDialog';
-import {
-  useSetColonyTokensMutation,
-  ColonyTokensDocument,
-  ColonyTokensQueryVariables,
-  Colony,
-} from '~data/index';
-import { Address } from '~types/index';
+import { Colony } from '~data/index';
+import { ActionTypes } from '~redux/index';
+import { pipe, mapPayload, withMeta } from '~utils/actions';
+import { useAsyncFunction } from '~utils/hooks';
+
 import getTokenList from './getTokenList';
 
 interface Props {
@@ -18,39 +17,52 @@ interface Props {
 
 const displayName = 'dashboard.ColonyTokenManagementDialog';
 
-const ColonyTokenManagementDialog = ({ colony, cancel, close }: Props) => {
-  const { colonyAddress } = colony;
+const updateTokensAction = {
+  submit: ActionTypes.COLONY_ACTION_EDIT_COLONY,
+  error: ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR,
+  success: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
+};
 
-  const [setColonyTokensMutation] = useSetColonyTokensMutation({
-    refetchQueries: [
-      {
-        query: ColonyTokensDocument,
-        variables: { address: colonyAddress } as ColonyTokensQueryVariables,
-      },
-    ],
-  });
+const ColonyTokenManagementDialog = ({
+  colony: {
+    colonyAddress,
+    colonyName,
+    displayName: colonyDisplayName,
+    avatarURL,
+  },
+  colony,
+  cancel,
+  close,
+}: Props) => {
+  const history = useHistory();
 
-  const colonyTokens = colony.tokens || [];
-
-  const updateTokens = useCallback(
-    (updatedAddresses: Address[]) => {
-      return setColonyTokensMutation({
-        variables: {
-          input: { colonyAddress, tokenAddresses: updatedAddresses },
-        },
-      });
-    },
-    [colonyAddress, setColonyTokensMutation],
+  const transform = useCallback(
+    pipe(
+      mapPayload(({ tokenAddresses, annotationMessage }) => ({
+        colonyAddress,
+        colonyName,
+        colonyDisplayName,
+        colonyAvatarImage: avatarURL,
+        colonyTokens: tokenAddresses,
+        annotationMessage,
+      })),
+      withMeta({ history }),
+    ),
+    [],
   );
+
+  const updateTokens = useAsyncFunction({
+    ...updateTokensAction,
+    transform,
+  }) as any;
 
   return (
     <TokenEditDialog
       cancel={cancel}
       close={close}
-      tokens={colonyTokens}
+      colony={colony}
       updateTokens={updateTokens}
       tokensList={getTokenList}
-      nativeTokenAddress={colony.nativeTokenAddress}
     />
   );
 };

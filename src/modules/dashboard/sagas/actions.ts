@@ -19,9 +19,12 @@ import {
   SubgraphActionsQuery,
   SubgraphActionsQueryVariables,
   SubgraphActionsDocument,
-  ColonyQuery,
-  ColonyQueryVariables,
-  ColonyDocument,
+  ProcessedColonyQuery,
+  ProcessedColonyQueryVariables,
+  ProcessedColonyDocument,
+  SubgraphColonyMetadataQuery,
+  SubgraphColonyMetadataQueryVariables,
+  SubgraphColonyMetadataDocument,
   getNetworkContracts,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -37,6 +40,7 @@ import {
   transactionReady,
   transactionAddParams,
 } from '../../core/actionCreators';
+import { updateColonyDisplayCache } from './utils';
 
 function* createPaymentAction({
   payload: {
@@ -671,12 +675,11 @@ function* createVersionUpgradeAction({
       );
     }
 
-    if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
-    }
-
-    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
-      query: ColonyDocument,
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
       variables: {
         address: colonyAddress,
       },
@@ -689,6 +692,10 @@ function* createVersionUpgradeAction({
       type: ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (caughtError) {
     putError(
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR,
@@ -866,6 +873,210 @@ function* createDomainAction({
   return null;
 }
 
+function* editColonyAction({
+  payload: {
+    colonyAddress,
+    colonyName,
+    colonyDisplayName,
+    colonyAvatarImage,
+    colonyTokens = [],
+    annotationMessage,
+  },
+  meta: { id: metaId, history },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_EDIT_COLONY>) {
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+    /*
+     * Validate the required values for the payment
+     */
+    if (!colonyDisplayName && colonyDisplayName !== null) {
+      throw new Error('A colony name is required in order to edit the colony');
+    }
+
+    /*
+     * Upload colony metadata to IPFS
+     */
+    let colonyAvatarIpfsHash = null;
+    if (colonyAvatarImage) {
+      colonyAvatarIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify(colonyAvatarImage),
+      );
+    }
+
+    /*
+     * Upload colony metadata to IPFS
+     */
+    let colonyMetadataIpfsHash = null;
+    colonyMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        colonyName,
+        colonyDisplayName,
+        colonyAvatarHash: colonyAvatarImage ? colonyAvatarIpfsHash : null,
+        colonyTokens,
+      }),
+    );
+
+    /*
+     * Upload annotation metadata to IPFS
+     */
+    let annotationMessageIpfsHash = null;
+    if (annotationMessage) {
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'editColonyAction';
+    const {
+      editColonyAction: editColony,
+      annotateEditColonyAction: annotateEditColony,
+    } = yield createTransactionChannels(metaId, [
+      'editColonyAction',
+      'annotateEditColonyAction',
+    ]);
+
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: batchKey,
+          id: metaId,
+          index,
+        },
+      });
+
+    yield createGroupTransaction(editColony, {
+      context: ClientType.ColonyClient,
+      methodName: 'editColony',
+      identifier: colonyAddress,
+      params: [colonyMetadataIpfsHash],
+      ready: false,
+    });
+
+    if (annotationMessage) {
+      yield createGroupTransaction(annotateEditColony, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        ready: false,
+      });
+    }
+
+    yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateEditColony.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    yield put(transactionReady(editColony.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      editColony.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+    yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(
+        transactionAddParams(annotateEditColony.id, [
+          txHash,
+          annotationMessageIpfsHash,
+        ]),
+      );
+
+      yield put(transactionReady(annotateEditColony.id));
+
+      yield takeFrom(
+        annotateEditColony.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
+
+    /*
+     * Update the colony object cache
+     */
+    yield apolloClient.query<ColonyFromNameQuery, ColonyFromNameQueryVariables>(
+      {
+        query: ColonyFromNameDocument,
+        variables: { name: colonyName || '', address: colonyAddress },
+        fetchPolicy: 'network-only',
+      },
+    );
+
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+        first: 1,
+        skip: 0,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    /*
+     * Re-fetch colony metadata history so we have the new values to compare agaist
+     * This could have also been a cache update since we have all ifps hashes locally
+     */
+    yield apolloClient.query<
+      SubgraphColonyMetadataQuery,
+      SubgraphColonyMetadataQueryVariables
+    >({
+      query: SubgraphColonyMetadataDocument,
+      variables: {
+        address: colonyAddress.toLocaleLowerCase(),
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    /*
+     * Update apollo's cache for the current colony to reflect the recently
+     * made changes
+     */
+    yield updateColonyDisplayCache(
+      colonyAddress,
+      colonyDisplayName,
+      colonyAvatarIpfsHash,
+      colonyAvatarImage as string | null,
+    );
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
+      meta,
+    });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* tasksSagas() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
@@ -881,4 +1092,5 @@ export default function* tasksSagas() {
     ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
     createVersionUpgradeAction,
   );
+  yield takeEvery(ActionTypes.COLONY_ACTION_EDIT_COLONY, editColonyAction);
 }

@@ -25,7 +25,7 @@ const TokenItem = ({ token, disabled = false }: Props) => {
     <div className={styles.main}>
       <div className={styles.tokenChoice}>
         <Checkbox
-          name="tokenAddresses"
+          name="selectedTokenAddresses"
           value={token.address}
           className={styles.checkbox}
           disabled={disabled}

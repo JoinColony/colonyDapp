@@ -13,9 +13,15 @@ import ENS from '~lib/ENS';
 import ColonyManager from '~lib/ColonyManager';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
-import { Transfer } from '~data/index';
+import {
+  Transfer,
+  SubgraphColoniesQuery,
+  SubgraphColoniesQueryVariables,
+  SubgraphColoniesDocument,
+} from '~data/index';
 
 import { getToken } from './token';
+import { getProcessedColony } from './colony';
 
 const getUserReputation = async (
   colonyManager: ColonyManager,
@@ -39,6 +45,8 @@ export const userResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
   ens,
+  apolloClient,
+  ipfs,
 }: Required<Context>): Resolvers => ({
   Query: {
     async userAddress(_, { name }): Promise<Address> {
@@ -154,6 +162,45 @@ export const userResolvers = ({
           };
         }),
       );
+    },
+    async processedColonies({ colonyAddresses }) {
+      try {
+        const { data } = await apolloClient.query<
+          SubgraphColoniesQuery,
+          SubgraphColoniesQueryVariables
+        >({
+          query: SubgraphColoniesDocument,
+          fetchPolicy: 'network-only',
+        });
+        if (data?.colonies) {
+          const userColonies: Array<{
+            colonyChainId: string;
+            ensName: string;
+            metadata: string;
+            id: string;
+          }> = colonyAddresses.reduce((colonies, colonyAddress) => {
+            const subscribedColony = ((data?.colonies as unknown) as Array<{
+              id: string;
+              colonyChainId: string;
+              ensName: string;
+              metadata: string;
+            }>).find(({ id }) => id === colonyAddress.toLowerCase());
+            if (subscribedColony) {
+              colonies.push(subscribedColony);
+            }
+            return colonies;
+          }, []);
+          return Promise.all(
+            userColonies.map(async (colony) =>
+              getProcessedColony(colony, createAddress(colony.id), ipfs),
+            ),
+          );
+        }
+        return null;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
     },
   },
 });

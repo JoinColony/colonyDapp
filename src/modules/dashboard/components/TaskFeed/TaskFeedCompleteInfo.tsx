@@ -7,7 +7,12 @@ import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
-import { useUser, useTokenQuery, useColonyQuery, AnyTask } from '~data/index';
+import {
+  useUser,
+  useTokenQuery,
+  useProcessedColonyQuery,
+  AnyTask,
+} from '~data/index';
 import InfoPopover from '~core/InfoPopover';
 import { createAddress } from '~utils/web3';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -82,12 +87,16 @@ const TaskFeedCompleteInfo = ({
   const { data: tokenData, loading: isLoadingToken } = useTokenQuery({
     variables: { address: tokenAddress },
   });
-  const { data: colonyData, loading: isLoadingColony } = useColonyQuery({
+  const {
+    data: colonyData,
+    loading: isLoadingColony,
+  } = useProcessedColonyQuery({
     variables: { address: colonyAddress },
   });
   const { decimals = DEFAULT_TOKEN_DECIMALS, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
-  const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
+  const { nativeTokenAddress = '' } =
+    (colonyData && colonyData.processedColony) || {};
   const metaColonyFee = bigNumberify(
     moveDecimal(fullPayoutAmount, decimals),
   ).sub(bigNumberify(amount));

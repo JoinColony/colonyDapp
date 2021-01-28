@@ -23,12 +23,6 @@ fragment CreateTaskFields on Task {
   }
   assignedWorkerAddress
   cancelledAt
-  colony {
-    id
-    colonyName
-    displayName
-    nativeTokenAddress
-  }
   colonyAddress
   commentCount @client
   createdAt
@@ -46,7 +40,7 @@ fragment CreateTaskFields on Task {
   txHash
 }
 
-fragment Tokens on Colony {
+fragment Tokens on ProcessedColony {
   nativeTokenAddress
   tokenAddresses
   tokens @client {
@@ -63,18 +57,7 @@ fragment Tokens on Colony {
   }
 }
 
-fragment ColonyProfile on Colony {
-  id
-  colonyAddress
-  colonyName
-  avatarHash
-  description
-  displayName
-  guideline
-  website
-}
-
-fragment DomainFields on Domain {
+fragment DomainFields on ProcessedDomain {
   id
   color
   description
@@ -83,10 +66,18 @@ fragment DomainFields on Domain {
   ethParentDomainId
 }
 
-fragment FullColony on Colony {
+fragment ColonyProfile on ProcessedColony {
+  id
+  colonyAddress
+  colonyName
+  displayName
+  avatarHash,
+  avatarURL
+}
+
+fragment FullColony on ProcessedColony {
   ...ColonyProfile
   ...Tokens
-  isNativeTokenExternal
   domains @client {
     ...DomainFields
   }

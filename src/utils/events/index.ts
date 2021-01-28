@@ -20,6 +20,7 @@ import {
   ACTIONS_EVENTS,
   EVENTS_REQUIRED_FOR_ACTION,
 } from '~dashboard/ActionsPage';
+import ipfs from '../../context/ipfsNodeContext';
 
 interface ActionValues {
   recipient: Address;
@@ -29,6 +30,7 @@ interface ActionValues {
   toDomain: number;
   oldVersion: string;
   newVersion: string;
+  address: Address;
 }
 
 /*
@@ -149,6 +151,7 @@ const getPaymentActionValues = async (
    * Get the agent value
    */
   const {
+    address,
     values: { agent },
   } = oneTxPaymentEvent;
 
@@ -161,11 +164,13 @@ const getPaymentActionValues = async (
     fromDomain: number;
     recipient: Address;
     actionInitiator?: string;
+    address: Address;
   } = {
     amount: bigNumberify(paymentAmount || '0').toString(),
     tokenAddress: token || AddressZero,
     fromDomain,
     recipient,
+    address,
   };
   if (agent) {
     paymentActionValues.actionInitiator = agent;
@@ -192,6 +197,7 @@ const getMoveFundsActionValues = async (
    * Fetch the rest of the values that are present directly in the event
    */
   const {
+    address,
     values: { amount, fromPot, toPot, token, agent },
   } = moveFundsEvent;
 
@@ -207,11 +213,13 @@ const getMoveFundsActionValues = async (
     fromDomain: number;
     toDomain: number;
     actionInitiator?: string;
+    address: Address;
   } = {
     amount: bigNumberify(amount || '0').toString(),
     tokenAddress: token || AddressZero,
     fromDomain: bigNumberify(fromDomain || '1').toNumber(),
     toDomain: bigNumberify(toDomain || '1').toNumber(),
+    address,
   };
   if (agent) {
     moveFundsActionValues.actionInitiator = agent;
@@ -230,6 +238,7 @@ const getMintTokensActionValues = async (
   const tokenAddress = await colonyClient.getToken();
 
   const {
+    address,
     values: { who, amount, agent },
   } = mintTokensEvent;
 
@@ -238,10 +247,12 @@ const getMintTokensActionValues = async (
     tokenAddress: Address;
     actionInitiator?: string;
     recipient: Address;
+    address: Address;
   } = {
     amount: bigNumberify(amount || '0').toString(),
     recipient: who,
     tokenAddress,
+    address,
   };
   if (agent) {
     tokensMintedValues.actionInitiator = agent;
@@ -257,13 +268,16 @@ const getCreateDomainActionValues = async (
   ) as ProcessedEvent;
 
   const {
+    address,
     values: { agent },
   } = domainAddedEvent;
 
   const domainAction: {
+    address: Address;
     fromDomain: number;
     actionInitiator?: string;
   } = {
+    address,
     fromDomain: parseInt(domainAddedEvent.values.domainId.toString(), 10),
   };
   if (agent) {
@@ -280,13 +294,63 @@ const getVersionUpgradeActionValues = async (
   ) as ProcessedEvent;
 
   const {
-    values: { oldVersion, newVersion },
+    address,
+    values: { oldVersion, newVersion, agent },
   } = versionUpgradeEvent;
 
-  return {
+  const colonyContractUpgradeValues: {
+    address: Address;
+    actionInitiator?: string;
+    oldVersion: string;
+    newVersion: string;
+  } = {
+    address,
     oldVersion: bigNumberify(oldVersion || '0').toString(),
     newVersion: bigNumberify(newVersion || '0').toString(),
   };
+
+  if (agent) {
+    colonyContractUpgradeValues.actionInitiator = agent;
+  }
+  return colonyContractUpgradeValues;
+};
+
+const getColonyEditActionValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const colonyMetadataEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.ColonyMetadata,
+  ) as ProcessedEvent;
+
+  const {
+    address,
+    values: { agent, metadata },
+  } = colonyMetadataEvent;
+
+  const ipfsData = await ipfs.getString(metadata);
+  const {
+    colonyDisplayName = null,
+    colonyAvatarHash = null,
+    colonyTokens = [],
+  } = JSON.parse(ipfsData);
+
+  const colonyEditValues: {
+    address: Address;
+    actionInitiator?: string;
+    colonyDisplayName: string;
+    colonyAvatarHash?: string;
+    colonyTokens?: string[];
+  } = {
+    address,
+    colonyDisplayName,
+    colonyAvatarHash,
+    colonyTokens,
+  };
+
+  if (agent) {
+    colonyEditValues.actionInitiator = agent;
+  }
+  return colonyEditValues;
 };
 
 export const getActionValues = async (
@@ -302,6 +366,7 @@ export const getActionValues = async (
     tokenAddress: AddressZero,
     newVersion: '0',
     oldVersion: '0',
+    address: AddressZero,
   };
   switch (actionType) {
     case ColonyActions.Payment: {
@@ -350,6 +415,15 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...versionUpgradeActionValues,
+      };
+    }
+    case ColonyActions.ColonyEdit: {
+      const colonyEditActionValues = await getColonyEditActionValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...colonyEditActionValues,
       };
     }
     default: {

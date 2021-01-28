@@ -30,8 +30,11 @@ const SubscribedColoniesList = () => {
     <div className={styles.main}>
       <div className={styles.scrollableContainer}>
         {data &&
-          data.user.colonies.map((colony) => {
-            const { colonyAddress, colonyName } = colony;
+          data.user.processedColonies.map((colony) => {
+            const { colonyAddress, colonyName } = colony as {
+              colonyAddress: string;
+              colonyName: string;
+            };
             return (
               <div className={styles.item} key={colonyAddress}>
                 <NavLink

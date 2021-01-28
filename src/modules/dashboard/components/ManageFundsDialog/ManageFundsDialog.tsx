@@ -51,6 +51,10 @@ const MSG = defineMessages({
     id: 'dashboard.ManageFundsDialog.manageTokensDescription',
     defaultMessage: 'Add or remove tokens you want the colony to recognize.',
   },
+  manageTokensPermissionsList: {
+    id: 'dashboard.AdvancedDialog.manageTokensPermissionsList',
+    defaultMessage: 'root',
+  },
   rewardPayoutTitle: {
     id: 'dashboard.ManageFundsDialog.rewardPayoutTitle',
     defaultMessage: 'Start a Reward Payout',
@@ -71,8 +75,9 @@ const MSG = defineMessages({
 });
 
 interface CustomWizardDialogProps {
-  nextStep: string;
+  nextStepTransferFunds: string;
   nextStepMintTokens: string;
+  nextStepManageTokens: string;
   prevStep: string;
   colony: Colony;
 }
@@ -87,8 +92,9 @@ const ManageFundsDialog = ({
   callStep,
   prevStep,
   colony,
-  nextStep,
+  nextStepTransferFunds,
   nextStepMintTokens,
+  nextStepManageTokens,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -97,6 +103,7 @@ const ManageFundsDialog = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
   const canMintNativeToken = colony.canMintNativeToken && hasRoot(allUserRoles);
+  const canManageTokens = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const items = [
     {
@@ -108,7 +115,7 @@ const ManageFundsDialog = ({
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
       },
-      onClick: () => callStep(nextStep),
+      onClick: () => callStep(nextStepTransferFunds),
     },
     {
       title: MSG.mintTokensTitle,
@@ -127,6 +134,14 @@ const ManageFundsDialog = ({
       title: MSG.manageTokensTitle,
       description: MSG.manageTokensDescription,
       icon: 'emoji-pen',
+      permissionRequired: !canManageTokens,
+      permissionInfoText: MSG.permissionsListText,
+      permissionInfoTextValues: {
+        permissionsList: (
+          <FormattedMessage {...MSG.manageTokensPermissionsList} />
+        ),
+      },
+      onClick: () => callStep(nextStepManageTokens),
     },
     {
       title: MSG.rewardPayoutTitle,

@@ -21,12 +21,12 @@ import {
   ColonyProfileDocument,
   ColonyProfileQuery,
   ColonyProfileQueryVariables,
-  CreateColonyDocument,
-  CreateColonyMutation,
-  CreateColonyMutationVariables,
   CreateUserMutation,
   CreateUserDocument,
   CreateUserMutationVariables,
+  SubscribeToColonyDocument,
+  SubscribeToColonyMutation,
+  SubscribeToColonyMutationVariables,
   cacheUpdates,
 } from '~data/index';
 import ENS from '~lib/ENS';
@@ -42,6 +42,7 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
+import { ipfsUpload } from '../../core/sagas/ipfs';
 
 interface ChannelDefinition {
   channel: Channel<any>;
@@ -151,7 +152,6 @@ function* colonyCreate({
     recover: recoveryAddress,
     tokenAddress: givenTokenAddress,
     tokenChoice,
-    tokenIcon,
     tokenName: givenTokenName,
     tokenSymbol: givenTokenSymbol,
     username: givenUsername,
@@ -271,7 +271,7 @@ function* colonyCreate({
     if (createColony) {
       yield createGroupedTransaction(createColony, {
         context: ClientType.NetworkClient,
-        methodName: 'createColony(address,uint256,string)',
+        methodName: 'createColony(address,uint256,string,string)',
         ready: false,
       });
     }
@@ -390,11 +390,22 @@ function* colonyCreate({
     let colonyAddress = recoveryInfo && recoveryInfo.colonyAddress;
 
     if (createColony) {
+      const colonyMetadataIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          colonyName,
+          colonyDisplayName: displayName,
+          colonyAvatarHash: null,
+          colonyTokens: [],
+        }),
+      );
+
       yield put(
         transactionAddParams(createColony.id, [
           tokenAddress,
           ColonyVersion.CeruleanLightweightSpaceship,
           colonyName,
+          colonyMetadataIpfsHash,
         ]),
       );
       yield put(transactionReady(createColony.id));
@@ -422,35 +433,10 @@ function* colonyCreate({
     }
 
     if (!recoveryAddress || (recoveryInfo && !recoveryInfo.isProfileCreated)) {
-      /*
-       * Create the colony in the Mongo Database
-       */
-      yield apolloClient.mutate<
-        CreateColonyMutation,
-        CreateColonyMutationVariables
-      >({
-        mutation: CreateColonyDocument,
-        variables: {
-          input: {
-            colonyAddress,
-            colonyName,
-            displayName,
-            tokenAddress,
-            tokenIsExternal: !createToken,
-            tokenName,
-            tokenSymbol,
-            tokenIconHash: tokenIcon,
-            tokenDecimals: DEFAULT_TOKEN_DECIMALS,
-          },
-        },
-        update: cacheUpdates.createColony(walletAddress),
-      });
-
       if (createColony) {
         yield put(transactionLoadRelated(createColony.id, false));
       }
     }
-
     /*
      * Add a colonyAddress identifier to all pending transactions.
      */
@@ -552,6 +538,38 @@ function* colonyCreate({
         setOneTxRoleFunding.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
+
+      /*
+       * Manually subscribe the user to the colony
+       *
+       * @NOTE That this just subscribes the user to a particular address, as we
+       * don't have the capability any more, to check if that address is a valid
+       * colony, on the server side
+       *
+       * However, we do know that his colony actually exists, since we just
+       * created it, but be **WARNED** that his is race condition!!
+       *
+       * We just skirt around it by calling this mutation after the whole batch
+       * of transactions have been sent, assuming that by that time, the subgraph
+       * had time to ingest the new block in which the colony was created.
+       *
+       * However, due to various network conditions, this might not be case, and
+       * the colony might not exist still.
+       *
+       * It's not a super-huge deal breaker, as a page refresh will solve it,
+       * and the colony is still usable, just that it doesn't provide _that_
+       * nice of a user experience.
+       */
+      yield apolloClient.mutate<
+        SubscribeToColonyMutation,
+        SubscribeToColonyMutationVariables
+      >({
+        mutation: SubscribeToColonyDocument,
+        variables: {
+          input: { colonyAddress },
+        },
+        update: cacheUpdates.subscribeToColony(colonyAddress),
+      });
     }
     return null;
   } catch (error) {

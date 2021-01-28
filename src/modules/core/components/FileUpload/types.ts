@@ -27,6 +27,7 @@ export interface UploadItemComponentProps {
   reset: FieldArrayRenderProps['form']['resetForm'];
   upload: UploadFn;
   validate: ValidateFileFn;
+  handleError?: (...args: any[]) => Promise<any>;
 }
 
 export type UploadFn = (fileData: FileReaderFile) => any;

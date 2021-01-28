@@ -5,7 +5,7 @@ import Icon from '~core/Icon';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import TransactionLink from '~core/TransactionLink';
 
-import { AnyUser } from '~data/index';
+import { AnyUser, Colony } from '~data/index';
 import { ColonyActions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { getDetailsForAction } from '~utils/colonyActions';
@@ -51,6 +51,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.domainDescription',
     defaultMessage: 'Team Purpouse',
   },
+  colonyName: {
+    id: 'dashboard.ActionsPage.DetailsWidget.colonyName',
+    defaultMessage: 'Name',
+  },
 });
 
 interface Props {
@@ -58,6 +62,7 @@ interface Props {
   recipient?: AnyUser;
   values?: EventValues;
   transactionHash?: string;
+  colony: Colony;
 }
 
 const DetailsWidget = ({
@@ -176,6 +181,14 @@ const DetailsWidget = ({
               {values.fromDomain.description}
             </div>
           </div>
+        </div>
+      )}
+      {detailsForAction.Name && values?.colonyName && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.colonyName} />
+          </div>
+          <div className={styles.value}>{values.colonyName}</div>
         </div>
       )}
       {!!shortenedHash && (

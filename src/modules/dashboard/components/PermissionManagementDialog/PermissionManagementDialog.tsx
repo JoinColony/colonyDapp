@@ -15,7 +15,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import {
-  useColonyQuery,
+  useProcessedColonyQuery,
   useLoggedInUser,
   useColonySubscribedUsersQuery,
   useUser,
@@ -81,21 +81,21 @@ const PermissionManagementDialog = ({
     },
   });
 
-  const subscribedUsers = colonySubscribedUsers?.colony.subscribedUsers || [];
+  const subscribedUsers = colonySubscribedUsers?.subscribedUsers || [];
 
-  const { data: colonyData } = useColonyQuery({
+  const { data: colonyData } = useProcessedColonyQuery({
     variables: { address: colonyAddress },
   });
 
   const currentUserRoles = useTransformer(getUserRolesForDomain, [
-    colonyData?.colony,
+    colonyData?.processedColony,
     // CURRENT USER!
     loggedInUserWalletAddress,
     selectedDomainId,
   ]);
 
   const userDirectRoles = useTransformer(getUserRolesForDomain, [
-    colonyData?.colony,
+    colonyData?.processedColony,
     // USER TO SET PERMISSIONS FOR!
     selectedUser.profile.walletAddress,
     selectedDomainId,
@@ -103,24 +103,26 @@ const PermissionManagementDialog = ({
   ]);
 
   const userInheritedRoles = useTransformer(getUserRolesForDomain, [
-    colonyData?.colony,
+    colonyData?.processedColony,
     // USER TO SET PERMISSIONS FOR!
     selectedUser.profile.walletAddress,
     selectedDomainId,
   ]);
 
   const domainRoles = useTransformer(getAllUserRolesForDomain, [
-    colonyData?.colony,
+    colonyData?.processedColony,
     selectedDomainId,
   ]);
 
   const directDomainRoles = useTransformer(getAllUserRolesForDomain, [
-    colonyData?.colony,
+    colonyData?.processedColony,
     selectedDomainId,
     true,
   ]);
 
-  const rootAccounts = useTransformer(getAllRootAccounts, [colonyData?.colony]);
+  const rootAccounts = useTransformer(getAllRootAccounts, [
+    colonyData?.processedColony,
+  ]);
 
   const transform = useCallback(
     pipe(
@@ -160,11 +162,11 @@ const PermissionManagementDialog = ({
 
   const domain =
     colonyData &&
-    colonyData.colony.domains.find(
+    colonyData.processedColony.domains.find(
       ({ ethDomainId }) => ethDomainId === selectedDomainId,
     );
 
-  const members: Member[] = subscribedUsers.map((user) => {
+  const members = subscribedUsers.map((user) => {
     const {
       profile: { walletAddress },
     } = user;
@@ -224,7 +226,7 @@ const PermissionManagementDialog = ({
                   rootAccounts={rootAccounts}
                   userDirectRoles={userDirectRoles}
                   userInheritedRoles={userInheritedRoles}
-                  colonyDomains={colonyData.colony.domains}
+                  colonyDomains={colonyData.processedColony.domains}
                   onDomainSelected={setSelectedDomainId}
                 />
               </DialogSection>

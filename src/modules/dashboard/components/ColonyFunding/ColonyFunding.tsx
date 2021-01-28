@@ -49,11 +49,11 @@ const ColonyFunding = ({ match }: Props) => {
   const domainChoices = useMemo<
     ComponentProps<typeof Select>['options']
   >(() => {
-    if (!data || !data.colony) {
+    if (!data || !data.processedColony) {
       return [];
     }
     const {
-      colony: { domains },
+      processedColony: { domains },
     } = data;
     return [
       {
@@ -82,7 +82,7 @@ const ColonyFunding = ({ match }: Props) => {
     return null;
   }
 
-  const { colony } = data;
+  const { processedColony: colony } = data;
 
   return (
     <div className={styles.main}>

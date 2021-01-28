@@ -10,6 +10,7 @@ export enum ActionPageDetails {
   Amount = 'Amount',
   Domain = 'Domain',
   Description = 'Description',
+  Name = 'Name',
 }
 
 type EventRolesMap = Partial<
@@ -40,9 +41,9 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
     ColonyRole.Funding,
   ],
   [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
-  [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.ColonyUpgraded]: [ColonyRole.Root],
+  [ColonyAndExtensionsEvents.ColonyMetadata]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -50,12 +51,14 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
  * Which icons correspond to which action types in the details widget
  */
 export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
+  [ColonyActions.WrongColony]: 'forbidden-signal',
   [ColonyActions.Payment]: 'emoji-dollar-stack',
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
   [ColonyActions.MoveFunds]: 'emoji-world-globe',
   [ColonyActions.MintTokens]: 'emoji-seed-sprout',
   [ColonyActions.CreateDomain]: 'emoji-crane',
   [ColonyActions.VersionUpgrade]: 'emoji-strong-person',
+  [ColonyActions.ColonyEdit]: 'emoji-edit-tools',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -79,7 +82,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
   [ColonyActions.CreateDomain]: [ColonyAndExtensionsEvents.DomainAdded],
   [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
-  [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
+  [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
 };
 
 /*
@@ -112,6 +115,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
     ColonyAndExtensionsEvents.DomainAdded,
   ],
   [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
+  [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
 };
 
 /*
@@ -134,4 +138,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Domain,
     ActionPageDetails.Description,
   ],
+  [ColonyActions.ColonyEdit]: [ActionPageDetails.Name],
 };

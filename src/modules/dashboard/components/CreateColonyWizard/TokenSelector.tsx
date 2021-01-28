@@ -54,6 +54,7 @@ interface Props {
 
   /** Extra node to render on the top right in the label */
   extra?: ReactNode;
+  disabled?: boolean;
 }
 
 const getStatusText = (isLoading: boolean, tokenData?: OneToken) => {
@@ -83,6 +84,7 @@ const TokenSelector = ({
   extra,
   label,
   appearance,
+  disabled = false,
 }: Props) => {
   const apolloClient = useApolloClient();
   const { formatMessage } = useIntl();
@@ -169,6 +171,7 @@ const TokenSelector = ({
         extra={extra}
         {...getStatusText(isLoading, tokenData)}
         appearance={appearance}
+        disabled={disabled}
       />
     </div>
   );

@@ -14,7 +14,7 @@ import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 import {
   useUser,
   useTokenQuery,
-  useColonyQuery,
+  useProcessedColonyQuery,
   useColonySingleDomainQuery,
   AnyUser,
   EventType,
@@ -274,12 +274,13 @@ const TaskFeedEventPayoutSet = ({
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },
   });
-  const { data: colonyData } = useColonyQuery({
+  const { data: colonyData } = useProcessedColonyQuery({
     variables: { address: colonyAddress },
   });
   const { decimals = DEFAULT_TOKEN_DECIMALS, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
-  const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
+  const { nativeTokenAddress = '' } =
+    (colonyData && colonyData.processedColony) || {};
   if (!tokenData) {
     return <SpinnerLoader />;
   }

@@ -1,11 +1,8 @@
-import { ColonyRole, ColonyRoles } from '@colony/colony-js';
+import { ColonyRole } from '@colony/colony-js';
 
 import { Address } from '~types/index';
 
-export const canMoveTokens = (
-  colonyRoles: ColonyRoles,
-  walletAddress: Address,
-) =>
+export const canMoveTokens = (colonyRoles, walletAddress: Address) =>
   colonyRoles &&
   !!colonyRoles.find(
     (user) =>

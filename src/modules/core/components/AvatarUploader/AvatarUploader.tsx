@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
 });
 
-export const ACCEPTED_MIME_TYPES: string[] = ['image/png', 'image/svg'];
+export const ACCEPTED_MIME_TYPES: string[] = ['image/png', 'image/svg+xml'];
 
 export const ACCEPTED_MAX_FILE_SIZE = 2097152; // 2MB
 
@@ -51,6 +51,9 @@ interface Props {
   /** Function to handle the actual uploading of the file */
   upload: (fileData: FileReaderFile) => Promise<string>;
 
+  /** Function to handle an upload error from the outside */
+  handleError?: (...args: any[]) => Promise<any>;
+
   /** Used to control the state of the remove button (don't fire the remove action if not avatar is set) */
   isSet?: boolean;
 
@@ -72,6 +75,7 @@ const AvatarUploader = ({
   disabled,
   isSet = true,
   labelAppearance,
+  handleError,
 }: Props) => {
   const dropzoneRef = useRef<{ open: () => void }>();
 
@@ -114,6 +118,7 @@ const AvatarUploader = ({
           ref={dropzoneRef}
           itemComponent={AvatarUploadItem}
           upload={upload}
+          handleError={handleError}
         >
           {renderOverlay()}
         </FileUpload>

@@ -69,43 +69,49 @@ const getTokenData = async (
     };
   }
 
-  const tokenClient = await colonyManager.getTokenClient(tokenAddress);
-  const chainData = await tokenClient.getTokenInfo();
-
-  let serverDataResult;
   try {
-    const { data } = await client.query({
-      query: TokenInfoDocument,
-      variables: { address: tokenAddress },
-    });
-    serverDataResult = data;
-  } catch (e) {
-    console.warn(`Server error for token with address ${tokenAddress}`, e);
+    const tokenClient = await colonyManager.getTokenClient(tokenAddress);
+    const chainData = await tokenClient.getTokenInfo();
+
+    let serverDataResult;
+    try {
+      const { data } = await client.query({
+        query: TokenInfoDocument,
+        variables: { address: tokenAddress },
+      });
+      serverDataResult = data;
+    } catch (e) {
+      console.warn(`Server error for token with address ${tokenAddress}`, e);
+    }
+
+    const serverData: TokenInfo = serverDataResult
+      ? serverDataResult.tokenInfo
+      : {};
+
+    return {
+      __typename: 'Token',
+      id: tokenAddress,
+      /*
+       * @NOTE Checksum the token address before returning it
+       * This is only needed for legacy reasons as not all entries in the
+       * database are checksummed, so this, while cosuming more cycles, will
+       * prevent us headache in the future
+       */
+      address: createAddress(tokenAddress),
+      decimals: getTokenDecimalsWithFallback(
+        chainData.decimals,
+        serverData.decimals,
+      ),
+      iconHash: serverData.iconHash || null,
+      name: chainData.name || serverData.name || 'Unknown token',
+      symbol: chainData.symbol || serverData.symbol || '???',
+      verified: serverData.verified || false,
+    };
+  } catch (error) {
+    console.error('Could not fetch Colony token:', tokenAddress);
+    console.error(error);
+    return null;
   }
-
-  const serverData: TokenInfo = serverDataResult
-    ? serverDataResult.tokenInfo
-    : {};
-
-  return {
-    __typename: 'Token',
-    id: tokenAddress,
-    /*
-     * @NOTE Checksum the token address before returning it
-     * This is only needed for legacy reasons as not all entries in the
-     * database are checksummed, so this, while cosuming more cycles, will
-     * prevent us headache in the future
-     */
-    address: createAddress(tokenAddress),
-    decimals: getTokenDecimalsWithFallback(
-      chainData.decimals,
-      serverData.decimals,
-    ),
-    iconHash: serverData.iconHash || null,
-    name: chainData.name || serverData.name || 'Unknown token',
-    symbol: chainData.symbol || serverData.symbol || '???',
-    verified: serverData.verified || false,
-  };
 };
 
 export const getToken = (
@@ -140,11 +146,12 @@ export const tokenResolvers = ({
       { addresses }: { addresses: Address[] },
       { client }: { client: ApolloClient<object> },
     ) {
-      return Promise.all(
-        addresses.map((address) =>
+      const tokens = await Promise.all(
+        addresses.map(async (address) =>
           getToken({ colonyManager, client }, address),
         ),
       );
+      return tokens.filter((token) => !!token);
     },
   },
   Token: {

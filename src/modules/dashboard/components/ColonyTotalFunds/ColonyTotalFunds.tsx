@@ -53,7 +53,7 @@ const ColonyTotalFunds = ({
     nativeTokenAddress,
   );
   const isSupportedColonyVersion =
-    version >= ColonyVersion.CeruleanLightweightSpaceship;
+    parseInt(version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
   const {
     data,
     loading: isLoadingTokenBalances,

@@ -4,6 +4,7 @@ import { SubgraphActions, TransactionsMessagesCount } from '~data/index';
 import { ColonyActions, FormattedAction } from '~types/index';
 import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
+import { TEMP_getContext, ContextModule } from '~context/index';
 
 export const getActionsListData = (
   unformattedActions?: SubgraphActions,
@@ -114,5 +115,45 @@ export const getActionsListData = (
     );
     return null;
   });
-  return formattedActions;
+
+  /*
+   * @NOTE Filter out the initial 'Colony Edit' action, if it comes from the
+   * network contract (not the current colony).
+   *
+   * This is the first edit action that gets created, and shares the same
+   * transaction hash with the 'Domain Added' action (basically all actions
+   * that get created intially, when creating a new colony, will share the
+   * same tx hash)
+   *
+   * Since we can't link to two separate actions on the same hash, we filter
+   * out one of them, as since the metadata change is less important (and it's
+   * not actually a change, but a "set") we filter it out
+   */
+  return formattedActions.filter(
+    ({ initiator, actionType }: FormattedAction) => {
+      /*
+       * @NOTE This is wrapped inside a try/catch block since if the user logs out,
+       * for a brief moment the colony manager won't exist
+       *
+       * If that's at the same time as this filter runs, it will error out, so we
+       * prevent that by just returning an empty list
+       *
+       * How I **hate** race conditions
+       */
+      try {
+        const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+        if (
+          colonyManager?.networkClient &&
+          actionType === ColonyActions.ColonyEdit
+        ) {
+          return (
+            initiator !== colonyManager.networkClient.address.toLowerCase()
+          );
+        }
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+  );
 };

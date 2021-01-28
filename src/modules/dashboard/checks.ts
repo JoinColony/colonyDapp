@@ -12,7 +12,9 @@ export const canBeUpgraded = (
   colony: Colony | undefined,
   networkVersion: number | null,
 ) =>
-  colony && colony.version && networkVersion && networkVersion > colony.version;
+  colony?.version &&
+  networkVersion &&
+  networkVersion > parseInt(colony.version, 10);
 
 /*
  * Tasks

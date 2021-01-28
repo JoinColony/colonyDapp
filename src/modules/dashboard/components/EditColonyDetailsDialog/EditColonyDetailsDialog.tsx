@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
+import { useHistory } from 'react-router-dom';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -8,12 +9,14 @@ import { ActionForm } from '~core/Fields';
 import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
+import { pipe, withMeta, mapPayload } from '~utils/actions';
 
 import DialogForm from './EditColonyDetailsDialogForm';
 
 export interface FormValues {
-  name: string;
-  annotation: string;
+  colonyDisplayName: string;
+  colonyAvatarImage: string;
+  annotationMessage: string;
 }
 
 interface CustomWizardDialogProps {
@@ -30,24 +33,63 @@ const EditColonyDetailsDialog = ({
   close,
   callStep,
   prevStep,
+  colony: {
+    colonyAddress,
+    colonyName,
+    displayName: colonyDisplayName,
+    avatarURL,
+    tokenAddresses,
+    nativeTokenAddress,
+  },
   colony,
 }: Props) => {
+  const history = useHistory();
+
   const validationSchema = yup.object().shape({
-    name: yup.string().required(),
-    annotation: yup.string().max(4000),
+    colonyAvatarImage: yup.string().nullable(),
+    colonyDisplayName: yup.string().required(),
+    annotationMessage: yup.string().max(4000),
   });
+
+  const transform = useCallback(
+    pipe(
+      mapPayload(
+        ({
+          colonyAvatarImage,
+          colonyDisplayName: payloadDisplayName,
+          annotationMessage,
+        }) => ({
+          colonyAddress,
+          colonyName,
+          colonyDisplayName: payloadDisplayName,
+          colonyAvatarImage:
+            typeof colonyAvatarImage === 'string' || colonyAvatarImage === null
+              ? colonyAvatarImage
+              : avatarURL,
+          colonyTokens: tokenAddresses.filter(
+            (tokenAddres) => tokenAddres !== nativeTokenAddress,
+          ),
+          annotationMessage,
+        }),
+      ),
+      withMeta({ history }),
+    ),
+    [],
+  );
 
   return (
     <ActionForm
       initialValues={{
-        name: undefined,
-        annotation: undefined,
+        colonyDisplayName: colonyDisplayName || colonyName,
+        colonyAvatarImage: undefined,
+        annotationMessage: undefined,
       }}
-      submit={ActionTypes.COLONY_EDIT_DETAILS}
-      error={ActionTypes.COLONY_EDIT_DETAILS_ERROR}
-      success={ActionTypes.COLONY_EDIT_DETAILS_SUCCESS}
+      submit={ActionTypes.COLONY_ACTION_EDIT_COLONY}
+      error={ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR}
+      success={ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS}
       validationSchema={validationSchema}
       onSuccess={close}
+      transform={transform}
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>

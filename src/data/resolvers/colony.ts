@@ -23,9 +23,14 @@ import {
   SubgraphSingleDomainQuery,
   SubgraphSingleDomainQueryVariables,
   SubgraphSingleDomainDocument,
+  SubgraphColonyQuery,
+  SubgraphColonyQueryVariables,
+  SubgraphColonyDocument,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
+import IPFSNode from '~lib/ipfs';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { createAddress } from '~utils/web3';
 import { Color } from '~core/ColorTag';
 
 import { getToken } from './token';
@@ -50,6 +55,158 @@ const getColonyMembersWithReputation = async (
   const { skillId } = await colonyClient.getDomain(domainId);
   const { addresses } = await colonyClient.getMembersReputation(skillId);
   return addresses || [];
+};
+
+export const getProcessedColony = async (
+  subgraphColony,
+  colonyAddress: Address,
+  ipfs: IPFSNode,
+) => {
+  const {
+    colonyChainId,
+    ensName,
+    metadata,
+    token,
+    metadataHistory = [],
+  } = subgraphColony;
+  let displayName: string | null = null;
+  let avatarURL: string | null = null;
+  let avatarHash: string | null = null;
+  let tokenAddresses: Array<Address> = [];
+
+  const prevIpfsHash = metadataHistory.slice(-1).pop();
+  const ipfsHash = metadata || prevIpfsHash?.metadata || null;
+
+  /*
+   * Fetch the colony's metadata
+   */
+  let ipfsMetadata: string | null = null;
+  try {
+    ipfsMetadata = await ipfs.getString(ipfsHash);
+  } catch (error) {
+    console.error(
+      `Could not fetch IPFS metadata for colony:`,
+      ensName,
+      'with hash:',
+      metadata,
+    );
+  }
+
+  try {
+    if (ipfsMetadata) {
+      const {
+        colonyDisplayName = null,
+        colonyAvatarHash = null,
+        colonyTokens = [],
+      } = JSON.parse(ipfsMetadata);
+      displayName = colonyDisplayName;
+      avatarHash = colonyAvatarHash;
+      tokenAddresses = colonyTokens;
+
+      /*
+       * Fetch the colony's avatar
+       */
+      try {
+        avatarURL = await ipfs.getString(colonyAvatarHash);
+      } catch (error) {
+        console.error('Could not fetch colony avatar', avatarURL);
+        console.error(
+          `Could not parse IPFS avatar for colony:`,
+          ensName,
+          'with hash:',
+          colonyAvatarHash,
+        );
+      }
+    }
+  } catch (error) {
+    console.error(
+      `Could not parse IPFS metadata for colony:`,
+      ensName,
+      'with object:',
+      ipfsMetadata,
+    );
+  }
+
+  return {
+    __typename: 'ProcessedColony',
+    id: parseInt(colonyChainId, 10),
+    colonyName: ENS.stripDomainParts('colony', ensName),
+    colonyAddress,
+    displayName,
+    avatarHash,
+    avatarURL,
+    nativeTokenAddress: token?.tokenAddress
+      ? createAddress(token.tokenAddress)
+      : null,
+    tokenAddresses: token?.tokenAddress
+      ? [...tokenAddresses, token.tokenAddress].map(createAddress)
+      : [],
+  };
+};
+
+export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
+  const {
+    metadata,
+    metadataHistory = [],
+    id,
+    domainChainId,
+    parent,
+    name: domainName,
+  } = subgraphDomain;
+  let name: string | null = null;
+  let color: string | null = null;
+  let description: string | null = null;
+
+  const prevIpfsHash = metadataHistory.slice(-1).pop();
+  const ipfsHash = metadata || prevIpfsHash?.metadata || null;
+
+  /*
+   * Fetch the domains's metadata
+   */
+  let ipfsMetadata: string | null = null;
+  try {
+    ipfsMetadata = await ipfs.getString(ipfsHash);
+  } catch (error) {
+    console.error(
+      `Could not fetch IPFS metadata for domain:`,
+      domainName,
+      'with hash:',
+      metadata,
+    );
+  }
+
+  try {
+    if (ipfsMetadata) {
+      const {
+        domainName: metadataDomainName = null,
+        domainColor = null,
+        domainPurpose = null,
+      } = JSON.parse(ipfsMetadata);
+
+      name = metadataDomainName;
+      color = domainColor;
+      description = domainPurpose;
+    }
+  } catch (error) {
+    console.error(
+      `Could not parse IPFS metadata for domain:`,
+      domainChainId,
+      'with object:',
+      ipfsMetadata,
+    );
+  }
+
+  return {
+    __typename: 'ProcessedDomain',
+    id,
+    ethDomainId: parseInt(domainChainId, 10),
+    ethParentDomainId: parent?.domainChainId
+      ? parseInt(parent.domainChainId, 10)
+      : null,
+    name: name || domainName,
+    color: color ? parseInt(color, 10) : Color.LightPink,
+    description,
+  };
 };
 
 export const colonyResolvers = ({
@@ -99,7 +256,12 @@ export const colonyResolvers = ({
             colonyAddress,
           },
         });
-        return subscribedMembers.data?.colony.subscribedUsers.map(
+        return subscribedMembers.data?.subscribedUsers.map(
+          /*
+           * The profile object exists and it's even defined in the types
+           * Just TS deciding to be a jerk
+           */
+          // @ts-ignore
           ({ profile: { walletAddress } }) => walletAddress,
         );
       }
@@ -138,60 +300,66 @@ export const colonyResolvers = ({
       });
       if (data?.domains) {
         const [singleDomain] = data.domains;
-        const lastMetadata = singleDomain.metadataHistory.slice(-1).pop();
-        const ipfsHash = singleDomain.metadata || lastMetadata?.metadata || '';
-        const metadataString = await ipfs.getString(ipfsHash as string);
-        const metadata = JSON.parse(metadataString || '{}');
-        return {
-          ...singleDomain,
-          ethDomainId: parseInt(singleDomain.domainChainId, 10),
-          ethParentDomainId: singleDomain.parent
-            ? parseInt(singleDomain.parent.domainChainId, 10)
-            : null,
-          name: metadata?.domainName || singleDomain.name,
-          color: parseInt(metadata?.domainColor || Color.LightPink, 10),
-          description: metadata?.domainPurpose || null,
-        };
+        return singleDomain ? getProcessedDomain(singleDomain, ipfs) : null;
       }
       return null;
     },
-  },
-  Colony: {
-    async domains({ colonyAddress }) {
-      const { data } = await apolloClient.query<
-        SubgraphDomainsQuery,
-        SubgraphDomainsQueryVariables
-      >({
-        query: SubgraphDomainsDocument,
-        variables: {
-          /*
-           * Subgraph addresses are not checksummed
-           */
-          colonyAddress: colonyAddress.toLowerCase(),
-        },
-        fetchPolicy: 'network-only',
-      });
-      if (data?.domains) {
-        return Promise.all(
-          data.domains.map(async (domain) => {
-            const lastMetadata = domain.metadataHistory.slice(-1).pop();
-            const ipfsHash = domain.metadata || lastMetadata?.metadata || '';
-            const metadataString = await ipfs.getString(ipfsHash as string);
-            const metadata = JSON.parse(metadataString || '{}');
-            return {
-              ...domain,
-              ethDomainId: parseInt(domain.domainChainId, 10),
-              ethParentDomainId: domain.parent
-                ? parseInt(domain.parent.domainChainId, 10)
-                : null,
-              name: metadata?.domainName || domain.name,
-              color: parseInt(metadata?.domainColor || Color.LightPink, 10),
-              description: metadata?.domainPurpose || null,
-            };
-          }),
-        );
+    async processedColony(_, { address }) {
+      try {
+        const { data } = await apolloClient.query<
+          SubgraphColonyQuery,
+          SubgraphColonyQueryVariables
+        >({
+          query: SubgraphColonyDocument,
+          variables: {
+            /*
+             * First convert it a string since in cases where the network name
+             * cannot be found via ENS it will throw an error
+             *
+             * Converting this to string basically converts the error object into
+             * a string form
+             */
+            address: address.toString().toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+        return data?.colony
+          ? await getProcessedColony(data.colony, address, ipfs)
+          : null;
+      } catch (error) {
+        console.error(error);
+        return null;
       }
-      return [];
+    },
+  },
+  ProcessedColony: {
+    async domains({ colonyAddress }) {
+      try {
+        const { data } = await apolloClient.query<
+          SubgraphDomainsQuery,
+          SubgraphDomainsQueryVariables
+        >({
+          query: SubgraphDomainsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+        if (data?.domains) {
+          return Promise.all(
+            data.domains.map(async (domain) =>
+              getProcessedDomain(domain, ipfs),
+            ),
+          );
+        }
+        return null;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
     },
     async canMintNativeToken({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
@@ -236,11 +404,18 @@ export const colonyResolvers = ({
       _,
       { client },
     ) {
-      return Promise.all(
-        ['0x0', ...tokenAddresses].map((tokenAddress) =>
-          getToken({ colonyManager, client }, tokenAddress),
-        ),
+      const tokens = await Promise.all(
+        ['0x0', ...tokenAddresses].map(async (tokenAddress) => {
+          try {
+            return getToken({ colonyManager, client }, tokenAddress);
+          } catch (error) {
+            console.error('Could not fetch Colony token:', tokenAddress);
+            console.error(error);
+            return undefined;
+          }
+        }),
       );
+      return tokens.filter((token) => !!token);
     },
     async canUnlockNativeToken({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
@@ -263,11 +438,9 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-
       if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
         throw new Error(`Not supported in this version of Colony`);
       }
-
       const roles = await getColonyRoles(colonyClient);
       return roles.map((userRoles) => ({
         ...userRoles,
@@ -283,9 +456,7 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-
       const events = await getColonyAllEvents(colonyClient);
-
       return events;
     },
     async transfers({ colonyAddress }): Promise<Transfer[]> {
@@ -293,16 +464,13 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-
       // eslint-disable-next-line max-len
       const colonyFundsClaimedTransactions = await getColonyFundsClaimedTransfers(
         colonyClient,
       );
-
       const payoutClaimedTransactions = await getPayoutClaimedTransfers(
         colonyClient,
       );
-
       return [
         ...colonyFundsClaimedTransactions,
         ...payoutClaimedTransactions,
@@ -313,12 +481,10 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-
       // eslint-disable-next-line max-len
       const colonyUnclaimedTransfers = await getColonyUnclaimedTransfers(
         colonyClient,
       );
-
       // Get ether balance and add a fake transaction if there's any unclaimed
       const colonyEtherBalance = await colonyClient.provider.getBalance(
         colonyAddress,
@@ -331,11 +497,9 @@ export const colonyResolvers = ({
         0,
         AddressZero,
       );
-
       const unclaimedEther = colonyEtherBalance
         .sub(colonyNonRewardsPotsTotal)
         .sub(colonyRewardsPotTotal);
-
       if (unclaimedEther.gt(0)) {
         colonyUnclaimedTransfers.push({
           // @ts-ignore
@@ -350,7 +514,6 @@ export const colonyResolvers = ({
           token: AddressZero,
         });
       }
-
       return colonyUnclaimedTransfers;
     },
     async version({ colonyAddress }) {
