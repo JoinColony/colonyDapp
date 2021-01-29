@@ -30,6 +30,7 @@ import ColonyManager from '~lib/ColonyManager';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createAddress } from '~utils/web3';
+import { log } from '~utils/debug';
 import { Color } from '~core/ColorTag';
 
 import { getToken } from './token';
@@ -82,7 +83,7 @@ export const getProcessedColony = async (
   try {
     ipfsMetadata = await ipfs.getString(ipfsHash);
   } catch (error) {
-    console.error(
+    log.verbose(
       `Could not fetch IPFS metadata for colony:`,
       ensName,
       'with hash:',
@@ -107,8 +108,8 @@ export const getProcessedColony = async (
       try {
         avatarURL = await ipfs.getString(colonyAvatarHash);
       } catch (error) {
-        console.error('Could not fetch colony avatar', avatarURL);
-        console.error(
+        log.verbose('Could not fetch colony avatar', avatarURL);
+        log.verbose(
           `Could not parse IPFS avatar for colony:`,
           ensName,
           'with hash:',
@@ -117,7 +118,7 @@ export const getProcessedColony = async (
       }
     }
   } catch (error) {
-    console.error(
+    log.verbose(
       `Could not parse IPFS metadata for colony:`,
       ensName,
       'with object:',
@@ -168,7 +169,7 @@ export const getProcessedDomain = async (
   try {
     ipfsMetadata = await ipfs.getString(ipfsHash);
   } catch (error) {
-    console.error(
+    log.verbose(
       `Could not fetch IPFS metadata for domain:`,
       domainName,
       'with hash:',
@@ -189,7 +190,7 @@ export const getProcessedDomain = async (
       description = domainPurpose;
     }
   } catch (error) {
-    console.error(
+    log.verbose(
       `Could not parse IPFS metadata for domain:`,
       domainChainId,
       'with object:',

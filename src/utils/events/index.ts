@@ -22,6 +22,7 @@ import {
   EVENTS_REQUIRED_FOR_ACTION,
 } from '~dashboard/ActionsPage';
 import ipfs from '~context/ipfsWithFallbackContext';
+import { log } from '~utils/debug';
 
 interface ActionValues {
   recipient: Address;
@@ -344,7 +345,7 @@ const getColonyEditActionValues = async (
   try {
     ipfsMetadata = await ipfs.getString(metadata);
   } catch (error) {
-    console.error(
+    log.verbose(
       'Could not fetch IPFS metadata for colony with hash:',
       metadata,
     );
@@ -363,7 +364,7 @@ const getColonyEditActionValues = async (
       colonyTokens = tokenAddresses;
     }
   } catch (error) {
-    console.error(
+    log.verbose(
       `Could not parse IPFS metadata for colony, using hash:`,
       metadata,
       'with object:',
