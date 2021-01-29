@@ -1,3 +1,5 @@
+import { log } from '~utils/debug';
+
 import {
   PINATA_API_KEY,
   PINATA_API_SECRET,
@@ -20,6 +22,9 @@ class Pinata {
   async getJSON(hash: string): Promise<string | null> {
     let responseData: string | undefined;
     try {
+      if (!hash) {
+        throw new Error(`The provided IPFS hash cannot be fetched: ${hash}`);
+      }
       const response = await fetch(`${PINATA_GATEWAY}/${hash}`);
       responseData = await response.text();
       if (!responseData && typeof responseData !== 'string') {
@@ -27,8 +32,8 @@ class Pinata {
       }
       return responseData;
     } catch (error) {
-      console.error('Could not get IPFS hash from Pinata:', hash);
-      console.error(error);
+      log.verbose('Could not get IPFS hash from Pinata:', hash);
+      log.verbose(error);
       return null;
     }
   }
@@ -80,8 +85,8 @@ class Pinata {
       }
       return responseData;
     } catch (error) {
-      console.error('Could not save data to IPFS using Pinata:', data);
-      console.error(error);
+      log.verbose('Could not save data to IPFS using Pinata:', data);
+      log.verbose(error);
       return null;
     }
   }
