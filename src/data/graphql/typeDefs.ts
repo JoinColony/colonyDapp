@@ -341,5 +341,6 @@ export default gql`
     transfers: [Transfer!]!
     unclaimedTransfers: [Transfer!]!
     events: [NetworkEvent!]!
+    canMakePayment: Boolean!
   }
 `;
