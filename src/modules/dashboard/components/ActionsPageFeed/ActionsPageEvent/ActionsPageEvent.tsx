@@ -7,6 +7,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
+import ColorTag, { Color } from '~core/ColorTag';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import { EventValues } from '../ActionsPageFeed';
@@ -22,7 +23,9 @@ import {
   getSpecificActionValuesCheck,
   sortMetdataHistory,
   parseColonyMetadata,
+  parseDomainMetadata,
   getColonyMetadataMessageDescriptorsIds,
+  getDomainMetadataMessageDescriptorsIds,
 } from '~utils/colonyActions';
 
 import styles from './ActionsPageEvent.css';
@@ -54,6 +57,12 @@ interface Props {
   colony: Colony;
 }
 
+interface DomainMetadata {
+  domainName: string | null;
+  domainPurpose: string | null;
+  domainColor: string | null;
+}
+
 const ActionsPageEvent = ({
   createdAt,
   transactionHash,
@@ -68,6 +77,7 @@ const ActionsPageEvent = ({
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
     undefined,
   );
+  const [previousDomainMetadata, setPreviousDomainMetadata] = useState<DomainMetadata | null>();
 
   /*
    * @NOTE See nanoId's docs about the reasoning for this
@@ -99,7 +109,6 @@ const ActionsPageEvent = ({
       domainId: values?.fromDomain.ethDomainId || 0,
     },
   });
-  console.log(domainMetadataHistory);
   /*
    * Fetch a historic metadata hash using IPFS
    */
@@ -183,6 +192,71 @@ const ActionsPageEvent = ({
     };
   }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
 
+  const getDomainMetadataChecks = useMemo(() => {
+    if (
+      eventName === ColonyAndExtensionsEvents.DomainMetadata &&
+      !!domainMetadataHistory?.data?.domains.length > 0 &&
+      !!actionData
+    ) {
+      const domain = domainMetadataHistory?.data?.domains[0];
+      const sortedMetdataHistory = sortMetdataHistory(domain.metadataHistory);
+      const currentMedataIndex = findLastIndex(
+        sortedMetdataHistory,
+        ({ transaction: { id: hash } }) => hash === actionData.hash,
+      );
+      /*
+       * We have a previous metadata entry
+       */
+      if (currentMedataIndex > 0) {
+        const prevMetdata = sortedMetdataHistory[currentMedataIndex - 1];
+        if (prevMetdata) {
+          setMetdataIpfsHash(prevMetdata.metadata);
+          if (metadataJSON) {
+            const previousParsedMetadata = parseDomainMetadata(metadataJSON);
+            setPreviousDomainMetadata(previousParsedMetadata);
+            return getSpecificActionValuesCheck(
+              eventName as ColonyAndExtensionsEvents,
+              actionData,
+              previousParsedMetadata,
+            );
+          }
+        }
+      }
+      const { domainColor, domainName, domainPurpose } = actionData;
+      return {
+        nameChanged: !!domainName,
+        colorChanged: !!domainColor,
+        descriptionChanged: !!domainPurpose,
+      };
+    }
+    /*
+     * Default fallback
+     */
+    
+    return {
+      nameChanged: false,
+      colorChanged: false,
+      descriptionChanged: false,
+    };
+  }, [domainMetadataHistory, actionData, metadataJSON, eventName, colony]);
+
+  const getEventTitleMessageDescriptor = useMemo(() => {
+    switch (eventName) {
+      case ColonyAndExtensionsEvents.ColonyMetadata:
+        return getColonyMetadataMessageDescriptorsIds(
+          ColonyAndExtensionsEvents.ColonyMetadata,
+          getColonyMetadataChecks,
+        );
+      case ColonyAndExtensionsEvents.DomainMetadata:
+        return getDomainMetadataMessageDescriptorsIds(
+          ColonyAndExtensionsEvents.DomainMetadata,
+          getDomainMetadataChecks,
+        );
+      default:
+        return 'event.title';
+    }
+  }, [eventName, getDomainMetadataChecks, getColonyMetadataChecks]);
+
   return (
     <div className={styles.main}>
       <div className={styles.status}>
@@ -191,18 +265,19 @@ const ActionsPageEvent = ({
       <div className={styles.content}>
         <div className={styles.text}>
           <FormattedMessage
-            id={
-              eventName === ColonyAndExtensionsEvents.ColonyMetadata
-                ? getColonyMetadataMessageDescriptorsIds(
-                    ColonyAndExtensionsEvents.ColonyMetadata,
-                    getColonyMetadataChecks,
-                  )
-                : 'event.title'
-            }
+            id={getEventTitleMessageDescriptor}
             values={{
               ...values,
               fromDomain: values?.fromDomain?.name,
               toDomain: values?.toDomain?.name,
+              oldColor: (
+                <ColorTag color={previousDomainMetadata?.domainColor || Color.LightPink} />
+              ),
+              domainColor: (
+                <ColorTag color={values?.domainColor || Color.LightPink} />
+              ),
+              oldDescription: previousDomainMetadata?.domainPurpose,
+              oldName: previousDomainMetadata?.domainName,
               eventName,
               /*
                * Usefull if a event isn't found or doesn't have a message descriptor
