@@ -190,6 +190,10 @@ export default gql`
     domainChainId: Int
   }
 
+  input ByColoniesAddressesFilter {
+    id_in: [String]!
+  }
+
   type SubgraphBlock {
     id: String!
     timestamp: String!
@@ -282,7 +286,7 @@ export default gql`
     events(skip: Int, first: Int, where: EventsFilter!): [SubgraphEvent!]!
     domains(where: ByColonyFilter!): [SubgraphDomain!]!
     colony(id: String!): SubgraphColony!
-    colonies: SubgraphColony!
+    colonies(where: ByColoniesAddressesFilter!): [SubgraphColony!]!
     processedColony(address: String!): ProcessedColony!
   }
 

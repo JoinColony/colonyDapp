@@ -678,7 +678,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 };
 
 export type Query = {
-  colonies: SubgraphColony;
+  colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
   colonyAddress: Scalars['String'];
@@ -704,6 +704,11 @@ export type Query = {
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
   username: Scalars['String'];
+};
+
+
+export type QueryColoniesArgs = {
+  where: ByColoniesAddressesFilter;
 };
 
 
@@ -1112,6 +1117,10 @@ export type EventsFilter = {
 export type ByColonyFilter = {
   colonyAddress: Scalars['String'];
   domainChainId?: Maybe<Scalars['Int']>;
+};
+
+export type ByColoniesAddressesFilter = {
+  id_in: Array<Maybe<Scalars['String']>>;
 };
 
 export type SubgraphBlock = {
@@ -1896,16 +1905,18 @@ export type SubgraphColonyQuery = { colony: (
     ) }
   ) };
 
-export type SubgraphColoniesQueryVariables = Exact<{ [key: string]: never; }>;
+export type SubgraphColoniesQueryVariables = Exact<{
+  colonyAddresses: Array<Maybe<Scalars['String']>>;
+}>;
 
 
-export type SubgraphColoniesQuery = { colonies: (
+export type SubgraphColoniesQuery = { colonies: Array<(
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
     & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
     ) }
-  ) };
+  )> };
 
 export type SubgraphColonyMetadataQueryVariables = Exact<{
   address: Scalars['String'];
@@ -4611,8 +4622,8 @@ export type SubgraphColonyQueryHookResult = ReturnType<typeof useSubgraphColonyQ
 export type SubgraphColonyLazyQueryHookResult = ReturnType<typeof useSubgraphColonyLazyQuery>;
 export type SubgraphColonyQueryResult = Apollo.QueryResult<SubgraphColonyQuery, SubgraphColonyQueryVariables>;
 export const SubgraphColoniesDocument = gql`
-    query SubgraphColonies {
-  colonies {
+    query SubgraphColonies($colonyAddresses: [String]!) {
+  colonies(where: {id_in: $colonyAddresses}) {
     id
     colonyChainId
     ensName
@@ -4642,6 +4653,7 @@ export const SubgraphColoniesDocument = gql`
  * @example
  * const { data, loading, error } = useSubgraphColoniesQuery({
  *   variables: {
+ *      colonyAddresses: // value for 'colonyAddresses'
  *   },
  * });
  */

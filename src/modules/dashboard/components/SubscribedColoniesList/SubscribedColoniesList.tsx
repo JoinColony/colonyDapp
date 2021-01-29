@@ -23,9 +23,9 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 const displayName = 'dashboard.SubscribedColoniesList';
 
 const SubscribedColoniesList = () => {
-  const loggedInUser = useLoggedInUser();
+  const { walletAddress } = useLoggedInUser();
   const { data, error, loading } = useUserColoniesQuery({
-    variables: { address: loggedInUser?.walletAddress },
+    variables: { address: walletAddress },
   });
 
   if (error) {
