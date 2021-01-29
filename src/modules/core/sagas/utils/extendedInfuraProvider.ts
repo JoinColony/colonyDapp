@@ -2,7 +2,10 @@ import { InfuraProvider, BlockTag } from 'ethers/providers';
 import { poll } from 'ethers/utils';
 
 export class ExtendedInfuraProvider extends InfuraProvider {
-  _parentGetCode: any;
+  _parentGetCode: (
+    addressOrName: string | Promise<string>,
+    blockTag?: BlockTag | Promise<BlockTag>,
+  ) => Promise<string>;
 
   constructor(...args) {
     super(...args);
