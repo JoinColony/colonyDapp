@@ -27,6 +27,12 @@ const MSG = defineMessages({
     defaultMessage: `You must have the {permissionsList} permissions in the
       relevant teams, in order to take this action`,
   },
+  noOneTxExtension: {
+    id: 'dashboard.ExpendituresDialog.noOneTxExtension',
+    defaultMessage: `The OneTxPayment extension is not installed in this colony.
+    Please use the Extensions Manager to install it if you want to make a new
+    payment.`,
+  },
   paymentPermissionsList: {
     id: 'dashboard.ExpendituresDialog.paymentPermissionsList',
     defaultMessage: 'administration and funding',
@@ -65,6 +71,7 @@ const ExpendituresDialog = ({
   callStep,
   prevStep,
   colony,
+  colony: { canMakePayment },
   nextStep,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -80,8 +87,10 @@ const ExpendituresDialog = ({
       title: MSG.paymentTitle,
       description: MSG.paymentDescription,
       icon: 'emoji-dollar-stack',
-      permissionRequired: !canCreatePayment,
-      permissionInfoText: MSG.paymentPermissionsText,
+      permissionRequired: !canCreatePayment || !canMakePayment,
+      permissionInfoText: !canCreatePayment
+        ? MSG.paymentPermissionsText
+        : MSG.noOneTxExtension,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
       },
