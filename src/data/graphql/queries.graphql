@@ -489,8 +489,8 @@ query SubgraphColony($address: String!) {
   }
 }
 
-query SubgraphColonies {
-  colonies {
+query SubgraphColonies($colonyAddresses: [String]!) {
+  colonies(where: { id_in: $colonyAddresses }) {
     id
     colonyChainId
     ensName
