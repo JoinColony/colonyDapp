@@ -4,6 +4,7 @@ import {
   ClientType,
   ColonyClientV5,
   ColonyVersion,
+  ColonyRole,
 } from '@colony/colony-js';
 import { BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
@@ -29,6 +30,9 @@ export interface EventValue {
   oldVersion: string;
   newVersion: string;
   metadata: string;
+  user: Address;
+  role: ColonyRole;
+  setTo: boolean;
 }
 
 export interface ProcessedEvent {
