@@ -430,6 +430,24 @@ query SubgraphDomains($colonyAddress: String!) {
   }
 }
 
+query SubgraphDomainMetadata($colonyAddress: String!, $domainId: Int!) {
+  domains(where: { colonyAddress: $colonyAddress, domainChainId: $domainId }) {
+    id
+    domainChainId
+    metadata
+    metadataHistory {
+      id
+      metadata
+      transaction {
+        id
+        block {
+          timestamp
+        }
+      }
+    }
+  }
+}
+
 query SubgraphSingleDomain($colonyAddress: String!, $domainId: Int!) {
   domains(where: { colonyAddress: $colonyAddress, domainChainId: $domainId }) {
     id

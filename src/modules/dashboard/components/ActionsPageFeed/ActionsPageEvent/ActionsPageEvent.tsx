@@ -15,6 +15,7 @@ import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
 import {
   ColonyAction,
   useSubgraphColonyMetadataQuery,
+  useSubgraphDomainMetadataQuery,
   Colony,
 } from '~data/index';
 import {
@@ -92,6 +93,13 @@ const ActionsPageEvent = ({
     },
   });
 
+  const domainMetadataHistory = useSubgraphDomainMetadataQuery({
+    variables: {
+      colonyAddress: colonyAddress.toLowerCase(),
+      domainId: values?.fromDomain.ethDomainId || 0,
+    },
+  });
+  console.log(domainMetadataHistory);
   /*
    * Fetch a historic metadata hash using IPFS
    */
