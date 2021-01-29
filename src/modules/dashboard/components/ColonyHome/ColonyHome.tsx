@@ -146,7 +146,11 @@ const ColonyHome = ({ match, location }: Props) => {
    * times are slow.
    */
   if (loading || data?.processedColony?.colonyName !== colonyName) {
-    return <LoadingTemplate loadingText={MSG.loadingText} />;
+    return (
+      <div className={styles.loadingWrapper}>
+        <LoadingTemplate loadingText={MSG.loadingText} />
+      </div>
+    );
   }
 
   if (

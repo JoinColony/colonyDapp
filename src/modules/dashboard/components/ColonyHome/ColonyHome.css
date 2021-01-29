@@ -75,3 +75,8 @@
 .upgradeBanner {
   padding: 15px 0;
 }
+
+.loadingWrapper {
+  height: 100%;
+  position: relative;
+}
