@@ -29,7 +29,9 @@ interface CustomWizardDialogProps {
   selectedDomainId?: string;
 }
 
-type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+type Props = DialogProps &
+  Partial<WizardDialogType<object>> &
+  CustomWizardDialogProps;
 
 const displayName = 'dashboard.EditDomainDialog';
 
@@ -84,7 +86,7 @@ const EditDomainDialog = ({
         <Dialog cancel={cancel}>
           <DialogForm
             {...formValues}
-            back={prevStep ? () => callStep(prevStep) : undefined}
+            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
             colony={colony}
           />
         </Dialog>

@@ -100,7 +100,12 @@ const DomainDropdown = ({
 
   const options = useMemo<ComponentProps<typeof Select>['options']>(() => {
     const allDomainsOption: SelectOption = {
-      children: <DomainSelectItem domain={ALLDOMAINS_DOMAIN_SELECTION} />,
+      children: (
+        <DomainSelectItem
+          domain={ALLDOMAINS_DOMAIN_SELECTION}
+          colony={colony}
+        />
+      ),
       label: { id: 'domain.all' },
       value: '0',
     };
@@ -123,7 +128,7 @@ const DomainDropdown = ({
         .map((domain) => {
           const { ethDomainId, name } = domain;
           return {
-            children: <DomainSelectItem domain={domain} />,
+            children: <DomainSelectItem domain={domain} colony={colony} />,
             label: name,
             value: `${ethDomainId}`,
           };
