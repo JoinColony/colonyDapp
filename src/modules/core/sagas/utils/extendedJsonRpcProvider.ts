@@ -2,7 +2,10 @@ import { JsonRpcProvider, BlockTag } from 'ethers/providers';
 import { poll } from 'ethers/utils';
 
 export class ExtendedJsonRpcProvider extends JsonRpcProvider {
-  _parentGetCode: any;
+  _parentGetCode: (
+    addressOrName: string | Promise<string>,
+    blockTag?: BlockTag | Promise<BlockTag>,
+  ) => Promise<string>;
 
   constructor(...args) {
     super(...args);
