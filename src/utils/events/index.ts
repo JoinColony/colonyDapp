@@ -23,8 +23,6 @@ import {
 } from '~dashboard/ActionsPage';
 import ipfs from '../../context/ipfsNodeContext';
 
-import ipfs from '../../context/ipfsNodeContext';
-
 interface ActionValues {
   recipient: Address;
   amount: string;

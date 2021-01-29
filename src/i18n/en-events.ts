@@ -44,7 +44,7 @@ const eventsMessageDescriptors = {
     [`event.${ColonyAndExtensionsEvents.DomainMetadata}.description`]: `{initiator} changed {fromDomain} teams's description from {oldDescription} to {domainPurpose}`,
     [`event.${ColonyAndExtensionsEvents.DomainMetadata}.name`]: `{initiator} changed {fromDomain} teams's name from {oldName} to {domainName}`,
     [`event.${ColonyAndExtensionsEvents.DomainMetadata}.color`]: `{initiator} changed {fromDomain} teams's color from {oldColor} to {domainColor}`,
-  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`]: `{initiator} changed this domain, but values are the same`,
+    [`event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`]: `{initiator} changed this domain, but values are the same`,
 };
 
 export default eventsMessageDescriptors;

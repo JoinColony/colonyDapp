@@ -270,9 +270,6 @@ const ActionsPage = () => {
       newVersion,
       oldVersion,
       colonyDisplayName,
-      domainColor,
-      domainPurpose,
-      domainName
     },
   } = colonyActionData;
 
@@ -339,9 +336,6 @@ const ActionsPage = () => {
       ) as OneDomain) || fallbackToDomain?.colonyDomain,
     newVersion,
     oldVersion,
-    domainColor,
-    domainPurpose,
-    domainName,
     colonyName: (
       <FriendlyName
         colony={{

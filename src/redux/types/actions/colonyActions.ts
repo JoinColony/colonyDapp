@@ -52,7 +52,7 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_DOMAIN_EDIT_SUCCESS,
       MetaWithHistory<object>
-  >
+    >
   | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC>
   | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_SUCCESS>
   | ErrorActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_ERROR, object>

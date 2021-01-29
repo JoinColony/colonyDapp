@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -26,7 +26,6 @@ export interface FormValues {
 interface CustomWizardDialogProps {
   prevStep?: string;
   colony: Colony;
-  id?: string;
   selectedDomainId?: string;
 }
 
@@ -41,7 +40,6 @@ const EditDomainDialog = ({
   close,
   colony,
   colony: { colonyAddress, colonyName },
-  id,
   selectedDomainId = ROOT_DOMAIN_ID.toString(),
 }: Props) => {
   const history = useHistory();
@@ -88,7 +86,6 @@ const EditDomainDialog = ({
             {...formValues}
             back={prevStep ? () => callStep(prevStep) : undefined}
             colony={colony}
-            id={id}
           />
         </Dialog>
       )}

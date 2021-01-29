@@ -77,7 +77,10 @@ const ActionsPageEvent = ({
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
     undefined,
   );
-  const [previousDomainMetadata, setPreviousDomainMetadata] = useState<DomainMetadata | null>();
+  const [
+    previousDomainMetadata,
+    setPreviousDomainMetadata,
+  ] = useState<DomainMetadata | null>();
 
   /*
    * @NOTE See nanoId's docs about the reasoning for this
@@ -195,11 +198,11 @@ const ActionsPageEvent = ({
   const getDomainMetadataChecks = useMemo(() => {
     if (
       eventName === ColonyAndExtensionsEvents.DomainMetadata &&
-      !!domainMetadataHistory?.data?.domains.length > 0 &&
+      !!domainMetadataHistory?.data?.domains?.length &&
       !!actionData
     ) {
       const domain = domainMetadataHistory?.data?.domains[0];
-      const sortedMetdataHistory = sortMetdataHistory(domain.metadataHistory);
+      const sortedMetdataHistory = sortMetdataHistory(domain?.metadataHistory);
       const currentMedataIndex = findLastIndex(
         sortedMetdataHistory,
         ({ transaction: { id: hash } }) => hash === actionData.hash,
@@ -222,23 +225,14 @@ const ActionsPageEvent = ({
           }
         }
       }
-      const { domainColor, domainName, domainPurpose } = actionData;
-      return {
-        nameChanged: !!domainName,
-        colorChanged: !!domainColor,
-        descriptionChanged: !!domainPurpose,
-      };
     }
-    /*
-     * Default fallback
-     */
-    
+    const { domainColor, domainName, domainPurpose } = actionData;
     return {
-      nameChanged: false,
-      colorChanged: false,
-      descriptionChanged: false,
+      nameChanged: !!domainName,
+      colorChanged: !!domainColor,
+      descriptionChanged: !!domainPurpose,
     };
-  }, [domainMetadataHistory, actionData, metadataJSON, eventName, colony]);
+  }, [domainMetadataHistory, actionData, metadataJSON, eventName]);
 
   const getEventTitleMessageDescriptor = useMemo(() => {
     switch (eventName) {
@@ -256,7 +250,7 @@ const ActionsPageEvent = ({
         return 'event.title';
     }
   }, [eventName, getDomainMetadataChecks, getColonyMetadataChecks]);
-
+  const { domainPurpose, domainName, domainColor } = actionData;
   return (
     <div className={styles.main}>
       <div className={styles.status}>
@@ -271,13 +265,22 @@ const ActionsPageEvent = ({
               fromDomain: values?.fromDomain?.name,
               toDomain: values?.toDomain?.name,
               oldColor: (
-                <ColorTag color={previousDomainMetadata?.domainColor || Color.LightPink} />
+                <ColorTag
+                  color={
+                    Number(previousDomainMetadata?.domainColor) ||
+                    Color.LightPink
+                  }
+                />
               ),
               domainColor: (
-                <ColorTag color={values?.domainColor || Color.LightPink} />
+                <ColorTag color={Number(domainColor) || Color.LightPink} />
               ),
-              oldDescription: previousDomainMetadata?.domainPurpose,
-              oldName: previousDomainMetadata?.domainName,
+              // Fallback to current name/description when there is no previous metadata obj
+              oldDescription:
+                previousDomainMetadata?.domainPurpose || domainPurpose,
+              oldName: previousDomainMetadata?.domainName || domainName,
+              domainPurpose,
+              domainName,
               eventName,
               /*
                * Usefull if a event isn't found or doesn't have a message descriptor

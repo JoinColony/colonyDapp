@@ -40,8 +40,7 @@ const MSG = defineMessages({
     defaultMessage: 'What is the purpose of this team?',
   },
   annotation: {
-    id:
-      'dashboard.EditDomainDialog.EditDomainDialogForm.annotation',
+    id: 'dashboard.EditDomainDialog.EditDomainDialogForm.annotation',
     defaultMessage: 'Explain why you’re editing this team',
   },
   noPermission: {
@@ -57,7 +56,6 @@ const MSG = defineMessages({
 interface Props {
   back?: () => void;
   colony: Colony;
-  id?: string;
   isSubmitting;
   isValid;
 }
@@ -67,7 +65,6 @@ const EditDomainDialogForm = ({
   colony,
   colony: { domains },
   handleSubmit,
-  id,
   isSubmitting,
   isValid,
   setFieldValue,
@@ -79,8 +76,7 @@ const EditDomainDialogForm = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canEditDomain =
-    hasRegisteredProfile && canArchitect(allUserRoles);
+  const canEditDomain = hasRegisteredProfile && canArchitect(allUserRoles);
 
   const domainOptions = useMemo(
     () =>
@@ -96,7 +92,9 @@ const EditDomainDialogForm = ({
   );
 
   const handleDomainChange = (selectedDomainId) => {
-    const selectedDomain = domains.find(domain => domain.ethDomainId.toString() === selectedDomainId);
+    const selectedDomain = domains.find(
+      (domain) => domain.ethDomainId.toString() === selectedDomainId,
+    );
     if (selectedDomain) {
       setFieldValue('domainColor', selectedDomain.color || undefined);
       setFieldValue('domainName', selectedDomain.name || undefined);

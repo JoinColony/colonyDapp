@@ -260,7 +260,8 @@ export const getSpecificActionValuesCheck = (
     }
     case ColonyAndExtensionsEvents.DomainMetadata: {
       const nameChanged = prevDomainName !== currentDomainName;
-      const colorChanged = parseInt(prevDomainColor, 10) !== parseInt(currentDomainColor, 10);
+      const colorChanged =
+        Number(prevDomainColor) !== Number(currentDomainColor);
       const descriptionChanged = prevDomainPurpose !== currentDomainPurpose;
       return {
         nameChanged,
