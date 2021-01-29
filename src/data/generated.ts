@@ -1265,6 +1265,7 @@ export type ProcessedColony = {
   transfers: Array<Transfer>;
   unclaimedTransfers: Array<Transfer>;
   events: Array<NetworkEvent>;
+  canMakePayment: Scalars['Boolean'];
 };
 
 export type PayoutsFragment = { payouts: Array<(
@@ -1294,7 +1295,7 @@ export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'descr
 export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>;
 
 export type FullColonyFragment = (
-  Pick<ProcessedColony, 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
+  Pick<ProcessedColony, 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'canMakePayment'>
   & { domains: Array<DomainFieldsFragment>, roles: Array<(
     Pick<ProcessedRoles, 'address'>
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
@@ -2128,6 +2129,7 @@ export const FullColonyFragmentDoc = gql`
   canUnlockNativeToken @client
   isInRecoveryMode @client
   isNativeTokenLocked @client
+  canMakePayment @client
 }
     ${ColonyProfileFragmentDoc}
 ${TokensFragmentDoc}

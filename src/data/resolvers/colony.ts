@@ -6,6 +6,7 @@ import {
   ColonyVersion,
   getColonyRoles,
   TokenClientType,
+  getExtensionHash,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -519,6 +520,22 @@ export const colonyResolvers = ({
       );
       const version = await colonyClient.version();
       return version.toString();
+    },
+    /*
+     * @NOTE This is temporary until the Extension Manager #2260 gets merged
+     * and will provide a more robust way of getting the extensions
+     *
+     * This only detects the OneTxPayment extension
+     */
+    async canMakePayment({ colonyAddress }) {
+      const extensionAddress = await networkClient.getExtensionInstallation(
+        getExtensionHash('OneTxPayment'),
+        colonyAddress,
+      );
+      if (extensionAddress === AddressZero) {
+        return false;
+      }
+      return true;
     },
   },
 });

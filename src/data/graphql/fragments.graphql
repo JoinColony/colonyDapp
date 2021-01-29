@@ -93,6 +93,7 @@ fragment FullColony on ProcessedColony {
   canUnlockNativeToken @client
   isInRecoveryMode @client
   isNativeTokenLocked @client
+  canMakePayment @client
 }
 
 fragment EventFields on Event {
