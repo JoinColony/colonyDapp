@@ -24,8 +24,6 @@ import {
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 
-import ipfs from '../../context/ipfsNodeContext';
-
 interface ActionValues {
   recipient: Address;
   amount: string;
