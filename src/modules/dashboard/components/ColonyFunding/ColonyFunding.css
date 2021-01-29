@@ -42,3 +42,10 @@
 .aside {
   padding: 75px 0 0 150px;
 }
+
+.loadingWrapper {
+  margin-left: 60px;
+  height: 100%;
+  width: calc(100% - 60px);
+  position: relative;
+}
