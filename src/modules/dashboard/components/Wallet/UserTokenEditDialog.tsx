@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 
-import TokenEditDialog from '~core/TokenEditDialog';
 import {
   useSetUserTokensMutation,
   UserTokensDocument,
@@ -8,6 +7,8 @@ import {
   useUserTokensQuery,
 } from '~data/index';
 import { Address } from '~types/index';
+
+import DialogForm from './UserTokenEditDialogForm';
 
 interface Props {
   cancel: () => void;
@@ -50,7 +51,7 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
      * the user and wire it up for launch
      */
     // @ts-ignore
-    <TokenEditDialog
+    <DialogForm
       cancel={cancel}
       close={close}
       tokensList={userTokens}
