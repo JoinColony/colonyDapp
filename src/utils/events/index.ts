@@ -13,6 +13,7 @@ import {
   ColonyAndExtensionsEvents,
   Address,
   FormattedAction,
+  ActionUserRoles,
 } from '~types/index';
 import { ParsedEvent } from '~data/index';
 import { ProcessedEvent } from '~data/resolvers/colonyActions';
@@ -32,6 +33,7 @@ interface ActionValues {
   oldVersion: string;
   newVersion: string;
   address: Address;
+  roles: ActionUserRoles[];
 }
 
 /*
@@ -398,6 +400,40 @@ const getEditDomainActionValues = async (
   return domainMetadataValues;
 };
 
+const getSetUserRolesActionValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const setUserRolesEvents = processedEvents.filter(
+    ({ name }) => name === ColonyAndExtensionsEvents.ColonyRoleSet,
+  ) as ProcessedEvent[];
+
+  const roles: ActionUserRoles[] = setUserRolesEvents.map(({ values }) => ({
+    id: values.role,
+    setTo: values.setTo,
+  }));
+
+  const {
+    values: { agent, user, domainId },
+  } = setUserRolesEvents[0];
+
+  const userRoleAction: {
+    recipient: Address;
+    roles: ActionUserRoles[];
+    fromDomain: number;
+    actionInitiator?: string;
+  } = {
+    recipient: user,
+    roles,
+    fromDomain: parseInt(domainId.toString(), 10),
+  };
+
+  if (agent) {
+    userRoleAction.actionInitiator = agent;
+  }
+
+  return userRoleAction;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -412,6 +448,7 @@ export const getActionValues = async (
     newVersion: '0',
     oldVersion: '0',
     address: AddressZero,
+    roles: [{ id: 0, setTo: false }],
   };
   switch (actionType) {
     case ColonyActions.Payment: {
@@ -471,13 +508,13 @@ export const getActionValues = async (
         ...versionUpgradeActionValues,
       };
     }
-    case ColonyActions.ColonyEdit: {
-      const colonyEditActionValues = await getColonyEditActionValues(
+    case ColonyActions.SetUserRoles: {
+      const setUserRolesActionValues = await getSetUserRolesActionValues(
         processedEvents,
       );
       return {
         ...fallbackValues,
-        ...colonyEditActionValues,
+        ...setUserRolesActionValues,
       };
     }
     default: {
