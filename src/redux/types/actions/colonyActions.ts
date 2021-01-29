@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers/utils';
+import { ColonyRole } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
@@ -145,4 +146,21 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_USER_ROLES_SET,
+      {
+        colonyAddress: Address;
+        colonyName: string;
+        domainId: number;
+        userAddress: Address;
+        roles: Record<ColonyRole, boolean>;
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_USER_ROLES_SET_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS,
+      MetaWithHistory<object>
+    >;
