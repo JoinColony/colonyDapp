@@ -131,7 +131,21 @@ const ColonyHome = ({ match, location }: Props) => {
     });
   }, [data, openUpgradeVersionDialog]);
 
-  if (loading) {
+  /*
+   * Keep the page loaded when the colony name changes, but we have data
+   *
+   * This can happen if changing the colony from the left subscriptions sidebar
+   * The data won't change, hence not trigger the "loading" check, until it is
+   * fetched and refreshed in the background.
+   *
+   * What this looks like in practice is that you change the colony but you'll
+   * see the "old" colony's data on the page, up until it is just changed in
+   * front of you.
+   *
+   * This problem is made even worse in an production environment where loading
+   * times are slow.
+   */
+  if (loading || data?.processedColony?.colonyName !== colonyName) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 

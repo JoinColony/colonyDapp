@@ -24,13 +24,9 @@ const displayName = 'dashboard.SubscribedColoniesList';
 
 const SubscribedColoniesList = () => {
   const { walletAddress } = useLoggedInUser();
-  const { data, error, loading } = useUserColoniesQuery({
+  const { data, loading } = useUserColoniesQuery({
     variables: { address: walletAddress },
   });
-
-  if (error) {
-    console.error(error);
-  }
 
   return (
     <div className={styles.main}>
