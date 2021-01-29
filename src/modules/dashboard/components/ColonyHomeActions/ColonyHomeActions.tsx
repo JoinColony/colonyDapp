@@ -5,7 +5,7 @@ import { ColonyVersion } from '@colony/colony-js';
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
 import ExpendituresDialog from '~dashboard/ExpendituresDialog';
-import CreateEditDomainDialog from '~dashboard/CreateEditDomainDialog';
+import CreateDomainDialog from '~dashboard/CreateDomainDialog';
 import EditDomainDialog from '~dashboard/EditDomainDialog';
 import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
 import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
@@ -81,13 +81,13 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: ManageDomainsDialog,
       props: {
         prevStep: 'dashboard.ColonyActionsDialog',
-        nextStep: 'dashboard.CreateEditDomainDialog',
+        nextStep: 'dashboard.CreateDomainDialog',
         nextStepEdit: 'dashboard.EditDomainDialog',
         colony,
       },
     },
     {
-      component: CreateEditDomainDialog,
+      component: CreateDomainDialog,
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,

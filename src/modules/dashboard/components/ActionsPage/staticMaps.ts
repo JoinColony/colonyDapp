@@ -143,5 +143,8 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Description,
   ],
   [ColonyActions.ColonyEdit]: [ActionPageDetails.Name],
-  [ColonyActions.EditDomain]: [ActionPageDetails.Domain],
+  [ColonyActions.EditDomain]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Description,
+  ],
 };

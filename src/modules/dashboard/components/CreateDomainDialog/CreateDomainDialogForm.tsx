@@ -18,36 +18,30 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '../../../transformers';
 import { canArchitect } from '../../../users/checks';
 
-import { FormValues } from './CreateEditDomainDialog';
-import styles from './CreateEditDomainDialogForm.css';
+import { FormValues } from './CreateDomainDialog';
+import styles from './CreateDomainDialogForm.css';
 
 const MSG = defineMessages({
   titleCreate: {
-    id:
-      'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleCreate',
+    id: 'dashboard.CreateDomainDialog.CreateDomainDialogForm.titleCreate',
     defaultMessage: 'Create a new team',
   },
-  titleEdit: {
-    id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.titleEdit',
-    defaultMessage: 'Edit team details',
-  },
   name: {
-    id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.name',
+    id: 'dashboard.CreateDomainDialog.CreateDomainDialogForm.name',
     defaultMessage: 'Team name',
   },
   purpose: {
-    id: 'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.name',
+    id: 'dashboard.CreateDomainDialog.CreateDomainDialogForm.name',
     defaultMessage: 'What is the purpose of this team?',
   },
   annotation: {
-    id:
-      'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.annotation',
+    id: 'dashboard.CreateDomainDialog.CreateDomainDialogForm.annotation',
     defaultMessage: 'Explain why you’re creating this team',
   },
   noPermission: {
     id:
       // eslint-disable-next-line max-len
-      'dashboard.CreateEditDomainDialog.CreateEditDomainDialogForm.noPermission',
+      'dashboard.CreateDomainDialog.CreateDomainDialogForm.noPermission',
     defaultMessage:
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
@@ -57,16 +51,14 @@ const MSG = defineMessages({
 interface Props {
   back?: () => void;
   colony: Colony;
-  id?: string;
   isSubmitting;
   isValid;
 }
 
-const CreateEditDomainDialogForm = ({
+const CreateDomainDialogForm = ({
   back,
   colony,
   handleSubmit,
-  id,
   isSubmitting,
   isValid,
 }: Props & FormikProps<FormValues>) => {
@@ -77,19 +69,18 @@ const CreateEditDomainDialogForm = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canCreateEditDomain =
-    hasRegisteredProfile && canArchitect(allUserRoles);
+  const canCreateDomain = hasRegisteredProfile && canArchitect(allUserRoles);
 
   return (
     <>
       <DialogSection appearance={{ theme: 'heading' }}>
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
-          text={id === undefined ? MSG.titleCreate : MSG.titleEdit}
+          text={MSG.titleCreate}
           className={styles.title}
         />
       </DialogSection>
-      {!canCreateEditDomain && (
+      {!canCreateDomain && (
         <DialogSection>
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Architecture]} />
         </DialogSection>
@@ -101,7 +92,7 @@ const CreateEditDomainDialogForm = ({
               label={MSG.name}
               name="teamName"
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
-              disabled={!canCreateEditDomain}
+              disabled={!canCreateDomain}
               maxLength={20}
             />
           </div>
@@ -109,7 +100,7 @@ const CreateEditDomainDialogForm = ({
             activeOption={domainColor}
             appearance={{ alignOptions: 'right' }}
             onColorChange={setDomainColor}
-            disabled={!canCreateEditDomain}
+            disabled={!canCreateDomain}
             name="domainColor"
           />
         </div>
@@ -119,7 +110,7 @@ const CreateEditDomainDialogForm = ({
           label={MSG.purpose}
           name="domainPurpose"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          disabled={!canCreateEditDomain}
+          disabled={!canCreateDomain}
           maxLength={90}
         />
       </DialogSection>
@@ -127,10 +118,10 @@ const CreateEditDomainDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotationMessage"
-          disabled={!canCreateEditDomain}
+          disabled={!canCreateDomain}
         />
       </DialogSection>
-      {!canCreateEditDomain && (
+      {!canCreateDomain && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionFromMessage}>
             <FormattedMessage
@@ -142,8 +133,7 @@ const CreateEditDomainDialogForm = ({
                     name={{ id: `role.${ColonyRole.Architecture}` }}
                   />
                 ),
-                // placeholder for now, needs to be actual domain when `Edit` is done
-                domain: id === undefined ? 'Root' : 'DOMAIN PLACEHOLDER',
+                domain: 'Root',
               }}
             />
           </div>
@@ -162,11 +152,11 @@ const CreateEditDomainDialogForm = ({
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
-          disabled={!canCreateEditDomain || !isValid}
+          disabled={!canCreateDomain || !isValid}
         />
       </DialogSection>
     </>
   );
 };
 
-export default CreateEditDomainDialogForm;
+export default CreateDomainDialogForm;

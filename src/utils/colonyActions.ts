@@ -80,7 +80,7 @@ export const getValuesForActionType = (
     case ColonyActions.EditDomain: {
       return {
         initiator: argsObj.agent,
-        fromDomain: argsObj.domainId
+        fromDomain: argsObj.domainId,
       };
     }
     default: {

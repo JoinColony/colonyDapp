@@ -11,7 +11,7 @@ import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 
-import DialogForm from './CreateEditDomainDialogForm';
+import DialogForm from './CreateDomainDialogForm';
 import { Color } from '~core/ColorTag';
 
 export interface FormValues {
@@ -24,21 +24,19 @@ export interface FormValues {
 interface CustomWizardDialogProps {
   prevStep?: string;
   colony: Colony;
-  id?: string;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
 
-const displayName = 'dashboard.CreateEditDomainDialog';
+const displayName = 'dashboard.CreateDomainDialog';
 
-const CreateEditDomainDialog = ({
+const CreateDomainDialog = ({
   callStep,
   prevStep,
   cancel,
   close,
   colony,
   colony: { colonyAddress, colonyName },
-  id,
 }: Props) => {
   const history = useHistory();
 
@@ -83,7 +81,6 @@ const CreateEditDomainDialog = ({
             {...formValues}
             back={prevStep ? () => callStep(prevStep) : undefined}
             colony={colony}
-            id={id}
           />
         </Dialog>
       )}
@@ -91,6 +88,6 @@ const CreateEditDomainDialog = ({
   );
 };
 
-CreateEditDomainDialog.displayName = displayName;
+CreateDomainDialog.displayName = displayName;
 
-export default CreateEditDomainDialog;
+export default CreateDomainDialog;
