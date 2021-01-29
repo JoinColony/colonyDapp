@@ -2,10 +2,12 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import Icon from '~core/Icon';
+import { SpinnerLoader } from '~core/Preloaders';
 import NavLink from '~core/NavLink';
+import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
+
 import { useLoggedInUser, useUserColoniesQuery } from '~data/index';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import styles from './SubscribedColoniesList.css';
 
@@ -21,16 +23,25 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 const displayName = 'dashboard.SubscribedColoniesList';
 
 const SubscribedColoniesList = () => {
-  const { walletAddress } = useLoggedInUser();
-  const { data } = useUserColoniesQuery({
-    variables: { address: walletAddress },
+  const loggedInUser = useLoggedInUser();
+  const { data, error, loading } = useUserColoniesQuery({
+    variables: { address: loggedInUser?.walletAddress },
   });
+
+  if (error) {
+    console.error(error);
+  }
 
   return (
     <div className={styles.main}>
       <div className={styles.scrollableContainer}>
-        {data &&
-          data.user.processedColonies.map((colony) => {
+        {loading && (
+          <div className={styles.loadingColonies}>
+            <SpinnerLoader appearance={{ size: 'medium' }} />
+          </div>
+        )}
+        {!loading &&
+          data?.user?.processedColonies.map((colony) => {
             const { colonyAddress, colonyName } = colony as {
               colonyAddress: string;
               colonyName: string;
