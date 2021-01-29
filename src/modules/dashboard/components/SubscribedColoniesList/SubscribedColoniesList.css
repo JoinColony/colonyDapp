@@ -48,3 +48,7 @@
   position: sticky;
   bottom: 0;
 }
+
+.loadingColonies {
+  padding: 8px 0 2px;
+}
