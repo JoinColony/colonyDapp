@@ -22,9 +22,6 @@ import {
   ProcessedColonyQuery,
   ProcessedColonyQueryVariables,
   ProcessedColonyDocument,
-  SubgraphColonyMetadataQuery,
-  SubgraphColonyMetadataQueryVariables,
-  SubgraphColonyMetadataDocument,
   getNetworkContracts,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -38,6 +35,7 @@ import {
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import {
   transactionReady,
+  transactionPending,
   transactionAddParams,
   transactionPending,
 } from '../../core/actionCreators';
@@ -1064,6 +1062,8 @@ function* editColonyAction({
     colonyName,
     colonyDisplayName,
     colonyAvatarImage,
+    colonyAvatarHash,
+    hasAvatarChanged,
     colonyTokens = [],
     annotationMessage,
   },
@@ -1079,46 +1079,6 @@ function* editColonyAction({
      */
     if (!colonyDisplayName && colonyDisplayName !== null) {
       throw new Error('A colony name is required in order to edit the colony');
-    }
-
-    /*
-     * Upload colony metadata to IPFS
-     */
-    let colonyAvatarIpfsHash = null;
-    if (colonyAvatarImage) {
-      colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          image: colonyAvatarImage,
-        }),
-      );
-    }
-
-    /*
-     * Upload colony metadata to IPFS
-     */
-    let colonyMetadataIpfsHash = null;
-    colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        colonyName,
-        colonyDisplayName,
-        colonyAvatarHash: colonyAvatarIpfsHash,
-        colonyTokens,
-      }),
-    );
-
-    /*
-     * Upload annotation metadata to IPFS
-     */
-    let annotationMessageIpfsHash = null;
-    if (annotationMessage) {
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
     }
 
     txChannel = yield call(getTxChannel, metaId);
@@ -1146,7 +1106,7 @@ function* editColonyAction({
       context: ClientType.ColonyClient,
       methodName: 'editColony',
       identifier: colonyAddress,
-      params: [colonyMetadataIpfsHash],
+      params: [],
       ready: false,
     });
 
@@ -1161,12 +1121,55 @@ function* editColonyAction({
     }
 
     yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_CREATED);
+
     if (annotationMessage) {
       yield takeFrom(
         annotateEditColony.channel,
         ActionTypes.TRANSACTION_CREATED,
       );
     }
+
+    yield put(transactionPending(editColony.id));
+
+    /*
+     * Upload colony metadata to IPFS
+     *
+     * @NOTE Only (re)upload the avatar if it has changed, otherwise just use
+     * the old hash.
+     * This cuts down on some transaction signing wait time, since IPFS uplaods
+     * tend to be on the slower side :(
+     */
+    let colonyAvatarIpfsHash = null;
+    if (colonyAvatarImage && hasAvatarChanged) {
+      colonyAvatarIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          image: colonyAvatarImage,
+        }),
+      );
+    }
+
+    /*
+     * Upload colony metadata to IPFS
+     */
+    let colonyMetadataIpfsHash = null;
+    colonyMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        colonyName,
+        colonyDisplayName,
+        colonyAvatarHash: hasAvatarChanged
+          ? colonyAvatarIpfsHash
+          : colonyAvatarHash,
+        colonyTokens,
+      }),
+    );
+
+    yield put(
+      transactionAddParams(editColony.id, [
+        (colonyMetadataIpfsHash as unknown) as string,
+      ]),
+    );
 
     yield put(transactionReady(editColony.id));
 
@@ -1179,6 +1182,19 @@ function* editColonyAction({
     yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateEditColony.id));
+
+      /*
+       * Upload annotation metadata to IPFS
+       */
+      let annotationMessageIpfsHash = null;
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(
         transactionAddParams(annotateEditColony.id, [
           txHash,
@@ -1214,21 +1230,6 @@ function* editColonyAction({
         colonyAddress: colonyAddress.toLocaleLowerCase(),
         first: 1,
         skip: 0,
-      },
-      fetchPolicy: 'network-only',
-    });
-
-    /*
-     * Re-fetch colony metadata history so we have the new values to compare agaist
-     * This could have also been a cache update since we have all ifps hashes locally
-     */
-    yield apolloClient.query<
-      SubgraphColonyMetadataQuery,
-      SubgraphColonyMetadataQueryVariables
-    >({
-      query: SubgraphColonyMetadataDocument,
-      variables: {
-        address: colonyAddress.toLocaleLowerCase(),
       },
       fetchPolicy: 'network-only',
     });

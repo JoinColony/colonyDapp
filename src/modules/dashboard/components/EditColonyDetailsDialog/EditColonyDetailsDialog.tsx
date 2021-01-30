@@ -38,6 +38,7 @@ const EditColonyDetailsDialog = ({
     colonyName,
     displayName: colonyDisplayName,
     avatarURL,
+    avatarHash,
     tokenAddresses,
     nativeTokenAddress,
   },
@@ -66,6 +67,10 @@ const EditColonyDetailsDialog = ({
             typeof colonyAvatarImage === 'string' || colonyAvatarImage === null
               ? colonyAvatarImage
               : avatarURL,
+          colonyAvatarHash: avatarHash,
+          hasAvatarChanged: !!(
+            typeof colonyAvatarImage === 'string' || colonyAvatarImage === null
+          ),
           colonyTokens: tokenAddresses.filter(
             (tokenAddres) => tokenAddres !== nativeTokenAddress,
           ),
