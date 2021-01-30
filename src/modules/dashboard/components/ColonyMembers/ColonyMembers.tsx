@@ -1,12 +1,14 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
+import { ColonyVersion } from '@colony/colony-js';
 
 import Members from '~dashboard/Members';
-import { useColonyFromNameQuery } from '~data/index';
+import { useColonyFromNameQuery, useLoggedInUser } from '~data/index';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
+import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './ColonyMembers.css';
 
@@ -20,6 +22,8 @@ const MSG = defineMessages({
 });
 
 const ColonyMembers = () => {
+  const { networkId } = useLoggedInUser();
+
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
@@ -36,6 +40,11 @@ const ColonyMembers = () => {
     });
   }, [openPermissionManagementDialog, colonyData]);
 
+  const isSupportedColonyVersion =
+    parseInt(colonyData?.processedColony?.version || '1', 10) >=
+    ColonyVersion.CeruleanLightweightSpaceship;
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
   return (
     <div className={styles.main}>
       <div className={styles.mainContentGrid}>
@@ -49,6 +58,7 @@ const ColonyMembers = () => {
             appearance={{ theme: 'blue' }}
             text={MSG.editPermissions}
             onClick={handlePermissionManagementDialog}
+            disabled={!isSupportedColonyVersion || !isNetworkAllowed}
           />
         </aside>
       </div>
