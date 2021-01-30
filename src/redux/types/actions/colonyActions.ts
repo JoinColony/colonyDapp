@@ -84,6 +84,8 @@ export type ColonyActionsActionTypes =
         colonyName: string;
         colonyDisplayName: string;
         colonyAvatarImage?: string;
+        colonyAvatarHash?: string;
+        hasAvatarChanged?: boolean;
         colonyTokens?: Address[];
         annotationMessage?: string;
         /*
