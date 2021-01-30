@@ -28,7 +28,7 @@ export type UserActionTypes =
       {
         address: Address;
         avatar: string;
-        hash: string;
+        hash: string | null;
       },
       object
     >
