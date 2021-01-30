@@ -41,7 +41,10 @@ export default function* getNetworkClient() {
 
   const signer = new EthersSigner({ purserWallet: wallet, provider });
 
-  if (process.env.NODE_ENV === 'development') {
+  if (
+    process.env.NODE_ENV === 'development' &&
+    DEFAULT_NETWORK === Network.Local
+  ) {
     return yield call(getColonyNetworkClient, network, signer, {
       networkAddress: getLocalContractAddress('EtherRouter'),
       reputationOracleEndpoint: 'http://localhost:3001/reputation',
