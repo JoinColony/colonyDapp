@@ -13,6 +13,7 @@ import {
   Colony,
 } from '~data/index';
 import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
+import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './ColonySubscription.css';
 
@@ -32,7 +33,7 @@ interface Props {
 }
 
 const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
-  const { username, walletAddress } = useLoggedInUser();
+  const { username, walletAddress, networkId } = useLoggedInUser();
 
   const { data } = useUserColonyAddressesQuery({
     variables: { address: walletAddress },
@@ -61,6 +62,8 @@ const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
 
   const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
 
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
   return (
     <div className={styles.main}>
       {loadingSubscribe ||
@@ -81,6 +84,7 @@ const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
         <ColonySubscriptionInfoPopover
           colony={colony}
           onUnsubscribe={() => unsubscribe()}
+          canUnsubscribe={isNetworkAllowed}
         >
           <div className={styles.menuIconContainer}>
             <Icon

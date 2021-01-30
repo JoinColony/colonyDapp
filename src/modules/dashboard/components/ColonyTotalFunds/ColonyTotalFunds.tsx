@@ -2,14 +2,18 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyVersion } from '@colony/colony-js';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
-import { Colony, useTokenBalancesForDomainsQuery } from '~data/index';
+import {
+  Colony,
+  useTokenBalancesForDomainsQuery,
+  useLoggedInUser,
+} from '~data/index';
 import { Address } from '~types/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ALLOWED_NETWORKS } from '~constants';
 
 import ColonyTotalFundsPopover from './ColonyTotalFundsPopover';
 
@@ -49,11 +53,12 @@ const ColonyTotalFunds = ({
     version,
   },
 }: Props) => {
+  const { networkId } = useLoggedInUser();
+
   const [currentTokenAddress, setCurrentTokenAddress] = useState<Address>(
     nativeTokenAddress,
   );
-  const isSupportedColonyVersion =
-    parseInt(version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+
   const {
     data,
     loading: isLoadingTokenBalances,
@@ -77,6 +82,11 @@ const ColonyTotalFunds = ({
     }
     return undefined;
   }, [data, currentTokenAddress]);
+
+  const isSupportedColonyVersion =
+    parseInt(version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
   if (!data || !currentToken || isLoadingTokenBalances) {
     return (
       <div className={styles.main}>
@@ -115,7 +125,7 @@ const ColonyTotalFunds = ({
       </div>
       <div className={styles.totalBalanceCopy}>
         <FormattedMessage {...MSG.totalBalance} />
-        {isSupportedColonyVersion && (
+        {isSupportedColonyVersion && isNetworkAllowed && (
           <Link
             className={styles.manageFundsLink}
             to={`/colony/${colonyName}/funds`}

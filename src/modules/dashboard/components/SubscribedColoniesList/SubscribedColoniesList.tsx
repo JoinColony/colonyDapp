@@ -8,6 +8,7 @@ import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import { useLoggedInUser, useUserColoniesQuery } from '~data/index';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
+import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './SubscribedColoniesList.css';
 
@@ -23,10 +24,12 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 const displayName = 'dashboard.SubscribedColoniesList';
 
 const SubscribedColoniesList = () => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, networkId } = useLoggedInUser();
   const { data, loading } = useUserColoniesQuery({
     variables: { address: walletAddress },
   });
+
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   return (
     <div className={styles.main}>
@@ -62,15 +65,17 @@ const SubscribedColoniesList = () => {
             );
           })}
       </div>
-      <div className={`${styles.item} ${styles.newColonyItem}`}>
-        <NavLink className={styles.itemLink} to={CREATE_COLONY_ROUTE}>
-          <Icon
-            className={styles.newColonyIcon}
-            name="circle-plus"
-            title={MSG.iconTitleCreateNewColony}
-          />
-        </NavLink>
-      </div>
+      {isNetworkAllowed && (
+        <div className={`${styles.item} ${styles.newColonyItem}`}>
+          <NavLink className={styles.itemLink} to={CREATE_COLONY_ROUTE}>
+            <Icon
+              className={styles.newColonyIcon}
+              name="circle-plus"
+              title={MSG.iconTitleCreateNewColony}
+            />
+          </NavLink>
+        </div>
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ export const COLONY_HOME_ROUTE = '/colony/:colonyName';
 export const COLONY_EVENTS_ROUTE = `${COLONY_HOME_ROUTE}/events`;
 export const COLONY_EXTENSIONS_ROUTE = `${COLONY_HOME_ROUTE}/extensions`;
 export const COLONY_FUNDING_ROUTE = `${COLONY_HOME_ROUTE}/funds`;
+export const MEMBERS_ROUTE = `${COLONY_HOME_ROUTE}/members/:domainId?`;
 export const CREATE_COLONY_ROUTE = '/create-colony';
 export const CREATE_USER_ROUTE = '/create-user';
 export const INBOX_ROUTE = '/inbox';
