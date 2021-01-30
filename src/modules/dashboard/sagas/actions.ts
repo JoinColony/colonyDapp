@@ -738,32 +738,6 @@ function* createDomainAction({
       throw new Error('A domain name is required to create a new domain');
     }
 
-    /*
-     * Upload domain metadata to IPFS
-     */
-    let domainMetadataIpfsHash = null;
-    domainMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        domainName,
-        domainColor,
-        domainPurpose,
-      }),
-    );
-
-    /*
-     * Upload domain metadata to IPFS
-     */
-    let annotationMessageIpfsHash = null;
-    if (annotationMessage) {
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
-
     txChannel = yield call(getTxChannel, metaId);
 
     const batchKey = 'createDomainAction';
@@ -789,7 +763,7 @@ function* createDomainAction({
       context: ClientType.ColonyClient,
       methodName: 'addDomainWithProofs',
       identifier: colonyAddress,
-      params: [parentId, domainMetadataIpfsHash],
+      params: [],
       ready: false,
     });
 
@@ -811,6 +785,28 @@ function* createDomainAction({
       );
     }
 
+    yield put(transactionPending(createDomain.id));
+
+    /*
+     * Upload domain metadata to IPFS
+     */
+    let domainMetadataIpfsHash = null;
+    domainMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        domainName,
+        domainColor,
+        domainPurpose,
+      }),
+    );
+
+    yield put(
+      transactionAddParams(createDomain.id, [
+        parentId,
+        (domainMetadataIpfsHash as unknown) as string,
+      ]),
+    );
+
     yield put(transactionReady(createDomain.id));
 
     const {
@@ -822,6 +818,21 @@ function* createDomainAction({
     yield takeFrom(createDomain.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateCreateDomain.id));
+
+      /*
+       * Upload domain metadata to IPFS
+       */
+      let annotationMessageIpfsHash = null;
+      if (annotationMessage) {
+        annotationMessageIpfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({
+            annotationMessage,
+          }),
+        );
+      }
+
       yield put(
         transactionAddParams(annotateCreateDomain.id, [
           txHash,
