@@ -10,11 +10,12 @@ import { ipfsDataFetcher } from '../../../core/fetchers';
 export default withHooks<
   { fetchUser: boolean } | void,
   UserAvatarProps,
-  { user: AnyUser | void; avatarURL: string | void }
+  { user: AnyUser | void; avatarURL?: string | null }
 >((hookParams, { user, address }) => {
+  let avatarObject = { image: null };
   const result: {
     user: AnyUser | void;
-    avatarURL: string | void;
+    avatarURL?: string | null;
   } = {
     user,
     avatarURL: undefined,
@@ -28,11 +29,16 @@ export default withHooks<
     result.user && result.user.profile
       ? result.user.profile.avatarHash
       : undefined;
-  const { data: avatarURL } = useDataFetcher(
+  const { data: avatar } = useDataFetcher(
     ipfsDataFetcher,
     [avatarHash as string], // Technically a bug
     [avatarHash],
   );
-  result.avatarURL = avatarURL;
+  try {
+    avatarObject = JSON.parse(avatar);
+  } catch (error) {
+    // silent error
+  }
+  result.avatarURL = avatarObject?.image || null;
   return result;
 })(UserAvatar);
