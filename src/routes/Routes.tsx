@@ -211,6 +211,11 @@ const Routes = () => {
             backRoute: `/colony/${colonyName}`,
           })}
         />
+
+        {/*
+         * Redirect anything else that's not found to the 404 route
+         */}
+        <Redirect to={NOT_FOUND_ROUTE} />
       </Switch>
     ),
     [didClaimProfile, isConnected, username],
