@@ -10,6 +10,7 @@ export default withHooks<
   ColonyAvatarProps,
   { colony?: AnyColonyProfile; avatarURL?: string | null }
 >(({ fetchColony = true }, { colony, colonyAddress }) => {
+  let avatarObject = { image: null };
   const result: { colony?: AnyColonyProfile; avatarURL?: string | null } = {
     colony,
     avatarURL: undefined,
@@ -28,12 +29,17 @@ export default withHooks<
   result.avatarURL = avatarURL;
 
   if (!avatarURL) {
-    const { data: fetchedAvatarURL } = useDataFetcher(
+    const { data: avatar } = useDataFetcher(
       ipfsDataFetcher,
       [avatarHash as string], // Technically a bug, shouldn't need type override
       [avatarHash],
     );
-    result.avatarURL = fetchedAvatarURL;
+    try {
+      avatarObject = JSON.parse(avatar);
+    } catch (error) {
+      // silent error
+    }
+    result.avatarURL = avatarObject?.image || null;
   }
 
   return result;
