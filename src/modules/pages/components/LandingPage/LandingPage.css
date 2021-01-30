@@ -54,3 +54,8 @@
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
+
+.itemLoading {
+  composes: itemLink;
+  text-align: center;
+}
