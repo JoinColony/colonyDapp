@@ -97,16 +97,6 @@ function* createPaymentAction({
 
     const { amount, tokenAddress, decimals = 18 } = singlePayment;
 
-    let ipfsHash = null;
-    if (annotationMessage) {
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
-
     txChannel = yield call(getTxChannel, metaId);
 
     /*
@@ -180,6 +170,16 @@ function* createPaymentAction({
     yield takeFrom(paymentAction.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotatePaymentAction.id));
+
+      let ipfsHash = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(
         transactionAddParams(annotatePaymentAction.id, [txHash, ipfsHash]),
       );
@@ -305,16 +305,6 @@ function* createMoveFundsAction({
       call([colonyClient, colonyClient.getDomain], toDomainId),
     ]);
 
-    let ipfsHash = null;
-    if (annotationMessage) {
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
-
     txChannel = yield call(getTxChannel, metaId);
 
     // setup batch ids and channels
@@ -376,6 +366,16 @@ function* createMoveFundsAction({
     yield takeFrom(moveFunds.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateMoveFunds.id));
+
+      let ipfsHash = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(transactionAddParams(annotateMoveFunds.id, [txHash, ipfsHash]));
 
       yield put(transactionReady(annotateMoveFunds.id));
@@ -448,16 +448,6 @@ function* createMintTokensAction({
 
     if (!amount) {
       throw new Error('Amount to mint not set for mintTokens transaction');
-    }
-
-    let ipfsHash = null;
-    if (annotationMessage) {
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
     }
 
     txChannel = yield call(getTxChannel, metaId);
@@ -538,6 +528,16 @@ function* createMintTokensAction({
     yield takeFrom(claimColonyFunds.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateMintTokens.id));
+
+      let ipfsHash = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(
         transactionAddParams(annotateMintTokens.id, [txHash, ipfsHash]),
       );
@@ -611,16 +611,6 @@ function* createVersionUpgradeAction({
       currentVersion >= ColonyVersion.CeruleanLightweightSpaceship &&
       annotationMessage;
 
-    let ipfsHash = null;
-    if (supportAnnotation) {
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
-
     txChannel = yield call(getTxChannel, metaId);
 
     const batchKey = 'upgrade';
@@ -673,6 +663,16 @@ function* createVersionUpgradeAction({
     yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (supportAnnotation) {
+      yield put(transactionPending(annotateUpgrade.id));
+
+      let ipfsHash = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]));
 
       yield put(transactionReady(annotateUpgrade.id));
@@ -824,14 +824,12 @@ function* createDomainAction({
        * Upload domain metadata to IPFS
        */
       let annotationMessageIpfsHash = null;
-      if (annotationMessage) {
-        annotationMessageIpfsHash = yield call(
-          ipfsUpload,
-          JSON.stringify({
-            annotationMessage,
-          }),
-        );
-      }
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
 
       yield put(
         transactionAddParams(annotateCreateDomain.id, [
