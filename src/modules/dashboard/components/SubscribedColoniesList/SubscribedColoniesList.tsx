@@ -24,7 +24,7 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 const displayName = 'dashboard.SubscribedColoniesList';
 
 const SubscribedColoniesList = () => {
-  const { walletAddress, networkId } = useLoggedInUser();
+  const { walletAddress, networkId, ethereal } = useLoggedInUser();
   const { data, loading } = useUserColoniesQuery({
     variables: { address: walletAddress },
   });
@@ -65,7 +65,7 @@ const SubscribedColoniesList = () => {
             );
           })}
       </div>
-      {isNetworkAllowed && (
+      {(ethereal || isNetworkAllowed) && (
         <div className={`${styles.item} ${styles.newColonyItem}`}>
           <NavLink className={styles.itemLink} to={CREATE_COLONY_ROUTE}>
             <Icon
