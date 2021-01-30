@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { ColonyVersion } from '@colony/colony-js';
 
@@ -7,8 +7,11 @@ import Members from '~dashboard/Members';
 import { useColonyFromNameQuery, useLoggedInUser } from '~data/index';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
+import LoadingTemplate from '~pages/LoadingTemplate';
 import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
+
 import { ALLOWED_NETWORKS } from '~constants';
+import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import styles from './ColonyMembers.css';
 
@@ -19,6 +22,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyMembers.editPermissions',
     defaultMessage: 'Edit permissions',
   },
+  loadingText: {
+    id: 'dashboard.ColonyMembers.loadingText',
+    defaultMessage: 'Loading Colony',
+  },
 });
 
 const ColonyMembers = () => {
@@ -28,7 +35,7 @@ const ColonyMembers = () => {
     colonyName: string;
   }>();
 
-  const { data: colonyData } = useColonyFromNameQuery({
+  const { data: colonyData, error, loading } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
 
@@ -44,6 +51,19 @@ const ColonyMembers = () => {
     parseInt(colonyData?.processedColony?.version || '1', 10) >=
     ColonyVersion.CeruleanLightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
+  if (loading) {
+    return (
+      <div className={styles.loadingWrapper}>
+        <LoadingTemplate loadingText={MSG.loadingText} />
+      </div>
+    );
+  }
+
+  if (!colonyName || error || !colonyData?.processedColony) {
+    console.error(error);
+    return <Redirect to={NOT_FOUND_ROUTE} />;
+  }
 
   return (
     <div className={styles.main}>
