@@ -12,8 +12,13 @@ import {
   UserAddressDocument,
   UserAddressQuery,
   UserAddressQueryVariables,
+  useLoggedInUser,
 } from '~data/index';
-import { DEFAULT_NETWORK_INFO, DEFAULT_NETWORK_TOKEN } from '~constants';
+import {
+  DEFAULT_NETWORK_INFO,
+  DEFAULT_NETWORK_TOKEN,
+  ALLOWED_NETWORKS,
+} from '~constants';
 
 import styles from './StepUserName.css';
 
@@ -67,6 +72,7 @@ const validationSchema = yup.object({
 
 const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
   const apolloClient = useApolloClient();
+  const { networkId } = useLoggedInUser();
 
   const checkDomainTaken = useCallback(
     async (values: FormValues) => {
@@ -110,6 +116,9 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
     },
     [checkDomainTaken],
   );
+
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
   return (
     <Form
       onSubmit={nextStep}
@@ -139,6 +148,7 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                   }}
                   formattingOptions={{ lowercase: true }}
                   data-test="claimUsernameInput"
+                  disabled={!isNetworkAllowed}
                 />
                 <div className={styles.buttons}>
                   <p className={styles.reminder}>
@@ -153,7 +163,11 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
                     type="submit"
-                    disabled={!isValid || (!dirty && !stepCompleted)}
+                    disabled={
+                      !isNetworkAllowed ||
+                      !isValid ||
+                      (!dirty && !stepCompleted)
+                    }
                     loading={isSubmitting}
                     text={MSG.continue}
                     data-test="claimUsernameConfirm"

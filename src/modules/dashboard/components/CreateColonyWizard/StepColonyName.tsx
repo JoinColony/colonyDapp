@@ -17,7 +17,7 @@ import {
   ColonyAddressQuery,
   ColonyAddressQueryVariables,
 } from '~data/index';
-import { DEFAULT_NETWORK_INFO } from '~constants';
+import { DEFAULT_NETWORK_INFO, ALLOWED_NETWORKS } from '~constants';
 
 import styles from './StepColonyName.css';
 
@@ -117,7 +117,7 @@ const StepColonyName = ({
     [apolloClient],
   );
 
-  const { username } = useLoggedInUser();
+  const { username, networkId } = useLoggedInUser();
 
   const [currentENSName, setCurrentENSName] = useState<string | undefined>();
 
@@ -148,6 +148,8 @@ const StepColonyName = ({
     },
     [checkDomainTaken, currentENSName, setCurrentENSName],
   );
+
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   return (
     <Form
@@ -197,6 +199,7 @@ const StepColonyName = ({
                 name="displayName"
                 data-test="claimColonyDisplayNameInput"
                 label={MSG.labelDisplay}
+                disabled={!isNetworkAllowed}
               />
               <Input
                 appearance={{ theme: 'fat' }}
@@ -208,6 +211,7 @@ const StepColonyName = ({
                 status={normalized !== colonyName ? MSG.statusText : undefined}
                 formattingOptions={{ lowercase: true }}
                 statusValues={{ normalized }}
+                disabled={!isNetworkAllowed}
                 extra={
                   <Tooltip
                     placement="right"
@@ -238,7 +242,9 @@ const StepColonyName = ({
                   appearance={{ theme: 'primary', size: 'large' }}
                   type="submit"
                   data-test="claimColonyNameConfirm"
-                  disabled={!isValid || (!dirty && !stepCompleted)}
+                  disabled={
+                    !isNetworkAllowed || !isValid || (!dirty && !stepCompleted)
+                  }
                   loading={isSubmitting}
                   text={MSG.continue}
                 />
