@@ -691,6 +691,7 @@ export type Query = {
   networkContracts: NetworkContracts;
   oneTxPayments: Array<OneTxPayment>;
   processedColony: ProcessedColony;
+  processedMetaColony?: Maybe<ProcessedMetaColony>;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   task: Task;
@@ -1095,6 +1096,15 @@ export type NetworkEvent = {
   topic?: Maybe<Scalars['String']>;
   userAddress?: Maybe<Scalars['String']>;
   domainId?: Maybe<Scalars['String']>;
+};
+
+export type ProcessedMetaColony = {
+  id: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  colonyName: Scalars['String'];
+  displayName?: Maybe<Scalars['String']>;
+  avatarHash?: Maybe<Scalars['String']>;
+  avatarURL?: Maybe<Scalars['String']>;
 };
 
 export type ActionsFilter = {
@@ -1795,6 +1805,11 @@ export type TransactionMessagesCountQueryVariables = Exact<{
 
 
 export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
+
+export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MetaColonyQuery = { processedMetaColony?: Maybe<Pick<ProcessedMetaColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>> };
 
 export type SubgraphActionsQueryVariables = Exact<{
   skip: Scalars['Int'];
@@ -4258,6 +4273,43 @@ export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQu
 export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
 export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
 export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
+export const MetaColonyDocument = gql`
+    query MetaColony {
+  processedMetaColony @client {
+    id
+    colonyAddress
+    colonyName
+    displayName
+    avatarHash
+    avatarURL
+  }
+}
+    `;
+
+/**
+ * __useMetaColonyQuery__
+ *
+ * To run a query within a React component, call `useMetaColonyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMetaColonyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMetaColonyQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMetaColonyQuery(baseOptions?: Apollo.QueryHookOptions<MetaColonyQuery, MetaColonyQueryVariables>) {
+        return Apollo.useQuery<MetaColonyQuery, MetaColonyQueryVariables>(MetaColonyDocument, baseOptions);
+      }
+export function useMetaColonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MetaColonyQuery, MetaColonyQueryVariables>) {
+          return Apollo.useLazyQuery<MetaColonyQuery, MetaColonyQueryVariables>(MetaColonyDocument, baseOptions);
+        }
+export type MetaColonyQueryHookResult = ReturnType<typeof useMetaColonyQuery>;
+export type MetaColonyLazyQueryHookResult = ReturnType<typeof useMetaColonyLazyQuery>;
+export type MetaColonyQueryResult = Apollo.QueryResult<MetaColonyQuery, MetaColonyQueryVariables>;
 export const SubgraphActionsDocument = gql`
     query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
   oneTxPayments(skip: $skip, first: $first, where: {payment_contains: $colonyAddress}) {

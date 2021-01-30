@@ -349,6 +349,17 @@ query TransactionMessagesCount($colonyAddress: String!) {
   }
 }
 
+query MetaColony {
+  processedMetaColony @client {
+    id
+    colonyAddress
+    colonyName
+    displayName
+    avatarHash
+    avatarURL
+  }
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`

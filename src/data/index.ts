@@ -39,6 +39,8 @@ import {
   initialCache as networkContracts,
 } from './resolvers/networkContracts';
 import { colonyActionsResolvers } from './resolvers/colonyActions';
+import { metaColonyResolvers } from './resolvers/metacolony';
+
 import { FixedToken } from '../types';
 
 type ResolverFactory = (context?: any) => Resolvers;
@@ -61,6 +63,7 @@ export const resolvers: ResolverFactory[] = [
   tokenResolvers,
   networkContractsResolvers,
   colonyActionsResolvers,
+  metaColonyResolvers,
 ];
 
 // export all the generated types and helpers
