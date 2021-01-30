@@ -7,6 +7,7 @@ import { WalletMethod } from '~immutable/index';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
 import ColonyHome from '~dashboard/ColonyHome';
+import ColonyMembers from '~dashboard/ColonyMembers';
 import FourOFour from '~dashboard/FourOFour';
 import Inbox from '~users/Inbox';
 import Wallet from '~dashboard/Wallet';
@@ -38,6 +39,7 @@ import {
   USER_ROUTE,
   WALLET_ROUTE,
   LANDING_PAGE_ROUTE,
+  MEMBERS_ROUTE,
   ACTIONS_PAGE_ROUTE,
 } from './routeConstants';
 
@@ -187,6 +189,17 @@ const Routes = () => {
             backText: MSG.userProfileEditBack,
             backRoute: `/user/${username}`,
           }}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={MEMBERS_ROUTE}
+          component={ColonyMembers}
+          layout={Default}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+            hasSubscribedColonies: false,
+          })}
         />
         <AlwaysAccesibleRoute
           exact

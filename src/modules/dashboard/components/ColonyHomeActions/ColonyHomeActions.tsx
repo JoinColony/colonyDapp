@@ -19,7 +19,8 @@ import EditColonyDetailsDialog from '~dashboard/EditColonyDetailsDialog';
 import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
+import { ALLOWED_NETWORKS } from '~constants';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -35,6 +36,8 @@ interface Props {
 }
 
 const ColonyHomeActions = ({ colony }: Props) => {
+  const { networkId } = useLoggedInUser();
+
   const startWizardFlow = useNaiveBranchingDialogWizard([
     {
       component: ColonyActionsDialog,
@@ -146,14 +149,17 @@ const ColonyHomeActions = ({ colony }: Props) => {
       },
     },
   ]);
+
   const isSupportedColonyVersion =
     parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
   return (
     <Button
       appearance={{ theme: 'primary', size: 'large' }}
       text={MSG.newAction}
       onClick={() => startWizardFlow('dashboard.ColonyActionsDialog')}
-      disabled={!isSupportedColonyVersion}
+      disabled={!isSupportedColonyVersion || !isNetworkAllowed}
     />
   );
 };
