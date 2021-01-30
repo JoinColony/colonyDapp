@@ -26,7 +26,7 @@ const MSG = defineMessages({
     defaultMessage: 'Funds',
   },
   loadingText: {
-    id: 'dashboard.ColonyFunding.title',
+    id: 'dashboard.ColonyFunding.loadingText',
     defaultMessage: 'Loading Colony',
   },
 });
@@ -52,10 +52,6 @@ const ColonyFunding = ({ match }: Props) => {
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
-
-  if (error) {
-    console.error(error);
-  }
 
   const domainChoices = useMemo<
     ComponentProps<typeof Select>['options']
@@ -98,6 +94,7 @@ const ColonyFunding = ({ match }: Props) => {
   }
 
   if (!colonyName || error || !data?.processedColony) {
+    console.error(error);
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
