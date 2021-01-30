@@ -70,8 +70,9 @@ export const getProcessedColony = async (
     metadataHistory = [],
   } = subgraphColony;
   let displayName: string | null = null;
-  let avatarURL: string | null = null;
+  let avatar: string | null = null;
   let avatarHash: string | null = null;
+  let avatarObject: { image: string | null } | null = { image: null };
   let tokenAddresses: Array<Address> = [];
 
   const prevIpfsHash = metadataHistory.slice(-1).pop();
@@ -107,9 +108,10 @@ export const getProcessedColony = async (
        * Fetch the colony's avatar
        */
       try {
-        avatarURL = await ipfs.getString(colonyAvatarHash);
+        avatar = await ipfs.getString(colonyAvatarHash);
+        avatarObject = JSON.parse(avatar as string);
       } catch (error) {
-        log.verbose('Could not fetch colony avatar', avatarURL);
+        log.verbose('Could not fetch colony avatar', avatar);
         log.verbose(
           `Could not parse IPFS avatar for colony:`,
           ensName,
@@ -134,7 +136,7 @@ export const getProcessedColony = async (
     colonyAddress,
     displayName,
     avatarHash,
-    avatarURL,
+    avatarURL: avatarObject?.image || null,
     nativeTokenAddress: token?.tokenAddress
       ? createAddress(token.tokenAddress)
       : null,

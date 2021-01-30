@@ -1088,7 +1088,9 @@ function* editColonyAction({
     if (colonyAvatarImage) {
       colonyAvatarIpfsHash = yield call(
         ipfsUpload,
-        JSON.stringify(colonyAvatarImage),
+        JSON.stringify({
+          image: colonyAvatarImage,
+        }),
       );
     }
 
@@ -1101,7 +1103,7 @@ function* editColonyAction({
       JSON.stringify({
         colonyName,
         colonyDisplayName,
-        colonyAvatarHash: colonyAvatarImage ? colonyAvatarIpfsHash : null,
+        colonyAvatarHash: colonyAvatarIpfsHash,
         colonyTokens,
       }),
     );
