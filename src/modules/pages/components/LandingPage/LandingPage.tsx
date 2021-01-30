@@ -7,8 +7,8 @@ import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import Heading from '~core/Heading';
 
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { useColonyFromNameQuery } from '~data/index';
-import { METACOLONY_ENS } from '~constants';
+import { useColonyFromNameQuery, useLoggedInUser } from '~data/index';
+import { METACOLONY_ENS, ALLOWED_NETWORKS } from '~constants';
 
 import styles from './LandingPage.css';
 
@@ -32,9 +32,13 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 const displayName = 'pages.LandingPage';
 
 const LandingPage = () => {
+  const { networkId, ethereal } = useLoggedInUser();
+
   const { data: colonyData } = useColonyFromNameQuery({
     variables: { name: METACOLONY_ENS, address: '' },
   });
+
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   return (
     <div className={styles.main}>
@@ -46,18 +50,20 @@ const LandingPage = () => {
           />
         </div>
         <ul>
-          <li className={styles.item}>
-            <NavLink to={CREATE_COLONY_ROUTE} className={styles.itemLink}>
-              <Icon
-                className={styles.itemIcon}
-                name="circle-plus"
-                title={MSG.createColony}
-              />
-              <span className={styles.itemTitle}>
-                <FormattedMessage {...MSG.createColony} />
-              </span>
-            </NavLink>
-          </li>
+          {(ethereal || isNetworkAllowed) && (
+            <li className={styles.item}>
+              <NavLink to={CREATE_COLONY_ROUTE} className={styles.itemLink}>
+                <Icon
+                  className={styles.itemIcon}
+                  name="circle-plus"
+                  title={MSG.createColony}
+                />
+                <span className={styles.itemTitle}>
+                  <FormattedMessage {...MSG.createColony} />
+                </span>
+              </NavLink>
+            </li>
+          )}
           {colonyData && colonyData.processedColony && (
             <li className={styles.item}>
               <NavLink
