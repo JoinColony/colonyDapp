@@ -1,9 +1,17 @@
 import { FormikProps } from 'formik';
 import React, { useCallback, useState, useMemo } from 'react';
+import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
+import { useHistory } from 'react-router-dom';
 
-import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
+import {
+  mergePayload,
+  withKey,
+  mapPayload,
+  pipe,
+  withMeta,
+} from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { useTransformer } from '~utils/hooks';
 import { ItemDataType } from '~core/OmniPicker';
@@ -67,6 +75,7 @@ const PermissionManagementDialog = ({
   cancel,
   close,
 }: Props) => {
+  const history = useHistory();
   const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
 
   const loggedInUser = useUser(loggedInUserWalletAddress);
@@ -129,17 +138,23 @@ const PermissionManagementDialog = ({
   const transform = useCallback(
     pipe(
       withKey(colonyAddress),
-      mapPayload((p) => ({
-        ...p,
+      mapPayload(({ roles, user, domainId, annotationMessage }) => ({
+        domainId,
+        userAddress: user.profile.walletAddress,
         roles: availableRoles.reduce(
           (acc, role) => ({
             ...acc,
-            [role]: p.roles.includes(role),
+            [role]: roles.includes(role),
           }),
           {},
         ),
+        annotationMessage,
       })),
-      mergePayload({ colonyAddress }),
+      mergePayload({
+        colonyAddress,
+        colonyName: colonyData?.colony.colonyName,
+      }),
+      withMeta({ history }),
     ),
     [colonyAddress, selectedDomainId],
   );
@@ -161,6 +176,13 @@ const PermissionManagementDialog = ({
         }),
     [directDomainRoles, domainRoles],
   );
+
+  const validationSchema = yup.object().shape({
+    domainId: yup.number().required(),
+    user: yup.object().required(),
+    roles: yup.array().required(),
+    annotation: yup.string().max(4000),
+  });
 
   const domain =
     colonyData &&
@@ -193,11 +215,13 @@ const PermissionManagementDialog = ({
             user: selectedUser,
             domainId: selectedDomainId.toString(),
             roles: userDirectRoles,
+            annotationMessage: undefined,
           }}
+          validationSchema={validationSchema}
           onSuccess={close}
-          submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
-          error={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR}
-          success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS}
+          submit={ActionTypes.COLONY_ACTION_USER_ROLES_SET}
+          error={ActionTypes.COLONY_ACTION_USER_ROLES_SET_ERROR}
+          success={ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS}
           transform={transform}
         >
           {({ isSubmitting }: FormikProps<any>) => (

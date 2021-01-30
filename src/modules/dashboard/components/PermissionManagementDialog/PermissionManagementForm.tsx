@@ -124,7 +124,7 @@ const PermissionManagementForm = ({
           );
         })}
       </div>
-      <Annotations label={MSG.annotation} name="annotation" />
+      <Annotations label={MSG.annotation} name="annotationMessage" />
     </>
   );
 };
