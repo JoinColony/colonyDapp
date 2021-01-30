@@ -71,7 +71,7 @@ fragment ColonyProfile on ProcessedColony {
   colonyAddress
   colonyName
   displayName
-  avatarHash,
+  avatarHash
   avatarURL
 }
 

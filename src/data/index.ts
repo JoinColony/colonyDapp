@@ -40,6 +40,8 @@ import {
 } from './resolvers/networkContracts';
 import { extensionsResolvers } from './resolvers/extensions';
 import { colonyActionsResolvers } from './resolvers/colonyActions';
+import { metaColonyResolvers } from './resolvers/metacolony';
+
 import { FixedToken } from '../types';
 
 type ResolverFactory = (context?: any) => Resolvers;
@@ -63,6 +65,7 @@ export const resolvers: ResolverFactory[] = [
   networkContractsResolvers,
   extensionsResolvers,
   colonyActionsResolvers,
+  metaColonyResolvers,
 ];
 
 // export all the generated types and helpers

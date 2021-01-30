@@ -138,6 +138,15 @@ export default gql`
     processedColonies: [ProcessedColony!]!
   }
 
+  type ProcessedMetaColony {
+    id: Int!
+    colonyAddress: String!
+    colonyName: String!
+    displayName: String
+    avatarHash: String
+    avatarURL: String
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -162,6 +171,7 @@ export default gql`
       transactionHash: String!
       colonyAddress: String!
     ): ColonyAction!
+    processedMetaColony: ProcessedMetaColony
   }
 
   extend type Mutation {
