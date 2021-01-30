@@ -22,8 +22,13 @@ const ColonyBackText = () => {
     variables: { name: colonyName, address: '' },
   });
   if (!data) return null;
-  const { displayName = colonyName } = data.processedColony;
-  return <FormattedMessage {...MSG.backText} values={{ displayName }} />;
+  const { displayName, colonyName: ensName } = data.processedColony;
+  return (
+    <FormattedMessage
+      {...MSG.backText}
+      values={{ displayName: displayName || ensName }}
+    />
+  );
 };
 
 export default ColonyBackText;
