@@ -192,6 +192,11 @@ export const transactionReady = (id: string): AllActions => ({
   meta: { id },
 });
 
+export const transactionPending = (id: string): AllActions => ({
+  type: ActionTypes.TRANSACTION_PENDING,
+  meta: { id },
+});
+
 export const transactionEstimateGas = (id: string): AllActions => ({
   type: ActionTypes.TRANSACTION_ESTIMATE_GAS,
   meta: { id },
