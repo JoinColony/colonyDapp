@@ -540,7 +540,7 @@ query ColonyNativeToken($address: String!) {
 }
 
 query ColonyTransfers($address: String!) {
-  processedColony(address: $address) {
+  processedColony(address: $address) @client {
     id
     colonyAddress
     transfers @client {
@@ -564,16 +564,6 @@ query ColonyTransfers($address: String!) {
       incoming
       to
       token
-    }
-  }
-}
-
-query ColonyEvents($address: String!) {
-  processedColony(address: $address) {
-    id
-    colonyAddress
-    events @client {
-      ...FullNetworkEvent
     }
   }
 }

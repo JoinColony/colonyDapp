@@ -92,7 +92,7 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
           />
         </div>
       </Form>
-      {subgraphEventsLoading ? (
+      {subgraphEventsLoading && !filteredEvents ? (
         <SpinnerLoader />
       ) : (
         <ActionsList

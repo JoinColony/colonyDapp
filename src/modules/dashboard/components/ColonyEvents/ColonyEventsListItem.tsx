@@ -35,11 +35,6 @@ const MSG = defineMessages({
   },
 });
 
-export enum Status {
-  'needsAction' = 'red',
-  'needsAttention' = 'blue',
-}
-
 interface Props {
   item: FormattedEvent;
   colony: Colony;
