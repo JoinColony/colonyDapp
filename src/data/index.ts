@@ -5,7 +5,6 @@ import apolloCache from './cache';
 import {
   ColonyProfileFragment,
   ColonyTransfersQuery,
-  ColonyEventsQuery,
   DomainFieldsFragment,
   FullColonyFragment,
   LoggedInUserDocument,
@@ -88,8 +87,6 @@ export type Colony = FullColonyFragment;
 export type OneDomain = DomainFieldsFragment;
 
 export type ColonyTransaction = ColonyTransfersQuery['processedColony']['transfers'][number];
-
-export type ColonyEvent = ColonyEventsQuery['processedColony']['events'][number];
 
 export type OneToken = TokenQuery['token'];
 export type ColonyTokens = ProcessedColonyQuery['processedColony']['tokens'];
