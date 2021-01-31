@@ -21,7 +21,7 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`]: `{initiator} changed this colony's metadata, but the values are the same`,
   'eventList.event': `{eventName, select,
       ${ColonyAndExtensionsEvents.DomainAdded} {{agent} added Team: {fromDomain}}
-      ${ColonyAndExtensionsEvents.DomainMetadata} {{agent} changed Team {fromDomain} metdata to {metadata}}
+      ${ColonyAndExtensionsEvents.DomainMetadata} {{agent} changed Team {fromDomain} metadata to {metadata}}
       ${ColonyAndExtensionsEvents.Annotation} {{agent} annotated transaction {transactionHash} with {metadata}}
       ${ColonyAndExtensionsEvents.FundingPotAdded} {Funding pot {fundingPot} added}
       ${ColonyAndExtensionsEvents.ColonyInitialised} {{agent} created a colony with token {tokenSymbol} ({tokenAddress})}
@@ -33,7 +33,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.PaymentPayoutSet} {{agent} added {amount} {tokenSymbol} as payout to payment {paymentId}}
       ${ColonyAndExtensionsEvents.PaymentFinalized} {{agent} finalized payment with id {paymentId}}
       ${ColonyAndExtensionsEvents.PayoutClaimed} {{agent} claimed a payout of {amount} {tokenSymbol} from funding pot {fundingPot}}
-      ${ColonyAndExtensionsEvents.ColonyMetadata} {{agent} changed Colony metdata to {metadata}}
+      ${ColonyAndExtensionsEvents.ColonyMetadata} {{agent} changed Colony metadata to {metadata}}
       other {{eventName} emmited with values: {displayValues}}
     }`,
 };

@@ -166,22 +166,23 @@ export const getActionsListData = (
 
 export const getEventsListData = (
   unformattedEvents?: SubgraphEvents,
-): FormattedEvent[] =>
-  unformattedEvents?.events
-    .map((event) => {
-      if (event) {
-        const {
-          id,
-          associatedColony: { colonyAddress },
-          transaction: {
-            hash,
-            block: { timestamp },
-          },
-          name,
-          args,
-        } = event;
-        const values = JSON.parse(args);
-        return {
+): FormattedEvent[] | undefined =>
+  unformattedEvents?.events?.reduce((processedEvents, event) => {
+    if (event) {
+      const {
+        id,
+        associatedColony: { colonyAddress },
+        transaction: {
+          hash,
+          block: { timestamp },
+        },
+        name,
+        args,
+      } = event;
+      const values = JSON.parse(args);
+      return [
+        ...processedEvents,
+        {
           id,
           agent: values.agent ? createAddress(values.agent) : null,
           eventName: formatEventName(name),
@@ -191,8 +192,8 @@ export const getEventsListData = (
           values,
           displayValues: args,
           fromDomain: values?.domainId || null,
-        };
-      }
-      return undefined;
-    })
-    .filter((existingValue) => !!existingValue) as FormattedEvent[];
+        },
+      ];
+    }
+    return undefined;
+  }, []);
