@@ -179,19 +179,39 @@ export const getEventsListData = (
         name,
         args,
       } = event;
-      const values = JSON.parse(args);
+      const {
+        agent,
+        domainId,
+        recipient,
+        fundingPotId,
+        metadata,
+        token,
+        paymentId,
+        amount,
+        payoutRemainder,
+        decimals = '18',
+      } = JSON.parse(args);
+      const checksummedColonyAddress = createAddress(colonyAddress);
       return [
         ...processedEvents,
         {
           id,
-          agent: values.agent ? createAddress(values.agent) : null,
+          agent: agent ? createAddress(agent) : null,
           eventName: formatEventName(name),
           transactionHash: hash,
-          colonyAddress: createAddress(colonyAddress),
+          colonyAddress: checksummedColonyAddress,
           createdAt: new Date(parseInt(`${timestamp}000`, 10)),
-          values,
           displayValues: args,
-          fromDomain: values?.domainId || null,
+          domainId: domainId || null,
+          recipient: recipient
+            ? createAddress(recipient)
+            : checksummedColonyAddress,
+          fundingPot: fundingPotId,
+          metadata,
+          tokenAddress: token ? createAddress(token) : null,
+          paymentId,
+          decimals: parseInt(decimals, 10),
+          amount: amount || payoutRemainder || '0',
         },
       ];
     }

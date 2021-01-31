@@ -128,8 +128,15 @@ export interface FormattedEvent {
   eventName: ColonyAndExtensionsEvents;
   colonyAddress: Address;
   agent: Address | null;
+  recipient: Address;
   transactionHash: string;
   createdAt: Date;
-  values: { [key: string]: string };
   displayValues: string;
+  domainId: string;
+  fundingPot?: string;
+  metadata?: string;
+  tokenAddress?: string | null;
+  paymentId?: string;
+  decimals: number;
+  amount: string;
 }
