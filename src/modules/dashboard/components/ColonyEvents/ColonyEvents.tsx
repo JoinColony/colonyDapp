@@ -47,7 +47,7 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
 
   if (error) console.error(error);
 
-  const events = useTransformer(getEventsListData, [data]);
+  const events = useTransformer(getEventsListData, [data]) || [];
 
   const sort = useCallback(
     (first: any, second: any) => {
