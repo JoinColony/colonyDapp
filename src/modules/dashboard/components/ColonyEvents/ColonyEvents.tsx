@@ -75,7 +75,7 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
 
   return (
     <div>
-      <UnclaimedTransfers colonyAddress={colonyAddress} />
+      <UnclaimedTransfers colony={colony} />
       <Form
         initialValues={{ filter: EventFilterOptions.NEWEST }}
         onSubmit={() => undefined}

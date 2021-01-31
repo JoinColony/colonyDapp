@@ -1,16 +1,14 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useColonyTransfersQuery } from '~data/index';
+import { useColonyTransfersQuery, Colony } from '~data/index';
 import UnclaimedTransfersItem from './UnclaimedTransfersItem';
-
-import { Address } from '~types/index';
 
 import styles from './UnclaimedTransfers.css';
 
 const displayName = 'dashboard.UnclaimedTransfers';
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
 }
 
 const MSG = defineMessages({
@@ -20,7 +18,7 @@ const MSG = defineMessages({
   },
 });
 
-const UnclaimedTransfers = ({ colonyAddress }: Props) => {
+const UnclaimedTransfers = ({ colony: { colonyAddress }, colony }: Props) => {
   const { data, error } = useColonyTransfersQuery({
     variables: { address: colonyAddress },
   });
@@ -38,6 +36,7 @@ const UnclaimedTransfers = ({ colonyAddress }: Props) => {
               <UnclaimedTransfersItem
                 transaction={transaction}
                 key={transaction.hash}
+                colony={colony}
               />
             ))}
           </ul>

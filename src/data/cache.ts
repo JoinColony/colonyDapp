@@ -13,6 +13,9 @@ export default new InMemoryCache({
         tokens: {
           merge: false,
         },
+        unclaimedTransfers: {
+          merge: false,
+        },
       },
     },
     User: {
