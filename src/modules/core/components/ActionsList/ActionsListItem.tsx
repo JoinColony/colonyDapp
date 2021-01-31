@@ -70,11 +70,6 @@ const ActionsListItem = ({
 }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
 
-  /*
-   * @TODO createAddress is just temporary
-   * Address checksum / normalization needs to be fixed on the
-   * subgraph side
-   */
   const initiatorUserProfile = useUser(createAddress(initiator));
   const recipientAddress = createAddress(recipient);
   const isColonyAddress = recipientAddress === colony.colonyAddress;

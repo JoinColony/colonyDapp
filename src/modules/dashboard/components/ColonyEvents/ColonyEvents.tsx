@@ -15,6 +15,8 @@ import { Colony, useSubgraphEventsQuery } from '~data/index';
 import { getEventsListData } from '../../transformers';
 import { useTransformer } from '~utils/hooks';
 
+import ColonyEventsListItem from './ColonyEventsListItem';
+
 import styles from './ColonyEvents.css';
 
 const displayName = 'dashboard.ColonyEvents';
@@ -96,7 +98,7 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
         <ActionsList
           items={filteredEvents}
           colony={colony}
-          messageDescriptorId="eventList.event"
+          itemComponent={ColonyEventsListItem}
         />
       )}
     </div>
