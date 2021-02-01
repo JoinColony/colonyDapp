@@ -1,5 +1,5 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
-import { bigNumberify } from 'ethers/utils';
+import { bigNumberify, hexlify, hexZeroPad } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import {
   ClientType,
@@ -26,6 +26,9 @@ import {
   SubgraphColonyMetadataQueryVariables,
   SubgraphColonyMetadataDocument,
   getNetworkContracts,
+  ColonyRolesDocument,
+  ColonyRolesQuery,
+  ColonyRolesQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -1262,6 +1265,177 @@ function* editColonyAction({
   return null;
 }
 
+function* createSetUserRolesAction({
+  payload: {
+    colonyAddress,
+    domainId,
+    userAddress,
+    roles,
+    colonyName,
+    annotationMessage,
+  },
+  meta: { id: metaId, history },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_USER_ROLES_SET>) {
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+    if (!userAddress) {
+      throw new Error('User address not set for setUserRole transaction');
+    }
+
+    if (!domainId) {
+      throw new Error('Domain id not set for setUserRole transaction');
+    }
+
+    if (!roles) {
+      throw new Error('Roles not set for setUserRole transaction');
+    }
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'setUserRoles';
+
+    let annotationMessageIpfsHash = null;
+    if (annotationMessage) {
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+    }
+
+    const {
+      setUserRoles,
+      annotateSetUserRoles,
+    } = yield createTransactionChannels(metaId, [
+      'setUserRoles',
+      'annotateSetUserRoles',
+    ]);
+
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: batchKey,
+          id: metaId,
+          index,
+        },
+      });
+
+    const roleArray = Object.values(roles).reverse();
+    roleArray.splice(2, 0, false);
+
+    let roleBitmask = '';
+
+    roleArray.forEach((role) => {
+      roleBitmask += role ? '1' : '0';
+    });
+
+    const hexString = hexlify(parseInt(roleBitmask, 2));
+    const zeroPadHexString = hexZeroPad(hexString, 32);
+
+    yield createGroupTransaction(setUserRoles, {
+      context: ClientType.ColonyClient,
+      methodName: 'setUserRolesWithProofs',
+      identifier: colonyAddress,
+      params: [userAddress, domainId, zeroPadHexString],
+      ready: false,
+    });
+
+    if (annotationMessage) {
+      yield createGroupTransaction(annotateSetUserRoles, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        ready: false,
+      });
+    }
+
+    yield takeFrom(setUserRoles.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateSetUserRoles.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    yield put(transactionReady(setUserRoles.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      setUserRoles.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+
+    yield takeFrom(setUserRoles.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(
+        transactionAddParams(annotateSetUserRoles.id, [
+          txHash,
+          annotationMessageIpfsHash,
+        ]),
+      );
+
+      yield put(transactionReady(annotateSetUserRoles.id));
+
+      yield takeFrom(
+        annotateSetUserRoles.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS,
+      meta,
+    });
+
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+        first: 1,
+        skip: 0,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    // Refresh the colony roles in cache
+    yield apolloClient.query<ColonyRolesQuery, ColonyRolesQueryVariables>({
+      query: ColonyRolesDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS,
+      meta,
+    });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_USER_ROLES_SET_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* tasksSagas() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
@@ -1279,4 +1453,5 @@ export default function* tasksSagas() {
   );
   yield takeEvery(ActionTypes.COLONY_ACTION_EDIT_COLONY, editColonyAction);
   yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_EDIT, editDomainAction);
+  yield takeEvery(ActionTypes.COLONY_ACTION_USER_ROLES_SET, createSetUserRolesAction);
 }
