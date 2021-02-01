@@ -168,52 +168,52 @@ export const getEventsListData = (
   unformattedEvents?: SubgraphEvents,
 ): FormattedEvent[] | undefined =>
   unformattedEvents?.events?.reduce((processedEvents, event) => {
-    if (event) {
-      const {
-        id,
-        associatedColony: { colonyAddress },
-        transaction: {
-          hash,
-          block: { timestamp },
-        },
-        name,
-        args,
-      } = event;
-      const {
-        agent,
-        domainId,
-        recipient,
-        fundingPotId,
-        metadata,
-        token,
-        paymentId,
-        amount,
-        payoutRemainder,
-        decimals = '18',
-      } = JSON.parse(args);
-      const checksummedColonyAddress = createAddress(colonyAddress);
-      return [
-        ...processedEvents,
-        {
-          id,
-          agent: agent ? createAddress(agent) : null,
-          eventName: formatEventName(name),
-          transactionHash: hash,
-          colonyAddress: checksummedColonyAddress,
-          createdAt: new Date(parseInt(`${timestamp}000`, 10)),
-          displayValues: args,
-          domainId: domainId || null,
-          recipient: recipient
-            ? createAddress(recipient)
-            : checksummedColonyAddress,
-          fundingPot: fundingPotId,
-          metadata,
-          tokenAddress: token ? createAddress(token) : null,
-          paymentId,
-          decimals: parseInt(decimals, 10),
-          amount: amount || payoutRemainder || '0',
-        },
-      ];
+    if (!event) {
+      return processedEvents;
     }
-    return undefined;
+    const {
+      id,
+      associatedColony: { colonyAddress },
+      transaction: {
+        hash,
+        block: { timestamp },
+      },
+      name,
+      args,
+    } = event;
+    const {
+      agent,
+      domainId,
+      recipient,
+      fundingPotId,
+      metadata,
+      token,
+      paymentId,
+      amount,
+      payoutRemainder,
+      decimals = '18',
+    } = JSON.parse(args || '{}');
+    const checksummedColonyAddress = createAddress(colonyAddress);
+    return [
+      ...processedEvents,
+      {
+        id,
+        agent: agent ? createAddress(agent) : null,
+        eventName: formatEventName(name),
+        transactionHash: hash,
+        colonyAddress: checksummedColonyAddress,
+        createdAt: new Date(parseInt(`${timestamp}000`, 10)),
+        displayValues: args,
+        domainId: domainId || null,
+        recipient: recipient
+          ? createAddress(recipient)
+          : checksummedColonyAddress,
+        fundingPot: fundingPotId,
+        metadata,
+        tokenAddress: token ? createAddress(token) : null,
+        paymentId,
+        decimals: parseInt(decimals, 10),
+        amount: amount || payoutRemainder || '0',
+      },
+    ];
   }, []);
