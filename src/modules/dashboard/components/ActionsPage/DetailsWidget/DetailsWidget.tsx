@@ -13,6 +13,7 @@ import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
 import { ACTION_TYPES_ICONS_MAP } from '../../ActionsPage/staticMaps';
 
 import DetailsWidgetTeam from './DetailsWidgetTeam';
+import DetailsWidgetRoles from './DetailsWidgetRoles';
 
 import styles from './DetailsWidget.css';
 
@@ -50,6 +51,10 @@ const MSG = defineMessages({
   domainDescription: {
     id: 'dashboard.ActionsPage.DetailsWidget.domainDescription',
     defaultMessage: 'Team Purpose',
+  },
+  roles: {
+    id: 'dashboard.ActionsPage.DetailsWidget.roles',
+    defaultMessage: 'Roles',
   },
   colonyName: {
     id: 'dashboard.ActionsPage.DetailsWidget.colonyName',
@@ -165,6 +170,16 @@ const DetailsWidget = ({
             {values?.fromDomain && (
               <DetailsWidgetTeam domain={values.fromDomain} />
             )}
+          </div>
+        </div>
+      )}
+      {detailsForAction.Permissions && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.roles} />
+          </div>
+          <div className={styles.value}>
+            {values?.roles && <DetailsWidgetRoles roles={values.roles} />}
           </div>
         </div>
       )}
