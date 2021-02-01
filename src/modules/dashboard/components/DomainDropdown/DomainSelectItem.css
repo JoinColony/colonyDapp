@@ -50,3 +50,12 @@
 .editButton:focus-within {
   opacity: 1;
 }
+
+.headingWrapper {
+  max-width: 150px;
+}
+
+.headingWrapper h4 {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

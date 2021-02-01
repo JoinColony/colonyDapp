@@ -7,3 +7,4 @@ export const rootText: string;
 export const description: string;
 export const editButtonCol: string;
 export const editButton: string;
+export const headingWrapper: string;
