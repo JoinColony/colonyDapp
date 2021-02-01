@@ -198,7 +198,9 @@ const ActionsPageEvent = ({
   }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
   const roleNameMessage = { id: `role.${values?.roles[eventIndex].id}` };
   const { formatMessage } = useIntl();
-  const formattedRole = formatMessage(roleNameMessage);
+  const formattedRole = `${
+    values?.roles[eventIndex].setTo ? 'assigned' : 'removed'
+  } the ${formatMessage(roleNameMessage)}`;
 
   const getDomainMetadataChecks = useMemo(() => {
     if (
