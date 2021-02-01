@@ -12,6 +12,7 @@ import {
   TokenClientType,
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
+import { poll } from 'ethers/utils';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
@@ -498,10 +499,23 @@ function* colonyCreate({
 
       yield takeFrom(deployOneTx.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-      const oneTxPaymentExtension = yield colonyManager.getClient(
-        ClientType.OneTxPaymentClient,
-        colonyAddress,
+      const oneTxPaymentExtension = yield poll(
+        async () => {
+          try {
+            const client = await colonyManager.getClient(
+              ClientType.OneTxPaymentClient,
+              colonyAddress,
+            );
+            return client;
+          } catch (err) {
+            return undefined;
+          }
+        },
+        {
+          timeout: 10000,
+        },
       );
+
       const extensionAddress = oneTxPaymentExtension.address;
 
       /*
