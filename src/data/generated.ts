@@ -995,6 +995,11 @@ export type ParsedEvent = {
   emmitedBy: Scalars['String'];
 };
 
+export type ColonyActionRoles = {
+  id: Scalars['Int'];
+  setTo: Scalars['Boolean'];
+};
+
 export type ColonyAction = {
   hash: Scalars['String'];
   actionInitiator: Scalars['String'];
@@ -1007,6 +1012,7 @@ export type ColonyAction = {
   actionType: Scalars['String'];
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
+  roles: Array<ColonyActionRoles>;
   annotationHash?: Maybe<Scalars['String']>;
   oldVersion: Scalars['String'];
   newVersion: Scalars['String'];
