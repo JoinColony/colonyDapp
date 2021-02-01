@@ -1,3 +1,7 @@
 .main {
-  display: inline;
+  display: inline-block;
+  vertical-align: text-bottom;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
