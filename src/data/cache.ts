@@ -13,6 +13,9 @@ export default new InMemoryCache({
         tokens: {
           merge: false,
         },
+        unclaimedTransfers: {
+          merge: false,
+        },
       },
     },
     User: {
@@ -34,6 +37,13 @@ export default new InMemoryCache({
           merge: false,
         },
         colonyMembersWithReputation: {
+          merge: false,
+        },
+      },
+    },
+    Event: {
+      fields: {
+        associatedColony: {
           merge: false,
         },
       },

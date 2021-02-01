@@ -1,10 +1,16 @@
 import { AddressZero, HashZero } from 'ethers/constants';
 
-import { SubgraphActions, TransactionsMessagesCount } from '~data/index';
-import { ColonyActions, FormattedAction } from '~types/index';
+import {
+  SubgraphActions,
+  SubgraphEvents,
+  TransactionsMessagesCount,
+} from '~data/index';
+import { ColonyActions, FormattedAction, FormattedEvent } from '~types/index';
 import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
 import { TEMP_getContext, ContextModule } from '~context/index';
+import { createAddress } from '~utils/web3';
+import { formatEventName } from '~utils/events';
 
 export const getActionsListData = (
   unformattedActions?: SubgraphActions,
@@ -157,3 +163,57 @@ export const getActionsListData = (
     },
   );
 };
+
+export const getEventsListData = (
+  unformattedEvents?: SubgraphEvents,
+): FormattedEvent[] | undefined =>
+  unformattedEvents?.events?.reduce((processedEvents, event) => {
+    if (!event) {
+      return processedEvents;
+    }
+    const {
+      id,
+      associatedColony: { colonyAddress },
+      transaction: {
+        hash,
+        block: { timestamp },
+      },
+      name,
+      args,
+    } = event;
+    const {
+      agent,
+      domainId,
+      recipient,
+      fundingPotId,
+      metadata,
+      token,
+      paymentId,
+      amount,
+      payoutRemainder,
+      decimals = '18',
+    } = JSON.parse(args || '{}');
+    const checksummedColonyAddress = createAddress(colonyAddress);
+    return [
+      ...processedEvents,
+      {
+        id,
+        agent: agent ? createAddress(agent) : null,
+        eventName: formatEventName(name),
+        transactionHash: hash,
+        colonyAddress: checksummedColonyAddress,
+        createdAt: new Date(parseInt(`${timestamp}000`, 10)),
+        displayValues: args,
+        domainId: domainId || null,
+        recipient: recipient
+          ? createAddress(recipient)
+          : checksummedColonyAddress,
+        fundingPot: fundingPotId,
+        metadata,
+        tokenAddress: token ? createAddress(token) : null,
+        paymentId,
+        decimals: parseInt(decimals, 10),
+        amount: amount || payoutRemainder || '0',
+      },
+    ];
+  }, []);

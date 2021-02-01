@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 
 import ActionsList from '~core/ActionsList';
@@ -11,7 +11,11 @@ import {
   EventFilterSelectOptions,
 } from '../shared/eventsFilter';
 import { immutableSort } from '~utils/arrays';
-import { Colony, useColonyEventsQuery, NetworkEvent } from '~data/index';
+import { Colony, useSubgraphEventsQuery } from '~data/index';
+import { getEventsListData } from '../../transformers';
+import { useTransformer } from '~utils/hooks';
+
+import ColonyEventsListItem from './ColonyEventsListItem';
 
 import styles from './ColonyEvents.css';
 
@@ -21,11 +25,6 @@ interface Props {
   colony: Colony;
 }
 
-// Implement formating based on Event Type (or in resolver)
-const formatColonyEvents = (events: NetworkEvent[]) => {
-  return events;
-};
-
 const MSG = defineMessages({
   labelFilter: {
     id: 'dashboard.ColonyEvents.labelFilter',
@@ -34,15 +33,23 @@ const MSG = defineMessages({
 });
 
 const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
-  const { data, error, loading } = useColonyEventsQuery({
-    variables: { address: colonyAddress },
-  });
-  if (error) console.warn(error);
-
-  const [events, setEvents] = useState<NetworkEvent[]>([]);
   const [eventsFilter, setEventsFilter] = useState<string>(
     EventFilterOptions.NEWEST,
   );
+
+  const {
+    data,
+    loading: subgraphEventsLoading,
+    error,
+  } = useSubgraphEventsQuery({
+    variables: {
+      colonyAddress: colonyAddress.toLowerCase(),
+    },
+  });
+
+  if (error) console.error(error);
+
+  const events = useTransformer(getEventsListData, [data]) || [];
 
   const sort = useCallback(
     (first: any, second: any) => {
@@ -54,12 +61,6 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
     },
     [eventsFilter],
   );
-
-  useEffect(() => {
-    if (data && data.processedColony.events) {
-      setEvents(formatColonyEvents(data.processedColony.events));
-    }
-  }, [data]);
 
   const filteredEvents = useMemo(
     () =>
@@ -74,7 +75,7 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
 
   return (
     <div>
-      <UnclaimedTransfers colonyAddress={colonyAddress} />
+      <UnclaimedTransfers colony={colony} />
       <Form
         initialValues={{ filter: EventFilterOptions.NEWEST }}
         onSubmit={() => undefined}
@@ -91,10 +92,14 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
           />
         </div>
       </Form>
-      {loading ? (
+      {subgraphEventsLoading && !filteredEvents ? (
         <SpinnerLoader />
       ) : (
-        <ActionsList items={filteredEvents} colony={colony} />
+        <ActionsList
+          items={filteredEvents}
+          colony={colony}
+          itemComponent={ColonyEventsListItem}
+        />
       )}
     </div>
   );

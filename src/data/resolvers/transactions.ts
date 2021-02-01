@@ -7,54 +7,8 @@ import {
 import { bigNumberify } from 'ethers/utils';
 import { HashZero } from 'ethers/constants';
 
-import { Transfer, NetworkEvent } from '~data/index';
+import { Transfer } from '~data/index';
 import { notUndefined } from '~utils/arrays';
-
-export const getColonyAllEvents = async (
-  colonyClient: ColonyClient,
-): Promise<NetworkEvent[]> => {
-  const { provider, filters } = colonyClient;
-
-  const eventFilters = Object.keys(filters).filter((key) => !key.includes('('));
-
-  const allEventsLogs = await eventFilters.reduce(async (acc, filter) => {
-    const logs = await getLogs(colonyClient, colonyClient.filters[filter]());
-    return [...(await acc), ...logs];
-  }, Promise.resolve([]));
-
-  const events = await Promise.all(
-    allEventsLogs.map(async (log) => {
-      const event = colonyClient.interface.parseLog(log);
-      const date = log.blockHash
-        ? await getBlockTime(provider, log.blockHash)
-        : 0;
-
-      const {
-        values: { user, domainId },
-      } = event;
-
-      // eslint-disable-next-line no-underscore-dangle
-      const domain = domainId ? bigNumberify(domainId._hex).toString() : null;
-
-      const tx = log.transactionHash
-        ? await provider.getTransaction(log.transactionHash)
-        : undefined;
-
-      return {
-        __typename: 'NetworkEvent',
-        ...event,
-        createdAt: date,
-        fromAddress: (tx && tx.from) || null,
-        hash: log.transactionHash || HashZero,
-        toAddress: colonyClient.address,
-        domainId: domain,
-        userAddress: user || null,
-      };
-    }),
-  );
-
-  return events;
-};
 
 export const getColonyFundsClaimedTransfers = async (
   colonyClient: ColonyClient,

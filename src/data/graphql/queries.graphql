@@ -540,7 +540,7 @@ query ColonyNativeToken($address: String!) {
 }
 
 query ColonyTransfers($address: String!) {
-  processedColony(address: $address) {
+  processedColony(address: $address) @client {
     id
     colonyAddress
     transfers @client {
@@ -568,16 +568,6 @@ query ColonyTransfers($address: String!) {
   }
 }
 
-query ColonyEvents($address: String!) {
-  processedColony(address: $address) {
-    id
-    colonyAddress
-    events @client {
-      ...FullNetworkEvent
-    }
-  }
-}
-
 query ColonyProfile($address: String!) {
   processedColony(address: $address) @client {
     ...ColonyProfile
@@ -598,4 +588,24 @@ query ColonySubscribedUsers($colonyAddress: String!) {
 
 query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+}
+
+query SubgraphEvents($colonyAddress: String!) {
+  events(where: { associatedColony: $colonyAddress }) {
+    id
+    address
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+    }
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    name
+    args
+  }
 }

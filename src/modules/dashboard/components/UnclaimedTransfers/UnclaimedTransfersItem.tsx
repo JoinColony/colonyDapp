@@ -4,20 +4,29 @@ import {
   defineMessages,
   FormattedDateParts,
 } from 'react-intl';
+
+import { ActionButton } from '~core/Button';
+import MaskedAddress from '~core/MaskedAddress';
+import Numeral from '~core/Numeral';
+import Icon from '~core/Icon';
+import EthUsd from '~core/EthUsd';
+
 import {
   useTokenQuery,
   ColonyTransaction,
   useUsernameQuery,
+  useLoggedInUser,
+  Colony,
 } from '~data/index';
-import { mergePayload } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
-import { ActionButton } from '~core/Button';
-import MaskedAddress from '~core/MaskedAddress';
-import Numeral from '~core/Numeral';
+import { mergePayload } from '~utils/actions';
+import { useTransformer } from '~utils/hooks';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import Icon from '~core/Icon';
-import EthUsd from '~core/EthUsd';
 import { tokenIsETH } from '../../../core/checks';
+import { hasRoot } from '../../../users/checks';
+import { getAllUserRoles } from '../../../transformers';
+
+import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './UnclaimedTransfersItem.css';
 
@@ -36,6 +45,7 @@ const MSG = defineMessages({
 
 interface Props {
   transaction: ColonyTransaction;
+  colony: Colony;
 }
 
 const UnclaimedTransfersItem = ({
@@ -46,7 +56,10 @@ const UnclaimedTransfersItem = ({
     token: tokenAddress,
     from: senderAddress,
   },
+  colony,
 }: Props) => {
+  const { username, walletAddress, networkId, ethereal } = useLoggedInUser();
+
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },
   });
@@ -60,11 +73,19 @@ const UnclaimedTransfersItem = ({
     tokenAddress,
   ]);
 
+  const senderUsername = usernameData && usernameData.username;
+  const description = null; // Will be support after network upgrade to v5
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
   if (!tokenData) return null;
 
   const { token } = tokenData;
-  const username = usernameData && usernameData.username;
-  const description = null; // Will be support after network upgrade to v5
+
   return (
     <li>
       <div className={styles.content}>
@@ -82,7 +103,7 @@ const UnclaimedTransfersItem = ({
           appearance={{ size: 'medium' }}
           className={styles.arrowIcon}
           name="circle-arrow-down"
-          title="comment"
+          title="Incoming Transfer"
         />
         <div className={styles.details}>
           <div className={styles.sender}>
@@ -90,7 +111,9 @@ const UnclaimedTransfersItem = ({
               <FormattedMessage
                 {...MSG.from}
                 values={{
-                  sender: username || <MaskedAddress address={senderAddress} />,
+                  sender: senderUsername || (
+                    <MaskedAddress address={senderAddress} />
+                  ),
                 }}
               />
             )}
@@ -113,6 +136,7 @@ const UnclaimedTransfersItem = ({
           error={ActionTypes.COLONY_CLAIM_TOKEN_ERROR}
           success={ActionTypes.COLONY_CLAIM_TOKEN_SUCCESS}
           transform={transform}
+          disabled={!userHasPermission || !isNetworkAllowed}
         />
       </div>
     </li>

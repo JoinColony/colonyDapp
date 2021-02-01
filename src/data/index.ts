@@ -5,7 +5,6 @@ import apolloCache from './cache';
 import {
   ColonyProfileFragment,
   ColonyTransfersQuery,
-  ColonyEventsQuery,
   DomainFieldsFragment,
   FullColonyFragment,
   LoggedInUserDocument,
@@ -25,6 +24,7 @@ import {
   SubgraphActionsQuery,
   TransactionMessagesCountQuery,
   ProcessedColonyQuery,
+  SubgraphEventsQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -88,8 +88,6 @@ export type OneDomain = DomainFieldsFragment;
 
 export type ColonyTransaction = ColonyTransfersQuery['processedColony']['transfers'][number];
 
-export type ColonyEvent = ColonyEventsQuery['processedColony']['events'][number];
-
 export type OneToken = TokenQuery['token'];
 export type ColonyTokens = ProcessedColonyQuery['processedColony']['tokens'];
 export type UserTokens = UserTokensQuery['user']['tokens'];
@@ -116,3 +114,5 @@ export type TransactionsMessagesCount = TransactionMessagesCountQuery['transacti
 export type EventOrMessage = ParsedEvent | TransactionMessage;
 
 export type SubgraphActions = SubgraphActionsQuery;
+
+export type SubgraphEvents = SubgraphEventsQuery;
