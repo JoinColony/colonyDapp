@@ -49,7 +49,7 @@ const MSG = defineMessages({
   },
   notListedToken: {
     id: 'core.TokenEditDialog.notListedToken',
-    defaultMessage: `If token is not listed above, please add any ERC20 compatibile token contract address below.`,
+    defaultMessage: `If token is not listed above, please add any ERC20 compatible token contract address below.`,
   },
   noPermission: {
     id: 'core.TokenEditDialog.noPermission',
