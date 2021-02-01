@@ -41,6 +41,7 @@ import {
   transactionAddIdentifier,
   transactionReady,
   transactionLoadRelated,
+  transactionPending,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
@@ -499,6 +500,11 @@ function* colonyCreate({
 
       yield takeFrom(deployOneTx.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
+      /*
+       * Set OneTx administration role
+       */
+      yield put(transactionPending(setOneTxRoleAdministration.id));
+
       const oneTxPaymentExtension = yield poll(
         async () => {
           try {
@@ -518,9 +524,6 @@ function* colonyCreate({
 
       const extensionAddress = oneTxPaymentExtension.address;
 
-      /*
-       * Set OneTx administration role
-       */
       yield put(
         transactionAddParams(setOneTxRoleAdministration.id, [
           extensionAddress,
