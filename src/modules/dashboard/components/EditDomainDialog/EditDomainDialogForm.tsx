@@ -96,6 +96,10 @@ const EditDomainDialogForm = ({
       (domain) => domain.ethDomainId.toString() === selectedDomainId,
     );
     if (selectedDomain) {
+      setFieldValue(
+        'domainId',
+        selectedDomain.ethDomainId.toString() || undefined,
+      );
       setFieldValue('domainColor', selectedDomain.color || undefined);
       setFieldValue('domainName', selectedDomain.name || undefined);
       setFieldValue('domainPurpose', selectedDomain.description || undefined);

@@ -97,7 +97,7 @@ const InputComponent = ({
       onChange={onChange}
       placeholder={placeholder}
       ref={innerRef}
-      defaultValue={value}
+      value={value || ''}
       {...props}
     />
   ) : (
@@ -111,7 +111,7 @@ const InputComponent = ({
         placeholder={placeholder}
         ref={innerRef}
         maxLength={maxLength}
-        defaultValue={value}
+        value={value || ''}
         {...props}
       />
       {maxLength && (

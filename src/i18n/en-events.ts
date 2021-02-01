@@ -37,14 +37,14 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.ColonyMetadata} {{agent} changed Colony metadata to {metadata}}
       other {{eventName} emmited with values: {displayValues}}
     }`,
-    [`event.${ColonyAndExtensionsEvents.DomainMetadata}.all`]: `{initiator} changed {fromDomain} teams's name, description, color from {oldName}, {oldDescription}, {oldColor} to {domainName}, {domainPurpose}, {domainColor}`,
-    [`event.${ColonyAndExtensionsEvents.DomainMetadata}.nameDescription`]: `{initiator} changed {fromDomain} teams's name and description from {oldName}, {oldDescription} to {domainName}, {domainPurpose}`,
-    [`event.${ColonyAndExtensionsEvents.DomainMetadata}.nameColor`]: `{initiator} changed {fromDomain} teams's name and color from {oldName}, {oldColor} to {domainName}, {domainColor}`,
-    [`event.${ColonyAndExtensionsEvents.DomainMetadata}.descriptionColor`]: `{initiator} changed {fromDomain} teams's description and color from {oldDescription}, {oldColor} to {domainPurpose}, {domainColor}`,
-    [`event.${ColonyAndExtensionsEvents.DomainMetadata}.description`]: `{initiator} changed {fromDomain} teams's description from {oldDescription} to {domainPurpose}`,
-    [`event.${ColonyAndExtensionsEvents.DomainMetadata}.name`]: `{initiator} changed {fromDomain} teams's name from {oldName} to {domainName}`,
-    [`event.${ColonyAndExtensionsEvents.DomainMetadata}.color`]: `{initiator} changed {fromDomain} teams's color from {oldColor} to {domainColor}`,
-    [`event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`]: `{initiator} changed this domain, but values are the same`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.all`]: `{initiator} changed {fromDomain} teams's name, description, color from {oldName}, {oldDescription}, {oldColor} to {domainName}, {domainPurpose}, {domainColor}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.nameDescription`]: `{initiator} changed {fromDomain} teams's name and description from {oldName}, {oldDescription} to {domainName}, {domainPurpose}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.nameColor`]: `{initiator} changed {fromDomain} teams's name and color from {oldName}, {oldColor} to {domainName}, {domainColor}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.descriptionColor`]: `{initiator} changed {fromDomain} teams's description and color from {oldDescription}, {oldColor} to {domainPurpose}, {domainColor}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.description`]: `{initiator} changed {fromDomain} teams's description from {oldDescription} to {domainPurpose}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.name`]: `{initiator} changed {fromDomain} teams's name from {oldName} to {domainName}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.color`]: `{initiator} changed {fromDomain} teams's color from {oldColor} to {domainColor}`,
+  [`event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`]: `{initiator} changed this domain, but values are the same`,
 };
 
 export default eventsMessageDescriptors;
