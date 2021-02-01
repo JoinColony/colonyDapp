@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { useIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { nanoid } from 'nanoid';
 import findLastIndex from 'lodash/findLastIndex';
 
@@ -47,6 +47,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  index: number;
   eventName?: string;
   eventValues?: Record<string, any>;
   transactionHash: string;
@@ -64,6 +65,7 @@ interface DomainMetadata {
 }
 
 const ActionsPageEvent = ({
+  index: eventIndex,
   createdAt,
   transactionHash,
   eventName = ColonyAndExtensionsEvents.Generic,
@@ -194,6 +196,9 @@ const ActionsPageEvent = ({
       tokensChanged: !!tokenAddresses?.length,
     };
   }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
+  const roleNameMessage = { id: `role.${values?.roles[eventIndex].id}` };
+  const { formatMessage } = useIntl();
+  const formattedRole = formatMessage(roleNameMessage);
 
   const getDomainMetadataChecks = useMemo(() => {
     if (
@@ -286,6 +291,7 @@ const ActionsPageEvent = ({
                * Usefull if a event isn't found or doesn't have a message descriptor
                */
               eventNameDecorated: <b>{eventName}</b>,
+              role: formattedRole,
               clientOrExtensionType: (
                 <span className={styles.highlight}>{emmitedBy}</span>
               ),
