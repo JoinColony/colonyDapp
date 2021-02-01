@@ -508,6 +508,15 @@ export const getActionValues = async (
         ...versionUpgradeActionValues,
       };
     }
+    case ColonyActions.ColonyEdit: {
+      const colonyEditActionValues = await getColonyEditActionValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...colonyEditActionValues,
+      };
+    }
     case ColonyActions.SetUserRoles: {
       const setUserRolesActionValues = await getSetUserRolesActionValues(
         processedEvents,
