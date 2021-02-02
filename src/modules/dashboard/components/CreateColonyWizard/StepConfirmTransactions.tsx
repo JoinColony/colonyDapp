@@ -1,15 +1,14 @@
-import React, { useEffect } from 'react';
-import { defineMessages } from 'react-intl';
-import { Redirect, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import { Redirect } from 'react-router-dom';
 import { useDispatch } from 'redux-react-hook';
-import { parse as parseQS } from 'query-string';
 
 import { WizardProps } from '~core/Wizard';
 import Heading from '~core/Heading';
+import NavLink from '~core/NavLink';
 import { useSelector } from '~utils/hooks';
 import { log } from '~utils/debug';
 import ENS from '~lib/ENS';
-import { LANDING_PAGE_ROUTE } from '~routes/index';
 
 import GasStationContent from '../../../users/components/GasStation/GasStationContent';
 import { groupedTransactions } from '../../../core/selectors';
@@ -30,41 +29,13 @@ const MSG = defineMessages({
     defaultMessage: `Complete these transactions to deploy
       your colony to the blockchain.`,
   },
-  descriptionOne: {
-    id: 'dashboard.CreateColonyWizard.StepConfirmTransactions.descriptionOne',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      "Here's something cool about Colony: {boldText} You own it, you control it.",
+  deploymentFailed: {
+    id: 'dashboard.CreateColonyWizard.StepConfirmTransactions.deploymentFailed',
+    defaultMessage: `An error occurred. Click {linkToColony} to go to your colony and continue`,
   },
-  descriptionBoldText: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.CreateColonyWizard.StepConfirmTransactions.descriptionBoldText',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      "we are a fully decentralized application and do not have a central store of yours or anyone's data.",
-  },
-  descriptionTwo: {
-    id: 'dashboard.CreateColonyWizard.StepConfirmTransactions.descriptionTwo',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'To setup your data storage, we need you to create a unique name for your colony. This allows a mapping between the data stored on the blockchain, on IPFS, and your colony.',
-  },
-  label: {
-    id: 'dashboard.CreateColonyWizard.StepConfirmTransactions.label',
-    defaultMessage: 'Your unique colony domain name',
-  },
-  continue: {
-    id: 'dashboard.CreateColonyWizard.StepConfirmTransactions.continue',
-    defaultMessage: 'Continue',
-  },
-  callToAction: {
-    id: 'dashboard.CreateColonyWizard.StepConfirmTransactions.callToAction',
-    defaultMessage: 'Click confirm to sign each transaction',
-  },
-  errorDomainTaken: {
-    id: 'dashboard.CreateColonyWizard.StepConfirmTransactions.errorDomainTaken',
-    defaultMessage: 'This colony domain name is already taken',
+  keywordHere: {
+    id: 'dashboard.CreateColonyWizard.StepConfirmTransactions.keywordHere',
+    defaultMessage: `here`,
   },
 });
 
@@ -76,9 +47,41 @@ type Props = WizardProps<FormValues>;
 
 const displayName = 'dashboard.CreateColonyWizard.StepConfirmTransactions';
 
-const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
+const StepConfirmTransactions = ({
+  wizardValues: { colonyName: chosenColonyName },
+}: Props) => {
+  const [createErrorButRecoverable, setCreateErrorButRecoverable] = useState<
+    boolean
+  >(false);
   const dispatch = useDispatch();
-  const location = useLocation();
+
+  const txGroups = useSelector(groupedTransactions);
+  const newestGroup = findNewestGroup(txGroups);
+
+  useEffect(() => {
+    /*
+     * Find out if the deployment failed, and we can actually recover it
+     * Show an error message based on that
+     */
+    const colonyContractWasDeployed = ((newestGroup as unknown) as Array<{
+      methodName: string;
+      status: typeof TRANSACTION_STATUSES;
+    }>).find(
+      ({ methodName = '', status = '' }) =>
+        methodName.includes('createColony') &&
+        status === TRANSACTION_STATUSES.SUCCEEDED,
+    );
+    const deploymentHasErrors =
+      getGroupStatus(newestGroup) === TRANSACTION_STATUSES.FAILED;
+    if (colonyContractWasDeployed && deploymentHasErrors) {
+      setCreateErrorButRecoverable(true);
+    } else if (createErrorButRecoverable) {
+      /*
+       * Hide the error if the user pressed the retry button
+       */
+      setCreateErrorButRecoverable(false);
+    }
+  }, [newestGroup, createErrorButRecoverable, setCreateErrorButRecoverable]);
 
   // Cancel the saga when the component unmounts
   useEffect(
@@ -88,26 +91,19 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
     [dispatch],
   );
 
-  const txGroups = useSelector(groupedTransactions);
-  const newestGroup = findNewestGroup(txGroups);
-
-  const { recover } = parseQS(location.search) as {
-    recover: string | undefined;
-  };
-
+  const normalizedColonyName = ENS.normalizeAsText(chosenColonyName);
+  // This should never happen
+  if (!normalizedColonyName)
+    log.error(
+      `The colonyName '${normalizedColonyName}' could not be normalized`,
+    );
+  const colonyName = normalizedColonyName || chosenColonyName;
   // Redirect to the colony if a successful creteColony tx group is found
   if (
     getGroupStatus(newestGroup) === TRANSACTION_STATUSES.SUCCEEDED &&
     getGroupKey(newestGroup) === 'group.createColony'
   ) {
-    if (recover) {
-      return <Redirect to={LANDING_PAGE_ROUTE} />;
-    }
-    const normalizedColonyName = ENS.normalizeAsText(colonyName);
-    // This should never happen
-    if (!normalizedColonyName)
-      log.error(`The colonyName '${colonyName}' could not be normalized`);
-    return <Redirect to={`/colony/${normalizedColonyName || colonyName}`} />;
+    return <Redirect to={`/colony/${colonyName}`} />;
   }
 
   const createColonyTxGroup = findTransactionGroupByKey(
@@ -129,6 +125,23 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
           />
         )}
       </div>
+      {createErrorButRecoverable && (
+        <div className={styles.deploymentError}>
+          <FormattedMessage
+            {...MSG.deploymentFailed}
+            values={{
+              linkToColony: (
+                <NavLink
+                  className={styles.linkToColony}
+                  to={`/colony/${colonyName}`}
+                >
+                  <FormattedMessage {...MSG.keywordHere} />
+                </NavLink>
+              ),
+            }}
+          />
+        </div>
+      )}
     </section>
   );
 };
