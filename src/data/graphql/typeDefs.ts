@@ -338,15 +338,6 @@ export default gql`
     balances(colonyAddress: String!): [ProcessedTokenBalances!]!
   }
 
-  type UnfinishedDeployment {
-    isDeploymentUnfinished: Boolean!
-    canFinishDeployment: Boolean!
-    isTokenAuthoritySetUp: Boolean!
-    isOneTxExtensionDeployed: Boolean!
-    hasOneTxAdminRole: Boolean!
-    hasOneTxFundingRole: Boolean!
-  }
-
   type ProcessedColony {
     id: Int!
     colonyAddress: String!
@@ -368,6 +359,6 @@ export default gql`
     unclaimedTransfers: [Transfer!]!
     events: [NetworkEvent!]!
     canMakePayment: Boolean!
-    unfinishedDeployment: UnfinishedDeployment!
+    isDeploymentFinished: Boolean!
   }
 `;
