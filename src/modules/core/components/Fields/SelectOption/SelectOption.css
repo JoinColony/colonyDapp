@@ -43,3 +43,8 @@
   min-height: 32px;
   line-height: 32px;
 }
+
+.value {
+  composes: inlineEllipsis from '~styles/text.css';
+  max-width: 200px;
+}
