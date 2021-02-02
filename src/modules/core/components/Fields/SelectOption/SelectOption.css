@@ -46,5 +46,6 @@
 
 .value {
   composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
   max-width: 200px;
 }

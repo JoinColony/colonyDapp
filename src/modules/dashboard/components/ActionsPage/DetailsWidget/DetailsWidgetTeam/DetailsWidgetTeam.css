@@ -1,7 +1,7 @@
 .text {
   composes: inlineEllipsis from '~styles/text.css';
-  max-width: 150px;
   display: inline-block;
-  vertical-align: bottom;
   margin-left: 5px;
+  max-width: 150px;
+  vertical-align: bottom;
 }

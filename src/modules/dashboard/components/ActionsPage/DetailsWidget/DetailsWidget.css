@@ -19,8 +19,8 @@
 
 .value {
   composes: inlineEllipsis from '~styles/text.css';
-  color: color-mod(var(--dark) alpha(85%));
   max-width: 200px;
+  color: color-mod(var(--dark) alpha(85%));
 }
 
 .value i {
