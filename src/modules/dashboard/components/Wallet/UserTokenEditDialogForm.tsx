@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { FormikProps, FormikHelpers } from 'formik';
-import { ColonyRole } from '@colony/colony-js';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import * as yup from 'yup';
 import { AddressZero } from 'ethers/constants';
@@ -12,11 +11,9 @@ import { Form } from '~core/Fields';
 import Heading from '~core/Heading';
 import Paragraph from '~core/Paragraph';
 import TokenSelector from '~dashboard/CreateColonyWizard/TokenSelector';
-import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import PermissionsLabel from '~core/PermissionsLabel';
 import TokenItem from '~core/TokenEditDialog/TokenItem/index';
 
-import { AnyToken, OneToken, useLoggedInUser, Colony } from '~data/index';
+import { UserTokens, OneToken, useLoggedInUser, Colony } from '~data/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
 
@@ -36,10 +33,6 @@ const MSG = defineMessages({
     id: 'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.fieldLabel',
     defaultMessage: 'Contract address',
   },
-  textareaLabel: {
-    id: 'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.textareaLabel',
-    defaultMessage: 'Explain why you’re making these changes (optional)',
-  },
   noTokensText: {
     id: 'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.noTokensText',
     defaultMessage: `It looks no tokens have been added yet. Get started using the form above.`,
@@ -48,10 +41,10 @@ const MSG = defineMessages({
     id: 'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.notListedToken',
     defaultMessage: `If token is not listed above, please add any ERC20 compatibile token contract address below.`,
   },
-  noPermission: {
-    id: 'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.noPermission',
-    defaultMessage: `You do not have the {roleRequired} permission required
-      to take this action.`,
+  notRegisteredUser: {
+    id:
+      'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.notRegisteredUser',
+    defaultMessage: `Please sign in or register to edit tokens`,
   },
 });
 
@@ -60,7 +53,7 @@ interface Props {
   cancel: () => void;
   close: () => void;
   // Token list from json file. Not supported on local env
-  tokensList?: AnyToken[];
+  tokensList?: UserTokens;
   colony: Colony;
 }
 
@@ -78,18 +71,19 @@ const UserTokenEditDialogForm = ({
   cancel,
   close,
   tokensList = [],
-  colony,
 }: Props) => {
   const { username, ethereal } = useLoggedInUser();
-  const tokens = colony?.tokens || [];
-  const nativeTokenAddress = colony?.nativeTokenAddress;
-  const tokenAddresses = colony?.tokenAddresses || [];
 
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
   const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
     false,
   );
   const { formatMessage } = useIntl();
+
+  const sortedTokenIds = useMemo(
+    () => tokensList.map((token) => token.id).sort(),
+    [tokensList],
+  );
 
   const handleTokenSelect = (token: OneToken) => {
     setTokenData(token);
@@ -103,11 +97,7 @@ const UserTokenEditDialogForm = ({
     selectedTokenAddresses,
     tokenAddress,
   }: FormValues) =>
-    !!tokenAddress ||
-    !isEqual(
-      [AddressZero, ...tokenAddresses].sort(),
-      selectedTokenAddresses?.sort(),
-    );
+    !!tokenAddress || !isEqual(sortedTokenIds, selectedTokenAddresses?.sort());
 
   const handleSubmit = useCallback(
     async (
@@ -116,20 +106,12 @@ const UserTokenEditDialogForm = ({
     ) => {
       let addresses = selectedTokenAddresses;
       if (tokenAddress && !selectedTokenAddresses.includes(tokenAddress)) {
-        addresses.push(tokenAddress);
+        addresses.push(createAddress(tokenAddress));
       }
       addresses = [
-        ...new Set(
-          addresses
-            .map((address) => createAddress(address))
-            .filter((address) => {
-              if (address === AddressZero || address === nativeTokenAddress) {
-                return false;
-              }
-              return true;
-            }),
-        ),
+        ...new Set(addresses.filter((address) => address !== AddressZero)),
       ];
+
       try {
         await updateTokens({
           tokenAddresses: addresses,
@@ -141,21 +123,15 @@ const UserTokenEditDialogForm = ({
         setSubmitting(false);
       }
     },
-    [updateTokens, formatMessage, close, nativeTokenAddress],
+    [updateTokens, formatMessage, close],
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
-  const allTokens = useMemo(() => {
-    return [...tokens, ...(hasRegisteredProfile ? tokensList : [])].filter(
-      ({ address: firstTokenAddress }, index, mergedTokens) =>
-        mergedTokens.findIndex(
-          ({ address: secondTokenAddress }) =>
-            secondTokenAddress === firstTokenAddress,
-        ) === index,
-    );
-  }, [tokens, tokensList, hasRegisteredProfile]);
+  const tokens = useMemo(() => [...(hasRegisteredProfile ? tokensList : [])], [
+    tokensList,
+    hasRegisteredProfile,
+  ]);
 
   return (
     <Dialog cancel={cancel}>
@@ -165,15 +141,11 @@ const UserTokenEditDialogForm = ({
           text={MSG.title}
         />
       </DialogSection>
-      {!hasRegisteredProfile && (
-        <DialogSection appearance={{ theme: 'sidePadding' }}>
-          <PermissionRequiredInfo requiredRoles={requiredRoles} />
-        </DialogSection>
-      )}
+
       <Form
         initialValues={{
           tokenAddress: undefined,
-          selectedTokenAddresses: tokens.map((token) => token.address),
+          selectedTokenAddresses: tokensList.map((token) => token.address),
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
@@ -182,16 +154,14 @@ const UserTokenEditDialogForm = ({
         {({ isSubmitting, isValid, values }: FormikProps<FormValues>) => (
           <>
             <DialogSection appearance={{ theme: 'sidePadding' }}>
-              {allTokens.length > 0 ? (
+              {tokens.length > 0 ? (
                 <div className={styles.tokenChoiceContainer}>
-                  {allTokens.map((token) => (
+                  {tokens.map((token) => (
                     <TokenItem
                       key={token.address}
                       token={token}
                       disabled={
-                        !hasRegisteredProfile ||
-                        token.address === nativeTokenAddress ||
-                        token.address === AddressZero
+                        !hasRegisteredProfile || token.address === AddressZero
                       }
                     />
                   ))}
@@ -220,19 +190,7 @@ const UserTokenEditDialogForm = ({
             {!hasRegisteredProfile && (
               <DialogSection appearance={{ theme: 'sidePadding' }}>
                 <div className={styles.noPermissionMessage}>
-                  <FormattedMessage
-                    {...MSG.noPermission}
-                    values={{
-                      roleRequired: (
-                        <PermissionsLabel
-                          permission={ColonyRole.Root}
-                          name={{
-                            id: `role.${ColonyRole.Root}`,
-                          }}
-                        />
-                      ),
-                    }}
-                  />
+                  <FormattedMessage {...MSG.notRegisteredUser} />
                 </div>
               </DialogSection>
             )}
