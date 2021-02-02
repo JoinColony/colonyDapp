@@ -523,6 +523,24 @@ export const colonyResolvers = ({
       const version = await colonyClient.version();
       return version.toString();
     },
+    async unfinishedDeployment({ colonyAddress }) {
+      // const extensionAddress = await networkClient.getExtensionInstallation(
+      //   getExtensionHash('OneTxPayment'),
+      //   colonyAddress,
+      // );
+      // if (extensionAddress === AddressZero) {
+      //   return false;
+      // }
+      return {
+        __typename: 'UnfinishedDeployment',
+        isDeploymentUnfinished: false,
+        canFinishDeployment: false,
+        isTokenAuthoritySetUp: false,
+        isOneTxExtensionDeployed: false,
+        hasOneTxAdminRole: false,
+        hasOneTxFundingRole: false,
+      };
+    },
     /*
      * @NOTE This is temporary until the Extension Manager #2260 gets merged
      * and will provide a more robust way of getting the extensions
