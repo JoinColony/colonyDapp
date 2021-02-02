@@ -19,6 +19,10 @@ import {
   ProcessedColonyQuery,
   ProcessedColonyQueryVariables,
   ProcessedColonyDocument,
+  SubscribeToColonyMutation,
+  SubscribeToColonyMutationVariables,
+  SubscribeToColonyDocument,
+  cacheUpdates,
 } from '~data/index';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -361,6 +365,17 @@ function* colonyRestartDeployment({
         address: colonyAddress,
       },
       fetchPolicy: 'network-only',
+    });
+
+    yield apolloClient.mutate<
+      SubscribeToColonyMutation,
+      SubscribeToColonyMutationVariables
+    >({
+      mutation: SubscribeToColonyDocument,
+      variables: {
+        input: { colonyAddress },
+      },
+      update: cacheUpdates.subscribeToColony(colonyAddress),
     });
 
     yield put<AllActions>({
