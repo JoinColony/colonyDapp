@@ -192,14 +192,14 @@ query UserTokens($address: String!) {
   user(address: $address) {
     id
     tokenAddresses
-    tokens @client {
+    tokens(walletAddress: $address) @client {
       id
       address
       iconHash
       decimals
       name
       symbol
-      balance(walletAddress: $address)
+      balance
     }
   }
 }

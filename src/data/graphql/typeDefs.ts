@@ -69,7 +69,7 @@ export default gql`
     symbol: String!
     iconHash: String
     verified: Boolean!
-    balance(walletAddress: String!): String!
+    balance: String
     balances(colonyAddress: String!, domainIds: [Int!]): [DomainBalance!]!
   }
 
@@ -124,7 +124,7 @@ export default gql`
 
   extend type User {
     reputation(colonyAddress: String!, domainId: Int): String!
-    tokens: [Token!]!
+    tokens(walletAddress: String): [Token!]!
     tokenTransfers: [Transfer!]!
     processedColonies: [ProcessedColony!]!
   }
