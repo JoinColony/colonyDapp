@@ -60,6 +60,7 @@ export function* getTxChannel(id: string) {
 export function* createTransactionChannels(
   batchId: string,
   ids: string[],
+  customIndex = 0,
 ): IterableIterator<{
   [id: string]: { channel: Channel<any>; index: number; id: string };
 }> {
@@ -68,7 +69,11 @@ export function* createTransactionChannels(
   return ids.reduce(
     (result, id, index) => ({
       ...result,
-      [id]: { index, channel: (channels as any)[index], id: txIds[index] },
+      [id]: {
+        index: customIndex + index,
+        channel: (channels as any)[index],
+        id: txIds[index],
+      },
     }),
     {},
   );
