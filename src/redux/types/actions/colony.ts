@@ -2,7 +2,12 @@ import { ColonyRole } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
 import { Address, WithKey } from '~types/index';
-import { ActionType, ErrorActionType, UniqueActionType } from './index';
+import {
+  ActionType,
+  ErrorActionType,
+  UniqueActionType,
+  UniqueActionTypeWithoutPayload,
+} from './index';
 
 export type ColonyActionTypes =
   | UniqueActionType<
@@ -34,6 +39,18 @@ export type ColonyActionTypes =
   | ActionType<typeof ActionTypes.COLONY_CREATE_CANCEL>
   | ErrorActionType<ActionTypes.COLONY_CREATE_ERROR, object>
   | UniqueActionType<ActionTypes.COLONY_CREATE_SUCCESS, void, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_DEPLOYMENT_RESTART,
+      {
+        colonyAddress: Address;
+      },
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_DEPLOYMENT_RESTART_ERROR, object>
+  | UniqueActionTypeWithoutPayload<
+      ActionTypes.COLONY_DEPLOYMENT_RESTART_SUCCESS,
+      object
+    >
   | UniqueActionType<
       ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK,
       { colonyAddress: Address },

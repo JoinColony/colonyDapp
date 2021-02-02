@@ -60,6 +60,10 @@
 
     "transaction.group.createColony.title": "Create Colony",
     "transaction.group.createColony.description": "Create Colony",
+    "transaction.group.restartColonyDeployment.title": "Restart Colony Deployment",
+    "transaction.group.restartColonyDeployment.description": "Restart Colony Deployment",
+    "transaction.group.restartColonyDeployment.setOneTxRoles.title": "Set OneTxPayment Extension Roles",
+    "transaction.group.restartColonyDeployment.setOneTxRoles.description": "Set OneTxPayment Extension Roles",
     "transaction.NetworkClient.deployToken.title": "Create Token",
     "transaction.NetworkClient.deployToken.description": "Create Token",
     "transaction.NetworkClient.createColony(address,uint256,string).title": "Create Colony",
