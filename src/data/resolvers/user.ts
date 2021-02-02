@@ -6,7 +6,7 @@ import {
   getLogs,
 } from '@colony/colony-js';
 import { BigNumber } from 'ethers/utils';
-import { HashZero } from 'ethers/constants';
+import { AddressZero, HashZero } from 'ethers/constants';
 
 import { Context } from '~context/index';
 import ENS from '~lib/ENS';
@@ -98,12 +98,12 @@ export const userResolvers = ({
     },
     async tokens(
       { tokenAddresses }: { tokenAddresses: Address[] },
-      _,
+      { walletAddress },
       { client },
     ): Promise<Address[]> {
       return Promise.all(
-        ['0x0', ...tokenAddresses].map((tokenAddress) =>
-          getToken({ colonyManager, client }, tokenAddress),
+        [AddressZero, ...tokenAddresses].map(async (tokenAddress) =>
+          getToken({ colonyManager, client }, tokenAddress, walletAddress),
         ),
       );
     },
