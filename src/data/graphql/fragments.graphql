@@ -57,6 +57,17 @@ fragment Tokens on ProcessedColony {
   }
 }
 
+fragment UnfinishedDeployment on ProcessedColony {
+  unfinishedDeployment @client {
+    isDeploymentUnfinished
+    canFinishDeployment
+    isTokenAuthoritySetUp
+    isOneTxExtensionDeployed
+    hasOneTxAdminRole
+    hasOneTxFundingRole
+  }
+}
+
 fragment DomainFields on ProcessedDomain {
   id
   color
@@ -94,6 +105,7 @@ fragment FullColony on ProcessedColony {
   isInRecoveryMode @client
   isNativeTokenLocked @client
   canMakePayment @client
+  ...UnfinishedDeployment
 }
 
 fragment EventFields on Event {

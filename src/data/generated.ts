@@ -1255,6 +1255,15 @@ export type ProcessedTokensBalancesArgs = {
   colonyAddress: Scalars['String'];
 };
 
+export type UnfinishedDeployment = {
+  isDeploymentUnfinished: Scalars['Boolean'];
+  canFinishDeployment: Scalars['Boolean'];
+  isTokenAuthoritySetUp: Scalars['Boolean'];
+  isOneTxExtensionDeployed: Scalars['Boolean'];
+  hasOneTxAdminRole: Scalars['Boolean'];
+  hasOneTxFundingRole: Scalars['Boolean'];
+};
+
 export type ProcessedColony = {
   id: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -1276,6 +1285,7 @@ export type ProcessedColony = {
   unclaimedTransfers: Array<Transfer>;
   events: Array<NetworkEvent>;
   canMakePayment: Scalars['Boolean'];
+  unfinishedDeployment: UnfinishedDeployment;
 };
 
 export type PayoutsFragment = { payouts: Array<(
@@ -1300,6 +1310,8 @@ export type TokensFragment = (
   )> }
 );
 
+export type UnfinishedDeploymentFragment = { unfinishedDeployment: Pick<UnfinishedDeployment, 'isDeploymentUnfinished' | 'canFinishDeployment' | 'isTokenAuthoritySetUp' | 'isOneTxExtensionDeployed' | 'hasOneTxAdminRole' | 'hasOneTxFundingRole'> };
+
 export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
 export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>;
@@ -1312,6 +1324,7 @@ export type FullColonyFragment = (
   )> }
   & ColonyProfileFragment
   & TokensFragment
+  & UnfinishedDeploymentFragment
 );
 
 export type EventFieldsFragment = (
@@ -2043,6 +2056,13 @@ export type SubgraphEventsQuery = { events: Array<(
     ) }
   )> };
 
+export type ColonyUnfinishedDeploymentQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyUnfinishedDeploymentQuery = { processedColony: UnfinishedDeploymentFragment };
+
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
   payouts {
@@ -2125,6 +2145,18 @@ export const DomainFieldsFragmentDoc = gql`
   ethParentDomainId
 }
     `;
+export const UnfinishedDeploymentFragmentDoc = gql`
+    fragment UnfinishedDeployment on ProcessedColony {
+  unfinishedDeployment @client {
+    isDeploymentUnfinished
+    canFinishDeployment
+    isTokenAuthoritySetUp
+    isOneTxExtensionDeployed
+    hasOneTxAdminRole
+    hasOneTxFundingRole
+  }
+}
+    `;
 export const FullColonyFragmentDoc = gql`
     fragment FullColony on ProcessedColony {
   ...ColonyProfile
@@ -2145,10 +2177,12 @@ export const FullColonyFragmentDoc = gql`
   isInRecoveryMode @client
   isNativeTokenLocked @client
   canMakePayment @client
+  ...UnfinishedDeployment
 }
     ${ColonyProfileFragmentDoc}
 ${TokensFragmentDoc}
-${DomainFieldsFragmentDoc}`;
+${DomainFieldsFragmentDoc}
+${UnfinishedDeploymentFragmentDoc}`;
 export const EventFieldsFragmentDoc = gql`
     fragment EventFields on Event {
   createdAt
@@ -5146,3 +5180,36 @@ export function useSubgraphEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type SubgraphEventsQueryHookResult = ReturnType<typeof useSubgraphEventsQuery>;
 export type SubgraphEventsLazyQueryHookResult = ReturnType<typeof useSubgraphEventsLazyQuery>;
 export type SubgraphEventsQueryResult = Apollo.QueryResult<SubgraphEventsQuery, SubgraphEventsQueryVariables>;
+export const ColonyUnfinishedDeploymentDocument = gql`
+    query ColonyUnfinishedDeployment($address: String!) {
+  processedColony(address: $address) @client {
+    ...UnfinishedDeployment
+  }
+}
+    ${UnfinishedDeploymentFragmentDoc}`;
+
+/**
+ * __useColonyUnfinishedDeploymentQuery__
+ *
+ * To run a query within a React component, call `useColonyUnfinishedDeploymentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyUnfinishedDeploymentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyUnfinishedDeploymentQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyUnfinishedDeploymentQuery(baseOptions?: Apollo.QueryHookOptions<ColonyUnfinishedDeploymentQuery, ColonyUnfinishedDeploymentQueryVariables>) {
+        return Apollo.useQuery<ColonyUnfinishedDeploymentQuery, ColonyUnfinishedDeploymentQueryVariables>(ColonyUnfinishedDeploymentDocument, baseOptions);
+      }
+export function useColonyUnfinishedDeploymentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyUnfinishedDeploymentQuery, ColonyUnfinishedDeploymentQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyUnfinishedDeploymentQuery, ColonyUnfinishedDeploymentQueryVariables>(ColonyUnfinishedDeploymentDocument, baseOptions);
+        }
+export type ColonyUnfinishedDeploymentQueryHookResult = ReturnType<typeof useColonyUnfinishedDeploymentQuery>;
+export type ColonyUnfinishedDeploymentLazyQueryHookResult = ReturnType<typeof useColonyUnfinishedDeploymentLazyQuery>;
+export type ColonyUnfinishedDeploymentQueryResult = Apollo.QueryResult<ColonyUnfinishedDeploymentQuery, ColonyUnfinishedDeploymentQueryVariables>;
