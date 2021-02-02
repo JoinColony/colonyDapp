@@ -106,6 +106,7 @@ const getTokenData = async (
       name: chainData.name || serverData.name || 'Unknown token',
       symbol: chainData.symbol || serverData.symbol || '???',
       verified: serverData.verified || false,
+      balance: '',
     };
   } catch (error) {
     console.error('Could not fetch Colony token:', tokenAddress);
@@ -114,7 +115,7 @@ const getTokenData = async (
   }
 };
 
-export const getToken = (
+export const getToken = async (
   {
     colonyManager,
     client,
@@ -123,11 +124,29 @@ export const getToken = (
     client: ApolloClient<object>;
   },
   address: Address,
+  walletAddress?: Address,
 ) => {
-  if (tokenCache.has(address)) return tokenCache.get(address);
-  const promise = getTokenData({ colonyManager, client }, address);
-  tokenCache.set(address, promise);
-  return promise;
+  if (tokenCache.has(address)) {
+    return tokenCache.get(address);
+  }
+  const tokenData = await getTokenData({ colonyManager, client }, address);
+
+  if (walletAddress !== undefined && tokenData !== null) {
+    const { provider } = colonyManager;
+
+    if (address === AddressZero) {
+      const balance = await provider.getBalance(walletAddress);
+      tokenData.balance = balance.toString();
+    } else {
+      const tokenClient = await colonyManager.getTokenClient(address);
+      const amount = await tokenClient.balanceOf(walletAddress);
+
+      tokenData.balance = amount.toString();
+    }
+  }
+
+  tokenCache.set(address, tokenData);
+  return tokenData;
 };
 
 export const tokenResolvers = ({
@@ -155,21 +174,6 @@ export const tokenResolvers = ({
     },
   },
   Token: {
-    async balance({ address }, { walletAddress }) {
-      const {
-        networkClient: {
-          adapter: { provider },
-        },
-      } = colonyManager;
-      if (address === AddressZero) {
-        const balance = await provider.getBalance(walletAddress);
-        return balance.toString();
-      }
-
-      const tokenClient = await colonyManager.getTokenClient(address);
-      const amount = await tokenClient.balanceOf(walletAddress);
-      return amount.toString();
-    },
     async balances(
       { address }: { address: Address },
       {
