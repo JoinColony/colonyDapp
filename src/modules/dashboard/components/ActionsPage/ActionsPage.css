@@ -54,6 +54,8 @@
   line-height: 24px;
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
+  composes: inlineEllipsis from '~styles/text.css';
+  max-width: 250px;
 }
 
 .heading span {
