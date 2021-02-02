@@ -13,7 +13,7 @@ import Paragraph from '~core/Paragraph';
 import TokenSelector from '~dashboard/CreateColonyWizard/TokenSelector';
 import TokenItem from '~core/TokenEditDialog/TokenItem/index';
 
-import { UserTokens, OneToken, useLoggedInUser, Colony } from '~data/index';
+import { UserTokens, OneToken, useLoggedInUser } from '~data/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
 
@@ -52,9 +52,7 @@ interface Props {
   updateTokens: (payload: { tokenAddresses: Address[] }) => Promise<any>;
   cancel: () => void;
   close: () => void;
-  // Token list from json file. Not supported on local env
-  tokensList?: UserTokens;
-  colony: Colony;
+  tokensList: UserTokens;
 }
 
 interface FormValues {
