@@ -8,7 +8,7 @@ import isEqual from 'lodash/isEqual';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { Form, Annotations } from '~core/Fields';
+import { Form } from '~core/Fields';
 import Heading from '~core/Heading';
 import Paragraph from '~core/Paragraph';
 import TokenSelector from '~dashboard/CreateColonyWizard/TokenSelector';
@@ -19,9 +19,6 @@ import TokenItem from '~core/TokenEditDialog/TokenItem/index';
 import { AnyToken, OneToken, useLoggedInUser, Colony } from '~data/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
-import { useTransformer } from '~utils/hooks';
-import { getAllUserRoles } from '../../../transformers';
-import { hasRoot } from '../../../users/checks';
 
 import styles from './UserTokenEditDialogForm.css';
 
@@ -59,10 +56,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  updateTokens: (payload: {
-    tokenAddresses: Address[];
-    annotationMessage?: string;
-  }) => Promise<any>;
+  updateTokens: (payload: { tokenAddresses: Address[] }) => Promise<any>;
   cancel: () => void;
   close: () => void;
   // Token list from json file. Not supported on local env
@@ -73,12 +67,10 @@ interface Props {
 interface FormValues {
   tokenAddress?: Address;
   selectedTokenAddresses?: Address[];
-  annotationMessage?: string;
 }
 
 const validationSchema = yup.object({
   tokenAddress: yup.string().address(),
-  annotation: yup.string().max(4000),
 });
 
 const UserTokenEditDialogForm = ({
@@ -86,13 +78,12 @@ const UserTokenEditDialogForm = ({
   cancel,
   close,
   tokensList = [],
-  // colony: { tokens = [], nativeTokenAddress, tokenAddresses },
   colony,
 }: Props) => {
-  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { username, ethereal } = useLoggedInUser();
   const tokens = colony?.tokens || [];
   const nativeTokenAddress = colony?.nativeTokenAddress;
-  const tokenAddresses = colony?.tokenAddresses;
+  const tokenAddresses = colony?.tokenAddresses || [];
 
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
   const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
@@ -120,11 +111,7 @@ const UserTokenEditDialogForm = ({
 
   const handleSubmit = useCallback(
     async (
-      {
-        tokenAddress,
-        selectedTokenAddresses = [],
-        annotationMessage,
-      }: FormValues,
+      { tokenAddress, selectedTokenAddresses = [] }: FormValues,
       { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
     ) => {
       let addresses = selectedTokenAddresses;
@@ -144,7 +131,9 @@ const UserTokenEditDialogForm = ({
         ),
       ];
       try {
-        await updateTokens({ tokenAddresses: addresses, annotationMessage });
+        await updateTokens({
+          tokenAddresses: addresses,
+        });
         resetForm();
         close();
       } catch (e) {
@@ -155,21 +144,18 @@ const UserTokenEditDialogForm = ({
     [updateTokens, formatMessage, close, nativeTokenAddress],
   );
 
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
   const hasRegisteredProfile = !!username && !ethereal;
-  const userHasPermissions = hasRegisteredProfile && hasRoot(allUserRoles);
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
   const allTokens = useMemo(() => {
-    return [...tokens, ...(userHasPermissions ? tokensList : [])].filter(
+    return [...tokens, ...(hasRegisteredProfile ? tokensList : [])].filter(
       ({ address: firstTokenAddress }, index, mergedTokens) =>
         mergedTokens.findIndex(
           ({ address: secondTokenAddress }) =>
             secondTokenAddress === firstTokenAddress,
         ) === index,
     );
-  }, [tokens, tokensList, userHasPermissions]);
+  }, [tokens, tokensList, hasRegisteredProfile]);
 
   return (
     <Dialog cancel={cancel}>
@@ -179,7 +165,7 @@ const UserTokenEditDialogForm = ({
           text={MSG.title}
         />
       </DialogSection>
-      {!userHasPermissions && (
+      {!hasRegisteredProfile && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <PermissionRequiredInfo requiredRoles={requiredRoles} />
         </DialogSection>
@@ -188,7 +174,6 @@ const UserTokenEditDialogForm = ({
         initialValues={{
           tokenAddress: undefined,
           selectedTokenAddresses: tokens.map((token) => token.address),
-          annotationMessage: undefined,
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
@@ -204,7 +189,7 @@ const UserTokenEditDialogForm = ({
                       key={token.address}
                       token={token}
                       disabled={
-                        !userHasPermissions ||
+                        !hasRegisteredProfile ||
                         token.address === nativeTokenAddress ||
                         token.address === AddressZero
                       }
@@ -229,17 +214,10 @@ const UserTokenEditDialogForm = ({
                 tokenData={tokenData}
                 label={MSG.fieldLabel}
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}
-                disabled={!userHasPermissions}
+                disabled={!hasRegisteredProfile}
               />
-              <div className={styles.textarea}>
-                <Annotations
-                  label={MSG.textareaLabel}
-                  name="annotationMessage"
-                  disabled={!userHasPermissions}
-                />
-              </div>
             </DialogSection>
-            {!userHasPermissions && (
+            {!hasRegisteredProfile && (
               <DialogSection appearance={{ theme: 'sidePadding' }}>
                 <div className={styles.noPermissionMessage}>
                   <FormattedMessage
@@ -271,7 +249,7 @@ const UserTokenEditDialogForm = ({
                 disabled={
                   tokenSelectorHasError ||
                   !isValid ||
-                  !userHasPermissions ||
+                  !hasRegisteredProfile ||
                   !hasTokensListChanged(values)
                 }
                 type="submit"
@@ -284,8 +262,5 @@ const UserTokenEditDialogForm = ({
     </Dialog>
   );
 };
-
-UserTokenEditDialogForm.displayName =
-  'dashboard.UserTokenEditDialog.UserTokenEditDialogForm';
 
 export default UserTokenEditDialogForm;
