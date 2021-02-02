@@ -523,23 +523,30 @@ export const colonyResolvers = ({
       const version = await colonyClient.version();
       return version.toString();
     },
-    async unfinishedDeployment({ colonyAddress }) {
-      // const extensionAddress = await networkClient.getExtensionInstallation(
-      //   getExtensionHash('OneTxPayment'),
-      //   colonyAddress,
-      // );
-      // if (extensionAddress === AddressZero) {
-      //   return false;
-      // }
-      return {
-        __typename: 'UnfinishedDeployment',
-        isDeploymentUnfinished: false,
-        canFinishDeployment: false,
-        isTokenAuthoritySetUp: false,
-        isOneTxExtensionDeployed: false,
-        hasOneTxAdminRole: false,
-        hasOneTxFundingRole: false,
-      };
+    async isDeploymentFinished({ colonyAddress }) {
+      if (!colonyAddress) {
+        return null;
+      }
+
+      let isDeploymentFinished = true;
+
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+
+      /*
+       * Check if the token autority is set up
+       */
+      const { tokenClient } = colonyClient;
+      if (tokenClient.tokenClientType === TokenClientType.Colony) {
+        const tokenAuthority = await tokenClient.authority();
+        if (tokenAuthority === AddressZero) {
+          isDeploymentFinished = false;
+        }
+      }
+
+      return isDeploymentFinished;
     },
     /*
      * @NOTE This is temporary until the Extension Manager #2260 gets merged

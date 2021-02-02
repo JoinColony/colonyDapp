@@ -643,9 +643,3 @@ query SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
     args
   }
 }
-
-query ColonyUnfinishedDeployment($address: String!) {
-  processedColony(address: $address) @client {
-    ...UnfinishedDeployment
-  }
-}
