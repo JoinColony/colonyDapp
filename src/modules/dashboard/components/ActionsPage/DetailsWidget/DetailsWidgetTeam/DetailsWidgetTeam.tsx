@@ -2,6 +2,8 @@ import React from 'react';
 import { OneDomain } from '~data/index';
 import ColorTag, { Color } from '~core/ColorTag';
 
+import styles from './DetailsWidgetTeam.css';
+
 const displayName = 'dashboard.ActionsPage.DetailsWidget.DetailsWidgetTeam';
 
 interface Props {
@@ -11,7 +13,7 @@ interface Props {
 const DetailsWidgetTeam = ({ domain }: Props) => (
   <div>
     <ColorTag color={domain?.color || Color.LightPink} />
-    {` ${domain?.name}`}
+    <span className={styles.text}>{` ${domain?.name}`}</span>
   </div>
 );
 
