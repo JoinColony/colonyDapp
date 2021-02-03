@@ -104,20 +104,21 @@ const ColonyActions = ({
 
   /* filtering at this level as it is more performant
   & we reduce the number of events passing through transformers */
-  const uniqueEvents = useMemo(
-    () =>
-      /* additional check for types to work */
-      data === undefined
-        ? []
-        : data.events.filter(
-            (action) =>
-              !data?.oneTxPayments.some(
-                (paymentAction) =>
-                  paymentAction.transaction?.hash === action.transaction.hash,
-              ),
-          ),
-    [data],
-  );
+  const uniqueEvents = useMemo(() => {
+    /* additional check for types to work */
+    if (data === undefined) {
+      return [];
+    }
+
+    return data.events.filter((event) => {
+      /* filtering out events that are already shown in `oneTxPayments` */
+      const isTransactionRepeated = data?.oneTxPayments.some(
+        (paymentAction) =>
+          paymentAction.transaction?.hash === event.transaction?.hash,
+      );
+      return !isTransactionRepeated;
+    });
+  }, [data]);
 
   const {
     data: commentCount,
