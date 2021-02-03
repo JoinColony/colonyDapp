@@ -68,6 +68,8 @@ const ActionsListItem = ({
     createdAt,
     commentCount = 0,
     metadata,
+    role,
+    setTo,
   },
   colony,
   handleOnClick,
@@ -92,6 +94,13 @@ const ActionsListItem = ({
   const toDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === parseInt(toDomainId, 10),
   );
+
+  const getFormattedRole = () => {
+    const roleNameMessage = { id: `role.${role}` };
+    return `${setTo === 'true' ? 'assigned' : 'removed'} ${formatMessage(
+      roleNameMessage,
+    )}`;
+  };
 
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
@@ -196,6 +205,7 @@ const ActionsListItem = ({
                 decimals: getTokenDecimalsWithFallback(decimals),
                 fromDomain: domainName || fromDomain?.name || '',
                 toDomain: toDomain?.name || '',
+                roles: role ? getFormattedRole() : '',
               }}
             />
           </div>
