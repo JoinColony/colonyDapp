@@ -912,7 +912,7 @@ export type UserReputationArgs = {
 
 
 export type UserTokensArgs = {
-  walletAddress?: Maybe<Scalars['String']>;
+  walletAddress: Scalars['String'];
 };
 
 export type UserProfile = {
@@ -1037,7 +1037,7 @@ export type Token = {
   symbol: Scalars['String'];
   iconHash?: Maybe<Scalars['String']>;
   verified: Scalars['Boolean'];
-  balance?: Maybe<Scalars['String']>;
+  balance: Scalars['String'];
   balances: Array<DomainBalance>;
 };
 
