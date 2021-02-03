@@ -37,7 +37,7 @@ interface Props {
 }
 
 const ColonyHomeActions = ({ colony }: Props) => {
-  const { networkId } = useLoggedInUser();
+  const { networkId, username, ethereal } = useLoggedInUser();
 
   const startWizardFlow = useNaiveBranchingDialogWizard([
     {
@@ -159,6 +159,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
     },
   ]);
 
+  const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
     parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
@@ -168,7 +169,12 @@ const ColonyHomeActions = ({ colony }: Props) => {
       appearance={{ theme: 'primary', size: 'large' }}
       text={MSG.newAction}
       onClick={() => startWizardFlow('dashboard.ColonyActionsDialog')}
-      disabled={!isSupportedColonyVersion || !isNetworkAllowed}
+      disabled={
+        !isSupportedColonyVersion ||
+        !isNetworkAllowed ||
+        !hasRegisteredProfile ||
+        !colony?.isDeploymentFinished
+      }
     />
   );
 };

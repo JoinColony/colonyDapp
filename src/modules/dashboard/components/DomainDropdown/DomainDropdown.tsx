@@ -48,7 +48,7 @@ const DomainDropdown = ({
   onDomainChange,
   colony,
 }: Props) => {
-  const { networkId } = useLoggedInUser();
+  const { networkId, ethereal, username } = useLoggedInUser();
 
   const [, setSelectedDomain] = useState<number>(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -150,6 +150,7 @@ const DomainDropdown = ({
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
   const isSupportedColonyVersion =
     parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+  const hasRegisteredProfile = !!username && !ethereal;
 
   return (
     <Form<FormValues>
@@ -174,7 +175,10 @@ const DomainDropdown = ({
         }}
         options={options}
         optionsFooter={
-          isSupportedColonyVersion && isNetworkAllowed ? (
+          isSupportedColonyVersion &&
+          isNetworkAllowed &&
+          hasRegisteredProfile &&
+          colony?.isDeploymentFinished ? (
             <CreateDomainButton colony={colony} />
           ) : null
         }
