@@ -29,7 +29,7 @@ const MSG = defineMessages({
 });
 
 const ColonyMembers = () => {
-  const { networkId } = useLoggedInUser();
+  const { networkId, username, ethereal } = useLoggedInUser();
 
   const { colonyName } = useParams<{
     colonyName: string;
@@ -47,6 +47,7 @@ const ColonyMembers = () => {
     });
   }, [openPermissionManagementDialog, colonyData]);
 
+  const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
     parseInt(colonyData?.processedColony?.version || '1', 10) >=
     ColonyVersion.CeruleanLightweightSpaceship;
@@ -78,7 +79,12 @@ const ColonyMembers = () => {
             appearance={{ theme: 'blue' }}
             text={MSG.editPermissions}
             onClick={handlePermissionManagementDialog}
-            disabled={!isSupportedColonyVersion || !isNetworkAllowed}
+            disabled={
+              !isSupportedColonyVersion ||
+              !isNetworkAllowed ||
+              !hasRegisteredProfile ||
+              !colonyData?.processedColony?.isDeploymentFinished
+            }
           />
         </aside>
       </div>

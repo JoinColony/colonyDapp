@@ -39,11 +39,11 @@ interface Props {
 const displayName = 'dashboard.ColonyFundingMenu';
 
 const ColonyFundingMenu = ({
-  colony: { canMintNativeToken, version },
+  colony: { canMintNativeToken, version, isDeploymentFinished },
   colony,
   selectedDomainId,
 }: Props) => {
-  const { walletAddress, networkId } = useLoggedInUser();
+  const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
 
   const openTokenManagementDialog = useDialog(ColonyTokenManagementDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
@@ -81,6 +81,7 @@ const ColonyFundingMenu = ({
     userHasRole(rootRoles, ColonyRole.Administration);
   const canMoveTokens = userHasRole(rootRoles, ColonyRole.Funding);
 
+  const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
     parseInt(version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
@@ -93,7 +94,11 @@ const ColonyFundingMenu = ({
           appearance={{ theme: 'blue' }}
           onClick={handleMoveTokens}
           disabled={
-            !canMoveTokens || !isSupportedColonyVersion || !isNetworkAllowed
+            !canMoveTokens ||
+            !isSupportedColonyVersion ||
+            !isNetworkAllowed ||
+            !hasRegisteredProfile ||
+            !isDeploymentFinished
           }
         />
       </li>
@@ -105,7 +110,9 @@ const ColonyFundingMenu = ({
           disabled={
             !canMintNativeToken ||
             !isSupportedColonyVersion ||
-            !isNetworkAllowed
+            !isNetworkAllowed ||
+            !hasRegisteredProfile ||
+            !isDeploymentFinished
           }
         />
       </li>
@@ -114,7 +121,13 @@ const ColonyFundingMenu = ({
           text={MSG.navItemManageTokens}
           appearance={{ theme: 'blue' }}
           onClick={handleEditTokens}
-          disabled={!canEdit || !isSupportedColonyVersion || !isNetworkAllowed}
+          disabled={
+            !canEdit ||
+            !isSupportedColonyVersion ||
+            !isNetworkAllowed ||
+            !hasRegisteredProfile ||
+            !isDeploymentFinished
+          }
         />
       </li>
     </ul>
