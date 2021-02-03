@@ -19,7 +19,7 @@
 }
 
 .color {
-  flex-basis: 19px;
+  margin-right: 6px;
 }
 
 .rootText {
@@ -52,10 +52,11 @@
 }
 
 .headingWrapper {
-  max-width: 150px;
+  width: 200px;
 }
 
 .headingWrapper h4 {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
