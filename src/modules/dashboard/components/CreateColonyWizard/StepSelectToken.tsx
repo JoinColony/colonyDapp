@@ -38,7 +38,7 @@ const MSG = defineMessages({
   },
   symbolHint: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.symbolHint',
-    defaultMessage: 'Max of 6 characters',
+    defaultMessage: 'Max of 5 characters',
   },
   tokenName: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.tokenName',
@@ -73,7 +73,7 @@ const MSG = defineMessages({
 
 export const validationSchema = yup.object({
   tokenAddress: yup.string().address(() => MSG.invalidAddress),
-  tokenSymbol: yup.string().max(6),
+  tokenSymbol: yup.string().max(5),
   tokenName: yup.string(),
 });
 
@@ -158,13 +158,18 @@ const StepSelectToken = ({
             {values.tokenAddress && !tokenData && (
               <>
                 <div className={styles.tokenDetails}>
-                  <Input name="tokenName" label={MSG.tokenName} />
+                  <Input
+                    name="tokenName"
+                    label={MSG.tokenName}
+                    formattingOptions={{ blocks: [256] }}
+                  />
                 </div>
                 <div className={styles.tokenDetails}>
                   <Input
                     name="tokenSymbol"
                     label={MSG.tokenSymbol}
                     help={MSG.symbolHint}
+                    formattingOptions={{ uppercase: true, blocks: [5] }}
                   />
                 </div>
               </>

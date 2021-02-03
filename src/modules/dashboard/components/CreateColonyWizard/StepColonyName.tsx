@@ -209,7 +209,7 @@ const StepColonyName = ({
                 extensionString={`.colony.${DEFAULT_NETWORK_INFO.displayENSDomain}`}
                 label={MSG.label}
                 status={normalized !== colonyName ? MSG.statusText : undefined}
-                formattingOptions={{ lowercase: true }}
+                formattingOptions={{ lowercase: true, blocks: [256] }}
                 statusValues={{ normalized }}
                 disabled={!isNetworkAllowed}
                 extra={
