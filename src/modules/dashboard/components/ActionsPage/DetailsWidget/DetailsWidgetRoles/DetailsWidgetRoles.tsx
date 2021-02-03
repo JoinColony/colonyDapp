@@ -14,7 +14,7 @@ interface Props {
 const DetailsWidgetRoles = ({ roles }: Props) => (
   <ul className={styles.roleList}>
     {roles.map((role) => (
-      <DetailsWidgetRolesItem role={role} />
+      <DetailsWidgetRolesItem key={role.id} role={role} />
     ))}
   </ul>
 );
