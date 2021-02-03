@@ -166,9 +166,9 @@ const ColonyPermissionsAddDialog = ({
             user,
           }}
           onSuccess={close}
-          submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
-          error={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR}
-          success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS}
+          submit={ActionTypes.COLONY_ACTION_USER_ROLES_SET}
+          error={ActionTypes.COLONY_ACTION_USER_ROLES_SET_ERROR}
+          success={ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS}
           transform={transform}
         >
           {({ isSubmitting }: FormikProps<any>) => {
