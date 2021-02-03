@@ -710,6 +710,8 @@ export type Query = {
 
 export type QueryColoniesArgs = {
   where: ByColoniesAddressesFilter;
+  orderBy: Scalars['String'];
+  orderDirection: Scalars['String'];
 };
 
 
@@ -4679,7 +4681,7 @@ export type SubgraphColonyLazyQueryHookResult = ReturnType<typeof useSubgraphCol
 export type SubgraphColonyQueryResult = Apollo.QueryResult<SubgraphColonyQuery, SubgraphColonyQueryVariables>;
 export const SubgraphColoniesDocument = gql`
     query SubgraphColonies($colonyAddresses: [String]!) {
-  colonies(where: {id_in: $colonyAddresses}) {
+  colonies(where: {id_in: $colonyAddresses}, orderBy: "colonyChainId", orderDirection: "asc") {
     id
     colonyChainId
     ensName

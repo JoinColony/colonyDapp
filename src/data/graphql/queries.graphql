@@ -510,7 +510,11 @@ query SubgraphColony($address: String!) {
 }
 
 query SubgraphColonies($colonyAddresses: [String]!) {
-  colonies(where: { id_in: $colonyAddresses }) {
+  colonies(
+    where: { id_in: $colonyAddresses },
+    orderBy: "colonyChainId",
+    orderDirection: "asc"
+  ) {
     id
     colonyChainId
     ensName

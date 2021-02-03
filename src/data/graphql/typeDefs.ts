@@ -296,7 +296,11 @@ export default gql`
     events(skip: Int, first: Int, where: EventsFilter!): [SubgraphEvent!]!
     domains(where: ByColonyFilter!): [SubgraphDomain!]!
     colony(id: String!): SubgraphColony!
-    colonies(where: ByColoniesAddressesFilter!): [SubgraphColony!]!
+    colonies(
+      where: ByColoniesAddressesFilter!
+      orderBy: String!
+      orderDirection: String!
+    ): [SubgraphColony!]!
     processedColony(address: String!): ProcessedColony!
   }
 
