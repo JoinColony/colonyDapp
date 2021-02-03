@@ -72,7 +72,7 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object({
-  tokenName: yup.string().required(),
+  tokenName: yup.string().max(256).required(),
   tokenSymbol: yup
     .string()
     .required()
@@ -159,7 +159,6 @@ const StepCreateToken = ({
                 appearance={{ theme: 'fat' }}
                 label={MSG.labelTokenName}
                 help={MSG.helpTokenName}
-                formattingOptions={{ blocks: [256] }}
                 data-test="defineTokenName"
                 extra={
                   <button
