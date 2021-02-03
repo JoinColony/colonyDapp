@@ -19,7 +19,7 @@
 }
 
 .color {
-  flex-basis: 19px;
+  margin-right: 6px;
 }
 
 .rootText {
@@ -49,4 +49,14 @@
 .main:hover .editButton,
 .editButton:focus-within {
   opacity: 1;
+}
+
+.headingWrapper {
+  width: 200px;
+}
+
+.headingWrapper h4 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -78,10 +78,12 @@ const DomainSelectItem = ({
              */}
             <ColorTag color={color || Color.LightPink} />
           </div>
-          <Heading
-            appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
-            text={name}
-          />
+          <div className={styles.headingWrapper}>
+            <Heading
+              appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
+              text={name}
+            />
+          </div>
           {ethDomainId === ROOT_DOMAIN_ID && (
             <div className={styles.rootText}>(Root)</div>
           )}

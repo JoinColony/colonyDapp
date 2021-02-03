@@ -48,7 +48,9 @@
 }
 
 .heading {
+  composes: inlineEllipsis from '~styles/text.css';
   margin-bottom: 20px;
+  max-width: 250px;
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
   line-height: 24px;

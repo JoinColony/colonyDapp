@@ -18,6 +18,8 @@
 }
 
 .value {
+  composes: inlineEllipsis from '~styles/text.css';
+  max-width: 200px;
   color: color-mod(var(--dark) alpha(85%));
 }
 

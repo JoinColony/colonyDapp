@@ -1,5 +1,5 @@
 .modal {
-  max-height: max-content;
+  max-height: calc(100vh - 28px);
   position: relative;
   z-index: var(--z-index-dialog);
   overflow-y: auto;

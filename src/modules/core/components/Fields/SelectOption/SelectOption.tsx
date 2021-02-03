@@ -80,7 +80,7 @@ const SelectOption = ({
       onMouseEnter={handleItemSelect}
       data-checked={checked}
     >
-      <span title={label}>
+      <span title={label} className={styles.value}>
         {option.children || (
           <>
             {label}
