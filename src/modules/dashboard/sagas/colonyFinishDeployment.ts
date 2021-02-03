@@ -317,7 +317,7 @@ function* colonyRestartDeployment({
           }
         },
         {
-          timeout: 10000,
+          timeout: 30000,
         },
       );
 
