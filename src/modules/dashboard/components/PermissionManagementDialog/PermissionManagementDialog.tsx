@@ -1,7 +1,7 @@
 import { FormikProps } from 'formik';
 import React, { useCallback, useState, useMemo } from 'react';
 import * as yup from 'yup';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
 import { useHistory } from 'react-router-dom';
 
@@ -17,10 +17,12 @@ import { useTransformer } from '~utils/hooks';
 import { ItemDataType } from '~core/OmniPicker';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import PermissionsLabel from '~core/PermissionsLabel';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import {
   useProcessedColonyQuery,
@@ -35,6 +37,7 @@ import {
   getAllRootAccounts,
   getAllUserRolesForDomain,
 } from '../../../transformers';
+import { userHasRole } from '../../../users/checks';
 import PermissionManagementForm from './PermissionManagementForm';
 import { availableRoles } from './constants';
 
@@ -50,6 +53,13 @@ const MSG = defineMessages({
   selectUser: {
     id: 'dashboard.PermissionManagementDialog.selectUser',
     defaultMessage: 'Member',
+  },
+  noPermissionFrom: {
+    id:
+      'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noPermissionFrom',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'You do not have the {firstRoleRequired} and {secondRoleRequired} permissions required to take this action.',
   },
 });
 
@@ -199,6 +209,21 @@ const PermissionManagementDialog = ({
     };
   });
 
+  const userHasFundingPermission = userHasRole(
+    currentUserRoles,
+    ColonyRole.Funding,
+  );
+  const userHasAdministrationPermission = userHasRole(
+    currentUserRoles,
+    ColonyRole.Administration,
+  );
+  const userHasPermission =
+    userHasFundingPermission && userHasAdministrationPermission;
+  const requiredRoles: ColonyRole[] = [
+    ColonyRole.Funding,
+    ColonyRole.Administration,
+  ];
+
   return (
     <Dialog cancel={cancel}>
       {!selectedUser.profile.walletAddress || !colonyData || !domain ? (
@@ -219,7 +244,7 @@ const PermissionManagementDialog = ({
           success={ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS}
           transform={transform}
         >
-          {({ isSubmitting }: FormikProps<any>) => (
+          {({ isSubmitting, isValid }: FormikProps<any>) => (
             <div className={styles.dialogContainer}>
               <DialogSection appearance={{ theme: 'heading' }}>
                 <Heading
@@ -228,6 +253,11 @@ const PermissionManagementDialog = ({
                   textValues={{ domain: domain && domain.name }}
                 />
               </DialogSection>
+              {!userHasPermission && (
+                <DialogSection>
+                  <PermissionRequiredInfo requiredRoles={requiredRoles} />
+                </DialogSection>
+              )}
               <DialogSection appearance={{ theme: 'sidePadding' }}>
                 <div className={styles.singleUserContainer}>
                   <SingleUserPicker
@@ -237,6 +267,7 @@ const PermissionManagementDialog = ({
                     filter={filterUserSelection}
                     onSelected={setSelectedUser}
                     renderAvatar={supRenderAvatar}
+                    disabled={!userHasPermission}
                   />
                 </div>
               </DialogSection>
@@ -249,8 +280,32 @@ const PermissionManagementDialog = ({
                   userInheritedRoles={userInheritedRoles}
                   colonyDomains={colonyData.processedColony.domains}
                   onDomainSelected={setSelectedDomainId}
+                  userHasPermission={userHasPermission}
                 />
               </DialogSection>
+              {!userHasPermission && (
+                <DialogSection appearance={{ theme: 'sidePadding' }}>
+                  <div className={styles.noPermissionFromMessage}>
+                    <FormattedMessage
+                      {...MSG.noPermissionFrom}
+                      values={{
+                        firstRoleRequired: (
+                          <PermissionsLabel
+                            permission={ColonyRole.Funding}
+                            name={{ id: `role.${ColonyRole.Funding}` }}
+                          />
+                        ),
+                        secondRoleRequired: (
+                          <PermissionsLabel
+                            permission={ColonyRole.Administration}
+                            name={{ id: `role.${ColonyRole.Administration}` }}
+                          />
+                        ),
+                      }}
+                    />
+                  </div>
+                </DialogSection>
+              )}
               <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
@@ -263,6 +318,7 @@ const PermissionManagementDialog = ({
                   text={{ id: 'button.confirm' }}
                   type="submit"
                   style={{ width: styles.wideButton }}
+                  disabled={!userHasPermission || !isValid}
                 />
               </DialogSection>
             </div>
