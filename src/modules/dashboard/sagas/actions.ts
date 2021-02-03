@@ -987,8 +987,8 @@ function* editDomainAction({
       yield put(transactionPending(annotateEditDomain.id));
 
       /*
-      * Upload annotationMessage to IPFS
-      */
+       * Upload annotationMessage to IPFS
+       */
       let annotationMessageIpfsHash = null;
       if (annotationMessage) {
         annotationMessageIpfsHash = yield call(

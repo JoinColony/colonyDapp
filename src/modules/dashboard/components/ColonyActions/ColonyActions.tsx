@@ -22,9 +22,11 @@ import {
 import { getActionsListData } from '../../transformers';
 import { getDomainsforMoveFundsActions } from '~utils/events';
 import { useTransformer } from '~utils/hooks';
+import { formatEventName } from '~utils/events';
 import {
   ColonyActions as ColonyActionTypes,
   FormattedAction,
+  ColonyAndExtensionsEvents,
 } from '~types/index';
 
 import styles from './ColonyActions.css';
@@ -102,24 +104,6 @@ const ColonyActions = ({
     },
   });
 
-  /* filtering at this level as it is more performant
-  & we reduce the number of events passing through transformers */
-  const uniqueEvents = useMemo(() => {
-    /* additional check for types to work */
-    if (data === undefined) {
-      return [];
-    }
-
-    return data.events.filter((event) => {
-      /* filtering out events that are already shown in `oneTxPayments` */
-      const isTransactionRepeated = data?.oneTxPayments.some(
-        (paymentAction) =>
-          paymentAction.transaction?.hash === event.transaction?.hash,
-      );
-      return !isTransactionRepeated;
-    });
-  }, [data]);
-
   const {
     data: commentCount,
     loading: commentCountLoading,
@@ -127,9 +111,35 @@ const ColonyActions = ({
     variables: { colonyAddress },
   });
 
+  const uniqueEvents = useMemo(
+    () =>
+      (data?.events || []).reduce((acc, event) => {
+        if (
+          formatEventName(event.name) ===
+          ColonyAndExtensionsEvents.DomainMetadata
+        ) {
+          const linkedDomainAddedEvent = (data?.events || []).find(
+            (e) =>
+              formatEventName(e.name) ===
+                ColonyAndExtensionsEvents.DomainAdded &&
+              e.transaction?.hash === event.transaction?.hash,
+          );
+          if (linkedDomainAddedEvent) return acc;
+        }
+        /* filtering out events that are already shown in `oneTxPayments` */
+        const isTransactionRepeated = data?.oneTxPayments.some(
+          (paymentAction) =>
+            paymentAction.transaction?.hash === event.transaction?.hash,
+        );
+        if (isTransactionRepeated) return acc;
+
+        return [...acc, event];
+      }, []),
+    [data],
+  );
+
   const actions = useTransformer(getActionsListData, [
-    /* additional check for types to work */
-    data === undefined ? data : { ...data, events: uniqueEvents },
+    (data && { ...data, events: uniqueEvents }) || data,
     commentCount?.transactionMessagesCount,
   ]);
 
