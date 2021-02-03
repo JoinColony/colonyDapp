@@ -26,9 +26,6 @@ import {
   SubgraphColonyMetadataQueryVariables,
   SubgraphColonyMetadataDocument,
   getNetworkContracts,
-  ColonyRolesDocument,
-  ColonyRolesQuery,
-  ColonyRolesQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -1408,14 +1405,6 @@ function* createSetUserRolesAction({
       fetchPolicy: 'network-only',
     });
 
-    // Refresh the colony roles in cache
-    yield apolloClient.query<ColonyRolesQuery, ColonyRolesQueryVariables>({
-      query: ColonyRolesDocument,
-      variables: {
-        address: colonyAddress,
-      },
-      fetchPolicy: 'network-only',
-    });
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS,
       meta,
