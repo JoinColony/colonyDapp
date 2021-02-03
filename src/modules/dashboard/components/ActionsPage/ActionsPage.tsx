@@ -8,6 +8,10 @@ import Button from '~core/Button';
 import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import {
+  parseDomainMetadata,
+} from '~utils/colonyActions';
+
 import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
@@ -25,9 +29,11 @@ import {
   useColonySingleDomainQuery,
 } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { ColonyActions } from '~types/index';
+import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { useDataFetcher } from '~utils/hooks';
+import { ipfsDataFetcher } from '../../../core/fetchers';
 
 import MultisigWidget from './MultisigWidget';
 import DetailsWidget from './DetailsWidget';
@@ -109,6 +115,12 @@ const ActionsPage = () => {
       error: colonyActionError,
     },
   ] = useColonyActionLazyQuery();
+  const domainMetadataEvent = (colonyActionData?.colonyAction?.events || []).find(event => event.name === ColonyAndExtensionsEvents.DomainMetadata);
+  const { data: metadataJSON } = useDataFetcher(
+    ipfsDataFetcher,
+    [domainMetadataEvent?.values.metadata as string],
+    [domainMetadataEvent?.values.metadata],
+  );
 
   const [
     fetchRecipientProfile,
@@ -280,7 +292,6 @@ const ActionsPage = () => {
     processedColony: { colonyAddress, domains },
     processedColony,
   } = colonyData;
-
   /*
    * Users, both initiator and recipient
    */
@@ -298,6 +309,12 @@ const ActionsPage = () => {
   const {
     tokenInfo: { decimals, symbol },
   } = tokenData;
+
+  let domainMetadata;
+  if (metadataJSON) {
+    const {domainName, domainColor, domainPurpose} = parseDomainMetadata(metadataJSON);
+    domainMetadata = {name: domainName,  color: domainColor, description: domainPurpose}
+  }
 
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
@@ -327,7 +344,7 @@ const ActionsPage = () => {
     tokenSymbol: <span>{symbol || '???'}</span>,
     decimals: getTokenDecimalsWithFallback(decimals),
     fromDomain:
-      (domains.find(
+      domainMetadata || (domains.find(
         ({ ethDomainId }) => ethDomainId === fromDomain,
       ) as OneDomain) || fallbackFromDomain?.colonyDomain,
     toDomain:
