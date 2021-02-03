@@ -68,7 +68,7 @@ const EditDomainDialogForm = ({
   isSubmitting,
   isValid,
   setFieldValue,
-  values: { domainId },
+  values: { domainId, domainName },
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
 
@@ -188,7 +188,7 @@ const EditDomainDialogForm = ({
                     name={{ id: `role.${ColonyRole.Architecture}` }}
                   />
                 ),
-                domain: 'domainName',
+                domain: domainName,
               }}
             />
           </div>
