@@ -60,7 +60,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CreateUserWizard.StepUserName';
 
 const validationSchema = yup.object({
-  username: yup.string().required().ensAddress(),
+  username: yup.string().required().max(100).ensAddress(),
 });
 
 const StepUserName = ({ wizardValues, nextStep }: Props) => {
@@ -145,8 +145,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                   statusValues={{
                     normalized,
                   }}
-                  formattingOptions={{ lowercase: true }}
-                  data-test="claimUsernameInput"
+                  formattingOptions={{ lowercase: true, blocks: [100] }}
                   disabled={!isNetworkAllowed}
                 />
                 <div className={styles.buttons}>
