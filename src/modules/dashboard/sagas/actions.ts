@@ -39,6 +39,7 @@ import { ipfsUpload } from '../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionAddParams,
+  transactionPending,
 } from '../../core/actionCreators';
 import { updateColonyDisplayCache } from './utils';
 
@@ -903,32 +904,6 @@ function* editDomainAction({
       throw new Error('A domain id is required to edit domain');
     }
 
-    /*
-     * Upload domain metadata to IPFS
-     */
-    let domainMetadataIpfsHash = null;
-    domainMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        domainName,
-        domainColor,
-        domainPurpose,
-      }),
-    );
-
-    /*
-     * Upload annotationMessage to IPFS
-     */
-    let annotationMessageIpfsHash = null;
-    if (annotationMessage) {
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
-
     txChannel = yield call(getTxChannel, metaId);
 
     const batchKey = 'editDomainAction';
@@ -954,7 +929,7 @@ function* editDomainAction({
       context: ClientType.ColonyClient,
       methodName: 'editDomainWithProofs',
       identifier: colonyAddress,
-      params: [domainId, domainMetadataIpfsHash],
+      params: [],
       ready: false,
     });
 
@@ -976,6 +951,28 @@ function* editDomainAction({
       );
     }
 
+    yield put(transactionPending(editDomain.id));
+
+    /*
+     * Upload domain metadata to IPFS
+     */
+    let domainMetadataIpfsHash = null;
+    domainMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        domainName,
+        domainColor,
+        domainPurpose,
+      }),
+    );
+
+    yield put(
+      transactionAddParams(editDomain.id, [
+        domainId,
+        (domainMetadataIpfsHash as unknown) as string,
+      ]),
+    );
+
     yield put(transactionReady(editDomain.id));
 
     const {
@@ -987,6 +984,21 @@ function* editDomainAction({
     yield takeFrom(editDomain.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateEditDomain.id));
+
+      /*
+      * Upload annotationMessage to IPFS
+      */
+      let annotationMessageIpfsHash = null;
+      if (annotationMessage) {
+        annotationMessageIpfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({
+            annotationMessage,
+          }),
+        );
+      }
+
       yield put(
         transactionAddParams(annotateEditDomain.id, [
           txHash,
