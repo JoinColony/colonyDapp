@@ -148,17 +148,13 @@ const EditDomainDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection>
-        <div className={styles.nameAndColorContainer}>
-          <div className={styles.domainName}>
-            <Input
-              label={MSG.name}
-              name="domainName"
-              appearance={{ colorSchema: 'grey', theme: 'fat' }}
-              disabled={!canEditDomain}
-              maxLength={20}
-            />
-          </div>
-        </div>
+        <Input
+          label={MSG.name}
+          name="domainName"
+          appearance={{ colorSchema: 'grey', theme: 'fat' }}
+          disabled={!canEditDomain}
+          maxLength={20}
+        />
       </DialogSection>
       <DialogSection>
         <Input
