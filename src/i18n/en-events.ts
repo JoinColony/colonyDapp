@@ -9,7 +9,6 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.TokensMinted} {{initiator} minted {amount} {tokenSymbol} to {recipient}}
       ${ColonyAndExtensionsEvents.DomainAdded} {{initiator} added Team: {fromDomain}}
       ${ColonyAndExtensionsEvents.ColonyUpgraded} {This colony has upgraded to {newVersion}}
-      ${ColonyAndExtensionsEvents.ColonyRoleSet} {{initiator} assigned the {role} permission in the {toDomain} team to {recipient}}
       ${ColonyAndExtensionsEvents.ColonyRoleSet} {{initiator} {role} permission in the {toDomain} team to {recipient}}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
