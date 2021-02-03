@@ -59,11 +59,6 @@ interface Props {
   colonyAddress: string;
 }
 
-type Member = AnyUser & {
-  roles: ColonyRole[];
-  directRoles: ColonyRole[];
-};
-
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const supRenderAvatar = (address: string, item: ItemDataType<AnyUser>) => (
@@ -152,7 +147,7 @@ const PermissionManagementDialog = ({
       })),
       mergePayload({
         colonyAddress,
-        colonyName: colonyData?.colony.colonyName,
+        colonyName: colonyData?.processedColony.colonyName,
       }),
       withMeta({ history }),
     ),

@@ -413,15 +413,18 @@ const getSetUserRolesActionValues = async (
   }));
 
   const {
+    address,
     values: { agent, user, domainId },
   } = setUserRolesEvents[0];
 
   const userRoleAction: {
+    address: Address;
     recipient: Address;
     roles: ActionUserRoles[];
     fromDomain: number;
     actionInitiator?: string;
   } = {
+    address,
     recipient: user,
     roles,
     fromDomain: parseInt(domainId.toString(), 10),
