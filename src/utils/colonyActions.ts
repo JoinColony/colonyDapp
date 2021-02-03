@@ -89,7 +89,9 @@ export const getValuesForActionType = (
       return {
         initiator: argsObj.agent,
         toDomain: argsObj.domainId,
-        recipient: argsObj.who,
+        recipient: argsObj.user,
+        role: argsObj.role,
+        setTo: argsObj.setTo,
       };
     }
     default: {
