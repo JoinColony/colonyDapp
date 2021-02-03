@@ -159,6 +159,7 @@ const StepCreateToken = ({
                 appearance={{ theme: 'fat' }}
                 label={MSG.labelTokenName}
                 help={MSG.helpTokenName}
+                formattingOptions={{ blocks: [256] }}
                 data-test="defineTokenName"
                 extra={
                   <button
