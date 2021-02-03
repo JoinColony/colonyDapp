@@ -37,6 +37,7 @@ import {
   transactionReady,
   transactionPending,
   transactionAddParams,
+  transactionPending,
 } from '../../core/actionCreators';
 import { updateColonyDisplayCache } from './utils';
 
