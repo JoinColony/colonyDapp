@@ -85,6 +85,13 @@ export const getValuesForActionType = (
         metadata: argsObj.metadata,
       };
     }
+    case ColonyActions.SetUserRoles: {
+      return {
+        initiator: argsObj.agent,
+        toDomain: argsObj.domainId,
+        recipient: argsObj.who,
+      };
+    }
     default: {
       return {};
     }
