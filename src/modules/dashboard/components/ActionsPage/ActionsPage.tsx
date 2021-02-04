@@ -8,9 +8,8 @@ import Button from '~core/Button';
 import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import {
-  parseDomainMetadata,
-} from '~utils/colonyActions';
+import { EventValue } from '~data/resolvers/colonyActions';
+import { parseDomainMetadata } from '~utils/colonyActions';
 
 import ActionsPageFeed, {
   ActionsPageFeedItem,
@@ -115,12 +114,15 @@ const ActionsPage = () => {
       error: colonyActionError,
     },
   ] = useColonyActionLazyQuery();
-  const domainMetadataEvent = (colonyActionData?.colonyAction?.events || []).find(event => event.name === ColonyAndExtensionsEvents.DomainMetadata);
+  const domainMetadataEvent = (
+    colonyActionData?.colonyAction?.events || []
+  ).find((event) => event.name === ColonyAndExtensionsEvents.DomainMetadata);
+  const values = (domainMetadataEvent?.values as unknown) as EventValue;
 
   const { data: metadataJSON } = useDataFetcher(
     ipfsDataFetcher,
-    [domainMetadataEvent?.values.metadata as string],
-    [domainMetadataEvent?.values.metadata],
+    [values?.metadata],
+    [values?.metadata],
   );
 
   const [
@@ -313,8 +315,15 @@ const ActionsPage = () => {
 
   let domainMetadata;
   if (metadataJSON) {
-    const {domainName, domainColor, domainPurpose} = parseDomainMetadata(metadataJSON);
-    domainMetadata = {name: domainName,  color: domainColor, description: domainPurpose, ethDomainId: fromDomain}
+    const { domainName, domainColor, domainPurpose } = parseDomainMetadata(
+      metadataJSON,
+    );
+    domainMetadata = {
+      name: domainName,
+      color: domainColor,
+      description: domainPurpose,
+      ethDomainId: fromDomain,
+    };
   }
 
   /*
@@ -345,9 +354,11 @@ const ActionsPage = () => {
     tokenSymbol: <span>{symbol || '???'}</span>,
     decimals: getTokenDecimalsWithFallback(decimals),
     fromDomain:
-      domainMetadata || (domains.find(
+      domainMetadata ||
+      (domains.find(
         ({ ethDomainId }) => ethDomainId === fromDomain,
-      ) as OneDomain) || fallbackFromDomain?.colonyDomain,
+      ) as OneDomain) ||
+      fallbackFromDomain?.colonyDomain,
     toDomain:
       (domains.find(
         ({ ethDomainId }) => ethDomainId === toDomain,

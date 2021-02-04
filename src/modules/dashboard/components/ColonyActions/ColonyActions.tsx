@@ -20,9 +20,9 @@ import {
   ActionsSortSelectOptions,
 } from '../shared/actionsSort';
 import { getActionsListData } from '../../transformers';
-import { getDomainsforMoveFundsActions } from '~utils/events';
+import { getDomainsforMoveFundsActions, formatEventName } from '~utils/events';
 import { useTransformer } from '~utils/hooks';
-import { formatEventName } from '~utils/events';
+
 import {
   ColonyActions as ColonyActionTypes,
   FormattedAction,

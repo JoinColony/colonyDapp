@@ -17,9 +17,7 @@ import { useUser, Colony } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { FormattedAction, ColonyActions } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
-import {
-  parseDomainMetadata,
-} from '~utils/colonyActions';
+import { parseDomainMetadata } from '~utils/colonyActions';
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 import { ClickHandlerProps } from './ActionsList';
@@ -71,7 +69,6 @@ const ActionsListItem = ({
     commentCount = 0,
     metadata,
   },
-  item,
   colony,
   handleOnClick,
 }: Props) => {

@@ -17,7 +17,7 @@ import {
   Address,
 } from '~types/index';
 
-interface EventValue {
+export interface EventValue {
   agent: Address;
   domainId: BigNumberish;
   paymentId: BigNumberish;

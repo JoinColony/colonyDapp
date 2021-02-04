@@ -80,10 +80,12 @@ const EditDomainDialogForm = ({
   const domainOptions = useMemo(
     () =>
       sortBy(
-        domains.filter(({ethDomainId}) => ethDomainId !== ROOT_DOMAIN_ID).map(({ name, ethDomainId }) => ({
-          value: ethDomainId.toString(),
-          label: name,
-        })),
+        domains
+          .filter(({ ethDomainId }) => ethDomainId !== ROOT_DOMAIN_ID)
+          .map(({ name, ethDomainId }) => ({
+            value: ethDomainId.toString(),
+            label: name,
+          })),
         ['value'],
       ),
 
@@ -91,7 +93,8 @@ const EditDomainDialogForm = ({
   );
 
   const hasRoles = canArchitect(allUserRoles);
-  const canEditDomain = hasRegisteredProfile && hasRoles && Object.keys(domainOptions).length > 0;
+  const canEditDomain =
+    hasRegisteredProfile && hasRoles && Object.keys(domainOptions).length > 0;
 
   const handleDomainChange = (selectedDomainId) => {
     const selectedDomain = domains.find(
