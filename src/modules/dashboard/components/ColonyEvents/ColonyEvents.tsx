@@ -7,13 +7,15 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { Select, Form } from '~core/Fields';
 
 import {
-  EventFilterOptions,
-  EventFilterSelectOptions,
-} from '../shared/eventsFilter';
+  EventsSortOptions,
+  EventsSortSelectOptions,
+} from '../shared/eventsSort';
 import { immutableSort } from '~utils/arrays';
 import { Colony, useSubgraphEventsQuery } from '~data/index';
-import { getEventsListData } from '../../transformers';
+import { ColonyAndExtensionsEvents } from '~types/index';
 import { useTransformer } from '~utils/hooks';
+
+import { getEventsListData } from '../../transformers';
 
 import ColonyEventsListItem from './ColonyEventsListItem';
 
@@ -23,6 +25,7 @@ const displayName = 'dashboard.ColonyEvents';
 
 interface Props {
   colony: Colony;
+  ethDomainId?: number;
 }
 
 const MSG = defineMessages({
@@ -32,9 +35,13 @@ const MSG = defineMessages({
   },
 });
 
-const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
-  const [eventsFilter, setEventsFilter] = useState<string>(
-    EventFilterOptions.NEWEST,
+const ColonyEvents = ({
+  colony: { colonyAddress },
+  colony,
+  ethDomainId,
+}: Props) => {
+  const [eventsSort, setEventsSort] = useState<string>(
+    EventsSortOptions.NEWEST,
   );
 
   const {
@@ -55,29 +62,51 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
     (first: any, second: any) => {
       if (!(first && second)) return 0;
 
-      return eventsFilter === EventFilterOptions.NEWEST
+      return eventsSort === EventsSortOptions.NEWEST
         ? second.createdAt - first.createdAt
         : first.createdAt - second.createdAt;
     },
-    [eventsFilter],
+    [eventsSort],
   );
 
-  const filteredEvents = useMemo(
+  /* Needs to be tested when all event types are wirde up & reflected in the list */
+  const filtereEvents = useMemo(
     () =>
-      immutableSort(events, sort).map((event) => {
+      !ethDomainId
+        ? events
+        : events.filter((event) => {
+            const displayValues = JSON.parse(event.displayValues);
+            return (
+              Number(event.fundingPot) === ethDomainId ||
+              Number(displayValues.fromPot) === ethDomainId ||
+              Number(event.domainId) === ethDomainId ||
+              /* when transfering funds the list shows both sender & recipient */
+              (event.eventName ===
+                ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots &&
+                Number(displayValues.toPot) === ethDomainId) ||
+              /* when no specific domain in the event it is displayed in Root */
+              (ethDomainId === 1 && event.domainId === undefined)
+            );
+          }),
+    [ethDomainId, events],
+  );
+
+  const sortedEvents = useMemo(
+    () =>
+      immutableSort(filtereEvents, sort).map((event) => {
         return {
           ...event,
           userAddress: event.userAddress || event.fromAddress,
         };
       }),
-    [events, sort],
+    [filtereEvents, sort],
   );
 
   return (
     <div>
       <UnclaimedTransfers colony={colony} />
       <Form
-        initialValues={{ filter: EventFilterOptions.NEWEST }}
+        initialValues={{ filter: EventsSortOptions.NEWEST }}
         onSubmit={() => undefined}
       >
         <div className={styles.filter}>
@@ -86,17 +115,17 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
             elementOnly
             label={MSG.labelFilter}
             name="filter"
-            options={EventFilterSelectOptions}
-            onChange={setEventsFilter}
+            options={EventsSortSelectOptions}
+            onChange={setEventsSort}
             placeholder={MSG.labelFilter}
           />
         </div>
       </Form>
-      {subgraphEventsLoading && !filteredEvents ? (
+      {subgraphEventsLoading && !sortedEvents ? (
         <SpinnerLoader />
       ) : (
         <ActionsList
-          items={filteredEvents}
+          items={sortedEvents}
           colony={colony}
           itemComponent={ColonyEventsListItem}
         />
