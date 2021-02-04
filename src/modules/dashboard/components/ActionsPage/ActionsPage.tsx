@@ -313,7 +313,7 @@ const ActionsPage = () => {
   let domainMetadata;
   if (metadataJSON) {
     const {domainName, domainColor, domainPurpose} = parseDomainMetadata(metadataJSON);
-    domainMetadata = {name: domainName,  color: domainColor, description: domainPurpose}
+    domainMetadata = {name: domainName,  color: domainColor, description: domainPurpose, ethDomainId: fromDomain}
   }
 
   /*
