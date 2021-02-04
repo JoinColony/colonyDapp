@@ -82,6 +82,10 @@ const ColonyEventsListItem = ({
     return [offsetSkid, removeValueUnits(popoverDistance)];
   }, []);
 
+  const displayValuesObject = useMemo(() => JSON.parse(displayValues), [
+    displayValues,
+  ]);
+
   const eventMessageValues = {
     eventName,
     agent: (
@@ -108,6 +112,8 @@ const ColonyEventsListItem = ({
     metadata,
     tokenAddress,
     paymentId,
+    fromPot: displayValuesObject.fromPot,
+    toPot: displayValuesObject.toPot,
     displayValues,
   };
 

@@ -42,6 +42,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.PaymentFinalized} {{agent} finalized payment with id {paymentId}}
       ${ColonyAndExtensionsEvents.PayoutClaimed} {{agent} claimed a payout of {amount} {tokenSymbol} from funding pot {fundingPot}}
       ${ColonyAndExtensionsEvents.ColonyMetadata} {{agent} changed Colony metadata to {metadata}}
+      ${ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots} {{agent} transferred {amount} {tokenSymbol} from pot {fromPot} to pot {toPot}}
       other {{eventName} emmited with values: {displayValues}}
     }`,
 };
