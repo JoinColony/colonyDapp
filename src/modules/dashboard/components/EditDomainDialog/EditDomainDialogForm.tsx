@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { ColonyRole } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { FormikProps } from 'formik';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
@@ -76,12 +76,11 @@ const EditDomainDialogForm = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canEditDomain = hasRegisteredProfile && canArchitect(allUserRoles);
 
   const domainOptions = useMemo(
     () =>
       sortBy(
-        domains.map(({ name, ethDomainId }) => ({
+        domains.filter(({ethDomainId}) => ethDomainId !== ROOT_DOMAIN_ID).map(({ name, ethDomainId }) => ({
           value: ethDomainId.toString(),
           label: name,
         })),
@@ -90,6 +89,9 @@ const EditDomainDialogForm = ({
 
     [domains],
   );
+
+  const hasRoles = canArchitect(allUserRoles);
+  const canEditDomain = hasRegisteredProfile && hasRoles && Object.keys(domainOptions).length > 0;
 
   const handleDomainChange = (selectedDomainId) => {
     const selectedDomain = domains.find(
@@ -121,7 +123,7 @@ const EditDomainDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
-      {!canEditDomain && (
+      {!hasRoles && (
         <DialogSection>
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Architecture]} />
         </DialogSection>
@@ -172,7 +174,7 @@ const EditDomainDialogForm = ({
           disabled={!canEditDomain}
         />
       </DialogSection>
-      {!canEditDomain && (
+      {!hasRoles && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionFromMessage}>
             <FormattedMessage

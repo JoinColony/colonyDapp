@@ -41,11 +41,11 @@ const EditDomainDialog = ({
   cancel,
   close,
   colony,
-  colony: { colonyAddress, colonyName },
-  selectedDomainId = ROOT_DOMAIN_ID.toString(),
+  colony: { colonyAddress, colonyName, domains },
+  selectedDomainId,
 }: Props) => {
   const history = useHistory();
-
+  
   const validationSchema = yup.object().shape({
     domainName: yup.string(),
     domainId: yup.number().required(),
@@ -65,7 +65,7 @@ const EditDomainDialog = ({
     ),
     [],
   );
-
+  
   return (
     <ActionForm
       initialValues={{
@@ -73,7 +73,7 @@ const EditDomainDialog = ({
         domainColor: undefined,
         domainPurpose: undefined,
         annotationMessage: undefined,
-        domainId: selectedDomainId,
+        domainId: selectedDomainId || domains.find(({ethDomainId}) => ethDomainId !== ROOT_DOMAIN_ID)?.ethDomainId.toString(),
       }}
       submit={ActionTypes.COLONY_ACTION_DOMAIN_EDIT}
       error={ActionTypes.COLONY_ACTION_DOMAIN_EDIT_ERROR}
