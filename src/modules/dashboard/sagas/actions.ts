@@ -1393,6 +1393,17 @@ function* createSetUserRolesAction({
     });
 
     yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield apolloClient.query<
       SubgraphActionsQuery,
       SubgraphActionsQueryVariables
     >({
