@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 
-import TokenEditDialog from '~core/TokenEditDialog';
 import {
   useSetUserTokensMutation,
   UserTokensDocument,
@@ -9,11 +8,15 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 
+import DialogForm from './UserTokenEditDialogForm';
+
 interface Props {
   cancel: () => void;
   close: () => void;
   walletAddress: Address;
 }
+
+const displayName = 'dashboard.Wallet.UserTokenEditDialog';
 
 const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
   const [setUserTokensMutation] = useSetUserTokensMutation({
@@ -41,16 +44,7 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
   );
 
   return (
-    /*
-     * @TODO This needs to be checked but most likely it doesn work
-     * This is because we changed the logic for the TokenEditDilog which now
-     * only supports colonies
-     *
-     * Most likely we'll have to retrieve the old Token Edit Dialog, just for
-     * the user and wire it up for launch
-     */
-    // @ts-ignore
-    <TokenEditDialog
+    <DialogForm
       cancel={cancel}
       close={close}
       tokensList={userTokens}
@@ -58,5 +52,7 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
     />
   );
 };
+
+UserTokenEditDialog.displayName = displayName;
 
 export default UserTokenEditDialog;

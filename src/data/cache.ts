@@ -29,6 +29,9 @@ export default new InMemoryCache({
         processedColonies: {
           merge: false,
         },
+        tokens: {
+          merge: false,
+        },
       },
     },
     Query: {

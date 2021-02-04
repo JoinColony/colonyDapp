@@ -910,6 +910,11 @@ export type UserReputationArgs = {
   domainId?: Maybe<Scalars['Int']>;
 };
 
+
+export type UserTokensArgs = {
+  walletAddress: Scalars['String'];
+};
+
 export type UserProfile = {
   username?: Maybe<Scalars['String']>;
   avatarHash?: Maybe<Scalars['String']>;
@@ -1034,11 +1039,6 @@ export type Token = {
   verified: Scalars['Boolean'];
   balance: Scalars['String'];
   balances: Array<DomainBalance>;
-};
-
-
-export type TokenBalanceArgs = {
-  walletAddress: Scalars['String'];
 };
 
 
@@ -3686,14 +3686,14 @@ export const UserTokensDocument = gql`
   user(address: $address) {
     id
     tokenAddresses
-    tokens @client {
+    tokens(walletAddress: $address) @client {
       id
       address
       iconHash
       decimals
       name
       symbol
-      balance(walletAddress: $address)
+      balance
     }
   }
 }
