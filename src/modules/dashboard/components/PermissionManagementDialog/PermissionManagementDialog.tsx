@@ -209,20 +209,11 @@ const PermissionManagementDialog = ({
     };
   });
 
-  const userHasFundingPermission = userHasRole(
+  const userHasPermission = userHasRole(
     currentUserRoles,
-    ColonyRole.Funding,
+    ColonyRole.Architecture,
   );
-  const userHasAdministrationPermission = userHasRole(
-    currentUserRoles,
-    ColonyRole.Administration,
-  );
-  const userHasPermission =
-    userHasFundingPermission && userHasAdministrationPermission;
-  const requiredRoles: ColonyRole[] = [
-    ColonyRole.Funding,
-    ColonyRole.Administration,
-  ];
+  const requiredRoles: ColonyRole[] = [ColonyRole.Architecture];
 
   return (
     <Dialog cancel={cancel}>
