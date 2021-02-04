@@ -104,7 +104,7 @@ const DomainSelectItem = ({
         )}
       </div>
       <div className={styles.editButtonCol}>
-        {ethDomainId !== 0 && (
+        {ethDomainId !== 0 && ethDomainId !== ROOT_DOMAIN_ID && (
           // Hide for `All Domains` option
           <div className={styles.editButton}>
             <Button
