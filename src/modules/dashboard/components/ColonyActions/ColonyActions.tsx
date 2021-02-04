@@ -1,7 +1,8 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
+import { ContextModule, TEMP_getContext } from '~context/index';
 import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
@@ -19,6 +20,7 @@ import {
   ActionsSortSelectOptions,
 } from '../shared/actionsSort';
 import { getActionsListData } from '../../transformers';
+import { getDomainsforMoveFundsActions } from '~utils/events';
 import { useTransformer } from '~utils/hooks';
 import {
   ColonyActions as ColonyActionTypes,
@@ -75,9 +77,18 @@ const ColonyActions = ({
 
   const [dataPage, setDataPage] = useState<number>(1);
 
+  const [formattedActions, setFormattedActions] = useState<FormattedAction[]>(
+    [],
+  );
+
   const ITEMS_PER_PAGE = 10;
 
   const history = useHistory();
+
+  const colonyManager = useMemo(
+    () => TEMP_getContext(ContextModule.ColonyManager),
+    [],
+  );
 
   const { data, loading: paymentActionsLoading } = useSubgraphActionsQuery({
     variables: {
@@ -91,6 +102,24 @@ const ColonyActions = ({
     },
   });
 
+  /* filtering at this level as it is more performant
+  & we reduce the number of events passing through transformers */
+  const uniqueEvents = useMemo(() => {
+    /* additional check for types to work */
+    if (data === undefined) {
+      return [];
+    }
+
+    return data.events.filter((event) => {
+      /* filtering out events that are already shown in `oneTxPayments` */
+      const isTransactionRepeated = data?.oneTxPayments.some(
+        (paymentAction) =>
+          paymentAction.transaction?.hash === event.transaction?.hash,
+      );
+      return !isTransactionRepeated;
+    });
+  }, [data]);
+
   const {
     data: commentCount,
     loading: commentCountLoading,
@@ -99,16 +128,30 @@ const ColonyActions = ({
   });
 
   const actions = useTransformer(getActionsListData, [
-    data,
+    /* additional check for types to work */
+    data === undefined ? data : { ...data, events: uniqueEvents },
     commentCount?.transactionMessagesCount,
   ]);
+
+  useEffect(() => {
+    if (
+      formattedActions.length === 0 ||
+      actions?.length !== formattedActions.length
+    ) {
+      getDomainsforMoveFundsActions(
+        colonyAddress,
+        actions,
+        colonyManager,
+      ).then((result) => setFormattedActions(result));
+    }
+  }, [actions, colonyAddress, colonyManager, formattedActions]);
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */
   const filteredActions = useMemo(
     () =>
       !ethDomainId
-        ? actions
-        : actions.filter(
+        ? formattedActions
+        : formattedActions.filter(
             (action) =>
               Number(action.fromDomain) === ethDomainId ||
               /* when no specific domain in the action it is displayed in Root */
@@ -117,7 +160,7 @@ const ColonyActions = ({
               (action.actionType === ColonyActionTypes.MoveFunds &&
                 Number(action.toDomain) === ethDomainId),
           ),
-    [ethDomainId, actions],
+    [ethDomainId, formattedActions],
   );
 
   const handleDataPagination = useCallback(() => {
