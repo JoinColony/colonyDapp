@@ -21,32 +21,32 @@ import styles from './UserTokenEditDialogForm.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.title',
+    id: 'dashboard.Wallet.UserTokenEditDialogForm.title',
     defaultMessage: 'Manage tokens',
   },
   errorAddingToken: {
-    id:
-      'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.errorAddingToken',
+    id: 'dashboard.Wallet.UserTokenEditDialogForm.errorAddingToken',
     defaultMessage: `Sorry, there was an error adding this token. Learn more about tokens at: https://colony.io.`,
   },
   fieldLabel: {
-    id: 'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.fieldLabel',
+    id: 'dashboard.Wallet.UserTokenEditDialogForm.fieldLabel',
     defaultMessage: 'Contract address',
   },
   noTokensText: {
-    id: 'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.noTokensText',
+    id: 'dashboard.Wallet.UserTokenEditDialogForm.noTokensText',
     defaultMessage: `It looks no tokens have been added yet. Get started using the form above.`,
   },
   notListedToken: {
-    id: 'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.notListedToken',
+    id: 'dashboard.Wallet.UserTokenEditDialogForm.notListedToken',
     defaultMessage: `If token is not listed above, please add any ERC20 compatibile token contract address below.`,
   },
   notRegisteredUser: {
-    id:
-      'dashboard.UserTokenEditDialog.UserTokenEditDialogForm.notRegisteredUser',
+    id: 'dashboard.Wallet.UserTokenEditDialogForm.notRegisteredUser',
     defaultMessage: `Please sign in or register to edit tokens`,
   },
 });
+
+const displayName = 'dashboard.Wallet.UserTokenEditDialogForm';
 
 interface Props {
   updateTokens: (payload: { tokenAddresses: Address[] }) => Promise<any>;
@@ -218,5 +218,7 @@ const UserTokenEditDialogForm = ({
     </Dialog>
   );
 };
+
+UserTokenEditDialogForm.displayName = displayName;
 
 export default UserTokenEditDialogForm;
