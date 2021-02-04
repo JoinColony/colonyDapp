@@ -4286,7 +4286,7 @@ export const SubgraphActionsDocument = gql`
       }
     }
   }
-  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)"]}) {
+  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "ColonyRoleSet(address, address, uint256, uint8, bool)"]}) {
     id
     transaction {
       hash: id
