@@ -116,6 +116,7 @@ const ActionsPage = () => {
     },
   ] = useColonyActionLazyQuery();
   const domainMetadataEvent = (colonyActionData?.colonyAction?.events || []).find(event => event.name === ColonyAndExtensionsEvents.DomainMetadata);
+
   const { data: metadataJSON } = useDataFetcher(
     ipfsDataFetcher,
     [domainMetadataEvent?.values.metadata as string],

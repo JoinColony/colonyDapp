@@ -122,6 +122,7 @@ export interface FormattedAction {
   transactionHash: string;
   createdAt: Date;
   commentCount: number;
+  metadata?: string;
 }
 
 export interface FormattedEvent {

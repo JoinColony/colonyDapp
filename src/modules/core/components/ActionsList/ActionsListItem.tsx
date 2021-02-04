@@ -15,7 +15,12 @@ import { getMainClasses, removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useUser, Colony } from '~data/index';
 import { createAddress } from '~utils/web3';
-import { FormattedAction } from '~types/index';
+import { FormattedAction, ColonyActions } from '~types/index';
+import { useDataFetcher } from '~utils/hooks';
+import {
+  parseDomainMetadata,
+} from '~utils/colonyActions';
+import { ipfsDataFetcher } from '../../../core/fetchers';
 
 import { ClickHandlerProps } from './ActionsList';
 
@@ -64,11 +69,19 @@ const ActionsListItem = ({
     transactionHash,
     createdAt,
     commentCount = 0,
+    metadata,
   },
+  item,
   colony,
   handleOnClick,
 }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
+
+  const { data: metadataJSON } = useDataFetcher(
+    ipfsDataFetcher,
+    [metadata as string],
+    [metadata],
+  );
 
   const initiatorUserProfile = useUser(createAddress(initiator));
   const recipientAddress = createAddress(recipient);
@@ -93,6 +106,12 @@ const ActionsListItem = ({
     () => handleOnClick && handleOnClick({ id, transactionHash }),
     [handleOnClick, id, transactionHash],
   );
+
+  let domainName;
+  if (metadataJSON && actionType === ColonyActions.EditDomain) {
+    const domainObject = parseDomainMetadata(metadataJSON);
+    domainName = domainObject.domainName;
+  }
 
   return (
     <li>
@@ -175,7 +194,7 @@ const ActionsListItem = ({
                 ),
                 tokenSymbol: symbol,
                 decimals: getTokenDecimalsWithFallback(decimals),
-                fromDomain: fromDomain?.name || '',
+                fromDomain: domainName || fromDomain?.name || '',
                 toDomain: toDomain?.name || '',
               }}
             />
@@ -191,8 +210,8 @@ const ActionsListItem = ({
             </FormattedDateParts>
             {fromDomain && (
               <span className={styles.domain}>
-                {fromDomain.name ? (
-                  fromDomain.name
+                {domainName || fromDomain.name ? (
+                  domainName || fromDomain.name
                 ) : (
                   <FormattedMessage
                     {...MSG.domain}

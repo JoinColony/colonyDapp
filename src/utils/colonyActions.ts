@@ -81,6 +81,7 @@ export const getValuesForActionType = (
       return {
         initiator: argsObj.agent,
         fromDomain: argsObj.domainId,
+        metadata: argsObj.metadata,
       };
     }
     default: {
