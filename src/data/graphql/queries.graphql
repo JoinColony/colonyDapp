@@ -388,7 +388,7 @@ query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
       "TokensMinted(address,address,uint256)",
       "DomainAdded(address,uint256)",
       "ColonyMetadata(address,string)",
-      "FundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)"
+      "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)"
     ] }) {
     id
     transaction {
