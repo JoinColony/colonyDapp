@@ -76,16 +76,21 @@ const ColonyEvents = ({
         ? events
         : events.filter((event) => {
             const displayValues = JSON.parse(event.displayValues);
+
             return (
-              Number(event.fundingPot) === ethDomainId ||
-              Number(displayValues.fromPot) === ethDomainId ||
+              // Number(event.fundingPot) === ethDomainId ||
               Number(event.domainId) === ethDomainId ||
-              /* when transfering funds the list shows both sender & recipient */
+              Number(displayValues.fromPot) === ethDomainId ||
+              /* when transfering funds the list shows both sender & recipient domains */
               (event.eventName ===
                 ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots &&
                 Number(displayValues.toPot) === ethDomainId) ||
               /* when no specific domain in the event it is displayed in Root */
-              (ethDomainId === 1 && event.domainId === undefined)
+              (ethDomainId === 1 &&
+                event.domainId === null &&
+                event.fundingPot === undefined &&
+                displayValues.toPot === undefined &&
+                displayValues.fromPot === undefined)
             );
           }),
     [ethDomainId, events],
