@@ -1,11 +1,7 @@
-import { defineMessages } from 'react-intl';
 import React, { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import Alert from '~core/Alert';
-import { useLoggedInUser } from '~data/index';
 import { getMainClasses } from '~utils/css';
-import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import HistoryNavigation from '../HistoryNavigation';
 import UserNavigation from '../UserNavigation';
@@ -14,15 +10,6 @@ import { RouteComponentProps } from '~pages/RouteLayouts';
 import styles from './NavBar.css';
 
 const displayName = 'pages.NavBar';
-
-const MSG = defineMessages({
-  mainnetAlert: {
-    id: `pages.NavBar.mainnetAlert`,
-    defaultMessage:
-      /* eslint-disable-next-line max-len */
-      'Heads up! Colony is a beta product on {networkName}. Please be careful.',
-  },
-});
 
 interface Props {
   children: ReactNode;
@@ -39,7 +26,6 @@ const NavBar = ({
   } = {},
   children,
 }: Props) => {
-  const { username } = useLoggedInUser();
   const location = useLocation<{ hasBackLink?: boolean }>();
 
   const backLinkExists =
@@ -64,24 +50,7 @@ const NavBar = ({
             <UserNavigation />
           </div>
         </nav>
-        <main className={styles.content}>
-          {children}
-          {!username && (
-            <div className={styles.alertBanner}>
-              <Alert
-                appearance={{
-                  theme: 'danger',
-                  borderRadius: 'round',
-                }}
-                text={MSG.mainnetAlert}
-                textValues={{
-                  networkName: DEFAULT_NETWORK_INFO.name,
-                }}
-                isDismissible
-              />
-            </div>
-          )}
-        </main>
+        <main className={styles.content}>{children}</main>
       </div>
     </div>
   );
