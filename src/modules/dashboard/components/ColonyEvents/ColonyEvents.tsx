@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl';
 
 import ActionsList from '~core/ActionsList';
 import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
+import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Select, Form } from '~core/Fields';
 
@@ -44,12 +45,18 @@ const ColonyEvents = ({
     EventsSortOptions.NEWEST,
   );
 
+  const [dataPage, setDataPage] = useState<number>(1);
+
+  const ITEMS_PER_PAGE = 10;
+
   const {
     data,
     loading: subgraphEventsLoading,
     error,
   } = useSubgraphEventsQuery({
     variables: {
+      skip: 0,
+      first: 100,
       colonyAddress: colonyAddress.toLowerCase(),
     },
   });
@@ -68,6 +75,10 @@ const ColonyEvents = ({
     },
     [eventsSort],
   );
+
+  const handleDataPagination = useCallback(() => {
+    setDataPage(dataPage + 1);
+  }, [dataPage]);
 
   /* Needs to be tested when all event types are wirde up & reflected in the list */
   const filtereEvents = useMemo(
@@ -107,6 +118,8 @@ const ColonyEvents = ({
     [filtereEvents, sort],
   );
 
+  const paginatedEvents = sortedEvents.slice(0, ITEMS_PER_PAGE * dataPage);
+
   return (
     <div>
       <UnclaimedTransfers colony={colony} />
@@ -130,9 +143,15 @@ const ColonyEvents = ({
         <SpinnerLoader />
       ) : (
         <ActionsList
-          items={sortedEvents}
+          items={paginatedEvents}
           colony={colony}
           itemComponent={ColonyEventsListItem}
+        />
+      )}
+      {ITEMS_PER_PAGE * dataPage < sortedEvents.length && (
+        <LoadMoreButton
+          onClick={handleDataPagination}
+          isLoadingData={subgraphEventsLoading}
         />
       )}
     </div>

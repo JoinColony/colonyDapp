@@ -745,6 +745,8 @@ export type QueryDomainsArgs = {
 
 
 export type QueryEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
   where: EventsFilter;
 };
 
@@ -1988,6 +1990,8 @@ export type ColonyMembersWithReputationQueryVariables = Exact<{
 export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
 
 export type SubgraphEventsQueryVariables = Exact<{
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
 
@@ -4982,8 +4986,8 @@ export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useCo
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
 export const SubgraphEventsDocument = gql`
-    query SubgraphEvents($colonyAddress: String!) {
-  events(where: {associatedColony: $colonyAddress}) {
+    query SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
+  events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
     id
     address
     associatedColony {
@@ -5015,6 +5019,8 @@ export const SubgraphEventsDocument = gql`
  * @example
  * const { data, loading, error } = useSubgraphEventsQuery({
  *   variables: {
+ *      skip: // value for 'skip'
+ *      first: // value for 'first'
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
