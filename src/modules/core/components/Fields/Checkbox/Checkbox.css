@@ -20,12 +20,12 @@
   border: 1px solid var(--temp-grey-blue-4);
   border-radius: 2px;
   background-color: var(--colony-white);
-  box-shadow: 0 0 0 2px color-mod(var(--temp-grey-blue-4), alpha(25%));
+  box-shadow: 0 0 0 2px color-mod(var(--temp-grey-blue-4) alpha(25%));
 }
 
 .stateIsChecked .checkbox {
   border: 1px solid var(--primary);
-  box-shadow: 0 0 0 2px color-mod(var(--primary), alpha(25%));
+  box-shadow: 0 0 0 2px color-mod(var(--primary) alpha(25%));
 }
 
 .delegate:focus + .checkbox {
@@ -85,7 +85,7 @@
 
 .stateDisabled .checkbox {
   border-color: var(--grey-5);
-  box-shadow: 0 0 0 2px color-mod(var(--text-disabled), alpha(25%));
+  box-shadow: 0 0 0 2px color-mod(var(--text-disabled) alpha(25%));
 }
 
 .stateDisabled .checkbox .checkmark::before,
