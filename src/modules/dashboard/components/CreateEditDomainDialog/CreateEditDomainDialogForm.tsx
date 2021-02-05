@@ -99,7 +99,7 @@ const CreateEditDomainDialogForm = ({
           <div className={styles.domainName}>
             <Input
               label={MSG.name}
-              name="domainName"
+              name="teamName"
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
               disabled={!canCreateEditDomain}
               maxLength={20}

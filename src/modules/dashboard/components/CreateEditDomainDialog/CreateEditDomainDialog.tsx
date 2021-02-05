@@ -15,7 +15,7 @@ import DialogForm from './CreateEditDomainDialogForm';
 import { Color } from '~core/ColorTag';
 
 export interface FormValues {
-  domainName: string;
+  teamName: string;
   domainColor?: Color;
   domainPurpose?: string;
   annotationMessage?: string;
@@ -43,7 +43,7 @@ const CreateEditDomainDialog = ({
   const history = useHistory();
 
   const validationSchema = yup.object().shape({
-    domainName: yup.string().required(),
+    teamName: yup.string().required(),
     domainColor: yup.string(),
     domainPurpose: yup.string(),
     annotationMessage: yup.string().max(4000),
@@ -54,6 +54,7 @@ const CreateEditDomainDialog = ({
       mapPayload((payload) => ({
         colonyAddress,
         colonyName,
+        domainName: payload.teamName,
         ...payload,
       })),
       withMeta({ history }),
@@ -64,7 +65,7 @@ const CreateEditDomainDialog = ({
   return (
     <ActionForm
       initialValues={{
-        domainName: undefined,
+        teamName: undefined,
         domainColor: Color.LightPink,
         domainPurpose: undefined,
         annotationMessage: undefined,
