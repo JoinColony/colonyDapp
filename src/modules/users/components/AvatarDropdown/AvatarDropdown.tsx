@@ -67,15 +67,16 @@ const AvatarDropdown = ({ onlyLogout = false }: Props) => {
         ],
       }}
     >
-      {({ isOpen, toggle, ...props }) => (
+      {({ isOpen, toggle, ref, id }) => (
         <button
+          id={id}
+          ref={ref}
           className={classnames(styles.avatarButton, {
             [styles.activeDropdown]: isOpen,
           })}
           onClick={toggle}
           type="button"
           data-test="avatarDropdown"
-          {...props}
         >
           <UserAvatar address={walletAddress} notSet={ethereal} size="s" />
         </button>
