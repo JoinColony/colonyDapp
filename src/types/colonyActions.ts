@@ -127,7 +127,7 @@ export interface FormattedAction {
   commentCount: number;
   metadata?: string;
   role: ColonyRole;
-  setTo: string;
+  setTo: boolean;
 }
 
 export interface FormattedEvent {

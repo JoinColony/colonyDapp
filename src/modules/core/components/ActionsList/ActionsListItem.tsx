@@ -97,7 +97,7 @@ const ActionsListItem = ({
 
   const getFormattedRole = () => {
     const roleNameMessage = { id: `role.${role}` };
-    return `${setTo === 'true' ? 'assigned' : 'removed'} ${formatMessage(
+    return `${setTo ? 'assigned' : 'removed'} ${formatMessage(
       roleNameMessage,
     )}`;
   };

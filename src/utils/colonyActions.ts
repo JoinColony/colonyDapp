@@ -91,7 +91,7 @@ export const getValuesForActionType = (
         toDomain: argsObj.domainId,
         recipient: argsObj.user,
         role: argsObj.role,
-        setTo: argsObj.setTo,
+        setTo: argsObj.setTo === 'true',
       };
     }
     default: {
