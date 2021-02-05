@@ -129,7 +129,13 @@ const DomainDropdown = ({
         .map((domain) => {
           const { ethDomainId, name } = domain;
           return {
-            children: <DomainSelectItem domain={domain} colony={colony} isSelected={filteredDomainId === ethDomainId} />,
+            children: (
+              <DomainSelectItem
+                domain={domain}
+                colony={colony}
+                isSelected={filteredDomainId === ethDomainId}
+              />
+            ),
             label: name,
             value: `${ethDomainId}`,
           };
