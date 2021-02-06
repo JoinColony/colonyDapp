@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
-import { ContextModule, TEMP_getContext } from '~context/index';
 import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
 } from '~core/ActionsList';
@@ -12,22 +11,19 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
-  useSubgraphActionsQuery,
   useTransactionMessagesCountQuery,
-  useOneTxPaymentExtensionAddressQuery,
+  useSubscriptionSubgraphOneTxSubscription,
+  useSubscriptionSubgraphEventsThatAreActionsSubscription,
 } from '~data/index';
 import {
   ActionsSortOptions,
   ActionsSortSelectOptions,
 } from '../shared/actionsSort';
 import { getActionsListData } from '../../transformers';
-import { getDomainsforMoveFundsActions, formatEventName } from '~utils/events';
 import { useTransformer } from '~utils/hooks';
-
 import {
   ColonyActions as ColonyActionTypes,
   FormattedAction,
-  ColonyAndExtensionsEvents,
 } from '~types/index';
 
 import styles from './ColonyActions.css';
@@ -80,27 +76,28 @@ const ColonyActions = ({
 
   const [dataPage, setDataPage] = useState<number>(1);
 
-  const [formattedActions, setFormattedActions] = useState<FormattedAction[]>(
-    [],
-  );
-
   const ITEMS_PER_PAGE = 10;
 
   const history = useHistory();
 
-  const colonyManager = useMemo(
-    () => TEMP_getContext(ContextModule.ColonyManager),
-    [],
-  );
-
-  const { data, loading: paymentActionsLoading } = useSubgraphActionsQuery({
+  const {
+    data: oneTxActions,
+    loading: oneTxActionsLoading,
+  } = useSubscriptionSubgraphOneTxSubscription({
     variables: {
       skip: 0,
       first: 100,
-      /*
-       * @TODO Find a way to better handle address normalization
-       * Maybe this will/should be fixed on the subgraph's side ?
-       */
+      colonyAddress: colonyAddress?.toLowerCase(),
+    },
+  });
+
+  const {
+    data: eventsActions,
+    loading: eventsActionsLoading,
+  } = useSubscriptionSubgraphEventsThatAreActionsSubscription({
+    variables: {
+      skip: 0,
+      first: 100,
       colonyAddress: colonyAddress?.toLowerCase(),
     },
   });
@@ -112,84 +109,17 @@ const ColonyActions = ({
     variables: { colonyAddress },
   });
 
-  const {
-    data: oneTxPaymentExtensionData,
-  } = useOneTxPaymentExtensionAddressQuery();
-  const uniqueEvents = useMemo(
-    () =>
-      (data?.events || [])
-        .reduce((acc, event) => {
-          if (
-            formatEventName(event.name) ===
-            ColonyAndExtensionsEvents.DomainMetadata
-          ) {
-            const linkedDomainAddedEvent = (data?.events || []).find(
-              (e) =>
-                formatEventName(e.name) ===
-                  ColonyAndExtensionsEvents.DomainAdded &&
-                e.transaction?.hash === event.transaction?.hash,
-            );
-            if (linkedDomainAddedEvent) return acc;
-          }
-          /* filtering out events that are already shown in `oneTxPayments` */
-          const isTransactionRepeated = data?.oneTxPayments.some(
-            (paymentAction) =>
-              paymentAction.transaction?.hash === event.transaction?.hash,
-          );
-          if (isTransactionRepeated) return acc;
-
-          return [...acc, event];
-        }, [])
-        .map((event) => {
-          if (
-            formatEventName(event.name) ===
-            ColonyAndExtensionsEvents.DomainAdded
-          ) {
-            const connectedMetadataEvent = data?.events.find(
-              (e) =>
-                e.transaction.hash === event.transaction.hash &&
-                formatEventName(e.name) ===
-                  ColonyAndExtensionsEvents.DomainMetadata,
-            );
-            if (!connectedMetadataEvent) return event;
-            const domainAddedArgs = JSON.parse(event.args);
-            const domainMetadataArgs = JSON.parse(connectedMetadataEvent.args);
-            const updatedArgs = JSON.stringify({
-              ...domainAddedArgs,
-              metadata: domainMetadataArgs.metadata,
-            });
-            return { ...event, args: updatedArgs };
-          }
-          return event;
-        }),
-    [data],
-  );
-
   const actions = useTransformer(getActionsListData, [
-    (data && { ...data, events: uniqueEvents }) || data,
+    { ...oneTxActions, ...eventsActions },
     commentCount?.transactionMessagesCount,
-    oneTxPaymentExtensionData?.oneTxPaymentExtensionAddress,
   ]);
-
-  useEffect(() => {
-    if (
-      formattedActions.length === 0 ||
-      actions?.length !== formattedActions.length
-    ) {
-      getDomainsforMoveFundsActions(
-        colonyAddress,
-        actions,
-        colonyManager,
-      ).then((result) => setFormattedActions(result));
-    }
-  }, [actions, colonyAddress, colonyManager, formattedActions]);
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */
   const filteredActions = useMemo(
     () =>
       !ethDomainId
-        ? formattedActions
-        : formattedActions.filter(
+        ? actions
+        : actions.filter(
             (action) =>
               Number(action.fromDomain) === ethDomainId ||
               /* when no specific domain in the action it is displayed in Root */
@@ -198,7 +128,7 @@ const ColonyActions = ({
               (action.actionType === ColonyActionTypes.MoveFunds &&
                 Number(action.toDomain) === ethDomainId),
           ),
-    [ethDomainId, formattedActions],
+    [ethDomainId, actions],
   );
 
   const handleDataPagination = useCallback(() => {
@@ -237,7 +167,14 @@ const ColonyActions = ({
     [colonyName, history],
   );
 
-  if (paymentActionsLoading || commentCountLoading || !data || !commentCount) {
+  if (
+    oneTxActionsLoading ||
+    eventsActionsLoading ||
+    commentCountLoading ||
+    !commentCount ||
+    !oneTxActions ||
+    !eventsActions
+  ) {
     return (
       <div className={styles.loadingSpinner}>
         <SpinnerLoader
@@ -273,10 +210,10 @@ const ColonyActions = ({
             handleItemClick={handleActionRedirect}
             colony={colony}
           />
-          {ITEMS_PER_PAGE * dataPage < sortedActionsData.length && (
+          {ITEMS_PER_PAGE * dataPage < actions.length && (
             <LoadMoreButton
               onClick={handleDataPagination}
-              isLoadingData={paymentActionsLoading}
+              isLoadingData={oneTxActionsLoading || eventsActionsLoading}
             />
           )}
         </>

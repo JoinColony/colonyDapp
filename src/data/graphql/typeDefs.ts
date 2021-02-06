@@ -376,6 +376,6 @@ export default gql`
       first: Int!
       where: ActionsFilter!
     ): [OneTxPayment!]!
-    events(where: EventsFilter!): [SubgraphEvent!]!
+    events(skip: Int!, first: Int!, where: EventsFilter!): [SubgraphEvent!]!
   }
 `;

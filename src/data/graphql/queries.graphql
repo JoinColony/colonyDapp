@@ -657,18 +657,22 @@ query SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   }
 }
 
-subscription SubscriptionSubgraphEvents($colonyAddress: String!) {
-  events(where: { associatedColony: $colonyAddress }) {
+subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
+  events(skip: $skip, first: $first, where: { associatedColony: $colonyAddress }) {
     id
     address
     associatedColony {
       colonyAddress: id
       id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
     }
     transaction {
       hash: id
       block {
-        id
         timestamp
       }
     }
@@ -677,7 +681,7 @@ subscription SubscriptionSubgraphEvents($colonyAddress: String!) {
   }
 }
 
-query SubscriptionSubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
+subscription SubscriptionSubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
   oneTxPayments(skip: $skip, first: $first, where: { payment_contains: $colonyAddress }) {
     id
     agent
@@ -707,7 +711,13 @@ query SubscriptionSubgraphActions($skip: Int!, $first: Int!, $colonyAddress: Str
       }
     }
   }
-  events(where: {
+}
+
+subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
+  events(
+    skip: $skip,
+    first: $first,
+    where: {
     associatedColony_contains: $colonyAddress,
     name_in: [
       "TokensMinted(address,address,uint256)",
@@ -716,20 +726,23 @@ query SubscriptionSubgraphActions($skip: Int!, $first: Int!, $colonyAddress: Str
       "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)"
     ] }) {
     id
+    address
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
     transaction {
       hash: id
       block {
         timestamp
       }
     }
-    associatedColony {
-      token {
-        decimals
-        symbol
-      }
-    }
-    args
-    address # Address of the contract that emitted the event
     name
+    args
   }
 }
