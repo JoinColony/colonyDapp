@@ -1125,7 +1125,7 @@ export type ByColonyFilter = {
 };
 
 export type ByColoniesAddressesFilter = {
-  id_in: Array<Maybe<Scalars['String']>>;
+  id_in: Array<Scalars['String']>;
 };
 
 export type SubgraphBlock = {
@@ -1913,7 +1913,7 @@ export type SubgraphColonyQuery = { colony: (
   ) };
 
 export type SubgraphColoniesQueryVariables = Exact<{
-  colonyAddresses: Array<Maybe<Scalars['String']>>;
+  colonyAddresses: Array<Scalars['String']>;
 }>;
 
 
@@ -4634,7 +4634,7 @@ export type SubgraphColonyQueryHookResult = ReturnType<typeof useSubgraphColonyQ
 export type SubgraphColonyLazyQueryHookResult = ReturnType<typeof useSubgraphColonyLazyQuery>;
 export type SubgraphColonyQueryResult = Apollo.QueryResult<SubgraphColonyQuery, SubgraphColonyQueryVariables>;
 export const SubgraphColoniesDocument = gql`
-    query SubgraphColonies($colonyAddresses: [String]!) {
+    query SubgraphColonies($colonyAddresses: [String!]!) {
   colonies(where: {id_in: $colonyAddresses}, orderBy: "colonyChainId", orderDirection: "asc") {
     id
     colonyChainId
