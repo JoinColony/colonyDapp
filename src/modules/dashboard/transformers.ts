@@ -28,10 +28,31 @@ export const getActionsListData = (
   oneTxPaymentExtensionAddress?: Address | null,
 ): FormattedAction[] => {
   let formattedActions = [];
+  /*
+   * Filter out the move funds actions that are actually payment actions (before processing)
+   *
+   * This happens because internally the oneTxAction also triggers a Move Funds and
+   * we don't consider that one an action
+   *
+   * We only consider an action that we manually trigger ourselves, so if the transaction
+   * hashes match, throw them out.
+   */
+  const filteredUnformattedActions = {
+    oneTxPayments: unformattedActions?.oneTxPayments || [],
+    events:
+      unformattedActions?.events?.filter((event) => {
+        /* filtering out events that are already shown in `oneTxPayments` */
+        const isTransactionRepeated = unformattedActions?.oneTxPayments?.some(
+          (paymentAction) =>
+            paymentAction.transaction?.hash === event.transaction?.hash,
+        );
+        return !isTransactionRepeated;
+      }) || [],
+  };
 
-  Object.keys(unformattedActions || {}).map((subgraphActionType) => {
+  Object.keys(filteredUnformattedActions || {}).map((subgraphActionType) => {
     formattedActions = formattedActions.concat(
-      (unformattedActions || {})[subgraphActionType].map(
+      (filteredUnformattedActions || {})[subgraphActionType].map(
         (unformattedAction) => {
           const formatedAction = {
             id: unformattedAction.id,
