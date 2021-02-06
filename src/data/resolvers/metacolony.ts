@@ -28,13 +28,6 @@ export const metaColonyResolvers = ({
           >({
             query: SubgraphColonyDocument,
             variables: {
-              /*
-               * First convert it a string since in cases where the network name
-               * cannot be found via ENS it will throw an error
-               *
-               * Converting this to string basically converts the error object into
-               * a string form
-               */
               address: metaColonyAddress.toLowerCase(),
             },
             fetchPolicy: 'network-only',
