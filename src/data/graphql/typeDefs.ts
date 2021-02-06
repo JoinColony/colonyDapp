@@ -194,7 +194,7 @@ export default gql`
   }
 
   input ByColoniesAddressesFilter {
-    id_in: [String]!
+    id_in: [String!]!
   }
 
   type SubgraphBlock {

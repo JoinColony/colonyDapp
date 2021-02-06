@@ -23,11 +23,11 @@ class Pinata {
     let responseData: string | undefined;
     try {
       if (!hash) {
-        throw new Error(`The provided IPFS hash cannot be fetched: ${hash}`);
+        throw new Error(`IPFS hash was not provided: ${hash}`);
       }
       const response = await fetch(`${PINATA_GATEWAY}/${hash}`);
       responseData = await response.text();
-      if (!responseData && typeof responseData !== 'string') {
+      if (!responseData || typeof responseData !== 'string') {
         throw new Error(`Malformed IPFS data fetched: ${responseData}`);
       }
       return responseData;
@@ -74,7 +74,13 @@ class Pinata {
         body: potentialJSONBlob,
       });
 
-      const postResponse = await response.json();
+      let postResponse;
+      try {
+        postResponse = await response.json();
+      } catch (error) {
+        throw new Error(`POST response from Pinata failed: ${postResponse}`);
+      }
+
       responseData = postResponse?.IpfsHash;
       if (!responseData) {
         throw new Error(
