@@ -1,9 +1,10 @@
 import { AddressZero, HashZero } from 'ethers/constants';
 
 import {
-  SubgraphActions,
-  SubgraphEvents,
   TransactionsMessagesCount,
+  SubscriptionSubgraphOneTxSubscription,
+  SubscriptionSubgraphEventsThatAreActionsSubscription,
+  SubscriptionSubgraphEventsSubscription,
 } from '~data/index';
 import {
   Address,
@@ -19,7 +20,10 @@ import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 
 export const getActionsListData = (
-  unformattedActions?: SubgraphActions,
+  unformattedActions?: {
+    oneTxPayments?: SubscriptionSubgraphOneTxSubscription['oneTxPayments'];
+    events?: SubscriptionSubgraphEventsThatAreActionsSubscription['events'];
+  },
   transactionsCommentsCount?: TransactionsMessagesCount,
   oneTxPaymentExtensionAddress?: Address | null,
 ): FormattedAction[] => {
@@ -199,7 +203,7 @@ export const getActionsListData = (
 };
 
 export const getEventsListData = (
-  unformattedEvents?: SubgraphEvents,
+  unformattedEvents?: SubscriptionSubgraphEventsSubscription,
 ): FormattedEvent[] | undefined =>
   unformattedEvents?.events?.reduce((processedEvents, event) => {
     if (!event) {
