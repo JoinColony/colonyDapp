@@ -1,5 +1,6 @@
 import { ApolloClient, createHttpLink, ApolloLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { WebSocketLink } from '@apollo/client/link/ws';
 
 import { cache, typeDefs } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -12,6 +13,13 @@ const httpLink = createHttpLink({
 
 const subgraphHttpLink = createHttpLink({
   uri: process.env.SUBGRAPH_ENDPOINT,
+});
+
+const subgraphWebSocketLink = new WebSocketLink({
+  uri: process.env.SUBGRAPH_WS_ENDPOINT as string,
+  options: {
+    reconnect: true,
+  },
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -31,12 +39,23 @@ const authLink = setContext((_, { headers }) => {
 export default new ApolloClient({
   link: ApolloLink.split(
     /*
-     * Only send the queries that start with 'Subgraph' to
-     * the `subgraphHttpLink` endpoint
+     * If the operation starts with subscription, redirect to the web socket link
      */
-    ({ operationName }) => operationName.startsWith('Subgraph'),
-    subgraphHttpLink,
-    authLink.concat(httpLink),
+    ({ operationName }) => operationName.startsWith('Subscription'),
+    subgraphWebSocketLink,
+    /*
+     * Otherwise, redirect to one of our two http links: the subgraph server or
+     * our own metadata server
+     */
+    ApolloLink.split(
+      /*
+       * Only send the queries that start with 'Subgraph' to
+       * the `subgraphHttpLink` endpoint
+       */
+      ({ operationName }) => operationName.startsWith('Subgraph'),
+      subgraphHttpLink,
+      authLink.concat(httpLink),
+    ),
   ),
   cache,
   typeDefs,
