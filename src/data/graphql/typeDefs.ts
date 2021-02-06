@@ -365,4 +365,17 @@ export default gql`
     canMakePayment: Boolean!
     isDeploymentFinished: Boolean!
   }
+
+  #
+  # Subgraph Subscriptions
+  #
+
+  extend type Subscription {
+    oneTxPayments(
+      skip: Int!
+      first: Int!
+      where: ActionsFilter!
+    ): [OneTxPayment!]!
+    events(where: EventsFilter!): [SubgraphEvent!]!
+  }
 `;
