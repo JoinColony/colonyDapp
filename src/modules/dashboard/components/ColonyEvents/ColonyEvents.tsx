@@ -13,7 +13,6 @@ import {
 } from '../shared/eventsSort';
 import { immutableSort } from '~utils/arrays';
 import { Colony, useSubgraphEventsQuery } from '~data/index';
-import { ColonyAndExtensionsEvents } from '~types/index';
 import { useTransformer } from '~utils/hooks';
 
 import { getEventsListData } from '../../transformers';
@@ -81,41 +80,31 @@ const ColonyEvents = ({
   }, [dataPage]);
 
   /* Needs to be tested when all event types are wirde up & reflected in the list */
-  const filtereEvents = useMemo(
+  const filteredEvents = useMemo(
     () =>
       !ethDomainId
         ? events
-        : events.filter((event) => {
-            const displayValues = JSON.parse(event.displayValues);
-
-            return (
+        : events.filter(
+            (event) =>
               // Number(event.fundingPot) === ethDomainId ||
               Number(event.domainId) === ethDomainId ||
-              Number(displayValues.fromPot) === ethDomainId ||
-              /* when transfering funds the list shows both sender & recipient domains */
-              (event.eventName ===
-                ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots &&
-                Number(displayValues.toPot) === ethDomainId) ||
               /* when no specific domain in the event it is displayed in Root */
               (ethDomainId === 1 &&
                 event.domainId === null &&
-                event.fundingPot === undefined &&
-                displayValues.toPot === undefined &&
-                displayValues.fromPot === undefined)
-            );
-          }),
+                event.fundingPot === undefined),
+          ),
     [ethDomainId, events],
   );
 
   const sortedEvents = useMemo(
     () =>
-      immutableSort(filtereEvents, sort).map((event) => {
+      immutableSort(filteredEvents, sort).map((event) => {
         return {
           ...event,
           userAddress: event.userAddress || event.fromAddress,
         };
       }),
-    [filtereEvents, sort],
+    [filteredEvents, sort],
   );
 
   const paginatedEvents = sortedEvents.slice(0, ITEMS_PER_PAGE * dataPage);
