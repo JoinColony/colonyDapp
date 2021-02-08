@@ -47,10 +47,10 @@ const EditDomainDialog = ({
   const history = useHistory();
 
   const validationSchema = yup.object().shape({
-    domainName: yup.string(),
+    domainName: yup.string().max(20),
     domainId: yup.number().required(),
     domainColor: yup.string(),
-    domainPurpose: yup.string(),
+    domainPurpose: yup.string().max(90),
     annotationMessage: yup.string().max(4000),
   });
 

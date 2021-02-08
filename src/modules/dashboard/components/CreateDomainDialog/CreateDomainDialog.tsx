@@ -41,9 +41,9 @@ const CreateDomainDialog = ({
   const history = useHistory();
 
   const validationSchema = yup.object().shape({
-    teamName: yup.string().required(),
+    teamName: yup.string().max(20).required(),
     domainColor: yup.string(),
-    domainPurpose: yup.string(),
+    domainPurpose: yup.string().max(90),
     annotationMessage: yup.string().max(4000),
   });
 
