@@ -6,7 +6,7 @@ schema:
 documents: 'src/data/graphql/*.graphql'
 generates:
   src/data/generated.ts:
-    schema: 'src/data/graphql/typeDefs.ts'
+    schema: 'src/data/graphql/*.ts'
     config:
       skipTypename: true
     plugins:

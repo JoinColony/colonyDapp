@@ -1,0 +1,89 @@
+subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
+  events(skip: $skip, first: $first, where: { associatedColony: $colonyAddress }) {
+    id
+    address
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
+    transaction {
+      hash: id
+      block {
+        timestamp
+      }
+    }
+    name
+    args
+  }
+}
+
+subscription SubscriptionSubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
+  oneTxPayments(skip: $skip, first: $first, where: { payment_contains: $colonyAddress }) {
+    id
+    agent
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    payment {
+      to
+      domain {
+        ethDomainId: domainChainId
+        name
+      }
+      fundingPot {
+        fundingPotPayouts {
+          id
+          token {
+            address: id
+            symbol
+            decimals
+          }
+          amount
+        }
+      }
+    }
+  }
+}
+
+subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
+  events(
+    skip: $skip,
+    first: $first,
+    where: {
+    associatedColony_contains: $colonyAddress,
+    name_in: [
+      "TokensMinted(address,address,uint256)",
+      "DomainAdded(address,uint256)",
+      "ColonyMetadata(address,string)",
+      "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)"
+    ] }) {
+    id
+    address
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
+    transaction {
+      hash: id
+      block {
+        timestamp
+      }
+    }
+    name
+    args
+  }
+}
