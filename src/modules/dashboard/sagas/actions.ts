@@ -16,9 +16,6 @@ import {
   ColonyFromNameDocument,
   ColonyFromNameQuery,
   ColonyFromNameQueryVariables,
-  SubgraphActionsQuery,
-  SubgraphActionsQueryVariables,
-  SubgraphActionsDocument,
   ProcessedColonyQuery,
   ProcessedColonyQueryVariables,
   ProcessedColonyDocument,
@@ -211,19 +208,6 @@ function* createPaymentAction({
       fetchPolicy: 'network-only',
     });
 
-    yield apolloClient.query<
-      SubgraphActionsQuery,
-      SubgraphActionsQueryVariables
-    >({
-      query: SubgraphActionsDocument,
-      variables: {
-        colonyAddress: colonyAddress.toLocaleLowerCase(),
-        skip: 0,
-        first: 1,
-      },
-      fetchPolicy: 'network-only',
-    });
-
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
       meta,
@@ -402,19 +386,6 @@ function* createMoveFundsAction({
       fetchPolicy: 'network-only',
     });
 
-    yield apolloClient.query<
-      SubgraphActionsQuery,
-      SubgraphActionsQueryVariables
-    >({
-      query: SubgraphActionsDocument,
-      variables: {
-        colonyAddress: colonyAddress.toLocaleLowerCase(),
-        skip: 0,
-        first: 1,
-      },
-      fetchPolicy: 'network-only',
-    });
-
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS,
       meta,
@@ -557,19 +528,6 @@ function* createMintTokensAction({
       variables: {
         colonyAddress,
         tokenAddresses: [nativeTokenAddress],
-      },
-      fetchPolicy: 'network-only',
-    });
-
-    yield apolloClient.query<
-      SubgraphActionsQuery,
-      SubgraphActionsQueryVariables
-    >({
-      query: SubgraphActionsDocument,
-      variables: {
-        colonyAddress: colonyAddress.toLocaleLowerCase(),
-        skip: 0,
-        first: 1,
       },
       fetchPolicy: 'network-only',
     });
@@ -855,19 +813,6 @@ function* createDomainAction({
         fetchPolicy: 'network-only',
       },
     );
-
-    yield apolloClient.query<
-      SubgraphActionsQuery,
-      SubgraphActionsQueryVariables
-    >({
-      query: SubgraphActionsDocument,
-      variables: {
-        colonyAddress: colonyAddress.toLocaleLowerCase(),
-        skip: 0,
-        first: 1,
-      },
-      fetchPolicy: 'network-only',
-    });
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
@@ -1228,19 +1173,6 @@ function* editColonyAction({
         fetchPolicy: 'network-only',
       },
     );
-
-    yield apolloClient.query<
-      SubgraphActionsQuery,
-      SubgraphActionsQueryVariables
-    >({
-      query: SubgraphActionsDocument,
-      variables: {
-        colonyAddress: colonyAddress.toLocaleLowerCase(),
-        first: 1,
-        skip: 0,
-      },
-      fetchPolicy: 'network-only',
-    });
 
     /*
      * Update apollo's cache for the current colony to reflect the recently

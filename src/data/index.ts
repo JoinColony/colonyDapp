@@ -21,10 +21,8 @@ import {
   NetworkContractsDocument,
   TransactionMessageFragment,
   ParsedEvent,
-  SubgraphActionsQuery,
   TransactionMessagesCountQuery,
   ProcessedColonyQuery,
-  SubgraphEventsQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -119,7 +117,3 @@ export type TransactionMessage = TransactionMessageFragment;
 export type TransactionsMessagesCount = TransactionMessagesCountQuery['transactionMessagesCount'];
 
 export type EventOrMessage = ParsedEvent | TransactionMessage;
-
-export type SubgraphActions = SubgraphActionsQuery;
-
-export type SubgraphEvents = SubgraphEventsQuery;
