@@ -6,7 +6,12 @@
 }
 
 .childDomainIcon {
-  padding: 3px 10px 0 0;
+  margin: 7px 16px 0 0;
+}
+
+.childDomainIcon i {
+  height: 6px;
+  width: 8px;
 }
 
 .mainContent {
@@ -19,7 +24,7 @@
 }
 
 .color {
-  margin-right: 6px;
+  margin-right: 15px;
 }
 
 .rootText {
