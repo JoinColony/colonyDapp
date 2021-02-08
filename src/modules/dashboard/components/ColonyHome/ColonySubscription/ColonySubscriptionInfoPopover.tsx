@@ -19,7 +19,7 @@ const MSG = defineMessages({
   },
   nativeTokenTitle: {
     id: 'dashboard.ColonyHome.ColonySubscriptionInfoPopover.nativeTokenTitle',
-    defaultMessage: 'NativeTokenAddress',
+    defaultMessage: 'Native Token Address',
   },
 });
 

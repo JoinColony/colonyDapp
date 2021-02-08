@@ -49,7 +49,7 @@ const MSG = defineMessages({
   },
   domainDescription: {
     id: 'dashboard.ActionsPage.DetailsWidget.domainDescription',
-    defaultMessage: 'Team Purpouse',
+    defaultMessage: 'Team Purpose',
   },
   colonyName: {
     id: 'dashboard.ActionsPage.DetailsWidget.colonyName',
