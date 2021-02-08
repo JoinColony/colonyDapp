@@ -73,7 +73,6 @@ const ActionsListItem = ({
   handleOnClick,
 }: Props) => {
   const { formatMessage, formatNumber } = useIntl();
-
   const { data: metadataJSON } = useDataFetcher(
     ipfsDataFetcher,
     [metadata as string],
@@ -105,7 +104,11 @@ const ActionsListItem = ({
   );
 
   let domainName;
-  if (metadataJSON && actionType === ColonyActions.EditDomain) {
+  if (
+    metadataJSON &&
+    (actionType === ColonyActions.EditDomain ||
+      actionType === ColonyActions.CreateDomain)
+  ) {
     const domainObject = parseDomainMetadata(metadataJSON);
     domainName = domainObject.domainName;
   }

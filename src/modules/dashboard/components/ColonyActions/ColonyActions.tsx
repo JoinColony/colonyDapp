@@ -113,28 +113,51 @@ const ColonyActions = ({
 
   const uniqueEvents = useMemo(
     () =>
-      (data?.events || []).reduce((acc, event) => {
-        if (
-          formatEventName(event.name) ===
-          ColonyAndExtensionsEvents.DomainMetadata
-        ) {
-          const linkedDomainAddedEvent = (data?.events || []).find(
-            (e) =>
-              formatEventName(e.name) ===
-                ColonyAndExtensionsEvents.DomainAdded &&
-              e.transaction?.hash === event.transaction?.hash,
+      (data?.events || [])
+        .reduce((acc, event) => {
+          if (
+            formatEventName(event.name) ===
+            ColonyAndExtensionsEvents.DomainMetadata
+          ) {
+            const linkedDomainAddedEvent = (data?.events || []).find(
+              (e) =>
+                formatEventName(e.name) ===
+                  ColonyAndExtensionsEvents.DomainAdded &&
+                e.transaction?.hash === event.transaction?.hash,
+            );
+            if (linkedDomainAddedEvent) return acc;
+          }
+          /* filtering out events that are already shown in `oneTxPayments` */
+          const isTransactionRepeated = data?.oneTxPayments.some(
+            (paymentAction) =>
+              paymentAction.transaction?.hash === event.transaction?.hash,
           );
-          if (linkedDomainAddedEvent) return acc;
-        }
-        /* filtering out events that are already shown in `oneTxPayments` */
-        const isTransactionRepeated = data?.oneTxPayments.some(
-          (paymentAction) =>
-            paymentAction.transaction?.hash === event.transaction?.hash,
-        );
-        if (isTransactionRepeated) return acc;
+          if (isTransactionRepeated) return acc;
 
-        return [...acc, event];
-      }, []),
+          return [...acc, event];
+        }, [])
+        .map((event) => {
+          if (
+            formatEventName(event.name) ===
+            ColonyAndExtensionsEvents.DomainAdded
+          ) {
+            const connectedMetadataEvent = data?.events.find(
+              (e) =>
+                e.transaction.hash === event.transaction.hash &&
+                formatEventName(e.name) ===
+                  ColonyAndExtensionsEvents.DomainMetadata,
+            );
+            if (!connectedMetadataEvent) return event;
+            const domainAddedArgs = JSON.parse(event.args);
+            const domainMetadataArgs = JSON.parse(connectedMetadataEvent.args);
+            const updatedArgs = JSON.stringify({
+              ...domainAddedArgs,
+              metadata: domainMetadataArgs.metadata,
+            });
+            return { ...event, args: updatedArgs };
+          }
+          return event;
+        }),
     [data],
   );
 
