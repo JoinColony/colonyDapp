@@ -6,7 +6,7 @@ import {
   ColonyAndExtensionsEvents,
   FormattedAction,
 } from '~types/index';
-import { ColonyAction } from '~data/index';
+import { ColonyAction, EventProcessedValues } from '~data/index';
 
 import {
   DETAILS_FOR_ACTION,
@@ -46,51 +46,49 @@ export const getDetailsForAction = (
  * Get values for action type based on action type
  */
 export const getValuesForActionType = (
-  args: string,
+  values: EventProcessedValues,
   actionType: ColonyActions,
 ): ValuesForActionTypesMap => {
-  const argsObj = JSON.parse(args);
   switch (actionType) {
     case ColonyActions.MintTokens: {
       return {
-        initiator: argsObj.agent,
-        recipient: argsObj.who,
-        amount: argsObj.amount,
+        initiator: values.agent,
+        recipient: values.who,
+        amount: values.amount,
       };
     }
     case ColonyActions.CreateDomain: {
       return {
-        initiator: argsObj.agent,
-        fromDomain: argsObj.domainId,
-        metadata: argsObj.metadata,
+        initiator: values.agent,
+        fromDomain: values.domainId,
       };
     }
     case ColonyActions.ColonyEdit: {
       return {
-        initiator: argsObj.agent,
+        initiator: values.agent,
       };
     }
     case ColonyActions.MoveFunds: {
       return {
-        amount: argsObj.amount,
-        fromDomain: argsObj.fromPot,
-        toDomain: argsObj.toPot,
-        initiator: argsObj.agent,
+        amount: values.amount,
+        fromDomain: values.fromDomain,
+        toDomain: values.toDomain,
+        initiator: values.agent,
       };
     }
     case ColonyActions.EditDomain: {
       return {
-        initiator: argsObj.agent,
-        fromDomain: argsObj.domainId,
-        metadata: argsObj.metadata,
+        initiator: values.agent,
+        fromDomain: values.domainId,
+        metadata: values.metadata,
       };
     }
     case ColonyActions.SetUserRoles: {
       return {
-        initiator: argsObj.agent,
-        fromDomain: argsObj.domainId,
-        recipient: argsObj.user,
-        roles: [{ id: argsObj.role, setTo: argsObj.setTo === 'true' }],
+        initiator: values.agent,
+        fromDomain: values.domainId,
+        recipient: values.user,
+        roles: [{ id: values.role, setTo: values.setTo === 'true' }],
       };
     }
     default: {

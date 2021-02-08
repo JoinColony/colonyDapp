@@ -143,7 +143,7 @@ export const getActionsListData = (
           if (subgraphActionType === 'events') {
             try {
               const {
-                args,
+                processedValues,
                 associatedColony: {
                   token: { address: tokenAddress, symbol, decimals },
                 },
@@ -159,7 +159,10 @@ export const getActionsListData = (
               formatedAction.tokenAddress = tokenAddress;
               formatedAction.symbol = symbol;
               formatedAction.decimals = decimals;
-              const actionTypeValues = getValuesForActionType(args, actionType);
+              const actionTypeValues = getValuesForActionType(
+                processedValues,
+                actionType,
+              );
               const actionTypeKeys = Object.keys(actionTypeValues);
               actionTypeKeys.forEach((key) => {
                 formatedAction[key] = actionTypeValues[key];
