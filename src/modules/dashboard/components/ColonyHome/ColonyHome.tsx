@@ -4,12 +4,10 @@ import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 
 import Alert from '~core/Alert';
-import Button, { ActionButton } from '~core/Button';
-import { useDialog } from '~core/Dialog';
+import { ActionButton } from '~core/Button';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
-import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
@@ -34,6 +32,7 @@ import ColonyDomainDescription from './ColonyDomainDescription';
 import ColonyTotalFunds from '../ColonyTotalFunds';
 import ColonyActions from '../ColonyActions';
 import ColonyEvents from '../ColonyEvents';
+import ColonyUpgrade from './ColonyUpgrade';
 
 import styles from './ColonyHome.css';
 import DomainDropdown from '~dashboard/DomainDropdown';
@@ -60,11 +59,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.noFilter',
     defaultMessage: 'All Transactions in Colony',
   },
-  upgradeRequired: {
-    id: `dashboard.ColonyHome.upgradeRequired`,
-    defaultMessage: `This colony uses a version of the network that is no
-      longer supported. You must upgrade to continue using this application.`,
-  },
   deploymentNotFinished: {
     id: `dashboard.ColonyHome.deploymentNotFinished`,
     defaultMessage: `Colony creation incomplete. Click to continue 👉`,
@@ -85,10 +79,10 @@ const ColonyHome = ({ match, location }: Props) => {
       `No match found for route in ${displayName} Please check route setup.`,
     );
   }
+
   const { colonyName } = match.params;
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
-  const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
 
   const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
     domainFilter: string | undefined;
@@ -111,15 +105,6 @@ const ColonyHome = ({ match, location }: Props) => {
     data?.processedColony,
     walletAddress,
   ]);
-
-  const handleUpgradeColony = useCallback(() => {
-    if (!data || !data.processedColony) {
-      return;
-    }
-    openUpgradeVersionDialog({
-      colony: data.processedColony,
-    });
-  }, [data, openUpgradeVersionDialog]);
 
   const transform = useCallback(
     mapPayload(() => ({
@@ -163,12 +148,7 @@ const ColonyHome = ({ match, location }: Props) => {
   const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
   const canFinishDeployment =
     canUpgradeColony && canEnterRecoveryMode(allUserRoles);
-  /*
-   * @NOTE As a future upgrade, we can have a mapping where we keep track of
-   * past and current network versions so that we can control, more granularly,
-   * which versions *must* be upgraded, and which can function as-is, even with
-   * an older version
-   */
+
   const mustUpgradeColony = canBeUpgraded(
     colony,
     parseInt(networkVersion || '0', 10),
@@ -223,27 +203,7 @@ const ColonyHome = ({ match, location }: Props) => {
           <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
         </aside>
       </div>
-      {!!mustUpgradeColony && (
-        <div className={styles.upgradeBannerContainer}>
-          <Alert
-            appearance={{
-              theme: 'danger',
-              margin: 'none',
-              borderRadius: 'none',
-            }}
-          >
-            <div className={styles.upgradeBanner}>
-              <FormattedMessage {...MSG.upgradeRequired} />
-            </div>
-            <Button
-              appearance={{ theme: 'primary', size: 'medium' }}
-              text={{ id: 'button.upgrade' }}
-              onClick={handleUpgradeColony}
-              disabled={!canUpgradeColony}
-            />
-          </Alert>
-        </div>
-      )}
+      <ColonyUpgrade colony={colony} />
       {!mustUpgradeColony && !isDeploymentFinished && canFinishDeployment && (
         <div className={styles.upgradeBannerContainer}>
           <Alert

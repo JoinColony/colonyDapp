@@ -1,0 +1,17 @@
+.upgradeBannerContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-weight: var(--weight-bold);
+  text-align: center;
+}
+
+.upgradeBannerContainer button {
+  margin-top: -38px;
+  float: right;
+}
+
+.upgradeBanner {
+  padding: 15px 0;
+}
