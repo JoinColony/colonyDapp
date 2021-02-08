@@ -49,52 +49,55 @@ export const getValuesForActionType = (
   values: EventProcessedValues,
   actionType: ColonyActions,
 ): ValuesForActionTypesMap => {
-  switch (actionType) {
-    case ColonyActions.MintTokens: {
-      return {
-        initiator: values.agent,
-        recipient: values.who,
-        amount: values.amount,
-      };
-    }
-    case ColonyActions.CreateDomain: {
-      return {
-        initiator: values.agent,
-        fromDomain: values.domainId,
-      };
-    }
-    case ColonyActions.ColonyEdit: {
-      return {
-        initiator: values.agent,
-      };
-    }
-    case ColonyActions.MoveFunds: {
-      return {
-        amount: values.amount,
-        fromDomain: values.fromDomain,
-        toDomain: values.toDomain,
-        initiator: values.agent,
-      };
-    }
-    case ColonyActions.EditDomain: {
-      return {
-        initiator: values.agent,
-        fromDomain: values.domainId,
-        metadata: values.metadata,
-      };
-    }
-    case ColonyActions.SetUserRoles: {
-      return {
-        initiator: values.agent,
-        fromDomain: values.domainId,
-        recipient: values.user,
-        roles: [{ id: values.role, setTo: values.setTo === 'true' }],
-      };
-    }
-    default: {
-      return {};
+  if (Object.keys(values).length) {
+    switch (actionType) {
+      case ColonyActions.MintTokens: {
+        return {
+          initiator: values.agent,
+          recipient: values.who,
+          amount: values.amount,
+        };
+      }
+      case ColonyActions.CreateDomain: {
+        return {
+          initiator: values.agent,
+          fromDomain: values.domainId,
+        };
+      }
+      case ColonyActions.ColonyEdit: {
+        return {
+          initiator: values.agent,
+        };
+      }
+      case ColonyActions.MoveFunds: {
+        return {
+          amount: values.amount,
+          fromDomain: values.fromDomain,
+          toDomain: values.toDomain,
+          initiator: values.agent,
+        };
+      }
+      case ColonyActions.EditDomain: {
+        return {
+          initiator: values.agent,
+          fromDomain: values.domainId,
+          metadata: values.metadata,
+        };
+      }
+      case ColonyActions.SetUserRoles: {
+        return {
+          initiator: values.agent,
+          fromDomain: values.domainId,
+          recipient: values.user,
+          roles: [{ id: values.role, setTo: values.setTo === 'true' }],
+        };
+      }
+      default: {
+        return {};
+      }
     }
   }
+  return {};
 };
 
 export const getColonyMetadataMessageDescriptorsIds = (
