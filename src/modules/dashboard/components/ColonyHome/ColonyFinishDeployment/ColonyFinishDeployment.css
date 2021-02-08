@@ -1,0 +1,17 @@
+.finishDeploymentBannerContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-weight: var(--weight-bold);
+  text-align: center;
+}
+
+.finishDeploymentBannerContainer button {
+  margin-top: -38px;
+  float: right;
+}
+
+.finishDeploymentBanner {
+  padding: 15px 0;
+}
