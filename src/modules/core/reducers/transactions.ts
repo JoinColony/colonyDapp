@@ -103,6 +103,15 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
         TRANSACTION_STATUSES.READY,
       );
     }
+    case ActionTypes.TRANSACTION_PENDING: {
+      const {
+        meta: { id },
+      } = action;
+      return state.setIn(
+        [CORE_TRANSACTIONS_LIST, id, 'status'],
+        TRANSACTION_STATUSES.PENDING,
+      );
+    }
     case ActionTypes.TRANSACTION_LOAD_RELATED: {
       const {
         meta: { id },

@@ -5,7 +5,7 @@ import { ColonyVersion } from '@colony/colony-js';
 import Icon from '~core/Icon';
 import { useDialog } from '~core/Dialog';
 
-import CreateEditDomainDialog from '~dashboard/CreateEditDomainDialog';
+import CreateDomainDialog from '~dashboard/CreateDomainDialog';
 
 import { Colony } from '~data/index';
 
@@ -26,7 +26,7 @@ const displayName = 'dashboard.DomainDropdown.CreateDomainButton';
 
 const CreateDomainButton = ({ colony }: Props) => {
   const { formatMessage } = useIntl();
-  const openCreateDomainDialog = useDialog(CreateEditDomainDialog);
+  const openCreateDomainDialog = useDialog(CreateDomainDialog);
 
   const handleClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (evt) => {

@@ -1011,6 +1011,9 @@ export type ColonyAction = {
   colonyDisplayName: Scalars['String'];
   colonyAvatarHash: Scalars['String'];
   colonyTokens: Array<Maybe<Scalars['String']>>;
+  domainName: Scalars['String'];
+  domainPurpose: Scalars['String'];
+  domainColor: Scalars['String'];
 };
 
 export type NetworkContractsInput = {
@@ -1760,7 +1763,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
   ) };
 
@@ -1822,6 +1825,23 @@ export type SubgraphDomainsQueryVariables = Exact<{
 export type SubgraphDomainsQuery = { domains: Array<(
     Pick<SubgraphDomain, 'id' | 'domainChainId' | 'name' | 'colonyAddress' | 'metadata'>
     & { parent?: Maybe<Pick<SubgraphDomain, 'id' | 'domainChainId'>>, metadataHistory: Array<Maybe<Pick<SubgraphDomainMetadata, 'id' | 'metadata'>>> }
+  )> };
+
+export type SubgraphDomainMetadataQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  domainId: Scalars['Int'];
+}>;
+
+
+export type SubgraphDomainMetadataQuery = { domains: Array<(
+    Pick<SubgraphDomain, 'id' | 'domainChainId' | 'metadata'>
+    & { metadataHistory: Array<Maybe<(
+      Pick<SubgraphDomainMetadata, 'id' | 'metadata'>
+      & { transaction: (
+        Pick<SubgraphTransaction, 'id'>
+        & { block: Pick<SubgraphBlock, 'timestamp'> }
+      ) }
+    )>> }
   )> };
 
 export type SubgraphSingleDomainQueryVariables = Exact<{
@@ -4116,6 +4136,9 @@ export const ColonyActionDocument = gql`
     colonyDisplayName
     colonyAvatarHash
     colonyTokens
+    domainName
+    domainPurpose
+    domainColor
   }
 }
     `;
@@ -4249,7 +4272,7 @@ export const SubgraphActionsDocument = gql`
       }
     }
   }
-  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)"]}) {
+  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)"]}) {
     id
     transaction {
       hash: id
@@ -4342,6 +4365,52 @@ export function useSubgraphDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type SubgraphDomainsQueryHookResult = ReturnType<typeof useSubgraphDomainsQuery>;
 export type SubgraphDomainsLazyQueryHookResult = ReturnType<typeof useSubgraphDomainsLazyQuery>;
 export type SubgraphDomainsQueryResult = Apollo.QueryResult<SubgraphDomainsQuery, SubgraphDomainsQueryVariables>;
+export const SubgraphDomainMetadataDocument = gql`
+    query SubgraphDomainMetadata($colonyAddress: String!, $domainId: Int!) {
+  domains(where: {colonyAddress: $colonyAddress, domainChainId: $domainId}) {
+    id
+    domainChainId
+    metadata
+    metadataHistory {
+      id
+      metadata
+      transaction {
+        id
+        block {
+          timestamp
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphDomainMetadataQuery__
+ *
+ * To run a query within a React component, call `useSubgraphDomainMetadataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphDomainMetadataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphDomainMetadataQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useSubgraphDomainMetadataQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphDomainMetadataQuery, SubgraphDomainMetadataQueryVariables>) {
+        return Apollo.useQuery<SubgraphDomainMetadataQuery, SubgraphDomainMetadataQueryVariables>(SubgraphDomainMetadataDocument, baseOptions);
+      }
+export function useSubgraphDomainMetadataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphDomainMetadataQuery, SubgraphDomainMetadataQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphDomainMetadataQuery, SubgraphDomainMetadataQueryVariables>(SubgraphDomainMetadataDocument, baseOptions);
+        }
+export type SubgraphDomainMetadataQueryHookResult = ReturnType<typeof useSubgraphDomainMetadataQuery>;
+export type SubgraphDomainMetadataLazyQueryHookResult = ReturnType<typeof useSubgraphDomainMetadataLazyQuery>;
+export type SubgraphDomainMetadataQueryResult = Apollo.QueryResult<SubgraphDomainMetadataQuery, SubgraphDomainMetadataQueryVariables>;
 export const SubgraphSingleDomainDocument = gql`
     query SubgraphSingleDomain($colonyAddress: String!, $domainId: Int!) {
   domains(where: {colonyAddress: $colonyAddress, domainChainId: $domainId}) {

@@ -39,6 +39,7 @@ import { ipfsUpload } from '../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionAddParams,
+  transactionPending,
 } from '../../core/actionCreators';
 import { updateColonyDisplayCache } from './utils';
 
@@ -882,6 +883,181 @@ function* createDomainAction({
   return null;
 }
 
+function* editDomainAction({
+  payload: {
+    colonyAddress,
+    colonyName,
+    domainName,
+    domainColor,
+    domainPurpose,
+    annotationMessage,
+    domainId,
+  },
+  meta: { id: metaId, history },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_DOMAIN_EDIT>) {
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+    if (!domainId) {
+      throw new Error('A domain id is required to edit domain');
+    }
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'editDomainAction';
+    const {
+      editDomainAction: editDomain,
+      annotateEditDomainAction: annotateEditDomain,
+    } = yield createTransactionChannels(metaId, [
+      'editDomainAction',
+      'annotateEditDomainAction',
+    ]);
+
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: batchKey,
+          id: metaId,
+          index,
+        },
+      });
+
+    yield createGroupTransaction(editDomain, {
+      context: ClientType.ColonyClient,
+      methodName: 'editDomainWithProofs',
+      identifier: colonyAddress,
+      params: [],
+      ready: false,
+    });
+
+    if (annotationMessage) {
+      yield createGroupTransaction(annotateEditDomain, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        ready: false,
+      });
+    }
+
+    yield takeFrom(editDomain.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateEditDomain.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    yield put(transactionPending(editDomain.id));
+
+    /*
+     * Upload domain metadata to IPFS
+     */
+    let domainMetadataIpfsHash = null;
+    domainMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        domainName,
+        domainColor,
+        domainPurpose,
+      }),
+    );
+
+    yield put(
+      transactionAddParams(editDomain.id, [
+        domainId,
+        (domainMetadataIpfsHash as unknown) as string,
+      ]),
+    );
+
+    yield put(transactionReady(editDomain.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      editDomain.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+    yield takeFrom(editDomain.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(transactionPending(annotateEditDomain.id));
+
+      /*
+       * Upload annotationMessage to IPFS
+       */
+      let annotationMessageIpfsHash = null;
+      if (annotationMessage) {
+        annotationMessageIpfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({
+            annotationMessage,
+          }),
+        );
+      }
+
+      yield put(
+        transactionAddParams(annotateEditDomain.id, [
+          txHash,
+          annotationMessageIpfsHash,
+        ]),
+      );
+
+      yield put(transactionReady(annotateEditDomain.id));
+
+      yield takeFrom(
+        annotateEditDomain.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
+
+    /*
+     * Update the colony object cache
+     */
+    yield apolloClient.query<ColonyFromNameQuery, ColonyFromNameQueryVariables>(
+      {
+        query: ColonyFromNameDocument,
+        variables: { name: colonyName || '', address: colonyAddress },
+        fetchPolicy: 'network-only',
+      },
+    );
+
+    yield apolloClient.query<
+      SubgraphActionsQuery,
+      SubgraphActionsQueryVariables
+    >({
+      query: SubgraphActionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLocaleLowerCase(),
+        skip: 0,
+        first: 1,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ACTION_DOMAIN_EDIT_SUCCESS,
+      meta,
+    });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_DOMAIN_EDIT_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 function* editColonyAction({
   payload: {
     colonyAddress,
@@ -1102,4 +1278,5 @@ export default function* tasksSagas() {
     createVersionUpgradeAction,
   );
   yield takeEvery(ActionTypes.COLONY_ACTION_EDIT_COLONY, editColonyAction);
+  yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_EDIT, editDomainAction);
 }

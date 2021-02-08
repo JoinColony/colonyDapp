@@ -21,6 +21,7 @@ export type TransactionActionTypes =
       WithId
     >
   | ActionTypeWithMeta<ActionTypes.TRANSACTION_READY, WithId>
+  | ActionTypeWithMeta<ActionTypes.TRANSACTION_PENDING, WithId>
   | ActionTypeWithMeta<ActionTypes.TRANSACTION_CANCEL, WithId>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_CREATED,

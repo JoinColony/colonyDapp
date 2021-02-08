@@ -10,6 +10,7 @@ export enum ColonyActions {
   CreateDomain = 'CreateDomain',
   VersionUpgrade = 'VersionUpgrade',
   ColonyEdit = 'ColonyEdit',
+  EditDomain = 'EditDomain',
 }
 
 export enum ColonyAndExtensionsEvents {
@@ -121,6 +122,7 @@ export interface FormattedAction {
   transactionHash: string;
   createdAt: Date;
   commentCount: number;
+  metadata?: string;
 }
 
 export interface FormattedEvent {

@@ -1,0 +1,28 @@
+.nameAndColorContainer {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.domainName {
+  margin-right: 18px;
+  width: 100%;
+}
+
+.noPermissionFromMessage {
+  margin-bottom: 20px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}
+
+.noPermissionFromMessage > div {
+  vertical-align: bottom;
+}

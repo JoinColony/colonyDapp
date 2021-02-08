@@ -62,6 +62,7 @@ export const getValuesForActionType = (
       return {
         initiator: argsObj.agent,
         fromDomain: argsObj.domainId,
+        metadata: argsObj.metadata,
       };
     }
     case ColonyActions.ColonyEdit: {
@@ -75,6 +76,13 @@ export const getValuesForActionType = (
         fromDomain: argsObj.fromPot,
         toDomain: argsObj.toPot,
         initiator: argsObj.agent,
+      };
+    }
+    case ColonyActions.EditDomain: {
+      return {
+        initiator: argsObj.agent,
+        fromDomain: argsObj.domainId,
+        metadata: argsObj.metadata,
       };
     }
     default: {
@@ -102,6 +110,36 @@ export const getColonyMetadataMessageDescriptorsIds = (
     }
   }
   return `event.${ColonyAndExtensionsEvents.ColonyMetadata}.fallback`;
+};
+
+export const getDomainMetadataMessageDescriptorsIds = (
+  actionType: ColonyAndExtensionsEvents,
+  { nameChanged, colorChanged, descriptionChanged }: { [key: string]: boolean },
+) => {
+  if (actionType === ColonyAndExtensionsEvents.DomainMetadata) {
+    if (nameChanged && colorChanged && descriptionChanged) {
+      return `event.${ColonyAndExtensionsEvents.DomainMetadata}.all`;
+    }
+    if (nameChanged && colorChanged) {
+      return `event.${ColonyAndExtensionsEvents.DomainMetadata}.nameColor`;
+    }
+    if (nameChanged && descriptionChanged) {
+      return `event.${ColonyAndExtensionsEvents.DomainMetadata}.nameDescription`;
+    }
+    if (colorChanged && descriptionChanged) {
+      return `event.${ColonyAndExtensionsEvents.DomainMetadata}.descriptionColor`;
+    }
+    if (nameChanged) {
+      return `event.${ColonyAndExtensionsEvents.DomainMetadata}.name`;
+    }
+    if (colorChanged) {
+      return `event.${ColonyAndExtensionsEvents.DomainMetadata}.color`;
+    }
+    if (descriptionChanged) {
+      return `event.${ColonyAndExtensionsEvents.DomainMetadata}.description`;
+    }
+  }
+  return `event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`;
 };
 
 export const parseColonyMetadata = (
@@ -135,6 +173,37 @@ export const parseColonyMetadata = (
   };
 };
 
+export const parseDomainMetadata = (
+  jsonMetadata: string,
+): {
+  domainName: string | null;
+  domainPurpose: string | null;
+  domainColor: string | null;
+} => {
+  try {
+    if (jsonMetadata) {
+      const {
+        domainName = null,
+        domainPurpose = null,
+        domainColor = null,
+      } = JSON.parse(jsonMetadata);
+      return {
+        domainName,
+        domainPurpose,
+        domainColor,
+      };
+    }
+  } catch (error) {
+    console.error('Could not parse domain ipfs json blob', jsonMetadata);
+    console.error(error);
+  }
+  return {
+    domainName: null,
+    domainPurpose: null,
+    domainColor: null,
+  };
+};
+
 export const sortMetdataHistory = (colonyMetadata) =>
   sortBy(colonyMetadata, [
     ({
@@ -158,15 +227,24 @@ export const getSpecificActionValuesCheck = (
     colonyDisplayName: currentColonyDisplayName,
     colonyAvatarHash: currentColonyAvatarHash,
     colonyTokens: currentColonyTokens,
+    domainName: currentDomainName,
+    domainPurpose: currentDomainPurpose,
+    domainColor: currentDomainColor,
   }: ColonyAction,
   {
     colonyDisplayName: prevColonyDisplayName,
     colonyAvatarHash: prevColonyAvatarHash,
     colonyTokens: prevColonyTokens,
+    domainName: prevDomainName,
+    domainPurpose: prevDomainPurpose,
+    domainColor: prevDomainColor,
   }: {
-    colonyDisplayName: string | null;
-    colonyAvatarHash: string | null;
-    colonyTokens: string[] | null;
+    colonyDisplayName?: string | null;
+    colonyAvatarHash?: string | null;
+    colonyTokens?: string[] | null;
+    domainName?: string | null;
+    domainPurpose?: string | null;
+    domainColor?: string | null;
   },
 ): { [key: string]: boolean } => {
   switch (actionType) {
@@ -186,6 +264,17 @@ export const getSpecificActionValuesCheck = (
         nameChanged,
         logoChanged,
         tokensChanged,
+      };
+    }
+    case ColonyAndExtensionsEvents.DomainMetadata: {
+      const nameChanged = prevDomainName !== currentDomainName;
+      const colorChanged =
+        Number(prevDomainColor) !== Number(currentDomainColor);
+      const descriptionChanged = prevDomainPurpose !== currentDomainPurpose;
+      return {
+        nameChanged,
+        colorChanged,
+        descriptionChanged,
       };
     }
     default: {

@@ -10,7 +10,9 @@ import ColorTag, { Color } from '~core/ColorTag';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Paragraph from '~core/Paragraph';
-import { OneDomain } from '~data/index';
+import EditDomainDialog from '~dashboard/EditDomainDialog';
+import { useDialog } from '~core/Dialog';
+import { OneDomain, Colony } from '~data/index';
 import { ENTER } from '~types/index';
 
 import { ALLDOMAINS_DOMAIN_SELECTION } from '~constants';
@@ -19,6 +21,7 @@ import styles from './DomainSelectItem.css';
 
 interface Props {
   domain: OneDomain | typeof ALLDOMAINS_DOMAIN_SELECTION;
+  colony: Colony;
 }
 
 const displayName = 'dashboard.DomainDropdown.DomainSelectItem';
@@ -31,33 +34,39 @@ const DomainSelectItem = ({
     ethParentDomainId,
     name,
   },
+  colony,
 }: Props) => {
-  const openUAC = useCallback(() => {
-    /*
-     * @fixme open UAC here
-     */
-    // eslint-disable-next-line no-alert
-    alert('Open UAC');
-  }, []);
-
-  const handleEditClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
+  const openEditDialog = useDialog(EditDomainDialog);
+  const handleEditDomain = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (evt) => {
       evt.stopPropagation();
-      openUAC();
+      if (colony) {
+        openEditDialog({
+          selectedDomainId: ethDomainId.toString(),
+          colony,
+        });
+      }
     },
-    [openUAC],
+    [openEditDialog, colony, ethDomainId],
   );
-  const handleEditKeyDown = useCallback<
+
+  const handleEditDomainKeyDown = useCallback<
     KeyboardEventHandler<HTMLButtonElement>
   >(
     (evt) => {
       if (evt.key === ENTER) {
         evt.stopPropagation();
-        openUAC();
+        if (colony) {
+          openEditDialog({
+            selectedDomainId: ethDomainId.toString(),
+            colony,
+          });
+        }
       }
     },
-    [openUAC],
+    [openEditDialog, colony, ethDomainId],
   );
+
   return (
     <div className={styles.main}>
       {typeof ethParentDomainId === 'number' && (
@@ -95,13 +104,13 @@ const DomainSelectItem = ({
         )}
       </div>
       <div className={styles.editButtonCol}>
-        {ethDomainId !== 0 && (
+        {ethDomainId !== 0 && ethDomainId !== ROOT_DOMAIN_ID && (
           // Hide for `All Domains` option
           <div className={styles.editButton}>
             <Button
               appearance={{ theme: 'blue' }}
-              onClick={handleEditClick}
-              onKeyDown={handleEditKeyDown}
+              onClick={handleEditDomain}
+              onKeyDown={handleEditDomainKeyDown}
               tabIndex={0}
               text={{ id: 'button.edit' }}
             />

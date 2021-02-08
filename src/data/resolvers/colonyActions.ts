@@ -17,7 +17,7 @@ import {
   Address,
 } from '~types/index';
 
-interface EventValue {
+export interface EventValue {
   agent: Address;
   domainId: BigNumberish;
   paymentId: BigNumberish;
@@ -203,6 +203,9 @@ export const colonyActionsResolvers = ({
           colonyDisplayName: null,
           colonyAvatarHash: null,
           colonyTokens: [],
+          domainName: null,
+          domainPurpose: null,
+          domainColor: null,
           ...actionValues,
         };
       }

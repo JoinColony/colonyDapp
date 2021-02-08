@@ -44,6 +44,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.ColonyUpgraded]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.ColonyMetadata]: [ColonyRole.Root],
+  [ColonyAndExtensionsEvents.DomainMetadata]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -59,6 +60,7 @@ export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
   [ColonyActions.CreateDomain]: 'emoji-crane',
   [ColonyActions.VersionUpgrade]: 'emoji-strong-person',
   [ColonyActions.ColonyEdit]: 'emoji-edit-tools',
+  [ColonyActions.EditDomain]: 'emoji-pencil-note',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -83,6 +85,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.CreateDomain]: [ColonyAndExtensionsEvents.DomainAdded],
   [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
   [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
+  [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
 };
 
 /*
@@ -116,6 +119,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   ],
   [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
   [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
+  [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
 };
 
 /*
@@ -139,4 +143,8 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Description,
   ],
   [ColonyActions.ColonyEdit]: [ActionPageDetails.Name],
+  [ColonyActions.EditDomain]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Description,
+  ],
 };
