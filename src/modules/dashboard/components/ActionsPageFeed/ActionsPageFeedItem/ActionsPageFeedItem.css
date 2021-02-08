@@ -37,6 +37,7 @@
 
 .text {
   font-size: var(--size-normal);
+  white-space: pre-wrap;
   color: var(--temp-grey-blue-7);
 }
 
