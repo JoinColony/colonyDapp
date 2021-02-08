@@ -31,7 +31,7 @@ const UserAvatar = HookedUserAvatar();
 const MSG = defineMessages({
   domain: {
     id: 'ActionsList.ActionsListItem.domain',
-    defaultMessage: 'Domain {domainId}',
+    defaultMessage: 'Team {domainId}',
   },
   titleCommentCount: {
     id: 'ActionsList.ActionsListItem.titleCommentCount',
