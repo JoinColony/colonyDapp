@@ -59,13 +59,14 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
     skip: $skip,
     first: $first,
     where: {
-    associatedColony_contains: $colonyAddress,
-    name_in: [
-      "TokensMinted(address,address,uint256)",
-      "DomainAdded(address,uint256)",
-      "ColonyMetadata(address,string)",
-      "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)"
-    ] }) {
+      associatedColony_contains: $colonyAddress,
+      name_in: [
+        "TokensMinted(address,address,uint256)",
+        "DomainAdded(address,uint256)",
+        "ColonyMetadata(address,string)",
+        "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)"
+      ]
+    }) {
     id
     address
     associatedColony {
@@ -85,5 +86,17 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
     }
     name
     args
+    processedValues @client {
+      agent
+      who
+      fromPot
+      fromDomain
+      toPot
+      toDomain
+      domainId
+      amount
+      token
+      metadata
+    }
   }
 }

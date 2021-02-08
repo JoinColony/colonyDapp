@@ -184,17 +184,6 @@ export default gql`
   # The Graph
   #
   #
-
-  input ActionsFilter {
-    payment_contains: String
-  }
-
-  input EventsFilter {
-    associatedColony_contains: String
-    associatedColony: String
-    name_in: [String!]
-  }
-
   input ByColonyFilter {
     colonyAddress: String!
     domainChainId: Int
@@ -271,29 +260,7 @@ export default gql`
     domains: [SubgraphDomain!]!
   }
 
-  type SubgraphEvent {
-    id: String!
-    transaction: SubgraphTransaction!
-    address: String!
-    name: String!
-    args: String!
-    associatedColony: SubgraphColony!
-  }
-
-  type OneTxPayment {
-    id: String!
-    agent: String!
-    transaction: SubgraphTransaction!
-    payment: SubgraphPayment!
-  }
-
   extend type Query {
-    oneTxPayments(
-      skip: Int!
-      first: Int!
-      where: ActionsFilter!
-    ): [OneTxPayment!]!
-    events(skip: Int, first: Int, where: EventsFilter!): [SubgraphEvent!]!
     domains(where: ByColonyFilter!): [SubgraphDomain!]!
     colony(id: String!): SubgraphColony!
     colonies(

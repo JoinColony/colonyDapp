@@ -41,6 +41,7 @@ import {
 import { extensionsResolvers } from './resolvers/extensions';
 import { colonyActionsResolvers } from './resolvers/colonyActions';
 import { metaColonyResolvers } from './resolvers/metacolony';
+import { eventsResolvers } from './resolvers/events';
 
 import { FixedToken } from '../types';
 
@@ -66,6 +67,7 @@ export const resolvers: ResolverFactory[] = [
   extensionsResolvers,
   colonyActionsResolvers,
   metaColonyResolvers,
+  eventsResolvers,
 ];
 
 // export all the generated types and helpers
