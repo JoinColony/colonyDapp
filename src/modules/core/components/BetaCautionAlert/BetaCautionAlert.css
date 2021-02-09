@@ -30,3 +30,12 @@
   font-weight: var(--weight-bold);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
+
+.link {
+  margin: 18px 0;
+  width: 100%;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  color: var(--sky-blue);
+}
