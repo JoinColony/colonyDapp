@@ -7,7 +7,6 @@ import { ApolloProvider } from '@apollo/client';
 
 import layout from '~styles/layout.css';
 import { DialogProvider } from '~core/Dialog';
-import BetaCautionAlert from '~core/BetaCautionAlert';
 
 import messages from './i18n/en.json';
 import actionMessages from './i18n/en-actions';
@@ -40,7 +39,6 @@ const App = ({ store }: Props) => (
             <DialogProvider>
               <div className={layout.stretch}>
                 <Routes />
-                <BetaCautionAlert />
               </div>
             </DialogProvider>
           </BrowserRouter>
