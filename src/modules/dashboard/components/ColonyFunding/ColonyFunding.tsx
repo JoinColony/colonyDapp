@@ -118,6 +118,7 @@ const ColonyFunding = ({ match }: Props) => {
             appearance={{ numCols: '3' }}
             nativeTokenAddress={colony.nativeTokenAddress}
             tokens={colony.tokens}
+            domainId={selectedDomainId}
           />
         </div>
         <div className={styles.banner}>
