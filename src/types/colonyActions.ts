@@ -146,4 +146,6 @@ export interface FormattedEvent {
   paymentId?: string;
   decimals: number;
   amount: string;
+  role: ColonyRole;
+  setTo: boolean;
 }

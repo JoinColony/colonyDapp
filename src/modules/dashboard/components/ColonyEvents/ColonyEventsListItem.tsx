@@ -56,6 +56,8 @@ const ColonyEventsListItem = ({
     metadata,
     tokenAddress,
     paymentId,
+    role,
+    setTo,
   },
   colony: { tokens, nativeTokenAddress },
   colony,
@@ -76,6 +78,13 @@ const ColonyEventsListItem = ({
   const colonyNativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
+
+  const getFormattedRole = () => {
+    const roleNameMessage = { id: `role.${role}` };
+    return `${setTo ? 'assigned' : 'removed'} the ${formatMessage(
+      roleNameMessage,
+    ).toLowerCase()} permission`;
+  };
 
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
@@ -109,6 +118,7 @@ const ColonyEventsListItem = ({
     tokenAddress,
     paymentId,
     displayValues,
+    roles: role ? getFormattedRole() : '',
   };
 
   return (
