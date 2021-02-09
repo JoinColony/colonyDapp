@@ -150,7 +150,8 @@ export const getActionsListData = (
         const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
         if (
           colonyManager?.networkClient &&
-          actionType === ColonyActions.ColonyEdit
+          (actionType === ColonyActions.ColonyEdit ||
+            actionType === ColonyActions.SetUserRoles)
         ) {
           return (
             initiator !== colonyManager.networkClient.address.toLowerCase()
@@ -192,6 +193,8 @@ export const getEventsListData = (
       amount,
       payoutRemainder,
       decimals = '18',
+      role,
+      setTo,
     } = JSON.parse(args || '{}');
     const checksummedColonyAddress = createAddress(colonyAddress);
     return [
@@ -214,6 +217,8 @@ export const getEventsListData = (
         paymentId,
         decimals: parseInt(decimals, 10),
         amount: amount || payoutRemainder || '0',
+        role,
+        setTo: setTo === 'true',
       },
     ];
   }, []);
