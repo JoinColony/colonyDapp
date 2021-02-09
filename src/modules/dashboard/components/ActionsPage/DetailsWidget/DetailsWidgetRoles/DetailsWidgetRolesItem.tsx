@@ -6,9 +6,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 
 import styles from './DetailsWidgetRoles.css';
 
-const displayName =
-  // eslint-disable-next-line max-len
-  'dashboard.ActionsPage.DetailsWidget.DetailsWidgetRoles.DetailsWidgetRolesItem';
+const displayName = `dashboard.ActionsPage.DetailsWidget.DetailsWidgetRoles.DetailsWidgetRolesItem`;
 
 interface Props {
   role: ActionUserRoles;
