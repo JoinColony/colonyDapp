@@ -123,8 +123,6 @@
     "transaction.group.setUserRoles.description": "Set user roles",
     "transaction.ColonyClient.setUserRolesWithProofs.title": "Set user roles",
     "transaction.ColonyClient.setUserRolesWithProofs.description": "Set user roles",
-    "transaction.group.setRoles.title": "Set roles",
-    "transaction.group.setRoles.description": "Sign the transactions required to set the selected roles.",
     "transaction.ColonyClient.setAdministrationRoleWithProofs.title": "{2, select, true { Add administration role } false { Remove administration role } }",
     "transaction.ColonyClient.setAdministrationRoleWithProofs.description": "{2, select, true { Give role to ({ 0 }) } false { Remove role from ({ 0 }) } }",
     "transaction.ColonyClient.setArchitectureRoleWithProofs.title": "{2, select, true { Add architecture role } false { Remove architecture role } }",
