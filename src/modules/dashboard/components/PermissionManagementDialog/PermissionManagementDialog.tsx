@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
 import { useHistory } from 'react-router-dom';
+import { isEqual, sortBy } from 'lodash';
 
 import {
   mergePayload,
@@ -55,11 +56,8 @@ const MSG = defineMessages({
     defaultMessage: 'Member',
   },
   noPermissionFrom: {
-    id:
-      'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noPermissionFrom',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'You do not have the {firstRoleRequired} and {secondRoleRequired} permissions required to take this action.',
+    id: 'dashboard.PermissionManagementDialog.noPermissionFrom',
+    defaultMessage: `You do not have the {roleRequired} permission required to take this action.`,
   },
 });
 
@@ -235,7 +233,12 @@ const PermissionManagementDialog = ({
           success={ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS}
           transform={transform}
         >
-          {({ isSubmitting, isValid }: FormikProps<any>) => (
+          {({
+            isSubmitting,
+            isValid,
+            initialValues,
+            values,
+          }: FormikProps<any>) => (
             <div className={styles.dialogContainer}>
               <DialogSection appearance={{ theme: 'heading' }}>
                 <Heading
@@ -280,16 +283,10 @@ const PermissionManagementDialog = ({
                     <FormattedMessage
                       {...MSG.noPermissionFrom}
                       values={{
-                        firstRoleRequired: (
+                        roleRequired: (
                           <PermissionsLabel
-                            permission={ColonyRole.Funding}
-                            name={{ id: `role.${ColonyRole.Funding}` }}
-                          />
-                        ),
-                        secondRoleRequired: (
-                          <PermissionsLabel
-                            permission={ColonyRole.Administration}
-                            name={{ id: `role.${ColonyRole.Administration}` }}
+                            permission={ColonyRole.Architecture}
+                            name={{ id: `role.${ColonyRole.Architecture}` }}
                           />
                         ),
                       }}
@@ -309,7 +306,11 @@ const PermissionManagementDialog = ({
                   text={{ id: 'button.confirm' }}
                   type="submit"
                   style={{ width: styles.wideButton }}
-                  disabled={!userHasPermission || !isValid}
+                  disabled={
+                    !userHasPermission ||
+                    !isValid ||
+                    isEqual(sortBy(values.roles), sortBy(initialValues.roles))
+                  }
                 />
               </DialogSection>
             </div>
