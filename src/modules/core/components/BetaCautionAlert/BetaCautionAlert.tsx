@@ -20,6 +20,8 @@ const MSG = {
   },
 };
 
+const LEARN_MORE_LINK = 'https://colony.io';
+
 const BetaCautionAlert = () => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -35,7 +37,7 @@ const BetaCautionAlert = () => {
         <ExternalLink
           text={MSG.learnMore}
           className={styles.link}
-          href="https://colony.io"
+          href={LEARN_MORE_LINK}
         />
       ) : (
         <>
