@@ -1771,7 +1771,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -4286,7 +4286,7 @@ export const SubgraphActionsDocument = gql`
       }
     }
   }
-  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "ColonyRoleSet(address,address,uint256,uint8,bool)"]}) {
+  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)"]}) {
     id
     transaction {
       hash: id
