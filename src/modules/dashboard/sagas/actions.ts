@@ -1096,7 +1096,6 @@ function* editColonyAction({
     colonyMetadataIpfsHash = yield call(
       ipfsUpload,
       JSON.stringify({
-        colonyName,
         colonyDisplayName,
         colonyAvatarHash: hasAvatarChanged
           ? colonyAvatarIpfsHash
