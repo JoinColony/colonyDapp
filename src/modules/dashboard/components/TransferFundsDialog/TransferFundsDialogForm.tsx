@@ -70,7 +70,7 @@ const MSG = defineMessages({
   },
   noBalance: {
     id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.noBalance',
-    defaultMessage: 'Insufficient balance in from domain pot',
+    defaultMessage: 'Insufficient balance in from team pot',
   },
   noPermissionFrom: {
     id:
@@ -80,7 +80,7 @@ const MSG = defineMessages({
   },
   samePot: {
     id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.samePot',
-    defaultMessage: 'Cannot move to same domain pot',
+    defaultMessage: 'Cannot move to same team pot',
   },
   transferIconTitle: {
     id:
