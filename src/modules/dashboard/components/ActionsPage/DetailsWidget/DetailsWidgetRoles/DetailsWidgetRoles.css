@@ -2,11 +2,12 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
+  padding: 10px 0 5px 0;
   max-width: 270px;
 }
 
 .roleListItem {
-  margin-left: 10px;
+  margin: 0 0 5px 10px;
 }
 
 .roleListItem:first-child {
