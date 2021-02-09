@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import ExternalLink from '~core/ExternalLink';
+
 import styles from './BetaCautionAlert.css';
 
 const MSG = {
@@ -30,15 +32,11 @@ const BetaCautionAlert = () => {
       onMouseLeave={() => toggleHover(false)}
     >
       {isHovered ? (
-        <a
-          // need to provide a proper link (probably to notion page)
-          href="https://colony.io"
-          target="_blank"
-          rel="noopener noreferrer"
+        <ExternalLink
+          text={MSG.learnMore}
           className={styles.link}
-        >
-          <FormattedMessage {...MSG.learnMore} />
-        </a>
+          href="https://colony.io"
+        />
       ) : (
         <>
           <div className={styles.pinkStripe} />
