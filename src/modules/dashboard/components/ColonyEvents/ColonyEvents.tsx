@@ -3,17 +3,19 @@ import { defineMessages } from 'react-intl';
 
 import ActionsList from '~core/ActionsList';
 import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
+import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Select, Form } from '~core/Fields';
 
 import {
-  EventFilterOptions,
-  EventFilterSelectOptions,
-} from '../shared/eventsFilter';
+  EventsSortOptions,
+  EventsSortSelectOptions,
+} from '../shared/eventsSort';
 import { immutableSort } from '~utils/arrays';
 import { Colony, useSubgraphEventsQuery } from '~data/index';
-import { getEventsListData } from '../../transformers';
 import { useTransformer } from '~utils/hooks';
+
+import { getEventsListData } from '../../transformers';
 
 import ColonyEventsListItem from './ColonyEventsListItem';
 
@@ -23,6 +25,7 @@ const displayName = 'dashboard.ColonyEvents';
 
 interface Props {
   colony: Colony;
+  ethDomainId?: number;
 }
 
 const MSG = defineMessages({
@@ -32,10 +35,18 @@ const MSG = defineMessages({
   },
 });
 
-const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
-  const [eventsFilter, setEventsFilter] = useState<string>(
-    EventFilterOptions.NEWEST,
+const ColonyEvents = ({
+  colony: { colonyAddress },
+  colony,
+  ethDomainId,
+}: Props) => {
+  const [eventsSort, setEventsSort] = useState<string>(
+    EventsSortOptions.NEWEST,
   );
+
+  const [dataPage, setDataPage] = useState<number>(1);
+
+  const ITEMS_PER_PAGE = 10;
 
   const {
     data,
@@ -43,6 +54,8 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
     error,
   } = useSubgraphEventsQuery({
     variables: {
+      skip: 0,
+      first: 100,
       colonyAddress: colonyAddress.toLowerCase(),
     },
   });
@@ -55,29 +68,52 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
     (first: any, second: any) => {
       if (!(first && second)) return 0;
 
-      return eventsFilter === EventFilterOptions.NEWEST
+      return eventsSort === EventsSortOptions.NEWEST
         ? second.createdAt - first.createdAt
         : first.createdAt - second.createdAt;
     },
-    [eventsFilter],
+    [eventsSort],
   );
 
+  const handleDataPagination = useCallback(() => {
+    setDataPage(dataPage + 1);
+  }, [dataPage]);
+
+  /* Needs to be tested when all event types are wirde up & reflected in the list */
   const filteredEvents = useMemo(
     () =>
-      immutableSort(events, sort).map((event) => {
+      !ethDomainId
+        ? events
+        : events.filter(
+            (event) =>
+              // Number(event.fundingPot) === ethDomainId ||
+              Number(event.domainId) === ethDomainId ||
+              /* when no specific domain in the event it is displayed in Root */
+              (ethDomainId === 1 &&
+                event.domainId === null &&
+                event.fundingPot === undefined),
+          ),
+    [ethDomainId, events],
+  );
+
+  const sortedEvents = useMemo(
+    () =>
+      immutableSort(filteredEvents, sort).map((event) => {
         return {
           ...event,
           userAddress: event.userAddress || event.fromAddress,
         };
       }),
-    [events, sort],
+    [filteredEvents, sort],
   );
+
+  const paginatedEvents = sortedEvents.slice(0, ITEMS_PER_PAGE * dataPage);
 
   return (
     <div>
       <UnclaimedTransfers colony={colony} />
       <Form
-        initialValues={{ filter: EventFilterOptions.NEWEST }}
+        initialValues={{ filter: EventsSortOptions.NEWEST }}
         onSubmit={() => undefined}
       >
         <div className={styles.filter}>
@@ -86,19 +122,25 @@ const ColonyEvents = ({ colony: { colonyAddress }, colony }: Props) => {
             elementOnly
             label={MSG.labelFilter}
             name="filter"
-            options={EventFilterSelectOptions}
-            onChange={setEventsFilter}
+            options={EventsSortSelectOptions}
+            onChange={setEventsSort}
             placeholder={MSG.labelFilter}
           />
         </div>
       </Form>
-      {subgraphEventsLoading && !filteredEvents ? (
+      {subgraphEventsLoading && !sortedEvents ? (
         <SpinnerLoader />
       ) : (
         <ActionsList
-          items={filteredEvents}
+          items={paginatedEvents}
           colony={colony}
           itemComponent={ColonyEventsListItem}
+        />
+      )}
+      {ITEMS_PER_PAGE * dataPage < sortedEvents.length && (
+        <LoadMoreButton
+          onClick={handleDataPagination}
+          isLoadingData={subgraphEventsLoading}
         />
       )}
     </div>
