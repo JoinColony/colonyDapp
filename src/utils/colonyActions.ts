@@ -88,7 +88,7 @@ export const getValuesForActionType = (
     case ColonyActions.SetUserRoles: {
       return {
         initiator: argsObj.agent,
-        toDomain: argsObj.domainId,
+        fromDomain: argsObj.domainId,
         recipient: argsObj.user,
         role: argsObj.role,
         setTo: argsObj.setTo === 'true',
