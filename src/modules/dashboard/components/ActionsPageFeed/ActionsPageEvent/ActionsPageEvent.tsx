@@ -47,7 +47,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  index: number;
+  eventIndex: number;
   eventName?: string;
   eventValues?: Record<string, any>;
   transactionHash: string;
@@ -65,7 +65,7 @@ interface DomainMetadata {
 }
 
 const ActionsPageEvent = ({
-  index: eventIndex,
+  eventIndex,
   createdAt,
   transactionHash,
   eventName = ColonyAndExtensionsEvents.Generic,
@@ -200,7 +200,7 @@ const ActionsPageEvent = ({
   const { formatMessage } = useIntl();
   const formattedRole = `${
     values?.roles[eventIndex].setTo ? 'assigned' : 'removed'
-  } the ${formatMessage(roleNameMessage)}`;
+  } the ${formatMessage(roleNameMessage).toLowerCase()}`;
 
   const getDomainMetadataChecks = useMemo(() => {
     if (
