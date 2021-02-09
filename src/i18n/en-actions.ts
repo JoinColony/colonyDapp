@@ -12,7 +12,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.VersionUpgrade} {Upgrade Colony!}
       ${ColonyActions.ColonyEdit} {Colony details changed}
       ${ColonyActions.EditDomain} {{fromDomain} team details edited}
-      ${ColonyActions.SetUserRoles} {{initiator} {roles} in {toDomain} to {recipient}}
+      ${ColonyActions.SetUserRoles} {{roles} in {fromDomain} to {recipient}}
       other {Generic action we don't have information about}
     }`,
   'action.type': `{actionType, select,
