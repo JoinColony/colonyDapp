@@ -71,11 +71,7 @@ const DomainSelectItem = ({
     <div className={styles.main}>
       {typeof ethParentDomainId === 'number' && (
         <div className={styles.childDomainIcon}>
-          <Icon
-            appearance={{ size: 'small' }}
-            name="return-arrow"
-            title="Child Domain"
-          />
+          <Icon name="return-arrow" title="Child Domain" />
         </div>
       )}
       <div className={styles.mainContent}>

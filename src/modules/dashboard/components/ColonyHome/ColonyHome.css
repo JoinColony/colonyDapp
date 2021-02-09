@@ -40,6 +40,10 @@
   width: 320px;
 }
 
+.domainsDropdownContainer ul {
+  max-height: 458px;
+}
+
 .contentActionsPanel {
   display: flex;
   justify-content: space-between;
