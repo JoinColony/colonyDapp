@@ -97,9 +97,9 @@ const ActionsListItem = ({
 
   const getFormattedRole = () => {
     const roleNameMessage = { id: `role.${role}` };
-    return `${setTo ? 'assigned' : 'removed'} ${formatMessage(
+    return `${setTo ? 'Assign' : 'Remove'} ${formatMessage(
       roleNameMessage,
-    )}`;
+    ).toLowerCase()} permission`;
   };
 
   const popoverPlacement = useMemo(() => {
