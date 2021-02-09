@@ -9,7 +9,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.TokensMinted} {{initiator} minted {amount} {tokenSymbol} to {recipient}}
       ${ColonyAndExtensionsEvents.DomainAdded} {{initiator} added Team: {fromDomain}}
       ${ColonyAndExtensionsEvents.ColonyUpgraded} {This colony has upgraded to {newVersion}}
-      ${ColonyAndExtensionsEvents.ColonyRoleSet} {{initiator} {role} permission in the {toDomain} team to {recipient}}
+      ${ColonyAndExtensionsEvents.ColonyRoleSet} {{initiator} {role} permission in the {fromDomain} team to {recipient}}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
   /*
@@ -44,6 +44,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.PayoutClaimed} {{agent} claimed a payout of {amount} {tokenSymbol} from funding pot {fundingPot}}
       ${ColonyAndExtensionsEvents.ColonyMetadata} {{agent} changed Colony metadata to {metadata}}
       ${ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots} {{agent} transferred {amount} {tokenSymbol} between pots}
+      ${ColonyAndExtensionsEvents.ColonyRoleSet} {{agent} {roles} in {domain} to {recipient}}
       other {{eventName} emmited with values: {displayValues}}
     }`,
 };
