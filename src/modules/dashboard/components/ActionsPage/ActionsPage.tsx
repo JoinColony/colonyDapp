@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
-import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
-import { isEmpty } from 'lodash';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Numeral from '~core/Numeral';
@@ -31,6 +30,7 @@ import {
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
+import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../core/fetchers';
@@ -82,8 +82,6 @@ const ActionsPage = () => {
     transactionHash?: string;
     colonyName: string;
   }>();
-
-  const { formatMessage } = useIntl();
 
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
@@ -218,6 +216,10 @@ const ActionsPage = () => {
     },
   });
 
+  const { roleTitle } = useFormatRolesTitle(
+    colonyActionData?.colonyAction.roles,
+  );
+
   if (!isTransactionFormat(transactionHash) || colonyActionError) {
     return (
       <div className={styles.main}>
@@ -330,55 +332,6 @@ const ActionsPage = () => {
     };
   }
 
-  const getFormmatedRoleList = (roleGroupA, roleGroupB) => {
-    let roleList = '';
-
-    roleGroupA.forEach((role, i) => {
-      const roleNameMessage = { id: `role.${role.id}` };
-      const formattedRole = formatMessage(roleNameMessage);
-
-      roleList += ` ${formattedRole}`;
-
-      if (
-        i < roleGroupA.length - 1 ||
-        (i === roleGroupA.length - 1 && !isEmpty(roleGroupB))
-      ) {
-        roleList += ',';
-      }
-    });
-
-    return roleList;
-  };
-
-  const getRolesTitle = () => {
-    let roleTitle = '';
-    const assignedRoles = roles.filter((role) => role.setTo);
-    const unassignedRoles = roles.filter((role) => !role.setTo);
-
-    if (!isEmpty(assignedRoles)) {
-      roleTitle += `assigned${getFormmatedRoleList(
-        assignedRoles,
-        unassignedRoles,
-      )}`;
-    }
-
-    if (isEmpty(assignedRoles) && !isEmpty(unassignedRoles)) {
-      roleTitle += `removed${getFormmatedRoleList(
-        unassignedRoles,
-        assignedRoles,
-      )}`;
-    } else if (!isEmpty(unassignedRoles)) {
-      roleTitle += ` and removed the${getFormmatedRoleList(
-        unassignedRoles,
-        assignedRoles,
-      )}`;
-    }
-
-    roleTitle += roles.length > 1 ? ' permissions' : ' permission';
-
-    return roleTitle;
-  };
-
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *
@@ -453,7 +406,7 @@ const ActionsPage = () => {
                 ...actionAndEventValues,
                 fromDomain: actionAndEventValues.fromDomain?.name,
                 toDomain: actionAndEventValues.toDomain?.name,
-                roles: getRolesTitle(),
+                roles: roleTitle,
               }}
             />
           </h1>
