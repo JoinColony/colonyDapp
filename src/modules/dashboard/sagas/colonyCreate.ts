@@ -38,6 +38,7 @@ import {
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
+import { log } from '~utils/debug';
 
 interface ChannelDefinition {
   channel: Channel<any>;
@@ -270,27 +271,61 @@ function* colonyCreate({
       tokenAddress = createAddress(givenTokenAddress);
     }
 
-    /**
-     * If we're not recovering this will be overwritten
+    /*
+     * This is a bit of a cumbersome solution, but should serve fine currently,
+     * until we find a way to properly stabilize IPFS uploads
      */
     let colonyAddress;
     if (createColony) {
-      const colonyMetadataIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          colonyName,
-          colonyDisplayName: displayName,
-          colonyAvatarHash: null,
-          colonyTokens: [],
-        }),
-      );
+      /*
+       * First IPFS upload try
+       */
+      let colonyMetadataIpfsHash;
+      try {
+        colonyMetadataIpfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({
+            colonyName,
+            colonyDisplayName: displayName,
+            colonyAvatarHash: null,
+            colonyTokens: [],
+          }),
+        );
+      } catch (error) {
+        log.verbose('Could not upload the colony metadata IPFS. Retrying...');
+        log.verbose(error);
+        /*
+         * If the first try fails, then attempt to upload again
+         * We assume the first error was due to a connection issue
+         */
+        colonyMetadataIpfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({
+            colonyName,
+            colonyDisplayName: displayName,
+            colonyAvatarHash: null,
+            colonyTokens: [],
+          }),
+        );
+      }
 
       yield put(
         transactionAddParams(createColony.id, [
           tokenAddress,
           ColonyVersion.CeruleanLightweightSpaceship,
           colonyName,
-          colonyMetadataIpfsHash,
+          /*
+           * If both upload attempts fail, set the value to an empty string
+           * This is needed as the contract method expects a string (doesn't care
+           * if it's empty) othwise the call will fail
+           *
+           * This way, even if we didn't upload the metadata, we can still
+           * go forward with creating the colony, and relying on it's fallback
+           * values to display it
+           */
+          typeof colonyMetadataIpfsHash === 'string'
+            ? colonyMetadataIpfsHash
+            : '',
         ]),
       );
       yield put(transactionReady(createColony.id));
