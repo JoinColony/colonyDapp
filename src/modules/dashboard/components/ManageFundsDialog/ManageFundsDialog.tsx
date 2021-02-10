@@ -72,6 +72,15 @@ const MSG = defineMessages({
     id: 'dashboard.ManageFundsDialog.rewardsDescription',
     defaultMessage: "Set what % of the colony's revenue should go to members.",
   },
+  unlockTokensTitle: {
+    id: 'dashboard.ManageFundsDialog.unlockTokensTitle',
+    defaultMessage: 'Unlock Token',
+  },
+  unlockTokensDescription: {
+    id: 'dashboard.ManageFundsDialog.unlockTokensDescription',
+    defaultMessage:
+      'Allow your native token to be transferred between acccounts.',
+  },
 });
 
 interface CustomWizardDialogProps {
@@ -154,6 +163,11 @@ const ManageFundsDialog = ({
       description: MSG.rewardsDescription,
       icon: 'emoji-medal',
       comingSoon: true,
+    },
+    {
+      title: MSG.unlockTokensTitle,
+      description: MSG.unlockTokensDescription,
+      icon: 'emoji-padlock',
     },
   ];
   return (
