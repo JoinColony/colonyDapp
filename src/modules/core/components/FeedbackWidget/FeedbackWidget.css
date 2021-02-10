@@ -1,0 +1,15 @@
+.container {
+  position: absolute;
+  right: 34px;
+  bottom: 16px;
+}
+
+.button {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  cursor: pointer;
+}

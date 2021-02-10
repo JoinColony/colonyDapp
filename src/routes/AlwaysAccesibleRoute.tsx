@@ -2,6 +2,7 @@ import React, { ComponentType } from 'react';
 import { Route, RouteProps } from 'react-router-dom';
 
 import BetaCautionAlert from '~core/BetaCautionAlert';
+import FeedbackWidget from '~core/FeedbackWidget';
 import { RouteComponentProps } from '~pages/RouteLayouts';
 
 type routePropsFn = (params: any) => RouteComponentProps;
@@ -30,6 +31,7 @@ const AlwaysAccesibleRoute = ({
         <Layout routeProps={passedDownRouteProps} {...props}>
           <Component routeProps={passedDownRouteProps} {...props} />
           <BetaCautionAlert />
+          <FeedbackWidget />
         </Layout>
       );
     }}
