@@ -222,7 +222,7 @@ const TransferFundsDialogForm = ({
     );
 
     if (convertedAmount.isZero()) {
-      customValidationErrors.amount = MSG.noBalance;
+      customValidationErrors.amount = MSG.noAmount;
     }
 
     if (fromDomainTokenBalance.lt(convertedAmount)) {
