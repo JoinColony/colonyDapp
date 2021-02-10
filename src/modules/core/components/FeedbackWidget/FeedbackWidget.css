@@ -12,4 +12,8 @@
   font-weight: var(--weight-bold);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
   cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
 }
