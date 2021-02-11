@@ -1,5 +1,5 @@
 import { bigNumberify } from 'ethers/utils';
-import { ClientType, TokenClientType } from '@colony/colony-js';
+import { ClientType } from '@colony/colony-js';
 
 import { TaskDocument, TaskQuery, TaskQueryVariables } from '~data/index';
 import { Address } from '~types/index';
@@ -443,14 +443,11 @@ const cacheUpdates = {
             canMintNativeToken = false;
           }
 
-          const { tokenClient } = colonyClient;
           let canUnlockNativeToken = true;
-          if (tokenClient.tokenClientType === TokenClientType.Colony) {
-            try {
-              await tokenClient.estimate.unlock();
-            } catch (error) {
-              canUnlockNativeToken = false;
-            }
+          try {
+            await colonyClient.estimate.unlockToken();
+          } catch (error) {
+            canUnlockNativeToken = false;
           }
 
           const data = cache.readQuery<
