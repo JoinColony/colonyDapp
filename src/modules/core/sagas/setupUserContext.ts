@@ -220,7 +220,7 @@ export default function* setupUserContext(
        * to the cache update function
        */
       // @ts-ignore
-      update: cacheUpdates.setCanMintNativeToken(),
+      update: cacheUpdates.setNativeTokenPermissions(),
     });
 
     setupOnBeforeUnload();
