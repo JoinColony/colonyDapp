@@ -1294,16 +1294,6 @@ function* createSetUserRolesAction({
 
     const batchKey = 'setUserRoles';
 
-    let annotationMessageIpfsHash = null;
-    if (annotationMessage) {
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
-
     const {
       setUserRoles,
       annotateSetUserRoles,
@@ -1372,6 +1362,16 @@ function* createSetUserRolesAction({
     yield takeFrom(setUserRoles.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateSetUserRoles.id));
+
+      let annotationMessageIpfsHash = null;
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(
         transactionAddParams(annotateSetUserRoles.id, [
           txHash,
