@@ -183,7 +183,7 @@ const PermissionManagementDialog = ({
   const validationSchema = yup.object().shape({
     domainId: yup.number().required(),
     user: yup.object().required(),
-    roles: yup.array().required(),
+    roles: yup.array().ensure(),
     annotation: yup.string().max(4000),
   });
 
