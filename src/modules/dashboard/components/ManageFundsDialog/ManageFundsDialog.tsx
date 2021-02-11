@@ -87,6 +87,7 @@ interface CustomWizardDialogProps {
   nextStepTransferFunds: string;
   nextStepMintTokens: string;
   nextStepManageTokens: string;
+  nextStepUnlockToken: string;
   prevStep: string;
   colony: Colony;
 }
@@ -104,6 +105,7 @@ const ManageFundsDialog = ({
   nextStepTransferFunds,
   nextStepMintTokens,
   nextStepManageTokens,
+  nextStepUnlockToken,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -112,6 +114,10 @@ const ManageFundsDialog = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
   const canMintNativeToken = colony.canMintNativeToken && hasRoot(allUserRoles);
+  const canUnlockToken =
+    colony.isNativeTokenLocked &&
+    colony.canUnlockNativeToken &&
+    hasRoot(allUserRoles);
   const canManageTokens = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const items = [
@@ -168,6 +174,14 @@ const ManageFundsDialog = ({
       title: MSG.unlockTokensTitle,
       description: MSG.unlockTokensDescription,
       icon: 'emoji-padlock',
+      onClick: () => callStep(nextStepUnlockToken),
+      permissionRequired: !canUnlockToken,
+      permissionInfoText: MSG.permissionsListText,
+      permissionInfoTextValues: {
+        permissionsList: (
+          <FormattedMessage {...MSG.manageTokensPermissionsList} />
+        ),
+      },
     },
   ];
   return (

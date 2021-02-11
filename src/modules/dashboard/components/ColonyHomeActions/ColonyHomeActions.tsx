@@ -10,6 +10,7 @@ import EditDomainDialog from '~dashboard/EditDomainDialog';
 import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
 import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
+import UnlockTokenDialog from '~dashboard/UnlockTokenDialog';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import AdvancedDialog from '~dashboard/AdvancedDialog';
 import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
@@ -70,12 +71,20 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStepTransferFunds: 'dashboard.TransferFundsDialog',
         nextStepMintTokens: 'dashboard.TokenMintDialog',
         nextStepManageTokens: 'dashboard.ColonyTokenManagementDialog',
+        nextStepUnlockToken: 'dashboard.UnlockTokenDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
       },
     },
     {
       component: TransferFundsDialog,
+      props: {
+        prevStep: 'dashboard.ManageFundsDialog',
+        colony,
+      },
+    },
+    {
+      component: UnlockTokenDialog,
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
