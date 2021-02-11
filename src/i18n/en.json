@@ -83,8 +83,8 @@
     "transaction.ColonyClient.setFundingRoleWithProofs.setOneTxRoles.title": "Give Funding Permission to OneTxPayment Extension",
     "transaction.ColonyClient.setFundingRoleWithProofs.setOneTxRoles.description": "Give Funding Permission to OneTxPayment Extension",
 
-    "transaction.TokenClient.unlock.title": "Unlock Token",
-    "transaction.TokenClient.unlock.description": "Unlock Token",
+    "transaction.ColonyClient.unlockToken.title": "Unlock Token",
+    "transaction.ColonyClient.unlockToken.description": "Unlock Token",
 
     "transaction.group.paymentAction.title": "Expenditure Payment",
     "transaction.group.paymentAction.description": "Expenditure Payment",
