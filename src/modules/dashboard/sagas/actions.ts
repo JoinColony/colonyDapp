@@ -1335,8 +1335,5 @@ export default function* tasksSagas() {
   );
   yield takeEvery(ActionTypes.COLONY_ACTION_EDIT_COLONY, editColonyAction);
   yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_EDIT, editDomainAction);
-  yield takeEvery(
-    ActionTypes.COLONY_ACTION_UNLOCK_TOKEN,
-    colonyTokenUnlock,
-  );
+  yield takeEvery(ActionTypes.COLONY_ACTION_UNLOCK_TOKEN, colonyTokenUnlock);
 }

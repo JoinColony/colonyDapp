@@ -18,9 +18,9 @@
 }
 
 .learnMoreLink {
+  margin-left: 4px;
   font-size: var(--size-tiny);
   color: var(--sky-blue);
-  margin-left: 4px;
 }
 
 .learnMoreLink:hover {
