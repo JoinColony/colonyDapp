@@ -1,5 +1,5 @@
 import { bigNumberify } from 'ethers/utils';
-import { ClientType } from '@colony/colony-js';
+import { ClientType, TokenClientType } from '@colony/colony-js';
 
 import { TaskDocument, TaskQuery, TaskQueryVariables } from '~data/index';
 import { Address } from '~types/index';
@@ -424,7 +424,7 @@ const cacheUpdates = {
       }
     };
   },
-  setCanMintNativeToken() {
+  setNativeTokenPermissions() {
     return async (cache: Cache) => {
       try {
         const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
@@ -443,6 +443,16 @@ const cacheUpdates = {
             canMintNativeToken = false;
           }
 
+          const { tokenClient } = colonyClient;
+          let canUnlockNativeToken = true;
+          if (tokenClient.tokenClientType === TokenClientType.Colony) {
+            try {
+              await tokenClient.estimate.unlock();
+            } catch (error) {
+              canUnlockNativeToken = false;
+            }
+          }
+
           const data = cache.readQuery<
             ProcessedColonyQuery,
             ProcessedColonyQueryVariables
@@ -457,12 +467,8 @@ const cacheUpdates = {
             cache.modify({
               id: cache.identify(data.processedColony),
               fields: {
-                /*
-                 * @TODO Most likely we'll have to do this cache update for
-                 * the `canUnlockNativeToken`  and `isNativeTokenLocked`
-                 * fields at some point
-                 */
                 canMintNativeToken: () => canMintNativeToken,
+                canUnlockNativeToken: () => canUnlockNativeToken,
               },
             });
           }
