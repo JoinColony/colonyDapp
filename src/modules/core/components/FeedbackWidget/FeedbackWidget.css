@@ -1,11 +1,8 @@
-.container {
+.button {
+  padding: 0;
   position: absolute;
   right: 34px;
   bottom: 16px;
-}
-
-.button {
-  padding: 0;
   border: none;
   background-color: transparent;
   font-size: var(--size-tiny);
