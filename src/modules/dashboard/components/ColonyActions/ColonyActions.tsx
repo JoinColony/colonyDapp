@@ -14,6 +14,7 @@ import {
   Colony,
   useSubgraphActionsQuery,
   useTransactionMessagesCountQuery,
+  useOneTxPaymentExtensionAddressQuery,
 } from '~data/index';
 import {
   ActionsSortOptions,
@@ -111,6 +112,9 @@ const ColonyActions = ({
     variables: { colonyAddress },
   });
 
+  const {
+    data: oneTxPaymentExtensionData,
+  } = useOneTxPaymentExtensionAddressQuery();
   const uniqueEvents = useMemo(
     () =>
       (data?.events || [])
@@ -164,6 +168,7 @@ const ColonyActions = ({
   const actions = useTransformer(getActionsListData, [
     (data && { ...data, events: uniqueEvents }) || data,
     commentCount?.transactionMessagesCount,
+    oneTxPaymentExtensionData?.oneTxPaymentExtensionAddress,
   ]);
 
   useEffect(() => {

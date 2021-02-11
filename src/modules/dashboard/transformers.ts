@@ -5,7 +5,12 @@ import {
   SubgraphEvents,
   TransactionsMessagesCount,
 } from '~data/index';
-import { ColonyActions, FormattedAction, FormattedEvent } from '~types/index';
+import {
+  Address,
+  ColonyActions,
+  FormattedAction,
+  FormattedEvent,
+} from '~types/index';
 import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
 import { TEMP_getContext, ContextModule } from '~context/index';
@@ -15,6 +20,7 @@ import { formatEventName } from '~utils/events';
 export const getActionsListData = (
   unformattedActions?: SubgraphActions,
   transactionsCommentsCount?: TransactionsMessagesCount,
+  oneTxPaymentExtensionAddress?: Address | null,
 ): FormattedAction[] => {
   let formattedActions = [];
 
@@ -136,7 +142,7 @@ export const getActionsListData = (
    * not actually a change, but a "set") we filter it out
    */
   return formattedActions.filter(
-    ({ initiator, actionType }: FormattedAction) => {
+    ({ initiator, recipient, actionType }: FormattedAction) => {
       /*
        * @NOTE This is wrapped inside a try/catch block since if the user logs out,
        * for a brief moment the colony manager won't exist
@@ -154,7 +160,8 @@ export const getActionsListData = (
             actionType === ColonyActions.SetUserRoles)
         ) {
           return (
-            initiator !== colonyManager.networkClient.address.toLowerCase()
+            initiator !== colonyManager?.networkClient.address.toLowerCase() &&
+            oneTxPaymentExtensionAddress?.toLowerCase() !== recipient
           );
         }
         return true;

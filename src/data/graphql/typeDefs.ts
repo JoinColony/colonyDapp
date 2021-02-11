@@ -157,6 +157,7 @@ export default gql`
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!
+    oneTxPaymentExtensionAddress: String
     colonyAction(
       transactionHash: String!
       colonyAddress: String!

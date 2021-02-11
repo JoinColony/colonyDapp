@@ -689,6 +689,7 @@ export type Query = {
   events: Array<SubgraphEvent>;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
+  oneTxPaymentExtensionAddress?: Maybe<Scalars['String']>;
   oneTxPayments: Array<OneTxPayment>;
   processedColony: ProcessedColony;
   subscribedUsers: Array<User>;
@@ -1763,6 +1764,11 @@ export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
+export type OneTxPaymentExtensionAddressQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OneTxPaymentExtensionAddressQuery = Pick<Query, 'oneTxPaymentExtensionAddress'>;
 
 export type ColonyActionQueryVariables = Exact<{
   transactionHash: Scalars['String'];
@@ -4121,6 +4127,36 @@ export function useNetworkContractsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContractsQuery>;
 export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
 export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
+export const OneTxPaymentExtensionAddressDocument = gql`
+    query OneTxPaymentExtensionAddress {
+  oneTxPaymentExtensionAddress @client
+}
+    `;
+
+/**
+ * __useOneTxPaymentExtensionAddressQuery__
+ *
+ * To run a query within a React component, call `useOneTxPaymentExtensionAddressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOneTxPaymentExtensionAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOneTxPaymentExtensionAddressQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOneTxPaymentExtensionAddressQuery(baseOptions?: Apollo.QueryHookOptions<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>) {
+        return Apollo.useQuery<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>(OneTxPaymentExtensionAddressDocument, baseOptions);
+      }
+export function useOneTxPaymentExtensionAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>) {
+          return Apollo.useLazyQuery<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>(OneTxPaymentExtensionAddressDocument, baseOptions);
+        }
+export type OneTxPaymentExtensionAddressQueryHookResult = ReturnType<typeof useOneTxPaymentExtensionAddressQuery>;
+export type OneTxPaymentExtensionAddressLazyQueryHookResult = ReturnType<typeof useOneTxPaymentExtensionAddressLazyQuery>;
+export type OneTxPaymentExtensionAddressQueryResult = Apollo.QueryResult<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>;
 export const ColonyActionDocument = gql`
     query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
