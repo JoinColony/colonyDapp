@@ -16,7 +16,8 @@ import { removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useUser, Colony } from '~data/index';
 import { createAddress } from '~utils/web3';
-import { FormattedEvent } from '~types/index';
+import { FormattedEvent, ColonyAndExtensionsEvents } from '~types/index';
+import { getColonyRoleSetMessageDescriptorsIds } from '~utils/colonyActions';
 
 import styles, {
   popoverWidth,
@@ -79,12 +80,16 @@ const ColonyEventsListItem = ({
     ({ address }) => address === nativeTokenAddress,
   );
 
-  const getFormattedRole = () => {
-    const roleNameMessage = { id: `role.${role}` };
-    return `${setTo ? 'assigned' : 'removed'} the ${formatMessage(
-      roleNameMessage,
-    ).toLowerCase()} permission`;
-  };
+  const getEventListTitleMessageDescriptor = useMemo(() => {
+    switch (eventName) {
+      case ColonyAndExtensionsEvents.ColonyRoleSet:
+        return getColonyRoleSetMessageDescriptorsIds(setTo, 'eventList');
+      default:
+        return 'eventList.event';
+    }
+  }, [eventName, setTo]);
+  const roleNameMessage = { id: `role.${role}` };
+  const getFormattedRole = () => formatMessage(roleNameMessage).toLowerCase();
 
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
@@ -118,7 +123,7 @@ const ColonyEventsListItem = ({
     tokenAddress,
     paymentId,
     displayValues,
-    roles: role ? getFormattedRole() : '',
+    role: role ? getFormattedRole() : '',
   };
 
   return (
@@ -172,13 +177,13 @@ const ColonyEventsListItem = ({
             className={styles.title}
             title={
               formatMessage(
-                { id: 'eventList.event' },
+                { id: getEventListTitleMessageDescriptor },
                 eventMessageValues,
               ) as string
             }
           >
             <FormattedMessage
-              id="eventList.event"
+              id={getEventListTitleMessageDescriptor}
               values={eventMessageValues}
             />
           </div>

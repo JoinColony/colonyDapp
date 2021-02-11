@@ -216,8 +216,9 @@ const ActionsPage = () => {
     },
   });
 
-  const { roleTitle } = useFormatRolesTitle(
+  const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
     colonyActionData?.colonyAction.roles,
+    colonyActionData?.colonyAction.actionType,
   );
 
   if (!isTransactionFormat(transactionHash) || colonyActionError) {
@@ -401,7 +402,7 @@ const ActionsPage = () => {
            */}
           <h1 className={styles.heading}>
             <FormattedMessage
-              id="action.title"
+              id={roleMessageDescriptorId || 'action.title'}
               values={{
                 ...actionAndEventValues,
                 fromDomain: actionAndEventValues.fromDomain?.name,

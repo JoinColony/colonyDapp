@@ -12,9 +12,11 @@ const actionsMessageDescriptors = {
       ${ColonyActions.VersionUpgrade} {Upgrade Colony!}
       ${ColonyActions.ColonyEdit} {Colony details changed}
       ${ColonyActions.EditDomain} {{fromDomain} team details edited}
-      ${ColonyActions.SetUserRoles} {{roles} in {fromDomain} to {recipient}}
       other {Generic action we don't have information about}
     }`,
+  [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
+  [`action.${ColonyActions.SetUserRoles}.remove`]: `Remove the {roles} in {fromDomain} from {recipient}`,
+  [`action.${ColonyActions.SetUserRoles}.assignAndRemove`]: `{roles} in {fromDomain} to/from {recipient}`,
   'action.type': `{actionType, select,
       ${ColonyActions.WrongColony} {Not part of the Colony}
       ${ColonyActions.Payment} {Payment}

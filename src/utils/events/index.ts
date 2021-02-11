@@ -24,6 +24,8 @@ import {
 } from '~dashboard/ActionsPage';
 import ipfs from '../../context/ipfsNodeContext';
 
+import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
+
 interface ActionValues {
   recipient: Address;
   amount: string;
@@ -586,4 +588,16 @@ export const getDomainsforMoveFundsActions = async (
       };
     }),
   );
+};
+
+export const getActionTitleMessageDescriptor = (
+  actionType: ColonyActions,
+  roleSetTo: boolean,
+) => {
+  switch (actionType) {
+    case ColonyActions.SetUserRoles:
+      return getSetUserRolesMessageDescriptorsIds(roleSetTo);
+    default:
+      return 'action.title';
+  }
 };

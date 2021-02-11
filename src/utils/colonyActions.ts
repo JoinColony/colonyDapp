@@ -151,6 +151,21 @@ export const getDomainMetadataMessageDescriptorsIds = (
   return `event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`;
 };
 
+export const getColonyRoleSetMessageDescriptorsIds = (
+  roleSetTo: boolean | undefined,
+  eventMessageType: string,
+) => {
+  return roleSetTo
+    ? `${eventMessageType}.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`
+    : `${eventMessageType}.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`;
+};
+
+export const getSetUserRolesMessageDescriptorsIds = (roleSetTo: boolean) => {
+  return roleSetTo
+    ? `action.${ColonyActions.SetUserRoles}.assign`
+    : `action.${ColonyActions.SetUserRoles}.remove`;
+};
+
 export const parseColonyMetadata = (
   jsonMetadata: string,
 ): {

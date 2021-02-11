@@ -1,11 +1,14 @@
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 
-export const useFormatRolesTitle = (roles) => {
+import { ColonyActions } from '~types/index';
+
+export const useFormatRolesTitle = (roles, actionType) => {
   let roleTitle = '';
+  let roleMessageDescriptorId = '';
   const { formatMessage } = useIntl();
 
-  if (!roles) {
+  if (!roles || actionType !== ColonyActions.SetUserRoles) {
     return { roleTitle };
   }
 
@@ -14,6 +17,7 @@ export const useFormatRolesTitle = (roles) => {
 
   const getFormattedRoleList = (roleGroupA, roleGroupB) => {
     let roleList = '';
+
     roleGroupA.forEach((role, i) => {
       const roleNameMessage = { id: `role.${role.id}` };
       const formattedRole = formatMessage(roleNameMessage);
@@ -32,27 +36,28 @@ export const useFormatRolesTitle = (roles) => {
   };
 
   if (!isEmpty(assignedRoles)) {
-    roleTitle += `Assign the${getFormattedRoleList(
-      assignedRoles,
-      unassignedRoles,
-    )}`;
+    roleTitle += getFormattedRoleList(assignedRoles, unassignedRoles);
+    roleMessageDescriptorId = `action.${ColonyActions.SetUserRoles}.assign`;
   }
 
   if (isEmpty(assignedRoles) && !isEmpty(unassignedRoles)) {
-    roleTitle += `Remove the${getFormattedRoleList(
-      unassignedRoles,
-      assignedRoles,
-    )}`;
+    roleTitle += getFormattedRoleList(unassignedRoles, null);
+    roleMessageDescriptorId = `action.${ColonyActions.SetUserRoles}.remove`;
   } else if (!isEmpty(unassignedRoles)) {
+    roleTitle = `Assign the ${roleTitle}`;
     roleTitle += ` and remove the${getFormattedRoleList(
       unassignedRoles,
-      assignedRoles,
+      null,
     )}`;
+    roleMessageDescriptorId += 'AndRemove';
   }
 
   roleTitle += roles.length > 1 ? ' permissions' : ' permission';
 
   return {
     roleTitle,
+    roleMessageDescriptorId: !isEmpty(roleMessageDescriptorId)
+      ? roleMessageDescriptorId
+      : null,
   };
 };

@@ -18,6 +18,7 @@ import { createAddress } from '~utils/web3';
 import { FormattedAction, ColonyActions } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
 import { parseDomainMetadata } from '~utils/colonyActions';
+import { getActionTitleMessageDescriptor } from '~utils/events';
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 import { ClickHandlerProps } from './ActionsList';
@@ -94,13 +95,9 @@ const ActionsListItem = ({
   const toDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === parseInt(toDomainId, 10),
   );
-
-  const getFormattedRole = () => {
-    const roleNameMessage = { id: `role.${role}` };
-    return `${setTo ? 'Assign' : 'Remove'} ${formatMessage(
-      roleNameMessage,
-    ).toLowerCase()} permission`;
-  };
+  const roleNameMessage = { id: `role.${role}` };
+  const getFormattedRole = () =>
+    `${formatMessage(roleNameMessage).toLowerCase()} permission`;
 
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
@@ -172,7 +169,7 @@ const ActionsListItem = ({
         <div className={styles.content}>
           <div className={styles.title}>
             <FormattedMessage
-              id="action.title"
+              id={getActionTitleMessageDescriptor(actionType, setTo)}
               values={{
                 actionType,
                 initiator: (
