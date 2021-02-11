@@ -25,7 +25,9 @@ const FeedbackWidget = () => {
   return (
     <FeedbackFish
       projectId={
-        process.env.FEEDBACK_FISH_PROJECT_ID === undefined || isDevelopment
+        /* the second check is for the types
+        if the projectId is an empty string the feedback won't be sent */
+        isDevelopment || process.env.FEEDBACK_FISH_PROJECT_ID === undefined
           ? PROJECT_ID
           : process.env.FEEDBACK_FISH_PROJECT_ID
       }
