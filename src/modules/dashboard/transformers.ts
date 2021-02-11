@@ -202,8 +202,18 @@ export const getEventsListData = (
       decimals = '18',
       role,
       setTo,
+      user,
     } = JSON.parse(args || '{}');
     const checksummedColonyAddress = createAddress(colonyAddress);
+    const getRecipient = () => {
+      if (recipient) {
+        return createAddress(recipient);
+      }
+      if (user) {
+        return user;
+      }
+      return checksummedColonyAddress;
+    };
     return [
       ...processedEvents,
       {
@@ -215,9 +225,7 @@ export const getEventsListData = (
         createdAt: new Date(parseInt(`${timestamp}000`, 10)),
         displayValues: args,
         domainId: domainId || null,
-        recipient: recipient
-          ? createAddress(recipient)
-          : checksummedColonyAddress,
+        recipient: getRecipient(),
         fundingPot: fundingPotId,
         metadata,
         tokenAddress: token ? createAddress(token) : null,

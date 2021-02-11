@@ -68,7 +68,7 @@ const ColonyEventsListItem = ({
   const agentUserProfile = useUser(agent ? createAddress(agent) : '');
 
   const recipientProfile = useUser(
-    recipient === colony.colonyAddress ? '' : recipient,
+    recipient === colony.colonyAddress ? '' : createAddress(recipient),
   );
 
   const domain = colony.domains.find(
