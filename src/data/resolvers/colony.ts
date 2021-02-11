@@ -429,16 +429,12 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-      const { tokenClient } = colonyClient;
-      if (tokenClient.tokenClientType === TokenClientType.Colony) {
-        try {
-          await tokenClient.estimate.unlock();
-        } catch (error) {
-          return false;
-        }
-        return true;
+      try {
+        await colonyClient.estimate.unlockToken();
+      } catch (error) {
+        return false;
       }
-      return false;
+      return true;
     },
     async roles({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
