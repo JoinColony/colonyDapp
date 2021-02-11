@@ -1448,6 +1448,50 @@ function* createSetUserRolesAction({
   return null;
 }
 
+function* colonyTokenUnlock({
+  meta,
+  payload: { colonyAddress },
+}: Action<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN>) {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'unlockToken',
+      identifier: colonyAddress,
+    });
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    yield put({
+      type: ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS,
+      meta,
+    });
+
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* tasksSagas() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
@@ -1468,5 +1512,9 @@ export default function* tasksSagas() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_USER_ROLES_SET,
     createSetUserRolesAction,
+  );
+  yield takeEvery(
+    ActionTypes.COLONY_ACTION_UNLOCK_TOKEN,
+    colonyTokenUnlock,
   );
 }
