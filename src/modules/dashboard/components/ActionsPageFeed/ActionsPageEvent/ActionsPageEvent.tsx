@@ -26,6 +26,7 @@ import {
   parseDomainMetadata,
   getColonyMetadataMessageDescriptorsIds,
   getDomainMetadataMessageDescriptorsIds,
+  getColonyRoleSetMessageDescriptorsIds,
 } from '~utils/colonyActions';
 
 import styles from './ActionsPageEvent.css';
@@ -198,9 +199,7 @@ const ActionsPageEvent = ({
   }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
   const roleNameMessage = { id: `role.${values?.roles[eventIndex].id}` };
   const { formatMessage } = useIntl();
-  const formattedRole = `${
-    values?.roles[eventIndex].setTo ? 'assigned' : 'removed'
-  } the ${formatMessage(roleNameMessage).toLowerCase()}`;
+  const formattedRole = formatMessage(roleNameMessage).toLowerCase();
 
   const getDomainMetadataChecks = useMemo(() => {
     if (
@@ -253,10 +252,21 @@ const ActionsPageEvent = ({
           ColonyAndExtensionsEvents.DomainMetadata,
           getDomainMetadataChecks,
         );
+      case ColonyAndExtensionsEvents.ColonyRoleSet:
+        return getColonyRoleSetMessageDescriptorsIds(
+          values?.roles[eventIndex].setTo,
+          'event',
+        );
       default:
         return 'event.title';
     }
-  }, [eventName, getDomainMetadataChecks, getColonyMetadataChecks]);
+  }, [
+    eventName,
+    getDomainMetadataChecks,
+    getColonyMetadataChecks,
+    eventIndex,
+    values,
+  ]);
   const { domainPurpose, domainName, domainColor } = actionData;
   return (
     <div className={styles.main}>
