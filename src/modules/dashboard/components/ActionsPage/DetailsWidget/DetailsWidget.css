@@ -51,3 +51,9 @@
   text-align: right;
   word-break: break-all;
 }
+
+.roleSettingItem {
+  composes: item;
+  align-items: initial;
+  padding: 10px 0 5px 0;
+}

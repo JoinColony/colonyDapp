@@ -174,7 +174,7 @@ const DetailsWidget = ({
         </div>
       )}
       {detailsForAction.Permissions && (
-        <div className={styles.item}>
+        <div className={styles.roleSettingItem}>
           <div className={styles.label}>
             <FormattedMessage {...MSG.roles} />
           </div>
