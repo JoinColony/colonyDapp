@@ -58,55 +58,7 @@ function* colonyRecoveryModeEnter({
   return null;
 }
 
-function* colonyNativeTokenUnlock({
-  meta,
-  payload: { colonyAddress },
-}: Action<ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK>) {
-  const txChannel = yield call(getTxChannel, meta.id);
-
-  try {
-    yield fork(createTransaction, meta.id, {
-      context: ClientType.TokenClient,
-      methodName: 'unlock',
-      identifier: colonyAddress,
-    });
-
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    yield put({
-      type: ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS,
-      meta,
-    });
-
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-
-    yield apolloClient.query<
-      ProcessedColonyQuery,
-      ProcessedColonyQueryVariables
-    >({
-      query: ProcessedColonyDocument,
-      variables: {
-        address: colonyAddress,
-      },
-      fetchPolicy: 'network-only',
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_ERROR,
-      error,
-      meta,
-    );
-  } finally {
-    txChannel.close();
-  }
-  return null;
-}
-
 export default function* colonySagas() {
-  yield takeEvery(
-    ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK,
-    colonyNativeTokenUnlock,
-  );
   yield takeEvery(
     ActionTypes.COLONY_RECOVERY_MODE_ENTER,
     colonyRecoveryModeEnter,
