@@ -81,12 +81,9 @@ const ColonyEventsListItem = ({
   );
 
   const getEventListTitleMessageDescriptor = useMemo(() => {
-    switch (eventName) {
-      case ColonyAndExtensionsEvents.ColonyRoleSet:
-        return getColonyRoleSetMessageDescriptorsIds(setTo, 'eventList');
-      default:
-        return 'eventList.event';
-    }
+    return eventName === ColonyAndExtensionsEvents.ColonyRoleSet
+      ? getColonyRoleSetMessageDescriptorsIds(setTo, 'eventList')
+      : 'eventList.event';
   }, [eventName, setTo]);
   const roleNameMessage = { id: `role.${role}` };
   const getFormattedRole = () => formatMessage(roleNameMessage).toLowerCase();
