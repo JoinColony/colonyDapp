@@ -147,4 +147,16 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS,
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_UNLOCK_TOKEN,
+      {
+        colonyAddress: Address;
+      },
+      MetaWithHistory<object>
+    >
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR, object>;
