@@ -172,7 +172,6 @@ function* colonyCreate({
       });
     }
 
-
     if (setOwner) {
       yield createGroupedTransaction(setOwner, {
         context: ClientType.TokenClient,
@@ -316,7 +315,7 @@ function* colonyCreate({
       }
 
       yield put(transactionLoadRelated(createColony.id, true));
-    } 
+    }
 
     if (createColony) {
       yield put(transactionLoadRelated(createColony.id, false));
@@ -369,18 +368,10 @@ function* colonyCreate({
       );
     }
 
-
     if (setOwner) {
-      yield put(
-        transactionAddParams(setOwner.id, [
-          colonyAddress,
-        ]),
-      );
+      yield put(transactionAddParams(setOwner.id, [colonyAddress]));
       yield put(transactionReady(setOwner.id));
-      yield takeFrom(
-        setOwner.channel,
-        ActionTypes.TRANSACTION_SUCCEEDED,
-      );
+      yield takeFrom(setOwner.channel, ActionTypes.TRANSACTION_SUCCEEDED);
     }
 
     if (deployOneTx) {
