@@ -50,7 +50,7 @@ fragment Tokens on ProcessedColony {
     decimals
     name
     symbol
-    balances(colonyAddress: $address) {
+    processedBalances(colonyAddress: $address) {
       domainId
       amount
     }
