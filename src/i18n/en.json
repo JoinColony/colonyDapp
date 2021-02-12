@@ -78,6 +78,8 @@
     "transaction.ColonyClient.installExtension.description": "Add Extension to Colony",
     "transaction.TokenClient.setAuthority.title": "Set Token Authority",
     "transaction.TokenClient.setAuthority.description": "Set Token Authority",
+    "transaction.TokenClient.setOwner.title": "Set Token Owner",
+    "transaction.TokenClient.setOwner.description": "Set Token Owner",
     "transaction.ColonyClient.setAdministrationRoleWithProofs.setOneTxRoles.title": "Give Administration Permission to OneTxPayment Extension",
     "transaction.ColonyClient.setAdministrationRoleWithProofs.setOneTxRoles.description": "Give Administration Permission to OneTxPayment Extension",
     "transaction.ColonyClient.setFundingRoleWithProofs.setOneTxRoles.title": "Give Funding Permission to OneTxPayment Extension",
