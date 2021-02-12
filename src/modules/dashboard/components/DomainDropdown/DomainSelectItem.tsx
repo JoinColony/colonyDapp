@@ -4,6 +4,7 @@ import React, {
   MouseEventHandler,
   useCallback,
 } from 'react';
+import classnames from 'classnames';
 
 import Button from '~core/Button';
 import ColorTag, { Color } from '~core/ColorTag';
@@ -22,6 +23,7 @@ import styles from './DomainSelectItem.css';
 interface Props {
   domain: OneDomain | typeof ALLDOMAINS_DOMAIN_SELECTION;
   colony: Colony;
+  isSelected: boolean;
 }
 
 const displayName = 'dashboard.DomainDropdown.DomainSelectItem';
@@ -35,6 +37,7 @@ const DomainSelectItem = ({
     name,
   },
   colony,
+  isSelected,
 }: Props) => {
   const openEditDialog = useDialog(EditDomainDialog);
   const handleEditDomain = useCallback<MouseEventHandler<HTMLButtonElement>>(
@@ -75,7 +78,11 @@ const DomainSelectItem = ({
         </div>
       )}
       <div className={styles.mainContent}>
-        <div className={styles.title}>
+        <div
+          className={classnames(styles.title, {
+            [styles.activeDomain]: isSelected,
+          })}
+        >
           <div className={styles.color}>
             {/*
              * @TODO fallback color won't be needed after graphql

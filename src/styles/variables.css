@@ -114,7 +114,7 @@
   --spacing-medium: 0.5px;
 
   /**
-   * @NOTE Weight medium is olny available on the techie font family
+   * @NOTE Weight medium and semi bold is only available on the techie font family
    */
   --family-monospace: "Source Code Pro", "Monaco", "Inconsolata", monospace;
   --family-techie: "IBM Plex Mono", sans-serif;

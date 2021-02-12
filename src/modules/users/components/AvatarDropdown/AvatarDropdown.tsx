@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import classnames from 'classnames';
 
 import Popover from '~core/Popover';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -66,13 +67,20 @@ const AvatarDropdown = ({ onlyLogout = false }: Props) => {
         ],
       }}
     >
-      <button
-        className={styles.avatarButton}
-        type="button"
-        data-test="avatarDropdown"
-      >
-        <UserAvatar address={walletAddress} notSet={ethereal} size="s" />
-      </button>
+      {({ isOpen, toggle, ref, id }) => (
+        <button
+          id={id}
+          ref={ref}
+          className={classnames(styles.avatarButton, {
+            [styles.activeDropdown]: isOpen,
+          })}
+          onClick={toggle}
+          type="button"
+          data-test="avatarDropdown"
+        >
+          <UserAvatar address={walletAddress} notSet={ethereal} size="s" />
+        </button>
+      )}
     </Popover>
   );
 };

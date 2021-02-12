@@ -1,5 +1,6 @@
 .main {
   display: flex;
+  align-items: center;
 }
 
 .copyButton {

@@ -8,3 +8,4 @@ export const description: string;
 export const editButtonCol: string;
 export const editButton: string;
 export const headingWrapper: string;
+export const activeDomain: string;

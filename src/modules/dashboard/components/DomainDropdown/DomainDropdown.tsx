@@ -104,6 +104,7 @@ const DomainDropdown = ({
         <DomainSelectItem
           domain={ALLDOMAINS_DOMAIN_SELECTION}
           colony={colony}
+          isSelected={filteredDomainId === 0}
         />
       ),
       label: { id: 'domain.all' },
@@ -128,13 +129,19 @@ const DomainDropdown = ({
         .map((domain) => {
           const { ethDomainId, name } = domain;
           return {
-            children: <DomainSelectItem domain={domain} colony={colony} />,
+            children: (
+              <DomainSelectItem
+                domain={domain}
+                colony={colony}
+                isSelected={filteredDomainId === ethDomainId}
+              />
+            ),
             label: name,
             value: `${ethDomainId}`,
           };
         }),
     ];
-  }, [colony]);
+  }, [colony, filteredDomainId]);
 
   return (
     <Form<FormValues>

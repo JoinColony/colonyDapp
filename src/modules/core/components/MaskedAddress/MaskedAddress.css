@@ -1,5 +1,7 @@
 .address {
   font-family: var(--family-techie);
+  font-weight: var(--weight-medium);
+  color: var(--temp-grey-blue-7);
 }
 
 .middleSection {

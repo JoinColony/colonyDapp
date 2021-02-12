@@ -7,7 +7,7 @@
 }
 
 .section {
-  padding: 20px;
+  padding: 20px 15px;
 }
 
 .section + .section {
@@ -28,16 +28,12 @@
   margin-left: 5px;
 }
 
-.address {
-  display: block;
-  width: 100%;
-  font-size: var(--size-normal);
+.address span {
   font-weight: 500;
-  color: var(--temp-grey-blue-7);
 }
 
 .reputation {
-  margin-right: 4px;
+  margin-right: 5px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: reputationColor;
@@ -63,8 +59,8 @@
 }
 
 .icon {
-  height: 12px;
-  width: 12px;
+  height: 11px;
+  width: 11px;
 }
 
 .icon svg {

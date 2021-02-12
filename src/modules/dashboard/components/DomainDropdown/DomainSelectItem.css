@@ -65,3 +65,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.activeDomain h4 {
+  color: var(--primary);
+}

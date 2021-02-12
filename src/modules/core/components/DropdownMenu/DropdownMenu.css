@@ -24,7 +24,7 @@
 /* themes */
 .main {
   composes: baseStyles;
-  color: var(--grey-4);
+  color: var(--dark);
 }
 
 .main a:hover, .main button:hover {
@@ -39,7 +39,7 @@
 }
 
 .themeDark a, .themeDark button {
-  color: var(--grey-4);
+  color: var(--dark);
 }
 
 .themeDark a:hover .themeDark button:hover {

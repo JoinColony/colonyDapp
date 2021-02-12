@@ -58,6 +58,7 @@ const TokenInfo = ({ token, isTokenNative }: Props) => {
       </div>
       <div className={styles.section}>
         <TokenLink
+          className={styles.etherscanLink}
           tokenAddress={address}
           text={MSG.viewOnEtherscan}
           textValues={{
