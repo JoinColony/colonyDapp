@@ -300,7 +300,7 @@ query NetworkContracts {
     feeInverse
   }
 }
-
+# NOTE: This is temporary. Refactor after merging colonyDapp#2260 
 query OneTxPaymentExtensionAddress {
   oneTxPaymentExtensionAddress @client
 }
