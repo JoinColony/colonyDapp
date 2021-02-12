@@ -7,6 +7,7 @@ import {
   getColonyRoles,
   TokenClientType,
   getExtensionHash,
+  ColonyClientV5,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -425,10 +426,10 @@ export const colonyResolvers = ({
       return tokens.filter((token) => !!token);
     },
     async canUnlockNativeToken({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
+      const colonyClient = (await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
-      );
+      )) as ColonyClientV5;
       try {
         await colonyClient.estimate.unlockToken();
       } catch (error) {

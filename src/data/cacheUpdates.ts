@@ -1,5 +1,5 @@
 import { bigNumberify } from 'ethers/utils';
-import { ClientType } from '@colony/colony-js';
+import { ClientType, ColonyClientV5 } from '@colony/colony-js';
 
 import { TaskDocument, TaskQuery, TaskQueryVariables } from '~data/index';
 import { Address } from '~types/index';
@@ -432,10 +432,10 @@ const cacheUpdates = {
           const [
             colonyAddress,
           ] = colonyManager.colonyClients.entries().next().value;
-          const colonyClient = await colonyManager.getClient(
+          const colonyClient = (await colonyManager.getClient(
             ClientType.ColonyClient,
             colonyAddress,
-          );
+          )) as ColonyClientV5;
           let canMintNativeToken = true;
           try {
             await colonyClient.estimate.mintTokens(bigNumberify(1));
