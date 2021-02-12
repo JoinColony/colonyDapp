@@ -42,6 +42,18 @@ export type ColonyActionTypes =
       { colonyAddress: Address },
       object
     >
+  | UniqueActionType<
+      ActionTypes.COLONY_DEPLOYMENT_RESTART,
+      {
+        colonyAddress: Address;
+      },
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_DEPLOYMENT_RESTART_ERROR, object>
+  | UniqueActionTypeWithoutPayload<
+      ActionTypes.COLONY_DEPLOYMENT_RESTART_SUCCESS,
+      object
+    >
   | ErrorActionType<ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR, object>
   | UniqueActionType<
       ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS,
