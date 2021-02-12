@@ -15,7 +15,7 @@ import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
 import { TEMP_getContext, ContextModule } from '~context/index';
 import { createAddress } from '~utils/web3';
-import { formatEventName } from '~utils/events';
+import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 
 export const getActionsListData = (
   unformattedActions?: SubgraphActions,
@@ -28,7 +28,7 @@ export const getActionsListData = (
     formattedActions = formattedActions.concat(
       (unformattedActions || {})[subgraphActionType].map(
         (unformattedAction) => {
-          const formatedAction = {
+          const formattedAction = {
             id: unformattedAction.id,
             actionType: ColonyActions.Generic,
             initiator: AddressZero,
@@ -75,20 +75,20 @@ export const getActionsListData = (
                 },
               },
             } = unformattedAction;
-            formatedAction.actionType = ColonyActions.Payment;
-            formatedAction.recipient = recipient;
-            formatedAction.fromDomain = ethDomainId;
-            formatedAction.amount = amount;
-            formatedAction.tokenAddress = tokenAddress;
-            formatedAction.symbol = symbol;
-            formatedAction.decimals = decimals;
-            formatedAction.initiator = unformattedAction.agent;
+            formattedAction.actionType = ColonyActions.Payment;
+            formattedAction.recipient = recipient;
+            formattedAction.fromDomain = ethDomainId;
+            formattedAction.amount = amount;
+            formattedAction.tokenAddress = tokenAddress;
+            formattedAction.symbol = symbol;
+            formattedAction.decimals = decimals;
+            formattedAction.initiator = unformattedAction.agent;
           }
           if (transactionsCommentsCount && transactionComments) {
-            formatedAction.commentCount = transactionComments.count;
+            formattedAction.commentCount = transactionComments.count;
           }
           if (timestamp) {
-            formatedAction.createdAt = new Date(
+            formattedAction.createdAt = new Date(
               /*
                * @NOTE blocktime is expressed in seconds, and we need milliseconds
                * to instantiate the correct Date object
@@ -110,23 +110,25 @@ export const getActionsListData = (
             const actionType =
               (actionEvent && (actionEvent[0] as ColonyActions)) ||
               ColonyActions.Generic;
-            formatedAction.actionType = actionType;
-            formatedAction.tokenAddress = tokenAddress;
-            formatedAction.symbol = symbol;
-            formatedAction.decimals = decimals;
+            formattedAction.actionType = actionType;
+            formattedAction.tokenAddress = tokenAddress;
+            formattedAction.symbol = symbol;
+            formattedAction.decimals = decimals;
             const actionTypeValues = getValuesForActionType(args, actionType);
             const actionTypeKeys = Object.keys(actionTypeValues);
             actionTypeKeys.forEach((key) => {
-              formatedAction[key] = actionTypeValues[key];
+              formattedAction[key] = actionTypeValues[key];
             });
           }
-          formatedAction.transactionHash = hash;
-          return formatedAction;
+          formattedAction.transactionHash = hash;
+          return formattedAction;
         },
       ),
     );
     return null;
   });
+
+  const formattedGroupedActions = groupSetUserRolesActions(formattedActions);
 
   /*
    * @NOTE Filter out the initial 'Colony Edit' action, if it comes from the
@@ -141,7 +143,7 @@ export const getActionsListData = (
    * out one of them, as since the metadata change is less important (and it's
    * not actually a change, but a "set") we filter it out
    */
-  return formattedActions.filter(
+  return formattedGroupedActions.filter(
     ({ initiator, recipient, actionType }: FormattedAction) => {
       /*
        * @NOTE This is wrapped inside a try/catch block since if the user logs out,

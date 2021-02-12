@@ -1,5 +1,5 @@
 import { ColonyRole } from '@colony/colony-js';
-import { Address } from './index';
+import { Address, ActionUserRoles } from './index';
 
 export enum ColonyActions {
   Generic = 'Generic',
@@ -126,8 +126,7 @@ export interface FormattedAction {
   createdAt: Date;
   commentCount: number;
   metadata?: string;
-  role: ColonyRole;
-  setTo: boolean;
+  roles: ActionUserRoles[];
 }
 
 export interface FormattedEvent {

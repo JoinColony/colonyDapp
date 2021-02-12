@@ -593,11 +593,42 @@ export const getDomainsforMoveFundsActions = async (
 export const getActionTitleMessageDescriptor = (
   actionType: ColonyActions,
   roleSetTo: boolean,
-) => {
+): string => {
   switch (actionType) {
     case ColonyActions.SetUserRoles:
       return getSetUserRolesMessageDescriptorsIds(roleSetTo);
     default:
       return 'action.title';
   }
+};
+
+export const groupSetUserRolesActions = (actions): FormattedAction[] => {
+  const groupedActions: FormattedAction[] = [];
+
+  actions.forEach((actionA) => {
+    if (actionA.actionType === ColonyActions.SetUserRoles) {
+      if (
+        groupedActions.findIndex(
+          (groupedAction) =>
+            actionA.transactionHash === groupedAction.transactionHash,
+        ) === -1
+      ) {
+        const filteredActionsByHash = actions.filter(
+          (actionB) => actionA.transactionHash === actionB.transactionHash,
+        );
+        const actionRoles = filteredActionsByHash.map((filteredAction) => ({
+          id: filteredAction.roles[0].id,
+          setTo: filteredAction.roles[0].setTo,
+        }));
+        groupedActions.push({
+          ...actionA,
+          roles: actionRoles,
+        });
+      }
+    } else {
+      groupedActions.push(actionA);
+    }
+  });
+
+  return groupedActions;
 };

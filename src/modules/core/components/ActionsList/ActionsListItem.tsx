@@ -18,7 +18,7 @@ import { createAddress } from '~utils/web3';
 import { FormattedAction, ColonyActions } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
 import { parseDomainMetadata } from '~utils/colonyActions';
-import { getActionTitleMessageDescriptor } from '~utils/events';
+import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 import { ClickHandlerProps } from './ActionsList';
@@ -69,8 +69,7 @@ const ActionsListItem = ({
     createdAt,
     commentCount = 0,
     metadata,
-    role,
-    setTo,
+    roles,
   },
   colony,
   handleOnClick,
@@ -95,9 +94,11 @@ const ActionsListItem = ({
   const toDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === parseInt(toDomainId, 10),
   );
-  const roleNameMessage = { id: `role.${role}` };
-  const getFormattedRole = () =>
-    `${formatMessage(roleNameMessage).toLowerCase()} permission`;
+
+  const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
+    roles,
+    actionType,
+  );
 
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
@@ -169,7 +170,7 @@ const ActionsListItem = ({
         <div className={styles.content}>
           <div className={styles.title}>
             <FormattedMessage
-              id={getActionTitleMessageDescriptor(actionType, setTo)}
+              id={roleMessageDescriptorId || 'action.title'}
               values={{
                 actionType,
                 initiator: (
@@ -202,7 +203,7 @@ const ActionsListItem = ({
                 decimals: getTokenDecimalsWithFallback(decimals),
                 fromDomain: domainName || fromDomain?.name || '',
                 toDomain: toDomain?.name || '',
-                roles: role ? getFormattedRole() : '',
+                roles: roleTitle,
               }}
             />
           </div>
