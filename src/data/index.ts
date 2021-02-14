@@ -21,10 +21,8 @@ import {
   NetworkContractsDocument,
   TransactionMessageFragment,
   ParsedEvent,
-  SubgraphActionsQuery,
   TransactionMessagesCountQuery,
   ProcessedColonyQuery,
-  SubgraphEventsQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -41,6 +39,7 @@ import {
 import { extensionsResolvers } from './resolvers/extensions';
 import { colonyActionsResolvers } from './resolvers/colonyActions';
 import { metaColonyResolvers } from './resolvers/metacolony';
+import { eventsResolvers } from './resolvers/events';
 
 import { FixedToken } from '../types';
 
@@ -66,6 +65,7 @@ export const resolvers: ResolverFactory[] = [
   extensionsResolvers,
   colonyActionsResolvers,
   metaColonyResolvers,
+  eventsResolvers,
 ];
 
 // export all the generated types and helpers
@@ -117,7 +117,3 @@ export type TransactionMessage = TransactionMessageFragment;
 export type TransactionsMessagesCount = TransactionMessagesCountQuery['transactionMessagesCount'];
 
 export type EventOrMessage = ParsedEvent | TransactionMessage;
-
-export type SubgraphActions = SubgraphActionsQuery;
-
-export type SubgraphEvents = SubgraphEventsQuery;

@@ -1,12 +1,13 @@
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
+import { ColonyRole } from '@colony/colony-js';
 
 import {
   ColonyActions,
   ColonyAndExtensionsEvents,
   FormattedAction,
 } from '~types/index';
-import { ColonyAction } from '~data/index';
+import { ColonyAction, EventProcessedValues } from '~data/index';
 
 import {
   DETAILS_FOR_ACTION,
@@ -46,57 +47,63 @@ export const getDetailsForAction = (
  * Get values for action type based on action type
  */
 export const getValuesForActionType = (
-  args: string,
+  values: EventProcessedValues,
   actionType: ColonyActions,
 ): ValuesForActionTypesMap => {
-  const argsObj = JSON.parse(args);
-  switch (actionType) {
-    case ColonyActions.MintTokens: {
-      return {
-        initiator: argsObj.agent,
-        recipient: argsObj.who,
-        amount: argsObj.amount,
-      };
-    }
-    case ColonyActions.CreateDomain: {
-      return {
-        initiator: argsObj.agent,
-        fromDomain: argsObj.domainId,
-        metadata: argsObj.metadata,
-      };
-    }
-    case ColonyActions.ColonyEdit: {
-      return {
-        initiator: argsObj.agent,
-      };
-    }
-    case ColonyActions.MoveFunds: {
-      return {
-        amount: argsObj.amount,
-        fromDomain: argsObj.fromPot,
-        toDomain: argsObj.toPot,
-        initiator: argsObj.agent,
-      };
-    }
-    case ColonyActions.EditDomain: {
-      return {
-        initiator: argsObj.agent,
-        fromDomain: argsObj.domainId,
-        metadata: argsObj.metadata,
-      };
-    }
-    case ColonyActions.SetUserRoles: {
-      return {
-        initiator: argsObj.agent,
-        fromDomain: argsObj.domainId,
-        recipient: argsObj.user,
-        roles: [{ id: argsObj.role, setTo: argsObj.setTo === 'true' }],
-      };
-    }
-    default: {
-      return {};
+  if (Object.keys(values).length) {
+    switch (actionType) {
+      case ColonyActions.MintTokens: {
+        return {
+          initiator: values.agent,
+          recipient: values.who,
+          amount: values.amount,
+        };
+      }
+      case ColonyActions.CreateDomain: {
+        return {
+          initiator: values.agent,
+          fromDomain: values.domainId,
+        };
+      }
+      case ColonyActions.ColonyEdit: {
+        return {
+          initiator: values.agent,
+        };
+      }
+      case ColonyActions.MoveFunds: {
+        return {
+          amount: values.amount,
+          fromDomain: values.fromDomain,
+          toDomain: values.toDomain,
+          initiator: values.agent,
+        };
+      }
+      case ColonyActions.EditDomain: {
+        return {
+          initiator: values.agent,
+          fromDomain: values.domainId,
+          metadata: values.metadata,
+        };
+      }
+      case ColonyActions.SetUserRoles: {
+        return {
+          initiator: values.agent,
+          fromDomain: values.domainId,
+          recipient: values.user,
+          roles: [
+            {
+              id: (values.role as unknown) as ColonyRole,
+              setTo: values.setTo === 'true',
+            },
+          ],
+        };
+      }
+      default: {
+        return {};
+      }
     }
   }
+  return {};
 };
 
 export const getColonyMetadataMessageDescriptorsIds = (

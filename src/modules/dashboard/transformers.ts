@@ -1,9 +1,10 @@
 import { AddressZero, HashZero } from 'ethers/constants';
 
 import {
-  SubgraphActions,
-  SubgraphEvents,
   TransactionsMessagesCount,
+  SubscriptionSubgraphOneTxSubscription,
+  SubscriptionSubgraphEventsThatAreActionsSubscription,
+  SubscriptionSubgraphEventsSubscription,
 } from '~data/index';
 import {
   Address,
@@ -19,15 +20,39 @@ import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 
 export const getActionsListData = (
-  unformattedActions?: SubgraphActions,
+  unformattedActions?: {
+    oneTxPayments?: SubscriptionSubgraphOneTxSubscription['oneTxPayments'];
+    events?: SubscriptionSubgraphEventsThatAreActionsSubscription['events'];
+  },
   transactionsCommentsCount?: TransactionsMessagesCount,
   oneTxPaymentExtensionAddress?: Address | null,
 ): FormattedAction[] => {
   let formattedActions = [];
+  /*
+   * Filter out the move funds actions that are actually payment actions (before processing)
+   *
+   * This happens because internally the oneTxAction also triggers a Move Funds and
+   * we don't consider that one an action
+   *
+   * We only consider an action that we manually trigger ourselves, so if the transaction
+   * hashes match, throw them out.
+   */
+  const filteredUnformattedActions = {
+    oneTxPayments: unformattedActions?.oneTxPayments || [],
+    events:
+      unformattedActions?.events?.filter((event) => {
+        /* filtering out events that are already shown in `oneTxPayments` */
+        const isTransactionRepeated = unformattedActions?.oneTxPayments?.some(
+          (paymentAction) =>
+            paymentAction.transaction?.hash === event.transaction?.hash,
+        );
+        return !isTransactionRepeated;
+      }) || [],
+  };
 
-  Object.keys(unformattedActions || {}).map((subgraphActionType) => {
+  Object.keys(filteredUnformattedActions || {}).map((subgraphActionType) => {
     formattedActions = formattedActions.concat(
-      (unformattedActions || {})[subgraphActionType].map(
+      (filteredUnformattedActions || {})[subgraphActionType].map(
         (unformattedAction) => {
           const formatedAction = {
             id: unformattedAction.id,
@@ -118,7 +143,7 @@ export const getActionsListData = (
           if (subgraphActionType === 'events') {
             try {
               const {
-                args,
+                processedValues,
                 associatedColony: {
                   token: { address: tokenAddress, symbol, decimals },
                 },
@@ -134,7 +159,10 @@ export const getActionsListData = (
               formatedAction.tokenAddress = tokenAddress;
               formatedAction.symbol = symbol;
               formatedAction.decimals = decimals;
-              const actionTypeValues = getValuesForActionType(args, actionType);
+              const actionTypeValues = getValuesForActionType(
+                processedValues,
+                actionType,
+              );
               const actionTypeKeys = Object.keys(actionTypeValues);
               actionTypeKeys.forEach((key) => {
                 formatedAction[key] = actionTypeValues[key];
@@ -199,7 +227,7 @@ export const getActionsListData = (
 };
 
 export const getEventsListData = (
-  unformattedEvents?: SubgraphEvents,
+  unformattedEvents?: SubscriptionSubgraphEventsSubscription,
 ): FormattedEvent[] | undefined =>
   unformattedEvents?.events?.reduce((processedEvents, event) => {
     if (!event) {

@@ -374,65 +374,6 @@ query MetaColony {
 # otherwise they will be sent to our own graphql server
 # Prepending them with `Subgraph` allows the client to decide what endpoint to use
 
-query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
-  oneTxPayments(skip: $skip, first: $first, where: { payment_contains: $colonyAddress }) {
-    id
-    agent
-    transaction {
-      hash: id
-      block {
-        id
-        timestamp
-      }
-    }
-    payment {
-      to
-      domain {
-        ethDomainId: domainChainId
-        name
-      }
-      fundingPot {
-        fundingPotPayouts {
-          id
-          token {
-            address: id
-            symbol
-            decimals
-          }
-          amount
-        }
-      }
-    }
-  }
-  events(where: {
-    associatedColony_contains: $colonyAddress,
-    name_in: [
-      "TokensMinted(address,address,uint256)",
-      "DomainAdded(address,uint256)",
-      "ColonyMetadata(address,string)",
-      "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)",
-      "DomainMetadata(address,uint256,string)"
-      "ColonyRoleSet(address,address,uint256,uint8,bool)"
-    ] }) {
-    id
-    transaction {
-      hash: id
-      block {
-        timestamp
-      }
-    }
-    associatedColony {
-      token {
-        decimals
-        symbol
-      }
-    }
-    args
-    address # Address of the contract that emitted the event
-    name
-  }
-}
-
 query SubgraphDomains($colonyAddress: String!) {
   domains(where: { colonyAddress: $colonyAddress }) {
     id
@@ -635,24 +576,4 @@ query ColonySubscribedUsers($colonyAddress: String!) {
 
 query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
-}
-
-query SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
-  events(skip: $skip, first: $first, where: { associatedColony: $colonyAddress }) {
-    id
-    address
-    associatedColony {
-      colonyAddress: id
-      id: colonyChainId
-    }
-    transaction {
-      hash: id
-      block {
-        id
-        timestamp
-      }
-    }
-    name
-    args
-  }
 }

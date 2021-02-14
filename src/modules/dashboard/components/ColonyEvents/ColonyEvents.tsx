@@ -3,19 +3,18 @@ import { defineMessages } from 'react-intl';
 
 import ActionsList from '~core/ActionsList';
 import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
-import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Select, Form } from '~core/Fields';
+import LoadMoreButton from '~core/LoadMoreButton';
 
 import {
   EventsSortOptions,
   EventsSortSelectOptions,
 } from '../shared/eventsSort';
 import { immutableSort } from '~utils/arrays';
-import { Colony, useSubgraphEventsQuery } from '~data/index';
-import { useTransformer } from '~utils/hooks';
-
+import { Colony, useSubscriptionSubgraphEventsSubscription } from '~data/index';
 import { getEventsListData } from '../../transformers';
+import { useTransformer } from '~utils/hooks';
 
 import ColonyEventsListItem from './ColonyEventsListItem';
 
@@ -52,7 +51,7 @@ const ColonyEvents = ({
     data,
     loading: subgraphEventsLoading,
     error,
-  } = useSubgraphEventsQuery({
+  } = useSubscriptionSubgraphEventsSubscription({
     variables: {
       skip: 0,
       first: 100,
