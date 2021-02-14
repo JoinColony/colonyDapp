@@ -1,25 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useState } from 'react';
+import { defineMessages } from 'react-intl';
 import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 
-import Alert from '~core/Alert';
-import Button, { ActionButton } from '~core/Button';
-import { useDialog } from '~core/Dialog';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
 import ColonyMembers from '~dashboard/ColonyHome/ColonyMembers';
-import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
-import { useLoggedInUser } from '~data/helpers';
-import { useTransformer } from '~utils/hooks';
-import { getAllUserRoles } from '../../../transformers';
-import { hasRoot, canEnterRecoveryMode } from '../../../users/checks';
-import { canBeUpgraded } from '../../checks';
-import { ActionTypes } from '~redux/index';
-import { mapPayload } from '~utils/actions';
+import { useColonyFromNameQuery } from '~data/index';
 
 import {
   COLONY_EVENTS_ROUTE,
@@ -34,6 +23,8 @@ import ColonyDomainDescription from './ColonyDomainDescription';
 import ColonyTotalFunds from '../ColonyTotalFunds';
 import ColonyActions from '../ColonyActions';
 import ColonyEvents from '../ColonyEvents';
+import ColonyUpgrade from './ColonyUpgrade';
+import ColonyFinishDeployment from './ColonyFinishDeployment';
 
 import styles from './ColonyHome.css';
 import DomainDropdown from '~dashboard/DomainDropdown';
@@ -60,19 +51,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.noFilter',
     defaultMessage: 'All Transactions in Colony',
   },
-  upgradeRequired: {
-    id: `dashboard.ColonyHome.upgradeRequired`,
-    defaultMessage: `This colony uses a version of the network that is no
-      longer supported. You must upgrade to continue using this application.`,
-  },
-  deploymentNotFinished: {
-    id: `dashboard.ColonyHome.deploymentNotFinished`,
-    defaultMessage: `Colony creation incomplete. Click to continue 👉`,
-  },
-  buttonFinishDeployment: {
-    id: `dashboard.ColonyHome.buttonFinishDeployment`,
-    defaultMessage: `Finish Deployment`,
-  },
 });
 
 type Props = RouteChildrenProps<{ colonyName: string }>;
@@ -85,10 +63,8 @@ const ColonyHome = ({ match, location }: Props) => {
       `No match found for route in ${displayName} Please check route setup.`,
     );
   }
+
   const { colonyName } = match.params;
-  const { walletAddress, username, ethereal } = useLoggedInUser();
-  const { version: networkVersion } = useNetworkContracts();
-  const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
 
   const { domainFilter: queryDomainFilterId } = parseQS(location.search) as {
     domainFilter: string | undefined;
@@ -106,27 +82,6 @@ const ColonyHome = ({ match, location }: Props) => {
   });
 
   if (error) console.error(error);
-
-  const allUserRoles = useTransformer(getAllUserRoles, [
-    data?.processedColony,
-    walletAddress,
-  ]);
-
-  const handleUpgradeColony = useCallback(() => {
-    if (!data || !data.processedColony) {
-      return;
-    }
-    openUpgradeVersionDialog({
-      colony: data.processedColony,
-    });
-  }, [data, openUpgradeVersionDialog]);
-
-  const transform = useCallback(
-    mapPayload(() => ({
-      colonyAddress: data?.colonyAddress,
-    })),
-    [data],
-  );
 
   /*
    * Keep the page loaded when the colony name changes, but we have data
@@ -154,25 +109,7 @@ const ColonyHome = ({ match, location }: Props) => {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  const {
-    processedColony: colony,
-    processedColony: { isDeploymentFinished },
-  } = data;
-
-  const hasRegisteredProfile = !!username && !ethereal;
-  const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
-  const canFinishDeployment =
-    canUpgradeColony && canEnterRecoveryMode(allUserRoles);
-  /*
-   * @NOTE As a future upgrade, we can have a mapping where we keep track of
-   * past and current network versions so that we can control, more granularly,
-   * which versions *must* be upgraded, and which can function as-is, even with
-   * an older version
-   */
-  const mustUpgradeColony = canBeUpgraded(
-    colony,
-    parseInt(networkVersion || '0', 10),
-  );
+  const { processedColony: colony } = data;
 
   return (
     <div className={styles.main}>
@@ -223,51 +160,8 @@ const ColonyHome = ({ match, location }: Props) => {
           <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
         </aside>
       </div>
-      {!!mustUpgradeColony && (
-        <div className={styles.upgradeBannerContainer}>
-          <Alert
-            appearance={{
-              theme: 'danger',
-              margin: 'none',
-              borderRadius: 'none',
-            }}
-          >
-            <div className={styles.upgradeBanner}>
-              <FormattedMessage {...MSG.upgradeRequired} />
-            </div>
-            <Button
-              appearance={{ theme: 'primary', size: 'medium' }}
-              text={{ id: 'button.upgrade' }}
-              onClick={handleUpgradeColony}
-              disabled={!canUpgradeColony}
-            />
-          </Alert>
-        </div>
-      )}
-      {!mustUpgradeColony && !isDeploymentFinished && canFinishDeployment && (
-        <div className={styles.upgradeBannerContainer}>
-          <Alert
-            appearance={{
-              theme: 'danger',
-              margin: 'none',
-              borderRadius: 'none',
-            }}
-          >
-            <div className={styles.upgradeBanner}>
-              <FormattedMessage {...MSG.deploymentNotFinished} />
-            </div>
-            <ActionButton
-              appearance={{ theme: 'primary', size: 'medium' }}
-              text={MSG.buttonFinishDeployment}
-              submit={ActionTypes.COLONY_DEPLOYMENT_RESTART}
-              error={ActionTypes.COLONY_DEPLOYMENT_RESTART_ERROR}
-              success={ActionTypes.COLONY_DEPLOYMENT_RESTART_SUCCESS}
-              transform={transform}
-              disabled={!canFinishDeployment}
-            />
-          </Alert>
-        </div>
-      )}
+      <ColonyUpgrade colony={colony} />
+      <ColonyFinishDeployment colony={colony} />
     </div>
   );
 };
