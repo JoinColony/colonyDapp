@@ -17,7 +17,7 @@
   height: 18px;
   width: 18px;
   position: relative;
-  border: 1px solid var(--temp-grey-blue-4);
+  border: 1px solid var(--primary);
   border-radius: 2px;
   background-color: var(--colony-white);
   box-shadow: 0 0 0 2px color-mod(var(--temp-grey-blue-4) alpha(25%));
