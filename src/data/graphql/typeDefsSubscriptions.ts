@@ -29,6 +29,9 @@ export default gql`
     amount: String!
     token: String!
     metadata: String!
+    user: String!
+    role: String!
+    setTo: String!
   }
 
   type SubscriptionEvent {

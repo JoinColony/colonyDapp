@@ -686,11 +686,9 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   domains: Array<SubgraphDomain>;
-  events: Array<SubgraphEvent>;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
   oneTxPaymentExtensionAddress?: Maybe<Scalars['String']>;
-  oneTxPayments: Array<OneTxPayment>;
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
   subscribedUsers: Array<User>;
@@ -750,20 +748,6 @@ export type QueryColonyNameArgs = {
 
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
-};
-
-
-export type QueryEventsArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  first?: Maybe<Scalars['Int']>;
-  where: EventsFilter;
-};
-
-
-export type QueryOneTxPaymentsArgs = {
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
-  where: ActionsFilter;
 };
 
 
@@ -1116,16 +1100,6 @@ export type ProcessedMetaColony = {
   avatarURL?: Maybe<Scalars['String']>;
 };
 
-export type ActionsFilter = {
-  payment_contains?: Maybe<Scalars['String']>;
-};
-
-export type EventsFilter = {
-  associatedColony_contains?: Maybe<Scalars['String']>;
-  associatedColony?: Maybe<Scalars['String']>;
-  name_in?: Maybe<Array<Scalars['String']>>;
-};
-
 export type ByColonyFilter = {
   colonyAddress: Scalars['String'];
   domainChainId?: Maybe<Scalars['Int']>;
@@ -1202,22 +1176,6 @@ export type SubgraphColony = {
   domains: Array<SubgraphDomain>;
 };
 
-export type SubgraphEvent = {
-  id: Scalars['String'];
-  transaction: SubgraphTransaction;
-  address: Scalars['String'];
-  name: Scalars['String'];
-  args: Scalars['String'];
-  associatedColony: SubgraphColony;
-};
-
-export type OneTxPayment = {
-  id: Scalars['String'];
-  agent: Scalars['String'];
-  transaction: SubgraphTransaction;
-  payment: SubgraphPayment;
-};
-
 export type ProcessedDomain = {
   id: Scalars['String'];
   color: Scalars['Int'];
@@ -1279,6 +1237,68 @@ export type ProcessedColony = {
   events: Array<NetworkEvent>;
   canMakePayment: Scalars['Boolean'];
   isDeploymentFinished: Scalars['Boolean'];
+};
+
+export type ActionsFilter = {
+  payment_contains?: Maybe<Scalars['String']>;
+};
+
+export type EventsFilter = {
+  associatedColony_contains?: Maybe<Scalars['String']>;
+  associatedColony?: Maybe<Scalars['String']>;
+  name_in?: Maybe<Array<Scalars['String']>>;
+};
+
+export type OneTxPayment = {
+  id: Scalars['String'];
+  agent: Scalars['String'];
+  transaction: SubgraphTransaction;
+  payment: SubgraphPayment;
+};
+
+export type EventProcessedValues = {
+  agent: Scalars['String'];
+  who: Scalars['String'];
+  fromPot: Scalars['String'];
+  fromDomain: Scalars['String'];
+  toPot: Scalars['String'];
+  toDomain: Scalars['String'];
+  domainId: Scalars['String'];
+  amount: Scalars['String'];
+  token: Scalars['String'];
+  metadata: Scalars['String'];
+  user: Scalars['String'];
+  role: Scalars['String'];
+  setTo: Scalars['String'];
+};
+
+export type SubscriptionEvent = {
+  id: Scalars['String'];
+  transaction: SubgraphTransaction;
+  address: Scalars['String'];
+  name: Scalars['String'];
+  args: Scalars['String'];
+  associatedColony: SubgraphColony;
+  processedValues: EventProcessedValues;
+};
+
+export type Subscription = {
+  oneTxPayments: Array<OneTxPayment>;
+  events: Array<SubscriptionEvent>;
+};
+
+
+export type SubscriptionOneTxPaymentsArgs = {
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  where: ActionsFilter;
+};
+
+
+export type SubscriptionEventsArgs = {
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  where: EventsFilter;
 };
 
 export type PayoutsFragment = { payouts: Array<(
@@ -1826,39 +1846,6 @@ export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MetaColonyQuery = { processedMetaColony?: Maybe<Pick<ProcessedMetaColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>> };
 
-export type SubgraphActionsQueryVariables = Exact<{
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type SubgraphActionsQuery = { oneTxPayments: Array<(
-    Pick<OneTxPayment, 'id' | 'agent'>
-    & { transaction: (
-      { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
-    ), payment: (
-      Pick<SubgraphPayment, 'to'>
-      & { domain: (
-        Pick<SubgraphDomain, 'name'>
-        & { ethDomainId: SubgraphDomain['domainChainId'] }
-      ), fundingPot: { fundingPotPayouts: Array<(
-          Pick<SubgraphFundingPotPayout, 'id' | 'amount'>
-          & { token: (
-            Pick<SubgraphToken, 'symbol' | 'decimals'>
-            & { address: SubgraphToken['id'] }
-          ) }
-        )> } }
-    ) }
-  )>, events: Array<(
-    Pick<SubgraphEvent, 'id' | 'args' | 'address' | 'name'>
-    & { transaction: (
-      { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'timestamp'> }
-    ), associatedColony: { token: Pick<SubgraphToken, 'decimals' | 'symbol'> } }
-  )> };
-
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -2031,19 +2018,73 @@ export type ColonyMembersWithReputationQueryVariables = Exact<{
 
 export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
 
-export type SubgraphEventsQueryVariables = Exact<{
+export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type SubgraphEventsQuery = { events: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { associatedColony: { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }, transaction: (
+export type SubscriptionSubgraphEventsSubscription = { events: Array<(
+    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
+    & { associatedColony: (
+      { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
+      & { token: (
+        Pick<SubgraphToken, 'decimals' | 'symbol'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ), transaction: (
+      { hash: SubgraphTransaction['id'] }
+      & { block: Pick<SubgraphBlock, 'timestamp'> }
+    ) }
+  )> };
+
+export type SubscriptionSubgraphOneTxSubscriptionVariables = Exact<{
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type SubscriptionSubgraphOneTxSubscription = { oneTxPayments: Array<(
+    Pick<OneTxPayment, 'id' | 'agent'>
+    & { transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
+    ), payment: (
+      Pick<SubgraphPayment, 'to'>
+      & { domain: (
+        Pick<SubgraphDomain, 'name'>
+        & { ethDomainId: SubgraphDomain['domainChainId'] }
+      ), fundingPot: { fundingPotPayouts: Array<(
+          Pick<SubgraphFundingPotPayout, 'id' | 'amount'>
+          & { token: (
+            Pick<SubgraphToken, 'symbol' | 'decimals'>
+            & { address: SubgraphToken['id'] }
+          ) }
+        )> } }
     ) }
+  )> };
+
+export type SubscriptionSubgraphEventsThatAreActionsSubscriptionVariables = Exact<{
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Array<(
+    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
+    & { associatedColony: (
+      { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
+      & { token: (
+        Pick<SubgraphToken, 'decimals' | 'symbol'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ), transaction: (
+      { hash: SubgraphTransaction['id'] }
+      & { block: Pick<SubgraphBlock, 'timestamp'> }
+    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata'> }
   )> };
 
 export const PayoutsFragmentDoc = gql`
@@ -4360,85 +4401,6 @@ export function useMetaColonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type MetaColonyQueryHookResult = ReturnType<typeof useMetaColonyQuery>;
 export type MetaColonyLazyQueryHookResult = ReturnType<typeof useMetaColonyLazyQuery>;
 export type MetaColonyQueryResult = Apollo.QueryResult<MetaColonyQuery, MetaColonyQueryVariables>;
-export const SubgraphActionsDocument = gql`
-    query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
-  oneTxPayments(skip: $skip, first: $first, where: {payment_contains: $colonyAddress}) {
-    id
-    agent
-    transaction {
-      hash: id
-      block {
-        id
-        timestamp
-      }
-    }
-    payment {
-      to
-      domain {
-        ethDomainId: domainChainId
-        name
-      }
-      fundingPot {
-        fundingPotPayouts {
-          id
-          token {
-            address: id
-            symbol
-            decimals
-          }
-          amount
-        }
-      }
-    }
-  }
-  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)"]}) {
-    id
-    transaction {
-      hash: id
-      block {
-        timestamp
-      }
-    }
-    associatedColony {
-      token {
-        decimals
-        symbol
-      }
-    }
-    args
-    address
-    name
-  }
-}
-    `;
-
-/**
- * __useSubgraphActionsQuery__
- *
- * To run a query within a React component, call `useSubgraphActionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphActionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphActionsQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useSubgraphActionsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphActionsQuery, SubgraphActionsQueryVariables>) {
-        return Apollo.useQuery<SubgraphActionsQuery, SubgraphActionsQueryVariables>(SubgraphActionsDocument, baseOptions);
-      }
-export function useSubgraphActionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphActionsQuery, SubgraphActionsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphActionsQuery, SubgraphActionsQueryVariables>(SubgraphActionsDocument, baseOptions);
-        }
-export type SubgraphActionsQueryHookResult = ReturnType<typeof useSubgraphActionsQuery>;
-export type SubgraphActionsLazyQueryHookResult = ReturnType<typeof useSubgraphActionsLazyQuery>;
-export type SubgraphActionsQueryResult = Apollo.QueryResult<SubgraphActionsQuery, SubgraphActionsQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {
@@ -5101,19 +5063,23 @@ export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.Laz
 export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
-export const SubgraphEventsDocument = gql`
-    query SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
+export const SubscriptionSubgraphEventsDocument = gql`
+    subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
     id
     address
     associatedColony {
       colonyAddress: id
       id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
     }
     transaction {
       hash: id
       block {
-        id
         timestamp
       }
     }
@@ -5124,16 +5090,16 @@ export const SubgraphEventsDocument = gql`
     `;
 
 /**
- * __useSubgraphEventsQuery__
+ * __useSubscriptionSubgraphEventsSubscription__
  *
- * To run a query within a React component, call `useSubgraphEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubscriptionSubgraphEventsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionSubgraphEventsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubgraphEventsQuery({
+ * const { data, loading, error } = useSubscriptionSubgraphEventsSubscription({
  *   variables: {
  *      skip: // value for 'skip'
  *      first: // value for 'first'
@@ -5141,12 +5107,126 @@ export const SubgraphEventsDocument = gql`
  *   },
  * });
  */
-export function useSubgraphEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphEventsQuery, SubgraphEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphEventsQuery, SubgraphEventsQueryVariables>(SubgraphEventsDocument, baseOptions);
+export function useSubscriptionSubgraphEventsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionSubgraphEventsSubscription, SubscriptionSubgraphEventsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubscriptionSubgraphEventsSubscription, SubscriptionSubgraphEventsSubscriptionVariables>(SubscriptionSubgraphEventsDocument, baseOptions);
       }
-export function useSubgraphEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphEventsQuery, SubgraphEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphEventsQuery, SubgraphEventsQueryVariables>(SubgraphEventsDocument, baseOptions);
+export type SubscriptionSubgraphEventsSubscriptionHookResult = ReturnType<typeof useSubscriptionSubgraphEventsSubscription>;
+export type SubscriptionSubgraphEventsSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubgraphEventsSubscription>;
+export const SubscriptionSubgraphOneTxDocument = gql`
+    subscription SubscriptionSubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
+  oneTxPayments(skip: $skip, first: $first, where: {payment_contains: $colonyAddress}) {
+    id
+    agent
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    payment {
+      to
+      domain {
+        ethDomainId: domainChainId
+        name
+      }
+      fundingPot {
+        fundingPotPayouts {
+          id
+          token {
+            address: id
+            symbol
+            decimals
+          }
+          amount
         }
-export type SubgraphEventsQueryHookResult = ReturnType<typeof useSubgraphEventsQuery>;
-export type SubgraphEventsLazyQueryHookResult = ReturnType<typeof useSubgraphEventsLazyQuery>;
-export type SubgraphEventsQueryResult = Apollo.QueryResult<SubgraphEventsQuery, SubgraphEventsQueryVariables>;
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubscriptionSubgraphOneTxSubscription__
+ *
+ * To run a query within a React component, call `useSubscriptionSubgraphOneTxSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionSubgraphOneTxSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubscriptionSubgraphOneTxSubscription({
+ *   variables: {
+ *      skip: // value for 'skip'
+ *      first: // value for 'first'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useSubscriptionSubgraphOneTxSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionSubgraphOneTxSubscription, SubscriptionSubgraphOneTxSubscriptionVariables>) {
+        return Apollo.useSubscription<SubscriptionSubgraphOneTxSubscription, SubscriptionSubgraphOneTxSubscriptionVariables>(SubscriptionSubgraphOneTxDocument, baseOptions);
+      }
+export type SubscriptionSubgraphOneTxSubscriptionHookResult = ReturnType<typeof useSubscriptionSubgraphOneTxSubscription>;
+export type SubscriptionSubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubgraphOneTxSubscription>;
+export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
+    subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
+  events(skip: $skip, first: $first, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)"]}) {
+    id
+    address
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
+    transaction {
+      hash: id
+      block {
+        timestamp
+      }
+    }
+    name
+    args
+    processedValues @client {
+      agent
+      who
+      fromPot
+      fromDomain
+      toPot
+      toDomain
+      domainId
+      amount
+      token
+      metadata
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubscriptionSubgraphEventsThatAreActionsSubscription__
+ *
+ * To run a query within a React component, call `useSubscriptionSubgraphEventsThatAreActionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionSubgraphEventsThatAreActionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubscriptionSubgraphEventsThatAreActionsSubscription({
+ *   variables: {
+ *      skip: // value for 'skip'
+ *      first: // value for 'first'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useSubscriptionSubgraphEventsThatAreActionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionSubgraphEventsThatAreActionsSubscription, SubscriptionSubgraphEventsThatAreActionsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubscriptionSubgraphEventsThatAreActionsSubscription, SubscriptionSubgraphEventsThatAreActionsSubscriptionVariables>(SubscriptionSubgraphEventsThatAreActionsDocument, baseOptions);
+      }
+export type SubscriptionSubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubscriptionSubgraphEventsThatAreActionsSubscription>;
+export type SubscriptionSubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubgraphEventsThatAreActionsSubscription>;
