@@ -1512,8 +1512,5 @@ export default function* tasksSagas() {
     ActionTypes.COLONY_ACTION_USER_ROLES_SET,
     createSetUserRolesAction,
   );
-  yield takeEvery(
-    ActionTypes.COLONY_ACTION_UNLOCK_TOKEN,
-    colonyTokenUnlock,
-  );
+  yield takeEvery(ActionTypes.COLONY_ACTION_UNLOCK_TOKEN, colonyTokenUnlock);
 }

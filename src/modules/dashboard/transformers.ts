@@ -253,8 +253,6 @@ export const getEventsListData = (
           displayValues: args,
           domainId: domainId || null,
           recipient: getRecipient(),
-            ? createAddress(recipient)
-            : checksummedColonyAddress,
           fundingPot: fundingPotId,
           metadata,
           tokenAddress: token ? createAddress(token) : null,
