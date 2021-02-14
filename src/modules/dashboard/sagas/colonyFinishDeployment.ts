@@ -119,6 +119,7 @@ function* colonyRestartDeployment({
         startingIndex -= 2;
         channelNames.push('deployTokenAuthority');
         channelNames.push('setTokenAuthority');
+        channelNames.push('setOwner');
       }
     }
 
@@ -182,6 +183,7 @@ function* colonyRestartDeployment({
       deployOneTx,
       setOneTxRoleAdministration,
       setOneTxRoleFunding,
+      setOwner,
     } = channels;
 
     const createGroupedTransaction = (
@@ -204,12 +206,15 @@ function* colonyRestartDeployment({
         identifier: colonyAddress,
         ready: false,
       });
-      // }
-
-      // if (setTokenAuthority) {
       yield createGroupedTransaction(setTokenAuthority, {
         context: ClientType.TokenClient,
         methodName: 'setAuthority',
+        identifier: colonyAddress,
+        ready: false,
+      });
+      yield createGroupedTransaction(setOwner, {
+        context: ClientType.TokenClient,
+        methodName: 'setOwner',
         identifier: colonyAddress,
         ready: false,
       });
@@ -283,6 +288,13 @@ function* colonyRestartDeployment({
         setTokenAuthority.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
+
+      /*
+       * Set the Token's owner
+       */
+      yield put(transactionAddParams(setOwner.id, [colonyAddress]));
+      yield put(transactionReady(setOwner.id));
+      yield takeFrom(setOwner.channel, ActionTypes.TRANSACTION_SUCCEEDED);
     }
 
     if (deployOneTx) {
