@@ -25,6 +25,11 @@ export default gql`
     emmitedBy: String!
   }
 
+  type ColonyActionRoles {
+    id: Int!
+    setTo: Boolean!
+  }
+
   type ColonyAction {
     hash: String!
     actionInitiator: String!
@@ -37,6 +42,7 @@ export default gql`
     actionType: String!
     amount: String!
     tokenAddress: String!
+    roles: [ColonyActionRoles!]!
     annotationHash: String
     oldVersion: String!
     newVersion: String!
@@ -151,6 +157,7 @@ export default gql`
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!
+    oneTxPaymentExtensionAddress: String
     colonyAction(
       transactionHash: String!
       colonyAddress: String!

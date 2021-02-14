@@ -11,6 +11,7 @@ export enum ActionPageDetails {
   Domain = 'Domain',
   Description = 'Description',
   Name = 'Name',
+  Permissions = 'Permissions',
 }
 
 type EventRolesMap = Partial<
@@ -45,6 +46,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.ColonyUpgraded]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.ColonyMetadata]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainMetadata]: [ColonyRole.Architecture],
+  [ColonyAndExtensionsEvents.ColonyRoleSet]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -61,6 +63,7 @@ export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
   [ColonyActions.VersionUpgrade]: 'emoji-strong-person',
   [ColonyActions.ColonyEdit]: 'emoji-edit-tools',
   [ColonyActions.EditDomain]: 'emoji-pencil-note',
+  [ColonyActions.SetUserRoles]: 'emoji-crane',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -86,6 +89,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
   [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
   [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
+  [ColonyActions.SetUserRoles]: [ColonyAndExtensionsEvents.ColonyRoleSet],
 };
 
 /*
@@ -120,6 +124,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
   [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
   [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
+  [ColonyActions.SetUserRoles]: [ColonyAndExtensionsEvents.ColonyRoleSet],
 };
 
 /*
@@ -146,5 +151,10 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   [ColonyActions.EditDomain]: [
     ActionPageDetails.Domain,
     ActionPageDetails.Description,
+  ],
+  [ColonyActions.SetUserRoles]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.Permissions,
   ],
 };

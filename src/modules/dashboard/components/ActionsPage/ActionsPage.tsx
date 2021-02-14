@@ -30,6 +30,7 @@ import {
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
+import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../core/fetchers';
@@ -215,6 +216,11 @@ const ActionsPage = () => {
     },
   });
 
+  const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
+    colonyActionData?.colonyAction.roles,
+    colonyActionData?.colonyAction.actionType,
+  );
+
   if (!isTransactionFormat(transactionHash) || colonyActionError) {
     return (
       <div className={styles.main}>
@@ -285,6 +291,7 @@ const ActionsPage = () => {
       newVersion,
       oldVersion,
       colonyDisplayName,
+      roles,
     },
   } = colonyActionData;
 
@@ -374,6 +381,7 @@ const ActionsPage = () => {
         autoShrinkAddress
       />
     ),
+    roles,
   };
 
   return (
@@ -394,11 +402,12 @@ const ActionsPage = () => {
            */}
           <h1 className={styles.heading}>
             <FormattedMessage
-              id="action.title"
+              id={roleMessageDescriptorId || 'action.title'}
               values={{
                 ...actionAndEventValues,
                 fromDomain: actionAndEventValues.fromDomain?.name,
                 toDomain: actionAndEventValues.toDomain?.name,
+                roles: roleTitle,
               }}
             />
           </h1>

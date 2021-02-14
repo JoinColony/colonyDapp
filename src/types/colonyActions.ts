@@ -1,4 +1,5 @@
-import { Address } from './index';
+import { ColonyRole } from '@colony/colony-js';
+import { Address, ActionUserRoles } from './index';
 
 export enum ColonyActions {
   Generic = 'Generic',
@@ -11,6 +12,7 @@ export enum ColonyActions {
   VersionUpgrade = 'VersionUpgrade',
   ColonyEdit = 'ColonyEdit',
   EditDomain = 'EditDomain',
+  SetUserRoles = 'SetUserRoles',
 }
 
 export enum ColonyAndExtensionsEvents {
@@ -32,6 +34,7 @@ export enum ColonyAndExtensionsEvents {
   ColonyInitialised = 'ColonyInitialised',
   ColonyBootstrapped = 'ColonyBootstrapped',
   ColonyFundsClaimed = 'ColonyFundsClaimed',
+  ColonyRoleSet = 'ColonyRoleSet',
   RewardPayoutCycleStarted = 'RewardPayoutCycleStarted',
   RewardPayoutCycleEnded = 'RewardPayoutCycleEnded',
   RewardPayoutClaimed = 'RewardPayoutClaimed',
@@ -123,6 +126,7 @@ export interface FormattedAction {
   createdAt: Date;
   commentCount: number;
   metadata?: string;
+  roles: ActionUserRoles[];
 }
 
 export interface FormattedEvent {
@@ -141,4 +145,6 @@ export interface FormattedEvent {
   paymentId?: string;
   decimals: number;
   amount: string;
+  role: ColonyRole;
+  setTo: boolean;
 }

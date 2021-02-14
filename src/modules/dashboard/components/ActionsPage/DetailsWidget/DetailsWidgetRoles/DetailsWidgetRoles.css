@@ -1,0 +1,14 @@
+.roleList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 270px;
+}
+
+.roleListItem {
+  margin: 0 0 5px 10px;
+}
+
+.roleListItem:first-child {
+  margin-left: 0;
+}

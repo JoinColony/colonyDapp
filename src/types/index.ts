@@ -67,6 +67,11 @@ export type UniversalMessageValues = Record<string, PrimitiveType | ReactNode>;
 export type MethodParam = string | BigNumberish | boolean;
 export type MethodParams = (MethodParam | MethodParam[])[];
 
+export type ActionUserRoles = {
+  id: ColonyRole;
+  setTo: boolean;
+};
+
 export interface TxConfig {
   context: ClientType;
   group?: {

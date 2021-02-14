@@ -300,6 +300,10 @@ query NetworkContracts {
     feeInverse
   }
 }
+# NOTE: This is temporary. Refactor after merging colonyDapp#2260 
+query OneTxPaymentExtensionAddress {
+  oneTxPaymentExtensionAddress @client
+}
 
 query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
@@ -328,6 +332,10 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     domainName
     domainPurpose
     domainColor
+    roles {
+      id
+      setTo
+    }
   }
 }
 
@@ -393,6 +401,7 @@ query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
       "ColonyMetadata(address,string)",
       "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)",
       "DomainMetadata(address,uint256,string)"
+      "ColonyRoleSet(address,address,uint256,uint8,bool)"
     ] }) {
     id
     transaction {

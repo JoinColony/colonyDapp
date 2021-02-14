@@ -1,7 +1,5 @@
-import { ColonyRole } from '@colony/colony-js';
-
 import { ActionTypes } from '~redux/index';
-import { Address, WithKey } from '~types/index';
+import { Address } from '~types/index';
 import { ActionType, ErrorActionType, UniqueActionType } from './index';
 
 export type ColonyActionTypes =
@@ -55,28 +53,4 @@ export type ColonyActionTypes =
       ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS,
       object,
       object
-    >
-  | UniqueActionType<
-      ActionTypes.COLONY_DOMAIN_USER_ROLES_SET,
-      {
-        colonyAddress: Address;
-        domainId: number;
-        roles: Record<ColonyRole, boolean>;
-        userAddress: Address;
-      },
-      WithKey
-    >
-  | ErrorActionType<
-      typeof ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR,
-      WithKey
-    >
-  | UniqueActionType<
-      typeof ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS,
-      {
-        colonyAddress: Address;
-        domainId: number;
-        roles: Record<ColonyRole, boolean>;
-        userAddress: Address;
-      },
-      WithKey
     >;

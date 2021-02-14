@@ -1,18 +1,29 @@
 import { FormikProps } from 'formik';
 import React, { useCallback, useState, useMemo } from 'react';
-import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
+import { useHistory } from 'react-router-dom';
+import { isEqual, sortBy } from 'lodash';
 
-import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
+import {
+  mergePayload,
+  withKey,
+  mapPayload,
+  pipe,
+  withMeta,
+} from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { useTransformer } from '~utils/hooks';
 import { ItemDataType } from '~core/OmniPicker';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import PermissionsLabel from '~core/PermissionsLabel';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import {
   useProcessedColonyQuery,
@@ -27,10 +38,13 @@ import {
   getAllRootAccounts,
   getAllUserRolesForDomain,
 } from '../../../transformers';
+import { userHasRole } from '../../../users/checks';
 import PermissionManagementForm from './PermissionManagementForm';
 import { availableRoles } from './constants';
 
 import styles from './PermissionManagementDialog.css';
+
+const displayName = 'dashboard.PermissionManagementDialog';
 
 const MSG = defineMessages({
   title: {
@@ -41,6 +55,10 @@ const MSG = defineMessages({
     id: 'dashboard.PermissionManagementDialog.selectUser',
     defaultMessage: 'Member',
   },
+  noPermissionFrom: {
+    id: 'dashboard.PermissionManagementDialog.noPermissionFrom',
+    defaultMessage: `You do not have the {roleRequired} permission required to take this action.`,
+  },
 });
 
 interface Props {
@@ -48,11 +66,6 @@ interface Props {
   close: () => void;
   colonyAddress: string;
 }
-
-type Member = AnyUser & {
-  roles: ColonyRole[];
-  directRoles: ColonyRole[];
-};
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
@@ -65,6 +78,7 @@ const PermissionManagementDialog = ({
   cancel,
   close,
 }: Props) => {
+  const history = useHistory();
   const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
 
   const loggedInUser = useUser(loggedInUserWalletAddress);
@@ -127,17 +141,23 @@ const PermissionManagementDialog = ({
   const transform = useCallback(
     pipe(
       withKey(colonyAddress),
-      mapPayload((p) => ({
-        ...p,
+      mapPayload(({ roles, user, domainId, annotationMessage }) => ({
+        domainId,
+        userAddress: user.profile.walletAddress,
         roles: availableRoles.reduce(
           (acc, role) => ({
             ...acc,
-            [role]: p.roles.includes(role),
+            [role]: roles.includes(role),
           }),
           {},
         ),
+        annotationMessage,
       })),
-      mergePayload({ colonyAddress }),
+      mergePayload({
+        colonyAddress,
+        colonyName: colonyData?.processedColony.colonyName,
+      }),
+      withMeta({ history }),
     ),
     [colonyAddress, selectedDomainId],
   );
@@ -160,6 +180,13 @@ const PermissionManagementDialog = ({
     [directDomainRoles, domainRoles],
   );
 
+  const validationSchema = yup.object().shape({
+    domainId: yup.number().required(),
+    user: yup.object().required(),
+    roles: yup.array().ensure(),
+    annotation: yup.string().max(4000),
+  });
+
   const domain =
     colonyData &&
     colonyData.processedColony.domains.find(
@@ -180,6 +207,12 @@ const PermissionManagementDialog = ({
     };
   });
 
+  const userHasPermission = userHasRole(
+    currentUserRoles,
+    ColonyRole.Architecture,
+  );
+  const requiredRoles: ColonyRole[] = [ColonyRole.Architecture];
+
   return (
     <Dialog cancel={cancel}>
       {!selectedUser.profile.walletAddress || !colonyData || !domain ? (
@@ -191,14 +224,21 @@ const PermissionManagementDialog = ({
             user: selectedUser,
             domainId: selectedDomainId.toString(),
             roles: userDirectRoles,
+            annotationMessage: undefined,
           }}
+          validationSchema={validationSchema}
           onSuccess={close}
-          submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
-          error={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR}
-          success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS}
+          submit={ActionTypes.COLONY_ACTION_USER_ROLES_SET}
+          error={ActionTypes.COLONY_ACTION_USER_ROLES_SET_ERROR}
+          success={ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS}
           transform={transform}
         >
-          {({ isSubmitting }: FormikProps<any>) => (
+          {({
+            isSubmitting,
+            isValid,
+            initialValues,
+            values,
+          }: FormikProps<any>) => (
             <div className={styles.dialogContainer}>
               <DialogSection appearance={{ theme: 'heading' }}>
                 <Heading
@@ -207,6 +247,11 @@ const PermissionManagementDialog = ({
                   textValues={{ domain: domain && domain.name }}
                 />
               </DialogSection>
+              {!userHasPermission && (
+                <DialogSection>
+                  <PermissionRequiredInfo requiredRoles={requiredRoles} />
+                </DialogSection>
+              )}
               <DialogSection appearance={{ theme: 'sidePadding' }}>
                 <div className={styles.singleUserContainer}>
                   <SingleUserPicker
@@ -216,6 +261,7 @@ const PermissionManagementDialog = ({
                     filter={filterUserSelection}
                     onSelected={setSelectedUser}
                     renderAvatar={supRenderAvatar}
+                    disabled={!userHasPermission}
                   />
                 </div>
               </DialogSection>
@@ -228,8 +274,26 @@ const PermissionManagementDialog = ({
                   userInheritedRoles={userInheritedRoles}
                   colonyDomains={colonyData.processedColony.domains}
                   onDomainSelected={setSelectedDomainId}
+                  userHasPermission={userHasPermission}
                 />
               </DialogSection>
+              {!userHasPermission && (
+                <DialogSection appearance={{ theme: 'sidePadding' }}>
+                  <div className={styles.noPermissionFromMessage}>
+                    <FormattedMessage
+                      {...MSG.noPermissionFrom}
+                      values={{
+                        roleRequired: (
+                          <PermissionsLabel
+                            permission={ColonyRole.Architecture}
+                            name={{ id: `role.${ColonyRole.Architecture}` }}
+                          />
+                        ),
+                      }}
+                    />
+                  </div>
+                </DialogSection>
+              )}
               <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
@@ -242,6 +306,11 @@ const PermissionManagementDialog = ({
                   text={{ id: 'button.confirm' }}
                   type="submit"
                   style={{ width: styles.wideButton }}
+                  disabled={
+                    !userHasPermission ||
+                    !isValid ||
+                    isEqual(sortBy(values.roles), sortBy(initialValues.roles))
+                  }
                 />
               </DialogSection>
             </div>
@@ -252,7 +321,6 @@ const PermissionManagementDialog = ({
   );
 };
 
-PermissionManagementDialog.displayName =
-  'dashboard.Permissions.PermissionManagementDialog';
+PermissionManagementDialog.displayName = displayName;
 
 export default PermissionManagementDialog;

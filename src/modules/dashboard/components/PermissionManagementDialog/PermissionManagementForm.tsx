@@ -37,6 +37,7 @@ interface Props {
   userDirectRoles: ColonyRole[];
   userInheritedRoles: ColonyRole[];
   colonyDomains: DomainFieldsFragment[];
+  userHasPermission: boolean;
   onDomainSelected: (domain: number) => void;
 }
 
@@ -48,6 +49,7 @@ const PermissionManagementForm = ({
   userInheritedRoles,
   colonyDomains,
   onDomainSelected,
+  userHasPermission,
 }: Props) => {
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(
@@ -102,6 +104,7 @@ const PermissionManagementForm = ({
           name="domainId"
           appearance={{ theme: 'grey' }}
           onChange={handleDomainChange}
+          disabled={!userHasPermission}
         />
       </div>
       <InputLabel
@@ -124,7 +127,11 @@ const PermissionManagementForm = ({
           );
         })}
       </div>
-      <Annotations label={MSG.annotation} name="annotation" />
+      <Annotations
+        label={MSG.annotation}
+        name="annotationMessage"
+        disabled={!userHasPermission}
+      />
     </>
   );
 };

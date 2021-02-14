@@ -38,6 +38,7 @@ import {
   networkContractsResolvers,
   initialCache as networkContracts,
 } from './resolvers/networkContracts';
+import { extensionsResolvers } from './resolvers/extensions';
 import { colonyActionsResolvers } from './resolvers/colonyActions';
 import { FixedToken } from '../types';
 
@@ -60,6 +61,7 @@ export const resolvers: ResolverFactory[] = [
   taskResolvers,
   tokenResolvers,
   networkContractsResolvers,
+  extensionsResolvers,
   colonyActionsResolvers,
 ];
 

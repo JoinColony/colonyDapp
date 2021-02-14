@@ -12,6 +12,7 @@ import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import AdvancedDialog from '~dashboard/AdvancedDialog';
+import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
 import RecoveryModeDialog from '~dashboard/RecoveryModeDialog';
 import TokenMintDialog from '~dashboard/TokenMintDialog';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
@@ -104,10 +105,18 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: AdvancedDialog,
       props: {
         prevStep: 'dashboard.ColonyActionsDialog',
+        nextStepPermissionManagement: 'dashboard.PermissionManagementDialog',
         nextStepRecovery: 'dashboard.RecoveryModeDialog',
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
         colony,
+      },
+    },
+    {
+      component: PermissionManagementDialog,
+      props: {
+        prevStep: 'dashboard.AdvancedDialog',
+        colonyAddress: colony.colonyAddress,
       },
     },
     {

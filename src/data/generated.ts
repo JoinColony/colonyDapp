@@ -689,6 +689,7 @@ export type Query = {
   events: Array<SubgraphEvent>;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
+  oneTxPaymentExtensionAddress?: Maybe<Scalars['String']>;
   oneTxPayments: Array<OneTxPayment>;
   processedColony: ProcessedColony;
   subscribedUsers: Array<User>;
@@ -995,6 +996,11 @@ export type ParsedEvent = {
   emmitedBy: Scalars['String'];
 };
 
+export type ColonyActionRoles = {
+  id: Scalars['Int'];
+  setTo: Scalars['Boolean'];
+};
+
 export type ColonyAction = {
   hash: Scalars['String'];
   actionInitiator: Scalars['String'];
@@ -1007,6 +1013,7 @@ export type ColonyAction = {
   actionType: Scalars['String'];
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
+  roles: Array<ColonyActionRoles>;
   annotationHash?: Maybe<Scalars['String']>;
   oldVersion: Scalars['String'];
   newVersion: Scalars['String'];
@@ -1758,6 +1765,11 @@ export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
 
+export type OneTxPaymentExtensionAddressQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OneTxPaymentExtensionAddressQuery = Pick<Query, 'oneTxPaymentExtensionAddress'>;
+
 export type ColonyActionQueryVariables = Exact<{
   transactionHash: Scalars['String'];
   colonyAddress: Scalars['String'];
@@ -1766,7 +1778,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 export type ColonyActionQuery = { colonyAction: (
     Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor'>
-    & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> }
+    & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
 export type TransactionMessagesQueryVariables = Exact<{
@@ -4115,6 +4127,36 @@ export function useNetworkContractsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContractsQuery>;
 export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
 export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
+export const OneTxPaymentExtensionAddressDocument = gql`
+    query OneTxPaymentExtensionAddress {
+  oneTxPaymentExtensionAddress @client
+}
+    `;
+
+/**
+ * __useOneTxPaymentExtensionAddressQuery__
+ *
+ * To run a query within a React component, call `useOneTxPaymentExtensionAddressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOneTxPaymentExtensionAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOneTxPaymentExtensionAddressQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOneTxPaymentExtensionAddressQuery(baseOptions?: Apollo.QueryHookOptions<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>) {
+        return Apollo.useQuery<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>(OneTxPaymentExtensionAddressDocument, baseOptions);
+      }
+export function useOneTxPaymentExtensionAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>) {
+          return Apollo.useLazyQuery<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>(OneTxPaymentExtensionAddressDocument, baseOptions);
+        }
+export type OneTxPaymentExtensionAddressQueryHookResult = ReturnType<typeof useOneTxPaymentExtensionAddressQuery>;
+export type OneTxPaymentExtensionAddressLazyQueryHookResult = ReturnType<typeof useOneTxPaymentExtensionAddressLazyQuery>;
+export type OneTxPaymentExtensionAddressQueryResult = Apollo.QueryResult<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>;
 export const ColonyActionDocument = gql`
     query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
@@ -4143,6 +4185,10 @@ export const ColonyActionDocument = gql`
     domainName
     domainPurpose
     domainColor
+    roles {
+      id
+      setTo
+    }
   }
 }
     `;
@@ -4276,7 +4322,7 @@ export const SubgraphActionsDocument = gql`
       }
     }
   }
-  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)"]}) {
+  events(where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)"]}) {
     id
     transaction {
       hash: id

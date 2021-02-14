@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { useIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { nanoid } from 'nanoid';
 import findLastIndex from 'lodash/findLastIndex';
 
@@ -26,6 +26,7 @@ import {
   parseDomainMetadata,
   getColonyMetadataMessageDescriptorsIds,
   getDomainMetadataMessageDescriptorsIds,
+  getColonyRoleSetMessageDescriptorsIds,
 } from '~utils/colonyActions';
 
 import styles from './ActionsPageEvent.css';
@@ -47,6 +48,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  eventIndex: number;
   eventName?: string;
   eventValues?: Record<string, any>;
   transactionHash: string;
@@ -64,6 +66,7 @@ interface DomainMetadata {
 }
 
 const ActionsPageEvent = ({
+  eventIndex,
   createdAt,
   transactionHash,
   eventName = ColonyAndExtensionsEvents.Generic,
@@ -194,6 +197,9 @@ const ActionsPageEvent = ({
       tokensChanged: !!tokenAddresses?.length,
     };
   }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
+  const roleNameMessage = { id: `role.${values?.roles[eventIndex].id}` };
+  const { formatMessage } = useIntl();
+  const formattedRole = formatMessage(roleNameMessage).toLowerCase();
 
   const getDomainMetadataChecks = useMemo(() => {
     if (
@@ -246,10 +252,21 @@ const ActionsPageEvent = ({
           ColonyAndExtensionsEvents.DomainMetadata,
           getDomainMetadataChecks,
         );
+      case ColonyAndExtensionsEvents.ColonyRoleSet:
+        return getColonyRoleSetMessageDescriptorsIds(
+          values?.roles[eventIndex].setTo,
+          'event',
+        );
       default:
         return 'event.title';
     }
-  }, [eventName, getDomainMetadataChecks, getColonyMetadataChecks]);
+  }, [
+    eventName,
+    getDomainMetadataChecks,
+    getColonyMetadataChecks,
+    eventIndex,
+    values,
+  ]);
   const { domainPurpose, domainName, domainColor } = actionData;
   return (
     <div className={styles.main}>
@@ -286,6 +303,7 @@ const ActionsPageEvent = ({
                * Usefull if a event isn't found or doesn't have a message descriptor
                */
               eventNameDecorated: <b>{eventName}</b>,
+              role: formattedRole,
               clientOrExtensionType: (
                 <span className={styles.highlight}>{emmitedBy}</span>
               ),

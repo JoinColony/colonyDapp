@@ -16,7 +16,8 @@ import { removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useUser, Colony } from '~data/index';
 import { createAddress } from '~utils/web3';
-import { FormattedEvent } from '~types/index';
+import { FormattedEvent, ColonyAndExtensionsEvents } from '~types/index';
+import { getColonyRoleSetMessageDescriptorsIds } from '~utils/colonyActions';
 
 import styles, {
   popoverWidth,
@@ -56,6 +57,8 @@ const ColonyEventsListItem = ({
     metadata,
     tokenAddress,
     paymentId,
+    role,
+    setTo,
   },
   colony: { tokens, nativeTokenAddress },
   colony,
@@ -65,7 +68,7 @@ const ColonyEventsListItem = ({
   const agentUserProfile = useUser(agent ? createAddress(agent) : '');
 
   const recipientProfile = useUser(
-    recipient === colony.colonyAddress ? '' : recipient,
+    recipient === colony.colonyAddress ? '' : createAddress(recipient),
   );
 
   const domain = colony.domains.find(
@@ -76,6 +79,14 @@ const ColonyEventsListItem = ({
   const colonyNativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
+
+  const getEventListTitleMessageDescriptor = useMemo(() => {
+    return eventName === ColonyAndExtensionsEvents.ColonyRoleSet
+      ? getColonyRoleSetMessageDescriptorsIds(setTo, 'eventList')
+      : 'eventList.event';
+  }, [eventName, setTo]);
+  const roleNameMessage = { id: `role.${role}` };
+  const getFormattedRole = () => formatMessage(roleNameMessage).toLowerCase();
 
   const popoverPlacement = useMemo(() => {
     const offsetSkid = (-1 * removeValueUnits(popoverWidth)) / 2;
@@ -109,6 +120,7 @@ const ColonyEventsListItem = ({
     tokenAddress,
     paymentId,
     displayValues,
+    role: role ? getFormattedRole() : '',
   };
 
   return (
@@ -162,13 +174,13 @@ const ColonyEventsListItem = ({
             className={styles.title}
             title={
               formatMessage(
-                { id: 'eventList.event' },
+                { id: getEventListTitleMessageDescriptor },
                 eventMessageValues,
               ) as string
             }
           >
             <FormattedMessage
-              id="eventList.event"
+              id={getEventListTitleMessageDescriptor}
               values={eventMessageValues}
             />
           </div>

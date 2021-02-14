@@ -4,3 +4,4 @@ export const singleUserContainer: string;
 export const domainSelectContainer: string;
 export const permissionChoiceContainer: string;
 export const dialogFooterSection: string;
+export const noPermissionFromMessage: string;
