@@ -5,6 +5,7 @@ import ActionsList from '~core/ActionsList';
 import UnclaimedTransfers from '~dashboard/UnclaimedTransfers';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Select, Form } from '~core/Fields';
+import LoadMoreButton from '~core/LoadMoreButton';
 
 import {
   EventsSortOptions,
