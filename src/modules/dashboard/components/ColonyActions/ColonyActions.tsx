@@ -14,6 +14,7 @@ import {
   useTransactionMessagesCountQuery,
   useSubscriptionSubgraphOneTxSubscription,
   useSubscriptionSubgraphEventsThatAreActionsSubscription,
+  useOneTxPaymentExtensionAddressQuery,
 } from '~data/index';
 import {
   ActionsSortOptions,
@@ -109,9 +110,14 @@ const ColonyActions = ({
     variables: { colonyAddress },
   });
 
+  const {
+    data: oneTxPaymentExtensionData,
+  } = useOneTxPaymentExtensionAddressQuery();
+
   const actions = useTransformer(getActionsListData, [
     { ...oneTxActions, ...eventsActions },
     commentCount?.transactionMessagesCount,
+    oneTxPaymentExtensionData?.oneTxPaymentExtensionAddress,
   ]);
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */

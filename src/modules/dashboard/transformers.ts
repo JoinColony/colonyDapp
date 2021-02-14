@@ -57,7 +57,7 @@ export const getActionsListData = (
           if (linkedDomainAddedEvent) return acc;
         }
         /* filtering out events that are already shown in `oneTxPayments` */
-        const isTransactionRepeated = unformattedActions?.oneTxPayments.some(
+        const isTransactionRepeated = unformattedActions?.oneTxPayments?.some(
           (paymentAction) =>
             paymentAction.transaction?.hash === event.transaction?.hash,
         );
