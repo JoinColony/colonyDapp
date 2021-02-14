@@ -16,6 +16,7 @@ import { getValuesForActionType } from '~utils/colonyActions';
 import { TEMP_getContext, ContextModule } from '~context/index';
 import { createAddress } from '~utils/web3';
 import { formatEventName, groupSetUserRolesActions } from '~utils/events';
+import { log } from '~utils/debug';
 
 export const getActionsListData = (
   unformattedActions?: SubgraphActions,
@@ -28,7 +29,7 @@ export const getActionsListData = (
     formattedActions = formattedActions.concat(
       (unformattedActions || {})[subgraphActionType].map(
         (unformattedAction) => {
-          const formattedAction = {
+          const formatedAction = {
             id: unformattedAction.id,
             actionType: ColonyActions.Generic,
             initiator: AddressZero,
@@ -43,12 +44,21 @@ export const getActionsListData = (
             createdAt: new Date(),
             commentCount: 0,
           };
-          const {
-            transaction: {
-              hash,
-              block: { timestamp },
-            },
-          } = unformattedAction;
+          let hash;
+          let timestamp;
+          try {
+            const {
+              transaction: {
+                hash: txHash,
+                block: { timestamp: blockTimestamp },
+              },
+            } = unformattedAction;
+            hash = txHash;
+            timestamp = blockTimestamp;
+          } catch (error) {
+            log.verbose('Could not deconstruct the subgraph action object');
+            log.verbose(error);
+          }
           const transactionComments =
             /*
              * @NOTE Had to disable this as prettier was being too whiny
@@ -61,34 +71,43 @@ export const getActionsListData = (
               ({ transactionHash }) => transactionHash === hash,
             );
           if (subgraphActionType === 'oneTxPayments') {
-            const {
-              payment: {
-                to: recipient,
-                domain: { ethDomainId },
-                fundingPot: {
-                  fundingPotPayouts: [
-                    {
-                      amount,
-                      token: { address: tokenAddress, symbol, decimals },
-                    },
-                  ],
+            try {
+              const {
+                payment: {
+                  to: recipient,
+                  domain: { ethDomainId },
+                  fundingPot: {
+                    fundingPotPayouts: [
+                      {
+                        amount,
+                        token: { address: tokenAddress, symbol, decimals },
+                      },
+                    ],
+                  },
                 },
-              },
-            } = unformattedAction;
-            formattedAction.actionType = ColonyActions.Payment;
-            formattedAction.recipient = recipient;
-            formattedAction.fromDomain = ethDomainId;
-            formattedAction.amount = amount;
-            formattedAction.tokenAddress = tokenAddress;
-            formattedAction.symbol = symbol;
-            formattedAction.decimals = decimals;
-            formattedAction.initiator = unformattedAction.agent;
+              } = unformattedAction;
+              formatedAction.actionType = ColonyActions.Payment;
+              formatedAction.recipient = recipient;
+              formatedAction.fromDomain = ethDomainId;
+              formatedAction.amount = amount;
+              formatedAction.tokenAddress = tokenAddress;
+              formatedAction.symbol = symbol;
+              formatedAction.decimals = decimals;
+              if (unformattedAction?.agent) {
+                formatedAction.initiator = unformattedAction.agent;
+              }
+            } catch (error) {
+              log.verbose(
+                'Could not deconstruct the subgraph oneTx action object',
+              );
+              log.verbose(error);
+            }
           }
           if (transactionsCommentsCount && transactionComments) {
-            formattedAction.commentCount = transactionComments.count;
+            formatedAction.commentCount = transactionComments.count;
           }
           if (timestamp) {
-            formattedAction.createdAt = new Date(
+            formatedAction.createdAt = new Date(
               /*
                * @NOTE blocktime is expressed in seconds, and we need milliseconds
                * to instantiate the correct Date object
@@ -97,31 +116,36 @@ export const getActionsListData = (
             );
           }
           if (subgraphActionType === 'events') {
-            const {
-              args,
-              associatedColony: {
-                token: { address: tokenAddress, symbol, decimals },
-              },
-              name,
-            } = unformattedAction;
-            const actionEvent = Object.entries(ACTIONS_EVENTS).find((el) =>
-              el[1]?.includes(name.split('(')[0]),
-            );
-            const actionType =
-              (actionEvent && (actionEvent[0] as ColonyActions)) ||
-              ColonyActions.Generic;
-            formattedAction.actionType = actionType;
-            formattedAction.tokenAddress = tokenAddress;
-            formattedAction.symbol = symbol;
-            formattedAction.decimals = decimals;
-            const actionTypeValues = getValuesForActionType(args, actionType);
-            const actionTypeKeys = Object.keys(actionTypeValues);
-            actionTypeKeys.forEach((key) => {
-              formattedAction[key] = actionTypeValues[key];
-            });
+            try {
+              const {
+                args,
+                associatedColony: {
+                  token: { address: tokenAddress, symbol, decimals },
+                },
+                name,
+              } = unformattedAction;
+              const actionEvent = Object.entries(ACTIONS_EVENTS).find((el) =>
+                el[1]?.includes(name.split('(')[0]),
+              );
+              const actionType =
+                (actionEvent && (actionEvent[0] as ColonyActions)) ||
+                ColonyActions.Generic;
+              formatedAction.actionType = actionType;
+              formatedAction.tokenAddress = tokenAddress;
+              formatedAction.symbol = symbol;
+              formatedAction.decimals = decimals;
+              const actionTypeValues = getValuesForActionType(args, actionType);
+              const actionTypeKeys = Object.keys(actionTypeValues);
+              actionTypeKeys.forEach((key) => {
+                formatedAction[key] = actionTypeValues[key];
+              });
+            } catch (error) {
+              log.verbose('Could not deconstruct the subgraph event object');
+              log.verbose(error);
+            }
           }
-          formattedAction.transactionHash = hash;
-          return formattedAction;
+          formatedAction.transactionHash = hash;
+          return formatedAction;
         },
       ),
     );
@@ -181,61 +205,67 @@ export const getEventsListData = (
     if (!event) {
       return processedEvents;
     }
-    const {
-      id,
-      associatedColony: { colonyAddress },
-      transaction: {
-        hash,
-        block: { timestamp },
-      },
-      name,
-      args,
-    } = event;
-    const {
-      agent,
-      domainId,
-      recipient,
-      fundingPotId,
-      metadata,
-      token,
-      paymentId,
-      amount,
-      payoutRemainder,
-      decimals = '18',
-      role,
-      setTo,
-      user,
-    } = JSON.parse(args || '{}');
-    const checksummedColonyAddress = createAddress(colonyAddress);
-    const getRecipient = () => {
-      if (recipient) {
-        return createAddress(recipient);
-      }
-      if (user) {
-        return user;
-      }
-      return checksummedColonyAddress;
-    };
-    return [
-      ...processedEvents,
-      {
+    try {
+      const {
         id,
-        agent: agent ? createAddress(agent) : null,
-        eventName: formatEventName(name),
-        transactionHash: hash,
-        colonyAddress: checksummedColonyAddress,
-        createdAt: new Date(parseInt(`${timestamp}000`, 10)),
-        displayValues: args,
-        domainId: domainId || null,
-        recipient: getRecipient(),
-        fundingPot: fundingPotId,
+        associatedColony: { colonyAddress },
+        transaction: {
+          hash,
+          block: { timestamp },
+        },
+        name,
+        args,
+      } = event;
+      const {
+        agent,
+        domainId,
+        recipient,
+        fundingPotId,
         metadata,
-        tokenAddress: token ? createAddress(token) : null,
+        token,
         paymentId,
-        decimals: parseInt(decimals, 10),
-        amount: amount || payoutRemainder || '0',
+        amount,
+        payoutRemainder,
+        decimals = '18',
         role,
-        setTo: setTo === 'true',
-      },
-    ];
+        setTo,
+        user,
+      } = JSON.parse(args || '{}');
+      const checksummedColonyAddress = createAddress(colonyAddress);
+      const getRecipient = () => {
+        if (recipient) {
+          return createAddress(recipient);
+        }
+        if (user) {
+          return user;
+        }
+        return checksummedColonyAddress;
+      };
+      return [
+        ...processedEvents,
+        {
+          id,
+          agent: agent ? createAddress(agent) : null,
+          eventName: formatEventName(name),
+          transactionHash: hash,
+          colonyAddress: checksummedColonyAddress,
+          createdAt: new Date(parseInt(`${timestamp}000`, 10)),
+          displayValues: args,
+          domainId: domainId || null,
+          recipient: getRecipient(),
+          fundingPot: fundingPotId,
+          metadata,
+          tokenAddress: token ? createAddress(token) : null,
+          paymentId,
+          decimals: parseInt(decimals, 10),
+          amount: amount || payoutRemainder || '0',
+          role,
+          setTo: setTo === 'true',
+        },
+      ];
+    } catch (error) {
+      log.verbose('Could not deconstruct the subgraph event object');
+      log.verbose(error);
+      return processedEvents;
+    }
   }, []);

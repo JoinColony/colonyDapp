@@ -51,6 +51,7 @@ const GroupedTransactionCard = ({
     params,
     status,
     loadingRelated,
+    group,
   },
 }: Props) => {
   const dispatch = useDispatch();
@@ -99,7 +100,7 @@ const GroupedTransactionCard = ({
           trigger={hasDependency ? 'hover' : 'disabled'}
         >
           <div>
-            {`${idx + 1}. `}
+            {`${(group?.index || idx) + 1}. `}
             <FormattedMessage
               id={`transaction.${context ? `${context}.` : ''}${methodName}.${
                 methodContext ? `${methodContext}.` : ''

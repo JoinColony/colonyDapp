@@ -6,11 +6,13 @@ import {
   ColonyVersion,
   getColonyRoles,
   TokenClientType,
+  getExtensionHash,
+  ColonyClientV5,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
-import { Context } from '~context/index';
+import { Context, IpfsWithFallbackSkeleton } from '~context/index';
 import {
   Transfer,
   ColonySubscribedUsersQuery,
@@ -27,9 +29,10 @@ import {
   SubgraphColonyDocument,
 } from '~data/index';
 import ColonyManager from '~lib/ColonyManager';
-import IPFSNode from '~lib/ipfs';
+
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createAddress } from '~utils/web3';
+import { log } from '~utils/debug';
 import { Color } from '~core/ColorTag';
 
 import { getToken } from './token';
@@ -58,7 +61,7 @@ const getColonyMembersWithReputation = async (
 export const getProcessedColony = async (
   subgraphColony,
   colonyAddress: Address,
-  ipfs: IPFSNode,
+  ipfs: IpfsWithFallbackSkeleton,
 ) => {
   const {
     colonyChainId,
@@ -68,8 +71,9 @@ export const getProcessedColony = async (
     metadataHistory = [],
   } = subgraphColony;
   let displayName: string | null = null;
-  let avatarURL: string | null = null;
+  let avatar: string | null = null;
   let avatarHash: string | null = null;
+  let avatarObject: { image: string | null } | null = { image: null };
   let tokenAddresses: Array<Address> = [];
 
   const prevIpfsHash = metadataHistory.slice(-1).pop();
@@ -82,7 +86,7 @@ export const getProcessedColony = async (
   try {
     ipfsMetadata = await ipfs.getString(ipfsHash);
   } catch (error) {
-    console.error(
+    log.verbose(
       `Could not fetch IPFS metadata for colony:`,
       ensName,
       'with hash:',
@@ -105,10 +109,11 @@ export const getProcessedColony = async (
        * Fetch the colony's avatar
        */
       try {
-        avatarURL = await ipfs.getString(colonyAvatarHash);
+        avatar = await ipfs.getString(colonyAvatarHash);
+        avatarObject = JSON.parse(avatar as string);
       } catch (error) {
-        console.error('Could not fetch colony avatar', avatarURL);
-        console.error(
+        log.verbose('Could not fetch colony avatar', avatar);
+        log.verbose(
           `Could not parse IPFS avatar for colony:`,
           ensName,
           'with hash:',
@@ -117,7 +122,7 @@ export const getProcessedColony = async (
       }
     }
   } catch (error) {
-    console.error(
+    log.verbose(
       `Could not parse IPFS metadata for colony:`,
       ensName,
       'with object:',
@@ -132,7 +137,7 @@ export const getProcessedColony = async (
     colonyAddress,
     displayName,
     avatarHash,
-    avatarURL,
+    avatarURL: avatarObject?.image || null,
     nativeTokenAddress: token?.tokenAddress
       ? createAddress(token.tokenAddress)
       : null,
@@ -142,7 +147,10 @@ export const getProcessedColony = async (
   };
 };
 
-export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
+export const getProcessedDomain = async (
+  subgraphDomain,
+  ipfs: IpfsWithFallbackSkeleton,
+) => {
   const {
     metadata,
     metadataHistory = [],
@@ -165,7 +173,7 @@ export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
   try {
     ipfsMetadata = await ipfs.getString(ipfsHash);
   } catch (error) {
-    console.error(
+    log.verbose(
       `Could not fetch IPFS metadata for domain:`,
       domainName,
       'with hash:',
@@ -186,7 +194,7 @@ export const getProcessedDomain = async (subgraphDomain, ipfs: IPFSNode) => {
       description = domainPurpose;
     }
   } catch (error) {
-    console.error(
+    log.verbose(
       `Could not parse IPFS metadata for domain:`,
       domainChainId,
       'with object:',
@@ -212,7 +220,7 @@ export const colonyResolvers = ({
   colonyManager,
   ens,
   apolloClient,
-  ipfs,
+  ipfsWithFallback,
 }: Required<Context>): Resolvers => ({
   Query: {
     async colonyAddress(_, { name }) {
@@ -298,7 +306,9 @@ export const colonyResolvers = ({
       });
       if (data?.domains) {
         const [singleDomain] = data.domains;
-        return singleDomain ? getProcessedDomain(singleDomain, ipfs) : null;
+        return singleDomain
+          ? getProcessedDomain(singleDomain, ipfsWithFallback)
+          : null;
       }
       return null;
     },
@@ -322,7 +332,7 @@ export const colonyResolvers = ({
           fetchPolicy: 'network-only',
         });
         return data?.colony
-          ? await getProcessedColony(data.colony, address, ipfs)
+          ? await getProcessedColony(data.colony, address, ipfsWithFallback)
           : null;
       } catch (error) {
         console.error(error);
@@ -349,7 +359,7 @@ export const colonyResolvers = ({
         if (data?.domains) {
           return Promise.all(
             data.domains.map(async (domain) =>
-              getProcessedDomain(domain, ipfs),
+              getProcessedDomain(domain, ipfsWithFallback),
             ),
           );
         }
@@ -416,20 +426,16 @@ export const colonyResolvers = ({
       return tokens.filter((token) => !!token);
     },
     async canUnlockNativeToken({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
+      const colonyClient = (await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
-      );
-      const { tokenClient } = colonyClient;
-      if (tokenClient.tokenClientType === TokenClientType.Colony) {
-        try {
-          await tokenClient.estimate.unlock();
-        } catch (error) {
-          return false;
-        }
-        return true;
+      )) as ColonyClientV5;
+      try {
+        await colonyClient.estimate.unlockToken();
+      } catch (error) {
+        return false;
       }
-      return false;
+      return true;
     },
     async roles({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
@@ -513,6 +519,47 @@ export const colonyResolvers = ({
       );
       const version = await colonyClient.version();
       return version.toString();
+    },
+    async isDeploymentFinished({ colonyAddress }) {
+      if (!colonyAddress) {
+        return null;
+      }
+
+      let isDeploymentFinished = true;
+
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+
+      /*
+       * Check if the token autority is set up
+       */
+      const { tokenClient } = colonyClient;
+      if (tokenClient.tokenClientType === TokenClientType.Colony) {
+        const tokenAuthority = await tokenClient.authority();
+        if (tokenAuthority === AddressZero) {
+          isDeploymentFinished = false;
+        }
+      }
+
+      return isDeploymentFinished;
+    },
+    /*
+     * @NOTE This is temporary until the Extension Manager #2260 gets merged
+     * and will provide a more robust way of getting the extensions
+     *
+     * This only detects the OneTxPayment extension
+     */
+    async canMakePayment({ colonyAddress }) {
+      const extensionAddress = await networkClient.getExtensionInstallation(
+        getExtensionHash('OneTxPayment'),
+        colonyAddress,
+      );
+      if (extensionAddress === AddressZero) {
+        return false;
+      }
+      return true;
     },
   },
 });

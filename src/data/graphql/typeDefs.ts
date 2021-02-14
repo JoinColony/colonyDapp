@@ -138,6 +138,15 @@ export default gql`
     processedColonies: [ProcessedColony!]!
   }
 
+  type ProcessedMetaColony {
+    id: Int!
+    colonyAddress: String!
+    colonyName: String!
+    displayName: String
+    avatarHash: String
+    avatarURL: String
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -162,6 +171,7 @@ export default gql`
       transactionHash: String!
       colonyAddress: String!
     ): ColonyAction!
+    processedMetaColony: ProcessedMetaColony
   }
 
   extend type Mutation {
@@ -188,6 +198,10 @@ export default gql`
   input ByColonyFilter {
     colonyAddress: String!
     domainChainId: Int
+  }
+
+  input ByColoniesAddressesFilter {
+    id_in: [String!]!
   }
 
   type SubgraphBlock {
@@ -282,7 +296,11 @@ export default gql`
     events(skip: Int, first: Int, where: EventsFilter!): [SubgraphEvent!]!
     domains(where: ByColonyFilter!): [SubgraphDomain!]!
     colony(id: String!): SubgraphColony!
-    colonies: SubgraphColony!
+    colonies(
+      where: ByColoniesAddressesFilter!
+      orderBy: String!
+      orderDirection: String!
+    ): [SubgraphColony!]!
     processedColony(address: String!): ProcessedColony!
   }
 
@@ -344,5 +362,7 @@ export default gql`
     transfers: [Transfer!]!
     unclaimedTransfers: [Transfer!]!
     events: [NetworkEvent!]!
+    canMakePayment: Boolean!
+    isDeploymentFinished: Boolean!
   }
 `;

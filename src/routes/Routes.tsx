@@ -7,7 +7,6 @@ import { WalletMethod } from '~immutable/index';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
 import ColonyHome from '~dashboard/ColonyHome';
-import Task from '~dashboard/Task';
 import ColonyMembers from '~dashboard/ColonyMembers';
 import FourOFour from '~dashboard/FourOFour';
 import Inbox from '~users/Inbox';
@@ -15,7 +14,6 @@ import Wallet from '~dashboard/Wallet';
 import ConnectWalletWizard from '~users/ConnectWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
-import AdminDashboard from '~admin/AdminDashboard';
 import { NavBar, Plain, SimpleNav, Default } from '~pages/RouteLayouts/index';
 import { ColonyBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -28,7 +26,6 @@ import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 
 import {
-  ADMIN_DASHBOARD_ROUTE,
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
   COLONY_FUNDING_ROUTE,
@@ -38,7 +35,6 @@ import {
   CREATE_USER_ROUTE,
   INBOX_ROUTE,
   NOT_FOUND_ROUTE,
-  TASK_ROUTE,
   USER_EDIT_ROUTE,
   USER_ROUTE,
   WALLET_ROUTE,
@@ -178,16 +174,6 @@ const Routes = () => {
           })}
         />
         <AlwaysAccesibleRoute
-          exact
-          path={ADMIN_DASHBOARD_ROUTE}
-          component={AdminDashboard}
-          layout={NavBar}
-          routeProps={({ colonyName }) => ({
-            backText: ColonyBackText,
-            backRoute: `/colony/${colonyName}`,
-          })}
-        />
-        <AlwaysAccesibleRoute
           path={USER_ROUTE}
           component={UserProfile}
           layout={SimpleNav}
@@ -203,16 +189,6 @@ const Routes = () => {
             backText: MSG.userProfileEditBack,
             backRoute: `/user/${username}`,
           }}
-        />
-        <AlwaysAccesibleRoute
-          exact
-          path={TASK_ROUTE}
-          component={Task}
-          layout={NavBar}
-          routeProps={({ colonyName }) => ({
-            backText: ColonyBackText,
-            backRoute: `/colony/${colonyName}`,
-          })}
         />
         <AlwaysAccesibleRoute
           exact
@@ -235,6 +211,11 @@ const Routes = () => {
             backRoute: `/colony/${colonyName}`,
           })}
         />
+
+        {/*
+         * Redirect anything else that's not found to the 404 route
+         */}
+        <Redirect to={NOT_FOUND_ROUTE} />
       </Switch>
     ),
     [didClaimProfile, isConnected, username],

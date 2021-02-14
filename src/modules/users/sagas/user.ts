@@ -81,7 +81,18 @@ function* userAvatarUpload({
   try {
     const { walletAddress } = yield getLoggedInUser();
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-    const ipfsHash = yield call(ipfsUpload, payload.data);
+
+    let ipfsHash = null;
+    if (payload.data) {
+      try {
+        ipfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({ image: payload.data }),
+        );
+      } catch (error) {
+        // silent error
+      }
+    }
 
     yield apolloClient.mutate<EditUserMutation, EditUserMutationVariables>({
       mutation: EditUserDocument,

@@ -1,5 +1,7 @@
-import { InfuraProvider, JsonRpcProvider, Provider } from 'ethers/providers';
+import { Provider } from 'ethers/providers';
 import { Network } from '@colony/colony-js';
+import { ExtendedInfuraProvider } from './extendedInfuraProvider';
+import { ExtendedJsonRpcProvider } from './extendedJsonRpcProvider';
 
 import { DEFAULT_NETWORK } from '~constants';
 
@@ -10,15 +12,15 @@ const getProvider = (): Provider => {
   const network = DEFAULT_NETWORK as Network;
 
   if (network === Network.Local) {
-    return new JsonRpcProvider();
+    return new ExtendedJsonRpcProvider();
   }
   if (network === Network.Xdai) {
-    return new JsonRpcProvider('https://xdai.poanetwork.dev');
+    return new ExtendedJsonRpcProvider('https://xdai.poanetwork.dev');
   }
   if (network === Network.XdaiFork) {
-    return new JsonRpcProvider('https://qaxdai.colony.io/rpc/');
+    return new ExtendedJsonRpcProvider('https://qaxdai.colony.io/rpc/');
   }
-  return new InfuraProvider(network, process.env.INFURA_ID);
+  return new ExtendedInfuraProvider(network, process.env.INFURA_ID);
 };
 
 export default getProvider;

@@ -22,7 +22,8 @@ import {
   ACTIONS_EVENTS,
   EVENTS_REQUIRED_FOR_ACTION,
 } from '~dashboard/ActionsPage';
-import ipfs from '../../context/ipfsNodeContext';
+import ipfs from '~context/ipfsWithFallbackContext';
+import { log } from '~utils/debug';
 
 import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
 
@@ -328,6 +329,10 @@ const getVersionUpgradeActionValues = async (
 const getColonyEditActionValues = async (
   processedEvents: ProcessedEvent[],
 ): Promise<Partial<ActionValues>> => {
+  let colonyDisplayName = null;
+  let colonyAvatarHash = null;
+  let colonyTokens = [];
+
   const colonyMetadataEvent = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.ColonyMetadata,
   ) as ProcessedEvent;
@@ -337,18 +342,45 @@ const getColonyEditActionValues = async (
     values: { agent, metadata },
   } = colonyMetadataEvent;
 
-  const ipfsData = await ipfs.getString(metadata);
-  const {
-    colonyDisplayName = null,
-    colonyAvatarHash = null,
-    colonyTokens = [],
-  } = JSON.parse(ipfsData);
+  /*
+   * Fetch the colony's metadata
+   */
+  let ipfsMetadata: any = null;
+  try {
+    ipfsMetadata = await ipfs.getString(metadata);
+  } catch (error) {
+    log.verbose(
+      'Could not fetch IPFS metadata for colony with hash:',
+      metadata,
+    );
+  }
+
+  try {
+    if (ipfsMetadata) {
+      const {
+        colonyDisplayName: displayName,
+        colonyAvatarHash: avatarHash,
+        colonyTokens: tokenAddresses,
+      } = JSON.parse(ipfsMetadata);
+
+      colonyDisplayName = displayName;
+      colonyAvatarHash = avatarHash;
+      colonyTokens = tokenAddresses;
+    }
+  } catch (error) {
+    log.verbose(
+      `Could not parse IPFS metadata for colony, using hash:`,
+      metadata,
+      'with object:',
+      ipfsMetadata,
+    );
+  }
 
   const colonyEditValues: {
     address: Address;
     actionInitiator?: string;
-    colonyDisplayName: string;
-    colonyAvatarHash?: string;
+    colonyDisplayName: string | null;
+    colonyAvatarHash?: string | null;
     colonyTokens?: string[];
   } = {
     address,

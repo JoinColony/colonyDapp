@@ -72,12 +72,22 @@ const MSG = defineMessages({
     id: 'dashboard.ManageFundsDialog.rewardsDescription',
     defaultMessage: "Set what % of the colony's revenue should go to members.",
   },
+  unlockTokensTitle: {
+    id: 'dashboard.ManageFundsDialog.unlockTokensTitle',
+    defaultMessage: 'Unlock Token',
+  },
+  unlockTokensDescription: {
+    id: 'dashboard.ManageFundsDialog.unlockTokensDescription',
+    defaultMessage:
+      'Allow your native token to be transferred between acccounts.',
+  },
 });
 
 interface CustomWizardDialogProps {
   nextStepTransferFunds: string;
   nextStepMintTokens: string;
   nextStepManageTokens: string;
+  nextStepUnlockToken: string;
   prevStep: string;
   colony: Colony;
 }
@@ -95,6 +105,7 @@ const ManageFundsDialog = ({
   nextStepTransferFunds,
   nextStepMintTokens,
   nextStepManageTokens,
+  nextStepUnlockToken,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -103,6 +114,10 @@ const ManageFundsDialog = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
   const canMintNativeToken = colony.canMintNativeToken && hasRoot(allUserRoles);
+  const canUnlockToken =
+    colony.isNativeTokenLocked &&
+    colony.canUnlockNativeToken &&
+    hasRoot(allUserRoles);
   const canManageTokens = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const items = [
@@ -154,6 +169,19 @@ const ManageFundsDialog = ({
       description: MSG.rewardsDescription,
       icon: 'emoji-medal',
       comingSoon: true,
+    },
+    {
+      title: MSG.unlockTokensTitle,
+      description: MSG.unlockTokensDescription,
+      icon: 'emoji-padlock',
+      onClick: () => callStep(nextStepUnlockToken),
+      permissionRequired: !canUnlockToken,
+      permissionInfoText: MSG.permissionsListText,
+      permissionInfoTextValues: {
+        permissionsList: (
+          <FormattedMessage {...MSG.manageTokensPermissionsList} />
+        ),
+      },
     },
   ];
   return (

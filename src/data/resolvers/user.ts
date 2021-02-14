@@ -46,7 +46,7 @@ export const userResolvers = ({
   colonyManager,
   ens,
   apolloClient,
-  ipfs,
+  ipfsWithFallback,
 }: Required<Context>): Resolvers => ({
   Query: {
     async userAddress(_, { name }): Promise<Address> {
@@ -163,7 +163,7 @@ export const userResolvers = ({
         }),
       );
     },
-    async processedColonies({ colonyAddresses }) {
+    async processedColonies({ colonyAddresses = [] }) {
       try {
         const { data } = await apolloClient.query<
           SubgraphColoniesQuery,
@@ -171,34 +171,26 @@ export const userResolvers = ({
         >({
           query: SubgraphColoniesDocument,
           fetchPolicy: 'network-only',
+          variables: {
+            colonyAddresses: colonyAddresses.map((address) =>
+              address.toLowerCase(),
+            ),
+          },
         });
         if (data?.colonies) {
-          const userColonies: Array<{
-            colonyChainId: string;
-            ensName: string;
-            metadata: string;
-            id: string;
-          }> = colonyAddresses.reduce((colonies, colonyAddress) => {
-            const subscribedColony = ((data?.colonies as unknown) as Array<{
-              id: string;
-              colonyChainId: string;
-              ensName: string;
-              metadata: string;
-            }>).find(({ id }) => id === colonyAddress.toLowerCase());
-            if (subscribedColony) {
-              colonies.push(subscribedColony);
-            }
-            return colonies;
-          }, []);
           return Promise.all(
-            userColonies.map(async (colony) =>
-              getProcessedColony(colony, createAddress(colony.id), ipfs),
+            data.colonies.map(async (colony) =>
+              getProcessedColony(
+                colony,
+                createAddress(colony.id),
+                ipfsWithFallback,
+              ),
             ),
           );
         }
         return null;
       } catch (error) {
-        console.error(error);
+        console.info(error);
         return null;
       }
     },

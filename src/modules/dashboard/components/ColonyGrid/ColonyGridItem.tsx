@@ -41,7 +41,7 @@ const ColonyGridItem = ({ colonyAddress }: Props) => {
             title={displayName || colonyName}
             className={styles.displayName}
           >
-            {displayName}
+            {displayName || colonyName}
           </span>
         </Heading>
       </Link>

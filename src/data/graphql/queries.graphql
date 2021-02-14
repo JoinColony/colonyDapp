@@ -357,6 +357,17 @@ query TransactionMessagesCount($colonyAddress: String!) {
   }
 }
 
+query MetaColony {
+  processedMetaColony @client {
+    id
+    colonyAddress
+    colonyName
+    displayName
+    avatarHash
+    avatarURL
+  }
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`
@@ -498,8 +509,12 @@ query SubgraphColony($address: String!) {
   }
 }
 
-query SubgraphColonies {
-  colonies {
+query SubgraphColonies($colonyAddresses: [String!]!) {
+  colonies(
+    where: { id_in: $colonyAddresses },
+    orderBy: "colonyChainId",
+    orderDirection: "asc"
+  ) {
     id
     colonyChainId
     ensName

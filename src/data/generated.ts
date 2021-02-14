@@ -678,7 +678,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 };
 
 export type Query = {
-  colonies: SubgraphColony;
+  colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
   colonyAddress: Scalars['String'];
@@ -692,6 +692,7 @@ export type Query = {
   oneTxPaymentExtensionAddress?: Maybe<Scalars['String']>;
   oneTxPayments: Array<OneTxPayment>;
   processedColony: ProcessedColony;
+  processedMetaColony?: Maybe<ProcessedMetaColony>;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   task: Task;
@@ -704,6 +705,13 @@ export type Query = {
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
   username: Scalars['String'];
+};
+
+
+export type QueryColoniesArgs = {
+  where: ByColoniesAddressesFilter;
+  orderBy: Scalars['String'];
+  orderDirection: Scalars['String'];
 };
 
 
@@ -1099,6 +1107,15 @@ export type NetworkEvent = {
   domainId?: Maybe<Scalars['String']>;
 };
 
+export type ProcessedMetaColony = {
+  id: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  colonyName: Scalars['String'];
+  displayName?: Maybe<Scalars['String']>;
+  avatarHash?: Maybe<Scalars['String']>;
+  avatarURL?: Maybe<Scalars['String']>;
+};
+
 export type ActionsFilter = {
   payment_contains?: Maybe<Scalars['String']>;
 };
@@ -1112,6 +1129,10 @@ export type EventsFilter = {
 export type ByColonyFilter = {
   colonyAddress: Scalars['String'];
   domainChainId?: Maybe<Scalars['Int']>;
+};
+
+export type ByColoniesAddressesFilter = {
+  id_in: Array<Scalars['String']>;
 };
 
 export type SubgraphBlock = {
@@ -1256,6 +1277,8 @@ export type ProcessedColony = {
   transfers: Array<Transfer>;
   unclaimedTransfers: Array<Transfer>;
   events: Array<NetworkEvent>;
+  canMakePayment: Scalars['Boolean'];
+  isDeploymentFinished: Scalars['Boolean'];
 };
 
 export type PayoutsFragment = { payouts: Array<(
@@ -1285,7 +1308,7 @@ export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'descr
 export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>;
 
 export type FullColonyFragment = (
-  Pick<ProcessedColony, 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
+  Pick<ProcessedColony, 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'canMakePayment' | 'isDeploymentFinished'>
   & { domains: Array<DomainFieldsFragment>, roles: Array<(
     Pick<ProcessedRoles, 'address'>
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
@@ -1798,6 +1821,11 @@ export type TransactionMessagesCountQueryVariables = Exact<{
 
 export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
 
+export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MetaColonyQuery = { processedMetaColony?: Maybe<Pick<ProcessedMetaColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>> };
+
 export type SubgraphActionsQueryVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -1896,16 +1924,18 @@ export type SubgraphColonyQuery = { colony: (
     ) }
   ) };
 
-export type SubgraphColoniesQueryVariables = Exact<{ [key: string]: never; }>;
+export type SubgraphColoniesQueryVariables = Exact<{
+  colonyAddresses: Array<Scalars['String']>;
+}>;
 
 
-export type SubgraphColoniesQuery = { colonies: (
+export type SubgraphColoniesQuery = { colonies: Array<(
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
     & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
     ) }
-  ) };
+  )> };
 
 export type SubgraphColonyMetadataQueryVariables = Exact<{
   address: Scalars['String'];
@@ -2117,6 +2147,8 @@ export const FullColonyFragmentDoc = gql`
   canUnlockNativeToken @client
   isInRecoveryMode @client
   isNativeTokenLocked @client
+  canMakePayment @client
+  isDeploymentFinished @client
 }
     ${ColonyProfileFragmentDoc}
 ${TokensFragmentDoc}
@@ -4291,6 +4323,43 @@ export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQu
 export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
 export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
 export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
+export const MetaColonyDocument = gql`
+    query MetaColony {
+  processedMetaColony @client {
+    id
+    colonyAddress
+    colonyName
+    displayName
+    avatarHash
+    avatarURL
+  }
+}
+    `;
+
+/**
+ * __useMetaColonyQuery__
+ *
+ * To run a query within a React component, call `useMetaColonyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMetaColonyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMetaColonyQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMetaColonyQuery(baseOptions?: Apollo.QueryHookOptions<MetaColonyQuery, MetaColonyQueryVariables>) {
+        return Apollo.useQuery<MetaColonyQuery, MetaColonyQueryVariables>(MetaColonyDocument, baseOptions);
+      }
+export function useMetaColonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MetaColonyQuery, MetaColonyQueryVariables>) {
+          return Apollo.useLazyQuery<MetaColonyQuery, MetaColonyQueryVariables>(MetaColonyDocument, baseOptions);
+        }
+export type MetaColonyQueryHookResult = ReturnType<typeof useMetaColonyQuery>;
+export type MetaColonyLazyQueryHookResult = ReturnType<typeof useMetaColonyLazyQuery>;
+export type MetaColonyQueryResult = Apollo.QueryResult<MetaColonyQuery, MetaColonyQueryVariables>;
 export const SubgraphActionsDocument = gql`
     query SubgraphActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
   oneTxPayments(skip: $skip, first: $first, where: {payment_contains: $colonyAddress}) {
@@ -4611,8 +4680,8 @@ export type SubgraphColonyQueryHookResult = ReturnType<typeof useSubgraphColonyQ
 export type SubgraphColonyLazyQueryHookResult = ReturnType<typeof useSubgraphColonyLazyQuery>;
 export type SubgraphColonyQueryResult = Apollo.QueryResult<SubgraphColonyQuery, SubgraphColonyQueryVariables>;
 export const SubgraphColoniesDocument = gql`
-    query SubgraphColonies {
-  colonies {
+    query SubgraphColonies($colonyAddresses: [String!]!) {
+  colonies(where: {id_in: $colonyAddresses}, orderBy: "colonyChainId", orderDirection: "asc") {
     id
     colonyChainId
     ensName
@@ -4642,6 +4711,7 @@ export const SubgraphColoniesDocument = gql`
  * @example
  * const { data, loading, error } = useSubgraphColoniesQuery({
  *   variables: {
+ *      colonyAddresses: // value for 'colonyAddresses'
  *   },
  * });
  */

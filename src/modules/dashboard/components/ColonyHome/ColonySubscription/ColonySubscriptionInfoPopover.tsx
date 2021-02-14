@@ -29,12 +29,14 @@ interface Props {
   colony: Colony;
   onUnsubscribe?: () => void;
   children?: ReactNode;
+  canUnsubscribe?: boolean;
 }
 
 const ColonySubscriptionInfoPopover = ({
   children,
   colony: { colonyAddress, displayName, colonyName, nativeTokenAddress },
   colony,
+  canUnsubscribe = true,
   onUnsubscribe = () => {},
 }: Props) => (
   <Popover
@@ -57,14 +59,16 @@ const ColonySubscriptionInfoPopover = ({
               <MaskedAddress address={colonyAddress} full />
             </span>
           </div>
-          <div className={styles.unsubscribeFromColony}>
-            <Button
-              appearance={{ theme: 'blue', size: 'small' }}
-              onClick={onUnsubscribe}
-            >
-              <FormattedMessage {...MSG.leaveColonyQuestion} />
-            </Button>
-          </div>
+          {canUnsubscribe && (
+            <div className={styles.unsubscribeFromColony}>
+              <Button
+                appearance={{ theme: 'blue', size: 'small' }}
+                onClick={onUnsubscribe}
+              >
+                <FormattedMessage {...MSG.leaveColonyQuestion} />
+              </Button>
+            </div>
+          )}
         </div>
         <span className={styles.nativeTokenTitle}>
           <FormattedMessage {...MSG.nativeTokenTitle} />

@@ -8,9 +8,10 @@ import { ipfsDataFetcher } from '../../../core/fetchers';
 export default withHooks<
   { fetchColony: boolean },
   ColonyAvatarProps,
-  { colony?: AnyColonyProfile; avatarURL?: string }
+  { colony?: AnyColonyProfile; avatarURL?: string | null }
 >(({ fetchColony = true }, { colony, colonyAddress }) => {
-  const result: { colony?: AnyColonyProfile; avatarURL?: string } = {
+  let avatarObject = { image: null };
+  const result: { colony?: AnyColonyProfile; avatarURL?: string | null } = {
     colony,
     avatarURL: undefined,
   };
@@ -23,12 +24,23 @@ export default withHooks<
       result.colony = data.processedColony;
     }
   }
-  const avatarHash = result.colony ? result.colony.avatarHash : undefined;
-  const { data: avatarURL } = useDataFetcher(
-    ipfsDataFetcher,
-    [avatarHash as string], // Technically a bug, shouldn't need type override
-    [avatarHash],
-  );
+  const avatarHash = result.colony ? result.colony.avatarHash : null;
+  const avatarURL = result.colony ? result.colony.avatarURL : null;
   result.avatarURL = avatarURL;
+
+  if (!avatarURL) {
+    const { data: avatar } = useDataFetcher(
+      ipfsDataFetcher,
+      [avatarHash as string], // Technically a bug, shouldn't need type override
+      [avatarHash],
+    );
+    try {
+      avatarObject = JSON.parse(avatar);
+    } catch (error) {
+      // silent error
+    }
+    result.avatarURL = avatarObject?.image || null;
+  }
+
   return result;
 })(ColonyAvatar);

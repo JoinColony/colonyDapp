@@ -6,14 +6,16 @@ import React, {
   useState,
 } from 'react';
 import { defineMessages } from 'react-intl';
+import { ColonyVersion } from '@colony/colony-js';
 
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   ALLDOMAINS_DOMAIN_SELECTION,
+  ALLOWED_NETWORKS,
 } from '~constants';
 import ColorTag, { Color } from '~core/ColorTag';
 import { Form, Select, SelectOption } from '~core/Fields';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 
 import CreateDomainButton from './CreateDomainButton';
 import DomainSelectItem from './DomainSelectItem';
@@ -46,6 +48,8 @@ const DomainDropdown = ({
   onDomainChange,
   colony,
 }: Props) => {
+  const { networkId, ethereal, username } = useLoggedInUser();
+
   const [, setSelectedDomain] = useState<number>(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
@@ -143,6 +147,11 @@ const DomainDropdown = ({
     ];
   }, [colony, filteredDomainId]);
 
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isSupportedColonyVersion =
+    parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+  const hasRegisteredProfile = !!username && !ethereal;
+
   return (
     <Form<FormValues>
       initialValues={{
@@ -165,7 +174,14 @@ const DomainDropdown = ({
           handleSubmit(Number(val));
         }}
         options={options}
-        optionsFooter={<CreateDomainButton colony={colony} />}
+        optionsFooter={
+          isSupportedColonyVersion &&
+          isNetworkAllowed &&
+          hasRegisteredProfile &&
+          colony?.isDeploymentFinished ? (
+            <CreateDomainButton colony={colony} />
+          ) : null
+        }
         renderActiveOption={renderActiveOption}
       />
     </Form>

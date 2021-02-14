@@ -22,9 +22,6 @@ import {
   ProcessedColonyQuery,
   ProcessedColonyQueryVariables,
   ProcessedColonyDocument,
-  SubgraphColonyMetadataQuery,
-  SubgraphColonyMetadataQueryVariables,
-  SubgraphColonyMetadataDocument,
   getNetworkContracts,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -38,8 +35,8 @@ import {
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import {
   transactionReady,
-  transactionAddParams,
   transactionPending,
+  transactionAddParams,
 } from '../../core/actionCreators';
 import { updateColonyDisplayCache } from './utils';
 
@@ -98,16 +95,6 @@ function* createPaymentAction({
     }
 
     const { amount, tokenAddress, decimals = 18 } = singlePayment;
-
-    let ipfsHash = null;
-    if (annotationMessage) {
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
 
     txChannel = yield call(getTxChannel, metaId);
 
@@ -182,6 +169,16 @@ function* createPaymentAction({
     yield takeFrom(paymentAction.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotatePaymentAction.id));
+
+      let ipfsHash = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(
         transactionAddParams(annotatePaymentAction.id, [txHash, ipfsHash]),
       );
@@ -307,16 +304,6 @@ function* createMoveFundsAction({
       call([colonyClient, colonyClient.getDomain], toDomainId),
     ]);
 
-    let ipfsHash = null;
-    if (annotationMessage) {
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
-
     txChannel = yield call(getTxChannel, metaId);
 
     // setup batch ids and channels
@@ -378,6 +365,16 @@ function* createMoveFundsAction({
     yield takeFrom(moveFunds.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateMoveFunds.id));
+
+      let ipfsHash = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(transactionAddParams(annotateMoveFunds.id, [txHash, ipfsHash]));
 
       yield put(transactionReady(annotateMoveFunds.id));
@@ -450,16 +447,6 @@ function* createMintTokensAction({
 
     if (!amount) {
       throw new Error('Amount to mint not set for mintTokens transaction');
-    }
-
-    let ipfsHash = null;
-    if (annotationMessage) {
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
     }
 
     txChannel = yield call(getTxChannel, metaId);
@@ -540,6 +527,16 @@ function* createMintTokensAction({
     yield takeFrom(claimColonyFunds.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateMintTokens.id));
+
+      let ipfsHash = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(
         transactionAddParams(annotateMintTokens.id, [txHash, ipfsHash]),
       );
@@ -613,16 +610,6 @@ function* createVersionUpgradeAction({
       currentVersion >= ColonyVersion.CeruleanLightweightSpaceship &&
       annotationMessage;
 
-    let ipfsHash = null;
-    if (supportAnnotation) {
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
-
     txChannel = yield call(getTxChannel, metaId);
 
     const batchKey = 'upgrade';
@@ -675,6 +662,16 @@ function* createVersionUpgradeAction({
     yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (supportAnnotation) {
+      yield put(transactionPending(annotateUpgrade.id));
+
+      let ipfsHash = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]));
 
       yield put(transactionReady(annotateUpgrade.id));
@@ -740,32 +737,6 @@ function* createDomainAction({
       throw new Error('A domain name is required to create a new domain');
     }
 
-    /*
-     * Upload domain metadata to IPFS
-     */
-    let domainMetadataIpfsHash = null;
-    domainMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        domainName,
-        domainColor,
-        domainPurpose,
-      }),
-    );
-
-    /*
-     * Upload domain metadata to IPFS
-     */
-    let annotationMessageIpfsHash = null;
-    if (annotationMessage) {
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-    }
-
     txChannel = yield call(getTxChannel, metaId);
 
     const batchKey = 'createDomainAction';
@@ -791,7 +762,7 @@ function* createDomainAction({
       context: ClientType.ColonyClient,
       methodName: 'addDomainWithProofs',
       identifier: colonyAddress,
-      params: [parentId, domainMetadataIpfsHash],
+      params: [],
       ready: false,
     });
 
@@ -813,6 +784,28 @@ function* createDomainAction({
       );
     }
 
+    yield put(transactionPending(createDomain.id));
+
+    /*
+     * Upload domain metadata to IPFS
+     */
+    let domainMetadataIpfsHash = null;
+    domainMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        domainName,
+        domainColor,
+        domainPurpose,
+      }),
+    );
+
+    yield put(
+      transactionAddParams(createDomain.id, [
+        parentId,
+        (domainMetadataIpfsHash as unknown) as string,
+      ]),
+    );
+
     yield put(transactionReady(createDomain.id));
 
     const {
@@ -824,6 +817,19 @@ function* createDomainAction({
     yield takeFrom(createDomain.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateCreateDomain.id));
+
+      /*
+       * Upload domain metadata to IPFS
+       */
+      let annotationMessageIpfsHash = null;
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(
         transactionAddParams(annotateCreateDomain.id, [
           txHash,
@@ -1064,6 +1070,8 @@ function* editColonyAction({
     colonyName,
     colonyDisplayName,
     colonyAvatarImage,
+    colonyAvatarHash,
+    hasAvatarChanged,
     colonyTokens = [],
     annotationMessage,
   },
@@ -1079,44 +1087,6 @@ function* editColonyAction({
      */
     if (!colonyDisplayName && colonyDisplayName !== null) {
       throw new Error('A colony name is required in order to edit the colony');
-    }
-
-    /*
-     * Upload colony metadata to IPFS
-     */
-    let colonyAvatarIpfsHash = null;
-    if (colonyAvatarImage) {
-      colonyAvatarIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify(colonyAvatarImage),
-      );
-    }
-
-    /*
-     * Upload colony metadata to IPFS
-     */
-    let colonyMetadataIpfsHash = null;
-    colonyMetadataIpfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        colonyName,
-        colonyDisplayName,
-        colonyAvatarHash: colonyAvatarImage ? colonyAvatarIpfsHash : null,
-        colonyTokens,
-      }),
-    );
-
-    /*
-     * Upload annotation metadata to IPFS
-     */
-    let annotationMessageIpfsHash = null;
-    if (annotationMessage) {
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
     }
 
     txChannel = yield call(getTxChannel, metaId);
@@ -1144,7 +1114,7 @@ function* editColonyAction({
       context: ClientType.ColonyClient,
       methodName: 'editColony',
       identifier: colonyAddress,
-      params: [colonyMetadataIpfsHash],
+      params: [],
       ready: false,
     });
 
@@ -1159,12 +1129,55 @@ function* editColonyAction({
     }
 
     yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_CREATED);
+
     if (annotationMessage) {
       yield takeFrom(
         annotateEditColony.channel,
         ActionTypes.TRANSACTION_CREATED,
       );
     }
+
+    yield put(transactionPending(editColony.id));
+
+    /*
+     * Upload colony metadata to IPFS
+     *
+     * @NOTE Only (re)upload the avatar if it has changed, otherwise just use
+     * the old hash.
+     * This cuts down on some transaction signing wait time, since IPFS uplaods
+     * tend to be on the slower side :(
+     */
+    let colonyAvatarIpfsHash = null;
+    if (colonyAvatarImage && hasAvatarChanged) {
+      colonyAvatarIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          image: colonyAvatarImage,
+        }),
+      );
+    }
+
+    /*
+     * Upload colony metadata to IPFS
+     */
+    let colonyMetadataIpfsHash = null;
+    colonyMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        colonyName,
+        colonyDisplayName,
+        colonyAvatarHash: hasAvatarChanged
+          ? colonyAvatarIpfsHash
+          : colonyAvatarHash,
+        colonyTokens,
+      }),
+    );
+
+    yield put(
+      transactionAddParams(editColony.id, [
+        (colonyMetadataIpfsHash as unknown) as string,
+      ]),
+    );
 
     yield put(transactionReady(editColony.id));
 
@@ -1177,6 +1190,19 @@ function* editColonyAction({
     yield takeFrom(editColony.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      yield put(transactionPending(annotateEditColony.id));
+
+      /*
+       * Upload annotation metadata to IPFS
+       */
+      let annotationMessageIpfsHash = null;
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
       yield put(
         transactionAddParams(annotateEditColony.id, [
           txHash,
@@ -1212,21 +1238,6 @@ function* editColonyAction({
         colonyAddress: colonyAddress.toLocaleLowerCase(),
         first: 1,
         skip: 0,
-      },
-      fetchPolicy: 'network-only',
-    });
-
-    /*
-     * Re-fetch colony metadata history so we have the new values to compare agaist
-     * This could have also been a cache update since we have all ifps hashes locally
-     */
-    yield apolloClient.query<
-      SubgraphColonyMetadataQuery,
-      SubgraphColonyMetadataQueryVariables
-    >({
-      query: SubgraphColonyMetadataDocument,
-      variables: {
-        address: colonyAddress.toLocaleLowerCase(),
       },
       fetchPolicy: 'network-only',
     });
@@ -1436,6 +1447,50 @@ function* createSetUserRolesAction({
   return null;
 }
 
+function* colonyTokenUnlock({
+  meta,
+  payload: { colonyAddress },
+}: Action<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN>) {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'unlockToken',
+      identifier: colonyAddress,
+    });
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    yield put({
+      type: ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS,
+      meta,
+    });
+
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+    yield apolloClient.query<
+      ProcessedColonyQuery,
+      ProcessedColonyQueryVariables
+    >({
+      query: ProcessedColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* tasksSagas() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
@@ -1457,4 +1512,5 @@ export default function* tasksSagas() {
     ActionTypes.COLONY_ACTION_USER_ROLES_SET,
     createSetUserRolesAction,
   );
+  yield takeEvery(ActionTypes.COLONY_ACTION_UNLOCK_TOKEN, colonyTokenUnlock);
 }

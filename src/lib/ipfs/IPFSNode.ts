@@ -1,5 +1,7 @@
 import IPFS from 'ipfs';
 
+import { log } from '~utils/debug';
+
 import devConfig from './ipfsConfig.development';
 import prodConfig from './ipfsConfig.production';
 import qaConfig from './ipfsConfig.qa';
@@ -32,13 +34,19 @@ class IPFSNode {
   }
 
   /** Return a file from IPFS as text */
-  async getString(hash: string): Promise<string> {
-    if (!hash) return '';
-    await this.ready;
-    const resultIterator = await this._ipfs.cat(hash);
-    const { value } = await resultIterator.next();
-    if (!value) throw new Error('No such file');
-    return value.toString();
+  async getString(hash: string): Promise<string | null> {
+    try {
+      if (!hash) return '';
+      await this.ready;
+      const resultIterator = await this._ipfs.cat(hash);
+      const { value } = await resultIterator.next();
+      if (!value) throw new Error('No such file');
+      return value.toString();
+    } catch (error) {
+      log.verbose('Could not get IPFS hash:', hash);
+      log.verbose(error);
+      return null;
+    }
   }
 
   /** Upload a string */

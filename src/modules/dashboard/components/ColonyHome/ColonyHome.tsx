@@ -4,7 +4,7 @@ import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 
 import Alert from '~core/Alert';
-import Button from '~core/Button';
+import Button, { ActionButton } from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyNavigation from '~dashboard/ColonyNavigation';
@@ -16,8 +16,10 @@ import { useColonyFromNameQuery, useNetworkContracts } from '~data/index';
 import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '../../../transformers';
-import { hasRoot } from '../../../users/checks';
+import { hasRoot, canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded } from '../../checks';
+import { ActionTypes } from '~redux/index';
+import { mapPayload } from '~utils/actions';
 
 import {
   COLONY_EVENTS_ROUTE,
@@ -39,7 +41,7 @@ import ColonyHomeActions from '~dashboard/ColonyHomeActions';
 
 const MSG = defineMessages({
   loadingText: {
-    id: 'dashboard.Admin.loadingText',
+    id: 'dashboard.ColonyHome.loadingText',
     defaultMessage: 'Loading Colony',
   },
   tabContribute: {
@@ -62,6 +64,14 @@ const MSG = defineMessages({
     id: `dashboard.ColonyHome.upgradeRequired`,
     defaultMessage: `This colony uses a version of the network that is no
       longer supported. You must upgrade to continue using this application.`,
+  },
+  deploymentNotFinished: {
+    id: `dashboard.ColonyHome.deploymentNotFinished`,
+    defaultMessage: `Colony creation incomplete. Click to continue 👉`,
+  },
+  buttonFinishDeployment: {
+    id: `dashboard.ColonyHome.buttonFinishDeployment`,
+    defaultMessage: `Finish Deployment`,
   },
 });
 
@@ -90,31 +100,12 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const filteredDomainId = domainIdFilter || COLONY_TOTAL_BALANCE_DOMAIN_ID;
 
-  const {
-    data,
-    error,
-    /**
-     * @NOTE Hooking into the return variable value
-     *
-     * Since this is a client side query it's return value will never end up
-     * in the final result from the main query hook, either the value or the
-     * eventual error.
-     *
-     * For this we hook into the `address` value which will be set internally
-     * by the `@client` query so that we can act on it if we encounter an ENS
-     * error.
-     *
-     * Based on that error we can determine if the colony is registered or not.
-     */
-    variables: dataVariables,
-  } = useColonyFromNameQuery({
+  const { data, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
 
   if (error) console.error(error);
-
-  const reverseENSAddress = dataVariables && dataVariables.address;
 
   const allUserRoles = useTransformer(getAllUserRoles, [
     data?.processedColony,
@@ -130,18 +121,48 @@ const ColonyHome = ({ match, location }: Props) => {
     });
   }, [data, openUpgradeVersionDialog]);
 
-  if (!colonyName || (reverseENSAddress as any) instanceof Error) {
+  const transform = useCallback(
+    mapPayload(() => ({
+      colonyAddress: data?.colonyAddress,
+    })),
+    [data],
+  );
+
+  /*
+   * Keep the page loaded when the colony name changes, but we have data
+   *
+   * This can happen if changing the colony from the left subscriptions sidebar
+   * The data won't change, hence not trigger the "loading" check, until it is
+   * fetched and refreshed in the background.
+   *
+   * What this looks like in practice is that you change the colony but you'll
+   * see the "old" colony's data on the page, up until it is just changed in
+   * front of you.
+   *
+   * This problem is made even worse in an production environment where loading
+   * times are slow.
+   */
+  if (loading || data?.processedColony?.colonyName !== colonyName) {
+    return (
+      <div className={styles.loadingWrapper}>
+        <LoadingTemplate loadingText={MSG.loadingText} />
+      </div>
+    );
+  }
+
+  if (!colonyName || error || !data?.processedColony) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  if (!data || !data.colonyAddress || !data.processedColony) {
-    return <LoadingTemplate loadingText={MSG.loadingText} />;
-  }
-
-  const { processedColony: colony } = data;
+  const {
+    processedColony: colony,
+    processedColony: { isDeploymentFinished },
+  } = data;
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
+  const canFinishDeployment =
+    canUpgradeColony && canEnterRecoveryMode(allUserRoles);
   /*
    * @NOTE As a future upgrade, we can have a mapping where we keep track of
    * past and current network versions so that we can control, more granularly,
@@ -149,7 +170,7 @@ const ColonyHome = ({ match, location }: Props) => {
    * an older version
    */
   const mustUpgradeColony = canBeUpgraded(
-    data.processedColony,
+    colony,
     parseInt(networkVersion || '0', 10),
   );
 
@@ -219,6 +240,30 @@ const ColonyHome = ({ match, location }: Props) => {
               text={{ id: 'button.upgrade' }}
               onClick={handleUpgradeColony}
               disabled={!canUpgradeColony}
+            />
+          </Alert>
+        </div>
+      )}
+      {!mustUpgradeColony && !isDeploymentFinished && canFinishDeployment && (
+        <div className={styles.upgradeBannerContainer}>
+          <Alert
+            appearance={{
+              theme: 'danger',
+              margin: 'none',
+              borderRadius: 'none',
+            }}
+          >
+            <div className={styles.upgradeBanner}>
+              <FormattedMessage {...MSG.deploymentNotFinished} />
+            </div>
+            <ActionButton
+              appearance={{ theme: 'primary', size: 'medium' }}
+              text={MSG.buttonFinishDeployment}
+              submit={ActionTypes.COLONY_DEPLOYMENT_RESTART}
+              error={ActionTypes.COLONY_DEPLOYMENT_RESTART_ERROR}
+              success={ActionTypes.COLONY_DEPLOYMENT_RESTART_SUCCESS}
+              transform={transform}
+              disabled={!canFinishDeployment}
             />
           </Alert>
         </div>

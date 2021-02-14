@@ -83,9 +83,15 @@ const MSG = defineMessages({
   noPermissionFrom: {
     id:
       'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noPermissionFrom',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'You do not have the {firstRoleRequired} and {secondRoleRequired} permissions required to take this action.',
+    defaultMessage: `You do not have the {firstRoleRequired} and
+    {secondRoleRequired} permissions required to take this action.`,
+  },
+  noOneTxExtension: {
+    id:
+      'dashboard.CreatePaymentDialog.CreatePaymentDialogForm.noOneTxExtension',
+    defaultMessage: `The OneTxPayment extension is not installed in this colony.
+    Please use the Extensions Manager to install it if you want to make a new
+    payment.`,
   },
 });
 
@@ -104,7 +110,7 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
 const CreatePaymentDialogForm = ({
   back,
   colony,
-  colony: { colonyAddress, domains, tokens },
+  colony: { colonyAddress, domains, tokens, canMakePayment },
   subscribedUsers,
   handleSubmit,
   isSubmitting,
@@ -267,7 +273,7 @@ const CreatePaymentDialogForm = ({
               label={MSG.from}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
-              disabled={!userHasPermission}
+              disabled={!userHasPermission || !canMakePayment}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -304,7 +310,7 @@ const CreatePaymentDialogForm = ({
             name="recipient"
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
-            disabled={!userHasPermission}
+            disabled={!userHasPermission || !canMakePayment}
           />
         </div>
       </DialogSection>
@@ -325,7 +331,7 @@ const CreatePaymentDialogForm = ({
                   selectedToken && selectedToken.decimals,
                 ),
               }}
-              disabled={!userHasPermission}
+              disabled={!userHasPermission || !canMakePayment}
               /*
                * Force the input component into an error state
                * This is needed for our custom error state to work
@@ -340,7 +346,7 @@ const CreatePaymentDialogForm = ({
               name="tokenAddress"
               elementOnly
               appearance={{ alignOptions: 'right', theme: 'grey' }}
-              disabled={!userHasPermission}
+              disabled={!userHasPermission || !canMakePayment}
             />
           </div>
           {values.tokenAddress === AddressZero && (
@@ -364,7 +370,7 @@ const CreatePaymentDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotation"
-          disabled={!userHasPermission}
+          disabled={!userHasPermission || !canMakePayment}
         />
       </DialogSection>
       {!userHasPermission && (
@@ -390,15 +396,19 @@ const CreatePaymentDialogForm = ({
           </div>
         </DialogSection>
       )}
+      {userHasPermission && !canMakePayment && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
+            <FormattedMessage {...MSG.noOneTxExtension} />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
           onClick={back}
           text={{ id: 'button.back' }}
         />
-        {/**
-         * @TODO: Add validation for when colony doesn't have the OneTxPayment extension enabled
-         */}
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
@@ -408,7 +418,7 @@ const CreatePaymentDialogForm = ({
            * Disable Form submissions if either the form is invalid, or
            * if our custom state was triggered.
            */
-          disabled={!isValid || !!customAmountError}
+          disabled={!isValid || !!customAmountError || !canMakePayment}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

@@ -191,13 +191,13 @@ export default function* setupUserContext(
 
     // @TODO refactor setupUserContext for graphql
     // @BODY eventually we want to move everything to resolvers, so all of this has to happen outside of sagas. There is no need to have a separate state or anything, just set it up in an aync function (instead of WALLET_CREATE), then call this function
-    const ipfs = TEMP_getContext(ContextModule.IPFS);
+    const ipfsWithFallback = TEMP_getContext(ContextModule.IPFSWithFallback);
     const userContext = {
       apolloClient,
       colonyManager,
       ens,
-      ipfs,
       wallet,
+      ipfsWithFallback,
     };
     yield setupResolvers(apolloClient, userContext);
 
@@ -220,7 +220,7 @@ export default function* setupUserContext(
        * to the cache update function
        */
       // @ts-ignore
-      update: cacheUpdates.setCanMintNativeToken(),
+      update: cacheUpdates.setNativeTokenPermissions(),
     });
 
     setupOnBeforeUnload();

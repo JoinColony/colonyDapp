@@ -22,3 +22,16 @@
   border: 1px solid var(--temp-grey-blue-2);
   background-color: var(--temp-grey-blue-6);
 }
+
+.deploymentError {
+  padding: 15px;
+  border-radius: var(--radius-small);
+  background-color: var(--danger);
+  text-align: center;
+  color: var(--colony-white);
+}
+
+.linkToColony {
+  font-weight: var(--weight-bold);
+  text-decoration: underline;
+}

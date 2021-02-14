@@ -1,4 +1,4 @@
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID, ColonyVersion } from '@colony/colony-js';
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -12,6 +12,7 @@ import TokenMintDialog from '~dashboard/TokenMintDialog';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
+import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './ColonyFundingMenu.css';
 
@@ -38,11 +39,11 @@ interface Props {
 const displayName = 'dashboard.ColonyFundingMenu';
 
 const ColonyFundingMenu = ({
-  colony: { canMintNativeToken },
+  colony: { canMintNativeToken, version, isDeploymentFinished },
   colony,
   selectedDomainId,
 }: Props) => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
 
   const openTokenManagementDialog = useDialog(ColonyTokenManagementDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
@@ -53,11 +54,6 @@ const ColonyFundingMenu = ({
     walletAddress,
     ROOT_DOMAIN_ID,
   ]);
-
-  const canEdit =
-    userHasRole(rootRoles, ColonyRole.Root) ||
-    userHasRole(rootRoles, ColonyRole.Administration);
-  const canMoveTokens = userHasRole(rootRoles, ColonyRole.Funding);
 
   const handleEditTokens = useCallback(
     () =>
@@ -80,6 +76,16 @@ const ColonyFundingMenu = ({
     [colony, openTokensMoveDialog, selectedDomainId],
   );
 
+  const canEdit =
+    userHasRole(rootRoles, ColonyRole.Root) ||
+    userHasRole(rootRoles, ColonyRole.Administration);
+  const canMoveTokens = userHasRole(rootRoles, ColonyRole.Funding);
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const isSupportedColonyVersion =
+    parseInt(version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
   return (
     <ul className={styles.main}>
       <li>
@@ -87,7 +93,13 @@ const ColonyFundingMenu = ({
           text={MSG.navItemMoveTokens}
           appearance={{ theme: 'blue' }}
           onClick={handleMoveTokens}
-          disabled={!canMoveTokens}
+          disabled={
+            !canMoveTokens ||
+            !isSupportedColonyVersion ||
+            !isNetworkAllowed ||
+            !hasRegisteredProfile ||
+            !isDeploymentFinished
+          }
         />
       </li>
       <li>
@@ -95,7 +107,13 @@ const ColonyFundingMenu = ({
           text={MSG.navItemMintNewTokens}
           appearance={{ theme: 'blue' }}
           onClick={handleMintTokens}
-          disabled={!canMintNativeToken}
+          disabled={
+            !canMintNativeToken ||
+            !isSupportedColonyVersion ||
+            !isNetworkAllowed ||
+            !hasRegisteredProfile ||
+            !isDeploymentFinished
+          }
         />
       </li>
       <li>
@@ -103,7 +121,13 @@ const ColonyFundingMenu = ({
           text={MSG.navItemManageTokens}
           appearance={{ theme: 'blue' }}
           onClick={handleEditTokens}
-          disabled={!canEdit}
+          disabled={
+            !canEdit ||
+            !isSupportedColonyVersion ||
+            !isNetworkAllowed ||
+            !hasRegisteredProfile ||
+            !isDeploymentFinished
+          }
         />
       </li>
     </ul>

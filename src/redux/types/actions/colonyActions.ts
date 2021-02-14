@@ -85,6 +85,8 @@ export type ColonyActionsActionTypes =
         colonyName: string;
         colonyDisplayName: string;
         colonyAvatarImage?: string;
+        colonyAvatarHash?: string;
+        hasAvatarChanged?: boolean;
         colonyTokens?: Address[];
         annotationMessage?: string;
         /*
@@ -163,4 +165,16 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS,
       MetaWithHistory<object>
-    >;
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_UNLOCK_TOKEN,
+      {
+        colonyAddress: Address;
+      },
+      MetaWithHistory<object>
+    >
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR, object>;

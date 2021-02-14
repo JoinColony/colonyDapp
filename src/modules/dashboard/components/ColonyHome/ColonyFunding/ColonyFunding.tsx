@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyVersion } from '@colony/colony-js';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ALLOWED_NETWORKS } from '~constants';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
@@ -41,7 +41,7 @@ interface Props {
 const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
 const ColonyFunding = ({ colony, currentDomainId }: Props) => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
   const openDialog = useDialog(TransferFundsDialog);
 
   const canMoveTokens = useMemo(
@@ -49,7 +49,12 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
     [colony.roles, walletAddress],
   );
 
-  const { colonyAddress, tokens: colonyTokens, nativeTokenAddress } = colony;
+  const {
+    colonyAddress,
+    tokens: colonyTokens,
+    nativeTokenAddress,
+    isDeploymentFinished,
+  } = colony;
 
   const handleMoveTokens = useCallback(
     () =>
@@ -76,6 +81,9 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
 
   const isSupportedColonyVersion =
     parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const hasRegisteredProfile = !!username && !ethereal;
+
   return (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
@@ -86,7 +94,12 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
               appearance={{ theme: 'blue' }}
               onClick={handleMoveTokens}
               text={MSG.buttonFund}
-              disabled={!isSupportedColonyVersion}
+              disabled={
+                !isSupportedColonyVersion ||
+                !isNetworkAllowed ||
+                !hasRegisteredProfile ||
+                !isDeploymentFinished
+              }
             />
           </span>
         )}

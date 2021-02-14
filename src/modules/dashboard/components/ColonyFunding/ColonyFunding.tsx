@@ -1,15 +1,18 @@
 import React, { ComponentProps, useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
-import { RouteChildrenProps } from 'react-router';
+import { Redirect, RouteChildrenProps } from 'react-router-dom';
 import sortBy from 'lodash/sortBy';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { Form, Select } from '~core/Fields';
 import Heading from '~core/Heading';
+import LoadingTemplate from '~pages/LoadingTemplate';
 import ColonyFundingBanner from '~dashboard/ColonyFundingBanner';
 import ColonyFundingMenu from '~dashboard/ColonyFundingMenu';
 import TokenCardList from '~dashboard/TokenCardList';
 import { useColonyFromNameQuery } from '~data/index';
+
+import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import styles from './ColonyFunding.css';
 
@@ -19,8 +22,12 @@ const MSG = defineMessages({
     defaultMessage: 'Select a domain',
   },
   title: {
-    defaultMessage: 'Funds',
     id: 'dashboard.ColonyFunding.title',
+    defaultMessage: 'Funds',
+  },
+  loadingText: {
+    id: 'dashboard.ColonyFunding.loadingText',
+    defaultMessage: 'Loading Colony',
   },
 });
 
@@ -41,7 +48,7 @@ const ColonyFunding = ({ match }: Props) => {
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
-  const { data } = useColonyFromNameQuery({
+  const { data, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
@@ -78,8 +85,17 @@ const ColonyFunding = ({ match }: Props) => {
     return typeof label === 'string' ? label : formatMessage(label);
   }, [domainChoices, formatMessage, selectedDomainId]);
 
-  if (!data) {
-    return null;
+  if (loading) {
+    return (
+      <div className={styles.loadingWrapper}>
+        <LoadingTemplate loadingText={MSG.loadingText} />
+      </div>
+    );
+  }
+
+  if (!colonyName || error || !data?.processedColony) {
+    console.error(error);
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   const { processedColony: colony } = data;

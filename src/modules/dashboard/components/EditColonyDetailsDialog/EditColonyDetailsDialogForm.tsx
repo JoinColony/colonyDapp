@@ -42,7 +42,7 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.permittedFormat',
     defaultMessage:
-      'Permitted format: .png or .svg (at least 250px, up to 1MB)',
+      'Permitted format: .png or .svg (at least 250px, up to 200 Kb)',
   },
   annotation: {
     id:
@@ -166,7 +166,7 @@ const EditColonyDetailsDialogForm = ({
                  * show the default colony avatar, without values coming from the
                  * colony.
                  *
-                 * Note that in case of the avatar being remove, `avatarURL` will be
+                 * Note that in case of the avatar being removed, `avatarURL` will be
                  * passed as `undefined` so that the blockies show.
                  * This is intended functionality
                  */

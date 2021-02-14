@@ -1,3 +1,5 @@
+import { log } from './debug';
+
 /* eslint-disable-next-line import/prefer-default-export */
 export const raceAgainstTimeout = async (
   promise: Promise<any>,
@@ -15,6 +17,9 @@ export const raceAgainstTimeout = async (
     // use `await`
     const result = await Promise.race([timeoutPromise, promise]);
     return result;
+  } catch (error) {
+    log.verbose(error);
+    return null;
   } finally {
     if (typeof cleanup === 'function') cleanup();
     clearTimeout(timeout);

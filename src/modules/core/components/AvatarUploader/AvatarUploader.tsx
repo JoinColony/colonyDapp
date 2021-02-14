@@ -30,7 +30,7 @@ const MSG = defineMessages({
 
 export const ACCEPTED_MIME_TYPES: string[] = ['image/png', 'image/svg+xml'];
 
-export const ACCEPTED_MAX_FILE_SIZE = 2097152; // 2MB
+export const ACCEPTED_MAX_FILE_SIZE = 1048576; // 1 Mb
 
 interface Props {
   /** Only render the Uploader, no label */

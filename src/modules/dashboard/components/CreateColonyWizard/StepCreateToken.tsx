@@ -72,7 +72,7 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object({
-  tokenName: yup.string().required(),
+  tokenName: yup.string().max(256).required(),
   tokenSymbol: yup
     .string()
     .required()

@@ -10,6 +10,7 @@ import EditDomainDialog from '~dashboard/EditDomainDialog';
 import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
 import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
+import UnlockTokenDialog from '~dashboard/UnlockTokenDialog';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import AdvancedDialog from '~dashboard/AdvancedDialog';
 import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
@@ -20,7 +21,8 @@ import EditColonyDetailsDialog from '~dashboard/EditColonyDetailsDialog';
 import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
+import { ALLOWED_NETWORKS } from '~constants';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -36,6 +38,8 @@ interface Props {
 }
 
 const ColonyHomeActions = ({ colony }: Props) => {
+  const { networkId, username, ethereal } = useLoggedInUser();
+
   const startWizardFlow = useNaiveBranchingDialogWizard([
     {
       component: ColonyActionsDialog,
@@ -67,12 +71,20 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStepTransferFunds: 'dashboard.TransferFundsDialog',
         nextStepMintTokens: 'dashboard.TokenMintDialog',
         nextStepManageTokens: 'dashboard.ColonyTokenManagementDialog',
+        nextStepUnlockToken: 'dashboard.UnlockTokenDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
       },
     },
     {
       component: TransferFundsDialog,
+      props: {
+        prevStep: 'dashboard.ManageFundsDialog',
+        colony,
+      },
+    },
+    {
+      component: UnlockTokenDialog,
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
@@ -89,6 +101,13 @@ const ColonyHomeActions = ({ colony }: Props) => {
     },
     {
       component: CreateDomainDialog,
+      props: {
+        prevStep: 'dashboard.ManageDomainsDialog',
+        colony,
+      },
+    },
+    {
+      component: EditDomainDialog,
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,
@@ -155,14 +174,23 @@ const ColonyHomeActions = ({ colony }: Props) => {
       },
     },
   ]);
+
+  const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
     parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+
   return (
     <Button
       appearance={{ theme: 'primary', size: 'large' }}
       text={MSG.newAction}
       onClick={() => startWizardFlow('dashboard.ColonyActionsDialog')}
-      disabled={!isSupportedColonyVersion}
+      disabled={
+        !isSupportedColonyVersion ||
+        !isNetworkAllowed ||
+        !hasRegisteredProfile ||
+        !colony?.isDeploymentFinished
+      }
     />
   );
 };
