@@ -1,5 +1,6 @@
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
+import { ColonyRole } from '@colony/colony-js';
 
 import {
   ColonyActions,
@@ -89,7 +90,12 @@ export const getValuesForActionType = (
           initiator: values.agent,
           fromDomain: values.domainId,
           recipient: values.user,
-          roles: [{ id: values.role, setTo: values.setTo === 'true' }],
+          roles: [
+            {
+              id: (values.role as unknown) as ColonyRole,
+              setTo: values.setTo === 'true',
+            },
+          ],
         };
       }
       default: {
