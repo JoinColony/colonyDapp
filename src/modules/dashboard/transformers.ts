@@ -11,6 +11,7 @@ import {
   ColonyActions,
   FormattedAction,
   FormattedEvent,
+  ColonyAndExtensionsEvents,
 } from '~types/index';
 import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
@@ -40,14 +41,30 @@ export const getActionsListData = (
   const filteredUnformattedActions = {
     oneTxPayments: unformattedActions?.oneTxPayments || [],
     events:
-      unformattedActions?.events?.filter((event) => {
+      unformattedActions?.events?.reduce((acc, event) => {
+        if (
+          formatEventName(event.name) ===
+          ColonyAndExtensionsEvents.DomainMetadata
+        ) {
+          const linkedDomainAddedEvent = (
+            unformattedActions?.events || []
+          ).find(
+            (e) =>
+              formatEventName(e.name) ===
+                ColonyAndExtensionsEvents.DomainAdded &&
+              e.transaction?.hash === event.transaction?.hash,
+          );
+          if (linkedDomainAddedEvent) return acc;
+        }
         /* filtering out events that are already shown in `oneTxPayments` */
-        const isTransactionRepeated = unformattedActions?.oneTxPayments?.some(
+        const isTransactionRepeated = unformattedActions?.oneTxPayments.some(
           (paymentAction) =>
             paymentAction.transaction?.hash === event.transaction?.hash,
         );
-        return !isTransactionRepeated;
-      }) || [],
+        if (isTransactionRepeated) return acc;
+
+        return [...acc, event];
+      }, []) || [],
   };
 
   Object.keys(filteredUnformattedActions || {}).map((subgraphActionType) => {
