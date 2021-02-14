@@ -976,19 +976,6 @@ function* editDomainAction({
       },
     );
 
-    yield apolloClient.query<
-      SubgraphActionsQuery,
-      SubgraphActionsQueryVariables
-    >({
-      query: SubgraphActionsDocument,
-      variables: {
-        colonyAddress: colonyAddress.toLocaleLowerCase(),
-        skip: 0,
-        first: 1,
-      },
-      fetchPolicy: 'network-only',
-    });
-
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_DOMAIN_EDIT_SUCCESS,
       meta,
@@ -1342,19 +1329,6 @@ function* createSetUserRolesAction({
       query: ProcessedColonyDocument,
       variables: {
         address: colonyAddress,
-      },
-      fetchPolicy: 'network-only',
-    });
-
-    yield apolloClient.query<
-      SubgraphActionsQuery,
-      SubgraphActionsQueryVariables
-    >({
-      query: SubgraphActionsDocument,
-      variables: {
-        colonyAddress: colonyAddress.toLocaleLowerCase(),
-        first: 1,
-        skip: 0,
       },
       fetchPolicy: 'network-only',
     });
