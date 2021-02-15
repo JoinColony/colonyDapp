@@ -3,7 +3,7 @@
   padding: 2px;
   height: 54px;
   width: 143px;
-  position: absolute;
+  position: fixed;
   bottom: 12px;
   left: 60px;
   border-radius: var(--radius-normal);

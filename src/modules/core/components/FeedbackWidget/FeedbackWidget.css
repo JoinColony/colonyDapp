@@ -2,7 +2,7 @@
   padding: 0;
   padding-right: 9px;
   width: 320px;
-  position: absolute;
+  position: fixed;
   right: 25px;
   bottom: 16px;
   border: none;
