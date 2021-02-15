@@ -3,7 +3,7 @@ import React, { ReactNode, Dispatch, SetStateAction } from 'react';
 import Popover from '~core/Popover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
-import { Colony } from '~data/index';
+import { TokenBalancesForDomainsQuery } from '~data/index';
 import { Address } from '~types/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -12,7 +12,7 @@ import styles from './ColonyTotalFundsPopover.css';
 
 interface Props {
   onSelectToken?: Dispatch<SetStateAction<Address>>;
-  tokens?: Colony['tokens'][0][];
+  tokens?: TokenBalancesForDomainsQuery['tokens'][0][];
   children?: ReactNode;
   currentTokenAddress?: Address;
 }
