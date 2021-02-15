@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormattedMessage } from 'react-intl';
 import { FeedbackFish } from '@feedback-fish/react';
 
 import Button from '~core/Button';
@@ -13,7 +14,7 @@ const PROJECT_ID = '';
 const MSG = {
   loveFeedback: {
     id: 'FeedbackWidget.loveFeedback',
-    defaultMessage: 'We ♥️ feedback!',
+    defaultMessage: 'We {heart} feedback!',
   },
 };
 
@@ -33,11 +34,18 @@ const FeedbackWidget = () => {
       }
       userId={username === null ? undefined : username}
     >
-      <Button
-        appearance={{ theme: 'no-style' }}
-        className={styles.button}
-        text={MSG.loveFeedback}
-      />
+      <Button appearance={{ theme: 'no-style' }} className={styles.button}>
+        <FormattedMessage
+          {...MSG.loveFeedback}
+          values={{
+            heart: (
+              <span role="img" className={styles.heart} aria-label="">
+                ♥️
+              </span>
+            ),
+          }}
+        />
+      </Button>
     </FeedbackFish>
   );
 };
