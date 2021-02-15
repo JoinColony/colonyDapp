@@ -9,6 +9,7 @@ import { Location } from 'history';
 import { StaticContext } from 'react-router';
 
 import BetaCautionAlert from '~core/BetaCautionAlert';
+import FeedbackWidget from '~core/FeedbackWidget';
 import { RouteComponentProps } from '~pages/RouteLayouts';
 
 import {
@@ -44,6 +45,7 @@ const WalletRequiredRoute = ({
     <Layout routeProps={routeProps} {...props}>
       <Component routeProps={routeProps} {...props} />
       <BetaCautionAlert />
+      <FeedbackWidget />
     </Layout>
   );
   const locationPath = location && `${location.pathname}${location.search}`;
@@ -126,6 +128,7 @@ const WalletRequiredRoute = ({
               <Layout routeProps={routeProps} {...props}>
                 <Component routeProps={routeProps} {...props} />
                 <BetaCautionAlert />
+                <FeedbackWidget />
               </Layout>
             );
           }
