@@ -86,9 +86,11 @@ const FriendlyName = ({
       addressRef.current.style.fontSize = `${inheritedFontSize - 1}px`;
     }
   }, [addressRef, autoShrinkAddress]);
+  const isColony = user?.profile.walletAddress === colony?.colonyAddress;
+
   return (
     <div className={styles.main}>
-      {userDisplay || colonyDisplay || (
+      {userDisplay || (isColony && colonyDisplay) || (
         <MaskedAddress
           address={userDisplayAddress || colonyDisplayAddress}
           full={!maskedAddress}
