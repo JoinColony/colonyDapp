@@ -8,7 +8,13 @@ import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   DEFAULT_NETWORK_TOKEN,
 } from '~constants';
-import { TokenInfo, TokenInfoDocument } from '~data/index';
+import {
+  TokenInfo,
+  TokenInfoDocument,
+  SubgraphDomainsQuery,
+  SubgraphDomainsQueryVariables,
+  SubgraphDomainsDocument,
+} from '~data/index';
 import { Address } from '~types/index';
 import { createAddress, isAddress } from '~utils/web3';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -200,6 +206,59 @@ export const tokenResolvers = ({
         address,
         colonyAddress,
       }));
+    },
+    async processedBalances(
+      { address }: { address: Address },
+      { colonyAddress }: { colonyAddress: Address },
+      { client }: { client: ApolloClient<object> },
+    ) {
+      try {
+        const { data } = await client.query<
+          SubgraphDomainsQuery,
+          SubgraphDomainsQueryVariables
+        >({
+          query: SubgraphDomainsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        if (data?.domains) {
+          const domains = [...data.domains, { domainChainId: '0' }];
+
+          const colonyClient = await colonyManager.getClient(
+            ClientType.ColonyClient,
+            colonyAddress,
+          );
+
+          const balances: BigNumber[] = await Promise.all(
+            domains.map((domain) =>
+              getBalanceForTokenAndDomain(
+                colonyClient,
+                address,
+                Number(domain.domainChainId),
+              ),
+            ),
+          );
+
+          return domains.map((domain, idx) => ({
+            __typename: 'DomainBalance',
+            amount: balances[idx].toString(),
+            domainId: Number(domain.domainChainId),
+            // `address` & `colonyAddress` only used for cache key - NOT PART OF QUERY
+            address,
+            colonyAddress,
+          }));
+        }
+        return null;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
     },
   },
 });

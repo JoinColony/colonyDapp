@@ -306,7 +306,7 @@ export default gql`
     decimals: Int!
     name: String!
     symbol: String!
-    balances(colonyAddress: String!): [ProcessedTokenBalances!]!
+    processedBalances(colonyAddress: String!): [ProcessedTokenBalances!]!
   }
 
   type ProcessedColony {

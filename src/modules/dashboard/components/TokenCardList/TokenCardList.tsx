@@ -37,6 +37,13 @@ const TokenCardList = ({
     <CardList appearance={appearance}>
       {tokens.map((token) => (
         <div key={token.address}>
+          {'processedBalances' in token && (
+            <TokenCard
+              domainId={domainId}
+              nativeTokenAddress={nativeTokenAddress}
+              token={token}
+            />
+          )}
           {'balances' in token && (
             <TokenCard
               domainId={domainId}

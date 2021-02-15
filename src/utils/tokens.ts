@@ -14,6 +14,11 @@ export const getBalanceFromToken = (
       ({ domainId }) => domainId === tokenDomainId,
     );
     result = domainBalance ? domainBalance.amount : 0;
+  } else if ('processedBalances' in token) {
+    const domainBalance = token.processedBalances.find(
+      ({ domainId }) => domainId === tokenDomainId,
+    );
+    result = domainBalance ? domainBalance.amount : 0;
   } else if ('balance' in token) {
     result = token.balance;
   } else {

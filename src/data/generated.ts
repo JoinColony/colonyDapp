@@ -1207,11 +1207,11 @@ export type ProcessedTokens = {
   decimals: Scalars['Int'];
   name: Scalars['String'];
   symbol: Scalars['String'];
-  balances: Array<ProcessedTokenBalances>;
+  processedBalances: Array<ProcessedTokenBalances>;
 };
 
 
-export type ProcessedTokensBalancesArgs = {
+export type ProcessedTokensProcessedBalancesArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -1319,7 +1319,7 @@ export type TokensFragment = (
   Pick<ProcessedColony, 'nativeTokenAddress' | 'tokenAddresses'>
   & { tokens: Array<(
     Pick<ProcessedTokens, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
-    & { balances: Array<Pick<ProcessedTokenBalances, 'domainId' | 'amount'>> }
+    & { processedBalances: Array<Pick<ProcessedTokenBalances, 'domainId' | 'amount'>> }
   )> }
 );
 
@@ -2152,7 +2152,7 @@ export const TokensFragmentDoc = gql`
     decimals
     name
     symbol
-    balances(colonyAddress: $address) {
+    processedBalances(colonyAddress: $address) {
       domainId
       amount
     }

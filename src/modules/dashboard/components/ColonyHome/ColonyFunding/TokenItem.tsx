@@ -1,12 +1,12 @@
 import React from 'react';
 
 import Numeral from '~core/Numeral';
-import { Colony } from '~data/index';
+import { TokenBalancesForDomainsQuery } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 interface Props {
   currentDomainId: number;
-  token: Colony['tokens'][0];
+  token: TokenBalancesForDomainsQuery['tokens'][0];
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyFunding.TokenItem';
