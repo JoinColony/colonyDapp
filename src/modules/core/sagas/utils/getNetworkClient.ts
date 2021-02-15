@@ -1,5 +1,9 @@
 import { call } from 'redux-saga/effects';
-import { getColonyNetworkClient, Network } from '@colony/colony-js';
+import {
+  getColonyNetworkClient,
+  Network,
+  colonyNetworkAddresses,
+} from '@colony/colony-js';
 import { EthersSigner } from '@purser/signer-ethers';
 
 import { DEFAULT_NETWORK } from '~constants';
@@ -51,5 +55,13 @@ export default function* getNetworkClient() {
     });
   }
 
-  return yield call(getColonyNetworkClient, network, signer);
+  return yield call(getColonyNetworkClient, network, signer, {
+    /*
+     * Manually set the network address to instantiate the network client
+     * This is usefull for networks where we have two deployments (like xDAI)
+     * and we want to be able to differentiate between them
+     */
+    networkAddress:
+      process.env.NETWORK_CONTRACT_ADDRESS || colonyNetworkAddresses[network],
+  });
 }
