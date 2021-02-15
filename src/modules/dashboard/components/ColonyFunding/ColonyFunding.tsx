@@ -29,10 +29,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyFunding.loadingText',
     defaultMessage: 'Loading Colony',
   },
-  loading: {
-    id: 'dashboard.ColonyFunding.loading',
-    defaultMessage: `Loading Tokens`,
-  },
 });
 
 type Props = RouteChildrenProps<{ colonyName: string }>;
