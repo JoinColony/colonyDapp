@@ -97,7 +97,10 @@ const ColonyHome = ({ match, location }: Props) => {
    * This problem is made even worse in an production environment where loading
    * times are slow.
    */
-  if (loading || data?.processedColony?.colonyName !== colonyName) {
+  if (
+    loading ||
+    (data?.processedColony && data.processedColony.colonyName !== colonyName)
+  ) {
     return (
       <div className={styles.loadingWrapper}>
         <LoadingTemplate loadingText={MSG.loadingText} />
@@ -105,7 +108,12 @@ const ColonyHome = ({ match, location }: Props) => {
     );
   }
 
-  if (!colonyName || error || !data?.processedColony) {
+  if (
+    !colonyName ||
+    error ||
+    !data?.processedColony ||
+    (data?.colonyAddress as any) instanceof Error
+  ) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
