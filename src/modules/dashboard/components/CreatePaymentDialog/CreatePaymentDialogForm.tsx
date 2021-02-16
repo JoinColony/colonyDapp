@@ -225,6 +225,8 @@ const CreatePaymentDialogForm = ({
          * to Formik's error state.
          */
         setCustomAmountError(MSG.noBalance);
+      } else {
+        setCustomAmountError(undefined);
       }
     }
   }, [
