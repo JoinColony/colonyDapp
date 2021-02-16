@@ -7,7 +7,7 @@ import IndexModal from '~core/IndexModal';
 import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { useLoggedInUser, Colony } from '~data/index';
 import { getAllUserRoles } from '../../../transformers';
-import { canArchitect, canFund } from '../../../users/checks';
+import { canAdminister, canFund } from '../../../users/checks';
 
 const MSG = defineMessages({
   dialogHeader: {
@@ -80,7 +80,9 @@ const ExpendituresDialog = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canCreatePayment =
-    hasRegisteredProfile && canArchitect(allUserRoles) && canFund(allUserRoles);
+    hasRegisteredProfile &&
+    canAdminister(allUserRoles) &&
+    canFund(allUserRoles);
 
   const items = [
     {
