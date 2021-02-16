@@ -104,7 +104,6 @@ const PermissionManagementForm = ({
           name="domainId"
           appearance={{ theme: 'grey' }}
           onChange={handleDomainChange}
-          disabled={!userHasPermission}
         />
       </div>
       <InputLabel

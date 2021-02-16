@@ -225,6 +225,8 @@ const CreatePaymentDialogForm = ({
          * to Formik's error state.
          */
         setCustomAmountError(MSG.noBalance);
+      } else {
+        setCustomAmountError(undefined);
       }
     }
   }, [
@@ -273,7 +275,6 @@ const CreatePaymentDialogForm = ({
               label={MSG.from}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
-              disabled={!userHasPermission || !canMakePayment}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -418,7 +419,12 @@ const CreatePaymentDialogForm = ({
            * Disable Form submissions if either the form is invalid, or
            * if our custom state was triggered.
            */
-          disabled={!isValid || !!customAmountError || !canMakePayment}
+          disabled={
+            !isValid ||
+            !!customAmountError ||
+            !canMakePayment ||
+            !userHasPermission
+          }
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
