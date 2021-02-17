@@ -112,6 +112,13 @@ const UserNavigation = () => {
         </ConnectWalletPopover>
       )}
       {userCanNavigate && (
+        <>
+          <button type="button" className={styles.tokens}>
+            TEST
+          </button>
+        </>
+      )}
+      {userCanNavigate && (
         <GasStationPopover
           transactionAndMessageGroups={transactionAndMessageGroups}
         >
