@@ -1,5 +1,5 @@
-@value itemLinkSize: 40px;
-@value itemMarginBotton: 6px;
+@value itemLinkSize: 42px;
+@value itemMarginBotton: 4px;
 
 .main {
   display: flex;
@@ -11,7 +11,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding-top: 9px;
+  padding-top: 8px;
   max-height: calc(100vh - (itemLinkSize + itemMarginBotton));
   width: 100%;
   overflow-y: auto;
@@ -36,8 +36,9 @@
 }
 
 .itemImage {
-  height: 34px;
-  width: 34px;
+  height: 36px;
+  width: 36px;
+  border: 1px solid transparent;
 }
 
 .newColonyIcon {
