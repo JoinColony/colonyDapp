@@ -57,7 +57,7 @@ const SubscribedColoniesList = () => {
                     <ColonyAvatar
                       colony={colony}
                       colonyAddress={colonyAddress}
-                      size="xs"
+                      size="s"
                     />
                   </div>
                 </NavLink>
