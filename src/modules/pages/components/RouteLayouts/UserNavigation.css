@@ -153,3 +153,11 @@
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
 }
+
+.tokens {
+  composes: walletAddress;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  font-size: var(--size-smallis);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
