@@ -1,11 +1,11 @@
 import { $PropertyType } from 'utility-types';
 import { FormikBag } from 'formik';
 import React, { useCallback, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import * as yup from 'yup';
 import { AddressZero } from 'ethers/constants';
 
-import { DEFAULT_NETWORK_TOKEN, XDAI_TOKEN } from '~constants';
+import { DEFAULT_NETWORK_TOKEN } from '~constants';
 import { WizardProps } from '~core/Wizard';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -59,13 +59,10 @@ const MSG = defineMessages({
     defaultMessage:
       'Not a valid token. Only ERC20 tokens with 18 decimals are supported.',
   },
-  xdaiAddress: {
-    id: 'dashboard.CreateColonyWizard.StepSelectToken.xdaiAddress',
-    defaultMessage: 'You cannot use XDAI token as a native token for colony.',
-  },
-  ethAddress: {
-    id: 'dashboard.CreateColonyWizard.StepSelectToken.xdaiAddress',
-    defaultMessage: 'You cannot use ETH token as a native token for colony.',
+  addressZeroError: {
+    id: 'dashboard.CreateColonyWizard.StepSelectToken.addressZeroError',
+    defaultMessage:
+      'You cannot use {symbol} token as a native token for colony.',
   },
   link: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.link',
@@ -81,20 +78,19 @@ const MSG = defineMessages({
   },
 });
 
-const isXdai = DEFAULT_NETWORK_TOKEN.symbol === XDAI_TOKEN.symbol;
-
-export const validationSchema = yup.object({
-  tokenAddress: yup
-    .string()
-    .address(() => MSG.invalidAddress)
-    .test(
-      'is-not-addressZero',
-      () => (isXdai && MSG.xdaiAddress) || MSG.ethAddress,
-      (value) => value !== AddressZero,
-    ),
-  tokenSymbol: yup.string().max(5),
-  tokenName: yup.string().max(256),
-});
+export const validationSchema = (addressZeroErrorMessage) =>
+  yup.object({
+    tokenAddress: yup
+      .string()
+      .address(() => MSG.invalidAddress)
+      .test(
+        'is-not-addressZero',
+        addressZeroErrorMessage,
+        (value) => value !== AddressZero,
+      ),
+    tokenSymbol: yup.string().max(5),
+    tokenName: yup.string().max(256),
+  });
 
 const StepSelectToken = ({
   nextStep,
@@ -104,6 +100,7 @@ const StepSelectToken = ({
   wizardValues,
 }: Props) => {
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
+  const { formatMessage } = useIntl();
 
   const handleTokenSelect = (token: OneToken, setFieldValue: SetFieldValue) => {
     setTokenData(token);
@@ -152,7 +149,11 @@ const StepSelectToken = ({
       </div>
       <Form
         onSubmit={nextStep}
-        validationSchema={validationSchema}
+        validationSchema={validationSchema(
+          formatMessage(MSG.addressZeroError, {
+            symbol: DEFAULT_NETWORK_TOKEN.symbol,
+          }),
+        )}
         initialValues={initialValues}
       >
         {({ dirty, isValid, setFieldValue, values }) => (
