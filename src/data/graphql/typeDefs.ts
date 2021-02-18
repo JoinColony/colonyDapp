@@ -139,10 +139,18 @@ export default gql`
     installedAt: Int!
     missingPermissions: [Int!]!
   }
+  
+  type UserLock {
+    balance: String!
+  }
 
   extend type User {
     reputation(colonyAddress: String!, domainId: Int): String!
     tokens(walletAddress: String!): [Token!]!
+    userLock(
+      walletAddress: String!
+      tokenAddress: String!
+    ): UserLock!
     tokenTransfers: [Transfer!]!
     processedColonies: [ProcessedColony!]!
   }
