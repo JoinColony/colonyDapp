@@ -9,7 +9,7 @@ import {
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
-import { createTransaction, getTxChannel } from '../../core/sagas';
+import { createTransaction, getTxChannel } from '../../../core/sagas';
 
 function* colonyTokenUnlock({
   meta,
