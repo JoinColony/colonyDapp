@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useParams } from 'react-router-dom';
 
 import { GasStationPopover } from '~users/GasStation';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
@@ -7,7 +8,7 @@ import AvatarDropdown from '~users/AvatarDropdown';
 import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
-import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
+import { useUserNotificationsQuery, useLoggedInUser, useUserBalanceWithLockQuery, useColonyFromNameQuery } from '~data/index';
 import MaskedAddress from '~core/MaskedAddress';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 import { useSelector } from '~utils/hooks';
@@ -34,11 +35,20 @@ const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
   const { walletAddress, ethereal, networkId } = useLoggedInUser();
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
 
+  const { data: colonyData, error, loading } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
   const { data } = useUserNotificationsQuery({
     variables: { address: walletAddress },
   });
 
+  const { data: userData } = useUserBalanceWithLockQuery({
+    variables: { address: walletAddress, tokenAddress: colonyData?.processedColony?.nativeTokenAddress || '' },
+  });
   const notifications = (data && data.user && data.user.notifications) || [];
   const hasUnreadNotifications = notifications.some(
     (notification) => !notification.read,
