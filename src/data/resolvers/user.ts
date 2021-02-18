@@ -18,6 +18,7 @@ import {
   SubgraphColoniesQuery,
   SubgraphColoniesQueryVariables,
   SubgraphColoniesDocument,
+  UserLock,
 } from '~data/index';
 
 import { getToken } from './token';
@@ -39,6 +40,22 @@ const getUserReputation = async (
     address,
   );
   return reputationAmount;
+};
+
+const getUserLock = async (
+  networkClient: any,
+  walletAddress: Address,
+  tokenAddress: Address,
+) => {
+  const tokenUnlockClient = await networkClient.getTokenLockingClient();
+  const userLock = await tokenUnlockClient.getUserLock(
+    tokenAddress,
+    walletAddress,
+  );
+  return {
+    __typename: 'UserLock',
+    balance: userLock.balance.toString(),
+  };
 };
 
 export const userResolvers = ({
@@ -106,6 +123,13 @@ export const userResolvers = ({
           getToken({ colonyManager, client }, tokenAddress, walletAddress),
         ),
       );
+    },
+    async userLock(
+      _,
+      {tokenAddress, walletAddress}
+    ): Promise<UserLock> {
+      const userLock = await getUserLock(networkClient, walletAddress, tokenAddress);
+      return userLock;
     },
     async tokenTransfers({
       walletAddress,
