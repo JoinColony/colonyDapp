@@ -9,9 +9,9 @@ import { STATUS } from '../types';
 import styles from './TransactionMeta.css';
 
 const MSG = defineMessages({
-  blockscout: {
-    id: 'dashboard.ActionsPage.TransactionMeta.blockscout',
-    defaultMessage: 'Etherscan',
+  blockExplorer: {
+    id: 'dashboard.ActionsPage.TransactionMeta.blockExplorer',
+    defaultMessage: '{blockExplorerName}',
   },
   transactionStatus: {
     id: 'dashboard.ColonyHome.ColonyTitle.transactionStatus',
@@ -43,7 +43,7 @@ const TransactionMeta = ({ createdAt, transactionHash, status }: Props) => (
         <TransactionLink
           className={styles.blockscoutLink}
           hash={transactionHash}
-          text={MSG.blockscout}
+          text={MSG.blockExplorer}
           textValues={{
             blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
           }}
