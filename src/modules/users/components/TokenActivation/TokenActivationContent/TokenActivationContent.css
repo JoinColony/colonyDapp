@@ -1,0 +1,38 @@
+.main {
+  height: 488px;
+  width: 240px;
+}
+
+.tabsContainer {
+  display: flex;
+  height: 42px;
+}
+
+.tab {
+  padding: 11px 0;
+  width: 50%;
+  border: none;
+  border-bottom: 1px solid var(--temp-grey-13);
+  background-color: inherit;
+  font-weight: var(--weight-bold);
+  text-align: center;
+  color: var(--temp-grey-blue-7);
+  outline: none;
+}
+
+.selectedTab {
+  composes: tab;
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+
+.claimsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}

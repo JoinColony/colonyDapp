@@ -1,1 +1,1 @@
-export { default as TokenActivationContent } from './TokenActivationContent';
+export { default as TokenActivationPopover } from './TokenActivationPopover';
