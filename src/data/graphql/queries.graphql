@@ -221,6 +221,12 @@ query UserBalanceWithLock($address: String!, $tokenAddress: String!) {
     id
     userLock(walletAddress: $address, tokenAddress: $tokenAddress) @client {
       balance
+      nativeToken {
+        decimals
+        name
+        symbol
+        balance
+      }
     }
   }
 }
