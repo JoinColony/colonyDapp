@@ -4,6 +4,7 @@ import paymentActionSaga from './payment';
 import moveFundsActionSaga from './moveFunds';
 import mintTokensActionSaga from './mintTokens';
 import versionUpgradeActionSaga from './versionUpgrade';
+import createDomainActionSaga from './createDomain';
 
 export default function* actionsSagas() {
   yield all([
@@ -11,5 +12,6 @@ export default function* actionsSagas() {
     call(moveFundsActionSaga),
     call(mintTokensActionSaga),
     call(versionUpgradeActionSaga),
+    call(createDomainActionSaga),
   ]);
 }
