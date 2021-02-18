@@ -142,6 +142,7 @@ export default gql`
   
   type UserLock {
     balance: String!
+    nativeToken: Token!
   }
 
   extend type User {
