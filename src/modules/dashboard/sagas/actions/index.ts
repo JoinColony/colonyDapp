@@ -7,6 +7,7 @@ import versionUpgradeActionSaga from './versionUpgrade';
 import createDomainActionSaga from './createDomain';
 import editDomainActionSaga from './editDomain';
 import editColonyActionSaga from './editColony';
+import managePermissionsActionSaga from './managePermissions';
 
 export default function* actionsSagas() {
   yield all([
@@ -17,5 +18,6 @@ export default function* actionsSagas() {
     call(createDomainActionSaga),
     call(editDomainActionSaga),
     call(editColonyActionSaga),
+    call(managePermissionsActionSaga),
   ]);
 }
