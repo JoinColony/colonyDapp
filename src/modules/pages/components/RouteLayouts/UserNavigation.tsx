@@ -11,6 +11,7 @@ import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
 import {
   useUserNotificationsQuery,
   useLoggedInUser,
+  useUserBalanceWithLockQuery,
   useColonyFromNameQuery,
 } from '~data/index';
 import MaskedAddress from '~core/MaskedAddress';
@@ -40,6 +41,9 @@ const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
   const { walletAddress, ethereal, networkId } = useLoggedInUser();
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
 
   const { colonyName } = useParams<{
     colonyName: string;
@@ -53,6 +57,12 @@ const UserNavigation = () => {
     variables: { address: walletAddress },
   });
 
+  const { data: userData } = useUserBalanceWithLockQuery({
+    variables: {
+      address: walletAddress,
+      tokenAddress: colonyData?.processedColony?.nativeTokenAddress || '',
+    },
+  });
   const notifications = (data && data.user && data.user.notifications) || [];
   const hasUnreadNotifications = notifications.some(
     (notification) => !notification.read,
