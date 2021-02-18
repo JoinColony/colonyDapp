@@ -4,6 +4,7 @@ import {
   ROOT_DOMAIN_ID,
   getBlockTime,
   getLogs,
+  ColonyClient,
 } from '@colony/colony-js';
 import { BigNumber } from 'ethers/utils';
 import { AddressZero, HashZero } from 'ethers/constants';
@@ -49,18 +50,21 @@ const getUserReputation = async (
 };
 
 const getUserLock = async (
-  networkClient: any,
+  client: ColonyClient,
+  colonyManager: ColonyManager,
   walletAddress: Address,
   tokenAddress: Address,
 ) => {
-  const tokenUnlockClient = await networkClient.getTokenLockingClient();
+  const tokenUnlockClient = await colonyManager.networkClient.getTokenLockingClient();
   const userLock = await tokenUnlockClient.getUserLock(
     tokenAddress,
     walletAddress,
   );
+  const nativeToken = await getToken({ colonyManager, client }, tokenAddress, walletAddress);
   return {
     __typename: 'UserLock',
     balance: userLock.balance.toString(),
+    nativeToken,
   };
 };
 
@@ -132,9 +136,10 @@ export const userResolvers = ({
     },
     async userLock(
       _,
-      {tokenAddress, walletAddress}
+      { tokenAddress, walletAddress },
+      { client }
     ): Promise<UserLock> {
-      const userLock = await getUserLock(networkClient, walletAddress, tokenAddress);
+      const userLock = await getUserLock(client, colonyManager, walletAddress, tokenAddress);
       return userLock;
     },
     async tokenTransfers({
