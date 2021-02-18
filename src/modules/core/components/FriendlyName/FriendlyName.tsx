@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { AddressZero } from 'ethers/constants';
 
+import { isEmpty } from 'lodash';
 import MaskedAddress from '~core/MaskedAddress';
 
 import { AnyUser, Colony } from '~data/index';
@@ -86,8 +87,9 @@ const FriendlyName = ({
       addressRef.current.style.fontSize = `${inheritedFontSize - 1}px`;
     }
   }, [addressRef, autoShrinkAddress]);
-  const isColony = user?.profile.walletAddress === colony?.colonyAddress;
-
+  const isColony =
+    user?.profile.walletAddress === colony?.colonyAddress ||
+    (isEmpty(user) && !isEmpty(colony));
   return (
     <div className={styles.main}>
       {userDisplay || (isColony && colonyDisplay) || (
