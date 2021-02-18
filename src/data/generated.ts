@@ -725,6 +725,7 @@ export type ColonyExtensionDetails = {
 
 export type UserLock = {
   balance: Scalars['String'];
+  nativeToken: Token;
 };
 
 export type ProcessedMetaColony = {
@@ -1137,7 +1138,10 @@ export type UserBalanceWithLockQueryVariables = Exact<{
 
 export type UserBalanceWithLockQuery = { user: (
     Pick<User, 'id'>
-    & { userLock: Pick<UserLock, 'balance'> }
+    & { userLock: (
+      Pick<UserLock, 'balance'>
+      & { nativeToken: Pick<Token, 'decimals' | 'name' | 'symbol' | 'balance'> }
+    ) }
   ) };
 
 export type UsernameQueryVariables = Exact<{
@@ -2316,6 +2320,12 @@ export const UserBalanceWithLockDocument = gql`
     id
     userLock(walletAddress: $address, tokenAddress: $tokenAddress) @client {
       balance
+      nativeToken {
+        decimals
+        name
+        symbol
+        balance
+      }
     }
   }
 }
