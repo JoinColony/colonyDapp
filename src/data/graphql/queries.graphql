@@ -63,6 +63,15 @@ query UserTokens($address: String!) {
   }
 }
 
+query UserBalanceWithLock($address: String!, $tokenAddress: String!) {
+  user(address: $address) {
+    id
+    userLock(walletAddress: $address, tokenAddress: $tokenAddress) @client {
+      balance
+    }
+  }
+}
+
 query Username($address: String!) {
   username(address: $address) @client
 }
