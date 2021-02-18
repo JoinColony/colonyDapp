@@ -111,6 +111,7 @@ export const getColonyUnclaimedTransfers = async (
     null,
     null,
   );
+
   const claimedTransferLogs = await getLogs(
     colonyClient,
     claimedTransferFilter,
@@ -136,9 +137,27 @@ export const getColonyUnclaimedTransfers = async (
       const date = log.blockHash
         ? await getBlockTime(provider, log.blockHash)
         : 0;
-      const {
-        values: { src, wad },
-      } = event;
+      /*
+       * @NOTE Take the values from the "array" rather than from the named properties
+       * This is because our native tokens differ in abi from ERC20 or SAI tokens
+       *
+       * Here's the mapping:
+       *
+       * Ours   ERC20
+       * ---    ---
+       * src    from
+       * dest   to
+       * wad    value
+       *
+       * But if we take the values from the array, they will always be in the
+       * same order: 0->from, 1->to, 2->value
+       *
+       * This way we can always be sure that get the correct values for the various
+       * tokens all the time
+       */
+      const source = event?.values['0'];
+      const amount = event?.values['2'];
+
       const { blockNumber } = log;
 
       const transferClaimed = !!claimedTransferEvents.find(
@@ -157,10 +176,10 @@ export const getColonyUnclaimedTransfers = async (
 
       return {
         __typename: 'Transfer',
-        amount: wad.toString(),
+        amount: amount?.toString(),
         colonyAddress: colonyClient.address,
         date,
-        from: src || null,
+        from: source || null,
         hash: log.transactionHash || HashZero,
         incoming: true,
         to: colonyClient.address,
