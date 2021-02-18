@@ -1,5 +1,5 @@
 .main {
-  margin-bottom: 30px;
+  margin: 30px 0;
 }
 
 .title {
@@ -7,4 +7,12 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.loadingText {
+  display: inline-block;
+  margin: -8px 0 0 5px;
+  vertical-align: middle;
+  font-size: var(--size-small);
+  letter-spacing: initial;
 }
