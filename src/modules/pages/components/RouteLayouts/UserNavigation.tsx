@@ -131,44 +131,46 @@ const UserNavigation = () => {
           )}
         </ConnectWalletPopover>
       )}
-      {userCanNavigate && nativeToken && (
-        <>
-          <button type="button" className={styles.tokens}>
-            <span className={`${styles.dot} ${(lockedBalance.gt(0) || totalBalance.isZero()) && styles.dotInactive}`} />
-            <Numeral
-              suffix={` ${nativeToken?.symbol} `}
-              unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
-              value={totalBalance}
-              truncate={3}
-            />
-          </button>
-        </>
-      )}
-      {userCanNavigate && (
-        <GasStationPopover
-          transactionAndMessageGroups={transactionAndMessageGroups}
-        >
-          {({ isOpen, toggle, ref }) => (
-            <>
-              <button
-                type="button"
-                className={
-                  isOpen ? styles.walletAddressActive : styles.walletAddress
-                }
-                ref={ref}
-                onClick={toggle}
-              >
-                <MaskedAddress address={walletAddress} />
-              </button>
-              {readyTransactions >= 1 && (
-                <span className={styles.readyTransactionsCount}>
-                  {readyTransactions}
-                </span>
-              )}
-            </>
-          )}
-        </GasStationPopover>
-      )}
+      <div className={styles.buttonsWrapper}>
+        {userCanNavigate && nativeToken && (
+          <>
+            <button type="button" className={styles.tokens}>
+              <span className={`${styles.dot} ${(lockedBalance.gt(0) || totalBalance.isZero()) && styles.dotInactive}`} />
+              <Numeral
+                suffix={` ${nativeToken?.symbol} `}
+                unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
+                value={totalBalance}
+                truncate={3}
+              />
+            </button>
+          </>
+        )}
+        {userCanNavigate && (
+          <GasStationPopover
+            transactionAndMessageGroups={transactionAndMessageGroups}
+          >
+            {({ isOpen, toggle, ref }) => (
+              <>
+                <button
+                  type="button"
+                  className={
+                    isOpen ? styles.walletAddressActive : styles.walletAddress
+                  }
+                  ref={ref}
+                  onClick={toggle}
+                >
+                  <MaskedAddress address={walletAddress} />
+                </button>
+                {readyTransactions >= 1 && (
+                  <span className={styles.readyTransactionsCount}>
+                    {readyTransactions}
+                  </span>
+                )}
+              </>
+            )}
+          </GasStationPopover>
+        )}
+      </div>
       {userCanNavigate && (
         <InboxPopover notifications={notifications}>
           {({ isOpen, toggle, ref }) => (
