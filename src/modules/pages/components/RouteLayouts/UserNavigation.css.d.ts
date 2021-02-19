@@ -12,3 +12,5 @@ export const walletAddressActive: string;
 export const readyTransactionsCount: string;
 export const reputation: string;
 export const tokens: string;
+export const dot: string;
+export const dotInactive: string;
