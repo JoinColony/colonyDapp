@@ -161,3 +161,16 @@
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
+
+.dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  margin-right: 5px;
+}
+
+.dotInactive {
+  background-color: var(--pink);
+}
