@@ -9,6 +9,7 @@ export const networkInfo: string;
 export const wrongNetwork: string;
 export const walletAddress: string;
 export const walletAddressActive: string;
+export const buttonsWrapper: string;
 export const readyTransactionsCount: string;
 export const reputation: string;
 export const tokens: string;

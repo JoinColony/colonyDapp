@@ -1,10 +1,10 @@
-import { Resolvers } from '@apollo/client';
+import { Resolvers, ApolloClient } from '@apollo/client';
+
 import {
   ClientType,
   ROOT_DOMAIN_ID,
   getBlockTime,
   getLogs,
-  ColonyClient,
 } from '@colony/colony-js';
 import { BigNumber } from 'ethers/utils';
 import { AddressZero, HashZero } from 'ethers/constants';
@@ -50,11 +50,11 @@ const getUserReputation = async (
 };
 
 const getUserLock = async (
-  client: ColonyClient,
+  client: ApolloClient<object>,
   colonyManager: ColonyManager,
   walletAddress: Address,
   tokenAddress: Address,
-) => {
+): Promise<UserLock> => {
   const tokenUnlockClient = await colonyManager.networkClient.getTokenLockingClient();
   const userLock = await tokenUnlockClient.getUserLock(
     tokenAddress,
