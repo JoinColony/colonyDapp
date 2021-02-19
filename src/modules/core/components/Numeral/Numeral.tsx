@@ -55,11 +55,11 @@ const Numeral = ({
       ? formatUnits(value, unit)
       : moveDecimal(value.toString(10), -(unit || 0));
 
-  const formattedNumber = formatNumber({
+      const formattedNumber = formatNumber({
     prefix,
     suffix,
     integerSeparator,
-    truncate,
+    truncate: convertedNum > 10**4 ? 0 : truncate,
   })(parseFloat(convertedNum));
 
   return (
