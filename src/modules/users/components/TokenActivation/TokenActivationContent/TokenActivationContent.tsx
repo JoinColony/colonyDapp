@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import ClaimsTab from './ClaimsTab';
+import TokensTab, { TokensTabProps } from './TokensTab';
 import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
@@ -15,7 +16,7 @@ const MSG = defineMessages({
   },
 });
 
-const TokenActivationContent = () => {
+const TokenActivationContent = (props: TokensTabProps) => {
   const [isTokens, setIsTokens] = useState(true);
 
   return (
@@ -36,7 +37,9 @@ const TokenActivationContent = () => {
           <FormattedMessage {...MSG.claims} />
         </button>
       </ul>
-      {isTokens ? <div>Placeholder</div> : <ClaimsTab />}
+      <div className={styles.container}>
+        {isTokens ? <TokensTab {...props} /> : <ClaimsTab />}
+      </div>
     </div>
   );
 };
