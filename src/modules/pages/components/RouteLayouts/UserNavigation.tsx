@@ -1,10 +1,13 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useParams } from 'react-router-dom';
+import { bigNumberify } from 'ethers/utils';
 
 import { GasStationPopover } from '~users/GasStation';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
@@ -39,7 +42,7 @@ const UserNavigation = () => {
     colonyName: string;
   }>();
 
-  const { data: colonyData, error, loading } = useColonyFromNameQuery({
+  const { data: colonyData } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
   const { data } = useUserNotificationsQuery({
@@ -49,6 +52,7 @@ const UserNavigation = () => {
   const { data: userData } = useUserBalanceWithLockQuery({
     variables: { address: walletAddress, tokenAddress: colonyData?.processedColony?.nativeTokenAddress || '' },
   });
+
   const notifications = (data && data.user && data.user.notifications) || [];
   const hasUnreadNotifications = notifications.some(
     (notification) => !notification.read,
@@ -65,6 +69,14 @@ const UserNavigation = () => {
 
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
   const userCanNavigate = !ethereal && isNetworkAllowed;
+
+  const userLock = userData?.user.userLock;
+  const nativeToken = userLock?.nativeToken;
+  const userActiveBalance = nativeToken?.balance;
+
+  const lockedBalance = userLock && bigNumberify(userLock.balance) || bigNumberify(0);
+  const walletBalance = userActiveBalance && bigNumberify(userActiveBalance) || bigNumberify(0);
+  const totalBalance = lockedBalance.add(walletBalance);
 
   return (
     <div className={styles.main}>
@@ -99,10 +111,14 @@ const UserNavigation = () => {
           )}
         </ConnectWalletPopover>
       )}
-      {userCanNavigate && (
+      {userCanNavigate && totalBalance && nativeToken && (
         <>
           <button type="button" className={styles.tokens}>
-            TEST
+            <Numeral
+              suffix={` ${nativeToken?.symbol} `}
+              unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
+              value={totalBalance}
+            />
           </button>
         </>
       )}
