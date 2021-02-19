@@ -106,15 +106,17 @@
    * active class (the one that has a different colored border), we remove the extra padding
    * and set the border
    */
-  margin-right: 12px;
   padding: 2px 9px 3px;
   border: none;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
-  font-size: 13px;
-  font-weight: var(--weight-medium);
   color: var(--temp-grey-blue-7);
   cursor: pointer;
+}
+
+.walletAddress span {
+  font-weight: 600;
+  font-size: 13px;
 }
 
 .walletAddress:hover {
@@ -127,6 +129,12 @@
   padding: 1px 8px 2px;
   border: 1px solid var(--colony-blue);
   color: var(--colony-blue);
+}
+
+.buttonsWrapper {
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  padding: 1px;
 }
 
 .readyTransactionsCount {
@@ -156,10 +164,19 @@
 
 .tokens {
   composes: walletAddress;
-  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  background: transparent;
+  border: 0;
   font-size: var(--size-smallis);
   font-weight: var(--weight-bold);
   color: var(--dark);
+  margin-right: -5px;
+}
+
+.tokens:hover {
+  position: relative;
+  z-index: 5;
+  background-color: #D9D8EC;
+  color: var(--colony-blue);
 }
 
 .dot {

@@ -132,9 +132,10 @@ export const getToken = async (
   address: Address,
   walletAddress?: Address,
 ) => {
-  if (tokenCache.has(address)) {
-    return tokenCache.get(address);
-  }
+  // TO DISCUSS
+  // if (tokenCache.has(address)) {
+  //   return tokenCache.get(address);
+  // }
   const tokenData = await getTokenData({ colonyManager, client }, address);
 
   if (walletAddress !== undefined && tokenData !== null) {
