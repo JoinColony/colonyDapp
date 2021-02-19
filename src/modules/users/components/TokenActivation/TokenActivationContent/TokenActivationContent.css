@@ -8,6 +8,10 @@
   height: 42px;
 }
 
+.containerPartBorder {
+  border-bottom: 1px solid var(--temp-grey-13);
+}
+
 .tab {
   padding: 11px 0;
   width: 50%;
@@ -26,12 +30,33 @@
   color: var(--primary);
 }
 
+.container {
+  height: 100%;
+  width: 100%;
+}
+
+.totalTokens {
+  composes: containerPartBorder;
+  height: 64px;
+  width: 100%;
+}
+
+.tokensDetails {
+  composes: containerPartBorder;
+  height: 163px;
+  width: 100%;
+}
+
+.changeTokensState {
+  height: 219px;
+  width: 100%;
+}
+
 .claimsContainer {
+  composes: container;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
