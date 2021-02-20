@@ -256,7 +256,7 @@ const ActionsPageEvent = ({
         );
       case ColonyAndExtensionsEvents.ColonyRoleSet:
         return getColonyRoleSetMessageDescriptorsIds(
-          values?.roles[eventIndex].setTo,
+          values?.roles && values?.roles[eventIndex].setTo,
           'event',
         );
       default:
