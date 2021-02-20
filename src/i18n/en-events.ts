@@ -10,6 +10,9 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.DomainAdded} {{initiator} added Team: {fromDomain}}
       ${ColonyAndExtensionsEvents.ColonyUpgraded} {This colony has upgraded to {newVersion}}
       ${ColonyAndExtensionsEvents.RecoveryModeEntered} {{initiator} activated Recovery Mode}
+      ${ColonyAndExtensionsEvents.RecoveryStorageSlotSet} {{initiator} submitted new slot value}
+      ${ColonyAndExtensionsEvents.RecoveryModeExitApproved} {{initiator} approved exiting}
+      ${ColonyAndExtensionsEvents.RecoveryModeExited} {{initiator} exited Recovery Mode}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
   /*

@@ -32,15 +32,15 @@ const MSG = defineMessages({
 
 export interface EventValues {
   actionType: string;
-  amount: string | ReactElement;
-  tokenSymbol: string | ReactElement;
-  decimals: number;
-  fromDomain: OneDomain;
-  toDomain: OneDomain;
-  oldVersion: string;
-  newVersion: string;
-  colonyName: string | ReactElement;
-  roles: ActionUserRoles[];
+  amount?: string | ReactElement;
+  tokenSymbol?: string | ReactElement;
+  decimals?: number;
+  fromDomain?: OneDomain;
+  toDomain?: OneDomain;
+  oldVersion?: string;
+  newVersion?: string;
+  colonyName?: string | ReactElement;
+  roles?: ActionUserRoles[];
 }
 
 interface Props {

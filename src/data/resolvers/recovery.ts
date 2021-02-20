@@ -5,6 +5,7 @@ import {
   getLogs,
   ColonyClientV5,
 } from '@colony/colony-js';
+import { Log } from 'ethers/providers';
 
 import { Context } from '~context/index';
 
@@ -25,6 +26,8 @@ export const recoveryModeResolvers = ({
         } = {
           fromBlock: blockNumber,
         };
+        const recoveryModeLogs: Log[] = [];
+
         const colonyClient = (await colonyManager.getClient(
           ClientType.ColonyClient,
           colonyAddress,
@@ -36,8 +39,9 @@ export const recoveryModeResolvers = ({
           blockFilter,
         );
 
-        if (mostRecentRecovery?.blockNumber) {
-          blockFilter.toBlock = mostRecentRecovery.blockNumber;
+        if (mostRecentRecovery) {
+          blockFilter.toBlock = mostRecentRecovery?.blockNumber;
+          recoveryModeLogs.push(mostRecentRecovery);
         }
 
         const storageSetFilter = await getLogs(
@@ -53,20 +57,22 @@ export const recoveryModeResolvers = ({
         );
 
         const parsedLogs = await Promise.all(
-          [...storageSetFilter, ...exitApprovedLogs].map(async (log) => {
-            const potentialParsedLog = colonyClient.interface.parseLog(log);
-            const { address, blockHash } = log;
-            const { name, values } = potentialParsedLog;
-            return {
-              name,
-              values,
-              createdAt: blockHash
-                ? await getBlockTime(provider, blockHash)
-                : 0,
-              emmitedBy: ClientType.ColonyClient,
-              address,
-            } as ProcessedEvent;
-          }),
+          [...storageSetFilter, ...exitApprovedLogs, ...recoveryModeLogs].map(
+            async (log) => {
+              const potentialParsedLog = colonyClient.interface.parseLog(log);
+              const { address, blockHash } = log;
+              const { name, values } = potentialParsedLog;
+              return {
+                name,
+                values,
+                createdAt: blockHash
+                  ? await getBlockTime(provider, blockHash)
+                  : 0,
+                emmitedBy: ClientType.ColonyClient,
+                address,
+              } as ProcessedEvent;
+            },
+          ),
         );
         return parsedLogs;
       } catch (error) {

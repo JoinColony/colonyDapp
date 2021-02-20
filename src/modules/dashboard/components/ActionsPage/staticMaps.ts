@@ -48,6 +48,9 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.DomainMetadata]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.ColonyRoleSet]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.RecoveryModeEntered]: [ColonyRole.Recovery],
+  [ColonyAndExtensionsEvents.RecoveryStorageSlotSet]: [ColonyRole.Recovery],
+  [ColonyAndExtensionsEvents.RecoveryModeExitApproved]: [ColonyRole.Recovery],
+  [ColonyAndExtensionsEvents.RecoveryModeExited]: [ColonyRole.Recovery],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -91,10 +94,12 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
   [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
   [ColonyActions.SetUserRoles]: [ColonyAndExtensionsEvents.ColonyRoleSet],
-  /*
-   * @TODO I think we need to display more events here
-   */
-  [ColonyActions.Recovery]: [ColonyAndExtensionsEvents.RecoveryModeEntered],
+  [ColonyActions.Recovery]: [
+    ColonyAndExtensionsEvents.RecoveryModeEntered,
+    ColonyAndExtensionsEvents.RecoveryStorageSlotSet,
+    ColonyAndExtensionsEvents.RecoveryModeExitApproved,
+    ColonyAndExtensionsEvents.RecoveryModeExited,
+  ],
 };
 
 /*

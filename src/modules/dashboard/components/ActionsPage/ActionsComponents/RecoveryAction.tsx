@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
@@ -17,8 +17,9 @@ import {
   ColonyActionQuery,
   TokenInfoQuery,
   AnyUser,
+  useRecoveryEventsForSessionQuery,
 } from '~data/index';
-import { ColonyActions } from '~types/index';
+import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 
 import MultisigWidget from '../MultisigWidget';
 import InputStorageWidget from '../InputStorageWidget';
@@ -72,6 +73,7 @@ const RecoveryAction = ({
     actionType,
     annotationHash,
     colonyDisplayName,
+    blockNumber,
   },
   colonyAction,
   transactionHash,
@@ -82,6 +84,25 @@ const RecoveryAction = ({
   initiator,
 }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
+
+  /*
+   * @TODO Add load state for fetching all the events from the chain
+   */
+  const { data } = useRecoveryEventsForSessionQuery({
+    variables: {
+      blockNumber,
+      colonyAddress,
+    },
+  });
+
+  const isInRecoveryMode = useMemo(() => {
+    if (data?.recoveryEventsForSession) {
+      return !data.recoveryEventsForSession.find(
+        ({ name }) => name === ColonyAndExtensionsEvents.RecoveryModeExited,
+      );
+    }
+    return false;
+  }, [data]);
 
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
@@ -137,14 +158,6 @@ const RecoveryAction = ({
               comment={annotationHash}
             />
           )}
-          <ActionsPageFeed
-            actionType={actionType}
-            transactionHash={transactionHash as string}
-            networkEvents={events}
-            values={actionAndEventValues}
-            actionData={colonyAction}
-            colony={colony}
-          />
           <ActionsPageTip
             appearance={{ theme: 'recovery' }}
             tip={MSG.tip}
@@ -167,6 +180,17 @@ const RecoveryAction = ({
               ),
             }}
           />
+          <ActionsPageFeed
+            actionType={actionType}
+            transactionHash={transactionHash as string}
+            networkEvents={[
+              ...events,
+              ...(data?.recoveryEventsForSession || []),
+            ]}
+            values={actionAndEventValues}
+            actionData={colonyAction}
+            colony={colony}
+          />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
            * and a registered user profile
@@ -179,24 +203,28 @@ const RecoveryAction = ({
           )}
         </div>
         <div className={styles.details}>
-          <InputStorageWidget />
-          <MultisigWidget
-            // Mocking for now
-            membersAllowedForApproval={Array.from(
-              Array(10),
-              () => initiatorWalletAddress,
-            )}
-            requiredNumber={4}
-            requiredPermission={ColonyRole.Recovery}
-          >
-            <Button
-              text={{ id: 'button.approve' }}
-              appearance={{
-                theme: 'primary',
-                size: 'medium',
-              }}
-            />
-          </MultisigWidget>
+          {isInRecoveryMode && (
+            <>
+              <InputStorageWidget />
+              <MultisigWidget
+                // Mocking for now
+                membersAllowedForApproval={Array.from(
+                  Array(10),
+                  () => initiatorWalletAddress,
+                )}
+                requiredNumber={4}
+                requiredPermission={ColonyRole.Recovery}
+              >
+                <Button
+                  text={{ id: 'button.approve' }}
+                  appearance={{
+                    theme: 'primary',
+                    size: 'medium',
+                  }}
+                />
+              </MultisigWidget>
+            </>
+          )}
           <DetailsWidget
             actionType={actionType as ColonyActions}
             recipient={recipient}
