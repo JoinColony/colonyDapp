@@ -20,13 +20,11 @@ interface Props {
 
 const ActionsPageTip = ({ tip, tipValues, appearance }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
-    <div className={styles.content}>
-      {tip && tip === 'string' ? (
-        tip
-      ) : (
-        <FormattedMessage {...tip} values={tipValues} />
-      )}
-    </div>
+    {tip && tip === 'string' ? (
+      tip
+    ) : (
+      <FormattedMessage {...tip} values={tipValues} />
+    )}
   </div>
 );
 
