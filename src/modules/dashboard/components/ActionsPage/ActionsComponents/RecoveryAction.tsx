@@ -1,6 +1,8 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import { ColonyRole } from '@colony/colony-js';
 
+import Button from '~core/Button';
 import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
 import { EventValue } from '~data/resolvers/colonyActions';
@@ -26,11 +28,22 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
+import MultisigWidget from '../MultisigWidget';
+import InputStorageWidget from '../InputStorageWidget';
 import DetailsWidget from '../DetailsWidget';
+import TransactionHash from '../TransactionHash';
+import { STATUS_MAP } from '../staticMaps';
 
 import styles from './DefaultAction.css';
 
-const displayName = 'dashboard.ActionsPage.DefaultAction';
+const MSG = defineMessages({
+  recoveryTag: {
+    id: 'dashboard.ActionsPage.RecoveryAction.recovery',
+    defaultMessage: `Recovery`,
+  },
+});
+
+const displayName = 'dashboard.ActionsPage.RecoveryAction';
 
 interface Props {
   colony: Colony;
@@ -41,11 +54,13 @@ interface Props {
   initiator: AnyUser;
 }
 
-const DefaultAction = ({
+const RecoveryAction = ({
   colony,
   colony: { colonyAddress, domains },
   token: { decimals, symbol },
   colonyAction: {
+    hash,
+    status,
     events = [],
     createdAt,
     actionType,
@@ -61,6 +76,9 @@ const DefaultAction = ({
   colonyAction,
   transactionHash,
   recipient,
+  initiator: {
+    profile: { walletAddress: initiatorWalletAddress },
+  },
   initiator,
 }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
@@ -164,6 +182,11 @@ const DefaultAction = ({
 
   return (
     <div className={styles.main}>
+      <div className={styles.container}>
+        <p className={styles.recoveryTag}>
+          <FormattedMessage {...MSG.recoveryTag} />
+        </p>
+      </div>
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
         <div className={styles.content}>
@@ -182,6 +205,19 @@ const DefaultAction = ({
               }}
             />
           </h1>
+          {!events?.length && hash && (
+            <TransactionHash
+              transactionHash={hash}
+              /*
+               * @NOTE Otherwise it interprets 0 as false, rather then a index
+               * Typecasting it doesn't work as well
+               */
+              status={
+                typeof status === 'number' ? STATUS_MAP[status] : undefined
+              }
+              createdAt={createdAt}
+            />
+          )}
           {actionType !== ColonyActions.Generic && annotationHash && (
             <ActionsPageFeedItem
               createdAt={createdAt}
@@ -210,6 +246,24 @@ const DefaultAction = ({
           )}
         </div>
         <div className={styles.details}>
+          <InputStorageWidget />
+          <MultisigWidget
+            // Mocking for now
+            membersAllowedForApproval={Array.from(
+              Array(10),
+              () => initiatorWalletAddress,
+            )}
+            requiredNumber={4}
+            requiredPermission={ColonyRole.Recovery}
+          >
+            <Button
+              text={{ id: 'button.approve' }}
+              appearance={{
+                theme: 'primary',
+                size: 'medium',
+              }}
+            />
+          </MultisigWidget>
           <DetailsWidget
             actionType={actionType as ColonyActions}
             recipient={recipient}
@@ -223,6 +277,6 @@ const DefaultAction = ({
   );
 };
 
-DefaultAction.displayName = displayName;
+RecoveryAction.displayName = displayName;
 
-export default DefaultAction;
+export default RecoveryAction;
