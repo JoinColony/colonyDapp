@@ -47,6 +47,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.ColonyMetadata]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainMetadata]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.ColonyRoleSet]: [ColonyRole.Architecture],
+  [ColonyAndExtensionsEvents.RecoveryModeEntered]: [ColonyRole.Recovery],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -90,6 +91,10 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
   [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
   [ColonyActions.SetUserRoles]: [ColonyAndExtensionsEvents.ColonyRoleSet],
+  /*
+   * @TODO I think we need to display more events here
+   */
+  [ColonyActions.Recovery]: [ColonyAndExtensionsEvents.RecoveryModeEntered],
 };
 
 /*
@@ -125,6 +130,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
   [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
   [ColonyActions.SetUserRoles]: [ColonyAndExtensionsEvents.ColonyRoleSet],
+  [ColonyActions.Recovery]: [ColonyAndExtensionsEvents.RecoveryModeEntered],
 };
 
 /*
@@ -157,4 +163,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ToRecipient,
     ActionPageDetails.Permissions,
   ],
+  [ColonyActions.Recovery]: [],
 };
