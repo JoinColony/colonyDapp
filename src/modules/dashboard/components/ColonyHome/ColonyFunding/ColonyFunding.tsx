@@ -1,24 +1,27 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyVersion } from '@colony/colony-js';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ALLOWED_NETWORKS } from '~constants';
+import { SpinnerLoader } from '~core/Preloaders';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
+
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import {
   useLoggedInUser,
   Colony,
   useTokenBalancesForDomainsQuery,
 } from '~data/index';
+import { useTransformer } from '~utils/hooks';
+import { canFund } from '../../../../users/checks';
+import { getAllUserRoles } from '../../../../transformers';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ALLOWED_NETWORKS } from '~constants';
 
-import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';
 import TokenItem from './TokenItem';
 
 import styles from './ColonyFunding.css';
-import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   buttonFund: {
@@ -44,10 +47,9 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
   const openDialog = useDialog(TransferFundsDialog);
 
-  const canMoveTokens = useMemo(
-    () => canMoveTokensCheck(colony.roles, walletAddress),
-    [colony.roles, walletAddress],
-  );
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const canMoveFunds = !!username && !ethereal && canFund(allUserRoles);
 
   const {
     colonyAddress,
@@ -88,7 +90,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
         <FormattedMessage {...MSG.title} />
-        {canMoveTokens && (
+        {canMoveFunds && (
           <span className={styles.fundingButton}>
             <Button
               appearance={{ theme: 'blue' }}
