@@ -9,6 +9,7 @@ import editDomainActionSaga from './editDomain';
 import editColonyActionSaga from './editColony';
 import managePermissionsActionSaga from './managePermissions';
 import unlockTokenActionSaga from './unlockToken';
+import enterRecoveryActionSaga from './enterRecovery';
 
 export default function* actionsSagas() {
   yield all([
@@ -21,5 +22,6 @@ export default function* actionsSagas() {
     call(editColonyActionSaga),
     call(managePermissionsActionSaga),
     call(unlockTokenActionSaga),
+    call(enterRecoveryActionSaga),
   ]);
 }

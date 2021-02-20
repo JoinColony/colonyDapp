@@ -182,6 +182,7 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_RECOVERY,
       {
         colonyAddress: Address;
+        colonyName: string;
       },
       MetaWithHistory<object>
     >
