@@ -3,43 +3,52 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
-import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
-import { EventValue } from '~data/resolvers/colonyActions';
-import { parseDomainMetadata } from '~utils/colonyActions';
-
+import PermissionsLabel from '~core/PermissionsLabel';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
+  ActionsPageTip,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 
 import {
   useLoggedInUser,
-  OneDomain,
-  useColonySingleDomainQuery,
   Colony,
   ColonyActionQuery,
   TokenInfoQuery,
   AnyUser,
 } from '~data/index';
-import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
-import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { useDataFetcher } from '~utils/hooks';
-import { ipfsDataFetcher } from '../../../../core/fetchers';
+import { ColonyActions } from '~types/index';
 
 import MultisigWidget from '../MultisigWidget';
 import InputStorageWidget from '../InputStorageWidget';
 import DetailsWidget from '../DetailsWidget';
-import TransactionHash from '../TransactionHash';
-import { STATUS_MAP } from '../staticMaps';
 
 import styles from './DefaultAction.css';
+import recoverySpecificStyles from './RecoveryAction.css';
 
 const MSG = defineMessages({
   recoveryTag: {
     id: 'dashboard.ActionsPage.RecoveryAction.recovery',
     defaultMessage: `Recovery`,
+  },
+  tip: {
+    id: 'dashboard.ActionsPage.RecoveryAction.tip',
+    defaultMessage: `{tipTitle} While in recovery mode the colony is disabled
+and no actions may be taken.
+
+A {role} permission holder may update storage slots to rectify the issue that
+caused {user} to take this action.
+
+A majority of {role} permission holders must satisfy themselves that this issue
+has been overcome and the colony is secure, and sign a transaction to approve
+exiting recovery mode, and then reactivate the colony.
+
+Approvals are reset each time storage slots are updated.`,
+  },
+  tipTitle: {
+    id: 'dashboard.ActionsPage.RecoveryAction.tipTitle',
+    defaultMessage: 'Tip:',
   },
 });
 
@@ -56,22 +65,13 @@ interface Props {
 
 const RecoveryAction = ({
   colony,
-  colony: { colonyAddress, domains },
-  token: { decimals, symbol },
+  colony: { colonyAddress },
   colonyAction: {
-    hash,
-    status,
     events = [],
     createdAt,
     actionType,
-    amount,
-    fromDomain,
-    toDomain,
     annotationHash,
-    newVersion,
-    oldVersion,
     colonyDisplayName,
-    roles,
   },
   colonyAction,
   transactionHash,
@@ -82,56 +82,6 @@ const RecoveryAction = ({
   initiator,
 }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
-
-  const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
-    roles,
-    actionType,
-  );
-
-  const domainMetadataEvent = events.find(
-    (event) => event.name === ColonyAndExtensionsEvents.DomainMetadata,
-  );
-  const values = (domainMetadataEvent?.values as unknown) as EventValue;
-
-  const { data: metadataJSON } = useDataFetcher(
-    ipfsDataFetcher,
-    [values?.metadata],
-    [values?.metadata],
-  );
-
-  let domainMetadata;
-  if (metadataJSON) {
-    const { domainName, domainColor, domainPurpose } = parseDomainMetadata(
-      metadataJSON,
-    );
-    domainMetadata = {
-      name: domainName,
-      color: domainColor,
-      description: domainPurpose,
-      ethDomainId: fromDomain,
-    };
-  }
-
-  /*
-   * There's a weird edge case where Apollo's caches screws with us and doesn't
-   * fetch the latest domain (maybe network lag?)
-   *
-   * So we fetch the known existent domain manually and set it as a fallback
-   *
-   * This way the actions page will always be able to display a domain
-   */
-  const { data: fallbackFromDomain } = useColonySingleDomainQuery({
-    variables: {
-      colonyAddress: colonyAddress.toLowerCase() || '',
-      domainId: fromDomain || 0,
-    },
-  });
-  const { data: fallbackToDomain } = useColonySingleDomainQuery({
-    variables: {
-      colonyAddress: colonyAddress.toLowerCase() || '',
-      domainId: toDomain || 0,
-    },
-  });
 
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
@@ -146,28 +96,6 @@ const RecoveryAction = ({
         <FriendlyName user={initiator} autoShrinkAddress />
       </span>
     ),
-    recipient: (
-      <span className={styles.titleDecoration}>
-        <FriendlyName user={recipient} autoShrinkAddress colony={colony} />
-      </span>
-    ),
-    amount: (
-      <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
-    ),
-    tokenSymbol: <span>{symbol || '???'}</span>,
-    decimals: getTokenDecimalsWithFallback(decimals),
-    fromDomain:
-      domainMetadata ||
-      (domains.find(
-        ({ ethDomainId }) => ethDomainId === fromDomain,
-      ) as OneDomain) ||
-      fallbackFromDomain?.colonyDomain,
-    toDomain:
-      (domains.find(
-        ({ ethDomainId }) => ethDomainId === toDomain,
-      ) as OneDomain) || fallbackToDomain?.colonyDomain,
-    newVersion,
-    oldVersion,
     colonyName: (
       <FriendlyName
         colony={{
@@ -177,7 +105,6 @@ const RecoveryAction = ({
         autoShrinkAddress
       />
     ),
-    roles,
   };
 
   return (
@@ -196,29 +123,13 @@ const RecoveryAction = ({
            */}
           <h1 className={styles.heading}>
             <FormattedMessage
-              id={roleMessageDescriptorId || 'action.title'}
+              id="action.title"
               values={{
                 ...actionAndEventValues,
-                fromDomain: actionAndEventValues.fromDomain?.name,
-                toDomain: actionAndEventValues.toDomain?.name,
-                roles: roleTitle,
               }}
             />
           </h1>
-          {!events?.length && hash && (
-            <TransactionHash
-              transactionHash={hash}
-              /*
-               * @NOTE Otherwise it interprets 0 as false, rather then a index
-               * Typecasting it doesn't work as well
-               */
-              status={
-                typeof status === 'number' ? STATUS_MAP[status] : undefined
-              }
-              createdAt={createdAt}
-            />
-          )}
-          {actionType !== ColonyActions.Generic && annotationHash && (
+          {annotationHash && (
             <ActionsPageFeedItem
               createdAt={createdAt}
               user={initiator}
@@ -233,6 +144,28 @@ const RecoveryAction = ({
             values={actionAndEventValues}
             actionData={colonyAction}
             colony={colony}
+          />
+          <ActionsPageTip
+            appearance={{ theme: 'recovery' }}
+            tip={MSG.tip}
+            tipValues={{
+              tipTitle: (
+                <span className={recoverySpecificStyles.tipTitle}>
+                  <FormattedMessage {...MSG.tipTitle} />
+                </span>
+              ),
+              user: (
+                <span className={styles.titleDecoration}>
+                  <FriendlyName user={initiator} autoShrinkAddress />
+                </span>
+              ),
+              role: (
+                <PermissionsLabel
+                  permission={ColonyRole.Recovery}
+                  name={{ id: `role.${ColonyRole.Recovery}` }}
+                />
+              ),
+            }}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
