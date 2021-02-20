@@ -35,21 +35,113 @@
   width: 100%;
 }
 
-.totalTokens {
+.totalTokensContainer {
   composes: containerPartBorder;
+  display: flex;
+  align-items: center;
+  padding-left: 18px;
   height: 64px;
   width: 100%;
 }
 
-.tokensDetails {
+.totalTokens {
+  margin-left: 16px;
+  font-size: var(--size-medium-l);
+  color: var(--dark);
+}
+
+.totalTokens > span {
+  font-size: var(--size-medium);
+}
+
+.tokensDetailsContainer {
   composes: containerPartBorder;
+  padding: 21px 0 0 18px;
   height: 163px;
   width: 100%;
 }
 
+.listItem {
+  display: flex;
+  align-items: baseline;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.listItemTitle {
+  margin-left: 10px;
+}
+
+.disc {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+}
+
+.greenDisc {
+  composes: disc;
+  background: var(--primary);
+}
+
+.redDisc {
+  composes: disc;
+  background: var(--pink);
+}
+
+.tokenNumbers {
+  margin-left: 20px;
+  color: var(--dark);
+  font: var(--size-normal);
+}
+
+.previousTotalAmount {
+  display: flex;
+  align-items: center;
+  margin: 0 0 21px 20px;
+  font-size: var(--size-tiny);
+  color: var(--text-disabled);
+}
+
+.previousTotalAmount > p {
+  margin-left: 8px;
+}
+
 .changeTokensState {
+  padding: 20px 0 0 26px;
   height: 219px;
   width: 100%;
+}
+
+.changeStateTitle {
+  margin-bottom: 15px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.changeStateButtonsContainer {
+  display: flex;
+}
+
+.baseButton {
+  width: 95px;
+}
+
+.whiteButton {
+  composes: baseButton;
+  border: 1px solid --temp-grey-blue-7;
+  background-color: white;
+}
+
+.leftBorders {
+  composes: whiteButton;
+  border-right: none;
+}
+
+.rightBorders {
+  composes: whiteButton;
+  border-left: none;
 }
 
 .claimsContainer {
