@@ -84,6 +84,8 @@
     "transaction.ColonyClient.setAdministrationRoleWithProofs.setOneTxRoles.description": "Give Administration Permission to OneTxPayment Extension",
     "transaction.ColonyClient.setFundingRoleWithProofs.setOneTxRoles.title": "Give Funding Permission to OneTxPayment Extension",
     "transaction.ColonyClient.setFundingRoleWithProofs.setOneTxRoles.description": "Give Funding Permission to OneTxPayment Extension",
+    "transaction.group.recoveryAction.title": "Enter Recovery mode",
+    "transaction.group.recoveryAction.description": "Enter Recovery mode",
 
     "transaction.ColonyClient.unlockToken.title": "Unlock Token",
     "transaction.ColonyClient.unlockToken.description": "Unlock Token",

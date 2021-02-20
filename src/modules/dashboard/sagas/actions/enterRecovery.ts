@@ -9,36 +9,106 @@ import {
   ProcessedColonyQueryVariables,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
-
-import { createTransaction, getTxChannel } from '../../../core/sagas';
+import {
+  transactionReady,
+  transactionPending,
+  transactionAddParams,
+} from '../../../core/actionCreators';
+import {
+  createTransaction,
+  getTxChannel,
+  createTransactionChannels,
+} from '../../../core/sagas';
+import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 function* enterRecoveryAction({
-  payload: { colonyAddress, colonyName },
+  payload: { colonyAddress, colonyName, annotationMessage },
   meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_RECOVERY>) {
-  const txChannel = yield call(getTxChannel, meta.id);
+  let txChannel;
 
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
-    yield fork(createTransaction, meta.id, {
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'recoveryAction';
+    const {
+      recoveryAction,
+      annotateRecoveryAction,
+    } = yield createTransactionChannels(metaId, [
+      'recoveryAction',
+      'annotateRecoveryAction',
+    ]);
+
+    yield fork(createTransaction, recoveryAction.id, {
       context: ClientType.ColonyClient,
       methodName: 'enterRecoveryMode',
       identifier: colonyAddress,
+      group: {
+        key: batchKey,
+        id: metaId,
+        index: 0,
+      },
+      ready: false,
     });
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield fork(createTransaction, annotateRecoveryAction.id, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        group: {
+          key: batchKey,
+          id: metaId,
+          index: 1,
+        },
+        ready: false,
+      });
+    }
 
-    yield put({
-      type: ActionTypes.COLONY_ACTION_RECOVERY_SUCCESS,
-      meta,
-    });
+    yield takeFrom(recoveryAction.channel, ActionTypes.TRANSACTION_CREATED);
+    if (annotationMessage) {
+      yield takeFrom(
+        annotateRecoveryAction.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
+
+    yield put(transactionReady(recoveryAction.id));
 
     const {
       payload: { hash: txHash },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+    } = yield takeFrom(
+      recoveryAction.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+    yield takeFrom(recoveryAction.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    if (annotationMessage) {
+      yield put(transactionPending(annotateRecoveryAction.id));
+
+      let ipfsHash = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
+      yield put(
+        transactionAddParams(annotateRecoveryAction.id, [txHash, ipfsHash]),
+      );
+
+      yield put(transactionReady(annotateRecoveryAction.id));
+
+      yield takeFrom(
+        annotateRecoveryAction.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
 
     yield apolloClient.query<
       ProcessedColonyQuery,
@@ -49,6 +119,11 @@ function* enterRecoveryAction({
         address: colonyAddress,
       },
       fetchPolicy: 'network-only',
+    });
+
+    yield put({
+      type: ActionTypes.COLONY_ACTION_RECOVERY_SUCCESS,
+      meta,
     });
 
     if (colonyName) {

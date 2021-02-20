@@ -183,6 +183,7 @@ export type ColonyActionsActionTypes =
       {
         colonyAddress: Address;
         colonyName: string;
+        annotationMessage?: string;
       },
       MetaWithHistory<object>
     >
