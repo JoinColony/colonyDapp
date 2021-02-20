@@ -112,7 +112,7 @@ const ActionsPageEvent = ({
   const domainMetadataHistory = useSubgraphDomainMetadataQuery({
     variables: {
       colonyAddress: colonyAddress.toLowerCase(),
-      domainId: values?.fromDomain.ethDomainId || 0,
+      domainId: values?.fromDomain?.ethDomainId || 0,
     },
   });
   /*
@@ -197,7 +197,9 @@ const ActionsPageEvent = ({
       tokensChanged: !!tokenAddresses?.length,
     };
   }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
-  const roleNameMessage = { id: `role.${values?.roles[eventIndex].id}` };
+  const roleNameMessage = {
+    id: `role.${values?.roles ? values?.roles[eventIndex].id : 'unknown'}`,
+  };
   const { formatMessage } = useIntl();
   const formattedRole = formatMessage(roleNameMessage).toLowerCase();
 
