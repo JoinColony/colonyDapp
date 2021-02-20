@@ -32,7 +32,7 @@ const MSG = defineMessages({
   },
   transactionNotFound: {
     id: 'dashboard.ActionsPage.transactionNotFound',
-    defaultMessage: `Ooops, transaction not found`,
+    defaultMessage: `Ooops, action not found`,
   },
   returnToColony: {
     id: 'dashboard.ActionsPage.returnToColony',
