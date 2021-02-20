@@ -177,4 +177,16 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS,
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_RECOVERY,
+      {
+        colonyAddress: Address;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_RECOVERY_SUCCESS,
+      MetaWithHistory<object>
+    >;
