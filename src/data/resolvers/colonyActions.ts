@@ -87,6 +87,7 @@ export const colonyActionsResolvers = ({
           status,
           logs,
           blockHash,
+          blockNumber,
           from,
         } = transactionReceipt;
 
@@ -210,6 +211,7 @@ export const colonyActionsResolvers = ({
           domainName: null,
           domainPurpose: null,
           domainColor: null,
+          blockNumber,
           ...actionValues,
         };
       }
@@ -252,6 +254,7 @@ export const colonyActionsResolvers = ({
         colonyDisplayName: null,
         colonyAvatarHash: null,
         colonyTokens: [],
+        blockNumber: null,
         ...pendingActionValues,
       };
     },
