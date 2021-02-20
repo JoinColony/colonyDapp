@@ -471,6 +471,30 @@ const getSetUserRolesActionValues = async (
   return userRoleAction;
 };
 
+const getRecoveryActionValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const recoveryModeEntered = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.RecoveryModeEntered,
+  ) as ProcessedEvent;
+
+  const {
+    address,
+    values: { user },
+  } = recoveryModeEntered;
+
+  const recoveryAction: {
+    address: Address;
+    actionInitiator?: string;
+  } = {
+    address,
+  };
+  if (user) {
+    recoveryAction.actionInitiator = user;
+  }
+  return recoveryAction;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -561,6 +585,15 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...setUserRolesActionValues,
+      };
+    }
+    case ColonyActions.Recovery: {
+      const recoveryActionValues = await getRecoveryActionValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...recoveryActionValues,
       };
     }
     default: {
