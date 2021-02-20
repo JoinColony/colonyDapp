@@ -1,7 +1,6 @@
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import { ColonyRole } from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
 
 import {
   ColonyActions,
@@ -104,6 +103,11 @@ export const getValuesForActionType = (
           initiator: values?.agent || AddressZero,
           oldVersion: values.oldVersion,
           newVersion: values.newVersion,
+        };
+      }
+      case ColonyActions.Recovery: {
+        return {
+          initiator: values.user,
         };
       }
       default: {

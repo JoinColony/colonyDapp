@@ -68,7 +68,8 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
         "DomainMetadata(address,uint256,string)",
         "ColonyRoleSet(address,address,uint256,uint8,bool)",
         "ColonyUpgraded(address,uint256,uint256)",
-        "ColonyUpgraded(uint256,uint256)"
+        "ColonyUpgraded(uint256,uint256)",
+        "RecoveryModeEntered(address)"
       ]
     }) {
     id
