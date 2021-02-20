@@ -8,7 +8,7 @@ import styles from './ActionsPageTip.css';
 
 const displayName = 'dashboard.ActionsPageFeed.ActionsPageTip';
 
-interface Appearance {
+export interface Appearance {
   theme?: 'default' | 'recovery';
 }
 

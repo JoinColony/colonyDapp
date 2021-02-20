@@ -1,1 +1,1 @@
-export { default } from './ActionsPageTip';
+export { default, Appearance } from './ActionsPageTip';

@@ -7,7 +7,6 @@ import FriendlyName from '~core/FriendlyName';
 import PermissionsLabel from '~core/PermissionsLabel';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
-  ActionsPageTip,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 
@@ -158,28 +157,6 @@ const RecoveryAction = ({
               comment={annotationHash}
             />
           )}
-          <ActionsPageTip
-            appearance={{ theme: 'recovery' }}
-            tip={MSG.tip}
-            tipValues={{
-              tipTitle: (
-                <span className={recoverySpecificStyles.tipTitle}>
-                  <FormattedMessage {...MSG.tipTitle} />
-                </span>
-              ),
-              user: (
-                <span className={styles.titleDecoration}>
-                  <FriendlyName user={initiator} autoShrinkAddress />
-                </span>
-              ),
-              role: (
-                <PermissionsLabel
-                  permission={ColonyRole.Recovery}
-                  name={{ id: `role.${ColonyRole.Recovery}` }}
-                />
-              ),
-            }}
-          />
           <ActionsPageFeed
             actionType={actionType}
             transactionHash={transactionHash as string}
@@ -190,6 +167,28 @@ const RecoveryAction = ({
             values={actionAndEventValues}
             actionData={colonyAction}
             colony={colony}
+            tip={{
+              text: MSG.tip,
+              textValues: {
+                tipTitle: (
+                  <span className={recoverySpecificStyles.tipTitle}>
+                    <FormattedMessage {...MSG.tipTitle} />
+                  </span>
+                ),
+                user: (
+                  <span className={styles.titleDecoration}>
+                    <FriendlyName user={initiator} autoShrinkAddress />
+                  </span>
+                ),
+                role: (
+                  <PermissionsLabel
+                    permission={ColonyRole.Recovery}
+                    name={{ id: `role.${ColonyRole.Recovery}` }}
+                  />
+                ),
+              },
+              appearance: { theme: 'recovery' },
+            }}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
