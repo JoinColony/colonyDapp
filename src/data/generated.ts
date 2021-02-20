@@ -691,6 +691,7 @@ export type Query = {
   networkContracts: NetworkContracts;
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
+  recoveryEventsForSession: Array<ParsedEvent>;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   task: Task;
@@ -759,6 +760,12 @@ export type QueryDomainsArgs = {
 
 export type QueryProcessedColonyArgs = {
   address: Scalars['String'];
+};
+
+
+export type QueryRecoveryEventsForSessionArgs = {
+  blockNumber: Scalars['Int'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1021,6 +1028,7 @@ export type ColonyAction = {
   domainName: Scalars['String'];
   domainPurpose: Scalars['String'];
   domainColor: Scalars['String'];
+  blockNumber: Scalars['Int'];
 };
 
 export type NetworkContractsInput = {
@@ -1875,7 +1883,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'blockNumber'>
     & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -1900,6 +1908,14 @@ export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MetaColonyQuery = { processedMetaColony?: Maybe<Pick<ProcessedMetaColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>> };
+
+export type RecoveryEventsForSessionQueryVariables = Exact<{
+  blockNumber: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type RecoveryEventsForSessionQuery = { recoveryEventsForSession: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> };
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4376,6 +4392,7 @@ export const ColonyActionDocument = gql`
       id
       setTo
     }
+    blockNumber
   }
 }
     `;
@@ -4515,6 +4532,43 @@ export function useMetaColonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type MetaColonyQueryHookResult = ReturnType<typeof useMetaColonyQuery>;
 export type MetaColonyLazyQueryHookResult = ReturnType<typeof useMetaColonyLazyQuery>;
 export type MetaColonyQueryResult = Apollo.QueryResult<MetaColonyQuery, MetaColonyQueryVariables>;
+export const RecoveryEventsForSessionDocument = gql`
+    query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    name
+    values
+    createdAt
+    emmitedBy
+  }
+}
+    `;
+
+/**
+ * __useRecoveryEventsForSessionQuery__
+ *
+ * To run a query within a React component, call `useRecoveryEventsForSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRecoveryEventsForSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRecoveryEventsForSessionQuery({
+ *   variables: {
+ *      blockNumber: // value for 'blockNumber'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useRecoveryEventsForSessionQuery(baseOptions?: Apollo.QueryHookOptions<RecoveryEventsForSessionQuery, RecoveryEventsForSessionQueryVariables>) {
+        return Apollo.useQuery<RecoveryEventsForSessionQuery, RecoveryEventsForSessionQueryVariables>(RecoveryEventsForSessionDocument, baseOptions);
+      }
+export function useRecoveryEventsForSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RecoveryEventsForSessionQuery, RecoveryEventsForSessionQueryVariables>) {
+          return Apollo.useLazyQuery<RecoveryEventsForSessionQuery, RecoveryEventsForSessionQueryVariables>(RecoveryEventsForSessionDocument, baseOptions);
+        }
+export type RecoveryEventsForSessionQueryHookResult = ReturnType<typeof useRecoveryEventsForSessionQuery>;
+export type RecoveryEventsForSessionLazyQueryHookResult = ReturnType<typeof useRecoveryEventsForSessionLazyQuery>;
+export type RecoveryEventsForSessionQueryResult = Apollo.QueryResult<RecoveryEventsForSessionQuery, RecoveryEventsForSessionQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {

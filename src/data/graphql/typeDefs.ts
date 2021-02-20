@@ -52,6 +52,7 @@ export default gql`
     domainName: String!
     domainPurpose: String!
     domainColor: String!
+    blockNumber: Int!
   }
 
   input NetworkContractsInput {
@@ -190,6 +191,10 @@ export default gql`
       colonyAddress: String!
     ): ColonyAction!
     processedMetaColony: ProcessedMetaColony
+    recoveryEventsForSession(
+      blockNumber: Int!
+      colonyAddress: String!
+    ): [ParsedEvent!]!
   }
 
   extend type Mutation {
