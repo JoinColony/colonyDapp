@@ -100,7 +100,7 @@ const AdvancedDialog = ({
   callStep,
   prevStep,
   nextStepPermissionManagement,
-  // nextStepRecovery,
+  nextStepRecovery,
   nextStepEditDetails,
   nextStepVersionUpgrade,
   colony,
@@ -136,13 +136,12 @@ const AdvancedDialog = ({
       title: MSG.recoveryTitle,
       description: MSG.recoveryDescription,
       icon: 'emoji-alarm-lamp',
-      // onClick: () => callStep(nextStepRecovery),
+      onClick: () => callStep(nextStepRecovery),
       permissionRequired: !canEnterRecovery,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.recoveryPermissionsList} />,
       },
-      comingSoon: true,
     },
     {
       title: MSG.upgradeTitle,
