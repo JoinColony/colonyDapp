@@ -14,6 +14,7 @@
     "role.4": "Architecture Subdomain",
     "role.5": "Funding",
     "role.6": "Administration",
+    "role.unknown": "Unknown",
     "button.accept": "Accept",
     "button.approve": "Approve",
     "button.cancel": "Cancel",

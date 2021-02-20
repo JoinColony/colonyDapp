@@ -12,6 +12,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.VersionUpgrade} {Upgrade Colony to Version {newVersion}!}
       ${ColonyActions.ColonyEdit} {Colony details changed}
       ${ColonyActions.EditDomain} {{fromDomain} team details edited}
+      ${ColonyActions.Recovery} {Recovery mode activated by {initiator}}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
@@ -27,6 +28,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.ColonyEdit} {Colony Edit}
       ${ColonyActions.EditDomain} {Edit Team}
       ${ColonyActions.SetUserRoles} {Permission Management}
+      ${ColonyActions.Recovery} {Recovery}
       other {Generic}
     }`,
 };
