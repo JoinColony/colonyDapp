@@ -4,7 +4,7 @@
   letter-spacing: var(--spacing-medium);
 }
 
-.main a h4:hover, .main a h4:active {
+.main a:hover, .main a:active {
   text-decoration: underline;
   color: var(--colony-blue);
 }

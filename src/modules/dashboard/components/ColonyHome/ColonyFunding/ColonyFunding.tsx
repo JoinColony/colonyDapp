@@ -1,14 +1,11 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ColonyVersion } from '@colony/colony-js';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import Button from '~core/Button';
-import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
 import NavLink from '~core/NavLink';
-import TransferFundsDialog from '~dashboard/TransferFundsDialog';
+
 import {
   useLoggedInUser,
   Colony,
@@ -24,17 +21,11 @@ import TokenItem from './TokenItem';
 import styles from './ColonyFunding.css';
 
 const MSG = defineMessages({
-  buttonFund: {
-    id: 'dashboard.ColonyHome.ColonyFunding.buttonFund',
-    defaultMessage: 'Move Funds',
-  },
   title: {
     id: 'dashboard.ColonyHome.ColonyFunding.title',
     defaultMessage: 'Available funds',
   },
 });
-
-// SHOW button if user has COLONY_ROLE_FUNDING or ROOT in any domain
 
 interface Props {
   colony: Colony;
@@ -44,8 +35,7 @@ interface Props {
 const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
 const ColonyFunding = ({ colony, currentDomainId }: Props) => {
-  const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
-  const openDialog = useDialog(TransferFundsDialog);
+  const { walletAddress, ethereal, username } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
@@ -55,20 +45,8 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
     colonyAddress,
     tokens: colonyTokens,
     nativeTokenAddress,
-    isDeploymentFinished,
+    colonyName,
   } = colony;
-
-  const handleMoveTokens = useCallback(
-    () =>
-      openDialog({
-        colony,
-        fromDomain:
-          currentDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID
-            ? currentDomainId
-            : undefined,
-      }),
-    [openDialog, colony, currentDomainId],
-  );
 
   const {
     data,
@@ -81,33 +59,15 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
     },
   });
 
-  const isSupportedColonyVersion =
-    parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
-  const hasRegisteredProfile = !!username && !ethereal;
-
   return (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
-        <NavLink to={`/colony/${colonyName}/funds`}>
-          <Heading appearance={{ size: 'normal', weight: 'bold' }}>
+        {canMoveTokens ? (
+          <NavLink to={`/colony/${colonyName}/funds`}>
             <FormattedMessage {...MSG.title} />
-          </Heading>
-        </NavLink>
-        {canMoveTokens && (
-          <span className={styles.fundingButton}>
-            <Button
-              appearance={{ theme: 'blue' }}
-              onClick={handleMoveTokens}
-              text={MSG.buttonFund}
-              disabled={
-                !isSupportedColonyVersion ||
-                !isNetworkAllowed ||
-                !hasRegisteredProfile ||
-                !isDeploymentFinished
-              }
-            />
-          </span>
+          </NavLink>
+        ) : (
+          <FormattedMessage {...MSG.title} />
         )}
       </Heading>
       {data && !isLoadingTokenBalances ? (
