@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
-import { Redirect, Route, RouteChildrenProps, Switch, useParams } from 'react-router-dom';
+import {
+  Redirect,
+  Route,
+  RouteChildrenProps,
+  Switch,
+  useParams,
+} from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -13,6 +19,8 @@ import ColonyActions from '~dashboard/ColonyActions';
 import ColonyEvents from '~dashboard/ColonyEvents';
 
 import ColonyHomeLayout from './ColonyHomeLayout';
+
+import styles from './ColonyHomeLayout.css';
 
 import {
   COLONY_EVENTS_ROUTE,
@@ -55,25 +63,7 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const filteredDomainId = domainIdFilter || COLONY_TOTAL_BALANCE_DOMAIN_ID;
 
-  const {
-    data,
-    error,
-    loading,
-    /**
-     * @NOTE Hooking into the return variable value
-     *
-     * Since this is a client side query it's return value will never end up
-     * in the final result from the main query hook, either the value or the
-     * eventual error.
-     *
-     * For this we hook into the `address` value which will be set internally
-     * by the `@client` query so that we can act on it if we encounter an ENS
-     * error.
-     *
-     * Based on that error we can determine if the colony is registered or not.
-     */
-    variables: dataVariables,
-  } = useColonyFromNameQuery({
+  const { data, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });

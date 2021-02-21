@@ -37,9 +37,9 @@ const ColonyFunding = ({ colony: { colonyName, colonyAddress } }: Props) => {
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
         <FormattedMessage {...MSG.title} />
       </Heading>
-      {data && !loading ? (
+      {data?.processedColony && !loading ? (
         <ul>
-          {data.colony.installedExtensions
+          {data.processedColony.installedExtensions
             .filter(
               (extension) =>
                 extension.details.initialized &&

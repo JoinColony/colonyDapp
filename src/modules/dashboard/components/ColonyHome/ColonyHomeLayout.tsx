@@ -1,10 +1,4 @@
 import React, { ReactChild } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
-
-import { Colony } from '~data/index';
-import Alert from '~core/Alert';
-import { DialogActionButton } from '~core/Button';
-import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 
 import DomainDropdown from '~dashboard/DomainDropdown';
 import ColonyHomeActions from '~dashboard/ColonyHomeActions';
@@ -16,25 +10,17 @@ import ColonyNavigation from './ColonyNavigation';
 import ColonyMembers from './ColonyMembers';
 import ColonyExtensions from './ColonyExtensions';
 import ColonyDomainDescription from './ColonyDomainDescription';
+import ColonyUpgrade from './ColonyUpgrade';
+import ColonyFinishDeployment from './ColonyFinishDeployment';
 
-import { ActionTypes } from '~redux/index';
+import { Colony } from '~data/index';
 
 import styles from './ColonyHomeLayout.css';
-
-const MSG = defineMessages({
-  upgradeRequired: {
-    id: `dashboard.ColonyHome.ColonyLayout.upgradeRequired`,
-    defaultMessage: `This colony uses a version of the network that is no
-      longer supported. You must upgrade to continue using this application.`,
-  },
-});
 
 type Props = {
   colony: Colony;
   filteredDomainId: number;
   onDomainChange?: (domainId: number) => void;
-  canUpgradeColony?: boolean;
-  mustUpgradeColony?: boolean;
   /*
    * This component should only be used with a child to render,
    * otherwise it has no point
@@ -48,12 +34,9 @@ type Props = {
 const displayName = 'dashboard.ColonyHome.ColonyHomeLayout';
 
 const ColonyHomeLayout = ({
-  colony: { colonyAddress },
   colony,
   filteredDomainId,
   children,
-  canUpgradeColony = false,
-  mustUpgradeColony = false,
   showControls = true,
   showNavigation = true,
   showSidebar = true,
@@ -97,31 +80,8 @@ const ColonyHomeLayout = ({
         <aside />
       )}
     </div>
-    {!!mustUpgradeColony && (
-      <div className={styles.upgradeBannerContainer}>
-        <Alert
-          appearance={{
-            theme: 'danger',
-            margin: 'none',
-            borderRadius: 'none',
-          }}
-        >
-          <div className={styles.upgradeBanner}>
-            <FormattedMessage {...MSG.upgradeRequired} />
-          </div>
-          <DialogActionButton
-            appearance={{ theme: 'primary', size: 'medium' }}
-            text={{ id: 'button.upgrade' }}
-            dialog={NetworkContractUpgradeDialog}
-            submit={ActionTypes.COLONY_VERSION_UPGRADE}
-            success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
-            error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
-            values={{ colonyAddress }}
-            disabled={!canUpgradeColony}
-          />
-        </Alert>
-      </div>
-    )}
+    <ColonyUpgrade colony={colony} />
+    <ColonyFinishDeployment colony={colony} />
   </div>
 );
 
