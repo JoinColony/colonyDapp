@@ -31,8 +31,6 @@ import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import MultisigWidget from '../MultisigWidget';
 import DetailsWidget from '../DetailsWidget';
-import TransactionHash from '../TransactionHash';
-import { STATUS_MAP } from '../staticMaps';
 
 import styles from './DefaultAction.css';
 
@@ -59,8 +57,6 @@ const DefaultAction = ({
   colony: { colonyAddress, domains },
   token: { decimals, symbol },
   colonyAction: {
-    hash,
-    status,
     events = [],
     createdAt,
     actionType,
@@ -207,19 +203,6 @@ const DefaultAction = ({
               }}
             />
           </h1>
-          {!events?.length && hash && (
-            <TransactionHash
-              transactionHash={hash}
-              /*
-               * @NOTE Otherwise it interprets 0 as false, rather then a index
-               * Typecasting it doesn't work as well
-               */
-              status={
-                typeof status === 'number' ? STATUS_MAP[status] : undefined
-              }
-              createdAt={createdAt}
-            />
-          )}
           {actionType !== ColonyActions.Generic && annotationHash && (
             <ActionsPageFeedItem
               createdAt={createdAt}

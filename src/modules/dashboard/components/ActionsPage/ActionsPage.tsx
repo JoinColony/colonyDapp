@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -19,7 +19,8 @@ import { NOT_FOUND_ROUTE } from '~routes/index';
 import { ColonyActions } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
 
-import { Hash } from './TransactionHash';
+import TransactionHash, { Hash } from './TransactionHash';
+import { STATUS_MAP } from './staticMaps';
 
 import NakedMoleImage from '../../../../img/naked-mole.svg';
 import styles from './ActionsPage.css';
@@ -36,6 +37,10 @@ const MSG = defineMessages({
   returnToColony: {
     id: 'dashboard.ActionsPage.returnToColony',
     defaultMessage: `Return to colony`,
+  },
+  unknownTransaction: {
+    id: 'dashboard.ActionsPage.unknownTransaction',
+    defaultMessage: `Unknown Transaction`,
   },
 });
 
@@ -210,7 +215,39 @@ const ActionsPage = () => {
   const initiatorProfileWithFallback =
     initiatorProfile?.user || fallbackInitiatorProfile;
 
-  const { actionType } = colonyActionData?.colonyAction;
+  const {
+    actionType,
+    events,
+    hash,
+    createdAt,
+    status,
+  } = colonyActionData?.colonyAction;
+
+  if (!events?.length && hash) {
+    return (
+      <div className={styles.main}>
+        <hr className={styles.dividerTop} />
+        <div className={styles.container}>
+          <div className={styles.content}>
+            <h1 className={styles.heading}>
+              <FormattedMessage {...MSG.unknownTransaction} />
+            </h1>
+            <TransactionHash
+              transactionHash={hash}
+              /*
+               * @NOTE Otherwise it interprets 0 as false, rather then a index
+               * Typecasting it doesn't work as well
+               */
+              status={
+                typeof status === 'number' ? STATUS_MAP[status] : undefined
+              }
+              createdAt={createdAt}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   switch (actionType) {
     /*
