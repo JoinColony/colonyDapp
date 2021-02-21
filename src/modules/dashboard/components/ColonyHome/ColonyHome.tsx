@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import {
   Redirect,
@@ -70,6 +70,75 @@ const ColonyHome = ({ match, location }: Props) => {
 
   if (error) console.error(error);
 
+  const memoizedSwitch = useMemo(() => {
+    if (data?.processedColony) {
+      const { processedColony: colony } = data;
+      const { colonyAddress } = colony;
+      return (
+        <Switch>
+          <Route
+            path={COLONY_EVENTS_ROUTE}
+            component={() => (
+              <ColonyHomeLayout
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+              >
+                <ColonyEvents colony={colony} ethDomainId={filteredDomainId} />
+              </ColonyHomeLayout>
+            )}
+          />
+          <Route
+            exact
+            path={COLONY_EXTENSIONS_ROUTE}
+            render={(props) => (
+              <ColonyHomeLayout
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+                showControls={false}
+                showSidebar={false}
+              >
+                <Extensions {...props} colonyAddress={colonyAddress} />
+              </ColonyHomeLayout>
+            )}
+          />
+          <Route
+            exact
+            path={[
+              COLONY_EXTENSION_DETAILS_ROUTE,
+              COLONY_EXTENSION_SETUP_ROUTE,
+            ]}
+            render={(props) => (
+              <ColonyHomeLayout
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+                showControls={false}
+                showSidebar={false}
+              >
+                <ExtensionDetails {...props} colonyAddress={colonyAddress} />
+              </ColonyHomeLayout>
+            )}
+          />
+          <Route
+            path={COLONY_HOME_ROUTE}
+            component={() => (
+              <ColonyHomeLayout
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+              >
+                <ColonyActions colony={colony} ethDomainId={filteredDomainId} />
+              </ColonyHomeLayout>
+            )}
+          />
+        </Switch>
+      );
+    }
+    return null;
+  }, [data, setDomainIdFilter, filteredDomainId]);
+
   /*
    * Keep the page loaded when the colony name changes, but we have data
    *
@@ -104,67 +173,7 @@ const ColonyHome = ({ match, location }: Props) => {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  const { processedColony: colony } = data;
-  const { colonyAddress } = colony;
-
-  return (
-    <Switch>
-      <Route
-        path={COLONY_EVENTS_ROUTE}
-        component={() => (
-          <ColonyHomeLayout
-            colony={colony}
-            filteredDomainId={filteredDomainId}
-            onDomainChange={setDomainIdFilter}
-          >
-            <ColonyEvents colony={colony} ethDomainId={domainIdFilter} />
-          </ColonyHomeLayout>
-        )}
-      />
-      <Route
-        exact
-        path={COLONY_EXTENSIONS_ROUTE}
-        render={(props) => (
-          <ColonyHomeLayout
-            colony={colony}
-            filteredDomainId={filteredDomainId}
-            onDomainChange={setDomainIdFilter}
-            showControls={false}
-            showSidebar={false}
-          >
-            <Extensions {...props} colonyAddress={colonyAddress} />
-          </ColonyHomeLayout>
-        )}
-      />
-      <Route
-        exact
-        path={[COLONY_EXTENSION_DETAILS_ROUTE, COLONY_EXTENSION_SETUP_ROUTE]}
-        render={(props) => (
-          <ColonyHomeLayout
-            colony={colony}
-            filteredDomainId={filteredDomainId}
-            onDomainChange={setDomainIdFilter}
-            showControls={false}
-            showSidebar={false}
-          >
-            <ExtensionDetails {...props} colonyAddress={colonyAddress} />
-          </ColonyHomeLayout>
-        )}
-      />
-      <Route
-        path={COLONY_HOME_ROUTE}
-        component={() => (
-          <ColonyHomeLayout
-            colony={colony}
-            filteredDomainId={filteredDomainId}
-            onDomainChange={setDomainIdFilter}
-          >
-            <ColonyActions colony={colony} ethDomainId={domainIdFilter} />
-          </ColonyHomeLayout>
-        )}
-      />
-    </Switch>
-  );
+  return memoizedSwitch;
 };
 
 ColonyHome.displayName = displayName;

@@ -1,6 +1,5 @@
 .main {
   composes: stretch from '~styles/layout.css';
-  margin-top: -15px;
   overflow: visible;
 }
 
