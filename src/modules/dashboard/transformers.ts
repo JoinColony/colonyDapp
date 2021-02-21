@@ -307,7 +307,7 @@ export const getEventsListData = (
         ...processedEvents,
         {
           id,
-          agent: agent ? createAddress(agent) : null,
+          agent: agent || user ? createAddress(agent || user) : null,
           eventName: formatEventName(name),
           transactionHash: hash,
           colonyAddress: checksummedColonyAddress,
