@@ -8,7 +8,7 @@ import {
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import { Address } from '~types/index';
@@ -27,6 +27,7 @@ import {
   useTokenBalancesForDomainsLazyQuery,
   Colony,
   AnyUser,
+  useColonyExtensionsQuery,
 } from '~data/index';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
@@ -110,7 +111,7 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
 const CreatePaymentDialogForm = ({
   back,
   colony,
-  colony: { colonyAddress, domains, tokens, canMakePayment },
+  colony: { colonyAddress, domains, tokens },
   subscribedUsers,
   handleSubmit,
   isSubmitting,
@@ -127,6 +128,10 @@ const CreatePaymentDialogForm = ({
   const domainId = values.domainId
     ? parseInt(values.domainId, 10)
     : ROOT_DOMAIN_ID;
+
+  const { data: colonyExtensionsData } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
 
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
@@ -252,6 +257,11 @@ const CreatePaymentDialogForm = ({
     ColonyRole.Funding,
     ColonyRole.Administration,
   ];
+
+  const canMakePayment =
+    colonyExtensionsData?.processedColony?.installedExtensions?.find(
+      ({ extensionId }) => extensionId === Extension.OneTxPayment,
+    ) || false;
 
   return (
     <>

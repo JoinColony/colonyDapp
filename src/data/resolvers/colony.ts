@@ -568,22 +568,6 @@ export const colonyResolvers = ({
 
       return isDeploymentFinished;
     },
-    /*
-     * @NOTE This is temporary until the Extension Manager #2260 gets merged
-     * and will provide a more robust way of getting the extensions
-     *
-     * This only detects the OneTxPayment extension
-     */
-    async canMakePayment({ colonyAddress }) {
-      const extensionAddress = await networkClient.getExtensionInstallation(
-        getExtensionHash('OneTxPayment'),
-        colonyAddress,
-      );
-      if (extensionAddress === AddressZero) {
-        return false;
-      }
-      return true;
-    },
     async installedExtensions({ colonyAddress }) {
       const promises = extensions.map((extensionId: Extension) =>
         networkClient.getExtensionInstallation(

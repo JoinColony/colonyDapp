@@ -348,7 +348,6 @@ export default gql`
     transfers: [Transfer!]!
     unclaimedTransfers: [Transfer!]!
     events: [NetworkEvent!]!
-    canMakePayment: Boolean!
     isDeploymentFinished: Boolean!
     installedExtensions: [ColonyExtension!]!
   }
