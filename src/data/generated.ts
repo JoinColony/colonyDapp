@@ -683,6 +683,7 @@ export type Query = {
   colonyAction: ColonyAction;
   colonyAddress: Scalars['String'];
   colonyDomain: ProcessedDomain;
+  colonyExtension?: Maybe<ColonyExtension>;
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   domains: Array<SubgraphDomain>;
@@ -732,6 +733,12 @@ export type QueryColonyAddressArgs = {
 export type QueryColonyDomainArgs = {
   colonyAddress: Scalars['String'];
   domainId: Scalars['Int'];
+};
+
+
+export type QueryColonyExtensionArgs = {
+  colonyAddress: Scalars['String'];
+  extensionId: Scalars['String'];
 };
 
 
@@ -1091,6 +1098,26 @@ export type NetworkEvent = {
   domainId?: Maybe<Scalars['String']>;
 };
 
+export type ColonyExtension = {
+  address: Scalars['String'];
+  id: Scalars['String'];
+  extensionId: Scalars['String'];
+  details: ColonyExtensionDetails;
+};
+
+
+export type ColonyExtensionDetailsArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+export type ColonyExtensionDetails = {
+  deprecated: Scalars['Boolean'];
+  initialized: Scalars['Boolean'];
+  installedBy: Scalars['String'];
+  installedAt: Scalars['Int'];
+  missingPermissions: Array<Scalars['Int']>;
+};
+
 export type ProcessedMetaColony = {
   id: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -1237,6 +1264,7 @@ export type ProcessedColony = {
   events: Array<NetworkEvent>;
   canMakePayment: Scalars['Boolean'];
   isDeploymentFinished: Scalars['Boolean'];
+  installedExtensions: Array<ColonyExtension>;
 };
 
 export type ActionsFilter = {
@@ -1738,6 +1766,30 @@ export type UserAddressQueryVariables = Exact<{
 
 
 export type UserAddressQuery = Pick<Query, 'userAddress'>;
+
+export type ColonyExtensionsQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyExtensionsQuery = { processedColony: (
+    Pick<ProcessedColony, 'id' | 'colonyAddress'>
+    & { installedExtensions: Array<(
+      Pick<ColonyExtension, 'id' | 'extensionId' | 'address'>
+      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+    )> }
+  ) };
+
+export type ColonyExtensionQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  extensionId: Scalars['String'];
+}>;
+
+
+export type ColonyExtensionQuery = { colonyExtension?: Maybe<(
+    Pick<ColonyExtension, 'id' | 'address' | 'extensionId'>
+    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+  )> };
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3895,6 +3947,95 @@ export function useUserAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type UserAddressQueryHookResult = ReturnType<typeof useUserAddressQuery>;
 export type UserAddressLazyQueryHookResult = ReturnType<typeof useUserAddressLazyQuery>;
 export type UserAddressQueryResult = Apollo.QueryResult<UserAddressQuery, UserAddressQueryVariables>;
+export const ColonyExtensionsDocument = gql`
+    query ColonyExtensions($address: String!) {
+  processedColony(address: $address) @client {
+    id
+    colonyAddress
+    installedExtensions @client {
+      id
+      extensionId
+      address
+      details(colonyAddress: $address) {
+        deprecated
+        initialized
+        installedBy
+        installedAt
+        missingPermissions
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyExtensionsQuery__
+ *
+ * To run a query within a React component, call `useColonyExtensionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyExtensionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyExtensionsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyExtensionsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>) {
+        return Apollo.useQuery<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>(ColonyExtensionsDocument, baseOptions);
+      }
+export function useColonyExtensionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>(ColonyExtensionsDocument, baseOptions);
+        }
+export type ColonyExtensionsQueryHookResult = ReturnType<typeof useColonyExtensionsQuery>;
+export type ColonyExtensionsLazyQueryHookResult = ReturnType<typeof useColonyExtensionsLazyQuery>;
+export type ColonyExtensionsQueryResult = Apollo.QueryResult<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>;
+export const ColonyExtensionDocument = gql`
+    query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
+  colonyExtension(colonyAddress: $colonyAddress, extensionId: $extensionId) @client {
+    id
+    address
+    extensionId
+    details(colonyAddress: $colonyAddress) {
+      deprecated
+      initialized
+      installedBy
+      installedAt
+      missingPermissions
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyExtensionQuery__
+ *
+ * To run a query within a React component, call `useColonyExtensionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyExtensionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyExtensionQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      extensionId: // value for 'extensionId'
+ *   },
+ * });
+ */
+export function useColonyExtensionQuery(baseOptions?: Apollo.QueryHookOptions<ColonyExtensionQuery, ColonyExtensionQueryVariables>) {
+        return Apollo.useQuery<ColonyExtensionQuery, ColonyExtensionQueryVariables>(ColonyExtensionDocument, baseOptions);
+      }
+export function useColonyExtensionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyExtensionQuery, ColonyExtensionQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyExtensionQuery, ColonyExtensionQueryVariables>(ColonyExtensionDocument, baseOptions);
+        }
+export type ColonyExtensionQueryHookResult = ReturnType<typeof useColonyExtensionQuery>;
+export type ColonyExtensionLazyQueryHookResult = ReturnType<typeof useColonyExtensionLazyQuery>;
+export type ColonyExtensionQueryResult = Apollo.QueryResult<ColonyExtensionQuery, ColonyExtensionQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {

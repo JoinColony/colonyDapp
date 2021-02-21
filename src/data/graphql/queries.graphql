@@ -224,10 +224,8 @@ query UserAddress($name: String!) {
   userAddress(name: $name) @client
 }
 
-This is most likely broken!
-
 query ColonyExtensions($address: String!) {
-  colony(address: $address) {
+  processedColony(address: $address) @client {
     id
     colonyAddress
     installedExtensions @client {
@@ -352,7 +350,7 @@ query NetworkContracts {
     feeInverse
   }
 }
-# NOTE: This is temporary. Refactor after merging colonyDapp#2260 
+# NOTE: This is temporary. Refactor after merging colonyDapp#2260
 query OneTxPaymentExtensionAddress {
   oneTxPaymentExtensionAddress @client
 }
