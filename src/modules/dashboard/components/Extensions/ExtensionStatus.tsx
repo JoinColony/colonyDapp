@@ -1,8 +1,9 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { ColonyExtension } from '~data/index';
 import Tag from '~core/Tag';
+
+import { ColonyExtension } from '~data/index';
 
 const MSG = defineMessages({
   installed: {
