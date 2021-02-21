@@ -7,16 +7,11 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ColonyRole } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
-import {
-  useColonyExtensionQuery,
-  useColonyRolesQuery,
-  useLoggedInUser,
-} from '~data/index';
-import { Address } from '~types/index';
+import { Colony, useLoggedInUser, useColonyExtensionQuery } from '~data/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
@@ -34,7 +29,8 @@ import {
 } from '~routes/index';
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
-import { getUserRolesForDomain } from '../../../transformers';
+import { getAllUserRoles } from '../../../transformers';
+import { hasRoot } from '../../../users/checks';
 
 import styles from './ExtensionDetails.css';
 import ExtensionActionButton from './ExtensionActionButton';
@@ -117,36 +113,30 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
 }
 
-const ExtensionDetails = ({ colonyAddress }: Props) => {
+const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
   const { colonyName, extensionId } = useParams<{
     colonyName: string;
     extensionId: string;
   }>();
   const match = useRouteMatch();
   const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+
   const { data, loading } = useColonyExtensionQuery({
     variables: { colonyAddress, extensionId },
   });
 
-  const { data: colonyRolesData } = useColonyRolesQuery({
-    variables: { address: colonyAddress },
-  });
-
-  const rootUserRoles = useTransformer(getUserRolesForDomain, [
-    colonyRolesData && colonyRolesData.colony,
-    walletAddress,
-    ROOT_DOMAIN_ID,
-  ]);
+  const hasRegisteredProfile = !!username && !ethereal;
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   if (loading) {
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
   }
 
-  const canInstall = rootUserRoles.includes(ColonyRole.Root);
+  const canInstall = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const installedExtension = data ? data.colonyExtension : null;
   const extension = extensionData[extensionId];

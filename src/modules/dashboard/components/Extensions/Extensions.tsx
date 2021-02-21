@@ -43,7 +43,9 @@ const Extensions = ({ colonyAddress }: Props) => {
   if (loading) {
     return <SpinnerLoader appearance={{ size: 'medium' }} />;
   }
-  const installedExtensions = data ? data.colony.installedExtensions : [];
+  const installedExtensions = data
+    ? data.processedColony.installedExtensions
+    : [];
 
   const installedExtensionsData = installedExtensions.map(
     ({ extensionId, address }) => ({

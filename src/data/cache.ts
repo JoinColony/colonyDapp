@@ -25,6 +25,9 @@ export default new InMemoryCache({
         unclaimedTransfers: {
           merge: false,
         },
+        installedExtensions: {
+          merge: false,
+        },
       },
     },
     User: {

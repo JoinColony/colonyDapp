@@ -117,7 +117,7 @@ const ColonyHome = ({ match, location }: Props) => {
                 showControls={false}
                 showSidebar={false}
               >
-                <ExtensionDetails {...props} colonyAddress={colonyAddress} />
+                <ExtensionDetails {...props} colony={colony} />
               </ColonyHomeLayout>
             )}
           />

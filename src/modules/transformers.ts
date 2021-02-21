@@ -26,7 +26,7 @@ const getRolesForUserAndParentDomains = (
   domainId: number,
   roleSet = new Set<ColonyRole>(),
 ): ColonyRole[] => {
-  const domain = colony.domains.find(
+  const domain = colony?.domains?.find(
     ({ ethDomainId }) => ethDomainId === domainId,
   );
   if (!domain) return Array.from(roleSet);
