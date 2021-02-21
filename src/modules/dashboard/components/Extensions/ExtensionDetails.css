@@ -55,6 +55,14 @@
   margin-top: 30px;
 }
 
+.permissions div {
+  margin-right: 7px;
+}
+
+.permissions div:last-child {
+  margin-right: 0px;
+}
+
 .buttonUninstall {
   margin-top: 10px;
   text-align: right;
