@@ -10,6 +10,8 @@ import Heading from '~core/Heading';
 import Dialog from './Dialog';
 import DialogSection from './DialogSection';
 
+import styles from './ConfirmDialog.css';
+
 const MSG = defineMessages({
   defaultHeading: {
     id: 'ConfirmDialog.defaultHeading',
@@ -49,13 +51,19 @@ const ConfirmDialog = ({
   onClick = () => close(null),
 }: Props) => (
   <Dialog cancel={cancel}>
-    <DialogSection appearance={{ border: 'bottom' }}>
-      <Heading appearance={{ size: 'medium', margin: 'none' }} text={heading} />
+    <DialogSection appearance={{ theme: 'heading' }}>
+      <Heading
+        appearance={{ size: 'medium', margin: 'none' }}
+        text={heading}
+        className={styles.title}
+      />
     </DialogSection>
-    <DialogSection appearance={{ border: 'bottom' }}>
-      {children || <FormattedMessage {...MSG.defaultText} />}
+    <DialogSection>
+      <div className={styles.content}>
+        {children || <FormattedMessage {...MSG.defaultText} />}
+      </div>
     </DialogSection>
-    <DialogSection appearance={{ align: 'right' }}>
+    <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
       <Button
         appearance={{ theme: 'secondary', size: 'large' }}
         onClick={() => cancel()}
@@ -69,6 +77,7 @@ const ConfirmDialog = ({
         autoFocus
         onClick={onClick}
         text={confirmButtonText}
+        style={{ width: styles.wideButton }}
       />
     </DialogSection>
   </Dialog>

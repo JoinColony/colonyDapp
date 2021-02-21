@@ -1,0 +1,12 @@
+@value wideButton: 160px;
+
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.content {
+  padding-bottom: 40px;
+}
