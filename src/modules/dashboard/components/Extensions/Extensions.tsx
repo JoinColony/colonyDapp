@@ -30,6 +30,10 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.availableExtensions',
     defaultMessage: 'Available Extensions',
   },
+  loading: {
+    id: 'dashboard.Extensions.loading',
+    defaultMessage: `Loading Extensions`,
+  },
 });
 
 interface Props {
@@ -40,9 +44,18 @@ const Extensions = ({ colonyAddress }: Props) => {
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
+
   if (loading) {
-    return <SpinnerLoader appearance={{ size: 'medium' }} />;
+    return (
+      <div className={styles.loadingSpinner}>
+        <SpinnerLoader
+          loadingText={MSG.loading}
+          appearance={{ theme: 'primary', size: 'massive' }}
+        />
+      </div>
+    );
   }
+
   const installedExtensions = data
     ? data.processedColony.installedExtensions
     : [];
@@ -73,7 +86,7 @@ const Extensions = ({ colonyAddress }: Props) => {
           <>
             <Heading
               tagName="h3"
-              appearance={{ size: 'normal', margin: 'small' }}
+              appearance={{ size: 'normal', margin: 'double' }}
               text={MSG.installedExtensions}
             />
             <div className={styles.cards}>
@@ -91,7 +104,7 @@ const Extensions = ({ colonyAddress }: Props) => {
           <div className={styles.availableExtensionsWrapper}>
             <Heading
               tagName="h3"
-              appearance={{ size: 'normal', margin: 'small' }}
+              appearance={{ size: 'normal', margin: 'double' }}
               text={MSG.availableExtensions}
             />
             <div className={styles.cards}>

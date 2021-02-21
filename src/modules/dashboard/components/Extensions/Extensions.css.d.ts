@@ -5,3 +5,4 @@ export const content: string;
 export const sidebar: string;
 export const availableExtensionsWrapper: string;
 export const cards: string;
+export const loadingSpinner: string;

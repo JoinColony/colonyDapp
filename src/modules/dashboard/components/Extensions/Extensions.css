@@ -46,3 +46,7 @@
   flex-wrap: wrap;
   width: 100%;
 }
+
+.loadingSpinner {
+  margin-top: 100px;
+}
