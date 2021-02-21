@@ -1,5 +1,5 @@
 import { ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Address, WithKey } from '~types/index';
 import {
   ActionType,
   ErrorActionType,
