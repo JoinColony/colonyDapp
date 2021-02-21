@@ -210,7 +210,7 @@ function* createPaymentAction({
   }
 }
 
-export default function* tasksSagas() {
+export default function* paymentActionSaga() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
     createPaymentAction,

@@ -183,6 +183,6 @@ function* editDomainAction({
   return null;
 }
 
-export default function* tasksSagas() {
+export default function* editDomainActionSaga() {
   yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_EDIT, editDomainAction);
 }

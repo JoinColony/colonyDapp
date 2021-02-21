@@ -55,6 +55,6 @@ function* colonyTokenUnlock({
   return null;
 }
 
-export default function* tasksSagas() {
+export default function* unlockTokenActionSaga() {
   yield takeEvery(ActionTypes.COLONY_ACTION_UNLOCK_TOKEN, colonyTokenUnlock);
 }

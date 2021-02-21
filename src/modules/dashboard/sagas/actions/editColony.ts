@@ -217,6 +217,6 @@ function* editColonyAction({
   return null;
 }
 
-export default function* tasksSagas() {
+export default function* editColonyActionSaga() {
   yield takeEvery(ActionTypes.COLONY_ACTION_EDIT_COLONY, editColonyAction);
 }

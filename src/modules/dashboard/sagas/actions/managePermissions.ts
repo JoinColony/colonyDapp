@@ -183,7 +183,7 @@ function* managePermissionsAction({
   return null;
 }
 
-export default function* tasksSagas() {
+export default function* managePermissionsActionSaga() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_USER_ROLES_SET,
     managePermissionsAction,

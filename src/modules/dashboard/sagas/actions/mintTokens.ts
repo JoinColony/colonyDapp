@@ -167,7 +167,7 @@ function* createMintTokensAction({
   }
 }
 
-export default function* tasksSagas() {
+export default function* mintTokensActionSaga() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_MINT_TOKENS,
     createMintTokensAction,

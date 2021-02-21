@@ -183,6 +183,6 @@ function* createDomainAction({
   return null;
 }
 
-export default function* tasksSagas() {
+export default function* createDomainActionSaga() {
   yield takeEvery(ActionTypes.COLONY_ACTION_DOMAIN_CREATE, createDomainAction);
 }

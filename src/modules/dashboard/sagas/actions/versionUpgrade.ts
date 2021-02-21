@@ -147,7 +147,7 @@ function* createVersionUpgradeAction({
   }
 }
 
-export default function* tasksSagas() {
+export default function* versionUpgradeActionSaga() {
   yield takeEvery(
     ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
     createVersionUpgradeAction,

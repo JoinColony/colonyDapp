@@ -199,6 +199,6 @@ function* createMoveFundsAction({
   }
 }
 
-export default function* tasksSagas() {
+export default function* moveFundsActionSaga() {
   yield takeEvery(ActionTypes.COLONY_ACTION_MOVE_FUNDS, createMoveFundsAction);
 }
