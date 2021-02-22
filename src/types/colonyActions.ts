@@ -83,6 +83,7 @@ export enum ColonyAndExtensionsEvents {
   ReputationMinerPenalised = 'ReputationMinerPenalised',
   ExtensionAddedToNetwork = 'ExtensionAddedToNetwork',
   ExtensionInstalled = 'ExtensionInstalled',
+  ExtensionInitialised = 'ExtensionInitialised',
   ExtensionUpgraded = 'ExtensionUpgraded',
   ExtensionDeprecated = 'ExtensionDeprecated',
   ExtensionUninstalled = 'ExtensionUninstalled',
@@ -147,4 +148,6 @@ export interface FormattedEvent {
   amount: string;
   role: ColonyRole;
   setTo: boolean;
+  extensionHash?: string;
+  extensionVersion?: string;
 }

@@ -288,6 +288,8 @@ export const getEventsListData = (
         role,
         setTo,
         user,
+        extensionId,
+        version,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -319,6 +321,8 @@ export const getEventsListData = (
           amount: amount || payoutRemainder || '0',
           role,
           setTo: setTo === 'true',
+          extensionHash: extensionId,
+          extensionVersion: version,
         },
       ];
     } catch (error) {

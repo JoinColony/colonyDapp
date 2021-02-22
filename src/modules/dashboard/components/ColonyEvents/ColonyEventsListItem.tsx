@@ -59,6 +59,8 @@ const ColonyEventsListItem = ({
     paymentId,
     role,
     setTo,
+    extensionHash,
+    extensionVersion,
   },
   colony: { tokens, nativeTokenAddress },
   colony,
@@ -121,6 +123,8 @@ const ColonyEventsListItem = ({
     paymentId,
     displayValues,
     role: role ? getFormattedRole() : '',
+    extensionHash,
+    extensionVersion,
   };
 
   return (
