@@ -13,6 +13,9 @@ import {
   ColonyExtensionsQuery,
   ColonyExtensionsQueryVariables,
   ColonyExtensionsDocument,
+  ProcessedColonyQuery,
+  ProcessedColonyQueryVariables,
+  ProcessedColonyDocument,
 } from '~data/index';
 import extensionData from '~data/staticData/extensionData';
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -47,6 +50,15 @@ function* refreshExtension(colonyAddress: string, extensionId: string) {
     },
     fetchPolicy: 'network-only',
   });
+  yield apolloClient.query<ProcessedColonyQuery, ProcessedColonyQueryVariables>(
+    {
+      query: ProcessedColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    },
+  );
 }
 
 function* colonyExtensionInstall({
