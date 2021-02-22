@@ -11,7 +11,12 @@ import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
-import { useUserNotificationsQuery, useLoggedInUser, useUserBalanceWithLockQuery, useColonyFromNameQuery } from '~data/index';
+import {
+  useUserNotificationsQuery,
+  useLoggedInUser,
+  useUserBalanceWithLockQuery,
+  useColonyFromNameQuery,
+} from '~data/index';
 import MaskedAddress from '~core/MaskedAddress';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 import { useSelector } from '~utils/hooks';
@@ -50,7 +55,10 @@ const UserNavigation = () => {
   });
 
   const { data: userData } = useUserBalanceWithLockQuery({
-    variables: { address: walletAddress, tokenAddress: colonyData?.processedColony?.nativeTokenAddress || '' },
+    variables: {
+      address: walletAddress,
+      tokenAddress: colonyData?.processedColony?.nativeTokenAddress || '',
+    },
   });
 
   const notifications = (data && data.user && data.user.notifications) || [];
@@ -74,8 +82,10 @@ const UserNavigation = () => {
   const nativeToken = userLock?.nativeToken;
   const userActiveBalance = nativeToken?.balance;
 
-  const lockedBalance = userLock && bigNumberify(userLock.balance) || bigNumberify(0);
-  const walletBalance = userActiveBalance && bigNumberify(userActiveBalance) || bigNumberify(0);
+  const lockedBalance =
+    (userLock && bigNumberify(userLock.balance)) || bigNumberify(0);
+  const walletBalance =
+    (userActiveBalance && bigNumberify(userActiveBalance)) || bigNumberify(0);
   const totalBalance = lockedBalance.add(walletBalance);
 
   return (
@@ -115,7 +125,12 @@ const UserNavigation = () => {
         {userCanNavigate && nativeToken && (
           <>
             <button type="button" className={styles.tokens}>
-              <span className={`${styles.dot} ${(lockedBalance.gt(0) || totalBalance.isZero()) && styles.dotInactive}`} />
+              <span
+                className={`${styles.dot} ${
+                  (lockedBalance.gt(0) || totalBalance.isZero()) &&
+                  styles.dotInactive
+                }`}
+              />
               <Numeral
                 suffix={` ${nativeToken?.symbol} `}
                 unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
