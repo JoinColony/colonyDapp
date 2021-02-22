@@ -27,9 +27,6 @@ const TOKEN_INFO = Object.freeze({
   ...DEFAULT_NETWORK_TOKEN,
 });
 
-// Token data is used a lot and never change. They require a custom cache
-const tokenCache = new Map();
-
 const getBalanceForTokenAndDomain = async (
   colonyClient: ColonyClient,
   tokenAddress: string,
@@ -132,9 +129,6 @@ export const getToken = async (
   address: Address,
   walletAddress?: Address,
 ) => {
-  if (tokenCache.has(address)) {
-    return tokenCache.get(address);
-  }
   const tokenData = await getTokenData({ colonyManager, client }, address);
 
   if (walletAddress !== undefined && tokenData !== null) {
@@ -151,7 +145,6 @@ export const getToken = async (
     }
   }
 
-  tokenCache.set(address, tokenData);
   return tokenData;
 };
 
