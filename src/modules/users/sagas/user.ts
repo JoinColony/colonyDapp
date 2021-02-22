@@ -26,8 +26,15 @@ import { putError, takeFrom } from '~utils/saga/effects';
 
 import { clearToken } from '../../../api/auth';
 import { ipfsUpload } from '../../core/sagas/ipfs';
-import { transactionLoadRelated } from '../../core/actionCreators';
-import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
+import {
+  transactionLoadRelated,
+  transactionReady,
+} from '../../core/actionCreators';
+import {
+  createTransactionChannels,
+  createTransaction,
+  getTxChannel,
+} from '../../core/sagas/transactions';
 import { clearLastWallet } from '~utils/autoLogin';
 
 function* userAddressFetch({
@@ -209,10 +216,96 @@ function* userLogout() {
   return null;
 }
 
+function* userDepositToken({
+  meta: { id },
+  meta,
+  payload: { tokenAddress, amount },
+}: Action<ActionTypes.USER_DEPOSIT_TOKEN>) {
+  try {
+    const txChannel = yield call(getTxChannel, id);
+
+    const { deposit } = yield createTransactionChannels(id, ['deposit']);
+
+    yield fork(createTransaction, id, {
+      context: ClientType.NetworkClient,
+      methodName: 'deposit',
+      ready: false,
+      params: [tokenAddress, amount, false],
+      group: {
+        key: 'transaction.batch.deposit',
+        id,
+        index: 0,
+      },
+    });
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
+
+    yield put(transactionReady(deposit.id));
+
+    yield takeFrom(deposit.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    yield put<AllActions>({
+      type: ActionTypes.USER_DEPOSIT_TOKEN_SUCCESS,
+      meta,
+      payload: {
+        tokenAddress,
+        amount,
+      },
+    });
+  } catch (error) {
+    return yield putError(ActionTypes.USER_DEPOSIT_TOKEN_ERROR, error, meta);
+  }
+  return null;
+}
+
+function* userWithdrawToken({
+  meta: { id },
+  meta,
+  payload: { tokenAddress, amount },
+}: Action<ActionTypes.USER_WITHDRAW_TOKEN>) {
+  try {
+    const txChannel = yield call(getTxChannel, id);
+
+    const { withdraw } = yield createTransactionChannels(id, ['withdraw']);
+
+    yield fork(createTransaction, id, {
+      context: ClientType.NetworkClient,
+      methodName: 'withdraw',
+      ready: false,
+      params: [tokenAddress, amount, false],
+      group: {
+        key: 'transaction.batch.withdraw',
+        id,
+        index: 0,
+      },
+    });
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
+
+    yield put(transactionReady(withdraw.id));
+
+    yield takeFrom(withdraw.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    yield put<AllActions>({
+      type: ActionTypes.USER_WITHDRAW_TOKEN_SUCCESS,
+      meta,
+      payload: {
+        tokenAddress,
+        amount,
+      },
+    });
+  } catch (error) {
+    return yield putError(ActionTypes.USER_WITHDRAW_TOKEN_ERROR, error, meta);
+  }
+  return null;
+}
+
 export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);
   yield takeLatest(ActionTypes.USERNAME_CREATE, usernameCreate);
+  yield takeLatest(ActionTypes.USER_DEPOSIT_TOKEN, userDepositToken);
+  yield takeLatest(ActionTypes.USER_WITHDRAW_TOKEN, userWithdrawToken);
 }
