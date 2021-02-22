@@ -124,14 +124,26 @@
   display: flex;
 }
 
+.changeStateButtonsContainer > button {
+  width: 95px;
+  outline: none;
+
+  &:focus: {
+    outline: none;
+  }
+}
+
 .baseButton {
   width: 95px;
 }
 
 .whiteButton {
   composes: baseButton;
-  border: 1px solid --temp-grey-blue-7;
+  border: 1px solid var(--temp-grey-blue-7);
   background-color: white;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
 }
 
 .leftBorders {
@@ -142,6 +154,22 @@
 .rightBorders {
   composes: whiteButton;
   border-left: none;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 189px;
+}
+
+.inputField {
+  margin-bottom: 22px;
+  width: 100%;
+}
+
+.form > button {
+  width: 100px;
 }
 
 .claimsContainer {
