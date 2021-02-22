@@ -115,8 +115,8 @@
 }
 
 .walletAddress span {
-  font-weight: 600;
   font-size: 13px;
+  font-weight: 600;
 }
 
 .walletAddress:hover {
@@ -132,9 +132,9 @@
 }
 
 .buttonsWrapper {
+  padding: 1px;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
-  padding: 1px;
 }
 
 .readyTransactionsCount {
@@ -164,28 +164,28 @@
 
 .tokens {
   composes: walletAddress;
-  background: transparent;
+  margin-right: -5px;
   border: 0;
+  background: transparent;
   font-size: var(--size-smallis);
   font-weight: var(--weight-bold);
   color: var(--dark);
-  margin-right: -5px;
 }
 
 .tokens:hover {
   position: relative;
   z-index: 5;
-  background-color: #D9D8EC;
+  background-color: rgb(217, 216, 236);
   color: var(--colony-blue);
 }
 
 .dot {
   display: inline-block;
-  width: 9px;
+  margin-right: 5px;
   height: 9px;
+  width: 9px;
   border-radius: 50%;
   background-color: var(--primary);
-  margin-right: 5px;
 }
 
 .dotInactive {

@@ -730,9 +730,19 @@ export type ColonyExtensionDetails = {
   version: Scalars['Int'];
 };
 
+export type UserToken = {
+  address: Scalars['String'];
+  decimals: Scalars['Int'];
+  name: Scalars['String'];
+  symbol: Scalars['String'];
+  iconHash?: Maybe<Scalars['String']>;
+  verified: Scalars['Boolean'];
+  balance: Scalars['String'];
+};
+
 export type UserLock = {
   balance: Scalars['String'];
-  nativeToken: Token;
+  nativeToken?: Maybe<UserToken>;
 };
 
 export type ProcessedMetaColony = {
@@ -1147,7 +1157,7 @@ export type UserBalanceWithLockQuery = { user: (
     Pick<User, 'id'>
     & { userLock: (
       Pick<UserLock, 'balance'>
-      & { nativeToken: Pick<Token, 'decimals' | 'name' | 'symbol' | 'balance'> }
+      & { nativeToken?: Maybe<Pick<UserToken, 'decimals' | 'name' | 'symbol' | 'balance'>> }
     ) }
   ) };
 
