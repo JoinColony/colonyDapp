@@ -60,7 +60,11 @@ const getUserLock = async (
     tokenAddress,
     walletAddress,
   );
-  const nativeToken = await getToken({ colonyManager, client }, tokenAddress, walletAddress);
+  const nativeToken = await getToken(
+    { colonyManager, client },
+    tokenAddress,
+    walletAddress,
+  );
   return {
     __typename: 'UserLock',
     balance: userLock.balance.toString(),
@@ -137,9 +141,14 @@ export const userResolvers = ({
     async userLock(
       _,
       { tokenAddress, walletAddress },
-      { client }
+      { client },
     ): Promise<UserLock> {
-      const userLock = await getUserLock(client, colonyManager, walletAddress, tokenAddress);
+      const userLock = await getUserLock(
+        client,
+        colonyManager,
+        walletAddress,
+        tokenAddress,
+      );
       return userLock;
     },
     async tokenTransfers({
