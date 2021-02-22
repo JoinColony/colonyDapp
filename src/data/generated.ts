@@ -2137,7 +2137,7 @@ export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Arr
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'timestamp'> }
-    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata'> }
+    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user'> }
   )> };
 
 export const PayoutsFragmentDoc = gql`
@@ -5322,6 +5322,7 @@ export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
       amount
       token
       metadata
+      user
     }
   }
 }

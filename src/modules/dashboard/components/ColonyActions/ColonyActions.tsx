@@ -1,8 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
-import { Extension } from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
 
 import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
@@ -16,7 +14,6 @@ import {
   useTransactionMessagesCountQuery,
   useSubscriptionSubgraphOneTxSubscription,
   useSubscriptionSubgraphEventsThatAreActionsSubscription,
-  useColonyExtensionsQuery,
 } from '~data/index';
 import {
   ActionsSortOptions,
@@ -69,7 +66,7 @@ type Props = {
 const displayName = 'dashboard.ColonyActions';
 
 const ColonyActions = ({
-  colony: { colonyAddress, colonyName },
+  colony: { colonyAddress, colonyName, extensionAddresses },
   colony,
   ethDomainId,
 }: Props) => {
@@ -112,31 +109,10 @@ const ColonyActions = ({
     variables: { colonyAddress },
   });
 
-  const {
-    data: extensionsData,
-    loading: extensionDataLoading,
-  } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
-
-  /*
-   * @NOTE Prettier is stupid
-   *
-   * I want to fix this line so it's under 80 but apparently it doesn't like
-   * my solution and over-writes with a wrong approach
-   */
-  // eslint-disable-next-line max-len
-  const oneTxPaymentExtension = extensionsData?.processedColony?.installedExtensions?.find(
-    ({ extensionId }) => extensionId === Extension.OneTxPayment,
-  );
-
   const actions = useTransformer(getActionsListData, [
     { ...oneTxActions, ...eventsActions },
     commentCount?.transactionMessagesCount,
-    /*
-     * @TODO Filter out all extensions roles actions, not just the oneTx one
-     */
-    oneTxPaymentExtension?.address || AddressZero,
+    extensionAddresses as string[],
   ]);
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */
@@ -196,7 +172,6 @@ const ColonyActions = ({
     oneTxActionsLoading ||
     eventsActionsLoading ||
     commentCountLoading ||
-    extensionDataLoading ||
     !commentCount ||
     !oneTxActions ||
     !eventsActions

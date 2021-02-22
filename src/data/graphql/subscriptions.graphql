@@ -99,6 +99,7 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
       amount
       token
       metadata
+      user
     }
   }
 }
