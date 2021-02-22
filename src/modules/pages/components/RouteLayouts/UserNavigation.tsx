@@ -135,7 +135,12 @@ const UserNavigation = () => {
         {userCanNavigate && nativeToken && (
           <>
             <button type="button" className={styles.tokens}>
-              <span className={`${styles.dot} ${(lockedBalance.gt(0) || totalBalance.isZero()) && styles.dotInactive}`} />
+              <span
+                className={`${styles.dot} ${
+                  (lockedBalance.gt(0) || totalBalance.isZero()) &&
+                  styles.dotInactive
+                }`}
+              />
               <Numeral
                 suffix={` ${nativeToken?.symbol} `}
                 unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
