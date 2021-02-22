@@ -20,6 +20,7 @@ import {
   SubgraphColoniesQueryVariables,
   SubgraphColoniesDocument,
   UserLock,
+  UserToken,
 } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
@@ -55,20 +56,20 @@ const getUserLock = async (
   walletAddress: Address,
   tokenAddress: Address,
 ): Promise<UserLock> => {
-  const tokenUnlockClient = await colonyManager.networkClient.getTokenLockingClient();
+  const { networkClient } = colonyManager;
+  const tokenUnlockClient = await networkClient.getTokenLockingClient();
   const userLock = await tokenUnlockClient.getUserLock(
     tokenAddress,
     walletAddress,
   );
-  const nativeToken = await getToken(
+  const nativeToken = (await getToken(
     { colonyManager, client },
     tokenAddress,
     walletAddress,
-  );
+  )) as UserToken;
   return {
-    __typename: 'UserLock',
     balance: userLock.balance.toString(),
-    nativeToken,
+    nativeToken: nativeToken || null,
   };
 };
 
@@ -131,7 +132,7 @@ export const userResolvers = ({
       { tokenAddresses }: { tokenAddresses: Address[] },
       { walletAddress },
       { client },
-    ): Promise<Address[]> {
+    ) {
       return Promise.all(
         [AddressZero, ...tokenAddresses].map(async (tokenAddress) =>
           getToken({ colonyManager, client }, tokenAddress, walletAddress),
