@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import * as yup from 'yup';
+import moveDecimal from 'move-decimal-point';
+import { bigNumberify } from 'ethers/utils';
 
 import Button from '~core/Button';
+import { ActionForm, Input } from '~core/Fields';
 import Icon from '~core/Icon';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
+import { pipe, mapPayload } from '~utils/actions';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
 import styles from './TokenActivationContent.css';
+import { Token } from '~data/generated';
 
 const MSG = defineMessages({
   active: {
@@ -30,24 +38,47 @@ const MSG = defineMessages({
   },
 });
 
+const validationSchema = yup.object({
+  amount: yup.number(),
+});
+
+type FormValues = {
+  amount: number;
+};
+
 export interface TokensTabProps {
   activeTokens: number;
   inactiveTokens: number;
   tokenSymbol: string;
+  token: Token;
 }
 
 const TokensTab = ({
   activeTokens,
   inactiveTokens,
   tokenSymbol,
+  token,
 }: TokensTabProps) => {
   const [isActivate, setIsActivate] = useState(true);
+
+  const transform = useCallback(
+    pipe(
+      mapPayload(({ amount }) => {
+        const decimals = getTokenDecimalsWithFallback(token?.decimals);
+
+        // Convert amount string with decimals to BigInt (eth to wei)
+        const formtattedAmount = bigNumberify(moveDecimal(amount, decimals));
+
+        return { amount: formtattedAmount };
+      }),
+    ),
+    [],
+  );
 
   return (
     <>
       <div className={styles.totalTokensContainer}>
-        {/* @ts-ignore */}
-        <TokenIcon token={{}} size="xs" />
+        <TokenIcon token={{ address: '', symbol: '', name: '' }} size="xs" />
         <p className={styles.totalTokens}>
           {activeTokens + inactiveTokens} <span>{tokenSymbol}</span>
         </p>
@@ -104,6 +135,37 @@ const TokensTab = ({
             text={MSG.withdraw}
           />
         </div>
+        <ActionForm
+          initialValues={{ amount: 0 }}
+          validationSchema={validationSchema}
+          transform={transform}
+          submit=""
+          error=""
+          success=""
+        >
+          {() => (
+            <div className={styles.form}>
+              <div className={styles.inputField}>
+                <Input
+                  name="amount"
+                  appearance={{
+                    theme: 'minimal',
+                    align: 'right',
+                  }}
+                  status="boooooo"
+                  formattingOptions={{
+                    delimiter: ',',
+                    numeral: true,
+                    numeralDecimalScale: getTokenDecimalsWithFallback(
+                      token.decimals,
+                    ),
+                  }}
+                />
+              </div>
+              <Button text={{ id: 'button.confirm' }} type="submit" />
+            </div>
+          )}
+        </ActionForm>
       </div>
     </>
   );
