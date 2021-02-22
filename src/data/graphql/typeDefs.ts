@@ -267,6 +267,12 @@ export default gql`
     transaction: SubgraphTransaction!
   }
 
+  type SubgraphColonyExtension {
+    id: String!
+    address: String!
+    hash: String!
+  }
+
   type SubgraphColony {
     id: String!
     colonyChainId: String!
@@ -276,6 +282,7 @@ export default gql`
     metadataHistory: [SubgraphColonyMetadata!]!
     token: SubgraphToken!
     domains: [SubgraphDomain!]!
+    extensions: [SubgraphColonyExtension!]
   }
 
   extend type Query {
@@ -336,6 +343,7 @@ export default gql`
     avatarURL: String
     nativeTokenAddress: String!
     tokenAddresses: [String]!
+    extensionAddresses: [String!]
     domains: [ProcessedDomain!]!
     roles: [ProcessedRoles!]!
     tokens: [ProcessedTokens!]!

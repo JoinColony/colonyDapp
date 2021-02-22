@@ -1191,6 +1191,12 @@ export type SubgraphColonyMetadata = {
   transaction: SubgraphTransaction;
 };
 
+export type SubgraphColonyExtension = {
+  id: Scalars['String'];
+  address: Scalars['String'];
+  hash: Scalars['String'];
+};
+
 export type SubgraphColony = {
   id: Scalars['String'];
   colonyChainId: Scalars['String'];
@@ -1200,6 +1206,7 @@ export type SubgraphColony = {
   metadataHistory: Array<SubgraphColonyMetadata>;
   token: SubgraphToken;
   domains: Array<SubgraphDomain>;
+  extensions?: Maybe<Array<SubgraphColonyExtension>>;
 };
 
 export type ProcessedDomain = {
@@ -1250,6 +1257,7 @@ export type ProcessedColony = {
   avatarURL?: Maybe<Scalars['String']>;
   nativeTokenAddress: Scalars['String'];
   tokenAddresses: Array<Maybe<Scalars['String']>>;
+  extensionAddresses?: Maybe<Array<Scalars['String']>>;
   domains: Array<ProcessedDomain>;
   roles: Array<ProcessedRoles>;
   tokens: Array<ProcessedTokens>;
@@ -1351,7 +1359,7 @@ export type TokensFragment = (
 
 export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
-export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>;
+export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses'>;
 
 export type FullColonyFragment = (
   Pick<ProcessedColony, 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'isDeploymentFinished'>
@@ -1950,10 +1958,10 @@ export type SubgraphColonyQueryVariables = Exact<{
 
 export type SubgraphColonyQuery = { colony: (
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
-    & { token: (
+    & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
-    ) }
+    ), extensions?: Maybe<Array<Pick<SubgraphColonyExtension, 'address' | 'hash'>>> }
   ) };
 
 export type SubgraphColoniesQueryVariables = Exact<{
@@ -2184,6 +2192,7 @@ export const ColonyProfileFragmentDoc = gql`
   displayName
   avatarHash
   avatarURL
+  extensionAddresses
 }
     `;
 export const TokensFragmentDoc = gql`
@@ -4710,10 +4719,18 @@ export const SubgraphColonyDocument = gql`
     colonyChainId
     ensName
     metadata
+    metadataHistory {
+      id
+      metadata
+    }
     token {
       tokenAddress: id
       decimals
       symbol
+    }
+    extensions {
+      address
+      hash
     }
   }
 }

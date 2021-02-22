@@ -76,6 +76,7 @@ export const getProcessedColony = async (
     metadata,
     token,
     metadataHistory = [],
+    extensions: colonyExtensions = [],
   } = subgraphColony;
   let displayName: string | null = null;
   let avatar: string | null = null;
@@ -151,6 +152,7 @@ export const getProcessedColony = async (
     tokenAddresses: token?.tokenAddress
       ? [...tokenAddresses, token.tokenAddress].map(createAddress)
       : [],
+    extensionAddresses: colonyExtensions.map(({ address }) => address),
   };
 };
 

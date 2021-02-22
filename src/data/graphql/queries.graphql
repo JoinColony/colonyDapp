@@ -488,10 +488,18 @@ query SubgraphColony($address: String!) {
     colonyChainId
     ensName
     metadata
+    metadataHistory {
+      id
+      metadata
+    }
     token {
       tokenAddress: id
       decimals
       symbol
+    }
+    extensions {
+      address
+      hash
     }
   }
 }

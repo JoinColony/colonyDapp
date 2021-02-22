@@ -73,6 +73,7 @@ fragment ColonyProfile on ProcessedColony {
   displayName
   avatarHash
   avatarURL
+  extensionAddresses
 }
 
 fragment FullColony on ProcessedColony {
