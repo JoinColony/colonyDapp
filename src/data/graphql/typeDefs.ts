@@ -137,9 +137,19 @@ export default gql`
     missingPermissions: [Int!]!
   }
   
+  type UserToken {
+    address: String!
+    decimals: Int!
+    name: String!
+    symbol: String!
+    iconHash: String
+    verified: Boolean!
+    balance: String!
+  }
+
   type UserLock {
     balance: String!
-    nativeToken: Token!
+    nativeToken: UserToken
   }
 
   extend type TaskPayout {
