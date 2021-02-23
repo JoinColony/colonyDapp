@@ -69,7 +69,7 @@ const getUserLock = async (
   return {
     balance: userLock.balance.toString(),
     nativeToken: nativeToken || null,
-    totalObligation: totalObligation.toString()
+    totalObligation: totalObligation.toString(),
   };
 };
 
