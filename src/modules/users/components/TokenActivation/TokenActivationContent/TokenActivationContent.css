@@ -51,7 +51,7 @@
 }
 
 .totalTokens > span {
-  font-size: var(--size-medium);
+  font-size: var(--size-normal);
 }
 
 .tokensDetailsContainer {
@@ -95,10 +95,14 @@
   font: var(--size-normal);
 }
 
-.previousTotalAmount {
+.lockedAmountContainer {
   display: flex;
   align-items: center;
   margin: 0 0 21px 20px;
+}
+
+.lockedAmount {
+  margin-left: 8px;
   font-size: var(--size-tiny);
   color: var(--text-disabled);
 }

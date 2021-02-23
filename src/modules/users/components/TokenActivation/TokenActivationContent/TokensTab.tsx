@@ -2,18 +2,21 @@ import React, { useCallback, useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
-import { bigNumberify } from 'ethers/utils';
+import { BigNumber, bigNumberify } from 'ethers/utils';
 
 import Button from '~core/Button';
 import { ActionForm, Input } from '~core/Fields';
 import Icon from '~core/Icon';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import Numeral from '~core/Numeral';
+import { UserToken } from '~data/generated';
 
+import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload } from '~utils/actions';
+import { formatTokenValue } from '~utils/numbers';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './TokenActivationContent.css';
-import { Token } from '~data/generated';
 
 const MSG = defineMessages({
   active: {
@@ -47,19 +50,28 @@ type FormValues = {
 };
 
 export interface TokensTabProps {
-  activeTokens: number;
-  inactiveTokens: number;
-  tokenSymbol: string;
-  token: Token;
+  activeTokens: BigNumber;
+  inactiveTokens: BigNumber;
+  totalTokens: BigNumber;
+  lockedTokens: BigNumber;
+  token: UserToken;
 }
 
 const TokensTab = ({
   activeTokens,
   inactiveTokens,
-  tokenSymbol,
+  totalTokens,
+  lockedTokens,
   token,
 }: TokensTabProps) => {
   const [isActivate, setIsActivate] = useState(true);
+
+  const formattedTotalAmount = formatTokenValue({
+    value: totalTokens,
+    suffix: ` ${token?.symbol}`,
+    unit: getTokenDecimalsWithFallback(token?.decimals),
+    truncate: 3,
+  }).split(' ')[0];
 
   const transform = useCallback(
     pipe(
@@ -78,9 +90,9 @@ const TokensTab = ({
   return (
     <>
       <div className={styles.totalTokensContainer}>
-        <TokenIcon token={{ address: '', symbol: '', name: '' }} size="xs" />
+        <TokenIcon token={token || {}} size="xs" />
         <p className={styles.totalTokens}>
-          {activeTokens + inactiveTokens} <span>{tokenSymbol}</span>
+          {formattedTotalAmount} <span>{token?.symbol}</span>
         </p>
       </div>
       <div className={styles.tokensDetailsContainer}>
@@ -92,16 +104,27 @@ const TokensTab = ({
                 <FormattedMessage {...MSG.active} />
               </p>
             </div>
-            <div
-              className={styles.tokenNumbers}
-            >{`${activeTokens} ${tokenSymbol}`}</div>
-            <div className={styles.previousTotalAmount}>
+            <div className={styles.tokenNumbers}>
+              <Numeral
+                value={activeTokens}
+                suffix={` ${token?.symbol}`}
+                unit={getTokenDecimalsWithFallback(token?.decimals)}
+                truncate={3}
+              />
+            </div>
+            <div className={styles.lockedAmountContainer}>
               <Icon
                 title="padlock"
                 appearance={{ size: 'extraTiny' }}
                 name="emoji-padlock-closed"
               />
-              <p>{`18,000 ${tokenSymbol} !!!!! PLACEHOLDER`}</p>
+              <Numeral
+                className={styles.lockedAmount}
+                value={lockedTokens}
+                suffix={` ${token?.symbol}`}
+                unit={getTokenDecimalsWithFallback(token?.decimals)}
+                truncate={3}
+              />
             </div>
           </li>
           <li>
@@ -111,9 +134,14 @@ const TokensTab = ({
                 <FormattedMessage {...MSG.inactive} />
               </p>
             </div>
-            <div
-              className={styles.tokenNumbers}
-            >{`${inactiveTokens} ${tokenSymbol}`}</div>
+            <div className={styles.tokenNumbers}>
+              <Numeral
+                value={inactiveTokens}
+                suffix={` ${token?.symbol}`}
+                unit={getTokenDecimalsWithFallback(token?.decimals)}
+                truncate={3}
+              />
+            </div>
           </li>
         </ul>
       </div>
@@ -139,9 +167,10 @@ const TokensTab = ({
           initialValues={{ amount: 0 }}
           validationSchema={validationSchema}
           transform={transform}
-          submit=""
-          error=""
-          success=""
+          // temporary PLACEHOLDER !!!!!!!!!
+          submit={ActionTypes.COLONY_CREATE}
+          error={ActionTypes.COLONY_CREATE_ERROR}
+          success={ActionTypes.COLONY_CREATE_SUCCESS}
         >
           {() => (
             <div className={styles.form}>
@@ -157,7 +186,7 @@ const TokensTab = ({
                     delimiter: ',',
                     numeral: true,
                     numeralDecimalScale: getTokenDecimalsWithFallback(
-                      token.decimals,
+                      token?.decimals,
                     ),
                   }}
                 />
