@@ -80,13 +80,12 @@ const UserNavigation = () => {
 
   const userLock = userData?.user.userLock;
   const nativeToken = userLock?.nativeToken;
-  const userActiveBalance = nativeToken?.balance;
+  const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
 
-  const lockedBalance =
-    (userLock && bigNumberify(userLock.balance)) || bigNumberify(0);
-  const walletBalance =
-    (userActiveBalance && bigNumberify(userActiveBalance)) || bigNumberify(0);
-  const totalBalance = lockedBalance.add(walletBalance);
+  const lockedBalance = bigNumberify(userLock?.totalObligation || 0);
+  const lockContractBalance = bigNumberify(userLock?.balance || 0);
+  const activeBalance = lockContractBalance.sub(lockedBalance);
+  const totalBalance = inactiveBalance.add(activeBalance);
 
   return (
     <div className={styles.main}>
@@ -127,7 +126,7 @@ const UserNavigation = () => {
             <button type="button" className={styles.tokens}>
               <span
                 className={`${styles.dot} ${
-                  (lockedBalance.gt(0) || totalBalance.isZero()) &&
+                  (inactiveBalance.gt(0) || totalBalance.isZero()) &&
                   styles.dotInactive
                 }`}
               />
