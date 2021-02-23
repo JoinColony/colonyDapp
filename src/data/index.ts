@@ -12,6 +12,7 @@ import {
   TokenQuery,
   UserNotificationsQuery,
   UserQuery,
+  UserToken,
   UserTokensQuery,
   UserWithReputationQuery,
   UserColoniesQuery,
@@ -99,6 +100,7 @@ export type AnyTokens = (
   | UserTokens[number]
   | OneToken
   | FixedToken
+  | UserToken
 )[];
 
 // Almost all tokens with 'address' and 'iconHash'
