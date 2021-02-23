@@ -129,18 +129,30 @@ const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
     variables: { colonyAddress, extensionId },
   });
 
+  const { contractAddressLink } = DEFAULT_NETWORK_INFO;
+
   const hasRegisteredProfile = !!username && !ethereal;
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
-  if (loading) {
-    return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
-  }
+  const extension = extensionData[extensionId];
 
   const canInstall = hasRegisteredProfile && hasRoot(allUserRoles);
-
   const installedExtension = data ? data.colonyExtension : null;
-  const extension = extensionData[extensionId];
-  const { contractAddressLink } = DEFAULT_NETWORK_INFO;
+
+  const extensionInstallable = !onSetupRoute && canInstall;
+  const extensionUninstallable = canInstall && extension?.uninstallable;
+
+  const extesionCanBeInstalled =
+    extensionInstallable && !installedExtension?.details?.initialized;
+  const extesionCanBeEnabled =
+    extensionInstallable &&
+    !!installedExtension?.details?.missingPermissions?.length;
+  const extesionCanBeDeprecated =
+    extensionUninstallable &&
+    installedExtension &&
+    !installedExtension?.details?.deprecated;
+  const extesionCanBeUninstalled =
+    extensionUninstallable && installedExtension?.details.deprecated;
 
   let tableData;
 
@@ -203,14 +215,21 @@ const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
       },
     ];
   }
+
   const extensionUrl = `/colony/${colonyName}/extensions/${extensionId}`;
   const breadCrumbs: Crumb[] = [
     [MSG.title, `/colony/${colonyName}/extensions`],
     [extension.name, match.url === extensionUrl ? '' : extensionUrl],
   ];
+
   if (match.path === COLONY_EXTENSION_SETUP_ROUTE) {
     breadCrumbs.push(MSG.setup);
   }
+
+  if (loading) {
+    return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
+  }
+
   return (
     <div className={styles.main}>
       <div>
@@ -261,16 +280,13 @@ const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
         <div className={styles.extensionDetails}>
           <hr className={styles.headerLine} />
           <div className={styles.buttonWrapper}>
-            {!onSetupRoute &&
-              canInstall &&
-              (!installedExtension?.details.initialized ||
-                !!installedExtension?.details.missingPermissions.length) && (
-                <ExtensionActionButton
-                  colonyAddress={colonyAddress}
-                  installedExtension={installedExtension}
-                  extension={extension}
-                />
-              )}
+            {(extesionCanBeInstalled || extesionCanBeEnabled) && (
+              <ExtensionActionButton
+                colonyAddress={colonyAddress}
+                installedExtension={installedExtension}
+                extension={extension}
+              />
+            )}
           </div>
           <Table appearance={{ theme: 'lined' }}>
             <TableBody>
@@ -284,10 +300,7 @@ const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
               ))}
             </TableBody>
           </Table>
-          {canInstall &&
-          extension.uninstallable &&
-          installedExtension &&
-          !installedExtension.details.deprecated ? (
+          {extesionCanBeDeprecated ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
                 dialog={ConfirmDialog}
@@ -304,9 +317,7 @@ const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
               />
             </div>
           ) : null}
-          {canInstall &&
-          extension.uninstallable &&
-          installedExtension?.details.deprecated ? (
+          {extesionCanBeUninstalled ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
                 dialog={ConfirmDialog}
