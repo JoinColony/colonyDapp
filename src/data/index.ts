@@ -98,11 +98,15 @@ export type AnyTokens = (
   | UserTokens[number]
   | OneToken
   | FixedToken
-  | UserToken
 )[];
 
 // Almost all tokens with 'address' and 'iconHash'
-export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken | FixedToken;
+export type AnyToken =
+  | ColonyTokens[0]
+  | UserTokens[0]
+  | OneToken
+  | FixedToken
+  | UserToken;
 
 export type TransactionMessage = TransactionMessageFragment;
 export type TransactionsMessagesCount = TransactionMessagesCountQuery['transactionMessagesCount'];
