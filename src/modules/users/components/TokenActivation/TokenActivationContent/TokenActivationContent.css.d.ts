@@ -13,6 +13,8 @@ export const disc: string;
 export const greenDisc: string;
 export const redDisc: string;
 export const tokenNumbers: string;
+export const lockedAmountContainer: string;
+export const lockedAmount: string;
 export const previousTotalAmount: string;
 export const changeTokensState: string;
 export const changeStateTitle: string;
