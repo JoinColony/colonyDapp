@@ -578,15 +578,28 @@ export const colonyResolvers = ({
         ),
       );
       const extensionAddresses = await Promise.all(promises);
-      return extensionAddresses
-        .map((address: Address, idx: number) => ({
-          __typename: 'ColonyExtension',
-          colonyAddress,
-          id: address,
-          extensionId: extensions[idx],
-          address,
-        }))
-        .filter(({ address }) => address !== AddressZero);
+      return extensionAddresses.reduce(
+        (
+          colonyExtensions: Array<Record<string, any>>,
+          address: Address,
+          index: number,
+        ) => {
+          if (address !== AddressZero) {
+            return [
+              ...colonyExtensions,
+              {
+                __typename: 'ColonyExtension',
+                colonyAddress,
+                id: address,
+                extensionId: extensions[index],
+                address,
+              },
+            ];
+          }
+          return colonyExtensions;
+        },
+        [],
+      );
     },
   },
   ColonyExtension: {
