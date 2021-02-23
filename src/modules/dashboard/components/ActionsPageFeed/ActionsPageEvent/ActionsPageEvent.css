@@ -1,8 +1,11 @@
 .main {
-  display: flex;
-  align-items: flex-start;
   padding: 16px 16px 16px 0;
   width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  align-items: flex-start;
 }
 
 .status {
