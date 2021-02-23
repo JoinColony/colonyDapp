@@ -614,19 +614,17 @@ export const colonyResolvers = ({
       }
 
       const { neededColonyPermissions } = extension;
-      const roleCheckPromises = neededColonyPermissions.map(async (role) => {
-        const hasRole = await colonyClient.hasUserRole(
-          address,
-          ROOT_DOMAIN_ID,
-          role,
-        );
-        if (!hasRole) return role;
-        return null;
-      });
 
-      const roleCheckResults = await Promise.all(roleCheckPromises);
-      const missingPermissions = roleCheckResults.filter(
-        (role) => role !== null,
+      const missingPermissions = await Promise.resolve(
+        neededColonyPermissions.reduce(async (roles, role) => {
+          const hasRole = await colonyClient.hasUserRole(
+            address,
+            ROOT_DOMAIN_ID,
+            role,
+          );
+          if (!hasRole) return [...(await roles), role];
+          return roles;
+        }, Promise.resolve([])),
       );
 
       const installFilter = networkClient.filters.ExtensionInstalled(
