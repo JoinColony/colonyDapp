@@ -1,6 +1,6 @@
 import { all, call } from 'redux-saga/effects';
 
-import actionSagas from './actions';
+import actionsSagas from './actions';
 import colonySagas from './colony';
 import colonyCreateSaga from './colonyCreate';
 import colonyDeploymentSaga from './colonyFinishDeployment';
@@ -9,7 +9,7 @@ import tokenSagas from './token';
 
 export default function* setupDashboardSagas() {
   yield all([
-    call(actionSagas),
+    call(actionsSagas),
     call(colonySagas),
     call(colonyCreateSaga),
     call(colonyDeploymentSaga),
