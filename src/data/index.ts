@@ -98,6 +98,7 @@ export type AnyTokens = (
   | UserTokens[number]
   | OneToken
   | FixedToken
+  | UserToken
 )[];
 
 // Almost all tokens with 'address' and 'iconHash'
