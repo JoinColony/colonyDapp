@@ -57,11 +57,16 @@ const getUserLock = async (
   tokenAddress: Address,
 ): Promise<UserLock> => {
   const { networkClient } = colonyManager;
-  const tokenUnlockClient = await networkClient.getTokenLockingClient();
-  const userLock = await tokenUnlockClient.getUserLock(
+  const tokenLockingClient = await networkClient.getTokenLockingClient();
+  const userLock = await tokenLockingClient.getUserLock(
     tokenAddress,
     walletAddress,
   );
+  const totalObligation = await tokenLockingClient.getTotalObligation(
+    walletAddress,
+    tokenAddress,
+  );
+
   const nativeToken = (await getToken(
     { colonyManager, client },
     tokenAddress,
@@ -70,6 +75,7 @@ const getUserLock = async (
   return {
     balance: userLock.balance.toString(),
     nativeToken: nativeToken || null,
+    totalObligation: totalObligation.toString()
   };
 };
 
