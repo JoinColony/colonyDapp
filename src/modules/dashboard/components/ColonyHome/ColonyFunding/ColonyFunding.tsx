@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
@@ -14,7 +14,6 @@ import {
 import { useTransformer } from '~utils/hooks';
 import { canFund } from '../../../../users/checks';
 import { getAllUserRoles } from '../../../../transformers';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ALLOWED_NETWORKS } from '~constants';
 
 import TokenItem from './TokenItem';
 
@@ -62,7 +61,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   return (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
-        {canMoveTokens ? (
+        {canMoveFunds ? (
           <NavLink to={`/colony/${colonyName}/funds`}>
             <FormattedMessage {...MSG.title} />
           </NavLink>
