@@ -150,6 +150,7 @@ export default gql`
   type UserLock {
     balance: String!
     nativeToken: UserToken
+    totalObligation: String!
   }
 
   extend type TaskPayout {
