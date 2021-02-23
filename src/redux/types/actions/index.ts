@@ -1,7 +1,6 @@
 import { ColonyActionTypes } from './colony';
 import { ColonyActionsActionTypes } from './colonyActions';
 import { ConnectionActionTypes } from './connection';
-import { DomainActionTypes } from './domain';
 import { GasPricesActionTypes } from './gasPrices';
 import { IpfsActionTypes } from './ipfs';
 import { MultisigActionTypes } from './multisig';
@@ -96,7 +95,6 @@ export type AllActions =
   | ColonyActionTypes
   | ColonyActionsActionTypes
   | ConnectionActionTypes
-  | DomainActionTypes
   | GasPricesActionTypes
   | IpfsActionTypes
   | MultisigActionTypes
