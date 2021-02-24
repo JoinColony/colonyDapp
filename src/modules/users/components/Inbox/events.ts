@@ -8,16 +8,10 @@ const notificationsToEventsMapping = {
    */
   [EventType.AssignWorker]: 'notificationWorkerAssigned',
   [EventType.NewUser]: 'notificationUserClaimedProfile',
-  [EventType.CreateTask]: 'notificationTaskCreated',
   [EventType.CreateDomain]: 'notificationAdminColonyDomainCreated',
   [EventType.CreateWorkRequest]: 'notificationWorkRequested',
-  [EventType.FinalizeTask]: 'notificationTaskFinalized',
-  [EventType.TaskMessage]: 'notificationUserMentioned',
   [EventType.SendWorkInvite]: 'actionWorkerInviteReceived',
   [EventType.UnassignWorker]: 'notificationWorkerUnassigned',
-  [EventType.SetTaskPayout]: 'notificationTaskPayoutSet',
-  [EventType.RemoveTaskPayout]: 'notificationTaskPayoutRemove',
-  [EventType.CancelTask]: 'notificationTaskCancel',
 };
 
 export const transformNotificationEventNames = (eventName: string): string =>
