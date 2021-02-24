@@ -140,7 +140,7 @@ export default gql`
     missingPermissions: [Int!]!
     version: Int!
   }
-  
+
   type UserToken {
     address: String!
     decimals: Int!
