@@ -23,7 +23,7 @@ interface Props {
 
 const displayName = 'dashboard.ColonyHome.ColonyExtensions';
 
-const ColonyFunding = ({ colony: { colonyName, colonyAddress } }: Props) => {
+const ColonyExtensions = ({ colony: { colonyName, colonyAddress } }: Props) => {
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
@@ -69,6 +69,6 @@ const ColonyFunding = ({ colony: { colonyName, colonyAddress } }: Props) => {
   );
 };
 
-ColonyFunding.displayName = displayName;
+ColonyExtensions.displayName = displayName;
 
-export default ColonyFunding;
+export default ColonyExtensions;
