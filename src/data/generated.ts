@@ -1158,7 +1158,7 @@ export type UserBalanceWithLockQuery = { user: (
     Pick<User, 'id'>
     & { userLock: (
       Pick<UserLock, 'balance' | 'totalObligation'>
-      & { nativeToken?: Maybe<Pick<UserToken, 'decimals' | 'name' | 'symbol' | 'balance'>> }
+      & { nativeToken?: Maybe<Pick<UserToken, 'decimals' | 'name' | 'symbol' | 'balance' | 'address' | 'verified'>> }
     ) }
   ) };
 
@@ -2350,6 +2350,8 @@ export const UserBalanceWithLockDocument = gql`
         name
         symbol
         balance
+        address
+        verified
       }
       totalObligation
     }
