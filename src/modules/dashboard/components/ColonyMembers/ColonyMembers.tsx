@@ -50,7 +50,7 @@ const ColonyMembers = () => {
   const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
     parseInt(colonyData?.processedColony?.version || '1', 10) >=
-    ColonyVersion.CeruleanLightweightSpaceship;
+    ColonyVersion.LightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   if (loading) {

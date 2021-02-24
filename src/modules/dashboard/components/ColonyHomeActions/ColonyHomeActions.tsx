@@ -177,7 +177,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
-    parseInt(colony.version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+    parseInt(colony.version, 10) >= ColonyVersion.LightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   return (

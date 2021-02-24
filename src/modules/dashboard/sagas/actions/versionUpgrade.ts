@@ -40,8 +40,7 @@ function* createVersionUpgradeAction({
     }
 
     const supportAnnotation =
-      currentVersion >= ColonyVersion.CeruleanLightweightSpaceship &&
-      annotationMessage;
+      currentVersion >= ColonyVersion.LightweightSpaceship && annotationMessage;
 
     txChannel = yield call(getTxChannel, metaId);
 

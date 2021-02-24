@@ -179,10 +179,7 @@ export const colonyActionsResolvers = ({
 
         const clientVersion = await colonyClient?.version();
         let annotation;
-        if (
-          clientVersion.toNumber() ===
-          ColonyVersion.CeruleanLightweightSpaceship
-        ) {
+        if (clientVersion.toNumber() === ColonyVersion.LightweightSpaceship) {
           annotation = await getAnnotation(
             from as string,
             hash as string,
