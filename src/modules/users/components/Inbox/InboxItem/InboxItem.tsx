@@ -15,7 +15,6 @@ import {
   useMarkNotificationAsReadMutation,
   useTokenQuery,
   useUserQuery,
-  useTaskQuery,
   OneNotification,
   UserNotificationsDocument,
 } from '~data/index';
@@ -102,7 +101,6 @@ const InboxItem = ({
   // We might have more than just the worker as the target in the future
   const { workerAddress: targetUserAddress = '' } =
     'workerAddress' in context ? context : {};
-  const { taskId = '' } = 'taskId' in context ? context : {};
   const { colonyAddress = undefined } =
     'colonyAddress' in context ? context : {};
   const { ethDomainId = 0 } = 'ethDomainId' in context ? context : {};
@@ -121,8 +119,6 @@ const InboxItem = ({
   const { data: targetUser } = useUserQuery({
     variables: { address: targetUserAddress },
   });
-
-  const { data: taskData } = useTaskQuery({ variables: { id: taskId } });
 
   const { data: colonyNameData } = useColonyNameQuery({
     variables: { address: colonyAddress || '' },
@@ -166,7 +162,6 @@ const InboxItem = ({
 
   const colonyName = colonyNameData && colonyNameData.colonyName;
   const token = tokenData && tokenData.token;
-  const taskTitle = taskData && taskData.task && taskData.task.title;
   const domainName = domainData?.colonyDomain?.name;
 
   return (
@@ -220,15 +215,6 @@ const InboxItem = ({
                   otherUser: makeInboxDetail(targetUserFriendlyName, (value) =>
                     targetUserUsername ? (
                       <Link to={`/user/${targetUserUsername}`}>{value}</Link>
-                    ) : (
-                      value
-                    ),
-                  ),
-                  task: makeInboxDetail(taskTitle, (value) =>
-                    colonyName && taskId ? (
-                      <Link to={`/colony/${colonyName}/task/${taskId}`}>
-                        {value}
-                      </Link>
                     ) : (
                       value
                     ),
