@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
   exploreColony: {
     id: 'pages.LandingPage.exploreColony',
-    defaultMessage: 'Explore the {colonyName} colony',
+    defaultMessage: 'Explore the {colonyName}',
   },
 });
 
