@@ -536,6 +536,7 @@ export type UserTokensArgs = {
 export type UserUserLockArgs = {
   walletAddress: Scalars['String'];
   tokenAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 export type UserProfile = {
@@ -1151,6 +1152,7 @@ export type UserTokensQuery = { user: (
 export type UserBalanceWithLockQueryVariables = Exact<{
   address: Scalars['String'];
   tokenAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
 }>;
 
 
@@ -2340,10 +2342,10 @@ export type UserTokensQueryHookResult = ReturnType<typeof useUserTokensQuery>;
 export type UserTokensLazyQueryHookResult = ReturnType<typeof useUserTokensLazyQuery>;
 export type UserTokensQueryResult = Apollo.QueryResult<UserTokensQuery, UserTokensQueryVariables>;
 export const UserBalanceWithLockDocument = gql`
-    query UserBalanceWithLock($address: String!, $tokenAddress: String!) {
+    query UserBalanceWithLock($address: String!, $tokenAddress: String!, $colonyAddress: String!) {
   user(address: $address) {
     id
-    userLock(walletAddress: $address, tokenAddress: $tokenAddress) @client {
+    userLock(walletAddress: $address, tokenAddress: $tokenAddress, colonyAddress: $colonyAddress) @client {
       balance
       nativeToken {
         decimals
@@ -2373,6 +2375,7 @@ export const UserBalanceWithLockDocument = gql`
  *   variables: {
  *      address: // value for 'address'
  *      tokenAddress: // value for 'tokenAddress'
+ *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
