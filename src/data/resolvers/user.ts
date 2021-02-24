@@ -45,7 +45,7 @@ const getUserReputation = async (
 };
 
 const getUserLock = async (
-  client: ApolloClient<object>,
+  apolloClient: ApolloClient<object>,
   colonyManager: ColonyManager,
   walletAddress: Address,
   tokenAddress: Address,
@@ -62,7 +62,7 @@ const getUserLock = async (
   );
 
   const nativeToken = (await getToken(
-    { colonyManager, client },
+    { colonyManager, client: apolloClient },
     tokenAddress,
     walletAddress,
   )) as UserToken;
