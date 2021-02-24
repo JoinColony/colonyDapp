@@ -150,33 +150,3 @@
   color: var(--colony-white);
   box-shadow: 0px 2px 11px var(--drop-shadow);
 }
-
-.tokens {
-  composes: walletAddress;
-  margin-right: -5px;
-  border: 0;
-  background: transparent;
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-  color: var(--dark);
-}
-
-.tokens:hover {
-  position: relative;
-  z-index: 5;
-  background-color: rgb(217, 216, 236);
-  color: var(--colony-blue);
-}
-
-.dot {
-  display: inline-block;
-  margin-right: 5px;
-  height: 9px;
-  width: 9px;
-  border-radius: 50%;
-  background-color: var(--primary);
-}
-
-.dotInactive {
-  background-color: var(--pink);
-}

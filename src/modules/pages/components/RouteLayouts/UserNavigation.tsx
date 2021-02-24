@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useParams } from 'react-router-dom';
-import { bigNumberify } from 'ethers/utils';
 
 import { GasStationPopover } from '~users/GasStation';
+import UserTokenActivationButton from '~users/UserTokenActivationButton';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import Numeral from '~core/Numeral';
+
 import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
@@ -80,12 +79,6 @@ const UserNavigation = () => {
 
   const userLock = userData?.user.userLock;
   const nativeToken = userLock?.nativeToken;
-  const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
-
-  const lockedBalance = bigNumberify(userLock?.totalObligation || 0);
-  const lockContractBalance = bigNumberify(userLock?.balance || 0);
-  const activeBalance = lockContractBalance.sub(lockedBalance);
-  const totalBalance = inactiveBalance.add(activeBalance);
 
   return (
     <div className={styles.main}>
@@ -121,23 +114,11 @@ const UserNavigation = () => {
         </ConnectWalletPopover>
       )}
       <div className={styles.buttonsWrapper}>
-        {userCanNavigate && nativeToken && (
-          <>
-            <button type="button" className={styles.tokens}>
-              <span
-                className={`${styles.dot} ${
-                  (inactiveBalance.gt(0) || totalBalance.isZero()) &&
-                  styles.dotInactive
-                }`}
-              />
-              <Numeral
-                suffix={` ${nativeToken?.symbol} `}
-                unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
-                value={totalBalance}
-                truncate={3}
-              />
-            </button>
-          </>
+        {userCanNavigate && nativeToken && userLock && (
+          <UserTokenActivationButton
+            nativeToken={nativeToken}
+            userLock={userLock}
+          />
         )}
         {userCanNavigate && (
           <GasStationPopover
