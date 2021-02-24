@@ -9,4 +9,8 @@
 .buttonIcon {
   margin-right: 20px;
   max-height: 28px;
+
+  & svg {
+    fill: var(--dark);
+  }
 }

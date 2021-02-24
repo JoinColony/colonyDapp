@@ -1,5 +1,5 @@
-@value verticalPadding: 4px;
-@value itemLinkSize: 34px;
+@value itemLinkSize: 42px;
+@value itemMarginBotton: 4px;
 
 .main {
   display: flex;
@@ -11,13 +11,14 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  max-height: calc(100vh - (itemLinkSize + (verticalPadding * 2)));
+  padding-top: 8px;
+  max-height: calc(100vh - (itemLinkSize + itemMarginBotton));
   width: 100%;
   overflow-y: auto;
 }
 
 .item {
-  padding: verticalPadding 0;
+  margin-bottom: itemMarginBotton;
 }
 
 .itemLink {
@@ -26,7 +27,7 @@
   align-items: center;
   height: itemLinkSize;
   width: itemLinkSize;
-  border: 2px solid transparent;
+  border: 3px solid transparent;
   border-radius: 50%;
 }
 
@@ -35,13 +36,15 @@
 }
 
 .itemImage {
-  height: 26px;
-  width: 26px;
+  height: 36px;
+  width: 36px;
+  border: 1px solid transparent;
 }
 
 .newColonyIcon {
-  height: 26px;
-  width: 26px;
+  height: 34px;
+  width: 34px;
+  fill: var(--temp-grey-blue-7);
 }
 
 .newColonyItem {

@@ -1,5 +1,5 @@
-export const verticalPadding: string;
 export const itemLinkSize: string;
+export const itemMarginBotton: string;
 export const main: string;
 export const scrollableContainer: string;
 export const item: string;
