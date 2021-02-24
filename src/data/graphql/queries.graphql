@@ -226,6 +226,8 @@ query UserBalanceWithLock($address: String!, $tokenAddress: String!) {
         name
         symbol
         balance
+        address
+        verified
       }
       totalObligation
     }
