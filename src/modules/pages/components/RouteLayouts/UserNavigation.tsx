@@ -59,6 +59,7 @@ const UserNavigation = () => {
     variables: {
       address: walletAddress,
       tokenAddress: colonyData?.processedColony?.nativeTokenAddress || '',
+      colonyAddress: colonyData?.colonyAddress || '',
     },
   });
 
