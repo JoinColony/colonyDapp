@@ -1,7 +1,6 @@
 import { bigNumberify } from 'ethers/utils';
 import { ClientType, ColonyClientV5 } from '@colony/colony-js';
 
-import { TaskDocument, TaskQuery, TaskQueryVariables } from '~data/index';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
 import apolloCache from './cache';
@@ -14,7 +13,6 @@ import {
   UserQueryVariables,
   UnsubscribeFromColonyMutationResult,
   SubscribeToColonyMutationResult,
-  SetTaskSkillMutationResult,
   UserColoniesQuery,
   UserColoniesQueryVariables,
   UserColoniesDocument,
@@ -362,65 +360,6 @@ const cacheUpdates = {
         log.verbose(
           'Cannot update the colony subscriptions cache - not loaded yet',
         );
-      }
-    };
-  },
-  setTaskSkill(draftId: string) {
-    return (cache: Cache, { data }: SetTaskSkillMutationResult) => {
-      try {
-        const cacheData = cache.readQuery<TaskQuery, TaskQueryVariables>({
-          query: TaskDocument,
-          variables: {
-            id: draftId,
-          },
-        });
-        const taskData = data && data.setTaskSkill;
-        if (cacheData && taskData) {
-          cache.writeQuery<TaskQuery, TaskQueryVariables>({
-            query: TaskDocument,
-            data: {
-              task: {
-                ...cacheData.task,
-                ethSkillId: taskData.ethSkillId,
-              },
-            },
-            variables: {
-              id: draftId,
-            },
-          });
-        }
-      } catch (e) {
-        log.verbose(e);
-        log.verbose('Not updating store - task not loaded yet');
-      }
-    };
-  },
-  removeTaskSkill(draftId: string) {
-    return (cache: Cache) => {
-      try {
-        const cacheData = cache.readQuery<TaskQuery, TaskQueryVariables>({
-          query: TaskDocument,
-          variables: {
-            id: draftId,
-          },
-        });
-        if (cacheData) {
-          cache.writeQuery<TaskQuery, TaskQueryVariables>({
-            query: TaskDocument,
-            data: {
-              task: {
-                ...cacheData.task,
-                ethSkillId: null,
-              },
-            },
-            variables: {
-              id: draftId,
-            },
-          });
-        }
-      } catch (e) {
-        log.verbose(e);
-        log.verbose('Not updating store - task not loaded yet');
       }
     };
   },
