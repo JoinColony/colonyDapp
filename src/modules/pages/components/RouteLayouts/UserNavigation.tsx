@@ -49,6 +49,7 @@ const UserNavigation = () => {
   const { data: colonyData } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
   });
+
   const { data } = useUserNotificationsQuery({
     variables: { address: walletAddress },
   });
@@ -57,6 +58,7 @@ const UserNavigation = () => {
     variables: {
       address: walletAddress,
       tokenAddress: colonyData?.processedColony?.nativeTokenAddress || '',
+      colonyAddress: colonyData?.colonyAddress || '',
     },
   });
 

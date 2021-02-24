@@ -216,10 +216,10 @@ query UserTokens($address: String!) {
   }
 }
 
-query UserBalanceWithLock($address: String!, $tokenAddress: String!) {
+query UserBalanceWithLock($address: String!, $tokenAddress: String!, $colonyAddress: String!) {
   user(address: $address) {
     id
-    userLock(walletAddress: $address, tokenAddress: $tokenAddress) @client {
+    userLock(walletAddress: $address, tokenAddress: $tokenAddress, colonyAddress: $colonyAddress) @client {
       balance
       nativeToken {
         decimals
