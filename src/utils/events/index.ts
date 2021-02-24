@@ -679,12 +679,16 @@ export const groupSetUserRolesActions = (actions): FormattedAction[] => {
         ) === -1
       ) {
         const filteredActionsByHash = actions.filter(
-          (actionB) => actionA.transactionHash === actionB.transactionHash,
+          ({ transactionHash, actionType }) =>
+            actionType === ColonyActions.SetUserRoles &&
+            actionA.transactionHash === transactionHash,
         );
-        const actionRoles = filteredActionsByHash.map((filteredAction) => ({
-          id: filteredAction.roles[0].id,
-          setTo: filteredAction.roles[0].setTo,
-        }));
+        const actionRoles = filteredActionsByHash.map((filteredAction) => {
+          return {
+            id: filteredAction?.roles[0]?.id,
+            setTo: filteredAction?.roles[0]?.setTo,
+          };
+        });
         groupedActions.push({
           ...actionA,
           roles: actionRoles,
