@@ -4,7 +4,6 @@ import createSagaMiddleware from 'redux-saga';
 import setupSagas from '../modules/core/sagas';
 import reduxPromiseListener from './createPromiseListener';
 import createRootReducer from './createRootReducer';
-import { createDuplicateActionGuardMiddleware } from './createDuplicateActionGuardMiddleware';
 import { createSubscriberMiddleware } from './createSubscriberMiddleware';
 import { ActionTypes } from './actionTypes';
 
@@ -16,13 +15,6 @@ const sagaMiddleware = createSagaMiddleware();
  * end up being really confusing, so we should seek to remove them in favour of
  * more proper solutions.
  */
-
-// This is symptom-fighting for #1299 and the underlying issue has not
-// been resolved yet. For now, only fetch actions with a key are guarded against.
-const duplicateActionGuardMiddleware = createDuplicateActionGuardMiddleware(
-  300,
-  ActionTypes.TASK_FETCH,
-);
 
 // Allows useDataSubsctiber to always dispatch, and prevents those actions from
 // propagating while something is already being subscribed to, or other
@@ -41,7 +33,6 @@ const store = createStore(
   createRootReducer(),
   composeEnhancer(
     applyMiddleware(
-      duplicateActionGuardMiddleware,
       subscriberMiddleware,
       sagaMiddleware,
       reduxPromiseListener.middleware,
