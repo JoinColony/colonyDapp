@@ -3,9 +3,7 @@
  * This is the only skill that works on ganache
  */
 
-import { ConsumableItem } from '~core/ItemsList';
-
-const taskSkills: ConsumableItem[] = [
+const taskSkills = [
   {
     id: 3,
     name: 'Accounting',
