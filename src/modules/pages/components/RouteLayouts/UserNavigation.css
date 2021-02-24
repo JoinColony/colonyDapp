@@ -115,8 +115,8 @@
 }
 
 .walletAddress span {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-medium);
 }
 
 .walletAddress:hover {
@@ -156,7 +156,7 @@
   margin-right: -5px;
   border: 0;
   background: transparent;
-  font-size: var(--size-smallis);
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
 }

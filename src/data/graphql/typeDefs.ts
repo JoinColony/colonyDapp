@@ -136,7 +136,7 @@ export default gql`
     installedAt: Int!
     missingPermissions: [Int!]!
   }
-  
+
   type UserToken {
     address: String!
     decimals: Int!
