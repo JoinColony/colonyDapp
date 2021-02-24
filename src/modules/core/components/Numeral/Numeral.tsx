@@ -37,6 +37,9 @@ export interface Props extends HTMLAttributes<HTMLSpanElement> {
 
   /** Actual value */
   value: number | string | BigNumber;
+
+  /** Should large number be truncate to 5 figures */
+  reducedOutput?: boolean;
 }
 
 const Numeral = ({
@@ -48,6 +51,7 @@ const Numeral = ({
   truncate,
   unit,
   value,
+  reducedOutput = true,
   ...props
 }: Props) => {
   const convertedNum =
@@ -55,11 +59,13 @@ const Numeral = ({
       ? formatUnits(value, unit)
       : moveDecimal(value.toString(10), -(unit || 0));
 
+  const largeNumberTruncate = convertedNum > 10 ** 4 ? 0 : truncate;
+
   const formattedNumber = formatNumber({
     prefix,
     suffix,
     integerSeparator,
-    truncate: convertedNum > 10 ** 4 ? 0 : truncate,
+    truncate: reducedOutput ? largeNumberTruncate : truncate,
   })(parseFloat(convertedNum));
 
   return (
