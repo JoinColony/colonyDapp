@@ -92,13 +92,6 @@ export default gql`
     balances(colonyAddress: String!, domainIds: [Int!]): [DomainBalance!]!
   }
 
-  type TaskFinalizedPayment {
-    amount: String!
-    tokenAddress: String!
-    workerAddress: String!
-    transactionHash: String!
-  }
-
   type DomainRoles {
     domainId: Int!
     roles: [Int!]!
@@ -145,15 +138,6 @@ export default gql`
     installedBy: String!
     installedAt: Int!
     missingPermissions: [Int!]!
-  }
-
-  extend type TaskPayout {
-    token: Token!
-  }
-
-  extend type Task {
-    commentCount: Int!
-    finalizedPayment: TaskFinalizedPayment
   }
 
   extend type User {
