@@ -9,12 +9,10 @@ import {
   FullColonyFragment,
   LoggedInUserDocument,
   PayoutsFragment,
-  TaskQuery,
   TokenBalancesForDomainsQuery,
   TokenQuery,
   UserNotificationsQuery,
   UserQuery,
-  UserTasksQuery,
   UserTokensQuery,
   UserWithReputationQuery,
   UserColoniesQuery,
@@ -31,7 +29,6 @@ import {
 import { colonyResolvers } from './resolvers/colony';
 import { userResolvers } from './resolvers/user';
 import { tokenResolvers } from './resolvers/token';
-import { taskResolvers } from './resolvers/task';
 import {
   networkContractsResolvers,
   initialCache as networkContracts,
@@ -59,7 +56,6 @@ export const resolvers: ResolverFactory[] = [
   colonyResolvers,
   loggedInUserResolvers,
   userResolvers,
-  taskResolvers,
   tokenResolvers,
   networkContractsResolvers,
   colonyActionsResolvers,
@@ -73,10 +69,6 @@ export * from './generated';
 export * from './helpers';
 
 export type AnyUser = UserQuery['user'] | UserWithReputationQuery['user'];
-
-export type AnyTask =
-  | TaskQuery['task']
-  | UserTasksQuery['user']['tasks'][number];
 
 export type Payouts = PayoutsFragment['payouts'];
 
