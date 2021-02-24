@@ -1,22 +1,18 @@
-import React, { useCallback, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import * as yup from 'yup';
-import moveDecimal from 'move-decimal-point';
-import { BigNumber, bigNumberify } from 'ethers/utils';
+import { BigNumber } from 'ethers/utils';
 
 import Button from '~core/Button';
-import { ActionForm, Input } from '~core/Fields';
 import Icon from '~core/Icon';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
-import { UserToken } from '~data/generated';
 
-import { ActionTypes } from '~redux/index';
-import { pipe, mapPayload } from '~utils/actions';
+import { UserToken } from '~data/generated';
 import { formatTokenValue } from '~utils/numbers';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './TokenActivationContent.css';
+import TokensTabForm from './TokensTabForm';
 
 const MSG = defineMessages({
   active: {
@@ -41,14 +37,6 @@ const MSG = defineMessages({
   },
 });
 
-const validationSchema = yup.object({
-  amount: yup.number(),
-});
-
-type FormValues = {
-  amount: number;
-};
-
 export interface TokensTabProps {
   activeTokens: BigNumber;
   inactiveTokens: BigNumber;
@@ -66,26 +54,17 @@ const TokensTab = ({
 }: TokensTabProps) => {
   const [isActivate, setIsActivate] = useState(true);
 
+  const tokenDecimals = useMemo(
+    () => getTokenDecimalsWithFallback(token?.decimals),
+    [token],
+  );
+
   const formattedTotalAmount = formatTokenValue({
     value: totalTokens,
     suffix: ` ${token?.symbol}`,
-    unit: getTokenDecimalsWithFallback(token?.decimals),
+    unit: tokenDecimals,
     truncate: 3,
   }).split(' ')[0];
-
-  const transform = useCallback(
-    pipe(
-      mapPayload(({ amount }) => {
-        const decimals = getTokenDecimalsWithFallback(token?.decimals);
-
-        // Convert amount string with decimals to BigInt (eth to wei)
-        const formtattedAmount = bigNumberify(moveDecimal(amount, decimals));
-
-        return { amount: formtattedAmount };
-      }),
-    ),
-    [],
-  );
 
   return (
     <>
@@ -108,7 +87,7 @@ const TokensTab = ({
               <Numeral
                 value={activeTokens}
                 suffix={` ${token?.symbol}`}
-                unit={getTokenDecimalsWithFallback(token?.decimals)}
+                unit={tokenDecimals}
                 truncate={3}
               />
             </div>
@@ -122,7 +101,7 @@ const TokensTab = ({
                 className={styles.lockedAmount}
                 value={lockedTokens}
                 suffix={` ${token?.symbol}`}
-                unit={getTokenDecimalsWithFallback(token?.decimals)}
+                unit={tokenDecimals}
                 truncate={3}
               />
             </div>
@@ -138,7 +117,7 @@ const TokensTab = ({
               <Numeral
                 value={inactiveTokens}
                 suffix={` ${token?.symbol}`}
-                unit={getTokenDecimalsWithFallback(token?.decimals)}
+                unit={tokenDecimals}
                 truncate={3}
               />
             </div>
@@ -163,38 +142,13 @@ const TokensTab = ({
             text={MSG.withdraw}
           />
         </div>
-        <ActionForm
-          initialValues={{ amount: 0 }}
-          validationSchema={validationSchema}
-          transform={transform}
-          // temporary PLACEHOLDER !!!!!!!!!
-          submit={ActionTypes.COLONY_CREATE}
-          error={ActionTypes.COLONY_CREATE_ERROR}
-          success={ActionTypes.COLONY_CREATE_SUCCESS}
-        >
-          {() => (
-            <div className={styles.form}>
-              <div className={styles.inputField}>
-                <Input
-                  name="amount"
-                  appearance={{
-                    theme: 'minimal',
-                    align: 'right',
-                  }}
-                  status="boooooo"
-                  formattingOptions={{
-                    delimiter: ',',
-                    numeral: true,
-                    numeralDecimalScale: getTokenDecimalsWithFallback(
-                      token?.decimals,
-                    ),
-                  }}
-                />
-              </div>
-              <Button text={{ id: 'button.confirm' }} type="submit" />
-            </div>
-          )}
-        </ActionForm>
+        <TokensTabForm
+          token={token}
+          isActivate={isActivate}
+          tokenDecimals={tokenDecimals}
+          activeTokens={activeTokens}
+          inactiveTokens={inactiveTokens}
+        />
       </div>
     </>
   );

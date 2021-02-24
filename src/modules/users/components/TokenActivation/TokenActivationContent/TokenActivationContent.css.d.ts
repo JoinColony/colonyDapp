@@ -25,4 +25,6 @@ export const leftBorders: string;
 export const rightBorders: string;
 export const form: string;
 export const inputField: string;
+export const balanceInfo: string;
+export const balanceInfoText: string;
 export const claimsContainer: string;
