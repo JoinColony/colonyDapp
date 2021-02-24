@@ -126,6 +126,7 @@
 
 .changeStateButtonsContainer {
   display: flex;
+  margin-bottom: 16px;
 }
 
 .changeStateButtonsContainer > button {
@@ -148,6 +149,7 @@
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
+  cursor: pointer;
 }
 
 .leftBorders {
@@ -168,8 +170,22 @@
 }
 
 .inputField {
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.balanceInfo {
+  display: flex;
+  align-items: baseline;
   margin-bottom: 22px;
   width: 100%;
+}
+
+.balanceInfoText {
+  margin-left: 7px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
 }
 
 .form > button {
