@@ -9,6 +9,7 @@ import {
   Extension,
   OneTxPaymentClient,
   TokenClient,
+  TokenLockingClient,
   ExtensionClient,
 } from '@colony/colony-js';
 
@@ -27,6 +28,8 @@ export default class ColonyManager {
 
   tokenClients: Map<Address, Promise<TokenClient>>;
 
+  tokenLockingClients: Map<Address, Promise<TokenLockingClient>>;
+
   networkClient: ColonyNetworkClient;
 
   provider: Provider;
@@ -37,6 +40,7 @@ export default class ColonyManager {
     this.colonyClients = new Map();
     this.extensionClients = new Map();
     this.tokenClients = new Map();
+    this.tokenLockingClients = new Map();
     this.networkClient = networkClient;
     this.provider = networkClient.provider;
     this.signer = networkClient.signer;
@@ -118,6 +122,11 @@ export default class ColonyManager {
   ): Promise<TokenClient>;
 
   async getClient(
+    type: ClientType.TokenLockingClient,
+    identifier?: AddressOrENSName,
+  ): Promise<TokenLockingClient>;
+
+  async getClient(
     type: ClientType.OneTxPaymentClient,
     identifier?: AddressOrENSName,
   ): Promise<OneTxPaymentClient>;
@@ -145,6 +154,18 @@ export default class ColonyManager {
           throw new Error('Need colony identifier to get TokenClient');
         const colonyClient = await this.getColonyClient(identifier);
         return colonyClient.tokenClient;
+      }
+      case ClientType.TokenLockingClient: {
+        if (!identifier)
+          throw new Error('Need colony identifier to get TokenLockingClient');
+        const colonyClient = await this.getColonyClient(identifier);
+        const tokenLockingClient = this.networkClient.getTokenLockingClient();
+        /*
+         * @TODO This needs a proper fix in colonyJS
+         */
+        // @ts-ignore
+        colonyClient.tokenLockingClient = tokenLockingClient;
+        return tokenLockingClient;
       }
       case ClientType.OneTxPaymentClient: {
         if (!identifier)
@@ -180,6 +201,15 @@ export default class ColonyManager {
     if (!clientPromise) {
       clientPromise = getTokenClient(address, this.signer);
       this.tokenClients.set(address, clientPromise);
+    }
+    return clientPromise;
+  }
+
+  async getTokenLockingClient(address: Address): Promise<TokenLockingClient> {
+    let clientPromise = this.tokenLockingClients.get(address);
+    if (!clientPromise) {
+      clientPromise = this.networkClient.getTokenLockingClient();
+      this.tokenLockingClients.set(address, clientPromise);
     }
     return clientPromise;
   }

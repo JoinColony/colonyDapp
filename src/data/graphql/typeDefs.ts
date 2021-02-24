@@ -160,7 +160,11 @@ export default gql`
   extend type User {
     reputation(colonyAddress: String!, domainId: Int): String!
     tokens(walletAddress: String!): [Token!]!
-    userLock(walletAddress: String!, tokenAddress: String!, colonyAddress: String!): UserLock!
+    userLock(
+      walletAddress: String!
+      tokenAddress: String!
+      colonyAddress: String!
+    ): UserLock!
     tokenTransfers: [Transfer!]!
     processedColonies: [ProcessedColony!]!
   }
