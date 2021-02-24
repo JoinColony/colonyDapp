@@ -1,3 +1,4 @@
+import BN from 'bn.js';
 import { getAddress, padZeros, hexlify } from 'ethers/utils';
 
 import { Address } from '~types/index';
@@ -55,3 +56,9 @@ export const isTransactionFormat = (
   }
   return !!potentialTransactionHash.match(hexStringRegex);
 };
+
+export function intArrayToBytes32(arr: Array<number>) {
+  return `0x${new BN(
+    arr.map((num) => new BN(1).shln(num)).reduce((a, b) => a.or(b), new BN(0)),
+  ).toString(16, 64)}`;
+}

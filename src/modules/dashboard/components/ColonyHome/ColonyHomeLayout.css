@@ -1,11 +1,11 @@
 .main {
-  composes: stretchHorizontal from '~styles/layout.css';
-  display: grid;
-  grid-template-columns: auto;
+  composes: stretch from '~styles/layout.css';
+  overflow: visible;
 }
 
 .mainContentGrid {
   display: grid;
+  margin: 0 80px;
 
   /*
    * @NOTE On the below width calculations
@@ -13,27 +13,29 @@
    * the width of the left subscribed colonies list
    */
   max-width: calc(100vw - (100vw - 100%));
-  overflow: hidden;
+  grid-template-columns: [left] minmax(0, 1fr) [content] minmax(700px, 2fr) [sidebar] minmax(180px, 1fr);
+  column-gap: 80px;
+}
 
+.minimalGrid {
+  composes: mainContentGrid;
+}
+
+.minimalGrid .mainContent {
   /*
-   * @NOTE Grid needs to have a max value for the center content section, otherwise
-   * anything that relies on overflow (think: text ellipsis) will not work.
-   *
-   * Value was arrived at from 100% - 23% - 26.5%
+   * @NOTE Span the content over the last two columns of the grid
+   * I have no idea this existed. This is super cool!
    */
-  grid-template-columns: 23% minmax(auto, 50.5%) 26.5%;
+  grid-column: content / sidebar;
 }
 
 .leftAside {
-  padding: 17px 7% 20px 25%;
-}
-
-.leftAsideNav {
-  margin-top: 53px;
+  padding-top: 60px;
+  text-align: right;
 }
 
 .mainContent {
-  padding: 90px 0 40px;
+  padding: 30px 0;
 }
 
 .domainsDropdownContainer {
@@ -53,7 +55,8 @@
 }
 
 .rightAside {
-  padding: 220px 5% 20px 80px;
+  padding-top: 155px;
+  text-align: left;
 }
 
 .events {

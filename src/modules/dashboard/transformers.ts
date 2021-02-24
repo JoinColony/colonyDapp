@@ -26,7 +26,7 @@ export const getActionsListData = (
     events?: SubscriptionSubgraphEventsThatAreActionsSubscription['events'];
   },
   transactionsCommentsCount?: TransactionsMessagesCount,
-  oneTxPaymentExtensionAddress?: Address | null,
+  extensionsAddresses?: Address[],
 ): FormattedAction[] => {
   let formattedActions = [];
   /*
@@ -62,6 +62,21 @@ export const getActionsListData = (
             paymentAction.transaction?.hash === event.transaction?.hash,
         );
         if (isTransactionRepeated) return acc;
+
+        /*
+         * Filter out events that have the recipient an extension's address
+         *
+         * This is used to filter out setting root roles to extensions after
+         * they have been installed
+         */
+        if (
+          extensionsAddresses?.find(
+            (extensionAddress) =>
+              extensionAddress === event?.processedValues?.user,
+          )
+        ) {
+          return acc;
+        }
 
         return [...acc, event];
       }, []) || [],
@@ -213,7 +228,7 @@ export const getActionsListData = (
    * not actually a change, but a "set") we filter it out
    */
   return formattedGroupedActions.filter(
-    ({ initiator, recipient, actionType }: FormattedAction) => {
+    ({ initiator, actionType }: FormattedAction) => {
       /*
        * @NOTE This is wrapped inside a try/catch block since if the user logs out,
        * for a brief moment the colony manager won't exist
@@ -227,12 +242,10 @@ export const getActionsListData = (
         const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
         if (
           colonyManager?.networkClient &&
-          (actionType === ColonyActions.ColonyEdit ||
-            actionType === ColonyActions.SetUserRoles)
+          actionType === ColonyActions.ColonyEdit
         ) {
           return (
-            initiator !== colonyManager?.networkClient.address.toLowerCase() &&
-            oneTxPaymentExtensionAddress?.toLowerCase() !== recipient
+            initiator !== colonyManager?.networkClient.address.toLowerCase()
           );
         }
         return true;
@@ -275,6 +288,8 @@ export const getEventsListData = (
         role,
         setTo,
         user,
+        extensionId,
+        version,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -306,6 +321,8 @@ export const getEventsListData = (
           amount: amount || payoutRemainder || '0',
           role,
           setTo: setTo === 'true',
+          extensionHash: extensionId,
+          extensionVersion: version,
         },
       ];
     } catch (error) {

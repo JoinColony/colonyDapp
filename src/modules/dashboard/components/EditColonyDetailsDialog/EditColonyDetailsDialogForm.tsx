@@ -38,29 +38,21 @@ const MSG = defineMessages({
     defaultMessage: 'Colony Logo (Optional)',
   },
   permittedFormat: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.permittedFormat',
+    id: `dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.permittedFormat`,
     defaultMessage:
-      'Permitted format: .png or .svg (at least 250px, up to 200 Kb)',
+      'Permitted format: .png or .svg (at least 250px, up to 1 MB)',
   },
   annotation: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.annotation',
+    id: `dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.annotation`,
     defaultMessage: `Explain why you’re editing the colony's details (optional)`,
   },
   noPermission: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.noPermission',
+    id: `dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.noPermission`,
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
   },
   invalidAvatarFormat: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.invalidAvatarFormat',
+    id: `dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.invalidAvatarFormat`,
     defaultMessage: `Image you tried to upload is in an invalid format`,
   },
 });

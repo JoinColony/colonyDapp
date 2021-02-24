@@ -11,3 +11,4 @@ export const help: string;
 export const helpAlignRight: string;
 export const extra: string;
 export const stateScreenReaderOnly: string;
+export const sizeMedium: string;

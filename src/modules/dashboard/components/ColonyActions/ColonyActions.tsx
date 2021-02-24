@@ -14,7 +14,6 @@ import {
   useTransactionMessagesCountQuery,
   useSubscriptionSubgraphOneTxSubscription,
   useSubscriptionSubgraphEventsThatAreActionsSubscription,
-  useOneTxPaymentExtensionAddressQuery,
 } from '~data/index';
 import {
   ActionsSortOptions,
@@ -67,7 +66,7 @@ type Props = {
 const displayName = 'dashboard.ColonyActions';
 
 const ColonyActions = ({
-  colony: { colonyAddress, colonyName },
+  colony: { colonyAddress, colonyName, extensionAddresses },
   colony,
   ethDomainId,
 }: Props) => {
@@ -110,14 +109,10 @@ const ColonyActions = ({
     variables: { colonyAddress },
   });
 
-  const {
-    data: oneTxPaymentExtensionData,
-  } = useOneTxPaymentExtensionAddressQuery();
-
   const actions = useTransformer(getActionsListData, [
     { ...oneTxActions, ...eventsActions },
     commentCount?.transactionMessagesCount,
-    oneTxPaymentExtensionData?.oneTxPaymentExtensionAddress,
+    extensionAddresses as string[],
   ]);
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */

@@ -1,8 +1,12 @@
 .baseStyles {
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 1px 10px 2px;
+  border-radius: var(--radius-large);
   font-size: 0.8rem;
   font-weight: var(--weight-bold);
+}
+
+.baseStyles + .baseStyles {
+  margin-left: 10px;
 }
 
 .themePrimary {
@@ -19,6 +23,12 @@
 .themeGolden {
   composes: baseStyles;
   background-color: var(--golden);
+  color: white;
+}
+
+.themeDanger {
+  composes: baseStyles;
+  background-color: var(--danger);
   color: white;
 }
 

@@ -73,6 +73,7 @@ fragment ColonyProfile on ProcessedColony {
   displayName
   avatarHash
   avatarURL
+  extensionAddresses
 }
 
 fragment FullColony on ProcessedColony {
@@ -93,7 +94,6 @@ fragment FullColony on ProcessedColony {
   canUnlockNativeToken @client
   isInRecoveryMode @client
   isNativeTokenLocked @client
-  canMakePayment @client
   isDeploymentFinished @client
 }
 

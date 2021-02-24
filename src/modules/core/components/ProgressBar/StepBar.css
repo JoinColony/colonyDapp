@@ -6,7 +6,6 @@
 
 .stepCounter {
   padding-top: 5px;
-  position: relative;
   top: 10px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);

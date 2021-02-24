@@ -135,7 +135,11 @@ query User($address: String!) {
 # This isn't currently being used anywhere, but... here it is anyways.
 # In most cases, we'll want to fetch the reputation *after* the user is already fetched,
 # as fetching reputation takes quite a bit longer.
-query UserWithReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
+query UserWithReputation(
+  $address: String!
+  $colonyAddress: String!
+  $domainId: Int
+) {
   user(address: $address) {
     id
     profile {
@@ -151,8 +155,16 @@ query UserWithReputation($address: String!, $colonyAddress: String!, $domainId: 
   }
 }
 
-query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
-  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
+query UserReputation(
+  $address: String!
+  $colonyAddress: String!
+  $domainId: Int
+) {
+  userReputation(
+    address: $address
+    colonyAddress: $colonyAddress
+    domainId: $domainId
+  ) @client
 }
 
 query UserTasks($address: String!) {
@@ -212,7 +224,45 @@ query UserAddress($name: String!) {
   userAddress(name: $name) @client
 }
 
-query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
+query ColonyExtensions($address: String!) {
+  processedColony(address: $address) @client {
+    id
+    colonyAddress
+    installedExtensions @client {
+      id
+      extensionId
+      address
+      details(colonyAddress: $address) {
+        deprecated
+        initialized
+        installedBy
+        installedAt
+        missingPermissions
+      }
+    }
+  }
+}
+
+query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
+  colonyExtension(colonyAddress: $colonyAddress, extensionId: $extensionId) @client {
+    id
+    address
+    extensionId
+    details(colonyAddress: $colonyAddress) {
+      deprecated
+      initialized
+      installedBy
+      installedAt
+      missingPermissions
+    }
+  }
+}
+
+query TokenBalancesForDomains(
+  $colonyAddress: String!
+  $tokenAddresses: [String!]!
+  $domainIds: [Int!]
+) {
   tokens(addresses: $tokenAddresses) @client {
     id
     address
@@ -299,10 +349,6 @@ query NetworkContracts {
     version
     feeInverse
   }
-}
-# NOTE: This is temporary. Refactor after merging colonyDapp#2260 
-query OneTxPaymentExtensionAddress {
-  oneTxPaymentExtensionAddress @client
 }
 
 query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
@@ -442,10 +488,18 @@ query SubgraphColony($address: String!) {
     colonyChainId
     ensName
     metadata
+    metadataHistory {
+      id
+      metadata
+    }
     token {
       tokenAddress: id
       decimals
       symbol
+    }
+    extensions {
+      address
+      hash
     }
   }
 }

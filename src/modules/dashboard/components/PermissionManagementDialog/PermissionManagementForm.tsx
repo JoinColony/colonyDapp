@@ -56,12 +56,15 @@ const PermissionManagementForm = ({
     (role: ColonyRole) => {
       switch (role) {
         // Can't set arbitration at all yet
+        /*
+         * @TODO Termporary disable Recovery Role setting until v6 gets deployed
+         */
         case ColonyRole.Arbitration:
+        case ColonyRole.Recovery:
           return false;
 
         // Can only be set by root and in root domain (and only unset if other root accounts exist)
         case ColonyRole.Root:
-        case ColonyRole.Recovery:
           return (
             domainId === ROOT_DOMAIN_ID &&
             currentUserRoles.includes(ColonyRole.Root) &&

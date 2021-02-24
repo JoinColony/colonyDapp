@@ -4,10 +4,16 @@ import { bigNumberify } from 'ethers/utils';
 import {
   ClientType,
   ColonyVersion,
+  Extension,
   getColonyRoles,
   TokenClientType,
+  extensions,
   getExtensionHash,
   ColonyClientV5,
+  getEvents,
+  getLogs,
+  getBlockTime,
+  ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -34,6 +40,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
 import { Color } from '~core/ColorTag';
+import extensionData from '~data/staticData/extensionData';
 
 import { getToken } from './token';
 import {
@@ -69,6 +76,7 @@ export const getProcessedColony = async (
     metadata,
     token,
     metadataHistory = [],
+    extensions: colonyExtensions = [],
   } = subgraphColony;
   let displayName: string | null = null;
   let avatar: string | null = null;
@@ -144,6 +152,7 @@ export const getProcessedColony = async (
     tokenAddresses: token?.tokenAddress
       ? [...tokenAddresses, token.tokenAddress].map(createAddress)
       : [],
+    extensionAddresses: colonyExtensions.map(({ address }) => address),
   };
 };
 
@@ -223,6 +232,22 @@ export const colonyResolvers = ({
   ipfsWithFallback,
 }: Required<Context>): Resolvers => ({
   Query: {
+    async colonyExtension(_, { colonyAddress, extensionId }) {
+      const extensionAddress = await networkClient.getExtensionInstallation(
+        getExtensionHash(extensionId),
+        colonyAddress,
+      );
+      if (extensionAddress === AddressZero) {
+        return null;
+      }
+      return {
+        __typename: 'ColonyExtension',
+        id: extensionAddress,
+        address: extensionAddress,
+        colonyAddress,
+        extensionId,
+      };
+    },
     async colonyAddress(_, { name }) {
       try {
         const address = await ens.getAddress(
@@ -545,21 +570,114 @@ export const colonyResolvers = ({
 
       return isDeploymentFinished;
     },
-    /*
-     * @NOTE This is temporary until the Extension Manager #2260 gets merged
-     * and will provide a more robust way of getting the extensions
-     *
-     * This only detects the OneTxPayment extension
-     */
-    async canMakePayment({ colonyAddress }) {
-      const extensionAddress = await networkClient.getExtensionInstallation(
-        getExtensionHash('OneTxPayment'),
+    async installedExtensions({ colonyAddress }) {
+      const promises = extensions.map((extensionId: Extension) =>
+        networkClient.getExtensionInstallation(
+          getExtensionHash(extensionId),
+          colonyAddress,
+        ),
+      );
+      const extensionAddresses = await Promise.all(promises);
+      return extensionAddresses.reduce(
+        (
+          colonyExtensions: Array<Record<string, any>>,
+          address: Address,
+          index: number,
+        ) => {
+          if (address !== AddressZero) {
+            return [
+              ...colonyExtensions,
+              {
+                __typename: 'ColonyExtension',
+                colonyAddress,
+                id: address,
+                extensionId: extensions[index],
+                address,
+              },
+            ];
+          }
+          return colonyExtensions;
+        },
+        [],
+      );
+    },
+  },
+  ColonyExtension: {
+    async details({ address, extensionId }, { colonyAddress }) {
+      const extension = extensionData[extensionId];
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
         colonyAddress,
       );
-      if (extensionAddress === AddressZero) {
-        return false;
+      if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
+        throw new Error('Colony version too old');
       }
-      return true;
+
+      const { neededColonyPermissions } = extension;
+
+      const missingPermissions = await Promise.resolve(
+        neededColonyPermissions.reduce(async (roles, role) => {
+          const hasRole = await colonyClient.hasUserRole(
+            address,
+            ROOT_DOMAIN_ID,
+            role,
+          );
+          if (!hasRole) return [...(await roles), role];
+          return roles;
+        }, Promise.resolve([])),
+      );
+
+      const installFilter = networkClient.filters.ExtensionInstalled(
+        getExtensionHash(extensionId),
+        colonyAddress,
+        null,
+      );
+      const installLogs = await getLogs(networkClient, installFilter);
+      let installedBy = AddressZero;
+      let installedAt = 0;
+
+      if (
+        installLogs[0] &&
+        installLogs[0].transactionHash &&
+        installLogs[0].blockHash
+      ) {
+        const { blockHash, transactionHash } = installLogs[0];
+        const receipt = await networkClient.provider.getTransactionReceipt(
+          transactionHash,
+        );
+        installedBy = receipt.from || AddressZero;
+        const time = await getBlockTime(networkClient.provider, blockHash);
+        installedAt = time || 0;
+      }
+
+      const extensionClient = await colonyClient.getExtensionClient(
+        extensionId,
+      );
+
+      const deprecated = await extensionClient.getDeprecated();
+
+      // If no initializationParams are present it does not need initialization
+      // and will set to be true by default
+      let initialized = !extension.initializationParams;
+      if (!initialized) {
+        // Otherwise we look for the presence of an initialization event
+        // eslint-disable-next-line max-len
+        const initializedFilter = extensionClient.filters.ExtensionInitialised();
+        const initializedEvents = await getEvents(
+          extensionClient,
+          initializedFilter,
+        );
+        initialized = !!initializedEvents.length;
+      }
+
+      return {
+        __typename: 'ColonyExtensionDetails',
+        deprecated,
+        missingPermissions,
+        initialized,
+        installedBy,
+        installedAt,
+      };
     },
   },
 });

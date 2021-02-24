@@ -6,3 +6,4 @@ export const separatorsRows: string;
 export const main: string;
 export const themeDark: string;
 export const themeRounder: string;
+export const themeLined: string;

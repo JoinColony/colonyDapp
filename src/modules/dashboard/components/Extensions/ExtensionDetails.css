@@ -1,0 +1,69 @@
+.main {
+  composes: main from "./Extensions.css";
+  margin-right: 100px;
+  grid-template-columns: minmax(460px, 2fr) minmax(340px, 1fr);
+}
+
+.headerLine {
+  margin: 20px 0 12px 0;
+}
+
+.extensionText {
+  padding-top: 24px;
+}
+
+.extensionDetails {
+  width: 340px;
+}
+
+.extensionDetails .headerLine {
+  margin: 41px 0 0 -80px;
+}
+
+.extensionDetails table tr:first-child {
+  border-top-color: transparent;
+}
+
+.buttonWrapper {
+  padding: 8px 0;
+  height: 48px;
+  border-bottom: 1px solid var(--temp-grey-5);
+  text-align: right;
+}
+
+.cellLabel {
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-4);
+}
+
+.cellData {
+  font-weight: var(--weight-bold);
+  text-align: right;
+}
+
+.installedBy {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.installedByAddress {
+  margin-left: 5px;
+}
+
+.permissions {
+  margin-top: 30px;
+}
+
+.permissions div {
+  margin-right: 7px;
+}
+
+.permissions div:last-child {
+  margin-right: 0px;
+}
+
+.buttonUninstall {
+  margin-top: 10px;
+  text-align: right;
+}

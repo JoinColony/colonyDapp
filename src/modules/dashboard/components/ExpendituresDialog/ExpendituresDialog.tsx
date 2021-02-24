@@ -1,11 +1,12 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { Extension } from '@colony/colony-js';
 
 import { DialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
-import { useLoggedInUser, Colony } from '~data/index';
+import { useLoggedInUser, Colony, useColonyExtensionsQuery } from '~data/index';
 import { getAllUserRoles } from '../../../transformers';
 import { canAdminister, canFund } from '../../../users/checks';
 
@@ -70,8 +71,8 @@ const ExpendituresDialog = ({
   close,
   callStep,
   prevStep,
+  colony: { colonyAddress },
   colony,
-  colony: { canMakePayment },
   nextStep,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -83,6 +84,15 @@ const ExpendituresDialog = ({
     hasRegisteredProfile &&
     canAdminister(allUserRoles) &&
     canFund(allUserRoles);
+
+  const { data: colonyExtensionsData } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
+
+  const canMakePayment =
+    colonyExtensionsData?.processedColony?.installedExtensions?.find(
+      ({ extensionId }) => extensionId === Extension.OneTxPayment,
+    ) || false;
 
   const items = [
     {

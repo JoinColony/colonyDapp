@@ -1,0 +1,52 @@
+@value lineHeight: 18px;
+
+.main {
+  display: grid;
+  grid-template-columns: minmax(700px, 2fr) minmax(340px, 1fr);
+  column-gap: 80px;
+}
+
+.main hr {
+  margin: 15px 0 20px;
+}
+
+.description {
+  margin-top: 15px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: lineHeight;
+  color: var(--temp-grey-blue-7);
+  letter-spacing: var(--spacing-medium);
+}
+
+.content {
+  display: block;
+}
+
+/*
+ * @NOTE We don't realy use the sidebar here, it's just easier this way
+ * to properly align the grid with the one on the details page
+ */
+.sidebar {
+  display: block;
+}
+
+.availableExtensionsWrapper {
+  margin-top: 40px;
+}
+
+.content h3 {
+  margin-bottom: 10px;
+  line-height: lineHeight;
+  letter-spacing: var(--spacing-medium);
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.loadingSpinner {
+  margin-top: 100px;
+}

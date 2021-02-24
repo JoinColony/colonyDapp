@@ -2,6 +2,15 @@ import { InMemoryCache } from '@apollo/client/cache/';
 
 export default new InMemoryCache({
   typePolicies: {
+    Colony: {
+      fields: {
+        installedExtensions: {
+          merge(_existing, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
     DomainBalance: {
       keyFields: ['colonyAddress', 'address', 'domainId'],
     },
@@ -14,6 +23,9 @@ export default new InMemoryCache({
           merge: false,
         },
         unclaimedTransfers: {
+          merge: false,
+        },
+        installedExtensions: {
           merge: false,
         },
       },

@@ -5,7 +5,6 @@ import {
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
-import { Colony } from '~data/index';
 import { Address, UserRolesForDomain } from '~types/index';
 
 export const getRolesForUserAndDomain = (
@@ -27,7 +26,7 @@ const getRolesForUserAndParentDomains = (
   domainId: number,
   roleSet = new Set<ColonyRole>(),
 ): ColonyRole[] => {
-  const domain = colony.domains.find(
+  const domain = colony?.domains?.find(
     ({ ethDomainId }) => ethDomainId === domainId,
   );
   if (!domain) return Array.from(roleSet);
@@ -106,7 +105,7 @@ export const getUserRolesForDomain = (
 };
 
 /* Gets all account addresses that have the ROOT role in the ROOT_DOMAIN */
-export const getAllRootAccounts = (colony: Colony | undefined): Address[] => {
+export const getAllRootAccounts = (colony): Address[] => {
   if (!colony) return [];
 
   return colony.roles
@@ -114,8 +113,7 @@ export const getAllRootAccounts = (colony: Colony | undefined): Address[] => {
       ({ domains }) =>
         !!domains.find(
           ({ domainId, roles }) =>
-            domainId === ROOT_DOMAIN_ID &&
-            roles.includes((ColonyRole.Root as unknown) as string),
+            domainId === ROOT_DOMAIN_ID && roles.includes(ColonyRole.Root),
         ),
     )
     .map(({ address }) => address);

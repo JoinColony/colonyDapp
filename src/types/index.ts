@@ -1,11 +1,7 @@
 import { ReactNode } from 'react';
 import { TransactionReceipt } from 'ethers/providers';
 import { BigNumberish } from 'ethers/utils';
-import {
-  ClientType,
-  ColonyRole,
-  TransactionOverrides,
-} from '@colony/colony-js';
+import { ColonyRole, TransactionOverrides } from '@colony/colony-js';
 
 import { TransactionMultisig } from '~immutable/index';
 
@@ -73,7 +69,7 @@ export type ActionUserRoles = {
 };
 
 export interface TxConfig {
-  context: ClientType;
+  context: string;
   group?: {
     key: string;
     id: string | string[];

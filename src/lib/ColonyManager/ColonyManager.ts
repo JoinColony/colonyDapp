@@ -68,14 +68,14 @@ export default class ColonyManager {
 
   private async getColonyExtensionClient(
     identifier: AddressOrENSName,
-    extensionName: Extension,
+    extensionId: Extension,
   ): Promise<ExtensionClient> {
     const address = await this.resolveColonyIdentifier(identifier);
-    const key = `${address}-${extensionName}`;
+    const key = `${address}-${extensionId}`;
     let client = this.extensionClients.get(key);
     if (!client) {
       const colonyClient = await this.getColonyClient(identifier);
-      client = colonyClient.getExtensionClient(extensionName);
+      client = colonyClient.getExtensionClient(extensionId);
       this.extensionClients.set(key, client);
     }
     return client;
@@ -153,6 +153,11 @@ export default class ColonyManager {
           identifier,
           Extension.OneTxPayment,
         );
+      }
+      case ClientType.CoinMachineClient: {
+        if (!identifier)
+          throw new Error('Need colony identifier to get CoinMachineClient');
+        return this.getColonyExtensionClient(identifier, Extension.CoinMachine);
       }
       default: {
         throw new Error('A valid contract client type has to be specified');

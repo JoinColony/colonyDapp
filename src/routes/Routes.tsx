@@ -28,6 +28,8 @@ import { ActionTypes } from '~redux/index';
 import {
   COLONY_EVENTS_ROUTE,
   COLONY_EXTENSIONS_ROUTE,
+  COLONY_EXTENSION_DETAILS_ROUTE,
+  COLONY_EXTENSION_SETUP_ROUTE,
   COLONY_FUNDING_ROUTE,
   COLONY_HOME_ROUTE,
   CONNECT_ROUTE,
@@ -157,6 +159,8 @@ const Routes = () => {
             COLONY_HOME_ROUTE,
             COLONY_EVENTS_ROUTE,
             COLONY_EXTENSIONS_ROUTE,
+            COLONY_EXTENSION_DETAILS_ROUTE,
+            COLONY_EXTENSION_SETUP_ROUTE,
           ]}
           component={ColonyHome}
           layout={Default}

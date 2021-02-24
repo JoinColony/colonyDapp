@@ -1,5 +1,5 @@
 import { ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Address, WithKey } from '~types/index';
 import {
   ActionType,
   ErrorActionType,
@@ -59,4 +59,44 @@ export type ColonyActionTypes =
       ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS,
       object,
       object
-    >;
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_INSTALL,
+      { colonyAddress: Address; extensionId: string },
+      WithKey
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_INSTALL_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_INSTALL_ERROR, object>
+  | UniqueActionType<ActionTypes.COLONY_EXTENSION_ENABLE, any, WithKey>
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_ENABLE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_DEPRECATE,
+      { colonyAddress: Address; extensionId: string },
+      WithKey
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_UNINSTALL,
+      { colonyAddress: Address; extensionId: string },
+      WithKey
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>;

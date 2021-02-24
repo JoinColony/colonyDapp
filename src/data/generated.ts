@@ -683,12 +683,12 @@ export type Query = {
   colonyAction: ColonyAction;
   colonyAddress: Scalars['String'];
   colonyDomain: ProcessedDomain;
+  colonyExtension?: Maybe<ColonyExtension>;
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   domains: Array<SubgraphDomain>;
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
-  oneTxPaymentExtensionAddress?: Maybe<Scalars['String']>;
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
   subscribedUsers: Array<User>;
@@ -732,6 +732,12 @@ export type QueryColonyAddressArgs = {
 export type QueryColonyDomainArgs = {
   colonyAddress: Scalars['String'];
   domainId: Scalars['Int'];
+};
+
+
+export type QueryColonyExtensionArgs = {
+  colonyAddress: Scalars['String'];
+  extensionId: Scalars['String'];
 };
 
 
@@ -1091,6 +1097,26 @@ export type NetworkEvent = {
   domainId?: Maybe<Scalars['String']>;
 };
 
+export type ColonyExtension = {
+  address: Scalars['String'];
+  id: Scalars['String'];
+  extensionId: Scalars['String'];
+  details: ColonyExtensionDetails;
+};
+
+
+export type ColonyExtensionDetailsArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+export type ColonyExtensionDetails = {
+  deprecated: Scalars['Boolean'];
+  initialized: Scalars['Boolean'];
+  installedBy: Scalars['String'];
+  installedAt: Scalars['Int'];
+  missingPermissions: Array<Scalars['Int']>;
+};
+
 export type ProcessedMetaColony = {
   id: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -1165,6 +1191,12 @@ export type SubgraphColonyMetadata = {
   transaction: SubgraphTransaction;
 };
 
+export type SubgraphColonyExtension = {
+  id: Scalars['String'];
+  address: Scalars['String'];
+  hash: Scalars['String'];
+};
+
 export type SubgraphColony = {
   id: Scalars['String'];
   colonyChainId: Scalars['String'];
@@ -1174,6 +1206,7 @@ export type SubgraphColony = {
   metadataHistory: Array<SubgraphColonyMetadata>;
   token: SubgraphToken;
   domains: Array<SubgraphDomain>;
+  extensions?: Maybe<Array<SubgraphColonyExtension>>;
 };
 
 export type ProcessedDomain = {
@@ -1224,6 +1257,7 @@ export type ProcessedColony = {
   avatarURL?: Maybe<Scalars['String']>;
   nativeTokenAddress: Scalars['String'];
   tokenAddresses: Array<Maybe<Scalars['String']>>;
+  extensionAddresses?: Maybe<Array<Scalars['String']>>;
   domains: Array<ProcessedDomain>;
   roles: Array<ProcessedRoles>;
   tokens: Array<ProcessedTokens>;
@@ -1235,8 +1269,8 @@ export type ProcessedColony = {
   transfers: Array<Transfer>;
   unclaimedTransfers: Array<Transfer>;
   events: Array<NetworkEvent>;
-  canMakePayment: Scalars['Boolean'];
   isDeploymentFinished: Scalars['Boolean'];
+  installedExtensions: Array<ColonyExtension>;
 };
 
 export type ActionsFilter = {
@@ -1325,10 +1359,10 @@ export type TokensFragment = (
 
 export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'description' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
 
-export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>;
+export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses'>;
 
 export type FullColonyFragment = (
-  Pick<ProcessedColony, 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'canMakePayment' | 'isDeploymentFinished'>
+  Pick<ProcessedColony, 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'isDeploymentFinished'>
   & { domains: Array<DomainFieldsFragment>, roles: Array<(
     Pick<ProcessedRoles, 'address'>
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
@@ -1739,6 +1773,30 @@ export type UserAddressQueryVariables = Exact<{
 
 export type UserAddressQuery = Pick<Query, 'userAddress'>;
 
+export type ColonyExtensionsQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyExtensionsQuery = { processedColony: (
+    Pick<ProcessedColony, 'id' | 'colonyAddress'>
+    & { installedExtensions: Array<(
+      Pick<ColonyExtension, 'id' | 'extensionId' | 'address'>
+      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+    )> }
+  ) };
+
+export type ColonyExtensionQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  extensionId: Scalars['String'];
+}>;
+
+
+export type ColonyExtensionQuery = { colonyExtension?: Maybe<(
+    Pick<ColonyExtension, 'id' | 'address' | 'extensionId'>
+    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+  )> };
+
 export type TokenBalancesForDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   tokenAddresses: Array<Scalars['String']>;
@@ -1807,11 +1865,6 @@ export type NetworkContractsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type NetworkContractsQuery = { networkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
-
-export type OneTxPaymentExtensionAddressQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type OneTxPaymentExtensionAddressQuery = Pick<Query, 'oneTxPaymentExtensionAddress'>;
 
 export type ColonyActionQueryVariables = Exact<{
   transactionHash: Scalars['String'];
@@ -1905,10 +1958,10 @@ export type SubgraphColonyQueryVariables = Exact<{
 
 export type SubgraphColonyQuery = { colony: (
     Pick<SubgraphColony, 'id' | 'colonyChainId' | 'ensName' | 'metadata'>
-    & { token: (
+    & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
-    ) }
+    ), extensions?: Maybe<Array<Pick<SubgraphColonyExtension, 'address' | 'hash'>>> }
   ) };
 
 export type SubgraphColoniesQueryVariables = Exact<{
@@ -2084,7 +2137,7 @@ export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Arr
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'timestamp'> }
-    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata'> }
+    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user'> }
   )> };
 
 export const PayoutsFragmentDoc = gql`
@@ -2139,6 +2192,7 @@ export const ColonyProfileFragmentDoc = gql`
   displayName
   avatarHash
   avatarURL
+  extensionAddresses
 }
     `;
 export const TokensFragmentDoc = gql`
@@ -2188,7 +2242,6 @@ export const FullColonyFragmentDoc = gql`
   canUnlockNativeToken @client
   isInRecoveryMode @client
   isNativeTokenLocked @client
-  canMakePayment @client
   isDeploymentFinished @client
 }
     ${ColonyProfileFragmentDoc}
@@ -3895,6 +3948,95 @@ export function useUserAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type UserAddressQueryHookResult = ReturnType<typeof useUserAddressQuery>;
 export type UserAddressLazyQueryHookResult = ReturnType<typeof useUserAddressLazyQuery>;
 export type UserAddressQueryResult = Apollo.QueryResult<UserAddressQuery, UserAddressQueryVariables>;
+export const ColonyExtensionsDocument = gql`
+    query ColonyExtensions($address: String!) {
+  processedColony(address: $address) @client {
+    id
+    colonyAddress
+    installedExtensions @client {
+      id
+      extensionId
+      address
+      details(colonyAddress: $address) {
+        deprecated
+        initialized
+        installedBy
+        installedAt
+        missingPermissions
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyExtensionsQuery__
+ *
+ * To run a query within a React component, call `useColonyExtensionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyExtensionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyExtensionsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyExtensionsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>) {
+        return Apollo.useQuery<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>(ColonyExtensionsDocument, baseOptions);
+      }
+export function useColonyExtensionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>(ColonyExtensionsDocument, baseOptions);
+        }
+export type ColonyExtensionsQueryHookResult = ReturnType<typeof useColonyExtensionsQuery>;
+export type ColonyExtensionsLazyQueryHookResult = ReturnType<typeof useColonyExtensionsLazyQuery>;
+export type ColonyExtensionsQueryResult = Apollo.QueryResult<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>;
+export const ColonyExtensionDocument = gql`
+    query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
+  colonyExtension(colonyAddress: $colonyAddress, extensionId: $extensionId) @client {
+    id
+    address
+    extensionId
+    details(colonyAddress: $colonyAddress) {
+      deprecated
+      initialized
+      installedBy
+      installedAt
+      missingPermissions
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyExtensionQuery__
+ *
+ * To run a query within a React component, call `useColonyExtensionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyExtensionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyExtensionQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      extensionId: // value for 'extensionId'
+ *   },
+ * });
+ */
+export function useColonyExtensionQuery(baseOptions?: Apollo.QueryHookOptions<ColonyExtensionQuery, ColonyExtensionQueryVariables>) {
+        return Apollo.useQuery<ColonyExtensionQuery, ColonyExtensionQueryVariables>(ColonyExtensionDocument, baseOptions);
+      }
+export function useColonyExtensionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyExtensionQuery, ColonyExtensionQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyExtensionQuery, ColonyExtensionQueryVariables>(ColonyExtensionDocument, baseOptions);
+        }
+export type ColonyExtensionQueryHookResult = ReturnType<typeof useColonyExtensionQuery>;
+export type ColonyExtensionLazyQueryHookResult = ReturnType<typeof useColonyExtensionLazyQuery>;
+export type ColonyExtensionQueryResult = Apollo.QueryResult<ColonyExtensionQuery, ColonyExtensionQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
@@ -4200,36 +4342,6 @@ export function useNetworkContractsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type NetworkContractsQueryHookResult = ReturnType<typeof useNetworkContractsQuery>;
 export type NetworkContractsLazyQueryHookResult = ReturnType<typeof useNetworkContractsLazyQuery>;
 export type NetworkContractsQueryResult = Apollo.QueryResult<NetworkContractsQuery, NetworkContractsQueryVariables>;
-export const OneTxPaymentExtensionAddressDocument = gql`
-    query OneTxPaymentExtensionAddress {
-  oneTxPaymentExtensionAddress @client
-}
-    `;
-
-/**
- * __useOneTxPaymentExtensionAddressQuery__
- *
- * To run a query within a React component, call `useOneTxPaymentExtensionAddressQuery` and pass it any options that fit your needs.
- * When your component renders, `useOneTxPaymentExtensionAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOneTxPaymentExtensionAddressQuery({
- *   variables: {
- *   },
- * });
- */
-export function useOneTxPaymentExtensionAddressQuery(baseOptions?: Apollo.QueryHookOptions<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>) {
-        return Apollo.useQuery<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>(OneTxPaymentExtensionAddressDocument, baseOptions);
-      }
-export function useOneTxPaymentExtensionAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>) {
-          return Apollo.useLazyQuery<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>(OneTxPaymentExtensionAddressDocument, baseOptions);
-        }
-export type OneTxPaymentExtensionAddressQueryHookResult = ReturnType<typeof useOneTxPaymentExtensionAddressQuery>;
-export type OneTxPaymentExtensionAddressLazyQueryHookResult = ReturnType<typeof useOneTxPaymentExtensionAddressLazyQuery>;
-export type OneTxPaymentExtensionAddressQueryResult = Apollo.QueryResult<OneTxPaymentExtensionAddressQuery, OneTxPaymentExtensionAddressQueryVariables>;
 export const ColonyActionDocument = gql`
     query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   colonyAction(transactionHash: $transactionHash, colonyAddress: $colonyAddress) @client {
@@ -4607,10 +4719,18 @@ export const SubgraphColonyDocument = gql`
     colonyChainId
     ensName
     metadata
+    metadataHistory {
+      id
+      metadata
+    }
     token {
       tokenAddress: id
       decimals
       symbol
+    }
+    extensions {
+      address
+      hash
     }
   }
 }
@@ -5202,6 +5322,7 @@ export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
       amount
       token
       metadata
+      user
     }
   }
 }

@@ -45,6 +45,11 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.PayoutClaimed} {{agent} claimed a payout of {amount} {tokenSymbol} from funding pot {fundingPot}}
       ${ColonyAndExtensionsEvents.ColonyMetadata} {{agent} changed Colony metadata to {metadata}}
       ${ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots} {{agent} transferred {amount} {tokenSymbol} between pots}
+      ${ColonyAndExtensionsEvents.ExtensionInstalled} {Extension was installed {extensionHash} version {extensionVersion}}
+      ${ColonyAndExtensionsEvents.ExtensionInitialised} {Extension was initialised}
+      ${ColonyAndExtensionsEvents.ExtensionDeprecated} {Extension was deprecated {extensionHash}}
+      ${ColonyAndExtensionsEvents.ExtensionUpgraded} {Extension was upgraded to {extensionVersion} {extensionHash}}
+      ${ColonyAndExtensionsEvents.ExtensionUninstalled} {Extension was uninstalled {extensionHash}}
       other {{eventName} emmited with values: {displayValues}}
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,

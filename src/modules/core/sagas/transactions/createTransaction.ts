@@ -12,7 +12,7 @@ import {
 import { ActionTypes } from '~redux/index';
 import { filterUniqueAction } from '~utils/actions';
 import { getLoggedInUser } from '~data/index';
-
+import { takeFrom } from '~utils/saga/effects';
 import { TxConfig } from '~types/index';
 import { createTxAction } from '../../actionCreators';
 import estimateGasCost from './estimateGasCost';
@@ -57,6 +57,12 @@ export function* getTxChannel(id: string) {
   return yield actionChannel(filterUniqueAction(id), buffers.fixed());
 }
 
+export interface ChannelDefinition {
+  channel: Channel<any>;
+  index: number;
+  id: string;
+}
+
 export function* createTransactionChannels(
   batchId: string,
   ids: string[],
@@ -77,4 +83,16 @@ export function* createTransactionChannels(
     }),
     {},
   );
+}
+
+export function* waitForTxResult(channel: Channel<any>) {
+  const result = yield takeFrom(channel, [
+    ActionTypes.TRANSACTION_ERROR,
+    ActionTypes.TRANSACTION_SUCCEEDED,
+    ActionTypes.TRANSACTION_CANCEL,
+  ]);
+
+  if (result.type === ActionTypes.TRANSACTION_ERROR) {
+    throw new Error('Transaction failed');
+  }
 }

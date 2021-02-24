@@ -177,3 +177,18 @@
     border-bottom-right-radius: var(--radius-large);
   }
 }
+
+.themeLined {
+  & td {
+    height: 44px;
+    vertical-align: middle;
+  }
+
+  & tr {
+    border-bottom: 1px solid var(--temp-grey-5);
+  }
+
+  & tr:first-child {
+    border-top: 1px solid var(--temp-grey-5);
+  }
+}

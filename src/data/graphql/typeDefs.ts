@@ -122,6 +122,21 @@ export default gql`
     domainId: String
   }
 
+  type ColonyExtension {
+    address: String!
+    id: String!
+    extensionId: String!
+    details(colonyAddress: String!): ColonyExtensionDetails!
+  }
+
+  type ColonyExtensionDetails {
+    deprecated: Boolean!
+    initialized: Boolean!
+    installedBy: String!
+    installedAt: Int!
+    missingPermissions: [Int!]!
+  }
+
   extend type TaskPayout {
     token: Token!
   }
@@ -150,6 +165,10 @@ export default gql`
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
+    colonyExtension(
+      colonyAddress: String!
+      extensionId: String!
+    ): ColonyExtension
     colonyName(address: String!): String!
     colonyMembersWithReputation(
       colonyAddress: String!
@@ -166,7 +185,6 @@ export default gql`
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!
-    oneTxPaymentExtensionAddress: String
     colonyAction(
       transactionHash: String!
       colonyAddress: String!
@@ -249,6 +267,12 @@ export default gql`
     transaction: SubgraphTransaction!
   }
 
+  type SubgraphColonyExtension {
+    id: String!
+    address: String!
+    hash: String!
+  }
+
   type SubgraphColony {
     id: String!
     colonyChainId: String!
@@ -258,6 +282,7 @@ export default gql`
     metadataHistory: [SubgraphColonyMetadata!]!
     token: SubgraphToken!
     domains: [SubgraphDomain!]!
+    extensions: [SubgraphColonyExtension!]
   }
 
   extend type Query {
@@ -318,6 +343,7 @@ export default gql`
     avatarURL: String
     nativeTokenAddress: String!
     tokenAddresses: [String]!
+    extensionAddresses: [String!]
     domains: [ProcessedDomain!]!
     roles: [ProcessedRoles!]!
     tokens: [ProcessedTokens!]!
@@ -329,7 +355,7 @@ export default gql`
     transfers: [Transfer!]!
     unclaimedTransfers: [Transfer!]!
     events: [NetworkEvent!]!
-    canMakePayment: Boolean!
     isDeploymentFinished: Boolean!
+    installedExtensions: [ColonyExtension!]!
   }
 `;

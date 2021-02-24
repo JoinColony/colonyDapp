@@ -1,3 +1,17 @@
+.main {
+  display: flex;
+  overflow: hidden;
+  color: var(--dark);
+}
+
+.invisibleLink {
+  color: var(--dark);
+}
+
+.invisibleLink:hover {
+  color: color-mod(var(--dark) alpha(50%));
+}
+
 .breadCrumble {
   font-size: var(--size-medium-l);
 }
@@ -7,13 +21,8 @@
 }
 
 .elementLast {
-  composes: inlineEllipsis from '~styles/text.css';
+  composes: inlineEllipsis from "~styles/text.css";
   flex: 1 1 auto;
-}
-
-.crumbContainer {
-  display: flex;
-  overflow: hidden;
 }
 
 .arrow {

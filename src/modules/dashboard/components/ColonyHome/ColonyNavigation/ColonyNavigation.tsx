@@ -4,17 +4,19 @@ import { useParams } from 'react-router';
 
 import NavItem from './NavItem';
 
+import styles from './ColonyNavigation.css';
+
 const MSG = defineMessages({
   linkTextActions: {
-    id: 'dashboard.ColonyNavigation.linkTextActions',
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextActions',
     defaultMessage: 'Actions',
   },
   linkTextEvents: {
-    id: 'dashboard.ColonyNavigation.linkTextEvents',
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextEvents',
     defaultMessage: 'Events',
   },
   linkTextExtensions: {
-    id: 'dashboard.ColonyNavigation.linkTextExtensions',
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
   },
   comingSoonMessage: {
@@ -23,7 +25,7 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'dashboard.ColonyNavigation';
+const displayName = 'dashboard.ColonyHome.ColonyNavigation';
 
 const ColonyNavigation = () => {
   const { colonyName } = useParams<{ colonyName: string }>();
@@ -54,8 +56,7 @@ const ColonyNavigation = () => {
         text: MSG.linkTextEvents,
       },
       {
-        disabled: true,
-        extra: MSG.comingSoonMessage,
+        exact: false,
         linkTo: `/colony/${colonyName}/extensions`,
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,
@@ -65,7 +66,7 @@ const ColonyNavigation = () => {
   );
 
   return (
-    <nav role="navigation">
+    <nav role="navigation" className={styles.main}>
       {items.map((itemProps) => (
         <NavItem key={itemProps.linkTo} {...itemProps} />
       ))}
