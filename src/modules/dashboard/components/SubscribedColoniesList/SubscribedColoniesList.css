@@ -44,6 +44,7 @@
 .newColonyIcon {
   height: 34px;
   width: 34px;
+  fill: var(--temp-grey-blue-7);
 }
 
 .newColonyItem {
