@@ -157,7 +157,7 @@ export const userResolvers = ({
         colonyManager,
         walletAddress,
         tokenAddress,
-        colonyAddress
+        colonyAddress,
       );
       return userLock;
     },
