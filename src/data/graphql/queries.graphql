@@ -174,7 +174,6 @@ query UserNotifications($address: String!) {
         initiatorAddress
         sourceId
         sourceType
-        ...EventContext
       }
       read
     }

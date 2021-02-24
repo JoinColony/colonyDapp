@@ -55,6 +55,23 @@ fragment FullColony on ProcessedColony {
   isDeploymentFinished @client
 }
 
+fragment EventFields on Event {
+  createdAt
+  initiator {
+    id
+    profile {
+      avatarHash
+      displayName
+     username
+      walletAddress
+    }
+  }
+  initiatorAddress
+  sourceId
+  sourceType
+  type
+}
+
 fragment FullNetworkEvent on NetworkEvent {
   fromAddress
   toAddress
