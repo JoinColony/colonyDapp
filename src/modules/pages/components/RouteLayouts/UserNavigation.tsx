@@ -120,6 +120,7 @@ const UserNavigation = () => {
           <UserTokenActivationButton
             nativeToken={nativeToken}
             userLock={userLock}
+            isOpen={false}
           />
         )}
         {userCanNavigate && (
