@@ -6,7 +6,6 @@ import { GasStationPopover } from '~users/GasStation';
 import UserTokenActivationButton from '~users/UserTokenActivationButton';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
-import { TokenActivationPopover } from '~users/TokenActivation';
 import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
@@ -126,24 +125,10 @@ const UserNavigation = () => {
       )}
       <div className={styles.buttonsWrapper}>
         {userCanNavigate && nativeToken && userLock && (
-          <TokenActivationPopover
-            activeTokens={activeBalance}
-            inactiveTokens={lockedBalance}
-            totalTokens={totalBalance}
-            token={nativeToken}
-            lockedTokens={lockedBalance}
-          >
-            {({ toggle, ref }) => (
-              <>
-                <UserTokenActivationButton
-                  nativeToken={nativeToken}
-                  userLock={userLock}
-                  toggle={toggle}
-                  ref={ref}
-                />
-              </>
-            )}
-          </TokenActivationPopover>
+          <UserTokenActivationButton
+            nativeToken={nativeToken}
+            userLock={userLock}
+          />
         )}
         {userCanNavigate && (
           <GasStationPopover
