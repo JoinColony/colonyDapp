@@ -1328,6 +1328,8 @@ export type EventProcessedValues = {
   user: Scalars['String'];
   role: Scalars['String'];
   setTo: Scalars['String'];
+  oldVersion: Scalars['String'];
+  newVersion: Scalars['String'];
 };
 
 export type SubscriptionEvent = {
@@ -2176,7 +2178,7 @@ export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Arr
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'timestamp'> }
-    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user'> }
+    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion'> }
   )> };
 
 export const PayoutsFragmentDoc = gql`
@@ -5377,7 +5379,7 @@ export type SubscriptionSubgraphOneTxSubscriptionHookResult = ReturnType<typeof 
 export type SubscriptionSubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubgraphOneTxSubscription>;
 export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
     subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
-  events(skip: $skip, first: $first, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)"]}) {
+  events(skip: $skip, first: $first, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)"]}) {
     id
     address
     associatedColony {
@@ -5409,6 +5411,8 @@ export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
       token
       metadata
       user
+      oldVersion
+      newVersion
     }
   }
 }
