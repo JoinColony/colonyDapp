@@ -21,7 +21,7 @@ const MSG = defineMessages({
   },
   zeroTokens: {
     id: 'users.UserTokenActivationButton.zeroTokens',
-    defaultMessage: "You don't have any tokens. 😢",
+    defaultMessage: 'You don’t have any tokens! 😭',
   },
 });
 
