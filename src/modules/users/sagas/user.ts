@@ -21,6 +21,9 @@ import {
   ClearLoggedInUserDocument,
   ClearLoggedInUserMutation,
   ClearLoggedInUserMutationVariables,
+  UserBalanceWithLockDocument,
+  UserBalanceWithLockQuery,
+  UserBalanceWithLockQueryVariables,
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 
@@ -222,7 +225,9 @@ function* userDepositToken({
 }: Action<ActionTypes.USER_DEPOSIT_TOKEN>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+    const { walletAddress } = yield getLoggedInUser();
 
     // eslint-disable-next-line max-len
     const tokenLockingClient: TokenLockingClient = yield colonyManager.getClient(
@@ -275,6 +280,19 @@ function* userDepositToken({
 
     yield takeFrom(deposit.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
+    yield apolloClient.query<
+      UserBalanceWithLockQuery,
+      UserBalanceWithLockQueryVariables
+    >({
+      query: UserBalanceWithLockDocument,
+      variables: {
+        address: walletAddress,
+        tokenAddress,
+        colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield put({
       type: ActionTypes.USER_DEPOSIT_TOKEN_SUCCESS,
       meta,
@@ -293,6 +311,9 @@ function* userWithdrawToken({
 }: Action<ActionTypes.USER_WITHDRAW_TOKEN>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const { walletAddress } = yield getLoggedInUser();
+
     const { withdraw } = yield createTransactionChannels(meta.id, ['withdraw']);
 
     yield fork(createTransaction, withdraw.id, {
@@ -313,6 +334,19 @@ function* userWithdrawToken({
     yield put(transactionReady(withdraw.id));
 
     yield takeFrom(withdraw.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    yield apolloClient.query<
+      UserBalanceWithLockQuery,
+      UserBalanceWithLockQueryVariables
+    >({
+      query: UserBalanceWithLockDocument,
+      variables: {
+        address: walletAddress,
+        tokenAddress,
+        colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
 
     yield put<AllActions>({
       type: ActionTypes.USER_WITHDRAW_TOKEN_SUCCESS,
