@@ -48,7 +48,7 @@ export type UserActionTypes =
   | ActionType<ActionTypes.USER_LOGOUT_SUCCESS>
   | UniqueActionType<
       ActionTypes.USER_DEPOSIT_TOKEN,
-      { tokenAddress: string; amount: number },
+      { colonyAddress: string; tokenAddress: string; amount: number },
       object
     >
   | ErrorActionType<ActionTypes.USER_DEPOSIT_TOKEN_ERROR, object>
@@ -62,7 +62,7 @@ export type UserActionTypes =
     >
   | UniqueActionType<
       ActionTypes.USER_WITHDRAW_TOKEN,
-      { tokenAddress: string; amount: number },
+      { colonyAddress: string; tokenAddress: string; amount: number },
       object
     >
   | ErrorActionType<ActionTypes.USER_WITHDRAW_TOKEN_ERROR, object>
