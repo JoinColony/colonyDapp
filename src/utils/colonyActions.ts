@@ -1,6 +1,7 @@
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import { ColonyRole } from '@colony/colony-js';
+import { AddressZero } from 'ethers/constants';
 
 import {
   ColonyActions,
@@ -96,6 +97,13 @@ export const getValuesForActionType = (
               setTo: values.setTo === 'true',
             },
           ],
+        };
+      }
+      case ColonyActions.VersionUpgrade: {
+        return {
+          initiator: values?.agent || AddressZero,
+          oldVersion: values.oldVersion,
+          newVersion: values.newVersion,
         };
       }
       default: {

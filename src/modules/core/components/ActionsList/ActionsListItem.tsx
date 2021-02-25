@@ -70,6 +70,7 @@ const ActionsListItem = ({
     commentCount = 0,
     metadata,
     roles,
+    newVersion,
   },
   colony,
   handleOnClick,
@@ -204,6 +205,7 @@ const ActionsListItem = ({
                 fromDomain: domainName || fromDomain?.name || '',
                 toDomain: toDomain?.name || '',
                 roles: roleTitle,
+                newVersion: newVersion || '0',
               }}
             />
           </div>
