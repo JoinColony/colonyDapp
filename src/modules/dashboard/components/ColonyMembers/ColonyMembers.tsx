@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl';
 import { ColonyVersion } from '@colony/colony-js';
 
 import Members from '~dashboard/Members';
-import { useColonyFromNameQuery, useLoggedInUser } from '~data/index';
+import { useColonyFromNameQuery, useLoggedInUser, Colony } from '~data/index';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -43,7 +43,7 @@ const ColonyMembers = () => {
 
   const handlePermissionManagementDialog = useCallback(() => {
     openPermissionManagementDialog({
-      colonyAddress: colonyData?.processedColony.colonyAddress || '',
+      colony: colonyData?.processedColony as Colony,
     });
   }, [openPermissionManagementDialog, colonyData]);
 

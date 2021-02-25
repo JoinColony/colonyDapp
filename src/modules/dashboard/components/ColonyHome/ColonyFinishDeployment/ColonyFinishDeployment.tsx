@@ -59,10 +59,7 @@ const ColonyFinishDeployment = ({
    * which versions *must* be upgraded, and which can function as-is, even with
    * an older version
    */
-  const mustUpgradeColony = canBeUpgraded(
-    colony,
-    parseInt(networkVersion || '0', 10),
-  );
+  const mustUpgradeColony = canBeUpgraded(colony, networkVersion as string);
 
   return !mustUpgradeColony && !isDeploymentFinished && canFinishDeployment ? (
     <div className={styles.finishDeploymentBannerContainer}>
