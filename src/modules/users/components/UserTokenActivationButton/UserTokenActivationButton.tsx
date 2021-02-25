@@ -1,6 +1,8 @@
 import React from 'react';
 import { bigNumberify } from 'ethers/utils';
 
+import { TokenActivationPopover } from '~users/TokenActivation';
+
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 
@@ -24,22 +26,37 @@ const UserTokenActivationButton = ({ nativeToken, userLock }: Props) => {
   const totalBalance = inactiveBalance.add(activeBalance);
 
   return (
-    <>
-      <button type="button" className={styles.tokens}>
-        <span
-          className={`${styles.dot} ${
-            (inactiveBalance.gt(0) || totalBalance.isZero()) &&
-            styles.dotInactive
-          }`}
-        />
-        <Numeral
-          suffix={` ${nativeToken?.symbol} `}
-          unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
-          value={totalBalance}
-          truncate={3}
-        />
-      </button>
-    </>
+    <TokenActivationPopover
+      activeTokens={activeBalance}
+      inactiveTokens={lockedBalance}
+      totalTokens={totalBalance}
+      token={nativeToken}
+      lockedTokens={lockedBalance}
+    >
+      {({ toggle, ref }) => (
+        <>
+          <button
+            type="button"
+            className={styles.tokens}
+            onClick={toggle}
+            ref={ref}
+          >
+            <span
+              className={`${styles.dot} ${
+                (inactiveBalance.gt(0) || totalBalance.isZero()) &&
+                styles.dotInactive
+              }`}
+            />
+            <Numeral
+              suffix={` ${nativeToken?.symbol} `}
+              unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
+              value={totalBalance}
+              truncate={3}
+            />
+          </button>
+        </>
+      )}
+    </TokenActivationPopover>
   );
 };
 
