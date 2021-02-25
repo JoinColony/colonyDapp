@@ -195,6 +195,7 @@ export default gql`
       blockNumber: Int!
       colonyAddress: String!
     ): [ParsedEvent!]!
+    legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
   }
 
   extend type Mutation {

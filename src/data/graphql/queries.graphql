@@ -408,6 +408,10 @@ query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
   }
 }
 
+query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
+  legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`

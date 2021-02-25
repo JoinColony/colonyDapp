@@ -4,6 +4,9 @@ import {
   getBlockTime,
   getLogs,
   ColonyClientV5,
+  getMultipleEvents,
+  ColonyRole,
+  ColonyVersion,
 } from '@colony/colony-js';
 import { Log } from 'ethers/providers';
 
@@ -44,7 +47,7 @@ export const recoveryModeResolvers = ({
           recoveryModeLogs.push(mostRecentRecovery);
         }
 
-        const storageSetFilter = await getLogs(
+        const storageSlotSet = await getLogs(
           colonyClient,
           colonyClient.filters.RecoveryStorageSlotSet(null, null, null, null),
           blockFilter,
@@ -57,7 +60,7 @@ export const recoveryModeResolvers = ({
         );
 
         const parsedLogs = await Promise.all(
-          [...storageSetFilter, ...exitApprovedLogs, ...recoveryModeLogs].map(
+          [...storageSlotSet, ...exitApprovedLogs, ...recoveryModeLogs].map(
             async (log) => {
               const potentialParsedLog = colonyClient.interface.parseLog(log);
               const { address, blockHash } = log;
@@ -78,6 +81,56 @@ export const recoveryModeResolvers = ({
       } catch (error) {
         console.error(error);
         return null;
+      }
+    },
+    /*
+     * Total number of recovery roles set to users by the colony
+     *
+     * We use this to detect the issue introduced in v5 network contracts
+     * and prevent the colony upgrade if a colony has more than 1 recovery
+     * roles set to users
+     */
+    async legacyNumberOfRecoveryRoles(_, { colonyAddress }) {
+      try {
+        const colonyClient = (await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        )) as ColonyClientV5;
+
+        const colonyVersion = await colonyClient.version();
+
+        /*
+         * @NOTE We don't care about colonies that are newer than v6
+         */
+        if (colonyVersion.toNumber() === ColonyVersion.LightweightSpaceship) {
+          const allRolesSet = await getMultipleEvents(colonyClient, [
+            colonyClient.filters.ColonyRoleSet(null, null, null, null, null),
+          ]);
+          const filteredAllRoles = allRolesSet?.filter(({ values }) => {
+            if (values) {
+              return values?.setTo && values?.role === ColonyRole.Recovery;
+            }
+            return false;
+          });
+
+          const recoveryRolesSet = await getMultipleEvents(colonyClient, [
+            colonyClient.filters.RecoveryRoleSet(null, null),
+          ]);
+          const filteredRecoveryRoles = recoveryRolesSet?.filter(
+            ({ values }) => {
+              if (values) {
+                return values?.setTo;
+              }
+              return false;
+            },
+          );
+
+          return [...filteredAllRoles, ...filteredRecoveryRoles].length;
+        }
+        return 0;
+      } catch (error) {
+        console.error(error);
+        return 0;
       }
     },
   },
