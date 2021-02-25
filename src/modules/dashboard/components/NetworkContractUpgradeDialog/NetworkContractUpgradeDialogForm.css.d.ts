@@ -7,3 +7,5 @@ export const permissionsWarning: string;
 export const warningTitle: string;
 export const warningDescription: string;
 export const highlightInstruction: string;
+export const loadingInfo: string;
+export const loadingText: string;

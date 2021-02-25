@@ -64,3 +64,16 @@
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
+
+.loadingInfo {
+  composes: permissionsWarning;
+  background-color: color-mod(var(--primary) alpha(6%));
+}
+
+.loadingText {
+  display: inline-block;
+  margin: -8px 0 0 5px;
+  vertical-align: middle;
+  font-size: var(--size-small);
+  letter-spacing: initial;
+}

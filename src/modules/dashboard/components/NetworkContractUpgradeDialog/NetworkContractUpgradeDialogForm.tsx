@@ -9,6 +9,7 @@ import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -78,6 +79,10 @@ safely upgrade the colony to the next version.
     id: `dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.highlightInstruction`,
     defaultMessage: `except`,
   },
+  loadingData: {
+    id: `dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.loadingData`,
+    defaultMessage: "Loading the Colony's Recovery Roles",
+  },
 });
 
 interface Props {
@@ -94,7 +99,10 @@ const NetworkContractUpgradeDialogForm = ({
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
-  const { data } = useLegacyNumberOfRecoveryRolesQuery({
+  const {
+    data,
+    loading: loadingLegacyRecoveyRole,
+  } = useLegacyNumberOfRecoveryRolesQuery({
     variables: {
       colonyAddress,
     },
@@ -122,7 +130,7 @@ const NetworkContractUpgradeDialogForm = ({
      */
     // eslint-disable-next-line prettier/prettier
     data?.legacyNumberOfRecoveryRoles
-      ? data?.legacyNumberOfRecoveryRoles > 0
+      ? data?.legacyNumberOfRecoveryRoles > 1
       : false;
 
   return (
@@ -134,6 +142,16 @@ const NetworkContractUpgradeDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
+      {loadingLegacyRecoveyRole && (
+        <DialogSection>
+          <div className={styles.loadingInfo}>
+            <SpinnerLoader appearance={{ size: 'small' }} />
+            <span className={styles.loadingText}>
+              <FormattedMessage {...MSG.loadingData} />
+            </span>
+          </div>
+        </DialogSection>
+      )}
       {PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES && (
         <DialogSection>
           <div className={styles.permissionsWarning}>
@@ -235,7 +253,7 @@ const NetworkContractUpgradeDialogForm = ({
             !canUpgradeVersion || PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES
           }
           onClick={() => handleSubmit()}
-          loading={isSubmitting}
+          loading={isSubmitting || loadingLegacyRecoveyRole}
         />
       </DialogSection>
     </>
