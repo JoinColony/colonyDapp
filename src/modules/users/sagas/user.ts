@@ -1,5 +1,5 @@
 import { call, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
-import { ClientType } from '@colony/colony-js';
+import { ClientType, TokenLockingClient } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
@@ -217,70 +217,98 @@ function* userLogout() {
 }
 
 function* userDepositToken({
-  meta: { id },
   meta,
-  payload: { tokenAddress, amount },
+  payload: { tokenAddress, amount, colonyAddress },
 }: Action<ActionTypes.USER_DEPOSIT_TOKEN>) {
+  const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const txChannel = yield call(getTxChannel, id);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
-    const { deposit } = yield createTransactionChannels(id, ['deposit']);
+    // eslint-disable-next-line max-len
+    const tokenLockingClient: TokenLockingClient = yield colonyManager.getClient(
+      ClientType.TokenLockingClient,
+      colonyAddress,
+    );
 
-    yield fork(createTransaction, id, {
-      context: ClientType.NetworkClient,
-      methodName: 'deposit',
+    const batchKey = 'deposit';
+
+    const { approve, deposit } = yield createTransactionChannels(meta.id, [
+      'approve',
+      'deposit',
+    ]);
+
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: batchKey,
+          id: meta.id,
+          index,
+        },
+      });
+
+    yield createGroupTransaction(approve, {
+      context: ClientType.TokenClient,
+      methodName: 'approve',
+      identifier: colonyAddress,
+      params: [tokenLockingClient.address, amount],
       ready: false,
-      params: [tokenAddress, amount, false],
-      group: {
-        key: 'transaction.batch.deposit',
-        id,
-        index: 0,
-      },
     });
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
+    yield createGroupTransaction(deposit, {
+      context: ClientType.TokenLockingClient,
+      methodName: 'deposit',
+      identifier: colonyAddress,
+      params: [tokenAddress, amount, false],
+      ready: false,
+    });
+
+    yield takeFrom(approve.channel, ActionTypes.TRANSACTION_CREATED);
+
+    yield put(transactionReady(approve.id));
+
+    yield takeFrom(approve.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    yield takeFrom(deposit.channel, ActionTypes.TRANSACTION_CREATED);
 
     yield put(transactionReady(deposit.id));
 
     yield takeFrom(deposit.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    yield put<AllActions>({
+    yield put({
       type: ActionTypes.USER_DEPOSIT_TOKEN_SUCCESS,
       meta,
-      payload: {
-        tokenAddress,
-        amount,
-      },
     });
   } catch (error) {
     return yield putError(ActionTypes.USER_DEPOSIT_TOKEN_ERROR, error, meta);
+  } finally {
+    txChannel.close();
   }
   return null;
 }
 
 function* userWithdrawToken({
-  meta: { id },
   meta,
-  payload: { tokenAddress, amount },
+  payload: { tokenAddress, amount, colonyAddress },
 }: Action<ActionTypes.USER_WITHDRAW_TOKEN>) {
+  const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const txChannel = yield call(getTxChannel, id);
+    const { withdraw } = yield createTransactionChannels(meta.id, ['withdraw']);
 
-    const { withdraw } = yield createTransactionChannels(id, ['withdraw']);
-
-    yield fork(createTransaction, id, {
-      context: ClientType.NetworkClient,
+    yield fork(createTransaction, withdraw.id, {
+      context: ClientType.TokenLockingClient,
       methodName: 'withdraw',
-      ready: false,
+      identifier: colonyAddress,
       params: [tokenAddress, amount, false],
+      ready: false,
       group: {
-        key: 'transaction.batch.withdraw',
-        id,
+        key: 'withdraw',
+        id: meta.id,
         index: 0,
       },
     });
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
+    yield takeFrom(withdraw.channel, ActionTypes.TRANSACTION_CREATED);
 
     yield put(transactionReady(withdraw.id));
 
@@ -296,6 +324,8 @@ function* userWithdrawToken({
     });
   } catch (error) {
     return yield putError(ActionTypes.USER_WITHDRAW_TOKEN_ERROR, error, meta);
+  } finally {
+    txChannel.close();
   }
   return null;
 }
