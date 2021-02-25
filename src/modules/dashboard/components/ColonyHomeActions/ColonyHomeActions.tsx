@@ -1,6 +1,5 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { ColonyVersion } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
@@ -21,8 +20,9 @@ import EditColonyDetailsDialog from '~dashboard/EditColonyDetailsDialog';
 import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
-import { Colony, useLoggedInUser } from '~data/index';
+import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
 import { ALLOWED_NETWORKS } from '~constants';
+import { mustBeUpgraded } from '../../checks';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -39,6 +39,7 @@ interface Props {
 
 const ColonyHomeActions = ({ colony }: Props) => {
   const { networkId, username, ethereal } = useLoggedInUser();
+  const { version: networkVersion } = useNetworkContracts();
 
   const startWizardFlow = useNaiveBranchingDialogWizard([
     {
@@ -176,9 +177,8 @@ const ColonyHomeActions = ({ colony }: Props) => {
   ]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const isSupportedColonyVersion =
-    parseInt(colony.version, 10) >= ColonyVersion.LightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const mustUpgrade = mustBeUpgraded(colony, networkVersion as string);
 
   return (
     <Button
@@ -186,7 +186,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       text={MSG.newAction}
       onClick={() => startWizardFlow('dashboard.ColonyActionsDialog')}
       disabled={
-        !isSupportedColonyVersion ||
+        mustUpgrade ||
         !isNetworkAllowed ||
         !hasRegisteredProfile ||
         !colony?.isDeploymentFinished

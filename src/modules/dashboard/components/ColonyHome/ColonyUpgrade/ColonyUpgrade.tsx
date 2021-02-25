@@ -46,18 +46,10 @@ const ColonyUpgrade = ({ colony }: Props) => {
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
-  /*
-   * @NOTE As a future upgrade, we can have a mapping where we keep track of
-   * past and current network versions so that we can control, more granularly,
-   * which versions *must* be upgraded, and which can function as-is, even with
-   * an older version
-   */
-  const mustUpgradeColony = canBeUpgraded(
-    colony,
-    parseInt(networkVersion || '0', 10),
-  );
 
-  return mustUpgradeColony ? (
+  const canUpgrade = canBeUpgraded(colony, networkVersion as string);
+
+  return canUpgrade ? (
     <div className={styles.upgradeBannerContainer}>
       <Alert
         appearance={{
