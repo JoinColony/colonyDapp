@@ -6,6 +6,7 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
+import { Tooltip } from '~core/Popover';
 
 import { UserToken } from '~data/generated';
 import { formatTokenValue } from '~utils/numbers';
@@ -34,6 +35,29 @@ const MSG = defineMessages({
   withdraw: {
     id: 'users.TokenActivation.TokenActivationContent.TokensTab.withdraw',
     defaultMessage: 'Withdraw',
+  },
+  activeTokensTooltip: {
+    id:
+      // eslint-disable-next-line max-len
+      'users.TokenActivation.TokenActivationContent.TokensTab.activeTokensTooltip',
+    defaultMessage: `Tokens are “Active” when they’ve been deposited to a
+     contract which lets them get ‘locked’ when you need to stake,
+     or claim a share of Rewards. You can withdraw tokens back
+     to your wallet any time, you just need to clear any locks first.`,
+  },
+  inactiveTokensTooltip: {
+    id:
+      // eslint-disable-next-line max-len
+      'users.TokenActivation.TokenActivationContent.TokensTab.inactiveTokensTooltip',
+    defaultMessage: `Inactive tokens are contained in your own wallet.
+     You need to “Activate” them to stake, or be eligible to receive Rewards.`,
+  },
+  lockedTokensTooltip: {
+    id:
+      // eslint-disable-next-line max-len
+      'users.TokenActivation.TokenActivationContent.TokensTab.lockedTokensTooltip',
+    defaultMessage: `You have unclaimed transactions which must be claimed
+     before these tokens can be withdrawn.`,
   },
 });
 
@@ -77,12 +101,25 @@ const TokensTab = ({
       <div className={styles.tokensDetailsContainer}>
         <ul>
           <li>
-            <div className={styles.listItem}>
-              <div className={styles.greenDisc} />
-              <p className={styles.listItemTitle}>
-                <FormattedMessage {...MSG.active} />
-              </p>
-            </div>
+            <Tooltip
+              darkTheme
+              placement="top-start"
+              content={<FormattedMessage {...MSG.activeTokensTooltip} />}
+            >
+              {({ close, open, ref }) => (
+                <div
+                  className={styles.listItem}
+                  ref={ref}
+                  onMouseEnter={open}
+                  onMouseLeave={close}
+                >
+                  <div className={styles.greenDisc} />
+                  <p className={styles.listItemTitle}>
+                    <FormattedMessage {...MSG.active} />
+                  </p>
+                </div>
+              )}
+            </Tooltip>
             <div className={styles.tokenNumbers}>
               <Numeral
                 value={activeTokens}
@@ -91,28 +128,54 @@ const TokensTab = ({
                 truncate={3}
               />
             </div>
-            <div className={styles.lockedAmountContainer}>
-              <Icon
-                title="padlock"
-                appearance={{ size: 'extraTiny' }}
-                name="emoji-padlock-closed"
-              />
-              <Numeral
-                className={styles.lockedAmount}
-                value={lockedTokens}
-                suffix={` ${token?.symbol}`}
-                unit={tokenDecimals}
-                truncate={3}
-              />
-            </div>
+            <Tooltip
+              darkTheme
+              placement="top-start"
+              content={<FormattedMessage {...MSG.inactiveTokensTooltip} />}
+            >
+              {({ close, open, ref }) => (
+                <div
+                  className={styles.lockedAmountContainer}
+                  ref={ref}
+                  onMouseEnter={open}
+                  onMouseLeave={close}
+                >
+                  <Icon
+                    title="padlock"
+                    appearance={{ size: 'extraTiny' }}
+                    name="emoji-padlock-closed"
+                  />
+                  <Numeral
+                    className={styles.lockedAmount}
+                    value={lockedTokens}
+                    suffix={` ${token?.symbol}`}
+                    unit={tokenDecimals}
+                    truncate={3}
+                  />
+                </div>
+              )}
+            </Tooltip>
           </li>
           <li>
-            <div className={styles.listItem}>
-              <div className={styles.redDisc} />
-              <p className={styles.listItemTitle}>
-                <FormattedMessage {...MSG.inactive} />
-              </p>
-            </div>
+            <Tooltip
+              darkTheme
+              placement="top-start"
+              content={<FormattedMessage {...MSG.inactiveTokensTooltip} />}
+            >
+              {({ close, open, ref }) => (
+                <div
+                  className={styles.listItem}
+                  ref={ref}
+                  onMouseEnter={open}
+                  onMouseLeave={close}
+                >
+                  <div className={styles.redDisc} />
+                  <p className={styles.listItemTitle}>
+                    <FormattedMessage {...MSG.inactive} />
+                  </p>
+                </div>
+              )}
+            </Tooltip>
             <div className={styles.tokenNumbers}>
               <Numeral
                 value={inactiveTokens}
