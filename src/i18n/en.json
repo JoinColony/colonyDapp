@@ -64,7 +64,7 @@
     "transaction.group.transaction.batch.createUser.description": "Claim Your Username \"{0}\"",
     "transaction.NetworkClient.registerUserLabel.title": "Claim Username",
     "transaction.NetworkClient.registerUserLabel.description": "Confirm Your Username \"{0}\"",
-    
+
     "transaction.group.createColony.title": "Create Colony",
     "transaction.group.createColony.description": "Create Colony",
     "transaction.group.restartColonyDeployment.title": "Restart Colony Deployment",
