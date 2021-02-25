@@ -28,10 +28,10 @@ const UserTokenActivationButton = ({ nativeToken, userLock }: Props) => {
   return (
     <TokenActivationPopover
       activeTokens={activeBalance}
-      inactiveTokens={lockedBalance}
+      inactiveTokens={inactiveBalance}
       totalTokens={totalBalance}
-      token={nativeToken}
       lockedTokens={lockedBalance}
+      token={nativeToken}
     >
       {({ toggle, ref }) => (
         <>
