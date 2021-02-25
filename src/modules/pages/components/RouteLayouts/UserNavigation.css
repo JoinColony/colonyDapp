@@ -106,9 +106,14 @@
    * active class (the one that has a different colored border), we remove the extra padding
    * and set the border
    */
-  padding: 2px 9px 3px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
   border: none;
   border-radius: var(--radius-normal);
+  border: 1px solid transparent;
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
   color: var(--temp-grey-blue-7);
   cursor: pointer;
@@ -120,18 +125,18 @@
 }
 
 .walletAddress:hover {
-  background-color: color-mod(var(--colony-blue) alpha(10%));
+  background-color: rgb(217, 216, 236);
   color: var(--colony-blue);
 }
 
 .walletAddressActive {
   composes: walletAddress;
-  padding: 1px 8px 2px;
   border: 1px solid var(--colony-blue);
   color: var(--colony-blue);
 }
 
 .buttonsWrapper {
+  display: flex;
   padding: 1px;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));

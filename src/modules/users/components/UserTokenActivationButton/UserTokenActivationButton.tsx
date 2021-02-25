@@ -22,10 +22,17 @@ const UserTokenActivationButton = ({ nativeToken, userLock }: Props) => {
   const lockContractBalance = bigNumberify(userLock?.balance || 0);
   const activeBalance = lockContractBalance.sub(lockedBalance);
   const totalBalance = inactiveBalance.add(activeBalance);
-
+  // TODO link with popover logic when ready
+  const isOpen = false;
   return (
     <>
-      <button type="button" className={styles.tokens}>
+      <button type="button"
+        className={
+          isOpen
+            ? styles.tokensActive
+            : styles.tokens
+        }
+      >
         <span
           className={`${styles.dot} ${
             (inactiveBalance.gt(0) || totalBalance.isZero()) &&
