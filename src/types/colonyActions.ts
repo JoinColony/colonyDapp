@@ -128,6 +128,8 @@ export interface FormattedAction {
   commentCount: number;
   metadata?: string;
   roles: ActionUserRoles[];
+  oldVersion?: string;
+  newVersion?: string;
 }
 
 export interface FormattedEvent {
@@ -150,4 +152,6 @@ export interface FormattedEvent {
   setTo: boolean;
   extensionHash?: string;
   extensionVersion?: string;
+  oldVersion?: string;
+  newVersion?: string;
 }
