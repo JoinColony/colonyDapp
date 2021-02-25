@@ -52,11 +52,19 @@
 
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
+    "transaction.group.deposit.title": "Activate tokens",
+    "transaction.group.deposit.description": "Activate tokens",
+    "transaction.TokenLockingClient.deposit.title": "Activate tokens",
+    "transaction.group.withdraw.title": "Withdraw tokens",
+    "transaction.group.withdraw.description": "Withdraw tokens",
+    "transaction.TokenLockingClient.wthdraw.description": "Withdraw tokens",
+    "transaction.TokenLockingClient.withdraw.title": "Withdraw tokens",
+    "transaction.TokenClient.approve.title": "Approve amount of tokens",
     "transaction.group.transaction.batch.createUser.title": "Claim Username",
     "transaction.group.transaction.batch.createUser.description": "Claim Your Username \"{0}\"",
     "transaction.NetworkClient.registerUserLabel.title": "Claim Username",
     "transaction.NetworkClient.registerUserLabel.description": "Confirm Your Username \"{0}\"",
-
+    
     "transaction.group.createColony.title": "Create Colony",
     "transaction.group.createColony.description": "Create Colony",
     "transaction.group.restartColonyDeployment.title": "Restart Colony Deployment",
