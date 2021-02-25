@@ -8,7 +8,6 @@ import {
   DomainFieldsFragment,
   FullColonyFragment,
   LoggedInUserDocument,
-  PayoutsFragment,
   TokenBalancesForDomainsQuery,
   TokenQuery,
   UserNotificationsQuery,
@@ -69,8 +68,6 @@ export * from './generated';
 export * from './helpers';
 
 export type AnyUser = UserQuery['user'] | UserWithReputationQuery['user'];
-
-export type Payouts = PayoutsFragment['payouts'];
 
 export type Notifications = UserNotificationsQuery['user']['notifications'];
 export type OneNotification = Notifications[number];
