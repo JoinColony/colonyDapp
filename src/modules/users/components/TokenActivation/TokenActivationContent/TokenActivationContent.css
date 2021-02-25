@@ -57,7 +57,7 @@
 .tokensDetailsContainer {
   composes: containerPartBorder;
   padding: 21px 0 0 18px;
-  height: 163px;
+  height: 153px;
   width: 100%;
 }
 
@@ -172,6 +172,10 @@
 .inputField {
   margin-bottom: 4px;
   width: 100%;
+}
+
+.inputField > div > div > input[aria-invalid="true"] {
+  border-color: var(--primary);
 }
 
 .balanceInfo {

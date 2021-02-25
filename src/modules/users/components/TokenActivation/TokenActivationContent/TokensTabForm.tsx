@@ -61,7 +61,7 @@ const TokensTabForm = ({
 
   return (
     <ActionForm
-      initialValues={{ amount: 0 }}
+      initialValues={{ amount: undefined }}
       validationSchema={validationSchema}
       transform={transform}
       submit={
@@ -80,7 +80,7 @@ const TokensTabForm = ({
           : ActionTypes.USER_WITHDRAW_TOKEN_SUCCESS
       }
     >
-      {({ isValid }: FormikProps<FormValues>) => (
+      {({ isValid, values }: FormikProps<FormValues>) => (
         <div className={styles.form}>
           <div className={styles.inputField}>
             <Input
@@ -90,7 +90,6 @@ const TokensTabForm = ({
                 align: 'right',
               }}
               elementOnly
-              // status="boooooo"
               formattingOptions={{
                 delimiter: ',',
                 numeral: true,
@@ -120,7 +119,7 @@ const TokensTabForm = ({
           <Button
             text={{ id: 'button.confirm' }}
             type="submit"
-            disabled={isValid}
+            disabled={!isValid || values.amount === undefined}
           />
         </div>
       )}
