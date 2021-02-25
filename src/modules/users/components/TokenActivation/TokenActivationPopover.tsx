@@ -7,11 +7,7 @@ import { removeValueUnits } from '~utils/css';
 import TokenActivationContent, {
   TokensTabProps,
 } from './TokenActivationContent/index';
-import {
-  // refWidth,
-  // horizontalOffset,
-  verticalOffset,
-} from './TokenActivationPopover.css';
+import { verticalOffset } from './TokenActivationPopover.css';
 
 interface Props extends TokensTabProps {
   children: ReactElement | PopoverChildFn;
@@ -34,10 +30,7 @@ const TokenActivationPopover = ({ children, ...otherProps }: Props) => {
    * reference element.
    */
   const popoverOffset = useMemo(() => {
-    // const skid =
-    //   removeValueUnits(refWidth) / 2 + removeValueUnits(horizontalOffset);
-    // return [-1 * skid, removeValueUnits(verticalOffset)];
-    return [-50, removeValueUnits(verticalOffset)];
+    return [0, removeValueUnits(verticalOffset)];
   }, []);
 
   return (
