@@ -39,6 +39,7 @@ interface Props {
   colonyDomains: DomainFieldsFragment[];
   userHasPermission: boolean;
   onDomainSelected: (domain: number) => void;
+  isSupportedRecoveryRole: boolean;
 }
 
 const PermissionManagementForm = ({
@@ -50,17 +51,14 @@ const PermissionManagementForm = ({
   colonyDomains,
   onDomainSelected,
   userHasPermission,
+  isSupportedRecoveryRole = true,
 }: Props) => {
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(
     (role: ColonyRole) => {
       switch (role) {
         // Can't set arbitration at all yet
-        /*
-         * @TODO Termporary disable Recovery Role setting until v6 gets deployed
-         */
         case ColonyRole.Arbitration:
-        case ColonyRole.Recovery:
           return false;
 
         // Can only be set by root and in root domain (and only unset if other root accounts exist)
@@ -72,6 +70,21 @@ const PermissionManagementForm = ({
               rootAccounts.length > 1)
           );
 
+        /*
+         * Prevent setting the recovery role for all colonies pre v6
+         */
+        case ColonyRole.Recovery: {
+          if (!isSupportedRecoveryRole) {
+            return false;
+          }
+          return (
+            domainId === ROOT_DOMAIN_ID &&
+            currentUserRoles.includes(ColonyRole.Root) &&
+            (!userDirectRoles.includes(ColonyRole.Root) ||
+              rootAccounts.length > 1)
+          );
+        }
+
         // Must be root for these
         case ColonyRole.Administration:
         case ColonyRole.Funding:
@@ -82,7 +95,13 @@ const PermissionManagementForm = ({
           return false;
       }
     },
-    [currentUserRoles, domainId, rootAccounts, userDirectRoles],
+    [
+      currentUserRoles,
+      domainId,
+      rootAccounts,
+      userDirectRoles,
+      isSupportedRecoveryRole,
+    ],
   );
 
   const domainSelectOptions = sortBy(
@@ -125,6 +144,7 @@ const PermissionManagementForm = ({
               role={role}
               asterisk={roleIsInherited}
               domainId={domainId}
+              isSupportedRecoveryRole={isSupportedRecoveryRole}
             />
           );
         })}

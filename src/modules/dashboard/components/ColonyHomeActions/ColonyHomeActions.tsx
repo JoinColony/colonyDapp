@@ -136,7 +136,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       component: PermissionManagementDialog,
       props: {
         prevStep: 'dashboard.AdvancedDialog',
-        colonyAddress: colony.colonyAddress,
+        colony,
       },
     },
     {
