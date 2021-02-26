@@ -97,24 +97,27 @@ const TokensTabForm = ({
               }}
             />
           </div>
-          <div className={styles.balanceInfo}>
-            <div className={isActivate ? styles.redDisc : styles.greenDisc} />
-            <p className={styles.balanceInfoText}>
-              <FormattedMessage
-                {...MSG.balance}
-                values={{
-                  tokenBalance: (
-                    <Numeral
-                      value={isActivate ? activeTokens : inactiveTokens}
-                      suffix={` ${token?.symbol}`}
-                      unit={tokenDecimals}
-                      truncate={3}
-                      className={styles.balanceInfoText}
-                    />
-                  ),
-                }}
-              />
-            </p>
+          <div
+            className={
+              isActivate
+                ? styles.balanceInfoActivate
+                : styles.balanceInfoWithdraw
+            }
+          >
+            <FormattedMessage
+              {...MSG.balance}
+              values={{
+                tokenBalance: (
+                  <Numeral
+                    value={isActivate ? activeTokens : inactiveTokens}
+                    suffix={` ${token?.symbol}`}
+                    unit={tokenDecimals}
+                    truncate={3}
+                    className={styles.balanceAmount}
+                  />
+                ),
+              }}
+            />
           </div>
           <Button
             text={{ id: 'button.confirm' }}
