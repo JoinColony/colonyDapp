@@ -135,11 +135,21 @@
   outline: none;
 }
 
+.activateButton > button {
+  border-radius: 2px 0 0 2px;
+}
+
+.withdrawButton > button {
+  border-radius: 0 2px 2px 0;
+}
+
 .activateButtonInactive > button {
+  border-radius: 2px 0 0 2px;
   border-right: none;
 }
 
 .withdrawButtonInactive > button {
+  border-radius: 0 2px 2px 0;
   border-left: none;
 }
 
