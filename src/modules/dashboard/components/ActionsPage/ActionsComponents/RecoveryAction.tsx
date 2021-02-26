@@ -89,7 +89,10 @@ const RecoveryAction = ({
   /*
    * @TODO Add load state for fetching all the events from the chain
    */
-  const { data } = useRecoveryEventsForSessionQuery({
+  const {
+    data,
+    loading: recoveryEventsLoading,
+  } = useRecoveryEventsForSessionQuery({
     variables: {
       blockNumber,
       colonyAddress,
@@ -200,6 +203,7 @@ const RecoveryAction = ({
             values={actionAndEventValues}
             actionData={colonyAction}
             colony={colony}
+            loading={recoveryEventsLoading}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
