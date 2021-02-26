@@ -1001,6 +1001,7 @@ export type LoggedInUser = {
 };
 
 export type ParsedEvent = {
+  type: Scalars['String'];
   name: Scalars['String'];
   values: Scalars['String'];
   createdAt: Scalars['Int'];
@@ -1890,7 +1891,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 export type ColonyActionQuery = { colonyAction: (
     Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'blockNumber'>
-    & { events: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
+    & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
 export type TransactionMessagesQueryVariables = Exact<{
@@ -4383,6 +4384,7 @@ export const ColonyActionDocument = gql`
     recipient
     status
     events {
+      type
       name
       values
       createdAt

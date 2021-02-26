@@ -344,6 +344,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     recipient
     status
     events {
+      type
       name
       values
       createdAt

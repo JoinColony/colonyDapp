@@ -19,6 +19,7 @@ export default gql`
   }
 
   type ParsedEvent {
+    type: String!
     name: String!
     values: String!
     createdAt: Int!

@@ -17,6 +17,7 @@ import {
   ColonyAndExtensionsEvents,
   Address,
 } from '~types/index';
+import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 
 export interface EventValue {
   agent: Address;
@@ -36,6 +37,7 @@ export interface EventValue {
 }
 
 export interface ProcessedEvent {
+  type: ActionsPageFeedType;
   name: ColonyAndExtensionsEvents;
   values: EventValue;
   createdAt: number;
@@ -121,6 +123,7 @@ export const colonyActionsResolvers = ({
                   const { address } = log;
                   const { name, values } = potentialParsedLog;
                   return {
+                    type: ActionsPageFeedType.NetworkEvent,
                     name,
                     values,
                     createdAt,
