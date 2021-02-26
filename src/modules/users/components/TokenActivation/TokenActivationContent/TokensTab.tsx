@@ -1,8 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
-import Button from '~core/Button';
 import Icon from '~core/Icon';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
@@ -13,7 +12,7 @@ import { formatTokenValue } from '~utils/numbers';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './TokenActivationContent.css';
-import TokensTabForm from './TokensTabForm';
+import ChangeTokenStateForm from './ChangeTokenStateForm';
 
 const MSG = defineMessages({
   active: {
@@ -23,18 +22,6 @@ const MSG = defineMessages({
   inactive: {
     id: 'users.TokenActivation.TokenActivationContent.TokensTab.inactive',
     defaultMessage: 'Inactive',
-  },
-  changeState: {
-    id: 'users.TokenActivation.TokenActivationContent.TokensTab.changeState',
-    defaultMessage: 'Change token state',
-  },
-  activate: {
-    id: 'users.TokenActivation.TokenActivationContent.TokensTab.activate',
-    defaultMessage: 'Activate',
-  },
-  withdraw: {
-    id: 'users.TokenActivation.TokenActivationContent.TokensTab.withdraw',
-    defaultMessage: 'Withdraw',
   },
   activeTokensTooltip: {
     id:
@@ -76,8 +63,6 @@ const TokensTab = ({
   lockedTokens,
   token,
 }: TokensTabProps) => {
-  const [isActivate, setIsActivate] = useState(true);
-
   const popperProps = {
     modifiers: [
       {
@@ -195,42 +180,12 @@ const TokensTab = ({
           </li>
         </ul>
       </div>
-      <div className={styles.changeTokensState}>
-        <div className={styles.changeStateTitle}>
-          <FormattedMessage {...MSG.changeState} />
-        </div>
-        <div className={styles.changeStateButtonsContainer}>
-          <div
-            className={
-              isActivate ? styles.activateButton : styles.activateButtonInactive
-            }
-          >
-            <Button
-              appearance={{ theme: isActivate ? 'primary' : 'white' }}
-              onClick={() => setIsActivate(true)}
-              text={MSG.activate}
-            />
-          </div>
-          <div
-            className={
-              isActivate ? styles.withdrawButtonInactive : styles.withdrawButton
-            }
-          >
-            <Button
-              appearance={{ theme: !isActivate ? 'primary' : 'white' }}
-              onClick={() => setIsActivate(false)}
-              text={MSG.withdraw}
-            />
-          </div>
-        </div>
-        <TokensTabForm
-          token={token}
-          isActivate={isActivate}
-          tokenDecimals={tokenDecimals}
-          activeTokens={activeTokens}
-          inactiveTokens={inactiveTokens}
-        />
-      </div>
+      <ChangeTokenStateForm
+        token={token}
+        tokenDecimals={tokenDecimals}
+        activeTokens={activeTokens}
+        inactiveTokens={inactiveTokens}
+      />
     </>
   );
 };
