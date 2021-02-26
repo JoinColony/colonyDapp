@@ -8,6 +8,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
   SystemInfo,
+  SystemMessage,
   ActionsPageFeedType,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
@@ -19,6 +20,7 @@ import {
   TokenInfoQuery,
   AnyUser,
   useRecoveryEventsForSessionQuery,
+  useRecoverySystemMessagesForSessionQuery,
 } from '~data/index';
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 
@@ -86,11 +88,8 @@ const RecoveryAction = ({
 }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
-  /*
-   * @TODO Add load state for fetching all the events from the chain
-   */
   const {
-    data,
+    data: recoveryEvents,
     loading: recoveryEventsLoading,
   } = useRecoveryEventsForSessionQuery({
     variables: {
@@ -99,14 +98,24 @@ const RecoveryAction = ({
     },
   });
 
+  const {
+    data: recoverySystemMessages,
+    loading: recoverySystemMessagesLoading,
+  } = useRecoverySystemMessagesForSessionQuery({
+    variables: {
+      blockNumber,
+      colonyAddress,
+    },
+  });
+
   const isInRecoveryMode = useMemo(() => {
-    if (data?.recoveryEventsForSession) {
-      return !data.recoveryEventsForSession.find(
+    if (recoveryEvents?.recoveryEventsForSession) {
+      return !recoveryEvents.recoveryEventsForSession.find(
         ({ name }) => name === ColonyAndExtensionsEvents.RecoveryModeExited,
       );
     }
     return false;
-  }, [data]);
+  }, [recoveryEvents]);
 
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
@@ -197,13 +206,21 @@ const RecoveryAction = ({
             transactionHash={transactionHash as string}
             networkEvents={[
               ...events,
-              ...(data?.recoveryEventsForSession || []),
+              ...(recoveryEvents?.recoveryEventsForSession || []),
             ]}
             systemInfos={[recoveryModeSystemInfo]}
+            systemMessages={
+              /*
+               * @NOTE Prettier is stupid, it keeps changing this line in a way that
+               * breaks it
+               */
+              // eslint-disable-next-line prettier/prettier,max-len
+              recoverySystemMessages?.recoverySystemMessagesForSession as SystemMessage[]
+            }
             values={actionAndEventValues}
             actionData={colonyAction}
             colony={colony}
-            loading={recoveryEventsLoading}
+            loading={recoveryEventsLoading || recoverySystemMessagesLoading}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected

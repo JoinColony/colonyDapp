@@ -693,6 +693,7 @@ export type Query = {
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
   recoveryEventsForSession: Array<ParsedEvent>;
+  recoverySystemMessagesForSession: Array<Maybe<SystemMessage>>;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   task: Task;
@@ -770,6 +771,12 @@ export type QueryProcessedColonyArgs = {
 
 
 export type QueryRecoveryEventsForSessionArgs = {
+  blockNumber: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryRecoverySystemMessagesForSessionArgs = {
   blockNumber: Scalars['Int'];
   colonyAddress: Scalars['String'];
 };
@@ -1006,6 +1013,12 @@ export type ParsedEvent = {
   values: Scalars['String'];
   createdAt: Scalars['Int'];
   emmitedBy: Scalars['String'];
+};
+
+export type SystemMessage = {
+  type: Scalars['String'];
+  name: Scalars['String'];
+  createdAt: Scalars['Int'];
 };
 
 export type ColonyActionRoles = {
@@ -1923,6 +1936,14 @@ export type RecoveryEventsForSessionQueryVariables = Exact<{
 
 
 export type RecoveryEventsForSessionQuery = { recoveryEventsForSession: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy'>> };
+
+export type RecoverySystemMessagesForSessionQueryVariables = Exact<{
+  blockNumber: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type RecoverySystemMessagesForSessionQuery = { recoverySystemMessagesForSession: Array<Maybe<Pick<SystemMessage, 'type' | 'name' | 'createdAt'>>> };
 
 export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4585,6 +4606,42 @@ export function useRecoveryEventsForSessionLazyQuery(baseOptions?: Apollo.LazyQu
 export type RecoveryEventsForSessionQueryHookResult = ReturnType<typeof useRecoveryEventsForSessionQuery>;
 export type RecoveryEventsForSessionLazyQueryHookResult = ReturnType<typeof useRecoveryEventsForSessionLazyQuery>;
 export type RecoveryEventsForSessionQueryResult = Apollo.QueryResult<RecoveryEventsForSessionQuery, RecoveryEventsForSessionQueryVariables>;
+export const RecoverySystemMessagesForSessionDocument = gql`
+    query RecoverySystemMessagesForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoverySystemMessagesForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useRecoverySystemMessagesForSessionQuery__
+ *
+ * To run a query within a React component, call `useRecoverySystemMessagesForSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRecoverySystemMessagesForSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRecoverySystemMessagesForSessionQuery({
+ *   variables: {
+ *      blockNumber: // value for 'blockNumber'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useRecoverySystemMessagesForSessionQuery(baseOptions?: Apollo.QueryHookOptions<RecoverySystemMessagesForSessionQuery, RecoverySystemMessagesForSessionQueryVariables>) {
+        return Apollo.useQuery<RecoverySystemMessagesForSessionQuery, RecoverySystemMessagesForSessionQueryVariables>(RecoverySystemMessagesForSessionDocument, baseOptions);
+      }
+export function useRecoverySystemMessagesForSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RecoverySystemMessagesForSessionQuery, RecoverySystemMessagesForSessionQueryVariables>) {
+          return Apollo.useLazyQuery<RecoverySystemMessagesForSessionQuery, RecoverySystemMessagesForSessionQueryVariables>(RecoverySystemMessagesForSessionDocument, baseOptions);
+        }
+export type RecoverySystemMessagesForSessionQueryHookResult = ReturnType<typeof useRecoverySystemMessagesForSessionQuery>;
+export type RecoverySystemMessagesForSessionLazyQueryHookResult = ReturnType<typeof useRecoverySystemMessagesForSessionLazyQuery>;
+export type RecoverySystemMessagesForSessionQueryResult = Apollo.QueryResult<RecoverySystemMessagesForSessionQuery, RecoverySystemMessagesForSessionQueryVariables>;
 export const LegacyNumberOfRecoveryRolesDocument = gql`
     query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client

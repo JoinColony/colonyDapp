@@ -4,6 +4,7 @@ import {
   getBlockTime,
   getLogs,
   ColonyClientV5,
+  ColonyClientV6,
   getMultipleEvents,
   ColonyRole,
   ColonyVersion,
@@ -13,76 +14,137 @@ import { Log } from 'ethers/providers';
 import { Context } from '~context/index';
 
 import { ProcessedEvent } from './colonyActions';
-import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
+import {
+  ActionsPageFeedType,
+  SystemMessage,
+  SystemMessagesName,
+} from '~dashboard/ActionsPageFeed';
+import { ColonyAndExtensionsEvents } from '~types/index';
+
+const getSessionRecoveryEvents = async (
+  colonyClient: ColonyClientV6,
+  startBlock = 1,
+) => {
+  const blockFilter: {
+    fromBlock: number;
+    toBlock?: number;
+  } = {
+    fromBlock: startBlock,
+  };
+  const recoveryModeLogs: Log[] = [];
+
+  const [mostRecentExitRecovery] = await getLogs(
+    colonyClient,
+    colonyClient.filters.RecoveryModeExited(null),
+    {
+      fromBlock: startBlock,
+    },
+  );
+
+  if (mostRecentExitRecovery) {
+    blockFilter.toBlock = mostRecentExitRecovery?.blockNumber;
+    recoveryModeLogs.push(mostRecentExitRecovery);
+  }
+
+  const storageSlotSetLogs = await getLogs(
+    colonyClient,
+    colonyClient.filters.RecoveryStorageSlotSet(null, null, null, null),
+    blockFilter,
+  );
+
+  const exitApprovedLogs = await getLogs(
+    colonyClient,
+    colonyClient.filters.RecoveryModeExitApproved(null),
+    blockFilter,
+  );
+
+  const parsedRecoveryEvents = await Promise.all(
+    [...recoveryModeLogs, ...storageSlotSetLogs, ...exitApprovedLogs].map(
+      async (log) => {
+        const potentialParsedLog = colonyClient.interface.parseLog(log);
+        const { address, blockHash } = log;
+        const { name, values } = potentialParsedLog;
+        return {
+          type: ActionsPageFeedType.NetworkEvent,
+          name,
+          values,
+          createdAt: blockHash
+            ? await getBlockTime(colonyClient.provider, blockHash)
+            : 0,
+          emmitedBy: ClientType.ColonyClient,
+          address,
+        } as ProcessedEvent;
+      },
+    ),
+  );
+
+  return parsedRecoveryEvents.sort(
+    (firstEvent, secondEvent) => firstEvent.createdAt - secondEvent.createdAt,
+  );
+};
 
 export const recoveryModeResolvers = ({
   colonyManager,
-  colonyManager: {
-    networkClient: { provider },
-  },
 }: Required<Context>): Resolvers => ({
   Query: {
     async recoveryEventsForSession(_, { blockNumber, colonyAddress }) {
       try {
-        const blockFilter: {
-          fromBlock: number;
-          toBlock?: number;
-        } = {
-          fromBlock: blockNumber,
-        };
-        const recoveryModeLogs: Log[] = [];
-
         const colonyClient = (await colonyManager.getClient(
           ClientType.ColonyClient,
           colonyAddress,
-        )) as ColonyClientV5;
+        )) as ColonyClientV6;
 
-        const [mostRecentRecovery] = await getLogs(
-          colonyClient,
-          colonyClient.filters.RecoveryModeExited(null),
-          blockFilter,
-        );
-
-        if (mostRecentRecovery) {
-          blockFilter.toBlock = mostRecentRecovery?.blockNumber;
-          recoveryModeLogs.push(mostRecentRecovery);
-        }
-
-        const storageSlotSet = await getLogs(
-          colonyClient,
-          colonyClient.filters.RecoveryStorageSlotSet(null, null, null, null),
-          blockFilter,
-        );
-
-        const exitApprovedLogs = await getLogs(
-          colonyClient,
-          colonyClient.filters.RecoveryModeExitApproved(null),
-          blockFilter,
-        );
-
-        const parsedLogs = await Promise.all(
-          [...storageSlotSet, ...exitApprovedLogs, ...recoveryModeLogs].map(
-            async (log) => {
-              const potentialParsedLog = colonyClient.interface.parseLog(log);
-              const { address, blockHash } = log;
-              const { name, values } = potentialParsedLog;
-              return {
-                type: ActionsPageFeedType.NetworkEvent,
-                name,
-                values,
-                createdAt: blockHash
-                  ? await getBlockTime(provider, blockHash)
-                  : 0,
-                emmitedBy: ClientType.ColonyClient,
-                address,
-              } as ProcessedEvent;
-            },
-          ),
-        );
-        return parsedLogs;
+        return getSessionRecoveryEvents(colonyClient, blockNumber);
       } catch (error) {
         console.error(error);
-        return null;
+        return [];
+      }
+    },
+    async recoverySystemMessagesForSession(_, { blockNumber, colonyAddress }) {
+      try {
+        const colonyClient = (await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        )) as ColonyClientV6;
+
+        let exitApprovalsCounter = 0;
+        const systemMessages: SystemMessage[] = [];
+
+        const thresholdExitApprovals = (
+          await colonyClient.numRecoveryRoles()
+        ).toNumber();
+
+        const recoveryEvents = await getSessionRecoveryEvents(
+          colonyClient,
+          blockNumber,
+        );
+
+        await Promise.all(
+          recoveryEvents.map(async ({ createdAt, name }) => {
+            switch (name) {
+              case ColonyAndExtensionsEvents.RecoveryModeExitApproved:
+                exitApprovalsCounter += 1;
+                break;
+              case ColonyAndExtensionsEvents.RecoveryStorageSlotSet:
+                exitApprovalsCounter = 0;
+                break;
+              default:
+                break;
+            }
+            if (exitApprovalsCounter >= thresholdExitApprovals) {
+              systemMessages.push({
+                type: ActionsPageFeedType.SystemMessage,
+                name: SystemMessagesName.EnoughExitRecoveryApprovals,
+                createdAt,
+              });
+            }
+          }),
+        );
+
+        return systemMessages;
+      } catch (error) {
+        console.error(error);
+        return [];
       }
     },
     /*

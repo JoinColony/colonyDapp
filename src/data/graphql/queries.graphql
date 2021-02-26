@@ -410,6 +410,14 @@ query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
   }
 }
 
+query RecoverySystemMessagesForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoverySystemMessagesForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    createdAt
+  }
+}
+
 query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }

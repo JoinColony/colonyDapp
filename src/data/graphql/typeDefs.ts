@@ -26,6 +26,12 @@ export default gql`
     emmitedBy: String!
   }
 
+  type SystemMessage {
+    type: String!
+    name: String!
+    createdAt: Int!
+  }
+
   type ColonyActionRoles {
     id: Int!
     setTo: Boolean!
@@ -196,6 +202,11 @@ export default gql`
       blockNumber: Int!
       colonyAddress: String!
     ): [ParsedEvent!]!
+    recoverySystemMessagesForSession(
+      blockNumber: Int!
+      colonyAddress: String!
+    ): [SystemMessage]!
+
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
   }
 
