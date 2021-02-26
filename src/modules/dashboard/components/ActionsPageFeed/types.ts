@@ -1,6 +1,6 @@
 import { MessageDescriptor } from 'react-intl';
 import { UniversalMessageValues } from '~types/index';
-import { Appearance as SystemInfoAppearance } from './ActionsPageTip';
+import { Appearance as SystemInfoAppearance } from './ActionsPageSystemInfo';
 
 export enum ActionsPageFeedType {
   /*
