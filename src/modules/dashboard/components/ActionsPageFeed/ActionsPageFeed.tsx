@@ -15,7 +15,7 @@ import {
   TransactionMessageFragment,
   ParsedEvent,
 } from '~data/index';
-import { ActionUserRoles, ColonyActions } from '~types/index';
+import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { ActionsPageFeedType, SystemInfo, SystemMessage } from './types';
 
 import ActionsPageFeedItem from './ActionsPageFeedItem';
@@ -45,6 +45,8 @@ export interface EventValues {
   newVersion?: string;
   colonyName?: string | ReactElement;
   roles?: ActionUserRoles[];
+  user?: Address;
+  agent?: Address;
 }
 
 type FeedItemWithId<T> = T & { uniqueId: string };
@@ -181,6 +183,7 @@ const ActionsPageFeed = ({
               createdAt,
               emmitedBy,
               uniqueId,
+              values: eventValues,
             } = feedItem as FeedItemWithId<ParsedEvent>;
             return (
               <ActionsPageEvent
@@ -190,7 +193,10 @@ const ActionsPageFeed = ({
                 transactionHash={transactionHash}
                 eventName={name}
                 actionData={actionData}
-                values={values}
+                values={{
+                  ...((eventValues as unknown) as EventValues),
+                  ...values,
+                }}
                 emmitedBy={emmitedBy}
                 colony={colony}
               />

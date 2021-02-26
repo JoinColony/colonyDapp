@@ -8,3 +8,4 @@ export const highlight: string;
 export const roles: string;
 export const meta: string;
 export const tooltipIcon: string;
+export const userDecoration: string;

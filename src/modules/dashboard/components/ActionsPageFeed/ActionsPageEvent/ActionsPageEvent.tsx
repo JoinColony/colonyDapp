@@ -5,19 +5,15 @@ import findLastIndex from 'lodash/findLastIndex';
 
 import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
-import { ColonyAndExtensionsEvents } from '~types/index';
-import { useDataFetcher } from '~utils/hooks';
 import ColorTag, { Color } from '~core/ColorTag';
-import { ipfsDataFetcher } from '../../../../core/fetchers';
+import FriendlyName from '~core/FriendlyName';
 
-import { EventValues } from '../ActionsPageFeed';
-import { STATUS } from '../../ActionsPage/types';
-import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
 import {
   ColonyAction,
   useSubgraphColonyMetadataQuery,
   useSubgraphDomainMetadataQuery,
   Colony,
+  useUser,
 } from '~data/index';
 import {
   getSpecificActionValuesCheck,
@@ -28,6 +24,13 @@ import {
   getDomainMetadataMessageDescriptorsIds,
   getColonyRoleSetMessageDescriptorsIds,
 } from '~utils/colonyActions';
+import { useDataFetcher } from '~utils/hooks';
+import { ipfsDataFetcher } from '../../../../core/fetchers';
+
+import { ColonyAndExtensionsEvents } from '~types/index';
+import { EventValues } from '../ActionsPageFeed';
+import { STATUS } from '../../ActionsPage/types';
+import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
 
 import styles from './ActionsPageEvent.css';
 
@@ -82,6 +85,9 @@ const ActionsPageEvent = ({
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
     undefined,
   );
+
+  const initiator = useUser(values?.agent || values?.user || '');
+
   const [
     previousDomainMetadata,
     setPreviousDomainMetadata,
@@ -271,7 +277,9 @@ const ActionsPageEvent = ({
     eventIndex,
     values,
   ]);
+
   const { domainPurpose, domainName, domainColor } = actionData;
+
   return (
     <div className={styles.main}>
       <div className={styles.wrapper}>
@@ -311,6 +319,11 @@ const ActionsPageEvent = ({
                 role: formattedRole,
                 clientOrExtensionType: (
                   <span className={styles.highlight}>{emmitedBy}</span>
+                ),
+                initiator: (
+                  <span className={styles.userDecoration}>
+                    <FriendlyName user={initiator} autoShrinkAddress />
+                  </span>
                 ),
               }}
             />
