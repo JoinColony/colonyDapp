@@ -9,6 +9,10 @@
   letter-spacing: var(--spacing-medium);
 }
 
+.main > div {
+  vertical-align: sub;
+}
+
 .themeDefault {
   composes: main;
   background-color: color-mod(var(--primary) alpha(6%));
