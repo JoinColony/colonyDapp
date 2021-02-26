@@ -108,15 +108,12 @@ const TokensTab = ({
             >
               {({ close, open, ref }) => (
                 <div
-                  className={styles.listItem}
+                  className={styles.listItemActive}
                   ref={ref}
                   onMouseEnter={open}
                   onMouseLeave={close}
                 >
-                  <div className={styles.greenDisc} />
-                  <p className={styles.listItemTitle}>
-                    <FormattedMessage {...MSG.active} />
-                  </p>
+                  <FormattedMessage {...MSG.active} />
                 </div>
               )}
             </Tooltip>
@@ -164,15 +161,12 @@ const TokensTab = ({
             >
               {({ close, open, ref }) => (
                 <div
-                  className={styles.listItem}
+                  className={styles.listItemInactive}
                   ref={ref}
                   onMouseEnter={open}
                   onMouseLeave={close}
                 >
-                  <div className={styles.redDisc} />
-                  <p className={styles.listItemTitle}>
-                    <FormattedMessage {...MSG.inactive} />
-                  </p>
+                  <FormattedMessage {...MSG.inactive} />
                 </div>
               )}
             </Tooltip>
