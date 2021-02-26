@@ -78,6 +78,17 @@ const TokensTab = ({
 }: TokensTabProps) => {
   const [isActivate, setIsActivate] = useState(true);
 
+  const popperProps = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, 5],
+        },
+      },
+    ],
+  };
+
   const tokenDecimals = useMemo(
     () => getTokenDecimalsWithFallback(token?.decimals),
     [token],
@@ -105,6 +116,7 @@ const TokensTab = ({
               darkTheme
               placement="top-start"
               content={<FormattedMessage {...MSG.activeTokensTooltip} />}
+              popperProps={popperProps}
             >
               {({ close, open, ref }) => (
                 <div
@@ -129,6 +141,7 @@ const TokensTab = ({
               darkTheme
               placement="top-start"
               content={<FormattedMessage {...MSG.inactiveTokensTooltip} />}
+              popperProps={popperProps}
             >
               {({ close, open, ref }) => (
                 <div
@@ -158,6 +171,7 @@ const TokensTab = ({
               darkTheme
               placement="top-start"
               content={<FormattedMessage {...MSG.inactiveTokensTooltip} />}
+              popperProps={popperProps}
             >
               {({ close, open, ref }) => (
                 <div
