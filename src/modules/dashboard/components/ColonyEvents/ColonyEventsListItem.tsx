@@ -11,6 +11,7 @@ import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
+import { Tooltip } from '~core/Popover';
 
 import { removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -178,20 +179,35 @@ const ColonyEventsListItem = ({
           )}
         </div>
         <div className={styles.content}>
-          <div
-            className={styles.title}
-            title={
-              formatMessage(
-                { id: getEventListTitleMessageDescriptor },
-                eventMessageValues,
-              ) as string
+          <Tooltip
+            placement="bottom-start"
+            showArrow={false}
+            content={
+              <div className={styles.tooltip}>
+                <FormattedMessage
+                  id={getEventListTitleMessageDescriptor}
+                  values={eventMessageValues}
+                />
+              </div>
             }
+            popperProps={{
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [0, 5],
+                  },
+                },
+              ],
+            }}
           >
-            <FormattedMessage
-              id={getEventListTitleMessageDescriptor}
-              values={eventMessageValues}
-            />
-          </div>
+            <div className={styles.title}>
+              <FormattedMessage
+                id={getEventListTitleMessageDescriptor}
+                values={eventMessageValues}
+              />
+            </div>
+          </Tooltip>
           <div className={styles.meta}>
             <FormattedDateParts value={createdAt} month="short" day="numeric">
               {(parts) => (
