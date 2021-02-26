@@ -322,3 +322,19 @@
 .themeDottedArea:hover {
   opacity: 0.7;
 }
+
+/*
+ * White
+ * buttons with white background, --temp-grey-blue-7 border & font color
+ */
+
+.themeWhite {
+  composes: main;
+  border: 1px solid var(--temp-grey-blue-7);
+  background-color: rgba(255, 255, 255);
+  color: var(--temp-grey-blue-7);
+}
+
+.themeWhite:hover {
+  background-color: rgba(255, 255, 255, 0.65);
+}

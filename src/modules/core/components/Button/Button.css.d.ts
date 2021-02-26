@@ -15,3 +15,4 @@ export const colorSchemaGrey: string;
 export const themeUnderlinedBold: string;
 export const themeBlue: string;
 export const themeDottedArea: string;
+export const themeWhite: string;

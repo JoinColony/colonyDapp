@@ -21,6 +21,7 @@ export interface Appearance {
     | 'underlinedBold'
     | 'blue'
     | 'no-style'
+    | 'white'
     | 'dottedArea';
   colorSchema?: 'inverted' | 'grey';
   size?: 'small' | 'medium' | 'large';
