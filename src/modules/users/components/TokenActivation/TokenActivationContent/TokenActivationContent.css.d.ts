@@ -19,6 +19,8 @@ export const previousTotalAmount: string;
 export const changeTokensState: string;
 export const changeStateTitle: string;
 export const changeStateButtonsContainer: string;
+export const activateButton: string;
+export const withdrawButton: string;
 export const activateButtonInactive: string;
 export const withdrawButtonInactive: string;
 export const form: string;
