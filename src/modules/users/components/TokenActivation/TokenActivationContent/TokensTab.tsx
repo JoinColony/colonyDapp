@@ -192,18 +192,20 @@ const TokensTab = ({
           <FormattedMessage {...MSG.changeState} />
         </div>
         <div className={styles.changeStateButtonsContainer}>
-          <Button
-            appearance={{ theme: isActivate ? 'primary' : 'secondary' }}
-            className={!isActivate ? styles.leftBorders : ''}
-            onClick={() => setIsActivate(true)}
-            text={MSG.activate}
-          />
-          <Button
-            appearance={{ theme: !isActivate ? 'primary' : 'secondary' }}
-            className={isActivate ? styles.rightBorders : ''}
-            onClick={() => setIsActivate(false)}
-            text={MSG.withdraw}
-          />
+          <div className={isActivate ? '' : styles.activateButtonInactive}>
+            <Button
+              appearance={{ theme: isActivate ? 'primary' : 'white' }}
+              onClick={() => setIsActivate(true)}
+              text={MSG.activate}
+            />
+          </div>
+          <div className={isActivate ? styles.withdrawButtonInactive : ''}>
+            <Button
+              appearance={{ theme: !isActivate ? 'primary' : 'white' }}
+              onClick={() => setIsActivate(false)}
+              text={MSG.withdraw}
+            />
+          </div>
         </div>
         <TokensTabForm
           token={token}
