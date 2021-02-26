@@ -4,9 +4,9 @@ import { MessageDescriptor, FormattedMessage } from 'react-intl';
 import { getMainClasses } from '~utils/css';
 import { UniversalMessageValues } from '~types/index';
 
-import styles from './ActionsPageTip.css';
+import styles from './ActionsPageSystemInfo.css';
 
-const displayName = 'dashboard.ActionsPageFeed.ActionsPageTip';
+const displayName = 'dashboard.ActionsPageFeed.ActionsPageSystemInfo';
 
 export interface Appearance {
   theme?: 'default' | 'recovery';
@@ -18,7 +18,7 @@ interface Props {
   tipValues?: UniversalMessageValues;
 }
 
-const ActionsPageTip = ({ tip, tipValues, appearance }: Props) => (
+const ActionsPageSystemInfo = ({ tip, tipValues, appearance }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
     {tip && tip === 'string' ? (
       tip
@@ -28,6 +28,6 @@ const ActionsPageTip = ({ tip, tipValues, appearance }: Props) => (
   </div>
 );
 
-ActionsPageTip.displayName = displayName;
+ActionsPageSystemInfo.displayName = displayName;
 
-export default ActionsPageTip;
+export default ActionsPageSystemInfo;
