@@ -19,6 +19,7 @@ export interface ItemShape {
   description: MessageDescriptor;
   icon: string;
   comingSoon?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
   permissionRequired?: boolean;
   permissionInfoText?: MessageDescriptor;

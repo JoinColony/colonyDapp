@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import Icon from '~core/Icon';
@@ -35,17 +35,27 @@ const IndexModalItem = ({
     icon,
     onClick,
     comingSoon = false,
+    disabled = false,
     permissionRequired = false,
     permissionInfoText = MSG.permissionsMessageFallback,
     permissionInfoTextValues,
   },
 }: Props) => {
+  const triggerOnClick = useCallback(() => {
+    if (!disabled && !comingSoon && !permissionRequired && onClick) {
+      return onClick();
+    }
+    return null;
+  }, [disabled, comingSoon, permissionRequired, onClick]);
+
   return (
     <div
-      className={getMainClasses({}, styles, { disabled: !!comingSoon })}
-      onClick={onClick}
+      className={getMainClasses({}, styles, {
+        disabled: !!comingSoon || !!disabled,
+      })}
+      onClick={triggerOnClick}
       role="button"
-      onKeyPress={onClick}
+      onKeyPress={triggerOnClick}
       tabIndex={0}
     >
       <div>
@@ -64,7 +74,7 @@ const IndexModalItem = ({
           <FormattedMessage {...description} />
         </Paragraph>
       </div>
-      {!comingSoon && permissionRequired && (
+      {(!comingSoon || !disabled) && permissionRequired && (
         <Tooltip
           /*
            * @NOTE About tooltip placement
@@ -98,7 +108,7 @@ const IndexModalItem = ({
           </div>
         </Tooltip>
       )}
-      {!comingSoon && !permissionRequired && (
+      {!comingSoon && !permissionRequired && !disabled && (
         <div className={styles.iconCaret}>
           <Icon
             appearance={{ size: 'medium' }}
