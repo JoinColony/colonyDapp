@@ -129,36 +129,17 @@
   margin-bottom: 16px;
 }
 
-.changeStateButtonsContainer > button {
+.changeStateButtonsContainer > div > button {
+  margin-left: 0;
   width: 95px;
   outline: none;
-
-  &:focus: {
-    outline: none;
-  }
 }
 
-.baseButton {
-  width: 95px;
-}
-
-.whiteButton {
-  composes: baseButton;
-  border: 1px solid var(--temp-grey-blue-7);
-  background-color: white;
-  font-size: var(--size-small);
-  font-weight: var(--weight-bold);
-  color: var(--temp-grey-blue-7);
-  cursor: pointer;
-}
-
-.leftBorders {
-  composes: whiteButton;
+.activateButtonInactive > button {
   border-right: none;
 }
 
-.rightBorders {
-  composes: whiteButton;
+.withdrawButtonInactive > button {
   border-left: none;
 }
 
