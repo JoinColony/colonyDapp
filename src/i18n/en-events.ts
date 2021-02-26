@@ -50,6 +50,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.ExtensionDeprecated} {Extension was deprecated {extensionHash}}
       ${ColonyAndExtensionsEvents.ExtensionUpgraded} {Extension was upgraded to {extensionVersion} {extensionHash}}
       ${ColonyAndExtensionsEvents.ExtensionUninstalled} {Extension was uninstalled {extensionHash}}
+      ${ColonyAndExtensionsEvents.ColonyUpgraded} {Colony was upgraded from version {oldVersion} to {newVersion}}
       other {{eventName} emmited with values: {displayValues}}
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,

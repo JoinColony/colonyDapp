@@ -32,6 +32,8 @@ export default gql`
     user: String!
     role: String!
     setTo: String!
+    oldVersion: String!
+    newVersion: String!
   }
 
   type SubscriptionEvent {

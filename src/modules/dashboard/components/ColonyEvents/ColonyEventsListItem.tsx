@@ -61,6 +61,8 @@ const ColonyEventsListItem = ({
     setTo,
     extensionHash,
     extensionVersion,
+    oldVersion,
+    newVersion,
   },
   colony: { tokens, nativeTokenAddress },
   colony,
@@ -125,6 +127,8 @@ const ColonyEventsListItem = ({
     role: role ? getFormattedRole() : '',
     extensionHash,
     extensionVersion,
+    oldVersion,
+    newVersion,
   };
 
   return (

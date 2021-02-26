@@ -66,7 +66,9 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
         "ColonyMetadata(address,string)",
         "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)",
         "DomainMetadata(address,uint256,string)",
-        "ColonyRoleSet(address,address,uint256,uint8,bool)"
+        "ColonyRoleSet(address,address,uint256,uint8,bool)",
+        "ColonyUpgraded(address,uint256,uint256)",
+        "ColonyUpgraded(uint256,uint256)"
       ]
     }) {
     id
@@ -100,6 +102,8 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
       token
       metadata
       user
+      oldVersion
+      newVersion
     }
   }
 }

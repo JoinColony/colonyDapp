@@ -9,7 +9,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.MoveFunds} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
       ${ColonyActions.MintTokens} {Mint {amount} {tokenSymbol}}
       ${ColonyActions.CreateDomain} {New team: {fromDomain}}
-      ${ColonyActions.VersionUpgrade} {Upgrade Colony!}
+      ${ColonyActions.VersionUpgrade} {Upgrade Colony to Version {newVersion}!}
       ${ColonyActions.ColonyEdit} {Colony details changed}
       ${ColonyActions.EditDomain} {{fromDomain} team details edited}
       other {Generic action we don't have information about}
