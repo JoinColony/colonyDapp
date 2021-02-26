@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
+import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
+
 import ClaimsTab from './ClaimsTab';
 import TokensTab, { TokensTabProps } from './TokensTab';
 import styles from './TokenActivationContent.css';
@@ -17,29 +19,34 @@ const MSG = defineMessages({
 });
 
 const TokenActivationContent = (props: TokensTabProps) => {
-  const [isTokens, setIsTokens] = useState(true);
+  const [tabIndex, setTabIndex] = useState<number>(0);
 
   return (
     <div className={styles.main}>
-      <ul className={styles.tabsContainer}>
-        <button
-          type="button"
-          className={isTokens ? styles.selectedTab : styles.tab}
-          onClick={() => setIsTokens(true)}
+      <Tabs
+        selectedIndex={tabIndex}
+        onSelect={(newIndex) => {
+          setTabIndex(newIndex);
+        }}
+      >
+        <TabList
+          className={styles.tabsList}
+          containerClassName={styles.tabsListContainer}
         >
-          <FormattedMessage {...MSG.yourTokens} />
-        </button>
-        <button
-          type="button"
-          className={isTokens ? styles.tab : styles.selectedTab}
-          onClick={() => setIsTokens(false)}
-        >
-          <FormattedMessage {...MSG.claims} />
-        </button>
-      </ul>
-      <div className={styles.container}>
-        {isTokens ? <TokensTab {...props} /> : <ClaimsTab />}
-      </div>
+          <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
+            <FormattedMessage {...MSG.yourTokens} />
+          </Tab>
+          <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
+            <FormattedMessage {...MSG.claims} />
+          </Tab>
+        </TabList>
+        <TabPanel className={styles.tabContainer}>
+          <TokensTab {...props} />
+        </TabPanel>
+        <TabPanel className={styles.tabContainer}>
+          <ClaimsTab />
+        </TabPanel>
+      </Tabs>
     </div>
   );
 };
