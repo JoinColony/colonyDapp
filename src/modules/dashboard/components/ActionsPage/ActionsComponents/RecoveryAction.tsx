@@ -7,6 +7,8 @@ import FriendlyName from '~core/FriendlyName';
 import PermissionsLabel from '~core/PermissionsLabel';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
+  SystemInfo,
+  ActionsPageFeedType,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 
@@ -127,6 +129,36 @@ const RecoveryAction = ({
     ),
   };
 
+  const recoveryModeSystemInfo: SystemInfo = {
+    type: ActionsPageFeedType.SystemInfo,
+    text: MSG.tip,
+    /*
+     * Position in the feed array
+     * This is because these can be inserted at any point the feed and are not
+     * affected by creation time / date
+     */
+    position: 1,
+    textValues: {
+      tipTitle: (
+        <span className={recoverySpecificStyles.tipTitle}>
+          <FormattedMessage {...MSG.tipTitle} />
+        </span>
+      ),
+      user: (
+        <span className={styles.titleDecoration}>
+          <FriendlyName user={initiator} autoShrinkAddress />
+        </span>
+      ),
+      role: (
+        <PermissionsLabel
+          permission={ColonyRole.Recovery}
+          name={{ id: `role.${ColonyRole.Recovery}` }}
+        />
+      ),
+    },
+    appearance: { theme: 'recovery' },
+  };
+
   return (
     <div className={styles.main}>
       <div className={styles.container}>
@@ -164,31 +196,10 @@ const RecoveryAction = ({
               ...events,
               ...(data?.recoveryEventsForSession || []),
             ]}
+            systemInfos={[recoveryModeSystemInfo]}
             values={actionAndEventValues}
             actionData={colonyAction}
             colony={colony}
-            tip={{
-              text: MSG.tip,
-              textValues: {
-                tipTitle: (
-                  <span className={recoverySpecificStyles.tipTitle}>
-                    <FormattedMessage {...MSG.tipTitle} />
-                  </span>
-                ),
-                user: (
-                  <span className={styles.titleDecoration}>
-                    <FriendlyName user={initiator} autoShrinkAddress />
-                  </span>
-                ),
-                role: (
-                  <PermissionsLabel
-                    permission={ColonyRole.Recovery}
-                    name={{ id: `role.${ColonyRole.Recovery}` }}
-                  />
-                ),
-              },
-              appearance: { theme: 'recovery' },
-            }}
           />
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
