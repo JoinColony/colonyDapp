@@ -13,6 +13,7 @@ import { Log } from 'ethers/providers';
 import { Context } from '~context/index';
 
 import { ProcessedEvent } from './colonyActions';
+import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 
 export const recoveryModeResolvers = ({
   colonyManager,
@@ -66,6 +67,7 @@ export const recoveryModeResolvers = ({
               const { address, blockHash } = log;
               const { name, values } = potentialParsedLog;
               return {
+                type: ActionsPageFeedType.NetworkEvent,
                 name,
                 values,
                 createdAt: blockHash

@@ -402,6 +402,7 @@ query MetaColony {
 
 query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
   recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    type
     name
     values
     createdAt

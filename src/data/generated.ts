@@ -1922,7 +1922,7 @@ export type RecoveryEventsForSessionQueryVariables = Exact<{
 }>;
 
 
-export type RecoveryEventsForSessionQuery = { recoveryEventsForSession: Array<Pick<ParsedEvent, 'name' | 'values' | 'createdAt' | 'emmitedBy'>> };
+export type RecoveryEventsForSessionQuery = { recoveryEventsForSession: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy'>> };
 
 export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4550,6 +4550,7 @@ export type MetaColonyQueryResult = Apollo.QueryResult<MetaColonyQuery, MetaColo
 export const RecoveryEventsForSessionDocument = gql`
     query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
   recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    type
     name
     values
     createdAt
