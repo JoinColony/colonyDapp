@@ -62,6 +62,7 @@
 }
 
 .listItemActive {
+  width: fit-content;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
@@ -95,6 +96,7 @@
   display: flex;
   align-items: center;
   margin: 0 0 21px 20px;
+  width: fit-content;
 }
 
 .lockedAmount {
