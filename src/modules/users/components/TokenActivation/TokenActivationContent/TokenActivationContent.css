@@ -8,6 +8,8 @@
 }
 
 .tabsListContainer {
+  /* `composes: main divider` to be removed once the claims tab is added */
+  composes: mainDivider;
   height: 42px;
 }
 
@@ -21,12 +23,17 @@
   padding: 11px 0;
   width: 50%;
   border: none;
-  border-bottom: 1px solid var(--temp-grey-13);
   background-color: inherit;
   font-weight: var(--weight-bold);
   text-align: center;
-  color: var(--temp-grey-blue-7);
+
+  /* when `ClaimsTab` is added remove dark color & uncomment the last 2 lines */
+  color: var(--dark);
   outline: none;
+
+  /* color: var(--temp-grey-blue-7); */
+
+  /* border-bottom: 1px solid var(--temp-grey-13); */
 }
 
 .tabSelected {
