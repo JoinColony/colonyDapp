@@ -2,6 +2,8 @@ import { MessageDescriptor } from 'react-intl';
 import { UniversalMessageValues } from '~types/index';
 import { Appearance as SystemInfoAppearance } from './ActionsPageSystemInfo';
 
+export { EventValues, FeedItemWithId, FeedItems } from './ActionsPageFeed';
+
 export enum ActionsPageFeedType {
   /*
    * Events coming from the contracts

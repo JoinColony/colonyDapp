@@ -6,10 +6,15 @@ import Button from '~core/Button';
 import FriendlyName from '~core/FriendlyName';
 import PermissionsLabel from '~core/PermissionsLabel';
 import ActionsPageFeed, {
-  ActionsPageFeedItem,
   SystemInfo,
   SystemMessage,
   ActionsPageFeedType,
+  ActionsPageFeedItem,
+  ActionsPageEvent,
+  EventValues,
+  FeedItemWithId,
+  ActionsPageSystemInfo,
+  ActionsPageSystemMessage,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 
@@ -21,6 +26,8 @@ import {
   AnyUser,
   useRecoveryEventsForSessionQuery,
   useRecoverySystemMessagesForSessionQuery,
+  ParsedEvent,
+  TransactionMessageFragment,
 } from '~data/index';
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 
@@ -54,6 +61,18 @@ Approvals are reset each time storage slots are updated.`,
     id: 'dashboard.ActionsPage.RecoveryAction.tipTitle',
     defaultMessage: 'Tip:',
   },
+  newSlotValue: {
+    id: 'dashboard.ActionsPage.RecoveryAction.newSlotValue',
+    defaultMessage: 'New slot value',
+  },
+  previousSlotValue: {
+    id: 'dashboard.ActionsPage.RecoveryAction.previousSlotValue',
+    defaultMessage: 'Previous value: {slotValue}',
+  },
+  approvalResetNotice: {
+    id: 'dashboard.ActionsPage.RecoveryAction.approvalResetNotice',
+    defaultMessage: 'Approvals to exit recovery have been reset.',
+  },
 });
 
 const displayName = 'dashboard.ActionsPage.RecoveryAction';
@@ -72,7 +91,7 @@ const RecoveryAction = ({
   colony: { colonyAddress },
   colonyAction: {
     events = [],
-    createdAt,
+    createdAt: actionCreatedAt,
     actionType,
     annotationHash,
     colonyDisplayName,
@@ -87,6 +106,8 @@ const RecoveryAction = ({
   initiator,
 }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
+
+  const fallbackStorageSlotValue = `0x${'0'.padStart(64, '0')}`;
 
   const {
     data: recoveryEvents,
@@ -195,7 +216,7 @@ const RecoveryAction = ({
           </h1>
           {annotationHash && (
             <ActionsPageFeedItem
-              createdAt={createdAt}
+              createdAt={actionCreatedAt}
               user={initiator}
               annotation
               comment={annotationHash}
@@ -221,7 +242,135 @@ const RecoveryAction = ({
             actionData={colonyAction}
             colony={colony}
             loading={recoveryEventsLoading || recoverySystemMessagesLoading}
-          />
+          >
+            {(feedItems) =>
+              feedItems.map((item, index) => {
+                /*
+                 * Event
+                 */
+                if (item.type === ActionsPageFeedType.NetworkEvent) {
+                  const {
+                    name,
+                    createdAt,
+                    emmitedBy,
+                    uniqueId,
+                    values: eventValues,
+                  } = item as FeedItemWithId<ParsedEvent>;
+                  return (
+                    <ActionsPageEvent
+                      key={uniqueId}
+                      eventIndex={index}
+                      createdAt={new Date(createdAt)}
+                      transactionHash={transactionHash}
+                      eventName={name}
+                      actionData={colonyAction}
+                      values={{
+                        ...((eventValues as unknown) as EventValues),
+                        ...actionAndEventValues,
+                      }}
+                      emmitedBy={emmitedBy}
+                      colony={colony}
+                    >
+                      {name ===
+                        ColonyAndExtensionsEvents.RecoveryStorageSlotSet && (
+                        <div
+                          className={recoverySpecificStyles.additionalEventInfo}
+                        >
+                          <div className={recoverySpecificStyles.storageSlot}>
+                            <FormattedMessage
+                              tagName="p"
+                              {...MSG.newSlotValue}
+                            />
+                            <div className={recoverySpecificStyles.slotValue}>
+                              {((eventValues as unknown) as EventValues)
+                                ?.toValue || fallbackStorageSlotValue}
+                            </div>
+                            <p
+                              className={
+                                recoverySpecificStyles.previousSlotValue
+                              }
+                            >
+                              <FormattedMessage
+                                {...MSG.previousSlotValue}
+                                values={{
+                                  slotValue: (
+                                    <span>
+                                      {((eventValues as unknown) as EventValues)
+                                        ?.fromValue || fallbackStorageSlotValue}
+                                    </span>
+                                  ),
+                                }}
+                              />
+                            </p>
+                          </div>
+                          <p
+                            className={
+                              recoverySpecificStyles.approvalResetNotice
+                            }
+                          >
+                            <FormattedMessage {...MSG.approvalResetNotice} />
+                          </p>
+                        </div>
+                      )}
+                    </ActionsPageEvent>
+                  );
+                }
+                /*
+                 * Comment
+                 */
+                if (item.type === ActionsPageFeedType.ServerComment) {
+                  const {
+                    initiator: messageInitiator,
+                    createdAt,
+                    context: { message },
+                    uniqueId,
+                  } = (item as unknown) as FeedItemWithId<
+                    TransactionMessageFragment
+                  >;
+                  return (
+                    <ActionsPageFeedItem
+                      key={uniqueId}
+                      createdAt={createdAt}
+                      comment={message}
+                      user={messageInitiator}
+                    />
+                  );
+                }
+                /*
+                 * System Info
+                 */
+                if (item.type === ActionsPageFeedType.SystemInfo) {
+                  const {
+                    text,
+                    textValues,
+                    appearance,
+                    uniqueId,
+                  } = item as FeedItemWithId<SystemInfo>;
+                  return (
+                    <ActionsPageSystemInfo
+                      key={uniqueId}
+                      tip={text}
+                      tipValues={textValues}
+                      appearance={appearance}
+                    />
+                  );
+                }
+                /*
+                 * System Message
+                 */
+                if (item.type === ActionsPageFeedType.SystemMessage) {
+                  const { uniqueId } = item as FeedItemWithId<SystemMessage>;
+                  return (
+                    <ActionsPageSystemMessage
+                      key={uniqueId}
+                      systemMessage={item as SystemMessage}
+                    />
+                  );
+                }
+                return null;
+              })
+            }
+          </ActionsPageFeed>
           {/*
            *  @NOTE A user can comment only if he has a wallet connected
            * and a registered user profile

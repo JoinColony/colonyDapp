@@ -48,11 +48,13 @@ export interface EventValues {
   user?: Address;
   agent?: Address;
   slot?: Record<string, any>;
+  toValue?: string;
+  fromValue?: string;
 }
 
-type FeedItemWithId<T> = T & { uniqueId: string };
+export type FeedItemWithId<T> = T & { uniqueId: string };
 
-type FeedItems = Array<
+export type FeedItems = Array<
   | FeedItemWithId<ParsedEvent>
   | FeedItemWithId<TransactionMessageFragment>
   | FeedItemWithId<SystemInfo>

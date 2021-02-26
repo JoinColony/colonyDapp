@@ -2,3 +2,47 @@
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
+
+.additionalEventInfo {
+  padding: 16px 0 0 60px;
+}
+
+.storageSlot {
+  padding: 10px 0;
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.slotValue {
+  margin-top: 8px;
+  padding: 14px 19px;
+  border: 1px solid var(--temp-grey-blue-4);
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-4) alpha(33%));
+  font-family: var(--family-techie);
+  font-size: var(--size-normal);
+  font-weight: var(--weight-medium);
+  box-shadow: inset 0px 2px 4px color-mod(black alpha(0.7%));
+}
+
+.previousSlotValue {
+  margin-top: 6px;
+  font-size: var(--size-tiny);
+  word-break: break-all;
+  color: var(--temp-grey-blue-7);
+}
+
+.previousSlotValue span {
+  font-family: var(--family-techie);
+  color: color-mod(var(--temp-grey-blue-7) alpha(80%));
+}
+
+.approvalResetNotice {
+  margin-top: 8px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
