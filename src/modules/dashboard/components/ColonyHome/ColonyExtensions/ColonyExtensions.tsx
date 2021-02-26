@@ -15,6 +15,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyExtensions.title',
     defaultMessage: 'Enabled extensions',
   },
+  loadingData: {
+    id: 'dashboard.ColonyHome.ColonyMembers.loadingData',
+    defaultMessage: 'Loading enabled extensions information...',
+  },
 });
 
 interface Props {
@@ -27,10 +31,6 @@ const ColonyExtensions = ({ colony: { colonyName, colonyAddress } }: Props) => {
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
-
-  if (loading) {
-    return <SpinnerLoader />;
-  }
 
   return (
     <div className={styles.main}>
@@ -63,7 +63,12 @@ const ColonyExtensions = ({ colony: { colonyName, colonyAddress } }: Props) => {
             })}
         </ul>
       ) : (
-        <SpinnerLoader />
+        <>
+          <SpinnerLoader />
+          <span className={styles.loadingText}>
+            <FormattedMessage {...MSG.loadingData} />
+          </span>
+        </>
       )}
     </div>
   );
