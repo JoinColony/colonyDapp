@@ -27,7 +27,23 @@ export enum ActionsPageFeedType {
 export interface SystemInfo {
   type: ActionsPageFeedType.SystemInfo;
   text: MessageDescriptor | string;
+  /*
+   * Used to determine where to inser the system info item in the feed
+   */
   position: number;
   textValues?: UniversalMessageValues;
   appearance?: SystemInfoAppearance;
+}
+
+/*
+ * This list will get longer once we add more system events to the dapp
+ */
+export enum SystemMessagesName {
+  EnoughExitRecoveryApprovals = 'EnoughExitRecoveryApprovals',
+}
+
+export interface SystemMessage {
+  type: ActionsPageFeedType.SystemMessage;
+  name: SystemMessagesName;
+  createdAt: number;
 }
