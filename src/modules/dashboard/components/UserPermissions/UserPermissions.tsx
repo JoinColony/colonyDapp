@@ -1,5 +1,7 @@
 import React from 'react';
 import { ColonyRole } from '@colony/colony-js';
+import { isNil } from 'lodash';
+
 import PermissionsLabel from '~core/PermissionsLabel';
 import { permissionsObject } from '~core/PermissionsLabel/permissions';
 import { getMainClasses } from '~utils/css';
@@ -34,7 +36,7 @@ const UserPermissions = ({ roles, directRoles, appearance }: Props) => {
   const [headRole, ...restRoles] = sortedRoles;
   return (
     <div className={getMainClasses(appearance, styles)}>
-      {headRole && (
+      {!isNil(headRole) && (
         <PermissionsLabel
           permission={headRole}
           key={headRole}
