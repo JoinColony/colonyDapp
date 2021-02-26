@@ -1,0 +1,31 @@
+.main {
+  padding: 16px 16px 16px 0;
+  width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  align-items: flex-start;
+}
+
+.status {
+  margin: 0 9px 0 25px;
+}
+
+.details {
+  display: flex;
+  margin: 8px 0 0 -5px;
+}
+
+.content {
+  flex: 1;
+}
+
+.text {
+  font-size: var(--size-normal);
+  color: var(--temp-grey-blue-7);
+}
+
+.meta {
+  margin-top: -2px;
+}
