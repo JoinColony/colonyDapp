@@ -85,22 +85,14 @@ const ChangeTokenStateForm = ({
         <FormattedMessage {...MSG.changeState} />
       </div>
       <div className={styles.changeStateButtonsContainer}>
-        <div
-          className={
-            isActivate ? styles.activateButton : styles.activateButtonInactive
-          }
-        >
+        <div className={isActivate ? styles.activate : styles.activateInactive}>
           <Button
             appearance={{ theme: isActivate ? 'primary' : 'white' }}
             onClick={() => setIsActivate(true)}
             text={MSG.activate}
           />
         </div>
-        <div
-          className={
-            isActivate ? styles.withdrawButtonInactive : styles.withdrawButton
-          }
-        >
+        <div className={isActivate ? styles.withdrawInactive : styles.withdraw}>
           <Button
             appearance={{ theme: !isActivate ? 'primary' : 'white' }}
             onClick={() => setIsActivate(false)}

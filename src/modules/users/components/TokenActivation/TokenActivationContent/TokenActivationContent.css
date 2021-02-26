@@ -133,20 +133,20 @@
   outline: none;
 }
 
-.activateButton > button {
+.activate > button {
   border-radius: 2px 0 0 2px;
 }
 
-.withdrawButton > button {
+.withdraw > button {
   border-radius: 0 2px 2px 0;
 }
 
-.activateButtonInactive > button {
+.activateInactive > button {
   border-radius: 2px 0 0 2px;
   border-right: none;
 }
 
-.withdrawButtonInactive > button {
+.withdrawInactive > button {
   border-radius: 0 2px 2px 0;
   border-left: none;
 }
