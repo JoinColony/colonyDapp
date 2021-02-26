@@ -3,13 +3,18 @@
   width: 240px;
 }
 
-.tabsContainer {
-  display: flex;
+.mainDivider {
+  border-bottom: 1px solid var(--temp-grey-13);
+}
+
+.tabsListContainer {
   height: 42px;
 }
 
-.containerPartBorder {
-  border-bottom: 1px solid var(--temp-grey-13);
+.tabsList {
+  display: flex;
+  height: 100%;
+  width: 100%;
 }
 
 .tab {
@@ -24,19 +29,19 @@
   outline: none;
 }
 
-.selectedTab {
+.tabSelected {
   composes: tab;
   border-bottom-color: var(--primary);
   color: var(--primary);
 }
 
-.container {
+.tabContainer {
   height: 100%;
   width: 100%;
 }
 
 .totalTokensContainer {
-  composes: containerPartBorder;
+  composes: mainDivider;
   display: flex;
   align-items: center;
   padding-left: 18px;
@@ -55,7 +60,7 @@
 }
 
 .tokensDetailsContainer {
-  composes: containerPartBorder;
+  composes: mainDivider;
   padding: 21px 0 0 18px;
   height: 153px;
   width: 100%;
@@ -197,10 +202,11 @@
 }
 
 .claimsContainer {
-  composes: container;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 442px;
+  width: 100%;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
