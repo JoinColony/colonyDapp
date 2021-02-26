@@ -13,3 +13,4 @@ export const commentCount: string;
 export const commentCountIcon: string;
 export const userMention: string;
 export const titleDecoration: string;
+export const tooltip: string;
