@@ -57,6 +57,14 @@ const ChangeTokenStateForm = ({
 }: ChangeTokenStateFormProps) => {
   const [isActivate, setIsActivate] = useState(true);
 
+  const formAction = useCallback(
+    (actionType: '' | '_ERROR' | '_SUCCESS') =>
+      isActivate
+        ? ActionTypes[`USER_DEPOSIT_TOKEN${actionType}`]
+        : ActionTypes[`USER_WITHDRAW_TOKEN${actionType}`],
+    [isActivate],
+  );
+
   const transform = useCallback(
     pipe(
       mapPayload(({ amount }) => {
@@ -104,21 +112,9 @@ const ChangeTokenStateForm = ({
         initialValues={{ amount: undefined }}
         validationSchema={validationSchema}
         transform={transform}
-        submit={
-          isActivate
-            ? ActionTypes.USER_DEPOSIT_TOKEN
-            : ActionTypes.USER_WITHDRAW_TOKEN
-        }
-        error={
-          isActivate
-            ? ActionTypes.USER_DEPOSIT_TOKEN_ERROR
-            : ActionTypes.USER_WITHDRAW_TOKEN_ERROR
-        }
-        success={
-          isActivate
-            ? ActionTypes.USER_DEPOSIT_TOKEN_SUCCESS
-            : ActionTypes.USER_WITHDRAW_TOKEN_SUCCESS
-        }
+        submit={formAction('')}
+        error={formAction('_ERROR')}
+        success={formAction('_SUCCESS')}
       >
         {({ isValid, values }: FormikProps<FormValues>) => (
           <div className={styles.form}>
