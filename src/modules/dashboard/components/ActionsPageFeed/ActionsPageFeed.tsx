@@ -172,93 +172,87 @@ const ActionsPageFeed = ({
     /*
      * Default render method
      */
-    return (
-      <ul className={styles.main}>
-        {sortedFeed.map((feedItem, index) => {
-          /*
-           * Event
-           */
-          if (feedItem.type === ActionsPageFeedType.NetworkEvent) {
-            const {
-              name,
-              createdAt,
-              emmitedBy,
-              uniqueId,
-              values: eventValues,
-            } = feedItem as FeedItemWithId<ParsedEvent>;
-            return (
-              <ActionsPageEvent
-                key={uniqueId}
-                eventIndex={index}
-                createdAt={new Date(createdAt)}
-                transactionHash={transactionHash}
-                eventName={name}
-                actionData={actionData}
-                values={{
-                  ...((eventValues as unknown) as EventValues),
-                  ...values,
-                }}
-                emmitedBy={emmitedBy}
-                colony={colony}
-              />
-            );
-          }
-          /*
-           * Comment
-           */
-          if (feedItem.type === ActionsPageFeedType.ServerComment) {
-            const {
-              initiator: messageInitiator,
-              createdAt,
-              context: { message },
-              uniqueId,
-            } = (feedItem as unknown) as FeedItemWithId<
-              TransactionMessageFragment
-            >;
-            return (
-              <ActionsPageFeedItem
-                key={uniqueId}
-                createdAt={createdAt}
-                comment={message}
-                user={messageInitiator}
-              />
-            );
-          }
-          /*
-           * System Info
-           */
-          if (feedItem.type === ActionsPageFeedType.SystemInfo) {
-            const {
-              text,
-              textValues,
-              appearance,
-              uniqueId,
-            } = feedItem as FeedItemWithId<SystemInfo>;
-            return (
-              <ActionsPageSystemInfo
-                key={uniqueId}
-                tip={text}
-                tipValues={textValues}
-                appearance={appearance}
-              />
-            );
-          }
-          /*
-           * System Message
-           */
-          if (feedItem.type === ActionsPageFeedType.SystemMessage) {
-            const { uniqueId } = feedItem as FeedItemWithId<SystemMessage>;
-            return (
-              <ActionsPageSystemMessage
-                key={uniqueId}
-                systemMessage={feedItem as SystemMessage}
-              />
-            );
-          }
-          return null;
-        })}
-      </ul>
-    );
+    return sortedFeed.map((feedItem, index) => {
+      /*
+       * Event
+       */
+      if (feedItem.type === ActionsPageFeedType.NetworkEvent) {
+        const {
+          name,
+          createdAt,
+          emmitedBy,
+          uniqueId,
+          values: eventValues,
+        } = feedItem as FeedItemWithId<ParsedEvent>;
+        return (
+          <ActionsPageEvent
+            key={uniqueId}
+            eventIndex={index}
+            createdAt={new Date(createdAt)}
+            transactionHash={transactionHash}
+            eventName={name}
+            actionData={actionData}
+            values={{
+              ...((eventValues as unknown) as EventValues),
+              ...values,
+            }}
+            emmitedBy={emmitedBy}
+            colony={colony}
+          />
+        );
+      }
+      /*
+       * Comment
+       */
+      if (feedItem.type === ActionsPageFeedType.ServerComment) {
+        const {
+          initiator: messageInitiator,
+          createdAt,
+          context: { message },
+          uniqueId,
+        } = (feedItem as unknown) as FeedItemWithId<TransactionMessageFragment>;
+        return (
+          <ActionsPageFeedItem
+            key={uniqueId}
+            createdAt={createdAt}
+            comment={message}
+            user={messageInitiator}
+          />
+        );
+      }
+      /*
+       * System Info
+       */
+      if (feedItem.type === ActionsPageFeedType.SystemInfo) {
+        const {
+          text,
+          textValues,
+          appearance,
+          uniqueId,
+        } = feedItem as FeedItemWithId<SystemInfo>;
+        return (
+          <ActionsPageSystemInfo
+            key={uniqueId}
+            tip={text}
+            tipValues={textValues}
+            appearance={appearance}
+          />
+        );
+      }
+      /*
+       * System Message
+       */
+      if (feedItem.type === ActionsPageFeedType.SystemMessage) {
+        const { uniqueId } = feedItem as FeedItemWithId<SystemMessage>;
+        return (
+          <ActionsPageSystemMessage
+            key={uniqueId}
+            systemMessage={feedItem as SystemMessage}
+          />
+        );
+      }
+      return null;
+    });
   };
 
   /*
@@ -266,7 +260,7 @@ const ActionsPageFeed = ({
    */
   return (
     <>
-      {customRenderWithFallback()}
+      <ul className={styles.main}>{customRenderWithFallback()}</ul>
       {(loadingServerComments || extenalLoadingState) && (
         <div className={styles.loading}>
           <SpinnerLoader />
