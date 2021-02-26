@@ -325,6 +325,7 @@ const ActionsPageEvent = ({
                     <FriendlyName user={initiator} autoShrinkAddress />
                   </span>
                 ),
+                storageSlot: values?.slot?.toHexString(),
               }}
             />
           </div>

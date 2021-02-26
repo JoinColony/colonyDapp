@@ -47,6 +47,7 @@ export interface EventValues {
   roles?: ActionUserRoles[];
   user?: Address;
   agent?: Address;
+  slot?: Record<string, any>;
 }
 
 type FeedItemWithId<T> = T & { uniqueId: string };
