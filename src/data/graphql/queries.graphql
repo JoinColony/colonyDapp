@@ -418,13 +418,26 @@ query RecoverySystemMessagesForSession($blockNumber: Int!, $colonyAddress: Strin
   }
 }
 
+query GetRecoveryStorageSlot($colonyAddress: String!, $storageSlot: String!) {
+  getRecoveryStorageSlot(colonyAddress: $colonyAddress, storageSlot: $storageSlot) @client
+}
+
+query RecoveryRolesUsers($colonyAddress: String!) {
+  recoveryRolesUsers(colonyAddress: $colonyAddress) @client {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+
 query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }
 
-query GetRecoveryStorageSlot($colonyAddress: String!, $storageSlot: String!) {
-  getRecoveryStorageSlot(colonyAddress: $colonyAddress, storageSlot: $storageSlot) @client
-}
 
 # The Graph
 #

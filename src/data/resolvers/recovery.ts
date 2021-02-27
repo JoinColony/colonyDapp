@@ -10,12 +10,17 @@ import {
   ColonyVersion,
 } from '@colony/colony-js';
 import { Log } from 'ethers/providers';
+import { LogDescription } from 'ethers/utils';
 
 import { Context } from '~context/index';
 import {
-  RecoveryEventsForSessionQueryVariables,
   RecoveryEventsForSessionQuery,
+  RecoveryEventsForSessionQueryVariables,
   RecoveryEventsForSessionDocument,
+  ColonySubscribedUsersQuery,
+  ColonySubscribedUsersQueryVariables,
+  ColonySubscribedUsersDocument,
+  getMinimalUser,
 } from '~data/index';
 
 import { ProcessedEvent } from './colonyActions';
@@ -89,6 +94,21 @@ const getSessionRecoveryEvents = async (
   );
 
   return sortedRecoveryEvents;
+};
+
+const getUsersWithRecoveryRoles = (recoveryRoleSetEvents: LogDescription[]) => {
+  const userAddresses: Record<string, boolean> = {};
+  recoveryRoleSetEvents.map(({ values: { user, setTo } }) => {
+    if (setTo) {
+      userAddresses[user] = true;
+    } else {
+      userAddresses[user] = false;
+    }
+    return null;
+  });
+  return Object.keys(userAddresses).filter(
+    (userAddress) => !!userAddresses[userAddress],
+  );
 };
 
 export const recoveryModeResolvers = ({
@@ -166,6 +186,7 @@ export const recoveryModeResolvers = ({
                     name: SystemMessagesName.EnoughExitRecoveryApprovals,
                     createdAt,
                   });
+                  exitApprovalsCounter = 0;
                 }
               },
             ),
@@ -173,6 +194,47 @@ export const recoveryModeResolvers = ({
           return systemMessages;
         }
         return [];
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    },
+    async recoveryRolesUsers(_, { colonyAddress }) {
+      try {
+        const subscribedUsers = await apolloClient.query<
+          ColonySubscribedUsersQuery,
+          ColonySubscribedUsersQueryVariables
+        >({
+          query: ColonySubscribedUsersDocument,
+          variables: {
+            colonyAddress,
+          },
+        });
+
+        const colonyClient = (await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        )) as ColonyClientV6;
+
+        const recoveryRolesSet = await getMultipleEvents(colonyClient, [
+          colonyClient.filters.RecoveryRoleSet(null, null),
+        ]);
+
+        const allUsers = subscribedUsers?.data?.subscribedUsers || [];
+        const userWithRecoveryRoles = getUsersWithRecoveryRoles(
+          recoveryRolesSet,
+        );
+
+        return userWithRecoveryRoles.map((userAddress) => {
+          const userWithProfile = allUsers.find(
+            ({ profile: { walletAddress } }) =>
+              walletAddress.toLowerCase() === userAddress.toLowerCase(),
+          );
+          if (!userWithProfile) {
+            return getMinimalUser(userAddress);
+          }
+          return userWithProfile;
+        });
       } catch (error) {
         console.error(error);
         return [];

@@ -694,6 +694,7 @@ export type Query = {
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
   recoveryEventsForSession: Array<ParsedEvent>;
+  recoveryRolesUsers: Array<User>;
   recoverySystemMessagesForSession: Array<Maybe<SystemMessage>>;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
@@ -779,6 +780,11 @@ export type QueryProcessedColonyArgs = {
 
 export type QueryRecoveryEventsForSessionArgs = {
   blockNumber: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryRecoveryRolesUsersArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -944,11 +950,11 @@ export type UserTokensArgs = {
 };
 
 export type UserProfile = {
-  username?: Maybe<Scalars['String']>;
   avatarHash?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
   walletAddress: Scalars['String'];
   website?: Maybe<Scalars['String']>;
 };
@@ -1954,13 +1960,6 @@ export type RecoverySystemMessagesForSessionQueryVariables = Exact<{
 
 export type RecoverySystemMessagesForSessionQuery = { recoverySystemMessagesForSession: Array<Maybe<Pick<SystemMessage, 'type' | 'name' | 'createdAt'>>> };
 
-export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type LegacyNumberOfRecoveryRolesQuery = Pick<Query, 'legacyNumberOfRecoveryRoles'>;
-
 export type GetRecoveryStorageSlotQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   storageSlot: Scalars['String'];
@@ -1968,6 +1967,23 @@ export type GetRecoveryStorageSlotQueryVariables = Exact<{
 
 
 export type GetRecoveryStorageSlotQuery = Pick<Query, 'getRecoveryStorageSlot'>;
+
+export type RecoveryRolesUsersQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type RecoveryRolesUsersQuery = { recoveryRolesUsers: Array<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+  )> };
+
+export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type LegacyNumberOfRecoveryRolesQuery = Pick<Query, 'legacyNumberOfRecoveryRoles'>;
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4659,37 +4675,6 @@ export function useRecoverySystemMessagesForSessionLazyQuery(baseOptions?: Apoll
 export type RecoverySystemMessagesForSessionQueryHookResult = ReturnType<typeof useRecoverySystemMessagesForSessionQuery>;
 export type RecoverySystemMessagesForSessionLazyQueryHookResult = ReturnType<typeof useRecoverySystemMessagesForSessionLazyQuery>;
 export type RecoverySystemMessagesForSessionQueryResult = Apollo.QueryResult<RecoverySystemMessagesForSessionQuery, RecoverySystemMessagesForSessionQueryVariables>;
-export const LegacyNumberOfRecoveryRolesDocument = gql`
-    query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
-  legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
-}
-    `;
-
-/**
- * __useLegacyNumberOfRecoveryRolesQuery__
- *
- * To run a query within a React component, call `useLegacyNumberOfRecoveryRolesQuery` and pass it any options that fit your needs.
- * When your component renders, `useLegacyNumberOfRecoveryRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLegacyNumberOfRecoveryRolesQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useLegacyNumberOfRecoveryRolesQuery(baseOptions?: Apollo.QueryHookOptions<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>) {
-        return Apollo.useQuery<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>(LegacyNumberOfRecoveryRolesDocument, baseOptions);
-      }
-export function useLegacyNumberOfRecoveryRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>) {
-          return Apollo.useLazyQuery<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>(LegacyNumberOfRecoveryRolesDocument, baseOptions);
-        }
-export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesQuery>;
-export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
-export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
 export const GetRecoveryStorageSlotDocument = gql`
     query GetRecoveryStorageSlot($colonyAddress: String!, $storageSlot: String!) {
   getRecoveryStorageSlot(colonyAddress: $colonyAddress, storageSlot: $storageSlot) @client
@@ -4722,6 +4707,76 @@ export function useGetRecoveryStorageSlotLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetRecoveryStorageSlotQueryHookResult = ReturnType<typeof useGetRecoveryStorageSlotQuery>;
 export type GetRecoveryStorageSlotLazyQueryHookResult = ReturnType<typeof useGetRecoveryStorageSlotLazyQuery>;
 export type GetRecoveryStorageSlotQueryResult = Apollo.QueryResult<GetRecoveryStorageSlotQuery, GetRecoveryStorageSlotQueryVariables>;
+export const RecoveryRolesUsersDocument = gql`
+    query RecoveryRolesUsers($colonyAddress: String!) {
+  recoveryRolesUsers(colonyAddress: $colonyAddress) @client {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useRecoveryRolesUsersQuery__
+ *
+ * To run a query within a React component, call `useRecoveryRolesUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRecoveryRolesUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRecoveryRolesUsersQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useRecoveryRolesUsersQuery(baseOptions?: Apollo.QueryHookOptions<RecoveryRolesUsersQuery, RecoveryRolesUsersQueryVariables>) {
+        return Apollo.useQuery<RecoveryRolesUsersQuery, RecoveryRolesUsersQueryVariables>(RecoveryRolesUsersDocument, baseOptions);
+      }
+export function useRecoveryRolesUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RecoveryRolesUsersQuery, RecoveryRolesUsersQueryVariables>) {
+          return Apollo.useLazyQuery<RecoveryRolesUsersQuery, RecoveryRolesUsersQueryVariables>(RecoveryRolesUsersDocument, baseOptions);
+        }
+export type RecoveryRolesUsersQueryHookResult = ReturnType<typeof useRecoveryRolesUsersQuery>;
+export type RecoveryRolesUsersLazyQueryHookResult = ReturnType<typeof useRecoveryRolesUsersLazyQuery>;
+export type RecoveryRolesUsersQueryResult = Apollo.QueryResult<RecoveryRolesUsersQuery, RecoveryRolesUsersQueryVariables>;
+export const LegacyNumberOfRecoveryRolesDocument = gql`
+    query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
+  legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useLegacyNumberOfRecoveryRolesQuery__
+ *
+ * To run a query within a React component, call `useLegacyNumberOfRecoveryRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLegacyNumberOfRecoveryRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLegacyNumberOfRecoveryRolesQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useLegacyNumberOfRecoveryRolesQuery(baseOptions?: Apollo.QueryHookOptions<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>) {
+        return Apollo.useQuery<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>(LegacyNumberOfRecoveryRolesDocument, baseOptions);
+      }
+export function useLegacyNumberOfRecoveryRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>) {
+          return Apollo.useLazyQuery<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>(LegacyNumberOfRecoveryRolesDocument, baseOptions);
+        }
+export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesQuery>;
+export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
+export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {

@@ -170,6 +170,18 @@ export default gql`
     avatarURL: String
   }
 
+  type UserProfile {
+    avatarHash: String
+    displayName: String
+    username: String
+    walletAddress: String!
+  }
+
+  type User {
+    id: String!
+    profile: UserProfile!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -206,7 +218,7 @@ export default gql`
       blockNumber: Int!
       colonyAddress: String!
     ): [SystemMessage]!
-
+    recoveryRolesUsers(colonyAddress: String!): [User!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     getRecoveryStorageSlot(
       colonyAddress: String!
