@@ -5,7 +5,7 @@
 }
 
 .inputStorageSlotContainer {
-  padding-bottom: 10px;
+  padding-bottom: 15px;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
@@ -20,8 +20,17 @@
   font-weight: var(--weight-medium);
 }
 
+.inputStorageSlotContainer div p {
+  display: none;
+}
+
+.inputValidationError {
+  display: block;
+  margin: -9px 0 8px;
+}
+
 .currentValueText {
-  margin-top: -25px;
+  margin: -5px 0;
   font-size: var(--size-tiny);
   word-break: break-all;
   color: var(--temp-grey-blue-7);
@@ -33,7 +42,6 @@
 }
 
 .controls {
-  margin-top: -19px;
   text-align: right;
 }
 

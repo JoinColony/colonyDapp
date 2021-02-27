@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
+import { ActionForm, TextareaAutoresize, InputStatus } from '~core/Fields';
+
 import { ActionTypes } from '~redux/index';
-import { ActionForm, TextareaAutoresize } from '~core/Fields';
+import { ensureHexPrefix } from '~utils/strings';
+import { ENTER, SPACE } from '~types/index';
 
 import styles from './InputStorageWidget.css';
 
@@ -38,9 +41,43 @@ const MSG = defineMessages({
 
 const InputStorageWidget = () => {
   const validationSchema = yup.object().shape({
-    inputStorageSlot: yup.string(),
+    inputStorageSlot: yup.string().max(66).hexString(),
     inputNewValue: yup.string(),
   });
+
+  /*
+   * We need to handle these manually using a ref, since the TextAreaAutoresize
+   * component doesn't give us access to the native React ones :(
+   */
+  const handleInputStorageSlotBlur = useCallback(
+    (textarea, currentValue, updateValues) => {
+      if (textarea?._ref) {
+        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
+        const autoResizeTextareaComponent = textarea?._ref;
+        /*
+         * Add 0x prefix on blur
+         */
+        autoResizeTextareaComponent.onblur = () =>
+          updateValues('inputStorageSlot', ensureHexPrefix(currentValue));
+        /*
+         * Prevent entering a new line
+         *
+         * Based on specs we need to **fake** a multi-line input, but one
+         * you can't actually create a new line manully, just if the text
+         * overflows...
+         *
+         * While we're at it we also disable the space bar, since no value
+         * that can be entered requires a space (it's just a litte nice-to-have)
+         */
+        autoResizeTextareaComponent.onkeypress = (event) => {
+          if (event.code === ENTER || event.code === SPACE) {
+            event.preventDefault();
+          }
+        };
+      }
+    },
+    [],
+  );
 
   return (
     <ActionForm
@@ -53,50 +90,66 @@ const InputStorageWidget = () => {
       error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
       success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
     >
-      {(formValues: FormikProps<FormValues>) => {
-        return (
-          <div className={styles.widgetForm}>
-            <div className={styles.inputStorageSlotContainer}>
-              <TextareaAutoresize
-                label={MSG.inputStorageSlot}
-                name="inputStorageSlot"
-                appearance={{
-                  theme: 'fat',
-                  colorSchema: 'grey',
+      {({
+        handleSubmit,
+        isSubmitting,
+        isValid,
+        errors: { inputStorageSlot: inputStorageSlotError },
+        values: { inputStorageSlot: inputStorageSlotValue },
+        setFieldValue,
+      }: FormikProps<FormValues>) => (
+        <div className={styles.widgetForm}>
+          <div className={styles.inputStorageSlotContainer}>
+            <TextareaAutoresize
+              label={MSG.inputStorageSlot}
+              name="inputStorageSlot"
+              innerRef={(ref) =>
+                handleInputStorageSlotBlur(
+                  ref,
+                  inputStorageSlotValue,
+                  setFieldValue,
+                )
+              }
+              appearance={{
+                theme: 'fat',
+                colorSchema: 'grey',
+              }}
+            />
+            {inputStorageSlotError && (
+              <span className={styles.inputValidationError}>
+                <InputStatus error={inputStorageSlotError} />
+              </span>
+            )}
+            <div className={styles.currentValueText}>
+              <FormattedMessage
+                {...MSG.currentValueLabel}
+                values={{
+                  slotValue: <span>{CURRENT_VALUE_PLACEHOLDER}</span>,
                 }}
-                onClick={() => {}} // @TODO: Connect with functional on click handler
               />
-              <p className={styles.currentValueText}>
-                <FormattedMessage
-                  {...MSG.currentValueLabel}
-                  values={{
-                    slotValue: <span>{CURRENT_VALUE_PLACEHOLDER}</span>,
-                  }}
-                />
-              </p>
-            </div>
-            <div className={styles.inputStorageSlotContainer}>
-              <TextareaAutoresize
-                label={MSG.inputNewValue}
-                name="inputNewValue"
-                appearance={{
-                  theme: 'fat',
-                  colorSchema: 'grey',
-                }}
-              />
-              <div className={styles.controls}>
-                <Button
-                  appearance={{ theme: 'primary', size: 'medium' }}
-                  onClick={() => formValues.handleSubmit()}
-                  text={{ id: 'button.submit' }}
-                  loading={formValues.isSubmitting}
-                  disabled={!formValues.isValid}
-                />
-              </div>
             </div>
           </div>
-        );
-      }}
+          <div className={styles.inputStorageSlotContainer}>
+            <TextareaAutoresize
+              label={MSG.inputNewValue}
+              name="inputNewValue"
+              appearance={{
+                theme: 'fat',
+                colorSchema: 'grey',
+              }}
+            />
+            <div className={styles.controls}>
+              <Button
+                appearance={{ theme: 'primary', size: 'medium' }}
+                onClick={() => handleSubmit()}
+                text={{ id: 'button.submit' }}
+                loading={isSubmitting}
+                disabled={!isValid}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </ActionForm>
   );
 };
