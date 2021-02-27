@@ -219,6 +219,24 @@ export const recoveryModeResolvers = ({
           },
         });
 
+        /*
+         * @NOTE This part is **very** import here
+         *
+         * We need to check the RecoveryRoleSet events UP UNTIL the block where
+         * we exit the recovery mode.
+         *
+         * This is because the "old" recovery mode pages (where the recovery
+         * session finished), need the reflect the then-users and approvals
+         * as the roles might change between sessions (eg: one user lost
+         * the recovery role, another gained it)
+         *
+         * If we are in a recovery session curently, we just go up until the
+         * curent block
+         *
+         * (then again, we could also check these against the bock up until the
+         * recovery session start, as roles cannot be changed once the recovery
+         * session starts)
+         */
         const filterOptions: { fromBlock: number; toBlock?: number } = {
           fromBlock: 0,
         };
