@@ -24,6 +24,7 @@ import {
   SystemMessage,
   SystemMessagesName,
 } from '~dashboard/ActionsPageFeed';
+import { ensureHexPrefix } from '~utils/strings';
 import { ColonyAndExtensionsEvents } from '~types/index';
 
 const getSessionRecoveryEvents = async (
@@ -92,6 +93,7 @@ const getSessionRecoveryEvents = async (
 
 export const recoveryModeResolvers = ({
   colonyManager,
+  colonyManager: { provider },
   apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
@@ -224,6 +226,20 @@ export const recoveryModeResolvers = ({
       } catch (error) {
         console.error(error);
         return 0;
+      }
+    },
+    async getRecoveryStorageSlot(_, { colonyAddress, storageSlot }) {
+      try {
+        const storageSlotValue = await provider.getStorageAt(
+          colonyAddress,
+          storageSlot,
+        );
+        return ensureHexPrefix(
+          storageSlotValue.toLowerCase().slice(2).padStart(64, '0'),
+        );
+      } catch (error) {
+        console.error(error);
+        return `0x${'0'.padStart(64, '0')}`;
       }
     },
   },

@@ -208,6 +208,10 @@ export default gql`
     ): [SystemMessage]!
 
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
+    getRecoveryStorageSlot(
+      colonyAddress: String!
+      storageSlot: String!
+    ): String!
   }
 
   extend type Mutation {

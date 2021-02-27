@@ -687,6 +687,7 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   domains: Array<SubgraphDomain>;
+  getRecoveryStorageSlot: Scalars['String'];
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
@@ -757,6 +758,12 @@ export type QueryColonyNameArgs = {
 
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
+};
+
+
+export type QueryGetRecoveryStorageSlotArgs = {
+  colonyAddress: Scalars['String'];
+  storageSlot: Scalars['String'];
 };
 
 
@@ -1953,6 +1960,14 @@ export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
 
 
 export type LegacyNumberOfRecoveryRolesQuery = Pick<Query, 'legacyNumberOfRecoveryRoles'>;
+
+export type GetRecoveryStorageSlotQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  storageSlot: Scalars['String'];
+}>;
+
+
+export type GetRecoveryStorageSlotQuery = Pick<Query, 'getRecoveryStorageSlot'>;
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4675,6 +4690,38 @@ export function useLegacyNumberOfRecoveryRolesLazyQuery(baseOptions?: Apollo.Laz
 export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesQuery>;
 export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
 export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
+export const GetRecoveryStorageSlotDocument = gql`
+    query GetRecoveryStorageSlot($colonyAddress: String!, $storageSlot: String!) {
+  getRecoveryStorageSlot(colonyAddress: $colonyAddress, storageSlot: $storageSlot) @client
+}
+    `;
+
+/**
+ * __useGetRecoveryStorageSlotQuery__
+ *
+ * To run a query within a React component, call `useGetRecoveryStorageSlotQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRecoveryStorageSlotQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRecoveryStorageSlotQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      storageSlot: // value for 'storageSlot'
+ *   },
+ * });
+ */
+export function useGetRecoveryStorageSlotQuery(baseOptions?: Apollo.QueryHookOptions<GetRecoveryStorageSlotQuery, GetRecoveryStorageSlotQueryVariables>) {
+        return Apollo.useQuery<GetRecoveryStorageSlotQuery, GetRecoveryStorageSlotQueryVariables>(GetRecoveryStorageSlotDocument, baseOptions);
+      }
+export function useGetRecoveryStorageSlotLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecoveryStorageSlotQuery, GetRecoveryStorageSlotQueryVariables>) {
+          return Apollo.useLazyQuery<GetRecoveryStorageSlotQuery, GetRecoveryStorageSlotQueryVariables>(GetRecoveryStorageSlotDocument, baseOptions);
+        }
+export type GetRecoveryStorageSlotQueryHookResult = ReturnType<typeof useGetRecoveryStorageSlotQuery>;
+export type GetRecoveryStorageSlotLazyQueryHookResult = ReturnType<typeof useGetRecoveryStorageSlotLazyQuery>;
+export type GetRecoveryStorageSlotQueryResult = Apollo.QueryResult<GetRecoveryStorageSlotQuery, GetRecoveryStorageSlotQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {
