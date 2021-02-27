@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState, RefObject } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { ActionForm, TextareaAutoresize, InputStatus } from '~core/Fields';
@@ -16,6 +17,9 @@ import { ActionTypes } from '~redux/index';
 import { ensureHexPrefix } from '~utils/strings';
 import { ENTER, SPACE } from '~types/index';
 import { mapPayload } from '~utils/actions';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '../../../../transformers';
+import { userHasRole } from '../../../../users/checks';
 
 import styles from './InputStorageWidget.css';
 
@@ -60,10 +64,11 @@ const validationSchema = yup.object().shape({
 
 const InputStorageWidget = ({
   colony: { colonyAddress },
+  colony,
   startBlock = 1,
   scrollToRef,
 }: Props) => {
-  const { username, ethereal } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
   const [storageSlot, setStorageSlot] = useState('');
 
   const [
@@ -190,6 +195,8 @@ const InputStorageWidget = ({
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const userHasPermission = userHasRole(allUserRoles, ColonyRole.Recovery);
 
   return (
     <ActionForm
@@ -275,14 +282,14 @@ const InputStorageWidget = ({
                 theme: 'fat',
                 colorSchema: 'grey',
               }}
-              disabled={!hasRegisteredProfile}
+              disabled={!hasRegisteredProfile || !userHasPermission}
             />
             {newStorageSlotValueError && (
               <span className={styles.inputValidationError}>
                 <InputStatus error={newStorageSlotValueError} />
               </span>
             )}
-            {hasRegisteredProfile && (
+            {hasRegisteredProfile && userHasPermission && (
               <div className={styles.controls}>
                 <Button
                   appearance={{ theme: 'primary', size: 'medium' }}

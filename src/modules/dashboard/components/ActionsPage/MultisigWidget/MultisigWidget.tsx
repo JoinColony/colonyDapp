@@ -17,6 +17,9 @@ import {
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload } from '~utils/actions';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '../../../../transformers';
+import { userHasRole } from '../../../../users/checks';
 
 import styles from './MultisigWidget.css';
 
@@ -62,6 +65,7 @@ interface Props {
 
 const MultisigWidget = ({
   colony: { colonyAddress },
+  colony,
   startBlock = 1,
   scrollToRef,
 }: Props) => {
@@ -108,6 +112,8 @@ const MultisigWidget = ({
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const userHasPermission = userHasRole(allUserRoles, ColonyRole.Recovery);
   const hasAlreadyApproved = data?.recoveryRolesAndApprovalsForSession?.find(
     ({ profile: { walletAddress: userAddress } }) =>
       userAddress === walletAddress,
@@ -203,7 +209,7 @@ const MultisigWidget = ({
       </p>
       <ProgressBar value={currentApprovals} max={maxPotentialApprovals} />
       <div className={styles.controls}>
-        {hasRegisteredProfile && (
+        {hasRegisteredProfile && userHasPermission && (
           <Tooltip
             placement="right"
             trigger={hasAlreadyApproved ? 'hover' : 'disabled'}
