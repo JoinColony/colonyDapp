@@ -209,7 +209,7 @@ const NetworkContractUpgradeDialogForm = ({
         <div className={styles.contractVersionLine}>
           <FormattedMessage {...MSG.newVersion} />
           <div className={styles.contractVersionNumber}>
-            {nextVersion < networkVersion ? nextVersion : newVersion}
+            {nextVersion < networkVersion ? nextVersion : networkVersion}
           </div>
         </div>
         <hr className={styles.divider} />
