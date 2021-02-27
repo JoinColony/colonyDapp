@@ -395,13 +395,14 @@ const RecoveryAction = ({
                 startBlock={blockNumber}
                 scrollToRef={bottomElementRef}
               />
-              <MultisigWidget
-                colony={colony}
-                startBlock={blockNumber}
-                scrollToRef={bottomElementRef}
-              />
             </>
           )}
+          <MultisigWidget
+            colony={colony}
+            startBlock={blockNumber}
+            scrollToRef={bottomElementRef}
+            isInRecoveryMode={isInRecoveryMode}
+          />
           <DetailsWidget
             actionType={actionType as ColonyActions}
             recipient={recipient}

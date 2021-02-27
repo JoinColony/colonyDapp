@@ -61,6 +61,7 @@ interface Props {
   colony: Colony;
   startBlock?: number;
   scrollToRef?: RefObject<HTMLInputElement>;
+  isInRecoveryMode?: boolean;
 }
 
 const MultisigWidget = ({
@@ -68,6 +69,7 @@ const MultisigWidget = ({
   colony,
   startBlock = 1,
   scrollToRef,
+  isInRecoveryMode = false,
 }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
 
@@ -209,7 +211,7 @@ const MultisigWidget = ({
       </p>
       <ProgressBar value={currentApprovals} max={maxPotentialApprovals} />
       <div className={styles.controls}>
-        {hasRegisteredProfile && userHasPermission && (
+        {hasRegisteredProfile && userHasPermission && isInRecoveryMode && (
           <Tooltip
             placement="right"
             trigger={hasAlreadyApproved ? 'hover' : 'disabled'}
