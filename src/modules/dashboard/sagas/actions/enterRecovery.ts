@@ -352,6 +352,89 @@ function* approveExitRecovery({
   return null;
 }
 
+function* exitRecoveryMode({
+  payload: { colonyAddress, startBlock, scrollToRef },
+  meta: { id: metaId },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_RECOVERY_APPROVE>) {
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'exitRecovery';
+    const { exitRecovery } = yield createTransactionChannels(metaId, [
+      'exitRecovery',
+    ]);
+
+    yield fork(createTransaction, exitRecovery.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'exitRecoveryMode',
+      identifier: colonyAddress,
+      group: {
+        key: batchKey,
+        id: metaId,
+        index: 0,
+      },
+      params: [],
+      ready: false,
+    });
+
+    yield takeFrom(exitRecovery.channel, ActionTypes.TRANSACTION_CREATED);
+
+    yield put(transactionReady(exitRecovery.id));
+
+    yield takeFrom(exitRecovery.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    /*
+     * Refresh recovery events
+     */
+    yield apolloClient.query<
+      RecoveryEventsForSessionQuery,
+      RecoveryEventsForSessionQueryVariables
+    >({
+      query: RecoveryEventsForSessionDocument,
+      variables: {
+        colonyAddress,
+        blockNumber: startBlock,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield put({
+      type: ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS,
+      meta,
+    });
+
+    /*
+     * This is such a HACKY WAY to do this...
+     *
+     * We're scrolling to the bottom of the page because the `ActionButton`
+     * internal logic is broken, and doesn't trigger `onSuccess` after the
+     * correct action has been dispatch
+     *
+     * Instead it triggers it randomly which breaks *something* in React internal's
+     * rendering logic so that it won't find the element to scroll to anymore
+     *
+     * But this way suprisingly works, as it will fire it at the end of the saga
+     * where everything else is cleaned up.
+     *
+     * As long as we're aware of it, it's not really such a big deal
+     */
+    scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* enterRecoveryActionSaga() {
   yield takeEvery(ActionTypes.COLONY_ACTION_RECOVERY, enterRecoveryAction);
   yield takeEvery(
@@ -362,4 +445,5 @@ export default function* enterRecoveryActionSaga() {
     ActionTypes.COLONY_ACTION_RECOVERY_APPROVE,
     approveExitRecovery,
   );
+  yield takeEvery(ActionTypes.COLONY_ACTION_RECOVERY_EXIT, exitRecoveryMode);
 }

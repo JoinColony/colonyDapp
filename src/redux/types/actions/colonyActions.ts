@@ -221,4 +221,15 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS,
       object
-    >;
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_RECOVERY_EXIT,
+      {
+        colonyAddress: Address;
+        startBlock: number;
+        scrollToRef: RefObject<HTMLInputElement>;
+      },
+      WithKey
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_ERROR, object>
+  | ActionTypeWithMeta<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_SUCCESS, object>;
