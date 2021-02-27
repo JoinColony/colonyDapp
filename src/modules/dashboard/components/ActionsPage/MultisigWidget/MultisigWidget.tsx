@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import React, { RefObject, useCallback } from 'react';
 import { ColonyRole } from '@colony/colony-js';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -14,6 +14,7 @@ import {
   useLoggedInUser,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
+import { mapPayload } from '~utils/actions';
 
 import styles from './MultisigWidget.css';
 
@@ -56,6 +57,7 @@ interface Props {
 const MultisigWidget = ({
   colony: { colonyAddress },
   startBlock = 1,
+  scrollToRef,
 }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
 
@@ -65,6 +67,15 @@ const MultisigWidget = ({
       blockNumber: startBlock,
     },
   });
+
+  const transform = useCallback(
+    mapPayload(() => ({
+      colonyAddress,
+      startBlock,
+      scrollToRef,
+    })),
+    [],
+  );
 
   const hasRegisteredProfile = !!username && !ethereal;
   const hasAlreadyApproved = data?.recoveryRolesAndApprovalsForSession?.find(
@@ -149,10 +160,10 @@ const MultisigWidget = ({
             <div className={styles.buttonWrapper}>
               <ActionButton
                 appearance={{ theme: 'primary', size: 'medium' }}
-                submit={ActionTypes.COLONY_ACTION_GENERIC}
-                error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-                success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-                // transform={transform}
+                submit={ActionTypes.COLONY_ACTION_RECOVERY_APPROVE}
+                error={ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_ERROR}
+                success={ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS}
+                transform={transform}
                 text={{ id: 'button.approve' }}
                 disabled={hasAlreadyApproved}
               />
