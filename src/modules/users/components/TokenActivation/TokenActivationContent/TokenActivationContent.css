@@ -111,6 +111,12 @@
   width: fit-content;
 }
 
+.lockedAmountContainer > i {
+  height: 9px;
+  width: 9px;
+  fill: var(--text-disabled);
+}
+
 .lockedAmount {
   margin-left: 8px;
   font-size: var(--size-tiny);
