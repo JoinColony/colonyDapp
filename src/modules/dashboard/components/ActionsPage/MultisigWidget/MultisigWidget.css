@@ -22,17 +22,17 @@
   margin-top: 16px;
 }
 
-.avatars figure {
+.avatarWrapper {
+  margin: 0 13px 10px 0;
+}
+
+.avatarWrapper:nth-child(7n) {
+  margin-right: 0px;
+}
+
+.avatarWrapper figure {
   height: 37px;
   width: 37px;
-}
-
-.avatars > div {
-  margin: 0 13px 10px 0px;
-}
-
-.avatars > div:nth-child(7n) {
-  margin-right: 0;
 }
 
 .status {
@@ -69,12 +69,19 @@
   text-align: right;
 }
 
-.controls button {
-  margin: 16px 0 0;
+.buttonWrapper {
+  margin-top: 16px;
+}
+
+.buttonWrapper button {
   width: 100px;
   font-size: var(--size-small);
 }
 
 .totalRequired {
   color: var(--pink);
+}
+
+.tooltip {
+  padding: 8px 4px;
 }

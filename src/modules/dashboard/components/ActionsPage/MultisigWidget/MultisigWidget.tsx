@@ -1,19 +1,18 @@
-import React, { ReactNode, useState, RefObject } from 'react';
+import React, { RefObject } from 'react';
 import { ColonyRole } from '@colony/colony-js';
-import { nanoid } from 'nanoid';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import PermissionsLabel from '~core/PermissionsLabel';
 import ProgressBar from '~core/ProgressBar';
 import { ActionButton } from '~core/Button';
+import { Tooltip } from '~core/Popover';
 
 import {
   Colony,
-  useGetRecoveryStorageSlotLazyQuery,
+  useRecoveryRolesAndApprovalsForSessionQuery,
   useLoggedInUser,
 } from '~data/index';
-import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 
 import styles from './MultisigWidget.css';
@@ -33,6 +32,17 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.MultisigWidget.totalRequired',
     defaultMessage: `({required} required)`,
   },
+  alreadyApprovedNotice: {
+    id: 'dashboard.ActionsPage.MultisigWidget.alreadyApprovedNotice',
+    defaultMessage: `You already approved to exit the recovery mode`,
+  },
+  approvedState: {
+    id: 'dashboard.ActionsPage.MultisigWidget.approvedState',
+    defaultMessage: `{approved, select,
+      true {Approved}
+      other {Did not yet approve}
+    }`,
+  },
 });
 
 const UserAvatar = HookedUserAvatar({ fetchUser: true });
@@ -43,10 +53,24 @@ interface Props {
   scrollToRef?: RefObject<HTMLInputElement>;
 }
 
-const MultisigWidget = ({ colony: { colonyAddress } }: Props) => {
-  const { username, ethereal } = useLoggedInUser();
+const MultisigWidget = ({
+  colony: { colonyAddress },
+  startBlock = 1,
+}: Props) => {
+  const { username, ethereal, walletAddress } = useLoggedInUser();
+
+  const { data } = useRecoveryRolesAndApprovalsForSessionQuery({
+    variables: {
+      colonyAddress,
+      blockNumber: startBlock,
+    },
+  });
 
   const hasRegisteredProfile = !!username && !ethereal;
+  const hasAlreadyApproved = data?.recoveryRolesAndApprovalsForSession?.find(
+    ({ profile: { walletAddress: userAddress } }) =>
+      userAddress === walletAddress,
+  )?.approvedRecoveryExit;
 
   return (
     <div className={styles.wrapper}>
@@ -61,25 +85,37 @@ const MultisigWidget = ({ colony: { colonyAddress } }: Props) => {
         />
       </div>
       <div className={styles.avatars}>
-        {[...new Array(17)].map((_, index) => {
-          // @TODO get status for address
-          const approved = index % 2 === 0;
-          return (
-            <div>
-              <UserAvatar
-                size="s"
-                address="0xb77D57F4959eAfA0339424b83FcFaf9c15407461"
-                notSet={false}
-                showInfo
-              />
-              <span
-                className={`${styles.status} ${
-                  approved && styles.statusApproved
-                }`}
-              />
-            </div>
-          );
-        })}
+        {data?.recoveryRolesAndApprovalsForSession?.map((user) => (
+          <div key={user.id}>
+            <Tooltip
+              placement="right"
+              trigger="hover"
+              content={
+                <div className={styles.tooltip}>
+                  <FormattedMessage
+                    {...MSG.approvedState}
+                    values={{ approved: user.approvedRecoveryExit }}
+                  />
+                </div>
+              }
+            >
+              <div className={styles.avatarWrapper}>
+                <UserAvatar
+                  user={user}
+                  size="s"
+                  address={user.profile.walletAddress}
+                  notSet={false}
+                  showInfo
+                />
+                <span
+                  className={`${styles.status} ${
+                    user.approvedRecoveryExit && styles.statusApproved
+                  }`}
+                />
+              </div>
+            </Tooltip>
+          </div>
+        ))}
       </div>
       <p className={styles.progressBarLabel}>
         <FormattedMessage
@@ -101,14 +137,27 @@ const MultisigWidget = ({ colony: { colonyAddress } }: Props) => {
       <ProgressBar value={5} max={18} />
       <div className={styles.controls}>
         {hasRegisteredProfile && (
-          <ActionButton
-            appearance={{ theme: 'primary', size: 'medium' }}
-            submit={ActionTypes.COLONY_ACTION_GENERIC}
-            error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-            success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-            // transform={transform}
-            text={{ id: 'button.approve' }}
-          />
+          <Tooltip
+            placement="right"
+            trigger={hasAlreadyApproved ? 'hover' : 'disabled'}
+            content={
+              <div className={styles.tooltip}>
+                <FormattedMessage {...MSG.alreadyApprovedNotice} />
+              </div>
+            }
+          >
+            <div className={styles.buttonWrapper}>
+              <ActionButton
+                appearance={{ theme: 'primary', size: 'medium' }}
+                submit={ActionTypes.COLONY_ACTION_GENERIC}
+                error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+                success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+                // transform={transform}
+                text={{ id: 'button.approve' }}
+                disabled={hasAlreadyApproved}
+              />
+            </div>
+          </Tooltip>
         )}
       </div>
     </div>
