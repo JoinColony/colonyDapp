@@ -33,6 +33,7 @@ import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import MultisigWidget from '../MultisigWidget';
 import InputStorageWidget from '../InputStorageWidget';
 import DetailsWidget from '../DetailsWidget';
+import ApproveExitWidget from '../ApproveExitWidget';
 
 import styles from './DefaultAction.css';
 import recoverySpecificStyles from './RecoveryAction.css';
@@ -384,6 +385,11 @@ const RecoveryAction = ({
         <div className={styles.details}>
           {isInRecoveryMode && (
             <>
+              <ApproveExitWidget
+                colony={colony}
+                startBlock={blockNumber}
+                scrollToRef={bottomElementRef}
+              />
               <InputStorageWidget
                 colony={colony}
                 startBlock={blockNumber}

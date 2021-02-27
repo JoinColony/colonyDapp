@@ -1,0 +1,23 @@
+.main {
+  display: flex;
+  align-items: center;
+  margin-bottom: -4px;
+  padding: 10px 0;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.title {
+  flex: 1 0 auto;
+}
+
+.controls {
+  flex: 0 0 auto;
+  align-self: flex-end;
+}
+
+.controls button {
+  width: 100px;
+  font-size: var(--size-small);
+}
