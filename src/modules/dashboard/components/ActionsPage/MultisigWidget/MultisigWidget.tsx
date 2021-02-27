@@ -1,4 +1,4 @@
-import React, { RefObject, useCallback } from 'react';
+import React, { RefObject, useCallback, useMemo } from 'react';
 import { ColonyRole } from '@colony/colony-js';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -12,6 +12,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import {
   Colony,
   useRecoveryRolesAndApprovalsForSessionQuery,
+  useGetRecoveryRequiredApprovalsQuery,
   useLoggedInUser,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -72,6 +73,30 @@ const MultisigWidget = ({
       blockNumber: startBlock,
     },
   });
+
+  const { data: requiredApprovals } = useGetRecoveryRequiredApprovalsQuery({
+    variables: {
+      colonyAddress,
+    },
+  });
+
+  const maxPotentialApprovals =
+    data?.recoveryRolesAndApprovalsForSession?.length || 0;
+
+  const currentApprovals = useMemo(() => {
+    if (data?.recoveryRolesAndApprovalsForSession) {
+      return data?.recoveryRolesAndApprovalsForSession.reduce(
+        (approvalsTotal, currentUser) => {
+          if (currentUser?.approvedRecoveryExit) {
+            return approvalsTotal + 1;
+          }
+          return approvalsTotal;
+        },
+        0,
+      );
+    }
+    return 0;
+  }, [data]);
 
   const transform = useCallback(
     mapPayload(() => ({
@@ -160,20 +185,23 @@ const MultisigWidget = ({
         <FormattedMessage
           {...MSG.progressBarLabel}
           values={{
-            value: 5,
-            max: 10,
+            value: currentApprovals,
+            max: maxPotentialApprovals,
             totalRequired: (
               <span className={styles.totalRequired}>
                 <FormattedMessage
                   {...MSG.totalRequired}
-                  values={{ required: 8 }}
+                  values={{
+                    required:
+                      requiredApprovals?.getRecoveryRequiredApprovals || 0,
+                  }}
                 />
               </span>
             ),
           }}
         />
       </p>
-      <ProgressBar value={5} max={18} />
+      <ProgressBar value={currentApprovals} max={maxPotentialApprovals} />
       <div className={styles.controls}>
         {hasRegisteredProfile && (
           <Tooltip
