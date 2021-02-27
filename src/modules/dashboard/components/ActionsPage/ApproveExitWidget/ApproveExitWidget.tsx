@@ -103,9 +103,9 @@ const ApproveExitWidget = ({
       <div className={styles.controls}>
         <ActionButton
           appearance={{ theme: 'primary', size: 'medium' }}
-          submit={ActionTypes.COLONY_ACTION_GENERIC}
-          error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-          success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+          submit={ActionTypes.COLONY_ACTION_RECOVERY_EXIT}
+          error={ActionTypes.COLONY_ACTION_RECOVERY_EXIT_ERROR}
+          success={ActionTypes.COLONY_ACTION_RECOVERY_EXIT_SUCCESS}
           transform={transform}
           text={MSG.reactivateButton}
         />
