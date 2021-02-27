@@ -385,7 +385,7 @@ const RecoveryAction = ({
         <div className={styles.details}>
           {isInRecoveryMode && (
             <>
-              <InputStorageWidget />
+              <InputStorageWidget colony={colony} />
               <MultisigWidget
                 // Mocking for now
                 membersAllowedForApproval={Array.from(

@@ -23,9 +23,6 @@ interface Props {
   colony: Colony;
 }
 
-const CURRENT_VALUE_PLACEHOLDER =
-  '0x0000000000000000000000000000000000000000000000000004939EF6B04812';
-
 const MSG = defineMessages({
   inputStorageSlot: {
     id: 'dashboard.ActionsPage.InputStorageWidget.inputStorageSlot',
@@ -55,20 +52,41 @@ const validationSchema = yup.object().shape({
 });
 
 const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
+  const [storageSlot, setStorageSlot] = useState('');
+
+  const [
+    fetchStorageSlotValue,
+    { data, loading: loadinStorageSlotValue },
+  ] = useGetRecoveryStorageSlotLazyQuery();
+
+  useEffect(() => {
+    if (storageSlot) {
+      fetchStorageSlotValue({ variables: { colonyAddress, storageSlot } });
+    }
+  }, [storageSlot, colonyAddress, fetchStorageSlotValue]);
+
   /*
    * We need to handle these manually using a ref, since the TextAreaAutoresize
    * component doesn't give us access to the native React ones :(
    */
   const handleInputStorageSlotBlur = useCallback(
-    (textarea, currentValue, updateValues) => {
+    (textarea, currentValue, fieldError, updateValues) => {
       if (textarea?._ref) {
         // eslint-disable-next-line no-param-reassign, no-underscore-dangle
         const autoResizeTextareaComponent = textarea?._ref;
         /*
-         * Add 0x prefix on blur
+         * Add 0x prefix on blur and set the storage slot in state
          */
-        autoResizeTextareaComponent.onblur = () =>
-          updateValues('inputStorageSlot', ensureHexPrefix(currentValue));
+        autoResizeTextareaComponent.onblur = () => {
+          if (!fieldError && currentValue) {
+            const normalizedStorageSlot = ensureHexPrefix(currentValue);
+            updateValues('inputStorageSlot', normalizedStorageSlot);
+            setStorageSlot(normalizedStorageSlot);
+          }
+          if (!currentValue) {
+            setStorageSlot('');
+          }
+        };
         /*
          * Prevent entering a new line
          *
@@ -117,6 +135,7 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
                 handleInputStorageSlotBlur(
                   ref,
                   inputStorageSlotValue,
+                  inputStorageSlotError,
                   setFieldValue,
                 )
               }
@@ -131,16 +150,17 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
               </span>
             )}
             <div className={styles.currentValueText}>
-              {true ? (
+              {loadinStorageSlotValue && (
                 <div className={styles.loadingSlotValue}>
                   <SpinnerLoader />
                   <FormattedMessage tagName="span" {...MSG.loadingSlotValue} />
                 </div>
-              ) : (
+              )}
+              {data?.getRecoveryStorageSlot && storageSlot && (
                 <FormattedMessage
                   {...MSG.currentValueLabel}
                   values={{
-                    slotValue: <span>{CURRENT_VALUE_PLACEHOLDER}</span>,
+                    slotValue: <span>{data.getRecoveryStorageSlot}</span>,
                   }}
                 />
               )}
