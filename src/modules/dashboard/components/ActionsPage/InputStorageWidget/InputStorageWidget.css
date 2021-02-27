@@ -1,50 +1,43 @@
 .widgetForm {
   margin-top: 20px;
   margin-bottom: 55px;
-  position: relative;
-}
-
-.widgetForm label {
-  line-height: 18px;
-  color: var(--dark);
-}
-
-.learnMoreLink {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-  font-size: var(--size-small);
   font-weight: var(--weight-bold);
-  color: var(--action-secondary);
+}
+
+.inputStorageSlotContainer {
+  padding-bottom: 10px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.inputStorageSlotContainer:nth-child(2) {
+  margin-top: 20px;
+  padding-bottom: 15px;
+}
+
+.inputStorageSlotContainer textarea {
+  font-family: var(--family-techie);
+  font-size: var(--size-normal);
+  font-weight: var(--weight-medium);
 }
 
 .currentValueText {
-  margin-bottom: 2px;
+  margin-top: -25px;
   font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  line-height: 18px;
+  word-break: break-all;
+  color: var(--temp-grey-blue-7);
 }
 
-.formFooter {
+.currentValueText span {
+  font-family: var(--family-techie);
+  color: color-mod(var(--temp-grey-blue-7) alpha(80%));
+}
+
+.controls {
   margin-top: -19px;
   text-align: right;
 }
 
-.widgetForm input {
-  font-size: var(--size-normal);
-  font-weight: var(--weight-bold);
-  line-height: 18px;
-  color: var(--dark);
-}
-
-.formFooter button {
-  margin-top: 5px;
-  padding: 2px 29px;
+.controls button {
+  width: 100px;
   font-size: var(--size-small);
-  line-height: 18px;
-}
-
-.inputStorageSlotContainer > div {
-  margin-bottom: 0;
 }

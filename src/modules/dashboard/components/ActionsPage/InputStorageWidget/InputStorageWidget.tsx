@@ -4,9 +4,8 @@ import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
-import ExternalLink from '~core/ExternalLink';
 import { ActionTypes } from '~redux/index';
-import { ActionForm, Input } from '~core/Fields';
+import { ActionForm, TextareaAutoresize } from '~core/Fields';
 
 import styles from './InputStorageWidget.css';
 
@@ -15,14 +14,13 @@ export interface FormValues {
   inputNewValue?: string;
 }
 
-const LEARN_MORE_URL = '#CHANGEME';
 const CURRENT_VALUE_PLACEHOLDER =
-  '0x0000000000000000000000000000000000 000000000000000004939EF6B04812';
+  '0x0000000000000000000000000000000000000000000000000004939EF6B04812';
 
 const MSG = defineMessages({
   inputStorageSlot: {
     id: 'dashboard.ActionsPage.InputStorageWidget.inputStorageSlot',
-    defaultMessage: 'Input storage lot',
+    defaultMessage: 'Input storage slot',
   },
   inputNewValue: {
     id: 'dashboard.ActionsPage.InputStorageWidget.inputNewValue',
@@ -30,26 +28,18 @@ const MSG = defineMessages({
   },
   currentValueLabel: {
     id: 'dashboard.ActionsPage.InputStorageWidget.currentValueLabel',
-    defaultMessage: 'Current value:',
-  },
-  currentValue: {
-    id: 'dashboard.ActionsPage.InputStorageWidget.currentValue',
-    defaultMessage: '{currentValue}',
+    defaultMessage: 'Current value: {slotValue}',
   },
   token: {
     id: 'dashboard.ActionsPage.InputStorageWidget.address',
     defaultMessage: 'Token',
   },
-  learnMoreLink: {
-    id: 'dashboard.ActionsPage.InputStorageWidget.learnMoreLink',
-    defaultMessage: 'Learn more',
-  },
 });
 
 const InputStorageWidget = () => {
   const validationSchema = yup.object().shape({
-    inputStorageSlot: yup.string().required(),
-    inputNewValue: yup.string().required(),
+    inputStorageSlot: yup.string(),
+    inputNewValue: yup.string(),
   });
 
   return (
@@ -66,13 +56,8 @@ const InputStorageWidget = () => {
       {(formValues: FormikProps<FormValues>) => {
         return (
           <div className={styles.widgetForm}>
-            <ExternalLink
-              className={styles.learnMoreLink}
-              text={MSG.learnMoreLink}
-              href={LEARN_MORE_URL}
-            />
             <div className={styles.inputStorageSlotContainer}>
-              <Input
+              <TextareaAutoresize
                 label={MSG.inputStorageSlot}
                 name="inputStorageSlot"
                 appearance={{
@@ -81,32 +66,33 @@ const InputStorageWidget = () => {
                 }}
                 onClick={() => {}} // @TODO: Connect with functional on click handler
               />
+              <p className={styles.currentValueText}>
+                <FormattedMessage
+                  {...MSG.currentValueLabel}
+                  values={{
+                    slotValue: <span>{CURRENT_VALUE_PLACEHOLDER}</span>,
+                  }}
+                />
+              </p>
             </div>
-            <p className={styles.currentValueText}>
-              <FormattedMessage {...MSG.currentValueLabel} />
-            </p>
-            <p className={styles.currentValueText}>
-              <FormattedMessage
-                {...MSG.currentValue}
-                values={{ currentValue: CURRENT_VALUE_PLACEHOLDER }}
+            <div className={styles.inputStorageSlotContainer}>
+              <TextareaAutoresize
+                label={MSG.inputNewValue}
+                name="inputNewValue"
+                appearance={{
+                  theme: 'fat',
+                  colorSchema: 'grey',
+                }}
               />
-            </p>
-            <Input
-              label={MSG.inputNewValue}
-              name="inputNewValue"
-              appearance={{
-                theme: 'fat',
-                colorSchema: 'grey',
-              }}
-            />
-            <div className={styles.formFooter}>
-              <Button
-                appearance={{ theme: 'primary', size: 'medium' }}
-                onClick={() => formValues.handleSubmit()}
-                text={{ id: 'button.submit' }}
-                loading={formValues.isSubmitting}
-                disabled={!formValues.isValid}
-              />
+              <div className={styles.controls}>
+                <Button
+                  appearance={{ theme: 'primary', size: 'medium' }}
+                  onClick={() => formValues.handleSubmit()}
+                  text={{ id: 'button.submit' }}
+                  loading={formValues.isSubmitting}
+                  disabled={!formValues.isValid}
+                />
+              </div>
             </div>
           </div>
         );
