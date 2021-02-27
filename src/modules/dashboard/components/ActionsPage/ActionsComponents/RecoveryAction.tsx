@@ -2,7 +2,6 @@ import React, { useMemo, useRef } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
-import Button from '~core/Button';
 import FriendlyName from '~core/FriendlyName';
 import PermissionsLabel from '~core/PermissionsLabel';
 import ActionsPageFeed, {
@@ -100,9 +99,6 @@ const RecoveryAction = ({
   colonyAction,
   transactionHash,
   recipient,
-  initiator: {
-    profile: { walletAddress: initiatorWalletAddress },
-  },
   initiator,
 }: Props) => {
   const bottomElementRef = useRef<HTMLInputElement>(null);
@@ -394,22 +390,10 @@ const RecoveryAction = ({
                 scrollToRef={bottomElementRef}
               />
               <MultisigWidget
-                // Mocking for now
-                membersAllowedForApproval={Array.from(
-                  Array(10),
-                  () => initiatorWalletAddress,
-                )}
-                requiredNumber={4}
-                requiredPermission={ColonyRole.Recovery}
-              >
-                <Button
-                  text={{ id: 'button.approve' }}
-                  appearance={{
-                    theme: 'primary',
-                    size: 'medium',
-                  }}
-                />
-              </MultisigWidget>
+                colony={colony}
+                startBlock={blockNumber}
+                scrollToRef={bottomElementRef}
+              />
             </>
           )}
           <DetailsWidget
