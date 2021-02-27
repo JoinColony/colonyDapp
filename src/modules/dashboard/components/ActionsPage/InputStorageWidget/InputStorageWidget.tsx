@@ -1,20 +1,26 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import { ActionForm, TextareaAutoresize, InputStatus } from '~core/Fields';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import { ActionTypes } from '~redux/index';
 import { ensureHexPrefix } from '~utils/strings';
 import { ENTER, SPACE } from '~types/index';
+import { Colony, useGetRecoveryStorageSlotLazyQuery } from '~data/index';
 
 import styles from './InputStorageWidget.css';
 
 export interface FormValues {
   inputStorageSlot?: string;
   inputNewValue?: string;
+}
+
+interface Props {
+  colony: Colony;
 }
 
 const CURRENT_VALUE_PLACEHOLDER =
@@ -37,14 +43,18 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.InputStorageWidget.address',
     defaultMessage: 'Token',
   },
+  loadingSlotValue: {
+    id: 'dashboard.ActionsPage.InputStorageWidget.loadingSlotValue',
+    defaultMessage: 'Fetching storage slot value ...',
+  },
 });
 
-const InputStorageWidget = () => {
-  const validationSchema = yup.object().shape({
-    inputStorageSlot: yup.string().max(66).hexString(),
-    inputNewValue: yup.string(),
-  });
+const validationSchema = yup.object().shape({
+  inputStorageSlot: yup.string().max(66).hexString(),
+  inputNewValue: yup.string(),
+});
 
+const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
   /*
    * We need to handle these manually using a ref, since the TextAreaAutoresize
    * component doesn't give us access to the native React ones :(
@@ -121,12 +131,19 @@ const InputStorageWidget = () => {
               </span>
             )}
             <div className={styles.currentValueText}>
-              <FormattedMessage
-                {...MSG.currentValueLabel}
-                values={{
-                  slotValue: <span>{CURRENT_VALUE_PLACEHOLDER}</span>,
-                }}
-              />
+              {true ? (
+                <div className={styles.loadingSlotValue}>
+                  <SpinnerLoader />
+                  <FormattedMessage tagName="span" {...MSG.loadingSlotValue} />
+                </div>
+              ) : (
+                <FormattedMessage
+                  {...MSG.currentValueLabel}
+                  values={{
+                    slotValue: <span>{CURRENT_VALUE_PLACEHOLDER}</span>,
+                  }}
+                />
+              )}
             </div>
           </div>
           <div className={styles.inputStorageSlotContainer}>

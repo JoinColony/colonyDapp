@@ -49,3 +49,14 @@
   width: 100px;
   font-size: var(--size-small);
 }
+
+.loadingSlotValue {
+  color: var(--text);
+}
+
+.loadingSlotValue span {
+  margin-left: 6px;
+  vertical-align: top;
+  font-family: var(--family-primary);
+  font-weight: var(--weight-normal);
+}
