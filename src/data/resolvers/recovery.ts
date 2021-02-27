@@ -131,7 +131,7 @@ export const recoveryModeResolvers = ({
           colonyAddress,
         )) as ColonyClientV6;
 
-        return getSessionRecoveryEvents(colonyClient, blockNumber);
+        return await getSessionRecoveryEvents(colonyClient, blockNumber);
       } catch (error) {
         console.error(error);
         return [];

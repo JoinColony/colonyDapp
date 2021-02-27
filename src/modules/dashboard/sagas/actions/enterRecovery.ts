@@ -10,6 +10,12 @@ import {
   RecoveryEventsForSessionQueryVariables,
   RecoveryEventsForSessionQuery,
   RecoveryEventsForSessionDocument,
+  RecoveryRolesAndApprovalsForSessionQuery,
+  RecoveryRolesAndApprovalsForSessionQueryVariables,
+  RecoveryRolesAndApprovalsForSessionDocument,
+  RecoverySystemMessagesForSessionQuery,
+  RecoverySystemMessagesForSessionQueryVariables,
+  RecoverySystemMessagesForSessionDocument,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -191,16 +197,27 @@ function* setStorageSlotValue({
     yield takeFrom(setStorageSlot.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     /*
-     * Note that we only have to update the recovery events query, since the
-     * systems messages counter gets reset every time we submit a new storage
-     * slot value, meaning that there is never a case when they change after
-     * this transaction
+     * Refresh recovery events
      */
     yield apolloClient.query<
       RecoveryEventsForSessionQuery,
       RecoveryEventsForSessionQueryVariables
     >({
       query: RecoveryEventsForSessionDocument,
+      variables: {
+        colonyAddress,
+        blockNumber: startBlock,
+      },
+      fetchPolicy: 'network-only',
+    });
+    /*
+     * Refresh user approvals
+     */
+    yield apolloClient.query<
+      RecoveryRolesAndApprovalsForSessionQuery,
+      RecoveryRolesAndApprovalsForSessionQueryVariables
+    >({
+      query: RecoveryRolesAndApprovalsForSessionDocument,
       variables: {
         colonyAddress,
         blockNumber: startBlock,
@@ -224,10 +241,125 @@ function* setStorageSlotValue({
   return null;
 }
 
+function* approveExitRecovery({
+  payload: { colonyAddress, startBlock, scrollToRef },
+  meta: { id: metaId },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_RECOVERY_APPROVE>) {
+  let txChannel;
+  try {
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'approveExit';
+    const { approveExit } = yield createTransactionChannels(metaId, [
+      'approveExit',
+    ]);
+
+    yield fork(createTransaction, approveExit.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'approveExitRecovery',
+      identifier: colonyAddress,
+      group: {
+        key: batchKey,
+        id: metaId,
+        index: 0,
+      },
+      params: [],
+      ready: false,
+    });
+
+    yield takeFrom(approveExit.channel, ActionTypes.TRANSACTION_CREATED);
+
+    yield put(transactionReady(approveExit.id));
+
+    yield takeFrom(approveExit.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    /*
+     * Refresh recovery events
+     */
+    yield apolloClient.query<
+      RecoveryEventsForSessionQuery,
+      RecoveryEventsForSessionQueryVariables
+    >({
+      query: RecoveryEventsForSessionDocument,
+      variables: {
+        colonyAddress,
+        blockNumber: startBlock,
+      },
+      fetchPolicy: 'network-only',
+    });
+    /*
+     * Refresh user approvals
+     */
+    yield apolloClient.query<
+      RecoveryRolesAndApprovalsForSessionQuery,
+      RecoveryRolesAndApprovalsForSessionQueryVariables
+    >({
+      query: RecoveryRolesAndApprovalsForSessionDocument,
+      variables: {
+        colonyAddress,
+        blockNumber: startBlock,
+      },
+      fetchPolicy: 'network-only',
+    });
+    /*
+     * Refresh system messages
+     */
+    yield apolloClient.query<
+      RecoverySystemMessagesForSessionQuery,
+      RecoverySystemMessagesForSessionQueryVariables
+    >({
+      query: RecoverySystemMessagesForSessionDocument,
+      variables: {
+        colonyAddress,
+        blockNumber: startBlock,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield put({
+      type: ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS,
+      meta,
+    });
+
+    /*
+     * This is such a HACKY WAY to do this...
+     *
+     * We're scrolling to the bottom of the page because the `ActionButton`
+     * internal logic is broken, and doesn't trigger `onSuccess` after the
+     * correct action has been dispatch
+     *
+     * Instead it triggers it randomly which breaks *something* in React internal's
+     * rendering logic so that it won't find the element to scroll to anymore
+     *
+     * But this way suprisingly works, as it will fire it at the end of the saga
+     * where everything else is cleaned up.
+     *
+     * As long as we're aware of it, it's not really such a big deal
+     */
+    scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* enterRecoveryActionSaga() {
   yield takeEvery(ActionTypes.COLONY_ACTION_RECOVERY, enterRecoveryAction);
   yield takeEvery(
     ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT,
     setStorageSlotValue,
+  );
+  yield takeEvery(
+    ActionTypes.COLONY_ACTION_RECOVERY_APPROVE,
+    approveExitRecovery,
   );
 }

@@ -93,6 +93,10 @@
     "transaction.group.setStorageSlot.description": "Set Storage Slot",
     "transaction.ColonyClient.setStorageSlotRecovery.title": "Set Storage Slot",
     "transaction.ColonyClient.setStorageSlotRecovery.description": "Set Storage Slot",
+    "transaction.group.approveExit.title": "Approve Exiting Recovery Mode",
+    "transaction.group.approveExit.description": "Approve Exiting Recovery Mode",
+    "transaction.ColonyClient.approveExitRecovery.title": "Approve Exiting Recovery Mode",
+    "transaction.ColonyClient.approveExitRecovery.description": "Approve Exiting Recovery Mode",
 
     "transaction.ColonyClient.unlockToken.title": "Unlock Token",
     "transaction.ColonyClient.unlockToken.description": "Unlock Token",

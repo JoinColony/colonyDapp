@@ -1,3 +1,4 @@
+import { RefObject } from 'react';
 import { BigNumber } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
@@ -205,5 +206,19 @@ export type ColonyActionsActionTypes =
   | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS,
+      object
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE,
+      {
+        colonyAddress: Address;
+        startBlock: number;
+        scrollToRef: RefObject<HTMLInputElement>;
+      },
+      WithKey
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS,
       object
     >;
