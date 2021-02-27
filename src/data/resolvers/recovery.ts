@@ -376,23 +376,17 @@ export const recoveryModeResolvers = ({
           const allRolesSet = await getMultipleEvents(colonyClient, [
             colonyClient.filters.ColonyRoleSet(null, null, null, null, null),
           ]);
-          const filteredAllRoles = allRolesSet?.filter(({ values }) => {
-            if (values) {
-              return values?.setTo && values?.role === ColonyRole.Recovery;
-            }
-            return false;
-          });
+          const filteredAllRoles = getUsersWithRecoveryRoles(
+            allRolesSet?.filter(
+              ({ values }) => values?.role === ColonyRole.Recovery,
+            ) || [],
+          );
 
           const recoveryRolesSet = await getMultipleEvents(colonyClient, [
             colonyClient.filters.RecoveryRoleSet(null, null),
           ]);
-          const filteredRecoveryRoles = recoveryRolesSet?.filter(
-            ({ values }) => {
-              if (values) {
-                return values?.setTo;
-              }
-              return false;
-            },
+          const filteredRecoveryRoles = getUsersWithRecoveryRoles(
+            recoveryRolesSet,
           );
 
           return [...filteredAllRoles, ...filteredRecoveryRoles].length;
