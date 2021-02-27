@@ -182,6 +182,12 @@ export default gql`
     profile: UserProfile!
   }
 
+  type UsersAndRecoveryApprovals {
+    id: String!
+    profile: UserProfile!
+    approvedRecoveryExit: Boolean!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -219,11 +225,15 @@ export default gql`
       colonyAddress: String!
     ): [SystemMessage]!
     recoveryRolesUsers(colonyAddress: String!): [User!]!
-    legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     getRecoveryStorageSlot(
       colonyAddress: String!
       storageSlot: String!
     ): String!
+    recoveryRolesAndApprovalsForSession(
+      blockNumber: Int!
+      colonyAddress: String!
+    ): [UsersAndRecoveryApprovals!]!
+    legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
   }
 
   extend type Mutation {

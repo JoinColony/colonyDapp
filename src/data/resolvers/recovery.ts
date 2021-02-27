@@ -20,7 +20,11 @@ import {
   ColonySubscribedUsersQuery,
   ColonySubscribedUsersQueryVariables,
   ColonySubscribedUsersDocument,
+  RecoveryRolesUsersQuery,
+  RecoveryRolesUsersQueryVariables,
+  RecoveryRolesUsersDocument,
   getMinimalUser,
+  UserQuery,
 } from '~data/index';
 
 import { ProcessedEvent } from './colonyActions';
@@ -110,6 +114,9 @@ const getUsersWithRecoveryRoles = (recoveryRoleSetEvents: LogDescription[]) => {
     (userAddress) => !!userAddresses[userAddress],
   );
 };
+
+const resetAllApprovalChecks = (users: Array<UserQuery['user']>) =>
+  users.map((user) => ({ ...user, approvedRecoveryExit: false }));
 
 export const recoveryModeResolvers = ({
   colonyManager,
@@ -235,6 +242,84 @@ export const recoveryModeResolvers = ({
           }
           return userWithProfile;
         });
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    },
+    async recoveryRolesAndApprovalsForSession(
+      _,
+      { blockNumber, colonyAddress },
+    ) {
+      try {
+        /*
+         * @NOTE Leveraging apollo's internal cache
+         *
+         * This might seem counter intuitive, fetching an apollo query here,
+         * when we could just call `getSessionRecoveryEvents` directly, but
+         * doing so, allows us to fetch the recovery events that are already
+         * inside the cache, and not be forced to fetch them all over again.
+         *
+         * This cuts down on loading times, especially on pages with a lot
+         * of events generated.
+         */
+        const recoveryEvents = await apolloClient.query<
+          RecoveryEventsForSessionQuery,
+          RecoveryEventsForSessionQueryVariables
+        >({
+          query: RecoveryEventsForSessionDocument,
+          variables: {
+            colonyAddress,
+            blockNumber,
+          },
+        });
+
+        /*
+         * @NOTE Leveraging apollo's internal cache yet again, so we don't
+         * re-fetch and re-parse both the server user and the recovery role events
+         */
+        const usersWithRecoveryRoles = await apolloClient.query<
+          RecoveryRolesUsersQuery,
+          RecoveryRolesUsersQueryVariables
+        >({
+          query: RecoveryRolesUsersDocument,
+          variables: {
+            colonyAddress,
+          },
+        });
+
+        if (
+          recoveryEvents?.data?.recoveryEventsForSession?.length &&
+          usersWithRecoveryRoles?.data?.recoveryRolesUsers?.length
+        ) {
+          let usersAndApprovals = resetAllApprovalChecks(
+            usersWithRecoveryRoles.data.recoveryRolesUsers,
+          );
+
+          recoveryEvents.data.recoveryEventsForSession.map((event) => {
+            const { name, values } = event;
+            const { user: userAddress } = (values as unknown) as {
+              user: string;
+            };
+            const userIndex = usersAndApprovals.findIndex(
+              ({ id: walletAddress }) =>
+                walletAddress.toLowerCase() === userAddress.toLowerCase(),
+            );
+            if (name === ColonyAndExtensionsEvents.RecoveryModeExitApproved) {
+              usersAndApprovals[userIndex].approvedRecoveryExit = true;
+            }
+            /*
+             * Storage Slot was set, reset everything
+             */
+            if (name === ColonyAndExtensionsEvents.RecoveryStorageSlotSet) {
+              usersAndApprovals = resetAllApprovalChecks(usersAndApprovals);
+            }
+            return null;
+          });
+
+          return usersAndApprovals;
+        }
+        return [];
       } catch (error) {
         console.error(error);
         return [];

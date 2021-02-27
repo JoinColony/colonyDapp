@@ -434,6 +434,19 @@ query RecoveryRolesUsers($colonyAddress: String!) {
   }
 }
 
+query RecoveryRolesAndApprovalsForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoveryRolesAndApprovalsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+    approvedRecoveryExit
+  }
+}
+
 query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }
