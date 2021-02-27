@@ -24,6 +24,7 @@ export default gql`
     values: String!
     createdAt: Int!
     emmitedBy: String!
+    blockNumber: Int
   }
 
   type SystemMessage {
@@ -224,7 +225,7 @@ export default gql`
       blockNumber: Int!
       colonyAddress: String!
     ): [SystemMessage]!
-    recoveryRolesUsers(colonyAddress: String!): [User!]!
+    recoveryRolesUsers(colonyAddress: String!, endBlockNumber: Int): [User!]!
     getRecoveryStorageSlot(
       colonyAddress: String!
       storageSlot: String!

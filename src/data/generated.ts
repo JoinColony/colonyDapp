@@ -799,6 +799,7 @@ export type QueryRecoveryRolesAndApprovalsForSessionArgs = {
 
 export type QueryRecoveryRolesUsersArgs = {
   colonyAddress: Scalars['String'];
+  endBlockNumber?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1039,6 +1040,7 @@ export type ParsedEvent = {
   values: Scalars['String'];
   createdAt: Scalars['Int'];
   emmitedBy: Scalars['String'];
+  blockNumber?: Maybe<Scalars['Int']>;
 };
 
 export type SystemMessage = {
@@ -1969,7 +1971,7 @@ export type RecoveryEventsForSessionQueryVariables = Exact<{
 }>;
 
 
-export type RecoveryEventsForSessionQuery = { recoveryEventsForSession: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy'>> };
+export type RecoveryEventsForSessionQuery = { recoveryEventsForSession: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'blockNumber'>> };
 
 export type RecoverySystemMessagesForSessionQueryVariables = Exact<{
   blockNumber: Scalars['Int'];
@@ -1989,6 +1991,7 @@ export type GetRecoveryStorageSlotQuery = Pick<Query, 'getRecoveryStorageSlot'>;
 
 export type RecoveryRolesUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
+  endBlockNumber?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -4646,6 +4649,7 @@ export const RecoveryEventsForSessionDocument = gql`
     values
     createdAt
     emmitedBy
+    blockNumber
   }
 }
     `;
@@ -4745,8 +4749,8 @@ export type GetRecoveryStorageSlotQueryHookResult = ReturnType<typeof useGetReco
 export type GetRecoveryStorageSlotLazyQueryHookResult = ReturnType<typeof useGetRecoveryStorageSlotLazyQuery>;
 export type GetRecoveryStorageSlotQueryResult = Apollo.QueryResult<GetRecoveryStorageSlotQuery, GetRecoveryStorageSlotQueryVariables>;
 export const RecoveryRolesUsersDocument = gql`
-    query RecoveryRolesUsers($colonyAddress: String!) {
-  recoveryRolesUsers(colonyAddress: $colonyAddress) @client {
+    query RecoveryRolesUsers($colonyAddress: String!, $endBlockNumber: Int) {
+  recoveryRolesUsers(colonyAddress: $colonyAddress, endBlockNumber: $endBlockNumber) @client {
     id
     profile {
       avatarHash
@@ -4771,6 +4775,7 @@ export const RecoveryRolesUsersDocument = gql`
  * const { data, loading, error } = useRecoveryRolesUsersQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
+ *      endBlockNumber: // value for 'endBlockNumber'
  *   },
  * });
  */

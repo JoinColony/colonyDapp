@@ -407,6 +407,7 @@ query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
     values
     createdAt
     emmitedBy
+    blockNumber
   }
 }
 
@@ -422,8 +423,8 @@ query GetRecoveryStorageSlot($colonyAddress: String!, $storageSlot: String!) {
   getRecoveryStorageSlot(colonyAddress: $colonyAddress, storageSlot: $storageSlot) @client
 }
 
-query RecoveryRolesUsers($colonyAddress: String!) {
-  recoveryRolesUsers(colonyAddress: $colonyAddress) @client {
+query RecoveryRolesUsers($colonyAddress: String!, $endBlockNumber: Int) {
+  recoveryRolesUsers(colonyAddress: $colonyAddress, endBlockNumber: $endBlockNumber) @client {
     id
     profile {
       avatarHash

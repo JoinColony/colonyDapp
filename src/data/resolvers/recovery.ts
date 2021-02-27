@@ -77,7 +77,7 @@ const getSessionRecoveryEvents = async (
     [...recoveryModeLogs, ...storageSlotSetLogs, ...exitApprovedLogs].map(
       async (log) => {
         const potentialParsedLog = colonyClient.interface.parseLog(log);
-        const { address, blockHash } = log;
+        const { address, blockHash, blockNumber } = log;
         const { name, values } = potentialParsedLog;
         return {
           type: ActionsPageFeedType.NetworkEvent,
@@ -88,6 +88,7 @@ const getSessionRecoveryEvents = async (
             : 0,
           emmitedBy: ClientType.ColonyClient,
           address,
+          blockNumber,
         } as ProcessedEvent;
       },
     ),
@@ -206,7 +207,7 @@ export const recoveryModeResolvers = ({
         return [];
       }
     },
-    async recoveryRolesUsers(_, { colonyAddress }) {
+    async recoveryRolesUsers(_, { colonyAddress, endBlockNumber }) {
       try {
         const subscribedUsers = await apolloClient.query<
           ColonySubscribedUsersQuery,
@@ -218,14 +219,23 @@ export const recoveryModeResolvers = ({
           },
         });
 
+        const filterOptions: { fromBlock: number; toBlock?: number } = {
+          fromBlock: 0,
+        };
+        if (endBlockNumber) {
+          filterOptions.toBlock = endBlockNumber;
+        }
+
         const colonyClient = (await colonyManager.getClient(
           ClientType.ColonyClient,
           colonyAddress,
         )) as ColonyClientV6;
 
-        const recoveryRolesSet = await getMultipleEvents(colonyClient, [
-          colonyClient.filters.RecoveryRoleSet(null, null),
-        ]);
+        const recoveryRolesSet = await getMultipleEvents(
+          colonyClient,
+          [colonyClient.filters.RecoveryRoleSet(null, null)],
+          filterOptions,
+        );
 
         const allUsers = subscribedUsers?.data?.subscribedUsers || [];
         const userWithRecoveryRoles = getUsersWithRecoveryRoles(
@@ -274,6 +284,11 @@ export const recoveryModeResolvers = ({
           },
         });
 
+        // eslint-disable-next-line max-len
+        const potentialExitEvent = recoveryEvents?.data?.recoveryEventsForSession?.find(
+          ({ name }) => name === ColonyAndExtensionsEvents.RecoveryModeExited,
+        );
+
         /*
          * @NOTE Leveraging apollo's internal cache yet again, so we don't
          * re-fetch and re-parse both the server user and the recovery role events
@@ -285,18 +300,16 @@ export const recoveryModeResolvers = ({
           query: RecoveryRolesUsersDocument,
           variables: {
             colonyAddress,
+            endBlockNumber: potentialExitEvent?.blockNumber,
           },
         });
 
-        if (
-          recoveryEvents?.data?.recoveryEventsForSession?.length &&
-          usersWithRecoveryRoles?.data?.recoveryRolesUsers?.length
-        ) {
+        if (usersWithRecoveryRoles?.data?.recoveryRolesUsers?.length) {
           let usersAndApprovals = resetAllApprovalChecks(
             usersWithRecoveryRoles.data.recoveryRolesUsers,
           );
 
-          recoveryEvents.data.recoveryEventsForSession.map((event) => {
+          recoveryEvents?.data?.recoveryEventsForSession.map((event) => {
             const { name, values } = event;
             const { user: userAddress } = (values as unknown) as {
               user: string;
@@ -305,7 +318,10 @@ export const recoveryModeResolvers = ({
               ({ id: walletAddress }) =>
                 walletAddress.toLowerCase() === userAddress.toLowerCase(),
             );
-            if (name === ColonyAndExtensionsEvents.RecoveryModeExitApproved) {
+            if (
+              name === ColonyAndExtensionsEvents.RecoveryModeExitApproved &&
+              userIndex >= 0
+            ) {
               usersAndApprovals[userIndex].approvedRecoveryExit = true;
             }
             /*
