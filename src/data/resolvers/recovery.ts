@@ -12,6 +12,11 @@ import {
 import { Log } from 'ethers/providers';
 
 import { Context } from '~context/index';
+import {
+  RecoveryEventsForSessionQueryVariables,
+  RecoveryEventsForSessionQuery,
+  RecoveryEventsForSessionDocument,
+} from '~data/index';
 
 import { ProcessedEvent } from './colonyActions';
 import {
@@ -78,13 +83,16 @@ const getSessionRecoveryEvents = async (
     ),
   );
 
-  return parsedRecoveryEvents.sort(
+  const sortedRecoveryEvents = parsedRecoveryEvents.sort(
     (firstEvent, secondEvent) => firstEvent.createdAt - secondEvent.createdAt,
   );
+
+  return sortedRecoveryEvents;
 };
 
 export const recoveryModeResolvers = ({
   colonyManager,
+  apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
     async recoveryEventsForSession(_, { blockNumber, colonyAddress }) {
@@ -102,46 +110,67 @@ export const recoveryModeResolvers = ({
     },
     async recoverySystemMessagesForSession(_, { blockNumber, colonyAddress }) {
       try {
-        const colonyClient = (await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
-        )) as ColonyClientV6;
+        /*
+         * @NOTE Leveraging apollo's internal cache
+         *
+         * This might seem counter intuitive, fetching an apollo query here,
+         * when we could just call `getSessionRecoveryEvents` directly, but
+         * doing so, allows us to fetch the recovery events that are already
+         * inside the cache, and not be forced to fetch them all over again.
+         *
+         * This cuts down on loading times, especially on pages with a lot
+         * of events generated.
+         */
+        const recoveryEvents = await apolloClient.query<
+          RecoveryEventsForSessionQuery,
+          RecoveryEventsForSessionQueryVariables
+        >({
+          query: RecoveryEventsForSessionDocument,
+          variables: {
+            colonyAddress,
+            blockNumber,
+          },
+        });
 
-        let exitApprovalsCounter = 0;
-        const systemMessages: SystemMessage[] = [];
+        if (recoveryEvents?.data?.recoveryEventsForSession?.length) {
+          const colonyClient = (await colonyManager.getClient(
+            ClientType.ColonyClient,
+            colonyAddress,
+          )) as ColonyClientV6;
 
-        const thresholdExitApprovals = (
-          await colonyClient.numRecoveryRoles()
-        ).toNumber();
+          let exitApprovalsCounter = 0;
+          const systemMessages: SystemMessage[] = [];
 
-        const recoveryEvents = await getSessionRecoveryEvents(
-          colonyClient,
-          blockNumber,
-        );
+          const thresholdExitApprovals = (
+            await colonyClient.numRecoveryRoles()
+          ).toNumber();
 
-        await Promise.all(
-          recoveryEvents.map(async ({ createdAt, name }) => {
-            switch (name) {
-              case ColonyAndExtensionsEvents.RecoveryModeExitApproved:
-                exitApprovalsCounter += 1;
-                break;
-              case ColonyAndExtensionsEvents.RecoveryStorageSlotSet:
-                exitApprovalsCounter = 0;
-                break;
-              default:
-                break;
-            }
-            if (exitApprovalsCounter >= thresholdExitApprovals) {
-              systemMessages.push({
-                type: ActionsPageFeedType.SystemMessage,
-                name: SystemMessagesName.EnoughExitRecoveryApprovals,
-                createdAt,
-              });
-            }
-          }),
-        );
-
-        return systemMessages;
+          await Promise.all(
+            recoveryEvents.data.recoveryEventsForSession.map(
+              async ({ createdAt, name }) => {
+                switch (name) {
+                  case ColonyAndExtensionsEvents.RecoveryModeExitApproved:
+                    exitApprovalsCounter += 1;
+                    break;
+                  case ColonyAndExtensionsEvents.RecoveryStorageSlotSet:
+                    exitApprovalsCounter = 0;
+                    break;
+                  default:
+                    break;
+                }
+                if (exitApprovalsCounter >= thresholdExitApprovals) {
+                  systemMessages.push({
+                    type: ActionsPageFeedType.SystemMessage,
+                    name: SystemMessagesName.EnoughExitRecoveryApprovals,
+                    createdAt,
+                  });
+                }
+              },
+            ),
+          );
+          return systemMessages;
+        }
+        return [];
       } catch (error) {
         console.error(error);
         return [];
