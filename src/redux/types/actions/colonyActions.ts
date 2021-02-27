@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Address, WithKey } from '~types/index';
 import { Color } from '~core/ColorTag';
 
 import {
@@ -191,4 +191,19 @@ export type ColonyActionsActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_RECOVERY_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT,
+      {
+        colonyAddress: Address;
+        startBlock: number;
+        storageSlotLocation: string;
+        storageSlotValue: string;
+      },
+      WithKey
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS,
+      object
     >;

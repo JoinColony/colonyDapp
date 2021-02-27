@@ -7,6 +7,9 @@ import {
   ProcessedColonyDocument,
   ProcessedColonyQuery,
   ProcessedColonyQueryVariables,
+  RecoveryEventsForSessionQueryVariables,
+  RecoveryEventsForSessionQuery,
+  RecoveryEventsForSessionDocument,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -141,6 +144,90 @@ function* enterRecoveryAction({
   return null;
 }
 
+function* setStorageSlotValue({
+  payload: { colonyAddress, startBlock, storageSlotLocation, storageSlotValue },
+  meta: { id: metaId },
+  meta,
+}: Action<ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT>) {
+  let txChannel;
+  try {
+    if (!storageSlotLocation) {
+      throw new Error(
+        'The storage slot location is required in order to update it',
+      );
+    }
+    if (!storageSlotValue) {
+      throw new Error(
+        'The storage slot value is required in order to update it',
+      );
+    }
+
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+    txChannel = yield call(getTxChannel, metaId);
+
+    const batchKey = 'setStorageSlot';
+    const { setStorageSlot } = yield createTransactionChannels(metaId, [
+      'setStorageSlot',
+    ]);
+
+    yield fork(createTransaction, setStorageSlot.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'setStorageSlotRecovery',
+      identifier: colonyAddress,
+      group: {
+        key: batchKey,
+        id: metaId,
+        index: 0,
+      },
+      params: [storageSlotLocation, storageSlotValue],
+      ready: false,
+    });
+
+    yield takeFrom(setStorageSlot.channel, ActionTypes.TRANSACTION_CREATED);
+
+    yield put(transactionReady(setStorageSlot.id));
+
+    yield takeFrom(setStorageSlot.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    /*
+     * Note that we only have to update the recovery events query, since the
+     * systems messages counter gets reset every time we submit a new storage
+     * slot value, meaning that there is never a case when they change after
+     * this transaction
+     */
+    yield apolloClient.query<
+      RecoveryEventsForSessionQuery,
+      RecoveryEventsForSessionQueryVariables
+    >({
+      query: RecoveryEventsForSessionDocument,
+      variables: {
+        colonyAddress,
+        blockNumber: startBlock,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    yield put({
+      type: ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS,
+      meta,
+    });
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* enterRecoveryActionSaga() {
   yield takeEvery(ActionTypes.COLONY_ACTION_RECOVERY, enterRecoveryAction);
+  yield takeEvery(
+    ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT,
+    setStorageSlotValue,
+  );
 }
