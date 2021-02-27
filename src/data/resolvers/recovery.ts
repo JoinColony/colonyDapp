@@ -325,6 +325,34 @@ export const recoveryModeResolvers = ({
         return [];
       }
     },
+    async getRecoveryStorageSlot(_, { colonyAddress, storageSlot }) {
+      try {
+        const storageSlotValue = await provider.getStorageAt(
+          colonyAddress,
+          storageSlot,
+        );
+        return ensureHexPrefix(
+          storageSlotValue.toLowerCase().slice(2).padStart(64, '0'),
+        );
+      } catch (error) {
+        console.error(error);
+        return `0x${'0'.padStart(64, '0')}`;
+      }
+    },
+    async getRecoveryRequiredApprovals(_, { colonyAddress }) {
+      try {
+        const colonyClient = (await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        )) as ColonyClientV6;
+
+        const requiredApprovals = await colonyClient.numRecoveryRoles();
+        return requiredApprovals.toNumber();
+      } catch (error) {
+        console.error(error);
+        return 0;
+      }
+    },
     /*
      * Total number of recovery roles set to users by the colony
      *
@@ -373,20 +401,6 @@ export const recoveryModeResolvers = ({
       } catch (error) {
         console.error(error);
         return 0;
-      }
-    },
-    async getRecoveryStorageSlot(_, { colonyAddress, storageSlot }) {
-      try {
-        const storageSlotValue = await provider.getStorageAt(
-          colonyAddress,
-          storageSlot,
-        );
-        return ensureHexPrefix(
-          storageSlotValue.toLowerCase().slice(2).padStart(64, '0'),
-        );
-      } catch (error) {
-        console.error(error);
-        return `0x${'0'.padStart(64, '0')}`;
       }
     },
   },

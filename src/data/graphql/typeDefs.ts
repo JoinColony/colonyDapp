@@ -233,6 +233,7 @@ export default gql`
       blockNumber: Int!
       colonyAddress: String!
     ): [UsersAndRecoveryApprovals!]!
+    getRecoveryRequiredApprovals(colonyAddress: String!): Int!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
   }
 

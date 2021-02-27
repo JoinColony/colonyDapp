@@ -687,6 +687,7 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   domains: Array<SubgraphDomain>;
+  getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
@@ -760,6 +761,11 @@ export type QueryColonyNameArgs = {
 
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
+};
+
+
+export type QueryGetRecoveryRequiredApprovalsArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -2001,6 +2007,13 @@ export type RecoveryRolesAndApprovalsForSessionQuery = { recoveryRolesAndApprova
     Pick<UsersAndRecoveryApprovals, 'id' | 'approvedRecoveryExit'>
     & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
   )> };
+
+export type GetRecoveryRequiredApprovalsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type GetRecoveryRequiredApprovalsQuery = Pick<Query, 'getRecoveryRequiredApprovals'>;
 
 export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4811,6 +4824,37 @@ export function useRecoveryRolesAndApprovalsForSessionLazyQuery(baseOptions?: Ap
 export type RecoveryRolesAndApprovalsForSessionQueryHookResult = ReturnType<typeof useRecoveryRolesAndApprovalsForSessionQuery>;
 export type RecoveryRolesAndApprovalsForSessionLazyQueryHookResult = ReturnType<typeof useRecoveryRolesAndApprovalsForSessionLazyQuery>;
 export type RecoveryRolesAndApprovalsForSessionQueryResult = Apollo.QueryResult<RecoveryRolesAndApprovalsForSessionQuery, RecoveryRolesAndApprovalsForSessionQueryVariables>;
+export const GetRecoveryRequiredApprovalsDocument = gql`
+    query GetRecoveryRequiredApprovals($colonyAddress: String!) {
+  getRecoveryRequiredApprovals(colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useGetRecoveryRequiredApprovalsQuery__
+ *
+ * To run a query within a React component, call `useGetRecoveryRequiredApprovalsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRecoveryRequiredApprovalsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRecoveryRequiredApprovalsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useGetRecoveryRequiredApprovalsQuery(baseOptions?: Apollo.QueryHookOptions<GetRecoveryRequiredApprovalsQuery, GetRecoveryRequiredApprovalsQueryVariables>) {
+        return Apollo.useQuery<GetRecoveryRequiredApprovalsQuery, GetRecoveryRequiredApprovalsQueryVariables>(GetRecoveryRequiredApprovalsDocument, baseOptions);
+      }
+export function useGetRecoveryRequiredApprovalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecoveryRequiredApprovalsQuery, GetRecoveryRequiredApprovalsQueryVariables>) {
+          return Apollo.useLazyQuery<GetRecoveryRequiredApprovalsQuery, GetRecoveryRequiredApprovalsQueryVariables>(GetRecoveryRequiredApprovalsDocument, baseOptions);
+        }
+export type GetRecoveryRequiredApprovalsQueryHookResult = ReturnType<typeof useGetRecoveryRequiredApprovalsQuery>;
+export type GetRecoveryRequiredApprovalsLazyQueryHookResult = ReturnType<typeof useGetRecoveryRequiredApprovalsLazyQuery>;
+export type GetRecoveryRequiredApprovalsQueryResult = Apollo.QueryResult<GetRecoveryRequiredApprovalsQuery, GetRecoveryRequiredApprovalsQueryVariables>;
 export const LegacyNumberOfRecoveryRolesDocument = gql`
     query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client

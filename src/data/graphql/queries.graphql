@@ -447,6 +447,10 @@ query RecoveryRolesAndApprovalsForSession($blockNumber: Int!, $colonyAddress: St
   }
 }
 
+query GetRecoveryRequiredApprovals($colonyAddress: String!) {
+  getRecoveryRequiredApprovals(colonyAddress: $colonyAddress) @client
+}
+
 query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }
