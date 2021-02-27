@@ -5,7 +5,6 @@ import { BigNumber } from 'ethers/utils';
 import Icon from '~core/Icon';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
-import { Tooltip } from '~core/Popover';
 
 import { UserToken } from '~data/generated';
 import { formatTokenValue } from '~utils/numbers';
@@ -13,6 +12,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './TokenActivationContent.css';
 import ChangeTokenStateForm from './ChangeTokenStateForm';
+import TokenTooltip from './TokenTooltip';
 
 const MSG = defineMessages({
   active: {
@@ -63,17 +63,6 @@ const TokensTab = ({
   lockedTokens,
   token,
 }: TokensTabProps) => {
-  const popperProps = {
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 5],
-        },
-      },
-    ],
-  };
-
   const tokenDecimals = useMemo(
     () => getTokenDecimalsWithFallback(token?.decimals),
     [token],
@@ -97,23 +86,12 @@ const TokensTab = ({
       <div className={styles.tokensDetailsContainer}>
         <ul>
           <li>
-            <Tooltip
-              darkTheme
-              placement="top-start"
+            <TokenTooltip
+              className={styles.listItemActive}
               content={<FormattedMessage {...MSG.activeTokensTooltip} />}
-              popperProps={popperProps}
             >
-              {({ close, open, ref }) => (
-                <div
-                  className={styles.listItemActive}
-                  ref={ref}
-                  onMouseEnter={open}
-                  onMouseLeave={close}
-                >
-                  <FormattedMessage {...MSG.active} />
-                </div>
-              )}
-            </Tooltip>
+              <FormattedMessage {...MSG.active} />
+            </TokenTooltip>
             <div className={styles.tokenNumbers}>
               <Numeral
                 value={activeTokens}
@@ -122,53 +100,31 @@ const TokensTab = ({
                 truncate={3}
               />
             </div>
-            <Tooltip
-              darkTheme
-              placement="top-start"
-              content={<FormattedMessage {...MSG.inactiveTokensTooltip} />}
-              popperProps={popperProps}
+            <TokenTooltip
+              className={styles.lockedAmountContainer}
+              content={<FormattedMessage {...MSG.lockedTokensTooltip} />}
             >
-              {({ close, open, ref }) => (
-                <div
-                  className={styles.lockedAmountContainer}
-                  ref={ref}
-                  onMouseEnter={open}
-                  onMouseLeave={close}
-                >
-                  <Icon
-                    title="padlock"
-                    appearance={{ size: 'extraTiny' }}
-                    name="emoji-padlock-closed"
-                  />
-                  <Numeral
-                    className={styles.lockedAmount}
-                    value={lockedTokens}
-                    suffix={` ${token?.symbol}`}
-                    unit={tokenDecimals}
-                    truncate={3}
-                  />
-                </div>
-              )}
-            </Tooltip>
+              <Icon
+                title="padlock"
+                appearance={{ size: 'extraTiny' }}
+                name="emoji-padlock-closed"
+              />
+              <Numeral
+                className={styles.lockedAmount}
+                value={lockedTokens}
+                suffix={` ${token?.symbol}`}
+                unit={tokenDecimals}
+                truncate={3}
+              />
+            </TokenTooltip>
           </li>
           <li>
-            <Tooltip
-              darkTheme
-              placement="top-start"
+            <TokenTooltip
+              className={styles.listItemInactive}
               content={<FormattedMessage {...MSG.inactiveTokensTooltip} />}
-              popperProps={popperProps}
             >
-              {({ close, open, ref }) => (
-                <div
-                  className={styles.listItemInactive}
-                  ref={ref}
-                  onMouseEnter={open}
-                  onMouseLeave={close}
-                >
-                  <FormattedMessage {...MSG.inactive} />
-                </div>
-              )}
-            </Tooltip>
+              <FormattedMessage {...MSG.inactive} />
+            </TokenTooltip>
             <div className={styles.tokenNumbers}>
               <Numeral
                 value={inactiveTokens}
