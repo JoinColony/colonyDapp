@@ -10,13 +10,17 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { ActionTypes } from '~redux/index';
 import { ensureHexPrefix } from '~utils/strings';
 import { ENTER, SPACE } from '~types/index';
-import { Colony, useGetRecoveryStorageSlotLazyQuery } from '~data/index';
+import {
+  Colony,
+  useGetRecoveryStorageSlotLazyQuery,
+  useLoggedInUser,
+} from '~data/index';
 
 import styles from './InputStorageWidget.css';
 
 export interface FormValues {
-  inputStorageSlot?: string;
-  inputNewValue?: string;
+  storageSlotLocation?: string;
+  newStorageSlotValue?: string;
 }
 
 interface Props {
@@ -47,11 +51,12 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object().shape({
-  inputStorageSlot: yup.string().max(66).hexString(),
-  inputNewValue: yup.string(),
+  storageSlotLocation: yup.string().max(66).hexString(),
+  newStorageSlotValue: yup.string().max(66).hexString(),
 });
 
 const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
+  const { username, ethereal } = useLoggedInUser();
   const [storageSlot, setStorageSlot] = useState('');
 
   const [
@@ -69,7 +74,7 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
    * We need to handle these manually using a ref, since the TextAreaAutoresize
    * component doesn't give us access to the native React ones :(
    */
-  const handleInputStorageSlotBlur = useCallback(
+  const handleStorageSlotLocationBlur = useCallback(
     (textarea, currentValue, fieldError, updateValues) => {
       if (textarea?._ref) {
         // eslint-disable-next-line no-param-reassign, no-underscore-dangle
@@ -80,7 +85,7 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
         autoResizeTextareaComponent.onblur = () => {
           if (!fieldError && currentValue) {
             const normalizedStorageSlot = ensureHexPrefix(currentValue);
-            updateValues('inputStorageSlot', normalizedStorageSlot);
+            updateValues('storageSlotLocation', normalizedStorageSlot);
             setStorageSlot(normalizedStorageSlot);
           }
           if (!currentValue) {
@@ -107,11 +112,55 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
     [],
   );
 
+  /*
+   * We need to handle these manually using a ref, since the TextAreaAutoresize
+   * component doesn't give us access to the native React ones :(
+   */
+  const handleNewStorageSlotValueBlur = useCallback(
+    (textarea, currentValue, fieldError, updateValues) => {
+      if (textarea?._ref) {
+        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
+        const autoResizeTextareaComponent = textarea?._ref;
+        /*
+         * Add 0x prefix on blur and set the storage slot in state
+         */
+        autoResizeTextareaComponent.onblur = () => {
+          if (!fieldError && currentValue) {
+            const noPrefixValue = currentValue.startsWith('0x')
+              ? currentValue.slice(2)
+              : currentValue;
+            const paddedValue = noPrefixValue.padStart(64, '0');
+            updateValues('newStorageSlotValue', ensureHexPrefix(paddedValue));
+            // ;
+          }
+        };
+        /*
+         * Prevent entering a new line
+         *
+         * Based on specs we need to **fake** a multi-line input, but one
+         * you can't actually create a new line manully, just if the text
+         * overflows...
+         *
+         * While we're at it we also disable the space bar, since no value
+         * that can be entered requires a space (it's just a litte nice-to-have)
+         */
+        autoResizeTextareaComponent.onkeypress = (event) => {
+          if (event.code === ENTER || event.code === SPACE) {
+            event.preventDefault();
+          }
+        };
+      }
+    },
+    [],
+  );
+
+  const hasRegisteredProfile = !!username && !ethereal;
+
   return (
     <ActionForm
       initialValues={{
-        inputStorageSlot: '',
-        inputNewValue: '',
+        storageSlotLocation: '',
+        newStorageSlotValue: '',
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.COLONY_ACTION_GENERIC} // @TODO: Add in correct ActionTypes
@@ -122,20 +171,26 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
         handleSubmit,
         isSubmitting,
         isValid,
-        errors: { inputStorageSlot: inputStorageSlotError },
-        values: { inputStorageSlot: inputStorageSlotValue },
+        values: {
+          storageSlotLocation: storageSlotLocationValue,
+          newStorageSlotValue,
+        },
+        errors: {
+          storageSlotLocation: storageSlotLocationError,
+          newStorageSlotValue: newStorageSlotValueError,
+        },
         setFieldValue,
       }: FormikProps<FormValues>) => (
         <div className={styles.widgetForm}>
           <div className={styles.inputStorageSlotContainer}>
             <TextareaAutoresize
               label={MSG.inputStorageSlot}
-              name="inputStorageSlot"
+              name="storageSlotLocation"
               innerRef={(ref) =>
-                handleInputStorageSlotBlur(
+                handleStorageSlotLocationBlur(
                   ref,
-                  inputStorageSlotValue,
-                  inputStorageSlotError,
+                  storageSlotLocationValue,
+                  storageSlotLocationError,
                   setFieldValue,
                 )
               }
@@ -143,10 +198,11 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
                 theme: 'fat',
                 colorSchema: 'grey',
               }}
+              disabled={!hasRegisteredProfile}
             />
-            {inputStorageSlotError && (
+            {storageSlotLocationError && (
               <span className={styles.inputValidationError}>
-                <InputStatus error={inputStorageSlotError} />
+                <InputStatus error={storageSlotLocationError} />
               </span>
             )}
             <div className={styles.currentValueText}>
@@ -169,21 +225,41 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
           <div className={styles.inputStorageSlotContainer}>
             <TextareaAutoresize
               label={MSG.inputNewValue}
-              name="inputNewValue"
+              name="newStorageSlotValue"
+              innerRef={(ref) =>
+                handleNewStorageSlotValueBlur(
+                  ref,
+                  newStorageSlotValue,
+                  newStorageSlotValueError,
+                  setFieldValue,
+                )
+              }
               appearance={{
                 theme: 'fat',
                 colorSchema: 'grey',
               }}
+              disabled={!hasRegisteredProfile}
             />
-            <div className={styles.controls}>
-              <Button
-                appearance={{ theme: 'primary', size: 'medium' }}
-                onClick={() => handleSubmit()}
-                text={{ id: 'button.submit' }}
-                loading={isSubmitting}
-                disabled={!isValid}
-              />
-            </div>
+            {newStorageSlotValueError && (
+              <span className={styles.inputValidationError}>
+                <InputStatus error={newStorageSlotValueError} />
+              </span>
+            )}
+            {hasRegisteredProfile && (
+              <div className={styles.controls}>
+                <Button
+                  appearance={{ theme: 'primary', size: 'medium' }}
+                  onClick={() => handleSubmit()}
+                  text={{ id: 'button.submit' }}
+                  loading={isSubmitting}
+                  disabled={
+                    !isValid ||
+                    !storageSlotLocationValue ||
+                    !newStorageSlotValue
+                  }
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
