@@ -17,7 +17,7 @@ type Appearance = {
   layout?: 'inline';
   resizable?: 'both' | 'horizontal' | 'vertical';
   direction?: 'horizontal';
-  colorSchema?: 'dark' | 'transparent';
+  colorSchema?: 'dark' | 'grey' | 'transparent';
   size?: 'small';
 };
 
