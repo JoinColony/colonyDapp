@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
@@ -105,6 +105,7 @@ const RecoveryAction = ({
   },
   initiator,
 }: Props) => {
+  const bottomElementRef = useRef<HTMLInputElement>(null);
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
   const fallbackStorageSlotValue = `0x${'0'.padStart(64, '0')}`;
@@ -376,16 +377,22 @@ const RecoveryAction = ({
            * and a registered user profile
            */}
           {currentUserName && !ethereal && (
-            <ActionsPageComment
-              transactionHash={transactionHash}
-              colonyAddress={colonyAddress}
-            />
+            <div ref={bottomElementRef}>
+              <ActionsPageComment
+                transactionHash={transactionHash}
+                colonyAddress={colonyAddress}
+              />
+            </div>
           )}
         </div>
         <div className={styles.details}>
           {isInRecoveryMode && (
             <>
-              <InputStorageWidget colony={colony} />
+              <InputStorageWidget
+                colony={colony}
+                startBlock={blockNumber}
+                scrollToRef={bottomElementRef}
+              />
               <MultisigWidget
                 // Mocking for now
                 membersAllowedForApproval={Array.from(

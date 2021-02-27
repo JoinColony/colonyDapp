@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, RefObject } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
@@ -7,14 +7,15 @@ import Button from '~core/Button';
 import { ActionForm, TextareaAutoresize, InputStatus } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { ActionTypes } from '~redux/index';
-import { ensureHexPrefix } from '~utils/strings';
-import { ENTER, SPACE } from '~types/index';
 import {
   Colony,
   useGetRecoveryStorageSlotLazyQuery,
   useLoggedInUser,
 } from '~data/index';
+import { ActionTypes } from '~redux/index';
+import { ensureHexPrefix } from '~utils/strings';
+import { ENTER, SPACE } from '~types/index';
+import { mapPayload } from '~utils/actions';
 
 import styles from './InputStorageWidget.css';
 
@@ -25,6 +26,8 @@ export interface FormValues {
 
 interface Props {
   colony: Colony;
+  startBlock?: number;
+  scrollToRef?: RefObject<HTMLInputElement>;
 }
 
 const MSG = defineMessages({
@@ -55,7 +58,11 @@ const validationSchema = yup.object().shape({
   newStorageSlotValue: yup.string().max(66).hexString(),
 });
 
-const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
+const InputStorageWidget = ({
+  colony: { colonyAddress },
+  startBlock = 1,
+  scrollToRef,
+}: Props) => {
   const { username, ethereal } = useLoggedInUser();
   const [storageSlot, setStorageSlot] = useState('');
 
@@ -154,6 +161,34 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
     [],
   );
 
+  const handleSubmitSuccess = useCallback(
+    (_, { resetForm }) => {
+      /*
+       * Reset the storage slot form and scroll to the bottom of the page
+       *
+       * Note that we don't actually know where the bottom of the page is,
+       * but we know where the comment box is (which is always visible if the user
+       * is logged in)
+       * So we use that to scroll it into view, knowing that it will always
+       * scroll to the correct position
+       */
+      resetForm({});
+      setStorageSlot('');
+      scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+    },
+    [scrollToRef],
+  );
+
+  const transform = useCallback(
+    mapPayload(({ storageSlotLocation, newStorageSlotValue }) => ({
+      colonyAddress,
+      startBlock,
+      storageSlotLocation,
+      storageSlotValue: newStorageSlotValue,
+    })),
+    [],
+  );
+
   const hasRegisteredProfile = !!username && !ethereal;
 
   return (
@@ -163,9 +198,11 @@ const InputStorageWidget = ({ colony: { colonyAddress } }: Props) => {
         newStorageSlotValue: '',
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_GENERIC} // @TODO: Add in correct ActionTypes
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+      submit={ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT}
+      error={ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_ERROR}
+      success={ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS}
+      transform={transform}
+      onSuccess={handleSubmitSuccess}
     >
       {({
         handleSubmit,
