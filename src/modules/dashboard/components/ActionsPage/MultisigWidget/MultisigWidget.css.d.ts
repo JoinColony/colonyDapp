@@ -10,3 +10,5 @@ export const controls: string;
 export const buttonWrapper: string;
 export const totalRequired: string;
 export const tooltip: string;
+export const loading: string;
+export const loadingText: string;

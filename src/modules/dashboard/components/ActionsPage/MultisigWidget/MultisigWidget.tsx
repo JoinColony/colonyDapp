@@ -7,6 +7,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import ProgressBar from '~core/ProgressBar';
 import { ActionButton } from '~core/Button';
 import { Tooltip } from '~core/Popover';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -44,6 +45,10 @@ const MSG = defineMessages({
       other {Did not yet approve}
     }`,
   },
+  loadingData: {
+    id: 'dashboard.ActionsPage.MultisigWidget.loadingData',
+    defaultMessage: 'Loading members information...',
+  },
 });
 
 const UserAvatar = HookedUserAvatar({ fetchUser: true });
@@ -61,7 +66,7 @@ const MultisigWidget = ({
 }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
 
-  const { data } = useRecoveryRolesAndApprovalsForSessionQuery({
+  const { data, loading } = useRecoveryRolesAndApprovalsForSessionQuery({
     variables: {
       colonyAddress,
       blockNumber: startBlock,
@@ -82,6 +87,29 @@ const MultisigWidget = ({
     ({ profile: { walletAddress: userAddress } }) =>
       userAddress === walletAddress,
   )?.approvedRecoveryExit;
+
+  if (loading) {
+    return (
+      <div className={styles.wrapper}>
+        <div className={styles.title}>
+          <FormattedMessage
+            {...MSG.title}
+            values={{
+              permissionLabel: (
+                <PermissionsLabel permission={ColonyRole.Recovery} />
+              ),
+            }}
+          />
+        </div>
+        <div className={styles.loading}>
+          <SpinnerLoader appearance={{ size: 'small' }} />
+          <span className={styles.loadingText}>
+            <FormattedMessage {...MSG.loadingData} />
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.wrapper}>

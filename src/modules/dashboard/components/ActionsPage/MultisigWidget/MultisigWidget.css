@@ -85,3 +85,16 @@
 .tooltip {
   padding: 8px 4px;
 }
+
+.loading {
+  padding: 16px 0;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.loadingText {
+  display: inline-block;
+  margin: -8px 0 0 5px;
+  vertical-align: middle;
+  font-size: var(--size-small);
+  letter-spacing: initial;
+}
