@@ -100,7 +100,7 @@ export const getValuesForActionType = (
       }
       case ColonyActions.VersionUpgrade: {
         return {
-          initiator: values?.agent || AddressZero,
+          initiator: values?.agent,
           oldVersion: values.oldVersion,
           newVersion: values.newVersion,
         };

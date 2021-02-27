@@ -56,6 +56,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.ExtensionUninstalled} {Extension was uninstalled {extensionHash}}
       ${ColonyAndExtensionsEvents.ColonyUpgraded} {Colony was upgraded from version {oldVersion} to {newVersion}}
       ${ColonyAndExtensionsEvents.RecoveryModeEntered} {{agent} entered the colony into Recovery Mode}
+      ${ColonyAndExtensionsEvents.RecoveryStorageSlotSet} {{agent} set storage slot {storageSlot} to {storageSlotValue}}
       ${ColonyAndExtensionsEvents.RecoveryModeExitApproved} {{agent} approved exiting the Recovery Mode}
       ${ColonyAndExtensionsEvents.RecoveryModeExited} {{agent} exited the colony from Recovery Mode}
       other {{eventName} emmited with values: {displayValues}}

@@ -154,4 +154,6 @@ export interface FormattedEvent {
   extensionVersion?: string;
   oldVersion?: string;
   newVersion?: string;
+  storageSlot?: string;
+  storageSlotValue?: string;
 }

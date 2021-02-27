@@ -16,7 +16,7 @@ import {
 import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
 import { TEMP_getContext, ContextModule } from '~context/index';
-import { createAddress } from '~utils/web3';
+import { createAddress, toHex } from '~utils/web3';
 import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 
@@ -292,6 +292,8 @@ export const getEventsListData = (
         version,
         oldVersion,
         newVersion,
+        slot,
+        toValue,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -327,6 +329,8 @@ export const getEventsListData = (
           extensionVersion: version,
           oldVersion: oldVersion || '0',
           newVersion: newVersion || '0',
+          storageSlot: slot ? toHex(parseInt(slot, 10)) : '0',
+          storageSlotValue: toValue || AddressZero,
         },
       ];
     } catch (error) {

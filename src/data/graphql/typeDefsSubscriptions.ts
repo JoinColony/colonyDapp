@@ -34,6 +34,8 @@ export default gql`
     setTo: String!
     oldVersion: String!
     newVersion: String!
+    storageSlot: String!
+    storageSlotValue: String!
   }
 
   type SubscriptionEvent {

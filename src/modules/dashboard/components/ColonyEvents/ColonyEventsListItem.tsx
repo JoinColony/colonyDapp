@@ -64,6 +64,8 @@ const ColonyEventsListItem = ({
     extensionVersion,
     oldVersion,
     newVersion,
+    storageSlot,
+    storageSlotValue,
   },
   colony: { tokens, nativeTokenAddress },
   colony,
@@ -130,6 +132,8 @@ const ColonyEventsListItem = ({
     extensionVersion,
     oldVersion,
     newVersion,
+    storageSlot,
+    storageSlotValue,
   };
 
   return (

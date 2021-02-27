@@ -1334,6 +1334,8 @@ export type EventProcessedValues = {
   setTo: Scalars['String'];
   oldVersion: Scalars['String'];
   newVersion: Scalars['String'];
+  storageSlot: Scalars['String'];
+  storageSlotValue: Scalars['String'];
 };
 
 export type SubscriptionEvent = {
@@ -2190,7 +2192,7 @@ export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Arr
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'timestamp'> }
-    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion'> }
+    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
   )> };
 
 export const PayoutsFragmentDoc = gql`
@@ -5485,6 +5487,8 @@ export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
       user
       oldVersion
       newVersion
+      storageSlot
+      storageSlotValue
     }
   }
 }

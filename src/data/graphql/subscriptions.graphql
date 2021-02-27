@@ -105,6 +105,8 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
       user
       oldVersion
       newVersion
+      storageSlot
+      storageSlotValue
     }
   }
 }
