@@ -46,6 +46,10 @@ const MSG = defineMessages({
 export enum ItemStatus {
   NeedAction = 'NeedAction',
   NeedAttention = 'NeedAttention',
+  /*
+   * Default status, does not do anything
+   */
+  Defused = 'Defused',
 }
 
 interface Props {
@@ -71,7 +75,7 @@ const ActionsListItem = ({
     metadata,
     roles,
     newVersion,
-    status = ItemStatus.NeedAction,
+    status = ItemStatus.Defused,
   },
   colony,
   handleOnClick,

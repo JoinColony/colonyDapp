@@ -187,6 +187,7 @@ const InputStorageWidget = ({
   const transform = useCallback(
     mapPayload(({ storageSlotLocation, newStorageSlotValue }) => ({
       colonyAddress,
+      walletAddress,
       startBlock,
       storageSlotLocation,
       storageSlotValue: newStorageSlotValue,

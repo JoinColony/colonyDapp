@@ -107,6 +107,7 @@ const MultisigWidget = ({
   const transform = useCallback(
     mapPayload(() => ({
       colonyAddress,
+      walletAddress,
       startBlock,
       scrollToRef,
     })),
