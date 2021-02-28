@@ -197,6 +197,7 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT,
       {
         colonyAddress: Address;
+        walletAddress: Address;
         startBlock: number;
         storageSlotLocation: string;
         storageSlotValue: string;
@@ -212,6 +213,7 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_RECOVERY_APPROVE,
       {
         colonyAddress: Address;
+        walletAddress: Address;
         startBlock: number;
         scrollToRef: RefObject<HTMLInputElement>;
       },

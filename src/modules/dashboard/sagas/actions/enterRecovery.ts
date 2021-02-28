@@ -16,6 +16,9 @@ import {
   RecoverySystemMessagesForSessionQuery,
   RecoverySystemMessagesForSessionQueryVariables,
   RecoverySystemMessagesForSessionDocument,
+  ActionsThatNeedAttentionQuery,
+  ActionsThatNeedAttentionQueryVariables,
+  ActionsThatNeedAttentionDocument,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -151,7 +154,13 @@ function* enterRecoveryAction({
 }
 
 function* setStorageSlotValue({
-  payload: { colonyAddress, startBlock, storageSlotLocation, storageSlotValue },
+  payload: {
+    colonyAddress,
+    walletAddress,
+    startBlock,
+    storageSlotLocation,
+    storageSlotValue,
+  },
   meta: { id: metaId },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT>) {
@@ -224,6 +233,20 @@ function* setStorageSlotValue({
       },
       fetchPolicy: 'network-only',
     });
+    /*
+     * Actions that need attention
+     */
+    yield apolloClient.query<
+      ActionsThatNeedAttentionQuery,
+      ActionsThatNeedAttentionQueryVariables
+    >({
+      query: ActionsThatNeedAttentionDocument,
+      variables: {
+        colonyAddress,
+        walletAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
 
     yield put({
       type: ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS,
@@ -242,7 +265,7 @@ function* setStorageSlotValue({
 }
 
 function* approveExitRecovery({
-  payload: { colonyAddress, startBlock, scrollToRef },
+  payload: { colonyAddress, walletAddress, startBlock, scrollToRef },
   meta: { id: metaId },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_RECOVERY_APPROVE>) {
@@ -315,6 +338,20 @@ function* approveExitRecovery({
       variables: {
         colonyAddress,
         blockNumber: startBlock,
+      },
+      fetchPolicy: 'network-only',
+    });
+    /*
+     * Actions that need attention
+     */
+    yield apolloClient.query<
+      ActionsThatNeedAttentionQuery,
+      ActionsThatNeedAttentionQueryVariables
+    >({
+      query: ActionsThatNeedAttentionDocument,
+      variables: {
+        colonyAddress,
+        walletAddress,
       },
       fetchPolicy: 'network-only',
     });

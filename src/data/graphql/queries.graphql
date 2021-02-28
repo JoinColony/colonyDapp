@@ -400,6 +400,13 @@ query MetaColony {
   }
 }
 
+query ActionsThatNeedAttention($colonyAddress: String!, $walletAddress: String!) {
+  actionsThatNeedAttention(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+    transactionHash
+    needsAction
+  }
+}
+
 query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
   recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
     type

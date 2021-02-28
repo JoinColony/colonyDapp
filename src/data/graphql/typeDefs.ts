@@ -190,6 +190,11 @@ export default gql`
     approvedRecoveryExit: Boolean!
   }
 
+  type ActionThatNeedsAttention {
+    transactionHash: String!
+    needsAction: Boolean!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -218,6 +223,10 @@ export default gql`
       colonyAddress: String!
     ): ColonyAction!
     processedMetaColony: ProcessedMetaColony
+    actionsThatNeedAttention(
+      colonyAddress: String!
+      walletAddress: String!
+    ): [ActionThatNeedsAttention]!
     recoveryEventsForSession(
       blockNumber: Int!
       colonyAddress: String!

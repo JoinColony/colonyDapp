@@ -678,6 +678,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 };
 
 export type Query = {
+  actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
@@ -711,6 +712,12 @@ export type Query = {
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
   username: Scalars['String'];
+};
+
+
+export type QueryActionsThatNeedAttentionArgs = {
+  colonyAddress: Scalars['String'];
+  walletAddress: Scalars['String'];
 };
 
 
@@ -1193,6 +1200,11 @@ export type UsersAndRecoveryApprovals = {
   id: Scalars['String'];
   profile: UserProfile;
   approvedRecoveryExit: Scalars['Boolean'];
+};
+
+export type ActionThatNeedsAttention = {
+  transactionHash: Scalars['String'];
+  needsAction: Scalars['Boolean'];
 };
 
 export type ByColonyFilter = {
@@ -1971,6 +1983,14 @@ export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MetaColonyQuery = { processedMetaColony?: Maybe<Pick<ProcessedMetaColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL'>> };
+
+export type ActionsThatNeedAttentionQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  walletAddress: Scalars['String'];
+}>;
+
+
+export type ActionsThatNeedAttentionQuery = { actionsThatNeedAttention: Array<Maybe<Pick<ActionThatNeedsAttention, 'transactionHash' | 'needsAction'>>> };
 
 export type RecoveryEventsForSessionQueryVariables = Exact<{
   blockNumber: Scalars['Int'];
@@ -4655,6 +4675,41 @@ export function useMetaColonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type MetaColonyQueryHookResult = ReturnType<typeof useMetaColonyQuery>;
 export type MetaColonyLazyQueryHookResult = ReturnType<typeof useMetaColonyLazyQuery>;
 export type MetaColonyQueryResult = Apollo.QueryResult<MetaColonyQuery, MetaColonyQueryVariables>;
+export const ActionsThatNeedAttentionDocument = gql`
+    query ActionsThatNeedAttention($colonyAddress: String!, $walletAddress: String!) {
+  actionsThatNeedAttention(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+    transactionHash
+    needsAction
+  }
+}
+    `;
+
+/**
+ * __useActionsThatNeedAttentionQuery__
+ *
+ * To run a query within a React component, call `useActionsThatNeedAttentionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useActionsThatNeedAttentionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useActionsThatNeedAttentionQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      walletAddress: // value for 'walletAddress'
+ *   },
+ * });
+ */
+export function useActionsThatNeedAttentionQuery(baseOptions?: Apollo.QueryHookOptions<ActionsThatNeedAttentionQuery, ActionsThatNeedAttentionQueryVariables>) {
+        return Apollo.useQuery<ActionsThatNeedAttentionQuery, ActionsThatNeedAttentionQueryVariables>(ActionsThatNeedAttentionDocument, baseOptions);
+      }
+export function useActionsThatNeedAttentionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ActionsThatNeedAttentionQuery, ActionsThatNeedAttentionQueryVariables>) {
+          return Apollo.useLazyQuery<ActionsThatNeedAttentionQuery, ActionsThatNeedAttentionQueryVariables>(ActionsThatNeedAttentionDocument, baseOptions);
+        }
+export type ActionsThatNeedAttentionQueryHookResult = ReturnType<typeof useActionsThatNeedAttentionQuery>;
+export type ActionsThatNeedAttentionLazyQueryHookResult = ReturnType<typeof useActionsThatNeedAttentionLazyQuery>;
+export type ActionsThatNeedAttentionQueryResult = Apollo.QueryResult<ActionsThatNeedAttentionQuery, ActionsThatNeedAttentionQueryVariables>;
 export const RecoveryEventsForSessionDocument = gql`
     query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
   recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
