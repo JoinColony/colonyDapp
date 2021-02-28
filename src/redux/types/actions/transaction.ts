@@ -51,7 +51,7 @@ export type TransactionActionTypes =
   | ActionTypeWithMeta<ActionTypes.TRANSACTION_ESTIMATE_GAS, WithId>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_HASH_RECEIVED,
-      { hash: string; params: object },
+      { hash: string; blockHash: string; blockNumber: number; params: object },
       WithId
     >
   | ActionTypeWithPayloadAndMeta<

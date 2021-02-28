@@ -146,9 +146,12 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
     case ActionTypes.TRANSACTION_HASH_RECEIVED: {
       const {
         meta: { id },
-        payload: { hash },
+        payload: { hash, blockNumber, blockHash },
       } = action;
-      return state.setIn([CORE_TRANSACTIONS_LIST, id, 'hash'], hash);
+      return state
+        .setIn([CORE_TRANSACTIONS_LIST, id, 'hash'], hash)
+        .setIn([CORE_TRANSACTIONS_LIST, id, 'blockNumber'], blockNumber)
+        .setIn([CORE_TRANSACTIONS_LIST, id, 'blockHash'], blockHash);
     }
     case ActionTypes.TRANSACTION_SENT: {
       const {

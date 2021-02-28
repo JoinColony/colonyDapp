@@ -148,7 +148,12 @@ export const transactionSent = (id: string): AllActions => ({
 
 export const transactionHashReceived = (
   id: string,
-  payload: { hash: string; params: MethodParams },
+  payload: {
+    hash: string;
+    blockHash: string;
+    blockNumber: number;
+    params: MethodParams;
+  },
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_HASH_RECEIVED,
   payload,
