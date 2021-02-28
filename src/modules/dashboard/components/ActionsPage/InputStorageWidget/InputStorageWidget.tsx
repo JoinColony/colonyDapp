@@ -115,7 +115,7 @@ const InputStorageWidget = ({
          * that can be entered requires a space (it's just a litte nice-to-have)
          */
         autoResizeTextareaComponent.onkeypress = (event) => {
-          if (event.code === ENTER || event.code === SPACE) {
+          if (event.key === ENTER || event.code === SPACE) {
             event.preventDefault();
           }
         };
@@ -143,7 +143,6 @@ const InputStorageWidget = ({
               : currentValue;
             const paddedValue = noPrefixValue.padStart(64, '0');
             updateValues('newStorageSlotValue', ensureHexPrefix(paddedValue));
-            // ;
           }
         };
         /*
@@ -157,7 +156,7 @@ const InputStorageWidget = ({
          * that can be entered requires a space (it's just a litte nice-to-have)
          */
         autoResizeTextareaComponent.onkeypress = (event) => {
-          if (event.code === ENTER || event.code === SPACE) {
+          if (event.key === ENTER || event.code === SPACE) {
             event.preventDefault();
           }
         };
