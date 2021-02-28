@@ -1,4 +1,6 @@
 import { ColonyRole } from '@colony/colony-js';
+
+import { ItemStatus } from '~core/ActionsList';
 import { Address, ActionUserRoles } from './index';
 
 export enum ColonyActions {
@@ -114,6 +116,7 @@ export enum ColonyAndExtensionsEvents {
 
 export interface FormattedAction {
   id: string;
+  status?: ItemStatus;
   actionType: ColonyActions;
   initiator: Address;
   recipient: Address;
@@ -134,6 +137,7 @@ export interface FormattedAction {
 
 export interface FormattedEvent {
   id: string;
+  status?: ItemStatus;
   eventName: ColonyAndExtensionsEvents;
   colonyAddress: Address;
   agent: Address | null;

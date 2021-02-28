@@ -43,9 +43,9 @@ const MSG = defineMessages({
   },
 });
 
-export enum Status {
-  'needsAction' = 'red',
-  'needsAttention' = 'blue',
+export enum ItemStatus {
+  NeedAction = 'NeedAction',
+  NeedAttention = 'NeedAttention',
 }
 
 interface Props {
@@ -71,6 +71,7 @@ const ActionsListItem = ({
     metadata,
     roles,
     newVersion,
+    status = ItemStatus.NeedAction,
   },
   colony,
   handleOnClick,
@@ -141,6 +142,7 @@ const ActionsListItem = ({
         tabIndex={0}
         className={getMainClasses({}, styles, {
           noPointer: !handleOnClick,
+          [ItemStatus[status]]: !!status,
         })}
         onClick={handleSyntheticEvent}
         onKeyPress={handleSyntheticEvent}
