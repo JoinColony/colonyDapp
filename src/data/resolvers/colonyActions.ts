@@ -43,6 +43,7 @@ export interface ProcessedEvent {
   createdAt: number;
   emmitedBy: ClientType;
   address: Address;
+  transactionHash: string;
 }
 
 export const colonyActionsResolvers = ({

@@ -694,6 +694,7 @@ export type Query = {
   networkContracts: NetworkContracts;
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
+  recoveryAllEnteredEvents: Array<Maybe<ParsedEvent>>;
   recoveryEventsForSession: Array<ParsedEvent>;
   recoveryRolesAndApprovalsForSession: Array<UsersAndRecoveryApprovals>;
   recoveryRolesUsers: Array<User>;
@@ -782,6 +783,11 @@ export type QueryLegacyNumberOfRecoveryRolesArgs = {
 
 export type QueryProcessedColonyArgs = {
   address: Scalars['String'];
+};
+
+
+export type QueryRecoveryAllEnteredEventsArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1041,6 +1047,7 @@ export type ParsedEvent = {
   createdAt: Scalars['Int'];
   emmitedBy: Scalars['String'];
   blockNumber?: Maybe<Scalars['Int']>;
+  transactionHash: Scalars['String'];
 };
 
 export type SystemMessage = {
@@ -2017,6 +2024,13 @@ export type GetRecoveryRequiredApprovalsQueryVariables = Exact<{
 
 
 export type GetRecoveryRequiredApprovalsQuery = Pick<Query, 'getRecoveryRequiredApprovals'>;
+
+export type RecoveryAllEnteredEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type RecoveryAllEnteredEventsQuery = { recoveryAllEnteredEvents: Array<Maybe<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'blockNumber' | 'transactionHash'>>> };
 
 export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4860,6 +4874,45 @@ export function useGetRecoveryRequiredApprovalsLazyQuery(baseOptions?: Apollo.La
 export type GetRecoveryRequiredApprovalsQueryHookResult = ReturnType<typeof useGetRecoveryRequiredApprovalsQuery>;
 export type GetRecoveryRequiredApprovalsLazyQueryHookResult = ReturnType<typeof useGetRecoveryRequiredApprovalsLazyQuery>;
 export type GetRecoveryRequiredApprovalsQueryResult = Apollo.QueryResult<GetRecoveryRequiredApprovalsQuery, GetRecoveryRequiredApprovalsQueryVariables>;
+export const RecoveryAllEnteredEventsDocument = gql`
+    query RecoveryAllEnteredEvents($colonyAddress: String!) {
+  recoveryAllEnteredEvents(colonyAddress: $colonyAddress) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
+  }
+}
+    `;
+
+/**
+ * __useRecoveryAllEnteredEventsQuery__
+ *
+ * To run a query within a React component, call `useRecoveryAllEnteredEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRecoveryAllEnteredEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRecoveryAllEnteredEventsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useRecoveryAllEnteredEventsQuery(baseOptions?: Apollo.QueryHookOptions<RecoveryAllEnteredEventsQuery, RecoveryAllEnteredEventsQueryVariables>) {
+        return Apollo.useQuery<RecoveryAllEnteredEventsQuery, RecoveryAllEnteredEventsQueryVariables>(RecoveryAllEnteredEventsDocument, baseOptions);
+      }
+export function useRecoveryAllEnteredEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RecoveryAllEnteredEventsQuery, RecoveryAllEnteredEventsQueryVariables>) {
+          return Apollo.useLazyQuery<RecoveryAllEnteredEventsQuery, RecoveryAllEnteredEventsQueryVariables>(RecoveryAllEnteredEventsDocument, baseOptions);
+        }
+export type RecoveryAllEnteredEventsQueryHookResult = ReturnType<typeof useRecoveryAllEnteredEventsQuery>;
+export type RecoveryAllEnteredEventsLazyQueryHookResult = ReturnType<typeof useRecoveryAllEnteredEventsLazyQuery>;
+export type RecoveryAllEnteredEventsQueryResult = Apollo.QueryResult<RecoveryAllEnteredEventsQuery, RecoveryAllEnteredEventsQueryVariables>;
 export const LegacyNumberOfRecoveryRolesDocument = gql`
     query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client

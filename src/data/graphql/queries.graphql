@@ -452,6 +452,18 @@ query GetRecoveryRequiredApprovals($colonyAddress: String!) {
   getRecoveryRequiredApprovals(colonyAddress: $colonyAddress) @client
 }
 
+query RecoveryAllEnteredEvents($colonyAddress: String!) {
+  recoveryAllEnteredEvents(colonyAddress: $colonyAddress) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
+  }
+}
+
 query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }

@@ -25,6 +25,7 @@ export default gql`
     createdAt: Int!
     emmitedBy: String!
     blockNumber: Int
+    transactionHash: String!
   }
 
   type SystemMessage {
@@ -235,6 +236,7 @@ export default gql`
       colonyAddress: String!
     ): [UsersAndRecoveryApprovals!]!
     getRecoveryRequiredApprovals(colonyAddress: String!): Int!
+    recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
   }
 

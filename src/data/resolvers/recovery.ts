@@ -77,7 +77,7 @@ const getSessionRecoveryEvents = async (
     [...recoveryModeLogs, ...storageSlotSetLogs, ...exitApprovedLogs].map(
       async (log) => {
         const potentialParsedLog = colonyClient.interface.parseLog(log);
-        const { address, blockHash, blockNumber } = log;
+        const { address, blockHash, blockNumber, transactionHash } = log;
         const { name, values } = potentialParsedLog;
         return {
           type: ActionsPageFeedType.NetworkEvent,
@@ -89,11 +89,18 @@ const getSessionRecoveryEvents = async (
           emmitedBy: ClientType.ColonyClient,
           address,
           blockNumber,
+          transactionHash,
         } as ProcessedEvent;
       },
     ),
   );
 
+  /*
+   * Mayyyybe? this can work if we just use reverse() -- going by the logic
+   * that all events come in order from the chain?
+   *
+   * Unless the RPC provider screws us over that is...
+   */
   const sortedRecoveryEvents = parsedRecoveryEvents.sort(
     (firstEvent, secondEvent) => firstEvent.createdAt - secondEvent.createdAt,
   );
@@ -133,6 +140,42 @@ export const recoveryModeResolvers = ({
         )) as ColonyClientV6;
 
         return await getSessionRecoveryEvents(colonyClient, blockNumber);
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    },
+    async recoveryAllEnteredEvents(_, { colonyAddress }) {
+      try {
+        const colonyClient = (await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        )) as ColonyClientV6;
+
+        const enterRecoveryLogs = await getLogs(
+          colonyClient,
+          colonyClient.filters.RecoveryModeEntered(null),
+        );
+
+        return Promise.all(
+          enterRecoveryLogs.map(async (log) => {
+            const potentialParsedLog = colonyClient.interface.parseLog(log);
+            const { address, blockHash, blockNumber, transactionHash } = log;
+            const { name, values } = potentialParsedLog;
+            return {
+              type: ActionsPageFeedType.NetworkEvent,
+              name,
+              values,
+              createdAt: blockHash
+                ? await getBlockTime(colonyClient.provider, blockHash)
+                : 0,
+              emmitedBy: ClientType.ColonyClient,
+              address,
+              blockNumber,
+              transactionHash,
+            } as ProcessedEvent;
+          }),
+        );
       } catch (error) {
         console.error(error);
         return [];
