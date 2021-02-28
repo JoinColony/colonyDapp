@@ -34,7 +34,7 @@ import {
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 function* enterRecoveryAction({
-  payload: { colonyAddress, colonyName, annotationMessage },
+  payload: { colonyAddress, walletAddress, colonyName, annotationMessage },
   meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COLONY_ACTION_RECOVERY>) {
@@ -92,7 +92,7 @@ function* enterRecoveryAction({
     yield put(transactionReady(recoveryAction.id));
 
     const {
-      payload: { hash: txHash },
+      payload: { hash: txHash, blockNumber },
     } = yield takeFrom(
       recoveryAction.channel,
       ActionTypes.TRANSACTION_HASH_RECEIVED,
@@ -122,6 +122,9 @@ function* enterRecoveryAction({
       );
     }
 
+    /*
+     * Refesh the current colony data object
+     */
     yield apolloClient.query<
       ProcessedColonyQuery,
       ProcessedColonyQueryVariables
@@ -129,6 +132,34 @@ function* enterRecoveryAction({
       query: ProcessedColonyDocument,
       variables: {
         address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+    /*
+     * Refresh recovery events
+     */
+    yield apolloClient.query<
+      RecoveryEventsForSessionQuery,
+      RecoveryEventsForSessionQueryVariables
+    >({
+      query: RecoveryEventsForSessionDocument,
+      variables: {
+        colonyAddress,
+        blockNumber,
+      },
+      fetchPolicy: 'network-only',
+    });
+    /*
+     * Actions that need attention
+     */
+    yield apolloClient.query<
+      ActionsThatNeedAttentionQuery,
+      ActionsThatNeedAttentionQueryVariables
+    >({
+      query: ActionsThatNeedAttentionDocument,
+      variables: {
+        colonyAddress,
+        walletAddress,
       },
       fetchPolicy: 'network-only',
     });
@@ -234,7 +265,7 @@ function* setStorageSlotValue({
       fetchPolicy: 'network-only',
     });
     /*
-     * Actions that need attention
+     * Refresh Actions that need attention
      */
     yield apolloClient.query<
       ActionsThatNeedAttentionQuery,
@@ -342,7 +373,7 @@ function* approveExitRecovery({
       fetchPolicy: 'network-only',
     });
     /*
-     * Actions that need attention
+     * Refresh Actions that need attention
      */
     yield apolloClient.query<
       ActionsThatNeedAttentionQuery,

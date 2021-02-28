@@ -50,6 +50,7 @@ const ApproveExitWidget = ({
       colonyAddress,
       blockNumber: startBlock,
     },
+    fetchPolicy: 'network-only',
   });
 
   const { data: requiredApprovals } = useGetRecoveryRequiredApprovalsQuery({

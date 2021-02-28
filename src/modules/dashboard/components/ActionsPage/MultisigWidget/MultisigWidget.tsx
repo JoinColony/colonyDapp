@@ -78,6 +78,7 @@ const MultisigWidget = ({
       colonyAddress,
       blockNumber: startBlock,
     },
+    fetchPolicy: 'network-only',
   });
 
   const { data: requiredApprovals } = useGetRecoveryRequiredApprovalsQuery({

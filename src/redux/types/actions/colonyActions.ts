@@ -183,6 +183,7 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_RECOVERY,
       {
         colonyAddress: Address;
+        walletAddress: Address;
         colonyName: string;
         annotationMessage?: string;
       },

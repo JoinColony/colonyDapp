@@ -48,6 +48,7 @@ export const eventsResolvers = ({
           variables: {
             colonyAddress,
           },
+          fetchPolicy: 'network-only',
         });
 
         const colonyClient = (await colonyManager.getClient(

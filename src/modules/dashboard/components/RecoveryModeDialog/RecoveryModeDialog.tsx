@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
@@ -34,6 +34,7 @@ const RecoveryModeDialog = ({
   colony: { colonyName, colonyAddress },
   colony,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const history = useHistory();
 
   const validationSchema = yup.object().shape({
@@ -46,6 +47,7 @@ const RecoveryModeDialog = ({
         return {
           colonyName,
           colonyAddress,
+          walletAddress,
           annotationMessage,
         };
       }),
