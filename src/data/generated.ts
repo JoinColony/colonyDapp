@@ -1959,7 +1959,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 export type ColonyActionQuery = { colonyAction: (
     Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'blockNumber'>
-    & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
+    & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
 export type TransactionMessagesQueryVariables = Exact<{
@@ -1998,7 +1998,7 @@ export type RecoveryEventsForSessionQueryVariables = Exact<{
 }>;
 
 
-export type RecoveryEventsForSessionQuery = { recoveryEventsForSession: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'blockNumber'>> };
+export type RecoveryEventsForSessionQuery = { recoveryEventsForSession: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'blockNumber' | 'transactionHash'>> };
 
 export type RecoverySystemMessagesForSessionQueryVariables = Exact<{
   blockNumber: Scalars['Int'];
@@ -4517,6 +4517,7 @@ export const ColonyActionDocument = gql`
       values
       createdAt
       emmitedBy
+      transactionHash
     }
     createdAt
     actionType
@@ -4719,6 +4720,7 @@ export const RecoveryEventsForSessionDocument = gql`
     createdAt
     emmitedBy
     blockNumber
+    transactionHash
   }
 }
     `;

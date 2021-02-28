@@ -349,6 +349,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
       values
       createdAt
       emmitedBy
+      transactionHash
     }
     createdAt
     actionType
@@ -415,6 +416,7 @@ query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
     createdAt
     emmitedBy
     blockNumber
+    transactionHash
   }
 }
 

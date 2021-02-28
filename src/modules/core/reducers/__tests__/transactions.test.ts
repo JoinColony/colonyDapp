@@ -36,6 +36,8 @@ describe(`core: reducers (transactions)`, () => {
   const eventData = { myEventParam: 123 };
   const from = 'my wallet address';
   const hash = 'my transaction hash';
+  const blockHash = 'blockHash';
+  const blockNumber = 123;
   const options = { gasPrice: 4 };
   const params = [123];
   const id = 'my transaction id';
@@ -68,7 +70,12 @@ describe(`core: reducers (transactions)`, () => {
   });
 
   const sentTx = transactionSent(id);
-  const hashReceived = transactionHashReceived(id, { hash, params });
+  const hashReceived = transactionHashReceived(id, {
+    hash,
+    params,
+    blockHash,
+    blockNumber,
+  });
   // @ts-ignore
   const receiptReceived = transactionReceiptReceived(id, { receipt: { hash } });
   // @ts-ignore

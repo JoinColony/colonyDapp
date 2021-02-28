@@ -121,7 +121,10 @@ export const colonyActionsResolvers = ({
                 const type = clientType?.clientType;
                 const potentialParsedLog = clientType?.interface.parseLog(log);
                 if (potentialParsedLog) {
-                  const { address } = log;
+                  const {
+                    address,
+                    transactionHash: currentLogTransactionHash,
+                  } = log;
                   const { name, values } = potentialParsedLog;
                   return {
                     type: ActionsPageFeedType.NetworkEvent,
@@ -130,6 +133,7 @@ export const colonyActionsResolvers = ({
                     createdAt,
                     emmitedBy: type,
                     address,
+                    transactionHash: currentLogTransactionHash,
                   } as ProcessedEvent;
                 }
                 return null;
