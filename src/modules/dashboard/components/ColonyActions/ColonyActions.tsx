@@ -115,7 +115,10 @@ const ColonyActions = ({
     variables: { colonyAddress },
   });
 
-  const { data } = useActionsThatNeedAttentionQuery({
+  const {
+    data: actionStatuses,
+    loading: actionStatusesLoading,
+  } = useActionsThatNeedAttentionQuery({
     variables: {
       colonyAddress,
       walletAddress,
@@ -134,7 +137,7 @@ const ColonyActions = ({
        * suggestions it gives up
        */
       // eslint-disable-next-line max-len
-      actionsThatNeedAttention: data?.actionsThatNeedAttention as ActionThatNeedsAttention[],
+      actionsThatNeedAttention: actionStatuses?.actionsThatNeedAttention as ActionThatNeedsAttention[],
     },
   ]);
 
@@ -195,6 +198,7 @@ const ColonyActions = ({
     oneTxActionsLoading ||
     eventsActionsLoading ||
     commentCountLoading ||
+    actionStatusesLoading ||
     !commentCount ||
     !oneTxActions ||
     !eventsActions
