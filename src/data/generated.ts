@@ -773,6 +773,7 @@ export type QueryDomainsArgs = {
 
 
 export type QueryGetRecoveryRequiredApprovalsArgs = {
+  blockNumber: Scalars['Int'];
   colonyAddress: Scalars['String'];
 };
 
@@ -2039,6 +2040,7 @@ export type RecoveryRolesAndApprovalsForSessionQuery = { recoveryRolesAndApprova
   )> };
 
 export type GetRecoveryRequiredApprovalsQueryVariables = Exact<{
+  blockNumber: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
 
@@ -4901,8 +4903,8 @@ export type RecoveryRolesAndApprovalsForSessionQueryHookResult = ReturnType<type
 export type RecoveryRolesAndApprovalsForSessionLazyQueryHookResult = ReturnType<typeof useRecoveryRolesAndApprovalsForSessionLazyQuery>;
 export type RecoveryRolesAndApprovalsForSessionQueryResult = Apollo.QueryResult<RecoveryRolesAndApprovalsForSessionQuery, RecoveryRolesAndApprovalsForSessionQueryVariables>;
 export const GetRecoveryRequiredApprovalsDocument = gql`
-    query GetRecoveryRequiredApprovals($colonyAddress: String!) {
-  getRecoveryRequiredApprovals(colonyAddress: $colonyAddress) @client
+    query GetRecoveryRequiredApprovals($blockNumber: Int!, $colonyAddress: String!) {
+  getRecoveryRequiredApprovals(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client
 }
     `;
 
@@ -4918,6 +4920,7 @@ export const GetRecoveryRequiredApprovalsDocument = gql`
  * @example
  * const { data, loading, error } = useGetRecoveryRequiredApprovalsQuery({
  *   variables: {
+ *      blockNumber: // value for 'blockNumber'
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });

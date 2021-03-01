@@ -56,6 +56,7 @@ const ApproveExitWidget = ({
   const { data: requiredApprovals } = useGetRecoveryRequiredApprovalsQuery({
     variables: {
       colonyAddress,
+      blockNumber: startBlock,
     },
   });
 

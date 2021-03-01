@@ -84,6 +84,7 @@ const MultisigWidget = ({
   const { data: requiredApprovals } = useGetRecoveryRequiredApprovalsQuery({
     variables: {
       colonyAddress,
+      blockNumber: startBlock,
     },
   });
 

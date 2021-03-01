@@ -11,6 +11,7 @@ import {
 } from '@colony/colony-js';
 import { Log } from 'ethers/providers';
 import { LogDescription } from 'ethers/utils';
+import { AddressZero } from 'ethers/constants';
 
 import { Context } from '~context/index';
 import {
@@ -34,6 +35,7 @@ import {
   SystemMessagesName,
 } from '~dashboard/ActionsPageFeed';
 import { ensureHexPrefix } from '~utils/strings';
+import { halfPlusOne } from '~utils/numbers';
 import { ColonyAndExtensionsEvents } from '~types/index';
 
 const getSessionRecoveryEvents = async (
@@ -416,15 +418,107 @@ export const recoveryModeResolvers = ({
         return `0x${'0'.padStart(64, '0')}`;
       }
     },
-    async getRecoveryRequiredApprovals(_, { colonyAddress }) {
+    async getRecoveryRequiredApprovals(_, { blockNumber, colonyAddress }) {
       try {
+        /*
+         * @NOTE Leveraging apollo's internal cache
+         *
+         * This might seem counter intuitive, fetching an apollo query here,
+         * when we could just call `getSessionRecoveryEvents` directly, but
+         * doing so, allows us to fetch the recovery events that are already
+         * inside the cache, and not be forced to fetch them all over again.
+         *
+         * This cuts down on loading times, especially on pages with a lot
+         * of events generated.
+         */
+        const recoveryEvents = await apolloClient.query<
+          RecoveryEventsForSessionQuery,
+          RecoveryEventsForSessionQueryVariables
+        >({
+          query: RecoveryEventsForSessionDocument,
+          variables: {
+            colonyAddress,
+            blockNumber,
+          },
+        });
+
+        /*
+         * Prettier is being stupid again
+         */
+        // eslint-disable-next-line max-len
+        const potentialExitEvent = recoveryEvents?.data?.recoveryEventsForSession?.find(
+          ({ name }) => name === ColonyAndExtensionsEvents.RecoveryModeExited,
+        );
+
+        /*
+         * @NOTE Leveraging apollo's internal cache yet again, so we don't
+         * re-fetch and re-parse both the server user and the recovery role events
+         */
+        const usersWithRecoveryRoles = await apolloClient.query<
+          RecoveryRolesUsersQuery,
+          RecoveryRolesUsersQueryVariables
+        >({
+          query: RecoveryRolesUsersDocument,
+          variables: {
+            colonyAddress,
+            endBlockNumber: potentialExitEvent?.blockNumber,
+          },
+        });
+
         const colonyClient = (await colonyManager.getClient(
           ClientType.ColonyClient,
           colonyAddress,
         )) as ColonyClientV6;
 
-        const requiredApprovals = await colonyClient.numRecoveryRoles();
-        return requiredApprovals.toNumber();
+        /*
+         * The deployment owner is "special"
+         *
+         * Normally it's not set, but might get set when the colony is in
+         * recovery mode, so the next the colony is in recovery mode, we
+         * need to count recovery roles + 1
+         */
+        const deploymentOwner = await colonyClient.owner();
+
+        /*
+         * If we have an owner address, we need to actually check if that is
+         * a different address from all the ones that have recovery roles assinged
+         * to them.
+         *
+         * If it is, disregard it, as the number of required approvals is the same.
+         *
+         * But if it's not, then we need to add one to the count
+         */
+        if (deploymentOwner !== AddressZero) {
+          /*
+           * Prettier is being stupid again
+           */
+          // eslint-disable-next-line max-len
+          const isOwnerAlreadyAssignedRole = usersWithRecoveryRoles?.data?.recoveryRolesUsers?.find(
+            ({ id: walletAddress }) =>
+              walletAddress.toLowerCase() === deploymentOwner.toLowerCase(),
+          );
+          if (!isOwnerAlreadyAssignedRole) {
+            return halfPlusOne(
+              usersWithRecoveryRoles?.data?.recoveryRolesUsers?.length
+                ? usersWithRecoveryRoles?.data?.recoveryRolesUsers?.length + 1
+                : 1,
+            );
+          }
+          /*
+           * If we could find the user in the recovery roles array it means that
+           * even though it has the owner designation as well, it was also
+           * assigned a recovery role, at which point we just default back
+           * to our usual mode of calculating this.
+           */
+        }
+
+        /*
+         * We don't have the owner address set, so we just take the total
+         * number of recovery roles and apply the half + 1 logic
+         */
+        return halfPlusOne(
+          usersWithRecoveryRoles?.data?.recoveryRolesUsers?.length || 0,
+        );
       } catch (error) {
         console.error(error);
         return 0;

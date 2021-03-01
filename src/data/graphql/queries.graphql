@@ -457,8 +457,8 @@ query RecoveryRolesAndApprovalsForSession($blockNumber: Int!, $colonyAddress: St
   }
 }
 
-query GetRecoveryRequiredApprovals($colonyAddress: String!) {
-  getRecoveryRequiredApprovals(colonyAddress: $colonyAddress) @client
+query GetRecoveryRequiredApprovals($blockNumber: Int!,$colonyAddress: String!) {
+  getRecoveryRequiredApprovals(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client
 }
 
 query RecoveryAllEnteredEvents($colonyAddress: String!) {

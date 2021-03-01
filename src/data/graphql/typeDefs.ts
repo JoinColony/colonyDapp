@@ -244,7 +244,10 @@ export default gql`
       blockNumber: Int!
       colonyAddress: String!
     ): [UsersAndRecoveryApprovals!]!
-    getRecoveryRequiredApprovals(colonyAddress: String!): Int!
+    getRecoveryRequiredApprovals(
+      blockNumber: Int!
+      colonyAddress: String!
+    ): Int!
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
   }
