@@ -1,23 +1,26 @@
 .tokens {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin-right: -3px;
   padding: 0 8px;
   height: 24px;
   position: relative;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: var(--radius-normal);
   background-color: transparent;
+  cursor: pointer;
+}
+
+.tokens span {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
-  cursor: pointer;
 }
 
 .tokens:hover {
   z-index: 5;
   background-color: rgb(217, 216, 236);
+}
+
+.tokens:hover span {
   color: var(--action-secondary);
 }
 
