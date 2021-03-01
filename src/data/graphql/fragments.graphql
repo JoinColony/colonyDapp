@@ -72,6 +72,16 @@ fragment EventFields on Event {
   type
 }
 
+fragment EventContext on Event {	
+    context {
+    ... on CreateDomainEvent {	
+      type	
+      ethDomainId	
+      colonyAddress	
+    }
+  }
+}
+
 fragment FullNetworkEvent on NetworkEvent {
   fromAddress
   toAddress

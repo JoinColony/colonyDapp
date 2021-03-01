@@ -19,63 +19,6 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
     "types": [
       {
         "kind": "INTERFACE",
-        "name": "TaskEvent",
-        "possibleTypes": [
-          {
-            "name": "AssignWorkerEvent"
-          },
-          {
-            "name": "UnassignWorkerEvent"
-          },
-          {
-            "name": "CancelTaskEvent"
-          },
-          {
-            "name": "CreateTaskEvent"
-          },
-          {
-            "name": "CreateWorkRequestEvent"
-          },
-          {
-            "name": "FinalizeTaskEvent"
-          },
-          {
-            "name": "SetTaskPendingEvent"
-          },
-          {
-            "name": "RemoveTaskPayoutEvent"
-          },
-          {
-            "name": "SendWorkInviteEvent"
-          },
-          {
-            "name": "SetTaskDescriptionEvent"
-          },
-          {
-            "name": "SetTaskDomainEvent"
-          },
-          {
-            "name": "SetTaskDueDateEvent"
-          },
-          {
-            "name": "SetTaskPayoutEvent"
-          },
-          {
-            "name": "SetTaskSkillEvent"
-          },
-          {
-            "name": "RemoveTaskSkillEvent"
-          },
-          {
-            "name": "SetTaskTitleEvent"
-          },
-          {
-            "name": "TaskMessageEvent"
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
         "name": "ColonyEvent",
         "possibleTypes": [
           {
@@ -88,61 +31,10 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
         "name": "EventContext",
         "possibleTypes": [
           {
-            "name": "AssignWorkerEvent"
-          },
-          {
-            "name": "CancelTaskEvent"
-          },
-          {
             "name": "CreateDomainEvent"
           },
           {
-            "name": "CreateTaskEvent"
-          },
-          {
-            "name": "CreateWorkRequestEvent"
-          },
-          {
-            "name": "FinalizeTaskEvent"
-          },
-          {
             "name": "NewUserEvent"
-          },
-          {
-            "name": "RemoveTaskPayoutEvent"
-          },
-          {
-            "name": "SendWorkInviteEvent"
-          },
-          {
-            "name": "SetTaskDescriptionEvent"
-          },
-          {
-            "name": "SetTaskDomainEvent"
-          },
-          {
-            "name": "SetTaskDueDateEvent"
-          },
-          {
-            "name": "SetTaskPayoutEvent"
-          },
-          {
-            "name": "SetTaskPendingEvent"
-          },
-          {
-            "name": "SetTaskSkillEvent"
-          },
-          {
-            "name": "RemoveTaskSkillEvent"
-          },
-          {
-            "name": "SetTaskTitleEvent"
-          },
-          {
-            "name": "TaskMessageEvent"
-          },
-          {
-            "name": "UnassignWorkerEvent"
           },
           {
             "name": "TransactionMessageEvent"
@@ -167,138 +59,14 @@ export type Scalars = {
   Upload: any;
 };
 
-export type TaskEvent = {
-  type: EventType;
-  taskId: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
 export type ColonyEvent = {
   type: EventType;
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type AssignWorkerEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  workerAddress: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type UnassignWorkerEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  workerAddress: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type CancelTaskEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
   colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type CreateDomainEvent = ColonyEvent & {
   type: EventType;
   ethDomainId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type CreateTaskEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type CreateWorkRequestEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type FinalizeTaskEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskPendingEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  txHash: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type RemoveTaskPayoutEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  tokenAddress: Scalars['String'];
-  amount: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SendWorkInviteEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  workerAddress: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskDescriptionEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  description: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskDomainEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskDueDateEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  dueDate?: Maybe<Scalars['DateTime']>;
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskPayoutEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  tokenAddress: Scalars['String'];
-  amount: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskSkillEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  ethSkillId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type RemoveTaskSkillEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  ethSkillId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskTitleEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  title: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type TaskMessageEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  message: Scalars['String'];
   colonyAddress?: Maybe<Scalars['String']>;
 };
 
@@ -313,7 +81,7 @@ export type TransactionMessageEvent = {
   colonyAddress: Scalars['String'];
 };
 
-export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | TransactionMessageEvent;
+export type EventContext = CreateDomainEvent | NewUserEvent | TransactionMessageEvent;
 
 export type Event = {
   id: Scalars['String'];
@@ -344,41 +112,6 @@ export type EditUserInput = {
   website?: Maybe<Scalars['String']>;
 };
 
-export type CreateTaskInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-};
-
-export type SetTaskDomainInput = {
-  id: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-};
-
-export type SetTaskSkillInput = {
-  id: Scalars['String'];
-  ethSkillId: Scalars['Int'];
-};
-
-export type RemoveTaskSkillInput = {
-  id: Scalars['String'];
-  ethSkillId: Scalars['Int'];
-};
-
-export type SetTaskTitleInput = {
-  id: Scalars['String'];
-  title: Scalars['String'];
-};
-
-export type SetTaskDescriptionInput = {
-  id: Scalars['String'];
-  description: Scalars['String'];
-};
-
-export type SetTaskDueDateInput = {
-  id: Scalars['String'];
-  dueDate?: Maybe<Scalars['DateTime']>;
-};
-
 export type CreateWorkRequestInput = {
   id: Scalars['String'];
 };
@@ -386,18 +119,6 @@ export type CreateWorkRequestInput = {
 export type SendWorkInviteInput = {
   id: Scalars['String'];
   workerAddress: Scalars['String'];
-};
-
-export type SetTaskPayoutInput = {
-  id: Scalars['String'];
-  amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
-};
-
-export type RemoveTaskPayoutInput = {
-  id: Scalars['String'];
-  amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
 };
 
 export type AssignWorkerInput = {
@@ -410,20 +131,6 @@ export type UnassignWorkerInput = {
   workerAddress: Scalars['String'];
 };
 
-export type TaskIdInput = {
-  id: Scalars['String'];
-};
-
-export type SetTaskPendingInput = {
-  id: Scalars['String'];
-  txHash: Scalars['String'];
-};
-
-export type FinalizeTaskInput = {
-  id: Scalars['String'];
-  ethPotId: Scalars['Int'];
-};
-
 export type SubscribeToColonyInput = {
   colonyAddress: Scalars['String'];
 };
@@ -434,11 +141,6 @@ export type UnsubscribeFromColonyInput = {
 
 export type MarkNotificationAsReadInput = {
   id: Scalars['String'];
-};
-
-export type SendTaskMessageInput = {
-  id: Scalars['String'];
-  message: Scalars['String'];
 };
 
 export type EditDomainNameInput = {
@@ -470,10 +172,6 @@ export type RemoveUpvoteFromSuggestionInput = {
   id: Scalars['String'];
 };
 
-export type CreateTaskFromSuggestionInput = {
-  id: Scalars['String'];
-};
-
 export type Payout = {
   amount: Scalars['String'];
   tokenAddress: Scalars['String'];
@@ -487,37 +185,19 @@ export type SendTransactionMessageInput = {
 
 export type Mutation = {
   addUpvoteToSuggestion?: Maybe<Suggestion>;
-  assignWorker?: Maybe<Task>;
-  cancelTask?: Maybe<Task>;
   clearLoggedInUser: LoggedInUser;
   createSuggestion?: Maybe<Suggestion>;
-  createTask?: Maybe<Task>;
-  createTaskFromSuggestion?: Maybe<Task>;
   createUser?: Maybe<User>;
-  createWorkRequest?: Maybe<Task>;
   editUser?: Maybe<User>;
-  finalizeTask?: Maybe<Task>;
   markAllNotificationsAsRead: Scalars['Boolean'];
   markNotificationAsRead: Scalars['Boolean'];
-  removeTaskPayout?: Maybe<Task>;
-  removeTaskSkill?: Maybe<Task>;
   removeUpvoteFromSuggestion?: Maybe<Suggestion>;
-  sendTaskMessage: Scalars['Boolean'];
   sendTransactionMessage: Scalars['Boolean'];
-  sendWorkInvite?: Maybe<Task>;
   setLoggedInUser: LoggedInUser;
   setNetworkContracts: NetworkContracts;
   setSuggestionStatus?: Maybe<Suggestion>;
-  setTaskDescription?: Maybe<Task>;
-  setTaskDomain?: Maybe<Task>;
-  setTaskDueDate?: Maybe<Task>;
-  setTaskPayout?: Maybe<Task>;
-  setTaskPending?: Maybe<Task>;
-  setTaskSkill?: Maybe<Task>;
-  setTaskTitle?: Maybe<Task>;
   setUserTokens?: Maybe<User>;
   subscribeToColony?: Maybe<User>;
-  unassignWorker?: Maybe<Task>;
   unsubscribeFromColony?: Maybe<User>;
   updateNetworkContracts: NetworkContracts;
 };
@@ -528,28 +208,8 @@ export type MutationAddUpvoteToSuggestionArgs = {
 };
 
 
-export type MutationAssignWorkerArgs = {
-  input: AssignWorkerInput;
-};
-
-
-export type MutationCancelTaskArgs = {
-  input: TaskIdInput;
-};
-
-
 export type MutationCreateSuggestionArgs = {
   input: CreateSuggestionInput;
-};
-
-
-export type MutationCreateTaskArgs = {
-  input: CreateTaskInput;
-};
-
-
-export type MutationCreateTaskFromSuggestionArgs = {
-  input: CreateTaskFromSuggestionInput;
 };
 
 
@@ -558,18 +218,8 @@ export type MutationCreateUserArgs = {
 };
 
 
-export type MutationCreateWorkRequestArgs = {
-  input: CreateWorkRequestInput;
-};
-
-
 export type MutationEditUserArgs = {
   input: EditUserInput;
-};
-
-
-export type MutationFinalizeTaskArgs = {
-  input: FinalizeTaskInput;
 };
 
 
@@ -578,33 +228,13 @@ export type MutationMarkNotificationAsReadArgs = {
 };
 
 
-export type MutationRemoveTaskPayoutArgs = {
-  input: RemoveTaskPayoutInput;
-};
-
-
-export type MutationRemoveTaskSkillArgs = {
-  input: RemoveTaskSkillInput;
-};
-
-
 export type MutationRemoveUpvoteFromSuggestionArgs = {
   input: RemoveUpvoteFromSuggestionInput;
 };
 
 
-export type MutationSendTaskMessageArgs = {
-  input: SendTaskMessageInput;
-};
-
-
 export type MutationSendTransactionMessageArgs = {
   input: SendTransactionMessageInput;
-};
-
-
-export type MutationSendWorkInviteArgs = {
-  input: SendWorkInviteInput;
 };
 
 
@@ -623,41 +253,6 @@ export type MutationSetSuggestionStatusArgs = {
 };
 
 
-export type MutationSetTaskDescriptionArgs = {
-  input: SetTaskDescriptionInput;
-};
-
-
-export type MutationSetTaskDomainArgs = {
-  input: SetTaskDomainInput;
-};
-
-
-export type MutationSetTaskDueDateArgs = {
-  input: SetTaskDueDateInput;
-};
-
-
-export type MutationSetTaskPayoutArgs = {
-  input: SetTaskPayoutInput;
-};
-
-
-export type MutationSetTaskPendingArgs = {
-  input: SetTaskPendingInput;
-};
-
-
-export type MutationSetTaskSkillArgs = {
-  input: SetTaskSkillInput;
-};
-
-
-export type MutationSetTaskTitleArgs = {
-  input: SetTaskTitleInput;
-};
-
-
 export type MutationSetUserTokensArgs = {
   input: SetUserTokensInput;
 };
@@ -665,11 +260,6 @@ export type MutationSetUserTokensArgs = {
 
 export type MutationSubscribeToColonyArgs = {
   input: SubscribeToColonyInput;
-};
-
-
-export type MutationUnassignWorkerArgs = {
-  input: UnassignWorkerInput;
 };
 
 
@@ -702,7 +292,6 @@ export type Query = {
   recoverySystemMessagesForSession: Array<SystemMessage>;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
-  task: Task;
   token: Token;
   tokenInfo: TokenInfo;
   tokens: Array<Token>;
@@ -828,11 +417,6 @@ export type QuerySubscribedUsersArgs = {
 };
 
 
-export type QueryTaskArgs = {
-  id: Scalars['String'];
-};
-
-
 export type QueryTokenArgs = {
   address: Scalars['String'];
 };
@@ -895,38 +479,7 @@ export type Suggestion = {
   ethDomainId: Scalars['Int'];
   status: SuggestionStatus;
   title: Scalars['String'];
-  taskId?: Maybe<Scalars['String']>;
   upvotes: Array<Scalars['String']>;
-};
-
-export type TaskPayout = {
-  amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
-};
-
-export type Task = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  ethDomainId: Scalars['Int'];
-  ethPotId?: Maybe<Scalars['Int']>;
-  ethSkillId?: Maybe<Scalars['Int']>;
-  cancelledAt?: Maybe<Scalars['DateTime']>;
-  description?: Maybe<Scalars['String']>;
-  dueDate?: Maybe<Scalars['DateTime']>;
-  finalizedAt?: Maybe<Scalars['DateTime']>;
-  title?: Maybe<Scalars['String']>;
-  colonyAddress: Scalars['String'];
-  creator: User;
-  creatorAddress: Scalars['String'];
-  assignedWorker?: Maybe<User>;
-  assignedWorkerAddress?: Maybe<Scalars['String']>;
-  workInvites: Array<User>;
-  workInviteAddresses: Array<Scalars['String']>;
-  workRequests: Array<User>;
-  workRequestAddresses: Array<Scalars['String']>;
-  events: Array<Event>;
-  payouts: Array<TaskPayout>;
-  txHash?: Maybe<Scalars['String']>;
 };
 
 export type TokenInfo = {
@@ -951,8 +504,6 @@ export type User = {
   processedColonies: Array<ProcessedColony>;
   profile: UserProfile;
   reputation: Scalars['String'];
-  taskIds: Array<Scalars['String']>;
-  tasks: Array<Task>;
   tokenAddresses: Array<Scalars['String']>;
   tokenTransfers: Array<Transfer>;
   tokens: Array<Token>;
@@ -987,23 +538,10 @@ export type UserProfile = {
 
 export enum EventType {
   AssignWorker = 'AssignWorker',
-  CancelTask = 'CancelTask',
   CreateDomain = 'CreateDomain',
-  CreateTask = 'CreateTask',
   CreateWorkRequest = 'CreateWorkRequest',
-  FinalizeTask = 'FinalizeTask',
   NewUser = 'NewUser',
-  RemoveTaskPayout = 'RemoveTaskPayout',
   SendWorkInvite = 'SendWorkInvite',
-  SetTaskDescription = 'SetTaskDescription',
-  SetTaskDomain = 'SetTaskDomain',
-  SetTaskDueDate = 'SetTaskDueDate',
-  SetTaskPayout = 'SetTaskPayout',
-  SetTaskPending = 'SetTaskPending',
-  SetTaskSkill = 'SetTaskSkill',
-  RemoveTaskSkill = 'RemoveTaskSkill',
-  SetTaskTitle = 'SetTaskTitle',
-  TaskMessage = 'TaskMessage',
   UnassignWorker = 'UnassignWorker',
   TransactionMessage = 'TransactionMessage'
 }
@@ -1441,6 +979,8 @@ export type EventFieldsFragment = (
   )> }
 );
 
+export type EventContextFragment = { context: Pick<CreateDomainEvent, 'type' | 'ethDomainId' | 'colonyAddress'> };
+
 export type FullNetworkEventFragment = Pick<NetworkEvent, 'fromAddress' | 'toAddress' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domainId'>;
 
 export type TransactionEventContextFragment = { context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress'> };
@@ -1668,7 +1208,10 @@ export type UserNotificationsQuery = { user: (
     Pick<User, 'id'>
     & { notifications: Array<(
       Pick<Notification, 'id' | 'read'>
-      & { event: Pick<Event, 'id' | 'type' | 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType'> }
+      & { event: (
+        Pick<Event, 'id' | 'type' | 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType'>
+        & EventContextFragment
+      ) }
     )> }
   ) };
 
@@ -2095,6 +1638,17 @@ export const FullColonyFragmentDoc = gql`
     ${ColonyProfileFragmentDoc}
 ${TokensFragmentDoc}
 ${DomainFieldsFragmentDoc}`;
+export const EventContextFragmentDoc = gql`
+    fragment EventContext on Event {
+  context {
+    ... on CreateDomainEvent {
+      type
+      ethDomainId
+      colonyAddress
+    }
+  }
+}
+    `;
 export const FullNetworkEventFragmentDoc = gql`
     fragment FullNetworkEvent on NetworkEvent {
   fromAddress
@@ -3092,12 +2646,13 @@ export const UserNotificationsDocument = gql`
         initiatorAddress
         sourceId
         sourceType
+        ...EventContext
       }
       read
     }
   }
 }
-    `;
+    ${EventContextFragmentDoc}`;
 
 /**
  * __useUserNotificationsQuery__
