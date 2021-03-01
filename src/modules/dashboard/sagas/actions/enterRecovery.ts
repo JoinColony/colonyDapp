@@ -19,6 +19,9 @@ import {
   ActionsThatNeedAttentionQuery,
   ActionsThatNeedAttentionQueryVariables,
   ActionsThatNeedAttentionDocument,
+  RecoveryRolesUsersQuery,
+  RecoveryRolesUsersQueryVariables,
+  RecoveryRolesUsersDocument,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -134,6 +137,19 @@ function* enterRecoveryAction({
         address: colonyAddress,
       },
       fetchPolicy: 'network-only',
+    });
+    /*
+     * Refesh the current colony data object
+     */
+    yield apolloClient.query<
+      RecoveryRolesUsersQuery,
+      RecoveryRolesUsersQueryVariables
+    >({
+      query: RecoveryRolesUsersDocument,
+      variables: {
+        colonyAddress,
+        endBlockNumber: blockNumber,
+      },
     });
     /*
      * Refresh recovery events
