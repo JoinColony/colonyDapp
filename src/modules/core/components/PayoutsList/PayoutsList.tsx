@@ -7,7 +7,6 @@ import moveDecimal from 'move-decimal-point';
 import InfoPopover from '~core/InfoPopover';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-import { Payouts } from '~data/index';
 import { Address } from '~types/index';
 
 import { Tooltip } from '../Popover';
@@ -28,7 +27,7 @@ interface Props {
   maxLines?: number;
 
   /** Payouts list containing all the payouts */
-  payouts: Payouts;
+  payouts: any[];
 
   /** Pretty self-explanatory */
   nativeTokenAddress: Address;

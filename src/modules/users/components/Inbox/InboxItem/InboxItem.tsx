@@ -198,7 +198,7 @@ const InboxItem = ({
                     <Numeral
                       suffix={` ${token ? token.symbol : ''}`}
                       integerSeparator=""
-                      value={value}
+                      value={value || '-'}
                     />
                   )),
                   colonyAddress: makeInboxDetail(colonyAddress),
@@ -270,7 +270,7 @@ const InboxItem = ({
                   <Numeral
                     suffix={` ${token ? token.symbol : ''}`}
                     integerSeparator=""
-                    value={amount}
+                    value={amount || '-'}
                     appearance={{ size: 'small', theme: 'grey' }}
                   />
                 </span>
