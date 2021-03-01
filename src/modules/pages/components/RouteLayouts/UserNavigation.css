@@ -127,13 +127,13 @@
 
 .walletAddress:hover {
   background-color: rgb(217, 216, 236);
-  color: var(--colony-blue);
+  color: var(--action-secondary);
 }
 
 .walletAddressActive {
   composes: walletAddress;
-  border: 1px solid var(--colony-blue);
-  color: var(--colony-blue);
+  border: 1px solid var(--action-secondary);
+  color: var(--action-secondary);
 }
 
 .buttonsWrapper {

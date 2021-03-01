@@ -18,15 +18,15 @@
 .tokens:hover {
   z-index: 5;
   background-color: rgb(217, 216, 236);
-  color: var(--colony-blue);
+  color: var(--action-secondary);
 }
 
 .tokensActive {
   composes: tokens;
   z-index: 5;
-  border: 1px solid var(--colony-blue);
+  border: 1px solid var(--action-secondary);
   background-color: rgb(217, 216, 236);
-  color: var(--colony-blue);
+  color: var(--action-secondary);
 }
 
 .dot {
