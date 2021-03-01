@@ -29,12 +29,11 @@ interface Props {
 
 const TransactionStatus = ({ status, showTooltip = true }: Props) => (
   <Tooltip
+    appearance={{ size: 'medium' }}
     placement="right"
     trigger={showTooltip ? 'hover' : 'disabled'}
     content={
-      <div className={styles.tooltip}>
-        <FormattedMessage {...MSG.transactionStatus} values={{ status }} />
-      </div>
+      <FormattedMessage {...MSG.transactionStatus} values={{ status }} />
     }
   >
     <div className={styles.main}>

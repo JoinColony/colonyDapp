@@ -21,10 +21,6 @@
   cursor: default;
 }
 
-.tooltip {
-  padding: 8px 4px;
-}
-
 .themeFailed {
   composes: statusTheme;
   background-color: var(--pink);
