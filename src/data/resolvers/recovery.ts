@@ -26,6 +26,9 @@ import {
   RecoveryRolesUsersDocument,
   getMinimalUser,
   UserQuery,
+  GetRecoveryRequiredApprovalsQuery,
+  GetRecoveryRequiredApprovalsQueryVariables,
+  GetRecoveryRequiredApprovalsDocument,
 } from '~data/index';
 
 import { ProcessedEvent } from './colonyActions';
@@ -207,18 +210,33 @@ export const recoveryModeResolvers = ({
           },
         });
 
-        if (recoveryEvents?.data?.recoveryEventsForSession?.length) {
-          const colonyClient = (await colonyManager.getClient(
-            ClientType.ColonyClient,
+        /*
+         * @NOTE Leveraging apollo's internal cache
+         *
+         * This cuts down on loading times, especially on pages with a lot
+         * of events generated.
+         */
+        const requiredApprovals = await apolloClient.query<
+          GetRecoveryRequiredApprovalsQuery,
+          GetRecoveryRequiredApprovalsQueryVariables
+        >({
+          query: GetRecoveryRequiredApprovalsDocument,
+          variables: {
             colonyAddress,
-          )) as ColonyClientV6;
+            blockNumber,
+          },
+        });
 
+        if (
+          recoveryEvents?.data?.recoveryEventsForSession?.length &&
+          requiredApprovals?.data?.getRecoveryRequiredApprovals
+        ) {
           let exitApprovalsCounter = 0;
           const systemMessages: SystemMessage[] = [];
 
-          const thresholdExitApprovals = (
-            await colonyClient.numRecoveryRoles()
-          ).toNumber();
+          const {
+            data: { getRecoveryRequiredApprovals: thresholdExitApprovals },
+          } = requiredApprovals;
 
           await Promise.all(
             recoveryEvents.data.recoveryEventsForSession.map(
