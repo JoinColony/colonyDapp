@@ -421,36 +421,6 @@ export const recoveryModeResolvers = ({
     async getRecoveryRequiredApprovals(_, { blockNumber, colonyAddress }) {
       try {
         /*
-         * @NOTE Leveraging apollo's internal cache
-         *
-         * This might seem counter intuitive, fetching an apollo query here,
-         * when we could just call `getSessionRecoveryEvents` directly, but
-         * doing so, allows us to fetch the recovery events that are already
-         * inside the cache, and not be forced to fetch them all over again.
-         *
-         * This cuts down on loading times, especially on pages with a lot
-         * of events generated.
-         */
-        const recoveryEvents = await apolloClient.query<
-          RecoveryEventsForSessionQuery,
-          RecoveryEventsForSessionQueryVariables
-        >({
-          query: RecoveryEventsForSessionDocument,
-          variables: {
-            colonyAddress,
-            blockNumber,
-          },
-        });
-
-        /*
-         * Prettier is being stupid again
-         */
-        // eslint-disable-next-line max-len
-        const potentialExitEvent = recoveryEvents?.data?.recoveryEventsForSession?.find(
-          ({ name }) => name === ColonyAndExtensionsEvents.RecoveryModeExited,
-        );
-
-        /*
          * @NOTE Leveraging apollo's internal cache yet again, so we don't
          * re-fetch and re-parse both the server user and the recovery role events
          */
@@ -461,7 +431,7 @@ export const recoveryModeResolvers = ({
           query: RecoveryRolesUsersDocument,
           variables: {
             colonyAddress,
-            endBlockNumber: potentialExitEvent?.blockNumber,
+            endBlockNumber: blockNumber,
           },
         });
 
