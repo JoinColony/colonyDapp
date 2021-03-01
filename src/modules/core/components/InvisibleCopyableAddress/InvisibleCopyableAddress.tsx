@@ -64,15 +64,14 @@ const InvisibleCopyableAddress = ({
     formatMessage(MSG.copyMessage);
   return (
     <Tooltip
+      appearance={{ size: 'medium' }}
       placement="right"
       trigger="hover"
       content={
-        <div className={styles.copyAddressTooltip}>
-          <FormattedMessage
-            {...MSG.copyAddressTooltip}
-            values={{ copied, tooltipMessage }}
-          />
-        </div>
+        <FormattedMessage
+          {...MSG.copyAddressTooltip}
+          values={{ copied, tooltipMessage }}
+        />
       }
     >
       <div className={styles.addressWrapper}>

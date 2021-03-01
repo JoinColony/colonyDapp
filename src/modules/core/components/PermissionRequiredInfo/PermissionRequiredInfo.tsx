@@ -64,7 +64,11 @@ const PermissionRequiredInfo = ({ requiredRoles }: Props) => {
           <p className={styles.sectionLabel}>
             <FormattedMessage {...MSG.sectionLabel} />
           </p>
-          <Tooltip darkTheme content={tooltipText} placement="right">
+          <Tooltip
+            appearance={{ theme: 'dark', size: 'medium' }}
+            content={tooltipText}
+            placement="right"
+          >
             {({ close, open, ref }) => (
               <div
                 ref={ref}

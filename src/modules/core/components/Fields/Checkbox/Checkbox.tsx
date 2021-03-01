@@ -129,7 +129,7 @@ const Checkbox = ({
     <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
       {disabled && tooltipText ? (
         <Tooltip
-          darkTheme
+          appearance={{ theme: 'dark' }}
           content={tooltipText}
           placement="bottom"
           popperProps={tooltipPopperProps}
