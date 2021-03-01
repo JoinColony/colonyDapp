@@ -13,6 +13,8 @@ interface Props {
   colony: Colony;
   cancel: () => void;
   close: () => void;
+  prevStep?: string;
+  callStep?: (dialogName: string) => void;
 }
 
 const displayName = 'dashboard.ColonyTokenManagementDialog';
@@ -34,6 +36,8 @@ const ColonyTokenManagementDialog = ({
   colony,
   cancel,
   close,
+  callStep,
+  prevStep,
 }: Props) => {
   const history = useHistory();
 
@@ -66,6 +70,11 @@ const ColonyTokenManagementDialog = ({
       colony={colony}
       updateTokens={updateTokens}
       tokensList={getTokenList}
+      back={
+        prevStep === undefined || callStep === undefined
+          ? undefined
+          : () => callStep(prevStep)
+      }
     />
   );
 };

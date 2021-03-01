@@ -68,6 +68,7 @@ interface Props {
   // Token list from json file. Not supported on local env
   tokensList?: AnyToken[];
   colony: Colony;
+  back?: () => void;
 }
 
 interface FormValues {
@@ -88,6 +89,7 @@ const TokenEditDialog = ({
   tokensList = [],
   colony: { tokens = [], nativeTokenAddress, tokenAddresses },
   colony,
+  back,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -258,8 +260,10 @@ const TokenEditDialog = ({
             <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
               <Button
                 appearance={{ theme: 'secondary', size: 'large' }}
-                text={{ id: 'button.cancel' }}
-                onClick={close}
+                text={{
+                  id: back === undefined ? 'button.cancel' : 'button.back',
+                }}
+                onClick={back === undefined ? close : back}
               />
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
