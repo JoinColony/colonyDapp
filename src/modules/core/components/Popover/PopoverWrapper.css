@@ -138,6 +138,10 @@
   color: var(--colony-white);
 }
 
+.sizeMedium {
+  padding: 8px 4px;
+}
+
 /*
  *  @NOTE On theme-ing arrows
  *

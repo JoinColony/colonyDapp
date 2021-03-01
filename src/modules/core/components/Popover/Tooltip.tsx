@@ -2,11 +2,18 @@ import React, { ReactNode, useMemo } from 'react';
 import { PopperProps } from 'react-popper';
 
 import Popover from './Popover';
-import { PopoverTriggerType, PopoverChildFn } from './types';
+import {
+  PopoverTriggerType,
+  PopoverChildFn,
+  PopoverAppearanceType,
+} from './types';
 
 import styles from './Tooltip.css';
 
 interface Props {
+  /** Appearance object */
+  appearance?: PopoverAppearanceType;
+
   /** Child element to trigger the popover */
   children: ReactNode | PopoverChildFn;
 
@@ -27,11 +34,10 @@ interface Props {
 
   /** Set the open state from outside */
   isOpen?: boolean;
-
-  darkTheme?: boolean;
 }
 
 const Tooltip = ({
+  appearance,
   children,
   content,
   placement = 'top',
@@ -39,7 +45,6 @@ const Tooltip = ({
   showArrow = true,
   trigger = 'hover',
   isOpen,
-  darkTheme = true,
 }: Props) => {
   const renderedContent = useMemo(
     () => <div className={styles.container}>{content}</div>,
@@ -47,7 +52,7 @@ const Tooltip = ({
   );
   return (
     <Popover
-      appearance={darkTheme ? { theme: 'dark' } : undefined}
+      appearance={appearance}
       trigger={content ? trigger : 'disabled'}
       openDelay={200}
       content={renderedContent}
