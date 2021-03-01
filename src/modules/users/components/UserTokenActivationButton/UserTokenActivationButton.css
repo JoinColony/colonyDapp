@@ -1,17 +1,32 @@
 .tokens {
-  margin-right: -5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: -3px;
+  padding: 0 8px;
+  height: 24px;
+  position: relative;
   border: 0;
-  background: transparent;
+  border-radius: var(--radius-normal);
+  background-color: transparent;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+  cursor: pointer;
 }
 
 .tokens:hover {
-  position: relative;
   z-index: 5;
   background-color: rgb(217, 216, 236);
-  color: var(--colony-blue);
+  color: var(--action-secondary);
+}
+
+.tokensActive {
+  composes: tokens;
+  z-index: 5;
+  border: 1px solid var(--action-secondary);
+  background-color: rgb(217, 216, 236);
+  color: var(--action-secondary);
 }
 
 .dot {

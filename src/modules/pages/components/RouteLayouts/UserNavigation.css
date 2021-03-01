@@ -96,6 +96,11 @@
 }
 
 .walletAddress {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 8px;
+
   /*
    * @NOTE We need to do border sizing shenanigans due to how the border color
    * is required by spec to have opacity.
@@ -106,8 +111,9 @@
    * active class (the one that has a different colored border), we remove the extra padding
    * and set the border
    */
-  padding: 2px 9px 3px;
+  height: 24px;
   border: none;
+  border: 1px solid transparent;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
   color: var(--temp-grey-blue-7);
@@ -120,18 +126,18 @@
 }
 
 .walletAddress:hover {
-  background-color: color-mod(var(--colony-blue) alpha(10%));
-  color: var(--colony-blue);
+  background-color: rgb(217, 216, 236);
+  color: var(--action-secondary);
 }
 
 .walletAddressActive {
   composes: walletAddress;
-  padding: 1px 8px 2px;
-  border: 1px solid var(--colony-blue);
-  color: var(--colony-blue);
+  border: 1px solid var(--action-secondary);
+  color: var(--action-secondary);
 }
 
 .buttonsWrapper {
+  display: flex;
   padding: 1px;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
