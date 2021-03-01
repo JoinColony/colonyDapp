@@ -22,6 +22,7 @@ export const leftArrow: string;
 export const leftEndArrow: string;
 export const leftStartArrow: string;
 export const themeDark: string;
+export const sizeMedium: string;
 export const themeDarkTopArrow: string;
 export const themeDarkTopEndArrow: string;
 export const themeDarkTopStartArrow: string;
