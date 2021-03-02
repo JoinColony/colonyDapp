@@ -333,6 +333,7 @@
   border: 1px solid var(--temp-grey-blue-7);
   background-color: rgba(255, 255, 255);
   color: var(--temp-grey-blue-7);
+  opacity: 0.65;
 }
 
 .themeWhite:hover {
