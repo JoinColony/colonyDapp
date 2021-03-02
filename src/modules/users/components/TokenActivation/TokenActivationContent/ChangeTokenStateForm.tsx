@@ -10,26 +10,28 @@ import { ActionForm, Input } from '~core/Fields';
 import Numeral from '~core/Numeral';
 
 import { UserToken } from '~data/generated';
+import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
+import { Address } from '~types/index';
 import { pipe, mapPayload } from '~utils/actions';
 
 import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
   changeState: {
-    id: 'users.TokenActivation.TokenActivationContent.TokensTab.changeState',
+    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.changeState`,
     defaultMessage: 'Change token state',
   },
   activate: {
-    id: 'users.TokenActivation.TokenActivationContent.TokensTab.activate',
+    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.activate`,
     defaultMessage: 'Activate',
   },
   withdraw: {
-    id: 'users.TokenActivation.TokenActivationContent.TokensTab.withdraw',
+    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.withdraw`,
     defaultMessage: 'Withdraw',
   },
   balance: {
-    id: 'users.TokenActivation.TokenActivationContent.TokensTab.balance',
+    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.balance`,
     defaultMessage: 'balance: {tokenBalance}',
   },
 });
@@ -47,6 +49,7 @@ export interface ChangeTokenStateFormProps {
   tokenDecimals: number;
   activeTokens: BigNumber;
   inactiveTokens: BigNumber;
+  colonyAddress: Address;
 }
 
 const ChangeTokenStateForm = ({
@@ -54,8 +57,11 @@ const ChangeTokenStateForm = ({
   tokenDecimals,
   activeTokens,
   inactiveTokens,
+  colonyAddress,
 }: ChangeTokenStateFormProps) => {
-  const [isActivate, setIsActivate] = useState(true);
+  const [isActivate, setIsActive] = useState(true);
+
+  const { walletAddress } = useLoggedInUser();
 
   const formAction = useCallback(
     (actionType: '' | '_ERROR' | '_SUCCESS') =>
@@ -73,7 +79,11 @@ const ChangeTokenStateForm = ({
           moveDecimal(amount, tokenDecimals),
         );
 
-        return { amount: formtattedAmount };
+        return {
+          amount: formtattedAmount,
+          userAddress: walletAddress,
+          colonyAddress,
+        };
       }),
     ),
     [],
@@ -88,14 +98,14 @@ const ChangeTokenStateForm = ({
         <div className={isActivate ? styles.activate : styles.activateInactive}>
           <Button
             appearance={{ theme: isActivate ? 'primary' : 'white' }}
-            onClick={() => setIsActivate(true)}
+            onClick={() => setIsActive(true)}
             text={MSG.activate}
           />
         </div>
         <div className={isActivate ? styles.withdrawInactive : styles.withdraw}>
           <Button
             appearance={{ theme: !isActivate ? 'primary' : 'white' }}
-            onClick={() => setIsActivate(false)}
+            onClick={() => setIsActive(false)}
             text={MSG.withdraw}
           />
         </div>

@@ -7,6 +7,7 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
 
 import { UserToken } from '~data/generated';
+import { Address } from '~types/index';
 import { formatTokenValue } from '~utils/numbers';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
@@ -24,25 +25,19 @@ const MSG = defineMessages({
     defaultMessage: 'Inactive',
   },
   activeTokensTooltip: {
-    id:
-      // eslint-disable-next-line max-len
-      'users.TokenActivation.TokenActivationContent.TokensTab.activeTokensTooltip',
+    id: `users.TokenActivation.TokenActivationContent.TokensTab.activeTokensTooltip`,
     defaultMessage: `Tokens are “Active” when they’ve been deposited to a
      contract which lets them get ‘locked’ when you need to stake,
      or claim a share of Rewards. You can withdraw tokens back
      to your wallet any time, you just need to clear any locks first.`,
   },
   inactiveTokensTooltip: {
-    id:
-      // eslint-disable-next-line max-len
-      'users.TokenActivation.TokenActivationContent.TokensTab.inactiveTokensTooltip',
+    id: `users.TokenActivation.TokenActivationContent.TokensTab.inactiveTokensTooltip`,
     defaultMessage: `Inactive tokens are contained in your own wallet.
      You need to “Activate” them to stake, or be eligible to receive Rewards.`,
   },
   lockedTokensTooltip: {
-    id:
-      // eslint-disable-next-line max-len
-      'users.TokenActivation.TokenActivationContent.TokensTab.lockedTokensTooltip',
+    id: `users.TokenActivation.TokenActivationContent.TokensTab.lockedTokensTooltip`,
     defaultMessage: `You have unclaimed transactions which must be claimed
      before these tokens can be withdrawn.`,
   },
@@ -54,6 +49,7 @@ export interface TokensTabProps {
   totalTokens: BigNumber;
   lockedTokens: BigNumber;
   token: UserToken;
+  colonyAddress: Address;
 }
 
 const TokensTab = ({
@@ -62,6 +58,7 @@ const TokensTab = ({
   totalTokens,
   lockedTokens,
   token,
+  colonyAddress,
 }: TokensTabProps) => {
   const tokenDecimals = useMemo(
     () => getTokenDecimalsWithFallback(token?.decimals),
@@ -141,6 +138,7 @@ const TokensTab = ({
         tokenDecimals={tokenDecimals}
         activeTokens={activeTokens}
         inactiveTokens={inactiveTokens}
+        colonyAddress={colonyAddress}
       />
     </>
   );
