@@ -5,6 +5,7 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+  cursor: pointer;
 }
 
 .tokens:hover {

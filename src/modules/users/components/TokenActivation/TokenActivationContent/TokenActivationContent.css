@@ -1,6 +1,6 @@
 .main {
   height: 488px;
-  width: 240px;
+  min-width: 240px;
 }
 
 .mainDivider {
@@ -51,7 +51,7 @@
   composes: mainDivider;
   display: flex;
   align-items: center;
-  padding-left: 18px;
+  padding: 0 18px;
   height: 64px;
   width: 100%;
 }
