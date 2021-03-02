@@ -83,6 +83,7 @@ const ChangeTokenStateForm = ({
           amount: formtattedAmount,
           userAddress: walletAddress,
           colonyAddress,
+          tokenAddress: token.address,
         };
       }),
     ),
