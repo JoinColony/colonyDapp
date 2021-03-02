@@ -7,6 +7,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 
 import { UserLock, UserToken } from '~data/index';
+import { Address } from '~types/index';
 
 import styles from './UserTokenActivationButton.css';
 
@@ -15,9 +16,14 @@ const displayName = 'users.UserTokenActivationButton';
 interface Props {
   userLock: UserLock;
   nativeToken: UserToken;
+  colonyAddress: Address;
 }
 
-const UserTokenActivationButton = ({ nativeToken, userLock }: Props) => {
+const UserTokenActivationButton = ({
+  nativeToken,
+  userLock,
+  colonyAddress,
+}: Props) => {
   const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
 
   const lockedBalance = bigNumberify(userLock?.totalObligation || 0);
@@ -32,6 +38,7 @@ const UserTokenActivationButton = ({ nativeToken, userLock }: Props) => {
       totalTokens={totalBalance}
       lockedTokens={lockedBalance}
       token={nativeToken}
+      colonyAddress={colonyAddress}
     >
       {({ toggle, ref }) => (
         <>
