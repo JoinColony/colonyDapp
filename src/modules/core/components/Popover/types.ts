@@ -2,7 +2,8 @@ import { ReactNode, ReactElement } from 'react';
 import { MessageDescriptor } from 'react-intl';
 
 export type PopoverAppearanceType = {
-  theme: 'dark' | 'grey';
+  theme?: 'dark' | 'grey';
+  size?: 'medium';
 };
 
 export interface PopoverChildFnProps {
