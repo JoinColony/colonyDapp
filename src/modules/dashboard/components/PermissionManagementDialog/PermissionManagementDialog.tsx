@@ -65,6 +65,8 @@ interface Props {
   cancel: () => void;
   close: () => void;
   colonyAddress: string;
+  prevStep?: string;
+  callStep?: (dialogName: string) => void;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -77,6 +79,8 @@ const PermissionManagementDialog = ({
   colonyAddress,
   cancel,
   close,
+  callStep,
+  prevStep,
 }: Props) => {
   const history = useHistory();
   const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
@@ -297,8 +301,17 @@ const PermissionManagementDialog = ({
               <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={cancel}
-                  text={{ id: 'button.cancel' }}
+                  onClick={
+                    prevStep === undefined || callStep === undefined
+                      ? cancel
+                      : () => callStep(prevStep)
+                  }
+                  text={{
+                    id:
+                      prevStep === undefined || callStep === undefined
+                        ? 'button.cancel'
+                        : 'button.back',
+                  }}
                 />
                 <Button
                   appearance={{ theme: 'primary', size: 'large' }}
