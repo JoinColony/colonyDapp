@@ -113,18 +113,15 @@ export const eventsResolvers = ({
               needsAction: !!needsAction,
             }));
             /*
-             * Only return the array of actions, if at least one of them needs
-             * attention, otherwise we don't show anything anyway.
+             * Only return the actions that actually need attention, otherwise
+             * return a empty array
              *
              * By doing so, we lighted the processing need of the actions list
              * transformer
              */
-            if (
-              actionsThatNeedAttention.some(({ needsAction }) => needsAction)
-            ) {
-              return actionsThatNeedAttention;
-            }
-            return [];
+            return actionsThatNeedAttention.filter(
+              ({ needsAction }) => needsAction,
+            );
           }
         }
         return [];
