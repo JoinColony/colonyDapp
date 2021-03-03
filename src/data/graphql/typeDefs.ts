@@ -234,7 +234,7 @@ export default gql`
     recoverySystemMessagesForSession(
       blockNumber: Int!
       colonyAddress: String!
-    ): [SystemMessage]!
+    ): [SystemMessage!]!
     recoveryRolesUsers(colonyAddress: String!, endBlockNumber: Int): [User!]!
     getRecoveryStorageSlot(
       colonyAddress: String!
@@ -248,7 +248,7 @@ export default gql`
       blockNumber: Int!
       colonyAddress: String!
     ): Int!
-    recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent]!
+    recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
   }
 

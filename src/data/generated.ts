@@ -695,11 +695,11 @@ export type Query = {
   networkContracts: NetworkContracts;
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
-  recoveryAllEnteredEvents: Array<Maybe<ParsedEvent>>;
+  recoveryAllEnteredEvents: Array<ParsedEvent>;
   recoveryEventsForSession: Array<ParsedEvent>;
   recoveryRolesAndApprovalsForSession: Array<UsersAndRecoveryApprovals>;
   recoveryRolesUsers: Array<User>;
-  recoverySystemMessagesForSession: Array<Maybe<SystemMessage>>;
+  recoverySystemMessagesForSession: Array<SystemMessage>;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   task: Task;
@@ -2007,7 +2007,7 @@ export type RecoverySystemMessagesForSessionQueryVariables = Exact<{
 }>;
 
 
-export type RecoverySystemMessagesForSessionQuery = { recoverySystemMessagesForSession: Array<Maybe<Pick<SystemMessage, 'type' | 'name' | 'createdAt'>>> };
+export type RecoverySystemMessagesForSessionQuery = { recoverySystemMessagesForSession: Array<Pick<SystemMessage, 'type' | 'name' | 'createdAt'>> };
 
 export type GetRecoveryStorageSlotQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -2052,7 +2052,7 @@ export type RecoveryAllEnteredEventsQueryVariables = Exact<{
 }>;
 
 
-export type RecoveryAllEnteredEventsQuery = { recoveryAllEnteredEvents: Array<Maybe<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'blockNumber' | 'transactionHash'>>> };
+export type RecoveryAllEnteredEventsQuery = { recoveryAllEnteredEvents: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'blockNumber' | 'transactionHash'>> };
 
 export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
