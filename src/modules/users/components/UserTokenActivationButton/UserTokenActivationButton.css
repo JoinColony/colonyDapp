@@ -1,6 +1,8 @@
 .tokens {
+  display: flex;
+  align-items: center;
   margin-right: -3px;
-  padding: 0 8px;
+  padding: 0 8px 2px;
   height: 24px;
   position: relative;
   border: 1px solid transparent;
@@ -13,6 +15,10 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.tokens span:first-child {
+  margin-top: 2px;
 }
 
 .tokens:hover {
