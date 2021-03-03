@@ -96,7 +96,9 @@
 }
 
 .walletAddress {
-  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px 2px;
 
   /*
    * @NOTE We need to do border sizing shenanigans due to how the border color
