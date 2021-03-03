@@ -15,6 +15,7 @@ import {
   Colony,
   useUser,
 } from '~data/index';
+import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   getSpecificActionValuesCheck,
   sortMetdataHistory,
@@ -27,7 +28,6 @@ import {
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
-import { ColonyAndExtensionsEvents } from '~types/index';
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
@@ -206,7 +206,11 @@ const ActionsPageEvent = ({
     };
   }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
   const roleNameMessage = {
-    id: `role.${values?.roles ? values?.roles[eventIndex].id : 'unknown'}`,
+    id: `role.${
+      values?.roles && values?.roles[eventIndex]
+        ? values?.roles[eventIndex].id
+        : 'unknown'
+    }`,
   };
   const { formatMessage } = useIntl();
   const formattedRole = formatMessage(roleNameMessage).toLowerCase();
@@ -264,7 +268,9 @@ const ActionsPageEvent = ({
         );
       case ColonyAndExtensionsEvents.ColonyRoleSet:
         return getColonyRoleSetMessageDescriptorsIds(
-          values?.roles && values?.roles[eventIndex].setTo,
+          values?.roles &&
+            values?.roles[eventIndex] &&
+            values?.roles[eventIndex]?.setTo,
           'event',
         );
       default:
