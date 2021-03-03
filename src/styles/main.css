@@ -50,6 +50,10 @@ textarea {
   margin: 0;
 }
 
+button {
+  outline: 0;
+}
+
 *, *::before, *::after {
   box-sizing: inherit;
 }
