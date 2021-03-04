@@ -25,7 +25,7 @@ const MSG = defineMessages({
   },
   staked: {
     id: 'users.TokenActivation.TokenActivationContent.TokensTab.staked',
-    defaultMessage: 'Active',
+    defaultMessage: 'Staked',
   },
   inactive: {
     id: 'users.TokenActivation.TokenActivationContent.TokensTab.inactive',
@@ -82,7 +82,9 @@ const TokensTab = ({
   return (
     <>
       <div className={styles.totalTokensContainer}>
-        <TokenIcon token={token || {}} size="xs" />
+        <div className={styles.tokenSymbol}>
+          <TokenIcon token={token || {}} size="xs" />
+        </div>
         <p className={styles.totalTokens}>
           {formattedTotalAmount} <span>{token?.symbol}</span>
         </p>
@@ -128,7 +130,7 @@ const TokensTab = ({
             >
               <FormattedMessage {...MSG.inactive} />
             </TokenTooltip>
-            <div className={styles.tokenNumbers}>
+            <div className={styles.tokenNumbersInactive}>
               <Numeral
                 value={inactiveTokens}
                 suffix={` ${token?.symbol}`}
@@ -145,6 +147,7 @@ const TokensTab = ({
         activeTokens={activeTokens}
         inactiveTokens={inactiveTokens}
         colonyAddress={colonyAddress}
+        lockedTokens={lockedTokens}
       />
     </>
   );
