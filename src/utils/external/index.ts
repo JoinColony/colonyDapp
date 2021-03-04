@@ -1,7 +1,7 @@
 import { BigNumber, formatUnits } from 'ethers/utils';
-import { Network } from '@colony/colony-js';
+import { Network, ColonyVersion, releaseMap } from '@colony/colony-js';
 
-import { DEFAULT_NETWORK } from '~constants';
+import { DEFAULT_NETWORK, NETWORK_RELEASES_URL } from '~constants';
 
 interface EthUsdResponse {
   status: string;
@@ -110,3 +110,6 @@ export const getBlockExplorerLink = ({
     network === 'homestead' || network === Network.Mainnet ? '' : `${network}.`;
   return `https://${networkSubdomain}etherscan.${tld}/${linkType}/${addressOrHash}`;
 };
+
+export const getNetworkRelaseLink = (version: ColonyVersion) =>
+  `${NETWORK_RELEASES_URL}/${releaseMap[version]}`;
