@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { FormikProps } from 'formik';
@@ -26,9 +26,9 @@ const MSG = defineMessages({
     id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.activate`,
     defaultMessage: 'Activate',
   },
-  withdraw: {
-    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.withdraw`,
-    defaultMessage: 'Withdraw',
+  deactivate: {
+    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.deactivate`,
+    defaultMessage: 'Deactivate',
   },
   balance: {
     id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.balance`,
@@ -49,6 +49,7 @@ export interface ChangeTokenStateFormProps {
   tokenDecimals: number;
   activeTokens: BigNumber;
   inactiveTokens: BigNumber;
+  lockedTokens: BigNumber;
   colonyAddress: Address;
 }
 
@@ -57,6 +58,7 @@ const ChangeTokenStateForm = ({
   tokenDecimals,
   activeTokens,
   inactiveTokens,
+  lockedTokens,
   colonyAddress,
 }: ChangeTokenStateFormProps) => {
   const [isActivate, setIsActive] = useState(true);
@@ -69,6 +71,14 @@ const ChangeTokenStateForm = ({
         ? ActionTypes[`USER_DEPOSIT_TOKEN${actionType}`]
         : ActionTypes[`USER_WITHDRAW_TOKEN${actionType}`],
     [isActivate],
+  );
+
+  const deActivateBalanceStyles = useMemo(
+    () =>
+      lockedTokens.isZero()
+        ? styles.balanceInfoWithdraw
+        : styles.balanceInfoWithdrawLocked,
+    [lockedTokens],
   );
 
   const transform = useCallback(
@@ -107,7 +117,7 @@ const ChangeTokenStateForm = ({
           <Button
             appearance={{ theme: !isActivate ? 'primary' : 'white' }}
             onClick={() => setIsActive(false)}
-            text={MSG.withdraw}
+            text={MSG.deactivate}
           />
         </div>
       </div>
@@ -140,7 +150,7 @@ const ChangeTokenStateForm = ({
               className={
                 isActivate
                   ? styles.balanceInfoActivate
-                  : styles.balanceInfoWithdraw
+                  : deActivateBalanceStyles
               }
             >
               <FormattedMessage

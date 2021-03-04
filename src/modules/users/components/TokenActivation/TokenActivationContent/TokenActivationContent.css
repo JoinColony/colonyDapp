@@ -51,15 +51,20 @@
   composes: mainDivider;
   display: flex;
   align-items: center;
-  padding: 0 18px;
-  height: 64px;
+  padding: 16px;
+  min-height: 60px;
   width: 100%;
+}
+
+.tokenSymbol {
+  width: 26px;
 }
 
 .totalTokens {
   margin-left: 16px;
   font-size: var(--size-medium-l);
   color: var(--dark);
+  overflow-wrap: anywhere;
 }
 
 .totalTokens > span {
@@ -68,8 +73,8 @@
 
 .tokensDetailsContainer {
   composes: mainDivider;
-  padding: 13px 0 0 16px;
-  height: 189px;
+  padding: 13px 16px 15px 16px;
+  min-height: 189px;
   width: 100%;
 }
 
@@ -112,6 +117,7 @@
   margin-left: 20px;
   color: var(--dark);
   font: var(--size-normal);
+  overflow-wrap: anywhere;
 }
 
 .tokenNumbersLocked {
@@ -119,27 +125,9 @@
   margin-left: 40px;
 }
 
-.lockedAmountContainer {
-  display: flex;
-  align-items: center;
-  margin: 0 0 21px 20px;
-  width: fit-content;
-}
-
-.lockedAmountContainer > i {
-  height: 9px;
-  width: 9px;
-  fill: var(--text-disabled);
-}
-
-.lockedAmount {
-  margin-left: 8px;
-  font-size: var(--size-tiny);
-  color: var(--text-disabled);
-}
-
-.previousTotalAmount > p {
-  margin-left: 8px;
+.tokenNumbersInactive {
+  composes: tokenNumbers;
+  margin-bottom: 0;
 }
 
 .changeTokensState {
@@ -219,10 +207,19 @@
   }
 }
 
+.balanceInfoWithdrawLocked {
+  composes: balanceInfoActivate;
+
+  &::before {
+    background-color: var(--golden);
+  }
+}
+
 .balanceAmount {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
+  overflow-wrap: anywhere;
 }
 
 .form > button {
