@@ -164,11 +164,6 @@ export default function* setupUserContext(
      */
     yield fork(setupContextDependentSagas);
 
-    /*
-     * Get the network contract values from the resolver
-     */
-    yield updateNetworkContracts();
-
     // Start a forked task to listen for user balance events
     yield fork(setupUserBalanceListener, walletAddress);
 
@@ -220,6 +215,11 @@ export default function* setupUserContext(
       // @ts-ignore
       update: cacheUpdates.setNativeTokenPermissions(),
     });
+
+    /*
+     * Get the network contract values from the resolver
+     */
+    yield updateNetworkContracts();
 
     setupOnBeforeUnload();
 
