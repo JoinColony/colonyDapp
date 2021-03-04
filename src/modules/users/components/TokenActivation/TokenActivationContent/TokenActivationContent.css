@@ -60,10 +60,23 @@
   width: 26px;
 }
 
+.tokenSymbolSmall {
+  margin-left: 5px;
+  width: 16px;
+}
+
 .totalTokens {
   margin-left: 16px;
   font-size: var(--size-medium-l);
+  white-space: nowrap;
   color: var(--dark);
+}
+
+.totalTokensSmall {
+  composes: totalTokens;
+  margin-right: 4px;
+  font-size: var(--size-normal);
+  white-space: unset;
   overflow-wrap: anywhere;
 }
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
@@ -67,6 +67,18 @@ const TokensTab = ({
   token,
   colonyAddress,
 }: TokensTabProps) => {
+  const targetRef = useRef<HTMLParagraphElement>(null);
+
+  const [totalTokensWidth, setTotalTokensWidth] = useState(0);
+
+  const widthLimit = 164;
+
+  useLayoutEffect(() => {
+    if (targetRef?.current && totalTokensWidth === 0) {
+      setTotalTokensWidth(targetRef?.current?.offsetWidth);
+    }
+  }, [totalTokensWidth]);
+
   const tokenDecimals = useMemo(
     () => getTokenDecimalsWithFallback(token?.decimals),
     [token],
@@ -82,10 +94,26 @@ const TokensTab = ({
   return (
     <>
       <div className={styles.totalTokensContainer}>
-        <div className={styles.tokenSymbol}>
-          <TokenIcon token={token || {}} size="xs" />
+        <div
+          className={
+            totalTokensWidth <= widthLimit
+              ? styles.tokenSymbol
+              : styles.tokenSymbolSmall
+          }
+        >
+          <TokenIcon
+            token={token || {}}
+            size={totalTokensWidth <= widthLimit ? 'xs' : 'xxs'}
+          />
         </div>
-        <p className={styles.totalTokens}>
+        <p
+          ref={targetRef}
+          className={
+            totalTokensWidth <= widthLimit
+              ? styles.totalTokens
+              : styles.totalTokensSmall
+          }
+        >
           {formattedTotalAmount} <span>{token?.symbol}</span>
         </p>
       </div>
