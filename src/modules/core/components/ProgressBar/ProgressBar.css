@@ -3,9 +3,26 @@
   align-items: center;
   padding: 0 3px;
   height: 16px;
+  position: relative;
   border-radius: var(--radius-small);
-  background-color: var(--colony-light-blue);
   box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+}
+
+.themeDefault {
+  background-color: var(--colony-light-blue);
+}
+
+.themeDark {
+  background-color: rgb(207, 213, 229);
+}
+
+.sizeNormal {
+  height: 16px;
+}
+
+.sizeSmall {
+  padding: 0;
+  height: 7px;
 }
 
 .main {
@@ -19,7 +36,6 @@
 
 .main::-webkit-progress-bar {
   border-radius: var(--radius-small);
-  background-color: var(--colony-light-blue);
 }
 
 .main::-webkit-progress-value {
@@ -30,4 +46,37 @@
 .main::-moz-progress-bar {
   border-radius: var(--radius-small);
   background-color: var(--primary);
+}
+
+.themeDefault .main::-webkit-progress-bar {
+  background-color: var(--colony-light-blue);
+}
+
+.themeDark .main::-webkit-progress-bar {
+  background-color: rgb(207, 213, 229);
+}
+
+.sizeSmall .main {
+  height: 7px;
+}
+
+.threshold {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: -21px;
+}
+
+.thresholdPercentage {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+}
+
+.thresholdSeparator {
+  height: 14px;
+  width: 2px;
+  background-color: var(--danger);
 }
