@@ -1,7 +1,6 @@
 import React, { ReactNode, useCallback, useState } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 
-import Icon from '~core/Icon';
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
@@ -14,21 +13,20 @@ interface Appearance {
   margin?: 'none' | 'default';
 }
 
+type childrenFn = (handleDismissed: any) => void;
+
 interface Props {
   /** Appearance object */
   appearance?: Appearance;
 
   /** `children` to render (only works if `text` is not set) */
-  children?: ReactNode;
+  children?: ReactNode | childrenFn;
 
   /** A string or a `messageDescriptor` that make up the alert's content */
   text?: MessageDescriptor | string;
 
   /** Values for loading text (react-intl interpolation) */
   textValues?: SimpleMessageValues;
-
-  /** Should the alert be dismissible */
-  isDismissible?: boolean;
 
   /** Callback after alert is dismissed (only if `isDismissible` is `true`) */
   onAlertDismissed?: () => void;
@@ -39,7 +37,6 @@ const displayName = 'Alert';
 const Alert = ({
   appearance = { theme: 'danger', margin: 'default' },
   onAlertDismissed: callback,
-  isDismissible = false,
   children,
   text,
   textValues,
@@ -49,14 +46,11 @@ const Alert = ({
   const { formatMessage } = useIntl();
 
   const handleDismiss = useCallback(() => {
-    if (!isDismissible) {
-      return;
-    }
     setIsOpen(false);
     if (typeof callback === 'function') {
       callback();
     }
-  }, [callback, isDismissible]);
+  }, [callback]);
 
   if (!isOpen) return null;
 
@@ -64,20 +58,11 @@ const Alert = ({
     typeof text === 'string' ? text : text && formatMessage(text, textValues);
   return (
     <div className={getMainClasses(appearance, styles)}>
-      {isDismissible && (
-        <button
-          className={styles.closeButton}
-          type="button"
-          onClick={handleDismiss}
-        >
-          <Icon
-            appearance={{ size: 'small' }}
-            name="close"
-            title={{ id: 'button.close' }}
-          />
-        </button>
-      )}
-      {alertText || children}
+      <>
+        {alertText || typeof children === 'function'
+          ? (children as childrenFn)(handleDismiss)
+          : children}
+      </>
     </div>
   );
 };
