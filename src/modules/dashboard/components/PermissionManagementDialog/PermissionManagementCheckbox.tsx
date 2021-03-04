@@ -14,11 +14,7 @@ const MSG = defineMessages({
   },
   roleDescription0: {
     id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription0`,
-    defaultMessage: `{isSupportedRecoveryRole, select,
-      true {Disable colony in emergency,
-          update storage, and approve reactivation.}
-      other {Setting this role is not supported in the current colony version.}
-    }`,
+    defaultMessage: `Disable colony in emergency, update storage, and approve reactivation.`,
   },
   roleDescription1: {
     id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription1`,
@@ -56,7 +52,6 @@ interface Props {
   disabled: boolean;
   role: ColonyRole;
   domainId: number;
-  isSupportedRecoveryRole: boolean;
 }
 
 const displayName =
@@ -67,7 +62,6 @@ const PermissionManagementCheckbox = ({
   disabled,
   role,
   domainId,
-  isSupportedRecoveryRole,
 }: Props) => {
   const roleNameMessage = { id: `role.${role}` };
   const roleDescriptionMessage = useMemo(
@@ -129,18 +123,11 @@ const PermissionManagementCheckbox = ({
              *
              * Currently applicable for:
              * - Arbitration
-             * - Recovery in all colonies pre v6
              */
-            role === ColonyRole.Arbitration ||
-            (!isSupportedRecoveryRole && role === ColonyRole.Recovery)
-              ? styles.permissionNotAvailable
-              : ''
+            role === ColonyRole.Arbitration ? styles.permissionNotAvailable : ''
           }
         >
-          <FormattedMessage
-            {...roleDescriptionMessage}
-            values={{ isSupportedRecoveryRole }}
-          />
+          <FormattedMessage {...roleDescriptionMessage} />
         </span>
       </span>
     </Checkbox>

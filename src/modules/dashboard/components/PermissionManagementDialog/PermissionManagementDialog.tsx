@@ -2,7 +2,7 @@ import { FormikProps } from 'formik';
 import React, { useCallback, useState, useMemo } from 'react';
 import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ROOT_DOMAIN_ID, ColonyRole, ColonyVersion } from '@colony/colony-js';
+import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
 import { useHistory } from 'react-router-dom';
 import { isEqual, sortBy } from 'lodash';
 
@@ -76,7 +76,7 @@ const supRenderAvatar = (address: string, item: ItemDataType<AnyUser>) => (
 );
 
 const PermissionManagementDialog = ({
-  colony: { colonyAddress, colonyName, version: colonyVersion, domains },
+  colony: { colonyAddress, colonyName, domains },
   colony,
   cancel,
   close,
@@ -210,10 +210,6 @@ const PermissionManagementDialog = ({
   );
   const requiredRoles: ColonyRole[] = [ColonyRole.Architecture];
 
-  const isSupportedRecoveryRole =
-    parseInt(colonyVersion || '1', 10) >=
-    ColonyVersion.CeruleanLightweightSpaceship;
-
   return (
     <Dialog cancel={cancel}>
       {!selectedUser.profile.walletAddress || !colony || !domain ? (
@@ -276,7 +272,6 @@ const PermissionManagementDialog = ({
                   colonyDomains={domains}
                   onDomainSelected={setSelectedDomainId}
                   userHasPermission={userHasPermission}
-                  isSupportedRecoveryRole={isSupportedRecoveryRole}
                 />
               </DialogSection>
               {!userHasPermission && (
