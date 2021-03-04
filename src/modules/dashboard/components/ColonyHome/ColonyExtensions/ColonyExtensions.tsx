@@ -15,6 +15,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyExtensions.title',
     defaultMessage: 'Enabled extensions',
   },
+  loadingData: {
+    id: 'dashboard.ColonyHome.ColonyMembers.loadingData',
+    defaultMessage: 'Loading extensions data ...',
+  },
 });
 
 interface Props {
@@ -29,44 +33,50 @@ const ColonyExtensions = ({ colony: { colonyName, colonyAddress } }: Props) => {
   });
 
   if (loading) {
-    return <SpinnerLoader />;
+    return (
+      <div className={styles.main}>
+        <Heading appearance={{ size: 'normal', weight: 'bold' }}>
+          <FormattedMessage {...MSG.title} />
+        </Heading>
+        <SpinnerLoader />
+        <span className={styles.loadingText}>
+          <FormattedMessage {...MSG.loadingData} />
+        </span>
+      </div>
+    );
   }
 
-  return (
+  return data?.processedColony ? (
     <div className={styles.main}>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
         <FormattedMessage {...MSG.title} />
       </Heading>
-      {data?.processedColony && !loading ? (
-        <ul>
-          {data.processedColony.installedExtensions
-            .filter(
-              (extension) =>
-                extension.details.initialized &&
-                !extension.details.missingPermissions.length,
-            )
-            .map((extension) => {
-              const { address, extensionId } = extension;
-              return (
-                <li key={address} className={styles.extension}>
-                  <NavLink
-                    className={styles.invisibleLink}
-                    to={`/colony/${colonyName}/extensions/${extensionId}`}
-                    text={extensionData[extensionId].name}
-                  />
-                  <ExtensionStatus
-                    installedExtension={extension}
-                    deprecatedOnly
-                  />
-                </li>
-              );
-            })}
-        </ul>
-      ) : (
-        <SpinnerLoader />
-      )}
+      <ul>
+        {data.processedColony.installedExtensions
+          .filter(
+            (extension) =>
+              extension.details.initialized &&
+              !extension.details.missingPermissions.length,
+          )
+          .map((extension) => {
+            const { address, extensionId } = extension;
+            return (
+              <li key={address} className={styles.extension}>
+                <NavLink
+                  className={styles.invisibleLink}
+                  to={`/colony/${colonyName}/extensions/${extensionId}`}
+                  text={extensionData[extensionId].name}
+                />
+                <ExtensionStatus
+                  installedExtension={extension}
+                  deprecatedOnly
+                />
+              </li>
+            );
+          })}
+      </ul>
     </div>
-  );
+  ) : null;
 };
 
 ColonyExtensions.displayName = displayName;

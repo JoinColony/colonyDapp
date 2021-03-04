@@ -3,11 +3,14 @@
   margin-top: 40px;
 }
 
-.main a h4 {
-  display: inline-block;
+.main h4 {
   font-size: var(--size-smallish);
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
+}
+
+.main a h4 {
+  display: inline-block;
 }
 
 .main a h4:hover, .main a h4:active {
