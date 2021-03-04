@@ -60,11 +60,11 @@
   background-color: var(--pink);
 }
 
-.NeedAttention {
+.stateNeedAttention {
   composes: status;
 }
 
-.NeedAttention::before {
+.stateNeedAttention::before {
   background-color: var(--colony-blue);
 }
 
