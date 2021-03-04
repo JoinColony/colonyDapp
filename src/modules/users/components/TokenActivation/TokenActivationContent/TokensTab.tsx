@@ -79,6 +79,8 @@ const TokensTab = ({
     }
   }, [totalTokensWidth]);
 
+  const hasLockedTokens = useMemo(() => !lockedTokens.isZero(), [lockedTokens]);
+
   const tokenDecimals = useMemo(
     () => getTokenDecimalsWithFallback(token?.decimals),
     [token],
@@ -125,7 +127,7 @@ const TokensTab = ({
               content={<FormattedMessage {...MSG.activeTokensTooltip} />}
             >
               <FormattedMessage
-                {...(lockedTokens.isZero() ? MSG.active : MSG.activeLocked)}
+                {...(!hasLockedTokens ? MSG.active : MSG.activeLocked)}
               />
             </TokenTooltip>
             <div className={styles.tokenNumbers}>
@@ -175,7 +177,7 @@ const TokensTab = ({
         activeTokens={activeTokens}
         inactiveTokens={inactiveTokens}
         colonyAddress={colonyAddress}
-        lockedTokens={lockedTokens}
+        hasLockedTokens={hasLockedTokens}
       />
     </>
   );
