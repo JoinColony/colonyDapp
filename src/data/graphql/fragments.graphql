@@ -62,7 +62,7 @@ fragment EventFields on Event {
     profile {
       avatarHash
       displayName
-     username
+      username
       walletAddress
     }
   }
