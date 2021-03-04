@@ -1,9 +1,7 @@
-import { ColonyRole, ColonyVersion } from '@colony/colony-js';
+import { ColonyVersion } from '@colony/colony-js';
 
 import { Colony } from '~data/index';
-import { TaskUserType } from '~immutable/index';
-import { Address } from '~types/index';
-import { hasRoot, canAdminister, canFund } from '../users/checks';
+import { hasRoot } from '../users/checks';
 
 /*
  * Colony
