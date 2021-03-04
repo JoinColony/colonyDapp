@@ -18,9 +18,9 @@ import { pipe, mapPayload } from '~utils/actions';
 import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
-  changeState: {
-    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.changeState`,
-    defaultMessage: 'Change token state',
+  tokenActivation: {
+    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.tokenActivation`,
+    defaultMessage: 'Token activation',
   },
   activate: {
     id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.activate`,
@@ -93,7 +93,7 @@ const ChangeTokenStateForm = ({
   return (
     <div className={styles.changeTokensState}>
       <div className={styles.changeStateTitle}>
-        <FormattedMessage {...MSG.changeState} />
+        <FormattedMessage {...MSG.tokenActivation} />
       </div>
       <div className={styles.changeStateButtonsContainer}>
         <div className={isActivate ? styles.activate : styles.activateInactive}>
