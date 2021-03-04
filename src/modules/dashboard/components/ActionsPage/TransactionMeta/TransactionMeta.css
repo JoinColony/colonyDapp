@@ -8,7 +8,7 @@
   display: inline-block;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: color-mod(var(--grey-dark) alpha(65%));
+  color: color-mod(var(--dark) alpha(50%));
   letter-spacing: var(--spacing-medium);
 }
 
@@ -27,7 +27,7 @@
 }
 
 .blockscoutLink {
-  color: color-mod(var(--grey-dark) alpha(65%));
+  color: color-mod(var(--dark) alpha(50%));
 }
 
 .blockscoutLink:hover {
