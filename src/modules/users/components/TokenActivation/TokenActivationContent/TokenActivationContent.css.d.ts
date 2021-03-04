@@ -1,3 +1,4 @@
+export const pendingColor: string;
 export const main: string;
 export const mainDivider: string;
 export const tabsListContainer: string;
@@ -9,8 +10,10 @@ export const totalTokensContainer: string;
 export const totalTokens: string;
 export const tokensDetailsContainer: string;
 export const listItemActive: string;
+export const lockedTokens: string;
 export const listItemInactive: string;
 export const tokenNumbers: string;
+export const tokenNumbersLocked: string;
 export const lockedAmountContainer: string;
 export const lockedAmount: string;
 export const previousTotalAmount: string;

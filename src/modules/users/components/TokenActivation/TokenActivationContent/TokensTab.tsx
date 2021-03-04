@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
-import Icon from '~core/Icon';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
 
@@ -20,6 +19,14 @@ const MSG = defineMessages({
     id: 'users.TokenActivation.TokenActivationContent.TokensTab.active',
     defaultMessage: 'Active',
   },
+  activeLocked: {
+    id: 'users.TokenActivation.TokenActivationContent.TokensTab.activeLocked',
+    defaultMessage: 'Active',
+  },
+  staked: {
+    id: 'users.TokenActivation.TokenActivationContent.TokensTab.staked',
+    defaultMessage: 'Active',
+  },
   inactive: {
     id: 'users.TokenActivation.TokenActivationContent.TokensTab.inactive',
     defaultMessage: 'Inactive',
@@ -27,19 +34,19 @@ const MSG = defineMessages({
   activeTokensTooltip: {
     id: `users.TokenActivation.TokenActivationContent.TokensTab.activeTokensTooltip`,
     defaultMessage: `Tokens are “Active” when they’ve been deposited to a
-     contract which lets them get ‘locked’ when you need to stake,
-     or claim a share of Rewards. You can withdraw tokens back
-     to your wallet any time, you just need to clear any locks first.`,
+      contract which lets them get ‘locked’ when you need to stake,
+      or claim a share of Rewards. You can withdraw tokens back
+      to your wallet any time, you just need to clear any locks first.`,
   },
   inactiveTokensTooltip: {
     id: `users.TokenActivation.TokenActivationContent.TokensTab.inactiveTokensTooltip`,
     defaultMessage: `Inactive tokens are contained in your own wallet.
-     You need to “Activate” them to stake, or be eligible to receive Rewards.`,
+      You need to “Activate” them to stake, or be eligible to receive Rewards.`,
   },
-  lockedTokensTooltip: {
-    id: `users.TokenActivation.TokenActivationContent.TokensTab.lockedTokensTooltip`,
-    defaultMessage: `You have unclaimed transactions which must be claimed
-     before these tokens can be withdrawn.`,
+  stakedTokensTooltip: {
+    id: `users.TokenActivation.TokenActivationContent.TokensTab.stakedTokensTooltip`,
+    defaultMessage: `You have tokens staked in processes which must conclude
+      before they can be deactivated.`,
   },
 });
 
@@ -87,7 +94,9 @@ const TokensTab = ({
               className={styles.listItemActive}
               content={<FormattedMessage {...MSG.activeTokensTooltip} />}
             >
-              <FormattedMessage {...MSG.active} />
+              <FormattedMessage
+                {...(lockedTokens.isZero() ? MSG.active : MSG.activeLocked)}
+              />
             </TokenTooltip>
             <div className={styles.tokenNumbers}>
               <Numeral
@@ -98,22 +107,19 @@ const TokensTab = ({
               />
             </div>
             <TokenTooltip
-              className={styles.lockedAmountContainer}
-              content={<FormattedMessage {...MSG.lockedTokensTooltip} />}
+              className={styles.lockedTokens}
+              content={<FormattedMessage {...MSG.stakedTokensTooltip} />}
             >
-              <Icon
-                title="padlock"
-                appearance={{ size: 'extraTiny' }}
-                name="emoji-padlock-closed"
-              />
+              <FormattedMessage {...MSG.staked} />
+            </TokenTooltip>
+            <div className={styles.tokenNumbersLocked}>
               <Numeral
-                className={styles.lockedAmount}
                 value={lockedTokens}
                 suffix={` ${token?.symbol}`}
                 unit={tokenDecimals}
                 truncate={3}
               />
-            </TokenTooltip>
+            </div>
           </li>
           <li>
             <TokenTooltip
