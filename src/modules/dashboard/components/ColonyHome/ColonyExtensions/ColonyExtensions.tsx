@@ -46,41 +46,37 @@ const ColonyExtensions = ({ colony: { colonyName, colonyAddress } }: Props) => {
     );
   }
 
-  return (
+  return data?.processedColony ? (
     <div className={styles.main}>
-      {data?.processedColony && (
-        <>
-          <Heading appearance={{ size: 'normal', weight: 'bold' }}>
-            <FormattedMessage {...MSG.title} />
-          </Heading>
-          <ul>
-            {data.processedColony.installedExtensions
-              .filter(
-                (extension) =>
-                  extension.details.initialized &&
-                  !extension.details.missingPermissions.length,
-              )
-              .map((extension) => {
-                const { address, extensionId } = extension;
-                return (
-                  <li key={address} className={styles.extension}>
-                    <NavLink
-                      className={styles.invisibleLink}
-                      to={`/colony/${colonyName}/extensions/${extensionId}`}
-                      text={extensionData[extensionId].name}
-                    />
-                    <ExtensionStatus
-                      installedExtension={extension}
-                      deprecatedOnly
-                    />
-                  </li>
-                );
-              })}
-          </ul>
-        </>
-      )}
+      <Heading appearance={{ size: 'normal', weight: 'bold' }}>
+        <FormattedMessage {...MSG.title} />
+      </Heading>
+      <ul>
+        {data.processedColony.installedExtensions
+          .filter(
+            (extension) =>
+              extension.details.initialized &&
+              !extension.details.missingPermissions.length,
+          )
+          .map((extension) => {
+            const { address, extensionId } = extension;
+            return (
+              <li key={address} className={styles.extension}>
+                <NavLink
+                  className={styles.invisibleLink}
+                  to={`/colony/${colonyName}/extensions/${extensionId}`}
+                  text={extensionData[extensionId].name}
+                />
+                <ExtensionStatus
+                  installedExtension={extension}
+                  deprecatedOnly
+                />
+              </li>
+            );
+          })}
+      </ul>
     </div>
-  );
+  ) : null;
 };
 
 ColonyExtensions.displayName = displayName;
