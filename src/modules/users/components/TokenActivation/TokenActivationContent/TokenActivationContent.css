@@ -1,6 +1,8 @@
+@value pendingColor: rgb(255, 176, 0);
+
 .main {
-  height: 488px;
-  min-width: 240px;
+  min-height: 511px;
+  width: 240px;
 }
 
 .mainDivider {
@@ -68,8 +70,8 @@
 
 .tokensDetailsContainer {
   composes: mainDivider;
-  padding: 21px 0 0 18px;
-  height: 153px;
+  padding: 13px 0 0 16px;
+  height: 189px;
   width: 100%;
 }
 
@@ -90,6 +92,15 @@
   }
 }
 
+.lockedTokens {
+  composes: listItemActive;
+  margin-left: 20px;
+
+  &::before {
+    background-color: pendingColor;
+  }
+}
+
 .listItemInactive {
   composes: listItemActive;
 
@@ -99,9 +110,15 @@
 }
 
 .tokenNumbers {
+  margin-bottom: 19px;
   margin-left: 20px;
   color: var(--dark);
   font: var(--size-normal);
+}
+
+.tokenNumbersLocked {
+  composes: tokenNumbers;
+  margin-left: 40px;
 }
 
 .lockedAmountContainer {
@@ -128,13 +145,13 @@
 }
 
 .changeTokensState {
-  padding: 20px 0 0 26px;
-  height: 219px;
+  padding: 22px 25px 29px 25px;
+  min-height: 220px;
   width: 100%;
 }
 
 .changeStateTitle {
-  margin-bottom: 15px;
+  margin-bottom: 8px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
