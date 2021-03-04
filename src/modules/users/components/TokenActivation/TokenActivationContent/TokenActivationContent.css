@@ -1,5 +1,3 @@
-@value pendingColor: rgb(255, 176, 0);
-
 .main {
   min-height: 511px;
   width: 240px;
@@ -97,7 +95,7 @@
   margin-left: 20px;
 
   &::before {
-    background-color: pendingColor;
+    background-color: var(--golden);
   }
 }
 
