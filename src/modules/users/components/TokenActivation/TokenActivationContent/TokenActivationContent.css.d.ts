@@ -1,4 +1,3 @@
-export const pendingColor: string;
 export const main: string;
 export const mainDivider: string;
 export const tabsListContainer: string;
