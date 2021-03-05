@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ReactSlider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
@@ -16,7 +16,7 @@ interface Props {
 
 const displayName = 'Slider';
 
-const Slider = ({ value, max = 100, onChange, limit = null }: Props) => {
+const Slider = ({ value, max = 100, onChange, limit = null, appearance = { theme: 'primary' } }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
 
   const marks = {};
@@ -38,6 +38,27 @@ const Slider = ({ value, max = 100, onChange, limit = null }: Props) => {
     }
   }
 
+  const SliderStylesObject = {
+    primary: {
+      backgroundColor: '#68D2D2',
+      borderColor: '#68D2D2',
+      height: 1,
+      markHeight: 5,
+      markWidth: 1,
+      markPositionTop: -2,
+    },
+    danger: {
+      backgroundColor: '#FE5E7C',
+      borderColor: '#FE5E7C',
+      height: 3,
+      markHeight: 8,
+      markWidth: 2,
+      markPositionTop: -3,
+    }
+  }
+
+  const styles = SliderStylesObject[appearance?.theme];
+
   return (
     <ReactSlider
       min={0}
@@ -46,24 +67,24 @@ const Slider = ({ value, max = 100, onChange, limit = null }: Props) => {
       onChange={onSliderChange}
       marks={marks}
       max={max}
-      trackStyle={{ backgroundColor: '#68D2D2', height: 1 }}
+      trackStyle={{ backgroundColor: styles.backgroundColor, height: styles.height }}
       handleStyle={{
-        borderColor: '#68D2D2',
+        borderColor: styles.borderColor,
         borderWidth: 6,
         height: 15,
         width: 15,
         marginTop: -7,
-        backgroundColor: 'transparent',
+        backgroundColor: '#FFFFFF',
       }}
       dotStyle={{
-        height: 5,
-        width: 1,
+        height: styles.markHeight,
+        width: styles.markWidth,
         backgroundColor: '#76748B',
         border: 0,
         borderRadius: 0,
-        top: -2,
+        top: styles.markPositionTop,
       }}
-      railStyle={{ backgroundColor: '#C2CCCC', height: 1 }}
+      railStyle={{ backgroundColor: '#C2CCCC', height: styles.height }}
     />
   );
 };
