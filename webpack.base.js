@@ -78,7 +78,7 @@ const config = {
       },
       {
         test: /\.css$/,
-        include: [path.resolve('node_modules', 'draft-js')],
+        include: [path.resolve('node_modules', 'draft-js'), path.resolve('node_modules', 'rc-slider')],
         use: ['style-loader', 'css-loader'],
       },
       {
