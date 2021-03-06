@@ -134,7 +134,7 @@ const InputComponent = ({
             );
             /* problem with cleave types */
             /* @ts-ignore */
-            cleave?.setRawValue(Number(maxButtonParams.maxAmount, 10));
+            cleave?.setRawValue(Number(maxButtonParams.maxAmount));
           }}
         />
         <Cleave
