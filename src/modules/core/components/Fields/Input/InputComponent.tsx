@@ -4,7 +4,6 @@ import React, {
   InputHTMLAttributes,
   useMemo,
   RefObject,
-  ReactInstance,
 } from 'react';
 import { defineMessages } from 'react-intl';
 import Cleave from 'cleave.js/react';
@@ -74,7 +73,8 @@ const InputComponent = ({
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
 }: Props) => {
-  const [cleave, setCleave] = useState<ReactInstance | null>(null);
+  /* problem with cleave types, that's why `any` */
+  const [cleave, setCleave] = useState<any>(null);
 
   const length = value ? value.toString().length : 0;
 
@@ -132,8 +132,6 @@ const InputComponent = ({
               maxButtonParams?.fieldName,
               maxButtonParams.maxAmount,
             );
-            /* problem with cleave types */
-            /* @ts-ignore */
             cleave?.setRawValue(Number(maxButtonParams.maxAmount));
           }}
         />
