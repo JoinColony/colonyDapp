@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { FormikProps } from 'formik';
@@ -74,6 +74,11 @@ const ChangeTokenStateForm = ({
   const [isActivate, setIsActive] = useState(true);
 
   const { walletAddress } = useLoggedInUser();
+
+  const tokenBalance = useMemo(
+    () => (isActivate ? inactiveTokens : activeTokens),
+    [isActivate, activeTokens, inactiveTokens],
+  );
 
   const formAction = useCallback(
     (actionType: '' | '_ERROR' | '_SUCCESS') =>
@@ -161,7 +166,7 @@ const ChangeTokenStateForm = ({
                   values={{
                     tokenBalance: (
                       <Numeral
-                        value={isActivate ? activeTokens : inactiveTokens}
+                        value={tokenBalance}
                         suffix={` ${token?.symbol}`}
                         unit={tokenDecimals}
                         truncate={3}
@@ -189,7 +194,7 @@ const ChangeTokenStateForm = ({
                     values={{
                       tokenBalance: (
                         <Numeral
-                          value={isActivate ? inactiveTokens : activeTokens}
+                          value={tokenBalance}
                           suffix={` ${token?.symbol}`}
                           unit={tokenDecimals}
                           truncate={3}
