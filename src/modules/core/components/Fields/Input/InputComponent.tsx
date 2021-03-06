@@ -6,6 +6,7 @@ import React, {
   RefObject,
   ReactInstance,
 } from 'react';
+import { defineMessages } from 'react-intl';
 import Cleave from 'cleave.js/react';
 import { CleaveOptions } from 'cleave.js/options';
 import { ChangeEvent } from 'cleave.js/react/props';
@@ -15,6 +16,13 @@ import Button from '~core/Button';
 import { getMainClasses } from '~utils/css';
 
 import styles from './InputComponent.css';
+
+const MSG = defineMessages({
+  max: {
+    id: `users.Fileds.Input.InputComponent.max`,
+    defaultMessage: 'Max',
+  },
+});
 
 export type Appearance = {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
@@ -118,7 +126,7 @@ const InputComponent = ({
       <div className={styles.inputContainer}>
         <Button
           className={styles.maxButton}
-          text="Max"
+          text={MSG.max}
           onClick={() => {
             maxButtonParams?.setFieldValue(
               maxButtonParams?.fieldName,
