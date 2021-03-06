@@ -44,6 +44,10 @@ const MSG = defineMessages({
     defaultMessage: `You have unclaimed transactions which must be claimed
     before these tokens can be withdrawn.`,
   },
+  max: {
+    id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.max`,
+    defaultMessage: 'Max',
+  },
 });
 
 const validationSchema = yup.object({
@@ -87,6 +91,11 @@ const ChangeTokenStateForm = ({
         : ActionTypes[`USER_WITHDRAW_TOKEN${actionType}`],
     [isActivate],
   );
+
+  const maxAmount = useMemo(() => moveDecimal(tokenBalance, -tokenDecimals), [
+    tokenDecimals,
+    tokenBalance,
+  ]);
 
   const transform = useCallback(
     pipe(
@@ -136,7 +145,7 @@ const ChangeTokenStateForm = ({
         error={formAction('_ERROR')}
         success={formAction('_SUCCESS')}
       >
-        {({ isValid, values }: FormikProps<FormValues>) => (
+        {({ isValid, values, setFieldValue }: FormikProps<FormValues>) => (
           <div className={styles.form}>
             <div className={styles.inputField}>
               <Input
@@ -150,6 +159,11 @@ const ChangeTokenStateForm = ({
                   delimiter: ',',
                   numeral: true,
                   numeralDecimalScale: tokenDecimals,
+                }}
+                maxButtonParams={{
+                  setFieldValue,
+                  maxAmount,
+                  fieldName: 'amount',
                 }}
               />
             </div>
