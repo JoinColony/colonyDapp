@@ -189,7 +189,7 @@ const ChangeTokenStateForm = ({
                     values={{
                       tokenBalance: (
                         <Numeral
-                          value={isActivate ? activeTokens : inactiveTokens}
+                          value={isActivate ? inactiveTokens : activeTokens}
                           suffix={` ${token?.symbol}`}
                           unit={tokenDecimals}
                           truncate={3}
