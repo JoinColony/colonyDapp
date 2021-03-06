@@ -1,12 +1,16 @@
 import React, {
   useCallback,
+  useState,
   InputHTMLAttributes,
   useMemo,
   RefObject,
+  ReactInstance,
 } from 'react';
 import Cleave from 'cleave.js/react';
 import { CleaveOptions } from 'cleave.js/options';
 import { ChangeEvent } from 'cleave.js/react/props';
+
+import Button from '~core/Button';
 
 import { getMainClasses } from '~utils/css';
 
@@ -21,6 +25,12 @@ export type Appearance = {
 
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
+interface MaxButtonParams {
+  setFieldValue: (field, value) => void;
+  maxAmount: string;
+  fieldName: string;
+}
+
 export interface Props
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'form'> {
   /** Appearance object */
@@ -34,6 +44,9 @@ export interface Props
 
   /** Pass a ref to the `<input>` element */
   innerRef?: RefObject<any> | ((ref: HTMLInputElement | null) => void);
+
+  /** Pass params to a max button - implemented only in Cleave options */
+  maxButtonParams?: MaxButtonParams;
 }
 
 const InputComponent = ({
@@ -49,16 +62,22 @@ const InputComponent = ({
   spellCheck,
   maxLength,
   value,
+  maxButtonParams,
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
 }: Props) => {
+  const [cleave, setCleave] = useState<ReactInstance | null>(null);
+
   const length = value ? value.toString().length : 0;
 
   const handleCleaveChange = useCallback(
     (evt: ChangeEvent<CleaveHTMLInputElement>): void => {
       // We are reassigning the value here as cleave just adds a `rawValue` prop
       // eslint-disable-next-line no-param-reassign
-      evt.currentTarget.value = evt.currentTarget.rawValue;
+      evt.currentTarget = {
+        ...evt.currentTarget,
+        value: evt.currentTarget?.rawValue,
+      };
       if (onChange) onChange(evt);
     },
     [onChange],
@@ -78,7 +97,7 @@ const InputComponent = ({
       console.error('Cleave inner ref must be a function');
       return null;
     }
-    return (
+    return maxButtonParams === undefined ? (
       <Cleave
         {...props}
         key={dynamicCleaveOptionKey}
@@ -88,6 +107,32 @@ const InputComponent = ({
         onChange={handleCleaveChange}
         placeholder={placeholder}
       />
+    ) : (
+      <div className={styles.inputContainer}>
+        <Button
+          className={styles.maxButton}
+          text="Max"
+          onClick={() => {
+            maxButtonParams?.setFieldValue(
+              maxButtonParams?.fieldName,
+              maxButtonParams.maxAmount,
+            );
+            /* problem with cleave types */
+            /* @ts-ignore */
+            cleave?.setRawValue(Number(maxButtonParams.maxAmount, 10));
+          }}
+        />
+        <Cleave
+          {...props}
+          key={dynamicCleaveOptionKey}
+          className={getMainClasses(appearance, styles)}
+          htmlRef={innerRef}
+          options={formattingOptions}
+          onChange={handleCleaveChange}
+          placeholder={placeholder}
+          onInit={(cleaveInstance) => setCleave(cleaveInstance)}
+        />
+      </div>
     );
   }
 
