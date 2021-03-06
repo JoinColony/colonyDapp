@@ -73,11 +73,18 @@ const InputComponent = ({
   const handleCleaveChange = useCallback(
     (evt: ChangeEvent<CleaveHTMLInputElement>): void => {
       // We are reassigning the value here as cleave just adds a `rawValue` prop
-      // eslint-disable-next-line no-param-reassign
-      evt.currentTarget = {
-        ...evt.currentTarget,
-        value: evt.currentTarget?.rawValue,
-      };
+      if (evt.currentTarget !== undefined) {
+        // eslint-disable-next-line no-param-reassign
+        evt.currentTarget.value = evt.currentTarget.rawValue;
+      } else {
+        // setCleaveValue(evt.currentTarget?.rawValue);
+        // @ts-ignore
+        // eslint-disable-next-line no-param-reassign
+        evt.currentTarget = {
+          // @ts-ignore
+          value: evt.currentTarget?.rawValue as string,
+        };
+      }
       if (onChange) onChange(evt);
     },
     [onChange],
