@@ -17,6 +17,8 @@ export const listItemInactive: string;
 export const tokenNumbers: string;
 export const tokenNumbersLocked: string;
 export const tokenNumbersInactive: string;
+export const pendingError: string;
+export const questionmarkIcon: string;
 export const changeTokensState: string;
 export const changeStateTitle: string;
 export const changeStateButtonsContainer: string;
