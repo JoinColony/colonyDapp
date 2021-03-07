@@ -30,6 +30,9 @@ const UserTokenActivationButton = ({
   const lockContractBalance = bigNumberify(userLock?.balance || 0);
   const activeBalance = lockContractBalance.sub(lockedBalance);
   const totalBalance = inactiveBalance.add(activeBalance);
+  const isPendingBalanceZero = bigNumberify(
+    userLock?.pendingBalance || 0,
+  ).isZero();
 
   return (
     <TokenActivationPopover
@@ -39,6 +42,7 @@ const UserTokenActivationButton = ({
       lockedTokens={lockedBalance}
       token={nativeToken}
       colonyAddress={colonyAddress}
+      isPendingBalanceZero={isPendingBalanceZero}
     >
       {({ toggle, ref }) => (
         <>
