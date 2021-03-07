@@ -738,6 +738,7 @@ export type UserLock = {
   balance: Scalars['String'];
   nativeToken?: Maybe<UserToken>;
   totalObligation: Scalars['String'];
+  pendingBalance?: Maybe<Scalars['String']>;
 };
 
 export type ProcessedMetaColony = {
@@ -1152,7 +1153,7 @@ export type UserBalanceWithLockQueryVariables = Exact<{
 export type UserBalanceWithLockQuery = { user: (
     Pick<User, 'id'>
     & { userLock: (
-      Pick<UserLock, 'balance' | 'totalObligation'>
+      Pick<UserLock, 'balance' | 'totalObligation' | 'pendingBalance'>
       & { nativeToken?: Maybe<Pick<UserToken, 'decimals' | 'name' | 'symbol' | 'balance' | 'address' | 'verified'>> }
     ) }
   ) };
@@ -2342,6 +2343,7 @@ export const UserBalanceWithLockDocument = gql`
         verified
       }
       totalObligation
+      pendingBalance
     }
   }
 }
