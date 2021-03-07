@@ -154,7 +154,7 @@ export default gql`
     balance: String!
     nativeToken: UserToken
     totalObligation: String!
-    pendingBalance: String
+    pendingBalance: String!
   }
 
   extend type User {

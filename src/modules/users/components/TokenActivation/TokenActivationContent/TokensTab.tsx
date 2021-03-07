@@ -179,7 +179,7 @@ const TokensTab = ({
                 truncate={3}
               />
             </div>
-            {isPendingBalanceZero && (
+            {!isPendingBalanceZero && (
               <div className={styles.pendingError}>
                 <FormattedMessage {...MSG.pendingError} />
                 <TokenTooltip
