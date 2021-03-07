@@ -143,6 +143,19 @@
   margin-bottom: 0;
 }
 
+.pendingError {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 20px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.questionmarkIcon {
+  margin-right: 5px;
+}
+
 .changeTokensState {
   padding: 22px 25px 29px 25px;
   min-height: 220px;

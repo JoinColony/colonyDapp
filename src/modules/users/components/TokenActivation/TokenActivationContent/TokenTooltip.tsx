@@ -6,15 +6,21 @@ export interface TokenTooltipProps {
   children: ReactNode;
   className: string;
   content: ReactNode;
+  popperOffset?: [number, number];
 }
 
-const TokenTooltip = ({ children, className, content }: TokenTooltipProps) => {
+const TokenTooltip = ({
+  children,
+  className,
+  content,
+  popperOffset,
+}: TokenTooltipProps) => {
   const popperProps = {
     modifiers: [
       {
         name: 'offset',
         options: {
-          offset: [0, 5],
+          offset: popperOffset || [0, 5],
         },
       },
     ],
