@@ -745,7 +745,7 @@ export type UserLock = {
   balance: Scalars['String'];
   nativeToken?: Maybe<UserToken>;
   totalObligation: Scalars['String'];
-  pendingBalance?: Maybe<Scalars['String']>;
+  pendingBalance: Scalars['String'];
 };
 
 export type ProcessedMetaColony = {
