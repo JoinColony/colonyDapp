@@ -2,8 +2,9 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
-import TokenIcon from '~dashboard/HookedTokenIcon';
 import Numeral from '~core/Numeral';
+import Icon from '~core/Icon';
+import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { UserToken } from '~data/generated';
 import { Address } from '~types/index';
@@ -48,6 +49,14 @@ const MSG = defineMessages({
     defaultMessage: `You have tokens staked in processes which must conclude
       before they can be deactivated.`,
   },
+  pendingError: {
+    id: `users.TokenActivation.TokenActivationContent.TokensTab.pendingError`,
+    defaultMessage: 'Error: balance pending!',
+  },
+  pendingErrorTooltip: {
+    id: `users.TokenActivation.TokenActivationContent.TokensTab.pendingErrorTooltip`,
+    defaultMessage: 'Send any “Activate” transaction to claim pending balance.',
+  },
 });
 
 export interface TokensTabProps {
@@ -55,6 +64,7 @@ export interface TokensTabProps {
   inactiveTokens: BigNumber;
   totalTokens: BigNumber;
   lockedTokens: BigNumber;
+  isPendingBalanceZero: boolean;
   token: UserToken;
   colonyAddress: Address;
 }
@@ -66,6 +76,7 @@ const TokensTab = ({
   lockedTokens,
   token,
   colonyAddress,
+  isPendingBalanceZero,
 }: TokensTabProps) => {
   const targetRef = useRef<HTMLParagraphElement>(null);
 
@@ -168,6 +179,22 @@ const TokensTab = ({
                 truncate={3}
               />
             </div>
+            {isPendingBalanceZero && (
+              <div className={styles.pendingError}>
+                <FormattedMessage {...MSG.pendingError} />
+                <TokenTooltip
+                  className={styles.questionmarkIcon}
+                  content={<FormattedMessage {...MSG.pendingErrorTooltip} />}
+                  popperOffset={[-5, 8]}
+                >
+                  <Icon
+                    name="question-mark"
+                    title={MSG.pendingError}
+                    appearance={{ size: 'small' }}
+                  />
+                </TokenTooltip>
+              </div>
+            )}
           </li>
         </ul>
       </div>
