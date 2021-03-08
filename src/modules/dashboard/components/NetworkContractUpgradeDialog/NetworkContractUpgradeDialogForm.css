@@ -34,3 +34,46 @@
   margin: 0 80px;
   background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
+
+.permissionsWarning {
+  padding: 20px;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--danger) alpha(5%));
+}
+
+.warningTitle {
+  margin-bottom: 20px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--danger);
+}
+
+.warningDescription {
+  margin-bottom: 20px;
+}
+
+.warningDescription:last-child {
+  margin-bottom: 0;
+}
+
+.warningTitle > div, .warningDescription > div {
+  vertical-align: top;
+}
+
+.highlightInstruction {
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.loadingInfo {
+  composes: permissionsWarning;
+  background-color: color-mod(var(--primary) alpha(6%));
+}
+
+.loadingText {
+  display: inline-block;
+  margin: -8px 0 0 5px;
+  vertical-align: middle;
+  font-size: var(--size-small);
+  letter-spacing: initial;
+}

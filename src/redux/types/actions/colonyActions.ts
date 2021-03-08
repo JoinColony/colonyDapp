@@ -1,8 +1,9 @@
+import { RefObject } from 'react';
 import { BigNumber } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Address, WithKey } from '~types/index';
 import { Color } from '~core/ColorTag';
 
 import {
@@ -177,4 +178,61 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS,
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_RECOVERY,
+      {
+        colonyAddress: Address;
+        walletAddress: Address;
+        colonyName: string;
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_RECOVERY_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT,
+      {
+        colonyAddress: Address;
+        walletAddress: Address;
+        startBlock: number;
+        storageSlotLocation: string;
+        storageSlotValue: string;
+      },
+      WithKey
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS,
+      object
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE,
+      {
+        colonyAddress: Address;
+        walletAddress: Address;
+        startBlock: number;
+        scrollToRef: RefObject<HTMLInputElement>;
+      },
+      WithKey
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_RECOVERY_APPROVE_SUCCESS,
+      object
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_RECOVERY_EXIT,
+      {
+        colonyAddress: Address;
+        startBlock: number;
+        scrollToRef: RefObject<HTMLInputElement>;
+      },
+      WithKey
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_ERROR, object>
+  | ActionTypeWithMeta<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_SUCCESS, object>;

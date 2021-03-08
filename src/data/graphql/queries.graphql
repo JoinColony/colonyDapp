@@ -135,11 +135,7 @@ query User($address: String!) {
 # This isn't currently being used anywhere, but... here it is anyways.
 # In most cases, we'll want to fetch the reputation *after* the user is already fetched,
 # as fetching reputation takes quite a bit longer.
-query UserWithReputation(
-  $address: String!
-  $colonyAddress: String!
-  $domainId: Int
-) {
+query UserWithReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
   user(address: $address) {
     id
     profile {
@@ -155,16 +151,8 @@ query UserWithReputation(
   }
 }
 
-query UserReputation(
-  $address: String!
-  $colonyAddress: String!
-  $domainId: Int
-) {
-  userReputation(
-    address: $address
-    colonyAddress: $colonyAddress
-    domainId: $domainId
-  ) @client
+query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
 }
 
 query UserTasks($address: String!) {
@@ -258,11 +246,7 @@ query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
   }
 }
 
-query TokenBalancesForDomains(
-  $colonyAddress: String!
-  $tokenAddresses: [String!]!
-  $domainIds: [Int!]
-) {
+query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id
     address
@@ -360,10 +344,12 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     recipient
     status
     events {
+      type
       name
       values
       createdAt
       emmitedBy
+      transactionHash
     }
     createdAt
     actionType
@@ -382,6 +368,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
       id
       setTo
     }
+    blockNumber
   }
 }
 
@@ -413,6 +400,83 @@ query MetaColony {
     avatarURL
   }
 }
+
+query ActionsThatNeedAttention($colonyAddress: String!, $walletAddress: String!) {
+  actionsThatNeedAttention(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+    transactionHash
+    needsAction
+  }
+}
+
+query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
+  }
+}
+
+query RecoverySystemMessagesForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoverySystemMessagesForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    createdAt
+  }
+}
+
+query GetRecoveryStorageSlot($colonyAddress: String!, $storageSlot: String!) {
+  getRecoveryStorageSlot(colonyAddress: $colonyAddress, storageSlot: $storageSlot) @client
+}
+
+query RecoveryRolesUsers($colonyAddress: String!, $endBlockNumber: Int) {
+  recoveryRolesUsers(colonyAddress: $colonyAddress, endBlockNumber: $endBlockNumber) @client {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+
+query RecoveryRolesAndApprovalsForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoveryRolesAndApprovalsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+    approvedRecoveryExit
+  }
+}
+
+query GetRecoveryRequiredApprovals($blockNumber: Int!,$colonyAddress: String!) {
+  getRecoveryRequiredApprovals(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client
+}
+
+query RecoveryAllEnteredEvents($colonyAddress: String!) {
+  recoveryAllEnteredEvents(colonyAddress: $colonyAddress) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
+  }
+}
+
+query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
+  legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
+}
+
 
 # The Graph
 #

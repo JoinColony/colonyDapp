@@ -47,6 +47,10 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.ColonyMetadata]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainMetadata]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.ColonyRoleSet]: [ColonyRole.Architecture],
+  [ColonyAndExtensionsEvents.RecoveryModeEntered]: [ColonyRole.Recovery],
+  [ColonyAndExtensionsEvents.RecoveryStorageSlotSet]: [ColonyRole.Recovery],
+  [ColonyAndExtensionsEvents.RecoveryModeExitApproved]: [ColonyRole.Recovery],
+  [ColonyAndExtensionsEvents.RecoveryModeExited]: [ColonyRole.Recovery],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -90,6 +94,12 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
   [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
   [ColonyActions.SetUserRoles]: [ColonyAndExtensionsEvents.ColonyRoleSet],
+  [ColonyActions.Recovery]: [
+    ColonyAndExtensionsEvents.RecoveryModeEntered,
+    ColonyAndExtensionsEvents.RecoveryStorageSlotSet,
+    ColonyAndExtensionsEvents.RecoveryModeExitApproved,
+    ColonyAndExtensionsEvents.RecoveryModeExited,
+  ],
 };
 
 /*
@@ -125,6 +135,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.ColonyEdit]: [ColonyAndExtensionsEvents.ColonyMetadata],
   [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
   [ColonyActions.SetUserRoles]: [ColonyAndExtensionsEvents.ColonyRoleSet],
+  [ColonyActions.Recovery]: [ColonyAndExtensionsEvents.RecoveryModeEntered],
 };
 
 /*
@@ -157,4 +168,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ToRecipient,
     ActionPageDetails.Permissions,
   ],
+  [ColonyActions.Recovery]: [],
 };

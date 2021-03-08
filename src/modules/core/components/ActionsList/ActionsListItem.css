@@ -52,19 +52,19 @@
   content: '';
 }
 
-.stateRed {
+.stateNeedAction {
   composes: status;
 }
 
-.stateRed::before {
+.stateNeedAction::before {
   background-color: var(--pink);
 }
 
-.stateBlue {
+.stateNeedAttention {
   composes: status;
 }
 
-.stateBlue::before {
+.stateNeedAttention::before {
   background-color: var(--colony-blue);
 }
 

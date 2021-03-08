@@ -27,7 +27,7 @@ import {
 } from './index';
 import { SetNetworkContractsDocument } from './generated';
 
-const getMinimalUser = (address: string): UserQuery['user'] => ({
+export const getMinimalUser = (address: string): UserQuery['user'] => ({
   id: address,
   profile: { walletAddress: address },
 });

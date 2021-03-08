@@ -38,11 +38,6 @@ export type ColonyActionTypes =
   | ErrorActionType<ActionTypes.COLONY_CREATE_ERROR, object>
   | UniqueActionType<ActionTypes.COLONY_CREATE_SUCCESS, void, object>
   | UniqueActionType<
-      ActionTypes.COLONY_RECOVERY_MODE_ENTER,
-      { colonyAddress: Address },
-      object
-    >
-  | UniqueActionType<
       ActionTypes.COLONY_DEPLOYMENT_RESTART,
       {
         colonyAddress: Address;

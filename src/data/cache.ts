@@ -54,6 +54,9 @@ export default new InMemoryCache({
         colonyMembersWithReputation: {
           merge: false,
         },
+        actionsThatNeedAttention: {
+          merge: false,
+        },
       },
     },
     Event: {

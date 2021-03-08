@@ -9,59 +9,40 @@ import styles from './PermissionManagementCheckbox.css';
 
 const MSG = defineMessages({
   roleWithAsterisk: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleWithAsterisk',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleWithAsterisk`,
     defaultMessage: '{role}{asterisk, select, true {*} false {} }',
   },
   roleDescription0: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription0',
-    defaultMessage:
-      'Disable colony in emergency, update storage, and approvee reactivation',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription0`,
+    defaultMessage: `Disable colony in emergency, update storage, and approve reactivation.`,
   },
   roleDescription1: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription1',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription1`,
     defaultMessage: 'Take actions effecting the colony as a whole.',
   },
   roleDescription2: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription2',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription2`,
     defaultMessage: 'Coming soon...',
   },
   roleDescription3: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription3',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription3`,
     defaultMessage: 'Set permissions in the active domain, and any subdomain.',
   },
   // We don't have architecture_subdomain (which would be 4)
   roleDescription5: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription5',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription5`,
     defaultMessage: 'Fund expenditures and transfer funds between domains.',
   },
   roleDescription6: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription6',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription6`,
     defaultMessage: 'Create and manage expenditures.',
   },
   tooltipNoPermissionsText: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.PermissionManagementDialog.PermissionManagementCheckbox.tooltipNoPermissionsText',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.tooltipNoPermissionsText`,
     defaultMessage: 'You do not have permission to set the {roleName} role.',
   },
   tooltipNoRootDomainSelected: {
-    id:
-      // eslint-disable-next-line max-len
-      'dashboard.PermissionManagementDialog.PermissionManagementCheckbox.tooltipNoRootDomainSelected',
+    id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.tooltipNoRootDomainSelected`,
     defaultMessage: 'Switch domain to #Root to set the root role.',
   },
 });
@@ -135,7 +116,19 @@ const PermissionManagementCheckbox = ({
           name={formattedRole}
           inherited={asterisk}
         />
-        <FormattedMessage {...roleDescriptionMessage} />
+        <span
+          className={
+            /*
+             * If the roles cannot be set, show the description faded out.
+             *
+             * Currently applicable for:
+             * - Arbitration
+             */
+            role === ColonyRole.Arbitration ? styles.permissionNotAvailable : ''
+          }
+        >
+          <FormattedMessage {...roleDescriptionMessage} />
+        </span>
       </span>
     </Checkbox>
   );

@@ -83,7 +83,7 @@ const ColonyFundingMenu = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
-    parseInt(version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+    parseInt(version, 10) >= ColonyVersion.LightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   return (

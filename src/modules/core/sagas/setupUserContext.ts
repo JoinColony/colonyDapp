@@ -29,7 +29,6 @@ import AppLoadingState from '~context/appLoadingState';
 import { authenticate, clearToken } from '../../../api';
 
 import ENS from '../../../lib/ENS';
-import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
 import {
@@ -43,7 +42,6 @@ import { setupUserBalanceListener } from './setupUserBalanceListener';
 function* setupContextDependentSagas() {
   const appLoadingState: typeof AppLoadingState = AppLoadingState;
   yield all([
-    call(setupAdminSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
     /**

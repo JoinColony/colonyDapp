@@ -20,6 +20,10 @@ yup.setLocale(en);
  */
 // eslint-disable-next-line import/prefer-default-export
 export const ENS_DOMAIN_REGEX = '^[A-Za-z0-9][^.]{0,255}$';
+/*
+ * Hex String Regex Test
+ */
+export const HEX_STRING_REGEX = '^(0x|0X)?[a-fA-F0-9]+$';
 
 /* Custom validators */
 function equalTo(ref, msg) {
@@ -95,8 +99,30 @@ export class BigNumberSchemaType extends yup.object {
   }
 }
 
+function hexString(msg) {
+  return this.test({
+    name: 'hexString',
+    message: msg || en.string.hexString,
+    test(value) {
+      return value ? !!value.match(new RegExp(HEX_STRING_REGEX)) : true;
+    },
+  });
+}
+
+function hasHexPrefix(msg) {
+  return this.test({
+    name: 'hasHexPrefix',
+    message: msg || en.string.hasHexPrefix,
+    test(value) {
+      return value ? value.toLowerCase().startsWith('0x') : true;
+    },
+  });
+}
+
 yup.addMethod(yup.mixed, 'equalTo', equalTo);
 yup.addMethod(yup.string, 'address', address);
 yup.addMethod(yup.string, 'ensAddress', ensAddress);
 yup.addMethod(yup.array, 'includes', includes);
 yup.addMethod(yup.string, 'cid', cid);
+yup.addMethod(yup.string, 'hexString', hexString);
+yup.addMethod(yup.string, 'hasHexPrefix', hasHexPrefix);

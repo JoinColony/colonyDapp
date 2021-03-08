@@ -5,3 +5,5 @@ import { BigNumberish, bigNumberify } from 'ethers/utils';
  */
 export const bnLessThan = (a: BigNumberish, b: BigNumberish) =>
   bigNumberify(a).lt(bigNumberify(b));
+
+export const halfPlusOne = (count: number) => Math.floor(count / 2) + 1;

@@ -471,6 +471,30 @@ const getSetUserRolesActionValues = async (
   return userRoleAction;
 };
 
+const getRecoveryActionValues = async (
+  processedEvents: ProcessedEvent[],
+): Promise<Partial<ActionValues>> => {
+  const recoveryModeEntered = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.RecoveryModeEntered,
+  ) as ProcessedEvent;
+
+  const {
+    address,
+    values: { user },
+  } = recoveryModeEntered;
+
+  const recoveryAction: {
+    address: Address;
+    actionInitiator?: string;
+  } = {
+    address,
+  };
+  if (user) {
+    recoveryAction.actionInitiator = user;
+  }
+  return recoveryAction;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -563,6 +587,15 @@ export const getActionValues = async (
         ...setUserRolesActionValues,
       };
     }
+    case ColonyActions.Recovery: {
+      const recoveryActionValues = await getRecoveryActionValues(
+        processedEvents,
+      );
+      return {
+        ...fallbackValues,
+        ...recoveryActionValues,
+      };
+    }
     default: {
       return fallbackValues;
     }
@@ -646,12 +679,25 @@ export const groupSetUserRolesActions = (actions): FormattedAction[] => {
         ) === -1
       ) {
         const filteredActionsByHash = actions.filter(
-          (actionB) => actionA.transactionHash === actionB.transactionHash,
+          ({ transactionHash, actionType }) =>
+            actionType === ColonyActions.SetUserRoles &&
+            actionA.transactionHash === transactionHash,
         );
-        const actionRoles = filteredActionsByHash.map((filteredAction) => ({
-          id: filteredAction.roles[0].id,
-          setTo: filteredAction.roles[0].setTo,
-        }));
+        const actionRoles = filteredActionsByHash.reduce(
+          (roles, filteredAction) => {
+            if (filteredAction?.roles) {
+              return [
+                ...roles,
+                {
+                  id: filteredAction?.roles[0]?.id,
+                  setTo: filteredAction?.roles[0]?.setTo,
+                },
+              ];
+            }
+            return roles;
+          },
+          [],
+        );
         groupedActions.push({
           ...actionA,
           roles: actionRoles,

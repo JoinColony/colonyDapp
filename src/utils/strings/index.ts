@@ -144,3 +144,11 @@ type RandomId = string;
 
 export const generateUrlFriendlyId = (): RandomId =>
   customAlphabet(urlAlphabet, 21)();
+
+export const ensureHexPrefix = (value: string): string => {
+  const HEX_HEADER = '0x';
+  if (value.toLocaleLowerCase().startsWith(HEX_HEADER)) {
+    return value;
+  }
+  return `${HEX_HEADER}${value}`;
+};

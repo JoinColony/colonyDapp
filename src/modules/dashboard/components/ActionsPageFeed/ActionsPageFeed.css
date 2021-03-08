@@ -4,12 +4,12 @@
 
 .loading {
   composes: main;
-  margin-top: 30px;
+  padding: 16px 0 16px 23px;
 }
 
 .loaderMessage {
   display: inline-block;
-  margin-left: 10px;
+  margin-left: 24px;
   vertical-align: top;
   font-size: var(--size-small);
 }

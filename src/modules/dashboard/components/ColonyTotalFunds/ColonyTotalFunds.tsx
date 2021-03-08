@@ -84,7 +84,7 @@ const ColonyTotalFunds = ({
   }, [data, currentTokenAddress]);
 
   const isSupportedColonyVersion =
-    parseInt(version, 10) >= ColonyVersion.CeruleanLightweightSpaceship;
+    parseInt(version, 10) >= ColonyVersion.LightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   if (!data || !currentToken || isLoadingTokenBalances) {

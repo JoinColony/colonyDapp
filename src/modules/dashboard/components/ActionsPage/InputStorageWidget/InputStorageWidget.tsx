@@ -1,28 +1,43 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState, RefObject } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
-import ExternalLink from '~core/ExternalLink';
+import { ActionForm, TextareaAutoresize, InputStatus } from '~core/Fields';
+import { SpinnerLoader } from '~core/Preloaders';
+
+import {
+  Colony,
+  useGetRecoveryStorageSlotLazyQuery,
+  useLoggedInUser,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { ActionForm, Input } from '~core/Fields';
+import { ensureHexPrefix } from '~utils/strings';
+import { ENTER, SPACE } from '~types/index';
+import { mapPayload } from '~utils/actions';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '../../../../transformers';
+import { userHasRole } from '../../../../users/checks';
 
 import styles from './InputStorageWidget.css';
 
 export interface FormValues {
-  inputStorageSlot?: string;
-  inputNewValue?: string;
+  storageSlotLocation?: string;
+  newStorageSlotValue?: string;
 }
 
-const LEARN_MORE_URL = '#CHANGEME';
-const CURRENT_VALUE_PLACEHOLDER =
-  '0x0000000000000000000000000000000000 000000000000000004939EF6B04812';
+interface Props {
+  colony: Colony;
+  startBlock?: number;
+  scrollToRef?: RefObject<HTMLInputElement>;
+}
 
 const MSG = defineMessages({
   inputStorageSlot: {
     id: 'dashboard.ActionsPage.InputStorageWidget.inputStorageSlot',
-    defaultMessage: 'Input storage lot',
+    defaultMessage: 'Input storage slot',
   },
   inputNewValue: {
     id: 'dashboard.ActionsPage.InputStorageWidget.inputNewValue',
@@ -30,87 +45,268 @@ const MSG = defineMessages({
   },
   currentValueLabel: {
     id: 'dashboard.ActionsPage.InputStorageWidget.currentValueLabel',
-    defaultMessage: 'Current value:',
-  },
-  currentValue: {
-    id: 'dashboard.ActionsPage.InputStorageWidget.currentValue',
-    defaultMessage: '{currentValue}',
+    defaultMessage: 'Current value: {slotValue}',
   },
   token: {
     id: 'dashboard.ActionsPage.InputStorageWidget.address',
     defaultMessage: 'Token',
   },
-  learnMoreLink: {
-    id: 'dashboard.ActionsPage.InputStorageWidget.learnMoreLink',
-    defaultMessage: 'Learn more',
+  loadingSlotValue: {
+    id: 'dashboard.ActionsPage.InputStorageWidget.loadingSlotValue',
+    defaultMessage: 'Fetching storage slot value ...',
   },
 });
 
-const InputStorageWidget = () => {
-  const validationSchema = yup.object().shape({
-    inputStorageSlot: yup.string().required(),
-    inputNewValue: yup.string().required(),
-  });
+const validationSchema = yup.object().shape({
+  storageSlotLocation: yup.string().max(66).hexString(),
+  newStorageSlotValue: yup.string().max(66).hexString(),
+});
+
+const InputStorageWidget = ({
+  colony: { colonyAddress },
+  colony,
+  startBlock = 1,
+  scrollToRef,
+}: Props) => {
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const [storageSlot, setStorageSlot] = useState('');
+
+  const [
+    fetchStorageSlotValue,
+    { data, loading: loadinStorageSlotValue },
+  ] = useGetRecoveryStorageSlotLazyQuery();
+
+  useEffect(() => {
+    if (storageSlot) {
+      fetchStorageSlotValue({ variables: { colonyAddress, storageSlot } });
+    }
+  }, [storageSlot, colonyAddress, fetchStorageSlotValue]);
+
+  /*
+   * We need to handle these manually using a ref, since the TextAreaAutoresize
+   * component doesn't give us access to the native React ones :(
+   */
+  const handleStorageSlotLocationBlur = useCallback(
+    (textarea, currentValue, fieldError, updateValues) => {
+      if (textarea?._ref) {
+        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
+        const autoResizeTextareaComponent = textarea?._ref;
+        /*
+         * Add 0x prefix on blur and set the storage slot in state
+         */
+        autoResizeTextareaComponent.onblur = () => {
+          if (!fieldError && currentValue) {
+            const normalizedStorageSlot = ensureHexPrefix(currentValue);
+            updateValues('storageSlotLocation', normalizedStorageSlot);
+            setStorageSlot(normalizedStorageSlot);
+          }
+          if (!currentValue) {
+            setStorageSlot('');
+          }
+        };
+        /*
+         * Prevent entering a new line
+         *
+         * Based on specs we need to **fake** a multi-line input, but one
+         * you can't actually create a new line manully, just if the text
+         * overflows...
+         *
+         * While we're at it we also disable the space bar, since no value
+         * that can be entered requires a space (it's just a litte nice-to-have)
+         */
+        autoResizeTextareaComponent.onkeypress = (event) => {
+          if (event.key === ENTER || event.code === SPACE) {
+            event.preventDefault();
+          }
+        };
+      }
+    },
+    [],
+  );
+
+  /*
+   * We need to handle these manually using a ref, since the TextAreaAutoresize
+   * component doesn't give us access to the native React ones :(
+   */
+  const handleNewStorageSlotValueBlur = useCallback(
+    (textarea, currentValue, fieldError, updateValues) => {
+      if (textarea?._ref) {
+        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
+        const autoResizeTextareaComponent = textarea?._ref;
+        /*
+         * Add 0x prefix on blur and set the storage slot in state
+         */
+        autoResizeTextareaComponent.onblur = () => {
+          if (!fieldError && currentValue) {
+            const noPrefixValue = currentValue.startsWith('0x')
+              ? currentValue.slice(2)
+              : currentValue;
+            const paddedValue = noPrefixValue.padStart(64, '0');
+            updateValues('newStorageSlotValue', ensureHexPrefix(paddedValue));
+          }
+        };
+        /*
+         * Prevent entering a new line
+         *
+         * Based on specs we need to **fake** a multi-line input, but one
+         * you can't actually create a new line manully, just if the text
+         * overflows...
+         *
+         * While we're at it we also disable the space bar, since no value
+         * that can be entered requires a space (it's just a litte nice-to-have)
+         */
+        autoResizeTextareaComponent.onkeypress = (event) => {
+          if (event.key === ENTER || event.code === SPACE) {
+            event.preventDefault();
+          }
+        };
+      }
+    },
+    [],
+  );
+
+  const handleSubmitSuccess = useCallback(
+    (_, { resetForm }) => {
+      /*
+       * Reset the storage slot form and scroll to the bottom of the page
+       *
+       * Note that we don't actually know where the bottom of the page is,
+       * but we know where the comment box is (which is always visible if the user
+       * is logged in)
+       * So we use that to scroll it into view, knowing that it will always
+       * scroll to the correct position
+       */
+      resetForm({});
+      setStorageSlot('');
+      scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+    },
+    [scrollToRef],
+  );
+
+  const transform = useCallback(
+    mapPayload(({ storageSlotLocation, newStorageSlotValue }) => ({
+      colonyAddress,
+      walletAddress,
+      startBlock,
+      storageSlotLocation,
+      storageSlotValue: newStorageSlotValue,
+    })),
+    [],
+  );
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const userHasPermission = userHasRole(allUserRoles, ColonyRole.Recovery);
 
   return (
     <ActionForm
       initialValues={{
-        inputStorageSlot: '',
-        inputNewValue: '',
+        storageSlotLocation: '',
+        newStorageSlotValue: '',
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_GENERIC} // @TODO: Add in correct ActionTypes
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+      submit={ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT}
+      error={ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_ERROR}
+      success={ActionTypes.COLONY_ACTION_RECOVERY_SET_SLOT_SUCCESS}
+      transform={transform}
+      onSuccess={handleSubmitSuccess}
     >
-      {(formValues: FormikProps<FormValues>) => {
-        return (
-          <div className={styles.widgetForm}>
-            <ExternalLink
-              className={styles.learnMoreLink}
-              text={MSG.learnMoreLink}
-              href={LEARN_MORE_URL}
-            />
-            <div className={styles.inputStorageSlotContainer}>
-              <Input
-                label={MSG.inputStorageSlot}
-                name="inputStorageSlot"
-                appearance={{
-                  theme: 'fat',
-                  colorSchema: 'grey',
-                }}
-                onClick={() => {}} // @TODO: Connect with functional on click handler
-              />
-            </div>
-            <p className={styles.currentValueText}>
-              <FormattedMessage {...MSG.currentValueLabel} />
-            </p>
-            <p className={styles.currentValueText}>
-              <FormattedMessage
-                {...MSG.currentValue}
-                values={{ currentValue: CURRENT_VALUE_PLACEHOLDER }}
-              />
-            </p>
-            <Input
-              label={MSG.inputNewValue}
-              name="inputNewValue"
+      {({
+        handleSubmit,
+        isSubmitting,
+        isValid,
+        values: {
+          storageSlotLocation: storageSlotLocationValue,
+          newStorageSlotValue,
+        },
+        errors: {
+          storageSlotLocation: storageSlotLocationError,
+          newStorageSlotValue: newStorageSlotValueError,
+        },
+        setFieldValue,
+      }: FormikProps<FormValues>) => (
+        <div className={styles.widgetForm}>
+          <div className={styles.inputStorageSlotContainer}>
+            <TextareaAutoresize
+              label={MSG.inputStorageSlot}
+              name="storageSlotLocation"
+              innerRef={(ref) =>
+                handleStorageSlotLocationBlur(
+                  ref,
+                  storageSlotLocationValue,
+                  storageSlotLocationError,
+                  setFieldValue,
+                )
+              }
               appearance={{
                 theme: 'fat',
                 colorSchema: 'grey',
               }}
+              disabled={!hasRegisteredProfile}
             />
-            <div className={styles.formFooter}>
-              <Button
-                appearance={{ theme: 'primary', size: 'medium' }}
-                onClick={() => formValues.handleSubmit()}
-                text={{ id: 'button.submit' }}
-                loading={formValues.isSubmitting}
-                disabled={!formValues.isValid}
-              />
+            {storageSlotLocationError && (
+              <span className={styles.inputValidationError}>
+                <InputStatus error={storageSlotLocationError} />
+              </span>
+            )}
+            <div className={styles.currentValueText}>
+              {loadinStorageSlotValue && (
+                <div className={styles.loadingSlotValue}>
+                  <SpinnerLoader />
+                  <FormattedMessage tagName="span" {...MSG.loadingSlotValue} />
+                </div>
+              )}
+              {data?.getRecoveryStorageSlot && storageSlot && (
+                <FormattedMessage
+                  {...MSG.currentValueLabel}
+                  values={{
+                    slotValue: <span>{data.getRecoveryStorageSlot}</span>,
+                  }}
+                />
+              )}
             </div>
           </div>
-        );
-      }}
+          <div className={styles.inputStorageSlotContainer}>
+            <TextareaAutoresize
+              label={MSG.inputNewValue}
+              name="newStorageSlotValue"
+              innerRef={(ref) =>
+                handleNewStorageSlotValueBlur(
+                  ref,
+                  newStorageSlotValue,
+                  newStorageSlotValueError,
+                  setFieldValue,
+                )
+              }
+              appearance={{
+                theme: 'fat',
+                colorSchema: 'grey',
+              }}
+              disabled={!hasRegisteredProfile || !userHasPermission}
+            />
+            {newStorageSlotValueError && (
+              <span className={styles.inputValidationError}>
+                <InputStatus error={newStorageSlotValueError} />
+              </span>
+            )}
+            {hasRegisteredProfile && userHasPermission && (
+              <div className={styles.controls}>
+                <Button
+                  appearance={{ theme: 'primary', size: 'medium' }}
+                  onClick={() => handleSubmit()}
+                  text={{ id: 'button.submit' }}
+                  loading={isSubmitting}
+                  disabled={
+                    !isValid ||
+                    !storageSlotLocationValue ||
+                    !newStorageSlotValue
+                  }
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </ActionForm>
   );
 };

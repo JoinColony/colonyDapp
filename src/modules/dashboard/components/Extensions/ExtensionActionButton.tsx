@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { useHistory, useParams } from 'react-router';
+import { ColonyVersion } from '@colony/colony-js';
 
 import Button, { ActionButton, IconButton } from '~core/Button';
 import { ColonyExtensionQuery } from '~data/index';
@@ -23,10 +24,12 @@ interface Props {
   colonyAddress: Address;
   extension: ExtensionData;
   installedExtension?: ColonyExtensionQuery['colonyExtension'] | null;
+  colonyVersion: string;
 }
 
 const ExtensionActionButton = ({
   colonyAddress,
+  colonyVersion,
   extension,
   installedExtension,
 }: Props) => {
@@ -39,6 +42,9 @@ const ExtensionActionButton = ({
   const handleEnableButtonClick = useCallback(() => {
     history.push(`/colony/${colonyName}/extensions/${extensionId}/setup`);
   }, [colonyName, extensionId, history]);
+
+  const isSupportedColonyVersion =
+    parseInt(colonyVersion || '1', 10) >= ColonyVersion.LightweightSpaceship;
 
   if (!installedExtension) {
     return (
@@ -53,6 +59,7 @@ const ExtensionActionButton = ({
           extensionId: extension.extensionId,
         }}
         text={MSG.install}
+        disabled={!isSupportedColonyVersion}
       />
     );
   }
@@ -67,6 +74,7 @@ const ExtensionActionButton = ({
         appearance={{ theme: 'primary', size: 'medium' }}
         onClick={handleEnableButtonClick}
         text={MSG.enable}
+        disabled={!isSupportedColonyVersion}
       />
     );
   }
@@ -82,6 +90,7 @@ const ExtensionActionButton = ({
           extensionId: extension.extensionId,
         }}
         text={MSG.enable}
+        disabled={!isSupportedColonyVersion}
       />
     );
   }

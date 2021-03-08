@@ -6,7 +6,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
-import DefaultAction from './ActionsComponents/DefaultAction';
+import { DefaultAction, RecoverytAction } from './ActionsComponents';
 
 import {
   useColonyActionLazyQuery,
@@ -32,7 +32,7 @@ const MSG = defineMessages({
   },
   transactionNotFound: {
     id: 'dashboard.ActionsPage.transactionNotFound',
-    defaultMessage: `Ooops, transaction not found`,
+    defaultMessage: `Ooops, action not found`,
   },
   returnToColony: {
     id: 'dashboard.ActionsPage.returnToColony',
@@ -253,6 +253,17 @@ const ActionsPage = () => {
     /*
      * @TODO Add cases for all actions that require a specific component
      */
+    case ColonyActions.Recovery:
+      return (
+        <RecoverytAction
+          colony={colonyData?.processedColony}
+          token={tokenData?.tokenInfo}
+          colonyAction={colonyActionData?.colonyAction}
+          transactionHash={transactionHash as string}
+          recipient={recipientProfileWithFallback}
+          initiator={initiatorProfileWithFallback}
+        />
+      );
     case ColonyActions.Generic:
     default:
       return (

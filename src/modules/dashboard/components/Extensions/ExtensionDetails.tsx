@@ -7,7 +7,7 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { ColonyRole } from '@colony/colony-js';
+import { ColonyRole, ColonyVersion } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -116,7 +116,10 @@ interface Props {
   colony: Colony;
 }
 
-const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
+const ExtensionDetails = ({
+  colony: { colonyAddress, version: colonyVersion },
+  colony,
+}: Props) => {
   const { colonyName, extensionId } = useParams<{
     colonyName: string;
     extensionId: string;
@@ -133,6 +136,8 @@ const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
 
   const hasRegisteredProfile = !!username && !ethereal;
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const isSupportedColonyVersion =
+    parseInt(colonyVersion || '1', 10) >= ColonyVersion.LightweightSpaceship;
 
   const extension = extensionData[extensionId];
 
@@ -283,6 +288,7 @@ const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
             {(extesionCanBeInstalled || extesionCanBeEnabled) && (
               <ExtensionActionButton
                 colonyAddress={colonyAddress}
+                colonyVersion={colonyVersion}
                 installedExtension={installedExtension}
                 extension={extension}
               />
@@ -314,6 +320,7 @@ const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
                 success={ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS}
                 text={MSG.buttonDeprecate}
                 values={{ colonyAddress, extensionId }}
+                disabled={!isSupportedColonyVersion}
               />
             </div>
           ) : null}
@@ -331,6 +338,7 @@ const ExtensionDetails = ({ colony: { colonyAddress }, colony }: Props) => {
                 success={ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS}
                 text={MSG.buttonUninstall}
                 values={{ colonyAddress, extensionId }}
+                disabled={!isSupportedColonyVersion}
               />
             </div>
           ) : null}

@@ -19,10 +19,19 @@ export default gql`
   }
 
   type ParsedEvent {
+    type: String!
     name: String!
     values: String!
     createdAt: Int!
     emmitedBy: String!
+    blockNumber: Int
+    transactionHash: String!
+  }
+
+  type SystemMessage {
+    type: String!
+    name: String!
+    createdAt: Int!
   }
 
   type ColonyActionRoles {
@@ -52,6 +61,7 @@ export default gql`
     domainName: String!
     domainPurpose: String!
     domainColor: String!
+    blockNumber: Int!
   }
 
   input NetworkContractsInput {
@@ -162,6 +172,29 @@ export default gql`
     avatarURL: String
   }
 
+  type UserProfile {
+    avatarHash: String
+    displayName: String
+    username: String
+    walletAddress: String!
+  }
+
+  type User {
+    id: String!
+    profile: UserProfile!
+  }
+
+  type UsersAndRecoveryApprovals {
+    id: String!
+    profile: UserProfile!
+    approvedRecoveryExit: Boolean!
+  }
+
+  type ActionThatNeedsAttention {
+    transactionHash: String!
+    needsAction: Boolean!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -190,6 +223,33 @@ export default gql`
       colonyAddress: String!
     ): ColonyAction!
     processedMetaColony: ProcessedMetaColony
+    actionsThatNeedAttention(
+      colonyAddress: String!
+      walletAddress: String!
+    ): [ActionThatNeedsAttention]!
+    recoveryEventsForSession(
+      blockNumber: Int!
+      colonyAddress: String!
+    ): [ParsedEvent!]!
+    recoverySystemMessagesForSession(
+      blockNumber: Int!
+      colonyAddress: String!
+    ): [SystemMessage!]!
+    recoveryRolesUsers(colonyAddress: String!, endBlockNumber: Int): [User!]!
+    getRecoveryStorageSlot(
+      colonyAddress: String!
+      storageSlot: String!
+    ): String!
+    recoveryRolesAndApprovalsForSession(
+      blockNumber: Int!
+      colonyAddress: String!
+    ): [UsersAndRecoveryApprovals!]!
+    getRecoveryRequiredApprovals(
+      blockNumber: Int!
+      colonyAddress: String!
+    ): Int!
+    recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
+    legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
   }
 
   extend type Mutation {

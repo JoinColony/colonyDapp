@@ -1,8 +1,6 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
-import { ColonyRole } from '@colony/colony-js';
+import { FormattedMessage } from 'react-intl';
 
-import Button from '~core/Button';
 import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
 import { EventValue } from '~data/resolvers/colonyActions';
@@ -12,7 +10,6 @@ import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
-import InputStorageWidget from '../InputStorageWidget';
 
 import {
   useLoggedInUser,
@@ -29,17 +26,9 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
-import MultisigWidget from '../MultisigWidget';
 import DetailsWidget from '../DetailsWidget';
 
 import styles from './DefaultAction.css';
-
-const MSG = defineMessages({
-  recoveryTag: {
-    id: 'dashboard.ActionsPage.DefaultAction.recovery',
-    defaultMessage: `Recovery`,
-  },
-});
 
 const displayName = 'dashboard.ActionsPage.DefaultAction';
 
@@ -72,9 +61,6 @@ const DefaultAction = ({
   colonyAction,
   transactionHash,
   recipient,
-  initiator: {
-    profile: { walletAddress: initiatorWalletAddress },
-  },
   initiator,
 }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
@@ -178,13 +164,6 @@ const DefaultAction = ({
 
   return (
     <div className={styles.main}>
-      {actionType === ColonyActions.Recovery && (
-        <div className={styles.container}>
-          <p className={styles.recoveryTag}>
-            <FormattedMessage {...MSG.recoveryTag} />
-          </p>
-        </div>
-      )}
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
         <div className={styles.content}>
@@ -231,36 +210,13 @@ const DefaultAction = ({
           )}
         </div>
         <div className={styles.details}>
-          {actionType === ColonyActions.Recovery ? (
-            <>
-              <InputStorageWidget />
-              <MultisigWidget
-                // Mocking for now
-                membersAllowedForApproval={Array.from(
-                  Array(10),
-                  () => initiatorWalletAddress,
-                )}
-                requiredNumber={4}
-                requiredPermission={ColonyRole.Recovery}
-              >
-                <Button
-                  text={{ id: 'button.approve' }}
-                  appearance={{
-                    theme: 'primary',
-                    size: 'medium',
-                  }}
-                />
-              </MultisigWidget>
-            </>
-          ) : (
-            <DetailsWidget
-              actionType={actionType as ColonyActions}
-              recipient={recipient}
-              transactionHash={transactionHash}
-              values={actionAndEventValues}
-              colony={colony}
-            />
-          )}
+          <DetailsWidget
+            actionType={actionType as ColonyActions}
+            recipient={recipient}
+            transactionHash={transactionHash}
+            values={actionAndEventValues}
+            colony={colony}
+          />
         </div>
       </div>
     </div>

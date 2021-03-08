@@ -14,6 +14,9 @@ import {
   useTransactionMessagesCountQuery,
   useSubscriptionSubgraphOneTxSubscription,
   useSubscriptionSubgraphEventsThatAreActionsSubscription,
+  useActionsThatNeedAttentionQuery,
+  useLoggedInUser,
+  ActionThatNeedsAttention,
 } from '~data/index';
 import {
   ActionsSortOptions,
@@ -24,6 +27,7 @@ import { useTransformer } from '~utils/hooks';
 import {
   ColonyActions as ColonyActionTypes,
   FormattedAction,
+  Address,
 } from '~types/index';
 
 import styles from './ColonyActions.css';
@@ -70,6 +74,8 @@ const ColonyActions = ({
   colony,
   ethDomainId,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
+
   const [actionsSortOption, setActionsSortOption] = useState<string>(
     ActionsSortOptions.NEWEST,
   );
@@ -109,10 +115,30 @@ const ColonyActions = ({
     variables: { colonyAddress },
   });
 
+  const {
+    data: actionStatuses,
+    loading: actionStatusesLoading,
+  } = useActionsThatNeedAttentionQuery({
+    variables: {
+      colonyAddress,
+      walletAddress,
+    },
+  });
+
   const actions = useTransformer(getActionsListData, [
     { ...oneTxActions, ...eventsActions },
     commentCount?.transactionMessagesCount,
-    extensionAddresses as string[],
+    {
+      extensionAddresses: extensionAddresses as Address[],
+      /*
+       * Prettier is being stupid again
+       *
+       * Just try it! Remove the disable below and see for yourself what stupid
+       * suggestions it gives up
+       */
+      // eslint-disable-next-line max-len
+      actionsThatNeedAttention: actionStatuses?.actionsThatNeedAttention as ActionThatNeedsAttention[],
+    },
   ]);
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */
@@ -172,6 +198,7 @@ const ColonyActions = ({
     oneTxActionsLoading ||
     eventsActionsLoading ||
     commentCountLoading ||
+    actionStatusesLoading ||
     !commentCount ||
     !oneTxActions ||
     !eventsActions

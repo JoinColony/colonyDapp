@@ -10,7 +10,9 @@
         "address": "This is not a valid address",
         "domainName": "This is not a valid domain name",
         "orbitDBAddress": "This is not a valid OrbitDB address",
-        "ensAddress": "This is not a valid ENS address"
+        "ensAddress": "This is not a valid ENS address",
+        "hexString": "The value is not a valid hex string",
+        "hasHexPrefix": "A hex string must be prepended with the 0x prefix"
     },
     "array": {
         "includes": "The values should include ${searchVal}"

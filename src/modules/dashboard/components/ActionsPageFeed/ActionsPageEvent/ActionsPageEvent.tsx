@@ -1,24 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactNode } from 'react';
 import { useIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { nanoid } from 'nanoid';
 import findLastIndex from 'lodash/findLastIndex';
 
 import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
-import { ColonyAndExtensionsEvents } from '~types/index';
-import { useDataFetcher } from '~utils/hooks';
 import ColorTag, { Color } from '~core/ColorTag';
-import { ipfsDataFetcher } from '../../../../core/fetchers';
+import FriendlyName from '~core/FriendlyName';
 
-import { EventValues } from '../ActionsPageFeed';
-import { STATUS } from '../../ActionsPage/types';
-import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
 import {
   ColonyAction,
   useSubgraphColonyMetadataQuery,
   useSubgraphDomainMetadataQuery,
   Colony,
+  useUser,
 } from '~data/index';
+import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   getSpecificActionValuesCheck,
   sortMetdataHistory,
@@ -28,6 +25,12 @@ import {
   getDomainMetadataMessageDescriptorsIds,
   getColonyRoleSetMessageDescriptorsIds,
 } from '~utils/colonyActions';
+import { useDataFetcher } from '~utils/hooks';
+import { ipfsDataFetcher } from '../../../../core/fetchers';
+
+import { EventValues } from '../ActionsPageFeed';
+import { STATUS } from '../../ActionsPage/types';
+import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
 
 import styles from './ActionsPageEvent.css';
 
@@ -57,6 +60,7 @@ interface Props {
   emmitedBy?: string;
   actionData: ColonyAction;
   colony: Colony;
+  children?: ReactNode;
 }
 
 interface DomainMetadata {
@@ -75,11 +79,15 @@ const ActionsPageEvent = ({
   actionData,
   colony: { colonyAddress },
   colony,
+  children,
 }: Props) => {
   let metadataJSON;
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
     undefined,
   );
+
+  const initiator = useUser(values?.agent || values?.user || '');
+
   const [
     previousDomainMetadata,
     setPreviousDomainMetadata,
@@ -112,7 +120,7 @@ const ActionsPageEvent = ({
   const domainMetadataHistory = useSubgraphDomainMetadataQuery({
     variables: {
       colonyAddress: colonyAddress.toLowerCase(),
-      domainId: values?.fromDomain.ethDomainId || 0,
+      domainId: values?.fromDomain?.ethDomainId || 0,
     },
   });
   /*
@@ -197,7 +205,13 @@ const ActionsPageEvent = ({
       tokensChanged: !!tokenAddresses?.length,
     };
   }, [colonyMetadataHistory, actionData, metadataJSON, eventName, colony]);
-  const roleNameMessage = { id: `role.${values?.roles[eventIndex].id}` };
+  const roleNameMessage = {
+    id: `role.${
+      values?.roles && values?.roles[eventIndex]
+        ? values?.roles[eventIndex].id
+        : 'unknown'
+    }`,
+  };
   const { formatMessage } = useIntl();
   const formattedRole = formatMessage(roleNameMessage).toLowerCase();
 
@@ -254,7 +268,9 @@ const ActionsPageEvent = ({
         );
       case ColonyAndExtensionsEvents.ColonyRoleSet:
         return getColonyRoleSetMessageDescriptorsIds(
-          values?.roles[eventIndex].setTo,
+          values?.roles &&
+            values?.roles[eventIndex] &&
+            values?.roles[eventIndex]?.setTo,
           'event',
         );
       default:
@@ -267,84 +283,95 @@ const ActionsPageEvent = ({
     eventIndex,
     values,
   ]);
+
   const { domainPurpose, domainName, domainColor } = actionData;
+
   return (
     <div className={styles.main}>
-      <div className={styles.status}>
-        <TransactionStatus status={STATUS.Succeeded} showTooltip={false} />
-      </div>
-      <div className={styles.content}>
-        <div className={styles.text}>
-          <FormattedMessage
-            id={getEventTitleMessageDescriptor}
-            values={{
-              ...values,
-              fromDomain: values?.fromDomain?.name,
-              toDomain: values?.toDomain?.name,
-              oldColor: (
-                <ColorTag
-                  color={
-                    Number(previousDomainMetadata?.domainColor) ||
-                    Color.LightPink
-                  }
-                />
-              ),
-              domainColor: (
-                <ColorTag color={Number(domainColor) || Color.LightPink} />
-              ),
-              // Fallback to current name/description when there is no previous metadata obj
-              oldDescription:
-                previousDomainMetadata?.domainPurpose || domainPurpose,
-              oldName: previousDomainMetadata?.domainName || domainName,
-              domainPurpose,
-              domainName,
-              eventName,
-              /*
-               * Usefull if a event isn't found or doesn't have a message descriptor
-               */
-              eventNameDecorated: <b>{eventName}</b>,
-              role: formattedRole,
-              clientOrExtensionType: (
-                <span className={styles.highlight}>{emmitedBy}</span>
-              ),
-            }}
-          />
+      <div className={styles.wrapper}>
+        <div className={styles.status}>
+          <TransactionStatus status={STATUS.Succeeded} showTooltip={false} />
         </div>
-        <div className={styles.details}>
-          <div className={styles.roles}>
-            {eventName &&
-              EVENT_ROLES_MAP[eventName] &&
-              EVENT_ROLES_MAP[eventName].map((role, index) => (
-                <PermissionsLabel
-                  key={autogeneratedIds[eventName][index]}
-                  appearance={{ theme: 'simple' }}
-                  permission={role}
-                  minimal
-                  infoMessage={MSG.rolesTooltip}
-                  infoMessageValues={{
-                    role,
-                    icon: (
-                      <div className={styles.tooltipIcon}>
-                        <PermissionsLabel
-                          permission={role}
-                          appearance={{ theme: 'white' }}
-                        />
-                      </div>
-                    ),
-                  }}
-                />
-              ))}
+        <div className={styles.content}>
+          <div className={styles.text}>
+            <FormattedMessage
+              id={getEventTitleMessageDescriptor}
+              values={{
+                ...values,
+                fromDomain: values?.fromDomain?.name,
+                toDomain: values?.toDomain?.name,
+                oldColor: (
+                  <ColorTag
+                    color={
+                      Number(previousDomainMetadata?.domainColor) ||
+                      Color.LightPink
+                    }
+                  />
+                ),
+                domainColor: (
+                  <ColorTag color={Number(domainColor) || Color.LightPink} />
+                ),
+                // Fallback to current name/description when there is no previous metadata obj
+                oldDescription:
+                  previousDomainMetadata?.domainPurpose || domainPurpose,
+                oldName: previousDomainMetadata?.domainName || domainName,
+                domainPurpose,
+                domainName,
+                eventName,
+                /*
+                 * Usefull if a event isn't found or doesn't have a message descriptor
+                 */
+                eventNameDecorated: <b>{eventName}</b>,
+                role: formattedRole,
+                clientOrExtensionType: (
+                  <span className={styles.highlight}>{emmitedBy}</span>
+                ),
+                initiator: (
+                  <span className={styles.userDecoration}>
+                    <FriendlyName user={initiator} autoShrinkAddress />
+                  </span>
+                ),
+                storageSlot: values?.slot?.toHexString(),
+              }}
+            />
           </div>
-          {transactionHash && (
-            <div className={styles.meta}>
-              <TransactionMeta
-                transactionHash={transactionHash}
-                createdAt={createdAt}
-              />
+          <div className={styles.details}>
+            <div className={styles.roles}>
+              {eventName &&
+                EVENT_ROLES_MAP[eventName] &&
+                EVENT_ROLES_MAP[eventName].map((role, index) => (
+                  <PermissionsLabel
+                    key={autogeneratedIds[eventName][index]}
+                    appearance={{ theme: 'simple' }}
+                    permission={role}
+                    minimal
+                    infoMessage={MSG.rolesTooltip}
+                    infoMessageValues={{
+                      role,
+                      icon: (
+                        <div className={styles.tooltipIcon}>
+                          <PermissionsLabel
+                            permission={role}
+                            appearance={{ theme: 'white' }}
+                          />
+                        </div>
+                      ),
+                    }}
+                  />
+                ))}
             </div>
-          )}
+            {transactionHash && (
+              <div className={styles.meta}>
+                <TransactionMeta
+                  transactionHash={transactionHash}
+                  createdAt={createdAt}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
+      {children && <div>{children}</div>}
     </div>
   );
 };

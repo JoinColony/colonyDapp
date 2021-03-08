@@ -19,3 +19,7 @@
 .popoverContent {
   padding: 10px;
 }
+
+.permissionNotAvailable {
+  color: var(--text-disabled);
+}

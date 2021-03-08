@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { ColonyVersion } from '@colony/colony-js';
 
 import { DialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
@@ -44,6 +45,10 @@ const MSG = defineMessages({
   recoveryDescription: {
     id: 'dashboard.AdvancedDialog.recoveryDescription',
     defaultMessage: 'Disable your colony in case of emergency.',
+  },
+  recoveryPreventDescription: {
+    id: 'dashboard.AdvancedDialog.recoveryPreventDescription',
+    defaultMessage: 'Please upgrade your colony version to use Recovery Mode.',
   },
   recoveryPermissionsList: {
     id: 'dashboard.AdvancedDialog.recoveryPermissionsList',
@@ -100,10 +105,11 @@ const AdvancedDialog = ({
   callStep,
   prevStep,
   nextStepPermissionManagement,
-  // nextStepRecovery,
+  nextStepRecovery,
   nextStepEditDetails,
   nextStepVersionUpgrade,
   colony,
+  colony: { version: colonyVersion },
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -114,6 +120,8 @@ const AdvancedDialog = ({
 
   const canEnterRecovery =
     hasRegisteredProfile && canEnterRecoveryMode(allUserRoles);
+  const isSupportedColonyVersion =
+    parseInt(colonyVersion, 10) > ColonyVersion.LightweightSpaceship;
 
   const canEnterPermissionManagement =
     hasRegisteredProfile && canArchitect(allUserRoles);
@@ -134,15 +142,17 @@ const AdvancedDialog = ({
     },
     {
       title: MSG.recoveryTitle,
-      description: MSG.recoveryDescription,
+      description: isSupportedColonyVersion
+        ? MSG.recoveryDescription
+        : MSG.recoveryPreventDescription,
       icon: 'emoji-alarm-lamp',
-      // onClick: () => callStep(nextStepRecovery),
+      onClick: () => callStep(nextStepRecovery),
       permissionRequired: !canEnterRecovery,
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.recoveryPermissionsList} />,
       },
-      comingSoon: true,
+      disabled: !isSupportedColonyVersion,
     },
     {
       title: MSG.upgradeTitle,

@@ -16,9 +16,20 @@ import {
 import { ACTIONS_EVENTS } from '~dashboard/ActionsPage/staticMaps';
 import { getValuesForActionType } from '~utils/colonyActions';
 import { TEMP_getContext, ContextModule } from '~context/index';
-import { createAddress } from '~utils/web3';
+import { createAddress, toHex } from '~utils/web3';
 import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
+import { ItemStatus } from '~core/ActionsList';
+
+interface ActionsThatNeedAttention {
+  transactionHash: string;
+  needsAction: boolean;
+}
+
+interface ActionsTransformerMetadata {
+  extensionAddresses?: Address[];
+  actionsThatNeedAttention?: ActionsThatNeedAttention[];
+}
 
 export const getActionsListData = (
   unformattedActions?: {
@@ -26,7 +37,10 @@ export const getActionsListData = (
     events?: SubscriptionSubgraphEventsThatAreActionsSubscription['events'];
   },
   transactionsCommentsCount?: TransactionsMessagesCount,
-  extensionsAddresses?: Address[],
+  {
+    extensionAddresses,
+    actionsThatNeedAttention,
+  }: ActionsTransformerMetadata = {},
 ): FormattedAction[] => {
   let formattedActions = [];
   /*
@@ -70,7 +84,7 @@ export const getActionsListData = (
          * they have been installed
          */
         if (
-          extensionsAddresses?.find(
+          extensionAddresses?.find(
             (extensionAddress) =>
               extensionAddress === event?.processedValues?.user,
           )
@@ -100,6 +114,7 @@ export const getActionsListData = (
             transactionHash: HashZero,
             createdAt: new Date(),
             commentCount: 0,
+            status: undefined,
           };
           let hash;
           let timestamp;
@@ -227,7 +242,7 @@ export const getActionsListData = (
    * out one of them, as since the metadata change is less important (and it's
    * not actually a change, but a "set") we filter it out
    */
-  return formattedGroupedActions.filter(
+  const filteredActions = formattedGroupedActions.filter(
     ({ initiator, actionType }: FormattedAction) => {
       /*
        * @NOTE This is wrapped inside a try/catch block since if the user logs out,
@@ -254,6 +269,37 @@ export const getActionsListData = (
       }
     },
   );
+
+  /*
+   * Assign the NeedsAction status to whichever action needs it
+   *
+   * I wish I could merge this extra map with the other processing steps
+   * but for one it's kinda complex and would make the code read harder
+   * and second, we need to wait until we've processed everything else in order
+   * to determine which actions need a status change.
+   *
+   * The good part is, that this will trigger **only** if we have actions that
+   * need actions, otherwise, it will skip the extra map
+   */
+  if (actionsThatNeedAttention?.length) {
+    return filteredActions.map((action) => {
+      const { transactionHash: currentActionTransactionHash } = action;
+      const potentialNeedsAction = actionsThatNeedAttention.find(
+        ({ transactionHash }) =>
+          transactionHash === currentActionTransactionHash,
+      );
+      if (potentialNeedsAction) {
+        return {
+          ...action,
+          status: potentialNeedsAction.needsAction
+            ? ItemStatus.NeedAction
+            : undefined,
+        };
+      }
+      return action;
+    });
+  }
+  return filteredActions;
 };
 
 export const getEventsListData = (
@@ -292,6 +338,8 @@ export const getEventsListData = (
         version,
         oldVersion,
         newVersion,
+        slot,
+        toValue,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -307,7 +355,7 @@ export const getEventsListData = (
         ...processedEvents,
         {
           id,
-          agent: agent ? createAddress(agent) : null,
+          agent: agent || user ? createAddress(agent || user) : null,
           eventName: formatEventName(name),
           transactionHash: hash,
           colonyAddress: checksummedColonyAddress,
@@ -327,6 +375,8 @@ export const getEventsListData = (
           extensionVersion: version,
           oldVersion: oldVersion || '0',
           newVersion: newVersion || '0',
+          storageSlot: slot ? toHex(parseInt(slot, 10)) : '0',
+          storageSlotValue: toValue || AddressZero,
         },
       ];
     } catch (error) {

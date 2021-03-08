@@ -1,7 +1,38 @@
 @value defaultDotBackground: rgb(255, 176, 0);
 
 .wrapper {
-  margin-top: 20px;
+  margin-top: 30px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.title > div {
+  margin: 0 6px;
+}
+
+.avatars {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.avatarWrapper {
+  margin: 0 13px 10px 0;
+}
+
+.avatarWrapper:nth-child(7n) {
+  margin-right: 0px;
+}
+
+.avatarWrapper figure {
+  height: 37px;
+  width: 37px;
 }
 
 .status {
@@ -19,42 +50,51 @@
   background-color: var(--primary);
 }
 
-.avatars {
-  display: flex;
-  flex-wrap: wrap;
-  margin-left: -6px;
-  margin-bottom: 10px;
-}
-
-.avatars > div {
-  margin: 0 6px 10px;
-}
-
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-top: 13px;
-}
-
-.title {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-  font-size: var(--size-normal);
-  font-weight: var(--weight-bold);
-  color: var(--dark);
-}
-
-.title > div {
-  margin: 0 10px;
-}
-
 .progressBarLabel {
-  margin-bottom: 4px;
+  /*
+   * Only 6px top margin since we have to compensate for the 10px of the avatar's
+   * bottom margin, to bring our total to 16px
+   */
+  margin: 6px 0 4px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   text-align: right;
   color: var(--dark);
   letter-spacing: var(--spacing-medium);
+}
+
+.controls {
+  padding: 0 0 16px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  text-align: right;
+}
+
+.buttonWrapper {
+  margin-top: 16px;
+}
+
+.buttonWrapper button {
+  width: 100px;
+  font-size: var(--size-small);
+}
+
+.totalRequired {
+  color: var(--pink);
+}
+
+.tooltip {
+  padding: 8px 4px;
+}
+
+.loading {
+  padding: 16px 0;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.loadingText {
+  display: inline-block;
+  margin: -8px 0 0 5px;
+  vertical-align: middle;
+  font-size: var(--size-small);
+  letter-spacing: initial;
 }

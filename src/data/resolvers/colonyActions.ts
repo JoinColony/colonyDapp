@@ -17,6 +17,7 @@ import {
   ColonyAndExtensionsEvents,
   Address,
 } from '~types/index';
+import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 
 export interface EventValue {
   agent: Address;
@@ -36,11 +37,13 @@ export interface EventValue {
 }
 
 export interface ProcessedEvent {
+  type: ActionsPageFeedType;
   name: ColonyAndExtensionsEvents;
   values: EventValue;
   createdAt: number;
   emmitedBy: ClientType;
   address: Address;
+  transactionHash: string;
 }
 
 export const colonyActionsResolvers = ({
@@ -87,6 +90,7 @@ export const colonyActionsResolvers = ({
           status,
           logs,
           blockHash,
+          blockNumber,
           from,
         } = transactionReceipt;
 
@@ -117,14 +121,19 @@ export const colonyActionsResolvers = ({
                 const type = clientType?.clientType;
                 const potentialParsedLog = clientType?.interface.parseLog(log);
                 if (potentialParsedLog) {
-                  const { address } = log;
+                  const {
+                    address,
+                    transactionHash: currentLogTransactionHash,
+                  } = log;
                   const { name, values } = potentialParsedLog;
                   return {
+                    type: ActionsPageFeedType.NetworkEvent,
                     name,
                     values,
                     createdAt,
                     emmitedBy: type,
                     address,
+                    transactionHash: currentLogTransactionHash,
                   } as ProcessedEvent;
                 }
                 return null;
@@ -178,10 +187,7 @@ export const colonyActionsResolvers = ({
 
         const clientVersion = await colonyClient?.version();
         let annotation;
-        if (
-          clientVersion.toNumber() ===
-          ColonyVersion.CeruleanLightweightSpaceship
-        ) {
+        if (clientVersion.toNumber() >= ColonyVersion.LightweightSpaceship) {
           annotation = await getAnnotation(
             from as string,
             hash as string,
@@ -210,6 +216,7 @@ export const colonyActionsResolvers = ({
           domainName: null,
           domainPurpose: null,
           domainColor: null,
+          blockNumber,
           ...actionValues,
         };
       }
@@ -252,6 +259,7 @@ export const colonyActionsResolvers = ({
         colonyDisplayName: null,
         colonyAvatarHash: null,
         colonyTokens: [],
+        blockNumber: null,
         ...pendingActionValues,
       };
     },
