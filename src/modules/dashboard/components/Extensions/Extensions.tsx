@@ -45,6 +45,17 @@ const Extensions = ({ colonyAddress }: Props) => {
     variables: { address: colonyAddress },
   });
 
+  const installedExtensionsData = useMemo(() => {
+    if (data?.processedColony?.installedExtensions) {
+      const { installedExtensions } = data.processedColony;
+      return installedExtensions.map(({ extensionId, address }) => ({
+        ...extensionData[extensionId],
+        address,
+      }));
+    }
+    return [];
+  }, [data]);
+
   const availableExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
@@ -80,13 +91,6 @@ const Extensions = ({ colonyAddress }: Props) => {
   const installedExtensions = data
     ? data.processedColony.installedExtensions
     : [];
-
-  const installedExtensionsData = installedExtensions.map(
-    ({ extensionId, address }) => ({
-      ...extensionData[extensionId],
-      address,
-    }),
-  );
 
   return (
     <div className={styles.main}>
