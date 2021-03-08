@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ColonyVersion } from '@colony/colony-js';
 
 import { useDialog } from '~core/Dialog';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
@@ -107,7 +106,7 @@ const ColonyUpgrade = ({ colony }: Props) => {
                       <ExternalLink
                         text={MSG.learnMore}
                         href={getNetworkRelaseLink(
-                          (colony.version as unknown) as ColonyVersion,
+                          parseInt(colony.version, 10) + 1,
                         )}
                       />
                     ),
