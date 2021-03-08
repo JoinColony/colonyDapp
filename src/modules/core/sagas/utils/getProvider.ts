@@ -15,10 +15,10 @@ const getProvider = (): Provider => {
     return new ExtendedJsonRpcProvider();
   }
   if (network === Network.Xdai) {
-    return new ExtendedJsonRpcProvider('https://xdai.poanetwork.dev');
+    return new ExtendedJsonRpcProvider(process.env.RPC_URL);
   }
   if (network === Network.XdaiFork) {
-    return new ExtendedJsonRpcProvider('https://qaxdai.colony.io/rpc/');
+    return new ExtendedJsonRpcProvider(process.env.RPC_URL);
   }
   return new ExtendedInfuraProvider(network, process.env.INFURA_ID);
 };
