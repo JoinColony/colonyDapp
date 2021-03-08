@@ -2,6 +2,7 @@ import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
+import { createAddress } from '~utils/web3';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
 import CopyableAddress from '~core/CopyableAddress';
@@ -93,7 +94,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     profile: { walletAddress },
   } = user;
 
-  const userProfile = useUser(walletAddress);
+  const userProfile = useUser(createAddress(walletAddress));
 
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId },
