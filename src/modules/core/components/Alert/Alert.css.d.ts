@@ -1,3 +1,4 @@
+export const newInfoBlue: string;
 export const main: string;
 export const closeButton: string;
 export const themePrimary: string;

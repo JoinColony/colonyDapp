@@ -1,5 +1,5 @@
 .main {
-  margin: 16px 0;
+  margin: 15px 0 16px;
   padding: 50px;
   border-radius: var(--radius-large);
   font-size: var(--size-normal);
