@@ -37,7 +37,7 @@ interface Props {
 }
 
 const Tooltip = ({
-  appearance,
+  appearance = {},
   children,
   content,
   placement = 'top',
@@ -52,7 +52,7 @@ const Tooltip = ({
   );
   return (
     <Popover
-      appearance={appearance}
+      appearance={{ theme: 'dark', ...appearance }}
       trigger={content ? trigger : 'disabled'}
       openDelay={200}
       content={renderedContent}
