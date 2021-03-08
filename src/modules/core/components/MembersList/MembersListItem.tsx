@@ -1,4 +1,5 @@
 import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
+import { AddressZero } from 'ethers/constants';
 
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
@@ -94,7 +95,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     profile: { walletAddress },
   } = user;
 
-  const userProfile = useUser(createAddress(walletAddress));
+  const userProfile = useUser(createAddress(walletAddress || AddressZero));
 
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId },
