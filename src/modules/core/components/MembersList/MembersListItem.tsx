@@ -194,7 +194,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             </span>
           )}
           <div className={styles.address}>
-            <CopyableAddress>{colonyAddress}</CopyableAddress>
+            <CopyableAddress>{walletAddress}</CopyableAddress>
           </div>
         </div>
         {renderedExtraItemContent && <div>{renderedExtraItemContent}</div>}
