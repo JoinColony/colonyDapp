@@ -19,6 +19,7 @@ import {
   SubgraphColoniesQueryVariables,
   SubgraphColoniesDocument,
 } from '~data/index';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import { getToken } from './token';
 import { getProcessedColony } from './colony';
@@ -33,7 +34,12 @@ const getUserReputation = async (
     ClientType.ColonyClient,
     colonyAddress,
   );
-  const { skillId } = await colonyClient.getDomain(domainId);
+  const { skillId } = await colonyClient.getDomain(
+    /*
+     * If we have the "All Teams" domain selected, fetch reputation values from "Root"
+     */
+    domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? ROOT_DOMAIN_ID : domainId,
+  );
   const { reputationAmount } = await colonyClient.getReputation(
     skillId,
     address,
