@@ -6,6 +6,7 @@ import {
   ColonyActions,
   ColonyAndExtensionsEvents,
   FormattedAction,
+  Address,
 } from '~types/index';
 import { ColonyAction, EventProcessedValues } from '~data/index';
 
@@ -49,6 +50,7 @@ export const getDetailsForAction = (
 export const getValuesForActionType = (
   values: EventProcessedValues,
   actionType: ColonyActions,
+  colonyAddress: Address,
 ): ValuesForActionTypesMap => {
   if (Object.keys(values).length) {
     switch (actionType) {
@@ -100,14 +102,14 @@ export const getValuesForActionType = (
       }
       case ColonyActions.VersionUpgrade: {
         return {
-          initiator: values?.agent,
+          initiator: values?.agent || colonyAddress,
           oldVersion: values.oldVersion,
           newVersion: values.newVersion,
         };
       }
       case ColonyActions.Recovery: {
         return {
-          initiator: values.user,
+          initiator: values?.user || colonyAddress,
         };
       }
       default: {

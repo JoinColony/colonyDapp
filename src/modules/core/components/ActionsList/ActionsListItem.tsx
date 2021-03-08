@@ -6,6 +6,7 @@ import {
   useIntl,
 } from 'react-intl';
 
+import { AddressZero } from 'ethers/constants';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import Numeral, { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
@@ -87,7 +88,7 @@ const ActionsListItem = ({
     [metadata],
   );
 
-  const initiatorUserProfile = useUser(createAddress(initiator));
+  const initiatorUserProfile = useUser(createAddress(initiator || AddressZero));
   const recipientAddress = createAddress(recipient);
   const isColonyAddress = recipientAddress === colony.colonyAddress;
   const fallbackRecipientProfile = useUser(

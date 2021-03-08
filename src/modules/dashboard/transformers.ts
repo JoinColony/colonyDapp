@@ -192,6 +192,7 @@ export const getActionsListData = (
               const {
                 processedValues,
                 associatedColony: {
+                  colonyAddress,
                   token: { address: tokenAddress, symbol, decimals },
                 },
                 name,
@@ -199,6 +200,7 @@ export const getActionsListData = (
               const actionEvent = Object.entries(ACTIONS_EVENTS).find((el) =>
                 el[1]?.includes(name.split('(')[0]),
               );
+              const checksummedColonyAddress = createAddress(colonyAddress);
               const actionType =
                 (actionEvent && (actionEvent[0] as ColonyActions)) ||
                 ColonyActions.Generic;
@@ -209,6 +211,7 @@ export const getActionsListData = (
               const actionTypeValues = getValuesForActionType(
                 processedValues,
                 actionType,
+                checksummedColonyAddress,
               );
               const actionTypeKeys = Object.keys(actionTypeValues);
               actionTypeKeys.forEach((key) => {
@@ -355,7 +358,10 @@ export const getEventsListData = (
         ...processedEvents,
         {
           id,
-          agent: agent || user ? createAddress(agent || user) : null,
+          agent:
+            agent || user
+              ? createAddress(agent || user)
+              : checksummedColonyAddress,
           eventName: formatEventName(name),
           transactionHash: hash,
           colonyAddress: checksummedColonyAddress,
