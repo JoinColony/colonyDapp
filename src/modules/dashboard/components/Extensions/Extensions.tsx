@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { extensions } from '@colony/colony-js';
 
@@ -45,6 +45,27 @@ const Extensions = ({ colonyAddress }: Props) => {
     variables: { address: colonyAddress },
   });
 
+  const availableExtensionsData = useMemo(() => {
+    if (data?.processedColony?.installedExtensions) {
+      const { installedExtensions } = data.processedColony;
+      return extensions.reduce((availableExtensions, extensionName) => {
+        const installedExtension = installedExtensions.find(
+          ({ extensionId }) => extensionName === extensionId,
+        );
+        if (!installedExtension) {
+          return [
+            ...availableExtensions,
+            {
+              ...extensionData[extensionName],
+            },
+          ];
+        }
+        return availableExtensions;
+      }, []);
+    }
+    return [];
+  }, [data]);
+
   if (loading) {
     return (
       <div className={styles.loadingSpinner}>
@@ -66,14 +87,7 @@ const Extensions = ({ colonyAddress }: Props) => {
       address,
     }),
   );
-  const availableExtensionsData = extensions
-    .filter(
-      (name: string) =>
-        !installedExtensions.find(({ extensionId }) => name === extensionId),
-    )
-    .map((id: string) => ({
-      ...extensionData[id],
-    }));
+
   return (
     <div className={styles.main}>
       <div className={styles.content}>
