@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import ReactSlider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
@@ -16,26 +16,31 @@ interface Props {
 
 const displayName = 'Slider';
 
-const Slider = ({ value, max = 100, onChange, limit = null, appearance = { theme: 'primary' } }: Props) => {
+const Slider = ({ value, max = 100, onChange, limit, appearance }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
+
+  const gradientStopPercentage = useMemo(() => {
+    return limit ? Math.round((limit / max) * 100) : 0;
+  }, [limit, max]);
+
+  const onSliderChange = useCallback(
+    (val): void => {
+      if ((limit && sliderValue < limit) || val < sliderValue || !limit) {
+        setSliderValue(val);
+        onChange(val);
+      }
+      if (limit && sliderValue > limit) {
+        setSliderValue(limit);
+        onChange(limit);
+      }
+    },
+    [setSliderValue, onChange, limit, sliderValue],
+  );
 
   const marks = {};
 
-  if (limit) {
-    if (limit >= max) return;
-  
+  if (limit && limit < max) {
     marks[limit] = {};
-  }
-
-  const onSliderChange = (val) => {
-    if ((limit && sliderValue < limit) || val < sliderValue || !limit) {
-      setSliderValue(val);
-      onChange(val);
-    }
-    if (limit && sliderValue > limit) {
-      setSliderValue(limit);
-      onChange(limit);
-    }
   }
 
   const SliderStylesObject = {
@@ -54,10 +59,10 @@ const Slider = ({ value, max = 100, onChange, limit = null, appearance = { theme
       markHeight: 8,
       markWidth: 2,
       markPositionTop: -3,
-    }
-  }
+    },
+  };
 
-  const styles = SliderStylesObject[appearance?.theme];
+  const styles = SliderStylesObject[appearance?.theme || 'primary'];
 
   return (
     <ReactSlider
@@ -67,7 +72,10 @@ const Slider = ({ value, max = 100, onChange, limit = null, appearance = { theme
       onChange={onSliderChange}
       marks={marks}
       max={max}
-      trackStyle={{ backgroundColor: styles.backgroundColor, height: styles.height }}
+      trackStyle={{
+        backgroundColor: styles.backgroundColor,
+        height: styles.height,
+      }}
       handleStyle={{
         borderColor: styles.borderColor,
         borderWidth: 6,
@@ -83,8 +91,13 @@ const Slider = ({ value, max = 100, onChange, limit = null, appearance = { theme
         border: 0,
         borderRadius: 0,
         top: styles.markPositionTop,
+        marginLeft: 0,
       }}
-      railStyle={{ backgroundColor: '#C2CCCC', height: styles.height }}
+      railStyle={{
+        backgroundColor: '#C2CCCC',
+        height: styles.height,
+        backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientStopPercentage}%, transparent ${gradientStopPercentage}%)`,
+      }}
     />
   );
 };
