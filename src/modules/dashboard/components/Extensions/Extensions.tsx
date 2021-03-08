@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { extensions } from '@colony/colony-js';
+import { extensions, Extension } from '@colony/colony-js';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -45,6 +45,43 @@ const Extensions = ({ colonyAddress }: Props) => {
     variables: { address: colonyAddress },
   });
 
+  const installedExtensionsData = useMemo(() => {
+    if (data?.processedColony?.installedExtensions) {
+      const { installedExtensions } = data.processedColony;
+      return installedExtensions.map(({ extensionId, address }) => ({
+        ...extensionData[extensionId],
+        address,
+      }));
+    }
+    return [];
+  }, [data]);
+
+  const availableExtensionsData = useMemo(() => {
+    if (data?.processedColony?.installedExtensions) {
+      const { installedExtensions } = data.processedColony;
+      return extensions.reduce((availableExtensions, extensionName) => {
+        const installedExtension = installedExtensions.find(
+          ({ extensionId }) => extensionName === extensionId,
+        );
+        /*
+         * @NOTE Temporary disable the coin machine extension in the list
+         *
+         * This will be re-enabled in the Coin Machine feature branch
+         */
+        if (!installedExtension && extensionName !== Extension.CoinMachine) {
+          return [
+            ...availableExtensions,
+            {
+              ...extensionData[extensionName],
+            },
+          ];
+        }
+        return availableExtensions;
+      }, []);
+    }
+    return [];
+  }, [data]);
+
   if (loading) {
     return (
       <div className={styles.loadingSpinner}>
@@ -60,20 +97,6 @@ const Extensions = ({ colonyAddress }: Props) => {
     ? data.processedColony.installedExtensions
     : [];
 
-  const installedExtensionsData = installedExtensions.map(
-    ({ extensionId, address }) => ({
-      ...extensionData[extensionId],
-      address,
-    }),
-  );
-  const availableExtensionsData = extensions
-    .filter(
-      (name: string) =>
-        !installedExtensions.find(({ extensionId }) => name === extensionId),
-    )
-    .map((id: string) => ({
-      ...extensionData[id],
-    }));
   return (
     <div className={styles.main}>
       <div className={styles.content}>
