@@ -66,7 +66,6 @@
   align-items: center;
   position: absolute;
   top: -21px;
-  border-radius: 1px;
 }
 
 .thresholdPercentage {
@@ -79,6 +78,7 @@
 .thresholdSeparator {
   height: 14px;
   width: 2px;
+  border-radius: 1px;
   background-color: var(--pink);
 }
 
