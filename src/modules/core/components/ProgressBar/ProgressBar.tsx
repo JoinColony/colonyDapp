@@ -39,7 +39,11 @@ const ProgressBar = ({
     <div className={`${styles.wrapper} ${getMainClasses(appearance, styles)}`}>
       {threshold && (
         <div
-          style={{ left: `calc(${threshold}% - 12px)` }}
+          style={{
+            left: `calc(${threshold}% - ${
+              appearance.size === 'normal' ? 9 : 12
+            }px)`,
+          }}
           className={styles.threshold}
         >
           <span className={styles.thresholdPercentage}>{threshold}%</span>
