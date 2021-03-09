@@ -96,8 +96,6 @@
 }
 
 .walletAddress {
-  display: flex;
-  align-items: center;
   padding: 0 8px 2px;
 
   /*
