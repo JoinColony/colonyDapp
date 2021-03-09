@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import ReactSlider from 'rc-slider';
+import { useField } from 'formik';
+
 import 'rc-slider/assets/index.css';
 
 type Appearance = {
@@ -12,12 +14,21 @@ interface Props {
   limit?: number;
   appearance?: Appearance;
   onChange: (val: any) => void;
+  name: string;
 }
 
 const displayName = 'Slider';
 
-const Slider = ({ value, max = 100, onChange, limit, appearance }: Props) => {
+const Slider = ({
+  value,
+  max = 100,
+  onChange,
+  limit,
+  appearance,
+  name,
+}: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
+  const [, , { setValue }] = useField(name);
 
   const gradientStopPercentage = useMemo(() => {
     return limit ? Math.round((limit / max) * 100) : 0;
@@ -27,10 +38,12 @@ const Slider = ({ value, max = 100, onChange, limit, appearance }: Props) => {
     (val): void => {
       if ((limit && sliderValue < limit) || val < sliderValue || !limit) {
         setSliderValue(val);
+        setValue(val);
         onChange(val);
       }
       if (limit && sliderValue > limit) {
         setSliderValue(limit);
+        setValue(val);
         onChange(limit);
       }
     },
