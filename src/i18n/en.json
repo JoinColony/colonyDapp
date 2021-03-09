@@ -50,8 +50,6 @@
 
     "wallet.metamask": "MetaMask",
 
-    "task.untitled": "Untitled Task",
-
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
     "transaction.group.transaction.batch.createUser.title": "Claim Username",
@@ -155,8 +153,6 @@
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
-    "message.taskComment.title": "Task Comment",
-    "message.taskComment.description": "Sign this message to post your comment",
     "permission.6": "Administration",
     "permission.2": "Arbitration",
     "permission.3": "Architecture",

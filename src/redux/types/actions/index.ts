@@ -4,7 +4,6 @@ import { ConnectionActionTypes } from './connection';
 import { GasPricesActionTypes } from './gasPrices';
 import { IpfsActionTypes } from './ipfs';
 import { MultisigActionTypes } from './multisig';
-import { TaskActionTypes } from './task';
 import { TokenActionTypes } from './token';
 import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
@@ -98,7 +97,6 @@ export type AllActions =
   | GasPricesActionTypes
   | IpfsActionTypes
   | MultisigActionTypes
-  | TaskActionTypes
   | TokenActionTypes
   | TransactionActionTypes
   | MessageActionTypes

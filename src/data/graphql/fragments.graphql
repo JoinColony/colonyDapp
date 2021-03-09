@@ -1,45 +1,3 @@
-fragment Payouts on Task {
-  payouts {
-    amount
-    tokenAddress
-    token @client {
-      id
-      address
-      decimals
-      name
-      symbol
-    }
-  }
-}
-
-fragment CreateTaskFields on Task {
-  id
-  ...Payouts
-  assignedWorker {
-    id
-    profile {
-      avatarHash
-    }
-  }
-  assignedWorkerAddress
-  cancelledAt
-  colonyAddress
-  commentCount @client
-  createdAt
-  creatorAddress
-  dueDate
-  ethDomainId
-  ethSkillId
-  events {
-    id
-    type
-  }
-  finalizedAt
-  title
-  workRequestAddresses
-  txHash
-}
-
 fragment Tokens on ProcessedColony {
   nativeTokenAddress
   tokenAddresses
@@ -114,121 +72,14 @@ fragment EventFields on Event {
   type
 }
 
-fragment EventContext on Event {
+fragment EventContext on Event {	
     context {
-    ... on AssignWorkerEvent {
-      taskId
-      type
-      workerAddress
-      colonyAddress
-    }
-    ... on CancelTaskEvent {
-      taskId
-      type
-      colonyAddress
-    }
-    ... on CreateTaskEvent {
-      colonyAddress
-      ethDomainId
-      taskId
-      type
-    }
-    ... on CreateWorkRequestEvent {
-      taskId
-      type
-      colonyAddress
-    }
-    ... on FinalizeTaskEvent {
-      taskId
-      type
-      colonyAddress
-    }
-    ... on RemoveTaskPayoutEvent {
-      amount
-      taskId
-      tokenAddress
-      type
-      colonyAddress
-    }
-    ... on SendWorkInviteEvent {
-      taskId
-      type
-      workerAddress
-      colonyAddress
-    }
-    ... on SetTaskDescriptionEvent {
-      description
-      taskId
-      type
-      colonyAddress
-    }
-    ... on SetTaskDomainEvent {
-      ethDomainId
-      taskId
-      type
-      colonyAddress
-    }
-    ... on SetTaskDueDateEvent {
-      dueDate
-      taskId
-      type
-      colonyAddress
-    }
-    ... on SetTaskPayoutEvent {
-      amount
-      taskId
-      tokenAddress
-      type
-      colonyAddress
-    }
-    ... on SetTaskSkillEvent {
-      ethSkillId
-      taskId
-      type
-      colonyAddress
-    }
-    ... on RemoveTaskSkillEvent {
-      ethSkillId
-      taskId
-      type
-      colonyAddress
-    }
-    ... on SetTaskTitleEvent {
-      taskId
-      title
-      type
-      colonyAddress
-    }
-    ... on SetTaskPendingEvent {
-      taskId
-      type
-      colonyAddress
-      txHash
-    }
-    ... on TaskMessageEvent {
-      colonyAddress
-      message
-      taskId
-      type
-      colonyAddress
-    }
-    ... on UnassignWorkerEvent {
-      taskId
-      type
-      workerAddress
-      colonyAddress
-    }
-    ... on CreateDomainEvent {
-      type
-      ethDomainId
-      colonyAddress
+    ... on CreateDomainEvent {	
+      type	
+      ethDomainId	
+      colonyAddress	
     }
   }
-}
-
-fragment TaskEvent on Event {
-  ...EventFields
-  ...EventContext
 }
 
 fragment FullNetworkEvent on NetworkEvent {
