@@ -72,14 +72,11 @@ const Extensions = ({ colonyAddress }: Props) => {
       const { installedExtensions } = data.processedColony;
       return extensions.reduce((availableExtensions, extensionName) => {
         /*
-         * @NOTE Temporary disable the coin machine extension in the list
+         * @NOTE Temporary disable the voting reputation extension in the list
          *
          * This will be re-enabled in the Coin Machine feature branch
          */
-        if (
-          extensionName === Extension.CoinMachine ||
-          extensionName === Extension.VotingReputation
-        ) {
+        if (extensionName === Extension.VotingReputation) {
           return availableExtensions;
         }
         const installedExtension = installedExtensions.find(
