@@ -1,9 +1,10 @@
 import React from 'react';
-import { MessageDescriptor } from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
 import { useField } from 'formik';
 
 import { getMainClasses } from '~utils/css';
 import Icon from '~core/Icon';
+import { SimpleMessageValues } from '~types/index';
 
 import styles from './RadioButton.css';
 
@@ -23,6 +24,8 @@ export interface RadioButtonTypes {
   label: string | MessageDescriptor;
   /** Button description */
   description?: string | MessageDescriptor;
+  /** Description text values for intl interpolation */
+  descriptionValues?: SimpleMessageValues;
   /** Button icon */
   icon?: string;
   /** If the input is checked */
@@ -41,9 +44,18 @@ const RadioButton = ({
   name,
   appearance = { theme: 'primary' },
   description,
+  descriptionValues,
   icon,
 }: RadioButtonTypes) => {
   const [, { error }, { setValue }] = useField(name);
+  const { formatMessage } = useIntl();
+
+  const labelText =
+    typeof label === 'object' ? formatMessage(label) : label;
+  const descriptionText =
+    typeof description === 'object'
+      ? formatMessage(description, descriptionValues)
+      : description;
   return (
     <label
       className={getMainClasses(appearance, styles, {
@@ -67,8 +79,12 @@ const RadioButton = ({
           <Icon appearance={{ size: 'medium' }} name={icon} title={icon} />
         </div>
       )}
-      <span className={styles.label}>{label}</span>
-      <span className={styles.description}>{description}</span>
+      {labelText && (
+        <span className={styles.label}>{labelText}</span>
+      )}
+      {descriptionText && (
+        <span className={styles.description}>{descriptionText}</span>
+      )}
     </label>
   );
 };
