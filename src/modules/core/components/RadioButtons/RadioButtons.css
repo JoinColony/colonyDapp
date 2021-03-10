@@ -1,12 +1,14 @@
 
 .directionHorizontal {
   display: flex;
+  align-items: center;
   flex-direction: column;
   gap: 6px;
 }
 
 .directionVertical {
   display: flex;
+  align-items: center;
   flex-direction: row;
   gap: 6px;
 }

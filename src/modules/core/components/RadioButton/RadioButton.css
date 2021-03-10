@@ -67,3 +67,7 @@
   font-weight: var(--weight-bold);
   margin-left: auto;
 }
+
+.icon {
+  margin-right: 10px;
+}

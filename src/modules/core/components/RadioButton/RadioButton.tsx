@@ -3,6 +3,7 @@ import { MessageDescriptor } from 'react-intl';
 import { useField } from 'formik';
 
 import { getMainClasses } from '~utils/css';
+import Icon from '~core/Icon';
 
 import styles from './RadioButton.css';
 
@@ -32,28 +33,44 @@ export interface RadioButtonTypes {
 
 const displayName = 'RadioButton';
 
-const RadioButton = ({ disabled, value, label, checked, name, appearance = { theme: 'primary' }, description }: RadioButtonTypes) => {
+const RadioButton = ({
+  disabled,
+  value,
+  label,
+  checked,
+  name,
+  appearance = { theme: 'primary' },
+  description,
+  icon,
+}: RadioButtonTypes) => {
   const [, { error }, { setValue }] = useField(name);
-  return <label
-    className={getMainClasses(appearance, styles, {
-      isChecked: checked,
-      isDisabled: !!disabled,
-    })}
-    onClick={() => setValue(value)}
-  >
-    <input
-      aria-checked={checked}
-      aria-disabled={disabled}
-      aria-invalid={!!error}
-      disabled={disabled}
-      type="radio"
-      value={value}
-      name={name}
-      className={styles.input}
-    />
-    <span className={styles.label}>{label}</span>
-    <span className={styles.description}>{description}</span>
-</label>;
+  return (
+    <label
+      className={getMainClasses(appearance, styles, {
+        isChecked: checked,
+        isDisabled: !!disabled,
+      })}
+      onClick={() => setValue(value)}
+    >
+      <input
+        aria-checked={checked}
+        aria-disabled={disabled}
+        aria-invalid={!!error}
+        disabled={disabled}
+        type="radio"
+        value={value}
+        name={name}
+        className={styles.input}
+      />
+      {icon && (
+        <div className={styles.icon}>
+          <Icon appearance={{ size: 'medium' }} name={icon} title={icon} />
+        </div>
+      )}
+      <span className={styles.label}>{label}</span>
+      <span className={styles.description}>{description}</span>
+    </label>
+  );
 };
 
 RadioButton.displayName = displayName;

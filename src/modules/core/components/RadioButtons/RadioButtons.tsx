@@ -18,9 +18,15 @@ interface Props {
 
 const displayName = 'RadioButtons';
 
-const RadioButtons = ({ options, currentlyCheckedValue, name, appearance = { direction: 'horizontal' } }: Props) => {
-  return <div className={getMainClasses(appearance, styles)}>
-    {options.map(({ value, label, ...rest }) => (
+const RadioButtons = ({
+  options,
+  currentlyCheckedValue,
+  name,
+  appearance = { direction: 'horizontal' },
+}: Props) => {
+  return (
+    <div className={getMainClasses(appearance, styles)}>
+      {options.map(({ value, label, ...rest }) => (
         <RadioButton
           checked={currentlyCheckedValue === value}
           name={name}
@@ -28,8 +34,9 @@ const RadioButtons = ({ options, currentlyCheckedValue, name, appearance = { dir
           label={label}
           {...rest}
         />
-    ))}
-  </div>;
+      ))}
+    </div>
+  );
 };
 
 RadioButtons.displayName = displayName;

@@ -6,3 +6,4 @@ export const stateIsChecked: string;
 export const description: string;
 export const stateIsDisabled: string;
 export const label: string;
+export const icon: string;
