@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import NavLink from '~core/NavLink';
@@ -9,6 +9,8 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { Colony, useColonyMembersWithReputationQuery } from '~data/index';
 import { Address } from '~types/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+
+import useAvatarDisplayCounter from '../../../hooks/useAvatarDisplayCounter';
 
 import styles from './ColonyMembers.css';
 
@@ -55,33 +57,16 @@ const ColonyMembers = ({
     },
   });
 
+  const {
+    avatarsDisplaySplitRules,
+    remainingAvatarsCount,
+  } = useAvatarDisplayCounter(maxAvatars, members?.colonyMembersWithReputation);
+
   const BASE_MEMBERS_ROUTE = `/colony/${colonyName}/members`;
   const membersPageRoute =
     currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
       ? BASE_MEMBERS_ROUTE
       : `${BASE_MEMBERS_ROUTE}/${currentDomainId}`;
-
-  const avatarsDisplaySplitRules = useMemo(() => {
-    if (!members || !members.colonyMembersWithReputation?.length) {
-      return 0;
-    }
-
-    if (members.colonyMembersWithReputation.length <= maxAvatars) {
-      return members.colonyMembersWithReputation.length;
-    }
-    return maxAvatars - 1;
-  }, [members, maxAvatars]);
-
-  const remainingAvatarsCount = useMemo(() => {
-    if (!members || !members.colonyMembersWithReputation?.length) {
-      return 0;
-    }
-
-    if (members.colonyMembersWithReputation.length <= maxAvatars) {
-      return 0;
-    }
-    return members.colonyMembersWithReputation.length - maxAvatars;
-  }, [members, maxAvatars]);
 
   if (loadingColonyMembersWithReputation) {
     return (
