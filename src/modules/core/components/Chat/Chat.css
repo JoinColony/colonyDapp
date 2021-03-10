@@ -1,0 +1,16 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 0;
+  height: 100%;
+}
+
+.messages {
+  flex: 1 0 0;
+  margin-bottom: 20px;
+  overflow: auto;
+}
+
+.inputBox {
+  flex: 0 0 auto;
+}

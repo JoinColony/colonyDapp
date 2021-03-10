@@ -1,0 +1,25 @@
+.main {
+  display: flex;
+}
+
+.main + .main {
+  margin-top: 10px;
+}
+
+.avatar {
+  margin-top: 5px;
+}
+
+.commentMain {
+  padding-left: 10px;
+}
+
+.username {
+  margin-right: 5px;
+  font-weight: var(--weight-bold);
+}
+
+.timestamp {
+  font-size: var(--size-small);
+  color: var(--temp-grey-4);
+}
