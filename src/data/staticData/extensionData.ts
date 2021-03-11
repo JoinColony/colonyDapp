@@ -26,7 +26,18 @@ export interface ExtensionData {
   uninstallable: boolean;
 }
 
-const MSG = defineMessages({
+const unknownExtensionMessages = {
+  unknownName: {
+    id: 'extensions.Unknown.name',
+    defaultMessage: 'Unknown Extension',
+  },
+  unknownDescription: {
+    id: 'extensions.Unknown.description',
+    defaultMessage: 'I do not know this extension',
+  },
+};
+
+const oneTransactionPaymentMessages = {
   oneTxPaymentName: {
     id: 'extensions.OneTxPayment.name',
     defaultMessage: 'One Transaction Payment',
@@ -39,6 +50,9 @@ const MSG = defineMessages({
     id: 'extensions.OneTxPayment.descriptionLong',
     defaultMessage: 'Pay a single account one type of token.',
   },
+};
+
+const coinMachineMessages = {
   coinMachineName: {
     id: 'extensions.CoinMachine.name',
     defaultMessage: 'Coin Machine',
@@ -107,14 +121,92 @@ const MSG = defineMessages({
     id: 'extensions.CoinMachine.param.tokensToSell.description',
     defaultMessage: `The maximum number of tokens that are going to be sold during the entire lifecycle of this contract`,
   },
-  unknownName: {
-    id: 'extensions.Unknown.name',
-    defaultMessage: 'Unknown Extension',
+};
+
+const votingReputationMessages = {
+  votingReputationName: {
+    id: 'extensions.votingReputation.name',
+    defaultMessage: 'Voting Reputation',
   },
-  unknownDescription: {
-    id: 'extensions.Unknown.description',
-    defaultMessage: 'I do not know this extension',
+  votingReputationDescriptionShort: {
+    id: 'extensions.votingReputation.description',
+    defaultMessage: `Initiate a motion or raise an objection staking it with reputation`,
   },
+  votingReputationDescriptionLong: {
+    id: 'extensions.votingReputation.descriptionLong',
+    defaultMessage: `Use your reputation to initiate a motion when creating a Colony action, or raise an objection for an existing one.`,
+  },
+  votingReputationTotalStakeFractionTitle: {
+    id: 'extensions.votingReputation.param.totalStakeFraction.title',
+    defaultMessage: 'Total Stake Fraction',
+  },
+  votingReputationTotalStakeFractionDescription: {
+    id: 'extensions.votingReputation.param.totalStakeFraction.description',
+    defaultMessage: '(To be added)',
+  },
+  votingReputationVoterRewardFractionTitle: {
+    id: 'extensions.votingReputation.param.voterRewardFraction.title',
+    defaultMessage: 'Voter Reward Fraction',
+  },
+  votingReputationVoterRewardFractionDescription: {
+    id: 'extensions.votingReputation.param.voterRewardFraction.description',
+    defaultMessage: '(To be added)',
+  },
+  votingReputationUserMinStakeFractionTitle: {
+    id: 'extensions.votingReputation.param.userMinStakeFraction.title',
+    defaultMessage: 'User Minimum Stake Fraction',
+  },
+  votingReputationUserMinStakeFractionDescription: {
+    id: 'extensions.votingReputation.param.userMinStakeFraction.description',
+    defaultMessage: '(To be added)',
+  },
+  votingReputationMaxVoteFractionTitle: {
+    id: `extensions.votingReputation.param.votingReputationMaxVoteFractionTitle.title`,
+    defaultMessage: 'Maximum Vote Fraction',
+  },
+  votingReputationMaxVoteFractionDescription: {
+    id: 'extensions.votingReputation.param.maxVoteFraction.description',
+    defaultMessage: '(To be added)',
+  },
+  votingReputationStakePeriodTitle: {
+    id: 'extensions.votingReputation.param.stakePeriod.title',
+    defaultMessage: 'Stake Period',
+  },
+  votingReputationStakePeriodDescription: {
+    id: 'extensions.votingReputation.param.stakePeriod.description',
+    defaultMessage: '(In seconds)',
+  },
+  votingReputationSubmitPeriodTitle: {
+    id: 'extensions.votingReputation.param.submitPeriod.title',
+    defaultMessage: 'Submit Period',
+  },
+  votingReputationSubmitPeriodDescription: {
+    id: 'extensions.votingReputation.param.submitPeriod.description',
+    defaultMessage: '(In seconds)',
+  },
+  votingReputationRevealPeriodTitle: {
+    id: 'extensions.votingReputation.param.revealPeriod.title',
+    defaultMessage: 'Reveal Period',
+  },
+  votingReputationRevealPeriodDescription: {
+    id: 'extensions.votingReputation.param.revealPeriod.description',
+    defaultMessage: '(In seconds)',
+  },
+  votingReputationEscalationPeriodTitle: {
+    id: 'extensions.votingReputation.param.escalationPeriod.title',
+    defaultMessage: 'Escalation Period',
+  },
+  votingReputationEscalationPeriodDescription: {
+    id: 'extensions.votingReputation.param.escalationPeriod.description',
+    defaultMessage: '(In seconds)',
+  },
+};
+
+const MSG = defineMessages({
+  ...unknownExtensionMessages,
+  ...oneTransactionPaymentMessages,
+  ...coinMachineMessages,
+  ...votingReputationMessages,
 });
 
 const extensions: { [key: string]: ExtensionData } = {
@@ -185,6 +277,80 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
         defaultValue: 10,
+      },
+    ],
+    uninstallable: true,
+  },
+  VotingReputation: {
+    extensionId: Extension.VotingReputation,
+    name: MSG.votingReputationName,
+    descriptionShort: MSG.votingReputationDescriptionShort,
+    descriptionLong: MSG.votingReputationDescriptionLong,
+    currentVersion: 1,
+    createdAt: 1603915271852,
+    neededColonyPermissions: [
+      ColonyRole.Root,
+      ColonyRole.Administration,
+      ColonyRole.Arbitration,
+      ColonyRole.Architecture,
+      ColonyRole.Funding,
+    ],
+    initializationParams: [
+      {
+        paramName: 'totalStakeFraction',
+        validation: yup.number().required(),
+        defaultValue: 500000000000000000,
+        title: MSG.votingReputationTotalStakeFractionTitle,
+        description: MSG.votingReputationTotalStakeFractionDescription,
+      },
+      {
+        paramName: 'voterRewardFraction',
+        validation: yup.number().required(),
+        defaultValue: 500000000000000000,
+        title: MSG.votingReputationVoterRewardFractionTitle,
+        description: MSG.votingReputationVoterRewardFractionDescription,
+      },
+      {
+        paramName: 'userMinStakeFraction',
+        validation: yup.number().required(),
+        defaultValue: 500000000000000000,
+        title: MSG.votingReputationUserMinStakeFractionTitle,
+        description: MSG.votingReputationUserMinStakeFractionDescription,
+      },
+      {
+        paramName: 'maxVoteFraction',
+        validation: yup.number().required(),
+        defaultValue: 700000000000000000,
+        title: MSG.votingReputationMaxVoteFractionTitle,
+        description: MSG.votingReputationMaxVoteFractionDescription,
+      },
+      {
+        paramName: 'stakePeriod',
+        validation: yup.number().required(),
+        defaultValue: 604800, // week in seconds
+        title: MSG.votingReputationStakePeriodTitle,
+        description: MSG.votingReputationStakePeriodDescription,
+      },
+      {
+        paramName: 'submitPeriod',
+        validation: yup.number().required(),
+        defaultValue: 604800, // week in seconds
+        title: MSG.votingReputationSubmitPeriodTitle,
+        description: MSG.votingReputationSubmitPeriodDescription,
+      },
+      {
+        paramName: 'revealPeriod',
+        validation: yup.number().required(),
+        defaultValue: 604800, // week in seconds
+        title: MSG.votingReputationRevealPeriodTitle,
+        description: MSG.votingReputationRevealPeriodDescription,
+      },
+      {
+        paramName: 'escalationPeriod',
+        validation: yup.number().required(),
+        defaultValue: 604800, // week in seconds
+        title: MSG.votingReputationEscalationPeriodTitle,
+        description: MSG.votingReputationEscalationPeriodDescription,
       },
     ],
     uninstallable: true,
