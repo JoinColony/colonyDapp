@@ -146,6 +146,7 @@
     "transaction.group.enableExtension.title": "Enable Colony Extension",
     "transaction.group.enableExtension.description": "Enable Colony Extension",
     "transaction.CoinMachineClient.initialise.title": "Initialize CoinMachine Extension",
+    "transaction.VotingReputationClient.initialise.title": "Initialize Voting Reputation Extension",
     "transaction.ColonyClient.uninstallExtension.title": "Uninstall Colony Extension",
     "transaction.ColonyClient.uninstallExtension.description": "Uninstall Colony Extension",
     "transaction.ColonyClient.deprecateExtension.title": "Deprecate Colony Extension",
