@@ -3,6 +3,7 @@
   border-radius: var(--radius-large);
   font-size: 0.8rem;
   font-weight: var(--weight-bold);
+  color: var(--colony-white);
 }
 
 .baseStyles + .baseStyles {
@@ -12,36 +13,32 @@
 .themePrimary {
   composes: baseStyles;
   background-color: var(--primary);
-  color: var(--colony-white);
 }
 
 .themeLight {
   composes: baseStyles;
   background-color: var(--grey-blue-1);
+  color: var(--grey-dark);
 }
 
 .themeGolden {
   composes: baseStyles;
   background-color: var(--golden);
-  color: white;
 }
 
 .themeDanger {
   composes: baseStyles;
   background-color: var(--danger);
-  color: white;
 }
 
 .themePink {
   composes: baseStyles;
   background-color: var(--pink);
-  color: white;
 }
 
 .themeBlue {
   composes: baseStyles;
   background-color: var(--action-secondary);
-  color: white;
 }
 
 .themePrimary.colorSchemaInverted {
