@@ -6,7 +6,15 @@ import { useMainClasses } from '~utils/hooks';
 import styles from './Tag.css';
 
 interface Appearance {
-  theme: 'primary' | 'light' | 'golden' | 'danger';
+  theme:
+    | 'primary'
+    | 'light'
+    | 'golden'
+    | 'danger'
+    | 'pink'
+    | 'blue'
+    | 'inversePrimary';
+  fontSize?: 'tiny';
 }
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {

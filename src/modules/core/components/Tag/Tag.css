@@ -32,6 +32,29 @@
   color: white;
 }
 
+.themePink {
+  composes: baseStyles;
+  background-color: var(--pink);
+  color: white;
+}
+
+.themeBlue {
+  composes: baseStyles;
+  background-color: var(--action-secondary);
+  color: white;
+}
+
+.themeInversePrimary {
+  composes: baseStyles;
+  border: 1px solid var(--primary);
+  background-color: transparent;
+  color: var(--primary);
+}
+
+.fontSizeTiny {
+  font-size: 9px;
+}
+
 .main {
   composes: themeLight;
 }
