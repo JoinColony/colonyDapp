@@ -6,6 +6,7 @@ import 'rc-slider/assets/index.css';
 
 type Appearance = {
   theme?: 'primary' | 'danger';
+  size?: 'thin' | 'thick';
 };
 
 interface Props {
@@ -56,18 +57,25 @@ const Slider = ({
     marks[limit] = {};
   }
 
-  const SliderStylesObject = {
+  const SliderColorsObject = {
     primary: {
       backgroundColor: '#68D2D2',
       borderColor: '#68D2D2',
+    },
+    danger: {
+      backgroundColor: '#FE5E7C',
+      borderColor: '#FE5E7C',
+    },
+  };
+
+  const SliderSizesObject = {
+    thin: {
       height: 1,
       markHeight: 5,
       markWidth: 1,
       markPositionTop: -2,
     },
-    danger: {
-      backgroundColor: '#FE5E7C',
-      borderColor: '#FE5E7C',
+    thick: {
       height: 3,
       markHeight: 8,
       markWidth: 2,
@@ -75,7 +83,8 @@ const Slider = ({
     },
   };
 
-  const styles = SliderStylesObject[appearance?.theme || 'primary'];
+  const colors = SliderColorsObject[appearance?.theme || 'primary'];
+  const sizes = SliderSizesObject[appearance?.size || 'thin'];
 
   return (
     <ReactSlider
@@ -86,11 +95,11 @@ const Slider = ({
       marks={marks}
       max={max}
       trackStyle={{
-        backgroundColor: styles.backgroundColor,
-        height: styles.height,
+        backgroundColor: colors.backgroundColor,
+        height: sizes.height,
       }}
       handleStyle={{
-        borderColor: styles.borderColor,
+        borderColor: colors.borderColor,
         borderWidth: 6,
         height: 15,
         width: 15,
@@ -98,17 +107,17 @@ const Slider = ({
         backgroundColor: '#FFFFFF',
       }}
       dotStyle={{
-        height: styles.markHeight,
-        width: styles.markWidth,
+        height: sizes.markHeight,
+        width: sizes.markWidth,
         backgroundColor: '#76748B',
         border: 0,
         borderRadius: 0,
-        top: styles.markPositionTop,
+        top: sizes.markPositionTop,
         marginLeft: 0,
       }}
       railStyle={{
         backgroundColor: '#C2CCCC',
-        height: styles.height,
+        height: sizes.height,
         backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientStopPercentage}%, transparent ${gradientStopPercentage}%)`,
       }}
     />
