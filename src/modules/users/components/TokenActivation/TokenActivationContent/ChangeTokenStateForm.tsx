@@ -192,7 +192,6 @@ const ChangeTokenStateForm = ({
               </div>
             ) : (
               <Tooltip
-                darkTheme
                 placement="right"
                 content={<FormattedMessage {...MSG.lockedTooltip} />}
               >
