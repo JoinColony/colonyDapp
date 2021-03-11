@@ -27,12 +27,7 @@ const TokenTooltip = ({
   };
 
   return (
-    <Tooltip
-      darkTheme
-      placement="top-start"
-      content={content}
-      popperProps={popperProps}
-    >
+    <Tooltip placement="top-start" content={content} popperProps={popperProps}>
       {({ close, open, ref }) => (
         <div
           className={className}
