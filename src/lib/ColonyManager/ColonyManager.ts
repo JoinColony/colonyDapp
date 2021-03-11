@@ -159,6 +159,16 @@ export default class ColonyManager {
           throw new Error('Need colony identifier to get CoinMachineClient');
         return this.getColonyExtensionClient(identifier, Extension.CoinMachine);
       }
+      case ClientType.VotingReputationClient: {
+        if (!identifier)
+          throw new Error(
+            'Need colony identifier to get the VotingReputationClient',
+          );
+        return this.getColonyExtensionClient(
+          identifier,
+          Extension.VotingReputation,
+        );
+      }
       default: {
         throw new Error('A valid contract client type has to be specified');
       }
