@@ -22,6 +22,8 @@ export interface RadioButtonTypes {
   value: string;
   /** Label text */
   label: string | MessageDescriptor;
+  /** Description text values for intl interpolation */
+  labelValues?: SimpleMessageValues;
   /** Button description */
   description?: string | MessageDescriptor;
   /** Description text values for intl interpolation */
@@ -40,6 +42,7 @@ const RadioButton = ({
   disabled,
   value,
   label,
+  labelValues,
   checked,
   name,
   appearance = { theme: 'primary' },
@@ -51,7 +54,7 @@ const RadioButton = ({
   const { formatMessage } = useIntl();
 
   const labelText =
-    typeof label === 'object' ? formatMessage(label) : label;
+    typeof label === 'object' ? formatMessage(label, labelValues) : label;
   const descriptionText =
     typeof description === 'object'
       ? formatMessage(description, descriptionValues)
