@@ -1,5 +1,4 @@
 import React from 'react';
-import { MessageDescriptor } from 'react-intl';
 import { getMainClasses } from '~utils/css';
 
 import RadioButton, { RadioButtonTypes, Appearance } from '~core/RadioButton';

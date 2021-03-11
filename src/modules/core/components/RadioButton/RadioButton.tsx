@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
+import { nanoid } from 'nanoid';
 import { useField } from 'formik';
 
 import { getMainClasses } from '~utils/css';
@@ -34,6 +35,8 @@ export interface RadioButtonTypes {
   checked: boolean;
   /** Radio button name attribute */
   name: string;
+  /** Html input `id` attribute */
+  inputId?: string;
 }
 
 const displayName = 'RadioButton';
@@ -45,6 +48,7 @@ const RadioButton = ({
   labelValues,
   checked,
   name,
+  inputId,
   appearance = { theme: 'primary' },
   description,
   descriptionValues,
@@ -52,6 +56,7 @@ const RadioButton = ({
 }: RadioButtonTypes) => {
   const [, { error }, { setValue }] = useField(name);
   const { formatMessage } = useIntl();
+  const inputRef = useRef<string>(inputId || nanoid());
 
   const labelText =
     typeof label === 'object' ? formatMessage(label, labelValues) : label;
@@ -66,6 +71,7 @@ const RadioButton = ({
         isDisabled: !!disabled,
       })}
       onClick={() => setValue(value)}
+      htmlFor={inputRef.current}
     >
       <input
         aria-checked={checked}
@@ -75,6 +81,7 @@ const RadioButton = ({
         type="radio"
         value={value}
         name={name}
+        id={inputRef.current}
         className={styles.input}
       />
       {icon && (
@@ -82,9 +89,7 @@ const RadioButton = ({
           <Icon appearance={{ size: 'medium' }} name={icon} title={icon} />
         </div>
       )}
-      {labelText && (
-        <span className={styles.label}>{labelText}</span>
-      )}
+      {labelText && <span className={styles.label}>{labelText}</span>}
       {descriptionText && (
         <span className={styles.description}>{descriptionText}</span>
       )}
