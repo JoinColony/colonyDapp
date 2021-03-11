@@ -44,11 +44,64 @@
   color: white;
 }
 
-.themeInversePrimary {
-  composes: baseStyles;
+.themePrimary.colorSchemaInverted {
   border: 1px solid var(--primary);
   background-color: transparent;
   color: var(--primary);
+}
+
+.themePrimary.colorSchemaPlain {
+  border: none;
+  background-color: var(--temp-grey-blue-8);
+  color: var(--primary);
+}
+
+.themeGolden.colorSchemaInverted {
+  border: 1px solid var(--golden);
+  background-color: transparent;
+  color: var(--golden);
+}
+
+.themeGolden.colorSchemaPlain {
+  border: none;
+  background-color: var(--temp-grey-blue-8);
+  color: var(--golden);
+}
+
+.themePink.colorSchemaInverted {
+  border: 1px solid var(--pink);
+  background-color: transparent;
+  color: var(--pink);
+}
+
+.themePink.colorSchemaPlain {
+  border: none;
+  background-color: var(--temp-grey-blue-8);
+  color: var(--pink);
+}
+
+.themeBlue.colorSchemaInverted {
+  border: 1px solid var(--action-secondary);
+  background-color: transparent;
+  color: var(--action-secondary);
+}
+
+.themeBlue.colorSchemaPlain {
+  border: none;
+  background-color: var(--temp-grey-blue-8);
+  color: var(--action-secondary);
+}
+
+.themeDanger.colorSchemaInverted {
+  border: 1px solid var(--danger);
+  background-color: transparent;
+  color: var(--danger);
+}
+
+.themeDanger.colorSchemaPlain {
+  border: none;
+  background-color: var(--temp-grey-blue-8);
+  color: var(--danger);
 }
 
 .fontSizeTiny {
