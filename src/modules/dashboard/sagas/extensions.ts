@@ -4,6 +4,7 @@ import {
   getExtensionHash,
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
+import { bigNumberify } from 'ethers/utils';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
@@ -138,9 +139,12 @@ function* colonyExtensionEnable({
     } = data.colonyExtension;
 
     if (!initialized && extension.initializationParams) {
-      const initParams = extension.initializationParams.map(
-        ({ paramName }) => payload[paramName],
-      );
+      const initParams = extension.initializationParams.map(({ paramName }) => {
+        if (typeof payload[paramName] === 'number') {
+          return bigNumberify(String(payload[paramName]));
+        }
+        return payload[paramName];
+      });
       yield fork(createTransaction, initChannelName, {
         context: `${extensionId}Client`,
         methodName: 'initialise',
