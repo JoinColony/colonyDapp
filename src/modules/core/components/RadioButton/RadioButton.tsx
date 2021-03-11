@@ -70,7 +70,6 @@ const RadioButton = ({
         isChecked: checked,
         isDisabled: !!disabled,
       })}
-      onClick={() => setValue(value)}
       htmlFor={inputRef.current}
     >
       <input
@@ -80,6 +79,7 @@ const RadioButton = ({
         disabled={disabled}
         type="radio"
         value={value}
+        onClick={() => setValue(value)}
         name={name}
         id={inputRef.current}
         className={styles.input}
