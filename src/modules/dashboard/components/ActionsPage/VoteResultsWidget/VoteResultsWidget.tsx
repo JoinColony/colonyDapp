@@ -1,5 +1,4 @@
 import React from 'react';
-import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
 import Icon from '~core/Icon';
 import Heading from '~core/Heading';
@@ -15,17 +14,6 @@ import styles from './VoteResultsWidget.css';
 interface Appearance {
   theme?: 'approve' | 'disapprove';
 }
-
-const MSG = defineMessages({
-  title: {
-    id: 'dashboard.ActionsPage.VoteResultsWidget.title',
-    defaultMessage: '{title}',
-  },
-  reputationPercentage: {
-    id: 'dashboard.ActionsPage.VoteResultsWidget.reputationPercentage',
-    defaultMessage: '{percentage}%',
-  },
-});
 
 interface Props {
   colony: Colony;
@@ -46,7 +34,6 @@ const VoteResultsWidget = ({
   voters = [],
   maxAvatars = 3,
 }: Props) => {
-  const { formatMessage } = useIntl();
   const {
     avatarsDisplaySplitRules,
     remainingAvatarsCount,
@@ -58,11 +45,7 @@ const VoteResultsWidget = ({
   return (
     <div className={`${styles.wrapper} ${getMainClasses(appearance, styles)}`}>
       <div className={styles.voteInfoContainer}>
-        <Icon
-          name={iconName}
-          title={formatMessage(MSG.title, { title })}
-          appearance={{ size: 'medium' }}
-        />
+        <Icon name={iconName} title={title} appearance={{ size: 'medium' }} />
         <div className={styles.voteResults}>
           <div className={styles.voteHeading}>
             <Heading
@@ -74,12 +57,7 @@ const VoteResultsWidget = ({
               }}
               text={title}
             />
-            <span className={styles.votePercentage}>
-              <FormattedMessage
-                {...MSG.reputationPercentage}
-                values={{ percentage: value }}
-              />
-            </span>
+            <span className={styles.votePercentage}>{value}%</span>
           </div>
           <div
             style={{ width: `${value}%` }}
