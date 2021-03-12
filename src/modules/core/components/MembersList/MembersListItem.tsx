@@ -2,34 +2,17 @@ import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 import { AddressZero } from 'ethers/constants';
 
 import { defineMessages } from 'react-intl';
-import { bigNumberify } from 'ethers/utils';
 import { createAddress } from '~utils/web3';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
 import CopyableAddress from '~core/CopyableAddress';
-import { AnyUser, useUserReputationQuery, useUser } from '~data/index';
+import { AnyUser, useUser } from '~data/index';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
-import Numeral from '~core/Numeral';
-import Icon from '~core/Icon';
+import MemberReputation from '~core/MemberReputation';
 
 import styles from './MembersListItem.css';
-
-const MSG = defineMessages({
-  starReputationTitle: {
-    id: 'MembersList.MembersListItem.starReputationTitle',
-    defaultMessage: `User reputation value: {reputation}`,
-  },
-  starNoReputationTitle: {
-    id: 'MembersList.MembersListItem.starNoReputationTitle',
-    defaultMessage: `User has no reputation`,
-  },
-});
-
-interface Reputation {
-  userReputation: string;
-}
 
 interface Props<U> {
   extraItemContent?: (user: U) => ReactNode;
@@ -38,46 +21,9 @@ interface Props<U> {
   showUserInfo: boolean;
   domainId: number | undefined;
   user: U;
-  totalReputation: Reputation | undefined;
 }
-
-enum ZeroValue {
-  Zero = '0',
-  NearZero = '~0',
-}
-
-type PercentageReputationType = ZeroValue | number | null;
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
-
-const calculatePercentageReputation = (
-  decimalPlaces: number,
-  userReputation?: Reputation,
-  totalReputation?: Reputation,
-): PercentageReputationType => {
-  if (!userReputation || !totalReputation) return null;
-  const userReputationNumber = bigNumberify(userReputation.userReputation);
-  const totalReputationNumber = bigNumberify(totalReputation.userReputation);
-
-  const reputationSafeguard = bigNumberify(100).pow(decimalPlaces);
-
-  if (userReputationNumber.isZero()) {
-    return ZeroValue.Zero;
-  }
-
-  if (userReputationNumber.mul(reputationSafeguard).lt(totalReputationNumber)) {
-    return ZeroValue.NearZero;
-  }
-
-  const reputation = userReputationNumber
-    .mul(reputationSafeguard)
-    .div(totalReputationNumber)
-    .toNumber();
-
-  return reputation / 10 ** decimalPlaces;
-};
-
-const DECIMAL_PLACES = 2;
 
 const componentDisplayName = 'MembersList.MembersListItem';
 
@@ -89,23 +35,12 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     onRowClick,
     showUserInfo,
     user,
-    totalReputation,
   } = props;
   const {
     profile: { walletAddress },
   } = user;
 
   const userProfile = useUser(createAddress(walletAddress || AddressZero));
-
-  const { data: userReputationData } = useUserReputationQuery({
-    variables: { address: walletAddress, colonyAddress, domainId },
-  });
-
-  const userPercentageReputation = calculatePercentageReputation(
-    DECIMAL_PLACES,
-    userReputationData,
-    totalReputation,
-  );
 
   const handleRowClick = useCallback(() => {
     if (onRowClick) {
@@ -144,34 +79,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
         tabIndex={onRowClick ? 0 : undefined}
       >
         <div className={styles.reputationSection}>
-          {!userPercentageReputation && (
-            <div className={styles.reputation}>— %</div>
-          )}
-          {userPercentageReputation === ZeroValue.NearZero && (
-            <div className={styles.reputation}>{userPercentageReputation}%</div>
-          )}
-          {userPercentageReputation &&
-            userPercentageReputation !== ZeroValue.NearZero && (
-              <Numeral
-                className={styles.reputation}
-                appearance={{ theme: 'primary' }}
-                value={userPercentageReputation}
-                suffix="%"
-              />
-            )}
-          <Icon
-            name="star"
-            appearance={{ size: 'extraTiny' }}
-            className={styles.icon}
-            title={
-              userPercentageReputation
-                ? MSG.starReputationTitle
-                : MSG.starNoReputationTitle
-            }
-            titleValues={{
-              reputation: userPercentageReputation,
-            }}
-          />
+          <MemberReputation walletAddress={walletAddress} colonyAddress={colonyAddress} domainId={domainId} />
         </div>
         <div className={styles.section}>
           <UserAvatar
