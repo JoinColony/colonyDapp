@@ -1,23 +1,27 @@
 import React from 'react';
 import { getMainClasses } from '~utils/css';
 
-import RadioButton, { RadioButtonTypes, Appearance } from '~core/RadioButton';
+import { CustomRadio, CustomRadioProps } from '~core/Fields/Radio';
 
-import styles from './RadioButtons.css';
+import styles from './CustomRadioGroup.css';
+
+export interface Appearance {
+  direction?: 'horizontal' | 'vertical';
+}
 
 interface Props {
   /** Appearance object */
   appearance?: Appearance;
-  options: RadioButtonTypes[];
+  options: CustomRadioProps[];
   /** Currently selected value */
   currentlyCheckedValue: string;
   /** HTML field name */
   name: string;
 }
 
-const displayName = 'RadioButtons';
+const displayName = 'CustomRadioGroup';
 
-const RadioButtons = ({
+const CustomRadioGroup = ({
   options,
   currentlyCheckedValue,
   name,
@@ -25,12 +29,14 @@ const RadioButtons = ({
 }: Props) => {
   return (
     <div className={getMainClasses(appearance, styles)}>
-      {options.map(({ value, label, ...rest }) => (
-        <RadioButton
+      {options.map(({ value, label, appearance: optionApperance, ...rest }) => (
+        <CustomRadio
           checked={currentlyCheckedValue === value}
           name={name}
           value={value}
           label={label}
+          key={value}
+          appearance={{ ...optionApperance, direction: appearance.direction }}
           {...rest}
         />
       ))}
@@ -38,6 +44,6 @@ const RadioButtons = ({
   );
 };
 
-RadioButtons.displayName = displayName;
+CustomRadioGroup.displayName = displayName;
 
-export default RadioButtons;
+export default CustomRadioGroup;

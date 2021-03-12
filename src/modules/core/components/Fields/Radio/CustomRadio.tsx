@@ -7,14 +7,14 @@ import { getMainClasses } from '~utils/css';
 import Icon from '~core/Icon';
 import { SimpleMessageValues } from '~types/index';
 
-import styles from './RadioButton.css';
+import styles from './CustomRadio.css';
 
 export interface Appearance {
   theme?: 'primary' | 'danger';
   direction?: 'horizontal' | 'vertical';
 }
 
-export interface RadioButtonTypes {
+export interface Props {
   /** Appearance object */
   appearance?: Appearance;
   /** Disable the input */
@@ -39,9 +39,9 @@ export interface RadioButtonTypes {
   inputId?: string;
 }
 
-const displayName = 'RadioButton';
+const displayName = 'CustomRadio';
 
-const RadioButton = ({
+const CustomRadio = ({
   disabled,
   value,
   label,
@@ -53,11 +53,10 @@ const RadioButton = ({
   description,
   descriptionValues,
   icon,
-}: RadioButtonTypes) => {
+}: Props) => {
   const [, { error }, { setValue }] = useField(name);
   const { formatMessage } = useIntl();
   const inputRef = useRef<string>(inputId || nanoid());
-
   const labelText =
     typeof label === 'object' ? formatMessage(label, labelValues) : label;
   const descriptionText =
@@ -89,14 +88,16 @@ const RadioButton = ({
           <Icon appearance={{ size: 'medium' }} name={icon} title={icon} />
         </div>
       )}
-      {labelText && <span className={styles.label}>{labelText}</span>}
-      {descriptionText && (
-        <span className={styles.description}>{descriptionText}</span>
-      )}
+      <div className={styles.content}>
+        {labelText && <span className={styles.label}>{labelText}</span>}
+        {descriptionText && (
+          <span className={styles.description}>{descriptionText}</span>
+        )}
+      </div>
     </label>
   );
 };
 
-RadioButton.displayName = displayName;
+CustomRadio.displayName = displayName;
 
-export default RadioButton;
+export default CustomRadio;

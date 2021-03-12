@@ -1,5 +1,5 @@
 
-## Radio Buttons
+## Custom Radio Group
 
 ```jsx
 const { Form, Formik } = require('formik');
@@ -25,7 +25,7 @@ const options = [
 ]
 <Formik onSubmit={() => {}} initialValues={{ 'test': null }}>
   {({ values }) => (
-    <RadioButtons options={options} currentlyCheckedValue={values.test} name="test" />
+    <CustomRadioGroup options={options} currentlyCheckedValue={values.test} name="test" />
   )}
 </Formik>
 ```

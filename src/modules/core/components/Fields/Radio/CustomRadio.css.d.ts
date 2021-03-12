@@ -7,3 +7,5 @@ export const description: string;
 export const stateIsDisabled: string;
 export const label: string;
 export const icon: string;
+export const content: string;
+export const directionVertical: string;
