@@ -29,7 +29,6 @@ interface Comment {
   author: string;
   comment: string;
   id: string;
-  room: string;
   timestamp: number;
 }
 
