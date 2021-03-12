@@ -1,0 +1,92 @@
+.input {
+  height: 0;
+  width: 0;
+  opacity: 0;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  padding: 0 17px;
+  height: 41px;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(6%));
+  color: var(--dark);
+  cursor: pointer;
+}
+
+.themePrimary {
+  composes: main;
+}
+
+.themeDanger {
+  composes: main;
+}
+
+.themePrimary.stateIsChecked {
+  border: 1px solid var(--primary);
+  background-color: color-mod(var(--primary) alpha(12%));
+}
+
+.themeDanger.stateIsChecked {
+  border: 1px solid var(--pink);
+  background-color: color-mod(var(--pink) alpha(12%));
+}
+
+.themePrimary:hover {
+  border: 1px solid var(--primary);
+}
+
+.themeDanger:hover {
+  border: 1px solid var(--pink);
+}
+
+.main.stateIsChecked .description {
+  opacity: 0.85;
+}
+
+.main.stateIsDisabled .description {
+  opacity: 0.85;
+}
+
+.main.stateIsDisabled {
+  border-color: transparent;
+  background-color: var(--text-disabled);
+  cursor: default;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  gap: 6px;
+}
+
+.description {
+  margin-left: auto;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.content {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+  gap: 6px;
+}
+
+.directionVertical .content {
+  flex-direction: column;
+  gap: 0;
+}
+
+.directionVertical .description {
+  margin-left: 0;
+}
