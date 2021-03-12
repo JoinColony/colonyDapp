@@ -1,13 +1,13 @@
 import React from 'react';
+import { MessageDescriptor } from 'react-intl';
 
 import Icon from '~core/Icon';
 import Heading from '~core/Heading';
+import ProgressBar from '~core/ProgressBar';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { Colony } from '~data/index';
 import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
-
-import useAvatarDisplayCounter from '../../../hooks/useAvatarDisplayCounter';
+import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 
 import styles from './VoteResultsWidget.css';
 
@@ -16,10 +16,11 @@ interface Appearance {
 }
 
 interface Props {
-  colony: Colony;
   appearance?: Appearance;
-  value?: number;
-  title: string;
+  value: number;
+  maxValue: number;
+  maxPercentage?: number;
+  title: MessageDescriptor;
   voters?: Address[];
   maxAvatars?: number;
 }
@@ -27,9 +28,10 @@ interface Props {
 const displayName = 'VoteResultsWidget';
 
 const VoteResultsWidget = ({
-  colony: { colonyAddress },
   appearance = { theme: 'approve' },
-  value = 0,
+  value,
+  maxValue,
+  maxPercentage = 100,
   title,
   voters = [],
   maxAvatars = 3,
@@ -41,6 +43,7 @@ const VoteResultsWidget = ({
   const UserAvatar = HookedUserAvatar({ fetchUser: true });
   const iconName =
     appearance.theme === 'approve' ? 'circle-thumbs-up' : 'circle-thumbs-down';
+  const votePercentage = (value * maxPercentage) / maxValue;
 
   return (
     <div className={`${styles.wrapper} ${getMainClasses(appearance, styles)}`}>
@@ -57,11 +60,12 @@ const VoteResultsWidget = ({
               }}
               text={title}
             />
-            <span className={styles.votePercentage}>{value}%</span>
+            <span className={styles.votePercentage}>{votePercentage}%</span>
           </div>
-          <div
-            style={{ width: `${value}%` }}
-            className={styles.votePercentageBar}
+          <ProgressBar
+            value={votePercentage}
+            max={maxPercentage}
+            appearance={{ size: 'small', theme: 'transparent' }}
           />
         </div>
       </div>
@@ -71,12 +75,7 @@ const VoteResultsWidget = ({
             .slice(0, avatarsDisplaySplitRules)
             .map((voterAddress: Address) => (
               <li className={styles.voterAvatar} key={voterAddress}>
-                <UserAvatar
-                  size="xs"
-                  colonyAddress={colonyAddress}
-                  address={voterAddress}
-                  notSet={false}
-                />
+                <UserAvatar size="xs" address={voterAddress} notSet={false} />
               </li>
             ))}
         </ul>
