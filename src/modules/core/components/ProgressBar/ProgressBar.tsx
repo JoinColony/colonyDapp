@@ -6,7 +6,7 @@ import { getMainClasses } from '~utils/css';
 import styles from './ProgressBar.css';
 
 interface Appearance {
-  theme?: 'default' | 'dark';
+  theme?: 'default' | 'dark' | 'transparent';
   size?: 'small' | 'normal';
 }
 

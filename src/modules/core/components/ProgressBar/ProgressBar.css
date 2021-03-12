@@ -7,14 +7,6 @@
   box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
 }
 
-.themeDefault {
-  background-color: var(--colony-light-blue);
-}
-
-.themeDark {
-  background-color: rgb(207, 213, 229);
-}
-
 .sizeNormal {
   height: 16px;
 }
@@ -30,6 +22,10 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+.themeTransparent {
+  box-shadow: none;
 }
 
 .main::-webkit-progress-bar {
@@ -52,6 +48,10 @@
 
 .themeDark .main::-webkit-progress-bar {
   background-color: rgb(207, 213, 229);
+}
+
+.themeTransparent .main::-webkit-progress-bar {
+  background-color: transparent;
 }
 
 .sizeSmall .main {
