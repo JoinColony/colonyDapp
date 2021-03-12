@@ -5,12 +5,10 @@ import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
-
+import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 import { Colony, useColonyMembersWithReputationQuery } from '~data/index';
 import { Address } from '~types/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-
-import useAvatarDisplayCounter from '../../../hooks/useAvatarDisplayCounter';
 
 import styles from './ColonyMembers.css';
 
