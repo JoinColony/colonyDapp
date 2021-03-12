@@ -1,7 +1,6 @@
 .wrapper {
   display: flex;
   align-items: center;
-  padding: 0 3px;
   height: 16px;
   position: relative;
   border-radius: var(--radius-small);
@@ -21,12 +20,11 @@
 }
 
 .sizeSmall {
-  padding: 0;
   height: 7px;
 }
 
 .main {
-  height: 8px;
+  height: 16px;
   width: 100%;
   border: none;
   -webkit-appearance: none;
