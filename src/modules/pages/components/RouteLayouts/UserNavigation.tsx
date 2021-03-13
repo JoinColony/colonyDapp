@@ -6,7 +6,6 @@ import { GasStationPopover } from '~users/GasStation';
 import UserTokenActivationButton from '~users/UserTokenActivationButton';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
-
 import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
@@ -120,6 +119,7 @@ const UserNavigation = () => {
           <UserTokenActivationButton
             nativeToken={nativeToken}
             userLock={userLock}
+            colonyAddress={colonyData?.colonyAddress || ''}
           />
         )}
         {userCanNavigate && (

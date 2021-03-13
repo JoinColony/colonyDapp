@@ -1,4 +1,3 @@
-export const defaultDotBackground: string;
 export const wrapper: string;
 export const title: string;
 export const avatars: string;
