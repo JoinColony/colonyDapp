@@ -155,6 +155,8 @@ const TokensTab = ({
             >
               <FormattedMessage {...MSG.staked} />
             </TokenTooltip>
+          </li>
+          <li>
             <div className={styles.tokenNumbersLocked}>
               <Numeral
                 value={lockedTokens}
