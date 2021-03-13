@@ -31,9 +31,9 @@ const ExtensionActionButton = ({
   return (
     <ActionButton
       appearance={{ theme: 'primary', size: 'medium' }}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+      submit={ActionTypes.COLONY_EXTENSION_UPGRADE}
+      error={ActionTypes.COLONY_EXTENSION_UPGRADE_ERROR}
+      success={ActionTypes.COLONY_EXTENSION_UPGRADE_SUCCESS}
       transform={transform}
       text={{ id: 'button.upgrade' }}
       disabled={!isSupportedColonyVersion}

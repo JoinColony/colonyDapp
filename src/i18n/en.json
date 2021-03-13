@@ -151,6 +151,8 @@
     "transaction.ColonyClient.uninstallExtension.description": "Uninstall Colony Extension",
     "transaction.ColonyClient.deprecateExtension.title": "Deprecate Colony Extension",
     "transaction.ColonyClient.deprecateExtension.description": "Deprecate Colony Extension",
+    "transaction.ColonyClient.upgradeExtension.title": "Upgrade Colony Extension",
+    "transaction.ColonyClient.upgradeExtension.description": "Upgrade Colony Extension",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
