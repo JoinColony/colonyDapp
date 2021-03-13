@@ -7,7 +7,7 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { ColonyRole, ColonyVersion } from '@colony/colony-js';
+import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -36,6 +36,7 @@ import styles from './ExtensionDetails.css';
 import ExtensionActionButton from './ExtensionActionButton';
 import ExtensionSetup from './ExtensionSetup';
 import ExtensionStatus from './ExtensionStatus';
+import ExtensionUpgrade from './ExtensionUpgrade';
 
 const MSG = defineMessages({
   title: {
@@ -158,6 +159,13 @@ const ExtensionDetails = ({
     !installedExtension?.details?.deprecated;
   const extesionCanBeUninstalled =
     extensionUninstallable && installedExtension?.details.deprecated;
+  /*
+   * @TODO Add proper logic
+   */
+  const extensionCanBeUpgraded =
+    hasRegisteredProfile &&
+    installedExtension?.extensionId === Extension.OneTxPayment &&
+    !(extesionCanBeInstalled || extesionCanBeEnabled);
 
   let tableData;
 
@@ -292,6 +300,9 @@ const ExtensionDetails = ({
                 installedExtension={installedExtension}
                 extension={extension}
               />
+            )}
+            {extensionCanBeUpgraded && (
+              <ExtensionUpgrade colony={colony} extension={extension} />
             )}
           </div>
           <Table appearance={{ theme: 'lined' }}>
