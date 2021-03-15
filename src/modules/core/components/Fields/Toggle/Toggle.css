@@ -1,4 +1,5 @@
 @value toggleHeight: 16px;
+@value toggleWidth: 32px;
 
 .container {
   display: flex;
@@ -11,7 +12,7 @@
 
 .delegate {
   height: toggleHeight;
-  width: 32px;
+  width: toggleWidth;
   position: absolute;
   z-index: var(--z-index-positioning);
   opacity: 0;
@@ -35,6 +36,11 @@
   box-shadow: none;
 }
 
+.toggleDisabled > span {
+  border: 1px solid white;
+  background-color: var(--text-disabled);
+}
+
 .toggleSwitch {
   display: inline-block;
   margin: 1px;
@@ -45,13 +51,12 @@
   background-color: rgba(196, 196, 196);
 }
 
-.toggleSwitchDisabled {
-  border: 1px solid white;
-  background-color: var(--text-disabled);
-}
-
 .checked {
   composes: toggleSwitch;
   margin-left: 16px;
   background-color: var(--pink);
+}
+
+.icon {
+  margin-left: 11px;
 }

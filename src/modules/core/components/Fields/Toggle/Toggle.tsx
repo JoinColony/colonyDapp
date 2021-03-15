@@ -1,7 +1,10 @@
 import React from 'react';
 import { useField } from 'formik';
+import { PopperProps } from 'react-popper';
 
 import InputLabel from '~core/Fields/InputLabel';
+import Icon from '~core/Icon';
+import { Tooltip } from '~core/Popover';
 
 import styles from './Toggle.css';
 
@@ -11,14 +14,25 @@ interface Props {
   name: string;
   label?: string;
   disabled?: boolean;
+  tooltipText?: string;
+  elementOnly: boolean;
+  /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
+  tooltipPopperProps?: Omit<PopperProps, 'children'>;
 }
 
-const Toggle = ({ name, label, disabled }: Props) => {
+const Toggle = ({
+  name,
+  label,
+  disabled,
+  elementOnly,
+  tooltipText,
+  tooltipPopperProps,
+}: Props) => {
   const [{ onChange, value }] = useField(name);
 
   return (
     <div className={styles.container}>
-      {label && (
+      {!elementOnly && label && (
         <InputLabel label={label} appearance={{ colorSchema: 'grey' }} />
       )}
       <div>
@@ -35,10 +49,42 @@ const Toggle = ({ name, label, disabled }: Props) => {
           <span className={value ? styles.checked : styles.toggleSwitch} />
         </span>
       </div>
+      {tooltipText && (
+        <Tooltip
+          appearance={{ theme: 'dark' }}
+          content={tooltipText}
+          trigger="hover"
+          popperProps={tooltipPopperProps}
+        >
+          <div className={styles.icon}>
+            <Icon
+              name="question-mark"
+              appearance={{ size: 'small' }}
+              title=""
+            />
+          </div>
+        </Tooltip>
+      )}
     </div>
   );
 };
 
 Toggle.displayName = displayName;
+
+Toggle.defaultProps = {
+  disable: false,
+  elementOnly: false,
+  tooltipPopperProps: {
+    placement: 'top-end',
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [-5, 7],
+        },
+      },
+    ],
+  },
+};
 
 export default Toggle;
