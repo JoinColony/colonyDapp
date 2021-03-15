@@ -15,7 +15,7 @@ interface Props {
   label?: string;
   disabled?: boolean;
   tooltipText?: string;
-  elementOnly: boolean;
+  elementOnly?: boolean;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
   tooltipPopperProps?: Omit<PopperProps, 'children'>;
 }
@@ -23,10 +23,20 @@ interface Props {
 const Toggle = ({
   name,
   label,
-  disabled,
-  elementOnly,
+  disabled = false,
+  elementOnly = false,
   tooltipText,
-  tooltipPopperProps,
+  tooltipPopperProps = {
+    placement: 'right-start',
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [-3, 10],
+        },
+      },
+    ],
+  },
 }: Props) => {
   const [{ onChange, value }] = useField(name);
 
@@ -70,21 +80,5 @@ const Toggle = ({
 };
 
 Toggle.displayName = displayName;
-
-Toggle.defaultProps = {
-  disable: false,
-  elementOnly: false,
-  tooltipPopperProps: {
-    placement: 'top-end',
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [-5, 7],
-        },
-      },
-    ],
-  },
-};
 
 export default Toggle;
