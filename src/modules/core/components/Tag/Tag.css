@@ -1,8 +1,10 @@
 .baseStyles {
-  padding: 1px 10px 2px;
+  display: inline-block;
+  padding: 1px 8px 2px;
   border-radius: var(--radius-large);
   font-size: 0.8rem;
   font-weight: var(--weight-bold);
+  color: var(--colony-white);
 }
 
 .baseStyles + .baseStyles {
@@ -12,24 +14,90 @@
 .themePrimary {
   composes: baseStyles;
   background-color: var(--primary);
-  color: var(--colony-white);
 }
 
 .themeLight {
   composes: baseStyles;
   background-color: var(--grey-blue-1);
+  color: var(--grey-dark);
 }
 
 .themeGolden {
   composes: baseStyles;
   background-color: var(--golden);
-  color: white;
 }
 
 .themeDanger {
   composes: baseStyles;
   background-color: var(--danger);
-  color: white;
+}
+
+.themePink {
+  composes: baseStyles;
+  background-color: var(--pink);
+}
+
+.themeBlue {
+  composes: baseStyles;
+  background-color: var(--action-secondary);
+}
+
+.colorSchemaInverted {
+  background-color: transparent;
+}
+
+.colorSchemaPlain {
+  border: none;
+  background-color: var(--temp-grey-blue-8);
+}
+
+.themePrimary.colorSchemaInverted {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.themeGolden.colorSchemaInverted {
+  border: 1px solid var(--golden);
+  color: var(--golden);
+}
+
+.themePink.colorSchemaInverted {
+  border: 1px solid var(--pink);
+  color: var(--pink);
+}
+
+.themeBlue.colorSchemaInverted {
+  border: 1px solid var(--action-secondary);
+  color: var(--action-secondary);
+}
+
+.themeDanger.colorSchemaInverted {
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+.themeGolden.colorSchemaPlain {
+  color: var(--golden);
+}
+
+.themePrimary.colorSchemaPlain {
+  color: var(--primary);
+}
+
+.themePink.colorSchemaPlain {
+  color: var(--pink);
+}
+
+.themeBlue.colorSchemaPlain {
+  color: var(--action-secondary);
+}
+
+.themeDanger.colorSchemaPlain {
+  color: var(--danger);
+}
+
+.fontSizeTiny {
+  font-size: 9px;
 }
 
 .main {
