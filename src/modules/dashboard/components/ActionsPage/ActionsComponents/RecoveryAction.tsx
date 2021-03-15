@@ -5,6 +5,7 @@ import { ColonyRole } from '@colony/colony-js';
 import FriendlyName from '~core/FriendlyName';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Comment from '~core/Comment';
+import CommentInput from '~core/CommentInput';
 import ActionsPageFeed, {
   SystemInfo,
   SystemMessage,
@@ -16,7 +17,6 @@ import ActionsPageFeed, {
   ActionsPageSystemInfo,
   ActionsPageSystemMessage,
 } from '~dashboard/ActionsPageFeed';
-import CommentInput from '~core/CommentInput';
 
 import {
   useLoggedInUser,
