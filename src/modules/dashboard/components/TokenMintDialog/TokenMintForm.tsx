@@ -43,6 +43,7 @@ const MSG = defineMessages({
 
 interface Props {
   colony: Colony;
+  isVotingExtensionEnabled: boolean;
   back?: () => void;
   nativeToken?: ColonyTokens[0] | OneToken;
 }
@@ -50,6 +51,7 @@ interface Props {
 const TokenMintForm = ({
   colony: { canMintNativeToken },
   colony,
+  isVotingExtensionEnabled,
   back,
   isSubmitting,
   isValid,
@@ -70,8 +72,11 @@ const TokenMintForm = ({
           appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
           text={MSG.title}
         />
+        {userHasPermissions && isVotingExtensionEnabled && (
+          <div>Toggler</div>
+        )}
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermissions && !isVotingExtensionEnabled && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <PermissionRequiredInfo requiredRoles={requiredRoles} />
         </DialogSection>
