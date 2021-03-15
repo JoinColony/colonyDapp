@@ -1,4 +1,5 @@
 .baseStyles {
+  display: inline-block;
   padding: 1px 8px 2px;
   border-radius: var(--radius-large);
   font-size: 0.8rem;
@@ -41,63 +42,57 @@
   background-color: var(--action-secondary);
 }
 
-.themePrimary.colorSchemaInverted {
-  border: 1px solid var(--primary);
+.colorSchemaInverted {
   background-color: transparent;
-  color: var(--primary);
 }
 
-.themePrimary.colorSchemaPlain {
+.colorSchemaPlain {
   border: none;
   background-color: var(--temp-grey-blue-8);
+}
+
+.themePrimary.colorSchemaInverted {
+  border: 1px solid var(--primary);
   color: var(--primary);
 }
 
 .themeGolden.colorSchemaInverted {
   border: 1px solid var(--golden);
-  background-color: transparent;
-  color: var(--golden);
-}
-
-.themeGolden.colorSchemaPlain {
-  border: none;
-  background-color: var(--temp-grey-blue-8);
   color: var(--golden);
 }
 
 .themePink.colorSchemaInverted {
   border: 1px solid var(--pink);
-  background-color: transparent;
-  color: var(--pink);
-}
-
-.themePink.colorSchemaPlain {
-  border: none;
-  background-color: var(--temp-grey-blue-8);
   color: var(--pink);
 }
 
 .themeBlue.colorSchemaInverted {
   border: 1px solid var(--action-secondary);
-  background-color: transparent;
-  color: var(--action-secondary);
-}
-
-.themeBlue.colorSchemaPlain {
-  border: none;
-  background-color: var(--temp-grey-blue-8);
   color: var(--action-secondary);
 }
 
 .themeDanger.colorSchemaInverted {
   border: 1px solid var(--danger);
-  background-color: transparent;
   color: var(--danger);
 }
 
+.themeGolden.colorSchemaPlain {
+  color: var(--golden);
+}
+
+.themePrimary.colorSchemaPlain {
+  color: var(--primary);
+}
+
+.themePink.colorSchemaPlain {
+  color: var(--pink);
+}
+
+.themeBlue.colorSchemaPlain {
+  color: var(--action-secondary);
+}
+
 .themeDanger.colorSchemaPlain {
-  border: none;
-  background-color: var(--temp-grey-blue-8);
   color: var(--danger);
 }
 
