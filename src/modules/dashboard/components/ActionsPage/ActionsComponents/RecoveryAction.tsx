@@ -4,11 +4,11 @@ import { ColonyRole } from '@colony/colony-js';
 
 import FriendlyName from '~core/FriendlyName';
 import PermissionsLabel from '~core/PermissionsLabel';
+import FeedItem from '~core/FeedItem';
 import ActionsPageFeed, {
   SystemInfo,
   SystemMessage,
   ActionsPageFeedType,
-  ActionsPageFeedItem,
   ActionsPageFeedItemWithIPFS,
   ActionsPageEvent,
   EventValues,
@@ -16,7 +16,7 @@ import ActionsPageFeed, {
   ActionsPageSystemInfo,
   ActionsPageSystemMessage,
 } from '~dashboard/ActionsPageFeed';
-import ActionsPageComment from '~dashboard/ActionsPageComment';
+import Comment from '~core/Comment';
 
 import {
   useLoggedInUser,
@@ -327,7 +327,7 @@ const RecoveryAction = ({
                     TransactionMessageFragment
                   >;
                   return (
-                    <ActionsPageFeedItem
+                    <FeedItem
                       key={uniqueId}
                       createdAt={createdAt}
                       comment={message}
@@ -376,7 +376,7 @@ const RecoveryAction = ({
            */}
           {currentUserName && !ethereal && (
             <div ref={bottomElementRef}>
-              <ActionsPageComment
+              <Comment
                 transactionHash={transactionHash}
                 colonyAddress={colonyAddress}
               />
