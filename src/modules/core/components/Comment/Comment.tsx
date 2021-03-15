@@ -19,28 +19,28 @@ import {
 } from '~data/index';
 import { Address, ENTER } from '~types/index';
 
-import styles from './ActionsPageComment.css';
+import styles from './Comment.css';
 
-const displayName = 'dashboard.ActionsPageComment';
+const displayName = 'Comment';
 
 const MSG = defineMessages({
   commentInputPlaceholder: {
-    id: 'dashboard.ActionsPageComment.commentInputPlaceholder',
+    id: 'Comment.commentInputPlaceholder',
     defaultMessage: 'What would you like to say?',
   },
   commentInstuctions: {
-    id: 'dashboard.ActionsPageComment.commentInstuctions',
+    id: 'Comment.commentInstuctions',
     defaultMessage: `{sendCombo} to send {newLineCombo} for a new line`,
   },
   sendCombo: {
-    id: 'dashboard.ActionsPageComment.sendCombo',
+    id: 'Comment.sendCombo',
     defaultMessage: `{isMac, select,
       true {⌘}
       other {Ctrl}
     }+Return`,
   },
   newLineCombo: {
-    id: 'dashboard.ActionsPageComment.newLineCombo',
+    id: 'Comment.newLineCombo',
     defaultMessage: 'Return',
   },
 });
@@ -81,7 +81,7 @@ const handleKeyboardSubmit = (
   return false;
 };
 
-const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
+const Comment = ({ transactionHash, colonyAddress }: Props) => {
   const commentBoxRef = useRef<HTMLInputElement>(null);
   const [
     commentBoxInputRef,
@@ -189,6 +189,6 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
   );
 };
 
-ActionsPageComment.displayName = displayName;
+Comment.displayName = displayName;
 
-export default ActionsPageComment;
+export default Comment;
