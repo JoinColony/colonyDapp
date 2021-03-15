@@ -142,3 +142,20 @@
   color: var(--colony-white);
   box-shadow: 0px 2px 11px var(--drop-shadow);
 }
+
+.reputation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 5px;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  margin-right: 20px;
+}
+
+.reputation span {
+  font-size: 9px; /*it seems we start useing this font regulary, time for var? */
+  display: inline-block;
+  vertical-align: middle;
+}

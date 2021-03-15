@@ -1,7 +1,6 @@
 @value reputationColor: rgb(255, 176, 0);
 
 .reputation {
-  margin-right: 5px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: reputationColor;
