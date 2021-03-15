@@ -9,11 +9,11 @@ import TextDecorator from '~lib/TextDecorator';
 import { AnyUser } from '~data/index';
 import FriendlyName from '~core/FriendlyName';
 
-import styles from './ActionsPageFeedItem.css';
+import styles from './FeedItem.css';
 
-const displayName = 'dashboard.ActionsPageFeed.ActionsPageFeedItem';
+const displayName = 'FeedItem';
 
-export interface Props {
+interface Props {
   comment?: string;
   user?: AnyUser | null;
   annotation?: boolean;
@@ -22,12 +22,7 @@ export interface Props {
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const ActionsPageFeedItem = ({
-  comment,
-  user,
-  createdAt,
-  annotation = false,
-}: Props) => {
+const FeedItem = ({ comment, user, createdAt, annotation = false }: Props) => {
   const { Decorate } = new TextDecorator({
     username: (usernameWithAtSign) => (
       <UserMention username={usernameWithAtSign.slice(1)} />
@@ -60,6 +55,6 @@ const ActionsPageFeedItem = ({
   );
 };
 
-ActionsPageFeedItem.displayName = displayName;
+FeedItem.displayName = displayName;
 
-export default ActionsPageFeedItem;
+export default FeedItem;
