@@ -3,13 +3,12 @@ import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
+import FeedItem from '~core/FeedItem';
 import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
 
-import ActionsPageFeed, {
-  ActionsPageFeedItem,
-} from '~dashboard/ActionsPageFeed';
-import ActionsPageComment from '~dashboard/ActionsPageComment';
+import ActionsPageFeed from '~dashboard/ActionsPageFeed';
+import Comment from '~core/Comment';
 
 import {
   useLoggedInUser,
@@ -183,7 +182,7 @@ const DefaultAction = ({
             />
           </h1>
           {actionType !== ColonyActions.Generic && annotationHash && (
-            <ActionsPageFeedItem
+            <FeedItem
               createdAt={createdAt}
               user={initiator}
               annotation
@@ -203,7 +202,7 @@ const DefaultAction = ({
            * and a registered user profile
            */}
           {currentUserName && !ethereal && (
-            <ActionsPageComment
+            <Comment
               transactionHash={transactionHash}
               colonyAddress={colonyAddress}
             />

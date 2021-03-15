@@ -2,6 +2,7 @@ import React, { useState, useMemo, ReactElement, ReactNode } from 'react';
 import { nanoid } from 'nanoid';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
+import FeedItem from '~core/FeedItem';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { getEventsForActions } from '~utils/events';
@@ -18,7 +19,6 @@ import {
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { ActionsPageFeedType, SystemInfo, SystemMessage } from './types';
 
-import ActionsPageFeedItem from './ActionsPageFeedItem';
 import ActionsPageEvent from './ActionsPageEvent';
 import ActionsPageSystemInfo from './ActionsPageSystemInfo';
 import ActionsPageSystemMessage from './ActionsPageSystemMessage';
@@ -214,7 +214,7 @@ const ActionsPageFeed = ({
           uniqueId,
         } = (feedItem as unknown) as FeedItemWithId<TransactionMessageFragment>;
         return (
-          <ActionsPageFeedItem
+          <FeedItem
             key={uniqueId}
             createdAt={createdAt}
             comment={message}
