@@ -81,7 +81,7 @@ const UserNavigation = () => {
           <FormattedMessage {...MSG.wrongNetworkAlert} />
         </div>
       )}
-      {userCanNavigate && (
+      {userCanNavigate && colonyData?.colonyAddress && (
         <div className={styles.reputation}>
           <MemberReputation walletAddress={walletAddress} colonyAddress={colonyData?.colonyAddress} />
         </div>

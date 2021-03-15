@@ -17,7 +17,6 @@ import {
   AnyUser,
   Colony,
   useColonyMembersWithReputationQuery,
-  useUserReputationQuery,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -129,14 +128,6 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
       profile: { walletAddress },
     }));
   }, [data]);
-
-  const { data: totalReputationData } = useUserReputationQuery({
-    variables: {
-      address: AddressZero,
-      colonyAddress: colony.colonyAddress,
-      domainId: selectedDomainId,
-    },
-  });
 
   const domainRoles = useTransformer(getAllUserRolesForDomain, [
     colony,
@@ -252,7 +243,6 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
           )}
           domainId={currentDomainId}
           users={members}
-          totalReputation={totalReputationData}
         />
       ) : (
         <FormattedMessage {...MSG.failedToFetch} />
