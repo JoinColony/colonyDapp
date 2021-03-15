@@ -1,7 +1,6 @@
 import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
 import { AddressZero } from 'ethers/constants';
 
-import { defineMessages } from 'react-intl';
 import { createAddress } from '~utils/web3';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
@@ -79,7 +78,11 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
         tabIndex={onRowClick ? 0 : undefined}
       >
         <div className={styles.reputationSection}>
-          <MemberReputation walletAddress={walletAddress} colonyAddress={colonyAddress} domainId={domainId} />
+          <MemberReputation
+            walletAddress={walletAddress}
+            colonyAddress={colonyAddress}
+            domainId={domainId}
+          />
         </div>
         <div className={styles.section}>
           <UserAvatar

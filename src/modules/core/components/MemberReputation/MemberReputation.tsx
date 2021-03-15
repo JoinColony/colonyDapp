@@ -1,10 +1,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-
-import {
-  ROOT_DOMAIN_ID,
-} from '@colony/colony-js';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
 
@@ -74,7 +71,11 @@ const DECIMAL_PLACES = 2;
 
 const displayName = 'MemberReputation';
 
-const MemberReputation = ({ walletAddress, colonyAddress, domainId = ROOT_DOMAIN_ID }: Props) => {
+const MemberReputation = ({
+  walletAddress,
+  colonyAddress,
+  domainId = ROOT_DOMAIN_ID,
+}: Props) => {
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId },
   });
@@ -82,8 +83,8 @@ const MemberReputation = ({ walletAddress, colonyAddress, domainId = ROOT_DOMAIN
   const { data: totalReputation } = useUserReputationQuery({
     variables: {
       address: AddressZero,
-      colonyAddress: colonyAddress,
-      domainId: domainId,
+      colonyAddress,
+      domainId,
     },
   });
 
@@ -123,7 +124,7 @@ const MemberReputation = ({ walletAddress, colonyAddress, domainId = ROOT_DOMAIN
             suffix="%"
           />
         )}
-  </div>
+    </div>
   );
 };
 

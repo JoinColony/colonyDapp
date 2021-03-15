@@ -8,7 +8,11 @@ import AvatarDropdown from '~users/AvatarDropdown';
 import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
-import { useUserNotificationsQuery, useLoggedInUser, useColonyFromNameQuery } from '~data/index';
+import {
+  useUserNotificationsQuery,
+  useLoggedInUser,
+  useColonyFromNameQuery,
+} from '~data/index';
 import MaskedAddress from '~core/MaskedAddress';
 import MemberReputation from '~core/MemberReputation';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
@@ -83,7 +87,10 @@ const UserNavigation = () => {
       )}
       {userCanNavigate && colonyData?.colonyAddress && (
         <div className={styles.reputation}>
-          <MemberReputation walletAddress={walletAddress} colonyAddress={colonyData?.colonyAddress} />
+          <MemberReputation
+            walletAddress={walletAddress}
+            colonyAddress={colonyData?.colonyAddress}
+          />
         </div>
       )}
       {ethereal && (

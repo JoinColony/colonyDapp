@@ -145,17 +145,17 @@
 
 .reputation {
   display: flex;
-  align-items: center;
   justify-content: center;
-  height: 26px;
+  align-items: center;
+  margin-right: 20px;
   padding: 0 5px;
+  height: 26px;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
-  margin-right: 20px;
 }
 
 .reputation span {
-  font-size: 9px; /*it seems we start useing this font regulary, time for var? */
   display: inline-block;
   vertical-align: middle;
+  font-size: 9px; /* it seems we start useing this font regulary, time for var? */
 }
