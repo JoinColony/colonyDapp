@@ -726,19 +726,19 @@ export type ColonyExtensionDetails = {
 
 export type UserToken = {
   address: Scalars['String'];
-  balance: Scalars['String'];
   decimals: Scalars['Int'];
-  iconHash?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   symbol: Scalars['String'];
+  iconHash?: Maybe<Scalars['String']>;
   verified: Scalars['Boolean'];
+  balance: Scalars['String'];
 };
 
 export type UserLock = {
   balance: Scalars['String'];
   nativeToken?: Maybe<UserToken>;
-  pendingBalance: Scalars['String'];
   totalObligation: Scalars['String'];
+  pendingBalance: Scalars['String'];
 };
 
 export type ProcessedMetaColony = {
