@@ -8,9 +8,9 @@
 
 .icon {
   display: inline-block;
+  margin-right: 3px;
   height: 11px;
   width: 11px;
-  margin-right: 3px;
 }
 
 .icon svg {

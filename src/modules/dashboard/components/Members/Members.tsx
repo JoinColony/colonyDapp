@@ -4,7 +4,6 @@ import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
 import { useParams } from 'react-router-dom';
 
-import { AddressZero } from 'ethers/constants';
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
 import UserPermissions from '~dashboard/UserPermissions';
