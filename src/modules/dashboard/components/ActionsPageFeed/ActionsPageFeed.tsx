@@ -4,6 +4,7 @@ import { defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import FeedItem from '~core/FeedItem';
 
 import { getEventsForActions } from '~utils/events';
 
@@ -19,7 +20,6 @@ import {
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { MotionVote } from '~utils/colonyMotions';
 
-import ActionsPageFeedItem from './ActionsPageFeedItem';
 import ActionsPageEvent from './ActionsPageEvent';
 import ActionsPageSystemInfo from './ActionsPageSystemInfo';
 import ActionsPageSystemMessage from './ActionsPageSystemMessage';
@@ -228,7 +228,7 @@ const ActionsPageFeed = ({
           uniqueId,
         } = (feedItem as unknown) as FeedItemWithId<TransactionMessageFragment>;
         return (
-          <ActionsPageFeedItem
+          <FeedItem
             key={uniqueId}
             createdAt={createdAt}
             comment={message}

@@ -10,6 +10,7 @@ import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
+import Comment from '~core/Comment';
 
 import {
   useLoggedInUser,
@@ -225,7 +226,7 @@ const DefaultAction = ({
            * and a registered user profile
            */}
           {currentUserName && !ethereal && (
-            <ActionsPageComment
+            <Comment
               transactionHash={transactionHash}
               colonyAddress={colonyAddress}
             />
