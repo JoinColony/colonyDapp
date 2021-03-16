@@ -7,14 +7,6 @@
   box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
 }
 
-.sizeNormal {
-  height: 16px;
-}
-
-.sizeSmall {
-  height: 7px;
-}
-
 .main {
   height: 16px;
   width: 100%;
@@ -24,7 +16,15 @@
   appearance: none;
 }
 
-.themeTransparent {
+.sizeNormal {
+  height: 16px;
+}
+
+.sizeSmall {
+  height: 7px;
+}
+
+.backgroundThemeTransparent {
   box-shadow: none;
 }
 
@@ -34,7 +34,6 @@
 
 .main::-webkit-progress-value {
   border-radius: var(--radius-small);
-  background-color: var(--primary);
 }
 
 .main::-moz-progress-bar {
@@ -42,16 +41,24 @@
   background-color: var(--primary);
 }
 
-.themeDefault .main::-webkit-progress-bar {
+.backgroundThemeDefault .main::-webkit-progress-bar {
   background-color: var(--colony-light-blue);
 }
 
-.themeDark .main::-webkit-progress-bar {
+.backgroundThemeDark .main::-webkit-progress-bar {
   background-color: rgb(207, 213, 229);
 }
 
-.themeTransparent .main::-webkit-progress-bar {
+.backgroundThemeTransparent .main::-webkit-progress-bar {
   background-color: transparent;
+}
+
+.barThemePrimary .main::-webkit-progress-value {
+  background-color: var(--primary);
+}
+
+.barThemeDanger .main::-webkit-progress-value {
+  background-color: var(--pink);
 }
 
 .sizeSmall .main {
