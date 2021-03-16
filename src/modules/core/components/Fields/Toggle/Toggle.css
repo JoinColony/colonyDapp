@@ -19,6 +19,10 @@
   cursor: pointer;
 }
 
+.delegate:disabled {
+  cursor: initial;
+}
+
 .toggle {
   display: inline-block;
   height: toggleHeight;
@@ -54,9 +58,22 @@
 .checked {
   composes: toggleSwitch;
   margin-left: 16px;
+}
+
+.themePrimary {
+  composes: checked;
+  background-color: var(--primary);
+}
+
+.themeDanger {
+  composes: checked;
   background-color: var(--pink);
 }
 
 .icon {
   margin-left: 11px;
+}
+
+.main {
+  composes: themePrimary;
 }

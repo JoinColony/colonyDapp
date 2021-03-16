@@ -6,11 +6,17 @@ import InputLabel from '~core/Fields/InputLabel';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 
+import { getMainClasses } from '~utils/css';
+
 import styles from './Toggle.css';
 
 const displayName = 'Toggle';
 
+interface Appearance {
+  theme?: 'primary' | 'danger';
+}
 interface Props {
+  appearance?: Appearance;
   name: string;
   label?: string;
   disabled?: boolean;
@@ -21,6 +27,7 @@ interface Props {
 }
 
 const Toggle = ({
+  appearance,
   name,
   label,
   disabled = false,
@@ -40,6 +47,8 @@ const Toggle = ({
 }: Props) => {
   const [{ onChange, value }] = useField(name);
 
+  const mainClasses = getMainClasses(appearance, styles);
+
   return (
     <div className={styles.container}>
       {!elementOnly && label && (
@@ -50,13 +59,14 @@ const Toggle = ({
           name={name}
           type="checkbox"
           disabled={disabled}
+          checked={value}
           aria-checked={value}
           aria-disabled={disabled}
           className={styles.delegate}
           onChange={onChange}
         />
         <span className={disabled ? styles.toggleDisabled : styles.toggle}>
-          <span className={value ? styles.checked : styles.toggleSwitch} />
+          <span className={value ? mainClasses : styles.toggleSwitch} />
         </span>
       </div>
       {tooltipText && (

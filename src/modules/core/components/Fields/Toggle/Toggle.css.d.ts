@@ -6,4 +6,7 @@ export const toggle: string;
 export const toggleDisabled: string;
 export const toggleSwitch: string;
 export const checked: string;
+export const themePrimary: string;
+export const themeDanger: string;
 export const icon: string;
+export const main: string;
