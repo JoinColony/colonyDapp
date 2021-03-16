@@ -8,4 +8,5 @@ export const themeBlue: string;
 export const colorSchemaInverted: string;
 export const colorSchemaPlain: string;
 export const fontSizeTiny: string;
+export const fontSizeSmall: string;
 export const main: string;
