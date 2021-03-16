@@ -15,7 +15,7 @@ import styles from './MemberReputation.css';
 const MSG = defineMessages({
   starReputationTitle: {
     id: 'MemberReputation.starReputationTitle',
-    defaultMessage: `User reputation value: {reputation}`,
+    defaultMessage: `User reputation value: {reputation}%`,
   },
   starNoReputationTitle: {
     id: 'MemberReputation.starNoReputationTitle',
@@ -93,7 +93,6 @@ const MemberReputation = ({
     userReputationData,
     totalReputation,
   );
-
   return (
     <div>
       <Icon
@@ -113,7 +112,7 @@ const MemberReputation = ({
         <div className={styles.reputation}>— %</div>
       )}
       {userPercentageReputation === ZeroValue.NearZero && (
-        <div className={styles.reputation}>{userPercentageReputation}%</div>
+        <div className={styles.reputation}>{userPercentageReputation}</div>
       )}
       {userPercentageReputation &&
         userPercentageReputation !== ZeroValue.NearZero && (
