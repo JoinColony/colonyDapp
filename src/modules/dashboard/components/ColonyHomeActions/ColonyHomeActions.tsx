@@ -1,6 +1,5 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { Extension } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
@@ -19,9 +18,10 @@ import TokenMintDialog from '~dashboard/TokenMintDialog';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 import EditColonyDetailsDialog from '~dashboard/EditColonyDetailsDialog';
 import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
-import { Colony, useLoggedInUser, useNetworkContracts, useColonyExtensionsQuery } from '~data/index';
+import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
 import { ALLOWED_NETWORKS } from '~constants';
 import { mustBeUpgraded } from '../../checks';
 
@@ -42,15 +42,10 @@ const ColonyHomeActions = ({ colony }: Props) => {
   const { networkId, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
-  const { data: colonyExtensionsData } = useColonyExtensionsQuery({
-    variables: { address: colony.colonyAddress || "" },
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
   });
 
-  const isVotingExtensionEnabled =
-    !!colonyExtensionsData?.processedColony?.installedExtensions?.find(
-      ({ extensionId }) => extensionId === Extension.VotingReputation,
-    );
-  
   const startWizardFlow = useNaiveBranchingDialogWizard([
     {
       component: ColonyActionsDialog,
