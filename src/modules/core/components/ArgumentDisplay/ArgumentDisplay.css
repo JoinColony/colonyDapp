@@ -1,13 +1,15 @@
 .container {
   display: flex;
+  padding: 12px 18px;
+  border-radius: 6px;
 }
 
 .avatar {
-  margin-top: 5px;
+  margin-top: 7px;
 }
 
 .main {
-  padding-left: 10px;
+  margin-left: 16px;
 }
 
 .username {
@@ -16,6 +18,21 @@
 }
 
 .timestamp {
-  font-size: var(--size-small);
-  color: var(--temp-grey-4);
+  margin-left: 7px;
+  font-size: var(--size-tiny);
+  color: color-mod(var(--dark) alpha(50%));
+}
+
+.message {
+  font-size: var(--size-normal);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+}
+
+.themeMotion {
+  background-color: color-mod(var(--primary) alpha(6%));
+}
+
+.themeObjection {
+  background-color: color-mod(var(--pink) alpha(6%));
 }
