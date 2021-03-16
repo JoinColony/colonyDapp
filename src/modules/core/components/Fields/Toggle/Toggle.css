@@ -1,0 +1,79 @@
+@value toggleHeight: 16px;
+@value toggleWidth: 32px;
+
+.container {
+  display: flex;
+}
+
+.container label {
+  margin-right: 6px;
+  width: fit-content;
+}
+
+.delegate {
+  height: toggleHeight;
+  width: toggleWidth;
+  position: absolute;
+  z-index: var(--z-index-positioning);
+  opacity: 0;
+  cursor: pointer;
+}
+
+.delegate:disabled {
+  cursor: initial;
+}
+
+.toggle {
+  display: inline-block;
+  height: toggleHeight;
+  width: 32px;
+  position: relative;
+  border: 1px solid var(--text-disabled);
+  border-radius: 22px;
+  background-color: white;
+  box-shadow: inset 0px 1px 4px 2px rgba(14, 37, 88, 0.09);
+}
+
+.toggleDisabled {
+  composes: toggle;
+  background-color: var(--text-disabled);
+  box-shadow: none;
+}
+
+.toggleDisabled > span {
+  border: 1px solid white;
+  background-color: var(--text-disabled);
+}
+
+.toggleSwitch {
+  display: inline-block;
+  margin: 1px;
+  height: 12px;
+  width: 12px;
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(196, 196, 196);
+}
+
+.checked {
+  composes: toggleSwitch;
+  margin-left: 16px;
+}
+
+.themePrimary {
+  composes: checked;
+  background-color: var(--primary);
+}
+
+.themeDanger {
+  composes: checked;
+  background-color: var(--pink);
+}
+
+.icon {
+  margin-left: 11px;
+}
+
+.main {
+  composes: themePrimary;
+}
