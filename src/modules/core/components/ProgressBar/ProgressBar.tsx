@@ -6,7 +6,8 @@ import { getMainClasses } from '~utils/css';
 import styles from './ProgressBar.css';
 
 interface Appearance {
-  theme?: 'default' | 'dark';
+  barTheme?: 'primary' | 'danger';
+  backgroundTheme?: 'default' | 'dark' | 'transparent';
   size?: 'small' | 'normal';
 }
 
@@ -28,7 +29,11 @@ const displayName = 'ProgressBar';
 
 /* Trying to use an actual ProgressBar here to be semantic and accessible */
 const ProgressBar = ({
-  appearance = { theme: 'default', size: 'normal' },
+  appearance = {
+    barTheme: 'primary',
+    backgroundTheme: 'default',
+    size: 'normal',
+  },
   value = 0,
   max = 100,
   threshold,
