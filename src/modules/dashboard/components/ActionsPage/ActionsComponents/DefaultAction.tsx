@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl';
 
 import Tag, { Appearance as TagAppareance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
+import Comment from '~core/Comment';
 import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
 
