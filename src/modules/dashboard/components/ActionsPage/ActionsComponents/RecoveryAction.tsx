@@ -16,7 +16,7 @@ import ActionsPageFeed, {
   ActionsPageSystemInfo,
   ActionsPageSystemMessage,
 } from '~dashboard/ActionsPageFeed';
-import Comment from '~core/Comment';
+import CommentInput from '~core/CommentInput';
 
 import {
   useLoggedInUser,
@@ -376,7 +376,7 @@ const RecoveryAction = ({
            */}
           {currentUserName && !ethereal && (
             <div ref={bottomElementRef}>
-              <Comment
+              <CommentInput
                 transactionHash={transactionHash}
                 colonyAddress={colonyAddress}
               />
