@@ -8,7 +8,7 @@ import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
 
 import ActionsPageFeed from '~dashboard/ActionsPageFeed';
-import Comment from '~core/Comment';
+import CommentInput from '~core/CommentInput';
 
 import {
   useLoggedInUser,
@@ -202,7 +202,7 @@ const DefaultAction = ({
            * and a registered user profile
            */}
           {currentUserName && !ethereal && (
-            <Comment
+            <CommentInput
               transactionHash={transactionHash}
               colonyAddress={colonyAddress}
             />
