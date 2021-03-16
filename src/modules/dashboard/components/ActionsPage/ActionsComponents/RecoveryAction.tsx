@@ -4,7 +4,7 @@ import { ColonyRole } from '@colony/colony-js';
 
 import FriendlyName from '~core/FriendlyName';
 import PermissionsLabel from '~core/PermissionsLabel';
-import FeedItem from '~core/FeedItem';
+import Comment from '~core/Comment';
 import ActionsPageFeed, {
   SystemInfo,
   SystemMessage,
@@ -213,7 +213,7 @@ const RecoveryAction = ({
             />
           </h1>
           {annotationHash && (
-            <FeedItem
+            <Comment
               createdAt={actionCreatedAt}
               user={initiator}
               annotation
@@ -326,7 +326,7 @@ const RecoveryAction = ({
                     TransactionMessageFragment
                   >;
                   return (
-                    <FeedItem
+                    <Comment
                       key={uniqueId}
                       createdAt={createdAt}
                       comment={message}

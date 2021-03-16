@@ -3,7 +3,7 @@ import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
-import FeedItem from '~core/FeedItem';
+import Comment from '~core/Comment';
 import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
 
@@ -182,7 +182,7 @@ const DefaultAction = ({
             />
           </h1>
           {actionType !== ColonyActions.Generic && annotationHash && (
-            <FeedItem
+            <Comment
               createdAt={createdAt}
               user={initiator}
               annotation

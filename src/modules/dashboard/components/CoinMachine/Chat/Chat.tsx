@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import FeedItem from '~core/FeedItem';
+import Comment from '~core/Comment';
 import CommentInput from '~core/CommentInput';
 
 import {
@@ -54,7 +54,7 @@ const Chat = ({
       <div className={styles.messages}>
         {comments && comments.length ? (
           comments.map(({ createdAt, initiator, context }) => (
-            <FeedItem
+            <Comment
               key={`${initiator}.${createdAt}`}
               createdAt={createdAt}
               comment={context.message}
