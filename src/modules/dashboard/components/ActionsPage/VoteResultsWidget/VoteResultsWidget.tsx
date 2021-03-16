@@ -44,6 +44,7 @@ const VoteResultsWidget = ({
   const iconName =
     appearance.theme === 'approve' ? 'circle-thumbs-up' : 'circle-thumbs-down';
   const votePercentage = (value * maxPercentage) / maxValue;
+  const barTheme = appearance.theme === 'approve' ? 'primary' : 'danger';
 
   return (
     <div className={`${styles.wrapper} ${getMainClasses(appearance, styles)}`}>
@@ -65,7 +66,11 @@ const VoteResultsWidget = ({
           <ProgressBar
             value={votePercentage}
             max={maxPercentage}
-            appearance={{ size: 'small', theme: 'transparent' }}
+            appearance={{
+              size: 'small',
+              backgroundTheme: 'transparent',
+              barTheme,
+            }}
           />
         </div>
       </div>
