@@ -9,9 +9,9 @@ import TextDecorator from '~lib/TextDecorator';
 import { AnyUser } from '~data/index';
 import FriendlyName from '~core/FriendlyName';
 
-import styles from './FeedItem.css';
+import styles from './Comment.css';
 
-const displayName = 'FeedItem';
+const displayName = 'Comment';
 
 export interface Appearance {
   theme?: 'primary' | 'danger';
@@ -27,7 +27,7 @@ export interface Props {
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const FeedItem = ({
+const Comment = ({
   appearance = { theme: 'primary' },
   comment,
   user,
@@ -66,6 +66,6 @@ const FeedItem = ({
   );
 };
 
-FeedItem.displayName = displayName;
+Comment.displayName = displayName;
 
-export default FeedItem;
+export default Comment;
