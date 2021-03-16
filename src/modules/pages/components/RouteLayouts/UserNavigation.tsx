@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useParams } from 'react-router-dom';
 
 import { GasStationPopover } from '~users/GasStation';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
@@ -7,8 +8,13 @@ import AvatarDropdown from '~users/AvatarDropdown';
 import Icon from '~core/Icon';
 import InboxPopover from '~users/Inbox/InboxPopover';
 import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
-import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
+import {
+  useUserNotificationsQuery,
+  useLoggedInUser,
+  useColonyFromNameQuery,
+} from '~data/index';
 import MaskedAddress from '~core/MaskedAddress';
+import MemberReputation from '~core/MemberReputation';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 import { useSelector } from '~utils/hooks';
 import { ALLOWED_NETWORKS } from '~constants';
@@ -34,6 +40,14 @@ const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
   const { walletAddress, ethereal, networkId } = useLoggedInUser();
+
+  const { colonyName } = useParams<{
+    colonyName: string;
+  }>();
+
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
+  });
 
   const { data } = useUserNotificationsQuery({
     variables: { address: walletAddress },
@@ -69,6 +83,14 @@ const UserNavigation = () => {
       {!ethereal && !isNetworkAllowed && (
         <div className={styles.wrongNetwork}>
           <FormattedMessage {...MSG.wrongNetworkAlert} />
+        </div>
+      )}
+      {userCanNavigate && colonyData?.colonyAddress && (
+        <div className={styles.reputation}>
+          <MemberReputation
+            walletAddress={walletAddress}
+            colonyAddress={colonyData?.colonyAddress}
+          />
         </div>
       )}
       {ethereal && (

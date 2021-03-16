@@ -142,3 +142,14 @@
   color: var(--colony-white);
   box-shadow: 0px 2px 11px var(--drop-shadow);
 }
+
+.reputation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 20px;
+  padding: 0 7px;
+  height: 26px;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+}
