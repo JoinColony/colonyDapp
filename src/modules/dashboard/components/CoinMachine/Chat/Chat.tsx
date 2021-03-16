@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import FeedItem from '~core/FeedItem';
-import Comment from '~core/Comment';
+import CommentInput from '~core/CommentInput';
 
 import {
   useLoggedInUser,
@@ -68,7 +68,7 @@ const Chat = ({
       </div>
       <div className={styles.inputBox}>
         {username && !ethereal && (
-          <Comment
+          <CommentInput
             colonyAddress={colonyAddress}
             transactionHash={transactionHash}
           />
