@@ -148,7 +148,7 @@
   justify-content: center;
   align-items: center;
   margin-right: 20px;
-  padding: 0 5px;
+  padding: 0 7px;
   height: 26px;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
@@ -156,6 +156,4 @@
 
 .reputation span {
   display: inline-block;
-  vertical-align: middle;
-  font-size: 9px; /* it seems we start useing this font regulary, time for var? */
 }
