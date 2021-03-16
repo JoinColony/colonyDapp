@@ -3,8 +3,8 @@ import { nanoid } from 'nanoid';
 import { defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
+import Comment from '~core/Comment';
 import { MiniSpinnerLoader } from '~core/Preloaders';
-import FeedItem from '~core/FeedItem';
 
 import { getEventsForActions } from '~utils/events';
 
@@ -228,7 +228,7 @@ const ActionsPageFeed = ({
           uniqueId,
         } = (feedItem as unknown) as FeedItemWithId<TransactionMessageFragment>;
         return (
-          <FeedItem
+          <Comment
             key={uniqueId}
             createdAt={createdAt}
             comment={message}
