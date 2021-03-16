@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
+import Comment from '~core/Comment';
 import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
 

@@ -9,9 +9,9 @@ import TextDecorator from '~lib/TextDecorator';
 import { AnyUser } from '~data/index';
 import FriendlyName from '~core/FriendlyName';
 
-import styles from './FeedItem.css';
+import styles from './Comment.css';
 
-const displayName = 'FeedItem';
+const displayName = 'Comment';
 
 interface Props {
   comment?: string;
@@ -22,7 +22,7 @@ interface Props {
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const FeedItem = ({ comment, user, createdAt, annotation = false }: Props) => {
+const Comment = ({ comment, user, createdAt, annotation = false }: Props) => {
   const { Decorate } = new TextDecorator({
     username: (usernameWithAtSign) => (
       <UserMention username={usernameWithAtSign.slice(1)} />
@@ -55,6 +55,6 @@ const FeedItem = ({ comment, user, createdAt, annotation = false }: Props) => {
   );
 };
 
-FeedItem.displayName = displayName;
+Comment.displayName = displayName;
 
-export default FeedItem;
+export default Comment;
