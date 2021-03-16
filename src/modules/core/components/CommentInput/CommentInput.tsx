@@ -18,28 +18,28 @@ import {
 } from '~data/index';
 import { Address, ENTER } from '~types/index';
 
-import styles from './Comment.css';
+import styles from './CommentInput.css';
 
-const displayName = 'Comment';
+const displayName = 'CommentInput';
 
 const MSG = defineMessages({
   commentInputPlaceholder: {
-    id: 'Comment.commentInputPlaceholder',
+    id: 'CommentInput.commentInputPlaceholder',
     defaultMessage: 'What would you like to say?',
   },
   commentInstuctions: {
-    id: 'Comment.commentInstuctions',
+    id: 'CommentInput.commentInstuctions',
     defaultMessage: `{sendCombo} to send {newLineCombo} for a new line`,
   },
   sendCombo: {
-    id: 'Comment.sendCombo',
+    id: 'CommentInput.sendCombo',
     defaultMessage: `{isMac, select,
       true {⌘}
       other {Ctrl}
     }+Return`,
   },
   newLineCombo: {
-    id: 'Comment.newLineCombo',
+    id: 'CommentInput.newLineCombo',
     defaultMessage: 'Return',
   },
 });
@@ -80,7 +80,7 @@ const handleKeyboardSubmit = (
   return false;
 };
 
-const Comment = ({ transactionHash, colonyAddress }: Props) => {
+const CommentInput = ({ transactionHash, colonyAddress }: Props) => {
   const commentBoxRef = useRef<HTMLInputElement>(null);
 
   const [sendTransactionMessage] = useSendTransactionMessageMutation();
@@ -177,6 +177,6 @@ const Comment = ({ transactionHash, colonyAddress }: Props) => {
   );
 };
 
-Comment.displayName = displayName;
+CommentInput.displayName = displayName;
 
-export default Comment;
+export default CommentInput;
