@@ -2,6 +2,7 @@ import React from 'react';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import TimeRelative from '~core/TimeRelative';
+import Tag from '~core/Tag';
 import { useUser } from '~data/index';
 import { getMainClasses } from '~utils/css';
 
@@ -29,8 +30,8 @@ const ArgumentDisplay = ({
   argument: { author, timestamp, comment },
 }: Props) => {
   const user = useUser(author);
-  // const tagTheme = appearance.theme === 'motion' ? 'primary' : 'pink';
-  // const tagText = appearance.theme === 'motion' ? 'Motion' : 'Objection';
+  const tagTheme = appearance.theme === 'motion' ? 'primary' : 'pink';
+  const tagText = appearance.theme === 'motion' ? 'Motion' : 'Objection';
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
   return (
@@ -42,13 +43,20 @@ const ArgumentDisplay = ({
       </div>
       <div className={styles.main}>
         <div>
-          {/* <Tag text={tagText} appearance={{ theme: tagTheme colorSchema: 'plain', fontSize: 'tiny' }} /> */}
+          <Tag
+            text={tagText}
+            appearance={{
+              theme: tagTheme,
+              colorSchema: 'fullColor',
+              fontSize: 'small',
+            }}
+          />
           <TimeRelative
             className={styles.timestamp}
             value={new Date(timestamp)}
           />
         </div>
-        <p>{comment}</p>
+        <p className={styles.message}>{comment}</p>
       </div>
     </div>
   );
