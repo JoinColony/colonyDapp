@@ -1,6 +1,7 @@
 import React from 'react';
 import { useField } from 'formik';
 import { PopperProps } from 'react-popper';
+import { MessageDescriptor } from 'react-intl';
 
 import InputLabel from '~core/Fields/InputLabel';
 import Icon from '~core/Icon';
@@ -18,7 +19,7 @@ interface Appearance {
 interface Props {
   appearance?: Appearance;
   name: string;
-  label?: string;
+  label?: string | MessageDescriptor;
   disabled?: boolean;
   tooltipText?: string;
   elementOnly?: boolean;
