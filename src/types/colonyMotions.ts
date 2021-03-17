@@ -1,4 +1,3 @@
-
 export enum ColonyMotions {
   /*
     I dont like Motion postfitx, but if we would use actionType for 
