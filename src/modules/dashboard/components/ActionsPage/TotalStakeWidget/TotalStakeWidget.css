@@ -1,0 +1,18 @@
+.widgetHeading {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.stakeProgress {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.userStake {
+  margin-top: 16px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
