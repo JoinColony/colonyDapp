@@ -136,7 +136,7 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_VOTE_MINT_TOKENS,
+      ActionTypes.COLONY_MOTION_MINT_TOKENS,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -146,9 +146,9 @@ export type ColonyActionsActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_VOTE_MINT_TOKENS_ERROR, object>
+  | ErrorActionType<ActionTypes.COLONY_MOTION_MINT_TOKENS_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_VOTE_MINT_TOKENS_SUCCESS,
+      ActionTypes.COLONY_MOTION_MINT_TOKENS_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
