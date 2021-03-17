@@ -83,8 +83,8 @@ const TokenMintDialog = ({
 
       /* need to add the condition that force toggle is not on */
       return hasVotingExtension
-        ? ActionTypes[`COLONY_ACTION_VOTE_MINT_TOKENS${actionEnd}`]
-        : ActionTypes.COLONY_ACTION_MINT_TOKENS;
+        ? ActionTypes[`COLONY_MOTION_MINT_TOKENS${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_MINT_TOKENS${actionEnd}`];
     },
     [hasVotingExtension],
   );
