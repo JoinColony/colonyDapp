@@ -77,7 +77,9 @@ const TokenMintForm = ({
           appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
           text={MSG.title}
         />
-        {userHasPermissions && isVotingExtensionEnabled && <Toggle label={MSG.force} name="toggle" />}
+        {userHasPermissions && isVotingExtensionEnabled && (
+          <Toggle label={MSG.force} name="toggle" />
+        )}
       </DialogSection>
       {!userHasPermissions && !isVotingExtensionEnabled && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
