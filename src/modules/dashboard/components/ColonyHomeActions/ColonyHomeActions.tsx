@@ -80,6 +80,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStepUnlockToken: 'dashboard.UnlockTokenDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {

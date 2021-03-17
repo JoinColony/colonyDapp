@@ -90,6 +90,7 @@ interface CustomWizardDialogProps {
   nextStepUnlockToken: string;
   prevStep: string;
   colony: Colony;
+  isVotingExtensionEnabled: boolean;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -106,6 +107,7 @@ const ManageFundsDialog = ({
   nextStepMintTokens,
   nextStepManageTokens,
   nextStepUnlockToken,
+  isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -113,7 +115,9 @@ const ManageFundsDialog = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
-  const canMintNativeToken = colony.canMintNativeToken && hasRoot(allUserRoles);
+  const canMintNativeToken =
+    (colony.canMintNativeToken && hasRoot(allUserRoles)) ||
+    isVotingExtensionEnabled;
   const canUnlockToken =
     colony.isNativeTokenLocked &&
     colony.canUnlockNativeToken &&
