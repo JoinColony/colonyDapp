@@ -136,6 +136,22 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
+      ActionTypes.COLONY_ACTION_VOTE_MINT_TOKENS,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        nativeTokenAddress: Address;
+        amount: BigNumber;
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_VOTE_MINT_TOKENS_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_VOTE_MINT_TOKENS_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
       {
         colonyAddress: Address;
