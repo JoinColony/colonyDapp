@@ -13,6 +13,7 @@ import { useTransformer } from '~utils/hooks';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
+import Toggle from '~core/Fields/Toggle';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -38,6 +39,10 @@ const MSG = defineMessages({
     id: 'dashboard.TokenMintDialog.TokenMintForm.noPermission',
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
+  },
+  force: {
+    id: 'dashboard.TokenMintDialog.TokenMintForm.force',
+    defaultMessage: 'Force',
   },
 });
 
@@ -72,7 +77,7 @@ const TokenMintForm = ({
           appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
           text={MSG.title}
         />
-        {userHasPermissions && isVotingExtensionEnabled && <div>Toggler</div>}
+        {userHasPermissions && isVotingExtensionEnabled && <Toggle label={MSG.force} name="toggle" />}
       </DialogSection>
       {!userHasPermissions && !isVotingExtensionEnabled && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
