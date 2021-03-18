@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  padding: 12px 18px;
+  border-radius: 6px;
+}
+
+.avatar {
+  margin-top: 7px;
+}
+
+.main {
+  margin-left: 16px;
+}
+
+.username {
+  margin-right: 5px;
+  font-weight: var(--weight-bold);
+}
+
+.timestamp {
+  margin-left: 7px;
+  font-size: var(--size-tiny);
+  color: color-mod(var(--dark) alpha(50%));
+}
+
+.message {
+  font-size: var(--size-normal);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+}
+
+.themeMotion {
+  background-color: color-mod(var(--primary) alpha(6%));
+}
+
+.themeObjection {
+  background-color: color-mod(var(--pink) alpha(6%));
+}

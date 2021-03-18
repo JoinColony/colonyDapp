@@ -8,7 +8,7 @@ import styles from './Tag.css';
 interface Appearance {
   /* "light" is default */
   theme: 'primary' | 'light' | 'golden' | 'danger' | 'pink' | 'blue';
-  fontSize?: 'tiny';
+  fontSize?: 'tiny' | 'small';
   /* "fullColor" is default */
   colorSchema?: 'fullColor' | 'inverted' | 'plain';
 }
