@@ -1,4 +1,5 @@
 import React from 'react';
+import { MessageDescriptor } from 'react-intl';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import TimeRelative from '~core/TimeRelative';
@@ -20,6 +21,7 @@ interface Argument {
 
 interface Props {
   appearance?: Appearance;
+  tagText: MessageDescriptor | string;
   argument: Argument;
 }
 
@@ -28,10 +30,10 @@ const displayName = 'ArgumentDisplay';
 const ArgumentDisplay = ({
   appearance = { theme: 'motion' },
   argument: { author, timestamp, comment },
+  tagText,
 }: Props) => {
   const user = useUser(author);
   const tagTheme = appearance.theme === 'motion' ? 'primary' : 'pink';
-  const tagText = appearance.theme === 'motion' ? 'Motion' : 'Objection';
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
   return (
