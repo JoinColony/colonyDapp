@@ -41,16 +41,22 @@ addProcess('truffle', () =>
  * version that we use for testing reputation queries locally
  */
 addProcess('oracle', async () => {
-  const mockOracleProcess = spawn('npm', ['start'], {
-    cwd: path.resolve(__dirname, '..', 'src/lib/mock-oracle'),
+  // const mockOracleProcess = spawn('npm', ['start'], {
+  //   cwd: path.resolve(__dirname, '..', 'src/lib/mock-oracle'),
+  //   stdio: 'pipe',
+  // });
+  const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
+  const minerProcess = spawn('node', ['node_modules/.bin/babel-node', '--presets', '@babel/preset-env', 'src/lib/colonyNetwork/packages/reputation-miner/bin/index.js', '--minerAddress', '0x3a965407cEd5E62C5aD71dE491Ce7B23DA5331A4', '--syncFrom', '1', '--colonyNetworkAddress', networkAddress, '--oracle', '--auto', '--dbPath', 'src/lib/colonyNetwork/packages/reputation-miner/reputationStates.sqlite'], {
+    cwd: path.resolve(__dirname, '..'),
     stdio: 'pipe',
   });
+
   if (args.foreground) {
-    mockOracleProcess.stdout.pipe(process.stdout);
-    mockOracleProcess.stderr.pipe(process.stderr);
+    minerProcess.stdout.pipe(process.stdout);
+    minerProcess.stderr.pipe(process.stderr);
   }
-  mockOracleProcess.on('error', error => {
-    mockOracleProcess.kill();
+  minerProcess.on('error', error => {
+    minerProcess.kill();
     /*
      * @NOTE Just stop the startup orchestration process is something goes wrong
      */
@@ -58,7 +64,7 @@ addProcess('oracle', async () => {
     process.exit(1);
   });
   await waitOn({ resources: ['tcp:3001'] });
-  return mockOracleProcess;
+  return minerProcess;
 });
 
 addProcess('db', async () => {
