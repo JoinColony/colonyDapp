@@ -42,6 +42,9 @@
   "homepage": "https://github.com/JoinColony/colonyDapp#readme",
   "devDependencies": {
     "@adobe/node-fetch-retry": "^1.1.0",
+    "@babel/core": "^7.13.10",
+    "@babel/node": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
     "@colony/eslint-config-colony": "^8.0.0",
     "@graphql-codegen/cli": "^1.17.8",
     "@graphql-codegen/fragment-matcher": "^1.17.8",
