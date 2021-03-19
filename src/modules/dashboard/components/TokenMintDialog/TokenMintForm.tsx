@@ -40,8 +40,8 @@ const MSG = defineMessages({
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
   },
-  force: {
-    id: 'dashboard.TokenMintDialog.TokenMintForm.force',
+  forceMotion: {
+    id: 'dashboard.TokenMintDialog.TokenMintForm.forceMotion',
     defaultMessage: 'Force',
   },
 });
@@ -78,7 +78,7 @@ const TokenMintForm = ({
           text={MSG.title}
         />
         {userHasPermissions && isVotingExtensionEnabled && (
-          <Toggle label={MSG.force} name="toggle" />
+          <Toggle label={MSG.forceMotion} name="toggle" />
         )}
       </DialogSection>
       {!userHasPermissions && !isVotingExtensionEnabled && (
