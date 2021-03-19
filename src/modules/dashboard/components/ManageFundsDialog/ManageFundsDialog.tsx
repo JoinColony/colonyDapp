@@ -116,8 +116,7 @@ const ManageFundsDialog = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
   const canMintNativeToken =
-    (colony.canMintNativeToken && hasRoot(allUserRoles)) ||
-    isVotingExtensionEnabled;
+    (colony.canMintNativeToken && hasRoot(allUserRoles));
   const canUnlockToken =
     colony.isNativeTokenLocked &&
     colony.canUnlockNativeToken &&
@@ -140,7 +139,7 @@ const ManageFundsDialog = ({
       title: MSG.mintTokensTitle,
       description: MSG.mintTokensDescription,
       icon: 'emoji-seed-sprout',
-      permissionRequired: !canMintNativeToken,
+      permissionRequired: !isVotingExtensionEnabled || !canMintNativeToken,
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
