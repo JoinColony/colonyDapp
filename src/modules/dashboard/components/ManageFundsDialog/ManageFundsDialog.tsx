@@ -115,8 +115,7 @@ const ManageFundsDialog = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
-  const canMintNativeToken =
-    (colony.canMintNativeToken && hasRoot(allUserRoles));
+  const canMintNativeToken = colony.canMintNativeToken && hasRoot(allUserRoles);
   const canUnlockToken =
     colony.isNativeTokenLocked &&
     colony.canUnlockNativeToken &&
