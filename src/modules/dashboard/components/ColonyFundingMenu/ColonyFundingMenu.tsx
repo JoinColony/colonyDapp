@@ -69,7 +69,7 @@ const ColonyFundingMenu = ({
       colony,
       isVotingExtensionEnabled,
     });
-  }, [colony, openTokenMintDialog]);
+  }, [colony, openTokenMintDialog, isVotingExtensionEnabled]);
   const handleMoveTokens = useCallback(
     () =>
       openTokensMoveDialog({
