@@ -6,6 +6,7 @@ import { MessageDescriptor } from 'react-intl';
 import InputLabel from '~core/Fields/InputLabel';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
+import { SimpleMessageValues } from '~types/index';
 
 import { getMainClasses } from '~utils/css';
 
@@ -20,6 +21,7 @@ interface Props {
   appearance?: Appearance;
   name: string;
   label?: string | MessageDescriptor;
+  labelValues?: SimpleMessageValues;
   disabled?: boolean;
   tooltipText?: string;
   elementOnly?: boolean;
@@ -31,6 +33,7 @@ const Toggle = ({
   appearance,
   name,
   label,
+  labelValues,
   disabled = false,
   elementOnly = false,
   tooltipText,
@@ -53,7 +56,7 @@ const Toggle = ({
   return (
     <div className={styles.container}>
       {!elementOnly && label && (
-        <InputLabel label={label} appearance={{ colorSchema: 'grey' }} />
+        <InputLabel label={label} labelValues={labelValues} appearance={{ colorSchema: 'grey' }} />
       )}
       <div>
         <input
