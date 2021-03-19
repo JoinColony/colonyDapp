@@ -80,3 +80,7 @@
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
+
+.tagWrapper {
+  margin-bottom: 13px;
+}
