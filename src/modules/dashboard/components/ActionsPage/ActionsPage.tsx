@@ -269,7 +269,16 @@ const ActionsPage = () => {
         />
       );
     case ColonyMotions.MintTokensMotion:
-      return <MintTokenMotion />;
+      return (
+        <MintTokenMotion
+          colony={colonyData?.processedColony}
+          token={tokenData?.tokenInfo}
+          colonyAction={colonyActionData?.colonyAction}
+          transactionHash={transactionHash as string}
+          recipient={recipientProfileWithFallback}
+          initiator={initiatorProfileWithFallback}
+        />
+      );
     case ColonyActions.Generic:
     default:
       return (
