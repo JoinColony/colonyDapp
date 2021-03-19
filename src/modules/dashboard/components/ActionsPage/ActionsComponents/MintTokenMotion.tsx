@@ -2,9 +2,7 @@ import React from 'react';
 
 import { defineMessage, FormattedMessage } from 'react-intl';
 
-import {
-  ActionsPageFeedItem,
-} from '~dashboard/ActionsPageFeed';
+import { ActionsPageFeedItem } from '~dashboard/ActionsPageFeed';
 import { ColonyMotions } from '~types/index';
 import {
   Colony,
@@ -38,9 +36,7 @@ interface Props {
 
 const MintTokenMotion = ({
   colony,
-  colony: { colonyAddress },
   colonyAction: {
-    events = [],
     createdAt: actionCreatedAt,
     actionType,
     annotationHash,
@@ -69,43 +65,43 @@ const MintTokenMotion = ({
   };
   return (
     <div className={styles.main}>
-    <div className={styles.container}>
-      <p className={styles.tagWrapper}>
-        {/* TODO Make it dynamic */}
-        <Tag text={MSG.motionTag} appearance={{ theme: 'primary' }} />
-      </p>
-    </div>
-    <hr className={styles.dividerTop} />
-    <div className={styles.container}>
-      <div className={styles.content}>
-        <h1 className={styles.heading}>
-          <FormattedMessage
-            id="motion.title"
-            values={{
-              ...actionAndEventValues,
-            }}
-          />
-        </h1>
-        {annotationHash && (
-          <ActionsPageFeedItem
-            createdAt={actionCreatedAt}
-            user={initiator}
-            annotation
-            comment={annotationHash}
-          />
-        )}
+      <div className={styles.container}>
+        <p className={styles.tagWrapper}>
+          {/* Make it dynamic */}
+          <Tag text={MSG.motionTag} appearance={{ theme: 'primary' }} />
+        </p>
       </div>
-      <div className={styles.details}>
-        <DetailsWidget
-          actionType={actionType as ColonyMotions}
-          recipient={recipient}
-          transactionHash={transactionHash}
-          colony={colony}
-        />
+      <hr className={styles.dividerTop} />
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <h1 className={styles.heading}>
+            <FormattedMessage
+              id="motion.title"
+              values={{
+                ...actionAndEventValues,
+              }}
+            />
+          </h1>
+          {annotationHash && (
+            <ActionsPageFeedItem
+              createdAt={actionCreatedAt}
+              user={initiator}
+              annotation
+              comment={annotationHash}
+            />
+          )}
+        </div>
+        <div className={styles.details}>
+          <DetailsWidget
+            actionType={actionType as ColonyMotions}
+            recipient={recipient}
+            transactionHash={transactionHash}
+            colony={colony}
+          />
+        </div>
       </div>
     </div>
-  </div>
-  )
+  );
 };
 
 MintTokenMotion.displayName = displayName;

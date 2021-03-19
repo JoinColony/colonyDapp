@@ -4,6 +4,7 @@ import { ColonyRole } from '@colony/colony-js';
 
 import {
   ColonyActions,
+  ColonyMotions,
   ColonyAndExtensionsEvents,
   FormattedAction,
   Address,
@@ -31,7 +32,7 @@ type ValuesForActionTypesMap = Partial<
  * Get colony action details for DetailsWidget based on action type and ActionPageDetails map
  */
 export const getDetailsForAction = (
-  actionType: ColonyActions,
+  actionType: ColonyActions | ColonyMotions,
 ): DetailsValuesMap => {
   const detailsForActionType = DETAILS_FOR_ACTION[actionType];
   return Object.keys(ActionPageDetails).reduce((detailsMap, detailsKey) => {
