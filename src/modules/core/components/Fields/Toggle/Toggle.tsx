@@ -1,7 +1,7 @@
 import React from 'react';
 import { useField } from 'formik';
 import { PopperProps } from 'react-popper';
-import { MessageDescriptor } from 'react-intl';
+import { MessageDescriptor, FormattedMessage } from 'react-intl';
 
 import InputLabel from '~core/Fields/InputLabel';
 import Icon from '~core/Icon';
@@ -23,7 +23,8 @@ interface Props {
   label?: string | MessageDescriptor;
   labelValues?: SimpleMessageValues;
   disabled?: boolean;
-  tooltipText?: string;
+  tooltipText?: string | MessageDescriptor;
+  tooltipTextValues?: SimpleMessageValues;
   elementOnly?: boolean;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
   tooltipPopperProps?: Omit<PopperProps, 'children'>;
@@ -36,6 +37,7 @@ const Toggle = ({
   labelValues,
   disabled = false,
   elementOnly = false,
+  tooltipTextValues,
   tooltipText,
   tooltipPopperProps = {
     placement: 'right-start',
@@ -76,7 +78,11 @@ const Toggle = ({
       {tooltipText && (
         <Tooltip
           appearance={{ theme: 'dark' }}
-          content={tooltipText}
+          content={tooltipText && tooltipText === 'string' ? (
+            tooltipText
+          ) : (
+            <FormattedMessage {...tooltipText} values={tooltipTextValues} />
+          )}
           trigger="hover"
           popperProps={tooltipPopperProps}
         >
