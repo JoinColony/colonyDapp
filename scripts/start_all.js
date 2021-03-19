@@ -41,12 +41,8 @@ addProcess('truffle', () =>
  * version that we use for testing reputation queries locally
  */
 addProcess('oracle', async () => {
-  // const mockOracleProcess = spawn('npm', ['start'], {
-  //   cwd: path.resolve(__dirname, '..', 'src/lib/mock-oracle'),
-  //   stdio: 'pipe',
-  // });
   const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
-  const minerProcess = spawn('node', ['node_modules/.bin/babel-node', '--presets', '@babel/preset-env', 'src/lib/colonyNetwork/packages/reputation-miner/bin/index.js', '--minerAddress', '0x3a965407cEd5E62C5aD71dE491Ce7B23DA5331A4', '--syncFrom', '1', '--colonyNetworkAddress', networkAddress, '--oracle', '--auto', '--dbPath', 'src/lib/colonyNetwork/packages/reputation-miner/reputationStates.sqlite', '--oraclePort', '3001'], {
+  const minerProcess = spawn('node', ['node_modules/.bin/babel-node', '--presets', '@babel/preset-env', 'src/lib/colonyNetwork/packages/reputation-miner/bin/index.js', '--minerAddress', '0x3a965407cEd5E62C5aD71dE491Ce7B23DA5331A4', '--syncFrom', '1', '--colonyNetworkAddress', networkAddress, '--oracle', '--auto', '--dbPath', 'src/lib/colonyNetwork/packages/reputation-miner/reputationStates.sqlite', '--oraclePort', '3001', '--processingDelay', '1'], {
     cwd: path.resolve(__dirname, '..'),
     stdio: 'pipe',
   });
@@ -65,6 +61,28 @@ addProcess('oracle', async () => {
   });
   await waitOn({ resources: ['tcp:3001'] });
   return minerProcess;
+});
+
+addProcess('reputationMonitor', async () => {
+  const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
+  const monitorProcess = spawn('node', ['src/lib/reputationMonitor/index.js', networkAddress], {
+    cwd: path.resolve(__dirname, '..'),
+    stdio: 'pipe',
+  });
+
+  if (args.foreground) {
+    monitorProcess.stdout.pipe(process.stdout);
+    monitorProcess.stderr.pipe(process.stderr);
+  }
+  monitorProcess.on('error', error => {
+    monitorProcess.kill();
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
+  });
+  return monitorProcess;
 });
 
 addProcess('db', async () => {
