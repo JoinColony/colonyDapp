@@ -90,6 +90,7 @@ interface CustomWizardDialogProps {
   nextStepUnlockToken: string;
   prevStep: string;
   colony: Colony;
+  isVotingExtensionEnabled: boolean;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -106,6 +107,7 @@ const ManageFundsDialog = ({
   nextStepMintTokens,
   nextStepManageTokens,
   nextStepUnlockToken,
+  isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -136,7 +138,7 @@ const ManageFundsDialog = ({
       title: MSG.mintTokensTitle,
       description: MSG.mintTokensDescription,
       icon: 'emoji-seed-sprout',
-      permissionRequired: !canMintNativeToken,
+      permissionRequired: !isVotingExtensionEnabled || !canMintNativeToken,
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (

@@ -9,6 +9,7 @@ import { useTransformer } from '~utils/hooks';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
 import TokenMintDialog from '~dashboard/TokenMintDialog';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
@@ -39,11 +40,12 @@ interface Props {
 const displayName = 'dashboard.ColonyFundingMenu';
 
 const ColonyFundingMenu = ({
-  colony: { canMintNativeToken, version, isDeploymentFinished },
+  colony: { canMintNativeToken, version, isDeploymentFinished, colonyAddress },
   colony,
   selectedDomainId,
 }: Props) => {
   const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
+  const { isVotingExtensionEnabled } = useEnabledExtensions({ colonyAddress });
 
   const openTokenManagementDialog = useDialog(ColonyTokenManagementDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
@@ -65,8 +67,9 @@ const ColonyFundingMenu = ({
   const handleMintTokens = useCallback(() => {
     openTokenMintDialog({
       colony,
+      isVotingExtensionEnabled,
     });
-  }, [colony, openTokenMintDialog]);
+  }, [colony, openTokenMintDialog, isVotingExtensionEnabled]);
   const handleMoveTokens = useCallback(
     () =>
       openTokensMoveDialog({

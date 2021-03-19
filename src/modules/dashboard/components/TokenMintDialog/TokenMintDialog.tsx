@@ -35,6 +35,7 @@ export interface FormValues {
 interface CustomWizardDialogProps {
   prevStep?: string;
   colony: Colony;
+  isVotingExtensionEnabled: boolean;
 }
 
 type Props = DialogProps &
@@ -54,6 +55,7 @@ const validationSchema = yup.object().shape({
 const TokenMintDialog = ({
   colony: { nativeTokenAddress, tokens = [], colonyAddress, colonyName },
   colony,
+  isVotingExtensionEnabled,
   cancel,
   close,
   callStep,
@@ -107,6 +109,7 @@ const TokenMintDialog = ({
           <TokenMintForm
             {...formValues}
             colony={colony}
+            isVotingExtensionEnabled={isVotingExtensionEnabled}
             back={prevStep && callStep ? () => callStep(prevStep) : undefined}
             nativeToken={nativeToken}
           />

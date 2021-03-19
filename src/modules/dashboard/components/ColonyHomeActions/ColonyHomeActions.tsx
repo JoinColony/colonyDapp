@@ -18,6 +18,7 @@ import TokenMintDialog from '~dashboard/TokenMintDialog';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 import EditColonyDetailsDialog from '~dashboard/EditColonyDetailsDialog';
 import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
 import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
@@ -40,6 +41,10 @@ interface Props {
 const ColonyHomeActions = ({ colony }: Props) => {
   const { networkId, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const startWizardFlow = useNaiveBranchingDialogWizard([
     {
@@ -75,6 +80,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStepUnlockToken: 'dashboard.UnlockTokenDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -165,6 +171,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {

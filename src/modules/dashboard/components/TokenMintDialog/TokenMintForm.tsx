@@ -13,6 +13,7 @@ import { useTransformer } from '~utils/hooks';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
+import Toggle from '~core/Fields/Toggle';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -39,10 +40,15 @@ const MSG = defineMessages({
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
   },
+  forceMotion: {
+    id: 'dashboard.TokenMintDialog.TokenMintForm.forceMotion',
+    defaultMessage: 'Force',
+  },
 });
 
 interface Props {
   colony: Colony;
+  isVotingExtensionEnabled: boolean;
   back?: () => void;
   nativeToken?: ColonyTokens[0] | OneToken;
 }
@@ -50,6 +56,7 @@ interface Props {
 const TokenMintForm = ({
   colony: { canMintNativeToken },
   colony,
+  isVotingExtensionEnabled,
   back,
   isSubmitting,
   isValid,
@@ -70,8 +77,11 @@ const TokenMintForm = ({
           appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
           text={MSG.title}
         />
+        {userHasPermissions && isVotingExtensionEnabled && (
+          <Toggle label={MSG.forceMotion} name="toggle" />
+        )}
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermissions && !isVotingExtensionEnabled && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <PermissionRequiredInfo requiredRoles={requiredRoles} />
         </DialogSection>
