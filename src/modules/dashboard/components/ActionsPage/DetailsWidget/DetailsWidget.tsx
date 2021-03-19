@@ -6,7 +6,7 @@ import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import TransactionLink from '~core/TransactionLink';
 
 import { AnyUser, Colony } from '~data/index';
-import { ColonyActions } from '~types/index';
+import { ColonyActions, ColonyMotions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { getDetailsForAction } from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
@@ -63,7 +63,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  actionType: ColonyActions;
+  actionType: ColonyActions | ColonyMotions;
   recipient?: AnyUser;
   values?: EventValues;
   transactionHash?: string;
