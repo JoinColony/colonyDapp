@@ -21,7 +21,7 @@ function* createMintTokensMotion({
   payload: { colonyAddress, colonyName, amount, annotationMessage },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_MINT_TOKENS>) {
+}: Action<ActionTypes.COLONY_MOTION_MINT_TOKENS>) {
   let txChannel;
   try {
     if (!amount) {
@@ -78,14 +78,14 @@ function* createMintTokensMotion({
 
     if (annotationMessage) {
       yield fork(createTransaction, annotateMintTokens.id, {
-        context: ClientType.VotingReputationClient,
+        context: ClientType.ColonyClient,
         methodName: 'annotateTransaction',
         identifier: colonyAddress,
         params: [],
         group: {
           key: batchKey,
           id: metaId,
-          index: 2,
+          index: 1,
         },
         ready: false,
       });
@@ -131,9 +131,8 @@ function* createMintTokensMotion({
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
-
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
+      type: ActionTypes.COLONY_MOTION_MINT_TOKENS_SUCCESS,
       meta,
     });
 
@@ -141,7 +140,7 @@ function* createMintTokensMotion({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (caughtError) {
-    putError(ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR, caughtError, meta);
+    putError(ActionTypes.COLONY_MOTION_MINT_TOKENS_ERROR, caughtError, meta);
   } finally {
     txChannel.close();
   }
