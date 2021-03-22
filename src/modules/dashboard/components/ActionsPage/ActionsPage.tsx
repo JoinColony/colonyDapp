@@ -6,7 +6,11 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
-import { DefaultAction, RecoverytAction } from './ActionsComponents';
+import {
+  DefaultAction,
+  RecoverytAction,
+  MintTokenMotion,
+} from './ActionsComponents';
 
 import {
   useColonyActionLazyQuery,
@@ -16,7 +20,7 @@ import {
   useTokenInfoLazyQuery,
 } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { ColonyActions } from '~types/index';
+import { ColonyActions, ColonyMotions } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
 
 import TransactionHash, { Hash } from './TransactionHash';
@@ -256,6 +260,17 @@ const ActionsPage = () => {
     case ColonyActions.Recovery:
       return (
         <RecoverytAction
+          colony={colonyData?.processedColony}
+          token={tokenData?.tokenInfo}
+          colonyAction={colonyActionData?.colonyAction}
+          transactionHash={transactionHash as string}
+          recipient={recipientProfileWithFallback}
+          initiator={initiatorProfileWithFallback}
+        />
+      );
+    case ColonyMotions.MintTokensMotion:
+      return (
+        <MintTokenMotion
           colony={colonyData?.processedColony}
           token={tokenData?.tokenInfo}
           colonyAction={colonyActionData?.colonyAction}
