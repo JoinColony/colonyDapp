@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Network } from '@colony/colony-js';
-
 import { AddressZero } from 'ethers/constants';
-import { TOKEN_LOGOS_REPO_URL, DEFAULT_NETWORK } from '~constants';
 
 import Avatar from '~core/Avatar';
 import { useDataFetcher } from '~utils/hooks';
@@ -10,6 +8,8 @@ import { AnyToken } from '~data/index';
 import { Address } from '~types/index';
 import Icon from '~core/Icon';
 import { getBase64image } from '~utils/dataReader';
+
+import { TOKEN_LOGOS_REPO_URL, DEFAULT_NETWORK } from '~constants';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
@@ -42,9 +42,11 @@ interface Props {
 const ICON_STORAGE = 'tokenImages';
 
 const loadTokenImages = async (address: Address): Promise<Response> => {
-  let tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}${address}/logo.png`;
+  const network =
+    DEFAULT_NETWORK === Network.Mainnet ? 'ethereum' : DEFAULT_NETWORK;
+  let tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}/${network}/${address}/logo.png`;
   if (address === AddressZero) {
-    tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}info/logo.png`;
+    tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}/${network}/info/logo.png`;
   }
   return fetch(tokenImageUrl);
 };
@@ -53,7 +55,8 @@ const HookedTokenIcon = ({
   name,
   token: { iconHash, address },
   iconName,
-  dontFetch = DEFAULT_NETWORK !== Network.Mainnet,
+  dontFetch = DEFAULT_NETWORK !== Network.Mainnet &&
+    DEFAULT_NETWORK !== Network.Xdai,
   ...props
 }: Props) => {
   const [tokenImage, setTokenImage] = useState<string | undefined>();
