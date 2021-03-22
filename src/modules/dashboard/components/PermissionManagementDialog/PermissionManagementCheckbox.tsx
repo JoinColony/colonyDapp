@@ -26,12 +26,12 @@ const MSG = defineMessages({
   },
   roleDescription3: {
     id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription3`,
-    defaultMessage: 'Set permissions in the active domain, and any subdomain.',
+    defaultMessage: 'Set permissions in the active team, and any sub-team.',
   },
   // We don't have architecture_subdomain (which would be 4)
   roleDescription5: {
     id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription5`,
-    defaultMessage: 'Fund expenditures and transfer funds between domains.',
+    defaultMessage: 'Fund expenditures and transfer funds between teams.',
   },
   roleDescription6: {
     id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription6`,
@@ -43,7 +43,7 @@ const MSG = defineMessages({
   },
   tooltipNoRootDomainSelected: {
     id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.tooltipNoRootDomainSelected`,
-    defaultMessage: 'Switch domain to #Root to set the root role.',
+    defaultMessage: 'Switch team to Root to set the root role.',
   },
 });
 
