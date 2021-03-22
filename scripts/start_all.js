@@ -42,7 +42,7 @@ addProcess('truffle', () =>
  */
 addProcess('oracle', async () => {
   const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
-  const minerProcess = spawn('node', ['node_modules/.bin/babel-node', '--presets', '@babel/preset-env', 'src/lib/colonyNetwork/packages/reputation-miner/bin/index.js', '--minerAddress', '0x3a965407cEd5E62C5aD71dE491Ce7B23DA5331A4', '--syncFrom', '1', '--colonyNetworkAddress', networkAddress, '--oracle', '--auto', '--dbPath', 'src/lib/colonyNetwork/packages/reputation-miner/reputationStates.sqlite', '--oraclePort', '3001', '--processingDelay', '1'], {
+  const minerProcess = spawn('node', ['node_modules/.bin/babel-node', '--presets', '@babel/preset-env', 'src/lib/colonyNetwork/packages/reputation-miner/bin/index.js', '--minerAddress', '0x3a965407cEd5E62C5aD71dE491Ce7B23DA5331A4', '--syncFrom', '1', '--colonyNetworkAddress', networkAddress, '--oracle', '--auto', '--dbPath', 'src/lib/colonyNetwork/packages/reputation-miner/reputationStates.sqlite', '--oraclePort', '3002', '--processingDelay', '1'], {
     cwd: path.resolve(__dirname, '..'),
     stdio: 'pipe',
   });
@@ -59,7 +59,7 @@ addProcess('oracle', async () => {
     console.error(error);
     process.exit(1);
   });
-  await waitOn({ resources: ['tcp:3001'] });
+  await waitOn({ resources: ['tcp:3002'] });
   return minerProcess;
 });
 
@@ -82,6 +82,8 @@ addProcess('reputationMonitor', async () => {
     console.error(error);
     process.exit(1);
   });
+  await waitOn({ resources: ['tcp:3001'] });
+
   return monitorProcess;
 });
 
