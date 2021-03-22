@@ -35,3 +35,14 @@
   background-color: color-mod(var(--colony-blue) alpha(10%));
   fill: var(--colony-blue);
 }
+
+.createUserRedirect {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--colony-blue);
+}
+
+.createUserRedirect:hover {
+  text-decoration: underline;
+  color: var(--colony-blue);
+}
