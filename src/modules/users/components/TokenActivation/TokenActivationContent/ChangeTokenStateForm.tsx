@@ -116,6 +116,10 @@ const ChangeTokenStateForm = ({
     [],
   );
 
+  const handleSubmitSuccess = useCallback((_, { resetForm }) => {
+    resetForm();
+  }, []);
+
   return (
     <div className={styles.changeTokensState}>
       <div className={styles.changeStateTitle}>
@@ -144,6 +148,7 @@ const ChangeTokenStateForm = ({
         submit={formAction('')}
         error={formAction('_ERROR')}
         success={formAction('_SUCCESS')}
+        onSuccess={handleSubmitSuccess}
       >
         {({ isValid, values, setFieldValue }: FormikProps<FormValues>) => (
           <div className={styles.form}>

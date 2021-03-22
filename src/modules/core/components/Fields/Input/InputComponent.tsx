@@ -4,12 +4,14 @@ import React, {
   InputHTMLAttributes,
   useMemo,
   RefObject,
+  useEffect,
 } from 'react';
 import { defineMessages } from 'react-intl';
 import Cleave from 'cleave.js/react';
 import { CleaveOptions } from 'cleave.js/options';
 import { ChangeEvent } from 'cleave.js/react/props';
 
+import { isNil } from 'lodash';
 import Button from '~core/Button';
 
 import { getMainClasses } from '~utils/css';
@@ -106,6 +108,12 @@ const InputComponent = ({
     () => JSON.stringify(formattingOptions),
     [formattingOptions],
   );
+
+  useEffect(() => {
+    if (isNil(value) && cleave) {
+      cleave.setRawValue('');
+    }
+  }, [cleave, value]);
 
   if (formattingOptions) {
     if (typeof innerRef === 'object') {
