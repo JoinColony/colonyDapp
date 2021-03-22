@@ -71,9 +71,12 @@ const TokenMintDialog = ({
 
   const hasVotingExtension = useMemo(
     () =>
-      data?.processedColony?.installedExtensions.find(
-        (extension) => extension.extensionId === ExtensionIds.VOTING_REPUTATION,
-      ) !== undefined,
+      data?.processedColony?.installedExtensions
+        .filter((extension) => extension.details.initialized)
+        .find(
+          (extension) =>
+            extension.extensionId === ExtensionIds.VOTING_REPUTATION,
+        ) !== undefined,
     [data],
   );
 
