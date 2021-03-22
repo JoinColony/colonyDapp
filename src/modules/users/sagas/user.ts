@@ -1,5 +1,6 @@
 import { call, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { ClientType, TokenLockingClient } from '@colony/colony-js';
+import { BigNumber } from 'ethers/utils';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
@@ -229,6 +230,7 @@ function* userDepositToken({
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
     const { walletAddress } = yield getLoggedInUser();
 
+    // @NOTE This line exceeds the max-len but there's no prettier solution
     // eslint-disable-next-line max-len
     const tokenLockingClient: TokenLockingClient = yield colonyManager.getClient(
       ClientType.TokenLockingClient,
@@ -256,7 +258,7 @@ function* userDepositToken({
       context: ClientType.TokenClient,
       methodName: 'approve',
       identifier: colonyAddress,
-      params: [tokenLockingClient.address, amount],
+      params: [tokenLockingClient.address, new BigNumber(amount)],
       ready: false,
     });
 
@@ -264,7 +266,7 @@ function* userDepositToken({
       context: ClientType.TokenLockingClient,
       methodName: 'deposit',
       identifier: colonyAddress,
-      params: [tokenAddress, amount, false],
+      params: [tokenAddress, new BigNumber(amount), false],
       ready: false,
     });
 
@@ -320,7 +322,7 @@ function* userWithdrawToken({
       context: ClientType.TokenLockingClient,
       methodName: 'withdraw',
       identifier: colonyAddress,
-      params: [tokenAddress, amount, false],
+      params: [tokenAddress, new BigNumber(amount), false],
       ready: false,
       group: {
         key: 'withdraw',
