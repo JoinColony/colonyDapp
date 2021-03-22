@@ -58,3 +58,14 @@ async function doBlockChecks() {
 }
 
 provider.on('block', doBlockChecks);
+
+// Also proxy oracle reqeusts from 127.0.0.1:3001/reputation/local to the oracle
+// to accommodate differences between dev and production
+
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+const app = express();
+
+app.use('/reputation/local', createProxyMiddleware({ target: 'http://127.0.0.1:3002/', changeOrigin: true, pathRewrite: {'^/reputation/local' : ''}}));
+app.listen(3001);
