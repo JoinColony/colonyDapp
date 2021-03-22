@@ -1,11 +1,18 @@
 .main {
   display: block;
-  margin: 0 0 0 82px;
+  margin: 0 -40px 50px;
   padding-top: 15px;
+  text-align: right;
+}
+
+.wrapper {
+  display: inline-block;
+  width: 225px;
+  text-align: left;
 }
 
 .colonyTitle {
-  padding-right: 40px;
+  padding: 0 0 0 4px;
 }
 
 .colonyTitle h3 {

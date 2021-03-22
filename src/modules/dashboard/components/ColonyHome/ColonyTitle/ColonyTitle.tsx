@@ -32,28 +32,30 @@ const ColonyTitle = ({
 }: Props) => {
   return (
     <div className={styles.main}>
-      <div className={styles.colonyTitle}>
-        <Heading
-          appearance={{
-            size: 'medium',
-            weight: 'thin',
-            margin: 'none',
-          }}
-          text={colonyDisplayName || colonyName || MSG.fallbackColonyName}
-        />
-      </div>
-      <div>
-        {colonyAddress && (
-          <InvisibleCopyableAddress
-            address={colonyAddress}
-            copyMessage={MSG.copyMessage}
-          >
-            <div className={styles.colonyAddress}>
-              <MaskedAddress address={colonyAddress} />
-            </div>
-          </InvisibleCopyableAddress>
-        )}
-        <ColonySubscription colony={colony} />
+      <div className={styles.wrapper}>
+        <div className={styles.colonyTitle}>
+          <Heading
+            appearance={{
+              size: 'medium',
+              weight: 'thin',
+              margin: 'none',
+            }}
+            text={colonyDisplayName || colonyName || MSG.fallbackColonyName}
+          />
+        </div>
+        <div>
+          {colonyAddress && (
+            <InvisibleCopyableAddress
+              address={colonyAddress}
+              copyMessage={MSG.copyMessage}
+            >
+              <div className={styles.colonyAddress}>
+                <MaskedAddress address={colonyAddress} />
+              </div>
+            </InvisibleCopyableAddress>
+          )}
+          <ColonySubscription colony={colony} />
+        </div>
       </div>
     </div>
   );
