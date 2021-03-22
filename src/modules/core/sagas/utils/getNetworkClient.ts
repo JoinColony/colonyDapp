@@ -51,7 +51,7 @@ export default function* getNetworkClient() {
   ) {
     return yield call(getColonyNetworkClient, network, signer, {
       networkAddress: getLocalContractAddress('EtherRouter'),
-      reputationOracleEndpoint: 'http://localhost:3001/reputation',
+      reputationOracleEndpoint: 'http://localhost:3001',
     });
   }
 
