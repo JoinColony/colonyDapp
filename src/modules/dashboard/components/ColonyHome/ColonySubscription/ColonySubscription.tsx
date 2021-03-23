@@ -4,6 +4,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
 import Button from '~core/Button';
+import Link from '~core/Link';
+
 import {
   useLoggedInUser,
   useSubscribeToColonyMutation,
@@ -12,8 +14,10 @@ import {
   cacheUpdates,
   Colony,
 } from '~data/index';
-import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
 import { ALLOWED_NETWORKS } from '~constants';
+import { CREATE_USER_ROUTE } from '~routes/index';
+
+import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
 
 import styles from './ColonySubscription.css';
 
@@ -54,13 +58,9 @@ const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
     update: cacheUpdates.unsubscribeFromColony(colonyAddress),
   });
 
-  if (!username || !data) return null;
-
-  const {
-    user: { colonyAddresses },
-  } = data;
-
-  const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
+  const isSubscribed = (data?.user?.colonyAddresses || []).includes(
+    colonyAddress,
+  );
 
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
@@ -72,13 +72,20 @@ const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
             <SpinnerLoader appearance={{ theme: 'primary', size: 'small' }} />
           </div>
         ))}
-      {!isSubscribed && (
+      {!isSubscribed && username && (
         <Button
           onClick={() => subscribe()}
           appearance={{ theme: 'blue', size: 'small' }}
         >
           <FormattedMessage {...MSG.joinColony} />
         </Button>
+      )}
+      {!isSubscribed && !username && (
+        <Link
+          className={styles.createUserRedirect}
+          to={CREATE_USER_ROUTE}
+          text={MSG.joinColony}
+        />
       )}
       {isSubscribed && (
         <ColonySubscriptionInfoPopover
