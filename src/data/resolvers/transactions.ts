@@ -131,11 +131,11 @@ export const getColonyUnclaimedTransfers = async (
     topics: tokenTransferFilter.topics,
   });
 
-  const transfers = await Promise.all(
-    tokenTransferLogs.map(async (log) => {
-      const event = tokenClient.interface.parseLog(log);
-      const date = log.blockHash
-        ? await getBlockTime(provider, log.blockHash)
+  return Promise.resolve(
+    tokenTransferLogs.reduce(async (transferLogs, transferLog) => {
+      const event = tokenClient.interface.parseLog(transferLog);
+      const date = transferLog.blockHash
+        ? await getBlockTime(provider, transferLog.blockHash)
         : 0;
       /*
        * @NOTE Take the values from the "array" rather than from the named properties
@@ -158,11 +158,11 @@ export const getColonyUnclaimedTransfers = async (
       const source = event?.values['0'];
       const amount = event?.values['2'];
 
-      const { blockNumber } = log;
+      const { blockNumber } = transferLog;
 
       const transferClaimed = !!claimedTransferEvents.find(
         ({ values: { token } }, i) =>
-          token === log.address &&
+          token === transferLog.address &&
           blockNumber &&
           claimedTransferLogs &&
           claimedTransferLogs[i] &&
@@ -172,21 +172,23 @@ export const getColonyUnclaimedTransfers = async (
           claimedTransferLogs[i].blockNumber! > blockNumber,
       );
 
-      if (transferClaimed) return undefined;
-
-      return {
-        __typename: 'Transfer',
-        amount: amount?.toString(),
-        colonyAddress: colonyClient.address,
-        date,
-        from: source || null,
-        hash: log.transactionHash || HashZero,
-        incoming: true,
-        to: colonyClient.address,
-        token: log.address,
-      };
-    }),
+      if (!transferClaimed) {
+        return [
+          ...(await transferLogs),
+          {
+            __typename: 'Transfer',
+            amount: amount?.toString(),
+            colonyAddress: colonyClient.address,
+            date,
+            from: source || null,
+            hash: transferLog.transactionHash || HashZero,
+            incoming: true,
+            to: colonyClient.address,
+            token: transferLog.address,
+          },
+        ];
+      }
+      return transferLogs;
+    }, Promise.resolve([])),
   );
-
-  return transfers.filter(notUndefined);
 };
