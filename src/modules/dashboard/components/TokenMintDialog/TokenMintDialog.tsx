@@ -1,5 +1,5 @@
 import { FormikProps } from 'formik';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -9,12 +9,12 @@ import moveDecimal from 'move-decimal-point';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { useColonyExtensionsQuery, Colony } from '~data/index';
-import { ExtensionIds } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
 
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { WizardDialogType } from '~utils/hooks';
+import { useHasVotingExtension } from '~utils/hooks/useHasVotingExtension';
 
 import TokenMintForm from './TokenMintForm';
 
@@ -71,16 +71,7 @@ const TokenMintDialog = ({
     variables: { address: colonyAddress },
   });
 
-  const hasVotingExtension = useMemo(
-    () =>
-      data?.processedColony?.installedExtensions
-        .filter((extension) => extension.details.initialized)
-        .find(
-          (extension) =>
-            extension.extensionId === ExtensionIds.VOTING_REPUTATION,
-        ) !== undefined,
-    [data],
-  );
+  const hasVotingExtension = useHasVotingExtension(data);
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
