@@ -1,5 +1,5 @@
 import { FormikProps } from 'formik';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -30,6 +30,7 @@ const MSG = defineMessages({
 });
 
 export interface FormValues {
+  forceAction: boolean;
   annotation: string;
   mintAmount: number;
 }
@@ -63,6 +64,7 @@ const TokenMintDialog = ({
   callStep,
   prevStep,
 }: Props) => {
+  const [isForceOn, setIsForceOn] = useState(false);
   const history = useHistory();
 
   const { data } = useColonyExtensionsQuery({
@@ -85,11 +87,11 @@ const TokenMintDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       /* need to add the condition that force toggle is not on */
-      return hasVotingExtension
+      return hasVotingExtension && !isForceOn
         ? ActionTypes[`COLONY_MOTION_MINT_TOKENS${actionEnd}`]
         : ActionTypes[`COLONY_ACTION_MINT_TOKENS${actionEnd}`];
     },
-    [hasVotingExtension],
+    [hasVotingExtension, isForceOn],
   );
 
   const nativeToken =
@@ -123,6 +125,7 @@ const TokenMintDialog = ({
   return (
     <ActionForm
       initialValues={{
+        forceAction: false,
         annotation: '',
         mintAmount: 0,
       }}
@@ -133,17 +136,22 @@ const TokenMintDialog = ({
       onSuccess={close}
       transform={transform}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <TokenMintForm
-            {...formValues}
-            colony={colony}
-            isVotingExtensionEnabled={isVotingExtensionEnabled}
-            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
-            nativeToken={nativeToken}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForceOn) {
+          setIsForceOn(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <TokenMintForm
+              {...formValues}
+              colony={colony}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+              back={prevStep && callStep ? () => callStep(prevStep) : undefined}
+              nativeToken={nativeToken}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };
