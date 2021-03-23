@@ -435,6 +435,14 @@ query MotionStakerReward($motionId: Int!, $colonyAddress: String!, $userAddress:
   }
 }
 
+query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: String!) {
+  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+    totalStaked
+    userStake
+    requiredStake
+  }
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`

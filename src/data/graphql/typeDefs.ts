@@ -232,6 +232,12 @@ export default gql`
     claimedReward: Boolean!
   }
 
+  type StakeAmounts {
+    totalStaked: Int!
+    userStake: Int!
+    requiredStake: Int!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -327,6 +333,11 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
     ): MotionStakerRewards!
+    stakeAmountsForMotion(
+      colonyAddress: String!
+      userAddress: String!
+      motionId: String!
+    ): StakeAmounts!
   }
 
   extend type Mutation {

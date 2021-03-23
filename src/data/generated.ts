@@ -302,6 +302,7 @@ export type Query = {
   recoveryRolesAndApprovalsForSession: Array<UsersAndRecoveryApprovals>;
   recoveryRolesUsers: Array<User>;
   recoverySystemMessagesForSession: Array<SystemMessage>;
+  stakeAmountsForMotion: StakeAmounts;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   token: Token;
@@ -497,6 +498,13 @@ export type QueryRecoveryRolesUsersArgs = {
 export type QueryRecoverySystemMessagesForSessionArgs = {
   blockNumber: Scalars['Int'];
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryStakeAmountsForMotionArgs = {
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  motionId: Scalars['String'];
 };
 
 
@@ -875,6 +883,12 @@ export type MotionVoteResults = {
   yayVoters: Array<Scalars['String']>;
   nayVotes: Scalars['String'];
   nayVoters: Array<Scalars['String']>;
+}
+
+export type StakeAmounts = {
+  totalStaked: Scalars['Int'];
+  userStake: Scalars['Int'];
+  requiredStake: Scalars['Int'];
 };
 
 export type MotionStakerRewards = {
