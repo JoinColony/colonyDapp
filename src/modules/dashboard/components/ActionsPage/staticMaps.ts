@@ -37,7 +37,10 @@ type ActionsDetailsMap = Partial<
  * Containing the actual event, and the role(s)
  */
 export const EVENT_ROLES_MAP: EventRolesMap = {
-  [ColonyAndExtensionsEvents.OneTxPaymentMade]: [ColonyRole.Administration],
+  [ColonyAndExtensionsEvents.OneTxPaymentMade]: [
+    ColonyRole.Administration,
+    ColonyRole.Funding,
+  ],
   [ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots]: [
     ColonyRole.Funding,
   ],
