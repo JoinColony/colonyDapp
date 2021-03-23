@@ -505,6 +505,7 @@ export const colonyResolvers = ({
       // eslint-disable-next-line max-len
       const colonyUnclaimedTransfers = await getColonyUnclaimedTransfers(
         colonyClient,
+        networkClient,
       );
       // Get ether balance and add a fake transaction if there's any unclaimed
       const colonyEtherBalance = await colonyClient.provider.getBalance(
