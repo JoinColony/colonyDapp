@@ -15,7 +15,7 @@ import styles from './PermissionManagementDialog.css';
 const MSG = defineMessages({
   domain: {
     id: 'dashboard.PermissionManagementDialog.PermissionManagementForm.domain',
-    defaultMessage: 'Domain',
+    defaultMessage: 'Team',
   },
   permissionsLabel: {
     id: `dashboard
