@@ -8,14 +8,14 @@ while [ $# -gt 0 ]; do
     --skip-server-build)
       SKIP_SERVER_BUILD=true
       ;;
-    --skip-oracle-build)
-      SKIP_ORACLE_BUILD=true
-      ;;
     --skip-subgraph-build)
       SKIP_SUBGRAPH_BUILD=true
       ;;
     --skip-graph-node-build)
       SKIP_GRAPH_NODE_BUILD=true
+      ;;
+    --skip-reputationMonitor-build)
+      SKIP_REPUTATIONMONITOR=true
       ;;
     *)
       echo "Invalid argument: $1"
@@ -30,9 +30,9 @@ ENV_FILE="./.env"
 
 NETWORK="colonyNetwork"
 SERVER="colonyServer"
-ORACLE="mock-oracle"
 SUBGRAPH="subgraph"
 GRAPH_NODE="graph-node"
+REPUTATIONMONITOR="reputationMonitor"
 
 ROOT_PATH=$(pwd)
 
@@ -112,20 +112,6 @@ else
     warn "Skipping '${SERVER}' submodule provision"
 fi
 
-# Mock reputation miner
-if [ "$SKIP_ORACLE_BUILD" != true ]
-then
-    log "Building the '${ORACLE}' submodule"
-    cd "${ROOT_PATH}/${LIB_PATH}/${ORACLE}"
-    log "Generating the '${ORACLE}' submodule .env file"
-    printf "PORT=3001\nHOST=0.0.0.0\nGANACHE_ACCOUNTS_PATH=../colonyNetwork/ganache-accounts.json" >> .env
-    log "Installing the '${ORACLE}' submodule node_modules"
-    npm install
-    cd ${ROOT_PATH}
-else
-    warn "Skipping '${ORACLE}' submodule provision"
-fi
-
 # Subgraph
 if [ "$SKIP_SUBGRAPH_BUILD" != true ]
 then
@@ -149,4 +135,15 @@ then
     cd ${ROOT_PATH}
 else
     warn "Skipping '${GRAPH_NODE}' submodule provision"
+fi
+
+if [ "$SKIP_REPUTATIONMONITOR" != true ]
+then
+    log "Building the '${REPUTATIONMONITOR}' submodule"
+    cd "${ROOT_PATH}/${LIB_PATH}/${REPUTATIONMONITOR}"
+    log "Installing the '${REPUTATIONMONITOR}' submodule node_modules"
+    npm install
+    cd ${ROOT_PATH}
+else
+    warn "Skipping '${REPUTATIONMONITOR}' submodule provision"
 fi
