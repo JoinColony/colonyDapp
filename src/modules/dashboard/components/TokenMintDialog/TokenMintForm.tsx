@@ -78,7 +78,7 @@ const TokenMintForm = ({
           text={MSG.title}
         />
         {userHasPermissions && isVotingExtensionEnabled && (
-          <Toggle label={MSG.forceMotion} name="toggle" />
+          <Toggle label={MSG.forceMotion} name="forceAction" />
         )}
       </DialogSection>
       {!userHasPermissions && !isVotingExtensionEnabled && (
