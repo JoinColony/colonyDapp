@@ -30,12 +30,12 @@
 }
 
 .leftAside {
-  padding-top: 60px;
+  padding-top: 0;
   text-align: right;
 }
 
 .mainContent {
-  padding: 30px 0;
+  padding: 100px 0 30px;
 }
 
 .domainsDropdownContainer {
@@ -55,7 +55,7 @@
 }
 
 .rightAside {
-  padding-top: 155px;
+  padding-top: 225px;
   text-align: left;
 }
 

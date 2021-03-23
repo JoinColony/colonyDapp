@@ -43,9 +43,9 @@ const ColonyHomeLayout = ({
   onDomainChange = () => null,
 }: Props) => (
   <div className={styles.main}>
-    <ColonyTitle colony={colony} />
     <div className={showSidebar ? styles.mainContentGrid : styles.minimalGrid}>
       <aside className={styles.leftAside}>
+        <ColonyTitle colony={colony} />
         {showNavigation && <ColonyNavigation />}
       </aside>
       <div className={styles.mainContent}>
