@@ -17,7 +17,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, Annotations } from '~core/Fields';
+import { Select, Input, Annotations, TokenSymbolSelector } from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
@@ -136,15 +136,6 @@ const CreatePaymentDialogForm = ({
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
     [tokens, values.tokenAddress],
-  );
-
-  const tokenOptions = useMemo(
-    () =>
-      tokens.map(({ address, symbol }) => ({
-        value: address,
-        label: symbol || '???',
-      })),
-    [tokens],
   );
 
   const { walletAddress } = useLoggedInUser();
@@ -351,9 +342,9 @@ const CreatePaymentDialogForm = ({
             />
           </div>
           <div className={styles.tokenAmountSelect}>
-            <Select
+            <TokenSymbolSelector
               label={MSG.token}
-              options={tokenOptions}
+              tokens={tokens}
               name="tokenAddress"
               elementOnly
               appearance={{ alignOptions: 'right', theme: 'grey' }}
