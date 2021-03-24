@@ -1,4 +1,5 @@
-import { Resolvers } from '@apollo/client';
+import { Resolvers, ApolloClient } from '@apollo/client';
+
 import {
   ClientType,
   ROOT_DOMAIN_ID,
@@ -18,6 +19,8 @@ import {
   SubgraphColoniesQuery,
   SubgraphColoniesQueryVariables,
   SubgraphColoniesDocument,
+  UserLock,
+  UserToken,
 } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
@@ -45,6 +48,38 @@ const getUserReputation = async (
     address,
   );
   return reputationAmount;
+};
+
+const getUserLock = async (
+  apolloClient: ApolloClient<object>,
+  colonyManager: ColonyManager,
+  walletAddress: Address,
+  tokenAddress: Address,
+  colonyAddress: Address,
+): Promise<UserLock> => {
+  const tokenLockingClient = await colonyManager.getClient(
+    ClientType.TokenLockingClient,
+    colonyAddress,
+  );
+  const userLock = await tokenLockingClient.getUserLock(
+    tokenAddress,
+    walletAddress,
+  );
+  const totalObligation = await tokenLockingClient.getTotalObligation(
+    walletAddress,
+    tokenAddress,
+  );
+  const nativeToken = (await getToken(
+    { colonyManager, client: apolloClient },
+    tokenAddress,
+    walletAddress,
+  )) as UserToken;
+  return {
+    balance: userLock.balance.toString(),
+    nativeToken: nativeToken || null,
+    totalObligation: totalObligation.toString(),
+    pendingBalance: userLock.pendingBalance.toString(),
+  };
 };
 
 export const userResolvers = ({
@@ -106,12 +141,26 @@ export const userResolvers = ({
       { tokenAddresses }: { tokenAddresses: Address[] },
       { walletAddress },
       { client },
-    ): Promise<Address[]> {
+    ) {
       return Promise.all(
         [AddressZero, ...tokenAddresses].map(async (tokenAddress) =>
           getToken({ colonyManager, client }, tokenAddress, walletAddress),
         ),
       );
+    },
+    async userLock(
+      _,
+      { tokenAddress, walletAddress, colonyAddress },
+      { client },
+    ): Promise<UserLock> {
+      const userLock = await getUserLock(
+        client,
+        colonyManager,
+        walletAddress,
+        tokenAddress,
+        colonyAddress,
+      );
+      return userLock;
     },
     async tokenTransfers({
       walletAddress,

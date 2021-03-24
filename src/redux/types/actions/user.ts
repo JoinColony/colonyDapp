@@ -45,4 +45,32 @@ export type UserActionTypes =
     >
   | ActionType<ActionTypes.USER_LOGOUT>
   | ErrorActionType<ActionTypes.USER_LOGOUT_ERROR, object>
-  | ActionType<ActionTypes.USER_LOGOUT_SUCCESS>;
+  | ActionType<ActionTypes.USER_LOGOUT_SUCCESS>
+  | UniqueActionType<
+      ActionTypes.USER_DEPOSIT_TOKEN,
+      { colonyAddress: string; tokenAddress: string; amount: number },
+      object
+    >
+  | ErrorActionType<ActionTypes.USER_DEPOSIT_TOKEN_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.USER_DEPOSIT_TOKEN_SUCCESS,
+      {
+        tokenAddress: string;
+        amount: number;
+      },
+      object
+    >
+  | UniqueActionType<
+      ActionTypes.USER_WITHDRAW_TOKEN,
+      { colonyAddress: string; tokenAddress: string; amount: number },
+      object
+    >
+  | ErrorActionType<ActionTypes.USER_WITHDRAW_TOKEN_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.USER_WITHDRAW_TOKEN_SUCCESS,
+      {
+        tokenAddress: string;
+        amount: number;
+      },
+      object
+    >;

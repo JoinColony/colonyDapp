@@ -106,15 +106,17 @@
    * active class (the one that has a different colored border), we remove the extra padding
    * and set the border
    */
-  margin-right: 12px;
   padding: 2px 9px 3px;
   border: none;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
-  font-size: 13px;
-  font-weight: var(--weight-medium);
   color: var(--temp-grey-blue-7);
   cursor: pointer;
+}
+
+.walletAddress span {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-medium);
 }
 
 .walletAddress:hover {
@@ -127,6 +129,12 @@
   padding: 1px 8px 2px;
   border: 1px solid var(--colony-blue);
   color: var(--colony-blue);
+}
+
+.buttonsWrapper {
+  padding: 1px;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
 }
 
 .readyTransactionsCount {

@@ -507,6 +507,7 @@ export type User = {
   tokenAddresses: Array<Scalars['String']>;
   tokenTransfers: Array<Transfer>;
   tokens: Array<Token>;
+  userLock: UserLock;
 };
 
 
@@ -523,6 +524,13 @@ export type UserReputationArgs = {
 
 export type UserTokensArgs = {
   walletAddress: Scalars['String'];
+};
+
+
+export type UserUserLockArgs = {
+  walletAddress: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 export type UserProfile = {
@@ -714,6 +722,23 @@ export type ColonyExtensionDetails = {
   installedBy: Scalars['String'];
   installedAt: Scalars['Int'];
   missingPermissions: Array<Scalars['Int']>;
+};
+
+export type UserToken = {
+  address: Scalars['String'];
+  decimals: Scalars['Int'];
+  name: Scalars['String'];
+  symbol: Scalars['String'];
+  iconHash?: Maybe<Scalars['String']>;
+  verified: Scalars['Boolean'];
+  balance: Scalars['String'];
+};
+
+export type UserLock = {
+  balance: Scalars['String'];
+  nativeToken?: Maybe<UserToken>;
+  totalObligation: Scalars['String'];
+  pendingBalance: Scalars['String'];
 };
 
 export type ProcessedMetaColony = {
@@ -1116,6 +1141,21 @@ export type UserTokensQueryVariables = Exact<{
 export type UserTokensQuery = { user: (
     Pick<User, 'id' | 'tokenAddresses'>
     & { tokens: Array<Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol' | 'balance'>> }
+  ) };
+
+export type UserBalanceWithLockQueryVariables = Exact<{
+  address: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type UserBalanceWithLockQuery = { user: (
+    Pick<User, 'id'>
+    & { userLock: (
+      Pick<UserLock, 'balance' | 'totalObligation' | 'pendingBalance'>
+      & { nativeToken?: Maybe<Pick<UserToken, 'decimals' | 'name' | 'symbol' | 'balance' | 'address' | 'verified'>> }
+    ) }
   ) };
 
 export type UsernameQueryVariables = Exact<{
@@ -2288,6 +2328,54 @@ export function useUserTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type UserTokensQueryHookResult = ReturnType<typeof useUserTokensQuery>;
 export type UserTokensLazyQueryHookResult = ReturnType<typeof useUserTokensLazyQuery>;
 export type UserTokensQueryResult = Apollo.QueryResult<UserTokensQuery, UserTokensQueryVariables>;
+export const UserBalanceWithLockDocument = gql`
+    query UserBalanceWithLock($address: String!, $tokenAddress: String!, $colonyAddress: String!) {
+  user(address: $address) {
+    id
+    userLock(walletAddress: $address, tokenAddress: $tokenAddress, colonyAddress: $colonyAddress) @client {
+      balance
+      nativeToken {
+        decimals
+        name
+        symbol
+        balance
+        address
+        verified
+      }
+      totalObligation
+      pendingBalance
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserBalanceWithLockQuery__
+ *
+ * To run a query within a React component, call `useUserBalanceWithLockQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserBalanceWithLockQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserBalanceWithLockQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *      tokenAddress: // value for 'tokenAddress'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useUserBalanceWithLockQuery(baseOptions?: Apollo.QueryHookOptions<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>) {
+        return Apollo.useQuery<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>(UserBalanceWithLockDocument, baseOptions);
+      }
+export function useUserBalanceWithLockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>) {
+          return Apollo.useLazyQuery<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>(UserBalanceWithLockDocument, baseOptions);
+        }
+export type UserBalanceWithLockQueryHookResult = ReturnType<typeof useUserBalanceWithLockQuery>;
+export type UserBalanceWithLockLazyQueryHookResult = ReturnType<typeof useUserBalanceWithLockLazyQuery>;
+export type UserBalanceWithLockQueryResult = Apollo.QueryResult<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>;
 export const UsernameDocument = gql`
     query Username($address: String!) {
   username(address: $address) @client

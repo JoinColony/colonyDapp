@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { useParams } from 'react-router-dom';
 
 import { GasStationPopover } from '~users/GasStation';
+import UserTokenActivationButton from '~users/UserTokenActivationButton';
 import { readyTransactionsCount } from '~users/GasStation/transactionGroup';
 import AvatarDropdown from '~users/AvatarDropdown';
 import Icon from '~core/Icon';
@@ -11,6 +12,7 @@ import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
 import {
   useUserNotificationsQuery,
   useLoggedInUser,
+  useUserBalanceWithLockQuery,
   useColonyFromNameQuery,
 } from '~data/index';
 import MaskedAddress from '~core/MaskedAddress';
@@ -40,7 +42,6 @@ const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
   const { walletAddress, ethereal, networkId } = useLoggedInUser();
-
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
@@ -51,6 +52,14 @@ const UserNavigation = () => {
 
   const { data } = useUserNotificationsQuery({
     variables: { address: walletAddress },
+  });
+
+  const { data: userData } = useUserBalanceWithLockQuery({
+    variables: {
+      address: walletAddress,
+      tokenAddress: colonyData?.processedColony?.nativeTokenAddress || '',
+      colonyAddress: colonyData?.colonyAddress || '',
+    },
   });
 
   const notifications = (data && data.user && data.user.notifications) || [];
@@ -69,6 +78,9 @@ const UserNavigation = () => {
 
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
   const userCanNavigate = !ethereal && isNetworkAllowed;
+
+  const userLock = userData?.user.userLock;
+  const nativeToken = userLock?.nativeToken;
 
   return (
     <div className={styles.main}>
@@ -111,31 +123,40 @@ const UserNavigation = () => {
           )}
         </ConnectWalletPopover>
       )}
-      {userCanNavigate && (
-        <GasStationPopover
-          transactionAndMessageGroups={transactionAndMessageGroups}
-        >
-          {({ isOpen, toggle, ref }) => (
-            <>
-              <button
-                type="button"
-                className={
-                  isOpen ? styles.walletAddressActive : styles.walletAddress
-                }
-                ref={ref}
-                onClick={toggle}
-              >
-                <MaskedAddress address={walletAddress} />
-              </button>
-              {readyTransactions >= 1 && (
-                <span className={styles.readyTransactionsCount}>
-                  {readyTransactions}
-                </span>
-              )}
-            </>
-          )}
-        </GasStationPopover>
-      )}
+      <div className={styles.buttonsWrapper}>
+        {userCanNavigate && nativeToken && userLock && (
+          <UserTokenActivationButton
+            nativeToken={nativeToken}
+            userLock={userLock}
+            colonyAddress={colonyData?.colonyAddress || ''}
+          />
+        )}
+        {userCanNavigate && (
+          <GasStationPopover
+            transactionAndMessageGroups={transactionAndMessageGroups}
+          >
+            {({ isOpen, toggle, ref }) => (
+              <>
+                <button
+                  type="button"
+                  className={
+                    isOpen ? styles.walletAddressActive : styles.walletAddress
+                  }
+                  ref={ref}
+                  onClick={toggle}
+                >
+                  <MaskedAddress address={walletAddress} />
+                </button>
+                {readyTransactions >= 1 && (
+                  <span className={styles.readyTransactionsCount}>
+                    {readyTransactions}
+                  </span>
+                )}
+              </>
+            )}
+          </GasStationPopover>
+        )}
+      </div>
       {userCanNavigate && (
         <InboxPopover notifications={notifications}>
           {({ isOpen, toggle, ref }) => (

@@ -1,16 +1,29 @@
 import React, {
   useCallback,
+  useState,
   InputHTMLAttributes,
   useMemo,
   RefObject,
+  useEffect,
 } from 'react';
+import { defineMessages } from 'react-intl';
 import Cleave from 'cleave.js/react';
 import { CleaveOptions } from 'cleave.js/options';
 import { ChangeEvent } from 'cleave.js/react/props';
 
+import { isNil } from 'lodash';
+import Button from '~core/Button';
+
 import { getMainClasses } from '~utils/css';
 
 import styles from './InputComponent.css';
+
+const MSG = defineMessages({
+  max: {
+    id: `users.Fileds.Input.InputComponent.max`,
+    defaultMessage: 'Max',
+  },
+});
 
 export type Appearance = {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
@@ -20,6 +33,12 @@ export type Appearance = {
 };
 
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
+
+interface MaxButtonParams {
+  setFieldValue: (field, value) => void;
+  maxAmount: string;
+  fieldName: string;
+}
 
 export interface Props
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'form'> {
@@ -34,6 +53,9 @@ export interface Props
 
   /** Pass a ref to the `<input>` element */
   innerRef?: RefObject<any> | ((ref: HTMLInputElement | null) => void);
+
+  /** Pass params to a max button - implemented only in Cleave options */
+  maxButtonParams?: MaxButtonParams;
 }
 
 const InputComponent = ({
@@ -49,16 +71,30 @@ const InputComponent = ({
   spellCheck,
   maxLength,
   value,
+  maxButtonParams,
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
 }: Props) => {
+  /* problem with cleave types, that's why `any` */
+  const [cleave, setCleave] = useState<any>(null);
+
   const length = value ? value.toString().length : 0;
 
   const handleCleaveChange = useCallback(
     (evt: ChangeEvent<CleaveHTMLInputElement>): void => {
       // We are reassigning the value here as cleave just adds a `rawValue` prop
-      // eslint-disable-next-line no-param-reassign
-      evt.currentTarget.value = evt.currentTarget.rawValue;
+      if (evt.currentTarget !== undefined) {
+        // eslint-disable-next-line no-param-reassign
+        evt.currentTarget.value = evt.currentTarget.rawValue;
+      } else {
+        // setCleaveValue(evt.currentTarget?.rawValue);
+        // @ts-ignore
+        // eslint-disable-next-line no-param-reassign
+        evt.currentTarget = {
+          // @ts-ignore
+          value: evt.currentTarget?.rawValue as string,
+        };
+      }
       if (onChange) onChange(evt);
     },
     [onChange],
@@ -73,12 +109,18 @@ const InputComponent = ({
     [formattingOptions],
   );
 
+  useEffect(() => {
+    if (isNil(value) && cleave) {
+      cleave.setRawValue('');
+    }
+  }, [cleave, value]);
+
   if (formattingOptions) {
     if (typeof innerRef === 'object') {
       console.error('Cleave inner ref must be a function');
       return null;
     }
-    return (
+    return maxButtonParams === undefined ? (
       <Cleave
         {...props}
         key={dynamicCleaveOptionKey}
@@ -88,6 +130,30 @@ const InputComponent = ({
         onChange={handleCleaveChange}
         placeholder={placeholder}
       />
+    ) : (
+      <div className={styles.inputContainer}>
+        <Button
+          className={styles.maxButton}
+          text={MSG.max}
+          onClick={() => {
+            maxButtonParams?.setFieldValue(
+              maxButtonParams?.fieldName,
+              maxButtonParams.maxAmount,
+            );
+            cleave?.setRawValue(Number(maxButtonParams.maxAmount));
+          }}
+        />
+        <Cleave
+          {...props}
+          key={dynamicCleaveOptionKey}
+          className={getMainClasses(appearance, styles)}
+          htmlRef={innerRef}
+          options={formattingOptions}
+          onChange={handleCleaveChange}
+          placeholder={placeholder}
+          onInit={(cleaveInstance) => setCleave(cleaveInstance)}
+        />
+      </div>
     );
   }
 
