@@ -18,7 +18,7 @@ const displayName = 'TokenSymbolSelector';
 const TokenSymbolSelector = ({ tokens, ...props }: Props) => {
   const tokenOptions = useMemo(
     () =>
-      tokens?.map((token) => {
+      tokens.map((token) => {
         const labelElement = (
           elementType: 'labelElement' | 'optionElement',
         ) => (
