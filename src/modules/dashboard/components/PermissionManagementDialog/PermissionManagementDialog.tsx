@@ -38,7 +38,6 @@ import {
   getAllRootAccounts,
   getAllUserRolesForDomain,
 } from '../../../transformers';
-import { userHasRole } from '../../../users/checks';
 import PermissionManagementForm from './PermissionManagementForm';
 import { availableRoles } from './constants';
 
@@ -210,7 +209,10 @@ const PermissionManagementDialog = ({
     };
   });
 
-  const userHasPermission = selectedDomainId === ROOT_DOMAIN_ID && currentUserRolesInRoot.includes(ColonyRole.Root) || currentUserRolesInRoot.includes(ColonyRole.Architecture);
+  const userHasPermission =
+    (selectedDomainId === ROOT_DOMAIN_ID &&
+      currentUserRolesInRoot.includes(ColonyRole.Root)) ||
+    currentUserRolesInRoot.includes(ColonyRole.Architecture);
   const requiredRoles: ColonyRole[] = [ColonyRole.Architecture];
 
   return (
