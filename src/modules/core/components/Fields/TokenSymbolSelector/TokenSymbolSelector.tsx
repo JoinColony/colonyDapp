@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { ColonyTokens, UserTokens } from '~data/index';
+import { AnyToken } from '~data/index';
 
 import Select from '~core/Fields/Select';
 import TokenIcon from '~dashboard/HookedTokenIcon';
@@ -10,7 +10,7 @@ import { Props as SelectProps } from '../Select/types';
 import styles from './TokenSymbolSelector.css';
 
 interface Props extends Omit<SelectProps, 'options'> {
-  tokens: ColonyTokens | UserTokens;
+  tokens: AnyToken[];
 }
 
 const displayName = 'TokenSymbolSelector';
