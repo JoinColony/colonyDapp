@@ -109,6 +109,12 @@ const PermissionManagementDialog = ({
     selectedDomainId,
   ]);
 
+  const currentUserRolesInRoot = useTransformer(getUserRolesForDomain, [
+    colony,
+    loggedInUserWalletAddress,
+    ROOT_DOMAIN_ID,
+  ]);
+
   const userDirectRoles = useTransformer(getUserRolesForDomain, [
     colony,
     // USER TO SET PERMISSIONS FOR!
@@ -204,10 +210,7 @@ const PermissionManagementDialog = ({
     };
   });
 
-  const userHasPermission = userHasRole(
-    currentUserRoles,
-    ColonyRole.Architecture,
-  );
+  const userHasPermission = selectedDomainId === ROOT_DOMAIN_ID && currentUserRolesInRoot.includes(ColonyRole.Root) || currentUserRolesInRoot.includes(ColonyRole.Architecture);
   const requiredRoles: ColonyRole[] = [ColonyRole.Architecture];
 
   return (
@@ -268,6 +271,7 @@ const PermissionManagementDialog = ({
                   domainId={selectedDomainId}
                   rootAccounts={rootAccounts}
                   userDirectRoles={userDirectRoles}
+                  currentUserRolesInRoot={currentUserRolesInRoot}
                   userInheritedRoles={userInheritedRoles}
                   colonyDomains={domains}
                   onDomainSelected={setSelectedDomainId}
