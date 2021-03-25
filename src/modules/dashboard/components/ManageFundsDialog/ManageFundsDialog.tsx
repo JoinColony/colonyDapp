@@ -138,7 +138,7 @@ const ManageFundsDialog = ({
       title: MSG.mintTokensTitle,
       description: MSG.mintTokensDescription,
       icon: 'emoji-seed-sprout',
-      permissionRequired: !isVotingExtensionEnabled || !canMintNativeToken,
+      permissionRequired: !(canMintNativeToken || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
