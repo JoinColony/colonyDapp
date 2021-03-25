@@ -162,6 +162,11 @@
     "transaction.ColonyClient.deprecateExtension.title": "Deprecate Colony Extension",
     "transaction.ColonyClient.deprecateExtension.description": "Deprecate Colony Extension",
 
+    "transaction.VotingReputationClient.createRootMotion.title": "Create root motion",
+    "transaction.VotingReputationClient.createRootMotion.description": "Create root motion",
+    "transaction.group.createRootMotion.title": "Create root motion",
+    "transaction.group.createRootMotion.description": "Create root motion",
+
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
     "permission.6": "Administration",

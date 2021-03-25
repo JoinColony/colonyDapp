@@ -3,6 +3,7 @@ import { all, call } from 'redux-saga/effects';
 import paymentActionSaga from './payment';
 import moveFundsActionSaga from './moveFunds';
 import mintTokensActionSaga from './mintTokens';
+import mintTokensMotionSaga from './mintTokensMotion';
 import versionUpgradeActionSaga from './versionUpgrade';
 import createDomainActionSaga from './createDomain';
 import editDomainActionSaga from './editDomain';
@@ -16,6 +17,7 @@ export default function* actionsSagas() {
     call(paymentActionSaga),
     call(moveFundsActionSaga),
     call(mintTokensActionSaga),
+    call(mintTokensMotionSaga),
     call(versionUpgradeActionSaga),
     call(createDomainActionSaga),
     call(editDomainActionSaga),

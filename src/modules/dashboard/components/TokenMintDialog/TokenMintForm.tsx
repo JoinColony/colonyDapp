@@ -67,7 +67,9 @@ const TokenMintForm = ({
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
-  const userHasPermissions = canMintNativeToken && hasRoot(allUserRoles);
+  const canMintTokens = canMintNativeToken && hasRoot(allUserRoles);
+  const userHasPermission = canMintTokens || isVotingExtensionEnabled;
+
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
   return (
@@ -77,11 +79,11 @@ const TokenMintForm = ({
           appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
           text={MSG.title}
         />
-        {userHasPermissions && isVotingExtensionEnabled && (
-          <Toggle label={MSG.forceMotion} name="toggle" />
+        {canMintTokens && isVotingExtensionEnabled && (
+          <Toggle label={MSG.forceMotion} name="forceAction" />
         )}
       </DialogSection>
-      {!userHasPermissions && !isVotingExtensionEnabled && (
+      {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <PermissionRequiredInfo requiredRoles={requiredRoles} />
         </DialogSection>
@@ -100,7 +102,7 @@ const TokenMintForm = ({
               }}
               label={MSG.amountLabel}
               name="mintAmount"
-              disabled={!userHasPermissions}
+              disabled={!userHasPermission}
             />
           </div>
           <span
@@ -116,11 +118,11 @@ const TokenMintForm = ({
           <Annotations
             label={MSG.annotationLabel}
             name="annotation"
-            disabled={!userHasPermissions}
+            disabled={!userHasPermission}
           />
         </div>
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>
             <FormattedMessage
@@ -150,7 +152,7 @@ const TokenMintForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !userHasPermissions}
+          disabled={!isValid || !userHasPermission}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

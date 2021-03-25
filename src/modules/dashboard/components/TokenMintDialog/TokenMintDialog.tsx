@@ -1,5 +1,5 @@
 import { FormikProps } from 'formik';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -8,9 +8,10 @@ import moveDecimal from 'move-decimal-point';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
+import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
-import { Colony } from '~data/index';
+
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { WizardDialogType } from '~utils/hooks';
 
@@ -28,6 +29,7 @@ const MSG = defineMessages({
 });
 
 export interface FormValues {
+  forceAction: boolean;
   annotation: string;
   mintAmount: number;
 }
@@ -61,7 +63,19 @@ const TokenMintDialog = ({
   callStep,
   prevStep,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_MOTION_MINT_TOKENS${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_MINT_TOKENS${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
 
   const nativeToken =
     tokens && tokens.find(({ address }) => address === nativeTokenAddress);
@@ -94,27 +108,33 @@ const TokenMintDialog = ({
   return (
     <ActionForm
       initialValues={{
+        forceAction: false,
         annotation: '',
         mintAmount: 0,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_MINT_TOKENS}
-      error={ActionTypes.COLONY_ACTION_MINT_TOKENS_ERROR}
-      success={ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
       onSuccess={close}
       transform={transform}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <TokenMintForm
-            {...formValues}
-            colony={colony}
-            isVotingExtensionEnabled={isVotingExtensionEnabled}
-            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
-            nativeToken={nativeToken}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <TokenMintForm
+              {...formValues}
+              colony={colony}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+              back={prevStep && callStep ? () => callStep(prevStep) : undefined}
+              nativeToken={nativeToken}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };
