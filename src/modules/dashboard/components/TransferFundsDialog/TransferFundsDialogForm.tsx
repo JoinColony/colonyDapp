@@ -10,7 +10,13 @@ import { AddressZero } from 'ethers/constants';
 import { useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, FormStatus, Annotations } from '~core/Fields';
+import {
+  Select,
+  Input,
+  FormStatus,
+  Annotations,
+  TokenSymbolSelector,
+} from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
@@ -122,15 +128,6 @@ const TransferFundsDialogForm = ({
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
     [tokens, values.tokenAddress],
-  );
-
-  const tokenOptions = useMemo(
-    () =>
-      tokens.map(({ address, symbol }) => ({
-        value: address,
-        label: symbol || '???',
-      })),
-    [tokens],
   );
 
   const { walletAddress } = useLoggedInUser();
@@ -339,7 +336,7 @@ const TransferFundsDialogForm = ({
       </DialogSection>
       <DialogSection>
         <div className={styles.tokenAmount}>
-          <div>
+          <div className={styles.amountContainer}>
             <Input
               label={MSG.amount}
               name="amount"
@@ -359,9 +356,9 @@ const TransferFundsDialogForm = ({
             />
           </div>
           <div className={styles.tokenAmountSelect}>
-            <Select
+            <TokenSymbolSelector
               label={MSG.token}
-              options={tokenOptions}
+              tokens={tokens}
               name="tokenAddress"
               elementOnly
               appearance={{ alignOptions: 'right', theme: 'grey' }}

@@ -1,0 +1,18 @@
+.labelElement {
+  display: flex;
+  align-items: center;
+}
+
+.labelElement > figure {
+  margin-right: 11px;
+}
+
+.symbol {
+  width: 55px;
+  text-align: left;
+}
+
+.optionElement {
+  composes: labelElement;
+  height: 42px;
+}

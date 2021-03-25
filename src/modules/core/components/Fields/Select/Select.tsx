@@ -29,7 +29,7 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
+export interface Props {
   /** Appearance object */
   appearance?: Appearance;
 
@@ -255,6 +255,8 @@ const Select = ({
           activeOption.label,
           activeOption.labelValues,
         );
+      } else if (activeOption.labelElement) {
+        activeOptionLabel = activeOption.labelElement;
       } else {
         activeOptionLabel = activeOption.label;
       }

@@ -1,9 +1,12 @@
 @value wideButton: 160px;
 
 .tokenAmount {
-  display: grid;
+  display: flex;
   width: 100%;
-  grid-template-columns: auto 120px;
+}
+
+.amountContainer {
+  width: 100%;
 }
 
 .tokenAmountSelect {
