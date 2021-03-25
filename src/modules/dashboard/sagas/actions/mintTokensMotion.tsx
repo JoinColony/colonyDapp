@@ -1,5 +1,5 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType } from '@colony/colony-js';
+import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -40,8 +40,10 @@ function* createMintTokensMotion({
       amount,
     ]);
 
-    /* Root domain is alaways 1 */
-    const { skillId } = yield call([colonyClient, colonyClient.getDomain], 1);
+    const { skillId } = yield call(
+      [colonyClient, colonyClient.getDomain],
+      ROOT_DOMAIN_ID,
+    );
 
     const { key, value, branchMask, siblings } = yield call(
       colonyClient.getReputation,
