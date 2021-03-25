@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
@@ -114,6 +114,16 @@ const PermissionManagementForm = ({
     [onDomainSelected],
   );
 
+  const filteredRoles = useMemo(
+    () =>
+      domainId !== ROOT_DOMAIN_ID
+        ? availableRoles.filter(
+            (role) => role !== ColonyRole.Root && role !== ColonyRole.Recovery,
+          )
+        : availableRoles,
+    [availableRoles, domainId],
+  );
+
   return (
     <>
       <div className={styles.domainSelectContainer}>
@@ -130,7 +140,7 @@ const PermissionManagementForm = ({
         appearance={{ colorSchema: 'grey' }}
       />
       <div className={styles.permissionChoiceContainer}>
-        {availableRoles.map((role) => {
+        {filteredRoles.map((role) => {
           const roleIsInherited =
             !userDirectRoles.includes(role) &&
             userInheritedRoles.includes(role);
