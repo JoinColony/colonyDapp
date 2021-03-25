@@ -1,0 +1,29 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.description {
+  margin-bottom: 18px;
+  font-size: var(--size-tiny);
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.buttonGroup {
+  margin-top: 32px;
+}
+
+.amount {
+  align-self: flex-end;
+  margin-bottom: 2px;
+  font-size: var(--size-tiny);
+  line-height: 18px;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
