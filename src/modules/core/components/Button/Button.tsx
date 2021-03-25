@@ -22,7 +22,8 @@ export interface Appearance {
     | 'blue'
     | 'no-style'
     | 'white'
-    | 'dottedArea';
+    | 'dottedArea'
+    | 'pink';
   colorSchema?: 'inverted' | 'grey';
   size?: 'small' | 'medium' | 'large';
 }

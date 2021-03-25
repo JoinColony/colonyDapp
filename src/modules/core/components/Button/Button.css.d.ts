@@ -16,3 +16,4 @@ export const themeUnderlinedBold: string;
 export const themeBlue: string;
 export const themeDottedArea: string;
 export const themeWhite: string;
+export const themePink: string;
