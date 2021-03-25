@@ -70,7 +70,6 @@ const TokenMintDialog = ({
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
-      /* need to add the condition that force toggle is not on */
       return isVotingExtensionEnabled && !isForce
         ? ActionTypes[`COLONY_MOTION_MINT_TOKENS${actionEnd}`]
         : ActionTypes[`COLONY_ACTION_MINT_TOKENS${actionEnd}`];
