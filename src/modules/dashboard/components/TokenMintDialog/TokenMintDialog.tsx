@@ -8,13 +8,12 @@ import moveDecimal from 'move-decimal-point';
 
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
-import { useColonyExtensionsQuery, Colony } from '~data/index';
+import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
 
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { WizardDialogType } from '~utils/hooks';
-import { useHasVotingExtension } from '~utils/hooks/useHasVotingExtension';
 
 import TokenMintForm from './TokenMintForm';
 
@@ -64,25 +63,19 @@ const TokenMintDialog = ({
   callStep,
   prevStep,
 }: Props) => {
-  const [isForceOn, setIsForceOn] = useState(false);
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
-
-  const { data } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
-
-  const hasVotingExtension = useHasVotingExtension(data);
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       /* need to add the condition that force toggle is not on */
-      return hasVotingExtension && !isForceOn
+      return isVotingExtensionEnabled && !isForce
         ? ActionTypes[`COLONY_MOTION_MINT_TOKENS${actionEnd}`]
         : ActionTypes[`COLONY_ACTION_MINT_TOKENS${actionEnd}`];
     },
-    [hasVotingExtension, isForceOn],
+    [isVotingExtensionEnabled, isForce],
   );
 
   const nativeToken =
@@ -128,8 +121,8 @@ const TokenMintDialog = ({
       transform={transform}
     >
       {(formValues: FormikProps<FormValues>) => {
-        if (formValues.values.forceAction !== isForceOn) {
-          setIsForceOn(formValues.values.forceAction);
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
         }
         return (
           <Dialog cancel={cancel}>
