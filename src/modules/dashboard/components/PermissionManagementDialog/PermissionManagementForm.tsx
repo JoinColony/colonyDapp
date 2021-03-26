@@ -90,15 +90,7 @@ const PermissionManagementForm = ({
           return false;
       }
     },
-    [
-      currentUserRoles,
-      domainId,
-      rootAccounts,
-      userDirectRoles,
-      canSetPermissionsInRoot,
-      hasArchitectureInRoot,
-      hasRoot,
-    ],
+    [domainId, canSetPermissionsInRoot, hasArchitectureInRoot, hasRoot],
   );
 
   const domainSelectOptions = sortBy(
@@ -121,7 +113,7 @@ const PermissionManagementForm = ({
             (role) => role !== ColonyRole.Root && role !== ColonyRole.Recovery,
           )
         : availableRoles,
-    [availableRoles, domainId],
+    [domainId],
   );
 
   return (
