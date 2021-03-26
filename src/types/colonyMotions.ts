@@ -5,3 +5,7 @@ export enum ColonyMotions {
   */
   MintTokensMotion = 'MintTokensMotion',
 }
+
+export const motionNameMapping = {
+  'mintTokens': ColonyMotions.MintTokensMotion
+}

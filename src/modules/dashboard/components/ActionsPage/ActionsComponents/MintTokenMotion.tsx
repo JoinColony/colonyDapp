@@ -2,6 +2,7 @@ import React from 'react';
 
 import { defineMessage, FormattedMessage } from 'react-intl';
 
+import Numeral from '~core/Numeral';
 import { ActionsPageFeedItem } from '~dashboard/ActionsPageFeed';
 import { ColonyMotions } from '~types/index';
 import {
@@ -12,6 +13,7 @@ import {
 } from '~data/index';
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import DetailsWidget from '../DetailsWidget';
 import styles from './DefaultAction.css';
@@ -41,13 +43,19 @@ const MintTokenMotion = ({
     actionType,
     annotationHash,
     colonyDisplayName,
+    amount,
   },
+  token: { decimals, symbol },
   transactionHash,
   recipient,
   initiator,
 }: Props) => {
   const actionAndEventValues = {
     actionType,
+    amount: (
+      <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
+    ),
+    tokenSymbol: <span>{symbol || '???'}</span>,
     initiator: (
       <span className={styles.titleDecoration}>
         <FriendlyName user={initiator} autoShrinkAddress />
