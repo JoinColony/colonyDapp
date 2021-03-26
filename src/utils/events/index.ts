@@ -3,6 +3,7 @@ import {
   ColonyClientV5,
   ClientType,
   getLogs,
+  VotingReputationClient,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
@@ -10,6 +11,8 @@ import { AddressZero } from 'ethers/constants';
 import ColonyManagerClass from '~lib/ColonyManager';
 import {
   ColonyActions,
+  ColonyMotions,
+  motionNameMapping,
   ColonyAndExtensionsEvents,
   Address,
   FormattedAction,
@@ -37,6 +40,17 @@ interface ActionValues {
   newVersion: string;
   address: Address;
   roles: ActionUserRoles[];
+}
+
+export enum MotionState {
+  Null = 0,
+  Staking = 1,
+  Submit = 2,
+  Reveal = 3,
+  Closed = 4,
+  Finalizable = 5,
+  Finalized = 6,
+  Failed = 7
 }
 
 /*
@@ -495,10 +509,43 @@ const getRecoveryActionValues = async (
   return recoveryAction;
 };
 
+// Motions
+const getMintTokensMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: VotingReputationClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<ActionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionid = motionCreatedEvent.values.motionId.toString()
+  const motion = await votingClient.getMotion(motionid);
+  const motionState = await votingClient.getMotionState(motionid);
+  const values = colonyClient.interface.parseTransaction({data: motion.action});
+  const tokenAddress = await colonyClient.getToken();
+
+  const mintTokensMotionValues: {
+    state: MotionState;
+    address: Address;
+    amount: string;
+    actionInitiator: string;
+    recipient: Address;
+    tokenAddress: Address;
+  } = {
+    state: motionState,
+    address: motionCreatedEvent.address,
+    recipient: motion.altTarget,
+    actionInitiator: motionCreatedEvent.values.creator,
+    amount: bigNumberify(values.args[0] || '0').toString(),
+    tokenAddress
+  };
+
+  return mintTokensMotionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
-  actionType: ColonyActions,
+  votingClient: VotingReputationClient,
+  actionType: ColonyActions | ColonyMotions,
 ): Promise<ActionValues> => {
   const fallbackValues = {
     recipient: AddressZero,
@@ -596,6 +643,17 @@ export const getActionValues = async (
         ...recoveryActionValues,
       };
     }
+    case ColonyMotions.MintTokensMotion: {
+      const mintTokensMotionValues = await getMintTokensMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient
+      );
+      return {
+        ...fallbackValues,
+        ...mintTokensMotionValues
+      };
+    };
     default: {
       return fallbackValues;
     }
@@ -709,4 +767,15 @@ export const groupSetUserRolesActions = (actions): FormattedAction[] => {
   });
 
   return groupedActions;
+};
+
+export const getMotionActionType = async (
+  votingClient: VotingReputationClient,
+  colonyClient: ColonyClient,
+  motionCreatedEvent: any,
+) => {
+  const motionid = motionCreatedEvent.values.motionId.toString()
+  const motion = await votingClient.getMotion(motionid);
+  const values = colonyClient.interface.parseTransaction({data: motion.action});
+  return motionNameMapping[values.name];
 };
