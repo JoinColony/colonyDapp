@@ -11,6 +11,7 @@ import editColonyActionSaga from './editColony';
 import managePermissionsActionSaga from './managePermissions';
 import unlockTokenActionSaga from './unlockToken';
 import enterRecoveryActionSaga from './enterRecovery';
+import stakeMotionSaga from './stakeMotion';
 
 export default function* actionsSagas() {
   yield all([
@@ -25,5 +26,6 @@ export default function* actionsSagas() {
     call(managePermissionsActionSaga),
     call(unlockTokenActionSaga),
     call(enterRecoveryActionSaga),
+    call(stakeMotionSaga),
   ]);
 }
