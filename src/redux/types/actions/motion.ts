@@ -1,8 +1,28 @@
-import { ActionTypeWithMeta, ActionTypes } from '~redux/index';
+import { BigNumber } from 'ethers/utils';
 
-type WithId = { id: string };
+import { ActionTypes } from '~redux/index';
+import { Address } from '~types/index';
+
+import {
+  ErrorActionType,
+  UniqueActionType,
+  ActionTypeWithMeta,
+  MetaWithHistory,
+} from './index';
 
 export type MotionActionTypes =
-  | ActionTypeWithMeta<ActionTypes.MOTION_STAKE, WithId>
-  | ActionTypeWithMeta<ActionTypes.MOTION_STAKE_SUCCESS, WithId>
-  | ActionTypeWithMeta<ActionTypes.MOTION_STAKE_ERROR, WithId>;
+  | UniqueActionType<
+      ActionTypes.MOTION_STAKE,
+      {
+        colonyAddress: Address;
+        motionId: string;
+        vote: number;
+        amount: BigNumber;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.MOTION_STAKE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.MOTION_STAKE_SUCCESS,
+      MetaWithHistory<object>
+    >;
