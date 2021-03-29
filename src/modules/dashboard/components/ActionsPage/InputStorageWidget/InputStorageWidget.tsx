@@ -6,7 +6,7 @@ import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { ActionForm, TextareaAutoresize, InputStatus } from '~core/Fields';
-import { SpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -251,10 +251,10 @@ const InputStorageWidget = ({
             )}
             <div className={styles.currentValueText}>
               {loadinStorageSlotValue && (
-                <div className={styles.loadingSlotValue}>
-                  <SpinnerLoader />
-                  <FormattedMessage tagName="span" {...MSG.loadingSlotValue} />
-                </div>
+                <MiniSpinnerLoader
+                  className={styles.loadingSlotValue}
+                  loadingText={MSG.loadingSlotValue}
+                />
               )}
               {data?.getRecoveryStorageSlot && storageSlot && (
                 <FormattedMessage

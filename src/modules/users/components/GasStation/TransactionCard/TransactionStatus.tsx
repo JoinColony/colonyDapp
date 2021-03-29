@@ -106,12 +106,7 @@ const TransactionStatus = ({
             className={styles.spinner}
             data-test="gasStationTransactionPending"
           >
-            <SpinnerLoader
-              appearance={{
-                size: 'small',
-                theme: 'primary',
-              }}
-            />
+            <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
           </div>
         )}
         {status === TRANSACTION_STATUSES.MULTISIG && (
