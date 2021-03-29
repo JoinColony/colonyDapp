@@ -100,6 +100,10 @@ export enum ColonyAndExtensionsEvents {
    */
   TokensBought = 'TokensBought',
   PeriodUpdated = 'PeriodUpdated',
+  /*
+   * Motion events
+   */
+  MotionCreated = 'MotionCreated',
 }
 
 export interface FormattedAction {
