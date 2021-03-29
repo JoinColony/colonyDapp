@@ -1,7 +1,0 @@
-.main {
-  padding: 20px;
-}
-
-.main + .main {
-  border-top: 1px solid var(--grey-blue-1);
-}
