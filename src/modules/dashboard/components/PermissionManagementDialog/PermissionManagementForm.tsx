@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
@@ -35,6 +35,7 @@ interface Props {
   domainId: number;
   rootAccounts: Address[];
   userDirectRoles: ColonyRole[];
+  currentUserRolesInRoot: ColonyRole[];
   userInheritedRoles: ColonyRole[];
   colonyDomains: DomainFieldsFragment[];
   userHasPermission: boolean;
@@ -50,7 +51,17 @@ const PermissionManagementForm = ({
   colonyDomains,
   onDomainSelected,
   userHasPermission,
+  currentUserRolesInRoot,
 }: Props) => {
+  const canSetPermissionsInRoot =
+    domainId === ROOT_DOMAIN_ID &&
+    currentUserRoles.includes(ColonyRole.Root) &&
+    (!userDirectRoles.includes(ColonyRole.Root) || rootAccounts.length > 1);
+  const hasRoot = currentUserRolesInRoot.includes(ColonyRole.Root);
+  const hasArchitectureInRoot = currentUserRolesInRoot.includes(
+    ColonyRole.Architecture,
+  );
+
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(
     (role: ColonyRole) => {
@@ -62,24 +73,24 @@ const PermissionManagementForm = ({
         // Can only be set by root and in root domain (and only unset if other root accounts exist)
         case ColonyRole.Root:
         case ColonyRole.Recovery:
-          return (
-            domainId === ROOT_DOMAIN_ID &&
-            currentUserRoles.includes(ColonyRole.Root) &&
-            (!userDirectRoles.includes(ColonyRole.Root) ||
-              rootAccounts.length > 1)
-          );
+          return canSetPermissionsInRoot;
 
         // Must be root for these
         case ColonyRole.Administration:
         case ColonyRole.Funding:
+          return hasArchitectureInRoot;
+
+        // Can be set if root domain and has root OR has architecture in parent
         case ColonyRole.Architecture:
-          return currentUserRoles.includes(ColonyRole.Root);
+          return (
+            (domainId === ROOT_DOMAIN_ID && hasRoot) || hasArchitectureInRoot
+          );
 
         default:
           return false;
       }
     },
-    [currentUserRoles, domainId, rootAccounts, userDirectRoles],
+    [domainId, canSetPermissionsInRoot, hasArchitectureInRoot, hasRoot],
   );
 
   const domainSelectOptions = sortBy(
@@ -93,6 +104,16 @@ const PermissionManagementForm = ({
   const handleDomainChange = useCallback(
     (value: string) => onDomainSelected(Number(value)),
     [onDomainSelected],
+  );
+
+  const filteredRoles = useMemo(
+    () =>
+      domainId !== ROOT_DOMAIN_ID
+        ? availableRoles.filter(
+            (role) => role !== ColonyRole.Root && role !== ColonyRole.Recovery,
+          )
+        : availableRoles,
+    [domainId],
   );
 
   return (
@@ -111,7 +132,7 @@ const PermissionManagementForm = ({
         appearance={{ colorSchema: 'grey' }}
       />
       <div className={styles.permissionChoiceContainer}>
-        {availableRoles.map((role) => {
+        {filteredRoles.map((role) => {
           const roleIsInherited =
             !userDirectRoles.includes(role) &&
             userInheritedRoles.includes(role);

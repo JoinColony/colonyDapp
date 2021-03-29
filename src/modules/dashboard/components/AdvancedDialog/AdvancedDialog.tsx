@@ -124,7 +124,7 @@ const AdvancedDialog = ({
     parseInt(colonyVersion, 10) > ColonyVersion.LightweightSpaceship;
 
   const canEnterPermissionManagement =
-    hasRegisteredProfile && canArchitect(allUserRoles);
+    (hasRegisteredProfile && canArchitect(allUserRoles)) || hasRootPermission;
 
   const items = [
     {
