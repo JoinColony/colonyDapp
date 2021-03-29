@@ -7,10 +7,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { Select, Form } from '~core/Fields';
 import LoadMoreButton from '~core/LoadMoreButton';
 
-import {
-  EventsSortOptions,
-  EventsSortSelectOptions,
-} from '../shared/eventsSort';
+import { SortOptions, SortSelectOptions } from '../shared/sortOptions';
 import { immutableSort } from '~utils/arrays';
 import { Colony, useSubscriptionSubgraphEventsSubscription } from '~data/index';
 import { getEventsListData } from '../../transformers';
@@ -39,9 +36,7 @@ const ColonyEvents = ({
   colony,
   ethDomainId,
 }: Props) => {
-  const [eventsSort, setEventsSort] = useState<string>(
-    EventsSortOptions.NEWEST,
-  );
+  const [eventsSort, setEventsSort] = useState<string>(SortOptions.NEWEST);
 
   const [dataPage, setDataPage] = useState<number>(1);
 
@@ -67,7 +62,7 @@ const ColonyEvents = ({
     (first: any, second: any) => {
       if (!(first && second)) return 0;
 
-      return eventsSort === EventsSortOptions.NEWEST
+      return eventsSort === SortOptions.NEWEST
         ? second.createdAt - first.createdAt
         : first.createdAt - second.createdAt;
     },
@@ -112,7 +107,7 @@ const ColonyEvents = ({
     <div>
       <UnclaimedTransfers colony={colony} />
       <Form
-        initialValues={{ filter: EventsSortOptions.NEWEST }}
+        initialValues={{ filter: SortOptions.NEWEST }}
         onSubmit={() => undefined}
       >
         <div className={styles.filter}>
@@ -121,7 +116,7 @@ const ColonyEvents = ({
             elementOnly
             label={MSG.labelFilter}
             name="filter"
-            options={EventsSortSelectOptions}
+            options={SortSelectOptions}
             onChange={setEventsSort}
             placeholder={MSG.labelFilter}
           />
