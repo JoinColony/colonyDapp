@@ -1,0 +1,7 @@
+.loadingText {
+  display: inline-block;
+  margin: -8px 0 0 5px;
+  vertical-align: middle;
+  font-size: var(--size-small);
+  letter-spacing: initial;
+}

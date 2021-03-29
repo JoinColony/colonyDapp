@@ -5,6 +5,7 @@ import Heading, { Appearance as HeadingAppearance } from '~core/Heading';
 import { SimpleMessageValues } from '~types/index';
 
 import SpinnerLoader, { Appearance } from './SpinnerLoader';
+import styles from './MiniSpinnerLoader.css';
 
 interface Props {
   appearance?: Appearance;
@@ -37,7 +38,7 @@ const MiniSpinnerLoader = ({
       )}
       <SpinnerLoader appearance={appearance} />
       {loadingText && (
-        <span className={loadingTextClassName}>
+        <span className={loadingTextClassName || styles.loadingText}>
           <FormattedMessage {...loadingText} />
         </span>
       )}

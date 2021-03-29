@@ -55,12 +55,7 @@ const MessageCardStatus = ({ status }: Props) => (
         )}
         {status === TRANSACTION_STATUSES.PENDING && (
           <div className={styles.spinner}>
-            <SpinnerLoader
-              appearance={{
-                size: 'small',
-                theme: 'primary',
-              }}
-            />
+            <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
           </div>
         )}
         {status === TRANSACTION_STATUSES.SUCCEEDED && (

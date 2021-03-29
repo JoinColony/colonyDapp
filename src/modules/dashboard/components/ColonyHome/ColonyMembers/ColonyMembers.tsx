@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { SpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 import { Colony, useColonyMembersWithReputationQuery } from '~data/index';
 import { Address } from '~types/index';
@@ -68,17 +68,12 @@ const ColonyMembers = ({
 
   if (loadingColonyMembersWithReputation) {
     return (
-      <div className={styles.main}>
-        <Heading
-          appearance={{ size: 'normal', weight: 'bold' }}
-          text={MSG.title}
-          textValues={{ hasCounter: false }}
-        />
-        <SpinnerLoader appearance={{ size: 'small' }} />
-        <span className={styles.loadingText}>
-          <FormattedMessage {...MSG.loadingData} />
-        </span>
-      </div>
+      <MiniSpinnerLoader
+        className={styles.main}
+        title={MSG.title}
+        loadingText={MSG.loadingData}
+        titleTextValues={{ hasCounter: false }}
+      />
     );
   }
 
