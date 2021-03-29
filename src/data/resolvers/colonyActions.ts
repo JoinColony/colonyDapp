@@ -155,9 +155,9 @@ export const colonyActionsResolvers = ({
           .filter((log) => !!log) as ProcessedEvent[];
 
         let actionType;
-        // For motion created event it will be always just one event
-        const motionid = reverseSortedEvents[0]?.values?.motionId?.toString()
-        if (motionid) {
+        const motionCreatedEvent = reverseSortedEvents.find(({name}) => name === 'MotionCreated');
+        if (motionCreatedEvent) {
+          const motionid = motionCreatedEvent.values?.motionId?.toString();
           actionType = await getMotionActionType(votingClient, colonyClient, reverseSortedEvents[0]);
         } else {
           actionType = getActionType(reverseSortedEvents);
