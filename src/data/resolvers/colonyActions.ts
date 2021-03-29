@@ -16,7 +16,7 @@ import {
   ColonyActions,
   ColonyAndExtensionsEvents,
   Address,
-  ColonyMotions
+  ColonyMotions,
 } from '~types/index';
 import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 
@@ -25,6 +25,7 @@ export interface EventValue {
   domainId: BigNumberish;
   paymentId: BigNumberish;
   amount: BigNumberish;
+  motionId: BigNumberish;
   token: Address;
   fromPot: BigNumberish;
   toPot: BigNumberish;
@@ -33,6 +34,7 @@ export interface EventValue {
   newVersion: string;
   metadata: string;
   user: Address;
+  creator: Address;
   role: ColonyRole;
   setTo: boolean;
 }
@@ -155,7 +157,8 @@ export const colonyActionsResolvers = ({
           .filter((log) => !!log) as ProcessedEvent[];
 
         let actionType;
-        const motionCreatedEvent = reverseSortedEvents.find(({name}) => name === 'MotionCreated');
+        const motionCreatedEvent = reverseSortedEvents.find(({name}) => name === ColonyAndExtensionsEvents.MotionCreated);
+        console.log(motionCreatedEvent);
         if (motionCreatedEvent) {
           const motionid = motionCreatedEvent.values?.motionId?.toString();
           actionType = await getMotionActionType(votingClient, colonyClient, reverseSortedEvents[0]);
