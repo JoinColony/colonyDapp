@@ -45,9 +45,9 @@ const StakingWidget = ({ motionId, colonyAddress }: Props) => {
 
   const transform = useCallback(
     pipe(
-      mapPayload(({ stakeAmount }) => {
+      mapPayload(({ amount }) => {
         return {
-          amount: stakeAmount,
+          amount,
           colonyAddress,
           motionId,
           vote: 1,
@@ -60,7 +60,7 @@ const StakingWidget = ({ motionId, colonyAddress }: Props) => {
   return (
     <ActionForm
       initialValues={{
-        stakeAmount: 0,
+        amount: 0,
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.MOTION_STAKE}
@@ -68,22 +68,18 @@ const StakingWidget = ({ motionId, colonyAddress }: Props) => {
       success={ActionTypes.MOTION_STAKE_SUCCESS}
       transform={transform}
     >
-      {({ values, handleChange, isValid }) => (
+      {({ values, isValid }) => (
         <div className={styles.wrapper}>
           <Heading text={MSG.title} className={styles.title} />
           <p className={styles.description}>
             <FormattedMessage {...MSG.description} />
           </p>
-          <span className={styles.amount}>{values.stakeAmount}</span>
-          <Slider
-            name="stakeAmount"
-            value={values.stakeAmount}
-            onChange={handleChange}
-          />
+          <span className={styles.amount}>{values.amount}</span>
+          <Slider name="amount" value={values.amount} />
           <div className={styles.buttonGroup}>
             <Button
               type="submit"
-              disabled={!isValid || values.amount === undefined}
+              disabled={!isValid || !values.amount}
               text={MSG.stakeButton}
             />
             <Button appearance={{ theme: 'pink' }} text={MSG.objectButton} />
