@@ -5,7 +5,7 @@ import { ColonyVersion } from '@colony/colony-js';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
 import Numeral from '~core/Numeral';
-import { SpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 import {
   Colony,
   useTokenBalancesForDomainsQuery,
@@ -89,12 +89,11 @@ const ColonyTotalFunds = ({
 
   if (!data || !currentToken || isLoadingTokenBalances) {
     return (
-      <div className={styles.main}>
-        <SpinnerLoader appearance={{ size: 'small' }} />
-        <span className={styles.loadingText}>
-          <FormattedMessage {...MSG.loadingData} />
-        </span>
-      </div>
+      <MiniSpinnerLoader
+        className={styles.main}
+        loadingText={MSG.loadingData}
+        titleTextValues={{ hasCounter: false }}
+      />
     );
   }
 

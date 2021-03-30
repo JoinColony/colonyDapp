@@ -6,9 +6,9 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './SpinnerLoader.css';
 
-interface Appearance {
+export interface Appearance {
   size: 'small' | 'medium' | 'large' | 'huge' | 'massive';
-  theme?: 'primary';
+  theme?: 'grey' | 'primary';
 }
 
 interface Props {
@@ -23,7 +23,7 @@ interface Props {
 }
 
 const SpinnerLoader = ({
-  appearance = { size: 'small' },
+  appearance = { size: 'small', theme: 'grey' },
   loadingText,
   textValues,
 }: Props) => {

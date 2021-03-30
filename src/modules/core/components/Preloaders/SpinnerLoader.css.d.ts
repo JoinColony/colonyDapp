@@ -7,4 +7,5 @@ export const sizeLarge: string;
 export const sizeHuge: string;
 export const sizeMassive: string;
 export const loadingTextContainer: string;
+export const themeGrey: string;
 export const themePrimary: string;

@@ -1,8 +1,8 @@
 import React, { useState, useMemo, ReactElement, ReactNode } from 'react';
 import { nanoid } from 'nanoid';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
-import { SpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import { getEventsForActions } from '~utils/events';
 
@@ -264,12 +264,11 @@ const ActionsPageFeed = ({
     <>
       <ul className={styles.main}>{customRenderWithFallback()}</ul>
       {(loadingServerComments || extenalLoadingState) && (
-        <div className={styles.loading}>
-          <SpinnerLoader />
-          <span className={styles.loaderMessage}>
-            <FormattedMessage {...MSG.loading} />
-          </span>
-        </div>
+        <MiniSpinnerLoader
+          className={styles.loading}
+          loadingTextClassName={styles.loaderMessage}
+          loadingText={MSG.loading}
+        />
       )}
     </>
   );
