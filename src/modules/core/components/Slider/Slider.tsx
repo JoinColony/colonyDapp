@@ -14,7 +14,7 @@ interface Props {
   max?: number;
   limit?: number;
   appearance?: Appearance;
-  onChange: (val: any) => void;
+  onChange?: (val: any) => void;
   name: string;
 }
 
@@ -40,12 +40,17 @@ const Slider = ({
       if ((limit && sliderValue < limit) || val < sliderValue || !limit) {
         setSliderValue(val);
         setValue(val);
-        onChange(val);
+        if (onChange) {
+          onChange(val);
+        }
       }
       if (limit && sliderValue > limit) {
         setSliderValue(limit);
         setValue(val);
-        onChange(limit);
+
+        if (onChange) {
+          onChange(limit);
+        }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
