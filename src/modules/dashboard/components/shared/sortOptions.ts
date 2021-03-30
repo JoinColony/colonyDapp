@@ -2,39 +2,39 @@ import { defineMessages } from 'react-intl';
 
 const SORT_MSG = defineMessages({
   newest: {
-    id: 'dashboard.ActionsSort.newest',
+    id: 'dashboard.Sort.newest',
     defaultMessage: 'Newest',
   },
   oldest: {
-    id: 'dashboard.ActionsSort.oldest',
+    id: 'dashboard.Sort.oldest',
     defaultMessage: 'Oldest',
   },
   haveActivity: {
-    id: 'dashboard.ActionsSort.haveActivity',
+    id: 'dashboard.Sort.haveActivity',
     defaultMessage: 'Activity',
   },
 });
 
-export enum ActionsSortOptions {
+export enum SortOptions {
   NEWEST = 'NEWEST',
   OLDEST = 'OLDEST',
   HAVE_ACTIVITY = 'HAVE_ACTIVITY',
 }
 
-export type ActionSortOptionType = ActionsSortOptions[keyof ActionsSortOptions];
+export type SortOptionType = SortOptions[keyof SortOptions];
 
-export const ActionsSortSelectOptions = [
+export const SortSelectOptions = [
   {
     label: SORT_MSG.newest,
-    value: ActionsSortOptions.NEWEST,
+    value: SortOptions.NEWEST,
   },
   {
     label: SORT_MSG.oldest,
-    value: ActionsSortOptions.OLDEST,
+    value: SortOptions.OLDEST,
   },
   /* temporarily disabling sorting by activity as this is not available yet */
   // {
   //   label: SORT_MSG.haveActivity,
-  //   value: ActionsSortOptions.HAVE_ACTIVITY,
+  //   value: SortOptions.HAVE_ACTIVITY,
   // },
 ];

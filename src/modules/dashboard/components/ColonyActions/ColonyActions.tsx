@@ -18,10 +18,7 @@ import {
   useLoggedInUser,
   ActionThatNeedsAttention,
 } from '~data/index';
-import {
-  ActionsSortOptions,
-  ActionsSortSelectOptions,
-} from '../shared/actionsSort';
+import { SortOptions, SortSelectOptions } from '../shared/sortOptions';
 import { getActionsListData } from '../../transformers';
 import { useTransformer } from '~utils/hooks';
 import {
@@ -77,7 +74,7 @@ const ColonyActions = ({
   const { walletAddress } = useLoggedInUser();
 
   const [actionsSortOption, setActionsSortOption] = useState<string>(
-    ActionsSortOptions.NEWEST,
+    SortOptions.NEWEST,
   );
 
   const [dataPage, setDataPage] = useState<number>(1);
@@ -165,11 +162,11 @@ const ColonyActions = ({
   const actionsSort = useCallback(
     (first: FormattedAction, second: FormattedAction) => {
       switch (actionsSortOption) {
-        case ActionsSortOptions.NEWEST:
+        case SortOptions.NEWEST:
           return second.createdAt.getTime() - first.createdAt.getTime();
-        case ActionsSortOptions.OLDEST:
+        case SortOptions.OLDEST:
           return first.createdAt.getTime() - second.createdAt.getTime();
-        case ActionsSortOptions.HAVE_ACTIVITY:
+        case SortOptions.HAVE_ACTIVITY:
           return second.commentCount - first.commentCount;
         default:
           return 0;
@@ -218,7 +215,7 @@ const ColonyActions = ({
       {sortedActionsData?.length ? (
         <>
           <Form
-            initialValues={{ filter: ActionsSortOptions.NEWEST }}
+            initialValues={{ filter: SortOptions.NEWEST }}
             onSubmit={() => undefined}
           >
             <div className={styles.filter}>
@@ -227,7 +224,7 @@ const ColonyActions = ({
                 elementOnly
                 label={MSG.labelFilter}
                 name="filter"
-                options={ActionsSortSelectOptions}
+                options={SortSelectOptions}
                 onChange={setActionsSortOption}
                 placeholder={MSG.placeholderFilter}
               />
