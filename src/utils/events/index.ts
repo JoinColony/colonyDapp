@@ -3,7 +3,7 @@ import {
   ColonyClientV5,
   ClientType,
   getLogs,
-  VotingReputationClient,
+  ExtensionClient,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
@@ -512,7 +512,7 @@ const getRecoveryActionValues = async (
 // Motions
 const getMintTokensMotionValues = async (
   processedEvents: ProcessedEvent[],
-  votingClient: VotingReputationClient,
+  votingClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<ActionValues>> => {
   const motionCreatedEvent = processedEvents[0];
@@ -544,7 +544,7 @@ const getMintTokensMotionValues = async (
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
-  votingClient: VotingReputationClient,
+  votingClient: ExtensionClient,
   actionType: ColonyActions | ColonyMotions,
 ): Promise<ActionValues> => {
   const fallbackValues = {
@@ -770,7 +770,7 @@ export const groupSetUserRolesActions = (actions): FormattedAction[] => {
 };
 
 export const getMotionActionType = async (
-  votingClient: VotingReputationClient,
+  votingClient: ExtensionClient,
   colonyClient: ColonyClient,
   motionCreatedEvent: any,
 ) => {
