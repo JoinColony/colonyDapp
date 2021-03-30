@@ -5,19 +5,23 @@ import {
   ColonyClientV5,
   ColonyVersion,
   ColonyRole,
-  ExtensionClient
+  ExtensionClient,
 } from '@colony/colony-js';
 import { BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
-import { getActionType, getActionValues, getAnnotation, getMotionActionType } from '~utils/events';
+import {
+  getActionType,
+  getActionValues,
+  getAnnotation,
+  getMotionActionType,
+} from '~utils/events';
 import { Context } from '~context/index';
 import {
   ColonyActions,
   ColonyAndExtensionsEvents,
   Address,
-  ColonyMotions,
 } from '~types/index';
 import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 
@@ -112,7 +116,7 @@ export const colonyActionsResolvers = ({
           ? await getBlockTime(provider, blockHash)
           : 0;
 
-          /*
+        /*
          * @NOTE Parse all logs with all clients to generate all the possible events
          * This is the second iteration of this implementation.
          *
@@ -158,11 +162,16 @@ export const colonyActionsResolvers = ({
           .filter((log) => !!log) as ProcessedEvent[];
 
         let actionType;
-        const motionCreatedEvent = reverseSortedEvents.find(({name}) => name === ColonyAndExtensionsEvents.MotionCreated);
+        const motionCreatedEvent = reverseSortedEvents.find(
+          ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+        );
 
         if (motionCreatedEvent) {
-          const motionid = motionCreatedEvent.values?.motionId?.toString();
-          actionType = await getMotionActionType(votingClient as ExtensionClient, colonyClient as ColonyClient, reverseSortedEvents[0]);
+          actionType = await getMotionActionType(
+            votingClient as ExtensionClient,
+            colonyClient as ColonyClient,
+            reverseSortedEvents[0],
+          );
         } else {
           actionType = getActionType(reverseSortedEvents);
         }
