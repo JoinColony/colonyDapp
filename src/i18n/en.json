@@ -169,6 +169,11 @@
     "transaction.group.createRootMotion.title": "Create root motion",
     "transaction.group.createRootMotion.description": "Create root motion",
 
+    "transaction.group.stakeMotion.title": "Stake motion",
+    "transaction.group.stakeMotion.description": "Stake motion",
+    "transaction.VotingReputationClient.stakeMotion.title": "Stake motion",
+    "transaction.VotingReputationClient.stakeMotion.description": "Stake motion",
+
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
     "permission.6": "Administration",
