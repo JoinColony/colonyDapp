@@ -17,6 +17,8 @@ const colonyNetwork = new ethers.Contract(
   provider,
 );
 
+let lastSeenInactiveCycleAddress = null;
+
 async function forwardTime(seconds) {
   await provider.send('evm_increaseTime', [seconds]);
   await provider.send('evm_mine');
@@ -27,6 +29,9 @@ async function doBlockChecks() {
   const inactiveCycleAddress = await colonyNetwork.getReputationMiningCycle(
     false,
   );
+  if (inactiveCycleAddress === lastSeenInactiveCycleAddress){ return; }
+  lastSeenInactiveCycleAddress = inactiveCycleAddress;
+
   const inactiveMiningCycle = new ethers.Contract(
     inactiveCycleAddress,
     cycleAbi,
