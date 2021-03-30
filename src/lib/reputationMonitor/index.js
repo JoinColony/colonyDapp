@@ -17,21 +17,21 @@ const colonyNetwork = new ethers.Contract(
   provider,
 );
 
-let lastSeenInactiveCycleAddress = null;
+let lastBlockThisServiceMined = null;
 
 async function forwardTime(seconds) {
   await provider.send('evm_increaseTime', [seconds]);
   await provider.send('evm_mine');
 }
 
-async function doBlockChecks() {
+async function doBlockChecks(blockNumber) {
+  // Don't mine two blocks in a row
+  if (lastBlockThisServiceMined >= blockNumber) { return; }
+
   // Inactive log length greater than one, mine a block
   const inactiveCycleAddress = await colonyNetwork.getReputationMiningCycle(
     false,
   );
-  if (inactiveCycleAddress === lastSeenInactiveCycleAddress){ return; }
-  lastSeenInactiveCycleAddress = inactiveCycleAddress;
-
   const inactiveMiningCycle = new ethers.Contract(
     inactiveCycleAddress,
     cycleAbi,
@@ -40,6 +40,7 @@ async function doBlockChecks() {
   let logLength = await inactiveMiningCycle.getReputationUpdateLogLength();
   if (logLength.gt(1)) {
     await forwardTime(86401);
+    lastBlockThisServiceMined = blockNumber + 1;
     return;
   }
   // If the active log length is greater than one, mine a block
@@ -52,6 +53,7 @@ async function doBlockChecks() {
   logLength = await activeMiningCycle.getReputationUpdateLogLength();
   if (logLength.gt(1)) {
     await forwardTime(86401);
+    lastBlockThisServiceMined = blockNumber + 1;
     return;
   }
 
@@ -59,6 +61,7 @@ async function doBlockChecks() {
   const nSubmitted = await activeMiningCycle.getNUniqueSubmittedHashes();
   if (nSubmitted.eq(1)) {
     await forwardTime(86401);
+    lastBlockThisServiceMined = blockNumber + 1;
   }
 }
 
