@@ -50,7 +50,7 @@ export enum MotionState {
   Closed = 4,
   Finalizable = 5,
   Finalized = 6,
-  Failed = 7
+  Failed = 7,
 }
 
 /*
@@ -516,26 +516,28 @@ const getMintTokensMotionValues = async (
   colonyClient: ColonyClient,
 ): Promise<Partial<ActionValues>> => {
   const motionCreatedEvent = processedEvents[0];
-  const motionid = motionCreatedEvent.values.motionId.toString()
+  const motionid = motionCreatedEvent.values.motionId.toString();
   const motion = await votingClient.getMotion(motionid);
   const motionState = await votingClient.getMotionState(motionid);
-  const values = colonyClient.interface.parseTransaction({data: motion.action});
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
   const tokenAddress = await colonyClient.getToken();
 
   const mintTokensMotionValues: {
-    state: MotionState;
+    motionState: MotionState;
     address: Address;
     amount: string;
     actionInitiator: string;
     recipient: Address;
     tokenAddress: Address;
   } = {
-    state: motionState,
+    motionState,
     address: motionCreatedEvent.address,
     recipient: motion.altTarget,
     actionInitiator: motionCreatedEvent.values.creator,
     amount: bigNumberify(values.args[0] || '0').toString(),
-    tokenAddress
+    tokenAddress,
   };
 
   return mintTokensMotionValues;
@@ -647,13 +649,13 @@ export const getActionValues = async (
       const mintTokensMotionValues = await getMintTokensMotionValues(
         processedEvents,
         votingClient,
-        colonyClient
+        colonyClient,
       );
       return {
         ...fallbackValues,
-        ...mintTokensMotionValues
+        ...mintTokensMotionValues,
       };
-    };
+    }
     default: {
       return fallbackValues;
     }
@@ -774,8 +776,10 @@ export const getMotionActionType = async (
   colonyClient: ColonyClient,
   motionCreatedEvent: any,
 ) => {
-  const motionid = motionCreatedEvent.values.motionId.toString()
+  const motionid = motionCreatedEvent.values.motionId.toString();
   const motion = await votingClient.getMotion(motionid);
-  const values = colonyClient.interface.parseTransaction({data: motion.action});
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
   return motionNameMapping[values.name];
 };
