@@ -253,6 +253,7 @@ export const colonyActionsResolvers = ({
       const pendingActionValues = await getActionValues(
         [],
         colonyClient as ColonyClient,
+        votingClient,
         ColonyActions.Generic,
       );
 
