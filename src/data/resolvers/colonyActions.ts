@@ -5,6 +5,7 @@ import {
   ColonyClientV5,
   ColonyVersion,
   ColonyRole,
+  ExtensionClient
 } from '@colony/colony-js';
 import { BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
@@ -161,14 +162,14 @@ export const colonyActionsResolvers = ({
 
         if (motionCreatedEvent) {
           const motionid = motionCreatedEvent.values?.motionId?.toString();
-          actionType = await getMotionActionType(votingClient, colonyClient as ColonyClient, reverseSortedEvents[0]);
+          actionType = await getMotionActionType(votingClient as ExtensionClient, colonyClient as ColonyClient, reverseSortedEvents[0]);
         } else {
           actionType = getActionType(reverseSortedEvents);
         }
         const actionValues = await getActionValues(
           reverseSortedEvents,
           colonyClient as ColonyClient,
-          votingClient,
+          votingClient as ExtensionClient,
           actionType,
         );
 
@@ -253,7 +254,7 @@ export const colonyActionsResolvers = ({
       const pendingActionValues = await getActionValues(
         [],
         colonyClient as ColonyClient,
-        votingClient,
+        votingClient as ExtensionClient,
         ColonyActions.Generic,
       );
 
