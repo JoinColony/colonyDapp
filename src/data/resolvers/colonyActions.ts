@@ -158,10 +158,10 @@ export const colonyActionsResolvers = ({
 
         let actionType;
         const motionCreatedEvent = reverseSortedEvents.find(({name}) => name === ColonyAndExtensionsEvents.MotionCreated);
-        console.log(motionCreatedEvent);
+
         if (motionCreatedEvent) {
           const motionid = motionCreatedEvent.values?.motionId?.toString();
-          actionType = await getMotionActionType(votingClient, colonyClient, reverseSortedEvents[0]);
+          actionType = await getMotionActionType(votingClient, colonyClient as ColonyClient, reverseSortedEvents[0]);
         } else {
           actionType = getActionType(reverseSortedEvents);
         }
