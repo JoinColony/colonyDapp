@@ -1,1 +1,4 @@
-export { default } from './ActionsPageFeedItem';
+export {
+  default,
+  Props as ActionsPageFeedItemProps,
+} from './ActionsPageFeedItem';

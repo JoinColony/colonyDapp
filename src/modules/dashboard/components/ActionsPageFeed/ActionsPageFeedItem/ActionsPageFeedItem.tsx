@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import UserMention from '~core/UserMention';
@@ -8,14 +8,12 @@ import { getMainClasses } from '~utils/css';
 import TextDecorator from '~lib/TextDecorator';
 import { AnyUser } from '~data/index';
 import FriendlyName from '~core/FriendlyName';
-import { useDataFetcher } from '~utils/hooks';
-import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import styles from './ActionsPageFeedItem.css';
 
 const displayName = 'dashboard.ActionsPageFeed.ActionsPageFeedItem';
 
-interface Props {
+export interface Props {
   comment?: string;
   user?: AnyUser | null;
   annotation?: boolean;
@@ -36,32 +34,6 @@ const ActionsPageFeedItem = ({
     ),
   });
 
-  const { data: annotationJSON } = useDataFetcher(
-    ipfsDataFetcher,
-    [annotation ? (comment as string) : ''], // Technically a bug, shouldn't need type override
-    [annotation ? comment : ''],
-  );
-
-  const getAnnotationMessage = useCallback(() => {
-    if (!annotationJSON) {
-      return undefined;
-    }
-    const annotationObject = JSON.parse(annotationJSON);
-    if (annotationObject && annotationObject.annotationMessage) {
-      return annotationObject.annotationMessage;
-    }
-    return undefined;
-  }, [annotationJSON]);
-
-  const annotationMessage = getAnnotationMessage();
-
-  /*
-   * This means that the annotation object is in a format we don't recognize
-   */
-  if (annotation && !annotationMessage) {
-    return null;
-  }
-
   return (
     <div className={getMainClasses({}, styles, { annotation })}>
       <div className={styles.avatar}>
@@ -81,7 +53,7 @@ const ActionsPageFeedItem = ({
           {createdAt && <TransactionMeta createdAt={createdAt} />}
         </div>
         <div className={styles.text}>
-          <Decorate>{annotation ? annotationMessage : comment}</Decorate>
+          <Decorate>{comment}</Decorate>
         </div>
       </div>
     </div>

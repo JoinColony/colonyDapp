@@ -7,7 +7,7 @@ import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
 
 import ActionsPageFeed, {
-  ActionsPageFeedItem,
+  ActionsPageFeedItemWithIPFS,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
 
@@ -183,11 +183,11 @@ const DefaultAction = ({
             />
           </h1>
           {actionType !== ColonyActions.Generic && annotationHash && (
-            <ActionsPageFeedItem
+            <ActionsPageFeedItemWithIPFS
               createdAt={createdAt}
               user={initiator}
               annotation
-              comment={annotationHash}
+              hash={annotationHash}
             />
           )}
           <ActionsPageFeed

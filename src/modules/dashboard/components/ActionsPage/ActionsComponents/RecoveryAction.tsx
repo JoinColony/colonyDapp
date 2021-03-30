@@ -9,6 +9,7 @@ import ActionsPageFeed, {
   SystemMessage,
   ActionsPageFeedType,
   ActionsPageFeedItem,
+  ActionsPageFeedItemWithIPFS,
   ActionsPageEvent,
   EventValues,
   FeedItemWithId,
@@ -213,11 +214,11 @@ const RecoveryAction = ({
             />
           </h1>
           {annotationHash && (
-            <ActionsPageFeedItem
+            <ActionsPageFeedItemWithIPFS
               createdAt={actionCreatedAt}
               user={initiator}
               annotation
-              comment={annotationHash}
+              hash={annotationHash}
             />
           )}
           <ActionsPageFeed
