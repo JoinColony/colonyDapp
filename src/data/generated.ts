@@ -641,7 +641,7 @@ export type ColonyAction = {
   domainPurpose: Scalars['String'];
   domainColor: Scalars['String'];
   blockNumber: Scalars['Int'];
-  motionState?: Maybe<Scalars['Int']>;
+  motionState?: Maybe<Scalars['String']>;
 };
 
 export type NetworkContractsInput = {

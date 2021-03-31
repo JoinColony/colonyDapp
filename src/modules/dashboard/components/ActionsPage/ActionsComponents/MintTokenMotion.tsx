@@ -44,6 +44,7 @@ const MintTokenMotion = ({
     annotationHash,
     colonyDisplayName,
     amount,
+    motionState,
   },
   token: { decimals, symbol },
   transactionHash,
