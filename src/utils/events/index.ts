@@ -42,7 +42,7 @@ interface ActionValues {
   roles: ActionUserRoles[];
 }
 
-export enum MotionState {
+export enum NetworkMotionState {
   Null = 0,
   Staking = 1,
   Submit = 2,
@@ -51,6 +51,17 @@ export enum MotionState {
   Finalizable = 5,
   Finalized = 6,
   Failed = 7,
+}
+
+export enum MotionState {
+  Motion = 'Motion',
+  StakeRequired = 'StakeRequired',
+  Voting = 'Voting',
+  Reveal = 'Reveal',
+  Objection = 'Objection',
+  Failed = 'Failed',
+  Passed = 'Passed',
+  Invalid = 'Invalid',
 }
 
 /*
@@ -510,6 +521,32 @@ const getRecoveryActionValues = async (
 };
 
 // Motions
+const getMotionState = async (
+  motionNetworkState: NetworkMotionState,
+  votingClient: ExtensionClient,
+  motion
+): MotionState => {
+  switch (motionNetworkState) {
+    case NetworkMotionState.Staking:
+      const totalStakeFraction = await votingClient.getTotalStakeFraction();
+      const requiredStakes = bigNumberify(motion.skillRep).mul(totalStakeFraction).div(bigNumberify(10).pow(18));
+      return motion.stakes[1].eq(requiredStakes) && motion.stakes[0].isZero() ? MotionState.Motion : MotionState.StakeRequired;
+    case NetworkMotionState.Submit:
+      return MotionState.Voting;
+    case NetworkMotionState.Reveal:
+      return MotionState.Reveal;
+    case NetworkMotionState.Closed:
+      return motion.votes[0].gte(motion.votes[1]) ? MotionState.Objection : MotionState.Motion;
+    case NetworkMotionState.Finalizable:
+    case NetworkMotionState.Finalized:
+      return motion.votes[0].gte(motion.votes[1]) ? MotionState.Failed : MotionState.Passed;
+    case NetworkMotionState.Failed:
+      return MotionState.Failed;
+    default:
+      return MotionState.Invalid;
+  }
+}
+
 const getMintTokensMotionValues = async (
   processedEvents: ProcessedEvent[],
   votingClient: ExtensionClient,
@@ -518,7 +555,8 @@ const getMintTokensMotionValues = async (
   const motionCreatedEvent = processedEvents[0];
   const motionid = motionCreatedEvent.values.motionId.toString();
   const motion = await votingClient.getMotion(motionid);
-  const motionState = await votingClient.getMotionState(motionid);
+  const motionNetworkState = await votingClient.getMotionState(motionid);
+  const motionState = await getMotionState(motionNetworkState, votingClient, motion)
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
   });
