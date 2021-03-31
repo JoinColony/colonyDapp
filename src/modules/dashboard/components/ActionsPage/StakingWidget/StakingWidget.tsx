@@ -2,15 +2,18 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
-import { ActionTypes } from '~redux/index';
+import Button from '~core/Button';
+import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import { ActionForm } from '~core/Fields';
 import Slider from '~core/Slider';
+import RaiseObjectionDialog from '~dashboard/RaiseObjectionDialog';
+
+import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { mapPayload, pipe } from '~utils/actions';
 
 import styles from './StakingWidget.css';
-import Button from '~core/Button';
 
 type Props = {
   motionId: string;
@@ -39,6 +42,13 @@ const MSG = defineMessages({
 });
 
 const StakingWidget = ({ motionId, colonyAddress }: Props) => {
+  const openRaiseObjectionDialog = useDialog(RaiseObjectionDialog);
+
+  const handleRaiseObjection = useCallback(
+    () => openRaiseObjectionDialog({ colonyAddress }),
+    [colonyAddress, openRaiseObjectionDialog],
+  );
+
   const validationSchema = yup.object().shape({
     amount: yup.number().required().moreThan(0),
   });
@@ -86,7 +96,11 @@ const StakingWidget = ({ motionId, colonyAddress }: Props) => {
               disabled={!isValid || values.amount === undefined}
               text={MSG.stakeButton}
             />
-            <Button appearance={{ theme: 'pink' }} text={MSG.objectButton} />
+            <Button
+              appearance={{ theme: 'pink' }}
+              text={MSG.objectButton}
+              onClick={handleRaiseObjection}
+            />
           </div>
         </div>
       )}
