@@ -14,9 +14,7 @@ import {
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import {
-  MotionState
-} from '~utils/events';
+import { MotionState } from '~utils/events';
 
 import DetailsWidget from '../DetailsWidget';
 import styles from './DefaultAction.css';
@@ -52,6 +50,10 @@ const MSG = defineMessage({
     id: 'dashboard.ActionsPage.MintTokenMotion.passedTag',
     defaultMessage: 'Passed',
   },
+  invalidTag: {
+    id: 'dashboard.ActionsPage.MintTokenMotion.invalidTag',
+    defaultMessage: 'Invalid',
+  },
 });
 
 interface Props {
@@ -78,7 +80,6 @@ const MintTokenMotion = ({
   recipient,
   initiator,
 }: Props) => {
-
   const actionAndEventValues = {
     actionType,
     amount: (
@@ -103,47 +104,58 @@ const MintTokenMotion = ({
 
   const motionTagMap = {
     [MotionState.Motion]: {
-      theme: "primary",
-      colorSchema: "fullColor",
+      theme: 'primary',
+      colorSchema: 'fullColor',
       name: MSG.motionTag,
     },
     [MotionState.StakeRequired]: {
-      theme: "pink",
-      colorSchema: "fullColor",
+      theme: 'pink',
+      colorSchema: 'fullColor',
       name: MSG.stakeRequiredTag,
     },
     [MotionState.Voting]: {
-      theme: "golden",
-      colorSchema: "fullColor",
+      theme: 'golden',
+      colorSchema: 'fullColor',
       name: MSG.votingTag,
     },
     [MotionState.Reveal]: {
-      theme: "blue",
-      colorSchema: "fullColor",
+      theme: 'blue',
+      colorSchema: 'fullColor',
       name: MSG.revealTag,
     },
     [MotionState.Objection]: {
-      theme: "pink",
-      colorSchema: "fullColor",
+      theme: 'pink',
+      colorSchema: 'fullColor',
       name: MSG.objectionTag,
     },
     [MotionState.Failed]: {
-      theme: "pink",
-      colorSchema: "plain",
+      theme: 'pink',
+      colorSchema: 'plain',
       name: MSG.failedTag,
     },
     [MotionState.Passed]: {
-      theme: "primary",
-      colorSchema: "plain",
+      theme: 'primary',
+      colorSchema: 'plain',
       name: MSG.passedTag,
     },
-  }
-  const motionStyles = motionTagMap[motionState];
+    [MotionState.Invalid]: {
+      theme: 'pink',
+      colorSchema: 'plain',
+      name: MSG.invalidTag,
+    },
+  };
+  const motionStyles = motionTagMap[motionState || MotionState.Invalid];
   return (
     <div className={styles.main}>
       <div className={styles.container}>
         <p className={styles.tagWrapper}>
-          <Tag text={motionStyles.name} appearance={{ theme: motionStyles.theme, colorSchema: motionStyles.colorSchema }} />
+          <Tag
+            text={motionStyles.name}
+            appearance={{
+              theme: motionStyles.theme,
+              colorSchema: motionStyles.colorSchema,
+            }}
+          />
         </p>
       </div>
       <hr className={styles.dividerTop} />

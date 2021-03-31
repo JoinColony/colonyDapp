@@ -524,28 +524,36 @@ const getRecoveryActionValues = async (
 const getMotionState = async (
   motionNetworkState: NetworkMotionState,
   votingClient: ExtensionClient,
-  motion
-): MotionState => {
+  motion,
+): Promise<MotionState> => {
+  const totalStakeFraction = await votingClient.getTotalStakeFraction();
+  const requiredStakes = bigNumberify(motion.skillRep)
+    .mul(totalStakeFraction)
+    .div(bigNumberify(10).pow(18));
   switch (motionNetworkState) {
     case NetworkMotionState.Staking:
-      const totalStakeFraction = await votingClient.getTotalStakeFraction();
-      const requiredStakes = bigNumberify(motion.skillRep).mul(totalStakeFraction).div(bigNumberify(10).pow(18));
-      return motion.stakes[1].eq(requiredStakes) && motion.stakes[0].isZero() ? MotionState.Motion : MotionState.StakeRequired;
+      return motion.stakes[1].eq(requiredStakes) && motion.stakes[0].isZero()
+        ? MotionState.Motion
+        : MotionState.StakeRequired;
     case NetworkMotionState.Submit:
       return MotionState.Voting;
     case NetworkMotionState.Reveal:
       return MotionState.Reveal;
     case NetworkMotionState.Closed:
-      return motion.votes[0].gte(motion.votes[1]) ? MotionState.Objection : MotionState.Motion;
+      return motion.votes[0].gte(motion.votes[1])
+        ? MotionState.Objection
+        : MotionState.Motion;
     case NetworkMotionState.Finalizable:
     case NetworkMotionState.Finalized:
-      return motion.votes[0].gte(motion.votes[1]) ? MotionState.Failed : MotionState.Passed;
+      return motion.votes[0].gte(motion.votes[1])
+        ? MotionState.Failed
+        : MotionState.Passed;
     case NetworkMotionState.Failed:
       return MotionState.Failed;
     default:
       return MotionState.Invalid;
   }
-}
+};
 
 const getMintTokensMotionValues = async (
   processedEvents: ProcessedEvent[],
@@ -556,7 +564,11 @@ const getMintTokensMotionValues = async (
   const motionid = motionCreatedEvent.values.motionId.toString();
   const motion = await votingClient.getMotion(motionid);
   const motionNetworkState = await votingClient.getMotionState(motionid);
-  const motionState = await getMotionState(motionNetworkState, votingClient, motion)
+  const motionState = await getMotionState(
+    motionNetworkState,
+    votingClient,
+    motion,
+  );
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
   });
