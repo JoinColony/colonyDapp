@@ -14,6 +14,9 @@ import {
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  MotionState
+} from '~utils/events';
 
 import DetailsWidget from '../DetailsWidget';
 import styles from './DefaultAction.css';
@@ -22,8 +25,32 @@ const displayName = 'dashboard.ActionsPage.MintTokenMotion';
 
 const MSG = defineMessage({
   motionTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.tag',
+    id: 'dashboard.ActionsPage.MintTokenMotion.motionTag',
     defaultMessage: 'Motion',
+  },
+  stakeRequiredTag: {
+    id: 'dashboard.ActionsPage.MintTokenMotion.stakeRequiredTag',
+    defaultMessage: 'Stake required',
+  },
+  votingTag: {
+    id: 'dashboard.ActionsPage.MintTokenMotion.votingTag',
+    defaultMessage: 'Voting',
+  },
+  revealTag: {
+    id: 'dashboard.ActionsPage.MintTokenMotion.revealTag',
+    defaultMessage: 'Reveal',
+  },
+  objectionTag: {
+    id: 'dashboard.ActionsPage.MintTokenMotion.objectionTag',
+    defaultMessage: 'Objection',
+  },
+  failedTag: {
+    id: 'dashboard.ActionsPage.MintTokenMotion.failedTag',
+    defaultMessage: 'Failed',
+  },
+  passedTag: {
+    id: 'dashboard.ActionsPage.MintTokenMotion.passedTag',
+    defaultMessage: 'Passed',
   },
 });
 
@@ -51,6 +78,7 @@ const MintTokenMotion = ({
   recipient,
   initiator,
 }: Props) => {
+
   const actionAndEventValues = {
     actionType,
     amount: (
@@ -72,12 +100,50 @@ const MintTokenMotion = ({
       />
     ),
   };
+
+  const motionTagMap = {
+    [MotionState.Motion]: {
+      theme: "primary",
+      colorSchema: "fullColor",
+      name: MSG.motionTag,
+    },
+    [MotionState.StakeRequired]: {
+      theme: "pink",
+      colorSchema: "fullColor",
+      name: MSG.stakeRequiredTag,
+    },
+    [MotionState.Voting]: {
+      theme: "golden",
+      colorSchema: "fullColor",
+      name: MSG.votingTag,
+    },
+    [MotionState.Reveal]: {
+      theme: "blue",
+      colorSchema: "fullColor",
+      name: MSG.revealTag,
+    },
+    [MotionState.Objection]: {
+      theme: "pink",
+      colorSchema: "fullColor",
+      name: MSG.objectionTag,
+    },
+    [MotionState.Failed]: {
+      theme: "pink",
+      colorSchema: "plain",
+      name: MSG.failedTag,
+    },
+    [MotionState.Passed]: {
+      theme: "primary",
+      colorSchema: "plain",
+      name: MSG.passedTag,
+    },
+  }
+  const motionStyles = motionTagMap[motionState];
   return (
     <div className={styles.main}>
       <div className={styles.container}>
         <p className={styles.tagWrapper}>
-          {/* Make it dynamic */}
-          <Tag text={MSG.motionTag} appearance={{ theme: 'primary' }} />
+          <Tag text={motionStyles.name} appearance={{ theme: motionStyles.theme, colorSchema: motionStyles.colorSchema }} />
         </p>
       </div>
       <hr className={styles.dividerTop} />
