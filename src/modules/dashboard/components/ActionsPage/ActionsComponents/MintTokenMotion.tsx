@@ -3,7 +3,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
-import { ActionsPageFeedItem } from '~dashboard/ActionsPageFeed';
+import ActionsPageFeed, { ActionsPageFeedItem } from '~dashboard/ActionsPageFeed';
 import { ColonyMotions } from '~types/index';
 import {
   Colony,
@@ -33,6 +33,7 @@ interface Props {
 const MintTokenMotion = ({
   colony,
   colonyAction: {
+    events = [],
     createdAt: actionCreatedAt,
     actionType,
     annotationHash,
@@ -40,11 +41,13 @@ const MintTokenMotion = ({
     amount,
     motionState,
   },
+  colonyAction,
   token: { decimals, symbol },
   transactionHash,
   recipient,
   initiator,
 }: Props) => {
+
   const actionAndEventValues = {
     actionType,
     amount: (
@@ -65,6 +68,8 @@ const MintTokenMotion = ({
         autoShrinkAddress
       />
     ),
+    reputation: "reputation",
+    motionTag: "motion tag"
   };
 
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
@@ -100,6 +105,14 @@ const MintTokenMotion = ({
               comment={annotationHash}
             />
           )}
+          <ActionsPageFeed
+            actionType={actionType}
+            transactionHash={transactionHash as string}
+            networkEvents={events}
+            values={actionAndEventValues}
+            actionData={colonyAction}
+            colony={colony}
+          />
         </div>
         <div className={styles.details}>
           <DetailsWidget
