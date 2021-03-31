@@ -1,5 +1,5 @@
 import { ColonyRole } from '@colony/colony-js';
-import { ColonyAndExtensionsEvents, ColonyActions } from '~types/index';
+import { ColonyAndExtensionsEvents, ColonyActions, ColonyMotions } from '~types/index';
 
 import { STATUS } from './types';
 
@@ -103,6 +103,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.RecoveryModeExitApproved,
     ColonyAndExtensionsEvents.RecoveryModeExited,
   ],
+  [ColonyMotions.MintTokensMotion]: [ColonyAndExtensionsEvents.MotionCreated]
 };
 
 /*
