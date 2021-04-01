@@ -241,6 +241,7 @@ export const colonyActionsResolvers = ({
           domainPurpose: null,
           domainColor: null,
           blockNumber,
+          motionState: null,
           ...actionValues,
         };
       }
