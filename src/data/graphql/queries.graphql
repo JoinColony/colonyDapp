@@ -578,3 +578,9 @@ query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
 query ColonyReputation($address: String!) {
   colonyReputation(address: $address) @client
 }
+
+query VotingExtensionParams($colonyAddress: String!) {
+  votingExtensionParams(colonyAddress: $colonyAddress) @client {
+    stakePeriod
+  }
+}

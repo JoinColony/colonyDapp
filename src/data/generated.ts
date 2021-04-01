@@ -45,7 +45,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-    
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -302,6 +302,7 @@ export type Query = {
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
   username: Scalars['String'];
+  votingExtensionParams: VotingExtensionParams;
 };
 
 
@@ -467,6 +468,11 @@ export type QueryUserReputationArgs = {
 
 export type QueryUsernameArgs = {
   address: Scalars['String'];
+};
+
+
+export type QueryVotingExtensionParamsArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 export enum SuggestionStatus {
@@ -913,6 +919,10 @@ export type ProcessedColony = {
   events: Array<NetworkEvent>;
   isDeploymentFinished: Scalars['Boolean'];
   installedExtensions: Array<ColonyExtension>;
+};
+
+export type VotingExtensionParams = {
+  stakePeriod?: Maybe<Scalars['Int']>;
 };
 
 export type ActionsFilter = {
