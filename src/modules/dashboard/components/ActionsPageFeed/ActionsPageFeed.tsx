@@ -47,6 +47,7 @@ export interface EventValues {
   roles?: ActionUserRoles[];
   user?: Address;
   agent?: Address;
+  creator?: Address;
   slot?: Record<string, any>;
   toValue?: string;
   fromValue?: string;
