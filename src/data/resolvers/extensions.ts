@@ -58,6 +58,7 @@ export const extensionResolvers = ({
         const stakePeriod = stakePeriodBigNumber.toNumber();
 
         return {
+          __typename: 'VotingExtensionParams',
           stakePeriod,
         };
       } catch (error) {
