@@ -260,6 +260,7 @@ export default gql`
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     networkExtensionVersion(extensionId: String!): Int!
+    votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
   }
 
   extend type Mutation {
@@ -427,5 +428,9 @@ export default gql`
     events: [NetworkEvent!]!
     isDeploymentFinished: Boolean!
     installedExtensions: [ColonyExtension!]!
+  }
+
+  type VotingExtensionParams {
+    stakePeriod: Int
   }
 `;
