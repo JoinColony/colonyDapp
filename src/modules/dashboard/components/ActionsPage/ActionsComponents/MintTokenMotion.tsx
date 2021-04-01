@@ -13,11 +13,14 @@ import {
 } from '~data/index';
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
+import MemberReputation from '~core/MemberReputation';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
 import styles from './DefaultAction.css';
+
+import motionSpecificStyles from './MintTokenMotion.css';
 
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
 
@@ -40,13 +43,14 @@ const MintTokenMotion = ({
     colonyDisplayName,
     amount,
     motionState,
+    actionInitiator,
   },
   colonyAction,
   token: { decimals, symbol },
   transactionHash,
-  recipient,
   initiator,
 }: Props) => {
+  const motionTag = MOTION_TAG_MAP[MotionState.Motion];
 
   const actionAndEventValues = {
     actionType,
@@ -68,10 +72,12 @@ const MintTokenMotion = ({
         autoShrinkAddress
       />
     ),
-    reputation: "reputation",
-    motionTag: "motion tag"
+    reputation: <div className={motionSpecificStyles.reputation} ><MemberReputation
+        walletAddress={actionInitiator}
+        colonyAddress={colony.colonyAddress}
+      /></div>,
+    motionTag: <Tag text={motionTag.name} appearance={{theme: 'primary'}}/>
   };
-
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   return (
     <div className={styles.main}>
@@ -117,7 +123,6 @@ const MintTokenMotion = ({
         <div className={styles.details}>
           <DetailsWidget
             actionType={actionType as ColonyMotions}
-            recipient={recipient}
             transactionHash={transactionHash}
             colony={colony}
           />
