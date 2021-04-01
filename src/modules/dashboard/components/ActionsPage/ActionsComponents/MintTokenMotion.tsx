@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { defineMessage, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
 import { ActionsPageFeedItem } from '~dashboard/ActionsPageFeed';
@@ -14,47 +14,12 @@ import {
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { MotionState } from '~utils/events';
+import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
 import styles from './DefaultAction.css';
 
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
-
-const MSG = defineMessage({
-  motionTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.motionTag',
-    defaultMessage: 'Motion',
-  },
-  stakeRequiredTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.stakeRequiredTag',
-    defaultMessage: 'Stake required',
-  },
-  votingTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.votingTag',
-    defaultMessage: 'Voting',
-  },
-  revealTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.revealTag',
-    defaultMessage: 'Reveal',
-  },
-  objectionTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.objectionTag',
-    defaultMessage: 'Objection',
-  },
-  failedTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.failedTag',
-    defaultMessage: 'Failed',
-  },
-  passedTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.passedTag',
-    defaultMessage: 'Passed',
-  },
-  invalidTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.invalidTag',
-    defaultMessage: 'Invalid',
-  },
-});
 
 interface Props {
   colony: Colony;
@@ -102,49 +67,7 @@ const MintTokenMotion = ({
     ),
   };
 
-  const motionTagMap = {
-    [MotionState.Motion]: {
-      theme: 'primary',
-      colorSchema: 'fullColor',
-      name: MSG.motionTag,
-    },
-    [MotionState.StakeRequired]: {
-      theme: 'pink',
-      colorSchema: 'fullColor',
-      name: MSG.stakeRequiredTag,
-    },
-    [MotionState.Voting]: {
-      theme: 'golden',
-      colorSchema: 'fullColor',
-      name: MSG.votingTag,
-    },
-    [MotionState.Reveal]: {
-      theme: 'blue',
-      colorSchema: 'fullColor',
-      name: MSG.revealTag,
-    },
-    [MotionState.Objection]: {
-      theme: 'pink',
-      colorSchema: 'fullColor',
-      name: MSG.objectionTag,
-    },
-    [MotionState.Failed]: {
-      theme: 'pink',
-      colorSchema: 'plain',
-      name: MSG.failedTag,
-    },
-    [MotionState.Passed]: {
-      theme: 'primary',
-      colorSchema: 'plain',
-      name: MSG.passedTag,
-    },
-    [MotionState.Invalid]: {
-      theme: 'pink',
-      colorSchema: 'plain',
-      name: MSG.invalidTag,
-    },
-  };
-  const motionStyles = motionTagMap[motionState || MotionState.Invalid];
+  const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   return (
     <div className={styles.main}>
       <div className={styles.container}>

@@ -29,6 +29,7 @@ import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 
 import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
+import { NetworkMotionState, MotionState } from '../colonyMotions';
 
 interface ActionValues {
   recipient: Address;
@@ -40,28 +41,6 @@ interface ActionValues {
   newVersion: string;
   address: Address;
   roles: ActionUserRoles[];
-}
-
-export enum NetworkMotionState {
-  Null = 0,
-  Staking = 1,
-  Submit = 2,
-  Reveal = 3,
-  Closed = 4,
-  Finalizable = 5,
-  Finalized = 6,
-  Failed = 7,
-}
-
-export enum MotionState {
-  Motion = 'Motion',
-  StakeRequired = 'StakeRequired',
-  Voting = 'Voting',
-  Reveal = 'Reveal',
-  Objection = 'Objection',
-  Failed = 'Failed',
-  Passed = 'Passed',
-  Invalid = 'Invalid',
 }
 
 /*
