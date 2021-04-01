@@ -46,6 +46,24 @@ export const extensionResolvers = ({
       }
       return 0;
     },
+    async votingExtensionParams(_, { colonyAddress }) {
+      try {
+        const extensionClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
+        const stakePeriodBigNumber = await extensionClient.getStakePeriod();
+
+        const stakePeriod = stakePeriodBigNumber.toNumber();
+
+        return {
+          stakePeriod,
+        };
+      } catch (error) {
+        return error;
+      }
+    },
   },
   ColonyExtension: {
     async details({ address, extensionId }, { colonyAddress }) {
