@@ -86,7 +86,9 @@ const ActionsPageEvent = ({
     undefined,
   );
 
-  const initiator = useUser(values?.agent || values?.user || '');
+  const initiator = useUser(
+    values?.agent || values?.user || values?.creator || '',
+  );
 
   const [
     previousDomainMetadata,
@@ -326,7 +328,7 @@ const ActionsPageEvent = ({
                 clientOrExtensionType: (
                   <span className={styles.highlight}>{emmitedBy}</span>
                 ),
-                initiator: (
+                initiator: values?.initiator || (
                   <span className={styles.userDecoration}>
                     <FriendlyName user={initiator} autoShrinkAddress />
                   </span>

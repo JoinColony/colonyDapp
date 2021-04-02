@@ -118,7 +118,7 @@ export const getAllAvailableClients = async (
  */
 export const getEventsForActions = (
   events: ParsedEvent[],
-  actionType: ColonyActions,
+  actionType: ColonyActions | ColonyMotions,
 ): ParsedEvent[] => [
   ...((ACTIONS_EVENTS[actionType] as ColonyAndExtensionsEvents[]) || [])
     ?.map((event) => events.filter(({ name }) => name === event))

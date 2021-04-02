@@ -3,7 +3,9 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
-import { ActionsPageFeedItem } from '~dashboard/ActionsPageFeed';
+import ActionsPageFeed, {
+  ActionsPageFeedItem,
+} from '~dashboard/ActionsPageFeed';
 import { ColonyMotions } from '~types/index';
 import {
   Colony,
@@ -13,11 +15,14 @@ import {
 } from '~data/index';
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
+import MemberReputation from '~core/MemberReputation';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
 import styles from './DefaultAction.css';
+
+import motionSpecificStyles from './MintTokenMotion.css';
 
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
 
@@ -33,18 +38,22 @@ interface Props {
 const MintTokenMotion = ({
   colony,
   colonyAction: {
+    events = [],
     createdAt: actionCreatedAt,
     actionType,
     annotationHash,
     colonyDisplayName,
     amount,
     motionState,
+    actionInitiator,
   },
+  colonyAction,
   token: { decimals, symbol },
   transactionHash,
-  recipient,
   initiator,
 }: Props) => {
+  const motionTag = MOTION_TAG_MAP[MotionState.Motion];
+
   const actionAndEventValues = {
     actionType,
     amount: (
@@ -52,9 +61,17 @@ const MintTokenMotion = ({
     ),
     tokenSymbol: <span>{symbol || '???'}</span>,
     initiator: (
-      <span className={styles.titleDecoration}>
-        <FriendlyName user={initiator} autoShrinkAddress />
-      </span>
+      <>
+        <span className={styles.titleDecoration}>
+          <FriendlyName user={initiator} autoShrinkAddress />
+        </span>
+        <div className={motionSpecificStyles.reputation}>
+          <MemberReputation
+            walletAddress={actionInitiator}
+            colonyAddress={colony.colonyAddress}
+          />
+        </div>
+      </>
     ),
     colonyName: (
       <FriendlyName
@@ -65,8 +82,8 @@ const MintTokenMotion = ({
         autoShrinkAddress
       />
     ),
+    motionTag: <Tag text={motionTag.name} appearance={{ theme: 'primary' }} />,
   };
-
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   return (
     <div className={styles.main}>
@@ -100,11 +117,18 @@ const MintTokenMotion = ({
               comment={annotationHash}
             />
           )}
+          <ActionsPageFeed
+            actionType={actionType}
+            transactionHash={transactionHash as string}
+            networkEvents={events}
+            values={actionAndEventValues}
+            actionData={colonyAction}
+            colony={colony}
+          />
         </div>
         <div className={styles.details}>
           <DetailsWidget
             actionType={actionType as ColonyMotions}
-            recipient={recipient}
             transactionHash={transactionHash}
             colony={colony}
           />
