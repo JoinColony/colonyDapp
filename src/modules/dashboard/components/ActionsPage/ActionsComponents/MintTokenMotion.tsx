@@ -16,6 +16,7 @@ import {
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
+import CountDownTimer from '~core/CountDownTimer';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
@@ -87,7 +88,7 @@ const MintTokenMotion = ({
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   return (
     <div className={styles.main}>
-      <div className={styles.container}>
+      <div className={styles.upperContainer}>
         <p className={styles.tagWrapper}>
           <Tag
             text={motionStyles.name}
@@ -95,6 +96,13 @@ const MintTokenMotion = ({
               theme: motionStyles.theme,
               colorSchema: motionStyles.colorSchema,
             }}
+          />
+        </p>
+        <p className={styles.countdownContainer}>
+          <CountDownTimer
+            createdAt={actionCreatedAt}
+            colonyAddress={colony.colonyAddress}
+            copyOption="stake"
           />
         </p>
       </div>
