@@ -51,6 +51,7 @@ export interface EventValues {
   slot?: Record<string, any>;
   toValue?: string;
   fromValue?: string;
+  initiator?: string | ReactElement;
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };

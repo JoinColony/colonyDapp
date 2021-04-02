@@ -61,9 +61,17 @@ const MintTokenMotion = ({
     ),
     tokenSymbol: <span>{symbol || '???'}</span>,
     initiator: (
-      <span className={styles.titleDecoration}>
-        <FriendlyName user={initiator} autoShrinkAddress />
-      </span>
+      <>
+        <span className={styles.titleDecoration}>
+          <FriendlyName user={initiator} autoShrinkAddress />
+        </span>
+        <div className={motionSpecificStyles.reputation}>
+          <MemberReputation
+            walletAddress={actionInitiator}
+            colonyAddress={colony.colonyAddress}
+          />
+        </div>
+      </>
     ),
     colonyName: (
       <FriendlyName
@@ -73,14 +81,6 @@ const MintTokenMotion = ({
         }}
         autoShrinkAddress
       />
-    ),
-    reputation: (
-      <div className={motionSpecificStyles.reputation}>
-        <MemberReputation
-          walletAddress={actionInitiator}
-          colonyAddress={colony.colonyAddress}
-        />
-      </div>
     ),
     motionTag: <Tag text={motionTag.name} appearance={{ theme: 'primary' }} />,
   };
