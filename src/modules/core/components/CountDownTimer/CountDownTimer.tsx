@@ -6,44 +6,44 @@ import { FormattedMessage, defineMessage } from 'react-intl';
 import { useVotingExtensionParamsQuery } from '~data/index';
 import { Address } from '~types/index';
 
-import styles from './TimeLeftToStake.css';
+import styles from './CountDownTimer.css';
 import { calculateTimeLeft } from './calculateTimeLeft';
 
 const MSG = defineMessage({
   stake: {
-    id: 'TimeLeftToStake.TimeLeftToStake.stake',
+    id: 'CountDownTimer.CountDownTimer.stake',
     defaultMessage: 'Time left to stake',
   },
   motionPass: {
-    id: 'TimeLeftToStake.TimeLeftToStake.motionPass',
+    id: 'CountDownTimer.CountDownTimer.motionPass',
     defaultMessage: 'Motion will pass in',
   },
   motionFail: {
-    id: 'TimeLeftToStake.TimeLeftToStake.motionFail',
+    id: 'CountDownTimer.CountDownTimer.motionFail',
     defaultMessage: 'Motion will fail in',
   },
   reveal: {
-    id: 'TimeLeftToStake.TimeLeftToStake.reveal',
+    id: 'CountDownTimer.CountDownTimer.reveal',
     defaultMessage: 'Reveal ends in',
   },
   voting: {
-    id: 'TimeLeftToStake.TimeLeftToStake.voting',
+    id: 'CountDownTimer.CountDownTimer.voting',
     defaultMessage: 'Voting ends in',
   },
   days: {
-    id: 'TimeLeftToStake.days',
+    id: 'CountDownTimer.days',
     defaultMessage: ' {days}d',
   },
   hours: {
-    id: 'TimeLeftToStake.hours',
+    id: 'CountDownTimer.hours',
     defaultMessage: ' {hours}h',
   },
   minutes: {
-    id: 'TimeLeftToStake.minutes',
+    id: 'CountDownTimer.minutes',
     defaultMessage: ' {minutes}m',
   },
   seconds: {
-    id: 'TimeLeftToStake.seconds',
+    id: 'CountDownTimer.seconds',
     defaultMessage: ' {seconds}s',
   },
 });
@@ -54,7 +54,7 @@ interface Props {
   colonyAddress: Address;
 }
 
-const TimeLeftToStake = ({ copyOption, colonyAddress, createdAt }: Props) => {
+const CountDownTimer = ({ copyOption, colonyAddress, createdAt }: Props) => {
   const { data, error } = useVotingExtensionParamsQuery({
     variables: { colonyAddress },
   });
@@ -104,4 +104,4 @@ const TimeLeftToStake = ({ copyOption, colonyAddress, createdAt }: Props) => {
   );
 };
 
-export default TimeLeftToStake;
+export default CountDownTimer;
