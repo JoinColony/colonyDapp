@@ -429,6 +429,6 @@ export default gql`
   }
 
   type VotingExtensionParams {
-    stakePeriod: Int
+    stakePeriod: Int!
   }
 `;
