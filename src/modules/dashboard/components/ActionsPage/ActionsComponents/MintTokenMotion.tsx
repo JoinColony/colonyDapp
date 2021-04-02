@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { defineMessage, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
+import Numeral from '~core/Numeral';
 import { ActionsPageFeedItem } from '~dashboard/ActionsPageFeed';
 import { ColonyMotions } from '~types/index';
 import {
@@ -12,18 +13,13 @@ import {
 } from '~data/index';
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
 import styles from './DefaultAction.css';
 
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
-
-const MSG = defineMessage({
-  motionTag: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.tag',
-    defaultMessage: 'Motion',
-  },
-});
 
 interface Props {
   colony: Colony;
@@ -41,13 +37,20 @@ const MintTokenMotion = ({
     actionType,
     annotationHash,
     colonyDisplayName,
+    amount,
+    motionState,
   },
+  token: { decimals, symbol },
   transactionHash,
   recipient,
   initiator,
 }: Props) => {
   const actionAndEventValues = {
     actionType,
+    amount: (
+      <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
+    ),
+    tokenSymbol: <span>{symbol || '???'}</span>,
     initiator: (
       <span className={styles.titleDecoration}>
         <FriendlyName user={initiator} autoShrinkAddress />
@@ -63,12 +66,19 @@ const MintTokenMotion = ({
       />
     ),
   };
+
+  const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   return (
     <div className={styles.main}>
       <div className={styles.container}>
         <p className={styles.tagWrapper}>
-          {/* Make it dynamic */}
-          <Tag text={MSG.motionTag} appearance={{ theme: 'primary' }} />
+          <Tag
+            text={motionStyles.name}
+            appearance={{
+              theme: motionStyles.theme,
+              colorSchema: motionStyles.colorSchema,
+            }}
+          />
         </p>
       </div>
       <hr className={styles.dividerTop} />

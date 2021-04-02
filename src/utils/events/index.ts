@@ -3,6 +3,7 @@ import {
   ColonyClientV5,
   ClientType,
   getLogs,
+  ExtensionClient,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
@@ -10,6 +11,8 @@ import { AddressZero } from 'ethers/constants';
 import ColonyManagerClass from '~lib/ColonyManager';
 import {
   ColonyActions,
+  ColonyMotions,
+  motionNameMapping,
   ColonyAndExtensionsEvents,
   Address,
   FormattedAction,
@@ -26,6 +29,7 @@ import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 
 import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
+import { NetworkMotionState, MotionState } from '../colonyMotions';
 
 interface ActionValues {
   recipient: Address;
@@ -495,10 +499,84 @@ const getRecoveryActionValues = async (
   return recoveryAction;
 };
 
+// Motions
+const getMotionState = async (
+  motionNetworkState: NetworkMotionState,
+  votingClient: ExtensionClient,
+  motion,
+): Promise<MotionState> => {
+  const totalStakeFraction = await votingClient.getTotalStakeFraction();
+  const requiredStakes = bigNumberify(motion.skillRep)
+    .mul(totalStakeFraction)
+    .div(bigNumberify(10).pow(18));
+  switch (motionNetworkState) {
+    case NetworkMotionState.Staking:
+      return motion.stakes[1].eq(requiredStakes) && motion.stakes[0].isZero()
+        ? MotionState.Motion
+        : MotionState.StakeRequired;
+    case NetworkMotionState.Submit:
+      return MotionState.Voting;
+    case NetworkMotionState.Reveal:
+      return MotionState.Reveal;
+    case NetworkMotionState.Closed:
+      return motion.votes[0].gte(motion.votes[1])
+        ? MotionState.Objection
+        : MotionState.Motion;
+    case NetworkMotionState.Finalizable:
+    case NetworkMotionState.Finalized:
+      return motion.votes[0].gte(motion.votes[1])
+        ? MotionState.Failed
+        : MotionState.Passed;
+    case NetworkMotionState.Failed:
+      return MotionState.Failed;
+    default:
+      return MotionState.Invalid;
+  }
+};
+
+const getMintTokensMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<ActionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionid = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionid);
+  const motionNetworkState = await votingClient.getMotionState(motionid);
+  const motionState = await getMotionState(
+    motionNetworkState,
+    votingClient,
+    motion,
+  );
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const tokenAddress = await colonyClient.getToken();
+
+  const mintTokensMotionValues: {
+    motionState: MotionState;
+    address: Address;
+    amount: string;
+    actionInitiator: string;
+    recipient: Address;
+    tokenAddress: Address;
+  } = {
+    motionState,
+    address: motionCreatedEvent.address,
+    recipient: motion.altTarget,
+    actionInitiator: motionCreatedEvent.values.creator,
+    amount: bigNumberify(values.args[0] || '0').toString(),
+    tokenAddress,
+  };
+
+  return mintTokensMotionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
-  actionType: ColonyActions,
+  votingClient: ExtensionClient,
+  actionType: ColonyActions | ColonyMotions,
 ): Promise<ActionValues> => {
   const fallbackValues = {
     recipient: AddressZero,
@@ -594,6 +672,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...recoveryActionValues,
+      };
+    }
+    case ColonyMotions.MintTokensMotion: {
+      const mintTokensMotionValues = await getMintTokensMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...mintTokensMotionValues,
       };
     }
     default: {
@@ -709,4 +798,17 @@ export const groupSetUserRolesActions = (actions): FormattedAction[] => {
   });
 
   return groupedActions;
+};
+
+export const getMotionActionType = async (
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+  motionCreatedEvent: any,
+) => {
+  const motionid = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionid);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  return motionNameMapping[values.name];
 };

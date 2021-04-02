@@ -62,6 +62,7 @@ export default gql`
     domainPurpose: String!
     domainColor: String!
     blockNumber: Int!
+    motionState: String
   }
 
   input NetworkContractsInput {
