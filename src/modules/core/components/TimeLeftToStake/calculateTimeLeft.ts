@@ -1,4 +1,5 @@
 export const calculateTimeLeft = (createdAt: number, stakePeriod: number) => {
+  // 1617362399585
   const difference = createdAt + stakePeriod * 1000 - Date.now();
 
   return {
