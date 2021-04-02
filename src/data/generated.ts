@@ -929,7 +929,7 @@ export type ProcessedColony = {
 };
 
 export type VotingExtensionParams = {
-  stakePeriod?: Maybe<Scalars['Int']>;
+  stakePeriod: Scalars['Int'];
 };
 
 export type ActionsFilter = {
