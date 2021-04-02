@@ -13,7 +13,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.RecoveryStorageSlotSet} {{initiator} submitted new value for slot {storageSlot}}
       ${ColonyAndExtensionsEvents.RecoveryModeExitApproved} {{initiator} approved exiting}
       ${ColonyAndExtensionsEvents.RecoveryModeExited} {{initiator} exited Recovery Mode}
-      ${ColonyAndExtensionsEvents.MotionCreated} {{initiator} {reputation} created a {motionTag}}
+      ${ColonyAndExtensionsEvents.MotionCreated} {{initiator} created a {motionTag}}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
   /*
