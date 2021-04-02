@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FormattedMessage, defineMessage } from 'react-intl';
 
-// import TimeAgo from 'react-timeago';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import { useVotingExtensionParamsQuery } from '~data/index';
 import { Address } from '~types/index';
@@ -31,20 +31,24 @@ const MSG = defineMessage({
     defaultMessage: 'Voting ends in',
   },
   days: {
-    id: 'CountDownTimer.days',
+    id: 'CountDownTimer.CountDownTimer.days',
     defaultMessage: ' {days}d',
   },
   hours: {
-    id: 'CountDownTimer.hours',
+    id: 'CountDownTimer.CountDownTimer.hours',
     defaultMessage: ' {hours}h',
   },
   minutes: {
-    id: 'CountDownTimer.minutes',
+    id: 'CountDownTimer.CountDownTimer.minutes',
     defaultMessage: ' {minutes}m',
   },
   seconds: {
-    id: 'CountDownTimer.seconds',
+    id: 'CountDownTimer.CountDownTimer.seconds',
     defaultMessage: ' {seconds}s',
+  },
+  loadingText: {
+    id: 'CountDownTimer.CountDownTimer.loadingText',
+    defaultMessage: 'Loading countdown period',
   },
 });
 
@@ -55,7 +59,7 @@ interface Props {
 }
 
 const CountDownTimer = ({ copyOption, colonyAddress, createdAt }: Props) => {
-  const { data, error } = useVotingExtensionParamsQuery({
+  const { data, error, loading } = useVotingExtensionParamsQuery({
     variables: { colonyAddress },
   });
 
@@ -74,6 +78,10 @@ const CountDownTimer = ({ copyOption, colonyAddress, createdAt }: Props) => {
     }
     return undefined;
   }, [createdAt, stakePeriod]);
+
+  if (loading) {
+    return <MiniSpinnerLoader loadingText={MSG.loadingText} />;
+  }
 
   if (data === undefined || error || timeLeft === undefined) {
     return null;
