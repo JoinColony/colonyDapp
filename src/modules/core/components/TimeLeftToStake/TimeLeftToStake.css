@@ -6,4 +6,5 @@
 
 .time {
   opacity: 100%;
+  color: var(--dark);
 }
