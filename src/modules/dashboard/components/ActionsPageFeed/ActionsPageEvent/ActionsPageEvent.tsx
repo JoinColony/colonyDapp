@@ -86,7 +86,9 @@ const ActionsPageEvent = ({
     undefined,
   );
 
-  const initiator = useUser(values?.agent || values?.user || values?.creator || '');
+  const initiator = useUser(
+    values?.agent || values?.user || values?.creator || '',
+  );
 
   const [
     previousDomainMetadata,

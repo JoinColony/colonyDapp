@@ -3,7 +3,9 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
-import ActionsPageFeed, { ActionsPageFeedItem } from '~dashboard/ActionsPageFeed';
+import ActionsPageFeed, {
+  ActionsPageFeedItem,
+} from '~dashboard/ActionsPageFeed';
 import { ColonyMotions } from '~types/index';
 import {
   Colony,
@@ -72,11 +74,15 @@ const MintTokenMotion = ({
         autoShrinkAddress
       />
     ),
-    reputation: <div className={motionSpecificStyles.reputation} ><MemberReputation
-        walletAddress={actionInitiator}
-        colonyAddress={colony.colonyAddress}
-      /></div>,
-    motionTag: <Tag text={motionTag.name} appearance={{theme: 'primary'}}/>
+    reputation: (
+      <div className={motionSpecificStyles.reputation}>
+        <MemberReputation
+          walletAddress={actionInitiator}
+          colonyAddress={colony.colonyAddress}
+        />
+      </div>
+    ),
+    motionTag: <Tag text={motionTag.name} appearance={{ theme: 'primary' }} />,
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   return (
