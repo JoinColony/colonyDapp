@@ -47,6 +47,11 @@
   justify-content: space-between;
 }
 
+.upperContainer {
+  composes: container;
+  align-items: baseline;
+}
+
 .heading {
   margin-bottom: 20px;
   font-size: var(--size-medium-l);
@@ -68,6 +73,10 @@
 
 .details {
   width: 340px;
+}
+
+.countdownContainer {
+  composes: details;
 }
 
 .addressInTitle div {
