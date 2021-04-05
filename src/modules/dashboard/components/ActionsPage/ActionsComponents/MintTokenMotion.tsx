@@ -102,7 +102,8 @@ const MintTokenMotion = ({
           <CountDownTimer
             createdAt={actionCreatedAt}
             colonyAddress={colony.colonyAddress}
-            copyOption="stake"
+            copyOption="reveal"
+            periodType="revealPeriod"
           />
         </div>
       </div>
