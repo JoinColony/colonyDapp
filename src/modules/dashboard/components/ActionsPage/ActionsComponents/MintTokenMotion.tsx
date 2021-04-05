@@ -98,13 +98,13 @@ const MintTokenMotion = ({
             }}
           />
         </p>
-        <p className={styles.countdownContainer}>
+        <div className={styles.countdownContainer}>
           <CountDownTimer
             createdAt={actionCreatedAt}
             colonyAddress={colony.colonyAddress}
             copyOption="stake"
           />
-        </p>
+        </div>
       </div>
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
