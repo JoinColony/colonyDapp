@@ -582,5 +582,8 @@ query ColonyReputation($address: String!) {
 query VotingExtensionParams($colonyAddress: String!) {
   votingExtensionParams(colonyAddress: $colonyAddress) @client {
     stakePeriod
+    submitPeriod
+    revealPeriod
+    escalationPeriod
   }
 }

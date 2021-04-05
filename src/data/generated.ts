@@ -923,6 +923,9 @@ export type ProcessedColony = {
 
 export type VotingExtensionParams = {
   stakePeriod: Scalars['Int'];
+  submitPeriod: Scalars['Int'];
+  revealPeriod: Scalars['Int'];
+  escalationPeriod: Scalars['Int'];
 };
 
 export type ActionsFilter = {

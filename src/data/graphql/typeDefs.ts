@@ -430,5 +430,8 @@ export default gql`
 
   type VotingExtensionParams {
     stakePeriod: Int!
+    submitPeriod: Int!
+    revealPeriod: Int!
+    escalationPeriod: Int!
   }
 `;
