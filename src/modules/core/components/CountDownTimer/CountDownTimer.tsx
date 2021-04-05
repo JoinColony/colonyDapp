@@ -94,10 +94,10 @@ const CountDownTimer = ({ copyOption, colonyAddress, createdAt }: Props) => {
         {timeLeft.days > 0 && (
           <FormattedMessage {...MSG.days} values={{ days: timeLeft.days }} />
         )}
-        {timeLeft.days > 0 && timeLeft.hours > 0 && (
+        {(timeLeft.days > 0 || timeLeft.hours > 0) && (
           <FormattedMessage {...MSG.hours} values={{ hours: timeLeft.hours }} />
         )}
-        {timeLeft.days > 0 && timeLeft.hours > 0 && timeLeft.minutes > 0 && (
+        {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes) > 0 && (
           <FormattedMessage
             {...MSG.minutes}
             values={{ minutes: timeLeft.minutes }}
