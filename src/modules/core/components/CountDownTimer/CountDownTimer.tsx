@@ -54,16 +54,26 @@ const MSG = defineMessage({
 
 interface Props {
   copyOption: 'stake' | 'motionPass' | 'motionFail' | 'reveal' | 'voting';
+  periodType:
+    | 'stakePeriod'
+    | 'submitPeriod'
+    | 'revealPeriod'
+    | 'escalationPeriod';
   createdAt: number;
   colonyAddress: Address;
 }
 
-const CountDownTimer = ({ copyOption, colonyAddress, createdAt }: Props) => {
+const CountDownTimer = ({
+  copyOption,
+  colonyAddress,
+  createdAt,
+  periodType,
+}: Props) => {
   const { data, error, loading } = useVotingExtensionParamsQuery({
     variables: { colonyAddress },
   });
 
-  const stakePeriod = data?.votingExtensionParams.stakePeriod;
+  const stakePeriod = data?.votingExtensionParams[periodType];
 
   const [timeLeft, setTimeLeft] = useState(
     calculateTimeLeft(createdAt, stakePeriod),
