@@ -277,6 +277,7 @@ export type Query = {
   colonyExtension?: Maybe<ColonyExtension>;
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
+  colonyReputation?: Maybe<Scalars['String']>;
   domains: Array<SubgraphDomain>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
@@ -352,6 +353,11 @@ export type QueryColonyMembersWithReputationArgs = {
 
 
 export type QueryColonyNameArgs = {
+  address: Scalars['String'];
+};
+
+
+export type QueryColonyReputationArgs = {
   address: Scalars['String'];
 };
 
@@ -1546,6 +1552,13 @@ export type ColonyMembersWithReputationQueryVariables = Exact<{
 
 
 export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
+
+export type ColonyReputationQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyReputationQuery = Pick<Query, 'colonyReputation'>;
 
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
@@ -4004,6 +4017,37 @@ export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.Laz
 export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
+export const ColonyReputationDocument = gql`
+    query ColonyReputation($address: String!) {
+  colonyReputation(address: $address) @client
+}
+    `;
+
+/**
+ * __useColonyReputationQuery__
+ *
+ * To run a query within a React component, call `useColonyReputationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyReputationQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyReputationQuery(baseOptions?: Apollo.QueryHookOptions<ColonyReputationQuery, ColonyReputationQueryVariables>) {
+        return Apollo.useQuery<ColonyReputationQuery, ColonyReputationQueryVariables>(ColonyReputationDocument, baseOptions);
+      }
+export function useColonyReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyReputationQuery, ColonyReputationQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyReputationQuery, ColonyReputationQueryVariables>(ColonyReputationDocument, baseOptions);
+        }
+export type ColonyReputationQueryHookResult = ReturnType<typeof useColonyReputationQuery>;
+export type ColonyReputationLazyQueryHookResult = ReturnType<typeof useColonyReputationLazyQuery>;
+export type ColonyReputationQueryResult = Apollo.QueryResult<ColonyReputationQuery, ColonyReputationQueryVariables>;
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
