@@ -47,11 +47,6 @@ const MSG = defineMessages({
     id: 'dashboard.TokenMintDialog.TokenMintForm.forceMotion',
     defaultMessage: 'Force',
   },
-  tooltipText: {
-    id: 'dashboard.TokenMintDialog.TokenMintForm.tooltipText',
-    defaultMessage: `You cannot create this action as it requires reputation.
-    Instead, you can use permission to force an action.`,
-  },
 });
 
 interface Props {
