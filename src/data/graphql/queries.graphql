@@ -580,3 +580,7 @@ query ColonySubscribedUsers($colonyAddress: String!) {
 query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
 }
+
+query ColonyReputation($address: String!) {
+  colonyReputation(address: $address) @client
+}

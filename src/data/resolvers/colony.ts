@@ -265,6 +265,21 @@ export const colonyResolvers = ({
       const domain = await ens.getDomain(address, networkClient);
       return ENS.stripDomainParts('colony', domain);
     },
+    async colonyReputation(_, { address }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        address,
+      );
+
+      const { skillId } = await colonyClient.getDomain(ROOT_DOMAIN_ID);
+
+      const { reputationAmount } = await colonyClient.getReputation(
+        skillId,
+        AddressZero,
+      );
+
+      return reputationAmount.toString();
+    },
     async colonyMembersWithReputation(
       _,
       {
