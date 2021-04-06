@@ -4,5 +4,4 @@ export const inputComponent: string;
 export const nativeToken: string;
 export const annotation: string;
 export const noPermissionMessage: string;
-export const confirmButton: string;
-export const tooltip: string;
+export const reputationMessage: string;
