@@ -569,9 +569,9 @@ const getMintTokensMotionValues = async (
   colonyClient: ColonyClient,
 ): Promise<Partial<ActionValues>> => {
   const motionCreatedEvent = processedEvents[0];
-  const motionid = motionCreatedEvent.values.motionId.toString();
-  const motion = await votingClient.getMotion(motionid);
-  const motionNetworkState = await votingClient.getMotionState(motionid);
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const motionNetworkState = await votingClient.getMotionState(motionId);
   const motionState = await getMotionState(
     motionNetworkState,
     votingClient,
@@ -583,6 +583,9 @@ const getMintTokensMotionValues = async (
   const tokenAddress = await colonyClient.getToken();
 
   const mintTokensMotionValues: {
+    motionId: string;
+    rootHash: string;
+    motionDomainId: number;
     motionState: MotionState;
     address: Address;
     amount: string;
@@ -591,6 +594,9 @@ const getMintTokensMotionValues = async (
     tokenAddress: Address;
     motionDomain: number;
   } = {
+    motionId,
+    rootHash: motion.rootHash,
+    motionDomainId: motion.domainId.toNumber(),
     motionState,
     address: motionCreatedEvent.address,
     recipient: motion.altTarget,
