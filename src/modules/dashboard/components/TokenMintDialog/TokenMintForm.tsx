@@ -13,15 +13,10 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Toggle from '~core/Fields/Toggle';
 
-import {
-  ColonyTokens,
-  OneToken,
-  Colony,
-  useLoggedInUser,
-  useColonyReputationQuery,
-} from '~data/index';
+import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useTransformer } from '~utils/hooks';
+import { useColonyReputation } from '~utils/hooks/useColonyReputation';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -77,12 +72,6 @@ const TokenMintForm = ({
   nativeToken,
   values,
 }: Props & FormikProps<FormValues>) => {
-  const { data, error } = useColonyReputationQuery({
-    variables: {
-      address: colony.colonyAddress,
-    },
-  });
-
   const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
@@ -92,10 +81,10 @@ const TokenMintForm = ({
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
+  const { isColonyReputationZero } = useColonyReputation(colony.colonyAddress);
+
   const onlyForceAction =
-    isVotingExtensionEnabled &&
-    (data?.colonyReputation === '0' || error) &&
-    !values.forceAction;
+    isVotingExtensionEnabled && isColonyReputationZero && !values.forceAction;
   const inputDisabled = !userHasPermission || onlyForceAction;
 
   return (
