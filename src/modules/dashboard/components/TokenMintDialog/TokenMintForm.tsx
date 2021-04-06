@@ -5,15 +5,23 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
-import { Input, Annotations } from '~core/Fields';
-import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
 import DialogSection from '~core/Dialog/DialogSection';
+import { Input, Annotations } from '~core/Fields';
+import Heading from '~core/Heading';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import PermissionsLabel from '~core/PermissionsLabel';
+import { Tooltip } from '~core/Popover';
+import Toggle from '~core/Fields/Toggle';
+
+import {
+  ColonyTokens,
+  OneToken,
+  Colony,
+  useLoggedInUser,
+  useColonyReputationQuery,
+} from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useTransformer } from '~utils/hooks';
-import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import Heading from '~core/Heading';
-import PermissionsLabel from '~core/PermissionsLabel';
-import Toggle from '~core/Fields/Toggle';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -44,6 +52,11 @@ const MSG = defineMessages({
     id: 'dashboard.TokenMintDialog.TokenMintForm.forceMotion',
     defaultMessage: 'Force',
   },
+  tooltipText: {
+    id: 'dashboard.TokenMintDialog.TokenMintForm.tooltipText',
+    defaultMessage: `You cannot create this action as it requires reputation.
+    Instead, you can use permission to force an action.`,
+  },
 });
 
 interface Props {
@@ -62,7 +75,14 @@ const TokenMintForm = ({
   isValid,
   handleSubmit,
   nativeToken,
+  values,
 }: Props & FormikProps<FormValues>) => {
+  const { data, error } = useColonyReputationQuery({
+    variables: {
+      address: colony.colonyAddress,
+    },
+  });
+
   const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
@@ -71,6 +91,21 @@ const TokenMintForm = ({
   const userHasPermission = canMintTokens || isVotingExtensionEnabled;
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
+
+  const onlyForceAction =
+    (data?.colonyReputation === '0' || error) && !values.forceAction;
+  const inputDisabled = !userHasPermission || onlyForceAction;
+
+  const confirmButton = (
+    <Button
+      appearance={{ theme: 'primary', size: 'large' }}
+      onClick={() => handleSubmit()}
+      text={{ id: 'button.confirm' }}
+      loading={isSubmitting}
+      disabled={!isValid || inputDisabled}
+      style={{ width: styles.wideButton }}
+    />
+  );
 
   return (
     <>
@@ -102,7 +137,7 @@ const TokenMintForm = ({
               }}
               label={MSG.amountLabel}
               name="mintAmount"
-              disabled={!userHasPermission}
+              disabled={inputDisabled}
             />
           </div>
           <span
@@ -118,7 +153,7 @@ const TokenMintForm = ({
           <Annotations
             label={MSG.annotationLabel}
             name="annotation"
-            disabled={!userHasPermission}
+            disabled={inputDisabled}
           />
         </div>
       </DialogSection>
@@ -147,14 +182,30 @@ const TokenMintForm = ({
           onClick={back}
           text={{ id: 'button.back' }}
         />
-        <Button
-          appearance={{ theme: 'primary', size: 'large' }}
-          onClick={() => handleSubmit()}
-          text={{ id: 'button.confirm' }}
-          loading={isSubmitting}
-          disabled={!isValid || !userHasPermission}
-          style={{ width: styles.wideButton }}
-        />
+        {onlyForceAction ? (
+          <Tooltip
+            appearance={{ theme: 'dark' }}
+            content={
+              <div className={styles.tooltip}>
+                <FormattedMessage {...MSG.tooltipText} />
+              </div>
+            }
+            popperProps={{
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [10, 10],
+                  },
+                },
+              ],
+            }}
+          >
+            <span className={styles.confirmButton}>{confirmButton}</span>
+          </Tooltip>
+        ) : (
+          confirmButton
+        )}
       </DialogSection>
     </>
   );

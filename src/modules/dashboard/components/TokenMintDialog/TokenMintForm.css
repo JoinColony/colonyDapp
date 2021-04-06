@@ -38,3 +38,11 @@
 .noPermissionMessage > div {
   vertical-align: bottom;
 }
+
+.confirmButton {
+  margin-left: 10px;
+}
+
+.tooltip {
+  max-width: 200px;
+}
