@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { bigNumberify } from 'ethers/utils';
 
+import { useLoggedInUser, useStakeMotionLimitsQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import Heading from '~core/Heading';
 import { ActionForm } from '~core/Fields';
@@ -14,6 +16,8 @@ import Button from '~core/Button';
 
 type Props = {
   motionId: string;
+  motionDomainId: number;
+  rootHash: string;
   colonyAddress: Address;
 };
 
@@ -38,29 +42,41 @@ const MSG = defineMessages({
   },
 });
 
-const StakingWidget = ({ motionId, colonyAddress }: Props) => {
+const StakingWidget = ({
+  motionId,
+  motionDomainId,
+  rootHash,
+  colonyAddress,
+}: Props) => {
+  const { walletAddress } = useLoggedInUser();
+  const { data } = useStakeMotionLimitsQuery({
+    variables: { colonyAddress, motionId },
+  });
   const validationSchema = yup.object().shape({
-    amount: yup.number().required().moreThan(0),
+    amount: yup.number().required(),
   });
 
   const transform = useCallback(
     pipe(
       mapPayload(({ amount }) => {
         return {
-          amount,
+          amount: bigNumberify(amount),
+          userAddress: walletAddress,
+          rootHash,
           colonyAddress,
-          motionId,
-          vote: 1,
+          motionId: bigNumberify(motionId),
+          motionDomainId: bigNumberify(motionDomainId),
+          vote: bigNumberify(1),
         };
       }),
     ),
-    [],
+    [walletAddress, colonyAddress, motionId],
   );
 
   return (
     <ActionForm
       initialValues={{
-        amount: 0,
+        amount: 125,
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.MOTION_STAKE}
@@ -75,13 +91,13 @@ const StakingWidget = ({ motionId, colonyAddress }: Props) => {
             <FormattedMessage {...MSG.description} />
           </p>
           <span className={styles.amount}>{values.amount}</span>
-          <Slider name="amount" value={values.amount} />
+          <Slider
+            name="amount"
+            value={values.amount}
+            max={data?.stakeMotionLimits?.maxStake}
+          />
           <div className={styles.buttonGroup}>
-            <Button
-              type="submit"
-              disabled={!isValid || !values.amount}
-              text={MSG.stakeButton}
-            />
+            <Button type="submit" disabled={!isValid} text={MSG.stakeButton} />
             <Button appearance={{ theme: 'pink' }} text={MSG.objectButton} />
           </div>
         </div>

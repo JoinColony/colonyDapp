@@ -1,6 +1,5 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { TEMP_getContext, ContextModule } from '~context/index';
@@ -15,7 +14,15 @@ import { transactionReady } from '../../../core/actionCreators';
 
 function* stakeMotionAction({
   meta,
-  payload: { colonyAddress, motionId, vote, amount },
+  payload: {
+    userAddress,
+    colonyAddress,
+    motionId,
+    motionDomainId,
+    rootHash,
+    vote,
+    amount,
+  },
 }: Action<ActionTypes.MOTION_STAKE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
@@ -27,13 +34,14 @@ function* stakeMotionAction({
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      ROOT_DOMAIN_ID,
+      motionDomainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
       colonyClient.getReputation,
       skillId,
-      AddressZero,
+      userAddress,
+      rootHash,
     );
 
     const { stakeMotion } = yield createTransactionChannels(meta.id, [
