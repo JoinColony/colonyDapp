@@ -1,0 +1,10 @@
+.text {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.title {
+  composes: text;
+  color: var(--pink);
+}
