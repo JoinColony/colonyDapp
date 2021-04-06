@@ -14,9 +14,12 @@ export type MotionActionTypes =
   | UniqueActionType<
       ActionTypes.MOTION_STAKE,
       {
+        userAddress: Address;
         colonyAddress: Address;
-        motionId: string;
-        vote: number;
+        motionId: BigNumber;
+        motionDomainId: BigNumber;
+        rootHash: string;
+        vote: BigNumber;
         amount: BigNumber;
       },
       MetaWithHistory<object>
