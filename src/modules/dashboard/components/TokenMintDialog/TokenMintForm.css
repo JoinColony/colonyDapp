@@ -39,10 +39,6 @@
   vertical-align: bottom;
 }
 
-.confirmButton {
-  margin-left: 10px;
-}
-
-.tooltip {
-  max-width: 200px;
+.reputationMessage {
+  margin: 10px 0 30px 0;
 }

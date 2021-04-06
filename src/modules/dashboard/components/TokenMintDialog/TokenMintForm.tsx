@@ -8,9 +8,9 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
+import NotEnoughReputation from '~core/NotEnoughReputation';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
-import { Tooltip } from '~core/Popover';
 import Toggle from '~core/Fields/Toggle';
 
 import {
@@ -93,19 +93,10 @@ const TokenMintForm = ({
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
   const onlyForceAction =
-    (data?.colonyReputation === '0' || error) && !values.forceAction;
+    isVotingExtensionEnabled &&
+    (data?.colonyReputation === '0' || error) &&
+    !values.forceAction;
   const inputDisabled = !userHasPermission || onlyForceAction;
-
-  const confirmButton = (
-    <Button
-      appearance={{ theme: 'primary', size: 'large' }}
-      onClick={() => handleSubmit()}
-      text={{ id: 'button.confirm' }}
-      loading={isSubmitting}
-      disabled={!isValid || inputDisabled}
-      style={{ width: styles.wideButton }}
-    />
-  );
 
   return (
     <>
@@ -176,36 +167,27 @@ const TokenMintForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.reputationMessage}>
+            <NotEnoughReputation />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
           onClick={back}
           text={{ id: 'button.back' }}
         />
-        {onlyForceAction ? (
-          <Tooltip
-            appearance={{ theme: 'dark' }}
-            content={
-              <div className={styles.tooltip}>
-                <FormattedMessage {...MSG.tooltipText} />
-              </div>
-            }
-            popperProps={{
-              modifiers: [
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [10, 10],
-                  },
-                },
-              ],
-            }}
-          >
-            <span className={styles.confirmButton}>{confirmButton}</span>
-          </Tooltip>
-        ) : (
-          confirmButton
-        )}
+        <Button
+          appearance={{ theme: 'primary', size: 'large' }}
+          onClick={() => handleSubmit()}
+          text={{ id: 'button.confirm' }}
+          loading={isSubmitting}
+          disabled={!isValid || inputDisabled}
+          style={{ width: styles.wideButton }}
+        />
       </DialogSection>
     </>
   );
