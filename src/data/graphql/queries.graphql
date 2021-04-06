@@ -248,6 +248,9 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     domainName
     domainPurpose
     domainColor
+    motionId
+    motionDomainId
+    rootHash
     motionState
     motionDomain
     roles {
@@ -368,6 +371,13 @@ query RecoveryAllEnteredEvents($colonyAddress: String!) {
     emmitedBy
     blockNumber
     transactionHash
+  }
+}
+
+query StakeMotionLimits($colonyAddress: String!, $motionId: String!) {
+  stakeMotionLimits(colonyAddress: $colonyAddress, motionId: $motionId) @client {
+    minStake
+    maxStake
   }
 }
 

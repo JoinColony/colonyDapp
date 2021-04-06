@@ -62,6 +62,9 @@ export default gql`
     domainPurpose: String!
     domainColor: String!
     blockNumber: Int!
+    motionId: String!
+    motionDomainId: Int!
+    rootHash: String!
     motionState: String
     motionDomain: Int!
   }
@@ -181,6 +184,11 @@ export default gql`
     avatarURL: String
   }
 
+  type StakeLimits {
+    minStake: Int!
+    maxStake: Int!
+  }
+
   type UserProfile {
     avatarHash: String
     displayName: String
@@ -250,7 +258,6 @@ export default gql`
       colonyAddress: String!
       walletAddress: String!
     ): [ActionThatNeedsAttention]!
-    eventsForMotion(motionId: Int!, colonyAddress: String!): [ParsedEvent!]!
     recoveryEventsForSession(
       blockNumber: Int!
       colonyAddress: String!
@@ -281,6 +288,7 @@ export default gql`
       motionId: Int!
       colonyAddress: String!
     ): [SystemMessage!]!
+    stakeMotionLimits(colonyAddress: String!, motionId: String!): StakeLimits!
     motionVoterReward(
       motionId: Int!
       colonyAddress: String!

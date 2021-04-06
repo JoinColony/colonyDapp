@@ -299,6 +299,7 @@ export type Query = {
   recoveryRolesAndApprovalsForSession: Array<UsersAndRecoveryApprovals>;
   recoveryRolesUsers: Array<User>;
   recoverySystemMessagesForSession: Array<SystemMessage>;
+  stakeMotionLimits: StakeLimits;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   token: Token;
@@ -474,6 +475,12 @@ export type QueryRecoveryRolesUsersArgs = {
 export type QueryRecoverySystemMessagesForSessionArgs = {
   blockNumber: Scalars['Int'];
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryStakeMotionLimitsArgs = {
+  colonyAddress: Scalars['String'];
+  motionId: Scalars['String'];
 };
 
 
@@ -705,6 +712,9 @@ export type ColonyAction = {
   domainPurpose: Scalars['String'];
   domainColor: Scalars['String'];
   blockNumber: Scalars['Int'];
+  motionId: Scalars['String'];
+  motionDomainId: Scalars['Int'];
+  rootHash: Scalars['String'];
   motionState?: Maybe<Scalars['String']>;
   motionDomain: Scalars['Int'];
 };
@@ -821,6 +831,11 @@ export type ProcessedMetaColony = {
   displayName?: Maybe<Scalars['String']>;
   avatarHash?: Maybe<Scalars['String']>;
   avatarURL?: Maybe<Scalars['String']>;
+};
+
+export type StakeLimits = {
+  minStake: Scalars['Int'];
+  maxStake: Scalars['Int'];
 };
 
 export type UsersAndRecoveryApprovals = {
@@ -1407,7 +1422,11 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
+<<<<<<< HEAD
     Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber'>
+=======
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionId' | 'motionDomainId' | 'rootHash' | 'motionState' | 'blockNumber'>
+>>>>>>> Added stakeMotionLImits query and motion data to colonyAction
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -1509,6 +1528,14 @@ export type RecoveryAllEnteredEventsQueryVariables = Exact<{
 
 
 export type RecoveryAllEnteredEventsQuery = { recoveryAllEnteredEvents: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'blockNumber' | 'transactionHash'>> };
+
+export type StakeMotionLimitsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  motionId: Scalars['String'];
+}>;
+
+
+export type StakeMotionLimitsQuery = { stakeMotionLimits: Pick<StakeLimits, 'minStake' | 'maxStake'> };
 
 export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3128,6 +3155,9 @@ export const ColonyActionDocument = gql`
     domainName
     domainPurpose
     domainColor
+    motionId
+    motionDomainId
+    rootHash
     motionState
     motionDomain
     roles {
@@ -3609,6 +3639,41 @@ export function useRecoveryAllEnteredEventsLazyQuery(baseOptions?: Apollo.LazyQu
 export type RecoveryAllEnteredEventsQueryHookResult = ReturnType<typeof useRecoveryAllEnteredEventsQuery>;
 export type RecoveryAllEnteredEventsLazyQueryHookResult = ReturnType<typeof useRecoveryAllEnteredEventsLazyQuery>;
 export type RecoveryAllEnteredEventsQueryResult = Apollo.QueryResult<RecoveryAllEnteredEventsQuery, RecoveryAllEnteredEventsQueryVariables>;
+export const StakeMotionLimitsDocument = gql`
+    query StakeMotionLimits($colonyAddress: String!, $motionId: String!) {
+  stakeMotionLimits(colonyAddress: $colonyAddress, motionId: $motionId) @client {
+    minStake
+    maxStake
+  }
+}
+    `;
+
+/**
+ * __useStakeMotionLimitsQuery__
+ *
+ * To run a query within a React component, call `useStakeMotionLimitsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStakeMotionLimitsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStakeMotionLimitsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      motionId: // value for 'motionId'
+ *   },
+ * });
+ */
+export function useStakeMotionLimitsQuery(baseOptions?: Apollo.QueryHookOptions<StakeMotionLimitsQuery, StakeMotionLimitsQueryVariables>) {
+        return Apollo.useQuery<StakeMotionLimitsQuery, StakeMotionLimitsQueryVariables>(StakeMotionLimitsDocument, baseOptions);
+      }
+export function useStakeMotionLimitsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StakeMotionLimitsQuery, StakeMotionLimitsQueryVariables>) {
+          return Apollo.useLazyQuery<StakeMotionLimitsQuery, StakeMotionLimitsQueryVariables>(StakeMotionLimitsDocument, baseOptions);
+        }
+export type StakeMotionLimitsQueryHookResult = ReturnType<typeof useStakeMotionLimitsQuery>;
+export type StakeMotionLimitsLazyQueryHookResult = ReturnType<typeof useStakeMotionLimitsLazyQuery>;
+export type StakeMotionLimitsQueryResult = Apollo.QueryResult<StakeMotionLimitsQuery, StakeMotionLimitsQueryVariables>;
 export const LegacyNumberOfRecoveryRolesDocument = gql`
     query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
