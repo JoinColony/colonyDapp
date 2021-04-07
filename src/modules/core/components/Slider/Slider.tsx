@@ -12,6 +12,7 @@ type Appearance = {
 interface Props {
   value: number;
   max?: number;
+  min?: number;
   limit?: number;
   appearance?: Appearance;
   onChange?: (val: any) => void;
@@ -23,6 +24,7 @@ const displayName = 'Slider';
 const Slider = ({
   value,
   max = 100,
+  min = 0,
   onChange,
   limit,
   appearance,
@@ -94,7 +96,7 @@ const Slider = ({
 
   return (
     <ReactSlider
-      min={0}
+      min={min}
       step={1}
       value={sliderValue}
       onChange={onSliderChange}
