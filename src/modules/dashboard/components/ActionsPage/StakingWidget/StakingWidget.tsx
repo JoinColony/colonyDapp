@@ -49,8 +49,8 @@ const StakingWidget = ({
   colonyAddress,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
-  const { data } = useStakeMotionLimitsQuery({
-    variables: { colonyAddress, motionId },
+  const { data, loading } = useStakeMotionLimitsQuery({
+    variables: { colonyAddress, userAddress: walletAddress, motionId },
   });
   const validationSchema = yup.object().shape({
     amount: yup.number().required(),
@@ -73,10 +73,16 @@ const StakingWidget = ({
     [walletAddress, colonyAddress, motionId],
   );
 
+  if (loading || !data?.stakeMotionLimits) {
+    return null;
+  }
+
+  const { minStake, maxStake } = data.stakeMotionLimits;
+
   return (
     <ActionForm
       initialValues={{
-        amount: 125,
+        amount: minStake,
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.MOTION_STAKE}
@@ -94,7 +100,8 @@ const StakingWidget = ({
           <Slider
             name="amount"
             value={values.amount}
-            max={data?.stakeMotionLimits?.maxStake}
+            min={minStake}
+            max={maxStake}
           />
           <div className={styles.buttonGroup}>
             <Button type="submit" disabled={!isValid} text={MSG.stakeButton} />
