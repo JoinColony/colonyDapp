@@ -8,7 +8,7 @@ export const stakesResolvers = ({
   colonyManager,
 }: Required<Context>): Resolvers => ({
   Query: {
-    async stakeMotionLimits(_, { colonyAddress, motionId }) {
+    async stakeMotionLimits(_, { colonyAddress, userAddress, motionId }) {
       try {
         const colonyClient = (await colonyManager.getClient(
           ClientType.ColonyClient,
@@ -17,8 +17,15 @@ export const stakesResolvers = ({
         const votingReputationClient = await colonyClient.getExtensionClient(
           Extension.VotingReputation,
         );
-        const { skillRep, stakes } = await votingReputationClient.getMotion(
-          motionId,
+        const {
+          skillRep,
+          stakes,
+          domainId,
+        } = await votingReputationClient.getMotion(motionId);
+        const { skillId } = await colonyClient.getDomain(domainId);
+        const { reputationAmount } = await colonyClient.getReputation(
+          skillId,
+          userAddress,
         );
         // @NOTE There's no prettier compatible solution to this :(
         // eslint-disable-next-line max-len
@@ -36,9 +43,18 @@ export const stakesResolvers = ({
           .mul(userMinStakeFraction)
           .div(bigNumberify(10).pow(54))
           .toNumber();
+        const formattedReputationAmount = reputationAmount
+          .div(bigNumberify(10).pow(18))
+          .toNumber();
 
-        const maxStake = totalStakeAmount - totalStaked;
+        let maxStake: number;
         let minStake: number;
+
+        if (formattedReputationAmount >= totalStakeAmount - totalStaked) {
+          maxStake = totalStakeAmount - totalStaked;
+        } else {
+          maxStake = formattedReputationAmount;
+        }
 
         if (userMinStakeAmount > totalStakeAmount - totalStaked) {
           minStake = totalStakeAmount - totalStaked;
