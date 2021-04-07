@@ -288,7 +288,11 @@ export default gql`
       motionId: Int!
       colonyAddress: String!
     ): [SystemMessage!]!
-    stakeMotionLimits(colonyAddress: String!, motionId: String!): StakeLimits!
+    stakeMotionLimits(
+      colonyAddress: String!
+      userAddress: String!
+      motionId: String!
+    ): StakeLimits!
     motionVoterReward(
       motionId: Int!
       colonyAddress: String!
