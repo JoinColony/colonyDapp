@@ -76,10 +76,10 @@ const TokenMintForm = ({
 
   const { colonyHasReputation } = useColonyReputation(colony.colonyAddress);
   const onlyForceAction =
-    isVotingExtensionEnabled && colonyHasReputation && !values.forceAction;
+    isVotingExtensionEnabled && !colonyHasReputation && !values.forceAction;
 
   const userHasPermission =
-    canMintTokens || (isVotingExtensionEnabled && !colonyHasReputation);
+    canMintTokens || (isVotingExtensionEnabled && colonyHasReputation);
 
   const inputDisabled = !userHasPermission || onlyForceAction;
 
