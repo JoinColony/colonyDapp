@@ -1,7 +1,13 @@
-export const calculateTimeLeft = (createdAt: number, actionPeriod?: number) => {
-  const difference = actionPeriod
-    ? createdAt + actionPeriod * 1000 - Date.now()
-    : 0;
+export const calculateTimeLeft = (
+  createdAt: number,
+  timeSinceLastRefreshed: number,
+  timeNow?: number,
+  actionPeriod?: number,
+) => {
+  const difference =
+    actionPeriod && timeNow
+      ? createdAt + actionPeriod * 1000 - (timeNow + timeSinceLastRefreshed)
+      : 0;
 
   if (difference > 0) {
     return {

@@ -4,7 +4,7 @@ import { FormattedMessage, MessageDescriptor, defineMessage } from 'react-intl';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
-import { useVotingExtensionParamsQuery } from '~data/index';
+import { useVotingExtensionParamsQuery, useBlockTimeQuery } from '~data/index';
 import { Address } from '~types/index';
 
 import styles from './CountDownTimer.css';
@@ -56,20 +56,35 @@ const CountDownTimer = ({
     variables: { colonyAddress },
   });
   const stakePeriod = data?.votingExtensionParams[periodType];
+  const { data: blockTimeData } = useBlockTimeQuery();
 
+  const [timeSinceLastRefreshed, setTimeSinceLastRefreshed] = useState(0);
   const [timeLeft, setTimeLeft] = useState(
-    calculateTimeLeft(createdAt, stakePeriod),
+    calculateTimeLeft(
+      createdAt,
+      timeSinceLastRefreshed,
+      blockTimeData?.blockTime,
+      stakePeriod,
+    ),
   );
 
   useEffect(() => {
-    if (stakePeriod !== undefined) {
+    if (stakePeriod !== undefined && blockTimeData !== undefined) {
       const timer = setInterval(() => {
-        setTimeLeft(calculateTimeLeft(createdAt, stakePeriod));
+        setTimeSinceLastRefreshed(timeSinceLastRefreshed + 500);
+        setTimeLeft(
+          calculateTimeLeft(
+            createdAt,
+            timeSinceLastRefreshed,
+            blockTimeData.blockTime + timeSinceLastRefreshed,
+            stakePeriod,
+          ),
+        );
       }, 1000);
       return () => clearInterval(timer);
     }
     return undefined;
-  }, [createdAt, stakePeriod]);
+  }, [createdAt, stakePeriod, blockTimeData, timeSinceLastRefreshed]);
 
   if (loading || data === undefined) {
     return <MiniSpinnerLoader loadingText={MSG.loadingText} />;
