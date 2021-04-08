@@ -9,6 +9,6 @@ export const useColonyReputation = (colonyAddress: Address) => {
   });
 
   return {
-    colonyHasReputation: data?.colonyReputation === '0' || error,
+    colonyHasReputation: data?.colonyReputation !== '0' && !error,
   };
 };
