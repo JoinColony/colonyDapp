@@ -70,16 +70,17 @@ const TokenMintForm = ({
   const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
   const canMintTokens = canMintNativeToken && hasRoot(allUserRoles);
-  const userHasPermission = canMintTokens || isVotingExtensionEnabled;
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
   const { colonyHasReputation } = useColonyReputation(colony.colonyAddress);
-
   const onlyForceAction =
     isVotingExtensionEnabled && colonyHasReputation && !values.forceAction;
+
+  const userHasPermission =
+    canMintTokens || (isVotingExtensionEnabled && !colonyHasReputation);
+
   const inputDisabled = !userHasPermission || onlyForceAction;
 
   return (
