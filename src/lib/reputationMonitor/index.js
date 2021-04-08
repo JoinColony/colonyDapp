@@ -43,7 +43,7 @@ async function doBlockChecks(blockNumber) {
     lastBlockThisServiceMined = blockNumber + 1;
     return;
   }
-  // If the active log length is greater than one, mine a block
+  // If the active log length is anything other than 0, mine a block
   const activeCycleAddress = await colonyNetwork.getReputationMiningCycle(true);
   const activeMiningCycle = new ethers.Contract(
     activeCycleAddress,
@@ -51,7 +51,7 @@ async function doBlockChecks(blockNumber) {
     provider,
   );
   logLength = await activeMiningCycle.getReputationUpdateLogLength();
-  if (logLength.gt(1)) {
+  if (!logLength.eq(1)) {
     await forwardTime(86401);
     lastBlockThisServiceMined = blockNumber + 1;
     return;
