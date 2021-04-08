@@ -269,6 +269,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
+  blockTime: Scalars['Int'];
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
@@ -309,6 +310,11 @@ export type Query = {
 export type QueryActionsThatNeedAttentionArgs = {
   colonyAddress: Scalars['String'];
   walletAddress: Scalars['String'];
+};
+
+
+export type QueryBlockTimeArgs = {
+  blockHash?: Maybe<Scalars['String']>;
 };
 
 
@@ -1572,6 +1578,13 @@ export type ColonyReputationQueryVariables = Exact<{
 
 
 export type ColonyReputationQuery = Pick<Query, 'colonyReputation'>;
+
+export type BlockTimeQueryVariables = Exact<{
+  blockHash?: Maybe<Scalars['String']>;
+}>;
+
+
+export type BlockTimeQuery = Pick<Query, 'blockTime'>;
 
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];

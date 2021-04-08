@@ -259,6 +259,7 @@ export default gql`
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
+    blockTime(blockHash: String): Int!
   }
 
   extend type Mutation {

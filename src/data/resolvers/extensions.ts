@@ -1,10 +1,11 @@
 import { Resolvers } from '@apollo/client';
 
-import { ClientType } from '@colony/colony-js';
+import { ClientType, getBlockTime } from '@colony/colony-js';
 
 import { Context } from '~context/index';
 
 export const extensionsResolvers = ({
+  colonyManager: { networkClient },
   colonyManager,
 }: Required<Context>): Resolvers => ({
   Query: {
@@ -34,6 +35,17 @@ export const extensionsResolvers = ({
           revealPeriod,
           escalationPeriod,
         };
+      } catch (error) {
+        return error;
+      }
+    },
+    async blockTime(_, { blockHash }) {
+      try {
+        const blocktime = await getBlockTime(
+          networkClient.provider,
+          blockHash === undefined ? 'latest' : blockHash,
+        );
+        return blocktime;
       } catch (error) {
         return error;
       }
