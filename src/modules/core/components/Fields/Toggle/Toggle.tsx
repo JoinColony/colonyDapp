@@ -37,7 +37,7 @@ const Toggle = ({
   disabled = false,
   elementOnly = false,
   tooltipTextValues,
-  // tooltipText,
+  tooltipText,
   tooltipPopperProps = {
     placement: 'right-start',
     modifiers: [
@@ -51,7 +51,6 @@ const Toggle = ({
   },
 }: Props) => {
   const [{ onChange, value }] = useField(name);
-  const tooltipText = 'boooooooo sdlfhdafg ojfghadf kg';
 
   const mainClasses = getMainClasses(appearance, styles);
 

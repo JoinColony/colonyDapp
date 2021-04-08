@@ -49,13 +49,12 @@ const CountDownTimer = ({
   text,
   colonyAddress,
   createdAt,
-  // tooltipText,
+  tooltipText,
   periodType,
 }: Props) => {
   const { data, error, loading } = useVotingExtensionParamsQuery({
     variables: { colonyAddress },
   });
-  const tooltipText = 'booo nksjhga gha skjdfhsfdh';
   const stakePeriod = data?.votingExtensionParams[periodType];
 
   const [timeLeft, setTimeLeft] = useState(
