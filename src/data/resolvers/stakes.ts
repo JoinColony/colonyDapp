@@ -1,5 +1,6 @@
 import { Resolvers } from '@apollo/client';
-import { ClientType, ColonyClientV6, Extension } from '@colony/colony-js';
+import { ClientType, Extension } from '@colony/colony-js';
+import { bigNumberify } from 'ethers/utils';
 
 import { Context } from '~context/index';
 
@@ -7,29 +8,44 @@ export const stakesResolvers = ({
   colonyManager,
 }: Required<Context>): Resolvers => ({
   Query: {
-    async stakeAmountsForMotion(_, { colonyAddress, userAddress, motionId }) {
+    async stakeAmountsForMotion(
+      _,
+      { colonyAddress, userAddress, motionId, isObjectionStake, tokenDecimals },
+    ) {
       try {
-        const colonyClient = (await colonyManager.getClient(
+        const supportedSide = isObjectionStake ? 0 : 1;
+        const colonyClient = await colonyManager.getClient(
           ClientType.ColonyClient,
           colonyAddress,
-        )) as ColonyClientV6;
-        const votingReputationClient = colonyClient.getExtensionClient(
+        );
+        const votingReputationClient = await colonyClient.getExtensionClient(
           Extension.VotingReputation,
         );
-        const motionData = (await votingReputationClient).getMotion(motionId);
-        const totalStaked = motionData.stakes[1];
-        const userStake = (await votingReputationClient).getStake(
+        const { stakes, skillRep } = await votingReputationClient.getMotion(
+          motionId,
+        );
+        const userStake = await votingReputationClient.getStake(
           motionId,
           userAddress,
-          1,
+          supportedSide,
         );
-        const requiredStake = (await votingReputationClient).getRequiredStake(
-          motionId,
-        );
+        // @NOTE There's no prettier compatible solution to this :(
+        // eslint-disable-next-line max-len
+        const totalStakeFraction = await votingReputationClient.getTotalStakeFraction();
+        const requiredStake = skillRep
+          .mul(totalStakeFraction)
+          .div(bigNumberify(10).pow(tokenDecimals * 2))
+          .toNumber();
+        const totalStaked = stakes[supportedSide]
+          .div(bigNumberify(10).pow(tokenDecimals))
+          .toNumber();
+        const userStakeAmount = userStake
+          .div(bigNumberify(10).pow(tokenDecimals))
+          .toNumber();
 
         return {
           totalStaked,
-          userStake,
+          userStake: userStakeAmount,
           requiredStake,
         };
       } catch (error) {
