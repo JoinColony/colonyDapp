@@ -593,3 +593,7 @@ query VotingExtensionParams($colonyAddress: String!) {
     escalationPeriod
   }
 }
+
+query BlockTime($blockHash: String) {
+  blockTime(blockHash: $blockHash) @client
+}

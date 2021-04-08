@@ -76,6 +76,17 @@ export const extensionResolvers = ({
         return error;
       }
     },
+    async blockTime(_, { blockHash }) {
+      try {
+        const blocktime = await getBlockTime(
+          networkClient.provider,
+          blockHash === undefined ? 'latest' : blockHash,
+        );
+        return blocktime;
+      } catch (error) {
+        return error;
+      }
+    },
   },
   ColonyExtension: {
     async details({ address, extensionId }, { colonyAddress }) {

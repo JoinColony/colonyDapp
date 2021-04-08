@@ -261,6 +261,7 @@ export default gql`
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     networkExtensionVersion(extensionId: String!): Int!
     votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
+    blockTime(blockHash: String): Int!
   }
 
   extend type Mutation {
