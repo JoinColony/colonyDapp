@@ -6,5 +6,9 @@
 
 .time {
   color: var(--dark);
-  opacity: 100%;
+  opacity: 85%;
+}
+
+.tooltipIcon {
+  margin-left: 30px;
 }
