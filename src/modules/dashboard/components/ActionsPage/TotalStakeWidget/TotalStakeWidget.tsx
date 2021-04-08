@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import formatNumber from 'format-number';
 
 import Heading from '~core/Heading';
 import ProgressBar from '~core/ProgressBar';
+import { useLoggedInUser } from '~data/index';
 import {
   useStakeAmountsForMotionQuery,
   useColonyNativeTokenQuery,
@@ -15,15 +17,20 @@ import styles from './TotalStakeWidget.css';
 const displayName = 'TotalStakeWidget';
 
 type Props = {
+  tokenDecimals: number;
   colonyAddress: Address;
-  userAddress: Address;
   motionId: string;
+  isObjectionStake?: boolean;
 };
 
 const MSG = defineMessages({
-  title: {
-    id: 'dashboard.ActionsPage.TotalStakeWidget.title',
+  motionTitle: {
+    id: 'dashboard.ActionsPage.TotalStakeWidget.motionTitle',
     defaultMessage: 'Stake',
+  },
+  objectionTitle: {
+    id: 'dashboard.ActionsPage.TotalStakeWidget.objectionTitle',
+    defaultMessage: 'Goal',
   },
   stakeProgress: {
     id: 'dashboard.ActionsPage.TotalStakeWidget.stakeProgress',
@@ -35,9 +42,21 @@ const MSG = defineMessages({
   },
 });
 
-const TotalStakeWidget = ({ colonyAddress, userAddress, motionId }: Props) => {
+const TotalStakeWidget = ({
+  tokenDecimals,
+  colonyAddress,
+  motionId,
+  isObjectionStake = false,
+}: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const { data } = useStakeAmountsForMotionQuery({
-    variables: { colonyAddress, userAddress, motionId },
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+      isObjectionStake,
+      tokenDecimals,
+    },
   });
   const {
     totalStaked,
@@ -48,8 +67,6 @@ const TotalStakeWidget = ({ colonyAddress, userAddress, motionId }: Props) => {
     userStake: 0,
     requiredStake: 0,
   };
-  const totalStakedPercentage = (totalStaked * 100) / requiredStake;
-  const userStakePercentage = (userStake * 100) / requiredStake;
   const {
     data: nativeTokenAddressData,
     loading: loadingNativeTokenAddress,
@@ -70,6 +87,15 @@ const TotalStakeWidget = ({ colonyAddress, userAddress, motionId }: Props) => {
     }
   }, [fetchTokenInfo, nativeTokenAddressData]);
 
+  const totalStakedPercentage = (totalStaked * 100) / (requiredStake || 1);
+  const userStakePercentage = (userStake * 100) / (requiredStake || 1);
+  const formattedTotalStakedPercentage = formatNumber({
+    truncate: 2,
+  })(totalStakedPercentage);
+  const formattedUserStakePercentage = formatNumber({
+    truncate: 2,
+  })(userStakePercentage);
+
   return (
     <div>
       <div className={styles.widgetHeading}>
@@ -80,14 +106,14 @@ const TotalStakeWidget = ({ colonyAddress, userAddress, motionId }: Props) => {
             weight: 'bold',
             margin: 'none',
           }}
-          text={MSG.title}
+          text={isObjectionStake ? MSG.objectionTitle : MSG.motionTitle}
         />
         <span className={styles.stakeProgress}>
           {!loadingTokenInfoData && !loadingNativeTokenAddress && (
             <FormattedMessage
               {...MSG.stakeProgress}
               values={{
-                totalPercentage: totalStakedPercentage,
+                totalPercentage: formattedTotalStakedPercentage,
                 requiredStake,
                 tokenSymbol: tokenInfoData?.tokenInfo.symbol,
               }}
@@ -95,19 +121,28 @@ const TotalStakeWidget = ({ colonyAddress, userAddress, motionId }: Props) => {
           )}
         </span>
       </div>
-      <ProgressBar value={totalStakedPercentage} max={100} />
-      <p className={styles.userStake}>
-        {!loadingTokenInfoData && !loadingNativeTokenAddress && (
-          <FormattedMessage
-            {...MSG.userStake}
-            values={{
-              userPercentage: userStakePercentage,
-              userStake,
-              tokenSymbol: tokenInfoData?.tokenInfo.symbol,
-            }}
-          />
-        )}
-      </p>
+      <ProgressBar
+        value={totalStakedPercentage}
+        max={100}
+        appearance={{
+          barTheme: isObjectionStake ? 'danger' : 'primary',
+          backgroundTheme: 'default',
+        }}
+      />
+      {userStake !== 0 && (
+        <p className={styles.userStake}>
+          {!loadingTokenInfoData && !loadingNativeTokenAddress && (
+            <FormattedMessage
+              {...MSG.userStake}
+              values={{
+                userPercentage: formattedUserStakePercentage,
+                userStake,
+                tokenSymbol: tokenInfoData?.tokenInfo.symbol,
+              }}
+            />
+          )}
+        </p>
+      )}
     </div>
   );
 };
