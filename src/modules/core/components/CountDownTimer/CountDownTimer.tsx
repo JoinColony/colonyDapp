@@ -8,7 +8,7 @@ import { useVotingExtensionParamsQuery } from '~data/index';
 import { Address } from '~types/index';
 
 import styles from './CountDownTimer.css';
-import { calculateTimeLeft } from './calculateTimeLeft';
+import { calculateTimeLeft } from '~utils/time';
 
 const MSG = defineMessage({
   days: {
@@ -72,7 +72,7 @@ const CountDownTimer = ({
     return undefined;
   }, [createdAt, stakePeriod]);
 
-  if (loading) {
+  if (loading || data === undefined) {
     return <MiniSpinnerLoader loadingText={MSG.loadingText} />;
   }
 
