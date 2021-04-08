@@ -1,13 +1,12 @@
 import React from 'react';
 import { useField } from 'formik';
 import { PopperProps } from 'react-popper';
-import { MessageDescriptor, FormattedMessage } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 
 import InputLabel from '~core/Fields/InputLabel';
-import Icon from '~core/Icon';
-import { Tooltip } from '~core/Popover';
-import { SimpleMessageValues } from '~types/index';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import styles from './Toggle.css';
@@ -38,7 +37,7 @@ const Toggle = ({
   disabled = false,
   elementOnly = false,
   tooltipTextValues,
-  tooltipText,
+  // tooltipText,
   tooltipPopperProps = {
     placement: 'right-start',
     modifiers: [
@@ -52,6 +51,7 @@ const Toggle = ({
   },
 }: Props) => {
   const [{ onChange, value }] = useField(name);
+  const tooltipText = 'boooooooo sdlfhdafg ojfghadf kg';
 
   const mainClasses = getMainClasses(appearance, styles);
 
@@ -80,26 +80,12 @@ const Toggle = ({
         </span>
       </div>
       {tooltipText && (
-        <Tooltip
-          appearance={{ theme: 'dark' }}
-          content={
-            tooltipText && tooltipText === 'string' ? (
-              tooltipText
-            ) : (
-              <FormattedMessage {...tooltipText} values={tooltipTextValues} />
-            )
-          }
-          trigger="hover"
-          popperProps={tooltipPopperProps}
-        >
-          <div className={styles.icon}>
-            <Icon
-              name="question-mark"
-              appearance={{ size: 'small' }}
-              title=""
-            />
-          </div>
-        </Tooltip>
+        <QuestionMarkTooltip
+          className={styles.icon}
+          tooltipText={tooltipText}
+          tooltipPopperProps={tooltipPopperProps}
+          tooltipTextValues={tooltipTextValues}
+        />
       )}
     </div>
   );
