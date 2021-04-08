@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FormattedMessage, defineMessage } from 'react-intl';
+import { FormattedMessage, MessageDescriptor, defineMessage } from 'react-intl';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { useVotingExtensionParamsQuery } from '~data/index';
 import { Address } from '~types/index';
@@ -10,26 +11,6 @@ import styles from './CountDownTimer.css';
 import { calculateTimeLeft } from './calculateTimeLeft';
 
 const MSG = defineMessage({
-  stake: {
-    id: 'CountDownTimer.CountDownTimer.stake',
-    defaultMessage: 'Time left to stake',
-  },
-  motionPass: {
-    id: 'CountDownTimer.CountDownTimer.motionPass',
-    defaultMessage: 'Motion will pass in',
-  },
-  motionFail: {
-    id: 'CountDownTimer.CountDownTimer.motionFail',
-    defaultMessage: 'Motion will fail in',
-  },
-  reveal: {
-    id: 'CountDownTimer.CountDownTimer.reveal',
-    defaultMessage: 'Reveal ends in',
-  },
-  voting: {
-    id: 'CountDownTimer.CountDownTimer.voting',
-    defaultMessage: 'Voting ends in',
-  },
   days: {
     id: 'CountDownTimer.CountDownTimer.days',
     defaultMessage: ' {days}d',
@@ -53,7 +34,7 @@ const MSG = defineMessage({
 });
 
 interface Props {
-  copyOption: 'stake' | 'motionPass' | 'motionFail' | 'reveal' | 'voting';
+  text: MessageDescriptor | string;
   periodType:
     | 'stakePeriod'
     | 'submitPeriod'
@@ -61,18 +42,20 @@ interface Props {
     | 'escalationPeriod';
   createdAt: number;
   colonyAddress: Address;
+  tooltipText?: MessageDescriptor | string;
 }
 
 const CountDownTimer = ({
-  copyOption,
+  text,
   colonyAddress,
   createdAt,
+  // tooltipText,
   periodType,
 }: Props) => {
   const { data, error, loading } = useVotingExtensionParamsQuery({
     variables: { colonyAddress },
   });
-
+  const tooltipText = 'booo nksjhga gha skjdfhsfdh';
   const stakePeriod = data?.votingExtensionParams[periodType];
 
   const [timeLeft, setTimeLeft] = useState(
@@ -99,7 +82,7 @@ const CountDownTimer = ({
 
   return (
     <div className={styles.container}>
-      <FormattedMessage {...MSG[copyOption]} />
+      {typeof text === 'string' ? text : <FormattedMessage {...text} />}
       <span className={styles.time}>
         {timeLeft.days > 0 && (
           <FormattedMessage {...MSG.days} values={{ days: timeLeft.days }} />
@@ -118,6 +101,12 @@ const CountDownTimer = ({
           values={{ seconds: timeLeft.seconds }}
         />
       </span>
+      {tooltipText && (
+        <QuestionMarkTooltip
+          className={styles.tooltipIcon}
+          tooltipText={tooltipText}
+        />
+      )}
     </div>
   );
 };

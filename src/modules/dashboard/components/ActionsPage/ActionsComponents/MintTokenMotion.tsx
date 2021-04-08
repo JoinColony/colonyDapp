@@ -24,6 +24,7 @@ import DetailsWidget from '../DetailsWidget';
 import styles from './DefaultAction.css';
 
 import motionSpecificStyles from './MintTokenMotion.css';
+import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
 
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
 
@@ -102,7 +103,7 @@ const MintTokenMotion = ({
           <CountDownTimer
             createdAt={actionCreatedAt}
             colonyAddress={colony.colonyAddress}
-            copyOption="stake"
+            text={MSG.stake}
             periodType="stakePeriod"
           />
         </div>
