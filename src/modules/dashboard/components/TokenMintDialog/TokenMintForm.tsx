@@ -8,10 +8,10 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
-import NotEnoughReputation from '~core/NotEnoughReputation';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 
 import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -76,10 +76,10 @@ const TokenMintForm = ({
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
-  const { isColonyReputationZero } = useColonyReputation(colony.colonyAddress);
+  const { colonyHasReputation } = useColonyReputation(colony.colonyAddress);
 
   const onlyForceAction =
-    isVotingExtensionEnabled && isColonyReputationZero && !values.forceAction;
+    isVotingExtensionEnabled && colonyHasReputation && !values.forceAction;
   const inputDisabled = !userHasPermission || onlyForceAction;
 
   return (
