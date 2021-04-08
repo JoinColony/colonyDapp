@@ -505,6 +505,8 @@ export type QueryStakeAmountsForMotionArgs = {
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['String'];
+  isObjectionStake: Scalars['Boolean'];
+  tokenDecimals: Scalars['Int'];
 };
 
 
@@ -736,6 +738,7 @@ export type ColonyAction = {
   domainPurpose: Scalars['String'];
   domainColor: Scalars['String'];
   blockNumber: Scalars['Int'];
+  motionId: Scalars['String'];
   motionState?: Maybe<Scalars['String']>;
   motionDomain: Scalars['Int'];
 };
@@ -3212,6 +3215,7 @@ export const ColonyActionDocument = gql`
     domainName
     domainPurpose
     domainColor
+    motionId
     motionState
     motionDomain
     roles {
