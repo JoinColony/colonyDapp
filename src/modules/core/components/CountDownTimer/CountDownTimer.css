@@ -1,14 +1,16 @@
 .container {
+  display: flex;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .time {
+  margin-left: 5px;
   color: var(--dark);
   opacity: 85%;
 }
 
 .tooltipIcon {
-  margin-left: 30px;
+  margin-left: 10px;
 }
