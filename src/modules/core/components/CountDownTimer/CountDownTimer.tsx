@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, MessageDescriptor, defineMessage } from 'react-intl';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
@@ -58,33 +58,27 @@ const CountDownTimer = ({
   const stakePeriod = data?.votingExtensionParams[periodType];
   const { data: blockTimeData } = useBlockTimeQuery();
 
-  const [timeSinceLastRefreshed, setTimeSinceLastRefreshed] = useState(0);
+  const differenceVsBCTime = useMemo(
+    () =>
+      blockTimeData?.blockTime ? Date.now() - blockTimeData?.blockTime : 0,
+    [blockTimeData],
+  );
+
   const [timeLeft, setTimeLeft] = useState(
-    calculateTimeLeft(
-      createdAt,
-      timeSinceLastRefreshed,
-      blockTimeData?.blockTime,
-      stakePeriod,
-    ),
+    calculateTimeLeft(createdAt, differenceVsBCTime, stakePeriod),
   );
 
   useEffect(() => {
-    if (stakePeriod !== undefined && blockTimeData !== undefined) {
+    if (stakePeriod !== undefined) {
       const timer = setInterval(() => {
-        setTimeSinceLastRefreshed(timeSinceLastRefreshed + 500);
         setTimeLeft(
-          calculateTimeLeft(
-            createdAt,
-            timeSinceLastRefreshed,
-            blockTimeData.blockTime + timeSinceLastRefreshed,
-            stakePeriod,
-          ),
+          calculateTimeLeft(createdAt, differenceVsBCTime, stakePeriod),
         );
       }, 1000);
       return () => clearInterval(timer);
     }
     return undefined;
-  }, [createdAt, stakePeriod, blockTimeData, timeSinceLastRefreshed]);
+  }, [createdAt, stakePeriod, differenceVsBCTime]);
 
   if (loading || data === undefined) {
     return <MiniSpinnerLoader loadingText={MSG.loadingText} />;

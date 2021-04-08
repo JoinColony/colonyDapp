@@ -1,13 +1,13 @@
 export const calculateTimeLeft = (
   createdAt: number,
-  timeSinceLastRefreshed: number,
-  timeNow?: number,
+  differenceVsBlockChainTime: number,
   actionPeriod?: number,
 ) => {
-  const difference =
-    actionPeriod && timeNow
-      ? createdAt + actionPeriod * 1000 - (timeNow + timeSinceLastRefreshed)
-      : 0;
+  const difference = actionPeriod
+    ? createdAt +
+      actionPeriod * 1000 -
+      (Date.now() + differenceVsBlockChainTime)
+    : 0;
 
   if (difference > 0) {
     return {
