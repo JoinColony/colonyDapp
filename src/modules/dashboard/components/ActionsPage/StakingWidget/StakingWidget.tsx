@@ -60,12 +60,12 @@ const StakingWidget = ({
     pipe(
       mapPayload(({ amount }) => {
         return {
-          amount: bigNumberify(amount),
+          amount: bigNumberify(amount).mul(bigNumberify(10).pow(18)),
           userAddress: walletAddress,
           rootHash,
           colonyAddress,
           motionId: bigNumberify(motionId),
-          motionDomainId: bigNumberify(motionDomainId),
+          motionDomainId,
           vote: bigNumberify(1),
         };
       }),
