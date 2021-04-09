@@ -187,6 +187,7 @@ export default gql`
   type StakeLimits {
     minStake: Int!
     maxStake: Int!
+    requiredStake: Int!
   }
 
   type UserProfile {

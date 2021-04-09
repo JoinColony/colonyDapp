@@ -33,7 +33,9 @@ export const stakesResolvers = ({
         // eslint-disable-next-line max-len
         const userMinStakeFraction = await votingReputationClient.getUserMinStakeFraction();
 
-        const totalStaked = bigNumberify(stakes[1]).toNumber();
+        const totalStaked = bigNumberify(stakes[1])
+          .div(bigNumberify(10).pow(18))
+          .toNumber();
         const totalStakeAmount = skillRep
           .mul(totalStakeFraction)
           .div(bigNumberify(10).pow(36))
@@ -65,6 +67,7 @@ export const stakesResolvers = ({
         return {
           minStake,
           maxStake,
+          requiredStake: totalStakeAmount,
         };
       } catch (error) {
         console.error(error);

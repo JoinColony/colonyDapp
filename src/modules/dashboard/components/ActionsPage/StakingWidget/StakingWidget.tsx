@@ -77,7 +77,7 @@ const StakingWidget = ({
     return null;
   }
 
-  const { minStake, maxStake } = data.stakeMotionLimits;
+  const { minStake, maxStake, requiredStake } = data.stakeMotionLimits;
 
   return (
     <ActionForm
@@ -101,7 +101,8 @@ const StakingWidget = ({
             name="amount"
             value={values.amount}
             min={minStake}
-            max={maxStake}
+            max={requiredStake}
+            limit={maxStake}
           />
           <div className={styles.buttonGroup}>
             <Button type="submit" disabled={!isValid} text={MSG.stakeButton} />

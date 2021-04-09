@@ -378,6 +378,7 @@ query StakeMotionLimits($colonyAddress: String!, $userAddress: String!, $motionI
   stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
     minStake
     maxStake
+    requiredStake
   }
 }
 

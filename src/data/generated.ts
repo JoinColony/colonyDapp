@@ -837,6 +837,7 @@ export type ProcessedMetaColony = {
 export type StakeLimits = {
   minStake: Scalars['Int'];
   maxStake: Scalars['Int'];
+  requiredStake: Scalars['Int'];
 };
 
 export type UsersAndRecoveryApprovals = {
@@ -1537,7 +1538,7 @@ export type StakeMotionLimitsQueryVariables = Exact<{
 }>;
 
 
-export type StakeMotionLimitsQuery = { stakeMotionLimits: Pick<StakeLimits, 'minStake' | 'maxStake'> };
+export type StakeMotionLimitsQuery = { stakeMotionLimits: Pick<StakeLimits, 'minStake' | 'maxStake' | 'requiredStake'> };
 
 export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3646,6 +3647,7 @@ export const StakeMotionLimitsDocument = gql`
   stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
     minStake
     maxStake
+    requiredStake
   }
 }
     `;
