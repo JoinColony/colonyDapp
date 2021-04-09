@@ -14,9 +14,13 @@ interface Props {
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
   tooltipPopperProps?: Omit<PopperProps, 'children'>;
   className?: string;
+  tooltipClassName?: string;
+  iconTitle?: string;
 }
 
 const QuestionMarkTooltip = ({
+  iconTitle,
+  tooltipClassName,
   tooltipTextValues,
   tooltipPopperProps = {
     placement: 'right-start',
@@ -40,14 +44,20 @@ const QuestionMarkTooltip = ({
           typeof tooltipText === 'string' ? (
             tooltipText
           ) : (
-            <FormattedMessage {...tooltipText} values={tooltipTextValues} />
+            <div className={tooltipClassName}>
+              <FormattedMessage {...tooltipText} values={tooltipTextValues} />
+            </div>
           )
         }
         trigger="hover"
         popperProps={tooltipPopperProps}
       >
         <div className={className}>
-          <Icon name="question-mark" appearance={{ size: 'small' }} title="" />
+          <Icon
+            name="question-mark"
+            appearance={{ size: 'small' }}
+            title={iconTitle || ''}
+          />
         </div>
       </Tooltip>
     </>
