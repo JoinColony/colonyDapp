@@ -1,5 +1,7 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { VotingReputationClient } from '@colony/colony-js/lib/clients/VotingReputationClient';
+import { MaxUint256 } from 'ethers/constants';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { TEMP_getContext, ContextModule } from '~context/index';
@@ -27,8 +29,15 @@ function* stakeMotionAction({
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const context = TEMP_getContext(ContextModule.ColonyManager);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
     const colonyClient = yield context.getClient(
       ClientType.ColonyClient,
+      colonyAddress,
+    );
+    // @NOTE This line exceeds the max-len but there's no prettier solution
+    // eslint-disable-next-line max-len
+    const votingReputationClient: VotingReputationClient = yield colonyManager.getClient(
+      ClientType.VotingReputationClient,
       colonyAddress,
     );
 
@@ -44,18 +53,44 @@ function* stakeMotionAction({
       rootHash,
     );
 
-    const { stakeMotion } = yield createTransactionChannels(meta.id, [
+    const {
+      approveStake,
+      stakeMotion,
+    } = yield createTransactionChannels(meta.id, [
+      'approveStake',
       'stakeMotion',
     ]);
 
-    yield fork(createTransaction, stakeMotion.id, {
+    const batchKey = 'stakeMotion';
+
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: batchKey,
+          id: meta.id,
+          index,
+        },
+      });
+
+    yield createGroupTransaction(approveStake, {
+      context: ClientType.ColonyClient,
+      methodName: 'approveStake',
+      identifier: colonyAddress,
+      params: [votingReputationClient.address, motionDomainId, amount],
+      ready: false,
+    });
+
+    // @NOTE: This should only work when there's 1 domain (root) in the colony
+    // A "stakeMotionWithProofs" is needed for this to work like expected
+    yield createGroupTransaction(stakeMotion, {
       context: ClientType.VotingReputationClient,
       methodName: 'stakeMotion',
       identifier: colonyAddress,
       params: [
         motionId,
         ROOT_DOMAIN_ID,
-        skillId,
+        MaxUint256,
         vote,
         amount,
         key,
@@ -64,12 +99,13 @@ function* stakeMotionAction({
         siblings,
       ],
       ready: false,
-      group: {
-        key: 'stakeMotion',
-        id: meta.id,
-        index: 0,
-      },
     });
+
+    yield takeFrom(approveStake.channel, ActionTypes.TRANSACTION_CREATED);
+
+    yield put(transactionReady(approveStake.id));
+
+    yield takeFrom(approveStake.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     yield takeFrom(stakeMotion.channel, ActionTypes.TRANSACTION_CREATED);
 

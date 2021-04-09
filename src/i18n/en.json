@@ -173,6 +173,8 @@
     "transaction.group.stakeMotion.description": "Stake motion",
     "transaction.VotingReputationClient.stakeMotion.title": "Stake motion",
     "transaction.VotingReputationClient.stakeMotion.description": "Stake motion",
+    "transaction.ColonyClient.approveStake.title": "Approve stake",
+    "transaction.ColonyClient.approveStake.description": "Approve stake",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
