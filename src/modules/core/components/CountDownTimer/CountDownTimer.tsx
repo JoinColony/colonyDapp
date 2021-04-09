@@ -60,7 +60,7 @@ const CountDownTimer = ({
 
   const differenceVsBCTime = useMemo(
     () =>
-      blockTimeData?.blockTime ? Date.now() - blockTimeData?.blockTime : 0,
+      blockTimeData?.blockTime ? blockTimeData?.blockTime - Date.now() : 0,
     [blockTimeData],
   );
 
