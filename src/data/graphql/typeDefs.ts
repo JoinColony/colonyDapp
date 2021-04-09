@@ -293,6 +293,7 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
       motionId: String!
+      tokenDecimals: Int!
     ): StakeLimits!
     motionVoterReward(
       motionId: Int!

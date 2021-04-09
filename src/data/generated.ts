@@ -482,6 +482,7 @@ export type QueryStakeMotionLimitsArgs = {
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['String'];
+  tokenDecimals: Scalars['Int'];
 };
 
 
@@ -1535,6 +1536,7 @@ export type StakeMotionLimitsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['String'];
+  tokenDecimals: Scalars['Int'];
 }>;
 
 
@@ -3643,8 +3645,8 @@ export type RecoveryAllEnteredEventsQueryHookResult = ReturnType<typeof useRecov
 export type RecoveryAllEnteredEventsLazyQueryHookResult = ReturnType<typeof useRecoveryAllEnteredEventsLazyQuery>;
 export type RecoveryAllEnteredEventsQueryResult = Apollo.QueryResult<RecoveryAllEnteredEventsQuery, RecoveryAllEnteredEventsQueryVariables>;
 export const StakeMotionLimitsDocument = gql`
-    query StakeMotionLimits($colonyAddress: String!, $userAddress: String!, $motionId: String!) {
-  stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+    query StakeMotionLimits($colonyAddress: String!, $userAddress: String!, $motionId: String!, $tokenDecimals: Int!) {
+  stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, tokenDecimals: $tokenDecimals) @client {
     minStake
     maxStake
     requiredStake
@@ -3667,6 +3669,7 @@ export const StakeMotionLimitsDocument = gql`
  *      colonyAddress: // value for 'colonyAddress'
  *      userAddress: // value for 'userAddress'
  *      motionId: // value for 'motionId'
+ *      tokenDecimals: // value for 'tokenDecimals'
  *   },
  * });
  */

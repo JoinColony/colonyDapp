@@ -8,7 +8,10 @@ export const stakesResolvers = ({
   colonyManager,
 }: Required<Context>): Resolvers => ({
   Query: {
-    async stakeMotionLimits(_, { colonyAddress, userAddress, motionId }) {
+    async stakeMotionLimits(
+      _,
+      { colonyAddress, userAddress, motionId, tokenDecimals },
+    ) {
       try {
         const colonyClient = (await colonyManager.getClient(
           ClientType.ColonyClient,
@@ -34,19 +37,19 @@ export const stakesResolvers = ({
         const userMinStakeFraction = await votingReputationClient.getUserMinStakeFraction();
 
         const totalStaked = bigNumberify(stakes[1])
-          .div(bigNumberify(10).pow(18))
+          .div(bigNumberify(10).pow(tokenDecimals))
           .toNumber();
         const totalStakeAmount = skillRep
           .mul(totalStakeFraction)
-          .div(bigNumberify(10).pow(36))
+          .div(bigNumberify(10).pow(tokenDecimals * 2))
           .toNumber();
         const userMinStakeAmount = skillRep
           .mul(totalStakeFraction)
           .mul(userMinStakeFraction)
-          .div(bigNumberify(10).pow(54))
+          .div(bigNumberify(10).pow(tokenDecimals * 3))
           .toNumber();
         const formattedReputationAmount = reputationAmount
-          .div(bigNumberify(10).pow(18))
+          .div(bigNumberify(10).pow(tokenDecimals))
           .toNumber();
 
         let maxStake: number;

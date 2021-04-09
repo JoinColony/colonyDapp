@@ -374,8 +374,8 @@ query RecoveryAllEnteredEvents($colonyAddress: String!) {
   }
 }
 
-query StakeMotionLimits($colonyAddress: String!, $userAddress: String!, $motionId: String!) {
-  stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+query StakeMotionLimits($colonyAddress: String!, $userAddress: String!, $motionId: String!, $tokenDecimals: Int!) {
+  stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, tokenDecimals: $tokenDecimals) @client {
     minStake
     maxStake
     requiredStake

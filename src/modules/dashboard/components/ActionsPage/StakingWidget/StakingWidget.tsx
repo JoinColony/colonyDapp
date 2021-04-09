@@ -19,6 +19,7 @@ type Props = {
   motionDomainId: number;
   rootHash: string;
   colonyAddress: Address;
+  tokenDecimals: number;
 };
 
 const displayName = 'StakingWidget';
@@ -47,10 +48,16 @@ const StakingWidget = ({
   motionDomainId,
   rootHash,
   colonyAddress,
+  tokenDecimals,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const { data, loading } = useStakeMotionLimitsQuery({
-    variables: { colonyAddress, userAddress: walletAddress, motionId },
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+      tokenDecimals,
+    },
   });
   const validationSchema = yup.object().shape({
     amount: yup.number().required(),
@@ -60,7 +67,7 @@ const StakingWidget = ({
     pipe(
       mapPayload(({ amount }) => {
         return {
-          amount: bigNumberify(amount).mul(bigNumberify(10).pow(18)),
+          amount: bigNumberify(amount).mul(bigNumberify(10).pow(tokenDecimals)),
           userAddress: walletAddress,
           rootHash,
           colonyAddress,
