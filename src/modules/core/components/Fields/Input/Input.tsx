@@ -120,6 +120,7 @@ const Input = ({
       : placeholderProp;
 
   const inputProps: InputComponentProps = {
+    ...inputFieldProps,
     appearance,
     'aria-invalid': !!error || !!forcedFieldError,
     formattingOptions,
@@ -130,7 +131,6 @@ const Input = ({
     disabled,
     maxLength,
     maxButtonParams,
-    ...inputFieldProps,
   };
 
   const extensionStringText: string | undefined =
