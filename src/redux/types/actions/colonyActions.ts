@@ -14,6 +14,10 @@ import {
   ActionType,
 } from './index';
 
+export enum RootMotionOperationNames {
+  MINT_TOKENS = 'mintTokens',
+}
+
 /*
  * @NOTE About naming
  * I couldn't come up with anything better, as we already have ColonyActionTypes :(
@@ -154,7 +158,7 @@ export type ColonyActionsActionTypes =
   | UniqueActionType<
       ActionTypes.COLONY_ROOT_MOTION,
       {
-        operationName: string;
+        operationName: RootMotionOperationNames;
         colonyAddress: Address;
         colonyName?: string;
         motionParams: [BigNumber];

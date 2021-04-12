@@ -11,6 +11,8 @@ import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
 import { WalletActionTypes } from './wallet';
 
+export { RootMotionOperationNames } from './colonyActions';
+
 /*
  * Type that represents an action (bare minimum).
  *
