@@ -41,7 +41,7 @@ const ExtensionCard = ({ extension, installedExtension }: Props) => {
                 text={extension.name}
               />
               <span className={styles.version}>
-                v.{extension.currentVersion}
+                v{extension.currentVersion}
               </span>
             </div>
           </div>

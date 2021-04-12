@@ -11,7 +11,12 @@ import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
-import { Colony, useLoggedInUser, useColonyExtensionQuery } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useColonyExtensionQuery,
+  useNetworkExtensionVersionQuery,
+} from '~data/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
@@ -133,6 +138,10 @@ const ExtensionDetails = ({
     variables: { colonyAddress, extensionId },
   });
 
+  const { data: networkExtension } = useNetworkExtensionVersionQuery({
+    variables: { extensionId },
+  });
+
   const { contractAddressLink } = DEFAULT_NETWORK_INFO;
 
   const hasRegisteredProfile = !!username && !ethereal;
@@ -141,6 +150,15 @@ const ExtensionDetails = ({
     parseInt(colonyVersion || '1', 10) >= ColonyVersion.LightweightSpaceship;
 
   const extension = extensionData[extensionId];
+  /*
+   * Either the current version (only if it's installed), or the latest version
+   * available from the network (since that's the one that it going to get
+   * installed)
+   */
+  extension.currentVersion =
+    data?.colonyExtension?.details?.version ||
+    networkExtension?.networkExtensionVersion ||
+    0;
 
   const canInstall = hasRegisteredProfile && hasRoot(allUserRoles);
   const installedExtension = data ? data.colonyExtension : null;
@@ -191,7 +209,7 @@ const ExtensionDetails = ({
       },
       {
         label: MSG.versionInstalled,
-        value: `v.${extension.currentVersion}`,
+        value: `v${extension.currentVersion}`,
       },
       {
         label: MSG.contractAddress,
@@ -220,7 +238,7 @@ const ExtensionDetails = ({
       },
       {
         label: MSG.latestVersion,
-        value: `v.${extension.currentVersion}`,
+        value: `v${extension.currentVersion}`,
       },
       {
         label: MSG.developer,
