@@ -7,7 +7,7 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
+import { ColonyRole, ColonyVersion } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -141,6 +141,8 @@ const ExtensionDetails = ({
   const { data: networkExtension } = useNetworkExtensionVersionQuery({
     variables: { extensionId },
   });
+  const latestNetworkExtensionVersion =
+    networkExtension?.networkExtensionVersion || 0;
 
   const { contractAddressLink } = DEFAULT_NETWORK_INFO;
 
@@ -156,9 +158,7 @@ const ExtensionDetails = ({
    * installed)
    */
   extension.currentVersion =
-    data?.colonyExtension?.details?.version ||
-    networkExtension?.networkExtensionVersion ||
-    0;
+    data?.colonyExtension?.details?.version || latestNetworkExtensionVersion;
 
   const canInstall = hasRegisteredProfile && hasRoot(allUserRoles);
   const installedExtension = data ? data.colonyExtension : null;
@@ -177,13 +177,10 @@ const ExtensionDetails = ({
     !installedExtension?.details?.deprecated;
   const extesionCanBeUninstalled =
     extensionUninstallable && installedExtension?.details.deprecated;
-  /*
-   * @TODO Add proper logic
-   */
   const extensionCanBeUpgraded =
     hasRegisteredProfile &&
-    installedExtension?.extensionId === Extension.OneTxPayment &&
-    !(extesionCanBeInstalled || extesionCanBeEnabled);
+    !(extesionCanBeInstalled || extesionCanBeEnabled) &&
+    latestNetworkExtensionVersion > extension.currentVersion;
 
   let tableData;
 
