@@ -80,11 +80,18 @@ const CountDownTimer = ({
     return undefined;
   }, [createdAt, stakePeriod, differenceVsBCTime]);
 
-  if (loading || data === undefined) {
+  if (
+    loading ||
+    data === undefined ||
+    blockTimeData === undefined ||
+    (timeLeft === undefined &&
+      calculateTimeLeft(createdAt, differenceVsBCTime, stakePeriod) !==
+        undefined)
+  ) {
     return <MiniSpinnerLoader loadingText={MSG.loadingText} />;
   }
 
-  if (data === undefined || error || timeLeft === undefined) {
+  if (error || timeLeft === undefined) {
     return null;
   }
 
