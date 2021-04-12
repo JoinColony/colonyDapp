@@ -95,7 +95,7 @@ const InputComponent = ({
           value: evt.currentTarget?.rawValue as string,
         };
       }
-      if (onChange) onChange(evt);
+      if (onChange && evt.target.name) onChange(evt);
     },
     [onChange],
   );
