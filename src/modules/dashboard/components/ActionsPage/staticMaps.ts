@@ -107,7 +107,10 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.RecoveryModeExitApproved,
     ColonyAndExtensionsEvents.RecoveryModeExited,
   ],
-  [ColonyMotions.MintTokensMotion]: [ColonyAndExtensionsEvents.MotionCreated],
+  [ColonyMotions.MintTokensMotion]: [
+    ColonyAndExtensionsEvents.MotionCreated,
+    ColonyAndExtensionsEvents.MotionStaked,
+  ],
 };
 
 /*

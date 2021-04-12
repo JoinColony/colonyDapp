@@ -14,6 +14,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.RecoveryModeExitApproved} {{initiator} approved exiting}
       ${ColonyAndExtensionsEvents.RecoveryModeExited} {{initiator} exited Recovery Mode}
       ${ColonyAndExtensionsEvents.MotionCreated} {{initiator} created a {motionTag}}
+      ${ColonyAndExtensionsEvents.MotionStaked} {{initiator} backed the {motionTag} by staking {amountTag}}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
   /*
