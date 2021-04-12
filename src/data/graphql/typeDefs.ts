@@ -210,6 +210,7 @@ export default gql`
       extensionId: String!
     ): ColonyExtension
     colonyName(address: String!): String!
+    colonyReputation(address: String!): String
     colonyMembersWithReputation(
       colonyAddress: String!
       domainId: Int

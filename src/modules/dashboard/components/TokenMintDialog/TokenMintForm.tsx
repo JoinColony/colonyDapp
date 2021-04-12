@@ -5,15 +5,18 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
-import { Input, Annotations } from '~core/Fields';
-import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
 import DialogSection from '~core/Dialog/DialogSection';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { useTransformer } from '~utils/hooks';
-import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import { Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+
+import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { useTransformer } from '~utils/hooks';
+import { useColonyReputation } from '~utils/hooks/useColonyReputation';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -62,15 +65,23 @@ const TokenMintForm = ({
   isValid,
   handleSubmit,
   nativeToken,
+  values,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
   const canMintTokens = canMintNativeToken && hasRoot(allUserRoles);
-  const userHasPermission = canMintTokens || isVotingExtensionEnabled;
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
+
+  const { colonyHasReputation } = useColonyReputation(colony.colonyAddress);
+  const onlyForceAction =
+    isVotingExtensionEnabled && !colonyHasReputation && !values.forceAction;
+
+  const userHasPermission =
+    canMintTokens || (isVotingExtensionEnabled && colonyHasReputation);
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
 
   return (
     <>
@@ -102,7 +113,7 @@ const TokenMintForm = ({
               }}
               label={MSG.amountLabel}
               name="mintAmount"
-              disabled={!userHasPermission}
+              disabled={inputDisabled}
             />
           </div>
           <span
@@ -118,7 +129,7 @@ const TokenMintForm = ({
           <Annotations
             label={MSG.annotationLabel}
             name="annotation"
-            disabled={!userHasPermission}
+            disabled={inputDisabled}
           />
         </div>
       </DialogSection>
@@ -141,6 +152,13 @@ const TokenMintForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.reputationMessage}>
+            <NotEnoughReputation />
+          </div>
+        </DialogSection>
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -152,7 +170,7 @@ const TokenMintForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !userHasPermission}
+          disabled={!isValid || inputDisabled}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
