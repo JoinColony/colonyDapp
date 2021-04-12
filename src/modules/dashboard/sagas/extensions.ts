@@ -17,6 +17,9 @@ import {
   ProcessedColonyQuery,
   ProcessedColonyQueryVariables,
   ProcessedColonyDocument,
+  NetworkExtensionVersionQuery,
+  NetworkExtensionVersionQueryVariables,
+  NetworkExtensionVersionDocument,
 } from '~data/index';
 import extensionData from '~data/staticData/extensionData';
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -67,13 +70,30 @@ function* colonyExtensionInstall({
   payload: { colonyAddress, extensionId },
 }: Action<ActionTypes.COLONY_EXTENSION_INSTALL>) {
   const txChannel = yield call(getTxChannel, meta.id);
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
   try {
+    /*
+     * Get the latest extension version that's deployed to the network
+     */
+    const {
+      data: { networkExtensionVersion },
+    } = yield apolloClient.query<
+      NetworkExtensionVersionQuery,
+      NetworkExtensionVersionQueryVariables
+    >({
+      query: NetworkExtensionVersionDocument,
+      variables: {
+        extensionId,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield fork(createTransaction, meta.id, {
       context: ClientType.ColonyClient,
       methodName: 'installExtension',
       identifier: colonyAddress,
-      params: [getExtensionHash(extensionId), 1],
+      params: [getExtensionHash(extensionId), networkExtensionVersion],
     });
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
