@@ -33,8 +33,14 @@ export const extensionResolvers = ({
         extensionAddedToNetworkFilter,
       );
       if (extensionAddedEvents.length) {
-        const latestEvent =
-          extensionAddedEvents[extensionAddedEvents.length - 1];
+        const latestEvent = extensionAddedEvents
+          .sort(
+            (
+              { values: { version: firstVersion } },
+              { values: { version: secondVersion } },
+            ) => firstVersion.toNumber() - secondVersion.toNumber(),
+          )
+          .pop();
         const version = latestEvent?.values?.version;
         return version.toNumber();
       }
