@@ -85,6 +85,7 @@ query ColonyExtensions($address: String!) {
         installedBy
         installedAt
         missingPermissions
+        version
       }
     }
   }
@@ -101,6 +102,7 @@ query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
       installedBy
       installedAt
       missingPermissions
+      version
     }
   }
 }

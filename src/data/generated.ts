@@ -283,7 +283,7 @@ export type Query = {
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
-  networkExtensionVersion: Scalars['String'];
+  networkExtensionVersion: Scalars['Int'];
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
   recoveryAllEnteredEvents: Array<ParsedEvent>;
@@ -720,6 +720,7 @@ export type ColonyExtensionDetails = {
   installedBy: Scalars['String'];
   installedAt: Scalars['Int'];
   missingPermissions: Array<Scalars['Int']>;
+  version: Scalars['Int'];
 };
 
 export type ProcessedMetaColony = {
@@ -1147,7 +1148,7 @@ export type ColonyExtensionsQuery = { processedColony: (
     Pick<ProcessedColony, 'id' | 'colonyAddress'>
     & { installedExtensions: Array<(
       Pick<ColonyExtension, 'id' | 'extensionId' | 'address'>
-      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
     )> }
   ) };
 
@@ -1159,7 +1160,7 @@ export type ColonyExtensionQueryVariables = Exact<{
 
 export type ColonyExtensionQuery = { colonyExtension?: Maybe<(
     Pick<ColonyExtension, 'id' | 'address' | 'extensionId'>
-    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
   )> };
 
 export type NetworkExtensionVersionQueryVariables = Exact<{
@@ -2378,6 +2379,7 @@ export const ColonyExtensionsDocument = gql`
         installedBy
         installedAt
         missingPermissions
+        version
       }
     }
   }
@@ -2421,6 +2423,7 @@ export const ColonyExtensionDocument = gql`
       installedBy
       installedAt
       missingPermissions
+      version
     }
   }
 }

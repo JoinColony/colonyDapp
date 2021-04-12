@@ -4,7 +4,10 @@ import { extensions } from '@colony/colony-js';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
-import { useColonyExtensionsQuery } from '~data/index';
+import {
+  useColonyExtensionsQuery,
+  useNetworkExtensionVersionLazyQuery,
+} from '~data/index';
 import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import extensionData from '~data/staticData/extensionData';
@@ -45,13 +48,21 @@ const Extensions = ({ colonyAddress }: Props) => {
     variables: { address: colonyAddress },
   });
 
+  const [
+    fetchNetworkExtensionVersion,
+    { data: networkExtension },
+  ] = useNetworkExtensionVersionLazyQuery();
+
   const installedExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
-      return installedExtensions.map(({ extensionId, address }) => ({
-        ...extensionData[extensionId],
-        address,
-      }));
+      return installedExtensions.map(
+        ({ extensionId, address, details: { version } }) => ({
+          ...extensionData[extensionId],
+          address,
+          currentVersion: version,
+        }),
+      );
     }
     return [];
   }, [data]);
@@ -69,10 +80,14 @@ const Extensions = ({ colonyAddress }: Props) => {
          * This will be re-enabled in the Coin Machine feature branch
          */
         if (!installedExtension) {
+          fetchNetworkExtensionVersion({
+            variables: { extensionId: extensionName },
+          });
           return [
             ...availableExtensions,
             {
               ...extensionData[extensionName],
+              currentVersion: networkExtension?.networkExtensionVersion || 0,
             },
           ];
         }
@@ -80,7 +95,7 @@ const Extensions = ({ colonyAddress }: Props) => {
       }, []);
     }
     return [];
-  }, [data]);
+  }, [data, fetchNetworkExtensionVersion, networkExtension]);
 
   if (loading) {
     return (

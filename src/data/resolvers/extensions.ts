@@ -95,6 +95,8 @@ export const extensionResolvers = ({
 
       const deprecated = await extensionClient.getDeprecated();
 
+      const version = await extensionClient.version();
+
       // If no initializationParams are present it does not need initialization
       // and will set to be true by default
       let initialized = !extension.initializationParams;
@@ -116,6 +118,7 @@ export const extensionResolvers = ({
         initialized,
         installedBy,
         installedAt,
+        version: version.toNumber(),
       };
     },
   },
