@@ -105,6 +105,10 @@ query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
   }
 }
 
+query NetworkExtensionVersion($extensionId: String!) {
+  networkExtensionVersion(extensionId: $extensionId) @client
+}
+
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id

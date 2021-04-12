@@ -234,6 +234,7 @@ export default gql`
     ): Int!
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
+    networkExtensionVersion(extensionId: String!): String!
   }
 
   extend type Mutation {
