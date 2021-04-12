@@ -10,6 +10,7 @@ import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
+import { RootMotionOperationNames } from '~redux/types/actions';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
 
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -71,7 +72,7 @@ const TokenMintDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_MINT_TOKENS${actionEnd}`]
+        ? ActionTypes[`COLONY_ROOT_MOTION${actionEnd}`]
         : ActionTypes[`COLONY_ACTION_MINT_TOKENS${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
@@ -92,9 +93,11 @@ const TokenMintDialog = ({
             ),
           );
           return {
+            operationName: RootMotionOperationNames.MINT_TOKENS,
             colonyAddress,
             colonyName,
             nativeTokenAddress: nativeToken?.address,
+            motionParams: [amount],
             amount,
             annotationMessage,
           };
