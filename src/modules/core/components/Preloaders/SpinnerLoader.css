@@ -69,6 +69,10 @@
   user-select: none;
 }
 
+.themeGrey {
+  composes: main;
+}
+
 .themePrimary .loader {
   border-left-color: var(--primary);
   border-bottom-color: var(--primary);

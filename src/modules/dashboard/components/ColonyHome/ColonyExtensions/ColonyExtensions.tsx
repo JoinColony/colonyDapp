@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import { Colony, useColonyExtensionsQuery } from '~data/index';
-import { SpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 import extensionData from '~data/staticData/extensionData';
 
 import styles from './ColonyExtensions.css';
@@ -34,15 +34,11 @@ const ColonyExtensions = ({ colony: { colonyName, colonyAddress } }: Props) => {
 
   if (loading) {
     return (
-      <div className={styles.main}>
-        <Heading appearance={{ size: 'normal', weight: 'bold' }}>
-          <FormattedMessage {...MSG.title} />
-        </Heading>
-        <SpinnerLoader />
-        <span className={styles.loadingText}>
-          <FormattedMessage {...MSG.loadingData} />
-        </span>
-      </div>
+      <MiniSpinnerLoader
+        className={styles.main}
+        title={MSG.title}
+        loadingText={MSG.loadingData}
+      />
     );
   }
 

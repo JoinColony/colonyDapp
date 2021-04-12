@@ -258,6 +258,8 @@ export default gql`
     ): Int!
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
+    votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
+    blockTime(blockHash: String): Int!
   }
 
   extend type Mutation {
@@ -425,5 +427,12 @@ export default gql`
     events: [NetworkEvent!]!
     isDeploymentFinished: Boolean!
     installedExtensions: [ColonyExtension!]!
+  }
+
+  type VotingExtensionParams {
+    stakePeriod: Int!
+    submitPeriod: Int!
+    revealPeriod: Int!
+    escalationPeriod: Int!
   }
 `;

@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useColonyTransfersQuery, Colony } from '~data/index';
 
-import { SpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 import UnclaimedTransfersItem from './UnclaimedTransfersItem';
 
 import styles from './UnclaimedTransfers.css';
@@ -32,12 +32,10 @@ const UnclaimedTransfers = ({ colony: { colonyAddress }, colony }: Props) => {
 
   if (loading) {
     return (
-      <div className={styles.main}>
-        <SpinnerLoader appearance={{ size: 'small' }} />
-        <span className={styles.loadingText}>
-          <FormattedMessage {...MSG.loadingData} />
-        </span>
-      </div>
+      <MiniSpinnerLoader
+        className={styles.main}
+        loadingText={MSG.loadingData}
+      />
     );
   }
 

@@ -16,6 +16,7 @@ import {
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
+import CountDownTimer from '~core/CountDownTimer';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
@@ -23,6 +24,7 @@ import DetailsWidget from '../DetailsWidget';
 import styles from './DefaultAction.css';
 
 import motionSpecificStyles from './MintTokenMotion.css';
+import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
 
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
 
@@ -87,7 +89,7 @@ const MintTokenMotion = ({
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   return (
     <div className={styles.main}>
-      <div className={styles.container}>
+      <div className={styles.upperContainer}>
         <p className={styles.tagWrapper}>
           <Tag
             text={motionStyles.name}
@@ -97,6 +99,14 @@ const MintTokenMotion = ({
             }}
           />
         </p>
+        <div className={styles.countdownContainer}>
+          <CountDownTimer
+            createdAt={actionCreatedAt}
+            colonyAddress={colony.colonyAddress}
+            text={MSG.stake}
+            periodType="stakePeriod"
+          />
+        </div>
       </div>
       <hr className={styles.dividerTop} />
       <div className={styles.container}>

@@ -9,7 +9,7 @@ import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import { SpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -144,12 +144,10 @@ const NetworkContractUpgradeDialogForm = ({
       </DialogSection>
       {loadingLegacyRecoveyRole && (
         <DialogSection>
-          <div className={styles.loadingInfo}>
-            <SpinnerLoader appearance={{ size: 'small' }} />
-            <span className={styles.loadingText}>
-              <FormattedMessage {...MSG.loadingData} />
-            </span>
-          </div>
+          <MiniSpinnerLoader
+            className={styles.loadingInfo}
+            loadingText={MSG.loadingData}
+          />
         </DialogSection>
       )}
       {PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES && (

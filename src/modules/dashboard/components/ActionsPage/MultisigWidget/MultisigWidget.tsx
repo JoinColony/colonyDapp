@@ -7,7 +7,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import ProgressBar from '~core/ProgressBar';
 import { ActionButton } from '~core/Button';
 import { Tooltip } from '~core/Popover';
-import { SpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -124,41 +124,34 @@ const MultisigWidget = ({
       userAddress === walletAddress,
   )?.approvedRecoveryExit;
 
+  const MembersWithPermissions = () => (
+    <div className={styles.title}>
+      <FormattedMessage
+        {...MSG.title}
+        values={{
+          permissionLabel: (
+            <PermissionsLabel permission={ColonyRole.Recovery} />
+          ),
+        }}
+      />
+    </div>
+  );
+
   if (loading) {
     return (
       <div className={styles.wrapper}>
-        <div className={styles.title}>
-          <FormattedMessage
-            {...MSG.title}
-            values={{
-              permissionLabel: (
-                <PermissionsLabel permission={ColonyRole.Recovery} />
-              ),
-            }}
-          />
-        </div>
-        <div className={styles.loading}>
-          <SpinnerLoader appearance={{ size: 'small' }} />
-          <span className={styles.loadingText}>
-            <FormattedMessage {...MSG.loadingData} />
-          </span>
-        </div>
+        <MembersWithPermissions />
+        <MiniSpinnerLoader
+          className={styles.loading}
+          loadingText={MSG.loadingData}
+        />
       </div>
     );
   }
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.title}>
-        <FormattedMessage
-          {...MSG.title}
-          values={{
-            permissionLabel: (
-              <PermissionsLabel permission={ColonyRole.Recovery} />
-            ),
-          }}
-        />
-      </div>
+      <MembersWithPermissions />
       <div className={styles.avatars}>
         {data?.recoveryRolesAndApprovalsForSession?.map((user) => (
           <div key={user.id}>

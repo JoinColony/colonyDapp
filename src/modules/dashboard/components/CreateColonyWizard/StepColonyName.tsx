@@ -7,8 +7,8 @@ import { WizardProps } from '~core/Wizard';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import Icon from '~core/Icon';
-import { Tooltip } from '~core/Popover';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+
 import { multiLineTextEllipsis } from '~utils/strings';
 import ENS from '~lib/ENS';
 import {
@@ -213,28 +213,15 @@ const StepColonyName = ({
                 statusValues={{ normalized }}
                 disabled={!isNetworkAllowed}
                 extra={
-                  <Tooltip
-                    placement="right"
-                    content={
-                      <div className={styles.tooltipContent}>
-                        <FormattedMessage
-                          {...MSG.tooltip}
-                          values={{
-                            displayENSDomain:
-                              DEFAULT_NETWORK_INFO.displayENSDomain,
-                          }}
-                        />
-                      </div>
-                    }
-                  >
-                    <div className={styles.iconContainer}>
-                      <Icon
-                        name="question-mark"
-                        title="helper"
-                        appearance={{ size: 'small' }}
-                      />
-                    </div>
-                  </Tooltip>
+                  <QuestionMarkTooltip
+                    iconTitle="helper"
+                    tooltipText={MSG.tooltip}
+                    tooltipTextValues={{
+                      displayENSDomain: DEFAULT_NETWORK_INFO.displayENSDomain,
+                    }}
+                    className={styles.iconContainer}
+                    tooltipClassName={styles.tooltipContent}
+                  />
                 }
               />
               <div className={styles.buttons}>
