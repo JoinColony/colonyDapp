@@ -1,6 +1,7 @@
 import React, { useState, useMemo, ReactElement, ReactNode } from 'react';
 import { nanoid } from 'nanoid';
 import { defineMessages } from 'react-intl';
+import { BigNumber } from 'ethers/utils';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
@@ -14,6 +15,7 @@ import {
   Colony,
   TransactionMessageFragment,
   ParsedEvent,
+  TokenInfoQuery,
 } from '~data/index';
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { ActionsPageFeedType, SystemInfo, SystemMessage } from './types';
@@ -52,6 +54,8 @@ export interface EventValues {
   toValue?: string;
   fromValue?: string;
   initiator?: string | ReactElement;
+  staker?: string;
+  stakeAmount?: BigNumber;
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };
@@ -75,6 +79,7 @@ interface Props {
   actionType?: string;
   actionData: ColonyAction;
   colony: Colony;
+  token: TokenInfoQuery['tokenInfo'];
   children?: ReactNode | CustomChildrenRenderFn;
   loading?: boolean;
 }
@@ -88,6 +93,7 @@ const ActionsPageFeed = ({
   actionType,
   actionData,
   colony,
+  token,
   children,
   loading: extenalLoadingState = false,
 }: Props) => {
@@ -202,6 +208,7 @@ const ActionsPageFeed = ({
             }}
             emmitedBy={emmitedBy}
             colony={colony}
+            token={token}
           />
         );
       }

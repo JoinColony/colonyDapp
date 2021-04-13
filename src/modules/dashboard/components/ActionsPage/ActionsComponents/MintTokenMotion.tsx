@@ -14,6 +14,7 @@ import {
   TokenInfoQuery,
   AnyUser,
   useMotionsSystemMessagesQuery,
+  useEventsForMotionQuery,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -56,9 +57,11 @@ const MintTokenMotion = ({
     amount,
     motionState,
     actionInitiator,
+    motionId,
   },
   colonyAction,
   token: { decimals, symbol },
+  token,
   transactionHash,
   initiator,
 }: Props) => {
@@ -75,6 +78,9 @@ const MintTokenMotion = ({
       motionId,
       colonyAddress: colony.colonyAddress,
     },
+  });
+  const { data: motionEventsData } = useEventsForMotionQuery({
+    variables: { colonyAddress: colony.colonyAddress, motionId },
   });
 
   const actionAndEventValues = {
@@ -173,6 +179,7 @@ const MintTokenMotion = ({
             values={actionAndEventValues}
             actionData={colonyAction}
             colony={colony}
+            token={token}
           />
         </div>
         <div className={styles.details}>

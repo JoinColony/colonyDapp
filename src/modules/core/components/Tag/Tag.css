@@ -96,8 +96,10 @@
   color: var(--danger);
 }
 
-.fontSizeTiny {
+.fontSizeTiny,
+.fontSizeTiny span {
   font-size: 9px;
+  line-height: 15px;
 }
 
 .fontSizeSmall {

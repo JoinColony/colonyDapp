@@ -7,6 +7,9 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
 import ColorTag, { Color } from '~core/ColorTag';
 import FriendlyName from '~core/FriendlyName';
+import MemberReputation from '~core/MemberReputation';
+import Tag from '~core/Tag';
+import Numeral from '~core/Numeral';
 
 import {
   ColonyAction,
@@ -14,6 +17,7 @@ import {
   useSubgraphDomainMetadataQuery,
   Colony,
   useUser,
+  TokenInfoQuery,
 } from '~data/index';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
@@ -26,11 +30,14 @@ import {
   getColonyRoleSetMessageDescriptorsIds,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
+import motionSpecificStyles from '../../ActionsPage/ActionsComponents/MintTokenMotion.css';
 
 import styles from './ActionsPageEvent.css';
 
@@ -60,6 +67,7 @@ interface Props {
   emmitedBy?: string;
   actionData: ColonyAction;
   colony: Colony;
+  token: TokenInfoQuery['tokenInfo'];
   children?: ReactNode;
 }
 
@@ -79,6 +87,7 @@ const ActionsPageEvent = ({
   actionData,
   colony: { colonyAddress },
   colony,
+  token,
   children,
 }: Props) => {
   let metadataJSON;
@@ -87,7 +96,7 @@ const ActionsPageEvent = ({
   );
 
   const initiator = useUser(
-    values?.agent || values?.user || values?.creator || '',
+    values?.agent || values?.user || values?.creator || values?.staker || '',
   );
 
   const [
@@ -334,6 +343,34 @@ const ActionsPageEvent = ({
                   </span>
                 ),
                 storageSlot: values?.slot?.toHexString(),
+                amountTag: (
+                  <Tag
+                    appearance={{
+                      theme: 'primary',
+                      colorSchema: 'inverted',
+                      fontSize: 'tiny',
+                    }}
+                  >
+                    <Numeral
+                      value={values?.stakeAmount || 0}
+                      unit={getTokenDecimalsWithFallback(token.decimals)}
+                    />{' '}
+                    {values?.tokenSymbol}
+                  </Tag>
+                ),
+                staker: (
+                  <>
+                    <span className={styles.userDecoration}>
+                      <FriendlyName user={initiator} autoShrinkAddress />
+                    </span>
+                    <div className={motionSpecificStyles.reputation}>
+                      <MemberReputation
+                        walletAddress={values?.staker || ''}
+                        colonyAddress={colony.colonyAddress}
+                      />
+                    </div>
+                  </>
+                ),
               }}
             />
           </div>
