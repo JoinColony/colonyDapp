@@ -236,6 +236,7 @@ export default gql`
       colonyAddress: String!
       walletAddress: String!
     ): [ActionThatNeedsAttention]!
+    eventsForMotion(motionId: String!, colonyAddress: String!): [ParsedEvent!]!
     recoveryEventsForSession(
       blockNumber: Int!
       colonyAddress: String!

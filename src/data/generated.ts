@@ -280,6 +280,7 @@ export type Query = {
   colonyName: Scalars['String'];
   colonyReputation?: Maybe<Scalars['String']>;
   domains: Array<SubgraphDomain>;
+  eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
   legacyNumberOfRecoveryRoles: Scalars['Int'];
@@ -374,6 +375,12 @@ export type QueryColonyReputationArgs = {
 
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
+};
+
+
+export type QueryEventsForMotionArgs = {
+  motionId: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1395,6 +1402,14 @@ export type ActionsThatNeedAttentionQueryVariables = Exact<{
 
 
 export type ActionsThatNeedAttentionQuery = { actionsThatNeedAttention: Array<Maybe<Pick<ActionThatNeedsAttention, 'transactionHash' | 'needsAction'>>> };
+
+export type EventsForMotionQueryVariables = Exact<{
+  motionId: Scalars['String'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type EventsForMotionQuery = { eventsForMotion: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'blockNumber' | 'transactionHash'>> };
 
 export type RecoveryEventsForSessionQueryVariables = Exact<{
   blockNumber: Scalars['Int'];
@@ -3228,6 +3243,46 @@ export function useActionsThatNeedAttentionLazyQuery(baseOptions?: Apollo.LazyQu
 export type ActionsThatNeedAttentionQueryHookResult = ReturnType<typeof useActionsThatNeedAttentionQuery>;
 export type ActionsThatNeedAttentionLazyQueryHookResult = ReturnType<typeof useActionsThatNeedAttentionLazyQuery>;
 export type ActionsThatNeedAttentionQueryResult = Apollo.QueryResult<ActionsThatNeedAttentionQuery, ActionsThatNeedAttentionQueryVariables>;
+export const EventsForMotionDocument = gql`
+    query EventsForMotion($motionId: String!, $colonyAddress: String!) {
+  eventsForMotion(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
+  }
+}
+    `;
+
+/**
+ * __useEventsForMotionQuery__
+ *
+ * To run a query within a React component, call `useEventsForMotionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventsForMotionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventsForMotionQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useEventsForMotionQuery(baseOptions?: Apollo.QueryHookOptions<EventsForMotionQuery, EventsForMotionQueryVariables>) {
+        return Apollo.useQuery<EventsForMotionQuery, EventsForMotionQueryVariables>(EventsForMotionDocument, baseOptions);
+      }
+export function useEventsForMotionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsForMotionQuery, EventsForMotionQueryVariables>) {
+          return Apollo.useLazyQuery<EventsForMotionQuery, EventsForMotionQueryVariables>(EventsForMotionDocument, baseOptions);
+        }
+export type EventsForMotionQueryHookResult = ReturnType<typeof useEventsForMotionQuery>;
+export type EventsForMotionLazyQueryHookResult = ReturnType<typeof useEventsForMotionLazyQuery>;
+export type EventsForMotionQueryResult = Apollo.QueryResult<EventsForMotionQuery, EventsForMotionQueryVariables>;
 export const RecoveryEventsForSessionDocument = gql`
     query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
   recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {

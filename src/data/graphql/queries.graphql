@@ -293,6 +293,18 @@ query ActionsThatNeedAttention($colonyAddress: String!, $walletAddress: String!)
   }
 }
 
+query EventsForMotion($motionId: String!, $colonyAddress: String!) {
+  eventsForMotion(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
+  }
+}
+
 query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
   recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
     type
