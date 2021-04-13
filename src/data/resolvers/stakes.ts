@@ -3,6 +3,7 @@ import { ClientType, Extension } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 
 import { Context } from '~context/index';
+import { MotionVote } from '~utils/colonyMotions';
 
 export const stakesResolvers = ({
   colonyManager,
@@ -13,7 +14,9 @@ export const stakesResolvers = ({
       { colonyAddress, userAddress, motionId, isObjectionStake, tokenDecimals },
     ) {
       try {
-        const supportedSide = isObjectionStake ? 0 : 1;
+        const supportedSide = isObjectionStake
+          ? MotionVote.NAY
+          : MotionVote.YAY;
         const colonyClient = await colonyManager.getClient(
           ClientType.ColonyClient,
           colonyAddress,

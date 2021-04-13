@@ -1,5 +1,10 @@
 import { defineMessage } from 'react-intl';
 
+export enum MotionVote {
+  NAY = 0,
+  YAY = 1,
+}
+
 export enum MotionState {
   Motion = 'Motion',
   StakeRequired = 'StakeRequired',
