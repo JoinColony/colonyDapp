@@ -24,6 +24,7 @@ import CountDownTimer from '~core/CountDownTimer';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
+import TotalStakeWidget from '../TotalStakeWidget';
 import DetailsWidget from '../DetailsWidget';
 import StakingWidget from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
@@ -59,6 +60,7 @@ const MintTokenMotion = ({
     annotationHash,
     colonyDisplayName,
     amount,
+    motionId,
     motionState,
     motionDomain,
     actionInitiator,
@@ -249,6 +251,13 @@ const MintTokenMotion = ({
             transactionHash={transactionHash}
             colony={colony}
           />
+          {motionState === MotionState.StakeRequired && (
+            <TotalStakeWidget
+              colonyAddress={colony.colonyAddress}
+              tokenDecimals={decimals}
+              motionId={motionId}
+            />
+          )}
         </div>
       </div>
     </div>
