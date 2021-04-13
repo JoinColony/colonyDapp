@@ -67,7 +67,7 @@ interface Props {
   emmitedBy?: string;
   actionData: ColonyAction;
   colony: Colony;
-  token: TokenInfoQuery['tokenInfo'];
+  token?: TokenInfoQuery['tokenInfo'];
   children?: ReactNode;
 }
 
@@ -353,7 +353,7 @@ const ActionsPageEvent = ({
                   >
                     <Numeral
                       value={values?.stakeAmount || 0}
-                      unit={getTokenDecimalsWithFallback(token.decimals)}
+                      unit={getTokenDecimalsWithFallback(token?.decimals || 0)}
                     />{' '}
                     {values?.tokenSymbol}
                   </Tag>

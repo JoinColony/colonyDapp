@@ -79,7 +79,7 @@ interface Props {
   actionType?: string;
   actionData: ColonyAction;
   colony: Colony;
-  token: TokenInfoQuery['tokenInfo'];
+  token?: TokenInfoQuery['tokenInfo'];
   children?: ReactNode | CustomChildrenRenderFn;
   loading?: boolean;
 }
