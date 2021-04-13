@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import formatNumber from 'format-number';
+import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import ProgressBar from '~core/ProgressBar';
@@ -49,7 +50,7 @@ const TotalStakeWidget = ({
   isObjectionStake = false,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
-  const { data } = useStakeAmountsForMotionQuery({
+  const { data, loading } = useStakeAmountsForMotionQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
@@ -58,15 +59,7 @@ const TotalStakeWidget = ({
       tokenDecimals,
     },
   });
-  const {
-    totalStaked,
-    userStake,
-    requiredStake,
-  } = data?.stakeAmountsForMotion || {
-    totalStaked: 0,
-    userStake: 0,
-    requiredStake: 0,
-  };
+  const { totalStaked, userStake, requiredStake } = data.stakeAmountsForMotion;
   const {
     data: nativeTokenAddressData,
     loading: loadingNativeTokenAddress,
@@ -87,8 +80,18 @@ const TotalStakeWidget = ({
     }
   }, [fetchTokenInfo, nativeTokenAddressData]);
 
-  const totalStakedPercentage = (totalStaked * 100) / (requiredStake || 1);
-  const userStakePercentage = (userStake * 100) / (requiredStake || 1);
+  if (loading || !data?.stakeAmountsForMotion) {
+    return null;
+  }
+
+  const totalStakedPercentage = bigNumberify(totalStaked)
+    .mul(100)
+    .div(requiredStake || 1)
+    .toNumber();
+  const userStakePercentage = bigNumberify(userStake)
+    .mul(100)
+    .div(requiredStake || 1)
+    .toNumber();
   const formattedTotalStakedPercentage = formatNumber({
     truncate: 2,
   })(totalStakedPercentage);

@@ -38,13 +38,13 @@ export const stakesResolvers = ({
         const requiredStake = skillRep
           .mul(totalStakeFraction)
           .div(bigNumberify(10).pow(tokenDecimals * 2))
-          .toNumber();
-        const totalStaked = stakes[supportedSide]
-          .div(bigNumberify(10).pow(tokenDecimals))
-          .toNumber();
+          .toString();
+        const totalStaked = stakes[supportedSide].div(
+          bigNumberify(10).pow(tokenDecimals),
+        );
         const userStakeAmount = userStake
           .div(bigNumberify(10).pow(tokenDecimals))
-          .toNumber();
+          .toString();
 
         return {
           totalStaked,

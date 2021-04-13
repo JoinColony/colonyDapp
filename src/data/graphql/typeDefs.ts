@@ -234,9 +234,9 @@ export default gql`
   }
 
   type StakeAmounts {
-    totalStaked: Int!
-    userStake: Int!
-    requiredStake: Int!
+    totalStaked: String!
+    userStake: String!
+    requiredStake: String!
   }
 
   extend type Query {
