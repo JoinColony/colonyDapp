@@ -39,9 +39,9 @@ export const stakesResolvers = ({
           .mul(totalStakeFraction)
           .div(bigNumberify(10).pow(tokenDecimals * 2))
           .toString();
-        const totalStaked = stakes[supportedSide].div(
-          bigNumberify(10).pow(tokenDecimals),
-        );
+        const totalStaked = stakes[supportedSide]
+          .div(bigNumberify(10).pow(tokenDecimals))
+          .toString();
         const userStakeAmount = userStake
           .div(bigNumberify(10).pow(tokenDecimals))
           .toString();
