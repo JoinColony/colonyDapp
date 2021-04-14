@@ -958,6 +958,11 @@ export type EventsFilter = {
   name_in?: Maybe<Array<Scalars['String']>>;
 };
 
+export type MotionsFilter = {
+  associatedColony?: Maybe<Scalars['String']>;
+  extensionAddress?: Maybe<Scalars['String']>;
+};
+
 export type OneTxPayment = {
   id: Scalars['String'];
   agent: Scalars['String'];
@@ -995,9 +1000,23 @@ export type SubscriptionEvent = {
   processedValues: EventProcessedValues;
 };
 
+export type SubscriptionMotion = {
+  id: Scalars['String'];
+  transaction: SubgraphTransaction;
+  associatedColony: SubgraphColony;
+  domain: SubgraphDomain;
+  extensionAddress: Scalars['String'];
+  agent: Scalars['String'];
+  currentStake: Scalars['String'];
+  requiredStake: Scalars['String'];
+  escalated: Scalars['Boolean'];
+  state: Scalars['Int'];
+};
+
 export type Subscription = {
   oneTxPayments: Array<OneTxPayment>;
   events: Array<SubscriptionEvent>;
+  motions: Array<SubscriptionMotion>;
 };
 
 
@@ -1012,6 +1031,13 @@ export type SubscriptionEventsArgs = {
   skip: Scalars['Int'];
   first: Scalars['Int'];
   where: EventsFilter;
+};
+
+
+export type SubscriptionMotionsArgs = {
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  where: MotionsFilter;
 };
 
 export type TokensFragment = (
@@ -1689,6 +1715,31 @@ export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Arr
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'timestamp'> }
     ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
+  )> };
+
+export type SubscriptionsMotionsSubscriptionVariables = Exact<{
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
+}>;
+
+
+export type SubscriptionsMotionsSubscription = { motions: Array<(
+    Pick<SubscriptionMotion, 'id' | 'extensionAddress' | 'agent' | 'currentStake' | 'requiredStake' | 'escalated' | 'state'>
+    & { associatedColony: (
+      { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
+      & { token: (
+        Pick<SubgraphToken, 'decimals' | 'symbol'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ), transaction: (
+      { hash: SubgraphTransaction['id'] }
+      & { block: Pick<SubgraphBlock, 'timestamp'> }
+    ), domain: (
+      Pick<SubgraphDomain, 'name'>
+      & { ethDomainId: SubgraphDomain['domainChainId'] }
+    ) }
   )> };
 
 export const ColonyProfileFragmentDoc = gql`
@@ -4418,3 +4469,60 @@ export function useSubscriptionSubgraphEventsThatAreActionsSubscription(baseOpti
       }
 export type SubscriptionSubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubscriptionSubgraphEventsThatAreActionsSubscription>;
 export type SubscriptionSubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubgraphEventsThatAreActionsSubscription>;
+export const SubscriptionsMotionsDocument = gql`
+    subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
+  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
+    id
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
+    transaction {
+      hash: id
+      block {
+        timestamp
+      }
+    }
+    extensionAddress
+    agent
+    domain {
+      ethDomainId: domainChainId
+      name
+    }
+    currentStake
+    requiredStake
+    escalated
+    state @client
+  }
+}
+    `;
+
+/**
+ * __useSubscriptionsMotionsSubscription__
+ *
+ * To run a query within a React component, call `useSubscriptionsMotionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionsMotionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubscriptionsMotionsSubscription({
+ *   variables: {
+ *      skip: // value for 'skip'
+ *      first: // value for 'first'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      extensionAddress: // value for 'extensionAddress'
+ *   },
+ * });
+ */
+export function useSubscriptionsMotionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionsMotionsSubscription, SubscriptionsMotionsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubscriptionsMotionsSubscription, SubscriptionsMotionsSubscriptionVariables>(SubscriptionsMotionsDocument, baseOptions);
+      }
+export type SubscriptionsMotionsSubscriptionHookResult = ReturnType<typeof useSubscriptionsMotionsSubscription>;
+export type SubscriptionsMotionsSubscriptionResult = Apollo.SubscriptionResult<SubscriptionsMotionsSubscription>;

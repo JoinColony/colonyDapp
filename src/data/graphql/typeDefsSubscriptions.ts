@@ -11,6 +11,11 @@ export default gql`
     name_in: [String!]
   }
 
+  input MotionsFilter {
+    associatedColony: String
+    extensionAddress: String
+  }
+
   type OneTxPayment {
     id: String!
     agent: String!
@@ -48,6 +53,19 @@ export default gql`
     processedValues: EventProcessedValues!
   }
 
+  type SubscriptionMotion {
+    id: String!
+    transaction: SubgraphTransaction!
+    associatedColony: SubgraphColony!
+    domain: SubgraphDomain!
+    extensionAddress: String!
+    agent: String!
+    currentStake: String!
+    requiredStake: String!
+    escalated: Boolean!
+    state: Int!
+  }
+
   #
   # Subgraph Subscriptions
   #
@@ -58,5 +76,10 @@ export default gql`
       where: ActionsFilter!
     ): [OneTxPayment!]!
     events(skip: Int!, first: Int!, where: EventsFilter!): [SubscriptionEvent!]!
+    motions(
+      skip: Int!
+      first: Int!
+      where: MotionsFilter!
+    ): [SubscriptionMotion!]!
   }
 `;
