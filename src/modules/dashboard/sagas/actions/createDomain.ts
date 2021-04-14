@@ -38,7 +38,7 @@ function* createDomainAction({
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     /*
-     * Validate the required values for the payment
+     * Validate the required values
      */
     if (!domainName) {
       throw new Error('A domain name is required to create a new domain');
