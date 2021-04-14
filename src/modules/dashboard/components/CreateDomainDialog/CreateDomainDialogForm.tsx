@@ -53,6 +53,7 @@ interface Props {
   colony: Colony;
   isSubmitting;
   isValid;
+  isVotingExtensionEnabled: boolean;
 }
 
 const CreateDomainDialogForm = ({
