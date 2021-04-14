@@ -59,7 +59,6 @@ const TotalStakeWidget = ({
       tokenDecimals,
     },
   });
-  const { totalStaked, userStake, requiredStake } = data.stakeAmountsForMotion;
   const {
     data: nativeTokenAddressData,
     loading: loadingNativeTokenAddress,
@@ -84,13 +83,15 @@ const TotalStakeWidget = ({
     return null;
   }
 
+  const { totalStaked, userStake, requiredStake } = data.stakeAmountsForMotion;
+  const divisibleRequiredStake = requiredStake !== '0' ? requiredStake : 1;
   const totalStakedPercentage = bigNumberify(totalStaked)
     .mul(100)
-    .div(requiredStake || 1)
+    .div(divisibleRequiredStake)
     .toNumber();
   const userStakePercentage = bigNumberify(userStake)
     .mul(100)
-    .div(requiredStake || 1)
+    .div(divisibleRequiredStake)
     .toNumber();
   const formattedTotalStakedPercentage = formatNumber({
     truncate: 2,
@@ -100,7 +101,7 @@ const TotalStakeWidget = ({
   })(userStakePercentage);
 
   return (
-    <div>
+    <div className={styles.widget}>
       <div className={styles.widgetHeading}>
         <Heading
           appearance={{
@@ -132,7 +133,7 @@ const TotalStakeWidget = ({
           backgroundTheme: 'default',
         }}
       />
-      {userStake !== 0 && (
+      {userStake !== '0' && (
         <p className={styles.userStake}>
           {!loadingTokenInfoData && !loadingNativeTokenAddress && (
             <FormattedMessage

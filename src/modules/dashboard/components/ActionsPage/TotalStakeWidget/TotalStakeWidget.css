@@ -1,3 +1,8 @@
+.widget {
+  margin-top: 17px;
+  margin-bottom: 35px;
+}
+
 .widgetHeading {
   display: flex;
   justify-content: space-between;
