@@ -9,6 +9,11 @@
   margin-bottom: 7px;
 }
 
+.title {
+  font-size: var(--size-smallish);
+  color: var(--dark);
+}
+
 .stakeProgress {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);

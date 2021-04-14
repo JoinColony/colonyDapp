@@ -111,6 +111,7 @@ const TotalStakeWidget = ({
             margin: 'none',
           }}
           text={isObjectionStake ? MSG.objectionTitle : MSG.motionTitle}
+          className={styles.title}
         />
         <span className={styles.stakeProgress}>
           {!loadingTokenInfoData && !loadingNativeTokenAddress && (
