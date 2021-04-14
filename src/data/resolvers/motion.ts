@@ -56,12 +56,6 @@ const getMotionEvents = async (
     }),
   );
 
-  /*
-   * Mayyyybe? this can work if we just use reverse() -- going by the logic
-   * that all events come in order from the chain?
-   *
-   * Unless the RPC provider screws us over that is...
-   */
   const sortedMotionEvents = parsedMotionEvents.sort(
     (firstEvent, secondEvent) => firstEvent.createdAt - secondEvent.createdAt,
   );
