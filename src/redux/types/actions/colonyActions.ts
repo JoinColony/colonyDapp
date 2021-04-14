@@ -42,6 +42,24 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
+      ActionTypes.COLONY_MOTION_DOMAIN_CREATE,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        domainName: string;
+        domainColor?: Color;
+        domainPurpose?: string;
+        annotationMessage?: string;
+        parentId?: number;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_DOMAIN_CREATE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
       ActionTypes.COLONY_ACTION_DOMAIN_EDIT,
       {
         colonyAddress: Address;
@@ -81,6 +99,27 @@ export type ColonyActionsActionTypes =
   | ErrorActionType<ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_MOTION_EXPENDITURE_PAYMENT,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        recipientAddress: Address;
+        domainId: number;
+        singlePayment: {
+          amount: BigNumber;
+          tokenAddress: Address;
+          decimals: number;
+        };
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_EXPENDITURE_PAYMENT_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_EXPENDITURE_PAYMENT_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
