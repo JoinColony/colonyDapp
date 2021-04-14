@@ -1002,6 +1002,7 @@ export type SubscriptionEvent = {
 
 export type SubscriptionMotion = {
   id: Scalars['String'];
+  fundamentalChainId: Scalars['String'];
   transaction: SubgraphTransaction;
   associatedColony: SubgraphColony;
   domain: SubgraphDomain;
@@ -1726,7 +1727,7 @@ export type SubscriptionsMotionsSubscriptionVariables = Exact<{
 
 
 export type SubscriptionsMotionsSubscription = { motions: Array<(
-    Pick<SubscriptionMotion, 'id' | 'extensionAddress' | 'agent' | 'currentStake' | 'requiredStake' | 'escalated' | 'state'>
+    Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'currentStake' | 'requiredStake' | 'escalated' | 'state'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -4473,6 +4474,7 @@ export const SubscriptionsMotionsDocument = gql`
     subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
   motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
     id
+    fundamentalChainId
     associatedColony {
       colonyAddress: id
       id: colonyChainId

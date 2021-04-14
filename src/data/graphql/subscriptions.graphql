@@ -120,6 +120,7 @@ subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: Str
       extensionAddress: $extensionAddress,
     }) {
     id
+    fundamentalChainId
     associatedColony {
       colonyAddress: id
       id: colonyChainId

@@ -1,3 +1,5 @@
+import { ClientType } from '@colony/colony-js';
+import { bigNumberify } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
 
 import {
@@ -9,6 +11,7 @@ import {
 } from '@colony/colony-js';
 
 import { Context } from '~context/index';
+import { createAddress } from '~utils/web3';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   ActionsPageFeedType,
@@ -108,4 +111,15 @@ export const motionsResolvers = ({
       return Promise.all(systemMessages);
     },
   },
+  Motion: {
+    async state({ fundamentalChainId, associatedColony: { colonyAddress } }) {
+      const votingReputationClient = await colonyManager.getClient(
+        ClientType.VotingReputationClient,
+        createAddress(colonyAddress),
+      );
+      return votingReputationClient.getMotionState(
+        bigNumberify(fundamentalChainId),
+      );
+    },
+ },
 });

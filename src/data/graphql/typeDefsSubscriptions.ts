@@ -55,6 +55,7 @@ export default gql`
 
   type SubscriptionMotion {
     id: String!
+    fundamentalChainId: String!
     transaction: SubgraphTransaction!
     associatedColony: SubgraphColony!
     domain: SubgraphDomain!
