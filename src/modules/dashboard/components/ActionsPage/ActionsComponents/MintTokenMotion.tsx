@@ -209,6 +209,13 @@ const MintTokenMotion = ({
           )}
         </div>
         <div className={styles.details}>
+          {motionState === MotionState.StakeRequired && (
+            <TotalStakeWidget
+              colonyAddress={colony.colonyAddress}
+              tokenDecimals={decimals}
+              motionId={motionId}
+            />
+          )}
           {(motionState === MotionState.StakeRequired ||
             motionState === MotionState.Motion ||
             motionState === MotionState.Objection) && (
@@ -251,13 +258,6 @@ const MintTokenMotion = ({
             transactionHash={transactionHash}
             colony={colony}
           />
-          {motionState === MotionState.StakeRequired && (
-            <TotalStakeWidget
-              colonyAddress={colony.colonyAddress}
-              tokenDecimals={decimals}
-              motionId={motionId}
-            />
-          )}
         </div>
       </div>
     </div>
