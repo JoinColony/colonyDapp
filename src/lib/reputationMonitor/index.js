@@ -18,6 +18,7 @@ const colonyNetwork = new ethers.Contract(
 );
 
 let lastBlockThisServiceMined = null;
+let reputationMonitorActive = false;
 
 async function forwardTime(seconds) {
   await provider.send('evm_increaseTime', [seconds]);
@@ -27,6 +28,7 @@ async function forwardTime(seconds) {
 async function doBlockChecks(blockNumber) {
   // Don't mine two blocks in a row
   if (lastBlockThisServiceMined >= blockNumber) { return; }
+  if (!reputationMonitorActive) { return; }
 
   // Inactive log length greater than one, mine a block
   const inactiveCycleAddress = await colonyNetwork.getReputationMiningCycle(
@@ -76,4 +78,8 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 
 app.use('/reputation/local', createProxyMiddleware({ target: 'http://127.0.0.1:3002/', changeOrigin: true, pathRewrite: {'^/reputation/local' : ''}}));
+app.get('/reputation/toggle', function (req, res){
+  reputationMonitorActive = !reputationMonitorActive;
+  res.send(`Reputation monitor auto mining is now ${reputationMonitorActive ? "on" : "off" }`)
+})
 app.listen(3001);
