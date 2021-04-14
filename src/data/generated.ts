@@ -889,9 +889,9 @@ export type MotionVoteResults = {
 }
 
 export type StakeAmounts = {
-  totalStaked: Scalars['Int'];
-  userStake: Scalars['Int'];
-  requiredStake: Scalars['Int'];
+  totalStaked: Scalars['String'];
+  userStake: Scalars['String'];
+  requiredStake: Scalars['String'];
 };
 
 export type MotionStakerRewards = {
