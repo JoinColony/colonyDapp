@@ -171,8 +171,8 @@
 
     "transaction.group.stakeMotion.title": "Stake motion",
     "transaction.group.stakeMotion.description": "Stake motion",
-    "transaction.VotingReputationClient.stakeMotion.title": "Stake motion",
-    "transaction.VotingReputationClient.stakeMotion.description": "Stake motion",
+    "transaction.VotingReputationClient.stakeMotionWithProofs.title": "Stake motion",
+    "transaction.VotingReputationClient.stakeMotionWithProofs.description": "Stake motion",
     "transaction.ColonyClient.approveStake.title": "Approve stake",
     "transaction.ColonyClient.approveStake.description": "Approve stake",
 

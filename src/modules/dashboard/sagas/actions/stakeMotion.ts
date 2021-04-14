@@ -1,7 +1,5 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { VotingReputationClient } from '@colony/colony-js/lib/clients/VotingReputationClient';
-import { MaxUint256 } from 'ethers/constants';
+import { ClientType, VotingReputationClient } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { TEMP_getContext, ContextModule } from '~context/index';
@@ -81,23 +79,11 @@ function* stakeMotionAction({
       ready: false,
     });
 
-    // @NOTE: This should only work when there's 1 domain (root) in the colony
-    // A "stakeMotionWithProofs" is needed for this to work like expected
     yield createGroupTransaction(stakeMotion, {
       context: ClientType.VotingReputationClient,
-      methodName: 'stakeMotion',
+      methodName: 'stakeMotionWithProofs',
       identifier: colonyAddress,
-      params: [
-        motionId,
-        ROOT_DOMAIN_ID,
-        MaxUint256,
-        vote,
-        amount,
-        key,
-        value,
-        branchMask,
-        siblings,
-      ],
+      params: [motionId, vote, amount, key, value, branchMask, siblings],
       ready: false,
     });
 
