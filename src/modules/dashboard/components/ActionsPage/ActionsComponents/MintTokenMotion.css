@@ -2,3 +2,7 @@
   display: inline-block;
   margin-left: 4px;
 }
+
+.tagWrapper > span {
+  margin-left: 0;
+}

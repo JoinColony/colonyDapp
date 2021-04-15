@@ -5,6 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import Numeral from '~core/Numeral';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
+  SystemMessage,
 } from '~dashboard/ActionsPageFeed';
 import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
 import {
@@ -12,7 +13,7 @@ import {
   ColonyActionQuery,
   TokenInfoQuery,
   AnyUser,
-  useMotionsSystemMessagesQuery
+  useMotionsSystemMessagesQuery,
 } from '~data/index';
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -60,12 +61,13 @@ const MintTokenMotion = ({
   initiator,
 }: Props) => {
   const motionTag = MOTION_TAG_MAP[MotionState.Motion];
-  const motionCreatedEvent = colonyAction.events.find(({name}) => name === ColonyAndExtensionsEvents.MotionCreated);
-  const motionId = ((motionCreatedEvent?.values as unknown) as MotionValue).motionId;
+  const passedTag = MOTION_TAG_MAP[MotionState.Passed];
+  const motionCreatedEvent = colonyAction.events.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+  const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
 
-  const {
-    data: motionsSystemMessages,
-  } = useMotionsSystemMessagesQuery({
+  const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
       motionId,
       colonyAddress: colony.colonyAddress,
@@ -101,8 +103,17 @@ const MintTokenMotion = ({
       />
     ),
     motionTag: <Tag text={motionTag.name} appearance={{ theme: 'primary' }} />,
+    passedTag: (
+      <span className={motionSpecificStyles.tagWrapper}>
+        <Tag
+          text={passedTag.name}
+          appearance={{ theme: 'primary', colorSchema: 'plain' }}
+        />
+      </span>
+    ),
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
+
   return (
     <div className={styles.main}>
       <div className={styles.upperContainer}>
@@ -147,6 +158,10 @@ const MintTokenMotion = ({
             actionType={actionType}
             transactionHash={transactionHash as string}
             networkEvents={events}
+            systemMessages={
+              // eslint-disable-next-line max-len
+              motionsSystemMessagesData?.motionsSystemMessages as SystemMessage[]
+            }
             values={actionAndEventValues}
             actionData={colonyAction}
             colony={colony}

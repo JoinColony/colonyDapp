@@ -252,6 +252,7 @@ const ActionsPageFeed = ({
           <ActionsPageSystemMessage
             key={uniqueId}
             systemMessage={feedItem as SystemMessage}
+            values={values}
           />
         );
       }
