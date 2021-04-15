@@ -11,9 +11,11 @@ import { Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import Toggle from '~core/Fields/Toggle';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
+import { useColonyReputation } from '~utils/hooks/useColonyReputation';
 
 import { getAllUserRoles } from '../../../transformers';
 import { canArchitect } from '../../../users/checks';
@@ -46,6 +48,10 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
   },
+  forceMotion: {
+    id: 'dashboard.TokenMintDialog.TokenMintForm.forceMotion',
+    defaultMessage: 'Force',
+  },
 });
 
 interface Props {
@@ -62,6 +68,8 @@ const CreateDomainDialogForm = ({
   handleSubmit,
   isSubmitting,
   isValid,
+  isVotingExtensionEnabled,
+  values,
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
 
@@ -72,6 +80,15 @@ const CreateDomainDialogForm = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const canCreateDomain = hasRegisteredProfile && canArchitect(allUserRoles);
 
+  const { colonyHasReputation } = useColonyReputation(colony.colonyAddress);
+  const onlyForceAction =
+    isVotingExtensionEnabled && !colonyHasReputation && !values.forceAction;
+
+  const userHasPermission =
+    canCreateDomain || (isVotingExtensionEnabled && colonyHasReputation);
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
+
   return (
     <>
       <DialogSection appearance={{ theme: 'heading' }}>
@@ -80,8 +97,11 @@ const CreateDomainDialogForm = ({
           text={MSG.titleCreate}
           className={styles.title}
         />
+        {canCreateDomain && isVotingExtensionEnabled && (
+          <Toggle label={MSG.forceMotion} name="forceAction" />
+        )}
       </DialogSection>
-      {!canCreateDomain && (
+      {!userHasPermission && (
         <DialogSection>
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Architecture]} />
         </DialogSection>
@@ -93,7 +113,7 @@ const CreateDomainDialogForm = ({
               label={MSG.name}
               name="teamName"
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
-              disabled={!canCreateDomain}
+              disabled={inputDisabled}
               maxLength={20}
             />
           </div>
@@ -101,7 +121,7 @@ const CreateDomainDialogForm = ({
             activeOption={domainColor}
             appearance={{ alignOptions: 'right' }}
             onColorChange={setDomainColor}
-            disabled={!canCreateDomain}
+            disabled={inputDisabled}
             name="domainColor"
           />
         </div>
@@ -111,7 +131,7 @@ const CreateDomainDialogForm = ({
           label={MSG.purpose}
           name="domainPurpose"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          disabled={!canCreateDomain}
+          disabled={inputDisabled}
           maxLength={90}
         />
       </DialogSection>
@@ -119,10 +139,10 @@ const CreateDomainDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotationMessage"
-          disabled={!canCreateDomain}
+          disabled={inputDisabled}
         />
       </DialogSection>
-      {!canCreateDomain && (
+      {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionFromMessage}>
             <FormattedMessage
@@ -153,7 +173,7 @@ const CreateDomainDialogForm = ({
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
-          disabled={!canCreateDomain || !isValid}
+          disabled={inputDisabled || !isValid}
         />
       </DialogSection>
     </>
