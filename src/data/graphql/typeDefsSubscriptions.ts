@@ -64,7 +64,7 @@ export default gql`
     currentStake: String!
     requiredStake: String!
     escalated: Boolean!
-    state: Int!
+    state: String!
     action: String!
     type: String!
     args: SubscriptionMotionArguments!

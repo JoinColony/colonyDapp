@@ -1011,7 +1011,7 @@ export type SubscriptionMotion = {
   currentStake: Scalars['String'];
   requiredStake: Scalars['String'];
   escalated: Scalars['Boolean'];
-  state: Scalars['Int'];
+  state: Scalars['String'];
   action: Scalars['String'];
   type: Scalars['String'];
   args: SubscriptionMotionArguments;

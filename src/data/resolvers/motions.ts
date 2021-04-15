@@ -1,7 +1,6 @@
-import { ClientType } from '@colony/colony-js';
+import { ClientType, ExtensionClient } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
-
 import {
   ClientType,
   getLogs,
@@ -12,7 +11,7 @@ import {
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
-import { getMotionActionType } from '~utils/events';
+import { getMotionActionType, getMotionState } from '~utils/events';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   ActionsPageFeedType,
@@ -114,12 +113,17 @@ export const motionsResolvers = ({
   },
   Motion: {
     async state({ fundamentalChainId, associatedColony: { colonyAddress } }) {
+      const motionId = bigNumberify(fundamentalChainId);
       const votingReputationClient = await colonyManager.getClient(
         ClientType.VotingReputationClient,
         createAddress(colonyAddress),
       );
-      return votingReputationClient.getMotionState(
-        bigNumberify(fundamentalChainId),
+      const motion = await votingReputationClient.getMotion(motionId);
+      const state = await votingReputationClient.getMotionState(motionId);
+      return getMotionState(
+        state,
+        votingReputationClient as ExtensionClient,
+        motion,
       );
     },
     async type({

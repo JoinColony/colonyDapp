@@ -501,7 +501,7 @@ const getRecoveryActionValues = async (
 };
 
 // Motions
-const getMotionState = async (
+export const getMotionState = async (
   motionNetworkState: NetworkMotionState,
   votingClient: ExtensionClient,
   motion,
