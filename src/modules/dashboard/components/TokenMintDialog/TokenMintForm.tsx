@@ -16,7 +16,7 @@ import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useTransformer } from '~utils/hooks';
-import { useColonyReputation } from '~utils/hooks/useColonyReputation';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -74,12 +74,12 @@ const TokenMintForm = ({
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
-  const { colonyHasReputation } = useColonyReputation(colony.colonyAddress);
-  const onlyForceAction =
-    isVotingExtensionEnabled && !colonyHasReputation && !values.forceAction;
-
-  const userHasPermission =
-    canMintTokens || (isVotingExtensionEnabled && colonyHasReputation);
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canMintTokens,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
 
   const inputDisabled = !userHasPermission || onlyForceAction;
 

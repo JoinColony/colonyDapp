@@ -16,7 +16,7 @@ import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
-import { useColonyReputation } from '~utils/hooks/useColonyReputation';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getAllUserRoles } from '../../../transformers';
 import { canArchitect } from '../../../users/checks';
@@ -81,12 +81,12 @@ const CreateDomainDialogForm = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const canCreateDomain = hasRegisteredProfile && canArchitect(allUserRoles);
 
-  const { colonyHasReputation } = useColonyReputation(colony.colonyAddress);
-  const onlyForceAction =
-    isVotingExtensionEnabled && !colonyHasReputation && !values.forceAction;
-
-  const userHasPermission =
-    canCreateDomain || (isVotingExtensionEnabled && colonyHasReputation);
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canCreateDomain,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
 
   const inputDisabled = !userHasPermission || onlyForceAction;
 
