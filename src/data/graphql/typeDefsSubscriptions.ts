@@ -65,6 +65,7 @@ export default gql`
     requiredStake: String!
     escalated: Boolean!
     state: Int!
+    action: String!
   }
 
   #

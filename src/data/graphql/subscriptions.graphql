@@ -145,6 +145,7 @@ subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: Str
     currentStake
     requiredStake
     escalated
+    action
     state @client
   }
 }
