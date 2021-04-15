@@ -5,7 +5,7 @@ import { useMainClasses } from '~utils/hooks';
 
 import styles from './Tag.css';
 
-interface Appearance {
+export interface Appearance {
   /* "light" is default */
   theme: 'primary' | 'light' | 'golden' | 'danger' | 'pink' | 'blue';
   fontSize?: 'tiny' | 'small';
