@@ -57,7 +57,6 @@ const MintTokenMotion = ({
     amount,
     motionState,
     actionInitiator,
-    motionId,
   },
   colonyAction,
   token: { decimals, symbol },
