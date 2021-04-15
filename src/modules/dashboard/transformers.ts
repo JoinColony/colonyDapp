@@ -5,6 +5,7 @@ import {
   SubscriptionSubgraphOneTxSubscription,
   SubscriptionSubgraphEventsThatAreActionsSubscription,
   SubscriptionSubgraphEventsSubscription,
+  SubscriptionsMotionsSubscription,
 } from '~data/index';
 import {
   Address,
@@ -21,6 +22,12 @@ import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 import { ItemStatus } from '~core/ActionsList';
 
+enum FilteredUnformattedAction {
+  OneTxPayments = 'oneTxPayments',
+  Events = 'events',
+  Motions = 'motions',
+}
+
 interface ActionsThatNeedAttention {
   transactionHash: string;
   needsAction: boolean;
@@ -35,6 +42,7 @@ export const getActionsListData = (
   unformattedActions?: {
     oneTxPayments?: SubscriptionSubgraphOneTxSubscription['oneTxPayments'];
     events?: SubscriptionSubgraphEventsThatAreActionsSubscription['events'];
+    motions?: SubscriptionsMotionsSubscription['motions'];
   },
   transactionsCommentsCount?: TransactionsMessagesCount,
   {
@@ -94,6 +102,7 @@ export const getActionsListData = (
 
         return [...acc, event];
       }, []) || [],
+    motions: unformattedActions?.motions || [],
   };
 
   Object.keys(filteredUnformattedActions || {}).map((subgraphActionType) => {
@@ -115,6 +124,7 @@ export const getActionsListData = (
             createdAt: new Date(),
             commentCount: 0,
             status: undefined,
+            motionState: undefined,
           };
           let hash;
           let timestamp;
@@ -142,7 +152,7 @@ export const getActionsListData = (
             transactionsCommentsCount?.colonyTransactionMessages?.find(
               ({ transactionHash }) => transactionHash === hash,
             );
-          if (subgraphActionType === 'oneTxPayments') {
+          if (subgraphActionType === FilteredUnformattedAction.OneTxPayments) {
             try {
               const {
                 payment: {
@@ -187,7 +197,7 @@ export const getActionsListData = (
               parseInt(`${timestamp}000`, 10),
             );
           }
-          if (subgraphActionType === 'events') {
+          if (subgraphActionType === FilteredUnformattedAction.Events) {
             try {
               const {
                 processedValues,
@@ -221,6 +231,27 @@ export const getActionsListData = (
               log.verbose('Could not deconstruct the subgraph event object');
               log.verbose(error);
             }
+          }
+          if (subgraphActionType === FilteredUnformattedAction.Motions) {
+            const {
+              args: {
+                token: { address: tokenAddress, symbol, decimals },
+              },
+              args,
+              agent,
+              type,
+              state,
+            } = unformattedAction;
+            formatedAction.tokenAddress = tokenAddress;
+            formatedAction.symbol = symbol;
+            formatedAction.decimals = decimals;
+            formatedAction.initiator = agent;
+            formatedAction.actionType = type;
+            formatedAction.motionState = state;
+            const actionTypeKeys = Object.keys(args);
+            actionTypeKeys.forEach((key) => {
+              formatedAction[key] = args[key];
+            });
           }
           formatedAction.transactionHash = hash;
           return formatedAction;
