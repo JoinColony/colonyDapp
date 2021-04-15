@@ -153,14 +153,22 @@ export const motionsResolvers = ({
       const actionValues = colonyClient.interface.parseTransaction({
         data: action,
       });
-      const tokenAddress = await colonyClient.getToken();
+      const tokenAddress = colonyClient.tokenClient.address;
+      const {
+        symbol,
+        decimals,
+      } = await colonyClient.tokenClient.getTokenInfo();
       /*
        * @TODO Return argumnents for the other motions as well, as soon
        * as they get wired into the dapp
        */
       return {
         amount: bigNumberify(actionValues?.args[0] || '0').toString(),
-        tokenAddress,
+        token: {
+          id: tokenAddress,
+          symbol,
+          decimals,
+        },
       };
     },
   },

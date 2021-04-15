@@ -1019,7 +1019,7 @@ export type SubscriptionMotion = {
 
 export type SubscriptionMotionArguments = {
   amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
+  token: SubgraphToken;
 };
 
 export type Subscription = {
@@ -1736,19 +1736,19 @@ export type SubscriptionsMotionsSubscriptionVariables = Exact<{
 
 export type SubscriptionsMotionsSubscription = { motions: Array<(
     Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'currentStake' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
-    & { associatedColony: (
-      { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
-      & { token: (
-        Pick<SubgraphToken, 'decimals' | 'symbol'>
-        & { address: SubgraphToken['id'] }
-      ) }
-    ), transaction: (
+    & { associatedColony: { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }, transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'timestamp'> }
     ), domain: (
       Pick<SubgraphDomain, 'name'>
       & { ethDomainId: SubgraphDomain['domainChainId'] }
-    ), args: Pick<SubscriptionMotionArguments, 'amount' | 'tokenAddress'> }
+    ), args: (
+      Pick<SubscriptionMotionArguments, 'amount'>
+      & { token: (
+        Pick<SubgraphToken, 'symbol' | 'decimals'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ) }
   )> };
 
 export const ColonyProfileFragmentDoc = gql`
@@ -4420,11 +4420,6 @@ export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
     associatedColony {
       colonyAddress: id
       id: colonyChainId
-      token {
-        address: id
-        decimals
-        symbol
-      }
     }
     transaction {
       hash: id
@@ -4512,7 +4507,11 @@ export const SubscriptionsMotionsDocument = gql`
     type @client
     args @client {
       amount
-      tokenAddress
+      token {
+        address: id
+        symbol
+        decimals
+      }
     }
   }
 }

@@ -74,7 +74,7 @@ export default gql`
   #
   type SubscriptionMotionArguments {
     amount: String!
-    tokenAddress: String!
+    token: SubgraphToken!
   }
 
   #

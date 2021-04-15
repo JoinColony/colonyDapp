@@ -124,11 +124,6 @@ subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: Str
     associatedColony {
       colonyAddress: id
       id: colonyChainId
-      token {
-        address: id
-        decimals
-        symbol
-      }
     }
     transaction {
       hash: id
@@ -150,7 +145,11 @@ subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: Str
     type @client
     args @client {
       amount
-      tokenAddress
+      token {
+        address: id
+        symbol
+        decimals
+      }
     }
   }
 }
