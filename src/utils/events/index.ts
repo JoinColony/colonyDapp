@@ -5,7 +5,7 @@ import {
   getLogs,
   ExtensionClient,
 } from '@colony/colony-js';
-import { bigNumberify } from 'ethers/utils';
+import { bigNumberify, BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
 import ColonyManagerClass from '~lib/ColonyManager';
@@ -803,10 +803,9 @@ export const groupSetUserRolesActions = (actions): FormattedAction[] => {
 export const getMotionActionType = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
-  motionCreatedEvent: any,
+  motionId: BigNumberish,
 ) => {
-  const motionid = motionCreatedEvent.values.motionId.toString();
-  const motion = await votingClient.getMotion(motionid);
+  const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
   });
