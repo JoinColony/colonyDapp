@@ -24,6 +24,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
+import StakingWidget from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
 import FinalizeMotionWidget from '../FinalizeMotionWidget';
@@ -57,7 +58,10 @@ const MintTokenMotion = ({
     annotationHash,
     colonyDisplayName,
     amount,
+    motionId,
+    motionDomainId,
     motionState,
+    rootHash,
     motionDomain,
     actionInitiator,
   },
@@ -190,6 +194,15 @@ const MintTokenMotion = ({
           />
         </div>
         <div className={styles.details}>
+          {motionState === MotionState.StakeRequired && (
+            <StakingWidget
+              motionId={motionId}
+              motionDomainId={motionDomainId}
+              rootHash={rootHash}
+              colonyAddress={colony.colonyAddress}
+              tokenDecimals={decimals}
+            />
+          )}
           {motionState === MotionState.Voting && (
             <VoteWidget
               colony={colony}
