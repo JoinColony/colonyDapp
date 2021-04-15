@@ -524,10 +524,37 @@ export const getMotionState = async (
         ? MotionState.Objection
         : MotionState.Motion;
     case NetworkMotionState.Finalizable:
-    case NetworkMotionState.Finalized:
-      return motion.votes[0].gte(motion.votes[1])
-        ? MotionState.Failed
-        : MotionState.Passed;
+    case NetworkMotionState.Finalized: {
+      const [nayStakes, yayStakes] = motion.stakes;
+      /*
+       * Both sides staked fully, we go to a vote
+       *
+       * @TODO We're using gte as opposed to just eq to counteract a bug on the contracts
+       * Once that is fixed, we can switch this back to equals
+       */
+      if (nayStakes.gte(requiredStakes) && yayStakes.gte(requiredStakes)) {
+        const [nayVotes, yayVotes] = motion.votes;
+        /*
+         * It only passes if the yay votes outnumber the nay votes
+         * If the votes are equal, it fails
+         */
+        if (yayVotes.gt(nayVotes)) {
+          return MotionState.Passed;
+        }
+        return MotionState.Failed;
+      }
+      /*
+       * If we didn't get to a vote, it only passes if the Yay side stakes fully
+       * otherwise it fails
+       *
+       * @TODO We're using gte as opposed to just eq to counteract a bug on the contracts
+       * Once that is fixed, we can switch this back to equals
+       */
+      if (yayStakes.gte(requiredStakes)) {
+        return MotionState.Passed;
+      }
+      return MotionState.Failed;
+    }
     case NetworkMotionState.Failed:
       return MotionState.Failed;
     default:
