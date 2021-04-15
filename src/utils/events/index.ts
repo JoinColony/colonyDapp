@@ -4,6 +4,7 @@ import {
   ClientType,
   getLogs,
   ExtensionClient,
+  MotionState as NetworkMotionState,
 } from '@colony/colony-js';
 import { bigNumberify, BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
@@ -29,7 +30,7 @@ import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 
 import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
-import { NetworkMotionState, MotionState } from '../colonyMotions';
+import { MotionState } from '../colonyMotions';
 
 interface ActionValues {
   recipient: Address;

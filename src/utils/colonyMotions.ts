@@ -1,16 +1,5 @@
 import { defineMessage } from 'react-intl';
 
-export enum NetworkMotionState {
-  Null = 0,
-  Staking = 1,
-  Submit = 2,
-  Reveal = 3,
-  Closed = 4,
-  Finalizable = 5,
-  Finalized = 6,
-  Failed = 7,
-}
-
 export enum MotionState {
   Motion = 'Motion',
   StakeRequired = 'StakeRequired',
