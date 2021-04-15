@@ -64,6 +64,7 @@ export const resolvers: ResolverFactory[] = [
   eventsResolvers,
   recoveryModeResolvers,
   extensionResolvers,
+  motionsResolvers,
 ];
 
 // export all the generated types and helpers

@@ -104,6 +104,13 @@ export enum ColonyAndExtensionsEvents {
    * Motion events
    */
   MotionCreated = 'MotionCreated',
+  MotionStaked = 'MotionStaked',
+  MotionVoteSubmitted = 'MotionVoteSubmitted',
+  MotionVoteRevealed = 'MotionVoteRevealed',
+  MotionFinalized = 'MotionFinalized',
+  MotionEscalated = 'MotionEscalated',
+  MotionRewardClaimed = 'MotionRewardClaimed',
+  MotionEventSet = 'MotionEventSet',
 }
 
 export interface FormattedAction {

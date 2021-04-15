@@ -262,6 +262,10 @@ export default gql`
     networkExtensionVersion(extensionId: String!): Int!
     votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
     blockTime(blockHash: String): Int!
+    motionsSystemMessages(
+      motionId: Int!
+      colonyAddress: String!
+    ): [SystemMessage!]!
   }
 
   extend type Mutation {
