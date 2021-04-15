@@ -6,12 +6,13 @@ import Numeral from '~core/Numeral';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
 } from '~dashboard/ActionsPageFeed';
-import { ColonyMotions } from '~types/index';
+import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
 import {
   Colony,
   ColonyActionQuery,
   TokenInfoQuery,
   AnyUser,
+  useMotionsSystemMessagesQuery
 } from '~data/index';
 import Tag from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -37,6 +38,10 @@ interface Props {
   initiator: AnyUser;
 }
 
+interface MotionValue {
+  motionId: number;
+}
+
 const MintTokenMotion = ({
   colony,
   colonyAction: {
@@ -55,6 +60,17 @@ const MintTokenMotion = ({
   initiator,
 }: Props) => {
   const motionTag = MOTION_TAG_MAP[MotionState.Motion];
+  const motionCreatedEvent = colonyAction.events.find(({name}) => name === ColonyAndExtensionsEvents.MotionCreated);
+  const motionId = ((motionCreatedEvent?.values as unknown) as MotionValue).motionId;
+
+  const {
+    data: motionsSystemMessages,
+  } = useMotionsSystemMessagesQuery({
+    variables: {
+      motionId,
+      colonyAddress: colony.colonyAddress,
+    },
+  });
 
   const actionAndEventValues = {
     actionType,
