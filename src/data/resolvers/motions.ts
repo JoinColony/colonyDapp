@@ -35,8 +35,10 @@ export const motionsResolvers = ({
       const motionNetworkState = await votingReputationClient.getMotionState(motionId);
       const systemMessages: SystemMessage[] = [];
 
+      // @ts-ignore
       const motionStakedFilter = votingReputationClient.filters.MotionStaked(motionId, null, null, null);
       const motionStakedLogs = await getLogs(votingReputationClient, motionStakedFilter);
+      // @ts-ignore
       const motionVoteRevealedFilter = votingReputationClient.filters.MotionVoteRevealed(motionId, null, null);
       const motionVoteRevealedLogs = await getLogs(votingReputationClient, motionVoteRevealedFilter);
 
