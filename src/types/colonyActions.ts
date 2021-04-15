@@ -2,6 +2,7 @@ import { ColonyRole } from '@colony/colony-js';
 
 import { ItemStatus } from '~core/ActionsList';
 import { Address, ActionUserRoles } from './index';
+import { MotionState } from '~utils/colonyMotions';
 
 export enum ColonyActions {
   Generic = 'Generic',
@@ -132,6 +133,7 @@ export interface FormattedAction {
   roles: ActionUserRoles[];
   oldVersion?: string;
   newVersion?: string;
+  motionState?: MotionState;
 }
 
 export interface FormattedEvent {
