@@ -152,13 +152,7 @@ const TokenMintForm = ({
           </div>
         </DialogSection>
       )}
-      {onlyForceAction && (
-        <DialogSection appearance={{ theme: 'sidePadding' }}>
-          <div className={styles.reputationMessage}>
-            <NotEnoughReputation />
-          </div>
-        </DialogSection>
-      )}
+      {onlyForceAction && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
