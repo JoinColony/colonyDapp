@@ -62,6 +62,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStep: 'dashboard.CreatePaymentDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -69,6 +70,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         colony,
         prevStep: 'dashboard.ExpendituresDialog',
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -88,6 +90,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -95,6 +98,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -104,6 +108,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStep: 'dashboard.CreateDomainDialog',
         nextStepEdit: 'dashboard.EditDomainDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -111,6 +116,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -118,13 +124,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,
-      },
-    },
-    {
-      component: EditDomainDialog,
-      props: {
-        prevStep: 'dashboard.ManageDomainsDialog',
-        colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -136,6 +136,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -143,6 +144,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -157,6 +159,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -164,6 +167,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -179,6 +183,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
   ]);
