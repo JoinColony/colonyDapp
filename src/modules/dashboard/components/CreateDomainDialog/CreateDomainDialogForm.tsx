@@ -12,6 +12,7 @@ import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
@@ -160,6 +161,7 @@ const CreateDomainDialogForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button
