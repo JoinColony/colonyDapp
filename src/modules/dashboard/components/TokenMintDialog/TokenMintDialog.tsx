@@ -6,9 +6,8 @@ import { useHistory } from 'react-router-dom';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 
-import Dialog, { DialogProps } from '~core/Dialog';
+import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
-import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { RootMotionOperationNames } from '~redux/types/actions';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
@@ -35,15 +34,9 @@ export interface FormValues {
   mintAmount: number;
 }
 
-interface CustomWizardDialogProps {
-  prevStep?: string;
-  colony: Colony;
-  isVotingExtensionEnabled: boolean;
-}
-
 type Props = DialogProps &
   Partial<WizardDialogType<object>> &
-  CustomWizardDialogProps;
+  ActionDialogProps;
 
 const displayName = 'dashboard.TokenMintDialog';
 

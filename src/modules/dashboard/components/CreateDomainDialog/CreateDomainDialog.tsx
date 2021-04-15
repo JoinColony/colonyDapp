@@ -3,10 +3,9 @@ import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 
-import Dialog, { DialogProps } from '~core/Dialog';
+import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
@@ -22,13 +21,7 @@ export interface FormValues {
   annotationMessage?: string;
 }
 
-interface CustomWizardDialogProps {
-  prevStep?: string;
-  colony: Colony;
-  isVotingExtensionEnabled: boolean;
-}
-
-type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+type Props = DialogProps & WizardDialogType<object> & ActionDialogProps;
 
 const displayName = 'dashboard.CreateDomainDialog';
 

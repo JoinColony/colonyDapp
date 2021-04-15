@@ -6,6 +6,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import Button from '~core/Button';
 import ColorSelect from '~core/ColorSelect';
 import { Color } from '~core/ColorTag';
+import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -14,7 +15,7 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Toggle from '~core/Fields/Toggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 
-import { Colony, useLoggedInUser } from '~data/index';
+import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
@@ -55,12 +56,9 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  back?: () => void;
-  colony: Colony;
+interface Props extends ActionDialogProps {
   isSubmitting;
   isValid;
-  isVotingExtensionEnabled: boolean;
 }
 
 const CreateDomainDialogForm = ({

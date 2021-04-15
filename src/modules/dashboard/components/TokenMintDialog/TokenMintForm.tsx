@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
+import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -13,7 +14,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import Toggle from '~core/Fields/Toggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 
-import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
+import { ColonyTokens, OneToken, useLoggedInUser } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
@@ -49,10 +50,7 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  colony: Colony;
-  isVotingExtensionEnabled: boolean;
-  back?: () => void;
+interface Props extends ActionDialogProps {
   nativeToken?: ColonyTokens[0] | OneToken;
 }
 
