@@ -284,6 +284,7 @@ export type Query = {
   getRecoveryStorageSlot: Scalars['String'];
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
+  motionsSystemMessages: Array<SystemMessage>;
   networkContracts: NetworkContracts;
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
@@ -387,6 +388,12 @@ export type QueryGetRecoveryStorageSlotArgs = {
 
 
 export type QueryLegacyNumberOfRecoveryRolesArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionsSystemMessagesArgs = {
+  motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
 };
 
@@ -1399,6 +1406,14 @@ export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
 
 
 export type LegacyNumberOfRecoveryRolesQuery = Pick<Query, 'legacyNumberOfRecoveryRoles'>;
+
+export type MotionsSystemMessagesQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionsSystemMessagesQuery = { motionsSystemMessages: Array<Pick<SystemMessage, 'type' | 'name' | 'createdAt'>> };
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3380,6 +3395,42 @@ export function useLegacyNumberOfRecoveryRolesLazyQuery(baseOptions?: Apollo.Laz
 export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesQuery>;
 export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
 export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
+export const MotionsSystemMessagesDocument = gql`
+    query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
+  motionsSystemMessages(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useMotionsSystemMessagesQuery__
+ *
+ * To run a query within a React component, call `useMotionsSystemMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionsSystemMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionsSystemMessagesQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionsSystemMessagesQuery(baseOptions?: Apollo.QueryHookOptions<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>) {
+        return Apollo.useQuery<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>(MotionsSystemMessagesDocument, baseOptions);
+      }
+export function useMotionsSystemMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>) {
+          return Apollo.useLazyQuery<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>(MotionsSystemMessagesDocument, baseOptions);
+        }
+export type MotionsSystemMessagesQueryHookResult = ReturnType<typeof useMotionsSystemMessagesQuery>;
+export type MotionsSystemMessagesLazyQueryHookResult = ReturnType<typeof useMotionsSystemMessagesLazyQuery>;
+export type MotionsSystemMessagesQueryResult = Apollo.QueryResult<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {

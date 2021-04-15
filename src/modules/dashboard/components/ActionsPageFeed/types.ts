@@ -42,6 +42,7 @@ export interface SystemInfo {
  */
 export enum SystemMessagesName {
   EnoughExitRecoveryApprovals = 'EnoughExitRecoveryApprovals',
+  MotionHasPassed = 'MotionHasPassed',
 }
 
 export interface SystemMessage {

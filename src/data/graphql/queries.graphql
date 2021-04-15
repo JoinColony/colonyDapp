@@ -356,6 +356,13 @@ query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }
 
+query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
+  motionsSystemMessages(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    createdAt
+  }
+}
 
 # The Graph
 #

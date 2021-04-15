@@ -260,6 +260,10 @@ export default gql`
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
     blockTime(blockHash: String): Int!
+    motionsSystemMessages(
+      motionId: Int!
+      colonyAddress: String!
+    ): [SystemMessage!]!
   }
 
   extend type Mutation {
