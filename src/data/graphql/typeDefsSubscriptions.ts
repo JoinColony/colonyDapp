@@ -66,6 +66,7 @@ export default gql`
     escalated: Boolean!
     state: Int!
     action: String!
+    type: String!
   }
 
   #

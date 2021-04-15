@@ -147,5 +147,6 @@ subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: Str
     escalated
     action
     state @client
+    type @client
   }
 }

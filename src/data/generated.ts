@@ -1013,6 +1013,7 @@ export type SubscriptionMotion = {
   escalated: Scalars['Boolean'];
   state: Scalars['Int'];
   action: Scalars['String'];
+  type: Scalars['String'];
 };
 
 export type Subscription = {
@@ -1728,7 +1729,7 @@ export type SubscriptionsMotionsSubscriptionVariables = Exact<{
 
 
 export type SubscriptionsMotionsSubscription = { motions: Array<(
-    Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'currentStake' | 'requiredStake' | 'escalated' | 'action' | 'state'>
+    Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'currentStake' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -4502,6 +4503,7 @@ export const SubscriptionsMotionsDocument = gql`
     escalated
     action
     state @client
+    type @client
   }
 }
     `;

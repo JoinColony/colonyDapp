@@ -12,6 +12,7 @@ import {
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
+import { getMotionActionType } from '~utils/events';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   ActionsPageFeedType,
@@ -121,5 +122,24 @@ export const motionsResolvers = ({
         bigNumberify(fundamentalChainId),
       );
     },
- },
+    async type({
+      fundamentalChainId,
+      associatedColony: { colonyAddress: address },
+    }) {
+      const colonyAddress = createAddress(address);
+      const votingReputationClient = await colonyManager.getClient(
+        ClientType.VotingReputationClient,
+        colonyAddress,
+      );
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      return getMotionActionType(
+        votingReputationClient as ExtensionClient,
+        colonyClient,
+        bigNumberify(fundamentalChainId),
+      );
+    },
+  },
 });
