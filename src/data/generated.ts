@@ -1014,6 +1014,12 @@ export type SubscriptionMotion = {
   state: Scalars['Int'];
   action: Scalars['String'];
   type: Scalars['String'];
+  args: SubscriptionMotionArguments;
+};
+
+export type SubscriptionMotionArguments = {
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
 };
 
 export type Subscription = {
@@ -1742,7 +1748,7 @@ export type SubscriptionsMotionsSubscription = { motions: Array<(
     ), domain: (
       Pick<SubgraphDomain, 'name'>
       & { ethDomainId: SubgraphDomain['domainChainId'] }
-    ) }
+    ), args: Pick<SubscriptionMotionArguments, 'amount' | 'tokenAddress'> }
   )> };
 
 export const ColonyProfileFragmentDoc = gql`
@@ -4504,6 +4510,10 @@ export const SubscriptionsMotionsDocument = gql`
     action
     state @client
     type @client
+    args @client {
+      amount
+      tokenAddress
+    }
   }
 }
     `;

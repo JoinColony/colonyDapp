@@ -148,5 +148,9 @@ subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: Str
     action
     state @client
     type @client
+    args @client {
+      amount
+      tokenAddress
+    }
   }
 }

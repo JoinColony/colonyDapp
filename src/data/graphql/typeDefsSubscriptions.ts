@@ -67,6 +67,14 @@ export default gql`
     state: Int!
     action: String!
     type: String!
+    args: SubscriptionMotionArguments!
+  }
+
+  # @TODO Add types for the rest of the arguments
+  #
+  type SubscriptionMotionArguments {
+    amount: String!
+    tokenAddress: String!
   }
 
   #
