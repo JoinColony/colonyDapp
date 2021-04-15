@@ -3,7 +3,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { bigNumberify } from 'ethers/utils';
 
-import { useLoggedInUser, useStakeMotionLimitsQuery } from '~data/index';
+import {
+  useLoggedInUser,
+  useStakeMotionLimitsQuery,
+  useUserColonyAddressesQuery,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
 import Heading from '~core/Heading';
 import { ActionForm } from '~core/Fields';
@@ -59,6 +63,9 @@ const StakingWidget = ({
       tokenDecimals,
     },
   });
+  const { data: userColonyAddressesData } = useUserColonyAddressesQuery({
+    variables: { address: walletAddress },
+  });
   const validationSchema = yup.object().shape({
     amount: yup.number().required(),
   });
@@ -80,10 +87,15 @@ const StakingWidget = ({
     [walletAddress, colonyAddress, motionId],
   );
 
-  if (loading || !data?.stakeMotionLimits) {
+  if (loading || !data?.stakeMotionLimits || !userColonyAddressesData?.user) {
     return null;
   }
 
+  const {
+    user: { colonyAddresses },
+  } = userColonyAddressesData;
+
+  const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
   const { minStake, maxStake, requiredStake } = data.stakeMotionLimits;
 
   return (
@@ -112,7 +124,11 @@ const StakingWidget = ({
             limit={maxStake}
           />
           <div className={styles.buttonGroup}>
-            <Button type="submit" disabled={!isValid} text={MSG.stakeButton} />
+            <Button
+              type="submit"
+              disabled={!isValid || !isSubscribed}
+              text={MSG.stakeButton}
+            />
             <Button appearance={{ theme: 'pink' }} text={MSG.objectButton} />
           </div>
         </div>
