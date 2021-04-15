@@ -1,4 +1,5 @@
 import { AddressZero, HashZero } from 'ethers/constants';
+import { bigNumberify } from 'ethers/utils';
 
 import {
   TransactionsMessagesCount,
@@ -102,7 +103,21 @@ export const getActionsListData = (
 
         return [...acc, event];
       }, []) || [],
-    motions: unformattedActions?.motions || [],
+    /*
+     * Only display motions in the list if their stake reached 10% or
+     * if they have been escalated
+     */
+    motions:
+      unformattedActions?.motions?.reduce((acc, motion) => {
+        const { requiredStake, currentStake, escalated } = motion;
+        const stakePercentage = bigNumberify(currentStake)
+          .div(bigNumberify(requiredStake))
+          .mul(100);
+        if (escalated || stakePercentage.gte(10)) {
+          return [...acc, motion];
+        }
+        return acc;
+      }, []) || [],
   };
 
   Object.keys(filteredUnformattedActions || {}).map((subgraphActionType) => {
