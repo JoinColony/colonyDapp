@@ -9,6 +9,7 @@ import { ActionForm } from '~core/Fields';
 
 import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
+import { RootMotionOperationNames } from '~redux/types/actions';
 import { WizardDialogType } from '~utils/hooks';
 
 import DialogForm from './NetworkContractUpgradeDialogForm';
@@ -46,9 +47,11 @@ const NetworkContractUpgradeDialog = ({
     pipe(
       mapPayload(({ annotation: annotationMessage }) => {
         return {
+          operationName: RootMotionOperationNames.UPGRADE,
           colonyAddress,
           colonyName,
           version,
+          motionParams: [version],
           annotationMessage,
         };
       }),
