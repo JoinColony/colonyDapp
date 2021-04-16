@@ -21,7 +21,7 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-function* createMoveFundsMotion({
+function* moveFundsMotion({
   payload: {
     colonyAddress,
     colonyName,
@@ -199,5 +199,5 @@ function* createMoveFundsMotion({
 }
 
 export default function* moveFundsMotionSaga() {
-  yield takeEvery(ActionTypes.COLONY_MOTION_MOVE_FUNDS, createMoveFundsMotion);
+  yield takeEvery(ActionTypes.COLONY_MOTION_MOVE_FUNDS, moveFundsMotion);
 }

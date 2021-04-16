@@ -17,7 +17,7 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-function* createMintTokensMotion({
+function* mintTokensMotion({
   payload: { colonyAddress, colonyName, amount, annotationMessage },
   meta: { id: metaId, history },
   meta,
@@ -149,8 +149,5 @@ function* createMintTokensMotion({
 }
 
 export default function* mintTokensMotionSaga() {
-  yield takeEvery(
-    ActionTypes.COLONY_MOTION_MINT_TOKENS,
-    createMintTokensMotion,
-  );
+  yield takeEvery(ActionTypes.COLONY_MOTION_MINT_TOKENS, mintTokensMotion);
 }

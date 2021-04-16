@@ -22,7 +22,7 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-function* createAddEditDomainMotion({
+function* createEditDomainMotion({
   payload: {
     colonyAddress,
     colonyName,
@@ -196,6 +196,6 @@ function* createAddEditDomainMotion({
 export default function* createEditDomainMotionSaga() {
   yield takeEvery(
     ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT,
-    createAddEditDomainMotion,
+    createEditDomainMotion,
   );
 }
