@@ -15,6 +15,7 @@ import rootMotionSaga from './rootMotion';
 import createEditDomainMotionSaga from './createEditDomainMotion';
 import moveFundsMotionSaga from './moveFundsMotion';
 import managePermissionsMotionSaga from './managePermissionsMotion';
+import editColonyMotionSaga from './editColonyMotion';
 
 export default function* actionsSagas() {
   yield all([
@@ -33,5 +34,6 @@ export default function* actionsSagas() {
     call(createEditDomainMotionSaga),
     call(moveFundsMotionSaga),
     call(managePermissionsMotionSaga),
+    call(editColonyMotionSaga),
   ]);
 }
