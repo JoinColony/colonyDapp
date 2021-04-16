@@ -524,7 +524,8 @@ const getMotionState = async (
         : MotionState.Motion;
     case NetworkMotionState.Finalizable:
     case NetworkMotionState.Finalized:
-      return motion.votes[0].gte(motion.votes[1])
+      return motion.votes[0].gt(motion.votes[1]) ||
+        motion.stakes[0].gt(motion.stakes[1])
         ? MotionState.Failed
         : MotionState.Passed;
     case NetworkMotionState.Failed:
