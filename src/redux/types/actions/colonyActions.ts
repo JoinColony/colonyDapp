@@ -43,7 +43,7 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_DOMAIN_CREATE,
+      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT,
       {
         colonyAddress: Address;
         colonyName?: string;
@@ -52,12 +52,14 @@ export type ColonyActionsActionTypes =
         domainPurpose?: string;
         annotationMessage?: string;
         parentId?: number;
+        domainId?: number;
+        isCreateDomain: boolean;
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_DOMAIN_CREATE_ERROR, object>
+  | ErrorActionType<ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_SUCCESS,
+      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<

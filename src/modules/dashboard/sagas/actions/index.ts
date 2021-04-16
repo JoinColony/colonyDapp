@@ -12,7 +12,7 @@ import managePermissionsActionSaga from './managePermissions';
 import unlockTokenActionSaga from './unlockToken';
 import enterRecoveryActionSaga from './enterRecovery';
 import rootMotionSaga from './rootMotion';
-import createDomainMotionSaga from './createDomainMotion';
+import createEditDomainMotionSaga from './createEditDomainMotion';
 import moveFundsMotionSaga from './moveFundsMotion';
 
 export default function* actionsSagas() {
@@ -29,7 +29,7 @@ export default function* actionsSagas() {
     call(unlockTokenActionSaga),
     call(enterRecoveryActionSaga),
     call(rootMotionSaga),
-    call(createDomainMotionSaga),
+    call(createEditDomainMotionSaga),
     call(moveFundsMotionSaga),
   ]);
 }

@@ -57,9 +57,10 @@ const EditDomainDialog = ({
   const transform = useCallback(
     pipe(
       mapPayload((payload) => ({
+        ...payload,
         colonyAddress,
         colonyName,
-        ...payload,
+        isCreateDomain: false,
       })),
       withMeta({ history }),
     ),

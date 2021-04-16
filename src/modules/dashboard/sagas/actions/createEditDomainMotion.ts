@@ -22,7 +22,7 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-function* createAddDomainMotion({
+function* createAddEditDomainMotion({
   payload: {
     colonyAddress,
     colonyName,
@@ -30,11 +30,13 @@ function* createAddDomainMotion({
     domainColor,
     domainPurpose,
     annotationMessage,
+    domainId: editDomainId,
+    isCreateDomain,
     parentId = ROOT_DOMAIN_ID,
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_MOTION_DOMAIN_CREATE>) {
+}: Action<ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT>) {
   let txChannel;
   try {
     /*
@@ -43,6 +45,12 @@ function* createAddDomainMotion({
     if (!domainName) {
       throw new Error('A domain name is required to create a new domain');
     }
+
+    if (!isCreateDomain && !editDomainId) {
+      throw new Error('A domain id is required to edit domain');
+    }
+    /* additional editDomain check is for the TS to not ring alarm in getPermissionProofs */
+    const domainId = !isCreateDomain && editDomainId ? editDomainId : parentId;
 
     const context = TEMP_getContext(ContextModule.ColonyManager);
     const colonyClient = yield context.getClient(
@@ -53,7 +61,7 @@ function* createAddDomainMotion({
     const [permissionDomainId, childSkillIndex] = yield call(
       getPermissionProofs,
       colonyClient,
-      parentId,
+      domainId,
       ColonyRole.Architecture,
     );
 
@@ -75,10 +83,10 @@ function* createAddDomainMotion({
 
     const {
       createRootMotion,
-      annotateCreateDomainMotion,
+      annotateMotion,
     } = yield createTransactionChannels(metaId, [
       'createRootMotion',
-      'annotateCreateDomainMotion',
+      'annotateMotion',
     ]);
 
     /*
@@ -95,11 +103,13 @@ function* createAddDomainMotion({
     );
 
     const encodedAction = colonyClient.interface.functions[
-      'addDomain(uint256,uint256,uint256,string)'
+      isCreateDomain
+        ? 'addDomain(uint256,uint256,uint256,string)'
+        : 'editDomain'
     ].encode([
       permissionDomainId,
       childSkillIndex,
-      parentId,
+      domainId,
       domainMetadataIpfsHash,
     ]);
 
@@ -118,7 +128,7 @@ function* createAddDomainMotion({
     });
 
     if (annotationMessage) {
-      yield fork(createTransaction, annotateCreateDomainMotion.id, {
+      yield fork(createTransaction, annotateMotion.id, {
         context: ClientType.ColonyClient,
         methodName: 'annotateTransaction',
         identifier: colonyAddress,
@@ -134,10 +144,7 @@ function* createAddDomainMotion({
 
     yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
-      yield takeFrom(
-        annotateCreateDomainMotion.channel,
-        ActionTypes.TRANSACTION_CREATED,
-      );
+      yield takeFrom(annotateMotion.channel, ActionTypes.TRANSACTION_CREATED);
     }
 
     let ipfsHash = null;
@@ -159,21 +166,16 @@ function* createAddDomainMotion({
     yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      yield put(transactionPending(annotateCreateDomainMotion.id));
+      yield put(transactionPending(annotateMotion.id));
 
-      yield put(
-        transactionAddParams(annotateCreateDomainMotion.id, [txHash, ipfsHash]),
-      );
+      yield put(transactionAddParams(annotateMotion.id, [txHash, ipfsHash]));
 
-      yield put(transactionReady(annotateCreateDomainMotion.id));
+      yield put(transactionReady(annotateMotion.id));
 
-      yield takeFrom(
-        annotateCreateDomainMotion.channel,
-        ActionTypes.TRANSACTION_SUCCEEDED,
-      );
+      yield takeFrom(annotateMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
     }
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_DOMAIN_CREATE_SUCCESS,
+      type: ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_SUCCESS,
       meta,
     });
 
@@ -181,15 +183,19 @@ function* createAddDomainMotion({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (caughtError) {
-    putError(ActionTypes.COLONY_MOTION_DOMAIN_CREATE_ERROR, caughtError, meta);
+    putError(
+      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_ERROR,
+      caughtError,
+      meta,
+    );
   } finally {
     txChannel.close();
   }
 }
 
-export default function* createDomainMotionSaga() {
+export default function* createEditDomainMotionSaga() {
   yield takeEvery(
-    ActionTypes.COLONY_MOTION_DOMAIN_CREATE,
-    createAddDomainMotion,
+    ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT,
+    createAddEditDomainMotion,
   );
 }
