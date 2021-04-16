@@ -17,6 +17,7 @@ import {
 export enum RootMotionOperationNames {
   MINT_TOKENS = 'mintTokens',
   UNLOCK_TOKEN = 'unlockToken',
+  UPGRADE = 'upgrade',
 }
 
 /*
@@ -145,6 +146,28 @@ export type ColonyActionsActionTypes =
   | ErrorActionType<ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_MOTION_EDIT_COLONY,
+      {
+        colonyAddress: Address;
+        colonyName: string;
+        colonyDisplayName: string;
+        colonyAvatarImage?: string;
+        colonyAvatarHash?: string;
+        hasAvatarChanged?: boolean;
+        colonyTokens?: Address[];
+        annotationMessage?: string;
+        /*
+         * @TODO I think this will also store the subscribed-to tokens list
+         */
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_EDIT_COLONY_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_EDIT_COLONY_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
