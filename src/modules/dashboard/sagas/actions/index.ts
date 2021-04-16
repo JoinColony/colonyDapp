@@ -13,6 +13,7 @@ import unlockTokenActionSaga from './unlockToken';
 import enterRecoveryActionSaga from './enterRecovery';
 import rootMotionSaga from './rootMotion';
 import createDomainMotionSaga from './createDomainMotion';
+import moveFundsMotionSaga from './moveFundsMotion';
 
 export default function* actionsSagas() {
   yield all([
@@ -29,5 +30,6 @@ export default function* actionsSagas() {
     call(enterRecoveryActionSaga),
     call(rootMotionSaga),
     call(createDomainMotionSaga),
+    call(moveFundsMotionSaga),
   ]);
 }
