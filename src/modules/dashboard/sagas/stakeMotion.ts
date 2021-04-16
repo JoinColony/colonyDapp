@@ -9,10 +9,10 @@ import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
-} from '../../../core/sagas';
-import { transactionReady } from '../../../core/actionCreators';
+} from '../../core/sagas';
+import { transactionReady } from '../../core/actionCreators';
 
-function* stakeMotionAction({
+function* stakeMotion({
   meta,
   payload: {
     userAddress,
@@ -51,15 +51,12 @@ function* stakeMotionAction({
       rootHash,
     );
 
-    const {
-      approveStake,
-      stakeMotion,
-    } = yield createTransactionChannels(meta.id, [
+    const { approveStake, stake } = yield createTransactionChannels(meta.id, [
       'approveStake',
-      'stakeMotion',
+      'stake',
     ]);
 
-    const batchKey = 'stakeMotion';
+    const batchKey = 'stake';
 
     const createGroupTransaction = ({ id, index }, config) =>
       fork(createTransaction, id, {
@@ -79,7 +76,7 @@ function* stakeMotionAction({
       ready: false,
     });
 
-    yield createGroupTransaction(stakeMotion, {
+    yield createGroupTransaction(stake, {
       context: ClientType.VotingReputationClient,
       methodName: 'stakeMotionWithProofs',
       identifier: colonyAddress,
@@ -93,11 +90,11 @@ function* stakeMotionAction({
 
     yield takeFrom(approveStake.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    yield takeFrom(stakeMotion.channel, ActionTypes.TRANSACTION_CREATED);
+    yield takeFrom(stake.channel, ActionTypes.TRANSACTION_CREATED);
 
-    yield put(transactionReady(stakeMotion.id));
+    yield put(transactionReady(stake.id));
 
-    yield takeFrom(stakeMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(stake.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     yield put<AllActions>({
       type: ActionTypes.MOTION_STAKE_SUCCESS,
@@ -112,5 +109,5 @@ function* stakeMotionAction({
 }
 
 export default function* stakeMotionSaga() {
-  yield takeEvery(ActionTypes.MOTION_STAKE, stakeMotionAction);
+  yield takeEvery(ActionTypes.MOTION_STAKE, stakeMotion);
 }
