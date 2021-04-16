@@ -28,6 +28,7 @@ import StakingWidget from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
 import FinalizeMotionWidget from '../FinalizeMotionWidget';
+import StakingWidget from '../StakingWidget';
 
 import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
 
@@ -197,7 +198,7 @@ const MintTokenMotion = ({
           {motionState === MotionState.StakeRequired && (
             <StakingWidget
               motionId={motionId}
-              motionDomainId={motionDomainId}
+              motionDomainId={motionDomain}
               rootHash={rootHash}
               colonyAddress={colony.colonyAddress}
               tokenDecimals={decimals}
