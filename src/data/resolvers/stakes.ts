@@ -1,5 +1,5 @@
 import { Resolvers } from '@apollo/client';
-import { ClientType, ColonyClientV6, Extension } from '@colony/colony-js';
+import { ClientType, ColonyClientV6 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 
 import { Context } from '~context/index';
@@ -10,16 +10,18 @@ export const stakesResolvers = ({
   Query: {
     async stakeMotionLimits(
       _,
-      { colonyAddress, userAddress, motionId, tokenDecimals },
+      { colonyAddress, userAddress, motionId, rootHash },
     ) {
       try {
         const colonyClient = (await colonyManager.getClient(
           ClientType.ColonyClient,
           colonyAddress,
         )) as ColonyClientV6;
-        const votingReputationClient = await colonyClient.getExtensionClient(
-          Extension.VotingReputation,
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
         );
+        const tokenDecimals = await colonyClient.tokenClient.decimals();
         const {
           skillRep,
           stakes,
@@ -29,6 +31,7 @@ export const stakesResolvers = ({
         const { reputationAmount } = await colonyClient.getReputation(
           skillId,
           userAddress,
+          rootHash,
         );
         // @NOTE There's no prettier compatible solution to this :(
         // eslint-disable-next-line max-len

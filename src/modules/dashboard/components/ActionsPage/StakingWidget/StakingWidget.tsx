@@ -19,7 +19,7 @@ import styles from './StakingWidget.css';
 import Button from '~core/Button';
 
 type Props = {
-  motionId: string;
+  motionId: number;
   motionDomainId: number;
   rootHash: string;
   colonyAddress: Address;
@@ -60,7 +60,7 @@ const StakingWidget = ({
       colonyAddress,
       userAddress: walletAddress,
       motionId,
-      tokenDecimals,
+      rootHash,
     },
   });
   const { data: userColonyAddressesData } = useUserColonyAddressesQuery({
