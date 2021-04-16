@@ -264,6 +264,23 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
+      ActionTypes.COLONY_MOTION_USER_ROLES_SET,
+      {
+        colonyAddress: Address;
+        colonyName: string;
+        domainId: number;
+        userAddress: Address;
+        roles: Record<ColonyRole, boolean>;
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_USER_ROLES_SET_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_USER_ROLES_SET_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
       ActionTypes.COLONY_ACTION_UNLOCK_TOKEN,
       {
         colonyAddress: Address;
