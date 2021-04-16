@@ -14,6 +14,7 @@ import enterRecoveryActionSaga from './enterRecovery';
 import rootMotionSaga from './rootMotion';
 import createEditDomainMotionSaga from './createEditDomainMotion';
 import moveFundsMotionSaga from './moveFundsMotion';
+import managePermissionsMotionSaga from './managePermissionsMotion';
 
 export default function* actionsSagas() {
   yield all([
@@ -31,5 +32,6 @@ export default function* actionsSagas() {
     call(rootMotionSaga),
     call(createEditDomainMotionSaga),
     call(moveFundsMotionSaga),
+    call(managePermissionsMotionSaga),
   ]);
 }
