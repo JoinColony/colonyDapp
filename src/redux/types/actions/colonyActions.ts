@@ -163,6 +163,24 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
+      ActionTypes.COLONY_MOTION_MOVE_FUNDS,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        tokenAddress: Address;
+        fromDomainId: number;
+        toDomainId: number;
+        amount: BigNumber;
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_MOVE_FUNDS_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_MOVE_FUNDS_SUCCESS,
+      MetaWithHistory<object>
+    >
+  | UniqueActionType<
       ActionTypes.COLONY_ACTION_MINT_TOKENS,
       {
         colonyAddress: Address;
