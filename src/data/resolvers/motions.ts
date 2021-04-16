@@ -5,7 +5,7 @@ import {
   getLogs,
   getBlockTime,
   ExtensionClient,
-  NetworkMotionState,
+  MotionState as NetworkMotionState,
 } from '@colony/colony-js';
 
 import { Context } from '~context/index';
