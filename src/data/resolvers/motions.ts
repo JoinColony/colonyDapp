@@ -5,6 +5,7 @@ import {
   getLogs,
   getBlockTime,
   ExtensionClient,
+  NetworkMotionState,
 } from '@colony/colony-js';
 
 import { Context } from '~context/index';
@@ -14,7 +15,6 @@ import {
   SystemMessage,
   SystemMessagesName,
 } from '~dashboard/ActionsPageFeed';
-import { NetworkMotionState } from '~utils/colonyMotions';
 
 import { ProcessedEvent } from './colonyActions';
 
@@ -35,6 +35,7 @@ export const motionsResolvers = ({
       );
       const systemMessages: SystemMessage[] = [];
 
+      // @TODO Add missing types to colonyjs
       // @ts-ignore
       const motionStakedFilter = votingReputationClient.filters.MotionStaked(
         motionId,
