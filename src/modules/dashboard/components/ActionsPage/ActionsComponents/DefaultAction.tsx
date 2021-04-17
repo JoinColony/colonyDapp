@@ -225,10 +225,12 @@ const DefaultAction = ({
            * and a registered user profile
            */}
           {currentUserName && !ethereal && (
-            <CommentInput
-              transactionHash={transactionHash}
-              colonyAddress={colonyAddress}
-            />
+            <div className={styles.commentBox}>
+              <CommentInput
+                transactionHash={transactionHash}
+                colonyAddress={colonyAddress}
+              />
+            </div>
           )}
         </div>
         <div className={styles.details}>
