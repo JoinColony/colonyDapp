@@ -13,7 +13,7 @@ import styles from './Comment.css';
 
 const displayName = 'Comment';
 
-interface Props {
+export interface Props {
   comment?: string;
   user?: AnyUser | null;
   annotation?: boolean;

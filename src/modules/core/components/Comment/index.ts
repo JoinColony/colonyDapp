@@ -1,1 +1,1 @@
-export { default } from './Comment';
+export { default, Props } from './Comment';
