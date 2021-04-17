@@ -76,9 +76,9 @@ export default class ColonyManager {
     if (!client) {
       const colonyClient = await this.getColonyClient(identifier);
       client = colonyClient.getExtensionClient(extensionId);
-      this.extensionClients.set(key, client);
+      this.extensionClients.set(key, client as Promise<ExtensionClient>);
     }
-    return client;
+    return client as Promise<ExtensionClient>;
   }
 
   private async resolveColonyIdentifier(
