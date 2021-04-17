@@ -43,6 +43,7 @@ import {
   LANDING_PAGE_ROUTE,
   MEMBERS_ROUTE,
   ACTIONS_PAGE_ROUTE,
+  COIN_MACHINE_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -214,6 +215,13 @@ const Routes = () => {
             backText: '',
             backRoute: `/colony/${colonyName}`,
           })}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={COIN_MACHINE_ROUTE}
+          component={ColonyHome}
+          layout={Default}
+          routeProps={{ hasBackLink: false }}
         />
 
         {/*
