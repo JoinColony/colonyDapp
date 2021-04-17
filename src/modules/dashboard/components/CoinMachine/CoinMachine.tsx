@@ -1,9 +1,10 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import { Extension } from '@colony/colony-js';
 
 import { SpinnerLoader } from '~core/Preloaders';
+import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 
 import { useColonyExtensionsQuery, Colony } from '~data/index';
 
@@ -11,8 +12,16 @@ import styles from './CoinMachine.css';
 
 const MSG = defineMessages({
   loading: {
-    id: 'dashboard.Extensions.loading',
+    id: 'dashboard.CoinMachine.loading',
     defaultMessage: `Loading Buy Tokens`,
+  },
+  title: {
+    id: 'dashboard.CoinMachine.title',
+    defaultMessage: `Tokens`,
+  },
+  buyTokens: {
+    id: 'dashboard.CoinMachine.buyTokens',
+    defaultMessage: 'Buy {symbol}',
   },
 });
 
@@ -22,7 +31,10 @@ type Props = {
 
 const displayName = 'dashboard.CoinMachine';
 
-const CoinMachine = ({ colony: { colonyAddress, colonyName } }: Props) => {
+const CoinMachine = ({
+  colony: { colonyAddress, colonyName, nativeTokenAddress, tokens },
+}: Props) => {
+  const { formatMessage } = useIntl();
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
@@ -48,7 +60,21 @@ const CoinMachine = ({ colony: { colonyAddress, colonyName } }: Props) => {
     }
   }
 
-  return <div className={styles.main}>Coin Machine</div>;
+  const nativeToken = tokens.find(
+    ({ address }) => address === nativeTokenAddress,
+  );
+
+  const breadCrumbs: Crumb[] = [
+    MSG.title,
+    formatMessage(MSG.buyTokens, { symbol: nativeToken?.symbol }),
+  ];
+
+  return (
+    <div className={styles.main}>
+      <BreadCrumb elements={breadCrumbs} />
+      <div className={styles.grid}>Grid</div>
+    </div>
+  );
 };
 
 CoinMachine.displayName = displayName;
