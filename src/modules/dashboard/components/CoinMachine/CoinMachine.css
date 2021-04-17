@@ -5,3 +5,18 @@
 .loadingSpinner {
   margin-top: 100px;
 }
+
+.learnMore {
+  margin-left: 8px;
+  font-size: var(--size-tiny);
+  color: var(--colony-blue);
+}
+
+.learnMore:hover {
+  text-decoration: underline;
+  color: var(--colony-blue);
+}
+
+.grid {
+  margin-top: 40px;
+}
