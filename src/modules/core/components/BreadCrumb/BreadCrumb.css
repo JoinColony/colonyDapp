@@ -23,6 +23,7 @@
 .elementLast {
   composes: inlineEllipsis from "~styles/text.css";
   flex: 1 1 auto;
+  font-weight: var(--weight-bold);
 }
 
 .arrow {
