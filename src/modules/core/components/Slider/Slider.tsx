@@ -48,6 +48,7 @@ const Slider = ({
         onChange(limit);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [setSliderValue, onChange, limit, sliderValue],
   );
 
