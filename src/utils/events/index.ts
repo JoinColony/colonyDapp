@@ -4,8 +4,9 @@ import {
   ClientType,
   getLogs,
   ExtensionClient,
+  MotionState as NetworkMotionState,
 } from '@colony/colony-js';
-import { bigNumberify } from 'ethers/utils';
+import { bigNumberify, BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
 import ColonyManagerClass from '~lib/ColonyManager';
@@ -29,7 +30,7 @@ import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 
 import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
-import { NetworkMotionState, MotionState } from '../colonyMotions';
+import { MotionState } from '../colonyMotions';
 
 interface ActionValues {
   recipient: Address;
@@ -500,7 +501,7 @@ const getRecoveryActionValues = async (
 };
 
 // Motions
-const getMotionState = async (
+export const getMotionState = async (
   motionNetworkState: NetworkMotionState,
   votingClient: ExtensionClient,
   motion,
@@ -523,10 +524,37 @@ const getMotionState = async (
         ? MotionState.Objection
         : MotionState.Motion;
     case NetworkMotionState.Finalizable:
-    case NetworkMotionState.Finalized:
-      return motion.votes[0].gte(motion.votes[1])
-        ? MotionState.Failed
-        : MotionState.Passed;
+    case NetworkMotionState.Finalized: {
+      const [nayStakes, yayStakes] = motion.stakes;
+      /*
+       * Both sides staked fully, we go to a vote
+       *
+       * @TODO We're using gte as opposed to just eq to counteract a bug on the contracts
+       * Once that is fixed, we can switch this back to equals
+       */
+      if (nayStakes.gte(requiredStakes) && yayStakes.gte(requiredStakes)) {
+        const [nayVotes, yayVotes] = motion.votes;
+        /*
+         * It only passes if the yay votes outnumber the nay votes
+         * If the votes are equal, it fails
+         */
+        if (yayVotes.gt(nayVotes)) {
+          return MotionState.Passed;
+        }
+        return MotionState.Failed;
+      }
+      /*
+       * If we didn't get to a vote, it only passes if the Yay side stakes fully
+       * otherwise it fails
+       *
+       * @TODO We're using gte as opposed to just eq to counteract a bug on the contracts
+       * Once that is fixed, we can switch this back to equals
+       */
+      if (yayStakes.gte(requiredStakes)) {
+        return MotionState.Passed;
+      }
+      return MotionState.Failed;
+    }
     case NetworkMotionState.Failed:
       return MotionState.Failed;
     default:
@@ -803,10 +831,9 @@ export const groupSetUserRolesActions = (actions): FormattedAction[] => {
 export const getMotionActionType = async (
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
-  motionCreatedEvent: any,
+  motionId: BigNumberish,
 ) => {
-  const motionid = motionCreatedEvent.values.motionId.toString();
-  const motion = await votingClient.getMotion(motionid);
+  const motion = await votingClient.getMotion(motionId);
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
   });

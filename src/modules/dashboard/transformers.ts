@@ -1,10 +1,12 @@
 import { AddressZero, HashZero } from 'ethers/constants';
+import { bigNumberify } from 'ethers/utils';
 
 import {
   TransactionsMessagesCount,
   SubscriptionSubgraphOneTxSubscription,
   SubscriptionSubgraphEventsThatAreActionsSubscription,
   SubscriptionSubgraphEventsSubscription,
+  SubscriptionsMotionsSubscription,
 } from '~data/index';
 import {
   Address,
@@ -21,6 +23,12 @@ import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 import { ItemStatus } from '~core/ActionsList';
 
+enum FilteredUnformattedAction {
+  OneTxPayments = 'oneTxPayments',
+  Events = 'events',
+  Motions = 'motions',
+}
+
 interface ActionsThatNeedAttention {
   transactionHash: string;
   needsAction: boolean;
@@ -35,6 +43,7 @@ export const getActionsListData = (
   unformattedActions?: {
     oneTxPayments?: SubscriptionSubgraphOneTxSubscription['oneTxPayments'];
     events?: SubscriptionSubgraphEventsThatAreActionsSubscription['events'];
+    motions?: SubscriptionsMotionsSubscription['motions'];
   },
   transactionsCommentsCount?: TransactionsMessagesCount,
   {
@@ -94,6 +103,21 @@ export const getActionsListData = (
 
         return [...acc, event];
       }, []) || [],
+    /*
+     * Only display motions in the list if their stake reached 10% or
+     * if they have been escalated
+     */
+    motions:
+      unformattedActions?.motions?.reduce((acc, motion) => {
+        const { requiredStake, currentStake, escalated } = motion;
+        const stakePercentage = bigNumberify(currentStake)
+          .div(bigNumberify(requiredStake))
+          .mul(100);
+        if (escalated || stakePercentage.gte(10)) {
+          return [...acc, motion];
+        }
+        return acc;
+      }, []) || [],
   };
 
   Object.keys(filteredUnformattedActions || {}).map((subgraphActionType) => {
@@ -115,6 +139,7 @@ export const getActionsListData = (
             createdAt: new Date(),
             commentCount: 0,
             status: undefined,
+            motionState: undefined,
           };
           let hash;
           let timestamp;
@@ -142,7 +167,7 @@ export const getActionsListData = (
             transactionsCommentsCount?.colonyTransactionMessages?.find(
               ({ transactionHash }) => transactionHash === hash,
             );
-          if (subgraphActionType === 'oneTxPayments') {
+          if (subgraphActionType === FilteredUnformattedAction.OneTxPayments) {
             try {
               const {
                 payment: {
@@ -187,7 +212,7 @@ export const getActionsListData = (
               parseInt(`${timestamp}000`, 10),
             );
           }
-          if (subgraphActionType === 'events') {
+          if (subgraphActionType === FilteredUnformattedAction.Events) {
             try {
               const {
                 processedValues,
@@ -221,6 +246,27 @@ export const getActionsListData = (
               log.verbose('Could not deconstruct the subgraph event object');
               log.verbose(error);
             }
+          }
+          if (subgraphActionType === FilteredUnformattedAction.Motions) {
+            const {
+              args: {
+                token: { address: tokenAddress, symbol, decimals },
+              },
+              args,
+              agent,
+              type,
+              state,
+            } = unformattedAction;
+            formatedAction.tokenAddress = tokenAddress;
+            formatedAction.symbol = symbol;
+            formatedAction.decimals = decimals;
+            formatedAction.initiator = agent;
+            formatedAction.actionType = type;
+            formatedAction.motionState = state;
+            const actionTypeKeys = Object.keys(args);
+            actionTypeKeys.forEach((key) => {
+              formatedAction[key] = args[key];
+            });
           }
           formatedAction.transactionHash = hash;
           return formatedAction;
@@ -325,7 +371,11 @@ export const getEventsListData = (
       } = event;
       const {
         agent,
+        creator,
+        staker,
+        escalator,
         domainId,
+        newDomainId,
         recipient,
         fundingPotId,
         metadata,
@@ -343,6 +393,8 @@ export const getEventsListData = (
         newVersion,
         slot,
         toValue,
+        motionId,
+        vote,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -354,20 +406,25 @@ export const getEventsListData = (
         }
         return checksummedColonyAddress;
       };
+      const getAgent = () => {
+        const userAddress = agent || user || creator || staker || escalator;
+        if (userAddress) {
+          return createAddress(userAddress);
+        }
+        return checksummedColonyAddress;
+      };
       return [
         ...processedEvents,
         {
           id,
-          agent:
-            agent || user
-              ? createAddress(agent || user)
-              : checksummedColonyAddress,
+          agent: getAgent(),
           eventName: formatEventName(name),
           transactionHash: hash,
           colonyAddress: checksummedColonyAddress,
           createdAt: new Date(parseInt(`${timestamp}000`, 10)),
           displayValues: args,
           domainId: domainId || null,
+          newDomainId: newDomainId || null,
           recipient: getRecipient(),
           fundingPot: fundingPotId,
           metadata,
@@ -383,6 +440,8 @@ export const getEventsListData = (
           newVersion: newVersion || '0',
           storageSlot: slot ? toHex(parseInt(slot, 10)) : '0',
           storageSlotValue: toValue || AddressZero,
+          motionId,
+          vote,
         },
       ];
     } catch (error) {

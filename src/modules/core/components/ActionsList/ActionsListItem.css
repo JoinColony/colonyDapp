@@ -147,3 +147,10 @@
 .titleDecoration {
   color: var(--pink);
 }
+
+.motionTagWrapper {
+  display: inline-block;
+  margin: -5px 0 0 12px;
+  padding: 0;
+  vertical-align: middle;
+}

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 
-import { ColonyActions } from '~types/index';
+import { ColonyActions, ColonyMotions } from '~types/index';
 
 const actionsMessageDescriptors = {
   'action.title': `{actionType, select,
@@ -8,6 +8,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.Payment} {Pay {recipient} {amount} {tokenSymbol}}
       ${ColonyActions.MoveFunds} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
       ${ColonyActions.MintTokens} {Mint {amount} {tokenSymbol}}
+      ${ColonyMotions.MintTokensMotion} {Mint {amount} {tokenSymbol}}
       ${ColonyActions.CreateDomain} {New team: {fromDomain}}
       ${ColonyActions.VersionUpgrade} {Upgrade Colony to Version {newVersion}!}
       ${ColonyActions.ColonyEdit} {Colony details changed}

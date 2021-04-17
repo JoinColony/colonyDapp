@@ -11,6 +11,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import Numeral, { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
 import FriendlyName from '~core/FriendlyName';
+import Tag, { Appearance as TagAppearance } from '~core/Tag';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -20,6 +21,7 @@ import { FormattedAction, ColonyActions } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
 import { parseDomainMetadata } from '~utils/colonyActions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
+import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 import { ClickHandlerProps } from './ActionsList';
@@ -77,6 +79,7 @@ const ActionsListItem = ({
     roles,
     newVersion,
     status = ItemStatus.Defused,
+    motionState,
   },
   colony,
   handleOnClick,
@@ -126,6 +129,7 @@ const ActionsListItem = ({
     const domainObject = parseDomainMetadata(metadataJSON);
     domainName = domainObject.domainName;
   }
+  const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
 
   return (
     <li>
@@ -215,6 +219,21 @@ const ActionsListItem = ({
                 newVersion: newVersion || '0',
               }}
             />
+            {motionState && (
+              <div className={styles.motionTagWrapper}>
+                <Tag
+                  text={motionStyles.name}
+                  appearance={{
+                    theme: motionStyles.theme as TagAppearance['theme'],
+                    /*
+                     * @NOTE Prettier is being stupid
+                     */
+                    // eslint-disable-next-line max-len
+                    colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
+                  }}
+                />
+              </div>
+            )}
           </div>
           <div className={styles.meta}>
             <FormattedDateParts value={createdAt} month="short" day="numeric">

@@ -110,3 +110,46 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
     }
   }
 }
+
+subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
+  motions(
+    skip: $skip,
+    first: $first,
+    where: {
+      associatedColony: $colonyAddress,
+      extensionAddress: $extensionAddress,
+    }) {
+    id
+    fundamentalChainId
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+    }
+    transaction {
+      hash: id
+      block {
+        timestamp
+      }
+    }
+    extensionAddress
+    agent
+    domain {
+      ethDomainId: domainChainId
+      name
+    }
+    currentStake
+    requiredStake
+    escalated
+    action
+    state @client
+    type @client
+    args @client {
+      amount
+      token {
+        address: id
+        symbol
+        decimals
+      }
+    }
+  }
+}

@@ -1,14 +1,16 @@
-import { Resolvers } from '@apollo/client';
-
 import {
   ClientType,
+  ExtensionClient,
   getLogs,
   getBlockTime,
-  ExtensionClient,
   MotionState as NetworkMotionState,
 } from '@colony/colony-js';
+import { bigNumberify } from 'ethers/utils';
+import { Resolvers } from '@apollo/client';
 
 import { Context } from '~context/index';
+import { createAddress } from '~utils/web3';
+import { getMotionActionType, getMotionState } from '~utils/events';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   ActionsPageFeedType,
@@ -106,6 +108,67 @@ export const motionsResolvers = ({
       }
 
       return Promise.all(systemMessages);
+    },
+  },
+  Motion: {
+    async state({ fundamentalChainId, associatedColony: { colonyAddress } }) {
+      const motionId = bigNumberify(fundamentalChainId);
+      const votingReputationClient = await colonyManager.getClient(
+        ClientType.VotingReputationClient,
+        createAddress(colonyAddress),
+      );
+      const motion = await votingReputationClient.getMotion(motionId);
+      const state = await votingReputationClient.getMotionState(motionId);
+      return getMotionState(
+        state,
+        votingReputationClient as ExtensionClient,
+        motion,
+      );
+    },
+    async type({
+      fundamentalChainId,
+      associatedColony: { colonyAddress: address },
+    }) {
+      const colonyAddress = createAddress(address);
+      const votingReputationClient = await colonyManager.getClient(
+        ClientType.VotingReputationClient,
+        colonyAddress,
+      );
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      return getMotionActionType(
+        votingReputationClient as ExtensionClient,
+        colonyClient,
+        bigNumberify(fundamentalChainId),
+      );
+    },
+    async args({ action, associatedColony: { colonyAddress } }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      const actionValues = colonyClient.interface.parseTransaction({
+        data: action,
+      });
+      const tokenAddress = colonyClient.tokenClient.address;
+      const {
+        symbol,
+        decimals,
+      } = await colonyClient.tokenClient.getTokenInfo();
+      /*
+       * @TODO Return argumnents for the other motions as well, as soon
+       * as they get wired into the dapp
+       */
+      return {
+        amount: bigNumberify(actionValues?.args[0] || '0').toString(),
+        token: {
+          id: tokenAddress,
+          symbol,
+          decimals,
+        },
+      };
     },
   },
 });
