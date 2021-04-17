@@ -17,6 +17,7 @@ import { useColonyFromNameQuery } from '~data/index';
 
 import ColonyActions from '~dashboard/ColonyActions';
 import ColonyEvents from '~dashboard/ColonyEvents';
+import CoinMachine from '~dashboard/CoinMachine';
 
 import ColonyHomeLayout from './ColonyHomeLayout';
 
@@ -29,6 +30,7 @@ import {
   COLONY_EXTENSION_SETUP_ROUTE,
   COLONY_HOME_ROUTE,
   NOT_FOUND_ROUTE,
+  COIN_MACHINE_ROUTE,
 } from '~routes/index';
 
 const MSG = defineMessages({
@@ -119,6 +121,20 @@ const ColonyHome = ({ match, location }: Props) => {
                 showSidebar={false}
               >
                 <ExtensionDetails {...props} colony={colony} />
+              </ColonyHomeLayout>
+            )}
+          />
+          <Route
+            path={COIN_MACHINE_ROUTE}
+            component={() => (
+              <ColonyHomeLayout
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                onDomainChange={setDomainIdFilter}
+                showControls={false}
+                showSidebar={false}
+              >
+                <CoinMachine colony={colony} />
               </ColonyHomeLayout>
             )}
           />
