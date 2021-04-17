@@ -4420,6 +4420,11 @@ export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
     associatedColony {
       colonyAddress: id
       id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
     }
     transaction {
       hash: id
@@ -4481,11 +4486,6 @@ export const SubscriptionsMotionsDocument = gql`
     associatedColony {
       colonyAddress: id
       id: colonyChainId
-      token {
-        address: id
-        decimals
-        symbol
-      }
     }
     transaction {
       hash: id
