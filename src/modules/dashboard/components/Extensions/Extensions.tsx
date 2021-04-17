@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { extensions } from '@colony/colony-js';
+import { extensions, Extension } from '@colony/colony-js';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -71,14 +71,20 @@ const Extensions = ({ colonyAddress }: Props) => {
     if (data?.processedColony?.installedExtensions) {
       const { installedExtensions } = data.processedColony;
       return extensions.reduce((availableExtensions, extensionName) => {
-        const installedExtension = installedExtensions.find(
-          ({ extensionId }) => extensionName === extensionId,
-        );
         /*
          * @NOTE Temporary disable the coin machine extension in the list
          *
          * This will be re-enabled in the Coin Machine feature branch
          */
+        if (
+          extensionName === Extension.CoinMachine ||
+          extensionName === Extension.VotingReputation
+        ) {
+          return availableExtensions;
+        }
+        const installedExtension = installedExtensions.find(
+          ({ extensionId }) => extensionName === extensionId,
+        );
         if (!installedExtension) {
           fetchNetworkExtensionVersion({
             variables: { extensionId: extensionName },
