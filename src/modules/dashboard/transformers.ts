@@ -371,7 +371,11 @@ export const getEventsListData = (
       } = event;
       const {
         agent,
+        creator,
+        staker,
+        escalator,
         domainId,
+        newDomainId,
         recipient,
         fundingPotId,
         metadata,
@@ -389,6 +393,8 @@ export const getEventsListData = (
         newVersion,
         slot,
         toValue,
+        motionId,
+        vote,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -400,20 +406,25 @@ export const getEventsListData = (
         }
         return checksummedColonyAddress;
       };
+      const getAgent = () => {
+        const userAddress = agent || user || creator || staker || escalator;
+        if (userAddress) {
+          return createAddress(userAddress);
+        }
+        return checksummedColonyAddress;
+      };
       return [
         ...processedEvents,
         {
           id,
-          agent:
-            agent || user
-              ? createAddress(agent || user)
-              : checksummedColonyAddress,
+          agent: getAgent(),
           eventName: formatEventName(name),
           transactionHash: hash,
           colonyAddress: checksummedColonyAddress,
           createdAt: new Date(parseInt(`${timestamp}000`, 10)),
           displayValues: args,
           domainId: domainId || null,
+          newDomainId: newDomainId || null,
           recipient: getRecipient(),
           fundingPot: fundingPotId,
           metadata,
@@ -429,6 +440,8 @@ export const getEventsListData = (
           newVersion: newVersion || '0',
           storageSlot: slot ? toHex(parseInt(slot, 10)) : '0',
           storageSlotValue: toValue || AddressZero,
+          motionId,
+          vote,
         },
       ];
     } catch (error) {

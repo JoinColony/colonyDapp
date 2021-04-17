@@ -147,6 +147,7 @@ export interface FormattedEvent {
   createdAt: Date;
   displayValues: string;
   domainId: string;
+  newDomainId: string;
   fundingPot?: string;
   metadata?: string;
   tokenAddress?: string | null;
@@ -161,4 +162,6 @@ export interface FormattedEvent {
   newVersion?: string;
   storageSlot?: string;
   storageSlotValue?: string;
+  motionId?: string;
+  vote?: string;
 }
