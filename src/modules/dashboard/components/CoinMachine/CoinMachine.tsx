@@ -88,7 +88,23 @@ const CoinMachine = ({
   return (
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
-      <div className={styles.grid}>Grid</div>
+      <div className={styles.grid}>
+        <div className={styles.buy}>
+          <div className={styles.filler}>Buy Tokens</div>
+        </div>
+        <div className={styles.timeRemaining}>
+          <div className={styles.filler}>Time Remaining</div>
+        </div>
+        <div className={styles.tokensRemaining}>
+          <div className={styles.filler}>Tokens Remaining</div>
+        </div>
+        <div className={styles.sales}>
+          <div className={styles.filler}>Previous Sales</div>
+        </div>
+        <div className={styles.comments}>
+          <div className={styles.filler}>Comments</div>
+        </div>
+      </div>
     </div>
   );
 };
