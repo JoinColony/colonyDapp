@@ -1,7 +1,8 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { defineMessages, useIntl } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
+import ExternalLink from '~core/ExternalLink';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
@@ -23,6 +24,10 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.buyTokens',
     defaultMessage: 'Buy {symbol}',
   },
+  learnMore: {
+    id: 'dashboard.CoinMachine.learnMore',
+    defaultMessage: 'Learn More',
+  },
 });
 
 type Props = {
@@ -31,10 +36,11 @@ type Props = {
 
 const displayName = 'dashboard.CoinMachine';
 
+const LEARN_MORE_LINK = '';
+
 const CoinMachine = ({
   colony: { colonyAddress, colonyName, nativeTokenAddress, tokens },
 }: Props) => {
-  const { formatMessage } = useIntl();
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
@@ -66,7 +72,17 @@ const CoinMachine = ({
 
   const breadCrumbs: Crumb[] = [
     MSG.title,
-    formatMessage(MSG.buyTokens, { symbol: nativeToken?.symbol }),
+    <div>
+      <FormattedMessage
+        {...MSG.buyTokens}
+        values={{ symbol: nativeToken?.symbol }}
+      />
+      <ExternalLink
+        className={styles.learnMore}
+        text={MSG.learnMore}
+        href={LEARN_MORE_LINK}
+      />
+    </div>,
   ];
 
   return (
