@@ -1,7 +1,7 @@
 .main {
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 8px;
   height: 100%;
   border-radius: var(--radius-large);
   background-color: white;
@@ -15,4 +15,16 @@
 
 .inputBox {
   flex: 0 0 auto;
+  padding: 0 16px;
+}
+
+.loading, .empty {
+  padding: 16px;
+}
+
+.loaderMessage {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: top;
+  font-size: var(--size-small);
 }
