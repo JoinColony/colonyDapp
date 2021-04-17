@@ -115,6 +115,7 @@ const EditDomainDialogForm = ({
     if (domainId) {
       handleDomainChange(domainId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

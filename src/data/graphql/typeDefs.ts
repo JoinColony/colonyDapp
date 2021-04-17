@@ -138,6 +138,7 @@ export default gql`
     installedBy: String!
     installedAt: Int!
     missingPermissions: [Int!]!
+    version: Int!
   }
 
   extend type User {
@@ -234,6 +235,7 @@ export default gql`
     ): Int!
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
+    networkExtensionVersion(extensionId: String!): Int!
   }
 
   extend type Mutation {

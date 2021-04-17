@@ -76,9 +76,9 @@ export default class ColonyManager {
     if (!client) {
       const colonyClient = await this.getColonyClient(identifier);
       client = colonyClient.getExtensionClient(extensionId);
-      this.extensionClients.set(key, client);
+      this.extensionClients.set(key, client as Promise<ExtensionClient>);
     }
-    return client;
+    return client as Promise<ExtensionClient>;
   }
 
   private async resolveColonyIdentifier(
@@ -158,6 +158,16 @@ export default class ColonyManager {
         if (!identifier)
           throw new Error('Need colony identifier to get CoinMachineClient');
         return this.getColonyExtensionClient(identifier, Extension.CoinMachine);
+      }
+      case ClientType.VotingReputationClient: {
+        if (!identifier)
+          throw new Error(
+            'Need colony identifier to get the VotingReputationClient',
+          );
+        return this.getColonyExtensionClient(
+          identifier,
+          Extension.VotingReputation,
+        );
       }
       default: {
         throw new Error('A valid contract client type has to be specified');

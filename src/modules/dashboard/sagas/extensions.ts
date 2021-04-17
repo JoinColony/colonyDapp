@@ -4,6 +4,7 @@ import {
   getExtensionHash,
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
+import { bigNumberify } from 'ethers/utils';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
@@ -16,6 +17,9 @@ import {
   ProcessedColonyQuery,
   ProcessedColonyQueryVariables,
   ProcessedColonyDocument,
+  NetworkExtensionVersionQuery,
+  NetworkExtensionVersionQueryVariables,
+  NetworkExtensionVersionDocument,
 } from '~data/index';
 import extensionData from '~data/staticData/extensionData';
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -66,13 +70,30 @@ function* colonyExtensionInstall({
   payload: { colonyAddress, extensionId },
 }: Action<ActionTypes.COLONY_EXTENSION_INSTALL>) {
   const txChannel = yield call(getTxChannel, meta.id);
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
   try {
+    /*
+     * Get the latest extension version that's deployed to the network
+     */
+    const {
+      data: { networkExtensionVersion },
+    } = yield apolloClient.query<
+      NetworkExtensionVersionQuery,
+      NetworkExtensionVersionQueryVariables
+    >({
+      query: NetworkExtensionVersionDocument,
+      variables: {
+        extensionId,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     yield fork(createTransaction, meta.id, {
       context: ClientType.ColonyClient,
       methodName: 'installExtension',
       identifier: colonyAddress,
-      params: [getExtensionHash(extensionId), 1],
+      params: [getExtensionHash(extensionId), networkExtensionVersion],
     });
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
@@ -138,9 +159,12 @@ function* colonyExtensionEnable({
     } = data.colonyExtension;
 
     if (!initialized && extension.initializationParams) {
-      const initParams = extension.initializationParams.map(
-        ({ paramName }) => payload[paramName],
-      );
+      const initParams = extension.initializationParams.map(({ paramName }) => {
+        if (typeof payload[paramName] === 'number') {
+          return bigNumberify(String(payload[paramName]));
+        }
+        return payload[paramName];
+      });
       yield fork(createTransaction, initChannelName, {
         context: `${extensionId}Client`,
         methodName: 'initialise',
@@ -260,6 +284,43 @@ function* colonyExtensionUninstall({
   return null;
 }
 
+function* colonyExtensionUpgrade({
+  meta,
+  payload: { colonyAddress, extensionId, version },
+}: Action<ActionTypes.COLONY_EXTENSION_UPGRADE>) {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'upgradeExtension',
+      identifier: colonyAddress,
+      params: [getExtensionHash(extensionId), version],
+    });
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_EXTENSION_UPGRADE_SUCCESS,
+      payload: {},
+      meta,
+    });
+
+    yield waitForTxResult(txChannel);
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_EXTENSION_UPGRADE_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    yield call(refreshExtension, colonyAddress, extensionId);
+
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* colonySagas() {
   yield takeEvery(ActionTypes.COLONY_EXTENSION_INSTALL, colonyExtensionInstall);
   yield takeEvery(ActionTypes.COLONY_EXTENSION_ENABLE, colonyExtensionEnable);
@@ -271,4 +332,5 @@ export default function* colonySagas() {
     ActionTypes.COLONY_EXTENSION_UNINSTALL,
     colonyExtensionUninstall,
   );
+  yield takeEvery(ActionTypes.COLONY_EXTENSION_UPGRADE, colonyExtensionUpgrade);
 }

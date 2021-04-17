@@ -85,6 +85,7 @@ query ColonyExtensions($address: String!) {
         installedBy
         installedAt
         missingPermissions
+        version
       }
     }
   }
@@ -101,8 +102,13 @@ query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
       installedBy
       installedAt
       missingPermissions
+      version
     }
   }
+}
+
+query NetworkExtensionVersion($extensionId: String!) {
+  networkExtensionVersion(extensionId: $extensionId) @client
 }
 
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {

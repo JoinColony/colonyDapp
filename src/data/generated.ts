@@ -283,6 +283,7 @@ export type Query = {
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   networkContracts: NetworkContracts;
+  networkExtensionVersion: Scalars['Int'];
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
   recoveryAllEnteredEvents: Array<ParsedEvent>;
@@ -375,6 +376,11 @@ export type QueryGetRecoveryStorageSlotArgs = {
 
 export type QueryLegacyNumberOfRecoveryRolesArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryNetworkExtensionVersionArgs = {
+  extensionId: Scalars['String'];
 };
 
 
@@ -714,6 +720,7 @@ export type ColonyExtensionDetails = {
   installedBy: Scalars['String'];
   installedAt: Scalars['Int'];
   missingPermissions: Array<Scalars['Int']>;
+  version: Scalars['Int'];
 };
 
 export type ProcessedMetaColony = {
@@ -1141,7 +1148,7 @@ export type ColonyExtensionsQuery = { processedColony: (
     Pick<ProcessedColony, 'id' | 'colonyAddress'>
     & { installedExtensions: Array<(
       Pick<ColonyExtension, 'id' | 'extensionId' | 'address'>
-      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
     )> }
   ) };
 
@@ -1153,8 +1160,15 @@ export type ColonyExtensionQueryVariables = Exact<{
 
 export type ColonyExtensionQuery = { colonyExtension?: Maybe<(
     Pick<ColonyExtension, 'id' | 'address' | 'extensionId'>
-    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
   )> };
+
+export type NetworkExtensionVersionQueryVariables = Exact<{
+  extensionId: Scalars['String'];
+}>;
+
+
+export type NetworkExtensionVersionQuery = Pick<Query, 'networkExtensionVersion'>;
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -2365,6 +2379,7 @@ export const ColonyExtensionsDocument = gql`
         installedBy
         installedAt
         missingPermissions
+        version
       }
     }
   }
@@ -2408,6 +2423,7 @@ export const ColonyExtensionDocument = gql`
       installedBy
       installedAt
       missingPermissions
+      version
     }
   }
 }
@@ -2439,6 +2455,37 @@ export function useColonyExtensionLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type ColonyExtensionQueryHookResult = ReturnType<typeof useColonyExtensionQuery>;
 export type ColonyExtensionLazyQueryHookResult = ReturnType<typeof useColonyExtensionLazyQuery>;
 export type ColonyExtensionQueryResult = Apollo.QueryResult<ColonyExtensionQuery, ColonyExtensionQueryVariables>;
+export const NetworkExtensionVersionDocument = gql`
+    query NetworkExtensionVersion($extensionId: String!) {
+  networkExtensionVersion(extensionId: $extensionId) @client
+}
+    `;
+
+/**
+ * __useNetworkExtensionVersionQuery__
+ *
+ * To run a query within a React component, call `useNetworkExtensionVersionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNetworkExtensionVersionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNetworkExtensionVersionQuery({
+ *   variables: {
+ *      extensionId: // value for 'extensionId'
+ *   },
+ * });
+ */
+export function useNetworkExtensionVersionQuery(baseOptions?: Apollo.QueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
+        return Apollo.useQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
+      }
+export function useNetworkExtensionVersionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
+          return Apollo.useLazyQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
+        }
+export type NetworkExtensionVersionQueryHookResult = ReturnType<typeof useNetworkExtensionVersionQuery>;
+export type NetworkExtensionVersionLazyQueryHookResult = ReturnType<typeof useNetworkExtensionVersionLazyQuery>;
+export type NetworkExtensionVersionQueryResult = Apollo.QueryResult<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {

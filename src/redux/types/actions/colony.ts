@@ -94,4 +94,15 @@ export type ColonyActionTypes =
       object,
       object
     >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_UPGRADE,
+      { colonyAddress: Address; extensionId: string; version: number },
+      WithKey
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_UPGRADE_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UPGRADE_ERROR, object>;
