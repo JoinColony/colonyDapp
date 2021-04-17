@@ -6,7 +6,6 @@ import {
   Extension,
   ClientType,
   ROOT_DOMAIN_ID,
-  ColonyVersion,
 } from '@colony/colony-js';
 import { poll } from 'ethers/utils';
 
@@ -309,10 +308,12 @@ function* colonyCreate({
         );
       }
 
+      const latestVersion = yield networkClient.getCurrentColonyVersion();
+
       yield put(
         transactionAddParams(createColony.id, [
           tokenAddress,
-          ColonyVersion.CeruleanLightweightSpaceship,
+          latestVersion,
           colonyName,
           /*
            * If both upload attempts fail, set the value to an empty string
