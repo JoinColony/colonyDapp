@@ -18,5 +18,50 @@
 }
 
 .grid {
+  display: grid;
   margin-top: 40px;
+  height: calc(100vh - 300px);
+  min-height: 600px;
+  width: 1030px;
+  grid-template-columns: [buy] 340px [remaining] 220px [comments] auto;
+  grid-template-rows: [time] 180px [tokens] 180px [sales] auto;
+  column-gap: 20px;
+  row-gap: 20px;
+}
+
+.buy {
+  grid-column: buy / remaining;
+  grid-row: time / sales;
+}
+
+.timeRemaining {
+  grid-column: remaining / comments;
+  grid-row: time / tokens;
+}
+
+.tokensRemaining {
+  grid-column: remaining / comments;
+  grid-row: tokens / sales;
+}
+
+.sales {
+  grid-column: buy / comments;
+  grid-row: sales / last-line;
+}
+
+.comments {
+  grid-column: comments / end;
+  grid-row: time / last-line;
+}
+
+/*
+ * @TODO Remove when it will no longer be needed
+ */
+.filler {
+  padding: 15px;
+  height: 100%;
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
 }
