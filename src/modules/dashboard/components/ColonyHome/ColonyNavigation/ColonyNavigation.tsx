@@ -1,6 +1,8 @@
 import React, { ComponentProps, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
-import { useParams } from 'react-router';
+import { Extension } from '@colony/colony-js';
+
+import { useColonyExtensionsQuery, Colony } from '~data/index';
 
 import NavItem from './NavItem';
 
@@ -19,17 +21,26 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyNavigation.linkTextExtensions',
     defaultMessage: 'Extensions',
   },
+  linkTextCoinMachine: {
+    id: 'dashboard.ColonyHome.ColonyNavigation.linkTextCoinMachine',
+    defaultMessage: 'Buy Tokens',
+  },
   comingSoonMessage: {
     id: 'dashboard.ColonyNavigation.comingSoonMessage',
     defaultMessage: 'Coming Soon',
   },
 });
 
+type Props = {
+  colony: Colony;
+};
+
 const displayName = 'dashboard.ColonyHome.ColonyNavigation';
 
-const ColonyNavigation = () => {
-  const { colonyName } = useParams<{ colonyName: string }>();
-
+const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
+  const { data } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
   /*
    * @TODO actually determine these
    * This can be easily inferred from the subgraph queries
@@ -43,8 +54,8 @@ const ColonyNavigation = () => {
   const hasNewEvents = false;
   const hasNewExtensions = false;
 
-  const items = useMemo<ComponentProps<typeof NavItem>[]>(
-    () => [
+  const items = useMemo<ComponentProps<typeof NavItem>[]>(() => {
+    const navigationItems = [
       {
         linkTo: `/colony/${colonyName}`,
         showDot: hasNewActions,
@@ -61,9 +72,22 @@ const ColonyNavigation = () => {
         showDot: hasNewExtensions,
         text: MSG.linkTextExtensions,
       },
-    ],
-    [colonyName, hasNewActions, hasNewEvents, hasNewExtensions],
-  );
+    ];
+    if (data?.processedColony?.installedExtensions) {
+      const { installedExtensions } = data.processedColony;
+      const coinMachineExtension = installedExtensions.find(
+        ({ extensionId }) => extensionId === Extension.CoinMachine,
+      );
+      if (coinMachineExtension) {
+        navigationItems.push({
+          linkTo: `/colony/${colonyName}/buy-tokens`,
+          showDot: false,
+          text: MSG.linkTextCoinMachine,
+        });
+      }
+    }
+    return navigationItems;
+  }, [colonyName, hasNewActions, hasNewEvents, hasNewExtensions, data]);
 
   return (
     <nav role="navigation" className={styles.main}>
