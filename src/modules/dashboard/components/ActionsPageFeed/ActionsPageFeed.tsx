@@ -15,7 +15,6 @@ import {
   Colony,
   TransactionMessageFragment,
   ParsedEvent,
-  TokenInfoQuery,
 } from '~data/index';
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { ActionsPageFeedType, SystemInfo, SystemMessage } from './types';
@@ -79,7 +78,6 @@ interface Props {
   actionType?: string;
   actionData: ColonyAction;
   colony: Colony;
-  token?: TokenInfoQuery['tokenInfo'];
   children?: ReactNode | CustomChildrenRenderFn;
   loading?: boolean;
 }
@@ -93,7 +91,6 @@ const ActionsPageFeed = ({
   actionType,
   actionData,
   colony,
-  token,
   children,
   loading: extenalLoadingState = false,
 }: Props) => {
@@ -208,7 +205,6 @@ const ActionsPageFeed = ({
             }}
             emmitedBy={emmitedBy}
             colony={colony}
-            token={token}
           />
         );
       }

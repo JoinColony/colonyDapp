@@ -17,7 +17,6 @@ import {
   useSubgraphDomainMetadataQuery,
   Colony,
   useUser,
-  TokenInfoQuery,
 } from '~data/index';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
@@ -67,7 +66,6 @@ interface Props {
   emmitedBy?: string;
   actionData: ColonyAction;
   colony: Colony;
-  token?: TokenInfoQuery['tokenInfo'];
   children?: ReactNode;
 }
 
@@ -85,9 +83,8 @@ const ActionsPageEvent = ({
   values,
   emmitedBy,
   actionData,
-  colony: { colonyAddress },
+  colony: { colonyAddress, nativeTokenAddress, tokens },
   colony,
-  token,
   children,
 }: Props) => {
   let metadataJSON;
@@ -297,6 +294,10 @@ const ActionsPageEvent = ({
 
   const { domainPurpose, domainName, domainColor } = actionData;
 
+  const colonyNativeToken = tokens.find(
+    ({ address }) => address === nativeTokenAddress,
+  );
+
   return (
     <div className={styles.main}>
       <div className={styles.wrapper}>
@@ -353,7 +354,9 @@ const ActionsPageEvent = ({
                   >
                     <Numeral
                       value={values?.stakeAmount || 0}
-                      unit={getTokenDecimalsWithFallback(token?.decimals || 0)}
+                      unit={getTokenDecimalsWithFallback(
+                        colonyNativeToken?.decimals,
+                      )}
                     />{' '}
                     {values?.tokenSymbol}
                   </Tag>
