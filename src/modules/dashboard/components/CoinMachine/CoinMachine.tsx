@@ -48,7 +48,7 @@ const CoinMachine = ({
     variables: { address: colonyAddress },
   });
 
-  if (loading) {
+  if (loading || !data?.processedColony?.installedExtensions) {
     return (
       <div className={styles.loadingSpinner}>
         <SpinnerLoader
@@ -59,14 +59,12 @@ const CoinMachine = ({
     );
   }
 
-  if (data?.processedColony?.installedExtensions) {
-    const { installedExtensions } = data.processedColony;
-    const coinMachineExtension = installedExtensions.find(
-      ({ extensionId }) => extensionId === Extension.CoinMachine,
-    );
-    if (!coinMachineExtension) {
-      return <Redirect to={`/colony/${colonyName}`} />;
-    }
+  const { installedExtensions } = data.processedColony;
+  const coinMachineExtension = installedExtensions.find(
+    ({ extensionId }) => extensionId === Extension.CoinMachine,
+  );
+  if (!coinMachineExtension) {
+    return <Redirect to={`/colony/${colonyName}`} />;
   }
 
   const nativeToken = tokens.find(
@@ -105,7 +103,10 @@ const CoinMachine = ({
           <div className={styles.filler}>Previous Sales</div>
         </div>
         <div className={styles.comments}>
-          <Chat colony={colony} comments={[]} transactionHash="" />
+          <Chat
+            colony={colony}
+            transactionHash={coinMachineExtension.address}
+          />
         </div>
       </div>
     </div>
