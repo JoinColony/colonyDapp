@@ -393,6 +393,17 @@ export type QueryLegacyNumberOfRecoveryRolesArgs = {
 };
 
 
+export type QueryMotionsSystemMessagesArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryNetworkExtensionVersionArgs = {
+  extensionId: Scalars['String'];
+};
+
+
 export type QueryProcessedColonyArgs = {
   address: Scalars['String'];
 };
@@ -743,6 +754,7 @@ export type ColonyExtensionDetails = {
   installedBy: Scalars['String'];
   installedAt: Scalars['Int'];
   missingPermissions: Array<Scalars['Int']>;
+  version: Scalars['Int'];
 };
 
 export type UserToken = {
@@ -1209,7 +1221,7 @@ export type ColonyExtensionsQuery = { processedColony: (
     Pick<ProcessedColony, 'id' | 'colonyAddress'>
     & { installedExtensions: Array<(
       Pick<ColonyExtension, 'id' | 'extensionId' | 'address'>
-      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
     )> }
   ) };
 
@@ -1221,8 +1233,15 @@ export type ColonyExtensionQueryVariables = Exact<{
 
 export type ColonyExtensionQuery = { colonyExtension?: Maybe<(
     Pick<ColonyExtension, 'id' | 'address' | 'extensionId'>
-    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions'> }
+    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
   )> };
+
+export type NetworkExtensionVersionQueryVariables = Exact<{
+  extensionId: Scalars['String'];
+}>;
+
+
+export type NetworkExtensionVersionQuery = Pick<Query, 'networkExtensionVersion'>;
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -1401,6 +1420,14 @@ export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
 
 
 export type LegacyNumberOfRecoveryRolesQuery = Pick<Query, 'legacyNumberOfRecoveryRoles'>;
+
+export type MotionsSystemMessagesQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionsSystemMessagesQuery = { motionsSystemMessages: Array<Pick<SystemMessage, 'type' | 'name' | 'createdAt'>> };
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -2502,6 +2529,7 @@ export const ColonyExtensionsDocument = gql`
         installedBy
         installedAt
         missingPermissions
+        version
       }
     }
   }
@@ -2545,6 +2573,7 @@ export const ColonyExtensionDocument = gql`
       installedBy
       installedAt
       missingPermissions
+      version
     }
   }
 }
@@ -2576,6 +2605,37 @@ export function useColonyExtensionLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type ColonyExtensionQueryHookResult = ReturnType<typeof useColonyExtensionQuery>;
 export type ColonyExtensionLazyQueryHookResult = ReturnType<typeof useColonyExtensionLazyQuery>;
 export type ColonyExtensionQueryResult = Apollo.QueryResult<ColonyExtensionQuery, ColonyExtensionQueryVariables>;
+export const NetworkExtensionVersionDocument = gql`
+    query NetworkExtensionVersion($extensionId: String!) {
+  networkExtensionVersion(extensionId: $extensionId) @client
+}
+    `;
+
+/**
+ * __useNetworkExtensionVersionQuery__
+ *
+ * To run a query within a React component, call `useNetworkExtensionVersionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNetworkExtensionVersionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNetworkExtensionVersionQuery({
+ *   variables: {
+ *      extensionId: // value for 'extensionId'
+ *   },
+ * });
+ */
+export function useNetworkExtensionVersionQuery(baseOptions?: Apollo.QueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
+        return Apollo.useQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
+      }
+export function useNetworkExtensionVersionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
+          return Apollo.useLazyQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
+        }
+export type NetworkExtensionVersionQueryHookResult = ReturnType<typeof useNetworkExtensionVersionQuery>;
+export type NetworkExtensionVersionLazyQueryHookResult = ReturnType<typeof useNetworkExtensionVersionLazyQuery>;
+export type NetworkExtensionVersionQueryResult = Apollo.QueryResult<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
@@ -3382,6 +3442,42 @@ export function useLegacyNumberOfRecoveryRolesLazyQuery(baseOptions?: Apollo.Laz
 export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesQuery>;
 export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
 export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
+export const MotionsSystemMessagesDocument = gql`
+    query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
+  motionsSystemMessages(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useMotionsSystemMessagesQuery__
+ *
+ * To run a query within a React component, call `useMotionsSystemMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionsSystemMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionsSystemMessagesQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionsSystemMessagesQuery(baseOptions?: Apollo.QueryHookOptions<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>) {
+        return Apollo.useQuery<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>(MotionsSystemMessagesDocument, baseOptions);
+      }
+export function useMotionsSystemMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>) {
+          return Apollo.useLazyQuery<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>(MotionsSystemMessagesDocument, baseOptions);
+        }
+export type MotionsSystemMessagesQueryHookResult = ReturnType<typeof useMotionsSystemMessagesQuery>;
+export type MotionsSystemMessagesLazyQueryHookResult = ReturnType<typeof useMotionsSystemMessagesLazyQuery>;
+export type MotionsSystemMessagesQueryResult = Apollo.QueryResult<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {

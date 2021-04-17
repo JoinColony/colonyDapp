@@ -37,7 +37,8 @@ import { colonyActionsResolvers } from './resolvers/colonyActions';
 import { metaColonyResolvers } from './resolvers/metacolony';
 import { eventsResolvers } from './resolvers/events';
 import { recoveryModeResolvers } from './resolvers/recovery';
-import { extensionResolvers } from './resolvers/extensions';
+import { extensionsResolvers } from './resolvers/extensions';
+import { motionsResolvers } from './resolvers/motions';
 
 import { FixedToken } from '../types';
 
@@ -63,7 +64,7 @@ export const resolvers: ResolverFactory[] = [
   metaColonyResolvers,
   eventsResolvers,
   recoveryModeResolvers,
-  extensionResolvers,
+  extensionsResolvers,
   motionsResolvers,
 ];
 

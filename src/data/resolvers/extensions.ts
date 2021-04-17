@@ -14,7 +14,7 @@ import { Context } from '~context/index';
 
 import extensionData from '~data/staticData/extensionData';
 
-export const extensionResolvers = ({
+export const extensionsResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
 }: Required<Context>): Resolvers => ({
