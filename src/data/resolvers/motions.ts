@@ -1,13 +1,12 @@
-import { ClientType, ExtensionClient } from '@colony/colony-js';
-import { bigNumberify } from 'ethers/utils';
-import { Resolvers } from '@apollo/client';
 import {
   ClientType,
+  ExtensionClient,
   getLogs,
   getBlockTime,
-  ExtensionClient,
   MotionState as NetworkMotionState,
 } from '@colony/colony-js';
+import { bigNumberify } from 'ethers/utils';
+import { Resolvers } from '@apollo/client';
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
