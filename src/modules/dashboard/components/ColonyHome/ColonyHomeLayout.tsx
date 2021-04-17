@@ -46,7 +46,7 @@ const ColonyHomeLayout = ({
     <div className={showSidebar ? styles.mainContentGrid : styles.minimalGrid}>
       <aside className={styles.leftAside}>
         <ColonyTitle colony={colony} />
-        {showNavigation && <ColonyNavigation />}
+        {showNavigation && <ColonyNavigation colony={colony} />}
       </aside>
       <div className={styles.mainContent}>
         {showControls && (
