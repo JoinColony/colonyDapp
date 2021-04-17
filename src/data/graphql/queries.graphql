@@ -293,7 +293,7 @@ query ActionsThatNeedAttention($colonyAddress: String!, $walletAddress: String!)
   }
 }
 
-query EventsForMotion($motionId: String!, $colonyAddress: String!) {
+query EventsForMotion($motionId: Int!, $colonyAddress: String!) {
   eventsForMotion(motionId: $motionId, colonyAddress: $colonyAddress) @client {
     type
     name

@@ -379,7 +379,7 @@ export type QueryDomainsArgs = {
 
 
 export type QueryEventsForMotionArgs = {
-  motionId: Scalars['String'];
+  motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
 };
 
@@ -1404,7 +1404,7 @@ export type ActionsThatNeedAttentionQueryVariables = Exact<{
 export type ActionsThatNeedAttentionQuery = { actionsThatNeedAttention: Array<Maybe<Pick<ActionThatNeedsAttention, 'transactionHash' | 'needsAction'>>> };
 
 export type EventsForMotionQueryVariables = Exact<{
-  motionId: Scalars['String'];
+  motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
 
@@ -3244,7 +3244,7 @@ export type ActionsThatNeedAttentionQueryHookResult = ReturnType<typeof useActio
 export type ActionsThatNeedAttentionLazyQueryHookResult = ReturnType<typeof useActionsThatNeedAttentionLazyQuery>;
 export type ActionsThatNeedAttentionQueryResult = Apollo.QueryResult<ActionsThatNeedAttentionQuery, ActionsThatNeedAttentionQueryVariables>;
 export const EventsForMotionDocument = gql`
-    query EventsForMotion($motionId: String!, $colonyAddress: String!) {
+    query EventsForMotion($motionId: Int!, $colonyAddress: String!) {
   eventsForMotion(motionId: $motionId, colonyAddress: $colonyAddress) @client {
     type
     name

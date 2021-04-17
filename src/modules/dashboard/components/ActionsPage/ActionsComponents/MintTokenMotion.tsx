@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
@@ -60,7 +59,6 @@ const MintTokenMotion = ({
   },
   colonyAction,
   token: { decimals, symbol },
-  token,
   transactionHash,
   initiator,
 }: Props) => {
@@ -178,7 +176,6 @@ const MintTokenMotion = ({
             values={actionAndEventValues}
             actionData={colonyAction}
             colony={colony}
-            token={token}
           />
         </div>
         <div className={styles.details}>
