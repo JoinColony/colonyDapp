@@ -10,6 +10,7 @@ import {
   extensions,
   getExtensionHash,
   ColonyClientV5,
+  ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
