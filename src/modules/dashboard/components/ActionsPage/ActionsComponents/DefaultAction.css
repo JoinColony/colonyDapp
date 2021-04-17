@@ -80,3 +80,8 @@
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
+
+.commentBox {
+  margin-top: 30px;
+  padding-bottom: 40px;
+}

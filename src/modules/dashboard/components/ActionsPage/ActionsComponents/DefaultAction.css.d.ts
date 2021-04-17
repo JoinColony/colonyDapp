@@ -8,3 +8,4 @@ export const content: string;
 export const details: string;
 export const addressInTitle: string;
 export const titleDecoration: string;
+export const commentBox: string;

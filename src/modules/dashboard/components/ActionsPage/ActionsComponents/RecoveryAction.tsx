@@ -375,7 +375,7 @@ const RecoveryAction = ({
            * and a registered user profile
            */}
           {currentUserName && !ethereal && (
-            <div ref={bottomElementRef}>
+            <div ref={bottomElementRef} className={styles.commentBox}>
               <CommentInput
                 transactionHash={transactionHash}
                 colonyAddress={colonyAddress}
