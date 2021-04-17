@@ -62,6 +62,7 @@ type FormValues = {
 interface Props {
   transactionHash: string;
   colonyAddress: Address;
+  callback?: (message: string) => void;
 }
 
 const handleKeyboardSubmit = (
@@ -80,7 +81,7 @@ const handleKeyboardSubmit = (
   return false;
 };
 
-const CommentInput = ({ transactionHash, colonyAddress }: Props) => {
+const CommentInput = ({ transactionHash, colonyAddress, callback }: Props) => {
   const commentBoxRef = useRef<HTMLInputElement>(null);
 
   const [sendTransactionMessage] = useSendTransactionMessageMutation();
@@ -117,8 +118,11 @@ const CommentInput = ({ transactionHash, colonyAddress }: Props) => {
         resetForm({});
         setFieldError('messsage', '');
         commentBoxRef?.current?.scrollIntoView({ behavior: 'smooth' });
+        if (callback) {
+          callback(message);
+        }
       }),
-    [transactionHash, colonyAddress, sendTransactionMessage],
+    [transactionHash, colonyAddress, sendTransactionMessage, callback],
   );
 
   return (
