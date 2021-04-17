@@ -9,6 +9,8 @@ import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 
 import { useColonyExtensionsQuery, Colony } from '~data/index';
 
+import Chat from './Chat';
+
 import styles from './CoinMachine.css';
 
 const MSG = defineMessages({
@@ -40,6 +42,7 @@ const LEARN_MORE_LINK = '';
 
 const CoinMachine = ({
   colony: { colonyAddress, colonyName, nativeTokenAddress, tokens },
+  colony,
 }: Props) => {
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
@@ -102,7 +105,7 @@ const CoinMachine = ({
           <div className={styles.filler}>Previous Sales</div>
         </div>
         <div className={styles.comments}>
-          <div className={styles.filler}>Comments</div>
+          <Chat colony={colony} comments={[]} transactionHash="" />
         </div>
       </div>
     </div>
