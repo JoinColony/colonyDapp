@@ -33,7 +33,7 @@ interface Props {
   transactionHash: string;
 }
 
-const displayName = 'Chat';
+const displayName = 'dashboard.CoinMachine.Chat';
 
 const Chat = ({
   comments,
