@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, ReactElement, isValidElement } from 'react';
 import { MessageDescriptor, useIntl } from 'react-intl';
 
 import styles from './BreadCrumb.css';
 import SingleCrumb from './SingleCrumb';
 
-type CrumbText = string | MessageDescriptor;
+export type CrumbText = string | ReactElement | MessageDescriptor;
 export type Crumb = CrumbText | [CrumbText, string];
 
 interface Props {
@@ -20,13 +20,26 @@ const BreadCrumb = ({ elements }: Props) => {
     <div className={styles.main}>
       {elements.map((crumb, i) => {
         let crumbLink: string;
-        let crumbText: string;
+        let crumbText: CrumbText;
         if (Array.isArray(crumb)) {
-          crumbText =
-            typeof crumb[0] == 'string' ? crumb[0] : formatMessage(crumb[0]);
+          /*
+           * It's a react element or a string, we handle both cases the same
+           */
+          if (isValidElement(crumb[0]) || typeof crumb[0] === 'string') {
+            [crumbText] = crumb;
+          } else {
+            /*
+             * It's a message descriptor
+             */
+            crumbText = formatMessage(crumb[0] as MessageDescriptor);
+          }
           [, crumbLink] = crumb;
         } else {
-          crumbText = typeof crumb == 'string' ? crumb : formatMessage(crumb);
+          if (isValidElement(crumb) || typeof crumb === 'string') {
+            crumbText = crumb;
+          } else {
+            crumbText = formatMessage(crumb);
+          }
           crumbLink = '';
         }
         return (
