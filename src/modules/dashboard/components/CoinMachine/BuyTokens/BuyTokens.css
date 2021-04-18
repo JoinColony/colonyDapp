@@ -7,6 +7,10 @@
   box-shadow: var(--box-shadow-medium);
 }
 
+.stateDisabled {
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
+}
+
 .help {
   padding: 10px 0 0 0;
 
@@ -23,4 +27,46 @@
 .tooltip {
   padding: 4px;
   width: 250px;
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.inputComponent {
+  flex-grow: 1;
+  width: 190px;
+}
+
+.inputComponent input {
+  padding: 0;
+  font-size: var(--size-huge);
+  font-weight: var(--weight-normal);
+  text-align: right;
+}
+
+.inputComponent label {
+  margin: 0;
+  padding: 0;
+  color: var(--dark);
+}
+
+.nativeToken {
+  margin: 13px 0 0 14px;
+  width: 70px;
+}
+
+.userBalance, .userBalance span {
+  margin-top: -32px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: right;
+}
+
+.userBalance button {
+  margin-left: 5px;
+  height: auto;
 }
