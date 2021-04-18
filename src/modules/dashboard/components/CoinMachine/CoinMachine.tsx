@@ -114,7 +114,14 @@ const CoinMachine = ({
         )) || (
           <>
             <div className={styles.buy}>
-              <BuyTokens colony={colony} />
+              <BuyTokens
+                colony={colony}
+                /*
+                 * @TODO Determine if the sale is currently ongoing
+                 * And only disable it if it insn't
+                 */
+                disabled={!saleStarted}
+              />
             </div>
             <div className={styles.timeRemaining}>
               <div>Time Remaining</div>
