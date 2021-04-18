@@ -123,6 +123,7 @@ const BuyTokens = ({
     },
     [globalDisable, balance],
   );
+  const handleFormReset = useCallback((resetForm) => resetForm(), []);
 
   const transform = useCallback(
     mapPayload(({ amount }) => ({
@@ -166,6 +167,7 @@ const BuyTokens = ({
         error={ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR}
         success={ActionTypes.COIN_MACHINE_BUY_TOKENS_SUCCESS}
         transform={transform}
+        onSuccess={(result, { resetForm }) => handleFormReset(resetForm)}
       >
         {({
           values,
