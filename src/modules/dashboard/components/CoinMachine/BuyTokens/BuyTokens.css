@@ -54,13 +54,18 @@
   color: var(--dark);
 }
 
+.fieldError {
+  margin: -15px 0 12px;
+}
+
 .nativeToken {
-  margin: 13px 0 0 14px;
+  align-self: flex-start;
+  margin: 25px 0 0 14px;
   width: 70px;
 }
 
 .userBalance, .userBalance span {
-  margin-top: -32px;
+  margin-top: -13px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   text-align: right;
@@ -109,8 +114,6 @@
   width: calc(100% - 60px);
   position: absolute;
   bottom: 24px;
-
-  /* margin: 24px 0 0 0; */
   text-align: center;
 }
 
