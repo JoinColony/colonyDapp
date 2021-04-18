@@ -8,6 +8,7 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { ActionForm, Input } from '~core/Fields';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
+import EthUsd from '~core/EthUsd';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -37,6 +38,10 @@ const MSG = defineMessages({
   maxBalanceLabel: {
     id: 'dashboard.CoinMachine.BuyTokens.maxBalanceLabel',
     defaultMessage: 'Max',
+  },
+  priceLabel: {
+    id: 'dashboard.CoinMachine.BuyTokens.priceLabel',
+    defaultMessage: 'Price',
   },
 });
 
@@ -189,6 +194,39 @@ const BuyTokens = ({
               >
                 {nativeToken?.symbol}
               </span>
+            </div>
+            <div className={styles.amountsContainer}>
+              <div className={styles.amounts}>
+                <div className={styles.amountsLabel}>
+                  <FormattedMessage {...MSG.priceLabel} />
+                </div>
+                <div className={styles.amountsValues}>
+                  {/*
+                   * @TODO Get actual sale price
+                   */}
+                  <div>0.00010</div>
+                  <div>
+                    <EthUsd
+                      appearance={{ theme: 'grey', size: 'small' }}
+                      value={
+                        /*
+                         * @NOTE Set value to 0 if amount is only the decimal point
+                         * Just entering the decimal point will pass it through to EthUsd
+                         * and that will try to fetch the balance for, which, obviously, will fail
+                         *
+                         * values.amount && values.amount !== '.' ? values.amount : '0'
+                         *
+                         * @TODO Get actual sale price
+                         */
+                        0.0001
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className={styles.symbols}>
+                {`${DEFAULT_NETWORK_TOKEN.symbol}/${nativeToken?.symbol}`}
+              </div>
             </div>
           </div>
         )}

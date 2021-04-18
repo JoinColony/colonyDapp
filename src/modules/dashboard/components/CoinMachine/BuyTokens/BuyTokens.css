@@ -33,7 +33,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin-top: 30px;
+  margin: 30px 0 20px;
 }
 
 .inputComponent {
@@ -69,4 +69,34 @@
 .userBalance button {
   margin-left: 5px;
   height: auto;
+}
+
+.amountsContainer {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.amounts {
+  display: flex;
+  width: 196px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.amountsLabel {
+  flex: 0 1;
+}
+
+.amountsValues {
+  flex: 1 1;
+  align-self: flex-end;
+  text-align: right;
+}
+
+.symbols {
+  flex: 1 1;
+  margin: -2px 0 0 14px;
+  width: 70px;
 }
