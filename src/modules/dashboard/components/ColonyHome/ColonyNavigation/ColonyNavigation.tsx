@@ -78,7 +78,17 @@ const ColonyNavigation = ({ colony: { colonyAddress, colonyName } }: Props) => {
       const coinMachineExtension = installedExtensions.find(
         ({ extensionId }) => extensionId === Extension.CoinMachine,
       );
-      if (coinMachineExtension) {
+      /*
+       * Only show the Buy Tokens navigation link if the Coin Machine extension is:
+       * - installed
+       * - enable
+       * - not deprecated
+       */
+      if (
+        coinMachineExtension &&
+        coinMachineExtension?.details?.initialized &&
+        !coinMachineExtension?.details?.deprecated
+      ) {
         navigationItems.push({
           linkTo: `/colony/${colonyName}/buy-tokens`,
           showDot: false,
