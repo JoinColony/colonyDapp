@@ -47,6 +47,10 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.BuyTokens.priceLabel',
     defaultMessage: 'Cost',
   },
+  buyLabel: {
+    id: 'dashboard.CoinMachine.BuyTokens.buyLabel',
+    defaultMessage: 'Buy',
+  },
 });
 
 type Props = {
@@ -61,7 +65,7 @@ interface FormValues {
 const displayName = 'dashboard.CoinMachine.BuyTokens';
 
 const validationSchema = yup.object().shape({
-  mintAmount: yup.number().required().moreThan(0),
+  amount: yup.number().required().moreThan(0),
 });
 
 const BuyTokens = ({
@@ -144,7 +148,13 @@ const BuyTokens = ({
         error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
         success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
       >
-        {({ values, setFieldValue }: FormikProps<FormValues>) => (
+        {({
+          values,
+          setFieldValue,
+          isSubmitting,
+          handleSubmit,
+          isValid,
+        }: FormikProps<FormValues>) => (
           <div>
             <div className={styles.inputContainer}>
               <div
@@ -270,6 +280,16 @@ const BuyTokens = ({
               <div className={styles.symbols}>
                 {`${DEFAULT_NETWORK_TOKEN.symbol}`}
               </div>
+            </div>
+            <div className={styles.controls}>
+              <Button
+                type="submit"
+                text={MSG.buyLabel}
+                appearance={{ theme: 'primary', size: 'large' }}
+                onClick={() => handleSubmit()}
+                loading={isSubmitting}
+                disabled={globalDisable || !isValid}
+              />
             </div>
           </div>
         )}
