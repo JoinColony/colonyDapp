@@ -55,6 +55,9 @@ const MSG = defineMessages({
 
 type Props = {
   colony: Colony;
+  /*
+   * @NOTE This acts like an indicator that the sale is not currently active
+   */
   disabled?: boolean;
 };
 
@@ -232,7 +235,7 @@ const BuyTokens = ({
                   {/*
                    * @TODO Get actual sale price
                    */}
-                  <div>0.00010</div>
+                  <div>{!disabled ? 0.0001 : 'N/A'}</div>
                   <div>
                     <EthUsd
                       appearance={{ theme: 'grey', size: 'small' }}
@@ -246,7 +249,7 @@ const BuyTokens = ({
                          *
                          * @TODO Get actual sale price
                          */
-                        0.0001
+                        !disabled ? 0.0001 : 0
                       }
                     />
                   </div>
@@ -265,11 +268,15 @@ const BuyTokens = ({
                   {/*
                    * @TODO Get actual sale price
                    */}
-                  <div>
-                    {values.amount
-                      ? (parseInt(values.amount, 10) * 0.0001).toFixed(4)
-                      : ''}
-                  </div>
+                  {!disabled ? (
+                    <div>
+                      {values.amount
+                        ? (parseInt(values.amount, 10) * 0.0001).toFixed(4)
+                        : ''}
+                    </div>
+                  ) : (
+                    <div>N/A</div>
+                  )}
                   <div>
                     <EthUsd
                       appearance={{ theme: 'grey', size: 'small' }}
