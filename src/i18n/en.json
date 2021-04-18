@@ -204,6 +204,10 @@
     "transaction.VotingReputationClient.escalateMotionWithProofs.title": "Escalate Motion",
     "transaction.VotingReputationClient.escalateMotionWithProofs.description": "Escalate Motion",
 
+    "transaction.group.buyTokens.title": "Buy Tokens",
+    "transaction.group.buyTokens.description": "Buy Tokens",
+    "transaction.CoinMachineClient.buyTokens.title": "Buy Tokens",
+    "transaction.CoinMachineClient.buyTokens.description": "Buy Tokens",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
