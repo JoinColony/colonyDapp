@@ -26,17 +26,13 @@ const MSG = defineMessages({
   description: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.description',
     defaultMessage: `Your colony’s native token is locked and non-transferrable
-     by default. This action allows you to unlock it so that it may be 
+     by default. This action allows you to unlock it so that it may be
      freely transferred between accounts.`,
   },
   note: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.note',
     defaultMessage:
       'Please note: this action is irreversible. Use with caution',
-  },
-  learnMore: {
-    id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.learnMore',
-    defaultMessage: 'Learn more.',
   },
   noPermission: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.noPermission',
@@ -90,7 +86,7 @@ const UnlockTokenForm = ({
           <FormattedMessage {...MSG.note} />
           <ExternalLink
             className={styles.learnMoreLink}
-            text={MSG.learnMore}
+            text={{ id: 'text.learnMore' }}
             href=""
           />
         </div>
