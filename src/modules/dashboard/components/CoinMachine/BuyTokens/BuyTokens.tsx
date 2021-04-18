@@ -5,7 +5,7 @@ import { FormikProps } from 'formik';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import { ActionForm, Input } from '~core/Fields';
+import { ActionForm, Input, InputStatus } from '~core/Fields';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
@@ -64,9 +64,10 @@ interface FormValues {
 
 const displayName = 'dashboard.CoinMachine.BuyTokens';
 
-const validationSchema = yup.object().shape({
-  amount: yup.number().required().moreThan(0),
-});
+const validationSchema = (userBalance: number) =>
+  yup.object().shape({
+    amount: yup.number().moreThan(0).max(userBalance),
+  });
 
 const BuyTokens = ({
   colony: { nativeTokenAddress, tokens },
@@ -89,9 +90,10 @@ const BuyTokens = ({
     [globalDisable],
   );
   const handleInputBlur = useCallback(
-    ({ amount }, setFieldValue) => {
+    ({ amount }, resetForm, setFieldError) => {
       if (!globalDisable && !amount) {
-        setFieldValue('amount', '0');
+        resetForm();
+        setFieldError('amount', false);
       }
     },
     [globalDisable],
@@ -108,7 +110,10 @@ const BuyTokens = ({
         event.stopPropagation();
         setFieldValue(
           'amount',
-          `${parseInt(balance, 10)}.${balance.substr(balance.indexOf('.'), 3)}`,
+          `${parseInt(balance, 10)}.${balance.substr(
+            balance.indexOf('.') + 1,
+            2,
+          )}`,
         );
       }
     },
@@ -143,7 +148,7 @@ const BuyTokens = ({
         initialValues={{
           amount: '0',
         }}
-        validationSchema={validationSchema}
+        validationSchema={validationSchema(parseFloat(balance))}
         submit={ActionTypes.COLONY_ACTION_GENERIC}
         error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
         success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
@@ -154,13 +159,16 @@ const BuyTokens = ({
           isSubmitting,
           handleSubmit,
           isValid,
+          errors,
+          resetForm,
+          setFieldError,
         }: FormikProps<FormValues>) => (
           <div>
             <div className={styles.inputContainer}>
               <div
                 className={styles.inputComponent}
                 onClick={() => handleInputFocus(values, setFieldValue)}
-                onBlur={() => handleInputBlur(values, setFieldValue)}
+                onBlur={() => handleInputBlur(values, resetForm, setFieldError)}
                 aria-hidden="true"
               >
                 <Input
@@ -175,7 +183,13 @@ const BuyTokens = ({
                   label={MSG.amountLabel}
                   name="amount"
                   disabled={globalDisable}
+                  elementOnly
                 />
+                {errors?.amount && (
+                  <div className={styles.fieldError}>
+                    <InputStatus error={errors.amount} />
+                  </div>
+                )}
                 {!globalDisable && (
                   <div className={styles.userBalance}>
                     <span>
@@ -288,7 +302,9 @@ const BuyTokens = ({
                 appearance={{ theme: 'primary', size: 'large' }}
                 onClick={() => handleSubmit()}
                 loading={isSubmitting}
-                disabled={globalDisable || !isValid}
+                disabled={
+                  globalDisable || !isValid || parseFloat(values.amount) <= 0
+                }
               />
             </div>
           </div>
