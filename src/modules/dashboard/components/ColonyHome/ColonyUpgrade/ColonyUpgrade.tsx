@@ -30,10 +30,6 @@ const MSG = defineMessages({
     id: `dashboard.ColonyHome.ColonyUpgrade.upgradeSuggested`,
     defaultMessage: `A new version of the Colony Network is available! {linkToRelease}`,
   },
-  learnMore: {
-    id: `dashboard.ColonyHome.ColonyUpgrade.learnMore`,
-    defaultMessage: `Learn More`,
-  },
 });
 
 type Props = {
@@ -116,7 +112,7 @@ const ColonyUpgrade = ({ colony }: Props) => {
                   values={{
                     linkToRelease: (
                       <ExternalLink
-                        text={MSG.learnMore}
+                        text={{ id: 'text.learnMore' }}
                         href={getNetworkRelaseLink(
                           parseInt(colony.version, 10) + 1,
                         )}
