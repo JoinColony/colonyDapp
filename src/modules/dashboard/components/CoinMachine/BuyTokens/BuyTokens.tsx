@@ -15,6 +15,7 @@ import { ActionTypes } from '~redux/index';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
+import { mapPayload } from '~utils/actions';
 
 import styles from './BuyTokens.css';
 
@@ -73,7 +74,7 @@ const validationSchema = (userBalance: number) =>
   });
 
 const BuyTokens = ({
-  colony: { nativeTokenAddress, tokens },
+  colony: { nativeTokenAddress, tokens, colonyAddress },
   disabled,
 }: Props) => {
   const { username, ethereal, balance } = useLoggedInUser();
@@ -123,6 +124,15 @@ const BuyTokens = ({
     [globalDisable, balance],
   );
 
+  const transform = useCallback(
+    mapPayload(({ amount }) => ({
+      colonyAddress,
+      amount,
+      decimals: nativeToken?.decimals,
+    })),
+    [],
+  );
+
   return (
     <div
       className={getMainClasses({}, styles, {
@@ -152,9 +162,10 @@ const BuyTokens = ({
           amount: '0',
         }}
         validationSchema={validationSchema(parseFloat(balance))}
-        submit={ActionTypes.COLONY_ACTION_GENERIC}
-        error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-        success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+        submit={ActionTypes.COIN_MACHINE_BUY_TOKENS}
+        error={ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR}
+        success={ActionTypes.COIN_MACHINE_BUY_TOKENS_SUCCESS}
+        transform={transform}
       >
         {({
           values,
