@@ -51,6 +51,8 @@
 
     "wallet.metamask": "MetaMask",
 
+    "text.learnMore": "Learn More",
+
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
     "transaction.group.deposit.title": "Activate tokens",
