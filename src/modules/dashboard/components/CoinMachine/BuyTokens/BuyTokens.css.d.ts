@@ -4,6 +4,7 @@ export const help: string;
 export const tooltip: string;
 export const inputContainer: string;
 export const inputComponent: string;
+export const fieldError: string;
 export const nativeToken: string;
 export const userBalance: string;
 export const amountsContainer: string;
