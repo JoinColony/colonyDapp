@@ -1,0 +1,26 @@
+.main {
+  padding: 24px 30px;
+  height: 100%;
+  position: relative;
+  border-radius: var(--radius-large);
+  background-color: white;
+  box-shadow: var(--box-shadow-medium);
+}
+
+.help {
+  padding: 10px 0 0 0;
+
+  /*
+   * Needed to make the tooltip align better
+   */
+  width: 0;
+  position: absolute;
+  top: 1px;
+  right: 27px;
+  cursor: pointer;
+}
+
+.tooltip {
+  padding: 4px;
+  width: 250px;
+}
