@@ -95,8 +95,25 @@
   text-align: right;
 }
 
+.amountsValues div {
+  overflow: hidden;
+}
+
 .symbols {
   flex: 1 1;
   margin: -2px 0 0 14px;
   width: 70px;
+}
+
+.controls {
+  width: calc(100% - 60px);
+  position: absolute;
+  bottom: 24px;
+
+  /* margin: 24px 0 0 0; */
+  text-align: center;
+}
+
+.controls button {
+  width: 160px;
 }
