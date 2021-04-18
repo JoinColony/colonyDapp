@@ -33,10 +33,6 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.button',
     defaultMessage: 'Back',
   },
-  learnMore: {
-    id: 'dashboard.CreateColonyWizard.StepTokenChoice.learnMore',
-    defaultMessage: 'Learn More',
-  },
   notSure: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.notSure',
     defaultMessage: 'Not sure?',
@@ -147,7 +143,7 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
         />
         <ExternalLink
           className={styles.link}
-          text={MSG.learnMore}
+          text={{ id: 'text.learnMore' }}
           href={LEARN_MORE_URL}
         />
       </div>
