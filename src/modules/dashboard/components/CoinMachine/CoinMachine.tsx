@@ -27,10 +27,6 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.buyTokens',
     defaultMessage: 'Buy {symbol}',
   },
-  learnMore: {
-    id: 'dashboard.CoinMachine.learnMore',
-    defaultMessage: 'Learn More',
-  },
 });
 
 type Props = {
@@ -93,7 +89,7 @@ const CoinMachine = ({
       />
       <ExternalLink
         className={styles.learnMore}
-        text={MSG.learnMore}
+        text={{ id: 'text.learnMore' }}
         href={LEARN_MORE_LINK}
       />
     </div>,
