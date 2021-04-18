@@ -1,9 +1,11 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
+import moveDecimal from 'move-decimal-point';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import {
   createTransaction,
   createTransactionChannels,
@@ -38,7 +40,11 @@ function* buyTokens({
       context: ClientType.CoinMachineClient,
       methodName: 'buyTokens',
       identifier: colonyAddress,
-      params: [bigNumberify(amount).mul(bigNumberify(10).pow(decimals))],
+      params: [
+        bigNumberify(
+          moveDecimal(amount, getTokenDecimalsWithFallback(decimals)),
+        ),
+      ],
       group: {
         key: batchKey,
         id: metaId,
