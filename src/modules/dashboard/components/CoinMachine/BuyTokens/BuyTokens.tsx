@@ -43,6 +43,10 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.BuyTokens.priceLabel',
     defaultMessage: 'Price',
   },
+  constLabel: {
+    id: 'dashboard.CoinMachine.BuyTokens.priceLabel',
+    defaultMessage: 'Cost',
+  },
 });
 
 type Props = {
@@ -226,6 +230,45 @@ const BuyTokens = ({
               </div>
               <div className={styles.symbols}>
                 {`${DEFAULT_NETWORK_TOKEN.symbol}/${nativeToken?.symbol}`}
+              </div>
+            </div>
+            <div className={styles.amountsContainer}>
+              <div className={styles.amounts}>
+                <div className={styles.amountsLabel}>
+                  <FormattedMessage {...MSG.constLabel} />
+                </div>
+                <div className={styles.amountsValues}>
+                  {/*
+                   * @TODO Get actual sale price
+                   */}
+                  <div>
+                    {values.amount
+                      ? (parseInt(values.amount, 10) * 0.0001).toFixed(4)
+                      : ''}
+                  </div>
+                  <div>
+                    <EthUsd
+                      appearance={{ theme: 'grey', size: 'small' }}
+                      value={
+                        /*
+                         * @NOTE Set value to 0 if amount is only the decimal point
+                         * Just entering the decimal point will pass it through to EthUsd
+                         * and that will try to fetch the balance for, which, obviously, will fail
+                         *
+                         * values.amount && values.amount !== '.' ? values.amount : '0'
+                         *
+                         * @TODO Get actual sale price
+                         */
+                        values.amount
+                          ? parseInt(values.amount, 10) * 0.0001
+                          : '0'
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className={styles.symbols}>
+                {`${DEFAULT_NETWORK_TOKEN.symbol}`}
               </div>
             </div>
           </div>
