@@ -11,6 +11,7 @@ import { useColonyExtensionsQuery, Colony } from '~data/index';
 
 import Chat from './Chat';
 import SaleStateWidget, { SaleState } from './SaleStateWidget';
+import BuyTokens from './BuyTokens';
 
 import styles from './CoinMachine.css';
 
@@ -113,7 +114,7 @@ const CoinMachine = ({
         )) || (
           <>
             <div className={styles.buy}>
-              <div>Buy Tokens</div>
+              <BuyTokens colony={colony} />
             </div>
             <div className={styles.timeRemaining}>
               <div>Time Remaining</div>
