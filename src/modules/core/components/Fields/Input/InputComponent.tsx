@@ -124,6 +124,7 @@ const InputComponent = ({
     return maxButtonParams === undefined ? (
       <Cleave
         {...props}
+        value={value || ''}
         key={dynamicCleaveOptionKey}
         className={getMainClasses(appearance, styles)}
         htmlRef={innerRef}
