@@ -11,3 +11,4 @@ export const amounts: string;
 export const amountsLabel: string;
 export const amountsValues: string;
 export const symbols: string;
+export const controls: string;
