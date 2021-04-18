@@ -63,7 +63,17 @@ const CoinMachine = ({
   const coinMachineExtension = installedExtensions.find(
     ({ extensionId }) => extensionId === Extension.CoinMachine,
   );
-  if (!coinMachineExtension) {
+  /*
+   * Only allow access to the Coin Machine page, if the extension is:
+   * - installed
+   * - enable
+   * - not deprecated
+   */
+  if (
+    !coinMachineExtension ||
+    !coinMachineExtension?.details?.initialized ||
+    coinMachineExtension?.details?.deprecated
+  ) {
     return <Redirect to={`/colony/${colonyName}`} />;
   }
 
