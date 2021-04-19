@@ -284,6 +284,7 @@ export type Query = {
   getRecoveryStorageSlot: Scalars['String'];
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
+  motionVoterReward: Scalars['String'];
   motionsSystemMessages: Array<SystemMessage>;
   networkContracts: NetworkContracts;
   networkExtensionVersion: Scalars['Int'];
@@ -390,6 +391,13 @@ export type QueryGetRecoveryStorageSlotArgs = {
 
 export type QueryLegacyNumberOfRecoveryRolesArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionVoterRewardArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
 };
 
 
@@ -1463,6 +1471,15 @@ export type MotionsSystemMessagesQueryVariables = Exact<{
 
 
 export type MotionsSystemMessagesQuery = { motionsSystemMessages: Array<Pick<SystemMessage, 'type' | 'name' | 'createdAt'>> };
+
+export type MotionsVoterRewardQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+}>;
+
+
+export type MotionsVoterRewardQuery = Pick<Query, 'motionVoterReward'>;
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3538,6 +3555,39 @@ export function useMotionsSystemMessagesLazyQuery(baseOptions?: Apollo.LazyQuery
 export type MotionsSystemMessagesQueryHookResult = ReturnType<typeof useMotionsSystemMessagesQuery>;
 export type MotionsSystemMessagesLazyQueryHookResult = ReturnType<typeof useMotionsSystemMessagesLazyQuery>;
 export type MotionsSystemMessagesQueryResult = Apollo.QueryResult<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>;
+export const MotionsVoterRewardDocument = gql`
+    query MotionsVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
+}
+    `;
+
+/**
+ * __useMotionsVoterRewardQuery__
+ *
+ * To run a query within a React component, call `useMotionsVoterRewardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionsVoterRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionsVoterRewardQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useMotionsVoterRewardQuery(baseOptions?: Apollo.QueryHookOptions<MotionsVoterRewardQuery, MotionsVoterRewardQueryVariables>) {
+        return Apollo.useQuery<MotionsVoterRewardQuery, MotionsVoterRewardQueryVariables>(MotionsVoterRewardDocument, baseOptions);
+      }
+export function useMotionsVoterRewardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionsVoterRewardQuery, MotionsVoterRewardQueryVariables>) {
+          return Apollo.useLazyQuery<MotionsVoterRewardQuery, MotionsVoterRewardQueryVariables>(MotionsVoterRewardDocument, baseOptions);
+        }
+export type MotionsVoterRewardQueryHookResult = ReturnType<typeof useMotionsVoterRewardQuery>;
+export type MotionsVoterRewardLazyQueryHookResult = ReturnType<typeof useMotionsVoterRewardLazyQuery>;
+export type MotionsVoterRewardQueryResult = Apollo.QueryResult<MotionsVoterRewardQuery, MotionsVoterRewardQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {
