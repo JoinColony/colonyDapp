@@ -512,7 +512,8 @@ export const getMotionState = async (
     .div(bigNumberify(10).pow(18));
   switch (motionNetworkState) {
     case NetworkMotionState.Staking:
-      return motion.stakes[1].eq(requiredStakes) && motion.stakes[0].isZero()
+      return bigNumberify(motion.stakes[0]).gt(bigNumberify(0)) ||
+        bigNumberify(motion.stakes[1]).gt(bigNumberify(0))
         ? MotionState.Motion
         : MotionState.StakeRequired;
     case NetworkMotionState.Submit:
