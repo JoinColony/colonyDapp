@@ -3,10 +3,8 @@ import {
   ClientType,
   getBlockTime,
   getLogs,
-  Extension,
-  ColonyClientV6,
+  ExtensionClient,
 } from '@colony/colony-js';
-import { VotingReputationClient } from '@colony/colony-js/lib/clients/VotingReputationClient';
 import { bigNumberify } from 'ethers/utils';
 
 import { Context } from '~context/index';
@@ -14,10 +12,7 @@ import { Context } from '~context/index';
 import { ProcessedEvent } from './colonyActions';
 import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 
-const getMotionEvents = async (
-  votingReputationClient: VotingReputationClient,
-  motionId: string,
-) => {
+const getMotionEvents = async (votingReputationClient, motionId: string) => {
   const motionStakedLogs = await getLogs(
     votingReputationClient,
     votingReputationClient.filters.MotionStaked(
@@ -69,13 +64,10 @@ export const motionResolvers = ({
   Query: {
     async eventsForMotion(_, { motionId, colonyAddress }) {
       try {
-        const colonyClient = (await colonyManager.getClient(
-          ClientType.ColonyClient,
+        const votingReputationClient = (await colonyManager.getClient(
+          ClientType.VotingReputationClient,
           colonyAddress,
-        )) as ColonyClientV6;
-        const votingReputationClient = (await colonyClient.getExtensionClient(
-          Extension.VotingReputation,
-        )) as VotingReputationClient;
+        )) as ExtensionClient;
 
         return await getMotionEvents(votingReputationClient, motionId);
       } catch (error) {
