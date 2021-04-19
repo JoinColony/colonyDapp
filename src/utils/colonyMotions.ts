@@ -11,6 +11,11 @@ export enum MotionState {
   Invalid = 'Invalid',
 }
 
+export enum MotionVote {
+  Yay = 1,
+  Nay = 2,
+}
+
 const MSG = defineMessage({
   motionTag: {
     id: 'dashboard.ActionsPage.motionTag',
