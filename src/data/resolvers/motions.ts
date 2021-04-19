@@ -244,6 +244,40 @@ export const motionsResolvers = ({
         return [];
       }
     },
+    async motionUserVoteRevealed(_, { motionId, colonyAddress, userAddress }) {
+      try {
+        let userVote = {
+          revealed: false,
+          vote: null,
+        };
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        // @ts-ignore
+        // eslint-disable-next-line max-len
+        const motionVoteRevealedFilter = votingReputationClient.filters.MotionVoteRevealed(
+          bigNumberify(motionId),
+          userAddress,
+          null,
+        );
+        const [userReveal] = await getEvents(
+          votingReputationClient,
+          motionVoteRevealedFilter,
+        );
+        if (userReveal) {
+          userVote = {
+            revealed: true,
+            vote: userReveal.values.vote.toNumber(),
+          };
+        }
+        return userVote;
+      } catch (error) {
+        console.error('Could not fetch user vote revealed state');
+        console.error(error);
+        return null;
+      }
+    },
   },
   Motion: {
     async state({ fundamentalChainId, associatedColony: { colonyAddress } }) {

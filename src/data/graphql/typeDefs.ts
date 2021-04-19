@@ -203,6 +203,11 @@ export default gql`
     needsAction: Boolean!
   }
 
+  type MotionVoteReveal {
+    revealed: Boolean!
+    vote: Int!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -272,6 +277,11 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
     ): String!
+    motionUserVoteRevealed(
+      motionId: Int!
+      colonyAddress: String!
+      userAddress: String!
+    ): MotionVoteReveal!
   }
 
   extend type Mutation {

@@ -390,6 +390,13 @@ query MotionsVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress:
   motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
 }
 
+query MotionUserVoteRevealed($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionUserVoteRevealed(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    revealed
+    vote
+  }
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`

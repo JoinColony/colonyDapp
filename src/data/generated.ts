@@ -285,6 +285,7 @@ export type Query = {
   getRecoveryStorageSlot: Scalars['String'];
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
+  motionUserVoteRevealed: MotionVoteReveal;
   motionVoterReward: Scalars['String'];
   motionsSystemMessages: Array<SystemMessage>;
   networkContracts: NetworkContracts;
@@ -398,6 +399,13 @@ export type QueryGetRecoveryStorageSlotArgs = {
 
 export type QueryLegacyNumberOfRecoveryRolesArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionUserVoteRevealedArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
 };
 
 
@@ -807,6 +815,11 @@ export type UsersAndRecoveryApprovals = {
 export type ActionThatNeedsAttention = {
   transactionHash: Scalars['String'];
   needsAction: Scalars['Boolean'];
+};
+
+export type MotionVoteReveal = {
+  revealed: Scalars['Boolean'];
+  vote: Scalars['Int'];
 };
 
 export type ByColonyFilter = {
@@ -1495,6 +1508,15 @@ export type MotionsVoterRewardQueryVariables = Exact<{
 
 
 export type MotionsVoterRewardQuery = Pick<Query, 'motionVoterReward'>;
+
+export type MotionUserVoteRevealedQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+}>;
+
+
+export type MotionUserVoteRevealedQuery = { motionUserVoteRevealed: Pick<MotionVoteReveal, 'revealed' | 'vote'> };
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3643,6 +3665,42 @@ export function useMotionsVoterRewardLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type MotionsVoterRewardQueryHookResult = ReturnType<typeof useMotionsVoterRewardQuery>;
 export type MotionsVoterRewardLazyQueryHookResult = ReturnType<typeof useMotionsVoterRewardLazyQuery>;
 export type MotionsVoterRewardQueryResult = Apollo.QueryResult<MotionsVoterRewardQuery, MotionsVoterRewardQueryVariables>;
+export const MotionUserVoteRevealedDocument = gql`
+    query MotionUserVoteRevealed($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionUserVoteRevealed(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    revealed
+    vote
+  }
+}
+    `;
+
+/**
+ * __useMotionUserVoteRevealedQuery__
+ *
+ * To run a query within a React component, call `useMotionUserVoteRevealedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionUserVoteRevealedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionUserVoteRevealedQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useMotionUserVoteRevealedQuery(baseOptions?: Apollo.QueryHookOptions<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>) {
+        return Apollo.useQuery<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>(MotionUserVoteRevealedDocument, baseOptions);
+      }
+export function useMotionUserVoteRevealedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>) {
+          return Apollo.useLazyQuery<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>(MotionUserVoteRevealedDocument, baseOptions);
+        }
+export type MotionUserVoteRevealedQueryHookResult = ReturnType<typeof useMotionUserVoteRevealedQuery>;
+export type MotionUserVoteRevealedLazyQueryHookResult = ReturnType<typeof useMotionUserVoteRevealedLazyQuery>;
+export type MotionUserVoteRevealedQueryResult = Apollo.QueryResult<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {
