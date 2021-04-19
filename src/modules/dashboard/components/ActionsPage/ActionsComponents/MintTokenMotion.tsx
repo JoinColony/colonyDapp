@@ -175,7 +175,11 @@ const MintTokenMotion = ({
         </div>
         <div className={styles.details}>
           {motionState === MotionState.Voting && (
-            <VoteWidget colony={colony} actionType={actionType} />
+            <VoteWidget
+              colony={colony}
+              actionType={actionType}
+              motionId={motionId}
+            />
           )}
           <DetailsWidget
             actionType={actionType as ColonyMotions}

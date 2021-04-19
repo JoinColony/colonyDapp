@@ -8,11 +8,17 @@ import { ActionForm, CustomRadioGroup, CustomRadioProps } from '~core/Fields';
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import MemberReputation from '~core/MemberReputation';
+import Numeral from '~core/Numeral';
 
-import { Colony, useLoggedInUser } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useMotionsVoterRewardQuery,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './VoteWidget.css';
 
@@ -23,6 +29,7 @@ export interface FormValues {
 interface Props {
   colony: Colony;
   actionType: string;
+  motionId: number;
 }
 
 const MSG = defineMessages({
@@ -89,8 +96,17 @@ const validationSchema = yup.object().shape({
 const VoteWidget = ({
   colony: { colonyAddress, tokens, nativeTokenAddress },
   actionType,
+  motionId,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+
+  const { data: voterReward } = useMotionsVoterRewardQuery({
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+    },
+  });
 
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
@@ -222,7 +238,15 @@ const VoteWidget = ({
                     </div>
                   </div>
                   <div className={styles.value}>
-                    {`123 ${nativeToken?.symbol}`}
+                    {voterReward?.motionVoterReward && (
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={voterReward.motionVoterReward}
+                        suffix={` ${nativeToken?.symbol}`}
+                      />
+                    )}
                   </div>
                 </div>
               </>
