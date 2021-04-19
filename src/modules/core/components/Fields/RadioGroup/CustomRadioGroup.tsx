@@ -17,6 +17,8 @@ interface Props {
   currentlyCheckedValue: string;
   /** HTML field name */
   name: string;
+  /** Disable the input */
+  disabled?: boolean;
 }
 
 const displayName = 'CustomRadioGroup';
@@ -26,6 +28,7 @@ const CustomRadioGroup = ({
   currentlyCheckedValue,
   name,
   appearance = { direction: 'horizontal' },
+  disabled,
 }: Props) => {
   return (
     <div className={getMainClasses(appearance, styles)}>
@@ -51,6 +54,7 @@ const CustomRadioGroup = ({
             label={label}
             key={value}
             appearance={{ ...optionApperance, direction: appearance.direction }}
+            disabled={disabled}
             {...rest}
           />
         ),
