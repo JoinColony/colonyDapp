@@ -583,7 +583,7 @@ const getMintTokensMotionValues = async (
   const tokenAddress = await colonyClient.getToken();
 
   const mintTokensMotionValues: {
-    motionId: string;
+    motionNAYStake: string;
     motionState: MotionState;
     address: Address;
     amount: string;
@@ -592,7 +592,7 @@ const getMintTokensMotionValues = async (
     tokenAddress: Address;
     motionDomain: number;
   } = {
-    motionId,
+    motionNAYStake: motion.stakes[0].toString(),
     motionState,
     address: motionCreatedEvent.address,
     recipient: motion.altTarget,

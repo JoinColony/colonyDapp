@@ -11,7 +11,7 @@ export const stakesResolvers = ({
   Query: {
     async stakeAmountsForMotion(
       _,
-      { colonyAddress, userAddress, motionId, isObjectionStake, tokenDecimals },
+      { colonyAddress, userAddress, motionId, isObjectionStake },
     ) {
       try {
         const supportedSide = isObjectionStake
@@ -21,6 +21,7 @@ export const stakesResolvers = ({
           ClientType.ColonyClient,
           colonyAddress,
         );
+        const tokenDecimals = await colonyClient.tokenClient.decimals();
         const votingReputationClient = await colonyClient.getExtensionClient(
           Extension.VotingReputation,
         );

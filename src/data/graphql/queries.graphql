@@ -248,7 +248,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     domainName
     domainPurpose
     domainColor
-    motionId
+    motionNAYStake
     motionState
     motionDomain
     roles {
@@ -436,8 +436,8 @@ query MotionStakerReward($motionId: Int!, $colonyAddress: String!, $userAddress:
   }
 }
 
-query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: String!) {
-  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int! $isObjectionStake: Boolean!) {
+  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, isObjectionStake: $isObjectionStake) @client {
     totalStaked
     userStake
     requiredStake

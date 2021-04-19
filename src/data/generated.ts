@@ -504,9 +504,8 @@ export type QueryRecoverySystemMessagesForSessionArgs = {
 export type QueryStakeAmountsForMotionArgs = {
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
-  motionId: Scalars['String'];
+  motionId: Scalars['Int'];
   isObjectionStake: Scalars['Boolean'];
-  tokenDecimals: Scalars['Int'];
 };
 
 
@@ -738,7 +737,7 @@ export type ColonyAction = {
   domainPurpose: Scalars['String'];
   domainColor: Scalars['String'];
   blockNumber: Scalars['Int'];
-  motionId: Scalars['String'];
+  motionNAYStake?: Maybe<Scalars['String']>;
   motionState?: Maybe<Scalars['String']>;
   motionDomain: Scalars['Int'];
 };
@@ -1596,7 +1595,16 @@ export type MotionVoterRewardQueryVariables = Exact<{
 }>;
 
 
-export type MotionVoterRewardQuery = Pick<Query, 'motionVoterReward'>;
+export type MotionsVoterRewardQuery = Pick<Query, 'motionVoterReward'>;
+export type StakeAmountsForMotionQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  motionId: Scalars['Int'];
+  isObjectionStake: Scalars['Boolean'];
+}>;
+
+
+export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: Pick<StakeAmounts, 'totalStaked' | 'userStake' | 'requiredStake'> };
 
 export type MotionUserVoteRevealedQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -3215,7 +3223,7 @@ export const ColonyActionDocument = gql`
     domainName
     domainPurpose
     domainColor
-    motionId
+    motionNAYStake
     motionState
     motionDomain
     roles {
@@ -3811,8 +3819,12 @@ export const MotionVoterRewardDocument = gql`
 /**
  * __useMotionVoterRewardQuery__
  *
- * To run a query within a React component, call `useMotionVoterRewardQuery` and pass it any options that fit your needs.
- * When your component renders, `useMotionVoterRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMotionsVoterRewardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionsVoterRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * __useStakeAmountsForMotionQuery__
+ *
+ * To run a query within a React component, call `useStakeAmountsForMotionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStakeAmountsForMotionQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

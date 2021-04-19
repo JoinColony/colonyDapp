@@ -18,9 +18,8 @@ import styles from './TotalStakeWidget.css';
 const displayName = 'TotalStakeWidget';
 
 type Props = {
-  tokenDecimals: number;
   colonyAddress: Address;
-  motionId: string;
+  motionId: number;
   isObjectionStake?: boolean;
 };
 
@@ -44,7 +43,6 @@ const MSG = defineMessages({
 });
 
 const TotalStakeWidget = ({
-  tokenDecimals,
   colonyAddress,
   motionId,
   isObjectionStake = false,
@@ -56,7 +54,6 @@ const TotalStakeWidget = ({
       userAddress: walletAddress,
       motionId,
       isObjectionStake,
-      tokenDecimals,
     },
   });
   const {

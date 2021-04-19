@@ -62,7 +62,7 @@ export default gql`
     domainPurpose: String!
     domainColor: String!
     blockNumber: Int!
-    motionId: String!
+    motionNAYStake: String
     motionState: String
     motionDomain: Int!
   }
@@ -337,9 +337,8 @@ export default gql`
     stakeAmountsForMotion(
       colonyAddress: String!
       userAddress: String!
-      motionId: String!
+      motionId: Int!
       isObjectionStake: Boolean!
-      tokenDecimals: Int!
     ): StakeAmounts!
   }
 
