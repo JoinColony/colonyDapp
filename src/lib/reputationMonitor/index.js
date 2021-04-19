@@ -77,9 +77,17 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 app.use('/reputation/local', createProxyMiddleware({ target: 'http://127.0.0.1:3002/', changeOrigin: true, pathRewrite: {'^/reputation/local' : ''}}));
-app.get('/reputation/toggle', function (req, res){
+app.get('/reputation/monitor/toggle', function (req, res) {
   reputationMonitorActive = !reputationMonitorActive;
   res.send(`Reputation monitor auto mining is now ${reputationMonitorActive ? "on" : "off" }`)
-})
+});
+app.get('/reputation/monitor/status', function (req, res) {
+  res.send(`{state: ${reputationMonitorActive}}`);
+});
 app.listen(3001);
