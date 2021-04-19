@@ -29,3 +29,7 @@
   line-height: 18px;
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
+
+.sliderContainer {
+  margin-left: 6px;
+}

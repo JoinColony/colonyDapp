@@ -116,13 +116,15 @@ const StakingWidget = ({
             <FormattedMessage {...MSG.description} />
           </p>
           <span className={styles.amount}>{values.amount}</span>
-          <Slider
-            name="amount"
-            value={values.amount}
-            min={minStake}
-            max={requiredStake}
-            limit={maxStake}
-          />
+          <div className={styles.sliderContainer}>
+            <Slider
+              name="amount"
+              value={values.amount}
+              min={minStake}
+              max={requiredStake}
+              limit={maxStake}
+            />
+          </div>
           <div className={styles.buttonGroup}>
             <Button
               type="submit"
