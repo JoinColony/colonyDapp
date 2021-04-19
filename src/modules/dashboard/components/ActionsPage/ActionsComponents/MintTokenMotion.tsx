@@ -1,6 +1,7 @@
 import React, { useMemo, useRef } from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import { bigNumberify } from 'ethers/utils';
 import Numeral from '~core/Numeral';
 import ActionsPageFeed, {
   ActionsPageFeedItem,
@@ -60,7 +61,7 @@ const MintTokenMotion = ({
     annotationHash,
     colonyDisplayName,
     amount,
-    motionId,
+    motionNAYStake,
     motionState,
     motionDomain,
     actionInitiator,
@@ -209,12 +210,20 @@ const MintTokenMotion = ({
           )}
         </div>
         <div className={styles.details}>
-          {motionState === MotionState.StakeRequired && (
-            <TotalStakeWidget
-              colonyAddress={colony.colonyAddress}
-              tokenDecimals={decimals}
-              motionId={motionId}
-            />
+          {motionState !== MotionState.StakeRequired && (
+            <>
+              <TotalStakeWidget
+                colonyAddress={colony.colonyAddress}
+                motionId={motionId}
+              />
+              {!bigNumberify(motionNAYStake || 0).eq(0) && (
+                <TotalStakeWidget
+                  colonyAddress={colony.colonyAddress}
+                  motionId={motionId}
+                  isObjectionStake
+                />
+              )}
+            </>
           )}
           {(motionState === MotionState.StakeRequired ||
             motionState === MotionState.Motion ||
