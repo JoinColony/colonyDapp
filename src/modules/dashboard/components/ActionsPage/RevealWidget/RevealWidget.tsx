@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
-import * as yup from 'yup';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import { ActionForm } from '~core/Fields';
@@ -29,14 +28,14 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.RevealWidget.title',
     defaultMessage: `Reveal your vote to others to claim your reward.`,
   },
+  voteHiddnInfo: {
+    id: 'dashboard.ActionsPage.RevealWidget.voteHiddnInfo',
+    defaultMessage: `Your vote is hidden from others.`,
+  },
   buttonReveal: {
     id: 'dashboard.ActionsPage.RevealWidget.buttonReveal',
     defaultMessage: `Reveal`,
   },
-});
-
-const validationSchema = yup.object().shape({
-  vote: yup.number().required(),
 });
 
 const RevealWidget = ({
@@ -59,26 +58,21 @@ const RevealWidget = ({
 
   return (
     <ActionForm
-      initialValues={{
-        vote: undefined,
-      }}
-      validationSchema={validationSchema}
+      initialValues={{}}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
       error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
       success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
       transform={transform}
     >
-      {({
-        handleSubmit,
-        isSubmitting,
-        isValid,
-        values,
-      }: FormikProps<FormValues>) => (
+      {({ handleSubmit, isSubmitting }: FormikProps<FormValues>) => (
         <div className={styles.main}>
           <Heading
             text={MSG.title}
             appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
           />
+          <div className={styles.voteHiddenInfo}>
+            <FormattedMessage {...MSG.voteHiddnInfo} />
+          </div>
           <VoteDetails
             colony={colony}
             motionId={motionId}
@@ -86,7 +80,7 @@ const RevealWidget = ({
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
                 text={MSG.buttonReveal}
-                disabled={!isValid || !hasRegisteredProfile || !values.vote}
+                disabled={!hasRegisteredProfile}
                 onClick={() => handleSubmit()}
                 loading={isSubmitting}
               />
