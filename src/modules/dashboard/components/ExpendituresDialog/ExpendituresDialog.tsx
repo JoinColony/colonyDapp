@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
 
-import { DialogProps } from '~core/Dialog';
+import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
@@ -56,7 +56,7 @@ const MSG = defineMessages({
   },
 });
 
-interface CustomWizardDialogProps {
+interface CustomWizardDialogProps extends ActionDialogProps {
   nextStep: string;
   prevStep: string;
   colony: Colony;
@@ -74,6 +74,7 @@ const ExpendituresDialog = ({
   colony: { colonyAddress },
   colony,
   nextStep,
+  isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -99,7 +100,11 @@ const ExpendituresDialog = ({
       title: MSG.paymentTitle,
       description: MSG.paymentDescription,
       icon: 'emoji-dollar-stack',
-      permissionRequired: !canCreatePayment || !canMakePayment,
+      permissionRequired: !(
+        canCreatePayment ||
+        canMakePayment ||
+        isVotingExtensionEnabled
+      ),
       permissionInfoText: !canCreatePayment
         ? MSG.paymentPermissionsText
         : MSG.noOneTxExtension,

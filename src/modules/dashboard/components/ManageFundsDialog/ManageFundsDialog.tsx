@@ -125,7 +125,7 @@ const ManageFundsDialog = ({
       title: MSG.transferFundsTitle,
       description: MSG.transferFundsDescription,
       icon: 'emoji-world-globe',
-      permissionRequired: !canMoveFunds,
+      permissionRequired: !(canMoveFunds || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
@@ -149,7 +149,7 @@ const ManageFundsDialog = ({
       title: MSG.manageTokensTitle,
       description: MSG.manageTokensDescription,
       icon: 'emoji-pen',
-      permissionRequired: !canManageTokens,
+      permissionRequired: !(canManageTokens || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
@@ -175,7 +175,7 @@ const ManageFundsDialog = ({
       description: MSG.unlockTokensDescription,
       icon: 'emoji-padlock',
       onClick: () => callStep(nextStepUnlockToken),
-      permissionRequired: !canUnlockToken,
+      permissionRequired: !(canUnlockToken || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
