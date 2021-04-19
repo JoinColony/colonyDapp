@@ -5,6 +5,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 
 import Button from '~core/Button';
+import { ActionDialogProps } from '~core/Dialog';
 import ColorSelect from '~core/ColorSelect';
 import { Color } from '~core/ColorTag';
 import DialogSection from '~core/Dialog/DialogSection';
@@ -12,9 +13,12 @@ import { Input, Annotations, Select } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 
-import { Colony, useLoggedInUser } from '~data/index';
+import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getAllUserRoles } from '../../../transformers';
 import { canArchitect } from '../../../users/checks';
@@ -51,11 +55,13 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
   },
+  forceMotion: {
+    id: 'dashboard.EditDomainDialog.EditDomainDialogForm.forceMotion',
+    defaultMessage: 'Force',
+  },
 });
 
-interface Props {
-  back?: () => void;
-  colony: Colony;
+interface Props extends ActionDialogProps {
   isSubmitting;
   isValid;
 }
@@ -68,7 +74,8 @@ const EditDomainDialogForm = ({
   isSubmitting,
   isValid,
   setFieldValue,
-  values: { domainId, domainName },
+  values: { domainId, domainName, forceAction },
+  isVotingExtensionEnabled,
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
 
@@ -95,6 +102,15 @@ const EditDomainDialogForm = ({
   const hasRoles = canArchitect(allUserRoles);
   const canEditDomain =
     hasRegisteredProfile && hasRoles && Object.keys(domainOptions).length > 0;
+
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canEditDomain,
+    isVotingExtensionEnabled,
+    forceAction,
+  );
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
 
   const handleDomainChange = (selectedDomainId) => {
     const selectedDomain = domains.find(
@@ -126,8 +142,11 @@ const EditDomainDialogForm = ({
           text={MSG.titleEdit}
           className={styles.title}
         />
+        {canEditDomain && isVotingExtensionEnabled && (
+          <Toggle label={MSG.forceMotion} name="forceAction" />
+        )}
       </DialogSection>
-      {!hasRoles && (
+      {!userHasPermission && (
         <DialogSection>
           <PermissionRequiredInfo requiredRoles={[ColonyRole.Architecture]} />
         </DialogSection>
@@ -141,14 +160,14 @@ const EditDomainDialogForm = ({
               onChange={handleDomainChange}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
-              disabled={!canEditDomain}
+              disabled={inputDisabled}
             />
           </div>
           <ColorSelect
             activeOption={domainColor}
             appearance={{ alignOptions: 'right' }}
             onColorChange={setDomainColor}
-            disabled={!canEditDomain}
+            disabled={inputDisabled}
             name="domainColor"
           />
         </div>
@@ -158,7 +177,7 @@ const EditDomainDialogForm = ({
           label={MSG.name}
           name="domainName"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          disabled={!canEditDomain}
+          disabled={inputDisabled}
           maxLength={20}
         />
       </DialogSection>
@@ -167,7 +186,7 @@ const EditDomainDialogForm = ({
           label={MSG.purpose}
           name="domainPurpose"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          disabled={!canEditDomain}
+          disabled={inputDisabled}
           maxLength={90}
         />
       </DialogSection>
@@ -175,7 +194,7 @@ const EditDomainDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotationMessage"
-          disabled={!canEditDomain}
+          disabled={inputDisabled}
         />
       </DialogSection>
       {!hasRoles && (
@@ -196,6 +215,7 @@ const EditDomainDialogForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button
@@ -209,7 +229,7 @@ const EditDomainDialogForm = ({
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
-          disabled={!canEditDomain || !isValid}
+          disabled={inputDisabled || !isValid}
         />
       </DialogSection>
     </>
