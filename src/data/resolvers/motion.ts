@@ -30,12 +30,12 @@ const getMotionEvents = async (
 
   const parsedMotionEvents = await Promise.all(
     [...motionStakedLogs].map(async (log) => {
-      const potentialParsedLog = votingReputationClient.interface.parseLog(log);
+      const parsedLog = votingReputationClient.interface.parseLog(log);
       const { address, blockHash, blockNumber, transactionHash } = log;
       const {
         name,
         values: { amount, ...rest },
-      } = potentialParsedLog;
+      } = parsedLog;
       const stakeAmount = name === 'MotionStaked' ? amount : null;
 
       return {
