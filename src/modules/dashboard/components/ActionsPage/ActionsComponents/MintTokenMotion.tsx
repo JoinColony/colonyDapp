@@ -168,7 +168,10 @@ const MintTokenMotion = ({
           <ActionsPageFeed
             actionType={actionType}
             transactionHash={transactionHash as string}
-            networkEvents={events}
+            networkEvents={[
+              ...events,
+              ...(motionEventsData?.eventsForMotion || []),
+            ]}
             systemMessages={
               // eslint-disable-next-line max-len
               motionsSystemMessagesData?.motionsSystemMessages as SystemMessage[]
