@@ -1,30 +1,23 @@
-import React, { useCallback, useEffect, useState, RefObject } from 'react';
+import React from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
-import { ActionForm, TextareaAutoresize, InputStatus } from '~core/Fields';
-import { MiniSpinnerLoader } from '~core/Preloaders';
+import { ActionForm, CustomRadioGroup, CustomRadioProps } from '~core/Fields';
 import Heading from '~core/Heading';
 
-import {
-  Colony,
-  useGetRecoveryStorageSlotLazyQuery,
-  useLoggedInUser,
-} from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { ensureHexPrefix } from '~utils/strings';
-import { ENTER, SPACE, ColonyMotions, ColonyActions } from '~types/index';
+import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
 import { useTransformer } from '~utils/hooks';
-import { getAllUserRoles } from '../../../../transformers';
-import { userHasRole } from '../../../../users/checks';
 
 import styles from './VoteWidget.css';
 
-export interface FormValues {}
+export interface FormValues {
+  vote: string;
+}
 
 interface Props {
   colony: Colony;
@@ -49,11 +42,14 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object().shape({
-  storageSlotLocation: yup.string().max(66).hexString(),
-  newStorageSlotValue: yup.string().max(66).hexString(),
+  vote: yup.number().required(),
 });
 
-const VoteWidget = ({ colony: { colonyAddress }, colony, actionType }: Props) => {
+const VoteWidget = ({
+  colony: { colonyAddress },
+  colony,
+  actionType,
+}: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   // const transform = useCallback(
@@ -69,6 +65,29 @@ const VoteWidget = ({ colony: { colonyAddress }, colony, actionType }: Props) =>
 
   const hasRegisteredProfile = !!username && !ethereal;
 
+  const options: CustomRadioProps[] = [
+    {
+      value: '1',
+      label: { id: 'button.yes' },
+      name: 'vote',
+      appearance: {
+        theme: 'primary',
+      },
+      checked: false,
+      icon: 'circle-thumbs-up',
+    },
+    {
+      value: '0',
+      label: { id: 'button.no' },
+      name: 'vote',
+      appearance: {
+        theme: 'danger',
+      },
+      checked: false,
+      icon: 'circle-thumbs-down',
+    },
+  ];
+
   return (
     <ActionForm
       initialValues={{}}
@@ -78,12 +97,22 @@ const VoteWidget = ({ colony: { colonyAddress }, colony, actionType }: Props) =>
       success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
       // transform={transform}
     >
-      {({ handleSubmit, isSubmitting, isValid }: FormikProps<FormValues>) => (
+      {({
+        handleSubmit,
+        isSubmitting,
+        isValid,
+        values,
+      }: FormikProps<FormValues>) => (
         <div className={styles.main}>
           <Heading
             text={MSG.title}
             textValues={{ actionType }}
             appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+          />
+          <CustomRadioGroup
+            options={options}
+            currentlyCheckedValue={values.vote}
+            name="vote"
           />
         </div>
       )}

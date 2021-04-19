@@ -174,7 +174,9 @@ const MintTokenMotion = ({
           />
         </div>
         <div className={styles.details}>
-          {motionState === MotionState.Voting && <VoteWidget colony={colony} actionType={actionType} />}
+          {motionState === MotionState.Voting && (
+            <VoteWidget colony={colony} actionType={actionType} />
+          )}
           <DetailsWidget
             actionType={actionType as ColonyMotions}
             transactionHash={transactionHash}
