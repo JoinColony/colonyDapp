@@ -7,6 +7,10 @@
   padding: 20px 0 10px;
 }
 
+.main label {
+  cursor: default;
+}
+
 .voteHiddenInfo {
   padding: 12px 0;
   background-color: color-mod(var(--text-disabled) alpha(12%));

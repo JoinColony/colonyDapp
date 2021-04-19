@@ -3,12 +3,17 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
-import { ActionForm } from '~core/Fields';
+import { ActionForm, CustomRadio } from '~core/Fields';
 import Heading from '~core/Heading';
 
-import { Colony, useLoggedInUser } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useMotionUserVoteRevealedQuery,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload } from '~utils/actions';
+import { MotionVote } from '~utils/colonyMotions';
 
 import VoteDetails from '../VoteWidget/VoteDetails';
 
@@ -26,7 +31,10 @@ interface Props {
 const MSG = defineMessages({
   title: {
     id: 'dashboard.ActionsPage.RevealWidget.title',
-    defaultMessage: `Reveal your vote to others to claim your reward.`,
+    defaultMessage: `{revealed, select,
+      true {Waiting for other voters to reveal their votes.}
+      other {Reveal your vote to others to claim your reward.}
+    }`,
   },
   voteHiddnInfo: {
     id: 'dashboard.ActionsPage.RevealWidget.voteHiddnInfo',
@@ -45,6 +53,14 @@ const RevealWidget = ({
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
+  const { data: voteRevealed } = useMotionUserVoteRevealedQuery({
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+    },
+  });
+
   const transform = useCallback(
     mapPayload(({ vote }) => ({
       colonyAddress,
@@ -55,6 +71,8 @@ const RevealWidget = ({
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
+  const revealed = voteRevealed?.motionUserVoteRevealed?.revealed;
+  const vote = voteRevealed?.motionUserVoteRevealed?.vote;
 
   return (
     <ActionForm
@@ -68,11 +86,46 @@ const RevealWidget = ({
         <div className={styles.main}>
           <Heading
             text={MSG.title}
+            textValues={{
+              revealed,
+            }}
             appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
           />
-          <div className={styles.voteHiddenInfo}>
-            <FormattedMessage {...MSG.voteHiddnInfo} />
-          </div>
+          {revealed ? (
+            <>
+              {vote === MotionVote.Yay ? (
+                <CustomRadio
+                  /*
+                   * @NOTE This is just for display purposes, we don't actually
+                   * want to use it as radio button
+                   */
+                  value=""
+                  name="voteYes"
+                  label={{ id: 'button.yes' }}
+                  appearance={{ theme: 'primary' }}
+                  icon="circle-thumbs-up"
+                  checked
+                />
+              ) : (
+                <CustomRadio
+                  /*
+                   * @NOTE This is just for display purposes, we don't actually
+                   * want to use it as radio button
+                   */
+                  value=""
+                  name="voteNo"
+                  label={{ id: 'button.no' }}
+                  appearance={{ theme: 'danger' }}
+                  icon="circle-thumbs-down"
+                  checked
+                />
+              )}
+            </>
+          ) : (
+            <div className={styles.voteHiddenInfo}>
+              <FormattedMessage {...MSG.voteHiddnInfo} />
+            </div>
+          )}
           <VoteDetails
             colony={colony}
             motionId={motionId}
@@ -80,7 +133,7 @@ const RevealWidget = ({
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
                 text={MSG.buttonReveal}
-                disabled={!hasRegisteredProfile}
+                disabled={!hasRegisteredProfile || revealed}
                 onClick={() => handleSubmit()}
                 loading={isSubmitting}
               />
