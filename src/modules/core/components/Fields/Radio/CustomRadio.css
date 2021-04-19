@@ -7,7 +7,7 @@
 .main {
   display: flex;
   align-items: center;
-  padding: 0 17px;
+  padding: 7px;
   height: 41px;
   width: 100%;
   border: 1px solid transparent;
@@ -72,7 +72,7 @@
 }
 
 .icon {
-  margin-right: 10px;
+  margin: -3px 10px 0 0;
 }
 
 .content {
