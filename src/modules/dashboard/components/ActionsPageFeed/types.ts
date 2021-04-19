@@ -43,6 +43,7 @@ export interface SystemInfo {
 export enum SystemMessagesName {
   EnoughExitRecoveryApprovals = 'EnoughExitRecoveryApprovals',
   MotionHasPassed = 'MotionHasPassed',
+  MotionRevealPhase = 'MotionRevealPhase',
 }
 
 export interface SystemMessage {

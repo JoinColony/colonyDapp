@@ -51,6 +51,16 @@ export const motionsResolvers = ({
       );
       // @ts-ignore
       // eslint-disable-next-line max-len
+      const motionVoteSubmittedFilter = votingReputationClient.filters.MotionVoteSubmitted(
+        motionId,
+        null,
+      );
+      const motionVoteSubmittedLogs = await getLogs(
+        votingReputationClient,
+        motionVoteSubmittedFilter,
+      );
+      // @ts-ignore
+      // eslint-disable-next-line max-len
       const motionVoteRevealedFilter = votingReputationClient.filters.MotionVoteRevealed(
         motionId,
         null,
@@ -62,7 +72,11 @@ export const motionsResolvers = ({
       );
 
       const parsedEvents = await Promise.all(
-        [...motionStakedLogs, ...motionVoteRevealedLogs].map(async (log) => {
+        [
+          ...motionStakedLogs,
+          ...motionVoteRevealedLogs,
+          ...motionVoteSubmittedLogs,
+        ].map(async (log) => {
           const parsedLog = votingReputationClient.interface.parseLog(log);
           const { address, blockHash, blockNumber, transactionHash } = log;
           const { name, values } = parsedLog;
@@ -83,6 +97,19 @@ export const motionsResolvers = ({
         (firstEvent, secondEvent) =>
           secondEvent.createdAt - firstEvent.createdAt,
       );
+
+      // or motion.events[1] is in past
+      if (motionNetworkState === NetworkMotionState.Reveal) {
+        const newestVoteSubmittedEvent = sortedEvents.find(
+          (event) =>
+            event.name === ColonyAndExtensionsEvents.MotionVoteSubmitted,
+        );
+        systemMessages.push({
+          type: ActionsPageFeedType.SystemMessage,
+          name: SystemMessagesName.MotionRevealPhase,
+          createdAt: newestVoteSubmittedEvent.createdAt,
+        });
+      }
 
       if (
         motionNetworkState === NetworkMotionState.Finalizable ||
