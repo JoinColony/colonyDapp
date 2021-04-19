@@ -269,7 +269,7 @@ const VoteWidget = ({
                 <Button
                   appearance={{ theme: 'primary', size: 'medium' }}
                   text={MSG.buttonVote}
-                  disabled={!isValid || !hasRegisteredProfile}
+                  disabled={!isValid || !hasRegisteredProfile || !values.vote}
                   onClick={() => handleSubmit()}
                   loading={isSubmitting}
                 />
