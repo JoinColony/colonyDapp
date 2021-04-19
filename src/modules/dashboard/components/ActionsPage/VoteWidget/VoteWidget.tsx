@@ -1,24 +1,18 @@
 import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
 import { ActionForm, CustomRadioGroup, CustomRadioProps } from '~core/Fields';
 import Heading from '~core/Heading';
-import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import MemberReputation from '~core/MemberReputation';
-import Numeral from '~core/Numeral';
 
-import {
-  Colony,
-  useLoggedInUser,
-  useMotionsVoterRewardQuery,
-} from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
+import VoteDetails from './VoteDetails';
 
 import styles from './VoteWidget.css';
 
@@ -47,42 +41,6 @@ const MSG = defineMessages({
       other {Generic Action}
     }" be approved?`,
   },
-  votingMethodLabel: {
-    id: 'dashboard.ActionsPage.VoteWidget.votingMethodLabel',
-    defaultMessage: `Voting method`,
-  },
-  votingMethodValue: {
-    id: 'dashboard.ActionsPage.VoteWidget.votingMethodValue',
-    defaultMessage: `Reputation-weighted`,
-  },
-  votingMethodTooltip: {
-    id: 'dashboard.ActionsPage.VoteWidget.votingMethodTooltip',
-    defaultMessage: `Colony makes it possible to utilize different voting methods. Selected vothing method depends on installed extensions. You can change voting method in Governance Policy.`,
-  },
-  reputationTeamLabel: {
-    id: 'dashboard.ActionsPage.VoteWidget.reputationTeamLabel',
-    defaultMessage: `Reputation in team`,
-  },
-  reputationTeamTooltip: {
-    id: 'dashboard.ActionsPage.VoteWidget.reputationTeamTooltip',
-    defaultMessage: `Displays users own reputation in a domain. For example, for reputation 3.5%, user vote is going to be counted as 3.5. Users without reputation, couldn’t vote.`,
-  },
-  rewardLabel: {
-    id: 'dashboard.ActionsPage.VoteWidget.rewardLabel',
-    defaultMessage: `Reward`,
-  },
-  rewardTooltip: {
-    id: 'dashboard.ActionsPage.VoteWidget.rewardTooltip',
-    defaultMessage: `Displays possible reward range for an individual user. If prediction aligns with the winning outcome, than user receives reward. Final value depends on [TO BE ADDED]`,
-  },
-  rulesLabel: {
-    id: 'dashboard.ActionsPage.VoteWidget.rulesLabel',
-    defaultMessage: `Rules`,
-  },
-  rulesTooltip: {
-    id: 'dashboard.ActionsPage.VoteWidget.rulesTooltip',
-    defaultMessage: `Voting process goes in stages. User selects option to vote upon. Than reveals the own vote before the ‘Reveal’ stage passes. Later on, user has to claim tokens and finalize transaction.`,
-  },
   buttonVote: {
     id: 'dashboard.ActionsPage.VoteWidget.buttonVote',
     defaultMessage: `Vote`,
@@ -94,23 +52,12 @@ const validationSchema = yup.object().shape({
 });
 
 const VoteWidget = ({
-  colony: { colonyAddress, tokens, nativeTokenAddress },
+  colony: { colonyAddress },
+  colony,
   actionType,
   motionId,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
-
-  const { data: voterReward } = useMotionsVoterRewardQuery({
-    variables: {
-      colonyAddress,
-      userAddress: walletAddress,
-      motionId,
-    },
-  });
-
-  const nativeToken = tokens.find(
-    ({ address }) => address === nativeTokenAddress,
-  );
 
   const transform = useCallback(
     mapPayload(({ vote }) => ({
@@ -175,107 +122,19 @@ const VoteWidget = ({
             name="vote"
             disabled={!hasRegisteredProfile}
           />
-          <div>
-            <div className={styles.item}>
-              <div className={styles.label}>
-                <div>
-                  <FormattedMessage {...MSG.votingMethodLabel} />
-                  <QuestionMarkTooltip
-                    tooltipText={MSG.votingMethodTooltip}
-                    className={styles.help}
-                    tooltipClassName={styles.tooltip}
-                    tooltipPopperProps={{
-                      placement: 'right',
-                    }}
-                  />
-                </div>
-              </div>
-              <div className={styles.value}>
-                {/*
-                 * @TODO This needs to be dynamic, once we'll have more voting methods:
-                 * - reputation based
-                 * - token based
-                 * - hybrid
-                 */}
-                <FormattedMessage {...MSG.votingMethodValue} />
-              </div>
-            </div>
-            {hasRegisteredProfile && (
-              <>
-                <div className={styles.item}>
-                  <div className={styles.label}>
-                    <div>
-                      <FormattedMessage {...MSG.reputationTeamLabel} />
-                      <QuestionMarkTooltip
-                        tooltipText={MSG.reputationTeamTooltip}
-                        className={styles.help}
-                        tooltipClassName={styles.tooltip}
-                        tooltipPopperProps={{
-                          placement: 'right',
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.value}>
-                    <MemberReputation
-                      walletAddress={walletAddress}
-                      colonyAddress={colonyAddress}
-                    />
-                  </div>
-                </div>
-                <div className={styles.item}>
-                  <div className={styles.label}>
-                    <div>
-                      <FormattedMessage {...MSG.rewardLabel} />
-                      <QuestionMarkTooltip
-                        tooltipText={MSG.rewardTooltip}
-                        className={styles.help}
-                        tooltipClassName={styles.tooltip}
-                        tooltipPopperProps={{
-                          placement: 'right',
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.value}>
-                    {voterReward?.motionVoterReward && (
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
-                        )}
-                        value={voterReward.motionVoterReward}
-                        suffix={` ${nativeToken?.symbol}`}
-                      />
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-            <div className={styles.item}>
-              <div className={styles.label}>
-                <div>
-                  <FormattedMessage {...MSG.rulesLabel} />
-                  <QuestionMarkTooltip
-                    tooltipText={MSG.rulesTooltip}
-                    className={styles.help}
-                    tooltipClassName={styles.tooltip}
-                    tooltipPopperProps={{
-                      placement: 'right',
-                    }}
-                  />
-                </div>
-              </div>
-              <div className={styles.value}>
-                <Button
-                  appearance={{ theme: 'primary', size: 'medium' }}
-                  text={MSG.buttonVote}
-                  disabled={!isValid || !hasRegisteredProfile || !values.vote}
-                  onClick={() => handleSubmit()}
-                  loading={isSubmitting}
-                />
-              </div>
-            </div>
-          </div>
+          <VoteDetails
+            colony={colony}
+            motionId={motionId}
+            buttonComponent={
+              <Button
+                appearance={{ theme: 'primary', size: 'medium' }}
+                text={MSG.buttonVote}
+                disabled={!isValid || !hasRegisteredProfile || !values.vote}
+                onClick={() => handleSubmit()}
+                loading={isSubmitting}
+              />
+            }
+          />
         </div>
       )}
     </ActionForm>
