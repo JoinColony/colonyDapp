@@ -24,6 +24,7 @@ import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
 import VoteWidget from '../VoteWidget';
+import RevealWidget from '../RevealWidget';
 
 import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
 
@@ -188,6 +189,9 @@ const MintTokenMotion = ({
               actionType={actionType}
               motionId={motionId}
             />
+          )}
+          {motionState === MotionState.Reveal && (
+            <RevealWidget colony={colony} motionId={motionId} />
           )}
           <DetailsWidget
             actionType={actionType as ColonyMotions}
