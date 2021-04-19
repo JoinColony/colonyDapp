@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { defineMessages, FormattedMessage } from 'react-intl';
@@ -13,7 +13,6 @@ import { Colony, useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
-import { useTransformer } from '~utils/hooks';
 
 import styles from './VoteWidget.css';
 
@@ -89,7 +88,6 @@ const validationSchema = yup.object().shape({
 
 const VoteWidget = ({
   colony: { colonyAddress, tokens, nativeTokenAddress },
-  colony,
   actionType,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -98,16 +96,14 @@ const VoteWidget = ({
     ({ address }) => address === nativeTokenAddress,
   );
 
-  // const transform = useCallback(
-  //   mapPayload(({ storageSlotLocation, newStorageSlotValue }) => ({
-  //     colonyAddress,
-  //     walletAddress,
-  //     startBlock,
-  //     storageSlotLocation,
-  //     storageSlotValue: newStorageSlotValue,
-  //   })),
-  //   [],
-  // );
+  const transform = useCallback(
+    mapPayload(({ vote }) => ({
+      colonyAddress,
+      walletAddress,
+      vote: parseInt(vote, 10),
+    })),
+    [],
+  );
 
   const hasRegisteredProfile = !!username && !ethereal;
 
@@ -136,12 +132,14 @@ const VoteWidget = ({
 
   return (
     <ActionForm
-      initialValues={{}}
+      initialValues={{
+        vote: undefined,
+      }}
       validationSchema={validationSchema}
       submit={ActionTypes.COLONY_ACTION_GENERIC}
       error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
       success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-      // transform={transform}
+      transform={transform}
     >
       {({
         handleSubmit,
@@ -159,6 +157,7 @@ const VoteWidget = ({
             options={options}
             currentlyCheckedValue={values.vote}
             name="vote"
+            disabled={!hasRegisteredProfile}
           />
           <div>
             <div className={styles.item}>
@@ -247,6 +246,8 @@ const VoteWidget = ({
                   appearance={{ theme: 'primary', size: 'medium' }}
                   text={MSG.buttonVote}
                   disabled={!isValid || !hasRegisteredProfile}
+                  onClick={() => handleSubmit()}
+                  loading={isSubmitting}
                 />
               </div>
             </div>
