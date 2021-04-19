@@ -11,6 +11,7 @@ export interface Appearance {
   fontSize?: 'tiny' | 'small';
   /* "fullColor" is default */
   colorSchema?: 'fullColor' | 'inverted' | 'plain';
+  margin?: 'none';
 }
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {

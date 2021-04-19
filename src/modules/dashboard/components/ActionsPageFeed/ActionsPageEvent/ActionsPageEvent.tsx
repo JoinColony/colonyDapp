@@ -350,6 +350,7 @@ const ActionsPageEvent = ({
                       theme: 'primary',
                       colorSchema: 'inverted',
                       fontSize: 'tiny',
+                      margin: 'none',
                     }}
                   >
                     <Numeral
