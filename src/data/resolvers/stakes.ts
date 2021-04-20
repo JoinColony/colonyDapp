@@ -2,6 +2,7 @@ import { Resolvers } from '@apollo/client';
 import { ClientType, Extension } from '@colony/colony-js';
 
 import { Context } from '~context/index';
+import { StakeSide } from '~dashboard/ActionsPage/TotalStakeWidget';
 import { getMotionRequiredStake, MotionVote } from '~utils/colonyMotions';
 
 export const stakesResolvers = ({
@@ -10,12 +11,9 @@ export const stakesResolvers = ({
   Query: {
     async stakeAmountsForMotion(
       _,
-      { colonyAddress, userAddress, motionId, isObjectionStake },
+      { colonyAddress, userAddress, motionId, stakeSide },
     ) {
       try {
-        const supportedSide = isObjectionStake
-          ? MotionVote.NAY
-          : MotionVote.YAY;
         const colonyClient = await colonyManager.getClient(
           ClientType.ColonyClient,
           colonyAddress,
@@ -26,11 +24,21 @@ export const stakesResolvers = ({
         const { stakes, skillRep } = await votingReputationClient.getMotion(
           motionId,
         );
-        const userStake = await votingReputationClient.getStake(
-          motionId,
-          userAddress,
-          supportedSide,
-        );
+        let userStakeAmount: string | null = null;
+
+        if (stakeSide !== StakeSide.Both) {
+          const supportedSide =
+            stakeSide === StakeSide.Objection ? MotionVote.NAY : MotionVote.YAY;
+
+          const userStake = await votingReputationClient.getStake(
+            motionId,
+            userAddress,
+            supportedSide,
+          );
+
+          userStakeAmount = userStake.toString();
+        }
+
         // @NOTE There's no prettier compatible solution to this :(
         // eslint-disable-next-line max-len
         const totalStakeFraction = await votingReputationClient.getTotalStakeFraction();
@@ -39,8 +47,14 @@ export const stakesResolvers = ({
           totalStakeFraction,
           18,
         ).toString();
-        const totalStaked = stakes[supportedSide].toString();
-        const userStakeAmount = userStake.toString();
+        const totalStaked: {
+          YAY: string | null;
+          NAY: string | null;
+        } = {
+          YAY:
+            stakeSide !== StakeSide.Objection ? stakes[MotionVote.YAY] : null,
+          NAY: stakeSide !== StakeSide.Motion ? stakes[MotionVote.NAY] : null,
+        };
 
         return {
           totalStaked,

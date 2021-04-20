@@ -505,7 +505,7 @@ export type QueryStakeAmountsForMotionArgs = {
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['Int'];
-  isObjectionStake: Scalars['Boolean'];
+  stakeSide: Scalars['String'];
 };
 
 
@@ -887,9 +887,14 @@ export type MotionVoteResults = {
   nayVoters: Array<Scalars['String']>;
 }
 
+export type TotalStakedAmounts = {
+  YAY?: Maybe<Scalars['String']>;
+  NAY?: Maybe<Scalars['String']>;
+};
+
 export type StakeAmounts = {
-  totalStaked: Scalars['String'];
-  userStake: Scalars['String'];
+  totalStaked: TotalStakedAmounts;
+  userStake?: Maybe<Scalars['String']>;
   requiredStake: Scalars['String'];
 };
 
@@ -1600,11 +1605,14 @@ export type StakeAmountsForMotionQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['Int'];
-  isObjectionStake: Scalars['Boolean'];
+  stakeSide: Scalars['String'];
 }>;
 
 
-export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: Pick<StakeAmounts, 'totalStaked' | 'userStake' | 'requiredStake'> };
+export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: (
+    Pick<StakeAmounts, 'userStake' | 'requiredStake'>
+    & { totalStaked: Pick<TotalStakedAmounts, 'YAY' | 'NAY'> }
+  ) };
 
 export type MotionUserVoteRevealedQueryVariables = Exact<{
   motionId: Scalars['Int'];

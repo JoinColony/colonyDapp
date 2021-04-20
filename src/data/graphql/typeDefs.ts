@@ -233,9 +233,14 @@ export default gql`
     claimedReward: Boolean!
   }
 
+  type TotalStakedAmounts {
+    YAY: String
+    NAY: String
+  }
+
   type StakeAmounts {
-    totalStaked: String!
-    userStake: String!
+    totalStaked: TotalStakedAmounts!
+    userStake: String
     requiredStake: String!
   }
 
@@ -338,7 +343,7 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
       motionId: Int!
-      isObjectionStake: Boolean!
+      stakeSide: String!
     ): StakeAmounts!
   }
 

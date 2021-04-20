@@ -436,9 +436,12 @@ query MotionStakerReward($motionId: Int!, $colonyAddress: String!, $userAddress:
   }
 }
 
-query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int! $isObjectionStake: Boolean!) {
-  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, isObjectionStake: $isObjectionStake) @client {
-    totalStaked
+query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int! $stakeSide: String!) {
+  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, stakeSide: $stakeSide) @client {
+    totalStaked {
+      YAY
+      NAY
+    }
     userStake
     requiredStake
   }
