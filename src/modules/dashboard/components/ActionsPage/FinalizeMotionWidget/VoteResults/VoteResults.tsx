@@ -1,9 +1,12 @@
-import React, { useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React from 'react';
+import { defineMessages } from 'react-intl';
+import { bigNumberify } from 'ethers/utils';
 
-import { Colony, useLoggedInUser } from '~data/index';
-import { ActionTypes } from '~redux/index';
-import { ColonyMotions } from '~types/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useMotionVoteResultsQuery,
+} from '~data/index';
 
 import VoteResultsItem from './VoteResultsItem';
 
@@ -14,39 +17,80 @@ interface Props {
   motionId: number;
 }
 
-const VoteResults = ({ colony: { colonyAddress }, colony }: Props) => {
+const MSG = defineMessages({
+  voteYAY: {
+    id: 'dashboard.ActionsPage.FinalizeVoteWidget.VoteResults.voteYAY',
+    defaultMessage: `Yes`,
+  },
+  voteNAY: {
+    id: 'dashboard.ActionsPage.FinalizeVoteWidget.VoteResults.voteNAY',
+    defaultMessage: `No!`,
+  },
+});
+
+const VoteResults = ({ colony: { colonyAddress }, motionId }: Props) => {
+  const { walletAddress: userAddress } = useLoggedInUser();
+  const { data, loading } = useMotionVoteResultsQuery({
+    variables: {
+      colonyAddress,
+      userAddress,
+      motionId,
+    },
+  });
+
+  /*
+   * @TODO add proper loading state
+   */
+  if (loading || !data?.motionVoteResults) {
+    return <div>loading</div>;
+  }
+
+  const {
+    yayVoters = [],
+    yayVotes,
+    nayVoters = [],
+    nayVotes,
+  } = data?.motionVoteResults;
+
+  const yayVotesValue = bigNumberify(yayVotes)
+    .div(bigNumberify(10).pow(18))
+    .toNumber();
+  const nayVotesValue = bigNumberify(nayVotes)
+    .div(bigNumberify(10).pow(18))
+    .toNumber();
+  /*
+   * That moment when you have to do percentage math in plain JS because
+   * BigNumber is afraid of floating point
+   *
+   * Also, we need to round the values in order to not have off by one (or two)
+   * errors when visually approximating the percentages
+   */
+  const totalVotes = yayVotesValue + nayVotesValue;
+  const yayVotePercent = Math.round((yayVotesValue / totalVotes) * 100);
+  const nayVotePercent = Math.round((nayVotesValue / totalVotes) * 100);
+
   return (
     <div className={styles.main}>
       <div className={styles.firstVoteResult}>
         <VoteResultsItem
-          value={20}
+          value={yayVotePercent}
           maxValue={100}
-          title="yes"
-          voters={[
-            '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-            '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-          ]}
+          title={MSG.voteYAY}
+          voters={yayVoters as string[]}
         />
       </div>
       <VoteResultsItem
-        value={80}
+        value={nayVotePercent}
         maxValue={100}
-        title="no"
+        title={MSG.voteNAY}
         appearance={{ theme: 'disapprove' }}
-        voters={[
-          '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-          '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-          '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-          '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-          '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-          '0xb77D57F4959eAfA0339424b83FcFaf9c15407461',
-          '0x9dF24e73f40b2a911Eb254A8825103723E13209C',
-        ]}
+        voters={nayVoters as string[]}
       />
     </div>
   );
 };
 
-VoteResults.displayName = 'dashboard.ActionsPage.VoteResults';
+VoteResults.displayName =
+  'dashboard.ActionsPage.FinalizeVoteWidget.VoteResults';
 
 export default VoteResults;
