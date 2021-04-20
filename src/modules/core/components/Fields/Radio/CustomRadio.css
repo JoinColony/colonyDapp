@@ -44,11 +44,17 @@
 }
 
 .main.stateIsChecked .description {
+  color: var(--temp-grey-blue-7);
   opacity: 0.85;
 }
 
 .main.stateIsDisabled .description {
+  color: var(--temp-grey-blue-7);
   opacity: 0.85;
+}
+
+.main.stateIsDisabled .label {
+  color: var(--temp-grey-blue-7);
 }
 
 .main.stateIsDisabled {
@@ -65,7 +71,8 @@
   gap: 6px;
 }
 
-.description {
+.description,
+.description span {
   margin-left: auto;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
