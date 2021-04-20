@@ -38,8 +38,8 @@ interface Props {
   currentUserRolesInRoot: ColonyRole[];
   userInheritedRoles: ColonyRole[];
   colonyDomains: DomainFieldsFragment[];
-  userHasPermission: boolean;
   onDomainSelected: (domain: number) => void;
+  inputDisabled: boolean;
 }
 
 const PermissionManagementForm = ({
@@ -50,8 +50,8 @@ const PermissionManagementForm = ({
   userInheritedRoles,
   colonyDomains,
   onDomainSelected,
-  userHasPermission,
   currentUserRolesInRoot,
+  inputDisabled,
 }: Props) => {
   const canSetPermissionsInRoot =
     domainId === ROOT_DOMAIN_ID &&
@@ -139,7 +139,7 @@ const PermissionManagementForm = ({
           return (
             <PermissionManagementCheckbox
               key={role}
-              disabled={!canRoleBeSet(role) || roleIsInherited}
+              disabled={inputDisabled || !canRoleBeSet(role) || roleIsInherited}
               role={role}
               asterisk={roleIsInherited}
               domainId={domainId}
@@ -150,7 +150,7 @@ const PermissionManagementForm = ({
       <Annotations
         label={MSG.annotation}
         name="annotationMessage"
-        disabled={!userHasPermission}
+        disabled={inputDisabled}
       />
     </>
   );

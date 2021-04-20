@@ -14,12 +14,16 @@ import {
   withMeta,
 } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
-import { useTransformer } from '~utils/hooks';
+import { useTransformer, WizardDialogType } from '~utils/hooks';
 import { ItemDataType } from '~core/OmniPicker';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import PermissionsLabel from '~core/PermissionsLabel';
-import Dialog, { DialogSection } from '~core/Dialog';
+import Dialog, {
+  ActionDialogProps,
+  DialogProps,
+  DialogSection,
+} from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
@@ -30,8 +34,10 @@ import {
   useColonySubscribedUsersQuery,
   useUser,
   AnyUser,
-  Colony,
 } from '~data/index';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import {
   getUserRolesForDomain,
@@ -58,15 +64,13 @@ const MSG = defineMessages({
     id: 'dashboard.PermissionManagementDialog.noPermissionFrom',
     defaultMessage: `You do not have the {roleRequired} permission required to take this action.`,
   },
+  forceMotion: {
+    id: 'dashboard.PermissionManagementDialog.forceMotion',
+    defaultMessage: 'Force',
+  },
 });
 
-interface Props {
-  cancel: () => void;
-  close: () => void;
-  colony: Colony;
-  prevStep?: string;
-  callStep?: (dialogName: string) => void;
-}
+type Props = DialogProps & WizardDialogType<object> & ActionDialogProps;
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
@@ -81,8 +85,21 @@ const PermissionManagementDialog = ({
   close,
   callStep,
   prevStep,
+  isVotingExtensionEnabled,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_MOTION_USER_ROLES_SET${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_USER_ROLES_SET${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
   const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
 
   const loggedInUser = useUser(loggedInUserWalletAddress);
@@ -209,11 +226,20 @@ const PermissionManagementDialog = ({
     };
   });
 
-  const userHasPermission =
+  const canEditPermissions =
     (selectedDomainId === ROOT_DOMAIN_ID &&
       currentUserRolesInRoot.includes(ColonyRole.Root)) ||
     currentUserRolesInRoot.includes(ColonyRole.Architecture);
   const requiredRoles: ColonyRole[] = [ColonyRole.Architecture];
+
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canEditPermissions,
+    isVotingExtensionEnabled,
+    isForce,
+  );
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
 
   return (
     <Dialog cancel={cancel}>
@@ -223,6 +249,7 @@ const PermissionManagementDialog = ({
         <ActionForm
           enableReinitialize
           initialValues={{
+            forceAction: false,
             user: selectedUser,
             domainId: selectedDomainId.toString(),
             roles: userDirectRoles,
@@ -230,9 +257,9 @@ const PermissionManagementDialog = ({
           }}
           validationSchema={validationSchema}
           onSuccess={close}
-          submit={ActionTypes.COLONY_ACTION_USER_ROLES_SET}
-          error={ActionTypes.COLONY_ACTION_USER_ROLES_SET_ERROR}
-          success={ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS}
+          submit={getFormAction('SUBMIT')}
+          error={getFormAction('ERROR')}
+          success={getFormAction('SUCCESS')}
           transform={transform}
         >
           {({
@@ -240,93 +267,106 @@ const PermissionManagementDialog = ({
             isValid,
             initialValues,
             values,
-          }: FormikProps<any>) => (
-            <div className={styles.dialogContainer}>
-              <DialogSection appearance={{ theme: 'heading' }}>
-                <Heading
-                  appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-                  text={MSG.title}
-                  textValues={{ domain: domain && domain.name }}
-                />
-              </DialogSection>
-              {!userHasPermission && (
-                <DialogSection>
-                  <PermissionRequiredInfo requiredRoles={requiredRoles} />
-                </DialogSection>
-              )}
-              <DialogSection appearance={{ theme: 'sidePadding' }}>
-                <div className={styles.singleUserContainer}>
-                  <SingleUserPicker
-                    data={members}
-                    label={MSG.selectUser}
-                    name="user"
-                    filter={filterUserSelection}
-                    onSelected={setSelectedUser}
-                    renderAvatar={supRenderAvatar}
-                    disabled={!userHasPermission}
+          }: FormikProps<any>) => {
+            if (values.forceAction !== isForce) {
+              setIsForce(values.forceAction);
+            }
+            return (
+              <div className={styles.dialogContainer}>
+                <DialogSection appearance={{ theme: 'heading' }}>
+                  <Heading
+                    appearance={{
+                      size: 'medium',
+                      margin: 'none',
+                      theme: 'dark',
+                    }}
+                    text={MSG.title}
+                    textValues={{ domain: domain && domain.name }}
                   />
-                </div>
-              </DialogSection>
-              <DialogSection appearance={{ theme: 'sidePadding' }}>
-                <PermissionManagementForm
-                  currentUserRoles={currentUserRoles}
-                  domainId={selectedDomainId}
-                  rootAccounts={rootAccounts}
-                  userDirectRoles={userDirectRoles}
-                  currentUserRolesInRoot={currentUserRolesInRoot}
-                  userInheritedRoles={userInheritedRoles}
-                  colonyDomains={domains}
-                  onDomainSelected={setSelectedDomainId}
-                  userHasPermission={userHasPermission}
-                />
-              </DialogSection>
-              {!userHasPermission && (
+                  {canEditPermissions && isVotingExtensionEnabled && (
+                    <Toggle label={MSG.forceMotion} name="forceAction" />
+                  )}
+                </DialogSection>
+                {!userHasPermission && (
+                  <DialogSection>
+                    <PermissionRequiredInfo requiredRoles={requiredRoles} />
+                  </DialogSection>
+                )}
                 <DialogSection appearance={{ theme: 'sidePadding' }}>
-                  <div className={styles.noPermissionFromMessage}>
-                    <FormattedMessage
-                      {...MSG.noPermissionFrom}
-                      values={{
-                        roleRequired: (
-                          <PermissionsLabel
-                            permission={ColonyRole.Architecture}
-                            name={{ id: `role.${ColonyRole.Architecture}` }}
-                          />
-                        ),
-                      }}
+                  <div className={styles.singleUserContainer}>
+                    <SingleUserPicker
+                      data={members}
+                      label={MSG.selectUser}
+                      name="user"
+                      filter={filterUserSelection}
+                      onSelected={setSelectedUser}
+                      renderAvatar={supRenderAvatar}
+                      disabled={inputDisabled}
                     />
                   </div>
                 </DialogSection>
-              )}
-              <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-                <Button
-                  appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={
-                    prevStep === undefined || callStep === undefined
-                      ? cancel
-                      : () => callStep(prevStep)
-                  }
-                  text={{
-                    id:
+                <DialogSection appearance={{ theme: 'sidePadding' }}>
+                  <PermissionManagementForm
+                    currentUserRoles={currentUserRoles}
+                    domainId={selectedDomainId}
+                    rootAccounts={rootAccounts}
+                    userDirectRoles={userDirectRoles}
+                    currentUserRolesInRoot={currentUserRolesInRoot}
+                    userInheritedRoles={userInheritedRoles}
+                    colonyDomains={domains}
+                    onDomainSelected={setSelectedDomainId}
+                    inputDisabled={inputDisabled}
+                  />
+                </DialogSection>
+                {!userHasPermission && (
+                  <DialogSection appearance={{ theme: 'sidePadding' }}>
+                    <div className={styles.noPermissionFromMessage}>
+                      <FormattedMessage
+                        {...MSG.noPermissionFrom}
+                        values={{
+                          roleRequired: (
+                            <PermissionsLabel
+                              permission={ColonyRole.Architecture}
+                              name={{ id: `role.${ColonyRole.Architecture}` }}
+                            />
+                          ),
+                        }}
+                      />
+                    </div>
+                  </DialogSection>
+                )}
+                {onlyForceAction && <NotEnoughReputation />}
+                <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
+                  <Button
+                    appearance={{ theme: 'secondary', size: 'large' }}
+                    onClick={
                       prevStep === undefined || callStep === undefined
-                        ? 'button.cancel'
-                        : 'button.back',
-                  }}
-                />
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  loading={isSubmitting}
-                  text={{ id: 'button.confirm' }}
-                  type="submit"
-                  style={{ width: styles.wideButton }}
-                  disabled={
-                    !userHasPermission ||
-                    !isValid ||
-                    isEqual(sortBy(values.roles), sortBy(initialValues.roles))
-                  }
-                />
-              </DialogSection>
-            </div>
-          )}
+                        ? cancel
+                        : () => callStep(prevStep)
+                    }
+                    text={{
+                      id:
+                        prevStep === undefined || callStep === undefined
+                          ? 'button.cancel'
+                          : 'button.back',
+                    }}
+                  />
+                  <Button
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    loading={isSubmitting}
+                    text={{ id: 'button.confirm' }}
+                    type="submit"
+                    style={{ width: styles.wideButton }}
+                    disabled={
+                      inputDisabled ||
+                      !isValid ||
+                      isEqual(sortBy(values.roles), sortBy(initialValues.roles))
+                    }
+                  />
+                </DialogSection>
+              </div>
+            );
+          }}
         </ActionForm>
       )}
     </Dialog>
