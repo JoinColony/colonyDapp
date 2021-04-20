@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { AddressZero } from 'ethers/constants';
 import { FormikProps, FormikHelpers } from 'formik';
@@ -30,13 +30,8 @@ type Props = DialogProps &
 
 const displayName = 'dashboard.ColonyTokenManagementDialog';
 
-const updateTokensAction = {
-  submit: ActionTypes.COLONY_ACTION_EDIT_COLONY,
-  error: ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR,
-  success: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
-};
-
 export interface FormValues {
+  forceAction: boolean;
   tokenAddress?: Address;
   selectedTokenAddresses?: Address[];
   annotationMessage?: string;
@@ -63,8 +58,26 @@ const ColonyTokenManagementDialog = ({
   prevStep,
   isVotingExtensionEnabled,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
   const { formatMessage } = useIntl();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_MOTION_EDIT_COLONY${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_EDIT_COLONY${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
+
+  const updateTokensAction = {
+    submit: getFormAction('SUBMIT'),
+    error: getFormAction('ERROR'),
+    success: getFormAction('SUCCESS'),
+  };
 
   const transform = useCallback(
     pipe(
@@ -128,6 +141,7 @@ const ColonyTokenManagementDialog = ({
   return (
     <Form
       initialValues={{
+        forceAction: false,
         tokenAddress: undefined,
         selectedTokenAddresses: tokens.map((token) => token.address),
         annotationMessage: undefined,
@@ -136,18 +150,23 @@ const ColonyTokenManagementDialog = ({
       validateOnChange={false}
       onSubmit={handleSubmit}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <TokenEditDialog
-            {...formValues}
-            colony={colony}
-            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
-            tokensList={getTokenList}
-            close={close}
-            isVotingExtensionEnabled={isVotingExtensionEnabled}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <TokenEditDialog
+              {...formValues}
+              colony={colony}
+              back={prevStep && callStep ? () => callStep(prevStep) : undefined}
+              tokensList={getTokenList}
+              close={close}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+            />
+          </Dialog>
+        );
+      }}
     </Form>
   );
 };
