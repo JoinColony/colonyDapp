@@ -362,12 +362,20 @@ query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }
 
+# Motions
+#
+#
+
 query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
   motionsSystemMessages(motionId: $motionId, colonyAddress: $colonyAddress) @client {
     type
     name
     createdAt
   }
+}
+
+query MotionsVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
 }
 
 # The Graph

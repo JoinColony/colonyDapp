@@ -23,10 +23,12 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
-import styles from './DefaultAction.css';
+import VoteWidget from '../VoteWidget';
 
-import motionSpecificStyles from './MintTokenMotion.css';
 import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
+
+import styles from './DefaultAction.css';
+import motionSpecificStyles from './MintTokenMotion.css';
 
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
 
@@ -172,6 +174,13 @@ const MintTokenMotion = ({
           />
         </div>
         <div className={styles.details}>
+          {motionState === MotionState.Voting && (
+            <VoteWidget
+              colony={colony}
+              actionType={actionType}
+              motionId={motionId}
+            />
+          )}
           <DetailsWidget
             actionType={actionType as ColonyMotions}
             transactionHash={transactionHash}

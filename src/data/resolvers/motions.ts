@@ -13,6 +13,12 @@ import { createAddress } from '~utils/web3';
 import { getMotionActionType, getMotionState } from '~utils/events';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
+  UserReputationQuery,
+  UserReputationQueryVariables,
+  UserReputationDocument,
+} from '~data/index';
+
+import {
   ActionsPageFeedType,
   SystemMessage,
   SystemMessagesName,
@@ -23,6 +29,7 @@ import { ProcessedEvent } from './colonyActions';
 export const motionsResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
+  apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
     async motionsSystemMessages(_, { motionId, colonyAddress }) {
@@ -108,6 +115,39 @@ export const motionsResolvers = ({
       }
 
       return Promise.all(systemMessages);
+    },
+    async motionVoterReward(_, { motionId, colonyAddress, userAddress }) {
+      try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const { domainId } = await votingReputationClient.getMotion(motionId);
+
+        const { data } = await apolloClient.query<
+          UserReputationQuery,
+          UserReputationQueryVariables
+        >({
+          query: UserReputationDocument,
+          variables: {
+            colonyAddress,
+            address: userAddress,
+            domainId: domainId.toNumber(),
+          },
+        });
+        if (data?.userReputation) {
+          const reward = await votingReputationClient.getVoterReward(
+            bigNumberify(motionId),
+            bigNumberify(data.userReputation),
+          );
+          return reward.toString();
+        }
+        return null;
+      } catch (error) {
+        console.error('Could not fetch users vote reward');
+        console.error(error);
+        return null;
+      }
     },
   },
   Motion: {
