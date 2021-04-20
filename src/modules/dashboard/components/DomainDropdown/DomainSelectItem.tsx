@@ -15,6 +15,7 @@ import EditDomainDialog from '~dashboard/EditDomainDialog';
 import { useDialog } from '~core/Dialog';
 import { OneDomain, Colony } from '~data/index';
 import { ENTER } from '~types/index';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { ALLDOMAINS_DOMAIN_SELECTION } from '~constants';
 
@@ -39,6 +40,10 @@ const DomainSelectItem = ({
   colony,
   isSelected,
 }: Props) => {
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
+
   const openEditDialog = useDialog(EditDomainDialog);
   const handleEditDomain = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (evt) => {
@@ -47,10 +52,11 @@ const DomainSelectItem = ({
         openEditDialog({
           selectedDomainId: ethDomainId.toString(),
           colony,
+          isVotingExtensionEnabled,
         });
       }
     },
-    [openEditDialog, colony, ethDomainId],
+    [openEditDialog, colony, ethDomainId, isVotingExtensionEnabled],
   );
 
   const handleEditDomainKeyDown = useCallback<
@@ -63,11 +69,12 @@ const DomainSelectItem = ({
           openEditDialog({
             selectedDomainId: ethDomainId.toString(),
             colony,
+            isVotingExtensionEnabled,
           });
         }
       }
     },
-    [openEditDialog, colony, ethDomainId],
+    [openEditDialog, colony, ethDomainId, isVotingExtensionEnabled],
   );
 
   return (

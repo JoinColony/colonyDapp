@@ -11,6 +11,8 @@ import { Colony, useNetworkContracts } from '~data/index';
 import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
 import { getNetworkRelaseLink } from '~utils/external';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+
 import { mustBeUpgraded, shouldBeUpgraded } from '../../../checks';
 import { hasRoot } from '../../../../users/checks';
 import { getAllUserRoles } from '../../../../transformers';
@@ -43,13 +45,17 @@ const ColonyUpgrade = ({ colony }: Props) => {
   const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
   const { version: networkVersion } = useNetworkContracts();
   const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const handleUpgradeColony = useCallback(
     () =>
       openUpgradeVersionDialog({
         colony,
+        isVotingExtensionEnabled,
       }),
-    [colony, openUpgradeVersionDialog],
+    [colony, openUpgradeVersionDialog, isVotingExtensionEnabled],
   );
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);

@@ -70,7 +70,9 @@ const MSG = defineMessages({
   },
 });
 
-type Props = DialogProps & WizardDialogType<object> & ActionDialogProps;
+type Props = DialogProps &
+  Partial<WizardDialogType<object>> &
+  ActionDialogProps;
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 

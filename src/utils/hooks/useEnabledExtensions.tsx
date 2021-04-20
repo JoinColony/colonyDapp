@@ -3,7 +3,7 @@ import { useColonyExtensionsQuery } from '~data/index';
 import { Address } from '~types/index';
 
 interface Props {
-  colonyAddress: Address;
+  colonyAddress?: Address;
 }
 
 export const useEnabledExtensions = ({ colonyAddress }: Props) => {
