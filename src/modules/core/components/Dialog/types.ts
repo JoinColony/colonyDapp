@@ -4,7 +4,7 @@ import { Colony } from '~data/index';
 
 type Cancel = () => void;
 
-type Close = (val: any) => void;
+type Close = (val?: any) => void;
 
 export interface DialogProps {
   cancel: Cancel;
