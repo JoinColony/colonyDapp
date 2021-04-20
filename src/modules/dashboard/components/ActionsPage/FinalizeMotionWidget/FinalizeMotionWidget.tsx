@@ -3,6 +3,7 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
+import { bigNumberify } from 'ethers/utils';
 import Button from '~core/Button';
 import { ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -16,6 +17,7 @@ import {
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
+import { getMainClasses } from '~utils/css';
 
 import VoteResults from './VoteResults';
 
@@ -89,6 +91,16 @@ const FinalizeMotionWidget = ({
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
+  const hasVotes =
+    bigNumberify(data?.motionVoteResults?.nayVotes || 0).gt(0) ||
+    bigNumberify(data?.motionVoteResults?.yayVotes || 0).gt(0);
+
+  /*
+   * If the motion is in the Root domain, it cannot be escalated further
+   * meaning it can be finalized directly
+   */
+  const showFinalizeButton =
+    data?.motionVoteResults && motionDomain === ROOT_DOMAIN_ID;
 
   return (
     <ActionForm
@@ -99,41 +111,39 @@ const FinalizeMotionWidget = ({
       transform={transform}
     >
       {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
-        <div className={styles.main}>
-          {hasRegisteredProfile &&
-            data?.motionVoteResults &&
-            /*
-             * If the motion is in the Root domain, it cannot be escalated further
-             * meaning it can be finalized directly
-             */
-            motionDomain === ROOT_DOMAIN_ID && (
-              <div className={styles.itemWithForcedBorder}>
-                <div className={styles.label}>
-                  <div>
-                    <FormattedMessage {...MSG.finalizeLabel} />
-                    <QuestionMarkTooltip
-                      tooltipText={MSG.finalizeTooltip}
-                      className={styles.help}
-                      tooltipClassName={styles.tooltip}
-                      tooltipPopperProps={{
-                        placement: 'right',
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className={styles.value}>
-                  <Button
-                    appearance={{ theme: 'primary', size: 'medium' }}
-                    text={MSG.finalizeButton}
-                    disabled={!hasRegisteredProfile}
-                    onClick={() => handleSubmit()}
-                    loading={isSubmitting}
+        <div
+          className={getMainClasses({}, styles, {
+            marginBottom: showFinalizeButton || false,
+          })}
+        >
+          {showFinalizeButton && (
+            <div className={styles.itemWithForcedBorder}>
+              <div className={styles.label}>
+                <div>
+                  <FormattedMessage {...MSG.finalizeLabel} />
+                  <QuestionMarkTooltip
+                    tooltipText={MSG.finalizeTooltip}
+                    className={styles.help}
+                    tooltipClassName={styles.tooltip}
+                    tooltipPopperProps={{
+                      placement: 'right',
+                    }}
                   />
                 </div>
               </div>
-            )}
+              <div className={styles.value}>
+                <Button
+                  appearance={{ theme: 'primary', size: 'medium' }}
+                  text={MSG.finalizeButton}
+                  disabled={!hasRegisteredProfile}
+                  onClick={() => handleSubmit()}
+                  loading={isSubmitting}
+                />
+              </div>
+            </div>
+          )}
           <div className={styles.voteResults}>
-            {hasRegisteredProfile && data?.motionVoteResults && (
+            {hasRegisteredProfile && data?.motionVoteResults && hasVotes && (
               <div className={styles.outcome}>
                 <FormattedMessage
                   {...MSG.outcomeCelebration}
@@ -143,20 +153,29 @@ const FinalizeMotionWidget = ({
                 />
               </div>
             )}
-            <Heading
-              text={MSG.title}
-              textValues={{ actionType }}
-              appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
-            />
-            <VoteResults
+            {hasVotes && (
               /*
-               * @NOTE We are not passing down the `motionVoteResults` values
-               * since the `VoteResults` component is designed to work independent
-               * of this widget (since we'll need to use it in a system message)
+               * @NOTE If we have votes **AND** we're in a finalizable state (this is checked on the action page)
+               * then we are in a VOTING flow that needs to be finalized.
+               * Othewise, we're in a STAKING flow that needs to be finalized.
                */
-              colony={colony}
-              motionId={motionId}
-            />
+              <>
+                <Heading
+                  text={MSG.title}
+                  textValues={{ actionType }}
+                  appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+                />
+                <VoteResults
+                  /*
+                   * @NOTE We are not passing down the `motionVoteResults` values
+                   * since the `VoteResults` component is designed to work independent
+                   * of this widget (since we'll need to use it in a system message)
+                   */
+                  colony={colony}
+                  motionId={motionId}
+                />
+              </>
+            )}
           </div>
         </div>
       )}

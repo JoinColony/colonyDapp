@@ -1,6 +1,9 @@
 .main {
   display: block;
-  margin: 0px 0 100px 0;
+}
+
+.stateMarginBottom {
+  margin: 0px 0 80px 0;
 }
 
 .main h4 {
