@@ -5,6 +5,7 @@ import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import ProgressBar from '~core/ProgressBar';
+import Numeral from '~core/Numeral';
 import { useLoggedInUser } from '~data/index';
 import {
   useStakeAmountsForMotionQuery,
@@ -12,6 +13,7 @@ import {
   useTokenInfoLazyQuery,
 } from '~data/generated';
 import { Address } from '~types/index';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
 
@@ -34,11 +36,11 @@ const MSG = defineMessages({
   },
   stakeProgress: {
     id: 'dashboard.ActionsPage.TotalStakeWidget.stakeProgress',
-    defaultMessage: '{totalPercentage}% of {requiredStake} {tokenSymbol}',
+    defaultMessage: '{totalPercentage} of {requiredStake}',
   },
   userStake: {
     id: 'dashboard.ActionsPage.TotalStakeWidget.userStake',
-    defaultMessage: `You staked {userPercentage}% of this motion ({userStake} {tokenSymbol}).`,
+    defaultMessage: `You staked {userPercentage} of this motion ({userStake}).`,
   },
 });
 
@@ -81,12 +83,15 @@ const TotalStakeWidget = ({
   }
 
   const { totalStaked, userStake, requiredStake } = data.stakeAmountsForMotion;
-  const divisibleRequiredStake = requiredStake !== '0' ? requiredStake : 1;
+  const divisibleRequiredStake = !bigNumberify(requiredStake).isZero()
+    ? requiredStake
+    : 1;
+  const bigNumberUserStake = bigNumberify(userStake);
   const totalStakedPercentage = bigNumberify(totalStaked)
     .mul(100)
     .div(divisibleRequiredStake)
     .toNumber();
-  const userStakePercentage = bigNumberify(userStake)
+  const userStakePercentage = bigNumberUserStake
     .mul(100)
     .div(divisibleRequiredStake)
     .toNumber();
@@ -116,8 +121,15 @@ const TotalStakeWidget = ({
               {...MSG.stakeProgress}
               values={{
                 totalPercentage: formattedTotalStakedPercentage,
-                requiredStake,
-                tokenSymbol: tokenInfoData?.tokenInfo.symbol,
+                requiredStake: (
+                  <Numeral
+                    value={requiredStake}
+                    unit={getTokenDecimalsWithFallback(
+                      tokenInfoData?.tokenInfo.decimals,
+                    )}
+                    suffix={` ${tokenInfoData?.tokenInfo.symbol}`}
+                  />
+                ),
               }}
             />
           )}
@@ -131,15 +143,22 @@ const TotalStakeWidget = ({
           backgroundTheme: 'default',
         }}
       />
-      {userStake !== '0' && (
+      {!bigNumberUserStake.isZero() && (
         <p className={styles.userStake}>
           {!loadingTokenInfoData && !loadingNativeTokenAddress && (
             <FormattedMessage
               {...MSG.userStake}
               values={{
                 userPercentage: formattedUserStakePercentage,
-                userStake,
-                tokenSymbol: tokenInfoData?.tokenInfo.symbol,
+                userStake: (
+                  <Numeral
+                    value={userStake}
+                    unit={getTokenDecimalsWithFallback(
+                      tokenInfoData?.tokenInfo.decimals,
+                    )}
+                    suffix={` ${tokenInfoData?.tokenInfo.symbol}`}
+                  />
+                ),
               }}
             />
           )}

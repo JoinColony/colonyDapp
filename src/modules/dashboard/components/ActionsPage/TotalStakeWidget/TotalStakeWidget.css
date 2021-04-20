@@ -1,5 +1,5 @@
 .widget {
-  margin-top: 17px;
+  margin-top: 20px;
   margin-bottom: 35px;
 }
 
@@ -11,10 +11,12 @@
 
 .title {
   font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
   color: var(--dark);
 }
 
-.stakeProgress {
+.stakeProgress,
+.stakeProgress span {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--dark);
