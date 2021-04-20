@@ -8,7 +8,6 @@ import { ActionTypes } from '~redux/index';
 import { pipe, mergePayload, withMeta } from '~utils/actions';
 import { Colony } from '~data/index';
 import { WizardDialogType } from '~utils/hooks';
-import { RootMotionOperationNames } from '~redux/types/actions';
 
 import UnlockTokenForm from './UnlockTokenForm';
 
@@ -38,8 +37,6 @@ const UnlockTokenDialog = ({
       mergePayload({
         colonyAddress,
         colonyName,
-        operationName: RootMotionOperationNames.UNLOCK_TOKEN,
-        motionParams: [],
       }),
       withMeta({ history }),
     ),

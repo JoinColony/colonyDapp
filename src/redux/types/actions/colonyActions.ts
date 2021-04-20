@@ -16,7 +16,6 @@ import {
 
 export enum RootMotionOperationNames {
   MINT_TOKENS = 'mintTokens',
-  UNLOCK_TOKEN = 'unlockToken',
   UPGRADE = 'upgrade',
 }
 
