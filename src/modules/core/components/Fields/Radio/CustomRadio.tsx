@@ -100,13 +100,15 @@ const CustomRadio = ({
             )}
           </span>
         )}
-        <span className={styles.description}>
-          {description && description === 'string' ? (
-            description
-          ) : (
-            <FormattedMessage {...description} values={descriptionValues} />
-          )}
-        </span>
+        {description && (
+          <span className={styles.description}>
+            {description === 'string' ? (
+              description
+            ) : (
+              <FormattedMessage {...description} values={descriptionValues} />
+            )}
+          </span>
+        )}
       </div>
     </label>
   );
