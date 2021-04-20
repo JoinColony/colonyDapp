@@ -206,6 +206,7 @@ const MintTokenMotion = ({
               colony={colony}
               actionType={actionType}
               motionId={motionId}
+              motionDomain={motionDomain}
             />
           )}
           <DetailsWidget

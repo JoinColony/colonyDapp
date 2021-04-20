@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { ActionForm } from '~core/Fields';
@@ -24,6 +25,7 @@ interface Props {
   colony: Colony;
   motionId: number;
   actionType: string;
+  motionDomain: number;
 }
 
 const MSG = defineMessages({
@@ -67,6 +69,7 @@ const FinalizeMotionWidget = ({
   colony,
   motionId,
   actionType,
+  motionDomain = ROOT_DOMAIN_ID,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const { data } = useMotionVoteResultsQuery({
@@ -97,32 +100,38 @@ const FinalizeMotionWidget = ({
     >
       {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
         <div className={styles.main}>
-          {hasRegisteredProfile && data?.motionVoteResults && (
-            <div className={styles.itemWithForcedBorder}>
-              <div className={styles.label}>
-                <div>
-                  <FormattedMessage {...MSG.finalizeLabel} />
-                  <QuestionMarkTooltip
-                    tooltipText={MSG.finalizeTooltip}
-                    className={styles.help}
-                    tooltipClassName={styles.tooltip}
-                    tooltipPopperProps={{
-                      placement: 'right',
-                    }}
+          {hasRegisteredProfile &&
+            data?.motionVoteResults &&
+            /*
+             * If the motion is in the Root domain, it cannot be escalated further
+             * meaning it can be finalized directly
+             */
+            motionDomain === ROOT_DOMAIN_ID && (
+              <div className={styles.itemWithForcedBorder}>
+                <div className={styles.label}>
+                  <div>
+                    <FormattedMessage {...MSG.finalizeLabel} />
+                    <QuestionMarkTooltip
+                      tooltipText={MSG.finalizeTooltip}
+                      className={styles.help}
+                      tooltipClassName={styles.tooltip}
+                      tooltipPopperProps={{
+                        placement: 'right',
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className={styles.value}>
+                  <Button
+                    appearance={{ theme: 'primary', size: 'medium' }}
+                    text={MSG.finalizeButton}
+                    disabled={!hasRegisteredProfile}
+                    onClick={() => handleSubmit()}
+                    loading={isSubmitting}
                   />
                 </div>
               </div>
-              <div className={styles.value}>
-                <Button
-                  appearance={{ theme: 'primary', size: 'medium' }}
-                  text={MSG.finalizeButton}
-                  disabled={!hasRegisteredProfile}
-                  onClick={() => handleSubmit()}
-                  loading={isSubmitting}
-                />
-              </div>
-            </div>
-          )}
+            )}
           <div className={styles.voteResults}>
             {hasRegisteredProfile && data?.motionVoteResults && (
               <div className={styles.outcome}>
