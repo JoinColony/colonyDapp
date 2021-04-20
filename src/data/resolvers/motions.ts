@@ -338,11 +338,19 @@ export const motionsResolvers = ({
           motionVoteRevealedFilter,
         );
         revealEvents?.map(({ values: { vote, voter } }) => {
-          if (createAddress(voter) === createAddress(userAddress)) {
+          const currentUserVoted =
+            createAddress(voter) === createAddress(userAddress);
+          /*
+           * @NOTE We're using this little hack in order to ensure, that if
+           * the currently logged in user was one of the voters, that
+           * their avatar is going to show up first in the vote results
+           */
+          const arrayMethod = currentUserVoted ? 'unshift' : 'push';
+          if (currentUserVoted) {
             voteResult.currentUserVoteSide = vote.toNumber();
           }
           if (vote.toNumber() === MotionVote.Yay) {
-            voteResult.yayVoters.push(createAddress(voter));
+            voteResult.yayVoters[arrayMethod](createAddress(voter));
           }
           /*
            * @NOTE We expressly declare NAY rather then using "else" to prevent
@@ -350,7 +358,7 @@ export const motionsResolvers = ({
            * data (eg if vote was 2 due to weird issues)
            */
           if (vote.toNumber() === MotionVote.Nay) {
-            voteResult.nayVoters.push(createAddress(voter));
+            voteResult.nayVoters[arrayMethod](createAddress(voter));
           }
         });
         return voteResult;
