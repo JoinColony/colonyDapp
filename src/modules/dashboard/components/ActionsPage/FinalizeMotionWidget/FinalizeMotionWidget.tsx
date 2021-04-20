@@ -7,7 +7,11 @@ import { ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
-import { Colony, useLoggedInUser } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useMotionVoteResultsQuery,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
@@ -65,6 +69,13 @@ const FinalizeMotionWidget = ({
   actionType,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { data } = useMotionVoteResultsQuery({
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+    },
+  });
 
   const transform = useCallback(
     mapPayload(() => ({
@@ -86,7 +97,7 @@ const FinalizeMotionWidget = ({
     >
       {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
         <div className={styles.main}>
-          {hasRegisteredProfile && (
+          {hasRegisteredProfile && data?.motionVoteResults && (
             <div className={styles.itemWithForcedBorder}>
               <div className={styles.label}>
                 <div>
@@ -113,11 +124,13 @@ const FinalizeMotionWidget = ({
             </div>
           )}
           <div className={styles.voteResults}>
-            {hasRegisteredProfile && (
+            {hasRegisteredProfile && data?.motionVoteResults && (
               <div className={styles.outcome}>
                 <FormattedMessage
                   {...MSG.outcomeCelebration}
-                  values={{ outcome: true }}
+                  values={{
+                    outcome: !!data?.motionVoteResults?.currentUserVoteSide,
+                  }}
                 />
               </div>
             )}
@@ -126,7 +139,15 @@ const FinalizeMotionWidget = ({
               textValues={{ actionType }}
               appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
             />
-            <VoteResults colony={colony} motionId={motionId} />
+            <VoteResults
+              /*
+               * @NOTE We are not passing down the `motionVoteResults` values
+               * since the `VoteResults` component is designed to work independent
+               * of this widget (since we'll need to use it in a system message)
+               */
+              colony={colony}
+              motionId={motionId}
+            />
           </div>
         </div>
       )}
