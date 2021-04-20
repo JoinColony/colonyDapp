@@ -2,6 +2,8 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 
+import { MiniSpinnerLoader } from '~core/Preloaders';
+
 import {
   Colony,
   useLoggedInUser,
@@ -26,6 +28,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.FinalizeVoteWidget.VoteResults.voteNAY',
     defaultMessage: `No!`,
   },
+  loadingText: {
+    id: 'dashboard.ActionsPage.FinalizeVoteWidget.VoteResults.loadingText',
+    defaultMessage: 'Loading votes results',
+  },
 });
 
 const VoteResults = ({ colony: { colonyAddress }, motionId }: Props) => {
@@ -42,7 +48,11 @@ const VoteResults = ({ colony: { colonyAddress }, motionId }: Props) => {
    * @TODO add proper loading state
    */
   if (loading || !data?.motionVoteResults) {
-    return <div>loading</div>;
+    return (
+      <div className={styles.main}>
+        <MiniSpinnerLoader loadingText={MSG.loadingText} />
+      </div>
+    );
   }
 
   const {
