@@ -22,9 +22,14 @@
   color: var(--dark);
 }
 
-.userStake {
+.userStake,
+.userStake span {
   margin-top: 16px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
+}
+
+.totalStakeRadio + .totalStakeRadio {
+  margin-top: 6px;
 }

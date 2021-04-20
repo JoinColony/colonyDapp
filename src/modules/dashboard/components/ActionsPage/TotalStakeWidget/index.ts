@@ -1,1 +1,1 @@
-export { default } from './TotalStakeWidget';
+export { default, StakeSide } from './TotalStakeWidget';
