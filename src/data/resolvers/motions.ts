@@ -12,6 +12,7 @@ import { Resolvers } from '@apollo/client';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 import { getMotionActionType, getMotionState } from '~utils/events';
+import { MotionVote } from '~utils/colonyMotions';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   UserReputationQuery,
@@ -298,6 +299,63 @@ export const motionsResolvers = ({
         return userVote;
       } catch (error) {
         console.error('Could not fetch user vote revealed state');
+        console.error(error);
+        return null;
+      }
+    },
+    async motionVoteResults(_, { motionId, colonyAddress, userAddress }) {
+      try {
+        const voteResult: {
+          currentUserVoteSide: number | null;
+          yayVotes: string | null;
+          yayVoters: string[];
+          nayVotes: string | null;
+          nayVoters: string[];
+        } = {
+          currentUserVoteSide: null,
+          yayVotes: null,
+          yayVoters: [],
+          nayVotes: null,
+          nayVoters: [],
+        };
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const { votes } = await votingReputationClient.getMotion(motionId);
+        voteResult.yayVotes = votes[1].toString();
+        voteResult.nayVotes = votes[0].toString();
+
+        // @ts-ignore
+        // eslint-disable-next-line max-len
+        const motionVoteRevealedFilter = votingReputationClient.filters.MotionVoteRevealed(
+          bigNumberify(motionId),
+          null,
+          null,
+        );
+        const revealEvents = await getEvents(
+          votingReputationClient,
+          motionVoteRevealedFilter,
+        );
+        revealEvents?.map(({ values: { vote, voter } }) => {
+          if (createAddress(voter) === createAddress(userAddress)) {
+            voteResult.currentUserVoteSide = vote.toNumber();
+          }
+          if (vote.toNumber() === MotionVote.Yay) {
+            voteResult.yayVoters.push(createAddress(voter));
+          }
+          /*
+           * @NOTE We expressly declare NAY rather then using "else" to prevent
+           * any other *unexpected* values coming from the chain messing up our
+           * data (eg if vote was 2 due to weird issues)
+           */
+          if (vote.toNumber() === MotionVote.Nay) {
+            voteResult.nayVoters.push(createAddress(voter));
+          }
+        });
+        return voteResult;
+      } catch (error) {
+        console.error('Could not fetch motion voting results');
         console.error(error);
         return null;
       }
