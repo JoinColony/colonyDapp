@@ -170,7 +170,7 @@ export const colonyActionsResolvers = ({
           actionType = await getMotionActionType(
             votingClient as ExtensionClient,
             colonyClient as ColonyClient,
-            motionCreatedEvent.values.domainId,
+            motionCreatedEvent.values.motionId,
           );
         } else {
           actionType = getActionType(reverseSortedEvents);

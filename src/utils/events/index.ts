@@ -589,6 +589,7 @@ const getMintTokensMotionValues = async (
     actionInitiator: string;
     recipient: Address;
     tokenAddress: Address;
+    motionDomain: number;
   } = {
     motionState,
     address: motionCreatedEvent.address,
@@ -596,6 +597,7 @@ const getMintTokensMotionValues = async (
     actionInitiator: motionCreatedEvent.values.creator,
     amount: bigNumberify(values.args[0] || '0').toString(),
     tokenAddress,
+    motionDomain: motion.domainId.toNumber(),
   };
 
   return mintTokensMotionValues;
