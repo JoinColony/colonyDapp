@@ -1,9 +1,8 @@
 import { Resolvers } from '@apollo/client';
 import { ClientType, Extension } from '@colony/colony-js';
-import { bigNumberify } from 'ethers/utils';
 
 import { Context } from '~context/index';
-import { MotionVote } from '~utils/colonyMotions';
+import { getMotionRequiredStake, MotionVote } from '~utils/colonyMotions';
 
 export const stakesResolvers = ({
   colonyManager,
@@ -21,7 +20,6 @@ export const stakesResolvers = ({
           ClientType.ColonyClient,
           colonyAddress,
         );
-        const tokenDecimals = await colonyClient.tokenClient.decimals();
         const votingReputationClient = await colonyClient.getExtensionClient(
           Extension.VotingReputation,
         );
@@ -36,16 +34,13 @@ export const stakesResolvers = ({
         // @NOTE There's no prettier compatible solution to this :(
         // eslint-disable-next-line max-len
         const totalStakeFraction = await votingReputationClient.getTotalStakeFraction();
-        const requiredStake = skillRep
-          .mul(totalStakeFraction)
-          .div(bigNumberify(10).pow(tokenDecimals * 2))
-          .toString();
-        const totalStaked = stakes[supportedSide]
-          .div(bigNumberify(10).pow(tokenDecimals))
-          .toString();
-        const userStakeAmount = userStake
-          .div(bigNumberify(10).pow(tokenDecimals))
-          .toString();
+        const requiredStake = getMotionRequiredStake(
+          skillRep,
+          totalStakeFraction,
+          18,
+        ).toString();
+        const totalStaked = stakes[supportedSide].toString();
+        const userStakeAmount = userStake.toString();
 
         return {
           totalStaked,
