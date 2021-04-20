@@ -25,7 +25,7 @@ import CountDownTimer from '~core/CountDownTimer';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
-import TotalStakeWidget from '../TotalStakeWidget';
+import TotalStakeWidget, { StakeSide } from '../TotalStakeWidget';
 import DetailsWidget from '../DetailsWidget';
 import StakingWidget from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
@@ -210,20 +210,16 @@ const MintTokenMotion = ({
           )}
         </div>
         <div className={styles.details}>
-          {motionState !== MotionState.StakeRequired && (
-            <>
-              <TotalStakeWidget
-                colonyAddress={colony.colonyAddress}
-                motionId={motionId}
-              />
-              {!bigNumberify(motionNAYStake || 0).eq(0) && (
-                <TotalStakeWidget
-                  colonyAddress={colony.colonyAddress}
-                  motionId={motionId}
-                  isObjectionStake
-                />
-              )}
-            </>
+          {motionState === MotionState.StakeRequired && (
+            <TotalStakeWidget
+              colonyAddress={colony.colonyAddress}
+              motionId={motionId}
+              stakeSide={
+                bigNumberify(motionNAYStake || 0).eq(0)
+                  ? StakeSide.Motion
+                  : StakeSide.Both
+              }
+            />
           )}
           {(motionState === MotionState.StakeRequired ||
             motionState === MotionState.Motion ||
