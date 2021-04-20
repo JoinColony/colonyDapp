@@ -1601,6 +1601,7 @@ export type MotionVoterRewardQueryVariables = Exact<{
 
 
 export type MotionsVoterRewardQuery = Pick<Query, 'motionVoterReward'>;
+
 export type StakeAmountsForMotionQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
@@ -3829,10 +3830,6 @@ export const MotionVoterRewardDocument = gql`
  *
  * To run a query within a React component, call `useMotionsVoterRewardQuery` and pass it any options that fit your needs.
  * When your component renders, `useMotionsVoterRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * __useStakeAmountsForMotionQuery__
- *
- * To run a query within a React component, call `useStakeAmountsForMotionQuery` and pass it any options that fit your needs.
- * When your component renders, `useStakeAmountsForMotionQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
