@@ -67,7 +67,7 @@ const FinalizeMotionWidget = ({
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const transform = useCallback(
-    mapPayload(({}) => ({
+    mapPayload(() => ({
       colonyAddress,
       walletAddress,
     })),
@@ -86,7 +86,7 @@ const FinalizeMotionWidget = ({
     >
       {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
         <div className={styles.main}>
-          <div>
+          {hasRegisteredProfile && (
             <div className={styles.itemWithForcedBorder}>
               <div className={styles.label}>
                 <div>
@@ -111,14 +111,16 @@ const FinalizeMotionWidget = ({
                 />
               </div>
             </div>
-          </div>
+          )}
           <div className={styles.voteResults}>
-            <div className={styles.outcome}>
-              <FormattedMessage
-                {...MSG.outcomeCelebration}
-                values={{ outcome: true }}
-              />
-            </div>
+            {hasRegisteredProfile && (
+              <div className={styles.outcome}>
+                <FormattedMessage
+                  {...MSG.outcomeCelebration}
+                  values={{ outcome: true }}
+                />
+              </div>
+            )}
             <Heading
               text={MSG.title}
               textValues={{ actionType }}
