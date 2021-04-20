@@ -243,6 +243,7 @@ export const colonyActionsResolvers = ({
           blockNumber,
           motionState: null,
           motionDomain: null,
+          motionNAYStake: null,
           ...actionValues,
         };
       }
