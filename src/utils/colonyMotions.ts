@@ -13,7 +13,7 @@ export enum MotionState {
 
 export enum MotionVote {
   Yay = 1,
-  Nay = 2,
+  Nay = 0,
 }
 
 const MSG = defineMessage({
