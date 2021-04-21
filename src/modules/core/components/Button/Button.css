@@ -339,22 +339,3 @@
 .themeWhite:hover {
   background-color: var(--colony-light-blue);
 }
-
-.themePink {
-  composes: main;
-  border-color: var(--pink);
-  background-color: var(--pink);
-  color: var(--colony-white);
-}
-
-.themePink:hover {
-  border-color: var(--pink);
-  background-color: color-mod(var(--pink) shade(15%));
-  color: var(--colony-white);
-}
-
-.themePink[aria-busy="true"]::after {
-  border-color: var(--colony-white);
-  border-right-color: transparent;
-  border-top-color: transparent;
-}
