@@ -129,10 +129,12 @@ const VoteDetails = ({
               </div>
             </div>
             <div className={styles.value}>
-              <MemberReputation
-                walletAddress={walletAddress}
-                colonyAddress={colonyAddress}
-              />
+              <div className={styles.reputation}>
+                <MemberReputation
+                  walletAddress={walletAddress}
+                  colonyAddress={colonyAddress}
+                />
+              </div>
             </div>
           </div>
           <div className={styles.item}>
