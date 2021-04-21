@@ -4,6 +4,7 @@ import {
   getLogs,
   getBlockTime,
   MotionState as NetworkMotionState,
+  getEvents,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
