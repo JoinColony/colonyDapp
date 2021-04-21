@@ -10,6 +10,7 @@ import {
   Colony,
   useLoggedInUser,
   useMotionUserVoteRevealedQuery,
+  useMotionCurrentUserVotedQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload } from '~utils/actions';
@@ -36,6 +37,10 @@ const MSG = defineMessages({
       other {Reveal your vote to others to claim your reward.}
     }`,
   },
+  titleNotVoted: {
+    id: 'dashboard.ActionsPage.RevealWidget.titleNotVoted',
+    defaultMessage: `Please wait for the voters to reveal their vote.`,
+  },
   voteHiddnInfo: {
     id: 'dashboard.ActionsPage.RevealWidget.voteHiddnInfo',
     defaultMessage: `Your vote is hidden from others.`,
@@ -54,6 +59,14 @@ const RevealWidget = ({
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const { data: voteRevealed } = useMotionUserVoteRevealedQuery({
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+    },
+  });
+
+  const { data: userVoted } = useMotionCurrentUserVotedQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
@@ -84,13 +97,21 @@ const RevealWidget = ({
     >
       {({ handleSubmit, isSubmitting }: FormikProps<FormValues>) => (
         <div className={styles.main}>
-          <Heading
-            text={MSG.title}
-            textValues={{
-              revealed,
-            }}
-            appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
-          />
+          {userVoted?.motionCurrentUserVoted ? (
+            <Heading
+              text={MSG.title}
+              textValues={{
+                revealed,
+              }}
+              appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+            />
+          ) : (
+            <Heading
+              text={MSG.titleNotVoted}
+              appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+            />
+          )}
+
           {revealed ? (
             <>
               {vote === MotionVote.Yay ? (
@@ -122,18 +143,27 @@ const RevealWidget = ({
               )}
             </>
           ) : (
-            <div className={styles.voteHiddenInfo}>
-              <FormattedMessage {...MSG.voteHiddnInfo} />
-            </div>
+            <>
+              {userVoted?.motionCurrentUserVoted && (
+                <div className={styles.voteHiddenInfo}>
+                  <FormattedMessage {...MSG.voteHiddnInfo} />
+                </div>
+              )}
+            </>
           )}
           <VoteDetails
             colony={colony}
             motionId={motionId}
+            showReward={userVoted?.motionCurrentUserVoted}
             buttonComponent={
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
                 text={MSG.buttonReveal}
-                disabled={!hasRegisteredProfile || revealed}
+                disabled={
+                  !hasRegisteredProfile ||
+                  revealed ||
+                  !userVoted?.motionCurrentUserVoted
+                }
                 onClick={() => handleSubmit()}
                 loading={isSubmitting}
               />

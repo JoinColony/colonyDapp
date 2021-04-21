@@ -22,6 +22,7 @@ interface Props {
   colony: Colony;
   motionId: number;
   buttonComponent?: ReactElement;
+  showReward?: boolean;
 }
 
 const MSG = defineMessages({
@@ -67,6 +68,7 @@ const VoteDetails = ({
   colony: { colonyAddress, tokens, nativeTokenAddress },
   buttonComponent,
   motionId,
+  showReward = true,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -110,7 +112,7 @@ const VoteDetails = ({
           <FormattedMessage {...MSG.votingMethodValue} />
         </div>
       </div>
-      {hasRegisteredProfile && (
+      {hasRegisteredProfile && showReward && (
         <>
           <div className={styles.item}>
             <div className={styles.label}>
