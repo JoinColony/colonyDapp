@@ -39,41 +39,33 @@ export const stakesResolvers = ({
         // eslint-disable-next-line max-len
         const userMinStakeFraction = await votingReputationClient.getUserMinStakeFraction();
 
-        const totalStaked = bigNumberify(stakes[1])
-          .div(bigNumberify(10).pow(tokenDecimals))
-          .toNumber();
-        const totalStakeAmount = skillRep
+        const totalYAYStaked = stakes[1];
+        const requiredStake = skillRep
           .mul(totalStakeFraction)
-          .div(bigNumberify(10).pow(tokenDecimals * 2))
-          .toNumber();
+          .div(bigNumberify(10).pow(tokenDecimals))
+          /*
+           * @NOTE This is over-estimating by 1 to counteract a bug in the contracts
+           * To remove after it's fixed
+           */
+          .add(1);
+        const remainingToFullyStaked = requiredStake.sub(totalYAYStaked);
         const userMinStakeAmount = skillRep
           .mul(totalStakeFraction)
           .mul(userMinStakeFraction)
-          .div(bigNumberify(10).pow(tokenDecimals * 3))
-          .toNumber();
-        const formattedReputationAmount = reputationAmount
-          .div(bigNumberify(10).pow(tokenDecimals))
-          .toNumber();
-
-        let maxStake: number;
-        let minStake: number;
-
-        if (formattedReputationAmount >= totalStakeAmount - totalStaked) {
-          maxStake = totalStakeAmount - totalStaked;
-        } else {
-          maxStake = formattedReputationAmount;
-        }
-
-        if (userMinStakeAmount > totalStakeAmount - totalStaked) {
-          minStake = totalStakeAmount - totalStaked;
-        } else {
-          minStake = userMinStakeAmount;
-        }
+          /*
+           * @NOTE 36 in here has a reason.
+           * Both totalStakeFraction and userMinStakeFraction are fixed point 18
+           * meaning they both divide by 10 to the power of 18
+           *
+           * So since we've multiplied by both, we need to divide by
+           * 10 to the power of 18 times 2
+           */
+          .div(bigNumberify(10).pow(36));
 
         return {
-          minStake,
-          maxStake,
-          requiredStake: totalStakeAmount,
+          remainingToFullyStaked: remainingToFullyStaked.toString(),
+          maxUserStake: reputationAmount.toString(),
+          minUserStake: userMinStakeAmount.toString(),
         };
       } catch (error) {
         console.error(error);

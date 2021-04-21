@@ -182,9 +182,9 @@ export default gql`
   }
 
   type StakeLimits {
-    minStake: Int!
-    maxStake: Int!
-    requiredStake: Int!
+    remainingToFullyStaked: String!
+    maxUserStake: String!
+    minUserStake: String!
   }
 
   type UserProfile {

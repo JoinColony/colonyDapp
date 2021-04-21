@@ -833,9 +833,9 @@ export type ProcessedMetaColony = {
 };
 
 export type StakeLimits = {
-  minStake: Scalars['Int'];
-  maxStake: Scalars['Int'];
-  requiredStake: Scalars['Int'];
+  remainingToFullyStaked: Scalars['String'];
+  maxUserStake: Scalars['String'];
+  minUserStake: Scalars['String'];
 };
 
 export type UsersAndRecoveryApprovals = {
@@ -1533,7 +1533,7 @@ export type StakeMotionLimitsQueryVariables = Exact<{
 }>;
 
 
-export type StakeMotionLimitsQuery = { stakeMotionLimits: Pick<StakeLimits, 'minStake' | 'maxStake' | 'requiredStake'> };
+export type StakeMotionLimitsQuery = { stakeMotionLimits: Pick<StakeLimits, 'remainingToFullyStaked' | 'maxUserStake' | 'minUserStake'> };
 
 export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3637,9 +3637,9 @@ export type RecoveryAllEnteredEventsQueryResult = Apollo.QueryResult<RecoveryAll
 export const StakeMotionLimitsDocument = gql`
     query StakeMotionLimits($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $rootHash: String!) {
   stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, rootHash: $rootHash) @client {
-    minStake
-    maxStake
-    requiredStake
+    remainingToFullyStaked
+    maxUserStake
+    minUserStake
   }
 }
     `;
