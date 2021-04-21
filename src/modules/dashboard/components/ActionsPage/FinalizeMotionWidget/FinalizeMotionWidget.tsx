@@ -13,6 +13,7 @@ import {
   Colony,
   useLoggedInUser,
   useMotionVoteResultsQuery,
+  useMotionCurrentUserVotedQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
@@ -82,6 +83,14 @@ const FinalizeMotionWidget = ({
     },
   });
 
+  const { data: userVoted } = useMotionCurrentUserVotedQuery({
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+    },
+  });
+
   const transform = useCallback(
     mapPayload(() => ({
       colonyAddress,
@@ -143,16 +152,19 @@ const FinalizeMotionWidget = ({
             </div>
           )}
           <div className={styles.voteResults}>
-            {hasRegisteredProfile && data?.motionVoteResults && hasVotes && (
-              <div className={styles.outcome}>
-                <FormattedMessage
-                  {...MSG.outcomeCelebration}
-                  values={{
-                    outcome: !!data?.motionVoteResults?.currentUserVoteSide,
-                  }}
-                />
-              </div>
-            )}
+            {hasRegisteredProfile &&
+              data?.motionVoteResults &&
+              hasVotes &&
+              userVoted?.motionCurrentUserVoted && (
+                <div className={styles.outcome}>
+                  <FormattedMessage
+                    {...MSG.outcomeCelebration}
+                    values={{
+                      outcome: !!data?.motionVoteResults?.currentUserVoteSide,
+                    }}
+                  />
+                </div>
+              )}
             {hasVotes && (
               /*
                * @NOTE If we have votes **AND** we're in a finalizable state (this is checked on the action page)
