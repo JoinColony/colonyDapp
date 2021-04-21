@@ -56,6 +56,7 @@ const MintTokenMotion = ({
     colonyDisplayName,
     amount,
     motionState,
+    motionDomain,
     actionInitiator,
   },
   colonyAction,
@@ -188,6 +189,7 @@ const MintTokenMotion = ({
               colony={colony}
               actionType={actionType}
               motionId={motionId}
+              motionDomain={motionDomain}
             />
           )}
           {motionState === MotionState.Reveal && (

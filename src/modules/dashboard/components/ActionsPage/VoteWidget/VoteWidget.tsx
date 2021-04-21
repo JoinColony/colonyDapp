@@ -2,12 +2,14 @@ import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
+import { bigNumberify } from 'ethers/utils';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { ActionForm, CustomRadioGroup, CustomRadioProps } from '~core/Fields';
 import Heading from '~core/Heading';
 
-import { Colony, useLoggedInUser } from '~data/index';
+import { Colony, useLoggedInUser, useUserReputationQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
@@ -24,6 +26,7 @@ interface Props {
   colony: Colony;
   actionType: string;
   motionId: number;
+  motionDomain?: number;
 }
 
 const MSG = defineMessages({
@@ -56,8 +59,17 @@ const VoteWidget = ({
   colony,
   actionType,
   motionId,
+  motionDomain = ROOT_DOMAIN_ID,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+
+  const { data: userReputationData } = useUserReputationQuery({
+    variables: {
+      address: walletAddress,
+      colonyAddress,
+      domainId: motionDomain,
+    },
+  });
 
   const transform = useCallback(
     mapPayload(({ vote }) => ({
@@ -69,6 +81,9 @@ const VoteWidget = ({
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
+  const hasReputationToVote = bigNumberify(
+    userReputationData?.userReputation || 0,
+  ).gt(0);
 
   const options: CustomRadioProps[] = [
     {
@@ -125,11 +140,17 @@ const VoteWidget = ({
           <VoteDetails
             colony={colony}
             motionId={motionId}
+            showReward={hasReputationToVote}
             buttonComponent={
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
                 text={MSG.buttonVote}
-                disabled={!isValid || !hasRegisteredProfile || !values.vote}
+                disabled={
+                  !isValid ||
+                  !hasRegisteredProfile ||
+                  !values.vote ||
+                  !hasReputationToVote
+                }
                 onClick={() => handleSubmit()}
                 loading={isSubmitting}
               />
