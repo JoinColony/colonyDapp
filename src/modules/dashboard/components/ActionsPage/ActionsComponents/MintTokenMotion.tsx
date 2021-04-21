@@ -59,7 +59,6 @@ const MintTokenMotion = ({
     annotationHash,
     colonyDisplayName,
     amount,
-    motionId,
     motionState,
     motionDomain,
     actionInitiator,
@@ -200,8 +199,7 @@ const MintTokenMotion = ({
             <StakingWidget
               motionId={motionId}
               motionDomainId={motionDomain}
-              colonyAddress={colony.colonyAddress}
-              tokenDecimals={decimals}
+              colony={colony}
             />
           )}
           {motionState === MotionState.Voting && (

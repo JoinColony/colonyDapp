@@ -2,23 +2,27 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 
-import { useLoggedInUser, useStakeMotionLimitsQuery } from '~data/index';
-import { ActionTypes } from '~redux/index';
 import Heading from '~core/Heading';
 import { ActionForm } from '~core/Fields';
 import Slider from '~core/Slider';
-import { Address } from '~types/index';
-import { mapPayload, pipe } from '~utils/actions';
-
-import styles from './StakingWidget.css';
 import Button from '~core/Button';
 
+import {
+  Colony,
+  useLoggedInUser,
+  useStakeMotionLimitsQuery,
+} from '~data/index';
+import { ActionTypes } from '~redux/index';
+import { mapPayload, pipe } from '~utils/actions';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+
+import styles from './StakingWidget.css';
+
 type Props = {
+  colony: Colony;
   motionId: number;
   motionDomainId: number;
   rootHash: string;
-  colonyAddress: Address;
-  tokenDecimals: number;
 };
 
 const displayName = 'StakingWidget';
@@ -43,11 +47,10 @@ const MSG = defineMessages({
 });
 
 const StakingWidget = ({
+  colony: { colonyAddress, tokens, nativeTokenAddress },
   motionId,
   motionDomainId,
   rootHash,
-  colonyAddress,
-  tokenDecimals,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -60,11 +63,19 @@ const StakingWidget = ({
     },
   });
 
+  const nativeToken = tokens.find(
+    ({ address }) => address === nativeTokenAddress,
+  );
+
   const transform = useCallback(
     pipe(
       mapPayload(({ amount }) => {
         return {
-          amount: bigNumberify(amount).mul(bigNumberify(10).pow(tokenDecimals)),
+          amount: bigNumberify(amount).mul(
+            bigNumberify(10).pow(
+              nativeToken?.decimals || DEFAULT_TOKEN_DECIMALS,
+            ),
+          ),
           userAddress: walletAddress,
           rootHash,
           colonyAddress,
