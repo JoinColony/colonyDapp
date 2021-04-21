@@ -198,6 +198,14 @@ export const motionsResolvers = ({
         }
       }
 
+      if (motionNetworkState === NetworkMotionState.Failed) {
+        systemMessages.push({
+          type: ActionsPageFeedType.SystemMessage,
+          name: SystemMessagesName.MotionHasFailedNotFinalizable,
+          createdAt: motion.events[1].toNumber() * 1000,
+        });
+      }
+
       return Promise.all(systemMessages);
     },
     async motionVoterReward(_, { motionId, colonyAddress, userAddress }) {
