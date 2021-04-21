@@ -56,8 +56,8 @@ export interface EventValues {
   staker?: string;
   stakeAmount?: BigNumber;
   vote?: BigNumber;
-  motionTag: ReactElement;
-  objectionTag: ReactElement;
+  motionTag?: ReactElement;
+  objectionTag?: ReactElement;
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };
