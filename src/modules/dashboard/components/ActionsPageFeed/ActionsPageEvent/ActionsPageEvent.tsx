@@ -7,6 +7,9 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
 import ColorTag, { Color } from '~core/ColorTag';
 import FriendlyName from '~core/FriendlyName';
+import MemberReputation from '~core/MemberReputation';
+import Tag from '~core/Tag';
+import Numeral from '~core/Numeral';
 
 import {
   ColonyAction,
@@ -26,11 +29,14 @@ import {
   getColonyRoleSetMessageDescriptorsIds,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
+import motionSpecificStyles from '../../ActionsPage/ActionsComponents/MintTokenMotion.css';
 
 import styles from './ActionsPageEvent.css';
 
@@ -77,7 +83,7 @@ const ActionsPageEvent = ({
   values,
   emmitedBy,
   actionData,
-  colony: { colonyAddress },
+  colony: { colonyAddress, nativeTokenAddress, tokens },
   colony,
   children,
 }: Props) => {
@@ -87,7 +93,7 @@ const ActionsPageEvent = ({
   );
 
   const initiator = useUser(
-    values?.agent || values?.user || values?.creator || '',
+    values?.agent || values?.user || values?.creator || values?.staker || '',
   );
 
   const [
@@ -288,6 +294,10 @@ const ActionsPageEvent = ({
 
   const { domainPurpose, domainName, domainColor } = actionData;
 
+  const colonyNativeToken = tokens.find(
+    ({ address }) => address === nativeTokenAddress,
+  );
+
   return (
     <div className={styles.main}>
       <div className={styles.wrapper}>
@@ -334,6 +344,39 @@ const ActionsPageEvent = ({
                   </span>
                 ),
                 storageSlot: values?.slot?.toHexString(),
+                amountTag: (
+                  <div className={styles.amountTag}>
+                    <Tag
+                      appearance={{
+                        theme: 'primary',
+                        colorSchema: 'inverted',
+                        fontSize: 'tiny',
+                        margin: 'none',
+                      }}
+                    >
+                      <Numeral
+                        value={values?.stakeAmount || 0}
+                        unit={getTokenDecimalsWithFallback(
+                          colonyNativeToken?.decimals,
+                        )}
+                        suffix={` ${colonyNativeToken?.symbol}`}
+                      />
+                    </Tag>
+                  </div>
+                ),
+                staker: (
+                  <>
+                    <span className={styles.userDecoration}>
+                      <FriendlyName user={initiator} autoShrinkAddress />
+                    </span>
+                    <div className={motionSpecificStyles.reputation}>
+                      <MemberReputation
+                        walletAddress={values?.staker || ''}
+                        colonyAddress={colony.colonyAddress}
+                      />
+                    </div>
+                  </>
+                ),
               }}
             />
           </div>

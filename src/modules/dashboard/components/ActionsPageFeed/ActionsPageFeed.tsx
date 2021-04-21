@@ -1,6 +1,7 @@
 import React, { useState, useMemo, ReactElement, ReactNode } from 'react';
 import { nanoid } from 'nanoid';
 import { defineMessages } from 'react-intl';
+import { BigNumber } from 'ethers/utils';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
@@ -52,6 +53,8 @@ export interface EventValues {
   toValue?: string;
   fromValue?: string;
   initiator?: string | ReactElement;
+  staker?: string;
+  stakeAmount?: BigNumber;
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };

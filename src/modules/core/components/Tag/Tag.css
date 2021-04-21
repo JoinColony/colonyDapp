@@ -96,12 +96,19 @@
   color: var(--danger);
 }
 
-.fontSizeTiny {
+.fontSizeTiny,
+.fontSizeTiny span {
   font-size: 9px;
+  line-height: 15px;
 }
 
 .fontSizeSmall {
   font-size: var(--size-tiny);
+}
+
+.marginNone,
+.baseStyles + .marginNone {
+  margin: 0;
 }
 
 .main {
