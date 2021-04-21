@@ -4,6 +4,7 @@ import {
   getLogs,
   getBlockTime,
   MotionState as NetworkMotionState,
+  getEvents,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
@@ -242,6 +243,63 @@ export const motionsResolvers = ({
       } catch (error) {
         console.error(error);
         return [];
+      }
+    },
+    async motionCurrentUserVoted(_, { motionId, colonyAddress, userAddress }) {
+      try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        // @ts-ignore
+        // eslint-disable-next-line max-len
+        const motionVoteFilter = votingReputationClient.filters.MotionVoteSubmitted(
+          bigNumberify(motionId),
+          userAddress,
+        );
+        const voteSubmittedEvents = await getEvents(
+          votingReputationClient,
+          motionVoteFilter,
+        );
+        return !!voteSubmittedEvents.length;
+      } catch (error) {
+        console.error('Could not fetch current user vote status');
+        console.error(error);
+        return null;
+      }
+    },
+    async motionUserVoteRevealed(_, { motionId, colonyAddress, userAddress }) {
+      try {
+        let userVote = {
+          revealed: false,
+          vote: null,
+        };
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        // @ts-ignore
+        // eslint-disable-next-line max-len
+        const motionVoteRevealedFilter = votingReputationClient.filters.MotionVoteRevealed(
+          bigNumberify(motionId),
+          userAddress,
+          null,
+        );
+        const [userReveal] = await getEvents(
+          votingReputationClient,
+          motionVoteRevealedFilter,
+        );
+        if (userReveal) {
+          userVote = {
+            revealed: true,
+            vote: userReveal.values.vote.toNumber(),
+          };
+        }
+        return userVote;
+      } catch (error) {
+        console.error('Could not fetch user vote revealed state');
+        console.error(error);
+        return null;
       }
     },
   },

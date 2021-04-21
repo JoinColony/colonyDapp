@@ -1,0 +1,21 @@
+.main {
+  display: block;
+  margin: 0px 0 100px 0;
+}
+
+.main h4 {
+  padding: 20px 0 10px;
+}
+
+.main label {
+  cursor: default;
+}
+
+.voteHiddenInfo {
+  padding: 12px 0;
+  background-color: color-mod(var(--text-disabled) alpha(12%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  color: color-mod(var(--temp-grey-blue-7) alpha(50%));
+}

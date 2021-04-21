@@ -249,6 +249,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     domainPurpose
     domainColor
     motionState
+    motionDomain
     roles {
       id
       setTo
@@ -388,6 +389,17 @@ query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
 
 query MotionsVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
   motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
+}
+
+query MotionUserVoteRevealed($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionUserVoteRevealed(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    revealed
+    vote
+  }
+}
+
+query MotionCurrentUserVoted($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionCurrentUserVoted(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
 }
 
 # The Graph
