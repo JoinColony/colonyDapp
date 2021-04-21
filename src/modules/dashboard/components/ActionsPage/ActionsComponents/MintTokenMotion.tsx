@@ -195,7 +195,9 @@ const MintTokenMotion = ({
           />
         </div>
         <div className={styles.details}>
-          {motionState === MotionState.StakeRequired && (
+          {(motionState === MotionState.StakeRequired ||
+            motionState === MotionState.Motion ||
+            motionState === MotionState.Objection) && (
             <StakingWidget
               motionId={motionId}
               motionDomainId={motionDomain}

@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
+import moveDecimal from 'move-decimal-point';
 
 import Heading from '~core/Heading';
 import { ActionForm } from '~core/Fields';
@@ -15,7 +16,7 @@ import {
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload, pipe } from '~utils/actions';
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
 
@@ -74,23 +75,45 @@ const StakingWidget = ({
 
   const transform = useCallback(
     pipe(
+      // eslint-disable-next-line consistent-return
       mapPayload(({ amount }) => {
-        return {
-          amount: bigNumberify(amount).mul(
-            bigNumberify(10).pow(
-              nativeToken?.decimals || DEFAULT_TOKEN_DECIMALS,
+        if (data?.stakeMotionLimits) {
+          const { remainingToFullyStaked } = data.stakeMotionLimits;
+          const maxStake = parseFloat(
+            moveDecimal(
+              remainingToFullyStaked,
+              -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
             ),
-          ),
-          userAddress: walletAddress,
-          rootHash,
-          colonyAddress,
-          motionId: bigNumberify(motionId),
-          motionDomainId,
-          vote: bigNumberify(1),
-        };
+          ).toFixed(2);
+          return {
+            /*
+             * @NOTE Compensate for the lack of granularity in the slider
+             * This is in order to be able to fully stake a motion
+             *
+             * If we reached the max of what the slider can show, just add some
+             * extra in order to ensure we reach the required stake
+             *
+             * We're relying on the contracts here, since we can sent over the
+             * required stake limit, and the contract call will discard it
+             * (no, it's not lost)
+             *
+             * Example:
+             * Required stake is 18.771889487905761358 but the slider can only
+             * show 18.77 When we send this value, we'll do 18.77 + 0.01, that
+             * way we ensure that we can fully stake
+             */
+            amount: maxStake === amount ? amount + 0.01 : amount,
+            userAddress: walletAddress,
+            rootHash,
+            colonyAddress,
+            motionId: bigNumberify(motionId),
+            motionDomainId,
+            vote: bigNumberify(1),
+          };
+        }
       }),
     ),
-    [walletAddress, colonyAddress, motionId],
+    [walletAddress, colonyAddress, motionId, data],
   );
 
   /*
@@ -101,13 +124,30 @@ const StakingWidget = ({
   }
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const { minStake, maxStake, requiredStake } = data.stakeMotionLimits;
+  const {
+    remainingToFullyStaked,
+    maxUserStake,
+    minUserStake,
+  } = data.stakeMotionLimits;
+
+  const remainingToStake = moveDecimal(
+    remainingToFullyStaked,
+    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+  );
+  const userStakeTopLimit = moveDecimal(
+    maxUserStake,
+    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+  );
+  const userStakeBottomLimit = moveDecimal(
+    minUserStake,
+    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+  );
 
   return (
     <div className={styles.main}>
       <ActionForm
         initialValues={{
-          amount: minStake,
+          amount: parseFloat(userStakeBottomLimit),
         }}
         submit={ActionTypes.MOTION_STAKE}
         error={ActionTypes.MOTION_STAKE_ERROR}
@@ -134,16 +174,17 @@ const StakingWidget = ({
             <p className={styles.description}>
               <FormattedMessage {...MSG.description} />
             </p>
-            <span
-              className={styles.amount}
-            >{`${values.amount} ${nativeToken?.symbol}`}</span>
+            <span className={styles.amount}>{`${parseFloat(
+              values.amount,
+            ).toFixed(2)} ${nativeToken?.symbol}`}</span>
             <div className={styles.sliderContainer}>
               <Slider
                 name="amount"
                 value={values.amount}
-                min={minStake}
-                max={requiredStake}
-                limit={maxStake}
+                min={parseFloat(userStakeBottomLimit)}
+                max={parseFloat(remainingToStake)}
+                limit={parseFloat(userStakeTopLimit)}
+                step={0.01}
                 disabled={!hasRegisteredProfile}
               />
             </div>
