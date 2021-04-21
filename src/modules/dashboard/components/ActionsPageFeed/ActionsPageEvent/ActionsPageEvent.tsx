@@ -30,6 +30,7 @@ import {
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { MotionVote } from '~utils/colonyMotions';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
@@ -360,6 +361,7 @@ const ActionsPageEvent = ({
                           colonyNativeToken?.decimals,
                         )}
                         suffix={` ${colonyNativeToken?.symbol}`}
+                        truncate={2}
                       />
                     </Tag>
                   </div>
@@ -377,6 +379,9 @@ const ActionsPageEvent = ({
                     </div>
                   </>
                 ),
+                backedSideTag: values?.vote?.eq(MotionVote.Yay)
+                  ? values.motionTag
+                  : values?.objectionTag,
               }}
             />
           </div>
