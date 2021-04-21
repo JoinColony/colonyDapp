@@ -56,40 +56,48 @@ export const MOTION_TAG_MAP = {
     theme: 'primary',
     colorSchema: 'fullColor',
     name: MSG.motionTag,
+    tagName: 'motionTag',
   },
   [MotionState.StakeRequired]: {
     theme: 'pink',
     colorSchema: 'fullColor',
     name: MSG.stakeRequiredTag,
+    tagName: 'stakeRequiredTag',
   },
   [MotionState.Voting]: {
     theme: 'golden',
     colorSchema: 'fullColor',
     name: MSG.votingTag,
+    tagName: 'votingTag',
   },
   [MotionState.Reveal]: {
     theme: 'blue',
     colorSchema: 'fullColor',
     name: MSG.revealTag,
+    tagName: 'revealTag',
   },
   [MotionState.Objection]: {
     theme: 'pink',
     colorSchema: 'fullColor',
     name: MSG.objectionTag,
+    tagName: 'objectionTag',
   },
   [MotionState.Failed]: {
     theme: 'pink',
     colorSchema: 'plain',
     name: MSG.failedTag,
+    tagName: 'failedTag',
   },
   [MotionState.Passed]: {
     theme: 'primary',
     colorSchema: 'plain',
     name: MSG.passedTag,
+    tagName: 'passedTag',
   },
   [MotionState.Invalid]: {
     theme: 'pink',
     colorSchema: 'plain',
     name: MSG.invalidTag,
+    tagName: 'invalidTag',
   },
 };

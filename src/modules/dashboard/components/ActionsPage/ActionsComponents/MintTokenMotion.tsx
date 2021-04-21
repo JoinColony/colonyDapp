@@ -47,6 +47,14 @@ interface MotionValue {
   motionId: number;
 }
 
+const getTags = () => {
+  return Object.values(MOTION_TAG_MAP).reduce((map, object) => {
+    const { theme, colorSchema } = object;
+    map[object.tagName] = <Tag text={object.name} appearance={{ theme, colorSchema }} />
+    return map
+  }, {});
+}
+
 const MintTokenMotion = ({
   colony,
   colonyAction: {
@@ -65,10 +73,8 @@ const MintTokenMotion = ({
   transactionHash,
   initiator,
 }: Props) => {
-  const motionTag = MOTION_TAG_MAP[MotionState.Motion];
-  const passedTag = MOTION_TAG_MAP[MotionState.Passed];
-  const revealTag = MOTION_TAG_MAP[MotionState.Reveal];
-  const objectionTag = MOTION_TAG_MAP[MotionState.Objection];
+  const {motionTag, passedTag, revealTag, failedTag, objectionTag} = getTags();
+
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
   );
@@ -112,19 +118,15 @@ const MintTokenMotion = ({
         autoShrinkAddress
       />
     ),
-    motionTag: <Tag text={motionTag.name} appearance={{ theme: 'primary' }} />,
+    motionTag,
     passedTag: (
       <span className={motionSpecificStyles.tagWrapper}>
-        <Tag
-          text={passedTag.name}
-          appearance={{ theme: 'primary', colorSchema: 'plain' }}
-        />
+        {passedTag}
       </span>
     ),
-    revealTag: <Tag text={revealTag.name} appearance={{ theme: 'blue' }} />,
-    objectionTag: (
-      <Tag text={objectionTag.name} appearance={{ theme: 'danger' }} />
-    ),
+    objectionTag,
+    revealTag,
+    failedTag,
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
 
