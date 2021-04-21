@@ -183,7 +183,10 @@ const MintTokenMotion = ({
               colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
             }}
           />
-          <ObjectButton colonyAddress={colony.colonyAddress} />
+          <ObjectButton
+            colonyAddress={colony.colonyAddress}
+            tokenDecimals={decimals}
+          />
         </p>
         <div className={styles.countdownContainer}>
           <CountDownTimer

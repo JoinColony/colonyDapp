@@ -72,16 +72,18 @@ const RaiseObjectionDialogForm = ({
         />
       </DialogSection>
       <DialogSection>
-        {/* will be corrected when staking widget PR is merged */}
-        {/* @ts-ignore */}
-        <Slider
-          value={10}
-          name="slider"
-          appearance={{ theme: 'danger', size: 'thick' }}
-          limit={100}
-          max={100}
-          // onChange={() => console.log('CHANGE slider')}
-        />
+        <div className={styles.slider}>
+          {/* will be corrected when staking widget PR is merged */}
+          {/* @ts-ignore */}
+          <Slider
+            value={10}
+            name="slider"
+            appearance={{ theme: 'danger', size: 'thick' }}
+            limit={100}
+            max={100}
+            // onChange={() => console.log('CHANGE slider')}
+          />
+        </div>
       </DialogSection>
       <DialogSection>
         <Annotations label={MSG.annotation} name="annotation" maxLength={90} />

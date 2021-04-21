@@ -12,12 +12,18 @@ const MSG = defineMessages({
   },
 });
 
-const ObjectButton = ({ colonyAddress }: { colonyAddress: string }) => {
+const ObjectButton = ({
+  colonyAddress,
+  tokenDecimals,
+}: {
+  colonyAddress: string;
+  tokenDecimals: number;
+}) => {
   const openRaiseObjectionDialog = useDialog(RaiseObjectionDialog);
 
   const handleRaiseObjection = useCallback(
-    () => openRaiseObjectionDialog({ colonyAddress }),
-    [colonyAddress, openRaiseObjectionDialog],
+    () => openRaiseObjectionDialog({ colonyAddress, tokenDecimals }),
+    [colonyAddress, openRaiseObjectionDialog, tokenDecimals],
   );
 
   return (
