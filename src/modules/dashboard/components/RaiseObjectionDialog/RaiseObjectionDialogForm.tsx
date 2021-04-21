@@ -8,6 +8,7 @@ import DialogSection from '~core/Dialog/DialogSection';
 import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
+import Slider from '~core/Slider';
 
 import { FormValues } from './RaiseObjectionDialog';
 import styles from './RaiseObjectionDialogForm.css';
@@ -68,6 +69,18 @@ const RaiseObjectionDialogForm = ({
               </a>
             ),
           }}
+        />
+      </DialogSection>
+      <DialogSection>
+        {/* will be corrected when staking widget PR is merged */}
+        {/* @ts-ignore */}
+        <Slider
+          value={10}
+          name="slider"
+          appearance={{ theme: 'danger', size: 'thick' }}
+          limit={100}
+          max={100}
+          // onChange={() => console.log('CHANGE slider')}
         />
       </DialogSection>
       <DialogSection>
