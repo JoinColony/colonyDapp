@@ -197,7 +197,6 @@ const MintTokenMotion = ({
             <StakingWidget
               motionId={motionId}
               motionDomainId={motionDomain}
-              rootHash={rootHash}
               colonyAddress={colony.colonyAddress}
               tokenDecimals={decimals}
             />

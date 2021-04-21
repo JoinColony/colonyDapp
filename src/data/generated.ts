@@ -481,8 +481,8 @@ export type QueryRecoverySystemMessagesForSessionArgs = {
 export type QueryStakeMotionLimitsArgs = {
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
-  motionId: Scalars['String'];
-  tokenDecimals: Scalars['Int'];
+  motionId: Scalars['Int'];
+  rootHash: Scalars['String'];
 };
 
 
@@ -714,9 +714,7 @@ export type ColonyAction = {
   domainPurpose: Scalars['String'];
   domainColor: Scalars['String'];
   blockNumber: Scalars['Int'];
-  motionId: Scalars['String'];
-  motionDomainId: Scalars['Int'];
-  rootHash: Scalars['String'];
+  motionRootHash?: Maybe<Scalars['String']>;
   motionState?: Maybe<Scalars['String']>;
   motionDomain: Scalars['Int'];
 };
@@ -1425,11 +1423,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-<<<<<<< HEAD
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber'>
-=======
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionId' | 'motionDomainId' | 'rootHash' | 'motionState' | 'blockNumber'>
->>>>>>> Added stakeMotionLImits query and motion data to colonyAction
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionRootHash' | 'motionState' | 'motionDomain' | 'blockNumber'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -1535,8 +1529,8 @@ export type RecoveryAllEnteredEventsQuery = { recoveryAllEnteredEvents: Array<Pi
 export type StakeMotionLimitsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
-  motionId: Scalars['String'];
-  tokenDecimals: Scalars['Int'];
+  motionId: Scalars['Int'];
+  rootHash: Scalars['String'];
 }>;
 
 
@@ -3160,9 +3154,7 @@ export const ColonyActionDocument = gql`
     domainName
     domainPurpose
     domainColor
-    motionId
-    motionDomainId
-    rootHash
+    motionRootHash
     motionState
     motionDomain
     roles {
@@ -3645,8 +3637,8 @@ export type RecoveryAllEnteredEventsQueryHookResult = ReturnType<typeof useRecov
 export type RecoveryAllEnteredEventsLazyQueryHookResult = ReturnType<typeof useRecoveryAllEnteredEventsLazyQuery>;
 export type RecoveryAllEnteredEventsQueryResult = Apollo.QueryResult<RecoveryAllEnteredEventsQuery, RecoveryAllEnteredEventsQueryVariables>;
 export const StakeMotionLimitsDocument = gql`
-    query StakeMotionLimits($colonyAddress: String!, $userAddress: String!, $motionId: String!, $tokenDecimals: Int!) {
-  stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, tokenDecimals: $tokenDecimals) @client {
+    query StakeMotionLimits($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $rootHash: String!) {
+  stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, rootHash: $rootHash) @client {
     minStake
     maxStake
     requiredStake
@@ -3669,7 +3661,7 @@ export const StakeMotionLimitsDocument = gql`
  *      colonyAddress: // value for 'colonyAddress'
  *      userAddress: // value for 'userAddress'
  *      motionId: // value for 'motionId'
- *      tokenDecimals: // value for 'tokenDecimals'
+ *      rootHash: // value for 'rootHash'
  *   },
  * });
  */
