@@ -97,18 +97,26 @@ export const motionsResolvers = ({
         (firstEvent, secondEvent) =>
           secondEvent.createdAt - firstEvent.createdAt,
       );
+      const blocktime = await getBlockTime(networkClient.provider, 'latest');
 
-      // or motion.events[1] is in past
-      if (motionNetworkState === NetworkMotionState.Reveal) {
+      const timeToSubmitMS = motion.events[1].toNumber() * 1000;
+      const timeToSubmitInPast = timeToSubmitMS < blocktime;
+
+      if (
+        motionNetworkState === NetworkMotionState.Reveal ||
+        timeToSubmitInPast
+      ) {
         const newestVoteSubmittedEvent = sortedEvents.find(
           (event) =>
             event.name === ColonyAndExtensionsEvents.MotionVoteSubmitted,
         );
-        systemMessages.push({
-          type: ActionsPageFeedType.SystemMessage,
-          name: SystemMessagesName.MotionRevealPhase,
-          createdAt: newestVoteSubmittedEvent.createdAt,
-        });
+        if (newestVoteSubmittedEvent) {
+          systemMessages.push({
+            type: ActionsPageFeedType.SystemMessage,
+            name: SystemMessagesName.MotionRevealPhase,
+            createdAt: newestVoteSubmittedEvent.createdAt,
+          });
+        }
       }
 
       if (
