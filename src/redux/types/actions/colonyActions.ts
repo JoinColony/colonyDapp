@@ -231,7 +231,7 @@ export type ColonyActionsActionTypes =
         operationName: RootMotionOperationNames;
         colonyAddress: Address;
         colonyName?: string;
-        motionParams: [BigNumber];
+        motionParams: [BigNumber] | [string];
         annotationMessage?: string;
       },
       MetaWithHistory<object>
