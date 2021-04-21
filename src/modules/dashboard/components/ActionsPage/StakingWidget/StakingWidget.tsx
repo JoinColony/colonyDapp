@@ -6,6 +6,7 @@ import Heading from '~core/Heading';
 import { ActionForm } from '~core/Fields';
 import Slider from '~core/Slider';
 import Button from '~core/Button';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import {
   Colony,
@@ -43,6 +44,10 @@ const MSG = defineMessages({
   objectButton: {
     id: 'dashboard.ActionsPage.StakingWidget.objectButton',
     defaultMessage: 'Object',
+  },
+  stakingTooltip: {
+    id: 'dashboard.ActionsPage.StakingWidget.stakingTooltip',
+    defaultMessage: '[TO BE ADDED]',
   },
 });
 
@@ -99,47 +104,66 @@ const StakingWidget = ({
   const { minStake, maxStake, requiredStake } = data.stakeMotionLimits;
 
   return (
-    <ActionForm
-      initialValues={{
-        amount: minStake,
-      }}
-      submit={ActionTypes.MOTION_STAKE}
-      error={ActionTypes.MOTION_STAKE_ERROR}
-      success={ActionTypes.MOTION_STAKE_SUCCESS}
-      transform={transform}
-    >
-      {({ values }) => (
-        <div className={styles.wrapper}>
-          <Heading text={MSG.title} className={styles.title} />
-          <p className={styles.description}>
-            <FormattedMessage {...MSG.description} />
-          </p>
-          <span className={styles.amount}>{values.amount}</span>
-          <div className={styles.sliderContainer}>
-            <Slider
-              name="amount"
-              value={values.amount}
-              min={minStake}
-              max={requiredStake}
-              limit={maxStake}
-              disabled={!hasRegisteredProfile}
-            />
+    <div className={styles.main}>
+      <ActionForm
+        initialValues={{
+          amount: minStake,
+        }}
+        submit={ActionTypes.MOTION_STAKE}
+        error={ActionTypes.MOTION_STAKE_ERROR}
+        success={ActionTypes.MOTION_STAKE_SUCCESS}
+        transform={transform}
+      >
+        {({ values }) => (
+          <div className={styles.wrapper}>
+            <div className={styles.title}>
+              <Heading
+                text={MSG.title}
+                className={styles.title}
+                appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+              />
+              <QuestionMarkTooltip
+                tooltipText={MSG.stakingTooltip}
+                className={styles.help}
+                tooltipClassName={styles.tooltip}
+                tooltipPopperProps={{
+                  placement: 'right',
+                }}
+              />
+            </div>
+            <p className={styles.description}>
+              <FormattedMessage {...MSG.description} />
+            </p>
+            <span
+              className={styles.amount}
+            >{`${values.amount} ${nativeToken?.symbol}`}</span>
+            <div className={styles.sliderContainer}>
+              <Slider
+                name="amount"
+                value={values.amount}
+                min={minStake}
+                max={requiredStake}
+                limit={maxStake}
+                disabled={!hasRegisteredProfile}
+              />
+            </div>
+            <div className={styles.buttonGroup}>
+              <Button
+                appearance={{ theme: 'primary', size: 'medium' }}
+                type="submit"
+                disabled={!hasRegisteredProfile}
+                text={MSG.stakeButton}
+              />
+              <Button
+                appearance={{ theme: 'danger', size: 'medium' }}
+                text={MSG.objectButton}
+                disabled={!hasRegisteredProfile}
+              />
+            </div>
           </div>
-          <div className={styles.buttonGroup}>
-            <Button
-              type="submit"
-              disabled={!hasRegisteredProfile}
-              text={MSG.stakeButton}
-            />
-            <Button
-              appearance={{ theme: 'danger' }}
-              text={MSG.objectButton}
-              disabled={!hasRegisteredProfile}
-            />
-          </div>
-        </div>
-      )}
-    </ActionForm>
+        )}
+      </ActionForm>
+    </div>
   );
 };
 
