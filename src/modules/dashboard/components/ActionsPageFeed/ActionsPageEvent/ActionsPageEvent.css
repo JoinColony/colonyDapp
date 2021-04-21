@@ -47,3 +47,12 @@
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
+
+.amountTag {
+  display: inline-block;
+}
+
+.amountTag > span {
+  margin-top: 2px;
+  vertical-align: top;
+}

@@ -345,22 +345,24 @@ const ActionsPageEvent = ({
                 ),
                 storageSlot: values?.slot?.toHexString(),
                 amountTag: (
-                  <Tag
-                    appearance={{
-                      theme: 'primary',
-                      colorSchema: 'inverted',
-                      fontSize: 'tiny',
-                      margin: 'none',
-                    }}
-                  >
-                    <Numeral
-                      value={values?.stakeAmount || 0}
-                      unit={getTokenDecimalsWithFallback(
-                        colonyNativeToken?.decimals,
-                      )}
-                    />{' '}
-                    {values?.tokenSymbol}
-                  </Tag>
+                  <div className={styles.amountTag}>
+                    <Tag
+                      appearance={{
+                        theme: 'primary',
+                        colorSchema: 'inverted',
+                        fontSize: 'tiny',
+                        margin: 'none',
+                      }}
+                    >
+                      <Numeral
+                        value={values?.stakeAmount || 0}
+                        unit={getTokenDecimalsWithFallback(
+                          colonyNativeToken?.decimals,
+                        )}
+                        suffix={` ${colonyNativeToken?.symbol}`}
+                      />
+                    </Tag>
+                  </div>
                 ),
                 staker: (
                   <>
