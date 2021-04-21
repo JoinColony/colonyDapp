@@ -36,7 +36,7 @@ const MSG = defineMessages({
   },
   votingMethodTooltip: {
     id: 'dashboard.ActionsPage.VoteWidget.votingMethodTooltip',
-    defaultMessage: `Colony makes it possible to utilize different voting methods. Selected vothing method depends on installed extensions. You can change voting method in Governance Policy.`,
+    defaultMessage: `Colony makes it possible to utilize different voting methods. Selected voting method depends on installed extensions. You can change voting method in Governance Policy.`,
   },
   reputationTeamLabel: {
     id: 'dashboard.ActionsPage.VoteWidget.reputationTeamLabel',
@@ -52,7 +52,7 @@ const MSG = defineMessages({
   },
   rewardTooltip: {
     id: 'dashboard.ActionsPage.VoteWidget.rewardTooltip',
-    defaultMessage: `Displays possible reward range for an individual user. If prediction aligns with the winning outcome, than user receives reward. Final value depends on [TO BE ADDED]`,
+    defaultMessage: `Displays possible reward range for an individual user. If prediction aligns with the winning outcome, then user receives reward. Final value depends on [TO BE ADDED]`,
   },
   rulesLabel: {
     id: 'dashboard.ActionsPage.VoteWidget.rulesLabel',
@@ -60,7 +60,7 @@ const MSG = defineMessages({
   },
   rulesTooltip: {
     id: 'dashboard.ActionsPage.VoteWidget.rulesTooltip',
-    defaultMessage: `Voting process goes in stages. User selects option to vote upon. Than reveals the own vote before the ‘Reveal’ stage passes. Later on, user has to claim tokens and finalize transaction.`,
+    defaultMessage: `Voting process goes in stages. User selects option to vote upon. Then reveals the own vote before the ‘Reveal’ stage passes. Later on, user has to claim tokens and finalize transaction.`,
   },
 });
 
