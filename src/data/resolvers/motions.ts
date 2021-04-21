@@ -198,6 +198,25 @@ export const motionsResolvers = ({
         }
       }
 
+      if (
+        motionNetworkState === NetworkMotionState.Finalizable ||
+        motionNetworkState === NetworkMotionState.Finalized
+      ) {
+        const newestVoteRevealed = sortedEvents.find(
+          (event) =>
+            event.name === ColonyAndExtensionsEvents.MotionVoteRevealed,
+        );
+        if (newestVoteRevealed) {
+          if (motion.votes[0].gte(motion.votes[1])) {
+            systemMessages.push({
+              type: ActionsPageFeedType.SystemMessage,
+              name: SystemMessagesName.MotionHasFailedFinalizable,
+              createdAt: newestVoteRevealed.createdAt,
+            });
+          }
+        }
+      }
+
       if (motionNetworkState === NetworkMotionState.Failed) {
         systemMessages.push({
           type: ActionsPageFeedType.SystemMessage,
