@@ -221,18 +221,6 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
       MetaWithHistory<object>
     >
-  | UniqueActionType<
-      ActionTypes.COLONY_MOTION_MINT_TOKENS,
-      {
-        colonyAddress: Address;
-        colonyName?: string;
-        nativeTokenAddress: Address;
-        amount: BigNumber;
-        annotationMessage?: string;
-      },
-      MetaWithHistory<object>
-    >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_MINT_TOKENS_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ROOT_MOTION_SUCCESS,
       MetaWithHistory<object>
@@ -249,10 +237,6 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | ErrorActionType<ActionTypes.COLONY_ROOT_MOTION_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_MINT_TOKENS_SUCCESS,
-      MetaWithHistory<object>
-    >
   | UniqueActionType<
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
       {

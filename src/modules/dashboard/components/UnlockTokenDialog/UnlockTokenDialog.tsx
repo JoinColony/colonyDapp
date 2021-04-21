@@ -23,7 +23,7 @@ type Props = DialogProps &
 const displayName = 'dashboard.UnlockTokenDialog';
 
 const UnlockTokenDialog = ({
-  colony: { colonyAddress, colonyName },
+  colony: { colonyAddress },
   colony,
   cancel,
   close,
@@ -36,7 +36,6 @@ const UnlockTokenDialog = ({
     pipe(
       mergePayload({
         colonyAddress,
-        colonyName,
       }),
       withMeta({ history }),
     ),

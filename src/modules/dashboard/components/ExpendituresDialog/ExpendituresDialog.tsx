@@ -74,7 +74,6 @@ const ExpendituresDialog = ({
   colony: { colonyAddress },
   colony,
   nextStep,
-  isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -100,11 +99,7 @@ const ExpendituresDialog = ({
       title: MSG.paymentTitle,
       description: MSG.paymentDescription,
       icon: 'emoji-dollar-stack',
-      permissionRequired: !(
-        canCreatePayment ||
-        canMakePayment ||
-        isVotingExtensionEnabled
-      ),
+      permissionRequired: !canCreatePayment || !canMakePayment,
       permissionInfoText: !canCreatePayment
         ? MSG.paymentPermissionsText
         : MSG.noOneTxExtension,
