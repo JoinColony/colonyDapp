@@ -287,6 +287,7 @@ export type Query = {
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
   motionUserVoteRevealed: MotionVoteReveal;
+  motionVoteResults: MotionVoteResults;
   motionVoterReward: Scalars['String'];
   motionsSystemMessages: Array<SystemMessage>;
   networkContracts: NetworkContracts;
@@ -411,6 +412,13 @@ export type QueryMotionCurrentUserVotedArgs = {
 
 
 export type QueryMotionUserVoteRevealedArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+};
+
+
+export type QueryMotionVoteResultsArgs = {
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
@@ -829,6 +837,14 @@ export type ActionThatNeedsAttention = {
 export type MotionVoteReveal = {
   revealed: Scalars['Boolean'];
   vote: Scalars['Int'];
+};
+
+export type MotionVoteResults = {
+  currentUserVoteSide: Scalars['Int'];
+  yayVotes: Scalars['String'];
+  yayVoters: Array<Scalars['String']>;
+  nayVotes: Scalars['String'];
+  nayVoters: Array<Maybe<Scalars['String']>>;
 };
 
 export type ByColonyFilter = {
@@ -1526,6 +1542,15 @@ export type MotionUserVoteRevealedQueryVariables = Exact<{
 
 
 export type MotionUserVoteRevealedQuery = { motionUserVoteRevealed: Pick<MotionVoteReveal, 'revealed' | 'vote'> };
+
+export type MotionVoteResultsQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+}>;
+
+
+export type MotionVoteResultsQuery = { motionVoteResults: Pick<MotionVoteResults, 'currentUserVoteSide' | 'yayVotes' | 'yayVoters' | 'nayVotes' | 'nayVoters'> };
 
 export type MotionCurrentUserVotedQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -3720,6 +3745,45 @@ export function useMotionUserVoteRevealedLazyQuery(baseOptions?: Apollo.LazyQuer
 export type MotionUserVoteRevealedQueryHookResult = ReturnType<typeof useMotionUserVoteRevealedQuery>;
 export type MotionUserVoteRevealedLazyQueryHookResult = ReturnType<typeof useMotionUserVoteRevealedLazyQuery>;
 export type MotionUserVoteRevealedQueryResult = Apollo.QueryResult<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>;
+export const MotionVoteResultsDocument = gql`
+    query MotionVoteResults($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionVoteResults(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    currentUserVoteSide
+    yayVotes
+    yayVoters
+    nayVotes
+    nayVoters
+  }
+}
+    `;
+
+/**
+ * __useMotionVoteResultsQuery__
+ *
+ * To run a query within a React component, call `useMotionVoteResultsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionVoteResultsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionVoteResultsQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useMotionVoteResultsQuery(baseOptions?: Apollo.QueryHookOptions<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>) {
+        return Apollo.useQuery<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>(MotionVoteResultsDocument, baseOptions);
+      }
+export function useMotionVoteResultsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>) {
+          return Apollo.useLazyQuery<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>(MotionVoteResultsDocument, baseOptions);
+        }
+export type MotionVoteResultsQueryHookResult = ReturnType<typeof useMotionVoteResultsQuery>;
+export type MotionVoteResultsLazyQueryHookResult = ReturnType<typeof useMotionVoteResultsLazyQuery>;
+export type MotionVoteResultsQueryResult = Apollo.QueryResult<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>;
 export const MotionCurrentUserVotedDocument = gql`
     query MotionCurrentUserVoted($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
   motionCurrentUserVoted(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
