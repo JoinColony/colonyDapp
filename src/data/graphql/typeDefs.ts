@@ -214,7 +214,7 @@ export default gql`
     yayVotes: String!
     yayVoters: [String!]!
     nayVotes: String!
-    nayVoters: [String]!
+    nayVoters: [String!]!
   }
 
   extend type Query {
