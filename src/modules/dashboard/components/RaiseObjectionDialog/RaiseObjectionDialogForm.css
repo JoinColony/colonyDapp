@@ -1,0 +1,16 @@
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.link {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--sky-blue);
+}
+
+.nextButton > button {
+  width: 160px;
+}
