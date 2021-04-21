@@ -82,7 +82,10 @@ const MintTokenMotion = ({
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
   );
-  const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
+  const {
+    motionId,
+    rootHash: motionRootHash,
+  } = (motionCreatedEvent?.values as unknown) as MotionValue;
 
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {

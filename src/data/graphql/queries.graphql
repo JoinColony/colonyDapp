@@ -248,7 +248,6 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     domainName
     domainPurpose
     domainColor
-    motionRootHash
     motionState
     motionDomain
     roles {
