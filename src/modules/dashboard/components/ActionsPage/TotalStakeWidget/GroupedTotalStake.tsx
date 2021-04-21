@@ -5,6 +5,7 @@ import Heading from '~core/Heading';
 import { CustomRadio } from '~core/Fields/Radio';
 import Numeral from '~core/Numeral';
 import { Form } from '~core/Fields';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
@@ -39,6 +40,10 @@ const MSG = defineMessages({
   fullyStaked: {
     id: 'dashboard.ActionsPage.TotalStakeWidget.GroupedTotalStake.fullyStaked',
     defaultMessage: 'Fully staked',
+  },
+  totalStakeTooltip: {
+    id: `dashboard.ActionsPage.TotalStakeWidget.GroupedTotalStake.totalStakeTooltip`,
+    defaultMessage: `[TO BE ADDED WHEN AVAILABLE]`,
   },
 });
 
@@ -76,6 +81,13 @@ const GroupedTotalStake = ({
           }}
           text={MSG.crowdfundStakeTitle}
           className={styles.title}
+        />
+        <QuestionMarkTooltip
+          className={styles.tooltip}
+          tooltipText={MSG.totalStakeTooltip}
+          tooltipPopperProps={{
+            placement: 'right',
+          }}
         />
       </div>
       <div className={styles.totalStakeRadio}>

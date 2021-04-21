@@ -33,3 +33,8 @@
 .totalStakeRadio + .totalStakeRadio {
   margin-top: 6px;
 }
+
+.tooltip {
+  margin-right: auto;
+  margin-left: 8px;
+}
