@@ -244,6 +244,29 @@ export const motionsResolvers = ({
         return [];
       }
     },
+    async motionCurrentUserVoted(_, { motionId, colonyAddress, userAddress }) {
+      try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        // @ts-ignore
+        // eslint-disable-next-line max-len
+        const motionVoteFilter = votingReputationClient.filters.MotionVoteSubmitted(
+          bigNumberify(motionId),
+          userAddress,
+        );
+        const voteSubmittedEvents = await getEvents(
+          votingReputationClient,
+          motionVoteFilter,
+        );
+        return !!voteSubmittedEvents.length;
+      } catch (error) {
+        console.error('Could not fetch current user vote status');
+        console.error(error);
+        return null;
+      }
+    },
     async motionUserVoteRevealed(_, { motionId, colonyAddress, userAddress }) {
       try {
         let userVote = {

@@ -282,6 +282,11 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
     ): MotionVoteReveal!
+    motionCurrentUserVoted(
+      motionId: Int!
+      colonyAddress: String!
+      userAddress: String!
+    ): Boolean!
   }
 
   extend type Mutation {
