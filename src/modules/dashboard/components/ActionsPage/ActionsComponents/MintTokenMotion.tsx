@@ -144,6 +144,12 @@ const MintTokenMotion = ({
     failedTag: (
       <span className={motionSpecificStyles.tagWrapper}>{failedTag}</span>
     ),
+    revealTag: <Tag text={revealTag.name} appearance={{ theme: 'blue' }} />,
+    objectionTag: (
+      <span className={motionSpecificStyles.tagWrapper}>
+        <Tag text={objectionTag.name} appearance={{ theme: 'danger' }} />
+      </span>
+    ),
     ...tags,
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
