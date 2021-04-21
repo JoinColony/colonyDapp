@@ -209,6 +209,14 @@ export default gql`
     vote: Int!
   }
 
+  type MotionVoteResults {
+    currentUserVoteSide: Int!
+    yayVotes: String!
+    yayVoters: [String!]!
+    nayVotes: String!
+    nayVoters: [String!]!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -288,6 +296,11 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
     ): Boolean!
+    motionVoteResults(
+      motionId: Int!
+      colonyAddress: String!
+      userAddress: String!
+    ): MotionVoteResults!
   }
 
   extend type Mutation {

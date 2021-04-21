@@ -41,8 +41,8 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.RevealWidget.titleNotVoted',
     defaultMessage: `Please wait for the voters to reveal their vote.`,
   },
-  voteHiddnInfo: {
-    id: 'dashboard.ActionsPage.RevealWidget.voteHiddnInfo',
+  voteHiddenInfo: {
+    id: 'dashboard.ActionsPage.RevealWidget.voteHiddenInfo',
     defaultMessage: `Your vote is hidden from others.`,
   },
   buttonReveal: {
@@ -146,7 +146,7 @@ const RevealWidget = ({
             <>
               {userVoted?.motionCurrentUserVoted && (
                 <div className={styles.voteHiddenInfo}>
-                  <FormattedMessage {...MSG.voteHiddnInfo} />
+                  <FormattedMessage {...MSG.voteHiddenInfo} />
                 </div>
               )}
             </>

@@ -9,7 +9,7 @@ import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 
-import styles from './VoteResultsWidget.css';
+import styles from './VoteResultsItem.css';
 
 interface Appearance {
   theme?: 'approve' | 'disapprove';
@@ -20,14 +20,14 @@ interface Props {
   value: number;
   maxValue: number;
   maxPercentage?: number;
-  title: MessageDescriptor;
+  title: string | MessageDescriptor;
   voters?: Address[];
   maxAvatars?: number;
 }
 
-const displayName = 'VoteResultsWidget';
+const displayName = `dashboard.ActionPage.FinalizeMotionWidget.VoteResults.VoteResultsItem`;
 
-const VoteResultsWidget = ({
+const VoteResultsItem = ({
   appearance = { theme: 'approve' },
   value,
   maxValue,
@@ -94,6 +94,6 @@ const VoteResultsWidget = ({
   );
 };
 
-VoteResultsWidget.displayName = displayName;
+VoteResultsItem.displayName = displayName;
 
-export default VoteResultsWidget;
+export default VoteResultsItem;

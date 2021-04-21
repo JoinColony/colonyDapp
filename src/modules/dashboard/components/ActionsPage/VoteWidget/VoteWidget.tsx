@@ -135,7 +135,7 @@ const VoteWidget = ({
             options={options}
             currentlyCheckedValue={values.vote}
             name="vote"
-            disabled={!hasRegisteredProfile}
+            disabled={!hasRegisteredProfile || !hasReputationToVote}
           />
           <VoteDetails
             colony={colony}

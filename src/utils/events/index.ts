@@ -557,7 +557,7 @@ export const getMotionState = async (
       return MotionState.Failed;
     }
     case NetworkMotionState.Failed:
-      return MotionState.Failed;
+      return MotionState.Invalid;
     default:
       return MotionState.Invalid;
   }
