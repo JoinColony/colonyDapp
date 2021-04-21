@@ -1,13 +1,8 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import * as yup from 'yup';
 import { bigNumberify } from 'ethers/utils';
 
-import {
-  useLoggedInUser,
-  useStakeMotionLimitsQuery,
-  useUserColonyAddressesQuery,
-} from '~data/index';
+import { useLoggedInUser, useStakeMotionLimitsQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import Heading from '~core/Heading';
 import { ActionForm } from '~core/Fields';
@@ -54,7 +49,8 @@ const StakingWidget = ({
   colonyAddress,
   tokenDecimals,
 }: Props) => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+
   const { data, loading } = useStakeMotionLimitsQuery({
     variables: {
       colonyAddress,
@@ -62,12 +58,6 @@ const StakingWidget = ({
       motionId,
       rootHash,
     },
-  });
-  const { data: userColonyAddressesData } = useUserColonyAddressesQuery({
-    variables: { address: walletAddress },
-  });
-  const validationSchema = yup.object().shape({
-    amount: yup.number().required(),
   });
 
   const transform = useCallback(
@@ -87,15 +77,14 @@ const StakingWidget = ({
     [walletAddress, colonyAddress, motionId],
   );
 
-  if (loading || !data?.stakeMotionLimits || !userColonyAddressesData?.user) {
-    return null;
+  /*
+   * @TODO Add proper loading state
+   */
+  if (loading || !data?.stakeMotionLimits) {
+    return <div>Loading</div>;
   }
 
-  const {
-    user: { colonyAddresses },
-  } = userColonyAddressesData;
-
-  const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
+  const hasRegisteredProfile = !!username && !ethereal;
   const { minStake, maxStake, requiredStake } = data.stakeMotionLimits;
 
   return (
@@ -103,13 +92,12 @@ const StakingWidget = ({
       initialValues={{
         amount: minStake,
       }}
-      validationSchema={validationSchema}
       submit={ActionTypes.MOTION_STAKE}
       error={ActionTypes.MOTION_STAKE_ERROR}
       success={ActionTypes.MOTION_STAKE_SUCCESS}
       transform={transform}
     >
-      {({ values, isValid }) => (
+      {({ values }) => (
         <div className={styles.wrapper}>
           <Heading text={MSG.title} className={styles.title} />
           <p className={styles.description}>
@@ -123,15 +111,20 @@ const StakingWidget = ({
               min={minStake}
               max={requiredStake}
               limit={maxStake}
+              disabled={!hasRegisteredProfile}
             />
           </div>
           <div className={styles.buttonGroup}>
             <Button
               type="submit"
-              disabled={!isValid || !isSubscribed}
+              disabled={!hasRegisteredProfile}
               text={MSG.stakeButton}
             />
-            <Button appearance={{ theme: 'pink' }} text={MSG.objectButton} />
+            <Button
+              appearance={{ theme: 'danger' }}
+              text={MSG.objectButton}
+              disabled={!hasRegisteredProfile}
+            />
           </div>
         </div>
       )}
