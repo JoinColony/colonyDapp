@@ -4,6 +4,8 @@ import { useField } from 'formik';
 
 import 'rc-slider/assets/index.css';
 
+import styles from './Slider.css';
+
 type Appearance = {
   theme?: 'primary' | 'danger';
   size?: 'thin' | 'thick';
@@ -17,6 +19,8 @@ interface Props {
   appearance?: Appearance;
   onChange?: (val: any) => void;
   name: string;
+  disabled?: boolean;
+  step?: number;
 }
 
 const displayName = 'Slider';
@@ -29,6 +33,8 @@ const Slider = ({
   limit,
   appearance,
   name,
+  step = 1,
+  disabled = false,
 }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
   const [, , { setValue }] = useField(name);
@@ -95,40 +101,43 @@ const Slider = ({
   const sizes = SliderSizesObject[appearance?.size || 'thin'];
 
   return (
-    <ReactSlider
-      min={min}
-      step={1}
-      value={sliderValue}
-      onChange={onSliderChange}
-      marks={marks}
-      max={max}
-      trackStyle={{
-        backgroundColor: colors.backgroundColor,
-        height: sizes.height,
-      }}
-      handleStyle={{
-        borderColor: colors.borderColor,
-        borderWidth: 6,
-        height: 15,
-        width: 15,
-        marginTop: -7,
-        backgroundColor: '#FFFFFF',
-      }}
-      dotStyle={{
-        height: sizes.markHeight,
-        width: sizes.markWidth,
-        backgroundColor: '#76748B',
-        border: 0,
-        borderRadius: 0,
-        top: sizes.markPositionTop,
-        marginLeft: 0,
-      }}
-      railStyle={{
-        backgroundColor: '#C2CCCC',
-        height: sizes.height,
-        backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientStopPercentage}%, transparent ${gradientStopPercentage}%)`,
-      }}
-    />
+    <div className={styles.main}>
+      <ReactSlider
+        min={min}
+        step={step}
+        value={sliderValue}
+        onChange={onSliderChange}
+        marks={marks}
+        max={max}
+        disabled={disabled}
+        trackStyle={{
+          backgroundColor: colors.backgroundColor,
+          height: sizes.height,
+        }}
+        handleStyle={{
+          borderColor: colors.borderColor,
+          borderWidth: 6,
+          height: 15,
+          width: 15,
+          marginTop: -7,
+          backgroundColor: '#FFFFFF',
+        }}
+        dotStyle={{
+          height: sizes.markHeight,
+          width: sizes.markWidth,
+          backgroundColor: '#76748B',
+          border: 0,
+          borderRadius: 0,
+          top: sizes.markPositionTop,
+          marginLeft: 0,
+        }}
+        railStyle={{
+          backgroundColor: '#C2CCCC',
+          height: sizes.height,
+          backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientStopPercentage}%, transparent ${gradientStopPercentage}%)`,
+        }}
+      />
+    </div>
   );
 };
 
