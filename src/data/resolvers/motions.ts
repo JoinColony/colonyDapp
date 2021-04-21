@@ -45,7 +45,8 @@ const getMotionEvents = async (
         name,
         values: { amount, ...rest },
       } = parsedLog;
-      const stakeAmount = name === 'MotionStaked' ? amount : null;
+      const stakeAmount =
+        name === ColonyAndExtensionsEvents.MotionStaked ? amount : null;
 
       return {
         type: ActionsPageFeedType.NetworkEvent,
