@@ -14,15 +14,7 @@ import { transactionReady } from '../../core/actionCreators';
 
 function* stakeMotion({
   meta,
-  payload: {
-    userAddress,
-    colonyAddress,
-    motionId,
-    motionDomainId,
-    rootHash,
-    vote,
-    amount,
-  },
+  payload: { userAddress, colonyAddress, motionId, vote, amount },
 }: Action<ActionTypes.MOTION_STAKE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
@@ -39,9 +31,13 @@ function* stakeMotion({
       colonyAddress,
     );
 
+    const { domainId, rootHash } = yield votingReputationClient.getMotion(
+      motionId,
+    );
+
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      motionDomainId,
+      domainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
@@ -51,12 +47,15 @@ function* stakeMotion({
       rootHash,
     );
 
-    const { approveStake, stake } = yield createTransactionChannels(meta.id, [
+    const {
+      approveStake,
+      stakeMotionTransaction,
+    } = yield createTransactionChannels(meta.id, [
       'approveStake',
-      'stake',
+      'stakeMotionTransaction',
     ]);
 
-    const batchKey = 'stake';
+    const batchKey = 'stakeMotion';
 
     const createGroupTransaction = ({ id, index }, config) =>
       fork(createTransaction, id, {
@@ -72,11 +71,11 @@ function* stakeMotion({
       context: ClientType.ColonyClient,
       methodName: 'approveStake',
       identifier: colonyAddress,
-      params: [votingReputationClient.address, motionDomainId, amount],
+      params: [votingReputationClient.address, domainId, amount],
       ready: false,
     });
 
-    yield createGroupTransaction(stake, {
+    yield createGroupTransaction(stakeMotionTransaction, {
       context: ClientType.VotingReputationClient,
       methodName: 'stakeMotionWithProofs',
       identifier: colonyAddress,
@@ -90,11 +89,17 @@ function* stakeMotion({
 
     yield takeFrom(approveStake.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    yield takeFrom(stake.channel, ActionTypes.TRANSACTION_CREATED);
+    yield takeFrom(
+      stakeMotionTransaction.channel,
+      ActionTypes.TRANSACTION_CREATED,
+    );
 
-    yield put(transactionReady(stake.id));
+    yield put(transactionReady(stakeMotionTransaction.id));
 
-    yield takeFrom(stake.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(
+      stakeMotionTransaction.channel,
+      ActionTypes.TRANSACTION_SUCCEEDED,
+    );
 
     yield put<AllActions>({
       type: ActionTypes.MOTION_STAKE_SUCCESS,
@@ -108,6 +113,6 @@ function* stakeMotion({
   return null;
 }
 
-export default function* stakeMotionSaga() {
+export default function* motionSagas() {
   yield takeEvery(ActionTypes.MOTION_STAKE, stakeMotion);
 }

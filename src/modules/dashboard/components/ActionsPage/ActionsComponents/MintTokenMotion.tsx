@@ -83,7 +83,6 @@ const MintTokenMotion = ({
   );
   const {
     motionId,
-    rootHash: motionRootHash,
   } = (motionCreatedEvent?.values as unknown) as MotionValue;
 
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
@@ -198,11 +197,7 @@ const MintTokenMotion = ({
           {(motionState === MotionState.StakeRequired ||
             motionState === MotionState.Motion ||
             motionState === MotionState.Objection) && (
-            <StakingWidget
-              motionId={motionId}
-              motionDomainId={motionDomain}
-              colony={colony}
-            />
+            <StakingWidget motionId={motionId} colony={colony} />
           )}
           {motionState === MotionState.Voting && (
             <VoteWidget

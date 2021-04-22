@@ -19,8 +19,6 @@ import styles from './StakingWidget.css';
 type Props = {
   colony: Colony;
   motionId: number;
-  motionDomainId: number;
-  rootHash: string;
 };
 
 const displayName = 'StakingWidget';
@@ -51,8 +49,6 @@ const MSG = defineMessages({
 const StakingWidget = ({
   colony: { colonyAddress, tokens, nativeTokenAddress },
   motionId,
-  motionDomainId,
-  rootHash,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -61,7 +57,6 @@ const StakingWidget = ({
       colonyAddress,
       userAddress: walletAddress,
       motionId,
-      rootHash,
     },
   });
 
@@ -81,30 +76,34 @@ const StakingWidget = ({
               -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
             ),
           ).toFixed(2);
+          /*
+           * @NOTE Compensate for the lack of granularity in the slider
+           * This is in order to be able to fully stake a motion
+           *
+           * If we reached the max of what the slider can show, just add some
+           * extra in order to ensure we reach the required stake
+           *
+           * We're relying on the contracts here, since we can sent over the
+           * required stake limit, and the contract call will discard it
+           * (no, it's not lost)
+           *
+           * Example:
+           * Required stake is 18.771889487905761358 but the slider can only
+           * show 18.77 When we send this value, we'll do 18.77 + 0.01, that
+           * way we ensure that we can fully stake
+           */
+          const safeAmount = maxStake === amount ? amount + 0.01 : amount;
           return {
-            /*
-             * @NOTE Compensate for the lack of granularity in the slider
-             * This is in order to be able to fully stake a motion
-             *
-             * If we reached the max of what the slider can show, just add some
-             * extra in order to ensure we reach the required stake
-             *
-             * We're relying on the contracts here, since we can sent over the
-             * required stake limit, and the contract call will discard it
-             * (no, it's not lost)
-             *
-             * Example:
-             * Required stake is 18.771889487905761358 but the slider can only
-             * show 18.77 When we send this value, we'll do 18.77 + 0.01, that
-             * way we ensure that we can fully stake
-             */
-            amount: maxStake === amount ? amount + 0.01 : amount,
+            amount: bigNumberify(
+              moveDecimal(
+                safeAmount,
+                getTokenDecimalsWithFallback(nativeToken?.decimals),
+              ),
+            ),
             userAddress: walletAddress,
-            rootHash,
             colonyAddress,
             motionId: bigNumberify(motionId),
-            motionDomainId,
-            vote: bigNumberify(1),
+            vote: 1,
           };
         }
       }),

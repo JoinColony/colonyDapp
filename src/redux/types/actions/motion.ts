@@ -17,9 +17,7 @@ export type MotionActionTypes =
         userAddress: Address;
         colonyAddress: Address;
         motionId: BigNumber;
-        motionDomainId: BigNumber;
-        rootHash: string;
-        vote: BigNumber;
+        vote: number;
         amount: BigNumber;
       },
       MetaWithHistory<object>
