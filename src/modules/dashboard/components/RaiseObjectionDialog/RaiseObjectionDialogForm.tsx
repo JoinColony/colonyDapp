@@ -112,6 +112,7 @@ const RaiseObjectionDialogForm = ({
             appearance={{ theme: 'danger', size: 'large' }}
             text={MSG.stakeButton}
             onClick={() => handleSubmit()}
+            type="submit"
             loading={isSubmitting}
             disabled={!canUserStake}
           />
