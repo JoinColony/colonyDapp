@@ -7,8 +7,10 @@ import ActionsPageFeed, {
   ActionsPageFeedItem,
   SystemMessage,
 } from '~dashboard/ActionsPageFeed';
+import ActionsPageComment from '~dashboard/ActionsPageComment';
 import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
 import {
+  useLoggedInUser,
   Colony,
   ColonyActionQuery,
   TokenInfoQuery,
@@ -83,6 +85,8 @@ const MintTokenMotion = ({
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
   );
   const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
+
+  const { username: currentUserName, ethereal } = useLoggedInUser();
 
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
@@ -193,12 +197,16 @@ const MintTokenMotion = ({
             actionData={colonyAction}
             colony={colony}
           />
-          {/*
-           * @TODO this is the element that will wrap the comment box
-           * Make sure to preserve the ref callback
-           */}
-          <div ref={bottomElementRef} />
-        </div>
+          
+          {currentUserName && !ethereal && (
+            <div ref={bottomElementRef}>
+              <ActionsPageComment
+                transactionHash={transactionHash}
+                colonyAddress={colony.colonyAddress}
+              />
+            </div>
+          )}
+          </div>
         <div className={styles.details}>
           {(motionState === MotionState.StakeRequired ||
             motionState === MotionState.Motion ||
