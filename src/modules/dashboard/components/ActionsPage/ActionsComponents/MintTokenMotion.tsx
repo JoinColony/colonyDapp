@@ -18,7 +18,7 @@ import {
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
-import CountDownTimer from '~core/CountDownTimer';
+import CountdownTimer from '~core/CountdownTimer';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
@@ -145,7 +145,7 @@ const MintTokenMotion = ({
           />
         </p>
         <div className={styles.countdownContainer}>
-          <CountDownTimer
+          <CountdownTimer
             createdAt={actionCreatedAt}
             colonyAddress={colony.colonyAddress}
             text={MSG.stake}

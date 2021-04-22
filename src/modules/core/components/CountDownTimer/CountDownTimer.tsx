@@ -7,28 +7,28 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { useVotingExtensionParamsQuery, useBlockTimeQuery } from '~data/index';
 import { Address } from '~types/index';
 
-import styles from './CountDownTimer.css';
+import styles from './CountdownTimer.css';
 import { calculateTimeLeft } from '~utils/time';
 
 const MSG = defineMessage({
   days: {
-    id: 'CountDownTimer.CountDownTimer.days',
+    id: 'CountdownTimer.CountdownTimer.days',
     defaultMessage: ' {days}d',
   },
   hours: {
-    id: 'CountDownTimer.CountDownTimer.hours',
+    id: 'CountdownTimer.CountdownTimer.hours',
     defaultMessage: ' {hours}h',
   },
   minutes: {
-    id: 'CountDownTimer.CountDownTimer.minutes',
+    id: 'CountdownTimer.CountdownTimer.minutes',
     defaultMessage: ' {minutes}m',
   },
   seconds: {
-    id: 'CountDownTimer.CountDownTimer.seconds',
+    id: 'CountdownTimer.CountdownTimer.seconds',
     defaultMessage: ' {seconds}s',
   },
   loadingText: {
-    id: 'CountDownTimer.CountDownTimer.loadingText',
+    id: 'CountdownTimer.CountdownTimer.loadingText',
     defaultMessage: 'Loading countdown period',
   },
 });
@@ -45,7 +45,7 @@ interface Props {
   tooltipText?: MessageDescriptor | string;
 }
 
-const CountDownTimer = ({
+const CountdownTimer = ({
   text,
   colonyAddress,
   createdAt,
@@ -126,4 +126,4 @@ const CountDownTimer = ({
   );
 };
 
-export default CountDownTimer;
+export default CountdownTimer;
