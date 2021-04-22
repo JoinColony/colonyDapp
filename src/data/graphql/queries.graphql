@@ -371,14 +371,6 @@ query RecoveryAllEnteredEvents($colonyAddress: String!) {
   }
 }
 
-query StakeMotionLimits($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $rootHash: String!) {
-  stakeMotionLimits(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, rootHash: $rootHash) @client {
-    remainingToFullyStaked
-    maxUserStake
-    minUserStake
-  }
-}
-
 query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }
@@ -386,6 +378,14 @@ query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
 # Motions
 #
 #
+
+query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $rootHash: String!) {
+  motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, rootHash: $rootHash) @client {
+    remainingToFullyStaked
+    maxUserStake
+    minUserStake
+  }
+}
 
 query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
   motionsSystemMessages(motionId: $motionId, colonyAddress: $colonyAddress) @client {

@@ -181,7 +181,7 @@ export default gql`
     avatarURL: String
   }
 
-  type StakeLimits {
+  type MotionStakes {
     remainingToFullyStaked: String!
     maxUserStake: String!
     minUserStake: String!
@@ -283,16 +283,16 @@ export default gql`
     networkExtensionVersion(extensionId: String!): Int!
     votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
     blockTime(blockHash: String): Int!
-    motionsSystemMessages(
-      motionId: Int!
-      colonyAddress: String!
-    ): [SystemMessage!]!
-    stakeMotionLimits(
+    motionStakes(
       colonyAddress: String!
       userAddress: String!
       motionId: Int!
       rootHash: String!
-    ): StakeLimits!
+    ): MotionStakes!
+    motionsSystemMessages(
+      motionId: Int!
+      colonyAddress: String!
+    ): [SystemMessage!]!
     motionVoterReward(
       motionId: Int!
       colonyAddress: String!

@@ -9,11 +9,7 @@ import Slider from '~core/Slider';
 import Button from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
-import {
-  Colony,
-  useLoggedInUser,
-  useStakeMotionLimitsQuery,
-} from '~data/index';
+import { Colony, useLoggedInUser, useMotionStakesQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload, pipe } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -60,7 +56,7 @@ const StakingWidget = ({
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
-  const { data, loading } = useStakeMotionLimitsQuery({
+  const { data, loading } = useMotionStakesQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
@@ -77,8 +73,8 @@ const StakingWidget = ({
     pipe(
       // eslint-disable-next-line consistent-return
       mapPayload(({ amount }) => {
-        if (data?.stakeMotionLimits) {
-          const { remainingToFullyStaked } = data.stakeMotionLimits;
+        if (data?.motionStakes) {
+          const { remainingToFullyStaked } = data.motionStakes;
           const maxStake = parseFloat(
             moveDecimal(
               remainingToFullyStaked,
@@ -119,7 +115,7 @@ const StakingWidget = ({
   /*
    * @TODO Add proper loading state
    */
-  if (loading || !data?.stakeMotionLimits) {
+  if (loading || !data?.motionStakes) {
     return <div>Loading</div>;
   }
 
@@ -128,7 +124,7 @@ const StakingWidget = ({
     remainingToFullyStaked,
     maxUserStake,
     minUserStake,
-  } = data.stakeMotionLimits;
+  } = data.motionStakes;
 
   const remainingToStake = moveDecimal(
     remainingToFullyStaked,
