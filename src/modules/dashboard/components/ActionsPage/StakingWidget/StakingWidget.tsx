@@ -130,6 +130,11 @@ const StakingWidget = ({
     remainingToFullyYayStaked,
     -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
   );
+  /*
+   * This basically doubles as the user's reputation
+   * So we can use it to also check if the user can actually stake
+   * If the reputation is 0, they cannot stake at all
+   */
   const userStakeTopLimit = moveDecimal(
     maxUserStake,
     -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
@@ -138,6 +143,11 @@ const StakingWidget = ({
     minUserStake,
     -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
   );
+
+  const canUserStake =
+    hasRegisteredProfile &&
+    bigNumberify(maxUserStake).gt(0) &&
+    bigNumberify(maxUserStake).gte(bigNumberify(minUserStake));
 
   return (
     <div className={styles.main}>
@@ -181,20 +191,20 @@ const StakingWidget = ({
                 max={parseFloat(remainingToStake)}
                 limit={parseFloat(userStakeTopLimit)}
                 step={0.01}
-                disabled={!hasRegisteredProfile}
+                disabled={!canUserStake}
               />
             </div>
             <div className={styles.buttonGroup}>
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
                 type="submit"
-                disabled={!hasRegisteredProfile}
+                disabled={!canUserStake}
                 text={MSG.stakeButton}
               />
               <Button
                 appearance={{ theme: 'danger', size: 'medium' }}
                 text={MSG.objectButton}
-                disabled={!hasRegisteredProfile}
+                disabled={!canUserStake}
               />
             </div>
           </div>
