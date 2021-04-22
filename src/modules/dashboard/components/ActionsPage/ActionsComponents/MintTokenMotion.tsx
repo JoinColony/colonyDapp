@@ -38,8 +38,6 @@ import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';
 
-import ObjectButton from '~dashboard/RaiseObjectionDialog/ObjectButton';
-
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
 
 interface Props {
@@ -182,10 +180,6 @@ const MintTokenMotion = ({
               // eslint-disable-next-line max-len
               colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
             }}
-          />
-          <ObjectButton
-            colonyAddress={colony.colonyAddress}
-            tokenDecimals={decimals}
           />
         </p>
         <div className={styles.countdownContainer}>
