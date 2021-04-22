@@ -1,5 +1,4 @@
 import React, { useMemo, useRef } from 'react';
-
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
@@ -85,6 +84,8 @@ const MintTokenMotion = ({
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
   );
   const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
+
+  const bottomElementRef = useRef<HTMLInputElement>(null);
 
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
@@ -206,7 +207,7 @@ const MintTokenMotion = ({
               />
             </div>
           )}
-          </div>
+        </div>
         <div className={styles.details}>
           {(motionState === MotionState.StakeRequired ||
             motionState === MotionState.Motion ||
