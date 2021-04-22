@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import ReactSlider from 'rc-slider';
 import { useField } from 'formik';
 
@@ -21,6 +21,7 @@ interface Props {
   name: string;
   disabled?: boolean;
   step?: number;
+  onReset?: (val: any) => void;
 }
 
 const displayName = 'Slider';
@@ -38,6 +39,16 @@ const Slider = ({
 }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
   const [, , { setValue }] = useField(name);
+
+  /*
+   * This is needed to trigger an outside reset of the slider
+   * Eg: when using `setFieldValue` after submitting a form
+   */
+  useEffect(() => {
+    if (value !== sliderValue) {
+      setSliderValue(value);
+    }
+  }, [sliderValue, value, setSliderValue]);
 
   const gradientStopPercentage = useMemo(() => {
     return limit ? Math.round((limit / max) * 100) : 0;
