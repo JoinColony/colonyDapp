@@ -13,6 +13,9 @@ import {
   EventsForMotionQuery,
   EventsForMotionQueryVariables,
   EventsForMotionDocument,
+  MotionsSystemMessagesQuery,
+  MotionsSystemMessagesQueryVariables,
+  MotionsSystemMessagesDocument,
 } from '~data/index';
 
 import {
@@ -30,6 +33,9 @@ export function* updateCacheValues(
 ) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
+  /*
+   * Staking values
+   */
   yield apolloClient.query<MotionStakesQuery, MotionStakesQueryVariables>({
     query: MotionStakesDocument,
     variables: {
@@ -40,6 +46,9 @@ export function* updateCacheValues(
     fetchPolicy: 'network-only',
   });
 
+  /*
+   * Motion Events
+   */
   yield apolloClient.query<EventsForMotionQuery, EventsForMotionQueryVariables>(
     {
       query: EventsForMotionDocument,
@@ -50,6 +59,21 @@ export function* updateCacheValues(
       fetchPolicy: 'network-only',
     },
   );
+
+  /*
+   * Motion System Messages
+   */
+  yield apolloClient.query<
+    MotionsSystemMessagesQuery,
+    MotionsSystemMessagesQueryVariables
+  >({
+    query: MotionsSystemMessagesDocument,
+    variables: {
+      colonyAddress,
+      motionId: motionId.toNumber(),
+    },
+    fetchPolicy: 'network-only',
+  });
 }
 
 function* stakeMotion({
