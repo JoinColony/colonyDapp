@@ -55,6 +55,14 @@ const MSG = defineMessages({
         You should not be seeing this}
     }`,
   },
+  voteYes: {
+    id: 'dashboard.ActionsPageFeed.ActionsPageEvent.voteYes',
+    defaultMessage: 'YES',
+  },
+  voteNo: {
+    id: 'dashboard.ActionsPageFeed.ActionsPageEvent.voteNo',
+    defaultMessage: 'NO',
+  },
 });
 
 interface Props {
@@ -382,6 +390,13 @@ const ActionsPageEvent = ({
                 backedSideTag: values?.vote?.eq(MotionVote.Yay)
                   ? values.motionTag
                   : values?.objectionTag,
+                voteSide: (
+                  <FormattedMessage
+                    {...(values?.vote?.eq(MotionVote.Yay)
+                      ? MSG.voteYes
+                      : MSG.voteNo)}
+                  />
+                ),
               }}
             />
           </div>
