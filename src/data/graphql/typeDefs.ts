@@ -288,7 +288,6 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
       motionId: Int!
-      rootHash: String!
     ): MotionStakes!
     motionsSystemMessages(
       motionId: Int!

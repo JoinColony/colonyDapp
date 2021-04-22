@@ -416,7 +416,6 @@ export type QueryMotionStakesArgs = {
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['Int'];
-  rootHash: Scalars['String'];
 };
 
 
@@ -1537,7 +1536,6 @@ export type MotionStakesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['Int'];
-  rootHash: Scalars['String'];
 }>;
 
 
@@ -3667,8 +3665,8 @@ export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLe
 export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
 export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
 export const MotionStakesDocument = gql`
-    query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $rootHash: String!) {
-  motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, rootHash: $rootHash) @client {
+    query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
+  motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
     remainingToFullyYayStaked
     remainingToFullyNayStaked
     maxUserStake
@@ -3692,7 +3690,6 @@ export const MotionStakesDocument = gql`
  *      colonyAddress: // value for 'colonyAddress'
  *      userAddress: // value for 'userAddress'
  *      motionId: // value for 'motionId'
- *      rootHash: // value for 'rootHash'
  *   },
  * });
  */

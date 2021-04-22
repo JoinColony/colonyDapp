@@ -89,7 +89,7 @@ export const motionsResolvers = ({
   apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
-    async motionStakes(_, { colonyAddress, userAddress, motionId, rootHash }) {
+    async motionStakes(_, { colonyAddress, userAddress, motionId }) {
       try {
         const colonyClient = (await colonyManager.getClient(
           ClientType.ColonyClient,
@@ -104,6 +104,7 @@ export const motionsResolvers = ({
           skillRep,
           stakes,
           domainId,
+          rootHash,
         } = await votingReputationClient.getMotion(motionId);
         const { skillId } = await colonyClient.getDomain(domainId);
         const { reputationAmount } = await colonyClient.getReputation(
