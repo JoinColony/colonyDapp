@@ -1,14 +1,17 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import { ColonyRole } from '@colony/colony-js';
 import { FormikProps } from 'formik';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
-import PermissionsLabel from '~core/PermissionsLabel';
-import Slider from '~core/Slider';
+import {
+  StakingSlider,
+  StakingAmounts,
+} from '~dashboard/ActionsPage/StakingWidget';
+
+import { Colony } from '~data/index';
 
 import { FormValues } from './RaiseObjectionDialog';
 import styles from './RaiseObjectionDialogForm.css';
@@ -29,14 +32,27 @@ const MSG = defineMessages({
     id: 'dashboard.RaiseObjectionDialog.RaiseObjectionDialogForm.annotation',
     defaultMessage: 'Explain why you’re making this objection (optional)',
   },
+  stakeButton: {
+    id: 'dashboard.RaiseObjectionDialog.RaiseObjectionDialogForm.stakeButton',
+    defaultMessage: 'Stake',
+  },
 });
 
 const OBJECTION_HELP_LINK = `https://colony.io/dev/docs/colonynetwork/whitepaper-tldr-objections-and-disputes#objections`;
 
+export interface Props extends StakingAmounts {
+  colony: Colony;
+  canUserStake: boolean;
+}
+
 const RaiseObjectionDialogForm = ({
+  colony,
   handleSubmit,
   isSubmitting,
-}: FormikProps<FormValues>) => {
+  canUserStake,
+  values,
+  ...props
+}: Props & FormikProps<FormValues>) => {
   return (
     <>
       <DialogSection appearance={{ theme: 'heading' }}>
@@ -50,14 +66,6 @@ const RaiseObjectionDialogForm = ({
         <FormattedMessage
           {...MSG.objectionDescription}
           values={{
-            roleRequired: (
-              <PermissionsLabel
-                permission={ColonyRole.Recovery}
-                name={{
-                  id: `role.${ColonyRole.Recovery}`,
-                }}
-              />
-            ),
             a: (chunks) => (
               <a
                 href={OBJECTION_HELP_LINK}
@@ -73,33 +81,35 @@ const RaiseObjectionDialogForm = ({
       </DialogSection>
       <DialogSection>
         <div className={styles.slider}>
-          {/* will be corrected when staking widget PR is merged */}
-          {/* @ts-ignore */}
-          <Slider
-            value={10}
-            name="slider"
-            appearance={{ theme: 'danger', size: 'thick' }}
-            limit={100}
-            max={100}
-            // onChange={() => console.log('CHANGE slider')}
+          <StakingSlider
+            colony={colony}
+            canUserStake={canUserStake}
+            values={values}
+            {...props}
           />
         </div>
       </DialogSection>
       <DialogSection>
-        <Annotations label={MSG.annotation} name="annotation" maxLength={90} />
+        <Annotations
+          label={MSG.annotation}
+          name="annotation"
+          maxLength={90}
+          disabled={!canUserStake}
+        />
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
           text={{ id: 'button.cancel' }}
+          disabled={!canUserStake}
         />
         <span className={styles.nextButton}>
           <Button
-            // !!!!!: to change for `pink`
-            appearance={{ theme: 'primary', size: 'large' }}
-            text={{ id: 'button.next' }}
+            appearance={{ theme: 'danger', size: 'large' }}
+            text={MSG.stakeButton}
             onClick={() => handleSubmit()}
             loading={isSubmitting}
+            disabled={!canUserStake}
           />
         </span>
       </DialogSection>

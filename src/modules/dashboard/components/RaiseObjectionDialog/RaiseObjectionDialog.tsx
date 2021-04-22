@@ -3,27 +3,29 @@ import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { bigNumberify } from 'ethers/utils';
+import moveDecimal from 'move-decimal-point';
 
 import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import { useLoggedInUser } from '~data/index';
+import { AnyToken, useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-import DialogForm from './RaiseObjectionDialogForm';
-import { Address } from '~types/index';
+import DialogForm, { Props as FormProps } from './RaiseObjectionDialogForm';
 
 export interface FormValues {
   amount: number;
   annotation: string;
 }
 
-interface Props {
-  colonyAddress: Address;
+interface Props extends FormProps {
   cancel: () => void;
   close: () => void;
   tokenDecimals: number;
+  motionId: number;
+  nativeToken?: AnyToken;
 }
 
 const displayName = 'dashboard.RaiseObjectionDialog';
@@ -31,8 +33,12 @@ const displayName = 'dashboard.RaiseObjectionDialog';
 const RaiseObjectionDialog = ({
   cancel,
   close,
-  colonyAddress,
+  colony,
   tokenDecimals,
+  minUserStake,
+  nativeToken,
+  // motionId,
+  ...props
 }: Props) => {
   const history = useHistory();
   const { walletAddress } = useLoggedInUser();
@@ -42,12 +48,17 @@ const RaiseObjectionDialog = ({
     annotation: yup.string().max(90),
   });
 
+  const userStakeBottomLimit = moveDecimal(
+    minUserStake,
+    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+  );
+
   const transform = useCallback(
     pipe(
       mapPayload(({ annotation: annotationMessage, amount }) => {
         return {
           amount: bigNumberify(amount).mul(bigNumberify(10).pow(tokenDecimals)),
-          colonyAddress,
+          colonyAddress: colony.colonyAddress,
           walletAddress,
           annotationMessage,
         };
@@ -60,6 +71,7 @@ const RaiseObjectionDialog = ({
   return (
     <ActionForm
       initialValues={{
+        amount: parseFloat(userStakeBottomLimit),
         annotation: undefined,
       }}
       submit={ActionTypes.MOTION_OBJECT}
@@ -71,7 +83,12 @@ const RaiseObjectionDialog = ({
     >
       {(formValues: FormikProps<FormValues>) => (
         <Dialog cancel={cancel}>
-          <DialogForm {...formValues} />
+          <DialogForm
+            {...formValues}
+            colony={colony}
+            minUserStake={minUserStake}
+            {...props}
+          />
         </Dialog>
       )}
     </ActionForm>
