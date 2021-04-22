@@ -28,7 +28,6 @@ import StakingWidget from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
 import FinalizeMotionWidget from '../FinalizeMotionWidget';
-import StakingWidget from '../StakingWidget';
 
 import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
 
@@ -81,9 +80,7 @@ const MintTokenMotion = ({
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
   );
-  const {
-    motionId,
-  } = (motionCreatedEvent?.values as unknown) as MotionValue;
+  const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
 
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
