@@ -71,47 +71,18 @@ const StakingWidget = ({
 
   const transform = useCallback(
     pipe(
-      // eslint-disable-next-line consistent-return
-      mapPayload(({ amount }) => {
-        if (data?.motionStakes) {
-          const { remainingToFullyYayStaked } = data.motionStakes;
-          const maxStake = parseFloat(
-            moveDecimal(
-              remainingToFullyYayStaked,
-              -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-            ),
-          ).toFixed(2);
-          /*
-           * @NOTE Compensate for the lack of granularity in the slider
-           * This is in order to be able to fully stake a motion
-           *
-           * If we reached the max of what the slider can show, just add some
-           * extra in order to ensure we reach the required stake
-           *
-           * We're relying on the contracts here, since we can sent over the
-           * required stake limit, and the contract call will discard it
-           * (no, it's not lost)
-           *
-           * Example:
-           * Required stake is 18.771889487905761358 but the slider can only
-           * show 18.77 When we send this value, we'll do 18.77 + 0.01, that
-           * way we ensure that we can fully stake
-           */
-          const safeAmount = maxStake === amount ? amount + 0.01 : amount;
-          return {
-            amount: bigNumberify(
-              moveDecimal(
-                safeAmount,
-                getTokenDecimalsWithFallback(nativeToken?.decimals),
-              ),
-            ),
-            userAddress: walletAddress,
-            colonyAddress,
-            motionId: bigNumberify(motionId),
-            vote: 1,
-          };
-        }
-      }),
+      mapPayload(({ amount }) => ({
+        amount: bigNumberify(
+          moveDecimal(
+            amount,
+            getTokenDecimalsWithFallback(nativeToken?.decimals),
+          ),
+        ),
+        userAddress: walletAddress,
+        colonyAddress,
+        motionId: bigNumberify(motionId),
+        vote: 1,
+      })),
     ),
     [walletAddress, colonyAddress, motionId, data],
   );
@@ -152,22 +123,46 @@ const StakingWidget = ({
     minUserStake,
   } = data.motionStakes;
 
-  const remainingToStake = moveDecimal(
-    remainingToFullyYayStaked,
-    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+  const remainingToStake = parseFloat(
+    moveDecimal(
+      remainingToFullyYayStaked,
+      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+    ),
   );
+  /*
+   * @NOTE Compensate for the lack of granularity in the slider
+   * This is in order to be able to fully stake a motion
+   *
+   * If we reached the max of what the slider can show, just add some
+   * extra in order to ensure we reach the required stake
+   *
+   * We're relying on the contracts here, since we can sent over the
+   * required stake limit, and the contract call will discard it
+   * (no, it's not lost)
+   *
+   * Example:
+   * This is so we can round values like 18.627870543008473 to 18.63
+   */
+  const remainingToStakeSafe =
+    remainingToStake > 0
+      ? Math.round(remainingToStake * 100) / 100
+      : remainingToStake;
   /*
    * This basically doubles as the user's reputation
    * So we can use it to also check if the user can actually stake
    * If the reputation is 0, they cannot stake at all
    */
-  const userStakeTopLimit = moveDecimal(
-    maxUserStake,
-    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+  const userStakeTopLimit = parseFloat(
+    moveDecimal(
+      maxUserStake,
+      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+    ),
   );
-  const userStakeBottomLimit = moveDecimal(
-    minUserStake,
-    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+  const userStakeBottomLimit = parseFloat(
+    moveDecimal(
+      minUserStake,
+      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+    ),
   );
 
   const canUserStake =
@@ -179,7 +174,7 @@ const StakingWidget = ({
     <div className={styles.main}>
       <ActionForm
         initialValues={{
-          amount: parseFloat(userStakeBottomLimit),
+          amount: userStakeBottomLimit,
         }}
         submit={ActionTypes.MOTION_STAKE}
         error={ActionTypes.MOTION_STAKE_ERROR}
@@ -216,18 +211,22 @@ const StakingWidget = ({
               <Slider
                 name="amount"
                 value={values.amount}
-                min={parseFloat(userStakeBottomLimit)}
-                max={parseFloat(remainingToStake)}
-                limit={parseFloat(userStakeTopLimit)}
+                min={userStakeBottomLimit}
+                max={
+                  remainingToStakeSafe < userStakeBottomLimit
+                    ? userStakeBottomLimit
+                    : remainingToStakeSafe
+                }
+                limit={userStakeTopLimit}
                 step={0.01}
-                disabled={!canUserStake}
+                disabled={!canUserStake || remainingToStakeSafe === 0}
               />
             </div>
             <div className={styles.buttonGroup}>
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
                 type="submit"
-                disabled={!canUserStake}
+                disabled={!canUserStake || remainingToStakeSafe === 0}
                 text={MSG.stakeButton}
               />
               <Button
