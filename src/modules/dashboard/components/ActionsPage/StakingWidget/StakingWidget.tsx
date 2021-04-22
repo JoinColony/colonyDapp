@@ -10,6 +10,8 @@ import Slider from '~core/Slider';
 import Button from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import { useDialog } from '~core/Dialog';
+import RaiseObjectionDialog from '~dashboard/RaiseObjectionDialog';
 
 import {
   Colony,
@@ -22,6 +24,7 @@ import { mapPayload, pipe } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
+import { StakingAmounts } from './StakingSlider';
 
 type Props = {
   colony: Colony;
@@ -65,6 +68,7 @@ const validationSchema = yup.object({
 });
 
 const StakingWidget = ({
+  colony,
   colony: { colonyAddress, tokens, nativeTokenAddress },
   motionId,
   scrollToRef,
@@ -95,6 +99,21 @@ const StakingWidget = ({
 
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
+  );
+
+  const openRaiseObjectionDialog = useDialog(RaiseObjectionDialog);
+
+  const handleRaiseObjection = useCallback(
+    (userHasPermission: boolean, stakingAmounts: StakingAmounts) =>
+      openRaiseObjectionDialog({
+        motionId,
+        colony,
+        nativeToken,
+        tokenDecimals: nativeToken?.decimals as number,
+        canUserStake: userHasPermission,
+        ...stakingAmounts,
+      }),
+    [colony, openRaiseObjectionDialog, nativeToken, motionId],
   );
 
   const transform = useCallback(
@@ -284,17 +303,12 @@ const StakingWidget = ({
                 text={MSG.stakeButton}
               />
               <Button
-                appearance={{
-                  theme: previousTotalStakeStep ? 'ghost' : 'danger',
-                  size: 'medium',
-                }}
-                text={
-                  previousTotalStakeStep
-                    ? { id: 'button.back' }
-                    : MSG.objectButton
-                }
+                appearance={{ theme: 'danger', size: 'medium' }}
+                text={MSG.objectButton}
                 disabled={!previousTotalStakeStep && !canUserStake}
-                onClick={previousTotalStakeStep || undefined}
+                onClick={() =>
+                  handleRaiseObjection(canUserStake, data.motionStakes)
+                }
               />
             </div>
           </div>
