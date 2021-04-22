@@ -104,7 +104,7 @@ const StakingWidget = ({
           -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
         );
         resetForm({});
-        setFieldValue('amount', userStakeBottomLimit);
+        setFieldValue('amount', parseFloat(userStakeBottomLimit));
         scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
       }
     },
