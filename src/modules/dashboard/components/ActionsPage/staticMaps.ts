@@ -110,6 +110,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyMotions.MintTokensMotion]: [
     ColonyAndExtensionsEvents.MotionCreated,
     ColonyAndExtensionsEvents.MotionStaked,
+    ColonyAndExtensionsEvents.MotionVoteRevealed,
   ],
 };
 
