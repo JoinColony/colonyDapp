@@ -11,7 +11,7 @@
 
 .title {
   display: flex;
-  padding: 20px 0 0;
+  padding: 15px 0 0;
 }
 
 .title h4 {
@@ -64,4 +64,8 @@
 .tooltip {
   padding: 10px;
   width: 220px;
+}
+
+.loading {
+  padding-top: 35px;
 }

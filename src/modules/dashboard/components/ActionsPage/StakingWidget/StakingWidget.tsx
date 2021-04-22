@@ -8,6 +8,7 @@ import { ActionForm } from '~core/Fields';
 import Slider from '~core/Slider';
 import Button from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import { Colony, useLoggedInUser, useMotionStakesQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -43,6 +44,10 @@ const MSG = defineMessages({
   stakingTooltip: {
     id: 'dashboard.ActionsPage.StakingWidget.stakingTooltip',
     defaultMessage: '[TO BE ADDED]',
+  },
+  loading: {
+    id: 'dashboard.ActionsPage.StakingWidget.loading',
+    defaultMessage: 'Loading staking values ...',
   },
 });
 
@@ -130,7 +135,14 @@ const StakingWidget = ({
    * @TODO Add proper loading state
    */
   if (loading || !data?.motionStakes) {
-    return <div>Loading</div>;
+    return (
+      <div className={styles.main}>
+        <MiniSpinnerLoader
+          className={styles.loading}
+          loadingText={MSG.loading}
+        />
+      </div>
+    );
   }
 
   const hasRegisteredProfile = !!username && !ethereal;
