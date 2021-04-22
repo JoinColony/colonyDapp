@@ -111,6 +111,21 @@ const StakingWidget = ({
     [walletAddress, colonyAddress, motionId, data],
   );
 
+  const handleSuccess = useCallback(
+    (setFieldValue, resetForm) => {
+      if (data?.motionStakes) {
+        const { minUserStake } = data.motionStakes;
+        const userStakeBottomLimit = moveDecimal(
+          minUserStake,
+          -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+        );
+        setFieldValue('amount', parseFloat(userStakeBottomLimit));
+        resetForm();
+      }
+    },
+    [data, nativeToken],
+  );
+
   /*
    * @TODO Add proper loading state
    */
@@ -158,6 +173,9 @@ const StakingWidget = ({
         error={ActionTypes.MOTION_STAKE_ERROR}
         success={ActionTypes.MOTION_STAKE_SUCCESS}
         transform={transform}
+        onSuccess={(_, { resetForm, setFieldValue }) =>
+          handleSuccess(setFieldValue, resetForm)
+        }
       >
         {({ values }) => (
           <div className={styles.wrapper}>
