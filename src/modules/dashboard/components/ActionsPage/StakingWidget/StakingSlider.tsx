@@ -1,10 +1,9 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-// import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 
 import Heading from '~core/Heading';
-import Slider from '~core/Slider';
+import Slider, { Appearance } from '~core/Slider';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { Colony } from '~data/index';
@@ -20,6 +19,7 @@ export interface StakingAmounts {
 
 interface Props extends StakingAmounts {
   colony: Colony;
+  appearance?: Appearance;
   values: {
     amount: any;
   };
@@ -54,6 +54,7 @@ const StakingSlider = ({
   maxUserStake,
   minUserStake,
   canUserStake,
+  appearance,
 }: Props) => {
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
@@ -109,6 +110,7 @@ const StakingSlider = ({
           limit={parseFloat(userStakeTopLimit)}
           step={0.01}
           disabled={!canUserStake}
+          appearance={appearance}
         />
       </div>
     </>
