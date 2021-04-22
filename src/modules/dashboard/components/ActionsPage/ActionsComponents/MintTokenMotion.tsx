@@ -197,7 +197,7 @@ const MintTokenMotion = ({
            * @TODO this is the element that will wrap the comment box
            * Make sure to preserve the ref callback
            */}
-          <div ref={bottomElementRef}>test</div>
+          <div ref={bottomElementRef} />
         </div>
         <div className={styles.details}>
           {(motionState === MotionState.StakeRequired ||

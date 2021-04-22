@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, RefObject } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
+import * as yup from 'yup';
 
 import Heading from '~core/Heading';
 import { ActionForm } from '~core/Fields';
@@ -20,6 +21,7 @@ import styles from './StakingWidget.css';
 type Props = {
   colony: Colony;
   motionId: number;
+  scrollToRef?: RefObject<HTMLInputElement>;
 };
 
 const displayName = 'StakingWidget';
@@ -51,9 +53,14 @@ const MSG = defineMessages({
   },
 });
 
+const validationSchema = yup.object({
+  amount: yup.number(),
+});
+
 const StakingWidget = ({
   colony: { colonyAddress, tokens, nativeTokenAddress },
   motionId,
+  scrollToRef,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -63,6 +70,7 @@ const StakingWidget = ({
       userAddress: walletAddress,
       motionId,
     },
+    fetchPolicy: 'network-only',
   });
 
   const nativeToken = tokens.find(
@@ -88,18 +96,19 @@ const StakingWidget = ({
   );
 
   const handleSuccess = useCallback(
-    (setFieldValue, resetForm) => {
+    (_, { setFieldValue, resetForm }) => {
       if (data?.motionStakes) {
         const { minUserStake } = data.motionStakes;
         const userStakeBottomLimit = moveDecimal(
           minUserStake,
           -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
         );
-        setFieldValue('amount', parseFloat(userStakeBottomLimit));
-        resetForm();
+        resetForm({});
+        setFieldValue('amount', userStakeBottomLimit);
+        scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
       }
     },
-    [data, nativeToken],
+    [data, nativeToken, scrollToRef],
   );
 
   /*
@@ -176,13 +185,12 @@ const StakingWidget = ({
         initialValues={{
           amount: userStakeBottomLimit,
         }}
-        submit={ActionTypes.MOTION_STAKE}
-        error={ActionTypes.MOTION_STAKE_ERROR}
-        success={ActionTypes.MOTION_STAKE_SUCCESS}
+        validationSchema={validationSchema}
+        submit={ActionTypes.COLONY_MOTION_STAKE}
+        error={ActionTypes.COLONY_MOTION_STAKE_ERROR}
+        success={ActionTypes.COLONY_MOTION_STAKE_SUCCESS}
         transform={transform}
-        onSuccess={(_, { resetForm, setFieldValue }) =>
-          handleSuccess(setFieldValue, resetForm)
-        }
+        onSuccess={handleSuccess}
       >
         {({ values }) => (
           <div className={styles.wrapper}>

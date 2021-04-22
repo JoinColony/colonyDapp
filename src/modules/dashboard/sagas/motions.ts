@@ -79,7 +79,7 @@ export function* updateCacheValues(
 function* stakeMotion({
   meta,
   payload: { userAddress, colonyAddress, motionId, vote, amount },
-}: Action<ActionTypes.MOTION_STAKE>) {
+}: Action<ActionTypes.COLONY_MOTION_STAKE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -168,14 +168,14 @@ function* stakeMotion({
     /*
      * Update motion page values
      */
-    yield updateCacheValues(colonyAddress, userAddress, motionId);
+    yield fork(updateCacheValues, colonyAddress, userAddress, motionId);
 
     yield put<AllActions>({
-      type: ActionTypes.MOTION_STAKE_SUCCESS,
+      type: ActionTypes.COLONY_MOTION_STAKE_SUCCESS,
       meta,
     });
   } catch (error) {
-    return yield putError(ActionTypes.MOTION_STAKE_ERROR, error, meta);
+    return yield putError(ActionTypes.COLONY_MOTION_STAKE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
@@ -183,5 +183,5 @@ function* stakeMotion({
 }
 
 export default function* motionSagas() {
-  yield takeEvery(ActionTypes.MOTION_STAKE, stakeMotion);
+  yield takeEvery(ActionTypes.COLONY_MOTION_STAKE, stakeMotion);
 }

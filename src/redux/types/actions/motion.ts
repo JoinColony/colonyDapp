@@ -12,7 +12,7 @@ import {
 
 export type MotionActionTypes =
   | UniqueActionType<
-      ActionTypes.MOTION_STAKE,
+      ActionTypes.COLONY_MOTION_STAKE,
       {
         userAddress: Address;
         colonyAddress: Address;
@@ -22,8 +22,8 @@ export type MotionActionTypes =
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.MOTION_STAKE_ERROR, object>
+  | ErrorActionType<ActionTypes.COLONY_MOTION_STAKE_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.MOTION_STAKE_SUCCESS,
+      ActionTypes.COLONY_MOTION_STAKE_SUCCESS,
       MetaWithHistory<object>
     >;
