@@ -117,7 +117,7 @@ export const motionsResolvers = ({
         // eslint-disable-next-line max-len
         const userMinStakeFraction = await votingReputationClient.getUserMinStakeFraction();
 
-        const totalYAYStaked = stakes[1];
+        const [totalNAYStakes, totalYAYStaked] = stakes;
         const requiredStake = skillRep
           .mul(totalStakeFraction)
           .div(bigNumberify(10).pow(tokenDecimals))
@@ -126,7 +126,8 @@ export const motionsResolvers = ({
            * To remove after it's fixed
            */
           .add(1);
-        const remainingToFullyStaked = requiredStake.sub(totalYAYStaked);
+        const remainingToFullyYayStaked = requiredStake.sub(totalYAYStaked);
+        const remainingToFullyNayStaked = requiredStake.sub(totalNAYStakes);
         const userMinStakeAmount = skillRep
           .mul(totalStakeFraction)
           .mul(userMinStakeFraction)
@@ -141,7 +142,8 @@ export const motionsResolvers = ({
           .div(bigNumberify(10).pow(36));
 
         return {
-          remainingToFullyStaked: remainingToFullyStaked.toString(),
+          remainingToFullyYayStaked: remainingToFullyYayStaked.toString(),
+          remainingToFullyNayStaked: remainingToFullyNayStaked.toString(),
           maxUserStake: reputationAmount.toString(),
           minUserStake: userMinStakeAmount.toString(),
         };

@@ -833,7 +833,8 @@ export type ProcessedMetaColony = {
 };
 
 export type MotionStakes = {
-  remainingToFullyStaked: Scalars['String'];
+  remainingToFullyYayStaked: Scalars['String'];
+  remainingToFullyNayStaked: Scalars['String'];
   maxUserStake: Scalars['String'];
   minUserStake: Scalars['String'];
 };
@@ -1540,7 +1541,7 @@ export type MotionStakesQueryVariables = Exact<{
 }>;
 
 
-export type MotionStakesQuery = { motionStakes: Pick<MotionStakes, 'remainingToFullyStaked' | 'maxUserStake' | 'minUserStake'> };
+export type MotionStakesQuery = { motionStakes: Pick<MotionStakes, 'remainingToFullyYayStaked' | 'remainingToFullyNayStaked' | 'maxUserStake' | 'minUserStake'> };
 
 export type MotionsSystemMessagesQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -3668,7 +3669,8 @@ export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNu
 export const MotionStakesDocument = gql`
     query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $rootHash: String!) {
   motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, rootHash: $rootHash) @client {
-    remainingToFullyStaked
+    remainingToFullyYayStaked
+    remainingToFullyNayStaked
     maxUserStake
     minUserStake
   }

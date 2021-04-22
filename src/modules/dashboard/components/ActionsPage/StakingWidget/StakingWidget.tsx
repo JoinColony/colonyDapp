@@ -74,10 +74,10 @@ const StakingWidget = ({
       // eslint-disable-next-line consistent-return
       mapPayload(({ amount }) => {
         if (data?.motionStakes) {
-          const { remainingToFullyStaked } = data.motionStakes;
+          const { remainingToFullyYayStaked } = data.motionStakes;
           const maxStake = parseFloat(
             moveDecimal(
-              remainingToFullyStaked,
+              remainingToFullyYayStaked,
               -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
             ),
           ).toFixed(2);
@@ -121,13 +121,13 @@ const StakingWidget = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const {
-    remainingToFullyStaked,
+    remainingToFullyYayStaked,
     maxUserStake,
     minUserStake,
   } = data.motionStakes;
 
   const remainingToStake = moveDecimal(
-    remainingToFullyStaked,
+    remainingToFullyYayStaked,
     -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
   );
   const userStakeTopLimit = moveDecimal(

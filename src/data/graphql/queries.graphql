@@ -381,7 +381,8 @@ query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
 
 query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $rootHash: String!) {
   motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, rootHash: $rootHash) @client {
-    remainingToFullyStaked
+    remainingToFullyYayStaked
+    remainingToFullyNayStaked
     maxUserStake
     minUserStake
   }
