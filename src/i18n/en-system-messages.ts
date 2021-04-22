@@ -9,6 +9,7 @@ const systemMessagesMessageDescriptors = {
       ${SystemMessagesName.MotionRevealPhase} {It's time to {revealTag} votes to the world!}
       ${SystemMessagesName.MotionHasFailedNotFinalizable} {{motionTag} has failed.}
       ${SystemMessagesName.MotionHasFailedFinalizable} {{motionTag} has {failedTag} and may be finalized.}
+      ${SystemMessagesName.MotionVotingPhase} {{votingTag} has started! Voting is secret 😀, and weighted by Reputation.}
       other {Generic system message}
     }`,
 };
