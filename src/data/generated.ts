@@ -859,7 +859,7 @@ export type MotionVoteResults = {
   yayVotes: Scalars['String'];
   yayVoters: Array<Scalars['String']>;
   nayVotes: Scalars['String'];
-  nayVoters: Array<Maybe<Scalars['String']>>;
+  nayVoters: Array<Scalars['String']>;
 };
 
 export type ByColonyFilter = {
@@ -1857,7 +1857,13 @@ export type SubscriptionsMotionsSubscriptionVariables = Exact<{
 
 export type SubscriptionsMotionsSubscription = { motions: Array<(
     Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'currentStake' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
-    & { associatedColony: { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }, transaction: (
+    & { associatedColony: (
+      { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
+      & { token: (
+        Pick<SubgraphToken, 'decimals' | 'symbol'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'timestamp'> }
     ), domain: (
@@ -4827,6 +4833,11 @@ export const SubscriptionsMotionsDocument = gql`
     associatedColony {
       colonyAddress: id
       id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
     }
     transaction {
       hash: id

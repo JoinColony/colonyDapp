@@ -124,6 +124,11 @@ subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: Str
     associatedColony {
       colonyAddress: id
       id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
     }
     transaction {
       hash: id
