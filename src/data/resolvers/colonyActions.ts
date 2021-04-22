@@ -242,6 +242,7 @@ export const colonyActionsResolvers = ({
           domainColor: null,
           blockNumber,
           motionState: null,
+          motionDomain: null,
           ...actionValues,
         };
       }
@@ -286,6 +287,8 @@ export const colonyActionsResolvers = ({
         colonyAvatarHash: null,
         colonyTokens: [],
         blockNumber: null,
+        motionState: null,
+        motionDomain: null,
         ...pendingActionValues,
       };
     },
