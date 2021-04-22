@@ -37,7 +37,7 @@ const RaiseObjectionDialog = ({
   tokenDecimals,
   minUserStake,
   nativeToken,
-  // motionId,
+  motionId,
   ...props
 }: Props) => {
   const history = useHistory();
@@ -58,8 +58,10 @@ const RaiseObjectionDialog = ({
       mapPayload(({ annotation: annotationMessage, amount }) => {
         return {
           amount: bigNumberify(amount).mul(bigNumberify(10).pow(tokenDecimals)),
+          userAddress: walletAddress,
           colonyAddress: colony.colonyAddress,
-          walletAddress,
+          motionId: bigNumberify(motionId),
+          vote: 0,
           annotationMessage,
         };
       }),
@@ -87,6 +89,7 @@ const RaiseObjectionDialog = ({
             {...formValues}
             colony={colony}
             minUserStake={minUserStake}
+            cancel={cancel}
             {...props}
           />
         </Dialog>

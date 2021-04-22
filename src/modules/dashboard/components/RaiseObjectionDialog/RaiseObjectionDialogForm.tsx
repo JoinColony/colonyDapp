@@ -43,6 +43,7 @@ const OBJECTION_HELP_LINK = `https://colony.io/dev/docs/colonynetwork/whitepaper
 export interface Props extends StakingAmounts {
   colony: Colony;
   canUserStake: boolean;
+  cancel: () => void;
 }
 
 const RaiseObjectionDialogForm = ({
@@ -51,6 +52,7 @@ const RaiseObjectionDialogForm = ({
   isSubmitting,
   canUserStake,
   values,
+  cancel,
   ...props
 }: Props & FormikProps<FormValues>) => {
   return (
@@ -103,6 +105,7 @@ const RaiseObjectionDialogForm = ({
           appearance={{ theme: 'secondary', size: 'large' }}
           text={{ id: 'button.cancel' }}
           disabled={!canUserStake}
+          onClick={cancel}
         />
         <span className={styles.nextButton}>
           <Button
