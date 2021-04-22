@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
@@ -47,14 +48,6 @@ interface MotionValue {
   motionId: number;
 }
 
-const getTags = () => {
-  return Object.values(MOTION_TAG_MAP).reduce((map, object) => {
-    const { theme, colorSchema } = object;
-    map[object.tagName] = <Tag text={object.name} appearance={{ theme, colorSchema }} />
-    return map
-  }, {});
-}
-
 const MintTokenMotion = ({
   colony,
   colonyAction: {
@@ -73,7 +66,21 @@ const MintTokenMotion = ({
   transactionHash,
   initiator,
 }: Props) => {
-  const {motionTag, passedTag, revealTag, failedTag, objectionTag} = getTags();
+  const {
+    motionTag,
+    passedTag,
+    revealTag,
+    failedTag,
+    objectionTag,
+  } = useMemo(() => {
+    return Object.values(MOTION_TAG_MAP).reduce((acc, object) => {
+      const { theme, colorSchema } = object as TagAppearance;
+      acc[object.tagName] = (
+        <Tag text={object.name} appearance={{ theme, colorSchema }} />
+      );
+      return acc;
+    }, {} as any);
+  }, []);
 
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
@@ -120,9 +127,7 @@ const MintTokenMotion = ({
     ),
     motionTag,
     passedTag: (
-      <span className={motionSpecificStyles.tagWrapper}>
-        {passedTag}
-      </span>
+      <span className={motionSpecificStyles.tagWrapper}>{passedTag}</span>
     ),
     objectionTag,
     revealTag,
