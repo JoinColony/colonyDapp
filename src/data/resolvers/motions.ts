@@ -235,11 +235,11 @@ export const motionsResolvers = ({
         (event) => event.name === ColonyAndExtensionsEvents.MotionVoteSubmitted,
       );
 
-      const newestMotionStakedEvent = sortedEvents.find(
+      const latestMotionStakedEvent = sortedEvents.find(
         (event) => event.name === ColonyAndExtensionsEvents.MotionStaked,
       );
 
-      if (newestMotionStakedEvent) {
+      if (latestMotionStakedEvent) {
         // eslint-disable-next-line max-len
         const totalStakeFraction = await votingReputationClient.getTotalStakeFraction();
         const requiredStake = getMotionRequiredStake(
@@ -252,7 +252,7 @@ export const motionsResolvers = ({
           systemMessages.push({
             type: ActionsPageFeedType.SystemMessage,
             name: SystemMessagesName.MotionFullyStaked,
-            createdAt: newestMotionStakedEvent.createdAt,
+            createdAt: latestMotionStakedEvent.createdAt,
           });
         }
       }
