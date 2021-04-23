@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+
 import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
@@ -65,10 +66,22 @@ const MintTokenMotion = ({
   transactionHash,
   initiator,
 }: Props) => {
-  const motionTag = MOTION_TAG_MAP[MotionState.Motion];
-  const passedTag = MOTION_TAG_MAP[MotionState.Passed];
-  const revealTag = MOTION_TAG_MAP[MotionState.Reveal];
-  const objectionTag = MOTION_TAG_MAP[MotionState.Objection];
+  const {
+    motionTag,
+    passedTag,
+    revealTag,
+    failedTag,
+    objectionTag,
+  } = useMemo(() => {
+    return Object.values(MOTION_TAG_MAP).reduce((acc, object) => {
+      const { theme, colorSchema } = object as TagAppearance;
+      acc[object.tagName] = (
+        <Tag text={object.name} appearance={{ theme, colorSchema }} />
+      );
+      return acc;
+    }, {} as any);
+  }, []);
+
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
   );
@@ -112,19 +125,15 @@ const MintTokenMotion = ({
         autoShrinkAddress
       />
     ),
-    motionTag: <Tag text={motionTag.name} appearance={{ theme: 'primary' }} />,
+    motionTag,
     passedTag: (
-      <span className={motionSpecificStyles.tagWrapper}>
-        <Tag
-          text={passedTag.name}
-          appearance={{ theme: 'primary', colorSchema: 'plain' }}
-        />
-      </span>
+      <span className={motionSpecificStyles.tagWrapper}>{passedTag}</span>
     ),
-    revealTag: <Tag text={revealTag.name} appearance={{ theme: 'blue' }} />,
-    objectionTag: (
-      <Tag text={objectionTag.name} appearance={{ theme: 'danger' }} />
+    failedTag: (
+      <span className={motionSpecificStyles.tagWrapper}>{failedTag}</span>
     ),
+    objectionTag,
+    revealTag,
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
 
