@@ -76,9 +76,9 @@ const RaiseObjectionDialog = ({
         amount: parseFloat(userStakeBottomLimit),
         annotation: undefined,
       }}
-      submit={ActionTypes.MOTION_OBJECT}
-      error={ActionTypes.MOTION_OBJECT_ERROR}
-      success={ActionTypes.MOTION_OBJECT_SUCCESS}
+      submit={ActionTypes.COLONY_MOTION_STAKE}
+      error={ActionTypes.COLONY_MOTION_STAKE_ERROR}
+      success={ActionTypes.COLONY_MOTION_STAKE_SUCCESS}
       validationSchema={validationSchema}
       onSuccess={close}
       transform={transform}
