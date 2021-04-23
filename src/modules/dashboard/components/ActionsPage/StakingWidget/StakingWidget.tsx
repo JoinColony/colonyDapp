@@ -109,7 +109,6 @@ const StakingWidget = ({
         motionId,
         colony,
         nativeToken,
-        tokenDecimals: nativeToken?.decimals as number,
         canUserStake: userHasPermission,
         ...stakingAmounts,
       }),

@@ -23,7 +23,6 @@ export interface FormValues {
 interface Props extends FormProps {
   cancel: () => void;
   close: () => void;
-  tokenDecimals: number;
   motionId: number;
   nativeToken?: AnyToken;
 }
@@ -34,7 +33,6 @@ const RaiseObjectionDialog = ({
   cancel,
   close,
   colony,
-  tokenDecimals,
   minUserStake,
   nativeToken,
   motionId,
@@ -57,7 +55,12 @@ const RaiseObjectionDialog = ({
     pipe(
       mapPayload(({ annotation: annotationMessage, amount }) => {
         return {
-          amount: bigNumberify(amount).mul(bigNumberify(10).pow(tokenDecimals)),
+          amount: bigNumberify(
+            moveDecimal(
+              amount,
+              getTokenDecimalsWithFallback(nativeToken?.decimals),
+            ),
+          ),
           userAddress: walletAddress,
           colonyAddress: colony.colonyAddress,
           motionId: bigNumberify(motionId),
