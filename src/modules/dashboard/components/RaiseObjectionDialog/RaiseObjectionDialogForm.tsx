@@ -88,6 +88,7 @@ const RaiseObjectionDialogForm = ({
             canUserStake={canUserStake}
             values={values}
             appearance={{ theme: 'danger' }}
+            isObjection
             {...props}
           />
         </div>

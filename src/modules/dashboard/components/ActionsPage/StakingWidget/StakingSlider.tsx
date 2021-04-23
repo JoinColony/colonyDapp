@@ -24,18 +24,27 @@ interface Props extends StakingAmounts {
     amount: any;
   };
   canUserStake: boolean;
+  isObjection: boolean;
 }
 
 const displayName = 'StakingSlider';
 
 const MSG = defineMessages({
-  title: {
+  titleStake: {
     id: 'dashboard.ActionsPage.StakingSlider.title',
     defaultMessage: `Select the amount to back the motion`,
   },
-  description: {
+  titleObject: {
+    id: 'dashboard.ActionsPage.StakingSlider.title',
+    defaultMessage: `Select the amount to stake the objection`,
+  },
+  descriptionStake: {
     id: 'dashboard.ActionsPage.StakingSlider.description',
     defaultMessage: `Stake is returned if the motion passes. If there is a dispute, and the motion loses, part or all of your stake will be lost.`,
+  },
+  descriptionObject: {
+    id: 'dashboard.ActionsPage.StakingSlider.description',
+    defaultMessage: `Stake will be returned if the objection succeeds. If the objection fails, part or all of your stake will be lost.`,
   },
   stakingTooltip: {
     id: 'dashboard.ActionsPage.StakingSlider.stakingTooltip',
@@ -55,6 +64,7 @@ const StakingSlider = ({
   minUserStake,
   canUserStake,
   appearance,
+  isObjection,
 }: Props) => {
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
@@ -82,7 +92,7 @@ const StakingSlider = ({
     <>
       <div className={styles.title}>
         <Heading
-          text={MSG.title}
+          text={isObjection ? MSG.titleObject : MSG.titleStake}
           className={styles.title}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
         />
@@ -96,7 +106,9 @@ const StakingSlider = ({
         />
       </div>
       <p className={styles.description}>
-        <FormattedMessage {...MSG.description} />
+        <FormattedMessage
+          {...(isObjection ? MSG.descriptionObject : MSG.descriptionStake)}
+        />
       </p>
       <span className={styles.amount}>{`${parseFloat(values.amount).toFixed(
         2,
