@@ -164,22 +164,32 @@ export const motionsResolvers = ({
 
       const timeToSubmitMS = motion.events[1].toNumber() * 1000;
       const timeToSubmitInPast = timeToSubmitMS < blocktime;
+      const newestVoteSubmittedEvent = sortedEvents.find(
+        (event) => event.name === ColonyAndExtensionsEvents.MotionVoteSubmitted,
+      );
 
       if (
         motionNetworkState === NetworkMotionState.Reveal ||
         timeToSubmitInPast
       ) {
-        const newestVoteSubmittedEvent = sortedEvents.find(
-          (event) =>
-            event.name === ColonyAndExtensionsEvents.MotionVoteSubmitted,
-        );
         if (newestVoteSubmittedEvent) {
           systemMessages.push({
             type: ActionsPageFeedType.SystemMessage,
             name: SystemMessagesName.MotionRevealPhase,
-            createdAt: newestVoteSubmittedEvent.createdAt,
+            createdAt: timeToSubmitMS,
           });
         }
+      }
+
+      if (
+        motionNetworkState === NetworkMotionState.Submit ||
+        newestVoteSubmittedEvent
+      ) {
+        systemMessages.push({
+          type: ActionsPageFeedType.SystemMessage,
+          name: SystemMessagesName.MotionVotingPhase,
+          createdAt: motion.events[0].toNumber() * 1000,
+        });
       }
 
       if (

@@ -66,13 +66,7 @@ const MintTokenMotion = ({
   transactionHash,
   initiator,
 }: Props) => {
-  const {
-    motionTag,
-    passedTag,
-    revealTag,
-    failedTag,
-    objectionTag,
-  } = useMemo(() => {
+  const { passedTag, failedTag, ...tags } = useMemo(() => {
     return Object.values(MOTION_TAG_MAP).reduce((acc, object) => {
       const { theme, colorSchema } = object as TagAppearance;
       acc[object.tagName] = (
@@ -125,15 +119,13 @@ const MintTokenMotion = ({
         autoShrinkAddress
       />
     ),
-    motionTag,
     passedTag: (
       <span className={motionSpecificStyles.tagWrapper}>{passedTag}</span>
     ),
     failedTag: (
       <span className={motionSpecificStyles.tagWrapper}>{failedTag}</span>
     ),
-    objectionTag,
-    revealTag,
+    ...tags,
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
 
