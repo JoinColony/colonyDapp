@@ -41,6 +41,8 @@ function* stakeMotion({
       ClientType.ColonyClient,
       colonyAddress,
     );
+    const tokenAddress = colonyClient.tokenClient.address;
+
     // @NOTE This line exceeds the max-len but there's no prettier solution
     // eslint-disable-next-line max-len
     const votingReputationClient: ExtensionClient = yield colonyManager.getClient(
@@ -178,6 +180,7 @@ function* stakeMotion({
       motionId,
       transactionHash,
       StakeSide.Motion,
+      tokenAddress,
     );
 
     yield put<AllActions>({
