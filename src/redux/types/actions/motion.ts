@@ -19,6 +19,7 @@ export type MotionActionTypes =
         motionId: BigNumber;
         vote: number;
         amount: BigNumber;
+        transactionHash: string;
       },
       MetaWithHistory<object>
     >

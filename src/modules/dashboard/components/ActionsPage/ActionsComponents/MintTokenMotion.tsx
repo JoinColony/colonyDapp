@@ -207,6 +207,7 @@ const MintTokenMotion = ({
               motionId={motionId}
               colony={colony}
               scrollToRef={bottomElementRef}
+              transactionHash={transactionHash}
             />
           )}
           {motionState === MotionState.Voting && (

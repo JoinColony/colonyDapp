@@ -16,6 +16,9 @@ import {
   MotionsSystemMessagesQuery,
   MotionsSystemMessagesQueryVariables,
   MotionsSystemMessagesDocument,
+  ColonyActionQuery,
+  ColonyActionQueryVariables,
+  ColonyActionDocument,
 } from '~data/index';
 
 import {
@@ -30,6 +33,7 @@ export function* updateCacheValues(
   colonyAddress: Address,
   userAddress: Address,
   motionId: BigNumber,
+  transactionHash: string,
 ) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
@@ -74,11 +78,34 @@ export function* updateCacheValues(
     },
     fetchPolicy: 'network-only',
   });
+
+  /*
+   * Colony Actions (to get the refreshed motion state)
+   *
+   * @NOTE It might make sense in the long run to just create a separate
+   * resolver just for the motion's state. It will cut down on fetching
+   * data we don't need just to show the updated state
+   */
+  yield apolloClient.query<ColonyActionQuery, ColonyActionQueryVariables>({
+    query: ColonyActionDocument,
+    variables: {
+      colonyAddress,
+      transactionHash,
+    },
+    fetchPolicy: 'network-only',
+  });
 }
 
 function* stakeMotion({
   meta,
-  payload: { userAddress, colonyAddress, motionId, vote, amount },
+  payload: {
+    userAddress,
+    colonyAddress,
+    motionId,
+    vote,
+    amount,
+    transactionHash,
+  },
 }: Action<ActionTypes.COLONY_MOTION_STAKE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
@@ -168,7 +195,13 @@ function* stakeMotion({
     /*
      * Update motion page values
      */
-    yield fork(updateCacheValues, colonyAddress, userAddress, motionId);
+    yield fork(
+      updateCacheValues,
+      colonyAddress,
+      userAddress,
+      motionId,
+      transactionHash,
+    );
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_MOTION_STAKE_SUCCESS,

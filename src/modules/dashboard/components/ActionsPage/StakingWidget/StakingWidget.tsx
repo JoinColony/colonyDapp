@@ -27,6 +27,7 @@ type Props = {
   colony: Colony;
   motionId: number;
   scrollToRef?: RefObject<HTMLInputElement>;
+  transactionHash: string;
 };
 
 const displayName = 'StakingWidget';
@@ -66,6 +67,7 @@ const StakingWidget = ({
   colony: { colonyAddress, tokens, nativeTokenAddress },
   motionId,
   scrollToRef,
+  transactionHash,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -106,6 +108,7 @@ const StakingWidget = ({
         colonyAddress,
         motionId: bigNumberify(motionId),
         vote: 1,
+        transactionHash,
       })),
     ),
     [walletAddress, colonyAddress, motionId, data],
