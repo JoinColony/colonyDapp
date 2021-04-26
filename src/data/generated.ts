@@ -882,6 +882,7 @@ export type MotionStakerRewards = {
   stakingRewardNay: Scalars['String'];
   stakesYay: Scalars['String'];
   stakesNay: Scalars['String'];
+  claimedReward: Scalars['Boolean'];
 };
 
 export type ByColonyFilter = {
@@ -1622,7 +1623,7 @@ export type MotionStakerRewardQueryVariables = Exact<{
 }>;
 
 
-export type MotionStakerRewardQuery = { motionStakerReward: Pick<MotionStakerRewards, 'stakingRewardYay' | 'stakingRewardNay' | 'stakesYay' | 'stakesNay'> };
+export type MotionStakerRewardQuery = { motionStakerReward: Pick<MotionStakerRewards, 'stakingRewardYay' | 'stakingRewardNay' | 'stakesYay' | 'stakesNay' | 'claimedReward'> };
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3963,6 +3964,7 @@ export const MotionStakerRewardDocument = gql`
     stakingRewardNay
     stakesYay
     stakesNay
+    claimedReward
   }
 }
     `;

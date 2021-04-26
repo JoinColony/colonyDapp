@@ -6,6 +6,7 @@ import {
   getBlockTime,
   MotionState as NetworkMotionState,
   getEvents,
+  getMultipleEvents,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
@@ -499,11 +500,13 @@ export const motionsResolvers = ({
           stakingRewardNay: string | null;
           stakesYay: string | null;
           stakesNay: string | null;
+          claimedReward: boolean | null;
         } = {
           stakingRewardYay: null,
           stakingRewardNay: null,
           stakesYay: null,
           stakesNay: null,
+          claimedReward: null,
         };
         const votingReputationClient = await colonyManager.getClient(
           ClientType.VotingReputationClient,
@@ -514,13 +517,26 @@ export const motionsResolvers = ({
           userAddress.toLowerCase(),
           null,
         );
-        const userStakeEvent = await getEvents(
-          votingReputationClient,
+        // eslint-disable-next-line max-len
+        const stakeClaimedFilter = votingReputationClient.filters.MotionRewardClaimed(
+          bigNumberify(motionId),
+          userAddress.toLowerCase(),
+          null,
+          null,
+        );
+        const events = await getMultipleEvents(votingReputationClient, [
           motionStakedFilter,
+          stakeClaimedFilter,
+        ]);
+        const userStakeEvents = events.filter(
+          ({ name }) => name === ColonyAndExtensionsEvents.MotionStaked,
+        );
+        const rewardClaimedEvents = events.filter(
+          ({ name }) => name === ColonyAndExtensionsEvents.MotionRewardClaimed,
         );
         let stakesYay = bigNumberify(0);
         let stakesNay = bigNumberify(0);
-        userStakeEvent.map(({ values: { amount, vote } }) => {
+        userStakeEvents.map(({ values: { amount, vote } }) => {
           if (vote.toNumber() === 1) {
             stakesYay = stakesYay.add(amount);
             return stakesYay;
@@ -573,6 +589,7 @@ export const motionsResolvers = ({
           stakingRewardNay: stakingRewardNay.toString(),
           stakesYay: stakesYay.toString(),
           stakesNay: stakesNay.toString(),
+          claimedReward: !!rewardClaimedEvents.length,
         };
         return stakerReward;
       } catch (error) {

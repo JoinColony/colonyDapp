@@ -229,6 +229,7 @@ export default gql`
     stakingRewardNay: String!
     stakesYay: String!
     stakesNay: String!
+    claimedReward: Boolean!
   }
 
   extend type Query {

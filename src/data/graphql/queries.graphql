@@ -431,6 +431,7 @@ query MotionStakerReward($motionId: Int!, $colonyAddress: String!, $userAddress:
     stakingRewardNay
     stakesYay
     stakesNay
+    claimedReward
   }
 }
 

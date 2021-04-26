@@ -75,7 +75,10 @@ const MSG = defineMessages({
   },
   claimButton: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.claimButton',
-    defaultMessage: `Claim`,
+    defaultMessage: `{claimedReward, select,
+      true {Claimed}
+      other {Claim}
+    }`,
   },
   stakeLabel: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.stakeLabel',
@@ -137,8 +140,6 @@ const FinalizeMotionAndClaimWidget = ({
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
-
-  console.log(stakerRewards);
 
   /*
    * TODO Add loading state
@@ -257,67 +258,76 @@ const FinalizeMotionAndClaimWidget = ({
                   <Button
                     appearance={{ theme: 'primary', size: 'medium' }}
                     text={MSG.claimButton}
-                    disabled={!hasRegisteredProfile || !canClaimStakes}
+                    textValues={{
+                      claimedReward:
+                        stakerRewards?.motionStakerReward?.claimedReward,
+                    }}
+                    disabled={
+                      !hasRegisteredProfile ||
+                      !canClaimStakes ||
+                      stakerRewards?.motionStakerReward?.claimedReward
+                    }
                     onClick={() => handleSubmit()}
                     loading={isSubmitting}
                   />
                 </div>
               </div>
-              {canClaimStakes && (
-                <>
-                  <div className={styles.item}>
-                    <div className={styles.label}>
-                      <div>
-                        <FormattedMessage {...MSG.stakeLabel} />
+              {canClaimStakes &&
+                !stakerRewards?.motionStakerReward?.claimedReward && (
+                  <>
+                    <div className={styles.item}>
+                      <div className={styles.label}>
+                        <div>
+                          <FormattedMessage {...MSG.stakeLabel} />
+                        </div>
+                      </div>
+                      <div className={styles.value}>
+                        <Numeral
+                          unit={getTokenDecimalsWithFallback(
+                            nativeToken?.decimals,
+                          )}
+                          value={userStake}
+                          suffix={` ${nativeToken?.symbol}`}
+                          truncate={2}
+                        />
                       </div>
                     </div>
-                    <div className={styles.value}>
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
-                        )}
-                        value={userStake}
-                        suffix={` ${nativeToken?.symbol}`}
-                        truncate={2}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.item}>
-                    <div className={styles.label}>
-                      <div>
-                        <FormattedMessage {...MSG.winningsLabel} />
+                    <div className={styles.item}>
+                      <div className={styles.label}>
+                        <div>
+                          <FormattedMessage {...MSG.winningsLabel} />
+                        </div>
+                      </div>
+                      <div className={styles.value}>
+                        <Numeral
+                          unit={getTokenDecimalsWithFallback(
+                            nativeToken?.decimals,
+                          )}
+                          value={userWinnings}
+                          suffix={` ${nativeToken?.symbol}`}
+                          truncate={2}
+                        />
                       </div>
                     </div>
-                    <div className={styles.value}>
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
-                        )}
-                        value={userWinnings}
-                        suffix={` ${nativeToken?.symbol}`}
-                        truncate={2}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.item}>
-                    <div className={styles.label}>
-                      <div>
-                        <FormattedMessage {...MSG.totalLabel} />
+                    <div className={styles.item}>
+                      <div className={styles.label}>
+                        <div>
+                          <FormattedMessage {...MSG.totalLabel} />
+                        </div>
+                      </div>
+                      <div className={styles.value}>
+                        <Numeral
+                          unit={getTokenDecimalsWithFallback(
+                            nativeToken?.decimals,
+                          )}
+                          value={userTotals}
+                          suffix={` ${nativeToken?.symbol}`}
+                          truncate={2}
+                        />
                       </div>
                     </div>
-                    <div className={styles.value}>
-                      <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
-                        )}
-                        value={userTotals}
-                        suffix={` ${nativeToken?.symbol}`}
-                        truncate={2}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
             </>
           )}
         </ActionForm>
