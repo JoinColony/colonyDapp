@@ -1,4 +1,5 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useCallback } from 'react';
+
 import { FormattedMessage } from 'react-intl';
 
 import { bigNumberify } from 'ethers/utils';
@@ -90,6 +91,7 @@ const MintTokenMotion = ({
 
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
+  const [selectedStakeSide, setSelectedStakeSide] = useState<StakeSide>();
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
       motionId,
@@ -139,6 +141,18 @@ const MintTokenMotion = ({
     ...tags,
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
+
+  const getStakeSide = useCallback((): StakeSide => {
+    if (selectedStakeSide) {
+      return selectedStakeSide;
+    }
+
+    if (bigNumberify(motionNAYStake || 0).eq(0)) {
+      return StakeSide.Motion;
+    }
+
+    return StakeSide.Both;
+  }, [selectedStakeSide, motionNAYStake]);
 
   return (
     <div className={styles.main}>
@@ -210,15 +224,14 @@ const MintTokenMotion = ({
           )}
         </div>
         <div className={styles.details}>
-          {motionState === MotionState.StakeRequired && (
+          {(motionState === MotionState.StakeRequired ||
+            motionState === MotionState.Motion ||
+            motionState === MotionState.Objection) && (
             <TotalStakeWidget
               colonyAddress={colony.colonyAddress}
               motionId={motionId}
-              stakeSide={
-                bigNumberify(motionNAYStake || 0).eq(0)
-                  ? StakeSide.Motion
-                  : StakeSide.Both
-              }
+              stakeSide={getStakeSide()}
+              handleStakeSideSelect={setSelectedStakeSide}
             />
           )}
           {(motionState === MotionState.StakeRequired ||
