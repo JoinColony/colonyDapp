@@ -272,62 +272,61 @@ const FinalizeMotionAndClaimWidget = ({
                   />
                 </div>
               </div>
-              {canClaimStakes &&
-                !stakerRewards?.motionStakerReward?.claimedReward && (
-                  <>
-                    <div className={styles.item}>
-                      <div className={styles.label}>
-                        <div>
-                          <FormattedMessage {...MSG.stakeLabel} />
-                        </div>
-                      </div>
-                      <div className={styles.value}>
-                        <Numeral
-                          unit={getTokenDecimalsWithFallback(
-                            nativeToken?.decimals,
-                          )}
-                          value={userStake}
-                          suffix={` ${nativeToken?.symbol}`}
-                          truncate={2}
-                        />
+              {canClaimStakes && (
+                <>
+                  <div className={styles.item}>
+                    <div className={styles.label}>
+                      <div>
+                        <FormattedMessage {...MSG.stakeLabel} />
                       </div>
                     </div>
-                    <div className={styles.item}>
-                      <div className={styles.label}>
-                        <div>
-                          <FormattedMessage {...MSG.winningsLabel} />
-                        </div>
-                      </div>
-                      <div className={styles.value}>
-                        <Numeral
-                          unit={getTokenDecimalsWithFallback(
-                            nativeToken?.decimals,
-                          )}
-                          value={userWinnings}
-                          suffix={` ${nativeToken?.symbol}`}
-                          truncate={2}
-                        />
+                    <div className={styles.value}>
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={userStake}
+                        suffix={` ${nativeToken?.symbol}`}
+                        truncate={2}
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.item}>
+                    <div className={styles.label}>
+                      <div>
+                        <FormattedMessage {...MSG.winningsLabel} />
                       </div>
                     </div>
-                    <div className={styles.item}>
-                      <div className={styles.label}>
-                        <div>
-                          <FormattedMessage {...MSG.totalLabel} />
-                        </div>
-                      </div>
-                      <div className={styles.value}>
-                        <Numeral
-                          unit={getTokenDecimalsWithFallback(
-                            nativeToken?.decimals,
-                          )}
-                          value={userTotals}
-                          suffix={` ${nativeToken?.symbol}`}
-                          truncate={2}
-                        />
+                    <div className={styles.value}>
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={userWinnings}
+                        suffix={` ${nativeToken?.symbol}`}
+                        truncate={2}
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.item}>
+                    <div className={styles.label}>
+                      <div>
+                        <FormattedMessage {...MSG.totalLabel} />
                       </div>
                     </div>
-                  </>
-                )}
+                    <div className={styles.value}>
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={userTotals}
+                        suffix={` ${nativeToken?.symbol}`}
+                        truncate={2}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </>
           )}
         </ActionForm>

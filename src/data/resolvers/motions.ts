@@ -558,8 +558,8 @@ export const motionsResolvers = ({
          * block. If they succeed, they overwrite their initial valiues, if they
          * fail, they fall back to the initial 0.
          */
-        let stakingRewardNay = bigNumberify(0);
         let stakingRewardYay = bigNumberify(0);
+        let stakingRewardNay = bigNumberify(0);
         try {
           [stakingRewardYay] = await votingReputationClient.getStakerReward(
             motionId,
@@ -584,6 +584,21 @@ export const motionsResolvers = ({
            */
           // silent error
         }
+        /*
+         * @NOTE If we claimed the rewards, than `getStakerReward` will return 0
+         * (since we already claimed the reward, hence no more reward left).
+         *
+         * To be able to display the "original" value of the reward, we need to
+         * parse the claim reward events
+         */
+        rewardClaimedEvents.map(({ values: { amount, vote } }) => {
+          if (vote.toNumber() === 1) {
+            stakingRewardYay = amount;
+            return stakingRewardYay;
+          }
+          stakingRewardNay = amount;
+          return stakingRewardNay;
+        });
         stakerReward = {
           stakingRewardYay: stakingRewardYay.toString(),
           stakingRewardNay: stakingRewardNay.toString(),
