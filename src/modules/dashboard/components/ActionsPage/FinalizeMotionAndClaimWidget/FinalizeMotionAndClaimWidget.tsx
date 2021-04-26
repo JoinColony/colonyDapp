@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-
 import { bigNumberify } from 'ethers/utils';
+
 import Button from '~core/Button';
 import { ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -15,6 +15,7 @@ import {
   useMotionVoteResultsQuery,
   useMotionCurrentUserVotedQuery,
   useMotionFinalizedQuery,
+  useMotionStakerRewardQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
@@ -122,6 +123,17 @@ const FinalizeMotionAndClaimWidget = ({
     fetchPolicy: 'network-only',
   });
 
+  const { data: stakerRewards } = useMotionStakerRewardQuery({
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  console.log(stakerRewards);
+
   /*
    * TODO Add loading state
    */
@@ -149,6 +161,9 @@ const FinalizeMotionAndClaimWidget = ({
     motionDomain === ROOT_DOMAIN_ID;
 
   const showClaimButton = finalized?.motionFinalized;
+  const canClaimStakes =
+    bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||
+    bigNumberify(stakerRewards?.motionStakerReward?.stakesNay || 0).gt(0);
 
   return (
     <div
@@ -200,7 +215,7 @@ const FinalizeMotionAndClaimWidget = ({
           success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
           // transform={transform}
         >
-          {({ handleSubmit, isSubmitting, isValid }: FormikProps<{}>) => (
+          {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
             <>
               <div className={styles.title}>
                 <div className={styles.label}>
@@ -212,36 +227,40 @@ const FinalizeMotionAndClaimWidget = ({
                   <Button
                     appearance={{ theme: 'primary', size: 'medium' }}
                     text={MSG.claimButton}
-                    disabled={!isValid || !hasRegisteredProfile}
+                    disabled={!hasRegisteredProfile || !canClaimStakes}
                     onClick={() => handleSubmit()}
                     loading={isSubmitting}
                   />
                 </div>
               </div>
-              <div className={styles.item}>
-                <div className={styles.label}>
-                  <div>
-                    <FormattedMessage {...MSG.stakeLabel} />
+              {canClaimStakes && (
+                <>
+                  <div className={styles.item}>
+                    <div className={styles.label}>
+                      <div>
+                        <FormattedMessage {...MSG.stakeLabel} />
+                      </div>
+                    </div>
+                    <div className={styles.value}>12 A</div>
                   </div>
-                </div>
-                <div className={styles.value}>12 A</div>
-              </div>
-              <div className={styles.item}>
-                <div className={styles.label}>
-                  <div>
-                    <FormattedMessage {...MSG.winningsLabel} />
+                  <div className={styles.item}>
+                    <div className={styles.label}>
+                      <div>
+                        <FormattedMessage {...MSG.winningsLabel} />
+                      </div>
+                    </div>
+                    <div className={styles.value}>12 A</div>
                   </div>
-                </div>
-                <div className={styles.value}>12 A</div>
-              </div>
-              <div className={styles.item}>
-                <div className={styles.label}>
-                  <div>
-                    <FormattedMessage {...MSG.totalLabel} />
+                  <div className={styles.item}>
+                    <div className={styles.label}>
+                      <div>
+                        <FormattedMessage {...MSG.totalLabel} />
+                      </div>
+                    </div>
+                    <div className={styles.value}>12 A</div>
                   </div>
-                </div>
-                <div className={styles.value}>12 A</div>
-              </div>
+                </>
+              )}
             </>
           )}
         </ActionForm>
