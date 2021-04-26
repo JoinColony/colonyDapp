@@ -885,7 +885,7 @@ export type MotionVoteResults = {
   yayVoters: Array<Scalars['String']>;
   nayVotes: Scalars['String'];
   nayVoters: Array<Scalars['String']>;
-}
+};
 
 export type TotalStakedAmounts = {
   YAY?: Maybe<Scalars['String']>;
@@ -1466,7 +1466,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionNAYStake' | 'motionState' | 'motionDomain' | 'blockNumber'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -1602,19 +1602,6 @@ export type MotionVoterRewardQueryVariables = Exact<{
 
 export type MotionsVoterRewardQuery = Pick<Query, 'motionVoterReward'>;
 
-export type StakeAmountsForMotionQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  userAddress: Scalars['String'];
-  motionId: Scalars['Int'];
-  stakeSide: Scalars['String'];
-}>;
-
-
-export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: (
-    Pick<StakeAmounts, 'userStake' | 'requiredStake'>
-    & { totalStaked: Pick<TotalStakedAmounts, 'YAY' | 'NAY'> }
-  ) };
-
 export type MotionUserVoteRevealedQueryVariables = Exact<{
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -1658,6 +1645,18 @@ export type MotionStakerRewardQueryVariables = Exact<{
 
 
 export type MotionStakerRewardQuery = { motionStakerReward: Pick<MotionStakerRewards, 'stakingRewardYay' | 'stakingRewardNay' | 'stakesYay' | 'stakesNay' | 'claimedReward'> };
+export type StakeAmountsForMotionQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  motionId: Scalars['Int'];
+  stakeSide: Scalars['String'];
+}>;
+
+
+export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: (
+    Pick<StakeAmounts, 'userStake' | 'requiredStake'>
+    & { totalStaked: Pick<TotalStakedAmounts, 'YAY' | 'NAY'> }
+  ) };
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4000,6 +3999,15 @@ export const MotionStakerRewardDocument = gql`
     stakesYay
     stakesNay
     claimedReward
+export const StakeAmountsForMotionDocument = gql`
+    query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $stakeSide: String!) {
+  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, stakeSide: $stakeSide) @client {
+    totalStaked {
+      YAY
+      NAY
+    }
+    userStake
+    requiredStake
   }
 }
     `;
@@ -4009,6 +4017,10 @@ export const MotionStakerRewardDocument = gql`
  *
  * To run a query within a React component, call `useMotionStakerRewardQuery` and pass it any options that fit your needs.
  * When your component renders, `useMotionStakerRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * __useStakeAmountsForMotionQuery__
+ *
+ * To run a query within a React component, call `useStakeAmountsForMotionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStakeAmountsForMotionQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4031,6 +4043,24 @@ export function useMotionStakerRewardLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type MotionStakerRewardQueryHookResult = ReturnType<typeof useMotionStakerRewardQuery>;
 export type MotionStakerRewardLazyQueryHookResult = ReturnType<typeof useMotionStakerRewardLazyQuery>;
 export type MotionStakerRewardQueryResult = Apollo.QueryResult<MotionStakerRewardQuery, MotionStakerRewardQueryVariables>;
+ * const { data, loading, error } = useStakeAmountsForMotionQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *      motionId: // value for 'motionId'
+ *      stakeSide: // value for 'stakeSide'
+ *   },
+ * });
+ */
+export function useStakeAmountsForMotionQuery(baseOptions?: Apollo.QueryHookOptions<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>) {
+        return Apollo.useQuery<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>(StakeAmountsForMotionDocument, baseOptions);
+      }
+export function useStakeAmountsForMotionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>) {
+          return Apollo.useLazyQuery<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>(StakeAmountsForMotionDocument, baseOptions);
+        }
+export type StakeAmountsForMotionQueryHookResult = ReturnType<typeof useStakeAmountsForMotionQuery>;
+export type StakeAmountsForMotionLazyQueryHookResult = ReturnType<typeof useStakeAmountsForMotionLazyQuery>;
+export type StakeAmountsForMotionQueryResult = Apollo.QueryResult<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {
