@@ -144,6 +144,7 @@ export const motionsResolvers = ({
           .div(bigNumberify(10).pow(36));
 
         return {
+          totalNAYStakes: totalNAYStakes.toString(),
           remainingToFullyYayStaked: remainingToFullyYayStaked.toString(),
           remainingToFullyNayStaked: remainingToFullyNayStaked.toString(),
           maxUserStake: reputationAmount.toString(),

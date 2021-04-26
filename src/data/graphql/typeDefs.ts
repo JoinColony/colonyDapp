@@ -184,6 +184,7 @@ export default gql`
   }
 
   type MotionStakes {
+    totalNAYStakes: String!
     remainingToFullyYayStaked: String!
     remainingToFullyNayStaked: String!
     maxUserStake: String!
