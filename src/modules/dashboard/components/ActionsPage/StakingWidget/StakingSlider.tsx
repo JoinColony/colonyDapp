@@ -13,6 +13,7 @@ import styles from './StakingWidget.css';
 
 export interface StakingAmounts {
   remainingToFullyYayStaked: string;
+  remainingToFullyNayStaked: string;
   maxUserStake: string;
   minUserStake: string;
 }
@@ -60,6 +61,7 @@ const StakingSlider = ({
   colony: { tokens, nativeTokenAddress },
   values,
   remainingToFullyYayStaked,
+  remainingToFullyNayStaked,
   maxUserStake,
   minUserStake,
   canUserStake,
@@ -71,7 +73,7 @@ const StakingSlider = ({
   );
 
   const remainingToStake = moveDecimal(
-    remainingToFullyYayStaked,
+    isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
     -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
   );
   /*
