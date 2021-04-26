@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -24,6 +24,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
+import StakingWidget from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
 import FinalizeMotionWidget from '../FinalizeMotionWidget';
@@ -66,6 +67,8 @@ const MintTokenMotion = ({
   transactionHash,
   initiator,
 }: Props) => {
+  const bottomElementRef = useRef<HTMLInputElement>(null);
+
   const { passedTag, failedTag, ...tags } = useMemo(() => {
     return Object.values(MOTION_TAG_MAP).reduce((acc, object) => {
       const { theme, colorSchema } = object as TagAppearance;
@@ -86,9 +89,11 @@ const MintTokenMotion = ({
       motionId,
       colonyAddress: colony.colonyAddress,
     },
+    fetchPolicy: 'network-only',
   });
   const { data: motionEventsData } = useEventsForMotionQuery({
     variables: { colonyAddress: colony.colonyAddress, motionId },
+    fetchPolicy: 'network-only',
   });
 
   const actionAndEventValues = {
@@ -188,8 +193,23 @@ const MintTokenMotion = ({
             actionData={colonyAction}
             colony={colony}
           />
+          {/*
+           * @TODO this is the element that will wrap the comment box
+           * Make sure to preserve the ref callback
+           */}
+          <div ref={bottomElementRef} />
         </div>
         <div className={styles.details}>
+          {(motionState === MotionState.StakeRequired ||
+            motionState === MotionState.Motion ||
+            motionState === MotionState.Objection) && (
+            <StakingWidget
+              motionId={motionId}
+              colony={colony}
+              scrollToRef={bottomElementRef}
+              transactionHash={transactionHash}
+            />
+          )}
           {motionState === MotionState.Voting && (
             <VoteWidget
               colony={colony}

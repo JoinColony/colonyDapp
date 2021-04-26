@@ -286,6 +286,7 @@ export type Query = {
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
+  motionStakes: MotionStakes;
   motionUserVoteRevealed: MotionVoteReveal;
   motionVoteResults: MotionVoteResults;
   motionVoterReward: Scalars['String'];
@@ -408,6 +409,13 @@ export type QueryMotionCurrentUserVotedArgs = {
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
+};
+
+
+export type QueryMotionStakesArgs = {
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  motionId: Scalars['Int'];
 };
 
 
@@ -823,6 +831,13 @@ export type ProcessedMetaColony = {
   avatarURL?: Maybe<Scalars['String']>;
 };
 
+export type MotionStakes = {
+  remainingToFullyYayStaked: Scalars['String'];
+  remainingToFullyNayStaked: Scalars['String'];
+  maxUserStake: Scalars['String'];
+  minUserStake: Scalars['String'];
+};
+
 export type UsersAndRecoveryApprovals = {
   id: Scalars['String'];
   profile: UserProfile;
@@ -844,7 +859,7 @@ export type MotionVoteResults = {
   yayVotes: Scalars['String'];
   yayVoters: Array<Scalars['String']>;
   nayVotes: Scalars['String'];
-  nayVoters: Array<Maybe<Scalars['String']>>;
+  nayVoters: Array<Scalars['String']>;
 };
 
 export type ByColonyFilter = {
@@ -1517,6 +1532,15 @@ export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
 
 export type LegacyNumberOfRecoveryRolesQuery = Pick<Query, 'legacyNumberOfRecoveryRoles'>;
 
+export type MotionStakesQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  motionId: Scalars['Int'];
+}>;
+
+
+export type MotionStakesQuery = { motionStakes: Pick<MotionStakes, 'remainingToFullyYayStaked' | 'remainingToFullyNayStaked' | 'maxUserStake' | 'minUserStake'> };
+
 export type MotionsSystemMessagesQueryVariables = Exact<{
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -1833,7 +1857,13 @@ export type SubscriptionsMotionsSubscriptionVariables = Exact<{
 
 export type SubscriptionsMotionsSubscription = { motions: Array<(
     Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'currentStake' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
-    & { associatedColony: { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }, transaction: (
+    & { associatedColony: (
+      { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
+      & { token: (
+        Pick<SubgraphToken, 'decimals' | 'symbol'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'timestamp'> }
     ), domain: (
@@ -3640,6 +3670,44 @@ export function useLegacyNumberOfRecoveryRolesLazyQuery(baseOptions?: Apollo.Laz
 export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesQuery>;
 export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
 export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
+export const MotionStakesDocument = gql`
+    query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
+  motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+    remainingToFullyYayStaked
+    remainingToFullyNayStaked
+    maxUserStake
+    minUserStake
+  }
+}
+    `;
+
+/**
+ * __useMotionStakesQuery__
+ *
+ * To run a query within a React component, call `useMotionStakesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionStakesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionStakesQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *      motionId: // value for 'motionId'
+ *   },
+ * });
+ */
+export function useMotionStakesQuery(baseOptions?: Apollo.QueryHookOptions<MotionStakesQuery, MotionStakesQueryVariables>) {
+        return Apollo.useQuery<MotionStakesQuery, MotionStakesQueryVariables>(MotionStakesDocument, baseOptions);
+      }
+export function useMotionStakesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionStakesQuery, MotionStakesQueryVariables>) {
+          return Apollo.useLazyQuery<MotionStakesQuery, MotionStakesQueryVariables>(MotionStakesDocument, baseOptions);
+        }
+export type MotionStakesQueryHookResult = ReturnType<typeof useMotionStakesQuery>;
+export type MotionStakesLazyQueryHookResult = ReturnType<typeof useMotionStakesLazyQuery>;
+export type MotionStakesQueryResult = Apollo.QueryResult<MotionStakesQuery, MotionStakesQueryVariables>;
 export const MotionsSystemMessagesDocument = gql`
     query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
   motionsSystemMessages(motionId: $motionId, colonyAddress: $colonyAddress) @client {
@@ -4765,6 +4833,11 @@ export const SubscriptionsMotionsDocument = gql`
     associatedColony {
       colonyAddress: id
       id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
     }
     transaction {
       hash: id

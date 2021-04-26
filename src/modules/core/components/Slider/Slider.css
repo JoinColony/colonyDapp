@@ -1,0 +1,7 @@
+.main :global(.rc-slider-disabled) {
+  padding: 6px 0 7px;
+}
+
+.main :global(.rc-slider-disabled .rc-slider-handle) {
+  border-color: var(--text-disabled) !important;
+}

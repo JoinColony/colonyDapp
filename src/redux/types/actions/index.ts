@@ -1,6 +1,7 @@
 import { ColonyActionTypes } from './colony';
 import { ColonyActionsActionTypes } from './colonyActions';
 import { ConnectionActionTypes } from './connection';
+import { MotionActionTypes } from './motion';
 import { GasPricesActionTypes } from './gasPrices';
 import { IpfsActionTypes } from './ipfs';
 import { MultisigActionTypes } from './multisig';
@@ -101,7 +102,8 @@ export type AllActions =
   | TransactionActionTypes
   | MessageActionTypes
   | UserActionTypes
-  | WalletActionTypes;
+  | WalletActionTypes
+  | MotionActionTypes;
 
 export type Action<T extends AllActions['type']> = Extract<
   AllActions,

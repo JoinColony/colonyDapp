@@ -1,8 +1,10 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import ReactSlider from 'rc-slider';
 import { useField } from 'formik';
 
 import 'rc-slider/assets/index.css';
+
+import styles from './Slider.css';
 
 type Appearance = {
   theme?: 'primary' | 'danger';
@@ -12,10 +14,14 @@ type Appearance = {
 interface Props {
   value: number;
   max?: number;
+  min?: number;
   limit?: number;
   appearance?: Appearance;
-  onChange: (val: any) => void;
+  onChange?: (val: any) => void;
   name: string;
+  disabled?: boolean;
+  step?: number;
+  onReset?: (val: any) => void;
 }
 
 const displayName = 'Slider';
@@ -23,13 +29,26 @@ const displayName = 'Slider';
 const Slider = ({
   value,
   max = 100,
+  min = 0,
   onChange,
   limit,
   appearance,
   name,
+  step = 1,
+  disabled = false,
 }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
   const [, , { setValue }] = useField(name);
+
+  /*
+   * This is needed to trigger an outside reset of the slider
+   * Eg: when using `setFieldValue` after submitting a form
+   */
+  useEffect(() => {
+    if (value !== sliderValue) {
+      setSliderValue(value);
+    }
+  }, [sliderValue, value, setSliderValue]);
 
   const gradientStopPercentage = useMemo(() => {
     return limit ? Math.round((limit / max) * 100) : 0;
@@ -40,12 +59,17 @@ const Slider = ({
       if ((limit && sliderValue < limit) || val < sliderValue || !limit) {
         setSliderValue(val);
         setValue(val);
-        onChange(val);
+        if (onChange) {
+          onChange(val);
+        }
       }
       if (limit && sliderValue > limit) {
         setSliderValue(limit);
         setValue(val);
-        onChange(limit);
+
+        if (onChange) {
+          onChange(limit);
+        }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,40 +112,43 @@ const Slider = ({
   const sizes = SliderSizesObject[appearance?.size || 'thin'];
 
   return (
-    <ReactSlider
-      min={0}
-      step={1}
-      value={sliderValue}
-      onChange={onSliderChange}
-      marks={marks}
-      max={max}
-      trackStyle={{
-        backgroundColor: colors.backgroundColor,
-        height: sizes.height,
-      }}
-      handleStyle={{
-        borderColor: colors.borderColor,
-        borderWidth: 6,
-        height: 15,
-        width: 15,
-        marginTop: -7,
-        backgroundColor: '#FFFFFF',
-      }}
-      dotStyle={{
-        height: sizes.markHeight,
-        width: sizes.markWidth,
-        backgroundColor: '#76748B',
-        border: 0,
-        borderRadius: 0,
-        top: sizes.markPositionTop,
-        marginLeft: 0,
-      }}
-      railStyle={{
-        backgroundColor: '#C2CCCC',
-        height: sizes.height,
-        backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientStopPercentage}%, transparent ${gradientStopPercentage}%)`,
-      }}
-    />
+    <div className={styles.main}>
+      <ReactSlider
+        min={min}
+        step={step}
+        value={sliderValue}
+        onChange={onSliderChange}
+        marks={marks}
+        max={max}
+        disabled={disabled}
+        trackStyle={{
+          backgroundColor: colors.backgroundColor,
+          height: sizes.height,
+        }}
+        handleStyle={{
+          borderColor: colors.borderColor,
+          borderWidth: 6,
+          height: 15,
+          width: 15,
+          marginTop: -7,
+          backgroundColor: '#FFFFFF',
+        }}
+        dotStyle={{
+          height: sizes.markHeight,
+          width: sizes.markWidth,
+          backgroundColor: '#76748B',
+          border: 0,
+          borderRadius: 0,
+          top: sizes.markPositionTop,
+          marginLeft: 0,
+        }}
+        railStyle={{
+          backgroundColor: '#C2CCCC',
+          height: sizes.height,
+          backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientStopPercentage}%, transparent ${gradientStopPercentage}%)`,
+        }}
+      />
+    </div>
   );
 };
 

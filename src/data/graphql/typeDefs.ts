@@ -181,6 +181,13 @@ export default gql`
     avatarURL: String
   }
 
+  type MotionStakes {
+    remainingToFullyYayStaked: String!
+    remainingToFullyNayStaked: String!
+    maxUserStake: String!
+    minUserStake: String!
+  }
+
   type UserProfile {
     avatarHash: String
     displayName: String
@@ -277,6 +284,11 @@ export default gql`
     networkExtensionVersion(extensionId: String!): Int!
     votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
     blockTime(blockHash: String): Int!
+    motionStakes(
+      colonyAddress: String!
+      userAddress: String!
+      motionId: Int!
+    ): MotionStakes!
     motionsSystemMessages(
       motionId: Int!
       colonyAddress: String!

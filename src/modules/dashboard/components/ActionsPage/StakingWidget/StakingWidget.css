@@ -1,0 +1,71 @@
+.main {
+  display: block;
+  margin: 0px 0 100px 0;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 100px;
+}
+
+.title {
+  display: flex;
+  padding: 15px 0 0;
+}
+
+.title h4 {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.description {
+  margin: 4px 0 20px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.buttonGroup {
+  margin-top: 30px;
+}
+
+.buttonGroup button {
+  padding: 0 0 2px;
+  width: 100px;
+  font-size: var(--size-small);
+}
+
+.buttonGroup button:last-child {
+  margin-left: 20px;
+}
+
+.amount {
+  align-self: flex-end;
+  margin-bottom: 2px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+  letter-spacing: var(--spacing-medium);
+}
+
+.sliderContainer {
+  margin-left: 6px;
+}
+
+.help {
+  align-self: flex-end;
+  margin: 0 0 -1px 7px;
+  width: 33px;
+  cursor: pointer;
+}
+
+.tooltip {
+  padding: 10px;
+  width: 220px;
+}
+
+.loading {
+  padding-top: 35px;
+}
