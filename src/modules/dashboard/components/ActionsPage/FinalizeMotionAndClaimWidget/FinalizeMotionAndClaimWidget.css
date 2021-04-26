@@ -75,3 +75,7 @@
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
+
+.loading {
+  padding-top: 20px;
+}

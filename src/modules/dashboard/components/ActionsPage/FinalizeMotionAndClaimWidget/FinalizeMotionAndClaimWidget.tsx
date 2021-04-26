@@ -9,6 +9,7 @@ import { ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import Numeral from '~core/Numeral';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -92,6 +93,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.totalLabel',
     defaultMessage: `Total`,
   },
+  loading: {
+    id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.loading',
+    defaultMessage: 'Loading motion rewards ...',
+  },
 });
 
 const FinalizeMotionAndClaimWidget = ({
@@ -102,7 +107,10 @@ const FinalizeMotionAndClaimWidget = ({
   motionDomain = ROOT_DOMAIN_ID,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
-  const { data: voteResults } = useMotionVoteResultsQuery({
+  const {
+    data: voteResults,
+    loading: loadingVoteResults,
+  } = useMotionVoteResultsQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
@@ -111,7 +119,10 @@ const FinalizeMotionAndClaimWidget = ({
     fetchPolicy: 'network-only',
   });
 
-  const { data: userVoted } = useMotionCurrentUserVotedQuery({
+  const {
+    data: userVoted,
+    loading: loadingUserVoted,
+  } = useMotionCurrentUserVotedQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
@@ -120,7 +131,10 @@ const FinalizeMotionAndClaimWidget = ({
     fetchPolicy: 'network-only',
   });
 
-  const { data: finalized } = useMotionFinalizedQuery({
+  const {
+    data: finalized,
+    loading: loadingFinalized,
+  } = useMotionFinalizedQuery({
     variables: {
       colonyAddress,
       motionId,
@@ -128,7 +142,10 @@ const FinalizeMotionAndClaimWidget = ({
     fetchPolicy: 'network-only',
   });
 
-  const { data: stakerRewards } = useMotionStakerRewardQuery({
+  const {
+    data: stakerRewards,
+    loading: loadingStakerRewards,
+  } = useMotionStakerRewardQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
@@ -141,36 +158,25 @@ const FinalizeMotionAndClaimWidget = ({
     ({ address }) => address === nativeTokenAddress,
   );
 
-  /*
-   * TODO Add loading state
-   */
-
-  const transform = useCallback(
+  const transformFinalizeData = useCallback(
     mapPayload(() => ({
       colonyAddress,
       walletAddress,
+      motionId,
     })),
     [],
   );
 
-  const hasRegisteredProfile = !!username && !ethereal;
-  const hasVotes =
-    bigNumberify(voteResults?.motionVoteResults?.nayVotes || 0).gt(0) ||
-    bigNumberify(voteResults?.motionVoteResults?.yayVotes || 0).gt(0);
-
-  /*
-   * If the motion is in the Root domain, it cannot be escalated further
-   * meaning it can be finalized directly
-   */
-  const showFinalizeButton =
-    voteResults?.motionVoteResults &&
-    !finalized?.motionFinalized &&
-    motionDomain === ROOT_DOMAIN_ID;
-
-  const showClaimButton = finalized?.motionFinalized;
-  const canClaimStakes =
-    bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||
-    bigNumberify(stakerRewards?.motionStakerReward?.stakesNay || 0).gt(0);
+  const transformClaimData = useCallback(
+    mapPayload(() => ({
+      colonyAddress,
+      walletAddress,
+      motionId,
+      stakesYay: stakerRewards?.motionStakerReward?.stakesYay,
+      stakesNay: stakerRewards?.motionStakerReward?.stakesNay,
+    })),
+    [stakerRewards],
+  );
 
   const { userStake, userWinnings, userTotals } = useMemo(() => {
     let stake = bigNumberify(0);
@@ -196,6 +202,41 @@ const FinalizeMotionAndClaimWidget = ({
     };
   }, [stakerRewards]);
 
+  if (
+    loadingVoteResults ||
+    loadingUserVoted ||
+    loadingFinalized ||
+    loadingStakerRewards
+  ) {
+    return (
+      <div className={styles.main}>
+        <MiniSpinnerLoader
+          className={styles.loading}
+          loadingText={MSG.loading}
+        />
+      </div>
+    );
+  }
+
+  const hasRegisteredProfile = !!username && !ethereal;
+  const hasVotes =
+    bigNumberify(voteResults?.motionVoteResults?.nayVotes || 0).gt(0) ||
+    bigNumberify(voteResults?.motionVoteResults?.yayVotes || 0).gt(0);
+
+  /*
+   * If the motion is in the Root domain, it cannot be escalated further
+   * meaning it can be finalized directly
+   */
+  const showFinalizeButton =
+    voteResults?.motionVoteResults &&
+    !finalized?.motionFinalized &&
+    motionDomain === ROOT_DOMAIN_ID;
+
+  const showClaimButton = finalized?.motionFinalized;
+  const canClaimStakes =
+    bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||
+    bigNumberify(stakerRewards?.motionStakerReward?.stakesNay || 0).gt(0);
+
   return (
     <div
       className={getMainClasses({}, styles, {
@@ -208,7 +249,7 @@ const FinalizeMotionAndClaimWidget = ({
           submit={ActionTypes.COLONY_ACTION_GENERIC}
           error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
           success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-          transform={transform}
+          transform={transformFinalizeData}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
             <div className={styles.itemWithForcedBorder}>
@@ -244,7 +285,7 @@ const FinalizeMotionAndClaimWidget = ({
           submit={ActionTypes.COLONY_ACTION_GENERIC}
           error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
           success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-          // transform={transform}
+          transform={transformClaimData}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
             <>

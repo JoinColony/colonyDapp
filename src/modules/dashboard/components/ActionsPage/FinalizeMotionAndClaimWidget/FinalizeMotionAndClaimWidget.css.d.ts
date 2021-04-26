@@ -9,3 +9,4 @@ export const help: string;
 export const tooltip: string;
 export const voteResults: string;
 export const outcome: string;
+export const loading: string;
