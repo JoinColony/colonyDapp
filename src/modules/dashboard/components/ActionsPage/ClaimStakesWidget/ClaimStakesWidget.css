@@ -1,0 +1,32 @@
+.main {
+  display: block;
+}
+
+.item {
+  composes: item from '../DetailsWidget/DetailsWidget.css';
+}
+
+.title {
+  composes: item;
+}
+
+.title .label {
+  color: var(--dark);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  composes: label from '../DetailsWidget/DetailsWidget.css';
+}
+
+.value {
+  composes: value from '../DetailsWidget/DetailsWidget.css';
+}
+
+.value button {
+  width: 100px;
+  font-size: var(--size-smal);
+}
