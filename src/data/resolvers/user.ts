@@ -5,8 +5,9 @@ import {
   ROOT_DOMAIN_ID,
   getBlockTime,
   getLogs,
+  getEvents,
 } from '@colony/colony-js';
-import { BigNumber } from 'ethers/utils';
+import { BigNumber, bigNumberify } from 'ethers/utils';
 import { AddressZero, HashZero } from 'ethers/constants';
 
 import { Context } from '~context/index';
@@ -50,6 +51,73 @@ const getUserReputation = async (
   return reputationAmount;
 };
 
+const getUserStakedBalance = async (
+  colonyManager: ColonyManager,
+  colonyAddress: Address,
+  walletAddress: Address,
+): Promise<BigNumber> => {
+  const votingReputationClient = await colonyManager.getClient(
+    ClientType.VotingReputationClient,
+    colonyAddress,
+  );
+  // @ts-ignore
+  // eslint-disable-next-line max-len
+  const motionStakeFilter = votingReputationClient.filters.MotionStaked(
+    null,
+    walletAddress,
+    null,
+    null,
+  );
+  const motionStakeEvents = await getEvents(
+    votingReputationClient,
+    motionStakeFilter,
+  );
+  const groupedMotionStakeEvents = motionStakeEvents.reduce((acc, event) => {
+    const { vote, motionId } = event.values;
+    const key = `${motionId.toString()}-${vote.toString()}`;
+    if (!acc[key]) {
+      acc[key] = [event];
+    } else {
+      acc[key].push(event);
+    }
+    return acc;
+  }, {});
+
+  // @ts-ignore
+  // eslint-disable-next-line max-len
+  const motionRewardClaimedFilter = votingReputationClient.filters.MotionRewardClaimed(
+    null,
+    walletAddress,
+    null,
+    null,
+  );
+  const motionRewardClaimedEvents = await getEvents(
+    votingReputationClient,
+    motionRewardClaimedFilter,
+  );
+
+  const filteredKeys = Object.keys(groupedMotionStakeEvents).filter((key) => {
+    const { motionId, vote } = groupedMotionStakeEvents[key][0].values;
+    const mappedMotionRewardClaimedEvent = motionRewardClaimedEvents.find(
+      (claimedEvent) =>
+        claimedEvent.values.motionId.toString() === motionId.toString() &&
+        claimedEvent.values.vote.toString() === vote.toString(),
+    );
+
+    return !mappedMotionRewardClaimedEvent;
+  });
+
+  const notClaimedEvents = filteredKeys.reduce((acc, key) => {
+    return [...acc, ...groupedMotionStakeEvents[key]];
+  }, []);
+
+  const totalStaked = notClaimedEvents.reduce((acc, event) => {
+    return acc.add(event.values.amount);
+  }, bigNumberify(0));
+
+  return totalStaked;
+};
+
 const getUserLock = async (
   apolloClient: ApolloClient<object>,
   colonyManager: ColonyManager,
@@ -69,6 +137,12 @@ const getUserLock = async (
     walletAddress,
     tokenAddress,
   );
+
+  const stakedTokens = await getUserStakedBalance(
+    colonyManager,
+    colonyAddress,
+    walletAddress,
+  );
   const nativeToken = (await getToken(
     { colonyManager, client: apolloClient },
     tokenAddress,
@@ -77,7 +151,7 @@ const getUserLock = async (
   return {
     balance: userLock.balance.toString(),
     nativeToken: nativeToken || null,
-    totalObligation: totalObligation.toString(),
+    totalObligation: totalObligation.add(stakedTokens).toString(),
     pendingBalance: userLock.pendingBalance.toString(),
   };
 };
