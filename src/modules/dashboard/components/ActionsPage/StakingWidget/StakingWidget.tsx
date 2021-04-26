@@ -11,7 +11,12 @@ import Button from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
-import { Colony, useLoggedInUser, useMotionStakesQuery } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useMotionStakesQuery,
+  useUserBalanceWithLockQuery,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload, pipe } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -73,6 +78,17 @@ const StakingWidget = ({
     fetchPolicy: 'network-only',
   });
 
+  const {
+    data: userData,
+    loading: userDataLoading,
+  } = useUserBalanceWithLockQuery({
+    variables: {
+      address: walletAddress,
+      tokenAddress: nativeTokenAddress,
+      colonyAddress,
+    },
+  });
+
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
@@ -111,10 +127,7 @@ const StakingWidget = ({
     [data, nativeToken, scrollToRef],
   );
 
-  /*
-   * @TODO Add proper loading state
-   */
-  if (loading || !data?.motionStakes) {
+  if (loading || userDataLoading || !data?.motionStakes) {
     return (
       <div className={styles.main}>
         <MiniSpinnerLoader
@@ -164,6 +177,12 @@ const StakingWidget = ({
   const userStakeTopLimit = parseFloat(
     moveDecimal(
       maxUserStake,
+      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+    ),
+  );
+  const userActivatedTokens = parseFloat(
+    moveDecimal(
+      userData?.user?.userLock?.balance || 0,
       -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
     ),
   );
@@ -225,16 +244,30 @@ const StakingWidget = ({
                     ? userStakeBottomLimit
                     : remainingToStakeSafe
                 }
-                limit={userStakeTopLimit}
+                limit={
+                  userStakeTopLimit < userActivatedTokens
+                    ? userStakeTopLimit
+                    : userActivatedTokens
+                }
                 step={0.01}
-                disabled={!canUserStake || remainingToStakeSafe === 0}
+                disabled={
+                  !canUserStake ||
+                  remainingToStakeSafe === 0 ||
+                  userActivatedTokens < userStakeBottomLimit ||
+                  userActivatedTokens === 0
+                }
               />
             </div>
             <div className={styles.buttonGroup}>
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
                 type="submit"
-                disabled={!canUserStake || remainingToStakeSafe === 0}
+                disabled={
+                  !canUserStake ||
+                  remainingToStakeSafe === 0 ||
+                  userActivatedTokens < userStakeBottomLimit ||
+                  userActivatedTokens === 0
+                }
                 text={MSG.stakeButton}
               />
               <Button
