@@ -6,6 +6,7 @@ import { CustomRadio } from '~core/Fields/Radio';
 import Numeral from '~core/Numeral';
 import { Form } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+import Icon from '~core/Icon';
 
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
@@ -31,11 +32,11 @@ const MSG = defineMessages({
   },
   YAYName: {
     id: 'dashboard.ActionsPage.TotalStakeWidget.GroupedTotalStake.YAYName',
-    defaultMessage: 'Motion',
+    defaultMessage: 'Motion {fullyStakedEmoji}',
   },
   NAYName: {
     id: 'dashboard.ActionsPage.TotalStakeWidget.GroupedTotalStake.NAYName',
-    defaultMessage: 'Objection',
+    defaultMessage: 'Objection {fullyStakedEmoji}',
   },
   fullyStaked: {
     id: 'dashboard.ActionsPage.TotalStakeWidget.GroupedTotalStake.fullyStaked',
@@ -109,7 +110,11 @@ const GroupedTotalStake = ({
             ),
           }}
           label={MSG.YAYName}
-          labelIcon={isYAYSideFullyStaked ? 'circle-check-primary' : null}
+          labelValues={{
+            fullyStakedEmoji: isYAYSideFullyStaked ? (
+              <Icon name="circle-check-primary" title={MSG.fullyStaked} />
+            ) : null,
+          }}
           appearance={{ theme: 'primary' }}
           checked
           disabled={isYAYSideFullyStaked}
@@ -134,7 +139,11 @@ const GroupedTotalStake = ({
             ),
           }}
           label={MSG.NAYName}
-          labelIcon={isNAYSideFullyStaked ? 'circle-check-primary' : null}
+          labelValues={{
+            fullyStakedEmoji: isNAYSideFullyStaked ? (
+              <Icon name="circle-check-primary" title={MSG.fullyStaked} />
+            ) : null,
+          }}
           appearance={{ theme: 'danger' }}
           checked
           disabled={isNAYSideFullyStaked}
