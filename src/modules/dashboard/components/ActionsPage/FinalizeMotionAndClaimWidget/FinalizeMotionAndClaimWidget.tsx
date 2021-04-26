@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -8,6 +8,7 @@ import Button from '~core/Button';
 import { ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+import Numeral from '~core/Numeral';
 
 import {
   Colony,
@@ -21,6 +22,7 @@ import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
 import { getMainClasses } from '~utils/css';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import VoteResults from './VoteResults';
 
@@ -90,7 +92,7 @@ const MSG = defineMessages({
 });
 
 const FinalizeMotionAndClaimWidget = ({
-  colony: { colonyAddress },
+  colony: { colonyAddress, tokens, nativeTokenAddress },
   colony,
   motionId,
   actionType,
@@ -132,6 +134,10 @@ const FinalizeMotionAndClaimWidget = ({
     fetchPolicy: 'network-only',
   });
 
+  const nativeToken = tokens.find(
+    ({ address }) => address === nativeTokenAddress,
+  );
+
   console.log(stakerRewards);
 
   /*
@@ -164,6 +170,30 @@ const FinalizeMotionAndClaimWidget = ({
   const canClaimStakes =
     bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||
     bigNumberify(stakerRewards?.motionStakerReward?.stakesNay || 0).gt(0);
+
+  const { userStake, userWinnings, userTotals } = useMemo(() => {
+    let stake = bigNumberify(0);
+    let winnings;
+    let totals = bigNumberify(0);
+    if (stakerRewards?.motionStakerReward) {
+      const {
+        stakesYay,
+        stakesNay,
+        stakingRewardNay,
+        stakingRewardYay,
+      } = stakerRewards.motionStakerReward;
+      stake = stake.add(bigNumberify(stakesYay)).add(bigNumberify(stakesNay));
+      totals = totals
+        .add(bigNumberify(stakingRewardYay))
+        .add(bigNumberify(stakingRewardNay));
+      winnings = totals.sub(stake);
+    }
+    return {
+      userStake: stake,
+      userWinnings: winnings,
+      userTotals: totals,
+    };
+  }, [stakerRewards]);
 
   return (
     <div
@@ -241,7 +271,16 @@ const FinalizeMotionAndClaimWidget = ({
                         <FormattedMessage {...MSG.stakeLabel} />
                       </div>
                     </div>
-                    <div className={styles.value}>12 A</div>
+                    <div className={styles.value}>
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={userStake}
+                        suffix={` ${nativeToken?.symbol}`}
+                        truncate={2}
+                      />
+                    </div>
                   </div>
                   <div className={styles.item}>
                     <div className={styles.label}>
@@ -249,7 +288,16 @@ const FinalizeMotionAndClaimWidget = ({
                         <FormattedMessage {...MSG.winningsLabel} />
                       </div>
                     </div>
-                    <div className={styles.value}>12 A</div>
+                    <div className={styles.value}>
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={userWinnings}
+                        suffix={` ${nativeToken?.symbol}`}
+                        truncate={2}
+                      />
+                    </div>
                   </div>
                   <div className={styles.item}>
                     <div className={styles.label}>
@@ -257,7 +305,16 @@ const FinalizeMotionAndClaimWidget = ({
                         <FormattedMessage {...MSG.totalLabel} />
                       </div>
                     </div>
-                    <div className={styles.value}>12 A</div>
+                    <div className={styles.value}>
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={userTotals}
+                        suffix={` ${nativeToken?.symbol}`}
+                        truncate={2}
+                      />
+                    </div>
                   </div>
                 </>
               )}
