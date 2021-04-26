@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
 import Heading from '~core/Heading';
 import { CustomRadio } from '~core/Fields/Radio';
@@ -7,15 +8,19 @@ import Numeral from '~core/Numeral';
 import { Form } from '~core/Fields';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import Icon from '~core/Icon';
+import Button from '~core/Button';
 
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
+import { StakeSide } from './TotalStakeWidget';
 
 type Props = {
   requiredStake: string | number;
+  isUserLoggedIn: boolean;
   formattedTotalYAYStakedPercentage: string;
   formattedTotalNAYStakedPercentage: string;
+  handleStakeSideSelect: Dispatch<SetStateAction<StakeSide | undefined>>;
   tokenDecimals?: number;
   tokenSymbol?: string;
 };
@@ -46,6 +51,10 @@ const MSG = defineMessages({
     id: `dashboard.ActionsPage.TotalStakeWidget.GroupedTotalStake.totalStakeTooltip`,
     defaultMessage: `[TO BE ADDED WHEN AVAILABLE]`,
   },
+  nextButton: {
+    id: `dashboard.ActionsPage.TotalStakeWidget.GroupedTotalStake.nextButton`,
+    defaultMessage: 'Next',
+  },
 });
 
 const GroupedTotalStake = ({
@@ -54,101 +63,110 @@ const GroupedTotalStake = ({
   formattedTotalNAYStakedPercentage,
   tokenDecimals,
   tokenSymbol,
+  isUserLoggedIn,
+  handleStakeSideSelect,
 }: Props) => {
   const isYAYSideFullyStaked = formattedTotalYAYStakedPercentage === '100';
   const isNAYSideFullyStaked = formattedTotalNAYStakedPercentage === '100';
-
-  /*
-   * @NOTE
-   *
-   * A Form component is added here just to make CustomRadio happy.
-   *
-   * This isn't really a Form, and those are not really Radio buttons.
-   *
-   * The CustomRadio are just there for the visuals.
-   */
-  // eslint-disable-next-line no-console
-  const handleSubmit = () => console.log('Time to submit');
+  const handleSubmit = ({ stakeSide }) => handleStakeSideSelect(stakeSide);
+  const validationSchema = yup.object().shape({
+    stakeSide: yup.string().required(),
+  });
 
   return (
-    <Form initialValues={{}} onSubmit={handleSubmit}>
-      <div className={styles.widgetHeading}>
-        <Heading
-          appearance={{
-            theme: 'dark',
-            size: 'small',
-            weight: 'bold',
-            margin: 'none',
-          }}
-          text={MSG.crowdfundStakeTitle}
-          className={styles.title}
-        />
-        <QuestionMarkTooltip
-          className={styles.tooltip}
-          tooltipText={MSG.totalStakeTooltip}
-          tooltipPopperProps={{
-            placement: 'right',
-          }}
-        />
-      </div>
-      <div className={styles.totalStakeRadio}>
-        <CustomRadio
-          value=""
-          name="stakeYAY"
-          description={
-            isYAYSideFullyStaked ? MSG.fullyStaked : MSG.stakeProgress
-          }
-          descriptionValues={{
-            totalPercentage: formattedTotalYAYStakedPercentage,
-            requiredStake: (
-              <Numeral
-                value={requiredStake}
-                unit={getTokenDecimalsWithFallback(tokenDecimals)}
-                suffix={` ${tokenSymbol}`}
-                truncate={2}
-              />
-            ),
-          }}
-          label={MSG.YAYName}
-          labelValues={{
-            fullyStakedEmoji: isYAYSideFullyStaked ? (
-              <Icon name="circle-check-primary" title={MSG.fullyStaked} />
-            ) : null,
-          }}
-          appearance={{ theme: 'primary' }}
-          checked
-          disabled={isYAYSideFullyStaked}
-        />
-      </div>
-      <div className={styles.totalStakeRadio}>
-        <CustomRadio
-          value=""
-          name="stakeNAY"
-          description={
-            isNAYSideFullyStaked ? MSG.fullyStaked : MSG.stakeProgress
-          }
-          descriptionValues={{
-            totalPercentage: formattedTotalNAYStakedPercentage,
-            requiredStake: (
-              <Numeral
-                value={requiredStake}
-                unit={getTokenDecimalsWithFallback(tokenDecimals)}
-                suffix={` ${tokenSymbol}`}
-                truncate={2}
-              />
-            ),
-          }}
-          label={MSG.NAYName}
-          labelValues={{
-            fullyStakedEmoji: isNAYSideFullyStaked ? (
-              <Icon name="circle-check-primary" title={MSG.fullyStaked} />
-            ) : null,
-          }}
-          appearance={{ theme: 'danger' }}
-          checked
-          disabled={isNAYSideFullyStaked}
-        />
-      </div>
+    <Form
+      initialValues={{ stakeSide: null }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {({ values, isValid }) => (
+        <>
+          <div className={styles.widgetHeading}>
+            <Heading
+              appearance={{
+                theme: 'dark',
+                size: 'small',
+                weight: 'bold',
+                margin: 'none',
+              }}
+              text={MSG.crowdfundStakeTitle}
+              className={styles.title}
+            />
+            <QuestionMarkTooltip
+              className={styles.help}
+              tooltipClassName={styles.tooltip}
+              tooltipText={MSG.totalStakeTooltip}
+              tooltipPopperProps={{
+                placement: 'right',
+              }}
+            />
+          </div>
+          <div className={styles.totalStakeRadio}>
+            <CustomRadio
+              value={StakeSide.Motion}
+              name="stakeSide"
+              description={
+                isYAYSideFullyStaked ? MSG.fullyStaked : MSG.stakeProgress
+              }
+              descriptionValues={{
+                totalPercentage: formattedTotalYAYStakedPercentage,
+                requiredStake: (
+                  <Numeral
+                    value={requiredStake}
+                    unit={getTokenDecimalsWithFallback(tokenDecimals)}
+                    suffix={` ${tokenSymbol}`}
+                    truncate={2}
+                  />
+                ),
+              }}
+              label={MSG.YAYName}
+              labelValues={{
+                fullyStakedEmoji: isYAYSideFullyStaked ? (
+                  <Icon name="circle-check-primary" title={MSG.fullyStaked} />
+                ) : null,
+              }}
+              appearance={{ theme: 'primary' }}
+              checked={values.stakeSide === StakeSide.Motion}
+              disabled={isYAYSideFullyStaked || !isUserLoggedIn}
+            />
+          </div>
+          <div className={styles.totalStakeRadio}>
+            <CustomRadio
+              value={StakeSide.Objection}
+              name="stakeSide"
+              description={
+                isNAYSideFullyStaked ? MSG.fullyStaked : MSG.stakeProgress
+              }
+              descriptionValues={{
+                totalPercentage: formattedTotalNAYStakedPercentage,
+                requiredStake: (
+                  <Numeral
+                    value={requiredStake}
+                    unit={getTokenDecimalsWithFallback(tokenDecimals)}
+                    suffix={` ${tokenSymbol}`}
+                    truncate={2}
+                  />
+                ),
+              }}
+              label={MSG.NAYName}
+              labelValues={{
+                fullyStakedEmoji: isNAYSideFullyStaked ? (
+                  <Icon name="circle-check-primary" title={MSG.fullyStaked} />
+                ) : null,
+              }}
+              appearance={{ theme: 'danger' }}
+              checked={values.stakeSide === StakeSide.Objection}
+              disabled={!isNAYSideFullyStaked || !isUserLoggedIn}
+            />
+          </div>
+          <Button
+            type="submit"
+            appearance={{ theme: 'primary', size: 'medium' }}
+            text={MSG.nextButton}
+            disabled={!isValid || !isUserLoggedIn}
+          />
+        </>
+      )}
     </Form>
   );
 };
