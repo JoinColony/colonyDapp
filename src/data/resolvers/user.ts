@@ -60,6 +60,11 @@ const getUserStakedBalance = async (
     ClientType.VotingReputationClient,
     colonyAddress,
   );
+  /**
+   * @NOTE If there will be more staking events
+   * on reputation voting extension we need to remember to filter them out
+   * in here for correct value of staked tokens.
+   */
   // @ts-ignore
   // eslint-disable-next-line max-len
   const motionStakeFilter = votingReputationClient.filters.MotionStaked(
