@@ -1,14 +1,11 @@
 import React, { useCallback, RefObject } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import * as yup from 'yup';
 
-import Heading from '~core/Heading';
 import { ActionForm } from '~core/Fields';
-import Slider from '~core/Slider';
 import Button from '~core/Button';
-import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { useDialog } from '~core/Dialog';
 import RaiseObjectionDialog from '~dashboard/RaiseObjectionDialog';
@@ -24,7 +21,7 @@ import { mapPayload, pipe } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
-import { StakingAmounts } from './StakingSlider';
+import StakingSlider, { StakingAmounts } from './StakingSlider';
 
 type Props = {
   colony: Colony;
@@ -37,14 +34,6 @@ type Props = {
 const displayName = 'StakingWidget';
 
 const MSG = defineMessages({
-  title: {
-    id: 'dashboard.ActionsPage.StakingWidget.title',
-    defaultMessage: `Select the amount to back the motion`,
-  },
-  description: {
-    id: 'dashboard.ActionsPage.StakingWidget.description',
-    defaultMessage: `Stake is returned if the motion passes. If there is a dispute, and the motion loses, part or all of your stake will be lost.`,
-  },
   stakeButton: {
     id: 'dashboard.ActionsPage.StakingWidget.stakeButton',
     defaultMessage: 'Stake',
@@ -166,6 +155,7 @@ const StakingWidget = ({
   const {
     totalNAYStakes,
     remainingToFullyYayStaked,
+    remainingToFullyNayStaked,
     maxUserStake,
     minUserStake,
   } = data.motionStakes;
@@ -194,17 +184,6 @@ const StakingWidget = ({
     remainingToStake > 0
       ? Math.round(remainingToStake * 100) / 100
       : remainingToStake;
-  /*
-   * This basically doubles as the user's reputation
-   * So we can use it to also check if the user can actually stake
-   * If the reputation is 0, they cannot stake at all
-   */
-  const userStakeTopLimit = parseFloat(
-    moveDecimal(
-      maxUserStake,
-      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-    ),
-  );
   const userActivatedTokens = parseFloat(
     moveDecimal(
       userData?.user?.userLock?.balance || 0,
@@ -256,46 +235,17 @@ const StakingWidget = ({
       >
         {({ values }) => (
           <div className={styles.wrapper}>
-            <div className={styles.title}>
-              <Heading
-                text={MSG.title}
-                className={styles.title}
-                appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
-              />
-              <QuestionMarkTooltip
-                tooltipText={MSG.stakingTooltip}
-                className={styles.help}
-                tooltipClassName={styles.tooltip}
-                tooltipPopperProps={{
-                  placement: 'right',
-                }}
-              />
-            </div>
-            <p className={styles.description}>
-              <FormattedMessage {...MSG.description} />
-            </p>
-            <span className={styles.amount}>{`${parseFloat(
-              values.amount,
-            ).toFixed(2)} ${nativeToken?.symbol}`}</span>
-            <div className={styles.sliderContainer}>
-              <Slider
-                name="amount"
-                value={values.amount}
-                min={userStakeBottomLimit}
-                max={
-                  remainingToStakeSafe < userStakeBottomLimit
-                    ? userStakeBottomLimit
-                    : remainingToStakeSafe
-                }
-                limit={
-                  userStakeTopLimit < userActivatedTokens
-                    ? userStakeTopLimit
-                    : userActivatedTokens
-                }
-                step={0.01}
-                disabled={!canUserStake}
-              />
-            </div>
+            <StakingSlider
+              colony={colony}
+              canUserStake={canUserStake}
+              values={values}
+              appearance={{ theme: 'primary' }}
+              isObjection={false}
+              remainingToFullyYayStaked={remainingToFullyYayStaked}
+              remainingToFullyNayStaked={remainingToFullyNayStaked}
+              maxUserStake={maxUserStake}
+              minUserStake={minUserStake}
+            />
             <div className={styles.buttonGroup}>
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
