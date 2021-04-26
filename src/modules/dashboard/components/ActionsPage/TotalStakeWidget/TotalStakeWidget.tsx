@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import formatNumber from 'format-number';
 import { bigNumberify } from 'ethers/utils';
 
@@ -26,15 +26,17 @@ export enum StakeSide {
 type Props = {
   colonyAddress: Address;
   motionId: number;
-  stakeSide?: string;
+  handleStakeSideSelect: Dispatch<SetStateAction<StakeSide | undefined>>;
+  stakeSide?: StakeSide;
 };
 
 const TotalStakeWidget = ({
   colonyAddress,
   motionId,
   stakeSide = StakeSide.Motion,
+  handleStakeSideSelect,
 }: Props) => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
   const { data, loading } = useStakeAmountsForMotionQuery({
     variables: {
       colonyAddress,
@@ -109,6 +111,8 @@ const TotalStakeWidget = ({
           formattedTotalYAYStakedPercentage={formattedTotalYAYStakedPercentage}
           tokenDecimals={tokenInfoData?.tokenInfo.decimals}
           tokenSymbol={tokenInfoData?.tokenInfo.symbol}
+          isUserLoggedIn={!!(username && !ethereal)}
+          handleStakeSideSelect={handleStakeSideSelect}
         />
       )}
     </div>
