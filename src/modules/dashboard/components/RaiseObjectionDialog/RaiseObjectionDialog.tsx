@@ -25,6 +25,7 @@ interface Props extends FormProps {
   close: () => void;
   motionId: number;
   nativeToken?: AnyToken;
+  transactionHash: string;
 }
 
 const displayName = 'dashboard.RaiseObjectionDialog';
@@ -36,6 +37,7 @@ const RaiseObjectionDialog = ({
   minUserStake,
   nativeToken,
   motionId,
+  transactionHash,
   ...props
 }: Props) => {
   const history = useHistory();
@@ -65,6 +67,7 @@ const RaiseObjectionDialog = ({
           colonyAddress: colony.colonyAddress,
           motionId: bigNumberify(motionId),
           vote: 0,
+          transactionHash,
           annotationMessage,
         };
       }),
@@ -83,6 +86,7 @@ const RaiseObjectionDialog = ({
       error={ActionTypes.COLONY_MOTION_STAKE_ERROR}
       success={ActionTypes.COLONY_MOTION_STAKE_SUCCESS}
       validationSchema={validationSchema}
+      onSubmit={close}
       onSuccess={close}
       transform={transform}
     >

@@ -110,9 +110,10 @@ const StakingWidget = ({
         colony,
         nativeToken,
         canUserStake: userHasPermission,
+        transactionHash,
         ...stakingAmounts,
       }),
-    [colony, openRaiseObjectionDialog, nativeToken, motionId],
+    [colony, openRaiseObjectionDialog, nativeToken, motionId, transactionHash],
   );
 
   const transform = useCallback(
@@ -163,6 +164,7 @@ const StakingWidget = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const {
+    totalNAYStakes,
     remainingToFullyYayStaked,
     maxUserStake,
     minUserStake,
@@ -306,7 +308,12 @@ const StakingWidget = ({
                 text={MSG.objectButton}
                 disabled={!previousTotalStakeStep && !canUserStake}
                 onClick={() =>
-                  handleRaiseObjection(canUserStake, data.motionStakes)
+                  bigNumberify(totalNAYStakes).isZero() &&
+                  handleRaiseObjection(
+                    // true,
+                    canUserStake,
+                    data.motionStakes,
+                  )
                 }
               />
             </div>
