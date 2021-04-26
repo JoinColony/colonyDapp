@@ -396,7 +396,7 @@ query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
   }
 }
 
-query MotionsVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+query MotionVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
   motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
 }
 
@@ -423,6 +423,15 @@ query MotionCurrentUserVoted($motionId: Int!, $colonyAddress: String!, $userAddr
 
 query MotionFinalized($motionId: Int!, $colonyAddress: String!) {
   motionFinalized(motionId: $motionId, colonyAddress: $colonyAddress) @client
+}
+
+query MotionStakerReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionStakerReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    stakingRewardYay
+    stakingRewardNay
+    stakesYay
+    stakesNay
+  }
 }
 
 # The Graph

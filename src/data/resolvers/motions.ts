@@ -492,6 +492,95 @@ export const motionsResolvers = ({
         return null;
       }
     },
+    async motionStakerReward(_, { motionId, colonyAddress, userAddress }) {
+      try {
+        let stakerReward: {
+          stakingRewardYay: string | null;
+          stakingRewardNay: string | null;
+          stakesYay: string | null;
+          stakesNay: string | null;
+        } = {
+          stakingRewardYay: null,
+          stakingRewardNay: null,
+          stakesYay: null,
+          stakesNay: null,
+        };
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const motionStakedFilter = votingReputationClient.filters.MotionStaked(
+          bigNumberify(motionId),
+          userAddress.toLowerCase(),
+          null,
+        );
+        const userStakeEvent = await getEvents(
+          votingReputationClient,
+          motionStakedFilter,
+        );
+        let stakesYay = bigNumberify(0);
+        let stakesNay = bigNumberify(0);
+        userStakeEvent.map(({ values: { amount, vote } }) => {
+          if (vote.toNumber() === 1) {
+            stakesYay = stakesYay.add(amount);
+            return stakesYay;
+          }
+          stakesNay = stakesNay.add(amount);
+          return stakesNay;
+        });
+        /*
+         * @NOTE We need to do a little bit of try/catch trickery here because of
+         * the way the contracts function
+         *
+         * If **anyone** staked on a side, calling the rewards function (even for
+         * a user who didnd't stake) returns 0
+         *
+         * But calling the rewards function on a side where **no one** has voted
+         * will result in an error being thrown.
+         *
+         * For this we initialize both with zero, call them both in a try/catch
+         * block. If they succeed, they overwrite their initial valiues, if they
+         * fail, they fall back to the initial 0.
+         */
+        let stakingRewardNay = bigNumberify(0);
+        let stakingRewardYay = bigNumberify(0);
+        try {
+          [stakingRewardYay] = await votingReputationClient.getStakerReward(
+            motionId,
+            userAddress,
+            1,
+          );
+        } catch (error) {
+          /*
+           * We don't care to catch the error since we fallback to it's initial value
+           */
+          // silent error
+        }
+        try {
+          [stakingRewardNay] = await votingReputationClient.getStakerReward(
+            motionId,
+            userAddress,
+            0,
+          );
+        } catch (error) {
+          /*
+           * We don't care to catch the error since we fallback to it's initial value
+           */
+          // silent error
+        }
+        stakerReward = {
+          stakingRewardYay: stakingRewardYay.toString(),
+          stakingRewardNay: stakingRewardNay.toString(),
+          stakesYay: stakesYay.toString(),
+          stakesNay: stakesNay.toString(),
+        };
+        return stakerReward;
+      } catch (error) {
+        console.error('Could not fetch the rewards for the current staker');
+        console.error(error);
+        return null;
+      }
+    },
   },
   Motion: {
     async state({ fundamentalChainId, associatedColony: { colonyAddress } }) {

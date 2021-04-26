@@ -8,7 +8,7 @@ import Numeral from '~core/Numeral';
 import {
   Colony,
   useLoggedInUser,
-  useMotionsVoterRewardQuery,
+  useMotionVoterRewardQuery,
 } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
@@ -72,7 +72,7 @@ const VoteDetails = ({
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
-  const { data: voterReward } = useMotionsVoterRewardQuery({
+  const { data: voterReward } = useMotionVoterRewardQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
