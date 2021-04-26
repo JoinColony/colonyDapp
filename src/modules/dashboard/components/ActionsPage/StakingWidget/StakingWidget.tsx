@@ -197,9 +197,27 @@ const StakingWidget = ({
   );
 
   const canUserStake =
+    /*
+     * Has a profile registered
+     */
     hasRegisteredProfile &&
+    /*
+     * User has enough reputation to stake
+     */
     bigNumberify(maxUserStake).gt(0) &&
-    bigNumberify(maxUserStake).gte(bigNumberify(minUserStake));
+    bigNumberify(maxUserStake).gte(bigNumberify(minUserStake)) &&
+    /*
+     * Motion can be still staked (ie: amount left to stake)
+     */
+    remainingToStakeSafe > 0 &&
+    /*
+     * Activated tokens are more than the minimum required stake amount
+     */
+    userActivatedTokens >= userStakeBottomLimit &&
+    /*
+     * Has activated tokens
+     */
+    userActivatedTokens > 0;
 
   return (
     <div className={styles.main}>
@@ -253,24 +271,14 @@ const StakingWidget = ({
                     : userActivatedTokens
                 }
                 step={0.01}
-                disabled={
-                  !canUserStake ||
-                  remainingToStakeSafe === 0 ||
-                  userActivatedTokens < userStakeBottomLimit ||
-                  userActivatedTokens === 0
-                }
+                disabled={!canUserStake}
               />
             </div>
             <div className={styles.buttonGroup}>
               <Button
                 appearance={{ theme: 'primary', size: 'medium' }}
                 type="submit"
-                disabled={
-                  !canUserStake ||
-                  remainingToStakeSafe === 0 ||
-                  userActivatedTokens < userStakeBottomLimit ||
-                  userActivatedTokens === 0
-                }
+                disabled={!canUserStake}
                 text={MSG.stakeButton}
               />
               <Button
