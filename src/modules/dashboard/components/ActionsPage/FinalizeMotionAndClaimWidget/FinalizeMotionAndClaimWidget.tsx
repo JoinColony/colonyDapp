@@ -14,6 +14,7 @@ import {
   useLoggedInUser,
   useMotionVoteResultsQuery,
   useMotionCurrentUserVotedQuery,
+  useMotionFinalizedQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
@@ -95,12 +96,13 @@ const FinalizeMotionAndClaimWidget = ({
   motionDomain = ROOT_DOMAIN_ID,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
-  const { data } = useMotionVoteResultsQuery({
+  const { data: voteResults } = useMotionVoteResultsQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
       motionId,
     },
+    fetchPolicy: 'network-only',
   });
 
   const { data: userVoted } = useMotionCurrentUserVotedQuery({
@@ -109,7 +111,20 @@ const FinalizeMotionAndClaimWidget = ({
       userAddress: walletAddress,
       motionId,
     },
+    fetchPolicy: 'network-only',
   });
+
+  const { data: finalized } = useMotionFinalizedQuery({
+    variables: {
+      colonyAddress,
+      motionId,
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  /*
+   * TODO Add loading state
+   */
 
   const transform = useCallback(
     mapPayload(() => ({
@@ -121,17 +136,19 @@ const FinalizeMotionAndClaimWidget = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const hasVotes =
-    bigNumberify(data?.motionVoteResults?.nayVotes || 0).gt(0) ||
-    bigNumberify(data?.motionVoteResults?.yayVotes || 0).gt(0);
+    bigNumberify(voteResults?.motionVoteResults?.nayVotes || 0).gt(0) ||
+    bigNumberify(voteResults?.motionVoteResults?.yayVotes || 0).gt(0);
 
   /*
    * If the motion is in the Root domain, it cannot be escalated further
    * meaning it can be finalized directly
    */
   const showFinalizeButton =
-    data?.motionVoteResults && motionDomain === ROOT_DOMAIN_ID;
+    voteResults?.motionVoteResults &&
+    !finalized?.motionFinalized &&
+    motionDomain === ROOT_DOMAIN_ID;
 
-  const showClaimButton = true;
+  const showClaimButton = finalized?.motionFinalized;
 
   return (
     <div
@@ -231,14 +248,15 @@ const FinalizeMotionAndClaimWidget = ({
       )}
       <div className={styles.voteResults}>
         {hasRegisteredProfile &&
-          data?.motionVoteResults &&
+          voteResults?.motionVoteResults &&
           hasVotes &&
           userVoted?.motionCurrentUserVoted && (
             <div className={styles.outcome}>
               <FormattedMessage
                 {...MSG.outcomeCelebration}
                 values={{
-                  outcome: !!data?.motionVoteResults?.currentUserVoteSide,
+                  outcome: !!voteResults?.motionVoteResults
+                    ?.currentUserVoteSide,
                 }}
               />
             </div>

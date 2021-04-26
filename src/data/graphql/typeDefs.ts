@@ -313,6 +313,7 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
     ): MotionVoteResults!
+    motionFinalized(motionId: Int!, colonyAddress: String!): Boolean!
   }
 
   extend type Mutation {

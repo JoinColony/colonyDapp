@@ -477,6 +477,21 @@ export const motionsResolvers = ({
         return null;
       }
     },
+    async motionFinalized(_, { motionId, colonyAddress }) {
+      try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const { finalized } = await votingReputationClient.getMotion(motionId);
+
+        return finalized;
+      } catch (error) {
+        console.error('Could not fetch motion finalized state');
+        console.error(error);
+        return null;
+      }
+    },
   },
   Motion: {
     async state({ fundamentalChainId, associatedColony: { colonyAddress } }) {

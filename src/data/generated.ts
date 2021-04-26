@@ -286,6 +286,7 @@ export type Query = {
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
+  motionFinalized: Scalars['Boolean'];
   motionStakes: MotionStakes;
   motionUserVoteRevealed: MotionVoteReveal;
   motionVoteResults: MotionVoteResults;
@@ -409,6 +410,12 @@ export type QueryMotionCurrentUserVotedArgs = {
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
+};
+
+
+export type QueryMotionFinalizedArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1584,6 +1591,14 @@ export type MotionCurrentUserVotedQueryVariables = Exact<{
 
 
 export type MotionCurrentUserVotedQuery = Pick<Query, 'motionCurrentUserVoted'>;
+
+export type MotionFinalizedQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionFinalizedQuery = Pick<Query, 'motionFinalized'>;
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3885,6 +3900,38 @@ export function useMotionCurrentUserVotedLazyQuery(baseOptions?: Apollo.LazyQuer
 export type MotionCurrentUserVotedQueryHookResult = ReturnType<typeof useMotionCurrentUserVotedQuery>;
 export type MotionCurrentUserVotedLazyQueryHookResult = ReturnType<typeof useMotionCurrentUserVotedLazyQuery>;
 export type MotionCurrentUserVotedQueryResult = Apollo.QueryResult<MotionCurrentUserVotedQuery, MotionCurrentUserVotedQueryVariables>;
+export const MotionFinalizedDocument = gql`
+    query MotionFinalized($motionId: Int!, $colonyAddress: String!) {
+  motionFinalized(motionId: $motionId, colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useMotionFinalizedQuery__
+ *
+ * To run a query within a React component, call `useMotionFinalizedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionFinalizedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionFinalizedQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionFinalizedQuery(baseOptions?: Apollo.QueryHookOptions<MotionFinalizedQuery, MotionFinalizedQueryVariables>) {
+        return Apollo.useQuery<MotionFinalizedQuery, MotionFinalizedQueryVariables>(MotionFinalizedDocument, baseOptions);
+      }
+export function useMotionFinalizedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionFinalizedQuery, MotionFinalizedQueryVariables>) {
+          return Apollo.useLazyQuery<MotionFinalizedQuery, MotionFinalizedQueryVariables>(MotionFinalizedDocument, baseOptions);
+        }
+export type MotionFinalizedQueryHookResult = ReturnType<typeof useMotionFinalizedQuery>;
+export type MotionFinalizedLazyQueryHookResult = ReturnType<typeof useMotionFinalizedLazyQuery>;
+export type MotionFinalizedQueryResult = Apollo.QueryResult<MotionFinalizedQuery, MotionFinalizedQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {

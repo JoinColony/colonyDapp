@@ -421,6 +421,10 @@ query MotionCurrentUserVoted($motionId: Int!, $colonyAddress: String!, $userAddr
   motionCurrentUserVoted(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
 }
 
+query MotionFinalized($motionId: Int!, $colonyAddress: String!) {
+  motionFinalized(motionId: $motionId, colonyAddress: $colonyAddress) @client
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`
