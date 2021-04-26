@@ -26,6 +26,18 @@
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
+.itemWithForcedBorder .label {
+  color: var(--dark);
+}
+
+.title {
+  composes: item;
+}
+
+.title .label {
+  color: var(--dark);
+}
+
 .label {
   composes: label from '../DetailsWidget/DetailsWidget.css';
 }
