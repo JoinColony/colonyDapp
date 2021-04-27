@@ -1,6 +1,5 @@
-import React, { useMemo, useRef } from 'react';
-
-import { FormattedMessage } from 'react-intl';
+import React, { useMemo, useRef, useCallback, useState } from 'react';
+import { FormattedMessage, defineMessages } from 'react-intl';
 
 import Numeral from '~core/Numeral';
 import ActionsPageFeed, {
@@ -24,6 +23,7 @@ import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 import CountDownTimer from '~core/CountDownTimer';
+import ProgressBar from '~core/ProgressBar';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
@@ -33,10 +33,17 @@ import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
 import FinalizeMotionAndClaimWidget from '../FinalizeMotionAndClaimWidget';
 
-import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
+import { motionCountdownTimerMsg } from './motionCountdownTimerMsg';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';
+
+const MSG = defineMessages({
+  or: {
+    id: 'dashboard.ActionsPage.MintTokenMotion.or',
+    defaultMessage: `OR`,
+  },
+});
 
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
 
@@ -177,9 +184,28 @@ const MintTokenMotion = ({
           <CountDownTimer
             createdAt={actionCreatedAt}
             colonyAddress={colony.colonyAddress}
-            text={MSG.stake}
+            text={motionCountdownTimerMsg.stake}
             periodType="stakePeriod"
           />
+          {motionState === MotionState.Voting && (
+            <>
+              <span className={motionSpecificStyles.text}>
+                <FormattedMessage {...MSG.or} />
+              </span>
+              <div className={motionSpecificStyles.progressBarContainer}>
+                <ProgressBar
+                  value={30}
+                  threshold={50}
+                  max={100}
+                  appearance={{
+                    size: 'small',
+                    backgroundTheme: 'dark',
+                    barTheme: 'danger',
+                  }}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
       <hr className={styles.dividerTop} />
