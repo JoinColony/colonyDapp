@@ -73,4 +73,19 @@ export type MotionActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_MOTION_FINALIZE_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_MOTION_CLAIM,
+      {
+        userAddress: Address;
+        colonyAddress: Address;
+        motionId: BigNumber;
+        transactionHash: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_CLAIM_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_CLAIM_SUCCESS,
+      MetaWithHistory<object>
     >;

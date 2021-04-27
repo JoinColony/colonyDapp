@@ -162,7 +162,7 @@ const FinalizeMotionAndClaimWidget = ({
     ({ address }) => address === nativeTokenAddress,
   );
 
-  const transformFinalizeData = useCallback(
+  const transform = useCallback(
     mapPayload(() => ({
       colonyAddress,
       userAddress: walletAddress,
@@ -172,20 +172,9 @@ const FinalizeMotionAndClaimWidget = ({
     [walletAddress],
   );
 
-  const handleFinalizeSuccess = useCallback(() => {
+  const handleSuccess = useCallback(() => {
     scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [scrollToRef]);
-
-  const transformClaimData = useCallback(
-    mapPayload(() => ({
-      colonyAddress,
-      walletAddress,
-      motionId,
-      stakesYay: stakerRewards?.motionStakerReward?.stakesYay,
-      stakesNay: stakerRewards?.motionStakerReward?.stakesNay,
-    })),
-    [stakerRewards],
-  );
 
   const { userStake, userWinnings, userTotals } = useMemo(() => {
     let stake = bigNumberify(0);
@@ -274,8 +263,8 @@ const FinalizeMotionAndClaimWidget = ({
           submit={ActionTypes.COLONY_MOTION_FINALIZE}
           error={ActionTypes.COLONY_MOTION_FINALIZE_ERROR}
           success={ActionTypes.COLONY_MOTION_FINALIZE_SUCCESS}
-          transform={transformFinalizeData}
-          onSuccess={handleFinalizeSuccess}
+          transform={transform}
+          onSuccess={handleSuccess}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
             <div className={styles.itemWithForcedBorder}>
@@ -308,10 +297,11 @@ const FinalizeMotionAndClaimWidget = ({
       {showClaimButton && (
         <ActionForm
           initialValues={{}}
-          submit={ActionTypes.COLONY_ACTION_GENERIC}
-          error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-          success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-          transform={transformClaimData}
+          submit={ActionTypes.COLONY_MOTION_CLAIM}
+          error={ActionTypes.COLONY_MOTION_CLAIM_ERROR}
+          success={ActionTypes.COLONY_MOTION_CLAIM_SUCCESS}
+          transform={transform}
+          onSuccess={handleSuccess}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
             <>
