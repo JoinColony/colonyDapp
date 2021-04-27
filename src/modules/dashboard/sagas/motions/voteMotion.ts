@@ -18,7 +18,7 @@ import { updateMotionValues } from '../utils/updateMotionValues';
 function* voteMotion({
   meta,
   payload: { userAddress, colonyAddress, motionId, vote, transactionHash },
-}: Action<ActionTypes.COLONY_MOTION_STAKE>) {
+}: Action<ActionTypes.COLONY_MOTION_VOTE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const context = TEMP_getContext(ContextModule.ColonyManager);
