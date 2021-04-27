@@ -179,8 +179,8 @@ function* stakeMotion({
       userAddress,
       motionId,
       transactionHash,
-      StakeSide.Motion,
       tokenAddress,
+      StakeSide.Motion,
     );
 
     yield put<AllActions>({
