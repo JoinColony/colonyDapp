@@ -1,4 +1,4 @@
-import React, { useCallback, RefObject } from 'react';
+import React, { useCallback, useState, RefObject } from 'react';
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
@@ -64,6 +64,8 @@ const StakingWidget = ({
   transactionHash,
   previousTotalStakeStep,
 }: Props) => {
+  const [isObjection, setIsObjection] = useState(false);
+
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const { data, loading } = useMotionStakesQuery({
@@ -117,11 +119,11 @@ const StakingWidget = ({
         userAddress: walletAddress,
         colonyAddress,
         motionId: bigNumberify(motionId),
-        vote: 1,
+        vote: isObjection ? 0 : 1,
         transactionHash,
       })),
     ),
-    [walletAddress, colonyAddress, motionId, data],
+    [walletAddress, colonyAddress, motionId, data, isObjection],
   );
 
   const handleSuccess = useCallback(
@@ -160,10 +162,17 @@ const StakingWidget = ({
     minUserStake,
   } = data.motionStakes;
 
-  const remainingToStake = parseFloat(
+  const remainingToStakeYay = parseFloat(
     moveDecimal(
       remainingToFullyYayStaked,
       -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
+    ),
+  );
+
+  const remainingToStakeNay = parseFloat(
+    moveDecimal(
+      remainingToFullyNayStaked,
+      1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
     ),
   );
   /*
@@ -180,10 +189,11 @@ const StakingWidget = ({
    * Example:
    * This is so we can round values like 18.627870543008473 to 18.63
    */
-  const remainingToStakeSafe =
+  const remainingToStakeSafe = (remainingToStake: number) =>
     remainingToStake > 0
       ? Math.round(remainingToStake * 100) / 100
       : remainingToStake;
+
   const userActivatedTokens = parseFloat(
     moveDecimal(
       userData?.user?.userLock?.balance || 0,
@@ -208,10 +218,6 @@ const StakingWidget = ({
     bigNumberify(maxUserStake).gt(0) &&
     bigNumberify(maxUserStake).gte(bigNumberify(minUserStake)) &&
     /*
-     * Motion can be still staked (ie: amount left to stake)
-     */
-    remainingToStakeSafe > 0 &&
-    /*
      * Activated tokens are more than the minimum required stake amount
      */
     userActivatedTokens >= userStakeBottomLimit &&
@@ -220,7 +226,19 @@ const StakingWidget = ({
      */
     userActivatedTokens > 0;
 
-  return (
+  /*
+   * Motion can be still staked (ie: amount left to stake)
+   */
+  const canUserStakeYay =
+    canUserStake && remainingToStakeSafe(remainingToStakeYay) > 0;
+  const canUserStakeNay =
+    canUserStake && remainingToStakeSafe(remainingToStakeNay) > 0;
+
+  const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
+
+  return bigNumberify(totalNAYStakes).isZero() ? (
+    <div>PLACEHOLDER FOR ARMANDOS COMPONENT</div>
+  ) : (
     <div className={styles.main}>
       <ActionForm
         initialValues={{
@@ -237,10 +255,10 @@ const StakingWidget = ({
           <div className={styles.wrapper}>
             <StakingSlider
               colony={colony}
-              canUserStake={canUserStake}
+              canUserStake={canBeStaked}
               values={values}
-              appearance={{ theme: 'primary' }}
-              isObjection={false}
+              appearance={{ theme: isObjection ? 'danger' : 'primary' }}
+              isObjection={isObjection}
               remainingToFullyYayStaked={remainingToFullyYayStaked}
               remainingToFullyNayStaked={remainingToFullyNayStaked}
               maxUserStake={maxUserStake}
@@ -248,24 +266,34 @@ const StakingWidget = ({
             />
             <div className={styles.buttonGroup}>
               <Button
-                appearance={{ theme: 'primary', size: 'medium' }}
+                appearance={{
+                  theme: isObjection ? 'danger' : 'primary',
+                  size: 'medium',
+                }}
                 type="submit"
-                disabled={!canUserStake}
+                disabled={!canBeStaked}
                 text={MSG.stakeButton}
               />
-              <Button
-                appearance={{ theme: 'danger', size: 'medium' }}
-                text={MSG.objectButton}
-                disabled={!previousTotalStakeStep && !canUserStake}
-                onClick={() =>
-                  bigNumberify(totalNAYStakes).isZero() &&
-                  handleRaiseObjection(
-                    // true,
-                    canUserStake,
-                    data.motionStakes,
-                  )
-                }
-              />
+              <span className={isObjection ? '' : styles.objectButton}>
+                {isObjection ? (
+                  <Button
+                    appearance={{ theme: 'secondary', size: 'medium' }}
+                    text={{ id: 'button.back' }}
+                    onClick={() => setIsObjection(false)}
+                  />
+                ) : (
+                  <Button
+                    appearance={{ theme: 'danger', size: 'medium' }}
+                    text={MSG.objectButton}
+                    disabled={!previousTotalStakeStep && !canUserStakeNay}
+                    onClick={() =>
+                      bigNumberify(totalNAYStakes).isZero()
+                        ? handleRaiseObjection(canUserStake, data.motionStakes)
+                        : setIsObjection(true)
+                    }
+                  />
+                )}
+              </span>
             </div>
           </div>
         )}

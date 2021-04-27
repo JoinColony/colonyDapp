@@ -37,7 +37,7 @@
   font-size: var(--size-small);
 }
 
-.buttonGroup button:last-child {
+.objectButton {
   margin-left: 20px;
 }
 
