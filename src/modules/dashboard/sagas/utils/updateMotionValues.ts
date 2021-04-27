@@ -41,7 +41,6 @@ export function* updateMotionValues(
   userAddress: Address,
   motionId: BigNumber,
   transactionHash: string,
-  stakeSide?: string,
 ) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -95,24 +94,21 @@ export function* updateMotionValues(
     fetchPolicy: 'network-only',
   });
 
-  if (stakeSide) {
-    /*
-     * Total stake widget values
-     */
-    yield apolloClient.query<
-      StakeAmountsForMotionQuery,
-      StakeAmountsForMotionQueryVariables
-    >({
-      query: StakeAmountsForMotionDocument,
-      variables: {
-        colonyAddress,
-        userAddress,
-        motionId: motionId.toNumber(),
-        stakeSide,
-      },
-      fetchPolicy: 'network-only',
-    });
-  }
+  /*
+   * Total stake widget values
+   */
+  yield apolloClient.query<
+    StakeAmountsForMotionQuery,
+    StakeAmountsForMotionQueryVariables
+  >({
+    query: StakeAmountsForMotionDocument,
+    variables: {
+      colonyAddress,
+      userAddress,
+      motionId: motionId.toNumber(),
+    },
+    fetchPolicy: 'network-only',
+  });
 
   /*
    * Is motion finalized check

@@ -5,8 +5,6 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { TEMP_getContext, ContextModule } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 
-import { StakeSide } from '~dashboard/ActionsPage/TotalStakeWidget';
-
 import {
   createTransaction,
   createTransactionChannels,
@@ -177,7 +175,6 @@ function* stakeMotion({
       userAddress,
       motionId,
       transactionHash,
-      StakeSide.Motion,
     );
 
     yield put<AllActions>({
