@@ -43,4 +43,19 @@ export type MotionActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_MOTION_VOTE_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_MOTION_REVEAL_VOTE,
+      {
+        userAddress: Address;
+        colonyAddress: Address;
+        motionId: BigNumber;
+        transactionHash: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_REVEAL_VOTE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_REVEAL_VOTE_SUCCESS,
+      MetaWithHistory<object>
     >;

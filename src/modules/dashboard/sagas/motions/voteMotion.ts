@@ -52,7 +52,7 @@ function* voteMotion({
 
     const signature = yield signMessage(
       'motionVote',
-      'Sign this message to vote on the current motion',
+      'Sign this message to generate "salt" entrophy',
     );
     const hash = soliditySha3(soliditySha3Raw(signature), vote);
 

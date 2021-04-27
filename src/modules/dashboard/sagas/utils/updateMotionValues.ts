@@ -15,6 +15,12 @@ import {
   ColonyActionQuery,
   ColonyActionQueryVariables,
   ColonyActionDocument,
+  MotionUserVoteRevealedQuery,
+  MotionUserVoteRevealedQueryVariables,
+  MotionUserVoteRevealedDocument,
+  MotionCurrentUserVotedQuery,
+  MotionCurrentUserVotedQueryVariables,
+  MotionCurrentUserVotedDocument,
 } from '~data/index';
 
 export function* updateMotionValues(
@@ -30,6 +36,38 @@ export function* updateMotionValues(
    */
   yield apolloClient.query<MotionStakesQuery, MotionStakesQueryVariables>({
     query: MotionStakesDocument,
+    variables: {
+      colonyAddress,
+      userAddress,
+      motionId: motionId.toNumber(),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  /*
+   * Vote Revelead
+   */
+  yield apolloClient.query<
+    MotionUserVoteRevealedQuery,
+    MotionUserVoteRevealedQueryVariables
+  >({
+    query: MotionUserVoteRevealedDocument,
+    variables: {
+      colonyAddress,
+      userAddress,
+      motionId: motionId.toNumber(),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  /*
+   * User voted check
+   */
+  yield apolloClient.query<
+    MotionCurrentUserVotedQuery,
+    MotionCurrentUserVotedQueryVariables
+  >({
+    query: MotionCurrentUserVotedDocument,
     variables: {
       colonyAddress,
       userAddress,
