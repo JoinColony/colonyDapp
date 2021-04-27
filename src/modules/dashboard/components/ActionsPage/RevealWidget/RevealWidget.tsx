@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, RefObject } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -27,6 +27,8 @@ export interface FormValues {
 interface Props {
   colony: Colony;
   motionId: number;
+  scrollToRef?: RefObject<HTMLInputElement>;
+  transactionHash: string;
 }
 
 const MSG = defineMessages({
@@ -55,6 +57,8 @@ const RevealWidget = ({
   colony: { colonyAddress },
   colony,
   motionId,
+  scrollToRef,
+  transactionHash,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -64,6 +68,7 @@ const RevealWidget = ({
       userAddress: walletAddress,
       motionId,
     },
+    fetchPolicy: 'network-only',
   });
 
   const { data: userVoted } = useMotionCurrentUserVotedQuery({
@@ -72,15 +77,25 @@ const RevealWidget = ({
       userAddress: walletAddress,
       motionId,
     },
+    fetchPolicy: 'network-only',
   });
 
   const transform = useCallback(
-    mapPayload(({ vote }) => ({
+    mapPayload(() => ({
       colonyAddress,
-      walletAddress,
-      vote: parseInt(vote, 10),
+      userAddress: walletAddress,
+      motionId,
+      transactionHash,
     })),
-    [],
+    [walletAddress],
+  );
+
+  const handleSuccess = useCallback(
+    (_, { resetForm }) => {
+      resetForm({});
+      scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+    },
+    [scrollToRef],
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
@@ -90,10 +105,11 @@ const RevealWidget = ({
   return (
     <ActionForm
       initialValues={{}}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+      submit={ActionTypes.COLONY_MOTION_REVEAL_VOTE}
+      error={ActionTypes.COLONY_MOTION_REVEAL_VOTE_ERROR}
+      success={ActionTypes.COLONY_MOTION_REVEAL_VOTE_SUCCESS}
       transform={transform}
+      onSuccess={handleSuccess}
     >
       {({ handleSubmit, isSubmitting }: FormikProps<FormValues>) => (
         <div className={styles.main}>

@@ -228,7 +228,12 @@ const MintTokenMotion = ({
             />
           )}
           {motionState === MotionState.Reveal && (
-            <RevealWidget colony={colony} motionId={motionId} />
+            <RevealWidget
+              colony={colony}
+              motionId={motionId}
+              scrollToRef={bottomElementRef}
+              transactionHash={transactionHash}
+            />
           )}
           {(motionState === MotionState.Failed ||
             motionState === MotionState.Passed) && (
