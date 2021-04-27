@@ -1,6 +1,5 @@
 .widget {
   margin-top: 20px;
-  margin-bottom: 35px;
 }
 
 .widgetHeading {
@@ -47,4 +46,11 @@
   margin-left: 10px;
   padding: 10px;
   width: 220px;
+}
+
+.submitButtonContainer {
+  margin-top: 10px;
+  margin-bottom: 105px;
+  margin-left: auto;
+  width: fit-content;
 }

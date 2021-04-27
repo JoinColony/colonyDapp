@@ -6,3 +6,4 @@ export const userStake: string;
 export const totalStakeRadio: string;
 export const help: string;
 export const tooltip: string;
+export const submitButtonContainer: string;

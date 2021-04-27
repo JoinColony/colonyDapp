@@ -20,7 +20,7 @@ type Props = {
   isUserLoggedIn: boolean;
   formattedTotalYAYStakedPercentage: string;
   formattedTotalNAYStakedPercentage: string;
-  handleStakeSideSelect: Dispatch<SetStateAction<StakeSide | undefined>>;
+  handleStakeSideSelect: Dispatch<SetStateAction<StakeSide | null>>;
   tokenDecimals?: number;
   tokenSymbol?: string;
 };
@@ -156,15 +156,17 @@ const GroupedTotalStake = ({
               }}
               appearance={{ theme: 'danger' }}
               checked={values.stakeSide === StakeSide.Objection}
-              disabled={!isNAYSideFullyStaked || !isUserLoggedIn}
+              disabled={isNAYSideFullyStaked || !isUserLoggedIn}
             />
           </div>
-          <Button
-            type="submit"
-            appearance={{ theme: 'primary', size: 'medium' }}
-            text={MSG.nextButton}
-            disabled={!isValid || !isUserLoggedIn}
-          />
+          <div className={styles.submitButtonContainer}>
+            <Button
+              type="submit"
+              appearance={{ theme: 'primary', size: 'medium' }}
+              text={MSG.nextButton}
+              disabled={!isValid || !isUserLoggedIn || !values.stakeSide}
+            />
+          </div>
         </>
       )}
     </Form>
