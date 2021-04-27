@@ -1,0 +1,62 @@
+.widget {
+  margin-top: 20px;
+}
+
+.widgetHeading {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.title {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.stakeProgress,
+.stakeProgress span {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.userStake,
+.userStake span {
+  margin-top: 16px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.totalStakeRadio + .totalStakeRadio {
+  margin-top: 6px;
+}
+
+.totalStakeRadio > label {
+  padding: 7px 10px 7px 16px;
+}
+
+.help {
+  margin-right: auto;
+  margin-left: 8px;
+}
+
+.tooltip {
+  margin-left: 10px;
+  padding: 10px;
+  width: 220px;
+}
+
+.submitButtonContainer {
+  margin-top: 10px;
+  margin-bottom: 105px;
+  margin-left: auto;
+  width: fit-content;
+}
+
+.submitButtonContainer > button {
+  padding: 2px 35px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+}

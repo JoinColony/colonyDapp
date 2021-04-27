@@ -62,6 +62,7 @@ export default gql`
     domainPurpose: String!
     domainColor: String!
     blockNumber: Int!
+    motionNAYStake: String
     motionState: String
     motionDomain: Int!
   }
@@ -232,6 +233,17 @@ export default gql`
     claimedReward: Boolean!
   }
 
+  type TotalStakedAmounts {
+    YAY: String
+    NAY: String
+  }
+
+  type StakeAmounts {
+    totalStaked: TotalStakedAmounts!
+    userStake: String
+    requiredStake: String!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -327,6 +339,12 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
     ): MotionStakerRewards!
+    stakeAmountsForMotion(
+      colonyAddress: String!
+      userAddress: String!
+      motionId: Int!
+      stakeSide: String!
+    ): StakeAmounts!
   }
 
   extend type Mutation {

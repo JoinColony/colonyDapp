@@ -1,4 +1,5 @@
 import { defineMessage } from 'react-intl';
+import { BigNumber, bigNumberify } from 'ethers/utils';
 
 export enum MotionState {
   Motion = 'Motion',
@@ -100,4 +101,16 @@ export const MOTION_TAG_MAP = {
     name: MSG.invalidTag,
     tagName: 'invalidTag',
   },
+};
+
+export const getMotionRequiredStake = (
+  skillRep: BigNumber,
+  totalStakeFraction: BigNumber,
+  decimals: number,
+): BigNumber => {
+  const requiredStake = skillRep
+    .mul(totalStakeFraction)
+    .div(bigNumberify(10).pow(decimals));
+
+  return requiredStake;
 };

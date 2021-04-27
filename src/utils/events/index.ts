@@ -30,7 +30,7 @@ import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 
 import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
-import { MotionState } from '../colonyMotions';
+import { getMotionRequiredStake, MotionState } from '../colonyMotions';
 
 interface ActionValues {
   recipient: Address;
@@ -507,9 +507,11 @@ export const getMotionState = async (
   motion,
 ): Promise<MotionState> => {
   const totalStakeFraction = await votingClient.getTotalStakeFraction();
-  const requiredStakes = bigNumberify(motion.skillRep)
-    .mul(totalStakeFraction)
-    .div(bigNumberify(10).pow(18));
+  const requiredStakes = getMotionRequiredStake(
+    motion.skillRep,
+    totalStakeFraction,
+    18,
+  );
   switch (motionNetworkState) {
     case NetworkMotionState.Staking:
       return bigNumberify(motion.stakes[0]).gt(bigNumberify(0)) ||
@@ -583,6 +585,7 @@ const getMintTokensMotionValues = async (
   const tokenAddress = await colonyClient.getToken();
 
   const mintTokensMotionValues: {
+    motionNAYStake: string;
     motionState: MotionState;
     address: Address;
     amount: string;
@@ -591,6 +594,7 @@ const getMintTokensMotionValues = async (
     tokenAddress: Address;
     motionDomain: number;
   } = {
+    motionNAYStake: motion.stakes[0].toString(),
     motionState,
     address: motionCreatedEvent.address,
     recipient: motion.altTarget,
