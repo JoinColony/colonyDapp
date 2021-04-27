@@ -161,7 +161,7 @@ const MintTokenMotion = ({
   );
 
   const stakeShownSide = getStakeShownSide();
-  const isOnStakingPhase =
+  const isStakingPhase =
     motionState === MotionState.StakeRequired ||
     motionState === MotionState.Motion ||
     motionState === MotionState.Objection;
@@ -236,7 +236,7 @@ const MintTokenMotion = ({
           )}
         </div>
         <div className={styles.details}>
-          {isOnStakingPhase && (
+          {isStakingPhase && (
             <TotalStakeWidget
               colonyAddress={colony.colonyAddress}
               motionId={motionId}
@@ -244,7 +244,7 @@ const MintTokenMotion = ({
               handleStakeSideSelect={setSelectedStakeSide}
             />
           )}
-          {isOnStakingPhase && stakeShownSide === StakeSide.Motion && (
+          {isStakingPhase && stakeShownSide === StakeSide.Motion && (
             <StakingWidget
               motionId={motionId}
               colony={colony}
