@@ -1,11 +1,6 @@
 import { defineMessage } from 'react-intl';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 
-export enum MotionVote {
-  NAY = 0,
-  YAY = 1,
-}
-
 export enum MotionState {
   Motion = 'Motion',
   StakeRequired = 'StakeRequired',

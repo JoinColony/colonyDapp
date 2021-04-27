@@ -28,7 +28,7 @@ export const stakesResolvers = ({
 
         if (stakeSide !== StakeSide.Both) {
           const supportedSide =
-            stakeSide === StakeSide.Objection ? MotionVote.NAY : MotionVote.YAY;
+            stakeSide === StakeSide.Objection ? MotionVote.Nay : MotionVote.Yay;
 
           const userStake = await votingReputationClient.getStake(
             motionId,
@@ -52,8 +52,8 @@ export const stakesResolvers = ({
           NAY: string | null;
         } = {
           YAY:
-            stakeSide !== StakeSide.Objection ? stakes[MotionVote.YAY] : null,
-          NAY: stakeSide !== StakeSide.Motion ? stakes[MotionVote.NAY] : null,
+            stakeSide !== StakeSide.Objection ? stakes[MotionVote.Yay] : null,
+          NAY: stakeSide !== StakeSide.Motion ? stakes[MotionVote.Nay] : null,
         };
 
         return {
