@@ -248,7 +248,7 @@ export const motionsResolvers = ({
           18,
         );
 
-        if (motion.stakes[MotionVote.Yay].eq(requiredStake)) {
+        if (motion.stakes[MotionVote.Yay].gte(requiredStake)) {
           systemMessages.push({
             type: ActionsPageFeedType.SystemMessage,
             name: SystemMessagesName.MotionFullyStaked,
