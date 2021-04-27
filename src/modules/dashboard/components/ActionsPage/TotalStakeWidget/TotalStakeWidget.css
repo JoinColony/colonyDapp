@@ -54,3 +54,9 @@
   margin-left: auto;
   width: fit-content;
 }
+
+.submitButtonContainer > button {
+  padding: 2px 35px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+}
