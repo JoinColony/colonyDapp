@@ -1,5 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ExtensionClient } from '@colony/colony-js';
+import { soliditySha3, soliditySha3Raw } from 'web3-utils';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { TEMP_getContext, ContextModule } from '~context/index';
@@ -11,7 +12,7 @@ import {
   getTxChannel,
 } from '../../../core/sagas';
 import { transactionReady } from '../../../core/actionCreators';
-
+import { signMessage } from '../../../core/sagas/messages';
 import { updateMotionValues } from '../utils/updateMotionValues';
 
 function* voteMotion({
@@ -47,6 +48,48 @@ function* voteMotion({
       skillId,
       userAddress,
       rootHash,
+    );
+
+    const signature = yield signMessage(
+      'motionVote',
+      'Sign this message to vote on the current motion',
+    );
+    const hash = soliditySha3(soliditySha3Raw(signature), vote);
+
+    const { voteMotionTransaction } = yield createTransactionChannels(meta.id, [
+      'voteMotionTransaction',
+    ]);
+
+    const batchKey = 'voteMotion';
+
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: batchKey,
+          id: meta.id,
+          index,
+        },
+      });
+
+    yield createGroupTransaction(voteMotionTransaction, {
+      context: ClientType.VotingReputationClient,
+      methodName: 'submitVote',
+      identifier: colonyAddress,
+      params: [motionId, hash, key, value, branchMask, siblings],
+      ready: false,
+    });
+
+    yield takeFrom(
+      voteMotionTransaction.channel,
+      ActionTypes.TRANSACTION_CREATED,
+    );
+
+    yield put(transactionReady(voteMotionTransaction.id));
+
+    yield takeFrom(
+      voteMotionTransaction.channel,
+      ActionTypes.TRANSACTION_SUCCEEDED,
     );
 
     /*

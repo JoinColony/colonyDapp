@@ -176,8 +176,16 @@
     "transaction.ColonyClient.approveStake.title": "Approve stake",
     "transaction.ColonyClient.approveStake.description": "Approve stake",
 
+    "transaction.group.voteMotion.title": "Vote on motion",
+    "transaction.group.voteMotion.description": "Vote on motion",
+    "transaction.VotingReputationClient.submitVote.title": "Submit motion vote",
+    "transaction.VotingReputationClient.submitVote.description": "Submit motion vote",
+
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
+    "message.motionVote.title": "Sign message to vote",
+    "message.motionVote.description": "Sign message to vote",
+
     "permission.6": "Administration",
     "permission.2": "Arbitration",
     "permission.3": "Architecture",

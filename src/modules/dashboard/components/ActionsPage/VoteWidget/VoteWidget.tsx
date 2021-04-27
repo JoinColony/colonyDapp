@@ -27,6 +27,7 @@ interface Props {
   actionType: string;
   motionId: number;
   motionDomain?: number;
+  transactionHash: string;
 }
 
 const MSG = defineMessages({
@@ -60,6 +61,7 @@ const VoteWidget = ({
   actionType,
   motionId,
   motionDomain = ROOT_DOMAIN_ID,
+  transactionHash,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -74,10 +76,12 @@ const VoteWidget = ({
   const transform = useCallback(
     mapPayload(({ vote }) => ({
       colonyAddress,
-      walletAddress,
+      userAddress: walletAddress,
       vote: parseInt(vote, 10),
+      motionId,
+      transactionHash,
     })),
-    [],
+    [walletAddress],
   );
 
   const hasRegisteredProfile = !!username && !ethereal;
@@ -114,9 +118,9 @@ const VoteWidget = ({
         vote: undefined,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+      submit={ActionTypes.COLONY_MOTION_VOTE}
+      error={ActionTypes.COLONY_MOTION_VOTE_ERROR}
+      success={ActionTypes.COLONY_MOTION_VOTE_SUCCESS}
       transform={transform}
     >
       {({
