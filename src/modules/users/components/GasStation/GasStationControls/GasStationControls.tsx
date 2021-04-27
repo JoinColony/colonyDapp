@@ -28,9 +28,9 @@ const validationSchema = yup.object().shape({
   transactionId: yup.string(),
 });
 
-const displayName = 'users.GasStation.GasStationPrice';
+const displayName = 'users.GasStation.GasStationControls';
 
-const GasStationPrice = ({ transaction: { id, error } }: Props) => {
+const GasStationControls = ({ transaction: { id, error } }: Props) => {
   const dispatch = useDispatch();
   const transform = useCallback(withId(id), [id]);
 
@@ -75,6 +75,6 @@ const GasStationPrice = ({ transaction: { id, error } }: Props) => {
   );
 };
 
-GasStationPrice.displayName = displayName;
+GasStationControls.displayName = displayName;
 
-export default GasStationPrice;
+export default GasStationControls;
