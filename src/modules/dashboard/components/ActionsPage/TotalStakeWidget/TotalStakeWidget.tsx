@@ -44,6 +44,7 @@ const TotalStakeWidget = ({
       motionId,
       stakeSide,
     },
+    fetchPolicy: 'network-only',
   });
   const { data: nativeTokenAddressData } = useColonyNativeTokenQuery({
     variables: { address: colonyAddress },

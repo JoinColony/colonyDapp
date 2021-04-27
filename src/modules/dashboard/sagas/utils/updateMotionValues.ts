@@ -21,6 +21,9 @@ import {
   MotionCurrentUserVotedQuery,
   MotionCurrentUserVotedQueryVariables,
   MotionCurrentUserVotedDocument,
+  StakeAmountsForMotionQuery,
+  StakeAmountsForMotionQueryVariables,
+  StakeAmountsForMotionDocument,
 } from '~data/index';
 
 export function* updateMotionValues(
@@ -28,6 +31,7 @@ export function* updateMotionValues(
   userAddress: Address,
   motionId: BigNumber,
   transactionHash: string,
+  stakeSide: string,
 ) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
@@ -72,6 +76,23 @@ export function* updateMotionValues(
       colonyAddress,
       userAddress,
       motionId: motionId.toNumber(),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  /*
+   * Total stake widget values
+   */
+  yield apolloClient.query<
+    StakeAmountsForMotionQuery,
+    StakeAmountsForMotionQueryVariables
+  >({
+    query: StakeAmountsForMotionDocument,
+    variables: {
+      colonyAddress,
+      userAddress,
+      motionId: motionId.toNumber(),
+      stakeSide,
     },
     fetchPolicy: 'network-only',
   });

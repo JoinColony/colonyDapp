@@ -887,6 +887,14 @@ export type MotionVoteResults = {
   nayVoters: Array<Scalars['String']>;
 };
 
+export type MotionStakerRewards = {
+  stakingRewardYay: Scalars['String'];
+  stakingRewardNay: Scalars['String'];
+  stakesYay: Scalars['String'];
+  stakesNay: Scalars['String'];
+  claimedReward: Scalars['Boolean'];
+};
+
 export type TotalStakedAmounts = {
   YAY?: Maybe<Scalars['String']>;
   NAY?: Maybe<Scalars['String']>;
@@ -896,14 +904,6 @@ export type StakeAmounts = {
   totalStaked: TotalStakedAmounts;
   userStake?: Maybe<Scalars['String']>;
   requiredStake: Scalars['String'];
-};
-
-export type MotionStakerRewards = {
-  stakingRewardYay: Scalars['String'];
-  stakingRewardNay: Scalars['String'];
-  stakesYay: Scalars['String'];
-  stakesNay: Scalars['String'];
-  claimedReward: Scalars['Boolean'];
 };
 
 export type ByColonyFilter = {
@@ -1600,7 +1600,7 @@ export type MotionVoterRewardQueryVariables = Exact<{
 }>;
 
 
-export type MotionsVoterRewardQuery = Pick<Query, 'motionVoterReward'>;
+export type MotionVoterRewardQuery = Pick<Query, 'motionVoterReward'>;
 
 export type MotionUserVoteRevealedQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -1645,6 +1645,7 @@ export type MotionStakerRewardQueryVariables = Exact<{
 
 
 export type MotionStakerRewardQuery = { motionStakerReward: Pick<MotionStakerRewards, 'stakingRewardYay' | 'stakingRewardNay' | 'stakesYay' | 'stakesNay' | 'claimedReward'> };
+
 export type StakeAmountsForMotionQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
@@ -3827,8 +3828,8 @@ export const MotionVoterRewardDocument = gql`
 /**
  * __useMotionVoterRewardQuery__
  *
- * To run a query within a React component, call `useMotionsVoterRewardQuery` and pass it any options that fit your needs.
- * When your component renders, `useMotionsVoterRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMotionVoterRewardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionVoterRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -3999,15 +4000,6 @@ export const MotionStakerRewardDocument = gql`
     stakesYay
     stakesNay
     claimedReward
-export const StakeAmountsForMotionDocument = gql`
-    query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $stakeSide: String!) {
-  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, stakeSide: $stakeSide) @client {
-    totalStaked {
-      YAY
-      NAY
-    }
-    userStake
-    requiredStake
   }
 }
     `;
@@ -4017,10 +4009,6 @@ export const StakeAmountsForMotionDocument = gql`
  *
  * To run a query within a React component, call `useMotionStakerRewardQuery` and pass it any options that fit your needs.
  * When your component renders, `useMotionStakerRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * __useStakeAmountsForMotionQuery__
- *
- * To run a query within a React component, call `useStakeAmountsForMotionQuery` and pass it any options that fit your needs.
- * When your component renders, `useStakeAmountsForMotionQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4043,6 +4031,29 @@ export function useMotionStakerRewardLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type MotionStakerRewardQueryHookResult = ReturnType<typeof useMotionStakerRewardQuery>;
 export type MotionStakerRewardLazyQueryHookResult = ReturnType<typeof useMotionStakerRewardLazyQuery>;
 export type MotionStakerRewardQueryResult = Apollo.QueryResult<MotionStakerRewardQuery, MotionStakerRewardQueryVariables>;
+export const StakeAmountsForMotionDocument = gql`
+    query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $stakeSide: String!) {
+  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, stakeSide: $stakeSide) @client {
+    totalStaked {
+      YAY
+      NAY
+    }
+    userStake
+    requiredStake
+  }
+}
+    `;
+
+/**
+ * __useStakeAmountsForMotionQuery__
+ *
+ * To run a query within a React component, call `useStakeAmountsForMotionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStakeAmountsForMotionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
  * const { data, loading, error } = useStakeAmountsForMotionQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
