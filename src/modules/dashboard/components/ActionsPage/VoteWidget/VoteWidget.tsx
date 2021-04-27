@@ -84,6 +84,11 @@ const VoteWidget = ({
     [walletAddress],
   );
 
+  const handleSuccess = useCallback((_, { setFieldValue, resetForm }) => {
+    resetForm({});
+    setFieldValue('vote', undefined);
+  }, []);
+
   const hasRegisteredProfile = !!username && !ethereal;
   const hasReputationToVote = bigNumberify(
     userReputationData?.userReputation || 0,
@@ -122,6 +127,7 @@ const VoteWidget = ({
       error={ActionTypes.COLONY_MOTION_VOTE_ERROR}
       success={ActionTypes.COLONY_MOTION_VOTE_SUCCESS}
       transform={transform}
+      onSuccess={handleSuccess}
     >
       {({
         handleSubmit,
