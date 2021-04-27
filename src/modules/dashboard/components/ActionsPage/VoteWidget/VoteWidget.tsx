@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, RefObject } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { defineMessages } from 'react-intl';
@@ -27,6 +27,7 @@ interface Props {
   actionType: string;
   motionId: number;
   motionDomain?: number;
+  scrollToRef?: RefObject<HTMLInputElement>;
   transactionHash: string;
 }
 
@@ -61,6 +62,7 @@ const VoteWidget = ({
   actionType,
   motionId,
   motionDomain = ROOT_DOMAIN_ID,
+  scrollToRef,
   transactionHash,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -84,10 +86,14 @@ const VoteWidget = ({
     [walletAddress],
   );
 
-  const handleSuccess = useCallback((_, { setFieldValue, resetForm }) => {
-    resetForm({});
-    setFieldValue('vote', undefined);
-  }, []);
+  const handleSuccess = useCallback(
+    (_, { setFieldValue, resetForm }) => {
+      resetForm({});
+      setFieldValue('vote', undefined);
+      scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+    },
+    [scrollToRef],
+  );
 
   const hasRegisteredProfile = !!username && !ethereal;
   const hasReputationToVote = bigNumberify(
