@@ -479,6 +479,37 @@ export const motionsResolvers = ({
         return null;
       }
     },
+    async votingState(_, { colonyAddress, motionId }) {
+      try {
+        const colonyClient = (await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        )) as ColonyClientV6;
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const {
+          skillRep,
+          repSubmitted,
+        } = await votingReputationClient.getMotion(motionId);
+        const motion = await votingReputationClient.getMotion(motionId);
+        const maxVoteFraction = await votingReputationClient.getMaxVoteFraction();
+
+        const threasholdValue = skillRep
+          .mul(maxVoteFraction)
+          .div(bigNumberify(10).pow(18));
+
+        return {
+          threasholdValue: threasholdValue.toString(),
+          totalVotedReputation: repSubmitted.toString(),
+          skillRep: skillRep.toString(),
+        };
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
     async motionFinalized(_, { motionId, colonyAddress }) {
       try {
         const votingReputationClient = await colonyManager.getClient(

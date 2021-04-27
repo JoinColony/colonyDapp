@@ -18,6 +18,7 @@ import {
   useEventsForMotionQuery,
   useMotionObjectionAnnotationQuery,
   useUser,
+  useVotingStateQuery
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -37,6 +38,7 @@ import { motionCountdownTimerMsg } from './motionCountdownTimerMsg';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';
+import { bigNumberify } from 'ethers/utils';
 
 const MSG = defineMessages({
   or: {
@@ -116,6 +118,15 @@ const MintTokenMotion = ({
     },
     fetchPolicy: 'network-only',
   });
+
+  const { data: votingStateData } = useVotingStateQuery({
+    variables: { colonyAddress: colony.colonyAddress, motionId },
+    fetchPolicy: 'network-only',
+  });
+
+  // const {threasholdValue, totalVotedReputation, skillRep} = votingStateData;
+
+  console.log(votingStateData);
 
   const actionAndEventValues = {
     actionType,

@@ -316,6 +316,7 @@ export type Query = {
   userReputation: Scalars['String'];
   username: Scalars['String'];
   votingExtensionParams: VotingExtensionParams;
+  votingState: VotingState;
 };
 
 
@@ -569,6 +570,12 @@ export type QueryUsernameArgs = {
 
 export type QueryVotingExtensionParamsArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryVotingStateArgs = {
+  colonyAddress: Scalars['String'];
+  motionId: Scalars['Int'];
 };
 
 export enum SuggestionStatus {
@@ -917,6 +924,12 @@ export type StakeAmounts = {
 export type MotionObjectionAnnotation = {
   address: Scalars['String'];
   metadata: Scalars['String'];
+};
+
+export type VotingState = {
+  threasholdValue: Scalars['String'];
+  totalVotedReputation: Scalars['String'];
+  skillRep: Scalars['String'];
 };
 
 export type ByColonyFilter = {
@@ -1632,6 +1645,14 @@ export type MotionVoteResultsQueryVariables = Exact<{
 
 
 export type MotionVoteResultsQuery = { motionVoteResults: Pick<MotionVoteResults, 'currentUserVoteSide' | 'yayVotes' | 'yayVoters' | 'nayVotes' | 'nayVoters'> };
+
+export type VotingStateQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  motionId: Scalars['Int'];
+}>;
+
+
+export type VotingStateQuery = { votingState: Pick<VotingState, 'threasholdValue' | 'totalVotedReputation' | 'skillRep'> };
 
 export type MotionCurrentUserVotedQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -3949,6 +3970,42 @@ export function useMotionVoteResultsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type MotionVoteResultsQueryHookResult = ReturnType<typeof useMotionVoteResultsQuery>;
 export type MotionVoteResultsLazyQueryHookResult = ReturnType<typeof useMotionVoteResultsLazyQuery>;
 export type MotionVoteResultsQueryResult = Apollo.QueryResult<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>;
+export const VotingStateDocument = gql`
+    query VotingState($colonyAddress: String!, $motionId: Int!) {
+  votingState(colonyAddress: $colonyAddress, motionId: $motionId) @client {
+    threasholdValue
+    totalVotedReputation
+    skillRep
+  }
+}
+    `;
+
+/**
+ * __useVotingStateQuery__
+ *
+ * To run a query within a React component, call `useVotingStateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVotingStateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVotingStateQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      motionId: // value for 'motionId'
+ *   },
+ * });
+ */
+export function useVotingStateQuery(baseOptions?: Apollo.QueryHookOptions<VotingStateQuery, VotingStateQueryVariables>) {
+        return Apollo.useQuery<VotingStateQuery, VotingStateQueryVariables>(VotingStateDocument, baseOptions);
+      }
+export function useVotingStateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VotingStateQuery, VotingStateQueryVariables>) {
+          return Apollo.useLazyQuery<VotingStateQuery, VotingStateQueryVariables>(VotingStateDocument, baseOptions);
+        }
+export type VotingStateQueryHookResult = ReturnType<typeof useVotingStateQuery>;
+export type VotingStateLazyQueryHookResult = ReturnType<typeof useVotingStateLazyQuery>;
+export type VotingStateQueryResult = Apollo.QueryResult<VotingStateQuery, VotingStateQueryVariables>;
 export const MotionCurrentUserVotedDocument = gql`
     query MotionCurrentUserVoted($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
   motionCurrentUserVoted(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
