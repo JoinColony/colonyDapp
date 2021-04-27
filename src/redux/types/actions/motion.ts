@@ -81,8 +81,6 @@ export type MotionActionTypes =
         colonyAddress: Address;
         motionId: BigNumber;
         transactionHash: string;
-        sideYay: boolean;
-        sideNay: boolean;
       },
       MetaWithHistory<object>
     >

@@ -162,7 +162,7 @@ const FinalizeMotionAndClaimWidget = ({
     ({ address }) => address === nativeTokenAddress,
   );
 
-  const transformFinalizeData = useCallback(
+  const transform = useCallback(
     mapPayload(() => ({
       colonyAddress,
       userAddress: walletAddress,
@@ -175,22 +175,6 @@ const FinalizeMotionAndClaimWidget = ({
   const handleSuccess = useCallback(() => {
     scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [scrollToRef]);
-
-  const transformClaimData = useCallback(
-    mapPayload(() => ({
-      colonyAddress,
-      userAddress: walletAddress,
-      motionId,
-      sideYay: bigNumberify(
-        stakerRewards?.motionStakerReward?.stakesYay || 0,
-      ).gt(0),
-      sideNay: bigNumberify(
-        stakerRewards?.motionStakerReward?.stakesNay || 0,
-      ).gt(0),
-      transactionHash,
-    })),
-    [stakerRewards],
-  );
 
   const { userStake, userWinnings, userTotals } = useMemo(() => {
     let stake = bigNumberify(0);
@@ -279,7 +263,7 @@ const FinalizeMotionAndClaimWidget = ({
           submit={ActionTypes.COLONY_MOTION_FINALIZE}
           error={ActionTypes.COLONY_MOTION_FINALIZE_ERROR}
           success={ActionTypes.COLONY_MOTION_FINALIZE_SUCCESS}
-          transform={transformFinalizeData}
+          transform={transform}
           onSuccess={handleSuccess}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
@@ -316,7 +300,7 @@ const FinalizeMotionAndClaimWidget = ({
           submit={ActionTypes.COLONY_MOTION_CLAIM}
           error={ActionTypes.COLONY_MOTION_CLAIM_ERROR}
           success={ActionTypes.COLONY_MOTION_CLAIM_SUCCESS}
-          transform={transformClaimData}
+          transform={transform}
           onSuccess={handleSuccess}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
