@@ -27,6 +27,9 @@ import {
   MotionFinalizedQuery,
   MotionFinalizedQueryVariables,
   MotionFinalizedDocument,
+  MotionStakerRewardQuery,
+  MotionStakerRewardQueryVariables,
+  MotionStakerRewardDocument,
 } from '~data/index';
 
 export function* updateMotionValues(
@@ -115,6 +118,22 @@ export function* updateMotionValues(
       fetchPolicy: 'network-only',
     },
   );
+
+  /*
+   * Refresh rewards values and if the user claimed them
+   */
+  yield apolloClient.query<
+    MotionStakerRewardQuery,
+    MotionStakerRewardQueryVariables
+  >({
+    query: MotionStakerRewardDocument,
+    variables: {
+      colonyAddress,
+      userAddress,
+      motionId: motionId.toNumber(),
+    },
+    fetchPolicy: 'network-only',
+  });
 
   /*
    * Motion Events
