@@ -36,16 +36,14 @@ function* stakeMotion({
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const context = TEMP_getContext(ContextModule.ColonyManager);
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
     const colonyClient = yield context.getClient(
       ClientType.ColonyClient,
       colonyAddress,
     );
-    const tokenAddress = colonyClient.tokenClient.address;
 
     // @NOTE This line exceeds the max-len but there's no prettier solution
     // eslint-disable-next-line max-len
-    const votingReputationClient: ExtensionClient = yield colonyManager.getClient(
+    const votingReputationClient: ExtensionClient = yield context.getClient(
       ClientType.VotingReputationClient,
       colonyAddress,
     );
@@ -179,7 +177,6 @@ function* stakeMotion({
       userAddress,
       motionId,
       transactionHash,
-      tokenAddress,
       StakeSide.Motion,
     );
 
