@@ -236,7 +236,7 @@ const StakingWidget = ({
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
-  return bigNumberify(totalNAYStakes).isZero() ? (
+  return !bigNumberify(totalNAYStakes).isZero() ? (
     <div>PLACEHOLDER FOR ARMANDOS COMPONENT</div>
   ) : (
     <div className={styles.main}>
