@@ -181,10 +181,17 @@
     "transaction.VotingReputationClient.submitVote.title": "Submit motion vote",
     "transaction.VotingReputationClient.submitVote.description": "Submit motion vote",
 
+    "transaction.group.revealVoteMotion.title": "Reveal vote",
+    "transaction.group.revealVoteMotion.description": "Reveal vote",
+    "transaction.VotingReputationClient.revealVote.title": "Reveal your motion vote",
+    "transaction.VotingReputationClient.revealVote.description": "Reveal your motion vote",
+
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
     "message.motionVote.title": "Sign message to vote",
     "message.motionVote.description": "Sign message to vote",
+    "message.motionRevealVote.title": "Sign message to reveal vote",
+    "message.motionRevealVote.description": "Sign message to reveal vote",
 
     "permission.6": "Administration",
     "permission.2": "Arbitration",
