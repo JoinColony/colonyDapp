@@ -223,6 +223,8 @@ const MintTokenMotion = ({
               actionType={actionType}
               motionId={motionId}
               motionDomain={motionDomain}
+              scrollToRef={bottomElementRef}
+              transactionHash={transactionHash}
             />
           )}
           {motionState === MotionState.Reveal && (

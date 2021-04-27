@@ -1,50 +1,32 @@
-import { FormikProps } from 'formik';
-import React from 'react';
-import * as yup from 'yup';
+import { useEffect } from 'react';
+import { useDispatch } from 'redux-react-hook';
 
 import { MessageType } from '~immutable/index';
-import Button from '~core/Button';
-import { ActionForm } from '~core/Fields';
-import MetaMaskWalletInteraction from '../MetaMaskWalletInteraction';
-import { ActionTypes } from '~redux/index';
-import styles from './MessageCardControls.css';
+
+import { messageSign } from '../../../../core/actionCreators';
 
 interface Props {
   message: MessageType;
 }
 
-interface FormValues {
-  id: string;
-}
-
 const displayName = 'users.GasStation.MessageCardControls';
 
-const validationSchema = yup.object().shape({
-  id: yup.string(),
-});
+const MessageCardControls = ({ message: { id } }: Props) => {
+  const dispatch = useDispatch();
 
-const MessageCardControls = ({ message: { id } }: Props) => (
-  <div className={styles.main}>
-    <ActionForm
-      submit={ActionTypes.MESSAGE_SIGN}
-      success={ActionTypes.MESSAGE_SIGNED}
-      error={ActionTypes.MESSAGE_ERROR}
-      validationSchema={validationSchema}
-      initialValues={{ id }}
-    >
-      {({ isSubmitting }: FormikProps<FormValues>) => (
-        <Button
-          text={{ id: 'button.confirm' }}
-          type="submit"
-          loading={isSubmitting}
-        />
-      )}
-    </ActionForm>
-    <div className={styles.alert}>
-      <MetaMaskWalletInteraction />
-    </div>
-  </div>
-);
+  /*
+   * @NOTE Automatically sign the message
+   *
+   * Since we're just using Metamask, we won't wait for the user to click the "Confirm"
+   * button anymore, we just dispatch the action to sign the message, and the user
+   * will deal with _confirm-ing_ the action using Metamask's interface.
+   */
+  useEffect(() => {
+    dispatch(messageSign(id));
+  }, [dispatch, id]);
+
+  return null;
+};
 
 MessageCardControls.displayName = displayName;
 
