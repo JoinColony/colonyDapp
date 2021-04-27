@@ -18,11 +18,12 @@ import { StakeSide } from './TotalStakeWidget';
 type Props = {
   requiredStake: string | number;
   isUserLoggedIn: boolean;
-  formattedTotalYAYStakedPercentage: string;
-  formattedTotalNAYStakedPercentage: string;
-  handleStakeSideSelect: Dispatch<SetStateAction<StakeSide | null>>;
+  formattedYAYPercentage: string;
+  formattedNAYPercentage: string;
+  handleSideSelect: Dispatch<SetStateAction<boolean>>;
   tokenDecimals?: number;
   tokenSymbol?: string;
+  handleWidgetState: (isObjection: boolean) => void;
 };
 
 const MSG = defineMessages({
@@ -59,16 +60,20 @@ const MSG = defineMessages({
 
 const GroupedTotalStake = ({
   requiredStake,
-  formattedTotalYAYStakedPercentage,
-  formattedTotalNAYStakedPercentage,
+  formattedYAYPercentage,
+  formattedNAYPercentage,
   tokenDecimals,
   tokenSymbol,
   isUserLoggedIn,
-  handleStakeSideSelect,
+  handleSideSelect,
+  handleWidgetState,
 }: Props) => {
-  const isYAYSideFullyStaked = formattedTotalYAYStakedPercentage === '100';
-  const isNAYSideFullyStaked = formattedTotalNAYStakedPercentage === '100';
-  const handleSubmit = ({ stakeSide }) => handleStakeSideSelect(stakeSide);
+  const isYAYSideFullyStaked = formattedYAYPercentage === '100';
+  const isNAYSideFullyStaked = formattedNAYPercentage === '100';
+  const handleSubmit = ({ stakeSide }) => {
+    handleSideSelect(stakeSide === StakeSide.Objection);
+    handleWidgetState(false);
+  };
   const validationSchema = yup.object().shape({
     stakeSide: yup.string().required(),
   });
@@ -109,7 +114,7 @@ const GroupedTotalStake = ({
                 isYAYSideFullyStaked ? MSG.fullyStaked : MSG.stakeProgress
               }
               descriptionValues={{
-                totalPercentage: formattedTotalYAYStakedPercentage,
+                totalPercentage: formattedYAYPercentage,
                 requiredStake: (
                   <Numeral
                     value={requiredStake}
@@ -138,7 +143,7 @@ const GroupedTotalStake = ({
                 isNAYSideFullyStaked ? MSG.fullyStaked : MSG.stakeProgress
               }
               descriptionValues={{
-                totalPercentage: formattedTotalNAYStakedPercentage,
+                totalPercentage: formattedNAYPercentage,
                 requiredStake: (
                   <Numeral
                     value={requiredStake}

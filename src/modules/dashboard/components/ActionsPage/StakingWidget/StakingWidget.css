@@ -3,6 +3,10 @@
   margin: 0px 0 100px 0;
 }
 
+.widget {
+  margin-top: 20px;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;

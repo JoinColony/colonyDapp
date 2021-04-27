@@ -1,4 +1,4 @@
-import React, { useCallback, useState, RefObject } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
@@ -11,7 +11,6 @@ import { useDialog } from '~core/Dialog';
 import RaiseObjectionDialog from '~dashboard/RaiseObjectionDialog';
 
 import {
-  Colony,
   useLoggedInUser,
   useMotionStakesQuery,
   useUserBalanceWithLockQuery,
@@ -22,14 +21,12 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
 import StakingSlider, { StakingAmounts } from './StakingSlider';
+import { Props as StakingFlowProps } from './StakingWidgetFlow';
 
-type Props = {
-  colony: Colony;
-  motionId: number;
-  scrollToRef?: RefObject<HTMLInputElement>;
-  transactionHash: string;
-  previousTotalStakeStep: (() => void) | null;
-};
+export interface Props extends StakingFlowProps {
+  isObjection: boolean;
+  handleWidgetState: (isObjection: boolean) => void;
+}
 
 const displayName = 'StakingWidget';
 
@@ -62,10 +59,9 @@ const StakingWidget = ({
   motionId,
   scrollToRef,
   transactionHash,
-  previousTotalStakeStep,
+  isObjection,
+  handleWidgetState,
 }: Props) => {
-  const [isObjection, setIsObjection] = useState(false);
-
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const { data, loading } = useMotionStakesQuery({
@@ -236,9 +232,7 @@ const StakingWidget = ({
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
-  return !bigNumberify(totalNAYStakes).isZero() ? (
-    <div>PLACEHOLDER FOR ARMANDOS COMPONENT</div>
-  ) : (
+  return (
     <div className={styles.main}>
       <ActionForm
         initialValues={{
@@ -275,21 +269,21 @@ const StakingWidget = ({
                 text={MSG.stakeButton}
               />
               <span className={isObjection ? '' : styles.objectButton}>
-                {isObjection ? (
+                {isObjection || !bigNumberify(totalNAYStakes).isZero() ? (
                   <Button
                     appearance={{ theme: 'secondary', size: 'medium' }}
                     text={{ id: 'button.back' }}
-                    onClick={() => setIsObjection(false)}
+                    onClick={() => handleWidgetState(true)}
                   />
                 ) : (
                   <Button
                     appearance={{ theme: 'pink', size: 'medium' }}
                     text={MSG.objectButton}
-                    disabled={!previousTotalStakeStep && !canUserStakeNay}
+                    disabled={!canUserStakeNay}
                     onClick={() =>
                       bigNumberify(totalNAYStakes).isZero()
                         ? handleRaiseObjection(canUserStake, data.motionStakes)
-                        : setIsObjection(true)
+                        : handleWidgetState(true)
                     }
                   />
                 )}

@@ -1,4 +1,5 @@
 export const main: string;
+export const widget: string;
 export const wrapper: string;
 export const title: string;
 export const description: string;
