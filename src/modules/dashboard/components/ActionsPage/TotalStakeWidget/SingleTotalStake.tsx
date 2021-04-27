@@ -8,7 +8,7 @@ import ProgressBar from '~core/ProgressBar';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-import { StakeSide } from './TotalStakeWidget';
+import { StakeSide } from './GroupedTotalStake';
 import styles from './TotalStakeWidget.css';
 
 type Props = {

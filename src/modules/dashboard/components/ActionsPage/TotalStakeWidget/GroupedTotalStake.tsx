@@ -13,7 +13,11 @@ import Button from '~core/Button';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
-import { StakeSide } from './TotalStakeWidget';
+
+export enum StakeSide {
+  Motion = 'MOTION',
+  Objection = 'OBJECTION',
+}
 
 type Props = {
   requiredStake: string | number;
