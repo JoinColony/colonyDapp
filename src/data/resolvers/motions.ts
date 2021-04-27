@@ -6,6 +6,7 @@ import {
   getBlockTime,
   MotionState as NetworkMotionState,
   getEvents,
+  getMultipleEvents,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
@@ -473,6 +474,141 @@ export const motionsResolvers = ({
         return voteResult;
       } catch (error) {
         console.error('Could not fetch motion voting results');
+        console.error(error);
+        return null;
+      }
+    },
+    async motionFinalized(_, { motionId, colonyAddress }) {
+      try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const { finalized } = await votingReputationClient.getMotion(motionId);
+
+        return finalized;
+      } catch (error) {
+        console.error('Could not fetch motion finalized state');
+        console.error(error);
+        return null;
+      }
+    },
+    async motionStakerReward(_, { motionId, colonyAddress, userAddress }) {
+      try {
+        let stakerReward: {
+          stakingRewardYay: string | null;
+          stakingRewardNay: string | null;
+          stakesYay: string | null;
+          stakesNay: string | null;
+          claimedReward: boolean | null;
+        } = {
+          stakingRewardYay: null,
+          stakingRewardNay: null,
+          stakesYay: null,
+          stakesNay: null,
+          claimedReward: null,
+        };
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const motionStakedFilter = votingReputationClient.filters.MotionStaked(
+          bigNumberify(motionId),
+          userAddress.toLowerCase(),
+          null,
+        );
+        // eslint-disable-next-line max-len
+        const stakeClaimedFilter = votingReputationClient.filters.MotionRewardClaimed(
+          bigNumberify(motionId),
+          userAddress.toLowerCase(),
+          null,
+          null,
+        );
+        const events = await getMultipleEvents(votingReputationClient, [
+          motionStakedFilter,
+          stakeClaimedFilter,
+        ]);
+        const userStakeEvents = events.filter(
+          ({ name }) => name === ColonyAndExtensionsEvents.MotionStaked,
+        );
+        const rewardClaimedEvents = events.filter(
+          ({ name }) => name === ColonyAndExtensionsEvents.MotionRewardClaimed,
+        );
+        let stakesYay = bigNumberify(0);
+        let stakesNay = bigNumberify(0);
+        userStakeEvents.map(({ values: { amount, vote } }) => {
+          if (vote.toNumber() === 1) {
+            stakesYay = stakesYay.add(amount);
+            return stakesYay;
+          }
+          stakesNay = stakesNay.add(amount);
+          return stakesNay;
+        });
+        /*
+         * @NOTE We need to do a little bit of try/catch trickery here because of
+         * the way the contracts function
+         *
+         * If **anyone** staked on a side, calling the rewards function (even for
+         * a user who didnd't stake) returns 0
+         *
+         * But calling the rewards function on a side where **no one** has voted
+         * will result in an error being thrown.
+         *
+         * For this we initialize both with zero, call them both in a try/catch
+         * block. If they succeed, they overwrite their initial valiues, if they
+         * fail, they fall back to the initial 0.
+         */
+        let stakingRewardYay = bigNumberify(0);
+        let stakingRewardNay = bigNumberify(0);
+        try {
+          [stakingRewardYay] = await votingReputationClient.getStakerReward(
+            motionId,
+            userAddress,
+            1,
+          );
+        } catch (error) {
+          /*
+           * We don't care to catch the error since we fallback to it's initial value
+           */
+          // silent error
+        }
+        try {
+          [stakingRewardNay] = await votingReputationClient.getStakerReward(
+            motionId,
+            userAddress,
+            0,
+          );
+        } catch (error) {
+          /*
+           * We don't care to catch the error since we fallback to it's initial value
+           */
+          // silent error
+        }
+        /*
+         * @NOTE If we claimed the rewards, than `getStakerReward` will return 0
+         * (since we already claimed the reward, hence no more reward left).
+         *
+         * To be able to display the "original" value of the reward, we need to
+         * parse the claim reward events
+         */
+        rewardClaimedEvents.map(({ values: { amount, vote } }) => {
+          if (vote.toNumber() === 1) {
+            stakingRewardYay = amount;
+            return stakingRewardYay;
+          }
+          stakingRewardNay = amount;
+          return stakingRewardNay;
+        });
+        stakerReward = {
+          stakingRewardYay: stakingRewardYay.toString(),
+          stakingRewardNay: stakingRewardNay.toString(),
+          stakesYay: stakesYay.toString(),
+          stakesNay: stakesNay.toString(),
+          claimedReward: !!rewardClaimedEvents.length,
+        };
+        return stakerReward;
+      } catch (error) {
+        console.error('Could not fetch the rewards for the current staker');
         console.error(error);
         return null;
       }

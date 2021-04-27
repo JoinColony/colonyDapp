@@ -224,6 +224,14 @@ export default gql`
     nayVoters: [String!]!
   }
 
+  type MotionStakerRewards {
+    stakingRewardYay: String!
+    stakingRewardNay: String!
+    stakesYay: String!
+    stakesNay: String!
+    claimedReward: Boolean!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -313,6 +321,12 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
     ): MotionVoteResults!
+    motionFinalized(motionId: Int!, colonyAddress: String!): Boolean!
+    motionStakerReward(
+      motionId: Int!
+      colonyAddress: String!
+      userAddress: String!
+    ): MotionStakerRewards!
   }
 
   extend type Mutation {

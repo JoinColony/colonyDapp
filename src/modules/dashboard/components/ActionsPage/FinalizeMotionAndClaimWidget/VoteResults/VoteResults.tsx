@@ -21,15 +21,15 @@ interface Props {
 
 const MSG = defineMessages({
   voteYAY: {
-    id: 'dashboard.ActionsPage.FinalizeMotionWidget.VoteResults.voteYAY',
+    id: `dashboard.ActionsPage.FinalizeMotionAndClaimWidget.VoteResults.voteYAY`,
     defaultMessage: `Yes`,
   },
   voteNAY: {
-    id: 'dashboard.ActionsPage.FinalizeMotionWidget.VoteResults.voteNAY',
+    id: `dashboard.ActionsPage.FinalizeMotionAndClaimWidget.VoteResults.voteNAY`,
     defaultMessage: `No!`,
   },
   loadingText: {
-    id: 'dashboard.ActionsPage.FinalizeMotionWidget.VoteResults.loadingText',
+    id: `dashboard.ActionsPage.FinalizeMotionAndClaimWidget.VoteResults.loadingText`,
     defaultMessage: 'Loading votes results',
   },
 });
@@ -101,6 +101,6 @@ const VoteResults = ({ colony: { colonyAddress }, motionId }: Props) => {
 };
 
 VoteResults.displayName =
-  'dashboard.ActionsPage.FinalizeMotionWidget.VoteResults';
+  'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.VoteResults';
 
 export default VoteResults;

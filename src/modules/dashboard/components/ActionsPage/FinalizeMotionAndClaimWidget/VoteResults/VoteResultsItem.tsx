@@ -25,7 +25,7 @@ interface Props {
   maxAvatars?: number;
 }
 
-const displayName = `dashboard.ActionPage.FinalizeMotionWidget.VoteResults.VoteResultsItem`;
+const displayName = `dashboard.ActionPage.FinalizeMotionAndClaimWidget.VoteResults.VoteResultsItem`;
 
 const VoteResultsItem = ({
   appearance = { theme: 'approve' },

@@ -1,5 +1,6 @@
 .main {
   display: block;
+  padding: 0 0 100px 0;
 }
 
 .stateMarginBottom {
@@ -24,6 +25,18 @@
 
 .itemWithForcedBorder:last-child {
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.itemWithForcedBorder .label {
+  color: var(--dark);
+}
+
+.title {
+  composes: item;
+}
+
+.title .label {
+  color: var(--dark);
 }
 
 .label {
@@ -61,4 +74,8 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.loading {
+  padding-top: 20px;
 }

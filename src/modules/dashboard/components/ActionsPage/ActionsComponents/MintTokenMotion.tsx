@@ -28,7 +28,7 @@ import DetailsWidget from '../DetailsWidget';
 import StakingWidget from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
-import FinalizeMotionWidget from '../FinalizeMotionWidget';
+import FinalizeMotionAndClaimWidget from '../FinalizeMotionAndClaimWidget';
 
 import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
 
@@ -230,7 +230,7 @@ const MintTokenMotion = ({
           )}
           {(motionState === MotionState.Failed ||
             motionState === MotionState.Passed) && (
-            <FinalizeMotionWidget
+            <FinalizeMotionAndClaimWidget
               colony={colony}
               actionType={actionType}
               motionId={motionId}
