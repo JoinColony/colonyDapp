@@ -26,7 +26,7 @@ export enum StakeSide {
 type Props = {
   colonyAddress: Address;
   motionId: number;
-  handleStakeSideSelect: Dispatch<SetStateAction<StakeSide | undefined>>;
+  handleStakeSideSelect: Dispatch<SetStateAction<StakeSide | null>>;
   stakeSide?: StakeSide;
 };
 

@@ -28,6 +28,7 @@ type Props = {
   motionId: number;
   scrollToRef?: RefObject<HTMLInputElement>;
   transactionHash: string;
+  previousTotalStakeStep: (() => void) | null;
 };
 
 const displayName = 'StakingWidget';
@@ -49,6 +50,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.StakingWidget.objectButton',
     defaultMessage: 'Object',
   },
+  backButton: {
+    id: 'dashboard.ActionsPage.StakingWidget.backButton',
+    defaultMessage: 'Back',
+  },
   stakingTooltip: {
     id: 'dashboard.ActionsPage.StakingWidget.stakingTooltip',
     defaultMessage: '[TO BE ADDED]',
@@ -68,6 +73,7 @@ const StakingWidget = ({
   motionId,
   scrollToRef,
   transactionHash,
+  previousTotalStakeStep,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -282,9 +288,15 @@ const StakingWidget = ({
                 text={MSG.stakeButton}
               />
               <Button
-                appearance={{ theme: 'danger', size: 'medium' }}
-                text={MSG.objectButton}
-                disabled={!canUserStake}
+                appearance={{
+                  theme: previousTotalStakeStep ? 'ghost' : 'danger',
+                  size: 'medium',
+                }}
+                text={
+                  previousTotalStakeStep ? MSG.backButton : MSG.objectButton
+                }
+                disabled={!previousTotalStakeStep && !canUserStake}
+                onClick={previousTotalStakeStep || undefined}
               />
             </div>
           </div>

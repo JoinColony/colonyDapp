@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback } from 'react';
+import React, { useMemo, useRef, useCallback, useState } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -91,7 +91,9 @@ const MintTokenMotion = ({
 
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
-  const [selectedStakeSide, setSelectedStakeSide] = useState<StakeSide>();
+  const [selectedStakeSide, setSelectedStakeSide] = useState<StakeSide | null>(
+    null,
+  );
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
       motionId,
@@ -142,7 +144,7 @@ const MintTokenMotion = ({
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
 
-  const getStakeSide = useCallback((): StakeSide => {
+  const getStakeShownSide = useCallback((): StakeSide => {
     if (selectedStakeSide) {
       return selectedStakeSide;
     }
@@ -153,6 +155,16 @@ const MintTokenMotion = ({
 
     return StakeSide.Both;
   }, [selectedStakeSide, motionNAYStake]);
+  const previousTotalStakeStep = useCallback(
+    () => setSelectedStakeSide(null),
+    [],
+  );
+
+  const stakeShownSide = getStakeShownSide();
+  const isOnStakingPhase =
+    motionState === MotionState.StakeRequired ||
+    motionState === MotionState.Motion ||
+    motionState === MotionState.Objection;
 
   return (
     <div className={styles.main}>
@@ -224,24 +236,23 @@ const MintTokenMotion = ({
           )}
         </div>
         <div className={styles.details}>
-          {(motionState === MotionState.StakeRequired ||
-            motionState === MotionState.Motion ||
-            motionState === MotionState.Objection) && (
+          {isOnStakingPhase && (
             <TotalStakeWidget
               colonyAddress={colony.colonyAddress}
               motionId={motionId}
-              stakeSide={getStakeSide()}
+              stakeSide={stakeShownSide}
               handleStakeSideSelect={setSelectedStakeSide}
             />
           )}
-          {(motionState === MotionState.StakeRequired ||
-            motionState === MotionState.Motion ||
-            motionState === MotionState.Objection) && (
+          {isOnStakingPhase && stakeShownSide === StakeSide.Motion && (
             <StakingWidget
               motionId={motionId}
               colony={colony}
               scrollToRef={bottomElementRef}
               transactionHash={transactionHash}
+              previousTotalStakeStep={
+                selectedStakeSide && previousTotalStakeStep
+              }
             />
           )}
           {motionState === MotionState.Voting && (
