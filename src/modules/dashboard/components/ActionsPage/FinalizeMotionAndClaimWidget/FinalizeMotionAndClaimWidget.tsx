@@ -182,6 +182,13 @@ const FinalizeMotionAndClaimWidget = ({
     let stake = bigNumberify(0);
     let winnings;
     let totals = bigNumberify(0);
+    const safeLowReward = bigNumberify(1)
+      .mul(
+        bigNumberify(10).pow(
+          getTokenDecimalsWithFallback(nativeToken?.decimals),
+        ),
+      )
+      .div(100);
     if (stakerRewards?.motionStakerReward) {
       const {
         stakesYay,
@@ -190,17 +197,26 @@ const FinalizeMotionAndClaimWidget = ({
         stakingRewardYay,
       } = stakerRewards.motionStakerReward;
       stake = stake.add(bigNumberify(stakesYay)).add(bigNumberify(stakesNay));
+      if (stake.lt(safeLowReward)) {
+        stake = bigNumberify(0);
+      }
       totals = totals
         .add(bigNumberify(stakingRewardYay))
         .add(bigNumberify(stakingRewardNay));
+      if (totals.lt(safeLowReward)) {
+        totals = bigNumberify(0);
+      }
       winnings = totals.sub(stake);
+      if (winnings.lt(safeLowReward)) {
+        winnings = bigNumberify(0);
+      }
     }
     return {
       userStake: stake,
       userWinnings: winnings,
       userTotals: totals,
     };
-  }, [stakerRewards]);
+  }, [stakerRewards, nativeToken]);
 
   if (
     loadingVoteResults ||
