@@ -157,6 +157,7 @@ const getUserLock = async (
     balance: userLock.balance.toString(),
     nativeToken: nativeToken || null,
     totalObligation: totalObligation.add(stakedTokens).toString(),
+    activeTokens: userLock.balance.sub(totalObligation).toString(),
     pendingBalance: userLock.pendingBalance.toString(),
   };
 };

@@ -27,8 +27,7 @@ const UserTokenActivationButton = ({
   const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
 
   const lockedBalance = bigNumberify(userLock?.totalObligation || 0);
-  const lockContractBalance = bigNumberify(userLock?.balance || 0);
-  const activeBalance = lockContractBalance.sub(lockedBalance);
+  const activeBalance = bigNumberify(userLock?.activeTokens || 0);
   const totalBalance = inactiveBalance.add(activeBalance);
   const isPendingBalanceZero = bigNumberify(
     userLock?.pendingBalance || 0,
