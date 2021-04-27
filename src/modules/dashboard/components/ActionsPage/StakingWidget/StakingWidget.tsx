@@ -50,10 +50,6 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.StakingWidget.objectButton',
     defaultMessage: 'Object',
   },
-  backButton: {
-    id: 'dashboard.ActionsPage.StakingWidget.backButton',
-    defaultMessage: 'Back',
-  },
   stakingTooltip: {
     id: 'dashboard.ActionsPage.StakingWidget.stakingTooltip',
     defaultMessage: '[TO BE ADDED]',
@@ -293,7 +289,9 @@ const StakingWidget = ({
                   size: 'medium',
                 }}
                 text={
-                  previousTotalStakeStep ? MSG.backButton : MSG.objectButton
+                  previousTotalStakeStep
+                    ? { id: 'button.back' }
+                    : MSG.objectButton
                 }
                 disabled={!previousTotalStakeStep && !canUserStake}
                 onClick={previousTotalStakeStep || undefined}
