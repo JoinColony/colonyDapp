@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, RefObject } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -34,6 +34,8 @@ interface Props {
   motionId: number;
   actionType: string;
   motionDomain: number;
+  scrollToRef?: RefObject<HTMLInputElement>;
+  transactionHash: string;
 }
 
 const MSG = defineMessages({
@@ -105,6 +107,8 @@ const FinalizeMotionAndClaimWidget = ({
   motionId,
   actionType,
   motionDomain = ROOT_DOMAIN_ID,
+  scrollToRef,
+  transactionHash,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const {
@@ -161,11 +165,16 @@ const FinalizeMotionAndClaimWidget = ({
   const transformFinalizeData = useCallback(
     mapPayload(() => ({
       colonyAddress,
-      walletAddress,
+      userAddress: walletAddress,
       motionId,
+      transactionHash,
     })),
-    [],
+    [walletAddress],
   );
+
+  const handleFinalizeSuccess = useCallback(() => {
+    scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [scrollToRef]);
 
   const transformClaimData = useCallback(
     mapPayload(() => ({
@@ -262,10 +271,11 @@ const FinalizeMotionAndClaimWidget = ({
       {showFinalizeButton && (
         <ActionForm
           initialValues={{}}
-          submit={ActionTypes.COLONY_ACTION_GENERIC}
-          error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-          success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+          submit={ActionTypes.COLONY_MOTION_FINALIZE}
+          error={ActionTypes.COLONY_MOTION_FINALIZE_ERROR}
+          success={ActionTypes.COLONY_MOTION_FINALIZE_SUCCESS}
           transform={transformFinalizeData}
+          onSuccess={handleFinalizeSuccess}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
             <div className={styles.itemWithForcedBorder}>

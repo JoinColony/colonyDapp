@@ -186,6 +186,11 @@
     "transaction.VotingReputationClient.revealVote.title": "Reveal your motion vote",
     "transaction.VotingReputationClient.revealVote.description": "Reveal your motion vote",
 
+    "transaction.group.finalizeMotion.title": "Finalize motion",
+    "transaction.group.finalizeMotion.description": "Finalize motion",
+    "transaction.VotingReputationClient.finalizeMotion.title": "Finalize motion",
+    "transaction.VotingReputationClient.finalizeMotion.description": "Finalize motion",
+
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
     "message.motionVote.title": "Sign message to vote",

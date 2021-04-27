@@ -24,6 +24,9 @@ import {
   StakeAmountsForMotionQuery,
   StakeAmountsForMotionQueryVariables,
   StakeAmountsForMotionDocument,
+  MotionFinalizedQuery,
+  MotionFinalizedQueryVariables,
+  MotionFinalizedDocument,
 } from '~data/index';
 
 export function* updateMotionValues(
@@ -98,6 +101,20 @@ export function* updateMotionValues(
       fetchPolicy: 'network-only',
     });
   }
+
+  /*
+   * Is motion finalized check
+   */
+  yield apolloClient.query<MotionFinalizedQuery, MotionFinalizedQueryVariables>(
+    {
+      query: MotionFinalizedDocument,
+      variables: {
+        colonyAddress,
+        motionId: motionId.toNumber(),
+      },
+      fetchPolicy: 'network-only',
+    },
+  );
 
   /*
    * Motion Events
