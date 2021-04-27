@@ -11,7 +11,7 @@
   color: var(--sky-blue);
 }
 
-.nextButton > button {
+.submitButton > button {
   width: 160px;
 }
 

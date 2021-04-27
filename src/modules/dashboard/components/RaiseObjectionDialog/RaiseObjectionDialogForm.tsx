@@ -107,7 +107,7 @@ const RaiseObjectionDialogForm = ({
           text={{ id: 'button.cancel' }}
           onClick={cancel}
         />
-        <span className={styles.nextButton}>
+        <span className={styles.submitButton}>
           <Button
             appearance={{ theme: 'danger', size: 'large' }}
             text={MSG.stakeButton}
