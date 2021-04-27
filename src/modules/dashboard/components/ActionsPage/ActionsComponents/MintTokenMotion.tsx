@@ -73,13 +73,7 @@ const MintTokenMotion = ({
 }: Props) => {
   const bottomElementRef = useRef<HTMLInputElement>(null);
 
-  const {
-    passedTag,
-    failedTag,
-    objectionTag,
-    revealTag,
-    ...tags
-  } = useMemo(() => {
+  const { passedTag, failedTag, objectionTag, ...tags } = useMemo(() => {
     return Object.values(MOTION_TAG_MAP).reduce((acc, object) => {
       const { theme, colorSchema } = object as TagAppearance;
       acc[object.tagName] = (
@@ -150,7 +144,6 @@ const MintTokenMotion = ({
     failedTag: (
       <span className={motionSpecificStyles.tagWrapper}>{failedTag}</span>
     ),
-    revealTag,
     objectionTag: (
       <span className={motionSpecificStyles.tagWrapper}>{objectionTag}</span>
     ),
