@@ -283,7 +283,7 @@ const StakingWidget = ({
                   />
                 ) : (
                   <Button
-                    appearance={{ theme: 'danger', size: 'medium' }}
+                    appearance={{ theme: 'pink', size: 'medium' }}
                     text={MSG.objectButton}
                     disabled={!previousTotalStakeStep && !canUserStakeNay}
                     onClick={() =>
