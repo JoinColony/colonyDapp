@@ -85,8 +85,6 @@ const MintTokenMotion = ({
   );
   const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
 
-  const bottomElementRef = useRef<HTMLInputElement>(null);
-
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
@@ -198,7 +196,7 @@ const MintTokenMotion = ({
             actionData={colonyAction}
             colony={colony}
           />
-          
+
           {currentUserName && !ethereal && (
             <div ref={bottomElementRef}>
               <ActionsPageComment
