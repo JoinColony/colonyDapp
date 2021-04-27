@@ -4,6 +4,7 @@ import stakeMotionSaga from './stakeMotion';
 import voteMotionSaga from './voteMotion';
 import revealVoteMotionSaga from './revealVoteMotion';
 import finalizeMotionSaga from './finalizeMotion';
+import claimMotionRewardsSaga from './claimMotionRewards';
 
 export default function* actionsSagas() {
   yield all([
@@ -11,5 +12,6 @@ export default function* actionsSagas() {
     call(voteMotionSaga),
     call(revealVoteMotionSaga),
     call(finalizeMotionSaga),
+    call(claimMotionRewardsSaga),
   ]);
 }
