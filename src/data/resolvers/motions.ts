@@ -616,7 +616,7 @@ export const motionsResolvers = ({
     },
     async motionObjectionAnnotation(_, { motionId, colonyAddress }) {
       let objectionAnnotation = {
-        userAddress: null,
+        address: null,
         metadata: null,
       };
       try {
@@ -653,7 +653,7 @@ export const motionsResolvers = ({
         if (annotationEvents.length) {
           const [latestAnnotatedNayStake] = annotationEvents;
           objectionAnnotation = {
-            userAddress: latestAnnotatedNayStake.values.agent,
+            address: latestAnnotatedNayStake.values.agent,
             metadata: latestAnnotatedNayStake.values.metadata,
           };
         }
