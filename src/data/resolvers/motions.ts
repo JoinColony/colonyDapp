@@ -81,6 +81,35 @@ const getMotionEvents = async (
     (firstEvent, secondEvent) => firstEvent.createdAt - secondEvent.createdAt,
   );
 
+  const firstMotionStakedNAYEvent = sortedMotionEvents.find(
+    (event) =>
+      event.name === ColonyAndExtensionsEvents.MotionStaked &&
+      event.values.vote.eq(0),
+  );
+
+  if (firstMotionStakedNAYEvent) {
+    const {
+      values,
+      address,
+      blockNumber,
+      transactionHash,
+    } = firstMotionStakedNAYEvent;
+    sortedMotionEvents.push({
+      type: ActionsPageFeedType.NetworkEvent,
+      name: ColonyAndExtensionsEvents.ObjectionRaised,
+      /*
+       * @NOTE: I substract 1 second out of the timestamp
+       * to make the event appear before the first NAY stake
+       */
+      createdAt: firstMotionStakedNAYEvent.createdAt - 1000,
+      values,
+      emmitedBy: ClientType.VotingReputationClient,
+      address,
+      blockNumber,
+      transactionHash,
+    });
+  }
+
   return sortedMotionEvents;
 };
 
