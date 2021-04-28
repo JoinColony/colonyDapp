@@ -100,7 +100,7 @@ const StakingWidgetFlow = ({
         <SingleTotalStake
           userStake={isObjection ? userStake.NAY : userStake.YAY}
           requiredStake={divisibleRequiredStake}
-          stakeSide={isObjection ? StakeSide.Objection : StakeSide.Motion}
+          isObjection={isObjection}
           totalPercentage={!isObjection ? yayPercentage : nayPercentage}
           formattedTotalPercentage={
             !isObjection ? formattedYAYPercentage : formattedNAYPercentage

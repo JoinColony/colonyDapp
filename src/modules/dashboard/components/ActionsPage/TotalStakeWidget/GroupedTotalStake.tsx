@@ -14,7 +14,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
 
-export enum StakeSide {
+enum StakeSide {
   Motion = 'MOTION',
   Objection = 'OBJECTION',
 }
