@@ -205,6 +205,7 @@ const MintTokenMotion = ({
               user={objectionAnnotationUser}
               annotation
               hash={objectionAnnotation.motionObjectionAnnotation.metadata}
+              appearance={{ theme: 'danger' }}
             />
           )}
           <ActionsPageFeed
