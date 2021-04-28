@@ -78,6 +78,7 @@ const DetailsWidget = ({
 }: Props) => {
   const { formatMessage } = useIntl();
 
+  const messageId = ColonyMotions[actionType] ? 'motion.type' : 'action.type';
   const showFullDetails = actionType !== ColonyActions.Generic;
 
   const splitHash = splitTransactionHash(transactionHash as string);
@@ -104,7 +105,7 @@ const DetailsWidget = ({
         <div className={styles.value}>
           <Icon
             title={formatMessage(
-              { id: 'action.type' },
+              { id: messageId },
               {
                 actionType: values?.actionType,
               },
@@ -113,7 +114,7 @@ const DetailsWidget = ({
             name={ACTION_TYPES_ICONS_MAP[actionType]}
           />
           <FormattedMessage
-            id="action.type"
+            id={messageId}
             /*
              * @NOTE We need to use the action type value that was converted to
              * camelCase since ReactIntl doesn't like keys that are composed
