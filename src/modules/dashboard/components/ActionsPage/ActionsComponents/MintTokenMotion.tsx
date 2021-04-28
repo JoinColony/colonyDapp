@@ -154,7 +154,7 @@ const MintTokenMotion = ({
     motionState === MotionState.Objection;
 
   const objectionAnnotationUser = useUser(
-    objectionAnnotation?.motionObjectionAnnotation?.userAddress || '',
+    objectionAnnotation?.motionObjectionAnnotation?.address || '',
   );
 
   return (
@@ -194,11 +194,13 @@ const MintTokenMotion = ({
             />
           </h1>
           {annotationHash && (
-            <ActionsPageFeedItemWithIPFS
-              user={initiator}
-              annotation
-              hash={annotationHash}
-            />
+            <div className={motionSpecificStyles.annotation}>
+              <ActionsPageFeedItemWithIPFS
+                user={initiator}
+                annotation
+                hash={annotationHash}
+              />
+            </div>
           )}
           {objectionAnnotation?.motionObjectionAnnotation?.metadata && (
             <ActionsPageFeedItemWithIPFS
