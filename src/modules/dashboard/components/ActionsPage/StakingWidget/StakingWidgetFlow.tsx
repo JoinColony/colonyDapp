@@ -1,6 +1,9 @@
 import React, { useEffect, useState, RefObject } from 'react';
+import { defineMessages } from 'react-intl';
 import formatNumber from 'format-number';
 import { bigNumberify } from 'ethers/utils';
+
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import { useLoggedInUser, Colony } from '~data/index';
 import {
@@ -18,17 +21,19 @@ import styles from './StakingWidget.css';
 
 const displayName = 'StakingWidgetFlow';
 
-export enum StakeSide {
-  Motion = 'MOTION',
-  Objection = 'OBJECTION',
-}
-
 export interface Props {
   colony: Colony;
   motionId: number;
   scrollToRef?: RefObject<HTMLInputElement>;
   transactionHash: string;
 }
+
+const MSG = defineMessages({
+  loading: {
+    id: 'dashboard.ActionsPage.StakingWidget.loading',
+    defaultMessage: 'Loading staking values ...',
+  },
+});
 
 const StakingWidgetFlow = ({
   colony,
@@ -71,7 +76,14 @@ const StakingWidgetFlow = ({
   }, [fetchTokenInfo, nativeTokenAddressData]);
 
   if (loading || !data?.stakeAmountsForMotion) {
-    return null;
+    return (
+      <div className={styles.main}>
+        <MiniSpinnerLoader
+          className={styles.loading}
+          loadingText={MSG.loading}
+        />
+      </div>
+    );
   }
 
   const { totalStaked, userStake, requiredStake } = data.stakeAmountsForMotion;
