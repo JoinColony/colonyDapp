@@ -1,11 +1,10 @@
-import React, { useMemo, useRef, useCallback, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { FormattedMessage } from 'react-intl';
 
-import { bigNumberify } from 'ethers/utils';
 import Numeral from '~core/Numeral';
 import ActionsPageFeed, {
-  ActionsPageFeedItem,
+  ActionsPageFeedItemWithIPFS,
   SystemMessage,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
@@ -18,6 +17,8 @@ import {
   AnyUser,
   useMotionsSystemMessagesQuery,
   useEventsForMotionQuery,
+  useMotionObjectionAnnotationQuery,
+  useUser,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -26,9 +27,8 @@ import CountDownTimer from '~core/CountDownTimer';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
-import TotalStakeWidget, { StakeSide } from '../TotalStakeWidget';
 import DetailsWidget from '../DetailsWidget';
-import StakingWidget from '../StakingWidget';
+import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
 import FinalizeMotionAndClaimWidget from '../FinalizeMotionAndClaimWidget';
@@ -62,7 +62,6 @@ const MintTokenMotion = ({
     annotationHash,
     colonyDisplayName,
     amount,
-    motionNAYStake,
     motionState,
     motionDomain,
     actionInitiator,
@@ -91,9 +90,6 @@ const MintTokenMotion = ({
 
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
-  const [selectedStakeSide, setSelectedStakeSide] = useState<StakeSide | null>(
-    null,
-  );
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
       motionId,
@@ -103,6 +99,14 @@ const MintTokenMotion = ({
   });
   const { data: motionEventsData } = useEventsForMotionQuery({
     variables: { colonyAddress: colony.colonyAddress, motionId },
+    fetchPolicy: 'network-only',
+  });
+
+  const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
+    variables: {
+      motionId,
+      colonyAddress: colony.colonyAddress,
+    },
     fetchPolicy: 'network-only',
   });
 
@@ -144,27 +148,14 @@ const MintTokenMotion = ({
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
 
-  const getStakeShownSide = useCallback((): StakeSide => {
-    if (selectedStakeSide) {
-      return selectedStakeSide;
-    }
-
-    if (bigNumberify(motionNAYStake || 0).eq(0)) {
-      return StakeSide.Motion;
-    }
-
-    return StakeSide.Both;
-  }, [selectedStakeSide, motionNAYStake]);
-  const previousTotalStakeStep = useCallback(
-    () => setSelectedStakeSide(null),
-    [],
-  );
-
-  const stakeShownSide = getStakeShownSide();
   const isStakingPhase =
     motionState === MotionState.StakeRequired ||
     motionState === MotionState.Motion ||
     motionState === MotionState.Objection;
+
+  const objectionAnnotationUser = useUser(
+    objectionAnnotation?.motionObjectionAnnotation?.address || '',
+  );
 
   return (
     <div className={styles.main}>
@@ -203,11 +194,20 @@ const MintTokenMotion = ({
             />
           </h1>
           {annotationHash && (
-            <ActionsPageFeedItem
-              createdAt={actionCreatedAt}
-              user={initiator}
+            <div className={motionSpecificStyles.annotation}>
+              <ActionsPageFeedItemWithIPFS
+                user={initiator}
+                annotation
+                hash={annotationHash}
+              />
+            </div>
+          )}
+          {objectionAnnotation?.motionObjectionAnnotation?.metadata && (
+            <ActionsPageFeedItemWithIPFS
+              user={objectionAnnotationUser}
               annotation
-              comment={annotationHash}
+              hash={objectionAnnotation.motionObjectionAnnotation.metadata}
+              appearance={{ theme: 'danger' }}
             />
           )}
           <ActionsPageFeed
@@ -237,22 +237,11 @@ const MintTokenMotion = ({
         </div>
         <div className={styles.details}>
           {isStakingPhase && (
-            <TotalStakeWidget
-              colonyAddress={colony.colonyAddress}
-              motionId={motionId}
-              stakeSide={stakeShownSide}
-              handleStakeSideSelect={setSelectedStakeSide}
-            />
-          )}
-          {isStakingPhase && stakeShownSide === StakeSide.Motion && (
-            <StakingWidget
+            <StakingWidgetFlow
               motionId={motionId}
               colony={colony}
               scrollToRef={bottomElementRef}
               transactionHash={transactionHash}
-              previousTotalStakeStep={
-                selectedStakeSide && previousTotalStakeStep
-              }
             />
           )}
           {motionState === MotionState.Voting && (

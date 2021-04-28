@@ -5,3 +5,5 @@ export const details: string;
 export const content: string;
 export const text: string;
 export const username: string;
+export const themePrimary: string;
+export const themeDanger: string;

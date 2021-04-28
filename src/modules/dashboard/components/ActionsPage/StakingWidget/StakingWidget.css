@@ -3,6 +3,10 @@
   margin: 0px 0 100px 0;
 }
 
+.widget {
+  margin-top: 20px;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -15,13 +19,15 @@
 }
 
 .title h4 {
+  /* to align questionmark icon in the middle */
+  margin-bottom: 3px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
 
 .description {
-  margin: 4px 0 20px;
+  margin: 1px 0 20px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
@@ -37,7 +43,7 @@
   font-size: var(--size-small);
 }
 
-.buttonGroup button:last-child {
+.objectButton {
   margin-left: 20px;
 }
 

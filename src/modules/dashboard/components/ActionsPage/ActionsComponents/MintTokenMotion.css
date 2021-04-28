@@ -6,3 +6,7 @@
 .tagWrapper > span {
   margin-left: 0;
 }
+
+.annotation {
+  margin-bottom: 7px;
+}

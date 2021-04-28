@@ -287,6 +287,7 @@ export type Query = {
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
   motionFinalized: Scalars['Boolean'];
+  motionObjectionAnnotation: MotionObjectionAnnotation;
   motionStakerReward: MotionStakerRewards;
   motionStakes: MotionStakes;
   motionUserVoteRevealed: MotionVoteReveal;
@@ -421,6 +422,12 @@ export type QueryMotionFinalizedArgs = {
 };
 
 
+export type QueryMotionObjectionAnnotationArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
 export type QueryMotionStakerRewardArgs = {
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -505,7 +512,6 @@ export type QueryStakeAmountsForMotionArgs = {
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['Int'];
-  stakeSide: Scalars['String'];
 };
 
 
@@ -858,6 +864,7 @@ export type ProcessedMetaColony = {
 };
 
 export type MotionStakes = {
+  totalNAYStakes: Scalars['String'];
   remainingToFullyYayStaked: Scalars['String'];
   remainingToFullyNayStaked: Scalars['String'];
   maxUserStake: Scalars['String'];
@@ -896,15 +903,20 @@ export type MotionStakerRewards = {
   claimedReward: Scalars['Boolean'];
 };
 
-export type TotalStakedAmounts = {
-  YAY?: Maybe<Scalars['String']>;
-  NAY?: Maybe<Scalars['String']>;
+export type StakeSidesAmounts = {
+  YAY: Scalars['String'];
+  NAY: Scalars['String'];
 };
 
 export type StakeAmounts = {
-  totalStaked: TotalStakedAmounts;
-  userStake?: Maybe<Scalars['String']>;
+  totalStaked: StakeSidesAmounts;
+  userStake: StakeSidesAmounts;
   requiredStake: Scalars['String'];
+};
+
+export type MotionObjectionAnnotation = {
+  address: Scalars['String'];
+  metadata: Scalars['String'];
 };
 
 export type ByColonyFilter = {
@@ -1584,7 +1596,7 @@ export type MotionStakesQueryVariables = Exact<{
 }>;
 
 
-export type MotionStakesQuery = { motionStakes: Pick<MotionStakes, 'remainingToFullyYayStaked' | 'remainingToFullyNayStaked' | 'maxUserStake' | 'minUserStake'> };
+export type MotionStakesQuery = { motionStakes: Pick<MotionStakes, 'totalNAYStakes' | 'remainingToFullyYayStaked' | 'remainingToFullyNayStaked' | 'maxUserStake' | 'minUserStake'> };
 
 export type MotionsSystemMessagesQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -1651,14 +1663,21 @@ export type StakeAmountsForMotionQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['Int'];
-  stakeSide: Scalars['String'];
 }>;
 
 
 export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: (
-    Pick<StakeAmounts, 'userStake' | 'requiredStake'>
-    & { totalStaked: Pick<TotalStakedAmounts, 'YAY' | 'NAY'> }
+    Pick<StakeAmounts, 'requiredStake'>
+    & { totalStaked: Pick<StakeSidesAmounts, 'YAY' | 'NAY'>, userStake: Pick<StakeSidesAmounts, 'YAY' | 'NAY'> }
   ) };
+
+export type MotionObjectionAnnotationQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionObjectionAnnotationQuery = { motionObjectionAnnotation: Pick<MotionObjectionAnnotation, 'address' | 'metadata'> };
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -3750,6 +3769,7 @@ export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNu
 export const MotionStakesDocument = gql`
     query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
   motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+    totalNAYStakes
     remainingToFullyYayStaked
     remainingToFullyNayStaked
     maxUserStake
@@ -4034,13 +4054,16 @@ export type MotionStakerRewardQueryHookResult = ReturnType<typeof useMotionStake
 export type MotionStakerRewardLazyQueryHookResult = ReturnType<typeof useMotionStakerRewardLazyQuery>;
 export type MotionStakerRewardQueryResult = Apollo.QueryResult<MotionStakerRewardQuery, MotionStakerRewardQueryVariables>;
 export const StakeAmountsForMotionDocument = gql`
-    query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int!, $stakeSide: String!) {
-  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, stakeSide: $stakeSide) @client {
+    query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
+  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
     totalStaked {
       YAY
       NAY
     }
-    userStake
+    userStake {
+      YAY
+      NAY
+    }
     requiredStake
   }
 }
@@ -4061,7 +4084,6 @@ export const StakeAmountsForMotionDocument = gql`
  *      colonyAddress: // value for 'colonyAddress'
  *      userAddress: // value for 'userAddress'
  *      motionId: // value for 'motionId'
- *      stakeSide: // value for 'stakeSide'
  *   },
  * });
  */
@@ -4074,6 +4096,41 @@ export function useStakeAmountsForMotionLazyQuery(baseOptions?: Apollo.LazyQuery
 export type StakeAmountsForMotionQueryHookResult = ReturnType<typeof useStakeAmountsForMotionQuery>;
 export type StakeAmountsForMotionLazyQueryHookResult = ReturnType<typeof useStakeAmountsForMotionLazyQuery>;
 export type StakeAmountsForMotionQueryResult = Apollo.QueryResult<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>;
+export const MotionObjectionAnnotationDocument = gql`
+    query MotionObjectionAnnotation($motionId: Int!, $colonyAddress: String!) {
+  motionObjectionAnnotation(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    address
+    metadata
+  }
+}
+    `;
+
+/**
+ * __useMotionObjectionAnnotationQuery__
+ *
+ * To run a query within a React component, call `useMotionObjectionAnnotationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionObjectionAnnotationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionObjectionAnnotationQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionObjectionAnnotationQuery(baseOptions?: Apollo.QueryHookOptions<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>) {
+        return Apollo.useQuery<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>(MotionObjectionAnnotationDocument, baseOptions);
+      }
+export function useMotionObjectionAnnotationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>) {
+          return Apollo.useLazyQuery<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>(MotionObjectionAnnotationDocument, baseOptions);
+        }
+export type MotionObjectionAnnotationQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationQuery>;
+export type MotionObjectionAnnotationLazyQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationLazyQuery>;
+export type MotionObjectionAnnotationQueryResult = Apollo.QueryResult<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {

@@ -20,6 +20,7 @@ export type MotionActionTypes =
         vote: number;
         amount: BigNumber;
         transactionHash: string;
+        annotationMessage?: string;
       },
       MetaWithHistory<object>
     >

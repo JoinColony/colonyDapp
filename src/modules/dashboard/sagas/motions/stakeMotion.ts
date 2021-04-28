@@ -5,14 +5,17 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { TEMP_getContext, ContextModule } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 
-import { StakeSide } from '~dashboard/ActionsPage/TotalStakeWidget';
-
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { transactionReady } from '../../../core/actionCreators';
+import {
+  transactionReady,
+  transactionPending,
+  transactionAddParams,
+} from '../../../core/actionCreators';
+import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 import { updateMotionValues } from '../utils/updateMotionValues';
 
@@ -25,19 +28,20 @@ function* stakeMotion({
     vote,
     amount,
     transactionHash,
+    annotationMessage,
   },
 }: Action<ActionTypes.COLONY_MOTION_STAKE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const context = TEMP_getContext(ContextModule.ColonyManager);
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
     const colonyClient = yield context.getClient(
       ClientType.ColonyClient,
       colonyAddress,
     );
+
     // @NOTE This line exceeds the max-len but there's no prettier solution
     // eslint-disable-next-line max-len
-    const votingReputationClient: ExtensionClient = yield colonyManager.getClient(
+    const votingReputationClient: ExtensionClient = yield context.getClient(
       ClientType.VotingReputationClient,
       colonyAddress,
     );
@@ -61,9 +65,11 @@ function* stakeMotion({
     const {
       approveStake,
       stakeMotionTransaction,
+      annotateStaking,
     } = yield createTransactionChannels(meta.id, [
       'approveStake',
       'stakeMotionTransaction',
+      'annotateStaking',
     ]);
 
     const batchKey = 'stakeMotion';
@@ -94,23 +100,72 @@ function* stakeMotion({
       ready: false,
     });
 
+    if (annotationMessage) {
+      yield createGroupTransaction(annotateStaking, {
+        context: ClientType.ColonyClient,
+        methodName: 'annotateTransaction',
+        identifier: colonyAddress,
+        params: [],
+        ready: false,
+      });
+    }
+
     yield takeFrom(approveStake.channel, ActionTypes.TRANSACTION_CREATED);
-
-    yield put(transactionReady(approveStake.id));
-
-    yield takeFrom(approveStake.channel, ActionTypes.TRANSACTION_SUCCEEDED);
-
     yield takeFrom(
       stakeMotionTransaction.channel,
       ActionTypes.TRANSACTION_CREATED,
     );
 
+    if (annotationMessage) {
+      yield takeFrom(annotateStaking.channel, ActionTypes.TRANSACTION_CREATED);
+    }
+
+    yield put(transactionReady(approveStake.id));
+
+    yield takeFrom(approveStake.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
     yield put(transactionReady(stakeMotionTransaction.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      stakeMotionTransaction.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
 
     yield takeFrom(
       stakeMotionTransaction.channel,
       ActionTypes.TRANSACTION_SUCCEEDED,
     );
+
+    if (annotationMessage) {
+      yield put(transactionPending(annotateStaking.id));
+
+      /*
+       * Upload annotation metadata to IPFS
+       */
+      let annotationMessageIpfsHash = null;
+      annotationMessageIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
+      yield put(
+        transactionAddParams(annotateStaking.id, [
+          txHash,
+          annotationMessageIpfsHash,
+        ]),
+      );
+
+      yield put(transactionReady(annotateStaking.id));
+
+      yield takeFrom(
+        annotateStaking.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
 
     /*
      * Update motion page values
@@ -121,7 +176,6 @@ function* stakeMotion({
       userAddress,
       motionId,
       transactionHash,
-      StakeSide.Motion,
     );
 
     yield put<AllActions>({

@@ -8,12 +8,11 @@ import ProgressBar from '~core/ProgressBar';
 import Numeral from '~core/Numeral';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-import { StakeSide } from './TotalStakeWidget';
 import styles from './TotalStakeWidget.css';
 
 type Props = {
   requiredStake: string | number;
-  stakeSide: string;
+  isObjection: boolean;
   totalPercentage: number;
   formattedTotalPercentage: string;
   userStake?: string | null;
@@ -44,7 +43,7 @@ const MSG = defineMessages({
 const SingleTotalStake = ({
   userStake,
   requiredStake,
-  stakeSide,
+  isObjection,
   totalPercentage,
   formattedTotalPercentage,
   tokenDecimals,
@@ -68,11 +67,7 @@ const SingleTotalStake = ({
             weight: 'bold',
             margin: 'none',
           }}
-          text={
-            stakeSide === StakeSide.Objection
-              ? MSG.objectionTitle
-              : MSG.motionTitle
-          }
+          text={isObjection ? MSG.objectionTitle : MSG.motionTitle}
           className={styles.title}
         />
         <span className={styles.stakeProgress}>
@@ -96,7 +91,7 @@ const SingleTotalStake = ({
         value={totalPercentage}
         max={100}
         appearance={{
-          barTheme: stakeSide === StakeSide.Objection ? 'danger' : 'primary',
+          barTheme: isObjection ? 'danger' : 'primary',
           backgroundTheme: 'default',
         }}
       />

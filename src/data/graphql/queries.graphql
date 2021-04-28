@@ -383,6 +383,7 @@ query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
 
 query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
   motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+    totalNAYStakes
     remainingToFullyYayStaked
     remainingToFullyNayStaked
     maxUserStake
@@ -437,14 +438,24 @@ query MotionStakerReward($motionId: Int!, $colonyAddress: String!, $userAddress:
   }
 }
 
-query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int! $stakeSide: String!) {
-  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId, stakeSide: $stakeSide) @client {
+query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
+  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
     totalStaked {
       YAY
       NAY
     }
-    userStake
+    userStake {
+      YAY
+      NAY
+    }
     requiredStake
+  }
+}
+
+query MotionObjectionAnnotation($motionId: Int!, $colonyAddress: String!) {
+  motionObjectionAnnotation(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    address
+    metadata
   }
 }
 

@@ -184,6 +184,7 @@ export default gql`
   }
 
   type MotionStakes {
+    totalNAYStakes: String!
     remainingToFullyYayStaked: String!
     remainingToFullyNayStaked: String!
     maxUserStake: String!
@@ -234,15 +235,20 @@ export default gql`
     claimedReward: Boolean!
   }
 
-  type TotalStakedAmounts {
-    YAY: String
-    NAY: String
+  type StakeSidesAmounts {
+    YAY: String!
+    NAY: String!
   }
 
   type StakeAmounts {
-    totalStaked: TotalStakedAmounts!
-    userStake: String
+    totalStaked: StakeSidesAmounts!
+    userStake: StakeSidesAmounts!
     requiredStake: String!
+  }
+
+  type MotionObjectionAnnotation {
+    address: String!
+    metadata: String!
   }
 
   extend type Query {
@@ -344,8 +350,11 @@ export default gql`
       colonyAddress: String!
       userAddress: String!
       motionId: Int!
-      stakeSide: String!
     ): StakeAmounts!
+    motionObjectionAnnotation(
+      motionId: Int!
+      colonyAddress: String!
+    ): MotionObjectionAnnotation!
   }
 
   extend type Mutation {

@@ -6,7 +6,7 @@ import 'rc-slider/assets/index.css';
 
 import styles from './Slider.css';
 
-type Appearance = {
+export type Appearance = {
   theme?: 'primary' | 'danger';
   size?: 'thin' | 'thick';
 };

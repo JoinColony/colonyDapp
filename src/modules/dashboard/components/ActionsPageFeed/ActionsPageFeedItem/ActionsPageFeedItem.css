@@ -47,3 +47,15 @@
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
+
+.themePrimary {
+  composes: main;
+}
+
+.themeDanger {
+  composes: main;
+}
+
+.themeDanger.stateAnnotation {
+  background-color: color-mod(var(--pink) alpha(6%));
+}

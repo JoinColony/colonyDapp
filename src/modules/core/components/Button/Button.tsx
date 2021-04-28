@@ -14,6 +14,7 @@ const displayName = 'Button';
 export interface Appearance {
   theme?:
     | 'primary'
+    | 'pink'
     | 'secondary'
     | 'danger'
     | 'dangerLink'
