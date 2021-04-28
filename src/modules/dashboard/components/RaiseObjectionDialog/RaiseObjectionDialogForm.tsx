@@ -4,6 +4,7 @@ import { FormikProps } from 'formik';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
+import ExternalLink from '~core/ExternalLink';
 import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import {
@@ -69,14 +70,9 @@ const RaiseObjectionDialogForm = ({
           {...MSG.objectionDescription}
           values={{
             a: (chunks) => (
-              <a
-                href={OBJECTION_HELP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.link}
-              >
+              <ExternalLink href={OBJECTION_HELP_LINK} className={styles.link}>
                 {chunks}
-              </a>
+              </ExternalLink>
             ),
           }}
         />
