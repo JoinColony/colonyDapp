@@ -56,10 +56,16 @@ const getUserStakedBalance = async (
   colonyAddress: Address,
   walletAddress: Address,
 ): Promise<BigNumber> => {
-  const votingReputationClient = await colonyManager.getClient(
-    ClientType.VotingReputationClient,
-    colonyAddress,
-  );
+  let votingReputationClient;
+
+  try {
+    votingReputationClient = await colonyManager.getClient(
+      ClientType.VotingReputationClient,
+      colonyAddress,
+    );
+  } catch (error) {
+    return bigNumberify(0);
+  }
   /**
    * @NOTE If there will be more staking events
    * on reputation voting extension we need to remember to filter them out
@@ -148,6 +154,7 @@ const getUserLock = async (
     colonyAddress,
     walletAddress,
   );
+
   const nativeToken = (await getToken(
     { colonyManager, client: apolloClient },
     tokenAddress,
