@@ -38,7 +38,6 @@ import { motionCountdownTimerMsg } from './motionCountdownTimerMsg';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';
-import { bigNumberify } from 'ethers/utils';
 
 const MSG = defineMessages({
   or: {
@@ -124,9 +123,28 @@ const MintTokenMotion = ({
     fetchPolicy: 'network-only',
   });
 
-  // const {threasholdValue, totalVotedReputation, skillRep} = votingStateData;
+  const threashold = bigNumberify(
+    votingStateData?.votingState?.threasholdValue || 0,
+  )
+    .div(bigNumberify(10).pow(18))
+    .toNumber();
+  const totalVotedReputationValue = bigNumberify(
+    votingStateData?.votingState?.totalVotedReputation || 0,
+  )
+    .div(bigNumberify(10).pow(18))
+    .toNumber();
 
-  console.log(votingStateData);
+  const skillRepValue = bigNumberify(
+    votingStateData?.votingState?.skillRep || 0,
+  )
+    .div(bigNumberify(10).pow(18))
+    .toNumber();
+
+  const currentReputationPercent =
+    (totalVotedReputationValue > 0 &&
+      Math.round((totalVotedReputationValue / skillRepValue) * 100)) ||
+    0;
+  const threasholdPercent = Math.round((threashold / skillRepValue) * 100);
 
   const actionAndEventValues = {
     actionType,
@@ -198,15 +216,15 @@ const MintTokenMotion = ({
             text={motionCountdownTimerMsg.stake}
             periodType="stakePeriod"
           />
-          {motionState === MotionState.Voting && (
+          {motionState === MotionState.Voting && votingStateData && (
             <>
               <span className={motionSpecificStyles.text}>
                 <FormattedMessage {...MSG.or} />
               </span>
               <div className={motionSpecificStyles.progressBarContainer}>
                 <ProgressBar
-                  value={30}
-                  threshold={50}
+                  value={currentReputationPercent}
+                  threshold={threasholdPercent}
                   max={100}
                   appearance={{
                     size: 'small',
