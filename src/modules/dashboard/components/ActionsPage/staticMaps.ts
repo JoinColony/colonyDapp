@@ -32,7 +32,7 @@ type ActionsEventsMap = Partial<
 
 type ActionsDetailsMap = Partial<
   {
-    [key in ColonyActions]: ActionPageDetails[];
+    [key in ColonyActions | ColonyMotions]: ActionPageDetails[];
   }
 >;
 
@@ -64,7 +64,9 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
 /*
  * Which icons correspond to which action types in the details widget
  */
-export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
+export const ACTION_TYPES_ICONS_MAP: {
+  [key in ColonyActions | ColonyMotions]: string;
+} = {
   [ColonyActions.WrongColony]: 'forbidden-signal',
   [ColonyActions.Payment]: 'emoji-dollar-stack',
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
@@ -75,6 +77,7 @@ export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
   [ColonyActions.ColonyEdit]: 'emoji-edit-tools',
   [ColonyActions.EditDomain]: 'emoji-pencil-note',
   [ColonyActions.SetUserRoles]: 'emoji-crane',
+  [ColonyMotions.MintTokensMotion]: 'emoji-seed-sprout',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -184,4 +187,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Permissions,
   ],
   [ColonyActions.Recovery]: [],
+  [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
 };
