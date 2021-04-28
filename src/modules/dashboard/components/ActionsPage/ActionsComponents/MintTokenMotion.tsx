@@ -230,7 +230,6 @@ const MintTokenMotion = ({
                   appearance={{
                     size: 'small',
                     backgroundTheme: 'dark',
-                    barTheme: 'danger',
                   }}
                 />
               </div>
