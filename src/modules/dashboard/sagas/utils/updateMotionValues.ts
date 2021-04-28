@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers/utils';
+import { ClientType } from '@colony/colony-js';
 
 import { TEMP_getContext, ContextModule } from '~context/index';
 import { Address } from '~types/index';
@@ -30,6 +31,9 @@ import {
   MotionStakerRewardQuery,
   MotionStakerRewardQueryVariables,
   MotionStakerRewardDocument,
+  UserBalanceWithLockQuery,
+  UserBalanceWithLockQueryVariables,
+  UserBalanceWithLockDocument,
 } from '~data/index';
 
 export function* updateMotionValues(
@@ -40,7 +44,12 @@ export function* updateMotionValues(
   stakeSide?: string,
 ) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-
+  const context = TEMP_getContext(ContextModule.ColonyManager);
+  const colonyClient = yield context.getClient(
+    ClientType.ColonyClient,
+    colonyAddress,
+  );
+  const tokenAddress = colonyClient.tokenClient.address;
   /*
    * Staking values
    */
@@ -176,6 +185,22 @@ export function* updateMotionValues(
     variables: {
       colonyAddress,
       transactionHash,
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  /*
+   * Refresh wallet balance
+   */
+  yield apolloClient.query<
+    UserBalanceWithLockQuery,
+    UserBalanceWithLockQueryVariables
+  >({
+    query: UserBalanceWithLockDocument,
+    variables: {
+      address: userAddress,
+      tokenAddress,
+      colonyAddress,
     },
     fetchPolicy: 'network-only',
   });

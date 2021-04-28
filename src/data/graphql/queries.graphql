@@ -78,6 +78,7 @@ query UserBalanceWithLock($address: String!, $tokenAddress: String!, $colonyAddr
       }
       totalObligation
       pendingBalance
+      activeTokens
     }
   }
 }
