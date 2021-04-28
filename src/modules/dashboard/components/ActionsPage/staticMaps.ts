@@ -111,6 +111,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.MotionCreated,
     ColonyAndExtensionsEvents.MotionStaked,
     ColonyAndExtensionsEvents.MotionVoteRevealed,
+    ColonyAndExtensionsEvents.ObjectionRaised,
   ],
 };
 

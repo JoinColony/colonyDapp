@@ -112,6 +112,7 @@ export enum ColonyAndExtensionsEvents {
   MotionEscalated = 'MotionEscalated',
   MotionRewardClaimed = 'MotionRewardClaimed',
   MotionEventSet = 'MotionEventSet',
+  ObjectionRaised = 'ObjectionRaised',
 }
 
 export interface FormattedAction {

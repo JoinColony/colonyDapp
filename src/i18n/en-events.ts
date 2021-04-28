@@ -16,6 +16,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.MotionCreated} {{initiator} created a {motionTag}}
       ${ColonyAndExtensionsEvents.MotionStaked} {{staker} backed the {backedSideTag} by staking {amountTag}}
       ${ColonyAndExtensionsEvents.MotionVoteRevealed} {{staker} revealed vote for {voteSide}.}
+      ${ColonyAndExtensionsEvents.ObjectionRaised} {{staker} raised an {objectionTag}}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
   /*
