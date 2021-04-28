@@ -10,6 +10,7 @@ const systemMessagesMessageDescriptors = {
       ${SystemMessagesName.MotionHasFailedNotFinalizable} {{motionTag} has failed.}
       ${SystemMessagesName.MotionHasFailedFinalizable} {{motionTag} has {failedTag} and may be finalized.}
       ${SystemMessagesName.MotionVotingPhase} {{votingTag} has started! Voting is secret 😀, and weighted by Reputation.}
+      ${SystemMessagesName.MotionFullyStaked} {{motionTag} is fully staked; Staking period has reset. As long as there is no {objectionTag} , the motion will pass.}
       other {Generic system message}
     }`,
 };

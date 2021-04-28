@@ -47,6 +47,7 @@ export enum SystemMessagesName {
   MotionHasFailedFinalizable = 'MotionHasFailedFinalizable',
   MotionRevealPhase = 'MotionRevealPhase',
   MotionVotingPhase = 'MotionVotingPhase',
+  MotionFullyStaked = 'MotionFullyStaked',
 }
 
 export interface SystemMessage {

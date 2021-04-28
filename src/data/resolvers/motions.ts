@@ -14,7 +14,7 @@ import { Resolvers } from '@apollo/client';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 import { getMotionActionType, getMotionState } from '~utils/events';
-import { MotionVote } from '~utils/colonyMotions';
+import { MotionVote, getMotionRequiredStake } from '~utils/colonyMotions';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   UserReputationQuery,
@@ -234,6 +234,28 @@ export const motionsResolvers = ({
       const newestVoteSubmittedEvent = sortedEvents.find(
         (event) => event.name === ColonyAndExtensionsEvents.MotionVoteSubmitted,
       );
+
+      const latestMotionStakedEvent = sortedEvents.find(
+        (event) => event.name === ColonyAndExtensionsEvents.MotionStaked,
+      );
+
+      if (latestMotionStakedEvent) {
+        // eslint-disable-next-line max-len
+        const totalStakeFraction = await votingReputationClient.getTotalStakeFraction();
+        const requiredStake = getMotionRequiredStake(
+          motion.skillRep,
+          totalStakeFraction,
+          18,
+        );
+
+        if (motion.stakes[MotionVote.Yay].gte(requiredStake)) {
+          systemMessages.push({
+            type: ActionsPageFeedType.SystemMessage,
+            name: SystemMessagesName.MotionFullyStaked,
+            createdAt: latestMotionStakedEvent.createdAt,
+          });
+        }
+      }
 
       if (
         motionNetworkState === NetworkMotionState.Reveal ||
