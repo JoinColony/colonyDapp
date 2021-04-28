@@ -63,7 +63,7 @@ export default function* getNetworkClient() {
     return yield call(getColonyNetworkClient, network, signer, {
       networkAddress:
         process.env.NETWORK_CONTRACT_ADDRESS || colonyNetworkAddresses[network],
-      reputationOracleEndpoint: 'https://qaxdai.colony.io/reputation/xdai-qa',
+      reputationOracleEndpoint: 'https://qaxdai.colony.io/reputation',
     });
   }
 
