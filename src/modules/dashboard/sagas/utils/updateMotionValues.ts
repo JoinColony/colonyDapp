@@ -34,6 +34,9 @@ import {
   UserBalanceWithLockQuery,
   UserBalanceWithLockQueryVariables,
   UserBalanceWithLockDocument,
+  VotingStateQuery,
+  VotingStateQueryVariables,
+  VotingStateDocument,
 } from '~data/index';
 
 export function* updateMotionValues(
@@ -197,6 +200,18 @@ export function* updateMotionValues(
       address: userAddress,
       tokenAddress,
       colonyAddress,
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  /*
+   * Voting state
+   */
+  yield apolloClient.query<VotingStateQuery, VotingStateQueryVariables>({
+    query: VotingStateDocument,
+    variables: {
+      colonyAddress,
+      motionId: motionId.toNumber(),
     },
     fetchPolicy: 'network-only',
   });
