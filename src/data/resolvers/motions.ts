@@ -481,10 +481,6 @@ export const motionsResolvers = ({
     },
     async votingState(_, { colonyAddress, motionId }) {
       try {
-        const colonyClient = (await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
-        )) as ColonyClientV6;
         const votingReputationClient = await colonyManager.getClient(
           ClientType.VotingReputationClient,
           colonyAddress,
@@ -493,7 +489,7 @@ export const motionsResolvers = ({
           skillRep,
           repSubmitted,
         } = await votingReputationClient.getMotion(motionId);
-        const motion = await votingReputationClient.getMotion(motionId);
+        // eslint-disable-next-line max-len
         const maxVoteFraction = await votingReputationClient.getMaxVoteFraction();
 
         const threasholdValue = skillRep

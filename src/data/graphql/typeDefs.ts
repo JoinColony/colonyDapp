@@ -250,7 +250,7 @@ export default gql`
     address: String!
     metadata: String!
   }
-  
+
   type VotingState {
     threasholdValue: String!
     totalVotedReputation: String!
@@ -361,10 +361,7 @@ export default gql`
       motionId: Int!
       colonyAddress: String!
     ): MotionObjectionAnnotation!
-    votingState(
-      colonyAddress: String!
-      motionId: Int!
-    ): VotingState!
+    votingState(colonyAddress: String!, motionId: Int!): VotingState!
   }
 
   extend type Mutation {

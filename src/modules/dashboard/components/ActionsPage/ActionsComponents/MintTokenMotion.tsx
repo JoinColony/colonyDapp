@@ -1,4 +1,5 @@
-import React, { useMemo, useRef, useCallback, useState } from 'react';
+import { bigNumberify } from 'ethers/utils';
+import React, { useMemo, useRef } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import Numeral from '~core/Numeral';
@@ -18,7 +19,7 @@ import {
   useEventsForMotionQuery,
   useMotionObjectionAnnotationQuery,
   useUser,
-  useVotingStateQuery
+  useVotingStateQuery,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
