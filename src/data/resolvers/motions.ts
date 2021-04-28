@@ -8,7 +8,7 @@ import {
   getEvents,
   getMultipleEvents,
 } from '@colony/colony-js';
-import { bigNumberify } from 'ethers/utils';
+import { bigNumberify, LogDescription } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
 
 import { Context } from '~context/index';
@@ -610,6 +610,56 @@ export const motionsResolvers = ({
         return stakerReward;
       } catch (error) {
         console.error('Could not fetch the rewards for the current staker');
+        console.error(error);
+        return null;
+      }
+    },
+    async motionObjectionAnnotation(_, { motionId, colonyAddress }) {
+      let objectionAnnotation = {
+        userAddress: null,
+        metadata: null,
+      };
+      try {
+        const colonyClient = await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        );
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const nayStakedFilter = votingReputationClient.filters.MotionStaked(
+          bigNumberify(motionId),
+          null,
+          bigNumberify(0),
+          null,
+        );
+        const nayStakeEvents = await getLogs(
+          votingReputationClient,
+          nayStakedFilter,
+        );
+
+        let annotationEvents: LogDescription[] = [];
+        await Promise.all(
+          nayStakeEvents.map(async ({ transactionHash }) => {
+            const events = await getEvents(
+              colonyClient,
+              colonyClient.filters.Annotation(null, transactionHash, null),
+            );
+            annotationEvents = [...annotationEvents, ...events];
+          }),
+        );
+
+        if (annotationEvents.length) {
+          const [latestAnnotatedNayStake] = annotationEvents;
+          objectionAnnotation = {
+            userAddress: latestAnnotatedNayStake.values.agent,
+            metadata: latestAnnotatedNayStake.values.metadata,
+          };
+        }
+        return objectionAnnotation;
+      } catch (error) {
+        console.error('Could not nay side stake annotation for current motion');
         console.error(error);
         return null;
       }

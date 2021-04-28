@@ -452,6 +452,13 @@ query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $mot
   }
 }
 
+query MotionObjectionAnnotation($motionId: Int!, $colonyAddress: String!) {
+  motionObjectionAnnotation(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    address
+    metadata
+  }
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`

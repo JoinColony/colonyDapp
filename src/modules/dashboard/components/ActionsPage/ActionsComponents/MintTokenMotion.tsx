@@ -17,6 +17,8 @@ import {
   AnyUser,
   useMotionsSystemMessagesQuery,
   useEventsForMotionQuery,
+  useMotionObjectionAnnotationQuery,
+  useUser,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -100,6 +102,14 @@ const MintTokenMotion = ({
     fetchPolicy: 'network-only',
   });
 
+  const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
+    variables: {
+      motionId,
+      colonyAddress: colony.colonyAddress,
+    },
+    fetchPolicy: 'network-only',
+  });
+
   const actionAndEventValues = {
     actionType,
     amount: (
@@ -143,6 +153,10 @@ const MintTokenMotion = ({
     motionState === MotionState.Motion ||
     motionState === MotionState.Objection;
 
+  const objectionAnnotationUser = useUser(
+    objectionAnnotation?.motionObjectionAnnotation?.userAddress || '',
+  );
+
   return (
     <div className={styles.main}>
       <div className={styles.upperContainer}>
@@ -181,10 +195,16 @@ const MintTokenMotion = ({
           </h1>
           {annotationHash && (
             <ActionsPageFeedItemWithIPFS
-              createdAt={actionCreatedAt}
               user={initiator}
               annotation
               hash={annotationHash}
+            />
+          )}
+          {objectionAnnotation?.motionObjectionAnnotation?.metadata && (
+            <ActionsPageFeedItemWithIPFS
+              user={objectionAnnotationUser}
+              annotation
+              hash={objectionAnnotation.motionObjectionAnnotation.metadata}
             />
           )}
           <ActionsPageFeed

@@ -287,6 +287,7 @@ export type Query = {
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
   motionFinalized: Scalars['Boolean'];
+  motionObjectionAnnotation: MotionObjectionAnnotation;
   motionStakerReward: MotionStakerRewards;
   motionStakes: MotionStakes;
   motionUserVoteRevealed: MotionVoteReveal;
@@ -416,6 +417,12 @@ export type QueryMotionCurrentUserVotedArgs = {
 
 
 export type QueryMotionFinalizedArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionObjectionAnnotationArgs = {
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
 };
@@ -905,6 +912,11 @@ export type StakeAmounts = {
   totalStaked: StakeSidesAmounts;
   userStake: StakeSidesAmounts;
   requiredStake: Scalars['String'];
+};
+
+export type MotionObjectionAnnotation = {
+  address: Scalars['String'];
+  metadata: Scalars['String'];
 };
 
 export type ByColonyFilter = {
@@ -1658,6 +1670,14 @@ export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: (
     Pick<StakeAmounts, 'requiredStake'>
     & { totalStaked: Pick<StakeSidesAmounts, 'YAY' | 'NAY'>, userStake: Pick<StakeSidesAmounts, 'YAY' | 'NAY'> }
   ) };
+
+export type MotionObjectionAnnotationQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionObjectionAnnotationQuery = { motionObjectionAnnotation: Pick<MotionObjectionAnnotation, 'address' | 'metadata'> };
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4076,6 +4096,41 @@ export function useStakeAmountsForMotionLazyQuery(baseOptions?: Apollo.LazyQuery
 export type StakeAmountsForMotionQueryHookResult = ReturnType<typeof useStakeAmountsForMotionQuery>;
 export type StakeAmountsForMotionLazyQueryHookResult = ReturnType<typeof useStakeAmountsForMotionLazyQuery>;
 export type StakeAmountsForMotionQueryResult = Apollo.QueryResult<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>;
+export const MotionObjectionAnnotationDocument = gql`
+    query MotionObjectionAnnotation($motionId: Int!, $colonyAddress: String!) {
+  motionObjectionAnnotation(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    address
+    metadata
+  }
+}
+    `;
+
+/**
+ * __useMotionObjectionAnnotationQuery__
+ *
+ * To run a query within a React component, call `useMotionObjectionAnnotationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionObjectionAnnotationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionObjectionAnnotationQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionObjectionAnnotationQuery(baseOptions?: Apollo.QueryHookOptions<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>) {
+        return Apollo.useQuery<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>(MotionObjectionAnnotationDocument, baseOptions);
+      }
+export function useMotionObjectionAnnotationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>) {
+          return Apollo.useLazyQuery<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>(MotionObjectionAnnotationDocument, baseOptions);
+        }
+export type MotionObjectionAnnotationQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationQuery>;
+export type MotionObjectionAnnotationLazyQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationLazyQuery>;
+export type MotionObjectionAnnotationQueryResult = Apollo.QueryResult<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {

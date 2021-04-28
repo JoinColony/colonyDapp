@@ -246,6 +246,11 @@ export default gql`
     requiredStake: String!
   }
 
+  type MotionObjectionAnnotation {
+    address: String!
+    metadata: String!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -346,6 +351,10 @@ export default gql`
       userAddress: String!
       motionId: Int!
     ): StakeAmounts!
+    motionObjectionAnnotation(
+      motionId: Int!
+      colonyAddress: String!
+    ): MotionObjectionAnnotation!
   }
 
   extend type Mutation {
