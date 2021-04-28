@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
 import ActionsPageFeed, {
-  ActionsPageFeedItem,
+  ActionsPageFeedItemWithIPFS,
   SystemMessage,
 } from '~dashboard/ActionsPageFeed';
 import ActionsPageComment from '~dashboard/ActionsPageComment';
@@ -180,11 +180,11 @@ const MintTokenMotion = ({
             />
           </h1>
           {annotationHash && (
-            <ActionsPageFeedItem
+            <ActionsPageFeedItemWithIPFS
               createdAt={actionCreatedAt}
               user={initiator}
               annotation
-              comment={annotationHash}
+              hash={annotationHash}
             />
           )}
           <ActionsPageFeed
