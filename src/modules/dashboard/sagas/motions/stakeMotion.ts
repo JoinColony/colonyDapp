@@ -121,16 +121,17 @@ function* stakeMotion({
     }
 
     yield put(transactionReady(approveStake.id));
-    const {
-      payload: { hash: txHash },
-    } = yield takeFrom(
-      approveStake.channel,
-      ActionTypes.TRANSACTION_HASH_RECEIVED,
-    );
 
     yield takeFrom(approveStake.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     yield put(transactionReady(stakeMotionTransaction.id));
+
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      stakeMotionTransaction.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
 
     yield takeFrom(
       stakeMotionTransaction.channel,
