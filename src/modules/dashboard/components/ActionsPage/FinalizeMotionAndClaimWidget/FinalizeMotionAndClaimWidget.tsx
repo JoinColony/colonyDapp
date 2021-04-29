@@ -3,6 +3,7 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
+import moveDecimal from 'move-decimal-point';
 
 import Button from '~core/Button';
 import { ActionForm } from '~core/Fields';
@@ -209,9 +210,9 @@ const FinalizeMotionAndClaimWidget = ({
       }
     }
     return {
-      userStake: stake,
-      userWinnings: winnings,
-      userTotals: totals,
+      userStake: moveDecimal(stake, -(nativeToken?.decimals || 0)),
+      userWinnings: moveDecimal(winnings, -(nativeToken?.decimals || 0)),
+      userTotals: moveDecimal(totals, -(nativeToken?.decimals || 0)),
     };
   }, [stakerRewards, nativeToken]);
 
@@ -349,12 +350,8 @@ const FinalizeMotionAndClaimWidget = ({
                     </div>
                     <div className={styles.value}>
                       <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
-                        )}
                         value={userStake}
                         suffix={` ${nativeToken?.symbol}`}
-                        truncate={2}
                       />
                     </div>
                   </div>
@@ -366,12 +363,8 @@ const FinalizeMotionAndClaimWidget = ({
                     </div>
                     <div className={styles.value}>
                       <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
-                        )}
                         value={userWinnings}
                         suffix={` ${nativeToken?.symbol}`}
-                        truncate={2}
                       />
                     </div>
                   </div>
@@ -383,12 +376,8 @@ const FinalizeMotionAndClaimWidget = ({
                     </div>
                     <div className={styles.value}>
                       <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
-                        )}
                         value={userTotals}
                         suffix={` ${nativeToken?.symbol}`}
-                        truncate={2}
                       />
                     </div>
                   </div>
