@@ -10,3 +10,15 @@
 .annotation {
   margin-bottom: 7px;
 }
+
+.text {
+  margin: 0 6px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.progressBarContainer {
+  margin-left: 4px;
+  width: 116px;
+}

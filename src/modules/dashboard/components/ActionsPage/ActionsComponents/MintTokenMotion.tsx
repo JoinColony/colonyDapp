@@ -1,6 +1,6 @@
+import { bigNumberify } from 'ethers/utils';
 import React, { useMemo, useRef } from 'react';
-
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
 
 import Numeral from '~core/Numeral';
 import ActionsPageFeed, {
@@ -19,11 +19,13 @@ import {
   useEventsForMotionQuery,
   useMotionObjectionAnnotationQuery,
   useUser,
+  useVotingStateQuery,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 import CountDownTimer from '~core/CountDownTimer';
+import ProgressBar from '~core/ProgressBar';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 
@@ -33,10 +35,17 @@ import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
 import FinalizeMotionAndClaimWidget from '../FinalizeMotionAndClaimWidget';
 
-import { motionCountdownTimerMsg as MSG } from './motionCountdownTimerMsg';
+import { motionCountdownTimerMsg } from './motionCountdownTimerMsg';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';
+
+const MSG = defineMessages({
+  or: {
+    id: 'dashboard.ActionsPage.MintTokenMotion.or',
+    defaultMessage: `OR`,
+  },
+});
 
 const displayName = 'dashboard.ActionsPage.MintTokenMotion';
 
@@ -110,6 +119,34 @@ const MintTokenMotion = ({
     fetchPolicy: 'network-only',
   });
 
+  const { data: votingStateData } = useVotingStateQuery({
+    variables: { colonyAddress: colony.colonyAddress, motionId },
+    fetchPolicy: 'network-only',
+  });
+
+  const threashold = bigNumberify(
+    votingStateData?.votingState?.threasholdValue || 0,
+  )
+    .div(bigNumberify(10).pow(18))
+    .toNumber();
+  const totalVotedReputationValue = bigNumberify(
+    votingStateData?.votingState?.totalVotedReputation || 0,
+  )
+    .div(bigNumberify(10).pow(18))
+    .toNumber();
+
+  const skillRepValue = bigNumberify(
+    votingStateData?.votingState?.skillRep || 0,
+  )
+    .div(bigNumberify(10).pow(18))
+    .toNumber();
+
+  const currentReputationPercent =
+    (totalVotedReputationValue > 0 &&
+      Math.round((totalVotedReputationValue / skillRepValue) * 100)) ||
+    0;
+  const threasholdPercent = Math.round((threashold / skillRepValue) * 100);
+
   const actionAndEventValues = {
     actionType,
     amount: (
@@ -180,9 +217,27 @@ const MintTokenMotion = ({
           <CountDownTimer
             createdAt={actionCreatedAt}
             colonyAddress={colony.colonyAddress}
-            text={MSG.stake}
+            text={motionCountdownTimerMsg.stake}
             periodType="stakePeriod"
           />
+          {motionState === MotionState.Voting && votingStateData && (
+            <>
+              <span className={motionSpecificStyles.text}>
+                <FormattedMessage {...MSG.or} />
+              </span>
+              <div className={motionSpecificStyles.progressBarContainer}>
+                <ProgressBar
+                  value={currentReputationPercent}
+                  threshold={threasholdPercent}
+                  max={100}
+                  appearance={{
+                    size: 'small',
+                    backgroundTheme: 'dark',
+                  }}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
       <hr className={styles.dividerTop} />

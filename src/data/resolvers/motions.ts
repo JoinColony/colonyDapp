@@ -501,6 +501,35 @@ export const motionsResolvers = ({
         return null;
       }
     },
+    async votingState(_, { colonyAddress, motionId }) {
+      try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const {
+          skillRep,
+          repSubmitted,
+        } = await votingReputationClient.getMotion(motionId);
+        // eslint-disable-next-line max-len
+        const maxVoteFraction = await votingReputationClient.getMaxVoteFraction();
+
+        const threasholdValue = getMotionRequiredStake(
+          skillRep,
+          maxVoteFraction,
+          18,
+        );
+
+        return {
+          threasholdValue: threasholdValue.toString(),
+          totalVotedReputation: repSubmitted.toString(),
+          skillRep: skillRep.toString(),
+        };
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
     async motionFinalized(_, { motionId, colonyAddress }) {
       try {
         const votingReputationClient = await colonyManager.getClient(
