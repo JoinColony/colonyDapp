@@ -52,8 +52,15 @@ const getMotionEvents = async (
     votingReputationClient.filters.MotionVoteRevealed(motionId, null, null),
   );
 
+  const motionFinalizedLogs = await getLogs(
+    votingReputationClient,
+    // @TODO Add missing types to colonyjs
+    // @ts-ignore
+    votingReputationClient.filters.MotionFinalized(motionId, null, null),
+  );
+
   const parsedMotionEvents = await Promise.all(
-    [...motionStakedLogs, ...motionVoteRevealedLogs].map(async (log) => {
+    [...motionStakedLogs, ...motionVoteRevealedLogs, ...motionFinalizedLogs].map(async (log) => {
       const parsedLog = votingReputationClient.interface.parseLog(log);
       const { address, blockHash, blockNumber, transactionHash } = log;
       const {
@@ -62,7 +69,7 @@ const getMotionEvents = async (
       } = parsedLog;
       const stakeAmount =
         name === ColonyAndExtensionsEvents.MotionStaked ? amount : null;
-
+      console.log(name, rest);
       return {
         type: ActionsPageFeedType.NetworkEvent,
         name,
