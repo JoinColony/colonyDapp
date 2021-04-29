@@ -14,7 +14,7 @@ import { Resolvers } from '@apollo/client';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 import { getMotionActionType, getMotionState } from '~utils/events';
-import { MotionVote } from '~utils/colonyMotions';
+import { MotionVote, getMotionRequiredStake } from '~utils/colonyMotions';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   UserReputationQuery,
@@ -492,9 +492,11 @@ export const motionsResolvers = ({
         // eslint-disable-next-line max-len
         const maxVoteFraction = await votingReputationClient.getMaxVoteFraction();
 
-        const threasholdValue = skillRep
-          .mul(maxVoteFraction)
-          .div(bigNumberify(10).pow(18));
+        const threasholdValue = getMotionRequiredStake(
+          skillRep,
+          maxVoteFraction,
+          18,
+        );
 
         return {
           threasholdValue: threasholdValue.toString(),
