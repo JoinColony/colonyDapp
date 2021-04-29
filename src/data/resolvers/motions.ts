@@ -60,7 +60,11 @@ const getMotionEvents = async (
   );
 
   const parsedMotionEvents = await Promise.all(
-    [...motionStakedLogs, ...motionVoteRevealedLogs, ...motionFinalizedLogs].map(async (log) => {
+    [
+      ...motionStakedLogs,
+      ...motionVoteRevealedLogs,
+      ...motionFinalizedLogs,
+    ].map(async (log) => {
       const parsedLog = votingReputationClient.interface.parseLog(log);
       const { address, blockHash, blockNumber, transactionHash } = log;
       const {
@@ -69,7 +73,7 @@ const getMotionEvents = async (
       } = parsedLog;
       const stakeAmount =
         name === ColonyAndExtensionsEvents.MotionStaked ? amount : null;
-      console.log(name, rest);
+
       return {
         type: ActionsPageFeedType.NetworkEvent,
         name,
