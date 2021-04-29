@@ -14,7 +14,11 @@ import { Resolvers } from '@apollo/client';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 import { getMotionActionType, getMotionState } from '~utils/events';
-import { MotionVote, getMotionRequiredStake } from '~utils/colonyMotions';
+import {
+  MotionVote,
+  getMotionRequiredStake,
+  getEarlierEventTimestamp,
+} from '~utils/colonyMotions';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   UserReputationQuery,
@@ -101,7 +105,7 @@ const getMotionEvents = async (
        * @NOTE: I substract 1 second out of the timestamp
        * to make the event appear before the first NAY stake
        */
-      createdAt: firstMotionStakedNAYEvent.createdAt - 1000,
+      createdAt: getEarlierEventTimestamp(firstMotionStakedNAYEvent.createdAt),
       values,
       emmitedBy: ClientType.VotingReputationClient,
       address,
