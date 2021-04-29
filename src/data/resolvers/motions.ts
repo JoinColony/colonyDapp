@@ -14,7 +14,11 @@ import { Resolvers } from '@apollo/client';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 import { getMotionActionType, getMotionState } from '~utils/events';
-import { MotionVote, getMotionRequiredStake } from '~utils/colonyMotions';
+import {
+  MotionVote,
+  getMotionRequiredStake,
+  getEarlierEventTimestamp,
+} from '~utils/colonyMotions';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   UserReputationQuery,
@@ -80,6 +84,35 @@ const getMotionEvents = async (
   const sortedMotionEvents = parsedMotionEvents.sort(
     (firstEvent, secondEvent) => firstEvent.createdAt - secondEvent.createdAt,
   );
+
+  const firstMotionStakedNAYEvent = sortedMotionEvents.find(
+    (event) =>
+      event.name === ColonyAndExtensionsEvents.MotionStaked &&
+      event.values.vote.eq(MotionVote.Nay),
+  );
+
+  if (firstMotionStakedNAYEvent) {
+    const {
+      values,
+      address,
+      blockNumber,
+      transactionHash,
+    } = firstMotionStakedNAYEvent;
+    sortedMotionEvents.push({
+      type: ActionsPageFeedType.NetworkEvent,
+      name: ColonyAndExtensionsEvents.ObjectionRaised,
+      /*
+       * @NOTE: I substract 1 second out of the timestamp
+       * to make the event appear before the first NAY stake
+       */
+      createdAt: getEarlierEventTimestamp(firstMotionStakedNAYEvent.createdAt),
+      values,
+      emmitedBy: ClientType.VotingReputationClient,
+      address,
+      blockNumber,
+      transactionHash,
+    });
+  }
 
   return sortedMotionEvents;
 };
@@ -235,11 +268,13 @@ export const motionsResolvers = ({
         (event) => event.name === ColonyAndExtensionsEvents.MotionVoteSubmitted,
       );
 
-      const latestMotionStakedEvent = sortedEvents.find(
-        (event) => event.name === ColonyAndExtensionsEvents.MotionStaked,
+      const latestMotionStakedYAYEvent = sortedEvents.find(
+        (event) =>
+          event.name === ColonyAndExtensionsEvents.MotionStaked &&
+          event.values.vote.eq(MotionVote.Yay),
       );
 
-      if (latestMotionStakedEvent) {
+      if (latestMotionStakedYAYEvent) {
         // eslint-disable-next-line max-len
         const totalStakeFraction = await votingReputationClient.getTotalStakeFraction();
         const requiredStake = getMotionRequiredStake(
@@ -252,7 +287,7 @@ export const motionsResolvers = ({
           systemMessages.push({
             type: ActionsPageFeedType.SystemMessage,
             name: SystemMessagesName.MotionFullyStaked,
-            createdAt: latestMotionStakedEvent.createdAt,
+            createdAt: latestMotionStakedYAYEvent.createdAt,
           });
         }
       }
