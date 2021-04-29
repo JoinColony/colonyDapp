@@ -84,7 +84,7 @@ const getMotionEvents = async (
   const firstMotionStakedNAYEvent = sortedMotionEvents.find(
     (event) =>
       event.name === ColonyAndExtensionsEvents.MotionStaked &&
-      event.values.vote.eq(0),
+      event.values.vote.eq(MotionVote.Nay),
   );
 
   if (firstMotionStakedNAYEvent) {
