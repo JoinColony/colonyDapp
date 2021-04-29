@@ -27,15 +27,18 @@ import MemberReputation from '~core/MemberReputation';
 import CountDownTimer from '~core/CountDownTimer';
 import ProgressBar from '~core/ProgressBar';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
+import {
+  MotionState,
+  MOTION_TAG_MAP,
+  PERIOD_TYPE_MAP,
+  MOTION_STATE_TO_TIMER_TEXT_MAP,
+} from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
 import FinalizeMotionAndClaimWidget from '../FinalizeMotionAndClaimWidget';
-
-import { motionCountdownTimerMsg } from './motionCountdownTimerMsg';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';
@@ -217,8 +220,8 @@ const MintTokenMotion = ({
           <CountDownTimer
             createdAt={actionCreatedAt}
             colonyAddress={colony.colonyAddress}
-            text={motionCountdownTimerMsg.stake}
-            periodType="stakePeriod"
+            text={MOTION_STATE_TO_TIMER_TEXT_MAP[motionState]}
+            periodType={PERIOD_TYPE_MAP[motionState]}
           />
           {motionState === MotionState.Voting && votingStateData && (
             <>
