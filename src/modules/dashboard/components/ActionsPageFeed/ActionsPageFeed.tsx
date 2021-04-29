@@ -56,6 +56,7 @@ export interface EventValues {
   staker?: string;
   stakeAmount?: BigNumber;
   vote?: BigNumber;
+  voter?: Address;
   motionTag?: ReactElement;
   objectionTag?: ReactElement;
 }
