@@ -120,17 +120,16 @@ const NetworkContractUpgradeDialogForm = ({
 
   const hasRootPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
-  const canUpgradeVersion =
-    hasRootPermission && !!canBeUpgraded(colony, newVersion as string);
-
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
-    canUpgradeVersion,
+    hasRootPermission,
     isVotingExtensionEnabled,
     values.forceAction,
   );
+  const canUpgradeVersion =
+    userHasPermission && !!canBeUpgraded(colony, newVersion as string);
 
-  const inputDisabled = !userHasPermission || onlyForceAction;
+  const inputDisabled = !canUpgradeVersion || onlyForceAction;
 
   const PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES =
     /*
