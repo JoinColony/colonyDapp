@@ -95,18 +95,19 @@ const EditDomainDialogForm = ({
     [domains],
   );
 
-  const hasRoles = canArchitect(allUserRoles);
-  const canEditDomain =
-    hasRegisteredProfile && hasRoles && Object.keys(domainOptions).length > 0;
+  const hasRoles = hasRegisteredProfile && canArchitect(allUserRoles);
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
-    canEditDomain,
+    hasRoles,
     isVotingExtensionEnabled,
     forceAction,
   );
 
-  const inputDisabled = !userHasPermission || onlyForceAction;
+  const canEditDomain =
+    userHasPermission && Object.keys(domainOptions).length > 0;
+
+  const inputDisabled = !canEditDomain || onlyForceAction;
 
   const handleDomainChange = (selectedDomainId) => {
     const selectedDomain = domains.find(
@@ -138,8 +139,12 @@ const EditDomainDialogForm = ({
           text={MSG.titleEdit}
           className={styles.title}
         />
-        {canEditDomain && isVotingExtensionEnabled && (
-          <Toggle label={{ id: 'label.force' }} name="forceAction" />
+        {hasRoles && isVotingExtensionEnabled && (
+          <Toggle
+            label={{ id: 'label.force' }}
+            name="forceAction"
+            disabled={!canEditDomain}
+          />
         )}
       </DialogSection>
       {!userHasPermission && (
@@ -193,7 +198,7 @@ const EditDomainDialogForm = ({
           disabled={inputDisabled}
         />
       </DialogSection>
-      {!hasRoles && (
+      {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionFromMessage}>
             <FormattedMessage
