@@ -59,11 +59,19 @@ const getMotionEvents = async (
     votingReputationClient.filters.MotionFinalized(motionId, null, null),
   );
 
+  const motionStakeClaimedLogs = await getLogs(
+    votingReputationClient,
+    // @TODO Add missing types to colonyjs
+    // @ts-ignore
+    votingReputationClient.filters.MotionRewardClaimed(motionId, null, null),
+  );
+
   const parsedMotionEvents = await Promise.all(
     [
       ...motionStakedLogs,
       ...motionVoteRevealedLogs,
       ...motionFinalizedLogs,
+      ...motionStakeClaimedLogs,
     ].map(async (log) => {
       const parsedLog = votingReputationClient.interface.parseLog(log);
       const { address, blockHash, blockNumber, transactionHash } = log;
