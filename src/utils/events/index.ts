@@ -523,9 +523,7 @@ export const getMotionState = async (
     case NetworkMotionState.Reveal:
       return MotionState.Reveal;
     case NetworkMotionState.Closed:
-      return motion.votes[0].gte(motion.votes[1])
-        ? MotionState.Objection
-        : MotionState.Motion;
+      return MotionState.Escalation;
     case NetworkMotionState.Finalizable:
     case NetworkMotionState.Finalized: {
       const [nayStakes, yayStakes] = motion.stakes;
