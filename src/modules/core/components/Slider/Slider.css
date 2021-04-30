@@ -5,3 +5,7 @@
 .main :global(.rc-slider-disabled .rc-slider-handle) {
   border-color: var(--text-disabled) !important;
 }
+
+.main :global(.rc-slider-track) {
+  max-width: 100%;
+}

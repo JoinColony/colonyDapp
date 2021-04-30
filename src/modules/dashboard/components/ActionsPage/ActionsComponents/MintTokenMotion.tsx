@@ -200,8 +200,9 @@ const MintTokenMotion = ({
     objectionAnnotation?.motionObjectionAnnotation?.address || '',
   );
 
-  const countDownText = MOTION_STATE_TO_TIMER_TEXT_MAP[motionState];
-  const countDownPeriod = PERIOD_TYPE_MAP[motionState];
+  const countDownText =
+    motionState && MOTION_STATE_TO_TIMER_TEXT_MAP[motionState];
+  const countDownPeriod = motionState && PERIOD_TYPE_MAP[motionState];
 
   return (
     <div className={styles.main}>
