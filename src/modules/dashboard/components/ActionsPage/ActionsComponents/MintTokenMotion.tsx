@@ -27,15 +27,18 @@ import MemberReputation from '~core/MemberReputation';
 import CountDownTimer from '~core/CountDownTimer';
 import ProgressBar from '~core/ProgressBar';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
+import {
+  MotionState,
+  MOTION_TAG_MAP,
+  PERIOD_TYPE_MAP,
+  MOTION_STATE_TO_TIMER_TEXT_MAP,
+} from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
 import FinalizeMotionAndClaimWidget from '../FinalizeMotionAndClaimWidget';
-
-import { motionCountdownTimerMsg } from './motionCountdownTimerMsg';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';
@@ -197,6 +200,10 @@ const MintTokenMotion = ({
     objectionAnnotation?.motionObjectionAnnotation?.address || '',
   );
 
+  const countDownText =
+    motionState && MOTION_STATE_TO_TIMER_TEXT_MAP[motionState];
+  const countDownPeriod = motionState && PERIOD_TYPE_MAP[motionState];
+
   return (
     <div className={styles.main}>
       <div className={styles.upperContainer}>
@@ -214,12 +221,14 @@ const MintTokenMotion = ({
           />
         </p>
         <div className={styles.countdownContainer}>
-          <CountDownTimer
-            createdAt={actionCreatedAt}
-            colonyAddress={colony.colonyAddress}
-            text={motionCountdownTimerMsg.stake}
-            periodType="stakePeriod"
-          />
+          {countDownText && countDownPeriod && (
+            <CountDownTimer
+              createdAt={actionCreatedAt}
+              colonyAddress={colony.colonyAddress}
+              text={countDownText}
+              periodType={countDownPeriod}
+            />
+          )}
           {motionState === MotionState.Voting && votingStateData && (
             <>
               <span className={motionSpecificStyles.text}>
