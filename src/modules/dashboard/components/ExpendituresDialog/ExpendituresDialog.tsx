@@ -113,7 +113,6 @@ const ExpendituresDialog = ({
       description: MSG.taskDescription,
       icon: 'emoji-superman',
       comingSoon: true,
-      permissionRequired: true,
     },
     {
       title: MSG.recurringTitle,
