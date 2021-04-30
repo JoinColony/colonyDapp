@@ -58,7 +58,7 @@ const EditDomainDialog = ({
   );
 
   const validationSchema = yup.object().shape({
-    domainName: yup.string().max(20),
+    domainName: yup.string().max(20).required(),
     domainId: yup.number().required(),
     domainColor: yup.string(),
     domainPurpose: yup.string().max(90),
@@ -82,7 +82,11 @@ const EditDomainDialog = ({
     <ActionForm
       initialValues={{
         forceAction: false,
-        domainName: undefined,
+        domainName: domains.find(({ ethDomainId }) =>
+          selectedDomainId
+            ? ethDomainId.toString() === selectedDomainId
+            : ethDomainId !== ROOT_DOMAIN_ID,
+        )?.name,
         domainColor: undefined,
         domainPurpose: undefined,
         annotationMessage: undefined,
