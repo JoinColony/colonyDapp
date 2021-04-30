@@ -97,10 +97,6 @@ const MSG = defineMessages({
       'dashboard.TransferFundsDialog.TransferFundsDialogForm.transferIconTitle',
     defaultMessage: 'Transfer',
   },
-  forceMotion: {
-    id: 'dashboard.TransferFundsDialog.TransferFundsDialogForm.forceMotion',
-    defaultMessage: 'Force',
-  },
 });
 
 interface Props {
@@ -269,7 +265,7 @@ const TransferFundsDialogForm = ({
           className={styles.title}
         />
         {canTransferFunds && isVotingExtensionEnabled && (
-          <Toggle label={MSG.forceMotion} name="forceAction" />
+          <Toggle label={{ id: 'label.force' }} name="forceAction" />
         )}
       </DialogSection>
       {!userHasPermission && (

@@ -45,6 +45,7 @@
     "label.optional": "Optional",
     "label.email": "Email address",
     "label.password": "Password",
+    "label.force": "Force",
     "placeholder.email": "handle@domain.com",
     "placeholder.password": "Password",
 

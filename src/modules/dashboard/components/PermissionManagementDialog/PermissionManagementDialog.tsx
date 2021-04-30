@@ -64,10 +64,6 @@ const MSG = defineMessages({
     id: 'dashboard.PermissionManagementDialog.noPermissionFrom',
     defaultMessage: `You do not have the {roleRequired} permission required to take this action.`,
   },
-  forceMotion: {
-    id: 'dashboard.PermissionManagementDialog.forceMotion',
-    defaultMessage: 'Force',
-  },
 });
 
 type Props = DialogProps &
@@ -286,7 +282,7 @@ const PermissionManagementDialog = ({
                     textValues={{ domain: domain && domain.name }}
                   />
                   {canEditPermissions && isVotingExtensionEnabled && (
-                    <Toggle label={MSG.forceMotion} name="forceAction" />
+                    <Toggle label={{ id: 'label.force' }} name="forceAction" />
                   )}
                 </DialogSection>
                 {!userHasPermission && (

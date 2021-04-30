@@ -59,10 +59,6 @@ const MSG = defineMessages({
     id: `dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.invalidAvatarFormat`,
     defaultMessage: `Image you tried to upload is in an invalid format`,
   },
-  forceMotion: {
-    id: `dashboard.EditColonyDetailsDialog.EditColonyDetailsDialogForm.forceMotion`,
-    defaultMessage: 'Force',
-  },
 });
 
 const ColonyAvatarHooked = HookedColonyAvatar({ fetchColony: true });
@@ -149,7 +145,7 @@ const EditColonyDetailsDialogForm = ({
           className={styles.title}
         />
         {canEdit && isVotingExtensionEnabled && (
-          <Toggle label={MSG.forceMotion} name="forceAction" />
+          <Toggle label={{ id: 'label.force' }} name="forceAction" />
         )}
       </DialogSection>
       {!userHasPermission && (

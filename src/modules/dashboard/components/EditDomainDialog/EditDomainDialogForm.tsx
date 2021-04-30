@@ -55,10 +55,6 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
   },
-  forceMotion: {
-    id: 'dashboard.EditDomainDialog.EditDomainDialogForm.forceMotion',
-    defaultMessage: 'Force',
-  },
 });
 
 interface Props extends ActionDialogProps {
@@ -143,7 +139,7 @@ const EditDomainDialogForm = ({
           className={styles.title}
         />
         {canEditDomain && isVotingExtensionEnabled && (
-          <Toggle label={MSG.forceMotion} name="forceAction" />
+          <Toggle label={{ id: 'label.force' }} name="forceAction" />
         )}
       </DialogSection>
       {!userHasPermission && (

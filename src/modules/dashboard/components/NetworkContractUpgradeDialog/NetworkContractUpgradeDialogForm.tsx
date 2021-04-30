@@ -86,10 +86,6 @@ safely upgrade the colony to the next version.
     id: `dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.loadingData`,
     defaultMessage: "Loading the Colony's Recovery Roles",
   },
-  forceMotion: {
-    id: `dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.forceMotion`,
-    defaultMessage: 'Force',
-  },
 });
 
 const NetworkContractUpgradeDialogForm = ({
@@ -155,7 +151,7 @@ const NetworkContractUpgradeDialogForm = ({
           className={styles.title}
         />
         {canUpgradeVersion && isVotingExtensionEnabled && (
-          <Toggle label={MSG.forceMotion} name="forceAction" />
+          <Toggle label={{ id: 'label.force' }} name="forceAction" />
         )}
       </DialogSection>
       {loadingLegacyRecoveyRole && (

@@ -50,10 +50,6 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'You need the {roleRequired} permission in {domain} to take this action.',
   },
-  forceMotion: {
-    id: 'dashboard.TokenMintDialog.TokenMintForm.forceMotion',
-    defaultMessage: 'Force',
-  },
 });
 
 interface Props extends ActionDialogProps {
@@ -97,7 +93,7 @@ const CreateDomainDialogForm = ({
           className={styles.title}
         />
         {canCreateDomain && isVotingExtensionEnabled && (
-          <Toggle label={MSG.forceMotion} name="forceAction" />
+          <Toggle label={{ id: 'label.force' }} name="forceAction" />
         )}
       </DialogSection>
       {!userHasPermission && (

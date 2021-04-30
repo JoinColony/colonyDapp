@@ -44,10 +44,6 @@ const MSG = defineMessages({
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
   },
-  forceMotion: {
-    id: 'dashboard.TokenMintDialog.TokenMintForm.forceMotion',
-    defaultMessage: 'Force',
-  },
 });
 
 interface Props extends ActionDialogProps {
@@ -89,7 +85,7 @@ const TokenMintForm = ({
           text={MSG.title}
         />
         {canMintTokens && isVotingExtensionEnabled && (
-          <Toggle label={MSG.forceMotion} name="forceAction" />
+          <Toggle label={{ id: 'label.force' }} name="forceAction" />
         )}
       </DialogSection>
       {!userHasPermission && (
