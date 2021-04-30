@@ -200,6 +200,9 @@ const MintTokenMotion = ({
     objectionAnnotation?.motionObjectionAnnotation?.address || '',
   );
 
+  const countDownText = MOTION_STATE_TO_TIMER_TEXT_MAP[motionState];
+  const countDownPeriod = PERIOD_TYPE_MAP[motionState];
+
   return (
     <div className={styles.main}>
       <div className={styles.upperContainer}>
@@ -217,12 +220,14 @@ const MintTokenMotion = ({
           />
         </p>
         <div className={styles.countdownContainer}>
-          <CountDownTimer
-            createdAt={actionCreatedAt}
-            colonyAddress={colony.colonyAddress}
-            text={MOTION_STATE_TO_TIMER_TEXT_MAP[motionState]}
-            periodType={PERIOD_TYPE_MAP[motionState]}
-          />
+          {countDownText && countDownPeriod && (
+            <CountDownTimer
+              createdAt={actionCreatedAt}
+              colonyAddress={colony.colonyAddress}
+              text={countDownText}
+              periodType={countDownPeriod}
+            />
+          )}
           {motionState === MotionState.Voting && votingStateData && (
             <>
               <span className={motionSpecificStyles.text}>
