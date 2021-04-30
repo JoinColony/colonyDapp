@@ -102,7 +102,12 @@ const ActionsPageEvent = ({
   );
 
   const initiator = useUser(
-    values?.agent || values?.user || values?.creator || values?.staker || '',
+    values?.agent ||
+      values?.user ||
+      values?.creator ||
+      values?.staker ||
+      values?.voter ||
+      '',
   );
 
   const [
@@ -381,7 +386,7 @@ const ActionsPageEvent = ({
                     </span>
                     <div className={motionSpecificStyles.reputation}>
                       <MemberReputation
-                        walletAddress={values?.staker || ''}
+                        walletAddress={values?.staker || values?.voter || ''}
                         colonyAddress={colony.colonyAddress}
                       />
                     </div>
