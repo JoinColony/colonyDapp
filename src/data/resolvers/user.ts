@@ -33,11 +33,13 @@ const getUserReputation = async (
   address: Address,
   colonyAddress: Address,
   domainId: number,
+  rootHash?: string,
 ): Promise<BigNumber> => {
   const colonyClient = await colonyManager.getClient(
     ClientType.ColonyClient,
     colonyAddress,
   );
+
   const { skillId } = await colonyClient.getDomain(
     /*
      * If we have the "All Teams" domain selected, fetch reputation values from "Root"
@@ -47,6 +49,7 @@ const getUserReputation = async (
   const { reputationAmount } = await colonyClient.getReputation(
     skillId,
     address,
+    rootHash,
   );
   return reputationAmount;
 };
@@ -190,13 +193,20 @@ export const userResolvers = ({
         address,
         colonyAddress,
         domainId = ROOT_DOMAIN_ID,
-      }: { address: Address; colonyAddress: Address; domainId?: number },
+        rootHash,
+      }: {
+        address: Address;
+        colonyAddress: Address;
+        domainId?: number;
+        rootHash?: string;
+      },
     ): Promise<string> {
       const reputation = await getUserReputation(
         colonyManager,
         address,
         colonyAddress,
         domainId,
+        rootHash,
       );
       return reputation.toString();
     },

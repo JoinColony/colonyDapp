@@ -279,6 +279,7 @@ export default gql`
       address: String!
       colonyAddress: String!
       domainId: Int
+      rootHash: String
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!

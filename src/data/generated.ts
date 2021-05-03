@@ -560,6 +560,7 @@ export type QueryUserReputationArgs = {
   address: Scalars['String'];
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
+  rootHash?: Maybe<Scalars['String']>;
 };
 
 
@@ -1342,6 +1343,7 @@ export type UserReputationQueryVariables = Exact<{
   address: Scalars['String'];
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
+  rootHash?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2632,8 +2634,8 @@ export type UserWithReputationQueryHookResult = ReturnType<typeof useUserWithRep
 export type UserWithReputationLazyQueryHookResult = ReturnType<typeof useUserWithReputationLazyQuery>;
 export type UserWithReputationQueryResult = Apollo.QueryResult<UserWithReputationQuery, UserWithReputationQueryVariables>;
 export const UserReputationDocument = gql`
-    query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
-  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
+    query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int, $rootHash: String) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId, rootHash: $rootHash) @client
 }
     `;
 
@@ -2652,6 +2654,7 @@ export const UserReputationDocument = gql`
  *      address: // value for 'address'
  *      colonyAddress: // value for 'colonyAddress'
  *      domainId: // value for 'domainId'
+ *      rootHash: // value for 'rootHash'
  *   },
  * });
  */
