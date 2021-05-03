@@ -77,6 +77,7 @@ const MintTokenMotion = ({
     motionState,
     motionDomain,
     actionInitiator,
+    rootHash,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -165,6 +166,7 @@ const MintTokenMotion = ({
           <MemberReputation
             walletAddress={actionInitiator}
             colonyAddress={colony.colonyAddress}
+            rootHash={rootHash || undefined}
           />
         </div>
       </>
@@ -291,6 +293,7 @@ const MintTokenMotion = ({
             values={actionAndEventValues}
             actionData={colonyAction}
             colony={colony}
+            rootHash={rootHash || undefined}
           />
 
           {currentUserName && !ethereal && (
