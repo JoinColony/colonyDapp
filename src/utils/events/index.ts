@@ -590,6 +590,7 @@ const getMintTokensMotionValues = async (
     recipient: Address;
     tokenAddress: Address;
     motionDomain: number;
+    rootHash: string;
   } = {
     motionNAYStake: motion.stakes[0].toString(),
     motionState,
@@ -599,6 +600,7 @@ const getMintTokensMotionValues = async (
     amount: bigNumberify(values.args[0] || '0').toString(),
     tokenAddress,
     motionDomain: motion.domainId.toNumber(),
+    rootHash: motion.rootHash,
   };
 
   return mintTokensMotionValues;
