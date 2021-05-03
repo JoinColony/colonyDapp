@@ -24,7 +24,6 @@ import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
 import { getMainClasses } from '~utils/css';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { MotionVote, MotionState } from '~utils/colonyMotions';
 
 import VoteResults from './VoteResults';
@@ -178,15 +177,8 @@ const FinalizeMotionAndClaimWidget = ({
 
   const { userStake, userWinnings, userTotals } = useMemo(() => {
     let stake = bigNumberify(0);
-    let winnings;
+    let winnings = bigNumberify(0);
     let totals = bigNumberify(0);
-    const safeLowReward = bigNumberify(1)
-      .mul(
-        bigNumberify(10).pow(
-          getTokenDecimalsWithFallback(nativeToken?.decimals),
-        ),
-      )
-      .div(100);
     if (stakerRewards?.motionStakerReward) {
       const {
         stakesYay,
@@ -195,19 +187,10 @@ const FinalizeMotionAndClaimWidget = ({
         stakingRewardYay,
       } = stakerRewards.motionStakerReward;
       stake = stake.add(bigNumberify(stakesYay)).add(bigNumberify(stakesNay));
-      if (stake.lt(safeLowReward)) {
-        stake = bigNumberify(0);
-      }
       totals = totals
         .add(bigNumberify(stakingRewardYay))
         .add(bigNumberify(stakingRewardNay));
-      if (totals.lt(safeLowReward)) {
-        totals = bigNumberify(0);
-      }
       winnings = totals.sub(stake);
-      if (winnings.lt(safeLowReward)) {
-        winnings = bigNumberify(0);
-      }
     }
     return {
       userStake: moveDecimal(stake, -(nativeToken?.decimals || 0)),
