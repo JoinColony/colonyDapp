@@ -753,6 +753,7 @@ export type ColonyAction = {
   motionNAYStake?: Maybe<Scalars['String']>;
   motionState?: Maybe<Scalars['String']>;
   motionDomain: Scalars['Int'];
+  rootHash?: Maybe<Scalars['String']>;
 };
 
 export type NetworkContractsInput = {
@@ -1492,7 +1493,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionNAYStake' | 'motionState' | 'motionDomain' | 'blockNumber'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionNAYStake' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -3282,6 +3283,7 @@ export const ColonyActionDocument = gql`
       setTo
     }
     blockNumber
+    rootHash
   }
 }
     `;

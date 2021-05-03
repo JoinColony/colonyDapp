@@ -257,6 +257,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
       setTo
     }
     blockNumber
+    rootHash
   }
 }
 

@@ -65,6 +65,7 @@ export default gql`
     motionNAYStake: String
     motionState: String
     motionDomain: Int!
+    rootHash: String
   }
 
   input NetworkContractsInput {
