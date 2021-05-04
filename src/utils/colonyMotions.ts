@@ -32,6 +32,7 @@ export enum MotionState {
   Objection = 'Objection',
   Failed = 'Failed',
   Passed = 'Passed',
+  FailedNoFinalizable = 'FailedNoFinalizable',
   Invalid = 'Invalid',
   Escalation = 'Escalation',
 }
@@ -108,6 +109,12 @@ export const MOTION_TAG_MAP = {
     tagName: 'objectionTag',
   },
   [MotionState.Failed]: {
+    theme: 'pink',
+    colorSchema: 'plain',
+    name: MSG.failedTag,
+    tagName: 'failedTag',
+  },
+  [MotionState.FailedNoFinalizable]: {
     theme: 'pink',
     colorSchema: 'plain',
     name: MSG.failedTag,
