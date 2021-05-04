@@ -257,6 +257,7 @@ const StakingWidget = ({
               remainingToFullyNayStaked={remainingToFullyNayStaked}
               maxUserStake={maxUserStake}
               minUserStake={minUserStake}
+              userActivatedTokens={userActivatedTokens}
             />
             <div className={styles.buttonGroup}>
               <Button
@@ -282,7 +283,10 @@ const StakingWidget = ({
                     disabled={!canUserStakeNay}
                     onClick={() =>
                       bigNumberify(totalNAYStakes).isZero()
-                        ? handleRaiseObjection(canUserStake, data.motionStakes)
+                        ? handleRaiseObjection(canUserStake, {
+                            ...data.motionStakes,
+                            userActivatedTokens,
+                          })
                         : handleWidgetState(true)
                     }
                   />
