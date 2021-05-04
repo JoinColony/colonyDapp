@@ -76,6 +76,7 @@ interface Props {
   actionData: ColonyAction;
   colony: Colony;
   children?: ReactNode;
+  rootHash?: string;
 }
 
 interface DomainMetadata {
@@ -95,6 +96,7 @@ const ActionsPageEvent = ({
   colony: { colonyAddress, nativeTokenAddress, tokens },
   colony,
   children,
+  rootHash,
 }: Props) => {
   let metadataJSON;
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
@@ -388,6 +390,7 @@ const ActionsPageEvent = ({
                       <MemberReputation
                         walletAddress={values?.staker || values?.voter || ''}
                         colonyAddress={colony.colonyAddress}
+                        rootHash={rootHash}
                       />
                     </div>
                   </>

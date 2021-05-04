@@ -560,6 +560,7 @@ export type QueryUserReputationArgs = {
   address: Scalars['String'];
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
+  rootHash?: Maybe<Scalars['String']>;
 };
 
 
@@ -753,6 +754,7 @@ export type ColonyAction = {
   motionNAYStake?: Maybe<Scalars['String']>;
   motionState?: Maybe<Scalars['String']>;
   motionDomain: Scalars['Int'];
+  rootHash?: Maybe<Scalars['String']>;
 };
 
 export type NetworkContractsInput = {
@@ -1341,6 +1343,7 @@ export type UserReputationQueryVariables = Exact<{
   address: Scalars['String'];
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
+  rootHash?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1492,7 +1495,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionNAYStake' | 'motionState' | 'motionDomain' | 'blockNumber'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionNAYStake' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -2631,8 +2634,8 @@ export type UserWithReputationQueryHookResult = ReturnType<typeof useUserWithRep
 export type UserWithReputationLazyQueryHookResult = ReturnType<typeof useUserWithReputationLazyQuery>;
 export type UserWithReputationQueryResult = Apollo.QueryResult<UserWithReputationQuery, UserWithReputationQueryVariables>;
 export const UserReputationDocument = gql`
-    query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
-  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
+    query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int, $rootHash: String) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId, rootHash: $rootHash) @client
 }
     `;
 
@@ -2651,6 +2654,7 @@ export const UserReputationDocument = gql`
  *      address: // value for 'address'
  *      colonyAddress: // value for 'colonyAddress'
  *      domainId: // value for 'domainId'
+ *      rootHash: // value for 'rootHash'
  *   },
  * });
  */
@@ -3282,6 +3286,7 @@ export const ColonyActionDocument = gql`
       setTo
     }
     blockNumber
+    rootHash
   }
 }
     `;

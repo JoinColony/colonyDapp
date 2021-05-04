@@ -65,6 +65,7 @@ export default gql`
     motionNAYStake: String
     motionState: String
     motionDomain: Int!
+    rootHash: String
   }
 
   input NetworkContractsInput {
@@ -278,6 +279,7 @@ export default gql`
       address: String!
       colonyAddress: String!
       domainId: Int
+      rootHash: String
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!

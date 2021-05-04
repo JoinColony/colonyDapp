@@ -246,6 +246,7 @@ export const colonyActionsResolvers = ({
           motionState: null,
           motionDomain: null,
           motionNAYStake: null,
+          rootHash: null,
           ...actionValues,
         };
       }
