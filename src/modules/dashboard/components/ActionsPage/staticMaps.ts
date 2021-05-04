@@ -113,6 +113,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.MotionVoteRevealed,
     ColonyAndExtensionsEvents.ObjectionRaised,
     ColonyAndExtensionsEvents.MotionFinalized,
+    ColonyAndExtensionsEvents.MotionRewardClaimed,
   ],
 };
 

@@ -18,6 +18,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.MotionFinalized} {{initiator} finalized this {motionTag}. Stakes may be claimed.}
       ${ColonyAndExtensionsEvents.MotionVoteRevealed} {{staker} revealed vote for {voteSide}.}
       ${ColonyAndExtensionsEvents.ObjectionRaised} {{staker} raised an {objectionTag}}
+      ${ColonyAndExtensionsEvents.MotionRewardClaimed} {{staker} claimed their stake.}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
   /*
