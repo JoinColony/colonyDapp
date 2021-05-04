@@ -16,6 +16,7 @@ export interface StakingAmounts {
   remainingToFullyNayStaked: string;
   maxUserStake: string;
   minUserStake: string;
+  userActivatedTokens: number;
 }
 
 interface Props extends StakingAmounts {
@@ -67,6 +68,7 @@ const StakingSlider = ({
   canUserStake,
   appearance,
   isObjection,
+  userActivatedTokens,
 }: Props) => {
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
@@ -121,7 +123,11 @@ const StakingSlider = ({
           value={values.amount}
           min={parseFloat(userStakeBottomLimit)}
           max={parseFloat(remainingToStake)}
-          limit={parseFloat(userStakeTopLimit)}
+          limit={parseFloat(
+            userStakeTopLimit >= userActivatedTokens
+              ? userActivatedTokens
+              : userStakeTopLimit,
+          )}
           step={0.01}
           disabled={!canUserStake}
           appearance={appearance}
