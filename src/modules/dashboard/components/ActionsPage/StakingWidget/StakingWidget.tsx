@@ -283,7 +283,7 @@ const StakingWidget = ({
                     disabled={!canUserStakeNay}
                     onClick={() =>
                       bigNumberify(totalNAYStakes).isZero()
-                        ? handleRaiseObjection(canUserStake, {
+                        ? handleRaiseObjection(canUserStakeNay, {
                             ...data.motionStakes,
                             userActivatedTokens,
                           })
