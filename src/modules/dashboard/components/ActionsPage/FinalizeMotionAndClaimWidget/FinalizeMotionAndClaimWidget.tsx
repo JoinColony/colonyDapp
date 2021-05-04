@@ -24,6 +24,7 @@ import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
 import { getMainClasses } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { MotionVote } from '~utils/colonyMotions';
 
 import VoteResults from './VoteResults';
 
@@ -250,6 +251,12 @@ const FinalizeMotionAndClaimWidget = ({
   const canClaimStakes =
     bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||
     bigNumberify(stakerRewards?.motionStakerReward?.stakesNay || 0).gt(0);
+  const yaySideWon =
+    (voteResults?.motionVoteResults?.yayVoters.length || 0) >
+    (voteResults?.motionVoteResults?.nayVoters.length || 0);
+  const userSideWon = yaySideWon
+    ? voteResults?.motionVoteResults?.currentUserVoteSide === MotionVote.Yay
+    : voteResults?.motionVoteResults?.currentUserVoteSide === MotionVote.Nay;
 
   return (
     <div
@@ -397,8 +404,7 @@ const FinalizeMotionAndClaimWidget = ({
               <FormattedMessage
                 {...MSG.outcomeCelebration}
                 values={{
-                  outcome: !!voteResults?.motionVoteResults
-                    ?.currentUserVoteSide,
+                  outcome: userSideWon,
                 }}
               />
             </div>
