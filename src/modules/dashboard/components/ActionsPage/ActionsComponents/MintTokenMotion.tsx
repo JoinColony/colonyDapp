@@ -39,7 +39,9 @@ import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
-import FinalizeMotionAndClaimWidget, { MSG as voteResultsMSG } from '../FinalizeMotionAndClaimWidget';
+import FinalizeMotionAndClaimWidget, {
+  MSG as voteResultsMSG,
+} from '../FinalizeMotionAndClaimWidget';
 import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
 
 import styles from './DefaultAction.css';
@@ -199,10 +201,7 @@ const MintTokenMotion = ({
           textValues={{ actionType }}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
         />
-        <VoteResults
-          colony={colony}
-          motionId={motionId}
-        />
+        <VoteResults colony={colony} motionId={motionId} />
       </div>
     ),
   };

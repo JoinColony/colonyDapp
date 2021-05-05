@@ -352,7 +352,10 @@ export const motionsResolvers = ({
             systemMessages.push({
               type: ActionsPageFeedType.SystemMessage,
               name: SystemMessagesName.MotionHasPassed,
-              createdAt: newestStakeOrVoteEvent.createdAt,
+              createdAt: getEarlierEventTimestamp(
+                newestStakeOrVoteEvent.createdAt,
+                -5,
+              ),
             });
           }
         }
@@ -371,18 +374,27 @@ export const motionsResolvers = ({
             systemMessages.push({
               type: ActionsPageFeedType.SystemMessage,
               name: SystemMessagesName.MotionRevealResultObjectionWon,
-              createdAt: newestVoteRevealed.createdAt,
+              createdAt: getEarlierEventTimestamp(
+                newestVoteRevealed.createdAt,
+                -1,
+              ),
             });
             systemMessages.push({
               type: ActionsPageFeedType.SystemMessage,
               name: SystemMessagesName.MotionHasFailedFinalizable,
-              createdAt: newestVoteRevealed.createdAt,
+              createdAt: getEarlierEventTimestamp(
+                newestVoteRevealed.createdAt,
+                -5,
+              ),
             });
           } else {
             systemMessages.push({
               type: ActionsPageFeedType.SystemMessage,
               name: SystemMessagesName.MotionRevealResultMotionWon,
-              createdAt: newestVoteRevealed.createdAt,
+              createdAt: getEarlierEventTimestamp(
+                newestVoteRevealed.createdAt,
+                -1,
+              ),
             });
           }
         }
