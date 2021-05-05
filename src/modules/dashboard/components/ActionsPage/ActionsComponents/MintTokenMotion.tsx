@@ -3,6 +3,7 @@ import React, { useMemo, useRef } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import Numeral from '~core/Numeral';
+import Heading from '~core/Heading';
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
   SystemMessage,
@@ -38,7 +39,8 @@ import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
-import FinalizeMotionAndClaimWidget from '../FinalizeMotionAndClaimWidget';
+import FinalizeMotionAndClaimWidget, { MSG as voteResultsMSG } from '../FinalizeMotionAndClaimWidget';
+import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';
@@ -190,6 +192,19 @@ const MintTokenMotion = ({
       <span className={motionSpecificStyles.tagWrapper}>{objectionTag}</span>
     ),
     ...tags,
+    voteResultsWidget: (
+      <div className={motionSpecificStyles.voteResultsWrapper}>
+        <Heading
+          text={voteResultsMSG.title}
+          textValues={{ actionType }}
+          appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+        />
+        <VoteResults
+          colony={colony}
+          motionId={motionId}
+        />
+      </div>
+    ),
   };
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
 
