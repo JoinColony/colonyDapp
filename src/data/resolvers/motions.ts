@@ -370,7 +370,18 @@ export const motionsResolvers = ({
           if (motion.votes[0].gte(motion.votes[1])) {
             systemMessages.push({
               type: ActionsPageFeedType.SystemMessage,
+              name: SystemMessagesName.MotionRevealResultObjectionWon,
+              createdAt: newestVoteRevealed.createdAt,
+            });
+            systemMessages.push({
+              type: ActionsPageFeedType.SystemMessage,
               name: SystemMessagesName.MotionHasFailedFinalizable,
+              createdAt: newestVoteRevealed.createdAt,
+            });
+          } else {
+            systemMessages.push({
+              type: ActionsPageFeedType.SystemMessage,
+              name: SystemMessagesName.MotionRevealResultMotionWon,
               createdAt: newestVoteRevealed.createdAt,
             });
           }
