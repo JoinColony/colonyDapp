@@ -39,7 +39,7 @@ interface Props {
   transactionHash: string;
 }
 
-const MSG = defineMessages({
+export const MSG = defineMessages({
   /*
    * @NOTE I didn't want to create a mapping for this, since they will only
    * be used in this instance

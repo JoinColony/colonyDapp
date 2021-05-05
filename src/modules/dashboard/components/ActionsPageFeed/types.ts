@@ -48,6 +48,8 @@ export enum SystemMessagesName {
   MotionRevealPhase = 'MotionRevealPhase',
   MotionVotingPhase = 'MotionVotingPhase',
   MotionFullyStaked = 'MotionFullyStaked',
+  MotionRevealResultObjectionWon = 'MotionRevealResultObjectionWon',
+  MotionRevealResultMotionWon = 'MotionRevealResultMotionWon',
 }
 
 export interface SystemMessage {

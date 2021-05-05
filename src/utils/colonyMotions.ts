@@ -162,7 +162,10 @@ export const getMotionRequiredStake = (
   return requiredStake;
 };
 
-export const getEarlierEventTimestamp = (currentTimestamp: number) => {
-  const oneSecond = 1000;
-  return currentTimestamp - oneSecond;
+const ONE_SECOND = 1000;
+export const getEarlierEventTimestamp = (
+  currentTimestamp: number,
+  subTime = ONE_SECOND,
+) => {
+  return currentTimestamp - subTime;
 };
