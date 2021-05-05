@@ -1,5 +1,5 @@
 import { all, call, fork, put } from 'redux-saga/effects';
-import { formatEther } from 'ethers/utils';
+import { formatEther, bigNumberify } from 'ethers/utils';
 
 import { WalletMethod } from '~immutable/index';
 import { createAddress } from '~utils/web3';
@@ -220,6 +220,11 @@ export default function* setupUserContext(
      * Get the network contract values from the resolver
      */
     yield updateNetworkContracts();
+
+    // eslint-disable-next-line no-console
+    console.log(colonyManager);
+    // eslint-disable-next-line no-console
+    console.log(bigNumberify);
 
     setupOnBeforeUnload();
 

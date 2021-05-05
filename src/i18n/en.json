@@ -169,6 +169,12 @@
     "transaction.VotingReputationClient.createRootMotion.description": "Create root motion",
     "transaction.group.createRootMotion.title": "Create root motion",
     "transaction.group.createRootMotion.description": "Create root motion",
+    "transaction.VotingReputationClient.createDomainMotionWithProofs.title": "Create domain motion",
+    "transaction.VotingReputationClient.createDomainMotionWithProofs.description": "Create domain motion",
+    "transaction.VotingReputationClient.createDomainMotion.title": "Create domain motion",
+    "transaction.VotingReputationClient.createDomainMotion.description": "Create domain motion",
+    "transaction.group.createDomainMotion.title": "Create domain motion",
+    "transaction.group.createDomainMotion.description": "Create domain motion",
 
     "transaction.group.stakeMotion.title": "Stake motion",
     "transaction.group.stakeMotion.description": "Stake motion",

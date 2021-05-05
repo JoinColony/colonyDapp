@@ -79,13 +79,13 @@ function* createEditDomainMotion({
     txChannel = yield call(getTxChannel, metaId);
 
     // setup batch ids and channels
-    const batchKey = 'createRootMotion';
+    const batchKey = 'createDomainMotion';
 
     const {
-      createRootMotion,
+      createDomainMotion,
       annotateMotion,
     } = yield createTransactionChannels(metaId, [
-      'createRootMotion',
+      'createDomainMotion',
       'annotateMotion',
     ]);
 
@@ -114,11 +114,19 @@ function* createEditDomainMotion({
     ]);
 
     // create transactions
-    yield fork(createTransaction, createRootMotion.id, {
+    yield fork(createTransaction, createDomainMotion.id, {
       context: ClientType.VotingReputationClient,
-      methodName: 'createRootMotion',
+      methodName: 'createDomainMotion',
       identifier: colonyAddress,
-      params: [AddressZero, encodedAction, key, value, branchMask, siblings],
+      params: [
+        domainId,
+        childSkillIndex,
+        encodedAction,
+        key,
+        value,
+        branchMask,
+        siblings,
+      ],
       group: {
         key: batchKey,
         id: metaId,
@@ -142,7 +150,7 @@ function* createEditDomainMotion({
       });
     }
 
-    yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_CREATED);
+    yield takeFrom(createDomainMotion.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(annotateMotion.channel, ActionTypes.TRANSACTION_CREATED);
     }
@@ -155,15 +163,18 @@ function* createEditDomainMotion({
       }),
     );
 
-    yield put(transactionReady(createRootMotion.id));
+    yield put(transactionReady(createDomainMotion.id));
 
     const {
       payload: { hash: txHash },
     } = yield takeFrom(
-      createRootMotion.channel,
+      createDomainMotion.channel,
       ActionTypes.TRANSACTION_HASH_RECEIVED,
     );
-    yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(
+      createDomainMotion.channel,
+      ActionTypes.TRANSACTION_SUCCEEDED,
+    );
 
     if (annotationMessage) {
       yield put(transactionPending(annotateMotion.id));
