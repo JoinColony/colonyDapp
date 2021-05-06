@@ -259,11 +259,7 @@ const FinalizeMotionAndClaimWidget = ({
     : voteResults?.motionVoteResults?.currentUserVoteSide === MotionVote.Nay;
 
   return (
-    <div
-      className={getMainClasses({}, styles, {
-        marginBottom: showFinalizeButton || false,
-      })}
-    >
+    <div className={getMainClasses({}, styles)}>
       {showFinalizeButton && (
         <ActionForm
           initialValues={{}}
