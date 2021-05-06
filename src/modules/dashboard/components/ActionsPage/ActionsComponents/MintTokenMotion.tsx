@@ -86,6 +86,7 @@ const MintTokenMotion = ({
   colonyAction,
   token: { decimals, symbol },
   transactionHash,
+  recipient,
   initiator,
 }: Props) => {
   const bottomElementRef = useRef<HTMLInputElement>(null);
@@ -359,7 +360,9 @@ const MintTokenMotion = ({
           )}
           <DetailsWidget
             actionType={actionType as ColonyMotions}
+            recipient={recipient}
             transactionHash={transactionHash}
+            values={actionAndEventValues}
             colony={colony}
           />
         </div>
