@@ -62,6 +62,7 @@ export const getActionsListData = (
    * We only consider an action that we manually trigger ourselves, so if the transaction
    * hashes match, throw them out.
    */
+
   const filteredUnformattedActions = {
     oneTxPayments: unformattedActions?.oneTxPayments || [],
     events:
@@ -97,6 +98,20 @@ export const getActionsListData = (
           extensionAddresses?.find(
             (extensionAddress) =>
               extensionAddress === event?.processedValues?.user,
+          )
+        ) {
+          return acc;
+        }
+        /*
+         * Filter out events that have the initiator an extension's address
+         *
+         * This is used to filter out duplicated events which occrus when
+         * motion is finalized. (one motion event + one event from contract)
+         */
+        if (
+          extensionAddresses?.find(
+            (extensionAddress) =>
+              extensionAddress === event?.processedValues?.agent,
           )
         ) {
           return acc;
