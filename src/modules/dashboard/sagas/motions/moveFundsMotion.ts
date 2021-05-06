@@ -91,13 +91,13 @@ function* moveFundsMotion({
     txChannel = yield call(getTxChannel, metaId);
 
     // setup batch ids and channels
-    const batchKey = 'createRootMotion';
+    const batchKey = 'createDomainMotion';
 
     const {
-      createRootMotion,
+      createDomainMotion,
       annotateMoveFundsMotion,
     } = yield createTransactionChannels(metaId, [
-      'createRootMotion',
+      'createDomainMotion',
       'annotateMoveFundsMotion',
     ]);
 
@@ -115,11 +115,19 @@ function* moveFundsMotion({
     );
 
     // create transactions
-    yield fork(createTransaction, createRootMotion.id, {
+    yield fork(createTransaction, createDomainMotion.id, {
       context: ClientType.VotingReputationClient,
-      methodName: 'createRootMotion',
+      methodName: 'createDomainMotion',
       identifier: colonyAddress,
-      params: [AddressZero, encodedAction, key, value, branchMask, siblings],
+      params: [
+        ROOT_DOMAIN_ID,
+        fromChildSkillIndex,
+        encodedAction,
+        key,
+        value,
+        branchMask,
+        siblings,
+      ],
       group: {
         key: batchKey,
         id: metaId,
@@ -143,7 +151,7 @@ function* moveFundsMotion({
       });
     }
 
-    yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_CREATED);
+    yield takeFrom(createDomainMotion.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
         annotateMoveFundsMotion.channel,
@@ -159,15 +167,18 @@ function* moveFundsMotion({
       }),
     );
 
-    yield put(transactionReady(createRootMotion.id));
+    yield put(transactionReady(createDomainMotion.id));
 
     const {
       payload: { hash: txHash },
     } = yield takeFrom(
-      createRootMotion.channel,
+      createDomainMotion.channel,
       ActionTypes.TRANSACTION_HASH_RECEIVED,
     );
-    yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(
+      createDomainMotion.channel,
+      ActionTypes.TRANSACTION_SUCCEEDED,
+    );
 
     if (annotationMessage) {
       yield put(transactionPending(annotateMoveFundsMotion.id));
