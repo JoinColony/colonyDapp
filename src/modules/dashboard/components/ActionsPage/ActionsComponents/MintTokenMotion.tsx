@@ -347,7 +347,8 @@ const MintTokenMotion = ({
             />
           )}
           {(motionState === MotionState.Failed ||
-            motionState === MotionState.Passed) && (
+            motionState === MotionState.Passed ||
+            motionState === MotionState.FailedNoFinalizable) && (
             <FinalizeMotionAndClaimWidget
               colony={colony}
               actionType={actionType}
@@ -355,6 +356,7 @@ const MintTokenMotion = ({
               motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
               transactionHash={transactionHash}
+              motionState={motionState}
             />
           )}
           <DetailsWidget
