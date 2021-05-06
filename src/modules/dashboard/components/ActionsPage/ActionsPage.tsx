@@ -98,7 +98,7 @@ const ActionsPage = () => {
       loading: colonyActionLoading,
       error: colonyActionError,
     },
-  ] = useColonyActionLazyQuery();
+  ] = useColonyActionLazyQuery({ fetchPolicy: 'network-only' });
 
   const [
     fetchRecipientProfile,
