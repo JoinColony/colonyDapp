@@ -119,10 +119,13 @@ const StakingSlider = ({
         <Slider
           name="amount"
           value={values.amount}
-          min={parseFloat(userStakeBottomLimit)}
-          max={parseFloat(remainingToStake)}
-          limit={parseFloat(userStakeTopLimit)}
-          step={0.01}
+          // min={parseFloat(userStakeBottomLimit)}
+          // max={parseFloat(remainingToStake)}
+          // limit={parseFloat(userStakeTopLimit)}
+          // step={0.01}
+          min={0}
+          max={100}
+          step={1}
           disabled={!canUserStake}
           appearance={appearance}
         />
