@@ -24,7 +24,7 @@ import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
 import { getMainClasses } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { MotionVote } from '~utils/colonyMotions';
+import { MotionVote, MotionState } from '~utils/colonyMotions';
 
 import VoteResults from './VoteResults';
 
@@ -37,6 +37,7 @@ interface Props {
   motionDomain: number;
   scrollToRef?: RefObject<HTMLInputElement>;
   transactionHash: string;
+  motionState: MotionState;
 }
 
 export const MSG = defineMessages({
@@ -110,6 +111,7 @@ const FinalizeMotionAndClaimWidget = ({
   motionDomain = ROOT_DOMAIN_ID,
   scrollToRef,
   transactionHash,
+  motionState,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const {
@@ -123,7 +125,6 @@ const FinalizeMotionAndClaimWidget = ({
     },
     fetchPolicy: 'network-only',
   });
-
   const {
     data: userVoted,
     loading: loadingUserVoted,
@@ -242,12 +243,14 @@ const FinalizeMotionAndClaimWidget = ({
    * If the motion is in the Root domain, it cannot be escalated further
    * meaning it can be finalized directly
    */
+  const motionNotFinalizable = motionState === MotionState.FailedNoFinalizable;
   const showFinalizeButton =
     voteResults?.motionVoteResults &&
     !finalized?.motionFinalized &&
+    !motionNotFinalizable &&
     motionDomain === ROOT_DOMAIN_ID;
 
-  const showClaimButton = finalized?.motionFinalized;
+  const showClaimButton = finalized?.motionFinalized || motionNotFinalizable;
   const canClaimStakes =
     bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||
     bigNumberify(stakerRewards?.motionStakerReward?.stakesNay || 0).gt(0);
