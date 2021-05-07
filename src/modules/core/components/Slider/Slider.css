@@ -9,3 +9,11 @@
 .main :global(.rc-slider-track) {
   max-width: 100%;
 }
+
+.primary :global(.rc-slider-handle:active) {
+  box-shadow: 0 0 5px var(--primary);
+}
+
+.danger :global(.rc-slider-handle:active) {
+  box-shadow: 0 0 5px var(--danger);
+}
