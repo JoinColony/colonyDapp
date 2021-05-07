@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
+import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Input, Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -13,10 +14,10 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import Toggle from '~core/Fields/Toggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 
-import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
+import { ColonyTokens, OneToken, useLoggedInUser } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useTransformer } from '~utils/hooks';
-import { useColonyReputation } from '~utils/hooks/useColonyReputation';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -43,16 +44,9 @@ const MSG = defineMessages({
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
   },
-  forceMotion: {
-    id: 'dashboard.TokenMintDialog.TokenMintForm.forceMotion',
-    defaultMessage: 'Force',
-  },
 });
 
-interface Props {
-  colony: Colony;
-  isVotingExtensionEnabled: boolean;
-  back?: () => void;
+interface Props extends ActionDialogProps {
   nativeToken?: ColonyTokens[0] | OneToken;
 }
 
@@ -74,12 +68,12 @@ const TokenMintForm = ({
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
-  const { colonyHasReputation } = useColonyReputation(colony.colonyAddress);
-  const onlyForceAction =
-    isVotingExtensionEnabled && !colonyHasReputation && !values.forceAction;
-
-  const userHasPermission =
-    canMintTokens || (isVotingExtensionEnabled && colonyHasReputation);
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canMintTokens,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
 
   const inputDisabled = !userHasPermission || onlyForceAction;
 
@@ -91,7 +85,7 @@ const TokenMintForm = ({
           text={MSG.title}
         />
         {canMintTokens && isVotingExtensionEnabled && (
-          <Toggle label={MSG.forceMotion} name="forceAction" />
+          <Toggle label={{ id: 'label.force' }} name="forceAction" />
         )}
       </DialogSection>
       {!userHasPermission && (
@@ -152,13 +146,7 @@ const TokenMintForm = ({
           </div>
         </DialogSection>
       )}
-      {onlyForceAction && (
-        <DialogSection appearance={{ theme: 'sidePadding' }}>
-          <div className={styles.reputationMessage}>
-            <NotEnoughReputation />
-          </div>
-        </DialogSection>
-      )}
+      {onlyForceAction && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}

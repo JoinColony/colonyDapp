@@ -8,3 +8,7 @@
   composes: text;
   color: var(--pink);
 }
+
+.container {
+  margin: 10px 0 30px 0;
+}

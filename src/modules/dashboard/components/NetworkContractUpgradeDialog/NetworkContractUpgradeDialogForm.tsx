@@ -4,20 +4,23 @@ import { FormikProps } from 'formik';
 import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
+import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 
 import {
-  Colony,
   useLoggedInUser,
   useNetworkContracts,
   useLegacyNumberOfRecoveryRolesQuery,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -85,18 +88,15 @@ safely upgrade the colony to the next version.
   },
 });
 
-interface Props {
-  back?: () => void;
-  colony: Colony;
-}
-
 const NetworkContractUpgradeDialogForm = ({
   back,
   colony,
   colony: { colonyAddress, version },
   handleSubmit,
   isSubmitting,
-}: Props & FormikProps<FormValues>) => {
+  isVotingExtensionEnabled,
+  values,
+}: ActionDialogProps & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const {
@@ -120,8 +120,16 @@ const NetworkContractUpgradeDialogForm = ({
 
   const hasRootPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    hasRootPermission,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
   const canUpgradeVersion =
-    hasRootPermission && canBeUpgraded(colony, newVersion as string);
+    userHasPermission && !!canBeUpgraded(colony, newVersion as string);
+
+  const inputDisabled = !canUpgradeVersion || onlyForceAction;
 
   const PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES =
     /*
@@ -141,6 +149,9 @@ const NetworkContractUpgradeDialogForm = ({
           text={MSG.title}
           className={styles.title}
         />
+        {canUpgradeVersion && isVotingExtensionEnabled && (
+          <Toggle label={{ id: 'label.force' }} name="forceAction" />
+        )}
       </DialogSection>
       {loadingLegacyRecoveyRole && (
         <DialogSection>
@@ -216,7 +227,7 @@ const NetworkContractUpgradeDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotation"
-          disabled={!canUpgradeVersion}
+          disabled={inputDisabled}
         />
       </DialogSection>
       {!hasRootPermission && (
@@ -236,6 +247,7 @@ const NetworkContractUpgradeDialogForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button
@@ -247,9 +259,7 @@ const NetworkContractUpgradeDialogForm = ({
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={{ id: 'button.confirm' }}
-          disabled={
-            !canUpgradeVersion || PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES
-          }
+          disabled={inputDisabled || PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES}
           onClick={() => handleSubmit()}
           loading={isSubmitting || loadingLegacyRecoveyRole}
         />

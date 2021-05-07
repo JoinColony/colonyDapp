@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
-import { DialogProps } from '~core/Dialog';
+import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { Colony, useLoggedInUser } from '~data/index';
@@ -38,7 +38,7 @@ const MSG = defineMessages({
   },
 });
 
-interface CustomWizardDialogueProps {
+interface CustomWizardDialogueProps extends ActionDialogProps {
   nextStep: string;
   nextStepEdit: string;
   prevStep: string;
@@ -57,6 +57,7 @@ const ManageDomainsDialog = ({
   nextStep,
   nextStepEdit,
   colony,
+  isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -71,7 +72,7 @@ const ManageDomainsDialog = ({
       title: MSG.createNewDomainTitle,
       description: MSG.createNewDomainDescription,
       icon: 'emoji-crane',
-      permissionRequired: !canCreateEditDomain,
+      permissionRequired: !(canCreateEditDomain || isVotingExtensionEnabled),
       permissionInfoTextValues: {
         permissionRequired: <FormattedMessage {...MSG.domainPermissionsList} />,
       },
@@ -81,7 +82,7 @@ const ManageDomainsDialog = ({
       title: MSG.editDomainTitle,
       description: MSG.editDomainDescription,
       icon: 'emoji-pencil-note',
-      permissionRequired: !canCreateEditDomain,
+      permissionRequired: !(canCreateEditDomain || isVotingExtensionEnabled),
       permissionInfoTextValues: {
         permissionRequired: <FormattedMessage {...MSG.domainPermissionsList} />,
       },

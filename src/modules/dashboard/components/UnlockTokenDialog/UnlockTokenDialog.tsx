@@ -33,7 +33,12 @@ const UnlockTokenDialog = ({
   const history = useHistory();
 
   const transform = useCallback(
-    pipe(mergePayload({ colonyAddress }), withMeta({ history })),
+    pipe(
+      mergePayload({
+        colonyAddress,
+      }),
+      withMeta({ history }),
+    ),
     [colonyAddress],
   );
 

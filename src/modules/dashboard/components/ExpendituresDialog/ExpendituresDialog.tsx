@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
 
-import { DialogProps } from '~core/Dialog';
+import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
@@ -56,7 +56,7 @@ const MSG = defineMessages({
   },
 });
 
-interface CustomWizardDialogProps {
+interface CustomWizardDialogProps extends ActionDialogProps {
   nextStep: string;
   prevStep: string;
   colony: Colony;
@@ -113,7 +113,6 @@ const ExpendituresDialog = ({
       description: MSG.taskDescription,
       icon: 'emoji-superman',
       comingSoon: true,
-      permissionRequired: true,
     },
     {
       title: MSG.recurringTitle,

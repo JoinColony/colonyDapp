@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyVersion } from '@colony/colony-js';
 
-import { DialogProps } from '~core/Dialog';
+import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
@@ -86,7 +86,7 @@ const MSG = defineMessages({
   },
 });
 
-interface CustomWizardDialogProps {
+interface CustomWizardDialogProps extends ActionDialogProps {
   nextStepPermissionManagement: string;
   nextStepRecovery: string;
   nextStepEditDetails: string;
@@ -110,6 +110,7 @@ const AdvancedDialog = ({
   nextStepVersionUpgrade,
   colony,
   colony: { version: colonyVersion },
+  isVotingExtensionEnabled,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -132,7 +133,9 @@ const AdvancedDialog = ({
       description: MSG.managePermissionsDescription,
       icon: 'emoji-building',
       onClick: () => callStep(nextStepPermissionManagement),
-      permissionRequired: !canEnterPermissionManagement,
+      permissionRequired: !(
+        canEnterPermissionManagement || isVotingExtensionEnabled
+      ),
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permissionsList: (
@@ -158,7 +161,7 @@ const AdvancedDialog = ({
       title: MSG.upgradeTitle,
       description: MSG.upgradeDescription,
       icon: 'emoji-strong-person',
-      permissionRequired: !hasRootPermission,
+      permissionRequired: !(hasRootPermission || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,
@@ -169,7 +172,7 @@ const AdvancedDialog = ({
       title: MSG.editColonyDetailsTitle,
       description: MSG.editColonyDetailsDescription,
       icon: 'emoji-edit-tools',
-      permissionRequired: !hasRootPermission,
+      permissionRequired: !(hasRootPermission || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.upgradePermissionsList} />,

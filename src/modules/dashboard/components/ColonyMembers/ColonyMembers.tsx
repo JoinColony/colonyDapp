@@ -12,6 +12,7 @@ import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
 
 import { ALLOWED_NETWORKS } from '~constants';
 import { NOT_FOUND_ROUTE } from '~routes/index';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import styles from './ColonyMembers.css';
 
@@ -39,13 +40,18 @@ const ColonyMembers = () => {
     variables: { name: colonyName, address: '' },
   });
 
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colonyData?.processedColony?.colonyAddress,
+  });
+
   const openPermissionManagementDialog = useDialog(PermissionManagementDialog);
 
   const handlePermissionManagementDialog = useCallback(() => {
     openPermissionManagementDialog({
       colony: colonyData?.processedColony as Colony,
+      isVotingExtensionEnabled,
     });
-  }, [openPermissionManagementDialog, colonyData]);
+  }, [openPermissionManagementDialog, colonyData, isVotingExtensionEnabled]);
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =

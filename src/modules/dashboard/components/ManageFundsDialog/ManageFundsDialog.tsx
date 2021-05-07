@@ -1,11 +1,11 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { DialogProps } from '~core/Dialog';
+import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
-import { useLoggedInUser, Colony } from '~data/index';
+import { useLoggedInUser } from '~data/index';
 import { getAllUserRoles } from '../../../transformers';
 import { canFund, hasRoot } from '../../../users/checks';
 
@@ -83,14 +83,12 @@ const MSG = defineMessages({
   },
 });
 
-interface CustomWizardDialogProps {
+interface CustomWizardDialogProps extends ActionDialogProps {
   nextStepTransferFunds: string;
   nextStepMintTokens: string;
   nextStepManageTokens: string;
   nextStepUnlockToken: string;
   prevStep: string;
-  colony: Colony;
-  isVotingExtensionEnabled: boolean;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -127,7 +125,7 @@ const ManageFundsDialog = ({
       title: MSG.transferFundsTitle,
       description: MSG.transferFundsDescription,
       icon: 'emoji-world-globe',
-      permissionRequired: !canMoveFunds,
+      permissionRequired: !(canMoveFunds || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: <FormattedMessage {...MSG.paymentPermissionsList} />,
@@ -151,7 +149,7 @@ const ManageFundsDialog = ({
       title: MSG.manageTokensTitle,
       description: MSG.manageTokensDescription,
       icon: 'emoji-pen',
-      permissionRequired: !canManageTokens,
+      permissionRequired: !(canManageTokens || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
@@ -177,7 +175,7 @@ const ManageFundsDialog = ({
       description: MSG.unlockTokensDescription,
       icon: 'emoji-padlock',
       onClick: () => callStep(nextStepUnlockToken),
-      permissionRequired: !canUnlockToken,
+      permissionRequired: !(canUnlockToken || isVotingExtensionEnabled),
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (

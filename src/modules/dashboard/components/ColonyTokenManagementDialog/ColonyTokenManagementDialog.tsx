@@ -1,29 +1,46 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
+import { AddressZero } from 'ethers/constants';
+import { FormikProps, FormikHelpers } from 'formik';
 import { useHistory } from 'react-router-dom';
+import * as yup from 'yup';
 
+import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import TokenEditDialog from '~core/TokenEditDialog';
-import { Colony } from '~data/index';
+import { Form } from '~core/Fields';
+
 import { ActionTypes } from '~redux/index';
+import { Address } from '~types/index';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
-import { useAsyncFunction } from '~utils/hooks';
+import { WizardDialogType, useAsyncFunction } from '~utils/hooks';
+import { createAddress } from '~utils/web3';
 
 import getTokenList from './getTokenList';
 
-interface Props {
-  colony: Colony;
-  cancel: () => void;
-  close: () => void;
-  prevStep?: string;
-  callStep?: (dialogName: string) => void;
-}
+const MSG = defineMessages({
+  errorAddingToken: {
+    id: 'core.TokenEditDialog.errorAddingToken',
+    defaultMessage: `Sorry, there was an error adding this token. Learn more about tokens at: https://colony.io.`,
+  },
+});
+
+type Props = DialogProps &
+  Partial<WizardDialogType<object>> &
+  ActionDialogProps;
 
 const displayName = 'dashboard.ColonyTokenManagementDialog';
 
-const updateTokensAction = {
-  submit: ActionTypes.COLONY_ACTION_EDIT_COLONY,
-  error: ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR,
-  success: ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS,
-};
+export interface FormValues {
+  forceAction: boolean;
+  tokenAddress?: Address;
+  selectedTokenAddresses?: Address[];
+  annotationMessage?: string;
+}
+
+const validationSchema = yup.object({
+  tokenAddress: yup.string().address(),
+  annotation: yup.string().max(4000),
+});
 
 const ColonyTokenManagementDialog = ({
   colony: {
@@ -33,13 +50,34 @@ const ColonyTokenManagementDialog = ({
     avatarURL,
     avatarHash,
   },
+  colony: { tokens = [], nativeTokenAddress },
   colony,
   cancel,
   close,
   callStep,
   prevStep,
+  isVotingExtensionEnabled,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+  const { formatMessage } = useIntl();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_MOTION_EDIT_COLONY${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_EDIT_COLONY${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
+
+  const updateTokensAction = {
+    submit: getFormAction('SUBMIT'),
+    error: getFormAction('ERROR'),
+    success: getFormAction('SUCCESS'),
+  };
 
   const transform = useCallback(
     pipe(
@@ -63,19 +101,73 @@ const ColonyTokenManagementDialog = ({
     transform,
   }) as any;
 
-  return (
-    <TokenEditDialog
-      cancel={cancel}
-      close={close}
-      colony={colony}
-      updateTokens={updateTokens}
-      tokensList={getTokenList}
-      back={
-        prevStep === undefined || callStep === undefined
-          ? undefined
-          : () => callStep(prevStep)
+  const handleSubmit = useCallback(
+    async (
+      {
+        tokenAddress,
+        selectedTokenAddresses = [],
+        annotationMessage,
+      }: FormValues,
+      { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
+    ) => {
+      let addresses = selectedTokenAddresses;
+      if (tokenAddress && !selectedTokenAddresses.includes(tokenAddress)) {
+        addresses.push(tokenAddress);
       }
-    />
+      addresses = [
+        ...new Set(
+          addresses
+            .map((address) => createAddress(address))
+            .filter((address) => {
+              if (address === AddressZero || address === nativeTokenAddress) {
+                return false;
+              }
+              return true;
+            }),
+        ),
+      ];
+      try {
+        await updateTokens({ tokenAddresses: addresses, annotationMessage });
+        resetForm();
+        close();
+      } catch (e) {
+        setFieldError('tokenAddress', formatMessage(MSG.errorAddingToken));
+        setSubmitting(false);
+      }
+    },
+    [updateTokens, formatMessage, close, nativeTokenAddress],
+  );
+
+  return (
+    <Form
+      initialValues={{
+        forceAction: false,
+        tokenAddress: undefined,
+        selectedTokenAddresses: tokens.map((token) => token.address),
+        annotationMessage: undefined,
+      }}
+      validationSchema={validationSchema}
+      validateOnChange={false}
+      onSubmit={handleSubmit}
+    >
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <TokenEditDialog
+              {...formValues}
+              colony={colony}
+              back={prevStep && callStep ? () => callStep(prevStep) : undefined}
+              tokensList={getTokenList}
+              close={close}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+            />
+          </Dialog>
+        );
+      }}
+    </Form>
   );
 };
 

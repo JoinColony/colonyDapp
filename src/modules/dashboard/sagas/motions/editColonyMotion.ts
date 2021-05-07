@@ -17,17 +17,27 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-function* createMintTokensMotion({
-  payload: { colonyAddress, colonyName, amount, annotationMessage },
+function* editColonyMotion({
+  payload: {
+    colonyAddress,
+    colonyName,
+    colonyDisplayName,
+    colonyAvatarImage,
+    colonyAvatarHash,
+    hasAvatarChanged,
+    colonyTokens = [],
+    annotationMessage,
+  },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_MOTION_MINT_TOKENS>) {
+}: Action<ActionTypes.COLONY_MOTION_EDIT_COLONY>) {
   let txChannel;
   try {
-    if (!amount) {
-      throw new Error(
-        'Amount to mint not set for mintTokensMotion transaction',
-      );
+    /*
+     * Validate the required values
+     */
+    if (!colonyDisplayName && colonyDisplayName !== null) {
+      throw new Error('A colony name is required in order to edit the colony');
     }
 
     const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -35,10 +45,6 @@ function* createMintTokensMotion({
       ClientType.ColonyClient,
       colonyAddress,
     );
-
-    const encodedAction = colonyClient.interface.functions.mintTokens.encode([
-      amount,
-    ]);
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
@@ -58,10 +64,47 @@ function* createMintTokensMotion({
 
     const {
       createRootMotion,
-      annotateMintTokens,
+      annotateEditColonyMotion,
     } = yield createTransactionChannels(metaId, [
       'createRootMotion',
-      'annotateMintTokens',
+      'annotateEditColonyMotion',
+    ]);
+
+    /*
+     * Upload colony metadata to IPFS
+     *
+     * @NOTE Only (re)upload the avatar if it has changed, otherwise just use
+     * the old hash.
+     * This cuts down on some transaction signing wait time, since IPFS uplaods
+     * tend to be on the slower side :(
+     */
+    let colonyAvatarIpfsHash = null;
+    if (colonyAvatarImage && hasAvatarChanged) {
+      colonyAvatarIpfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          image: colonyAvatarImage,
+        }),
+      );
+    }
+
+    /*
+     * Upload colony metadata to IPFS
+     */
+    let colonyMetadataIpfsHash = null;
+    colonyMetadataIpfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        colonyDisplayName,
+        colonyAvatarHash: hasAvatarChanged
+          ? colonyAvatarIpfsHash
+          : colonyAvatarHash,
+        colonyTokens,
+      }),
+    );
+
+    const encodedAction = colonyClient.interface.functions.editColony.encode([
+      colonyMetadataIpfsHash,
     ]);
 
     // create transactions
@@ -79,7 +122,7 @@ function* createMintTokensMotion({
     });
 
     if (annotationMessage) {
-      yield fork(createTransaction, annotateMintTokens.id, {
+      yield fork(createTransaction, annotateEditColonyMotion.id, {
         context: ClientType.ColonyClient,
         methodName: 'annotateTransaction',
         identifier: colonyAddress,
@@ -96,10 +139,18 @@ function* createMintTokensMotion({
     yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
-        annotateMintTokens.channel,
+        annotateEditColonyMotion.channel,
         ActionTypes.TRANSACTION_CREATED,
       );
     }
+
+    let ipfsHash = null;
+    ipfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        annotationMessage,
+      }),
+    );
 
     yield put(transactionReady(createRootMotion.id));
 
@@ -112,29 +163,21 @@ function* createMintTokensMotion({
     yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      yield put(transactionPending(annotateMintTokens.id));
-
-      let ipfsHash = null;
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
+      yield put(transactionPending(annotateEditColonyMotion.id));
 
       yield put(
-        transactionAddParams(annotateMintTokens.id, [txHash, ipfsHash]),
+        transactionAddParams(annotateEditColonyMotion.id, [txHash, ipfsHash]),
       );
 
-      yield put(transactionReady(annotateMintTokens.id));
+      yield put(transactionReady(annotateEditColonyMotion.id));
 
       yield takeFrom(
-        annotateMintTokens.channel,
+        annotateEditColonyMotion.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_MINT_TOKENS_SUCCESS,
+      type: ActionTypes.COLONY_MOTION_EDIT_COLONY_SUCCESS,
       meta,
     });
 
@@ -142,15 +185,12 @@ function* createMintTokensMotion({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (caughtError) {
-    putError(ActionTypes.COLONY_MOTION_MINT_TOKENS_ERROR, caughtError, meta);
+    putError(ActionTypes.COLONY_MOTION_EDIT_COLONY_ERROR, caughtError, meta);
   } finally {
     txChannel.close();
   }
 }
 
-export default function* mintTokensMotionSaga() {
-  yield takeEvery(
-    ActionTypes.COLONY_MOTION_MINT_TOKENS,
-    createMintTokensMotion,
-  );
+export default function* editColonyMotionSaga() {
+  yield takeEvery(ActionTypes.COLONY_MOTION_EDIT_COLONY, editColonyMotion);
 }

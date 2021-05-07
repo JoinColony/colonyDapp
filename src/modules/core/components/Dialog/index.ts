@@ -7,4 +7,4 @@ export { default as DialogSection } from './DialogSection';
 
 export { default as useDialog } from './useDialog';
 
-export { DialogProps, DialogType } from './types';
+export { DialogProps, DialogType, ActionDialogProps } from './types';

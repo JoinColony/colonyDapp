@@ -61,8 +61,9 @@ const ColonyFundingMenu = ({
     () =>
       openTokenManagementDialog({
         colony,
+        isVotingExtensionEnabled,
       }),
-    [openTokenManagementDialog, colony],
+    [openTokenManagementDialog, colony, isVotingExtensionEnabled],
   );
   const handleMintTokens = useCallback(() => {
     openTokenMintDialog({
@@ -74,9 +75,10 @@ const ColonyFundingMenu = ({
     () =>
       openTokensMoveDialog({
         colony,
+        isVotingExtensionEnabled,
         fromDomain: selectedDomainId,
       }),
-    [colony, openTokensMoveDialog, selectedDomainId],
+    [colony, openTokensMoveDialog, selectedDomainId, isVotingExtensionEnabled],
   );
 
   const canEdit =

@@ -1,12 +1,14 @@
 import React from 'react';
 import { defineMessage, FormattedMessage } from 'react-intl';
 
+import DialogSection from '~core/Dialog/DialogSection';
+
 import styles from './NotEnoughReputation.css';
 
 const MSG = defineMessage({
   title: {
     id: 'NotEnoughReputation.title',
-    defaultMessage: 'You don’t have enough reputation to create this action.',
+    defaultMessage: 'You don’t have enough reputation to create this motion.',
   },
   description: {
     id: 'NotEnoughReputation.description',
@@ -19,14 +21,16 @@ const MSG = defineMessage({
 const displayName = 'NotEnoughReputation';
 
 const NotEnoughReputation = () => (
-  <>
-    <p className={styles.title}>
-      <FormattedMessage {...MSG.title} />
-    </p>
-    <p className={styles.text}>
-      <FormattedMessage {...MSG.description} />
-    </p>
-  </>
+  <DialogSection appearance={{ theme: 'sidePadding' }}>
+    <div className={styles.container}>
+      <p className={styles.title}>
+        <FormattedMessage {...MSG.title} />
+      </p>
+      <p className={styles.text}>
+        <FormattedMessage {...MSG.description} />
+      </p>
+    </div>
+  </DialogSection>
 );
 
 NotEnoughReputation.displayName = displayName;

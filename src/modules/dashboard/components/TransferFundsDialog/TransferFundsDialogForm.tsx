@@ -26,12 +26,16 @@ import {
   useTokenBalancesForDomainsLazyQuery,
   Colony,
 } from '~data/index';
+import { ActionDialogProps } from '~core/Dialog';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import {
   getBalanceFromToken,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
@@ -112,7 +116,8 @@ const TransferFundsDialogForm = ({
   values,
   validateForm,
   errors,
-}: Props & FormikProps<FormValues>) => {
+  isVotingExtensionEnabled,
+}: ActionDialogProps & FormikProps<FormValues>) => {
   const { tokenAddress, amount } = values;
 
   const fromDomainId = values.fromDomain
@@ -138,9 +143,18 @@ const TransferFundsDialogForm = ({
     fromDomainId,
   ]);
 
-  const userHasPermissions = userHasRole(fromDomainRoles, ColonyRole.Funding);
+  const canTransferFunds = userHasRole(fromDomainRoles, ColonyRole.Funding);
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Funding];
+
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canTransferFunds,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
 
   const domainOptions = useMemo(
     () =>
@@ -250,8 +264,11 @@ const TransferFundsDialogForm = ({
           text={MSG.title}
           className={styles.title}
         />
+        {canTransferFunds && isVotingExtensionEnabled && (
+          <Toggle label={{ id: 'label.force' }} name="forceAction" />
+        )}
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermission && (
         <div className={styles.permissionsRequired}>
           <DialogSection>
             <PermissionRequiredInfo requiredRoles={requiredRoles} />
@@ -267,7 +284,7 @@ const TransferFundsDialogForm = ({
               name="fromDomain"
               appearance={{ theme: 'grey' }}
               onChange={() => validateForm()}
-              disabled={!userHasPermissions}
+              disabled={inputDisabled}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -306,7 +323,7 @@ const TransferFundsDialogForm = ({
               name="toDomain"
               appearance={{ theme: 'grey' }}
               onChange={() => validateForm()}
-              disabled={!userHasPermissions}
+              disabled={inputDisabled}
             />
             {!!tokenAddress && toDomainTokenBalance && !errors.toDomain && (
               <div className={styles.domainPotBalance}>
@@ -351,7 +368,7 @@ const TransferFundsDialogForm = ({
                   selectedToken && selectedToken.decimals,
                 ),
               }}
-              disabled={!userHasPermissions}
+              disabled={inputDisabled}
               onChange={() => validateForm()}
             />
           </div>
@@ -362,7 +379,7 @@ const TransferFundsDialogForm = ({
               name="tokenAddress"
               elementOnly
               appearance={{ alignOptions: 'right', theme: 'grey' }}
-              disabled={!userHasPermissions}
+              disabled={inputDisabled}
             />
           </div>
           {values.tokenAddress === AddressZero && (
@@ -386,10 +403,10 @@ const TransferFundsDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotation"
-          disabled={!userHasPermissions}
+          disabled={inputDisabled}
         />
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermission && (
         <DialogSection>
           <span className={styles.permissionsError}>
             <FormattedMessage
@@ -407,6 +424,7 @@ const TransferFundsDialogForm = ({
           </span>
         </DialogSection>
       )}
+      {onlyForceAction && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button
@@ -420,7 +438,7 @@ const TransferFundsDialogForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !userHasPermissions}
+          disabled={!isValid || inputDisabled}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
