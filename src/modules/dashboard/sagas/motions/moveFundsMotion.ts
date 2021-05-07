@@ -1,10 +1,6 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
-import {
-  ClientType,
-  ROOT_DOMAIN_ID,
-  getMoveFundsPermissionProofs,
-} from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
+import { ClientType, getMoveFundsPermissionProofs } from '@colony/colony-js';
+import { AddressZero, MaxUint256 } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -79,7 +75,7 @@ function* moveFundsMotion({
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      ROOT_DOMAIN_ID,
+      fromDomainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
@@ -120,8 +116,8 @@ function* moveFundsMotion({
       methodName: 'createDomainMotion',
       identifier: colonyAddress,
       params: [
-        ROOT_DOMAIN_ID,
-        fromChildSkillIndex,
+        fromDomainId,
+        MaxUint256.toString(),
         encodedAction,
         key,
         value,

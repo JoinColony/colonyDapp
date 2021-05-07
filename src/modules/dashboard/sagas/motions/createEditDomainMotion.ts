@@ -67,7 +67,7 @@ function* createEditDomainMotion({
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      ROOT_DOMAIN_ID,
+      domainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(

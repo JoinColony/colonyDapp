@@ -58,18 +58,16 @@ function* managePermissionsMotion({
       colonyAddress,
     );
 
-    const isRootDomain = domainId === ROOT_DOMAIN_ID;
-
     const [permissionDomainId, childSkillIndex] = yield call(
       getPermissionProofs,
       colonyClient,
       domainId,
-      isRootDomain ? ColonyRole.Root : ColonyRole.Architecture,
+      domainId === ROOT_DOMAIN_ID ? ColonyRole.Root : ColonyRole.Architecture,
     );
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      ROOT_DOMAIN_ID,
+      domainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
