@@ -1,7 +1,7 @@
 .stakeRequiredBannerContainer {
   width: 100%;
   position: fixed;
-  top: 0;
+  top: 70px;
   left: 0;
   z-index: 1;
   font-weight: var(--weight-normal);
