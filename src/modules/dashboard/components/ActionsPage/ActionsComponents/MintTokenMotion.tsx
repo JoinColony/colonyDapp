@@ -39,6 +39,7 @@ import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
+import StakeRequiredBanner from '../StakeRequiredBanner';
 import FinalizeMotionAndClaimWidget, {
   MSG as voteResultsMSG,
 } from '../FinalizeMotionAndClaimWidget';
@@ -223,6 +224,7 @@ const MintTokenMotion = ({
 
   return (
     <div className={styles.main}>
+      <StakeRequiredBanner stakeRequired={true} />
       <div className={styles.upperContainer}>
         <p className={styles.tagWrapper}>
           <Tag

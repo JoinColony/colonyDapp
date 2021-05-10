@@ -1,0 +1,19 @@
+.stakeRequiredBannerContainer {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  font-weight: var(--weight-normal);
+  font-size: var(--size-normal);
+  text-align: center;
+}
+
+.stakeRequiredBanner {
+  padding: 9px 0;
+}
+
+.share button {
+  margin-left: 4px;
+  font-size: var(--size-small);
+}
