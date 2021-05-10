@@ -1,5 +1,8 @@
 import { defineMessage } from 'react-intl';
 import { BigNumber, bigNumberify } from 'ethers/utils';
+import moveDecimal from 'move-decimal-point';
+
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 const motionCountdownTimerMsg = defineMessage({
   stake: {
@@ -169,3 +172,22 @@ export const getEarlierEventTimestamp = (
 ) => {
   return currentTimestamp - subTime;
 };
+
+export const shouldDisplayMotion = (
+  currentStake: string,
+  requiredStake: string,
+  decimals: number,
+): boolean => {
+  const current = moveDecimal(
+    currentStake,
+    -1 * getTokenDecimalsWithFallback(decimals),
+  );
+  const required = moveDecimal(
+    requiredStake,
+    -1 * getTokenDecimalsWithFallback(decimals),
+  );
+  const stakePercentage = Math.round((current / required) * 100);
+  return stakePercentage >= 10;
+};
+
+
