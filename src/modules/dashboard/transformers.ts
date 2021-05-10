@@ -1,5 +1,4 @@
 import { AddressZero, HashZero } from 'ethers/constants';
-import moveDecimal from 'move-decimal-point';
 
 import {
   TransactionsMessagesCount,
@@ -22,7 +21,9 @@ import { createAddress, toHex } from '~utils/web3';
 import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 import { ItemStatus } from '~core/ActionsList';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  shouldDisplayMotion
+} from '~utils/colonyMotions';
 
 enum FilteredUnformattedAction {
   OneTxPayments = 'oneTxPayments',
@@ -118,16 +119,8 @@ export const getActionsListData = (
             token: { decimals },
           },
         } = motion;
-        const current = moveDecimal(
-          currentStake,
-          -1 * getTokenDecimalsWithFallback(decimals),
-        );
-        const required = moveDecimal(
-          requiredStake,
-          -1 * getTokenDecimalsWithFallback(decimals),
-        );
-        const stakePercentage = Math.round((current / required) * 100);
-        if (escalated || stakePercentage >= 10) {
+        const enoughStake = shouldDisplayMotion(currentStake, requiredStake, decimals);
+        if (escalated || enoughStake) {
           return [...acc, motion];
         }
         return acc;
