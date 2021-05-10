@@ -62,6 +62,7 @@ export const getActionsListData = (
    * We only consider an action that we manually trigger ourselves, so if the transaction
    * hashes match, throw them out.
    */
+
   const filteredUnformattedActions = {
     oneTxPayments: unformattedActions?.oneTxPayments || [],
     events:
@@ -88,15 +89,17 @@ export const getActionsListData = (
         if (isTransactionRepeated) return acc;
 
         /*
-         * Filter out events that have the recipient an extension's address
+         * Filter out events that have the recipient or initiator an extension's address
          *
          * This is used to filter out setting root roles to extensions after
-         * they have been installed
+         * they have been installed. This also filter out duplicated events
+         * which occurs when motion is finalized.
          */
         if (
           extensionAddresses?.find(
             (extensionAddress) =>
-              extensionAddress === event?.processedValues?.user,
+              extensionAddress === event?.processedValues?.user ||
+              extensionAddress === event?.processedValues?.agent,
           )
         ) {
           return acc;
