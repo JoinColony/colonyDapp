@@ -1,17 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, RefObject } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
-import { useHistory } from 'react-router-dom';
 import { bigNumberify } from 'ethers/utils';
-import moveDecimal from 'move-decimal-point';
+import { Decimal } from 'decimal.js';
 
 import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import { AnyToken, useLoggedInUser } from '~data/index';
+import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { pipe, mapPayload, withMeta } from '~utils/actions';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { pipe, mapPayload } from '~utils/actions';
 
 import DialogForm, { Props as FormProps } from './RaiseObjectionDialogForm';
 
@@ -24,8 +22,8 @@ interface Props extends FormProps {
   cancel: () => void;
   close: () => void;
   motionId: number;
-  nativeToken?: AnyToken;
   transactionHash: string;
+  scrollToRef?: RefObject<HTMLInputElement>;
 }
 
 const displayName = 'dashboard.RaiseObjectionDialog';
@@ -33,14 +31,14 @@ const displayName = 'dashboard.RaiseObjectionDialog';
 const RaiseObjectionDialog = ({
   cancel,
   close,
+  colony: { colonyAddress },
   colony,
   minUserStake,
-  nativeToken,
   motionId,
   transactionHash,
+  scrollToRef,
   ...props
 }: Props) => {
-  const history = useHistory();
   const { walletAddress } = useLoggedInUser();
 
   const validationSchema = yup.object().shape({
@@ -48,38 +46,42 @@ const RaiseObjectionDialog = ({
     annotation: yup.string().max(90),
   });
 
-  const userStakeBottomLimit = moveDecimal(
-    minUserStake,
-    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-  );
-
   const transform = useCallback(
     pipe(
-      mapPayload(({ annotation: annotationMessage, amount }) => {
+      mapPayload(({ amount }) => {
+        const { remainingToFullyNayStaked } = props;
+        const remainingToStake = new Decimal(remainingToFullyNayStaked);
+        const stake = new Decimal(amount).times(remainingToStake).div(100);
+        const stakeWithMin = new Decimal(minUserStake).gte(stake)
+          ? new Decimal(minUserStake)
+          : stake;
         return {
-          amount: bigNumberify(
-            moveDecimal(
-              amount,
-              getTokenDecimalsWithFallback(nativeToken?.decimals),
-            ),
-          ),
+          amount: stakeWithMin.round().toString(),
           userAddress: walletAddress,
-          colonyAddress: colony.colonyAddress,
+          colonyAddress,
           motionId: bigNumberify(motionId),
           vote: 0,
           transactionHash,
-          annotationMessage,
         };
       }),
-      withMeta({ history }),
     ),
-    [],
+    [walletAddress, colonyAddress, motionId],
+  );
+
+  const handleSuccess = useCallback(
+    (_, { setFieldValue, resetForm }) => {
+      resetForm({});
+      setFieldValue('amount', 0);
+      scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
+      close();
+    },
+    [scrollToRef, close],
   );
 
   return (
     <ActionForm
       initialValues={{
-        amount: parseFloat(userStakeBottomLimit),
+        amount: 0,
         annotation: undefined,
       }}
       submit={ActionTypes.COLONY_MOTION_STAKE}
@@ -87,7 +89,7 @@ const RaiseObjectionDialog = ({
       success={ActionTypes.COLONY_MOTION_STAKE_SUCCESS}
       validationSchema={validationSchema}
       onSubmit={close}
-      onSuccess={close}
+      onSuccess={handleSuccess}
       transform={transform}
     >
       {(formValues: FormikProps<FormValues>) => (

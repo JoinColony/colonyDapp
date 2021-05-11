@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
-import moveDecimal from 'move-decimal-point';
 import * as yup from 'yup';
+import { Decimal } from 'decimal.js';
 
 import { ActionForm } from '~core/Fields';
 import Button from '~core/Button';
@@ -17,7 +17,6 @@ import {
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload, pipe } from '~utils/actions';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
 import StakingSlider, { StakingAmounts } from './StakingSlider';
@@ -55,7 +54,7 @@ const validationSchema = yup.object({
 
 const StakingWidget = ({
   colony,
-  colony: { colonyAddress, tokens, nativeTokenAddress },
+  colony: { colonyAddress, nativeTokenAddress },
   motionId,
   scrollToRef,
   transactionHash,
@@ -84,10 +83,6 @@ const StakingWidget = ({
     },
   });
 
-  const nativeToken = tokens.find(
-    ({ address }) => address === nativeTokenAddress,
-  );
-
   const openRaiseObjectionDialog = useDialog(RaiseObjectionDialog);
 
   const handleRaiseObjection = useCallback(
@@ -95,47 +90,52 @@ const StakingWidget = ({
       openRaiseObjectionDialog({
         motionId,
         colony,
-        nativeToken,
         canUserStake: userHasPermission,
         transactionHash,
+        scrollToRef,
         ...stakingAmounts,
       }),
-    [colony, openRaiseObjectionDialog, nativeToken, motionId, transactionHash],
+    [colony, openRaiseObjectionDialog, scrollToRef, motionId, transactionHash],
   );
 
   const transform = useCallback(
     pipe(
-      mapPayload(({ amount }) => ({
-        amount: bigNumberify(
-          moveDecimal(
-            amount,
-            getTokenDecimalsWithFallback(nativeToken?.decimals),
-          ),
-        ),
-        userAddress: walletAddress,
-        colonyAddress,
-        motionId: bigNumberify(motionId),
-        vote: isObjection ? 0 : 1,
-        transactionHash,
-      })),
+      mapPayload(({ amount }) => {
+        if (data?.motionStakes) {
+          const {
+            remainingToFullyNayStaked,
+            remainingToFullyYayStaked,
+            minUserStake,
+          } = data.motionStakes;
+          const remainingToStake = new Decimal(
+            isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
+          );
+          const stake = new Decimal(amount).times(remainingToStake).div(100);
+          const stakeWithMin = new Decimal(minUserStake).gte(stake)
+            ? new Decimal(minUserStake)
+            : stake;
+          return {
+            amount: stakeWithMin.round().toString(),
+            userAddress: walletAddress,
+            colonyAddress,
+            motionId: bigNumberify(motionId),
+            vote: isObjection ? 0 : 1,
+            transactionHash,
+          };
+        }
+        return null;
+      }),
     ),
     [walletAddress, colonyAddress, motionId, data, isObjection],
   );
 
   const handleSuccess = useCallback(
     (_, { setFieldValue, resetForm }) => {
-      if (data?.motionStakes) {
-        const { minUserStake } = data.motionStakes;
-        const userStakeBottomLimit = moveDecimal(
-          minUserStake,
-          -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-        );
-        resetForm({});
-        setFieldValue('amount', parseFloat(userStakeBottomLimit));
-        scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
-      }
+      resetForm({});
+      setFieldValue('amount', 0);
+      scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
     },
-    [data, nativeToken, scrollToRef],
+    [scrollToRef],
   );
 
   if (loading || userDataLoading || !data?.motionStakes) {
@@ -158,50 +158,10 @@ const StakingWidget = ({
     minUserStake,
   } = data.motionStakes;
 
-  const remainingToStakeYay = parseFloat(
-    moveDecimal(
-      remainingToFullyYayStaked,
-      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-    ),
+  const userActivatedTokens = new Decimal(
+    userData?.user?.userLock?.balance || 0,
   );
-
-  const remainingToStakeNay = parseFloat(
-    moveDecimal(
-      remainingToFullyNayStaked,
-      1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-    ),
-  );
-  /*
-   * @NOTE Compensate for the lack of granularity in the slider
-   * This is in order to be able to fully stake a motion
-   *
-   * If we reached the max of what the slider can show, just add some
-   * extra in order to ensure we reach the required stake
-   *
-   * We're relying on the contracts here, since we can sent over the
-   * required stake limit, and the contract call will discard it
-   * (no, it's not lost)
-   *
-   * Example:
-   * This is so we can round values like 18.627870543008473 to 18.63
-   */
-  const remainingToStakeSafe = (remainingToStake: number) =>
-    remainingToStake > 0
-      ? Math.round(remainingToStake * 100) / 100
-      : remainingToStake;
-
-  const userActivatedTokens = parseFloat(
-    moveDecimal(
-      userData?.user?.userLock?.balance || 0,
-      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-    ),
-  );
-  const userStakeBottomLimit = parseFloat(
-    moveDecimal(
-      minUserStake,
-      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-    ),
-  );
+  const userStakeBottomLimit = new Decimal(minUserStake);
 
   const canUserStake =
     /*
@@ -216,19 +176,19 @@ const StakingWidget = ({
     /*
      * Activated tokens are more than the minimum required stake amount
      */
-    userActivatedTokens >= userStakeBottomLimit &&
+    userActivatedTokens.gte(userStakeBottomLimit) &&
     /*
      * Has activated tokens
      */
-    userActivatedTokens > 0;
+    userActivatedTokens.gt(0);
 
   /*
    * Motion can be still staked (ie: amount left to stake)
    */
   const canUserStakeYay =
-    canUserStake && remainingToStakeSafe(remainingToStakeYay) > 0;
+    canUserStake && new Decimal(remainingToFullyYayStaked).gt(0);
   const canUserStakeNay =
-    canUserStake && remainingToStakeSafe(remainingToStakeNay) > 0;
+    canUserStake && new Decimal(remainingToFullyNayStaked).gt(0);
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
@@ -236,7 +196,7 @@ const StakingWidget = ({
     <div className={styles.main}>
       <ActionForm
         initialValues={{
-          amount: userStakeBottomLimit,
+          amount: 0,
         }}
         validationSchema={validationSchema}
         submit={ActionTypes.COLONY_MOTION_STAKE}
