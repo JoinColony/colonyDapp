@@ -44,6 +44,14 @@ interface ActionValues {
   roles: ActionUserRoles[];
 }
 
+interface MotionValues extends ActionValues {
+  motionNAYStake: string;
+  motionState: MotionState;
+  actionInitiator: string;
+  motionDomain: number;
+  rootHash: string;
+}
+
 /*
  * Main logic for detecting a action type based on an array of "required" events
  */
@@ -562,11 +570,11 @@ export const getMotionState = async (
   }
 };
 
-const getMintTokensMotionValues = async (
+const getMotionValues = async (
   processedEvents: ProcessedEvent[],
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
-): Promise<Partial<ActionValues>> => {
+): Promise<Partial<MotionValues>> => {
   const motionCreatedEvent = processedEvents[0];
   const motionId = motionCreatedEvent.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
@@ -576,32 +584,75 @@ const getMintTokensMotionValues = async (
     votingClient,
     motion,
   );
-  const values = colonyClient.interface.parseTransaction({
-    data: motion.action,
-  });
   const tokenAddress = await colonyClient.getToken();
 
-  const mintTokensMotionValues: {
-    motionState: MotionState;
-    address: Address;
-    amount: string;
-    actionInitiator: string;
-    recipient: Address;
-    tokenAddress: Address;
-    motionDomain: number;
-    rootHash: string;
-  } = {
+  const motionValues: Partial<MotionValues> = {
+    motionNAYStake: motion.stakes[0].toString(),
     motionState,
     address: motionCreatedEvent.address,
     recipient: motion.altTarget,
     actionInitiator: motionCreatedEvent.values.creator,
-    amount: bigNumberify(values.args[0] || '0').toString(),
     tokenAddress,
     motionDomain: motion.domainId.toNumber(),
     rootHash: motion.rootHash,
   };
 
+  return motionValues;
+};
+
+const getMintTokensMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const mintTokensMotionValues: {
+    amount: string;
+  } = {
+    ...motionDefaultValues,
+    amount: bigNumberify(values.args[0] || '0').toString(),
+  };
+
   return mintTokensMotionValues;
+};
+
+const getCreateDomainMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const createDomainMotionValues: Partial<MotionValues> = {
+    ...motionDefaultValues,
+    fromDomain: bigNumberify(values.args[0]).toNumber(),
+  };
+
+  if (values.agent) {
+    createDomainMotionValues.actionInitiator = values.agent;
+  }
+  return createDomainMotionValues;
 };
 
 export const getActionValues = async (
@@ -715,6 +766,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...mintTokensMotionValues,
+      };
+    }
+    case ColonyMotions.CreateDomainMotion: {
+      const createDomainMotionValues = await getCreateDomainMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...createDomainMotionValues,
       };
     }
     default: {
