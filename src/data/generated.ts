@@ -1148,7 +1148,7 @@ export type SubscriptionMotion = {
   domain: SubgraphDomain;
   extensionAddress: Scalars['String'];
   agent: Scalars['String'];
-  stakes?: Maybe<Array<Scalars['String']>>;
+  stakes: Array<Scalars['String']>;
   requiredStake: Scalars['String'];
   escalated: Scalars['Boolean'];
   state: Scalars['String'];

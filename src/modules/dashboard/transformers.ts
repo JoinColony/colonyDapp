@@ -22,9 +22,7 @@ import { createAddress, toHex } from '~utils/web3';
 import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 import { ItemStatus } from '~core/ActionsList';
-import {
-  shouldDisplayMotion
-} from '~utils/colonyMotions';
+import { shouldDisplayMotion } from '~utils/colonyMotions';
 
 enum FilteredUnformattedAction {
   OneTxPayments = 'oneTxPayments',
@@ -123,7 +121,11 @@ export const getActionsListData = (
         const totalNayStake = bigNumberify(stakes[0] || 0);
         const totalYayStake = bigNumberify(stakes[1] || 0);
         const currentStake = totalNayStake.add(totalYayStake).toString();
-        const enoughStake = shouldDisplayMotion(currentStake, requiredStake, decimals);
+        const enoughStake = shouldDisplayMotion(
+          currentStake,
+          requiredStake,
+          decimals,
+        );
         if (escalated || enoughStake) {
           return [...acc, motion];
         }

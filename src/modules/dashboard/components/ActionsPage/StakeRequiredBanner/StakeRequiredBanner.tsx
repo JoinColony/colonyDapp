@@ -23,9 +23,7 @@ type Props = {
 
 const displayName = 'dashboard.ActionsPage.StakeRequiredBanner';
 
-const StakeRequiredBanner = ({
-  stakeRequired
-}: Props) => {
+const StakeRequiredBanner = ({ stakeRequired }: Props) => {
   return stakeRequired ? (
     <div className={styles.stakeRequiredBannerContainer}>
       <Alert
@@ -38,7 +36,7 @@ const StakeRequiredBanner = ({
         <div className={styles.stakeRequiredBanner}>
           <FormattedMessage {...MSG.stakeRequired} />
           <span className={styles.share}>
-            <ClipboardCopy value={window.location.href} text={MSG.shareUrl}/>
+            <ClipboardCopy value={window.location.href} text={MSG.shareUrl} />
           </span>
         </div>
       </Alert>

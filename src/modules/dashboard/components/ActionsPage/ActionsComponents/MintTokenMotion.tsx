@@ -34,7 +34,7 @@ import {
   MOTION_TAG_MAP,
   PERIOD_TYPE_MAP,
   MOTION_STATE_TO_TIMER_TEXT_MAP,
-  shouldDisplayMotion
+  shouldDisplayMotion,
 } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
@@ -108,7 +108,11 @@ const MintTokenMotion = ({
   );
   const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
 
-  const { username: currentUserName, walletAddress, ethereal } = useLoggedInUser();
+  const {
+    username: currentUserName,
+    walletAddress,
+    ethereal,
+  } = useLoggedInUser();
 
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
@@ -122,7 +126,7 @@ const MintTokenMotion = ({
     fetchPolicy: 'network-only',
   });
 
-  const { data: motionStakeData, loading } = useStakeAmountsForMotionQuery({
+  const { data: motionStakeData } = useStakeAmountsForMotionQuery({
     variables: {
       colonyAddress: colony.colonyAddress,
       userAddress: walletAddress,
@@ -130,9 +134,15 @@ const MintTokenMotion = ({
     },
   });
 
-  const requiredStake = bigNumberify(motionStakeData?.stakeAmountsForMotion?.requiredStake || 0).toString();
-  const totalNayStake = bigNumberify(motionStakeData?.stakeAmountsForMotion?.totalStaked.NAY || 0);
-  const totalYayStake = bigNumberify(motionStakeData?.stakeAmountsForMotion?.totalStaked.YAY || 0);
+  const requiredStake = bigNumberify(
+    motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
+  ).toString();
+  const totalNayStake = bigNumberify(
+    motionStakeData?.stakeAmountsForMotion?.totalStaked.NAY || 0,
+  );
+  const totalYayStake = bigNumberify(
+    motionStakeData?.stakeAmountsForMotion?.totalStaked.YAY || 0,
+  );
   const currentStake = totalNayStake.add(totalYayStake).toString();
 
   const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
@@ -238,7 +248,11 @@ const MintTokenMotion = ({
 
   return (
     <div className={styles.main}>
-      <StakeRequiredBanner stakeRequired={!shouldDisplayMotion(currentStake, requiredStake, decimals)} />
+      <StakeRequiredBanner
+        stakeRequired={
+          !shouldDisplayMotion(currentStake, requiredStake, decimals)
+        }
+      />
       <div className={styles.upperContainer}>
         <p className={styles.tagWrapper}>
           <Tag

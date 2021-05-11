@@ -176,9 +176,9 @@ export const getEarlierEventTimestamp = (
 export const shouldDisplayMotion = (
   currentStake: string,
   requiredStake: string,
-  decimals: number,
+  decimals: string | number,
 ): boolean => {
-  if (requiredStake === "0") return true;
+  if (requiredStake === '0') return true;
   const current = moveDecimal(
     currentStake,
     -1 * getTokenDecimalsWithFallback(decimals),
@@ -190,5 +190,3 @@ export const shouldDisplayMotion = (
   const stakePercentage = Math.round((current / required) * 100);
   return stakePercentage >= 10;
 };
-
-

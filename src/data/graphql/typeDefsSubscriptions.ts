@@ -61,7 +61,7 @@ export default gql`
     domain: SubgraphDomain!
     extensionAddress: String!
     agent: String!
-    stakes: [String!]
+    stakes: [String!]!
     requiredStake: String!
     escalated: Boolean!
     state: String!
