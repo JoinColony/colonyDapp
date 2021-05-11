@@ -128,6 +128,8 @@ const ActionsPage = () => {
   ] = useMotionStatusLazyQuery({ fetchPolicy: 'network-only' });
 
   const motionStatus = motionStatusData?.motionStatus;
+  const motionStatusChanged =
+    colonyActionData?.colonyAction.motionState !== motionStatus;
 
   const motionCreatedEvent = colonyActionData?.colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
@@ -167,11 +169,13 @@ const ActionsPage = () => {
   }, [colonyActionData, colonyData, fetchMotionStatus, motionCreatedEvent]);
 
   useEffect(() => {
-    if (colonyActionData?.colonyAction && refetchColonyAction && motionStatus) {
-      const motionStatusChanged =
-        colonyActionData.colonyAction.motionState !== motionStatus;
-
-      if (motionStatusChanged) refetchColonyAction();
+    if (
+      colonyActionData?.colonyAction &&
+      refetchColonyAction &&
+      motionStatus &&
+      motionStatusChanged
+    ) {
+      refetchColonyAction();
     }
   }, [colonyActionData, refetchColonyAction, motionStatus]);
 
@@ -246,7 +250,7 @@ const ActionsPage = () => {
     !colonyActionData ||
     !colonyData ||
     !tokenData ||
-    (motionCreatedEvent && !motionStatusData)
+    (motionCreatedEvent && (!motionStatusData || motionStatusChanged))
   ) {
     return <LoadingTemplate loadingText={MSG.loading} />;
   }
