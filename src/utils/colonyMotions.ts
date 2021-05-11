@@ -178,6 +178,7 @@ export const shouldDisplayMotion = (
   requiredStake: string,
   decimals: number,
 ): boolean => {
+  if (requiredStake === "0") return true;
   const current = moveDecimal(
     currentStake,
     -1 * getTokenDecimalsWithFallback(decimals),

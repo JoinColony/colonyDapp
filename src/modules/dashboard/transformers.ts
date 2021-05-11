@@ -1,4 +1,5 @@
 import { AddressZero, HashZero } from 'ethers/constants';
+import { bigNumberify } from 'ethers/utils';
 
 import {
   TransactionsMessagesCount,
@@ -113,12 +114,15 @@ export const getActionsListData = (
       unformattedActions?.motions?.reduce((acc, motion) => {
         const {
           requiredStake,
-          currentStake,
+          stakes,
           escalated,
           associatedColony: {
             token: { decimals },
           },
         } = motion;
+        const totalNayStake = bigNumberify(stakes[0] || 0);
+        const totalYayStake = bigNumberify(stakes[1] || 0);
+        const currentStake = totalNayStake.add(totalYayStake).toString();
         const enoughStake = shouldDisplayMotion(currentStake, requiredStake, decimals);
         if (escalated || enoughStake) {
           return [...acc, motion];

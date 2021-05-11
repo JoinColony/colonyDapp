@@ -1148,7 +1148,7 @@ export type SubscriptionMotion = {
   domain: SubgraphDomain;
   extensionAddress: Scalars['String'];
   agent: Scalars['String'];
-  currentStake: Scalars['String'];
+  stakes?: Maybe<Array<Scalars['String']>>;
   requiredStake: Scalars['String'];
   escalated: Scalars['Boolean'];
   state: Scalars['String'];
@@ -1974,7 +1974,7 @@ export type SubscriptionsMotionsSubscriptionVariables = Exact<{
 
 
 export type SubscriptionsMotionsSubscription = { motions: Array<(
-    Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'currentStake' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
+    Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'stakes' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -5159,7 +5159,7 @@ export const SubscriptionsMotionsDocument = gql`
       ethDomainId: domainChainId
       name
     }
-    currentStake
+    stakes
     requiredStake
     escalated
     action
