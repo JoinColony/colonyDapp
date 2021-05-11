@@ -602,6 +602,28 @@ export const motionsResolvers = ({
         return null;
       }
     },
+    async motionStatus(_, { motionId, colonyAddress }) {
+      try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+        const motion = await votingReputationClient.getMotion(motionId);
+        const motionState = await votingReputationClient.getMotionState(
+          motionId,
+        );
+
+        return getMotionState(
+          motionState,
+          votingReputationClient as ExtensionClient,
+          motion,
+        );
+      } catch (error) {
+        console.error('Could not fetch motion state');
+        console.error(error);
+        return null;
+      }
+    },
     async motionFinalized(_, { motionId, colonyAddress }) {
       try {
         const votingReputationClient = await colonyManager.getClient(
