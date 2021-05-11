@@ -65,7 +65,7 @@ const RaiseObjectionDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
-      <DialogSection>
+      <DialogSection appearance={{theme: 'sidePadding'}}>
         <FormattedMessage
           {...MSG.objectionDescription}
           values={{
@@ -77,7 +77,7 @@ const RaiseObjectionDialogForm = ({
           }}
         />
       </DialogSection>
-      <DialogSection>
+      <DialogSection appearance={{theme: 'sidePadding'}}>
         <div className={styles.slider}>
           <StakingSlider
             colony={colony}
