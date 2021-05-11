@@ -1,5 +1,6 @@
 import { defineMessage } from 'react-intl';
 import { BigNumber, bigNumberify } from 'ethers/utils';
+import { Decimal } from 'decimal.js';
 
 const motionCountdownTimerMsg = defineMessage({
   stake: {
@@ -168,4 +169,15 @@ export const getEarlierEventTimestamp = (
   subTime = ONE_SECOND,
 ) => {
   return currentTimestamp - subTime;
+};
+
+export const shouldDisplayMotion = (
+  currentStake: string,
+  requiredStake: string,
+): boolean => {
+  if (requiredStake === '0') return true;
+  return new Decimal(currentStake)
+    .div(new Decimal(requiredStake))
+    .times(100)
+    .gte(10);
 };

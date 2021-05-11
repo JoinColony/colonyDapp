@@ -4,6 +4,7 @@ export const closeButton: string;
 export const themePrimary: string;
 export const themeInfo: string;
 export const themeDanger: string;
+export const themePinky: string;
 export const sizeSmall: string;
 export const borderRadiusSmall: string;
 export const borderRadiusMedium: string;

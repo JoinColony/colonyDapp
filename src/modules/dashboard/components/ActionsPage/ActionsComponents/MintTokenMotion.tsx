@@ -19,6 +19,7 @@ import {
   useMotionsSystemMessagesQuery,
   useEventsForMotionQuery,
   useMotionObjectionAnnotationQuery,
+  useStakeAmountsForMotionQuery,
   useUser,
   useVotingStateQuery,
 } from '~data/index';
@@ -33,12 +34,14 @@ import {
   MOTION_TAG_MAP,
   PERIOD_TYPE_MAP,
   MOTION_STATE_TO_TIMER_TEXT_MAP,
+  shouldDisplayMotion,
 } from '~utils/colonyMotions';
 
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
 import RevealWidget from '../RevealWidget';
+import StakeRequiredBanner from '../StakeRequiredBanner';
 import FinalizeMotionAndClaimWidget, {
   MSG as voteResultsMSG,
 } from '../FinalizeMotionAndClaimWidget';
@@ -90,7 +93,6 @@ const MintTokenMotion = ({
   initiator,
 }: Props) => {
   const bottomElementRef = useRef<HTMLInputElement>(null);
-
   const { passedTag, failedTag, objectionTag, ...tags } = useMemo(() => {
     return Object.values(MOTION_TAG_MAP).reduce((acc, object) => {
       const { theme, colorSchema } = object as TagAppearance;
@@ -106,7 +108,11 @@ const MintTokenMotion = ({
   );
   const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
 
-  const { username: currentUserName, ethereal } = useLoggedInUser();
+  const {
+    username: currentUserName,
+    walletAddress,
+    ethereal,
+  } = useLoggedInUser();
 
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
@@ -119,6 +125,25 @@ const MintTokenMotion = ({
     variables: { colonyAddress: colony.colonyAddress, motionId },
     fetchPolicy: 'network-only',
   });
+
+  const { data: motionStakeData } = useStakeAmountsForMotionQuery({
+    variables: {
+      colonyAddress: colony.colonyAddress,
+      userAddress: walletAddress,
+      motionId,
+    },
+  });
+
+  const requiredStake = bigNumberify(
+    motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
+  ).toString();
+  const totalNayStake = bigNumberify(
+    motionStakeData?.stakeAmountsForMotion?.totalStaked.NAY || 0,
+  );
+  const totalYayStake = bigNumberify(
+    motionStakeData?.stakeAmountsForMotion?.totalStaked.YAY || 0,
+  );
+  const currentStake = totalNayStake.add(totalYayStake).toString();
 
   const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
     variables: {
@@ -223,6 +248,9 @@ const MintTokenMotion = ({
 
   return (
     <div className={styles.main}>
+      <StakeRequiredBanner
+        stakeRequired={!shouldDisplayMotion(currentStake, requiredStake)}
+      />
       <div className={styles.upperContainer}>
         <p className={styles.tagWrapper}>
           <Tag

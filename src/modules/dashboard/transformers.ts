@@ -1,5 +1,5 @@
 import { AddressZero, HashZero } from 'ethers/constants';
-import moveDecimal from 'move-decimal-point';
+import { bigNumberify } from 'ethers/utils';
 
 import {
   TransactionsMessagesCount,
@@ -22,7 +22,7 @@ import { createAddress, toHex } from '~utils/web3';
 import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 import { ItemStatus } from '~core/ActionsList';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { shouldDisplayMotion } from '~utils/colonyMotions';
 
 enum FilteredUnformattedAction {
   OneTxPayments = 'oneTxPayments',
@@ -113,24 +113,12 @@ export const getActionsListData = (
      */
     motions:
       unformattedActions?.motions?.reduce((acc, motion) => {
-        const {
-          requiredStake,
-          currentStake,
-          escalated,
-          associatedColony: {
-            token: { decimals },
-          },
-        } = motion;
-        const current = moveDecimal(
-          currentStake,
-          -1 * getTokenDecimalsWithFallback(decimals),
-        );
-        const required = moveDecimal(
-          requiredStake,
-          -1 * getTokenDecimalsWithFallback(decimals),
-        );
-        const stakePercentage = Math.round((current / required) * 100);
-        if (escalated || stakePercentage >= 10) {
+        const { requiredStake, stakes, escalated } = motion;
+        const totalNayStake = bigNumberify(stakes[0] || 0);
+        const totalYayStake = bigNumberify(stakes[1] || 0);
+        const currentStake = totalNayStake.add(totalYayStake).toString();
+        const enoughStake = shouldDisplayMotion(currentStake, requiredStake);
+        if (escalated || enoughStake) {
           return [...acc, motion];
         }
         return acc;

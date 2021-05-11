@@ -8,7 +8,7 @@ import styles from './Alert.css';
 
 interface Appearance {
   borderRadius?: 'small' | 'medium' | 'large' | 'round' | 'none';
-  theme?: 'primary' | 'info' | 'danger';
+  theme?: 'primary' | 'info' | 'danger' | 'pinky';
   size?: 'small';
   margin?: 'none' | 'default';
 }

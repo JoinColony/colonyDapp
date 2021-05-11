@@ -142,7 +142,7 @@ subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: Str
       ethDomainId: domainChainId
       name
     }
-    currentStake
+    stakes
     requiredStake
     escalated
     action
