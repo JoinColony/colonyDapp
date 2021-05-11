@@ -18,10 +18,16 @@ import {
   useColonyFromNameQuery,
   useUser,
   useTokenInfoLazyQuery,
+  useMotionStatusLazyQuery,
 } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { ColonyActions, ColonyMotions } from '~types/index';
+import {
+  ColonyActions,
+  ColonyMotions,
+  ColonyAndExtensionsEvents,
+} from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
+import { MotionValue } from '~utils/colonyMotions';
 
 import TransactionHash, { Hash } from './TransactionHash';
 import { STATUS_MAP } from './staticMaps';
@@ -92,13 +98,14 @@ const ActionsPage = () => {
   const reverseENSAddress = dataVariables?.address;
 
   const [
-    fetchTransction,
+    fetchTransaction,
     {
       data: colonyActionData,
       loading: colonyActionLoading,
       error: colonyActionError,
+      refetch: refetchColonyAction,
     },
-  ] = useColonyActionLazyQuery({ fetchPolicy: 'network-only' });
+  ] = useColonyActionLazyQuery();
 
   const [
     fetchRecipientProfile,
@@ -115,20 +122,58 @@ const ActionsPage = () => {
     { data: tokenData, loading: loadingTokenData },
   ] = useTokenInfoLazyQuery();
 
+  const [
+    fetchMotionStatus,
+    { data: motionStatusData, loading: loadingMotionStatus },
+  ] = useMotionStatusLazyQuery({ fetchPolicy: 'network-only' });
+
+  const motionStatus = motionStatusData?.motionStatus;
+
+  const motionCreatedEvent = colonyActionData?.colonyAction.events.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
+  );
+
   useEffect(() => {
     if (
       transactionHash &&
       isTransactionFormat(transactionHash) &&
       colonyData?.processedColony
     ) {
-      fetchTransction({
+      fetchTransaction({
         variables: {
           transactionHash,
           colonyAddress: colonyData.processedColony.colonyAddress,
         },
       });
     }
-  }, [fetchTransction, transactionHash, colonyData]);
+  }, [fetchTransaction, transactionHash, colonyData]);
+
+  useEffect(() => {
+    if (
+      colonyData?.processedColony &&
+      colonyActionData?.colonyAction &&
+      motionCreatedEvent
+    ) {
+      const {
+        motionId,
+      } = (motionCreatedEvent.values as unknown) as MotionValue;
+      fetchMotionStatus({
+        variables: {
+          motionId,
+          colonyAddress: colonyData?.processedColony.colonyAddress,
+        },
+      });
+    }
+  }, [colonyActionData, colonyData, fetchMotionStatus, motionCreatedEvent]);
+
+  useEffect(() => {
+    if (colonyActionData?.colonyAction && refetchColonyAction && motionStatus) {
+      const motionStatusChanged =
+        colonyActionData.colonyAction.motionState !== motionStatus;
+
+      if (motionStatusChanged) refetchColonyAction();
+    }
+  }, [colonyActionData, refetchColonyAction, motionStatus]);
 
   useEffect(() => {
     if (colonyActionData?.colonyAction) {
@@ -197,9 +242,11 @@ const ActionsPage = () => {
     repicientProfileLoading ||
     initiatorProfileLoading ||
     loadingTokenData ||
+    loadingMotionStatus ||
     !colonyActionData ||
     !colonyData ||
-    !tokenData
+    !tokenData ||
+    (motionCreatedEvent && !motionStatusData)
   ) {
     return <LoadingTemplate loadingText={MSG.loading} />;
   }
