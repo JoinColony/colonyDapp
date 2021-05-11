@@ -3,6 +3,7 @@ import { ColonyMotions } from '~types/index';
 const motionsMessageDescriptors = {
   'motion.title': `{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint {amount} {tokenSymbol}}
+      ${ColonyMotions.CreateDomainMotion} {New team: {fromDomain}}
       other {Generic motion we don't have information about}
     }`,
   'motion.type': `{actionType, select,
