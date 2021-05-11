@@ -76,7 +76,7 @@ const StakingSlider = ({
     isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
   );
 
-  const userStakeLimit = new Decimal(maxUserStake)
+  const userStakeLimitPercentage = new Decimal(maxUserStake)
     .div(remainingToStake)
     .times(100);
 
@@ -119,7 +119,7 @@ const StakingSlider = ({
         <Slider
           name="amount"
           value={values.amount}
-          limit={parseFloat(userStakeLimit.toFixed(2))}
+          limit={parseFloat(userStakeLimitPercentage.toFixed(2))}
           step={0.01}
           min={0}
           max={100}
