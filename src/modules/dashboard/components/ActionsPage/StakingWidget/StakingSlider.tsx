@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import moveDecimal from 'move-decimal-point';
+import { Decimal } from 'decimal.js';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
@@ -72,23 +72,23 @@ const StakingSlider = ({
     ({ address }) => address === nativeTokenAddress,
   );
 
-  const remainingToStake = moveDecimal(
+  const remainingToStake = new Decimal(
     isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
-    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
   );
-  /*
-   * This basically doubles as the user's reputation
-   * So we can use it to also check if the user can actually stake
-   * If the reputation is 0, they cannot stake at all
-   */
-  const userStakeTopLimit = moveDecimal(
-    maxUserStake,
-    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-  );
-  const userStakeBottomLimit = moveDecimal(
-    minUserStake,
-    -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-  );
+
+  const userStakeLimit = new Decimal(maxUserStake)
+    .div(remainingToStake)
+    .times(100);
+
+  const stake = new Decimal(values.amount).times(remainingToStake).div(100);
+  const stakeWithMin = new Decimal(minUserStake).gte(stake)
+    ? new Decimal(minUserStake)
+    : stake;
+  const displayStake = stakeWithMin
+    .div(
+      new Decimal(10).pow(getTokenDecimalsWithFallback(nativeToken?.decimals)),
+    )
+    .toFixed(2);
 
   return (
     <>
@@ -112,20 +112,17 @@ const StakingSlider = ({
           {...(isObjection ? MSG.descriptionObject : MSG.descriptionStake)}
         />
       </p>
-      <span className={styles.amount}>{`${parseFloat(values.amount).toFixed(
-        2,
-      )} ${nativeToken?.symbol}`}</span>
+      <span
+        className={styles.amount}
+      >{`${displayStake} ${nativeToken?.symbol}`}</span>
       <div className={styles.sliderContainer}>
         <Slider
           name="amount"
           value={values.amount}
-          // min={parseFloat(userStakeBottomLimit)}
-          // max={parseFloat(remainingToStake)}
-          // limit={parseFloat(userStakeTopLimit)}
-          // step={0.01}
+          limit={parseFloat(userStakeLimit.toFixed(2))}
+          step={0.01}
           min={0}
           max={100}
-          step={1}
           disabled={!canUserStake}
           appearance={appearance}
         />

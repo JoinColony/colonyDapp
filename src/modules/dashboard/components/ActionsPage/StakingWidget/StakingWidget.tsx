@@ -236,7 +236,7 @@ const StakingWidget = ({
     <div className={styles.main}>
       <ActionForm
         initialValues={{
-          amount: userStakeBottomLimit,
+          amount: 0,
         }}
         validationSchema={validationSchema}
         submit={ActionTypes.COLONY_MOTION_STAKE}
