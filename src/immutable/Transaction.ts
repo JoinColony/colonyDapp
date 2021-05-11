@@ -1,7 +1,7 @@
 import { Record } from 'immutable';
-import { BigNumber } from 'ethers/utils';
+import { BigNumber, bigNumberify } from 'ethers/utils';
 import { TransactionReceipt } from 'ethers/providers';
-import { ClientType, TransactionOverrides } from '@colony/colony-js';
+import { ClientType, TransactionOverrides, Network } from '@colony/colony-js';
 
 import {
   Address,
@@ -10,6 +10,7 @@ import {
   MethodParams,
   RecordToJS,
 } from '~types/index';
+import { DEFAULT_NETWORK } from '~constants';
 
 export enum TRANSACTION_ERRORS {
   ESTIMATE = 'ESTIMATE',
@@ -85,7 +86,10 @@ const defaultValues: DefaultValues<TransactionRecordProps> = {
   eventData: undefined,
   from: undefined,
   gasLimit: undefined,
-  gasPrice: undefined,
+  gasPrice:
+    DEFAULT_NETWORK === Network.Local || DEFAULT_NETWORK === Network.Xdai
+      ? bigNumberify('1000000000')
+      : undefined,
   group: undefined,
   hash: undefined,
   id: undefined,
