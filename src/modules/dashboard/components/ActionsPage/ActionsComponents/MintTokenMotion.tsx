@@ -249,9 +249,7 @@ const MintTokenMotion = ({
   return (
     <div className={styles.main}>
       <StakeRequiredBanner
-        stakeRequired={
-          !shouldDisplayMotion(currentStake, requiredStake, decimals)
-        }
+        stakeRequired={!shouldDisplayMotion(currentStake, requiredStake)}
       />
       <div className={styles.upperContainer}>
         <p className={styles.tagWrapper}>

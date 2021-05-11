@@ -110,22 +110,11 @@ export const getActionsListData = (
      */
     motions:
       unformattedActions?.motions?.reduce((acc, motion) => {
-        const {
-          requiredStake,
-          stakes,
-          escalated,
-          associatedColony: {
-            token: { decimals },
-          },
-        } = motion;
+        const { requiredStake, stakes, escalated } = motion;
         const totalNayStake = bigNumberify(stakes[0] || 0);
         const totalYayStake = bigNumberify(stakes[1] || 0);
         const currentStake = totalNayStake.add(totalYayStake).toString();
-        const enoughStake = shouldDisplayMotion(
-          currentStake,
-          requiredStake,
-          decimals,
-        );
+        const enoughStake = shouldDisplayMotion(currentStake, requiredStake);
         if (escalated || enoughStake) {
           return [...acc, motion];
         }
