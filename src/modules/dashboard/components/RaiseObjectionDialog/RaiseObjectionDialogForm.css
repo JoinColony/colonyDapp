@@ -18,6 +18,6 @@
 .slider {
   display: flex;
   flex-direction: column;
-  margin: 10px auto 30px;
+  margin: 10px auto 50px;
   width: 341px;
 }

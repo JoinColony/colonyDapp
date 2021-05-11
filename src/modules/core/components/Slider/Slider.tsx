@@ -112,7 +112,7 @@ const Slider = ({
   const sizes = SliderSizesObject[appearance?.size || 'thin'];
 
   return (
-    <div className={`${styles.main} ${styles[appearance?.theme]}`}>
+    <div className={`${styles.main} ${styles[appearance?.theme || 'primary']}`}>
       <ReactSlider
         min={min}
         step={step}
