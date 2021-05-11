@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
-import moveDecimal from 'move-decimal-point';
 import * as yup from 'yup';
 import { Decimal } from 'decimal.js';
 
@@ -18,7 +17,6 @@ import {
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload, pipe } from '~utils/actions';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
 import StakingSlider, { StakingAmounts } from './StakingSlider';
@@ -106,37 +104,42 @@ const StakingWidget = ({
 
   const transform = useCallback(
     pipe(
-      mapPayload(({ amount }) => ({
-        amount: bigNumberify(
-          moveDecimal(
-            amount,
-            getTokenDecimalsWithFallback(nativeToken?.decimals),
-          ),
-        ),
-        userAddress: walletAddress,
-        colonyAddress,
-        motionId: bigNumberify(motionId),
-        vote: isObjection ? 0 : 1,
-        transactionHash,
-      })),
+      mapPayload(({ amount }) => {
+        if (data?.motionStakes) {
+          const {
+            remainingToFullyNayStaked,
+            remainingToFullyYayStaked,
+            minUserStake,
+          } = data.motionStakes;
+          const remainingToStake = new Decimal(
+            isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
+          );
+          const stake = new Decimal(amount).times(remainingToStake).div(100);
+          const stakeWithMin = new Decimal(minUserStake).gte(stake)
+            ? new Decimal(minUserStake)
+            : stake;
+          return {
+            amount: stakeWithMin.round().toString(),
+            userAddress: walletAddress,
+            colonyAddress,
+            motionId: bigNumberify(motionId),
+            vote: isObjection ? 0 : 1,
+            transactionHash,
+          };
+        }
+        return null;
+      }),
     ),
     [walletAddress, colonyAddress, motionId, data, isObjection],
   );
 
   const handleSuccess = useCallback(
     (_, { setFieldValue, resetForm }) => {
-      if (data?.motionStakes) {
-        const { minUserStake } = data.motionStakes;
-        const userStakeBottomLimit = moveDecimal(
-          minUserStake,
-          -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-        );
-        resetForm({});
-        setFieldValue('amount', parseFloat(userStakeBottomLimit));
-        scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
-      }
+      resetForm({});
+      setFieldValue('amount', 0);
+      scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
     },
-    [data, nativeToken, scrollToRef],
+    [scrollToRef],
   );
 
   if (loading || userDataLoading || !data?.motionStakes) {
