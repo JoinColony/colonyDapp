@@ -7,6 +7,13 @@ const motionsMessageDescriptors = {
     }`,
   'motion.type': `{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint Tokens}
+      ${ColonyMotions.PaymentMotion} {Payment}
+      ${ColonyMotions.CreateDomainMotion} {Create Team}
+      ${ColonyMotions.EditDomainMotion} {Edit Team}
+      ${ColonyMotions.ColonyEditMotion} {Colony Edit}
+      ${ColonyMotions.SetUserRolesMotion} {Permission Management}
+      ${ColonyMotions.MoveFundsMotion} {Move Funds}
+      ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       other {Generic}
     }`,
 };
