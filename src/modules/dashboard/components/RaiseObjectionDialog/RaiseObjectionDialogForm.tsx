@@ -105,7 +105,7 @@ const RaiseObjectionDialogForm = ({
         />
         <span className={styles.submitButton}>
           <Button
-            appearance={{ theme: 'danger', size: 'large' }}
+            appearance={{ theme: 'pink', size: 'large' }}
             text={MSG.stakeButton}
             onClick={() => handleSubmit()}
             type="submit"
