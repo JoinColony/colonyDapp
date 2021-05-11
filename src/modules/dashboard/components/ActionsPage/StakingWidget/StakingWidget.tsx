@@ -54,7 +54,7 @@ const validationSchema = yup.object({
 
 const StakingWidget = ({
   colony,
-  colony: { colonyAddress, tokens, nativeTokenAddress },
+  colony: { colonyAddress, nativeTokenAddress },
   motionId,
   scrollToRef,
   transactionHash,
@@ -83,10 +83,6 @@ const StakingWidget = ({
     },
   });
 
-  const nativeToken = tokens.find(
-    ({ address }) => address === nativeTokenAddress,
-  );
-
   const openRaiseObjectionDialog = useDialog(RaiseObjectionDialog);
 
   const handleRaiseObjection = useCallback(
@@ -94,12 +90,12 @@ const StakingWidget = ({
       openRaiseObjectionDialog({
         motionId,
         colony,
-        nativeToken,
         canUserStake: userHasPermission,
         transactionHash,
+        scrollToRef,
         ...stakingAmounts,
       }),
-    [colony, openRaiseObjectionDialog, nativeToken, motionId, transactionHash],
+    [colony, openRaiseObjectionDialog, scrollToRef, motionId, transactionHash],
   );
 
   const transform = useCallback(
