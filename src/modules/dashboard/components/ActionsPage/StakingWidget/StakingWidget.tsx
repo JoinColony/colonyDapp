@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import * as yup from 'yup';
+import { Decimal } from 'decimal.js';
 
 import { ActionForm } from '~core/Fields';
 import Button from '~core/Button';
@@ -158,50 +159,10 @@ const StakingWidget = ({
     minUserStake,
   } = data.motionStakes;
 
-  const remainingToStakeYay = parseFloat(
-    moveDecimal(
-      remainingToFullyYayStaked,
-      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-    ),
+  const userActivatedTokens = new Decimal(
+    userData?.user?.userLock?.balance || 0,
   );
-
-  const remainingToStakeNay = parseFloat(
-    moveDecimal(
-      remainingToFullyNayStaked,
-      1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-    ),
-  );
-  /*
-   * @NOTE Compensate for the lack of granularity in the slider
-   * This is in order to be able to fully stake a motion
-   *
-   * If we reached the max of what the slider can show, just add some
-   * extra in order to ensure we reach the required stake
-   *
-   * We're relying on the contracts here, since we can sent over the
-   * required stake limit, and the contract call will discard it
-   * (no, it's not lost)
-   *
-   * Example:
-   * This is so we can round values like 18.627870543008473 to 18.63
-   */
-  const remainingToStakeSafe = (remainingToStake: number) =>
-    remainingToStake > 0
-      ? Math.round(remainingToStake * 100) / 100
-      : remainingToStake;
-
-  const userActivatedTokens = parseFloat(
-    moveDecimal(
-      userData?.user?.userLock?.balance || 0,
-      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-    ),
-  );
-  const userStakeBottomLimit = parseFloat(
-    moveDecimal(
-      minUserStake,
-      -1 * getTokenDecimalsWithFallback(nativeToken?.decimals),
-    ),
-  );
+  const userStakeBottomLimit = new Decimal(minUserStake);
 
   const canUserStake =
     /*
@@ -216,19 +177,19 @@ const StakingWidget = ({
     /*
      * Activated tokens are more than the minimum required stake amount
      */
-    userActivatedTokens >= userStakeBottomLimit &&
+    userActivatedTokens.gte(userStakeBottomLimit) &&
     /*
      * Has activated tokens
      */
-    userActivatedTokens > 0;
+    userActivatedTokens.gt(0);
 
   /*
    * Motion can be still staked (ie: amount left to stake)
    */
   const canUserStakeYay =
-    canUserStake && remainingToStakeSafe(remainingToStakeYay) > 0;
+    canUserStake && new Decimal(remainingToFullyYayStaked).gt(0);
   const canUserStakeNay =
-    canUserStake && remainingToStakeSafe(remainingToStakeNay) > 0;
+    canUserStake && new Decimal(remainingToFullyNayStaked).gt(0);
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
