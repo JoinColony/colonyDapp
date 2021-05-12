@@ -16,7 +16,6 @@ import {
   ColonyActionQuery,
   TokenInfoQuery,
   AnyUser,
-  OneDomain,
   useMotionsSystemMessagesQuery,
   useEventsForMotionQuery,
   useMotionObjectionAnnotationQuery,
@@ -24,7 +23,6 @@ import {
   useUser,
   useVotingStateQuery,
   useMotionStatusQuery,
-  useColonySingleDomainQuery,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -71,7 +69,6 @@ interface Props {
 }
 
 const MintTokenMotion = ({
-  colony: { colonyAddress, domains },
   colony,
   colonyAction: {
     events = [],
@@ -112,12 +109,6 @@ const MintTokenMotion = ({
     ethereal,
   } = useLoggedInUser();
 
-  const { data: fallbackFromDomain } = useColonySingleDomainQuery({
-    variables: {
-      colonyAddress: colonyAddress.toLowerCase() || '',
-      domainId: fromDomain || 0,
-    },
-  });
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
       motionId,
@@ -195,10 +186,7 @@ const MintTokenMotion = ({
 
   const actionAndEventValues = {
     actionType,
-    fromDomain:
-      (domains.find(
-        ({ ethDomainId }) => ethDomainId === fromDomain,
-      ) as OneDomain) || fallbackFromDomain?.colonyDomain,
+    fromDomain,
     amount: (
       <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
     ),
@@ -311,7 +299,7 @@ const MintTokenMotion = ({
               id="motion.title"
               values={{
                 ...actionAndEventValues,
-                fromDomain: actionAndEventValues.fromDomain?.name,
+                fromDomain: actionAndEventValues.fromDomain?.domainName,
               }}
             />
           </h1>

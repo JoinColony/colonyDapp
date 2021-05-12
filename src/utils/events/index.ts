@@ -644,14 +644,14 @@ const getCreateDomainMotionValues = async (
     colonyClient,
   );
 
+  const ipfsData = await ipfs.getString(values.args[3]);
+  const fromDomain = JSON.parse(ipfsData);
+
   const createDomainMotionValues: Partial<MotionValues> = {
     ...motionDefaultValues,
-    fromDomain: bigNumberify(values.args[0]).toNumber(),
+    fromDomain,
   };
 
-  if (values.agent) {
-    createDomainMotionValues.actionInitiator = values.agent;
-  }
   return createDomainMotionValues;
 };
 
