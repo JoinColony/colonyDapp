@@ -93,19 +93,23 @@ const StakingSlider = ({
   return (
     <>
       <div className={styles.title}>
-        <Heading
-          text={isObjection ? MSG.titleObject : MSG.titleStake}
-          className={styles.title}
-          appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
-        />
-        <QuestionMarkTooltip
-          tooltipText={MSG.stakingTooltip}
-          className={styles.help}
-          tooltipClassName={styles.tooltip}
-          tooltipPopperProps={{
-            placement: 'right',
-          }}
-        />
+        <div>
+          <Heading
+            text={isObjection ? MSG.titleObject : MSG.titleStake}
+            className={styles.title}
+            appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
+          />
+        </div>
+        <div>
+          <QuestionMarkTooltip
+            tooltipText={MSG.stakingTooltip}
+            className={styles.help}
+            tooltipClassName={styles.tooltip}
+            tooltipPopperProps={{
+              placement: 'right',
+            }}
+          />
+        </div>
       </div>
       <p className={styles.description}>
         <FormattedMessage

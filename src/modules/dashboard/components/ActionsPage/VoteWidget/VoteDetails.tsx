@@ -90,15 +90,19 @@ const VoteDetails = ({
     <div>
       <div className={styles.item}>
         <div className={styles.label}>
-          <FormattedMessage {...MSG.votingMethodLabel} />
-          <QuestionMarkTooltip
-            tooltipText={MSG.votingMethodTooltip}
-            className={styles.help}
-            tooltipClassName={styles.tooltip}
-            tooltipPopperProps={{
-              placement: 'right',
-            }}
-          />
+          <div>
+            <FormattedMessage {...MSG.votingMethodLabel} />
+          </div>
+          <div>
+            <QuestionMarkTooltip
+              tooltipText={MSG.votingMethodTooltip}
+              className={styles.help}
+              tooltipClassName={styles.tooltip}
+              tooltipPopperProps={{
+                placement: 'right',
+              }}
+            />
+          </div>
         </div>
         <div className={styles.value}>
           {/*
@@ -114,15 +118,19 @@ const VoteDetails = ({
         <>
           <div className={styles.item}>
             <div className={styles.label}>
-              <FormattedMessage {...MSG.reputationTeamLabel} />
-              <QuestionMarkTooltip
-                tooltipText={MSG.reputationTeamTooltip}
-                className={styles.help}
-                tooltipClassName={styles.tooltip}
-                tooltipPopperProps={{
-                  placement: 'right',
-                }}
-              />
+              <div>
+                <FormattedMessage {...MSG.reputationTeamLabel} />
+              </div>
+              <div>
+                <QuestionMarkTooltip
+                  tooltipText={MSG.reputationTeamTooltip}
+                  className={styles.help}
+                  tooltipClassName={styles.tooltip}
+                  tooltipPopperProps={{
+                    placement: 'right',
+                  }}
+                />
+              </div>
             </div>
             <div className={styles.value}>
               <div className={styles.reputation}>
@@ -135,15 +143,19 @@ const VoteDetails = ({
           </div>
           <div className={styles.item}>
             <div className={styles.label}>
-              <FormattedMessage {...MSG.rewardLabel} />
-              <QuestionMarkTooltip
-                tooltipText={MSG.rewardTooltip}
-                className={styles.help}
-                tooltipClassName={styles.tooltip}
-                tooltipPopperProps={{
-                  placement: 'right',
-                }}
-              />
+              <div>
+                <FormattedMessage {...MSG.rewardLabel} />
+              </div>
+              <div>
+                <QuestionMarkTooltip
+                  tooltipText={MSG.rewardTooltip}
+                  className={styles.help}
+                  tooltipClassName={styles.tooltip}
+                  tooltipPopperProps={{
+                    placement: 'right',
+                  }}
+                />
+              </div>
             </div>
             <div className={styles.value}>
               {voterReward?.motionVoterReward && (
