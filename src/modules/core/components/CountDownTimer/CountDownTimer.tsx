@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormattedMessage, MessageDescriptor, defineMessage } from 'react-intl';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
@@ -58,11 +58,9 @@ const CountDownTimer = ({
   const stakePeriod = data?.votingExtensionParams[periodType];
   const { data: blockTimeData } = useBlockTimeQuery();
 
-  const differenceVsBCTime = useMemo(
-    () =>
-      blockTimeData?.blockTime ? blockTimeData?.blockTime - Date.now() : 0,
-    [blockTimeData],
-  );
+  const differenceVsBCTime = blockTimeData?.blockTime
+    ? blockTimeData?.blockTime - Date.now()
+    : 0;
 
   const [timeLeft, setTimeLeft] = useState(
     calculateTimeLeft(createdAt, differenceVsBCTime, stakePeriod),
