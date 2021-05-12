@@ -65,7 +65,7 @@ const RaiseObjectionDialogForm = ({
           className={styles.title}
         />
       </DialogSection>
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
         <FormattedMessage
           {...MSG.objectionDescription}
           values={{
@@ -77,7 +77,7 @@ const RaiseObjectionDialogForm = ({
           }}
         />
       </DialogSection>
-      <DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.slider}>
           <StakingSlider
             colony={colony}
@@ -89,7 +89,7 @@ const RaiseObjectionDialogForm = ({
           />
         </div>
       </DialogSection>
-      <DialogSection>
+      <DialogSection appearance={{ border: 'top' }}>
         <Annotations
           label={MSG.annotation}
           name="annotation"
@@ -105,7 +105,7 @@ const RaiseObjectionDialogForm = ({
         />
         <span className={styles.submitButton}>
           <Button
-            appearance={{ theme: 'danger', size: 'large' }}
+            appearance={{ theme: 'pink', size: 'large' }}
             text={MSG.stakeButton}
             onClick={() => handleSubmit()}
             type="submit"
