@@ -12,11 +12,22 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
   });
   const installedExtensions =
     colonyExtensionsData?.processedColony?.installedExtensions || [];
-  const isVotingExtensionEnabled = !!installedExtensions.find(
+
+  const installedVotingExtension = installedExtensions.find(
     ({ extensionId }) => extensionId === Extension.VotingReputation,
   );
-  const isOneTxPaymentExtensionEnabled = !!installedExtensions.find(
-    ({ extensionId }) => extensionId === Extension.OneTxPayment,
+  const installedOneTxPaymentExtension = installedExtensions.find(
+    ({ extensionId }) => extensionId === Extension.VotingReputation,
+  );
+  const isVotingExtensionEnabled = !!(
+    installedVotingExtension &&
+    installedVotingExtension.details.initialized &&
+    !installedVotingExtension.details.deprecated
+  );
+  const isOneTxPaymentExtensionEnabled = !!(
+    installedOneTxPaymentExtension &&
+    installedOneTxPaymentExtension.details.initialized &&
+    !installedOneTxPaymentExtension.details.deprecated
   );
 
   return {
