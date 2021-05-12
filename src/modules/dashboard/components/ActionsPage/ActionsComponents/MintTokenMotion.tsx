@@ -287,6 +287,7 @@ const MintTokenMotion = ({
                   appearance={{
                     size: 'small',
                     backgroundTheme: 'dark',
+                    barTheme: 'primary',
                   }}
                 />
               </div>
