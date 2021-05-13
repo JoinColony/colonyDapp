@@ -809,6 +809,42 @@ export const motionsResolvers = ({
         return null;
       }
     },
+    async motionTimeoutPeriods(_, { colonyAddress }) {
+      try {
+        const extensionClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
+        const stakePeriod = await extensionClient.getStakePeriod();
+        const submitPeriod = await extensionClient.getSubmitPeriod();
+        const revealPeriod = await extensionClient.getRevealPeriod();
+        const escalationPeriod = await extensionClient.getEscalationPeriod();
+
+        return {
+          __typename: 'MotionTimeoutPeriods',
+          stakePeriod: stakePeriod.toString(),
+          submitPeriod: submitPeriod.toString(),
+          revealPeriod: revealPeriod.toString(),
+          escalationPeriod: escalationPeriod.toString(),
+        };
+      } catch (error) {
+        console.error(
+          'Could not get Voting Reputation extension period values',
+        );
+        console.error(error);
+        return null;
+      }
+    },
+    async blockTime(_, { blockHash = 'latest' }) {
+      try {
+        return getBlockTime(networkClient.provider, blockHash);
+      } catch (error) {
+        console.error('Could not get block time');
+        console.error(error);
+        return null;
+      }
+    },
   },
   Motion: {
     async state({ fundamentalChainId, associatedColony: { colonyAddress } }) {

@@ -472,6 +472,15 @@ query MotionStatus($motionId: Int!, $colonyAddress: String!) {
   motionStatus(motionId: $motionId, colonyAddress: $colonyAddress) @client
 }
 
+query MotionTimeoutPeriods($colonyAddress: String!) {
+  motionTimeoutPeriods(colonyAddress: $colonyAddress) @client {
+    stakePeriod
+    submitPeriod
+    revealPeriod
+    escalationPeriod
+  }
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`
@@ -692,15 +701,6 @@ query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
 
 query ColonyReputation($address: String!) {
   colonyReputation(address: $address) @client
-}
-
-query VotingExtensionParams($colonyAddress: String!) {
-  votingExtensionParams(colonyAddress: $colonyAddress) @client {
-    stakePeriod
-    submitPeriod
-    revealPeriod
-    escalationPeriod
-  }
 }
 
 query BlockTime($blockHash: String) {

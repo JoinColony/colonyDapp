@@ -317,7 +317,7 @@ export default gql`
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     networkExtensionVersion(extensionId: String!): Int!
-    votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
+    motionTimeoutPeriods(colonyAddress: String!): MotionTimeoutPeriods!
     blockTime(blockHash: String): Int!
     motionStakes(
       colonyAddress: String!
@@ -534,10 +534,10 @@ export default gql`
     installedExtensions: [ColonyExtension!]!
   }
 
-  type VotingExtensionParams {
-    stakePeriod: Int!
-    submitPeriod: Int!
-    revealPeriod: Int!
-    escalationPeriod: Int!
+  type MotionTimeoutPeriods {
+    stakePeriod: String!
+    submitPeriod: String!
+    revealPeriod: String!
+    escalationPeriod: String!
   }
 `;
