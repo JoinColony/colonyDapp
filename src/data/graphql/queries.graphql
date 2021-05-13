@@ -472,8 +472,8 @@ query MotionStatus($motionId: Int!, $colonyAddress: String!) {
   motionStatus(motionId: $motionId, colonyAddress: $colonyAddress) @client
 }
 
-query MotionTimeoutPeriods($colonyAddress: String!) {
-  motionTimeoutPeriods(colonyAddress: $colonyAddress) @client {
+query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
+  motionTimeoutPeriods(motionId: $motionId, colonyAddress: $colonyAddress) @client {
     stakePeriod
     submitPeriod
     revealPeriod
@@ -701,8 +701,4 @@ query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
 
 query ColonyReputation($address: String!) {
   colonyReputation(address: $address) @client
-}
-
-query BlockTime($blockHash: String) {
-  blockTime(blockHash: $blockHash) @client
 }

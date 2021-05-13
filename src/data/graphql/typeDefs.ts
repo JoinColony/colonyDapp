@@ -317,8 +317,10 @@ export default gql`
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     networkExtensionVersion(extensionId: String!): Int!
-    motionTimeoutPeriods(colonyAddress: String!): MotionTimeoutPeriods!
-    blockTime(blockHash: String): Int!
+    motionTimeoutPeriods(
+      motionId: Int!
+      colonyAddress: String!
+    ): MotionTimeoutPeriods!
     motionStakes(
       colonyAddress: String!
       userAddress: String!

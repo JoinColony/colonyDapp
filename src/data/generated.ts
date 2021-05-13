@@ -269,7 +269,6 @@ export type MutationUnsubscribeFromColonyArgs = {
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
-  blockTime: Scalars['Int'];
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
@@ -324,11 +323,6 @@ export type Query = {
 export type QueryActionsThatNeedAttentionArgs = {
   colonyAddress: Scalars['String'];
   walletAddress: Scalars['String'];
-};
-
-
-export type QueryBlockTimeArgs = {
-  blockHash?: Maybe<Scalars['String']>;
 };
 
 
@@ -444,7 +438,11 @@ export type QueryMotionStakesArgs = {
 };
 
 
+<<<<<<< HEAD
 export type QueryMotionStatusArgs = {
+=======
+export type QueryMotionTimeoutPeriodsArgs = {
+>>>>>>> Remove: unused `blockTime` client resolver
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
 };
@@ -1710,7 +1708,11 @@ export type MotionObjectionAnnotationQueryVariables = Exact<{
 
 export type MotionObjectionAnnotationQuery = { motionObjectionAnnotation: Pick<MotionObjectionAnnotation, 'address' | 'metadata'> };
 
+<<<<<<< HEAD
 export type MotionStatusQueryVariables = Exact<{
+=======
+export type MotionTimeoutPeriodsQueryVariables = Exact<{
+>>>>>>> Remove: unused `blockTime` client resolver
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
@@ -1897,6 +1899,7 @@ export type ColonyReputationQueryVariables = Exact<{
 
 export type ColonyReputationQuery = Pick<Query, 'colonyReputation'>;
 
+<<<<<<< HEAD
 export type VotingExtensionParamsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -1911,6 +1914,8 @@ export type BlockTimeQueryVariables = Exact<{
 
 export type BlockTimeQuery = Pick<Query, 'blockTime'>;
 
+=======
+>>>>>>> Remove: unused `blockTime` client resolver
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -4208,9 +4213,20 @@ export function useMotionObjectionAnnotationLazyQuery(baseOptions?: Apollo.LazyQ
 export type MotionObjectionAnnotationQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationQuery>;
 export type MotionObjectionAnnotationLazyQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationLazyQuery>;
 export type MotionObjectionAnnotationQueryResult = Apollo.QueryResult<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>;
+<<<<<<< HEAD
 export const MotionStatusDocument = gql`
     query MotionStatus($motionId: Int!, $colonyAddress: String!) {
   motionStatus(motionId: $motionId, colonyAddress: $colonyAddress) @client
+=======
+export const MotionTimeoutPeriodsDocument = gql`
+    query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
+  motionTimeoutPeriods(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    stakePeriod
+    submitPeriod
+    revealPeriod
+    escalationPeriod
+  }
+>>>>>>> Remove: unused `blockTime` client resolver
 }
     `;
 
@@ -4941,6 +4957,7 @@ export function useColonyReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type ColonyReputationQueryHookResult = ReturnType<typeof useColonyReputationQuery>;
 export type ColonyReputationLazyQueryHookResult = ReturnType<typeof useColonyReputationLazyQuery>;
 export type ColonyReputationQueryResult = Apollo.QueryResult<ColonyReputationQuery, ColonyReputationQueryVariables>;
+<<<<<<< HEAD
 export const VotingExtensionParamsDocument = gql`
     query VotingExtensionParams($colonyAddress: String!) {
   votingExtensionParams(colonyAddress: $colonyAddress) @client {
@@ -5008,6 +5025,8 @@ export function useBlockTimeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type BlockTimeQueryHookResult = ReturnType<typeof useBlockTimeQuery>;
 export type BlockTimeLazyQueryHookResult = ReturnType<typeof useBlockTimeLazyQuery>;
 export type BlockTimeQueryResult = Apollo.QueryResult<BlockTimeQuery, BlockTimeQueryVariables>;
+=======
+>>>>>>> Remove: unused `blockTime` client resolver
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
