@@ -71,7 +71,6 @@ const MintTokenMotion = ({
   colony,
   colonyAction: {
     events = [],
-    createdAt: actionCreatedAt,
     actionType,
     annotationHash,
     colonyDisplayName,
@@ -258,9 +257,9 @@ const MintTokenMotion = ({
         </p>
         <div className={styles.countdownContainer}>
           <CountDownTimer
-            createdAt={actionCreatedAt}
-            colonyAddress={colony.colonyAddress}
+            colony={colony}
             state={motionState as MotionState}
+            motionId={motionId}
           />
           {motionState === MotionState.Voting && votingStateData && (
             <>

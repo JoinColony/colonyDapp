@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { FormattedMessage, MessageDescriptor, defineMessage } from 'react-intl';
+import { FormattedMessage, defineMessage } from 'react-intl';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
-import { useBlockTimeQuery } from '~data/index';
-import { Address } from '~types/index';
+import { useMotionTimeoutPeriodsQuery, Colony } from '~data/index';
 import { calculateTimeLeft } from '~utils/time';
 import { MotionState } from '~utils/colonyMotions';
 
@@ -21,7 +20,7 @@ const MSG = defineMessage({
       Voting {Voting ends in}
       Reveal {Reveal ends in}
       Escalation {Time left to escalate}
-      Other {Timeout}
+      other {Timeout}
     }`,
   },
   days: {
@@ -47,21 +46,24 @@ const MSG = defineMessage({
 });
 
 interface Props {
-  createdAt: number;
-  colonyAddress: Address;
-  tooltipText?: MessageDescriptor | string;
+  colony: Colony;
   state: MotionState;
+  motionId: number;
 }
 
 const displayName = 'dashboard.ActionsPage.CountDownTimer';
 
 const CountDownTimer = ({
-  colonyAddress,
-  createdAt,
-  tooltipText,
+  colony: { colonyAddress },
   state,
+  motionId,
 }: Props) => {
-  // const { data: blockTimeData } = useBlockTimeQuery();
+  const { data, loading } = useMotionTimeoutPeriodsQuery({
+    variables: {
+      colonyAddress,
+      motionId,
+    },
+  });
 
   // const differenceVsBCTime = blockTimeData?.blockTime
   //   ? blockTimeData?.blockTime - Date.now()
@@ -117,12 +119,6 @@ const CountDownTimer = ({
           values={{ seconds: timeLeft.seconds }}
         />
       </span> */}
-      {tooltipText && (
-        <QuestionMarkTooltip
-          className={styles.tooltipIcon}
-          tooltipText={tooltipText}
-        />
-      )}
     </div>
   );
 };
