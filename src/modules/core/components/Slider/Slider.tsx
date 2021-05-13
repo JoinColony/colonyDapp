@@ -63,9 +63,9 @@ const Slider = ({
           onChange(val);
         }
       }
-      if (limit && sliderValue > limit) {
+      if (limit && (sliderValue > limit || val > limit)) {
         setSliderValue(limit);
-        setValue(val);
+        setValue(limit);
 
         if (onChange) {
           onChange(limit);
