@@ -125,14 +125,6 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.MotionFinalized,
     ColonyAndExtensionsEvents.MotionRewardClaimed,
   ],
-  [ColonyMotions.CreateDomainMotion]: [
-    ColonyAndExtensionsEvents.MotionCreated,
-    ColonyAndExtensionsEvents.MotionStaked,
-    ColonyAndExtensionsEvents.MotionVoteRevealed,
-    ColonyAndExtensionsEvents.ObjectionRaised,
-    ColonyAndExtensionsEvents.MotionFinalized,
-    ColonyAndExtensionsEvents.MotionRewardClaimed,
-  ],
 };
 
 /*
