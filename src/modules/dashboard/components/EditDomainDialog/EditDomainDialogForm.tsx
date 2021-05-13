@@ -102,6 +102,7 @@ const EditDomainDialogForm = ({
     hasRoles,
     isVotingExtensionEnabled,
     forceAction,
+    Number(domainId),
   );
 
   const canEditDomain =
