@@ -740,6 +740,7 @@ export const getActionValues = async (
         ...mintTokensMotionValues,
       };
     }
+    case ColonyMotions.ColonyEditMotion:
     case ColonyMotions.MoveFundsMotion:
     case ColonyMotions.SetUserRolesMotion:
     case ColonyMotions.CreateDomainMotion: {
