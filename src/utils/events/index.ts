@@ -743,6 +743,7 @@ export const getActionValues = async (
     case ColonyMotions.ColonyEditMotion:
     case ColonyMotions.MoveFundsMotion:
     case ColonyMotions.SetUserRolesMotion:
+    case ColonyMotions.EditDomainMotion:
     case ColonyMotions.CreateDomainMotion: {
       const motionValues = await getMotionValues(
         processedEvents,

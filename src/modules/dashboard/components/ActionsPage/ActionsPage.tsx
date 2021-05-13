@@ -272,6 +272,7 @@ const ActionsPage = () => {
     case ColonyMotions.MoveFundsMotion:
     case ColonyMotions.SetUserRolesMotion:
     case ColonyMotions.CreateDomainMotion:
+    case ColonyMotions.EditDomainMotion:
     case ColonyMotions.MintTokensMotion:
       return (
         <MintTokenMotion
