@@ -7,14 +7,15 @@ export const useDialogActionPermissions = (
   canPerformAction: boolean,
   isVotingExtensionEnabled: boolean,
   forceAction: boolean,
+  domainId?: number,
 ) => {
-  const { colonyHasReputation } = useColonyReputation(colonyAddress);
+  const hasReputation = useColonyReputation(colonyAddress, domainId);
 
   const onlyForceAction =
-    isVotingExtensionEnabled && !colonyHasReputation && !forceAction;
+    isVotingExtensionEnabled && !hasReputation && !forceAction;
 
   const userHasPermission =
-    canPerformAction || (isVotingExtensionEnabled && colonyHasReputation);
+    canPerformAction || (isVotingExtensionEnabled && hasReputation);
 
   return [userHasPermission, onlyForceAction];
 };
