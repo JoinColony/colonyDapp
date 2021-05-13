@@ -8,8 +8,8 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 
 import {
   DefaultAction,
-  RecoverytAction,
-  MintTokenMotion,
+  RecoveryAction,
+  DefaultMotion,
 } from './ActionsComponents';
 
 import {
@@ -259,7 +259,7 @@ const ActionsPage = () => {
      */
     case ColonyActions.Recovery:
       return (
-        <RecoverytAction
+        <RecoveryAction
           colony={colonyData?.processedColony}
           token={tokenData?.tokenInfo}
           colonyAction={colonyActionData?.colonyAction}
@@ -276,7 +276,7 @@ const ActionsPage = () => {
     case ColonyMotions.EditDomainMotion:
     case ColonyMotions.MintTokensMotion:
       return (
-        <MintTokenMotion
+        <DefaultMotion
           colony={colonyData?.processedColony}
           token={tokenData?.tokenInfo}
           colonyAction={colonyActionData?.colonyAction}

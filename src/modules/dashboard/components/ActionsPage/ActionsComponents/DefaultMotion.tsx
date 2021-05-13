@@ -48,16 +48,16 @@ import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
 import CountDownTimer from '../CountDownTimer';
 
 import styles from './DefaultAction.css';
-import motionSpecificStyles from './MintTokenMotion.css';
+import motionSpecificStyles from './DefaultMotion.css';
 
 const MSG = defineMessages({
   or: {
-    id: 'dashboard.ActionsPage.MintTokenMotion.or',
+    id: 'dashboard.ActionsPage.DefaultMotion.or',
     defaultMessage: `OR`,
   },
 });
 
-const displayName = 'dashboard.ActionsPage.MintTokenMotion';
+const displayName = 'dashboard.ActionsPage.DefaultMotion';
 
 interface Props {
   colony: Colony;
@@ -68,7 +68,7 @@ interface Props {
   initiator: AnyUser;
 }
 
-const MintTokenMotion = ({
+const DefaultMotion = ({
   colony,
   colonyAction: {
     events = [],
@@ -392,6 +392,6 @@ const MintTokenMotion = ({
   );
 };
 
-MintTokenMotion.displayName = displayName;
+DefaultMotion.displayName = displayName;
 
-export default MintTokenMotion;
+export default DefaultMotion;
