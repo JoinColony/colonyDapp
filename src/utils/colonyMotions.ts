@@ -181,3 +181,7 @@ export const shouldDisplayMotion = (
     .times(100)
     .gte(10);
 };
+
+export interface MotionValue {
+  motionId: number;
+}

@@ -290,6 +290,7 @@ export type Query = {
   motionObjectionAnnotation: MotionObjectionAnnotation;
   motionStakerReward: MotionStakerRewards;
   motionStakes: MotionStakes;
+  motionStatus: Scalars['String'];
   motionUserVoteRevealed: MotionVoteReveal;
   motionVoteResults: MotionVoteResults;
   motionVoterReward: Scalars['String'];
@@ -440,6 +441,12 @@ export type QueryMotionStakesArgs = {
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
   motionId: Scalars['Int'];
+};
+
+
+export type QueryMotionStatusArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1702,6 +1709,14 @@ export type MotionObjectionAnnotationQueryVariables = Exact<{
 
 
 export type MotionObjectionAnnotationQuery = { motionObjectionAnnotation: Pick<MotionObjectionAnnotation, 'address' | 'metadata'> };
+
+export type MotionStatusQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionStatusQuery = Pick<Query, 'motionStatus'>;
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4193,6 +4208,38 @@ export function useMotionObjectionAnnotationLazyQuery(baseOptions?: Apollo.LazyQ
 export type MotionObjectionAnnotationQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationQuery>;
 export type MotionObjectionAnnotationLazyQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationLazyQuery>;
 export type MotionObjectionAnnotationQueryResult = Apollo.QueryResult<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>;
+export const MotionStatusDocument = gql`
+    query MotionStatus($motionId: Int!, $colonyAddress: String!) {
+  motionStatus(motionId: $motionId, colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useMotionStatusQuery__
+ *
+ * To run a query within a React component, call `useMotionStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionStatusQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionStatusQuery(baseOptions?: Apollo.QueryHookOptions<MotionStatusQuery, MotionStatusQueryVariables>) {
+        return Apollo.useQuery<MotionStatusQuery, MotionStatusQueryVariables>(MotionStatusDocument, baseOptions);
+      }
+export function useMotionStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionStatusQuery, MotionStatusQueryVariables>) {
+          return Apollo.useLazyQuery<MotionStatusQuery, MotionStatusQueryVariables>(MotionStatusDocument, baseOptions);
+        }
+export type MotionStatusQueryHookResult = ReturnType<typeof useMotionStatusQuery>;
+export type MotionStatusLazyQueryHookResult = ReturnType<typeof useMotionStatusLazyQuery>;
+export type MotionStatusQueryResult = Apollo.QueryResult<MotionStatusQuery, MotionStatusQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {

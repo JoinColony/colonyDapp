@@ -31,6 +31,7 @@ import ProgressBar from '~core/ProgressBar';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import {
   MotionState,
+  MotionValue,
   MOTION_TAG_MAP,
   PERIOD_TYPE_MAP,
   MOTION_STATE_TO_TIMER_TEXT_MAP,
@@ -66,10 +67,6 @@ interface Props {
   transactionHash: string;
   recipient: AnyUser;
   initiator: AnyUser;
-}
-
-interface MotionValue {
-  motionId: number;
 }
 
 const MintTokenMotion = ({
