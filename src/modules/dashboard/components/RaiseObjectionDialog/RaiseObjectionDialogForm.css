@@ -21,3 +21,10 @@
   margin: 10px auto 50px;
   width: 341px;
 }
+
+.validationError {
+  margin-top: 10px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}

@@ -1,6 +1,8 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { FormikProps } from 'formik';
+import Decimal from 'decimal.js';
+import { BigNumber } from 'ethers/utils';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
@@ -11,6 +13,11 @@ import {
   StakingSlider,
   StakingAmounts,
 } from '~dashboard/ActionsPage/StakingWidget';
+import {
+  stakeValidationMSG,
+  NOT_ENOUGH_TOKENS_HELP_LINK,
+  INACTIVE_TOKEN_HELP_LINK,
+} from '~utils/colonyMotions';
 
 import { Colony } from '~data/index';
 
@@ -44,6 +51,8 @@ const OBJECTION_HELP_LINK = `https://colony.io/dev/docs/colonynetwork/whitepaper
 export interface Props extends StakingAmounts {
   colony: Colony;
   canUserStake: boolean;
+  userInactivatedTokens: BigNumber;
+  userActivatedTokens: Decimal;
   cancel: () => void;
 }
 
@@ -54,8 +63,14 @@ const RaiseObjectionDialogForm = ({
   canUserStake,
   values,
   cancel,
+  userInactivatedTokens,
+  userActivatedTokens,
+  remainingToFullyNayStaked,
   ...props
 }: Props & FormikProps<FormValues>) => {
+  const decimalAmount = new Decimal(values.amount)
+    .times(remainingToFullyNayStaked)
+    .div(100);
   return (
     <>
       <DialogSection appearance={{ theme: 'heading' }}>
@@ -85,6 +100,7 @@ const RaiseObjectionDialogForm = ({
             values={values}
             appearance={{ theme: 'danger' }}
             isObjection
+            remainingToFullyNayStaked={remainingToFullyNayStaked}
             {...props}
           />
         </div>
@@ -96,6 +112,46 @@ const RaiseObjectionDialogForm = ({
           maxLength={90}
           disabled={!canUserStake}
         />
+      </DialogSection>
+      <DialogSection>
+        {!userInactivatedTokens.isZero() && (
+          <div className={styles.validationError}>
+            <FormattedMessage
+              {...stakeValidationMSG.hasInactiveTokens}
+              values={{
+                a: (chunks) => (
+                  <a
+                    href={INACTIVE_TOKEN_HELP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.link}
+                  >
+                    {chunks}
+                  </a>
+                ),
+              }}
+            />
+          </div>
+        )}
+        {userActivatedTokens.lt(decimalAmount) && (
+          <div className={styles.validationError}>
+            <FormattedMessage
+              {...stakeValidationMSG.notEnoughTokens}
+              values={{
+                a: (chunks) => (
+                  <a
+                    href={NOT_ENOUGH_TOKENS_HELP_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.link}
+                  >
+                    {chunks}
+                  </a>
+                ),
+              }}
+            />
+          </div>
+        )}
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
@@ -110,7 +166,7 @@ const RaiseObjectionDialogForm = ({
             onClick={() => handleSubmit()}
             type="submit"
             loading={isSubmitting}
-            disabled={!canUserStake}
+            disabled={!canUserStake || userActivatedTokens.lt(decimalAmount)}
           />
         </span>
       </DialogSection>
