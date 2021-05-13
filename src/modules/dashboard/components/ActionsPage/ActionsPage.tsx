@@ -268,6 +268,7 @@ const ActionsPage = () => {
           initiator={initiatorProfileWithFallback}
         />
       );
+    case ColonyMotions.PaymentMotion:
     case ColonyMotions.ColonyEditMotion:
     case ColonyMotions.MoveFundsMotion:
     case ColonyMotions.SetUserRolesMotion:
