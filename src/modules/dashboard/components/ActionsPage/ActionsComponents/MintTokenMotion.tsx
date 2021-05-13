@@ -26,7 +26,6 @@ import {
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
-import CountDownTimer from '~core/CountDownTimer';
 import ProgressBar from '~core/ProgressBar';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import {
@@ -47,6 +46,7 @@ import FinalizeMotionAndClaimWidget, {
   MSG as voteResultsMSG,
 } from '../FinalizeMotionAndClaimWidget';
 import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
+import CountDownTimer from '../CountDownTimer';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';

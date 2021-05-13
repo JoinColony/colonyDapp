@@ -12,23 +12,23 @@ import { calculateTimeLeft } from '~utils/time';
 
 const MSG = defineMessage({
   days: {
-    id: 'CountDownTimer.CountDownTimer.days',
+    id: 'dashboard.ActionsPage.CountDownTimer.days',
     defaultMessage: ' {days}d',
   },
   hours: {
-    id: 'CountDownTimer.CountDownTimer.hours',
+    id: 'dashboard.ActionsPage.CountDownTimer.hours',
     defaultMessage: ' {hours}h',
   },
   minutes: {
-    id: 'CountDownTimer.CountDownTimer.minutes',
+    id: 'dashboard.ActionsPage.CountDownTimer.minutes',
     defaultMessage: ' {minutes}m',
   },
   seconds: {
-    id: 'CountDownTimer.CountDownTimer.seconds',
+    id: 'dashboard.ActionsPage.CountDownTimer.seconds',
     defaultMessage: ' {seconds}s',
   },
   loadingText: {
-    id: 'CountDownTimer.CountDownTimer.loadingText',
+    id: 'dashboard.ActionsPage.CountDownTimer.loadingText',
     defaultMessage: 'Loading countdown period',
   },
 });
@@ -44,6 +44,8 @@ interface Props {
   colonyAddress: Address;
   tooltipText?: MessageDescriptor | string;
 }
+
+const displayName = 'dashboard.ActionsPage.CountDownTimer';
 
 const CountDownTimer = ({
   text,
@@ -123,5 +125,7 @@ const CountDownTimer = ({
     </div>
   );
 };
+
+CountDownTimer.displayName = displayName;
 
 export default CountDownTimer;
