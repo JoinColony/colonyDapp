@@ -1086,11 +1086,19 @@ export type ProcessedColony = {
   installedExtensions: Array<ColonyExtension>;
 };
 
+<<<<<<< HEAD
 export type VotingExtensionParams = {
   stakePeriod: Scalars['Int'];
   submitPeriod: Scalars['Int'];
   revealPeriod: Scalars['Int'];
   escalationPeriod: Scalars['Int'];
+=======
+export type MotionTimeoutPeriods = {
+  timeLeftToStake: Scalars['Int'];
+  timeLeftToSubmit: Scalars['Int'];
+  timeLeftToReveal: Scalars['Int'];
+  timeLeftToEscalate: Scalars['Int'];
+>>>>>>> Refactor: `motionTimeoutPeriods` client resolver
 };
 
 export type ActionsFilter = {
@@ -1718,7 +1726,11 @@ export type MotionTimeoutPeriodsQueryVariables = Exact<{
 }>;
 
 
+<<<<<<< HEAD
 export type MotionStatusQuery = Pick<Query, 'motionStatus'>;
+=======
+export type MotionTimeoutPeriodsQuery = { motionTimeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> };
+>>>>>>> Refactor: `motionTimeoutPeriods` client resolver
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -4221,10 +4233,10 @@ export const MotionStatusDocument = gql`
 export const MotionTimeoutPeriodsDocument = gql`
     query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
   motionTimeoutPeriods(motionId: $motionId, colonyAddress: $colonyAddress) @client {
-    stakePeriod
-    submitPeriod
-    revealPeriod
-    escalationPeriod
+    timeLeftToStake
+    timeLeftToSubmit
+    timeLeftToReveal
+    timeLeftToEscalate
   }
 >>>>>>> Remove: unused `blockTime` client resolver
 }

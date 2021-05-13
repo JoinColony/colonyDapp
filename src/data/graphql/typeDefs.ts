@@ -537,9 +537,9 @@ export default gql`
   }
 
   type MotionTimeoutPeriods {
-    stakePeriod: String!
-    submitPeriod: String!
-    revealPeriod: String!
-    escalationPeriod: String!
+    timeLeftToStake: Int!
+    timeLeftToSubmit: Int!
+    timeLeftToReveal: Int!
+    timeLeftToEscalate: Int!
   }
 `;

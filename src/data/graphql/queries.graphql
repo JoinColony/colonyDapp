@@ -474,10 +474,10 @@ query MotionStatus($motionId: Int!, $colonyAddress: String!) {
 
 query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
   motionTimeoutPeriods(motionId: $motionId, colonyAddress: $colonyAddress) @client {
-    stakePeriod
-    submitPeriod
-    revealPeriod
-    escalationPeriod
+    timeLeftToStake
+    timeLeftToSubmit
+    timeLeftToReveal
+    timeLeftToEscalate
   }
 }
 
