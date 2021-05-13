@@ -268,6 +268,7 @@ const ActionsPage = () => {
           initiator={initiatorProfileWithFallback}
         />
       );
+    case ColonyMotions.SetUserRolesMotion:
     case ColonyMotions.CreateDomainMotion:
     case ColonyMotions.MintTokensMotion:
       return (
