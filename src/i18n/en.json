@@ -175,6 +175,10 @@
     "transaction.VotingReputationClient.createDomainMotion.description": "Create domain motion",
     "transaction.group.createDomainMotion.title": "Create domain motion",
     "transaction.group.createDomainMotion.description": "Create domain motion",
+    "transaction.VotingReputationClient.createMotion.title": "Create motion",
+    "transaction.VotingReputationClient.createMotion.description": "Create motion",
+    "transaction.group.createMotion.title": "Create domain motion",
+    "transaction.group.createMotion.description": "Create domain motion",
 
     "transaction.group.stakeMotion.title": "Stake motion",
     "transaction.group.stakeMotion.description": "Stake motion",
