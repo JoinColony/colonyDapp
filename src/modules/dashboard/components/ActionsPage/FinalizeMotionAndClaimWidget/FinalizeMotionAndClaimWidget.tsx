@@ -71,7 +71,7 @@ export const MSG = defineMessages({
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.outcomeCelebration',
     defaultMessage: `{outcome, select,
       true {🎉 Congratulations, your side won!}
-      other {Sorry, your side lost!}
+      other {Sorry, your side lost. 😢}
     }`,
   },
   claimLabel: {
