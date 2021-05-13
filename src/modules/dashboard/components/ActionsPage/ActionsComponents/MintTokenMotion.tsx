@@ -79,7 +79,6 @@ const MintTokenMotion = ({
     motionDomain,
     actionInitiator,
     rootHash,
-    fromDomain,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -186,7 +185,6 @@ const MintTokenMotion = ({
 
   const actionAndEventValues = {
     actionType,
-    fromDomain,
     amount: (
       <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
     ),
@@ -299,7 +297,6 @@ const MintTokenMotion = ({
               id="motion.title"
               values={{
                 ...actionAndEventValues,
-                fromDomain: actionAndEventValues.fromDomain?.domainName,
               }}
             />
           </h1>

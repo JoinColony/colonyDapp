@@ -627,34 +627,6 @@ const getMintTokensMotionValues = async (
   return mintTokensMotionValues;
 };
 
-const getCreateDomainMotionValues = async (
-  processedEvents: ProcessedEvent[],
-  votingClient: ExtensionClient,
-  colonyClient: ColonyClient,
-): Promise<Partial<MotionValues>> => {
-  const motionCreatedEvent = processedEvents[0];
-  const motionId = motionCreatedEvent.values.motionId.toString();
-  const motion = await votingClient.getMotion(motionId);
-  const values = colonyClient.interface.parseTransaction({
-    data: motion.action,
-  });
-  const motionDefaultValues = await getMotionValues(
-    processedEvents,
-    votingClient,
-    colonyClient,
-  );
-
-  const ipfsData = await ipfs.getString(values.args[3]);
-  const fromDomain = JSON.parse(ipfsData);
-
-  const createDomainMotionValues: Partial<MotionValues> = {
-    ...motionDefaultValues,
-    fromDomain,
-  };
-
-  return createDomainMotionValues;
-};
-
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -768,15 +740,16 @@ export const getActionValues = async (
         ...mintTokensMotionValues,
       };
     }
+    case ColonyMotions.SetUserRolesMotion:
     case ColonyMotions.CreateDomainMotion: {
-      const createDomainMotionValues = await getCreateDomainMotionValues(
+      const motionValues = await getMotionValues(
         processedEvents,
         votingClient,
         colonyClient,
       );
       return {
         ...fallbackValues,
-        ...createDomainMotionValues,
+        ...motionValues,
       };
     }
     default: {
