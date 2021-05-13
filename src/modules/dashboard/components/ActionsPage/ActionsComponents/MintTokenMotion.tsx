@@ -32,8 +32,6 @@ import {
   MotionState,
   MotionValue,
   MOTION_TAG_MAP,
-  PERIOD_TYPE_MAP,
-  MOTION_STATE_TO_TIMER_TEXT_MAP,
   shouldDisplayMotion,
 } from '~utils/colonyMotions';
 
@@ -239,10 +237,6 @@ const MintTokenMotion = ({
     objectionAnnotation?.motionObjectionAnnotation?.address || '',
   );
 
-  const countDownText =
-    motionState && MOTION_STATE_TO_TIMER_TEXT_MAP[motionState];
-  const countDownPeriod = motionState && PERIOD_TYPE_MAP[motionState];
-
   return (
     <div className={styles.main}>
       <StakeRequiredBanner
@@ -263,14 +257,11 @@ const MintTokenMotion = ({
           />
         </p>
         <div className={styles.countdownContainer}>
-          {countDownText && countDownPeriod && (
-            <CountDownTimer
-              createdAt={actionCreatedAt}
-              colonyAddress={colony.colonyAddress}
-              text={countDownText}
-              periodType={countDownPeriod}
-            />
-          )}
+          <CountDownTimer
+            createdAt={actionCreatedAt}
+            colonyAddress={colony.colonyAddress}
+            state={motionState as MotionState}
+          />
           {motionState === MotionState.Voting && votingStateData && (
             <>
               <span className={motionSpecificStyles.text}>
