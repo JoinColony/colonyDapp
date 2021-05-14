@@ -78,6 +78,13 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyActions.EditDomain]: 'emoji-pencil-note',
   [ColonyActions.SetUserRoles]: 'emoji-crane',
   [ColonyMotions.MintTokensMotion]: 'emoji-seed-sprout',
+  [ColonyMotions.PaymentMotion]: 'emoji-dollar-stack',
+  [ColonyMotions.MoveFundsMotion]: 'emoji-world-globe',
+  [ColonyMotions.CreateDomainMotion]: 'emoji-crane',
+  [ColonyMotions.VersionUpgradeMotion]: 'emoji-strong-person',
+  [ColonyMotions.ColonyEditMotion]: 'emoji-edit-tools',
+  [ColonyMotions.EditDomainMotion]: 'emoji-pencil-note',
+  [ColonyMotions.SetUserRolesMotion]: 'emoji-crane',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -188,4 +195,29 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   ],
   [ColonyActions.Recovery]: [],
   [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
+  [ColonyMotions.PaymentMotion]: [
+    ActionPageDetails.FromDomain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.Amount,
+  ],
+  [ColonyMotions.MoveFundsMotion]: [
+    ActionPageDetails.FromDomain,
+    ActionPageDetails.ToDomain,
+    ActionPageDetails.Amount,
+  ],
+  [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
+  [ColonyMotions.CreateDomainMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Description,
+  ],
+  [ColonyMotions.ColonyEditMotion]: [ActionPageDetails.Name],
+  [ColonyMotions.EditDomainMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Description,
+  ],
+  [ColonyMotions.SetUserRolesMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.Permissions,
+  ],
 };
