@@ -24,6 +24,10 @@
   position: relative;
 }
 
+.container input:disabled {
+  border-color: var(--text-disabled);
+}
+
 .inputContainer {
   display: flex;
   flex-wrap: wrap;
