@@ -81,6 +81,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.PaymentMotion]: 'emoji-dollar-stack',
   [ColonyMotions.MoveFundsMotion]: 'emoji-world-globe',
   [ColonyMotions.CreateDomainMotion]: 'emoji-crane',
+  [ColonyMotions.VersionUpgradeMotion]: 'emoji-strong-person',
   [ColonyMotions.ColonyEditMotion]: 'emoji-edit-tools',
   [ColonyMotions.EditDomainMotion]: 'emoji-pencil-note',
   [ColonyMotions.SetUserRolesMotion]: 'emoji-crane',
@@ -117,6 +118,14 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.RecoveryModeExited,
   ],
   [ColonyMotions.MintTokensMotion]: [
+    ColonyAndExtensionsEvents.MotionCreated,
+    ColonyAndExtensionsEvents.MotionStaked,
+    ColonyAndExtensionsEvents.MotionVoteRevealed,
+    ColonyAndExtensionsEvents.ObjectionRaised,
+    ColonyAndExtensionsEvents.MotionFinalized,
+    ColonyAndExtensionsEvents.MotionRewardClaimed,
+  ],
+  [ColonyMotions.CreateDomainMotion]: [
     ColonyAndExtensionsEvents.MotionCreated,
     ColonyAndExtensionsEvents.MotionStaked,
     ColonyAndExtensionsEvents.MotionVoteRevealed,
