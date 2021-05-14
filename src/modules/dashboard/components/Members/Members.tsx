@@ -12,6 +12,7 @@ import { Select, Form } from '~core/Fields';
 
 import { getAllUserRolesForDomain } from '../../../transformers';
 import { useTransformer } from '~utils/hooks';
+import { createAddress } from '~utils/web3';
 import {
   AnyUser,
   Colony,
@@ -149,6 +150,12 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
     true,
   ]);
 
+  const inheritedDomainRoles = useTransformer(getAllUserRolesForDomain, [
+    colony,
+    ROOT_DOMAIN_ID,
+    true,
+  ]);
+
   const domainSelectOptions = sortBy(
     [...colony.domains, ALLDOMAINS_DOMAIN_SELECTION].map(
       ({ ethDomainId, name }) => ({
@@ -172,10 +179,19 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
         const directUserRoles = directDomainRoles.find(
           ({ address: userAddress }) => userAddress === address,
         );
+        const rootRoles = inheritedDomainRoles.find(
+          ({ address: userAddress }) => userAddress === address,
+        );
+        const allUserRoles = [
+          ...new Set([
+            ...(directUserRoles?.roles || []),
+            ...(rootRoles?.roles || []),
+          ]),
+        ];
         return {
           userAddress: address,
           roles,
-          directRoles: directUserRoles ? directUserRoles.roles : [],
+          directRoles: allUserRoles,
         };
       });
   }, [directDomainRoles, domainRoles]);
@@ -196,7 +212,8 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
       profile: { walletAddress },
     } = user;
     const domainRole = domainRolesArray.find(
-      (rolesObject) => rolesObject.userAddress === walletAddress,
+      (rolesObject) =>
+        createAddress(rolesObject.userAddress) === createAddress(walletAddress),
     );
     return {
       ...user,
