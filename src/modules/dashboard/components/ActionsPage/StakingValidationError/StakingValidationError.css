@@ -1,0 +1,12 @@
+.link {
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: var(--sky-blue);
+}
+
+.validationError {
+  margin-top: 10px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
