@@ -57,11 +57,13 @@
 }
 
 .tokenSymbol {
+  height: 26px;
   width: 26px;
 }
 
 .tokenSymbolSmall {
   margin-left: 5px;
+  height: 16px;
   width: 16px;
 }
 
