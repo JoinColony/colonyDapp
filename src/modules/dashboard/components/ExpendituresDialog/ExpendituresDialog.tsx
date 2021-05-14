@@ -73,6 +73,7 @@ const ExpendituresDialog = ({
   prevStep,
   colony: { colonyAddress },
   colony,
+  isVotingExtensionEnabled,
   nextStep,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -90,9 +91,11 @@ const ExpendituresDialog = ({
   });
 
   const canMakePayment =
-    colonyExtensionsData?.processedColony?.installedExtensions?.find(
+    (colonyExtensionsData?.processedColony?.installedExtensions?.find(
       ({ extensionId }) => extensionId === Extension.OneTxPayment,
-    ) || false;
+    ) &&
+      isVotingExtensionEnabled) ||
+    false;
 
   const items = [
     {
