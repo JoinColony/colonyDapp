@@ -146,19 +146,3 @@ export const shouldDisplayMotion = (
 export interface MotionValue {
   motionId: number;
 }
-
-export const stakeValidationMSG = defineMessage({
-  hasInactiveTokens: {
-    id: 'dashboard.ActionsPage.hasInactiveTokens',
-    defaultMessage: `You have inactive tokens which cannot be staked, please activate them. <a>Learn more</a>`,
-  },
-  notEnoughTokens: {
-    id: 'dashboard.ActionsPage.notEnoughTokens',
-    defaultMessage:
-      'You do not have enough activated tokens to stake. <a>Learn more</a>',
-  },
-});
-
-// @TODO: Add actual links for help
-export const INACTIVE_TOKEN_HELP_LINK = '/';
-export const NOT_ENOUGH_TOKENS_HELP_LINK = '/';

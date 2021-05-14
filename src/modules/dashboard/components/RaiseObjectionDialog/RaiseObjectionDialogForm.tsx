@@ -13,11 +13,7 @@ import {
   StakingSlider,
   StakingAmounts,
 } from '~dashboard/ActionsPage/StakingWidget';
-import {
-  stakeValidationMSG,
-  NOT_ENOUGH_TOKENS_HELP_LINK,
-  INACTIVE_TOKEN_HELP_LINK,
-} from '~utils/colonyMotions';
+import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import { Colony } from '~data/index';
 
@@ -114,44 +110,11 @@ const RaiseObjectionDialogForm = ({
         />
       </DialogSection>
       <DialogSection>
-        {!userInactivatedTokens.isZero() && (
-          <div className={styles.validationError}>
-            <FormattedMessage
-              {...stakeValidationMSG.hasInactiveTokens}
-              values={{
-                a: (chunks) => (
-                  <a
-                    href={INACTIVE_TOKEN_HELP_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.link}
-                  >
-                    {chunks}
-                  </a>
-                ),
-              }}
-            />
-          </div>
-        )}
-        {userActivatedTokens.lt(decimalAmount) && (
-          <div className={styles.validationError}>
-            <FormattedMessage
-              {...stakeValidationMSG.notEnoughTokens}
-              values={{
-                a: (chunks) => (
-                  <a
-                    href={NOT_ENOUGH_TOKENS_HELP_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.link}
-                  >
-                    {chunks}
-                  </a>
-                ),
-              }}
-            />
-          </div>
-        )}
+        <StakingValidationError
+          userActivatedTokens={userActivatedTokens}
+          userInactivatedTokens={userInactivatedTokens}
+          decimalAmount={decimalAmount}
+        />
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button

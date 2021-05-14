@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import * as yup from 'yup';
 import { Decimal } from 'decimal.js';
@@ -9,11 +9,7 @@ import Button from '~core/Button';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { useDialog } from '~core/Dialog';
 import RaiseObjectionDialog from '~dashboard/RaiseObjectionDialog';
-import {
-  stakeValidationMSG,
-  INACTIVE_TOKEN_HELP_LINK,
-  NOT_ENOUGH_TOKENS_HELP_LINK,
-} from '~utils/colonyMotions';
+import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import {
   useLoggedInUser,
@@ -107,7 +103,14 @@ const StakingWidget = ({
         userActivatedTokens,
         ...stakingAmounts,
       }),
-    [colony, openRaiseObjectionDialog, scrollToRef, motionId],
+    [
+      colony,
+      openRaiseObjectionDialog,
+      scrollToRef,
+      motionId,
+      userInactivatedTokens,
+      userActivatedTokens,
+    ],
   );
 
   const getDecimalStake = useCallback(
@@ -209,9 +212,9 @@ const StakingWidget = ({
   const canUserStakeNay =
     canUserStake && new Decimal(remainingToFullyNayStaked).gt(0);
 
-  const canBeStaked = isObjection
-    ? canUserStakeNay
-    : canUserStakeYay && userInactivatedTokens.isZero();
+  const canBeStaked =
+    (isObjection ? canUserStakeNay : canUserStakeYay) &&
+    userInactivatedTokens.isZero();
 
   return (
     <div className={styles.main}>
@@ -273,44 +276,11 @@ const StakingWidget = ({
                 )}
               </span>
             </div>
-            {!userInactivatedTokens.isZero() && (
-              <div className={styles.validationError}>
-                <FormattedMessage
-                  {...stakeValidationMSG.hasInactiveTokens}
-                  values={{
-                    a: (chunks) => (
-                      <a
-                        href={INACTIVE_TOKEN_HELP_LINK}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.link}
-                      >
-                        {chunks}
-                      </a>
-                    ),
-                  }}
-                />
-              </div>
-            )}
-            {userActivatedTokens.lt(getDecimalStake(values.amount)) && (
-              <div className={styles.validationError}>
-                <FormattedMessage
-                  {...stakeValidationMSG.notEnoughTokens}
-                  values={{
-                    a: (chunks) => (
-                      <a
-                        href={NOT_ENOUGH_TOKENS_HELP_LINK}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.link}
-                      >
-                        {chunks}
-                      </a>
-                    ),
-                  }}
-                />
-              </div>
-            )}
+            <StakingValidationError
+              userActivatedTokens={userActivatedTokens}
+              userInactivatedTokens={userInactivatedTokens}
+              decimalAmount={getDecimalStake(values.amount)}
+            />
           </div>
         )}
       </ActionForm>
