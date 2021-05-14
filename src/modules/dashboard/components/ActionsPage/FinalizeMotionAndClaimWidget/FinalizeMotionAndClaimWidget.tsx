@@ -71,7 +71,7 @@ export const MSG = defineMessages({
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.outcomeCelebration',
     defaultMessage: `{outcome, select,
       true {🎉 Congratulations, your side won!}
-      other {Sorry, your side lost!}
+      other {Sorry, your side lost. 😢}
     }`,
   },
   claimLabel: {
@@ -257,9 +257,9 @@ const FinalizeMotionAndClaimWidget = ({
   const showClaimButton =
     finalized?.motionFinalized || (motionNotFinalizable && canClaimStakes);
 
-  const yaySideWon =
-    (voteResults?.motionVoteResults?.yayVoters.length || 0) >
-    (voteResults?.motionVoteResults?.nayVoters.length || 0);
+  const yaySideWon = bigNumberify(
+    voteResults?.motionVoteResults?.yayVotes || 0,
+  ).gt(voteResults?.motionVoteResults?.nayVotes || 0);
   const userSideWon = yaySideWon
     ? voteResults?.motionVoteResults?.currentUserVoteSide === MotionVote.Yay
     : voteResults?.motionVoteResults?.currentUserVoteSide === MotionVote.Nay;
