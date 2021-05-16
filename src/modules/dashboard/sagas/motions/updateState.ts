@@ -1,35 +1,18 @@
-import { put, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery, fork } from 'redux-saga/effects';
 
 import { ActionTypes, AllActions, Action } from '~redux/index';
-import { TEMP_getContext, ContextModule } from '~context/index';
 import { putError } from '~utils/saga/effects';
-import {
-  ColonyActionQuery,
-  ColonyActionQueryVariables,
-  ColonyActionDocument,
-} from '~data/index';
+import { updateMotionValues } from '../utils/updateMotionValues';
 
 function* motionStateUpdate({
-  payload: { colonyAddress, transactionHash },
+  payload: { colonyAddress, motionId, userAddress },
   meta,
 }: Action<ActionTypes.COLONY_MOTION_STATE_UPDATE>) {
   try {
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-
     /*
-     * Colony Actions (to get the refreshed motion state)
-     *
-     * @TODO This is a todo for now, since we'll difently need to refactor this
-     * to just update the state, and the bring in the whole resolver.
+     * Update motion page values
      */
-    yield apolloClient.query<ColonyActionQuery, ColonyActionQueryVariables>({
-      query: ColonyActionDocument,
-      variables: {
-        colonyAddress,
-        transactionHash,
-      },
-      fetchPolicy: 'network-only',
-    });
+    yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_MOTION_STATE_UPDATE_SUCCESS,

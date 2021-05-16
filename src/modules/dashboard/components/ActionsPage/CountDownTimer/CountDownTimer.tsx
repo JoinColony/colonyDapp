@@ -4,7 +4,11 @@ import { useDispatch } from 'redux-react-hook';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
-import { useMotionTimeoutPeriodsQuery, Colony } from '~data/index';
+import {
+  useMotionTimeoutPeriodsQuery,
+  Colony,
+  useLoggedInUser,
+} from '~data/index';
 import { splitTimePeriod } from '~utils/time';
 import { MotionState } from '~utils/colonyMotions';
 import { ActionTypes } from '~redux/index';
@@ -59,6 +63,7 @@ const CountDownTimer = ({
   state,
   motionId,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const dispatch = useDispatch();
   const { data, loading } = useMotionTimeoutPeriodsQuery({
     variables: {
@@ -121,6 +126,7 @@ const CountDownTimer = ({
         payload: {
           colonyAddress,
           motionId,
+          userAddress: walletAddress,
         },
       });
     }
@@ -128,7 +134,14 @@ const CountDownTimer = ({
       clearInterval(timer);
     }
     return () => clearInterval(timer);
-  }, [timeLeft, currentStatePeriod, dispatch, colonyAddress, motionId]);
+  }, [
+    timeLeft,
+    currentStatePeriod,
+    dispatch,
+    colonyAddress,
+    motionId,
+    walletAddress,
+  ]);
 
   /*
    * Split the time into h/m/s for display purpouses
