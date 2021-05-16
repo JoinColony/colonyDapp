@@ -290,6 +290,7 @@ export type Query = {
   motionStakerReward: MotionStakerRewards;
   motionStakes: MotionStakes;
   motionStatus: Scalars['String'];
+  motionTimeoutPeriods: MotionTimeoutPeriods;
   motionUserVoteRevealed: MotionVoteReveal;
   motionVoteResults: MotionVoteResults;
   motionVoterReward: Scalars['String'];
@@ -315,7 +316,6 @@ export type Query = {
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
   username: Scalars['String'];
-  votingExtensionParams: VotingExtensionParams;
   votingState: VotingState;
 };
 
@@ -438,11 +438,13 @@ export type QueryMotionStakesArgs = {
 };
 
 
-<<<<<<< HEAD
 export type QueryMotionStatusArgs = {
-=======
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
 export type QueryMotionTimeoutPeriodsArgs = {
->>>>>>> Remove: unused `blockTime` client resolver
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
 };
@@ -571,11 +573,6 @@ export type QueryUserReputationArgs = {
 
 export type QueryUsernameArgs = {
   address: Scalars['String'];
-};
-
-
-export type QueryVotingExtensionParamsArgs = {
-  colonyAddress: Scalars['String'];
 };
 
 
@@ -1085,19 +1082,11 @@ export type ProcessedColony = {
   installedExtensions: Array<ColonyExtension>;
 };
 
-<<<<<<< HEAD
-export type VotingExtensionParams = {
-  stakePeriod: Scalars['Int'];
-  submitPeriod: Scalars['Int'];
-  revealPeriod: Scalars['Int'];
-  escalationPeriod: Scalars['Int'];
-=======
 export type MotionTimeoutPeriods = {
   timeLeftToStake: Scalars['Int'];
   timeLeftToSubmit: Scalars['Int'];
   timeLeftToReveal: Scalars['Int'];
   timeLeftToEscalate: Scalars['Int'];
->>>>>>> Refactor: `motionTimeoutPeriods` client resolver
 };
 
 export type ActionsFilter = {
@@ -1715,21 +1704,21 @@ export type MotionObjectionAnnotationQueryVariables = Exact<{
 
 export type MotionObjectionAnnotationQuery = { motionObjectionAnnotation: Pick<MotionObjectionAnnotation, 'address' | 'metadata'> };
 
-<<<<<<< HEAD
 export type MotionStatusQueryVariables = Exact<{
-=======
-export type MotionTimeoutPeriodsQueryVariables = Exact<{
->>>>>>> Remove: unused `blockTime` client resolver
   motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
 
 
-<<<<<<< HEAD
 export type MotionStatusQuery = Pick<Query, 'motionStatus'>;
-=======
+
+export type MotionTimeoutPeriodsQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
 export type MotionTimeoutPeriodsQuery = { motionTimeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> };
->>>>>>> Refactor: `motionTimeoutPeriods` client resolver
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -1910,23 +1899,6 @@ export type ColonyReputationQueryVariables = Exact<{
 
 export type ColonyReputationQuery = Pick<Query, 'colonyReputation'>;
 
-<<<<<<< HEAD
-export type VotingExtensionParamsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type VotingExtensionParamsQuery = { votingExtensionParams: Pick<VotingExtensionParams, 'stakePeriod' | 'submitPeriod' | 'revealPeriod' | 'escalationPeriod'> };
-
-export type BlockTimeQueryVariables = Exact<{
-  blockHash?: Maybe<Scalars['String']>;
-}>;
-
-
-export type BlockTimeQuery = Pick<Query, 'blockTime'>;
-
-=======
->>>>>>> Remove: unused `blockTime` client resolver
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -4223,20 +4195,9 @@ export function useMotionObjectionAnnotationLazyQuery(baseOptions?: Apollo.LazyQ
 export type MotionObjectionAnnotationQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationQuery>;
 export type MotionObjectionAnnotationLazyQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationLazyQuery>;
 export type MotionObjectionAnnotationQueryResult = Apollo.QueryResult<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>;
-<<<<<<< HEAD
 export const MotionStatusDocument = gql`
     query MotionStatus($motionId: Int!, $colonyAddress: String!) {
   motionStatus(motionId: $motionId, colonyAddress: $colonyAddress) @client
-=======
-export const MotionTimeoutPeriodsDocument = gql`
-    query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
-  motionTimeoutPeriods(motionId: $motionId, colonyAddress: $colonyAddress) @client {
-    timeLeftToStake
-    timeLeftToSubmit
-    timeLeftToReveal
-    timeLeftToEscalate
-  }
->>>>>>> Remove: unused `blockTime` client resolver
 }
     `;
 
@@ -4266,6 +4227,43 @@ export function useMotionStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type MotionStatusQueryHookResult = ReturnType<typeof useMotionStatusQuery>;
 export type MotionStatusLazyQueryHookResult = ReturnType<typeof useMotionStatusLazyQuery>;
 export type MotionStatusQueryResult = Apollo.QueryResult<MotionStatusQuery, MotionStatusQueryVariables>;
+export const MotionTimeoutPeriodsDocument = gql`
+    query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
+  motionTimeoutPeriods(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    timeLeftToStake
+    timeLeftToSubmit
+    timeLeftToReveal
+    timeLeftToEscalate
+  }
+}
+    `;
+
+/**
+ * __useMotionTimeoutPeriodsQuery__
+ *
+ * To run a query within a React component, call `useMotionTimeoutPeriodsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionTimeoutPeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionTimeoutPeriodsQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionTimeoutPeriodsQuery(baseOptions?: Apollo.QueryHookOptions<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>) {
+        return Apollo.useQuery<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>(MotionTimeoutPeriodsDocument, baseOptions);
+      }
+export function useMotionTimeoutPeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>) {
+          return Apollo.useLazyQuery<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>(MotionTimeoutPeriodsDocument, baseOptions);
+        }
+export type MotionTimeoutPeriodsQueryHookResult = ReturnType<typeof useMotionTimeoutPeriodsQuery>;
+export type MotionTimeoutPeriodsLazyQueryHookResult = ReturnType<typeof useMotionTimeoutPeriodsLazyQuery>;
+export type MotionTimeoutPeriodsQueryResult = Apollo.QueryResult<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {
@@ -4967,76 +4965,6 @@ export function useColonyReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type ColonyReputationQueryHookResult = ReturnType<typeof useColonyReputationQuery>;
 export type ColonyReputationLazyQueryHookResult = ReturnType<typeof useColonyReputationLazyQuery>;
 export type ColonyReputationQueryResult = Apollo.QueryResult<ColonyReputationQuery, ColonyReputationQueryVariables>;
-<<<<<<< HEAD
-export const VotingExtensionParamsDocument = gql`
-    query VotingExtensionParams($colonyAddress: String!) {
-  votingExtensionParams(colonyAddress: $colonyAddress) @client {
-    stakePeriod
-    submitPeriod
-    revealPeriod
-    escalationPeriod
-  }
-}
-    `;
-
-/**
- * __useVotingExtensionParamsQuery__
- *
- * To run a query within a React component, call `useVotingExtensionParamsQuery` and pass it any options that fit your needs.
- * When your component renders, `useVotingExtensionParamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useVotingExtensionParamsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useVotingExtensionParamsQuery(baseOptions?: Apollo.QueryHookOptions<VotingExtensionParamsQuery, VotingExtensionParamsQueryVariables>) {
-        return Apollo.useQuery<VotingExtensionParamsQuery, VotingExtensionParamsQueryVariables>(VotingExtensionParamsDocument, baseOptions);
-      }
-export function useVotingExtensionParamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VotingExtensionParamsQuery, VotingExtensionParamsQueryVariables>) {
-          return Apollo.useLazyQuery<VotingExtensionParamsQuery, VotingExtensionParamsQueryVariables>(VotingExtensionParamsDocument, baseOptions);
-        }
-export type VotingExtensionParamsQueryHookResult = ReturnType<typeof useVotingExtensionParamsQuery>;
-export type VotingExtensionParamsLazyQueryHookResult = ReturnType<typeof useVotingExtensionParamsLazyQuery>;
-export type VotingExtensionParamsQueryResult = Apollo.QueryResult<VotingExtensionParamsQuery, VotingExtensionParamsQueryVariables>;
-export const BlockTimeDocument = gql`
-    query BlockTime($blockHash: String) {
-  blockTime(blockHash: $blockHash) @client
-}
-    `;
-
-/**
- * __useBlockTimeQuery__
- *
- * To run a query within a React component, call `useBlockTimeQuery` and pass it any options that fit your needs.
- * When your component renders, `useBlockTimeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBlockTimeQuery({
- *   variables: {
- *      blockHash: // value for 'blockHash'
- *   },
- * });
- */
-export function useBlockTimeQuery(baseOptions?: Apollo.QueryHookOptions<BlockTimeQuery, BlockTimeQueryVariables>) {
-        return Apollo.useQuery<BlockTimeQuery, BlockTimeQueryVariables>(BlockTimeDocument, baseOptions);
-      }
-export function useBlockTimeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BlockTimeQuery, BlockTimeQueryVariables>) {
-          return Apollo.useLazyQuery<BlockTimeQuery, BlockTimeQueryVariables>(BlockTimeDocument, baseOptions);
-        }
-export type BlockTimeQueryHookResult = ReturnType<typeof useBlockTimeQuery>;
-export type BlockTimeLazyQueryHookResult = ReturnType<typeof useBlockTimeLazyQuery>;
-export type BlockTimeQueryResult = Apollo.QueryResult<BlockTimeQuery, BlockTimeQueryVariables>;
-=======
->>>>>>> Remove: unused `blockTime` client resolver
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
