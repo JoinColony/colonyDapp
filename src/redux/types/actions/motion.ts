@@ -210,4 +210,10 @@ export type MotionActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_MOTION_USER_ROLES_SET_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<ActionTypes.COLONY_ROOT_MOTION_STATE_UPDATE, void, object>
+  | ErrorActionType<ActionTypes.COLONY_ROOT_MOTION_STATE_UPDATE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ROOT_MOTION_STATE_UPDATE_SUCCESS,
+      object
     >;
