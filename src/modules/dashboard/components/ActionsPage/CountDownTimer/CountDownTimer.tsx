@@ -50,7 +50,6 @@ interface Props {
   colony: Colony;
   state: MotionState;
   motionId: number;
-  transactionHash: string;
 }
 
 const displayName = 'dashboard.ActionsPage.CountDownTimer';
@@ -59,7 +58,6 @@ const CountDownTimer = ({
   colony: { colonyAddress },
   state,
   motionId,
-  transactionHash,
 }: Props) => {
   const dispatch = useDispatch();
   const { data, loading } = useMotionTimeoutPeriodsQuery({
@@ -105,9 +103,10 @@ const CountDownTimer = ({
    * blockchain has time to process any transactions, detect the motion's timeout,
    * and change the state so we can refresh it.
    */
-  useEffect(() => setTimeLeft(currentStatePeriod() / 1000 + 5), [
-    currentStatePeriod,
-  ]);
+  useEffect(() => {
+    const period = currentStatePeriod() / 1000;
+    setTimeLeft(period > 0 ? period + 5 : period);
+  }, [currentStatePeriod]);
 
   /*
    * Count it down
@@ -121,7 +120,7 @@ const CountDownTimer = ({
         type: ActionTypes.COLONY_MOTION_STATE_UPDATE,
         payload: {
           colonyAddress,
-          transactionHash,
+          motionId,
         },
       });
     }
@@ -129,7 +128,7 @@ const CountDownTimer = ({
       clearInterval(timer);
     }
     return () => clearInterval(timer);
-  }, [timeLeft, currentStatePeriod, dispatch, colonyAddress, transactionHash]);
+  }, [timeLeft, currentStatePeriod, dispatch, colonyAddress, motionId]);
 
   /*
    * Split the time into h/m/s for display purpouses
