@@ -17,7 +17,7 @@ import { updateMotionValues } from '../utils/updateMotionValues';
 
 function* revealVoteMotion({
   meta,
-  payload: { userAddress, colonyAddress, motionId, transactionHash },
+  payload: { userAddress, colonyAddress, motionId },
 }: Action<ActionTypes.COLONY_MOTION_REVEAL_VOTE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
@@ -152,13 +152,7 @@ function* revealVoteMotion({
       /*
        * Update motion page values
        */
-      yield fork(
-        updateMotionValues,
-        colonyAddress,
-        userAddress,
-        motionId,
-        transactionHash,
-      );
+      yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
 
       return yield put<AllActions>({
         type: ActionTypes.COLONY_MOTION_REVEAL_VOTE_SUCCESS,

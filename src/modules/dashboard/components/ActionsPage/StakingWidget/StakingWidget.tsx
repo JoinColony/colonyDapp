@@ -57,7 +57,6 @@ const StakingWidget = ({
   colony: { colonyAddress, nativeTokenAddress },
   motionId,
   scrollToRef,
-  transactionHash,
   isObjection,
   handleWidgetState,
 }: Props) => {
@@ -91,11 +90,10 @@ const StakingWidget = ({
         motionId,
         colony,
         canUserStake: userHasPermission,
-        transactionHash,
         scrollToRef,
         ...stakingAmounts,
       }),
-    [colony, openRaiseObjectionDialog, scrollToRef, motionId, transactionHash],
+    [colony, openRaiseObjectionDialog, scrollToRef, motionId],
   );
 
   const transform = useCallback(
@@ -120,7 +118,6 @@ const StakingWidget = ({
             colonyAddress,
             motionId: bigNumberify(motionId),
             vote: isObjection ? 0 : 1,
-            transactionHash,
           };
         }
         return null;

@@ -27,7 +27,6 @@ export type MotionActionTypes =
         motionId: BigNumber;
         vote: number;
         amount: BigNumber;
-        transactionHash: string;
         annotationMessage?: string;
       },
       MetaWithHistory<object>
@@ -44,7 +43,6 @@ export type MotionActionTypes =
         colonyAddress: Address;
         motionId: BigNumber;
         vote: number;
-        transactionHash: string;
       },
       MetaWithHistory<object>
     >
@@ -59,7 +57,6 @@ export type MotionActionTypes =
         userAddress: Address;
         colonyAddress: Address;
         motionId: BigNumber;
-        transactionHash: string;
       },
       MetaWithHistory<object>
     >
@@ -74,7 +71,6 @@ export type MotionActionTypes =
         userAddress: Address;
         colonyAddress: Address;
         motionId: BigNumber;
-        transactionHash: string;
       },
       MetaWithHistory<object>
     >
@@ -89,7 +85,6 @@ export type MotionActionTypes =
         userAddress: Address;
         colonyAddress: Address;
         motionId: BigNumber;
-        transactionHash: string;
       },
       MetaWithHistory<object>
     >
@@ -216,7 +211,8 @@ export type MotionActionTypes =
       ActionTypes.COLONY_MOTION_STATE_UPDATE,
       {
         colonyAddress: Address;
-        transactionHash: string;
+        motionId: BigNumber;
+        userAddress: Address;
       },
       object
     >

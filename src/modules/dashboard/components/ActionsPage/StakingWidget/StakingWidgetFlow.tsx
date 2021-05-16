@@ -25,7 +25,6 @@ export interface Props {
   colony: Colony;
   motionId: number;
   scrollToRef?: RefObject<HTMLInputElement>;
-  transactionHash: string;
 }
 
 const MSG = defineMessages({
@@ -35,12 +34,7 @@ const MSG = defineMessages({
   },
 });
 
-const StakingWidgetFlow = ({
-  colony,
-  motionId,
-  scrollToRef,
-  transactionHash,
-}: Props) => {
+const StakingWidgetFlow = ({ colony, motionId, scrollToRef }: Props) => {
   const [isSummary, setIsSummary] = useState(false);
   const [isObjection, setIsObjection] = useState(false);
 
@@ -138,7 +132,6 @@ const StakingWidgetFlow = ({
           scrollToRef={scrollToRef}
           motionId={motionId}
           colony={colony}
-          transactionHash={transactionHash}
           handleWidgetState={setIsSummary}
         />
       )}

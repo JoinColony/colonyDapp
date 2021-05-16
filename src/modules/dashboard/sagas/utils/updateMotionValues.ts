@@ -13,9 +13,9 @@ import {
   MotionsSystemMessagesQuery,
   MotionsSystemMessagesQueryVariables,
   MotionsSystemMessagesDocument,
-  ColonyActionQuery,
-  ColonyActionQueryVariables,
-  ColonyActionDocument,
+  MotionStatusQuery,
+  MotionStatusQueryVariables,
+  MotionStatusDocument,
   MotionUserVoteRevealedQuery,
   MotionUserVoteRevealedQueryVariables,
   MotionUserVoteRevealedDocument,
@@ -43,7 +43,6 @@ export function* updateMotionValues(
   colonyAddress: Address,
   userAddress: Address,
   motionId: BigNumber,
-  transactionHash: string,
 ) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -179,11 +178,11 @@ export function* updateMotionValues(
    * resolver just for the motion's state. It will cut down on fetching
    * data we don't need just to show the updated state
    */
-  yield apolloClient.query<ColonyActionQuery, ColonyActionQueryVariables>({
-    query: ColonyActionDocument,
+  yield apolloClient.query<MotionStatusQuery, MotionStatusQueryVariables>({
+    query: MotionStatusDocument,
     variables: {
       colonyAddress,
-      transactionHash,
+      motionId: motionId.toNumber(),
     },
     fetchPolicy: 'network-only',
   });

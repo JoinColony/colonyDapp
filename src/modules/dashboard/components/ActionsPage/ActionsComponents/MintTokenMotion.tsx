@@ -351,7 +351,6 @@ const MintTokenMotion = ({
               motionId={motionId}
               colony={colony}
               scrollToRef={bottomElementRef}
-              transactionHash={transactionHash}
             />
           )}
           {motionState === MotionState.Voting && (
@@ -361,7 +360,6 @@ const MintTokenMotion = ({
               motionId={motionId}
               motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
-              transactionHash={transactionHash}
             />
           )}
           {motionState === MotionState.Reveal && (
@@ -369,7 +367,6 @@ const MintTokenMotion = ({
               colony={colony}
               motionId={motionId}
               scrollToRef={bottomElementRef}
-              transactionHash={transactionHash}
             />
           )}
           {(motionState === MotionState.Failed ||
@@ -381,7 +378,6 @@ const MintTokenMotion = ({
               motionId={motionId}
               motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
-              transactionHash={transactionHash}
               motionState={motionState}
             />
           )}

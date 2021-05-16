@@ -22,7 +22,6 @@ interface Props extends FormProps {
   cancel: () => void;
   close: () => void;
   motionId: number;
-  transactionHash: string;
   scrollToRef?: RefObject<HTMLInputElement>;
 }
 
@@ -35,7 +34,6 @@ const RaiseObjectionDialog = ({
   colony,
   minUserStake,
   motionId,
-  transactionHash,
   scrollToRef,
   ...props
 }: Props) => {
@@ -61,7 +59,6 @@ const RaiseObjectionDialog = ({
           colonyAddress,
           motionId: bigNumberify(motionId),
           vote: 0,
-          transactionHash,
         };
       }),
     ),

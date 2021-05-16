@@ -27,7 +27,6 @@ function* stakeMotion({
     motionId,
     vote,
     amount,
-    transactionHash,
     annotationMessage,
   },
 }: Action<ActionTypes.COLONY_MOTION_STAKE>) {
@@ -170,13 +169,7 @@ function* stakeMotion({
     /*
      * Update motion page values
      */
-    yield fork(
-      updateMotionValues,
-      colonyAddress,
-      userAddress,
-      motionId,
-      transactionHash,
-    );
+    yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_MOTION_STAKE_SUCCESS,

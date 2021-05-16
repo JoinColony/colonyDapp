@@ -36,7 +36,6 @@ interface Props {
   actionType: string;
   motionDomain: number;
   scrollToRef?: RefObject<HTMLInputElement>;
-  transactionHash: string;
   motionState: MotionState;
 }
 
@@ -110,7 +109,6 @@ const FinalizeMotionAndClaimWidget = ({
   actionType,
   motionDomain = ROOT_DOMAIN_ID,
   scrollToRef,
-  transactionHash,
   motionState,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -169,7 +167,6 @@ const FinalizeMotionAndClaimWidget = ({
       colonyAddress,
       userAddress: walletAddress,
       motionId,
-      transactionHash,
     })),
     [walletAddress],
   );
