@@ -62,7 +62,6 @@ export default gql`
     domainPurpose: String!
     domainColor: String!
     blockNumber: Int!
-    motionNAYStake: String
     motionState: String
     motionDomain: Int!
     rootHash: String
