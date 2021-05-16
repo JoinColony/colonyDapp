@@ -80,6 +80,7 @@ const TokenMintForm = ({
   return (
     <>
       <DialogSection appearance={{ theme: 'heading' }}>
+        {isVotingExtensionEnabled && <div>Domain Dropdown Placeholder</div>}
         <Heading
           appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
           text={MSG.title}
