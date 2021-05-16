@@ -22,6 +22,7 @@ import {
   useStakeAmountsForMotionQuery,
   useUser,
   useVotingStateQuery,
+  useMotionStatusQuery,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -75,7 +76,6 @@ const MintTokenMotion = ({
     annotationHash,
     colonyDisplayName,
     amount,
-    motionState,
     motionDomain,
     actionInitiator,
     rootHash,
@@ -126,6 +126,14 @@ const MintTokenMotion = ({
       userAddress: walletAddress,
       motionId,
     },
+  });
+
+  const { data: motionStatusData } = useMotionStatusQuery({
+    variables: {
+      colonyAddress: colony.colonyAddress,
+      motionId,
+    },
+    fetchPolicy: 'network-only',
   });
 
   const requiredStake = bigNumberify(
@@ -225,8 +233,9 @@ const MintTokenMotion = ({
       </div>
     ),
   };
-  const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
 
+  const motionState = motionStatusData?.motionStatus || MotionState.Invalid;
+  const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   const isStakingPhase =
     motionState === MotionState.StakeRequired ||
     motionState === MotionState.Motion ||
@@ -260,7 +269,6 @@ const MintTokenMotion = ({
             colony={colony}
             state={motionState as MotionState}
             motionId={motionId}
-            transactionHash={transactionHash}
           />
           {motionState === MotionState.Voting && votingStateData && (
             <>
