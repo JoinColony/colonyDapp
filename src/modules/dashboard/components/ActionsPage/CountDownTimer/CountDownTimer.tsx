@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { FormattedMessage, defineMessage } from 'react-intl';
+import { useDispatch } from 'redux-react-hook';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import { useMotionTimeoutPeriodsQuery, Colony } from '~data/index';
 import { splitTimePeriod } from '~utils/time';
 import { MotionState } from '~utils/colonyMotions';
+import { ActionTypes } from '~redux/index';
 
 import styles from './CountDownTimer.css';
 
@@ -48,6 +50,7 @@ interface Props {
   colony: Colony;
   state: MotionState;
   motionId: number;
+  transactionHash: string;
 }
 
 const displayName = 'dashboard.ActionsPage.CountDownTimer';
@@ -56,7 +59,9 @@ const CountDownTimer = ({
   colony: { colonyAddress },
   state,
   motionId,
+  transactionHash,
 }: Props) => {
+  const dispatch = useDispatch();
   const { data, loading } = useMotionTimeoutPeriodsQuery({
     variables: {
       colonyAddress,
@@ -69,15 +74,15 @@ const CountDownTimer = ({
       case MotionState.StakeRequired:
       case MotionState.Motion:
       case MotionState.Objection:
-        return data?.motionTimeoutPeriods?.timeLeftToStake || 0;
+        return data?.motionTimeoutPeriods?.timeLeftToStake || -1;
       case MotionState.Voting:
-        return data?.motionTimeoutPeriods?.timeLeftToSubmit || 0;
+        return data?.motionTimeoutPeriods?.timeLeftToSubmit || -1;
       case MotionState.Reveal:
-        return data?.motionTimeoutPeriods?.timeLeftToReveal || 0;
+        return data?.motionTimeoutPeriods?.timeLeftToReveal || -1;
       case MotionState.Escalation:
-        return data?.motionTimeoutPeriods?.timeLeftToEscalate || 0;
+        return data?.motionTimeoutPeriods?.timeLeftToEscalate || -1;
       default:
-        return 0;
+        return -1;
     }
   }, [data, state]);
 
@@ -97,11 +102,20 @@ const CountDownTimer = ({
     const timer = setInterval(() => {
       setTimeLeft(timeLeft - 1);
     }, 1000);
+    if (timeLeft === 0) {
+      dispatch({
+        type: ActionTypes.COLONY_MOTION_STATE_UPDATE,
+        payload: {
+          colonyAddress,
+          transactionHash,
+        },
+      });
+    }
     if (timeLeft < 0) {
       clearInterval(timer);
     }
     return () => clearInterval(timer);
-  }, [timeLeft, currentStatePeriod]);
+  }, [timeLeft, currentStatePeriod, dispatch, colonyAddress, transactionHash]);
 
   /*
    * Split the time into h/m/s for display purpouses

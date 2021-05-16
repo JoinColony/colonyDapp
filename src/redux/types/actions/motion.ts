@@ -8,6 +8,7 @@ import { Color } from '~core/ColorTag';
 import {
   ErrorActionType,
   UniqueActionType,
+  UniqueActionTypeWithoutPayload,
   ActionTypeWithMeta,
   MetaWithHistory,
 } from './index';
@@ -211,9 +212,16 @@ export type MotionActionTypes =
       ActionTypes.COLONY_MOTION_USER_ROLES_SET_SUCCESS,
       MetaWithHistory<object>
     >
-  | UniqueActionType<ActionTypes.COLONY_ROOT_MOTION_STATE_UPDATE, void, object>
-  | ErrorActionType<ActionTypes.COLONY_ROOT_MOTION_STATE_UPDATE_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_ROOT_MOTION_STATE_UPDATE_SUCCESS,
+  | UniqueActionType<
+      ActionTypes.COLONY_MOTION_STATE_UPDATE,
+      {
+        colonyAddress: Address;
+        transactionHash: string;
+      },
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_STATE_UPDATE_ERROR, object>
+  | UniqueActionTypeWithoutPayload<
+      ActionTypes.COLONY_MOTION_STATE_UPDATE_SUCCESS,
       object
     >;

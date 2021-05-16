@@ -260,6 +260,7 @@ const MintTokenMotion = ({
             colony={colony}
             state={motionState as MotionState}
             motionId={motionId}
+            transactionHash={transactionHash}
           />
           {motionState === MotionState.Voting && votingStateData && (
             <>
