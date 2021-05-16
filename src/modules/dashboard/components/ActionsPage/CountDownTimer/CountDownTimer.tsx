@@ -90,8 +90,22 @@ const CountDownTimer = ({
 
   /*
    * Set the initial timeout
+   *
+   * @NOTE The extra 5 seconds are to account for the time in between the blockchain
+   * timeout being hit and the next block being processed.
+   *
+   * If there are no blockes being processes between the time the motion "should" finish
+   * and the time we refresh the state (because we are basically keeping a parallel time count)
+   * the state of the motion won't change.
+   *
+   * This is confusing UX and might need revisiting in the future with some clever messages
+   * for the user to let them know what's going on
+   *
+   * So we are "faking" this by adding an extra 5 to the alloted time, so that the
+   * blockchain has time to process any transactions, detect the motion's timeout,
+   * and change the state so we can refresh it.
    */
-  useEffect(() => setTimeLeft(currentStatePeriod() / 1000), [
+  useEffect(() => setTimeLeft(currentStatePeriod() / 1000 + 5), [
     currentStatePeriod,
   ]);
 
