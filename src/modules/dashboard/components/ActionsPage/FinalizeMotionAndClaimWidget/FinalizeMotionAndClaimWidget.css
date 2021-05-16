@@ -1,10 +1,9 @@
 .main {
   display: block;
-  padding: 0 0 100px 0;
 }
 
-.stateMarginBottom {
-  margin: 0px 0 80px 0;
+.stateMargin {
+  padding: 0 0 100px 0;
 }
 
 .main h4 {
@@ -65,6 +64,10 @@
 }
 
 .voteResults {
+  margin: 0;
+}
+
+.stateMargin .voteResults {
   margin: 30px 0 0 0;
 }
 

@@ -1,5 +1,5 @@
 export const main: string;
-export const stateMarginBottom: string;
+export const stateMargin: string;
 export const item: string;
 export const itemWithForcedBorder: string;
 export const label: string;
