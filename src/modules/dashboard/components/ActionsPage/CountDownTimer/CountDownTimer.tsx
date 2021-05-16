@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FormattedMessage, defineMessage } from 'react-intl';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
-import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { useMotionTimeoutPeriodsQuery, Colony } from '~data/index';
-import { calculateTimeLeft } from '~utils/time';
+import { splitTimePeriod } from '~utils/time';
 import { MotionState } from '~utils/colonyMotions';
 
 import styles from './CountDownTimer.css';
@@ -65,60 +64,83 @@ const CountDownTimer = ({
     },
   });
 
-  // const differenceVsBCTime = blockTimeData?.blockTime
-  //   ? blockTimeData?.blockTime - Date.now()
-  //   : 0;
+  const currentStatePeriod = useCallback(() => {
+    switch (state) {
+      case MotionState.StakeRequired:
+      case MotionState.Motion:
+      case MotionState.Objection:
+        return data?.motionTimeoutPeriods?.timeLeftToStake || 0;
+      case MotionState.Voting:
+        return data?.motionTimeoutPeriods?.timeLeftToSubmit || 0;
+      case MotionState.Reveal:
+        return data?.motionTimeoutPeriods?.timeLeftToReveal || 0;
+      case MotionState.Escalation:
+        return data?.motionTimeoutPeriods?.timeLeftToEscalate || 0;
+      default:
+        return 0;
+    }
+  }, [data, state]);
 
-  // const [timeLeft, setTimeLeft] = useState(
-  //   calculateTimeLeft(createdAt, differenceVsBCTime, 0),
-  // );
+  const [timeLeft, setTimeLeft] = useState<number>(-1);
 
-  // useEffect(() => {
-  //   if (undefined !== 0) {
-  //     const timer = setInterval(() => {
-  //       setTimeLeft(calculateTimeLeft(createdAt, differenceVsBCTime, 0));
-  //     }, 1000);
-  //     return () => clearInterval(timer);
-  //   }
-  //   return undefined;
-  // }, [createdAt, stakePeriod, differenceVsBCTime]);
+  /*
+   * Set the initial timeout
+   */
+  useEffect(() => setTimeLeft(currentStatePeriod() / 1000), [
+    currentStatePeriod,
+  ]);
 
-  // if (
-  //   loading ||
-  //   data === undefined ||
-  //   blockTimeData === undefined ||
-  //   (timeLeft === undefined &&
-  //     calculateTimeLeft(createdAt, differenceVsBCTime, stakePeriod) !==
-  //       undefined)
-  // ) {
-  //   return <MiniSpinnerLoader loadingText={MSG.loadingText} />;
-  // }
+  /*
+   * Count it down
+   */
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+    if (timeLeft < 0) {
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [timeLeft, currentStatePeriod]);
 
-  // if (timeLeft === undefined) {
-  //   return null;
-  // }
+  /*
+   * Split the time into h/m/s for display purpouses
+   */
+  const splitTime = splitTimePeriod(timeLeft);
+
+  if (loading || !data) {
+    return <MiniSpinnerLoader loadingText={MSG.loadingText} />;
+  }
+
+  if (splitTime === undefined) {
+    return null;
+  }
 
   return (
     <div className={styles.container}>
       <FormattedMessage {...MSG.title} values={{ motionState: state }} />
-      {/* <span className={styles.time}>
-        {timeLeft.days > 0 && (
-          <FormattedMessage {...MSG.days} values={{ days: timeLeft.days }} />
+      <span className={styles.time}>
+        {splitTime.days > 0 && (
+          <FormattedMessage {...MSG.days} values={{ days: splitTime.days }} />
         )}
-        {(timeLeft.days > 0 || timeLeft.hours > 0) && (
-          <FormattedMessage {...MSG.hours} values={{ hours: timeLeft.hours }} />
+        {(splitTime.days > 0 || splitTime.hours > 0) && (
+          <FormattedMessage
+            {...MSG.hours}
+            values={{ hours: splitTime.hours }}
+          />
         )}
-        {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes) > 0 && (
+        {(splitTime.days > 0 || splitTime.hours > 0 || splitTime.minutes) >
+          0 && (
           <FormattedMessage
             {...MSG.minutes}
-            values={{ minutes: timeLeft.minutes }}
+            values={{ minutes: splitTime.minutes }}
           />
         )}
         <FormattedMessage
           {...MSG.seconds}
-          values={{ seconds: timeLeft.seconds }}
+          values={{ seconds: splitTime.seconds }}
         />
-      </span> */}
+      </span>
     </div>
   );
 };
