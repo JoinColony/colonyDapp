@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
   notEnabled: {
     id: 'dashboard.Extensions.ExtensionStatus.notEnabled',
-    defaultMessage: 'Not enabled',
+    defaultMessage: 'Disabled',
   },
 });
 
