@@ -9,3 +9,6 @@ export const installedBy: string;
 export const installedByAddress: string;
 export const permissions: string;
 export const buttonUninstall: string;
+export const inputContainer: string;
+export const input: string;
+export const warning: string;
