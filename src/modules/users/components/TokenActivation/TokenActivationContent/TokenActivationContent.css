@@ -257,7 +257,11 @@
 }
 
 .form > button {
+  padding: 4px 0 7px 0;
+  height: 29px;
   width: 100px;
+  border: none;
+  line-height: 18px;
 }
 
 .claimsContainer {
