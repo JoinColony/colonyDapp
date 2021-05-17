@@ -250,7 +250,7 @@ const PermissionManagementDialog = ({
             forceAction: false,
             user: selectedUser,
             domainId: selectedDomainId.toString(),
-            roles: userDirectRoles,
+            roles: [...new Set([...userDirectRoles, ...userInheritedRoles])],
             annotationMessage: undefined,
           }}
           validationSchema={validationSchema}
