@@ -81,16 +81,17 @@ const ExpendituresDialog = ({
     colonyAddress,
   });
 
+  // const isVotingExtensionEnabled = false;
+
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canCreatePayment =
     hasRegisteredProfile &&
-    canAdminister(allUserRoles) &&
-    canFund(allUserRoles);
+    ((canAdminister(allUserRoles) && canFund(allUserRoles)) ||
+      isVotingExtensionEnabled);
 
-  const canMakePayment =
-    (isOneTxPaymentExtensionEnabled && isVotingExtensionEnabled) || false;
+  const canMakePayment = isOneTxPaymentExtensionEnabled || false;
 
   const items = [
     {

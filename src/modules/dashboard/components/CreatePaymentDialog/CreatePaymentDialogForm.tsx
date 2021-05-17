@@ -253,11 +253,6 @@ const CreatePaymentDialogForm = ({
     values.forceAction,
   );
 
-  // const isPaymentExtensionInstalled =
-  //   colonyExtensionsData?.processedColony?.installedExtensions?.find(
-  //     ({ extensionId }) => extensionId === Extension.OneTxPayment,
-  //   ) || false;
-
   const { isOneTxPaymentExtensionEnabled } = useEnabledExtensions({
     colonyAddress,
   });
