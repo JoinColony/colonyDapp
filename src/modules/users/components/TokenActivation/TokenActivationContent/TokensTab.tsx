@@ -205,6 +205,7 @@ const TokensTab = ({
         tokenDecimals={tokenDecimals}
         activeTokens={activeTokens}
         inactiveTokens={inactiveTokens}
+        lockedTokens={lockedTokens}
         colonyAddress={colonyAddress}
         hasLockedTokens={hasLockedTokens}
       />
