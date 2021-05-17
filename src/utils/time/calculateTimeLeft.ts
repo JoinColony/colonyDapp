@@ -1,4 +1,4 @@
-export const splitTimePeriod = (period: number) => {
+export const splitTimeLeft = (period: number) => {
   if (period > 0) {
     return {
       days: Math.floor(period / (60 * 60 * 24)),

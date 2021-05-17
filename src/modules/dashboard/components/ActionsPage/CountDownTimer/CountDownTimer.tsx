@@ -9,7 +9,7 @@ import {
   Colony,
   useLoggedInUser,
 } from '~data/index';
-import { splitTimePeriod } from '~utils/time';
+import { splitTimeLeft } from '~utils/time';
 import { MotionState } from '~utils/colonyMotions';
 import { ActionTypes } from '~redux/index';
 
@@ -146,7 +146,7 @@ const CountDownTimer = ({
   /*
    * Split the time into h/m/s for display purpouses
    */
-  const splitTime = splitTimePeriod(timeLeft);
+  const splitTime = splitTimeLeft(timeLeft);
 
   if (loading || !data) {
     return <MiniSpinnerLoader loadingText={MSG.loadingText} />;
