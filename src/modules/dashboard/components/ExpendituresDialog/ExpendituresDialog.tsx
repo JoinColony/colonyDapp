@@ -1,12 +1,12 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Extension } from '@colony/colony-js';
 
 import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
-import { useLoggedInUser, Colony, useColonyExtensionsQuery } from '~data/index';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { useLoggedInUser, Colony } from '~data/index';
 import { getAllUserRoles } from '../../../transformers';
 import { canAdminister, canFund } from '../../../users/checks';
 
@@ -77,6 +77,9 @@ const ExpendituresDialog = ({
   nextStep,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { isOneTxPaymentExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
@@ -86,16 +89,8 @@ const ExpendituresDialog = ({
     canAdminister(allUserRoles) &&
     canFund(allUserRoles);
 
-  const { data: colonyExtensionsData } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
-
   const canMakePayment =
-    (colonyExtensionsData?.processedColony?.installedExtensions?.find(
-      ({ extensionId }) => extensionId === Extension.OneTxPayment,
-    ) &&
-      isVotingExtensionEnabled) ||
-    false;
+    (isOneTxPaymentExtensionEnabled && isVotingExtensionEnabled) || false;
 
   const items = [
     {

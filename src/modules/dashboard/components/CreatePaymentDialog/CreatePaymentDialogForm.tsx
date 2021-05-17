@@ -8,7 +8,7 @@ import {
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
-import { ColonyRole, ROOT_DOMAIN_ID, Extension } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import EthUsd from '~core/EthUsd';
@@ -31,7 +31,6 @@ import {
   useLoggedInUser,
   useTokenBalancesForDomainsLazyQuery,
   AnyUser,
-  useColonyExtensionsQuery,
 } from '~data/index';
 import {
   getBalanceFromToken,
@@ -39,6 +38,7 @@ import {
 } from '~utils/tokens';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
@@ -130,10 +130,6 @@ const CreatePaymentDialogForm = ({
   const domainId = values.domainId
     ? parseInt(values.domainId, 10)
     : ROOT_DOMAIN_ID;
-
-  const { data: colonyExtensionsData } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
 
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
@@ -257,12 +253,16 @@ const CreatePaymentDialogForm = ({
     values.forceAction,
   );
 
-  const isPaymentExtensionInstalled =
-    colonyExtensionsData?.processedColony?.installedExtensions?.find(
-      ({ extensionId }) => extensionId === Extension.OneTxPayment,
-    ) || false;
+  // const isPaymentExtensionInstalled =
+  //   colonyExtensionsData?.processedColony?.installedExtensions?.find(
+  //     ({ extensionId }) => extensionId === Extension.OneTxPayment,
+  //   ) || false;
 
-  const canMakePayment = userHasPermission && isPaymentExtensionInstalled;
+  const { isOneTxPaymentExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
+
+  const canMakePayment = userHasPermission && isOneTxPaymentExtensionEnabled;
 
   const inputDisabled = !canMakePayment || onlyForceAction;
 
@@ -418,7 +418,7 @@ const CreatePaymentDialogForm = ({
           </div>
         </DialogSection>
       )}
-      {userHasPermission && !isPaymentExtensionInstalled && (
+      {userHasPermission && !isOneTxPaymentExtensionEnabled && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionFromMessage}>
             <FormattedMessage {...MSG.noOneTxExtension} />
