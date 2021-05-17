@@ -234,7 +234,7 @@ const MintTokenMotion = ({
     ),
   };
 
-  const motionState = motionStatusData?.motionStatus || MotionState.Invalid;
+  const motionState = motionStatusData?.motionStatus;
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   const isStakingPhase =
     motionState === MotionState.StakeRequired ||
@@ -251,19 +251,17 @@ const MintTokenMotion = ({
         stakeRequired={!shouldDisplayMotion(currentStake, requiredStake)}
       />
       <div className={styles.upperContainer}>
-        <p className={styles.tagWrapper}>
-          <Tag
-            text={motionStyles.name}
-            appearance={{
-              theme: motionStyles.theme as TagAppearance['theme'],
-              /*
-               * @NOTE Prettier is being stupid
-               */
-              // eslint-disable-next-line max-len
-              colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
-            }}
-          />
-        </p>
+        {motionState && (
+          <p className={styles.tagWrapper}>
+            <Tag
+              text={motionStyles.name}
+              appearance={{
+                theme: motionStyles.theme,
+                colorSchema: motionStyles.colorSchema,
+              }}
+            />
+          </p>
+        )}
         <div className={styles.countdownContainer}>
           <CountDownTimer
             colony={colony}
