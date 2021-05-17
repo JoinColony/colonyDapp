@@ -2,6 +2,7 @@ import { FormikProps } from 'formik';
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
+import { endsWith } from 'lodash';
 
 import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm } from '~core/Fields';
@@ -35,6 +36,10 @@ const MSG = defineMessages({
   setPermissions: {
     id: 'dashboard.Extensions.ExtensionSetup.setPermissions',
     defaultMessage: 'Set permissions',
+  },
+  hoursLabel: {
+    id: 'dashboard.Extensions.ExtensionSetup.hoursLabel',
+    defaultMessage: 'hours',
   },
 });
 
@@ -126,6 +131,13 @@ const ExtensionSetup = ({
                   name={paramName}
                 />
                 <FormattedMessage {...description} />
+                <span className={styles.complementaryLabel}>
+                  {endsWith(paramName, 'Period') ? (
+                    <FormattedMessage {...MSG.hoursLabel} />
+                  ) : (
+                    '%'
+                  )}
+                </span>
               </div>
             ))}
           </div>
