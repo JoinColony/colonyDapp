@@ -96,6 +96,8 @@
 }
 
 .walletAddress {
+  padding: 2px 9px 3px;
+
   /*
    * @NOTE We need to do border sizing shenanigans due to how the border color
    * is required by spec to have opacity.
@@ -106,7 +108,7 @@
    * active class (the one that has a different colored border), we remove the extra padding
    * and set the border
    */
-  padding: 2px 9px 3px;
+  height: 100%;
   border: none;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
@@ -134,6 +136,7 @@
 .buttonsWrapper {
   margin-right: 12px;
   padding: 1px;
+  height: 26px;
   position: relative;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
