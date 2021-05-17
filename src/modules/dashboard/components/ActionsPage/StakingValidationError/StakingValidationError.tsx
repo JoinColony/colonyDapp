@@ -28,20 +28,23 @@ const StakingValidationError = ({
   userInactivatedTokens,
   userActivatedTokens,
   decimalAmount,
-}: Props) => (
-  <>
-    {!userInactivatedTokens.isZero() && (
-      <div className={styles.validationError}>
-        <FormattedMessage {...stakeValidationMSG.hasInactiveTokens} />
-      </div>
-    )}
-    {userActivatedTokens.lt(decimalAmount) && (
-      <div className={styles.validationError}>
-        <FormattedMessage {...stakeValidationMSG.notEnoughTokens} />
-      </div>
-    )}
-  </>
-);
+}: Props) => {
+  const notEnoughActiveTokens = userActivatedTokens.lt(decimalAmount);
+  return (
+    <>
+      {notEnoughActiveTokens && !userInactivatedTokens.isZero() && (
+        <div className={styles.validationError}>
+          <FormattedMessage {...stakeValidationMSG.hasInactiveTokens} />
+        </div>
+      )}
+      {notEnoughActiveTokens && userInactivatedTokens.isZero() && (
+        <div className={styles.validationError}>
+          <FormattedMessage {...stakeValidationMSG.notEnoughTokens} />
+        </div>
+      )}
+    </>
+  );
+};
 
 StakingValidationError.displayName = displayName;
 

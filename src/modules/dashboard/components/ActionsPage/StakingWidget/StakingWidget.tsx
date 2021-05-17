@@ -212,9 +212,7 @@ const StakingWidget = ({
   const canUserStakeNay =
     canUserStake && new Decimal(remainingToFullyNayStaked).gt(0);
 
-  const canBeStaked =
-    (isObjection ? canUserStakeNay : canUserStakeYay) &&
-    userInactivatedTokens.isZero();
+  const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 
   return (
     <div className={styles.main}>
