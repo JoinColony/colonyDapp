@@ -245,7 +245,6 @@ export const colonyActionsResolvers = ({
           blockNumber,
           motionState: null,
           motionDomain: null,
-          motionNAYStake: null,
           rootHash: null,
           ...actionValues,
         };
@@ -293,6 +292,7 @@ export const colonyActionsResolvers = ({
         blockNumber: null,
         motionState: null,
         motionDomain: null,
+        rootHash: null,
         ...pendingActionValues,
       };
     },

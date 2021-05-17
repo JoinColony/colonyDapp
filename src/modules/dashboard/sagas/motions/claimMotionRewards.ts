@@ -15,7 +15,7 @@ import { updateMotionValues } from '../utils/updateMotionValues';
 
 function* claimMotionRewards({
   meta,
-  payload: { userAddress, colonyAddress, motionId, transactionHash },
+  payload: { userAddress, colonyAddress, motionId },
 }: Action<ActionTypes.COLONY_MOTION_CLAIM>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
@@ -148,13 +148,7 @@ function* claimMotionRewards({
     /*
      * Update motion page values
      */
-    yield fork(
-      updateMotionValues,
-      colonyAddress,
-      userAddress,
-      motionId,
-      transactionHash,
-    );
+    yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_MOTION_CLAIM_SUCCESS,

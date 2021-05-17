@@ -22,19 +22,17 @@ import {
   useStakeAmountsForMotionQuery,
   useUser,
   useVotingStateQuery,
+  useMotionStatusQuery,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
-import CountDownTimer from '~core/CountDownTimer';
 import ProgressBar from '~core/ProgressBar';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import {
   MotionState,
   MotionValue,
   MOTION_TAG_MAP,
-  PERIOD_TYPE_MAP,
-  MOTION_STATE_TO_TIMER_TEXT_MAP,
   shouldDisplayMotion,
 } from '~utils/colonyMotions';
 
@@ -47,6 +45,7 @@ import FinalizeMotionAndClaimWidget, {
   MSG as voteResultsMSG,
 } from '../FinalizeMotionAndClaimWidget';
 import VoteResults from '../FinalizeMotionAndClaimWidget/VoteResults';
+import CountDownTimer from '../CountDownTimer';
 
 import styles from './DefaultAction.css';
 import motionSpecificStyles from './MintTokenMotion.css';
@@ -73,12 +72,10 @@ const MintTokenMotion = ({
   colony,
   colonyAction: {
     events = [],
-    createdAt: actionCreatedAt,
     actionType,
     annotationHash,
     colonyDisplayName,
     amount,
-    motionState,
     motionDomain,
     actionInitiator,
     rootHash,
@@ -129,6 +126,14 @@ const MintTokenMotion = ({
       userAddress: walletAddress,
       motionId,
     },
+  });
+
+  const { data: motionStatusData } = useMotionStatusQuery({
+    variables: {
+      colonyAddress: colony.colonyAddress,
+      motionId,
+    },
+    fetchPolicy: 'network-only',
   });
 
   const requiredStake = bigNumberify(
@@ -228,8 +233,9 @@ const MintTokenMotion = ({
       </div>
     ),
   };
-  const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
 
+  const motionState = motionStatusData?.motionStatus;
+  const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   const isStakingPhase =
     motionState === MotionState.StakeRequired ||
     motionState === MotionState.Motion ||
@@ -239,38 +245,29 @@ const MintTokenMotion = ({
     objectionAnnotation?.motionObjectionAnnotation?.address || '',
   );
 
-  const countDownText =
-    motionState && MOTION_STATE_TO_TIMER_TEXT_MAP[motionState];
-  const countDownPeriod = motionState && PERIOD_TYPE_MAP[motionState];
-
   return (
     <div className={styles.main}>
       <StakeRequiredBanner
         stakeRequired={!shouldDisplayMotion(currentStake, requiredStake)}
       />
       <div className={styles.upperContainer}>
-        <p className={styles.tagWrapper}>
-          <Tag
-            text={motionStyles.name}
-            appearance={{
-              theme: motionStyles.theme as TagAppearance['theme'],
-              /*
-               * @NOTE Prettier is being stupid
-               */
-              // eslint-disable-next-line max-len
-              colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
-            }}
-          />
-        </p>
-        <div className={styles.countdownContainer}>
-          {countDownText && countDownPeriod && (
-            <CountDownTimer
-              createdAt={actionCreatedAt}
-              colonyAddress={colony.colonyAddress}
-              text={countDownText}
-              periodType={countDownPeriod}
+        {motionState && (
+          <p className={styles.tagWrapper}>
+            <Tag
+              text={motionStyles.name}
+              appearance={{
+                theme: motionStyles.theme,
+                colorSchema: motionStyles.colorSchema,
+              }}
             />
-          )}
+          </p>
+        )}
+        <div className={styles.countdownContainer}>
+          <CountDownTimer
+            colony={colony}
+            state={motionState as MotionState}
+            motionId={motionId}
+          />
           {motionState === MotionState.Voting && votingStateData && (
             <>
               <span className={motionSpecificStyles.text}>
@@ -352,7 +349,6 @@ const MintTokenMotion = ({
               motionId={motionId}
               colony={colony}
               scrollToRef={bottomElementRef}
-              transactionHash={transactionHash}
             />
           )}
           {motionState === MotionState.Voting && (
@@ -362,7 +358,6 @@ const MintTokenMotion = ({
               motionId={motionId}
               motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
-              transactionHash={transactionHash}
             />
           )}
           {motionState === MotionState.Reveal && (
@@ -370,7 +365,6 @@ const MintTokenMotion = ({
               colony={colony}
               motionId={motionId}
               scrollToRef={bottomElementRef}
-              transactionHash={transactionHash}
             />
           )}
           {(motionState === MotionState.Failed ||
@@ -382,7 +376,6 @@ const MintTokenMotion = ({
               motionId={motionId}
               motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
-              transactionHash={transactionHash}
               motionState={motionState}
             />
           )}

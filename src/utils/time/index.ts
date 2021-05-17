@@ -1,1 +1,1 @@
-export { calculateTimeLeft } from './calculateTimeLeft';
+export { splitTimeLeft } from './calculateTimeLeft';

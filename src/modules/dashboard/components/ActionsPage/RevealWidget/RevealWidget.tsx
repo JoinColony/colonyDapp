@@ -28,7 +28,6 @@ interface Props {
   colony: Colony;
   motionId: number;
   scrollToRef?: RefObject<HTMLInputElement>;
-  transactionHash: string;
 }
 
 const MSG = defineMessages({
@@ -58,7 +57,6 @@ const RevealWidget = ({
   colony,
   motionId,
   scrollToRef,
-  transactionHash,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -85,7 +83,6 @@ const RevealWidget = ({
       colonyAddress,
       userAddress: walletAddress,
       motionId,
-      transactionHash,
     })),
     [walletAddress],
   );

@@ -14,11 +14,6 @@ import {
   ActionType,
 } from './index';
 
-export enum RootMotionOperationNames {
-  MINT_TOKENS = 'mintTokens',
-  UPGRADE = 'upgrade',
-}
-
 /*
  * @NOTE About naming
  * I couldn't come up with anything better, as we already have ColonyActionTypes :(
@@ -40,26 +35,6 @@ export type ColonyActionsActionTypes =
   | ErrorActionType<ActionTypes.COLONY_ACTION_DOMAIN_CREATE_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_DOMAIN_CREATE_SUCCESS,
-      MetaWithHistory<object>
-    >
-  | UniqueActionType<
-      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT,
-      {
-        colonyAddress: Address;
-        colonyName?: string;
-        domainName: string;
-        domainColor?: Color;
-        domainPurpose?: string;
-        annotationMessage?: string;
-        parentId?: number;
-        domainId?: number;
-        isCreateDomain: boolean;
-      },
-      MetaWithHistory<object>
-    >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_DOMAIN_CREATE_EDIT_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<
@@ -105,27 +80,6 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_EXPENDITURE_PAYMENT,
-      {
-        colonyAddress: Address;
-        colonyName?: string;
-        recipientAddress: Address;
-        domainId: number;
-        singlePayment: {
-          amount: BigNumber;
-          tokenAddress: Address;
-          decimals: number;
-        };
-        annotationMessage?: string;
-      },
-      MetaWithHistory<object>
-    >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_EXPENDITURE_PAYMENT_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_EXPENDITURE_PAYMENT_SUCCESS,
-      MetaWithHistory<object>
-    >
-  | UniqueActionType<
       ActionTypes.COLONY_ACTION_EDIT_COLONY,
       {
         colonyAddress: Address;
@@ -148,28 +102,6 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_EDIT_COLONY,
-      {
-        colonyAddress: Address;
-        colonyName: string;
-        colonyDisplayName: string;
-        colonyAvatarImage?: string;
-        colonyAvatarHash?: string;
-        hasAvatarChanged?: boolean;
-        colonyTokens?: Address[];
-        annotationMessage?: string;
-        /*
-         * @TODO I think this will also store the subscribed-to tokens list
-         */
-      },
-      MetaWithHistory<object>
-    >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_EDIT_COLONY_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_EDIT_COLONY_SUCCESS,
-      MetaWithHistory<object>
-    >
-  | UniqueActionType<
       ActionTypes.COLONY_ACTION_MOVE_FUNDS,
       {
         colonyAddress: Address;
@@ -188,24 +120,6 @@ export type ColonyActionsActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_MOVE_FUNDS,
-      {
-        colonyAddress: Address;
-        colonyName?: string;
-        tokenAddress: Address;
-        fromDomainId: number;
-        toDomainId: number;
-        amount: BigNumber;
-        annotationMessage?: string;
-      },
-      MetaWithHistory<object>
-    >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_MOVE_FUNDS_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_MOVE_FUNDS_SUCCESS,
-      MetaWithHistory<object>
-    >
-  | UniqueActionType<
       ActionTypes.COLONY_ACTION_MINT_TOKENS,
       {
         colonyAddress: Address;
@@ -221,22 +135,6 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_MINT_TOKENS_SUCCESS,
       MetaWithHistory<object>
     >
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_ROOT_MOTION_SUCCESS,
-      MetaWithHistory<object>
-    >
-  | UniqueActionType<
-      ActionTypes.COLONY_ROOT_MOTION,
-      {
-        operationName: RootMotionOperationNames;
-        colonyAddress: Address;
-        colonyName?: string;
-        motionParams: [BigNumber] | [string];
-        annotationMessage?: string;
-      },
-      MetaWithHistory<object>
-    >
-  | ErrorActionType<ActionTypes.COLONY_ROOT_MOTION_ERROR, object>
   | UniqueActionType<
       ActionTypes.COLONY_ACTION_VERSION_UPGRADE,
       {
@@ -267,23 +165,6 @@ export type ColonyActionsActionTypes =
   | ErrorActionType<ActionTypes.COLONY_ACTION_USER_ROLES_SET_ERROR, object>
   | ActionTypeWithMeta<
       ActionTypes.COLONY_ACTION_USER_ROLES_SET_SUCCESS,
-      MetaWithHistory<object>
-    >
-  | UniqueActionType<
-      ActionTypes.COLONY_MOTION_USER_ROLES_SET,
-      {
-        colonyAddress: Address;
-        colonyName: string;
-        domainId: number;
-        userAddress: Address;
-        roles: Record<ColonyRole, boolean>;
-        annotationMessage?: string;
-      },
-      MetaWithHistory<object>
-    >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_USER_ROLES_SET_ERROR, object>
-  | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_USER_ROLES_SET_SUCCESS,
       MetaWithHistory<object>
     >
   | UniqueActionType<

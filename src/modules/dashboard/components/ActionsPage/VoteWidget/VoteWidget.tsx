@@ -28,7 +28,6 @@ interface Props {
   motionId: number;
   motionDomain?: number;
   scrollToRef?: RefObject<HTMLInputElement>;
-  transactionHash: string;
 }
 
 const MSG = defineMessages({
@@ -63,7 +62,6 @@ const VoteWidget = ({
   motionId,
   motionDomain = ROOT_DOMAIN_ID,
   scrollToRef,
-  transactionHash,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -81,7 +79,6 @@ const VoteWidget = ({
       userAddress: walletAddress,
       vote: parseInt(vote, 10),
       motionId,
-      transactionHash,
     })),
     [walletAddress],
   );

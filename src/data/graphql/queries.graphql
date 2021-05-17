@@ -249,7 +249,6 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     domainName
     domainPurpose
     domainColor
-    motionNAYStake
     motionState
     motionDomain
     roles {
@@ -472,6 +471,15 @@ query MotionStatus($motionId: Int!, $colonyAddress: String!) {
   motionStatus(motionId: $motionId, colonyAddress: $colonyAddress) @client
 }
 
+query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
+  motionTimeoutPeriods(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    timeLeftToStake
+    timeLeftToSubmit
+    timeLeftToReveal
+    timeLeftToEscalate
+  }
+}
+
 # The Graph
 #
 # @NOTE All queries meant for the subgraph should be prepended with `Subgraph`
@@ -692,17 +700,4 @@ query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
 
 query ColonyReputation($address: String!) {
   colonyReputation(address: $address) @client
-}
-
-query VotingExtensionParams($colonyAddress: String!) {
-  votingExtensionParams(colonyAddress: $colonyAddress) @client {
-    stakePeriod
-    submitPeriod
-    revealPeriod
-    escalationPeriod
-  }
-}
-
-query BlockTime($blockHash: String) {
-  blockTime(blockHash: $blockHash) @client
 }

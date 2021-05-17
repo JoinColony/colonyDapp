@@ -17,7 +17,7 @@ import { updateMotionValues } from '../utils/updateMotionValues';
 
 function* voteMotion({
   meta,
-  payload: { userAddress, colonyAddress, motionId, vote, transactionHash },
+  payload: { userAddress, colonyAddress, motionId, vote },
 }: Action<ActionTypes.COLONY_MOTION_VOTE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
@@ -95,13 +95,7 @@ function* voteMotion({
     /*
      * Update motion page values
      */
-    yield fork(
-      updateMotionValues,
-      colonyAddress,
-      userAddress,
-      motionId,
-      transactionHash,
-    );
+    yield fork(updateMotionValues, colonyAddress, userAddress, motionId);
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_MOTION_VOTE_SUCCESS,

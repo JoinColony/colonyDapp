@@ -62,7 +62,6 @@ export default gql`
     domainPurpose: String!
     domainColor: String!
     blockNumber: Int!
-    motionNAYStake: String
     motionState: String
     motionDomain: Int!
     rootHash: String
@@ -317,8 +316,10 @@ export default gql`
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     networkExtensionVersion(extensionId: String!): Int!
-    votingExtensionParams(colonyAddress: String!): VotingExtensionParams!
-    blockTime(blockHash: String): Int!
+    motionTimeoutPeriods(
+      motionId: Int!
+      colonyAddress: String!
+    ): MotionTimeoutPeriods!
     motionStakes(
       colonyAddress: String!
       userAddress: String!
@@ -534,10 +535,10 @@ export default gql`
     installedExtensions: [ColonyExtension!]!
   }
 
-  type VotingExtensionParams {
-    stakePeriod: Int!
-    submitPeriod: Int!
-    revealPeriod: Int!
-    escalationPeriod: Int!
+  type MotionTimeoutPeriods {
+    timeLeftToStake: Int!
+    timeLeftToSubmit: Int!
+    timeLeftToReveal: Int!
+    timeLeftToEscalate: Int!
   }
 `;
