@@ -61,17 +61,24 @@
 .baseInput {
   flex: 1 1 0;
   margin-left: 10px;
+  width: 100%;
   max-width: 305px;
   vertical-align: baseline;
   border: none;
   border-bottom: 1px solid var(--colony-black);
   background-color: transparent;
   font-size: var(--size-normal);
+  text-align: left;
   color: var(--colony-black);
   outline: none;
 
   &[aria-invalid="true"] {
     border-color: var(--danger);
+  }
+
+  &:disabled {
+    border-color: var(--text-disabled);
+    color: var(--temp-grey-blue-7);
   }
 }
 
@@ -86,6 +93,10 @@
 
   &:focus {
     border-color: var(--primary);
+  }
+
+  &:disabled {
+    border-color: var(--text-disabled);
   }
 }
 

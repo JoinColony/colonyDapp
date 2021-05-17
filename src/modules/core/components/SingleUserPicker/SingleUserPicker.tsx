@@ -190,17 +190,18 @@ const SingleUserPicker = ({
             {
               /* eslint-disable jsx-a11y/click-events-have-key-events */
               value && (
-                <div
-                  role="button"
+                <button
+                  type="button"
                   className={styles.recipientName}
                   onClick={handleActiveUserClick}
                   onFocus={handleActiveUserClick}
                   tabIndex={0}
+                  disabled={disabled}
                 >
                   {value.profile.displayName ||
                     value.profile.username ||
                     value.profile.walletAddress}
-                </div>
+                </button>
               )
             }
             {/* eslint-enable jsx-a11y/click-events-have-key-events */}
