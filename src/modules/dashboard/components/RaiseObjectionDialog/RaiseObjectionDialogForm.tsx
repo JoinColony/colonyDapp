@@ -1,6 +1,8 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { FormikProps } from 'formik';
+import Decimal from 'decimal.js';
+import { BigNumber } from 'ethers/utils';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
@@ -11,6 +13,7 @@ import {
   StakingSlider,
   StakingAmounts,
 } from '~dashboard/ActionsPage/StakingWidget';
+import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import { Colony } from '~data/index';
 
@@ -44,6 +47,8 @@ const OBJECTION_HELP_LINK = `https://colony.io/dev/docs/colonynetwork/whitepaper
 export interface Props extends StakingAmounts {
   colony: Colony;
   canUserStake: boolean;
+  userInactivatedTokens: BigNumber;
+  userActivatedTokens: Decimal;
   cancel: () => void;
 }
 
@@ -54,8 +59,14 @@ const RaiseObjectionDialogForm = ({
   canUserStake,
   values,
   cancel,
+  userInactivatedTokens,
+  userActivatedTokens,
+  remainingToFullyNayStaked,
   ...props
 }: Props & FormikProps<FormValues>) => {
+  const decimalAmount = new Decimal(values.amount)
+    .times(remainingToFullyNayStaked)
+    .div(100);
   return (
     <>
       <DialogSection appearance={{ theme: 'heading' }}>
@@ -85,6 +96,7 @@ const RaiseObjectionDialogForm = ({
             values={values}
             appearance={{ theme: 'danger' }}
             isObjection
+            remainingToFullyNayStaked={remainingToFullyNayStaked}
             {...props}
           />
         </div>
@@ -95,6 +107,13 @@ const RaiseObjectionDialogForm = ({
           name="annotation"
           maxLength={90}
           disabled={!canUserStake}
+        />
+      </DialogSection>
+      <DialogSection>
+        <StakingValidationError
+          userActivatedTokens={userActivatedTokens}
+          userInactivatedTokens={userInactivatedTokens}
+          decimalAmount={decimalAmount}
         />
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
@@ -110,7 +129,7 @@ const RaiseObjectionDialogForm = ({
             onClick={() => handleSubmit()}
             type="submit"
             loading={isSubmitting}
-            disabled={!canUserStake}
+            disabled={!canUserStake || userActivatedTokens.lt(decimalAmount)}
           />
         </span>
       </DialogSection>

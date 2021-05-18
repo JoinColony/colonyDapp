@@ -9,6 +9,7 @@ import Button from '~core/Button';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { useDialog } from '~core/Dialog';
 import RaiseObjectionDialog from '~dashboard/RaiseObjectionDialog';
+import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import {
   useLoggedInUser,
@@ -82,6 +83,13 @@ const StakingWidget = ({
     },
   });
 
+  const userInactivatedTokens = bigNumberify(
+    userData?.user?.userLock?.nativeToken?.balance || 0,
+  );
+  const userActivatedTokens = new Decimal(
+    userData?.user?.userLock?.balance || 0,
+  );
+
   const openRaiseObjectionDialog = useDialog(RaiseObjectionDialog);
 
   const handleRaiseObjection = useCallback(
@@ -91,24 +99,44 @@ const StakingWidget = ({
         colony,
         canUserStake: userHasPermission,
         scrollToRef,
+        userInactivatedTokens,
+        userActivatedTokens,
         ...stakingAmounts,
       }),
-    [colony, openRaiseObjectionDialog, scrollToRef, motionId],
+    [
+      colony,
+      openRaiseObjectionDialog,
+      scrollToRef,
+      motionId,
+      userInactivatedTokens,
+      userActivatedTokens,
+    ],
+  );
+
+  const getDecimalStake = useCallback(
+    (stake: number) => {
+      if (data?.motionStakes) {
+        const {
+          remainingToFullyNayStaked,
+          remainingToFullyYayStaked,
+        } = data.motionStakes;
+        const remainingToStake = new Decimal(
+          isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
+        );
+
+        return new Decimal(stake).times(remainingToStake).div(100);
+      }
+      return new Decimal(0);
+    },
+    [data, isObjection],
   );
 
   const transform = useCallback(
     pipe(
       mapPayload(({ amount }) => {
         if (data?.motionStakes) {
-          const {
-            remainingToFullyNayStaked,
-            remainingToFullyYayStaked,
-            minUserStake,
-          } = data.motionStakes;
-          const remainingToStake = new Decimal(
-            isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
-          );
-          const stake = new Decimal(amount).times(remainingToStake).div(100);
+          const { minUserStake } = data.motionStakes;
+          const stake = getDecimalStake(amount);
           const stakeWithMin = new Decimal(minUserStake).gte(stake)
             ? new Decimal(minUserStake)
             : stake;
@@ -155,9 +183,6 @@ const StakingWidget = ({
     minUserStake,
   } = data.motionStakes;
 
-  const userActivatedTokens = new Decimal(
-    userData?.user?.userLock?.balance || 0,
-  );
   const userStakeBottomLimit = new Decimal(minUserStake);
 
   const canUserStake =
@@ -222,7 +247,10 @@ const StakingWidget = ({
                   size: 'medium',
                 }}
                 type="submit"
-                disabled={!canBeStaked}
+                disabled={
+                  !canBeStaked ||
+                  userActivatedTokens.lt(getDecimalStake(values.amount))
+                }
                 text={MSG.stakeButton}
               />
               <span className={isObjection ? '' : styles.objectButton}>
@@ -246,6 +274,11 @@ const StakingWidget = ({
                 )}
               </span>
             </div>
+            <StakingValidationError
+              userActivatedTokens={userActivatedTokens}
+              userInactivatedTokens={userInactivatedTokens}
+              decimalAmount={getDecimalStake(values.amount)}
+            />
           </div>
         )}
       </ActionForm>
