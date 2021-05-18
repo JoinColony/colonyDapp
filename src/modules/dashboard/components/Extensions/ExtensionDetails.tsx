@@ -296,7 +296,18 @@ const ExtensionDetails = ({
                     appearance={{ size: 'medium', margin: 'small' }}
                     text={extension.name}
                   />
-                  <FormattedMessage {...extension.descriptionLong} />
+                  <FormattedMessage
+                    {...extension.descriptionLong}
+                    values={{
+                      h4: (chunks) => (
+                        <Heading
+                          tagName="h4"
+                          appearance={{ size: 'medium', margin: 'small' }}
+                          text={chunks}
+                        />
+                      ),
+                    }}
+                  />
                 </div>
               )}
             />
