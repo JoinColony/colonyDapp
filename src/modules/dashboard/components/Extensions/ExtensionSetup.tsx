@@ -152,13 +152,15 @@ const ExtensionSetup = ({
                   name={paramName}
                 />
                 <FormattedMessage {...description} />
-                <span className={styles.complementaryLabel}>
-                  {endsWith(paramName, 'Period') ? (
-                    <FormattedMessage {...MSG.hoursLabel} />
-                  ) : (
-                    '%'
-                  )}
-                </span>
+                {extensionId === Extension.VotingReputation && (
+                  <span className={styles.complementaryLabel}>
+                    {endsWith(paramName, 'Period') ? (
+                      <FormattedMessage {...MSG.hoursLabel} />
+                    ) : (
+                      '%'
+                    )}
+                  </span>
+                )}
               </div>
             ))}
           </div>
