@@ -3,6 +3,8 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
 import { endsWith } from 'lodash';
+import { Extension } from '@colony/colony-js';
+import { bigNumberify } from 'ethers/utils';
 
 import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm } from '~core/Fields';
@@ -10,7 +12,7 @@ import Heading from '~core/Heading';
 import { ActionTypes } from '~redux/index';
 import { ColonyExtension } from '~data/index';
 import { ExtensionData } from '~data/staticData/extensionData';
-import { mergePayload } from '~utils/actions';
+import { mergePayload, mapPayload, pipe } from '~utils/actions';
 import { Address } from '~types/index';
 
 import styles from './ExtensionSetup.css';
@@ -63,10 +65,29 @@ const ExtensionSetup = ({
     history.replace(`/colony/${colonyName}/extensions/${extensionId}`);
   }, [history, colonyName, extensionId]);
 
-  const transform = useCallback(mergePayload({ colonyAddress, extensionId }), [
-    colonyAddress,
-    extensionId,
-  ]);
+  const transform = useCallback(
+    pipe(
+      mapPayload((payload) => {
+        if (extensionId === Extension.VotingReputation) {
+          const formattedPayload = {};
+          initializationParams?.map(({ paramName }) => {
+            if (endsWith(paramName, 'Period')) {
+              formattedPayload[paramName] = payload[paramName] * 3600; // Seconds in 1 hour
+            } else {
+              formattedPayload[paramName] = bigNumberify(
+                payload[paramName],
+              ).mul(bigNumberify(10).pow(16));
+            }
+          });
+          return formattedPayload;
+        }
+
+        return payload;
+      }),
+      mergePayload({ colonyAddress, extensionId }),
+    ),
+    [colonyAddress, extensionId, initializationParams],
+  );
 
   if (
     installedExtension.details.deprecated ||
