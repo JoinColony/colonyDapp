@@ -68,39 +68,10 @@
   text-align: right;
 }
 
-.inputContainer {
-  margin-top: 27px;
-}
-
-.input {
-  padding: 0 16px;
-  height: 32px;
-  width: 100%;
-  border: 1px solid var(--temp-grey-5);
-  border-radius: var(--radius-tiny);
-  background-color: var(--colony-white);
-  font-size: var(--size-normal);
-  line-height: 32px;
-  color: var(--text);
-  outline: none;
-  letter-spacing: var(--spacing-normal);
-  transition: border-color 0.1s ease-in;
-
-  &:focus {
-    border-color: var(--primary);
-  }
-
-  &::placeholder {
-    font-size: var(--size-normal);
-    letter-spacing: var(--spacing-normal);
-    color: var(--text-disabled);
-  }
-}
-
 .warning {
-  background-color: var(--pink);
-  color: rgba(255, 255, 255);
-  font-weight: var(--weight-bold);
   padding: 25px 34px;
   border-radius: var(--radius-large);
+  background-color: var(--pink);
+  font-weight: var(--weight-bold);
+  color: rgba(255, 255, 255);
 }

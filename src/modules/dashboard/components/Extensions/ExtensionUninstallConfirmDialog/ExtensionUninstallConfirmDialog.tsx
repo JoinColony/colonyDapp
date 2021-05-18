@@ -1,10 +1,5 @@
 import React, { ReactNode, useState } from 'react';
-import {
-  MessageDescriptor,
-  defineMessages,
-  FormattedMessage,
-  useIntl
-} from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -31,11 +26,13 @@ const ExtensionUninstallConfirmDialog = ({
   onClick = () => close(null),
 }: Props) => {
   const { formatMessage } = useIntl();
-  const [isWarningInputValid, setIsWarningInputValid] = useState<boolean>(false);
+  const [isWarningInputValid, setIsWarningInputValid] = useState<boolean>(
+    false,
+  );
 
   const onWarningInputChange = (e) => {
-    setIsWarningInputValid(e.target.value === "I UNDERSTAND");
-  }
+    setIsWarningInputValid(e.target.value === 'I UNDERSTAND');
+  };
 
   return (
     <Dialog cancel={cancel}>
@@ -82,7 +79,7 @@ const ExtensionUninstallConfirmDialog = ({
         />
       </DialogSection>
     </Dialog>
-  )
+  );
 };
 
 export default ExtensionUninstallConfirmDialog;

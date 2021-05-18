@@ -35,7 +35,7 @@
 
   &::placeholder {
     font-size: var(--size-normal);
-    letter-spacing: var(--spacing-normal);
     color: var(--text-disabled);
+    letter-spacing: var(--spacing-normal);
   }
 }

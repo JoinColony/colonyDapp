@@ -24,5 +24,5 @@ export const ExtensionsMSG = defineMessages({
   warningPlaceholder: {
     id: 'dashboard.Extensions.ExtensionDetails.warningPlaceholder',
     defaultMessage: `I UNDERSTAND`,
-  }
+  },
 });

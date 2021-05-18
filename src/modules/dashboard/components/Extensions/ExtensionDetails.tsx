@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { defineMessages, FormattedDate, FormattedMessage, useIntl } from 'react-intl';
+import React from 'react';
+import { FormattedDate, defineMessages, FormattedMessage } from 'react-intl';
 import {
   useParams,
   Switch,
@@ -11,7 +11,6 @@ import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
-import InputLabel from '~core/Fields/InputLabel';
 import {
   Colony,
   useLoggedInUser,
@@ -43,6 +42,7 @@ import ExtensionActionButton from './ExtensionActionButton';
 import ExtensionSetup from './ExtensionSetup';
 import ExtensionStatus from './ExtensionStatus';
 import ExtensionUpgrade from './ExtensionUpgrade';
+import ExtensionUninstallConfirmDialog from './ExtensionUninstallConfirmDialog';
 import { ExtensionsMSG } from './extensionsMSG';
 
 const MSG = defineMessages({
@@ -135,8 +135,6 @@ const ExtensionDetails = ({
   const match = useRouteMatch();
   const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
   const { walletAddress, username, ethereal } = useLoggedInUser();
-  const { formatMessage } = useIntl();
-  const [isWarningInputValid, setIsWarningInputValid] = useState<boolean>(false);
 
   const { data, loading } = useColonyExtensionQuery({
     variables: { colonyAddress, extensionId },
@@ -262,40 +260,24 @@ const ExtensionDetails = ({
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
   }
 
-  const onWarningInputChange = (e) => {
-    setIsWarningInputValid(e.target.value === "I UNDERSTAND");
-  }
-
-  const modalContent = (content) => (
-    <div>
-      {content}
-      <div className={styles.inputContainer}>
-        <InputLabel
-          label={ExtensionsMSG.typeInBox}
-          appearance={{ colorSchema: 'grey' }}
-        />
-        <input
-          name="warning"
-          className={styles.input}
-          onChange={onWarningInputChange}
-          placeholder={formatMessage(ExtensionsMSG.warningPlaceholder)}
-        />
-      </div>
-    </div>
-  )
-
   const uninstallModalProps = {
     [Extension.VotingReputation]: {
       heading: ExtensionsMSG.headingVotingUninstall,
-      children: modalContent(<div className={styles.warning}><FormattedMessage {...ExtensionsMSG.textVotingUninstall} /></div>),
-      disabled: !isWarningInputValid,
+      children: (
+        <div className={styles.warning}>
+          <FormattedMessage {...ExtensionsMSG.textVotingUninstall} />
+        </div>
+      ),
     },
     [Extension.OneTxPayment]: {
       heading: ExtensionsMSG.headingDefaultUninstall,
-      children: modalContent(<FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />),
-      disabled: !isWarningInputValid,
-    }
-  }
+      children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
+    },
+    DEFAULT: {
+      heading: ExtensionsMSG.headingDefaultUninstall,
+      children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
+    },
+  };
 
   return (
     <div className={styles.main}>
@@ -392,8 +374,11 @@ const ExtensionDetails = ({
           {extesionCanBeUninstalled ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
-                dialog={ConfirmDialog}
-                dialogProps={uninstallModalProps[extensionId]}
+                dialog={ExtensionUninstallConfirmDialog}
+                dialogProps={
+                  uninstallModalProps[extensionId] ||
+                  uninstallModalProps.DEFAULT
+                }
                 appearance={{ theme: 'blue' }}
                 submit={ActionTypes.COLONY_EXTENSION_UNINSTALL}
                 error={ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR}
