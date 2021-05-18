@@ -251,6 +251,7 @@ const CreatePaymentDialogForm = ({
     hasRoles,
     isVotingExtensionEnabled,
     values.forceAction,
+    domainId,
   );
 
   const { isOneTxPaymentExtensionEnabled } = useEnabledExtensions({

@@ -81,8 +81,6 @@ const ExpendituresDialog = ({
     colonyAddress,
   });
 
-  // const isVotingExtensionEnabled = false;
-
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
