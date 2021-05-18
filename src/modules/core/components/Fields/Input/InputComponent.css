@@ -88,6 +88,10 @@
   }
 }
 
+.themeMinimal:disabled {
+  border-color: var(--text-disabled);
+}
+
 .themeMinimal::placeholder {
   font-style: italic;
   color: var(--grey-4);
