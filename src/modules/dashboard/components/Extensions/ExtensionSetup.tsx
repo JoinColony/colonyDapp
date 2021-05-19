@@ -39,9 +39,12 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionSetup.setPermissions',
     defaultMessage: 'Set permissions',
   },
-  hoursLabel: {
-    id: 'dashboard.Extensions.ExtensionSetup.hoursLabel',
-    defaultMessage: 'hours',
+  complementaryLabel: {
+    id: 'dashboard.Extensions.ExtensionSetup.complementaryLabel',
+    defaultMessage: `{isPeriod, select,
+      true {hours}
+      false {%}
+    }`,
   },
 });
 
@@ -154,11 +157,10 @@ const ExtensionSetup = ({
                 <FormattedMessage {...description} />
                 {extensionId === Extension.VotingReputation && (
                   <span className={styles.complementaryLabel}>
-                    {endsWith(paramName, 'Period') ? (
-                      <FormattedMessage {...MSG.hoursLabel} />
-                    ) : (
-                      '%'
-                    )}
+                    <FormattedMessage
+                      {...MSG.complementaryLabel}
+                      values={{ isPeriod: endsWith(paramName, 'Period') }}
+                    />
                   </span>
                 )}
               </div>
