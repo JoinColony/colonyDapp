@@ -37,7 +37,7 @@ import { ipfsDataFetcher } from '../../../../core/fetchers';
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
-import motionSpecificStyles from '../../ActionsPage/ActionsComponents/MintTokenMotion.css';
+import motionSpecificStyles from '../../ActionsPage/ActionsComponents/DefaultMotion.css';
 
 import styles from './ActionsPageEvent.css';
 
