@@ -179,7 +179,10 @@
 
 .changeStateButtonsContainer > div > button {
   margin-left: 0;
+  padding: 4px 0 7px 0;
+  height: 29px;
   width: 95px;
+  line-height: 18px;
   outline: none;
 }
 
