@@ -142,7 +142,7 @@ const votingReputationMessages = {
   },
   votingReputationTotalStakeFractionDescription: {
     id: 'extensions.votingReputation.param.totalStakeFraction.description',
-    defaultMessage: `What percentage of the team’s reputation, in token terms, should need to stake on each side of a motion?\n\ne.g. if a team has 100 reputation points between them, and the Required Stake is 5%, then 5 tokens would need to be staked to either create or object to a motion.`,
+    defaultMessage: `What percentage of the team’s reputation, in token terms, should need to stake on each side of a motion?\n\ne.g. if a team has 100 reputation points between them, and the Required Stake is 5%, then 5 tokens would need to be staked to either support or object to a motion.`,
   },
   votingReputationVoterRewardFractionTitle: {
     id: 'extensions.votingReputation.param.voterRewardFraction.title',
@@ -150,7 +150,7 @@ const votingReputationMessages = {
   },
   votingReputationVoterRewardFractionDescription: {
     id: 'extensions.votingReputation.param.voterRewardFraction.description',
-    defaultMessage: `In a dispute, what percentage of the losing side’s stake should be awarded to the voters?\n\ne.g. If both the colony members who create a motion, and the colony members who raise an objection stake 100 tokens, and the Voter Reward is 20%, then the voters will share 20 tokens between them, proportional to their reputations. The remainder will be shared between the stakers proportional to the outcome of the vote.`,
+    defaultMessage: `In a dispute, what percentage of the losing side’s stake should be awarded to the voters?\n\ne.g. If both the colony members who create a motion, and the colony members who raise an objection stake 50 tokens, and the Voter Reward is 20%, then the voters will share 20 tokens between them, proportional to their reputations (i.e. 20% of the combined stake of both side of the dispute). The remainder will be shared between the stakers proportional to the outcome of the vote.`,
   },
   votingReputationUserMinStakeFractionTitle: {
     id: 'extensions.votingReputation.param.userMinStakeFraction.title',
