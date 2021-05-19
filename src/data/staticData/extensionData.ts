@@ -200,6 +200,22 @@ const votingReputationMessages = {
     id: 'extensions.votingReputation.param.escalationPeriod.description',
     defaultMessage: `How long do you wish to allow for members to escalate a dispute to a higher team?\n\ne.g. If the escalation phase is 72 hours, once the outcome of a vote is known, if the loser feels the outcome was for any reason incorrect, then they will have 72 hours in which to escalate the dispute to a higher team in the colony by increasing the stake to meet the required stake of that higher team.`,
   },
+  votingReputationRequiredError: {
+    id: 'extensions.votingReputation.param.validation.requiredError',
+    defaultMessage: 'Please enter a value.',
+  },
+  votingReputationLessThan50Error: {
+    id: 'extensions.votingReputation.param.validation.lessThan50Error',
+    defaultMessage: 'Please enter a percentage less than or equal to 50%.',
+  },
+  votingReputationLessThan100Error: {
+    id: 'extensions.votingReputation.param.validation.lessThan100Error',
+    defaultMessage: 'Please enter a percentage less than or equal to 100%.',
+  },
+  votingReputationLessThan1YearError: {
+    id: 'extensions.votingReputation.param.validation.lessThan50Error',
+    defaultMessage: 'Please enter hours less than or equal to 1 year.',
+  },
 };
 
 const MSG = defineMessages({
@@ -298,56 +314,80 @@ const extensions: { [key: string]: ExtensionData } = {
     initializationParams: [
       {
         paramName: 'totalStakeFraction',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .required(() => MSG.votingReputationRequiredError)
+          .max(50, () => MSG.votingReputationLessThan50Error),
         defaultValue: 5,
         title: MSG.votingReputationTotalStakeFractionTitle,
         description: MSG.votingReputationTotalStakeFractionDescription,
       },
       {
         paramName: 'voterRewardFraction',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .required(() => MSG.votingReputationRequiredError)
+          .max(50, () => MSG.votingReputationLessThan50Error),
         defaultValue: 20,
         title: MSG.votingReputationVoterRewardFractionTitle,
         description: MSG.votingReputationVoterRewardFractionDescription,
       },
       {
         paramName: 'userMinStakeFraction',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .required(() => MSG.votingReputationRequiredError)
+          .max(100, () => MSG.votingReputationLessThan100Error),
         defaultValue: 10,
         title: MSG.votingReputationUserMinStakeFractionTitle,
         description: MSG.votingReputationUserMinStakeFractionDescription,
       },
       {
         paramName: 'maxVoteFraction',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .required(() => MSG.votingReputationRequiredError)
+          .max(100, () => MSG.votingReputationLessThan100Error),
         defaultValue: 70,
         title: MSG.votingReputationMaxVoteFractionTitle,
         description: MSG.votingReputationMaxVoteFractionDescription,
       },
       {
         paramName: 'stakePeriod',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .required(() => MSG.votingReputationRequiredError)
+          .max(8760, () => MSG.votingReputationLessThan1YearError),
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationStakePeriodTitle,
         description: MSG.votingReputationStakePeriodDescription,
       },
       {
         paramName: 'submitPeriod',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .required(() => MSG.votingReputationRequiredError)
+          .max(8760, () => MSG.votingReputationLessThan1YearError),
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationSubmitPeriodTitle,
         description: MSG.votingReputationSubmitPeriodDescription,
       },
       {
         paramName: 'revealPeriod',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .required(() => MSG.votingReputationRequiredError)
+          .max(8760, () => MSG.votingReputationLessThan1YearError),
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationRevealPeriodTitle,
         description: MSG.votingReputationRevealPeriodDescription,
       },
       {
         paramName: 'escalationPeriod',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .required(() => MSG.votingReputationRequiredError)
+          .max(8760, () => MSG.votingReputationLessThan1YearError),
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationEscalationPeriodTitle,
         description: MSG.votingReputationEscalationPeriodDescription,
