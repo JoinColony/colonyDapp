@@ -1,0 +1,41 @@
+@value wideButton: 160px;
+
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.content {
+  padding-bottom: 40px;
+}
+
+.inputContainer {
+  margin-top: 27px;
+}
+
+.input {
+  padding: 0 16px;
+  height: 32px;
+  width: 100%;
+  border: 1px solid var(--temp-grey-5);
+  border-radius: var(--radius-tiny);
+  background-color: var(--colony-white);
+  font-size: var(--size-normal);
+  line-height: 32px;
+  color: var(--text);
+  outline: none;
+  letter-spacing: var(--spacing-normal);
+  transition: border-color 0.1s ease-in;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+
+  &::placeholder {
+    font-size: var(--size-normal);
+    color: var(--text-disabled);
+    letter-spacing: var(--spacing-normal);
+  }
+}

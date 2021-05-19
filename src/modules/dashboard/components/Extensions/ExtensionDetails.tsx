@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
+import { FormattedDate, defineMessages, FormattedMessage } from 'react-intl';
 import {
   useParams,
   Switch,
@@ -7,7 +7,7 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { ColonyRole, ColonyVersion } from '@colony/colony-js';
+import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -42,6 +42,8 @@ import ExtensionActionButton from './ExtensionActionButton';
 import ExtensionSetup from './ExtensionSetup';
 import ExtensionStatus from './ExtensionStatus';
 import ExtensionUpgrade from './ExtensionUpgrade';
+import ExtensionUninstallConfirmDialog from './ExtensionUninstallConfirmDialog';
+import { ExtensionsMSG } from './extensionsMSG';
 
 const MSG = defineMessages({
   title: {
@@ -258,6 +260,25 @@ const ExtensionDetails = ({
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
   }
 
+  const uninstallModalProps = {
+    [Extension.VotingReputation]: {
+      heading: ExtensionsMSG.headingVotingUninstall,
+      children: (
+        <div className={styles.warning}>
+          <FormattedMessage {...ExtensionsMSG.textVotingUninstall} />
+        </div>
+      ),
+    },
+    [Extension.OneTxPayment]: {
+      heading: ExtensionsMSG.headingDefaultUninstall,
+      children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
+    },
+    DEFAULT: {
+      heading: ExtensionsMSG.headingDefaultUninstall,
+      children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
+    },
+  };
+
   return (
     <div className={styles.main}>
       <div>
@@ -353,11 +374,11 @@ const ExtensionDetails = ({
           {extesionCanBeUninstalled ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
-                dialog={ConfirmDialog}
-                dialogProps={{
-                  heading: MSG.headingUninstall,
-                  children: <FormattedMessage {...MSG.textUninstall} />,
-                }}
+                dialog={ExtensionUninstallConfirmDialog}
+                dialogProps={
+                  uninstallModalProps[extensionId] ||
+                  uninstallModalProps.DEFAULT
+                }
                 appearance={{ theme: 'blue' }}
                 submit={ActionTypes.COLONY_EXTENSION_UNINSTALL}
                 error={ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR}
