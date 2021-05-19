@@ -5,3 +5,4 @@ export const value: string;
 export const reputation: string;
 export const help: string;
 export const tooltip: string;
+export const range: string;

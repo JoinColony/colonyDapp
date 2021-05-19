@@ -12,6 +12,7 @@ import {
   useMotionVoterRewardQuery,
 } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { MotionState } from '~utils/colonyMotions';
 
 import styles from './VoteWidget.css';
 
@@ -24,6 +25,7 @@ interface Props {
   motionId: number;
   buttonComponent?: ReactElement;
   showReward?: boolean;
+  motionState: MotionState;
 }
 
 const MSG = defineMessages({
@@ -70,6 +72,7 @@ const VoteDetails = ({
   buttonComponent,
   motionId,
   showReward = true,
+  motionState,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -153,18 +156,47 @@ const VoteDetails = ({
               </div>
             </div>
             <div className={styles.value}>
-              {voterReward?.motionVoterReward && (
-                <><Icon
-                  name="clny-token"
-                  title="clny"
-                  appearance={{ size: 'tiny' }}
-                />
-                <Numeral
-                  unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
-                  value={voterReward.motionVoterReward}
-                  suffix={` ${nativeToken?.symbol}`}
-                /></>
-              )}
+              {motionState === MotionState.Voting &&
+                voterReward?.motionVoterReward && (
+                  <>
+                    <Icon
+                      name="clny-token"
+                      title="clny"
+                      appearance={{ size: 'tiny' }}
+                    />
+                    <Numeral
+                      unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
+                      value={voterReward.motionVoterReward}
+                      appearance={{ theme: 'darken', size: 'small' }}
+                      truncate={5}
+                    />
+                    <div className={styles.range} />
+                    <Numeral
+                      unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
+                      value={voterReward.motionVoterReward}
+                      appearance={{ theme: 'darken', size: 'small' }}
+                      truncate={5}
+                      suffix={` ${nativeToken?.symbol}`}
+                    />
+                  </>
+                )}
+              {motionState === MotionState.Reveal &&
+                voterReward?.motionVoterReward && (
+                  <>
+                    <Icon
+                      name="clny-token"
+                      title="clny"
+                      appearance={{ size: 'tiny' }}
+                    />
+                    <Numeral
+                      unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
+                      value={voterReward.motionVoterReward}
+                      suffix={` ${nativeToken?.symbol}`}
+                      appearance={{ theme: 'darken', size: 'small' }}
+                      truncate={5}
+                    />
+                  </>
+                )}
             </div>
           </div>
         </>

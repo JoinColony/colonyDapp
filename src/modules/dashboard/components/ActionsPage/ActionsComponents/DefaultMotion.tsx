@@ -358,6 +358,7 @@ const DefaultMotion = ({
               motionId={motionId}
               motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
+              motionState={motionState}
             />
           )}
           {motionState === MotionState.Reveal && (
@@ -365,6 +366,7 @@ const DefaultMotion = ({
               colony={colony}
               motionId={motionId}
               scrollToRef={bottomElementRef}
+              motionState={motionState}
             />
           )}
           {(motionState === MotionState.Failed ||

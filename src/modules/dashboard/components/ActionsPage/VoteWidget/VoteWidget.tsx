@@ -13,6 +13,7 @@ import { Colony, useLoggedInUser, useUserReputationQuery } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
 import { mapPayload } from '~utils/actions';
+import { MotionState } from '~utils/colonyMotions';
 
 import VoteDetails from './VoteDetails';
 
@@ -28,6 +29,7 @@ interface Props {
   motionId: number;
   motionDomain?: number;
   scrollToRef?: RefObject<HTMLInputElement>;
+  motionState: MotionState;
 }
 
 const MSG = defineMessages({
@@ -62,6 +64,7 @@ const VoteWidget = ({
   motionId,
   motionDomain = ROOT_DOMAIN_ID,
   scrollToRef,
+  motionState,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -153,6 +156,7 @@ const VoteWidget = ({
           <VoteDetails
             colony={colony}
             motionId={motionId}
+            motionState={motionState}
             showReward={hasReputationToVote}
             buttonComponent={
               <Button

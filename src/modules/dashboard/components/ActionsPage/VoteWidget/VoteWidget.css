@@ -21,6 +21,7 @@
 
 .value {
   composes: value from '../DetailsWidget/DetailsWidget.css';
+  max-width: 220px;
 }
 
 .value button {
@@ -42,4 +43,34 @@
 .tooltip {
   padding: 10px;
   width: 220px;
+}
+
+.range {
+  display: inline-block;
+  margin: -2px 5px 0;
+  height: 1px;
+  width: 30px;
+  position: relative;
+  vertical-align: middle;
+  background: linear-gradient(90deg, var(--pink) 4.65%, var(--primary) 101.16%);
+}
+
+.range::before, .range::after {
+  display: block;
+  height: 5px;
+  width: 5px;
+  position: absolute;
+  top: -2px;
+  border-radius: 50%;
+  content: "";
+}
+
+.range::before {
+  left: 0;
+  background-color: var(--pink);
+}
+
+.range::after {
+  right: 0;
+  background-color: var(--primary);
 }
