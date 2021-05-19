@@ -7,7 +7,7 @@ import { formatTokenValue } from '~utils/numbers';
 import styles from './Numeral.css';
 
 interface Appearance {
-  theme: 'primary' | 'grey' | 'dark' | 'blue';
+  theme: 'primary' | 'grey' | 'dark' | 'blue' | 'darken';
   size?: 'medium' | 'large' | 'small';
   weight?: 'medium';
 }
