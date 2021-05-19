@@ -4,6 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import MemberReputation from '~core/MemberReputation';
 import Numeral from '~core/Numeral';
+import Icon from '~core/Icon';
 
 import {
   Colony,
@@ -153,11 +154,16 @@ const VoteDetails = ({
             </div>
             <div className={styles.value}>
               {voterReward?.motionVoterReward && (
+                <><Icon
+                  name="clny-token"
+                  title="clny"
+                  appearance={{ size: 'tiny' }}
+                />
                 <Numeral
                   unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
                   value={voterReward.motionVoterReward}
                   suffix={` ${nativeToken?.symbol}`}
-                />
+                /></>
               )}
             </div>
           </div>
