@@ -44,6 +44,7 @@ const MSG = defineMessages({
     defaultMessage: `{isPeriod, select,
       true {hours}
       false {%}
+      other { }
     }`,
   },
 });
