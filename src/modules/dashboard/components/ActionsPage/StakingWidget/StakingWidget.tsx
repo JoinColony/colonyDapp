@@ -100,7 +100,6 @@ const StakingWidget = ({
         canUserStake: userHasPermission,
         scrollToRef,
         userInactivatedTokens,
-        userActivatedTokens,
         ...stakingAmounts,
       }),
     [
@@ -109,10 +108,9 @@ const StakingWidget = ({
       scrollToRef,
       motionId,
       userInactivatedTokens,
-      userActivatedTokens,
     ],
   );
-
+  // !!!!!!!
   const getDecimalStake = useCallback(
     (stake: number) => {
       if (data?.motionStakes) {
@@ -239,6 +237,7 @@ const StakingWidget = ({
               remainingToFullyNayStaked={remainingToFullyNayStaked}
               maxUserStake={maxUserStake}
               minUserStake={minUserStake}
+              userActivatedTokens={userActivatedTokens}
             />
             <div className={styles.buttonGroup}>
               <Button
@@ -267,7 +266,10 @@ const StakingWidget = ({
                     disabled={!canUserStakeNay}
                     onClick={() =>
                       bigNumberify(totalNAYStakes).isZero()
-                        ? handleRaiseObjection(canUserStake, data.motionStakes)
+                        ? handleRaiseObjection(canUserStake, {
+                            ...data.motionStakes,
+                            userActivatedTokens,
+                          })
                         : handleWidgetState(true)
                     }
                   />

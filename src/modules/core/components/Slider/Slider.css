@@ -17,3 +17,8 @@
 .danger :global(.rc-slider-handle:active) {
   box-shadow: 0 0 5px var(--danger);
 }
+
+/* This is to remove `left` from the dot for it have correct visual position */
+.primary > div > div > span {
+  left: 0 !important;
+}

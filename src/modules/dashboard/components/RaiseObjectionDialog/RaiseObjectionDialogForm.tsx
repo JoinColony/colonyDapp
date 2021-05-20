@@ -97,6 +97,7 @@ const RaiseObjectionDialogForm = ({
             appearance={{ theme: 'danger' }}
             isObjection
             remainingToFullyNayStaked={remainingToFullyNayStaked}
+            userActivatedTokens={userActivatedTokens}
             {...props}
           />
         </div>

@@ -16,6 +16,7 @@ export interface StakingAmounts {
   remainingToFullyNayStaked: string;
   maxUserStake: string;
   minUserStake: string;
+  userActivatedTokens: Decimal;
 }
 
 interface Props extends StakingAmounts {
@@ -66,6 +67,7 @@ const StakingSlider = ({
   minUserStake,
   canUserStake,
   appearance,
+  userActivatedTokens,
   isObjection,
 }: Props) => {
   const nativeToken = tokens.find(
@@ -76,9 +78,12 @@ const StakingSlider = ({
     isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
   );
 
-  const userStakeLimitPercentage = new Decimal(maxUserStake)
-    .div(remainingToStake)
-    .times(100);
+  const maxStake = new Decimal(maxUserStake);
+
+  const userStakeLimitPercentage = (maxStake.gte(userActivatedTokens)
+    ? userActivatedTokens
+    : maxStake
+  ).div(remainingToStake);
 
   const stake = new Decimal(values.amount).times(remainingToStake).div(100);
   const stakeWithMin = new Decimal(minUserStake).gte(stake)
@@ -119,7 +124,7 @@ const StakingSlider = ({
         <Slider
           name="amount"
           value={values.amount}
-          limit={parseFloat(userStakeLimitPercentage.toFixed(2))}
+          limit={parseFloat(userStakeLimitPercentage.toFixed(4))}
           step={0.01}
           min={0}
           max={100}

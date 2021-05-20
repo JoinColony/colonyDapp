@@ -50,30 +50,34 @@ const Slider = ({
     }
   }, [sliderValue, value, setSliderValue]);
 
-  const gradientStopPercentage = useMemo(() => {
-    return limit ? Math.round((limit / max) * 100) : 0;
-  }, [limit, max]);
+  const limitValue = useMemo(() => {
+    return limit ? limit * 100 : 0;
+  }, [limit]);
 
   const onSliderChange = useCallback(
     (val): void => {
-      if ((limit && sliderValue < limit) || val < sliderValue || !limit) {
+      if (
+        (limitValue && sliderValue < limitValue) ||
+        val < sliderValue ||
+        !limitValue
+      ) {
         setSliderValue(val);
         setValue(val);
         if (onChange) {
           onChange(val);
         }
       }
-      if (limit && (sliderValue > limit || val > limit)) {
-        setSliderValue(limit);
-        setValue(limit);
+      if (limitValue && (sliderValue > limitValue || val > limitValue)) {
+        setSliderValue(limitValue);
+        setValue(limitValue);
 
         if (onChange) {
-          onChange(limit);
+          onChange(limitValue);
         }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setSliderValue, onChange, limit, sliderValue],
+    [setSliderValue, onChange, limitValue, sliderValue],
   );
 
   const marks = {};
@@ -140,12 +144,12 @@ const Slider = ({
           border: 0,
           borderRadius: 0,
           top: sizes.markPositionTop,
-          marginLeft: 0,
+          marginLeft: `${limitValue}%`,
         }}
         railStyle={{
           backgroundColor: '#C2CCCC',
           height: sizes.height,
-          backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientStopPercentage}%, transparent ${gradientStopPercentage}%)`,
+          backgroundImage: `linear-gradient(90deg, #76748B 0% ${limitValue}%, transparent ${limitValue}%)`,
         }}
       />
     </div>
