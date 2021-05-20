@@ -79,6 +79,8 @@ const DefaultMotion = ({
     motionDomain,
     actionInitiator,
     rootHash,
+    domainName,
+    domainColor,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -185,6 +187,10 @@ const DefaultMotion = ({
 
   const actionAndEventValues = {
     actionType,
+    fromDomain: {
+      name: domainName,
+      color: domainColor,
+    },
     amount: (
       <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
     ),
@@ -297,6 +303,7 @@ const DefaultMotion = ({
               id="motion.title"
               values={{
                 ...actionAndEventValues,
+                domainName: actionAndEventValues.fromDomain.name,
               }}
             />
           </h1>

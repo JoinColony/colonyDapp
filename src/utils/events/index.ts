@@ -50,6 +50,8 @@ interface MotionValues extends ActionValues {
   actionInitiator: string;
   motionDomain: number;
   rootHash: string;
+  domainName: string;
+  domainColor: number;
 }
 
 /*
@@ -627,6 +629,37 @@ const getMintTokensMotionValues = async (
   return mintTokensMotionValues;
 };
 
+const getCreateDomainMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const ipfsData = await ipfs.getString(values.args[3]);
+  const domainMetadata = JSON.parse(ipfsData);
+
+  const createDomainMotionValues: {
+    domainName: string;
+    domainColor: number;
+  } = {
+    ...motionDefaultValues,
+    ...domainMetadata,
+  };
+
+  return createDomainMotionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -744,8 +777,7 @@ export const getActionValues = async (
     case ColonyMotions.ColonyEditMotion:
     case ColonyMotions.MoveFundsMotion:
     case ColonyMotions.SetUserRolesMotion:
-    case ColonyMotions.EditDomainMotion:
-    case ColonyMotions.CreateDomainMotion: {
+    case ColonyMotions.EditDomainMotion: {
       const motionValues = await getMotionValues(
         processedEvents,
         votingClient,
@@ -754,6 +786,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...motionValues,
+      };
+    }
+    case ColonyMotions.CreateDomainMotion: {
+      const createDomainMotionValues = await getCreateDomainMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...createDomainMotionValues,
       };
     }
     default: {
