@@ -5,8 +5,16 @@
 .input {
   margin-top: 50px;
   max-width: 450px;
+  position: relative;
+  white-space: pre-line;
 }
 
 .inputContainer {
   margin-bottom: 50px;
+}
+
+.complementaryLabel {
+  position: absolute;
+  top: 30px;
+  right: 5px;
 }

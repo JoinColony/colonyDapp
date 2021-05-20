@@ -10,6 +10,7 @@
 
 .extensionText {
   padding-top: 24px;
+  white-space: pre-line;
 }
 
 .extensionDetails {
