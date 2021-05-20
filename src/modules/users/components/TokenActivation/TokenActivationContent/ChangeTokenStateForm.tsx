@@ -100,7 +100,7 @@ const ChangeTokenStateForm = ({
         tokenBalance.sub(isActivate ? 0 : lockedTokens),
         -tokenDecimals,
       ),
-    [tokenDecimals, tokenBalance],
+    [tokenDecimals, tokenBalance, isActivate, lockedTokens],
   );
 
   const transform = useCallback(
