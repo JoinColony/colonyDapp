@@ -70,6 +70,7 @@
 .totalTokens {
   margin-left: 16px;
   font-size: var(--size-medium-l);
+  line-height: 18px;
   white-space: nowrap;
   color: var(--dark);
 }
