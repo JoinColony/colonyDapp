@@ -110,19 +110,23 @@ const StakingWidget = ({
       userInactivatedTokens,
     ],
   );
-  // !!!!!!!
+
   const getDecimalStake = useCallback(
     (stake: number) => {
       if (data?.motionStakes) {
         const {
           remainingToFullyNayStaked,
           remainingToFullyYayStaked,
+          minUserStake,
         } = data.motionStakes;
         const remainingToStake = new Decimal(
           isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
         );
 
-        return new Decimal(stake).times(remainingToStake).div(100);
+        return new Decimal(stake)
+          .div(100)
+          .times(remainingToStake.minus(minUserStake))
+          .plus(minUserStake);
       }
       return new Decimal(0);
     },
