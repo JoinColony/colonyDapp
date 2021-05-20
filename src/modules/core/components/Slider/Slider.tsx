@@ -54,10 +54,15 @@ const Slider = ({
     return limit ? limit * 100 : 0;
   }, [limit]);
 
+  const gradientPercentage = useMemo(
+    () => (limitValue >= 100 ? 100 : limitValue),
+    [limitValue],
+  );
+
   const onSliderChange = useCallback(
     (val): void => {
       if (
-        (limitValue && sliderValue < limitValue) ||
+        (limit !== undefined && sliderValue < limitValue) ||
         val < sliderValue ||
         !limitValue
       ) {
@@ -67,7 +72,10 @@ const Slider = ({
           onChange(val);
         }
       }
-      if (limitValue && (sliderValue > limitValue || val > limitValue)) {
+      if (
+        limit !== undefined &&
+        (sliderValue > limitValue || val > limitValue)
+      ) {
         setSliderValue(limitValue);
         setValue(limitValue);
 
@@ -138,18 +146,19 @@ const Slider = ({
           backgroundColor: '#FFFFFF',
         }}
         dotStyle={{
+          display: gradientPercentage === 100 ? 'none' : '',
           height: sizes.markHeight,
           width: sizes.markWidth,
           backgroundColor: '#76748B',
           border: 0,
           borderRadius: 0,
           top: sizes.markPositionTop,
-          marginLeft: `${limitValue}%`,
+          marginLeft: `${gradientPercentage}%`,
         }}
         railStyle={{
           backgroundColor: '#C2CCCC',
           height: sizes.height,
-          backgroundImage: `linear-gradient(90deg, #76748B 0% ${limitValue}%, transparent ${limitValue}%)`,
+          backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientPercentage}%, transparent ${gradientPercentage}%)`,
         }}
       />
     </div>
