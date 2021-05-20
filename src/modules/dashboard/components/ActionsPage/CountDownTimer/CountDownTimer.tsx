@@ -65,7 +65,7 @@ const CountDownTimer = ({
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const dispatch = useDispatch();
-  const { data, loading } = useMotionTimeoutPeriodsQuery({
+  const { data, loading, refetch } = useMotionTimeoutPeriodsQuery({
     variables: {
       colonyAddress,
       motionId,
@@ -142,6 +142,12 @@ const CountDownTimer = ({
     motionId,
     walletAddress,
   ]);
+
+  useEffect(() => {
+    if (state && data) {
+      refetch();
+    }
+  }, [state]);
 
   /*
    * Split the time into h/m/s for display purpouses
