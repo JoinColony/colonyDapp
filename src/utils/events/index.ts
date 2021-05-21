@@ -6,7 +6,7 @@ import {
   ExtensionClient,
   MotionState as NetworkMotionState,
 } from '@colony/colony-js';
-import { bigNumberify, BigNumberish } from 'ethers/utils';
+import { bigNumberify, BigNumberish, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
 import ColonyManagerClass from '~lib/ColonyManager';
@@ -31,6 +31,7 @@ import { log } from '~utils/debug';
 
 import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
+import { availableRoles } from '~dashboard/PermissionManagementDialog';
 
 interface ActionValues {
   recipient: Address;
@@ -660,6 +661,45 @@ const getCreateDomainMotionValues = async (
   return createDomainMotionValues;
 };
 
+const getSetUserRolesMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const roleBitMask = parseInt(hexStripZeros(values.args[4]), 16).toString(2);
+  const roleBitMaskArray = roleBitMask.split('').reverse();
+
+  const roles = availableRoles.map((role) => ({
+    id: role,
+    setTo: roleBitMaskArray[role] === '1',
+  }));
+
+  const setUserRolesMotionValues: {
+    recipient: Address;
+    fromDomain: number;
+    roles: ActionUserRoles[];
+  } = {
+    ...motionDefaultValues,
+    recipient: values.args[2],
+    fromDomain: bigNumberify(values.args[3]).toNumber(),
+    roles,
+  };
+
+  return setUserRolesMotionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -776,7 +816,6 @@ export const getActionValues = async (
     case ColonyMotions.PaymentMotion:
     case ColonyMotions.ColonyEditMotion:
     case ColonyMotions.MoveFundsMotion:
-    case ColonyMotions.SetUserRolesMotion:
     case ColonyMotions.EditDomainMotion: {
       const motionValues = await getMotionValues(
         processedEvents,
@@ -797,6 +836,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...createDomainMotionValues,
+      };
+    }
+    case ColonyMotions.SetUserRolesMotion: {
+      const setUserRolesValues = await getSetUserRolesMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...setUserRolesValues,
       };
     }
     default: {

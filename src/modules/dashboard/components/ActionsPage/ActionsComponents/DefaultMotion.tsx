@@ -1,6 +1,7 @@
 import { bigNumberify } from 'ethers/utils';
 import React, { useMemo, useRef } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import { isNil } from 'lodash';
 
 import Numeral from '~core/Numeral';
 import Heading from '~core/Heading';
@@ -23,6 +24,7 @@ import {
   useUser,
   useVotingStateQuery,
   useMotionStatusQuery,
+  OneDomain,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -35,7 +37,9 @@ import {
   MOTION_TAG_MAP,
   shouldDisplayMotion,
 } from '~utils/colonyMotions';
+import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 
+import { getUserRolesForDomain } from '../../../../transformers';
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
@@ -69,6 +73,7 @@ interface Props {
 }
 
 const DefaultMotion = ({
+  colony: { domains },
   colony,
   colonyAction: {
     events = [],
@@ -81,6 +86,8 @@ const DefaultMotion = ({
     rootHash,
     domainName,
     domainColor,
+    roles,
+    fromDomain,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -99,10 +106,31 @@ const DefaultMotion = ({
     }, {} as any);
   }, []);
 
+  const userCurrentRoles = getUserRolesForDomain(
+    colony,
+    recipient.profile.walletAddress,
+    fromDomain,
+  );
+  const updatedRoles = roles.filter((role) => {
+    const foundCurrentRole = userCurrentRoles.find(
+      (currentRole) => currentRole === role.id,
+    );
+    if (!isNil(foundCurrentRole)) {
+      return !role.setTo;
+    }
+    return true;
+  });
+
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
   );
   const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
+
+  const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
+    updatedRoles,
+    actionType,
+    true,
+  );
 
   const {
     username: currentUserName,
@@ -187,10 +215,18 @@ const DefaultMotion = ({
 
   const actionAndEventValues = {
     actionType,
-    fromDomain: {
+    fromDomain: (domains.find(
+      ({ ethDomainId }) => ethDomainId === fromDomain,
+    ) as OneDomain) || {
       name: domainName,
       color: domainColor,
     },
+    roles: updatedRoles,
+    recipient: (
+      <span className={styles.titleDecoration}>
+        <FriendlyName user={recipient} autoShrinkAddress colony={colony} />
+      </span>
+    ),
     amount: (
       <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
     ),
@@ -300,10 +336,11 @@ const DefaultMotion = ({
         <div className={styles.content}>
           <h1 className={styles.heading}>
             <FormattedMessage
-              id="motion.title"
+              id={roleMessageDescriptorId || 'motion.title'}
               values={{
                 ...actionAndEventValues,
                 domainName: actionAndEventValues.fromDomain.name,
+                roles: roleTitle,
               }}
             />
           </h1>
