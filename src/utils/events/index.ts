@@ -801,6 +801,39 @@ const getColonyEditMotionValues = async (
   return colonyEditValues;
 };
 
+const getPaymentMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const paymentMotionValues: {
+    amount: string;
+    tokenAddress: Address;
+    fromDomain: number;
+    recipient: Address;
+  } = {
+    ...motionDefaultValues,
+    amount: values.args[6].toString(),
+    tokenAddress: values.args[5],
+    fromDomain: values.args[7],
+    recipient: values.args[4],
+  };
+
+  return paymentMotionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -914,7 +947,6 @@ export const getActionValues = async (
         ...mintTokensMotionValues,
       };
     }
-    case ColonyMotions.PaymentMotion:
     case ColonyMotions.MoveFundsMotion: {
       const motionValues = await getMotionValues(
         processedEvents,
@@ -968,6 +1000,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...colonyEditValues,
+      };
+    }
+    case ColonyMotions.PaymentMotion: {
+      const paymentValues = await getPaymentMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...paymentValues,
       };
     }
     default: {
