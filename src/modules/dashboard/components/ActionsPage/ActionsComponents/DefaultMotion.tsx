@@ -88,6 +88,7 @@ const DefaultMotion = ({
     domainColor,
     roles,
     fromDomain,
+    toDomain,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -221,6 +222,9 @@ const DefaultMotion = ({
       name: domainName,
       color: domainColor,
     },
+    toDomain: domains.find(
+      ({ ethDomainId }) => ethDomainId === toDomain,
+    ) as OneDomain,
     roles: updatedRoles,
     recipient: (
       <span className={styles.titleDecoration}>
@@ -339,7 +343,8 @@ const DefaultMotion = ({
               id={roleMessageDescriptorId || 'motion.title'}
               values={{
                 ...actionAndEventValues,
-                domainName: actionAndEventValues.fromDomain.name,
+                fromDomainName: actionAndEventValues.fromDomain?.name,
+                toDomainName: actionAndEventValues.toDomain?.name,
                 roles: roleTitle,
               }}
             />

@@ -3,15 +3,17 @@ import { ColonyMotions } from '~types/index';
 const motionsMessageDescriptors = {
   'motion.title': `{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint {amount} {tokenSymbol}}
-      ${ColonyMotions.CreateDomainMotion} {New team: {domainName}}
-      ${ColonyMotions.EditDomainMotion} {{domainName} team details edited}
+      ${ColonyMotions.CreateDomainMotion} {New team: {fromDomainName}}
+      ${ColonyMotions.EditDomainMotion} {{fromDomainName} team details edited}
       ${ColonyMotions.ColonyEditMotion} {Colony details changed}
       ${ColonyMotions.PaymentMotion} {Pay {recipient} {amount} {tokenSymbol}}
+      ${ColonyMotions.MoveFundsMotion}
+        {Move {amount} {tokenSymbol} from {fromDomainName} to {toDomainName}}
       other {Generic motion we don't have information about}
     }`,
-  [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {domainName} to {recipient}`,
-  [`motion.${ColonyMotions.SetUserRolesMotion}.remove`]: `Remove the {roles} in {domainName} from {recipient}`,
-  [`motion.${ColonyMotions.SetUserRolesMotion}.assignAndRemove`]: `{roles} in {domainName} to/from {recipient}`,
+  [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {fromDomainName} to {recipient}`,
+  [`motion.${ColonyMotions.SetUserRolesMotion}.remove`]: `Remove the {roles} in {fromDomainName} from {recipient}`,
+  [`motion.${ColonyMotions.SetUserRolesMotion}.assignAndRemove`]: `{roles} in {fromDomainName} to/from {recipient}`,
   'motion.type': `{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint Tokens}
       ${ColonyMotions.PaymentMotion} {Payment}
