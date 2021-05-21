@@ -431,14 +431,17 @@ export const motionsResolvers = ({
           let maxReward = bigNumberify(0);
           if (state === NetworkMotionState.Submit) {
             try {
-              const [minUserReward, maxUserReward] = await votingReputationClient.getVoterRewardRange(
+              const [
+                minUserReward,
+                maxUserReward,
+              ] = await votingReputationClient.getVoterRewardRange(
                 bigNumberify(motionId),
                 bigNumberify(data.userReputation),
                 createAddress(userAddress),
               );
               minReward = minUserReward;
               maxReward = maxUserReward;
-            } catch(error) {
+            } catch (error) {
               /* Not ideal, but when we not logged in useLoggedInUser is returning wrong userAddress
                When we pass wrong address to getVoterRewardRange method it returning error.
               */
@@ -452,8 +455,8 @@ export const motionsResolvers = ({
           return {
             reward: reward.toString(),
             minReward: minReward.toString(),
-            maxReward: maxReward.toString()
-          }
+            maxReward: maxReward.toString(),
+          };
         }
         return null;
       } catch (error) {
