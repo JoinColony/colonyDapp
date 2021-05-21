@@ -89,14 +89,12 @@ const ExpendituresDialog = ({
     ((canAdminister(allUserRoles) && canFund(allUserRoles)) ||
       isVotingExtensionEnabled);
 
-  const canMakePayment = isOneTxPaymentExtensionEnabled || false;
-
   const items = [
     {
       title: MSG.paymentTitle,
       description: MSG.paymentDescription,
       icon: 'emoji-dollar-stack',
-      permissionRequired: !canCreatePayment || !canMakePayment,
+      permissionRequired: !canCreatePayment || !isOneTxPaymentExtensionEnabled,
       permissionInfoText: !canCreatePayment
         ? MSG.paymentPermissionsText
         : MSG.noOneTxExtension,
