@@ -4,7 +4,7 @@ const motionsMessageDescriptors = {
   'motion.title': `{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint {amount} {tokenSymbol}}
       ${ColonyMotions.CreateDomainMotion} {New team: {fromDomainName}}
-      ${ColonyMotions.EditDomainMotion} {{Edit {fromDomainName} team details}
+      ${ColonyMotions.EditDomainMotion} {Edit {fromDomainName} team details}
       ${ColonyMotions.ColonyEditMotion} {Change colony details}
       ${ColonyMotions.PaymentMotion} {Pay {recipient} {amount} {tokenSymbol}}
       ${ColonyMotions.MoveFundsMotion}
