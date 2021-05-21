@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -76,12 +76,13 @@ const VoteDetails = ({
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
-  const { data: voterReward } = useMotionVoterRewardQuery({
+  const { data: voterReward, loading: loadingVoterReward, } = useMotionVoterRewardQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
       motionId,
     },
+    fetchPolicy: 'network-only',
   });
 
   const nativeToken = tokens.find(
@@ -156,8 +157,9 @@ const VoteDetails = ({
               </div>
             </div>
             <div className={styles.value}>
-              {motionState === MotionState.Voting &&
-                voterReward?.motionVoterReward && (
+              {voterReward?.motionVoterReward && !loadingVoterReward && (
+                <>
+                {motionState === MotionState.Voting && (
                   <>
                     <Icon
                       name="clny-token"
@@ -166,22 +168,21 @@ const VoteDetails = ({
                     />
                     <Numeral
                       unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
-                      value={voterReward.motionVoterReward}
+                      value={voterReward.motionVoterReward.minReward}
                       appearance={{ theme: 'darken', size: 'small' }}
                       truncate={5}
                     />
                     <div className={styles.range} />
                     <Numeral
                       unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
-                      value={voterReward.motionVoterReward}
+                      value={voterReward.motionVoterReward.maxReward}
                       appearance={{ theme: 'darken', size: 'small' }}
                       truncate={5}
                       suffix={` ${nativeToken?.symbol}`}
                     />
                   </>
                 )}
-              {motionState === MotionState.Reveal &&
-                voterReward?.motionVoterReward && (
+              {motionState === MotionState.Reveal && (
                   <>
                     <Icon
                       name="clny-token"
@@ -190,13 +191,15 @@ const VoteDetails = ({
                     />
                     <Numeral
                       unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
-                      value={voterReward.motionVoterReward}
+                      value={voterReward.motionVoterReward.reward}
                       suffix={` ${nativeToken?.symbol}`}
                       appearance={{ theme: 'darken', size: 'small' }}
                       truncate={5}
                     />
                   </>
                 )}
+                </>
+              )}
             </div>
           </div>
         </>

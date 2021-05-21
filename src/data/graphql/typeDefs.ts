@@ -257,6 +257,12 @@ export default gql`
     skillRep: String!
   }
 
+  type MotionVoterReward {
+    reward: String!
+    minReward: String!
+    maxReward: String!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -333,7 +339,7 @@ export default gql`
       motionId: Int!
       colonyAddress: String!
       userAddress: String!
-    ): String!
+    ): MotionVoterReward!
     motionUserVoteRevealed(
       motionId: Int!
       colonyAddress: String!

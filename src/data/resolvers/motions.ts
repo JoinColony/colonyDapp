@@ -412,6 +412,7 @@ export const motionsResolvers = ({
           colonyAddress,
         );
         const { domainId } = await votingReputationClient.getMotion(motionId);
+        const state = await votingReputationClient.getMotionState(motionId);
 
         const { data } = await apolloClient.query<
           UserReputationQuery,
@@ -425,11 +426,34 @@ export const motionsResolvers = ({
           },
         });
         if (data?.userReputation) {
-          const reward = await votingReputationClient.getVoterReward(
-            bigNumberify(motionId),
-            bigNumberify(data.userReputation),
-          );
-          return reward.toString();
+          let reward = bigNumberify(0);
+          let minReward = bigNumberify(0);
+          let maxReward = bigNumberify(0);
+          if (state === NetworkMotionState.Submit) {
+            try {
+              const [minUserReward, maxUserReward] = await votingReputationClient.getVoterRewardRange(
+                bigNumberify(motionId),
+                bigNumberify(data.userReputation),
+                createAddress(userAddress),
+              );
+              minReward = minUserReward;
+              maxReward = maxUserReward;
+            } catch(error) {
+              /* Not ideal, but when we not logged in useLoggedInUser is returning wrong userAddress
+               When we pass wrong address to getVoterRewardRange method it returning error.
+              */
+            }
+          } else {
+            reward = await votingReputationClient.getVoterReward(
+              bigNumberify(motionId),
+              bigNumberify(data.userReputation),
+            );
+          }
+          return {
+            reward: reward.toString(),
+            minReward: minReward.toString(),
+            maxReward: maxReward.toString()
+          }
         }
         return null;
       } catch (error) {
