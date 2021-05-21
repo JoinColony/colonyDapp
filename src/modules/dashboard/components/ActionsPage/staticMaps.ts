@@ -100,6 +100,16 @@ export const STATUS_MAP: { [key in number]: STATUS } = {
 /*
  * Which events to display on which action's page
  */
+
+const MOTION_EVENTS = [
+  ColonyAndExtensionsEvents.MotionCreated,
+  ColonyAndExtensionsEvents.MotionStaked,
+  ColonyAndExtensionsEvents.MotionVoteRevealed,
+  ColonyAndExtensionsEvents.ObjectionRaised,
+  ColonyAndExtensionsEvents.MotionFinalized,
+  ColonyAndExtensionsEvents.MotionRewardClaimed,
+];
+
 export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.Payment]: [ColonyAndExtensionsEvents.OneTxPaymentMade],
   [ColonyActions.MoveFunds]: [
@@ -117,62 +127,13 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.RecoveryModeExitApproved,
     ColonyAndExtensionsEvents.RecoveryModeExited,
   ],
-  [ColonyMotions.MintTokensMotion]: [
-    ColonyAndExtensionsEvents.MotionCreated,
-    ColonyAndExtensionsEvents.MotionStaked,
-    ColonyAndExtensionsEvents.MotionVoteRevealed,
-    ColonyAndExtensionsEvents.ObjectionRaised,
-    ColonyAndExtensionsEvents.MotionFinalized,
-    ColonyAndExtensionsEvents.MotionRewardClaimed,
-  ],
-  [ColonyMotions.CreateDomainMotion]: [
-    ColonyAndExtensionsEvents.MotionCreated,
-    ColonyAndExtensionsEvents.MotionStaked,
-    ColonyAndExtensionsEvents.MotionVoteRevealed,
-    ColonyAndExtensionsEvents.ObjectionRaised,
-    ColonyAndExtensionsEvents.MotionFinalized,
-    ColonyAndExtensionsEvents.MotionRewardClaimed,
-  ],
-  [ColonyMotions.EditDomainMotion]: [
-    ColonyAndExtensionsEvents.MotionCreated,
-    ColonyAndExtensionsEvents.MotionStaked,
-    ColonyAndExtensionsEvents.MotionVoteRevealed,
-    ColonyAndExtensionsEvents.ObjectionRaised,
-    ColonyAndExtensionsEvents.MotionFinalized,
-    ColonyAndExtensionsEvents.MotionRewardClaimed,
-  ],
-  [ColonyMotions.ColonyEditMotion]: [
-    ColonyAndExtensionsEvents.MotionCreated,
-    ColonyAndExtensionsEvents.MotionStaked,
-    ColonyAndExtensionsEvents.MotionVoteRevealed,
-    ColonyAndExtensionsEvents.ObjectionRaised,
-    ColonyAndExtensionsEvents.MotionFinalized,
-    ColonyAndExtensionsEvents.MotionRewardClaimed,
-  ],
-  [ColonyMotions.SetUserRolesMotion]: [
-    ColonyAndExtensionsEvents.MotionCreated,
-    ColonyAndExtensionsEvents.MotionStaked,
-    ColonyAndExtensionsEvents.MotionVoteRevealed,
-    ColonyAndExtensionsEvents.ObjectionRaised,
-    ColonyAndExtensionsEvents.MotionFinalized,
-    ColonyAndExtensionsEvents.MotionRewardClaimed,
-  ],
-  [ColonyMotions.PaymentMotion]: [
-    ColonyAndExtensionsEvents.MotionCreated,
-    ColonyAndExtensionsEvents.MotionStaked,
-    ColonyAndExtensionsEvents.MotionVoteRevealed,
-    ColonyAndExtensionsEvents.ObjectionRaised,
-    ColonyAndExtensionsEvents.MotionFinalized,
-    ColonyAndExtensionsEvents.MotionRewardClaimed,
-  ],
-  [ColonyMotions.MoveFundsMotion]: [
-    ColonyAndExtensionsEvents.MotionCreated,
-    ColonyAndExtensionsEvents.MotionStaked,
-    ColonyAndExtensionsEvents.MotionVoteRevealed,
-    ColonyAndExtensionsEvents.ObjectionRaised,
-    ColonyAndExtensionsEvents.MotionFinalized,
-    ColonyAndExtensionsEvents.MotionRewardClaimed,
-  ],
+  [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
+  [ColonyMotions.CreateDomainMotion]: MOTION_EVENTS,
+  [ColonyMotions.EditDomainMotion]: MOTION_EVENTS,
+  [ColonyMotions.ColonyEditMotion]: MOTION_EVENTS,
+  [ColonyMotions.SetUserRolesMotion]: MOTION_EVENTS,
+  [ColonyMotions.PaymentMotion]: MOTION_EVENTS,
+  [ColonyMotions.MoveFundsMotion]: MOTION_EVENTS,
 };
 
 /*
