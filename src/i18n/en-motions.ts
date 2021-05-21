@@ -5,6 +5,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.MintTokensMotion} {Mint {amount} {tokenSymbol}}
       ${ColonyMotions.CreateDomainMotion} {New team: {domainName}}
       ${ColonyMotions.EditDomainMotion} {{domainName} team details edited}
+      ${ColonyMotions.ColonyEditMotion} {Colony details changed}
       other {Generic motion we don't have information about}
     }`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {domainName} to {recipient}`,

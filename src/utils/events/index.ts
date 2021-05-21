@@ -732,6 +732,75 @@ const getEditDomainMotionValues = async (
   return editDomainMotionValues;
 };
 
+const getColonyEditMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+  let colonyDisplayName = null;
+  let colonyAvatarHash = null;
+  let colonyTokens = [];
+
+  /*
+   * Fetch the colony's metadata
+   */
+  let ipfsMetadata: any = null;
+  try {
+    ipfsMetadata = await ipfs.getString(values.args[0]);
+  } catch (error) {
+    log.verbose(
+      'Could not fetch IPFS metadata for colony with hash:',
+      values.args[0],
+    );
+  }
+
+  try {
+    if (ipfsMetadata) {
+      const {
+        colonyDisplayName: displayName,
+        colonyAvatarHash: avatarHash,
+        colonyTokens: tokenAddresses,
+      } = JSON.parse(ipfsMetadata);
+
+      colonyDisplayName = displayName;
+      colonyAvatarHash = avatarHash;
+      colonyTokens = tokenAddresses;
+    }
+  } catch (error) {
+    log.verbose(
+      `Could not parse IPFS metadata for colony, using hash:`,
+      values.args[0],
+      'with object:',
+      ipfsMetadata,
+    );
+  }
+
+  const colonyEditValues: {
+    actionInitiator?: string;
+    colonyDisplayName: string | null;
+    colonyAvatarHash?: string | null;
+    colonyTokens?: string[];
+  } = {
+    ...motionDefaultValues,
+    colonyDisplayName,
+    colonyAvatarHash,
+    colonyTokens,
+  };
+
+  return colonyEditValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -846,7 +915,6 @@ export const getActionValues = async (
       };
     }
     case ColonyMotions.PaymentMotion:
-    case ColonyMotions.ColonyEditMotion:
     case ColonyMotions.MoveFundsMotion: {
       const motionValues = await getMotionValues(
         processedEvents,
@@ -889,6 +957,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...setUserRolesValues,
+      };
+    }
+    case ColonyMotions.ColonyEditMotion: {
+      const colonyEditValues = await getColonyEditMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...colonyEditValues,
       };
     }
     default: {
