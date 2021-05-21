@@ -133,6 +133,22 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.MotionFinalized,
     ColonyAndExtensionsEvents.MotionRewardClaimed,
   ],
+  [ColonyMotions.EditDomainMotion]: [
+    ColonyAndExtensionsEvents.MotionCreated,
+    ColonyAndExtensionsEvents.MotionStaked,
+    ColonyAndExtensionsEvents.MotionVoteRevealed,
+    ColonyAndExtensionsEvents.ObjectionRaised,
+    ColonyAndExtensionsEvents.MotionFinalized,
+    ColonyAndExtensionsEvents.MotionRewardClaimed,
+  ],
+  [ColonyMotions.ColonyEditMotion]: [
+    ColonyAndExtensionsEvents.MotionCreated,
+    ColonyAndExtensionsEvents.MotionStaked,
+    ColonyAndExtensionsEvents.MotionVoteRevealed,
+    ColonyAndExtensionsEvents.ObjectionRaised,
+    ColonyAndExtensionsEvents.MotionFinalized,
+    ColonyAndExtensionsEvents.MotionRewardClaimed,
+  ],
   [ColonyMotions.SetUserRolesMotion]: [
     ColonyAndExtensionsEvents.MotionCreated,
     ColonyAndExtensionsEvents.MotionStaked,
