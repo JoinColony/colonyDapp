@@ -86,6 +86,7 @@ const DefaultMotion = ({
     rootHash,
     domainName,
     domainColor,
+    domainPurpose,
     roles,
     fromDomain,
     toDomain,
@@ -213,15 +214,18 @@ const DefaultMotion = ({
       Math.round((totalVotedReputationValue / skillRepValue) * 100)) ||
     0;
   const threasholdPercent = Math.round((threashold / skillRepValue) * 100);
-
+  const domainMetadata = {
+    name: domainName,
+    color: domainColor,
+    description: domainPurpose,
+  };
   const actionAndEventValues = {
     actionType,
-    fromDomain: (domains.find(
-      ({ ethDomainId }) => ethDomainId === fromDomain,
-    ) as OneDomain) || {
-      name: domainName,
-      color: domainColor,
-    },
+    fromDomain:
+      (actionType === ColonyMotions.CreateDomainMotion && domainMetadata) ||
+      (domains.find(
+        ({ ethDomainId }) => ethDomainId === fromDomain,
+      ) as OneDomain),
     toDomain: domains.find(
       ({ ethDomainId }) => ethDomainId === toDomain,
     ) as OneDomain,
