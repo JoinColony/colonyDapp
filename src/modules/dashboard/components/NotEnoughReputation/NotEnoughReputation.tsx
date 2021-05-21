@@ -8,7 +8,8 @@ import styles from './NotEnoughReputation.css';
 const MSG = defineMessage({
   title: {
     id: 'NotEnoughReputation.title',
-    defaultMessage: 'You don’t have enough reputation to create this motion.',
+    defaultMessage:
+      'There is not enough reputation in colony/domain to create this motion.',
   },
   description: {
     id: 'NotEnoughReputation.description',
