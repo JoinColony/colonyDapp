@@ -22,6 +22,7 @@ interface Props {
   disabled?: boolean;
   step?: number;
   onReset?: (val: any) => void;
+  exceedLimit?: (val: boolean) => void;
 }
 
 const displayName = 'Slider';
@@ -36,6 +37,7 @@ const Slider = ({
   name,
   step = 1,
   disabled = false,
+  exceedLimit,
 }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
   const [, , { setValue }] = useField(name);
@@ -71,6 +73,9 @@ const Slider = ({
         if (onChange) {
           onChange(val);
         }
+        if (exceedLimit) {
+          exceedLimit(false);
+        }
       }
       if (
         limit !== undefined &&
@@ -81,6 +86,9 @@ const Slider = ({
 
         if (onChange) {
           onChange(limitValue);
+        }
+        if (exceedLimit) {
+          exceedLimit(true);
         }
       }
     },

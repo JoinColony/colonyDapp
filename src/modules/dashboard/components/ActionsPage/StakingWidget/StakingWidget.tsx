@@ -82,10 +82,6 @@ const StakingWidget = ({
       colonyAddress,
     },
   });
-
-  const userInactivatedTokens = bigNumberify(
-    userData?.user?.userLock?.nativeToken?.balance || 0,
-  );
   const userActivatedTokens = new Decimal(
     userData?.user?.userLock?.balance || 0,
   );
@@ -99,16 +95,9 @@ const StakingWidget = ({
         colony,
         canUserStake: userHasPermission,
         scrollToRef,
-        userInactivatedTokens,
         ...stakingAmounts,
       }),
-    [
-      colony,
-      openRaiseObjectionDialog,
-      scrollToRef,
-      motionId,
-      userInactivatedTokens,
-    ],
+    [colony, openRaiseObjectionDialog, scrollToRef, motionId],
   );
 
   const getDecimalStake = useCallback(
@@ -187,6 +176,10 @@ const StakingWidget = ({
 
   const userStakeBottomLimit = new Decimal(minUserStake);
 
+  const enoughReputation =
+    bigNumberify(maxUserStake).gt(0) &&
+    bigNumberify(maxUserStake).gte(bigNumberify(minUserStake));
+
   const canUserStake =
     /*
      * Has a profile registered
@@ -195,8 +188,7 @@ const StakingWidget = ({
     /*
      * User has enough reputation to stake
      */
-    bigNumberify(maxUserStake).gt(0) &&
-    bigNumberify(maxUserStake).gte(bigNumberify(minUserStake)) &&
+    enoughReputation &&
     /*
      * Activated tokens are more than the minimum required stake amount
      */
@@ -280,11 +272,9 @@ const StakingWidget = ({
                 )}
               </span>
             </div>
-            <StakingValidationError
-              userActivatedTokens={userActivatedTokens}
-              userInactivatedTokens={userInactivatedTokens}
-              decimalAmount={getDecimalStake(values.amount)}
-            />
+            {!enoughReputation && (
+              <StakingValidationError stakeType="reputation" />
+            )}
           </div>
         )}
       </ActionForm>

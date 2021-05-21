@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Decimal } from 'decimal.js';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import { Colony } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -69,7 +70,13 @@ const StakingSlider = ({
   appearance,
   userActivatedTokens,
   isObjection,
-}: Props) => {
+}: // userInactivatedTokens,
+Props) => {
+  const [showError, setShowError] = useState(false);
+
+  const exceedLimit = (isLimitExceeded: boolean) =>
+    setShowError(isLimitExceeded);
+
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
@@ -134,8 +141,12 @@ const StakingSlider = ({
           max={100}
           disabled={!canUserStake}
           appearance={appearance}
+          exceedLimit={exceedLimit}
         />
       </div>
+      {(userActivatedTokens.lessThan(minUserStake) || showError) && (
+        <StakingValidationError stakeType="tokens" />
+      )}
     </>
   );
 };

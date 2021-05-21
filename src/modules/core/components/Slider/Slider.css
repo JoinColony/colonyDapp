@@ -18,7 +18,10 @@
   box-shadow: 0 0 5px var(--danger);
 }
 
-/* This is to remove `left` from the dot for it have correct visual position */
+/*
+  Removes `left` property from the dot for the correct visual position.
+  I tried many options but that's the only one I found working
+*/
 .primary > div > div > span {
   left: 0 !important;
 }
