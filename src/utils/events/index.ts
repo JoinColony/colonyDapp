@@ -700,6 +700,38 @@ const getSetUserRolesMotionValues = async (
   return setUserRolesMotionValues;
 };
 
+const getEditDomainMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+  const ipfsData = await ipfs.getString(values.args[3]);
+  const domainMetadata = JSON.parse(ipfsData);
+  const editDomainMotionValues: {
+    domainName: string;
+    domainColor: number;
+    domainPurpose: string;
+    fromDomain: number;
+  } = {
+    ...motionDefaultValues,
+    ...domainMetadata,
+    fromDomain: parseInt(values.args[2].toString(), 10),
+  };
+
+  return editDomainMotionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -815,8 +847,7 @@ export const getActionValues = async (
     }
     case ColonyMotions.PaymentMotion:
     case ColonyMotions.ColonyEditMotion:
-    case ColonyMotions.MoveFundsMotion:
-    case ColonyMotions.EditDomainMotion: {
+    case ColonyMotions.MoveFundsMotion: {
       const motionValues = await getMotionValues(
         processedEvents,
         votingClient,
@@ -836,6 +867,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...createDomainMotionValues,
+      };
+    }
+    case ColonyMotions.EditDomainMotion: {
+      const editDomainMotionValues = await getEditDomainMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...editDomainMotionValues,
       };
     }
     case ColonyMotions.SetUserRolesMotion: {
