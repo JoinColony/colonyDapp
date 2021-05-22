@@ -20,8 +20,6 @@
 }
 
 .title h4 {
-  /* to align questionmark icon in the middle */
-  margin-bottom: 3px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
@@ -62,7 +60,7 @@
 }
 
 .help {
-  margin: 0 0 -4px 7px;
+  margin: 0 0 0px 7px;
   width: 33px;
   cursor: pointer;
 }
