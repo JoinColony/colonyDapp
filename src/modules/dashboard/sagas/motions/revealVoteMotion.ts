@@ -50,10 +50,17 @@ function* revealVoteMotion({
       rootHash,
     );
 
-    const signature = yield signMessage(
-      'motionRevealVote',
-      'Sign this message to generate "salt" entrophy',
-    );
+    /*
+     * @NOTE We this to be all in one line (no new lines, or line breaks) since
+     * Metamask doesn't play nice with them and will replace them, in the message
+     * presented to the user with \n
+     */
+    // eslint-disable-next-line max-len
+    const message = `Sign this message to generate 'salt' entropy. Extension Address: ${
+      votingReputationClient.address
+    } Motion ID: ${motionId.toNumber()}`;
+
+    const signature = yield signMessage('motionRevealVote', message);
     const salt = soliditySha3Raw(signature);
 
     /*
