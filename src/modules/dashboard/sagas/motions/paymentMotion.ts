@@ -1,10 +1,5 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import {
-  ClientType,
-  ROOT_DOMAIN_ID,
-  ColonyRole,
-  getPermissionProofs,
-} from '@colony/colony-js';
+import { ClientType, ColonyRole, getPermissionProofs } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import { bigNumberify, BigNumberish } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
@@ -24,26 +19,22 @@ import {
   transactionAddParams,
 } from '../../../core/actionCreators';
 
-function* getExtensionPermissionProofs(
-  // client: ExtendedIColony,
-  client: any,
+const getExtensionPermissionProofs = async (
+  colonyClient: any,
   domainId: BigNumberish,
   address?: string,
-) {
-  const [fundingPDID, fundingCSI] = yield call(
-    getPermissionProofs,
-    client,
+): Promise<[BigNumberish, BigNumberish]> => {
+  const [fundingPDID, fundingCSI] = await getPermissionProofs(
+    colonyClient,
     domainId,
     ColonyRole.Funding,
-    // address,
+    address,
   );
-
-  const [adminPDID, adminCSI] = yield call(
-    getPermissionProofs,
-    client,
+  const [adminPDID, adminCSI] = await getPermissionProofs(
+    colonyClient,
     domainId,
     ColonyRole.Administration,
-    // address,
+    address,
   );
 
   if (!fundingPDID.eq(adminPDID) || !fundingCSI.eq(adminCSI)) {
@@ -57,7 +48,7 @@ function* getExtensionPermissionProofs(
   }
 
   return [adminPDID, adminCSI];
-}
+};
 
 function* createPaymentMotion({
   payload: {
@@ -104,15 +95,28 @@ function* createPaymentMotion({
       colonyAddress,
     );
 
+    const colonyClient = yield context.getClient(
+      ClientType.ColonyClient,
+      colonyAddress,
+    );
+
+    const [, childSkillIndex] = yield call(
+      getPermissionProofs,
+      colonyClient,
+      domainId,
+      ColonyRole.Funding,
+    );
+
     const [extensionPDID, extensionCSI] = yield call(
       getExtensionPermissionProofs,
-      client,
+      colonyClient,
       domainId,
       client.address,
     );
+
     const [userPDID, userCSI] = yield call(
       getExtensionPermissionProofs,
-      client,
+      colonyClient,
       domainId,
     );
 
@@ -138,10 +142,13 @@ function* createPaymentMotion({
       ],
     );
 
-    const { skillId } = yield call([client, client.getDomain], ROOT_DOMAIN_ID);
+    const { skillId } = yield call(
+      [colonyClient, colonyClient.getDomain],
+      domainId,
+    );
 
     const { key, value, branchMask, siblings } = yield call(
-      client.getReputation,
+      colonyClient.getReputation,
       skillId,
       AddressZero,
     );
@@ -149,22 +156,31 @@ function* createPaymentMotion({
     txChannel = yield call(getTxChannel, metaId);
 
     // setup batch ids and channels
-    const batchKey = 'createRootMotion';
+    const batchKey = 'createMotion';
 
     const {
-      createRootMotion,
+      createMotion,
       annotatePaymentMotion,
     } = yield createTransactionChannels(metaId, [
-      'createRootMotion',
+      'createMotion',
       'annotatePaymentMotion',
     ]);
 
     // create transactions
-    yield fork(createTransaction, createRootMotion.id, {
+    yield fork(createTransaction, createMotion.id, {
       context: ClientType.VotingReputationClient,
-      methodName: 'createRootMotion',
+      methodName: 'createMotion',
       identifier: colonyAddress,
-      params: [AddressZero, encodedAction, key, value, branchMask, siblings],
+      params: [
+        domainId,
+        childSkillIndex,
+        client.address,
+        encodedAction,
+        key,
+        value,
+        branchMask,
+        siblings,
+      ],
       group: {
         key: batchKey,
         id: metaId,
@@ -188,7 +204,7 @@ function* createPaymentMotion({
       });
     }
 
-    yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_CREATED);
+    yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
         annotatePaymentMotion.channel,
@@ -196,15 +212,15 @@ function* createPaymentMotion({
       );
     }
 
-    yield put(transactionReady(createRootMotion.id));
+    yield put(transactionReady(createMotion.id));
 
     const {
       payload: { hash: txHash },
     } = yield takeFrom(
-      createRootMotion.channel,
+      createMotion.channel,
       ActionTypes.TRANSACTION_HASH_RECEIVED,
     );
-    yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
       yield put(transactionPending(annotatePaymentMotion.id));

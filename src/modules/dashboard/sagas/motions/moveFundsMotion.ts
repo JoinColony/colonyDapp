@@ -87,13 +87,13 @@ function* moveFundsMotion({
     txChannel = yield call(getTxChannel, metaId);
 
     // setup batch ids and channels
-    const batchKey = 'createDomainMotion';
+    const batchKey = 'createMotion';
 
     const {
-      createDomainMotion,
+      createMotion,
       annotateMoveFundsMotion,
     } = yield createTransactionChannels(metaId, [
-      'createDomainMotion',
+      'createMotion',
       'annotateMoveFundsMotion',
     ]);
 
@@ -111,13 +111,14 @@ function* moveFundsMotion({
     );
 
     // create transactions
-    yield fork(createTransaction, createDomainMotion.id, {
+    yield fork(createTransaction, createMotion.id, {
       context: ClientType.VotingReputationClient,
-      methodName: 'createDomainMotion',
+      methodName: 'createMotion',
       identifier: colonyAddress,
       params: [
         fromDomainId,
         MaxUint256.toString(),
+        AddressZero,
         encodedAction,
         key,
         value,
@@ -147,7 +148,7 @@ function* moveFundsMotion({
       });
     }
 
-    yield takeFrom(createDomainMotion.channel, ActionTypes.TRANSACTION_CREATED);
+    yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
         annotateMoveFundsMotion.channel,
@@ -163,18 +164,15 @@ function* moveFundsMotion({
       }),
     );
 
-    yield put(transactionReady(createDomainMotion.id));
+    yield put(transactionReady(createMotion.id));
 
     const {
       payload: { hash: txHash },
     } = yield takeFrom(
-      createDomainMotion.channel,
+      createMotion.channel,
       ActionTypes.TRANSACTION_HASH_RECEIVED,
     );
-    yield takeFrom(
-      createDomainMotion.channel,
-      ActionTypes.TRANSACTION_SUCCEEDED,
-    );
+    yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
       yield put(transactionPending(annotateMoveFundsMotion.id));

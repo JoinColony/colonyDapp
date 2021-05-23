@@ -1,5 +1,10 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import {
+  ClientType,
+  ROOT_DOMAIN_ID,
+  getPermissionProofs,
+  ColonyRole,
+} from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -46,6 +51,13 @@ function* editColonyMotion({
       colonyAddress,
     );
 
+    const [, childSkillIndex] = yield call(
+      getPermissionProofs,
+      colonyClient,
+      ROOT_DOMAIN_ID,
+      ColonyRole.Root,
+    );
+
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
       ROOT_DOMAIN_ID,
@@ -60,13 +72,13 @@ function* editColonyMotion({
     txChannel = yield call(getTxChannel, metaId);
 
     // setup batch ids and channels
-    const batchKey = 'createRootMotion';
+    const batchKey = 'createMotion';
 
     const {
-      createRootMotion,
+      createMotion,
       annotateEditColonyMotion,
     } = yield createTransactionChannels(metaId, [
-      'createRootMotion',
+      'createMotion',
       'annotateEditColonyMotion',
     ]);
 
@@ -108,11 +120,20 @@ function* editColonyMotion({
     ]);
 
     // create transactions
-    yield fork(createTransaction, createRootMotion.id, {
+    yield fork(createTransaction, createMotion.id, {
       context: ClientType.VotingReputationClient,
-      methodName: 'createRootMotion',
+      methodName: 'createMotion',
       identifier: colonyAddress,
-      params: [AddressZero, encodedAction, key, value, branchMask, siblings],
+      params: [
+        ROOT_DOMAIN_ID,
+        childSkillIndex,
+        AddressZero,
+        encodedAction,
+        key,
+        value,
+        branchMask,
+        siblings,
+      ],
       group: {
         key: batchKey,
         id: metaId,
@@ -136,7 +157,7 @@ function* editColonyMotion({
       });
     }
 
-    yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_CREATED);
+    yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
         annotateEditColonyMotion.channel,
@@ -152,15 +173,15 @@ function* editColonyMotion({
       }),
     );
 
-    yield put(transactionReady(createRootMotion.id));
+    yield put(transactionReady(createMotion.id));
 
     const {
       payload: { hash: txHash },
     } = yield takeFrom(
-      createRootMotion.channel,
+      createMotion.channel,
       ActionTypes.TRANSACTION_HASH_RECEIVED,
     );
-    yield takeFrom(createRootMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
       yield put(transactionPending(annotateEditColonyMotion.id));

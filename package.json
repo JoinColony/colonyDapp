@@ -135,7 +135,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.0.2",
-    "@colony/colony-js": "^4.0.0-rc.1",
+    "@colony/colony-js": "^4.0.0-rc.4",
     "@colony/redux-promise-listener": "^1.2.0",
     "@feedback-fish/react": "^1.2.1",
     "@formatjs/intl-pluralrules": "^1.5.7",
