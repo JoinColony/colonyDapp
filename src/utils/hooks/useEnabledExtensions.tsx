@@ -17,7 +17,7 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
     ({ extensionId }) => extensionId === Extension.VotingReputation,
   );
   const installedOneTxPaymentExtension = installedExtensions.find(
-    ({ extensionId }) => extensionId === Extension.VotingReputation,
+    ({ extensionId }) => extensionId === Extension.OneTxPayment,
   );
   const isVotingExtensionEnabled = !!(
     installedVotingExtension &&
