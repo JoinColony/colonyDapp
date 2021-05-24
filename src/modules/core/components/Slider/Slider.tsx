@@ -154,7 +154,8 @@ const Slider = ({
           backgroundColor: '#FFFFFF',
         }}
         dotStyle={{
-          display: gradientPercentage === 100 ? 'none' : '',
+          display:
+            gradientPercentage === 100 || gradientPercentage <= 0 ? 'none' : '',
           height: sizes.markHeight,
           width: sizes.markWidth,
           backgroundColor: '#76748B',
