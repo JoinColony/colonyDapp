@@ -93,14 +93,8 @@ const VoteDetails = ({
     fetchPolicy: 'network-only',
   });
 
-  if (
-    loadingVoterReward
-  ) {
-    return (
-      <MiniSpinnerLoader
-        loadingText={MSG.loading}
-      />
-    );
+  if (loadingVoterReward) {
+    return <MiniSpinnerLoader loadingText={MSG.loading} />;
   }
 
   const nativeToken = tokens.find(

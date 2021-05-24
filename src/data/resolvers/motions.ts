@@ -442,8 +442,8 @@ export const motionsResolvers = ({
               minReward = minUserReward;
               maxReward = maxUserReward;
             } catch (error) {
-              /* Not ideal, but when we not logged in useLoggedInUser is returning wrong userAddress
-               When we pass wrong address to getVoterRewardRange method it returning error.
+              /* getVoterRewardRange return error if no-one has voted yet or
+               user in question has no reputaiton.
               */
             }
           } else {
