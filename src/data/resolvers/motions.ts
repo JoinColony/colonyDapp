@@ -896,12 +896,17 @@ export const motionsResolvers = ({
         ClientType.VotingReputationClient,
         colonyAddress,
       );
+      const oneTxPaymentClient = await colonyManager.getClient(
+        ClientType.OneTxPaymentClient,
+        colonyAddress,
+      );
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
       );
       return getMotionActionType(
         votingReputationClient as ExtensionClient,
+        oneTxPaymentClient as ExtensionClient,
         colonyClient,
         bigNumberify(fundamentalChainId),
       );
