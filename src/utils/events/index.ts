@@ -866,12 +866,13 @@ const getColonyEditMotionValues = async (
 const getPaymentMotionValues = async (
   processedEvents: ProcessedEvent[],
   votingClient: ExtensionClient,
+  oneTxPaymentClient: ExtensionClient,
   colonyClient: ColonyClient,
 ): Promise<Partial<MotionValues>> => {
   const motionCreatedEvent = processedEvents[0];
   const motionId = motionCreatedEvent.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
-  const values = colonyClient.interface.parseTransaction({
+  const values = oneTxPaymentClient.interface.parseTransaction({
     data: motion.action,
   });
   const motionDefaultValues = await getMotionValues(
@@ -887,10 +888,10 @@ const getPaymentMotionValues = async (
     recipient: Address;
   } = {
     ...motionDefaultValues,
-    amount: values.args[6].toString(),
-    tokenAddress: values.args[5],
-    fromDomain: values.args[7],
-    recipient: values.args[4],
+    amount: values.args[6][0].toString(),
+    tokenAddress: values.args[5][0],
+    fromDomain: values.args[7].toNumber(),
+    recipient: values.args[4][0],
   };
 
   return paymentMotionValues;
@@ -936,6 +937,7 @@ export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
   votingClient: ExtensionClient,
+  oneTxPaymentClient: ExtensionClient,
   actionType: ColonyActions | ColonyMotions,
 ): Promise<ActionValues> => {
   const fallbackValues = {
@@ -1104,6 +1106,7 @@ export const getActionValues = async (
       const paymentValues = await getPaymentMotionValues(
         processedEvents,
         votingClient,
+        oneTxPaymentClient,
         colonyClient,
       );
       return {
@@ -1228,6 +1231,7 @@ export const groupSetUserRolesActions = (actions): FormattedAction[] => {
 
 export const getMotionActionType = async (
   votingClient: ExtensionClient,
+  oneTxPaymentClient: ExtensionClient,
   colonyClient: ColonyClient,
   motionId: BigNumberish,
 ) => {
@@ -1235,5 +1239,13 @@ export const getMotionActionType = async (
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
   });
+
+  if (!values) {
+    const paymentValues = oneTxPaymentClient.interface.parseTransaction({
+      data: motion.action,
+    });
+    return motionNameMapping[paymentValues.name];
+  }
+
   return motionNameMapping[values.name];
 };

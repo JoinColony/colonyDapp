@@ -90,6 +90,10 @@ export const colonyActionsResolvers = ({
         (client) => client?.clientType === ClientType.VotingReputationClient,
       );
 
+      const oneTxPaymentClient = clientsInstancesArray.find(
+        (client) => client?.clientType === ClientType.OneTxPaymentClient,
+      );
+
       /*
        * Try to get the transaction receipt. If the transaction is mined, you'll
        * get a return from this call, otherwise, it's null.
@@ -171,6 +175,7 @@ export const colonyActionsResolvers = ({
         if (motionCreatedEvent) {
           actionType = await getMotionActionType(
             votingClient as ExtensionClient,
+            oneTxPaymentClient as ExtensionClient,
             colonyClient as ColonyClient,
             motionCreatedEvent.values.motionId,
           );
@@ -181,6 +186,7 @@ export const colonyActionsResolvers = ({
           reverseSortedEvents,
           colonyClient as ColonyClient,
           votingClient as ExtensionClient,
+          oneTxPaymentClient as ExtensionClient,
           actionType,
         );
 
@@ -269,6 +275,7 @@ export const colonyActionsResolvers = ({
         [],
         colonyClient as ColonyClient,
         votingClient as ExtensionClient,
+        oneTxPaymentClient as ExtensionClient,
         ColonyActions.Generic,
       );
 
