@@ -70,6 +70,7 @@ const CountDownTimer = ({
       colonyAddress,
       motionId,
     },
+    notifyOnNetworkStatusChange: true,
   });
 
   const currentStatePeriod = useCallback(() => {
@@ -147,7 +148,7 @@ const CountDownTimer = ({
     if (state && data) {
       refetch();
     }
-  }, [state]);
+  }, [state, data, refetch]);
 
   /*
    * Split the time into h/m/s for display purpouses
