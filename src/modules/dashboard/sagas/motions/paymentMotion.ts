@@ -1,7 +1,12 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType, ColonyRole, getPermissionProofs } from '@colony/colony-js';
+import {
+  ClientType,
+  ColonyRole,
+  getPermissionProofs,
+  getExtensionPermissionProofs,
+} from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
-import { bigNumberify, BigNumberish } from 'ethers/utils';
+import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -18,37 +23,6 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-
-const getExtensionPermissionProofs = async (
-  colonyClient: any,
-  domainId: BigNumberish,
-  address?: string,
-): Promise<[BigNumberish, BigNumberish]> => {
-  const [fundingPDID, fundingCSI] = await getPermissionProofs(
-    colonyClient,
-    domainId,
-    ColonyRole.Funding,
-    address,
-  );
-  const [adminPDID, adminCSI] = await getPermissionProofs(
-    colonyClient,
-    domainId,
-    ColonyRole.Administration,
-    address,
-  );
-
-  if (!fundingPDID.eq(adminPDID) || !fundingCSI.eq(adminCSI)) {
-    // @TODO: this can surely be improved
-    throw new Error(
-      // eslint-disable-next-line max-len
-      `${
-        address || 'User'
-      } has to have the funding and administration role in the same domain`,
-    );
-  }
-
-  return [adminPDID, adminCSI];
-};
 
 function* createPaymentMotion({
   payload: {
