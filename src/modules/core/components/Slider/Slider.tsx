@@ -22,6 +22,7 @@ interface Props {
   disabled?: boolean;
   step?: number;
   onReset?: (val: any) => void;
+  exceedLimit?: (val: boolean) => void;
 }
 
 const displayName = 'Slider';
@@ -36,6 +37,7 @@ const Slider = ({
   name,
   step = 1,
   disabled = false,
+  exceedLimit,
 }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
   const [, , { setValue }] = useField(name);
@@ -50,30 +52,48 @@ const Slider = ({
     }
   }, [sliderValue, value, setSliderValue]);
 
-  const gradientStopPercentage = useMemo(() => {
-    return limit ? Math.round((limit / max) * 100) : 0;
-  }, [limit, max]);
+  const limitValue = useMemo(() => {
+    return limit ? limit * 100 : 0;
+  }, [limit]);
+
+  const gradientPercentage = useMemo(
+    () => (limitValue >= 100 ? 100 : limitValue),
+    [limitValue],
+  );
 
   const onSliderChange = useCallback(
     (val): void => {
-      if ((limit && sliderValue < limit) || val < sliderValue || !limit) {
+      if (
+        (limit !== undefined && sliderValue < limitValue) ||
+        val < sliderValue ||
+        !limitValue
+      ) {
         setSliderValue(val);
         setValue(val);
         if (onChange) {
           onChange(val);
         }
+        if (exceedLimit) {
+          exceedLimit(false);
+        }
       }
-      if (limit && (sliderValue > limit || val > limit)) {
-        setSliderValue(limit);
-        setValue(limit);
+      if (
+        limit !== undefined &&
+        (sliderValue > limitValue || val > limitValue)
+      ) {
+        setSliderValue(limitValue);
+        setValue(limitValue);
 
         if (onChange) {
-          onChange(limit);
+          onChange(limitValue);
+        }
+        if (exceedLimit) {
+          exceedLimit(true);
         }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setSliderValue, onChange, limit, sliderValue],
+    [setSliderValue, onChange, limitValue, sliderValue],
   );
 
   const marks = {};
@@ -134,18 +154,20 @@ const Slider = ({
           backgroundColor: '#FFFFFF',
         }}
         dotStyle={{
+          display:
+            gradientPercentage === 100 || gradientPercentage <= 0 ? 'none' : '',
           height: sizes.markHeight,
           width: sizes.markWidth,
           backgroundColor: '#76748B',
           border: 0,
           borderRadius: 0,
           top: sizes.markPositionTop,
-          marginLeft: 0,
+          marginLeft: `${gradientPercentage}%`,
         }}
         railStyle={{
           backgroundColor: '#C2CCCC',
           height: sizes.height,
-          backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientStopPercentage}%, transparent ${gradientStopPercentage}%)`,
+          backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientPercentage}%, transparent ${gradientPercentage}%)`,
         }}
       />
     </div>

@@ -82,10 +82,6 @@ const StakingWidget = ({
       colonyAddress,
     },
   });
-
-  const userInactivatedTokens = bigNumberify(
-    userData?.user?.userLock?.nativeToken?.balance || 0,
-  );
   const userActivatedTokens = new Decimal(
     userData?.user?.userLock?.balance || 0,
   );
@@ -99,18 +95,9 @@ const StakingWidget = ({
         colony,
         canUserStake: userHasPermission,
         scrollToRef,
-        userInactivatedTokens,
-        userActivatedTokens,
         ...stakingAmounts,
       }),
-    [
-      colony,
-      openRaiseObjectionDialog,
-      scrollToRef,
-      motionId,
-      userInactivatedTokens,
-      userActivatedTokens,
-    ],
+    [colony, openRaiseObjectionDialog, scrollToRef, motionId],
   );
 
   const getDecimalStake = useCallback(
@@ -119,12 +106,16 @@ const StakingWidget = ({
         const {
           remainingToFullyNayStaked,
           remainingToFullyYayStaked,
+          minUserStake,
         } = data.motionStakes;
         const remainingToStake = new Decimal(
           isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
         );
 
-        return new Decimal(stake).times(remainingToStake).div(100);
+        return new Decimal(stake)
+          .div(100)
+          .times(remainingToStake.minus(minUserStake))
+          .plus(minUserStake);
       }
       return new Decimal(0);
     },
@@ -185,6 +176,12 @@ const StakingWidget = ({
 
   const userStakeBottomLimit = new Decimal(minUserStake);
 
+  const enoughReputation =
+    bigNumberify(maxUserStake).gt(0) &&
+    bigNumberify(maxUserStake).gte(bigNumberify(minUserStake));
+
+  const enoughTokens = userActivatedTokens.gte(userStakeBottomLimit);
+
   const canUserStake =
     /*
      * Has a profile registered
@@ -193,12 +190,11 @@ const StakingWidget = ({
     /*
      * User has enough reputation to stake
      */
-    bigNumberify(maxUserStake).gt(0) &&
-    bigNumberify(maxUserStake).gte(bigNumberify(minUserStake)) &&
+    enoughReputation &&
     /*
      * Activated tokens are more than the minimum required stake amount
      */
-    userActivatedTokens.gte(userStakeBottomLimit) &&
+    enoughTokens &&
     /*
      * Has activated tokens
      */
@@ -239,6 +235,7 @@ const StakingWidget = ({
               remainingToFullyNayStaked={remainingToFullyNayStaked}
               maxUserStake={maxUserStake}
               minUserStake={minUserStake}
+              userActivatedTokens={userActivatedTokens}
             />
             <div className={styles.buttonGroup}>
               <Button
@@ -267,18 +264,20 @@ const StakingWidget = ({
                     disabled={!canUserStakeNay}
                     onClick={() =>
                       bigNumberify(totalNAYStakes).isZero()
-                        ? handleRaiseObjection(canUserStake, data.motionStakes)
+                        ? handleRaiseObjection(canUserStake, {
+                            ...data.motionStakes,
+                            userActivatedTokens,
+                          })
                         : handleWidgetState(true)
                     }
                   />
                 )}
               </span>
             </div>
-            <StakingValidationError
-              userActivatedTokens={userActivatedTokens}
-              userInactivatedTokens={userInactivatedTokens}
-              decimalAmount={getDecimalStake(values.amount)}
-            />
+            {!enoughReputation && (
+              <StakingValidationError stakeType="reputation" />
+            )}
+            {!enoughTokens && <StakingValidationError stakeType="tokens" />}
           </div>
         )}
       </ActionForm>

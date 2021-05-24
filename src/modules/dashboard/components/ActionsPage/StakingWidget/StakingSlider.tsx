@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Decimal } from 'decimal.js';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import { Colony } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -16,6 +17,7 @@ export interface StakingAmounts {
   remainingToFullyNayStaked: string;
   maxUserStake: string;
   minUserStake: string;
+  userActivatedTokens: Decimal;
 }
 
 interface Props extends StakingAmounts {
@@ -66,8 +68,14 @@ const StakingSlider = ({
   minUserStake,
   canUserStake,
   appearance,
+  userActivatedTokens,
   isObjection,
 }: Props) => {
+  const [showError, setShowError] = useState(false);
+
+  const exceedLimit = (isLimitExceeded: boolean) =>
+    setShowError(isLimitExceeded);
+
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
@@ -76,11 +84,18 @@ const StakingSlider = ({
     isObjection ? remainingToFullyNayStaked : remainingToFullyYayStaked,
   );
 
-  const userStakeLimitPercentage = new Decimal(maxUserStake)
-    .div(remainingToStake)
-    .times(100);
+  const maxStake = new Decimal(maxUserStake);
 
-  const stake = new Decimal(values.amount).times(remainingToStake).div(100);
+  const userStakeLimitPercentage = remainingToStake.lte(minUserStake)
+    ? 0
+    : (maxStake.gte(userActivatedTokens) ? userActivatedTokens : maxStake)
+        .minus(minUserStake)
+        .div(remainingToStake.minus(minUserStake));
+
+  const stake = new Decimal(values.amount)
+    .div(100)
+    .times(remainingToStake.minus(minUserStake))
+    .plus(minUserStake);
   const stakeWithMin = new Decimal(minUserStake).gte(stake)
     ? new Decimal(minUserStake)
     : stake;
@@ -119,14 +134,16 @@ const StakingSlider = ({
         <Slider
           name="amount"
           value={values.amount}
-          limit={parseFloat(userStakeLimitPercentage.toFixed(2))}
+          limit={parseFloat(userStakeLimitPercentage.toFixed(5))}
           step={0.01}
           min={0}
           max={100}
           disabled={!canUserStake}
           appearance={appearance}
+          exceedLimit={exceedLimit}
         />
       </div>
+      {showError && <StakingValidationError stakeType="stakeMore" />}
     </>
   );
 };
