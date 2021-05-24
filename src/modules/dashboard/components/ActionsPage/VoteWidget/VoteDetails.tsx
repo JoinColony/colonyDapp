@@ -5,6 +5,7 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import MemberReputation from '~core/MemberReputation';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -65,6 +66,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.VoteWidget.rulesTooltip',
     defaultMessage: `Voting process goes in stages. User selects option to vote upon. Then reveals the own vote before the ‘Reveal’ stage passes. Later on, user has to claim tokens and finalize transaction.`,
   },
+  loading: {
+    id: 'dashboard.ActionsPage.VoteWidget.loading',
+    defaultMessage: 'Loading vote details ...',
+  },
 });
 
 const VoteDetails = ({
@@ -87,6 +92,16 @@ const VoteDetails = ({
     },
     fetchPolicy: 'network-only',
   });
+
+  if (
+    loadingVoterReward
+  ) {
+    return (
+      <MiniSpinnerLoader
+        loadingText={MSG.loading}
+      />
+    );
+  }
 
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
@@ -160,7 +175,7 @@ const VoteDetails = ({
               </div>
             </div>
             <div className={styles.value}>
-              {voterReward?.motionVoterReward && !loadingVoterReward && (
+              {voterReward?.motionVoterReward && (
                 <>
                   {motionState === MotionState.Voting && (
                     <>
