@@ -94,14 +94,12 @@ const ChangeTokenStateForm = ({
     [isActivate],
   );
 
-  const maxAmount = useMemo(
-    () =>
-      moveDecimal(
-        tokenBalance.sub(isActivate ? 0 : lockedTokens),
-        -tokenDecimals,
-      ),
-    [tokenDecimals, tokenBalance, isActivate, lockedTokens],
-  );
+  const maxAmount = useMemo(() => moveDecimal(tokenBalance, -tokenDecimals), [
+    tokenDecimals,
+    tokenBalance,
+    isActivate,
+    lockedTokens,
+  ]);
 
   const transform = useCallback(
     pipe(
