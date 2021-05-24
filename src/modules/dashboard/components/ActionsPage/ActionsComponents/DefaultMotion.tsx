@@ -120,7 +120,7 @@ const DefaultMotion = ({
     if (!isNil(foundCurrentRole)) {
       return !role.setTo;
     }
-    return true;
+    return role.setTo;
   });
 
   const motionCreatedEvent = colonyAction.events.find(
