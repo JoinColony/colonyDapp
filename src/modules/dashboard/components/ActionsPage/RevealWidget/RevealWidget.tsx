@@ -14,7 +14,7 @@ import {
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mapPayload } from '~utils/actions';
-import { MotionVote } from '~utils/colonyMotions';
+import { MotionVote, MotionState } from '~utils/colonyMotions';
 
 import VoteDetails from '../VoteWidget/VoteDetails';
 
@@ -27,6 +27,7 @@ export interface FormValues {
 interface Props {
   colony: Colony;
   motionId: number;
+  motionState: MotionState;
   scrollToRef?: RefObject<HTMLInputElement>;
 }
 
@@ -57,6 +58,7 @@ const RevealWidget = ({
   colony,
   motionId,
   scrollToRef,
+  motionState,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
@@ -167,6 +169,7 @@ const RevealWidget = ({
           <VoteDetails
             colony={colony}
             motionId={motionId}
+            motionState={motionState}
             showReward={userVoted?.motionCurrentUserVoted}
             buttonComponent={
               <Button

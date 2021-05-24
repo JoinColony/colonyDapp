@@ -293,7 +293,7 @@ export type Query = {
   motionTimeoutPeriods: MotionTimeoutPeriods;
   motionUserVoteRevealed: MotionVoteReveal;
   motionVoteResults: MotionVoteResults;
-  motionVoterReward: Scalars['String'];
+  motionVoterReward: MotionVoterReward;
   motionsSystemMessages: Array<SystemMessage>;
   networkContracts: NetworkContracts;
   networkExtensionVersion: Scalars['Int'];
@@ -934,6 +934,12 @@ export type VotingState = {
   threasholdValue: Scalars['String'];
   totalVotedReputation: Scalars['String'];
   skillRep: Scalars['String'];
+};
+
+export type MotionVoterReward = {
+  reward: Scalars['String'];
+  minReward: Scalars['String'];
+  maxReward: Scalars['String'];
 };
 
 export type ByColonyFilter = {
@@ -1631,7 +1637,7 @@ export type MotionVoterRewardQueryVariables = Exact<{
 }>;
 
 
-export type MotionVoterRewardQuery = Pick<Query, 'motionVoterReward'>;
+export type MotionVoterRewardQuery = { motionVoterReward: Pick<MotionVoterReward, 'reward' | 'minReward' | 'maxReward'> };
 
 export type MotionUserVoteRevealedQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -3873,7 +3879,11 @@ export type MotionsSystemMessagesLazyQueryHookResult = ReturnType<typeof useMoti
 export type MotionsSystemMessagesQueryResult = Apollo.QueryResult<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>;
 export const MotionVoterRewardDocument = gql`
     query MotionVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
-  motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
+  motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    reward
+    minReward
+    maxReward
+  }
 }
     `;
 

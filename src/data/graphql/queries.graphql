@@ -400,7 +400,11 @@ query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
 }
 
 query MotionVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
-  motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
+  motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    reward
+    minReward
+    maxReward
+  }
 }
 
 query MotionUserVoteRevealed($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {

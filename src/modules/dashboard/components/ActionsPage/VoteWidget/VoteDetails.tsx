@@ -4,6 +4,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import MemberReputation from '~core/MemberReputation';
 import Numeral from '~core/Numeral';
+import Icon from '~core/Icon';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -11,6 +13,7 @@ import {
   useMotionVoterRewardQuery,
 } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { MotionState } from '~utils/colonyMotions';
 
 import styles from './VoteWidget.css';
 
@@ -23,6 +26,7 @@ interface Props {
   motionId: number;
   buttonComponent?: ReactElement;
   showReward?: boolean;
+  motionState: MotionState;
 }
 
 const MSG = defineMessages({
@@ -62,6 +66,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.VoteWidget.rulesTooltip',
     defaultMessage: `Voting process goes in stages. User selects option to vote upon. Then reveals the own vote before the ‘Reveal’ stage passes. Later on, user has to claim tokens and finalize transaction.`,
   },
+  loading: {
+    id: 'dashboard.ActionsPage.VoteWidget.loading',
+    defaultMessage: 'Loading vote details ...',
+  },
 });
 
 const VoteDetails = ({
@@ -69,16 +77,25 @@ const VoteDetails = ({
   buttonComponent,
   motionId,
   showReward = true,
+  motionState,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
-  const { data: voterReward } = useMotionVoterRewardQuery({
+  const {
+    data: voterReward,
+    loading: loadingVoterReward,
+  } = useMotionVoterRewardQuery({
     variables: {
       colonyAddress,
       userAddress: walletAddress,
       motionId,
     },
+    fetchPolicy: 'network-only',
   });
+
+  if (loadingVoterReward) {
+    return <MiniSpinnerLoader loadingText={MSG.loading} />;
+  }
 
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
@@ -153,11 +170,53 @@ const VoteDetails = ({
             </div>
             <div className={styles.value}>
               {voterReward?.motionVoterReward && (
-                <Numeral
-                  unit={getTokenDecimalsWithFallback(nativeToken?.decimals)}
-                  value={voterReward.motionVoterReward}
-                  suffix={` ${nativeToken?.symbol}`}
-                />
+                <>
+                  {motionState === MotionState.Voting && (
+                    <>
+                      <Icon
+                        name="clny-token"
+                        title="clny"
+                        appearance={{ size: 'tiny' }}
+                      />
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={voterReward.motionVoterReward.minReward}
+                        appearance={{ theme: 'dark', size: 'small' }}
+                        truncate={5}
+                      />
+                      <div className={styles.range} />
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={voterReward.motionVoterReward.maxReward}
+                        appearance={{ theme: 'dark', size: 'small' }}
+                        truncate={5}
+                        suffix={` ${nativeToken?.symbol}`}
+                      />
+                    </>
+                  )}
+                  {motionState === MotionState.Reveal && (
+                    <>
+                      <Icon
+                        name="clny-token"
+                        title="clny"
+                        appearance={{ size: 'tiny' }}
+                      />
+                      <Numeral
+                        unit={getTokenDecimalsWithFallback(
+                          nativeToken?.decimals,
+                        )}
+                        value={voterReward.motionVoterReward.reward}
+                        suffix={` ${nativeToken?.symbol}`}
+                        appearance={{ theme: 'dark', size: 'small' }}
+                        truncate={5}
+                      />
+                    </>
+                  )}
+                </>
               )}
             </div>
           </div>
