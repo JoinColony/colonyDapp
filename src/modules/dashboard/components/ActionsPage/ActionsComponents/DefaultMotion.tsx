@@ -438,7 +438,13 @@ const DefaultMotion = ({
             actionType={actionType as ColonyMotions}
             recipient={recipient}
             transactionHash={transactionHash}
-            values={actionAndEventValues}
+            values={{
+              ...actionAndEventValues,
+              fromDomain:
+                actionType === ColonyMotions.EditDomainMotion
+                  ? domainMetadata
+                  : actionAndEventValues.fromDomain,
+            }}
             colony={colony}
           />
         </div>
