@@ -50,14 +50,7 @@
   }
 }
 
-/* I see that in designs Dark is actually --dark not --grey-3 so maybe we
-should think about replacing this color here instead
-of adding one more theme option */
 .themeDark {
-  color: var(--grey-3);
-}
-
-.themeDarken {
   color: var(--dark);
 }
 
