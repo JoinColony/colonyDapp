@@ -180,6 +180,8 @@ const StakingWidget = ({
     bigNumberify(maxUserStake).gt(0) &&
     bigNumberify(maxUserStake).gte(bigNumberify(minUserStake));
 
+  const enoughTokens = userActivatedTokens.gte(userStakeBottomLimit);
+
   const canUserStake =
     /*
      * Has a profile registered
@@ -192,7 +194,7 @@ const StakingWidget = ({
     /*
      * Activated tokens are more than the minimum required stake amount
      */
-    userActivatedTokens.gte(userStakeBottomLimit) &&
+    enoughTokens &&
     /*
      * Has activated tokens
      */
@@ -275,6 +277,7 @@ const StakingWidget = ({
             {!enoughReputation && (
               <StakingValidationError stakeType="reputation" />
             )}
+            {!enoughTokens && <StakingValidationError stakeType="tokens" />}
           </div>
         )}
       </ActionForm>

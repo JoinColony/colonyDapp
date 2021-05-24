@@ -70,8 +70,7 @@ const StakingSlider = ({
   appearance,
   userActivatedTokens,
   isObjection,
-}: // userInactivatedTokens,
-Props) => {
+}: Props) => {
   const [showError, setShowError] = useState(false);
 
   const exceedLimit = (isLimitExceeded: boolean) =>
@@ -144,9 +143,7 @@ Props) => {
           exceedLimit={exceedLimit}
         />
       </div>
-      {(userActivatedTokens.lessThan(minUserStake) || showError) && (
-        <StakingValidationError stakeType="tokens" />
-      )}
+      {showError && <StakingValidationError stakeType="stakeMore" />}
     </>
   );
 };
