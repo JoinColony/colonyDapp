@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormattedDate, defineMessages, FormattedMessage } from 'react-intl';
 import {
   useParams,
@@ -12,6 +12,8 @@ import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import Warning from '~core/Warning';
+import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
+import { useDialog, ConfirmDialog } from '~core/Dialog';
 import {
   Colony,
   useLoggedInUser,
@@ -22,10 +24,11 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import { useTransformer } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
-import { ConfirmDialog } from '~core/Dialog';
+
 import PermissionsLabel from '~core/PermissionsLabel';
 import ExternalLink from '~core/ExternalLink';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
@@ -140,6 +143,20 @@ const ExtensionDetails = ({
   const match = useRouteMatch();
   const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
   const { walletAddress, username, ethereal } = useLoggedInUser();
+
+  const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
+
+  const handleUpgradeColony = useCallback(
+    () =>
+      openUpgradeVersionDialog({
+        colony,
+        isVotingExtensionEnabled,
+      }),
+    [colony, openUpgradeVersionDialog, isVotingExtensionEnabled],
+  );
 
   const { data, loading } = useColonyExtensionQuery({
     variables: { colonyAddress, extensionId },
@@ -268,9 +285,7 @@ const ExtensionDetails = ({
   const uninstallModalProps = {
     [Extension.VotingReputation]: {
       heading: ExtensionsMSG.headingVotingUninstall,
-      children: (
-        <Warning text={ExtensionsMSG.textVotingUninstall} />
-      ),
+      children: <Warning text={ExtensionsMSG.textVotingUninstall} />,
     },
     [Extension.OneTxPayment]: {
       heading: ExtensionsMSG.headingDefaultUninstall,
@@ -282,12 +297,23 @@ const ExtensionDetails = ({
     },
   };
 
+  // TEMP flag
+  const shouldShowWarning = true;
+
   return (
     <div className={styles.main}>
       <div>
         <BreadCrumb elements={breadCrumbs} />
         <hr className={styles.headerLine} />
         <div>
+          {shouldShowWarning && (
+            <Warning
+              text={MSG.warning}
+              buttonText={{ id: 'button.upgrade' }}
+              handleClick={handleUpgradeColony}
+              disabled={!canInstall}
+            />
+          )}
           <Switch>
             <Route
               exact
