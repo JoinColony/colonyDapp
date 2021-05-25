@@ -324,7 +324,11 @@ const CreatePaymentDialogForm = ({
               text={MSG.title}
             />
             {hasRoles && isVotingExtensionEnabled && (
-              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={!canMakePayment}
+              />
             )}
           </div>
         </div>

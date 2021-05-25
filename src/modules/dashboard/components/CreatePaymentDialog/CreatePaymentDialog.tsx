@@ -36,6 +36,7 @@ export interface FormValues {
   amount: string;
   tokenAddress: Address;
   annotation: string;
+  motionDomainId: string;
 }
 
 interface CustomWizardDialogProps {
