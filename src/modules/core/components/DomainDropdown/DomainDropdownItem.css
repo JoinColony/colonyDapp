@@ -1,0 +1,71 @@
+
+.main {
+  display: flex;
+  padding: 10px 0;
+  pointer-events: auto;
+}
+
+.childDomainIcon {
+  margin: 7px 16px 0 0;
+}
+
+.childDomainIcon i {
+  height: 6px;
+  width: 8px;
+}
+
+.mainContent {
+  flex-grow: 1;
+}
+
+.title {
+  display: flex;
+  align-items: baseline;
+}
+
+.color {
+  margin-right: 15px;
+}
+
+.rootText {
+  padding-left: 10px;
+  font-size: var(--size-tiny);
+  color: var(--grey-5);
+}
+
+.description {
+  composes: inlineEllipsis from '~styles/text.css';
+  width: 200px;
+  font-size: var(--size-tiny);
+  white-space: nowrap;
+  color: var(--grey-4);
+}
+
+.editButtonCol {
+  flex-basis: 60px;
+  text-align: right;
+}
+
+.editButton {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.main:hover .editButton,
+.editButton:focus-within {
+  opacity: 1;
+}
+
+.headingWrapper {
+  width: 200px;
+}
+
+.headingWrapper h4 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activeDomain h4 {
+  color: var(--primary);
+}

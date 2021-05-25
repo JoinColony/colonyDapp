@@ -3,18 +3,19 @@ import React, {
   ReactNode,
   useCallback,
   useMemo,
-  useState,} from 'react';
+  useState,
+} from 'react';
 import { defineMessages } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   ALLDOMAINS_DOMAIN_SELECTION,
-  ALLOWED_NETWORKS,
 } from '~constants';
-import ColorTag, { Color } from '~core/ColorTag';
 import { Form, Select, SelectOption } from '~core/Fields';
-import { Colony, useLoggedInUser } from '~data/index';
+import { Colony } from '~data/index';
+
+import DomainDropdownItem from './DomainDropdownItem';
 
 const MSG = defineMessages({
   labelDomainFilter: {
@@ -58,8 +59,6 @@ interface Props {
 
 const displayName = 'DomainDropdown';
 
-const allDomainsColor: Color = Color.Yellow;
-
 const DomainDropdown = ({
   colony,
   currentDomainId,
@@ -87,10 +86,11 @@ const DomainDropdown = ({
   const options = useMemo<ComponentProps<typeof Select>['options']>(() => {
     const allDomainsOption: SelectOption = {
       children: (
-        <ColonyDomainSelectorItem
+        <DomainDropdownItem
           domain={ALLDOMAINS_DOMAIN_SELECTION}
-          colony={colony}
           isSelected={currentDomainId === 0}
+          onDomainEdit={onDomainEdit}
+          showDescription={showDescription}
         />
       ),
       label: { id: 'domain.all' },
@@ -116,10 +116,11 @@ const DomainDropdown = ({
           const { ethDomainId, name } = domain;
           return {
             children: (
-              <ColonyDomainSelectorItem
+              <DomainDropdownItem
                 domain={domain}
-                colony={colony}
                 isSelected={currentDomainId === ethDomainId}
+                onDomainEdit={onDomainEdit}
+                showDescription={showDescription}
               />
             ),
             label: name,
@@ -127,7 +128,7 @@ const DomainDropdown = ({
           };
         }),
     ];
-  }, [colony, currentDomainId]);
+  }, [colony, currentDomainId, onDomainEdit, showDescription]);
 
   return (
     <Form<FormValues>
