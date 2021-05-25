@@ -1,5 +1,12 @@
 @value wideButton: 160px;
 
+.modalHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+}
+
 .inputContainer {
   display: flex;
   align-items: center;
@@ -37,4 +44,8 @@
 
 .noPermissionMessage > div {
   vertical-align: bottom;
+}
+
+.motionVoteDomain {
+  padding-top: 32px;
 }

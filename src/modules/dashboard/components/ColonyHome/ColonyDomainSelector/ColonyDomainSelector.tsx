@@ -101,6 +101,7 @@ const ColonyDomainSelector = ({
     >
       <DomainDropdown
         colony={colony}
+        name="filteredDomainId"
         currentDomainId={filteredDomainId}
         onDomainChange={onDomainChange}
         onDomainEdit={canInteract ? handleEditDomain : undefined}

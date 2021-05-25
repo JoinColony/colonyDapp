@@ -18,6 +18,9 @@ interface Props {
   /** Current colony from which to extract the valid domains */
   colony: Colony;
 
+  /** Optional form element name */
+  name?: string;
+
   /** Optional domain to emphasize the current selected domain */
   currentDomainId?: number;
 
@@ -41,12 +44,16 @@ interface Props {
 
   /** Toggle if to show the domains descriptions text (if available) */
   showDescription?: boolean;
+
+  /** Toggle if to set the domain dropdown in a disabled state (won't open) */
+  disabled?: boolean;
 }
 
 const displayName = 'DomainDropdown';
 
 const DomainDropdown = ({
   colony,
+  name = 'selectedDomainId',
   currentDomainId,
   onDomainChange,
   onDomainEdit,
@@ -54,6 +61,7 @@ const DomainDropdown = ({
   renderActiveOptionFn,
   showAllDomains = true,
   showDescription = true,
+  disabled = false,
 }: Props) => {
   const handleSubmit = useCallback(
     (domainId: number) => {
@@ -96,7 +104,7 @@ const DomainDropdown = ({
         .slice(0)
         .sort(sortByDomainId)
         .map((domain) => {
-          const { ethDomainId, name } = domain;
+          const { ethDomainId, name: domainName } = domain;
           return {
             children: (
               <DomainDropdownItem
@@ -106,7 +114,7 @@ const DomainDropdown = ({
                 showDescription={showDescription}
               />
             ),
-            label: name,
+            label: domainName,
             value: `${ethDomainId}`,
           };
         }),
@@ -123,13 +131,14 @@ const DomainDropdown = ({
       }}
       elementOnly
       label={MSG.labelDomainFilter}
-      name="filteredDomainId"
+      name={name}
       onChange={(val) => {
         handleSubmit(Number(val));
       }}
       options={options}
       optionsFooter={footerComponent}
       renderActiveOption={renderActiveOptionFn}
+      disabled={disabled}
     />
   );
 };

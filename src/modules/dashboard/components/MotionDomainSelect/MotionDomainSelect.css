@@ -1,0 +1,8 @@
+.main {
+  width: 250px;
+}
+
+.activeItem {
+  font-size: var(--size-tiny);
+  letter-spacing: var(--spacing-medium);
+}

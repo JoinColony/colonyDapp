@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -13,6 +13,7 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Toggle from '~core/Fields/Toggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { ColonyTokens, OneToken, useLoggedInUser } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -58,6 +59,7 @@ const TokenMintForm = ({
   isSubmitting,
   isValid,
   handleSubmit,
+  setFieldValue,
   nativeToken,
   values,
 }: Props & FormikProps<FormValues>) => {
@@ -75,19 +77,34 @@ const TokenMintForm = ({
     values.forceAction,
   );
 
+  const handleMotionDomainChange = useCallback(
+    (domainId) => setFieldValue('motionDomainId', domainId),
+    [setFieldValue],
+  );
+
   const inputDisabled = !userHasPermission || onlyForceAction;
 
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        {isVotingExtensionEnabled && <div>Domain Dropdown Placeholder</div>}
-        <Heading
-          appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-          text={MSG.title}
-        />
-        {canMintTokens && isVotingExtensionEnabled && (
-          <Toggle label={{ id: 'label.force' }} name="forceAction" />
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        {isVotingExtensionEnabled && (
+          <div className={styles.motionVoteDomain}>
+            <MotionDomainSelect
+              colony={colony}
+              disabled={values.forceAction}
+              onDomainChange={handleMotionDomainChange}
+            />
+          </div>
         )}
+        <div className={styles.modalHeading}>
+          <Heading
+            appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+            text={MSG.title}
+          />
+          {canMintTokens && isVotingExtensionEnabled && (
+            <Toggle label={{ id: 'label.force' }} name="forceAction" />
+          )}
+        </div>
       </DialogSection>
       {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>

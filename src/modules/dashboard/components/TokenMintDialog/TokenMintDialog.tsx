@@ -8,10 +8,10 @@ import moveDecimal from 'move-decimal-point';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
+
 import { ActionTypes } from '~redux/index';
 import { RootMotionOperationNames } from '~redux/types/actions';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
-
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { WizardDialogType } from '~utils/hooks';
 
@@ -41,11 +41,13 @@ type Props = DialogProps &
 const displayName = 'dashboard.TokenMintDialog';
 
 const validationSchema = yup.object().shape({
+  forceAction: yup.bool(),
   annotation: yup.string().max(4000),
   mintAmount: yup
     .number()
     .required(() => MSG.errorAmountRequired)
     .moreThan(0, () => MSG.errorAmountMin),
+  motionDomainId: yup.number(),
 });
 
 const TokenMintDialog = ({
@@ -77,7 +79,11 @@ const TokenMintDialog = ({
   const transform = useCallback(
     pipe(
       mapPayload(
-        ({ mintAmount: inputAmount, annotation: annotationMessage }) => {
+        ({
+          mintAmount: inputAmount,
+          annotation: annotationMessage,
+          motionDomainId,
+        }) => {
           // Find the selected token's decimals
           const amount = bigNumberify(
             moveDecimal(
@@ -93,6 +99,7 @@ const TokenMintDialog = ({
             motionParams: [amount],
             amount,
             annotationMessage,
+            motionDomainId,
           };
         },
       ),
@@ -107,6 +114,7 @@ const TokenMintDialog = ({
         forceAction: false,
         annotation: '',
         mintAmount: 0,
+        motionDomainId: 0,
       }}
       validationSchema={validationSchema}
       submit={getFormAction('SUBMIT')}
