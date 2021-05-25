@@ -914,8 +914,8 @@ const getMoveFundsMotionValues = async (
     colonyClient,
   );
 
-  const fromDomain = await colonyClient.getDomainFromFundingPot(values.args[3]);
-  const toDomain = await colonyClient.getDomainFromFundingPot(values.args[4]);
+  const fromDomain = await colonyClient.getDomainFromFundingPot(values.args[5]);
+  const toDomain = await colonyClient.getDomainFromFundingPot(values.args[6]);
 
   const moveFundsMotionValues: {
     amount: string;
@@ -924,8 +924,8 @@ const getMoveFundsMotionValues = async (
     toDomain: number;
   } = {
     ...motionDefaultValues,
-    amount: values.args[5].toString(),
-    tokenAddress: values.args[6],
+    amount: values.args[7].toString(),
+    tokenAddress: values.args[8],
     fromDomain: fromDomain.toNumber(),
     toDomain: toDomain.toNumber(),
   };
