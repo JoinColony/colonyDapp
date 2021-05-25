@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useField } from 'formik';
 import { PopperProps } from 'react-popper';
 import { MessageDescriptor } from 'react-intl';
@@ -27,6 +27,7 @@ interface Props {
   elementOnly?: boolean;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
   tooltipPopperProps?: Omit<PopperProps, 'children'>;
+  onChange?: (value: boolean) => any;
 }
 
 const Toggle = ({
@@ -49,10 +50,21 @@ const Toggle = ({
       },
     ],
   },
+  onChange: onChangeCallback,
 }: Props) => {
   const [{ onChange, value }] = useField(name);
 
   const mainClasses = getMainClasses(appearance, styles);
+
+  const handleOnChange = useCallback(
+    (event) => {
+      onChange(event);
+      if (onChangeCallback && typeof onChangeCallback === 'function') {
+        onChangeCallback(value);
+      }
+    },
+    [onChange, onChangeCallback, value],
+  );
 
   return (
     <div className={styles.container}>
@@ -72,7 +84,7 @@ const Toggle = ({
           aria-checked={value}
           aria-disabled={disabled}
           className={styles.delegate}
-          onChange={onChange}
+          onChange={handleOnChange}
         />
         <span className={disabled ? styles.toggleDisabled : styles.toggle}>
           <span className={value ? mainClasses : styles.toggleSwitch} />
