@@ -1,5 +1,6 @@
 import React, { ReactNode, useCallback } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { useIntl } from 'react-intl';
 
 import { Form, SelectOption } from '~core/Fields';
 import DomainDropdown from '~core/DomainDropdown';
@@ -27,9 +28,23 @@ const MotionDomainSelect = ({
   handleSubmit = () => {},
   onDomainChange,
 }: Props) => {
+  const { formatMessage } = useIntl();
   const renderActiveOption = useCallback<
     (option: SelectOption | undefined, label: string) => ReactNode
-  >((option, label) => <div className={styles.activeItem}>{label}</div>, []);
+  >(
+    (option, label) => {
+      /*
+       * @NOTE This is so that the active item is displayed as `Root/Current Domain`
+       * when a subdomain is selected
+       */
+      const displayLabel =
+        parseInt(option?.value || `${ROOT_DOMAIN_ID}`, 10) === ROOT_DOMAIN_ID
+          ? label
+          : `${formatMessage({ id: 'domain.root' })}/${label}`;
+      return <div className={styles.activeItem}>{displayLabel}</div>;
+    },
+    [formatMessage],
+  );
 
   return (
     /*
