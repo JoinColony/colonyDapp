@@ -82,7 +82,9 @@ exports[`Select component Renders initial component 1`] = `
               >
                 <div>
                   <div>
-                    <span />
+                    <span>
+                      Bar
+                    </span>
                   </div>
                   <span>
                     <Icon
