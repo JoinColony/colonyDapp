@@ -126,6 +126,7 @@ export type MotionActionTypes =
           decimals: number;
         };
         annotationMessage?: string;
+        motionDomainId: string;
       },
       MetaWithHistory<object>
     >

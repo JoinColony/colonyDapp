@@ -32,6 +32,7 @@ function* createPaymentMotion({
     domainId,
     singlePayment,
     annotationMessage,
+    motionDomainId,
   },
   meta: { id: metaId, history },
   meta,
@@ -146,7 +147,7 @@ function* createPaymentMotion({
       methodName: 'createMotion',
       identifier: colonyAddress,
       params: [
-        domainId,
+        motionDomainId,
         childSkillIndex,
         client.address,
         encodedAction,
