@@ -87,23 +87,28 @@ const TokenMintForm = ({
   return (
     <>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
-        {isVotingExtensionEnabled && (
-          <div className={styles.motionVoteDomain}>
-            <MotionDomainSelect
-              colony={colony}
-              disabled={values.forceAction}
-              onDomainChange={handleMotionDomainChange}
-            />
-          </div>
-        )}
         <div className={styles.modalHeading}>
-          <Heading
-            appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-            text={MSG.title}
-          />
-          {canMintTokens && isVotingExtensionEnabled && (
-            <Toggle label={{ id: 'label.force' }} name="forceAction" />
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                onDomainChange={handleMotionDomainChange}
+                /*
+                 * @NOTE Always disabled since you can only create this motion in root
+                 */
+                disabled
+              />
+            </div>
           )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {canMintTokens && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
         </div>
       </DialogSection>
       {!userHasPermission && (
