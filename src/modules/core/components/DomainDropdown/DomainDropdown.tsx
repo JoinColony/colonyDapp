@@ -119,7 +119,7 @@ const DomainDropdown = ({
         borderedOptions: 'true',
         size: 'mediumLarge',
         theme: 'alt',
-        width: 'fluid',
+        width: 'content',
       }}
       elementOnly
       label={MSG.labelDomainFilter}
