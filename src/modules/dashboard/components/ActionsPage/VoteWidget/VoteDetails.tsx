@@ -12,7 +12,10 @@ import {
   useLoggedInUser,
   useMotionVoterRewardQuery,
 } from '~data/index';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  getFormattedTokenValue,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
 import { MotionState } from '~utils/colonyMotions';
 
 import styles from './VoteWidget.css';
@@ -179,21 +182,19 @@ const VoteDetails = ({
                         appearance={{ size: 'tiny' }}
                       />
                       <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
+                        value={getFormattedTokenValue(
+                          voterReward.motionVoterReward.minReward,
+                          getTokenDecimalsWithFallback(nativeToken?.decimals),
                         )}
-                        value={voterReward.motionVoterReward.minReward}
                         appearance={{ theme: 'dark', size: 'small' }}
-                        truncate={5}
                       />
                       <div className={styles.range} />
                       <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
+                        value={getFormattedTokenValue(
+                          voterReward.motionVoterReward.maxReward,
+                          getTokenDecimalsWithFallback(nativeToken?.decimals),
                         )}
-                        value={voterReward.motionVoterReward.maxReward}
                         appearance={{ theme: 'dark', size: 'small' }}
-                        truncate={5}
                         suffix={` ${nativeToken?.symbol}`}
                       />
                     </>
@@ -206,13 +207,12 @@ const VoteDetails = ({
                         appearance={{ size: 'tiny' }}
                       />
                       <Numeral
-                        unit={getTokenDecimalsWithFallback(
-                          nativeToken?.decimals,
+                        value={getFormattedTokenValue(
+                          voterReward.motionVoterReward.reward,
+                          getTokenDecimalsWithFallback(nativeToken?.decimals),
                         )}
-                        value={voterReward.motionVoterReward.reward}
                         suffix={` ${nativeToken?.symbol}`}
                         appearance={{ theme: 'dark', size: 'small' }}
-                        truncate={5}
                       />
                     </>
                   )}
