@@ -39,6 +39,9 @@ interface Props {
     activeOptionLabel: string,
   ) => ReactNode;
 
+  /** Optional method to filter the options array */
+  filterOptionsFn?: (option: SelectOption) => boolean;
+
   /** Toggle if to display the "All Domains" entry */
   showAllDomains?: boolean;
 
@@ -59,6 +62,7 @@ const DomainDropdown = ({
   onDomainEdit,
   footerComponent,
   renderActiveOptionFn,
+  filterOptionsFn,
   showAllDomains = true,
   showDescription = true,
   disabled = false,
@@ -94,7 +98,7 @@ const DomainDropdown = ({
       { ethDomainId: firstDomainId },
       { ethDomainId: secondDomainId },
     ) => firstDomainId - secondDomainId;
-    return [
+    const domainOptions = [
       ...showAllDomainsOption,
       ...colony.domains
         /*
@@ -119,7 +123,18 @@ const DomainDropdown = ({
           };
         }),
     ];
-  }, [colony, currentDomainId, onDomainEdit, showDescription, showAllDomains]);
+    if (filterOptionsFn && typeof filterOptionsFn === 'function') {
+      return domainOptions.filter(filterOptionsFn);
+    }
+    return domainOptions;
+  }, [
+    colony,
+    currentDomainId,
+    onDomainEdit,
+    showDescription,
+    showAllDomains,
+    filterOptionsFn,
+  ]);
 
   return (
     <Select

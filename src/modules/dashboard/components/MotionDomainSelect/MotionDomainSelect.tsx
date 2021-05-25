@@ -12,10 +12,11 @@ import styles from './MotionDomainSelect.css';
 interface Props {
   colony: Colony;
   initialSelectedDomain?: number;
-  disabled?: boolean;
   name?: string;
   handleSubmit?: () => any;
   onDomainChange?: (domainId: number) => any;
+  filterDomains?: (option: SelectOption) => boolean;
+  disabled?: boolean;
 }
 
 const displayName = 'dashboard.MotionDomainSelect';
@@ -23,10 +24,11 @@ const displayName = 'dashboard.MotionDomainSelect';
 const MotionDomainSelect = ({
   initialSelectedDomain = ROOT_DOMAIN_ID,
   colony,
-  disabled = false,
   name = 'motionDomainId',
   handleSubmit = () => {},
   onDomainChange,
+  filterDomains,
+  disabled = false,
 }: Props) => {
   const { formatMessage } = useIntl();
   const renderActiveOption = useCallback<
@@ -37,10 +39,17 @@ const MotionDomainSelect = ({
        * @NOTE This is so that the active item is displayed as `Root/Current Domain`
        * when a subdomain is selected
        */
-      const displayLabel =
+      let displayLabel =
         parseInt(option?.value || `${ROOT_DOMAIN_ID}`, 10) === ROOT_DOMAIN_ID
           ? label
           : `${formatMessage({ id: 'domain.root' })}/${label}`;
+      /*
+       * @NOTE If the filtering function removed our previously selected option,
+       * reset the selection back to Root
+       */
+      if (!option) {
+        displayLabel = `${formatMessage({ id: 'domain.root' })}`;
+      }
       return <div className={styles.activeItem}>{displayLabel}</div>;
     },
     [formatMessage],
@@ -64,6 +73,7 @@ const MotionDomainSelect = ({
           name={name}
           currentDomainId={initialSelectedDomain}
           renderActiveOptionFn={renderActiveOption}
+          filterOptionsFn={filterDomains}
           onDomainChange={onDomainChange}
           showAllDomains={false}
           showDescription={false}
