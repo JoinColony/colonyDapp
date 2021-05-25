@@ -1,18 +1,8 @@
-import React, {
-  ComponentProps,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import React, { ComponentProps, ReactNode, useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import {
-  COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  ALLDOMAINS_DOMAIN_SELECTION,
-} from '~constants';
-import { Form, Select, SelectOption } from '~core/Fields';
+import { ALLDOMAINS_DOMAIN_SELECTION } from '~constants';
+import { Select, SelectOption } from '~core/Fields';
 import { Colony } from '~data/index';
 
 import DomainDropdownItem from './DomainDropdownItem';
@@ -23,10 +13,6 @@ const MSG = defineMessages({
     defaultMessage: 'Filter by Domain',
   },
 });
-
-interface FormValues {
-  currentDomainId: string;
-}
 
 interface Props {
   /** Current colony from which to extract the valid domains */
@@ -69,10 +55,6 @@ const DomainDropdown = ({
   showAllDomains = true,
   showDescription = true,
 }: Props) => {
-  const [, setSelectedDomain] = useState<number>(
-    showAllDomains ? COLONY_TOTAL_BALANCE_DOMAIN_ID : ROOT_DOMAIN_ID,
-  );
-
   const handleSubmit = useCallback(
     (domainId: number) => {
       if (onDomainChange) {
@@ -96,15 +78,16 @@ const DomainDropdown = ({
       label: { id: 'domain.all' },
       value: '0',
     };
+    const showAllDomainsOption = showAllDomains ? [allDomainsOption] : [];
     if (!colony) {
-      return [allDomainsOption];
+      return showAllDomainsOption;
     }
     const sortByDomainId = (
       { ethDomainId: firstDomainId },
       { ethDomainId: secondDomainId },
     ) => firstDomainId - secondDomainId;
     return [
-      allDomainsOption,
+      ...showAllDomainsOption,
       ...colony.domains
         /*
          * While this looks like an array, it's not a "true" one (this is the result from the subgraph query)
@@ -128,36 +111,26 @@ const DomainDropdown = ({
           };
         }),
     ];
-  }, [colony, currentDomainId, onDomainEdit, showDescription]);
+  }, [colony, currentDomainId, onDomainEdit, showDescription, showAllDomains]);
 
   return (
-    <Form<FormValues>
-      initialValues={{
-        currentDomainId: currentDomainId
-          ? `${currentDomainId}`
-          : `${COLONY_TOTAL_BALANCE_DOMAIN_ID}`,
+    <Select
+      appearance={{
+        borderedOptions: 'true',
+        size: 'mediumLarge',
+        theme: 'alt',
+        width: 'fluid',
       }}
-      onSubmit={() => {}}
-    >
-      <Select
-        appearance={{
-          borderedOptions: 'true',
-          size: 'mediumLarge',
-          theme: 'alt',
-          width: 'content',
-        }}
-        elementOnly
-        label={MSG.labelDomainFilter}
-        name="filteredDomainId"
-        onChange={(val) => {
-          setSelectedDomain(Number(val));
-          handleSubmit(Number(val));
-        }}
-        options={options}
-        optionsFooter={footerComponent}
-        renderActiveOption={renderActiveOptionFn}
-      />
-    </Form>
+      elementOnly
+      label={MSG.labelDomainFilter}
+      name="filteredDomainId"
+      onChange={(val) => {
+        handleSubmit(Number(val));
+      }}
+      options={options}
+      optionsFooter={footerComponent}
+      renderActiveOption={renderActiveOptionFn}
+    />
   );
 };
 
