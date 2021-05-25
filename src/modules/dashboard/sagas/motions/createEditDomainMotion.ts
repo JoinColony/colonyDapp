@@ -33,6 +33,7 @@ function* createEditDomainMotion({
     domainId: editDomainId,
     isCreateDomain,
     parentId = ROOT_DOMAIN_ID,
+    motionDomainId,
   },
   meta: { id: metaId, history },
   meta,
@@ -119,7 +120,7 @@ function* createEditDomainMotion({
       methodName: 'createMotion',
       identifier: colonyAddress,
       params: [
-        domainId,
+        motionDomainId,
         childSkillIndex,
         AddressZero,
         encodedAction,

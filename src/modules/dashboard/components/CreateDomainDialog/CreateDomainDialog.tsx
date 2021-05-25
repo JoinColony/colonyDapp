@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -77,11 +78,7 @@ const CreateDomainDialog = ({
         domainColor: Color.LightPink,
         domainPurpose: undefined,
         annotationMessage: undefined,
-        /*
-         * @NOTE That since this a root motion, and we don't actually make use
-         * of the motion domain selected (it's disabled), we don't need to actually
-         * pass the value over to the motion, since it will always be 1
-         */
+        motionDomainId: ROOT_DOMAIN_ID,
       }}
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}

@@ -105,6 +105,7 @@ export type MotionActionTypes =
         parentId?: number;
         domainId?: number;
         isCreateDomain: boolean;
+        motionDomainId: string;
       },
       MetaWithHistory<object>
     >
