@@ -1,4 +1,5 @@
-import { bigNumberify } from 'ethers/utils';
+import { bigNumberify, BigNumberish } from 'ethers/utils';
+import Decimal from 'decimal.js';
 
 import { TokenWithBalances } from '~data/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
@@ -45,4 +46,17 @@ export const getTokenDecimalsWithFallback = (
     return fallbackDecimals;
   }
   return DEFAULT_TOKEN_DECIMALS;
+};
+
+export const getFormattedTokenValue = (
+  value: BigNumberish,
+  decimals: number,
+): string => {
+  const safeDecimals = bigNumberify(10)
+    .pow(getTokenDecimalsWithFallback(decimals))
+    .toString();
+  return new Decimal(bigNumberify(value).toString())
+    .div(safeDecimals)
+    .toDP(5, Decimal.ROUND_DOWN)
+    .toString();
 };
