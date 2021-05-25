@@ -89,6 +89,7 @@ const CreatePaymentDialog = ({
       .moreThan(0, () => MSG.amountZero),
     tokenAddress: yup.string().address().required(),
     annotation: yup.string().max(4000),
+    motionDomainId: yup.number(),
   });
 
   const { data: subscribedUsersData } = useQuery(
@@ -107,6 +108,7 @@ const CreatePaymentDialog = ({
             profile: { walletAddress },
           },
           annotation: annotationMessage,
+          motionDomainId,
         } = payload;
 
         const selectedToken = tokens.find(
@@ -127,6 +129,7 @@ const CreatePaymentDialog = ({
             decimals,
           },
           annotationMessage,
+          motionDomainId,
         };
       }),
       withMeta({ history }),
@@ -143,6 +146,7 @@ const CreatePaymentDialog = ({
         amount: undefined,
         tokenAddress: nativeTokenAddress,
         annotation: undefined,
+        motionDomainId: ROOT_DOMAIN_ID,
       }}
       validationSchema={validationSchema}
       submit={getFormAction('SUBMIT')}
