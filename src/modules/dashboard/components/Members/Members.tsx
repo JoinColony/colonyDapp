@@ -194,7 +194,7 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
           directRoles: allUserRoles,
         };
       });
-  }, [directDomainRoles, domainRoles]);
+  }, [directDomainRoles, domainRoles, inheritedDomainRoles]);
 
   if (loadingColonyMembers) {
     return (
