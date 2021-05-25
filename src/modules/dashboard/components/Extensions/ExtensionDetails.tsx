@@ -11,6 +11,7 @@ import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
+import Warning from '~core/Warning';
 import {
   Colony,
   useLoggedInUser,
@@ -117,6 +118,10 @@ const MSG = defineMessages({
   setup: {
     id: 'dashboard.Extensions.ExtensionDetails.setup',
     defaultMessage: 'Setup',
+  },
+  warning: {
+    id: 'dashboard.Extensions.ExtensionDetails.warning',
+    defaultMessage: `This extension is incompatible with your current colony version. You must upgrade your colony before installing it.`,
   },
 });
 
@@ -264,9 +269,7 @@ const ExtensionDetails = ({
     [Extension.VotingReputation]: {
       heading: ExtensionsMSG.headingVotingUninstall,
       children: (
-        <div className={styles.warning}>
-          <FormattedMessage {...ExtensionsMSG.textVotingUninstall} />
-        </div>
+        <Warning text={ExtensionsMSG.textVotingUninstall} />
       ),
     },
     [Extension.OneTxPayment]: {

@@ -68,11 +68,3 @@
   margin-top: 10px;
   text-align: right;
 }
-
-.warning {
-  padding: 25px 34px;
-  border-radius: var(--radius-large);
-  background-color: var(--pink);
-  font-weight: var(--weight-bold);
-  color: rgba(255, 255, 255);
-}
