@@ -13,7 +13,6 @@ interface Props {
   colony: Colony;
   initialSelectedDomain?: number;
   name?: string;
-  handleSubmit?: () => any;
   onDomainChange?: (domainId: number) => any;
   filterDomains?: (option: SelectOption) => boolean;
   disabled?: boolean;
@@ -25,7 +24,6 @@ const MotionDomainSelect = ({
   initialSelectedDomain = ROOT_DOMAIN_ID,
   colony,
   name = 'motionDomainId',
-  handleSubmit = () => {},
   onDomainChange,
   filterDomains,
   disabled = false,
@@ -65,7 +63,7 @@ const MotionDomainSelect = ({
       initialValues={{
         motionDomainId: String(initialSelectedDomain),
       }}
-      onSubmit={handleSubmit}
+      onSubmit={() => {}}
     >
       <div className={styles.main}>
         <DomainDropdown
