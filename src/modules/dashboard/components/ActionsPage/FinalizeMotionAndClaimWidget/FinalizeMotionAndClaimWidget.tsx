@@ -51,6 +51,12 @@ export const MSG = defineMessages({
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.title',
     defaultMessage: `Should "{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint tokens}
+      ${ColonyMotions.PaymentMotion} {Payment}
+      ${ColonyMotions.CreateDomainMotion} {Create Team}
+      ${ColonyMotions.EditDomainMotion} {Edit Team}
+      ${ColonyMotions.ColonyEditMotion} {Colony Edit}
+      ${ColonyMotions.SetUserRolesMotion} {Permission Management}
+      ${ColonyMotions.MoveFundsMotion} {Move Funds}
       other {Generic Action}
     }" be approved?`,
   },
