@@ -21,6 +21,7 @@ function* moveFundsMotion({
   payload: {
     colonyAddress,
     colonyName,
+    version,
     fromDomainId,
     toDomainId,
     amount,
@@ -97,18 +98,22 @@ function* moveFundsMotion({
       'annotateMoveFundsMotion',
     ]);
 
-    // eslint-disable-next-line max-len
-    const encodedAction = colonyClient.interface.functions.moveFundsBetweenPots.encode(
-      [
-        permissionDomainId,
-        fromChildSkillIndex,
-        toChildSkillIndex,
-        fromPot,
-        toPot,
-        amount,
-        tokenAddress,
-      ],
-    );
+    const isOldVersion = parseInt(version, 10) <= 6;
+    const encodedAction = colonyClient.interface.functions[
+      isOldVersion
+        ? // eslint-disable-next-line max-len
+          'moveFundsBetweenPots(uint256,uint256,uint256,uint256,uint256,uint256,address)'
+        : 'moveFundsBetweenPots'
+    ].encode([
+      ...(isOldVersion ? [] : [permissionDomainId, MaxUint256]),
+      permissionDomainId,
+      fromChildSkillIndex,
+      toChildSkillIndex,
+      fromPot,
+      toPot,
+      amount,
+      tokenAddress,
+    ]);
 
     // create transactions
     yield fork(createTransaction, createMotion.id, {
