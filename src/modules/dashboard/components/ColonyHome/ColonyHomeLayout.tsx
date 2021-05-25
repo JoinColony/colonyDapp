@@ -1,6 +1,6 @@
 import React, { ReactChild } from 'react';
 
-import DomainDropdown from '~dashboard/DomainDropdown';
+import ColonyDomainSelector from '~dashboard/ColonyHome/ColonyDomainSelector';
 import ColonyHomeActions from '~dashboard/ColonyHomeActions';
 import ColonyTotalFunds from '~dashboard/ColonyTotalFunds';
 
@@ -54,7 +54,7 @@ const ColonyHomeLayout = ({
             <ColonyTotalFunds colony={colony} />
             <div className={styles.contentActionsPanel}>
               <div className={styles.domainsDropdownContainer}>
-                <DomainDropdown
+                <ColonyDomainSelector
                   filteredDomainId={filteredDomainId}
                   onDomainChange={onDomainChange}
                   colony={colony}

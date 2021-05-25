@@ -19,7 +19,7 @@ import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { ALLDOMAINS_DOMAIN_SELECTION } from '~constants';
 
-import styles from './DomainSelectItem.css';
+import styles from './ColonyDomainSelectorItem.css';
 
 interface Props {
   domain: OneDomain | typeof ALLDOMAINS_DOMAIN_SELECTION;
@@ -27,9 +27,9 @@ interface Props {
   isSelected: boolean;
 }
 
-const displayName = 'dashboard.DomainDropdown.DomainSelectItem';
+const displayName = `dashboard.ColonyHome.ColonyDomainSelector.ColonyDomainSelectorItem`;
 
-const DomainSelectItem = ({
+const ColonyDomainSelector = ({
   domain: {
     color = Color.LightPink,
     description,
@@ -131,6 +131,6 @@ const DomainSelectItem = ({
   );
 };
 
-DomainSelectItem.displayName = displayName;
+ColonyDomainSelector.displayName = displayName;
 
-export default DomainSelectItem;
+export default ColonyDomainSelector;

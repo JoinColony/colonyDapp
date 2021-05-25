@@ -18,13 +18,13 @@ import { Form, Select, SelectOption } from '~core/Fields';
 import { Colony, useLoggedInUser } from '~data/index';
 
 import CreateDomainButton from './CreateDomainButton';
-import DomainSelectItem from './DomainSelectItem';
+import ColonyDomainSelectorItem from './ColonyDomainSelectorItem';
 
-import styles from './DomainDropdown.css';
+import styles from './ColonyDomainSelector.css';
 
 const MSG = defineMessages({
   labelDomainFilter: {
-    id: 'dashboard.DomainDropdown.labelDomainFilter',
+    id: 'dashboard.ColonyHome.DomainSelector.labelDomainFilter',
     defaultMessage: 'Filter by Domain',
   },
 });
@@ -41,9 +41,9 @@ interface Props {
 
 const allDomainsColor: Color = Color.Yellow;
 
-const displayName = 'dashboard.DomainDropdown';
+const displayName = 'dashboard.ColonyHome.ColonyColonyDomainSelector';
 
-const DomainDropdown = ({
+const ColonyDomainSelector = ({
   filteredDomainId,
   onDomainChange,
   colony,
@@ -105,7 +105,7 @@ const DomainDropdown = ({
   const options = useMemo<ComponentProps<typeof Select>['options']>(() => {
     const allDomainsOption: SelectOption = {
       children: (
-        <DomainSelectItem
+        <ColonyDomainSelectorItem
           domain={ALLDOMAINS_DOMAIN_SELECTION}
           colony={colony}
           isSelected={filteredDomainId === 0}
@@ -134,7 +134,7 @@ const DomainDropdown = ({
           const { ethDomainId, name } = domain;
           return {
             children: (
-              <DomainSelectItem
+              <ColonyDomainSelectorItem
                 domain={domain}
                 colony={colony}
                 isSelected={filteredDomainId === ethDomainId}
@@ -188,6 +188,6 @@ const DomainDropdown = ({
   );
 };
 
-DomainDropdown.displayName = displayName;
+ColonyDomainSelector.displayName = displayName;
 
-export default DomainDropdown;
+export default ColonyDomainSelector;
