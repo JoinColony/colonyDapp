@@ -48,7 +48,13 @@ type Props = DialogProps &
 const displayName = 'dashboard.TransferFundsDialog';
 
 const TransferFundsDialog = ({
-  colony: { tokens = [], colonyAddress, nativeTokenAddress, colonyName },
+  colony: {
+    tokens = [],
+    colonyAddress,
+    nativeTokenAddress,
+    colonyName,
+    version,
+  },
   colony,
   fromDomain,
   callStep,
@@ -105,6 +111,7 @@ const TransferFundsDialog = ({
           return {
             colonyAddress,
             colonyName,
+            version,
             fromDomainId: parseInt(sourceDomain, 10),
             toDomainId: parseInt(toDomain, 10),
             amount,
