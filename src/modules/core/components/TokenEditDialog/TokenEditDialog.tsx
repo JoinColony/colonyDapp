@@ -15,6 +15,7 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Toggle from '~core/Fields/Toggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { AnyToken, OneToken, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
@@ -126,14 +127,29 @@ const TokenEditDialog = ({
 
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}
-          text={MSG.title}
-        />
-        {canEditTokens && isVotingExtensionEnabled && (
-          <Toggle label={{ id: 'label.force' }} name="forceAction" />
-        )}
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                /*
+                 * @NOTE Always disabled since you can only create this motion in root
+                 */
+                disabled
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {canEditTokens && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
+        </div>
       </DialogSection>
       {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
