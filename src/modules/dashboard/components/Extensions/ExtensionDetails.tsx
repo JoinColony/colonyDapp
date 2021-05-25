@@ -12,6 +12,7 @@ import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import Warning from '~core/Warning';
+import Icon from '~core/Icon';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 import { useDialog, ConfirmDialog } from '~core/Dialog';
 import {
@@ -206,6 +207,9 @@ const ExtensionDetails = ({
     !(extesionCanBeInstalled || extesionCanBeEnabled) &&
     latestNetworkExtensionVersion > extension.currentVersion;
 
+  // TEMP flag
+  const shouldShowWarning = false;
+
   let tableData;
 
   if (installedExtension) {
@@ -260,6 +264,9 @@ const ExtensionDetails = ({
       {
         label: MSG.latestVersion,
         value: `v${extension.currentVersion}`,
+        icon: shouldShowWarning && (
+          <Icon name="triangle-warning" title={MSG.warning} />
+        ),
       },
       {
         label: MSG.developer,
@@ -296,9 +303,6 @@ const ExtensionDetails = ({
       children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
     },
   };
-
-  // TEMP flag
-  const shouldShowWarning = true;
 
   return (
     <div className={styles.main}>
@@ -383,10 +387,11 @@ const ExtensionDetails = ({
           </div>
           <Table appearance={{ theme: 'lined' }}>
             <TableBody>
-              {tableData.map(({ label, value }) => (
+              {tableData.map(({ label, value, icon }) => (
                 <TableRow key={label.id}>
                   <TableCell className={styles.cellLabel}>
                     <FormattedMessage {...label} />
+                    {icon && <span className={styles.iconWrapper}>{icon}</span>}
                   </TableCell>
                   <TableCell className={styles.cellData}>{value}</TableCell>
                 </TableRow>
