@@ -95,6 +95,7 @@ const EditDomainDialog = ({
           domains
             .find(({ ethDomainId }) => ethDomainId !== ROOT_DOMAIN_ID)
             ?.ethDomainId.toString(),
+        motionDomainId: ROOT_DOMAIN_ID,
       }}
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
