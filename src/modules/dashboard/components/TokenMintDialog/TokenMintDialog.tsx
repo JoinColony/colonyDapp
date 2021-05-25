@@ -47,7 +47,6 @@ const validationSchema = yup.object().shape({
     .number()
     .required(() => MSG.errorAmountRequired)
     .moreThan(0, () => MSG.errorAmountMin),
-  motionDomainId: yup.number(),
 });
 
 const TokenMintDialog = ({
@@ -79,11 +78,7 @@ const TokenMintDialog = ({
   const transform = useCallback(
     pipe(
       mapPayload(
-        ({
-          mintAmount: inputAmount,
-          annotation: annotationMessage,
-          motionDomainId,
-        }) => {
+        ({ mintAmount: inputAmount, annotation: annotationMessage }) => {
           // Find the selected token's decimals
           const amount = bigNumberify(
             moveDecimal(
@@ -99,7 +94,6 @@ const TokenMintDialog = ({
             motionParams: [amount],
             amount,
             annotationMessage,
-            motionDomainId,
           };
         },
       ),
@@ -114,7 +108,11 @@ const TokenMintDialog = ({
         forceAction: false,
         annotation: '',
         mintAmount: 0,
-        motionDomainId: 0,
+        /*
+         * @NOTE That since this a root motion, and we don't actually make use
+         * of the motion domain selected (it's disabled), we don't need to actually
+         * pass the value over to the motion, since it will always be 1
+         */
       }}
       validationSchema={validationSchema}
       submit={getFormAction('SUBMIT')}

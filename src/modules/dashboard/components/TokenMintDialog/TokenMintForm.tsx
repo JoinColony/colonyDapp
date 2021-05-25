@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -59,7 +59,6 @@ const TokenMintForm = ({
   isSubmitting,
   isValid,
   handleSubmit,
-  setFieldValue,
   nativeToken,
   values,
 }: Props & FormikProps<FormValues>) => {
@@ -77,11 +76,6 @@ const TokenMintForm = ({
     values.forceAction,
   );
 
-  const handleMotionDomainChange = useCallback(
-    (domainId) => setFieldValue('motionDomainId', domainId),
-    [setFieldValue],
-  );
-
   const inputDisabled = !userHasPermission || onlyForceAction;
 
   return (
@@ -92,7 +86,6 @@ const TokenMintForm = ({
             <div className={styles.motionVoteDomain}>
               <MotionDomainSelect
                 colony={colony}
-                onDomainChange={handleMotionDomainChange}
                 /*
                  * @NOTE Always disabled since you can only create this motion in root
                  */
