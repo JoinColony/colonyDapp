@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormattedDate, defineMessages, FormattedMessage } from 'react-intl';
 import {
   useParams,
@@ -11,6 +11,10 @@ import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
+import Warning from '~core/Warning';
+import Icon from '~core/Icon';
+import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
+import { useDialog, ConfirmDialog } from '~core/Dialog';
 import {
   Colony,
   useLoggedInUser,
@@ -21,10 +25,11 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import { useTransformer } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
-import { ConfirmDialog } from '~core/Dialog';
+
 import PermissionsLabel from '~core/PermissionsLabel';
 import ExternalLink from '~core/ExternalLink';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
@@ -118,6 +123,10 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionDetails.setup',
     defaultMessage: 'Setup',
   },
+  warning: {
+    id: 'dashboard.Extensions.ExtensionDetails.warning',
+    defaultMessage: `This extension is incompatible with your current colony version. You must upgrade your colony before installing it.`,
+  },
 });
 
 interface Props {
@@ -135,6 +144,20 @@ const ExtensionDetails = ({
   const match = useRouteMatch();
   const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
   const { walletAddress, username, ethereal } = useLoggedInUser();
+
+  const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
+
+  const handleUpgradeColony = useCallback(
+    () =>
+      openUpgradeVersionDialog({
+        colony,
+        isVotingExtensionEnabled,
+      }),
+    [colony, openUpgradeVersionDialog, isVotingExtensionEnabled],
+  );
 
   const { data, loading } = useColonyExtensionQuery({
     variables: { colonyAddress, extensionId },
@@ -183,6 +206,9 @@ const ExtensionDetails = ({
     hasRegisteredProfile &&
     !(extesionCanBeInstalled || extesionCanBeEnabled) &&
     latestNetworkExtensionVersion > extension.currentVersion;
+
+  // TEMP flag
+  const shouldShowWarning = false;
 
   let tableData;
 
@@ -238,6 +264,9 @@ const ExtensionDetails = ({
       {
         label: MSG.latestVersion,
         value: `v${extension.currentVersion}`,
+        icon: shouldShowWarning && (
+          <Icon name="triangle-warning" title={MSG.warning} />
+        ),
       },
       {
         label: MSG.developer,
@@ -263,11 +292,7 @@ const ExtensionDetails = ({
   const uninstallModalProps = {
     [Extension.VotingReputation]: {
       heading: ExtensionsMSG.headingVotingUninstall,
-      children: (
-        <div className={styles.warning}>
-          <FormattedMessage {...ExtensionsMSG.textVotingUninstall} />
-        </div>
-      ),
+      children: <Warning text={ExtensionsMSG.textVotingUninstall} />,
     },
     [Extension.OneTxPayment]: {
       heading: ExtensionsMSG.headingDefaultUninstall,
@@ -285,6 +310,14 @@ const ExtensionDetails = ({
         <BreadCrumb elements={breadCrumbs} />
         <hr className={styles.headerLine} />
         <div>
+          {shouldShowWarning && (
+            <Warning
+              text={MSG.warning}
+              buttonText={{ id: 'button.upgrade' }}
+              handleClick={handleUpgradeColony}
+              disabled={!canInstall}
+            />
+          )}
           <Switch>
             <Route
               exact
@@ -354,10 +387,11 @@ const ExtensionDetails = ({
           </div>
           <Table appearance={{ theme: 'lined' }}>
             <TableBody>
-              {tableData.map(({ label, value }) => (
+              {tableData.map(({ label, value, icon }) => (
                 <TableRow key={label.id}>
                   <TableCell className={styles.cellLabel}>
                     <FormattedMessage {...label} />
+                    {icon && <span className={styles.iconWrapper}>{icon}</span>}
                   </TableCell>
                   <TableCell className={styles.cellData}>{value}</TableCell>
                 </TableRow>
