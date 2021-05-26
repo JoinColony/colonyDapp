@@ -274,10 +274,10 @@ const StakingWidget = ({
                 )}
               </span>
             </div>
-            {hasRegisteredProfile && !enoughReputation && (
+            {!ethereal && !enoughReputation && (
               <StakingValidationError stakeType="reputation" />
             )}
-            {hasRegisteredProfile && !enoughTokens && (
+            {!ethereal && !enoughTokens && (
               <StakingValidationError stakeType="tokens" />
             )}
           </div>
