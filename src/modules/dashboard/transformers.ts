@@ -253,18 +253,19 @@ export const getActionsListData = (
             }
           }
           if (subgraphActionType === FilteredUnformattedAction.Motions) {
-            const {
-              args: {
-                token: { address: tokenAddress, symbol, decimals },
-              },
-              args,
-              agent,
-              type,
-              state,
-            } = unformattedAction;
-            formatedAction.tokenAddress = tokenAddress;
-            formatedAction.symbol = symbol;
-            formatedAction.decimals = decimals;
+            const { args, agent, type, state } = unformattedAction;
+
+            if (args.token) {
+              const {
+                args: {
+                  token: { address: tokenAddress, symbol, decimals },
+                },
+              } = unformattedAction;
+
+              formatedAction.tokenAddress = tokenAddress;
+              formatedAction.symbol = symbol;
+              formatedAction.decimals = decimals;
+            }
             formatedAction.initiator = agent;
             formatedAction.actionType = type;
             formatedAction.motionState = state;
