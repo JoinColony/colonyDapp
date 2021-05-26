@@ -979,6 +979,12 @@ export const motionsResolvers = ({
         };
       }
 
+      if (actionValues.name === 'editColony') {
+        return {
+          metadata: actionValues.args[0],
+        };
+      }
+
       const tokenAddress = colonyClient.tokenClient.address;
       const {
         symbol,
