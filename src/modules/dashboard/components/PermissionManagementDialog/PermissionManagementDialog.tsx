@@ -181,6 +181,7 @@ const PermissionManagementDialog = ({
     canEditPermissions,
     isVotingExtensionEnabled,
     isForce,
+    Number(selectedDomainId),
   );
 
   const inputDisabled = !userHasPermission || onlyForceAction;
