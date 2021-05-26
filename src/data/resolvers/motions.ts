@@ -920,11 +920,39 @@ export const motionsResolvers = ({
       const actionValues = colonyClient.interface.parseTransaction({
         data: action,
       });
+
+      if (!actionValues) {
+        const oneTxPaymentClient = await colonyManager.getClient(
+          ClientType.OneTxPaymentClient,
+          colonyAddress,
+        );
+
+        const paymentValues = oneTxPaymentClient.interface.parseTransaction({
+          data: action,
+        });
+
+        const tokenClient = await colonyManager.getTokenClient(
+          paymentValues.args[5][0],
+        );
+        const { symbol, decimals } = await tokenClient.getTokenInfo();
+
+        return {
+          amount: paymentValues.args[6][0].toString(),
+          recipient: paymentValues.args[4][0],
+          token: {
+            id: paymentValues.args[5][0],
+            symbol,
+            decimals,
+          },
+        };
+      }
+
       const tokenAddress = colonyClient.tokenClient.address;
       const {
         symbol,
         decimals,
       } = await colonyClient.tokenClient.getTokenInfo();
+
       /*
        * @TODO Return argumnents for the other motions as well, as soon
        * as they get wired into the dapp
