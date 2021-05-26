@@ -921,6 +921,7 @@ export const motionsResolvers = ({
         data: action,
       });
 
+      // PaymentMotion
       if (!actionValues) {
         const oneTxPaymentClient = await colonyManager.getClient(
           ClientType.OneTxPaymentClient,
@@ -941,6 +942,31 @@ export const motionsResolvers = ({
           recipient: paymentValues.args[4][0],
           token: {
             id: paymentValues.args[5][0],
+            symbol,
+            decimals,
+          },
+        };
+      }
+
+      if (actionValues.name === 'moveFundsBetweenPots') {
+        const fromDomain = await colonyClient.getDomainFromFundingPot(
+          actionValues.args[5],
+        );
+        const toDomain = await colonyClient.getDomainFromFundingPot(
+          actionValues.args[6],
+        );
+
+        const tokenClient = await colonyManager.getTokenClient(
+          actionValues.args[8],
+        );
+        const { symbol, decimals } = await tokenClient.getTokenInfo();
+
+        return {
+          amount: actionValues.args[7].toString(),
+          fromDomain: fromDomain.toNumber(),
+          toDomain: toDomain.toNumber(),
+          token: {
+            id: actionValues.args[8],
             symbol,
             decimals,
           },
