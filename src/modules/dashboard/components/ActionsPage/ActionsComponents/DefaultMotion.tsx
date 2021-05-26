@@ -2,6 +2,7 @@ import { bigNumberify } from 'ethers/utils';
 import React, { useMemo, useRef } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import Heading from '~core/Heading';
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
@@ -28,8 +29,9 @@ import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
+import { ActionButton } from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import { getFormattedTokenValue } from '~utils/tokens';
+import { getTokenDecimalsWithFallback, getFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
   MotionState,
@@ -38,6 +40,7 @@ import {
   shouldDisplayMotion,
 } from '~utils/colonyMotions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
+import { ActionTypes } from '~redux/index';
 
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
@@ -58,8 +61,16 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DefaultMotion.or',
     defaultMessage: `OR`,
   },
+  escalate: {
+    id: 'dashboard.ActionsPage.DefaultMotion.escalate',
+    defaultMessage: `Escalate`,
+  },
+  escalateTooltip: {
+    id: 'dashboard.ActionsPage.DefaultMotion.escalateTooltip',
+    defaultMessage: `[TO BE ADDED WHEN AVAILABLE]`,
+  },
   votingProgressBarTooltip: {
-    id: 'dashboard.ActionsPage.DefaultMotion.or',
+    id: 'dashboard.ActionsPage.DefaultMotion.votingProgressBarTooltip',
     defaultMessage: `Voting ends at the sooner of either time-out, or the reputation threshold being reached.`,
   },
 });
@@ -358,6 +369,27 @@ const DefaultMotion = ({
               />
             </>
           )}
+          {motionState === MotionState.Escalation &&
+            motionDomain !== ROOT_DOMAIN_ID && (
+              <div className={motionSpecificStyles.escalation}>
+                <ActionButton
+                  appearance={{ theme: 'blue', size: 'small' }}
+                  submit={ActionTypes.COLONY_ACTION_GENERIC}
+                  error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+                  success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+                  // transform={transform}
+                  text={MSG.escalate}
+                />
+                <QuestionMarkTooltip
+                  tooltipText={MSG.escalateTooltip}
+                  className={motionSpecificStyles.help}
+                  tooltipClassName={motionSpecificStyles.tooltip}
+                  tooltipPopperProps={{
+                    placement: 'right',
+                  }}
+                />
+              </div>
+            )}
         </div>
       </div>
       <hr className={styles.dividerTop} />

@@ -4,5 +4,6 @@ export const annotation: string;
 export const text: string;
 export const progressBarContainer: string;
 export const voteResultsWrapper: string;
+export const escalation: string;
 export const help: string;
 export const tooltip: string;
