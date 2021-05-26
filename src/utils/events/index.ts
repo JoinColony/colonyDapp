@@ -668,7 +668,7 @@ const getCreateDomainMotionValues = async (
 
       domainName = domainMetadata.domainName;
       domainColor = domainMetadata.domainColor;
-      domainPurpose = domainMetadata.domainPurpose;
+      domainPurpose = domainMetadata.domainPurpose || null;
     }
   } catch (error) {
     log.verbose(
@@ -769,7 +769,7 @@ const getEditDomainMotionValues = async (
 
       domainName = domainMetadata.domainName;
       domainColor = domainMetadata.domainColor;
-      domainPurpose = domainMetadata.domainPurpose;
+      domainPurpose = domainMetadata.domainPurpose || null;
     }
   } catch (error) {
     log.verbose(
