@@ -71,6 +71,7 @@ export interface FormValues {
   roles: string[];
   annotation: string;
   forceAction: boolean;
+  motionDomainId: string;
 }
 
 type Props = DialogProps &

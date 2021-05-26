@@ -193,11 +193,6 @@ const PermissionManagementForm = ({
     };
   });
 
-  // const handleDomainChange = useCallback(
-  //   (value: string) => onDomainSelected(Number(value)),
-  //   [onDomainSelected],
-  // );
-
   const handleDomainChange = useCallback(
     (domainValue: string) => {
       const fromDomainId = parseInt(domainValue, 10);
@@ -208,7 +203,7 @@ const PermissionManagementForm = ({
       onDomainSelected(ROOT_DOMAIN_ID);
       return setFieldValue('motionDomainId', ROOT_DOMAIN_ID);
     },
-    [domainId, setFieldValue, onDomainSelected],
+    [domainId, onDomainSelected, setFieldValue],
   );
 
   const handleFilterMotionDomains = useCallback(
