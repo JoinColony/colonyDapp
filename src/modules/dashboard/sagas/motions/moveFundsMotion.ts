@@ -1,5 +1,9 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType, getMoveFundsPermissionProofs } from '@colony/colony-js';
+import {
+  ClientType,
+  ColonyVersion,
+  getMoveFundsPermissionProofs,
+} from '@colony/colony-js';
 import { AddressZero, MaxUint256 } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -98,7 +102,8 @@ function* moveFundsMotion({
       'annotateMoveFundsMotion',
     ]);
 
-    const isOldVersion = parseInt(version, 10) <= 6;
+    const isOldVersion =
+      parseInt(version, 10) <= ColonyVersion.CeruleanLightweightSpaceship;
     const encodedAction = colonyClient.interface.functions[
       isOldVersion
         ? // eslint-disable-next-line max-len
