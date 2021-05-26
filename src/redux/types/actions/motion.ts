@@ -224,4 +224,18 @@ export type MotionActionTypes =
   | UniqueActionTypeWithoutPayload<
       ActionTypes.COLONY_MOTION_STATE_UPDATE_SUCCESS,
       object
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_MOTION_ESCALATE,
+      {
+        userAddress: Address;
+        colonyAddress: Address;
+        motionId: BigNumber;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_ESCALATE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_ESCALATE_SUCCESS,
+      MetaWithHistory<object>
     >;

@@ -1,5 +1,5 @@
+import React, { useMemo, useRef, useCallback } from 'react';
 import { bigNumberify } from 'ethers/utils';
-import React, { useMemo, useRef } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -40,6 +40,7 @@ import {
   shouldDisplayMotion,
 } from '~utils/colonyMotions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
+import { mapPayload } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 
 import DetailsWidget from '../DetailsWidget';
@@ -87,7 +88,7 @@ interface Props {
 }
 
 const DefaultMotion = ({
-  colony: { domains },
+  colony: { domains, colonyAddress },
   colony,
   colonyAction: {
     events = [],
@@ -151,6 +152,7 @@ const DefaultMotion = ({
     walletAddress,
     ethereal,
   } = useLoggedInUser();
+  const userHasProfile = currentUserName && !ethereal;
 
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
@@ -179,6 +181,15 @@ const DefaultMotion = ({
     },
     fetchPolicy: 'network-only',
   });
+
+  const escalateTransform = useCallback(
+    mapPayload(() => ({
+      colonyAddress,
+      motionId,
+      userAddress: walletAddress,
+    })),
+    [],
+  );
 
   const requiredStake = bigNumberify(
     motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
@@ -370,14 +381,15 @@ const DefaultMotion = ({
             </>
           )}
           {motionState === MotionState.Escalation &&
-            motionDomain !== ROOT_DOMAIN_ID && (
+            motionDomain !== ROOT_DOMAIN_ID &&
+            userHasProfile && (
               <div className={motionSpecificStyles.escalation}>
                 <ActionButton
                   appearance={{ theme: 'blue', size: 'small' }}
-                  submit={ActionTypes.COLONY_ACTION_GENERIC}
-                  error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
-                  success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-                  // transform={transform}
+                  submit={ActionTypes.COLONY_MOTION_ESCALATE}
+                  error={ActionTypes.COLONY_MOTION_ESCALATE_ERROR}
+                  success={ActionTypes.COLONY_MOTION_ESCALATE_SUCCESS}
+                  transform={escalateTransform}
                   text={MSG.escalate}
                 />
                 <QuestionMarkTooltip
@@ -440,7 +452,7 @@ const DefaultMotion = ({
             rootHash={rootHash || undefined}
           />
 
-          {currentUserName && !ethereal && (
+          {userHasProfile && (
             <div ref={bottomElementRef}>
               <ActionsPageComment
                 transactionHash={transactionHash}
