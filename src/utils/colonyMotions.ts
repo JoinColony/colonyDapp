@@ -119,7 +119,8 @@ export const getMotionRequiredStake = (
 ): BigNumber => {
   const requiredStake = skillRep
     .mul(totalStakeFraction)
-    .div(bigNumberify(10).pow(decimals));
+    .div(bigNumberify(10).pow(decimals))
+    .add(1);
 
   return requiredStake;
 };

@@ -174,7 +174,8 @@ export const motionsResolvers = ({
         const [totalNAYStakes, totalYAYStaked] = stakes;
         const requiredStake = skillRep
           .mul(totalStakeFraction)
-          .div(bigNumberify(10).pow(tokenDecimals));
+          .div(bigNumberify(10).pow(tokenDecimals))
+          .add(1);
         const remainingToFullyYayStaked = requiredStake.sub(totalYAYStaked);
         const remainingToFullyNayStaked = requiredStake.sub(totalNAYStakes);
         const userMinStakeAmount = skillRep
