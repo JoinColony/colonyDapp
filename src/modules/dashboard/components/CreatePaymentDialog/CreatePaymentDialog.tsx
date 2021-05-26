@@ -90,6 +90,7 @@ const CreatePaymentDialog = ({
       .moreThan(0, () => MSG.amountZero),
     tokenAddress: yup.string().address().required(),
     annotation: yup.string().max(4000),
+    forceAction: yup.boolean(),
     motionDomainId: yup.number(),
   });
 

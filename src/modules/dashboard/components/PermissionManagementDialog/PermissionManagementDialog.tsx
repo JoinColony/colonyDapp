@@ -41,10 +41,19 @@ import styles from './PermissionManagementDialog.css';
 
 const validationSchema = yup.object().shape({
   domainId: yup.number().required(),
-  user: yup.object().required(),
+  user: yup
+    .object()
+    .shape({
+      profile: yup.object().shape({
+        walletAddress: yup.string().address().required(),
+      }),
+    })
+    .nullable()
+    .default(null),
   roles: yup.array().ensure(),
   annotation: yup.string().max(4000),
   forceAction: yup.boolean(),
+  motionDomainId: yup.number(),
 });
 
 const displayName = 'dashboard.PermissionManagementDialog';
@@ -56,7 +65,7 @@ const MSG = defineMessages({
   },
 });
 
-interface FormValues {
+export interface FormValues {
   domainId: string;
   user: Address;
   roles: string[];
@@ -133,18 +142,21 @@ const PermissionManagementDialog = ({
   const transform = useCallback(
     pipe(
       withKey(colonyAddress),
-      mapPayload(({ roles, user, domainId, annotationMessage }) => ({
-        domainId,
-        userAddress: user.profile.walletAddress,
-        roles: availableRoles.reduce(
-          (acc, role) => ({
-            ...acc,
-            [role]: roles.includes(role),
-          }),
-          {},
-        ),
-        annotationMessage,
-      })),
+      mapPayload(
+        ({ roles, user, domainId, annotationMessage, motionDomainId }) => ({
+          domainId,
+          userAddress: user.profile.walletAddress,
+          roles: availableRoles.reduce(
+            (acc, role) => ({
+              ...acc,
+              [role]: roles.includes(role),
+            }),
+            {},
+          ),
+          annotationMessage,
+          motionDomainId,
+        }),
+      ),
       mergePayload({
         colonyAddress,
         colonyName,
@@ -185,6 +197,7 @@ const PermissionManagementDialog = ({
             domainId: selectedDomainId.toString(),
             roles: [...new Set([...userDirectRoles, ...userInheritedRoles])],
             annotationMessage: undefined,
+            motionDomainId: ROOT_DOMAIN_ID,
           }}
           validationSchema={validationSchema}
           onSuccess={close}

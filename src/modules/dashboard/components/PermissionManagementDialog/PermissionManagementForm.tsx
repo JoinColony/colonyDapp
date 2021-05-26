@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import sortBy from 'lodash/sortBy';
+import { FormikProps } from 'formik';
 
 import { InputLabel, Select, Annotations } from '~core/Fields';
 import { DialogSection } from '~core/Dialog';
@@ -17,7 +18,9 @@ import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRolesForDomain } from '../../../transformers';
 import { availableRoles } from './constants';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
+import { FormValues } from './PermissionManagementDialog';
 import PermissionManagementCheckbox from './PermissionManagementCheckbox';
 
 import styles from './PermissionManagementDialog.css';
@@ -81,7 +84,9 @@ const PermissionManagementForm = ({
   isVotingExtensionEnabled,
   onDomainSelected,
   onChangeSelectedUser,
-}: Props) => {
+  values,
+  setFieldValue,
+}: Props & FormikProps<FormValues>) => {
   const { data: colonySubscribedUsers } = useColonySubscribedUsersQuery({
     variables: {
       colonyAddress,
@@ -102,6 +107,7 @@ const PermissionManagementForm = ({
     (domainId === ROOT_DOMAIN_ID &&
       currentUserRolesInRoot.includes(ColonyRole.Root)) ||
     currentUserRolesInRoot.includes(ColonyRole.Architecture);
+  const requiredRoles: ColonyRole[] = [ColonyRole.Architecture];
 
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(
@@ -187,9 +193,38 @@ const PermissionManagementForm = ({
     };
   });
 
+  // const handleDomainChange = useCallback(
+  //   (value: string) => onDomainSelected(Number(value)),
+  //   [onDomainSelected],
+  // );
+
   const handleDomainChange = useCallback(
-    (value: string) => onDomainSelected(Number(value)),
-    [onDomainSelected],
+    (domainValue: string) => {
+      const fromDomainId = parseInt(domainValue, 10);
+      if (fromDomainId !== ROOT_DOMAIN_ID && fromDomainId !== domainId) {
+        onDomainSelected(fromDomainId);
+        return setFieldValue('motionDomainId', fromDomainId);
+      }
+      onDomainSelected(ROOT_DOMAIN_ID);
+      return setFieldValue('motionDomainId', ROOT_DOMAIN_ID);
+    },
+    [domainId, setFieldValue, onDomainSelected],
+  );
+
+  const handleFilterMotionDomains = useCallback(
+    (optionDomain) => {
+      const optionDomainId = parseInt(optionDomain.value, 10);
+      if (domainId === ROOT_DOMAIN_ID) {
+        return optionDomainId === ROOT_DOMAIN_ID;
+      }
+      return optionDomainId === domainId || optionDomainId === ROOT_DOMAIN_ID;
+    },
+    [domainId],
+  );
+
+  const handleMotionDomainChange = useCallback(
+    (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
+    [setFieldValue],
   );
 
   const filteredRoles = useMemo(
@@ -202,23 +237,35 @@ const PermissionManagementForm = ({
     [domainId],
   );
 
-  const requiredRoles: ColonyRole[] = [ColonyRole.Architecture];
-
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{
-            size: 'medium',
-            margin: 'none',
-            theme: 'dark',
-          }}
-          text={MSG.title}
-          textValues={{ domain: domain?.name }}
-        />
-        {canEditPermissions && isVotingExtensionEnabled && (
-          <Toggle label={{ id: 'label.force' }} name="forceAction" />
-        )}
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                onDomainChange={handleMotionDomainChange}
+                disabled={values.forceAction}
+                /*
+                 * @NOTE We can only create a motion to vote in a subdomain if we
+                 * create a payment from that subdomain
+                 */
+                filterDomains={handleFilterMotionDomains}
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+              textValues={{ domain: domain?.name }}
+            />
+            {canEditPermissions && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
+        </div>
       </DialogSection>
       {!userHasPermission && (
         <DialogSection>
