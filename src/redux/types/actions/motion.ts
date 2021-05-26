@@ -202,6 +202,7 @@ export type MotionActionTypes =
         userAddress: Address;
         roles: Record<ColonyRole, boolean>;
         annotationMessage?: string;
+        motionDomainId: string;
       },
       MetaWithHistory<object>
     >

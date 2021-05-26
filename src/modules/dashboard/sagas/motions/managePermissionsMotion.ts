@@ -31,6 +31,7 @@ function* managePermissionsMotion({
     roles,
     colonyName,
     annotationMessage,
+    motionDomainId,
   },
   meta: { id: metaId, history },
   meta,
@@ -116,7 +117,7 @@ function* managePermissionsMotion({
       methodName: 'createMotion',
       identifier: colonyAddress,
       params: [
-        domainId,
+        motionDomainId,
         childSkillIndex,
         AddressZero,
         encodedAction,
