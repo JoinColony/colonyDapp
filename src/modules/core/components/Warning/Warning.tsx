@@ -38,7 +38,7 @@ const Warning = ({
 
   return (
     <div className={styles.warning}>
-      {warningText}
+      <div className={styles.content}>{warningText}</div>
       {buttonText && handleClick && (
         <Button
           appearance={{ theme: 'primary', size: 'medium' }}
