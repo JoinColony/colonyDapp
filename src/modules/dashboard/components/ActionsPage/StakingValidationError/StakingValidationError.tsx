@@ -4,7 +4,11 @@ import { defineMessage, FormattedMessage } from 'react-intl';
 import styles from './StakingValidationError.css';
 
 interface Props {
-  stakeType: 'tokens' | 'reputation' | 'stakeMore';
+  stakeType:
+    | 'tokens'
+    | 'reputation'
+    | 'stakeMoreTokens'
+    | 'stakeMoreReputation';
 }
 
 const stakeValidationMSG = defineMessage({
@@ -16,9 +20,13 @@ const stakeValidationMSG = defineMessage({
     id: 'dashboard.ActionsPage.StakingValidationError.reputation',
     defaultMessage: 'You do not have enough reputation to be able to stake.',
   },
-  stakeMore: {
+  stakeMoreTokens: {
     id: 'dashboard.ActionsPage.StakingValidationError.stakeMore',
     defaultMessage: 'You do not have enough active tokens to stake more.',
+  },
+  stakeMoreReputation: {
+    id: 'dashboard.ActionsPage.StakingValidationError.stakeMore',
+    defaultMessage: 'You do not have enough reputation to stake more.',
   },
 });
 
