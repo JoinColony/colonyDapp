@@ -973,6 +973,12 @@ export const motionsResolvers = ({
         };
       }
 
+      if (actionValues.name === 'addDomain') {
+        return {
+          metadata: actionValues.args[3],
+        };
+      }
+
       const tokenAddress = colonyClient.tokenClient.address;
       const {
         symbol,
