@@ -101,7 +101,13 @@ const DefaultMotion = ({
   initiator,
 }: Props) => {
   const bottomElementRef = useRef<HTMLInputElement>(null);
-  const { passedTag, failedTag, objectionTag, ...tags } = useMemo(() => {
+  const {
+    passedTag,
+    failedTag,
+    objectionTag,
+    escalateTag,
+    ...tags
+  } = useMemo(() => {
     return Object.values(MOTION_TAG_MAP).reduce((acc, object) => {
       const { theme, colorSchema } = object as TagAppearance;
       acc[object.tagName] = (
@@ -265,6 +271,9 @@ const DefaultMotion = ({
     objectionTag: (
       <span className={motionSpecificStyles.tagWrapper}>{objectionTag}</span>
     ),
+    escalateTag: (
+      <span className={motionSpecificStyles.tagWrapper}>{escalateTag}</span>
+    ),
     ...tags,
     voteResultsWidget: (
       <div className={motionSpecificStyles.voteResultsWrapper}>
@@ -276,6 +285,7 @@ const DefaultMotion = ({
         <VoteResults colony={colony} motionId={motionId} />
       </div>
     ),
+    spaceBreak: <br />,
   };
 
   const motionState = motionStatusData?.motionStatus;
