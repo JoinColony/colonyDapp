@@ -12,10 +12,7 @@ import {
   useLoggedInUser,
   useMotionVoterRewardQuery,
 } from '~data/index';
-import {
-  getFormattedTokenValue,
-  getTokenDecimalsWithFallback,
-} from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 import { MotionState } from '~utils/colonyMotions';
 
 import styles from './VoteWidget.css';
@@ -184,7 +181,7 @@ const VoteDetails = ({
                       <Numeral
                         value={getFormattedTokenValue(
                           voterReward.motionVoterReward.minReward,
-                          getTokenDecimalsWithFallback(nativeToken?.decimals),
+                          nativeToken?.decimals,
                         )}
                         appearance={{ theme: 'dark', size: 'small' }}
                       />
@@ -192,7 +189,7 @@ const VoteDetails = ({
                       <Numeral
                         value={getFormattedTokenValue(
                           voterReward.motionVoterReward.maxReward,
-                          getTokenDecimalsWithFallback(nativeToken?.decimals),
+                          nativeToken?.decimals,
                         )}
                         appearance={{ theme: 'dark', size: 'small' }}
                         suffix={` ${nativeToken?.symbol}`}
@@ -209,7 +206,7 @@ const VoteDetails = ({
                       <Numeral
                         value={getFormattedTokenValue(
                           voterReward.motionVoterReward.reward,
-                          getTokenDecimalsWithFallback(nativeToken?.decimals),
+                          nativeToken?.decimals,
                         )}
                         suffix={` ${nativeToken?.symbol}`}
                         appearance={{ theme: 'dark', size: 'small' }}

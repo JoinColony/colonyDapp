@@ -29,10 +29,7 @@ import {
   getColonyRoleSetMessageDescriptorsIds,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
-import {
-  getFormattedTokenValue,
-  getTokenDecimalsWithFallback,
-} from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 import { MotionVote } from '~utils/colonyMotions';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
@@ -318,7 +315,7 @@ const ActionsPageEvent = ({
   );
   const decimalStakeAmount = getFormattedTokenValue(
     values?.stakeAmount || 0,
-    getTokenDecimalsWithFallback(colonyNativeToken?.decimals),
+    colonyNativeToken?.decimals,
   );
   return (
     <div className={styles.main}>

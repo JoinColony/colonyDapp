@@ -117,10 +117,7 @@ const DefaultAction = ({
     },
   });
 
-  const decimalAmount = getFormattedTokenValue(
-    amount,
-    getTokenDecimalsWithFallback(decimals),
-  );
+  const decimalAmount = getFormattedTokenValue(amount, decimals);
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *

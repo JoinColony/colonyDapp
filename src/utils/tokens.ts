@@ -50,10 +50,11 @@ export const getTokenDecimalsWithFallback = (
 
 export const getFormattedTokenValue = (
   value: BigNumberish,
-  decimals: number,
+  decimals: any,
 ): string => {
+  const tokenDecimals = getTokenDecimalsWithFallback(decimals);
   const safeDecimals = bigNumberify(10)
-    .pow(getTokenDecimalsWithFallback(decimals))
+    .pow(getTokenDecimalsWithFallback(tokenDecimals))
     .toString();
   return new Decimal(bigNumberify(value).toString())
     .div(safeDecimals)
