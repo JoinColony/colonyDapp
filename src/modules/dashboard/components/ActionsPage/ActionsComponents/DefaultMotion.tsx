@@ -489,6 +489,7 @@ const DefaultMotion = ({
           )}
           {(motionState === MotionState.Failed ||
             motionState === MotionState.Passed ||
+            motionState === MotionState.Escalation ||
             motionState === MotionState.FailedNoFinalizable) && (
             <FinalizeMotionAndClaimWidget
               colony={colony}
