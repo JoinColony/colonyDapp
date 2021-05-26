@@ -979,6 +979,12 @@ export const motionsResolvers = ({
         };
       }
 
+      if (actionValues.name === 'editDomain') {
+        return {
+          fromDomain: parseInt(actionValues.args[2].toString(), 10),
+        };
+      }
+
       if (actionValues.name === 'editColony') {
         return {
           metadata: actionValues.args[0],
