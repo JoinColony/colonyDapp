@@ -187,8 +187,8 @@ const DefaultMotion = ({
     fetchPolicy: 'network-only',
   });
 
-  const threashold = bigNumberify(
-    votingStateData?.votingState?.threasholdValue || 0,
+  const threshold = bigNumberify(
+    votingStateData?.votingState?.thresholdValue || 0,
   )
     .div(bigNumberify(10).pow(18))
     .toNumber();
@@ -208,7 +208,7 @@ const DefaultMotion = ({
     (totalVotedReputationValue > 0 &&
       Math.round((totalVotedReputationValue / skillRepValue) * 100)) ||
     0;
-  const threasholdPercent = Math.round((threashold / skillRepValue) * 100);
+  const thresholdPercent = Math.round((threshold / skillRepValue) * 100);
   const domainMetadata = {
     name: domainName,
     color: domainColor,
@@ -320,7 +320,7 @@ const DefaultMotion = ({
               <div className={motionSpecificStyles.progressBarContainer}>
                 <ProgressBar
                   value={currentReputationPercent}
-                  threshold={threasholdPercent}
+                  threshold={thresholdPercent}
                   max={100}
                   appearance={{
                     size: 'small',

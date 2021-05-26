@@ -931,7 +931,7 @@ export type MotionObjectionAnnotation = {
 };
 
 export type VotingState = {
-  threasholdValue: Scalars['String'];
+  thresholdValue: Scalars['String'];
   totalVotedReputation: Scalars['String'];
   skillRep: Scalars['String'];
 };
@@ -1663,7 +1663,7 @@ export type VotingStateQueryVariables = Exact<{
 }>;
 
 
-export type VotingStateQuery = { votingState: Pick<VotingState, 'threasholdValue' | 'totalVotedReputation' | 'skillRep'> };
+export type VotingStateQuery = { votingState: Pick<VotingState, 'thresholdValue' | 'totalVotedReputation' | 'skillRep'> };
 
 export type MotionCurrentUserVotedQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -3992,7 +3992,7 @@ export type MotionVoteResultsQueryResult = Apollo.QueryResult<MotionVoteResultsQ
 export const VotingStateDocument = gql`
     query VotingState($colonyAddress: String!, $motionId: Int!) {
   votingState(colonyAddress: $colonyAddress, motionId: $motionId) @client {
-    threasholdValue
+    thresholdValue
     totalVotedReputation
     skillRep
   }

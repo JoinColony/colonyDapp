@@ -426,7 +426,7 @@ query MotionVoteResults($motionId: Int!, $colonyAddress: String!, $userAddress: 
 
 query VotingState($colonyAddress: String!, $motionId: Int!) {
   votingState(colonyAddress: $colonyAddress, motionId: $motionId, ) @client {
-    threasholdValue
+    thresholdValue
     totalVotedReputation
     skillRep
   }

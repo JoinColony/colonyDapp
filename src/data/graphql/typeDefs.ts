@@ -252,7 +252,7 @@ export default gql`
   }
 
   type VotingState {
-    threasholdValue: String!
+    thresholdValue: String!
     totalVotedReputation: String!
     skillRep: String!
   }

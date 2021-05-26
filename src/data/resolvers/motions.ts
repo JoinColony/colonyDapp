@@ -615,14 +615,14 @@ export const motionsResolvers = ({
         // eslint-disable-next-line max-len
         const maxVoteFraction = await votingReputationClient.getMaxVoteFraction();
 
-        const threasholdValue = getMotionRequiredStake(
+        const thresholdValue = getMotionRequiredStake(
           skillRep,
           maxVoteFraction,
           18,
         );
 
         return {
-          threasholdValue: threasholdValue.toString(),
+          thresholdValue: thresholdValue.toString(),
           totalVotedReputation: repSubmitted.toString(),
           skillRep: skillRep.toString(),
         };
