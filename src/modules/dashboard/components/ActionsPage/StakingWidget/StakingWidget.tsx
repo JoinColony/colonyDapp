@@ -274,10 +274,12 @@ const StakingWidget = ({
                 )}
               </span>
             </div>
-            {!enoughReputation && (
+            {hasRegisteredProfile && !enoughReputation && (
               <StakingValidationError stakeType="reputation" />
             )}
-            {!enoughTokens && <StakingValidationError stakeType="tokens" />}
+            {hasRegisteredProfile && !enoughTokens && (
+              <StakingValidationError stakeType="tokens" />
+            )}
           </div>
         )}
       </ActionForm>
