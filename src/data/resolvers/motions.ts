@@ -1011,16 +1011,13 @@ export const motionsResolvers = ({
         };
       }
 
+      // MintTokenMotion - default
       const tokenAddress = colonyClient.tokenClient.address;
       const {
         symbol,
         decimals,
       } = await colonyClient.tokenClient.getTokenInfo();
 
-      /*
-       * @TODO Return argumnents for the other motions as well, as soon
-       * as they get wired into the dapp
-       */
       return {
         amount: bigNumberify(actionValues?.args[0] || '0').toString(),
         token: {
