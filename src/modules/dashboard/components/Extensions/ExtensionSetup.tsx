@@ -155,7 +155,16 @@ const ExtensionSetup = ({
                   label={title}
                   name={paramName}
                 />
-                <FormattedMessage {...description} />
+                <FormattedMessage
+                  {...description}
+                  values={{
+                    span: (chunks) => (
+                      <span className={styles.descriptionExample}>
+                        {chunks}
+                      </span>
+                    ),
+                  }}
+                />
                 {extensionId === Extension.VotingReputation && (
                   <span className={styles.complementaryLabel}>
                     <FormattedMessage
