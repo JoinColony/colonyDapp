@@ -29,7 +29,7 @@ const MSG = defineMessages({
   },
   description: {
     id: 'dashboard.Extensions.ExtensionSetup.description',
-    defaultMessage: `Enabling this extension requires additional parameters. These parameters can not be changed after enabling it. To do that you have to uninstall the extension, install and enable it again with new parameters.`,
+    defaultMessage: `Enabling this extension requires additional parameters. These parameters cannot be changed after enabling it. To do so, you must uninstall the extension, and then install and enable it again with new parameters.`,
   },
   descriptionMissingPermissions: {
     id: 'dashboard.Extensions.ExtensionSetup.descriptionMissingPermissions',
