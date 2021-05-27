@@ -1,7 +1,6 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
 import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
@@ -22,7 +21,10 @@ import {
 } from '~data/index';
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  getFormattedTokenValue,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
@@ -115,6 +117,7 @@ const DefaultAction = ({
     },
   });
 
+  const decimalAmount = getFormattedTokenValue(amount, decimals);
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *
@@ -133,9 +136,7 @@ const DefaultAction = ({
         <FriendlyName user={recipient} autoShrinkAddress colony={colony} />
       </span>
     ),
-    amount: (
-      <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
-    ),
+    amount: decimalAmount,
     tokenSymbol: <span>{symbol || '???'}</span>,
     decimals: getTokenDecimalsWithFallback(decimals),
     fromDomain:

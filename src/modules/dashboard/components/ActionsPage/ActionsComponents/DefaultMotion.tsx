@@ -3,7 +3,6 @@ import React, { useMemo, useRef } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { isNil } from 'lodash';
 
-import Numeral from '~core/Numeral';
 import Heading from '~core/Heading';
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
@@ -30,7 +29,7 @@ import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 import {
   MotionState,
   MotionValue,
@@ -219,6 +218,7 @@ const DefaultMotion = ({
     color: domainColor,
     description: domainPurpose,
   };
+  const decimalAmount = getFormattedTokenValue(amount, decimals);
   const actionAndEventValues = {
     actionType,
     fromDomain:
@@ -235,9 +235,7 @@ const DefaultMotion = ({
         <FriendlyName user={recipient} autoShrinkAddress colony={colony} />
       </span>
     ),
-    amount: (
-      <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
-    ),
+    amount: decimalAmount,
     tokenSymbol: <span>{symbol || '???'}</span>,
     initiator: (
       <>
