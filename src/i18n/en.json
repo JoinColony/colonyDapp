@@ -149,10 +149,10 @@
     "transaction.ColonyClient.moveFundsBetweenPotsWithProofs.title": "Move Funds Between Pots",
     "transaction.ColonyClient.moveFundsBetweenPotsWithProofs.description": "Move Token from one team pot to another",
 
-    "transaction.group.setUserRoles.title": "Set user roles",
-    "transaction.group.setUserRoles.description": "Set user roles",
-    "transaction.ColonyClient.setUserRolesWithProofs.title": "Set user roles",
-    "transaction.ColonyClient.setUserRolesWithProofs.description": "Set user roles",
+    "transaction.group.setUserRoles.title": "Assign permissions",
+    "transaction.group.setUserRoles.description": "Assign permissions",
+    "transaction.ColonyClient.setUserRolesWithProofs.title": "Assign permissions",
+    "transaction.ColonyClient.setUserRolesWithProofs.description": "Assign permissions",
 
     "transaction.group.enableExtension.title": "Enable Colony Extension",
     "transaction.group.enableExtension.description": "Enable Colony Extension",
