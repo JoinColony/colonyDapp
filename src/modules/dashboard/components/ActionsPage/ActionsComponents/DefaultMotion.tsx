@@ -68,7 +68,7 @@ const MSG = defineMessages({
   },
   escalateTooltip: {
     id: 'dashboard.ActionsPage.DefaultMotion.escalateTooltip',
-    defaultMessage: `[TO BE ADDED WHEN AVAILABLE]`,
+    defaultMessage: `Motion escalation will be released in a future update`,
   },
   votingProgressBarTooltip: {
     id: 'dashboard.ActionsPage.DefaultMotion.votingProgressBarTooltip',
@@ -391,6 +391,13 @@ const DefaultMotion = ({
                   success={ActionTypes.COLONY_MOTION_ESCALATE_SUCCESS}
                   transform={escalateTransform}
                   text={MSG.escalate}
+                  /*
+                   * @NOTE For the current release the "escalate" functionality
+                   * has been disabled due to difficulties in implementing
+                   * the events, **after** the motion has been escalated, due
+                   * to the `motion.events` array values being reset
+                   */
+                  disabled
                 />
                 <QuestionMarkTooltip
                   tooltipText={MSG.escalateTooltip}
