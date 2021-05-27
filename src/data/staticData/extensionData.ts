@@ -316,6 +316,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'totalStakeFraction',
         validation: yup
           .number()
+          .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(50, () => MSG.votingReputationLessThan50Error),
         defaultValue: 5,
@@ -326,6 +327,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'voterRewardFraction',
         validation: yup
           .number()
+          .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(50, () => MSG.votingReputationLessThan50Error),
         defaultValue: 20,
@@ -336,6 +338,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'userMinStakeFraction',
         validation: yup
           .number()
+          .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(100, () => MSG.votingReputationLessThan100Error),
         defaultValue: 10,
@@ -346,6 +349,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'maxVoteFraction',
         validation: yup
           .number()
+          .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(100, () => MSG.votingReputationLessThan100Error),
         defaultValue: 70,
@@ -356,6 +360,8 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'stakePeriod',
         validation: yup
           .number()
+          .integer()
+          .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
         defaultValue: 72, // 3 days in hours
@@ -366,6 +372,8 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'submitPeriod',
         validation: yup
           .number()
+          .integer()
+          .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
         defaultValue: 72, // 3 days in hours
@@ -376,6 +384,8 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'revealPeriod',
         validation: yup
           .number()
+          .integer()
+          .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
         defaultValue: 72, // 3 days in hours
@@ -386,6 +396,8 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'escalationPeriod',
         validation: yup
           .number()
+          .integer()
+          .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
         defaultValue: 72, // 3 days in hours
