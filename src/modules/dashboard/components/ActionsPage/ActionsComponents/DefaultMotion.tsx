@@ -31,7 +31,7 @@ import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
 import { ActionButton } from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import { getTokenDecimalsWithFallback, getFormattedTokenValue } from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
   MotionState,
