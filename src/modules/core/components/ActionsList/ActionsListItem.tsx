@@ -21,7 +21,11 @@ import { FormattedAction, ColonyActions, ColonyMotions } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
 import { parseDomainMetadata } from '~utils/colonyActions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
-import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
+import {
+  getUpdatedDecodedMotionRoles,
+  MotionState,
+  MOTION_TAG_MAP,
+} from '~utils/colonyMotions';
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 import { ClickHandlerProps } from './ActionsList';
@@ -105,8 +109,14 @@ const ActionsListItem = ({
     ({ ethDomainId }) => ethDomainId === parseInt(toDomainId, 10),
   );
 
+  const updatedRoles = getUpdatedDecodedMotionRoles(
+    colony,
+    fallbackRecipientProfile,
+    parseInt(fromDomainId, 10),
+    roles || [],
+  );
   const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
-    roles,
+    actionType === ColonyMotions.SetUserRolesMotion ? updatedRoles : roles,
     actionType,
   );
 

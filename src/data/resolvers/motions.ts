@@ -8,7 +8,7 @@ import {
   getEvents,
   getMultipleEvents,
 } from '@colony/colony-js';
-import { bigNumberify, LogDescription } from 'ethers/utils';
+import { bigNumberify, LogDescription, hexStripZeros } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
 
 import { Context } from '~context/index';
@@ -31,6 +31,7 @@ import {
   SystemMessage,
   SystemMessagesName,
 } from '~dashboard/ActionsPageFeed';
+import { availableRoles } from '~dashboard/PermissionManagementDialog';
 
 import { ProcessedEvent } from './colonyActions';
 
@@ -988,6 +989,25 @@ export const motionsResolvers = ({
       if (actionValues.name === 'editColony') {
         return {
           metadata: actionValues.args[0],
+        };
+      }
+
+      if (actionValues.name === 'setUserRoles') {
+        const roleBitMask = parseInt(
+          hexStripZeros(actionValues.args[4]),
+          16,
+        ).toString(2);
+        const roleBitMaskArray = roleBitMask.split('').reverse();
+
+        const roles = availableRoles.map((role) => ({
+          id: role,
+          setTo: roleBitMaskArray[role] === '1',
+        }));
+
+        return {
+          recipient: actionValues.args[2],
+          fromDomain: bigNumberify(actionValues.args[3]).toNumber(),
+          roles,
         };
       }
 
