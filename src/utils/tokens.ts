@@ -52,9 +52,8 @@ export const getFormattedTokenValue = (
   value: BigNumberish,
   decimals: any,
 ): string => {
-  const tokenDecimals = getTokenDecimalsWithFallback(decimals);
   const safeDecimals = bigNumberify(10)
-    .pow(getTokenDecimalsWithFallback(tokenDecimals))
+    .pow(getTokenDecimalsWithFallback(decimals))
     .toString();
   return new Decimal(bigNumberify(value).toString())
     .div(safeDecimals)
