@@ -143,7 +143,15 @@ const StakingSlider = ({
           exceedLimit={exceedLimit}
         />
       </div>
-      {showError && <StakingValidationError stakeType="stakeMore" />}
+      {showError && (
+        <StakingValidationError
+          stakeType={
+            remainingToStake.lte(minUserStake)
+              ? 'cantStakeMore'
+              : 'stakeMoreTokens'
+          }
+        />
+      )}
     </>
   );
 };

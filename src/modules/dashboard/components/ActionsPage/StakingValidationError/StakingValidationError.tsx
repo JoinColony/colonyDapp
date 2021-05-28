@@ -4,7 +4,7 @@ import { defineMessage, FormattedMessage } from 'react-intl';
 import styles from './StakingValidationError.css';
 
 interface Props {
-  stakeType: 'tokens' | 'reputation' | 'stakeMore';
+  stakeType: 'tokens' | 'reputation' | 'stakeMoreTokens' | 'cantStakeMore';
 }
 
 const stakeValidationMSG = defineMessage({
@@ -16,9 +16,13 @@ const stakeValidationMSG = defineMessage({
     id: 'dashboard.ActionsPage.StakingValidationError.reputation',
     defaultMessage: 'You do not have enough reputation to be able to stake.',
   },
-  stakeMore: {
+  stakeMoreTokens: {
     id: 'dashboard.ActionsPage.StakingValidationError.stakeMore',
     defaultMessage: 'You do not have enough active tokens to stake more.',
+  },
+  cantStakeMore: {
+    id: 'dashboard.ActionsPage.StakingValidationError.stakeMore',
+    defaultMessage: `The motion can't be staked more than the minimum stake.`,
   },
 });
 
