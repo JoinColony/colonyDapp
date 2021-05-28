@@ -204,9 +204,9 @@ const StakingWidget = ({
    * Motion can be still staked (ie: amount left to stake)
    */
   const canUserStakeYay =
-    canUserStake && new Decimal(remainingToFullyYayStaked).gt(0);
+    canUserStake && new Decimal(remainingToFullyYayStaked).gt(1);
   const canUserStakeNay =
-    canUserStake && new Decimal(remainingToFullyNayStaked).gt(0);
+    canUserStake && new Decimal(remainingToFullyNayStaked).gt(1);
 
   const canBeStaked = isObjection ? canUserStakeNay : canUserStakeYay;
 

@@ -81,15 +81,19 @@ const StakingWidgetFlow = ({ colony, motionId, scrollToRef }: Props) => {
   }
 
   const { totalStaked, userStake, requiredStake } = data.stakeAmountsForMotion;
+
   const divisibleRequiredStake = !bigNumberify(requiredStake).isZero()
     ? requiredStake
     : 1;
 
   const yayPercentage = bigNumberify(totalStaked.YAY || 0)
+    .add(1)
     .mul(100)
     .div(divisibleRequiredStake)
     .toNumber();
+
   const nayPercentage = bigNumberify(totalStaked.NAY || 0)
+    .add(1)
     .mul(100)
     .div(divisibleRequiredStake)
     .toNumber();
