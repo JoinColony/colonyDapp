@@ -667,7 +667,7 @@ const getCreateDomainMotionValues = async (
       const domainMetadata = JSON.parse(ipfsMetadata);
 
       domainName = domainMetadata.domainName;
-      domainColor = domainMetadata.domainColor;
+      domainColor = domainMetadata.domainColor || null;
       domainPurpose = domainMetadata.domainPurpose || null;
     }
   } catch (error) {
@@ -768,7 +768,7 @@ const getEditDomainMotionValues = async (
       const domainMetadata = JSON.parse(ipfsMetadata);
 
       domainName = domainMetadata.domainName;
-      domainColor = domainMetadata.domainColor;
+      domainColor = domainMetadata.domainColor || null;
       domainPurpose = domainMetadata.domainPurpose || null;
     }
   } catch (error) {
