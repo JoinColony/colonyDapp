@@ -208,7 +208,7 @@ const ExtensionDetails = ({
     latestNetworkExtensionVersion > extension.currentVersion;
 
   // TEMP flag
-  const shouldShowWarning = false;
+  const extensionCompatible = false;
 
   let tableData;
 
@@ -264,7 +264,7 @@ const ExtensionDetails = ({
       {
         label: MSG.latestVersion,
         value: `v${extension.currentVersion}`,
-        icon: shouldShowWarning && (
+        icon: !extensionCompatible && (
           <Icon name="triangle-warning" title={MSG.warning} />
         ),
       },
@@ -310,7 +310,7 @@ const ExtensionDetails = ({
         <BreadCrumb elements={breadCrumbs} />
         <hr className={styles.headerLine} />
         <div>
-          {shouldShowWarning && (
+          {!extensionCompatible && (
             <Warning
               text={MSG.warning}
               buttonText={{ id: 'button.upgrade' }}
@@ -379,6 +379,7 @@ const ExtensionDetails = ({
                 colonyVersion={colonyVersion}
                 installedExtension={installedExtension}
                 extension={extension}
+                extensionCompatible={extensionCompatible}
               />
             )}
             {extensionCanBeUpgraded && (
