@@ -934,9 +934,20 @@ export const motionsResolvers = ({
         });
 
         const tokenClient = await colonyManager.getTokenClient(
-          paymentValues.args[5][0],
+          paymentValues?.args[5][0] || colonyClient.tokenClient.address,
         );
         const { symbol, decimals } = await tokenClient.getTokenInfo();
+
+        if (!paymentValues) {
+          return {
+            amount: 0,
+            token: {
+              id: colonyClient.tokenClient.address,
+              symbol,
+              decimals,
+            },
+          };
+        }
 
         return {
           amount: paymentValues.args[6][0].toString(),
