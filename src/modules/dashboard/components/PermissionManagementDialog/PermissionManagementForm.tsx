@@ -11,6 +11,8 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import Toggle from '~core/Fields/Toggle';
 import { ItemDataType } from '~core/OmniPicker';
+
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { Address } from '~types/index';
@@ -18,7 +20,6 @@ import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRolesForDomain } from '../../../transformers';
 import { availableRoles } from './constants';
-import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { FormValues } from './PermissionManagementDialog';
 import PermissionManagementCheckbox from './PermissionManagementCheckbox';
