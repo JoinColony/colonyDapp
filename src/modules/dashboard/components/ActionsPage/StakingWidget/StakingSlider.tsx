@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Decimal } from 'decimal.js';
+import { Decimal } from 'decimal.js-light';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';

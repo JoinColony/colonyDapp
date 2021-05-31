@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import formatNumber from 'format-number';
 import { bigNumberify } from 'ethers/utils';
-import { Decimal } from 'decimal.js';
+import { Decimal } from 'decimal.js-light';
 
 import Heading from '~core/Heading';
 import ProgressBar from '~core/ProgressBar';

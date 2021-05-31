@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { FormikProps } from 'formik';
-import Decimal from 'decimal.js';
+import Decimal from 'decimal.js-light';
 
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';

@@ -2,7 +2,7 @@ import React, { useCallback, RefObject } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { bigNumberify } from 'ethers/utils';
-import { Decimal } from 'decimal.js';
+import { Decimal } from 'decimal.js-light';
 
 import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -54,7 +54,7 @@ const RaiseObjectionDialog = ({
           ? new Decimal(minUserStake)
           : stake;
         return {
-          amount: stakeWithMin.round().toString(),
+          amount: stakeWithMin.toString(),
           userAddress: walletAddress,
           colonyAddress,
           motionId: bigNumberify(motionId),

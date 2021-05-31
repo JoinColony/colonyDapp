@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import * as yup from 'yup';
-import { Decimal } from 'decimal.js';
+import { Decimal } from 'decimal.js-light';
 
 import { ActionForm } from '~core/Fields';
 import Button from '~core/Button';
@@ -132,7 +132,7 @@ const StakingWidget = ({
             ? new Decimal(minUserStake)
             : stake;
           return {
-            amount: stakeWithMin.round().toString(),
+            amount: stakeWithMin.toString(),
             userAddress: walletAddress,
             colonyAddress,
             motionId: bigNumberify(motionId),
