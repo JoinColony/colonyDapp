@@ -360,7 +360,6 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'stakePeriod',
         validation: yup
           .number()
-          .integer()
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
@@ -372,7 +371,6 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'submitPeriod',
         validation: yup
           .number()
-          .integer()
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
@@ -384,7 +382,6 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'revealPeriod',
         validation: yup
           .number()
-          .integer()
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
@@ -396,7 +393,6 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'escalationPeriod',
         validation: yup
           .number()
-          .integer()
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),

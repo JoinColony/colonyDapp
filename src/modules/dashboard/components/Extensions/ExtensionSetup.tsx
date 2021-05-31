@@ -76,7 +76,9 @@ const ExtensionSetup = ({
           const formattedPayload = {};
           initializationParams?.map(({ paramName }) => {
             if (endsWith(paramName, 'Period')) {
-              formattedPayload[paramName] = payload[paramName] * 3600; // Seconds in 1 hour
+              formattedPayload[paramName] = new Decimal(payload[paramName])
+                .mul(3600) // Seconds in 1 hour
+                .toFixed(0, Decimal.ROUND_HALF_UP);
             } else {
               formattedPayload[paramName] = new Decimal(payload[paramName])
                 .mul(new Decimal(10).pow(16))
