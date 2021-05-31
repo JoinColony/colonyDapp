@@ -37,7 +37,7 @@ const MSG = defineMessages({
   },
   locked: {
     id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.locked`,
-    defaultMessage: 'Locked: {tokenBalance}',
+    defaultMessage: 'Locked: {lockedTokens}',
   },
   lockedTooltip: {
     id: `users.TokenActivation.TokenActivationContent.ChangeTokenStateForm.lockedTooltip`,
@@ -63,6 +63,7 @@ export interface ChangeTokenStateFormProps {
   tokenDecimals: number;
   activeTokens: BigNumber;
   inactiveTokens: BigNumber;
+  lockedTokens: BigNumber;
   hasLockedTokens: boolean;
   colonyAddress: Address;
 }
@@ -72,6 +73,7 @@ const ChangeTokenStateForm = ({
   tokenDecimals,
   activeTokens,
   inactiveTokens,
+  lockedTokens,
   hasLockedTokens,
   colonyAddress,
 }: ChangeTokenStateFormProps) => {
@@ -210,9 +212,9 @@ const ChangeTokenStateForm = ({
                   <FormattedMessage
                     {...(hasLockedTokens ? MSG.locked : MSG.balance)}
                     values={{
-                      tokenBalance: (
+                      lockedTokens: (
                         <Numeral
-                          value={tokenBalance}
+                          value={lockedTokens}
                           suffix={` ${token?.symbol}`}
                           unit={tokenDecimals}
                           truncate={3}
@@ -230,7 +232,7 @@ const ChangeTokenStateForm = ({
               disabled={
                 !isValid ||
                 values.amount === undefined ||
-                (!isActivate && hasLockedTokens)
+                values.amount > maxAmount
               }
             />
           </div>
