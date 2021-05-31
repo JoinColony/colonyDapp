@@ -7,7 +7,12 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
+import {
+  ColonyRole,
+  ColonyVersion,
+  Extension,
+  extensionsIncompatibilityMap,
+} from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -207,8 +212,11 @@ const ExtensionDetails = ({
     !(extesionCanBeInstalled || extesionCanBeEnabled) &&
     latestNetworkExtensionVersion > extension.currentVersion;
 
-  // TEMP flag
-  const extensionCompatible = false;
+  const extensionCompatible = extension?.currentVersion
+    ? !extensionsIncompatibilityMap[extensionId][extension.currentVersion].find(
+        (version: number) => version === parseInt(colonyVersion, 10),
+      )
+    : false;
 
   let tableData;
 
