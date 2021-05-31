@@ -57,20 +57,14 @@ const DomainDropdownItem = ({
   onDomainEdit,
   showDescription = true,
 }: Props) => {
-  const canEditDomain = onDomainEdit;
-
   const handleEditDomain = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (evt) => {
       evt.stopPropagation();
-      if (canEditDomain) {
-        /*
-         * @NOTE that TS is being stupid in not detecting our `canEditDomain` check
-         */
-        // @ts-ignore
+      if (onDomainEdit) {
         onDomainEdit(ethDomainId);
       }
     },
-    [canEditDomain, onDomainEdit, ethDomainId],
+    [onDomainEdit, ethDomainId],
   );
 
   const handleEditDomainKeyDown = useCallback<
@@ -79,16 +73,12 @@ const DomainDropdownItem = ({
     (evt) => {
       if (evt.key === ENTER) {
         evt.stopPropagation();
-        if (canEditDomain) {
-          /*
-           * @NOTE that TS is being stupid in not detecting our `canEditDomain` check
-           */
-          // @ts-ignore
+        if (onDomainEdit) {
           onDomainEdit(ethDomainId);
         }
       }
     },
-    [canEditDomain, onDomainEdit, ethDomainId],
+    [onDomainEdit, ethDomainId],
   );
 
   return (
@@ -135,7 +125,7 @@ const DomainDropdownItem = ({
            */
           ethDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID &&
             ethDomainId !== ROOT_DOMAIN_ID &&
-            canEditDomain && (
+            onDomainEdit && (
               <div className={styles.editButton}>
                 <Button
                   appearance={{ theme: 'blue' }}
