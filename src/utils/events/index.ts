@@ -523,7 +523,7 @@ export const getMotionState = async (
     motion.skillRep,
     totalStakeFraction,
     18,
-  );
+  ).sub(1);
   switch (motionNetworkState) {
     case NetworkMotionState.Staking:
       return bigNumberify(motion.stakes[1]).gte(bigNumberify(requiredStakes))
