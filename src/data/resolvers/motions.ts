@@ -341,7 +341,11 @@ export const motionsResolvers = ({
         systemMessages.push({
           type: ActionsPageFeedType.SystemMessage,
           name: SystemMessagesName.MotionCanBeEscalated,
-          createdAt: motion.events[2].toNumber() * 1000,
+          /*
+           * @NOTE We can just use the current time, since this is the last entry
+           * in the feed
+           */
+          createdAt: blocktime,
         });
       }
 
