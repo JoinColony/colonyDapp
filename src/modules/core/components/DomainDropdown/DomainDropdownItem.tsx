@@ -57,7 +57,7 @@ const DomainDropdownItem = ({
   onDomainEdit,
   showDescription = true,
 }: Props) => {
-  const canEditDomain = onDomainEdit && typeof onDomainEdit === 'function';
+  const canEditDomain = onDomainEdit;
 
   const handleEditDomain = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (evt) => {

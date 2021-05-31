@@ -123,7 +123,7 @@ const DomainDropdown = ({
           };
         }),
     ];
-    if (filterOptionsFn && typeof filterOptionsFn === 'function') {
+    if (filterOptionsFn) {
       return domainOptions.filter(filterOptionsFn);
     }
     return domainOptions;

@@ -59,7 +59,7 @@ const Toggle = ({
   const handleOnChange = useCallback(
     (event) => {
       onChange(event);
-      if (onChangeCallback && typeof onChangeCallback === 'function') {
+      if (onChangeCallback) {
         onChangeCallback(value);
       }
     },
