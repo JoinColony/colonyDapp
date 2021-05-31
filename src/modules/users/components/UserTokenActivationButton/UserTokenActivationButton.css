@@ -1,6 +1,8 @@
 .tokens {
-  padding: 0 8px;
-  border: 0;
+  padding: 2px 8px 3px;
+  height: 100%;
+  border: none;
+  border-radius: var(--radius-normal);
   background: transparent;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);

@@ -118,7 +118,7 @@
 
 .walletAddress span {
   font-size: var(--size-smallish);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .walletAddress:hover {
@@ -135,7 +135,7 @@
 
 .buttonsWrapper {
   margin-right: 12px;
-  padding: 1px;
+  padding: 2px;
   height: 26px;
   position: relative;
   border-radius: var(--radius-normal);
