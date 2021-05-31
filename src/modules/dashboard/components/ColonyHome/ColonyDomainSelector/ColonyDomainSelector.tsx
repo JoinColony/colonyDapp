@@ -25,7 +25,7 @@ interface Props {
   colony: Colony;
 }
 
-const displayName = 'dashboard.ColonyHome.ColonyColonyDomainSelector';
+const displayName = 'dashboard.ColonyHome.ColonyDomainSelector';
 
 const ColonyDomainSelector = ({
   filteredDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
