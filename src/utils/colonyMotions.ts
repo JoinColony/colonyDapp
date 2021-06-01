@@ -1,6 +1,11 @@
 import { defineMessage } from 'react-intl';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { Decimal } from 'decimal.js';
+import { isNil } from 'lodash';
+
+import { getUserRolesForDomain } from '../modules/transformers';
+import { Colony, AnyUser } from '~data/index';
+import { ActionUserRoles } from '~types/index';
 
 export enum MotionState {
   Motion = 'Motion',
@@ -147,3 +152,27 @@ export const shouldDisplayMotion = (
 export interface MotionValue {
   motionId: number;
 }
+
+export const getUpdatedDecodedMotionRoles = (
+  colony: Colony,
+  recipient: AnyUser,
+  fromDomain: number,
+  roles: ActionUserRoles[],
+) => {
+  const userCurrentRoles = getUserRolesForDomain(
+    colony,
+    recipient.profile.walletAddress,
+    fromDomain,
+  );
+  const updatedRoles = roles.filter((role) => {
+    const foundCurrentRole = userCurrentRoles.find(
+      (currentRole) => currentRole === role.id,
+    );
+    if (!isNil(foundCurrentRole)) {
+      return !role.setTo;
+    }
+    return role.setTo;
+  });
+
+  return updatedRoles;
+};

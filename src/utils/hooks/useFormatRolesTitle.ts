@@ -14,8 +14,8 @@ export const useFormatRolesTitle = (
 
   if (
     !roles ||
-    actionType !==
-      (isMotion ? ColonyMotions.SetUserRolesMotion : ColonyActions.SetUserRoles)
+    (actionType !== ColonyMotions.SetUserRolesMotion &&
+      actionType !== ColonyActions.SetUserRoles)
   ) {
     return { roleTitle };
   }
@@ -49,15 +49,15 @@ export const useFormatRolesTitle = (
   if (!isEmpty(assignedRoles)) {
     roleTitle += getFormattedRoleList(assignedRoles, unassignedRoles);
     roleMessageDescriptorId = isMotion
-      ? `motion.${ColonyMotions.SetUserRolesMotion}.assign`
-      : `action.${ColonyActions.SetUserRoles}.assign`;
+      ? `motion.${actionType}.assign`
+      : `action.${actionType}.assign`;
   }
 
   if (isEmpty(assignedRoles) && !isEmpty(unassignedRoles)) {
     roleTitle += getFormattedRoleList(unassignedRoles, null);
     roleMessageDescriptorId = isMotion
-      ? `motion.${ColonyMotions.SetUserRolesMotion}.remove`
-      : `action.${ColonyActions.SetUserRoles}.remove`;
+      ? `motion.${actionType}.remove`
+      : `action.${actionType}.remove`;
   } else if (!isEmpty(unassignedRoles)) {
     roleTitle = `Assign the ${roleTitle}`;
     roleTitle += ` and remove the${getFormattedRoleList(

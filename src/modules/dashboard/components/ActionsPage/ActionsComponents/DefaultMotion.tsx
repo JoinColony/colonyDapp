@@ -1,7 +1,6 @@
 import { bigNumberify } from 'ethers/utils';
 import React, { useMemo, useRef } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import { isNil } from 'lodash';
 
 import Heading from '~core/Heading';
 import ActionsPageFeed, {
@@ -31,6 +30,7 @@ import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
+  getUpdatedDecodedMotionRoles,
   MotionState,
   MotionValue,
   MOTION_TAG_MAP,
@@ -38,7 +38,6 @@ import {
 } from '~utils/colonyMotions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 
-import { getUserRolesForDomain } from '../../../../transformers';
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
 import VoteWidget from '../VoteWidget';
@@ -107,20 +106,12 @@ const DefaultMotion = ({
     }, {} as any);
   }, []);
 
-  const userCurrentRoles = getUserRolesForDomain(
+  const updatedRoles = getUpdatedDecodedMotionRoles(
     colony,
-    recipient.profile.walletAddress,
+    recipient,
     fromDomain,
+    roles,
   );
-  const updatedRoles = roles.filter((role) => {
-    const foundCurrentRole = userCurrentRoles.find(
-      (currentRole) => currentRole === role.id,
-    );
-    if (!isNil(foundCurrentRole)) {
-      return !role.setTo;
-    }
-    return role.setTo;
-  });
 
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,

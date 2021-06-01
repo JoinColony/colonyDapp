@@ -8,7 +8,7 @@ import {
   getEvents,
   getMultipleEvents,
 } from '@colony/colony-js';
-import { bigNumberify, LogDescription } from 'ethers/utils';
+import { bigNumberify, LogDescription, hexStripZeros } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
 
 import { Context } from '~context/index';
@@ -31,6 +31,7 @@ import {
   SystemMessage,
   SystemMessagesName,
 } from '~dashboard/ActionsPageFeed';
+import { availableRoles } from '~dashboard/PermissionManagementDialog';
 
 import { ProcessedEvent } from './colonyActions';
 
@@ -920,15 +921,114 @@ export const motionsResolvers = ({
       const actionValues = colonyClient.interface.parseTransaction({
         data: action,
       });
+
+      // PaymentMotion
+      if (!actionValues) {
+        const oneTxPaymentClient = await colonyManager.getClient(
+          ClientType.OneTxPaymentClient,
+          colonyAddress,
+        );
+
+        const paymentValues = oneTxPaymentClient.interface.parseTransaction({
+          data: action,
+        });
+
+        const tokenClient = await colonyManager.getTokenClient(
+          paymentValues?.args[5][0] || colonyClient.tokenClient.address,
+        );
+        const { symbol, decimals } = await tokenClient.getTokenInfo();
+
+        if (!paymentValues) {
+          return {
+            amount: 0,
+            token: {
+              id: colonyClient.tokenClient.address,
+              symbol,
+              decimals,
+            },
+          };
+        }
+
+        return {
+          amount: paymentValues.args[6][0].toString(),
+          recipient: paymentValues.args[4][0],
+          token: {
+            id: paymentValues.args[5][0],
+            symbol,
+            decimals,
+          },
+        };
+      }
+
+      if (actionValues.name === 'moveFundsBetweenPots') {
+        const fromDomain = await colonyClient.getDomainFromFundingPot(
+          actionValues.args[5],
+        );
+        const toDomain = await colonyClient.getDomainFromFundingPot(
+          actionValues.args[6],
+        );
+
+        const tokenClient = await colonyManager.getTokenClient(
+          actionValues.args[8],
+        );
+        const { symbol, decimals } = await tokenClient.getTokenInfo();
+
+        return {
+          amount: actionValues.args[7].toString(),
+          fromDomain: fromDomain.toNumber(),
+          toDomain: toDomain.toNumber(),
+          token: {
+            id: actionValues.args[8],
+            symbol,
+            decimals,
+          },
+        };
+      }
+
+      if (actionValues.name === 'addDomain') {
+        return {
+          metadata: actionValues.args[3],
+        };
+      }
+
+      if (actionValues.name === 'editDomain') {
+        return {
+          fromDomain: parseInt(actionValues.args[2].toString(), 10),
+        };
+      }
+
+      if (actionValues.name === 'editColony') {
+        return {
+          metadata: actionValues.args[0],
+        };
+      }
+
+      if (actionValues.name === 'setUserRoles') {
+        const roleBitMask = parseInt(
+          hexStripZeros(actionValues.args[4]),
+          16,
+        ).toString(2);
+        const roleBitMaskArray = roleBitMask.split('').reverse();
+
+        const roles = availableRoles.map((role) => ({
+          id: role,
+          setTo: roleBitMaskArray[role] === '1',
+        }));
+
+        return {
+          recipient: actionValues.args[2],
+          fromDomain: bigNumberify(actionValues.args[3]).toNumber(),
+          roles,
+        };
+      }
+
+      // MintTokenMotion - default
       const tokenAddress = colonyClient.tokenClient.address;
       const {
         symbol,
         decimals,
       } = await colonyClient.tokenClient.getTokenInfo();
-      /*
-       * @TODO Return argumnents for the other motions as well, as soon
-       * as they get wired into the dapp
-       */
+
       return {
         amount: bigNumberify(actionValues?.args[0] || '0').toString(),
         token: {
