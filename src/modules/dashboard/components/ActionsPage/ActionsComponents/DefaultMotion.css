@@ -29,3 +29,15 @@
   border: 1px solid var(--text-disabled);
   border-radius: var(--radius-large);
 }
+
+.help {
+  display: inline-block;
+  align-self: center;
+  margin-left: 7px;
+  cursor: pointer;
+}
+
+.tooltip {
+  padding: 5px;
+  width: 220px;
+}

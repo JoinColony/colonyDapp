@@ -29,6 +29,7 @@ import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   MotionState,
@@ -57,6 +58,10 @@ const MSG = defineMessages({
   or: {
     id: 'dashboard.ActionsPage.DefaultMotion.or',
     defaultMessage: `OR`,
+  },
+  votingProgressBarTooltip: {
+    id: 'dashboard.ActionsPage.DefaultMotion.or',
+    defaultMessage: `Voting ends at the sooner of either time-out, or the reputation threshold being reached.`,
   },
 });
 
@@ -316,7 +321,8 @@ const DefaultMotion = ({
             state={motionState as MotionState}
             motionId={motionId}
           />
-          {motionState === MotionState.Voting && votingStateData && (
+          {/* {motionState === MotionState.Voting && votingStateData && ( */}
+          {true && (
             <>
               <span className={motionSpecificStyles.text}>
                 <FormattedMessage {...MSG.or} />
@@ -333,6 +339,22 @@ const DefaultMotion = ({
                   }}
                 />
               </div>
+              <QuestionMarkTooltip
+                tooltipText={MSG.votingProgressBarTooltip}
+                className={motionSpecificStyles.help}
+                tooltipClassName={motionSpecificStyles.tooltip}
+                tooltipPopperProps={{
+                  placement: 'top-end',
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [0, 10],
+                      },
+                    },
+                  ],
+                }}
+              />
             </>
           )}
         </div>
