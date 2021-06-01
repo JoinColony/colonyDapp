@@ -10,11 +10,13 @@ import { mapPayload } from '~utils/actions';
 interface Props {
   colony: Colony;
   extension: ExtensionData;
+  canUpgrade?: boolean;
 }
 
 const ExtensionActionButton = ({
   colony: { colonyAddress, version: colonyVersion },
   extension,
+  canUpgrade = false,
 }: Props) => {
   const { username, ethereal } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
@@ -54,7 +56,9 @@ const ExtensionActionButton = ({
       success={ActionTypes.COLONY_EXTENSION_UPGRADE_SUCCESS}
       transform={transform}
       text={{ id: 'button.upgrade' }}
-      disabled={!isSupportedColonyVersion || !extensionCompatible}
+      disabled={
+        !isSupportedColonyVersion || !extensionCompatible || !canUpgrade
+      }
     />
   );
 };

@@ -391,7 +391,11 @@ const ExtensionDetails = ({
               />
             )}
             {extensionCanBeUpgraded && (
-              <ExtensionUpgrade colony={colony} extension={extension} />
+              <ExtensionUpgrade
+                colony={colony}
+                extension={extension}
+                canUpgrade={canInstall}
+              />
             )}
           </div>
           <Table appearance={{ theme: 'lined' }}>
