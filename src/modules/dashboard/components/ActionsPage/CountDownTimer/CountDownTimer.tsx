@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  MutableRefObject,
+} from 'react';
 import { FormattedMessage, defineMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
@@ -92,6 +98,11 @@ const CountDownTimer = ({
 
   const [timeLeft, setTimeLeft] = useState<number>(-1);
 
+  const prevStateRef: MutableRefObject<MotionState | null> = useRef(null);
+  const isStakingPhaseState =
+    state === MotionState.StakeRequired ||
+    state === MotionState.Motion ||
+    state === MotionState.Objection;
   /*
    * Set the initial timeout
    *
@@ -110,9 +121,15 @@ const CountDownTimer = ({
    * and change the state so we can refresh it.
    */
   useEffect(() => {
-    const period = currentStatePeriod() / 1000;
-    setTimeLeft(period > 0 ? period + 5 : period);
-  }, [currentStatePeriod]);
+    if (
+      (prevStateRef.current === null && isStakingPhaseState) ||
+      !isStakingPhaseState
+    ) {
+      const period = currentStatePeriod() / 1000;
+      setTimeLeft(period > 0 ? period + 5 : period);
+      prevStateRef.current = state || null;
+    }
+  }, [currentStatePeriod, prevStateRef, state, isStakingPhaseState]);
 
   /*
    * Count it down
@@ -145,7 +162,7 @@ const CountDownTimer = ({
   ]);
 
   useEffect(() => {
-    // @NOTE Later on, this logic might need to change after the MotionStates are updated
+    // @NOTE Later on this logic might need to change after the MotionStates are updated
     if (
       data &&
       state !== MotionState.StakeRequired &&
