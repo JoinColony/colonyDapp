@@ -7,7 +7,12 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { ColonyRole, ColonyVersion, Extension } from '@colony/colony-js';
+import {
+  ColonyRole,
+  ColonyVersion,
+  Extension,
+  extensionsIncompatibilityMap,
+} from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -207,8 +212,11 @@ const ExtensionDetails = ({
     !(extesionCanBeInstalled || extesionCanBeEnabled) &&
     latestNetworkExtensionVersion > extension.currentVersion;
 
-  // TEMP flag
-  const shouldShowWarning = false;
+  const extensionCompatible = extension?.currentVersion
+    ? !extensionsIncompatibilityMap[extensionId][extension.currentVersion].find(
+        (version: number) => version === parseInt(colonyVersion, 10),
+      )
+    : false;
 
   let tableData;
 
@@ -264,7 +272,7 @@ const ExtensionDetails = ({
       {
         label: MSG.latestVersion,
         value: `v${extension.currentVersion}`,
-        icon: shouldShowWarning && (
+        icon: !extensionCompatible && (
           <Icon name="triangle-warning" title={MSG.warning} />
         ),
       },
@@ -310,7 +318,7 @@ const ExtensionDetails = ({
         <BreadCrumb elements={breadCrumbs} />
         <hr className={styles.headerLine} />
         <div>
-          {shouldShowWarning && (
+          {!extensionCompatible && (
             <Warning
               text={MSG.warning}
               buttonText={{ id: 'button.upgrade' }}
@@ -379,10 +387,15 @@ const ExtensionDetails = ({
                 colonyVersion={colonyVersion}
                 installedExtension={installedExtension}
                 extension={extension}
+                extensionCompatible={extensionCompatible}
               />
             )}
             {extensionCanBeUpgraded && (
-              <ExtensionUpgrade colony={colony} extension={extension} />
+              <ExtensionUpgrade
+                colony={colony}
+                extension={extension}
+                canUpgrade={canInstall}
+              />
             )}
           </div>
           <Table appearance={{ theme: 'lined' }}>
