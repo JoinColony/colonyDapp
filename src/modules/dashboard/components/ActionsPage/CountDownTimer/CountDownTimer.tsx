@@ -145,7 +145,13 @@ const CountDownTimer = ({
   ]);
 
   useEffect(() => {
-    if (state && data) {
+    // @NOTE Later on, this logic might need to change after the MotionStates are updated
+    if (
+      data &&
+      state !== MotionState.StakeRequired &&
+      state !== MotionState.Motion &&
+      state !== MotionState.Objection
+    ) {
       refetch();
     }
   }, [state, data, refetch]);
