@@ -166,7 +166,7 @@ const CountDownTimer = ({
     if (data && !isStakingPhaseState) {
       refetch();
     }
-  }, [state, data, refetch]);
+  }, [isStakingPhaseState, data, refetch]);
 
   /*
    * Split the time into h/m/s for display purpouses
