@@ -72,7 +72,7 @@ const EditDomainDialogForm = ({
   isValid,
   setFieldValue,
   setValues,
-  values: { domainId, domainName, forceAction },
+  values: { domainId, domainName, forceAction, motionDomainId },
   isVotingExtensionEnabled,
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
@@ -117,6 +117,7 @@ const EditDomainDialogForm = ({
 
   const handleDomainChange = useCallback(
     (selectedDomainValue) => {
+      const selectedMotionDomainId = parseInt(motionDomainId, 10);
       const selectedDomainId = parseInt(selectedDomainValue, 10);
       const selectedDomain = domains.find(
         (domain) => domain.ethDomainId === selectedDomainId,
@@ -128,21 +129,20 @@ const EditDomainDialogForm = ({
           domainName: selectedDomain.name,
           domainPurpose: selectedDomain.description as string,
           forceAction,
+          motionDomainId,
         });
         setDomainColor(selectedDomain.color);
+        setCurrentFromDomain(selectedDomainId);
         if (
-          selectedDomainId !== ROOT_DOMAIN_ID &&
-          selectedDomainId !== currentFromDomain
+          selectedMotionDomainId !== ROOT_DOMAIN_ID &&
+          selectedMotionDomainId !== selectedDomainId
         ) {
-          setCurrentFromDomain(selectedDomainId);
-          return setFieldValue('motionDomainId', selectedDomainId);
+          setFieldValue('motionDomainId', selectedDomainId);
         }
-        setCurrentFromDomain(ROOT_DOMAIN_ID);
-        return setFieldValue('motionDomainId', ROOT_DOMAIN_ID);
       }
       return null;
     },
-    [currentFromDomain, domains, forceAction, setFieldValue, setValues],
+    [domains, forceAction, motionDomainId, setFieldValue, setValues],
   );
 
   const handleFilterMotionDomains = useCallback(
@@ -160,7 +160,8 @@ const EditDomainDialogForm = ({
   );
 
   const handleMotionDomainChange = useCallback(
-    (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
+    (motionDomainIdValue) =>
+      setFieldValue('motionDomainId', motionDomainIdValue),
     [setFieldValue],
   );
 

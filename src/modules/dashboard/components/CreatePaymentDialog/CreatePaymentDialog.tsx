@@ -11,7 +11,7 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { ColonySubscribedUsersDocument, Colony } from '~data/index';
+import { ColonySubscribedUsersDocument } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -37,11 +37,6 @@ export interface FormValues {
   tokenAddress: Address;
   annotation: string;
   motionDomainId: string;
-}
-
-interface CustomWizardDialogProps {
-  prevStep: string;
-  colony: Colony;
 }
 
 type Props = Required<DialogProps> &

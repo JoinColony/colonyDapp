@@ -21,6 +21,7 @@ export interface FormValues {
   domainColor?: Color;
   domainPurpose?: string;
   annotationMessage?: string;
+  motionDomainId: string;
 }
 
 interface CustomWizardDialogProps extends ActionDialogProps {
@@ -63,6 +64,7 @@ const EditDomainDialog = ({
     domainColor: yup.string(),
     domainPurpose: yup.string().max(90),
     annotationMessage: yup.string().max(4000),
+    motionDomainId: yup.number(),
   });
 
   const transform = useCallback(
