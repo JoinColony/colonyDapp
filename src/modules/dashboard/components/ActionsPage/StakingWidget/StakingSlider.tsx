@@ -121,7 +121,7 @@ const StakingSlider = ({
         <Slider
           name="amount"
           value={values.amount}
-          limit={parseFloat(userStakeLimitPercentage.toFixed(6))}
+          limit={parseFloat(userStakeLimitPercentage.toFixed(10))}
           step={0.01}
           min={0}
           max={100}
