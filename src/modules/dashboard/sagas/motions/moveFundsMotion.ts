@@ -3,6 +3,8 @@ import {
   ClientType,
   ColonyVersion,
   getMoveFundsPermissionProofs,
+  getChildIndex,
+  ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 import { AddressZero, MaxUint256 } from 'ethers/constants';
 
@@ -78,9 +80,16 @@ function* moveFundsMotion({
       toChildSkillIndex,
     ] = yield call(getMoveFundsPermissionProofs, colonyClient, fromPot, toPot);
 
+    const motionChildSkillIndex = yield call(
+      getChildIndex,
+      colonyClient,
+      ROOT_DOMAIN_ID,
+      ROOT_DOMAIN_ID,
+    );
+
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      fromDomainId,
+      ROOT_DOMAIN_ID,
     );
 
     const { key, value, branchMask, siblings } = yield call(
@@ -127,7 +136,7 @@ function* moveFundsMotion({
       identifier: colonyAddress,
       params: [
         fromDomainId,
-        MaxUint256.toString(),
+        motionChildSkillIndex,
         AddressZero,
         encodedAction,
         key,
