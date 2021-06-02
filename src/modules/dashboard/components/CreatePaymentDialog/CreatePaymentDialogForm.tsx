@@ -268,13 +268,11 @@ const CreatePaymentDialogForm = ({
         fromDomainId !== ROOT_DOMAIN_ID &&
         fromDomainId !== currentFromDomain
       ) {
-        setCurrentFromDomain(fromDomainId);
-        return setFieldValue('motionDomainId', fromDomainId);
+        return setCurrentFromDomain(fromDomainId);
       }
-      setCurrentFromDomain(ROOT_DOMAIN_ID);
-      return setFieldValue('motionDomainId', ROOT_DOMAIN_ID);
+      return setCurrentFromDomain(ROOT_DOMAIN_ID);
     },
-    [currentFromDomain, setFieldValue],
+    [currentFromDomain],
   );
 
   const handleFilterMotionDomains = useCallback(
