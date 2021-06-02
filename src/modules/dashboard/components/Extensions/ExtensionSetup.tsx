@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
 import { endsWith } from 'lodash';
 import { Extension } from '@colony/colony-js';
-import { bigNumberify } from 'ethers/utils';
+import Decimal from 'decimal.js';
 
 import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm } from '~core/Fields';
@@ -76,11 +76,13 @@ const ExtensionSetup = ({
           const formattedPayload = {};
           initializationParams?.map(({ paramName }) => {
             if (endsWith(paramName, 'Period')) {
-              formattedPayload[paramName] = payload[paramName] * 3600; // Seconds in 1 hour
+              formattedPayload[paramName] = new Decimal(payload[paramName])
+                .mul(3600) // Seconds in 1 hour
+                .toFixed(0, Decimal.ROUND_HALF_UP);
             } else {
-              formattedPayload[paramName] = bigNumberify(
-                payload[paramName],
-              ).mul(bigNumberify(10).pow(16));
+              formattedPayload[paramName] = new Decimal(payload[paramName])
+                .mul(new Decimal(10).pow(16))
+                .toString();
             }
           });
           return formattedPayload;
