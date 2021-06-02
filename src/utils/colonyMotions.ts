@@ -1,7 +1,7 @@
 import { defineMessage } from 'react-intl';
 import { BigNumber, bigNumberify } from 'ethers/utils';
-import { Decimal } from 'decimal.js';
 import { isNil } from 'lodash';
+import { Decimal } from 'decimal.js-light';
 
 import { getUserRolesForDomain } from '../modules/transformers';
 import { Colony, AnyUser } from '~data/index';

@@ -1,5 +1,5 @@
 import { bigNumberify, BigNumberish } from 'ethers/utils';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js-light';
 
 import { TokenWithBalances } from '~data/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
@@ -57,6 +57,6 @@ export const getFormattedTokenValue = (
     .toString();
   return new Decimal(bigNumberify(value).toString())
     .div(safeDecimals)
-    .toDP(5, Decimal.ROUND_DOWN)
+    .toDecimalPlaces(5, Decimal.ROUND_DOWN)
     .toString();
 };
