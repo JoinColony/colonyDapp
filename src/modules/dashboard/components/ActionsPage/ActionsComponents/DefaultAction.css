@@ -78,7 +78,7 @@
 .countdownContainer {
   composes: details;
   display: flex;
-  align-items: center;
+  align-items: baseline;
 }
 
 .addressInTitle div {

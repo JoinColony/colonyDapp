@@ -40,7 +40,7 @@ const MSG = defineMessages({
   },
   votingMethodTooltip: {
     id: 'dashboard.ActionsPage.VoteWidget.votingMethodTooltip',
-    defaultMessage: `Colony makes it possible to utilize different voting methods. Selected voting method depends on installed extensions. You can change voting method in Governance Policy.`,
+    defaultMessage: `Votes are weighted by reputation in the team in which the vote is happening.`,
   },
   reputationTeamLabel: {
     id: 'dashboard.ActionsPage.VoteWidget.reputationTeamLabel',
@@ -48,7 +48,7 @@ const MSG = defineMessages({
   },
   reputationTeamTooltip: {
     id: 'dashboard.ActionsPage.VoteWidget.reputationTeamTooltip',
-    defaultMessage: `Displays users own reputation in a domain. For example, for reputation 3.5%, user vote is going to be counted as 3.5. Users without reputation, couldn’t vote.`,
+    defaultMessage: `This is the % of the reputation you have in this team.`,
   },
   rewardLabel: {
     id: 'dashboard.ActionsPage.VoteWidget.rewardLabel',
@@ -56,7 +56,7 @@ const MSG = defineMessages({
   },
   rewardTooltip: {
     id: 'dashboard.ActionsPage.VoteWidget.rewardTooltip',
-    defaultMessage: `Displays possible reward range for an individual user. If prediction aligns with the winning outcome, then user receives reward. Final value depends on [TO BE ADDED]`,
+    defaultMessage: `This is the range of values between which your reward for voting will be, subject to the number of people that participate in the vote.`,
   },
   rulesLabel: {
     id: 'dashboard.ActionsPage.VoteWidget.rulesLabel',
@@ -64,7 +64,7 @@ const MSG = defineMessages({
   },
   rulesTooltip: {
     id: 'dashboard.ActionsPage.VoteWidget.rulesTooltip',
-    defaultMessage: `Voting process goes in stages. User selects option to vote upon. Then reveals the own vote before the ‘Reveal’ stage passes. Later on, user has to claim tokens and finalize transaction.`,
+    defaultMessage: `Votes are secret and must be revealed at the end of the voting period to count.`,
   },
   loading: {
     id: 'dashboard.ActionsPage.VoteWidget.loading',
