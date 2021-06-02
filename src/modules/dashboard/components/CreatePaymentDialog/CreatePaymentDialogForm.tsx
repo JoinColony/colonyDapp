@@ -264,15 +264,23 @@ const CreatePaymentDialogForm = ({
   const handleFromDomainChange = useCallback(
     (fromDomainValue) => {
       const fromDomainId = parseInt(fromDomainValue, 10);
+      const selectedMotionDomainId = parseInt(values.motionDomainId, 10);
       if (
         fromDomainId !== ROOT_DOMAIN_ID &&
         fromDomainId !== currentFromDomain
       ) {
-        return setCurrentFromDomain(fromDomainId);
+        setCurrentFromDomain(fromDomainId);
+      } else {
+        setCurrentFromDomain(ROOT_DOMAIN_ID);
       }
-      return setCurrentFromDomain(ROOT_DOMAIN_ID);
+      if (
+        selectedMotionDomainId !== ROOT_DOMAIN_ID &&
+        selectedMotionDomainId !== fromDomainId
+      ) {
+        setFieldValue('motionDomainId', fromDomainId);
+      }
     },
-    [currentFromDomain],
+    [currentFromDomain, setFieldValue, values.motionDomainId],
   );
 
   const handleFilterMotionDomains = useCallback(

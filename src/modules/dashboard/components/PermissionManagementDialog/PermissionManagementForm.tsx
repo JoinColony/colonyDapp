@@ -60,6 +60,7 @@ interface Props {
   userInheritedRoles: ColonyRole[];
   onDomainSelected: (domain: number) => void;
   onChangeSelectedUser: (user: AnyUser) => void;
+  onMotionDomainChange: (domain: number) => void;
   inputDisabled: boolean;
   userHasPermission: boolean;
   isVotingExtensionEnabled: boolean;
@@ -84,9 +85,9 @@ const PermissionManagementForm = ({
   userHasPermission,
   isVotingExtensionEnabled,
   onDomainSelected,
+  onMotionDomainChange,
   onChangeSelectedUser,
   values,
-  setFieldValue,
 }: Props & FormikProps<FormValues>) => {
   const { data: colonySubscribedUsers } = useColonySubscribedUsersQuery({
     variables: {
@@ -197,12 +198,16 @@ const PermissionManagementForm = ({
   const handleDomainChange = useCallback(
     (domainValue: string) => {
       const fromDomainId = parseInt(domainValue, 10);
-      if (fromDomainId !== ROOT_DOMAIN_ID && fromDomainId !== domainId) {
-        return onDomainSelected(fromDomainId);
+      const selectedMotionDomainId = parseInt(values.motionDomainId, 10);
+      onDomainSelected(fromDomainId);
+      if (
+        selectedMotionDomainId !== ROOT_DOMAIN_ID &&
+        selectedMotionDomainId !== fromDomainId
+      ) {
+        onMotionDomainChange(fromDomainId);
       }
-      return onDomainSelected(ROOT_DOMAIN_ID);
     },
-    [domainId, onDomainSelected],
+    [onDomainSelected, onMotionDomainChange, values.motionDomainId],
   );
 
   const handleFilterMotionDomains = useCallback(
@@ -217,8 +222,8 @@ const PermissionManagementForm = ({
   );
 
   const handleMotionDomainChange = useCallback(
-    (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
-    [setFieldValue],
+    (motionDomainId) => onMotionDomainChange(motionDomainId),
+    [onMotionDomainChange],
   );
 
   const filteredRoles = useMemo(
@@ -246,6 +251,7 @@ const PermissionManagementForm = ({
                  * create a payment from that subdomain
                  */
                 filterDomains={handleFilterMotionDomains}
+                initialSelectedDomain={parseInt(values.motionDomainId, 10)}
               />
             </div>
           )}

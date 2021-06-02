@@ -109,6 +109,9 @@ const PermissionManagementDialog = ({
   const [selectedDomainId, setSelectedDomainId] = useState<number>(
     ROOT_DOMAIN_ID,
   );
+  const [selectedMotionDomainId, setSelectedMoitonDomainId] = useState<number>(
+    ROOT_DOMAIN_ID,
+  );
 
   const currentUserRoles = useTransformer(getUserRolesForDomain, [
     colony,
@@ -155,7 +158,7 @@ const PermissionManagementDialog = ({
             {},
           ),
           annotationMessage,
-          motionDomainId,
+          motionDomainId: parseInt(motionDomainId, 10),
         }),
       ),
       mergePayload({
@@ -199,7 +202,7 @@ const PermissionManagementDialog = ({
             domainId: selectedDomainId.toString(),
             roles: [...new Set([...userDirectRoles, ...userInheritedRoles])],
             annotationMessage: undefined,
-            motionDomainId: ROOT_DOMAIN_ID,
+            motionDomainId: selectedMotionDomainId.toString(),
           }}
           validationSchema={validationSchema}
           onSuccess={close}
@@ -225,6 +228,7 @@ const PermissionManagementDialog = ({
                   currentUserRolesInRoot={currentUserRolesInRoot}
                   userInheritedRoles={userInheritedRoles}
                   onDomainSelected={setSelectedDomainId}
+                  onMotionDomainChange={setSelectedMoitonDomainId}
                   onChangeSelectedUser={setSelectedUser}
                   inputDisabled={inputDisabled}
                   userHasPermission={userHasPermission}
