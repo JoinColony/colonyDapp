@@ -3,6 +3,7 @@ import {
   ClientType,
   ROOT_DOMAIN_ID,
   getPermissionProofs,
+  getChildIndex,
   ColonyRole,
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
@@ -66,9 +67,16 @@ function* createEditDomainMotion({
       ColonyRole.Architecture,
     );
 
+    const motionChildSkillIndex = yield call(
+      getChildIndex,
+      colonyClient,
+      motionDomainId,
+      domainId,
+    );
+
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      domainId,
+      motionDomainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
@@ -121,7 +129,7 @@ function* createEditDomainMotion({
       identifier: colonyAddress,
       params: [
         motionDomainId,
-        childSkillIndex,
+        motionChildSkillIndex,
         AddressZero,
         encodedAction,
         key,
