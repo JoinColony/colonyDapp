@@ -1,9 +1,8 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import {
   ClientType,
-  ColonyRole,
-  getPermissionProofs,
   getExtensionPermissionProofs,
+  getChildIndex,
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
@@ -75,11 +74,11 @@ function* createPaymentMotion({
       colonyAddress,
     );
 
-    const [, childSkillIndex] = yield call(
-      getPermissionProofs,
+    const childSkillIndex = yield call(
+      getChildIndex,
       colonyClient,
+      motionDomainId,
       domainId,
-      ColonyRole.Funding,
     );
 
     const [extensionPDID, extensionCSI] = yield call(
@@ -119,7 +118,7 @@ function* createPaymentMotion({
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      domainId,
+      motionDomainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
