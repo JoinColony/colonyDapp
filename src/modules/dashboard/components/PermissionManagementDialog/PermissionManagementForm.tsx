@@ -198,13 +198,11 @@ const PermissionManagementForm = ({
     (domainValue: string) => {
       const fromDomainId = parseInt(domainValue, 10);
       if (fromDomainId !== ROOT_DOMAIN_ID && fromDomainId !== domainId) {
-        onDomainSelected(fromDomainId);
-        return setFieldValue('motionDomainId', fromDomainId);
+        return onDomainSelected(fromDomainId);
       }
-      onDomainSelected(ROOT_DOMAIN_ID);
-      return setFieldValue('motionDomainId', ROOT_DOMAIN_ID);
+      return onDomainSelected(ROOT_DOMAIN_ID);
     },
-    [domainId, onDomainSelected, setFieldValue],
+    [domainId, onDomainSelected],
   );
 
   const handleFilterMotionDomains = useCallback(
