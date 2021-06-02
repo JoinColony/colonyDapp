@@ -321,8 +321,7 @@ const DefaultMotion = ({
             state={motionState as MotionState}
             motionId={motionId}
           />
-          {/* {motionState === MotionState.Voting && votingStateData && ( */}
-          {true && (
+          {motionState === MotionState.Voting && votingStateData && (
             <>
               <span className={motionSpecificStyles.text}>
                 <FormattedMessage {...MSG.or} />
@@ -343,6 +342,7 @@ const DefaultMotion = ({
                 tooltipText={MSG.votingProgressBarTooltip}
                 className={motionSpecificStyles.help}
                 tooltipClassName={motionSpecificStyles.tooltip}
+                showArrow={false}
                 tooltipPopperProps={{
                   placement: 'top-end',
                   modifiers: [
