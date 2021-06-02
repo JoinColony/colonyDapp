@@ -16,6 +16,7 @@ interface Props {
   className?: string;
   tooltipClassName?: string;
   iconTitle?: string;
+  showArrow?: boolean;
 }
 
 const QuestionMarkTooltip = ({
@@ -35,6 +36,7 @@ const QuestionMarkTooltip = ({
   },
   tooltipText,
   className,
+  showArrow,
 }: Props) => {
   return (
     <>
@@ -50,6 +52,7 @@ const QuestionMarkTooltip = ({
           )
         }
         trigger="hover"
+        showArrow={showArrow}
         popperProps={tooltipPopperProps}
       >
         <div className={className}>
