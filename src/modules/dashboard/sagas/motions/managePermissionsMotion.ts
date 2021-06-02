@@ -3,6 +3,7 @@ import {
   ClientType,
   ROOT_DOMAIN_ID,
   getPermissionProofs,
+  getChildIndex,
   ColonyRole,
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
@@ -66,9 +67,16 @@ function* managePermissionsMotion({
       domainId === ROOT_DOMAIN_ID ? ColonyRole.Root : ColonyRole.Architecture,
     );
 
+    const motionChildSkillIndex = yield call(
+      getChildIndex,
+      colonyClient,
+      motionDomainId,
+      domainId,
+    );
+
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      domainId,
+      motionDomainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
@@ -102,7 +110,6 @@ function* managePermissionsMotion({
     const hexString = hexlify(parseInt(roleBitmask, 2));
     const zeroPadHexString = hexZeroPad(hexString, 32);
 
-    // eslint-disable-next-line max-len
     const encodedAction = colonyClient.interface.functions.setUserRoles.encode([
       permissionDomainId,
       childSkillIndex,
@@ -118,7 +125,7 @@ function* managePermissionsMotion({
       identifier: colonyAddress,
       params: [
         motionDomainId,
-        childSkillIndex,
+        motionChildSkillIndex,
         AddressZero,
         encodedAction,
         key,
