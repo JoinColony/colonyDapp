@@ -313,8 +313,8 @@ const DefaultMotion = ({
   const motionState = motionStatusData?.motionStatus;
   const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
   const isStakingPhase =
-    motionState === MotionState.StakeRequired ||
-    motionState === MotionState.Motion ||
+    motionState === MotionState.Staking ||
+    motionState === MotionState.Staked ||
     motionState === MotionState.Objection;
 
   const objectionAnnotationUser = useUser(
