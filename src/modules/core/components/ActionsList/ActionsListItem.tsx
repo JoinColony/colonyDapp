@@ -21,6 +21,7 @@ import { FormattedAction, ColonyActions, ColonyMotions } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
 import { parseDomainMetadata } from '~utils/colonyActions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import {
   getUpdatedDecodedMotionRoles,
   MotionState,
@@ -95,6 +96,10 @@ const ActionsListItem = ({
     [metadata],
   );
 
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
+
   const initiatorUserProfile = useUser(createAddress(initiator || AddressZero));
   const recipientAddress = createAddress(recipient);
   const isColonyAddress = recipientAddress === colony.colonyAddress;
@@ -140,7 +145,14 @@ const ActionsListItem = ({
     const domainObject = parseDomainMetadata(metadataJSON);
     domainName = domainObject.domainName;
   }
-  const motionStyles = MOTION_TAG_MAP[motionState || MotionState.Invalid];
+  const motionStyles =
+    MOTION_TAG_MAP[
+      motionState ||
+        (isVotingExtensionEnabled &&
+          !actionType.endsWith('Motion') &&
+          MotionState.Forced) ||
+        MotionState.Invalid
+    ];
 
   return (
     <li>
@@ -230,7 +242,7 @@ const ActionsListItem = ({
                 newVersion: newVersion || '0',
               }}
             />
-            {motionState && (
+            {(motionState || isVotingExtensionEnabled) && (
               <div className={styles.motionTagWrapper}>
                 <Tag
                   text={motionStyles.name}
