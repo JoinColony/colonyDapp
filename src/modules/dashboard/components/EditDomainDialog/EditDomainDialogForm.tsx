@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { FormikProps } from 'formik';
 import { FormattedMessage, defineMessages } from 'react-intl';
@@ -15,6 +15,7 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Toggle from '~core/Fields/Toggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
@@ -70,10 +71,14 @@ const EditDomainDialogForm = ({
   isSubmitting,
   isValid,
   setFieldValue,
-  values: { domainId, domainName, forceAction },
+  setValues,
+  values: { domainId, domainName, forceAction, motionDomainId },
   isVotingExtensionEnabled,
 }: Props & FormikProps<FormValues>) => {
   const [domainColor, setDomainColor] = useState(Color.LightPink);
+  const [currentFromDomain, setCurrentFromDomain] = useState<number>(
+    parseInt(domainId, 10),
+  );
 
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
@@ -110,21 +115,56 @@ const EditDomainDialogForm = ({
 
   const inputDisabled = !canEditDomain || onlyForceAction;
 
-  const handleDomainChange = (selectedDomainId) => {
-    const selectedDomain = domains.find(
-      (domain) => domain.ethDomainId.toString() === selectedDomainId,
-    );
-    if (selectedDomain) {
-      setFieldValue(
-        'domainId',
-        selectedDomain.ethDomainId.toString() || undefined,
+  const handleDomainChange = useCallback(
+    (selectedDomainValue) => {
+      const selectedMotionDomainId = parseInt(motionDomainId, 10);
+      const selectedDomainId = parseInt(selectedDomainValue, 10);
+      const selectedDomain = domains.find(
+        (domain) => domain.ethDomainId === selectedDomainId,
       );
-      setFieldValue('domainColor', selectedDomain.color || undefined);
-      setFieldValue('domainName', selectedDomain.name || undefined);
-      setFieldValue('domainPurpose', selectedDomain.description || undefined);
-      setDomainColor(selectedDomain.color);
-    }
-  };
+      if (selectedDomain) {
+        setValues({
+          domainId: selectedDomain.ethDomainId.toString(),
+          domainColor: selectedDomain.color,
+          domainName: selectedDomain.name,
+          domainPurpose: selectedDomain.description as string,
+          forceAction,
+          motionDomainId,
+        });
+        setDomainColor(selectedDomain.color);
+        setCurrentFromDomain(selectedDomainId);
+        if (
+          selectedMotionDomainId !== ROOT_DOMAIN_ID &&
+          selectedMotionDomainId !== selectedDomainId
+        ) {
+          setFieldValue('motionDomainId', selectedDomainId);
+        }
+      }
+      return null;
+    },
+    [domains, forceAction, motionDomainId, setFieldValue, setValues],
+  );
+
+  const handleFilterMotionDomains = useCallback(
+    (optionDomain) => {
+      const optionDomainId = parseInt(optionDomain.value, 10);
+      if (currentFromDomain === ROOT_DOMAIN_ID) {
+        return optionDomainId === ROOT_DOMAIN_ID;
+      }
+      return (
+        optionDomainId === currentFromDomain ||
+        optionDomainId === ROOT_DOMAIN_ID
+      );
+    },
+    [currentFromDomain],
+  );
+
+  const handleMotionDomainChange = useCallback(
+    (motionDomainIdValue) =>
+      setFieldValue('motionDomainId', motionDomainIdValue),
+    [setFieldValue],
+  );
+
   useEffect(() => {
     if (domainId) {
       handleDomainChange(domainId);
@@ -134,19 +174,36 @@ const EditDomainDialogForm = ({
 
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none' }}
-          text={MSG.titleEdit}
-          className={styles.title}
-        />
-        {hasRoles && isVotingExtensionEnabled && (
-          <Toggle
-            label={{ id: 'label.force' }}
-            name="forceAction"
-            disabled={!canEditDomain}
-          />
-        )}
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                onDomainChange={handleMotionDomainChange}
+                disabled={forceAction}
+                /*
+                 * @NOTE We can only create a motion to vote in a subdomain if we
+                 * create a payment from that subdomain
+                 */
+                filterDomains={handleFilterMotionDomains}
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.titleEdit}
+            />
+            {hasRoles && isVotingExtensionEnabled && (
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={!canEditDomain}
+              />
+            )}
+          </div>
+        </div>
       </DialogSection>
       {!userHasPermission && (
         <DialogSection>
@@ -162,7 +219,6 @@ const EditDomainDialogForm = ({
               onChange={handleDomainChange}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
-              disabled={inputDisabled}
             />
           </div>
           <ColorSelect

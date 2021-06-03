@@ -3,6 +3,7 @@ import {
   ClientType,
   ROOT_DOMAIN_ID,
   getPermissionProofs,
+  getChildIndex,
   ColonyRole,
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
@@ -33,6 +34,7 @@ function* createEditDomainMotion({
     domainId: editDomainId,
     isCreateDomain,
     parentId = ROOT_DOMAIN_ID,
+    motionDomainId,
   },
   meta: { id: metaId, history },
   meta,
@@ -57,17 +59,29 @@ function* createEditDomainMotion({
       ClientType.ColonyClient,
       colonyAddress,
     );
+    const votingReputationClient = yield context.getClient(
+      ClientType.VotingReputationClient,
+      colonyAddress,
+    );
 
     const [permissionDomainId, childSkillIndex] = yield call(
       getPermissionProofs,
       colonyClient,
       domainId,
       ColonyRole.Architecture,
+      votingReputationClient.address,
+    );
+
+    const motionChildSkillIndex = yield call(
+      getChildIndex,
+      colonyClient,
+      motionDomainId,
+      domainId,
     );
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      domainId,
+      motionDomainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
@@ -119,8 +133,8 @@ function* createEditDomainMotion({
       methodName: 'createMotion',
       identifier: colonyAddress,
       params: [
-        domainId,
-        childSkillIndex,
+        motionDomainId,
+        motionChildSkillIndex,
         AddressZero,
         encodedAction,
         key,

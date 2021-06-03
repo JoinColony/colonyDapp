@@ -197,6 +197,12 @@
     "transaction.VotingReputationClient.claimRewardWithProofs.title": "Claim motion reward",
     "transaction.VotingReputationClient.claimRewardWithProofs.description": "Claim motion reward",
 
+    "transaction.group.escalateMotion.title": "Escalate Motion",
+    "transaction.group.escalateMotion.description": "Escalate Motion",
+    "transaction.VotingReputationClient.escalateMotionWithProofs.title": "Escalate Motion",
+    "transaction.VotingReputationClient.escalateMotionWithProofs.description": "Escalate Motion",
+
+
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
     "message.motionVote.title": "Sign message to vote",

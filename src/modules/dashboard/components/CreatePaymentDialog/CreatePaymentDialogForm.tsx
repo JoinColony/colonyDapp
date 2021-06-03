@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { FormikProps } from 'formik';
 import {
   defineMessages,
@@ -24,6 +24,7 @@ import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Toggle from '~core/Fields/Toggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -116,20 +117,22 @@ const CreatePaymentDialogForm = ({
   isVotingExtensionEnabled,
   subscribedUsers,
   handleSubmit,
+  setFieldValue,
   isSubmitting,
   isValid,
   values,
 }: Props & FormikProps<FormValues>) => {
+  const domainId = values.domainId
+    ? parseInt(values.domainId, 10)
+    : ROOT_DOMAIN_ID;
   /*
    * Custom error state tracking
    */
   const [customAmountError, setCustomAmountError] = useState<
     MessageDescriptor | string | undefined
   >(undefined);
+  const [currentFromDomain, setCurrentFromDomain] = useState<number>(domainId);
   const { tokenAddress, amount } = values;
-  const domainId = values.domainId
-    ? parseInt(values.domainId, 10)
-    : ROOT_DOMAIN_ID;
 
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
@@ -258,25 +261,83 @@ const CreatePaymentDialogForm = ({
     colonyAddress,
   });
 
+  const handleFromDomainChange = useCallback(
+    (fromDomainValue) => {
+      const fromDomainId = parseInt(fromDomainValue, 10);
+      const selectedMotionDomainId = parseInt(values.motionDomainId, 10);
+      if (
+        fromDomainId !== ROOT_DOMAIN_ID &&
+        fromDomainId !== currentFromDomain
+      ) {
+        setCurrentFromDomain(fromDomainId);
+      } else {
+        setCurrentFromDomain(ROOT_DOMAIN_ID);
+      }
+      if (
+        selectedMotionDomainId !== ROOT_DOMAIN_ID &&
+        selectedMotionDomainId !== fromDomainId
+      ) {
+        setFieldValue('motionDomainId', fromDomainId);
+      }
+    },
+    [currentFromDomain, setFieldValue, values.motionDomainId],
+  );
+
+  const handleFilterMotionDomains = useCallback(
+    (optionDomain) => {
+      const optionDomainId = parseInt(optionDomain.value, 10);
+      if (currentFromDomain === ROOT_DOMAIN_ID) {
+        return optionDomainId === ROOT_DOMAIN_ID;
+      }
+      return (
+        optionDomainId === currentFromDomain ||
+        optionDomainId === ROOT_DOMAIN_ID
+      );
+    },
+    [currentFromDomain],
+  );
+
+  const handleMotionDomainChange = useCallback(
+    (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
+    [setFieldValue],
+  );
+
   const canMakePayment = userHasPermission && isOneTxPaymentExtensionEnabled;
 
   const inputDisabled = !canMakePayment || onlyForceAction;
 
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none' }}
-          text={MSG.title}
-          className={styles.title}
-        />
-        {hasRoles && isVotingExtensionEnabled && (
-          <Toggle
-            label={{ id: 'label.force' }}
-            name="forceAction"
-            disabled={!canMakePayment}
-          />
-        )}
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                onDomainChange={handleMotionDomainChange}
+                disabled={values.forceAction}
+                /*
+                 * @NOTE We can only create a motion to vote in a subdomain if we
+                 * create a payment from that subdomain
+                 */
+                filterDomains={handleFilterMotionDomains}
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {hasRoles && isVotingExtensionEnabled && (
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={!canMakePayment}
+              />
+            )}
+          </div>
+        </div>
       </DialogSection>
       {!userHasPermission && (
         <DialogSection>
@@ -291,7 +352,7 @@ const CreatePaymentDialogForm = ({
               label={MSG.from}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
-              disabled={inputDisabled}
+              onChange={handleFromDomainChange}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>

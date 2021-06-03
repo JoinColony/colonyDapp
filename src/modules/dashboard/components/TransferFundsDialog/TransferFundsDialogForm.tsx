@@ -10,13 +10,7 @@ import { AddressZero } from 'ethers/constants';
 import { useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
-import {
-  Select,
-  Input,
-  FormStatus,
-  Annotations,
-  TokenSymbolSelector,
-} from '~core/Fields';
+import { Select, Input, Annotations, TokenSymbolSelector } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
@@ -43,6 +37,7 @@ import { userHasRole } from '../../../users/checks';
 import styles from './TransferFundsDialogForm.css';
 import { FormValues } from './TransferFundsDialog';
 import Icon from '~core/Icon';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 const MSG = defineMessages({
   title: {
@@ -112,7 +107,6 @@ const TransferFundsDialogForm = ({
   isSubmitting,
   isValid,
   setErrors,
-  status,
   values,
   validateForm,
   errors,
@@ -257,16 +251,29 @@ const TransferFundsDialogForm = ({
 
   return (
     <>
-      <FormStatus status={status} />
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none' }}
-          text={MSG.title}
-          className={styles.title}
-        />
-        {canTransferFunds && isVotingExtensionEnabled && (
-          <Toggle label={{ id: 'label.force' }} name="forceAction" />
-        )}
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                /*
+                 * @NOTE Always disabled since you can only create this motion in root
+                 */
+                disabled
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {canTransferFunds && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
+        </div>
       </DialogSection>
       {!userHasPermission && (
         <div className={styles.permissionsRequired}>

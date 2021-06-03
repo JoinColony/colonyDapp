@@ -7,6 +7,7 @@ import { useDialog } from '~core/Dialog';
 import CreateDomainDialog from '~dashboard/CreateDomainDialog';
 
 import { Colony } from '~data/index';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import styles from './CreateDomainButton.css';
 
@@ -26,6 +27,9 @@ const displayName = 'dashboard.DomainDropdown.CreateDomainButton';
 const CreateDomainButton = ({ colony }: Props) => {
   const { formatMessage } = useIntl();
   const openCreateDomainDialog = useDialog(CreateDomainDialog);
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
 
   const handleClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (evt) => {
@@ -37,9 +41,10 @@ const CreateDomainButton = ({ colony }: Props) => {
       // @ts-ignore
       return openCreateDomainDialog({
         colony,
+        isVotingExtensionEnabled,
       });
     },
-    [openCreateDomainDialog, colony],
+    [openCreateDomainDialog, colony, isVotingExtensionEnabled],
   );
 
   const text = formatMessage(MSG.buttonCreateNewDomain);

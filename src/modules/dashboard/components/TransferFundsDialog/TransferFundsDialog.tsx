@@ -134,6 +134,11 @@ const TransferFundsDialog = ({
         amount: '',
         tokenAddress: nativeTokenAddress,
         annotation: undefined,
+        /*
+         * @NOTE That since this a root motion, and we don't actually make use
+         * of the motion domain selected (it's disabled), we don't need to actually
+         * pass the value over to the motion, since it will always be 1
+         */
       }}
       validationSchema={validationSchema}
       submit={getFormAction('SUBMIT')}

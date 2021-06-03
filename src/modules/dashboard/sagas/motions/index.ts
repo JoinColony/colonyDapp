@@ -12,6 +12,7 @@ import managePermissionsMotionSaga from './managePermissionsMotion';
 import editColonyMotionSaga from './editColonyMotion';
 import updateMotionStateSaga from './updateState';
 import paymentMotionSaga from './paymentMotion';
+import escalateMotionSaga from './escalateMotion';
 
 export default function* actionsSagas() {
   yield all([
@@ -27,5 +28,6 @@ export default function* actionsSagas() {
     call(editColonyMotionSaga),
     call(updateMotionStateSaga),
     call(paymentMotionSaga),
+    call(escalateMotionSaga),
   ]);
 }

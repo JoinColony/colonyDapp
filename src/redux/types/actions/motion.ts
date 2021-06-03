@@ -105,6 +105,7 @@ export type MotionActionTypes =
         parentId?: number;
         domainId?: number;
         isCreateDomain: boolean;
+        motionDomainId: string;
       },
       MetaWithHistory<object>
     >
@@ -126,6 +127,7 @@ export type MotionActionTypes =
           decimals: number;
         };
         annotationMessage?: string;
+        motionDomainId: string;
       },
       MetaWithHistory<object>
     >
@@ -200,6 +202,7 @@ export type MotionActionTypes =
         userAddress: Address;
         roles: Record<ColonyRole, boolean>;
         annotationMessage?: string;
+        motionDomainId: string;
       },
       MetaWithHistory<object>
     >
@@ -221,4 +224,18 @@ export type MotionActionTypes =
   | UniqueActionTypeWithoutPayload<
       ActionTypes.COLONY_MOTION_STATE_UPDATE_SUCCESS,
       object
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_MOTION_ESCALATE,
+      {
+        userAddress: Address;
+        colonyAddress: Address;
+        motionId: BigNumber;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_ESCALATE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_ESCALATE_SUCCESS,
+      MetaWithHistory<object>
     >;

@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -77,6 +78,7 @@ const CreateDomainDialog = ({
         domainColor: Color.LightPink,
         domainPurpose: undefined,
         annotationMessage: undefined,
+        motionDomainId: ROOT_DOMAIN_ID,
       }}
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}

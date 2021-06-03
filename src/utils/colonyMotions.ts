@@ -58,6 +58,10 @@ const MSG = defineMessage({
     id: 'dashboard.ActionsPage.invalidTag',
     defaultMessage: 'Invalid',
   },
+  escalateTag: {
+    id: 'dashboard.ActionsPage.escalateTag',
+    defaultMessage: 'Escalate',
+  },
 });
 
 export const MOTION_TAG_MAP = {
@@ -114,6 +118,12 @@ export const MOTION_TAG_MAP = {
     colorSchema: 'plain',
     name: MSG.invalidTag,
     tagName: 'invalidTag',
+  },
+  [MotionState.Escalation]: {
+    theme: 'dangerGhost',
+    colorSchema: 'plain',
+    name: MSG.escalateTag,
+    tagName: 'escalateTag',
   },
 };
 

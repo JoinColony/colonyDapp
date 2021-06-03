@@ -1,9 +1,8 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import {
   ClientType,
-  ColonyRole,
-  getPermissionProofs,
   getExtensionPermissionProofs,
+  getChildIndex,
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
@@ -32,6 +31,7 @@ function* createPaymentMotion({
     domainId,
     singlePayment,
     annotationMessage,
+    motionDomainId,
   },
   meta: { id: metaId, history },
   meta,
@@ -64,8 +64,13 @@ function* createPaymentMotion({
     }
 
     const context = TEMP_getContext(ContextModule.ColonyManager);
-    const client = yield context.getClient(
+    const oneTxPaymentClient = yield context.getClient(
       ClientType.OneTxPaymentClient,
+      colonyAddress,
+    );
+
+    const votingReputationClient = yield context.getClient(
+      ClientType.VotingReputationClient,
       colonyAddress,
     );
 
@@ -74,35 +79,36 @@ function* createPaymentMotion({
       colonyAddress,
     );
 
-    const [, childSkillIndex] = yield call(
-      getPermissionProofs,
+    const childSkillIndex = yield call(
+      getChildIndex,
       colonyClient,
+      motionDomainId,
       domainId,
-      ColonyRole.Funding,
     );
 
     const [extensionPDID, extensionCSI] = yield call(
       getExtensionPermissionProofs,
       colonyClient,
       domainId,
-      client.address,
+      oneTxPaymentClient.address,
     );
 
-    const [userPDID, userCSI] = yield call(
+    const [votingReputationPDID, votingReputationCSI] = yield call(
       getExtensionPermissionProofs,
       colonyClient,
       domainId,
+      votingReputationClient.address,
     );
 
     const { amount, tokenAddress, decimals = 18 } = singlePayment;
 
     // eslint-disable-next-line max-len
-    const encodedAction = client.interface.functions.makePaymentFundedFromDomain.encode(
+    const encodedAction = oneTxPaymentClient.interface.functions.makePaymentFundedFromDomain.encode(
       [
         extensionPDID,
         extensionCSI,
-        userPDID,
-        userCSI,
+        votingReputationPDID,
+        votingReputationCSI,
         [recipientAddress],
         [tokenAddress],
         [bigNumberify(moveDecimal(amount, decimals))],
@@ -118,7 +124,7 @@ function* createPaymentMotion({
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      domainId,
+      motionDomainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
@@ -146,9 +152,9 @@ function* createPaymentMotion({
       methodName: 'createMotion',
       identifier: colonyAddress,
       params: [
-        domainId,
+        motionDomainId,
         childSkillIndex,
-        client.address,
+        oneTxPaymentClient.address,
         encodedAction,
         key,
         value,

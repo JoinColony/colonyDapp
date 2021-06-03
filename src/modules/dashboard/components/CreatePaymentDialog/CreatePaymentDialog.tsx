@@ -11,7 +11,7 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { ColonySubscribedUsersDocument, Colony } from '~data/index';
+import { ColonySubscribedUsersDocument } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -36,11 +36,7 @@ export interface FormValues {
   amount: string;
   tokenAddress: Address;
   annotation: string;
-}
-
-interface CustomWizardDialogProps {
-  prevStep: string;
-  colony: Colony;
+  motionDomainId: string;
 }
 
 type Props = Required<DialogProps> &
@@ -89,6 +85,8 @@ const CreatePaymentDialog = ({
       .moreThan(0, () => MSG.amountZero),
     tokenAddress: yup.string().address().required(),
     annotation: yup.string().max(4000),
+    forceAction: yup.boolean(),
+    motionDomainId: yup.number(),
   });
 
   const { data: subscribedUsersData } = useQuery(
@@ -107,6 +105,7 @@ const CreatePaymentDialog = ({
             profile: { walletAddress },
           },
           annotation: annotationMessage,
+          motionDomainId,
         } = payload;
 
         const selectedToken = tokens.find(
@@ -127,6 +126,7 @@ const CreatePaymentDialog = ({
             decimals,
           },
           annotationMessage,
+          motionDomainId,
         };
       }),
       withMeta({ history }),
@@ -143,6 +143,7 @@ const CreatePaymentDialog = ({
         amount: undefined,
         tokenAddress: nativeTokenAddress,
         annotation: undefined,
+        motionDomainId: ROOT_DOMAIN_ID,
       }}
       validationSchema={validationSchema}
       submit={getFormAction('SUBMIT')}

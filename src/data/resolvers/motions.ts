@@ -7,6 +7,7 @@ import {
   MotionState as NetworkMotionState,
   getEvents,
   getMultipleEvents,
+  ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 import { bigNumberify, LogDescription, hexStripZeros } from 'ethers/utils';
 import { Resolvers } from '@apollo/client';
@@ -214,6 +215,7 @@ export const motionsResolvers = ({
       const motionNetworkState = await votingReputationClient.getMotionState(
         motionId,
       );
+      const { domainId: motionDomainId } = motion;
       const systemMessages: SystemMessage[] = [];
 
       // @TODO Add missing types to colonyjs
@@ -329,6 +331,21 @@ export const motionsResolvers = ({
           type: ActionsPageFeedType.SystemMessage,
           name: SystemMessagesName.MotionVotingPhase,
           createdAt: motion.events[0].toNumber() * 1000,
+        });
+      }
+
+      if (
+        motionNetworkState === NetworkMotionState.Closed &&
+        !motionDomainId.eq(ROOT_DOMAIN_ID)
+      ) {
+        systemMessages.push({
+          type: ActionsPageFeedType.SystemMessage,
+          name: SystemMessagesName.MotionCanBeEscalated,
+          /*
+           * @NOTE We can just use the current time, since this is the last entry
+           * in the feed
+           */
+          createdAt: blocktime,
         });
       }
 
@@ -615,14 +632,14 @@ export const motionsResolvers = ({
         // eslint-disable-next-line max-len
         const maxVoteFraction = await votingReputationClient.getMaxVoteFraction();
 
-        const threasholdValue = getMotionRequiredStake(
+        const thresholdValue = getMotionRequiredStake(
           skillRep,
           maxVoteFraction,
           18,
         );
 
         return {
-          threasholdValue: threasholdValue.toString(),
+          thresholdValue: thresholdValue.toString(),
           totalVotedReputation: repSubmitted.toString(),
           skillRep: skillRep.toString(),
         };

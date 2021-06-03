@@ -8,10 +8,10 @@ import moveDecimal from 'move-decimal-point';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
+
 import { ActionTypes } from '~redux/index';
 import { RootMotionOperationNames } from '~redux/types/actions';
 import { pipe, mapPayload, withMeta } from '~utils/actions';
-
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { WizardDialogType } from '~utils/hooks';
 
@@ -41,6 +41,7 @@ type Props = DialogProps &
 const displayName = 'dashboard.TokenMintDialog';
 
 const validationSchema = yup.object().shape({
+  forceAction: yup.bool(),
   annotation: yup.string().max(4000),
   mintAmount: yup
     .number()
@@ -107,6 +108,11 @@ const TokenMintDialog = ({
         forceAction: false,
         annotation: '',
         mintAmount: 0,
+        /*
+         * @NOTE That since this a root motion, and we don't actually make use
+         * of the motion domain selected (it's disabled), we don't need to actually
+         * pass the value over to the motion, since it will always be 1
+         */
       }}
       validationSchema={validationSchema}
       submit={getFormAction('SUBMIT')}

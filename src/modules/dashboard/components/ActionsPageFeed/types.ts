@@ -50,6 +50,7 @@ export enum SystemMessagesName {
   MotionFullyStaked = 'MotionFullyStaked',
   MotionRevealResultObjectionWon = 'MotionRevealResultObjectionWon',
   MotionRevealResultMotionWon = 'MotionRevealResultMotionWon',
+  MotionCanBeEscalated = 'MotionCanBeEscalated',
 }
 
 export interface SystemMessage {

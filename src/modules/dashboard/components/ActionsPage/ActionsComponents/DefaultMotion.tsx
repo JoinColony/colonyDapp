@@ -1,7 +1,8 @@
+import React, { useMemo, useRef, useCallback } from 'react';
 import { bigNumberify } from 'ethers/utils';
-import React, { useMemo, useRef } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import Heading from '~core/Heading';
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
@@ -28,6 +29,7 @@ import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import MemberReputation from '~core/MemberReputation';
 import ProgressBar from '~core/ProgressBar';
+import { ActionButton } from '~core/Button';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
@@ -38,6 +40,8 @@ import {
   shouldDisplayMotion,
 } from '~utils/colonyMotions';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
+import { mapPayload } from '~utils/actions';
+import { ActionTypes } from '~redux/index';
 
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
@@ -58,8 +62,16 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DefaultMotion.or',
     defaultMessage: `OR`,
   },
+  escalate: {
+    id: 'dashboard.ActionsPage.DefaultMotion.escalate',
+    defaultMessage: `Escalate`,
+  },
+  escalateTooltip: {
+    id: 'dashboard.ActionsPage.DefaultMotion.escalateTooltip',
+    defaultMessage: `Motion escalation will be released in a future update`,
+  },
   votingProgressBarTooltip: {
-    id: 'dashboard.ActionsPage.DefaultMotion.or',
+    id: 'dashboard.ActionsPage.DefaultMotion.votingProgressBarTooltip',
     defaultMessage: `Voting ends at the sooner of either time-out, or the reputation threshold being reached.`,
   },
 });
@@ -76,7 +88,7 @@ interface Props {
 }
 
 const DefaultMotion = ({
-  colony: { domains },
+  colony: { domains, colonyAddress },
   colony,
   colonyAction: {
     events = [],
@@ -101,7 +113,13 @@ const DefaultMotion = ({
   initiator,
 }: Props) => {
   const bottomElementRef = useRef<HTMLInputElement>(null);
-  const { passedTag, failedTag, objectionTag, ...tags } = useMemo(() => {
+  const {
+    passedTag,
+    failedTag,
+    objectionTag,
+    escalateTag,
+    ...tags
+  } = useMemo(() => {
     return Object.values(MOTION_TAG_MAP).reduce((acc, object) => {
       const { theme, colorSchema } = object as TagAppearance;
       acc[object.tagName] = (
@@ -134,6 +152,7 @@ const DefaultMotion = ({
     walletAddress,
     ethereal,
   } = useLoggedInUser();
+  const userHasProfile = currentUserName && !ethereal;
 
   const { data: motionsSystemMessagesData } = useMotionsSystemMessagesQuery({
     variables: {
@@ -163,6 +182,15 @@ const DefaultMotion = ({
     fetchPolicy: 'network-only',
   });
 
+  const escalateTransform = useCallback(
+    mapPayload(() => ({
+      colonyAddress,
+      motionId,
+      userAddress: walletAddress,
+    })),
+    [],
+  );
+
   const requiredStake = bigNumberify(
     motionStakeData?.stakeAmountsForMotion?.requiredStake || 0,
   ).toString();
@@ -187,8 +215,8 @@ const DefaultMotion = ({
     fetchPolicy: 'network-only',
   });
 
-  const threashold = bigNumberify(
-    votingStateData?.votingState?.threasholdValue || 0,
+  const threshold = bigNumberify(
+    votingStateData?.votingState?.thresholdValue || 0,
   )
     .div(bigNumberify(10).pow(18))
     .toNumber();
@@ -208,7 +236,7 @@ const DefaultMotion = ({
     (totalVotedReputationValue > 0 &&
       Math.round((totalVotedReputationValue / skillRepValue) * 100)) ||
     0;
-  const threasholdPercent = Math.round((threashold / skillRepValue) * 100);
+  const thresholdPercent = Math.round((threshold / skillRepValue) * 100);
   const domainMetadata = {
     name: domainName,
     color: domainColor,
@@ -265,6 +293,9 @@ const DefaultMotion = ({
     objectionTag: (
       <span className={motionSpecificStyles.tagWrapper}>{objectionTag}</span>
     ),
+    escalateTag: (
+      <span className={motionSpecificStyles.tagWrapper}>{escalateTag}</span>
+    ),
     ...tags,
     voteResultsWidget: (
       <div className={motionSpecificStyles.voteResultsWrapper}>
@@ -276,6 +307,7 @@ const DefaultMotion = ({
         <VoteResults colony={colony} motionId={motionId} />
       </div>
     ),
+    spaceBreak: <br />,
   };
 
   const motionState = motionStatusData?.motionStatus;
@@ -320,7 +352,7 @@ const DefaultMotion = ({
               <div className={motionSpecificStyles.progressBarContainer}>
                 <ProgressBar
                   value={currentReputationPercent}
-                  threshold={threasholdPercent}
+                  threshold={thresholdPercent}
                   max={100}
                   appearance={{
                     size: 'small',
@@ -348,6 +380,35 @@ const DefaultMotion = ({
               />
             </>
           )}
+          {motionState === MotionState.Escalation &&
+            motionDomain !== ROOT_DOMAIN_ID &&
+            userHasProfile && (
+              <div className={motionSpecificStyles.escalation}>
+                <ActionButton
+                  appearance={{ theme: 'blue', size: 'small' }}
+                  submit={ActionTypes.COLONY_MOTION_ESCALATE}
+                  error={ActionTypes.COLONY_MOTION_ESCALATE_ERROR}
+                  success={ActionTypes.COLONY_MOTION_ESCALATE_SUCCESS}
+                  transform={escalateTransform}
+                  text={MSG.escalate}
+                  /*
+                   * @NOTE For the current release the "escalate" functionality
+                   * has been disabled due to difficulties in implementing
+                   * the events, **after** the motion has been escalated, due
+                   * to the `motion.events` array values being reset
+                   */
+                  disabled
+                />
+                <QuestionMarkTooltip
+                  tooltipText={MSG.escalateTooltip}
+                  className={motionSpecificStyles.help}
+                  tooltipClassName={motionSpecificStyles.tooltip}
+                  tooltipPopperProps={{
+                    placement: 'right',
+                  }}
+                />
+              </div>
+            )}
         </div>
       </div>
       <hr className={styles.dividerTop} />
@@ -398,7 +459,7 @@ const DefaultMotion = ({
             rootHash={rootHash || undefined}
           />
 
-          {currentUserName && !ethereal && (
+          {userHasProfile && (
             <div ref={bottomElementRef}>
               <ActionsPageComment
                 transactionHash={transactionHash}
@@ -435,6 +496,7 @@ const DefaultMotion = ({
           )}
           {(motionState === MotionState.Failed ||
             motionState === MotionState.Passed ||
+            motionState === MotionState.Escalation ||
             motionState === MotionState.FailedNoFinalizable) && (
             <FinalizeMotionAndClaimWidget
               colony={colony}

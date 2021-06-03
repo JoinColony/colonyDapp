@@ -1,0 +1,18 @@
+.main {
+  width: 250px;
+}
+
+.main button {
+  padding: 0;
+}
+
+.main button[aria-disabled="true"] {
+  background-color: transparent;
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.activeItem {
+  font-size: var(--size-tiny);
+  letter-spacing: var(--spacing-medium);
+}
