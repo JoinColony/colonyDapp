@@ -59,12 +59,17 @@ function* managePermissionsMotion({
       ClientType.ColonyClient,
       colonyAddress,
     );
+    const votingReputationClient = yield context.getClient(
+      ClientType.VotingReputationClient,
+      colonyAddress,
+    );
 
     const [permissionDomainId, childSkillIndex] = yield call(
       getPermissionProofs,
       colonyClient,
       domainId,
       domainId === ROOT_DOMAIN_ID ? ColonyRole.Root : ColonyRole.Architecture,
+      votingReputationClient.address,
     );
 
     const motionChildSkillIndex = yield call(

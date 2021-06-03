@@ -68,6 +68,10 @@ function* moveFundsMotion({
       ClientType.ColonyClient,
       colonyAddress,
     );
+    const votingReputationClient = yield context.getClient(
+      ClientType.VotingReputationClient,
+      colonyAddress,
+    );
 
     const [{ fundingPotId: fromPot }, { fundingPotId: toPot }] = yield all([
       call([colonyClient, colonyClient.getDomain], fromDomainId),
@@ -78,7 +82,13 @@ function* moveFundsMotion({
       permissionDomainId,
       fromChildSkillIndex,
       toChildSkillIndex,
-    ] = yield call(getMoveFundsPermissionProofs, colonyClient, fromPot, toPot);
+    ] = yield call(
+      getMoveFundsPermissionProofs,
+      colonyClient,
+      fromPot,
+      toPot,
+      votingReputationClient.address,
+    );
 
     const motionChildSkillIndex = yield call(
       getChildIndex,

@@ -59,12 +59,17 @@ function* createEditDomainMotion({
       ClientType.ColonyClient,
       colonyAddress,
     );
+    const votingReputationClient = yield context.getClient(
+      ClientType.VotingReputationClient,
+      colonyAddress,
+    );
 
     const [permissionDomainId, childSkillIndex] = yield call(
       getPermissionProofs,
       colonyClient,
       domainId,
       ColonyRole.Architecture,
+      votingReputationClient.address,
     );
 
     const motionChildSkillIndex = yield call(
