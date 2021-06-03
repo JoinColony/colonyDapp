@@ -66,7 +66,9 @@ export const MSG = defineMessages({
   },
   finalizeTooltip: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.finalizeTooltip',
-    defaultMessage: `[TO BE ADDED WHEN AVAILABLE]`,
+    defaultMessage: `Finalize completes a motion, allows stakes to be
+    reclaimed, and if applicable, takes the action the motion was 
+    created to authorise.`,
   },
   finalizeButton: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.finalizeButton',

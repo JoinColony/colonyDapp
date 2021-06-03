@@ -4,7 +4,6 @@ import { Decimal } from 'decimal.js';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
-import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import { Colony } from '~data/index';
@@ -48,10 +47,6 @@ const MSG = defineMessages({
   descriptionObject: {
     id: 'dashboard.ActionsPage.StakingSlider.description',
     defaultMessage: `Stake will be returned if the objection succeeds. If the objection fails, part or all of your stake will be lost.`,
-  },
-  stakingTooltip: {
-    id: 'dashboard.ActionsPage.StakingSlider.stakingTooltip',
-    defaultMessage: '[TO BE ADDED]',
   },
   loading: {
     id: 'dashboard.ActionsPage.StakingSlider.loading',
@@ -112,14 +107,6 @@ const StakingSlider = ({
           text={isObjection ? MSG.titleObject : MSG.titleStake}
           className={styles.title}
           appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
-        />
-        <QuestionMarkTooltip
-          tooltipText={MSG.stakingTooltip}
-          className={styles.help}
-          tooltipClassName={styles.tooltip}
-          tooltipPopperProps={{
-            placement: 'right',
-          }}
         />
       </div>
       <p className={styles.description}>
