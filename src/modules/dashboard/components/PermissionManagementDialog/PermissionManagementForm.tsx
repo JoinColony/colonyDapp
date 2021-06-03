@@ -261,7 +261,7 @@ const PermissionManagementForm = ({
               text={MSG.title}
               textValues={{ domain: domain?.name }}
             />
-            {canEditPermissions && isVotingExtensionEnabled && (
+            {(canEditPermissions || isVotingExtensionEnabled) && (
               <Toggle label={{ id: 'label.force' }} name="forceAction" />
             )}
           </div>
@@ -308,7 +308,9 @@ const PermissionManagementForm = ({
               <PermissionManagementCheckbox
                 key={role}
                 disabled={
-                  inputDisabled || !canRoleBeSet(role) || roleIsInherited
+                  !isVotingExtensionEnabled
+                    ? inputDisabled || !canRoleBeSet(role) || roleIsInherited
+                    : false
                 }
                 role={role}
                 asterisk={roleIsInherited}
