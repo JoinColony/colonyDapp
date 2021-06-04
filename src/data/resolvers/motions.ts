@@ -47,13 +47,6 @@ const getMotionEvents = async (
     votingReputationClient.filters.MotionStaked(motionId, null, null, null),
   );
 
-  const motionVoteRevealedLogs = await getLogs(
-    votingReputationClient,
-    // @TODO Add missing types to colonyjs
-    // @ts-ignore
-    votingReputationClient.filters.MotionVoteRevealed(motionId, null, null),
-  );
-
   const motionFinalizedLogs = await getLogs(
     votingReputationClient,
     // @TODO Add missing types to colonyjs
@@ -71,7 +64,6 @@ const getMotionEvents = async (
   const parsedMotionEvents = await Promise.all(
     [
       ...motionStakedLogs,
-      ...motionVoteRevealedLogs,
       ...motionFinalizedLogs,
       ...motionStakeClaimedLogs,
     ].map(async (log) => {
