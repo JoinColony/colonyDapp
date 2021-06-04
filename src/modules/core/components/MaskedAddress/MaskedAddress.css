@@ -1,6 +1,7 @@
 .address {
   font-family: var(--family-techie);
-  font-weight: var(--weight-medium);
+  font-size: var(--size-smallish);
+  font-weight: 600;
   color: var(--temp-grey-blue-7);
 }
 
