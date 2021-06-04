@@ -116,11 +116,6 @@
   cursor: pointer;
 }
 
-.walletAddress span {
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-}
-
 .walletAddress:hover {
   background-color: color-mod(var(--colony-blue) alpha(10%));
   color: var(--colony-blue);
