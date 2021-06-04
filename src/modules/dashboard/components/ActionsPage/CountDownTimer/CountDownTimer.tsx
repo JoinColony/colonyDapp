@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  MutableRefObject,
+} from 'react';
 import { FormattedMessage, defineMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
@@ -65,11 +71,12 @@ const CountDownTimer = ({
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const dispatch = useDispatch();
-  const { data, loading } = useMotionTimeoutPeriodsQuery({
+  const { data, loading, refetch } = useMotionTimeoutPeriodsQuery({
     variables: {
       colonyAddress,
       motionId,
     },
+    notifyOnNetworkStatusChange: true,
   });
 
   const currentStatePeriod = useCallback(() => {
@@ -91,6 +98,11 @@ const CountDownTimer = ({
 
   const [timeLeft, setTimeLeft] = useState<number>(-1);
 
+  const prevStateRef: MutableRefObject<MotionState | null> = useRef(null);
+  const isStakingPhaseState =
+    state === MotionState.Staking ||
+    state === MotionState.Staked ||
+    state === MotionState.Objection;
   /*
    * Set the initial timeout
    *
@@ -109,9 +121,15 @@ const CountDownTimer = ({
    * and change the state so we can refresh it.
    */
   useEffect(() => {
-    const period = currentStatePeriod() / 1000;
-    setTimeLeft(period > 0 ? period + 5 : period);
-  }, [currentStatePeriod]);
+    if (
+      (prevStateRef.current === null && isStakingPhaseState) ||
+      !isStakingPhaseState
+    ) {
+      const period = currentStatePeriod() / 1000;
+      setTimeLeft(period > 0 ? period + 5 : period);
+      prevStateRef.current = state || null;
+    }
+  }, [currentStatePeriod, prevStateRef, state, isStakingPhaseState]);
 
   /*
    * Count it down
@@ -142,6 +160,12 @@ const CountDownTimer = ({
     motionId,
     walletAddress,
   ]);
+
+  useEffect(() => {
+    if (data && !isStakingPhaseState) {
+      refetch();
+    }
+  }, [isStakingPhaseState, data, refetch, state]);
 
   /*
    * Split the time into h/m/s for display purpouses
