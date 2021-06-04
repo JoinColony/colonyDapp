@@ -8,6 +8,7 @@ export const stateNeedAction: string;
 export const stateNeedAttention: string;
 export const stateYellow: string;
 export const content: string;
+export const titleWrapper: string;
 export const title: string;
 export const meta: string;
 export const separator: string;

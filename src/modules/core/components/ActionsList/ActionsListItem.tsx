@@ -203,45 +203,47 @@ const ActionsListItem = ({
           )}
         </div>
         <div className={styles.content}>
-          <div className={styles.title}>
-            <FormattedMessage
-              id={roleMessageDescriptorId || 'action.title'}
-              values={{
-                actionType,
-                initiator: (
-                  <span className={styles.titleDecoration}>
-                    <FriendlyName
-                      user={initiatorUserProfile}
-                      autoShrinkAddress
+          <div className={styles.titleWrapper}>
+            <span className={styles.title}>
+              <FormattedMessage
+                id={roleMessageDescriptorId || 'action.title'}
+                values={{
+                  actionType,
+                  initiator: (
+                    <span className={styles.titleDecoration}>
+                      <FriendlyName
+                        user={initiatorUserProfile}
+                        autoShrinkAddress
+                      />
+                    </span>
+                  ),
+                  /*
+                   * @TODO Add user mention popover back in
+                   */
+                  recipient: (
+                    <span className={styles.titleDecoration}>
+                      <FriendlyName
+                        user={fallbackRecipientProfile}
+                        autoShrinkAddress
+                        colony={colony}
+                      />
+                    </span>
+                  ),
+                  amount: (
+                    <Numeral
+                      value={amount}
+                      unit={getTokenDecimalsWithFallback(decimals)}
                     />
-                  </span>
-                ),
-                /*
-                 * @TODO Add user mention popover back in
-                 */
-                recipient: (
-                  <span className={styles.titleDecoration}>
-                    <FriendlyName
-                      user={fallbackRecipientProfile}
-                      autoShrinkAddress
-                      colony={colony}
-                    />
-                  </span>
-                ),
-                amount: (
-                  <Numeral
-                    value={amount}
-                    unit={getTokenDecimalsWithFallback(decimals)}
-                  />
-                ),
-                tokenSymbol: symbol,
-                decimals: getTokenDecimalsWithFallback(decimals),
-                fromDomain: domainName || fromDomain?.name || '',
-                toDomain: toDomain?.name || '',
-                roles: roleTitle,
-                newVersion: newVersion || '0',
-              }}
-            />
+                  ),
+                  tokenSymbol: symbol,
+                  decimals: getTokenDecimalsWithFallback(decimals),
+                  fromDomain: domainName || fromDomain?.name || '',
+                  toDomain: toDomain?.name || '',
+                  roles: roleTitle,
+                  newVersion: newVersion || '0',
+                }}
+              />
+            </span>
             {(motionState || isVotingExtensionEnabled) && (
               <div className={styles.motionTagWrapper}>
                 <Tag
