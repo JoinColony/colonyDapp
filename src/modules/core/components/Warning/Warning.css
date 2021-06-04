@@ -10,6 +10,7 @@
 
 .content {
   padding: 13px 22px;
+  white-space: pre-line;
 }
 
 .warning button {
