@@ -100,8 +100,8 @@ const CountDownTimer = ({
 
   const prevStateRef: MutableRefObject<MotionState | null> = useRef(null);
   const isStakingPhaseState =
-    state === MotionState.StakeRequired ||
-    state === MotionState.Motion ||
+    state === MotionState.Staking ||
+    state === MotionState.Staked ||
     state === MotionState.Objection;
   /*
    * Set the initial timeout
@@ -162,11 +162,10 @@ const CountDownTimer = ({
   ]);
 
   useEffect(() => {
-    // @NOTE Later on this logic might need to change after the MotionStates are updated
     if (data && !isStakingPhaseState) {
       refetch();
     }
-  }, [isStakingPhaseState, data, refetch]);
+  }, [isStakingPhaseState, data, refetch, state]);
 
   /*
    * Split the time into h/m/s for display purpouses
