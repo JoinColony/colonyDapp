@@ -299,7 +299,7 @@ export const motionsResolvers = ({
           motion.skillRep,
           totalStakeFraction,
           18,
-        );
+        ).sub(1);
 
         if (motion.stakes[MotionVote.Yay].gte(requiredStake)) {
           systemMessages.push({
