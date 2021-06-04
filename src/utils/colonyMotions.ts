@@ -8,16 +8,18 @@ import { Colony, AnyUser } from '~data/index';
 import { ActionUserRoles } from '~types/index';
 
 export enum MotionState {
-  Motion = 'Motion',
-  StakeRequired = 'StakeRequired',
+  Staked = 'Staked',
+  Staking = 'Staking',
   Voting = 'Voting',
   Reveal = 'Reveal',
   Objection = 'Objection',
+  Motion = 'Motion',
   Failed = 'Failed',
   Passed = 'Passed',
   FailedNoFinalizable = 'FailedNoFinalizable',
   Invalid = 'Invalid',
   Escalation = 'Escalation',
+  Forced = 'Forced',
 }
 
 export enum MotionVote {
@@ -26,13 +28,13 @@ export enum MotionVote {
 }
 
 const MSG = defineMessage({
-  motionTag: {
-    id: 'dashboard.ActionsPage.motionTag',
-    defaultMessage: 'Motion',
+  stakedTag: {
+    id: 'dashboard.ActionsPage.stakedTag',
+    defaultMessage: 'Staked',
   },
-  stakeRequiredTag: {
-    id: 'dashboard.ActionsPage.stakeRequiredTag',
-    defaultMessage: 'Stake required',
+  stakingTag: {
+    id: 'dashboard.ActionsPage.stakingTag',
+    defaultMessage: 'Staking',
   },
   votingTag: {
     id: 'dashboard.ActionsPage.votingTag',
@@ -45,6 +47,10 @@ const MSG = defineMessage({
   objectionTag: {
     id: 'dashboard.ActionsPage.objectionTag',
     defaultMessage: 'Objection',
+  },
+  motionTag: {
+    id: 'dashboard.ActionsPage.motionTag',
+    defaultMessage: 'Motion',
   },
   failedTag: {
     id: 'dashboard.ActionsPage.failedTag',
@@ -62,20 +68,24 @@ const MSG = defineMessage({
     id: 'dashboard.ActionsPage.escalateTag',
     defaultMessage: 'Escalate',
   },
+  forcedTag: {
+    id: 'dashboard.ActionsPage.forcedTag',
+    defaultMessage: 'Forced',
+  },
 });
 
 export const MOTION_TAG_MAP = {
-  [MotionState.Motion]: {
+  [MotionState.Staked]: {
     theme: 'primary',
     colorSchema: 'fullColor',
-    name: MSG.motionTag,
+    name: MSG.stakedTag,
     tagName: 'motionTag',
   },
-  [MotionState.StakeRequired]: {
+  [MotionState.Staking]: {
     theme: 'pink',
-    colorSchema: 'fullColor',
-    name: MSG.stakeRequiredTag,
-    tagName: 'stakeRequiredTag',
+    colorSchema: 'inverted',
+    name: MSG.stakingTag,
+    tagName: 'stakingTag',
   },
   [MotionState.Voting]: {
     theme: 'golden',
@@ -94,6 +104,12 @@ export const MOTION_TAG_MAP = {
     colorSchema: 'fullColor',
     name: MSG.objectionTag,
     tagName: 'objectionTag',
+  },
+  [MotionState.Motion]: {
+    theme: 'primary',
+    colorSchema: 'fullColor',
+    name: MSG.motionTag,
+    tagName: 'motionTag',
   },
   [MotionState.Failed]: {
     theme: 'pink',
@@ -124,6 +140,12 @@ export const MOTION_TAG_MAP = {
     colorSchema: 'plain',
     name: MSG.escalateTag,
     tagName: 'escalateTag',
+  },
+  [MotionState.Forced]: {
+    theme: 'blue',
+    colorSchema: 'inverted',
+    name: MSG.forcedTag,
+    tagName: 'forcedTag',
   },
 };
 

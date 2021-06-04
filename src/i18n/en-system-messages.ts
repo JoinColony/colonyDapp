@@ -11,8 +11,8 @@ const systemMessagesMessageDescriptors = {
       ${SystemMessagesName.MotionHasFailedFinalizable} {{motionTag} has {failedTag} and may be finalized.}
       ${SystemMessagesName.MotionVotingPhase} {{votingTag} has started! Voting is secret 😀, and weighted by Reputation.}
       ${SystemMessagesName.MotionFullyStaked} {{motionTag} is fully staked; Staking period has reset. As long as there is no {objectionTag} , the motion will pass.}
-      ${SystemMessagesName.MotionRevealResultObjectionWon} {{objectionTag} sustained! {voteResultsWidget} The motion will fail at the end of the escalation period unless the dispute is escalated to a higher domain.}
-      ${SystemMessagesName.MotionRevealResultMotionWon} {{motionTag} sustained! {voteResultsWidget} The motion will pass at the end of the escalation period unless the dispute is escalated to a higher domain.}
+      ${SystemMessagesName.MotionRevealResultObjectionWon} {{motionTag} failed. {voteResultsWidget} The motion will fail at the end of the escalation period unless the dispute is escalated to a higher domain.}
+      ${SystemMessagesName.MotionRevealResultMotionWon} {{motionTag} passed! {voteResultsWidget} The motion will pass at the end of the escalation period unless the dispute is escalated to a higher domain.}
       ${SystemMessagesName.MotionCanBeEscalated} {{escalateTag} period started. {spaceBreak}{spaceBreak} If you believe this result was unfair, and would be different if more people were involved, you may escalate it to a higher domain.}
       other {Generic system message}
     }`,

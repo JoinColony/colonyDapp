@@ -74,8 +74,8 @@ const CountDownTimer = ({
 
   const currentStatePeriod = useCallback(() => {
     switch (state) {
-      case MotionState.StakeRequired:
-      case MotionState.Motion:
+      case MotionState.Staking:
+      case MotionState.Staked:
       case MotionState.Objection:
         return data?.motionTimeoutPeriods?.timeLeftToStake || -1;
       case MotionState.Voting:
