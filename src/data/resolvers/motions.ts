@@ -403,6 +403,12 @@ export const motionsResolvers = ({
               ),
             });
           }
+        } else if (motion.votes[0].gte(motion.votes[1])) {
+          systemMessages.push({
+            type: ActionsPageFeedType.SystemMessage,
+            name: SystemMessagesName.MotionHasFailedFinalizable,
+            createdAt: motion.events[2].toNumber() * 1000,
+          });
         }
       }
 
