@@ -15,7 +15,7 @@ export const ExtensionsMSG = defineMessages({
   },
   textVotingUninstall: {
     id: 'dashboard.Extensions.ExtensionDetails.textVotingUninstall',
-    defaultMessage: `Please ensure that all funds in processes associated with this extension are claimed by their owners before uninstalling. Not doing so will result in permanent loss of the unclaimed funds.`,
+    defaultMessage: `Uninstalling this extension will permanently delete all actions associated with this extension from this colony. They will disappear from the application and can never be recovered.\n\nPlease ensure that all funds in processes associated with this extension are claimed by their owners before uninstalling. Not doing so will result in permanent loss of the unclaimed funds.`,
   },
   typeInBox: {
     id: 'dashboard.Extensions.ExtensionDetails.typeInBox',
