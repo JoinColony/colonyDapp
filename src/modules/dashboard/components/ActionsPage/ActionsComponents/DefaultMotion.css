@@ -30,6 +30,10 @@
   border-radius: var(--radius-large);
 }
 
+.voteResultsWrapper > div {
+  margin-top: 20px;
+}
+
 .escalation {
   flex: 1 1 auto;
   padding-bottom: 1px;
