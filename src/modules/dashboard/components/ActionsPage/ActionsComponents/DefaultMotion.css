@@ -19,7 +19,7 @@
 }
 
 .progressBarContainer {
-  margin-left: 4px;
+  margin-left: 2px;
   width: 116px;
 }
 
@@ -40,7 +40,13 @@
   text-align: right;
 }
 
-.help {
+.helpProgressBar {
+  align-self: flex-end;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.helpEscalate {
   display: inline-block;
   width: 25px;
   vertical-align: middle;
