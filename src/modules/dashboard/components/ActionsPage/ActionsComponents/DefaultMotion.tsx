@@ -358,6 +358,7 @@ const DefaultMotion = ({
                     size: 'small',
                     backgroundTheme: 'dark',
                     barTheme: 'primary',
+                    borderRadius: 'small',
                   }}
                 />
               </div>

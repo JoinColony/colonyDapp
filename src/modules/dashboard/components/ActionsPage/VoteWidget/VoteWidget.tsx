@@ -106,7 +106,9 @@ const VoteWidget = ({
     userReputationData?.userReputation || 0,
   ).gt(0);
 
-  const options: CustomRadioProps[] = [
+  const options: (checkedValue: string) => CustomRadioProps[] = (
+    checkedValue,
+  ) => [
     {
       value: '1',
       label: { id: 'button.yes' },
@@ -115,7 +117,7 @@ const VoteWidget = ({
         theme: 'primary',
       },
       checked: false,
-      icon: 'circle-thumbs-up',
+      icon: `circle-thumbs-up${checkedValue === '1' ? '' : '-outlined'}`,
     },
     {
       value: '0',
@@ -125,7 +127,7 @@ const VoteWidget = ({
         theme: 'danger',
       },
       checked: false,
-      icon: 'circle-thumbs-down',
+      icon: `circle-thumbs-down${checkedValue === '0' ? '' : '-outlined'}`,
     },
   ];
 
@@ -154,7 +156,7 @@ const VoteWidget = ({
             appearance={{ size: 'normal', theme: 'dark', margin: 'none' }}
           />
           <CustomRadioGroup
-            options={options}
+            options={options(values.vote)}
             currentlyCheckedValue={values.vote}
             name="vote"
             disabled={!hasRegisteredProfile || !hasReputationToVote}
