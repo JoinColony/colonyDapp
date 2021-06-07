@@ -10,3 +10,4 @@ export const barThemeDanger: string;
 export const threshold: string;
 export const thresholdPercentage: string;
 export const thresholdSeparator: string;
+export const borderRadiusSmall: string;

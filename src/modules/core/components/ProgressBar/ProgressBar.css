@@ -90,3 +90,11 @@
 .sizeNormal .thresholdSeparator {
   height: 22px;
 }
+
+.borderRadiusSmall .main::-webkit-progress-bar {
+  border-radius: 1px;
+}
+
+.borderRadiusSmall .main::-moz-progress-bar {
+  border-radius: 1px;
+}
