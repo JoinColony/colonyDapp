@@ -104,7 +104,6 @@ export const STATUS_MAP: { [key in number]: STATUS } = {
 const MOTION_EVENTS = [
   ColonyAndExtensionsEvents.MotionCreated,
   ColonyAndExtensionsEvents.MotionStaked,
-  ColonyAndExtensionsEvents.MotionVoteRevealed,
   ColonyAndExtensionsEvents.ObjectionRaised,
   ColonyAndExtensionsEvents.MotionFinalized,
   ColonyAndExtensionsEvents.MotionRewardClaimed,
