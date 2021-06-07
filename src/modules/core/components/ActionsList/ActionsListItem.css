@@ -88,6 +88,12 @@
   min-width: 0;
 }
 
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .title {
   composes: inlineEllipsis from '~styles/text.css';
 }
