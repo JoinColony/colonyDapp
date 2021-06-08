@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
 import { endsWith } from 'lodash';
 import { Extension } from '@colony/colony-js';
-import Decimal from 'decimal.js';
+import Decimal from 'decimal.js-light';
 
 import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm } from '~core/Fields';
