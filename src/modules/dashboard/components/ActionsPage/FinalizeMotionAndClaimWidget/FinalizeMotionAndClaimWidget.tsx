@@ -240,9 +240,9 @@ const FinalizeMotionAndClaimWidget = ({
     motionDomain === ROOT_DOMAIN_ID;
 
   const canClaimStakes =
-    bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||
-    bigNumberify(stakerRewards?.motionStakerReward?.stakesNay || 0).gt(0) ||
-    userTotals === '0';
+    (bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||
+      bigNumberify(stakerRewards?.motionStakerReward?.stakesNay || 0).gt(0)) &&
+    userTotals !== '0';
 
   const showClaimButton =
     finalized?.motionFinalized || (motionNotFinalizable && canClaimStakes);
