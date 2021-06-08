@@ -36,11 +36,11 @@
 }
 
 .themePrimary:hover {
-  border: 1px solid var(--primary);
+  background-color: color-mod(var(--primary) alpha(12%));
 }
 
 .themeDanger:hover {
-  border: 1px solid var(--pink);
+  background-color: color-mod(var(--pink) alpha(12%));
 }
 
 .main.stateIsChecked .description {
