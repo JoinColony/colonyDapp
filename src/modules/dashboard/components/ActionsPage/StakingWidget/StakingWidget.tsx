@@ -131,8 +131,9 @@ const StakingWidget = ({
           const stakeWithMin = new Decimal(minUserStake).gte(stake)
             ? new Decimal(minUserStake)
             : stake;
+
           return {
-            amount: stakeWithMin.toString(),
+            amount: stakeWithMin.toFixed(0),
             userAddress: walletAddress,
             colonyAddress,
             motionId: bigNumberify(motionId),
