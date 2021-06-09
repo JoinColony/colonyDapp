@@ -403,7 +403,10 @@ export const motionsResolvers = ({
               ),
             });
           }
-        } else if (motion.votes[0].gte(motion.votes[1])) {
+        } else if (
+          motion.votes[0].gte(motion.votes[1]) &&
+          motion.stakes[0].gte(motion.stakes[1])
+        ) {
           systemMessages.push({
             type: ActionsPageFeedType.SystemMessage,
             name: SystemMessagesName.MotionHasFailedFinalizable,
