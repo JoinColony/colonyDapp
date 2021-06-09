@@ -34,7 +34,7 @@ import { getWallet, setupUsersSagas } from '../../users/sagas/index';
 import {
   getGasPrices,
   getColonyManager,
-  rehydrateColonyClients,
+  reinitializeColonyManager
 } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
@@ -66,7 +66,6 @@ export default function* setupUserContext(
   } = action;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-    let colonyClients = new Map();
 
     /*
      * Get the "old" wallet address, and if it's ethereal, remove it's authetication
@@ -129,28 +128,8 @@ export default function* setupUserContext(
 
     yield call(setLastWallet, method, walletAddress);
 
-    /*
-     * If we have a colony manager set in context, get it's initialized colony clients
-     *
-     * Note that it won't exist if this is the first time loading the app, as it
-     * gets set just after this try/catch block
-     */
-    try {
-      const oldColonyManager = TEMP_getContext(ContextModule.ColonyManager);
-      colonyClients = oldColonyManager.colonyClients;
-    } catch (error) {
-      /*
-       * Silent error
-       */
-    }
 
-    const colonyManager = yield call(getColonyManager);
-    TEMP_setContext(ContextModule.ColonyManager, colonyManager);
-
-    /*
-     * Rehydrate the colony manage with (potentially) existing colony clients
-     */
-    yield rehydrateColonyClients(colonyClients);
+    const colonyManager = yield call(reinitializeColonyManager);
 
     yield call(getGasPrices);
 
