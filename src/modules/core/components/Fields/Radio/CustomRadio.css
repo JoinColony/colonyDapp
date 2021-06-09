@@ -54,7 +54,7 @@
 }
 
 .main.stateIsDisabled .label {
-  color: var(--temp-grey-blue-7);
+  color: color-mod(var(--dark) alpha(65%));
 }
 
 .main.stateIsDisabled {
