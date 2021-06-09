@@ -25,6 +25,7 @@ import extensionData from '~data/staticData/extensionData';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { intArrayToBytes32 } from '~utils/web3';
+import { reinitializeColonyManager } from '../../core/sagas/utils';
 
 import {
   createTransaction,
@@ -34,6 +35,9 @@ import {
 
 function* refreshExtension(colonyAddress: string, extensionId: string) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+  yield call(reinitializeColonyManager);
+
   yield apolloClient.query<ColonyExtensionQuery, ColonyExtensionQueryVariables>(
     {
       query: ColonyExtensionDocument,

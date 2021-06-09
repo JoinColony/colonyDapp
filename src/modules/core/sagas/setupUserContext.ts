@@ -31,11 +31,7 @@ import { authenticate, clearToken } from '../../../api';
 import ENS from '../../../lib/ENS';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
-import {
-  getGasPrices,
-  getColonyManager,
-  reinitializeColonyManager
-} from './utils';
+import { getGasPrices, reinitializeColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
 
@@ -127,7 +123,6 @@ export default function* setupUserContext(
     });
 
     yield call(setLastWallet, method, walletAddress);
-
 
     const colonyManager = yield call(reinitializeColonyManager);
 
