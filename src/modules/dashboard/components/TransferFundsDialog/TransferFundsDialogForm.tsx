@@ -3,14 +3,19 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
-import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import { useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, Annotations, TokenSymbolSelector } from '~core/Fields';
+import {
+  Select,
+  Input,
+  Annotations,
+  TokenSymbolSelector,
+  SelectOption,
+} from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
@@ -18,7 +23,6 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import {
   useLoggedInUser,
   useTokenBalancesForDomainsLazyQuery,
-  Colony,
 } from '~data/index';
 import { ActionDialogProps } from '~core/Dialog';
 import EthUsd from '~core/EthUsd';
@@ -95,14 +99,14 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  back?: () => void;
-  colony: Colony;
+  domainOptions: SelectOption[];
 }
 
 const TransferFundsDialogForm = ({
   back,
   colony,
   colony: { colonyAddress, domains, tokens },
+  domainOptions,
   handleSubmit,
   isSubmitting,
   isValid,
@@ -111,7 +115,7 @@ const TransferFundsDialogForm = ({
   validateForm,
   errors,
   isVotingExtensionEnabled,
-}: ActionDialogProps & FormikProps<FormValues>) => {
+}: ActionDialogProps & FormikProps<FormValues> & Props) => {
   const { tokenAddress, amount } = values;
 
   const fromDomainId = values.fromDomain
@@ -149,19 +153,6 @@ const TransferFundsDialogForm = ({
   );
 
   const inputDisabled = !userHasPermission || onlyForceAction;
-
-  const domainOptions = useMemo(
-    () =>
-      sortBy(
-        domains.map(({ name, ethDomainId }) => ({
-          value: ethDomainId.toString(),
-          label: name,
-        })),
-        ['value'],
-      ),
-
-    [domains],
-  );
 
   const [
     loadTokenBalances,

@@ -1,10 +1,11 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
 import { bigNumberify } from 'ethers/utils';
 import { useHistory } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
+import sortBy from 'lodash/sortBy';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { pipe, mapPayload, withMeta } from '~utils/actions';
@@ -54,6 +55,7 @@ const TransferFundsDialog = ({
     nativeTokenAddress,
     colonyName,
     version,
+    domains,
   },
   colony,
   fromDomain,
@@ -87,6 +89,18 @@ const TransferFundsDialog = ({
     tokenAddress: yup.string().address().required(),
     annotation: yup.string().max(4000),
   });
+
+  const domainOptions = useMemo(
+    () =>
+      sortBy(
+        domains.map(({ name, ethDomainId }) => ({
+          value: ethDomainId.toString(),
+          label: name,
+        })),
+        ['value'],
+      ),
+    [domains],
+  );
 
   const transform = useCallback(
     pipe(
@@ -130,7 +144,7 @@ const TransferFundsDialog = ({
       initialValues={{
         forceAction: false,
         fromDomain: fromDomain ? String(fromDomain) : ROOT_DOMAIN_ID.toString(),
-        toDomain: undefined,
+        toDomain: domainOptions[1]?.value || ROOT_DOMAIN_ID.toString(),
         amount: '',
         tokenAddress: nativeTokenAddress,
         annotation: undefined,
@@ -157,6 +171,7 @@ const TransferFundsDialog = ({
             <DialogForm
               {...formValues}
               colony={colony}
+              domainOptions={domainOptions}
               isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={prevStep && callStep ? () => callStep(prevStep) : undefined}
             />
