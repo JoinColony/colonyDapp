@@ -25,8 +25,8 @@ const MSG = defineMessage({
   title: {
     id: 'dashboard.ActionsPage.CountDownTimer.title',
     defaultMessage: `{motionState, select,
-      StakeRequired {Time left to stake}
-      Motion {Motion will pass in}
+      Staking {Time left to stake}
+      Staked {Motion will pass in}
       Objection {Motion will fail in}
       Voting {Voting ends in}
       Reveal {Reveal ends in}
