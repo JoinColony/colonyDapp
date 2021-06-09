@@ -106,6 +106,8 @@ const VoteWidget = ({
     userReputationData?.userReputation || 0,
   ).gt(0);
 
+  const inputDisabled = !hasRegisteredProfile || !hasReputationToVote;
+
   const options: (checkedValue: string) => CustomRadioProps[] = (
     checkedValue,
   ) => [
@@ -117,7 +119,10 @@ const VoteWidget = ({
         theme: 'primary',
       },
       checked: false,
-      icon: `circle-thumbs-up${checkedValue === '1' ? '' : '-outlined'}`,
+      /* the `fill` css property is not working for these svgs */
+      icon: inputDisabled
+        ? 'circle-thumbs-up-grey'
+        : `circle-thumbs-up${checkedValue === '1' ? '' : '-outlined'}`,
     },
     {
       value: '0',
@@ -127,7 +132,10 @@ const VoteWidget = ({
         theme: 'danger',
       },
       checked: false,
-      icon: `circle-thumbs-down${checkedValue === '0' ? '' : '-outlined'}`,
+      /* the `fill` css property is not working for these svgs */
+      icon: inputDisabled
+        ? 'circle-thumbs-down-grey'
+        : `circle-thumbs-down${checkedValue === '0' ? '' : '-outlined'}`,
     },
   ];
 
@@ -159,7 +167,7 @@ const VoteWidget = ({
             options={options(values.vote)}
             currentlyCheckedValue={values.vote}
             name="vote"
-            disabled={!hasRegisteredProfile || !hasReputationToVote}
+            disabled={inputDisabled}
           />
           <VoteDetails
             colony={colony}
