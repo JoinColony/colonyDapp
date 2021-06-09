@@ -13,6 +13,7 @@
 
 .voterAvatarsContainer {
   position: relative;
+  top: 1px;
 }
 
 .voteResults {
@@ -50,7 +51,11 @@
 .voterAvatar {
   position: relative;
   border-radius: 50px;
-  border: 1px solid var(--colony-white);
+  border: 2px solid var(--colony-white);
+}
+
+.voterAvatar figure > div {
+  filter: drop-shadow(0px 2px 11px var(--drop-shadow));
 }
 
 .voterAvatar:first-child {
