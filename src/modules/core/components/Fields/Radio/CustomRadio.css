@@ -36,11 +36,11 @@
 }
 
 .themePrimary:hover {
-  border: 1px solid var(--primary);
+  background-color: color-mod(var(--primary) alpha(12%));
 }
 
 .themeDanger:hover {
-  border: 1px solid var(--pink);
+  background-color: color-mod(var(--pink) alpha(12%));
 }
 
 .main.stateIsChecked .description {
@@ -54,7 +54,7 @@
 }
 
 .main.stateIsDisabled .label {
-  color: var(--temp-grey-blue-7);
+  color: color-mod(var(--dark) alpha(65%));
 }
 
 .main.stateIsDisabled {
@@ -79,7 +79,7 @@
 }
 
 .icon {
-  margin: -3px 10px 0 0;
+  margin-right: 10px;
 }
 
 .content {

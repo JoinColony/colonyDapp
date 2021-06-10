@@ -9,6 +9,7 @@ interface Appearance {
   barTheme?: 'primary' | 'danger';
   backgroundTheme?: 'default' | 'dark' | 'transparent';
   size?: 'small' | 'normal';
+  borderRadius?: 'default' | 'small';
 }
 
 const MSG = defineMessages({
@@ -33,6 +34,7 @@ const ProgressBar = ({
     barTheme: 'primary',
     backgroundTheme: 'default',
     size: 'normal',
+    borderRadius: 'default',
   },
   value = 0,
   max = 100,

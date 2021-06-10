@@ -358,12 +358,13 @@ const DefaultMotion = ({
                     size: 'small',
                     backgroundTheme: 'dark',
                     barTheme: 'primary',
+                    borderRadius: 'small',
                   }}
                 />
               </div>
               <QuestionMarkTooltip
                 tooltipText={MSG.votingProgressBarTooltip}
-                className={motionSpecificStyles.help}
+                className={motionSpecificStyles.helpProgressBar}
                 tooltipClassName={motionSpecificStyles.tooltip}
                 showArrow={false}
                 tooltipPopperProps={{
@@ -401,7 +402,7 @@ const DefaultMotion = ({
                 />
                 <QuestionMarkTooltip
                   tooltipText={MSG.escalateTooltip}
-                  className={motionSpecificStyles.help}
+                  className={motionSpecificStyles.helpEscalate}
                   tooltipClassName={motionSpecificStyles.tooltip}
                   tooltipPopperProps={{
                     placement: 'right',
