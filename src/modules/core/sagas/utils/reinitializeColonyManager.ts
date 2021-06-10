@@ -4,7 +4,7 @@ import {
   TEMP_setContext,
   ContextModule,
 } from '~context/index';
-import { getColonyManager, rehydrateColonyClients } from '.';
+import { getColonyManager } from '.';
 
 export default function* reinitializeColonyManager() {
   let colonyClients = new Map();
@@ -29,6 +29,9 @@ export default function* reinitializeColonyManager() {
   /*
    * Rehydrate the colony manage with (potentially) existing colony clients
    */
-  yield rehydrateColonyClients(colonyClients);
+  for (let index = 0; index < colonyClients.size; index += 1) {
+    const [colonyAddress] = colonyClients.entries().next().value;
+    yield colonyManager.setColonyClient(colonyAddress);
+  }
   return colonyManager;
 }
