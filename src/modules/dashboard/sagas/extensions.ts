@@ -22,10 +22,13 @@ import {
   NetworkExtensionVersionDocument,
 } from '~data/index';
 import extensionData from '~data/staticData/extensionData';
-import { ContextModule, TEMP_getContext } from '~context/index';
+import {
+  ContextModule,
+  TEMP_getContext,
+  TEMP_setContext,
+} from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { intArrayToBytes32 } from '~utils/web3';
-import { reinitializeColonyManager } from '../../core/sagas/utils';
 
 import {
   createTransaction,
@@ -35,8 +38,6 @@ import {
 
 function* refreshExtension(colonyAddress: string, extensionId: string) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-
-  yield call(reinitializeColonyManager);
 
   yield apolloClient.query<ColonyExtensionQuery, ColonyExtensionQueryVariables>(
     {
@@ -130,10 +131,17 @@ function* colonyExtensionEnable({
   const extension = extensionData[extensionId];
   const initChannelName = `${meta.id}-initialise`;
   const setPermissionChannelName = `${meta.id}-setUserRoles`;
+  const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
   if (!extension) {
     throw new Error(`Extension with id ${extensionId} does not exist!`);
   }
+
+  const key = `${colonyAddress}-${extensionId}`;
+  // Remove old exentions client if exist
+  colonyManager.extensionClients.delete(key);
+  TEMP_setContext(ContextModule.ColonyManager, colonyManager);
+
   const initChannel = yield call(getTxChannel, initChannelName);
   const setPermissionChannel = yield call(
     getTxChannel,
@@ -206,8 +214,16 @@ function* colonyExtensionEnable({
       meta,
     );
   } finally {
+    const colonyClient = yield colonyManager.getClient(
+      ClientType.ColonyClient,
+      colonyAddress,
+    );
+    const client = yield colonyClient.getExtensionClient(extensionId);
+    if (client) {
+      colonyManager.extensionClients.set(key, client);
+      TEMP_setContext(ContextModule.ColonyManager, colonyManager);
+    }
     yield call(refreshExtension, colonyAddress, extensionId);
-
     initChannel.close();
     setPermissionChannel.close();
   }
