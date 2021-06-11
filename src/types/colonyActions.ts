@@ -136,6 +136,7 @@ export interface FormattedAction {
   oldVersion?: string;
   newVersion?: string;
   motionState?: MotionState;
+  motionId?: string;
 }
 
 export interface FormattedEvent {

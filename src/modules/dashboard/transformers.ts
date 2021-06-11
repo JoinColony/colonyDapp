@@ -145,6 +145,7 @@ export const getActionsListData = (
             commentCount: 0,
             status: undefined,
             motionState: undefined,
+            motionId: unformattedAction.fundamentalChainId,
           };
           let hash;
           let timestamp;
@@ -253,7 +254,13 @@ export const getActionsListData = (
             }
           }
           if (subgraphActionType === FilteredUnformattedAction.Motions) {
-            const { args, agent, type, state } = unformattedAction;
+            const {
+              args,
+              agent,
+              type,
+              state,
+              fundamentalChainId,
+            } = unformattedAction;
 
             if (args.token) {
               const {
@@ -269,6 +276,7 @@ export const getActionsListData = (
             formatedAction.initiator = agent;
             formatedAction.actionType = type;
             formatedAction.motionState = state;
+            formatedAction.motionId = fundamentalChainId;
             const actionTypeKeys = Object.keys(args);
             actionTypeKeys.forEach((key) => {
               formatedAction[key] = args[key];
