@@ -138,7 +138,7 @@ function* colonyExtensionEnable({
   }
 
   const key = `${colonyAddress}-${extensionId}`;
-  // Remove old exentions client if exist
+  // Remove old extensions client if exist
   colonyManager.extensionClients.delete(key);
   TEMP_setContext(ContextModule.ColonyManager, colonyManager);
 
