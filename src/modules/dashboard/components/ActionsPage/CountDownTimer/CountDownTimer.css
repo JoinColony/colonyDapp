@@ -2,6 +2,7 @@
   display: flex;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
+  white-space: nowrap;
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
