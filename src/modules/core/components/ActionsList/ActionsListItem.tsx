@@ -151,7 +151,7 @@ const ActionsListItem = ({
     MOTION_TAG_MAP[
       motionState ||
         (isVotingExtensionEnabled &&
-          !actionType.endsWith('Motion') &&
+          !actionType?.endsWith('Motion') &&
           MotionState.Forced) ||
         MotionState.Invalid
     ];

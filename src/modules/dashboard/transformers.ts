@@ -262,7 +262,7 @@ export const getActionsListData = (
               fundamentalChainId,
             } = unformattedAction;
 
-            if (args.token) {
+            if (args?.token) {
               const {
                 args: {
                   token: { address: tokenAddress, symbol, decimals },
@@ -277,10 +277,12 @@ export const getActionsListData = (
             formatedAction.actionType = type;
             formatedAction.motionState = state;
             formatedAction.motionId = fundamentalChainId;
-            const actionTypeKeys = Object.keys(args);
-            actionTypeKeys.forEach((key) => {
-              formatedAction[key] = args[key];
-            });
+            if (args) {
+              const actionTypeKeys = Object.keys(args);
+              actionTypeKeys.forEach((key) => {
+                formatedAction[key] = args[key];
+              });
+            }
           }
           formatedAction.transactionHash = hash;
           return formatedAction;
