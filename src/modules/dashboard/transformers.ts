@@ -145,7 +145,7 @@ export const getActionsListData = (
             commentCount: 0,
             status: undefined,
             motionState: undefined,
-            motionId: unformattedAction.fundamentalChainId,
+            motionId: undefined,
           };
           let hash;
           let timestamp;
