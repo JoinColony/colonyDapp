@@ -20,3 +20,4 @@ export const userMention: string;
 export const stateNoPointer: string;
 export const titleDecoration: string;
 export const motionTagWrapper: string;
+export const countdownTimerContainer: string;
