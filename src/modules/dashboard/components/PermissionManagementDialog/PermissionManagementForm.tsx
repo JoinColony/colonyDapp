@@ -48,6 +48,10 @@ const MSG = defineMessages({
     id: `dashboard.PermissionManagementDialog.PermissionManagementForm.selectUser`,
     defaultMessage: 'Member',
   },
+  userPickerPlaceholder: {
+    id: 'SingleUserPicker.userPickerPlaceholder',
+    defaultMessage: 'Search for a user or paste wallet address',
+  },
 });
 
 interface Props {
@@ -282,6 +286,7 @@ const PermissionManagementForm = ({
             onSelected={onChangeSelectedUser}
             renderAvatar={supRenderAvatar}
             disabled={inputDisabled}
+            placeholder={MSG.userPickerPlaceholder}
           />
         </div>
       </DialogSection>
