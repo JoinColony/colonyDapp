@@ -1,7 +1,7 @@
 .main {
   display: flex;
   align-items: center;
-  padding: 10px 7px;
+  padding: 10px 14px;
 }
 
 .main:hover {
@@ -9,7 +9,7 @@
 }
 
 [aria-selected="true"] > .main {
-  background-color: var(--grey-blue-0);
+  background-color: var(--colony-light-blue);
 }
 
 .dataContainer {
