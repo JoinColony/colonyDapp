@@ -1,8 +1,4 @@
-import {
-  MessageDescriptor,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { MessageDescriptor, FormattedMessage } from 'react-intl';
 import React, {
   Component,
   KeyboardEvent,
@@ -20,17 +16,6 @@ import {
 import OmniPickerContent from './OmniPickerContent';
 import OmniPickerItemEmpty from './OmniPickerItemEmpty';
 import styles from './OmniPicker.css';
-
-const MSG = defineMessages({
-  close: {
-    id: 'OmniPicker.close',
-    defaultMessage: 'Esc to dismiss',
-  },
-  emptyMessage: {
-    id: 'OmniPicker.emptyMessage',
-    defaultMessage: 'Sorry, we could not find any match.',
-  },
-});
 
 interface Appearance {
   position: 'top' | 'bottom';
@@ -233,23 +218,17 @@ class OmniPicker extends Component<Props> {
 
   renderHeader = () => {
     const {
-      close,
       appearance: { position },
       title,
     } = this.props;
     return (
-      <div
-        className={cx(styles.header, styles[`header-${position}`], 'header')}
-      >
-        {title &&
-          (typeof title == 'string' ? title : <FormattedMessage {...title} />)}
-        <div className={styles.close}>
-          <FormattedMessage {...MSG.close} />
-          <button className={styles.closeButton} type="button" onClick={close}>
-            &times;
-          </button>
+      title && (
+        <div
+          className={cx(styles.header, styles[`header-${position}`], 'header')}
+        >
+          {typeof title == 'string' ? title : <FormattedMessage {...title} />}
         </div>
-      </div>
+      )
     );
   };
 
