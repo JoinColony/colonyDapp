@@ -146,7 +146,6 @@ export const motionsResolvers = ({
           ClientType.VotingReputationClient,
           colonyAddress,
         );
-        const tokenDecimals = await colonyClient.tokenClient.decimals();
         const {
           skillRep,
           stakes,
@@ -166,10 +165,11 @@ export const motionsResolvers = ({
         const userMinStakeFraction = await votingReputationClient.getUserMinStakeFraction();
 
         const [totalNAYStakes, totalYAYStaked] = stakes;
-        const requiredStake = skillRep
-          .mul(totalStakeFraction)
-          .div(bigNumberify(10).pow(tokenDecimals))
-          .add(1);
+        const requiredStake = getMotionRequiredStake(
+          skillRep,
+          totalStakeFraction,
+          18,
+        );
         const remainingToFullyYayStaked = requiredStake.sub(totalYAYStaked);
         const remainingToFullyNayStaked = requiredStake.sub(totalNAYStakes);
         const userMinStakeAmount = skillRep
@@ -291,7 +291,7 @@ export const motionsResolvers = ({
           motion.skillRep,
           totalStakeFraction,
           18,
-        ).sub(1);
+        );
 
         if (motion.stakes[MotionVote.Yay].gte(requiredStake)) {
           systemMessages.push({

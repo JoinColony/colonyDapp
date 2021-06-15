@@ -50,7 +50,6 @@ const SingleTotalStake = ({
   tokenSymbol,
 }: Props) => {
   const userStakePercentage = bigNumberify(userStake || 0)
-    .add(1)
     .mul(100)
     .div(requiredStake)
     .toNumber();
