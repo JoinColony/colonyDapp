@@ -11,6 +11,7 @@ import {
   Colony,
   useLoggedInUser,
   useMotionVoterRewardQuery,
+  AnyToken,
 } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
 import { MotionState } from '~utils/colonyMotions';
@@ -99,7 +100,7 @@ const VoteDetails = ({
 
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
-  );
+  ) as AnyToken;
 
   const hasRegisteredProfile = !!username && !ethereal;
 
@@ -179,22 +180,36 @@ const VoteDetails = ({
                         name={nativeToken.name || nativeToken.address}
                         size="xxs"
                       />
-                      <Numeral
-                        value={getFormattedTokenValue(
-                          voterReward.motionVoterReward.minReward,
-                          nativeToken?.decimals,
-                        )}
-                        appearance={{ theme: 'dark', size: 'small' }}
-                      />
-                      <div className={styles.range} />
-                      <Numeral
-                        value={getFormattedTokenValue(
-                          voterReward.motionVoterReward.maxReward,
-                          nativeToken?.decimals,
-                        )}
-                        appearance={{ theme: 'dark', size: 'small' }}
-                        suffix={` ${nativeToken?.symbol}`}
-                      />
+                      {voterReward.motionVoterReward.minReward ===
+                      voterReward.motionVoterReward.maxReward ? (
+                        <Numeral
+                          value={getFormattedTokenValue(
+                            voterReward.motionVoterReward.minReward,
+                            nativeToken?.decimals,
+                          )}
+                          appearance={{ theme: 'dark', size: 'small' }}
+                          suffix={` ${nativeToken?.symbol}`}
+                        />
+                      ) : (
+                        <>
+                          <Numeral
+                            value={getFormattedTokenValue(
+                              voterReward.motionVoterReward.minReward,
+                              nativeToken?.decimals,
+                            )}
+                            appearance={{ theme: 'dark', size: 'small' }}
+                          />
+                          <div className={styles.range} />
+                          <Numeral
+                            value={getFormattedTokenValue(
+                              voterReward.motionVoterReward.maxReward,
+                              nativeToken?.decimals,
+                            )}
+                            appearance={{ theme: 'dark', size: 'small' }}
+                            suffix={` ${nativeToken?.symbol}`}
+                          />
+                        </>
+                      )}
                     </>
                   )}
                   {motionState === MotionState.Reveal && (
