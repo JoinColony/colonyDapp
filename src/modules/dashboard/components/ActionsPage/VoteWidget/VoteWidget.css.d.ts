@@ -6,3 +6,4 @@ export const reputation: string;
 export const help: string;
 export const tooltip: string;
 export const range: string;
+export const tokenIcon: string;

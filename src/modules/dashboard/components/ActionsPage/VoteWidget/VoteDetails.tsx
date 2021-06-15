@@ -4,8 +4,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import MemberReputation from '~core/MemberReputation';
 import Numeral from '~core/Numeral';
-import Icon from '~core/Icon';
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import {
   Colony,
@@ -173,10 +173,11 @@ const VoteDetails = ({
                 <>
                   {motionState === MotionState.Voting && (
                     <>
-                      <Icon
-                        name="clny-token"
-                        title="clny"
-                        appearance={{ size: 'tiny' }}
+                      <TokenIcon
+                        className={styles.tokenIcon}
+                        token={nativeToken}
+                        name={nativeToken.name || nativeToken.address}
+                        size="xxs"
                       />
                       <Numeral
                         value={getFormattedTokenValue(
@@ -198,10 +199,11 @@ const VoteDetails = ({
                   )}
                   {motionState === MotionState.Reveal && (
                     <>
-                      <Icon
-                        name="clny-token"
-                        title="clny"
-                        appearance={{ size: 'tiny' }}
+                      <TokenIcon
+                        className={styles.tokenIcon}
+                        token={nativeToken}
+                        name={nativeToken.name || nativeToken.address}
+                        size="xxs"
                       />
                       <Numeral
                         value={getFormattedTokenValue(

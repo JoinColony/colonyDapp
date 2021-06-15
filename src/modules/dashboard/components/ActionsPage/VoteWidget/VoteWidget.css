@@ -74,3 +74,10 @@
   right: 0;
   background-color: var(--primary);
 }
+
+.tokenIcon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+  margin-top: -3px;
+}
