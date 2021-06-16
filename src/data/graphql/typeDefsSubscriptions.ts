@@ -68,6 +68,14 @@ export default gql`
     action: String!
     type: String!
     args: SubscriptionMotionArguments!
+    timeoutPeriods: MotionTimeoutPeriods!
+  }
+
+  type MotionTimeoutPeriods {
+    timeLeftToStake: Int!
+    timeLeftToSubmit: Int!
+    timeLeftToReveal: Int!
+    timeLeftToEscalate: Int!
   }
 
   # @TODO Add types for the rest of the arguments

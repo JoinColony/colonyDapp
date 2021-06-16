@@ -146,6 +146,7 @@ export const getActionsListData = (
             status: undefined,
             motionState: undefined,
             motionId: undefined,
+            timeoutPeriods: undefined,
           };
           let hash;
           let timestamp;
@@ -260,6 +261,7 @@ export const getActionsListData = (
               type,
               state,
               fundamentalChainId,
+              timeoutPeriods,
             } = unformattedAction;
 
             if (args?.token) {
@@ -277,6 +279,7 @@ export const getActionsListData = (
             formatedAction.actionType = type;
             formatedAction.motionState = state;
             formatedAction.motionId = fundamentalChainId;
+            formatedAction.timeoutPeriods = timeoutPeriods;
             if (args) {
               const actionTypeKeys = Object.keys(args);
               actionTypeKeys.forEach((key) => {

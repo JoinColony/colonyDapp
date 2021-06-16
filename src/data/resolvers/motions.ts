@@ -928,6 +928,44 @@ export const motionsResolvers = ({
         bigNumberify(fundamentalChainId),
       );
     },
+    async timeoutPeriods({
+      fundamentalChainId: motionId,
+      associatedColony: { colonyAddress },
+    }) {
+      try {
+        const extensionClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
+        const blockTime =
+          (await getBlockTime(networkClient.provider, 'latest')) || 0;
+
+        const escalationPeriod = await extensionClient.getEscalationPeriod();
+
+        const { events } = await extensionClient.getMotion(motionId);
+
+        const timeLeftToStake = events[0] * 1000 - blockTime;
+        const timeLeftToSubmit = events[1] * 1000 - blockTime;
+        const timeLeftToReveal = events[2] * 1000 - blockTime;
+        const timeLeftToEscalate =
+          timeLeftToReveal + escalationPeriod.toNumber() * 1000;
+
+        return {
+          __typename: 'MotionTimeoutPeriods',
+          timeLeftToStake: timeLeftToStake > 0 ? timeLeftToStake : 0,
+          timeLeftToSubmit: timeLeftToSubmit > 0 ? timeLeftToSubmit : 0,
+          timeLeftToReveal: timeLeftToReveal > 0 ? timeLeftToReveal : 0,
+          timeLeftToEscalate: timeLeftToEscalate > 0 ? timeLeftToEscalate : 0,
+        };
+      } catch (error) {
+        console.error(
+          'Could not get Voting Reputation extension period values',
+        );
+        console.error(error);
+        return null;
+      }
+    },
     async args({ action, associatedColony: { colonyAddress } }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
