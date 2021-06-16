@@ -431,7 +431,9 @@ export const motionsResolvers = ({
           ClientType.VotingReputationClient,
           colonyAddress,
         );
-        const { domainId } = await votingReputationClient.getMotion(motionId);
+        const { domainId, rootHash } = await votingReputationClient.getMotion(
+          motionId,
+        );
         const state = await votingReputationClient.getMotionState(motionId);
 
         const { data } = await apolloClient.query<
@@ -443,12 +445,14 @@ export const motionsResolvers = ({
             colonyAddress,
             address: userAddress,
             domainId: domainId.toNumber(),
+            rootHash,
           },
         });
         if (data?.userReputation) {
           let reward = bigNumberify(0);
           let minReward = bigNumberify(0);
           let maxReward = bigNumberify(0);
+
           if (state === NetworkMotionState.Submit) {
             try {
               const [
