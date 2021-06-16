@@ -216,7 +216,9 @@ const TokenEditDialog = ({
           </div>
         </DialogSection>
       )}
-      {onlyForceAction && <NotEnoughReputation />}
+      {onlyForceAction && (
+        <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}

@@ -487,7 +487,12 @@ const CreatePaymentDialogForm = ({
           </div>
         </DialogSection>
       )}
-      {onlyForceAction && <NotEnoughReputation />}
+      {onlyForceAction && (
+        <NotEnoughReputation
+          appearance={{ marginTop: 'negative' }}
+          domainId={domainId}
+        />
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
