@@ -83,6 +83,11 @@
   }
 }
 
+.baseInput::placeholder {
+  color: var(--temp-grey-blue-7);
+  opacity: 0.65;
+}
+
 .inputInvalid {
   border-color: var(--danger);
 }
@@ -147,6 +152,7 @@
   height: 24px;
   width: 24px;
   position: absolute;
+  top: 2px;
   left: 298px;
 }
 
