@@ -46,7 +46,7 @@ const RaiseObjectionDialog = ({
 
   const transform = useCallback(
     pipe(
-      mapPayload(({ amount }) => {
+      mapPayload(({ amount, annotation: annotationMessage }) => {
         const { remainingToFullyNayStaked } = props;
         const remainingToStake = new Decimal(remainingToFullyNayStaked);
         const stake = new Decimal(amount).times(remainingToStake).div(100);
@@ -59,6 +59,7 @@ const RaiseObjectionDialog = ({
           colonyAddress,
           motionId: bigNumberify(motionId),
           vote: 0,
+          annotationMessage,
         };
       }),
     ),
