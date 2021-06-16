@@ -1,6 +1,7 @@
 import React, { ReactNode, useCallback } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import compose from 'recompose/compose';
+import classnames from 'classnames';
 
 import { useField } from 'formik';
 import { AnyUser } from '~data/index';
@@ -38,6 +39,14 @@ const MSG = defineMessages({
   remove: {
     id: 'SingleUserPicker.remove',
     defaultMessage: 'Remove',
+  },
+  closedCaret: {
+    id: 'SingleUserPicker.closedCaret',
+    defaultMessage: 'Closed user picker',
+  },
+  openedCaret: {
+    id: 'SingleUserPicker.openedCaret',
+    defaultMessage: 'Opened user picker',
   },
 });
 
@@ -182,7 +191,7 @@ const SingleUserPicker = ({
           ) : (
             <Icon
               className={omniPickerIsOpen ? styles.focusIcon : styles.icon}
-              name="circle-person"
+              name="filled-circle-person"
               title={MSG.selectMember}
             />
           )}
@@ -219,6 +228,15 @@ const SingleUserPicker = ({
             <div className={styles.omniPickerContainer}>
               <OmniPicker renderItem={renderItem} onPick={handlePick} />
             </div>
+            {(!value || (value && !isResettable)) && (
+              <Icon
+                className={classnames(styles.arrowIcon, {
+                  [styles.arrowIconActive]: omniPickerIsOpen,
+                })}
+                name="caret-down-small"
+                title={omniPickerIsOpen ? MSG.openedCaret : MSG.closedCaret}
+              />
+            )}
           </div>
         </div>
       </OmniPickerWrapper>

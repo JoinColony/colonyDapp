@@ -99,6 +99,10 @@ const MSG = defineMessages({
     Please use the Extensions Manager to install it if you want to make a new
     payment.`,
   },
+  userPickerPlaceholder: {
+    id: 'SingleUserPicker.userPickerPlaceholder',
+    defaultMessage: 'Search for a user or paste wallet address',
+  },
 });
 interface Props extends ActionDialogProps {
   subscribedUsers: AnyUser[];
@@ -390,6 +394,7 @@ const CreatePaymentDialogForm = ({
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
             disabled={inputDisabled}
+            placeholder={MSG.userPickerPlaceholder}
           />
         </div>
       </DialogSection>

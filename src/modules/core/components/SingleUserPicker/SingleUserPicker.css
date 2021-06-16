@@ -32,6 +32,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  position: relative;
 }
 
 .avatarContainer {
@@ -65,7 +66,7 @@
   max-width: 305px;
   vertical-align: baseline;
   border: none;
-  border-bottom: 1px solid var(--colony-black);
+  border-bottom: 1px solid var(--temp-grey-blue-7);
   background-color: transparent;
   font-size: var(--size-normal);
   text-align: left;
@@ -80,6 +81,11 @@
     border-color: var(--text-disabled);
     color: var(--temp-grey-blue-7);
   }
+}
+
+.baseInput::placeholder {
+  color: var(--temp-grey-blue-7);
+  opacity: 0.65;
 }
 
 .inputInvalid {
@@ -104,7 +110,9 @@
   composes: baseInput;
   padding: 5px 3px;
   overflow: hidden;
+  font-weight: var(--weight-bold);
   text-overflow: ellipsis;
+  color: var(--danger);
 
   &:hover {
     cursor: text;
@@ -122,8 +130,6 @@
   top: 35px;
   left: 10px;
   z-index: var(--z-index-nav);
-  border-bottom-left-radius: var(--radius-large);
-  border-bottom-right-radius: var(--radius-large);
 }
 
 .errorHorizontal {
@@ -140,4 +146,17 @@
   align-items: center;
   justify-content: space-between;
   padding-left: 5px;
+}
+
+.arrowIcon {
+  height: 24px;
+  width: 24px;
+  position: absolute;
+  top: 2px;
+  left: 298px;
+}
+
+.arrowIconActive svg {
+  fill: var(--primary);
+  transform: rotate(180deg);
 }
