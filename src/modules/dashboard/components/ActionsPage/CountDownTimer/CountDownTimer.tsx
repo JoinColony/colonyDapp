@@ -25,8 +25,8 @@ const MSG = defineMessage({
   title: {
     id: 'dashboard.ActionsPage.CountDownTimer.title',
     defaultMessage: `{motionState, select,
-      StakeRequired {Time left to stake}
-      Motion {Motion will pass in}
+      Staking {Time left to stake}
+      Staked {Motion will pass in}
       Objection {Motion will fail in}
       Voting {Voting ends in}
       Reveal {Reveal ends in}
@@ -122,14 +122,16 @@ const CountDownTimer = ({
    */
   useEffect(() => {
     if (
-      (prevStateRef.current === null && isStakingPhaseState) ||
-      !isStakingPhaseState
+      data &&
+      state &&
+      ((prevStateRef.current === null && isStakingPhaseState) ||
+        !isStakingPhaseState)
     ) {
       const period = currentStatePeriod() / 1000;
       setTimeLeft(period > 0 ? period + 5 : period);
-      prevStateRef.current = state || null;
+      prevStateRef.current = state;
     }
-  }, [currentStatePeriod, prevStateRef, state, isStakingPhaseState]);
+  }, [data, currentStatePeriod, prevStateRef, state, isStakingPhaseState]);
 
   /*
    * Count it down
