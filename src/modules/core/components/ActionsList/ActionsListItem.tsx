@@ -87,6 +87,7 @@ const ActionsListItem = ({
     status = ItemStatus.Defused,
     motionState,
     motionId,
+    timeoutPeriods,
   },
   colony,
   handleOnClick,
@@ -310,12 +311,13 @@ const ActionsListItem = ({
             )}
           </div>
         </div>
-        {motionId && (
+        {motionId && timeoutPeriods !== undefined && (
           <div className={styles.countdownTimerContainer}>
             <CountDownTimer
               colony={colony}
               state={motionState as MotionState}
               motionId={Number(motionId)}
+              timeoutPeriods={timeoutPeriods}
             />
           </div>
         )}
