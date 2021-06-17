@@ -37,6 +37,9 @@ import {
   VotingStateQuery,
   VotingStateQueryVariables,
   VotingStateDocument,
+  MotionObjectionAnnotationQuery,
+  MotionObjectionAnnotationQueryVariables,
+  MotionObjectionAnnotationDocument,
 } from '~data/index';
 
 export function* updateMotionValues(
@@ -59,6 +62,21 @@ export function* updateMotionValues(
     variables: {
       colonyAddress,
       userAddress,
+      motionId: motionId.toNumber(),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  /*
+   * Objection stake annotation
+   */
+  yield apolloClient.query<
+    MotionObjectionAnnotationQuery,
+    MotionObjectionAnnotationQueryVariables
+  >({
+    query: MotionObjectionAnnotationDocument,
+    variables: {
+      colonyAddress,
       motionId: motionId.toNumber(),
     },
     fetchPolicy: 'network-only',
