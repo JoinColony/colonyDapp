@@ -48,6 +48,8 @@ export enum SystemMessagesName {
   MotionRevealPhase = 'MotionRevealPhase',
   MotionVotingPhase = 'MotionVotingPhase',
   MotionFullyStaked = 'MotionFullyStaked',
+  MotionFullyStakedAfterObjection = 'MotionFullyStakedAfterObjection',
+  ObjectionFullyStaked = 'ObjectionFullyStaked',
   MotionRevealResultObjectionWon = 'MotionRevealResultObjectionWon',
   MotionRevealResultMotionWon = 'MotionRevealResultMotionWon',
   MotionCanBeEscalated = 'MotionCanBeEscalated',

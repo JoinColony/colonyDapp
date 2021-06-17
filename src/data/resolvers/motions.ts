@@ -278,27 +278,64 @@ export const motionsResolvers = ({
         (event) => event.name === ColonyAndExtensionsEvents.MotionVoteSubmitted,
       );
 
+      // eslint-disable-next-line max-len
+      const totalStakeFraction = await votingReputationClient.getTotalStakeFraction();
+      const requiredStake = getMotionRequiredStake(
+        motion.skillRep,
+        totalStakeFraction,
+        18,
+      );
+
       const latestMotionStakedYAYEvent = sortedEvents.find(
         (event) =>
           event.name === ColonyAndExtensionsEvents.MotionStaked &&
           event.values.vote.eq(MotionVote.Yay),
       );
 
-      if (latestMotionStakedYAYEvent) {
-        // eslint-disable-next-line max-len
-        const totalStakeFraction = await votingReputationClient.getTotalStakeFraction();
-        const requiredStake = getMotionRequiredStake(
-          motion.skillRep,
-          totalStakeFraction,
-          18,
-        );
+      const latestMotionStakedNAYEvent = sortedEvents.find(
+        (event) =>
+          event.name === ColonyAndExtensionsEvents.MotionStaked &&
+          event.values.vote.eq(MotionVote.Nay),
+      );
 
+      if (latestMotionStakedNAYEvent) {
+        if (motion.stakes[MotionVote.Nay].gte(requiredStake)) {
+          if (
+            (motion.stakes[MotionVote.Yay].eq(motion.stakes[MotionVote.Nay]) &&
+              latestMotionStakedYAYEvent &&
+              latestMotionStakedNAYEvent.createdAt <
+                latestMotionStakedYAYEvent.createdAt) ||
+            motion.stakes[MotionVote.Nay].gt(motion.stakes[MotionVote.Yay])
+          ) {
+            systemMessages.push({
+              type: ActionsPageFeedType.SystemMessage,
+              name: SystemMessagesName.ObjectionFullyStaked,
+              createdAt: latestMotionStakedNAYEvent.createdAt,
+            });
+          }
+        }
+      }
+
+      if (latestMotionStakedYAYEvent) {
         if (motion.stakes[MotionVote.Yay].gte(requiredStake)) {
-          systemMessages.push({
-            type: ActionsPageFeedType.SystemMessage,
-            name: SystemMessagesName.MotionFullyStaked,
-            createdAt: latestMotionStakedYAYEvent.createdAt,
-          });
+          if (
+            motion.stakes[MotionVote.Yay].eq(motion.stakes[MotionVote.Nay]) &&
+            latestMotionStakedNAYEvent &&
+            latestMotionStakedNAYEvent.createdAt <
+              latestMotionStakedYAYEvent.createdAt
+          ) {
+            systemMessages.push({
+              type: ActionsPageFeedType.SystemMessage,
+              name: SystemMessagesName.MotionFullyStakedAfterObjection,
+              createdAt: latestMotionStakedYAYEvent.createdAt,
+            });
+          } else {
+            systemMessages.push({
+              type: ActionsPageFeedType.SystemMessage,
+              name: SystemMessagesName.MotionFullyStaked,
+              createdAt: latestMotionStakedYAYEvent.createdAt,
+            });
+          }
         }
       }
 

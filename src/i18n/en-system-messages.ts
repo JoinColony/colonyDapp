@@ -9,8 +9,10 @@ const systemMessagesMessageDescriptors = {
       ${SystemMessagesName.MotionRevealPhase} {It's time to {revealTag} votes to the world!}
       ${SystemMessagesName.MotionHasFailedNotFinalizable} {{motionTag} has failed.}
       ${SystemMessagesName.MotionHasFailedFinalizable} {{motionTag} has {failedTag} and may be finalized.}
-      ${SystemMessagesName.MotionVotingPhase} {{votingTag} has started! Voting is secret 😀, and weighted by Reputation.}
+      ${SystemMessagesName.MotionVotingPhase} {{votingTag} has started! Voting is secret 🤫, and weighted by Reputation.}
       ${SystemMessagesName.MotionFullyStaked} {{motionTag} is fully staked; Staking period has reset. As long as there is no {objectionTag} , the motion will pass.}
+      ${SystemMessagesName.MotionFullyStakedAfterObjection} {{motionTag} is fully staked.}
+      ${SystemMessagesName.ObjectionFullyStaked} {{objectionTag} is fully staked; Staking period has reset. If the {motionTag} gets fully staked, a vote will start immediately; if not, the {motionTag} will fail.}
       ${SystemMessagesName.MotionRevealResultObjectionWon} {{motionTag} failed. {voteResultsWidget} The motion will fail at the end of the escalation period unless the dispute is escalated to a higher domain.}
       ${SystemMessagesName.MotionRevealResultMotionWon} {{motionTag} passed! {voteResultsWidget} The motion will pass at the end of the escalation period unless the dispute is escalated to a higher domain.}
       ${SystemMessagesName.MotionCanBeEscalated} {{escalateTag} period started. {spaceBreak}{spaceBreak} If you believe this result was unfair, and would be different if more people were involved, you may escalate it to a higher domain.}
