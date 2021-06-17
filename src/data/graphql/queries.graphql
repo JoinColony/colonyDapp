@@ -705,3 +705,13 @@ query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
 query ColonyReputation($address: String!, $domainId: Int) {
   colonyReputation(address: $address, domainId: $domainId) @client
 }
+
+query ColonyHistoricRoles($colonyAddress: String!, $blockNumber: Int!) {
+  historicColonyRoles(colonyAddress: $colonyAddress, blockNumber: $blockNumber) @client {
+    address
+    domains {
+      domainId
+      roles
+    }
+  }
+}

@@ -277,6 +277,10 @@ export default gql`
       domainId: Int
     ): [String!]
     colonyDomain(colonyAddress: String!, domainId: Int!): ProcessedDomain!
+    historicColonyRoles(
+      colonyAddress: String!
+      blockNumber: Int!
+    ): [ProcessedRoles!]!
     token(address: String!): Token!
     tokens(addresses: [String!]): [Token!]!
     userAddress(name: String!): String!

@@ -704,7 +704,6 @@ const getSetUserRolesMotionValues = async (
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
   });
-  console.log(values);
   const motionDefaultValues = await getMotionValues(
     processedEvents,
     votingClient,
