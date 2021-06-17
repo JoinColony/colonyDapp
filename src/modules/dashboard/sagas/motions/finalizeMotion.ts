@@ -51,13 +51,13 @@ function* finalizeMotion({
     });
 
     /*
-     * Increase the estimate by 55k WEI. This is a flat increase for all networks
+     * Increase the estimate by 80k WEI. This is a flat increase for all networks
      *
      * @NOTE This will need to be increased further for `setExpenditureState` since
      * that requires even more gas, but since we don't use that one yet, there's
      * no reason to account for it just yet
      */
-    const estimate = bigNumberify(networkEstimate).add(bigNumberify(55000));
+    const estimate = bigNumberify(networkEstimate).add(bigNumberify(80000));
 
     const {
       finalizeMotionTransaction,
