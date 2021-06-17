@@ -9,7 +9,7 @@ const systemMessagesMessageDescriptors = {
       ${SystemMessagesName.MotionRevealPhase} {It's time to {revealTag} votes to the world!}
       ${SystemMessagesName.MotionHasFailedNotFinalizable} {{motionTag} has failed.}
       ${SystemMessagesName.MotionHasFailedFinalizable} {{motionTag} has {failedTag} and may be finalized.}
-      ${SystemMessagesName.MotionVotingPhase} {{votingTag} has started! Voting is secret 😀, and weighted by Reputation.}
+      ${SystemMessagesName.MotionVotingPhase} {{votingTag} has started! Voting is secret 🤫, and weighted by Reputation.}
       ${SystemMessagesName.MotionFullyStaked} {{motionTag} is fully staked; Staking period has reset. As long as there is no {objectionTag} , the motion will pass.}
       ${SystemMessagesName.MotionFullyStakedAfterObjection} {{motionTag} is fully staked.}
       ${SystemMessagesName.ObjectionFullyStaked} {{objectionTag} is fully staked; Staking period has reset. If the {motionTag} gets fully staked, a vote will start immediately; if not, the {motionTag} will fail.}
