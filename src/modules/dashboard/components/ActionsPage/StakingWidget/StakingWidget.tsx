@@ -23,6 +23,8 @@ import styles from './StakingWidget.css';
 import StakingSlider, { StakingAmounts } from './StakingSlider';
 import { Props as StakingFlowProps } from './StakingWidgetFlow';
 
+Decimal.set({ toExpPos: 78 });
+
 export interface Props extends StakingFlowProps {
   isObjection: boolean;
   handleWidgetState: (isObjection: boolean) => void;
