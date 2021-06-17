@@ -147,6 +147,7 @@ export const getActionsListData = (
             motionState: undefined,
             motionId: undefined,
             timeoutPeriods: undefined,
+            blockNumber: 0,
           };
           let hash;
           let timestamp;
@@ -154,11 +155,15 @@ export const getActionsListData = (
             const {
               transaction: {
                 hash: txHash,
-                block: { timestamp: blockTimestamp },
+                block: { timestamp: blockTimestamp, id: blockId },
               },
             } = unformattedAction;
             hash = txHash;
             timestamp = blockTimestamp;
+            formatedAction.blockNumber = parseInt(
+              blockId.replace('block_', ''),
+              10,
+            );
           } catch (error) {
             log.verbose('Could not deconstruct the subgraph action object');
             log.verbose(error);
