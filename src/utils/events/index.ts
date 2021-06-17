@@ -29,7 +29,6 @@ import {
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 
-import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
 import { availableRoles } from '~dashboard/PermissionManagementDialog';
 
@@ -705,6 +704,7 @@ const getSetUserRolesMotionValues = async (
   const values = colonyClient.interface.parseTransaction({
     data: motion.action,
   });
+  console.log(values);
   const motionDefaultValues = await getMotionValues(
     processedEvents,
     votingClient,
@@ -1172,18 +1172,6 @@ export const getDomainsforMoveFundsActions = async (
       };
     }),
   );
-};
-
-export const getActionTitleMessageDescriptor = (
-  actionType: ColonyActions,
-  roleSetTo: boolean,
-): string => {
-  switch (actionType) {
-    case ColonyActions.SetUserRoles:
-      return getSetUserRolesMessageDescriptorsIds(roleSetTo);
-    default:
-      return 'action.title';
-  }
 };
 
 export const groupSetUserRolesActions = (actions): FormattedAction[] => {

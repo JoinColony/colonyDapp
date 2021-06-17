@@ -181,12 +181,6 @@ export const getColonyRoleSetMessageDescriptorsIds = (
     : `${eventMessageType}.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`;
 };
 
-export const getSetUserRolesMessageDescriptorsIds = (roleSetTo: boolean) => {
-  return roleSetTo
-    ? `action.${ColonyActions.SetUserRoles}.assign`
-    : `action.${ColonyActions.SetUserRoles}.remove`;
-};
-
 export const parseColonyMetadata = (
   jsonMetadata: string,
 ): {
