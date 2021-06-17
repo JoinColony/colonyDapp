@@ -156,5 +156,11 @@ subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: Str
         decimals
       }
     }
+    timeoutPeriods @client {
+      timeLeftToStake
+      timeLeftToSubmit
+      timeLeftToReveal
+      timeLeftToEscalate
+    }
   }
 }

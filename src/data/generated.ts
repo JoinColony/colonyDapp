@@ -1090,10 +1090,10 @@ export type ProcessedColony = {
 };
 
 export type MotionTimeoutPeriods = {
+  timeLeftToEscalate: Scalars['Int'];
+  timeLeftToReveal: Scalars['Int'];
   timeLeftToStake: Scalars['Int'];
   timeLeftToSubmit: Scalars['Int'];
-  timeLeftToReveal: Scalars['Int'];
-  timeLeftToEscalate: Scalars['Int'];
 };
 
 export type ActionsFilter = {
@@ -1163,6 +1163,7 @@ export type SubscriptionMotion = {
   action: Scalars['String'];
   type: Scalars['String'];
   args: SubscriptionMotionArguments;
+  timeoutPeriods: MotionTimeoutPeriods;
 };
 
 export type SubscriptionMotionArguments = {
@@ -2004,7 +2005,7 @@ export type SubscriptionsMotionsSubscription = { motions: Array<(
         Pick<SubgraphToken, 'symbol' | 'decimals'>
         & { address: SubgraphToken['id'] }
       ) }
-    ) }
+    ), timeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> }
   )> };
 
 export const ColonyProfileFragmentDoc = gql`
@@ -5189,6 +5190,12 @@ export const SubscriptionsMotionsDocument = gql`
         symbol
         decimals
       }
+    }
+    timeoutPeriods @client {
+      timeLeftToStake
+      timeLeftToSubmit
+      timeLeftToReveal
+      timeLeftToEscalate
     }
   }
 }

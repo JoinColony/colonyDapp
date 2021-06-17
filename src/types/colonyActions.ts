@@ -1,8 +1,10 @@
 import { ColonyRole } from '@colony/colony-js';
 
 import { ItemStatus } from '~core/ActionsList';
-import { Address, ActionUserRoles } from './index';
+import { MotionTimeoutPeriods } from '~data/generated';
 import { MotionState } from '~utils/colonyMotions';
+
+import { Address, ActionUserRoles } from './index';
 import { ColonyMotions } from './colonyMotions';
 
 export enum ColonyActions {
@@ -136,6 +138,8 @@ export interface FormattedAction {
   oldVersion?: string;
   newVersion?: string;
   motionState?: MotionState;
+  motionId?: string;
+  timeoutPeriods: MotionTimeoutPeriods;
 }
 
 export interface FormattedEvent {

@@ -145,6 +145,8 @@ export const getActionsListData = (
             commentCount: 0,
             status: undefined,
             motionState: undefined,
+            motionId: undefined,
+            timeoutPeriods: undefined,
           };
           let hash;
           let timestamp;
@@ -253,9 +255,16 @@ export const getActionsListData = (
             }
           }
           if (subgraphActionType === FilteredUnformattedAction.Motions) {
-            const { args, agent, type, state } = unformattedAction;
+            const {
+              args,
+              agent,
+              type,
+              state,
+              fundamentalChainId,
+              timeoutPeriods,
+            } = unformattedAction;
 
-            if (args.token) {
+            if (args?.token) {
               const {
                 args: {
                   token: { address: tokenAddress, symbol, decimals },
@@ -269,10 +278,14 @@ export const getActionsListData = (
             formatedAction.initiator = agent;
             formatedAction.actionType = type;
             formatedAction.motionState = state;
-            const actionTypeKeys = Object.keys(args);
-            actionTypeKeys.forEach((key) => {
-              formatedAction[key] = args[key];
-            });
+            formatedAction.motionId = fundamentalChainId;
+            formatedAction.timeoutPeriods = timeoutPeriods;
+            if (args) {
+              const actionTypeKeys = Object.keys(args);
+              actionTypeKeys.forEach((key) => {
+                formatedAction[key] = args[key];
+              });
+            }
           }
           formatedAction.transactionHash = hash;
           return formatedAction;

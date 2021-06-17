@@ -12,6 +12,7 @@ import Numeral, { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
 import FriendlyName from '~core/FriendlyName';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
+import CountDownTimer from '~dashboard/ActionsPage/CountDownTimer';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -85,6 +86,8 @@ const ActionsListItem = ({
     newVersion,
     status = ItemStatus.Defused,
     motionState,
+    motionId,
+    timeoutPeriods,
   },
   colony,
   handleOnClick,
@@ -149,7 +152,7 @@ const ActionsListItem = ({
     MOTION_TAG_MAP[
       motionState ||
         (isVotingExtensionEnabled &&
-          !actionType.endsWith('Motion') &&
+          !actionType?.endsWith('Motion') &&
           MotionState.Forced) ||
         MotionState.Invalid
     ];
@@ -245,19 +248,21 @@ const ActionsListItem = ({
               />
             </span>
             {(motionState || isVotingExtensionEnabled) && (
-              <div className={styles.motionTagWrapper}>
-                <Tag
-                  text={motionStyles.name}
-                  appearance={{
-                    theme: motionStyles.theme as TagAppearance['theme'],
-                    /*
-                     * @NOTE Prettier is being stupid
-                     */
-                    // eslint-disable-next-line max-len
-                    colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
-                  }}
-                />
-              </div>
+              <>
+                <div className={styles.motionTagWrapper}>
+                  <Tag
+                    text={motionStyles.name}
+                    appearance={{
+                      theme: motionStyles.theme as TagAppearance['theme'],
+                      /*
+                       * @NOTE Prettier is being stupid
+                       */
+                      // eslint-disable-next-line max-len
+                      colorSchema: motionStyles.colorSchema as TagAppearance['colorSchema'],
+                    }}
+                  />
+                </div>
+              </>
             )}
           </div>
           <div className={styles.meta}>
@@ -306,6 +311,16 @@ const ActionsListItem = ({
             )}
           </div>
         </div>
+        {motionId && timeoutPeriods !== undefined && (
+          <div className={styles.countdownTimerContainer}>
+            <CountDownTimer
+              colony={colony}
+              state={motionState as MotionState}
+              motionId={Number(motionId)}
+              timeoutPeriods={timeoutPeriods}
+            />
+          </div>
+        )}
       </div>
     </li>
   );

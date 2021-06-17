@@ -7,6 +7,7 @@
 
 .main {
   display: flex;
+  align-items: center;
   margin-bottom: 1px;
   padding: 26px 20px;
   height: 89px;
@@ -159,4 +160,8 @@
   margin: -1px 0 0 12px;
   padding: 0;
   vertical-align: middle;
+}
+
+.countdownTimerContainer {
+  margin-left: 30px;
 }
