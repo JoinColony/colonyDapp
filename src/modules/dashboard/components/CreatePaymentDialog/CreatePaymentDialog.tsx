@@ -41,7 +41,9 @@ export interface FormValues {
 
 type Props = Required<DialogProps> &
   WizardDialogType<object> &
-  ActionDialogProps;
+  ActionDialogProps & {
+    ethDomainId?: number;
+  };
 
 const displayName = 'dashboard.CreatePaymentDialog';
 
@@ -53,6 +55,7 @@ const CreatePaymentDialog = ({
   prevStep,
   cancel,
   close,
+  ethDomainId,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
@@ -138,7 +141,10 @@ const CreatePaymentDialog = ({
     <ActionForm
       initialValues={{
         forceAction: false,
-        domainId: ROOT_DOMAIN_ID.toString(),
+        domainId: (ethDomainId === 0 || ethDomainId === undefined
+          ? ROOT_DOMAIN_ID
+          : ethDomainId
+        ).toString(),
         recipient: undefined,
         amount: undefined,
         tokenAddress: nativeTokenAddress,
@@ -164,6 +170,7 @@ const CreatePaymentDialog = ({
               isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
               subscribedUsers={subscribedUsersData.subscribedUsers}
+              ethDomainId={ethDomainId}
             />
           </Dialog>
         );
