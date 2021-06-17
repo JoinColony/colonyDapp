@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { FormattedMessage, defineMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
+import { bigNumberify } from 'ethers/utils';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
@@ -155,7 +156,7 @@ const CountDownTimer = ({
         type: ActionTypes.COLONY_MOTION_STATE_UPDATE,
         payload: {
           colonyAddress,
-          motionId,
+          motionId: bigNumberify(motionId),
           userAddress: walletAddress,
         },
       });
