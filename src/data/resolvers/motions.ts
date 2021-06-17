@@ -10,6 +10,7 @@ import {
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 import { bigNumberify, LogDescription, hexStripZeros } from 'ethers/utils';
+import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
 import { Context } from '~context/index';
@@ -33,6 +34,7 @@ import {
   SystemMessagesName,
 } from '~dashboard/ActionsPageFeed';
 import { availableRoles } from '~dashboard/PermissionManagementDialog';
+import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import { ProcessedEvent } from './colonyActions';
 
@@ -977,6 +979,7 @@ export const motionsResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
+
       const actionValues = colonyClient.interface.parseTransaction({
         data: action,
       });
@@ -1015,18 +1018,60 @@ export const motionsResolvers = ({
           return defaultValues;
         }
 
-        const tokenClient = await colonyManager.getTokenClient(
-          paymentValues?.args[5][0] || colonyClient.tokenClient.address,
-        );
-        const tokenInfo = await tokenClient.getTokenInfo();
+        const [
+          ,
+          ,
+          ,
+          ,
+          [recipient],
+          [paymentTokenAddress],
+          [paymentAmount],
+        ] = paymentValues?.args;
+
+        /*
+         * If the payment was made with the native chain's token. Eg: Xdai or Eth
+         */
+        if (paymentTokenAddress === AddressZero) {
+          return {
+            amount: paymentAmount.toString(),
+            recipient,
+            token: {
+              id: AddressZero,
+              symbol: DEFAULT_NETWORK_TOKEN.symbol,
+              decimals: DEFAULT_NETWORK_TOKEN.decimals,
+            },
+          };
+        }
+
+        /*
+         * Otherwise the payment was made with the native token's address, or an
+         * equally similar ERC20 token
+         */
+
+        let tokenClient;
+        try {
+          tokenClient = await colonyManager.getTokenClient(paymentTokenAddress);
+        } catch (error) {
+          /*
+           * If this try/catch block triggers it means that we have a non-standard
+           * ERC-20 token, which we can't handle
+           * For that, we will just replace the values with the colony's native token
+           */
+          tokenClient = await colonyManager.getTokenClient(tokenAddress);
+        }
+
+        const {
+          symbol: paymentTokenSymbol,
+          decimals: paymentTokenDecimals,
+        } = await tokenClient.getTokenInfo();
 
         return {
-          amount: paymentValues.args[6][0].toString(),
-          recipient: paymentValues.args[4][0],
+          amount: paymentAmount.toString(),
+          recipient,
           token: {
-            id: paymentValues.args[5][0],
-            symbol: tokenInfo.symbol,
-            decimals: tokenInfo.decimals,
+            id: tokenClient.address,
+            symbol: paymentTokenSymbol,
+            decimals: paymentTokenDecimals,
           },
         };
       }
