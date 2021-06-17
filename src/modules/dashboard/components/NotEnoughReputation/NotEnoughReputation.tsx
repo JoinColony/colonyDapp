@@ -21,7 +21,7 @@ const MSG = defineMessage({
     id: 'NotEnoughReputation.title',
     defaultMessage: `There is no reputation in this {onRootDomain, select,
       true {colony}
-      false {domain}
+      false {team}
     } yet.`,
   },
   description: {
