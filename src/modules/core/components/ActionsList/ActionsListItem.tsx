@@ -5,6 +5,7 @@ import {
   defineMessages,
   useIntl,
 } from 'react-intl';
+import { ColonyRoles } from '@colony/colony-js';
 
 import { AddressZero } from 'ethers/constants';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -16,7 +17,7 @@ import CountDownTimer from '~dashboard/ActionsPage/CountDownTimer';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { useUser, Colony } from '~data/index';
+import { useUser, Colony, useColonyHistoricRolesQuery } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { FormattedAction, ColonyActions, ColonyMotions } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
@@ -88,6 +89,7 @@ const ActionsListItem = ({
     motionState,
     motionId,
     timeoutPeriods,
+    blockNumber,
   },
   colony,
   handleOnClick,
@@ -101,6 +103,13 @@ const ActionsListItem = ({
 
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
+  });
+
+  const { data: historicColonyRoles } = useColonyHistoricRolesQuery({
+    variables: {
+      colonyAddress: colony.colonyAddress,
+      blockNumber: blockNumber - 1,
+    },
   });
 
   const initiatorUserProfile = useUser(createAddress(initiator || AddressZero));
@@ -118,9 +127,9 @@ const ActionsListItem = ({
   );
 
   const updatedRoles = getUpdatedDecodedMotionRoles(
-    colony,
     fallbackRecipientProfile,
     parseInt(fromDomainId, 10),
+    (historicColonyRoles?.historicColonyRoles as unknown) as ColonyRoles,
     roles || [],
   );
   const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
