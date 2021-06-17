@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, RefObject } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 
@@ -34,7 +33,6 @@ interface Props {
   colony: Colony;
   motionId: number;
   actionType: string;
-  motionDomain: number;
   scrollToRef?: RefObject<HTMLInputElement>;
   motionState: MotionState;
 }
@@ -67,7 +65,7 @@ export const MSG = defineMessages({
   finalizeTooltip: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.finalizeTooltip',
     defaultMessage: `Finalize completes a motion, allows stakes to be
-    reclaimed, and if applicable, takes the action the motion was 
+    reclaimed, and if applicable, takes the action the motion was
     created to authorise.`,
   },
   finalizeButton: {
@@ -115,7 +113,6 @@ const FinalizeMotionAndClaimWidget = ({
   colony,
   motionId,
   actionType,
-  motionDomain = ROOT_DOMAIN_ID,
   scrollToRef,
   motionState,
 }: Props) => {
@@ -236,8 +233,7 @@ const FinalizeMotionAndClaimWidget = ({
   const showFinalizeButton =
     voteResults?.motionVoteResults &&
     !finalized?.motionFinalized &&
-    !motionNotFinalizable &&
-    motionDomain === ROOT_DOMAIN_ID;
+    !motionNotFinalizable;
 
   const canClaimStakes =
     (bigNumberify(stakerRewards?.motionStakerReward?.stakesYay || 0).gt(0) ||

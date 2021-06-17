@@ -503,7 +503,6 @@ const DefaultMotion = ({
               colony={colony}
               actionType={actionType}
               motionId={motionId}
-              motionDomain={motionDomain}
               scrollToRef={bottomElementRef}
               motionState={motionState}
             />
