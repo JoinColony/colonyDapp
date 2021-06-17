@@ -1943,7 +1943,7 @@ export type SubscriptionSubgraphEventsSubscription = { events: Array<(
       ) }
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
     ) }
   )> };
 
@@ -1991,7 +1991,7 @@ export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Arr
       ) }
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
     ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
   )> };
 
@@ -2013,7 +2013,7 @@ export type SubscriptionsMotionsSubscription = { motions: Array<(
       ) }
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
     ), domain: (
       Pick<SubgraphDomain, 'name'>
       & { ethDomainId: SubgraphDomain['domainChainId'] }
@@ -5052,6 +5052,7 @@ export const SubscriptionSubgraphEventsDocument = gql`
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }
@@ -5158,6 +5159,7 @@ export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }
@@ -5224,6 +5226,7 @@ export const SubscriptionsMotionsDocument = gql`
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }
