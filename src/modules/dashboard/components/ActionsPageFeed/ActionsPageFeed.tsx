@@ -196,13 +196,14 @@ const ActionsPageFeed = ({
           emmitedBy,
           uniqueId,
           values: eventValues,
+          transactionHash: eventTransactionHash,
         } = feedItem as FeedItemWithId<ParsedEvent>;
         return (
           <ActionsPageEvent
             key={uniqueId}
             eventIndex={index}
             createdAt={new Date(createdAt)}
-            transactionHash={transactionHash}
+            transactionHash={eventTransactionHash}
             eventName={name}
             actionData={actionData}
             values={{
