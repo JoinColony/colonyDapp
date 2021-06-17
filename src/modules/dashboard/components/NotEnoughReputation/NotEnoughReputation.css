@@ -6,7 +6,7 @@
 
 .title {
   composes: text;
-  color: var(--pink);
+  color: var(--danger);
 }
 
 .container {
