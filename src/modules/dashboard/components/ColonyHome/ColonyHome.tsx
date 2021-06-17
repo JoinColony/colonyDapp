@@ -129,6 +129,7 @@ const ColonyHome = ({ match, location }: Props) => {
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
+                ethDomainId={filteredDomainId}
               >
                 <ColonyActions colony={colony} ethDomainId={filteredDomainId} />
               </ColonyHomeLayout>
