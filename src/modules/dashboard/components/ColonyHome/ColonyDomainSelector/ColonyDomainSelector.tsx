@@ -41,7 +41,7 @@ const ColonyDomainSelector = ({
   const handleEditDomain = useCallback(
     (ethDomainId: number) =>
       openEditDialog({
-        selectedDomainId: String(ethDomainId),
+        ethDomainId,
         colony,
         isVotingExtensionEnabled,
       }),
