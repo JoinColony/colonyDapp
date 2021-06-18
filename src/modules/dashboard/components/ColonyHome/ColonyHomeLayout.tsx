@@ -29,6 +29,7 @@ type Props = {
   showControls?: boolean;
   showNavigation?: boolean;
   showSidebar?: boolean;
+  showActions?: boolean;
 };
 
 const displayName = 'dashboard.ColonyHome.ColonyHomeLayout';
@@ -40,6 +41,7 @@ const ColonyHomeLayout = ({
   showControls = true,
   showNavigation = true,
   showSidebar = true,
+  showActions = true,
   onDomainChange = () => null,
 }: Props) => (
   <div className={styles.main}>
@@ -60,7 +62,7 @@ const ColonyHomeLayout = ({
                   colony={colony}
                 />
               </div>
-              <ColonyHomeActions colony={colony} />
+              {showActions && <ColonyHomeActions colony={colony} />}
             </div>
           </>
         )}
