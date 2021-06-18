@@ -273,7 +273,12 @@ const EditDomainDialogForm = ({
           </div>
         </DialogSection>
       )}
-      {onlyForceAction && <NotEnoughReputation />}
+      {onlyForceAction && (
+        <NotEnoughReputation
+          appearance={{ marginTop: 'negative' }}
+          domainId={Number(domainId)}
+        />
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button

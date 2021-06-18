@@ -6,9 +6,13 @@
 
 .title {
   composes: text;
-  color: var(--pink);
+  color: var(--danger);
 }
 
 .container {
-  margin: 10px 0 30px 0;
+  margin-bottom: 30px;
+}
+
+.marginTopNegative {
+  margin-top: -15px;
 }

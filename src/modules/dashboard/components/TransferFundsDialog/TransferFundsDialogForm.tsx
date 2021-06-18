@@ -422,7 +422,9 @@ const TransferFundsDialogForm = ({
           </span>
         </DialogSection>
       )}
-      {onlyForceAction && <NotEnoughReputation />}
+      {onlyForceAction && (
+        <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button

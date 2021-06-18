@@ -251,7 +251,9 @@ const PermissionManagementDialog = ({
                     </div>
                   </DialogSection>
                 )}
-                {onlyForceAction && <NotEnoughReputation />}
+                {onlyForceAction && (
+                  <NotEnoughReputation domainId={Number(values.domainId)} />
+                )}
                 <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
                   <Button
                     appearance={{ theme: 'secondary', size: 'large' }}
