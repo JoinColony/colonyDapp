@@ -98,6 +98,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.winningsLabel',
     defaultMessage: `Winnings`,
   },
+  penaltyLabel: {
+    id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.penaltyLabel',
+    defaultMessage: `Penalty`,
+  },
   totalLabel: {
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.totalLabel',
     defaultMessage: `Total`,
@@ -180,10 +184,11 @@ const FinalizeMotionAndClaimWidget = ({
     scrollToRef?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [scrollToRef]);
 
-  const { userStake, userWinnings, userTotals } = useMemo(() => {
+  const { userStake, userWinnings, userTotals, isWinning } = useMemo(() => {
     let stake = bigNumberify(0);
     let winnings = bigNumberify(0);
     let totals = bigNumberify(0);
+
     if (stakerRewards?.motionStakerReward) {
       const {
         stakesYay,
@@ -201,6 +206,7 @@ const FinalizeMotionAndClaimWidget = ({
       userStake: moveDecimal(stake, -(nativeToken?.decimals || 0)),
       userWinnings: moveDecimal(winnings, -(nativeToken?.decimals || 0)),
       userTotals: moveDecimal(totals, -(nativeToken?.decimals || 0)),
+      isWinning: winnings.gte(0),
     };
   }, [stakerRewards, nativeToken]);
 
@@ -347,7 +353,10 @@ const FinalizeMotionAndClaimWidget = ({
                   <div className={styles.item}>
                     <div className={styles.label}>
                       <div>
-                        <FormattedMessage {...MSG.winningsLabel} />
+                        <FormattedMessage
+                          {...((isWinning && MSG.winningsLabel) ||
+                            MSG.penaltyLabel)}
+                        />
                       </div>
                     </div>
                     <div className={styles.value}>
