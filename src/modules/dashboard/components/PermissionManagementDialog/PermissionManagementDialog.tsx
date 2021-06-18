@@ -76,7 +76,9 @@ export interface FormValues {
 
 type Props = DialogProps &
   Partial<WizardDialogType<object>> &
-  ActionDialogProps;
+  ActionDialogProps & {
+    ethDomainId?: number;
+  };
 
 const PermissionManagementDialog = ({
   colony: { colonyAddress, colonyName, domains },
@@ -86,6 +88,7 @@ const PermissionManagementDialog = ({
   callStep,
   prevStep,
   isVotingExtensionEnabled,
+  ethDomainId: preselectedDomainId,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
@@ -107,10 +110,12 @@ const PermissionManagementDialog = ({
   const [selectedUser, setSelectedUser] = useState<AnyUser>(loggedInUser);
 
   const [selectedDomainId, setSelectedDomainId] = useState<number>(
-    ROOT_DOMAIN_ID,
+    preselectedDomainId === 0 || preselectedDomainId === undefined
+      ? ROOT_DOMAIN_ID
+      : preselectedDomainId,
   );
   const [selectedMotionDomainId, setSelectedMoitonDomainId] = useState<number>(
-    ROOT_DOMAIN_ID,
+    selectedDomainId,
   );
 
   const currentUserRoles = useTransformer(getUserRolesForDomain, [
