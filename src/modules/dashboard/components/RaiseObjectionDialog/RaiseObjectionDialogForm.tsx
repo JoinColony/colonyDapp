@@ -102,7 +102,7 @@ const RaiseObjectionDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotation"
-          maxLength={90}
+          maxLength={4000}
           disabled={!canUserStake}
         />
       </DialogSection>
