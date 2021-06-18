@@ -127,6 +127,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,
         isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {

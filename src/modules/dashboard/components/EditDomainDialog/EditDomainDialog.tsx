@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
@@ -25,7 +25,7 @@ export interface FormValues {
 }
 
 interface CustomWizardDialogProps extends ActionDialogProps {
-  selectedDomainId?: string;
+  ethDomainId?: number;
 }
 
 type Props = DialogProps &
@@ -41,9 +41,25 @@ const EditDomainDialog = ({
   close,
   colony,
   colony: { colonyAddress, colonyName, domains },
-  selectedDomainId,
   isVotingExtensionEnabled,
+  ethDomainId: preselectedDomainId,
 }: Props) => {
+  // const selectedDomainId =
+  //   preselectedDomainId === 0 || preselectedDomainId === undefined
+  //     ? ROOT_DOMAIN_ID
+  //     : preselectedDomainId;
+
+  const selectedDomainId = useMemo(
+    () =>
+      preselectedDomainId === 0 ||
+      preselectedDomainId === undefined ||
+      preselectedDomainId === ROOT_DOMAIN_ID
+        ? domains.find(({ ethDomainId }) => ethDomainId !== ROOT_DOMAIN_ID)
+            ?.ethDomainId
+        : preselectedDomainId,
+    [preselectedDomainId, domains],
+  );
+
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
 
@@ -84,20 +100,14 @@ const EditDomainDialog = ({
     <ActionForm
       initialValues={{
         forceAction: false,
-        domainName: domains.find(({ ethDomainId }) =>
-          selectedDomainId
-            ? ethDomainId.toString() === selectedDomainId
-            : ethDomainId !== ROOT_DOMAIN_ID,
+        domainName: domains.find(
+          ({ ethDomainId }) => ethDomainId === selectedDomainId,
         )?.name,
         domainColor: undefined,
         domainPurpose: undefined,
         annotationMessage: undefined,
-        domainId:
-          selectedDomainId ||
-          domains
-            .find(({ ethDomainId }) => ethDomainId !== ROOT_DOMAIN_ID)
-            ?.ethDomainId.toString(),
-        motionDomainId: ROOT_DOMAIN_ID,
+        domainId: selectedDomainId?.toString(),
+        motionDomainId: selectedDomainId || ROOT_DOMAIN_ID,
       }}
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
