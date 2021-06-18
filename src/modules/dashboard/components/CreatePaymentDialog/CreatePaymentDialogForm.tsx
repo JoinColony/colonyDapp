@@ -128,14 +128,14 @@ const CreatePaymentDialogForm = ({
   values,
   ethDomainId: preselectedDomainId,
 }: Props & FormikProps<FormValues>) => {
-  const preselectedDomain =
+  const selectedDomain =
     preselectedDomainId === 0 || preselectedDomainId === undefined
       ? ROOT_DOMAIN_ID
       : preselectedDomainId;
 
   const domainId = values.domainId
     ? parseInt(values.domainId, 10)
-    : preselectedDomain;
+    : selectedDomain;
   /*
    * Custom error state tracking
    */
