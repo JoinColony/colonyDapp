@@ -146,7 +146,11 @@ const TransferFundsDialog = ({
         fromDomain: selectedDomainId
           ? String(selectedDomainId)
           : ROOT_DOMAIN_ID.toString(),
-        toDomain: domainOptions[1]?.value || ROOT_DOMAIN_ID.toString(),
+        // toDomain: domainOptions[1]?.value || ROOT_DOMAIN_ID.toString(),
+        toDomain:
+          domainOptions.find(
+            (domain) => domain.value !== selectedDomainId?.toString(),
+          )?.value || ROOT_DOMAIN_ID.toString(),
         amount: '',
         tokenAddress: nativeTokenAddress,
         annotation: undefined,
