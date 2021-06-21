@@ -98,7 +98,7 @@ const StakingSlider = ({
     .div(
       new Decimal(10).pow(getTokenDecimalsWithFallback(nativeToken?.decimals)),
     )
-    .toFixed(2);
+    .toDP(2, Decimal.ROUND_DOWN);
 
   return (
     <>
