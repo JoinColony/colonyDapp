@@ -8,8 +8,10 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { UserToken } from '~data/generated';
 import { Address } from '~types/index';
-import { formatTokenValue } from '~utils/numbers';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  getFormattedTokenValue,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
 
 import styles from './TokenActivationContent.css';
 import ChangeTokenStateForm from './ChangeTokenStateForm';
@@ -97,12 +99,22 @@ const TokensTab = ({
     [token],
   );
 
-  const formattedTotalAmount = formatTokenValue({
-    value: totalTokens,
-    suffix: ` ${token?.symbol}`,
-    unit: tokenDecimals,
-    truncate: 3,
-  }).split(' ')[0];
+  const formattedTotalAmount = getFormattedTokenValue(
+    totalTokens,
+    token.decimals,
+  );
+  const formattedLockedTokens = getFormattedTokenValue(
+    lockedTokens,
+    token.decimals,
+  );
+  const formattedActiveTokens = getFormattedTokenValue(
+    activeTokens,
+    token.decimals,
+  );
+  const formattedInactiveTokens = getFormattedTokenValue(
+    inactiveTokens,
+    token.decimals,
+  );
 
   return (
     <>
@@ -143,10 +155,8 @@ const TokensTab = ({
             </TokenTooltip>
             <div className={styles.tokenNumbers}>
               <Numeral
-                value={activeTokens}
+                value={formattedActiveTokens}
                 suffix={` ${token?.symbol}`}
-                unit={tokenDecimals}
-                truncate={3}
               />
             </div>
             <TokenTooltip
@@ -159,10 +169,8 @@ const TokensTab = ({
           <li>
             <div className={styles.tokenNumbersLocked}>
               <Numeral
-                value={lockedTokens}
+                value={formattedLockedTokens}
                 suffix={` ${token?.symbol}`}
-                unit={tokenDecimals}
-                truncate={3}
               />
             </div>
           </li>
@@ -175,10 +183,8 @@ const TokensTab = ({
             </TokenTooltip>
             <div className={styles.tokenNumbersInactive}>
               <Numeral
-                value={inactiveTokens}
+                value={formattedInactiveTokens}
                 suffix={` ${token?.symbol}`}
-                unit={tokenDecimals}
-                truncate={3}
               />
             </div>
             {!isPendingBalanceZero && (

@@ -251,7 +251,7 @@ const StakingWidget = ({
                 type="submit"
                 disabled={
                   !canBeStaked ||
-                  userActivatedTokens.lt(getDecimalStake(values.amount))
+                  userActivatedTokens.lte(getDecimalStake(values.amount))
                 }
                 text={MSG.stakeButton}
               />
