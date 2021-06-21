@@ -31,7 +31,7 @@ const MSG = defineMessages({
 
 export interface FormValues {
   forceAction: boolean;
-  fromDomain?: string;
+  ethDomainId?: string;
   toDomain?: string;
   amount: string;
   tokenAddress?: Address;
@@ -39,7 +39,7 @@ export interface FormValues {
 }
 
 interface CustomWizardDialogProps extends ActionDialogProps {
-  fromDomain?: number;
+  ethDomainId?: number;
 }
 
 type Props = DialogProps &
@@ -58,7 +58,7 @@ const TransferFundsDialog = ({
     domains,
   },
   colony,
-  fromDomain,
+  ethDomainId: selectedDomainId,
   callStep,
   prevStep,
   cancel,
@@ -143,7 +143,9 @@ const TransferFundsDialog = ({
     <ActionForm
       initialValues={{
         forceAction: false,
-        fromDomain: fromDomain ? String(fromDomain) : ROOT_DOMAIN_ID.toString(),
+        fromDomain: selectedDomainId
+          ? String(selectedDomainId)
+          : ROOT_DOMAIN_ID.toString(),
         toDomain: domainOptions[1]?.value || ROOT_DOMAIN_ID.toString(),
         amount: '',
         tokenAddress: nativeTokenAddress,
