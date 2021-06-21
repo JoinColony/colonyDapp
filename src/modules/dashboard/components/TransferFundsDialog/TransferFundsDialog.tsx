@@ -31,7 +31,7 @@ const MSG = defineMessages({
 
 export interface FormValues {
   forceAction: boolean;
-  ethDomainId?: string;
+  fromDomain?: string;
   toDomain?: string;
   amount: string;
   tokenAddress?: Address;
