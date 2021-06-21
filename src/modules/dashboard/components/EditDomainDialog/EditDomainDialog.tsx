@@ -44,11 +44,6 @@ const EditDomainDialog = ({
   isVotingExtensionEnabled,
   ethDomainId: preselectedDomainId,
 }: Props) => {
-  // const selectedDomainId =
-  //   preselectedDomainId === 0 || preselectedDomainId === undefined
-  //     ? ROOT_DOMAIN_ID
-  //     : preselectedDomainId;
-
   const selectedDomainId = useMemo(
     () =>
       preselectedDomainId === 0 ||
