@@ -231,7 +231,10 @@ const StakingWidget = ({
               colony={colony}
               canUserStake={canBeStaked}
               values={values}
-              appearance={{ theme: isObjection ? 'danger' : 'primary' }}
+              appearance={{
+                theme: isObjection ? 'danger' : 'primary',
+                size: 'thick',
+              }}
               isObjection={isObjection}
               remainingToFullyYayStaked={remainingToFullyYayStaked}
               remainingToFullyNayStaked={remainingToFullyNayStaked}
@@ -252,7 +255,13 @@ const StakingWidget = ({
                 }
                 text={MSG.stakeButton}
               />
-              <span className={isObjection ? '' : styles.objectButton}>
+              <span
+                className={
+                  !bigNumberify(totalNAYStakes).isZero()
+                    ? styles.backButtonWrapper
+                    : styles.objectButton
+                }
+              >
                 {isObjection || !bigNumberify(totalNAYStakes).isZero() ? (
                   <Button
                     appearance={{ theme: 'secondary', size: 'medium' }}
