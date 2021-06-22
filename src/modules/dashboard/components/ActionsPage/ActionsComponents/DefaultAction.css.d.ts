@@ -8,6 +8,7 @@ export const heading: string;
 export const content: string;
 export const details: string;
 export const countdownContainer: string;
+export const votingCountdownContainer: string;
 export const addressInTitle: string;
 export const titleDecoration: string;
 export const tagWrapper: string;

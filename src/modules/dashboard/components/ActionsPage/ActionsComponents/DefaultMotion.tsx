@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useCallback } from 'react';
 import { bigNumberify } from 'ethers/utils';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import classnames from 'classnames';
 
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 import Heading from '~core/Heading';
@@ -340,7 +341,12 @@ const DefaultMotion = ({
             />
           </p>
         )}
-        <div className={styles.countdownContainer}>
+        <div
+          className={classnames(styles.countdownContainer, {
+            [styles.votingCountdownContainer]:
+              motionState === MotionState.Voting && votingStateData,
+          })}
+        >
           <CountDownTimer
             colony={colony}
             state={motionState as MotionState}

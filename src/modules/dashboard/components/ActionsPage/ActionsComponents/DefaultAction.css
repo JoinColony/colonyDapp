@@ -81,6 +81,10 @@
   align-items: baseline;
 }
 
+.votingCountdownContainer {
+  justify-content: flex-end;
+}
+
 .addressInTitle div {
   display: inline-block;
   font-size: var(--size-medium);
