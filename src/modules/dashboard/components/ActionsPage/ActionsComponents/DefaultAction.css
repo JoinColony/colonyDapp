@@ -79,7 +79,6 @@
   composes: details;
   display: flex;
   align-items: baseline;
-  justify-content: flex-end;
 }
 
 .addressInTitle div {
