@@ -189,7 +189,7 @@ const DetailsWidget = ({
           <div className={styles.label}>
             <FormattedMessage {...MSG.domainDescription} />
           </div>
-          <div className={styles.value}>
+          <div className={`${styles.value} ${styles.descriptionValue}`}>
             <div
               className={styles.domainDescription}
               title={values.fromDomain.description || ''}
