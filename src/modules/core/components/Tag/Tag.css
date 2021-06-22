@@ -7,10 +7,6 @@
   color: var(--colony-white);
 }
 
-.baseStyles + .baseStyles {
-  margin-left: 10px;
-}
-
 .themePrimary {
   composes: baseStyles;
   background-color: var(--primary);

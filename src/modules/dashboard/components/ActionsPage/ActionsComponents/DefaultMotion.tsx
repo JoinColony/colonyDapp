@@ -284,18 +284,10 @@ const DefaultMotion = ({
         autoShrinkAddress
       />
     ),
-    passedTag: (
-      <span className={motionSpecificStyles.tagWrapper}>{passedTag}</span>
-    ),
-    failedTag: (
-      <span className={motionSpecificStyles.tagWrapper}>{failedTag}</span>
-    ),
-    objectionTag: (
-      <span className={motionSpecificStyles.tagWrapper}>{objectionTag}</span>
-    ),
-    escalateTag: (
-      <span className={motionSpecificStyles.tagWrapper}>{escalateTag}</span>
-    ),
+    passedTag,
+    failedTag,
+    objectionTag,
+    escalateTag,
     ...tags,
     voteResultsWidget: (
       <div className={motionSpecificStyles.voteResultsWrapper}>
