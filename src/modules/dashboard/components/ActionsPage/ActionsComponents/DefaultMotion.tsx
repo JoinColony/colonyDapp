@@ -210,6 +210,7 @@ const DefaultMotion = ({
     motionStakeData?.stakeAmountsForMotion?.totalStaked.YAY || 0,
   );
   const currentStake = totalNayStake.add(totalYayStake).toString();
+  const isFullyNayStaked = totalNayStake.gte(requiredStake);
 
   const { data: objectionAnnotation } = useMotionObjectionAnnotationQuery({
     variables: {
@@ -344,6 +345,7 @@ const DefaultMotion = ({
             colony={colony}
             state={motionState as MotionState}
             motionId={motionId}
+            isFullyNayStaked={isFullyNayStaked}
           />
           {motionState === MotionState.Voting && votingStateData && (
             <>

@@ -61,6 +61,7 @@ interface Props {
   colony: Colony;
   state: MotionState;
   motionId: number;
+  isFullyNayStaked?: boolean;
 }
 
 const displayName = 'dashboard.ActionsPage.CountDownTimer';
@@ -69,6 +70,7 @@ const CountDownTimer = ({
   colony: { colonyAddress },
   state,
   motionId,
+  isFullyNayStaked = false,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const dispatch = useDispatch();
@@ -126,13 +128,13 @@ const CountDownTimer = ({
       data &&
       state &&
       ((prevStateRef.current === null && isStakingPhaseState) ||
-        !isStakingPhaseState)
+        !isStakingPhaseState || isStakingPhaseState && isFullyNayStaked)
     ) {
       const period = currentStatePeriod() / 1000;
       setTimeLeft(period > 0 ? period + 5 : period);
       prevStateRef.current = state;
     }
-  }, [data, currentStatePeriod, prevStateRef, state, isStakingPhaseState]);
+  }, [data, currentStatePeriod, prevStateRef, state, isStakingPhaseState, isFullyNayStaked]);
 
   /*
    * Count it down
@@ -165,10 +167,10 @@ const CountDownTimer = ({
   ]);
 
   useEffect(() => {
-    if (data && !isStakingPhaseState) {
+    if (data && !isStakingPhaseState || data && isFullyNayStaked) {
       refetch();
     }
-  }, [isStakingPhaseState, data, refetch, state]);
+  }, [isStakingPhaseState, data, refetch, state, isFullyNayStaked]);
 
   /*
    * Split the time into h/m/s for display purpouses
