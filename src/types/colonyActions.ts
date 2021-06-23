@@ -141,6 +141,8 @@ export interface FormattedAction {
   motionId?: string;
   timeoutPeriods: MotionTimeoutPeriods;
   blockNumber: number;
+  totalNayStake?: string;
+  requiredStake?: string;
 }
 
 export interface FormattedEvent {

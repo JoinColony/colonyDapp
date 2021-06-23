@@ -128,13 +128,21 @@ const CountDownTimer = ({
       data &&
       state &&
       ((prevStateRef.current === null && isStakingPhaseState) ||
-        !isStakingPhaseState || isStakingPhaseState && isFullyNayStaked)
+        !isStakingPhaseState ||
+        (isStakingPhaseState && isFullyNayStaked))
     ) {
       const period = currentStatePeriod() / 1000;
       setTimeLeft(period > 0 ? period + 5 : period);
       prevStateRef.current = state;
     }
-  }, [data, currentStatePeriod, prevStateRef, state, isStakingPhaseState, isFullyNayStaked]);
+  }, [
+    data,
+    currentStatePeriod,
+    prevStateRef,
+    state,
+    isStakingPhaseState,
+    isFullyNayStaked,
+  ]);
 
   /*
    * Count it down
@@ -167,7 +175,7 @@ const CountDownTimer = ({
   ]);
 
   useEffect(() => {
-    if (data && !isStakingPhaseState || data && isFullyNayStaked) {
+    if ((data && !isStakingPhaseState) || (data && isFullyNayStaked)) {
       refetch();
     }
   }, [isStakingPhaseState, data, refetch, state, isFullyNayStaked]);

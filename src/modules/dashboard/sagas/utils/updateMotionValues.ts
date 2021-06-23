@@ -40,7 +40,7 @@ import {
   MotionObjectionAnnotationQuery,
   MotionObjectionAnnotationQueryVariables,
   MotionObjectionAnnotationDocument,
-  MotionTimeoutPeriodsQuery, 
+  MotionTimeoutPeriodsQuery,
   MotionTimeoutPeriodsQueryVariables,
   MotionTimeoutPeriodsDocument,
 } from '~data/index';
@@ -239,7 +239,10 @@ export function* updateMotionValues(
   /*
    * Timeout periods
    */
-  yield apolloClient.query<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>({
+  yield apolloClient.query<
+    MotionTimeoutPeriodsQuery,
+    MotionTimeoutPeriodsQueryVariables
+  >({
     query: MotionTimeoutPeriodsDocument,
     variables: {
       motionId: motionId.toNumber(),

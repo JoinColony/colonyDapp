@@ -148,6 +148,8 @@ export const getActionsListData = (
             motionId: undefined,
             timeoutPeriods: undefined,
             blockNumber: 0,
+            totalNayStake: '0',
+            requiredStake: '0',
           };
           let hash;
           let timestamp;
@@ -267,6 +269,8 @@ export const getActionsListData = (
               state,
               fundamentalChainId,
               timeoutPeriods,
+              stakes,
+              requiredStake,
             } = unformattedAction;
 
             if (args?.token) {
@@ -285,6 +289,10 @@ export const getActionsListData = (
             formatedAction.motionState = state;
             formatedAction.motionId = fundamentalChainId;
             formatedAction.timeoutPeriods = timeoutPeriods;
+            formatedAction.totalNayStake = bigNumberify(
+              stakes[0] || 0,
+            ).toString();
+            formatedAction.requiredStake = requiredStake;
             if (args) {
               const actionTypeKeys = Object.keys(args);
               actionTypeKeys.forEach((key) => {

@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
+import { bigNumberify } from 'ethers/utils';
 import {
   FormattedDateParts,
   FormattedMessage,
@@ -90,6 +91,8 @@ const ActionsListItem = ({
     motionId,
     timeoutPeriods,
     blockNumber,
+    totalNayStake,
+    requiredStake,
   },
   colony,
   handleOnClick,
@@ -145,6 +148,11 @@ const ActionsListItem = ({
   const handleSyntheticEvent = useCallback(
     () => handleOnClick && handleOnClick({ id, transactionHash }),
     [handleOnClick, id, transactionHash],
+  );
+
+  const totalNayStakeValue = bigNumberify(totalNayStake || 0);
+  const isFullyNayStaked = totalNayStakeValue.gte(
+    bigNumberify(requiredStake || 0),
   );
 
   let domainName;
@@ -326,6 +334,7 @@ const ActionsListItem = ({
               colony={colony}
               state={motionState as MotionState}
               motionId={Number(motionId)}
+              isFullyNayStaked={isFullyNayStaked}
             />
           </div>
         )}
