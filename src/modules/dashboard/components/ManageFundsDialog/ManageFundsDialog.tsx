@@ -20,7 +20,7 @@ const MSG = defineMessages({
   },
   transferFundsDescription: {
     id: 'dashboard.ManageFundsDialog.transferFundsDescription',
-    defaultMessage: 'Move funds between domais.',
+    defaultMessage: 'Move funds between teams.',
   },
   permissionsListText: {
     id: 'dashboard.ManageFundsDialog.permissionsListText',
