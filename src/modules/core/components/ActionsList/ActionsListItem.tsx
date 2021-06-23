@@ -89,7 +89,6 @@ const ActionsListItem = ({
     status = ItemStatus.Defused,
     motionState,
     motionId,
-    timeoutPeriods,
     blockNumber,
     totalNayStake,
     requiredStake,
@@ -328,7 +327,7 @@ const ActionsListItem = ({
             )}
           </div>
         </div>
-        {motionId && timeoutPeriods !== undefined && (
+        {motionId && (
           <div className={styles.countdownTimerContainer}>
             <CountDownTimer
               colony={colony}
