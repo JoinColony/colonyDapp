@@ -1,0 +1,7 @@
+.tagContainer {
+  display: inline-block;
+}
+
+.tagContainer span + span {
+  margin-left: 10px;
+}
