@@ -174,7 +174,7 @@ const DefaultMotion = ({
   const { data: historicColonyRoles } = useColonyHistoricRolesQuery({
     variables: {
       colonyAddress: colony.colonyAddress,
-      blockNumber: blockNumber - 1,
+      blockNumber,
     },
   });
 
