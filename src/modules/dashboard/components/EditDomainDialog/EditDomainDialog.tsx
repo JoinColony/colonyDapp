@@ -55,6 +55,18 @@ const EditDomainDialog = ({
     [preselectedDomainId, domains],
   );
 
+  const selectedDomain = useMemo(
+    () =>
+      domains.find(({ ethDomainId }) =>
+        preselectedDomainId === 0 ||
+        preselectedDomainId === undefined ||
+        preselectedDomainId === ROOT_DOMAIN_ID
+          ? ethDomainId !== ROOT_DOMAIN_ID
+          : ethDomainId === preselectedDomainId,
+      ),
+    [preselectedDomainId, domains],
+  );
+
   const [isForce, setIsForce] = useState(false);
   const history = useHistory();
 
@@ -95,14 +107,12 @@ const EditDomainDialog = ({
     <ActionForm
       initialValues={{
         forceAction: false,
-        domainName: domains.find(
-          ({ ethDomainId }) => ethDomainId === selectedDomainId,
-        )?.name,
+        domainName: selectedDomain?.name,
         domainColor: undefined,
         domainPurpose: undefined,
         annotationMessage: undefined,
         domainId: selectedDomainId?.toString(),
-        motionDomainId: selectedDomainId || ROOT_DOMAIN_ID,
+        motionDomainId: selectedDomain?.ethDomainId,
       }}
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
