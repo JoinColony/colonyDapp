@@ -40,6 +40,9 @@ import {
   MotionObjectionAnnotationQuery,
   MotionObjectionAnnotationQueryVariables,
   MotionObjectionAnnotationDocument,
+  MotionTimeoutPeriodsQuery, 
+  MotionTimeoutPeriodsQueryVariables,
+  MotionTimeoutPeriodsDocument,
 } from '~data/index';
 
 export function* updateMotionValues(
@@ -229,6 +232,18 @@ export function* updateMotionValues(
     variables: {
       colonyAddress,
       motionId: motionId.toNumber(),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  /*
+   * Timeout periods
+   */
+  yield apolloClient.query<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>({
+    query: MotionTimeoutPeriodsDocument,
+    variables: {
+      motionId: motionId.toNumber(),
+      colonyAddress,
     },
     fetchPolicy: 'network-only',
   });
