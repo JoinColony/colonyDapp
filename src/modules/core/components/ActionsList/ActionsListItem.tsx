@@ -326,7 +326,6 @@ const ActionsListItem = ({
               colony={colony}
               state={motionState as MotionState}
               motionId={Number(motionId)}
-              timeoutPeriods={timeoutPeriods}
             />
           </div>
         )}

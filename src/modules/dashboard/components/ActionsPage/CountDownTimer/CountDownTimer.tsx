@@ -4,7 +4,6 @@ import React, {
   useCallback,
   useRef,
   MutableRefObject,
-  useMemo,
 } from 'react';
 import { FormattedMessage, defineMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
@@ -17,7 +16,6 @@ import {
   Colony,
   useLoggedInUser,
 } from '~data/index';
-import { MotionTimeoutPeriods } from '~data/generated';
 import { splitTimeLeft } from '~utils/time';
 import { MotionState } from '~utils/colonyMotions';
 import { ActionTypes } from '~redux/index';
@@ -63,7 +61,6 @@ interface Props {
   colony: Colony;
   state: MotionState;
   motionId: number;
-  timeoutPeriods?: MotionTimeoutPeriods;
 }
 
 const displayName = 'dashboard.ActionsPage.CountDownTimer';
@@ -72,11 +69,10 @@ const CountDownTimer = ({
   colony: { colonyAddress },
   state,
   motionId,
-  timeoutPeriods,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const dispatch = useDispatch();
-  const { data: queryData, loading, refetch } = useMotionTimeoutPeriodsQuery({
+  const { data, loading, refetch } = useMotionTimeoutPeriodsQuery({
     variables: {
       colonyAddress,
       motionId,
@@ -84,26 +80,18 @@ const CountDownTimer = ({
     notifyOnNetworkStatusChange: true,
   });
 
-  const data = useMemo(
-    () =>
-      timeoutPeriods === undefined
-        ? queryData?.motionTimeoutPeriods
-        : timeoutPeriods,
-    [timeoutPeriods, queryData],
-  );
-
   const currentStatePeriod = useCallback(() => {
     switch (state) {
       case MotionState.Staking:
       case MotionState.Staked:
       case MotionState.Objection:
-        return data?.timeLeftToStake || -1;
+        return data?.motionTimeoutPeriods.timeLeftToStake || -1;
       case MotionState.Voting:
-        return data?.timeLeftToSubmit || -1;
+        return data?.motionTimeoutPeriods.timeLeftToSubmit || -1;
       case MotionState.Reveal:
-        return data?.timeLeftToReveal || -1;
+        return data?.motionTimeoutPeriods.timeLeftToReveal || -1;
       case MotionState.Escalation:
-        return data?.timeLeftToEscalate || -1;
+        return data?.motionTimeoutPeriods.timeLeftToEscalate || -1;
       default:
         return -1;
     }
