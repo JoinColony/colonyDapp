@@ -90,7 +90,7 @@ const RaiseObjectionDialogForm = ({
             colony={colony}
             canUserStake={canUserStake}
             values={values}
-            appearance={{ theme: 'danger' }}
+            appearance={{ theme: 'danger', size: 'thick' }}
             isObjection
             remainingToFullyNayStaked={remainingToFullyNayStaked}
             userActivatedTokens={userActivatedTokens}

@@ -150,7 +150,7 @@ const Slider = ({
           borderWidth: 6,
           height: 15,
           width: 15,
-          marginTop: -7,
+          marginTop: appearance?.size === 'thick' ? -6 : -7,
           backgroundColor: '#FFFFFF',
         }}
         dotStyle={{

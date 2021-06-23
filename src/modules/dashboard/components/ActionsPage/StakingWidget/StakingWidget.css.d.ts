@@ -10,3 +10,4 @@ export const sliderContainer: string;
 export const help: string;
 export const tooltip: string;
 export const loading: string;
+export const backButtonWrapper: string;
