@@ -186,7 +186,6 @@ const CountDownTimer = ({
   const splitTime = splitTimeLeft(timeLeft);
 
   if (loading || !data) {
-    // if (true) {
     return (
       <MiniSpinnerLoader
         loadingText={MSG.loadingText}
