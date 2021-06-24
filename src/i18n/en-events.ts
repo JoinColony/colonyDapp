@@ -66,7 +66,12 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.RecoveryModeExited} {{agent} exited the colony from Recovery Mode}
       ${ColonyAndExtensionsEvents.MotionCreated} {{agent} created motion {motionId} in {domain}}
       ${ColonyAndExtensionsEvents.MotionStaked} {{agent} {voteSide} motion {motionId} for {amount} {tokenSymbol}}
+      ${ColonyAndExtensionsEvents.MotionVoteSubmitted} {{agent} voted in motion {motionId}}
+      ${ColonyAndExtensionsEvents.MotionVoteRevealed} {{agent} revealed his vote in motion {motionId}}
+      ${ColonyAndExtensionsEvents.MotionFinalized} {Motion {motionId} in {domain} was finalized}
       ${ColonyAndExtensionsEvents.MotionEscalated} {{agent} escalated motion {motionId} from {domain} to {newDomain}}
+      ${ColonyAndExtensionsEvents.MotionRewardClaimed} {{agent} claimed their stake in motion {motionId}}
+      ${ColonyAndExtensionsEvents.MotionEventSet} {Motion {motionId} fast-forwarded to the next lifecycle}
       other {{eventName} emmited with values: {displayValues}}
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,
