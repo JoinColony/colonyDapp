@@ -85,7 +85,12 @@ const ColonyFunding = ({ match }: Props) => {
     return typeof label === 'string' ? label : formatMessage(label);
   }, [domainChoices, formatMessage, selectedDomainId]);
 
-  if (loading) {
+  if (
+    loading ||
+    (data?.colonyAddress &&
+      !data.processedColony &&
+      !((data.colonyAddress as any) instanceof Error))
+  ) {
     return (
       <div className={styles.loadingWrapper}>
         <LoadingTemplate loadingText={MSG.loadingText} />

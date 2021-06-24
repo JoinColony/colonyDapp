@@ -375,7 +375,7 @@ export const colonyResolvers = ({
           : null;
       } catch (error) {
         console.error(error);
-        return null;
+        return error;
       }
     },
     async historicColonyRoles(_, { colonyAddress, blockNumber }) {

@@ -59,7 +59,12 @@ const ColonyMembers = () => {
     ColonyVersion.LightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
-  if (loading) {
+  if (
+    loading ||
+    (colonyData?.colonyAddress &&
+      !colonyData.processedColony &&
+      !((colonyData.colonyAddress as any) instanceof Error))
+  ) {
     return (
       <div className={styles.loadingWrapper}>
         <LoadingTemplate loadingText={MSG.loadingText} />
