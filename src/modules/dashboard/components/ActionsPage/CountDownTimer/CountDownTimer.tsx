@@ -4,7 +4,6 @@ import React, {
   useCallback,
   useRef,
   MutableRefObject,
-  useMemo,
 } from 'react';
 import { FormattedMessage, defineMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
@@ -17,7 +16,6 @@ import {
   Colony,
   useLoggedInUser,
 } from '~data/index';
-import { MotionTimeoutPeriods } from '~data/generated';
 import { splitTimeLeft } from '~utils/time';
 import { MotionState } from '~utils/colonyMotions';
 import { ActionTypes } from '~redux/index';
@@ -63,7 +61,7 @@ interface Props {
   colony: Colony;
   state: MotionState;
   motionId: number;
-  timeoutPeriods?: MotionTimeoutPeriods;
+  isFullyNayStaked?: boolean;
 }
 
 const displayName = 'dashboard.ActionsPage.CountDownTimer';
@@ -72,11 +70,11 @@ const CountDownTimer = ({
   colony: { colonyAddress },
   state,
   motionId,
-  timeoutPeriods,
+  isFullyNayStaked = false,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const dispatch = useDispatch();
-  const { data: queryData, loading, refetch } = useMotionTimeoutPeriodsQuery({
+  const { data, loading, refetch } = useMotionTimeoutPeriodsQuery({
     variables: {
       colonyAddress,
       motionId,
@@ -84,26 +82,18 @@ const CountDownTimer = ({
     notifyOnNetworkStatusChange: true,
   });
 
-  const data = useMemo(
-    () =>
-      timeoutPeriods === undefined
-        ? queryData?.motionTimeoutPeriods
-        : timeoutPeriods,
-    [timeoutPeriods, queryData],
-  );
-
   const currentStatePeriod = useCallback(() => {
     switch (state) {
       case MotionState.Staking:
       case MotionState.Staked:
       case MotionState.Objection:
-        return data?.timeLeftToStake || -1;
+        return data?.motionTimeoutPeriods.timeLeftToStake || -1;
       case MotionState.Voting:
-        return data?.timeLeftToSubmit || -1;
+        return data?.motionTimeoutPeriods.timeLeftToSubmit || -1;
       case MotionState.Reveal:
-        return data?.timeLeftToReveal || -1;
+        return data?.motionTimeoutPeriods.timeLeftToReveal || -1;
       case MotionState.Escalation:
-        return data?.timeLeftToEscalate || -1;
+        return data?.motionTimeoutPeriods.timeLeftToEscalate || -1;
       default:
         return -1;
     }
@@ -138,13 +128,21 @@ const CountDownTimer = ({
       data &&
       state &&
       ((prevStateRef.current === null && isStakingPhaseState) ||
-        !isStakingPhaseState)
+        !isStakingPhaseState ||
+        (isStakingPhaseState && isFullyNayStaked))
     ) {
       const period = currentStatePeriod() / 1000;
       setTimeLeft(period > 0 ? period + 5 : period);
       prevStateRef.current = state;
     }
-  }, [data, currentStatePeriod, prevStateRef, state, isStakingPhaseState]);
+  }, [
+    data,
+    currentStatePeriod,
+    prevStateRef,
+    state,
+    isStakingPhaseState,
+    isFullyNayStaked,
+  ]);
 
   /*
    * Count it down
@@ -177,10 +175,10 @@ const CountDownTimer = ({
   ]);
 
   useEffect(() => {
-    if (data && !isStakingPhaseState) {
+    if ((data && !isStakingPhaseState) || (data && isFullyNayStaked)) {
       refetch();
     }
-  }, [isStakingPhaseState, data, refetch, state]);
+  }, [isStakingPhaseState, data, refetch, state, isFullyNayStaked]);
 
   /*
    * Split the time into h/m/s for display purpouses

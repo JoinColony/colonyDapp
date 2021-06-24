@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
+import { bigNumberify } from 'ethers/utils';
 import {
   FormattedDateParts,
   FormattedMessage,
@@ -88,8 +89,9 @@ const ActionsListItem = ({
     status = ItemStatus.Defused,
     motionState,
     motionId,
-    timeoutPeriods,
     blockNumber,
+    totalNayStake,
+    requiredStake,
   },
   colony,
   handleOnClick,
@@ -145,6 +147,11 @@ const ActionsListItem = ({
   const handleSyntheticEvent = useCallback(
     () => handleOnClick && handleOnClick({ id, transactionHash }),
     [handleOnClick, id, transactionHash],
+  );
+
+  const totalNayStakeValue = bigNumberify(totalNayStake || 0);
+  const isFullyNayStaked = totalNayStakeValue.gte(
+    bigNumberify(requiredStake || 0),
   );
 
   let domainName;
@@ -320,13 +327,13 @@ const ActionsListItem = ({
             )}
           </div>
         </div>
-        {motionId && timeoutPeriods !== undefined && (
+        {motionId && (
           <div className={styles.countdownTimerContainer}>
             <CountDownTimer
               colony={colony}
               state={motionState as MotionState}
               motionId={Number(motionId)}
-              timeoutPeriods={timeoutPeriods}
+              isFullyNayStaked={isFullyNayStaked}
             />
           </div>
         )}
