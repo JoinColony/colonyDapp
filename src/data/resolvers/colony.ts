@@ -11,6 +11,7 @@ import {
   getExtensionHash,
   ColonyClientV5,
   ROOT_DOMAIN_ID,
+  getHistoricColonyRoles,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -372,6 +373,18 @@ export const colonyResolvers = ({
         return data?.colony
           ? await getProcessedColony(data.colony, address, ipfsWithFallback)
           : null;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
+    async historicColonyRoles(_, { colonyAddress, blockNumber }) {
+      try {
+        const colonyClient = await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        );
+        return getHistoricColonyRoles(colonyClient, 0, blockNumber);
       } catch (error) {
         console.error(error);
         return null;

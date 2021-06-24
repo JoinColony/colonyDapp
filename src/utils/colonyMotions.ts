@@ -2,9 +2,10 @@ import { defineMessage } from 'react-intl';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { Decimal } from 'decimal.js';
 import { isNil } from 'lodash';
+import { ColonyRoles } from '@colony/colony-js';
 
-import { getUserRolesForDomain } from '../modules/transformers';
-import { Colony, AnyUser } from '~data/index';
+import { getRolesForUserAndDomain } from '../modules/transformers';
+import { AnyUser } from '~data/index';
 import { ActionUserRoles } from '~types/index';
 
 export enum MotionState {
@@ -184,18 +185,18 @@ export interface MotionValue {
 }
 
 export const getUpdatedDecodedMotionRoles = (
-  colony: Colony,
   recipient: AnyUser,
   fromDomain: number,
-  roles: ActionUserRoles[],
+  currentRoles: ColonyRoles = [],
+  setRoles: ActionUserRoles[],
 ) => {
-  const userCurrentRoles = getUserRolesForDomain(
-    colony,
-    recipient.profile.walletAddress,
+  const currentUserRoles = getRolesForUserAndDomain(
+    currentRoles,
+    recipient.id,
     fromDomain,
   );
-  const updatedRoles = roles.filter((role) => {
-    const foundCurrentRole = userCurrentRoles.find(
+  const updatedRoles = setRoles.filter((role) => {
+    const foundCurrentRole = currentUserRoles.find(
       (currentRole) => currentRole === role.id,
     );
     if (!isNil(foundCurrentRole)) {

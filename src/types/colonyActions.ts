@@ -140,6 +140,7 @@ export interface FormattedAction {
   motionState?: MotionState;
   motionId?: string;
   timeoutPeriods: MotionTimeoutPeriods;
+  blockNumber: number;
 }
 
 export interface FormattedEvent {

@@ -282,6 +282,7 @@ export type Query = {
   eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
+  historicColonyRoles: Array<ProcessedRoles>;
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
@@ -398,6 +399,12 @@ export type QueryGetRecoveryRequiredApprovalsArgs = {
 export type QueryGetRecoveryStorageSlotArgs = {
   colonyAddress: Scalars['String'];
   storageSlot: Scalars['String'];
+};
+
+
+export type QueryHistoricColonyRolesArgs = {
+  colonyAddress: Scalars['String'];
+  blockNumber: Scalars['Int'];
 };
 
 
@@ -1908,6 +1915,17 @@ export type ColonyReputationQueryVariables = Exact<{
 
 export type ColonyReputationQuery = Pick<Query, 'colonyReputation'>;
 
+export type ColonyHistoricRolesQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  blockNumber: Scalars['Int'];
+}>;
+
+
+export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
+    Pick<ProcessedRoles, 'address'>
+    & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
+  )> };
+
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -1925,7 +1943,7 @@ export type SubscriptionSubgraphEventsSubscription = { events: Array<(
       ) }
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
     ) }
   )> };
 
@@ -1973,7 +1991,7 @@ export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Arr
       ) }
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
     ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
   )> };
 
@@ -1995,7 +2013,7 @@ export type SubscriptionsMotionsSubscription = { motions: Array<(
       ) }
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
     ), domain: (
       Pick<SubgraphDomain, 'name'>
       & { ethDomainId: SubgraphDomain['domainChainId'] }
@@ -4979,6 +4997,44 @@ export function useColonyReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type ColonyReputationQueryHookResult = ReturnType<typeof useColonyReputationQuery>;
 export type ColonyReputationLazyQueryHookResult = ReturnType<typeof useColonyReputationLazyQuery>;
 export type ColonyReputationQueryResult = Apollo.QueryResult<ColonyReputationQuery, ColonyReputationQueryVariables>;
+export const ColonyHistoricRolesDocument = gql`
+    query ColonyHistoricRoles($colonyAddress: String!, $blockNumber: Int!) {
+  historicColonyRoles(colonyAddress: $colonyAddress, blockNumber: $blockNumber) @client {
+    address
+    domains {
+      domainId
+      roles
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyHistoricRolesQuery__
+ *
+ * To run a query within a React component, call `useColonyHistoricRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyHistoricRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyHistoricRolesQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      blockNumber: // value for 'blockNumber'
+ *   },
+ * });
+ */
+export function useColonyHistoricRolesQuery(baseOptions?: Apollo.QueryHookOptions<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>) {
+        return Apollo.useQuery<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>(ColonyHistoricRolesDocument, baseOptions);
+      }
+export function useColonyHistoricRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>(ColonyHistoricRolesDocument, baseOptions);
+        }
+export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHistoricRolesQuery>;
+export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
+export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
@@ -4996,6 +5052,7 @@ export const SubscriptionSubgraphEventsDocument = gql`
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }
@@ -5102,6 +5159,7 @@ export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }
@@ -5168,6 +5226,7 @@ export const SubscriptionsMotionsDocument = gql`
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }

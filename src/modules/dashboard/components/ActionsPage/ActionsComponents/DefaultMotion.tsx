@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useCallback } from 'react';
 import { bigNumberify } from 'ethers/utils';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 import Heading from '~core/Heading';
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
@@ -24,6 +24,7 @@ import {
   useVotingStateQuery,
   useMotionStatusQuery,
   OneDomain,
+  useColonyHistoricRolesQuery,
 } from '~data/index';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -105,6 +106,7 @@ const DefaultMotion = ({
     roles,
     fromDomain,
     toDomain,
+    blockNumber,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -129,23 +131,10 @@ const DefaultMotion = ({
     }, {} as any);
   }, []);
 
-  const updatedRoles = getUpdatedDecodedMotionRoles(
-    colony,
-    recipient,
-    fromDomain,
-    roles,
-  );
-
   const motionCreatedEvent = colonyAction.events.find(
     ({ name }) => name === ColonyAndExtensionsEvents.MotionCreated,
   );
   const { motionId } = (motionCreatedEvent?.values as unknown) as MotionValue;
-
-  const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
-    updatedRoles,
-    actionType,
-    true,
-  );
 
   const {
     username: currentUserName,
@@ -182,6 +171,13 @@ const DefaultMotion = ({
     fetchPolicy: 'network-only',
   });
 
+  const { data: historicColonyRoles } = useColonyHistoricRolesQuery({
+    variables: {
+      colonyAddress: colony.colonyAddress,
+      blockNumber,
+    },
+  });
+
   const escalateTransform = useCallback(
     mapPayload(() => ({
       colonyAddress,
@@ -189,6 +185,19 @@ const DefaultMotion = ({
       userAddress: walletAddress,
     })),
     [],
+  );
+
+  const updatedRoles = getUpdatedDecodedMotionRoles(
+    recipient,
+    fromDomain,
+    (historicColonyRoles?.historicColonyRoles as unknown) as ColonyRoles,
+    roles,
+  );
+
+  const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
+    updatedRoles,
+    actionType,
+    true,
   );
 
   const requiredStake = bigNumberify(
