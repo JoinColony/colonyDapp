@@ -6,6 +6,12 @@
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
+.loader {
+  position: relative;
+  top: 3px;
+  white-space: nowrap;
+}
+
 .time {
   margin-left: 5px;
   color: var(--dark);

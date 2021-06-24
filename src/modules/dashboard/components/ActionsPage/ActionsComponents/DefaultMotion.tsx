@@ -348,7 +348,7 @@ const DefaultMotion = ({
             isFullyNayStaked={isFullyNayStaked}
           />
           {motionState === MotionState.Voting && votingStateData && (
-            <>
+            <div className={motionSpecificStyles.progressStateContainer}>
               <span className={motionSpecificStyles.text}>
                 <FormattedMessage {...MSG.or} />
               </span>
@@ -382,7 +382,7 @@ const DefaultMotion = ({
                   ],
                 }}
               />
-            </>
+            </div>
           )}
           {motionState === MotionState.Escalation &&
             motionDomain !== ROOT_DOMAIN_ID &&
