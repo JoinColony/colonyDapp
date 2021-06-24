@@ -44,17 +44,6 @@ const EditDomainDialog = ({
   isVotingExtensionEnabled,
   ethDomainId: preselectedDomainId,
 }: Props) => {
-  const selectedDomainId = useMemo(
-    () =>
-      preselectedDomainId === 0 ||
-      preselectedDomainId === undefined ||
-      preselectedDomainId === ROOT_DOMAIN_ID
-        ? domains.find(({ ethDomainId }) => ethDomainId !== ROOT_DOMAIN_ID)
-            ?.ethDomainId
-        : preselectedDomainId,
-    [preselectedDomainId, domains],
-  );
-
   const selectedDomain = useMemo(
     () =>
       domains.find(({ ethDomainId }) =>
@@ -111,7 +100,7 @@ const EditDomainDialog = ({
         domainColor: undefined,
         domainPurpose: undefined,
         annotationMessage: undefined,
-        domainId: selectedDomainId?.toString(),
+        domainId: selectedDomain?.ethDomainId.toString(),
         motionDomainId: selectedDomain?.ethDomainId,
       }}
       submit={getFormAction('SUBMIT')}
