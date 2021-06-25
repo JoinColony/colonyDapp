@@ -186,7 +186,12 @@ const CountDownTimer = ({
   const splitTime = splitTimeLeft(timeLeft);
 
   if (loading || !data) {
-    return <MiniSpinnerLoader loadingText={MSG.loadingText} />;
+    return (
+      <MiniSpinnerLoader
+        loadingText={MSG.loadingText}
+        className={styles.loader}
+      />
+    );
   }
 
   if (splitTime === undefined) {
