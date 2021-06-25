@@ -49,7 +49,10 @@ const RaiseObjectionDialog = ({
       mapPayload(({ amount, annotation: annotationMessage }) => {
         const { remainingToFullyNayStaked } = props;
         const remainingToStake = new Decimal(remainingToFullyNayStaked);
-        const stake = new Decimal(amount).times(remainingToStake).div(100);
+        const stake = new Decimal(amount)
+          .div(100)
+          .times(remainingToStake.minus(minUserStake))
+          .plus(minUserStake);
         const stakeWithMin = new Decimal(minUserStake).gte(stake)
           ? new Decimal(minUserStake)
           : stake;
