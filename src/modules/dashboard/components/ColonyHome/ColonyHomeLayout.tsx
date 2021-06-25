@@ -30,6 +30,7 @@ type Props = {
   showNavigation?: boolean;
   showSidebar?: boolean;
   showActions?: boolean;
+  ethDomainId?: number;
 };
 
 const displayName = 'dashboard.ColonyHome.ColonyHomeLayout';
@@ -43,6 +44,7 @@ const ColonyHomeLayout = ({
   showSidebar = true,
   showActions = true,
   onDomainChange = () => null,
+  ethDomainId,
 }: Props) => (
   <div className={styles.main}>
     <div className={showSidebar ? styles.mainContentGrid : styles.minimalGrid}>
@@ -62,7 +64,9 @@ const ColonyHomeLayout = ({
                   colony={colony}
                 />
               </div>
-              {showActions && <ColonyHomeActions colony={colony} />}
+              {showActions && (
+                <ColonyHomeActions colony={colony} ethDomainId={ethDomainId} />
+              )}
             </div>
           </>
         )}

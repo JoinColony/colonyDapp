@@ -76,7 +76,7 @@ const ColonyFundingMenu = ({
       openTokensMoveDialog({
         colony,
         isVotingExtensionEnabled,
-        fromDomain: selectedDomainId,
+        ethDomainId: selectedDomainId,
       }),
     [colony, openTokensMoveDialog, selectedDomainId, isVotingExtensionEnabled],
   );

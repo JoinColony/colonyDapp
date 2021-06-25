@@ -36,9 +36,10 @@ const MSG = defineMessages({
 
 interface Props {
   colony: Colony;
+  ethDomainId?: number;
 }
 
-const ColonyHomeActions = ({ colony }: Props) => {
+const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
   const { networkId, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
 
@@ -71,6 +72,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         colony,
         prevStep: 'dashboard.ExpendituresDialog',
         isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {
@@ -91,6 +93,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
         isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {
@@ -125,6 +128,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,
         isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {
@@ -145,6 +149,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
         isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {

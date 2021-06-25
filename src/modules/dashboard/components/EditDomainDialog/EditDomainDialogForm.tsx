@@ -187,6 +187,11 @@ const EditDomainDialogForm = ({
                  * create a payment from that subdomain
                  */
                 filterDomains={handleFilterMotionDomains}
+                initialSelectedDomain={
+                  motionDomainId === undefined
+                    ? motionDomainId
+                    : Number(motionDomainId)
+                }
               />
             </div>
           )}

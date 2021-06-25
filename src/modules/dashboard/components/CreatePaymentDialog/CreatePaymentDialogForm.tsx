@@ -106,6 +106,7 @@ const MSG = defineMessages({
 });
 interface Props extends ActionDialogProps {
   subscribedUsers: AnyUser[];
+  ethDomainId?: number;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -125,10 +126,16 @@ const CreatePaymentDialogForm = ({
   isSubmitting,
   isValid,
   values,
+  ethDomainId: preselectedDomainId,
 }: Props & FormikProps<FormValues>) => {
+  const selectedDomain =
+    preselectedDomainId === 0 || preselectedDomainId === undefined
+      ? ROOT_DOMAIN_ID
+      : preselectedDomainId;
+
   const domainId = values.domainId
     ? parseInt(values.domainId, 10)
-    : ROOT_DOMAIN_ID;
+    : selectedDomain;
   /*
    * Custom error state tracking
    */
@@ -325,6 +332,7 @@ const CreatePaymentDialogForm = ({
                  * create a payment from that subdomain
                  */
                 filterDomains={handleFilterMotionDomains}
+                initialSelectedDomain={domainId}
               />
             </div>
           )}
