@@ -79,6 +79,9 @@
   composes: details;
   display: flex;
   align-items: baseline;
+}
+
+.votingCountdownContainer {
   justify-content: flex-end;
 }
 
