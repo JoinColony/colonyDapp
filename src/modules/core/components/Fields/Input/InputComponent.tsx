@@ -12,6 +12,7 @@ import { CleaveOptions } from 'cleave.js/options';
 import { ChangeEvent } from 'cleave.js/react/props';
 
 import { isNil } from 'lodash';
+import Decimal from 'decimal.js';
 import Button from '~core/Button';
 
 import { getMainClasses } from '~utils/css';
@@ -140,7 +141,11 @@ const InputComponent = ({
               maxButtonParams?.fieldName,
               maxButtonParams.maxAmount,
             );
-            cleave?.setRawValue(Number(maxButtonParams.maxAmount));
+            cleave?.setRawValue(
+              new Decimal(maxButtonParams.maxAmount)
+                .toDP(5, Decimal.ROUND_DOWN)
+                .toNumber(),
+            );
           }}
         />
         <Cleave

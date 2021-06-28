@@ -94,6 +94,10 @@ const ChangeTokenStateForm = ({
     lockedTokens,
     token.decimals,
   );
+  const unformattedTokenBalance = moveDecimal(
+    isActivate ? inactiveTokens : activeTokens,
+    -tokenDecimals,
+  );
 
   const tokenBalance = useMemo(
     () => (isActivate ? formattedInactiveTokens : formattedActiveTokens),
@@ -112,12 +116,12 @@ const ChangeTokenStateForm = ({
     pipe(
       mapPayload(({ amount }) => {
         // Convert amount string with decimals to BigInt (eth to wei)
-        const formtattedAmount = bigNumberify(
+        const formattedAmount = bigNumberify(
           moveDecimal(amount, tokenDecimals),
         );
 
         return {
-          amount: formtattedAmount,
+          amount: formattedAmount,
           userAddress: walletAddress,
           colonyAddress,
           tokenAddress: token.address,
@@ -178,7 +182,7 @@ const ChangeTokenStateForm = ({
                 }}
                 maxButtonParams={{
                   setFieldValue,
-                  maxAmount: tokenBalance,
+                  maxAmount: unformattedTokenBalance,
                   fieldName: 'amount',
                 }}
               />
@@ -237,7 +241,7 @@ const ChangeTokenStateForm = ({
               disabled={
                 !isValid ||
                 values.amount === undefined ||
-                values.amount > Number(tokenBalance)
+                values.amount > unformattedTokenBalance
               }
             />
           </div>
