@@ -66,12 +66,12 @@ export const permissionsObject: PermissionsObject = {
   [ColonyRole.Root]: {
     label: MSG.rootLabel,
     infoMessage: MSG.rootInfoMessage,
-    icon: 'emoji-gold-coin',
+    icon: 'emoji-yellow-superman',
   },
   [ColonyRole.Administration]: {
     label: MSG.administrationLabel,
     infoMessage: MSG.administrationInfoMessage,
-    icon: 'emoji-building',
+    icon: 'emoji-clipboard',
   },
   [ColonyRole.Architecture]: {
     label: MSG.architectureLabel,
@@ -86,7 +86,7 @@ export const permissionsObject: PermissionsObject = {
   [ColonyRole.Arbitration]: {
     label: MSG.arbitrationLabel,
     infoMessage: MSG.arbitrationInfoMessage,
-    icon: 'emoji-judge',
+    icon: 'emoji-balance',
   },
   [ColonyRole.Recovery]: {
     label: MSG.recoveryLabel,
