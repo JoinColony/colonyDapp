@@ -157,7 +157,10 @@ const ColonyHome = ({ match, location }: Props) => {
    */
   if (
     loading ||
-    (data?.processedColony && data.processedColony.colonyName !== colonyName)
+    (data?.processedColony && data.processedColony.colonyName !== colonyName) ||
+    (data?.colonyAddress &&
+      !data?.processedColony &&
+      !((data.colonyAddress as any) instanceof Error))
   ) {
     return (
       <div className={styles.loadingWrapper}>
