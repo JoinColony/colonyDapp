@@ -7,7 +7,7 @@ import Slider, { Appearance } from '~core/Slider';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import { Colony } from '~data/index';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
 
@@ -94,11 +94,10 @@ const StakingSlider = ({
   const stakeWithMin = new Decimal(minUserStake).gte(stake)
     ? new Decimal(minUserStake)
     : stake;
-  const displayStake = stakeWithMin
-    .div(
-      new Decimal(10).pow(getTokenDecimalsWithFallback(nativeToken?.decimals)),
-    )
-    .toDP(2, Decimal.ROUND_DOWN);
+  const displayStake = getFormattedTokenValue(
+    stakeWithMin.toString(),
+    nativeToken?.decimals,
+  );
 
   return (
     <>
