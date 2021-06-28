@@ -14,7 +14,7 @@ const useAvatarDisplayCounter = (
       return members.length;
     }
 
-    return maxAvatars;
+    return maxAvatars - 1;
   }, [members, maxAvatars]);
 
   const remainingAvatarsCount = useMemo(() => {
@@ -25,7 +25,7 @@ const useAvatarDisplayCounter = (
     if (members.length <= maxAvatars) {
       return 0;
     }
-    return members.length - maxAvatars;
+    return members.length - maxAvatars + 1;
   }, [members, maxAvatars]);
 
   return {
