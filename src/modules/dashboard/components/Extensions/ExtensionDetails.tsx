@@ -218,6 +218,11 @@ const ExtensionDetails = ({
     !(extesionCanBeInstalled || extesionCanBeEnabled) &&
     latestNetworkExtensionVersion > extension.currentVersion;
 
+  const extensionEnabled = 
+    installedExtension &&
+    installedExtension.details.initialized &&
+    !installedExtension.details.deprecated;
+
   const extensionCompatible = extension?.currentVersion
     ? !extensionsIncompatibilityMap[extensionId][extension.currentVersion].find(
         (version: number) => version === parseInt(colonyVersion, 10),
@@ -355,6 +360,7 @@ const ExtensionDetails = ({
                       ),
                     }}
                   />
+                  {extensionEnabled && extension.enabledExtensionBody && extension.enabledExtensionBody()}
                 </div>
               )}
             />

@@ -1,8 +1,10 @@
+import { ReactNode } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
 
+import WhitelistExtensionBody from '~dashboard/Extensions/WhitelistExtensionBody';
 import { Address } from '~types/index';
 
 export enum ExtensionParamType {
@@ -31,6 +33,7 @@ export interface ExtensionData {
   neededColonyPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
   uninstallable: boolean;
+  enabledExtensionBody?: ReactNode;
 }
 
 const unknownExtensionMessages = {
@@ -325,6 +328,7 @@ const extensions: { [key: string]: ExtensionData } = {
       ColonyRole.Architecture,
       ColonyRole.Funding,
     ],
+    enabledExtensionBody: WhitelistExtensionBody,
     initializationParams: [
       {
         paramName: 'totalStakeFraction',
