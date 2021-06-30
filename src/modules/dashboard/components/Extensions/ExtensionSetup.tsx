@@ -11,7 +11,7 @@ import { Input, ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
 import { ActionTypes } from '~redux/index';
 import { ColonyExtension } from '~data/index';
-import { ExtensionData } from '~data/staticData/extensionData';
+import { ExtensionData, ExtensionParamType } from '~data/staticData/extensionData';
 import { mergePayload, mapPayload, pipe } from '~utils/actions';
 import { Address } from '~types/index';
 
@@ -150,30 +150,34 @@ const ExtensionSetup = ({
           />
           <FormattedMessage {...MSG.description} />
           <div className={styles.inputContainer}>
-            {initializationParams.map(({ paramName, title, description }) => (
-              <div key={paramName} className={styles.input}>
-                <Input
-                  appearance={{ size: 'medium', theme: 'minimal' }}
-                  label={title}
-                  name={paramName}
-                />
-                <FormattedMessage
-                  {...description}
-                  values={{
-                    span: (chunks) => (
-                      <span className={styles.descriptionExample}>
-                        {chunks}
-                      </span>
-                    ),
-                  }}
-                />
-                {extensionId === Extension.VotingReputation && (
-                  <span className={styles.complementaryLabel}>
-                    <FormattedMessage
-                      {...MSG.complementaryLabel}
-                      values={{ isPeriod: endsWith(paramName, 'Period') }}
-                    />
-                  </span>
+            {initializationParams.map(({ paramName, title, description, type }) => (
+              <div key={paramName}>
+                {type === ExtensionParamType.Input && (
+                <div className={styles.input}>
+                  <Input
+                    appearance={{ size: 'medium', theme: 'minimal' }}
+                    label={title}
+                    name={paramName}
+                  />
+                  <FormattedMessage
+                    {...description}
+                    values={{
+                      span: (chunks) => (
+                        <span className={styles.descriptionExample}>
+                          {chunks}
+                        </span>
+                      ),
+                    }}
+                  />
+                  {extensionId === Extension.VotingReputation && (
+                    <span className={styles.complementaryLabel}>
+                      <FormattedMessage
+                        {...MSG.complementaryLabel}
+                        values={{ isPeriod: endsWith(paramName, 'Period') }}
+                      />
+                    </span>
+                  )}
+                </div>
                 )}
               </div>
             ))}
