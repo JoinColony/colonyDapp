@@ -10,9 +10,9 @@ import { defineMessages } from 'react-intl';
 import Cleave from 'cleave.js/react';
 import { CleaveOptions } from 'cleave.js/options';
 import { ChangeEvent } from 'cleave.js/react/props';
-
 import { isNil } from 'lodash';
 import Decimal from 'decimal.js';
+
 import Button from '~core/Button';
 
 import { getMainClasses } from '~utils/css';
@@ -141,11 +141,18 @@ const InputComponent = ({
               maxButtonParams?.fieldName,
               maxButtonParams.maxAmount,
             );
-            cleave?.setRawValue(
-              new Decimal(maxButtonParams.maxAmount)
-                .toDP(5, Decimal.ROUND_DOWN)
-                .toNumber(),
-            );
+            const decimalValue = new Decimal(maxButtonParams.maxAmount);
+            if (decimalValue.lt(0.00001) && decimalValue.gt(0)) {
+              cleave?.setRawValue(
+                decimalValue.toSD(5, Decimal.ROUND_DOWN).toNumber(),
+              );
+            } else {
+              cleave?.setRawValue(
+                new Decimal(maxButtonParams.maxAmount)
+                  .toDP(5, Decimal.ROUND_DOWN)
+                  .toNumber(),
+              );
+            }
           }}
         />
         <Cleave
