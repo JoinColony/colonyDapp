@@ -95,7 +95,7 @@ const StakingSlider = ({
     ? new Decimal(minUserStake)
     : stake;
   const displayStake = getFormattedTokenValue(
-    stakeWithMin.toString(),
+    stakeWithMin.round().toString(),
     nativeToken?.decimals,
   );
 
