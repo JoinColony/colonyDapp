@@ -2,11 +2,10 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import formatNumber from 'format-number';
 import { bigNumberify } from 'ethers/utils';
-import { Decimal } from 'decimal.js';
 
 import Heading from '~core/Heading';
 import ProgressBar from '~core/ProgressBar';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
 
@@ -57,13 +56,14 @@ const SingleTotalStake = ({
     truncate: 2,
   })(userStakePercentage);
 
-  const requiredStakeDisplay = new Decimal(requiredStake)
-    .div(new Decimal(10).pow(getTokenDecimalsWithFallback(tokenDecimals)))
-    .toFixed(2);
-
-  const userStakeDisplay = new Decimal(userStake || 0)
-    .div(new Decimal(10).pow(getTokenDecimalsWithFallback(tokenDecimals)))
-    .toFixed(2);
+  const requiredStakeDisplay = getFormattedTokenValue(
+    requiredStake,
+    tokenDecimals,
+  );
+  const userStakeDisplay = getFormattedTokenValue(
+    userStake || 0,
+    tokenDecimals,
+  );
 
   return (
     <>
