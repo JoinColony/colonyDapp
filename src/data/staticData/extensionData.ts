@@ -5,12 +5,19 @@ import * as yup from 'yup';
 
 import { Address } from '~types/index';
 
+export enum ExtensionParamType {
+  Input = 'Input',
+  Radio = 'Radio',
+  Textarea = 'Textarea'
+}
+
 export interface ExtensionInitParams {
   title: string | MessageDescriptor;
   description: string | MessageDescriptor;
   defaultValue: string | number;
   paramName: string;
   validation: object;
+  type: ExtensionParamType;
 }
 
 export interface ExtensionData {
@@ -251,6 +258,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: AddressZero,
         title: MSG.coinMachinePurchaseTokenTitle,
         description: MSG.coinMachinePurchaseTokenDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'periodLength',
@@ -258,6 +266,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachinePeriodLengthTitle,
         description: MSG.coinMachinePeriodLengthDescription,
         defaultValue: 3600,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'windowSize',
@@ -265,6 +274,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineWindowSizeTitle,
         description: MSG.coinMachineWindowSizeDescription,
         defaultValue: 8,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'targetPerPeriod',
@@ -272,6 +282,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineTargetPerPeriodTitle,
         description: MSG.coinMachineTargetPerPeriodDescription,
         defaultValue: 10,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'maxPerPeriod',
@@ -279,6 +290,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineMaxPerPeriodTitle,
         description: MSG.coinMachineMaxPerPeriodDescription,
         defaultValue: 10,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'tokensToSell',
@@ -286,6 +298,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineTokensToSellTitle,
         description: MSG.coinMachineTokensToSellDescription,
         defaultValue: 10000,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'startingPrice',
@@ -293,6 +306,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
         defaultValue: 10,
+        type: ExtensionParamType.Input,
       },
     ],
     uninstallable: true,
@@ -322,6 +336,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 5,
         title: MSG.votingReputationTotalStakeFractionTitle,
         description: MSG.votingReputationTotalStakeFractionDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'voterRewardFraction',
@@ -333,6 +348,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 20,
         title: MSG.votingReputationVoterRewardFractionTitle,
         description: MSG.votingReputationVoterRewardFractionDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'userMinStakeFraction',
@@ -344,6 +360,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 10,
         title: MSG.votingReputationUserMinStakeFractionTitle,
         description: MSG.votingReputationUserMinStakeFractionDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'maxVoteFraction',
@@ -355,6 +372,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 70,
         title: MSG.votingReputationMaxVoteFractionTitle,
         description: MSG.votingReputationMaxVoteFractionDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'stakePeriod',
@@ -366,6 +384,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationStakePeriodTitle,
         description: MSG.votingReputationStakePeriodDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'submitPeriod',
@@ -377,6 +396,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationSubmitPeriodTitle,
         description: MSG.votingReputationSubmitPeriodDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'revealPeriod',
@@ -388,6 +408,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationRevealPeriodTitle,
         description: MSG.votingReputationRevealPeriodDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'escalationPeriod',
@@ -399,6 +420,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationEscalationPeriodTitle,
         description: MSG.votingReputationEscalationPeriodDescription,
+        type: ExtensionParamType.Input,
       },
     ],
     uninstallable: true,
