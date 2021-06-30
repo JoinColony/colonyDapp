@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
-import Numeral from '~core/Numeral';
+import { SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
 import Icon from '~core/Icon';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
@@ -16,6 +16,7 @@ import {
 import styles from './TokenActivationContent.css';
 import ChangeTokenStateForm from './ChangeTokenStateForm';
 import TokenTooltip from './TokenTooltip';
+import SmallTokenAmountMessage from './SmallTokenAmountMessage';
 
 const MSG = defineMessages({
   active: {
@@ -154,10 +155,12 @@ const TokensTab = ({
               />
             </TokenTooltip>
             <div className={styles.tokenNumbers}>
-              <Numeral
-                value={formattedActiveTokens}
-                suffix={` ${token?.symbol}`}
-              />
+              <span>
+                {formattedActiveTokens} {token.symbol}
+              </span>
+              {formattedActiveTokens === SMALL_TOKEN_AMOUNT_FORMAT && (
+                <SmallTokenAmountMessage />
+              )}
             </div>
             <TokenTooltip
               className={styles.lockedTokens}
@@ -168,10 +171,9 @@ const TokensTab = ({
           </li>
           <li>
             <div className={styles.tokenNumbersLocked}>
-              <Numeral
-                value={formattedLockedTokens}
-                suffix={` ${token?.symbol}`}
-              />
+              <span>
+                {formattedLockedTokens} {token.symbol}
+              </span>
             </div>
           </li>
           <li>
@@ -182,10 +184,12 @@ const TokensTab = ({
               <FormattedMessage {...MSG.inactive} />
             </TokenTooltip>
             <div className={styles.tokenNumbersInactive}>
-              <Numeral
-                value={formattedInactiveTokens}
-                suffix={` ${token?.symbol}`}
-              />
+              <span>
+                {formattedInactiveTokens} {token.symbol}
+              </span>
+              {formattedInactiveTokens === SMALL_TOKEN_AMOUNT_FORMAT && (
+                <SmallTokenAmountMessage />
+              )}
             </div>
             {!isPendingBalanceZero && (
               <div className={styles.pendingError}>
