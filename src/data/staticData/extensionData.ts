@@ -228,11 +228,35 @@ const votingReputationMessages = {
   },
 };
 
+const whitelistMessages = {
+  whitelistName: {
+    id: 'extensions.whitelist.name',
+    defaultMessage: 'Whitelist',
+  },
+  whitelistDescriptionShort: {
+    id: 'extensions.whitelist.description',
+    defaultMessage: `Reputation weighted decentralized governance with a minimum of voting.`,
+  },
+  whitelistDescriptionLong: {
+    id: 'extensions.whitelist.descriptionLong',
+    defaultMessage: `The Whitelist extension is an utility which can be used for whitelisting wallet addresses.`,
+  },
+  whitelistTermsCondition: {
+    id: 'extensions.whitelist.termsCondition',
+    defaultMessage: `Terms and Conditions.`,
+  },
+  whitelistInfo: {
+    id: 'extensions.whitelist.info',
+    defaultMessage: 'The responsibility is on the issuer to ensure being compliant with the local rules.',
+  },
+};
+
 const MSG = defineMessages({
   ...unknownExtensionMessages,
   ...oneTransactionPaymentMessages,
   ...coinMachineMessages,
   ...votingReputationMessages,
+  ...whitelistMessages,
 });
 
 const extensions: { [key: string]: ExtensionData } = {
@@ -427,6 +451,24 @@ const extensions: { [key: string]: ExtensionData } = {
         type: ExtensionParamType.Input,
       },
     ],
+    uninstallable: true,
+  },
+  Whitelist: {
+    extensionId: Extension.Whitelist,
+    name: MSG.whitelistName,
+    descriptionShort: MSG.whitelistDescriptionShort,
+    descriptionLong: MSG.whitelistDescriptionLong,
+    currentVersion: 1,
+    createdAt: 1603915271852, // find out how to get this value
+    neededColonyPermissions: [
+      ColonyRole.Root,
+      ColonyRole.Administration,
+      ColonyRole.Arbitration,
+      ColonyRole.Architecture,
+      ColonyRole.Funding,
+    ],
+    enabledExtensionBody: WhitelistExtensionBody,
+    initializationParams: [],
     uninstallable: true,
   },
   Unknown: {
