@@ -54,7 +54,7 @@ export default function* estimateGasCost({
     /**
      * Setting gas price on local to 1 for the fun of it
      */
-    if (DEFAULT_NETWORK === Network.Local || DEFAULT_NETWORK === Network.Xdai) {
+    if (DEFAULT_NETWORK === Network.Local) {
       gasPrice = fixed;
     }
 
