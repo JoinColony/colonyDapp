@@ -7,6 +7,7 @@ import styles from './CustomRadioGroup.css';
 
 export interface Appearance {
   direction?: 'horizontal' | 'vertical';
+  gap?: 'medium';
 }
 
 interface Props {
