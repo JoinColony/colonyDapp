@@ -33,7 +33,7 @@ export interface ExtensionData {
   neededColonyPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
   uninstallable: boolean;
-  enabledExtensionBody?: ReactNode;
+  enabledExtensionBody?: () => ReactNode;
 }
 
 const unknownExtensionMessages = {
