@@ -9,10 +9,7 @@ import { ActionTypes } from '~redux/index';
 import { IconButton } from '~core/Button';
 import { ActionForm } from '~core/Fields';
 
-import {
-  transactionEstimateGas,
-  transactionSend,
-} from '../../../../core/actionCreators';
+import { transactionEstimateGas } from '../../../../core/actionCreators';
 
 import styles from './GasStationControls.css';
 
@@ -34,10 +31,6 @@ const GasStationControls = ({ transaction: { id, error } }: Props) => {
   const dispatch = useDispatch();
   const transform = useCallback(withId(id), [id]);
 
-  useEffect(() => {
-    dispatch(transactionEstimateGas(id));
-  }, [dispatch, id]);
-
   /*
    * @NOTE Automatically send the transaction
    * Since we're just using Metamask, we won't wait for the user to click the "Confirm"
@@ -49,7 +42,7 @@ const GasStationControls = ({ transaction: { id, error } }: Props) => {
    */
   useEffect(() => {
     if (!error) {
-      dispatch(transactionSend(id));
+      dispatch(transactionEstimateGas(id));
     }
   }, [dispatch, id, error]);
 
