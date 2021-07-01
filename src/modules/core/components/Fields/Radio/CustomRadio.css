@@ -25,7 +25,15 @@
   composes: main;
 }
 
-.themePrimary.stateIsChecked {
+.themeTraditional {
+  composes: main;
+  border-color: color-mod(var(--action-secondary) alpha(25%));
+  border-radius: var(--radius-tiny);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(5%));
+}
+
+.themePrimary.stateIsChecked,
+.themeTraditional.stateIsChecked {
   border: 1px solid var(--primary);
   background-color: color-mod(var(--primary) alpha(12%));
 }
