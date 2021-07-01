@@ -1,6 +1,7 @@
 import { MessageDescriptor, useIntl } from 'react-intl';
 import React from 'react';
 
+import { isNil } from 'lodash';
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
@@ -26,6 +27,7 @@ interface Props {
 
   /** Values for status text (react-intl interpolation) (if applicable) */
   statusValues?: SimpleMessageValues;
+  touched?: boolean;
 }
 
 const displayName = 'InputStatus';
@@ -35,18 +37,20 @@ const InputStatus = ({
   error,
   status,
   statusValues,
+  touched,
 }: Props) => {
   const { formatMessage } = useIntl();
   const errorText = typeof error === 'object' ? formatMessage(error) : error;
   const statusText =
     typeof status === 'object' ? formatMessage(status, statusValues) : status;
+  const showErrorText = !isNil(touched) && touched;
   const text = errorText || statusText;
   const Element = appearance.direction === 'horizontal' ? 'span' : 'p';
   return (
     <Element
       className={getMainClasses(appearance, styles, {
         error: !!error,
-        hidden: !text,
+        hidden: !text || (!!error && !showErrorText),
       })}
     >
       {text}

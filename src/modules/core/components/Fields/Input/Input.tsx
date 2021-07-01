@@ -161,12 +161,13 @@ const Input = ({
           <div className={styles.extension}>{extensionStringText}</div>
         )}
       </div>
-      {!elementOnly && (((error || forcedFieldError) && touched) || status) && (
+      {!elementOnly && (
         <InputStatus
           appearance={appearance}
           status={status}
           statusValues={statusValues}
           error={error || forcedFieldError}
+          touched={touched}
         />
       )}
     </div>
