@@ -41,15 +41,11 @@ import styles from './PermissionManagementDialog.css';
 
 const validationSchema = yup.object().shape({
   domainId: yup.number().required(),
-  user: yup
-    .object()
-    .shape({
-      profile: yup.object().shape({
-        walletAddress: yup.string().address().required(),
-      }),
-    })
-    .nullable()
-    .default(null),
+  user: yup.object().shape({
+    profile: yup.object().shape({
+      walletAddress: yup.string().address().required(),
+    }),
+  }),
   roles: yup.array().ensure(),
   annotation: yup.string().max(4000),
   forceAction: yup.boolean(),
