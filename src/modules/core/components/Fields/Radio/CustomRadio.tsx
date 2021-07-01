@@ -10,7 +10,7 @@ import { UniversalMessageValues } from '~types/index';
 import styles from './CustomRadio.css';
 
 export interface Appearance {
-  theme?: 'primary' | 'danger';
+  theme?: 'primary' | 'danger' | 'traditional';
   direction?: 'horizontal' | 'vertical';
 }
 
