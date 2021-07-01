@@ -11,6 +11,7 @@ import { oneTransaction } from '../../selectors';
 import {
   transactionUpdateGas,
   transactionEstimateError,
+  transactionSend,
 } from '../../actionCreators';
 import { getGasPrices } from '../utils';
 
@@ -51,7 +52,7 @@ export default function* estimateGasCost({
     let gasPrice = suggested || network;
 
     /**
-     * Setting gas price on local to 0 for the fun of it
+     * Setting gas price on local to 1 for the fun of it
      */
     if (DEFAULT_NETWORK === Network.Local || DEFAULT_NETWORK === Network.Xdai) {
       gasPrice = fixed;
@@ -63,6 +64,8 @@ export default function* estimateGasCost({
         gasPrice,
       }),
     );
+
+    yield put(transactionSend(id));
   } catch (error) {
     console.error(error);
     return yield put(transactionEstimateError(id, error));
