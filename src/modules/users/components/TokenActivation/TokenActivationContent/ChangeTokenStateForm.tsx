@@ -15,6 +15,7 @@ import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { pipe, mapPayload } from '~utils/actions';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './TokenActivationContent.css';
 
@@ -81,9 +82,26 @@ const ChangeTokenStateForm = ({
 
   const { walletAddress } = useLoggedInUser();
 
+  const formattedActiveTokens = getFormattedTokenValue(
+    activeTokens,
+    token.decimals,
+  );
+  const formattedInactiveTokens = getFormattedTokenValue(
+    inactiveTokens,
+    token.decimals,
+  );
+  const formattedLockedTokens = getFormattedTokenValue(
+    lockedTokens,
+    token.decimals,
+  );
+  const unformattedTokenBalance = moveDecimal(
+    isActivate ? inactiveTokens : activeTokens,
+    -tokenDecimals,
+  );
+
   const tokenBalance = useMemo(
-    () => (isActivate ? inactiveTokens : activeTokens),
-    [isActivate, activeTokens, inactiveTokens],
+    () => (isActivate ? formattedInactiveTokens : formattedActiveTokens),
+    [isActivate, formattedActiveTokens, formattedInactiveTokens],
   );
 
   const formAction = useCallback(
@@ -94,21 +112,16 @@ const ChangeTokenStateForm = ({
     [isActivate],
   );
 
-  const maxAmount = useMemo(() => moveDecimal(tokenBalance, -tokenDecimals), [
-    tokenDecimals,
-    tokenBalance,
-  ]);
-
   const transform = useCallback(
     pipe(
       mapPayload(({ amount }) => {
         // Convert amount string with decimals to BigInt (eth to wei)
-        const formtattedAmount = bigNumberify(
+        const formattedAmount = bigNumberify(
           moveDecimal(amount, tokenDecimals),
         );
 
         return {
-          amount: formtattedAmount,
+          amount: formattedAmount,
           userAddress: walletAddress,
           colonyAddress,
           tokenAddress: token.address,
@@ -169,7 +182,7 @@ const ChangeTokenStateForm = ({
                 }}
                 maxButtonParams={{
                   setFieldValue,
-                  maxAmount,
+                  maxAmount: unformattedTokenBalance,
                   fieldName: 'amount',
                 }}
               />
@@ -189,8 +202,6 @@ const ChangeTokenStateForm = ({
                       <Numeral
                         value={tokenBalance}
                         suffix={` ${token?.symbol}`}
-                        unit={tokenDecimals}
-                        truncate={3}
                         className={styles.balanceAmount}
                       />
                     ),
@@ -214,10 +225,8 @@ const ChangeTokenStateForm = ({
                     values={{
                       lockedTokens: (
                         <Numeral
-                          value={lockedTokens}
+                          value={formattedLockedTokens}
                           suffix={` ${token?.symbol}`}
-                          unit={tokenDecimals}
-                          truncate={3}
                           className={styles.balanceAmount}
                         />
                       ),
@@ -232,7 +241,7 @@ const ChangeTokenStateForm = ({
               disabled={
                 !isValid ||
                 values.amount === undefined ||
-                values.amount > maxAmount
+                values.amount > unformattedTokenBalance
               }
             />
           </div>

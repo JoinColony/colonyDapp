@@ -10,7 +10,7 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import Icon from '~core/Icon';
 import Button from '~core/Button';
 
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
 
@@ -81,6 +81,10 @@ const GroupedTotalStake = ({
   const validationSchema = yup.object().shape({
     stakeSide: yup.string().required(),
   });
+  const formattedRequiredStake = getFormattedTokenValue(
+    requiredStake,
+    tokenDecimals,
+  );
 
   return (
     <Form
@@ -121,10 +125,8 @@ const GroupedTotalStake = ({
                 totalPercentage: formattedYAYPercentage,
                 requiredStake: (
                   <Numeral
-                    value={requiredStake}
-                    unit={getTokenDecimalsWithFallback(tokenDecimals)}
+                    value={formattedRequiredStake}
                     suffix={` ${tokenSymbol}`}
-                    truncate={2}
                   />
                 ),
               }}
@@ -150,10 +152,8 @@ const GroupedTotalStake = ({
                 totalPercentage: formattedNAYPercentage,
                 requiredStake: (
                   <Numeral
-                    value={requiredStake}
-                    unit={getTokenDecimalsWithFallback(tokenDecimals)}
+                    value={formattedRequiredStake}
                     suffix={` ${tokenSymbol}`}
-                    truncate={2}
                   />
                 ),
               }}

@@ -2,18 +2,21 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
-import Numeral from '~core/Numeral';
+import { SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
 import Icon from '~core/Icon';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { UserToken } from '~data/generated';
 import { Address } from '~types/index';
-import { formatTokenValue } from '~utils/numbers';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  getFormattedTokenValue,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
 
 import styles from './TokenActivationContent.css';
 import ChangeTokenStateForm from './ChangeTokenStateForm';
 import TokenTooltip from './TokenTooltip';
+import SmallTokenAmountMessage from './SmallTokenAmountMessage';
 
 const MSG = defineMessages({
   active: {
@@ -97,12 +100,22 @@ const TokensTab = ({
     [token],
   );
 
-  const formattedTotalAmount = formatTokenValue({
-    value: totalTokens,
-    suffix: ` ${token?.symbol}`,
-    unit: tokenDecimals,
-    truncate: 3,
-  }).split(' ')[0];
+  const formattedTotalAmount = getFormattedTokenValue(
+    totalTokens,
+    token.decimals,
+  );
+  const formattedLockedTokens = getFormattedTokenValue(
+    lockedTokens,
+    token.decimals,
+  );
+  const formattedActiveTokens = getFormattedTokenValue(
+    activeTokens,
+    token.decimals,
+  );
+  const formattedInactiveTokens = getFormattedTokenValue(
+    inactiveTokens,
+    token.decimals,
+  );
 
   return (
     <>
@@ -142,12 +155,12 @@ const TokensTab = ({
               />
             </TokenTooltip>
             <div className={styles.tokenNumbers}>
-              <Numeral
-                value={activeTokens}
-                suffix={` ${token?.symbol}`}
-                unit={tokenDecimals}
-                truncate={3}
-              />
+              <span>
+                {formattedActiveTokens} {token.symbol}
+              </span>
+              {formattedActiveTokens === SMALL_TOKEN_AMOUNT_FORMAT && (
+                <SmallTokenAmountMessage />
+              )}
             </div>
             <TokenTooltip
               className={styles.lockedTokens}
@@ -158,12 +171,9 @@ const TokensTab = ({
           </li>
           <li>
             <div className={styles.tokenNumbersLocked}>
-              <Numeral
-                value={lockedTokens}
-                suffix={` ${token?.symbol}`}
-                unit={tokenDecimals}
-                truncate={3}
-              />
+              <span>
+                {formattedLockedTokens} {token.symbol}
+              </span>
             </div>
           </li>
           <li>
@@ -174,12 +184,12 @@ const TokensTab = ({
               <FormattedMessage {...MSG.inactive} />
             </TokenTooltip>
             <div className={styles.tokenNumbersInactive}>
-              <Numeral
-                value={inactiveTokens}
-                suffix={` ${token?.symbol}`}
-                unit={tokenDecimals}
-                truncate={3}
-              />
+              <span>
+                {formattedInactiveTokens} {token.symbol}
+              </span>
+              {formattedInactiveTokens === SMALL_TOKEN_AMOUNT_FORMAT && (
+                <SmallTokenAmountMessage />
+              )}
             </div>
             {!isPendingBalanceZero && (
               <div className={styles.pendingError}>

@@ -141,3 +141,5 @@ export const ALLDOMAINS_DOMAIN_SELECTION = {
 export const TOKEN_LOGOS_REPO_URL = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains`;
 
 export const NETWORK_RELEASES_URL = `https://github.com/JoinColony/colonyNetwork/releases/tag`;
+
+export const SMALL_TOKEN_AMOUNT_FORMAT = '0.00000...';

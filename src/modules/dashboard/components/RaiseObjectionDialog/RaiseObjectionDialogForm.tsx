@@ -58,11 +58,13 @@ const RaiseObjectionDialogForm = ({
   cancel,
   userActivatedTokens,
   remainingToFullyNayStaked,
+  minUserStake,
   ...props
 }: Props & FormikProps<FormValues>) => {
   const decimalAmount = new Decimal(values.amount)
-    .times(remainingToFullyNayStaked)
-    .div(100);
+    .times(new Decimal(remainingToFullyNayStaked).minus(minUserStake))
+    .div(100)
+    .plus(minUserStake);
   return (
     <>
       <DialogSection appearance={{ theme: 'heading' }}>
@@ -94,6 +96,7 @@ const RaiseObjectionDialogForm = ({
             isObjection
             remainingToFullyNayStaked={remainingToFullyNayStaked}
             userActivatedTokens={userActivatedTokens}
+            minUserStake={minUserStake}
             {...props}
           />
         </div>
