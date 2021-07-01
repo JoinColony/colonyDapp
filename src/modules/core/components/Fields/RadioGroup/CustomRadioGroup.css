@@ -12,3 +12,7 @@
   flex-direction: row;
   gap: 6px;
 }
+
+.gapMedium {
+  gap: 10px;
+}
