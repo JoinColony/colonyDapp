@@ -10,3 +10,6 @@ export const label: string;
 export const icon: string;
 export const content: string;
 export const directionVertical: string;
+export const customRadioIcon: string;
+export const checkedCustomRadioIcon: string;
+export const customRadioCheck: string;

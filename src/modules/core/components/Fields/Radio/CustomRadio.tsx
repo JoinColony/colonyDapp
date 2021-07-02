@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { MessageDescriptor, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { useField } from 'formik';
+import classnames from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 import Icon from '~core/Icon';
@@ -65,6 +66,15 @@ const CustomRadio = ({
       })}
       htmlFor={inputRef.current}
     >
+      {appearance.theme === 'traditional' && (
+        <div
+          className={classnames(styles.customRadioIcon, {
+            [styles.checkedCustomRadioIcon]: checked,
+          })}
+        >
+          {checked && <div className={styles.customRadioCheck} />}
+        </div>
+      )}
       <input
         aria-checked={checked}
         aria-disabled={disabled}
