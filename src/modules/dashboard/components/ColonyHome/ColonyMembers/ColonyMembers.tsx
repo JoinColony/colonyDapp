@@ -58,7 +58,11 @@ const ColonyMembers = ({
   const {
     avatarsDisplaySplitRules,
     remainingAvatarsCount,
-  } = useAvatarDisplayCounter(maxAvatars, members?.colonyMembersWithReputation);
+  } = useAvatarDisplayCounter(
+    maxAvatars,
+    members?.colonyMembersWithReputation,
+    false,
+  );
 
   const BASE_MEMBERS_ROUTE = `/colony/${colonyName}/members`;
   const membersPageRoute =
