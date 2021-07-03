@@ -346,7 +346,7 @@ const ExtensionDetails = ({
                   <Heading
                     tagName="h3"
                     appearance={{ size: 'medium', margin: 'small' }}
-                    text={extension.name}
+                    text={extension.header || extension.name}
                   />
                   <FormattedMessage
                     {...extension.descriptionLong}
@@ -360,6 +360,19 @@ const ExtensionDetails = ({
                       ),
                     }}
                   />
+                  {extension.info && (
+                    <div className={styles.extensionSubtext}><FormattedMessage
+                      {...extension.info}
+                      values={{
+                        link: (
+                          <ExternalLink
+                            text={extension.termsCondition}
+                            href=""
+                          />
+                        ),
+                      }}
+                    /></div>
+                  )}
                   {extensionEnabled && extension.enabledExtensionBody && extension.enabledExtensionBody()}
                 </div>
               )}
