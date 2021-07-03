@@ -26,8 +26,11 @@ export interface ExtensionData {
   address?: Address;
   extensionId: Extension | 'Unknown';
   name: string | MessageDescriptor;
+  header?: string | MessageDescriptor;
   descriptionShort: string | MessageDescriptor;
   descriptionLong: string | MessageDescriptor;
+  info?: string | MessageDescriptor;
+  termsCondition?: string | MessageDescriptor;
   currentVersion: number;
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
@@ -233,9 +236,13 @@ const whitelistMessages = {
     id: 'extensions.whitelist.name',
     defaultMessage: 'Whitelist',
   },
+  whitelistHeader: {
+    id: 'extensions.whitelist.header',
+    defaultMessage: 'What is the Whitelist extension?',
+  },
   whitelistDescriptionShort: {
     id: 'extensions.whitelist.description',
-    defaultMessage: `Reputation weighted decentralized governance with a minimum of voting.`,
+    defaultMessage: `Curate a list of addresses permitted to participate in your Coin Machine sale.`,
   },
   whitelistDescriptionLong: {
     id: 'extensions.whitelist.descriptionLong',
@@ -247,7 +254,7 @@ const whitelistMessages = {
   },
   whitelistInfo: {
     id: 'extensions.whitelist.info',
-    defaultMessage: 'The responsibility is on the issuer to ensure being compliant with the local rules.',
+    defaultMessage: 'The responsibility is on the issuer to ensure being compliant with the local rules. {link}',
   },
 };
 
@@ -456,8 +463,11 @@ const extensions: { [key: string]: ExtensionData } = {
   Whitelist: {
     extensionId: Extension.Whitelist,
     name: MSG.whitelistName,
+    header: MSG.whitelistHeader,
     descriptionShort: MSG.whitelistDescriptionShort,
     descriptionLong: MSG.whitelistDescriptionLong,
+    info: MSG.whitelistInfo,
+    termsCondition: MSG.whitelistTermsCondition,
     currentVersion: 1,
     createdAt: 1603915271852, // find out how to get this value
     neededColonyPermissions: [
