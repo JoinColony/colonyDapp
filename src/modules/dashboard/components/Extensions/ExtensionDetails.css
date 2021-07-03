@@ -13,6 +13,13 @@
   white-space: pre-line;
 }
 
+.extensionSubtext {
+  display: block;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  margin-top: 38px;
+}
+
 .extensionDetails {
   width: 340px;
 }
