@@ -12,6 +12,7 @@ import ColonyExtensions from './ColonyExtensions';
 import ColonyDomainDescription from './ColonyDomainDescription';
 import ColonyUpgrade from './ColonyUpgrade';
 import ColonyFinishDeployment from './ColonyFinishDeployment';
+import ExtensionUpgrade from './ExtensionUpgrade';
 
 import { Colony } from '~data/index';
 
@@ -87,6 +88,7 @@ const ColonyHomeLayout = ({
       )}
     </div>
     <ColonyUpgrade colony={colony} />
+    <ExtensionUpgrade colony={colony} />
     <ColonyFinishDeployment colony={colony} />
   </div>
 );
