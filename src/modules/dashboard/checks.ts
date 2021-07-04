@@ -1,6 +1,10 @@
-import { ColonyVersion } from '@colony/colony-js';
+import {
+  ColonyVersion,
+  Extension,
+  OneTxPaymentExtensionVersion,
+} from '@colony/colony-js';
 
-import { Colony } from '~data/index';
+import { Colony, ColonyExtension } from '~data/index';
 import { hasRoot } from '../users/checks';
 
 /*
@@ -28,3 +32,21 @@ export const colonyShouldBeUpgraded = (
   parseInt(colony.version, 10) >= ColonyVersion.LightweightSpaceship;
 
 export const canRecoverColony = hasRoot;
+
+/*
+ * Extension
+ */
+
+export const oneTxMustBeUpgraded = (extension?: ColonyExtension) => {
+  if (extension) {
+    const {
+      extensionId: extensionName,
+      details: { version },
+    } = extension;
+    return (
+      extensionName === Extension.OneTxPayment &&
+      version < OneTxPaymentExtensionVersion.DandelionLightweightSpaceship
+    );
+  }
+  return false;
+};

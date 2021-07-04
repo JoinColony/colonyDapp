@@ -6,12 +6,8 @@ import { useParams } from 'react-router';
 import Alert from '~core/Alert';
 import Button from '~core/Button';
 
-import {
-  Colony,
-  useNetworkContracts,
-  useColonyExtensionsQuery,
-} from '~data/index';
-import { colonyMustBeUpgraded } from '../../../checks';
+import { Colony, useColonyExtensionsQuery } from '~data/index';
+import { oneTxMustBeUpgraded } from '../../../checks';
 
 import styles from './ExtensionUpgrade.css';
 
@@ -32,11 +28,7 @@ type Props = {
 
 const displayName = 'dashboard.ColonyHome.ExtensionUpgrade';
 
-const ExtensionUpgrade = ({
-  colony: { colonyName, colonyAddress },
-  colony,
-}: Props) => {
-  const { version: networkVersion } = useNetworkContracts();
+const ExtensionUpgrade = ({ colony: { colonyName, colonyAddress } }: Props) => {
   const { colonyName: colonyNameEntry, extensionId } = useParams<{
     colonyName: string;
     extensionId: string;
@@ -46,7 +38,6 @@ const ExtensionUpgrade = ({
     variables: { address: colonyAddress },
   });
 
-  const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
   const isExtensionDetailsRoute =
     colonyNameEntry === colonyName && extensionId === Extension.OneTxPayment;
 
@@ -59,8 +50,9 @@ const ExtensionUpgrade = ({
       !missingPermissions.length &&
       extensionName === Extension.OneTxPayment,
   );
+  const mustUpgrade = oneTxMustBeUpgraded(oneTxPaymentExtension);
 
-  if (oneTxPaymentExtension && true) {
+  if (mustUpgrade) {
     return (
       <div className={styles.upgradeBannerContainer}>
         <Alert
