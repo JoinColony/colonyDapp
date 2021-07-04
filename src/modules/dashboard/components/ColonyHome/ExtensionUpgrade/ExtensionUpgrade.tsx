@@ -6,13 +6,12 @@ import { useParams } from 'react-router';
 import Alert from '~core/Alert';
 import Button from '~core/Button';
 
-import { Colony, useNetworkContracts } from '~data/index';
-import { useLoggedInUser } from '~data/helpers';
-import { useTransformer } from '~utils/hooks';
-
+import {
+  Colony,
+  useNetworkContracts,
+  useColonyExtensionsQuery,
+} from '~data/index';
 import { colonyMustBeUpgraded } from '../../../checks';
-import { hasRoot } from '../../../../users/checks';
-import { getAllUserRoles } from '../../../../transformers';
 
 import styles from './ExtensionUpgrade.css';
 
@@ -33,24 +32,35 @@ type Props = {
 
 const displayName = 'dashboard.ColonyHome.ExtensionUpgrade';
 
-const ExtensionUpgrade = ({ colony: { colonyName }, colony }: Props) => {
+const ExtensionUpgrade = ({
+  colony: { colonyName, colonyAddress },
+  colony,
+}: Props) => {
   const { version: networkVersion } = useNetworkContracts();
-  const { walletAddress, username, ethereal } = useLoggedInUser();
   const { colonyName: colonyNameEntry, extensionId } = useParams<{
     colonyName: string;
     extensionId: string;
   }>();
 
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-
-  const hasRegisteredProfile = !!username && !ethereal;
-  const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
+  const { data } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
 
   const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
   const isExtensionDetailsRoute =
     colonyNameEntry === colonyName && extensionId === Extension.OneTxPayment;
 
-  if (true) {
+  const oneTxPaymentExtension = data?.processedColony?.installedExtensions.find(
+    ({
+      details: { initialized, missingPermissions },
+      extensionId: extensionName,
+    }) =>
+      initialized &&
+      !missingPermissions.length &&
+      extensionName === Extension.OneTxPayment,
+  );
+
+  if (oneTxPaymentExtension && true) {
     return (
       <div className={styles.upgradeBannerContainer}>
         <Alert
@@ -70,7 +80,6 @@ const ExtensionUpgrade = ({ colony: { colonyName }, colony }: Props) => {
                 text={MSG.goToExtensionButton}
                 // eslint-disable-next-line max-len
                 linkTo={`/colony/${colonyName}/extensions/${Extension.OneTxPayment}`}
-                disabled={!canUpgradeColony}
               />
             </div>
           )}
