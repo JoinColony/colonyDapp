@@ -23,7 +23,7 @@ import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
 import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
 import { ALLOWED_NETWORKS } from '~constants';
-import { mustBeUpgraded } from '../../checks';
+import { colonyMustBeUpgraded } from '../../checks';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -195,7 +195,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
-  const mustUpgrade = mustBeUpgraded(colony, networkVersion as string);
+  const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
 
   return (
     <Button
