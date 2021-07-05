@@ -112,7 +112,7 @@ const Input = ({
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();
-  const [inputFieldProps, { error }] = useField<string>(name);
+  const [inputFieldProps, { error, touched }] = useField<string>(name);
 
   const placeholder =
     typeof placeholderProp === 'object'
@@ -122,7 +122,7 @@ const Input = ({
   const inputProps: InputComponentProps = {
     ...inputFieldProps,
     appearance,
-    'aria-invalid': !!error || !!forcedFieldError,
+    'aria-invalid': (!!error || !!forcedFieldError) && touched,
     formattingOptions,
     id,
     innerRef,
@@ -167,6 +167,7 @@ const Input = ({
           status={status}
           statusValues={statusValues}
           error={error || forcedFieldError}
+          touched={touched}
         />
       )}
     </div>

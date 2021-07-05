@@ -73,15 +73,11 @@ const CreatePaymentDialog = ({
 
   const validationSchema = yup.object().shape({
     domainId: yup.number().required(),
-    recipient: yup
-      .object()
-      .shape({
-        profile: yup.object().shape({
-          walletAddress: yup.string().address().required(),
-        }),
-      })
-      .nullable()
-      .default(null),
+    recipient: yup.object().shape({
+      profile: yup.object().shape({
+        walletAddress: yup.string().address().required(),
+      }),
+    }),
     amount: yup
       .number()
       .required()
