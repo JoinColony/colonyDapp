@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 const useAvatarDisplayCounter = (
   maxAvatars: number,
   members: Maybe<string[]>,
+  isLastAvatarIncluded = true,
 ) => {
   const avatarsDisplaySplitRules = useMemo(() => {
     if (!members?.length) {
@@ -14,8 +15,8 @@ const useAvatarDisplayCounter = (
       return members.length;
     }
 
-    return maxAvatars;
-  }, [members, maxAvatars]);
+    return isLastAvatarIncluded ? maxAvatars : maxAvatars - 1;
+  }, [members, maxAvatars, isLastAvatarIncluded]);
 
   const remainingAvatarsCount = useMemo(() => {
     if (!members?.length) {
@@ -25,8 +26,10 @@ const useAvatarDisplayCounter = (
     if (members.length <= maxAvatars) {
       return 0;
     }
-    return members.length - maxAvatars;
-  }, [members, maxAvatars]);
+    return (
+      members.length - (isLastAvatarIncluded ? maxAvatars : maxAvatars - 1)
+    );
+  }, [members, maxAvatars, isLastAvatarIncluded]);
 
   return {
     avatarsDisplaySplitRules,
