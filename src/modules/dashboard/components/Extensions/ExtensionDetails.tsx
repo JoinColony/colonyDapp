@@ -339,7 +339,7 @@ const ExtensionDetails = ({
                 <div className={styles.extensionText}>
                   <Heading
                     tagName="h3"
-                    appearance={{ size: 'medium', margin: 'small' }}
+                    appearance={{ size: 'medium', margin: 'small', theme: 'dark' }}
                     text={extension.header || extension.name}
                   />
                   <FormattedMessage
