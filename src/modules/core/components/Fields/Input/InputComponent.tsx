@@ -10,7 +10,7 @@ import { defineMessages } from 'react-intl';
 import Cleave from 'cleave.js/react';
 import { CleaveOptions } from 'cleave.js/options';
 import { ChangeEvent } from 'cleave.js/react/props';
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
 import Decimal from 'decimal.js';
 
 import Button from '~core/Button';
