@@ -7,7 +7,7 @@
 .main {
   display: flex;
   align-items: center;
-  padding: 0 17px;
+  padding: 7px;
   height: 41px;
   width: 100%;
   border: 1px solid transparent;
@@ -36,19 +36,25 @@
 }
 
 .themePrimary:hover {
-  border: 1px solid var(--primary);
+  background-color: color-mod(var(--primary) alpha(12%));
 }
 
 .themeDanger:hover {
-  border: 1px solid var(--pink);
+  background-color: color-mod(var(--pink) alpha(12%));
 }
 
 .main.stateIsChecked .description {
+  color: var(--temp-grey-blue-7);
   opacity: 0.85;
 }
 
 .main.stateIsDisabled .description {
+  color: var(--temp-grey-blue-7);
   opacity: 0.85;
+}
+
+.main.stateIsDisabled .label {
+  color: color-mod(var(--dark) alpha(65%));
 }
 
 .main.stateIsDisabled {
@@ -65,7 +71,8 @@
   gap: 6px;
 }
 
-.description {
+.description,
+.description span {
   margin-left: auto;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);

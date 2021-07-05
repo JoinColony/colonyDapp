@@ -37,6 +37,8 @@ export type TransactionActionTypes =
         | 'multisig'
         | 'options'
         | 'params'
+        | 'gasPrice'
+        | 'gasLimit'
         | 'status'
       >,
       WithId

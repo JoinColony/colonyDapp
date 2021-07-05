@@ -11,6 +11,7 @@ import { DialogProvider } from '~core/Dialog';
 import messages from './i18n/en.json';
 import actionMessages from './i18n/en-actions';
 import eventsMessages from './i18n/en-events';
+import motionMessages from './i18n/en-motions';
 import systemMessages from './i18n/en-system-messages';
 import Routes from './routes';
 import apolloClient from './context/apolloClient';
@@ -36,6 +37,7 @@ const App = ({ store }: Props) => (
       ...actionMessages,
       ...eventsMessages,
       ...systemMessages,
+      ...motionMessages,
     }}
   >
     <ApolloProvider client={apolloClient}>

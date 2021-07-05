@@ -1,17 +1,24 @@
 import React, { useCallback } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
-import { ColonyVersion } from '@colony/colony-js';
+import { ColonyVersion, Extension } from '@colony/colony-js';
 
-import Members from '~dashboard/Members';
-import { useColonyFromNameQuery, useLoggedInUser, Colony } from '~data/index';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import Members from '~dashboard/Members';
 import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
 
-import { ALLOWED_NETWORKS } from '~constants';
+import {
+  useColonyFromNameQuery,
+  useLoggedInUser,
+  Colony,
+  useColonyExtensionsQuery,
+} from '~data/index';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { oneTxMustBeUpgraded } from '../../../dashboard/checks';
 import { NOT_FOUND_ROUTE } from '~routes/index';
+import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './ColonyMembers.css';
 
@@ -39,13 +46,37 @@ const ColonyMembers = () => {
     variables: { name: colonyName, address: '' },
   });
 
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colonyData?.processedColony?.colonyAddress,
+  });
+
+  const {
+    data: colonyExtensions,
+    loading: colonyExtensionLoading,
+  } = useColonyExtensionsQuery({
+    variables: { address: colonyData?.processedColony?.colonyAddress || '' },
+  });
+
   const openPermissionManagementDialog = useDialog(PermissionManagementDialog);
 
   const handlePermissionManagementDialog = useCallback(() => {
     openPermissionManagementDialog({
       colony: colonyData?.processedColony as Colony,
+      isVotingExtensionEnabled,
     });
-  }, [openPermissionManagementDialog, colonyData]);
+  }, [openPermissionManagementDialog, colonyData, isVotingExtensionEnabled]);
+
+  // eslint-disable-next-line max-len
+  const oneTxPaymentExtension = colonyExtensions?.processedColony?.installedExtensions.find(
+    ({
+      details: { initialized, missingPermissions },
+      extensionId: extensionName,
+    }) =>
+      initialized &&
+      !missingPermissions.length &&
+      extensionName === Extension.OneTxPayment,
+  );
+  const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
@@ -53,7 +84,13 @@ const ColonyMembers = () => {
     ColonyVersion.LightweightSpaceship;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
-  if (loading) {
+  if (
+    loading ||
+    colonyExtensionLoading ||
+    (colonyData?.colonyAddress &&
+      !colonyData.processedColony &&
+      !((colonyData.colonyAddress as any) instanceof Error))
+  ) {
     return (
       <div className={styles.loadingWrapper}>
         <LoadingTemplate loadingText={MSG.loadingText} />
@@ -83,7 +120,8 @@ const ColonyMembers = () => {
               !isSupportedColonyVersion ||
               !isNetworkAllowed ||
               !hasRegisteredProfile ||
-              !colonyData?.processedColony?.isDeploymentFinished
+              !colonyData?.processedColony?.isDeploymentFinished ||
+              mustUpgradeOneTx
             }
           />
         </aside>

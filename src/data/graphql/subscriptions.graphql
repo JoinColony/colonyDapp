@@ -14,6 +14,7 @@ subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddres
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }
@@ -86,6 +87,7 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }
@@ -107,6 +109,61 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
       newVersion
       storageSlot
       storageSlotValue
+    }
+  }
+}
+
+subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
+  motions(
+    skip: $skip,
+    first: $first,
+    where: {
+      associatedColony: $colonyAddress,
+      extensionAddress: $extensionAddress,
+    }) {
+    id
+    fundamentalChainId
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    extensionAddress
+    agent
+    domain {
+      ethDomainId: domainChainId
+      name
+    }
+    stakes
+    requiredStake
+    escalated
+    action
+    state @client
+    type @client
+    args @client {
+      amount
+      token {
+        address: id
+        symbol
+        decimals
+      }
+    }
+    timeoutPeriods @client {
+      timeLeftToStake
+      timeLeftToSubmit
+      timeLeftToReveal
+      timeLeftToEscalate
     }
   }
 }

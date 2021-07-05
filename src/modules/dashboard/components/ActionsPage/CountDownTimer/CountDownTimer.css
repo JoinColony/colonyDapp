@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  white-space: nowrap;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.loader {
+  position: relative;
+  top: 3px;
+  white-space: nowrap;
+}
+
+.time {
+  margin-left: 5px;
+  color: var(--dark);
+  opacity: 85%;
+}
+
+.tooltipIcon {
+  margin-left: 10px;
+}

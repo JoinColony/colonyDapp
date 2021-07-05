@@ -1,10 +1,12 @@
 import { AddressZero, HashZero } from 'ethers/constants';
+import { bigNumberify } from 'ethers/utils';
 
 import {
   TransactionsMessagesCount,
   SubscriptionSubgraphOneTxSubscription,
   SubscriptionSubgraphEventsThatAreActionsSubscription,
   SubscriptionSubgraphEventsSubscription,
+  SubscriptionsMotionsSubscription,
 } from '~data/index';
 import {
   Address,
@@ -20,6 +22,13 @@ import { createAddress, toHex } from '~utils/web3';
 import { formatEventName, groupSetUserRolesActions } from '~utils/events';
 import { log } from '~utils/debug';
 import { ItemStatus } from '~core/ActionsList';
+import { shouldDisplayMotion } from '~utils/colonyMotions';
+
+enum FilteredUnformattedAction {
+  OneTxPayments = 'oneTxPayments',
+  Events = 'events',
+  Motions = 'motions',
+}
 
 interface ActionsThatNeedAttention {
   transactionHash: string;
@@ -35,6 +44,7 @@ export const getActionsListData = (
   unformattedActions?: {
     oneTxPayments?: SubscriptionSubgraphOneTxSubscription['oneTxPayments'];
     events?: SubscriptionSubgraphEventsThatAreActionsSubscription['events'];
+    motions?: SubscriptionsMotionsSubscription['motions'];
   },
   transactionsCommentsCount?: TransactionsMessagesCount,
   {
@@ -52,6 +62,7 @@ export const getActionsListData = (
    * We only consider an action that we manually trigger ourselves, so if the transaction
    * hashes match, throw them out.
    */
+
   const filteredUnformattedActions = {
     oneTxPayments: unformattedActions?.oneTxPayments || [],
     events:
@@ -78,21 +89,39 @@ export const getActionsListData = (
         if (isTransactionRepeated) return acc;
 
         /*
-         * Filter out events that have the recipient an extension's address
+         * Filter out events that have the recipient or initiator an extension's address
          *
          * This is used to filter out setting root roles to extensions after
-         * they have been installed
+         * they have been installed. This also filter out duplicated events
+         * which occurs when motion is finalized.
          */
         if (
           extensionAddresses?.find(
             (extensionAddress) =>
-              extensionAddress === event?.processedValues?.user,
+              extensionAddress === event?.processedValues?.user ||
+              extensionAddress === event?.processedValues?.agent,
           )
         ) {
           return acc;
         }
 
         return [...acc, event];
+      }, []) || [],
+    /*
+     * Only display motions in the list if their stake reached 10% or
+     * if they have been escalated
+     */
+    motions:
+      unformattedActions?.motions?.reduce((acc, motion) => {
+        const { requiredStake, stakes, escalated } = motion;
+        const totalNayStake = bigNumberify(stakes[0] || 0);
+        const totalYayStake = bigNumberify(stakes[1] || 0);
+        const currentStake = totalNayStake.add(totalYayStake).toString();
+        const enoughStake = shouldDisplayMotion(currentStake, requiredStake);
+        if (escalated || enoughStake) {
+          return [...acc, motion];
+        }
+        return acc;
       }, []) || [],
   };
 
@@ -115,6 +144,12 @@ export const getActionsListData = (
             createdAt: new Date(),
             commentCount: 0,
             status: undefined,
+            motionState: undefined,
+            motionId: undefined,
+            timeoutPeriods: undefined,
+            blockNumber: 0,
+            totalNayStake: '0',
+            requiredStake: '0',
           };
           let hash;
           let timestamp;
@@ -122,11 +157,15 @@ export const getActionsListData = (
             const {
               transaction: {
                 hash: txHash,
-                block: { timestamp: blockTimestamp },
+                block: { timestamp: blockTimestamp, id: blockId },
               },
             } = unformattedAction;
             hash = txHash;
             timestamp = blockTimestamp;
+            formatedAction.blockNumber = parseInt(
+              blockId.replace('block_', ''),
+              10,
+            );
           } catch (error) {
             log.verbose('Could not deconstruct the subgraph action object');
             log.verbose(error);
@@ -142,7 +181,7 @@ export const getActionsListData = (
             transactionsCommentsCount?.colonyTransactionMessages?.find(
               ({ transactionHash }) => transactionHash === hash,
             );
-          if (subgraphActionType === 'oneTxPayments') {
+          if (subgraphActionType === FilteredUnformattedAction.OneTxPayments) {
             try {
               const {
                 payment: {
@@ -187,7 +226,7 @@ export const getActionsListData = (
               parseInt(`${timestamp}000`, 10),
             );
           }
-          if (subgraphActionType === 'events') {
+          if (subgraphActionType === FilteredUnformattedAction.Events) {
             try {
               const {
                 processedValues,
@@ -220,6 +259,45 @@ export const getActionsListData = (
             } catch (error) {
               log.verbose('Could not deconstruct the subgraph event object');
               log.verbose(error);
+            }
+          }
+          if (subgraphActionType === FilteredUnformattedAction.Motions) {
+            const {
+              args,
+              agent,
+              type,
+              state,
+              fundamentalChainId,
+              timeoutPeriods,
+              stakes,
+              requiredStake,
+            } = unformattedAction;
+
+            if (args?.token) {
+              const {
+                args: {
+                  token: { address: tokenAddress, symbol, decimals },
+                },
+              } = unformattedAction;
+
+              formatedAction.tokenAddress = tokenAddress;
+              formatedAction.symbol = symbol;
+              formatedAction.decimals = decimals;
+            }
+            formatedAction.initiator = agent;
+            formatedAction.actionType = type;
+            formatedAction.motionState = state;
+            formatedAction.motionId = fundamentalChainId;
+            formatedAction.timeoutPeriods = timeoutPeriods;
+            formatedAction.totalNayStake = bigNumberify(
+              stakes[0] || 0,
+            ).toString();
+            formatedAction.requiredStake = requiredStake;
+            if (args) {
+              const actionTypeKeys = Object.keys(args);
+              actionTypeKeys.forEach((key) => {
+                formatedAction[key] = args[key];
+              });
             }
           }
           formatedAction.transactionHash = hash;
@@ -325,7 +403,11 @@ export const getEventsListData = (
       } = event;
       const {
         agent,
+        creator,
+        staker,
+        escalator,
         domainId,
+        newDomainId,
         recipient,
         fundingPotId,
         metadata,
@@ -343,6 +425,8 @@ export const getEventsListData = (
         newVersion,
         slot,
         toValue,
+        motionId,
+        vote,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -354,20 +438,25 @@ export const getEventsListData = (
         }
         return checksummedColonyAddress;
       };
+      const getAgent = () => {
+        const userAddress = agent || user || creator || staker || escalator;
+        if (userAddress) {
+          return createAddress(userAddress);
+        }
+        return checksummedColonyAddress;
+      };
       return [
         ...processedEvents,
         {
           id,
-          agent:
-            agent || user
-              ? createAddress(agent || user)
-              : checksummedColonyAddress,
+          agent: getAgent(),
           eventName: formatEventName(name),
           transactionHash: hash,
           colonyAddress: checksummedColonyAddress,
           createdAt: new Date(parseInt(`${timestamp}000`, 10)),
           displayValues: args,
           domainId: domainId || null,
+          newDomainId: newDomainId || null,
           recipient: getRecipient(),
           fundingPot: fundingPotId,
           metadata,
@@ -383,6 +472,8 @@ export const getEventsListData = (
           newVersion: newVersion || '0',
           storageSlot: slot ? toHex(parseInt(slot, 10)) : '0',
           storageSlotValue: toValue || AddressZero,
+          motionId,
+          vote,
         },
       ];
     } catch (error) {

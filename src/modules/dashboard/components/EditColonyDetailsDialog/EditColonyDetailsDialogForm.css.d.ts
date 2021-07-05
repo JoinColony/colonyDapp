@@ -5,3 +5,6 @@ export const tinyText: string;
 export const permissionLabel: string;
 export const noPermissionMessage: string;
 export const avatarUploadError: string;
+export const modalHeading: string;
+export const headingContainer: string;
+export const motionVoteDomain: string;

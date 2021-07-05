@@ -1,7 +1,11 @@
 import { ColonyRole } from '@colony/colony-js';
 
 import { ItemStatus } from '~core/ActionsList';
+import { MotionTimeoutPeriods } from '~data/generated';
+import { MotionState } from '~utils/colonyMotions';
+
 import { Address, ActionUserRoles } from './index';
+import { ColonyMotions } from './colonyMotions';
 
 export enum ColonyActions {
   Generic = 'Generic',
@@ -100,12 +104,24 @@ export enum ColonyAndExtensionsEvents {
    */
   TokensBought = 'TokensBought',
   PeriodUpdated = 'PeriodUpdated',
+  /*
+   * Motion events
+   */
+  MotionCreated = 'MotionCreated',
+  MotionStaked = 'MotionStaked',
+  MotionVoteSubmitted = 'MotionVoteSubmitted',
+  MotionVoteRevealed = 'MotionVoteRevealed',
+  MotionFinalized = 'MotionFinalized',
+  MotionEscalated = 'MotionEscalated',
+  MotionRewardClaimed = 'MotionRewardClaimed',
+  MotionEventSet = 'MotionEventSet',
+  ObjectionRaised = 'ObjectionRaised',
 }
 
 export interface FormattedAction {
   id: string;
   status?: ItemStatus;
-  actionType: ColonyActions;
+  actionType: ColonyActions | ColonyMotions;
   initiator: Address;
   recipient: Address;
   amount: string;
@@ -121,6 +137,12 @@ export interface FormattedAction {
   roles: ActionUserRoles[];
   oldVersion?: string;
   newVersion?: string;
+  motionState?: MotionState;
+  motionId?: string;
+  timeoutPeriods: MotionTimeoutPeriods;
+  blockNumber: number;
+  totalNayStake?: string;
+  requiredStake?: string;
 }
 
 export interface FormattedEvent {
@@ -134,6 +156,7 @@ export interface FormattedEvent {
   createdAt: Date;
   displayValues: string;
   domainId: string;
+  newDomainId: string;
   fundingPot?: string;
   metadata?: string;
   tokenAddress?: string | null;
@@ -148,4 +171,6 @@ export interface FormattedEvent {
   newVersion?: string;
   storageSlot?: string;
   storageSlotValue?: string;
+  motionId?: string;
+  vote?: string;
 }

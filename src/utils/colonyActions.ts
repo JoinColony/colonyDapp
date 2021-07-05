@@ -4,6 +4,7 @@ import { ColonyRole } from '@colony/colony-js';
 
 import {
   ColonyActions,
+  ColonyMotions,
   ColonyAndExtensionsEvents,
   FormattedAction,
   Address,
@@ -31,7 +32,7 @@ type ValuesForActionTypesMap = Partial<
  * Get colony action details for DetailsWidget based on action type and ActionPageDetails map
  */
 export const getDetailsForAction = (
-  actionType: ColonyActions,
+  actionType: ColonyActions | ColonyMotions,
 ): DetailsValuesMap => {
   const detailsForActionType = DETAILS_FOR_ACTION[actionType];
   return Object.keys(ActionPageDetails).reduce((detailsMap, detailsKey) => {
@@ -178,12 +179,6 @@ export const getColonyRoleSetMessageDescriptorsIds = (
   return roleSetTo
     ? `${eventMessageType}.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`
     : `${eventMessageType}.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`;
-};
-
-export const getSetUserRolesMessageDescriptorsIds = (roleSetTo: boolean) => {
-  return roleSetTo
-    ? `action.${ColonyActions.SetUserRoles}.assign`
-    : `action.${ColonyActions.SetUserRoles}.remove`;
 };
 
 export const parseColonyMetadata = (

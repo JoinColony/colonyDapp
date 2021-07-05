@@ -3,13 +3,6 @@
   align-items: center;
 }
 
-.title {
-  font-size: var(--size-medium-l);
-  font-weight: var(--weight-bold);
-  line-height: 24px;
-  color: var(--dark);
-}
-
 .domainName {
   margin-right: 18px;
   width: 100%;
@@ -25,4 +18,18 @@
 
 .noPermissionFromMessage > div {
   vertical-align: bottom;
+}
+
+.modalHeading {
+  padding: 32px 0 20px;
+}
+
+.headingContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.motionVoteDomain {
+  margin: 6px 0;
 }

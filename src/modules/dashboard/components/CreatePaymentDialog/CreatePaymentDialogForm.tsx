@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { FormikProps } from 'formik';
 import {
   defineMessages,
@@ -8,33 +8,38 @@ import {
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
-import { ColonyRole, ROOT_DOMAIN_ID, Extension } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
-import { Address } from '~types/index';
-import { useTransformer } from '~utils/hooks';
+import EthUsd from '~core/EthUsd';
+import Numeral from '~core/Numeral';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
+import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, Annotations, TokenSymbolSelector } from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+
+import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import {
   useLoggedInUser,
   useTokenBalancesForDomainsLazyQuery,
-  Colony,
   AnyUser,
-  useColonyExtensionsQuery,
 } from '~data/index';
-import EthUsd from '~core/EthUsd';
-import Numeral from '~core/Numeral';
 import {
   getBalanceFromToken,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useTransformer } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
@@ -94,12 +99,14 @@ const MSG = defineMessages({
     Please use the Extensions Manager to install it if you want to make a new
     payment.`,
   },
+  userPickerPlaceholder: {
+    id: 'SingleUserPicker.userPickerPlaceholder',
+    defaultMessage: 'Search for a user or paste wallet address',
+  },
 });
-
-interface Props {
-  back: () => void;
-  colony: Colony;
+interface Props extends ActionDialogProps {
   subscribedUsers: AnyUser[];
+  ethDomainId?: number;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -112,26 +119,31 @@ const CreatePaymentDialogForm = ({
   back,
   colony,
   colony: { colonyAddress, domains, tokens },
+  isVotingExtensionEnabled,
   subscribedUsers,
   handleSubmit,
+  setFieldValue,
   isSubmitting,
   isValid,
   values,
+  ethDomainId: preselectedDomainId,
 }: Props & FormikProps<FormValues>) => {
+  const selectedDomain =
+    preselectedDomainId === 0 || preselectedDomainId === undefined
+      ? ROOT_DOMAIN_ID
+      : preselectedDomainId;
+
+  const domainId = values.domainId
+    ? parseInt(values.domainId, 10)
+    : selectedDomain;
   /*
    * Custom error state tracking
    */
   const [customAmountError, setCustomAmountError] = useState<
     MessageDescriptor | string | undefined
   >(undefined);
+  const [currentFromDomain, setCurrentFromDomain] = useState<number>(domainId);
   const { tokenAddress, amount } = values;
-  const domainId = values.domainId
-    ? parseInt(values.domainId, 10)
-    : ROOT_DOMAIN_ID;
-
-  const { data: colonyExtensionsData } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
 
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
@@ -242,26 +254,102 @@ const CreatePaymentDialogForm = ({
     fromDomainRoles,
     ColonyRole.Administration,
   );
-  const userHasPermission =
-    userHasFundingPermission && userHasAdministrationPermission;
+  const hasRoles = userHasFundingPermission && userHasAdministrationPermission;
   const requiredRoles: ColonyRole[] = [
     ColonyRole.Funding,
     ColonyRole.Administration,
   ];
 
-  const canMakePayment =
-    colonyExtensionsData?.processedColony?.installedExtensions?.find(
-      ({ extensionId }) => extensionId === Extension.OneTxPayment,
-    ) || false;
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    hasRoles,
+    isVotingExtensionEnabled,
+    values.forceAction,
+    domainId,
+  );
+
+  const { isOneTxPaymentExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
+
+  const handleFromDomainChange = useCallback(
+    (fromDomainValue) => {
+      const fromDomainId = parseInt(fromDomainValue, 10);
+      const selectedMotionDomainId = parseInt(values.motionDomainId, 10);
+      if (
+        fromDomainId !== ROOT_DOMAIN_ID &&
+        fromDomainId !== currentFromDomain
+      ) {
+        setCurrentFromDomain(fromDomainId);
+      } else {
+        setCurrentFromDomain(ROOT_DOMAIN_ID);
+      }
+      if (
+        selectedMotionDomainId !== ROOT_DOMAIN_ID &&
+        selectedMotionDomainId !== fromDomainId
+      ) {
+        setFieldValue('motionDomainId', fromDomainId);
+      }
+    },
+    [currentFromDomain, setFieldValue, values.motionDomainId],
+  );
+
+  const handleFilterMotionDomains = useCallback(
+    (optionDomain) => {
+      const optionDomainId = parseInt(optionDomain.value, 10);
+      if (currentFromDomain === ROOT_DOMAIN_ID) {
+        return optionDomainId === ROOT_DOMAIN_ID;
+      }
+      return (
+        optionDomainId === currentFromDomain ||
+        optionDomainId === ROOT_DOMAIN_ID
+      );
+    },
+    [currentFromDomain],
+  );
+
+  const handleMotionDomainChange = useCallback(
+    (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
+    [setFieldValue],
+  );
+
+  const canMakePayment = userHasPermission && isOneTxPaymentExtensionEnabled;
+
+  const inputDisabled = !canMakePayment || onlyForceAction;
 
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none' }}
-          text={MSG.title}
-          className={styles.title}
-        />
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                onDomainChange={handleMotionDomainChange}
+                disabled={values.forceAction}
+                /*
+                 * @NOTE We can only create a motion to vote in a subdomain if we
+                 * create a payment from that subdomain
+                 */
+                filterDomains={handleFilterMotionDomains}
+                initialSelectedDomain={domainId}
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {hasRoles && isVotingExtensionEnabled && (
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={!canMakePayment}
+              />
+            )}
+          </div>
+        </div>
       </DialogSection>
       {!userHasPermission && (
         <DialogSection>
@@ -276,6 +364,7 @@ const CreatePaymentDialogForm = ({
               label={MSG.from}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
+              onChange={handleFromDomainChange}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -312,7 +401,8 @@ const CreatePaymentDialogForm = ({
             name="recipient"
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
-            disabled={!userHasPermission || !canMakePayment}
+            disabled={inputDisabled}
+            placeholder={MSG.userPickerPlaceholder}
           />
         </div>
       </DialogSection>
@@ -333,7 +423,7 @@ const CreatePaymentDialogForm = ({
                   selectedToken && selectedToken.decimals,
                 ),
               }}
-              disabled={!userHasPermission || !canMakePayment}
+              disabled={inputDisabled}
               /*
                * Force the input component into an error state
                * This is needed for our custom error state to work
@@ -348,7 +438,7 @@ const CreatePaymentDialogForm = ({
               name="tokenAddress"
               elementOnly
               appearance={{ alignOptions: 'right', theme: 'grey' }}
-              disabled={!userHasPermission || !canMakePayment}
+              disabled={inputDisabled}
             />
           </div>
           {values.tokenAddress === AddressZero && (
@@ -372,7 +462,7 @@ const CreatePaymentDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotation"
-          disabled={!userHasPermission || !canMakePayment}
+          disabled={inputDisabled}
         />
       </DialogSection>
       {!userHasPermission && (
@@ -398,12 +488,18 @@ const CreatePaymentDialogForm = ({
           </div>
         </DialogSection>
       )}
-      {userHasPermission && !canMakePayment && (
+      {userHasPermission && !isOneTxPaymentExtensionEnabled && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionFromMessage}>
             <FormattedMessage {...MSG.noOneTxExtension} />
           </div>
         </DialogSection>
+      )}
+      {onlyForceAction && (
+        <NotEnoughReputation
+          appearance={{ marginTop: 'negative' }}
+          domainId={domainId}
+        />
       )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
@@ -420,12 +516,7 @@ const CreatePaymentDialogForm = ({
            * Disable Form submissions if either the form is invalid, or
            * if our custom state was triggered.
            */
-          disabled={
-            !isValid ||
-            !!customAmountError ||
-            !canMakePayment ||
-            !userHasPermission
-          }
+          disabled={!isValid || !!customAmountError || inputDisabled}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

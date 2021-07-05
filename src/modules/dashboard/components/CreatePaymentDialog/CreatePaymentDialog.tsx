@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useQuery } from '@apollo/client';
@@ -6,12 +6,12 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
-import Dialog, { DialogProps } from '~core/Dialog';
+import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { ColonySubscribedUsersDocument, Colony } from '~data/index';
+import { ColonySubscribedUsersDocument } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -30,31 +30,46 @@ const MSG = defineMessages({
 });
 
 export interface FormValues {
+  forceAction: boolean;
   domainId: string;
   recipient: Address;
   amount: string;
   tokenAddress: Address;
   annotation: string;
+  motionDomainId: string;
 }
 
-interface CustomWizardDialogProps {
-  prevStep: string;
-  colony: Colony;
-}
-
-type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+type Props = Required<DialogProps> &
+  WizardDialogType<object> &
+  ActionDialogProps & {
+    ethDomainId?: number;
+  };
 
 const displayName = 'dashboard.CreatePaymentDialog';
 
 const CreatePaymentDialog = ({
   colony: { tokens = [], colonyAddress, nativeTokenAddress, colonyName },
   colony,
+  isVotingExtensionEnabled,
   callStep,
   prevStep,
   cancel,
   close,
+  ethDomainId,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_MOTION_EXPENDITURE_PAYMENT${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_EXPENDITURE_PAYMENT${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
 
   const validationSchema = yup.object().shape({
     domainId: yup.number().required(),
@@ -73,6 +88,8 @@ const CreatePaymentDialog = ({
       .moreThan(0, () => MSG.amountZero),
     tokenAddress: yup.string().address().required(),
     annotation: yup.string().max(4000),
+    forceAction: yup.boolean(),
+    motionDomainId: yup.number(),
   });
 
   const { data: subscribedUsersData } = useQuery(
@@ -91,6 +108,7 @@ const CreatePaymentDialog = ({
             profile: { walletAddress },
           },
           annotation: annotationMessage,
+          motionDomainId,
         } = payload;
 
         const selectedToken = tokens.find(
@@ -111,6 +129,7 @@ const CreatePaymentDialog = ({
             decimals,
           },
           annotationMessage,
+          motionDomainId,
         };
       }),
       withMeta({ history }),
@@ -121,29 +140,41 @@ const CreatePaymentDialog = ({
   return (
     <ActionForm
       initialValues={{
-        domainId: ROOT_DOMAIN_ID.toString(),
+        forceAction: false,
+        domainId: (ethDomainId === 0 || ethDomainId === undefined
+          ? ROOT_DOMAIN_ID
+          : ethDomainId
+        ).toString(),
         recipient: undefined,
         amount: undefined,
         tokenAddress: nativeTokenAddress,
         annotation: undefined,
+        motionDomainId: ROOT_DOMAIN_ID,
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT}
-      error={ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_ERROR}
-      success={ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT_SUCCESS}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
       transform={transform}
       onSuccess={close}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <DialogForm
-            {...formValues}
-            colony={colony}
-            back={() => callStep(prevStep)}
-            subscribedUsers={subscribedUsersData.subscribedUsers}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <DialogForm
+              {...formValues}
+              colony={colony}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+              back={() => callStep(prevStep)}
+              subscribedUsers={subscribedUsersData.subscribedUsers}
+              ethDomainId={ethDomainId}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };

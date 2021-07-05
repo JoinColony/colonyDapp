@@ -45,6 +45,7 @@
     "label.optional": "Optional",
     "label.email": "Email address",
     "label.password": "Password",
+    "label.force": "Force",
     "placeholder.email": "handle@domain.com",
     "placeholder.password": "Password",
 
@@ -52,6 +53,16 @@
 
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
+    "transaction.group.deposit.title": "Activate tokens",
+    "transaction.group.deposit.description": "Activate tokens",
+    "transaction.TokenLockingClient.deposit.title": "Activate tokens",
+    "transaction.TokenLockingClient.deposit.description": "Activate tokens",
+    "transaction.group.withdraw.title": "Withdraw tokens",
+    "transaction.group.withdraw.description": "Withdraw tokens",
+    "transaction.TokenLockingClient.withdraw.title": "Withdraw tokens",
+    "transaction.TokenLockingClient.withdraw.description": "Withdraw tokens",
+    "transaction.TokenClient.approve.title": "Approve amount of tokens",
+    "transaction.TokenClient.approve.description": "Approve amount of tokens",
     "transaction.group.transaction.batch.createUser.title": "Claim Username",
     "transaction.group.transaction.batch.createUser.description": "Claim Your Username \"{0}\"",
     "transaction.NetworkClient.registerUserLabel.title": "Claim Username",
@@ -138,10 +149,10 @@
     "transaction.ColonyClient.moveFundsBetweenPotsWithProofs.title": "Move Funds Between Pots",
     "transaction.ColonyClient.moveFundsBetweenPotsWithProofs.description": "Move Token from one team pot to another",
 
-    "transaction.group.setUserRoles.title": "Set user roles",
-    "transaction.group.setUserRoles.description": "Set user roles",
-    "transaction.ColonyClient.setUserRolesWithProofs.title": "Set user roles",
-    "transaction.ColonyClient.setUserRolesWithProofs.description": "Set user roles",
+    "transaction.group.setUserRoles.title": "Assign permissions",
+    "transaction.group.setUserRoles.description": "Assign permissions",
+    "transaction.ColonyClient.setUserRolesWithProofs.title": "Assign permissions",
+    "transaction.ColonyClient.setUserRolesWithProofs.description": "Assign permissions",
 
     "transaction.group.enableExtension.title": "Enable Colony Extension",
     "transaction.group.enableExtension.description": "Enable Colony Extension",
@@ -154,8 +165,51 @@
     "transaction.ColonyClient.upgradeExtension.title": "Upgrade Colony Extension",
     "transaction.ColonyClient.upgradeExtension.description": "Upgrade Colony Extension",
 
+    "transaction.VotingReputationClient.createMotion.title": "Create motion",
+    "transaction.VotingReputationClient.createMotion.description": "Create motion",
+    "transaction.group.createMotion.title": "Create motion",
+    "transaction.group.createMotion.description": "Create motion",
+
+    "transaction.group.stakeMotion.title": "Stake motion",
+    "transaction.group.stakeMotion.description": "Stake motion",
+    "transaction.VotingReputationClient.stakeMotionWithProofs.title": "Stake motion",
+    "transaction.VotingReputationClient.stakeMotionWithProofs.description": "Stake motion",
+    "transaction.ColonyClient.approveStake.title": "Approve stake",
+    "transaction.ColonyClient.approveStake.description": "Approve stake",
+
+    "transaction.group.voteMotion.title": "Vote on motion",
+    "transaction.group.voteMotion.description": "Vote on motion",
+    "transaction.VotingReputationClient.submitVote.title": "Submit motion vote",
+    "transaction.VotingReputationClient.submitVote.description": "Submit motion vote",
+
+    "transaction.group.revealVoteMotion.title": "Reveal vote",
+    "transaction.group.revealVoteMotion.description": "Reveal vote",
+    "transaction.VotingReputationClient.revealVote.title": "Reveal your motion vote",
+    "transaction.VotingReputationClient.revealVote.description": "Reveal your motion vote",
+
+    "transaction.group.finalizeMotion.title": "Finalize motion",
+    "transaction.group.finalizeMotion.description": "Finalize motion",
+    "transaction.VotingReputationClient.finalizeMotion.title": "Finalize motion",
+    "transaction.VotingReputationClient.finalizeMotion.description": "Finalize motion",
+
+    "transaction.group.claimMotionRewards.title": "Claim Rewards",
+    "transaction.group.claimMotionRewards.description": "Claim Rewards",
+    "transaction.VotingReputationClient.claimRewardWithProofs.title": "Claim motion reward",
+    "transaction.VotingReputationClient.claimRewardWithProofs.description": "Claim motion reward",
+
+    "transaction.group.escalateMotion.title": "Escalate Motion",
+    "transaction.group.escalateMotion.description": "Escalate Motion",
+    "transaction.VotingReputationClient.escalateMotionWithProofs.title": "Escalate Motion",
+    "transaction.VotingReputationClient.escalateMotionWithProofs.description": "Escalate Motion",
+
+
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
+    "message.motionVote.title": "Sign message to vote",
+    "message.motionVote.description": "Sign message to vote",
+    "message.motionRevealVote.title": "Sign message to reveal vote",
+    "message.motionRevealVote.description": "Sign message to reveal vote",
+
     "permission.6": "Administration",
     "permission.2": "Arbitration",
     "permission.3": "Architecture",

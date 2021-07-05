@@ -5,6 +5,8 @@ import Tag from '~core/Tag';
 
 import { ColonyExtension } from '~data/index';
 
+import styles from './ExtensionStatus.css';
+
 const MSG = defineMessages({
   installed: {
     id: 'dashboard.Extensions.ExtensionStatus.installed',
@@ -28,7 +30,7 @@ const MSG = defineMessages({
   },
   notEnabled: {
     id: 'dashboard.Extensions.ExtensionStatus.notEnabled',
-    defaultMessage: 'Not enabled',
+    defaultMessage: 'Disabled',
   },
 });
 
@@ -59,12 +61,12 @@ const ExtensionStatus = ({
     status = MSG.installed;
   }
   return (
-    <>
+    <div className={styles.tagContainer}>
       {!deprecatedOnly ? <Tag appearance={{ theme }} text={status} /> : null}
       {installedExtension && installedExtension.details.deprecated ? (
         <Tag appearance={{ theme: 'danger' }} text={MSG.deprecated} />
       ) : null}
-    </>
+    </div>
   );
 };
 

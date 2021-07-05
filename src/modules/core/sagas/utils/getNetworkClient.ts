@@ -55,6 +55,18 @@ export default function* getNetworkClient() {
     });
   }
 
+  /*
+   * @TODO Temporary patch, until we figure out the proper way to handle
+   * the different reputation miner for Xdai QA
+   */
+  if (DEFAULT_NETWORK === Network.Xdai) {
+    return yield call(getColonyNetworkClient, network, signer, {
+      networkAddress:
+        process.env.NETWORK_CONTRACT_ADDRESS || colonyNetworkAddresses[network],
+      reputationOracleEndpoint: 'https://qaxdai.colony.io/reputation',
+    });
+  }
+
   return yield call(getColonyNetworkClient, network, signer, {
     /*
      * Manually set the network address to instantiate the network client

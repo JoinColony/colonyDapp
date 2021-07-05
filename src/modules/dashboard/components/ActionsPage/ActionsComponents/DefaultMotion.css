@@ -1,0 +1,61 @@
+.reputation {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.annotation {
+  margin-bottom: 7px;
+}
+
+.text {
+  margin: 0 6px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.progressStateContainer {
+  display: flex;
+  align-items: baseline;
+}
+
+.progressBarContainer {
+  margin-left: 2px;
+  width: 116px;
+}
+
+.voteResultsWrapper {
+  margin: 14px 0;
+  padding: 17px 23px;
+  border: 1px solid var(--text-disabled);
+  border-radius: var(--radius-large);
+}
+
+.voteResultsWrapper > div {
+  margin-top: 20px;
+}
+
+.escalation {
+  flex: 1 1 auto;
+  padding-bottom: 1px;
+  text-align: right;
+}
+
+.helpProgressBar {
+  align-self: flex-end;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.helpEscalate {
+  display: inline-block;
+  width: 25px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.tooltip {
+  padding: 10px;
+  width: 220px;
+  text-align: left;
+}

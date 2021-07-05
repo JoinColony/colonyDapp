@@ -7,6 +7,9 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
 import ColorTag, { Color } from '~core/ColorTag';
 import FriendlyName from '~core/FriendlyName';
+import MemberReputation from '~core/MemberReputation';
+import Tag from '~core/Tag';
+import Numeral from '~core/Numeral';
 
 import {
   ColonyAction,
@@ -26,11 +29,15 @@ import {
   getColonyRoleSetMessageDescriptorsIds,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
+import { getFormattedTokenValue } from '~utils/tokens';
+import { MotionVote } from '~utils/colonyMotions';
+
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import { EventValues } from '../ActionsPageFeed';
 import { STATUS } from '../../ActionsPage/types';
 import { EVENT_ROLES_MAP } from '../../ActionsPage/staticMaps';
+import motionSpecificStyles from '../../ActionsPage/ActionsComponents/DefaultMotion.css';
 
 import styles from './ActionsPageEvent.css';
 
@@ -48,6 +55,14 @@ const MSG = defineMessages({
         You should not be seeing this}
     }`,
   },
+  voteYes: {
+    id: 'dashboard.ActionsPageFeed.ActionsPageEvent.voteYes',
+    defaultMessage: 'YES',
+  },
+  voteNo: {
+    id: 'dashboard.ActionsPageFeed.ActionsPageEvent.voteNo',
+    defaultMessage: 'NO',
+  },
 });
 
 interface Props {
@@ -61,6 +76,7 @@ interface Props {
   actionData: ColonyAction;
   colony: Colony;
   children?: ReactNode;
+  rootHash?: string;
 }
 
 interface DomainMetadata {
@@ -77,16 +93,24 @@ const ActionsPageEvent = ({
   values,
   emmitedBy,
   actionData,
-  colony: { colonyAddress },
+  colony: { colonyAddress, nativeTokenAddress, tokens },
   colony,
   children,
+  rootHash,
 }: Props) => {
   let metadataJSON;
   const [metdataIpfsHash, setMetdataIpfsHash] = useState<string | undefined>(
     undefined,
   );
 
-  const initiator = useUser(values?.agent || values?.user || '');
+  const initiator = useUser(
+    values?.agent ||
+      values?.user ||
+      values?.creator ||
+      values?.staker ||
+      values?.voter ||
+      '',
+  );
 
   const [
     previousDomainMetadata,
@@ -286,6 +310,13 @@ const ActionsPageEvent = ({
 
   const { domainPurpose, domainName, domainColor } = actionData;
 
+  const colonyNativeToken = tokens.find(
+    ({ address }) => address === nativeTokenAddress,
+  );
+  const decimalStakeAmount = getFormattedTokenValue(
+    values?.stakeAmount || 0,
+    colonyNativeToken?.decimals,
+  );
   return (
     <div className={styles.main}>
       <div className={styles.wrapper}>
@@ -326,12 +357,53 @@ const ActionsPageEvent = ({
                 clientOrExtensionType: (
                   <span className={styles.highlight}>{emmitedBy}</span>
                 ),
-                initiator: (
+                initiator: values?.initiator || (
                   <span className={styles.userDecoration}>
                     <FriendlyName user={initiator} autoShrinkAddress />
                   </span>
                 ),
                 storageSlot: values?.slot?.toHexString(),
+                amountTag: (
+                  <div className={styles.amountTag}>
+                    <Tag
+                      appearance={{
+                        theme: 'primary',
+                        colorSchema: 'inverted',
+                        fontSize: 'tiny',
+                        margin: 'none',
+                      }}
+                    >
+                      <Numeral
+                        value={decimalStakeAmount}
+                        suffix={` ${colonyNativeToken?.symbol}`}
+                      />
+                    </Tag>
+                  </div>
+                ),
+                staker: (
+                  <>
+                    <span className={styles.userDecoration}>
+                      <FriendlyName user={initiator} autoShrinkAddress />
+                    </span>
+                    <div className={motionSpecificStyles.reputation}>
+                      <MemberReputation
+                        walletAddress={values?.staker || values?.voter || ''}
+                        colonyAddress={colony.colonyAddress}
+                        rootHash={rootHash}
+                      />
+                    </div>
+                  </>
+                ),
+                backedSideTag: values?.vote?.eq(MotionVote.Yay)
+                  ? values.motionTag
+                  : values?.objectionTag,
+                voteSide: (
+                  <FormattedMessage
+                    {...(values?.vote?.eq(MotionVote.Yay)
+                      ? MSG.voteYes
+                      : MSG.voteNo)}
+                  />
+                ),
               }}
             />
           </div>

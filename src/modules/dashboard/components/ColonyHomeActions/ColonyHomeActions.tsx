@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { Extension } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
@@ -18,11 +19,17 @@ import TokenMintDialog from '~dashboard/TokenMintDialog';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
 import EditColonyDetailsDialog from '~dashboard/EditColonyDetailsDialog';
 import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
-import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useNetworkContracts,
+  useColonyExtensionsQuery,
+} from '~data/index';
 import { ALLOWED_NETWORKS } from '~constants';
-import { mustBeUpgraded } from '../../checks';
+import { colonyMustBeUpgraded, oneTxMustBeUpgraded } from '../../checks';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -35,11 +42,20 @@ const MSG = defineMessages({
 
 interface Props {
   colony: Colony;
+  ethDomainId?: number;
 }
 
-const ColonyHomeActions = ({ colony }: Props) => {
+const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
   const { networkId, username, ethereal } = useLoggedInUser();
   const { version: networkVersion } = useNetworkContracts();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
+
+  const { data } = useColonyExtensionsQuery({
+    variables: { address: colony.colonyAddress },
+  });
 
   const startWizardFlow = useNaiveBranchingDialogWizard([
     {
@@ -57,6 +73,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStep: 'dashboard.CreatePaymentDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -64,6 +81,8 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         colony,
         prevStep: 'dashboard.ExpendituresDialog',
+        isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {
@@ -75,6 +94,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStepUnlockToken: 'dashboard.UnlockTokenDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -82,6 +102,8 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
+        isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {
@@ -89,6 +111,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -98,6 +121,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStep: 'dashboard.CreateDomainDialog',
         nextStepEdit: 'dashboard.EditDomainDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -105,6 +129,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -112,13 +137,8 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
         colony,
-      },
-    },
-    {
-      component: EditDomainDialog,
-      props: {
-        prevStep: 'dashboard.ManageDomainsDialog',
-        colony,
+        isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {
@@ -130,6 +150,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
         nextStepEditDetails: 'dashboard.EditColonyDetailsDialog',
         nextStepVersionUpgrade: 'dashboard.NetworkContractUpgradeDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -137,6 +158,8 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
+        isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {
@@ -151,6 +174,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -158,6 +182,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.AdvancedDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -165,6 +190,7 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
     {
@@ -172,13 +198,24 @@ const ColonyHomeActions = ({ colony }: Props) => {
       props: {
         prevStep: 'dashboard.ManageFundsDialog',
         colony,
+        isVotingExtensionEnabled,
       },
     },
   ]);
 
+  const oneTxPaymentExtension = data?.processedColony?.installedExtensions.find(
+    ({
+      details: { initialized, missingPermissions },
+      extensionId: extensionName,
+    }) =>
+      initialized &&
+      !missingPermissions.length &&
+      extensionName === Extension.OneTxPayment,
+  );
+  const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
-  const mustUpgrade = mustBeUpgraded(colony, networkVersion as string);
+  const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
 
   return (
     <Button
@@ -189,7 +226,8 @@ const ColonyHomeActions = ({ colony }: Props) => {
         mustUpgrade ||
         !isNetworkAllowed ||
         !hasRegisteredProfile ||
-        !colony?.isDeploymentFinished
+        !colony?.isDeploymentFinished ||
+        mustUpgradeOneTx
       }
     />
   );

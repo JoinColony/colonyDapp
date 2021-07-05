@@ -14,6 +14,7 @@ const displayName = 'Button';
 export interface Appearance {
   theme?:
     | 'primary'
+    | 'pink'
     | 'secondary'
     | 'danger'
     | 'dangerLink'
@@ -21,6 +22,7 @@ export interface Appearance {
     | 'underlinedBold'
     | 'blue'
     | 'no-style'
+    | 'white'
     | 'dottedArea';
   colorSchema?: 'inverted' | 'grey';
   size?: 'small' | 'medium' | 'large';

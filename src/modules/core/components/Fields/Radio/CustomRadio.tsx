@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
-import { MessageDescriptor, useIntl } from 'react-intl';
+import { MessageDescriptor, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { useField } from 'formik';
 
 import { getMainClasses } from '~utils/css';
 import Icon from '~core/Icon';
-import { SimpleMessageValues } from '~types/index';
+import { UniversalMessageValues } from '~types/index';
 
 import styles from './CustomRadio.css';
 
@@ -24,11 +24,11 @@ export interface Props {
   /** Label text */
   label: string | MessageDescriptor;
   /** Description text values for intl interpolation */
-  labelValues?: SimpleMessageValues;
+  labelValues?: UniversalMessageValues;
   /** Button description */
   description?: string | MessageDescriptor;
   /** Description text values for intl interpolation */
-  descriptionValues?: SimpleMessageValues;
+  descriptionValues?: UniversalMessageValues;
   /** Button icon */
   icon?: string;
   /** If the input is checked */
@@ -55,14 +55,8 @@ const CustomRadio = ({
   icon,
 }: Props) => {
   const [, { error }, { setValue }] = useField(name);
-  const { formatMessage } = useIntl();
   const inputRef = useRef<string>(inputId || nanoid());
-  const labelText =
-    typeof label === 'object' ? formatMessage(label, labelValues) : label;
-  const descriptionText =
-    typeof description === 'object'
-      ? formatMessage(description, descriptionValues)
-      : description;
+
   return (
     <label
       className={getMainClasses(appearance, styles, {
@@ -89,9 +83,23 @@ const CustomRadio = ({
         </div>
       )}
       <div className={styles.content}>
-        {labelText && <span className={styles.label}>{labelText}</span>}
-        {descriptionText && (
-          <span className={styles.description}>{descriptionText}</span>
+        {label && (
+          <span className={styles.label}>
+            {label === 'string' ? (
+              label
+            ) : (
+              <FormattedMessage {...label} values={labelValues} />
+            )}
+          </span>
+        )}
+        {description && (
+          <span className={styles.description}>
+            {description === 'string' ? (
+              description
+            ) : (
+              <FormattedMessage {...description} values={descriptionValues} />
+            )}
+          </span>
         )}
       </div>
     </label>

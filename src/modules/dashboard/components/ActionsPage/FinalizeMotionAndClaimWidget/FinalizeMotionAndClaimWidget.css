@@ -1,0 +1,84 @@
+.main {
+  display: block;
+}
+
+.stateMargin {
+  padding: 0 0 100px 0;
+}
+
+.main h4 {
+  padding: 10px 0;
+}
+
+.item {
+  composes: item from '../DetailsWidget/DetailsWidget.css';
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.itemWithForcedBorder {
+  composes: item;
+}
+
+.itemWithForcedBorder:last-child {
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.itemWithForcedBorder .label {
+  color: var(--dark);
+}
+
+.title {
+  composes: item;
+}
+
+.title .label {
+  color: var(--dark);
+}
+
+.label {
+  composes: label from '../DetailsWidget/DetailsWidget.css';
+}
+
+.value {
+  composes: value from '../DetailsWidget/DetailsWidget.css';
+}
+
+.value button {
+  width: 100px;
+  font-size: var(--size-smal);
+}
+
+.help {
+  display: inline-block;
+  margin-left: 7px;
+  width: 33px;
+  cursor: pointer;
+}
+
+.tooltip {
+  padding: 10px;
+  width: 220px;
+}
+
+.voteResults {
+  margin: 0;
+}
+
+.stateMargin .voteResults {
+  margin: 30px 0 0 0;
+}
+
+.outcome {
+  padding: 10px 0;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.loading {
+  padding-top: 20px;
+}

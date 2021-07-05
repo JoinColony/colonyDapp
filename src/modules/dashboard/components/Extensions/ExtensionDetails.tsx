@@ -1,5 +1,5 @@
-import React from 'react';
-import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
+import React, { useCallback } from 'react';
+import { FormattedDate, defineMessages, FormattedMessage } from 'react-intl';
 import {
   useParams,
   Switch,
@@ -7,10 +7,19 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
-import { ColonyRole, ColonyVersion } from '@colony/colony-js';
+import {
+  ColonyRole,
+  ColonyVersion,
+  Extension,
+  extensionsIncompatibilityMap,
+} from '@colony/colony-js';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
+import Warning from '~core/Warning';
+import Icon from '~core/Icon';
+import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
+import { useDialog, ConfirmDialog } from '~core/Dialog';
 import {
   Colony,
   useLoggedInUser,
@@ -21,10 +30,11 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { DialogActionButton } from '~core/Button';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import { useTransformer } from '~utils/hooks';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import extensionData from '~data/staticData/extensionData';
 import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
-import { ConfirmDialog } from '~core/Dialog';
+
 import PermissionsLabel from '~core/PermissionsLabel';
 import ExternalLink from '~core/ExternalLink';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
@@ -42,6 +52,8 @@ import ExtensionActionButton from './ExtensionActionButton';
 import ExtensionSetup from './ExtensionSetup';
 import ExtensionStatus from './ExtensionStatus';
 import ExtensionUpgrade from './ExtensionUpgrade';
+import ExtensionUninstallConfirmDialog from './ExtensionUninstallConfirmDialog';
+import { ExtensionsMSG } from './extensionsMSG';
 
 const MSG = defineMessages({
   title: {
@@ -116,6 +128,10 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionDetails.setup',
     defaultMessage: 'Setup',
   },
+  warning: {
+    id: 'dashboard.Extensions.ExtensionDetails.warning',
+    defaultMessage: `This extension is incompatible with your current colony version. You must upgrade your colony before installing it.`,
+  },
 });
 
 interface Props {
@@ -133,6 +149,20 @@ const ExtensionDetails = ({
   const match = useRouteMatch();
   const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
   const { walletAddress, username, ethereal } = useLoggedInUser();
+
+  const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
+  const { isVotingExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
+
+  const handleUpgradeColony = useCallback(
+    () =>
+      openUpgradeVersionDialog({
+        colony,
+        isVotingExtensionEnabled,
+      }),
+    [colony, openUpgradeVersionDialog, isVotingExtensionEnabled],
+  );
 
   const { data, loading } = useColonyExtensionQuery({
     variables: { colonyAddress, extensionId },
@@ -181,6 +211,12 @@ const ExtensionDetails = ({
     hasRegisteredProfile &&
     !(extesionCanBeInstalled || extesionCanBeEnabled) &&
     latestNetworkExtensionVersion > extension.currentVersion;
+
+  const extensionCompatible = extension?.currentVersion
+    ? !extensionsIncompatibilityMap[extensionId][extension.currentVersion].find(
+        (version: number) => version === parseInt(colonyVersion, 10),
+      )
+    : false;
 
   let tableData;
 
@@ -236,6 +272,9 @@ const ExtensionDetails = ({
       {
         label: MSG.latestVersion,
         value: `v${extension.currentVersion}`,
+        icon: !extensionCompatible && (
+          <Icon name="triangle-warning" title={MSG.warning} />
+        ),
       },
       {
         label: MSG.developer,
@@ -258,12 +297,35 @@ const ExtensionDetails = ({
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
   }
 
+  const uninstallModalProps = {
+    [Extension.VotingReputation]: {
+      heading: ExtensionsMSG.headingVotingUninstall,
+      children: <Warning text={ExtensionsMSG.textVotingUninstall} />,
+    },
+    [Extension.OneTxPayment]: {
+      heading: ExtensionsMSG.headingDefaultUninstall,
+      children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
+    },
+    DEFAULT: {
+      heading: ExtensionsMSG.headingDefaultUninstall,
+      children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
+    },
+  };
+
   return (
     <div className={styles.main}>
       <div>
         <BreadCrumb elements={breadCrumbs} />
         <hr className={styles.headerLine} />
         <div>
+          {!extensionCompatible && (
+            <Warning
+              text={MSG.warning}
+              buttonText={{ id: 'button.upgrade' }}
+              handleClick={handleUpgradeColony}
+              disabled={!canInstall}
+            />
+          )}
           <Switch>
             <Route
               exact
@@ -275,7 +337,18 @@ const ExtensionDetails = ({
                     appearance={{ size: 'medium', margin: 'small' }}
                     text={extension.name}
                   />
-                  <FormattedMessage {...extension.descriptionLong} />
+                  <FormattedMessage
+                    {...extension.descriptionLong}
+                    values={{
+                      h4: (chunks) => (
+                        <Heading
+                          tagName="h4"
+                          appearance={{ size: 'medium', margin: 'small' }}
+                          text={chunks}
+                        />
+                      ),
+                    }}
+                  />
                 </div>
               )}
             />
@@ -314,18 +387,24 @@ const ExtensionDetails = ({
                 colonyVersion={colonyVersion}
                 installedExtension={installedExtension}
                 extension={extension}
+                extensionCompatible={extensionCompatible}
               />
             )}
             {extensionCanBeUpgraded && (
-              <ExtensionUpgrade colony={colony} extension={extension} />
+              <ExtensionUpgrade
+                colony={colony}
+                extension={extension}
+                canUpgrade={canInstall}
+              />
             )}
           </div>
           <Table appearance={{ theme: 'lined' }}>
             <TableBody>
-              {tableData.map(({ label, value }) => (
+              {tableData.map(({ label, value, icon }) => (
                 <TableRow key={label.id}>
                   <TableCell className={styles.cellLabel}>
                     <FormattedMessage {...label} />
+                    {icon && <span className={styles.iconWrapper}>{icon}</span>}
                   </TableCell>
                   <TableCell className={styles.cellData}>{value}</TableCell>
                 </TableRow>
@@ -353,11 +432,11 @@ const ExtensionDetails = ({
           {extesionCanBeUninstalled ? (
             <div className={styles.buttonUninstall}>
               <DialogActionButton
-                dialog={ConfirmDialog}
-                dialogProps={{
-                  heading: MSG.headingUninstall,
-                  children: <FormattedMessage {...MSG.textUninstall} />,
-                }}
+                dialog={ExtensionUninstallConfirmDialog}
+                dialogProps={
+                  uninstallModalProps[extensionId] ||
+                  uninstallModalProps.DEFAULT
+                }
                 appearance={{ theme: 'blue' }}
                 submit={ActionTypes.COLONY_EXTENSION_UNINSTALL}
                 error={ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR}

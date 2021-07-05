@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useField } from 'formik';
 import { PopperProps } from 'react-popper';
+import { MessageDescriptor } from 'react-intl';
 
 import InputLabel from '~core/Fields/InputLabel';
-import Icon from '~core/Icon';
-import { Tooltip } from '~core/Popover';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import styles from './Toggle.css';
@@ -18,20 +19,25 @@ interface Appearance {
 interface Props {
   appearance?: Appearance;
   name: string;
-  label?: string;
+  label?: string | MessageDescriptor;
+  labelValues?: SimpleMessageValues;
   disabled?: boolean;
-  tooltipText?: string;
+  tooltipText?: string | MessageDescriptor;
+  tooltipTextValues?: SimpleMessageValues;
   elementOnly?: boolean;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
   tooltipPopperProps?: Omit<PopperProps, 'children'>;
+  onChange?: (value: boolean) => any;
 }
 
 const Toggle = ({
   appearance,
   name,
   label,
+  labelValues,
   disabled = false,
   elementOnly = false,
+  tooltipTextValues,
   tooltipText,
   tooltipPopperProps = {
     placement: 'right-start',
@@ -44,15 +50,30 @@ const Toggle = ({
       },
     ],
   },
+  onChange: onChangeCallback,
 }: Props) => {
   const [{ onChange, value }] = useField(name);
 
   const mainClasses = getMainClasses(appearance, styles);
 
+  const handleOnChange = useCallback(
+    (event) => {
+      onChange(event);
+      if (onChangeCallback) {
+        onChangeCallback(value);
+      }
+    },
+    [onChange, onChangeCallback, value],
+  );
+
   return (
     <div className={styles.container}>
       {!elementOnly && label && (
-        <InputLabel label={label} appearance={{ colorSchema: 'grey' }} />
+        <InputLabel
+          label={label}
+          labelValues={labelValues}
+          appearance={{ colorSchema: 'grey' }}
+        />
       )}
       <div>
         <input
@@ -63,27 +84,19 @@ const Toggle = ({
           aria-checked={value}
           aria-disabled={disabled}
           className={styles.delegate}
-          onChange={onChange}
+          onChange={handleOnChange}
         />
         <span className={disabled ? styles.toggleDisabled : styles.toggle}>
           <span className={value ? mainClasses : styles.toggleSwitch} />
         </span>
       </div>
       {tooltipText && (
-        <Tooltip
-          appearance={{ theme: 'dark' }}
-          content={tooltipText}
-          trigger="hover"
-          popperProps={tooltipPopperProps}
-        >
-          <div className={styles.icon}>
-            <Icon
-              name="question-mark"
-              appearance={{ size: 'small' }}
-              title=""
-            />
-          </div>
-        </Tooltip>
+        <QuestionMarkTooltip
+          className={styles.icon}
+          tooltipText={tooltipText}
+          tooltipPopperProps={tooltipPopperProps}
+          tooltipTextValues={tooltipTextValues}
+        />
       )}
     </div>
   );

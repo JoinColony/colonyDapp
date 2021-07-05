@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}
+
+.tooltipIcon {
+  margin-left: 30px;
+}
+
+.tooltip {
+  width: 195px;
+  font-size: var(--size-small);
+}

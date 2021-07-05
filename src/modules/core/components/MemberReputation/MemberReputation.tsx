@@ -27,6 +27,7 @@ interface Props {
   walletAddress: Address;
   colonyAddress: Address;
   domainId?: number;
+  rootHash?: string;
 }
 
 interface Reputation {
@@ -75,9 +76,10 @@ const MemberReputation = ({
   walletAddress,
   colonyAddress,
   domainId = ROOT_DOMAIN_ID,
+  rootHash,
 }: Props) => {
   const { data: userReputationData } = useUserReputationQuery({
-    variables: { address: walletAddress, colonyAddress, domainId },
+    variables: { address: walletAddress, colonyAddress, domainId, rootHash },
   });
 
   const { data: totalReputation } = useUserReputationQuery({
@@ -85,6 +87,7 @@ const MemberReputation = ({
       address: AddressZero,
       colonyAddress,
       domainId,
+      rootHash,
     },
   });
 

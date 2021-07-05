@@ -47,6 +47,11 @@
   justify-content: space-between;
 }
 
+.upperContainer {
+  composes: container;
+  align-items: baseline;
+}
+
 .heading {
   margin-bottom: 20px;
   font-size: var(--size-medium-l);
@@ -70,6 +75,16 @@
   width: 340px;
 }
 
+.countdownContainer {
+  composes: details;
+  display: flex;
+  align-items: baseline;
+}
+
+.votingCountdownContainer {
+  justify-content: flex-end;
+}
+
 .addressInTitle div {
   display: inline-block;
   font-size: var(--size-medium);
@@ -79,4 +94,8 @@
 .titleDecoration {
   font-weight: var(--weight-bold);
   color: var(--pink);
+}
+
+.tagWrapper {
+  margin-bottom: 13px;
 }

@@ -1,0 +1,83 @@
+.main {
+  display: block;
+  margin: 0px 0 100px 0;
+}
+
+.main h4 {
+  padding: 20px 0;
+}
+
+.item {
+  composes: item from '../DetailsWidget/DetailsWidget.css';
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  composes: label from '../DetailsWidget/DetailsWidget.css';
+}
+
+.value {
+  composes: value from '../DetailsWidget/DetailsWidget.css';
+  max-width: 220px;
+}
+
+.value button {
+  width: 100px;
+  font-size: var(--size-smal);
+}
+
+.reputation i {
+  vertical-align: initial;
+}
+
+.help {
+  display: inline-block;
+  margin-left: 7px;
+  width: 33px;
+  cursor: pointer;
+}
+
+.tooltip {
+  padding: 10px;
+  width: 220px;
+}
+
+.range {
+  display: inline-block;
+  margin: -2px 5px 0;
+  height: 1px;
+  width: 30px;
+  position: relative;
+  vertical-align: middle;
+  background: linear-gradient(90deg, var(--pink) 4.65%, var(--primary) 101.16%);
+}
+
+.range::before, .range::after {
+  display: block;
+  height: 5px;
+  width: 5px;
+  position: absolute;
+  top: -2px;
+  border-radius: 50%;
+  content: "";
+}
+
+.range::before {
+  left: 0;
+  background-color: var(--pink);
+}
+
+.range::after {
+  right: 0;
+  background-color: var(--primary);
+}
+
+.tokenIcon {
+  display: inline-block;
+  margin-top: -3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}

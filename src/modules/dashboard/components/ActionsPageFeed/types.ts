@@ -42,6 +42,17 @@ export interface SystemInfo {
  */
 export enum SystemMessagesName {
   EnoughExitRecoveryApprovals = 'EnoughExitRecoveryApprovals',
+  MotionHasPassed = 'MotionHasPassed',
+  MotionHasFailedNotFinalizable = 'MotionHasFailedNotFinalizable',
+  MotionHasFailedFinalizable = 'MotionHasFailedFinalizable',
+  MotionRevealPhase = 'MotionRevealPhase',
+  MotionVotingPhase = 'MotionVotingPhase',
+  MotionFullyStaked = 'MotionFullyStaked',
+  MotionFullyStakedAfterObjection = 'MotionFullyStakedAfterObjection',
+  ObjectionFullyStaked = 'ObjectionFullyStaked',
+  MotionRevealResultObjectionWon = 'MotionRevealResultObjectionWon',
+  MotionRevealResultMotionWon = 'MotionRevealResultMotionWon',
+  MotionCanBeEscalated = 'MotionCanBeEscalated',
 }
 
 export interface SystemMessage {

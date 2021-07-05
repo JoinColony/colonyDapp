@@ -17,6 +17,8 @@ interface Props {
   currentlyCheckedValue: string;
   /** HTML field name */
   name: string;
+  /** Disable the input */
+  disabled?: boolean;
 }
 
 const displayName = 'CustomRadioGroup';
@@ -26,20 +28,37 @@ const CustomRadioGroup = ({
   currentlyCheckedValue,
   name,
   appearance = { direction: 'horizontal' },
+  disabled,
 }: Props) => {
   return (
     <div className={getMainClasses(appearance, styles)}>
-      {options.map(({ value, label, appearance: optionApperance, ...rest }) => (
-        <CustomRadio
-          checked={currentlyCheckedValue === value}
-          name={name}
-          value={value}
-          label={label}
-          key={value}
-          appearance={{ ...optionApperance, direction: appearance.direction }}
-          {...rest}
-        />
-      ))}
+      {options.map(
+        /*
+         * We need to take out both `checked` and `name`, as to not be
+         * overwritten when spreading the `rest` object
+         */
+        ({
+          value,
+          label,
+          appearance: optionApperance,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          checked,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          name: optionName,
+          ...rest
+        }) => (
+          <CustomRadio
+            checked={currentlyCheckedValue === value}
+            name={name}
+            value={value}
+            label={label}
+            key={value}
+            appearance={{ ...optionApperance, direction: appearance.direction }}
+            disabled={disabled}
+            {...rest}
+          />
+        ),
+      )}
     </div>
   );
 };

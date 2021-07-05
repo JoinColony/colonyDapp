@@ -21,7 +21,7 @@ const ColonyBackText = () => {
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
-  if (!data) return null;
+  if (!data?.processedColony) return null;
   const { displayName, colonyName: ensName } = data.processedColony;
   return (
     <FormattedMessage

@@ -9,8 +9,8 @@ export { default as InputStatus } from './InputStatus';
 export { default as Select, Appearance, SelectOption } from './Select';
 export { default as TokenSymbolSelector } from './TokenSymbolSelector';
 export { default as Textarea, TextareaAutoresize } from './Textarea';
-export { default as Radio } from './Radio';
-export { default as RadioGroup } from './RadioGroup';
+export { default as Radio, CustomRadio, CustomRadioProps } from './Radio';
+export { default as RadioGroup, CustomRadioGroup } from './RadioGroup';
 export { default as Annotations } from './Annotations';
 export { default as Toggle } from './Toggle';
 

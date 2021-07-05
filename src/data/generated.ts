@@ -277,11 +277,25 @@ export type Query = {
   colonyExtension?: Maybe<ColonyExtension>;
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
+  colonyReputation?: Maybe<Scalars['String']>;
   domains: Array<SubgraphDomain>;
+  eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
+  historicColonyRoles: Array<ProcessedRoles>;
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
+  motionCurrentUserVoted: Scalars['Boolean'];
+  motionFinalized: Scalars['Boolean'];
+  motionObjectionAnnotation: MotionObjectionAnnotation;
+  motionStakerReward: MotionStakerRewards;
+  motionStakes: MotionStakes;
+  motionStatus: Scalars['String'];
+  motionTimeoutPeriods: MotionTimeoutPeriods;
+  motionUserVoteRevealed: MotionVoteReveal;
+  motionVoteResults: MotionVoteResults;
+  motionVoterReward: MotionVoterReward;
+  motionsSystemMessages: Array<SystemMessage>;
   networkContracts: NetworkContracts;
   networkExtensionVersion: Scalars['Int'];
   processedColony: ProcessedColony;
@@ -291,6 +305,7 @@ export type Query = {
   recoveryRolesAndApprovalsForSession: Array<UsersAndRecoveryApprovals>;
   recoveryRolesUsers: Array<User>;
   recoverySystemMessagesForSession: Array<SystemMessage>;
+  stakeAmountsForMotion: StakeAmounts;
   subscribedUsers: Array<User>;
   systemInfo: SystemInfo;
   token: Token;
@@ -302,6 +317,7 @@ export type Query = {
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
   username: Scalars['String'];
+  votingState: VotingState;
 };
 
 
@@ -357,8 +373,20 @@ export type QueryColonyNameArgs = {
 };
 
 
+export type QueryColonyReputationArgs = {
+  address: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
+};
+
+
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
+};
+
+
+export type QueryEventsForMotionArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -374,7 +402,85 @@ export type QueryGetRecoveryStorageSlotArgs = {
 };
 
 
+export type QueryHistoricColonyRolesArgs = {
+  colonyAddress: Scalars['String'];
+  blockNumber: Scalars['Int'];
+};
+
+
 export type QueryLegacyNumberOfRecoveryRolesArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionCurrentUserVotedArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+};
+
+
+export type QueryMotionFinalizedArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionObjectionAnnotationArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionStakerRewardArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+};
+
+
+export type QueryMotionStakesArgs = {
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  motionId: Scalars['Int'];
+};
+
+
+export type QueryMotionStatusArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionTimeoutPeriodsArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryMotionUserVoteRevealedArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+};
+
+
+export type QueryMotionVoteResultsArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+};
+
+
+export type QueryMotionVoterRewardArgs = {
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+};
+
+
+export type QueryMotionsSystemMessagesArgs = {
+  motionId: Scalars['Int'];
   colonyAddress: Scalars['String'];
 };
 
@@ -415,6 +521,13 @@ export type QueryRecoveryRolesUsersArgs = {
 export type QueryRecoverySystemMessagesForSessionArgs = {
   blockNumber: Scalars['Int'];
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryStakeAmountsForMotionArgs = {
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  motionId: Scalars['Int'];
 };
 
 
@@ -462,11 +575,18 @@ export type QueryUserReputationArgs = {
   address: Scalars['String'];
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
+  rootHash?: Maybe<Scalars['String']>;
 };
 
 
 export type QueryUsernameArgs = {
   address: Scalars['String'];
+};
+
+
+export type QueryVotingStateArgs = {
+  colonyAddress: Scalars['String'];
+  motionId: Scalars['Int'];
 };
 
 export enum SuggestionStatus {
@@ -513,6 +633,7 @@ export type User = {
   tokenAddresses: Array<Scalars['String']>;
   tokenTransfers: Array<Transfer>;
   tokens: Array<Token>;
+  userLock: UserLock;
 };
 
 
@@ -529,6 +650,13 @@ export type UserReputationArgs = {
 
 export type UserTokensArgs = {
   walletAddress: Scalars['String'];
+};
+
+
+export type UserUserLockArgs = {
+  walletAddress: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 export type UserProfile = {
@@ -633,6 +761,9 @@ export type ColonyAction = {
   domainPurpose: Scalars['String'];
   domainColor: Scalars['String'];
   blockNumber: Scalars['Int'];
+  motionState?: Maybe<Scalars['String']>;
+  motionDomain: Scalars['Int'];
+  rootHash?: Maybe<Scalars['String']>;
 };
 
 export type NetworkContractsInput = {
@@ -723,6 +854,24 @@ export type ColonyExtensionDetails = {
   version: Scalars['Int'];
 };
 
+export type UserToken = {
+  address: Scalars['String'];
+  decimals: Scalars['Int'];
+  name: Scalars['String'];
+  symbol: Scalars['String'];
+  iconHash?: Maybe<Scalars['String']>;
+  verified: Scalars['Boolean'];
+  balance: Scalars['String'];
+};
+
+export type UserLock = {
+  balance: Scalars['String'];
+  nativeToken?: Maybe<UserToken>;
+  totalObligation: Scalars['String'];
+  pendingBalance: Scalars['String'];
+  activeTokens: Scalars['String'];
+};
+
 export type ProcessedMetaColony = {
   id: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -730,6 +879,14 @@ export type ProcessedMetaColony = {
   displayName?: Maybe<Scalars['String']>;
   avatarHash?: Maybe<Scalars['String']>;
   avatarURL?: Maybe<Scalars['String']>;
+};
+
+export type MotionStakes = {
+  totalNAYStakes: Scalars['String'];
+  remainingToFullyYayStaked: Scalars['String'];
+  remainingToFullyNayStaked: Scalars['String'];
+  maxUserStake: Scalars['String'];
+  minUserStake: Scalars['String'];
 };
 
 export type UsersAndRecoveryApprovals = {
@@ -741,6 +898,55 @@ export type UsersAndRecoveryApprovals = {
 export type ActionThatNeedsAttention = {
   transactionHash: Scalars['String'];
   needsAction: Scalars['Boolean'];
+};
+
+export type MotionVoteReveal = {
+  revealed: Scalars['Boolean'];
+  vote: Scalars['Int'];
+};
+
+export type MotionVoteResults = {
+  currentUserVoteSide: Scalars['Int'];
+  yayVotes: Scalars['String'];
+  yayVoters: Array<Scalars['String']>;
+  nayVotes: Scalars['String'];
+  nayVoters: Array<Scalars['String']>;
+};
+
+export type MotionStakerRewards = {
+  stakingRewardYay: Scalars['String'];
+  stakingRewardNay: Scalars['String'];
+  stakesYay: Scalars['String'];
+  stakesNay: Scalars['String'];
+  claimedReward: Scalars['Boolean'];
+};
+
+export type StakeSidesAmounts = {
+  YAY: Scalars['String'];
+  NAY: Scalars['String'];
+};
+
+export type StakeAmounts = {
+  totalStaked: StakeSidesAmounts;
+  userStake: StakeSidesAmounts;
+  requiredStake: Scalars['String'];
+};
+
+export type MotionObjectionAnnotation = {
+  address: Scalars['String'];
+  metadata: Scalars['String'];
+};
+
+export type VotingState = {
+  thresholdValue: Scalars['String'];
+  totalVotedReputation: Scalars['String'];
+  skillRep: Scalars['String'];
+};
+
+export type MotionVoterReward = {
+  reward: Scalars['String'];
+  minReward: Scalars['String'];
+  maxReward: Scalars['String'];
 };
 
 export type ByColonyFilter = {
@@ -890,6 +1096,13 @@ export type ProcessedColony = {
   installedExtensions: Array<ColonyExtension>;
 };
 
+export type MotionTimeoutPeriods = {
+  timeLeftToEscalate: Scalars['Int'];
+  timeLeftToReveal: Scalars['Int'];
+  timeLeftToStake: Scalars['Int'];
+  timeLeftToSubmit: Scalars['Int'];
+};
+
 export type ActionsFilter = {
   payment_contains?: Maybe<Scalars['String']>;
 };
@@ -898,6 +1111,11 @@ export type EventsFilter = {
   associatedColony_contains?: Maybe<Scalars['String']>;
   associatedColony?: Maybe<Scalars['String']>;
   name_in?: Maybe<Array<Scalars['String']>>;
+};
+
+export type MotionsFilter = {
+  associatedColony?: Maybe<Scalars['String']>;
+  extensionAddress?: Maybe<Scalars['String']>;
 };
 
 export type OneTxPayment = {
@@ -937,9 +1155,33 @@ export type SubscriptionEvent = {
   processedValues: EventProcessedValues;
 };
 
+export type SubscriptionMotion = {
+  id: Scalars['String'];
+  fundamentalChainId: Scalars['String'];
+  transaction: SubgraphTransaction;
+  associatedColony: SubgraphColony;
+  domain: SubgraphDomain;
+  extensionAddress: Scalars['String'];
+  agent: Scalars['String'];
+  stakes: Array<Scalars['String']>;
+  requiredStake: Scalars['String'];
+  escalated: Scalars['Boolean'];
+  state: Scalars['String'];
+  action: Scalars['String'];
+  type: Scalars['String'];
+  args: SubscriptionMotionArguments;
+  timeoutPeriods: MotionTimeoutPeriods;
+};
+
+export type SubscriptionMotionArguments = {
+  amount: Scalars['String'];
+  token: SubgraphToken;
+};
+
 export type Subscription = {
   oneTxPayments: Array<OneTxPayment>;
   events: Array<SubscriptionEvent>;
+  motions: Array<SubscriptionMotion>;
 };
 
 
@@ -954,6 +1196,13 @@ export type SubscriptionEventsArgs = {
   skip: Scalars['Int'];
   first: Scalars['Int'];
   where: EventsFilter;
+};
+
+
+export type SubscriptionMotionsArgs = {
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  where: MotionsFilter;
 };
 
 export type TokensFragment = (
@@ -1110,6 +1359,7 @@ export type UserReputationQueryVariables = Exact<{
   address: Scalars['String'];
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
+  rootHash?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1123,6 +1373,21 @@ export type UserTokensQueryVariables = Exact<{
 export type UserTokensQuery = { user: (
     Pick<User, 'id' | 'tokenAddresses'>
     & { tokens: Array<Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol' | 'balance'>> }
+  ) };
+
+export type UserBalanceWithLockQueryVariables = Exact<{
+  address: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type UserBalanceWithLockQuery = { user: (
+    Pick<User, 'id'>
+    & { userLock: (
+      Pick<UserLock, 'balance' | 'totalObligation' | 'pendingBalance' | 'activeTokens'>
+      & { nativeToken?: Maybe<Pick<UserToken, 'decimals' | 'name' | 'symbol' | 'balance' | 'address' | 'verified'>> }
+    ) }
   ) };
 
 export type UsernameQueryVariables = Exact<{
@@ -1246,7 +1511,7 @@ export type ColonyActionQueryVariables = Exact<{
 
 
 export type ColonyActionQuery = { colonyAction: (
-    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'blockNumber'>
+    Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
@@ -1279,6 +1544,14 @@ export type ActionsThatNeedAttentionQueryVariables = Exact<{
 
 
 export type ActionsThatNeedAttentionQuery = { actionsThatNeedAttention: Array<Maybe<Pick<ActionThatNeedsAttention, 'transactionHash' | 'needsAction'>>> };
+
+export type EventsForMotionQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type EventsForMotionQuery = { eventsForMotion: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'blockNumber' | 'transactionHash'>> };
 
 export type RecoveryEventsForSessionQueryVariables = Exact<{
   blockNumber: Scalars['Int'];
@@ -1347,6 +1620,120 @@ export type LegacyNumberOfRecoveryRolesQueryVariables = Exact<{
 
 
 export type LegacyNumberOfRecoveryRolesQuery = Pick<Query, 'legacyNumberOfRecoveryRoles'>;
+
+export type MotionStakesQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  motionId: Scalars['Int'];
+}>;
+
+
+export type MotionStakesQuery = { motionStakes: Pick<MotionStakes, 'totalNAYStakes' | 'remainingToFullyYayStaked' | 'remainingToFullyNayStaked' | 'maxUserStake' | 'minUserStake'> };
+
+export type MotionsSystemMessagesQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionsSystemMessagesQuery = { motionsSystemMessages: Array<Pick<SystemMessage, 'type' | 'name' | 'createdAt'>> };
+
+export type MotionVoterRewardQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+}>;
+
+
+export type MotionVoterRewardQuery = { motionVoterReward: Pick<MotionVoterReward, 'reward' | 'minReward' | 'maxReward'> };
+
+export type MotionUserVoteRevealedQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+}>;
+
+
+export type MotionUserVoteRevealedQuery = { motionUserVoteRevealed: Pick<MotionVoteReveal, 'revealed' | 'vote'> };
+
+export type MotionVoteResultsQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+}>;
+
+
+export type MotionVoteResultsQuery = { motionVoteResults: Pick<MotionVoteResults, 'currentUserVoteSide' | 'yayVotes' | 'yayVoters' | 'nayVotes' | 'nayVoters'> };
+
+export type VotingStateQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  motionId: Scalars['Int'];
+}>;
+
+
+export type VotingStateQuery = { votingState: Pick<VotingState, 'thresholdValue' | 'totalVotedReputation' | 'skillRep'> };
+
+export type MotionCurrentUserVotedQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+}>;
+
+
+export type MotionCurrentUserVotedQuery = Pick<Query, 'motionCurrentUserVoted'>;
+
+export type MotionFinalizedQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionFinalizedQuery = Pick<Query, 'motionFinalized'>;
+
+export type MotionStakerRewardQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+}>;
+
+
+export type MotionStakerRewardQuery = { motionStakerReward: Pick<MotionStakerRewards, 'stakingRewardYay' | 'stakingRewardNay' | 'stakesYay' | 'stakesNay' | 'claimedReward'> };
+
+export type StakeAmountsForMotionQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  motionId: Scalars['Int'];
+}>;
+
+
+export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: (
+    Pick<StakeAmounts, 'requiredStake'>
+    & { totalStaked: Pick<StakeSidesAmounts, 'YAY' | 'NAY'>, userStake: Pick<StakeSidesAmounts, 'YAY' | 'NAY'> }
+  ) };
+
+export type MotionObjectionAnnotationQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionObjectionAnnotationQuery = { motionObjectionAnnotation: Pick<MotionObjectionAnnotation, 'address' | 'metadata'> };
+
+export type MotionStatusQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionStatusQuery = Pick<Query, 'motionStatus'>;
+
+export type MotionTimeoutPeriodsQueryVariables = Exact<{
+  motionId: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type MotionTimeoutPeriodsQuery = { motionTimeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> };
 
 export type SubgraphDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -1520,6 +1907,25 @@ export type ColonyMembersWithReputationQueryVariables = Exact<{
 
 export type ColonyMembersWithReputationQuery = Pick<Query, 'colonyMembersWithReputation'>;
 
+export type ColonyReputationQueryVariables = Exact<{
+  address: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
+}>;
+
+
+export type ColonyReputationQuery = Pick<Query, 'colonyReputation'>;
+
+export type ColonyHistoricRolesQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  blockNumber: Scalars['Int'];
+}>;
+
+
+export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
+    Pick<ProcessedRoles, 'address'>
+    & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
+  )> };
+
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -1537,7 +1943,7 @@ export type SubscriptionSubgraphEventsSubscription = { events: Array<(
       ) }
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
     ) }
   )> };
 
@@ -1585,8 +1991,39 @@ export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Arr
       ) }
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
-      & { block: Pick<SubgraphBlock, 'timestamp'> }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
     ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
+  )> };
+
+export type SubscriptionsMotionsSubscriptionVariables = Exact<{
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  colonyAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
+}>;
+
+
+export type SubscriptionsMotionsSubscription = { motions: Array<(
+    Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'stakes' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
+    & { associatedColony: (
+      { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
+      & { token: (
+        Pick<SubgraphToken, 'decimals' | 'symbol'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ), transaction: (
+      { hash: SubgraphTransaction['id'] }
+      & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
+    ), domain: (
+      Pick<SubgraphDomain, 'name'>
+      & { ethDomainId: SubgraphDomain['domainChainId'] }
+    ), args: (
+      Pick<SubscriptionMotionArguments, 'amount'>
+      & { token: (
+        Pick<SubgraphToken, 'symbol' | 'decimals'>
+        & { address: SubgraphToken['id'] }
+      ) }
+    ), timeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> }
   )> };
 
 export const ColonyProfileFragmentDoc = gql`
@@ -2227,8 +2664,8 @@ export type UserWithReputationQueryHookResult = ReturnType<typeof useUserWithRep
 export type UserWithReputationLazyQueryHookResult = ReturnType<typeof useUserWithReputationLazyQuery>;
 export type UserWithReputationQueryResult = Apollo.QueryResult<UserWithReputationQuery, UserWithReputationQueryVariables>;
 export const UserReputationDocument = gql`
-    query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
-  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
+    query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int, $rootHash: String) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId, rootHash: $rootHash) @client
 }
     `;
 
@@ -2247,6 +2684,7 @@ export const UserReputationDocument = gql`
  *      address: // value for 'address'
  *      colonyAddress: // value for 'colonyAddress'
  *      domainId: // value for 'domainId'
+ *      rootHash: // value for 'rootHash'
  *   },
  * });
  */
@@ -2302,6 +2740,55 @@ export function useUserTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type UserTokensQueryHookResult = ReturnType<typeof useUserTokensQuery>;
 export type UserTokensLazyQueryHookResult = ReturnType<typeof useUserTokensLazyQuery>;
 export type UserTokensQueryResult = Apollo.QueryResult<UserTokensQuery, UserTokensQueryVariables>;
+export const UserBalanceWithLockDocument = gql`
+    query UserBalanceWithLock($address: String!, $tokenAddress: String!, $colonyAddress: String!) {
+  user(address: $address) {
+    id
+    userLock(walletAddress: $address, tokenAddress: $tokenAddress, colonyAddress: $colonyAddress) @client {
+      balance
+      nativeToken {
+        decimals
+        name
+        symbol
+        balance
+        address
+        verified
+      }
+      totalObligation
+      pendingBalance
+      activeTokens
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserBalanceWithLockQuery__
+ *
+ * To run a query within a React component, call `useUserBalanceWithLockQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserBalanceWithLockQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserBalanceWithLockQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *      tokenAddress: // value for 'tokenAddress'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useUserBalanceWithLockQuery(baseOptions?: Apollo.QueryHookOptions<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>) {
+        return Apollo.useQuery<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>(UserBalanceWithLockDocument, baseOptions);
+      }
+export function useUserBalanceWithLockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>) {
+          return Apollo.useLazyQuery<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>(UserBalanceWithLockDocument, baseOptions);
+        }
+export type UserBalanceWithLockQueryHookResult = ReturnType<typeof useUserBalanceWithLockQuery>;
+export type UserBalanceWithLockLazyQueryHookResult = ReturnType<typeof useUserBalanceWithLockLazyQuery>;
+export type UserBalanceWithLockQueryResult = Apollo.QueryResult<UserBalanceWithLockQuery, UserBalanceWithLockQueryVariables>;
 export const UsernameDocument = gql`
     query Username($address: String!) {
   username(address: $address) @client
@@ -2821,11 +3308,14 @@ export const ColonyActionDocument = gql`
     domainName
     domainPurpose
     domainColor
+    motionState
+    motionDomain
     roles {
       id
       setTo
     }
     blockNumber
+    rootHash
   }
 }
     `;
@@ -3000,6 +3490,46 @@ export function useActionsThatNeedAttentionLazyQuery(baseOptions?: Apollo.LazyQu
 export type ActionsThatNeedAttentionQueryHookResult = ReturnType<typeof useActionsThatNeedAttentionQuery>;
 export type ActionsThatNeedAttentionLazyQueryHookResult = ReturnType<typeof useActionsThatNeedAttentionLazyQuery>;
 export type ActionsThatNeedAttentionQueryResult = Apollo.QueryResult<ActionsThatNeedAttentionQuery, ActionsThatNeedAttentionQueryVariables>;
+export const EventsForMotionDocument = gql`
+    query EventsForMotion($motionId: Int!, $colonyAddress: String!) {
+  eventsForMotion(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
+  }
+}
+    `;
+
+/**
+ * __useEventsForMotionQuery__
+ *
+ * To run a query within a React component, call `useEventsForMotionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventsForMotionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventsForMotionQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useEventsForMotionQuery(baseOptions?: Apollo.QueryHookOptions<EventsForMotionQuery, EventsForMotionQueryVariables>) {
+        return Apollo.useQuery<EventsForMotionQuery, EventsForMotionQueryVariables>(EventsForMotionDocument, baseOptions);
+      }
+export function useEventsForMotionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsForMotionQuery, EventsForMotionQueryVariables>) {
+          return Apollo.useLazyQuery<EventsForMotionQuery, EventsForMotionQueryVariables>(EventsForMotionDocument, baseOptions);
+        }
+export type EventsForMotionQueryHookResult = ReturnType<typeof useEventsForMotionQuery>;
+export type EventsForMotionLazyQueryHookResult = ReturnType<typeof useEventsForMotionLazyQuery>;
+export type EventsForMotionQueryResult = Apollo.QueryResult<EventsForMotionQuery, EventsForMotionQueryVariables>;
 export const RecoveryEventsForSessionDocument = gql`
     query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
   recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
@@ -3291,6 +3821,480 @@ export function useLegacyNumberOfRecoveryRolesLazyQuery(baseOptions?: Apollo.Laz
 export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesQuery>;
 export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
 export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
+export const MotionStakesDocument = gql`
+    query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
+  motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+    totalNAYStakes
+    remainingToFullyYayStaked
+    remainingToFullyNayStaked
+    maxUserStake
+    minUserStake
+  }
+}
+    `;
+
+/**
+ * __useMotionStakesQuery__
+ *
+ * To run a query within a React component, call `useMotionStakesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionStakesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionStakesQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *      motionId: // value for 'motionId'
+ *   },
+ * });
+ */
+export function useMotionStakesQuery(baseOptions?: Apollo.QueryHookOptions<MotionStakesQuery, MotionStakesQueryVariables>) {
+        return Apollo.useQuery<MotionStakesQuery, MotionStakesQueryVariables>(MotionStakesDocument, baseOptions);
+      }
+export function useMotionStakesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionStakesQuery, MotionStakesQueryVariables>) {
+          return Apollo.useLazyQuery<MotionStakesQuery, MotionStakesQueryVariables>(MotionStakesDocument, baseOptions);
+        }
+export type MotionStakesQueryHookResult = ReturnType<typeof useMotionStakesQuery>;
+export type MotionStakesLazyQueryHookResult = ReturnType<typeof useMotionStakesLazyQuery>;
+export type MotionStakesQueryResult = Apollo.QueryResult<MotionStakesQuery, MotionStakesQueryVariables>;
+export const MotionsSystemMessagesDocument = gql`
+    query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
+  motionsSystemMessages(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useMotionsSystemMessagesQuery__
+ *
+ * To run a query within a React component, call `useMotionsSystemMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionsSystemMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionsSystemMessagesQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionsSystemMessagesQuery(baseOptions?: Apollo.QueryHookOptions<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>) {
+        return Apollo.useQuery<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>(MotionsSystemMessagesDocument, baseOptions);
+      }
+export function useMotionsSystemMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>) {
+          return Apollo.useLazyQuery<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>(MotionsSystemMessagesDocument, baseOptions);
+        }
+export type MotionsSystemMessagesQueryHookResult = ReturnType<typeof useMotionsSystemMessagesQuery>;
+export type MotionsSystemMessagesLazyQueryHookResult = ReturnType<typeof useMotionsSystemMessagesLazyQuery>;
+export type MotionsSystemMessagesQueryResult = Apollo.QueryResult<MotionsSystemMessagesQuery, MotionsSystemMessagesQueryVariables>;
+export const MotionVoterRewardDocument = gql`
+    query MotionVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    reward
+    minReward
+    maxReward
+  }
+}
+    `;
+
+/**
+ * __useMotionVoterRewardQuery__
+ *
+ * To run a query within a React component, call `useMotionVoterRewardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionVoterRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionVoterRewardQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useMotionVoterRewardQuery(baseOptions?: Apollo.QueryHookOptions<MotionVoterRewardQuery, MotionVoterRewardQueryVariables>) {
+        return Apollo.useQuery<MotionVoterRewardQuery, MotionVoterRewardQueryVariables>(MotionVoterRewardDocument, baseOptions);
+      }
+export function useMotionVoterRewardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionVoterRewardQuery, MotionVoterRewardQueryVariables>) {
+          return Apollo.useLazyQuery<MotionVoterRewardQuery, MotionVoterRewardQueryVariables>(MotionVoterRewardDocument, baseOptions);
+        }
+export type MotionVoterRewardQueryHookResult = ReturnType<typeof useMotionVoterRewardQuery>;
+export type MotionVoterRewardLazyQueryHookResult = ReturnType<typeof useMotionVoterRewardLazyQuery>;
+export type MotionVoterRewardQueryResult = Apollo.QueryResult<MotionVoterRewardQuery, MotionVoterRewardQueryVariables>;
+export const MotionUserVoteRevealedDocument = gql`
+    query MotionUserVoteRevealed($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionUserVoteRevealed(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    revealed
+    vote
+  }
+}
+    `;
+
+/**
+ * __useMotionUserVoteRevealedQuery__
+ *
+ * To run a query within a React component, call `useMotionUserVoteRevealedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionUserVoteRevealedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionUserVoteRevealedQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useMotionUserVoteRevealedQuery(baseOptions?: Apollo.QueryHookOptions<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>) {
+        return Apollo.useQuery<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>(MotionUserVoteRevealedDocument, baseOptions);
+      }
+export function useMotionUserVoteRevealedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>) {
+          return Apollo.useLazyQuery<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>(MotionUserVoteRevealedDocument, baseOptions);
+        }
+export type MotionUserVoteRevealedQueryHookResult = ReturnType<typeof useMotionUserVoteRevealedQuery>;
+export type MotionUserVoteRevealedLazyQueryHookResult = ReturnType<typeof useMotionUserVoteRevealedLazyQuery>;
+export type MotionUserVoteRevealedQueryResult = Apollo.QueryResult<MotionUserVoteRevealedQuery, MotionUserVoteRevealedQueryVariables>;
+export const MotionVoteResultsDocument = gql`
+    query MotionVoteResults($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionVoteResults(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    currentUserVoteSide
+    yayVotes
+    yayVoters
+    nayVotes
+    nayVoters
+  }
+}
+    `;
+
+/**
+ * __useMotionVoteResultsQuery__
+ *
+ * To run a query within a React component, call `useMotionVoteResultsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionVoteResultsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionVoteResultsQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useMotionVoteResultsQuery(baseOptions?: Apollo.QueryHookOptions<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>) {
+        return Apollo.useQuery<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>(MotionVoteResultsDocument, baseOptions);
+      }
+export function useMotionVoteResultsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>) {
+          return Apollo.useLazyQuery<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>(MotionVoteResultsDocument, baseOptions);
+        }
+export type MotionVoteResultsQueryHookResult = ReturnType<typeof useMotionVoteResultsQuery>;
+export type MotionVoteResultsLazyQueryHookResult = ReturnType<typeof useMotionVoteResultsLazyQuery>;
+export type MotionVoteResultsQueryResult = Apollo.QueryResult<MotionVoteResultsQuery, MotionVoteResultsQueryVariables>;
+export const VotingStateDocument = gql`
+    query VotingState($colonyAddress: String!, $motionId: Int!) {
+  votingState(colonyAddress: $colonyAddress, motionId: $motionId) @client {
+    thresholdValue
+    totalVotedReputation
+    skillRep
+  }
+}
+    `;
+
+/**
+ * __useVotingStateQuery__
+ *
+ * To run a query within a React component, call `useVotingStateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVotingStateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVotingStateQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      motionId: // value for 'motionId'
+ *   },
+ * });
+ */
+export function useVotingStateQuery(baseOptions?: Apollo.QueryHookOptions<VotingStateQuery, VotingStateQueryVariables>) {
+        return Apollo.useQuery<VotingStateQuery, VotingStateQueryVariables>(VotingStateDocument, baseOptions);
+      }
+export function useVotingStateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VotingStateQuery, VotingStateQueryVariables>) {
+          return Apollo.useLazyQuery<VotingStateQuery, VotingStateQueryVariables>(VotingStateDocument, baseOptions);
+        }
+export type VotingStateQueryHookResult = ReturnType<typeof useVotingStateQuery>;
+export type VotingStateLazyQueryHookResult = ReturnType<typeof useVotingStateLazyQuery>;
+export type VotingStateQueryResult = Apollo.QueryResult<VotingStateQuery, VotingStateQueryVariables>;
+export const MotionCurrentUserVotedDocument = gql`
+    query MotionCurrentUserVoted($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionCurrentUserVoted(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
+}
+    `;
+
+/**
+ * __useMotionCurrentUserVotedQuery__
+ *
+ * To run a query within a React component, call `useMotionCurrentUserVotedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionCurrentUserVotedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionCurrentUserVotedQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useMotionCurrentUserVotedQuery(baseOptions?: Apollo.QueryHookOptions<MotionCurrentUserVotedQuery, MotionCurrentUserVotedQueryVariables>) {
+        return Apollo.useQuery<MotionCurrentUserVotedQuery, MotionCurrentUserVotedQueryVariables>(MotionCurrentUserVotedDocument, baseOptions);
+      }
+export function useMotionCurrentUserVotedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionCurrentUserVotedQuery, MotionCurrentUserVotedQueryVariables>) {
+          return Apollo.useLazyQuery<MotionCurrentUserVotedQuery, MotionCurrentUserVotedQueryVariables>(MotionCurrentUserVotedDocument, baseOptions);
+        }
+export type MotionCurrentUserVotedQueryHookResult = ReturnType<typeof useMotionCurrentUserVotedQuery>;
+export type MotionCurrentUserVotedLazyQueryHookResult = ReturnType<typeof useMotionCurrentUserVotedLazyQuery>;
+export type MotionCurrentUserVotedQueryResult = Apollo.QueryResult<MotionCurrentUserVotedQuery, MotionCurrentUserVotedQueryVariables>;
+export const MotionFinalizedDocument = gql`
+    query MotionFinalized($motionId: Int!, $colonyAddress: String!) {
+  motionFinalized(motionId: $motionId, colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useMotionFinalizedQuery__
+ *
+ * To run a query within a React component, call `useMotionFinalizedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionFinalizedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionFinalizedQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionFinalizedQuery(baseOptions?: Apollo.QueryHookOptions<MotionFinalizedQuery, MotionFinalizedQueryVariables>) {
+        return Apollo.useQuery<MotionFinalizedQuery, MotionFinalizedQueryVariables>(MotionFinalizedDocument, baseOptions);
+      }
+export function useMotionFinalizedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionFinalizedQuery, MotionFinalizedQueryVariables>) {
+          return Apollo.useLazyQuery<MotionFinalizedQuery, MotionFinalizedQueryVariables>(MotionFinalizedDocument, baseOptions);
+        }
+export type MotionFinalizedQueryHookResult = ReturnType<typeof useMotionFinalizedQuery>;
+export type MotionFinalizedLazyQueryHookResult = ReturnType<typeof useMotionFinalizedLazyQuery>;
+export type MotionFinalizedQueryResult = Apollo.QueryResult<MotionFinalizedQuery, MotionFinalizedQueryVariables>;
+export const MotionStakerRewardDocument = gql`
+    query MotionStakerReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionStakerReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    stakingRewardYay
+    stakingRewardNay
+    stakesYay
+    stakesNay
+    claimedReward
+  }
+}
+    `;
+
+/**
+ * __useMotionStakerRewardQuery__
+ *
+ * To run a query within a React component, call `useMotionStakerRewardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionStakerRewardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionStakerRewardQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useMotionStakerRewardQuery(baseOptions?: Apollo.QueryHookOptions<MotionStakerRewardQuery, MotionStakerRewardQueryVariables>) {
+        return Apollo.useQuery<MotionStakerRewardQuery, MotionStakerRewardQueryVariables>(MotionStakerRewardDocument, baseOptions);
+      }
+export function useMotionStakerRewardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionStakerRewardQuery, MotionStakerRewardQueryVariables>) {
+          return Apollo.useLazyQuery<MotionStakerRewardQuery, MotionStakerRewardQueryVariables>(MotionStakerRewardDocument, baseOptions);
+        }
+export type MotionStakerRewardQueryHookResult = ReturnType<typeof useMotionStakerRewardQuery>;
+export type MotionStakerRewardLazyQueryHookResult = ReturnType<typeof useMotionStakerRewardLazyQuery>;
+export type MotionStakerRewardQueryResult = Apollo.QueryResult<MotionStakerRewardQuery, MotionStakerRewardQueryVariables>;
+export const StakeAmountsForMotionDocument = gql`
+    query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
+  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+    totalStaked {
+      YAY
+      NAY
+    }
+    userStake {
+      YAY
+      NAY
+    }
+    requiredStake
+  }
+}
+    `;
+
+/**
+ * __useStakeAmountsForMotionQuery__
+ *
+ * To run a query within a React component, call `useStakeAmountsForMotionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStakeAmountsForMotionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStakeAmountsForMotionQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      userAddress: // value for 'userAddress'
+ *      motionId: // value for 'motionId'
+ *   },
+ * });
+ */
+export function useStakeAmountsForMotionQuery(baseOptions?: Apollo.QueryHookOptions<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>) {
+        return Apollo.useQuery<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>(StakeAmountsForMotionDocument, baseOptions);
+      }
+export function useStakeAmountsForMotionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>) {
+          return Apollo.useLazyQuery<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>(StakeAmountsForMotionDocument, baseOptions);
+        }
+export type StakeAmountsForMotionQueryHookResult = ReturnType<typeof useStakeAmountsForMotionQuery>;
+export type StakeAmountsForMotionLazyQueryHookResult = ReturnType<typeof useStakeAmountsForMotionLazyQuery>;
+export type StakeAmountsForMotionQueryResult = Apollo.QueryResult<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>;
+export const MotionObjectionAnnotationDocument = gql`
+    query MotionObjectionAnnotation($motionId: Int!, $colonyAddress: String!) {
+  motionObjectionAnnotation(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    address
+    metadata
+  }
+}
+    `;
+
+/**
+ * __useMotionObjectionAnnotationQuery__
+ *
+ * To run a query within a React component, call `useMotionObjectionAnnotationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionObjectionAnnotationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionObjectionAnnotationQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionObjectionAnnotationQuery(baseOptions?: Apollo.QueryHookOptions<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>) {
+        return Apollo.useQuery<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>(MotionObjectionAnnotationDocument, baseOptions);
+      }
+export function useMotionObjectionAnnotationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>) {
+          return Apollo.useLazyQuery<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>(MotionObjectionAnnotationDocument, baseOptions);
+        }
+export type MotionObjectionAnnotationQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationQuery>;
+export type MotionObjectionAnnotationLazyQueryHookResult = ReturnType<typeof useMotionObjectionAnnotationLazyQuery>;
+export type MotionObjectionAnnotationQueryResult = Apollo.QueryResult<MotionObjectionAnnotationQuery, MotionObjectionAnnotationQueryVariables>;
+export const MotionStatusDocument = gql`
+    query MotionStatus($motionId: Int!, $colonyAddress: String!) {
+  motionStatus(motionId: $motionId, colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useMotionStatusQuery__
+ *
+ * To run a query within a React component, call `useMotionStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionStatusQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionStatusQuery(baseOptions?: Apollo.QueryHookOptions<MotionStatusQuery, MotionStatusQueryVariables>) {
+        return Apollo.useQuery<MotionStatusQuery, MotionStatusQueryVariables>(MotionStatusDocument, baseOptions);
+      }
+export function useMotionStatusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionStatusQuery, MotionStatusQueryVariables>) {
+          return Apollo.useLazyQuery<MotionStatusQuery, MotionStatusQueryVariables>(MotionStatusDocument, baseOptions);
+        }
+export type MotionStatusQueryHookResult = ReturnType<typeof useMotionStatusQuery>;
+export type MotionStatusLazyQueryHookResult = ReturnType<typeof useMotionStatusLazyQuery>;
+export type MotionStatusQueryResult = Apollo.QueryResult<MotionStatusQuery, MotionStatusQueryVariables>;
+export const MotionTimeoutPeriodsDocument = gql`
+    query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
+  motionTimeoutPeriods(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    timeLeftToStake
+    timeLeftToSubmit
+    timeLeftToReveal
+    timeLeftToEscalate
+  }
+}
+    `;
+
+/**
+ * __useMotionTimeoutPeriodsQuery__
+ *
+ * To run a query within a React component, call `useMotionTimeoutPeriodsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMotionTimeoutPeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMotionTimeoutPeriodsQuery({
+ *   variables: {
+ *      motionId: // value for 'motionId'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useMotionTimeoutPeriodsQuery(baseOptions?: Apollo.QueryHookOptions<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>) {
+        return Apollo.useQuery<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>(MotionTimeoutPeriodsDocument, baseOptions);
+      }
+export function useMotionTimeoutPeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>) {
+          return Apollo.useLazyQuery<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>(MotionTimeoutPeriodsDocument, baseOptions);
+        }
+export type MotionTimeoutPeriodsQueryHookResult = ReturnType<typeof useMotionTimeoutPeriodsQuery>;
+export type MotionTimeoutPeriodsLazyQueryHookResult = ReturnType<typeof useMotionTimeoutPeriodsLazyQuery>;
+export type MotionTimeoutPeriodsQueryResult = Apollo.QueryResult<MotionTimeoutPeriodsQuery, MotionTimeoutPeriodsQueryVariables>;
 export const SubgraphDomainsDocument = gql`
     query SubgraphDomains($colonyAddress: String!) {
   domains(where: {colonyAddress: $colonyAddress}) {
@@ -3961,6 +4965,76 @@ export function useColonyMembersWithReputationLazyQuery(baseOptions?: Apollo.Laz
 export type ColonyMembersWithReputationQueryHookResult = ReturnType<typeof useColonyMembersWithReputationQuery>;
 export type ColonyMembersWithReputationLazyQueryHookResult = ReturnType<typeof useColonyMembersWithReputationLazyQuery>;
 export type ColonyMembersWithReputationQueryResult = Apollo.QueryResult<ColonyMembersWithReputationQuery, ColonyMembersWithReputationQueryVariables>;
+export const ColonyReputationDocument = gql`
+    query ColonyReputation($address: String!, $domainId: Int) {
+  colonyReputation(address: $address, domainId: $domainId) @client
+}
+    `;
+
+/**
+ * __useColonyReputationQuery__
+ *
+ * To run a query within a React component, call `useColonyReputationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyReputationQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useColonyReputationQuery(baseOptions?: Apollo.QueryHookOptions<ColonyReputationQuery, ColonyReputationQueryVariables>) {
+        return Apollo.useQuery<ColonyReputationQuery, ColonyReputationQueryVariables>(ColonyReputationDocument, baseOptions);
+      }
+export function useColonyReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyReputationQuery, ColonyReputationQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyReputationQuery, ColonyReputationQueryVariables>(ColonyReputationDocument, baseOptions);
+        }
+export type ColonyReputationQueryHookResult = ReturnType<typeof useColonyReputationQuery>;
+export type ColonyReputationLazyQueryHookResult = ReturnType<typeof useColonyReputationLazyQuery>;
+export type ColonyReputationQueryResult = Apollo.QueryResult<ColonyReputationQuery, ColonyReputationQueryVariables>;
+export const ColonyHistoricRolesDocument = gql`
+    query ColonyHistoricRoles($colonyAddress: String!, $blockNumber: Int!) {
+  historicColonyRoles(colonyAddress: $colonyAddress, blockNumber: $blockNumber) @client {
+    address
+    domains {
+      domainId
+      roles
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyHistoricRolesQuery__
+ *
+ * To run a query within a React component, call `useColonyHistoricRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyHistoricRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyHistoricRolesQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      blockNumber: // value for 'blockNumber'
+ *   },
+ * });
+ */
+export function useColonyHistoricRolesQuery(baseOptions?: Apollo.QueryHookOptions<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>) {
+        return Apollo.useQuery<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>(ColonyHistoricRolesDocument, baseOptions);
+      }
+export function useColonyHistoricRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>(ColonyHistoricRolesDocument, baseOptions);
+        }
+export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHistoricRolesQuery>;
+export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
+export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
@@ -3978,6 +5052,7 @@ export const SubscriptionSubgraphEventsDocument = gql`
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }
@@ -4084,6 +5159,7 @@ export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
     transaction {
       hash: id
       block {
+        id
         timestamp
       }
     }
@@ -4133,3 +5209,78 @@ export function useSubscriptionSubgraphEventsThatAreActionsSubscription(baseOpti
       }
 export type SubscriptionSubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubscriptionSubgraphEventsThatAreActionsSubscription>;
 export type SubscriptionSubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubgraphEventsThatAreActionsSubscription>;
+export const SubscriptionsMotionsDocument = gql`
+    subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
+  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
+    id
+    fundamentalChainId
+    associatedColony {
+      colonyAddress: id
+      id: colonyChainId
+      token {
+        address: id
+        decimals
+        symbol
+      }
+    }
+    transaction {
+      hash: id
+      block {
+        id
+        timestamp
+      }
+    }
+    extensionAddress
+    agent
+    domain {
+      ethDomainId: domainChainId
+      name
+    }
+    stakes
+    requiredStake
+    escalated
+    action
+    state @client
+    type @client
+    args @client {
+      amount
+      token {
+        address: id
+        symbol
+        decimals
+      }
+    }
+    timeoutPeriods @client {
+      timeLeftToStake
+      timeLeftToSubmit
+      timeLeftToReveal
+      timeLeftToEscalate
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubscriptionsMotionsSubscription__
+ *
+ * To run a query within a React component, call `useSubscriptionsMotionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionsMotionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubscriptionsMotionsSubscription({
+ *   variables: {
+ *      skip: // value for 'skip'
+ *      first: // value for 'first'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      extensionAddress: // value for 'extensionAddress'
+ *   },
+ * });
+ */
+export function useSubscriptionsMotionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionsMotionsSubscription, SubscriptionsMotionsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubscriptionsMotionsSubscription, SubscriptionsMotionsSubscriptionVariables>(SubscriptionsMotionsDocument, baseOptions);
+      }
+export type SubscriptionsMotionsSubscriptionHookResult = ReturnType<typeof useSubscriptionsMotionsSubscription>;
+export type SubscriptionsMotionsSubscriptionResult = Apollo.SubscriptionResult<SubscriptionsMotionsSubscription>;

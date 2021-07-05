@@ -3,13 +3,17 @@ import {
   ColonyClientV5,
   ClientType,
   getLogs,
+  ExtensionClient,
+  MotionState as NetworkMotionState,
 } from '@colony/colony-js';
-import { bigNumberify } from 'ethers/utils';
+import { bigNumberify, BigNumberish, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
 import ColonyManagerClass from '~lib/ColonyManager';
 import {
   ColonyActions,
+  ColonyMotions,
+  motionNameMapping,
   ColonyAndExtensionsEvents,
   Address,
   FormattedAction,
@@ -25,7 +29,8 @@ import {
 import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 
-import { getSetUserRolesMessageDescriptorsIds } from '../colonyActions';
+import { getMotionRequiredStake, MotionState } from '../colonyMotions';
+import { availableRoles } from '~dashboard/PermissionManagementDialog';
 
 interface ActionValues {
   recipient: Address;
@@ -37,6 +42,17 @@ interface ActionValues {
   newVersion: string;
   address: Address;
   roles: ActionUserRoles[];
+}
+
+interface MotionValues extends ActionValues {
+  motionNAYStake: string;
+  motionState: MotionState;
+  actionInitiator: string;
+  motionDomain: number;
+  rootHash: string;
+  domainName: string | null;
+  domainColor: number | null;
+  domainPurpose: string | null;
 }
 
 /*
@@ -114,7 +130,7 @@ export const getAllAvailableClients = async (
  */
 export const getEventsForActions = (
   events: ParsedEvent[],
-  actionType: ColonyActions,
+  actionType: ColonyActions | ColonyMotions,
 ): ParsedEvent[] => [
   ...((ACTIONS_EVENTS[actionType] as ColonyAndExtensionsEvents[]) || [])
     ?.map((event) => events.filter(({ name }) => name === event))
@@ -495,10 +511,434 @@ const getRecoveryActionValues = async (
   return recoveryAction;
 };
 
+// Motions
+export const getMotionState = async (
+  motionNetworkState: NetworkMotionState,
+  votingClient: ExtensionClient,
+  motion,
+): Promise<MotionState> => {
+  const totalStakeFraction = await votingClient.getTotalStakeFraction();
+  const requiredStakes = getMotionRequiredStake(
+    motion.skillRep,
+    totalStakeFraction,
+    18,
+  );
+  switch (motionNetworkState) {
+    case NetworkMotionState.Staking:
+      return bigNumberify(motion.stakes[1]).gte(bigNumberify(requiredStakes)) &&
+        bigNumberify(motion.stakes[0]).isZero()
+        ? MotionState.Staked
+        : MotionState.Staking;
+    case NetworkMotionState.Submit:
+      return MotionState.Voting;
+    case NetworkMotionState.Reveal:
+      return MotionState.Reveal;
+    case NetworkMotionState.Closed:
+      return MotionState.Escalation;
+    case NetworkMotionState.Finalizable:
+    case NetworkMotionState.Finalized: {
+      const [nayStakes, yayStakes] = motion.stakes;
+      /*
+       * Both sides staked fully, we go to a vote
+       *
+       * @TODO We're using gte as opposed to just eq to counteract a bug on the contracts
+       * Once that is fixed, we can switch this back to equals
+       */
+      if (nayStakes.gte(requiredStakes) && yayStakes.gte(requiredStakes)) {
+        const [nayVotes, yayVotes] = motion.votes;
+        /*
+         * It only passes if the yay votes outnumber the nay votes
+         * If the votes are equal, it fails
+         */
+        if (yayVotes.gt(nayVotes)) {
+          return MotionState.Passed;
+        }
+        return MotionState.Failed;
+      }
+      /*
+       * If we didn't get to a vote, it only passes if the Yay side stakes fully
+       * otherwise it fails
+       *
+       * @TODO We're using gte as opposed to just eq to counteract a bug on the contracts
+       * Once that is fixed, we can switch this back to equals
+       */
+      if (yayStakes.gte(requiredStakes)) {
+        return MotionState.Passed;
+      }
+      return MotionState.Failed;
+    }
+    case NetworkMotionState.Failed:
+      return MotionState.FailedNoFinalizable;
+    default:
+      return MotionState.Invalid;
+  }
+};
+
+const getMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const motionNetworkState = await votingClient.getMotionState(motionId);
+  const motionState = await getMotionState(
+    motionNetworkState,
+    votingClient,
+    motion,
+  );
+  const tokenAddress = await colonyClient.getToken();
+
+  const motionValues: Partial<MotionValues> = {
+    motionNAYStake: motion.stakes[0].toString(),
+    motionState,
+    address: motionCreatedEvent.address,
+    recipient: motion.altTarget,
+    actionInitiator: motionCreatedEvent.values.creator,
+    tokenAddress,
+    motionDomain: motion.domainId.toNumber(),
+    rootHash: motion.rootHash,
+  };
+
+  return motionValues;
+};
+
+const getMintTokensMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const mintTokensMotionValues: {
+    amount: string;
+  } = {
+    ...motionDefaultValues,
+    amount: bigNumberify(values.args[0] || '0').toString(),
+  };
+
+  return mintTokensMotionValues;
+};
+
+const getCreateDomainMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  let ipfsMetadata: any = null;
+  let domainName = null;
+  let domainColor = null;
+  let domainPurpose = null;
+
+  try {
+    ipfsMetadata = await ipfs.getString(values.args[3]);
+  } catch (error) {
+    log.verbose(
+      'Could not fetch IPFS metadata for domain with hash:',
+      values.args[3],
+    );
+  }
+
+  try {
+    if (ipfsMetadata) {
+      const domainMetadata = JSON.parse(ipfsMetadata);
+
+      domainName = domainMetadata.domainName;
+      domainColor = domainMetadata.domainColor || null;
+      domainPurpose = domainMetadata.domainPurpose || null;
+    }
+  } catch (error) {
+    log.verbose(
+      `Could not parse IPFS metadata for domain, using hash:`,
+      values.args[3],
+      'with object:',
+      ipfsMetadata,
+    );
+  }
+
+  const createDomainMotionValues: {
+    domainName: string | null;
+    domainColor: number | null;
+    domainPurpose: string | null;
+  } = {
+    ...motionDefaultValues,
+    domainColor,
+    domainName,
+    domainPurpose,
+  };
+
+  return createDomainMotionValues;
+};
+
+const getSetUserRolesMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const roleBitMask = parseInt(hexStripZeros(values.args[4]), 16).toString(2);
+  const roleBitMaskArray = roleBitMask.split('').reverse();
+
+  const roles = availableRoles.map((role) => ({
+    id: role,
+    setTo: roleBitMaskArray[role] === '1',
+  }));
+
+  const setUserRolesMotionValues: {
+    recipient: Address;
+    fromDomain: number;
+    roles: ActionUserRoles[];
+  } = {
+    ...motionDefaultValues,
+    recipient: values.args[2],
+    fromDomain: bigNumberify(values.args[3]).toNumber(),
+    roles,
+  };
+
+  return setUserRolesMotionValues;
+};
+
+const getEditDomainMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  let ipfsMetadata: any = null;
+  let domainName = null;
+  let domainColor = null;
+  let domainPurpose = null;
+
+  try {
+    ipfsMetadata = await ipfs.getString(values.args[3]);
+  } catch (error) {
+    log.verbose(
+      'Could not fetch IPFS metadata for domain with hash:',
+      values.args[3],
+    );
+  }
+
+  try {
+    if (ipfsMetadata) {
+      const domainMetadata = JSON.parse(ipfsMetadata);
+
+      domainName = domainMetadata.domainName;
+      domainColor = domainMetadata.domainColor || null;
+      domainPurpose = domainMetadata.domainPurpose || null;
+    }
+  } catch (error) {
+    log.verbose(
+      `Could not parse IPFS metadata for domain, using hash:`,
+      values.args[3],
+      'with object:',
+      ipfsMetadata,
+    );
+  }
+
+  const editDomainMotionValues: {
+    domainName: string | null;
+    domainColor: number | null;
+    domainPurpose: string | null;
+    fromDomain: number;
+  } = {
+    ...motionDefaultValues,
+    domainName,
+    domainColor,
+    domainPurpose,
+    fromDomain: parseInt(values.args[2].toString(), 10),
+  };
+
+  return editDomainMotionValues;
+};
+
+const getColonyEditMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  let colonyDisplayName = null;
+  let colonyAvatarHash = null;
+  let colonyTokens = [];
+  let ipfsMetadata: any = null;
+
+  try {
+    ipfsMetadata = await ipfs.getString(values.args[0]);
+  } catch (error) {
+    log.verbose(
+      'Could not fetch IPFS metadata for colony with hash:',
+      values.args[0],
+    );
+  }
+
+  try {
+    if (ipfsMetadata) {
+      const {
+        colonyDisplayName: displayName,
+        colonyAvatarHash: avatarHash,
+        colonyTokens: tokenAddresses,
+      } = JSON.parse(ipfsMetadata);
+
+      colonyDisplayName = displayName;
+      colonyAvatarHash = avatarHash;
+      colonyTokens = tokenAddresses;
+    }
+  } catch (error) {
+    log.verbose(
+      `Could not parse IPFS metadata for colony, using hash:`,
+      values.args[0],
+      'with object:',
+      ipfsMetadata,
+    );
+  }
+
+  const colonyEditValues: {
+    actionInitiator?: string;
+    colonyDisplayName: string | null;
+    colonyAvatarHash?: string | null;
+    colonyTokens?: string[];
+  } = {
+    ...motionDefaultValues,
+    colonyDisplayName,
+    colonyAvatarHash,
+    colonyTokens,
+  };
+
+  return colonyEditValues;
+};
+
+const getPaymentMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  oneTxPaymentClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = oneTxPaymentClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const paymentMotionValues: {
+    amount: string;
+    tokenAddress: Address;
+    fromDomain: number;
+    recipient: Address;
+  } = {
+    ...motionDefaultValues,
+    amount: values.args[6][0].toString(),
+    tokenAddress: values.args[5][0],
+    fromDomain: values.args[7].toNumber(),
+    recipient: values.args[4][0],
+  };
+
+  return paymentMotionValues;
+};
+
+const getMoveFundsMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const fromDomain = await colonyClient.getDomainFromFundingPot(values.args[5]);
+  const toDomain = await colonyClient.getDomainFromFundingPot(values.args[6]);
+
+  const moveFundsMotionValues: {
+    amount: string;
+    tokenAddress: Address;
+    fromDomain: number;
+    toDomain: number;
+  } = {
+    ...motionDefaultValues,
+    amount: values.args[7].toString(),
+    tokenAddress: values.args[8],
+    fromDomain: fromDomain.toNumber(),
+    toDomain: toDomain.toNumber(),
+  };
+
+  return moveFundsMotionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
-  actionType: ColonyActions,
+  votingClient: ExtensionClient,
+  oneTxPaymentClient: ExtensionClient,
+  actionType: ColonyActions | ColonyMotions,
 ): Promise<ActionValues> => {
   const fallbackValues = {
     recipient: AddressZero,
@@ -596,6 +1036,84 @@ export const getActionValues = async (
         ...recoveryActionValues,
       };
     }
+    case ColonyMotions.MintTokensMotion: {
+      const mintTokensMotionValues = await getMintTokensMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...mintTokensMotionValues,
+      };
+    }
+    case ColonyMotions.MoveFundsMotion: {
+      const motionValues = await getMoveFundsMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...motionValues,
+      };
+    }
+    case ColonyMotions.CreateDomainMotion: {
+      const createDomainMotionValues = await getCreateDomainMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...createDomainMotionValues,
+      };
+    }
+    case ColonyMotions.EditDomainMotion: {
+      const editDomainMotionValues = await getEditDomainMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...editDomainMotionValues,
+      };
+    }
+    case ColonyMotions.SetUserRolesMotion: {
+      const setUserRolesValues = await getSetUserRolesMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...setUserRolesValues,
+      };
+    }
+    case ColonyMotions.ColonyEditMotion: {
+      const colonyEditValues = await getColonyEditMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...colonyEditValues,
+      };
+    }
+    case ColonyMotions.PaymentMotion: {
+      const paymentValues = await getPaymentMotionValues(
+        processedEvents,
+        votingClient,
+        oneTxPaymentClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...paymentValues,
+      };
+    }
     default: {
       return fallbackValues;
     }
@@ -655,18 +1173,6 @@ export const getDomainsforMoveFundsActions = async (
   );
 };
 
-export const getActionTitleMessageDescriptor = (
-  actionType: ColonyActions,
-  roleSetTo: boolean,
-): string => {
-  switch (actionType) {
-    case ColonyActions.SetUserRoles:
-      return getSetUserRolesMessageDescriptorsIds(roleSetTo);
-    default:
-      return 'action.title';
-  }
-};
-
 export const groupSetUserRolesActions = (actions): FormattedAction[] => {
   const groupedActions: FormattedAction[] = [];
 
@@ -709,4 +1215,25 @@ export const groupSetUserRolesActions = (actions): FormattedAction[] => {
   });
 
   return groupedActions;
+};
+
+export const getMotionActionType = async (
+  votingClient: ExtensionClient,
+  oneTxPaymentClient: ExtensionClient,
+  colonyClient: ColonyClient,
+  motionId: BigNumberish,
+) => {
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+
+  if (!values) {
+    const paymentValues = oneTxPaymentClient.interface.parseTransaction({
+      data: motion.action,
+    });
+    return motionNameMapping[paymentValues.name];
+  }
+
+  return motionNameMapping[values.name];
 };

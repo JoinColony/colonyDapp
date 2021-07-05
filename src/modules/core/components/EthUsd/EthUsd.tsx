@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { BigNumber, parseUnits } from 'ethers/utils';
 import { defineMessages, useIntl } from 'react-intl';
+import { Network } from '@colony/colony-js';
 
 import Numeral, { Props as NumeralProps } from '~core/Numeral/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import { getEthToUsd } from '~utils/external';
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { DEFAULT_NETWORK, DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const MSG = defineMessages({
   usdAbbreviation: {
@@ -86,6 +87,10 @@ const EthUsd = ({
       didCancel = true;
     };
   }, [unit, value]);
+
+  if (DEFAULT_NETWORK === Network.Xdai) {
+    return null;
+  }
 
   if (isLoading) {
     return <SpinnerLoader />;

@@ -5,12 +5,20 @@ import { useMainClasses } from '~utils/hooks';
 
 import styles from './Tag.css';
 
-interface Appearance {
+export interface Appearance {
   /* "light" is default */
-  theme: 'primary' | 'light' | 'golden' | 'danger' | 'pink' | 'blue';
+  theme:
+    | 'primary'
+    | 'light'
+    | 'golden'
+    | 'danger'
+    | 'pink'
+    | 'blue'
+    | 'dangerGhost';
   fontSize?: 'tiny' | 'small';
   /* "fullColor" is default */
   colorSchema?: 'fullColor' | 'inverted' | 'plain';
+  margin?: 'none';
 }
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {

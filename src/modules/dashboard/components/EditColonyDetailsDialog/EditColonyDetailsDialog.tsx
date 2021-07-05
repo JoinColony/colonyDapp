@@ -1,12 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 
-import Dialog, { DialogProps } from '~core/Dialog';
+import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { WizardDialogType } from '~utils/hooks';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
@@ -14,17 +13,15 @@ import { pipe, withMeta, mapPayload } from '~utils/actions';
 import DialogForm from './EditColonyDetailsDialogForm';
 
 export interface FormValues {
+  forceAction: boolean;
   colonyDisplayName: string;
   colonyAvatarImage: string;
   annotationMessage: string;
 }
 
-interface CustomWizardDialogProps {
-  prevStep: string;
-  colony: Colony;
-}
-
-type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
+type Props = Required<DialogProps> &
+  WizardDialogType<object> &
+  ActionDialogProps;
 
 const displayName = 'dashboard.EditColonyDetailsDialog';
 
@@ -43,8 +40,21 @@ const EditColonyDetailsDialog = ({
     nativeTokenAddress,
   },
   colony,
+  isVotingExtensionEnabled,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_MOTION_EDIT_COLONY${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_EDIT_COLONY${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
 
   const validationSchema = yup.object().shape({
     colonyAvatarImage: yup.string().nullable(),
@@ -85,26 +95,38 @@ const EditColonyDetailsDialog = ({
   return (
     <ActionForm
       initialValues={{
+        forceAction: false,
         colonyDisplayName: colonyDisplayName || colonyName,
         colonyAvatarImage: undefined,
         annotationMessage: undefined,
+        /*
+         * @NOTE That since this a root motion, and we don't actually make use
+         * of the motion domain selected (it's disabled), we don't need to actually
+         * pass the value over to the motion, since it will always be 1
+         */
       }}
-      submit={ActionTypes.COLONY_ACTION_EDIT_COLONY}
-      error={ActionTypes.COLONY_ACTION_EDIT_COLONY_ERROR}
-      success={ActionTypes.COLONY_ACTION_EDIT_COLONY_SUCCESS}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
       validationSchema={validationSchema}
       onSuccess={close}
       transform={transform}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <DialogForm
-            {...formValues}
-            colony={colony}
-            back={() => callStep(prevStep)}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <DialogForm
+              {...formValues}
+              colony={colony}
+              back={() => callStep(prevStep)}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };

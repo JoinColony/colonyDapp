@@ -7,10 +7,6 @@
   color: var(--colony-white);
 }
 
-.baseStyles + .baseStyles {
-  margin-left: 10px;
-}
-
 .themePrimary {
   composes: baseStyles;
   background-color: var(--primary);
@@ -40,6 +36,10 @@
 .themeBlue {
   composes: baseStyles;
   background-color: var(--action-secondary);
+}
+
+.themeDangerGhost {
+  composes: baseStyles;
 }
 
 .colorSchemaInverted {
@@ -96,12 +96,25 @@
   color: var(--danger);
 }
 
-.fontSizeTiny {
+.themeDangerGhost.colorSchemaPlain {
+  border: 1px solid var(--danger);
+  background-color: transparent;
+  color: var(--danger);
+}
+
+.fontSizeTiny,
+.fontSizeTiny span {
   font-size: 9px;
+  line-height: 15px;
 }
 
 .fontSizeSmall {
   font-size: var(--size-tiny);
+}
+
+.marginNone,
+.baseStyles + .marginNone {
+  margin: 0;
 }
 
 .main {

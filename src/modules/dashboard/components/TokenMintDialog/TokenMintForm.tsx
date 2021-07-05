@@ -5,14 +5,20 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
-import { Input, Annotations } from '~core/Fields';
-import { ColonyTokens, OneToken, Colony, useLoggedInUser } from '~data/index';
+import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
+import { Input, Annotations } from '~core/Fields';
+import Heading from '~core/Heading';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import PermissionsLabel from '~core/PermissionsLabel';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+
+import { ColonyTokens, OneToken, useLoggedInUser } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useTransformer } from '~utils/hooks';
-import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
-import Heading from '~core/Heading';
-import PermissionsLabel from '~core/PermissionsLabel';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -41,37 +47,64 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  colony: Colony;
-  back?: () => void;
+interface Props extends ActionDialogProps {
   nativeToken?: ColonyTokens[0] | OneToken;
 }
 
 const TokenMintForm = ({
   colony: { canMintNativeToken },
   colony,
+  isVotingExtensionEnabled,
   back,
   isSubmitting,
   isValid,
   handleSubmit,
   nativeToken,
+  values,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const canMintTokens = canMintNativeToken && hasRoot(allUserRoles);
 
-  const userHasPermissions = canMintNativeToken && hasRoot(allUserRoles);
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
+
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canMintTokens,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
 
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-          text={MSG.title}
-        />
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                /*
+                 * @NOTE Always disabled since you can only create this motion in root
+                 */
+                disabled
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {canMintTokens && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
+        </div>
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <PermissionRequiredInfo requiredRoles={requiredRoles} />
         </DialogSection>
@@ -90,7 +123,7 @@ const TokenMintForm = ({
               }}
               label={MSG.amountLabel}
               name="mintAmount"
-              disabled={!userHasPermissions}
+              disabled={inputDisabled}
             />
           </div>
           <span
@@ -106,11 +139,11 @@ const TokenMintForm = ({
           <Annotations
             label={MSG.annotationLabel}
             name="annotation"
-            disabled={!userHasPermissions}
+            disabled={inputDisabled}
           />
         </div>
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>
             <FormattedMessage
@@ -129,6 +162,7 @@ const TokenMintForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -140,7 +174,7 @@ const TokenMintForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !userHasPermissions}
+          disabled={!isValid || inputDisabled}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

@@ -1,0 +1,19 @@
+.warning {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: var(--radius-large);
+  background-color: var(--pink);
+  font-weight: var(--weight-bold);
+  color: rgba(255, 255, 255);
+}
+
+.content {
+  padding: 13px 22px;
+  white-space: pre-line;
+}
+
+.warning button {
+  align-self: flex-end;
+  margin-top: 10px;
+}

@@ -83,6 +83,7 @@ const ColonyHome = ({ match, location }: Props) => {
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
+                showActions={false}
               >
                 <ColonyEvents colony={colony} ethDomainId={filteredDomainId} />
               </ColonyHomeLayout>
@@ -128,6 +129,7 @@ const ColonyHome = ({ match, location }: Props) => {
                 colony={colony}
                 filteredDomainId={filteredDomainId}
                 onDomainChange={setDomainIdFilter}
+                ethDomainId={filteredDomainId}
               >
                 <ColonyActions colony={colony} ethDomainId={filteredDomainId} />
               </ColonyHomeLayout>
@@ -155,7 +157,10 @@ const ColonyHome = ({ match, location }: Props) => {
    */
   if (
     loading ||
-    (data?.processedColony && data.processedColony.colonyName !== colonyName)
+    (data?.processedColony && data.processedColony.colonyName !== colonyName) ||
+    (data?.colonyAddress &&
+      !data?.processedColony &&
+      !((data.colonyAddress as any) instanceof Error))
   ) {
     return (
       <div className={styles.loadingWrapper}>

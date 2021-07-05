@@ -96,6 +96,8 @@
 }
 
 .walletAddress {
+  padding: 2px 9px 3px;
+
   /*
    * @NOTE We need to do border sizing shenanigans due to how the border color
    * is required by spec to have opacity.
@@ -106,15 +108,17 @@
    * active class (the one that has a different colored border), we remove the extra padding
    * and set the border
    */
-  margin-right: 12px;
-  padding: 2px 9px 3px;
+  height: 100%;
   border: none;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
-  font-size: 13px;
-  font-weight: var(--weight-medium);
   color: var(--temp-grey-blue-7);
   cursor: pointer;
+}
+
+.walletAddress span {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
 }
 
 .walletAddress:hover {
@@ -129,11 +133,22 @@
   color: var(--colony-blue);
 }
 
+.buttonsWrapper {
+  margin-right: 12px;
+  padding: 2px;
+  height: 26px;
+  position: relative;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+}
+
 .readyTransactionsCount {
-  margin: -27px 0 0 -22px;
   padding-top: 2px;
   height: 20px;
   min-width: 20px;
+  position: absolute;
+  top: -10px;
+  right: -10px;
   border-radius: 50px;
   background-color: var(--pink);
   font-size: var(--size-tiny);

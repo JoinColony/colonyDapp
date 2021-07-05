@@ -6,7 +6,11 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
-import { DefaultAction, RecoverytAction } from './ActionsComponents';
+import {
+  DefaultAction,
+  RecoveryAction,
+  DefaultMotion,
+} from './ActionsComponents';
 
 import {
   useColonyActionLazyQuery,
@@ -16,7 +20,7 @@ import {
   useTokenInfoLazyQuery,
 } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { ColonyActions } from '~types/index';
+import { ColonyActions, ColonyMotions } from '~types/index';
 import { isTransactionFormat } from '~utils/web3';
 
 import TransactionHash, { Hash } from './TransactionHash';
@@ -88,7 +92,7 @@ const ActionsPage = () => {
   const reverseENSAddress = dataVariables?.address;
 
   const [
-    fetchTransction,
+    fetchTransaction,
     {
       data: colonyActionData,
       loading: colonyActionLoading,
@@ -117,14 +121,14 @@ const ActionsPage = () => {
       isTransactionFormat(transactionHash) &&
       colonyData?.processedColony
     ) {
-      fetchTransction({
+      fetchTransaction({
         variables: {
           transactionHash,
           colonyAddress: colonyData.processedColony.colonyAddress,
         },
       });
     }
-  }, [fetchTransction, transactionHash, colonyData]);
+  }, [fetchTransaction, transactionHash, colonyData]);
 
   useEffect(() => {
     if (colonyActionData?.colonyAction) {
@@ -255,7 +259,24 @@ const ActionsPage = () => {
      */
     case ColonyActions.Recovery:
       return (
-        <RecoverytAction
+        <RecoveryAction
+          colony={colonyData?.processedColony}
+          token={tokenData?.tokenInfo}
+          colonyAction={colonyActionData?.colonyAction}
+          transactionHash={transactionHash as string}
+          recipient={recipientProfileWithFallback}
+          initiator={initiatorProfileWithFallback}
+        />
+      );
+    case ColonyMotions.PaymentMotion:
+    case ColonyMotions.ColonyEditMotion:
+    case ColonyMotions.MoveFundsMotion:
+    case ColonyMotions.SetUserRolesMotion:
+    case ColonyMotions.CreateDomainMotion:
+    case ColonyMotions.EditDomainMotion:
+    case ColonyMotions.MintTokensMotion:
+      return (
+        <DefaultMotion
           colony={colonyData?.processedColony}
           token={tokenData?.tokenInfo}
           colonyAction={colonyActionData?.colonyAction}

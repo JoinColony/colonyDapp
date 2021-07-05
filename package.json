@@ -42,6 +42,9 @@
   "homepage": "https://github.com/JoinColony/colonyDapp#readme",
   "devDependencies": {
     "@adobe/node-fetch-retry": "^1.1.0",
+    "@babel/core": "^7.13.10",
+    "@babel/node": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
     "@colony/eslint-config-colony": "^8.0.0",
     "@graphql-codegen/cli": "^1.17.8",
     "@graphql-codegen/fragment-matcher": "^1.17.8",
@@ -132,9 +135,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.0.2",
-    "@colony/colony-js": "^4.0.0-rc.1",
+    "@colony/colony-js": "^4.0.0",
     "@colony/redux-promise-listener": "^1.2.0",
-    "@feedback-fish/react": "^1.2.1",
     "@formatjs/intl-pluralrules": "^1.5.7",
     "@formatjs/intl-relativetimeformat": "^4.5.14",
     "@formatjs/intl-unified-numberformat": "^3.3.5",
@@ -148,6 +150,7 @@
     "classnames": "^2.2.6",
     "cleave.js": "^1.5.10",
     "copy-to-clipboard": "^3.0.8",
+    "decimal.js": "^10.2.1",
     "draft-js": "^0.11.4",
     "eslint-plugin-eslint-comments": "^3.1.2",
     "eth-ens-namehash-ms": "^2.2.0",
@@ -196,6 +199,7 @@
     "subscriptions-transport-ws": "^0.9.18",
     "utility-types": "^3.7.0",
     "web3-eth-abi": "1.3.0",
+    "web3-utils": "^1.3.5",
     "yup": "^0.29.0"
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import Numeral from '~core/Numeral';
+import Tag, { Appearance as TagAppareance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
 import { EventValue } from '~data/resolvers/colonyActions';
 import { parseDomainMetadata } from '~utils/colonyActions';
@@ -22,8 +22,13 @@ import {
 } from '~data/index';
 import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import {
+  getFormattedTokenValue,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
+import { MotionState, MOTION_TAG_MAP } from '~utils/colonyMotions';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
 import DetailsWidget from '../DetailsWidget';
@@ -64,6 +69,8 @@ const DefaultAction = ({
   initiator,
 }: Props) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
+
+  const { isVotingExtensionEnabled } = useEnabledExtensions({ colonyAddress });
 
   const { roleMessageDescriptorId, roleTitle } = useFormatRolesTitle(
     roles,
@@ -115,6 +122,7 @@ const DefaultAction = ({
     },
   });
 
+  const decimalAmount = getFormattedTokenValue(amount, decimals);
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *
@@ -133,9 +141,7 @@ const DefaultAction = ({
         <FriendlyName user={recipient} autoShrinkAddress colony={colony} />
       </span>
     ),
-    amount: (
-      <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
-    ),
+    amount: decimalAmount,
     tokenSymbol: <span>{symbol || '???'}</span>,
     decimals: getTokenDecimalsWithFallback(decimals),
     fromDomain:
@@ -162,8 +168,24 @@ const DefaultAction = ({
     roles,
   };
 
+  const motionStyles = MOTION_TAG_MAP[MotionState.Forced];
+
   return (
     <div className={styles.main}>
+      {isVotingExtensionEnabled && (
+        <div className={styles.upperContainer}>
+          <p className={styles.tagWrapper}>
+            <Tag
+              text={motionStyles.name}
+              appearance={{
+                theme: motionStyles.theme as TagAppareance['theme'],
+                // eslint-disable-next-line max-len
+                colorSchema: motionStyles.colorSchema as TagAppareance['colorSchema'],
+              }}
+            />
+          </p>
+        </div>
+      )}
       <hr className={styles.dividerTop} />
       <div className={styles.container}>
         <div className={styles.content}>

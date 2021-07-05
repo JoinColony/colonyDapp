@@ -5,6 +5,7 @@ import { FormikProps } from 'formik';
 
 import AvatarUploader from '~core/AvatarUploader';
 import Button from '~core/Button';
+import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Annotations, Input } from '~core/Fields';
 import { DefaultPlaceholder } from '~core/FileUpload';
@@ -14,9 +15,13 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import ColonyAvatar from '~core/ColonyAvatar';
 import InputStatus from '~core/Fields/InputStatus';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
-import { useLoggedInUser, Colony } from '~data/index';
+import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -59,11 +64,6 @@ const MSG = defineMessages({
 
 const ColonyAvatarHooked = HookedColonyAvatar({ fetchColony: true });
 
-interface Props {
-  back: () => void;
-  colony: Colony;
-}
-
 const EditColonyDetailsDialogForm = ({
   back,
   colony,
@@ -71,9 +71,10 @@ const EditColonyDetailsDialogForm = ({
   handleSubmit,
   isSubmitting,
   isValid,
-  values: { colonyAvatarImage, colonyDisplayName },
+  isVotingExtensionEnabled,
+  values: { colonyAvatarImage, colonyDisplayName, forceAction },
   setFieldValue,
-}: Props & FormikProps<FormValues>) => {
+}: ActionDialogProps & FormikProps<FormValues>) => {
   const [showUploadedAvatar, setShowUploadedAvatar] = useState(false);
   const [avatarFileError, setAvatarFileError] = useState(false);
 
@@ -82,8 +83,16 @@ const EditColonyDetailsDialogForm = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
+  const canEdit = hasRegisteredProfile && hasRoot(allUserRoles);
 
-  const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canEdit,
+    isVotingExtensionEnabled,
+    forceAction,
+  );
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
 
   /*
    * Note that these threee methods just read the file locally, they don't actually
@@ -130,12 +139,29 @@ const EditColonyDetailsDialogForm = ({
 
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none' }}
-          text={MSG.title}
-          className={styles.title}
-        />
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                /*
+                 * @NOTE Always disabled since you can only create this motion in root
+                 */
+                disabled
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {canEdit && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
+        </div>
       </DialogSection>
       {!userHasPermission && (
         <DialogSection>
@@ -144,7 +170,7 @@ const EditColonyDetailsDialogForm = ({
       )}
       <DialogSection>
         <AvatarUploader
-          disabled={!userHasPermission}
+          disabled={inputDisabled}
           hasButtons={false}
           label={MSG.logo}
           upload={handleFileRead}
@@ -186,10 +212,10 @@ const EditColonyDetailsDialogForm = ({
                     handleFileRemove();
                   }}
                   text={{ id: 'button.remove' }}
-                  disabled={!userHasPermission}
+                  disabled={inputDisabled}
                 />
               ) : (
-                <DefaultPlaceholder disabled={!userHasPermission} />
+                <DefaultPlaceholder disabled={inputDisabled} />
               )}
             </>
           }
@@ -209,7 +235,7 @@ const EditColonyDetailsDialogForm = ({
           label={MSG.name}
           name="colonyDisplayName"
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          disabled={!userHasPermission}
+          disabled={inputDisabled}
           maxLength={20}
         />
       </DialogSection>
@@ -217,7 +243,7 @@ const EditColonyDetailsDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotationMessage"
-          disabled={!userHasPermission}
+          disabled={inputDisabled}
         />
       </DialogSection>
       {!userHasPermission && (
@@ -239,6 +265,9 @@ const EditColonyDetailsDialogForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && (
+        <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -251,10 +280,7 @@ const EditColonyDetailsDialogForm = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={
-            !userHasPermission ||
-            !isValid ||
-            avatarFileError ||
-            !canValuesBeUpdate
+            inputDisabled || !isValid || avatarFileError || !canValuesBeUpdate
           }
         />
       </DialogSection>

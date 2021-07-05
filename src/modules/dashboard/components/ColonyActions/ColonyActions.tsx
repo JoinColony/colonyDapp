@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
+import { Extension } from '@colony/colony-js';
 
 import ActionsList, {
   ClickHandlerProps as RedirectHandlerProps,
@@ -17,6 +18,8 @@ import {
   useActionsThatNeedAttentionQuery,
   useLoggedInUser,
   ActionThatNeedsAttention,
+  useSubscriptionsMotionsSubscription,
+  useColonyExtensionsQuery,
 } from '~data/index';
 import { SortOptions, SortSelectOptions } from '../shared/sortOptions';
 import { getActionsListData } from '../../transformers';
@@ -122,8 +125,29 @@ const ColonyActions = ({
     },
   });
 
+  const { data: extensions } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
+
+  /*
+   * @NOTE Prettier is being stupid
+   */
+  // eslint-disable-next-line max-len
+  const votingReputationExtension = extensions?.processedColony?.installedExtensions.find(
+    ({ extensionId }) => extensionId === Extension.VotingReputation,
+  );
+
+  const { data: motions } = useSubscriptionsMotionsSubscription({
+    variables: {
+      skip: 0,
+      first: 100,
+      colonyAddress: colonyAddress?.toLowerCase(),
+      extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
+    },
+  });
+
   const actions = useTransformer(getActionsListData, [
-    { ...oneTxActions, ...eventsActions },
+    { ...oneTxActions, ...eventsActions, ...motions },
     commentCount?.transactionMessagesCount,
     {
       extensionAddresses: extensionAddresses as Address[],

@@ -1,5 +1,9 @@
 import { ColonyRole } from '@colony/colony-js';
-import { ColonyAndExtensionsEvents, ColonyActions } from '~types/index';
+import {
+  ColonyAndExtensionsEvents,
+  ColonyActions,
+  ColonyMotions,
+} from '~types/index';
 
 import { STATUS } from './types';
 
@@ -22,13 +26,13 @@ type EventRolesMap = Partial<
 
 type ActionsEventsMap = Partial<
   {
-    [key in ColonyActions]: ColonyAndExtensionsEvents[];
+    [key in ColonyActions | ColonyMotions]: ColonyAndExtensionsEvents[];
   }
 >;
 
 type ActionsDetailsMap = Partial<
   {
-    [key in ColonyActions]: ActionPageDetails[];
+    [key in ColonyActions | ColonyMotions]: ActionPageDetails[];
   }
 >;
 
@@ -60,7 +64,9 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
 /*
  * Which icons correspond to which action types in the details widget
  */
-export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
+export const ACTION_TYPES_ICONS_MAP: {
+  [key in ColonyActions | ColonyMotions]: string;
+} = {
   [ColonyActions.WrongColony]: 'forbidden-signal',
   [ColonyActions.Payment]: 'emoji-dollar-stack',
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
@@ -71,6 +77,14 @@ export const ACTION_TYPES_ICONS_MAP: { [key in ColonyActions]: string } = {
   [ColonyActions.ColonyEdit]: 'emoji-edit-tools',
   [ColonyActions.EditDomain]: 'emoji-pencil-note',
   [ColonyActions.SetUserRoles]: 'emoji-crane',
+  [ColonyMotions.MintTokensMotion]: 'emoji-seed-sprout',
+  [ColonyMotions.PaymentMotion]: 'emoji-dollar-stack',
+  [ColonyMotions.MoveFundsMotion]: 'emoji-world-globe',
+  [ColonyMotions.CreateDomainMotion]: 'emoji-crane',
+  [ColonyMotions.VersionUpgradeMotion]: 'emoji-strong-person',
+  [ColonyMotions.ColonyEditMotion]: 'emoji-edit-tools',
+  [ColonyMotions.EditDomainMotion]: 'emoji-pencil-note',
+  [ColonyMotions.SetUserRolesMotion]: 'emoji-crane',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -86,6 +100,15 @@ export const STATUS_MAP: { [key in number]: STATUS } = {
 /*
  * Which events to display on which action's page
  */
+
+const MOTION_EVENTS = [
+  ColonyAndExtensionsEvents.MotionCreated,
+  ColonyAndExtensionsEvents.MotionStaked,
+  ColonyAndExtensionsEvents.ObjectionRaised,
+  ColonyAndExtensionsEvents.MotionFinalized,
+  ColonyAndExtensionsEvents.MotionRewardClaimed,
+];
+
 export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.Payment]: [ColonyAndExtensionsEvents.OneTxPaymentMade],
   [ColonyActions.MoveFunds]: [
@@ -103,6 +126,13 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.RecoveryModeExitApproved,
     ColonyAndExtensionsEvents.RecoveryModeExited,
   ],
+  [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
+  [ColonyMotions.CreateDomainMotion]: MOTION_EVENTS,
+  [ColonyMotions.EditDomainMotion]: MOTION_EVENTS,
+  [ColonyMotions.ColonyEditMotion]: MOTION_EVENTS,
+  [ColonyMotions.SetUserRolesMotion]: MOTION_EVENTS,
+  [ColonyMotions.PaymentMotion]: MOTION_EVENTS,
+  [ColonyMotions.MoveFundsMotion]: MOTION_EVENTS,
 };
 
 /*
@@ -172,4 +202,30 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Permissions,
   ],
   [ColonyActions.Recovery]: [],
+  [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
+  [ColonyMotions.PaymentMotion]: [
+    ActionPageDetails.FromDomain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.Amount,
+  ],
+  [ColonyMotions.MoveFundsMotion]: [
+    ActionPageDetails.FromDomain,
+    ActionPageDetails.ToDomain,
+    ActionPageDetails.Amount,
+  ],
+  [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
+  [ColonyMotions.CreateDomainMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Description,
+  ],
+  [ColonyMotions.ColonyEditMotion]: [ActionPageDetails.Name],
+  [ColonyMotions.EditDomainMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.Description,
+  ],
+  [ColonyMotions.SetUserRolesMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.Permissions,
+  ],
 };

@@ -9,10 +9,7 @@ import { ActionTypes } from '~redux/index';
 import { IconButton } from '~core/Button';
 import { ActionForm } from '~core/Fields';
 
-import {
-  transactionEstimateGas,
-  transactionSend,
-} from '../../../../core/actionCreators';
+import { transactionEstimateGas } from '../../../../core/actionCreators';
 
 import styles from './GasStationControls.css';
 
@@ -28,15 +25,11 @@ const validationSchema = yup.object().shape({
   transactionId: yup.string(),
 });
 
-const displayName = 'users.GasStation.GasStationPrice';
+const displayName = 'users.GasStation.GasStationControls';
 
-const GasStationPrice = ({ transaction: { id, error } }: Props) => {
+const GasStationControls = ({ transaction: { id, error } }: Props) => {
   const dispatch = useDispatch();
   const transform = useCallback(withId(id), [id]);
-
-  useEffect(() => {
-    dispatch(transactionEstimateGas(id));
-  }, [dispatch, id]);
 
   /*
    * @NOTE Automatically send the transaction
@@ -49,7 +42,7 @@ const GasStationPrice = ({ transaction: { id, error } }: Props) => {
    */
   useEffect(() => {
     if (!error) {
-      dispatch(transactionSend(id));
+      dispatch(transactionEstimateGas(id));
     }
   }, [dispatch, id, error]);
 
@@ -75,6 +68,6 @@ const GasStationPrice = ({ transaction: { id, error } }: Props) => {
   );
 };
 
-GasStationPrice.displayName = displayName;
+GasStationControls.displayName = displayName;
 
-export default GasStationPrice;
+export default GasStationControls;

@@ -6,7 +6,7 @@ import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import TransactionLink from '~core/TransactionLink';
 
 import { AnyUser, Colony } from '~data/index';
-import { ColonyActions } from '~types/index';
+import { ColonyActions, ColonyMotions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
 import { getDetailsForAction } from '~utils/colonyActions';
 import { EventValues } from '../../ActionsPageFeed/ActionsPageFeed';
@@ -63,7 +63,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  actionType: ColonyActions;
+  actionType: ColonyActions | ColonyMotions;
   recipient?: AnyUser;
   values?: EventValues;
   transactionHash?: string;
@@ -78,6 +78,7 @@ const DetailsWidget = ({
 }: Props) => {
   const { formatMessage } = useIntl();
 
+  const messageId = ColonyMotions[actionType] ? 'motion.type' : 'action.type';
   const showFullDetails = actionType !== ColonyActions.Generic;
 
   const splitHash = splitTransactionHash(transactionHash as string);
@@ -104,7 +105,7 @@ const DetailsWidget = ({
         <div className={styles.value}>
           <Icon
             title={formatMessage(
-              { id: 'action.type' },
+              { id: messageId },
               {
                 actionType: values?.actionType,
               },
@@ -113,7 +114,7 @@ const DetailsWidget = ({
             name={ACTION_TYPES_ICONS_MAP[actionType]}
           />
           <FormattedMessage
-            id="action.type"
+            id={messageId}
             /*
              * @NOTE We need to use the action type value that was converted to
              * camelCase since ReactIntl doesn't like keys that are composed
@@ -188,7 +189,7 @@ const DetailsWidget = ({
           <div className={styles.label}>
             <FormattedMessage {...MSG.domainDescription} />
           </div>
-          <div className={styles.value}>
+          <div className={styles.descriptionValue}>
             <div
               className={styles.domainDescription}
               title={values.fromDomain.description || ''}

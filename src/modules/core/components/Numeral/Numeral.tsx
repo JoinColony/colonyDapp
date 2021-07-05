@@ -1,9 +1,8 @@
 import React, { HTMLAttributes } from 'react';
-import formatNumber from 'format-number';
-import moveDecimal from 'move-decimal-point';
-import { BigNumber, formatUnits } from 'ethers/utils';
+import { BigNumber } from 'ethers/utils';
 
 import { getMainClasses } from '~utils/css';
+import { formatTokenValue } from '~utils/numbers';
 
 import styles from './Numeral.css';
 
@@ -37,6 +36,9 @@ export interface Props extends HTMLAttributes<HTMLSpanElement> {
 
   /** Actual value */
   value: number | string | BigNumber;
+
+  /** Should large number be truncate to 5 figures */
+  reducedOutput?: boolean;
 }
 
 const Numeral = ({
@@ -48,19 +50,18 @@ const Numeral = ({
   truncate,
   unit,
   value,
+  reducedOutput = true,
   ...props
 }: Props) => {
-  const convertedNum =
-    typeof unit === 'string'
-      ? formatUnits(value, unit)
-      : moveDecimal(value.toString(10), -(unit || 0));
-
-  const formattedNumber = formatNumber({
+  const formattedNumber = formatTokenValue({
+    unit,
+    value,
     prefix,
     suffix,
     integerSeparator,
     truncate,
-  })(parseFloat(convertedNum));
+    reducedOutput,
+  });
 
   return (
     <span

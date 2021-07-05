@@ -39,6 +39,12 @@
   color: var(--colony-white);
 }
 
+.themePinky {
+  composes: main;
+  background-color: var(--pink);
+  color: var(--colony-white);
+}
+
 .sizeSmall {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);

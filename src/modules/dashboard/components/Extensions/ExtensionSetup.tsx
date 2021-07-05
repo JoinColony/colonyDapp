@@ -2,6 +2,9 @@ import { FormikProps } from 'formik';
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
+import { endsWith } from 'lodash';
+import { Extension } from '@colony/colony-js';
+import Decimal from 'decimal.js';
 
 import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm } from '~core/Fields';
@@ -9,7 +12,7 @@ import Heading from '~core/Heading';
 import { ActionTypes } from '~redux/index';
 import { ColonyExtension } from '~data/index';
 import { ExtensionData } from '~data/staticData/extensionData';
-import { mergePayload } from '~utils/actions';
+import { mergePayload, mapPayload, pipe } from '~utils/actions';
 import { Address } from '~types/index';
 
 import styles from './ExtensionSetup.css';
@@ -26,7 +29,7 @@ const MSG = defineMessages({
   },
   description: {
     id: 'dashboard.Extensions.ExtensionSetup.description',
-    defaultMessage: `Enabling this extension requires additional parameters. These parameters can not be changed after enabling it. To do that you have to uninstall the extension, install and enable it again with new parameters.`,
+    defaultMessage: `Enabling this extension requires additional parameters. These parameters cannot be changed after enabling it. To do so, you must uninstall the extension, and then install and enable it again with new parameters.`,
   },
   descriptionMissingPermissions: {
     id: 'dashboard.Extensions.ExtensionSetup.descriptionMissingPermissions',
@@ -35,6 +38,14 @@ const MSG = defineMessages({
   setPermissions: {
     id: 'dashboard.Extensions.ExtensionSetup.setPermissions',
     defaultMessage: 'Set permissions',
+  },
+  complementaryLabel: {
+    id: 'dashboard.Extensions.ExtensionSetup.complementaryLabel',
+    defaultMessage: `{isPeriod, select,
+      true {hours}
+      false {%}
+      other { }
+    }`,
   },
 });
 
@@ -58,10 +69,31 @@ const ExtensionSetup = ({
     history.replace(`/colony/${colonyName}/extensions/${extensionId}`);
   }, [history, colonyName, extensionId]);
 
-  const transform = useCallback(mergePayload({ colonyAddress, extensionId }), [
-    colonyAddress,
-    extensionId,
-  ]);
+  const transform = useCallback(
+    pipe(
+      mapPayload((payload) => {
+        if (extensionId === Extension.VotingReputation) {
+          const formattedPayload = {};
+          initializationParams?.map(({ paramName }) => {
+            if (endsWith(paramName, 'Period')) {
+              formattedPayload[paramName] = new Decimal(payload[paramName])
+                .mul(3600) // Seconds in 1 hour
+                .toFixed(0, Decimal.ROUND_HALF_UP);
+            } else {
+              formattedPayload[paramName] = new Decimal(payload[paramName])
+                .mul(new Decimal(10).pow(16))
+                .toString();
+            }
+          });
+          return formattedPayload;
+        }
+
+        return payload;
+      }),
+      mergePayload({ colonyAddress, extensionId }),
+    ),
+    [colonyAddress, extensionId, initializationParams],
+  );
 
   if (
     installedExtension.details.deprecated ||
@@ -125,7 +157,24 @@ const ExtensionSetup = ({
                   label={title}
                   name={paramName}
                 />
-                <FormattedMessage {...description} />
+                <FormattedMessage
+                  {...description}
+                  values={{
+                    span: (chunks) => (
+                      <span className={styles.descriptionExample}>
+                        {chunks}
+                      </span>
+                    ),
+                  }}
+                />
+                {extensionId === Extension.VotingReputation && (
+                  <span className={styles.complementaryLabel}>
+                    <FormattedMessage
+                      {...MSG.complementaryLabel}
+                      values={{ isPeriod: endsWith(paramName, 'Period') }}
+                    />
+                  </span>
+                )}
               </div>
             ))}
           </div>

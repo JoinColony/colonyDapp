@@ -1,0 +1,280 @@
+.main {
+  min-height: 511px;
+  width: 240px;
+}
+
+.mainDivider {
+  border-bottom: 1px solid var(--temp-grey-13);
+}
+
+.tabsListContainer {
+  /* `composes: main divider` to be removed once the claims tab is added */
+  composes: mainDivider;
+  height: 42px;
+}
+
+.tabsList {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.tab {
+  padding: 11px 0;
+  width: 50%;
+  border: none;
+  background-color: inherit;
+  font-weight: var(--weight-bold);
+  text-align: center;
+
+  /* when `ClaimsTab` is added remove dark color & uncomment the last 2 lines */
+  color: var(--dark);
+  outline: none;
+
+  /* color: var(--temp-grey-blue-7); */
+
+  /* border-bottom: 1px solid var(--temp-grey-13); */
+}
+
+.tabSelected {
+  composes: tab;
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+
+.tabContainer {
+  height: 100%;
+  width: 100%;
+}
+
+.totalTokensContainer {
+  composes: mainDivider;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  min-height: 60px;
+  width: 100%;
+}
+
+.tokenSymbol {
+  height: 26px;
+  width: 26px;
+}
+
+.tokenSymbolSmall {
+  margin-left: 5px;
+  height: 16px;
+  width: 16px;
+}
+
+.totalTokens {
+  margin-left: 16px;
+  font-size: var(--size-medium-l);
+  line-height: 18px;
+  white-space: nowrap;
+  color: var(--dark);
+}
+
+.totalTokensSmall {
+  composes: totalTokens;
+  margin-right: 4px;
+  font-size: var(--size-normal);
+  white-space: unset;
+  overflow-wrap: anywhere;
+}
+
+.totalTokens > span {
+  font-size: var(--size-normal);
+}
+
+.tokensDetailsContainer {
+  composes: mainDivider;
+  padding: 18px 16px 19px 16px;
+  min-height: 189px;
+  width: 100%;
+}
+
+.listItemActive {
+  width: fit-content;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+
+  &::before {
+    display: inline-block;
+    margin-right: 15px;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    content: '';
+  }
+}
+
+.lockedTokens {
+  composes: listItemActive;
+  margin-left: 25px;
+
+  &::before {
+    margin-right: 10px;
+    background-color: var(--golden);
+  }
+}
+
+.listItemInactive {
+  composes: listItemActive;
+
+  &::before {
+    background-color: var(--pink);
+  }
+}
+
+.tokenNumbers {
+  margin-bottom: 19px;
+  margin-left: 25px;
+  color: var(--dark);
+  font: var(--size-normal);
+  overflow-wrap: anywhere;
+}
+
+.tokenNumbersLocked {
+  composes: tokenNumbers;
+  margin-left: 45px;
+}
+
+.tokenNumbersInactive {
+  composes: tokenNumbers;
+  margin-bottom: 0;
+}
+
+.pendingError {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 20px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--pink);
+}
+
+.questionmarkIcon {
+  margin-right: 5px;
+}
+
+.changeTokensState {
+  padding: 22px 25px 29px 25px;
+  min-height: 220px;
+  width: 100%;
+}
+
+.changeStateTitle {
+  margin-bottom: 8px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.changeStateButtonsContainer {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.changeStateButtonsContainer > div > button {
+  margin-left: 0;
+  padding: 4px 0 7px 0;
+  height: 29px;
+  width: 95px;
+  line-height: 18px;
+  outline: none;
+}
+
+.activate > button {
+  border-radius: 2px 0 0 2px;
+}
+
+.withdraw > button {
+  border-radius: 0 2px 2px 0;
+}
+
+.activateInactive > button {
+  border-radius: 2px 0 0 2px;
+  border-right: none;
+}
+
+.withdrawInactive > button {
+  border-radius: 0 2px 2px 0;
+  border-left: none;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 189px;
+}
+
+.inputField {
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.inputField > div > div > div > input {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+}
+
+.inputField > div > div > div > input[aria-invalid="true"] {
+  border-color: var(--primary);
+}
+
+.balanceInfoActivate {
+  composes: listItemInactive;
+  margin-bottom: 22px;
+  width: 100%;
+  font-size: var(--size-tiny);
+
+  &::before {
+    margin-right: 7px;
+  }
+}
+
+.balanceInfoWithdraw {
+  composes: balanceInfoActivate;
+
+  &::before {
+    background-color: var(--primary);
+  }
+}
+
+.balanceInfoWithdrawLocked {
+  composes: balanceInfoActivate;
+
+  &::before {
+    background-color: var(--golden);
+  }
+}
+
+.balanceAmount {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+  overflow-wrap: anywhere;
+}
+
+.form > button {
+  padding: 4px 0 7px 0;
+  height: 29px;
+  width: 100px;
+  border: none;
+  line-height: 18px;
+}
+
+.claimsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 442px;
+  width: 100%;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}

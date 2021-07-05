@@ -1,39 +1,38 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { FormikProps, FormikHelpers } from 'formik';
+import React, { useState, useMemo } from 'react';
 import { ColonyRole } from '@colony/colony-js';
-import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import * as yup from 'yup';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { AddressZero } from 'ethers/constants';
 import isEqual from 'lodash/isEqual';
+import { FormikProps } from 'formik';
 
 import Button from '~core/Button';
-import Dialog, { DialogSection } from '~core/Dialog';
-import { Form, Annotations } from '~core/Fields';
+import { ActionDialogProps, DialogSection } from '~core/Dialog';
+import { Annotations } from '~core/Fields';
 import Heading from '~core/Heading';
 import Paragraph from '~core/Paragraph';
 import TokenSelector from '~dashboard/CreateColonyWizard/TokenSelector';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
-import { AnyToken, OneToken, useLoggedInUser, Colony } from '~data/index';
-import { Address } from '~types/index';
-import { createAddress } from '~utils/web3';
+import { AnyToken, OneToken, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
 
 import TokenItem from './TokenItem/index';
 
+import { FormValues } from '~dashboard/ColonyTokenManagementDialog/ColonyTokenManagementDialog';
 import styles from './TokenEditDialog.css';
 
 const MSG = defineMessages({
   title: {
     id: 'core.TokenEditDialog.title',
     defaultMessage: 'Manage tokens',
-  },
-  errorAddingToken: {
-    id: 'core.TokenEditDialog.errorAddingToken',
-    defaultMessage: `Sorry, there was an error adding this token. Learn more about tokens at: https://colony.io.`,
   },
   fieldLabel: {
     id: 'core.TokenEditDialog.fieldLabel',
@@ -58,46 +57,30 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  updateTokens: (payload: {
-    tokenAddresses: Address[];
-    annotationMessage?: string;
-  }) => Promise<any>;
-  cancel: () => void;
-  close: () => void;
+interface Props extends ActionDialogProps {
   // Token list from json file. Not supported on local env
   tokensList?: AnyToken[];
-  colony: Colony;
-  back?: () => void;
+  close: (val: any) => void;
 }
-
-interface FormValues {
-  tokenAddress?: Address;
-  selectedTokenAddresses?: Address[];
-  annotationMessage?: string;
-}
-
-const validationSchema = yup.object({
-  tokenAddress: yup.string().address(),
-  annotation: yup.string().max(4000),
-});
 
 const TokenEditDialog = ({
-  updateTokens,
-  cancel,
   close,
   tokensList = [],
   colony: { tokens = [], nativeTokenAddress, tokenAddresses },
   colony,
   back,
-}: Props) => {
+  isSubmitting,
+  isValid,
+  values,
+  handleSubmit,
+  isVotingExtensionEnabled,
+}: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
   const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
     false,
   );
-  const { formatMessage } = useIntl();
 
   const handleTokenSelect = (token: OneToken) => {
     setTokenData(token);
@@ -117,172 +100,149 @@ const TokenEditDialog = ({
       selectedTokenAddresses?.sort(),
     );
 
-  const handleSubmit = useCallback(
-    async (
-      {
-        tokenAddress,
-        selectedTokenAddresses = [],
-        annotationMessage,
-      }: FormValues,
-      { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
-    ) => {
-      let addresses = selectedTokenAddresses;
-      if (tokenAddress && !selectedTokenAddresses.includes(tokenAddress)) {
-        addresses.push(tokenAddress);
-      }
-      addresses = [
-        ...new Set(
-          addresses
-            .map((address) => createAddress(address))
-            .filter((address) => {
-              if (address === AddressZero || address === nativeTokenAddress) {
-                return false;
-              }
-              return true;
-            }),
-        ),
-      ];
-      try {
-        await updateTokens({ tokenAddresses: addresses, annotationMessage });
-        resetForm();
-        close();
-      } catch (e) {
-        setFieldError('tokenAddress', formatMessage(MSG.errorAddingToken));
-        setSubmitting(false);
-      }
-    },
-    [updateTokens, formatMessage, close, nativeTokenAddress],
-  );
-
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const userHasPermissions = hasRegisteredProfile && hasRoot(allUserRoles);
+  const canEditTokens = hasRegisteredProfile && hasRoot(allUserRoles);
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canEditTokens,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
+
   const allTokens = useMemo(() => {
-    return [...tokens, ...(userHasPermissions ? tokensList : [])].filter(
+    return [...tokens, ...(canEditTokens ? tokensList : [])].filter(
       ({ address: firstTokenAddress }, index, mergedTokens) =>
         mergedTokens.findIndex(
           ({ address: secondTokenAddress }) =>
             secondTokenAddress === firstTokenAddress,
         ) === index,
     );
-  }, [tokens, tokensList, userHasPermissions]);
+  }, [tokens, tokensList, canEditTokens]);
 
   return (
-    <Dialog cancel={cancel}>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}
-          text={MSG.title}
-        />
+    <>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                /*
+                 * @NOTE Always disabled since you can only create this motion in root
+                 */
+                disabled
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {canEditTokens && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
+        </div>
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <PermissionRequiredInfo requiredRoles={requiredRoles} />
         </DialogSection>
       )}
-      <Form
-        initialValues={{
-          tokenAddress: undefined,
-          selectedTokenAddresses: tokens.map((token) => token.address),
-          annotationMessage: undefined,
-        }}
-        onSubmit={handleSubmit}
-        validationSchema={validationSchema}
-        validateOnChange={false}
-      >
-        {({ isSubmitting, isValid, values }: FormikProps<FormValues>) => (
-          <>
-            <DialogSection appearance={{ theme: 'sidePadding' }}>
-              {allTokens.length > 0 ? (
-                <div className={styles.tokenChoiceContainer}>
-                  {allTokens.map((token) => (
-                    <TokenItem
-                      key={token.address}
-                      token={token}
-                      disabled={
-                        !userHasPermissions ||
-                        token.address === nativeTokenAddress ||
-                        token.address === AddressZero
-                      }
-                    />
-                  ))}
-                </div>
-              ) : (
-                <Heading
-                  appearance={{ size: 'normal' }}
-                  text={MSG.noTokensText}
-                />
-              )}
-            </DialogSection>
-            <DialogSection>
-              <Paragraph className={styles.description}>
-                <FormattedMessage {...MSG.notListedToken} />
-              </Paragraph>
-              <TokenSelector
-                tokenAddress={values.tokenAddress as string}
-                onTokenSelect={(token: OneToken) => handleTokenSelect(token)}
-                onTokenSelectError={handleTokenSelectError}
-                tokenData={tokenData}
-                label={MSG.fieldLabel}
-                appearance={{ colorSchema: 'grey', theme: 'fat' }}
-                disabled={!userHasPermissions}
+
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        {allTokens.length > 0 ? (
+          <div className={styles.tokenChoiceContainer}>
+            {allTokens.map((token) => (
+              <TokenItem
+                key={token.address}
+                token={token}
+                disabled={
+                  inputDisabled ||
+                  token.address === nativeTokenAddress ||
+                  token.address === AddressZero
+                }
               />
-              <div className={styles.textarea}>
-                <Annotations
-                  label={MSG.textareaLabel}
-                  name="annotationMessage"
-                  disabled={!userHasPermissions}
-                />
-              </div>
-            </DialogSection>
-            {!userHasPermissions && (
-              <DialogSection appearance={{ theme: 'sidePadding' }}>
-                <div className={styles.noPermissionMessage}>
-                  <FormattedMessage
-                    {...MSG.noPermission}
-                    values={{
-                      roleRequired: (
-                        <PermissionsLabel
-                          permission={ColonyRole.Root}
-                          name={{
-                            id: `role.${ColonyRole.Root}`,
-                          }}
-                        />
-                      ),
+            ))}
+          </div>
+        ) : (
+          <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
+        )}
+      </DialogSection>
+      <DialogSection>
+        <Paragraph className={styles.description}>
+          <FormattedMessage {...MSG.notListedToken} />
+        </Paragraph>
+        <TokenSelector
+          tokenAddress={values.tokenAddress as string}
+          onTokenSelect={(token: OneToken) => handleTokenSelect(token)}
+          onTokenSelectError={handleTokenSelectError}
+          tokenData={tokenData}
+          label={MSG.fieldLabel}
+          appearance={{ colorSchema: 'grey', theme: 'fat' }}
+          disabled={inputDisabled}
+        />
+        <div className={styles.textarea}>
+          <Annotations
+            label={MSG.textareaLabel}
+            name="annotationMessage"
+            disabled={inputDisabled}
+          />
+        </div>
+      </DialogSection>
+      {!userHasPermission && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionMessage}>
+            <FormattedMessage
+              {...MSG.noPermission}
+              values={{
+                roleRequired: (
+                  <PermissionsLabel
+                    permission={ColonyRole.Root}
+                    name={{
+                      id: `role.${ColonyRole.Root}`,
                     }}
                   />
-                </div>
-              </DialogSection>
-            )}
-            <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                text={{
-                  id: back === undefined ? 'button.cancel' : 'button.back',
-                }}
-                onClick={back === undefined ? close : back}
-              />
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                text={{ id: 'button.confirm' }}
-                loading={isSubmitting}
-                disabled={
-                  tokenSelectorHasError ||
-                  !isValid ||
-                  !userHasPermissions ||
-                  !hasTokensListChanged(values)
-                }
-                type="submit"
-                style={{ width: styles.wideButton }}
-              />
-            </DialogSection>
-          </>
-        )}
-      </Form>
-    </Dialog>
+                ),
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
+      {onlyForceAction && (
+        <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
+      )}
+      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
+        <Button
+          appearance={{ theme: 'secondary', size: 'large' }}
+          text={{
+            id: back === undefined ? 'button.cancel' : 'button.back',
+          }}
+          onClick={back === undefined ? close : back}
+        />
+        <Button
+          appearance={{ theme: 'primary', size: 'large' }}
+          text={{ id: 'button.confirm' }}
+          loading={isSubmitting}
+          onClick={() => handleSubmit()}
+          disabled={
+            tokenSelectorHasError ||
+            !isValid ||
+            inputDisabled ||
+            !hasTokensListChanged(values)
+          }
+          type="submit"
+          style={{ width: styles.wideButton }}
+        />
+      </DialogSection>
+    </>
   );
 };
 

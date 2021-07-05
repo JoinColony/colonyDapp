@@ -1,0 +1,31 @@
+.tokens {
+  padding: 2px 8px 3px;
+  height: 100%;
+  border: none;
+  border-radius: var(--radius-normal);
+  background: transparent;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+  cursor: pointer;
+}
+
+.tokens:hover {
+  position: relative;
+  z-index: 5;
+  background-color: rgb(217, 216, 236);
+  color: var(--colony-blue);
+}
+
+.dot {
+  display: inline-block;
+  margin-right: 5px;
+  height: 9px;
+  width: 9px;
+  border-radius: 50%;
+  background-color: var(--primary);
+}
+
+.dotInactive {
+  background-color: var(--pink);
+}

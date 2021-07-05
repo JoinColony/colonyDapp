@@ -10,6 +10,8 @@ import {
   extensions,
   getExtensionHash,
   ColonyClientV5,
+  ROOT_DOMAIN_ID,
+  getHistoricColonyRoles,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -265,6 +267,23 @@ export const colonyResolvers = ({
       const domain = await ens.getDomain(address, networkClient);
       return ENS.stripDomainParts('colony', domain);
     },
+    async colonyReputation(_, { address, domainId }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        address,
+      );
+
+      const { skillId } = await colonyClient.getDomain(
+        domainId || ROOT_DOMAIN_ID,
+      );
+
+      const { reputationAmount } = await colonyClient.getReputation(
+        skillId,
+        AddressZero,
+      );
+
+      return reputationAmount.toString();
+    },
     async colonyMembersWithReputation(
       _,
       {
@@ -354,6 +373,18 @@ export const colonyResolvers = ({
         return data?.colony
           ? await getProcessedColony(data.colony, address, ipfsWithFallback)
           : null;
+      } catch (error) {
+        console.error(error);
+        return error;
+      }
+    },
+    async historicColonyRoles(_, { colonyAddress, blockNumber }) {
+      try {
+        const colonyClient = await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        );
+        return getHistoricColonyRoles(colonyClient, 0, blockNumber);
       } catch (error) {
         console.error(error);
         return null;

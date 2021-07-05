@@ -43,8 +43,8 @@ query UserWithReputation($address: String!, $colonyAddress: String!, $domainId: 
   }
 }
 
-query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
-  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
+query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int, $rootHash: String) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId, rootHash: $rootHash) @client
 }
 
 query UserTokens($address: String!) {
@@ -59,6 +59,26 @@ query UserTokens($address: String!) {
       name
       symbol
       balance
+    }
+  }
+}
+
+query UserBalanceWithLock($address: String!, $tokenAddress: String!, $colonyAddress: String!) {
+  user(address: $address) {
+    id
+    userLock(walletAddress: $address, tokenAddress: $tokenAddress, colonyAddress: $colonyAddress) @client {
+      balance
+      nativeToken {
+        decimals
+        name
+        symbol
+        balance
+        address
+        verified
+      }
+      totalObligation
+      pendingBalance
+      activeTokens
     }
   }
 }
@@ -229,11 +249,14 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     domainName
     domainPurpose
     domainColor
+    motionState
+    motionDomain
     roles {
       id
       setTo
     }
     blockNumber
+    rootHash
   }
 }
 
@@ -270,6 +293,18 @@ query ActionsThatNeedAttention($colonyAddress: String!, $walletAddress: String!)
   actionsThatNeedAttention(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
     transactionHash
     needsAction
+  }
+}
+
+query EventsForMotion($motionId: Int!, $colonyAddress: String!) {
+  eventsForMotion(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
   }
 }
 
@@ -342,6 +377,112 @@ query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
   legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }
 
+# Motions
+#
+#
+
+query MotionStakes($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
+  motionStakes(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+    totalNAYStakes
+    remainingToFullyYayStaked
+    remainingToFullyNayStaked
+    maxUserStake
+    minUserStake
+  }
+}
+
+query MotionsSystemMessages($motionId: Int!, $colonyAddress: String!) {
+  motionsSystemMessages(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    createdAt
+  }
+}
+
+query MotionVoterReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionVoterReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    reward
+    minReward
+    maxReward
+  }
+}
+
+query MotionUserVoteRevealed($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionUserVoteRevealed(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    revealed
+    vote
+  }
+}
+
+query MotionVoteResults($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionVoteResults(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    currentUserVoteSide
+    yayVotes
+    yayVoters
+    nayVotes
+    nayVoters
+  }
+}
+
+query VotingState($colonyAddress: String!, $motionId: Int!) {
+  votingState(colonyAddress: $colonyAddress, motionId: $motionId, ) @client {
+    thresholdValue
+    totalVotedReputation
+    skillRep
+  }
+}
+
+query MotionCurrentUserVoted($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionCurrentUserVoted(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
+}
+
+query MotionFinalized($motionId: Int!, $colonyAddress: String!) {
+  motionFinalized(motionId: $motionId, colonyAddress: $colonyAddress) @client
+}
+
+query MotionStakerReward($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
+  motionStakerReward(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    stakingRewardYay
+    stakingRewardNay
+    stakesYay
+    stakesNay
+    claimedReward
+  }
+}
+
+query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $motionId: Int!) {
+  stakeAmountsForMotion(colonyAddress: $colonyAddress, userAddress: $userAddress, motionId: $motionId) @client {
+    totalStaked {
+      YAY
+      NAY
+    }
+    userStake {
+      YAY
+      NAY
+    }
+    requiredStake
+  }
+}
+
+query MotionObjectionAnnotation($motionId: Int!, $colonyAddress: String!) {
+  motionObjectionAnnotation(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    address
+    metadata
+  }
+}
+
+query MotionStatus($motionId: Int!, $colonyAddress: String!) {
+  motionStatus(motionId: $motionId, colonyAddress: $colonyAddress) @client
+}
+
+query MotionTimeoutPeriods($motionId: Int!, $colonyAddress: String!) {
+  motionTimeoutPeriods(motionId: $motionId, colonyAddress: $colonyAddress) @client {
+    timeLeftToStake
+    timeLeftToSubmit
+    timeLeftToReveal
+    timeLeftToEscalate
+  }
+}
 
 # The Graph
 #
@@ -559,4 +700,18 @@ query ColonySubscribedUsers($colonyAddress: String!) {
 
 query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+}
+
+query ColonyReputation($address: String!, $domainId: Int) {
+  colonyReputation(address: $address, domainId: $domainId) @client
+}
+
+query ColonyHistoricRoles($colonyAddress: String!, $blockNumber: Int!) {
+  historicColonyRoles(colonyAddress: $colonyAddress, blockNumber: $blockNumber) @client {
+    address
+    domains {
+      domainId
+      roles
+    }
+  }
 }

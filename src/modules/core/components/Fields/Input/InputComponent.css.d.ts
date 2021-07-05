@@ -12,3 +12,4 @@ export const colorSchemaTransparent: string;
 export const inputContainer: string;
 export const characterCounter: string;
 export const paddingRightExtra: string;
+export const maxButton: string;

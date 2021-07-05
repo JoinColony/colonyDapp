@@ -247,7 +247,11 @@ const Select = ({
   }, [handleOutsideClick, isOpen]);
 
   const activeOptionDisplay = useMemo<ReactNode>(() => {
-    const activeOption = options[checkedOption];
+    /*
+     * @NOTE If the active option is removed by something (ie: filtered out),
+     * fall back to the last entry in the options array
+     */
+    const activeOption = options[checkedOption] || options[options.length - 1];
     let activeOptionLabel;
     if (activeOption) {
       if (typeof activeOption.label === 'object') {

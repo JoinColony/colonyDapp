@@ -5,6 +5,9 @@
 }
 
 .themeHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 32px 20px 20px;
 }
 

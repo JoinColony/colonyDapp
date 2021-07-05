@@ -62,6 +62,9 @@ export default gql`
     domainPurpose: String!
     domainColor: String!
     blockNumber: Int!
+    motionState: String
+    motionDomain: Int!
+    rootHash: String
   }
 
   input NetworkContractsInput {
@@ -141,9 +144,32 @@ export default gql`
     version: Int!
   }
 
+  type UserToken {
+    address: String!
+    decimals: Int!
+    name: String!
+    symbol: String!
+    iconHash: String
+    verified: Boolean!
+    balance: String!
+  }
+
+  type UserLock {
+    balance: String!
+    nativeToken: UserToken
+    totalObligation: String!
+    pendingBalance: String!
+    activeTokens: String!
+  }
+
   extend type User {
     reputation(colonyAddress: String!, domainId: Int): String!
     tokens(walletAddress: String!): [Token!]!
+    userLock(
+      walletAddress: String!
+      tokenAddress: String!
+      colonyAddress: String!
+    ): UserLock!
     tokenTransfers: [Transfer!]!
     processedColonies: [ProcessedColony!]!
   }
@@ -155,6 +181,14 @@ export default gql`
     displayName: String
     avatarHash: String
     avatarURL: String
+  }
+
+  type MotionStakes {
+    totalNAYStakes: String!
+    remainingToFullyYayStaked: String!
+    remainingToFullyNayStaked: String!
+    maxUserStake: String!
+    minUserStake: String!
   }
 
   type UserProfile {
@@ -180,6 +214,55 @@ export default gql`
     needsAction: Boolean!
   }
 
+  type MotionVoteReveal {
+    revealed: Boolean!
+    vote: Int!
+  }
+
+  type MotionVoteResults {
+    currentUserVoteSide: Int!
+    yayVotes: String!
+    yayVoters: [String!]!
+    nayVotes: String!
+    nayVoters: [String!]!
+  }
+
+  type MotionStakerRewards {
+    stakingRewardYay: String!
+    stakingRewardNay: String!
+    stakesYay: String!
+    stakesNay: String!
+    claimedReward: Boolean!
+  }
+
+  type StakeSidesAmounts {
+    YAY: String!
+    NAY: String!
+  }
+
+  type StakeAmounts {
+    totalStaked: StakeSidesAmounts!
+    userStake: StakeSidesAmounts!
+    requiredStake: String!
+  }
+
+  type MotionObjectionAnnotation {
+    address: String!
+    metadata: String!
+  }
+
+  type VotingState {
+    thresholdValue: String!
+    totalVotedReputation: String!
+    skillRep: String!
+  }
+
+  type MotionVoterReward {
+    reward: String!
+    minReward: String!
+    maxReward: String!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -188,11 +271,16 @@ export default gql`
       extensionId: String!
     ): ColonyExtension
     colonyName(address: String!): String!
+    colonyReputation(address: String!, domainId: Int): String
     colonyMembersWithReputation(
       colonyAddress: String!
       domainId: Int
     ): [String!]
     colonyDomain(colonyAddress: String!, domainId: Int!): ProcessedDomain!
+    historicColonyRoles(
+      colonyAddress: String!
+      blockNumber: Int!
+    ): [ProcessedRoles!]!
     token(address: String!): Token!
     tokens(addresses: [String!]): [Token!]!
     userAddress(name: String!): String!
@@ -200,6 +288,7 @@ export default gql`
       address: String!
       colonyAddress: String!
       domainId: Int
+      rootHash: String
     ): String!
     username(address: String!): String!
     networkContracts: NetworkContracts!
@@ -212,6 +301,7 @@ export default gql`
       colonyAddress: String!
       walletAddress: String!
     ): [ActionThatNeedsAttention]!
+    eventsForMotion(motionId: Int!, colonyAddress: String!): [ParsedEvent!]!
     recoveryEventsForSession(
       blockNumber: Int!
       colonyAddress: String!
@@ -236,6 +326,56 @@ export default gql`
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     networkExtensionVersion(extensionId: String!): Int!
+    motionTimeoutPeriods(
+      motionId: Int!
+      colonyAddress: String!
+    ): MotionTimeoutPeriods!
+    motionStakes(
+      colonyAddress: String!
+      userAddress: String!
+      motionId: Int!
+    ): MotionStakes!
+    motionsSystemMessages(
+      motionId: Int!
+      colonyAddress: String!
+    ): [SystemMessage!]!
+    motionVoterReward(
+      motionId: Int!
+      colonyAddress: String!
+      userAddress: String!
+    ): MotionVoterReward!
+    motionUserVoteRevealed(
+      motionId: Int!
+      colonyAddress: String!
+      userAddress: String!
+    ): MotionVoteReveal!
+    motionCurrentUserVoted(
+      motionId: Int!
+      colonyAddress: String!
+      userAddress: String!
+    ): Boolean!
+    motionVoteResults(
+      motionId: Int!
+      colonyAddress: String!
+      userAddress: String!
+    ): MotionVoteResults!
+    motionFinalized(motionId: Int!, colonyAddress: String!): Boolean!
+    motionStakerReward(
+      motionId: Int!
+      colonyAddress: String!
+      userAddress: String!
+    ): MotionStakerRewards!
+    stakeAmountsForMotion(
+      colonyAddress: String!
+      userAddress: String!
+      motionId: Int!
+    ): StakeAmounts!
+    motionObjectionAnnotation(
+      motionId: Int!
+      colonyAddress: String!
+    ): MotionObjectionAnnotation!
+    votingState(colonyAddress: String!, motionId: Int!): VotingState!
+    motionStatus(motionId: Int!, colonyAddress: String!): String!
   }
 
   extend type Mutation {
@@ -403,5 +543,12 @@ export default gql`
     events: [NetworkEvent!]!
     isDeploymentFinished: Boolean!
     installedExtensions: [ColonyExtension!]!
+  }
+
+  type MotionTimeoutPeriods {
+    timeLeftToStake: Int!
+    timeLeftToSubmit: Int!
+    timeLeftToReveal: Int!
+    timeLeftToEscalate: Int!
   }
 `;

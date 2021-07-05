@@ -88,6 +88,10 @@
   }
 }
 
+.themeMinimal:disabled {
+  border-color: var(--text-disabled);
+}
+
 .themeMinimal::placeholder {
   font-style: italic;
   color: var(--grey-4);
@@ -171,4 +175,16 @@
 
 .paddingRightExtra {
   padding-right: 45px;
+}
+
+.maxButton {
+  position: absolute;
+  right: 160px;
+  bottom: 7px;
+  border: none;
+  background: none;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--action-secondary);
+  cursor: pointer;
 }

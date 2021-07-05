@@ -1,10 +1,12 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import ReactSlider from 'rc-slider';
 import { useField } from 'formik';
 
 import 'rc-slider/assets/index.css';
 
-type Appearance = {
+import styles from './Slider.css';
+
+export type Appearance = {
   theme?: 'primary' | 'danger';
   size?: 'thin' | 'thick';
 };
@@ -12,10 +14,15 @@ type Appearance = {
 interface Props {
   value: number;
   max?: number;
+  min?: number;
   limit?: number;
   appearance?: Appearance;
-  onChange: (val: any) => void;
+  onChange?: (val: any) => void;
   name: string;
+  disabled?: boolean;
+  step?: number;
+  onReset?: (val: any) => void;
+  exceedLimit?: (val: boolean) => void;
 }
 
 const displayName = 'Slider';
@@ -23,33 +30,70 @@ const displayName = 'Slider';
 const Slider = ({
   value,
   max = 100,
+  min = 0,
   onChange,
   limit,
   appearance,
   name,
+  step = 1,
+  disabled = false,
+  exceedLimit,
 }: Props) => {
   const [sliderValue, setSliderValue] = useState<number>(value);
   const [, , { setValue }] = useField(name);
 
-  const gradientStopPercentage = useMemo(() => {
-    return limit ? Math.round((limit / max) * 100) : 0;
-  }, [limit, max]);
+  /*
+   * This is needed to trigger an outside reset of the slider
+   * Eg: when using `setFieldValue` after submitting a form
+   */
+  useEffect(() => {
+    if (value !== sliderValue) {
+      setSliderValue(value);
+    }
+  }, [sliderValue, value, setSliderValue]);
+
+  const limitValue = useMemo(() => {
+    return limit ? limit * 100 : 0;
+  }, [limit]);
+
+  const gradientPercentage = useMemo(
+    () => (limitValue >= 100 ? 100 : limitValue),
+    [limitValue],
+  );
 
   const onSliderChange = useCallback(
     (val): void => {
-      if ((limit && sliderValue < limit) || val < sliderValue || !limit) {
+      if (
+        (limit !== undefined && sliderValue < limitValue) ||
+        val < sliderValue ||
+        !limitValue
+      ) {
         setSliderValue(val);
         setValue(val);
-        onChange(val);
+        if (onChange) {
+          onChange(val);
+        }
+        if (exceedLimit) {
+          exceedLimit(false);
+        }
       }
-      if (limit && sliderValue > limit) {
-        setSliderValue(limit);
-        setValue(val);
-        onChange(limit);
+      if (
+        limit !== undefined &&
+        (sliderValue > limitValue || val > limitValue)
+      ) {
+        setSliderValue(limitValue);
+        setValue(limitValue);
+
+        if (onChange) {
+          onChange(limitValue);
+        }
+        if (exceedLimit) {
+          exceedLimit(true);
+        }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setSliderValue, onChange, limit, sliderValue],
+    [setSliderValue, onChange, limitValue, sliderValue],
   );
 
   const marks = {};
@@ -88,40 +132,45 @@ const Slider = ({
   const sizes = SliderSizesObject[appearance?.size || 'thin'];
 
   return (
-    <ReactSlider
-      min={0}
-      step={1}
-      value={sliderValue}
-      onChange={onSliderChange}
-      marks={marks}
-      max={max}
-      trackStyle={{
-        backgroundColor: colors.backgroundColor,
-        height: sizes.height,
-      }}
-      handleStyle={{
-        borderColor: colors.borderColor,
-        borderWidth: 6,
-        height: 15,
-        width: 15,
-        marginTop: -7,
-        backgroundColor: '#FFFFFF',
-      }}
-      dotStyle={{
-        height: sizes.markHeight,
-        width: sizes.markWidth,
-        backgroundColor: '#76748B',
-        border: 0,
-        borderRadius: 0,
-        top: sizes.markPositionTop,
-        marginLeft: 0,
-      }}
-      railStyle={{
-        backgroundColor: '#C2CCCC',
-        height: sizes.height,
-        backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientStopPercentage}%, transparent ${gradientStopPercentage}%)`,
-      }}
-    />
+    <div className={`${styles.main} ${styles[appearance?.theme || 'primary']}`}>
+      <ReactSlider
+        min={min}
+        step={step}
+        value={sliderValue}
+        onChange={onSliderChange}
+        marks={marks}
+        max={max}
+        disabled={disabled}
+        trackStyle={{
+          backgroundColor: colors.backgroundColor,
+          height: sizes.height,
+        }}
+        handleStyle={{
+          borderColor: colors.borderColor,
+          borderWidth: 6,
+          height: 15,
+          width: 15,
+          marginTop: appearance?.size === 'thick' ? -6 : -7,
+          backgroundColor: '#FFFFFF',
+        }}
+        dotStyle={{
+          display:
+            gradientPercentage === 100 || gradientPercentage <= 0 ? 'none' : '',
+          height: sizes.markHeight,
+          width: sizes.markWidth,
+          backgroundColor: '#76748B',
+          border: 0,
+          borderRadius: 0,
+          top: sizes.markPositionTop,
+          marginLeft: `${gradientPercentage}%`,
+        }}
+        railStyle={{
+          backgroundColor: '#C2CCCC',
+          height: sizes.height,
+          backgroundImage: `linear-gradient(90deg, #76748B 0% ${gradientPercentage}%, transparent ${gradientPercentage}%)`,
+        }}
+      />
+    </div>
   );
 };
 

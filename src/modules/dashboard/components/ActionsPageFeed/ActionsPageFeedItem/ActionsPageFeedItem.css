@@ -2,7 +2,7 @@
 .main {
   display: flex;
   align-items: flex-start;
-  padding: 16px 16px 16px 0;
+  padding: 11px 16px 11px 0;
   width: 100%;
   border-radius: var(--radius-large);
 }
@@ -46,4 +46,16 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--pink);
+}
+
+.themePrimary {
+  composes: main;
+}
+
+.themeDanger {
+  composes: main;
+}
+
+.themeDanger.stateAnnotation {
+  background-color: color-mod(var(--pink) alpha(6%));
 }

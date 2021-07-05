@@ -1,24 +1,35 @@
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 
-import { ColonyActions } from '~types/index';
+import { ActionUserRoles, ColonyActions, ColonyMotions } from '~types/index';
 
-export const useFormatRolesTitle = (roles, actionType) => {
+export const useFormatRolesTitle = (
+  roles: ActionUserRoles[],
+  actionType: string,
+  isMotion?: boolean,
+) => {
   let roleTitle = '';
   let roleMessageDescriptorId = '';
   const { formatMessage } = useIntl();
 
-  if (!roles || actionType !== ColonyActions.SetUserRoles) {
+  if (
+    !roles ||
+    (actionType !== ColonyMotions.SetUserRolesMotion &&
+      actionType !== ColonyActions.SetUserRoles)
+  ) {
     return { roleTitle };
   }
 
   const assignedRoles = roles.filter((role) => role.setTo);
   const unassignedRoles = roles.filter((role) => !role.setTo);
 
-  const getFormattedRoleList = (roleGroupA, roleGroupB) => {
+  const getFormattedRoleList = (
+    roleGroupA: ActionUserRoles[],
+    roleGroupB: ActionUserRoles[] | null,
+  ) => {
     let roleList = '';
 
-    roleGroupA.forEach((role, i) => {
+    roleGroupA.forEach((role: ActionUserRoles, i: number) => {
       const roleNameMessage = { id: `role.${role.id}` };
       const formattedRole = formatMessage(roleNameMessage);
 
@@ -37,12 +48,16 @@ export const useFormatRolesTitle = (roles, actionType) => {
 
   if (!isEmpty(assignedRoles)) {
     roleTitle += getFormattedRoleList(assignedRoles, unassignedRoles);
-    roleMessageDescriptorId = `action.${ColonyActions.SetUserRoles}.assign`;
+    roleMessageDescriptorId = isMotion
+      ? `motion.${actionType}.assign`
+      : `action.${actionType}.assign`;
   }
 
   if (isEmpty(assignedRoles) && !isEmpty(unassignedRoles)) {
     roleTitle += getFormattedRoleList(unassignedRoles, null);
-    roleMessageDescriptorId = `action.${ColonyActions.SetUserRoles}.remove`;
+    roleMessageDescriptorId = isMotion
+      ? `motion.${actionType}.remove`
+      : `action.${actionType}.remove`;
   } else if (!isEmpty(unassignedRoles)) {
     roleTitle = `Assign the ${roleTitle}`;
     roleTitle += ` and remove the${getFormattedRoleList(

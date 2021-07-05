@@ -23,6 +23,11 @@
   color: color-mod(var(--dark) alpha(85%));
 }
 
+.descriptionValue {
+  composes: value;
+  white-space: pre-line;
+}
+
 .value i {
   display: inline-block;
   margin: -3px 6px 0 0;
@@ -46,10 +51,9 @@
 }
 
 .domainDescription {
-  composes: multiLineEllipsis from '~styles/text.css';
   width: 190px;
   text-align: right;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .roleSettingItem {

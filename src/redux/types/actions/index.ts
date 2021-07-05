@@ -1,6 +1,7 @@
 import { ColonyActionTypes } from './colony';
 import { ColonyActionsActionTypes } from './colonyActions';
 import { ConnectionActionTypes } from './connection';
+import { MotionActionTypes } from './motion';
 import { GasPricesActionTypes } from './gasPrices';
 import { IpfsActionTypes } from './ipfs';
 import { MultisigActionTypes } from './multisig';
@@ -9,6 +10,8 @@ import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
 import { WalletActionTypes } from './wallet';
+
+export { RootMotionOperationNames } from './motion';
 
 /*
  * Type that represents an action (bare minimum).
@@ -101,7 +104,8 @@ export type AllActions =
   | TransactionActionTypes
   | MessageActionTypes
   | UserActionTypes
-  | WalletActionTypes;
+  | WalletActionTypes
+  | MotionActionTypes;
 
 export type Action<T extends AllActions['type']> = Extract<
   AllActions,

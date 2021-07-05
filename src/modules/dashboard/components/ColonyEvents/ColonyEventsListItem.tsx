@@ -35,6 +35,14 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyEvents.ColonyEventsListItem.domain',
     defaultMessage: 'Domain {domainId}',
   },
+  voteSide: {
+    id: 'dashboard.ColonyEvents.ColonyEventsListItem.voteSide',
+    defaultMessage: `{vote, select,
+      0 {objected}
+      1 {staked}
+      other {supported}
+    }`,
+  },
 });
 
 interface Props {
@@ -52,6 +60,7 @@ const ColonyEventsListItem = ({
     decimals,
     transactionHash,
     domainId,
+    newDomainId,
     createdAt,
     displayValues,
     fundingPot,
@@ -66,6 +75,8 @@ const ColonyEventsListItem = ({
     newVersion,
     storageSlot,
     storageSlotValue,
+    motionId,
+    vote,
   },
   colony: { tokens, nativeTokenAddress },
   colony,
@@ -80,6 +91,9 @@ const ColonyEventsListItem = ({
 
   const domain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === parseInt(domainId, 10),
+  );
+  const newDomain = colony.domains.find(
+    ({ ethDomainId }) => ethDomainId === parseInt(newDomainId, 10),
   );
 
   const token = tokens.find(({ address }) => address === tokenAddress);
@@ -117,10 +131,14 @@ const ColonyEventsListItem = ({
       </span>
     ),
     amount: (
-      <Numeral value={amount} unit={getTokenDecimalsWithFallback(decimals)} />
+      <Numeral
+        value={amount}
+        unit={getTokenDecimalsWithFallback(decimals || token?.decimals)}
+      />
     ),
     tokenSymbol: token?.symbol || colonyNativeToken?.symbol,
     domain: domain?.name || '',
+    newDomain: newDomain?.name || '',
     transactionHash,
     fundingPot,
     metadata,
@@ -134,6 +152,8 @@ const ColonyEventsListItem = ({
     newVersion,
     storageSlot,
     storageSlotValue,
+    motionId,
+    voteSide: <FormattedMessage {...MSG.voteSide} values={{ vote }} />,
   };
 
   return (

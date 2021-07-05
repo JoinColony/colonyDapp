@@ -3,7 +3,6 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
-import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
@@ -13,9 +12,9 @@ import DialogSection from '~core/Dialog/DialogSection';
 import {
   Select,
   Input,
-  FormStatus,
   Annotations,
   TokenSymbolSelector,
+  SelectOption,
 } from '~core/Fields';
 import Heading from '~core/Heading';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
@@ -24,14 +23,17 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import {
   useLoggedInUser,
   useTokenBalancesForDomainsLazyQuery,
-  Colony,
 } from '~data/index';
+import { ActionDialogProps } from '~core/Dialog';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import {
   getBalanceFromToken,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
@@ -39,6 +41,7 @@ import { userHasRole } from '../../../users/checks';
 import styles from './TransferFundsDialogForm.css';
 import { FormValues } from './TransferFundsDialog';
 import Icon from '~core/Icon';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 const MSG = defineMessages({
   title: {
@@ -96,23 +99,23 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  back?: () => void;
-  colony: Colony;
+  domainOptions: SelectOption[];
 }
 
 const TransferFundsDialogForm = ({
   back,
   colony,
   colony: { colonyAddress, domains, tokens },
+  domainOptions,
   handleSubmit,
   isSubmitting,
   isValid,
   setErrors,
-  status,
   values,
   validateForm,
   errors,
-}: Props & FormikProps<FormValues>) => {
+  isVotingExtensionEnabled,
+}: ActionDialogProps & FormikProps<FormValues> & Props) => {
   const { tokenAddress, amount } = values;
 
   const fromDomainId = values.fromDomain
@@ -138,22 +141,18 @@ const TransferFundsDialogForm = ({
     fromDomainId,
   ]);
 
-  const userHasPermissions = userHasRole(fromDomainRoles, ColonyRole.Funding);
+  const canTransferFunds = userHasRole(fromDomainRoles, ColonyRole.Funding);
 
   const requiredRoles: ColonyRole[] = [ColonyRole.Funding];
 
-  const domainOptions = useMemo(
-    () =>
-      sortBy(
-        domains.map(({ name, ethDomainId }) => ({
-          value: ethDomainId.toString(),
-          label: name,
-        })),
-        ['value'],
-      ),
-
-    [domains],
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canTransferFunds,
+    isVotingExtensionEnabled,
+    values.forceAction,
   );
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
 
   const [
     loadTokenBalances,
@@ -243,15 +242,31 @@ const TransferFundsDialogForm = ({
 
   return (
     <>
-      <FormStatus status={status} />
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none' }}
-          text={MSG.title}
-          className={styles.title}
-        />
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                /*
+                 * @NOTE Always disabled since you can only create this motion in root
+                 */
+                disabled
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {canTransferFunds && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
+        </div>
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermission && (
         <div className={styles.permissionsRequired}>
           <DialogSection>
             <PermissionRequiredInfo requiredRoles={requiredRoles} />
@@ -267,7 +282,7 @@ const TransferFundsDialogForm = ({
               name="fromDomain"
               appearance={{ theme: 'grey' }}
               onChange={() => validateForm()}
-              disabled={!userHasPermissions}
+              disabled={inputDisabled}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>
@@ -306,7 +321,7 @@ const TransferFundsDialogForm = ({
               name="toDomain"
               appearance={{ theme: 'grey' }}
               onChange={() => validateForm()}
-              disabled={!userHasPermissions}
+              disabled={inputDisabled}
             />
             {!!tokenAddress && toDomainTokenBalance && !errors.toDomain && (
               <div className={styles.domainPotBalance}>
@@ -351,7 +366,7 @@ const TransferFundsDialogForm = ({
                   selectedToken && selectedToken.decimals,
                 ),
               }}
-              disabled={!userHasPermissions}
+              disabled={inputDisabled}
               onChange={() => validateForm()}
             />
           </div>
@@ -362,7 +377,7 @@ const TransferFundsDialogForm = ({
               name="tokenAddress"
               elementOnly
               appearance={{ alignOptions: 'right', theme: 'grey' }}
-              disabled={!userHasPermissions}
+              disabled={inputDisabled}
             />
           </div>
           {values.tokenAddress === AddressZero && (
@@ -386,10 +401,10 @@ const TransferFundsDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotation"
-          disabled={!userHasPermissions}
+          disabled={inputDisabled}
         />
       </DialogSection>
-      {!userHasPermissions && (
+      {!userHasPermission && (
         <DialogSection>
           <span className={styles.permissionsError}>
             <FormattedMessage
@@ -407,6 +422,9 @@ const TransferFundsDialogForm = ({
           </span>
         </DialogSection>
       )}
+      {onlyForceAction && (
+        <NotEnoughReputation appearance={{ marginTop: 'negative' }} />
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         {back && (
           <Button
@@ -420,7 +438,7 @@ const TransferFundsDialogForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !userHasPermissions}
+          disabled={!isValid || inputDisabled}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>

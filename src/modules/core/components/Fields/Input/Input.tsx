@@ -52,7 +52,7 @@ export interface Props extends Omit<InputComponentProps, 'placeholder'> {
   innerRef?: RefObject<any> | ((ref: HTMLElement | null) => void);
 
   /** Label text */
-  label: string | MessageDescriptor;
+  label?: string | MessageDescriptor;
 
   /** Label text values for intl interpolation */
   labelValues?: SimpleMessageValues;
@@ -108,6 +108,7 @@ const Input = ({
   statusValues,
   forcedFieldError,
   maxLength,
+  maxButtonParams,
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();
@@ -119,6 +120,7 @@ const Input = ({
       : placeholderProp;
 
   const inputProps: InputComponentProps = {
+    ...inputFieldProps,
     appearance,
     'aria-invalid': !!error || !!forcedFieldError,
     formattingOptions,
@@ -128,7 +130,7 @@ const Input = ({
     placeholder,
     disabled,
     maxLength,
-    ...inputFieldProps,
+    maxButtonParams,
   };
 
   const extensionStringText: string | undefined =
@@ -141,16 +143,18 @@ const Input = ({
   });
   return (
     <div className={containerClasses}>
-      <InputLabel
-        appearance={appearance}
-        inputId={id}
-        label={label}
-        labelValues={labelValues}
-        help={help}
-        helpValues={helpValues}
-        extra={extra}
-        screenReaderOnly={elementOnly}
-      />
+      {label && (
+        <InputLabel
+          appearance={appearance}
+          inputId={id}
+          label={label}
+          labelValues={labelValues}
+          help={help}
+          helpValues={helpValues}
+          extra={extra}
+          screenReaderOnly={elementOnly}
+        />
+      )}
       <div className={styles.extensionContainer}>
         <InputComponent {...inputProps} />
         {extensionStringText && (

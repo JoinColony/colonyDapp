@@ -1,6 +1,6 @@
 import React, { ReactChild } from 'react';
 
-import DomainDropdown from '~dashboard/DomainDropdown';
+import ColonyDomainSelector from '~dashboard/ColonyHome/ColonyDomainSelector';
 import ColonyHomeActions from '~dashboard/ColonyHomeActions';
 import ColonyTotalFunds from '~dashboard/ColonyTotalFunds';
 
@@ -12,6 +12,7 @@ import ColonyExtensions from './ColonyExtensions';
 import ColonyDomainDescription from './ColonyDomainDescription';
 import ColonyUpgrade from './ColonyUpgrade';
 import ColonyFinishDeployment from './ColonyFinishDeployment';
+import ExtensionUpgrade from './ExtensionUpgrade';
 
 import { Colony } from '~data/index';
 
@@ -29,6 +30,8 @@ type Props = {
   showControls?: boolean;
   showNavigation?: boolean;
   showSidebar?: boolean;
+  showActions?: boolean;
+  ethDomainId?: number;
 };
 
 const displayName = 'dashboard.ColonyHome.ColonyHomeLayout';
@@ -40,7 +43,9 @@ const ColonyHomeLayout = ({
   showControls = true,
   showNavigation = true,
   showSidebar = true,
+  showActions = true,
   onDomainChange = () => null,
+  ethDomainId,
 }: Props) => (
   <div className={styles.main}>
     <div className={showSidebar ? styles.mainContentGrid : styles.minimalGrid}>
@@ -54,13 +59,15 @@ const ColonyHomeLayout = ({
             <ColonyTotalFunds colony={colony} />
             <div className={styles.contentActionsPanel}>
               <div className={styles.domainsDropdownContainer}>
-                <DomainDropdown
+                <ColonyDomainSelector
                   filteredDomainId={filteredDomainId}
                   onDomainChange={onDomainChange}
                   colony={colony}
                 />
               </div>
-              <ColonyHomeActions colony={colony} />
+              {showActions && (
+                <ColonyHomeActions colony={colony} ethDomainId={ethDomainId} />
+              )}
             </div>
           </>
         )}
@@ -81,6 +88,7 @@ const ColonyHomeLayout = ({
       )}
     </div>
     <ColonyUpgrade colony={colony} />
+    <ExtensionUpgrade colony={colony} />
     <ColonyFinishDeployment colony={colony} />
   </div>
 );

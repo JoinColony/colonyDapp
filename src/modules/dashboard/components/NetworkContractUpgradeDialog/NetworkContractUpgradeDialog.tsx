@@ -1,30 +1,26 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 
 import { pipe, mergePayload, withMeta, mapPayload } from '~utils/actions';
-import Dialog, { DialogProps } from '~core/Dialog';
+import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
-import { Colony } from '~data/index';
 import { ActionTypes } from '~redux/index';
+import { RootMotionOperationNames } from '~redux/types/actions';
 import { WizardDialogType } from '~utils/hooks';
 
 import DialogForm from './NetworkContractUpgradeDialogForm';
 
 export interface FormValues {
+  forceAction: boolean;
   annotation: string;
-}
-
-interface CustomWizardDialogProps {
-  prevStep?: string;
-  colony: Colony;
 }
 
 type Props = DialogProps &
   Partial<WizardDialogType<object>> &
-  CustomWizardDialogProps;
+  ActionDialogProps;
 
 const displayName = 'dashboard.NetworkContractUpgradeDialog';
 
@@ -39,16 +35,31 @@ const NetworkContractUpgradeDialog = ({
   prevStep,
   colony,
   colony: { colonyAddress, version, colonyName },
+  isVotingExtensionEnabled,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_ROOT_MOTION${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_VERSION_UPGRADE${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
 
   const transform = useCallback(
     pipe(
       mapPayload(({ annotation: annotationMessage }) => {
         return {
+          operationName: RootMotionOperationNames.UPGRADE,
           colonyAddress,
           colonyName,
           version,
+          motionParams: [version],
           annotationMessage,
         };
       }),
@@ -61,24 +72,36 @@ const NetworkContractUpgradeDialog = ({
   return (
     <ActionForm
       initialValues={{
+        forceAction: false,
         annotation: undefined,
+        /*
+         * @NOTE That since this a root motion, and we don't actually make use
+         * of the motion domain selected (it's disabled), we don't need to actually
+         * pass the value over to the motion, since it will always be 1
+         */
       }}
-      submit={ActionTypes.COLONY_ACTION_VERSION_UPGRADE}
-      error={ActionTypes.COLONY_ACTION_VERSION_UPGRADE_ERROR}
-      success={ActionTypes.COLONY_ACTION_VERSION_UPGRADE_SUCCESS}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
       validationSchema={validationSchema}
       transform={transform}
       onSuccess={close}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <DialogForm
-            {...formValues}
-            colony={colony}
-            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <DialogForm
+              {...formValues}
+              colony={colony}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+              back={prevStep && callStep ? () => callStep(prevStep) : undefined}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };

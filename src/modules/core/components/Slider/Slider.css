@@ -1,0 +1,27 @@
+.main :global(.rc-slider-disabled) {
+  padding: 6px 0 7px;
+}
+
+.main :global(.rc-slider-disabled .rc-slider-handle) {
+  border-color: var(--text-disabled) !important;
+}
+
+.main :global(.rc-slider-track) {
+  max-width: 100%;
+}
+
+.primary :global(.rc-slider-handle:active) {
+  box-shadow: 0 0 5px var(--primary);
+}
+
+.danger :global(.rc-slider-handle:active) {
+  box-shadow: 0 0 5px var(--danger);
+}
+
+/*
+  Removes `left` property from the dot for the correct visual position.
+  I tried many options but that's the only one I found working
+*/
+.primary :global(.rc-slider-dot) {
+  left: 0 !important;
+}

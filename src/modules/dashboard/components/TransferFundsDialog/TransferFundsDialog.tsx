@@ -1,18 +1,18 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
 import { bigNumberify } from 'ethers/utils';
 import { useHistory } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
+import sortBy from 'lodash/sortBy';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { pipe, mapPayload, withMeta } from '~utils/actions';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import Dialog, { DialogProps } from '~core/Dialog';
+import Dialog, { ActionDialogProps, DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
-import { Colony } from '~data/index';
 import { WizardDialogType } from '~utils/hooks';
 
 import DialogForm from './TransferFundsDialogForm';
@@ -30,6 +30,7 @@ const MSG = defineMessages({
 });
 
 export interface FormValues {
+  forceAction: boolean;
   fromDomain?: string;
   toDomain?: string;
   amount: string;
@@ -37,10 +38,8 @@ export interface FormValues {
   annotation: string;
 }
 
-interface CustomWizardDialogProps {
-  prevStep?: string;
-  colony: Colony;
-  fromDomain?: number;
+interface CustomWizardDialogProps extends ActionDialogProps {
+  ethDomainId?: number;
 }
 
 type Props = DialogProps &
@@ -50,15 +49,35 @@ type Props = DialogProps &
 const displayName = 'dashboard.TransferFundsDialog';
 
 const TransferFundsDialog = ({
-  colony: { tokens = [], colonyAddress, nativeTokenAddress, colonyName },
+  colony: {
+    tokens = [],
+    colonyAddress,
+    nativeTokenAddress,
+    colonyName,
+    version,
+    domains,
+  },
   colony,
-  fromDomain,
+  ethDomainId: selectedDomainId,
   callStep,
   prevStep,
   cancel,
   close,
+  isVotingExtensionEnabled,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
   const history = useHistory();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_MOTION_MOVE_FUNDS${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_MOVE_FUNDS${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
 
   const validationSchema = yup.object().shape({
     fromDomain: yup.number().required(),
@@ -70,6 +89,18 @@ const TransferFundsDialog = ({
     tokenAddress: yup.string().address().required(),
     annotation: yup.string().max(4000),
   });
+
+  const domainOptions = useMemo(
+    () =>
+      sortBy(
+        domains.map(({ name, ethDomainId }) => ({
+          value: ethDomainId.toString(),
+          label: name,
+        })),
+        ['value'],
+      ),
+    [domains],
+  );
 
   const transform = useCallback(
     pipe(
@@ -94,6 +125,7 @@ const TransferFundsDialog = ({
           return {
             colonyAddress,
             colonyName,
+            version,
             fromDomainId: parseInt(sourceDomain, 10),
             toDomainId: parseInt(toDomain, 10),
             amount,
@@ -110,29 +142,47 @@ const TransferFundsDialog = ({
   return (
     <ActionForm
       initialValues={{
-        fromDomain: fromDomain ? String(fromDomain) : ROOT_DOMAIN_ID.toString(),
-        toDomain: undefined,
+        forceAction: false,
+        fromDomain: selectedDomainId
+          ? String(selectedDomainId)
+          : ROOT_DOMAIN_ID.toString(),
+        toDomain:
+          domainOptions.find(
+            (domain) => domain.value !== selectedDomainId?.toString(),
+          )?.value || ROOT_DOMAIN_ID.toString(),
         amount: '',
         tokenAddress: nativeTokenAddress,
         annotation: undefined,
+        /*
+         * @NOTE That since this a root motion, and we don't actually make use
+         * of the motion domain selected (it's disabled), we don't need to actually
+         * pass the value over to the motion, since it will always be 1
+         */
       }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_ACTION_MOVE_FUNDS}
-      error={ActionTypes.COLONY_ACTION_MOVE_FUNDS_ERROR}
-      success={ActionTypes.COLONY_ACTION_MOVE_FUNDS_SUCCESS}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
       onSuccess={close}
       transform={transform}
       validateOnChange
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <DialogForm
-            {...formValues}
-            colony={colony}
-            back={prevStep && callStep ? () => callStep(prevStep) : undefined}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <DialogForm
+              {...formValues}
+              colony={colony}
+              domainOptions={domainOptions}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+              back={prevStep && callStep ? () => callStep(prevStep) : undefined}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };

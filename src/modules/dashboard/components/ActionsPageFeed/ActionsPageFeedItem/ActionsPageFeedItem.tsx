@@ -13,7 +13,12 @@ import styles from './ActionsPageFeedItem.css';
 
 const displayName = 'dashboard.ActionsPageFeed.ActionsPageFeedItem';
 
+export interface Appearance {
+  theme?: 'primary' | 'danger';
+}
+
 export interface Props {
+  appearance?: Appearance;
   comment?: string;
   user?: AnyUser | null;
   annotation?: boolean;
@@ -23,6 +28,7 @@ export interface Props {
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const ActionsPageFeedItem = ({
+  appearance = { theme: 'primary' },
   comment,
   user,
   createdAt,
@@ -35,7 +41,7 @@ const ActionsPageFeedItem = ({
   });
 
   return (
-    <div className={getMainClasses({}, styles, { annotation })}>
+    <div className={getMainClasses(appearance, styles, { annotation })}>
       <div className={styles.avatar}>
         <UserAvatar
           size="xs"

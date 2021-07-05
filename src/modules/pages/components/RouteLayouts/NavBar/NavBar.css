@@ -17,7 +17,6 @@
   display: flex;
   align-content: stretch;
   padding: 0 20px;
-  z-index: var(--z-index-positioning);
   border: 1px solid transparent;
   border-color: var(--grey-blue-0);
   background-color: var(--grey-blue-3);

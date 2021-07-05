@@ -8,6 +8,10 @@ import {
   TokenBalancesForDomainsDocument,
   TokenBalancesForDomainsQuery,
   TokenBalancesForDomainsQueryVariables,
+  UserBalanceWithLockQuery,
+  UserBalanceWithLockQueryVariables,
+  UserBalanceWithLockDocument,
+  getLoggedInUser,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
@@ -79,6 +83,7 @@ function* createPaymentAction({
     }
 
     const { amount, tokenAddress, decimals = 18 } = singlePayment;
+    const { walletAddress } = yield getLoggedInUser();
 
     txChannel = yield call(getTxChannel, metaId);
 
@@ -192,6 +197,19 @@ function* createPaymentAction({
       // Force resolvers to update, as query resolvers are only updated on a cache miss
       // See #4: https://www.apollographql.com/docs/link/links/state/#resolvers
       // Also: https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy
+      fetchPolicy: 'network-only',
+    });
+
+    yield apolloClient.query<
+      UserBalanceWithLockQuery,
+      UserBalanceWithLockQueryVariables
+    >({
+      query: UserBalanceWithLockDocument,
+      variables: {
+        address: walletAddress,
+        tokenAddress,
+        colonyAddress,
+      },
       fetchPolicy: 'network-only',
     });
 

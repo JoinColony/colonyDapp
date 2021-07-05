@@ -9,7 +9,7 @@ import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { mapPayload } from '~utils/actions';
-import { canBeUpgraded } from '../../../checks';
+import { colonyCanBeUpgraded } from '../../../checks';
 import { hasRoot, canEnterRecoveryMode } from '../../../../users/checks';
 import { getAllUserRoles } from '../../../../transformers';
 
@@ -59,7 +59,10 @@ const ColonyFinishDeployment = ({
    * which versions *must* be upgraded, and which can function as-is, even with
    * an older version
    */
-  const mustUpgradeColony = canBeUpgraded(colony, networkVersion as string);
+  const mustUpgradeColony = colonyCanBeUpgraded(
+    colony,
+    networkVersion as string,
+  );
 
   return !mustUpgradeColony && !isDeploymentFinished && canFinishDeployment ? (
     <div className={styles.finishDeploymentBannerContainer}>

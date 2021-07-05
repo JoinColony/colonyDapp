@@ -76,10 +76,7 @@ const Extensions = ({ colonyAddress }: Props) => {
          *
          * This will be re-enabled in the Coin Machine feature branch
          */
-        if (
-          extensionName === Extension.CoinMachine ||
-          extensionName === Extension.VotingReputation
-        ) {
+        if (extensionName === Extension.CoinMachine) {
           return availableExtensions;
         }
         const installedExtension = installedExtensions.find(

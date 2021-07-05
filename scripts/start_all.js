@@ -35,22 +35,42 @@ addProcess('truffle', () =>
   })
 );
 
-/*
- * For all future readers of this file:
- * This is not the actual oracle from the colonyNetwork, this is just a mocked
- * version that we use for testing reputation queries locally
- */
 addProcess('oracle', async () => {
-  const mockOracleProcess = spawn('npm', ['start'], {
-    cwd: path.resolve(__dirname, '..', 'src/lib/mock-oracle'),
+  const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
+  const minerProcess = spawn('node', ['node_modules/.bin/babel-node', '--presets', '@babel/preset-env', 'src/lib/colonyNetwork/packages/reputation-miner/bin/index.js', '--minerAddress', '0x3a965407cEd5E62C5aD71dE491Ce7B23DA5331A4', '--syncFrom', '1', '--colonyNetworkAddress', networkAddress, '--oracle', '--auto', '--dbPath', 'src/lib/colonyNetwork/packages/reputation-miner/reputationStates.sqlite', '--oraclePort', '3002', '--processingDelay', '1'], {
+    cwd: path.resolve(__dirname, '..'),
     stdio: 'pipe',
   });
+
   if (args.foreground) {
-    mockOracleProcess.stdout.pipe(process.stdout);
-    mockOracleProcess.stderr.pipe(process.stderr);
+    minerProcess.stdout.pipe(process.stdout);
+    minerProcess.stderr.pipe(process.stderr);
   }
-  mockOracleProcess.on('error', error => {
-    mockOracleProcess.kill();
+  minerProcess.on('error', error => {
+    minerProcess.kill();
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
+  });
+  await waitOn({ resources: ['tcp:3002'] });
+  return minerProcess;
+});
+
+addProcess('reputationMonitor', async () => {
+  const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
+  const monitorProcess = spawn('node', ['src/lib/reputationMonitor/index.js', networkAddress], {
+    cwd: path.resolve(__dirname, '..'),
+    stdio: 'pipe',
+  });
+
+  if (args.foreground) {
+    monitorProcess.stdout.pipe(process.stdout);
+    monitorProcess.stderr.pipe(process.stderr);
+  }
+  monitorProcess.on('error', error => {
+    monitorProcess.kill();
     /*
      * @NOTE Just stop the startup orchestration process is something goes wrong
      */
@@ -58,7 +78,8 @@ addProcess('oracle', async () => {
     process.exit(1);
   });
   await waitOn({ resources: ['tcp:3001'] });
-  return mockOracleProcess;
+
+  return monitorProcess;
 });
 
 addProcess('db', async () => {
@@ -129,7 +150,7 @@ addProcess('graph-node', async () => {
   await new Promise(resolve => {
     console.log(); // New line
     console.log('Cleaning up the old graph-node docker data folder. For this we need', chalk.bold.red('ROOT'), 'permissions');
-    sudo.exec(`rm -Rf ${path.resolve(__dirname, '..', 'src/lib/graph-node/docker/data')}`, {},
+    sudo.exec(`rm -Rf ${path.resolve(__dirname, '..', 'src/lib/graph-node/docker/data')}`, {name: 'GraphNodeCleanup'},
       function (error) {
         if (error) {
           throw new Error(`graph-node cleanup process failed: ${error}`);

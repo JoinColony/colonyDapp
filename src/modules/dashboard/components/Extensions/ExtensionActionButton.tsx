@@ -25,6 +25,7 @@ interface Props {
   extension: ExtensionData;
   installedExtension?: ColonyExtensionQuery['colonyExtension'] | null;
   colonyVersion: string;
+  extensionCompatible?: boolean;
 }
 
 const ExtensionActionButton = ({
@@ -32,6 +33,7 @@ const ExtensionActionButton = ({
   colonyVersion,
   extension,
   installedExtension,
+  extensionCompatible = true,
 }: Props) => {
   const history = useHistory();
   const { colonyName, extensionId } = useParams<{
@@ -59,7 +61,7 @@ const ExtensionActionButton = ({
           extensionId: extension.extensionId,
         }}
         text={MSG.install}
-        disabled={!isSupportedColonyVersion}
+        disabled={!isSupportedColonyVersion || !extensionCompatible}
       />
     );
   }

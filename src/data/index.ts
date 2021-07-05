@@ -12,6 +12,7 @@ import {
   TokenQuery,
   UserNotificationsQuery,
   UserQuery,
+  UserToken,
   UserTokensQuery,
   UserWithReputationQuery,
   UserColoniesQuery,
@@ -36,7 +37,9 @@ import { colonyActionsResolvers } from './resolvers/colonyActions';
 import { metaColonyResolvers } from './resolvers/metacolony';
 import { eventsResolvers } from './resolvers/events';
 import { recoveryModeResolvers } from './resolvers/recovery';
-import { extensionResolvers } from './resolvers/extensions';
+import { extensionsResolvers } from './resolvers/extensions';
+import { motionsResolvers } from './resolvers/motions';
+import { stakesResolvers } from './resolvers/stakes';
 
 import { FixedToken } from '../types';
 
@@ -62,7 +65,9 @@ export const resolvers: ResolverFactory[] = [
   metaColonyResolvers,
   eventsResolvers,
   recoveryModeResolvers,
-  extensionResolvers,
+  extensionsResolvers,
+  motionsResolvers,
+  stakesResolvers,
 ];
 
 // export all the generated types and helpers
@@ -99,10 +104,16 @@ export type AnyTokens = (
   | UserTokens[number]
   | OneToken
   | FixedToken
+  | UserToken
 )[];
 
 // Almost all tokens with 'address' and 'iconHash'
-export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken | FixedToken;
+export type AnyToken =
+  | ColonyTokens[0]
+  | UserTokens[0]
+  | OneToken
+  | FixedToken
+  | UserToken;
 
 export type TransactionMessage = TransactionMessageFragment;
 export type TransactionsMessagesCount = TransactionMessagesCountQuery['transactionMessagesCount'];
