@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import { Extension } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
@@ -21,9 +22,14 @@ import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog'
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
-import { Colony, useLoggedInUser, useNetworkContracts } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useNetworkContracts,
+  useColonyExtensionsQuery,
+} from '~data/index';
 import { ALLOWED_NETWORKS } from '~constants';
-import { mustBeUpgraded } from '../../checks';
+import { colonyMustBeUpgraded, oneTxMustBeUpgraded } from '../../checks';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 
@@ -45,6 +51,10 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
 
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
+  });
+
+  const { data } = useColonyExtensionsQuery({
+    variables: { address: colony.colonyAddress },
   });
 
   const startWizardFlow = useNaiveBranchingDialogWizard([
@@ -193,9 +203,19 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
     },
   ]);
 
+  const oneTxPaymentExtension = data?.processedColony?.installedExtensions.find(
+    ({
+      details: { initialized, missingPermissions },
+      extensionId: extensionName,
+    }) =>
+      initialized &&
+      !missingPermissions.length &&
+      extensionName === Extension.OneTxPayment,
+  );
+  const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
-  const mustUpgrade = mustBeUpgraded(colony, networkVersion as string);
+  const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
 
   return (
     <Button
@@ -206,7 +226,8 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         mustUpgrade ||
         !isNetworkAllowed ||
         !hasRegisteredProfile ||
-        !colony?.isDeploymentFinished
+        !colony?.isDeploymentFinished ||
+        mustUpgradeOneTx
       }
     />
   );

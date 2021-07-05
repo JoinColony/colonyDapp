@@ -1,18 +1,25 @@
-import { ColonyRole, ROOT_DOMAIN_ID, ColonyVersion } from '@colony/colony-js';
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+import {
+  ColonyRole,
+  ROOT_DOMAIN_ID,
+  ColonyVersion,
+  Extension,
+} from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
-import { Colony, useLoggedInUser } from '~data/index';
-import { useTransformer } from '~utils/hooks';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
 import TokenMintDialog from '~dashboard/TokenMintDialog';
+
+import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { useTransformer } from '~utils/hooks';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
+import { oneTxMustBeUpgraded } from '../../../dashboard/checks';
 import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './ColonyFundingMenu.css';
@@ -46,6 +53,9 @@ const ColonyFundingMenu = ({
 }: Props) => {
   const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
   const { isVotingExtensionEnabled } = useEnabledExtensions({ colonyAddress });
+  const { data } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
 
   const openTokenManagementDialog = useDialog(ColonyTokenManagementDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
@@ -81,6 +91,17 @@ const ColonyFundingMenu = ({
     [colony, openTokensMoveDialog, selectedDomainId, isVotingExtensionEnabled],
   );
 
+  const oneTxPaymentExtension = data?.processedColony?.installedExtensions.find(
+    ({
+      details: { initialized, missingPermissions },
+      extensionId: extensionName,
+    }) =>
+      initialized &&
+      !missingPermissions.length &&
+      extensionName === Extension.OneTxPayment,
+  );
+  const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
+
   const canEdit =
     userHasRole(rootRoles, ColonyRole.Root) ||
     userHasRole(rootRoles, ColonyRole.Administration);
@@ -103,7 +124,8 @@ const ColonyFundingMenu = ({
             !isSupportedColonyVersion ||
             !isNetworkAllowed ||
             !hasRegisteredProfile ||
-            !isDeploymentFinished
+            !isDeploymentFinished ||
+            mustUpgradeOneTx
           }
         />
       </li>
@@ -117,7 +139,8 @@ const ColonyFundingMenu = ({
             !isSupportedColonyVersion ||
             !isNetworkAllowed ||
             !hasRegisteredProfile ||
-            !isDeploymentFinished
+            !isDeploymentFinished ||
+            mustUpgradeOneTx
           }
         />
       </li>
@@ -131,7 +154,8 @@ const ColonyFundingMenu = ({
             !isSupportedColonyVersion ||
             !isNetworkAllowed ||
             !hasRegisteredProfile ||
-            !isDeploymentFinished
+            !isDeploymentFinished ||
+            mustUpgradeOneTx
           }
         />
       </li>

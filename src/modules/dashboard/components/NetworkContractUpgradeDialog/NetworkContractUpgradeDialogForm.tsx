@@ -25,7 +25,7 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
-import { canBeUpgraded } from '../../../dashboard/checks';
+import { colonyCanBeUpgraded } from '../../../dashboard/checks';
 
 import { FormValues } from './NetworkContractUpgradeDialog';
 
@@ -128,7 +128,7 @@ const NetworkContractUpgradeDialogForm = ({
     values.forceAction,
   );
   const canUpgradeVersion =
-    userHasPermission && !!canBeUpgraded(colony, newVersion as string);
+    userHasPermission && !!colonyCanBeUpgraded(colony, newVersion as string);
 
   const inputDisabled = !canUpgradeVersion || onlyForceAction;
 

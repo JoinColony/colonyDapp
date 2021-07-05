@@ -13,7 +13,7 @@ import { useTransformer } from '~utils/hooks';
 import { getNetworkRelaseLink } from '~utils/external';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
-import { mustBeUpgraded, shouldBeUpgraded } from '../../../checks';
+import { colonyMustBeUpgraded, colonyShouldBeUpgraded } from '../../../checks';
 import { hasRoot } from '../../../../users/checks';
 import { getAllUserRoles } from '../../../../transformers';
 
@@ -63,8 +63,11 @@ const ColonyUpgrade = ({ colony }: Props) => {
   const hasRegisteredProfile = !!username && !ethereal;
   const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
 
-  const mustUpgrade = mustBeUpgraded(colony, networkVersion as string);
-  const shouldUpdgrade = shouldBeUpgraded(colony, networkVersion as string);
+  const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
+  const shouldUpdgrade = colonyShouldBeUpgraded(
+    colony,
+    networkVersion as string,
+  );
 
   if (mustUpgrade) {
     return (
