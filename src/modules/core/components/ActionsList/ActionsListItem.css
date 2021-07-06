@@ -45,8 +45,8 @@
 
 .status::before {
   display: block;
-  margin: -22px 0 0 -17px;
-  height: 81px;
+  margin-left: -17px;
+  height: 82px;
   width: 4px;
   position: absolute;
   border-radius: var(--radius-large);
