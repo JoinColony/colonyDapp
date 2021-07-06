@@ -6,20 +6,23 @@ import * as yup from 'yup';
 
 import Whitelist from '~dashboard/Whitelist/';
 import { Address } from '~types/index';
+import { CustomRadioProps } from '~core/Fields';
 
 export enum ExtensionParamType {
   Input = 'Input',
   Radio = 'Radio',
   Textarea = 'Textarea',
+  ColonyPolicySelector = 'ColonyPolicySelector',
 }
 
 export interface ExtensionInitParams {
   title: string | MessageDescriptor;
-  description: string | MessageDescriptor;
+  description?: string | MessageDescriptor;
   defaultValue: string | number;
   paramName: string;
   validation: object;
   type: ExtensionParamType;
+  options?: CustomRadioProps[];
 }
 
 export interface ExtensionData {
@@ -36,7 +39,9 @@ export interface ExtensionData {
   neededColonyPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
   uninstallable: boolean;
-  enabledExtensionBody?: () => ReactNode;
+  enabledExtensionBody?: (
+    extensionInitParams: ExtensionInitParams[],
+  ) => ReactNode;
 }
 
 const unknownExtensionMessages = {
@@ -265,6 +270,22 @@ const whitelistMessages = {
     defaultMessage:
       'This agreement will be displayed during whitelisting process modal ',
   },
+  whitelistColonyPolicySelectorTitle: {
+    id: `extensions.whitelist.whitelistColonyPolicySelectorTitle`,
+    defaultMessage: 'What is the colony policy on whitelisting?',
+  },
+  whitelistColonyPolicySelectorAgreementOnly: {
+    id: `dashboard.Extensions.ColonyPolicySelector.agreementOnly`,
+    defaultMessage: 'Agreement only',
+  },
+  whitelistColonyPolicySelectorKYCOnly: {
+    id: 'dashboard.Extensions.ColonyPolicySelector.KYCOnly',
+    defaultMessage: 'KYC only',
+  },
+  whitelistColonyPolicySelectorAgreementAndKYC: {
+    id: `dashboard.Extensions.ColonyPolicySelector.agreementAndKYC`,
+    defaultMessage: 'KYC and agreement',
+  },
 };
 
 const MSG = defineMessages({
@@ -487,6 +508,42 @@ const extensions: { [key: string]: ExtensionData } = {
     ],
     enabledExtensionBody: Whitelist,
     initializationParams: [
+      {
+        paramName: 'policy',
+        validation: yup.string().required(),
+        defaultValue: '',
+        title: MSG.whitelistColonyPolicySelectorTitle,
+        type: ExtensionParamType.ColonyPolicySelector,
+        options: [
+          {
+            value: 'AGREEMENT_ONLY',
+            label: MSG.whitelistColonyPolicySelectorAgreementOnly,
+            name: 'policy',
+            appearance: {
+              theme: 'traditional',
+            },
+            checked: false,
+          },
+          {
+            value: 'KYC_ONLY',
+            label: MSG.whitelistColonyPolicySelectorKYCOnly,
+            name: 'policy',
+            appearance: {
+              theme: 'traditional',
+            },
+            checked: false,
+          },
+          {
+            value: 'KYC_AND_AGREEMENT',
+            label: MSG.whitelistColonyPolicySelectorAgreementAndKYC,
+            name: 'policy',
+            appearance: {
+              theme: 'traditional',
+            },
+            checked: false,
+          },
+        ],
+      },
       {
         paramName: 'agreement',
         validation: yup.string(),
