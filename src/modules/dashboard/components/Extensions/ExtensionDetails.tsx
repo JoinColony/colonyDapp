@@ -375,7 +375,10 @@ const ExtensionDetails = ({
                   )}
                   {extensionEnabled &&
                     extension.enabledExtensionBody &&
-                    extension.enabledExtensionBody()}
+                    extension.initializationParams &&
+                    extension.enabledExtensionBody(
+                      extension.initializationParams,
+                    )}
                 </div>
               )}
             />
