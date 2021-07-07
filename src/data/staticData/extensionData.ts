@@ -10,7 +10,7 @@ import { Address } from '~types/index';
 export enum ExtensionParamType {
   Input = 'Input',
   Radio = 'Radio',
-  Textarea = 'Textarea'
+  Textarea = 'Textarea',
 }
 
 export interface ExtensionInitParams {
@@ -254,7 +254,7 @@ const whitelistMessages = {
   },
   whitelistInfo: {
     id: 'extensions.whitelist.info',
-    defaultMessage: 'The responsibility is on the issuer to ensure being compliant with the local rules. {link}',
+    defaultMessage: `The responsibility is on the issuer to ensure being compliant with the local rules. {link}`,
   },
 };
 
