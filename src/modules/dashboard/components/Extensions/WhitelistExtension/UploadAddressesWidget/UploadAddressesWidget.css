@@ -1,0 +1,33 @@
+.uploadContainer {
+  margin: 40px 0;
+}
+
+.validationError {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}
+
+.inputContainer {
+  margin: 0;
+}
+
+.input {
+  padding: 13px;
+  height: 44px;
+  width: 100%;
+  border: 1px solid var(--temp-grey-blue-4);
+  border-radius: var(--radius-tiny);
+  background-color: var(--colony-white);
+  font-size: var(--size-normal);
+  line-height: 44px;
+  color: var(--dark);
+  outline: none;
+  letter-spacing: var(--spacing-normal);
+  transition: border-color 0.1s ease-in;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+}
