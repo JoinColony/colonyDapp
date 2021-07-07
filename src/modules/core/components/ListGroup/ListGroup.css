@@ -34,3 +34,7 @@
 .gapsTrue > li + li {
   margin-top: 10px;
 }
+
+.hoverColorDark > li:hover {
+  background-color: var(--colonylight-blue);
+}
