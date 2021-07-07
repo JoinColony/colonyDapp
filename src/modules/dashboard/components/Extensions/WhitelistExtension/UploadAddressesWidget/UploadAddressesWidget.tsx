@@ -10,31 +10,27 @@ import styles from './UploadAddressesWidget.css';
 
 const MSG = defineMessages({
   inputLabel: {
-    id:
-      'dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.inputLabel',
+    id: `dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.inputLabel`,
     defaultMessage: 'Add wallet address that has passed KYC/AML',
   },
   uploadLabel: {
-    id:
-      'dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.uploadLabel',
+    id: `dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.uploadLabel`,
     defaultMessage: 'Upload .csv with a list of addresses',
   },
   upload: {
-    id: 'dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.upload',
+    id: `dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.upload`,
     defaultMessage: 'Upload .csv',
   },
   input: {
-    id: 'dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.input',
+    id: `dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.input`,
     defaultMessage: 'Input',
   },
   uploadError: {
-    id:
-      'dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.uploadError',
+    id: `dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.uploadError`,
     defaultMessage: `It is possible to upload no more than 100x addresses at a time. \nPlease consider to upload a smaller amount of addresses.`,
   },
   inputError: {
-    id:
-      'dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.inputError',
+    id: `dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.inputError`,
     defaultMessage: `TODO`,
   },
 });
@@ -74,10 +70,7 @@ const UploadAddressesWidget = () => {
             </div>
           ) : (
             <div>
-              <FileUpload
-                name="avatarUploader"
-                upload={() => null}
-              />
+              <FileUpload name="avatarUploader" upload={() => null} />
             </div>
           )}
         </div>
