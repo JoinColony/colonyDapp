@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ActionForm, InputLabel, InputStatus } from '~core/Fields';
+import Button from '~core/Button';
 
 import { ActionTypes } from '~redux/index';
 
@@ -30,9 +31,16 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.uploadError',
     defaultMessage: `It is possible to upload no more than 100x addresses at a time. \nPlease consider to upload a smaller amount of addresses.`,
   },
+  inputError: {
+    id: 'dashboard.Extensions.WhitelistExtension.UploadAddressesWidget.inputError',
+    defaultMessage: `TODO`,
+  },
 });
 
 const UploadAddressesWidget = () => {
+  const [showInput, setShowInput] = useState<boolean>(true);
+  const toggleShowInput = () => setShowInput(!showInput);
+
   return (
     <ActionForm
       initialValues={{}}
@@ -42,33 +50,43 @@ const UploadAddressesWidget = () => {
     >
       {() => (
         <div className={styles.uploadContainer}>
-          <div className={styles.inputContainer}>
+          <div className={styles.actionsContainer}>
             <InputLabel
-              label={MSG.inputLabel}
+              label={showInput ? MSG.inputLabel : MSG.uploadLabel}
               appearance={{ colorSchema: 'grey' }}
             />
+            <Button
+              appearance={{ theme: 'blue' }}
+              text={showInput ? MSG.upload : MSG.input}
+              onClick={toggleShowInput}
+            />
+          </div>
+          {showInput ? (
+          <div className={styles.inputContainer}>
             <input
               name="tokenAddress"
               className={styles.input}
             />
-            {true && (
-              <span className={styles.validationError}>
-                <FormattedMessage
-                  {...MSG.uploadError}
-                />
-              </span>
-            )}
-          </div>
-          <div className={styles.uploadContainer}>
-            <div>Upload</div>
             {false && (
               <span className={styles.validationError}>
                 <FormattedMessage
-                  {...MSG.uploadError}
+                  {...MSG.inputError}
                 />
               </span>
             )}
           </div>
+          ) : (
+            <div className={styles.uploadContainer}>
+              <div>Upload</div>
+              {false && (
+                <span className={styles.validationError}>
+                  <FormattedMessage
+                    {...MSG.uploadError}
+                  />
+                </span>
+              )}
+            </div>
+          )}
         </div>
       )}
     </ActionForm>

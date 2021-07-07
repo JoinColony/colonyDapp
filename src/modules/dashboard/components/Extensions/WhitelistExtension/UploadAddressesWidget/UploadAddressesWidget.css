@@ -31,3 +31,13 @@
     border-color: var(--primary);
   }
 }
+
+.actionsContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.actionsContainer label {
+  margin: 0;
+}
