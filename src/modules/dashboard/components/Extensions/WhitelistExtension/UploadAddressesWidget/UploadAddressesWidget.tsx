@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ActionForm, InputLabel, InputStatus } from '~core/Fields';
+import FileUpload from '~core/FileUpload';
 import Button from '~core/Button';
 
 import { ActionTypes } from '~redux/index';
@@ -49,7 +50,7 @@ const UploadAddressesWidget = () => {
       success={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_SUCCESS}
     >
       {() => (
-        <div className={styles.uploadContainer}>
+        <div className={styles.container}>
           <div className={styles.actionsContainer}>
             <InputLabel
               label={showInput ? MSG.inputLabel : MSG.uploadLabel}
@@ -76,15 +77,11 @@ const UploadAddressesWidget = () => {
             )}
           </div>
           ) : (
-            <div className={styles.uploadContainer}>
-              <div>Upload</div>
-              {false && (
-                <span className={styles.validationError}>
-                  <FormattedMessage
-                    {...MSG.uploadError}
-                  />
-                </span>
-              )}
+            <div>
+              <FileUpload
+                name="avatarUploader"
+                upload={() => console.log("TODO")}
+              />
             </div>
           )}
         </div>
