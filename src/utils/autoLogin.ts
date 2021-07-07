@@ -29,7 +29,7 @@ export const clearLastWallet = () => {
   localStorage.removeItem(LAST_ADDRESS_KEY);
 };
 
-export const useMetaMaskAutoLogin = (
+export const useWalletAutoLogin = (
   lastWalletType: string,
   lastWalletAddress: string,
 ) => {
@@ -74,6 +74,6 @@ export const useMetaMaskAutoLogin = (
  */
 export const useAutoLogin = () => {
   const { type, address } = getLastWallet();
-  const loadingMetaMask = useMetaMaskAutoLogin(type || '', address || '');
+  const loadingMetaMask = useWalletAutoLogin(type || '', address || '');
   return loadingMetaMask;
 };
