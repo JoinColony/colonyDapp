@@ -359,7 +359,6 @@ const extensions: { [key: string]: ExtensionData } = {
       ColonyRole.Architecture,
       ColonyRole.Funding,
     ],
-    enabledExtensionBody: WhitelistExtensionBody,
     initializationParams: [
       {
         paramName: 'totalStakeFraction',
@@ -469,7 +468,7 @@ const extensions: { [key: string]: ExtensionData } = {
     info: MSG.whitelistInfo,
     termsCondition: MSG.whitelistTermsCondition,
     currentVersion: 1,
-    createdAt: 1603915271852, // find out how to get this value
+    createdAt: 1603915271852,
     neededColonyPermissions: [
       ColonyRole.Root,
       ColonyRole.Administration,
