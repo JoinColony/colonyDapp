@@ -177,7 +177,9 @@ const ExtensionSetup = ({
                         <span className={styles.complementaryLabel}>
                           <FormattedMessage
                             {...MSG.complementaryLabel}
-                            values={{ isPeriod: endsWith(paramName, 'Period') }}
+                            values={{
+                              isPeriod: endsWith(paramName, 'Period'),
+                            }}
                           />
                         </span>
                       )}
@@ -189,8 +191,12 @@ const ExtensionSetup = ({
                         appearance={{ colorSchema: 'grey' }}
                         label={title}
                         name={paramName}
-                        status={description}
                       />
+                      {description && (
+                        <p className={styles.textAreaDescription}>
+                          <FormattedMessage {...description} />
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
