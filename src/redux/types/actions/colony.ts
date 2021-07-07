@@ -105,4 +105,22 @@ export type ColonyActionTypes =
       object,
       object
     >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UPGRADE_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UPGRADE_ERROR, object>
+  | UniqueActionType<
+    ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS,
+    object,
+    object
+  >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
+  | UniqueActionType<
+    ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES,
+    any,
+    WithKey
+  >
+  | UniqueActionType<
+    ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_SUCCESS,
+    object,
+    object
+  >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_ERROR, object>;
+  
