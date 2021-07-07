@@ -379,7 +379,7 @@ const ExtensionDetails = ({
                       />
                     </div>
                   )}
-                  {true &&
+                  {extensionEnabled &&
                     extension.enabledExtensionBody &&
                     extension.enabledExtensionBody()}
                 </div>
