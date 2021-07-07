@@ -256,6 +256,15 @@ const whitelistMessages = {
     id: 'extensions.whitelist.info',
     defaultMessage: `The responsibility is on the issuer to ensure being compliant with the local rules. {link}`,
   },
+  agreementTitle: {
+    id: 'extensions.whitelist.param.agreement.title',
+    defaultMessage: 'Paste agreement',
+  },
+  agreementDescription: {
+    id: 'extensions.whitelist.param.agreement.description',
+    defaultMessage:
+      'This agreement will be displayed during whitelisting process modal ',
+  },
 };
 
 const MSG = defineMessages({
@@ -477,7 +486,16 @@ const extensions: { [key: string]: ExtensionData } = {
       ColonyRole.Funding,
     ],
     enabledExtensionBody: Whitelist,
-    initializationParams: [],
+    initializationParams: [
+      {
+        paramName: 'agreement',
+        validation: yup.string(),
+        defaultValue: '',
+        title: MSG.agreementTitle,
+        description: MSG.agreementDescription,
+        type: ExtensionParamType.Textarea,
+      },
+    ],
     uninstallable: true,
   },
   Unknown: {
