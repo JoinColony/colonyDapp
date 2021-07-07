@@ -10,7 +10,7 @@ import { Address } from '~types/index';
 export enum ExtensionParamType {
   Input = 'Input',
   Radio = 'Radio',
-  Textarea = 'Textarea'
+  Textarea = 'Textarea',
 }
 
 export interface ExtensionInitParams {
@@ -26,8 +26,11 @@ export interface ExtensionData {
   address?: Address;
   extensionId: Extension | 'Unknown';
   name: string | MessageDescriptor;
+  header?: string | MessageDescriptor;
   descriptionShort: string | MessageDescriptor;
   descriptionLong: string | MessageDescriptor;
+  info?: string | MessageDescriptor;
+  termsCondition?: string | MessageDescriptor;
   currentVersion: number;
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
@@ -228,11 +231,39 @@ const votingReputationMessages = {
   },
 };
 
+const whitelistMessages = {
+  whitelistName: {
+    id: 'extensions.whitelist.name',
+    defaultMessage: 'Whitelist',
+  },
+  whitelistHeader: {
+    id: 'extensions.whitelist.header',
+    defaultMessage: 'What is the Whitelist extension?',
+  },
+  whitelistDescriptionShort: {
+    id: 'extensions.whitelist.description',
+    defaultMessage: `Curate a list of addresses permitted to participate in your Coin Machine sale.`,
+  },
+  whitelistDescriptionLong: {
+    id: 'extensions.whitelist.descriptionLong',
+    defaultMessage: `The Whitelist extension is an utility which can be used for whitelisting wallet addresses.`,
+  },
+  whitelistTermsCondition: {
+    id: 'extensions.whitelist.termsCondition',
+    defaultMessage: `Terms and Conditions.`,
+  },
+  whitelistInfo: {
+    id: 'extensions.whitelist.info',
+    defaultMessage: `The responsibility is on the issuer to ensure being compliant with the local rules. {link}`,
+  },
+};
+
 const MSG = defineMessages({
   ...unknownExtensionMessages,
   ...oneTransactionPaymentMessages,
   ...coinMachineMessages,
   ...votingReputationMessages,
+  ...whitelistMessages,
 });
 
 const extensions: { [key: string]: ExtensionData } = {
@@ -427,6 +458,27 @@ const extensions: { [key: string]: ExtensionData } = {
         type: ExtensionParamType.Input,
       },
     ],
+    uninstallable: true,
+  },
+  Whitelist: {
+    extensionId: Extension.Whitelist,
+    name: MSG.whitelistName,
+    header: MSG.whitelistHeader,
+    descriptionShort: MSG.whitelistDescriptionShort,
+    descriptionLong: MSG.whitelistDescriptionLong,
+    info: MSG.whitelistInfo,
+    termsCondition: MSG.whitelistTermsCondition,
+    currentVersion: 1,
+    createdAt: 1603915271852, // find out how to get this value
+    neededColonyPermissions: [
+      ColonyRole.Root,
+      ColonyRole.Administration,
+      ColonyRole.Arbitration,
+      ColonyRole.Architecture,
+      ColonyRole.Funding,
+    ],
+    enabledExtensionBody: WhitelistExtensionBody,
+    initializationParams: [],
     uninstallable: true,
   },
   Unknown: {
