@@ -18,6 +18,7 @@ interface Props<U> {
   colonyAddress: Address;
   onRowClick?: (user: U) => void;
   showUserInfo: boolean;
+  showUserReputation: boolean;
   domainId: number | undefined;
   user: U;
 }
@@ -33,6 +34,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
     extraItemContent,
     onRowClick,
     showUserInfo,
+    showUserReputation,
     user,
   } = props;
   const {
@@ -77,13 +79,15 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={onRowClick ? 0 : undefined}
       >
-        <div className={styles.reputationSection}>
-          <MemberReputation
-            walletAddress={walletAddress}
-            colonyAddress={colonyAddress}
-            domainId={domainId}
-          />
-        </div>
+        {showUserReputation && (
+          <div className={styles.reputationSection}>
+            <MemberReputation
+              walletAddress={walletAddress}
+              colonyAddress={colonyAddress}
+              domainId={domainId}
+            />
+          </div>
+        )}
         <div className={styles.section}>
           <UserAvatar
             size="s"
