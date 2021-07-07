@@ -15,9 +15,9 @@
 
 .extensionSubtext {
   display: block;
+  margin-top: 38px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  margin-top: 38px;
 }
 
 .extensionDetails {

@@ -212,7 +212,7 @@ const ExtensionDetails = ({
     !(extesionCanBeInstalled || extesionCanBeEnabled) &&
     latestNetworkExtensionVersion > extension.currentVersion;
 
-  const extensionEnabled = 
+  const extensionEnabled =
     installedExtension &&
     installedExtension.details.initialized &&
     !installedExtension.details.deprecated;
@@ -339,7 +339,11 @@ const ExtensionDetails = ({
                 <div className={styles.extensionText}>
                   <Heading
                     tagName="h3"
-                    appearance={{ size: 'medium', margin: 'small', theme: 'dark' }}
+                    appearance={{
+                      size: 'medium',
+                      margin: 'small',
+                      theme: 'dark',
+                    }}
                     text={extension.header || extension.name}
                   />
                   <FormattedMessage
@@ -355,19 +359,23 @@ const ExtensionDetails = ({
                     }}
                   />
                   {extension.info && (
-                    <div className={styles.extensionSubtext}><FormattedMessage
-                      {...extension.info}
-                      values={{
-                        link: (
-                          <ExternalLink
-                            text={extension.termsCondition}
-                            href=""
-                          />
-                        ),
-                      }}
-                    /></div>
+                    <div className={styles.extensionSubtext}>
+                      <FormattedMessage
+                        {...extension.info}
+                        values={{
+                          link: (
+                            <ExternalLink
+                              text={extension.termsCondition}
+                              href=""
+                            />
+                          ),
+                        }}
+                      />
+                    </div>
                   )}
-                  {extensionEnabled && extension.enabledExtensionBody && extension.enabledExtensionBody()}
+                  {extensionEnabled &&
+                    extension.enabledExtensionBody &&
+                    extension.enabledExtensionBody()}
                 </div>
               )}
             />
