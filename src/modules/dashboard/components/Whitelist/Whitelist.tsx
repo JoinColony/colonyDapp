@@ -4,6 +4,12 @@ import { defineMessage } from 'react-intl';
 import { useWhitelistedUsersQuery } from '~data/index';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
+import Button from '~core/Button';
+
+import { useDialog } from '~core/Dialog';
+
+import AgreementDialog from './AgreementDialog';
+import styles from './WhitelistExtension.css';
 import UploadAddressesWidget from './UploadAddressesWidget';
 import WhitelistAddresses from './WhitelistAddresses';
 
@@ -16,9 +22,15 @@ const MSG = defineMessage({
     id: 'dashboard.Whitelist.loadingText',
     defaultMessage: 'Loading whitelist',
   },
+  agreement: {
+    id: 'dashboard.Extensions.WhitelisExtension.agreement',
+    defaultMessage: 'Agreement',
+  },
 });
 
 const Whitelist = ({ colonyAddress }: Props) => {
+  const openAgreementDialog = useDialog(AgreementDialog);
+
   const { data, loading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
   });
@@ -33,6 +45,19 @@ const Whitelist = ({ colonyAddress }: Props) => {
         />
       )) ||
         null}
+      <div className={styles.buttonsContainer}>
+        <Button
+          appearance={{ theme: 'blue' }}
+          onClick={openAgreementDialog}
+          text={MSG.agreement}
+        />
+        <Button
+          appearance={{ theme: 'primary' }}
+          text={{ id: 'button.confirm' }}
+          // temporary (outside of the scope of the issue)
+          disabled
+        />
+      </div>
     </div>
   );
 };
