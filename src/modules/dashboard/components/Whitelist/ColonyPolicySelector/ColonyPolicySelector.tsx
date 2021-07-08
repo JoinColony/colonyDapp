@@ -17,7 +17,7 @@ interface Props {
   options: CustomRadioProps[];
 }
 
-const displayName = 'dashboard.Extensions.ColonyPolicySelector';
+const displayName = 'dashboard.Whitelist.ColonyPolicySelector';
 
 const ColonyPolicySelector = ({ name, title, options }: Props) => {
   const [inputFieldProps] = useField<string>(name);
