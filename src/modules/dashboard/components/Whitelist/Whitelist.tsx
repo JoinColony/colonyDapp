@@ -1,7 +1,7 @@
 import React from 'react';
 import UploadAddressesWidget from './UploadAddressesWidget';
 
-const WhitelistExtension = () => {
+const Whitelist = () => {
   return (
     <div>
       <UploadAddressesWidget />
@@ -9,4 +9,4 @@ const WhitelistExtension = () => {
   );
 };
 
-export default WhitelistExtension;
+export default Whitelist;
