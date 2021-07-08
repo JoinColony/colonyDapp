@@ -520,7 +520,7 @@ const extensions: { [key: string]: ExtensionData } = {
             label: MSG.whitelistColonyPolicySelectorAgreementOnly,
             name: 'policy',
             appearance: {
-              theme: 'traditional',
+              theme: 'greyWithCircle',
             },
             checked: false,
           },
@@ -529,7 +529,7 @@ const extensions: { [key: string]: ExtensionData } = {
             label: MSG.whitelistColonyPolicySelectorKYCOnly,
             name: 'policy',
             appearance: {
-              theme: 'traditional',
+              theme: 'greyWithCircle',
             },
             checked: false,
           },
@@ -538,7 +538,7 @@ const extensions: { [key: string]: ExtensionData } = {
             label: MSG.whitelistColonyPolicySelectorAgreementAndKYC,
             name: 'policy',
             appearance: {
-              theme: 'traditional',
+              theme: 'greyWithCircle',
             },
             checked: false,
           },
