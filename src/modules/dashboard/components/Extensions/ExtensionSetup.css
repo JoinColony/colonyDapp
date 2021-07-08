@@ -27,6 +27,10 @@
   margin-top: 43px;
 }
 
+.textArea textarea {
+  resize: vertical;
+}
+
 .textAreaDescription {
   margin-top: -15px;
   margin-left: 4px;
