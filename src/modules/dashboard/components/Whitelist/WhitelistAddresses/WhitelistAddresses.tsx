@@ -14,9 +14,11 @@ interface Props {
   users: AnyUser[];
 }
 
+const displayName = 'WhitelistAddresses';
+
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.Extensions.ExtensionDetails.title',
+    id: 'dashboard.Whitelist.WhitelistAddresses.title',
     defaultMessage: 'List of whitelisted addresses',
   },
 });
@@ -39,5 +41,7 @@ const WhitelistAddresses = ({ colonyAddress, users }: Props) => {
     </div>
   );
 };
+
+WhitelistAddresses.displayName = displayName;
 
 export default WhitelistAddresses;

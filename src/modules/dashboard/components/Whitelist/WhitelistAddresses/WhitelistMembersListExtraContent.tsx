@@ -7,19 +7,21 @@ import { Tooltip } from '~core/Popover';
 
 import styles from './WhitelistMembersListExtraContent.css';
 
+const displayName = 'WhitelistMembersListExtraContent';
+
 const MSG = defineMessages({
   removeButtonIconTitle: {
-    id: 'dashboard.Extensions.ExtensionDetails.removeButtonIconTitle',
+    id: `dashboard.Whitelist.WhitelistAddresses.WhitelistMembersListExtraContent.removeButtonIconTitle`,
     defaultMessage: 'Remove',
   },
   tooltipMessage: {
-    id: 'dashboard.Extensions.ExtensionDetails.tooltipMessage',
+    id: `dashboard.Whitelist.WhitelistAddresses.WhitelistMembersListExtraContent.tooltipMessage`,
     defaultMessage: 'Remove selected address from the whitelist.',
   },
 });
 
 const WhitelistMembersListExtraContent = () => {
-  // @TODO: Connect dynamic, real date
+  // @TODO: Connect real date
   const placeholderDate = `${new Date().getDay()}.${new Date().getMonth()}.${new Date().getFullYear()}`;
   return (
     <div className={styles.container}>
@@ -51,5 +53,7 @@ const WhitelistMembersListExtraContent = () => {
     </div>
   );
 };
+
+WhitelistMembersListExtraContent.displayName = displayName;
 
 export default WhitelistMembersListExtraContent;
