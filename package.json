@@ -168,6 +168,7 @@
     "move-decimal-point": "^0.0.4",
     "nanoid": "^3.0.0",
     "p-event": "^4.1.0",
+    "papaparse": "^5.3.1",
     "prop-types": "^15.6.2",
     "punycode": "^2.1.1",
     "qrcode": "^1.4.4",
