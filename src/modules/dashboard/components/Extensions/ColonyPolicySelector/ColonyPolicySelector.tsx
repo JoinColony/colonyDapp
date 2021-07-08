@@ -1,5 +1,6 @@
 import React from 'react';
 import { MessageDescriptor } from 'react-intl';
+import { useField } from 'formik';
 
 import { CustomRadioGroup, CustomRadioProps } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -11,24 +12,31 @@ export interface FormValues {
 }
 
 interface Props {
-  selectedPolicy: string;
+  name: string;
   title: MessageDescriptor | string;
   options: CustomRadioProps[];
 }
 
-const ColonyPolicySelector = ({ selectedPolicy, title, options }: Props) => (
-  <div className={styles.container}>
-    <Heading
-      appearance={{ margin: 'small', size: 'normal', theme: 'dark' }}
-      text={title}
-    />
-    <CustomRadioGroup
-      appearance={{ direction: 'horizontal', gap: 'medium' }}
-      options={options}
-      currentlyCheckedValue={selectedPolicy}
-      name="policy"
-    />
-  </div>
-);
+const displayName = 'dashboard.Extensions.ColonyPolicySelector';
+
+const ColonyPolicySelector = ({ name, title, options }: Props) => {
+  const [inputFieldProps] = useField<string>(name);
+  return (
+    <div className={styles.container}>
+      <Heading
+        appearance={{ margin: 'small', size: 'normal', theme: 'dark' }}
+        text={title}
+      />
+      <CustomRadioGroup
+        appearance={{ direction: 'horizontal', gap: 'medium' }}
+        options={options}
+        currentlyCheckedValue={inputFieldProps.value}
+        name="policy"
+      />
+    </div>
+  );
+};
+
+ColonyPolicySelector.displayName = displayName;
 
 export default ColonyPolicySelector;
