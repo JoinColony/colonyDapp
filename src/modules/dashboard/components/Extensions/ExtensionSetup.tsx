@@ -7,7 +7,7 @@ import { Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 
 import { IconButton, ActionButton } from '~core/Button';
-import { Input, ActionForm } from '~core/Fields';
+import { Input, ActionForm, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
 import { ActionTypes } from '~redux/index';
 import { ColonyExtension } from '~data/index';
@@ -177,9 +177,25 @@ const ExtensionSetup = ({
                         <span className={styles.complementaryLabel}>
                           <FormattedMessage
                             {...MSG.complementaryLabel}
-                            values={{ isPeriod: endsWith(paramName, 'Period') }}
+                            values={{
+                              isPeriod: endsWith(paramName, 'Period'),
+                            }}
                           />
                         </span>
+                      )}
+                    </div>
+                  )}
+                  {type === ExtensionParamType.Textarea && (
+                    <div className={styles.textArea}>
+                      <Textarea
+                        appearance={{ colorSchema: 'grey' }}
+                        label={title}
+                        name={paramName}
+                      />
+                      {description && (
+                        <p className={styles.textAreaDescription}>
+                          <FormattedMessage {...description} />
+                        </p>
                       )}
                     </div>
                   )}

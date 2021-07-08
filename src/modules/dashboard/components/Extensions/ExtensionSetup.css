@@ -22,3 +22,19 @@
 .descriptionExample {
   font-style: italic;
 }
+
+.textArea {
+  margin-top: 43px;
+}
+
+.textArea textarea {
+  resize: vertical;
+}
+
+.textAreaDescription {
+  margin-top: -15px;
+  margin-left: 4px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
