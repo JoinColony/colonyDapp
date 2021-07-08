@@ -510,13 +510,13 @@ const extensions: { [key: string]: ExtensionData } = {
     initializationParams: [
       {
         paramName: 'policy',
-        validation: yup.string().required(),
+        validation: yup.number().required(),
         defaultValue: '',
         title: MSG.whitelistColonyPolicySelectorTitle,
         type: ExtensionParamType.ColonyPolicySelector,
         options: [
           {
-            value: 'AGREEMENT_ONLY',
+            value: 1,
             label: MSG.whitelistColonyPolicySelectorAgreementOnly,
             name: 'policy',
             appearance: {
@@ -525,7 +525,7 @@ const extensions: { [key: string]: ExtensionData } = {
             checked: false,
           },
           {
-            value: 'KYC_ONLY',
+            value: 0,
             label: MSG.whitelistColonyPolicySelectorKYCOnly,
             name: 'policy',
             appearance: {
@@ -534,7 +534,7 @@ const extensions: { [key: string]: ExtensionData } = {
             checked: false,
           },
           {
-            value: 'KYC_AND_AGREEMENT',
+            value: 2,
             label: MSG.whitelistColonyPolicySelectorAgreementAndKYC,
             name: 'policy',
             appearance: {
