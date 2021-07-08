@@ -190,6 +190,16 @@ export default class ColonyManager {
           Extension.VotingReputation,
         );
       }
+      case ClientType.WhitelistClient: {
+        if (!identifier)
+          throw new Error(
+            'Need colony identifier to get the WhitelistClient',
+          );
+        return this.getColonyExtensionClient(
+          identifier,
+          Extension.Whitelist,
+        );
+      }
       default: {
         throw new Error('A valid contract client type has to be specified');
       }
