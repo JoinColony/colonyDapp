@@ -4,7 +4,7 @@ import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
 
-import WhitelistExtensionBody from '~dashboard/Extensions/WhitelistExtensionBody';
+import Whitelist from '~dashboard/Whitelist/';
 import { Address } from '~types/index';
 
 export enum ExtensionParamType {
@@ -359,7 +359,6 @@ const extensions: { [key: string]: ExtensionData } = {
       ColonyRole.Architecture,
       ColonyRole.Funding,
     ],
-    enabledExtensionBody: WhitelistExtensionBody,
     initializationParams: [
       {
         paramName: 'totalStakeFraction',
@@ -469,7 +468,7 @@ const extensions: { [key: string]: ExtensionData } = {
     info: MSG.whitelistInfo,
     termsCondition: MSG.whitelistTermsCondition,
     currentVersion: 1,
-    createdAt: 1603915271852, // find out how to get this value
+    createdAt: 1603915271852,
     neededColonyPermissions: [
       ColonyRole.Root,
       ColonyRole.Administration,
@@ -477,7 +476,7 @@ const extensions: { [key: string]: ExtensionData } = {
       ColonyRole.Architecture,
       ColonyRole.Funding,
     ],
-    enabledExtensionBody: WhitelistExtensionBody,
+    enabledExtensionBody: Whitelist,
     initializationParams: [],
     uninstallable: true,
   },
