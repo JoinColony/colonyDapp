@@ -269,19 +269,19 @@ const whitelistMessages = {
       'This agreement will be displayed during whitelisting process modal ',
   },
   whitelistColonyPolicySelectorTitle: {
-    id: `extensions.whitelist.whitelistColonyPolicySelectorTitle`,
+    id: `extensions.whitelist.param.policy.title`,
     defaultMessage: 'What is the colony policy on whitelisting?',
   },
   whitelistColonyPolicySelectorAgreementOnly: {
-    id: `dashboard.Extensions.ColonyPolicySelector.agreementOnly`,
+    id: `extensions.whitelist.param.policy.option.agreementOnly`,
     defaultMessage: 'Agreement only',
   },
   whitelistColonyPolicySelectorKYCOnly: {
-    id: 'dashboard.Extensions.ColonyPolicySelector.KYCOnly',
+    id: 'extensions.whitelist.param.policy.option.KYCOnly',
     defaultMessage: 'KYC only',
   },
   whitelistColonyPolicySelectorAgreementAndKYC: {
-    id: `dashboard.Extensions.ColonyPolicySelector.agreementAndKYC`,
+    id: `extensions.whitelist.param.policy.option.agreementAndKYC`,
     defaultMessage: 'KYC and agreement',
   },
 };
