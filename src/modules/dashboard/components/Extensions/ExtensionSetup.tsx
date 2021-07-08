@@ -18,6 +18,8 @@ import {
 import { mergePayload, mapPayload, pipe } from '~utils/actions';
 import { Address } from '~types/index';
 
+import { ColonyPolicySelector } from '../Whitelist';
+
 import styles from './ExtensionSetup.css';
 
 import {
@@ -154,7 +156,7 @@ const ExtensionSetup = ({
           <FormattedMessage {...MSG.description} />
           <div className={styles.inputContainer}>
             {initializationParams.map(
-              ({ paramName, title, description, type }) => (
+              ({ paramName, title, description, type, options }) => (
                 <div key={paramName}>
                   {type === ExtensionParamType.Input && (
                     <div className={styles.input}>
@@ -198,6 +200,13 @@ const ExtensionSetup = ({
                         </p>
                       )}
                     </div>
+                  )}
+                  {type === ExtensionParamType.ColonyPolicySelector && (
+                    <ColonyPolicySelector
+                      name={paramName}
+                      title={title}
+                      options={options || []}
+                    />
                   )}
                 </div>
               ),
