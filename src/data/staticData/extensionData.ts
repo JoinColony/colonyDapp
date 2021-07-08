@@ -4,7 +4,7 @@ import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
 
-import WhitelistExtension from '~dashboard/Extensions/WhitelistExtension';
+import Whitelist from '~dashboard/Whitelist/';
 import { Address } from '~types/index';
 
 export enum ExtensionParamType {
@@ -476,7 +476,7 @@ const extensions: { [key: string]: ExtensionData } = {
       ColonyRole.Architecture,
       ColonyRole.Funding,
     ],
-    enabledExtensionBody: WhitelistExtension,
+    enabledExtensionBody: Whitelist,
     initializationParams: [],
     uninstallable: true,
   },
