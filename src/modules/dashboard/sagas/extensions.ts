@@ -3,6 +3,7 @@ import {
   ClientType,
   getExtensionHash,
   ROOT_DOMAIN_ID,
+  Extension,
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 
@@ -35,6 +36,7 @@ import {
   getTxChannel,
   waitForTxResult,
 } from '../../core/sagas';
+import { ipfsUpload } from '../../core/sagas/ipfs';
 
 function* refreshExtension(colonyAddress: string, extensionId: string) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -165,18 +167,38 @@ function* colonyExtensionEnable({
       throw new Error('Extension not installed');
     }
 
+    /*
+     * Upload whitelist policy to IPFS
+     */
+    let agreementHash = '';
+    if (extensionId === Extension.Whitelist) {
+      agreementHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          agreement: '',
+        }),
+      );
+    }
+
     const {
       address,
       details: { initialized, missingPermissions },
     } = data.colonyExtension;
 
     if (!initialized && extension.initializationParams) {
-      const initParams = extension.initializationParams.map(({ paramName }) => {
-        if (typeof payload[paramName] === 'number') {
-          return bigNumberify(String(payload[paramName]));
-        }
-        return payload[paramName];
-      });
+      let initParams = [] as any[];
+
+      if (extensionId === Extension.Whitelist) {
+        initParams = [true, agreementHash];
+      } else {
+        initParams = extension.initializationParams.map(({ paramName }) => {
+          if (typeof payload[paramName] === 'number') {
+            return bigNumberify(String(payload[paramName]));
+          }
+          return payload[paramName];
+        });
+      }
+
       yield fork(createTransaction, initChannelName, {
         context: `${extensionId}Client`,
         methodName: 'initialise',
