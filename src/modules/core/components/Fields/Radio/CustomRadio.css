@@ -26,7 +26,7 @@
   composes: main;
 }
 
-.themeTraditional {
+.themeGreyWithCircle {
   composes: main;
   border-color: color-mod(var(--action-secondary) alpha(25%));
   border-radius: var(--radius-tiny);
@@ -34,7 +34,7 @@
 }
 
 .themePrimary.stateIsChecked,
-.themeTraditional.stateIsChecked {
+.themeGreyWithCircle.stateIsChecked {
   border: 1px solid var(--primary);
   background-color: color-mod(var(--primary) alpha(12%));
 }
