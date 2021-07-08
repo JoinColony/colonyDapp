@@ -8,6 +8,8 @@ import { ActionTypes } from '~redux/index';
 
 import styles from './UploadAddressesWidget.css';
 
+const MIME_TYPES = ['text/csv'];
+
 const MSG = defineMessages({
   inputLabel: {
     id: `dashboard.Whitelist.UploadAddressesWidget.inputLabel`,
@@ -61,7 +63,7 @@ const UploadAddressesWidget = () => {
           </div>
           {showInput ? (
             <div className={styles.inputContainer}>
-              <input name="tokenAddress" className={styles.input} />
+              <input name="whitelistAddress" className={styles.input} />
               {false && (
                 <span className={styles.validationError}>
                   <FormattedMessage {...MSG.inputError} />
@@ -70,7 +72,13 @@ const UploadAddressesWidget = () => {
             </div>
           ) : (
             <div>
-              <FileUpload name="avatarUploader" upload={() => null} />
+              <FileUpload
+                name="whitelistUploader"
+                upload={() => null}
+                dropzoneOptions={{
+                  accept: MIME_TYPES,
+                }}
+              />
             </div>
           )}
         </div>
@@ -79,7 +87,6 @@ const UploadAddressesWidget = () => {
   );
 };
 
-UploadAddressesWidget.displayName =
-  'dashboard.Whitelist.UploadAddressesWidget';
+UploadAddressesWidget.displayName = 'dashboard.Whitelist.UploadAddressesWidget';
 
 export default UploadAddressesWidget;
