@@ -11,7 +11,7 @@ import { UniversalMessageValues } from '~types/index';
 import styles from './CustomRadio.css';
 
 export interface Appearance {
-  theme?: 'primary' | 'danger' | 'traditional';
+  theme?: 'primary' | 'danger' | 'greyWithCircle';
   direction?: 'horizontal' | 'vertical';
 }
 
@@ -21,7 +21,7 @@ export interface Props {
   /** Disable the input */
   disabled?: boolean;
   /** HTML input value */
-  value: string;
+  value: string | number;
   /** Label text */
   label: string | MessageDescriptor;
   /** Description text values for intl interpolation */
@@ -66,7 +66,7 @@ const CustomRadio = ({
       })}
       htmlFor={inputRef.current}
     >
-      {appearance.theme === 'traditional' && (
+      {appearance.theme === 'greyWithCircle' && (
         <div
           className={classnames(styles.customRadioIcon, {
             [styles.checkedCustomRadioIcon]: checked,
