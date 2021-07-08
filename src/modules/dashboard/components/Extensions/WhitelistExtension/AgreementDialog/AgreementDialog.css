@@ -1,0 +1,10 @@
+.title {
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  color: var(--dark);
+}
+
+.agreementContainer {
+  border: 1px solid var(--temp-grey-blue-4);
+}
