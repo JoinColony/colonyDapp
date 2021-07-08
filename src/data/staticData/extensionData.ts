@@ -4,7 +4,7 @@ import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
 
-import Whitelist from '~dashboard/Whitelist/';
+import Whitelist, { WhitelistProps } from '~dashboard/Whitelist';
 import { Address } from '~types/index';
 import { CustomRadioProps } from '~core/Fields';
 
@@ -46,7 +46,7 @@ export interface ExtensionData {
   neededColonyPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
   uninstallable: boolean;
-  enabledExtensionBody?: () => ReactNode;
+  enabledExtensionBody?: (props: WhitelistProps) => ReactNode;
 }
 
 const unknownExtensionMessages = {
@@ -511,7 +511,7 @@ const extensions: { [key: string]: ExtensionData } = {
       ColonyRole.Architecture,
       ColonyRole.Funding,
     ],
-    enabledExtensionBody: Whitelist,
+    enabledExtensionBody: (props) => Whitelist(props),
     initializationParams: [
       {
         paramName: 'policy',
