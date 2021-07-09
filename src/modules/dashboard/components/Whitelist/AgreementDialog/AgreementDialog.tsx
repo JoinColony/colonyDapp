@@ -26,7 +26,7 @@ interface Props {
 const AgreementDialog = ({ cancel, close }: Props) => {
   return (
     <Dialog cancel={cancel}>
-      <DialogSection appearance={{ theme: 'heading' }}>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
         <Heading
           appearance={{ size: 'medium', margin: 'none' }}
           text={MSG.title}
