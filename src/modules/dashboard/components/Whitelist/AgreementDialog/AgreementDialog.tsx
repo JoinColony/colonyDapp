@@ -21,9 +21,10 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   close: () => void;
+  agreementText?: string;
 }
 
-const AgreementDialog = ({ cancel, close }: Props) => {
+const AgreementDialog = ({ cancel, close, agreementText }: Props) => {
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -34,7 +35,7 @@ const AgreementDialog = ({ cancel, close }: Props) => {
         />
       </DialogSection>
       <DialogSection>
-        <div className={styles.agreementContainer}>AGREEMENT PLACEHOLDER</div>
+        <div className={styles.agreementContainer}>{agreementText}</div>
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
