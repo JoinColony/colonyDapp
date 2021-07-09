@@ -46,13 +46,15 @@ const Whitelist = ({ colonyAddress }: Props) => {
       )) ||
         null}
       <div className={styles.buttonsContainer}>
+        <div className={styles.agreeemntButton}>
+          <Button
+            appearance={{ theme: 'blue' }}
+            onClick={openAgreementDialog}
+            text={MSG.agreement}
+          />
+        </div>
         <Button
-          appearance={{ theme: 'blue' }}
-          onClick={openAgreementDialog}
-          text={MSG.agreement}
-        />
-        <Button
-          appearance={{ theme: 'primary' }}
+          appearance={{ theme: 'primary', size: 'large' }}
           text={{ id: 'button.confirm' }}
           // temporary (outside of the scope of the issue)
           disabled
