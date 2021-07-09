@@ -1,4 +1,5 @@
 .title {
+  padding-top: 30px;
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
   line-height: 24px;
@@ -6,5 +7,17 @@
 }
 
 .agreementContainer {
+  padding: 10px;
+  height: 271px;
+  overflow-y: auto;
   border: 1px solid var(--temp-grey-blue-4);
+  border-radius: var(--radius-tiny);
+  font-size: var(--size-normal);
+  white-space: pre-line;
+  color: var(--dark);
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.07);
+}
+
+.agreementParagraph {
+  margin-bottom: 20px;
 }
