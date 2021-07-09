@@ -40,6 +40,7 @@ import { recoveryModeResolvers } from './resolvers/recovery';
 import { extensionsResolvers } from './resolvers/extensions';
 import { motionsResolvers } from './resolvers/motions';
 import { stakesResolvers } from './resolvers/stakes';
+import { whitelistResolvers } from './resolvers/whitelist';
 
 import { FixedToken } from '../types';
 
@@ -68,6 +69,7 @@ export const resolvers: ResolverFactory[] = [
   extensionsResolvers,
   motionsResolvers,
   stakesResolvers,
+  whitelistResolvers,
 ];
 
 // export all the generated types and helpers
