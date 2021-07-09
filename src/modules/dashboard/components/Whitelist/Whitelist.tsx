@@ -9,7 +9,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 
 import AgreementDialog from './AgreementDialog';
-import styles from './WhitelistExtension.css';
+import styles from './Whitelist.css';
 import UploadAddressesWidget from './UploadAddressesWidget';
 import WhitelistAddresses from './WhitelistAddresses';
 
