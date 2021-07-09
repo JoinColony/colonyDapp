@@ -1,21 +1,21 @@
 import React from 'react';
 import { defineMessage } from 'react-intl';
 
-import { useWhitelistedUsersQuery } from '~data/index';
+import {
+  useWhitelistedUsersQuery,
+  useWhitelistAgreementQuery,
+} from '~data/index';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import Button from '~core/Button';
-
 import { useDialog } from '~core/Dialog';
+
+import { Address } from '~types/index';
 
 import AgreementDialog from './AgreementDialog';
 import styles from './Whitelist.css';
 import UploadAddressesWidget from './UploadAddressesWidget';
 import WhitelistAddresses from './WhitelistAddresses';
-
-export interface Props {
-  colonyAddress: string;
-}
 
 const MSG = defineMessage({
   loadingText: {
@@ -28,12 +28,20 @@ const MSG = defineMessage({
   },
 });
 
+interface Props {
+  colonyAddress: Address;
+}
+
 const Whitelist = ({ colonyAddress }: Props) => {
   const openAgreementDialog = useDialog(AgreementDialog);
 
   const { data, loading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
   });
+  const { data: agreementData } = useWhitelistAgreementQuery({
+    variables: { colonyAddress },
+  });
+
   return (
     <div>
       <UploadAddressesWidget />
@@ -47,11 +55,17 @@ const Whitelist = ({ colonyAddress }: Props) => {
         null}
       <div className={styles.buttonsContainer}>
         <div className={styles.agreeemntButton}>
-          <Button
-            appearance={{ theme: 'blue' }}
-            onClick={openAgreementDialog}
-            text={MSG.agreement}
-          />
+          {agreementData?.whitelistAgreement && (
+            <Button
+              appearance={{ theme: 'blue' }}
+              onClick={() =>
+                openAgreementDialog({
+                  agreementText: agreementData?.whitelistAgreement as string,
+                })
+              }
+              text={MSG.agreement}
+            />
+          )}
         </div>
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
