@@ -45,7 +45,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-    
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -1941,6 +1941,13 @@ export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
     Pick<ProcessedRoles, 'address'>
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
   )> };
+
+export type WhitelistAgreementQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type WhitelistAgreementQuery = Pick<Query, 'whitelistAgreement'>;
 
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
@@ -5087,6 +5094,37 @@ export function useColonyHistoricRolesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHistoricRolesQuery>;
 export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
 export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
+export const WhitelistAgreementDocument = gql`
+    query WhitelistAgreement($colonyAddress: String!) {
+  whitelistAgreement(colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useWhitelistAgreementQuery__
+ *
+ * To run a query within a React component, call `useWhitelistAgreementQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWhitelistAgreementQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWhitelistAgreementQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useWhitelistAgreementQuery(baseOptions?: Apollo.QueryHookOptions<WhitelistAgreementQuery, WhitelistAgreementQueryVariables>) {
+        return Apollo.useQuery<WhitelistAgreementQuery, WhitelistAgreementQueryVariables>(WhitelistAgreementDocument, baseOptions);
+      }
+export function useWhitelistAgreementLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WhitelistAgreementQuery, WhitelistAgreementQueryVariables>) {
+          return Apollo.useLazyQuery<WhitelistAgreementQuery, WhitelistAgreementQueryVariables>(WhitelistAgreementDocument, baseOptions);
+        }
+export type WhitelistAgreementQueryHookResult = ReturnType<typeof useWhitelistAgreementQuery>;
+export type WhitelistAgreementLazyQueryHookResult = ReturnType<typeof useWhitelistAgreementLazyQuery>;
+export type WhitelistAgreementQueryResult = Apollo.QueryResult<WhitelistAgreementQuery, WhitelistAgreementQueryVariables>;
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {

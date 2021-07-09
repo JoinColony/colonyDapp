@@ -377,6 +377,7 @@ export default gql`
     ): MotionObjectionAnnotation!
     votingState(colonyAddress: String!, motionId: Int!): VotingState!
     motionStatus(motionId: Int!, colonyAddress: String!): String!
+    whitelistAgreement(colonyAddress: String!): String
   }
 
   extend type Mutation {
