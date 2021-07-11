@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { open } from '@purser/metamask';
+import { open as purserOpenMetaMaskWallet } from '@purser/metamask';
+import { open as purserOpenSoftwareWallet } from '@purser/software';
 
+import { getAccounts } from '~users/ConnectWalletWizard/StepGanache';
 import { WalletMethod } from '~immutable/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
@@ -40,14 +42,15 @@ export const useWalletAutoLogin = (
   });
 
   const [loading, setLoading] = useState(
-    lastWalletType === WalletMethod.MetaMask,
+    lastWalletType === WalletMethod.MetaMask ||
+      lastWalletType === WalletMethod.Ganache,
   );
 
   useEffect(() => {
     (async () => {
       if (lastWalletType === WalletMethod.MetaMask) {
         try {
-          const wallet = await open();
+          const wallet = await purserOpenMetaMaskWallet();
           if (
             createAddress(wallet.address) === createAddress(lastWalletAddress)
           ) {
@@ -58,7 +61,35 @@ export const useWalletAutoLogin = (
           log.error(error);
           log.debug('MetaMask auto login was attempted and failed');
         }
-
+        clearLastWallet();
+        setLoading(false);
+      }
+      /*
+       * process.env.DEV is set by the QA server in case we want to have a debug build.
+       * We also don't want to load the accounts then
+       */
+      if (
+        lastWalletType === WalletMethod.Ganache &&
+        process.env.NODE_ENV === 'development' &&
+        !process.env.DEV
+      ) {
+        try {
+          const ganacheAccounts = getAccounts();
+          const lastGanacheAccount = ganacheAccounts.find(
+            ({ label }) => label === lastWalletAddress.toLowerCase(),
+          );
+          const wallet = await purserOpenSoftwareWallet({
+            privateKey: lastGanacheAccount?.value,
+          });
+          await login({
+            method: WalletMethod.Ganache,
+            privateKey: await wallet?.getPrivateKey(),
+          });
+          return;
+        } catch (error) {
+          log.error(error);
+          log.debug('Ganache Account auto login was attempted and failed');
+        }
         clearLastWallet();
         setLoading(false);
       }
@@ -74,6 +105,6 @@ export const useWalletAutoLogin = (
  */
 export const useAutoLogin = () => {
   const { type, address } = getLastWallet();
-  const loadingMetaMask = useWalletAutoLogin(type || '', address || '');
-  return loadingMetaMask;
+  const loadingWallet = useWalletAutoLogin(type || '', address || '');
+  return loadingWallet;
 };
