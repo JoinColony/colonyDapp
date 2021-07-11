@@ -81,9 +81,10 @@ export const useWalletAutoLogin = (
           const wallet = await purserOpenSoftwareWallet({
             privateKey: lastGanacheAccount?.value,
           });
+          const privateKey = wallet ? await wallet.getPrivateKey() : '';
           await login({
             method: WalletMethod.Ganache,
-            privateKey: await wallet?.getPrivateKey(),
+            privateKey,
           });
           return;
         } catch (error) {
