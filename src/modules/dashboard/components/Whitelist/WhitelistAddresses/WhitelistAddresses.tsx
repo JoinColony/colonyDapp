@@ -14,7 +14,7 @@ interface Props {
   users: AnyUser[];
 }
 
-const displayName = 'WhitelistAddresses';
+const displayName = 'dashboard.Whitelist.WhitelistAddresses';
 
 const MSG = defineMessages({
   title: {

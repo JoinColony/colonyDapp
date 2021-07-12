@@ -7,7 +7,8 @@ import { Tooltip } from '~core/Popover';
 
 import styles from './WhitelistMembersListExtraContent.css';
 
-const displayName = 'WhitelistMembersListExtraContent';
+const displayName =
+  'dashboard.Whitelist.WhitelistAddresses.WhitelistMembersListExtraContent';
 
 const MSG = defineMessages({
   removeButtonIconTitle: {
