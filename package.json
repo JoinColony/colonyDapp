@@ -145,6 +145,7 @@
     "@purser/metamask": "^3.1.1",
     "@purser/signer-ethers": "^1.0.2",
     "@purser/software": "^2.0.0",
+    "@types/papaparse": "^5.2.6",
     "bn.js": "^5.1.1",
     "camelcase": "^6.0.0",
     "classnames": "^2.2.6",
