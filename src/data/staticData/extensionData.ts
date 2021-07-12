@@ -544,7 +544,7 @@ const extensions: { [key: string]: ExtensionData } = {
       },
       {
         paramName: 'agreement',
-        validation: yup.string(),
+        validation: yup.string().min(100),
         defaultValue: '',
         title: MSG.agreementTitle,
         description: MSG.agreementDescription,
