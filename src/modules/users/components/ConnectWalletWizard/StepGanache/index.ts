@@ -1,1 +1,1 @@
-export { default } from './StepGanache';
+export { default, getAccounts } from './StepGanache';
