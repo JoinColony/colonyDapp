@@ -147,7 +147,12 @@ const ExtensionSetup = ({
       onSuccess={handleFormSuccess}
       transform={transform}
     >
-      {({ handleSubmit, isSubmitting, isValid, values }: FormikProps<object>) => (
+      {({
+        handleSubmit,
+        isSubmitting,
+        isValid,
+        values,
+      }: FormikProps<object>) => (
         <div className={styles.main}>
           <Heading
             appearance={{ size: 'medium', margin: 'none' }}
