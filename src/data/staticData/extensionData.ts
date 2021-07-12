@@ -544,11 +544,18 @@ const extensions: { [key: string]: ExtensionData } = {
       },
       {
         paramName: 'agreement',
-        validation: yup.string().min(100),
+        validation: yup.string().when(
+          'policy', {
+            is: (policy) => policy === 1 || policy === 2,
+            then: yup.string().required().min(100),
+            otherwise: false,
+          }
+        ),
         defaultValue: '',
         title: MSG.agreementTitle,
         description: MSG.agreementDescription,
         type: ExtensionParamType.Textarea,
+        disabled: (values) => !values.policy || values.policy === 0
       },
     ],
     uninstallable: true,
