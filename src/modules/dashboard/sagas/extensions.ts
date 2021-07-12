@@ -22,7 +22,7 @@ import {
   NetworkExtensionVersionQueryVariables,
   NetworkExtensionVersionDocument,
 } from '~data/index';
-import extensionData from '~data/staticData/extensionData';
+import extensionData, { PolicyType } from '~data/staticData/extensionData';
 import {
   ContextModule,
   TEMP_getContext,
@@ -171,7 +171,7 @@ function* colonyExtensionEnable({
      * Upload whitelist policy to IPFS
      */
     let agreementHash = '';
-    if (extensionId === Extension.Whitelist && payload?.policy !== 0) {
+    if (extensionId === Extension.Whitelist && payload?.policy !== PolicyType.KycOnly) {
       agreementHash = yield call(
         ipfsUpload,
         JSON.stringify({
@@ -183,12 +183,12 @@ function* colonyExtensionEnable({
       address,
       details: { initialized, missingPermissions },
     } = data.colonyExtension;
-    
+
     if (!initialized && extension.initializationParams) {
       let initParams = [] as any[];
 
       if (extensionId === Extension.Whitelist) {
-        initParams = [payload?.policy !== 1, agreementHash];
+        initParams = [payload?.policy !== PolicyType.AgreementOnly, agreementHash];
       } else {
         initParams = extension.initializationParams.map(({ paramName }) => {
           if (typeof payload[paramName] === 'number') {
