@@ -171,11 +171,11 @@ function* colonyExtensionEnable({
      * Upload whitelist policy to IPFS
      */
     let agreementHash = '';
-    if (extensionId === Extension.Whitelist) {
+    if (extensionId === Extension.Whitelist && payload?.agreement?.length) {
       agreementHash = yield call(
         ipfsUpload,
         JSON.stringify({
-          agreement: '',
+          agreement: payload.agreement,
         }),
       );
     }
