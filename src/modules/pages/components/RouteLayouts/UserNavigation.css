@@ -171,8 +171,8 @@
 
 .walletAutoLogin {
   margin-right: 12px;
-  padding: 3px 10px 0;
-  height: 24px;
+  padding: 4px 10px 0;
+  height: 26px;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
   text-align: center;
@@ -180,7 +180,7 @@
 
 .walletAutoLogin h4 {
   display: inline-block;
-  margin-top: 2px;
+  margin-top: 1px;
   margin-right: 10px;
   vertical-align: top;
   font-size: var(--size-tiny);
