@@ -14,6 +14,7 @@ export interface UploadFile {
   uploaded?: string;
   error?: string;
   preview?: string;
+  parsedData?: string[];
 }
 
 export interface UploadItemComponentProps {
@@ -30,6 +31,6 @@ export interface UploadItemComponentProps {
   handleError?: (...args: any[]) => Promise<any>;
 }
 
-export type UploadFn = (fileData: FileReaderFile) => any;
+export type UploadFn = (fileData: FileReaderFile | File) => any;
 
 export type ValidateFileFn = (value: UploadFile) => string | undefined;
