@@ -20,12 +20,16 @@
   stroke: color-mod(var(--dark) alpha(70%));
 }
 
+.container button:hover svg {
+  fill: var(--action-secondary);
+  stroke: var(--action-secondary);
+}
+
 .date {
   margin-right: 32px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: var(--temp-grey-blue-7);
-  opacity: 0.85;
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .tooltip {
