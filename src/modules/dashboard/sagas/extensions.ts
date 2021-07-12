@@ -171,7 +171,10 @@ function* colonyExtensionEnable({
      * Upload whitelist policy to IPFS
      */
     let agreementHash = '';
-    if (extensionId === Extension.Whitelist && payload?.policy !== PolicyType.KycOnly) {
+    if (
+      extensionId === Extension.Whitelist &&
+      payload?.policy !== PolicyType.KycOnly
+    ) {
       agreementHash = yield call(
         ipfsUpload,
         JSON.stringify({
@@ -188,7 +191,10 @@ function* colonyExtensionEnable({
       let initParams = [] as any[];
 
       if (extensionId === Extension.Whitelist) {
-        initParams = [payload?.policy !== PolicyType.AgreementOnly, agreementHash];
+        initParams = [
+          payload?.policy !== PolicyType.AgreementOnly,
+          agreementHash,
+        ];
       } else {
         initParams = extension.initializationParams.map(({ paramName }) => {
           if (typeof payload[paramName] === 'number') {
