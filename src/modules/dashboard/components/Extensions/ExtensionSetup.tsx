@@ -147,7 +147,12 @@ const ExtensionSetup = ({
       onSuccess={handleFormSuccess}
       transform={transform}
     >
-      {({ handleSubmit, isSubmitting, isValid }: FormikProps<object>) => (
+      {({
+        handleSubmit,
+        isSubmitting,
+        isValid,
+        values,
+      }: FormikProps<object>) => (
         <div className={styles.main}>
           <Heading
             appearance={{ size: 'medium', margin: 'none' }}
@@ -156,7 +161,7 @@ const ExtensionSetup = ({
           <FormattedMessage {...MSG.description} />
           <div className={styles.inputContainer}>
             {initializationParams.map(
-              ({ paramName, title, description, type, options }) => (
+              ({ paramName, title, description, type, options, disabled }) => (
                 <div key={paramName}>
                   {type === ExtensionParamType.Input && (
                     <div className={styles.input}>
@@ -193,6 +198,7 @@ const ExtensionSetup = ({
                         appearance={{ colorSchema: 'grey' }}
                         label={title}
                         name={paramName}
+                        disabled={disabled && disabled(values)}
                       />
                       {description && (
                         <p className={styles.textAreaDescription}>

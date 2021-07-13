@@ -15,6 +15,12 @@ export enum ExtensionParamType {
   ColonyPolicySelector = 'ColonyPolicySelector',
 }
 
+export enum PolicyType {
+  KycOnly = 0,
+  AgreementOnly = 1,
+  KycAndAgreement = 2,
+}
+
 export interface ExtensionInitParams {
   title: string | MessageDescriptor;
   description?: string | MessageDescriptor;
@@ -23,6 +29,7 @@ export interface ExtensionInitParams {
   validation: object;
   type: ExtensionParamType;
   options?: CustomRadioProps[];
+  disabled?: (props: any) => boolean;
 }
 
 export interface ExtensionData {
@@ -514,7 +521,7 @@ const extensions: { [key: string]: ExtensionData } = {
         type: ExtensionParamType.ColonyPolicySelector,
         options: [
           {
-            value: 1,
+            value: PolicyType.AgreementOnly,
             label: MSG.whitelistColonyPolicySelectorAgreementOnly,
             name: 'policy',
             appearance: {
@@ -523,7 +530,7 @@ const extensions: { [key: string]: ExtensionData } = {
             checked: false,
           },
           {
-            value: 0,
+            value: PolicyType.KycOnly,
             label: MSG.whitelistColonyPolicySelectorKYCOnly,
             name: 'policy',
             appearance: {
@@ -532,7 +539,7 @@ const extensions: { [key: string]: ExtensionData } = {
             checked: false,
           },
           {
-            value: 2,
+            value: PolicyType.KycAndAgreement,
             label: MSG.whitelistColonyPolicySelectorAgreementAndKYC,
             name: 'policy',
             appearance: {
@@ -544,11 +551,19 @@ const extensions: { [key: string]: ExtensionData } = {
       },
       {
         paramName: 'agreement',
-        validation: yup.string(),
+        validation: yup.string().when('policy', {
+          is: (policy) =>
+            policy === PolicyType.AgreementOnly ||
+            policy === PolicyType.KycAndAgreement,
+          then: yup.string().required().min(100),
+          otherwise: false,
+        }),
         defaultValue: '',
         title: MSG.agreementTitle,
         description: MSG.agreementDescription,
         type: ExtensionParamType.Textarea,
+        disabled: (values) =>
+          !values.policy || values.policy === PolicyType.KycOnly,
       },
     ],
     uninstallable: true,
