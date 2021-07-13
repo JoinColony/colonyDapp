@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import * as yup from 'yup';
+
 import { ActionForm, InputLabel } from '~core/Fields';
-import FileUpload from '~core/FileUpload';
 import Button from '~core/Button';
 
 import { ActionTypes } from '~redux/index';
 
+import CSVUploader from '../CSVUploader';
+
 import DownloadTemplate from './DownloadTemplate';
 import styles from './UploadAddressesWidget.css';
-
-const MIME_TYPES = ['text/csv'];
 
 const MSG = defineMessages({
   inputLabel: {
@@ -36,6 +37,22 @@ const MSG = defineMessages({
     id: `dashboard.Whitelist.UploadAddressesWidget.inputError`,
     defaultMessage: `TODO`,
   },
+  badFileError: {
+    id: 'dashboard.Whitelist.UploadAddressesWidget.badFileError',
+    defaultMessage: `.csv invalid or incomplete. Please ensure the file contains a single column with one address on each row.`,
+  },
+});
+
+const validationSchema = yup.object({
+  whitelistCSVUploader: yup.array().of(
+    yup.object().shape({
+      parsedData: yup
+        .array()
+        .of(yup.string())
+        .min(1, () => MSG.badFileError)
+        .max(1000, () => MSG.uploadError),
+    }),
+  ),
 });
 
 const UploadAddressesWidget = () => {
@@ -45,11 +62,12 @@ const UploadAddressesWidget = () => {
   return (
     <ActionForm
       initialValues={{}}
+      validationSchema={validationSchema}
       submit={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES}
       error={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_ERROR}
       success={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_SUCCESS}
     >
-      {() => (
+      {({ errors }) => (
         <div className={styles.container}>
           <div className={styles.actionsContainer}>
             <InputLabel
@@ -76,12 +94,12 @@ const UploadAddressesWidget = () => {
             </div>
           ) : (
             <div>
-              <FileUpload
-                name="whitelistUploader"
-                upload={() => null}
-                dropzoneOptions={{
-                  accept: MIME_TYPES,
-                }}
+              <CSVUploader
+                name="whitelistCSVUploader"
+                error={
+                  errors.whitelistCSVUploader &&
+                  errors.whitelistCSVUploader[0].parsedData
+                }
               />
             </div>
           )}
