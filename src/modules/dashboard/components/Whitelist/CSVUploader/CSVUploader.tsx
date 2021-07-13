@@ -6,6 +6,8 @@ import { MessageDescriptor } from 'react-intl';
 import FileUpload, { UploadFile } from '~core/FileUpload';
 import { isAddress } from '~utils/web3';
 
+import CSVUploaderItem from './CSVUploaderItem';
+
 interface Props {
   name: string;
   error?: string | MessageDescriptor;
@@ -17,6 +19,10 @@ const CSVUploader = ({ name, error }: Props) => {
   const [CSVFile, setCSVFile] = useState<File | null>(null);
   const [parsedCSV, setParsedCSV] = useState<ParseResult<unknown> | null>(null);
   const [, { value }, { setValue }] = useField<UploadFile[]>(name);
+
+  const handleUploadError = async () => {
+    await setValue([{ ...value[0], parsedData: [] }]);
+  };
 
   useEffect(() => {
     if (CSVFile) {
@@ -60,6 +66,8 @@ const CSVUploader = ({ name, error }: Props) => {
         }}
         customErrorMessage={error}
         inputStatusAppearance={{ theme: 'minimal', textSpace: 'wrap' }}
+        itemComponent={CSVUploaderItem}
+        handleError={handleUploadError}
       />
     </div>
   );
