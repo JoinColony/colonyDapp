@@ -28,6 +28,7 @@ interface Props {
    * Show a title over the element, on hover. This is browser native.
    */
   title?: string;
+  download?: string | boolean;
 }
 
 const ExternalLink = ({
@@ -37,6 +38,7 @@ const ExternalLink = ({
   textValues,
   className,
   title,
+  download,
 }: Props) => {
   const { formatMessage } = useIntl();
   // eslint-disable-next-line max-len
@@ -50,6 +52,7 @@ const ExternalLink = ({
       target="_blank"
       rel="noreferrer noopener"
       title={title}
+      {...(download !== undefined ? { download } : {})}
     >
       {linkText}
     </a>
