@@ -69,9 +69,7 @@ const UploadItem = ({
     try {
       readFile = await read();
       setValue({ ...value, preview: readFile.data });
-      fileReference = await upload(
-        value.file.type === 'text/csv' ? value.file : readFile,
-      );
+      fileReference = await upload(readFile);
     } catch (caughtError) {
       log.error(caughtError);
 
