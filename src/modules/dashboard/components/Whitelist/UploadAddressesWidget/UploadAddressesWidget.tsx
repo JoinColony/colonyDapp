@@ -6,6 +6,7 @@ import Button from '~core/Button';
 
 import { ActionTypes } from '~redux/index';
 
+import DownloadTemplate from './DownloadTemplate';
 import styles from './UploadAddressesWidget.css';
 
 const MIME_TYPES = ['text/csv'];
@@ -55,11 +56,14 @@ const UploadAddressesWidget = () => {
               label={showInput ? MSG.inputLabel : MSG.uploadLabel}
               appearance={{ colorSchema: 'grey' }}
             />
-            <Button
-              appearance={{ theme: 'blue' }}
-              text={showInput ? MSG.upload : MSG.input}
-              onClick={toggleShowInput}
-            />
+            <div className={styles.actionsSubContainer}>
+              {!showInput && <DownloadTemplate />}
+              <Button
+                appearance={{ theme: 'blue' }}
+                text={showInput ? MSG.upload : MSG.input}
+                onClick={toggleShowInput}
+              />
+            </div>
           </div>
           {showInput ? (
             <div className={styles.inputContainer}>
