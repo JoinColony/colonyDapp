@@ -149,7 +149,7 @@ const FileUpload = ({
         0,
         maxFilesLimit - countAcceptedFiles.length,
       );
-      newFiles.forEach((file) => push({ file }));
+      newFiles.forEach((file) => push(file));
     },
     [files, maxFilesLimit, push],
   );
@@ -158,7 +158,7 @@ const FileUpload = ({
     (rejectedFiles) => {
       rejectedFiles
         .slice(0, maxFilesLimit - files.length)
-        .forEach((file) => push({ file, error: 'filetypeError' }));
+        .forEach((file) => push({ ...file, error: 'filetypeError' }));
     },
     [files.length, maxFilesLimit, push],
   );
@@ -231,10 +231,10 @@ const FileUpload = ({
         {maxFileLimitNotMet && renderPlaceholder}
         {files && files.length > 0 && (
           <div className={classNames.filesContainer}>
-            {files.map(({ error, file }, idx) => (
+            {files.map((file, idx) => (
               <FileUploaderItem
                 accept={accept}
-                error={error}
+                error={file.error}
                 key={`${file.name}-${file.size}`}
                 idx={idx}
                 maxFileSize={maxSize}
