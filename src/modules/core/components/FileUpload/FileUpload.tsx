@@ -23,7 +23,7 @@ import UploadItem from './UploadItem';
 
 import { asFieldArray } from '../Fields';
 import InputLabel from '../Fields/InputLabel';
-import InputStatus from '../Fields/InputStatus';
+import InputStatus, { InputStatusAppearance } from '../Fields/InputStatus';
 
 import styles from './FileUpload.css';
 
@@ -90,6 +90,10 @@ interface Props {
   handleError?: (...args: any[]) => Promise<any>;
 
   labelAppearance?: Appearance;
+
+  customErrorMessage?: string | MessageDescriptor;
+
+  inputStatusAppearance?: InputStatusAppearance;
 }
 
 const validateFile: ValidateFileFn = (value) =>
@@ -119,6 +123,8 @@ const FileUpload = ({
   upload,
   handleError,
   labelAppearance,
+  customErrorMessage,
+  inputStatusAppearance,
 }: AsFieldArrayEnhancedProps<Props> & ForwardedRefProps) => {
   const files = useMemo(() => getIn(values, name) || [], [name, values]);
   const fileErrors = useMemo(() => getIn(errors, name) || [], [errors, name]);
@@ -244,7 +250,11 @@ const FileUpload = ({
         )}
         {renderExtraChildren()}
       </div>
-      <InputStatus status={status} error={hasError ? MSG.labelError : ''} />
+      <InputStatus
+        appearance={inputStatusAppearance}
+        status={status}
+        error={hasError ? customErrorMessage || MSG.labelError : ''}
+      />
     </div>
   );
 };
