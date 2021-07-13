@@ -32,6 +32,7 @@ export default function* estimateGasCost({
       methodName,
       identifier,
       params,
+      gasLimit,
     }: TransactionRecordProps = yield selectAsJS(oneTransaction, id);
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
@@ -50,7 +51,19 @@ export default function* estimateGasCost({
 
     yield put(
       transactionUpdateGas(id, {
-        gasLimit: suggestedGasLimit.toString(),
+        /*
+         * @NOTE Prevent a race condition if we're also manually estimating gas
+         *
+         * In some cases we might want to manually estimate gas (see: finalize motion).
+         * In cases like those we fire the TRANSACTION_ESTIMATE_GAS action twice in quick
+         * succession which leads to a race condition (basically which ever finishes
+         * last will get set)
+         *
+         * This prevents that by making sure that we preserve any gas limit values that
+         * are already set on the transaction (the ones that were set manually) and
+         * if not, only then set the suggested value
+         */
+        gasLimit: gasLimit || suggestedGasLimit.toString(),
         gasPrice,
       }),
     );
