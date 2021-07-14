@@ -58,6 +58,7 @@ const validationSchema = yup.object({
 const UploadAddressesWidget = () => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const toggleShowInput = () => setShowInput(!showInput);
+  const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
 
   return (
     <ActionForm
@@ -80,6 +81,7 @@ const UploadAddressesWidget = () => {
                 appearance={{ theme: 'blue' }}
                 text={showInput ? MSG.upload : MSG.input}
                 onClick={toggleShowInput}
+                disabled={processingCSVData}
               />
             </div>
           </div>
@@ -100,6 +102,8 @@ const UploadAddressesWidget = () => {
                   errors.whitelistCSVUploader &&
                   errors.whitelistCSVUploader[0].parsedData
                 }
+                processingData={processingCSVData}
+                setProcessingData={setProcessingCSVData}
               />
             </div>
           )}
