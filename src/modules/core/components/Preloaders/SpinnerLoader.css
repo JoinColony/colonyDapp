@@ -77,3 +77,13 @@
   border-left-color: var(--primary);
   border-bottom-color: var(--primary);
 }
+
+.layoutHorizontal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layoutHorizontal .loader {
+  margin: 0 10px 0 0;
+}
