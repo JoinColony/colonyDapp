@@ -376,7 +376,7 @@ function* removeFromWhitelist({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: ClientType.ColonyClient,
+      context: ClientType.WhitelistClient,
       methodName: 'approveUsers',
       identifier: colonyAddress,
       params: [[userAddress], false],
