@@ -1,5 +1,8 @@
-import isEmpty from 'lodash/isEmpty';
 import React from 'react';
+
+import {
+  useWhitelistedUsersQuery,
+} from '~data/index';
 
 import UploadAddressesWidget from './UploadAddressesWidget';
 import WhitelistAddresses from './WhitelistAddresses';
@@ -9,13 +12,14 @@ export interface Props {
 }
 
 const Whitelist = ({ colonyAddress }: Props) => {
-  const users = []; // @TODO: Connect with real added users
-
+  const { data, loading } = useWhitelistedUsersQuery({
+    variables: { colonyAddress },
+  });
   return (
     <div>
       <UploadAddressesWidget />
-      {!isEmpty(users) && (
-        <WhitelistAddresses colonyAddress={colonyAddress} users={users} />
+      {data?.whitelistedUsers?.length && (
+        <WhitelistAddresses colonyAddress={colonyAddress} users={data.whitelistedUsers} />
       )}
     </div>
   );
