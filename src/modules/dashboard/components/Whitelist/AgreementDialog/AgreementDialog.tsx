@@ -12,8 +12,8 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.title',
     defaultMessage: 'Sale agreement',
   },
-  gotiItButton: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.gotiItButton',
+  gotItButton: {
+    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.gotItButton',
     defaultMessage: 'Got it',
   },
 });
@@ -21,7 +21,7 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   close: () => void;
-  agreementText?: string;
+  agreementText: string;
 }
 
 const AgreementDialog = ({ cancel, close, agreementText }: Props) => {
@@ -41,7 +41,7 @@ const AgreementDialog = ({ cancel, close, agreementText }: Props) => {
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           onClick={close}
-          text={MSG.gotiItButton}
+          text={MSG.gotItButton}
         />
       </DialogSection>
     </Dialog>
