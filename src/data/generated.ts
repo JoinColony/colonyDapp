@@ -318,6 +318,7 @@ export type Query = {
   userReputation: Scalars['String'];
   username: Scalars['String'];
   votingState: VotingState;
+  whitelistedUsers: Array<User>;
 };
 
 
@@ -587,6 +588,11 @@ export type QueryUsernameArgs = {
 export type QueryVotingStateArgs = {
   colonyAddress: Scalars['String'];
   motionId: Scalars['Int'];
+};
+
+
+export type QueryWhitelistedUsersArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 export enum SuggestionStatus {
@@ -1434,6 +1440,16 @@ export type NetworkExtensionVersionQueryVariables = Exact<{
 
 
 export type NetworkExtensionVersionQuery = Pick<Query, 'networkExtensionVersion'>;
+
+export type WhitelistedUsersQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type WhitelistedUsersQuery = { whitelistedUsers: Array<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'walletAddress'> }
+  )> };
 
 export type TokenBalancesForDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -2973,6 +2989,42 @@ export function useNetworkExtensionVersionLazyQuery(baseOptions?: Apollo.LazyQue
 export type NetworkExtensionVersionQueryHookResult = ReturnType<typeof useNetworkExtensionVersionQuery>;
 export type NetworkExtensionVersionLazyQueryHookResult = ReturnType<typeof useNetworkExtensionVersionLazyQuery>;
 export type NetworkExtensionVersionQueryResult = Apollo.QueryResult<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>;
+export const WhitelistedUsersDocument = gql`
+    query WhitelistedUsers($colonyAddress: String!) {
+  whitelistedUsers(colonyAddress: $colonyAddress) @client {
+    id
+    profile {
+      walletAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useWhitelistedUsersQuery__
+ *
+ * To run a query within a React component, call `useWhitelistedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWhitelistedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWhitelistedUsersQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useWhitelistedUsersQuery(baseOptions?: Apollo.QueryHookOptions<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>) {
+        return Apollo.useQuery<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>(WhitelistedUsersDocument, baseOptions);
+      }
+export function useWhitelistedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>) {
+          return Apollo.useLazyQuery<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>(WhitelistedUsersDocument, baseOptions);
+        }
+export type WhitelistedUsersQueryHookResult = ReturnType<typeof useWhitelistedUsersQuery>;
+export type WhitelistedUsersLazyQueryHookResult = ReturnType<typeof useWhitelistedUsersLazyQuery>;
+export type WhitelistedUsersQueryResult = Apollo.QueryResult<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {

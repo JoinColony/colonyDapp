@@ -131,6 +131,15 @@ query NetworkExtensionVersion($extensionId: String!) {
   networkExtensionVersion(extensionId: $extensionId) @client
 }
 
+query WhitelistedUsers($colonyAddress: String!) {
+   whitelistedUsers(colonyAddress: $colonyAddress) @client {
+    id
+    profile {
+      walletAddress
+    }
+   }
+}
+
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id
