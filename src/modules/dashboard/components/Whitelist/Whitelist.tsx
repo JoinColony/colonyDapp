@@ -5,13 +5,19 @@ import isEmpty from 'lodash/isEmpty';
 import {
   useWhitelistedUsersQuery,
   useWhitelistAgreementQuery,
+  useWhitelistAgreementQuery,
+  useLoggedInUser,
+  Colony,
 } from '~data/index';
-import { MiniSpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader, MiniSpinnerLoader } from '~core/Preloaders';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 
-import { Address } from '~types/index';
+import { useTransformer } from '~utils/hooks';
+
+import { getAllUserRoles } from '../../../transformers';
+import { hasRoot } from '../../../users/checks';
 
 import AgreementDialog from './AgreementDialog';
 import styles from './Whitelist.css';
@@ -30,16 +36,26 @@ const MSG = defineMessage({
 });
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
 }
 
-const Whitelist = ({ colonyAddress }: Props) => {
-  const openAgreementDialog = useDialog(AgreementDialog);
-
+const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
   const { data, loading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
   });
-  const { data: agreementData } = useWhitelistAgreementQuery({
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const hasRegisteredProfile = !!username && !ethereal;
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const users = []; // @TODO: Connect with real added users
+
+  const openAgreementDialog = useDialog(AgreementDialog);
+
+  const {
+    data: agreementData,
+    loading: agreementLoading,
+  } = useWhitelistAgreementQuery({
     variables: { colonyAddress },
   });
 
@@ -63,7 +79,8 @@ const Whitelist = ({ colonyAddress }: Props) => {
         null}
       <div className={styles.buttonsContainer}>
         <div className={styles.agreeemntButton}>
-          {agreementData?.whitelistAgreement && (
+          {loading && <MiniSpinnerLoader />}
+          {!agreementLoading && agreementData?.whitelistAgreement && (
             <Button
               appearance={{ theme: 'blue' }}
               onClick={openDialog}
@@ -74,8 +91,7 @@ const Whitelist = ({ colonyAddress }: Props) => {
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={{ id: 'button.confirm' }}
-          // temporary (outside of the scope of the issue)
-          disabled
+          disabled={!userHasPermission}
         />
       </div>
     </div>
