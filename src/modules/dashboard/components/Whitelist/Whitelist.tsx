@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessage } from 'react-intl';
+import isEmpty from 'lodash/isEmpty';
 
 import {
   useWhitelistedUsersQuery,
@@ -42,6 +43,13 @@ const Whitelist = ({ colonyAddress }: Props) => {
     variables: { colonyAddress },
   });
 
+  const openDialog = useCallback(
+    () =>
+      agreementData?.whitelistAgreement &&
+      openAgreementDialog({ agreementText: agreementData?.whitelistAgreement }),
+    [openAgreementDialog, agreementData],
+  );
+
   return (
     <div>
       <UploadAddressesWidget />
@@ -58,11 +66,7 @@ const Whitelist = ({ colonyAddress }: Props) => {
           {agreementData?.whitelistAgreement && (
             <Button
               appearance={{ theme: 'blue' }}
-              onClick={() =>
-                openAgreementDialog({
-                  agreementText: agreementData?.whitelistAgreement as string,
-                })
-              }
+              onClick={openDialog}
               text={MSG.agreement}
             />
           )}
