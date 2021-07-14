@@ -29,7 +29,9 @@ const CSVUploader = ({
   const [, { value }, { setValue }] = useField<UploadFile[]>(name);
 
   const handleUploadError = async () => {
-    await setValue([{ ...value[0], parsedData: [] }]);
+    if (isNil(value[0].parsedData)) {
+      await setValue([{ ...value[0], parsedData: [] }]);
+    }
   };
 
   useEffect(() => {
