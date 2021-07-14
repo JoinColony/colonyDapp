@@ -7,9 +7,10 @@ import * as yup from 'yup';
 import Whitelist from '~dashboard/Whitelist';
 import { Address } from '~types/index';
 import { CustomRadioProps } from '~core/Fields';
+import { Colony } from '~data/index';
 
 export interface ExtensionBodyProps {
-  colonyAddress: string;
+  colony: Colony;
 }
 
 export enum ExtensionParamType {

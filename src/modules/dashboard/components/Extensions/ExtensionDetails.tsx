@@ -381,7 +381,7 @@ const ExtensionDetails = ({
                   )}
                   {extensionEnabled &&
                     extension.enabledExtensionBody &&
-                    extension.enabledExtensionBody({ colonyAddress })}
+                    extension.enabledExtensionBody({ colony })}
                 </div>
               )}
             />
