@@ -9,6 +9,7 @@ import styles from './SpinnerLoader.css';
 export interface Appearance {
   size: 'small' | 'medium' | 'large' | 'huge' | 'massive';
   theme?: 'grey' | 'primary';
+  layout?: 'horizontal';
 }
 
 interface Props {
