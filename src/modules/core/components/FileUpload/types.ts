@@ -11,7 +11,7 @@ export interface FileReaderFile {
 
 export interface UploadFile {
   file: File;
-  uploaded?: string;
+  uploaded?: string | boolean;
   error?: string;
   preview?: string;
   parsedData?: string[];
