@@ -69,6 +69,7 @@ export const extensionsResolvers = ({
           if (user.values[1]) {
             return [...users, getMinimalUser(user.values[0])];
           }
+          return users;
         }, []);
       } catch (error) {
         console.error(error);
