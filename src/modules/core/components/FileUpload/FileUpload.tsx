@@ -94,6 +94,10 @@ interface Props {
   customErrorMessage?: string | MessageDescriptor;
 
   inputStatusAppearance?: InputStatusAppearance;
+
+  processingData?: boolean;
+
+  handleProcessingData?: (...args: any) => void;
 }
 
 const validateFile: ValidateFileFn = (value) =>
@@ -125,6 +129,8 @@ const FileUpload = ({
   labelAppearance,
   customErrorMessage,
   inputStatusAppearance,
+  processingData,
+  handleProcessingData,
 }: AsFieldArrayEnhancedProps<Props> & ForwardedRefProps) => {
   const files = useMemo(() => getIn(values, name) || [], [name, values]);
   const fileErrors = useMemo(() => getIn(errors, name) || [], [errors, name]);
@@ -149,7 +155,7 @@ const FileUpload = ({
         0,
         maxFilesLimit - countAcceptedFiles.length,
       );
-      newFiles.forEach((file) => push(file));
+      newFiles.forEach((file) => push({ file }));
     },
     [files, maxFilesLimit, push],
   );
@@ -244,6 +250,8 @@ const FileUpload = ({
                 upload={upload}
                 validate={validateFile}
                 handleError={handleError}
+                processingData={processingData}
+                handleProcessingData={handleProcessingData}
               />
             ))}
           </div>

@@ -4,6 +4,7 @@ import { useField } from 'formik';
 
 import { UploadItemComponentProps } from '~core/FileUpload/types';
 import { UploadFile } from '~core/FileUpload';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import styles from './CSVUploaderItem.css';
 
@@ -16,6 +17,10 @@ const MSG = defineMessages({
     id: 'dashboard.Whitelist.CSVUploader.CSVUploaderItem.removeCSVText',
     defaultMessage: 'Remove',
   },
+  processingText: {
+    id: 'dashboard.Whitelist.CSVUploader.CSVUploaderItem.processingText',
+    defaultMessage: 'Processing',
+  },
 });
 
 const CSVUploaderItem = ({
@@ -25,6 +30,8 @@ const CSVUploaderItem = ({
   remove,
   upload,
   handleError,
+  processingData,
+  handleProcessingData,
 }: UploadItemComponentProps) => {
   const [
     ,
@@ -41,6 +48,9 @@ const CSVUploaderItem = ({
 
   useEffect(() => {
     if (file && !error) {
+      if (handleProcessingData) {
+        handleProcessingData(true);
+      }
       upload(value.file);
     }
 
@@ -48,6 +58,17 @@ const CSVUploaderItem = ({
       handleError();
     }
   }, [file, error]);
+
+  if (processingData || !file) {
+    return (
+      <div className={styles.loadingSpinnerContainer}>
+        <SpinnerLoader
+          loadingText={MSG.processingText}
+          appearance={{ theme: 'primary', size: 'small', layout: 'horizontal' }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.main}>

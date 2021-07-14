@@ -29,6 +29,8 @@ export interface UploadItemComponentProps {
   upload: UploadFn;
   validate: ValidateFileFn;
   handleError?: (...args: any[]) => Promise<any>;
+  processingData?: boolean;
+  handleProcessingData?: (...args: any) => void;
 }
 
 export type UploadFn = (fileData: FileReaderFile | File) => any;
