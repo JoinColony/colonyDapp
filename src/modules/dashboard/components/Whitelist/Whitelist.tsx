@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {
-  useWhitelistedUsersQuery,
-} from '~data/index';
+import { useWhitelistedUsersQuery } from '~data/index';
 
 import UploadAddressesWidget from './UploadAddressesWidget';
 import WhitelistAddresses from './WhitelistAddresses';
@@ -19,7 +17,10 @@ const Whitelist = ({ colonyAddress }: Props) => {
     <div>
       <UploadAddressesWidget />
       {data?.whitelistedUsers?.length && (
-        <WhitelistAddresses colonyAddress={colonyAddress} users={data.whitelistedUsers} />
+        <WhitelistAddresses
+          colonyAddress={colonyAddress}
+          users={data.whitelistedUsers}
+        />
       )}
     </div>
   );

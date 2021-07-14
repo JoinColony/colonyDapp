@@ -35,7 +35,14 @@ const WhitelistAddresses = ({ colonyAddress, users }: Props) => {
         domainId={ROOT_DOMAIN_ID}
         users={users}
         showUserReputation={false}
-        extraItemContent={WhitelistMembersListExtraContent}
+        extraItemContent={(props) => {
+          return (
+            <WhitelistMembersListExtraContent
+              userAddress={props.id}
+              colonyAddress={colonyAddress}
+            />
+          );
+        }}
         listGroupAppearance={{ hoverColor: 'dark' }}
       />
     </div>

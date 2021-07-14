@@ -392,11 +392,7 @@ function* removeFromWhitelist({
 
     yield waitForTxResult(txChannel);
   } catch (error) {
-    return yield putError(
-      ActionTypes.REMOVE_FROM_WHITELIST_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.REMOVE_FROM_WHITELIST_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
