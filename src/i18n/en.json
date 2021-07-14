@@ -166,6 +166,9 @@
     "transaction.ColonyClient.upgradeExtension.title": "Upgrade Colony Extension",
     "transaction.ColonyClient.upgradeExtension.description": "Upgrade Colony Extension",
 
+    "transaction.WhitelistClient.approveUsers.title": "Update whitelist users",
+    "transaction.WhitelistClient.approveUsers.description": "Update whitelist users",
+
     "transaction.VotingReputationClient.createMotion.title": "Create motion",
     "transaction.VotingReputationClient.createMotion.description": "Create motion",
     "transaction.group.createMotion.title": "Create motion",
