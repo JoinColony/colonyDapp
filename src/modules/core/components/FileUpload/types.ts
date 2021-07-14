@@ -33,6 +33,6 @@ export interface UploadItemComponentProps {
   handleProcessingData?: (...args: any) => void;
 }
 
-export type UploadFn = (fileData: FileReaderFile | File) => any;
+export type UploadFn = (fileData: FileReaderFile | File | null) => any;
 
 export type ValidateFileFn = (value: UploadFile) => string | undefined;
