@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Papa, { ParseResult } from 'papaparse';
 import { useField } from 'formik';
 import { MessageDescriptor } from 'react-intl';
+import isNil from 'lodash/isNil';
 
 import FileUpload, { UploadFile } from '~core/FileUpload';
 import { isAddress } from '~utils/web3';
@@ -40,10 +41,10 @@ const CSVUploader = ({
     } else if (!CSVFile && parsedCSV) {
       setParsedCSV(null);
     }
-  }, [CSVFile]);
+  }, [CSVFile, parsedCSV]);
 
   useEffect(() => {
-    if (parsedCSV) {
+    if (parsedCSV && value[0] && isNil(value[0].parsedData)) {
       const headerExpectedName = 'Whitelist Address';
       if (
         parsedCSV.meta.fields?.length === 1 &&
@@ -64,8 +65,11 @@ const CSVUploader = ({
         setValue([{ ...value[0], parsedData: [] }]);
       }
     }
-    setProcessingData(false);
-  }, [parsedCSV]);
+
+    if (processingData) {
+      setProcessingData(false);
+    }
+  }, [parsedCSV, value, setValue, processingData, setProcessingData]);
 
   return (
     <div>

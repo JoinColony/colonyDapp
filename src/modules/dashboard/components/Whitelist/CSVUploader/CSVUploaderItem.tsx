@@ -1,4 +1,4 @@
-import React, { useEffect, SyntheticEvent } from 'react';
+import React, { useEffect, SyntheticEvent, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { useField } from 'formik';
 
@@ -36,29 +36,43 @@ const CSVUploaderItem = ({
   const [
     ,
     {
-      value: { file },
+      value: { file, uploaded },
       value,
     },
+    { setValue },
   ] = useField<UploadFile>(name);
 
-  const handleRemoveClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
-    evt.stopPropagation();
-    upload(null);
-    remove(idx);
-  };
+  const handleRemoveClick = useCallback(
+    (evt: SyntheticEvent<HTMLButtonElement>) => {
+      evt.stopPropagation();
+      upload(null);
+      remove(idx);
+    },
+    [remove, idx, upload],
+  );
 
   useEffect(() => {
-    if (file && !error) {
+    if (file && !error && !uploaded) {
       if (handleProcessingData) {
         handleProcessingData(true);
       }
       upload(value.file);
+      setValue({ ...value, uploaded: true });
     }
 
     if (error && handleError) {
       handleError();
     }
-  }, [file, error]);
+  }, [
+    file,
+    error,
+    value,
+    handleProcessingData,
+    handleError,
+    upload,
+    setValue,
+    uploaded,
+  ]);
 
   if (processingData || !file) {
     return (
