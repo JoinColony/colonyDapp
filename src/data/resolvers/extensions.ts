@@ -11,6 +11,9 @@ import {
 } from '@colony/colony-js';
 
 import { Context } from '~context/index';
+import {
+  getMinimalUser,
+} from '~data/index';
 
 import extensionData from '~data/staticData/extensionData';
 
@@ -45,6 +48,34 @@ export const extensionsResolvers = ({
         return version.toNumber();
       }
       return 0;
+    },
+    async whitelistedUsers(_, { colonyAddress }) {
+      try {
+        const whitelistClient = (await colonyManager.getClient(
+          ClientType.WhitelistClient,
+          colonyAddress,
+        ));
+
+        const userApprovedFilter = whitelistClient.filters.UserApproved(
+          null,
+          null,
+        );
+
+        const userApprovedLogs = await getLogs(
+          whitelistClient,
+          userApprovedFilter,
+        );
+
+        return userApprovedLogs.reduce((users, userLog) => {
+          const user = whitelistClient.interface.parseLog(userLog);
+          if (user.values[1]) {
+            return [...users, getMinimalUser(user.values[0])];
+          }
+        }, []);
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
     },
   },
   ColonyExtension: {
