@@ -32,11 +32,13 @@ const CSVUploader = ({
   };
 
   useEffect(() => {
-    if (CSVFile) {
+    if (CSVFile && !parsedCSV) {
       Papa.parse(CSVFile, {
         complete: setParsedCSV,
         header: true,
       });
+    } else if (!CSVFile && parsedCSV) {
+      setParsedCSV(null);
     }
   }, [CSVFile]);
 

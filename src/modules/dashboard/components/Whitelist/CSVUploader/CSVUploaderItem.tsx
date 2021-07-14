@@ -43,6 +43,7 @@ const CSVUploaderItem = ({
 
   const handleRemoveClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
     evt.stopPropagation();
+    upload(null);
     remove(idx);
   };
 
