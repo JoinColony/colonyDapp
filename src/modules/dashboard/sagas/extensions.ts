@@ -368,6 +368,41 @@ function* colonyExtensionUpgrade({
   return null;
 }
 
+function* removeFromWhitelist({
+  meta,
+  payload: { userAddress, colonyAddress },
+}: Action<ActionTypes.REMOVE_FROM_WHITELIST>) {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: ClientType.ColonyClient,
+      methodName: 'approveUsers',
+      identifier: colonyAddress,
+      params: [[userAddress], false],
+    });
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
+
+    yield put<AllActions>({
+      type: ActionTypes.REMOVE_FROM_WHITELIST_SUCCESS,
+      payload: {},
+      meta,
+    });
+
+    yield waitForTxResult(txChannel);
+  } catch (error) {
+    return yield putError(
+      ActionTypes.REMOVE_FROM_WHITELIST_ERROR,
+      error,
+      meta,
+    );
+  } finally {
+    txChannel.close();
+  }
+  return null;
+}
+
 export default function* colonySagas() {
   yield takeEvery(ActionTypes.COLONY_EXTENSION_INSTALL, colonyExtensionInstall);
   yield takeEvery(ActionTypes.COLONY_EXTENSION_ENABLE, colonyExtensionEnable);
@@ -380,4 +415,5 @@ export default function* colonySagas() {
     colonyExtensionUninstall,
   );
   yield takeEvery(ActionTypes.COLONY_EXTENSION_UPGRADE, colonyExtensionUpgrade);
+  yield takeEvery(ActionTypes.REMOVE_FROM_WHITELIST, removeFromWhitelist);
 }
