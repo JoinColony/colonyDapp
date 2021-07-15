@@ -31,7 +31,7 @@ const Whitelist = ({ colonyAddress }: Props) => {
           colonyAddress={colonyAddress}
           users={data.whitelistedUsers}
         />
-      )}
+      ) || null}
     </div>
   );
 };
