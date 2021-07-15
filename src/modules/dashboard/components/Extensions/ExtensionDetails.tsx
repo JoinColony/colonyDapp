@@ -42,7 +42,7 @@ import {
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
 } from '~routes/index';
-import { DEFAULT_NETWORK_INFO } from '~constants';
+import { DEFAULT_NETWORK_INFO, ALLOWED_NETWORKS } from '~constants';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -148,9 +148,11 @@ const ExtensionDetails = ({
   }>();
   const match = useRouteMatch();
   const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
-  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { walletAddress, username, ethereal, networkId } = useLoggedInUser();
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
+
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress,
   });
@@ -190,7 +192,11 @@ const ExtensionDetails = ({
   extension.currentVersion =
     data?.colonyExtension?.details?.version || latestNetworkExtensionVersion;
 
-  const canInstall = hasRegisteredProfile && hasRoot(allUserRoles);
+  const canInstall =
+    hasRegisteredProfile &&
+    hasRoot(allUserRoles) &&
+    !ethereal &&
+    !isNetworkAllowed;
   const installedExtension = data ? data.colonyExtension : null;
 
   const extensionInstallable = !onSetupRoute && canInstall;
@@ -381,16 +387,17 @@ const ExtensionDetails = ({
         <div className={styles.extensionDetails}>
           <hr className={styles.headerLine} />
           <div className={styles.buttonWrapper}>
-            {(extesionCanBeInstalled || extesionCanBeEnabled) && (
-              <ExtensionActionButton
-                colonyAddress={colonyAddress}
-                colonyVersion={colonyVersion}
-                installedExtension={installedExtension}
-                extension={extension}
-                extensionCompatible={extensionCompatible}
-              />
-            )}
-            {extensionCanBeUpgraded && (
+            {(extesionCanBeInstalled || extesionCanBeEnabled) &&
+              isNetworkAllowed && (
+                <ExtensionActionButton
+                  colonyAddress={colonyAddress}
+                  colonyVersion={colonyVersion}
+                  installedExtension={installedExtension}
+                  extension={extension}
+                  extensionCompatible={extensionCompatible}
+                />
+              )}
+            {extensionCanBeUpgraded && isNetworkAllowed && (
               <ExtensionUpgrade
                 colony={colony}
                 extension={extension}
@@ -425,7 +432,7 @@ const ExtensionDetails = ({
                 success={ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS}
                 text={MSG.buttonDeprecate}
                 values={{ colonyAddress, extensionId }}
-                disabled={!isSupportedColonyVersion}
+                disabled={!isSupportedColonyVersion || !isNetworkAllowed}
               />
             </div>
           ) : null}
@@ -443,7 +450,7 @@ const ExtensionDetails = ({
                 success={ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS}
                 text={MSG.buttonUninstall}
                 values={{ colonyAddress, extensionId }}
-                disabled={!isSupportedColonyVersion}
+                disabled={!isSupportedColonyVersion || !isNetworkAllowed}
               />
             </div>
           ) : null}

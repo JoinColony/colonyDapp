@@ -1,13 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useParams, Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { ColonyVersion, Extension } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
+
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
 import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
+import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
 
 import {
   useColonyFromNameQuery,
@@ -37,6 +39,8 @@ const MSG = defineMessages({
 
 const ColonyMembers = () => {
   const { networkId, username, ethereal } = useLoggedInUser();
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
 
   const { colonyName } = useParams<{
     colonyName: string;
@@ -49,6 +53,12 @@ const ColonyMembers = () => {
   const { isVotingExtensionEnabled } = useEnabledExtensions({
     colonyAddress: colonyData?.processedColony?.colonyAddress,
   });
+
+  useEffect(() => {
+    if (!ethereal && !isNetworkAllowed) {
+      openWrongNetworkDialog();
+    }
+  }, [ethereal, isNetworkAllowed, openWrongNetworkDialog]);
 
   const {
     data: colonyExtensions,
@@ -82,7 +92,6 @@ const ColonyMembers = () => {
   const isSupportedColonyVersion =
     parseInt(colonyData?.processedColony?.version || '1', 10) >=
     ColonyVersion.LightweightSpaceship;
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   if (
     loading ||

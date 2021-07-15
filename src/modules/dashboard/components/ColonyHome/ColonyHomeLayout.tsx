@@ -1,4 +1,6 @@
-import React, { ReactChild } from 'react';
+import React, { ReactChild, useEffect } from 'react';
+
+import { useDialog } from '~core/Dialog';
 
 import ColonyDomainSelector from '~dashboard/ColonyHome/ColonyDomainSelector';
 import ColonyHomeActions from '~dashboard/ColonyHomeActions';
@@ -13,8 +15,10 @@ import ColonyDomainDescription from './ColonyDomainDescription';
 import ColonyUpgrade from './ColonyUpgrade';
 import ColonyFinishDeployment from './ColonyFinishDeployment';
 import ExtensionUpgrade from './ExtensionUpgrade';
+import WrongNetworkDialog from './WrongNetworkDialog';
 
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
+import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './ColonyHomeLayout.css';
 
@@ -46,52 +50,69 @@ const ColonyHomeLayout = ({
   showActions = true,
   onDomainChange = () => null,
   ethDomainId,
-}: Props) => (
-  <div className={styles.main}>
-    <div className={showSidebar ? styles.mainContentGrid : styles.minimalGrid}>
-      <aside className={styles.leftAside}>
-        <ColonyTitle colony={colony} />
-        {showNavigation && <ColonyNavigation />}
-      </aside>
-      <div className={styles.mainContent}>
-        {showControls && (
-          <>
-            <ColonyTotalFunds colony={colony} />
-            <div className={styles.contentActionsPanel}>
-              <div className={styles.domainsDropdownContainer}>
-                <ColonyDomainSelector
-                  filteredDomainId={filteredDomainId}
-                  onDomainChange={onDomainChange}
-                  colony={colony}
-                />
-              </div>
-              {showActions && (
-                <ColonyHomeActions colony={colony} ethDomainId={ethDomainId} />
-              )}
-            </div>
-          </>
-        )}
-        {children}
-      </div>
-      {showSidebar ? (
-        <aside className={styles.rightAside}>
-          <ColonyDomainDescription
-            colony={colony}
-            currentDomainId={filteredDomainId}
-          />
-          <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
-          <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
-          <ColonyExtensions colony={colony} />
+}: Props) => {
+  const { ethereal, networkId } = useLoggedInUser();
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
+
+  useEffect(() => {
+    if (!ethereal && !isNetworkAllowed) {
+      openWrongNetworkDialog();
+    }
+  }, [ethereal, isNetworkAllowed, openWrongNetworkDialog]);
+
+  return (
+    <div className={styles.main}>
+      <div
+        className={showSidebar ? styles.mainContentGrid : styles.minimalGrid}
+      >
+        <aside className={styles.leftAside}>
+          <ColonyTitle colony={colony} />
+          {showNavigation && <ColonyNavigation />}
         </aside>
-      ) : (
-        <aside />
-      )}
+        <div className={styles.mainContent}>
+          {showControls && (
+            <>
+              <ColonyTotalFunds colony={colony} />
+              <div className={styles.contentActionsPanel}>
+                <div className={styles.domainsDropdownContainer}>
+                  <ColonyDomainSelector
+                    filteredDomainId={filteredDomainId}
+                    onDomainChange={onDomainChange}
+                    colony={colony}
+                  />
+                </div>
+                {showActions && (
+                  <ColonyHomeActions
+                    colony={colony}
+                    ethDomainId={ethDomainId}
+                  />
+                )}
+              </div>
+            </>
+          )}
+          {children}
+        </div>
+        {showSidebar ? (
+          <aside className={styles.rightAside}>
+            <ColonyDomainDescription
+              colony={colony}
+              currentDomainId={filteredDomainId}
+            />
+            <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
+            <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
+            <ColonyExtensions colony={colony} />
+          </aside>
+        ) : (
+          <aside />
+        )}
+      </div>
+      <ColonyUpgrade colony={colony} />
+      <ExtensionUpgrade colony={colony} />
+      <ColonyFinishDeployment colony={colony} />
     </div>
-    <ColonyUpgrade colony={colony} />
-    <ExtensionUpgrade colony={colony} />
-    <ColonyFinishDeployment colony={colony} />
-  </div>
-);
+  );
+};
 
 ColonyHomeLayout.displayName = displayName;
 

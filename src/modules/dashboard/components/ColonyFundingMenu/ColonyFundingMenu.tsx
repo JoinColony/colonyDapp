@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import {
   ColonyRole,
@@ -12,6 +12,7 @@ import { useDialog } from '~core/Dialog';
 import TransferFundsDialog from '~dashboard/TransferFundsDialog';
 import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
 import TokenMintDialog from '~dashboard/TokenMintDialog';
+import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
 
 import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
@@ -52,6 +53,7 @@ const ColonyFundingMenu = ({
   selectedDomainId,
 }: Props) => {
   const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
+  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
   const { isVotingExtensionEnabled } = useEnabledExtensions({ colonyAddress });
   const { data } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
@@ -60,6 +62,13 @@ const ColonyFundingMenu = ({
   const openTokenManagementDialog = useDialog(ColonyTokenManagementDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
   const openTokensMoveDialog = useDialog(TransferFundsDialog);
+  const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
+
+  useEffect(() => {
+    if (!ethereal && !isNetworkAllowed) {
+      openWrongNetworkDialog();
+    }
+  }, [ethereal, isNetworkAllowed, openWrongNetworkDialog]);
 
   const rootRoles = useTransformer(getUserRolesForDomain, [
     colony,
@@ -110,7 +119,6 @@ const ColonyFundingMenu = ({
   const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
     parseInt(version, 10) >= ColonyVersion.LightweightSpaceship;
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
   return (
     <ul className={styles.main}>
