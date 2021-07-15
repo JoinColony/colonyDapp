@@ -31,7 +31,7 @@ const MSG = defineMessages({
   },
   uploadError: {
     id: `dashboard.Whitelist.UploadAddressesWidget.uploadError`,
-    defaultMessage: `It is possible to upload no more than 100x addresses at a time. \nPlease consider to upload a smaller amount of addresses.`,
+    defaultMessage: `We do not accept more than 100 addresses at a time, please upload a smaller amount.`,
   },
   inputError: {
     id: `dashboard.Whitelist.UploadAddressesWidget.inputError`,
