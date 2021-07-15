@@ -45,7 +45,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-
+    
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -318,6 +318,7 @@ export type Query = {
   userReputation: Scalars['String'];
   username: Scalars['String'];
   votingState: VotingState;
+  whitelistAgreement?: Maybe<Scalars['String']>;
   whitelistedUsers: Array<User>;
 };
 
@@ -588,6 +589,11 @@ export type QueryUsernameArgs = {
 export type QueryVotingStateArgs = {
   colonyAddress: Scalars['String'];
   motionId: Scalars['Int'];
+};
+
+
+export type QueryWhitelistAgreementArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
