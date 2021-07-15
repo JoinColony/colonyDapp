@@ -35,9 +35,20 @@
 .actionsContainer {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 6px;
+  width: unset;
 }
 
-.actionsContainer label {
-  margin: 0;
+.actionsContainer > label {
+  margin-bottom: 0px;
+}
+
+.actionsSubContainer {
+  display: flex;
+  align-items: center;
+}
+
+.actionsSubContainer > label {
+  margin-right: 0px;
 }
