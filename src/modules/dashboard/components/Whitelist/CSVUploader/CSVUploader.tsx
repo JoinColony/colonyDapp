@@ -4,8 +4,7 @@ import { useField } from 'formik';
 import { MessageDescriptor } from 'react-intl';
 import isNil from 'lodash/isNil';
 
-import FileUpload, { UploadFile } from '~core/FileUpload';
-import { isAddress } from '~utils/web3';
+import FileUpload from '~core/FileUpload';
 
 import CSVUploaderItem from './CSVUploaderItem';
 
@@ -26,7 +25,7 @@ const CSVUploader = ({
 }: Props) => {
   const [CSVFile, setCSVFile] = useState<File | null>(null);
   const [parsedCSV, setParsedCSV] = useState<ParseResult<unknown> | null>(null);
-  const [, { value }, { setValue }] = useField<UploadFile[]>(name);
+  const [, { value }, { setValue }] = useField(name);
 
   const handleUploadError = async () => {
     if (isNil(value[0].parsedData)) {
@@ -51,10 +50,7 @@ const CSVUploader = ({
         const validAddresses = parsedCSV.data.flatMap(
           (CSVRow: Record<string, any>) => {
             const potentialAddress: string = CSVRow[Object.keys(CSVRow)[0]];
-            if (potentialAddress) {
-              return isAddress(potentialAddress) ? [potentialAddress] : [];
-            }
-            return [];
+            return potentialAddress ? [potentialAddress] : [];
           },
         );
 
@@ -87,5 +83,7 @@ const CSVUploader = ({
     </div>
   );
 };
+
+CSVUploader.displayName = 'CSVUploader';
 
 export default CSVUploader;
