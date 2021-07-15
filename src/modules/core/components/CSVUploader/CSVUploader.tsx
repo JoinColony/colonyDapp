@@ -4,7 +4,7 @@ import { useField } from 'formik';
 import { MessageDescriptor } from 'react-intl';
 import isNil from 'lodash/isNil';
 
-import FileUpload from '~core/FileUpload';
+import FileUpload from '../FileUpload';
 
 import CSVUploaderItem from './CSVUploaderItem';
 
