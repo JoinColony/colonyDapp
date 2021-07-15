@@ -37,6 +37,7 @@ const WhitelistMembersListExtraContent = ({
     mapPayload(() => ({
       colonyAddress,
       userAddress,
+      status: false,
     })),
     [userAddress, colonyAddress],
   );
@@ -63,9 +64,9 @@ const WhitelistMembersListExtraContent = ({
       >
         <ActionButton
           appearance={{ theme: 'ghost', size: 'small' }}
-          submit={ActionTypes.REMOVE_FROM_WHITELIST}
-          error={ActionTypes.REMOVE_FROM_WHITELIST_ERROR}
-          success={ActionTypes.REMOVE_FROM_WHITELIST_SUCCESS}
+          submit={ActionTypes.UPDATE_WHITELIST}
+          error={ActionTypes.UPDATE_WHITELIST_ERROR}
+          success={ActionTypes.UPDATE_WHITELIST_SUCCESS}
           transform={transform}
         >
           <Icon name="close" title={MSG.removeButtonIconTitle} />
