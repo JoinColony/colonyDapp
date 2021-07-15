@@ -50,7 +50,7 @@ const validationSchema = yup.object({
         .array()
         .of(yup.string())
         .min(1, () => MSG.badFileError)
-        .max(1000, () => MSG.uploadError),
+        .max(100, () => MSG.uploadError),
     }),
   ),
 });
