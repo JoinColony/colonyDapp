@@ -47,14 +47,10 @@ const CSVUploader = ({
 
   useEffect(() => {
     if (parsedCSV && value[0] && isNil(value[0].parsedData)) {
-      const headerExpectedName = 'Whitelist Address';
-      if (
-        parsedCSV.meta.fields?.length === 1 &&
-        parsedCSV.meta.fields[0] === headerExpectedName
-      ) {
+      if (parsedCSV.meta.fields?.length === 1) {
         const validAddresses = parsedCSV.data.flatMap(
           (CSVRow: Record<string, any>) => {
-            const potentialAddress: string = CSVRow[headerExpectedName];
+            const potentialAddress: string = CSVRow[Object.keys(CSVRow)[0]];
             if (potentialAddress) {
               return isAddress(potentialAddress) ? [potentialAddress] : [];
             }
