@@ -64,9 +64,9 @@ const WhitelistMembersListExtraContent = ({
       >
         <ActionButton
           appearance={{ theme: 'ghost', size: 'small' }}
-          submit={ActionTypes.UPDATE_WHITELIST}
-          error={ActionTypes.UPDATE_WHITELIST_ERROR}
-          success={ActionTypes.UPDATE_WHITELIST_SUCCESS}
+          submit={ActionTypes.WHITELIST_UPDATE}
+          error={ActionTypes.WHITELIST_UPDATE_ERROR}
+          success={ActionTypes.WHITELIST_UPDATE_SUCCESS}
           transform={transform}
         >
           <Icon name="close" title={MSG.removeButtonIconTitle} />

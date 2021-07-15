@@ -374,7 +374,7 @@ function* colonyExtensionUpgrade({
 function* updateWhitelist({
   meta,
   payload: { userAddress, colonyAddress, status },
-}: Action<ActionTypes.UPDATE_WHITELIST>) {
+}: Action<ActionTypes.WHITELIST_UPDATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   // @TODO Please extend this saga to fit batch update when adding addresses to the list
@@ -389,14 +389,14 @@ function* updateWhitelist({
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
 
     yield put<AllActions>({
-      type: ActionTypes.UPDATE_WHITELIST_SUCCESS,
+      type: ActionTypes.WHITELIST_UPDATE_SUCCESS,
       payload: {},
       meta,
     });
 
     yield waitForTxResult(txChannel);
   } catch (error) {
-    return yield putError(ActionTypes.UPDATE_WHITELIST_ERROR, error, meta);
+    return yield putError(ActionTypes.WHITELIST_UPDATE_ERROR, error, meta);
   } finally {
     yield apolloClient.query<
       WhitelistedUsersQuery,
@@ -425,5 +425,5 @@ export default function* colonySagas() {
     colonyExtensionUninstall,
   );
   yield takeEvery(ActionTypes.COLONY_EXTENSION_UPGRADE, colonyExtensionUpgrade);
-  yield takeEvery(ActionTypes.UPDATE_WHITELIST, updateWhitelist);
+  yield takeEvery(ActionTypes.WHITELIST_UPDATE, updateWhitelist);
 }
