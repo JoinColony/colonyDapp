@@ -371,10 +371,10 @@ function* colonyExtensionUpgrade({
   return null;
 }
 
-function* removeFromWhitelist({
+function* updateWhitelist({
   meta,
-  payload: { userAddress, colonyAddress },
-}: Action<ActionTypes.REMOVE_FROM_WHITELIST>) {
+  payload: { userAddress, colonyAddress, status },
+}: Action<ActionTypes.UPDATE_WHITELIST>) {
   const txChannel = yield call(getTxChannel, meta.id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
@@ -383,20 +383,20 @@ function* removeFromWhitelist({
       context: ClientType.WhitelistClient,
       methodName: 'approveUsers',
       identifier: colonyAddress,
-      params: [[userAddress], false],
+      params: [[userAddress], status],
     });
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
 
     yield put<AllActions>({
-      type: ActionTypes.REMOVE_FROM_WHITELIST_SUCCESS,
+      type: ActionTypes.UPDATE_WHITELIST_SUCCESS,
       payload: {},
       meta,
     });
 
     yield waitForTxResult(txChannel);
   } catch (error) {
-    return yield putError(ActionTypes.REMOVE_FROM_WHITELIST_ERROR, error, meta);
+    return yield putError(ActionTypes.UPDATE_WHITELIST_ERROR, error, meta);
   } finally {
     yield apolloClient.query<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>(
       {
@@ -424,5 +424,5 @@ export default function* colonySagas() {
     colonyExtensionUninstall,
   );
   yield takeEvery(ActionTypes.COLONY_EXTENSION_UPGRADE, colonyExtensionUpgrade);
-  yield takeEvery(ActionTypes.REMOVE_FROM_WHITELIST, removeFromWhitelist);
+  yield takeEvery(ActionTypes.UPDATE_WHITELIST, updateWhitelist);
 }
