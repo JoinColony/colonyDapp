@@ -21,6 +21,9 @@ import {
   NetworkExtensionVersionQuery,
   NetworkExtensionVersionQueryVariables,
   NetworkExtensionVersionDocument,
+  WhitelistedUsersDocument,
+  WhitelistedUsersQuery,
+  WhitelistedUsersQueryVariables
 } from '~data/index';
 import extensionData, { PolicyType } from '~data/staticData/extensionData';
 import {
@@ -373,6 +376,7 @@ function* removeFromWhitelist({
   payload: { userAddress, colonyAddress },
 }: Action<ActionTypes.REMOVE_FROM_WHITELIST>) {
   const txChannel = yield call(getTxChannel, meta.id);
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
   try {
     yield fork(createTransaction, meta.id, {
@@ -394,6 +398,15 @@ function* removeFromWhitelist({
   } catch (error) {
     return yield putError(ActionTypes.REMOVE_FROM_WHITELIST_ERROR, error, meta);
   } finally {
+    yield apolloClient.query<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>(
+      {
+        query: WhitelistedUsersDocument,
+        variables: {
+          colonyAddress,
+        },
+        fetchPolicy: 'network-only',
+      },
+    );
     txChannel.close();
   }
   return null;
