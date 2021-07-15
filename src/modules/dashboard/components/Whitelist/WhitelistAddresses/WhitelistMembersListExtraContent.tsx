@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Button from '~core/Button';
+import { ActionButton } from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
+import { ActionTypes } from '~redux/index';
+import { mapPayload } from '~utils/actions';
+import { Address } from '~types/index';
 
 import styles from './WhitelistMembersListExtraContent.css';
 
@@ -21,12 +24,25 @@ const MSG = defineMessages({
   },
 });
 
-const WhitelistMembersListExtraContent = () => {
-  // @TODO: Connect real date
-  const placeholderDate = `${new Date().getDay()}.${new Date().getMonth()}.${new Date().getFullYear()}`;
+interface Props {
+  colonyAddress: Address;
+  userAddress: Address;
+}
+
+const WhitelistMembersListExtraContent = ({
+  colonyAddress,
+  userAddress,
+}: Props) => {
+  const transform = useCallback(
+    mapPayload(() => ({
+      colonyAddress,
+      userAddress,
+      status: false,
+    })),
+    [userAddress, colonyAddress],
+  );
   return (
     <div className={styles.container}>
-      <p className={styles.date}>{placeholderDate}</p>
       <Tooltip
         appearance={{ theme: 'dark' }}
         content={
@@ -46,10 +62,15 @@ const WhitelistMembersListExtraContent = () => {
           ],
         }}
       >
-        {/* @TODO:  Add interaction to remove an address from the list */}
-        <Button appearance={{ theme: 'ghost', size: 'small' }}>
+        <ActionButton
+          appearance={{ theme: 'ghost', size: 'small' }}
+          submit={ActionTypes.WHITELIST_UPDATE}
+          error={ActionTypes.WHITELIST_UPDATE_ERROR}
+          success={ActionTypes.WHITELIST_UPDATE_SUCCESS}
+          transform={transform}
+        >
           <Icon name="close" title={MSG.removeButtonIconTitle} />
-        </Button>
+        </ActionButton>
       </Tooltip>
     </div>
   );

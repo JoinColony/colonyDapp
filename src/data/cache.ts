@@ -57,6 +57,9 @@ export default new InMemoryCache({
         actionsThatNeedAttention: {
           merge: false,
         },
+        whitelistedUsers: {
+          merge: false,
+        },
       },
     },
     Event: {
