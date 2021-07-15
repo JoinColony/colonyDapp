@@ -33,8 +33,6 @@ const WhitelistMembersListExtraContent = ({
   colonyAddress,
   userAddress,
 }: Props) => {
-  // @TODO: Connect real date
-  const placeholderDate = `${new Date().getDay()}.${new Date().getMonth()}.${new Date().getFullYear()}`;
   const transform = useCallback(
     mapPayload(() => ({
       colonyAddress,
@@ -44,7 +42,6 @@ const WhitelistMembersListExtraContent = ({
   );
   return (
     <div className={styles.container}>
-      <p className={styles.date}>{placeholderDate}</p>
       <Tooltip
         appearance={{ theme: 'dark' }}
         content={
