@@ -71,7 +71,9 @@ export const extensionsResolvers = ({
             const { blockHash } = log;
             return {
               ...parsedLog,
-              createdAt: blockHash ? await getBlockTime(provider, blockHash) : 0,
+              createdAt: blockHash
+                ? await getBlockTime(provider, blockHash)
+                : 0,
             };
           }),
         );
@@ -79,12 +81,17 @@ export const extensionsResolvers = ({
           (firstEvent, secondEvent) =>
             secondEvent.createdAt - firstEvent.createdAt,
         );
-        const uniqeAddresses = [...new Set(userApprovedEvents.map(event => event.values._user))];
+        const uniqeAddresses = [
+          ...new Set(userApprovedEvents.map((event) => event.values._user)), // eslint-disable-line no-underscore-dangle
+        ];
 
         return uniqeAddresses.reduce((users, userAddress) => {
-          const userLastEvent = sortedUserApprovedEvents.find(event => event.values._user === userAddress);
+          const userLastEvent = sortedUserApprovedEvents.find(
+            (event) => event.values._user === userAddress, // eslint-disable-line no-underscore-dangle
+          );
+          // eslint-disable-next-line no-underscore-dangle
           if (userLastEvent.values._status) {
-            return [...users, getMinimalUser(userLastEvent.values._user)];
+            return [...users, getMinimalUser(userLastEvent.values._user)]; // eslint-disable-line no-underscore-dangle
           }
           return users;
         }, []);
