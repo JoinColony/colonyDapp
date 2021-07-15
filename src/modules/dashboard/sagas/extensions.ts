@@ -23,7 +23,7 @@ import {
   NetworkExtensionVersionDocument,
   WhitelistedUsersDocument,
   WhitelistedUsersQuery,
-  WhitelistedUsersQueryVariables
+  WhitelistedUsersQueryVariables,
 } from '~data/index';
 import extensionData, { PolicyType } from '~data/staticData/extensionData';
 import {
@@ -377,7 +377,7 @@ function* updateWhitelist({
 }: Action<ActionTypes.UPDATE_WHITELIST>) {
   const txChannel = yield call(getTxChannel, meta.id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-
+  // @TODO Please extend this saga to fit batch update when adding addresses to the list
   try {
     yield fork(createTransaction, meta.id, {
       context: ClientType.WhitelistClient,
@@ -398,15 +398,16 @@ function* updateWhitelist({
   } catch (error) {
     return yield putError(ActionTypes.UPDATE_WHITELIST_ERROR, error, meta);
   } finally {
-    yield apolloClient.query<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>(
-      {
-        query: WhitelistedUsersDocument,
-        variables: {
-          colonyAddress,
-        },
-        fetchPolicy: 'network-only',
+    yield apolloClient.query<
+      WhitelistedUsersQuery,
+      WhitelistedUsersQueryVariables
+    >({
+      query: WhitelistedUsersDocument,
+      variables: {
+        colonyAddress,
       },
-    );
+      fetchPolicy: 'network-only',
+    });
     txChannel.close();
   }
   return null;
