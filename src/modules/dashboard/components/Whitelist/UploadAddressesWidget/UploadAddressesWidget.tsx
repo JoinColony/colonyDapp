@@ -5,13 +5,13 @@ import isEmpty from 'lodash/isEmpty';
 
 import { ActionForm, InputLabel } from '~core/Fields';
 import Button from '~core/Button';
+import CSVUploader from '~core/CSVUploader';
 
 import { ActionTypes } from '~redux/index';
 import { isAddress } from '~utils/web3';
 
-import CSVUploader from '../CSVUploader';
-
 import DownloadTemplate from './DownloadTemplate';
+
 import styles from './UploadAddressesWidget.css';
 
 const MSG = defineMessages({
