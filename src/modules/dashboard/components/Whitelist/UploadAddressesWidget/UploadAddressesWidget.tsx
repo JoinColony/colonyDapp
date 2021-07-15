@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import isEmpty from 'lodash/isEmpty';
 
 import { ActionForm, InputLabel } from '~core/Fields';
 import Button from '~core/Button';
 
 import { ActionTypes } from '~redux/index';
+import { isAddress } from '~utils/web3';
 
 import CSVUploader from '../CSVUploader';
 
@@ -41,6 +43,10 @@ const MSG = defineMessages({
     id: 'dashboard.Whitelist.UploadAddressesWidget.badFileError',
     defaultMessage: `.csv invalid or incomplete. Please ensure the file contains a single column with one address on each row.`,
   },
+  invalidAddressError: {
+    id: `dashboard.Whitelist.UploadAddressesWidget.badFileError.invalidAddressError`,
+    defaultMessage: `It looks like one of your addresses is invalid. Please review our required format & validate that your file matches our requirement. Once fixed, please try again.`,
+  },
 });
 
 const validationSchema = yup.object({
@@ -50,7 +56,17 @@ const validationSchema = yup.object({
         .array()
         .of(yup.string())
         .min(1, () => MSG.badFileError)
-        .max(100, () => MSG.uploadError),
+        .max(100, () => MSG.uploadError)
+        .test(
+          'valid-wallet-addresses',
+          () => MSG.invalidAddressError,
+          (value) =>
+            isEmpty(
+              value?.filter(
+                (potentialAddress: string) => !isAddress(potentialAddress),
+              ),
+            ),
+        ),
     }),
   ),
 });
