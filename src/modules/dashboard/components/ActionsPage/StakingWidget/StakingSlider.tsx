@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Decimal } from 'decimal.js';
 
@@ -99,6 +99,18 @@ const StakingSlider = ({
     nativeToken?.decimals,
   );
 
+  const errorStakeType = useMemo(() => {
+    if (remainingToStake.lte(minUserStake)) {
+      return 'cantStakeMore';
+    }
+
+    if (userActivatedTokens.gt(maxStake)) {
+      return 'stakeMoreReputation';
+    }
+
+    return 'stakeMoreTokens';
+  }, [remainingToStake, minUserStake, maxStake, userActivatedTokens]);
+
   return (
     <>
       <div className={styles.title}>
@@ -129,15 +141,7 @@ const StakingSlider = ({
           exceedLimit={exceedLimit}
         />
       </div>
-      {showError && (
-        <StakingValidationError
-          stakeType={
-            remainingToStake.lte(minUserStake)
-              ? 'cantStakeMore'
-              : 'stakeMoreTokens'
-          }
-        />
-      )}
+      {showError && <StakingValidationError stakeType={errorStakeType} />}
     </>
   );
 };
