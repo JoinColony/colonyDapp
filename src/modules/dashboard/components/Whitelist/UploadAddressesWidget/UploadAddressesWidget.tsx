@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import * as yup from 'yup';
+import isEmpty from 'lodash/isEmpty';
+
 import { ActionForm, InputLabel } from '~core/Fields';
-import FileUpload from '~core/FileUpload';
 import Button from '~core/Button';
+import CSVUploader from '~core/CSVUploader';
 
 import { ActionTypes } from '~redux/index';
+import { isAddress } from '~utils/web3';
 
 import DownloadTemplate from './DownloadTemplate';
-import styles from './UploadAddressesWidget.css';
 
-const MIME_TYPES = ['text/csv'];
+import styles from './UploadAddressesWidget.css';
 
 const MSG = defineMessages({
   inputLabel: {
@@ -30,26 +33,58 @@ const MSG = defineMessages({
   },
   uploadError: {
     id: `dashboard.Whitelist.UploadAddressesWidget.uploadError`,
-    defaultMessage: `It is possible to upload no more than 100x addresses at a time. \nPlease consider to upload a smaller amount of addresses.`,
+    defaultMessage: `We do not accept more than 100 addresses at a time, please upload a smaller amount.`,
   },
   inputError: {
     id: `dashboard.Whitelist.UploadAddressesWidget.inputError`,
     defaultMessage: `TODO`,
   },
+  badFileError: {
+    id: 'dashboard.Whitelist.UploadAddressesWidget.badFileError',
+    defaultMessage: `.csv invalid or incomplete. Please ensure the file contains a single column with one address on each row.`,
+  },
+  invalidAddressError: {
+    id: `dashboard.Whitelist.UploadAddressesWidget.badFileError.invalidAddressError`,
+    defaultMessage: `It looks like one of your addresses is invalid. Please review our required format & validate that your file matches our requirement. Once fixed, please try again.`,
+  },
+});
+
+const validationSchema = yup.object({
+  whitelistCSVUploader: yup.array().of(
+    yup.object().shape({
+      parsedData: yup
+        .array()
+        .of(yup.string())
+        .min(1, () => MSG.badFileError)
+        .max(100, () => MSG.uploadError)
+        .test(
+          'valid-wallet-addresses',
+          () => MSG.invalidAddressError,
+          (value) =>
+            isEmpty(
+              value?.filter(
+                (potentialAddress: string) => !isAddress(potentialAddress),
+              ),
+            ),
+        ),
+    }),
+  ),
 });
 
 const UploadAddressesWidget = () => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const toggleShowInput = () => setShowInput(!showInput);
+  const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
 
   return (
     <ActionForm
       initialValues={{}}
+      validationSchema={validationSchema}
       submit={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES}
       error={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_ERROR}
       success={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_SUCCESS}
     >
-      {() => (
+      {({ errors }) => (
         <div className={styles.container}>
           <div className={styles.actionsContainer}>
             <InputLabel
@@ -62,6 +97,7 @@ const UploadAddressesWidget = () => {
                 appearance={{ theme: 'blue' }}
                 text={showInput ? MSG.upload : MSG.input}
                 onClick={toggleShowInput}
+                disabled={processingCSVData}
               />
             </div>
           </div>
@@ -76,12 +112,14 @@ const UploadAddressesWidget = () => {
             </div>
           ) : (
             <div>
-              <FileUpload
-                name="whitelistUploader"
-                upload={() => null}
-                dropzoneOptions={{
-                  accept: MIME_TYPES,
-                }}
+              <CSVUploader
+                name="whitelistCSVUploader"
+                error={
+                  errors.whitelistCSVUploader &&
+                  errors.whitelistCSVUploader[0].parsedData
+                }
+                processingData={processingCSVData}
+                setProcessingData={setProcessingCSVData}
               />
             </div>
           )}

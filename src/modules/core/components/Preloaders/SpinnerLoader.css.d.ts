@@ -9,3 +9,4 @@ export const sizeMassive: string;
 export const loadingTextContainer: string;
 export const themeGrey: string;
 export const themePrimary: string;
+export const layoutHorizontal: string;
