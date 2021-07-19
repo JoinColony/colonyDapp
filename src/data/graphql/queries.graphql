@@ -724,3 +724,11 @@ query ColonyHistoricRoles($colonyAddress: String!, $blockNumber: Int!) {
     }
   }
 }
+
+query WhitelistAgreement($agreementHash: String!) {
+  whitelistAgreement(agreementHash: $agreementHash) @client
+}
+
+query WhitelistAgreementHash($colonyAddress: String!) {
+  whitelistAgreementHash(colonyAddress: $colonyAddress) @client
+}
