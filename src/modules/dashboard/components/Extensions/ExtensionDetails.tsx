@@ -196,7 +196,7 @@ const ExtensionDetails = ({
     hasRegisteredProfile &&
     hasRoot(allUserRoles) &&
     !ethereal &&
-    !isNetworkAllowed;
+    isNetworkAllowed;
   const installedExtension = data ? data.colonyExtension : null;
 
   const extensionInstallable = !onSetupRoute && canInstall;
@@ -307,10 +307,6 @@ const ExtensionDetails = ({
     [Extension.VotingReputation]: {
       heading: ExtensionsMSG.headingVotingUninstall,
       children: <Warning text={ExtensionsMSG.textVotingUninstall} />,
-    },
-    [Extension.OneTxPayment]: {
-      heading: ExtensionsMSG.headingDefaultUninstall,
-      children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
     },
     DEFAULT: {
       heading: ExtensionsMSG.headingDefaultUninstall,
