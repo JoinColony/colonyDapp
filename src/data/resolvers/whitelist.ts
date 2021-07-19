@@ -10,7 +10,20 @@ export const whitelistResolvers = ({
   ipfsWithFallback,
 }: Required<Context>): Resolvers => ({
   Query: {
-    async whitelistAgreement(_, { colonyAddress }) {
+    async whitelistAgreement(_, { agreementHash }) {
+      try {
+        const agreement = await ipfsWithFallback.getString(agreementHash);
+
+        return JSON.parse(agreement).agreement;
+      } catch (error) {
+        log.verbose(
+          `Could not fetch whitelist agreement from IPFS with hash: `,
+          agreementHash,
+        );
+        return null;
+      }
+    },
+    async whitelistAgreementHash(_, { colonyAddress }) {
       try {
         const whitelistClient = await colonyManager.getClient(
           ClientType.WhitelistClient,
@@ -19,20 +32,7 @@ export const whitelistResolvers = ({
 
         const agreementHash = await whitelistClient.getAgreementHash();
 
-        if (agreementHash) {
-          try {
-            const agreement = await ipfsWithFallback.getString(agreementHash);
-
-            return JSON.parse(agreement).agreement;
-          } catch (error) {
-            log.verbose(
-              `Could not fetch whitelist agreement from IPFS with hash: `,
-              agreementHash,
-            );
-          }
-        }
-
-        return null;
+        return agreementHash || null;
       } catch (error) {
         console.error(error);
         return null;
