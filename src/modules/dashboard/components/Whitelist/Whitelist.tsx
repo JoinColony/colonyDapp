@@ -1,15 +1,13 @@
 import React, { useCallback } from 'react';
 import { defineMessage } from 'react-intl';
-import isEmpty from 'lodash/isEmpty';
 
 import {
   useWhitelistedUsersQuery,
   useWhitelistAgreementQuery,
-  useWhitelistAgreementQuery,
   useLoggedInUser,
   Colony,
 } from '~data/index';
-import { MiniSpinnerLoader, MiniSpinnerLoader } from '~core/Preloaders';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
@@ -40,15 +38,13 @@ interface Props {
 }
 
 const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
-  const { data, loading } = useWhitelistedUsersQuery({
+  const { data: usersData, loading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
   });
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
-
-  const users = []; // @TODO: Connect with real added users
 
   const openAgreementDialog = useDialog(AgreementDialog);
 
@@ -70,10 +66,10 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
     <div>
       <UploadAddressesWidget />
       {loading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
-      {(data?.whitelistedUsers?.length && (
+      {(usersData?.whitelistedUsers?.length && (
         <WhitelistAddresses
           colonyAddress={colonyAddress}
-          users={data.whitelistedUsers}
+          users={usersData.whitelistedUsers}
         />
       )) ||
         null}
