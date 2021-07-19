@@ -316,10 +316,6 @@ const ExtensionDetails = ({
       heading: ExtensionsMSG.headingVotingUninstall,
       children: <Warning text={ExtensionsMSG.textVotingUninstall} />,
     },
-    [Extension.OneTxPayment]: {
-      heading: ExtensionsMSG.headingDefaultUninstall,
-      children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
-    },
     DEFAULT: {
       heading: ExtensionsMSG.headingDefaultUninstall,
       children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
