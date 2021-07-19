@@ -3,7 +3,7 @@ import { defineMessage } from 'react-intl';
 
 import {
   useWhitelistedUsersQuery,
-  useWhitelistAgreementQuery,
+  useWhitelistAgreementHashQuery,
   useLoggedInUser,
   Colony,
 } from '~data/index';
@@ -47,19 +47,21 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
   const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const openAgreementDialog = useDialog(AgreementDialog);
-
   const {
-    data: agreementData,
-    loading: agreementLoading,
-  } = useWhitelistAgreementQuery({
+    data: agreementHashData,
+    loading: agreementHashLoading,
+  } = useWhitelistAgreementHashQuery({
     variables: { colonyAddress },
+    fetchPolicy: 'network-only',
   });
 
   const openDialog = useCallback(
     () =>
-      agreementData?.whitelistAgreement &&
-      openAgreementDialog({ agreementText: agreementData?.whitelistAgreement }),
-    [openAgreementDialog, agreementData],
+      agreementHashData?.whitelistAgreementHash &&
+      openAgreementDialog({
+        agreementHash: agreementHashData?.whitelistAgreementHash,
+      }),
+    [openAgreementDialog, agreementHashData],
   );
 
   return (
@@ -76,13 +78,14 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
       <div className={styles.buttonsContainer}>
         <div className={styles.agreeemntButton}>
           {loading && <MiniSpinnerLoader />}
-          {!agreementLoading && agreementData?.whitelistAgreement && (
-            <Button
-              appearance={{ theme: 'blue' }}
-              onClick={openDialog}
-              text={MSG.agreement}
-            />
-          )}
+          {!agreementHashLoading &&
+            agreementHashData?.whitelistAgreementHash && (
+              <Button
+                appearance={{ theme: 'blue' }}
+                onClick={openDialog}
+                text={MSG.agreement}
+              />
+            )}
         </div>
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
