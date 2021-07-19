@@ -38,7 +38,7 @@ interface Props {
 }
 
 const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
-  const { data: usersData, loading } = useWhitelistedUsersQuery({
+  const { data: usersData, loading: usersLoading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
   });
   const { walletAddress, username, ethereal } = useLoggedInUser();
@@ -67,7 +67,7 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
   return (
     <div>
       <UploadAddressesWidget />
-      {loading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
+      {usersLoading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
       {(usersData?.whitelistedUsers?.length && (
         <WhitelistAddresses
           colonyAddress={colonyAddress}
@@ -77,7 +77,7 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
         null}
       <div className={styles.buttonsContainer}>
         <div className={styles.agreeemntButton}>
-          {loading && <MiniSpinnerLoader />}
+          {agreementHashLoading && <MiniSpinnerLoader />}
           {!agreementHashLoading &&
             agreementHashData?.whitelistAgreementHash && (
               <Button
