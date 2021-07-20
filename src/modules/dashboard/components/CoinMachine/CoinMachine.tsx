@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
@@ -6,9 +6,11 @@ import ExternalLink from '~core/ExternalLink';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
+import { useDialog } from '~core/Dialog';
 
 import { useColonyExtensionsQuery, Colony } from '~data/index';
 
+import WelcomeDialog from './WelcomeDialog';
 import Chat from './Chat';
 
 import styles from './CoinMachine.css';
@@ -47,6 +49,13 @@ const CoinMachine = ({
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
+  const openWelcomeDialog = useDialog(WelcomeDialog);
+
+  useEffect(() => {
+    if (data && !loading) {
+      openWelcomeDialog();
+    }
+  }, [data, loading, openWelcomeDialog]);
 
   if (loading || !data?.processedColony?.installedExtensions) {
     return (
