@@ -16,7 +16,7 @@ import {
   transactionReady,
   transactionUpdateGas,
 } from '../../../core/actionCreators';
-import { updateMotionValues } from '../utils/updateMotionValues';
+import { updateMotionValues } from '../utils';
 
 function* finalizeMotion({
   meta,

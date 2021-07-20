@@ -17,7 +17,7 @@ import {
 } from '../../../core/actionCreators';
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
-import { updateMotionValues } from '../utils/updateMotionValues';
+import { updateMotionValues } from '../utils';
 
 function* stakeMotion({
   meta,
