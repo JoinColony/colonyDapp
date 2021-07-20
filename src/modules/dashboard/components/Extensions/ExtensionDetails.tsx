@@ -196,7 +196,7 @@ const ExtensionDetails = ({
     hasRegisteredProfile &&
     hasRoot(allUserRoles) &&
     !ethereal &&
-    !isNetworkAllowed;
+    isNetworkAllowed;
   const installedExtension = data ? data.colonyExtension : null;
 
   const extensionInstallable = !onSetupRoute && canInstall;
