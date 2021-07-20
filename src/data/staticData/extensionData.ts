@@ -73,6 +73,15 @@ const coinMachineMessages = {
     id: 'extensions.CoinMachine.param.purchaseToken.description',
     defaultMessage: 'The token to receive payments in. Use 0x0 for ether',
   },
+  coinMachineTokenToBeSoldTitle: {
+    id: 'extensions.CoinMachine.param.tokenToBeSold.title',
+    defaultMessage: 'Token To Be Sold',
+  },
+  coinMachineTokenToBeSoldDescription: {
+    id: 'extensions.CoinMachine.param.tokenToBeSold.description',
+    defaultMessage:
+      'The token address of the token that is going to be auctioned off',
+  },
   coinMachinePeriodLengthTitle: {
     id: 'extensions.CoinMachine.param.periodLength.title',
     defaultMessage: 'Period Length',
@@ -105,6 +114,14 @@ const coinMachineMessages = {
     id: 'extensions.CoinMachine.param.maxPerPeriod.description',
     defaultMessage: 'The maximum number of tokens that can be sold per period',
   },
+  coinMachineUserLimitFractionTitle: {
+    id: 'extensions.CoinMachine.param.userLimitFraction.title',
+    defaultMessage: 'User Limit Fraction',
+  },
+  coinMachineUserLimitFractionDescription: {
+    id: 'extensions.CoinMachine.param.userLimitFraction.description',
+    defaultMessage: `Limits the maximum amount of tokens a single address can buy.`,
+  },
   coinMachineStartingPriceTitle: {
     id: 'extensions.CoinMachine.param.startingPriceTitle.title',
     defaultMessage: 'Starting Price',
@@ -113,13 +130,13 @@ const coinMachineMessages = {
     id: 'extensions.CoinMachine.param.startingPriceTitle.description',
     defaultMessage: `The sale price to start at, expressed in units of the Purchase Token per token being sold, as a WAD`,
   },
-  coinMachineTokensToSellTitle: {
-    id: 'extensions.CoinMachine.param.tokensToSell.title',
-    defaultMessage: 'TokensToSell',
+  coinMachineWhitelistAddressTitle: {
+    id: 'extensions.CoinMachine.param.whitelistAddress.title',
+    defaultMessage: 'Whitelist Address',
   },
-  coinMachineTokensToSellDescription: {
-    id: 'extensions.CoinMachine.param.tokensToSell.description',
-    defaultMessage: `The maximum number of tokens that are going to be sold during the entire lifecycle of this contract`,
+  coinMachineWhitelistAddressDescription: {
+    id: 'extensions.CoinMachine.param.whitelistAddress.description',
+    defaultMessage: `The address of the Whitelist Extension which the current instance of Coin Machine should use`,
   },
 };
 
@@ -246,6 +263,13 @@ const extensions: { [key: string]: ExtensionData } = {
     neededColonyPermissions: [ColonyRole.Root],
     initializationParams: [
       {
+        paramName: 'tokenToBeSold',
+        validation: yup.string().required(),
+        defaultValue: AddressZero,
+        title: MSG.coinMachineTokenToBeSoldTitle,
+        description: MSG.coinMachineTokenToBeSoldDescription,
+      },
+      {
         paramName: 'purchaseToken',
         validation: yup.string().required(),
         defaultValue: AddressZero,
@@ -281,11 +305,11 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 10,
       },
       {
-        paramName: 'tokensToSell',
-        validation: yup.number().required(),
-        title: MSG.coinMachineTokensToSellTitle,
-        description: MSG.coinMachineTokensToSellDescription,
-        defaultValue: 10000,
+        paramName: 'userLimitFraction',
+        validation: yup.string().required(),
+        title: MSG.coinMachineUserLimitFractionTitle,
+        description: MSG.coinMachineUserLimitFractionDescription,
+        defaultValue: `1000000000000000000`,
       },
       {
         paramName: 'startingPrice',
@@ -293,6 +317,13 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
         defaultValue: 10,
+      },
+      {
+        paramName: 'whitelistAddress',
+        validation: yup.string().required(),
+        defaultValue: AddressZero,
+        title: MSG.coinMachineWhitelistAddressTitle,
+        description: MSG.coinMachineWhitelistAddressDescription,
       },
     ],
     uninstallable: true,
