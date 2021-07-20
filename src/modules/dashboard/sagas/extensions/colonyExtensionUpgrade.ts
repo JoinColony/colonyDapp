@@ -1,4 +1,5 @@
-import { call, fork, put } from 'redux-saga/effects';
+import { takeEvery, call, fork, put } from 'redux-saga/effects';
+
 import { ClientType, getExtensionHash } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -12,7 +13,7 @@ import {
 
 import { refreshExtension } from '../utils';
 
-export function* colonyExtensionUpgrade({
+function* colonyExtensionUpgrade({
   meta,
   payload: { colonyAddress, extensionId, version },
 }: Action<ActionTypes.COLONY_EXTENSION_UPGRADE>) {
@@ -47,4 +48,8 @@ export function* colonyExtensionUpgrade({
     txChannel.close();
   }
   return null;
+}
+
+export default function* colonyExtensionUpgradeSaga() {
+  yield takeEvery(ActionTypes.COLONY_EXTENSION_UPGRADE, colonyExtensionUpgrade);
 }

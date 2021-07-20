@@ -1,4 +1,4 @@
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, getExtensionHash } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -12,7 +12,7 @@ import {
 
 import { refreshExtension } from '../utils';
 
-export function* colonyExtensionDeprecate({
+function* colonyExtensionDeprecate({
   meta,
   payload: { colonyAddress, extensionId },
 }: Action<ActionTypes.COLONY_EXTENSION_DEPRECATE>) {
@@ -47,4 +47,11 @@ export function* colonyExtensionDeprecate({
     txChannel.close();
   }
   return null;
+}
+
+export default function* colonyExtensionDeprecateSaga() {
+  yield takeEvery(
+    ActionTypes.COLONY_EXTENSION_DEPRECATE,
+    colonyExtensionDeprecate,
+  );
 }
