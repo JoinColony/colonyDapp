@@ -1,10 +1,11 @@
 import { FormikProps } from 'formik';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
 import { endsWith } from 'lodash';
 import { Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
+import { bigNumberify } from 'ethers/utils';
 
 import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm, Textarea } from '~core/Fields';
@@ -58,11 +59,13 @@ interface Props {
   colonyAddress: Address;
   extension: ExtensionData;
   installedExtension: ColonyExtension;
+  nativeTokenAddress: Address;
 }
 const ExtensionSetup = ({
   colonyAddress,
   extension: { initializationParams },
   installedExtension,
+  nativeTokenAddress,
 }: Props) => {
   const { colonyName, extensionId } = useParams<{
     colonyName: string;
@@ -92,13 +95,39 @@ const ExtensionSetup = ({
           });
           return formattedPayload;
         }
-
+        if (extensionId === Extension.CoinMachine) {
+          return {
+            ...payload,
+            userLimitFraction: bigNumberify(payload.userLimitFraction),
+          };
+        }
         return payload;
       }),
       mergePayload({ colonyAddress, extensionId }),
     ),
     [colonyAddress, extensionId, initializationParams],
   );
+
+  const initialValues = useMemo(() => {
+    if (!initializationParams) {
+      return {};
+    }
+    const defaultValues = createExtensionDefaultValues(initializationParams);
+    if (extensionId === Extension.CoinMachine) {
+      return {
+        ...defaultValues,
+        /*
+         * @TODO The same needs to be done for the Whitelist Extension address,
+         * once that gets merged in.
+         *
+         * Please note to only add it, if the Whitelist extension is actually
+         * installed on the current colony.
+         */
+        tokenToBeSold: nativeTokenAddress,
+      };
+    }
+    return defaultValues;
+  }, [extensionId, initializationParams, nativeTokenAddress]);
 
   if (
     installedExtension.details.deprecated ||
@@ -139,7 +168,7 @@ const ExtensionSetup = ({
 
   return (
     <ActionForm
-      initialValues={createExtensionDefaultValues(initializationParams)}
+      initialValues={initialValues}
       validationSchema={createExtensionInitValidation(initializationParams)}
       submit={ActionTypes.COLONY_EXTENSION_ENABLE}
       error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
