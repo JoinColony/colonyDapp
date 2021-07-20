@@ -1,4 +1,4 @@
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -56,4 +56,8 @@ export function* updateWhitelist({
     txChannel.close();
   }
   return null;
+}
+
+export default function* updateWhitelistSaga() {
+  yield takeEvery(ActionTypes.WHITELIST_UPDATE, updateWhitelist);
 }

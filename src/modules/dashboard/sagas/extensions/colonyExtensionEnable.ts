@@ -1,4 +1,4 @@
-import { call, fork } from 'redux-saga/effects';
+import { call, fork, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID, Extension } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 
@@ -26,7 +26,7 @@ import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 import { refreshExtension } from '../utils';
 
-export function* colonyExtensionEnable({
+function* colonyExtensionEnable({
   meta,
   payload: { colonyAddress, extensionId, ...payload },
 }: Action<ActionTypes.COLONY_EXTENSION_ENABLE>) {
@@ -155,4 +155,8 @@ export function* colonyExtensionEnable({
     setPermissionChannel.close();
   }
   return null;
+}
+
+export default function* colonyExtensionEnableSaga() {
+  yield takeEvery(ActionTypes.COLONY_EXTENSION_ENABLE, colonyExtensionEnable);
 }

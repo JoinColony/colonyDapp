@@ -1,4 +1,4 @@
-import { call, fork, put } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, getExtensionHash } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -47,4 +47,11 @@ export function* colonyExtensionUninstall({
     txChannel.close();
   }
   return null;
+}
+
+export default function* colonyExtensionUninstallSaga() {
+  yield takeEvery(
+    ActionTypes.COLONY_EXTENSION_UNINSTALL,
+    colonyExtensionUninstall,
+  );
 }
