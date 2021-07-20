@@ -1,0 +1,55 @@
+.container {
+  padding: 40px 35px 32px 35px;
+}
+
+.modalHeading {
+  margin-bottom: 16px;
+}
+
+.modalContent {
+  margin-bottom: 24px;
+  font-size: var(--size-small);
+  white-space: pre-line;
+  color: var(--temp-grey-blue-7);
+}
+
+.dataContainer {
+  padding: 0 20px;
+  width: 100%;
+}
+
+.dataItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid color-mod(var(--grey-2) alpha(15%));
+}
+
+.dataItem:first-child {
+  border-top: 1px solid color-mod(var(--grey-2) alpha(15%));
+}
+
+.dataItem > h4 {
+  font-size: var(--size-smallish);
+}
+
+.itemValue {
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.confirmButtonContainer {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.confirmButtonContainer > button {
+  padding: 9px 58px;
+}
+
+.link {
+  font-weight: var(--weight-bold);
+  color: var(--dark-blue);
+}
