@@ -19,7 +19,6 @@ import {
 } from '~data/index';
 import { Address, ENTER } from '~types/index';
 
-<<<<<<< HEAD:src/modules/core/components/CommentInput/CommentInput.tsx
 import styles from './CommentInput.css';
 
 const displayName = 'CommentInput';
@@ -35,34 +34,13 @@ const MSG = defineMessages({
   },
   sendCombo: {
     id: 'CommentInput.sendCombo',
-=======
-import styles from './Comment.css';
-
-const displayName = 'Comment';
-
-const MSG = defineMessages({
-  commentInputPlaceholder: {
-    id: 'Comment.commentInputPlaceholder',
-    defaultMessage: 'What would you like to say?',
-  },
-  commentInstuctions: {
-    id: 'Comment.commentInstuctions',
-    defaultMessage: `{sendCombo} to send {newLineCombo} for a new line`,
-  },
-  sendCombo: {
-    id: 'Comment.sendCombo',
->>>>>>> Added ActionsPageComment as a core component:src/modules/core/components/Comment/Comment.tsx
     defaultMessage: `{isMac, select,
       true {⌘}
       other {Ctrl}
     }+Return`,
   },
   newLineCombo: {
-<<<<<<< HEAD:src/modules/core/components/CommentInput/CommentInput.tsx
     id: 'CommentInput.newLineCombo',
-=======
-    id: 'Comment.newLineCombo',
->>>>>>> Added ActionsPageComment as a core component:src/modules/core/components/Comment/Comment.tsx
     defaultMessage: 'Return',
   },
 });
@@ -104,11 +82,7 @@ const handleKeyboardSubmit = (
   return false;
 };
 
-<<<<<<< HEAD:src/modules/core/components/CommentInput/CommentInput.tsx
 const CommentInput = ({ transactionHash, colonyAddress, callback }: Props) => {
-=======
-const Comment = ({ transactionHash, colonyAddress }: Props) => {
->>>>>>> Added ActionsPageComment as a core component:src/modules/core/components/Comment/Comment.tsx
   const commentBoxRef = useRef<HTMLInputElement>(null);
   const [
     commentBoxInputRef,
@@ -220,12 +194,6 @@ const Comment = ({ transactionHash, colonyAddress }: Props) => {
   );
 };
 
-<<<<<<< HEAD:src/modules/core/components/CommentInput/CommentInput.tsx
 CommentInput.displayName = displayName;
 
 export default CommentInput;
-=======
-Comment.displayName = displayName;
-
-export default Comment;
->>>>>>> Added ActionsPageComment as a core component:src/modules/core/components/Comment/Comment.tsx
