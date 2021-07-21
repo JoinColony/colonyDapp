@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import isEmpty from 'lodash/isEmpty';
 
-import { ActionForm, InputLabel } from '~core/Fields';
+import { ActionForm, InputLabel, Input } from '~core/Fields';
 import Button from '~core/Button';
 import CSVUploader from '~core/CSVUploader';
 
 import { ActionTypes } from '~redux/index';
+import { pipe, mapPayload } from '~utils/actions';
 import { isAddress } from '~utils/web3';
 
 import DownloadTemplate from './DownloadTemplate';
@@ -50,6 +51,7 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object({
+  whitelistAddress: yup.string().required().address(),
   whitelistCSVUploader: yup.array().of(
     yup.object().shape({
       parsedData: yup
@@ -71,18 +73,38 @@ const validationSchema = yup.object({
   ),
 });
 
-const UploadAddressesWidget = () => {
+interface Props {
+  colonyAddress: string;
+}
+
+const UploadAddressesWidget = ({ colonyAddress }: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const toggleShowInput = () => setShowInput(!showInput);
   const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
 
+  const transform = useCallback(
+    pipe(
+      mapPayload((payload) => {
+        return {
+          userAddress: payload.whitelistAddress,
+          colonyAddress,
+          status: true,
+        };
+      }),
+    ),
+    [],
+  );
+
   return (
     <ActionForm
-      initialValues={{}}
+      initialValues={{
+        whitelistAddress: undefined,
+      }}
       validationSchema={validationSchema}
-      submit={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES}
-      error={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_ERROR}
-      success={ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_SUCCESS}
+      submit={ActionTypes.WHITELIST_UPDATE}
+      error={ActionTypes.WHITELIST_UPDATE_ERROR}
+      success={ActionTypes.WHITELIST_UPDATE_SUCCESS}
+      transform={transform}
     >
       {({ errors }) => (
         <div className={styles.container}>
@@ -103,7 +125,10 @@ const UploadAddressesWidget = () => {
           </div>
           {showInput ? (
             <div className={styles.inputContainer}>
-              <input name="whitelistAddress" className={styles.input} />
+              <Input
+                name="whitelistAddress"
+                appearance={{ colorSchema: 'grey', theme: 'fat' }}
+              />
               {false && (
                 <span className={styles.validationError}>
                   <FormattedMessage {...MSG.inputError} />
@@ -123,6 +148,12 @@ const UploadAddressesWidget = () => {
               />
             </div>
           )}
+          <Button
+            appearance={{ theme: 'primary', size: 'large' }}
+            text={{ id: 'button.confirm' }}
+            // disabled={!userHasPermission}
+            type="submit"
+          />
         </div>
       )}
     </ActionForm>

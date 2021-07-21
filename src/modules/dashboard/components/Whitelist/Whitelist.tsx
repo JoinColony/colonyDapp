@@ -66,7 +66,7 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
 
   return (
     <div>
-      <UploadAddressesWidget />
+      <UploadAddressesWidget colonyAddress={colonyAddress} />
       {usersLoading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
       {(usersData?.whitelistedUsers?.length && (
         <WhitelistAddresses
@@ -91,6 +91,7 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
           appearance={{ theme: 'primary', size: 'large' }}
           text={{ id: 'button.confirm' }}
           disabled={!userHasPermission}
+          type="submit"
         />
       </div>
     </div>
