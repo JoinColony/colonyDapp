@@ -18,7 +18,7 @@ import {
 
 export function* updateWhitelist({
   meta,
-  payload: { userAddress, colonyAddress, status },
+  payload: { userAddresses, colonyAddress, status },
 }: Action<ActionTypes.WHITELIST_UPDATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
@@ -28,7 +28,7 @@ export function* updateWhitelist({
       context: ClientType.WhitelistClient,
       methodName: 'approveUsers',
       identifier: colonyAddress,
-      params: [[userAddress], status],
+      params: [userAddresses, status],
     });
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
