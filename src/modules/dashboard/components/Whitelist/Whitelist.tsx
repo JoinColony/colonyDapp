@@ -22,28 +22,6 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
   const { data: usersData, loading: usersLoading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
   });
-  // const { walletAddress, username, ethereal } = useLoggedInUser();
-  // const hasRegisteredProfile = !!username && !ethereal;
-  // const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-  // const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
-
-  // const openAgreementDialog = useDialog(AgreementDialog);
-  // const {
-  //   data: agreementHashData,
-  //   loading: agreementHashLoading,
-  // } = useWhitelistAgreementHashQuery({
-  //   variables: { colonyAddress },
-  //   fetchPolicy: 'network-only',
-  // });
-
-  // const openDialog = useCallback(
-  //   () =>
-  //     agreementHashData?.whitelistAgreementHash &&
-  //     openAgreementDialog({
-  //       agreementHash: agreementHashData?.whitelistAgreementHash,
-  //     }),
-  //   [openAgreementDialog, agreementHashData],
-  // );
 
   return (
     <div>
@@ -56,25 +34,6 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
         />
       )) ||
         null}
-      {/* <div className={styles.buttonsContainer}>
-        <div className={styles.agreeemntButton}>
-          {agreementHashLoading && <MiniSpinnerLoader />}
-          {!agreementHashLoading &&
-            agreementHashData?.whitelistAgreementHash && (
-              <Button
-                appearance={{ theme: 'blue' }}
-                onClick={openDialog}
-                text={MSG.agreement}
-              />
-            )}
-        </div>
-        <Button
-          appearance={{ theme: 'primary', size: 'large' }}
-          text={{ id: 'button.confirm' }}
-          disabled={!userHasPermission}
-          type="submit"
-        />
-      </div> */}
     </div>
   );
 };
