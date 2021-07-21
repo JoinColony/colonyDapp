@@ -113,17 +113,6 @@ export type ColonyActionTypes =
     >
   | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
   | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES,
-      any,
-      WithKey
-    >
-  | UniqueActionType<
-      ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_SUCCESS,
-      object,
-      object
-    >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UPLOAD_ADDRESSES_ERROR, object>
-  | UniqueActionType<
       ActionTypes.WHITELIST_UPDATE,
       { userAddress: Address; colonyAddress: Address; status: boolean },
       WithKey
