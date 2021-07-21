@@ -36,7 +36,7 @@ const WhitelistMembersListExtraContent = ({
   const transform = useCallback(
     mapPayload(() => ({
       colonyAddress,
-      userAddress,
+      userAddresses: [userAddress],
       status: false,
     })),
     [userAddress, colonyAddress],

@@ -114,7 +114,7 @@ export type ColonyActionTypes =
   | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
   | UniqueActionType<
       ActionTypes.WHITELIST_UPDATE,
-      { userAddress: Address; colonyAddress: Address; status: boolean },
+      { userAddresses: [Address]; colonyAddress: Address; status: boolean },
       WithKey
     >
   | UniqueActionType<ActionTypes.WHITELIST_UPDATE_SUCCESS, object, object>
