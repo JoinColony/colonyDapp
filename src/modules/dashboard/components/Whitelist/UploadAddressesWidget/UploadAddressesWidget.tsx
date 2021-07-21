@@ -63,27 +63,33 @@ const MSG = defineMessages({
   },
 });
 
-const validationSchema = yup.object({
-  whitelistAddress: yup.string().address(),
-  whitelistCSVUploader: yup.array().of(
-    yup.object().shape({
-      parsedData: yup
-        .array()
-        .of(yup.string())
-        .min(1, () => MSG.badFileError)
-        .max(100, () => MSG.uploadError)
-        .test(
-          'valid-wallet-addresses',
-          () => MSG.invalidAddressError,
-          (value) =>
-            isEmpty(
-              value?.filter(
-                (potentialAddress: string) => !isAddress(potentialAddress),
+const validationSchemaInput = yup.object({
+  whitelistAddress: yup.string().required().address(),
+});
+
+const validationSchemaFile = yup.object({
+  whitelistCSVUploader: yup
+    .array()
+    .required()
+    .of(
+      yup.object().shape({
+        parsedData: yup
+          .array()
+          .of(yup.string())
+          .min(1, () => MSG.badFileError)
+          .max(100, () => MSG.uploadError)
+          .test(
+            'valid-wallet-addresses',
+            () => MSG.invalidAddressError,
+            (value) =>
+              isEmpty(
+                value?.filter(
+                  (potentialAddress: string) => !isAddress(potentialAddress),
+                ),
               ),
-            ),
-        ),
-    }),
-  ),
+          ),
+      }),
+    ),
 });
 
 interface Props {
@@ -140,13 +146,15 @@ const UploadAddressesWidget = ({
   return (
     <ActionForm
       initialValues={{}}
-      validationSchema={validationSchema}
+      validationSchema={
+        showInput ? validationSchemaInput : validationSchemaFile
+      }
       submit={ActionTypes.WHITELIST_UPDATE}
       error={ActionTypes.WHITELIST_UPDATE_ERROR}
       success={ActionTypes.WHITELIST_UPDATE_SUCCESS}
       transform={transform}
     >
-      {({ errors }) => (
+      {({ errors, isValid, isSubmitting }) => (
         <div className={styles.container}>
           <div className={styles.actionsContainer}>
             <InputLabel
@@ -168,6 +176,7 @@ const UploadAddressesWidget = ({
               <Input
                 name="whitelistAddress"
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}
+                disabled={!userHasPermission || isSubmitting}
               />
             </div>
           ) : (
@@ -202,7 +211,7 @@ const UploadAddressesWidget = ({
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
               text={{ id: 'button.confirm' }}
-              disabled={!userHasPermission}
+              disabled={!userHasPermission || !isValid || isSubmitting}
               type="submit"
             />
           </div>

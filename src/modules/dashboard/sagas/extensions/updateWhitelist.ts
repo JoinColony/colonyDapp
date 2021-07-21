@@ -22,7 +22,6 @@ export function* updateWhitelist({
 }: Action<ActionTypes.WHITELIST_UPDATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-  // @TODO Please extend this saga to fit batch update when adding addresses to the list
   try {
     yield fork(createTransaction, meta.id, {
       context: ClientType.WhitelistClient,
