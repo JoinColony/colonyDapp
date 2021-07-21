@@ -5,7 +5,6 @@ import colonySagas from './colony';
 import colonyCreateSaga from './colonyCreate';
 import colonyDeploymentSaga from './colonyFinishDeployment';
 import colonyExtensionSagas from './extensions';
-import tokenSagas from './token';
 import motionSagas from './motions';
 
 export default function* setupDashboardSagas() {
@@ -15,7 +14,6 @@ export default function* setupDashboardSagas() {
     call(colonyCreateSaga),
     call(colonyDeploymentSaga),
     call(colonyExtensionSagas),
-    call(tokenSagas),
     call(motionSagas),
   ]);
 }
