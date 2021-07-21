@@ -66,21 +66,19 @@ const CSVUploader = ({
   }, [parsedCSV, value, setValue, processingData, setProcessingData]);
 
   return (
-    <div>
-      <FileUpload
-        name={name}
-        upload={(file: File) => setCSVFile(file)}
-        dropzoneOptions={{
-          accept: MIME_TYPES,
-        }}
-        customErrorMessage={error}
-        inputStatusAppearance={{ theme: 'minimal', textSpace: 'wrap' }}
-        itemComponent={CSVUploaderItem}
-        handleError={handleUploadError}
-        processingData={processingData}
-        handleProcessingData={setProcessingData}
-      />
-    </div>
+    <FileUpload
+      name={name}
+      upload={(file: File) => setCSVFile(file)}
+      dropzoneOptions={{
+        accept: MIME_TYPES,
+      }}
+      customErrorMessage={error}
+      inputStatusAppearance={{ theme: 'minimal', textSpace: 'wrap' }}
+      itemComponent={CSVUploaderItem}
+      handleError={handleUploadError}
+      processingData={processingData}
+      handleProcessingData={setProcessingData}
+    />
   );
 };
 
