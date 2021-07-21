@@ -64,7 +64,7 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object({
-  whitelistAddress: yup.string().required().address(),
+  whitelistAddress: yup.string().address(),
   whitelistCSVUploader: yup.array().of(
     yup.object().shape({
       parsedData: yup
@@ -123,9 +123,12 @@ const UploadAddressesWidget = ({
 
   const transform = useCallback(
     pipe(
-      mapPayload((payload) => {
+      mapPayload(({ whitelistAddress, whitelistCSVUploader }) => {
         return {
-          userAddress: payload.whitelistAddress,
+          userAddresses:
+            whitelistAddress !== undefined
+              ? [whitelistAddress]
+              : whitelistCSVUploader[0].parsedData,
           colonyAddress,
           status: true,
         };
@@ -136,9 +139,7 @@ const UploadAddressesWidget = ({
 
   return (
     <ActionForm
-      initialValues={{
-        whitelistAddress: undefined,
-      }}
+      initialValues={{}}
       validationSchema={validationSchema}
       submit={ActionTypes.WHITELIST_UPDATE}
       error={ActionTypes.WHITELIST_UPDATE_ERROR}
