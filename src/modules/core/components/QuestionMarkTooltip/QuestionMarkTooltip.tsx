@@ -17,6 +17,7 @@ interface Props {
   tooltipClassName?: string;
   iconTitle?: string;
   showArrow?: boolean;
+  invertedIcon?: boolean;
 }
 
 const QuestionMarkTooltip = ({
@@ -37,6 +38,7 @@ const QuestionMarkTooltip = ({
   tooltipText,
   className,
   showArrow,
+  invertedIcon,
 }: Props) => {
   return (
     <>
@@ -57,7 +59,7 @@ const QuestionMarkTooltip = ({
       >
         <div className={className}>
           <Icon
-            name="question-mark"
+            name={invertedIcon ? 'question-mark-inverted' : 'question-mark'}
             appearance={{ size: 'small' }}
             title={iconTitle || ''}
           />
