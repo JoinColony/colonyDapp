@@ -1,24 +1,9 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { defineMessage } from 'react-intl';
 
-import {
-  useWhitelistedUsersQuery,
-  useWhitelistAgreementHashQuery,
-  useLoggedInUser,
-  Colony,
-} from '~data/index';
+import { useWhitelistedUsersQuery, Colony } from '~data/index';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
-import Button from '~core/Button';
-import { useDialog } from '~core/Dialog';
-
-import { useTransformer } from '~utils/hooks';
-
-import { getAllUserRoles } from '../../../transformers';
-import { hasRoot } from '../../../users/checks';
-
-import AgreementDialog from './AgreementDialog';
-import styles from './Whitelist.css';
 import UploadAddressesWidget from './UploadAddressesWidget';
 import WhitelistAddresses from './WhitelistAddresses';
 
@@ -26,10 +11,6 @@ const MSG = defineMessage({
   loadingText: {
     id: 'dashboard.Whitelist.loadingText',
     defaultMessage: 'Loading whitelist',
-  },
-  agreement: {
-    id: 'dashboard.Extensions.WhitelisExtension.agreement',
-    defaultMessage: 'Agreement',
   },
 });
 
@@ -41,32 +22,32 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
   const { data: usersData, loading: usersLoading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
   });
-  const { walletAddress, username, ethereal } = useLoggedInUser();
-  const hasRegisteredProfile = !!username && !ethereal;
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-  const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+  // const { walletAddress, username, ethereal } = useLoggedInUser();
+  // const hasRegisteredProfile = !!username && !ethereal;
+  // const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  // const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
-  const openAgreementDialog = useDialog(AgreementDialog);
-  const {
-    data: agreementHashData,
-    loading: agreementHashLoading,
-  } = useWhitelistAgreementHashQuery({
-    variables: { colonyAddress },
-    fetchPolicy: 'network-only',
-  });
+  // const openAgreementDialog = useDialog(AgreementDialog);
+  // const {
+  //   data: agreementHashData,
+  //   loading: agreementHashLoading,
+  // } = useWhitelistAgreementHashQuery({
+  //   variables: { colonyAddress },
+  //   fetchPolicy: 'network-only',
+  // });
 
-  const openDialog = useCallback(
-    () =>
-      agreementHashData?.whitelistAgreementHash &&
-      openAgreementDialog({
-        agreementHash: agreementHashData?.whitelistAgreementHash,
-      }),
-    [openAgreementDialog, agreementHashData],
-  );
+  // const openDialog = useCallback(
+  //   () =>
+  //     agreementHashData?.whitelistAgreementHash &&
+  //     openAgreementDialog({
+  //       agreementHash: agreementHashData?.whitelistAgreementHash,
+  //     }),
+  //   [openAgreementDialog, agreementHashData],
+  // );
 
   return (
     <div>
-      <UploadAddressesWidget colonyAddress={colonyAddress} />
+      <UploadAddressesWidget colony={colony} />
       {usersLoading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
       {(usersData?.whitelistedUsers?.length && (
         <WhitelistAddresses
@@ -75,7 +56,7 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
         />
       )) ||
         null}
-      <div className={styles.buttonsContainer}>
+      {/* <div className={styles.buttonsContainer}>
         <div className={styles.agreeemntButton}>
           {agreementHashLoading && <MiniSpinnerLoader />}
           {!agreementHashLoading &&
@@ -93,7 +74,7 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
           disabled={!userHasPermission}
           type="submit"
         />
-      </div>
+      </div> */}
     </div>
   );
 };
