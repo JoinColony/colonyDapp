@@ -52,3 +52,13 @@
 .actionsSubContainer > label {
   margin-right: 0px;
 }
+
+.buttonsContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.agreeemntButton {
+  margin-right: 30px;
+}

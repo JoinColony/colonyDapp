@@ -6,10 +6,23 @@ import isEmpty from 'lodash/isEmpty';
 import { ActionForm, InputLabel, Input } from '~core/Fields';
 import Button from '~core/Button';
 import CSVUploader from '~core/CSVUploader';
+import { useDialog } from '~core/Dialog';
+import { MiniSpinnerLoader } from '~core/Preloaders';
 
+import {
+  Colony,
+  useWhitelistAgreementHashQuery,
+  useLoggedInUser,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload } from '~utils/actions';
 import { isAddress } from '~utils/web3';
+import { useTransformer } from '~utils/hooks';
+
+import { getAllUserRoles } from '../../../../transformers';
+import { hasRoot } from '../../../../users/checks';
+
+import AgreementDialog from '../AgreementDialog';
 
 import DownloadTemplate from './DownloadTemplate';
 
@@ -27,6 +40,10 @@ const MSG = defineMessages({
   upload: {
     id: `dashboard.Whitelist.UploadAddressesWidget.upload`,
     defaultMessage: 'Upload .csv',
+  },
+  agreement: {
+    id: 'dashboard.Extensions.WhitelisExtension.agreement',
+    defaultMessage: 'Agreement',
   },
   input: {
     id: `dashboard.Whitelist.UploadAddressesWidget.input`,
@@ -74,13 +91,39 @@ const validationSchema = yup.object({
 });
 
 interface Props {
-  colonyAddress: string;
+  colony: Colony;
 }
 
-const UploadAddressesWidget = ({ colonyAddress }: Props) => {
+const UploadAddressesWidget = ({
+  colony: { colonyAddress },
+  colony,
+}: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const toggleShowInput = () => setShowInput(!showInput);
   const [processingCSVData, setProcessingCSVData] = useState<boolean>(false);
+
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const hasRegisteredProfile = !!username && !ethereal;
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+
+  const openAgreementDialog = useDialog(AgreementDialog);
+  const {
+    data: agreementHashData,
+    loading: agreementHashLoading,
+  } = useWhitelistAgreementHashQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+  });
+
+  const openDialog = useCallback(
+    () =>
+      agreementHashData?.whitelistAgreementHash &&
+      openAgreementDialog({
+        agreementHash: agreementHashData?.whitelistAgreementHash,
+      }),
+    [openAgreementDialog, agreementHashData],
+  );
 
   const transform = useCallback(
     pipe(
@@ -148,12 +191,25 @@ const UploadAddressesWidget = ({ colonyAddress }: Props) => {
               />
             </div>
           )}
-          <Button
-            appearance={{ theme: 'primary', size: 'large' }}
-            text={{ id: 'button.confirm' }}
-            // disabled={!userHasPermission}
-            type="submit"
-          />
+          <div className={styles.buttonsContainer}>
+            <div className={styles.agreeemntButton}>
+              {agreementHashLoading && <MiniSpinnerLoader />}
+              {!agreementHashLoading &&
+                agreementHashData?.whitelistAgreementHash && (
+                  <Button
+                    appearance={{ theme: 'blue' }}
+                    onClick={openDialog}
+                    text={MSG.agreement}
+                  />
+                )}
+            </div>
+            <Button
+              appearance={{ theme: 'primary', size: 'large' }}
+              text={{ id: 'button.confirm' }}
+              disabled={!userHasPermission}
+              type="submit"
+            />
+          </div>
         </div>
       )}
     </ActionForm>
