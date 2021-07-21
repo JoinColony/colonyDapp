@@ -17,6 +17,7 @@ import Chat from './Chat';
 import SaleStateWidget, { SaleState } from './SaleStateWidget';
 import BuyTokens from './BuyTokens';
 import TokenSalesTable from './TokenSalesTable';
+import RemainingDisplayWidget from './RemainingDisplayWidget';
 
 import styles from './CoinMachine.css';
 
@@ -32,6 +33,38 @@ const MSG = defineMessages({
   buyTokens: {
     id: 'dashboard.CoinMachine.buyTokens',
     defaultMessage: 'Buy {symbol}',
+  },
+  learnMore: {
+    id: 'dashboard.CoinMachine.learnMore',
+    defaultMessage: 'Learn More',
+  },
+  timeRemainingTitle: {
+    id: 'dashboard.CoinMachine.timeRemainingTitle',
+    defaultMessage: 'Time remaining',
+  },
+  timeRemainingTooltip: {
+    id: 'dashboard.CoinMachine.timeRemainingTooltip',
+    defaultMessage: `This is the amount of time remaining in the sale. Whatever the time says, that’s how much time remains. When it reaches zero, there will be no more time remaining. That’s how time works. When no more time remains, the next sale will start, and the amount of time remaining for that sale will appear in this box.`,
+  },
+  tokensRemainingTitle: {
+    id: 'dashboard.CoinMachine.tokensRemainingTitle',
+    defaultMessage: 'Tokens remaining',
+  },
+  tokensRemainingTooltip: {
+    id: 'dashboard.CoinMachine.tokensRemainingTooltip',
+    defaultMessage: `This is the amount of tokens remaining in the sale. Whatever the time says, that’s how much time remains. When it reaches zero, there will be no more time remaining. That’s how time works. When no more time remains, the next sale will start, and the amount of time remaining for that sale will appear in this box.`,
+  },
+  tokensTypePlaceholder: {
+    id: 'dashboard.CoinMachine.tokensRemainingTitle',
+    defaultMessage: '0',
+  },
+  timeTypePlaceholder: {
+    id: 'dashboard.CoinMachine.timeTypePlaceholder',
+    defaultMessage: `N/A`,
+  },
+  tokensTypeFooterText: {
+    id: 'dashboard.CoinMachine.tokensTypeFooterText',
+    defaultMessage: 'Price next sale',
   },
 });
 
@@ -140,11 +173,24 @@ const CoinMachine = ({
               />
             </div>
             <div className={styles.timeRemaining}>
-              <div>Time Remaining</div>
+              <RemainingDisplayWidget
+                title={MSG.timeRemainingTitle}
+                // @TODO: Add real value
+                value={null}
+                tooltipText={MSG.timeRemainingTooltip}
+                placeholderText={MSG.timeTypePlaceholder}
+              />
             </div>
-            <div className={styles.tokensRemaining}>
-              <div>Tokens Remaining</div>
-            </div>
+          <div className={styles.tokensRemaining}>
+            <RemainingDisplayWidget
+              title={MSG.tokensRemainingTitle}
+              // @TODO: Add real value
+              value={null}
+              tooltipText={MSG.tokensRemainingTitle}
+              placeholderText={MSG.tokensTypePlaceholder}
+              footerText={MSG.tokensTypeFooterText}
+            />
+          </div>
           </>
         )}
         <div className={styles.sales}>
