@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import isEmpty from 'lodash/isEmpty';
 
@@ -42,7 +42,7 @@ const MSG = defineMessages({
     defaultMessage: 'Upload .csv',
   },
   agreement: {
-    id: 'dashboard.Extensions.WhitelisExtension.agreement',
+    id: 'dashboard.Whitelist.UploadAddressesWidget.agreement',
     defaultMessage: 'Agreement',
   },
   input: {
@@ -52,10 +52,6 @@ const MSG = defineMessages({
   uploadError: {
     id: `dashboard.Whitelist.UploadAddressesWidget.uploadError`,
     defaultMessage: `We do not accept more than 100 addresses at a time, please upload a smaller amount.`,
-  },
-  inputError: {
-    id: `dashboard.Whitelist.UploadAddressesWidget.inputError`,
-    defaultMessage: `TODO`,
   },
   badFileError: {
     id: 'dashboard.Whitelist.UploadAddressesWidget.badFileError',
@@ -172,14 +168,13 @@ const UploadAddressesWidget = ({
                 name="whitelistAddress"
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}
               />
-              {false && (
-                <span className={styles.validationError}>
-                  <FormattedMessage {...MSG.inputError} />
-                </span>
-              )}
             </div>
           ) : (
-            <div>
+            <div
+              className={
+                !errors.whitelistCSVUploader ? styles.uploaderContainer : ''
+              }
+            >
               <CSVUploader
                 name="whitelistCSVUploader"
                 error={
