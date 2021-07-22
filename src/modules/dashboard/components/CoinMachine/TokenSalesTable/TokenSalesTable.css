@@ -1,0 +1,70 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  height: 100%;
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+  box-shadow: 0px 2px 11px var(--drop-shadow);
+}
+
+.container > h5 {
+  margin-bottom: 34px;
+  font-size: var(--size-smallish);
+}
+
+.tableContainer {
+  padding: 0 25px 5px 25px;
+}
+
+.table {
+  height: 100%;
+}
+
+.tableHeader {
+  border-bottom: 1px solid var(--temp-grey-13);
+}
+
+.tableHeaderCell {
+  padding-bottom: 6px;
+  text-align: right;
+  color: var(--dark);
+}
+
+.tableHeaderCell:first-child {
+  width: 16%;
+}
+
+.tableHeaderCell:nth-child(2) {
+  width: 42%;
+}
+
+.tableRow:first-child {
+  padding-top: 4px;
+}
+
+.cellData {
+  padding-top: 18px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: var(--temp-grey-blue-7);
+}
+
+.cellData > div {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.cellDataDanger {
+  color: var(--danger);
+}
+
+.tokenSymbol {
+  color: var(--temp-grey-blue-7);
+}
+
+.noDataMessage {
+  margin-top: 20px;
+  color: var(--temp-grey-blue-7);
+}
