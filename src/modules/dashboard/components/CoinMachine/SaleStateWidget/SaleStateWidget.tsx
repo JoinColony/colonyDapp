@@ -2,6 +2,10 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Numeral from '~core/Numeral';
+import Heading from '~core/Heading';
+import TransactionLink from '~core/TransactionLink';
+
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import styles from './SaleStateWidget.css';
 
@@ -21,9 +25,9 @@ interface Props {
 }
 
 const MSG = defineMessages({
-  etherscan: {
-    id: 'dashboard.CoinMachine.SaleStateWidget.etherscan',
-    defaultMessage: 'Etherscan',
+  blockExplorer: {
+    id: 'dashboard.CoinMachine.SaleStateWidget.blockExplorer',
+    defaultMessage: '{blockExplorerName}',
   },
   for: {
     id: 'dashboard.CoinMachine.SaleStateWidget.for',
@@ -132,7 +136,20 @@ const SaleStateWidget = ({
 
   return (
     <div className={styles.container}>
-
+      <div className={styles.header}>
+        <Heading
+          appearance={{ size: 'medium', theme: 'dark', margin: 'none' }}
+          text="TODO"
+        />
+        <TransactionLink
+          className={styles.blockExplorer}
+          hash=""
+          text={MSG.blockExplorer}
+          textValues={{
+            blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
+          }}
+        />
+      </div>
     </div>
   );
 };
