@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
@@ -49,7 +49,7 @@ const CoinMachine = ({
     variables: { address: colonyAddress },
   });
 
-  const [saleStarted, setSaleStarted] = useState<boolean>(true);
+  const [saleStarted] = useState<boolean>(true);
 
   if (loading || !data?.processedColony?.installedExtensions) {
     return (
@@ -103,9 +103,18 @@ const CoinMachine = ({
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
       <div className={styles.grid}>
-        {saleStarted && <div className={styles.saleStarted}><SaleStateWidget state={SaleState.Loading} price="" amount="" nextSale={123} /></div> || (
+        {(saleStarted && (
+          <div className={styles.saleStarted}>
+            <SaleStateWidget
+              state={SaleState.Loading}
+              price=""
+              amount=""
+              nextSale={123}
+            />
+          </div>
+        )) || (
           <>
-           <div className={styles.buy}>
+            <div className={styles.buy}>
               <div>Buy Tokens</div>
             </div>
             <div className={styles.timeRemaining}>

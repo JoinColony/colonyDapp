@@ -1,7 +1,6 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
-import Numeral from '~core/Numeral';
 import Heading from '~core/Heading';
 import TransactionLink from '~core/TransactionLink';
 
@@ -87,7 +86,8 @@ const MSG = defineMessages({
   },
   transactionFailedText: {
     id: 'dashboard.CoinMachine.SaleStateWidget.transactionFailedText',
-    defaultMessage: 'Unfortunately, something went wrong and your transaction failed.',
+    defaultMessage:
+      'Unfortunately, something went wrong and your transaction failed.',
   },
   transactionFailedSubtext: {
     id: 'dashboard.CoinMachine.SaleStateWidget.transactionFailedSubtext',
@@ -103,7 +103,8 @@ const MSG = defineMessages({
   },
   successText: {
     id: 'dashboard.CoinMachine.SaleStateWidget.successText',
-    defaultMessage: 'Congratulations! You have made a considerably wise purchase.',
+    defaultMessage:
+      'Congratulations! You have made a considerably wise purchase.',
   },
   successSubtext: {
     id: 'dashboard.CoinMachine.SaleStateWidget.successSubtext',
@@ -119,7 +120,8 @@ const MSG = defineMessages({
   },
   partialSuccessText: {
     id: 'dashboard.CoinMachine.SaleStateWidget.partialSuccessText',
-    defaultMessage: 'Unfortunately, you didn’t get quite as many tokens as you wanted. 😢 ',
+    defaultMessage:
+      'Unfortunately, you didn’t get quite as many tokens as you wanted. 😢 ',
   },
   partialSuccessSubtext: {
     id: 'dashboard.CoinMachine.SaleStateWidget.partialSuccessSubtext',
@@ -127,19 +129,13 @@ const MSG = defineMessages({
   },
 });
 
-const SaleStateWidget = ({
-  state,
-  amount,
-  price,
-  nextSale
-}: Props) => {
-
+const SaleStateWidget = ({ state }: Props) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <Heading
           appearance={{ size: 'medium', theme: 'dark', margin: 'none' }}
-          text="TODO"
+          text={MSG[`${state}Title`]}
         />
         <TransactionLink
           className={styles.blockExplorer}
