@@ -1,6 +1,3 @@
 .container {
-  padding: 26px 60px;
-  height: 100%;
-  border-radius: var(--radius-large);
-  background-color: white;
+  padding: 10px 45px;
 }
