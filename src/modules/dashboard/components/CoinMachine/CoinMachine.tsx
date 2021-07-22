@@ -52,7 +52,7 @@ const MSG = defineMessages({
   },
   tokensRemainingTooltip: {
     id: 'dashboard.CoinMachine.tokensRemainingTooltip',
-    defaultMessage: `This is the amount of tokens remaining in the sale. Whatever the time says, that’s how much time remains. When it reaches zero, there will be no more time remaining. That’s how time works. When no more time remains, the next sale will start, and the amount of time remaining for that sale will appear in this box.`,
+    defaultMessage: `This is the number of tokens remaining in the current batch.`,
   },
   tokensTypePlaceholder: {
     id: 'dashboard.CoinMachine.tokensRemainingTitle',
@@ -181,16 +181,16 @@ const CoinMachine = ({
                 placeholderText={MSG.timeTypePlaceholder}
               />
             </div>
-          <div className={styles.tokensRemaining}>
-            <RemainingDisplayWidget
-              title={MSG.tokensRemainingTitle}
-              // @TODO: Add real value
-              value={null}
-              tooltipText={MSG.tokensRemainingTitle}
-              placeholderText={MSG.tokensTypePlaceholder}
-              footerText={MSG.tokensTypeFooterText}
-            />
-          </div>
+            <div className={styles.tokensRemaining}>
+              <RemainingDisplayWidget
+                title={MSG.tokensRemainingTitle}
+                // @TODO: Add real value
+                value={null}
+                tooltipText={MSG.tokensRemainingTooltip}
+                placeholderText={MSG.tokensTypePlaceholder}
+                footerText={MSG.tokensTypeFooterText}
+              />
+            </div>
           </>
         )}
         <div className={styles.sales}>
