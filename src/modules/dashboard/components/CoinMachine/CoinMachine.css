@@ -54,6 +54,11 @@
   grid-row: time / last-line;
 }
 
+.saleStarted {
+  grid-column: 1 / 3;
+  grid-row: time / sales;
+}
+
 /*
  * @TODO Remove when it will no longer be needed
  */
