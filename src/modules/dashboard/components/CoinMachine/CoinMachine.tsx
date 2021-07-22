@@ -106,18 +106,18 @@ const CoinMachine = ({
         {saleStarted && <div className={styles.saleStarted}><SaleStateWidget state={SaleState.Loading} price="" amount="" nextSale={123} /></div> || (
           <>
            <div className={styles.buy}>
-              <div className={styles.filler}>Buy Tokens</div>
+              <div>Buy Tokens</div>
             </div>
             <div className={styles.timeRemaining}>
-              <div className={styles.filler}>Time Remaining</div>
+              <div>Time Remaining</div>
             </div>
             <div className={styles.tokensRemaining}>
-              <div className={styles.filler}>Tokens Remaining</div>
+              <div>Tokens Remaining</div>
             </div>
           </>
         )}
         <div className={styles.sales}>
-          <div className={styles.filler}>Previous Sales</div>
+          <div>Previous Sales</div>
         </div>
         <div className={styles.comments}>
           <Chat
