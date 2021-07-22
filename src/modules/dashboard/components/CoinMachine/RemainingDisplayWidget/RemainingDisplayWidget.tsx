@@ -1,5 +1,6 @@
 import React from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
+import classnames from 'classnames';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -55,10 +56,17 @@ const RemainingDisplayWidget = ({
         <QuestionMarkTooltip
           tooltipText={tooltipText}
           invertedIcon={appearance.theme === 'danger'}
+          tooltipClassName={styles.tooltip}
         />
       </div>
-      <p className={styles.value}>{value || placeholder}</p>
-      {footerText && (
+      <p
+        className={classnames(styles.value, {
+          [styles.valueWarning]: false, // @TODO:  Add logic to determine if we show the value on red
+        })}
+      >
+        {value || placeholder}
+      </p>
+      {footerText && value && (
         <div className={styles.footer}>
           <p className={styles.footerText}>
             {typeof footerText === 'string' ? (
