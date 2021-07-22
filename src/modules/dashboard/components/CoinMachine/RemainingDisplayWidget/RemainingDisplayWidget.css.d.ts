@@ -3,6 +3,7 @@ export const themeWhite: string;
 export const themeDanger: string;
 export const header: string;
 export const value: string;
-export const mainWarning: string;
+export const valueWarning: string;
 export const footer: string;
 export const footerText: string;
+export const tooltip: string;
