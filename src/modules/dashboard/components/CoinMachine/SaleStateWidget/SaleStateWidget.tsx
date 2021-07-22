@@ -124,11 +124,14 @@ const MSG = defineMessages({
 });
 
 const SaleStateWidget = ({
-
+  state,
+  amount,
+  price,
+  nextSale
 }: Props) => {
 
   return (
-    <div>
+    <div className={styles.container}>
 
     </div>
   );
