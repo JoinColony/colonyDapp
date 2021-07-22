@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Redirect } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
@@ -10,6 +10,7 @@ import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import { useColonyExtensionsQuery, Colony } from '~data/index';
 
 import Chat from './Chat';
+import SaleStateWidget, { SaleState } from './SaleStateWidget';
 
 import styles from './CoinMachine.css';
 
@@ -47,6 +48,8 @@ const CoinMachine = ({
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
+
+  const [saleStarted, setSaleStarted] = useState<boolean>(true);
 
   if (loading || !data?.processedColony?.installedExtensions) {
     return (
@@ -100,15 +103,19 @@ const CoinMachine = ({
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
       <div className={styles.grid}>
-        <div className={styles.buy}>
-          <div className={styles.filler}>Buy Tokens</div>
-        </div>
-        <div className={styles.timeRemaining}>
-          <div className={styles.filler}>Time Remaining</div>
-        </div>
-        <div className={styles.tokensRemaining}>
-          <div className={styles.filler}>Tokens Remaining</div>
-        </div>
+        {saleStarted && <div className={styles.saleStarted}><SaleStateWidget state={SaleState.Loading} price="" amount="" nextSale={123} /></div> || (
+          <>
+           <div className={styles.buy}>
+              <div className={styles.filler}>Buy Tokens</div>
+            </div>
+            <div className={styles.timeRemaining}>
+              <div className={styles.filler}>Time Remaining</div>
+            </div>
+            <div className={styles.tokensRemaining}>
+              <div className={styles.filler}>Tokens Remaining</div>
+            </div>
+          </>
+        )}
         <div className={styles.sales}>
           <div className={styles.filler}>Previous Sales</div>
         </div>

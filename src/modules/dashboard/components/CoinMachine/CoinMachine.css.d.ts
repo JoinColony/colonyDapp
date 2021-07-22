@@ -7,4 +7,5 @@ export const timeRemaining: string;
 export const tokensRemaining: string;
 export const sales: string;
 export const comments: string;
+export const saleStarted: string;
 export const filler: string;
