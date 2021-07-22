@@ -1,3 +1,16 @@
 .container {
   padding: 10px 45px;
 }
+
+.header {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blockExplorer {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark-blue);
+}
