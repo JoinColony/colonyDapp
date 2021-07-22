@@ -16,6 +16,7 @@ import {
 import Chat from './Chat';
 import SaleStateWidget, { SaleState } from './SaleStateWidget';
 import BuyTokens from './BuyTokens';
+import TokenSalesTable from './TokenSalesTable';
 
 import styles from './CoinMachine.css';
 
@@ -147,7 +148,8 @@ const CoinMachine = ({
           </>
         )}
         <div className={styles.sales}>
-          <div>Previous Sales</div>
+          {/* @TODO: Connect real tableData to TokenSalesTable */}
+          <TokenSalesTable tableData={[]} />
         </div>
         <div className={styles.comments}>
           <Chat
