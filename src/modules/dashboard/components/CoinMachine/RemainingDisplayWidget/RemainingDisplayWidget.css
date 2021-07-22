@@ -23,6 +23,10 @@
   height: 20px;
 }
 
+.header > h5 {
+  font-size: var(--size-smallish);
+}
+
 .value {
   display: flex;
   justify-content: center;
@@ -41,7 +45,7 @@
   color: var(--colony-white);
 }
 
-.mainWarning {
+.valueWarning {
   color: var(--danger);
 }
 
@@ -60,4 +64,10 @@
 
 .themeDanger .footerText {
   color: var(--colony-white);
+}
+
+.tooltip {
+  padding: 5px;
+  width: 260px;
+  font-weight: var(--weight-bold);
 }
