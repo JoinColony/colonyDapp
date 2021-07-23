@@ -6,12 +6,8 @@ import TransactionLink from '~core/TransactionLink';
 import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
 
-import {
-  TokenInfoQuery,
-} from '~data/index';
-import {
-  getFormattedTokenValue,
-} from '~utils/tokens';
+import { TokenInfoQuery } from '~data/index';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
@@ -144,24 +140,35 @@ const MSG = defineMessages({
   },
 });
 
-const ACTIVATE_LINK = "https://colony.gitbook.io/colony/key-concepts/token-activation";
+const ACTIVATE_LINK =
+  'https://colony.gitbook.io/colony/key-concepts/token-activation';
 
-const SaleStateWidget = ({ state, amount, price, nativeToken, transactionToken, nextSale }: Props) => {
+const SaleStateWidget = ({
+  state,
+  amount,
+  price,
+  nativeToken,
+  transactionToken,
+  nextSale,
+}: Props) => {
   const decimalAmount = getFormattedTokenValue(amount, nativeToken.decimals);
   const decimalPrice = getFormattedTokenValue(price, transactionToken.decimals);
   const buttonText = useCallback(() => {
     switch (state) {
       case SaleState.PartialSuccess:
       case SaleState.SaleFailed:
-        return MSG.tryAgain
+        return MSG.tryAgain;
       case SaleState.TransactionFailed:
-        return MSG.tryAgain
+        return MSG.tryAgain;
       case SaleState.Success:
-        return MSG.buyAgain
+        return MSG.buyAgain;
       default:
-        return MSG.buyAgain
+        return MSG.buyAgain;
     }
   }, [state, nextSale]);
+
+  const showTimeCountdown =
+    state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -196,10 +203,12 @@ const SaleStateWidget = ({ state, amount, price, nativeToken, transactionToken, 
           </div>
         </div>
       </div>
-      <div className={styles.text}><FormattedMessage {...MSG[`${state}Text`]} /></div>
+      <div className={styles.text}>
+        <FormattedMessage {...MSG[`${state}Text`]} />
+      </div>
       <div className={styles.text}>
         <FormattedMessage
-          {...MSG[`${state}Subtext`]} 
+          {...MSG[`${state}Subtext`]}
           values={{
             link: (
               <ExternalLink
@@ -207,16 +216,21 @@ const SaleStateWidget = ({ state, amount, price, nativeToken, transactionToken, 
                 className={styles.blockExplorer}
                 href={ACTIVATE_LINK}
               />
-            )
+            ),
           }}
-          />
+        />
       </div>
       <div className={styles.footer}>
-        {state === SaleState.PartialSuccess || state === SaleState.SaleFailed ? (
-          <div className={styles.nextSale}><FormattedMessage {...MSG.nextSale} /></div>
+        {showTimeCountdown ? (
+          <div className={styles.nextSale}>
+            <FormattedMessage {...MSG.nextSale} />
+          </div>
         ) : null}
         <Button
-          appearance={{ theme: 'primary', size: 'large' }}
+          appearance={{
+            theme: showTimeCountdown ? 'pink' : 'primary',
+            size: 'large',
+          }}
           text={buttonText()}
           loading={state === SaleState.Loading}
         />
