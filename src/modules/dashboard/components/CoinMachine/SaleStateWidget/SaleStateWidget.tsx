@@ -1,8 +1,17 @@
-import React from 'react';
-import { defineMessages } from 'react-intl';
+import React, { useCallback } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import TransactionLink from '~core/TransactionLink';
+import Button from '~core/Button';
+import ExternalLink from '~core/ExternalLink';
+
+import {
+  TokenInfoQuery,
+} from '~data/index';
+import {
+  getFormattedTokenValue,
+} from '~utils/tokens';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
@@ -21,6 +30,8 @@ interface Props {
   amount: string;
   price: string;
   nextSale: number;
+  nativeToken: TokenInfoQuery['tokenInfo'];
+  transactionToken: TokenInfoQuery['tokenInfo'];
 }
 
 const MSG = defineMessages({
@@ -108,7 +119,11 @@ const MSG = defineMessages({
   },
   successSubtext: {
     id: 'dashboard.CoinMachine.SaleStateWidget.successSubtext',
-    defaultMessage: 'Now deposit them in Locking so they’re ready to use.',
+    defaultMessage: `Now {link} them so they're ready to use.`,
+  },
+  activate: {
+    id: 'dashboard.CoinMachine.SaleStateWidget.activate',
+    defaultMessage: `**Activate**`,
   },
   partialSuccessTitle: {
     id: 'dashboard.CoinMachine.SaleStateWidget.partialSuccessTitle',
@@ -129,7 +144,24 @@ const MSG = defineMessages({
   },
 });
 
-const SaleStateWidget = ({ state }: Props) => {
+const ACTIVATE_LINK = "https://colony.gitbook.io/colony/key-concepts/token-activation";
+
+const SaleStateWidget = ({ state, amount, price, nativeToken, transactionToken, nextSale }: Props) => {
+  const decimalAmount = getFormattedTokenValue(amount, nativeToken.decimals);
+  const decimalPrice = getFormattedTokenValue(price, transactionToken.decimals);
+  const buttonText = useCallback(() => {
+    switch (state) {
+      case SaleState.PartialSuccess:
+      case SaleState.SaleFailed:
+        return MSG.tryAgain
+      case SaleState.TransactionFailed:
+        return MSG.tryAgain
+      case SaleState.Success:
+        return MSG.buyAgain
+      default:
+        return MSG.buyAgain
+    }
+  }, [state, nextSale]);
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -144,6 +176,49 @@ const SaleStateWidget = ({ state }: Props) => {
           textValues={{
             blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
           }}
+        />
+      </div>
+      <div className={styles.content}>
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG[`${state}AmountLabel`]} />
+          </div>
+          <div className={styles.value}>
+            {decimalAmount} {nativeToken.symbol || '???'}
+          </div>
+        </div>
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.for} />
+          </div>
+          <div className={styles.value}>
+            {decimalPrice} {transactionToken.symbol || '???'}
+          </div>
+        </div>
+      </div>
+      <div className={styles.text}><FormattedMessage {...MSG[`${state}Text`]} /></div>
+      <div className={styles.text}>
+        <FormattedMessage
+          {...MSG[`${state}Subtext`]} 
+          values={{
+            link: (
+              <ExternalLink
+                text={MSG.activate}
+                className={styles.blockExplorer}
+                href={ACTIVATE_LINK}
+              />
+            )
+          }}
+          />
+      </div>
+      <div className={styles.footer}>
+        {state === SaleState.PartialSuccess || state === SaleState.SaleFailed ? (
+          <div className={styles.nextSale}><FormattedMessage {...MSG.nextSale} /></div>
+        ) : null}
+        <Button
+          appearance={{ theme: 'primary', size: 'large' }}
+          text={buttonText()}
+          loading={state === SaleState.Loading}
         />
       </div>
     </div>
