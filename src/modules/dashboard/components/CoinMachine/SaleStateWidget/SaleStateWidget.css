@@ -1,16 +1,71 @@
 .container {
-  padding: 10px 45px;
+  padding: 10px 40px;
 }
 
 .header {
-  margin-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 20px;
 }
 
 .blockExplorer {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--dark-blue);
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 45px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.item:first-child {
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.value, .label {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--spacing-medium);
+}
+
+.label {
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.value {
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.content {
+  margin-top: 27px;
+  margin-bottom: 13px;
+}
+
+.text {
+  color: var(--dark);
+  font-size: var(--size-normal);
+  line-height: 18px;
+  font-weight: var(--weight-normal);
+  margin-bottom: 22px;
+}
+
+.footer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 35px;
+}
+
+.nextSale {
+  position: absolute;
+  left: 0;
+  color: var(--dark);
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
 }
