@@ -106,10 +106,12 @@ const CoinMachine = ({
         {(saleStarted && (
           <div className={styles.saleStarted}>
             <SaleStateWidget
-              state={SaleState.Loading}
-              price=""
-              amount=""
+              state={SaleState.Success}
+              price="1234234340000000"
+              amount="123423434000000000000"
               nextSale={123}
+              nativeToken={{symbol: "CLNY", decimals: "18"}}
+              transactionToken={{symbol: "ETH", decimals: "18"}}
             />
           </div>
         )) || (
