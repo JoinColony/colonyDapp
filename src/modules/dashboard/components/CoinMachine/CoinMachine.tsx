@@ -109,7 +109,7 @@ const CoinMachine = ({
               state={SaleState.PartialSuccess}
               price="1234234340000000"
               amount="123423434000000000000"
-              nextSale={123}
+              timeLeftToNextSale={864000}
               nativeToken={{ symbol: 'CLNY', decimals: 18, name: 'CLNY' }}
               transactionToken={{ symbol: 'ETH', decimals: 18, name: 'ETH' }}
             />

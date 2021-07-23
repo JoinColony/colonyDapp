@@ -24,22 +24,16 @@ interface Props {
   splitTime: any;
 }
 
-export const TimerValue = ({
-  splitTime
-}: Props) => {
+export const TimerValue = ({ splitTime }: Props) => {
   return (
     <>
       {splitTime.days > 0 && (
         <FormattedMessage {...MSG.days} values={{ days: splitTime.days }} />
       )}
       {(splitTime.days > 0 || splitTime.hours > 0) && (
-        <FormattedMessage
-          {...MSG.hours}
-          values={{ hours: splitTime.hours }}
-        />
+        <FormattedMessage {...MSG.hours} values={{ hours: splitTime.hours }} />
       )}
-      {(splitTime.days > 0 || splitTime.hours > 0 || splitTime.minutes) >
-        0 && (
+      {(splitTime.days > 0 || splitTime.hours > 0 || splitTime.minutes) > 0 && (
         <FormattedMessage
           {...MSG.minutes}
           values={{ minutes: splitTime.minutes }}
