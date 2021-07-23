@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
@@ -8,6 +8,8 @@ import ExternalLink from '~core/ExternalLink';
 
 import { TokenInfoQuery } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
+import { splitTimeLeft } from '~utils/time';
+import { TimerValue } from '~utils/components';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
@@ -25,7 +27,7 @@ interface Props {
   state: SaleState;
   amount: string;
   price: string;
-  nextSale: number;
+  timeLeftToNextSale: number;
   nativeToken: TokenInfoQuery['tokenInfo'];
   transactionToken: TokenInfoQuery['tokenInfo'];
 }
@@ -149,26 +151,40 @@ const SaleStateWidget = ({
   price,
   nativeToken,
   transactionToken,
-  nextSale,
+  timeLeftToNextSale,
 }: Props) => {
+  const [timeLeft, setTimeLeft] = useState<number>(timeLeftToNextSale / 1000);
   const decimalAmount = getFormattedTokenValue(amount, nativeToken.decimals);
   const decimalPrice = getFormattedTokenValue(price, transactionToken.decimals);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+    if (timeLeft === 0) {
+      clearInterval(timer);
+    }
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+  const splitTime = splitTimeLeft(timeLeft);
+
   const buttonText = useCallback(() => {
     switch (state) {
       case SaleState.PartialSuccess:
       case SaleState.SaleFailed:
-        return MSG.tryAgain;
+        return <TimerValue splitTime={splitTime} />;
       case SaleState.TransactionFailed:
-        return MSG.tryAgain;
+        return <FormattedMessage {...MSG.tryAgain} />;
       case SaleState.Success:
-        return MSG.buyAgain;
+        return <FormattedMessage {...MSG.buyAgain} />;
       default:
-        return MSG.buyAgain;
+        return <FormattedMessage {...MSG.buyAgain} />;
     }
-  }, [state, nextSale]);
+  }, [state, splitTime]);
 
   const showTimeCountdown =
     state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -231,9 +247,10 @@ const SaleStateWidget = ({
             theme: showTimeCountdown ? 'pink' : 'primary',
             size: 'large',
           }}
-          text={buttonText()}
           loading={state === SaleState.Loading}
-        />
+        >
+          {buttonText()}
+        </Button>
       </div>
     </div>
   );
