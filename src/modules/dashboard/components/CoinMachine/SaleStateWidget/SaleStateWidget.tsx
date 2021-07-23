@@ -156,16 +156,22 @@ const SaleStateWidget = ({
   const [timeLeft, setTimeLeft] = useState<number>(timeLeftToNextSale / 1000);
   const decimalAmount = getFormattedTokenValue(amount, nativeToken.decimals);
   const decimalPrice = getFormattedTokenValue(price, transactionToken.decimals);
+  const showTimeCountdown =
+    state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(timeLeft - 1);
-    }, 1000);
-    if (timeLeft === 0) {
-      clearInterval(timer);
+    let timer;
+    if (showTimeCountdown) {
+      timer = setInterval(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+      if (timeLeft === 0) {
+        clearInterval(timer);
+      }
     }
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [timeLeft, showTimeCountdown]);
+
   const splitTime = splitTimeLeft(timeLeft);
 
   const buttonText = useCallback(() => {
@@ -181,9 +187,6 @@ const SaleStateWidget = ({
         return <FormattedMessage {...MSG.buyAgain} />;
     }
   }, [state, splitTime]);
-
-  const showTimeCountdown =
-    state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
 
   return (
     <div className={styles.container}>
