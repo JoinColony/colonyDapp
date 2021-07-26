@@ -66,6 +66,12 @@
   color: var(--colony-white);
 }
 
+.tooltipIcon {
+  position: relative;
+  top: -5px;
+  right: -5px;
+}
+
 .tooltip {
   padding: 5px;
   width: 260px;
