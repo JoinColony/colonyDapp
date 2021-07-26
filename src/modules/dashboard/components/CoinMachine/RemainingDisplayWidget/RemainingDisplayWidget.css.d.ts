@@ -6,4 +6,5 @@ export const value: string;
 export const valueWarning: string;
 export const footer: string;
 export const footerText: string;
+export const tooltipIcon: string;
 export const tooltip: string;

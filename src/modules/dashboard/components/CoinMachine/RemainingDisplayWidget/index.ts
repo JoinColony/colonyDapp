@@ -1,1 +1,1 @@
-export { default } from './RemainingDisplayWidget';
+export { default, DataDisplayType } from './RemainingDisplayWidget';
