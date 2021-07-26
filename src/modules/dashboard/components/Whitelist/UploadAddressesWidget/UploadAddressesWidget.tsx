@@ -77,7 +77,7 @@ const validationSchemaFile = yup.object({
           .array()
           .of(yup.string())
           .min(1, () => MSG.badFileError)
-          .max(100, () => MSG.uploadError)
+          .max(1000, () => MSG.uploadError)
           .test(
             'valid-wallet-addresses',
             () => MSG.invalidAddressError,
@@ -213,6 +213,7 @@ const UploadAddressesWidget = ({
               text={{ id: 'button.confirm' }}
               disabled={!userHasPermission || !isValid || isSubmitting}
               type="submit"
+              loading={isSubmitting}
             />
           </div>
         </div>
