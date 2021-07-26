@@ -32,31 +32,31 @@ const displayName = 'dashboard.RemainingDisplayWidget';
 
 const MSG = defineMessages({
   timeRemainingTitle: {
-    id: 'dashboard.CoinMachine.timeRemainingTitle',
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.timeRemainingTitle',
     defaultMessage: 'Time remaining',
   },
   timeRemainingTooltip: {
-    id: 'dashboard.CoinMachine.timeRemainingTooltip',
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.timeRemainingTooltip',
     defaultMessage: `This is the amount of time remaining in the sale. Whatever the time says, that’s how much time remains. When it reaches zero, there will be no more time remaining. That’s how time works. When no more time remains, the next sale will start, and the amount of time remaining for that sale will appear in this box.`,
   },
   tokensRemainingTitle: {
-    id: 'dashboard.CoinMachine.tokensRemainingTitle',
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.tokensRemainingTitle',
     defaultMessage: 'Tokens remaining',
   },
   tokensRemainingTooltip: {
-    id: 'dashboard.CoinMachine.tokensRemainingTooltip',
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.tokensRemainingTooltip',
     defaultMessage: `This is the number of tokens remaining in the current batch.`,
   },
   tokensTypePlaceholder: {
-    id: 'dashboard.CoinMachine.tokensRemainingTitle',
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.tokensRemainingTitle',
     defaultMessage: '0',
   },
   timeTypePlaceholder: {
-    id: 'dashboard.CoinMachine.timeTypePlaceholder',
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.timeTypePlaceholder',
     defaultMessage: `N/A`,
   },
   tokensTypeFooterText: {
-    id: 'dashboard.CoinMachine.tokensTypeFooterText',
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.tokensTypeFooterText',
     defaultMessage: 'Price next sale',
   },
 });
