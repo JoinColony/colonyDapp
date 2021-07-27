@@ -29,22 +29,36 @@
   row-gap: 20px;
 }
 
+.container {
+  padding: 15px;
+  height: 100%;
+  border-radius: var(--radius-large);
+  background-color: white;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  box-shadow: var(--box-shadow-medium);
+}
+
 .buy {
+  composes: container;
   grid-column: buy / remaining;
   grid-row: time / sales;
 }
 
 .timeRemaining {
+  composes: container;
   grid-column: remaining / comments;
   grid-row: time / tokens;
 }
 
 .tokensRemaining {
+  composes: container;
   grid-column: remaining / comments;
   grid-row: tokens / sales;
 }
 
 .sales {
+  composes: container;
   grid-column: buy / comments;
   grid-row: sales / last-line;
 }
@@ -54,14 +68,8 @@
   grid-row: time / last-line;
 }
 
-/*
- * @TODO Remove when it will no longer be needed
- */
-.filler {
-  padding: 15px;
-  height: 100%;
-  border-radius: var(--radius-large);
-  background-color: white;
-  font-size: var(--size-small);
-  font-weight: var(--weight-bold);
+.saleStarted {
+  composes: container;
+  grid-column: 1 / 3;
+  grid-row: time / sales;
 }
