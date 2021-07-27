@@ -106,7 +106,7 @@ const CoinMachine = ({
         {(saleStarted && (
           <div className={styles.saleStarted}>
             <SaleStateWidget
-              state={SaleState.PartialSuccess}
+              state={SaleState.Success}
               price="1234234340000000"
               amount="123423434000000000000"
               timeLeftToNextSale={864000}
