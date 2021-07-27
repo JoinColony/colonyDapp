@@ -46,7 +46,7 @@ const CoinMachine = ({
     variables: { address: colonyAddress },
   });
 
-  const [saleStarted] = useState<boolean>(true);
+  const [saleStarted] = useState<boolean>(false);
 
   if (loading || !data?.processedColony?.installedExtensions) {
     return (
@@ -120,7 +120,7 @@ const CoinMachine = ({
                  * @TODO Determine if the sale is currently ongoing
                  * And only disable it if it insn't
                  */
-                disabled={!saleStarted}
+                disabled={false}
               />
             </div>
             <div className={styles.timeRemaining}>
