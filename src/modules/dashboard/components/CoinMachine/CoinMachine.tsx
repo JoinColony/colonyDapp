@@ -120,8 +120,10 @@ const CoinMachine = ({
               price="1234234340000000"
               amount="123423434000000000000"
               timeLeftToNextSale={864000}
-              nativeToken={{ symbol: 'CLNY', decimals: 18, name: 'CLNY' }}
-              transactionToken={{ symbol: 'ETH', decimals: 18, name: 'ETH' }}
+              sellableToken={saleToken}
+              purchaseToken={
+                saleTokensData?.coinMachineSaleTokens?.purchaseToken
+              }
             />
           </div>
         )) || (
