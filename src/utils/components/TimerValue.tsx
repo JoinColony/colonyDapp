@@ -25,6 +25,10 @@ interface Props {
 }
 
 export const TimerValue = ({ splitTime }: Props) => {
+  if (splitTime === undefined) {
+    return null;
+  }
+
   return (
     <>
       {splitTime.days > 0 && (
