@@ -1,11 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  padding: 15px;
   height: 100%;
-  border-radius: var(--radius-large);
-  background-color: var(--colony-white);
-  box-shadow: 0px 2px 11px var(--drop-shadow);
 }
 
 .container > h5 {
@@ -17,12 +13,17 @@
   padding: 0 25px 5px 25px;
 }
 
+.table {
+  background-color: var(--colony-white);
+}
+
 .tableHeader {
   border-bottom: 1px solid var(--temp-grey-13);
 }
 
 .tableHeaderCell {
   padding-bottom: 6px;
+  font-size: var(--size-normal);
   text-align: right;
   color: var(--dark);
 }
@@ -62,5 +63,6 @@
 
 .noDataMessage {
   margin-top: 20px;
+  font-size: var(--size-normal);
   color: var(--temp-grey-blue-7);
 }
