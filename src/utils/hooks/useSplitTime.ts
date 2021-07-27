@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { splitTimeLeft } from '~utils/time';
 
-export const useSplitTime = (initialTime: number, activeTimer: boolean) => {
+const useSplitTime = (initialTime: number, activeTimer: boolean) => {
   const [timeLeft, setTimeLeft] = useState<number>(initialTime / 1000);
 
   useEffect(() => {
@@ -24,3 +24,5 @@ export const useSplitTime = (initialTime: number, activeTimer: boolean) => {
     splitTime,
   };
 };
+
+export default useSplitTime;
