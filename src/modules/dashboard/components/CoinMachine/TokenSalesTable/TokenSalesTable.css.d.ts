@@ -1,5 +1,6 @@
 export const container: string;
 export const tableContainer: string;
+export const table: string;
 export const tableHeader: string;
 export const tableHeaderCell: string;
 export const tableRow: string;
