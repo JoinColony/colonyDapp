@@ -28,8 +28,8 @@ interface Props {
   amount: string;
   price: string;
   timeLeftToNextSale: number;
-  nativeToken: TokenInfoQuery['tokenInfo'];
-  transactionToken: TokenInfoQuery['tokenInfo'];
+  sellableToken?: TokenInfoQuery['tokenInfo'];
+  purchaseToken?: TokenInfoQuery['tokenInfo'];
 }
 
 const MSG = defineMessages({
@@ -149,13 +149,13 @@ const SaleStateWidget = ({
   state,
   amount,
   price,
-  nativeToken,
-  transactionToken,
+  sellableToken,
+  purchaseToken,
   timeLeftToNextSale,
 }: Props) => {
   const [timeLeft, setTimeLeft] = useState<number>(timeLeftToNextSale / 1000);
-  const decimalAmount = getFormattedTokenValue(amount, nativeToken.decimals);
-  const decimalPrice = getFormattedTokenValue(price, transactionToken.decimals);
+  const decimalAmount = getFormattedTokenValue(amount, sellableToken?.decimals);
+  const decimalPrice = getFormattedTokenValue(price, purchaseToken?.decimals);
   const showTimeCountdown =
     state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
 
@@ -210,7 +210,7 @@ const SaleStateWidget = ({
             <FormattedMessage {...MSG[`${state}AmountLabel`]} />
           </div>
           <div className={styles.value}>
-            {decimalAmount} {nativeToken.symbol || '???'}
+            {decimalAmount} {sellableToken?.symbol || '???'}
           </div>
         </div>
         <div className={styles.item}>
@@ -218,7 +218,7 @@ const SaleStateWidget = ({
             <FormattedMessage {...MSG.for} />
           </div>
           <div className={styles.value}>
-            {decimalPrice} {transactionToken.symbol || '???'}
+            {decimalPrice} {purchaseToken?.symbol || '???'}
           </div>
         </div>
       </div>
