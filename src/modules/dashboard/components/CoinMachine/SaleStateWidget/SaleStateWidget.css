@@ -58,7 +58,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 35px;
+  margin-top: 55px;
   position: relative;
 }
 
@@ -68,4 +68,8 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.buttonWrapper button {
+  width: 160px;
 }

@@ -245,15 +245,17 @@ const SaleStateWidget = ({
             <FormattedMessage {...MSG.nextSale} />
           </div>
         ) : null}
-        <Button
-          appearance={{
-            theme: showTimeCountdown ? 'pink' : 'primary',
-            size: 'large',
-          }}
-          loading={state === SaleState.Loading}
-        >
-          {buttonText()}
-        </Button>
+        <div className={styles.buttonWrapper}>
+          <Button
+            appearance={{
+              theme: showTimeCountdown ? 'pink' : 'primary',
+              size: 'large',
+            }}
+            loading={state === SaleState.Loading}
+          >
+            {buttonText()}
+          </Button>
+        </div>
       </div>
     </div>
   );
