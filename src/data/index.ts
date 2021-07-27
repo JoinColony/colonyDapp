@@ -44,6 +44,7 @@ import { motionsResolvers } from './resolvers/motions';
  */
 import { stakesResolvers } from './resolvers/stakes';
 import { whitelistResolvers } from './resolvers/whitelist';
+import { coinMachineResolvers } from './resolvers/coinMachine';
 
 import { FixedToken } from '../types';
 
@@ -73,6 +74,7 @@ export const resolvers: ResolverFactory[] = [
   motionsResolvers,
   stakesResolvers,
   whitelistResolvers,
+  coinMachineResolvers,
 ];
 
 // export all the generated types and helpers
