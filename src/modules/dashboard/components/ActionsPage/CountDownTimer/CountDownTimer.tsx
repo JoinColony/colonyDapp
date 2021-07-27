@@ -19,6 +19,7 @@ import {
 import { splitTimeLeft } from '~utils/time';
 import { MotionState } from '~utils/colonyMotions';
 import { ActionTypes } from '~redux/index';
+import { TimerValue } from '~utils/components';
 
 import styles from './CountDownTimer.css';
 
@@ -194,34 +195,11 @@ const CountDownTimer = ({
     );
   }
 
-  if (splitTime === undefined) {
-    return null;
-  }
-
   return (
     <div className={styles.container}>
       <FormattedMessage {...MSG.title} values={{ motionState: state }} />
       <span className={styles.time}>
-        {splitTime.days > 0 && (
-          <FormattedMessage {...MSG.days} values={{ days: splitTime.days }} />
-        )}
-        {(splitTime.days > 0 || splitTime.hours > 0) && (
-          <FormattedMessage
-            {...MSG.hours}
-            values={{ hours: splitTime.hours }}
-          />
-        )}
-        {(splitTime.days > 0 || splitTime.hours > 0 || splitTime.minutes) >
-          0 && (
-          <FormattedMessage
-            {...MSG.minutes}
-            values={{ minutes: splitTime.minutes }}
-          />
-        )}
-        <FormattedMessage
-          {...MSG.seconds}
-          values={{ seconds: splitTime.seconds }}
-        />
+        <TimerValue splitTime={splitTime} />
       </span>
     </div>
   );
