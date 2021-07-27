@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
+import { formatEther } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -15,9 +16,9 @@ import {
   Colony,
   useLoggedInUser,
   useCoinMachineSaleTokensQuery,
+  useUserTokensQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
-// import { DEFAULT_NETWORK_TOKEN } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
 import { mapPayload } from '~utils/actions';
@@ -79,14 +80,26 @@ const validationSchema = (userBalance: number) =>
   });
 
 const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
-  const { username, ethereal, balance } = useLoggedInUser();
+  const { username, ethereal, walletAddress } = useLoggedInUser();
 
   const { data: saleTokensData } = useCoinMachineSaleTokensQuery({
     variables: { colonyAddress },
   });
 
+  const { data: useTokenData } = useUserTokensQuery({
+    variables: { address: walletAddress },
+  });
+
   const sellableToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
   const purchaseToken = saleTokensData?.coinMachineSaleTokens?.purchaseToken;
+
+  const userPurchaseToken = useTokenData?.user?.tokens.find(
+    ({ address: userTokenAddress }) =>
+      userTokenAddress === purchaseToken?.address,
+  );
+  const userPurchaseTokenBalance = formatEther(
+    userPurchaseToken?.balance || '0',
+  );
 
   const globalDisable = disabled || !username || ethereal;
 
@@ -119,14 +132,17 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
         event.stopPropagation();
         setFieldValue(
           'amount',
-          `${parseInt(balance, 10)}.${balance.substr(
-            balance.indexOf('.') + 1,
+          `${parseInt(
+            userPurchaseTokenBalance,
+            10,
+          )}.${userPurchaseTokenBalance.substr(
+            userPurchaseTokenBalance.indexOf('.') + 1,
             2,
           )}`,
         );
       }
     },
-    [globalDisable, balance],
+    [globalDisable, userPurchaseTokenBalance],
   );
   const handleFormReset = useCallback((resetForm) => resetForm(), []);
 
@@ -167,7 +183,9 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
         initialValues={{
           amount: '0',
         }}
-        validationSchema={validationSchema(parseFloat(balance))}
+        validationSchema={validationSchema(
+          parseFloat(userPurchaseTokenBalance),
+        )}
         submit={ActionTypes.COIN_MACHINE_BUY_TOKENS}
         error={ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR}
         success={ActionTypes.COIN_MACHINE_BUY_TOKENS_SUCCESS}
@@ -219,13 +237,7 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
                         values={{
                           amount: (
                             <Numeral
-                              /*
-                               * @TODO We need to get the balance for any token
-                               * purchase token value is (if the user has any)
-                               *
-                               * We currently only get this value for XDAI/ETH
-                               */
-                              value={balance}
+                              value={userPurchaseTokenBalance}
                               truncate={2}
                               suffix={` ${purchaseToken?.symbol}`}
                             />
