@@ -40,7 +40,6 @@
 }
 
 .buy {
-  composes: container;
   grid-column: buy / remaining;
   grid-row: time / sales;
 }
