@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
@@ -8,7 +8,8 @@ import ExternalLink from '~core/ExternalLink';
 
 import { TokenInfoQuery } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
-import { splitTimeLeft } from '~utils/time';
+import useSplitTime from '~utils/hooks/useSplitTime';
+
 import { TimerValue } from '~utils/components';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
@@ -153,26 +154,12 @@ const SaleStateWidget = ({
   purchaseToken,
   timeLeftToNextSale,
 }: Props) => {
-  const [timeLeft, setTimeLeft] = useState<number>(timeLeftToNextSale / 1000);
-  const decimalAmount = getFormattedTokenValue(amount, sellableToken?.decimals);
-  const decimalPrice = getFormattedTokenValue(price, purchaseToken?.decimals);
   const showTimeCountdown =
     state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
+  const { splitTime } = useSplitTime(timeLeftToNextSale, showTimeCountdown);
 
-  useEffect(() => {
-    let timer;
-    if (showTimeCountdown) {
-      timer = setInterval(() => {
-        setTimeLeft(timeLeft - 1);
-      }, 1000);
-      if (timeLeft === 0) {
-        clearInterval(timer);
-      }
-    }
-    return () => clearInterval(timer);
-  }, [timeLeft, showTimeCountdown]);
-
-  const splitTime = splitTimeLeft(timeLeft);
+  const decimalAmount = getFormattedTokenValue(amount, sellableToken?.decimals);
+  const decimalPrice = getFormattedTokenValue(price, purchaseToken?.decimals);
 
   const buttonText = useCallback(() => {
     switch (state) {
