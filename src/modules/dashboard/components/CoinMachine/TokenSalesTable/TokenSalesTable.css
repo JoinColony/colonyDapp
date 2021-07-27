@@ -17,10 +17,6 @@
   padding: 0 25px 5px 25px;
 }
 
-.table {
-  height: 100%;
-}
-
 .tableHeader {
   border-bottom: 1px solid var(--temp-grey-13);
 }
