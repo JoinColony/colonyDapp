@@ -45,7 +45,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-    
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -263,7 +263,11 @@ export type MutationUnsubscribeFromColonyArgs = {
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
+<<<<<<< HEAD
   block?: Maybe<SubgraphBlock>;
+=======
+  coinMachineSaleTokens: SaleTokens;
+>>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
@@ -329,8 +333,13 @@ export type QueryActionsThatNeedAttentionArgs = {
 };
 
 
+<<<<<<< HEAD
 export type QueryBlockArgs = {
   id: Scalars['String'];
+=======
+export type QueryCoinMachineSaleTokensArgs = {
+  colonyAddress: Scalars['String'];
+>>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
 };
 
 
@@ -1219,11 +1228,28 @@ export type MotionTimeoutPeriods = {
   timeLeftToSubmit: Scalars['Int'];
 };
 
+<<<<<<< HEAD
 export type ColonyExtension = {
   address: Scalars['String'];
   id: Scalars['String'];
   extensionId: Scalars['String'];
   details: ColonyExtensionDetails;
+=======
+export type SaleToken = {
+  address: Scalars['String'];
+  decimals: Scalars['Int'];
+  symbol: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type SaleTokens = {
+  sellableToken: SaleToken;
+  purchaseToken: SaleToken;
+};
+
+export type ActionsFilter = {
+  payment_contains?: Maybe<Scalars['String']>;
+>>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
 };
 
 
@@ -1976,19 +2002,12 @@ export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
   )> };
 
-export type WhitelistAgreementQueryVariables = Exact<{
-  agreementHash: Scalars['String'];
-}>;
-
-
-export type WhitelistAgreementQuery = Pick<Query, 'whitelistAgreement'>;
-
-export type WhitelistAgreementHashQueryVariables = Exact<{
+export type CoinMachineSaleTokensQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type WhitelistAgreementHashQuery = Pick<Query, 'whitelistAgreementHash'>;
+export type CoinMachineSaleTokensQuery = { coinMachineSaleTokens: { sellableToken: Pick<SaleToken, 'address' | 'decimals' | 'symbol' | 'name'>, purchaseToken: Pick<SaleToken, 'address' | 'decimals' | 'symbol' | 'name'> } };
 
 export type HasKycPolicyQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -5356,6 +5375,7 @@ export function useColonyHistoricRolesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHistoricRolesQuery>;
 export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
 export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
+<<<<<<< HEAD
 export const WhitelistAgreementDocument = gql`
     query WhitelistAgreement($agreementHash: String!) {
   whitelistAgreement(agreementHash: $agreementHash) @client
@@ -6826,29 +6846,40 @@ export const MembersDocument = gql`
       displayName
       username
       walletAddress
+=======
+export const CoinMachineSaleTokensDocument = gql`
+    query CoinMachineSaleTokens($colonyAddress: String!) {
+  coinMachineSaleTokens(colonyAddress: $colonyAddress) @client {
+    sellableToken {
+      address
+      decimals
+      symbol
+      name
+    }
+    purchaseToken {
+      address
+      decimals
+      symbol
+      name
+>>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
     }
   }
 }
     `;
 
 /**
- * __useMembersSubscription__
+ * __useCoinMachineSaleTokensQuery__
  *
- * To run a query within a React component, call `useMembersSubscription` and pass it any options that fit your needs.
- * When your component renders, `useMembersSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCoinMachineSaleTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineSaleTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useMembersSubscription({
+ * const { data, loading, error } = useCoinMachineSaleTokensQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-export function useMembersSubscription(baseOptions?: Apollo.SubscriptionHookOptions<MembersSubscription, MembersSubscriptionVariables>) {
-        return Apollo.useSubscription<MembersSubscription, MembersSubscriptionVariables>(MembersDocument, baseOptions);
-      }
-export type MembersSubscriptionHookResult = ReturnType<typeof useMembersSubscription>;
-export type MembersSubscriptionResult = Apollo.SubscriptionResult<MembersSubscription>;
