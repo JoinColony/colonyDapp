@@ -1,4 +1,8 @@
 
+#
+# @TODO Split file into own /queries/*.graphql file based on purpouse
+#
+
 query LoggedInUser {
   loggedInUser @client {
     walletAddress

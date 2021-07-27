@@ -1,5 +1,9 @@
 import gql from 'graphql-tag';
 
+/*
+ * Split type defs into own /typedefs/*.ts file based on purpouse
+ */
+
 export default gql`
   input LoggedInUserInput {
     balance: String
