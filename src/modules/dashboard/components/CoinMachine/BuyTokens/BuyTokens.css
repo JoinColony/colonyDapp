@@ -1,4 +1,8 @@
 .main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   padding: 24px 30px;
   height: 100%;
   position: relative;
@@ -9,6 +13,10 @@
 
 .stateDisabled {
   background-color: color-mod(var(--temp-grey-blue-7) alpha(25%));
+}
+
+.heading {
+  align-self: flex-start;
 }
 
 .help {
@@ -27,6 +35,10 @@
 .tooltip {
   padding: 4px;
   width: 250px;
+}
+
+.form {
+  height: 100%;
 }
 
 .inputContainer {
@@ -118,6 +130,7 @@
 }
 
 .controls button {
+  padding: 9px 24px;
   width: 160px;
 }
 
@@ -126,4 +139,31 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.mainMessage {
+  font-size: var(--size-medium-l);
+  text-align: center;
+  white-space: pre-line;
+}
+
+.link {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark-blue);
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--dark-blue);
+  }
+}
+
+.accountStatus {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--primary);
+}
+
+.statusMessage {
+  margin-bottom: 6px;
 }
