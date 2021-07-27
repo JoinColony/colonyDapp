@@ -11,6 +11,8 @@ import TokenPriceStatusIcon, {
 } from '../TokenPriceStatusIcon/TokenPriceStatusIcon';
 
 import styles from './RemainingDisplayWidget.css';
+import { TimerValue } from '~utils/components';
+import useSplitTime from '~utils/hooks/useSplitTime';
 
 export enum DataDisplayType {
   Time = 'Time',
@@ -67,6 +69,11 @@ const RemainingDisplayWidget = ({
   value,
   tokenPriceStatus,
 }: Props) => {
+  const displaysTimer = displayType === DataDisplayType.Time;
+  const { splitTime } = useSplitTime(
+    displaysTimer && typeof value === 'number' ? value : 0,
+    displaysTimer,
+  );
   const widgetText = useMemo(() => {
     if (displayType === DataDisplayType.Time) {
       return {
@@ -83,6 +90,17 @@ const RemainingDisplayWidget = ({
       footerText: MSG.tokensTypeFooterText,
     };
   }, [displayType]);
+
+  const displayedValue = useMemo(() => {
+    if (displayType === DataDisplayType.Time && splitTime) {
+      return <TimerValue splitTime={splitTime} />;
+    }
+    if (value && displayType !== DataDisplayType.Time) {
+      return value;
+    }
+
+    return <FormattedMessage {...widgetText.placeholder} />;
+  }, [displayType, splitTime, value, widgetText]);
 
   return (
     <div className={getMainClasses(appearance, styles)}>
@@ -106,7 +124,7 @@ const RemainingDisplayWidget = ({
           [styles.valueWarning]: false, // @TODO:  Add logic to determine if we show the value on red
         })}
       >
-        {value || <FormattedMessage {...widgetText.placeholder} />}
+        {displayedValue}
       </p>
       {widgetText.footerText && value && (
         <div className={styles.footer}>
