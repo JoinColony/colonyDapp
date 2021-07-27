@@ -8,3 +8,4 @@ export const content: string;
 export const text: string;
 export const footer: string;
 export const nextSale: string;
+export const buttonWrapper: string;
