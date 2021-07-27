@@ -7,7 +7,11 @@ import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 
-import { useColonyExtensionsQuery, Colony } from '~data/index';
+import {
+  useColonyExtensionsQuery,
+  useCoinMachineSaleTokensQuery,
+  Colony,
+} from '~data/index';
 
 import Chat from './Chat';
 import SaleStateWidget, { SaleState } from './SaleStateWidget';
@@ -39,16 +43,27 @@ const displayName = 'dashboard.CoinMachine';
 const LEARN_MORE_LINK = '';
 
 const CoinMachine = ({
-  colony: { colonyAddress, colonyName, nativeTokenAddress, tokens },
+  colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
 
+  const {
+    data: saleTokensData,
+    loading: saleTokensLoading,
+  } = useCoinMachineSaleTokensQuery({
+    variables: { colonyAddress },
+  });
+
   const [saleStarted] = useState<boolean>(false);
 
-  if (loading || !data?.processedColony?.installedExtensions) {
+  if (
+    loading ||
+    saleTokensLoading ||
+    !data?.processedColony?.installedExtensions
+  ) {
     return (
       <div className={styles.loadingSpinner}>
         <SpinnerLoader
@@ -77,16 +92,14 @@ const CoinMachine = ({
     return <Redirect to={`/colony/${colonyName}`} />;
   }
 
-  const nativeToken = tokens.find(
-    ({ address }) => address === nativeTokenAddress,
-  );
+  const saleToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
 
   const breadCrumbs: Crumb[] = [
     MSG.title,
     <div>
       <FormattedMessage
         {...MSG.buyTokens}
-        values={{ symbol: nativeToken?.symbol }}
+        values={{ symbol: saleToken?.symbol }}
       />
       <ExternalLink
         className={styles.learnMore}
