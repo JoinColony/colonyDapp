@@ -7,6 +7,7 @@ import { formatEther, bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+import ExternalLink from '~core/ExternalLink';
 import { ActionForm, Input, InputStatus } from '~core/Fields';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
@@ -61,7 +62,25 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.BuyTokens.buyLabel',
     defaultMessage: 'Buy',
   },
+  mainMessage: {
+    id: 'dashbord.CoinMachine.BuyWidget.mainMessage',
+    defaultMessage: 'Coin Machine is empty.\nPlease come back later.',
+  },
+  tellMore: {
+    id: 'dashbord.CoinMachine.BuyWidget.tellMore',
+    defaultMessage: 'Tell me more',
+  },
+  getWhitelisted: {
+    id: 'dashbord.CoinMachine.BuyWidget.getWhitelisted',
+    defaultMessage: 'Get whitelisted',
+  },
+  accountWhitelisted: {
+    id: 'dashbord.CoinMachine.BuyWidget.accountWhitelisted',
+    defaultMessage: 'Your account is whitelisted. 😎',
+  },
 });
+
+const TELL_ME_MORE_LINK = '';
 
 type Props = {
   colony: Colony;
@@ -84,6 +103,10 @@ const validationSchema = (userBalance: number) =>
 
 const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
+
+  /* To add proper states later */
+  const isSale = false;
+  const isAccountWhitelisted = false;
 
   const {
     data: saleTokensData,
@@ -212,16 +235,18 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
         disabled: globalDisable,
       })}
     >
-      <Heading
-        appearance={{
-          margin: 'none',
-          size: 'medium',
-          weight: 'bold',
-          theme: 'dark',
-        }}
-        text={MSG.title}
-        textValues={{ tokenSymbol: sellableToken?.symbol }}
-      />
+      <div className={styles.heading}>
+        <Heading
+          appearance={{
+            margin: 'none',
+            size: 'medium',
+            weight: 'bold',
+            theme: 'dark',
+          }}
+          text={MSG.title}
+          textValues={{ tokenSymbol: sellableToken?.symbol }}
+        />
+      </div>
       <QuestionMarkTooltip
         tooltipText={MSG.helpTooltip}
         className={styles.help}
@@ -230,186 +255,224 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
         }}
         tooltipClassName={styles.tooltip}
       />
-      <ActionForm
-        initialValues={{
-          amount: '0',
-        }}
-        validationSchema={validationSchema(
-          parseFloat(formatEther(maxUserPurchase)),
-        )}
-        submit={ActionTypes.COIN_MACHINE_BUY_TOKENS}
-        error={ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR}
-        success={ActionTypes.COIN_MACHINE_BUY_TOKENS_SUCCESS}
-        transform={transform}
-        onSuccess={(result, { resetForm }) => handleFormReset(resetForm)}
-      >
-        {({
-          values,
-          setFieldValue,
-          isSubmitting,
-          handleSubmit,
-          isValid,
-          errors,
-          resetForm,
-          setFieldError,
-        }: FormikProps<FormValues>) => (
-          <div>
-            <div className={styles.inputContainer}>
-              <div
-                className={styles.inputComponent}
-                onClick={() => handleInputFocus(values, setFieldValue)}
-                onBlur={() => handleInputBlur(values, resetForm, setFieldError)}
-                aria-hidden="true"
-              >
-                <Input
-                  appearance={{ theme: 'minimal' }}
-                  formattingOptions={{
-                    numeral: true,
-                    numeralPositiveOnly: true,
-                    numeralDecimalScale: getTokenDecimalsWithFallback(
-                      sellableToken?.decimals,
-                    ),
-                  }}
-                  label={MSG.amountLabel}
-                  name="amount"
-                  disabled={globalDisable}
-                  elementOnly
-                />
-                {errors?.amount && (
-                  <div className={styles.fieldError}>
-                    <InputStatus error={errors.amount} />
-                  </div>
-                )}
-                {!globalDisable && (
-                  <div className={styles.userBalance}>
-                    <span>
-                      <FormattedMessage
-                        {...MSG.userBalanceLabel}
-                        values={{
-                          amount: (
-                            <Numeral
-                              value={userPurchaseTokenBalance}
-                              truncate={2}
-                              suffix={` ${purchaseToken?.symbol}`}
-                            />
-                          ),
-                        }}
-                      />
-                    </span>
-                    <Button
-                      text={MSG.maxBalanceLabel}
-                      appearance={{ size: 'small', theme: 'blue' }}
-                      onClick={(event) =>
-                        handleSetMaxAmount(event, setFieldValue)
-                      }
+      {isSale ? (
+        <div className={styles.form}>
+          <ActionForm
+            initialValues={{
+              amount: '0',
+            }}
+            validationSchema={validationSchema(
+              parseFloat(formatEther(maxUserPurchase)),
+            )}
+            submit={ActionTypes.COIN_MACHINE_BUY_TOKENS}
+            error={ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR}
+            success={ActionTypes.COIN_MACHINE_BUY_TOKENS_SUCCESS}
+            transform={transform}
+            onSuccess={(result, { resetForm }) => handleFormReset(resetForm)}
+          >
+            {({
+              values,
+              setFieldValue,
+              isSubmitting,
+              handleSubmit,
+              isValid,
+              errors,
+              resetForm,
+              setFieldError,
+            }: FormikProps<FormValues>) => (
+              <div>
+                <div className={styles.inputContainer}>
+                  <div
+                    className={styles.inputComponent}
+                    onClick={() => handleInputFocus(values, setFieldValue)}
+                    onBlur={() =>
+                      handleInputBlur(values, resetForm, setFieldError)
+                    }
+                    aria-hidden="true"
+                  >
+                    <Input
+                      appearance={{ theme: 'minimal' }}
+                      formattingOptions={{
+                        numeral: true,
+                        numeralPositiveOnly: true,
+                        numeralDecimalScale: getTokenDecimalsWithFallback(
+                          sellableToken?.decimals,
+                        ),
+                      }}
+                      label={MSG.amountLabel}
+                      name="amount"
+                      disabled={globalDisable}
+                      elementOnly
                     />
+                    {errors?.amount && (
+                      <div className={styles.fieldError}>
+                        <InputStatus error={errors.amount} />
+                      </div>
+                    )}
+                    {!globalDisable && (
+                      <div className={styles.userBalance}>
+                        <span>
+                          <FormattedMessage
+                            {...MSG.userBalanceLabel}
+                            values={{
+                              amount: (
+                                <Numeral
+                                  value={userPurchaseTokenBalance}
+                                  truncate={2}
+                                  suffix={` ${purchaseToken?.symbol}`}
+                                />
+                              ),
+                            }}
+                          />
+                        </span>
+                        <Button
+                          text={MSG.maxBalanceLabel}
+                          appearance={{ size: 'small', theme: 'blue' }}
+                          onClick={(event) =>
+                            handleSetMaxAmount(event, setFieldValue)
+                          }
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <span
-                className={styles.nativeToken}
-                title={sellableToken?.name || undefined}
-              >
-                {sellableToken?.symbol}
-              </span>
-            </div>
-            <div className={styles.amountsContainer}>
-              <div className={styles.amounts}>
-                <div className={styles.amountsLabel}>
-                  <FormattedMessage {...MSG.priceLabel} />
+                  <span
+                    className={styles.nativeToken}
+                    title={sellableToken?.name || undefined}
+                  >
+                    {sellableToken?.symbol}
+                  </span>
                 </div>
-                <div className={styles.amountsValues}>
-                  <div>{!disabled ? currentSalePrice : 'N/A'}</div>
-                  {
-                    /*
-                     * @NOTE only show the exchange rate if the token is XDAI/ETH
-                     * since otherwise there's not place we can (currently) fetch
-                     * this data
-                     */
-                    purchaseToken?.address === AddressZero && (
-                      <div>
-                        <EthUsd
-                          appearance={{ theme: 'grey', size: 'small' }}
-                          value={
-                            /*
-                             * @NOTE Set value to 0 if amount is only the decimal point
-                             * Just entering the decimal point will pass it through to EthUsd
-                             * and that will try to fetch the balance for, which, obviously, will fail
-                             */
-                            !disabled ? parseFloat(currentSalePrice) : 0
-                          }
-                        />
-                      </div>
-                    )
-                  }
-                </div>
-              </div>
-              <div className={styles.symbols}>
-                {`${purchaseToken?.symbol}/${sellableToken?.symbol}`}
-              </div>
-            </div>
-            <div className={styles.amountsContainer}>
-              <div className={styles.amounts}>
-                <div className={styles.amountsLabel}>
-                  <FormattedMessage {...MSG.costLabel} />
-                </div>
-                <div className={styles.amountsValues}>
-                  {!disabled ? (
-                    <div>
-                      {values.amount
-                        ? (
-                            parseInt(values.amount, 10) *
-                            parseFloat(currentSalePrice)
-                          ).toFixed(2)
-                        : ''}
+                <div className={styles.amountsContainer}>
+                  <div className={styles.amounts}>
+                    <div className={styles.amountsLabel}>
+                      <FormattedMessage {...MSG.priceLabel} />
                     </div>
-                  ) : (
-                    <div>N/A</div>
-                  )}
-                  {
-                    /*
-                     * @NOTE only show the exchange rate if the token is XDAI/ETH
-                     * since otherwise there's not place we can (currently) fetch
-                     * this data
-                     */
-                    purchaseToken?.address === AddressZero && (
-                      <div>
-                        <EthUsd
-                          appearance={{ theme: 'grey', size: 'small' }}
-                          value={
-                            /*
-                             * @NOTE Set value to 0 if amount is only the decimal point
-                             * Just entering the decimal point will pass it through to EthUsd
-                             * and that will try to fetch the balance for, which, obviously, will fail
-                             */
-                            values.amount
-                              ? parseInt(values.amount, 10) *
+                    <div className={styles.amountsValues}>
+                      <div>{!disabled ? currentSalePrice : 'N/A'}</div>
+                      {
+                        /*
+                         * @NOTE only show the exchange rate if the token is XDAI/ETH
+                         * since otherwise there's not place we can (currently) fetch
+                         * this data
+                         */
+                        purchaseToken?.address === AddressZero && (
+                          <div>
+                            <EthUsd
+                              appearance={{ theme: 'grey', size: 'small' }}
+                              value={
+                                /*
+                                 * @NOTE Set value to 0 if amount is only the decimal point
+                                 * Just entering the decimal point will pass it through to EthUsd
+                                 * and that will try to fetch the balance for, which, obviously, will fail
+                                 */
+                                !disabled ? parseFloat(currentSalePrice) : 0
+                              }
+                            />
+                          </div>
+                        )
+                      }
+                    </div>
+                  </div>
+                  <div className={styles.symbols}>
+                    {`${purchaseToken?.symbol}/${sellableToken?.symbol}`}
+                  </div>
+                </div>
+                <div className={styles.amountsContainer}>
+                  <div className={styles.amounts}>
+                    <div className={styles.amountsLabel}>
+                      <FormattedMessage {...MSG.costLabel} />
+                    </div>
+                    <div className={styles.amountsValues}>
+                      {!disabled ? (
+                        <div>
+                          {values.amount
+                            ? (
+                                parseInt(values.amount, 10) *
                                 parseFloat(currentSalePrice)
-                              : '0'
-                          }
-                        />
-                      </div>
-                    )
-                  }
+                              ).toFixed(2)
+                            : ''}
+                        </div>
+                      ) : (
+                        <div>N/A</div>
+                      )}
+                      {
+                        /*
+                         * @NOTE only show the exchange rate if the token is XDAI/ETH
+                         * since otherwise there's not place we can (currently) fetch
+                         * this data
+                         */
+                        purchaseToken?.address === AddressZero && (
+                          <div>
+                            <EthUsd
+                              appearance={{ theme: 'grey', size: 'small' }}
+                              value={
+                                /*
+                                 * @NOTE Set value to 0 if amount is only the decimal point
+                                 * Just entering the decimal point will pass it through to EthUsd
+                                 * and that will try to fetch the balance for, which, obviously, will fail
+                                 */
+                                values.amount
+                                  ? parseInt(values.amount, 10) *
+                                    parseFloat(currentSalePrice)
+                                  : '0'
+                              }
+                            />
+                          </div>
+                        )
+                      }
+                    </div>
+                  </div>
+                  <div
+                    className={styles.symbols}
+                  >{`${purchaseToken?.symbol}`}</div>
+                </div>
+                <div className={styles.controls}>
+                  <Button
+                    {...(isAccountWhitelisted ? { type: 'submit' } : {})}
+                    text={
+                      isAccountWhitelisted ? MSG.buyLabel : MSG.getWhitelisted
+                    }
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    /* Add option to get whitelisted if account is not whitelisted */
+                    onClick={() => handleSubmit()}
+                    loading={isSubmitting}
+                    disabled={
+                      globalDisable ||
+                      !isValid ||
+                      parseFloat(values.amount) <= 0
+                    }
+                  />
                 </div>
               </div>
-              <div className={styles.symbols}>{`${purchaseToken?.symbol}`}</div>
-            </div>
-            <div className={styles.controls}>
-              <Button
-                type="submit"
-                text={MSG.buyLabel}
-                appearance={{ theme: 'primary', size: 'large' }}
-                onClick={() => handleSubmit()}
-                loading={isSubmitting}
-                disabled={
-                  globalDisable || !isValid || parseFloat(values.amount) <= 0
-                }
+            )}
+          </ActionForm>
+        </div>
+      ) : (
+        <>
+          <div className={styles.mainMessage}>
+            <FormattedMessage {...MSG.mainMessage} />
+            <div>
+              <ExternalLink
+                className={styles.link}
+                text={MSG.tellMore}
+                href={TELL_ME_MORE_LINK}
               />
             </div>
           </div>
-        )}
-      </ActionForm>
+          <div className={styles.accountStatus}>
+            {!isAccountWhitelisted ? (
+              <Button
+                appearance={{ size: 'large', theme: 'primary' }}
+                text={MSG.getWhitelisted}
+              />
+            ) : (
+              <div className={styles.statusMessage}>
+                <FormattedMessage {...MSG.accountWhitelisted} />
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
