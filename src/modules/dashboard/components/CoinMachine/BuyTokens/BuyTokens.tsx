@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
+import { AddressZero } from 'ethers/constants';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -10,9 +11,13 @@ import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
 
-import { Colony, useLoggedInUser } from '~data/index';
+import {
+  Colony,
+  useLoggedInUser,
+  useCoinMachineSaleTokensQuery,
+} from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { DEFAULT_NETWORK_TOKEN } from '~constants';
+// import { DEFAULT_NETWORK_TOKEN } from '~constants';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
 import { mapPayload } from '~utils/actions';
@@ -73,15 +78,15 @@ const validationSchema = (userBalance: number) =>
     amount: yup.number().moreThan(0).max(userBalance),
   });
 
-const BuyTokens = ({
-  colony: { nativeTokenAddress, tokens, colonyAddress },
-  disabled,
-}: Props) => {
+const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
   const { username, ethereal, balance } = useLoggedInUser();
 
-  const nativeToken = tokens.find(
-    ({ address }) => address === nativeTokenAddress,
-  );
+  const { data: saleTokensData } = useCoinMachineSaleTokensQuery({
+    variables: { colonyAddress },
+  });
+
+  const sellableToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
+  const purchaseToken = saleTokensData?.coinMachineSaleTokens?.purchaseToken;
 
   const globalDisable = disabled || !username || ethereal;
 
@@ -129,7 +134,7 @@ const BuyTokens = ({
     mapPayload(({ amount }) => ({
       colonyAddress,
       amount,
-      decimals: nativeToken?.decimals,
+      decimals: sellableToken?.decimals,
     })),
     [],
   );
@@ -148,7 +153,7 @@ const BuyTokens = ({
           theme: 'dark',
         }}
         text={MSG.title}
-        textValues={{ tokenSymbol: nativeToken?.symbol }}
+        textValues={{ tokenSymbol: sellableToken?.symbol }}
       />
       <QuestionMarkTooltip
         tooltipText={MSG.helpTooltip}
@@ -193,7 +198,7 @@ const BuyTokens = ({
                     numeral: true,
                     numeralPositiveOnly: true,
                     numeralDecimalScale: getTokenDecimalsWithFallback(
-                      nativeToken?.decimals,
+                      sellableToken?.decimals,
                     ),
                   }}
                   label={MSG.amountLabel}
@@ -214,9 +219,15 @@ const BuyTokens = ({
                         values={{
                           amount: (
                             <Numeral
+                              /*
+                               * @TODO We need to get the balance for any token
+                               * purchase token value is (if the user has any)
+                               *
+                               * We currently only get this value for XDAI/ETH
+                               */
                               value={balance}
                               truncate={2}
-                              suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
+                              suffix={` ${purchaseToken?.symbol}`}
                             />
                           ),
                         }}
@@ -234,9 +245,9 @@ const BuyTokens = ({
               </div>
               <span
                 className={styles.nativeToken}
-                title={nativeToken?.name || undefined}
+                title={sellableToken?.name || undefined}
               >
-                {nativeToken?.symbol}
+                {sellableToken?.symbol}
               </span>
             </div>
             <div className={styles.amountsContainer}>
@@ -269,7 +280,7 @@ const BuyTokens = ({
                 </div>
               </div>
               <div className={styles.symbols}>
-                {`${DEFAULT_NETWORK_TOKEN.symbol}/${nativeToken?.symbol}`}
+                {`${purchaseToken?.symbol}/${sellableToken?.symbol}`}
               </div>
             </div>
             <div className={styles.amountsContainer}>
@@ -290,30 +301,30 @@ const BuyTokens = ({
                   ) : (
                     <div>N/A</div>
                   )}
-                  <div>
-                    <EthUsd
-                      appearance={{ theme: 'grey', size: 'small' }}
-                      value={
-                        /*
-                         * @NOTE Set value to 0 if amount is only the decimal point
-                         * Just entering the decimal point will pass it through to EthUsd
-                         * and that will try to fetch the balance for, which, obviously, will fail
-                         *
-                         * values.amount && values.amount !== '.' ? values.amount : '0'
-                         *
-                         * @TODO Get actual sale price
-                         */
-                        values.amount
-                          ? parseInt(values.amount, 10) * 0.0001
-                          : '0'
-                      }
-                    />
-                  </div>
+                  {purchaseToken?.address === AddressZero && (
+                    <div>
+                      <EthUsd
+                        appearance={{ theme: 'grey', size: 'small' }}
+                        value={
+                          /*
+                           * @NOTE Set value to 0 if amount is only the decimal point
+                           * Just entering the decimal point will pass it through to EthUsd
+                           * and that will try to fetch the balance for, which, obviously, will fail
+                           *
+                           * values.amount && values.amount !== '.' ? values.amount : '0'
+                           *
+                           * @TODO Get actual sale price
+                           */
+                          values.amount
+                            ? parseInt(values.amount, 10) * 0.0001
+                            : '0'
+                        }
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className={styles.symbols}>
-                {`${DEFAULT_NETWORK_TOKEN.symbol}`}
-              </div>
+              <div className={styles.symbols}>{`${purchaseToken?.symbol}`}</div>
             </div>
             <div className={styles.controls}>
               <Button
