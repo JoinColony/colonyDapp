@@ -30,7 +30,7 @@ type Props = {
   tokenPriceStatus?: TokenPriceStatuses;
 };
 
-const displayName = 'dashboard.RemainingDisplayWidget';
+const displayName = 'dashboard.CoinMachine.RemainingDisplayWidget';
 
 const MSG = defineMessages({
   timeRemainingTitle: {
