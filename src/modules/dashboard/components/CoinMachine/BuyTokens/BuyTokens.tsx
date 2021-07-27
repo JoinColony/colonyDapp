@@ -260,23 +260,32 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
                    * @TODO Get actual sale price
                    */}
                   <div>{!disabled ? 0.0001 : 'N/A'}</div>
-                  <div>
-                    <EthUsd
-                      appearance={{ theme: 'grey', size: 'small' }}
-                      value={
-                        /*
-                         * @NOTE Set value to 0 if amount is only the decimal point
-                         * Just entering the decimal point will pass it through to EthUsd
-                         * and that will try to fetch the balance for, which, obviously, will fail
-                         *
-                         * values.amount && values.amount !== '.' ? values.amount : '0'
-                         *
-                         * @TODO Get actual sale price
-                         */
-                        !disabled ? 0.0001 : 0
-                      }
-                    />
-                  </div>
+                  {
+                    /*
+                     * @NOTE only show the exchange rate if the token is XDAI/ETH
+                     * since otherwise there's not place we can (currently) fetch
+                     * this data
+                     */
+                    purchaseToken?.address === AddressZero && (
+                      <div>
+                        <EthUsd
+                          appearance={{ theme: 'grey', size: 'small' }}
+                          value={
+                            /*
+                             * @NOTE Set value to 0 if amount is only the decimal point
+                             * Just entering the decimal point will pass it through to EthUsd
+                             * and that will try to fetch the balance for, which, obviously, will fail
+                             *
+                             * values.amount && values.amount !== '.' ? values.amount : '0'
+                             *
+                             * @TODO Get actual sale price
+                             */
+                            !disabled ? 0.0001 : 0
+                          }
+                        />
+                      </div>
+                    )
+                  }
                 </div>
               </div>
               <div className={styles.symbols}>
@@ -301,27 +310,34 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
                   ) : (
                     <div>N/A</div>
                   )}
-                  {purchaseToken?.address === AddressZero && (
-                    <div>
-                      <EthUsd
-                        appearance={{ theme: 'grey', size: 'small' }}
-                        value={
-                          /*
-                           * @NOTE Set value to 0 if amount is only the decimal point
-                           * Just entering the decimal point will pass it through to EthUsd
-                           * and that will try to fetch the balance for, which, obviously, will fail
-                           *
-                           * values.amount && values.amount !== '.' ? values.amount : '0'
-                           *
-                           * @TODO Get actual sale price
-                           */
-                          values.amount
-                            ? parseInt(values.amount, 10) * 0.0001
-                            : '0'
-                        }
-                      />
-                    </div>
-                  )}
+                  {
+                    /*
+                     * @NOTE only show the exchange rate if the token is XDAI/ETH
+                     * since otherwise there's not place we can (currently) fetch
+                     * this data
+                     */
+                    purchaseToken?.address === AddressZero && (
+                      <div>
+                        <EthUsd
+                          appearance={{ theme: 'grey', size: 'small' }}
+                          value={
+                            /*
+                             * @NOTE Set value to 0 if amount is only the decimal point
+                             * Just entering the decimal point will pass it through to EthUsd
+                             * and that will try to fetch the balance for, which, obviously, will fail
+                             *
+                             * values.amount && values.amount !== '.' ? values.amount : '0'
+                             *
+                             * @TODO Get actual sale price
+                             */
+                            values.amount
+                              ? parseInt(values.amount, 10) * 0.0001
+                              : '0'
+                          }
+                        />
+                      </div>
+                    )
+                  }
                 </div>
               </div>
               <div className={styles.symbols}>{`${purchaseToken?.symbol}`}</div>
