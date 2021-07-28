@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
-import { formatEther } from 'ethers/utils';
+import { formatEther, bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -17,6 +17,7 @@ import {
   useLoggedInUser,
   useCoinMachineSaleTokensQuery,
   useCoinMachineCurrentPeriodPriceQuery,
+  useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
   useUserTokensQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -96,6 +97,13 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
     fetchPolicy: 'network-only',
   });
 
+  const {
+    data: maxUserPurchaseData,
+  } = useCoinMachineCurrentPeriodMaxUserPurchaseQuery({
+    variables: { colonyAddress, userAddress: walletAddress },
+    fetchPolicy: 'network-only',
+  });
+
   const sellableToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
   const purchaseToken = saleTokensData?.coinMachineSaleTokens?.purchaseToken;
 
@@ -130,29 +138,40 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
     },
     [globalDisable],
   );
-  /*
-   * @TODO This should be either
-   * - the max tokens available in the sale (if you have enough ETH/XDAI to cover them)
-   * - the max ETH/XDAI you have in the wallet (if there are more tokens in the sale than you can cover)
-   */
+
+  const maxUserPurchase = useMemo(() => {
+    if (
+      maxUserPurchaseData?.coinMachineCurrentPeriodMaxUserPurchase &&
+      salePriceData?.coinMachineCurrentPeriodPrice &&
+      userPurchaseToken?.balance
+    ) {
+      const userTokenBalance = bigNumberify(userPurchaseToken.balance);
+      const maxPurchase =
+        maxUserPurchaseData.coinMachineCurrentPeriodMaxUserPurchase;
+      const currentPrice = salePriceData.coinMachineCurrentPeriodPrice;
+      const maxPurchaseCost = bigNumberify(maxPurchase).mul(currentPrice);
+      if (maxPurchaseCost.gt(userTokenBalance)) {
+        return userTokenBalance;
+      }
+      return maxPurchaseCost;
+    }
+    return bigNumberify(0);
+  }, [maxUserPurchaseData, salePriceData, userPurchaseToken]);
+
   const handleSetMaxAmount = useCallback(
     (event, setFieldValue) => {
       if (!globalDisable) {
         event.preventDefault();
         event.stopPropagation();
-        setFieldValue(
-          'amount',
-          `${parseInt(
-            userPurchaseTokenBalance,
-            10,
-          )}.${userPurchaseTokenBalance.substr(
-            userPurchaseTokenBalance.indexOf('.') + 1,
-            2,
-          )}`,
-        );
+        /*
+         * @NOTE This will set the max amount a user can buy
+         * Either the max tokens available this period, or the user's total purchase
+         * tokens balance, whichever is smaller
+         */
+        setFieldValue('amount', formatEther(maxUserPurchase));
       }
     },
-    [globalDisable, userPurchaseTokenBalance],
+    [globalDisable, maxUserPurchase],
   );
   const handleFormReset = useCallback((resetForm) => resetForm(), []);
 
@@ -194,7 +213,7 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
           amount: '0',
         }}
         validationSchema={validationSchema(
-          parseFloat(userPurchaseTokenBalance),
+          parseFloat(formatEther(maxUserPurchase)),
         )}
         submit={ActionTypes.COIN_MACHINE_BUY_TOKENS}
         error={ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR}
