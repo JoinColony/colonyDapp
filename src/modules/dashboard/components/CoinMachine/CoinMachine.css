@@ -46,12 +46,14 @@
 
 .timeRemaining {
   composes: container;
+  padding: 0;
   grid-column: remaining / comments;
   grid-row: time / tokens;
 }
 
 .tokensRemaining {
   composes: container;
+  padding: 0;
   grid-column: remaining / comments;
   grid-row: tokens / sales;
 }
