@@ -15,5 +15,6 @@ export default gql`
 
   extend type Query {
     coinMachineSaleTokens(colonyAddress: String!): SaleTokens!
+    coinMachineCurrentPeriodPrice(colonyAddress: String!): String!
   }
 `;

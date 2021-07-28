@@ -264,8 +264,12 @@ export type MutationUnsubscribeFromColonyArgs = {
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
 <<<<<<< HEAD
+<<<<<<< HEAD
   block?: Maybe<SubgraphBlock>;
 =======
+=======
+  coinMachineCurrentPeriodPrice: Scalars['String'];
+>>>>>>> cb1dafbf3... Add: `coinMachineCurrentPeriodPrice` client resolver
   coinMachineSaleTokens: SaleTokens;
 >>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
   colonies: Array<SubgraphColony>;
@@ -334,9 +338,17 @@ export type QueryActionsThatNeedAttentionArgs = {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export type QueryBlockArgs = {
   id: Scalars['String'];
 =======
+=======
+export type QueryCoinMachineCurrentPeriodPriceArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+
+>>>>>>> cb1dafbf3... Add: `coinMachineCurrentPeriodPrice` client resolver
 export type QueryCoinMachineSaleTokensArgs = {
   colonyAddress: Scalars['String'];
 >>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
