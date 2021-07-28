@@ -396,7 +396,7 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup.string().required(),
         title: MSG.coinMachineUserLimitFractionTitle,
         description: MSG.coinMachineUserLimitFractionDescription,
-        defaultValue: `5000000000000000000`,
+        defaultValue: `1000000000000000000`,
         type: ExtensionParamType.Input,
       },
       {
