@@ -269,6 +269,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
+  coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
   coinMachineSaleTokens: SaleTokens;
   colonies: Array<SubgraphColony>;
@@ -326,6 +327,12 @@ export type Query = {
 export type QueryActionsThatNeedAttentionArgs = {
   colonyAddress: Scalars['String'];
   walletAddress: Scalars['String'];
+};
+
+
+export type QueryCoinMachineCurrentPeriodMaxUserPurchaseArgs = {
+  userAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1963,6 +1970,14 @@ export type CoinMachineCurrentPeriodPriceQueryVariables = Exact<{
 
 
 export type CoinMachineCurrentPeriodPriceQuery = Pick<Query, 'coinMachineCurrentPeriodPrice'>;
+
+export type CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables = Exact<{
+  userAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type CoinMachineCurrentPeriodMaxUserPurchaseQuery = Pick<Query, 'coinMachineCurrentPeriodMaxUserPurchase'>;
 
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
@@ -5148,6 +5163,38 @@ export function useCoinMachineCurrentPeriodPriceLazyQuery(baseOptions?: Apollo.L
 export type CoinMachineCurrentPeriodPriceQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceQuery>;
 export type CoinMachineCurrentPeriodPriceLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceLazyQuery>;
 export type CoinMachineCurrentPeriodPriceQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>;
+export const CoinMachineCurrentPeriodMaxUserPurchaseDocument = gql`
+    query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
+  coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useCoinMachineCurrentPeriodMaxUserPurchaseQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineCurrentPeriodMaxUserPurchaseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineCurrentPeriodMaxUserPurchaseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineCurrentPeriodMaxUserPurchaseQuery({
+ *   variables: {
+ *      userAddress: // value for 'userAddress'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useCoinMachineCurrentPeriodMaxUserPurchaseQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>) {
+        return Apollo.useQuery<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>(CoinMachineCurrentPeriodMaxUserPurchaseDocument, baseOptions);
+      }
+export function useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>(CoinMachineCurrentPeriodMaxUserPurchaseDocument, baseOptions);
+        }
+export type CoinMachineCurrentPeriodMaxUserPurchaseQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseQuery>;
+export type CoinMachineCurrentPeriodMaxUserPurchaseLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery>;
+export type CoinMachineCurrentPeriodMaxUserPurchaseQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>;
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {

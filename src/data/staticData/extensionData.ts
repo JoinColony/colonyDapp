@@ -302,14 +302,14 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup.number().required(),
         title: MSG.coinMachineMaxPerPeriodTitle,
         description: MSG.coinMachineMaxPerPeriodDescription,
-        defaultValue: 10,
+        defaultValue: `10000000000000000000`,
       },
       {
         paramName: 'userLimitFraction',
         validation: yup.string().required(),
         title: MSG.coinMachineUserLimitFractionTitle,
         description: MSG.coinMachineUserLimitFractionDescription,
-        defaultValue: `1000000000000000000`,
+        defaultValue: `5000000000000000000`,
       },
       {
         paramName: 'startingPrice',
