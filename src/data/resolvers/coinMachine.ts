@@ -43,5 +43,19 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
+    async coinMachineCurrentPeriodPrice(_, { colonyAddress }) {
+      try {
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+
+        const currentPrice = await coinMachineClient.getCurrentPrice();
+        return currentPrice.toString();
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
   },
 });
