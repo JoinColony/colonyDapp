@@ -1,7 +1,9 @@
 .main {
   display: flex;
   flex-direction: column;
+  padding: 15px;
   height: 100%;
+  border-radius: var(--radius-large);
 }
 
 .themeWhite {
