@@ -6,6 +6,9 @@ import moveDecimal from 'move-decimal-point';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { createAddress } from '~utils/web3';
+import { ContextModule, TEMP_getContext } from '~context/index';
+import { getToken } from '~data/resolvers/token';
 import {
   createTransaction,
   createTransactionChannels,
@@ -14,7 +17,7 @@ import {
 import { transactionReady } from '../../../core/actionCreators';
 
 function* buyTokens({
-  payload: { colonyAddress, amount, decimals },
+  payload: { colonyAddress, amount },
   meta: { id: metaId },
   meta,
 }: Action<ActionTypes.COIN_MACHINE_BUY_TOKENS>) {
@@ -23,6 +26,38 @@ function* buyTokens({
     if (!amount) {
       throw new Error('Amount is needed to buy token in the sale');
     }
+
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const coinMachineClient = yield colonyManager.getClient(
+      ClientType.CoinMachineClient,
+      colonyAddress,
+    );
+
+    const sellableTokenAddress = createAddress(
+      yield coinMachineClient.getToken(),
+    );
+    const purchaseTokenAddress = createAddress(
+      yield coinMachineClient.getPurchaseToken(),
+    );
+
+    const sellableToken = yield getToken(
+      { colonyManager, client: apolloClient },
+      sellableTokenAddress,
+    );
+    const purchaseToken = yield getToken(
+      { colonyManager, client: apolloClient },
+      purchaseTokenAddress,
+    );
+
+    const currentPrice = yield coinMachineClient.getCurrentPrice();
+
+    const purchaseAmount = bigNumberify(
+      moveDecimal(amount, getTokenDecimalsWithFallback(sellableToken.decimals)),
+    );
+    const purchaseCost = purchaseAmount
+      .mul(currentPrice)
+      .div(bigNumberify(10).pow(purchaseToken.decimals));
 
     txChannel = yield call(getTxChannel, metaId);
 
@@ -40,11 +75,10 @@ function* buyTokens({
       context: ClientType.CoinMachineClient,
       methodName: 'buyTokens',
       identifier: colonyAddress,
-      params: [
-        bigNumberify(
-          moveDecimal(amount, getTokenDecimalsWithFallback(decimals)),
-        ),
-      ],
+      params: [purchaseAmount],
+      options: {
+        value: purchaseCost,
+      },
       group: {
         key: batchKey,
         id: metaId,
