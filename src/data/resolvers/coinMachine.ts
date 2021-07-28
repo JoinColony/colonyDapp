@@ -57,5 +57,24 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
+    async coinMachineCurrentPeriodMaxUserPurchase(
+      _,
+      { userAddress, colonyAddress },
+    ) {
+      try {
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+
+        const maxUserPurchase = await coinMachineClient.getMaxPurchase(
+          userAddress,
+        );
+        return maxUserPurchase.toString();
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
   },
 });
