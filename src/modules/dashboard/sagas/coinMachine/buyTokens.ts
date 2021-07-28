@@ -1,6 +1,7 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
+import { AddressZero } from 'ethers/constants';
 import moveDecimal from 'move-decimal-point';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -9,6 +10,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { createAddress } from '~utils/web3';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { getToken } from '~data/resolvers/token';
+import { TxConfig } from '~types/index';
 import {
   createTransaction,
   createTransactionChannels,
@@ -64,14 +66,31 @@ function* buyTokens({
     // setup batch ids and channels
     const batchKey = 'buyTokens';
 
-    const { buyTokensTransaction } = yield createTransactionChannels(metaId, [
-      'buyTokensTransaction',
-    ]);
+    const {
+      approveTokensTransaction,
+      buyTokensTransaction,
+    } = yield createTransactionChannels(metaId, ['buyTokensTransaction']);
 
     /*
-     * @TODO Add actual buy tokens contract call
+     * If the token is non-ETH/XDAI, then we need to approve the amount we use
+     * to purchase with
      */
-    yield fork(createTransaction, buyTokensTransaction.id, {
+    if (purchaseTokenAddress !== AddressZero) {
+      yield fork(createTransaction, approveTokensTransaction.id, {
+        context: ClientType.TokenClient,
+        methodName: 'approve',
+        identifier: colonyAddress,
+        params: [coinMachineClient.address, purchaseCost],
+        group: {
+          key: batchKey,
+          id: metaId,
+          index: 0,
+        },
+        ready: false,
+      });
+    }
+
+    const buyTokensTransactionConfig: TxConfig = {
       context: ClientType.CoinMachineClient,
       methodName: 'buyTokens',
       identifier: colonyAddress,
@@ -85,12 +104,53 @@ function* buyTokens({
         index: 0,
       },
       ready: false,
-    });
+    };
+    /*
+     * If the token is non-ETH/XDAI, then we need to approve the amount we use
+     * to purchase with
+     */
+    if (
+      purchaseTokenAddress !== AddressZero &&
+      buyTokensTransactionConfig?.group
+    ) {
+      delete buyTokensTransactionConfig.options;
+      buyTokensTransactionConfig.group.index = 1;
+    }
+
+    yield fork(
+      createTransaction,
+      buyTokensTransaction.id,
+      buyTokensTransactionConfig,
+    );
+
+    /*
+     * If the token is non-ETH/XDAI, then we need to approve the amount we use
+     * to purchase with
+     */
+    if (purchaseTokenAddress !== AddressZero) {
+      yield takeFrom(
+        approveTokensTransaction.channel,
+        ActionTypes.TRANSACTION_CREATED,
+      );
+    }
 
     yield takeFrom(
       buyTokensTransaction.channel,
       ActionTypes.TRANSACTION_CREATED,
     );
+
+    /*
+     * If the token is non-ETH/XDAI, then we need to approve the amount we use
+     * to purchase with
+     */
+    if (purchaseTokenAddress !== AddressZero) {
+      yield put(transactionReady(approveTokensTransaction.id));
+
+      yield takeFrom(
+        approveTokensTransaction.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
 
     yield put(transactionReady(buyTokensTransaction.id));
 
