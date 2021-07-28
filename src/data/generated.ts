@@ -3,6 +3,7 @@ import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 
+<<<<<<< HEAD
       export interface IntrospectionResultData {
         __schema: {
           types: {
@@ -6895,3 +6896,5 @@ export const CoinMachineSaleTokensDocument = gql`
  *   },
  * });
  */
+=======
+>>>>>>> 18593b265... Add: `coinMachineCurrentPeriodMaxUserPurchase` resolver
