@@ -11,6 +11,7 @@ import { ActionForm, Input, InputStatus } from '~core/Fields';
 import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
@@ -84,21 +85,30 @@ const validationSchema = (userBalance: number) =>
 const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
 
-  const { data: saleTokensData } = useCoinMachineSaleTokensQuery({
+  const {
+    data: saleTokensData,
+    loading: loadingSaleTokens,
+  } = useCoinMachineSaleTokensQuery({
     variables: { colonyAddress },
   });
 
-  const { data: useTokenData } = useUserTokensQuery({
-    variables: { address: walletAddress },
-  });
+  const { data: userTokenData, loading: loadingUserToken } = useUserTokensQuery(
+    {
+      variables: { address: walletAddress },
+    },
+  );
 
-  const { data: salePriceData } = useCoinMachineCurrentPeriodPriceQuery({
+  const {
+    data: salePriceData,
+    loading: loadingSalePrice,
+  } = useCoinMachineCurrentPeriodPriceQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
   });
 
   const {
     data: maxUserPurchaseData,
+    loading: loadingMaxUserPurchase,
   } = useCoinMachineCurrentPeriodMaxUserPurchaseQuery({
     variables: { colonyAddress, userAddress: walletAddress },
     fetchPolicy: 'network-only',
@@ -107,7 +117,7 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
   const sellableToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
   const purchaseToken = saleTokensData?.coinMachineSaleTokens?.purchaseToken;
 
-  const userPurchaseToken = useTokenData?.user?.tokens.find(
+  const userPurchaseToken = userTokenData?.user?.tokens.find(
     ({ address: userTokenAddress }) =>
       userTokenAddress === purchaseToken?.address,
   );
@@ -183,6 +193,19 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
     })),
     [],
   );
+
+  if (
+    loadingSaleTokens &&
+    loadingUserToken &&
+    loadingSalePrice &&
+    loadingMaxUserPurchase
+  ) {
+    return (
+      <div className={styles.loader}>
+        <SpinnerLoader appearance={{ size: 'huge', theme: 'primary' }} />
+      </div>
+    );
+  }
 
   return (
     <div
