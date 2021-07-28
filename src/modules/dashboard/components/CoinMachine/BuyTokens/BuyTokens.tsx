@@ -16,6 +16,7 @@ import {
   Colony,
   useLoggedInUser,
   useCoinMachineSaleTokensQuery,
+  useCoinMachineCurrentPeriodPriceQuery,
   useUserTokensQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -90,6 +91,11 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
     variables: { address: walletAddress },
   });
 
+  const { data: salePriceData } = useCoinMachineCurrentPeriodPriceQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+  });
+
   const sellableToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
   const purchaseToken = saleTokensData?.coinMachineSaleTokens?.purchaseToken;
 
@@ -99,6 +105,10 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
   );
   const userPurchaseTokenBalance = formatEther(
     userPurchaseToken?.balance || '0',
+  );
+
+  const currentSalePrice = formatEther(
+    salePriceData?.coinMachineCurrentPeriodPrice || '0',
   );
 
   const globalDisable = disabled || !username || ethereal;
@@ -268,10 +278,7 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
                   <FormattedMessage {...MSG.priceLabel} />
                 </div>
                 <div className={styles.amountsValues}>
-                  {/*
-                   * @TODO Get actual sale price
-                   */}
-                  <div>{!disabled ? 0.0001 : 'N/A'}</div>
+                  <div>{!disabled ? currentSalePrice : 'N/A'}</div>
                   {
                     /*
                      * @NOTE only show the exchange rate if the token is XDAI/ETH
@@ -287,12 +294,8 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
                              * @NOTE Set value to 0 if amount is only the decimal point
                              * Just entering the decimal point will pass it through to EthUsd
                              * and that will try to fetch the balance for, which, obviously, will fail
-                             *
-                             * values.amount && values.amount !== '.' ? values.amount : '0'
-                             *
-                             * @TODO Get actual sale price
                              */
-                            !disabled ? 0.0001 : 0
+                            !disabled ? parseFloat(currentSalePrice) : 0
                           }
                         />
                       </div>
@@ -310,13 +313,13 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
                   <FormattedMessage {...MSG.constLabel} />
                 </div>
                 <div className={styles.amountsValues}>
-                  {/*
-                   * @TODO Get actual sale price
-                   */}
                   {!disabled ? (
                     <div>
                       {values.amount
-                        ? (parseInt(values.amount, 10) * 0.0001).toFixed(4)
+                        ? (
+                            parseInt(values.amount, 10) *
+                            parseFloat(currentSalePrice)
+                          ).toFixed(4)
                         : ''}
                     </div>
                   ) : (
@@ -337,13 +340,10 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
                              * @NOTE Set value to 0 if amount is only the decimal point
                              * Just entering the decimal point will pass it through to EthUsd
                              * and that will try to fetch the balance for, which, obviously, will fail
-                             *
-                             * values.amount && values.amount !== '.' ? values.amount : '0'
-                             *
-                             * @TODO Get actual sale price
                              */
                             values.amount
-                              ? parseInt(values.amount, 10) * 0.0001
+                              ? parseInt(values.amount, 10) *
+                                parseFloat(currentSalePrice)
                               : '0'
                           }
                         />
