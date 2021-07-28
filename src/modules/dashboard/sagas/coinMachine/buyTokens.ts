@@ -69,7 +69,10 @@ function* buyTokens({
     const {
       approveTokensTransaction,
       buyTokensTransaction,
-    } = yield createTransactionChannels(metaId, ['buyTokensTransaction']);
+    } = yield createTransactionChannels(metaId, [
+      'buyTokensTransaction',
+      'approveTokensTransaction',
+    ]);
 
     /*
      * If the token is non-ETH/XDAI, then we need to approve the amount we use
@@ -79,7 +82,7 @@ function* buyTokens({
       yield fork(createTransaction, approveTokensTransaction.id, {
         context: ClientType.TokenClient,
         methodName: 'approve',
-        identifier: colonyAddress,
+        identifier: purchaseTokenAddress,
         params: [coinMachineClient.address, purchaseCost],
         group: {
           key: batchKey,
