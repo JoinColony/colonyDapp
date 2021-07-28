@@ -53,8 +53,8 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.BuyTokens.priceLabel',
     defaultMessage: 'Price',
   },
-  constLabel: {
-    id: 'dashboard.CoinMachine.BuyTokens.priceLabel',
+  costLabel: {
+    id: 'dashboard.CoinMachine.BuyTokens.costLabel',
     defaultMessage: 'Cost',
   },
   buyLabel: {
@@ -189,7 +189,6 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
     mapPayload(({ amount }) => ({
       colonyAddress,
       amount,
-      decimals: sellableToken?.decimals,
     })),
     [],
   );
@@ -352,7 +351,7 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
             <div className={styles.amountsContainer}>
               <div className={styles.amounts}>
                 <div className={styles.amountsLabel}>
-                  <FormattedMessage {...MSG.constLabel} />
+                  <FormattedMessage {...MSG.costLabel} />
                 </div>
                 <div className={styles.amountsValues}>
                   {!disabled ? (
@@ -361,7 +360,7 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
                         ? (
                             parseInt(values.amount, 10) *
                             parseFloat(currentSalePrice)
-                          ).toFixed(4)
+                          ).toFixed(2)
                         : ''}
                     </div>
                   ) : (
