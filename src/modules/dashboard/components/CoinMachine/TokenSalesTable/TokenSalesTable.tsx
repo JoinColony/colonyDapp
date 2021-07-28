@@ -79,14 +79,19 @@ const TokenSalesTable = ({ tableData = [] }: Props) => {
       <div className={styles.tableContainer}>
         <Table className={styles.table} appearance={{ separators: 'none' }}>
           <TableHeader className={styles.tableHeader}>
-            {TABLE_HEADERS.map((header) => (
-              <TableHeaderCell
-                key={header.text.id}
-                className={styles.tableHeaderCell}
-              >
-                <FormattedMessage {...header.text} values={header.textValues} />
-              </TableHeaderCell>
-            ))}
+            <TableRow>
+              {TABLE_HEADERS.map((header) => (
+                <TableHeaderCell
+                  key={header.text.id}
+                  className={styles.tableHeaderCell}
+                >
+                  <FormattedMessage
+                    {...header.text}
+                    values={header.textValues}
+                  />
+                </TableHeaderCell>
+              ))}
+            </TableRow>
           </TableHeader>
           <TableBody>
             {/* @TODO: Wire up actual data structure from where these values will come from */}
