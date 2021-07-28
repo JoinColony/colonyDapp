@@ -388,7 +388,7 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup.number().required(),
         title: MSG.coinMachineMaxPerPeriodTitle,
         description: MSG.coinMachineMaxPerPeriodDescription,
-        defaultValue: `10000000000000000000`,
+        defaultValue: `100000000000000000000`,
         type: ExtensionParamType.Input,
       },
       {
