@@ -404,7 +404,7 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup.number().required(),
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
-        defaultValue: 10,
+        defaultValue: `10000000000000000`,
         type: ExtensionParamType.Input,
       },
       {
