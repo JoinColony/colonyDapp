@@ -18,3 +18,7 @@ query CoinMachineSaleTokens($colonyAddress: String!) {
     }
   }
 }
+
+query CoinMachineCurrentPeriodPrice($colonyAddress: String!) {
+  coinMachineCurrentPeriodPrice(colonyAddress: $colonyAddress) @client
+}
