@@ -6,7 +6,7 @@
 
 .themeWhite {
   composes: main;
-  background-color: var(--colony-white);
+  background-color: white;
 }
 
 .themeDanger {
