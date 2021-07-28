@@ -33,13 +33,14 @@ export default function* estimateGasCost({
       identifier,
       params,
       gasLimit,
+      options,
     }: TransactionRecordProps = yield selectAsJS(oneTransaction, id);
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
     const client = yield colonyManager.getClient(context, identifier);
 
     // Estimate the gas limit with the method.
-    const estimatedGas = yield client.estimate[methodName](...params);
+    const estimatedGas = yield client.estimate[methodName](...params, options);
 
     const suggestedGasLimit = estimatedGas
       .div(SAFE_GAS_LIMIT_MULTIPLIER)
