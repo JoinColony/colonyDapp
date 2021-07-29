@@ -471,7 +471,7 @@ const DefaultMotion = ({
           />
 
           {userHasProfile && (
-            <div ref={bottomElementRef}>
+            <div ref={bottomElementRef} className={styles.commentBox}>
               <CommentInput
                 transactionHash={transactionHash}
                 colonyAddress={colony.colonyAddress}
