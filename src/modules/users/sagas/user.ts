@@ -232,7 +232,7 @@ function* userDepositToken({
     yield createGroupTransaction(approve, {
       context: ClientType.TokenClient,
       methodName: 'approve',
-      identifier: colonyAddress,
+      identifier: tokenAddress,
       params: [tokenLockingClient.address, new BigNumber(amount)],
       ready: false,
     });
