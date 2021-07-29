@@ -5,6 +5,7 @@
   height: 100%;
   border-radius: var(--radius-large);
   background-color: white;
+  box-shadow: var(--box-shadow-medium);
 }
 
 .messages {

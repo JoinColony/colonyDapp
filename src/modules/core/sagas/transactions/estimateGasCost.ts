@@ -1,5 +1,6 @@
 import { call, put } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
+import { ClientType, ContractClient } from '@colony/colony-js';
 
 import { ActionTypes, Action } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -33,13 +34,26 @@ export default function* estimateGasCost({
       identifier,
       params,
       gasLimit,
+      options,
     }: TransactionRecordProps = yield selectAsJS(oneTransaction, id);
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
-    const client = yield colonyManager.getClient(context, identifier);
+    let contextClient: ContractClient;
+    if (context === ClientType.TokenClient) {
+      contextClient = yield colonyManager.getTokenClient(identifier as string);
+    } else {
+      contextClient = yield colonyManager.getClient(context, identifier);
+    }
+
+    if (!contextClient) {
+      throw new Error('Context client failed to instantiate');
+    }
 
     // Estimate the gas limit with the method.
-    const estimatedGas = yield client.estimate[methodName](...params);
+    const estimatedGas = yield contextClient.estimate[methodName](
+      ...params,
+      options,
+    );
 
     const suggestedGasLimit = estimatedGas
       .div(SAFE_GAS_LIMIT_MULTIPLIER)

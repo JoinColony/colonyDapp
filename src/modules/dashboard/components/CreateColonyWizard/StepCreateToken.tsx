@@ -15,10 +15,6 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepCreateToken.heading',
     defaultMessage: 'Create new token for {colony}',
   },
-  learnMoreLink: {
-    id: 'dashboard.CreateColonyWizard.StepCreateToken.learnMoreLink',
-    defaultMessage: 'Learn More',
-  },
   nextButton: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.confirmButton',
     defaultMessage: 'Continue',

@@ -1,3 +1,4 @@
+import { CoinMachineActionTypes } from './coinMachine';
 import { ColonyActionTypes } from './colony';
 import { ColonyActionsActionTypes } from './colonyActions';
 import { ConnectionActionTypes } from './connection';
@@ -94,6 +95,7 @@ export interface ErrorActionType<T extends string, M>
  * This is the type that contains ALL of our actions in the app.
  */
 export type AllActions =
+  | CoinMachineActionTypes
   | ColonyActionTypes
   | ColonyActionsActionTypes
   | ConnectionActionTypes

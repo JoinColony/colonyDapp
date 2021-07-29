@@ -7,10 +7,15 @@ import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 
-import { useColonyExtensionsQuery, Colony } from '~data/index';
+import {
+  useColonyExtensionsQuery,
+  useCoinMachineSaleTokensQuery,
+  Colony,
+} from '~data/index';
 
 import Chat from './Chat';
 import SaleStateWidget, { SaleState } from './SaleStateWidget';
+import BuyTokens from './BuyTokens';
 
 import styles from './CoinMachine.css';
 
@@ -27,10 +32,6 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.buyTokens',
     defaultMessage: 'Buy {symbol}',
   },
-  learnMore: {
-    id: 'dashboard.CoinMachine.learnMore',
-    defaultMessage: 'Learn More',
-  },
 });
 
 type Props = {
@@ -42,16 +43,27 @@ const displayName = 'dashboard.CoinMachine';
 const LEARN_MORE_LINK = '';
 
 const CoinMachine = ({
-  colony: { colonyAddress, colonyName, nativeTokenAddress, tokens },
+  colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
 
-  const [saleStarted] = useState<boolean>(true);
+  const {
+    data: saleTokensData,
+    loading: saleTokensLoading,
+  } = useCoinMachineSaleTokensQuery({
+    variables: { colonyAddress },
+  });
 
-  if (loading || !data?.processedColony?.installedExtensions) {
+  const [saleStarted] = useState<boolean>(false);
+
+  if (
+    loading ||
+    saleTokensLoading ||
+    !data?.processedColony?.installedExtensions
+  ) {
     return (
       <div className={styles.loadingSpinner}>
         <SpinnerLoader
@@ -80,20 +92,18 @@ const CoinMachine = ({
     return <Redirect to={`/colony/${colonyName}`} />;
   }
 
-  const nativeToken = tokens.find(
-    ({ address }) => address === nativeTokenAddress,
-  );
+  const saleToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
 
   const breadCrumbs: Crumb[] = [
     MSG.title,
     <div>
       <FormattedMessage
         {...MSG.buyTokens}
-        values={{ symbol: nativeToken?.symbol }}
+        values={{ symbol: saleToken?.symbol }}
       />
       <ExternalLink
         className={styles.learnMore}
-        text={MSG.learnMore}
+        text={{ id: 'text.learnMore' }}
         href={LEARN_MORE_LINK}
       />
     </div>,
@@ -110,14 +120,23 @@ const CoinMachine = ({
               price="1234234340000000"
               amount="123423434000000000000"
               timeLeftToNextSale={864000}
-              nativeToken={{ symbol: 'CLNY', decimals: 18, name: 'CLNY' }}
-              transactionToken={{ symbol: 'ETH', decimals: 18, name: 'ETH' }}
+              sellableToken={saleToken}
+              purchaseToken={
+                saleTokensData?.coinMachineSaleTokens?.purchaseToken
+              }
             />
           </div>
         )) || (
           <>
             <div className={styles.buy}>
-              <div>Buy Tokens</div>
+              <BuyTokens
+                colony={colony}
+                /*
+                 * @TODO Determine if the sale is currently ongoing
+                 * And only disable it if it insn't
+                 */
+                disabled={false}
+              />
             </div>
             <div className={styles.timeRemaining}>
               <div>Time Remaining</div>

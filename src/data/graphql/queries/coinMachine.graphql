@@ -1,0 +1,28 @@
+# Coin Machine Extension
+#
+#
+
+query CoinMachineSaleTokens($colonyAddress: String!) {
+  coinMachineSaleTokens(colonyAddress: $colonyAddress) @client {
+    sellableToken {
+      address
+      decimals
+      symbol
+      name
+    }
+    purchaseToken {
+      address
+      decimals
+      symbol
+      name
+    }
+  }
+}
+
+query CoinMachineCurrentPeriodPrice($colonyAddress: String!) {
+  coinMachineCurrentPeriodPrice(colonyAddress: $colonyAddress) @client
+}
+
+query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
+  coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
+}

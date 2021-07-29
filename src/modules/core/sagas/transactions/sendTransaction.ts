@@ -1,6 +1,7 @@
 import { call, put, take } from 'redux-saga/effects';
 import { TransactionResponse } from 'ethers/providers';
 import type { ContractClient, TransactionOverrides } from '@colony/colony-js';
+import { ClientType } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -53,16 +54,26 @@ export default function* sendTransaction({
     throw new Error('Transaction is not ready to send.');
   }
   const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-  const client = yield colonyManager.getClient(context, identifier);
+
+  let contextClient: ContractClient;
+  if (context === ClientType.TokenClient) {
+    contextClient = yield colonyManager.getTokenClient(identifier as string);
+  } else {
+    contextClient = yield colonyManager.getClient(context, identifier);
+  }
+
+  if (!contextClient) {
+    throw new Error('Context client failed to instantiate');
+  }
 
   // Create a promise to send the transaction with the given method.
-  const txPromise = getMethodTransactionPromise(client, transaction);
+  const txPromise = getMethodTransactionPromise(contextClient, transaction);
 
   const channel = yield call(
     transactionChannel,
     txPromise,
     transaction,
-    client,
+    contextClient,
   );
 
   try {
