@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, HTMLAttributes } from 'react';
 
 import styles from './TableHeader.css';
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLTableSectionElement> {
   children: ReactElement | ReactElement[];
 }
 
