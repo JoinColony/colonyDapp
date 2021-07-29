@@ -265,7 +265,7 @@ const PermissionManagementForm = ({
               text={MSG.title}
               textValues={{ domain: domain?.name }}
             />
-            {(canEditPermissions || isVotingExtensionEnabled) && (
+            {canEditPermissions && isVotingExtensionEnabled && (
               <Toggle label={{ id: 'label.force' }} name="forceAction" />
             )}
           </div>
