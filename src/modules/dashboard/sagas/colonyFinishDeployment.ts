@@ -212,13 +212,13 @@ function* colonyRestartDeployment({
       yield createGroupedTransaction(setTokenAuthority, {
         context: ClientType.TokenClient,
         methodName: 'setAuthority',
-        identifier: colonyAddress,
+        identifier: tokenClient.address,
         ready: false,
       });
       yield createGroupedTransaction(setOwner, {
         context: ClientType.TokenClient,
         methodName: 'setOwner',
-        identifier: colonyAddress,
+        identifier: tokenClient.address,
         ready: false,
       });
     }
