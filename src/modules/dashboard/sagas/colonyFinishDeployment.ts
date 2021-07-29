@@ -23,6 +23,9 @@ import {
   SubscribeToColonyMutationVariables,
   SubscribeToColonyDocument,
   cacheUpdates,
+  NetworkExtensionVersionQuery,
+  NetworkExtensionVersionQueryVariables,
+  NetworkExtensionVersionDocument,
 } from '~data/index';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -209,13 +212,13 @@ function* colonyRestartDeployment({
       yield createGroupedTransaction(setTokenAuthority, {
         context: ClientType.TokenClient,
         methodName: 'setAuthority',
-        identifier: colonyAddress,
+        identifier: tokenClient.address,
         ready: false,
       });
       yield createGroupedTransaction(setOwner, {
         context: ClientType.TokenClient,
         methodName: 'setOwner',
-        identifier: colonyAddress,
+        identifier: tokenClient.address,
         ready: false,
       });
     }
@@ -301,10 +304,22 @@ function* colonyRestartDeployment({
       /*
        * Deploy OneTx
        */
+      const {
+        data: { networkExtensionVersion },
+      } = yield apolloClient.query<
+        NetworkExtensionVersionQuery,
+        NetworkExtensionVersionQueryVariables
+      >({
+        query: NetworkExtensionVersionDocument,
+        variables: {
+          extensionId: Extension.OneTxPayment,
+        },
+        fetchPolicy: 'network-only',
+      });
       yield put(
         transactionAddParams(deployOneTx.id, [
           getExtensionHash(Extension.OneTxPayment),
-          1,
+          networkExtensionVersion,
         ]),
       );
       yield put(transactionReady(deployOneTx.id));
