@@ -21,6 +21,7 @@ interface Props {
 const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
   const { data: usersData, loading: usersLoading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
+    fetchPolicy: 'network-only',
   });
 
   return (
