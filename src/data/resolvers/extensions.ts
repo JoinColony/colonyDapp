@@ -11,6 +11,7 @@ import {
 } from '@colony/colony-js';
 
 import { Context } from '~context/index';
+import { getMinimalUser } from '~data/index';
 
 import extensionData from '~data/staticData/extensionData';
 
@@ -45,6 +46,59 @@ export const extensionsResolvers = ({
         return version.toNumber();
       }
       return 0;
+    },
+    async whitelistedUsers(_, { colonyAddress }) {
+      const { provider } = networkClient;
+      try {
+        const whitelistClient = await colonyManager.getClient(
+          ClientType.WhitelistClient,
+          colonyAddress,
+        );
+
+        const userApprovedFilter = whitelistClient.filters.UserApproved(
+          null,
+          null,
+        );
+
+        const userApprovedLogs = await getLogs(
+          whitelistClient,
+          userApprovedFilter,
+        );
+
+        const userApprovedEvents = await Promise.all(
+          userApprovedLogs.map(async (log) => {
+            const parsedLog = whitelistClient.interface.parseLog(log);
+            const { blockHash } = log;
+            return {
+              ...parsedLog,
+              createdAt: blockHash
+                ? await getBlockTime(provider, blockHash)
+                : 0,
+            };
+          }),
+        );
+        const sortedUserApprovedEvents = userApprovedEvents.sort(
+          (firstEvent, secondEvent) =>
+            secondEvent.createdAt - firstEvent.createdAt,
+        );
+        const uniqeAddresses = [
+          ...new Set(userApprovedEvents.map((event) => event.values._user)), // eslint-disable-line no-underscore-dangle
+        ];
+
+        return uniqeAddresses.reduce((users, userAddress) => {
+          const userLastEvent = sortedUserApprovedEvents.find(
+            (event) => event.values._user === userAddress, // eslint-disable-line no-underscore-dangle
+          );
+          // eslint-disable-next-line no-underscore-dangle
+          if (userLastEvent.values._status) {
+            return [...users, getMinimalUser(userLastEvent.values._user)]; // eslint-disable-line no-underscore-dangle
+          }
+          return users;
+        }, []);
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
     },
   },
   ColonyExtension: {

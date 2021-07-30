@@ -1,29 +1,57 @@
+import { ReactNode } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
 
+import Whitelist from '~dashboard/Whitelist';
 import { Address } from '~types/index';
+import { CustomRadioProps } from '~core/Fields';
+import { Colony } from '~data/index';
+
+export interface ExtensionBodyProps {
+  colony: Colony;
+}
+
+export enum ExtensionParamType {
+  Input = 'Input',
+  Radio = 'Radio',
+  Textarea = 'Textarea',
+  ColonyPolicySelector = 'ColonyPolicySelector',
+}
+
+export enum PolicyType {
+  KycOnly = 0,
+  AgreementOnly = 1,
+  KycAndAgreement = 2,
+}
 
 export interface ExtensionInitParams {
   title: string | MessageDescriptor;
-  description: string | MessageDescriptor;
+  description?: string | MessageDescriptor;
   defaultValue: string | number;
   paramName: string;
   validation: object;
+  type: ExtensionParamType;
+  options?: CustomRadioProps[];
+  disabled?: (props: any) => boolean;
 }
 
 export interface ExtensionData {
   address?: Address;
   extensionId: Extension | 'Unknown';
   name: string | MessageDescriptor;
+  header?: string | MessageDescriptor;
   descriptionShort: string | MessageDescriptor;
   descriptionLong: string | MessageDescriptor;
+  info?: string | MessageDescriptor;
+  termsCondition?: string | MessageDescriptor;
   currentVersion: number;
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
   uninstallable: boolean;
+  enabledExtensionBody?: (props: ExtensionBodyProps) => ReactNode;
 }
 
 const unknownExtensionMessages = {
@@ -218,11 +246,64 @@ const votingReputationMessages = {
   },
 };
 
+const whitelistMessages = {
+  whitelistName: {
+    id: 'extensions.whitelist.name',
+    defaultMessage: 'Whitelist',
+  },
+  whitelistHeader: {
+    id: 'extensions.whitelist.header',
+    defaultMessage: 'What is the Whitelist extension?',
+  },
+  whitelistDescriptionShort: {
+    id: 'extensions.whitelist.description',
+    defaultMessage: `Curate a list of addresses permitted to participate in your Coin Machine sale.`,
+  },
+  whitelistDescriptionLong: {
+    id: 'extensions.whitelist.descriptionLong',
+    defaultMessage: `The Whitelist extension is an utility which can be used for whitelisting wallet addresses.`,
+  },
+  whitelistTermsCondition: {
+    id: 'extensions.whitelist.termsCondition',
+    defaultMessage: `Terms and Conditions.`,
+  },
+  whitelistInfo: {
+    id: 'extensions.whitelist.info',
+    defaultMessage: `The responsibility is on the issuer to ensure being compliant with the local rules. {link}`,
+  },
+  agreementTitle: {
+    id: 'extensions.whitelist.param.agreement.title',
+    defaultMessage: 'Paste agreement',
+  },
+  agreementDescription: {
+    id: 'extensions.whitelist.param.agreement.description',
+    defaultMessage:
+      'This agreement will be displayed during whitelisting process modal ',
+  },
+  whitelistColonyPolicySelectorTitle: {
+    id: `extensions.whitelist.param.policy.title`,
+    defaultMessage: 'What is the colony policy on whitelisting?',
+  },
+  whitelistColonyPolicySelectorAgreementOnly: {
+    id: `extensions.whitelist.param.policy.option.agreementOnly`,
+    defaultMessage: 'Agreement only',
+  },
+  whitelistColonyPolicySelectorKYCOnly: {
+    id: 'extensions.whitelist.param.policy.option.KYCOnly',
+    defaultMessage: 'KYC only',
+  },
+  whitelistColonyPolicySelectorAgreementAndKYC: {
+    id: `extensions.whitelist.param.policy.option.agreementAndKYC`,
+    defaultMessage: 'KYC and agreement',
+  },
+};
+
 const MSG = defineMessages({
   ...unknownExtensionMessages,
   ...oneTransactionPaymentMessages,
   ...coinMachineMessages,
   ...votingReputationMessages,
+  ...whitelistMessages,
 });
 
 const extensions: { [key: string]: ExtensionData } = {
@@ -251,6 +332,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: AddressZero,
         title: MSG.coinMachinePurchaseTokenTitle,
         description: MSG.coinMachinePurchaseTokenDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'periodLength',
@@ -258,6 +340,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachinePeriodLengthTitle,
         description: MSG.coinMachinePeriodLengthDescription,
         defaultValue: 3600,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'windowSize',
@@ -265,6 +348,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineWindowSizeTitle,
         description: MSG.coinMachineWindowSizeDescription,
         defaultValue: 8,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'targetPerPeriod',
@@ -272,6 +356,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineTargetPerPeriodTitle,
         description: MSG.coinMachineTargetPerPeriodDescription,
         defaultValue: 10,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'maxPerPeriod',
@@ -279,6 +364,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineMaxPerPeriodTitle,
         description: MSG.coinMachineMaxPerPeriodDescription,
         defaultValue: 10,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'tokensToSell',
@@ -286,6 +372,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineTokensToSellTitle,
         description: MSG.coinMachineTokensToSellDescription,
         defaultValue: 10000,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'startingPrice',
@@ -293,6 +380,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
         defaultValue: 10,
+        type: ExtensionParamType.Input,
       },
     ],
     uninstallable: true,
@@ -322,6 +410,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 5,
         title: MSG.votingReputationTotalStakeFractionTitle,
         description: MSG.votingReputationTotalStakeFractionDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'voterRewardFraction',
@@ -333,6 +422,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 20,
         title: MSG.votingReputationVoterRewardFractionTitle,
         description: MSG.votingReputationVoterRewardFractionDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'userMinStakeFraction',
@@ -344,6 +434,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 10,
         title: MSG.votingReputationUserMinStakeFractionTitle,
         description: MSG.votingReputationUserMinStakeFractionDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'maxVoteFraction',
@@ -355,6 +446,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 70,
         title: MSG.votingReputationMaxVoteFractionTitle,
         description: MSG.votingReputationMaxVoteFractionDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'stakePeriod',
@@ -366,6 +458,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationStakePeriodTitle,
         description: MSG.votingReputationStakePeriodDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'submitPeriod',
@@ -377,6 +470,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationSubmitPeriodTitle,
         description: MSG.votingReputationSubmitPeriodDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'revealPeriod',
@@ -388,6 +482,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationRevealPeriodTitle,
         description: MSG.votingReputationRevealPeriodDescription,
+        type: ExtensionParamType.Input,
       },
       {
         paramName: 'escalationPeriod',
@@ -399,6 +494,81 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 72, // 3 days in hours
         title: MSG.votingReputationEscalationPeriodTitle,
         description: MSG.votingReputationEscalationPeriodDescription,
+        type: ExtensionParamType.Input,
+      },
+    ],
+    uninstallable: true,
+  },
+  Whitelist: {
+    extensionId: Extension.Whitelist,
+    name: MSG.whitelistName,
+    header: MSG.whitelistHeader,
+    descriptionShort: MSG.whitelistDescriptionShort,
+    descriptionLong: MSG.whitelistDescriptionLong,
+    info: MSG.whitelistInfo,
+    termsCondition: MSG.whitelistTermsCondition,
+    currentVersion: 1,
+    createdAt: 1603915271852,
+    neededColonyPermissions: [
+      ColonyRole.Root,
+      ColonyRole.Administration,
+      ColonyRole.Arbitration,
+      ColonyRole.Architecture,
+      ColonyRole.Funding,
+    ],
+    enabledExtensionBody: (props) => Whitelist(props),
+    initializationParams: [
+      {
+        paramName: 'policy',
+        validation: yup.number().required(),
+        defaultValue: '',
+        title: MSG.whitelistColonyPolicySelectorTitle,
+        type: ExtensionParamType.ColonyPolicySelector,
+        options: [
+          {
+            value: PolicyType.AgreementOnly,
+            label: MSG.whitelistColonyPolicySelectorAgreementOnly,
+            name: 'policy',
+            appearance: {
+              theme: 'greyWithCircle',
+            },
+            checked: false,
+          },
+          {
+            value: PolicyType.KycOnly,
+            label: MSG.whitelistColonyPolicySelectorKYCOnly,
+            name: 'policy',
+            appearance: {
+              theme: 'greyWithCircle',
+            },
+            checked: false,
+          },
+          {
+            value: PolicyType.KycAndAgreement,
+            label: MSG.whitelistColonyPolicySelectorAgreementAndKYC,
+            name: 'policy',
+            appearance: {
+              theme: 'greyWithCircle',
+            },
+            checked: false,
+          },
+        ],
+      },
+      {
+        paramName: 'agreement',
+        validation: yup.string().when('policy', {
+          is: (policy) =>
+            policy === PolicyType.AgreementOnly ||
+            policy === PolicyType.KycAndAgreement,
+          then: yup.string().required().min(100),
+          otherwise: false,
+        }),
+        defaultValue: '',
+        title: MSG.agreementTitle,
+        description: MSG.agreementDescription,
+        type: ExtensionParamType.Textarea,
+        disabled: (values) =>
+          !values.policy || values.policy === PolicyType.KycOnly,
       },
     ],
     uninstallable: true,

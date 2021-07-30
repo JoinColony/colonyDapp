@@ -158,12 +158,17 @@
     "transaction.group.enableExtension.description": "Enable Colony Extension",
     "transaction.CoinMachineClient.initialise.title": "Initialize CoinMachine Extension",
     "transaction.VotingReputationClient.initialise.title": "Initialize Voting Reputation Extension",
+    "transaction.WhitelistClient.initialise.title": "Initialize Whitelist Extension",
     "transaction.ColonyClient.uninstallExtension.title": "Uninstall Colony Extension",
     "transaction.ColonyClient.uninstallExtension.description": "Uninstall Colony Extension",
     "transaction.ColonyClient.deprecateExtension.title": "Deprecate Colony Extension",
     "transaction.ColonyClient.deprecateExtension.description": "Deprecate Colony Extension",
     "transaction.ColonyClient.upgradeExtension.title": "Upgrade Colony Extension",
     "transaction.ColonyClient.upgradeExtension.description": "Upgrade Colony Extension",
+
+    "transaction.WhitelistClient.approveUsers.title": "Update whitelist users",
+    "transaction.group.approveUsers.title": "Update whitelist users",
+    "transaction.group.approveUsers.description": "Update whitelist users",
 
     "transaction.VotingReputationClient.createMotion.title": "Create motion",
     "transaction.VotingReputationClient.createMotion.description": "Create motion",

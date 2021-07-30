@@ -11,9 +11,10 @@ export interface FileReaderFile {
 
 export interface UploadFile {
   file: File;
-  uploaded?: string;
+  uploaded?: string | boolean;
   error?: string;
   preview?: string;
+  parsedData?: string[];
 }
 
 export interface UploadItemComponentProps {
@@ -28,8 +29,10 @@ export interface UploadItemComponentProps {
   upload: UploadFn;
   validate: ValidateFileFn;
   handleError?: (...args: any[]) => Promise<any>;
+  processingData?: boolean;
+  handleProcessingData?: (...args: any) => void;
 }
 
-export type UploadFn = (fileData: FileReaderFile) => any;
+export type UploadFn = (fileData: FileReaderFile | File | null) => any;
 
 export type ValidateFileFn = (value: UploadFile) => string | undefined;

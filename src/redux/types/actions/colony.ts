@@ -105,4 +105,17 @@ export type ColonyActionTypes =
       object,
       object
     >
-  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UPGRADE_ERROR, object>;
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UPGRADE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_EXTENSION_UNINSTALL_SUCCESS,
+      object,
+      object
+    >
+  | ErrorActionType<ActionTypes.COLONY_EXTENSION_UNINSTALL_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.WHITELIST_UPDATE,
+      { userAddresses: [Address]; colonyAddress: Address; status: boolean },
+      WithKey
+    >
+  | UniqueActionType<ActionTypes.WHITELIST_UPDATE_SUCCESS, object, object>
+  | ErrorActionType<ActionTypes.WHITELIST_UPDATE_ERROR, object>;

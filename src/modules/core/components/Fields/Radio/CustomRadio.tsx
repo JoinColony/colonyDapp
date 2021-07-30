@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { MessageDescriptor, FormattedMessage } from 'react-intl';
 import { nanoid } from 'nanoid';
 import { useField } from 'formik';
+import classnames from 'classnames';
 
 import { getMainClasses } from '~utils/css';
 import Icon from '~core/Icon';
@@ -10,7 +11,7 @@ import { UniversalMessageValues } from '~types/index';
 import styles from './CustomRadio.css';
 
 export interface Appearance {
-  theme?: 'primary' | 'danger';
+  theme?: 'primary' | 'danger' | 'greyWithCircle';
   direction?: 'horizontal' | 'vertical';
 }
 
@@ -20,7 +21,7 @@ export interface Props {
   /** Disable the input */
   disabled?: boolean;
   /** HTML input value */
-  value: string;
+  value: string | number;
   /** Label text */
   label: string | MessageDescriptor;
   /** Description text values for intl interpolation */
@@ -65,6 +66,15 @@ const CustomRadio = ({
       })}
       htmlFor={inputRef.current}
     >
+      {appearance.theme === 'greyWithCircle' && (
+        <div
+          className={classnames(styles.customRadioIcon, {
+            [styles.checkedCustomRadioIcon]: checked,
+          })}
+        >
+          {checked && <div className={styles.customRadioCheck} />}
+        </div>
+      )}
       <input
         aria-checked={checked}
         aria-disabled={disabled}

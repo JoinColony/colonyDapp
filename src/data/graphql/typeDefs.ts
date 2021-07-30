@@ -326,6 +326,7 @@ export default gql`
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
     networkExtensionVersion(extensionId: String!): Int!
+    whitelistedUsers(colonyAddress: String!): [User!]!
     motionTimeoutPeriods(
       motionId: Int!
       colonyAddress: String!
@@ -376,6 +377,8 @@ export default gql`
     ): MotionObjectionAnnotation!
     votingState(colonyAddress: String!, motionId: Int!): VotingState!
     motionStatus(motionId: Int!, colonyAddress: String!): String!
+    whitelistAgreement(agreementHash: String!): String!
+    whitelistAgreementHash(colonyAddress: String!): String
   }
 
   extend type Mutation {

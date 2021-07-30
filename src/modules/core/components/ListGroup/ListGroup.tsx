@@ -4,9 +4,10 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './ListGroup.css';
 
-interface Appearance {
+export interface Appearance {
   /** Should there be gaps between each element in the list */
   gaps?: 'true';
+  hoverColor?: 'dark';
 }
 
 interface Props extends HTMLAttributes<HTMLUListElement> {

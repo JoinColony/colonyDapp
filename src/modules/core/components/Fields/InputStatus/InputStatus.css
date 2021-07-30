@@ -45,3 +45,13 @@
 .themeFat, .themeUnderlined, .themeMinimal {
   composes: main;
 }
+
+.themeMinimal::before {
+  display: none;
+}
+
+.textSpaceWrap {
+  height: 38px;
+  line-height: 18px;
+  white-space: pre-wrap;
+}

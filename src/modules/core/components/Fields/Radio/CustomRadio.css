@@ -10,6 +10,7 @@
   padding: 7px;
   height: 41px;
   width: 100%;
+  overflow: hidden;
   border: 1px solid transparent;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(6%));
@@ -25,7 +26,15 @@
   composes: main;
 }
 
-.themePrimary.stateIsChecked {
+.themeGreyWithCircle {
+  composes: main;
+  border-color: color-mod(var(--action-secondary) alpha(25%));
+  border-radius: var(--radius-tiny);
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(5%));
+}
+
+.themePrimary.stateIsChecked,
+.themeGreyWithCircle.stateIsChecked {
   border: 1px solid var(--primary);
   background-color: color-mod(var(--primary) alpha(12%));
 }
@@ -86,6 +95,7 @@
   display: flex;
   align-items: baseline;
   width: 100%;
+  white-space: nowrap;
   gap: 6px;
 }
 
@@ -96,4 +106,30 @@
 
 .directionVertical .description {
   margin-left: 0;
+}
+
+.customRadioIcon {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  height: 27px;
+  width: 27px;
+  border: 1px solid var(--temp-grey-blue-4);
+  border-radius: 50%;
+  background: var(--colony-white);
+  box-shadow: inset 0px 2px 4px rgba(14, 37, 88, 0.07);
+}
+
+.checkedCustomRadioIcon {
+  border-color: var(--primary);
+}
+
+.customRadioCheck {
+  height: 7px;
+  width: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: var(--box-shadow-medium);
 }

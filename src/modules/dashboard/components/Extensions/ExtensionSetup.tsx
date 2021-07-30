@@ -7,13 +7,18 @@ import { Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 
 import { IconButton, ActionButton } from '~core/Button';
-import { Input, ActionForm } from '~core/Fields';
+import { Input, ActionForm, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
 import { ActionTypes } from '~redux/index';
 import { ColonyExtension } from '~data/index';
-import { ExtensionData } from '~data/staticData/extensionData';
+import {
+  ExtensionData,
+  ExtensionParamType,
+} from '~data/staticData/extensionData';
 import { mergePayload, mapPayload, pipe } from '~utils/actions';
 import { Address } from '~types/index';
+
+import { ColonyPolicySelector } from '../Whitelist';
 
 import styles from './ExtensionSetup.css';
 
@@ -142,7 +147,12 @@ const ExtensionSetup = ({
       onSuccess={handleFormSuccess}
       transform={transform}
     >
-      {({ handleSubmit, isSubmitting, isValid }: FormikProps<object>) => (
+      {({
+        handleSubmit,
+        isSubmitting,
+        isValid,
+        values,
+      }: FormikProps<object>) => (
         <div className={styles.main}>
           <Heading
             appearance={{ size: 'medium', margin: 'none' }}
@@ -150,33 +160,63 @@ const ExtensionSetup = ({
           />
           <FormattedMessage {...MSG.description} />
           <div className={styles.inputContainer}>
-            {initializationParams.map(({ paramName, title, description }) => (
-              <div key={paramName} className={styles.input}>
-                <Input
-                  appearance={{ size: 'medium', theme: 'minimal' }}
-                  label={title}
-                  name={paramName}
-                />
-                <FormattedMessage
-                  {...description}
-                  values={{
-                    span: (chunks) => (
-                      <span className={styles.descriptionExample}>
-                        {chunks}
-                      </span>
-                    ),
-                  }}
-                />
-                {extensionId === Extension.VotingReputation && (
-                  <span className={styles.complementaryLabel}>
-                    <FormattedMessage
-                      {...MSG.complementaryLabel}
-                      values={{ isPeriod: endsWith(paramName, 'Period') }}
+            {initializationParams.map(
+              ({ paramName, title, description, type, options, disabled }) => (
+                <div key={paramName}>
+                  {type === ExtensionParamType.Input && (
+                    <div className={styles.input}>
+                      <Input
+                        appearance={{ size: 'medium', theme: 'minimal' }}
+                        label={title}
+                        name={paramName}
+                      />
+                      <FormattedMessage
+                        {...description}
+                        values={{
+                          span: (chunks) => (
+                            <span className={styles.descriptionExample}>
+                              {chunks}
+                            </span>
+                          ),
+                        }}
+                      />
+                      {extensionId === Extension.VotingReputation && (
+                        <span className={styles.complementaryLabel}>
+                          <FormattedMessage
+                            {...MSG.complementaryLabel}
+                            values={{
+                              isPeriod: endsWith(paramName, 'Period'),
+                            }}
+                          />
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  {type === ExtensionParamType.Textarea && (
+                    <div className={styles.textArea}>
+                      <Textarea
+                        appearance={{ colorSchema: 'grey' }}
+                        label={title}
+                        name={paramName}
+                        disabled={disabled && disabled(values)}
+                      />
+                      {description && (
+                        <p className={styles.textAreaDescription}>
+                          <FormattedMessage {...description} />
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  {type === ExtensionParamType.ColonyPolicySelector && (
+                    <ColonyPolicySelector
+                      name={paramName}
+                      title={title}
+                      options={options || []}
                     />
-                  </span>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              ),
+            )}
           </div>
           <IconButton
             appearance={{ theme: 'primary', size: 'large' }}

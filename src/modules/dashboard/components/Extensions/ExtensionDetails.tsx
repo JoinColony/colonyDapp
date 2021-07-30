@@ -218,6 +218,11 @@ const ExtensionDetails = ({
     !(extesionCanBeInstalled || extesionCanBeEnabled) &&
     latestNetworkExtensionVersion > extension.currentVersion;
 
+  const extensionEnabled =
+    installedExtension &&
+    installedExtension.details.initialized &&
+    !installedExtension.details.deprecated;
+
   const extensionCompatible = extension?.currentVersion
     ? !extensionsIncompatibilityMap[extensionId][extension.currentVersion].find(
         (version: number) => version === parseInt(colonyVersion, 10),
@@ -340,8 +345,12 @@ const ExtensionDetails = ({
                 <div className={styles.extensionText}>
                   <Heading
                     tagName="h3"
-                    appearance={{ size: 'medium', margin: 'small' }}
-                    text={extension.name}
+                    appearance={{
+                      size: 'medium',
+                      margin: 'small',
+                      theme: 'dark',
+                    }}
+                    text={extension.header || extension.name}
                   />
                   <FormattedMessage
                     {...extension.descriptionLong}
@@ -355,6 +364,24 @@ const ExtensionDetails = ({
                       ),
                     }}
                   />
+                  {extension.info && (
+                    <div className={styles.extensionSubtext}>
+                      <FormattedMessage
+                        {...extension.info}
+                        values={{
+                          link: (
+                            <ExternalLink
+                              text={extension.termsCondition}
+                              href=""
+                            />
+                          ),
+                        }}
+                      />
+                    </div>
+                  )}
+                  {extensionEnabled &&
+                    extension.enabledExtensionBody &&
+                    extension.enabledExtensionBody({ colony })}
                 </div>
               )}
             />

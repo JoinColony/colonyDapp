@@ -6,3 +6,4 @@ export const stateError: string;
 export const themeFat: string;
 export const themeUnderlined: string;
 export const themeMinimal: string;
+export const textSpaceWrap: string;

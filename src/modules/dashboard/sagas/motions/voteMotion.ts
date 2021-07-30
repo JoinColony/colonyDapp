@@ -13,7 +13,7 @@ import {
 } from '../../../core/sagas';
 import { transactionReady } from '../../../core/actionCreators';
 import { signMessage } from '../../../core/sagas/messages';
-import { updateMotionValues } from '../utils/updateMotionValues';
+import { updateMotionValues } from '../utils';
 
 function* voteMotion({
   meta,

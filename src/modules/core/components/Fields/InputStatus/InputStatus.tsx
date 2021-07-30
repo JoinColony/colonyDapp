@@ -7,12 +7,13 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './InputStatus.css';
 
-interface Appearance {
+export interface Appearance {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   direction?: 'horizontal';
   colorSchema?: 'dark' | 'grey' | 'transparent';
   statusShema?: 'info';
   size?: 'small' | 'medium';
+  textSpace?: 'wrap';
 }
 
 interface Props {

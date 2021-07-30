@@ -11,7 +11,7 @@ import {
   getTxChannel,
 } from '../../../core/sagas';
 import { transactionReady } from '../../../core/actionCreators';
-import { updateMotionValues } from '../utils/updateMotionValues';
+import { updateMotionValues } from '../utils';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
 function* escalateMotion({
