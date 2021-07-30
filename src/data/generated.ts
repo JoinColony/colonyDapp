@@ -1985,7 +1985,6 @@ export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
   )> };
 
-<<<<<<< HEAD
 export type WhitelistAgreementQueryVariables = Exact<{
   agreementHash: Scalars['String'];
 }>;
@@ -1994,18 +1993,18 @@ export type WhitelistAgreementQueryVariables = Exact<{
 export type WhitelistAgreementQuery = Pick<Query, 'whitelistAgreement'>;
 
 export type WhitelistAgreementHashQueryVariables = Exact<{
-=======
-export type CoinMachineSaleTokensQueryVariables = Exact<{
->>>>>>> Add: `coinMachineSaleTokens` client resolver
   colonyAddress: Scalars['String'];
 }>;
 
 
-<<<<<<< HEAD
 export type WhitelistAgreementHashQuery = Pick<Query, 'whitelistAgreementHash'>;
-=======
+
+export type CoinMachineSaleTokensQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
 export type CoinMachineSaleTokensQuery = { coinMachineSaleTokens: { sellableToken: Pick<SaleToken, 'address' | 'decimals' | 'symbol' | 'name'>, purchaseToken: Pick<SaleToken, 'address' | 'decimals' | 'symbol' | 'name'> } };
->>>>>>> Add: `coinMachineSaleTokens` client resolver
 
 export type CoinMachineCurrentPeriodPriceQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -5167,49 +5166,22 @@ export function useColonyHistoricRolesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHistoricRolesQuery>;
 export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
 export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
-<<<<<<< HEAD
 export const WhitelistAgreementDocument = gql`
     query WhitelistAgreement($agreementHash: String!) {
   whitelistAgreement(agreementHash: $agreementHash) @client
-=======
-export const CoinMachineSaleTokensDocument = gql`
-    query CoinMachineSaleTokens($colonyAddress: String!) {
-  coinMachineSaleTokens(colonyAddress: $colonyAddress) @client {
-    sellableToken {
-      address
-      decimals
-      symbol
-      name
-    }
-    purchaseToken {
-      address
-      decimals
-      symbol
-      name
-    }
-  }
->>>>>>> Add: `coinMachineSaleTokens` client resolver
 }
     `;
 
 /**
-<<<<<<< HEAD
  * __useWhitelistAgreementQuery__
  *
  * To run a query within a React component, call `useWhitelistAgreementQuery` and pass it any options that fit your needs.
  * When your component renders, `useWhitelistAgreementQuery` returns an object from Apollo Client that contains loading, error, and data properties
-=======
- * __useCoinMachineSaleTokensQuery__
- *
- * To run a query within a React component, call `useCoinMachineSaleTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useCoinMachineSaleTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
->>>>>>> Add: `coinMachineSaleTokens` client resolver
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
-<<<<<<< HEAD
  * const { data, loading, error } = useWhitelistAgreementQuery({
  *   variables: {
  *      agreementHash: // value for 'agreementHash'
@@ -5242,15 +5214,11 @@ export const WhitelistAgreementHashDocument = gql`
  *
  * @example
  * const { data, loading, error } = useWhitelistAgreementHashQuery({
-=======
- * const { data, loading, error } = useCoinMachineSaleTokensQuery({
->>>>>>> Add: `coinMachineSaleTokens` client resolver
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-<<<<<<< HEAD
 export function useWhitelistAgreementHashQuery(baseOptions?: Apollo.QueryHookOptions<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>) {
         return Apollo.useQuery<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>(WhitelistAgreementHashDocument, baseOptions);
       }
@@ -5260,7 +5228,41 @@ export function useWhitelistAgreementHashLazyQuery(baseOptions?: Apollo.LazyQuer
 export type WhitelistAgreementHashQueryHookResult = ReturnType<typeof useWhitelistAgreementHashQuery>;
 export type WhitelistAgreementHashLazyQueryHookResult = ReturnType<typeof useWhitelistAgreementHashLazyQuery>;
 export type WhitelistAgreementHashQueryResult = Apollo.QueryResult<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>;
-=======
+export const CoinMachineSaleTokensDocument = gql`
+    query CoinMachineSaleTokens($colonyAddress: String!) {
+  coinMachineSaleTokens(colonyAddress: $colonyAddress) @client {
+    sellableToken {
+      address
+      decimals
+      symbol
+      name
+    }
+    purchaseToken {
+      address
+      decimals
+      symbol
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useCoinMachineSaleTokensQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineSaleTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineSaleTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineSaleTokensQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
 export function useCoinMachineSaleTokensQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineSaleTokensQuery, CoinMachineSaleTokensQueryVariables>) {
         return Apollo.useQuery<CoinMachineSaleTokensQuery, CoinMachineSaleTokensQueryVariables>(CoinMachineSaleTokensDocument, baseOptions);
       }
@@ -5270,9 +5272,6 @@ export function useCoinMachineSaleTokensLazyQuery(baseOptions?: Apollo.LazyQuery
 export type CoinMachineSaleTokensQueryHookResult = ReturnType<typeof useCoinMachineSaleTokensQuery>;
 export type CoinMachineSaleTokensLazyQueryHookResult = ReturnType<typeof useCoinMachineSaleTokensLazyQuery>;
 export type CoinMachineSaleTokensQueryResult = Apollo.QueryResult<CoinMachineSaleTokensQuery, CoinMachineSaleTokensQueryVariables>;
-<<<<<<< HEAD
->>>>>>> Add: `coinMachineSaleTokens` client resolver
-=======
 export const CoinMachineCurrentPeriodPriceDocument = gql`
     query CoinMachineCurrentPeriodPrice($colonyAddress: String!) {
   coinMachineCurrentPeriodPrice(colonyAddress: $colonyAddress) @client
@@ -5304,9 +5303,6 @@ export function useCoinMachineCurrentPeriodPriceLazyQuery(baseOptions?: Apollo.L
 export type CoinMachineCurrentPeriodPriceQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceQuery>;
 export type CoinMachineCurrentPeriodPriceLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceLazyQuery>;
 export type CoinMachineCurrentPeriodPriceQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>;
-<<<<<<< HEAD
->>>>>>> Add: `coinMachineCurrentPeriodPrice` client resolver
-=======
 export const CoinMachineCurrentPeriodMaxUserPurchaseDocument = gql`
     query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
   coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
@@ -5339,7 +5335,6 @@ export function useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery(baseOptions?
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseQuery>;
 export type CoinMachineCurrentPeriodMaxUserPurchaseLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery>;
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>;
->>>>>>> Add: `coinMachineCurrentPeriodMaxUserPurchase` resolver
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
