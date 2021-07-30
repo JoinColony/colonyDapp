@@ -3,7 +3,6 @@ import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 
-<<<<<<< HEAD
       export interface IntrospectionResultData {
         __schema: {
           types: {
@@ -195,6 +194,7 @@ export type Mutation = {
   removeUpvoteFromSuggestion?: Maybe<Suggestion>;
   sendTransactionMessage: Scalars['Boolean'];
   setLoggedInUser: LoggedInUser;
+  setNetworkContracts: NetworkContracts;
   setSuggestionStatus?: Maybe<Suggestion>;
   setUserTokens?: Maybe<User>;
   subscribeToColony?: Maybe<User>;
@@ -243,6 +243,11 @@ export type MutationSetLoggedInUserArgs = {
 };
 
 
+export type MutationSetNetworkContractsArgs = {
+  input?: Maybe<NetworkContractsInput>;
+};
+
+
 export type MutationSetSuggestionStatusArgs = {
   input: SetSuggestionStatusInput;
 };
@@ -264,15 +269,9 @@ export type MutationUnsubscribeFromColonyArgs = {
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
-<<<<<<< HEAD
-<<<<<<< HEAD
-  block?: Maybe<SubgraphBlock>;
-=======
-=======
+  coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
->>>>>>> cb1dafbf3... Add: `coinMachineCurrentPeriodPrice` client resolver
   coinMachineSaleTokens: SaleTokens;
->>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
@@ -282,13 +281,10 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   colonyReputation?: Maybe<Scalars['String']>;
-  domainBalance: Scalars['String'];
   domains: Array<SubgraphDomain>;
-  events: Array<SubgraphEvent>;
   eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
-  hasKycPolicy: Scalars['Boolean'];
   historicColonyRoles: Array<ProcessedRoles>;
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
@@ -304,7 +300,7 @@ export type Query = {
   motionVoterReward: MotionVoterReward;
   motionsSystemMessages: Array<SystemMessage>;
   networkContracts: NetworkContracts;
-  networkExtensionVersion: Array<Maybe<ColonyExtensionVersion>>;
+  networkExtensionVersion: Scalars['Int'];
   processedColony: ProcessedColony;
   processedMetaColony?: Maybe<ProcessedMetaColony>;
   recoveryAllEnteredEvents: Array<ParsedEvent>;
@@ -323,7 +319,6 @@ export type Query = {
   user: User;
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
-  userReputationForTopDomains: Array<UserDomainReputation>;
   username: Scalars['String'];
   votingState: VotingState;
   whitelistAgreement: Scalars['String'];
@@ -338,21 +333,19 @@ export type QueryActionsThatNeedAttentionArgs = {
 };
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-export type QueryBlockArgs = {
-  id: Scalars['String'];
-=======
-=======
+export type QueryCoinMachineCurrentPeriodMaxUserPurchaseArgs = {
+  userAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
+};
+
+
 export type QueryCoinMachineCurrentPeriodPriceArgs = {
   colonyAddress: Scalars['String'];
 };
 
 
->>>>>>> cb1dafbf3... Add: `coinMachineCurrentPeriodPrice` client resolver
 export type QueryCoinMachineSaleTokensArgs = {
   colonyAddress: Scalars['String'];
->>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
 };
 
 
@@ -408,24 +401,8 @@ export type QueryColonyReputationArgs = {
 };
 
 
-export type QueryDomainBalanceArgs = {
-  colonyAddress: Scalars['String'];
-  tokenAddress: Scalars['String'];
-  domainId: Scalars['Int'];
-};
-
-
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
-};
-
-
-export type QueryEventsArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  first?: Maybe<Scalars['Int']>;
-  where?: Maybe<EventsFilter>;
-  orderDirection?: Maybe<Scalars['String']>;
-  block?: Maybe<ToBlockInput>;
 };
 
 
@@ -444,11 +421,6 @@ export type QueryGetRecoveryRequiredApprovalsArgs = {
 export type QueryGetRecoveryStorageSlotArgs = {
   colonyAddress: Scalars['String'];
   storageSlot: Scalars['String'];
-};
-
-
-export type QueryHasKycPolicyArgs = {
-  colonyAddress: Scalars['String'];
 };
 
 
@@ -536,7 +508,7 @@ export type QueryMotionsSystemMessagesArgs = {
 
 
 export type QueryNetworkExtensionVersionArgs = {
-  extensionId?: Maybe<Scalars['String']>;
+  extensionId: Scalars['String'];
 };
 
 
@@ -547,7 +519,6 @@ export type QueryProcessedColonyArgs = {
 
 export type QueryRecoveryAllEnteredEventsArgs = {
   colonyAddress: Scalars['String'];
-  currentBlock: Scalars['Int'];
 };
 
 
@@ -630,12 +601,6 @@ export type QueryUserReputationArgs = {
 };
 
 
-export type QueryUserReputationForTopDomainsArgs = {
-  address: Scalars['String'];
-  colonyAddress: Scalars['String'];
-};
-
-
 export type QueryUsernameArgs = {
   address: Scalars['String'];
 };
@@ -658,51 +623,6 @@ export type QueryWhitelistAgreementHashArgs = {
 
 
 export type QueryWhitelistedUsersArgs = {
-  colonyAddress: Scalars['String'];
-};
-
-export type Subscription = {
-  events: Array<SubgraphEvent>;
-  motions: Array<SubscriptionMotion>;
-  oneTxPayments: Array<OneTxPayment>;
-  subscribedUsers: Array<User>;
-  transactionMessages: TransactionMessages;
-  transactionMessagesCount: TransactionMessagesCount;
-};
-
-
-export type SubscriptionEventsArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  first?: Maybe<Scalars['Int']>;
-  where?: Maybe<EventsFilter>;
-};
-
-
-export type SubscriptionMotionsArgs = {
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
-  where: MotionsFilter;
-};
-
-
-export type SubscriptionOneTxPaymentsArgs = {
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
-  where: ActionsFilter;
-};
-
-
-export type SubscriptionSubscribedUsersArgs = {
-  colonyAddress: Scalars['String'];
-};
-
-
-export type SubscriptionTransactionMessagesArgs = {
-  transactionHash: Scalars['String'];
-};
-
-
-export type SubscriptionTransactionMessagesCountArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -825,19 +745,6 @@ export type LoggedInUserInput = {
   networkId?: Maybe<Scalars['Int']>;
 };
 
-export type ToBlockInput = {
-  number?: Maybe<Scalars['Int']>;
-};
-
-export type EventsFilter = {
-  associatedColony_contains?: Maybe<Scalars['String']>;
-  associatedColony?: Maybe<Scalars['String']>;
-  name_in?: Maybe<Array<Scalars['String']>>;
-  name_contains?: Maybe<Scalars['String']>;
-  args_contains?: Maybe<Scalars['String']>;
-  address?: Maybe<Scalars['String']>;
-};
-
 export type LoggedInUser = {
   id: Scalars['String'];
   balance: Scalars['String'];
@@ -845,36 +752,6 @@ export type LoggedInUser = {
   walletAddress: Scalars['String'];
   ethereal: Scalars['Boolean'];
   networkId?: Maybe<Scalars['Int']>;
-};
-
-export type SugraphEventProcessedValues = {
-  agent: Scalars['String'];
-  who: Scalars['String'];
-  fromPot: Scalars['String'];
-  fromDomain: Scalars['String'];
-  toPot: Scalars['String'];
-  toDomain: Scalars['String'];
-  domainId: Scalars['String'];
-  amount: Scalars['String'];
-  token: Scalars['String'];
-  metadata: Scalars['String'];
-  user: Scalars['String'];
-  role: Scalars['String'];
-  setTo: Scalars['String'];
-  oldVersion: Scalars['String'];
-  newVersion: Scalars['String'];
-  storageSlot: Scalars['String'];
-  storageSlotValue: Scalars['String'];
-};
-
-export type SubgraphEvent = {
-  id: Scalars['String'];
-  transaction: SubgraphTransaction;
-  address: Scalars['String'];
-  name: Scalars['String'];
-  args: Scalars['String'];
-  associatedColony: SubgraphColony;
-  processedValues: SugraphEventProcessedValues;
 };
 
 export type ParsedEvent = {
@@ -993,6 +870,27 @@ export type NetworkEvent = {
   domainId?: Maybe<Scalars['String']>;
 };
 
+export type ColonyExtension = {
+  address: Scalars['String'];
+  id: Scalars['String'];
+  extensionId: Scalars['String'];
+  details: ColonyExtensionDetails;
+};
+
+
+export type ColonyExtensionDetailsArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+export type ColonyExtensionDetails = {
+  deprecated: Scalars['Boolean'];
+  initialized: Scalars['Boolean'];
+  installedBy: Scalars['String'];
+  installedAt: Scalars['Int'];
+  missingPermissions: Array<Scalars['Int']>;
+  version: Scalars['Int'];
+};
+
 export type UserToken = {
   address: Scalars['String'];
   decimals: Scalars['Int'];
@@ -1088,11 +986,6 @@ export type MotionVoterReward = {
   maxReward: Scalars['String'];
 };
 
-export type UserDomainReputation = {
-  domainId: Scalars['Int'];
-  reputationPercentage: Scalars['String'];
-};
-
 export type ByColonyFilter = {
   colonyAddress: Scalars['String'];
   domainChainId?: Maybe<Scalars['Int']>;
@@ -1156,6 +1049,12 @@ export type SubgraphColonyMetadata = {
   id: Scalars['String'];
   metadata: Scalars['String'];
   transaction: SubgraphTransaction;
+};
+
+export type SubgraphColonyExtension = {
+  id: Scalars['String'];
+  address: Scalars['String'];
+  hash: Scalars['String'];
 };
 
 export type SubgraphColony = {
@@ -1241,13 +1140,6 @@ export type MotionTimeoutPeriods = {
   timeLeftToSubmit: Scalars['Int'];
 };
 
-<<<<<<< HEAD
-export type ColonyExtension = {
-  address: Scalars['String'];
-  id: Scalars['String'];
-  extensionId: Scalars['String'];
-  details: ColonyExtensionDetails;
-=======
 export type SaleToken = {
   address: Scalars['String'];
   decimals: Scalars['Int'];
@@ -1262,35 +1154,12 @@ export type SaleTokens = {
 
 export type ActionsFilter = {
   payment_contains?: Maybe<Scalars['String']>;
->>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
 };
 
-
-export type ColonyExtensionDetailsArgs = {
-  colonyAddress: Scalars['String'];
-};
-
-export type ColonyExtensionVersion = {
-  extensionHash: Scalars['String'];
-  version: Scalars['Int'];
-};
-
-export type ColonyExtensionDetails = {
-  deprecated: Scalars['Boolean'];
-  initialized: Scalars['Boolean'];
-  installedBy: Scalars['String'];
-  installedAt: Scalars['Int'];
-  missingPermissions: Array<Scalars['Int']>;
-  version: Scalars['Int'];
-};
-
-export type SubgraphColonyExtension = {
-  id: Scalars['String'];
-  hash: Scalars['String'];
-};
-
-export type ActionsFilter = {
-  payment_contains?: Maybe<Scalars['String']>;
+export type EventsFilter = {
+  associatedColony_contains?: Maybe<Scalars['String']>;
+  associatedColony?: Maybe<Scalars['String']>;
+  name_in?: Maybe<Array<Scalars['String']>>;
 };
 
 export type MotionsFilter = {
@@ -1303,6 +1172,36 @@ export type OneTxPayment = {
   agent: Scalars['String'];
   transaction: SubgraphTransaction;
   payment: SubgraphPayment;
+};
+
+export type EventProcessedValues = {
+  agent: Scalars['String'];
+  who: Scalars['String'];
+  fromPot: Scalars['String'];
+  fromDomain: Scalars['String'];
+  toPot: Scalars['String'];
+  toDomain: Scalars['String'];
+  domainId: Scalars['String'];
+  amount: Scalars['String'];
+  token: Scalars['String'];
+  metadata: Scalars['String'];
+  user: Scalars['String'];
+  role: Scalars['String'];
+  setTo: Scalars['String'];
+  oldVersion: Scalars['String'];
+  newVersion: Scalars['String'];
+  storageSlot: Scalars['String'];
+  storageSlotValue: Scalars['String'];
+};
+
+export type SubscriptionEvent = {
+  id: Scalars['String'];
+  transaction: SubgraphTransaction;
+  address: Scalars['String'];
+  name: Scalars['String'];
+  args: Scalars['String'];
+  associatedColony: SubgraphColony;
+  processedValues: EventProcessedValues;
 };
 
 export type SubscriptionMotion = {
@@ -1326,6 +1225,33 @@ export type SubscriptionMotion = {
 export type SubscriptionMotionArguments = {
   amount: Scalars['String'];
   token: SubgraphToken;
+};
+
+export type Subscription = {
+  oneTxPayments: Array<OneTxPayment>;
+  events: Array<SubscriptionEvent>;
+  motions: Array<SubscriptionMotion>;
+};
+
+
+export type SubscriptionOneTxPaymentsArgs = {
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  where: ActionsFilter;
+};
+
+
+export type SubscriptionEventsArgs = {
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  where: EventsFilter;
+};
+
+
+export type SubscriptionMotionsArgs = {
+  skip: Scalars['Int'];
+  first: Scalars['Int'];
+  where: MotionsFilter;
 };
 
 export type TokensFragment = (
@@ -1439,6 +1365,13 @@ export type SendTransactionMessageMutationVariables = Exact<{
 
 export type SendTransactionMessageMutation = Pick<Mutation, 'sendTransactionMessage'>;
 
+export type SetNetworkContractsMutationVariables = Exact<{
+  input: NetworkContractsInput;
+}>;
+
+
+export type SetNetworkContractsMutation = { setNetworkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
 export type UpdateNetworkContractsMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1481,14 +1414,6 @@ export type UserReputationQueryVariables = Exact<{
 
 export type UserReputationQuery = Pick<Query, 'userReputation'>;
 
-export type UserReputationForTopDomainsQueryVariables = Exact<{
-  address: Scalars['String'];
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type UserReputationForTopDomainsQuery = { userReputationForTopDomains: Array<Pick<UserDomainReputation, 'domainId' | 'reputationPercentage'>> };
-
 export type UserTokensQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -1528,6 +1453,37 @@ export type UserAddressQueryVariables = Exact<{
 
 export type UserAddressQuery = Pick<Query, 'userAddress'>;
 
+export type ColonyExtensionsQueryVariables = Exact<{
+  address: Scalars['String'];
+}>;
+
+
+export type ColonyExtensionsQuery = { processedColony: (
+    Pick<ProcessedColony, 'id' | 'colonyAddress'>
+    & { installedExtensions: Array<(
+      Pick<ColonyExtension, 'id' | 'extensionId' | 'address'>
+      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
+    )> }
+  ) };
+
+export type ColonyExtensionQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  extensionId: Scalars['String'];
+}>;
+
+
+export type ColonyExtensionQuery = { colonyExtension?: Maybe<(
+    Pick<ColonyExtension, 'id' | 'address' | 'extensionId'>
+    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
+  )> };
+
+export type NetworkExtensionVersionQueryVariables = Exact<{
+  extensionId: Scalars['String'];
+}>;
+
+
+export type NetworkExtensionVersionQuery = Pick<Query, 'networkExtensionVersion'>;
+
 export type WhitelistedUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -1549,15 +1505,6 @@ export type TokenBalancesForDomainsQuery = { tokens: Array<(
     Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
     & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
   )> };
-
-export type DomainBalanceQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  tokenAddress: Scalars['String'];
-  domainId: Scalars['Int'];
-}>;
-
-
-export type DomainBalanceQuery = Pick<Query, 'domainBalance'>;
 
 export type UserColoniesQueryVariables = Exact<{
   address: Scalars['String'];
@@ -1626,6 +1573,23 @@ export type ColonyActionQuery = { colonyAction: (
     Pick<ColonyAction, 'hash' | 'actionInitiator' | 'fromDomain' | 'toDomain' | 'recipient' | 'status' | 'createdAt' | 'actionType' | 'amount' | 'tokenAddress' | 'annotationHash' | 'newVersion' | 'oldVersion' | 'colonyDisplayName' | 'colonyAvatarHash' | 'colonyTokens' | 'domainName' | 'domainPurpose' | 'domainColor' | 'motionState' | 'motionDomain' | 'blockNumber' | 'rootHash'>
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
+
+export type TransactionMessagesQueryVariables = Exact<{
+  transactionHash: Scalars['String'];
+}>;
+
+
+export type TransactionMessagesQuery = { transactionMessages: (
+    Pick<TransactionMessages, 'transactionHash'>
+    & { messages: Array<TransactionMessageFragment> }
+  ) };
+
+export type TransactionMessagesCountQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
 
 export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1704,7 +1668,6 @@ export type GetRecoveryRequiredApprovalsQuery = Pick<Query, 'getRecoveryRequired
 
 export type RecoveryAllEnteredEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
-  currentBlock: Scalars['Int'];
 }>;
 
 
@@ -1893,10 +1856,7 @@ export type SubgraphColonyQuery = { colony: (
     & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
-    ), extensions?: Maybe<Array<(
-      Pick<SubgraphColonyExtension, 'hash'>
-      & { address: SubgraphColonyExtension['id'] }
-    )>> }
+    ), extensions?: Maybe<Array<Pick<SubgraphColonyExtension, 'address' | 'hash'>>> }
   ) };
 
 export type SubgraphColoniesQueryVariables = Exact<{
@@ -1988,6 +1948,16 @@ export type ColonyProfileQueryVariables = Exact<{
 
 export type ColonyProfileQuery = { processedColony: ColonyProfileFragment };
 
+export type ColonySubscribedUsersQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type ColonySubscribedUsersQuery = { subscribedUsers: Array<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+  )> };
+
 export type ColonyMembersWithReputationQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
@@ -2015,6 +1985,20 @@ export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
   )> };
 
+export type WhitelistAgreementQueryVariables = Exact<{
+  agreementHash: Scalars['String'];
+}>;
+
+
+export type WhitelistAgreementQuery = Pick<Query, 'whitelistAgreement'>;
+
+export type WhitelistAgreementHashQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type WhitelistAgreementHashQuery = Pick<Query, 'whitelistAgreementHash'>;
+
 export type CoinMachineSaleTokensQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -2022,389 +2006,30 @@ export type CoinMachineSaleTokensQueryVariables = Exact<{
 
 export type CoinMachineSaleTokensQuery = { coinMachineSaleTokens: { sellableToken: Pick<SaleToken, 'address' | 'decimals' | 'symbol' | 'name'>, purchaseToken: Pick<SaleToken, 'address' | 'decimals' | 'symbol' | 'name'> } };
 
-export type HasKycPolicyQueryVariables = Exact<{
+export type CoinMachineCurrentPeriodPriceQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type HasKycPolicyQuery = Pick<Query, 'hasKycPolicy'>;
+export type CoinMachineCurrentPeriodPriceQuery = Pick<Query, 'coinMachineCurrentPeriodPrice'>;
 
-export type TransactionMessagesQueryVariables = Exact<{
-  transactionHash: Scalars['String'];
-}>;
-
-
-export type TransactionMessagesQuery = { transactionMessages: (
-    Pick<TransactionMessages, 'transactionHash'>
-    & { messages: Array<TransactionMessageFragment> }
-  ) };
-
-export type TransactionMessagesCountQueryVariables = Exact<{
+export type CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables = Exact<{
+  userAddress: Scalars['String'];
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
+export type CoinMachineCurrentPeriodMaxUserPurchaseQuery = Pick<Query, 'coinMachineCurrentPeriodMaxUserPurchase'>;
 
-export type ColonyExtensionsQueryVariables = Exact<{
-  address: Scalars['String'];
-}>;
-
-
-export type ColonyExtensionsQuery = { processedColony: (
-    Pick<ProcessedColony, 'id' | 'colonyAddress'>
-    & { installedExtensions: Array<(
-      Pick<ColonyExtension, 'id' | 'extensionId' | 'address'>
-      & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
-    )> }
-  ) };
-
-export type ColonyExtensionQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  extensionId: Scalars['String'];
-}>;
-
-
-export type ColonyExtensionQuery = { colonyExtension?: Maybe<(
-    Pick<ColonyExtension, 'id' | 'address' | 'extensionId'>
-    & { details: Pick<ColonyExtensionDetails, 'deprecated' | 'initialized' | 'installedBy' | 'installedAt' | 'missingPermissions' | 'version'> }
-  )> };
-
-export type NetworkExtensionVersionQueryVariables = Exact<{
-  extensionId?: Maybe<Scalars['String']>;
-}>;
-
-
-export type NetworkExtensionVersionQuery = Pick<Query, 'networkExtensionVersion'>;
-
-export type SubgraphExtensionVersionDeployedEventsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SubgraphExtensionVersionDeployedEventsQuery = { extensionVersionDeployedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphExtensionEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  extensionAddress: Scalars['String'];
-}>;
-
-
-export type SubgraphExtensionEventsQuery = { extensionInstalledEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )>, extensionInitialisedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type ColonyMembersQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type ColonyMembersQuery = { subscribedUsers: Array<(
-    Pick<User, 'id'>
-    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-  )> };
-
-export type SubgraphMotionEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  motionId: Scalars['String'];
-}>;
-
-
-export type SubgraphMotionEventsQuery = { motionEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphMotionSystemEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  motionId: Scalars['String'];
-}>;
-
-
-export type SubgraphMotionSystemEventsQuery = { motionSystemEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphMotionVoteSubmittedEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  motionId: Scalars['String'];
-}>;
-
-
-export type SubgraphMotionVoteSubmittedEventsQuery = { motionVoteSubmittedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphMotionVoteRevealedEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  motionId: Scalars['String'];
-}>;
-
-
-export type SubgraphMotionVoteRevealedEventsQuery = { motionVoteRevealedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphMotionStakedEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  motionId: Scalars['String'];
-}>;
-
-
-export type SubgraphMotionStakedEventsQuery = { motionStakedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphUserMotionStakedEventsQueryVariables = Exact<{
-  walletAddress: Scalars['String'];
-}>;
-
-
-export type SubgraphUserMotionStakedEventsQuery = { motionStakedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphUserMotionRewardClaimedEventsQueryVariables = Exact<{
-  walletAddress: Scalars['String'];
-}>;
-
-
-export type SubgraphUserMotionRewardClaimedEventsQuery = { motionRewardClaimedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphMotionRewardClaimedEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  motionId: Scalars['String'];
-}>;
-
-
-export type SubgraphMotionRewardClaimedEventsQuery = { motionRewardClaimedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphBlockQueryVariables = Exact<{
-  blockId: Scalars['ID'];
-}>;
-
-
-export type SubgraphBlockQuery = { block?: Maybe<Pick<SubgraphBlock, 'id' | 'timestamp'>> };
-
-export type SubgraphRecoveryModeEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  toBlock: Scalars['Int'];
-}>;
-
-
-export type SubgraphRecoveryModeEventsQuery = { recoveryStorageSlotSetEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )>, recoveryModeExitApprovedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )>, recoveryModeEnteredEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphRecoveryModeExitedEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type SubgraphRecoveryModeExitedEventsQuery = { recoveryModeExitedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphRoleEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  toBlock: Scalars['Int'];
-}>;
-
-
-export type SubgraphRoleEventsQuery = { colonyRoleSetEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )>, recoveryRoleSetEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphColonyFundsClaimedEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type SubgraphColonyFundsClaimedEventsQuery = { colonyFundsClaimedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphPayoutClaimedEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type SubgraphPayoutClaimedEventsQuery = { payoutClaimedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type SubgraphEventsSubscriptionVariables = Exact<{
+export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type SubgraphEventsSubscription = { events: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+export type SubscriptionSubgraphEventsSubscription = { events: Array<(
+    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -2417,14 +2042,14 @@ export type SubgraphEventsSubscription = { events: Array<(
     ) }
   )> };
 
-export type SubgraphOneTxSubscriptionVariables = Exact<{
+export type SubscriptionSubgraphOneTxSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type SubgraphOneTxSubscription = { oneTxPayments: Array<(
+export type SubscriptionSubgraphOneTxSubscription = { oneTxPayments: Array<(
     Pick<OneTxPayment, 'id' | 'agent'>
     & { transaction: (
       { hash: SubgraphTransaction['id'] }
@@ -2444,15 +2069,15 @@ export type SubgraphOneTxSubscription = { oneTxPayments: Array<(
     ) }
   )> };
 
-export type SubgraphEventsThatAreActionsSubscriptionVariables = Exact<{
+export type SubscriptionSubgraphEventsThatAreActionsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+export type SubscriptionSubgraphEventsThatAreActionsSubscription = { events: Array<(
+    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -2462,10 +2087,10 @@ export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
-    ), processedValues: Pick<SugraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
+    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
   )> };
 
-export type SubgraphMotionsSubscriptionVariables = Exact<{
+export type SubscriptionsMotionsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -2473,7 +2098,7 @@ export type SubgraphMotionsSubscriptionVariables = Exact<{
 }>;
 
 
-export type SubgraphMotionsSubscription = { motions: Array<(
+export type SubscriptionsMotionsSubscription = { motions: Array<(
     Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'stakes' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
@@ -2494,50 +2119,6 @@ export type SubgraphMotionsSubscription = { motions: Array<(
         & { address: SubgraphToken['id'] }
       ) }
     ), timeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> }
-  )> };
-
-export type SubgraphAnnotationEventsQueryVariables = Exact<{
-  transactionHash: Scalars['String'];
-}>;
-
-
-export type SubgraphAnnotationEventsQuery = { annotationEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
-export type CommentCountSubscriptionVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type CommentCountSubscription = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
-
-export type CommentsSubscriptionVariables = Exact<{
-  transactionHash: Scalars['String'];
-}>;
-
-
-export type CommentsSubscription = { transactionMessages: (
-    Pick<TransactionMessages, 'transactionHash'>
-    & { messages: Array<TransactionMessageFragment> }
-  ) };
-
-export type MembersSubscriptionVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type MembersSubscription = { subscribedUsers: Array<(
-    Pick<User, 'id'>
-    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
   )> };
 
 export const ColonyProfileFragmentDoc = gql`
@@ -2989,6 +2570,39 @@ export function useSendTransactionMessageMutation(baseOptions?: Apollo.MutationH
 export type SendTransactionMessageMutationHookResult = ReturnType<typeof useSendTransactionMessageMutation>;
 export type SendTransactionMessageMutationResult = Apollo.MutationResult<SendTransactionMessageMutation>;
 export type SendTransactionMessageMutationOptions = Apollo.BaseMutationOptions<SendTransactionMessageMutation, SendTransactionMessageMutationVariables>;
+export const SetNetworkContractsDocument = gql`
+    mutation SetNetworkContracts($input: NetworkContractsInput!) {
+  setNetworkContracts(input: $input) @client {
+    version
+    feeInverse
+  }
+}
+    `;
+export type SetNetworkContractsMutationFn = Apollo.MutationFunction<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>;
+
+/**
+ * __useSetNetworkContractsMutation__
+ *
+ * To run a mutation, you first call `useSetNetworkContractsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetNetworkContractsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setNetworkContractsMutation, { data, loading, error }] = useSetNetworkContractsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetNetworkContractsMutation(baseOptions?: Apollo.MutationHookOptions<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>) {
+        return Apollo.useMutation<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>(SetNetworkContractsDocument, baseOptions);
+      }
+export type SetNetworkContractsMutationHookResult = ReturnType<typeof useSetNetworkContractsMutation>;
+export type SetNetworkContractsMutationResult = Apollo.MutationResult<SetNetworkContractsMutation>;
+export type SetNetworkContractsMutationOptions = Apollo.BaseMutationOptions<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>;
 export const UpdateNetworkContractsDocument = gql`
     mutation UpdateNetworkContracts {
   updateNetworkContracts @client {
@@ -3178,41 +2792,6 @@ export function useUserReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type UserReputationQueryHookResult = ReturnType<typeof useUserReputationQuery>;
 export type UserReputationLazyQueryHookResult = ReturnType<typeof useUserReputationLazyQuery>;
 export type UserReputationQueryResult = Apollo.QueryResult<UserReputationQuery, UserReputationQueryVariables>;
-export const UserReputationForTopDomainsDocument = gql`
-    query UserReputationForTopDomains($address: String!, $colonyAddress: String!) {
-  userReputationForTopDomains(address: $address, colonyAddress: $colonyAddress) @client {
-    domainId
-    reputationPercentage
-  }
-}
-    `;
-
-/**
- * __useUserReputationForTopDomainsQuery__
- *
- * To run a query within a React component, call `useUserReputationForTopDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserReputationForTopDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserReputationForTopDomainsQuery({
- *   variables: {
- *      address: // value for 'address'
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useUserReputationForTopDomainsQuery(baseOptions?: Apollo.QueryHookOptions<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>) {
-        return Apollo.useQuery<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>(UserReputationForTopDomainsDocument, baseOptions);
-      }
-export function useUserReputationForTopDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>) {
-          return Apollo.useLazyQuery<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>(UserReputationForTopDomainsDocument, baseOptions);
-        }
-export type UserReputationForTopDomainsQueryHookResult = ReturnType<typeof useUserReputationForTopDomainsQuery>;
-export type UserReputationForTopDomainsLazyQueryHookResult = ReturnType<typeof useUserReputationForTopDomainsLazyQuery>;
-export type UserReputationForTopDomainsQueryResult = Apollo.QueryResult<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>;
 export const UserTokensDocument = gql`
     query UserTokens($address: String!) {
   user(address: $address) {
@@ -3367,6 +2946,128 @@ export function useUserAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type UserAddressQueryHookResult = ReturnType<typeof useUserAddressQuery>;
 export type UserAddressLazyQueryHookResult = ReturnType<typeof useUserAddressLazyQuery>;
 export type UserAddressQueryResult = Apollo.QueryResult<UserAddressQuery, UserAddressQueryVariables>;
+export const ColonyExtensionsDocument = gql`
+    query ColonyExtensions($address: String!) {
+  processedColony(address: $address) @client {
+    id
+    colonyAddress
+    installedExtensions @client {
+      id
+      extensionId
+      address
+      details(colonyAddress: $address) {
+        deprecated
+        initialized
+        installedBy
+        installedAt
+        missingPermissions
+        version
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyExtensionsQuery__
+ *
+ * To run a query within a React component, call `useColonyExtensionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyExtensionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyExtensionsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyExtensionsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>) {
+        return Apollo.useQuery<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>(ColonyExtensionsDocument, baseOptions);
+      }
+export function useColonyExtensionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>(ColonyExtensionsDocument, baseOptions);
+        }
+export type ColonyExtensionsQueryHookResult = ReturnType<typeof useColonyExtensionsQuery>;
+export type ColonyExtensionsLazyQueryHookResult = ReturnType<typeof useColonyExtensionsLazyQuery>;
+export type ColonyExtensionsQueryResult = Apollo.QueryResult<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>;
+export const ColonyExtensionDocument = gql`
+    query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
+  colonyExtension(colonyAddress: $colonyAddress, extensionId: $extensionId) @client {
+    id
+    address
+    extensionId
+    details(colonyAddress: $colonyAddress) {
+      deprecated
+      initialized
+      installedBy
+      installedAt
+      missingPermissions
+      version
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyExtensionQuery__
+ *
+ * To run a query within a React component, call `useColonyExtensionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyExtensionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyExtensionQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      extensionId: // value for 'extensionId'
+ *   },
+ * });
+ */
+export function useColonyExtensionQuery(baseOptions?: Apollo.QueryHookOptions<ColonyExtensionQuery, ColonyExtensionQueryVariables>) {
+        return Apollo.useQuery<ColonyExtensionQuery, ColonyExtensionQueryVariables>(ColonyExtensionDocument, baseOptions);
+      }
+export function useColonyExtensionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyExtensionQuery, ColonyExtensionQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyExtensionQuery, ColonyExtensionQueryVariables>(ColonyExtensionDocument, baseOptions);
+        }
+export type ColonyExtensionQueryHookResult = ReturnType<typeof useColonyExtensionQuery>;
+export type ColonyExtensionLazyQueryHookResult = ReturnType<typeof useColonyExtensionLazyQuery>;
+export type ColonyExtensionQueryResult = Apollo.QueryResult<ColonyExtensionQuery, ColonyExtensionQueryVariables>;
+export const NetworkExtensionVersionDocument = gql`
+    query NetworkExtensionVersion($extensionId: String!) {
+  networkExtensionVersion(extensionId: $extensionId) @client
+}
+    `;
+
+/**
+ * __useNetworkExtensionVersionQuery__
+ *
+ * To run a query within a React component, call `useNetworkExtensionVersionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNetworkExtensionVersionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNetworkExtensionVersionQuery({
+ *   variables: {
+ *      extensionId: // value for 'extensionId'
+ *   },
+ * });
+ */
+export function useNetworkExtensionVersionQuery(baseOptions?: Apollo.QueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
+        return Apollo.useQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
+      }
+export function useNetworkExtensionVersionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
+          return Apollo.useLazyQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
+        }
+export type NetworkExtensionVersionQueryHookResult = ReturnType<typeof useNetworkExtensionVersionQuery>;
+export type NetworkExtensionVersionLazyQueryHookResult = ReturnType<typeof useNetworkExtensionVersionLazyQuery>;
+export type NetworkExtensionVersionQueryResult = Apollo.QueryResult<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>;
 export const WhitelistedUsersDocument = gql`
     query WhitelistedUsers($colonyAddress: String!) {
   whitelistedUsers(colonyAddress: $colonyAddress) @client {
@@ -3447,39 +3148,6 @@ export function useTokenBalancesForDomainsLazyQuery(baseOptions?: Apollo.LazyQue
 export type TokenBalancesForDomainsQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsQuery>;
 export type TokenBalancesForDomainsLazyQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsLazyQuery>;
 export type TokenBalancesForDomainsQueryResult = Apollo.QueryResult<TokenBalancesForDomainsQuery, TokenBalancesForDomainsQueryVariables>;
-export const DomainBalanceDocument = gql`
-    query DomainBalance($colonyAddress: String!, $tokenAddress: String!, $domainId: Int!) {
-  domainBalance(colonyAddress: $colonyAddress, tokenAddress: $tokenAddress, domainId: $domainId) @client
-}
-    `;
-
-/**
- * __useDomainBalanceQuery__
- *
- * To run a query within a React component, call `useDomainBalanceQuery` and pass it any options that fit your needs.
- * When your component renders, `useDomainBalanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDomainBalanceQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      tokenAddress: // value for 'tokenAddress'
- *      domainId: // value for 'domainId'
- *   },
- * });
- */
-export function useDomainBalanceQuery(baseOptions?: Apollo.QueryHookOptions<DomainBalanceQuery, DomainBalanceQueryVariables>) {
-        return Apollo.useQuery<DomainBalanceQuery, DomainBalanceQueryVariables>(DomainBalanceDocument, baseOptions);
-      }
-export function useDomainBalanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DomainBalanceQuery, DomainBalanceQueryVariables>) {
-          return Apollo.useLazyQuery<DomainBalanceQuery, DomainBalanceQueryVariables>(DomainBalanceDocument, baseOptions);
-        }
-export type DomainBalanceQueryHookResult = ReturnType<typeof useDomainBalanceQuery>;
-export type DomainBalanceLazyQueryHookResult = ReturnType<typeof useDomainBalanceLazyQuery>;
-export type DomainBalanceQueryResult = Apollo.QueryResult<DomainBalanceQuery, DomainBalanceQueryVariables>;
 export const UserColoniesDocument = gql`
     query UserColonies($address: String!) {
   user(address: $address) {
@@ -3809,6 +3477,78 @@ export function useColonyActionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type ColonyActionQueryHookResult = ReturnType<typeof useColonyActionQuery>;
 export type ColonyActionLazyQueryHookResult = ReturnType<typeof useColonyActionLazyQuery>;
 export type ColonyActionQueryResult = Apollo.QueryResult<ColonyActionQuery, ColonyActionQueryVariables>;
+export const TransactionMessagesDocument = gql`
+    query TransactionMessages($transactionHash: String!) {
+  transactionMessages(transactionHash: $transactionHash) {
+    transactionHash
+    messages {
+      ...TransactionMessage
+    }
+  }
+}
+    ${TransactionMessageFragmentDoc}`;
+
+/**
+ * __useTransactionMessagesQuery__
+ *
+ * To run a query within a React component, call `useTransactionMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionMessagesQuery({
+ *   variables: {
+ *      transactionHash: // value for 'transactionHash'
+ *   },
+ * });
+ */
+export function useTransactionMessagesQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
+        return Apollo.useQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
+      }
+export function useTransactionMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
+        }
+export type TransactionMessagesQueryHookResult = ReturnType<typeof useTransactionMessagesQuery>;
+export type TransactionMessagesLazyQueryHookResult = ReturnType<typeof useTransactionMessagesLazyQuery>;
+export type TransactionMessagesQueryResult = Apollo.QueryResult<TransactionMessagesQuery, TransactionMessagesQueryVariables>;
+export const TransactionMessagesCountDocument = gql`
+    query TransactionMessagesCount($colonyAddress: String!) {
+  transactionMessagesCount(colonyAddress: $colonyAddress) {
+    colonyTransactionMessages {
+      transactionHash
+      count
+    }
+  }
+}
+    `;
+
+/**
+ * __useTransactionMessagesCountQuery__
+ *
+ * To run a query within a React component, call `useTransactionMessagesCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionMessagesCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionMessagesCountQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useTransactionMessagesCountQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
+        return Apollo.useQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
+      }
+export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
+        }
+export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
+export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
+export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
 export const MetaColonyDocument = gql`
     query MetaColony {
   processedMetaColony @client {
@@ -4143,8 +3883,8 @@ export type GetRecoveryRequiredApprovalsQueryHookResult = ReturnType<typeof useG
 export type GetRecoveryRequiredApprovalsLazyQueryHookResult = ReturnType<typeof useGetRecoveryRequiredApprovalsLazyQuery>;
 export type GetRecoveryRequiredApprovalsQueryResult = Apollo.QueryResult<GetRecoveryRequiredApprovalsQuery, GetRecoveryRequiredApprovalsQueryVariables>;
 export const RecoveryAllEnteredEventsDocument = gql`
-    query RecoveryAllEnteredEvents($colonyAddress: String!, $currentBlock: Int!) {
-  recoveryAllEnteredEvents(colonyAddress: $colonyAddress, currentBlock: $currentBlock) @client {
+    query RecoveryAllEnteredEvents($colonyAddress: String!) {
+  recoveryAllEnteredEvents(colonyAddress: $colonyAddress) @client {
     type
     name
     values
@@ -4169,7 +3909,6 @@ export const RecoveryAllEnteredEventsDocument = gql`
  * const { data, loading, error } = useRecoveryAllEnteredEventsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
- *      currentBlock: // value for 'currentBlock'
  *   },
  * });
  */
@@ -4903,7 +4642,7 @@ export const SubgraphColonyDocument = gql`
       symbol
     }
     extensions {
-      address: id
+      address
       hash
     }
   }
@@ -5286,6 +5025,45 @@ export function useColonyProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ColonyProfileQueryHookResult = ReturnType<typeof useColonyProfileQuery>;
 export type ColonyProfileLazyQueryHookResult = ReturnType<typeof useColonyProfileLazyQuery>;
 export type ColonyProfileQueryResult = Apollo.QueryResult<ColonyProfileQuery, ColonyProfileQueryVariables>;
+export const ColonySubscribedUsersDocument = gql`
+    query ColonySubscribedUsers($colonyAddress: String!) {
+  subscribedUsers(colonyAddress: $colonyAddress) {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonySubscribedUsersQuery__
+ *
+ * To run a query within a React component, call `useColonySubscribedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonySubscribedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonySubscribedUsersQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useColonySubscribedUsersQuery(baseOptions?: Apollo.QueryHookOptions<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>) {
+        return Apollo.useQuery<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>(ColonySubscribedUsersDocument, baseOptions);
+      }
+export function useColonySubscribedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>) {
+          return Apollo.useLazyQuery<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>(ColonySubscribedUsersDocument, baseOptions);
+        }
+export type ColonySubscribedUsersQueryHookResult = ReturnType<typeof useColonySubscribedUsersQuery>;
+export type ColonySubscribedUsersLazyQueryHookResult = ReturnType<typeof useColonySubscribedUsersLazyQuery>;
+export type ColonySubscribedUsersQueryResult = Apollo.QueryResult<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>;
 export const ColonyMembersWithReputationDocument = gql`
     query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
@@ -5388,7 +5166,6 @@ export function useColonyHistoricRolesLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHistoricRolesQuery>;
 export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
 export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
-<<<<<<< HEAD
 export const WhitelistAgreementDocument = gql`
     query WhitelistAgreement($agreementHash: String!) {
   whitelistAgreement(agreementHash: $agreementHash) @client
@@ -5451,1049 +5228,115 @@ export function useWhitelistAgreementHashLazyQuery(baseOptions?: Apollo.LazyQuer
 export type WhitelistAgreementHashQueryHookResult = ReturnType<typeof useWhitelistAgreementHashQuery>;
 export type WhitelistAgreementHashLazyQueryHookResult = ReturnType<typeof useWhitelistAgreementHashLazyQuery>;
 export type WhitelistAgreementHashQueryResult = Apollo.QueryResult<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>;
-export const HasKycPolicyDocument = gql`
-    query HasKycPolicy($colonyAddress: String!) {
-  hasKycPolicy(colonyAddress: $colonyAddress) @client
-}
-    `;
-
-/**
- * __useHasKycPolicyQuery__
- *
- * To run a query within a React component, call `useHasKycPolicyQuery` and pass it any options that fit your needs.
- * When your component renders, `useHasKycPolicyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useHasKycPolicyQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useHasKycPolicyQuery(baseOptions?: Apollo.QueryHookOptions<HasKycPolicyQuery, HasKycPolicyQueryVariables>) {
-        return Apollo.useQuery<HasKycPolicyQuery, HasKycPolicyQueryVariables>(HasKycPolicyDocument, baseOptions);
-      }
-export function useHasKycPolicyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HasKycPolicyQuery, HasKycPolicyQueryVariables>) {
-          return Apollo.useLazyQuery<HasKycPolicyQuery, HasKycPolicyQueryVariables>(HasKycPolicyDocument, baseOptions);
-        }
-export type HasKycPolicyQueryHookResult = ReturnType<typeof useHasKycPolicyQuery>;
-export type HasKycPolicyLazyQueryHookResult = ReturnType<typeof useHasKycPolicyLazyQuery>;
-export type HasKycPolicyQueryResult = Apollo.QueryResult<HasKycPolicyQuery, HasKycPolicyQueryVariables>;
-export const TransactionMessagesDocument = gql`
-    query TransactionMessages($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
-    transactionHash
-    messages {
-      ...TransactionMessage
-    }
-  }
-}
-    ${TransactionMessageFragmentDoc}`;
-
-/**
- * __useTransactionMessagesQuery__
- *
- * To run a query within a React component, call `useTransactionMessagesQuery` and pass it any options that fit your needs.
- * When your component renders, `useTransactionMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTransactionMessagesQuery({
- *   variables: {
- *      transactionHash: // value for 'transactionHash'
- *   },
- * });
- */
-export function useTransactionMessagesQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
-        return Apollo.useQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
-      }
-export function useTransactionMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
-          return Apollo.useLazyQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
-        }
-export type TransactionMessagesQueryHookResult = ReturnType<typeof useTransactionMessagesQuery>;
-export type TransactionMessagesLazyQueryHookResult = ReturnType<typeof useTransactionMessagesLazyQuery>;
-export type TransactionMessagesQueryResult = Apollo.QueryResult<TransactionMessagesQuery, TransactionMessagesQueryVariables>;
-export const TransactionMessagesCountDocument = gql`
-    query TransactionMessagesCount($colonyAddress: String!) {
-  transactionMessagesCount(colonyAddress: $colonyAddress) {
-    colonyTransactionMessages {
-      transactionHash
-      count
-    }
-  }
-}
-    `;
-
-/**
- * __useTransactionMessagesCountQuery__
- *
- * To run a query within a React component, call `useTransactionMessagesCountQuery` and pass it any options that fit your needs.
- * When your component renders, `useTransactionMessagesCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTransactionMessagesCountQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useTransactionMessagesCountQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
-        return Apollo.useQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
-      }
-export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
-          return Apollo.useLazyQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
-        }
-export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
-export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
-export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
-export const ColonyExtensionsDocument = gql`
-    query ColonyExtensions($address: String!) {
-  processedColony(address: $address) @client {
-    id
-    colonyAddress
-    installedExtensions @client {
-      id
-      extensionId
+export const CoinMachineSaleTokensDocument = gql`
+    query CoinMachineSaleTokens($colonyAddress: String!) {
+  coinMachineSaleTokens(colonyAddress: $colonyAddress) @client {
+    sellableToken {
       address
-      details(colonyAddress: $address) {
-        deprecated
-        initialized
-        installedBy
-        installedAt
-        missingPermissions
-        version
-      }
+      decimals
+      symbol
+      name
+    }
+    purchaseToken {
+      address
+      decimals
+      symbol
+      name
     }
   }
 }
     `;
 
 /**
- * __useColonyExtensionsQuery__
+ * __useCoinMachineSaleTokensQuery__
  *
- * To run a query within a React component, call `useColonyExtensionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyExtensionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCoinMachineSaleTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineSaleTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useColonyExtensionsQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useColonyExtensionsQuery(baseOptions?: Apollo.QueryHookOptions<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>) {
-        return Apollo.useQuery<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>(ColonyExtensionsDocument, baseOptions);
-      }
-export function useColonyExtensionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>(ColonyExtensionsDocument, baseOptions);
-        }
-export type ColonyExtensionsQueryHookResult = ReturnType<typeof useColonyExtensionsQuery>;
-export type ColonyExtensionsLazyQueryHookResult = ReturnType<typeof useColonyExtensionsLazyQuery>;
-export type ColonyExtensionsQueryResult = Apollo.QueryResult<ColonyExtensionsQuery, ColonyExtensionsQueryVariables>;
-export const ColonyExtensionDocument = gql`
-    query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
-  colonyExtension(colonyAddress: $colonyAddress, extensionId: $extensionId) @client {
-    id
-    address
-    extensionId
-    details(colonyAddress: $colonyAddress) {
-      deprecated
-      initialized
-      installedBy
-      installedAt
-      missingPermissions
-      version
-    }
-  }
-}
-    `;
-
-/**
- * __useColonyExtensionQuery__
- *
- * To run a query within a React component, call `useColonyExtensionQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyExtensionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyExtensionQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      extensionId: // value for 'extensionId'
- *   },
- * });
- */
-export function useColonyExtensionQuery(baseOptions?: Apollo.QueryHookOptions<ColonyExtensionQuery, ColonyExtensionQueryVariables>) {
-        return Apollo.useQuery<ColonyExtensionQuery, ColonyExtensionQueryVariables>(ColonyExtensionDocument, baseOptions);
-      }
-export function useColonyExtensionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyExtensionQuery, ColonyExtensionQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyExtensionQuery, ColonyExtensionQueryVariables>(ColonyExtensionDocument, baseOptions);
-        }
-export type ColonyExtensionQueryHookResult = ReturnType<typeof useColonyExtensionQuery>;
-export type ColonyExtensionLazyQueryHookResult = ReturnType<typeof useColonyExtensionLazyQuery>;
-export type ColonyExtensionQueryResult = Apollo.QueryResult<ColonyExtensionQuery, ColonyExtensionQueryVariables>;
-export const NetworkExtensionVersionDocument = gql`
-    query NetworkExtensionVersion($extensionId: String) {
-  networkExtensionVersion(extensionId: $extensionId) @client
-}
-    `;
-
-/**
- * __useNetworkExtensionVersionQuery__
- *
- * To run a query within a React component, call `useNetworkExtensionVersionQuery` and pass it any options that fit your needs.
- * When your component renders, `useNetworkExtensionVersionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNetworkExtensionVersionQuery({
- *   variables: {
- *      extensionId: // value for 'extensionId'
- *   },
- * });
- */
-export function useNetworkExtensionVersionQuery(baseOptions?: Apollo.QueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
-        return Apollo.useQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
-      }
-export function useNetworkExtensionVersionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
-          return Apollo.useLazyQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
-        }
-export type NetworkExtensionVersionQueryHookResult = ReturnType<typeof useNetworkExtensionVersionQuery>;
-export type NetworkExtensionVersionLazyQueryHookResult = ReturnType<typeof useNetworkExtensionVersionLazyQuery>;
-export type NetworkExtensionVersionQueryResult = Apollo.QueryResult<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>;
-export const SubgraphExtensionVersionDeployedEventsDocument = gql`
-    query SubgraphExtensionVersionDeployedEvents {
-  extensionVersionDeployedEvents: events(where: {name_contains: "ExtensionAddedToNetwork"}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphExtensionVersionDeployedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphExtensionVersionDeployedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphExtensionVersionDeployedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphExtensionVersionDeployedEventsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useSubgraphExtensionVersionDeployedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphExtensionVersionDeployedEventsQuery, SubgraphExtensionVersionDeployedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphExtensionVersionDeployedEventsQuery, SubgraphExtensionVersionDeployedEventsQueryVariables>(SubgraphExtensionVersionDeployedEventsDocument, baseOptions);
-      }
-export function useSubgraphExtensionVersionDeployedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphExtensionVersionDeployedEventsQuery, SubgraphExtensionVersionDeployedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphExtensionVersionDeployedEventsQuery, SubgraphExtensionVersionDeployedEventsQueryVariables>(SubgraphExtensionVersionDeployedEventsDocument, baseOptions);
-        }
-export type SubgraphExtensionVersionDeployedEventsQueryHookResult = ReturnType<typeof useSubgraphExtensionVersionDeployedEventsQuery>;
-export type SubgraphExtensionVersionDeployedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphExtensionVersionDeployedEventsLazyQuery>;
-export type SubgraphExtensionVersionDeployedEventsQueryResult = Apollo.QueryResult<SubgraphExtensionVersionDeployedEventsQuery, SubgraphExtensionVersionDeployedEventsQueryVariables>;
-export const SubgraphExtensionEventsDocument = gql`
-    query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!) {
-  extensionInstalledEvents: events(where: {name_contains: "ExtensionInstalled", args_contains: $colonyAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-  extensionInitialisedEvents: events(where: {name_contains: "ExtensionInitialised", address: $extensionAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphExtensionEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphExtensionEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphExtensionEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphExtensionEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      extensionAddress: // value for 'extensionAddress'
- *   },
- * });
- */
-export function useSubgraphExtensionEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>(SubgraphExtensionEventsDocument, baseOptions);
-      }
-export function useSubgraphExtensionEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>(SubgraphExtensionEventsDocument, baseOptions);
-        }
-export type SubgraphExtensionEventsQueryHookResult = ReturnType<typeof useSubgraphExtensionEventsQuery>;
-export type SubgraphExtensionEventsLazyQueryHookResult = ReturnType<typeof useSubgraphExtensionEventsLazyQuery>;
-export type SubgraphExtensionEventsQueryResult = Apollo.QueryResult<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>;
-export const ColonyMembersDocument = gql`
-    query ColonyMembers($colonyAddress: String!) {
-  subscribedUsers(colonyAddress: $colonyAddress) {
-    id
-    profile {
-      avatarHash
-      displayName
-      username
-      walletAddress
-    }
-  }
-}
-    `;
-
-/**
- * __useColonyMembersQuery__
- *
- * To run a query within a React component, call `useColonyMembersQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useColonyMembersQuery({
+ * const { data, loading, error } = useCoinMachineSaleTokensQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-export function useColonyMembersQuery(baseOptions?: Apollo.QueryHookOptions<ColonyMembersQuery, ColonyMembersQueryVariables>) {
-        return Apollo.useQuery<ColonyMembersQuery, ColonyMembersQueryVariables>(ColonyMembersDocument, baseOptions);
+export function useCoinMachineSaleTokensQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineSaleTokensQuery, CoinMachineSaleTokensQueryVariables>) {
+        return Apollo.useQuery<CoinMachineSaleTokensQuery, CoinMachineSaleTokensQueryVariables>(CoinMachineSaleTokensDocument, baseOptions);
       }
-export function useColonyMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyMembersQuery, ColonyMembersQueryVariables>) {
-          return Apollo.useLazyQuery<ColonyMembersQuery, ColonyMembersQueryVariables>(ColonyMembersDocument, baseOptions);
+export function useCoinMachineSaleTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineSaleTokensQuery, CoinMachineSaleTokensQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineSaleTokensQuery, CoinMachineSaleTokensQueryVariables>(CoinMachineSaleTokensDocument, baseOptions);
         }
-export type ColonyMembersQueryHookResult = ReturnType<typeof useColonyMembersQuery>;
-export type ColonyMembersLazyQueryHookResult = ReturnType<typeof useColonyMembersLazyQuery>;
-export type ColonyMembersQueryResult = Apollo.QueryResult<ColonyMembersQuery, ColonyMembersQueryVariables>;
-export const SubgraphMotionEventsDocument = gql`
-    query SubgraphMotionEvents($colonyAddress: String!, $motionId: String!) {
-  motionEvents: events(where: {name_in: ["MotionStaked(uint256,address,uint256,uint256)", "MotionFinalized(uint256,bytes,bool)", "MotionRewardClaimed(uint256,address,uint256,uint256)"], associatedColony: $colonyAddress, args_contains: $motionId}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
+export type CoinMachineSaleTokensQueryHookResult = ReturnType<typeof useCoinMachineSaleTokensQuery>;
+export type CoinMachineSaleTokensLazyQueryHookResult = ReturnType<typeof useCoinMachineSaleTokensLazyQuery>;
+export type CoinMachineSaleTokensQueryResult = Apollo.QueryResult<CoinMachineSaleTokensQuery, CoinMachineSaleTokensQueryVariables>;
+export const CoinMachineCurrentPeriodPriceDocument = gql`
+    query CoinMachineCurrentPeriodPrice($colonyAddress: String!) {
+  coinMachineCurrentPeriodPrice(colonyAddress: $colonyAddress) @client
 }
     `;
 
 /**
- * __useSubgraphMotionEventsQuery__
+ * __useCoinMachineCurrentPeriodPriceQuery__
  *
- * To run a query within a React component, call `useSubgraphMotionEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphMotionEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCoinMachineCurrentPeriodPriceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineCurrentPeriodPriceQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubgraphMotionEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
- *   },
- * });
- */
-export function useSubgraphMotionEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionEventsQuery, SubgraphMotionEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphMotionEventsQuery, SubgraphMotionEventsQueryVariables>(SubgraphMotionEventsDocument, baseOptions);
-      }
-export function useSubgraphMotionEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionEventsQuery, SubgraphMotionEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphMotionEventsQuery, SubgraphMotionEventsQueryVariables>(SubgraphMotionEventsDocument, baseOptions);
-        }
-export type SubgraphMotionEventsQueryHookResult = ReturnType<typeof useSubgraphMotionEventsQuery>;
-export type SubgraphMotionEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionEventsLazyQuery>;
-export type SubgraphMotionEventsQueryResult = Apollo.QueryResult<SubgraphMotionEventsQuery, SubgraphMotionEventsQueryVariables>;
-export const SubgraphMotionSystemEventsDocument = gql`
-    query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!) {
-  motionSystemEvents: events(where: {name_in: ["MotionStaked(uint256,address,uint256,uint256)", "MotionVoteSubmitted(uint256,address)", "MotionVoteRevealed(uint256,address,uint256)"], associatedColony: $colonyAddress, args_contains: $motionId}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphMotionSystemEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphMotionSystemEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphMotionSystemEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphMotionSystemEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
- *   },
- * });
- */
-export function useSubgraphMotionSystemEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>(SubgraphMotionSystemEventsDocument, baseOptions);
-      }
-export function useSubgraphMotionSystemEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>(SubgraphMotionSystemEventsDocument, baseOptions);
-        }
-export type SubgraphMotionSystemEventsQueryHookResult = ReturnType<typeof useSubgraphMotionSystemEventsQuery>;
-export type SubgraphMotionSystemEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionSystemEventsLazyQuery>;
-export type SubgraphMotionSystemEventsQueryResult = Apollo.QueryResult<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>;
-export const SubgraphMotionVoteSubmittedEventsDocument = gql`
-    query SubgraphMotionVoteSubmittedEvents($colonyAddress: String!, $motionId: String!) {
-  motionVoteSubmittedEvents: events(where: {name_contains: "MotionVoteSubmitted", associatedColony: $colonyAddress, args_contains: $motionId}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphMotionVoteSubmittedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphMotionVoteSubmittedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphMotionVoteSubmittedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphMotionVoteSubmittedEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
- *   },
- * });
- */
-export function useSubgraphMotionVoteSubmittedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionVoteSubmittedEventsQuery, SubgraphMotionVoteSubmittedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphMotionVoteSubmittedEventsQuery, SubgraphMotionVoteSubmittedEventsQueryVariables>(SubgraphMotionVoteSubmittedEventsDocument, baseOptions);
-      }
-export function useSubgraphMotionVoteSubmittedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionVoteSubmittedEventsQuery, SubgraphMotionVoteSubmittedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphMotionVoteSubmittedEventsQuery, SubgraphMotionVoteSubmittedEventsQueryVariables>(SubgraphMotionVoteSubmittedEventsDocument, baseOptions);
-        }
-export type SubgraphMotionVoteSubmittedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionVoteSubmittedEventsQuery>;
-export type SubgraphMotionVoteSubmittedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionVoteSubmittedEventsLazyQuery>;
-export type SubgraphMotionVoteSubmittedEventsQueryResult = Apollo.QueryResult<SubgraphMotionVoteSubmittedEventsQuery, SubgraphMotionVoteSubmittedEventsQueryVariables>;
-export const SubgraphMotionVoteRevealedEventsDocument = gql`
-    query SubgraphMotionVoteRevealedEvents($colonyAddress: String!, $motionId: String!) {
-  motionVoteRevealedEvents: events(where: {name_contains: "MotionVoteRevealed", associatedColony: $colonyAddress, args_contains: $motionId}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphMotionVoteRevealedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphMotionVoteRevealedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphMotionVoteRevealedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphMotionVoteRevealedEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
- *   },
- * });
- */
-export function useSubgraphMotionVoteRevealedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionVoteRevealedEventsQuery, SubgraphMotionVoteRevealedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphMotionVoteRevealedEventsQuery, SubgraphMotionVoteRevealedEventsQueryVariables>(SubgraphMotionVoteRevealedEventsDocument, baseOptions);
-      }
-export function useSubgraphMotionVoteRevealedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionVoteRevealedEventsQuery, SubgraphMotionVoteRevealedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphMotionVoteRevealedEventsQuery, SubgraphMotionVoteRevealedEventsQueryVariables>(SubgraphMotionVoteRevealedEventsDocument, baseOptions);
-        }
-export type SubgraphMotionVoteRevealedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionVoteRevealedEventsQuery>;
-export type SubgraphMotionVoteRevealedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionVoteRevealedEventsLazyQuery>;
-export type SubgraphMotionVoteRevealedEventsQueryResult = Apollo.QueryResult<SubgraphMotionVoteRevealedEventsQuery, SubgraphMotionVoteRevealedEventsQueryVariables>;
-export const SubgraphMotionStakedEventsDocument = gql`
-    query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!) {
-  motionStakedEvents: events(where: {name_contains: "MotionStaked", associatedColony: $colonyAddress, args_contains: $motionId}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphMotionStakedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphMotionStakedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphMotionStakedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphMotionStakedEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
- *   },
- * });
- */
-export function useSubgraphMotionStakedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionStakedEventsQuery, SubgraphMotionStakedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphMotionStakedEventsQuery, SubgraphMotionStakedEventsQueryVariables>(SubgraphMotionStakedEventsDocument, baseOptions);
-      }
-export function useSubgraphMotionStakedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionStakedEventsQuery, SubgraphMotionStakedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphMotionStakedEventsQuery, SubgraphMotionStakedEventsQueryVariables>(SubgraphMotionStakedEventsDocument, baseOptions);
-        }
-export type SubgraphMotionStakedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionStakedEventsQuery>;
-export type SubgraphMotionStakedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionStakedEventsLazyQuery>;
-export type SubgraphMotionStakedEventsQueryResult = Apollo.QueryResult<SubgraphMotionStakedEventsQuery, SubgraphMotionStakedEventsQueryVariables>;
-export const SubgraphUserMotionStakedEventsDocument = gql`
-    query SubgraphUserMotionStakedEvents($walletAddress: String!) {
-  motionStakedEvents: events(where: {name_contains: "MotionStaked", args_contains: $walletAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphUserMotionStakedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphUserMotionStakedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphUserMotionStakedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphUserMotionStakedEventsQuery({
- *   variables: {
- *      walletAddress: // value for 'walletAddress'
- *   },
- * });
- */
-export function useSubgraphUserMotionStakedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphUserMotionStakedEventsQuery, SubgraphUserMotionStakedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphUserMotionStakedEventsQuery, SubgraphUserMotionStakedEventsQueryVariables>(SubgraphUserMotionStakedEventsDocument, baseOptions);
-      }
-export function useSubgraphUserMotionStakedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphUserMotionStakedEventsQuery, SubgraphUserMotionStakedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphUserMotionStakedEventsQuery, SubgraphUserMotionStakedEventsQueryVariables>(SubgraphUserMotionStakedEventsDocument, baseOptions);
-        }
-export type SubgraphUserMotionStakedEventsQueryHookResult = ReturnType<typeof useSubgraphUserMotionStakedEventsQuery>;
-export type SubgraphUserMotionStakedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphUserMotionStakedEventsLazyQuery>;
-export type SubgraphUserMotionStakedEventsQueryResult = Apollo.QueryResult<SubgraphUserMotionStakedEventsQuery, SubgraphUserMotionStakedEventsQueryVariables>;
-export const SubgraphUserMotionRewardClaimedEventsDocument = gql`
-    query SubgraphUserMotionRewardClaimedEvents($walletAddress: String!) {
-  motionRewardClaimedEvents: events(where: {name_contains: "MotionRewardClaimed", args_contains: $walletAddress}) {
-    id
-    name
-    args
-    address
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphUserMotionRewardClaimedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphUserMotionRewardClaimedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphUserMotionRewardClaimedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphUserMotionRewardClaimedEventsQuery({
- *   variables: {
- *      walletAddress: // value for 'walletAddress'
- *   },
- * });
- */
-export function useSubgraphUserMotionRewardClaimedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphUserMotionRewardClaimedEventsQuery, SubgraphUserMotionRewardClaimedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphUserMotionRewardClaimedEventsQuery, SubgraphUserMotionRewardClaimedEventsQueryVariables>(SubgraphUserMotionRewardClaimedEventsDocument, baseOptions);
-      }
-export function useSubgraphUserMotionRewardClaimedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphUserMotionRewardClaimedEventsQuery, SubgraphUserMotionRewardClaimedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphUserMotionRewardClaimedEventsQuery, SubgraphUserMotionRewardClaimedEventsQueryVariables>(SubgraphUserMotionRewardClaimedEventsDocument, baseOptions);
-        }
-export type SubgraphUserMotionRewardClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphUserMotionRewardClaimedEventsQuery>;
-export type SubgraphUserMotionRewardClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphUserMotionRewardClaimedEventsLazyQuery>;
-export type SubgraphUserMotionRewardClaimedEventsQueryResult = Apollo.QueryResult<SubgraphUserMotionRewardClaimedEventsQuery, SubgraphUserMotionRewardClaimedEventsQueryVariables>;
-export const SubgraphMotionRewardClaimedEventsDocument = gql`
-    query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!) {
-  motionRewardClaimedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", args_contains: $motionId}) {
-    id
-    name
-    args
-    address
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphMotionRewardClaimedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphMotionRewardClaimedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphMotionRewardClaimedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphMotionRewardClaimedEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
- *   },
- * });
- */
-export function useSubgraphMotionRewardClaimedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>(SubgraphMotionRewardClaimedEventsDocument, baseOptions);
-      }
-export function useSubgraphMotionRewardClaimedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>(SubgraphMotionRewardClaimedEventsDocument, baseOptions);
-        }
-export type SubgraphMotionRewardClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsQuery>;
-export type SubgraphMotionRewardClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsLazyQuery>;
-export type SubgraphMotionRewardClaimedEventsQueryResult = Apollo.QueryResult<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>;
-export const SubgraphBlockDocument = gql`
-    query SubgraphBlock($blockId: ID!) {
-  block(id: $blockId) {
-    id
-    timestamp
-  }
-}
-    `;
-
-/**
- * __useSubgraphBlockQuery__
- *
- * To run a query within a React component, call `useSubgraphBlockQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphBlockQuery({
- *   variables: {
- *      blockId: // value for 'blockId'
- *   },
- * });
- */
-export function useSubgraphBlockQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphBlockQuery, SubgraphBlockQueryVariables>) {
-        return Apollo.useQuery<SubgraphBlockQuery, SubgraphBlockQueryVariables>(SubgraphBlockDocument, baseOptions);
-      }
-export function useSubgraphBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphBlockQuery, SubgraphBlockQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphBlockQuery, SubgraphBlockQueryVariables>(SubgraphBlockDocument, baseOptions);
-        }
-export type SubgraphBlockQueryHookResult = ReturnType<typeof useSubgraphBlockQuery>;
-export type SubgraphBlockLazyQueryHookResult = ReturnType<typeof useSubgraphBlockLazyQuery>;
-export type SubgraphBlockQueryResult = Apollo.QueryResult<SubgraphBlockQuery, SubgraphBlockQueryVariables>;
-export const SubgraphRecoveryModeEventsDocument = gql`
-    query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
-  recoveryStorageSlotSetEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryStorageSlotSet", address: $colonyAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-  recoveryModeExitApprovedEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryModeExitApproved", address: $colonyAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-  recoveryModeEnteredEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryModeEntered", address: $colonyAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphRecoveryModeEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphRecoveryModeEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphRecoveryModeEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphRecoveryModeEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      toBlock: // value for 'toBlock'
- *   },
- * });
- */
-export function useSubgraphRecoveryModeEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphRecoveryModeEventsQuery, SubgraphRecoveryModeEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphRecoveryModeEventsQuery, SubgraphRecoveryModeEventsQueryVariables>(SubgraphRecoveryModeEventsDocument, baseOptions);
-      }
-export function useSubgraphRecoveryModeEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphRecoveryModeEventsQuery, SubgraphRecoveryModeEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphRecoveryModeEventsQuery, SubgraphRecoveryModeEventsQueryVariables>(SubgraphRecoveryModeEventsDocument, baseOptions);
-        }
-export type SubgraphRecoveryModeEventsQueryHookResult = ReturnType<typeof useSubgraphRecoveryModeEventsQuery>;
-export type SubgraphRecoveryModeEventsLazyQueryHookResult = ReturnType<typeof useSubgraphRecoveryModeEventsLazyQuery>;
-export type SubgraphRecoveryModeEventsQueryResult = Apollo.QueryResult<SubgraphRecoveryModeEventsQuery, SubgraphRecoveryModeEventsQueryVariables>;
-export const SubgraphRecoveryModeExitedEventsDocument = gql`
-    query SubgraphRecoveryModeExitedEvents($colonyAddress: String!) {
-  recoveryModeExitedEvents: events(where: {name_contains: "RecoveryModeExited", address: $colonyAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphRecoveryModeExitedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphRecoveryModeExitedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphRecoveryModeExitedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphRecoveryModeExitedEventsQuery({
+ * const { data, loading, error } = useCoinMachineCurrentPeriodPriceQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-export function useSubgraphRecoveryModeExitedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphRecoveryModeExitedEventsQuery, SubgraphRecoveryModeExitedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphRecoveryModeExitedEventsQuery, SubgraphRecoveryModeExitedEventsQueryVariables>(SubgraphRecoveryModeExitedEventsDocument, baseOptions);
+export function useCoinMachineCurrentPeriodPriceQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>) {
+        return Apollo.useQuery<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>(CoinMachineCurrentPeriodPriceDocument, baseOptions);
       }
-export function useSubgraphRecoveryModeExitedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphRecoveryModeExitedEventsQuery, SubgraphRecoveryModeExitedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphRecoveryModeExitedEventsQuery, SubgraphRecoveryModeExitedEventsQueryVariables>(SubgraphRecoveryModeExitedEventsDocument, baseOptions);
+export function useCoinMachineCurrentPeriodPriceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>(CoinMachineCurrentPeriodPriceDocument, baseOptions);
         }
-export type SubgraphRecoveryModeExitedEventsQueryHookResult = ReturnType<typeof useSubgraphRecoveryModeExitedEventsQuery>;
-export type SubgraphRecoveryModeExitedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphRecoveryModeExitedEventsLazyQuery>;
-export type SubgraphRecoveryModeExitedEventsQueryResult = Apollo.QueryResult<SubgraphRecoveryModeExitedEventsQuery, SubgraphRecoveryModeExitedEventsQueryVariables>;
-export const SubgraphRoleEventsDocument = gql`
-    query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!) {
-  colonyRoleSetEvents: events(block: {number: $toBlock}, where: {name_contains: "ColonyRoleSet", address: $colonyAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-  recoveryRoleSetEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryRoleSet", address: $colonyAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
+export type CoinMachineCurrentPeriodPriceQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceQuery>;
+export type CoinMachineCurrentPeriodPriceLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceLazyQuery>;
+export type CoinMachineCurrentPeriodPriceQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>;
+export const CoinMachineCurrentPeriodMaxUserPurchaseDocument = gql`
+    query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
+  coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
 }
     `;
 
 /**
- * __useSubgraphRoleEventsQuery__
+ * __useCoinMachineCurrentPeriodMaxUserPurchaseQuery__
  *
- * To run a query within a React component, call `useSubgraphRoleEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphRoleEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCoinMachineCurrentPeriodMaxUserPurchaseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineCurrentPeriodMaxUserPurchaseQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubgraphRoleEventsQuery({
+ * const { data, loading, error } = useCoinMachineCurrentPeriodMaxUserPurchaseQuery({
  *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      toBlock: // value for 'toBlock'
- *   },
- * });
- */
-export function useSubgraphRoleEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>(SubgraphRoleEventsDocument, baseOptions);
-      }
-export function useSubgraphRoleEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>(SubgraphRoleEventsDocument, baseOptions);
-        }
-export type SubgraphRoleEventsQueryHookResult = ReturnType<typeof useSubgraphRoleEventsQuery>;
-export type SubgraphRoleEventsLazyQueryHookResult = ReturnType<typeof useSubgraphRoleEventsLazyQuery>;
-export type SubgraphRoleEventsQueryResult = Apollo.QueryResult<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>;
-export const SubgraphColonyFundsClaimedEventsDocument = gql`
-    query SubgraphColonyFundsClaimedEvents($colonyAddress: String!) {
-  colonyFundsClaimedEvents: events(where: {name_contains: "ColonyFundsClaimed", address: $colonyAddress}) {
-    id
-    name
-    args
-    address
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphColonyFundsClaimedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphColonyFundsClaimedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphColonyFundsClaimedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphColonyFundsClaimedEventsQuery({
- *   variables: {
+ *      userAddress: // value for 'userAddress'
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-export function useSubgraphColonyFundsClaimedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>(SubgraphColonyFundsClaimedEventsDocument, baseOptions);
+export function useCoinMachineCurrentPeriodMaxUserPurchaseQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>) {
+        return Apollo.useQuery<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>(CoinMachineCurrentPeriodMaxUserPurchaseDocument, baseOptions);
       }
-export function useSubgraphColonyFundsClaimedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>(SubgraphColonyFundsClaimedEventsDocument, baseOptions);
+export function useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>(CoinMachineCurrentPeriodMaxUserPurchaseDocument, baseOptions);
         }
-export type SubgraphColonyFundsClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphColonyFundsClaimedEventsQuery>;
-export type SubgraphColonyFundsClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphColonyFundsClaimedEventsLazyQuery>;
-export type SubgraphColonyFundsClaimedEventsQueryResult = Apollo.QueryResult<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>;
-export const SubgraphPayoutClaimedEventsDocument = gql`
-    query SubgraphPayoutClaimedEvents($colonyAddress: String!) {
-  payoutClaimedEvents: events(where: {name_contains: "PayoutClaimed", address: $colonyAddress}) {
-    id
-    name
-    args
-    address
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphPayoutClaimedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphPayoutClaimedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphPayoutClaimedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphPayoutClaimedEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useSubgraphPayoutClaimedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>(SubgraphPayoutClaimedEventsDocument, baseOptions);
-      }
-export function useSubgraphPayoutClaimedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>(SubgraphPayoutClaimedEventsDocument, baseOptions);
-        }
-export type SubgraphPayoutClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsQuery>;
-export type SubgraphPayoutClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsLazyQuery>;
-export type SubgraphPayoutClaimedEventsQueryResult = Apollo.QueryResult<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>;
-export const SubgraphEventsDocument = gql`
-    subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
+export type CoinMachineCurrentPeriodMaxUserPurchaseQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseQuery>;
+export type CoinMachineCurrentPeriodMaxUserPurchaseLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery>;
+export type CoinMachineCurrentPeriodMaxUserPurchaseQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>;
+export const SubscriptionSubgraphEventsDocument = gql`
+    subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
     id
     address
@@ -6520,16 +5363,16 @@ export const SubgraphEventsDocument = gql`
     `;
 
 /**
- * __useSubgraphEventsSubscription__
+ * __useSubscriptionSubgraphEventsSubscription__
  *
- * To run a query within a React component, call `useSubgraphEventsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphEventsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubscriptionSubgraphEventsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionSubgraphEventsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubgraphEventsSubscription({
+ * const { data, loading, error } = useSubscriptionSubgraphEventsSubscription({
  *   variables: {
  *      skip: // value for 'skip'
  *      first: // value for 'first'
@@ -6537,13 +5380,13 @@ export const SubgraphEventsDocument = gql`
  *   },
  * });
  */
-export function useSubgraphEventsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubgraphEventsSubscription, SubgraphEventsSubscriptionVariables>) {
-        return Apollo.useSubscription<SubgraphEventsSubscription, SubgraphEventsSubscriptionVariables>(SubgraphEventsDocument, baseOptions);
+export function useSubscriptionSubgraphEventsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionSubgraphEventsSubscription, SubscriptionSubgraphEventsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubscriptionSubgraphEventsSubscription, SubscriptionSubgraphEventsSubscriptionVariables>(SubscriptionSubgraphEventsDocument, baseOptions);
       }
-export type SubgraphEventsSubscriptionHookResult = ReturnType<typeof useSubgraphEventsSubscription>;
-export type SubgraphEventsSubscriptionResult = Apollo.SubscriptionResult<SubgraphEventsSubscription>;
-export const SubgraphOneTxDocument = gql`
-    subscription SubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
+export type SubscriptionSubgraphEventsSubscriptionHookResult = ReturnType<typeof useSubscriptionSubgraphEventsSubscription>;
+export type SubscriptionSubgraphEventsSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubgraphEventsSubscription>;
+export const SubscriptionSubgraphOneTxDocument = gql`
+    subscription SubscriptionSubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
   oneTxPayments(skip: $skip, first: $first, where: {payment_contains: $colonyAddress}) {
     id
     agent
@@ -6577,16 +5420,16 @@ export const SubgraphOneTxDocument = gql`
     `;
 
 /**
- * __useSubgraphOneTxSubscription__
+ * __useSubscriptionSubgraphOneTxSubscription__
  *
- * To run a query within a React component, call `useSubgraphOneTxSubscription` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphOneTxSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubscriptionSubgraphOneTxSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionSubgraphOneTxSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubgraphOneTxSubscription({
+ * const { data, loading, error } = useSubscriptionSubgraphOneTxSubscription({
  *   variables: {
  *      skip: // value for 'skip'
  *      first: // value for 'first'
@@ -6594,13 +5437,13 @@ export const SubgraphOneTxDocument = gql`
  *   },
  * });
  */
-export function useSubgraphOneTxSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubgraphOneTxSubscription, SubgraphOneTxSubscriptionVariables>) {
-        return Apollo.useSubscription<SubgraphOneTxSubscription, SubgraphOneTxSubscriptionVariables>(SubgraphOneTxDocument, baseOptions);
+export function useSubscriptionSubgraphOneTxSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionSubgraphOneTxSubscription, SubscriptionSubgraphOneTxSubscriptionVariables>) {
+        return Apollo.useSubscription<SubscriptionSubgraphOneTxSubscription, SubscriptionSubgraphOneTxSubscriptionVariables>(SubscriptionSubgraphOneTxDocument, baseOptions);
       }
-export type SubgraphOneTxSubscriptionHookResult = ReturnType<typeof useSubgraphOneTxSubscription>;
-export type SubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubgraphOneTxSubscription>;
-export const SubgraphEventsThatAreActionsDocument = gql`
-    subscription SubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
+export type SubscriptionSubgraphOneTxSubscriptionHookResult = ReturnType<typeof useSubscriptionSubgraphOneTxSubscription>;
+export type SubscriptionSubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubgraphOneTxSubscription>;
+export const SubscriptionSubgraphEventsThatAreActionsDocument = gql`
+    subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)"]}) {
     id
     address
@@ -6644,16 +5487,16 @@ export const SubgraphEventsThatAreActionsDocument = gql`
     `;
 
 /**
- * __useSubgraphEventsThatAreActionsSubscription__
+ * __useSubscriptionSubgraphEventsThatAreActionsSubscription__
  *
- * To run a query within a React component, call `useSubgraphEventsThatAreActionsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphEventsThatAreActionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubscriptionSubgraphEventsThatAreActionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionSubgraphEventsThatAreActionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubgraphEventsThatAreActionsSubscription({
+ * const { data, loading, error } = useSubscriptionSubgraphEventsThatAreActionsSubscription({
  *   variables: {
  *      skip: // value for 'skip'
  *      first: // value for 'first'
@@ -6661,13 +5504,13 @@ export const SubgraphEventsThatAreActionsDocument = gql`
  *   },
  * });
  */
-export function useSubgraphEventsThatAreActionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubgraphEventsThatAreActionsSubscription, SubgraphEventsThatAreActionsSubscriptionVariables>) {
-        return Apollo.useSubscription<SubgraphEventsThatAreActionsSubscription, SubgraphEventsThatAreActionsSubscriptionVariables>(SubgraphEventsThatAreActionsDocument, baseOptions);
+export function useSubscriptionSubgraphEventsThatAreActionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionSubgraphEventsThatAreActionsSubscription, SubscriptionSubgraphEventsThatAreActionsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubscriptionSubgraphEventsThatAreActionsSubscription, SubscriptionSubgraphEventsThatAreActionsSubscriptionVariables>(SubscriptionSubgraphEventsThatAreActionsDocument, baseOptions);
       }
-export type SubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubgraphEventsThatAreActionsSubscription>;
-export type SubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphEventsThatAreActionsSubscription>;
-export const SubgraphMotionsDocument = gql`
-    subscription SubgraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
+export type SubscriptionSubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubscriptionSubgraphEventsThatAreActionsSubscription>;
+export type SubscriptionSubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubgraphEventsThatAreActionsSubscription>;
+export const SubscriptionsMotionsDocument = gql`
+    subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
   motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
     id
     fundamentalChainId
@@ -6718,16 +5561,16 @@ export const SubgraphMotionsDocument = gql`
     `;
 
 /**
- * __useSubgraphMotionsSubscription__
+ * __useSubscriptionsMotionsSubscription__
  *
- * To run a query within a React component, call `useSubgraphMotionsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphMotionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubscriptionsMotionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionsMotionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubgraphMotionsSubscription({
+ * const { data, loading, error } = useSubscriptionsMotionsSubscription({
  *   variables: {
  *      skip: // value for 'skip'
  *      first: // value for 'first'
@@ -6736,165 +5579,8 @@ export const SubgraphMotionsDocument = gql`
  *   },
  * });
  */
-export function useSubgraphMotionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubgraphMotionsSubscription, SubgraphMotionsSubscriptionVariables>) {
-        return Apollo.useSubscription<SubgraphMotionsSubscription, SubgraphMotionsSubscriptionVariables>(SubgraphMotionsDocument, baseOptions);
+export function useSubscriptionsMotionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionsMotionsSubscription, SubscriptionsMotionsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubscriptionsMotionsSubscription, SubscriptionsMotionsSubscriptionVariables>(SubscriptionsMotionsDocument, baseOptions);
       }
-export type SubgraphMotionsSubscriptionHookResult = ReturnType<typeof useSubgraphMotionsSubscription>;
-export type SubgraphMotionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphMotionsSubscription>;
-export const SubgraphAnnotationEventsDocument = gql`
-    query SubgraphAnnotationEvents($transactionHash: String!) {
-  annotationEvents: events(where: {name_contains: "Annotation", args_contains: $transactionHash}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphAnnotationEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphAnnotationEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphAnnotationEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphAnnotationEventsQuery({
- *   variables: {
- *      transactionHash: // value for 'transactionHash'
- *   },
- * });
- */
-export function useSubgraphAnnotationEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
-      }
-export function useSubgraphAnnotationEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
-        }
-export type SubgraphAnnotationEventsQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsQuery>;
-export type SubgraphAnnotationEventsLazyQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsLazyQuery>;
-export type SubgraphAnnotationEventsQueryResult = Apollo.QueryResult<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>;
-export const CommentCountDocument = gql`
-    subscription CommentCount($colonyAddress: String!) {
-  transactionMessagesCount(colonyAddress: $colonyAddress) {
-    colonyTransactionMessages {
-      transactionHash
-      count
-    }
-  }
-}
-    `;
-
-/**
- * __useCommentCountSubscription__
- *
- * To run a query within a React component, call `useCommentCountSubscription` and pass it any options that fit your needs.
- * When your component renders, `useCommentCountSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCommentCountSubscription({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useCommentCountSubscription(baseOptions?: Apollo.SubscriptionHookOptions<CommentCountSubscription, CommentCountSubscriptionVariables>) {
-        return Apollo.useSubscription<CommentCountSubscription, CommentCountSubscriptionVariables>(CommentCountDocument, baseOptions);
-      }
-export type CommentCountSubscriptionHookResult = ReturnType<typeof useCommentCountSubscription>;
-export type CommentCountSubscriptionResult = Apollo.SubscriptionResult<CommentCountSubscription>;
-export const CommentsDocument = gql`
-    subscription Comments($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
-    transactionHash
-    messages {
-      ...TransactionMessage
-    }
-  }
-}
-    ${TransactionMessageFragmentDoc}`;
-
-/**
- * __useCommentsSubscription__
- *
- * To run a query within a React component, call `useCommentsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useCommentsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCommentsSubscription({
- *   variables: {
- *      transactionHash: // value for 'transactionHash'
- *   },
- * });
- */
-export function useCommentsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<CommentsSubscription, CommentsSubscriptionVariables>) {
-        return Apollo.useSubscription<CommentsSubscription, CommentsSubscriptionVariables>(CommentsDocument, baseOptions);
-      }
-export type CommentsSubscriptionHookResult = ReturnType<typeof useCommentsSubscription>;
-export type CommentsSubscriptionResult = Apollo.SubscriptionResult<CommentsSubscription>;
-export const MembersDocument = gql`
-    subscription Members($colonyAddress: String!) {
-  subscribedUsers(colonyAddress: $colonyAddress) {
-    id
-    profile {
-      avatarHash
-      displayName
-      username
-      walletAddress
-=======
-export const CoinMachineSaleTokensDocument = gql`
-    query CoinMachineSaleTokens($colonyAddress: String!) {
-  coinMachineSaleTokens(colonyAddress: $colonyAddress) @client {
-    sellableToken {
-      address
-      decimals
-      symbol
-      name
-    }
-    purchaseToken {
-      address
-      decimals
-      symbol
-      name
->>>>>>> 5f22e9d48... Add: `coinMachineSaleTokens` client resolver
-    }
-  }
-}
-    `;
-
-/**
- * __useCoinMachineSaleTokensQuery__
- *
- * To run a query within a React component, call `useCoinMachineSaleTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useCoinMachineSaleTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCoinMachineSaleTokensQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-=======
->>>>>>> 18593b265... Add: `coinMachineCurrentPeriodMaxUserPurchase` resolver
+export type SubscriptionsMotionsSubscriptionHookResult = ReturnType<typeof useSubscriptionsMotionsSubscription>;
+export type SubscriptionsMotionsSubscriptionResult = Apollo.SubscriptionResult<SubscriptionsMotionsSubscription>;
