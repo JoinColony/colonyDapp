@@ -49,5 +49,6 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
     isOneTxPaymentExtensionEnabled,
     installedExtensionsAddresses,
     isWhitelistExtensionEnabled,
+    whitelistAddress: installedWhitelistExtension?.address,
   };
 };

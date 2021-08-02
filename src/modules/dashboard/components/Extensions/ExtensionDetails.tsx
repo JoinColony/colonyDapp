@@ -156,7 +156,7 @@ const ExtensionDetails = ({
 
   const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
 
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
+  const { isVotingExtensionEnabled, isWhitelistExtensionEnabled, whitelistAddress } = useEnabledExtensions({
     colonyAddress,
   });
 
