@@ -61,7 +61,6 @@ const CoinMachine = ({
 
   const { data: agreementHashData } = useWhitelistAgreementHashQuery({
     variables: { colonyAddress },
-    fetchPolicy: 'network-only',
   });
 
   const openDialog = useCallback(
