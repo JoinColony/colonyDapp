@@ -2,21 +2,25 @@ import { FormikProps } from 'formik';
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
+
 import { endsWith } from 'lodash';
 import { Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
 import { bigNumberify } from 'ethers/utils';
+import { AddressZero } from 'ethers/constants';
 
 import { IconButton, ActionButton } from '~core/Button';
 import { Input, ActionForm, Textarea } from '~core/Fields';
 import Heading from '~core/Heading';
 import { ActionTypes } from '~redux/index';
 import { ColonyExtension } from '~data/index';
+
 import {
   ExtensionData,
   ExtensionParamType,
 } from '~data/staticData/extensionData';
 import { mergePayload, mapPayload, pipe } from '~utils/actions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { Address } from '~types/index';
 
 import { ColonyPolicySelector } from '../Whitelist';
@@ -108,6 +112,13 @@ const ExtensionSetup = ({
     [colonyAddress, extensionId, initializationParams],
   );
 
+  const {
+    isWhitelistExtensionEnabled,
+    whitelistAddress,
+  } = useEnabledExtensions({
+    colonyAddress,
+  });
+
   const initialValues = useMemo(() => {
     if (!initializationParams) {
       return {};
@@ -116,18 +127,19 @@ const ExtensionSetup = ({
     if (extensionId === Extension.CoinMachine) {
       return {
         ...defaultValues,
-        /*
-         * @TODO The same needs to be done for the Whitelist Extension address,
-         * once that gets merged in.
-         *
-         * Please note to only add it, if the Whitelist extension is actually
-         * installed on the current colony.
-         */
+        whitelistAddress:
+          (isWhitelistExtensionEnabled && whitelistAddress) || AddressZero,
         tokenToBeSold: nativeTokenAddress,
       };
     }
     return defaultValues;
-  }, [extensionId, initializationParams, nativeTokenAddress]);
+  }, [
+    extensionId,
+    initializationParams,
+    nativeTokenAddress,
+    isWhitelistExtensionEnabled,
+    whitelistAddress,
+  ]);
 
   if (
     installedExtension.details.deprecated ||
