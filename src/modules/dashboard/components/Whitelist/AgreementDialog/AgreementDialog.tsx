@@ -53,7 +53,7 @@ const AgreementDialog = ({
   cancel,
   close,
   agreementHash,
-  isSignable,
+  isSignable = false,
   back,
 }: Props) => {
   const [hasBeenScrolled, setHasBeenScrolled] = useState(false);
