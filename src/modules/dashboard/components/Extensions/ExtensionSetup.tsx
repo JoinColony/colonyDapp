@@ -133,7 +133,13 @@ const ExtensionSetup = ({
       };
     }
     return defaultValues;
-  }, [extensionId, initializationParams, nativeTokenAddress]);
+  }, [
+    extensionId,
+    initializationParams,
+    nativeTokenAddress,
+    isWhitelistExtensionEnabled,
+    whitelistAddress,
+  ]);
 
   if (
     installedExtension.details.deprecated ||
