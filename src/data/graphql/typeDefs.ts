@@ -267,6 +267,12 @@ export default gql`
     maxReward: String!
   }
 
+  type WhitelistPolicy {
+    userIsApproved: Boolean!
+    kycRequired: Boolean!
+    agreementRequired: Boolean!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -384,6 +390,10 @@ export default gql`
     whitelistAgreement(agreementHash: String!): String!
     whitelistAgreementHash(colonyAddress: String!): String
     hasKycPolicy(colonyAddress: String!): Boolean!
+    whitelistPolicy(
+      colonyAddress: String!
+      userAddress: String!
+    ): WhitelistPolicy
   }
 
   extend type Mutation {
