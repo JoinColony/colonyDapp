@@ -267,6 +267,12 @@ export default gql`
     maxReward: String!
   }
 
+  type WhitelistPolicy {
+    userIsApproved: Boolean!
+    kycRequired: Boolean!
+    agreementRequired: Boolean!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -383,6 +389,10 @@ export default gql`
     motionStatus(motionId: Int!, colonyAddress: String!): String!
     whitelistAgreement(agreementHash: String!): String!
     whitelistAgreementHash(colonyAddress: String!): String
+    whitelistPolicy(
+      colonyAddress: String!
+      userAddress: String!
+    ): WhitelistPolicy
   }
 
   extend type Mutation {

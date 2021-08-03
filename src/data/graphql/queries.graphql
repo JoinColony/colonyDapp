@@ -736,3 +736,11 @@ query WhitelistAgreement($agreementHash: String!) {
 query WhitelistAgreementHash($colonyAddress: String!) {
   whitelistAgreementHash(colonyAddress: $colonyAddress) @client
 }
+
+query WhitelistPolicy($colonyAddress: String!, $userAddress: String!) {
+  whitelistPolicy(colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    userIsApproved,
+    kycRequired,
+    agreementRequired,
+  }
+}
