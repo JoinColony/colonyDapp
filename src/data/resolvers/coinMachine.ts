@@ -1,5 +1,6 @@
-import { ClientType } from '@colony/colony-js';
+import { ClientType, getBlockTime } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
+import { bigNumberify } from 'ethers/utils';
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
@@ -71,6 +72,24 @@ export const coinMachineResolvers = ({
           userAddress,
         );
         return maxUserPurchase.toString();
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
+    async coinMachinePeriodTimeRemaining(_, { colonyAddress }) {
+      try {
+        const { networkClient } = colonyManager;
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+        const periodLength = await coinMachineClient.getPeriodLength();
+        const blockTime = await getBlockTime(networkClient.provider, 'latest');
+        const timeRemaining = bigNumberify(blockTime).mod(
+          periodLength.mul(1000),
+        );
+        return timeRemaining.toString();
       } catch (error) {
         console.error(error);
         return null;
