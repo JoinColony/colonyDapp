@@ -1,7 +1,11 @@
 import React from 'react';
 import { defineMessage } from 'react-intl';
 
-import { useWhitelistedUsersQuery, Colony } from '~data/index';
+import {
+  useWhitelistedUsersQuery,
+  useHasKycPolicyQuery,
+  Colony,
+} from '~data/index';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import UploadAddressesWidget from './UploadAddressesWidget';
@@ -21,6 +25,14 @@ interface Props {
 const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
   const { data: usersData, loading: usersLoading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
+  });
+
+  const {
+    data: kycPolicyData,
+    loading: kycPolicyLoading,
+  } = useHasKycPolicyQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
   });
 
   return (
