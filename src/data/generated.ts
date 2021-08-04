@@ -284,6 +284,7 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   colonyReputation?: Maybe<Scalars['String']>;
+  currentPeriodTokens: CurrentPeriodTokens;
   domains: Array<SubgraphDomain>;
   eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
@@ -420,6 +421,11 @@ export type QueryColonyNameArgs = {
 export type QueryColonyReputationArgs = {
   address: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryCurrentPeriodTokensArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
