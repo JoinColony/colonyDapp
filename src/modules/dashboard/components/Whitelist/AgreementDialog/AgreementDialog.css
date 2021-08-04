@@ -21,3 +21,21 @@
 .error {
   color: var(--danger);
 }
+
+.description {
+  margin-top: 30px;
+  color: var(--dark);
+}
+
+.readCarefullyText {
+  margin-bottom: 6px;
+  color: var(--temp-grey-blue-7);
+}
+
+.agreeToTermsText {
+  margin-top: 10px;
+  width: 100%;
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: var(--dark);
+}
