@@ -61,6 +61,10 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.RemainingDisplayWidget.tokensTypeFooterText',
     defaultMessage: 'Price next sale',
   },
+  comeBackTitle: {
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.comeBackTitle',
+    defaultMessage: 'Come back in...',
+  },
 });
 
 const RemainingDisplayWidget = ({
@@ -77,7 +81,10 @@ const RemainingDisplayWidget = ({
   const widgetText = useMemo(() => {
     if (displayType === DataDisplayType.Time) {
       return {
-        title: MSG.timeRemainingTitle,
+        title:
+          appearance.theme === 'danger'
+            ? MSG.comeBackTitle
+            : MSG.timeRemainingTitle,
         placeholder: MSG.timeTypePlaceholder,
         tooltipText: MSG.timeRemainingTooltip,
       };
@@ -89,7 +96,7 @@ const RemainingDisplayWidget = ({
       tooltipText: MSG.tokensRemainingTooltip,
       footerText: MSG.tokensTypeFooterText,
     };
-  }, [displayType]);
+  }, [displayType, appearance]);
 
   const displayedValue = useMemo(() => {
     if (displayType === DataDisplayType.Time && splitTime) {
@@ -101,7 +108,10 @@ const RemainingDisplayWidget = ({
 
     return <FormattedMessage {...widgetText.placeholder} />;
   }, [displayType, splitTime, value, widgetText]);
-
+  const showValueWarning =
+    displayType === DataDisplayType.Time && appearance.theme !== 'danger'
+      ? (splitTime?.hours || 0) < 1
+      : false;
   return (
     <div className={getMainClasses(appearance, styles)}>
       <div className={styles.header}>
@@ -121,7 +131,7 @@ const RemainingDisplayWidget = ({
       </div>
       <p
         className={classnames(styles.value, {
-          [styles.valueWarning]: false, // @TODO:  Add logic to determine if we show the value on red
+          [styles.valueWarning]: showValueWarning,
         })}
       >
         {displayedValue}
