@@ -125,11 +125,9 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
     skip: !isWhitelistExtensionEnabled,
   });
 
-    /* To add proper states later */
-    const isUserApproved = whitelistPolicyData?.whitelistPolicy?.userIsApproved;
-    const isKYCRequired = whitelistPolicyData?.whitelistPolicy?.kycRequired;
-    const isAgreementRequired = whitelistPolicyData?.whitelistPolicy?.agreementRequired;
-    const isSale = false;
+  const isUserApproved = whitelistPolicyData?.whitelistPolicy?.userIsApproved;
+  /* Wire in is sale started logic */
+  const isSale = false;
   const { data: userTokenData, loading: loadingUserToken } = useUserTokensQuery(
     {
       variables: { address: walletAddress },
@@ -482,16 +480,18 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
           </div>
           <div className={styles.accountStatus}>
             {isWhitelistExtensionEnabled && (
-              <>{!isUserApproved ? (
-                <Button
-                  appearance={{ size: 'large', theme: 'primary' }}
-                  text={MSG.getWhitelisted}
-                />
-              ) : (
-                <div className={styles.statusMessage}>
-                  <FormattedMessage {...MSG.accountWhitelisted} />
-                </div>
-              )}</>
+              <>
+                {!isUserApproved ? (
+                  <Button
+                    appearance={{ size: 'large', theme: 'primary' }}
+                    text={MSG.getWhitelisted}
+                  />
+                ) : (
+                  <div className={styles.statusMessage}>
+                    <FormattedMessage {...MSG.accountWhitelisted} />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </>
