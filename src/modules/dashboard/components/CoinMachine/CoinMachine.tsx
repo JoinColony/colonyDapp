@@ -14,6 +14,7 @@ import {
   useCoinMachineSaleTokensQuery,
   Colony,
   useWhitelistAgreementHashQuery,
+  useCoinMachinePeriodTimeRemainingQuery,
 } from '~data/index';
 
 import Chat from './Chat';
@@ -89,11 +90,17 @@ const CoinMachine = ({
     variables: { colonyAddress },
   });
 
+  const {
+    data: timeRemainingData,
+    loading: timeRemainingLoading,
+  } = useCoinMachinePeriodTimeRemainingQuery({ variables: { colonyAddress } });
+
   const [saleStarted] = useState<boolean>(false);
 
   if (
     loading ||
     saleTokensLoading ||
+    timeRemainingLoading ||
     !data?.processedColony?.installedExtensions
   ) {
     return (
@@ -125,7 +132,10 @@ const CoinMachine = ({
   }
 
   const saleToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
-
+  const timeRemaining = parseInt(
+    timeRemainingData?.coinMachinePeriodTimeRemaining || '0',
+    10,
+  );
   const breadCrumbs: Crumb[] = [
     MSG.title,
     <div>
@@ -140,7 +150,8 @@ const CoinMachine = ({
       />
     </div>,
   ];
-
+  // @TODO: Remove once the tokens remaining logic is wired in.
+  const tokensRemaining = 10;
   return (
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
@@ -151,7 +162,7 @@ const CoinMachine = ({
               state={SaleState.Success}
               price="1234234340000000"
               amount="123423434000000000000"
-              timeLeftToNextSale={864000}
+              timeLeftToNextSale={timeRemaining}
               sellableToken={saleToken}
               purchaseToken={
                 saleTokensData?.coinMachineSaleTokens?.purchaseToken
@@ -173,8 +184,8 @@ const CoinMachine = ({
             <div className={styles.timeRemaining}>
               <RemainingDisplayWidget
                 displayType={DataDisplayType.Time}
-                // @TODO: Add real value
-                value={null}
+                appearance={{ theme: tokensRemaining > 0 ? 'white' : 'danger' }}
+                value={timeRemaining}
               />
             </div>
             <div className={styles.tokensRemaining}>
