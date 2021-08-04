@@ -20,5 +20,6 @@ export default gql`
       userAddress: String!
       colonyAddress: String!
     ): String!
+    coinMachinePeriodTimeRemaining(colonyAddress: String!): String!
   }
 `;
