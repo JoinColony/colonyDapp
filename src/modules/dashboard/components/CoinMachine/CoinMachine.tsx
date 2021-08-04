@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
@@ -10,6 +10,7 @@ import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import {
   useColonyExtensionsQuery,
   useCoinMachineSaleTokensQuery,
+  useCurrentPeriodTokensQuery,
   Colony,
   useCoinMachineSalePeriodQuery,
 } from '~data/index';
@@ -77,6 +78,13 @@ const CoinMachine = ({
   const { transactionHash } = useParams<{
     transactionHash: string;
   }>();
+
+  const { data: periodTokensData } = useCurrentPeriodTokensQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+  });
+
+  const [saleStarted] = useState<boolean>(false);
 
   if (
     loading ||
