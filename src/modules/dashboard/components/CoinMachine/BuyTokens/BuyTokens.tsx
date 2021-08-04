@@ -13,6 +13,7 @@ import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
 import { SpinnerLoader } from '~core/Preloaders';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import {
   Colony,
@@ -21,6 +22,7 @@ import {
   useCoinMachineCurrentPeriodPriceQuery,
   useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
   useUserTokensQuery,
+  useWhitelistPolicyQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -104,10 +106,6 @@ const validationSchema = (userBalance: number) =>
 const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
 
-  /* To add proper states later */
-  const isSale = false;
-  const isAccountWhitelisted = false;
-
   const {
     data: saleTokensData,
     loading: loadingSaleTokens,
@@ -115,6 +113,23 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
     variables: { colonyAddress },
   });
 
+  const { isWhitelistExtensionEnabled } = useEnabledExtensions({
+    colonyAddress,
+  });
+
+  const {
+    data: whitelistPolicyData,
+    loading: whitelistLoading,
+  } = useWhitelistPolicyQuery({
+    variables: { colonyAddress, userAddress: walletAddress },
+    skip: !isWhitelistExtensionEnabled,
+  });
+
+    /* To add proper states later */
+    const isUserApproved = whitelistPolicyData?.whitelistPolicy?.userIsApproved;
+    const isKYCRequired = whitelistPolicyData?.whitelistPolicy?.kycRequired;
+    const isAgreementRequired = whitelistPolicyData?.whitelistPolicy?.agreementRequired;
+    const isSale = false;
   const { data: userTokenData, loading: loadingUserToken } = useUserTokensQuery(
     {
       variables: { address: walletAddress },
@@ -220,6 +235,7 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
     loadingSaleTokens &&
     loadingUserToken &&
     loadingSalePrice &&
+    whitelistLoading &&
     loadingMaxUserPurchase
   ) {
     return (
@@ -427,21 +443,26 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
                   >{`${purchaseToken?.symbol}`}</div>
                 </div>
                 <div className={styles.controls}>
-                  <Button
-                    {...(isAccountWhitelisted ? { type: 'submit' } : {})}
-                    text={
-                      isAccountWhitelisted ? MSG.buyLabel : MSG.getWhitelisted
-                    }
-                    appearance={{ theme: 'primary', size: 'large' }}
-                    /* Add option to get whitelisted if account is not whitelisted */
-                    onClick={() => handleSubmit()}
-                    loading={isSubmitting}
-                    disabled={
-                      globalDisable ||
-                      !isValid ||
-                      parseFloat(values.amount) <= 0
-                    }
-                  />
+                  {isWhitelistExtensionEnabled && !isUserApproved ? (
+                    <Button
+                      text={MSG.getWhitelisted}
+                      appearance={{ theme: 'primary', size: 'large' }}
+                      disabled={globalDisable}
+                    />
+                  ) : (
+                    <Button
+                      type="submit"
+                      text={MSG.buyLabel}
+                      appearance={{ theme: 'primary', size: 'large' }}
+                      onClick={() => handleSubmit()}
+                      loading={isSubmitting}
+                      disabled={
+                        globalDisable ||
+                        !isValid ||
+                        parseFloat(values.amount) <= 0
+                      }
+                    />
+                  )}
                 </div>
               </div>
             )}
@@ -460,15 +481,17 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
             </div>
           </div>
           <div className={styles.accountStatus}>
-            {!isAccountWhitelisted ? (
-              <Button
-                appearance={{ size: 'large', theme: 'primary' }}
-                text={MSG.getWhitelisted}
-              />
-            ) : (
-              <div className={styles.statusMessage}>
-                <FormattedMessage {...MSG.accountWhitelisted} />
-              </div>
+            {isWhitelistExtensionEnabled && (
+              <>{!isUserApproved ? (
+                <Button
+                  appearance={{ size: 'large', theme: 'primary' }}
+                  text={MSG.getWhitelisted}
+                />
+              ) : (
+                <div className={styles.statusMessage}>
+                  <FormattedMessage {...MSG.accountWhitelisted} />
+                </div>
+              )}</>
             )}
           </div>
         </>
