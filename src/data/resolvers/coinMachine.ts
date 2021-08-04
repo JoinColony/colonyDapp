@@ -174,5 +174,29 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
+    async currentPeriodTokens(_, { colonyAddress }) {
+      try {
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+
+        const maxPerPeriodTokens = await coinMachineClient.getMaxPerPeriod();
+
+        const activeSoldTokens = await coinMachineClient.getActiveSold();
+
+        // eslint-disable-next-line max-len
+        const targetPerPeriodTokens = await coinMachineClient.getTargetPerPeriod();
+
+        return {
+          maxPerPeriodTokens: maxPerPeriodTokens.toString(),
+          activeSoldTokens: activeSoldTokens.toString(),
+          targetPerPeriodTokens: targetPerPeriodTokens.toString(),
+        };
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
   },
 });
