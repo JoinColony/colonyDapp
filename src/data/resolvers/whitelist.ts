@@ -38,5 +38,18 @@ export const whitelistResolvers = ({
         return null;
       }
     },
+    async hasKycPolicy(_, { colonyAddress }) {
+      try {
+        const whitelistClient = await colonyManager.getClient(
+          ClientType.WhitelistClient,
+          colonyAddress,
+        );
+
+        return whitelistClient.getUseApprovals();
+      } catch (error) {
+        console.error(error);
+        return error;
+      }
+    },
   },
 });

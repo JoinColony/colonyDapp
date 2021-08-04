@@ -732,3 +732,7 @@ query WhitelistAgreement($agreementHash: String!) {
 query WhitelistAgreementHash($colonyAddress: String!) {
   whitelistAgreementHash(colonyAddress: $colonyAddress) @client
 }
+
+query HasKycPolicy($colonyAddress: String!) {
+  hasKycPolicy(colonyAddress: $colonyAddress) @client
+}

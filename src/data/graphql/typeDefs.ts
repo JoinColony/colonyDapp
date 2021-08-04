@@ -379,6 +379,7 @@ export default gql`
     motionStatus(motionId: Int!, colonyAddress: String!): String!
     whitelistAgreement(agreementHash: String!): String!
     whitelistAgreementHash(colonyAddress: String!): String
+    hasKycPolicy(colonyAddress: String!): Boolean!
   }
 
   extend type Mutation {
