@@ -737,10 +737,17 @@ query WhitelistAgreementHash($colonyAddress: String!) {
   whitelistAgreementHash(colonyAddress: $colonyAddress) @client
 }
 
-query WhitelistPolicy($colonyAddress: String!, $userAddress: String!) {
-  whitelistPolicy(colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
-    userIsApproved,
+query WhitelistPolicy($colonyAddress: String!) {
+  whitelistPolicy(colonyAddress: $colonyAddress) @client {
     kycRequired,
     agreementRequired,
+  }
+}
+
+query UserWhitelistStatus($colonyAddress: String!, $userAddress: String!) {
+  userWhitelistStatus(colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    userIsApproved,
+    userIsWhitelisted,
+    userSignedAgreement,
   }
 }
