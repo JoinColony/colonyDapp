@@ -1211,6 +1211,7 @@ export type CurrentPeriodTokens = {
   maxPerPeriodTokens: Scalars['String'];
   activeSoldTokens: Scalars['String'];
   targetPerPeriodTokens: Scalars['String'];
+  tokenPeriodBalance: Scalars['String'];
 };
 
 export type BoughtTokens = {
@@ -2135,7 +2136,7 @@ export type CurrentPeriodTokensQueryVariables = Exact<{
 }>;
 
 
-export type CurrentPeriodTokensQuery = { currentPeriodTokens: Pick<CurrentPeriodTokens, 'maxPerPeriodTokens' | 'activeSoldTokens' | 'targetPerPeriodTokens'> };
+export type CurrentPeriodTokensQuery = { currentPeriodTokens: Pick<CurrentPeriodTokens, 'maxPerPeriodTokens' | 'activeSoldTokens' | 'targetPerPeriodTokens' | 'tokenPeriodBalance'> };
 
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
@@ -5631,6 +5632,7 @@ export const CurrentPeriodTokensDocument = gql`
     maxPerPeriodTokens
     activeSoldTokens
     targetPerPeriodTokens
+    tokenPeriodBalance
   }
 }
     `;
