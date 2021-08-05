@@ -14,7 +14,7 @@ import {
   useCoinMachineSaleTokensQuery,
   Colony,
   useWhitelistAgreementHashQuery,
-  useCoinMachinePeriodTimeRemainingQuery,
+  useCoinMachineSalePeriodQuery,
 } from '~data/index';
 
 import Chat from './Chat';
@@ -91,16 +91,16 @@ const CoinMachine = ({
   });
 
   const {
-    data: timeRemainingData,
-    loading: timeRemainingLoading,
-  } = useCoinMachinePeriodTimeRemainingQuery({ variables: { colonyAddress } });
+    data: salePeriodData,
+    loading: salePeriodLoading,
+  } = useCoinMachineSalePeriodQuery({ variables: { colonyAddress } });
 
   const [saleStarted] = useState<boolean>(false);
 
   if (
     loading ||
     saleTokensLoading ||
-    timeRemainingLoading ||
+    salePeriodLoading ||
     !data?.processedColony?.installedExtensions
   ) {
     return (
@@ -133,7 +133,11 @@ const CoinMachine = ({
 
   const saleToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
   const timeRemaining = parseInt(
-    timeRemainingData?.coinMachinePeriodTimeRemaining || '0',
+    salePeriodData?.coinMachineSalePeriod.timeRemaining || '0',
+    10,
+  );
+  const periodLength = parseInt(
+    salePeriodData?.coinMachineSalePeriod.periodLength || '0',
     10,
   );
   const breadCrumbs: Crumb[] = [
@@ -186,6 +190,7 @@ const CoinMachine = ({
                 displayType={DataDisplayType.Time}
                 appearance={{ theme: tokensRemaining > 0 ? 'white' : 'danger' }}
                 value={timeRemaining}
+                periodLength={periodLength}
               />
             </div>
             <div className={styles.tokensRemaining}>
