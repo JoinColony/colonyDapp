@@ -7,9 +7,9 @@ import {
   WhitelistedUsersDocument,
   WhitelistedUsersQuery,
   WhitelistedUsersQueryVariables,
-  WhitelistPolicyQuery,
-  WhitelistPolicyDocument,
-  WhitelistPolicyQueryVariables,
+  UserWhitelistStatusQuery,
+  UserWhitelistStatusDocument,
+  UserWhitelistStatusQueryVariables,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -114,9 +114,9 @@ export function* updateWhitelist({
 
     yield all(
       userAddresses.map((userAddress) =>
-        apolloClient.query<WhitelistPolicyQuery, WhitelistPolicyQueryVariables>(
+        apolloClient.query<UserWhitelistStatusQuery, UserWhitelistStatusQueryVariables>(
           {
-            query: WhitelistPolicyDocument,
+            query: UserWhitelistStatusDocument,
             variables: {
               colonyAddress,
               userAddress,
