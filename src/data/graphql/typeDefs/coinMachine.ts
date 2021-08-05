@@ -21,6 +21,7 @@ export default gql`
     maxPerPeriodTokens: String!
     activeSoldTokens: String!
     targetPerPeriodTokens: String!
+    tokenPeriodBalance: String!
   }
 
   type BoughtTokens {
