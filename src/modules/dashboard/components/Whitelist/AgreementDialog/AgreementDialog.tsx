@@ -9,7 +9,7 @@ import { mapPayload } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 
-import { useWhitelistAgreementQuery } from '~data/index';
+import { useWhitelistAgreementQuery, useLoggedInUser } from '~data/index';
 
 import styles from './AgreementDialog.css';
 
@@ -62,6 +62,7 @@ const AgreementDialog = ({
   colonyAddress,
 }: Props) => {
   const [hasBeenScrolled, setHasBeenScrolled] = useState(false);
+  const { walletAddress } = useLoggedInUser();
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -92,6 +93,7 @@ const AgreementDialog = ({
     mapPayload(() => ({
       agreementHash,
       colonyAddress,
+      userAddress: walletAddress,
     })),
     [],
   );
@@ -153,6 +155,7 @@ const AgreementDialog = ({
             submit={ActionTypes.WHITELIST_SIGN_AGREEMENT}
             error={ActionTypes.WHITELIST_SIGN_AGREEMENT_ERROR}
             success={ActionTypes.WHITELIST_SIGN_AGREEMENT_SUCCESS}
+            onSuccess={close}
             transform={signAgreementTransform}
             text={MSG.iAgreeButton}
             disabled={!data?.whitelistAgreement || !hasBeenScrolled}
