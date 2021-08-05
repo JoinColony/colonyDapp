@@ -114,16 +114,17 @@ export function* updateWhitelist({
 
     yield all(
       userAddresses.map((userAddress) =>
-        apolloClient.query<UserWhitelistStatusQuery, UserWhitelistStatusQueryVariables>(
-          {
-            query: UserWhitelistStatusDocument,
-            variables: {
-              colonyAddress,
-              userAddress,
-            },
-            fetchPolicy: 'network-only',
+        apolloClient.query<
+          UserWhitelistStatusQuery,
+          UserWhitelistStatusQueryVariables
+        >({
+          query: UserWhitelistStatusDocument,
+          variables: {
+            colonyAddress,
+            userAddress,
           },
-        ),
+          fetchPolicy: 'network-only',
+        }),
       ),
     );
 
