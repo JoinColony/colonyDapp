@@ -93,7 +93,10 @@ const CoinMachine = ({
   const {
     data: salePeriodData,
     loading: salePeriodLoading,
-  } = useCoinMachineSalePeriodQuery({ variables: { colonyAddress } });
+  } = useCoinMachineSalePeriodQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+  });
 
   const [saleStarted] = useState<boolean>(false);
 
@@ -133,11 +136,11 @@ const CoinMachine = ({
 
   const saleToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
   const timeRemaining = parseInt(
-    salePeriodData?.coinMachineSalePeriod.timeRemaining || '0',
+    salePeriodData?.coinMachineSalePeriod?.timeRemaining || '0',
     10,
   );
   const periodLength = parseInt(
-    salePeriodData?.coinMachineSalePeriod.periodLength || '0',
+    salePeriodData?.coinMachineSalePeriod?.periodLength || '0',
     10,
   );
   const breadCrumbs: Crumb[] = [
