@@ -77,7 +77,7 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
-    async coinMachinePeriodTimeRemaining(_, { colonyAddress }) {
+    async coinMachineSalePeriod(_, { colonyAddress }) {
       try {
         const { networkClient } = colonyManager;
         const coinMachineClient = await colonyManager.getClient(
@@ -86,10 +86,14 @@ export const coinMachineResolvers = ({
         );
         const periodLength = await coinMachineClient.getPeriodLength();
         const blockTime = await getBlockTime(networkClient.provider, 'latest');
-        const timeRemaining = bigNumberify(blockTime).mod(
-          periodLength.mul(1000),
+        const periodLengthInMs = periodLength.mul(1000);
+        const timeRemaining = periodLengthInMs.sub(
+          bigNumberify(blockTime).mod(periodLengthInMs),
         );
-        return timeRemaining.toString();
+        return {
+          periodLength: periodLength.toString(),
+          timeRemaining: timeRemaining.toString(),
+        };
       } catch (error) {
         console.error(error);
         return null;
