@@ -111,7 +111,6 @@ const RemainingDisplayWidget = ({
     return <FormattedMessage {...widgetText.placeholder} />;
   }, [displayType, splitTime, value, widgetText]);
   const showValueWarning =
-    displayType === DataDisplayType.Time &&
     appearance.theme !== 'danger' &&
     typeof value === 'number' &&
     periodLength &&
