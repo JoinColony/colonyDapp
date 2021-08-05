@@ -28,6 +28,7 @@ type Props = {
   value: string | number | null;
   appearance?: Appearance;
   tokenPriceStatus?: TokenPriceStatuses;
+  periodLength?: number;
 };
 
 const displayName = 'dashboard.CoinMachine.RemainingDisplayWidget';
@@ -72,6 +73,7 @@ const RemainingDisplayWidget = ({
   appearance = { theme: 'white' },
   value,
   tokenPriceStatus,
+  periodLength,
 }: Props) => {
   const displaysTimer = displayType === DataDisplayType.Time;
   const { splitTime } = useSplitTime(
@@ -109,9 +111,11 @@ const RemainingDisplayWidget = ({
     return <FormattedMessage {...widgetText.placeholder} />;
   }, [displayType, splitTime, value, widgetText]);
   const showValueWarning =
-    displayType === DataDisplayType.Time && appearance.theme !== 'danger'
-      ? (splitTime?.hours || 0) < 1
-      : false;
+    displayType === DataDisplayType.Time &&
+    appearance.theme !== 'danger' &&
+    typeof value === 'number' &&
+    periodLength &&
+    ((value / 1000) * 100) / periodLength <= 10;
   return (
     <div className={getMainClasses(appearance, styles)}>
       <div className={styles.header}>
