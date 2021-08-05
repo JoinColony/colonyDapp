@@ -38,5 +38,26 @@ export const whitelistResolvers = ({
         return null;
       }
     },
+    async whitelistPolicy(_, { colonyAddress, userAddress }) {
+      try {
+        const whitelistClient = await colonyManager.getClient(
+          ClientType.WhitelistClient,
+          colonyAddress,
+        );
+
+        const agreementHash = await whitelistClient.getAgreementHash();
+        const useApprovals = await whitelistClient.getUseApprovals();
+        const userIsApproved = await whitelistClient.isApproved(userAddress);
+
+        return {
+          userIsApproved,
+          kycRequired: useApprovals,
+          agreementRequired: !!agreementHash,
+        };
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
   },
 });
