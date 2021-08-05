@@ -1,12 +1,12 @@
 import React, { useEffect, useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import Button from '~core/Button';
 import { Address } from '~types/index';
 
 import {
   useWhitelistPolicyQuery,
   UserWhitelistStatus,
-  useWhitelistAgreementHashQuery
+  useWhitelistAgreementHashQuery,
 } from '~data/index';
 
 import { useDialog } from '~core/Dialog';
@@ -28,15 +28,15 @@ type Props = {
 const displayName = 'dashboard.CoinMachine.GetWhitelisted';
 
 const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
-
-  const {
-    data: whitelistPolicyData,
-  } = useWhitelistPolicyQuery({
+  const { data: whitelistPolicyData } = useWhitelistPolicyQuery({
     variables: { colonyAddress },
   });
 
   const openAgreementDialog = useDialog(AgreementDialog);
-  const signatureRequired = !disabled && whitelistPolicyData?.whitelistPolicy.agreementRequired && !userStatus?.userSignedAgreement;
+  const signatureRequired =
+    !disabled &&
+    whitelistPolicyData?.whitelistPolicy.agreementRequired &&
+    !userStatus?.userSignedAgreement;
 
   const { data: agreementHashData } = useWhitelistAgreementHashQuery({
     variables: { colonyAddress },
@@ -52,14 +52,14 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
         isSignable: true,
         back: () => {},
       }),
-    [agreementHashData, openAgreementDialog],
+    [agreementHashData, openAgreementDialog, colonyAddress],
   );
 
   useEffect(() => {
     if (signatureRequired) {
       openDialog();
     }
-  }, [openDialog]);
+  }, [openDialog, signatureRequired]);
 
   return (
     <Button

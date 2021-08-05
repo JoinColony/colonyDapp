@@ -23,7 +23,6 @@ import {
   useCoinMachineCurrentPeriodPriceQuery,
   useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
   useUserTokensQuery,
-  useWhitelistPolicyQuery,
   useUserWhitelistStatusQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -122,14 +121,6 @@ const BuyTokens = ({
   });
 
   const {
-    data: whitelistPolicyData,
-    loading: whitelistLoading,
-  } = useWhitelistPolicyQuery({
-    variables: { colonyAddress },
-    skip: !isWhitelistExtensionEnabled,
-  });
-
-  const {
     data: userWhitelistStatusData,
     loading: userStatusLoading,
   } = useUserWhitelistStatusQuery({
@@ -137,7 +128,8 @@ const BuyTokens = ({
     skip: !isWhitelistExtensionEnabled,
   });
 
-  const isUserWhitelisted = userWhitelistStatusData?.userWhitelistStatus?.userIsWhitelisted;
+  const isUserWhitelisted =
+    userWhitelistStatusData?.userWhitelistStatus?.userIsWhitelisted;
   /* Wire in is sale started logic */
   const isSale = true;
   const { data: userTokenData, loading: loadingUserToken } = useUserTokensQuery(
@@ -249,7 +241,6 @@ const BuyTokens = ({
     loadingSaleTokens &&
     loadingUserToken &&
     loadingSalePrice &&
-    whitelistLoading &&
     userStatusLoading &&
     loadingMaxUserPurchase
   ) {
@@ -459,7 +450,7 @@ const BuyTokens = ({
                 </div>
                 <div className={styles.controls}>
                   {isWhitelistExtensionEnabled && !isUserWhitelisted ? (
-                    <GetWhitelisted 
+                    <GetWhitelisted
                       disabled={globalDisable}
                       colonyAddress={colonyAddress}
                       userStatus={userWhitelistStatusData?.userWhitelistStatus}
@@ -499,7 +490,7 @@ const BuyTokens = ({
             {isWhitelistExtensionEnabled && (
               <>
                 {!isUserWhitelisted ? (
-                  <GetWhitelisted 
+                  <GetWhitelisted
                     disabled={globalDisable}
                     colonyAddress={colonyAddress}
                     userStatus={userWhitelistStatusData?.userWhitelistStatus}
