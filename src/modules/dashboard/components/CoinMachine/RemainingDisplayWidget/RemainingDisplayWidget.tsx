@@ -79,6 +79,7 @@ const RemainingDisplayWidget = ({
   const { splitTime } = useSplitTime(
     displaysTimer && typeof value === 'number' ? value : 0,
     displaysTimer,
+    periodLength,
   );
   const widgetText = useMemo(() => {
     if (displayType === DataDisplayType.Time) {
