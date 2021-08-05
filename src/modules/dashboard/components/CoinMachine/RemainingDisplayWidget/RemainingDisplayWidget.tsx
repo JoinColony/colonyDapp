@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import classnames from 'classnames';
+import { BigNumber } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -13,6 +14,7 @@ import TokenPriceStatusIcon, {
 import styles from './RemainingDisplayWidget.css';
 import { TimerValue } from '~utils/components';
 import useSplitTime from '~utils/hooks/useSplitTime';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 export enum DataDisplayType {
   Time = 'Time',
@@ -25,10 +27,15 @@ type Appearance = {
 
 type Props = {
   displayType: DataDisplayType;
-  value: string | number | null;
+  value?: string | number | null;
   appearance?: Appearance;
-  tokenPriceStatus?: TokenPriceStatuses;
   periodLength?: number;
+  periodTokens?: {
+    decimals: number;
+    soldPeriodTokens: BigNumber;
+    maxPeriodTokens: BigNumber;
+    targetPeriodTokens: BigNumber;
+  };
 };
 
 const displayName = 'dashboard.CoinMachine.RemainingDisplayWidget';
@@ -66,14 +73,18 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.RemainingDisplayWidget.comeBackTitle',
     defaultMessage: 'Come back in...',
   },
+  soldOut: {
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.tokensTypeFooterText',
+    defaultMessage: 'SOLD OUT',
+  },
 });
 
 const RemainingDisplayWidget = ({
   displayType,
   appearance = { theme: 'white' },
   value,
-  tokenPriceStatus,
   periodLength,
+  periodTokens,
 }: Props) => {
   const displaysTimer = displayType === DataDisplayType.Time;
   const { splitTime } = useSplitTime(
@@ -105,17 +116,69 @@ const RemainingDisplayWidget = ({
     if (displayType === DataDisplayType.Time && splitTime) {
       return <TimerValue splitTime={splitTime} />;
     }
-    if (value && displayType !== DataDisplayType.Time) {
-      return value;
+    if (periodTokens && displayType !== DataDisplayType.Time) {
+      const { soldPeriodTokens, decimals, maxPeriodTokens } = periodTokens;
+
+      if (soldPeriodTokens.gte(maxPeriodTokens)) {
+        return <FormattedMessage {...MSG.soldOut} />;
+      }
+
+      return `${getFormattedTokenValue(
+        soldPeriodTokens,
+        decimals,
+      )}/${getFormattedTokenValue(maxPeriodTokens, decimals)}`;
     }
 
     return <FormattedMessage {...widgetText.placeholder} />;
-  }, [displayType, splitTime, value, widgetText]);
-  const showValueWarning =
-    appearance.theme !== 'danger' &&
-    typeof value === 'number' &&
-    periodLength &&
-    ((value / 1000) * 100) / periodLength <= 10;
+  }, [displayType, splitTime, widgetText, periodTokens]);
+
+  const priceStatus = useMemo(() => {
+    if (!periodTokens || displayType === DataDisplayType.Time) {
+      return undefined;
+    }
+
+    const {
+      soldPeriodTokens,
+      maxPeriodTokens,
+      targetPeriodTokens,
+    } = periodTokens;
+
+    if (soldPeriodTokens.gte(maxPeriodTokens)) {
+      return TokenPriceStatuses.PRICE_SOLD_OUT;
+    }
+
+    if (soldPeriodTokens.eq(targetPeriodTokens)) {
+      return TokenPriceStatuses.PRICE_NO_CHANGES;
+    }
+
+    if (soldPeriodTokens.lt(targetPeriodTokens)) {
+      return TokenPriceStatuses.PRICE_DOWN;
+    }
+
+    if (soldPeriodTokens.gt(targetPeriodTokens)) {
+      return TokenPriceStatuses.PRICE_UP;
+    }
+
+    return undefined;
+  }, [displayType, periodTokens]);
+
+  const isValueWarning = useMemo(() => {
+    if (displayType === DataDisplayType.Time) {
+      return (
+        appearance.theme !== 'danger' &&
+        typeof value === 'number' &&
+        periodLength &&
+        ((value / 1000) * 100) / periodLength <= 10
+      );
+    }
+
+    if (periodTokens?.soldPeriodTokens.gte(periodTokens?.maxPeriodTokens)) {
+      return true;
+    }
+
+    return false;
+  }, [periodTokens, displayType, appearance, value, periodLength]);
+
   return (
     <div className={getMainClasses(appearance, styles)}>
       <div className={styles.header}>
@@ -135,19 +198,17 @@ const RemainingDisplayWidget = ({
       </div>
       <p
         className={classnames(styles.value, {
-          [styles.valueWarning]: showValueWarning,
+          [styles.valueWarning]: isValueWarning,
         })}
       >
         {displayedValue}
       </p>
-      {widgetText.footerText && value && (
+      {periodTokens && widgetText.footerText && (
         <div className={styles.footer}>
           <p className={styles.footerText}>
             <FormattedMessage {...widgetText.footerText} />
           </p>
-          {tokenPriceStatus && (
-            <TokenPriceStatusIcon status={tokenPriceStatus} />
-          )}
+          {priceStatus && <TokenPriceStatusIcon status={priceStatus} />}
         </div>
       )}
     </div>
