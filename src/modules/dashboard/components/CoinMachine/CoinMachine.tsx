@@ -6,8 +6,6 @@ import ExternalLink from '~core/ExternalLink';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
-import { useDialog } from '~core/Dialog';
-import AgreementDialog from '~dashboard/Whitelist/AgreementDialog';
 
 import {
   useColonyExtensionsQuery,
@@ -58,27 +56,6 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
-  const openAgreementDialog = useDialog(AgreementDialog);
-
-  const { data: agreementHashData } = useWhitelistAgreementHashQuery({
-    variables: { colonyAddress },
-  });
-
-  const openDialog = useCallback(
-    () =>
-      agreementHashData?.whitelistAgreementHash &&
-      openAgreementDialog({
-        agreementHash: agreementHashData?.whitelistAgreementHash,
-        isSignable: true,
-        back: () => {},
-      }),
-    [agreementHashData, openAgreementDialog],
-  );
-
-  useEffect(() => {
-    openDialog();
-  }, [openDialog]);
-
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
