@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
-import ExternalLink from '~core/ExternalLink';
+import { bigNumberify } from 'ethers/utils';
 
+import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 
@@ -79,18 +80,40 @@ const CoinMachine = ({
     transactionHash: string;
   }>();
 
-  const { data: periodTokensData } = useCurrentPeriodTokensQuery({
+  const {
+    data: periodTokensData,
+    loading: periodTokensLoading,
+  } = useCurrentPeriodTokensQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
   });
 
   const [saleStarted] = useState<boolean>(false);
 
+  const periodTokens = useMemo(() => {
+    if (!saleTokensData || !periodTokensData) {
+      return undefined;
+    }
+    return {
+      decimals: saleTokensData.coinMachineSaleTokens.sellableToken.decimals,
+      soldPeriodTokens: bigNumberify(
+        periodTokensData.currentPeriodTokens.activeSoldTokens,
+      ),
+      maxPeriodTokens: bigNumberify(
+        periodTokensData.currentPeriodTokens.maxPerPeriodTokens,
+      ),
+      targetPeriodTokens: bigNumberify(
+        periodTokensData.currentPeriodTokens.targetPerPeriodTokens,
+      ),
+    };
+  }, [periodTokensData, saleTokensData]);
+
   if (
     loading ||
     saleTokensLoading ||
     salePeriodLoading ||
-    !data?.processedColony?.installedExtensions
+    !data?.processedColony?.installedExtensions ||
+    periodTokensLoading
   ) {
     return (
       <div className={styles.loadingSpinner}>
@@ -184,8 +207,7 @@ const CoinMachine = ({
             <div className={styles.tokensRemaining}>
               <RemainingDisplayWidget
                 displayType={DataDisplayType.Tokens}
-                // @TODO: Add real value
-                value={null}
+                periodTokens={periodTokens}
               />
             </div>
           </>
