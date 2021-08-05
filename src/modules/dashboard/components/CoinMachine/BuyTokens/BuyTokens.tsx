@@ -31,6 +31,8 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
 import { mapPayload, withMeta, pipe } from '~utils/actions';
 
+import GetWhitelisted from '../GetWhitelisted';
+
 import styles from './BuyTokens.css';
 
 const MSG = defineMessages({
@@ -73,10 +75,6 @@ const MSG = defineMessages({
   tellMore: {
     id: 'dashbord.CoinMachine.BuyWidget.tellMore',
     defaultMessage: 'Tell me more',
-  },
-  getWhitelisted: {
-    id: 'dashbord.CoinMachine.BuyWidget.getWhitelisted',
-    defaultMessage: 'Get whitelisted',
   },
   accountWhitelisted: {
     id: 'dashbord.CoinMachine.BuyWidget.accountWhitelisted',
@@ -461,10 +459,10 @@ const BuyTokens = ({
                 </div>
                 <div className={styles.controls}>
                   {isWhitelistExtensionEnabled && !isUserWhitelisted ? (
-                    <Button
-                      text={MSG.getWhitelisted}
-                      appearance={{ theme: 'primary', size: 'large' }}
+                    <GetWhitelisted 
                       disabled={globalDisable}
+                      colonyAddress={colonyAddress}
+                      userStatus={userWhitelistStatusData?.userWhitelistStatus}
                     />
                   ) : (
                     <Button
@@ -501,9 +499,10 @@ const BuyTokens = ({
             {isWhitelistExtensionEnabled && (
               <>
                 {!isUserWhitelisted ? (
-                  <Button
-                    appearance={{ size: 'large', theme: 'primary' }}
-                    text={MSG.getWhitelisted}
+                  <GetWhitelisted 
+                    disabled={globalDisable}
+                    colonyAddress={colonyAddress}
+                    userStatus={userWhitelistStatusData?.userWhitelistStatus}
                   />
                 ) : (
                   <div className={styles.statusMessage}>
