@@ -24,6 +24,7 @@ import {
   useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
   useUserTokensQuery,
   useWhitelistPolicyQuery,
+  useUserWhitelistStatusQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -126,11 +127,19 @@ const BuyTokens = ({
     data: whitelistPolicyData,
     loading: whitelistLoading,
   } = useWhitelistPolicyQuery({
+    variables: { colonyAddress },
+    skip: !isWhitelistExtensionEnabled,
+  });
+
+  const {
+    data: userWhitelistStatusData,
+    loading: userStatusLoading,
+  } = useUserWhitelistStatusQuery({
     variables: { colonyAddress, userAddress: walletAddress },
     skip: !isWhitelistExtensionEnabled,
   });
 
-  const isUserApproved = whitelistPolicyData?.whitelistPolicy?.userIsApproved;
+  const isUserWhitelisted = userWhitelistStatusData?.userWhitelistStatus?.userIsWhitelisted;
   /* Wire in is sale started logic */
   const isSale = true;
   const { data: userTokenData, loading: loadingUserToken } = useUserTokensQuery(
@@ -243,6 +252,7 @@ const BuyTokens = ({
     loadingUserToken &&
     loadingSalePrice &&
     whitelistLoading &&
+    userStatusLoading &&
     loadingMaxUserPurchase
   ) {
     return (
@@ -450,7 +460,7 @@ const BuyTokens = ({
                   >{`${purchaseToken?.symbol}`}</div>
                 </div>
                 <div className={styles.controls}>
-                  {isWhitelistExtensionEnabled && !isUserApproved ? (
+                  {isWhitelistExtensionEnabled && !isUserWhitelisted ? (
                     <Button
                       text={MSG.getWhitelisted}
                       appearance={{ theme: 'primary', size: 'large' }}
@@ -490,7 +500,7 @@ const BuyTokens = ({
           <div className={styles.accountStatus}>
             {isWhitelistExtensionEnabled && (
               <>
-                {!isUserApproved ? (
+                {!isUserWhitelisted ? (
                   <Button
                     appearance={{ size: 'large', theme: 'primary' }}
                     text={MSG.getWhitelisted}
