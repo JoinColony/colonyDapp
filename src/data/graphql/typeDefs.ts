@@ -270,9 +270,14 @@ export default gql`
   }
 
   type WhitelistPolicy {
-    userIsApproved: Boolean!
     kycRequired: Boolean!
     agreementRequired: Boolean!
+  }
+
+  type UserWhitelistStatus {
+    userIsApproved: Boolean!
+    userIsWhitelisted: Boolean!
+    userSignedAgreement: Boolean!
   }
 
   extend type Query {
@@ -399,10 +404,11 @@ export default gql`
       tokenAddress: String!
       domainId: Int!
     ): String!
-    whitelistPolicy(
+    whitelistPolicy(colonyAddress: String!): WhitelistPolicy!
+    userWhitelistStatus(
       colonyAddress: String!
       userAddress: String!
-    ): WhitelistPolicy
+    ): UserWhitelistStatus!
   }
 
   extend type Mutation {
