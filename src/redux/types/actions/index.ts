@@ -10,6 +10,7 @@ import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
 import { WalletActionTypes } from './wallet';
+import { WhitelistActionTypes } from './whitelist';
 
 export { RootMotionOperationNames } from './motion';
 
@@ -105,6 +106,7 @@ export type AllActions =
   | MessageActionTypes
   | UserActionTypes
   | WalletActionTypes
+  | WhitelistActionTypes
   | MotionActionTypes;
 
 export type Action<T extends AllActions['type']> = Extract<
