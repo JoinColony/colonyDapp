@@ -65,7 +65,9 @@ export const whitelistResolvers = ({
         );
 
         const userIsWhitelisted = await whitelistClient.isApproved(userAddress);
-        const userSignedAgreement = await whitelistClient.getSignature(userAddress);
+        const userSignedAgreement = await whitelistClient.getSignature(
+          userAddress,
+        );
         const userIsApproved = await whitelistClient.getApproval(userAddress);
 
         return {

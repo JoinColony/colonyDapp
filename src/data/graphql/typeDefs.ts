@@ -394,9 +394,7 @@ export default gql`
     motionStatus(motionId: Int!, colonyAddress: String!): String!
     whitelistAgreement(agreementHash: String!): String!
     whitelistAgreementHash(colonyAddress: String!): String
-    whitelistPolicy(
-      colonyAddress: String!
-    ): WhitelistPolicy!
+    whitelistPolicy(colonyAddress: String!): WhitelistPolicy!
     userWhitelistStatus(
       colonyAddress: String!
       userAddress: String!
