@@ -271,7 +271,7 @@ export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
-  coinMachinePeriodTimeRemaining: Scalars['String'];
+  coinMachineSalePeriod: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
@@ -346,7 +346,7 @@ export type QueryCoinMachineCurrentPeriodPriceArgs = {
 };
 
 
-export type QueryCoinMachinePeriodTimeRemainingArgs = {
+export type QueryCoinMachineSalePeriodArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -1169,6 +1169,11 @@ export type SaleToken = {
 export type SaleTokens = {
   sellableToken: SaleToken;
   purchaseToken: SaleToken;
+};
+
+export type SalePeriod = {
+  periodLength: Scalars['String'];
+  timeRemaining: Scalars['String'];
 };
 
 export type ActionsFilter = {
@@ -2048,12 +2053,12 @@ export type CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables = Exact<{
 
 export type CoinMachineCurrentPeriodMaxUserPurchaseQuery = Pick<Query, 'coinMachineCurrentPeriodMaxUserPurchase'>;
 
-export type CoinMachinePeriodTimeRemainingQueryVariables = Exact<{
+export type CoinMachineSalePeriodQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type CoinMachinePeriodTimeRemainingQuery = Pick<Query, 'coinMachinePeriodTimeRemaining'>;
+export type CoinMachineSalePeriodQuery = { coinMachineSalePeriod: Pick<SalePeriod, 'periodLength' | 'timeRemaining'> };
 
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
@@ -5405,37 +5410,40 @@ export function useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery(baseOptions?
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseQuery>;
 export type CoinMachineCurrentPeriodMaxUserPurchaseLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery>;
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>;
-export const CoinMachinePeriodTimeRemainingDocument = gql`
-    query CoinMachinePeriodTimeRemaining($colonyAddress: String!) {
-  coinMachinePeriodTimeRemaining(colonyAddress: $colonyAddress) @client
+export const CoinMachineSalePeriodDocument = gql`
+    query CoinMachineSalePeriod($colonyAddress: String!) {
+  coinMachineSalePeriod(colonyAddress: $colonyAddress) @client {
+    periodLength
+    timeRemaining
+  }
 }
     `;
 
 /**
- * __useCoinMachinePeriodTimeRemainingQuery__
+ * __useCoinMachineSalePeriodQuery__
  *
- * To run a query within a React component, call `useCoinMachinePeriodTimeRemainingQuery` and pass it any options that fit your needs.
- * When your component renders, `useCoinMachinePeriodTimeRemainingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCoinMachineSalePeriodQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineSalePeriodQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useCoinMachinePeriodTimeRemainingQuery({
+ * const { data, loading, error } = useCoinMachineSalePeriodQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-export function useCoinMachinePeriodTimeRemainingQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachinePeriodTimeRemainingQuery, CoinMachinePeriodTimeRemainingQueryVariables>) {
-        return Apollo.useQuery<CoinMachinePeriodTimeRemainingQuery, CoinMachinePeriodTimeRemainingQueryVariables>(CoinMachinePeriodTimeRemainingDocument, baseOptions);
+export function useCoinMachineSalePeriodQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>) {
+        return Apollo.useQuery<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>(CoinMachineSalePeriodDocument, baseOptions);
       }
-export function useCoinMachinePeriodTimeRemainingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachinePeriodTimeRemainingQuery, CoinMachinePeriodTimeRemainingQueryVariables>) {
-          return Apollo.useLazyQuery<CoinMachinePeriodTimeRemainingQuery, CoinMachinePeriodTimeRemainingQueryVariables>(CoinMachinePeriodTimeRemainingDocument, baseOptions);
+export function useCoinMachineSalePeriodLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>(CoinMachineSalePeriodDocument, baseOptions);
         }
-export type CoinMachinePeriodTimeRemainingQueryHookResult = ReturnType<typeof useCoinMachinePeriodTimeRemainingQuery>;
-export type CoinMachinePeriodTimeRemainingLazyQueryHookResult = ReturnType<typeof useCoinMachinePeriodTimeRemainingLazyQuery>;
-export type CoinMachinePeriodTimeRemainingQueryResult = Apollo.QueryResult<CoinMachinePeriodTimeRemainingQuery, CoinMachinePeriodTimeRemainingQueryVariables>;
+export type CoinMachineSalePeriodQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodQuery>;
+export type CoinMachineSalePeriodLazyQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodLazyQuery>;
+export type CoinMachineSalePeriodQueryResult = Apollo.QueryResult<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>;
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
