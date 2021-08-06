@@ -20,7 +20,7 @@ const useSplitTime = (
       }
     }
     return () => clearInterval(timer);
-  }, [timeLeft, activeTimer]);
+  }, [timeLeft, activeTimer, periodLength]);
 
   const splitTime = splitTimeLeft(timeLeft);
 
