@@ -1,3 +1,5 @@
+import { Extension } from '@colony/colony-js';
+
 import {
   ColonyExtensionQuery,
   ColonyExtensionQueryVariables,
@@ -8,11 +10,27 @@ import {
   ProcessedColonyQuery,
   ProcessedColonyQueryVariables,
   ProcessedColonyDocument,
+  WhitelistedUsersDocument,
+  WhitelistedUsersQuery,
+  WhitelistedUsersQueryVariables,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
 export function* refreshExtension(colonyAddress: string, extensionId: string) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+  if (extensionId === Extension.Whitelist) {
+    yield apolloClient.query<
+      WhitelistedUsersQuery,
+      WhitelistedUsersQueryVariables
+    >({
+      query: WhitelistedUsersDocument,
+      variables: {
+        colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+  }
 
   yield apolloClient.query<ColonyExtensionQuery, ColonyExtensionQueryVariables>(
     {
