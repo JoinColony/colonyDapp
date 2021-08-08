@@ -1,13 +1,13 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-import { SpinnerLoader } from '~core/Preloaders';
 
 import { useWhitelistAgreementQuery } from '~data/index';
 
+import AgreementContainer from './AgreementContainer';
 import styles from './AgreementDialog.css';
 
 const MSG = defineMessages({
@@ -47,17 +47,7 @@ const AgreementDialog = ({ cancel, close, agreementHash }: Props) => {
         />
       </DialogSection>
       <DialogSection>
-        {loading ? (
-          <SpinnerLoader appearance={{ size: 'huge', theme: 'primary' }} />
-        ) : (
-          <div className={styles.agreementContainer}>
-            {data?.whitelistAgreement || (
-              <div className={styles.error}>
-                <FormattedMessage {...MSG.ipfsError} />
-              </div>
-            )}
-          </div>
-        )}
+        <AgreementContainer loading={loading} text={data?.whitelistAgreement} />
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
