@@ -269,6 +269,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
+  coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
   coinMachineSalePeriod: SalePeriod;
@@ -330,6 +331,12 @@ export type Query = {
 
 
 export type QueryActionsThatNeedAttentionArgs = {
+  colonyAddress: Scalars['String'];
+  walletAddress: Scalars['String'];
+};
+
+
+export type QueryCoinMachineBoughtTokensArgs = {
   colonyAddress: Scalars['String'];
   walletAddress: Scalars['String'];
 };
@@ -1174,6 +1181,11 @@ export type SaleTokens = {
 export type SalePeriod = {
   periodLength: Scalars['String'];
   timeRemaining: Scalars['String'];
+};
+
+export type BoughtTokens = {
+  numTokens: Scalars['String'];
+  totalCost: Scalars['String'];
 };
 
 export type ActionsFilter = {
@@ -2044,6 +2056,14 @@ export type CoinMachineCurrentPeriodPriceQueryVariables = Exact<{
 
 
 export type CoinMachineCurrentPeriodPriceQuery = Pick<Query, 'coinMachineCurrentPeriodPrice'>;
+
+export type CoinMachineBoughtTokensQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  walletAddress: Scalars['String'];
+}>;
+
+
+export type CoinMachineBoughtTokensQuery = { coinMachineBoughtTokens: Pick<BoughtTokens, 'numTokens' | 'totalCost'> };
 
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables = Exact<{
   userAddress: Scalars['String'];
@@ -5378,6 +5398,41 @@ export function useCoinMachineCurrentPeriodPriceLazyQuery(baseOptions?: Apollo.L
 export type CoinMachineCurrentPeriodPriceQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceQuery>;
 export type CoinMachineCurrentPeriodPriceLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceLazyQuery>;
 export type CoinMachineCurrentPeriodPriceQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>;
+export const CoinMachineBoughtTokensDocument = gql`
+    query CoinMachineBoughtTokens($colonyAddress: String!, $walletAddress: String!) {
+  coinMachineBoughtTokens(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+    numTokens
+    totalCost
+  }
+}
+    `;
+
+/**
+ * __useCoinMachineBoughtTokensQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineBoughtTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineBoughtTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineBoughtTokensQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      walletAddress: // value for 'walletAddress'
+ *   },
+ * });
+ */
+export function useCoinMachineBoughtTokensQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>) {
+        return Apollo.useQuery<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>(CoinMachineBoughtTokensDocument, baseOptions);
+      }
+export function useCoinMachineBoughtTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>(CoinMachineBoughtTokensDocument, baseOptions);
+        }
+export type CoinMachineBoughtTokensQueryHookResult = ReturnType<typeof useCoinMachineBoughtTokensQuery>;
+export type CoinMachineBoughtTokensLazyQueryHookResult = ReturnType<typeof useCoinMachineBoughtTokensLazyQuery>;
+export type CoinMachineBoughtTokensQueryResult = Apollo.QueryResult<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>;
 export const CoinMachineCurrentPeriodMaxUserPurchaseDocument = gql`
     query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
   coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
