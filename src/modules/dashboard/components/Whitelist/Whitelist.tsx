@@ -27,7 +27,7 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
     <div>
       <UploadAddressesWidget colony={colony} />
       {usersLoading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
-      {(usersData?.whitelistedUsers?.length && (
+      {(usersData?.whitelistedUsers?.length && !usersLoading && (
         <WhitelistAddresses
           colonyAddress={colonyAddress}
           users={usersData.whitelistedUsers}
