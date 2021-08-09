@@ -3,7 +3,6 @@ import { defineMessage } from 'react-intl';
 
 import { useWhitelistAgreementQuery } from '~data/index';
 
-import Button from '~core/Button';
 import { DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 
@@ -15,10 +14,6 @@ const MSG = defineMessage({
   title: {
     id: 'dashboard.Extensions.Whitelist.AgreementEmbed.title',
     defaultMessage: 'Sale agreement',
-  },
-  signedButton: {
-    id: 'dashboard.Extensions.Whitelist.AgreementEmbed.signed',
-    defaultMessage: 'Signed',
   },
 });
 
@@ -43,13 +38,6 @@ const AgreementEmbed = ({ agreementHash }: Props) => {
       </DialogSection>
       <DialogSection>
         <AgreementContainer text={data?.whitelistAgreement} loading={loading} />
-      </DialogSection>
-      <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-        <Button
-          appearance={{ theme: 'primary', size: 'large' }}
-          text={MSG.signedButton}
-          disabled
-        />
       </DialogSection>
     </div>
   );
