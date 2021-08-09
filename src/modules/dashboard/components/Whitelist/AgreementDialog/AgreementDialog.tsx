@@ -12,11 +12,11 @@ import styles from './AgreementDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.title',
+    id: 'dashboard.Extensions.Whitelist.AgreementDialog.title',
     defaultMessage: 'Sale agreement',
   },
   gotItButton: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.gotItButton',
+    id: 'dashboard.Extensions.Whitelist.AgreementDialog.gotItButton',
     defaultMessage: 'Got it',
   },
   ipfsError: {
