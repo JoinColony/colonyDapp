@@ -23,6 +23,13 @@ query CoinMachineCurrentPeriodPrice($colonyAddress: String!) {
   coinMachineCurrentPeriodPrice(colonyAddress: $colonyAddress) @client
 }
 
+query CoinMachineBoughtTokens($colonyAddress: String!, $walletAddress: String!) {
+  coinMachineBoughtTokens(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+    numTokens,
+    totalCost
+  }
+}
+
 query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
   coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
 }
