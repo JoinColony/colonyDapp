@@ -5,7 +5,7 @@ import { AddressZero } from 'ethers/constants';
 import moveDecimal from 'move-decimal-point';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { putError, takeFrom } from '~utils/saga/effects';
+import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { createAddress } from '~utils/web3';
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -19,8 +19,8 @@ import {
 import { transactionReady } from '../../../core/actionCreators';
 
 function* buyTokens({
-  payload: { colonyAddress, amount },
-  meta: { id: metaId },
+  payload: { colonyAddress, amount, colonyName },
+  meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COIN_MACHINE_BUY_TOKENS>) {
   let txChannel;
@@ -157,6 +157,13 @@ function* buyTokens({
 
     yield put(transactionReady(buyTokensTransaction.id));
 
+    const {
+      payload: { hash: txHash },
+    } = yield takeFrom(
+      buyTokensTransaction.channel,
+      ActionTypes.TRANSACTION_HASH_RECEIVED,
+    );
+
     yield takeFrom(
       buyTokensTransaction.channel,
       ActionTypes.TRANSACTION_SUCCEEDED,
@@ -166,6 +173,10 @@ function* buyTokens({
       type: ActionTypes.COIN_MACHINE_BUY_TOKENS_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/buy-tokens/${txHash}`, history);
+    }
   } catch (caughtError) {
     putError(ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR, caughtError, meta);
   } finally {
