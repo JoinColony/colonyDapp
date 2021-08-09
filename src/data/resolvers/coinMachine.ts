@@ -1,4 +1,8 @@
-import { ClientType, getBlockTime } from '@colony/colony-js';
+import { 
+  ClientType,
+  getLogs,
+  getBlockTime
+} from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { bigNumberify } from 'ethers/utils';
 
@@ -53,6 +57,51 @@ export const coinMachineResolvers = ({
 
         const currentPrice = await coinMachineClient.getCurrentPrice();
         return currentPrice.toString();
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
+    async coinMachineBoughtTokens(_, { colonyAddress, walletAddress }) {
+      const { provider } = colonyManager.networkClient;
+      try {
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+
+        const boughtTokensFilter = coinMachineClient.filters.TokensBought(
+          null,
+          null,
+          null,
+        );
+
+        const boughtTokensLogs = await getLogs(
+          coinMachineClient,
+          boughtTokensFilter,
+        );
+
+        const boughtTokensEvents = await Promise.all(
+          boughtTokensLogs.map(async (log) => {
+            const parsedLog = coinMachineClient.interface.parseLog(log);
+            const { blockHash } = log;
+            return {
+              ...parsedLog,
+              createdAt: blockHash
+                ? await getBlockTime(provider, blockHash)
+                : 0,
+            };
+          }),
+        );
+        const lastBoughtTokensEvent = boughtTokensEvents.sort(
+          (firstEvent, secondEvent) =>
+            secondEvent.createdAt - firstEvent.createdAt,
+        ).find((event) => event.values.buyer === walletAddress);
+
+        return {
+          numTokens: lastBoughtTokensEvent?.values.numTokens.toString() || "0",
+          totalCost: lastBoughtTokensEvent?.values.totalCost.toString() || "0",
+        }
       } catch (error) {
         console.error(error);
         return null;
