@@ -7,13 +7,8 @@ import { ActionForm, InputLabel, Input } from '~core/Fields';
 import Button from '~core/Button';
 import CSVUploader from '~core/CSVUploader';
 import { useDialog } from '~core/Dialog';
-import { MiniSpinnerLoader } from '~core/Preloaders';
 
-import {
-  Colony,
-  useWhitelistAgreementHashQuery,
-  useLoggedInUser,
-} from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload } from '~utils/actions';
 import { isAddress } from '~utils/web3';
@@ -94,11 +89,13 @@ const validationSchemaFile = yup.object({
 
 interface Props {
   colony: Colony;
+  whitelistAgreementHash?: string | null;
 }
 
 const UploadAddressesWidget = ({
   colony: { colonyAddress },
   colony,
+  whitelistAgreementHash,
 }: Props) => {
   const [showInput, setShowInput] = useState<boolean>(true);
   const toggleShowInput = () => setShowInput(!showInput);
@@ -110,21 +107,14 @@ const UploadAddressesWidget = ({
   const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const openAgreementDialog = useDialog(AgreementDialog);
-  const {
-    data: agreementHashData,
-    loading: agreementHashLoading,
-  } = useWhitelistAgreementHashQuery({
-    variables: { colonyAddress },
-    fetchPolicy: 'network-only',
-  });
 
   const openDialog = useCallback(
     () =>
-      agreementHashData?.whitelistAgreementHash &&
+      whitelistAgreementHash &&
       openAgreementDialog({
-        agreementHash: agreementHashData?.whitelistAgreementHash,
+        agreementHash: whitelistAgreementHash,
       }),
-    [openAgreementDialog, agreementHashData],
+    [openAgreementDialog, whitelistAgreementHash],
   );
 
   const transform = useCallback(
@@ -198,15 +188,13 @@ const UploadAddressesWidget = ({
           )}
           <div className={styles.buttonsContainer}>
             <div className={styles.agreeemntButton}>
-              {agreementHashLoading && <MiniSpinnerLoader />}
-              {!agreementHashLoading &&
-                agreementHashData?.whitelistAgreementHash && (
-                  <Button
-                    appearance={{ theme: 'blue' }}
-                    onClick={openDialog}
-                    text={MSG.agreement}
-                  />
-                )}
+              {whitelistAgreementHash && (
+                <Button
+                  appearance={{ theme: 'blue' }}
+                  onClick={openDialog}
+                  text={MSG.agreement}
+                />
+              )}
             </div>
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
