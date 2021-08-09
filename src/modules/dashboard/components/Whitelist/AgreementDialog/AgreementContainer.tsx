@@ -27,17 +27,13 @@ interface Props {
 }
 
 const AgreementContainer = ({ loading, text }: Props) => {
-  return (
-    <div>
-      {loading ? (
-        <SpinnerLoader appearance={{ size: 'huge', theme: 'primary' }} />
-      ) : (
-        <div className={styles.agreementContainer}>
-          {text || (
-            <div className={styles.error}>
-              <FormattedMessage {...MSG.ipfsError} />
-            </div>
-          )}
+  return loading ? (
+    <SpinnerLoader appearance={{ size: 'huge', theme: 'primary' }} />
+  ) : (
+    <div className={styles.agreementContainer}>
+      {text || (
+        <div className={styles.error}>
+          <FormattedMessage {...MSG.ipfsError} />
         </div>
       )}
     </div>
