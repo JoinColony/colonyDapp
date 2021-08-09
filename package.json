@@ -147,6 +147,7 @@
     "@purser/metamask": "^3.1.2",
     "@purser/signer-ethers": "^1.0.3",
     "@purser/software": "^2.0.0",
+    "@synaps-io/verify.js": "^3.0.5",
     "@types/papaparse": "^5.2.6",
     "bn.js": "^5.1.1",
     "camelcase": "^6.0.0",
