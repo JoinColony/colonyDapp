@@ -14,6 +14,7 @@ export type CoinMachineActionTypes =
       {
         colonyAddress: Address;
         amount: string;
+        colonyName: string;
       },
       MetaWithHistory<object>
     >
