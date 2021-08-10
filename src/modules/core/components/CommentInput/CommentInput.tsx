@@ -65,6 +65,7 @@ interface Props {
   colonyAddress: Address;
   disabled?: boolean;
   callback?: (message: string) => void;
+  disabledInputPlaceholder?: boolean;
 }
 
 const handleKeyboardSubmit = (
@@ -88,6 +89,7 @@ const CommentInput = ({
   colonyAddress,
   callback,
   disabled,
+  disabledInputPlaceholder,
 }: Props) => {
   const commentBoxRef = useRef<HTMLInputElement>(null);
   const [
@@ -158,7 +160,9 @@ const CommentInput = ({
               elementOnly
               label={MSG.commentInputPlaceholder}
               name="message"
-              placeholder={disabled ? '' : MSG.commentInputPlaceholder}
+              placeholder={
+                disabledInputPlaceholder ? '' : MSG.commentInputPlaceholder
+              }
               minRows={1}
               maxRows={6}
               onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
