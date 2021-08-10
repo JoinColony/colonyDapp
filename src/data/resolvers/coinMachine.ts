@@ -2,7 +2,6 @@ import { ClientType, getLogs, getBlockTime } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { bigNumberify } from 'ethers/utils';
 
-import { bigNumberify } from 'ethers/utils';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 
