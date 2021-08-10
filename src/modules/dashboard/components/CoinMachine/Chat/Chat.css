@@ -19,6 +19,11 @@
   padding: 0 16px;
 }
 
+.inputBox textarea:disabled {
+  border: 1px solid rgb(200, 214, 245);
+  background-color: var(--text-disabled);
+}
+
 .loading, .empty {
   padding: 16px;
 }
