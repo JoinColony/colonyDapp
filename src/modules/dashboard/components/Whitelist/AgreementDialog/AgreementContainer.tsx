@@ -8,15 +8,16 @@ import styles from './AgreementDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.title',
+    id:
+      'dashboard.Extensions.Whitelist.AgreementDialog.AgreementContainer.title',
     defaultMessage: 'Sale agreement',
   },
   signedButton: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.gotItButton',
+    id: `dashboard.Extensions.Whitelist.AgreementDialog.AgreementContainer.gotItButton`,
     defaultMessage: 'Signed',
   },
   ipfsError: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.ipfsError',
+    id: `dashboard.Extensions.Whitelist.AgreementDialog.AgreementContainer.ipfsError`,
     defaultMessage: `There is a problem loading the agreement. Please, try again or contact colony admins.`,
   },
 });
