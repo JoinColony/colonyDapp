@@ -12,6 +12,12 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { getToken } from '~data/resolvers/token';
 import { TxConfig } from '~types/index';
 import {
+  CurrentPeriodTokensDocument,
+  CurrentPeriodTokensQuery,
+  CurrentPeriodTokensQueryVariables,
+} from '~data/index';
+
+import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
@@ -23,6 +29,8 @@ function* buyTokens({
   meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COIN_MACHINE_BUY_TOKENS>) {
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
   let txChannel;
   try {
     if (!amount) {
@@ -30,7 +38,6 @@ function* buyTokens({
     }
 
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const coinMachineClient = yield colonyManager.getClient(
       ClientType.CoinMachineClient,
       colonyAddress,
@@ -181,8 +188,18 @@ function* buyTokens({
       );
     }
   } catch (caughtError) {
+    yield;
+
     putError(ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR, caughtError, meta);
   } finally {
+    yield apolloClient.query<
+      CurrentPeriodTokensQuery,
+      CurrentPeriodTokensQueryVariables
+    >({
+      query: CurrentPeriodTokensDocument,
+      variables: { colonyAddress },
+      fetchPolicy: 'network-only',
+    });
     txChannel.close();
   }
 }
