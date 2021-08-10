@@ -23,8 +23,8 @@ query CoinMachineCurrentPeriodPrice($colonyAddress: String!) {
   coinMachineCurrentPeriodPrice(colonyAddress: $colonyAddress) @client
 }
 
-query CoinMachineBoughtTokens($colonyAddress: String!, $walletAddress: String!) {
-  coinMachineBoughtTokens(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+query CoinMachineBoughtTokens($colonyAddress: String!, $transactionHash: String!) {
+  coinMachineBoughtTokens(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client {
     numTokens,
     totalCost
   }
