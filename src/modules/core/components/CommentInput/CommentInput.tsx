@@ -63,6 +63,7 @@ type FormValues = {
 interface Props {
   transactionHash: string;
   colonyAddress: Address;
+  disabled?: boolean;
   callback?: (message: string) => void;
 }
 
@@ -82,7 +83,12 @@ const handleKeyboardSubmit = (
   return false;
 };
 
-const CommentInput = ({ transactionHash, colonyAddress, callback }: Props) => {
+const CommentInput = ({
+  transactionHash,
+  colonyAddress,
+  callback,
+  disabled,
+}: Props) => {
   const commentBoxRef = useRef<HTMLInputElement>(null);
   const [
     commentBoxInputRef,
@@ -152,12 +158,12 @@ const CommentInput = ({ transactionHash, colonyAddress, callback }: Props) => {
               elementOnly
               label={MSG.commentInputPlaceholder}
               name="message"
-              placeholder={MSG.commentInputPlaceholder}
+              placeholder={disabled ? '' : MSG.commentInputPlaceholder}
               minRows={1}
               maxRows={6}
               onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
-              disabled={isSubmitting}
               innerRef={(ref) => setCommentBoxInputRef(ref)}
+              disabled={isSubmitting || disabled}
             />
             {isSubmitting && (
               <div className={styles.submitting}>
