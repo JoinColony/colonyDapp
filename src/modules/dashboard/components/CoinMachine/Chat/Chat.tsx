@@ -5,11 +5,7 @@ import Comment from '~core/Comment';
 import CommentInput from '~core/CommentInput';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
-import {
-  useLoggedInUser,
-  Colony,
-  useTransactionMessagesQuery,
-} from '~data/index';
+import { Colony, useTransactionMessagesQuery } from '~data/index';
 
 import styles from './Chat.css';
 
@@ -35,12 +31,16 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   transactionHash: string;
+  userHasProfile: boolean;
 }
 
 const displayName = 'dashboard.CoinMachine.Chat';
 
-const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
-  const { username, ethereal } = useLoggedInUser();
+const Chat = ({
+  colony: { colonyAddress },
+  transactionHash,
+  userHasProfile,
+}: Props) => {
   const scrollElmRef = useRef<HTMLDivElement | null>(null);
 
   /*
@@ -111,13 +111,12 @@ const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
         <div ref={scrollElmRef} />
       </div>
       <div className={styles.inputBox}>
-        {username && !ethereal && (
-          <CommentInput
-            colonyAddress={colonyAddress}
-            transactionHash={transactionHash}
-            callback={scrollComments}
-          />
-        )}
+        <CommentInput
+          colonyAddress={colonyAddress}
+          transactionHash={transactionHash}
+          callback={scrollComments}
+          disabled={!userHasProfile}
+        />
       </div>
     </div>
   );
