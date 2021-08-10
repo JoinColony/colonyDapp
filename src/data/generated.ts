@@ -2124,6 +2124,13 @@ export type CoinMachineSalePeriodQueryVariables = Exact<{
 
 export type CoinMachineSalePeriodQuery = { coinMachineSalePeriod: Pick<SalePeriod, 'periodLength' | 'timeRemaining'> };
 
+export type CurrentPeriodTokensQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type CurrentPeriodTokensQuery = { currentPeriodTokens: Pick<CurrentPeriodTokens, 'maxPerPeriodTokens' | 'activeSoldTokens' | 'targetPerPeriodTokens'> };
+
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -5612,6 +5619,41 @@ export function useCoinMachineSalePeriodLazyQuery(baseOptions?: Apollo.LazyQuery
 export type CoinMachineSalePeriodQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodQuery>;
 export type CoinMachineSalePeriodLazyQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodLazyQuery>;
 export type CoinMachineSalePeriodQueryResult = Apollo.QueryResult<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>;
+export const CurrentPeriodTokensDocument = gql`
+    query CurrentPeriodTokens($colonyAddress: String!) {
+  currentPeriodTokens(colonyAddress: $colonyAddress) @client {
+    maxPerPeriodTokens
+    activeSoldTokens
+    targetPerPeriodTokens
+  }
+}
+    `;
+
+/**
+ * __useCurrentPeriodTokensQuery__
+ *
+ * To run a query within a React component, call `useCurrentPeriodTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentPeriodTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCurrentPeriodTokensQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useCurrentPeriodTokensQuery(baseOptions?: Apollo.QueryHookOptions<CurrentPeriodTokensQuery, CurrentPeriodTokensQueryVariables>) {
+        return Apollo.useQuery<CurrentPeriodTokensQuery, CurrentPeriodTokensQueryVariables>(CurrentPeriodTokensDocument, baseOptions);
+      }
+export function useCurrentPeriodTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentPeriodTokensQuery, CurrentPeriodTokensQueryVariables>) {
+          return Apollo.useLazyQuery<CurrentPeriodTokensQuery, CurrentPeriodTokensQueryVariables>(CurrentPeriodTokensDocument, baseOptions);
+        }
+export type CurrentPeriodTokensQueryHookResult = ReturnType<typeof useCurrentPeriodTokensQuery>;
+export type CurrentPeriodTokensLazyQueryHookResult = ReturnType<typeof useCurrentPeriodTokensLazyQuery>;
+export type CurrentPeriodTokensQueryResult = Apollo.QueryResult<CurrentPeriodTokensQuery, CurrentPeriodTokensQueryVariables>;
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
