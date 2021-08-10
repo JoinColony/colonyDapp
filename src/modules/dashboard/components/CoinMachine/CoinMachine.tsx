@@ -14,6 +14,7 @@ import {
   useCurrentPeriodTokensQuery,
   Colony,
   useCoinMachineSalePeriodQuery,
+  useLoggedInUser,
 } from '~data/index';
 
 import Chat from './Chat';
@@ -59,6 +60,9 @@ const CoinMachine = ({
 }: Props) => {
   /* To add proper states later */
   const isSale = true;
+
+  const { username, ethereal } = useLoggedInUser();
+  const userHasProfile = !!username && !ethereal;
 
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
@@ -190,11 +194,12 @@ const CoinMachine = ({
             <div className={styles.buy}>
               <BuyTokens
                 colony={colony}
+                userHasProfile={userHasProfile}
                 /*
                  * @TODO Determine if the sale is currently ongoing
                  * And only disable it if it insn't
                  */
-                disabled={false}
+                isCurrentlyOnSale={false}
               />
             </div>
             <div className={styles.timeRemaining}>
@@ -222,6 +227,7 @@ const CoinMachine = ({
           <Chat
             colony={colony}
             transactionHash={coinMachineExtension.address}
+            userHasProfile={userHasProfile}
           />
         </div>
       </div>
