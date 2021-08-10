@@ -28,8 +28,8 @@
 }
 
 .commentBox textarea:disabled {
-  border-color: rgb(200, 214, 245);
-  background-color: var(--text-disabled);
+  border: 1px solid color-mod(var(--temp-grey-4) alpha(50%));
+  background-color: color-mod(var(--temp-grey-4) alpha(10%));
 }
 
 .sendInstructions {
