@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
@@ -57,6 +57,9 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
+  /* To add proper states later */
+  const isSale = false;
+
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
@@ -91,7 +94,7 @@ const CoinMachine = ({
   const [saleStarted] = useState<boolean>(false);
 
   const periodTokens = useMemo(() => {
-    if (!saleTokensData || !periodTokensData) {
+    if (!saleTokensData || !periodTokensData || !isSale) {
       return undefined;
     }
     return {
@@ -106,7 +109,7 @@ const CoinMachine = ({
         periodTokensData.currentPeriodTokens.targetPerPeriodTokens,
       ),
     };
-  }, [periodTokensData, saleTokensData]);
+  }, [periodTokensData, saleTokensData, isSale]);
 
   if (
     loading ||
