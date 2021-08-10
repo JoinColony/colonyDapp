@@ -116,6 +116,7 @@ const Chat = ({
           transactionHash={transactionHash}
           callback={scrollComments}
           disabled={!userHasProfile}
+          disabledInputPlaceholder
         />
       </div>
     </div>
