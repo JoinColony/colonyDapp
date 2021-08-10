@@ -85,10 +85,11 @@ const TELL_ME_MORE_LINK = '';
 
 type Props = {
   colony: Colony;
+  userHasProfile: boolean;
   /*
    * @NOTE This acts like an indicator that the sale is not currently active
    */
-  disabled?: boolean;
+  isCurrentlyOnSale: boolean;
 };
 
 interface FormValues {
@@ -104,10 +105,12 @@ const validationSchema = (userBalance: number) =>
 
 const BuyTokens = ({
   colony: { colonyAddress, colonyName },
-  disabled,
+  isCurrentlyOnSale,
 }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
   const history = useHistory();
+
+  const userHasProfile = !!username && !ethereal;
 
   const {
     data: saleTokensData,
@@ -130,8 +133,6 @@ const BuyTokens = ({
 
   const isUserWhitelisted =
     userWhitelistStatusData?.userWhitelistStatus?.userIsWhitelisted;
-  /* Wire in is sale started logic */
-  const isSale = true;
   const { data: userTokenData, loading: loadingUserToken } = useUserTokensQuery(
     {
       variables: { address: walletAddress },
@@ -169,7 +170,7 @@ const BuyTokens = ({
     salePriceData?.coinMachineCurrentPeriodPrice || '0',
   );
 
-  const globalDisable = disabled || !username || ethereal;
+  const globalDisable = !isCurrentlyOnSale || !userHasProfile;
 
   const handleInputFocus = useCallback(
     ({ amount }, setFieldValue) => {
@@ -277,7 +278,7 @@ const BuyTokens = ({
         }}
         tooltipClassName={styles.tooltip}
       />
-      {isSale ? (
+      {isCurrentlyOnSale ? (
         <div className={styles.form}>
           <ActionForm
             initialValues={{
@@ -370,7 +371,7 @@ const BuyTokens = ({
                       <FormattedMessage {...MSG.priceLabel} />
                     </div>
                     <div className={styles.amountsValues}>
-                      <div>{!disabled ? currentSalePrice : 'N/A'}</div>
+                      <div>{isCurrentlyOnSale ? currentSalePrice : 'N/A'}</div>
                       {
                         /*
                          * @NOTE only show the exchange rate if the token is XDAI/ETH
@@ -387,7 +388,9 @@ const BuyTokens = ({
                                  * Just entering the decimal point will pass it through to EthUsd
                                  * and that will try to fetch the balance for, which, obviously, will fail
                                  */
-                                !disabled ? parseFloat(currentSalePrice) : 0
+                                isCurrentlyOnSale
+                                  ? parseFloat(currentSalePrice)
+                                  : 0
                               }
                             />
                           </div>
@@ -405,7 +408,7 @@ const BuyTokens = ({
                       <FormattedMessage {...MSG.costLabel} />
                     </div>
                     <div className={styles.amountsValues}>
-                      {!disabled ? (
+                      {isCurrentlyOnSale ? (
                         <div>
                           {values.amount
                             ? (
