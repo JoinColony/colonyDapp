@@ -5,16 +5,17 @@ import { BigNumber } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+
 import { getMainClasses } from '~utils/css';
+import { TimerValue } from '~utils/components';
+import useSplitTime from '~utils/hooks/useSplitTime';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import TokenPriceStatusIcon, {
   TokenPriceStatuses,
 } from '../TokenPriceStatusIcon/TokenPriceStatusIcon';
 
 import styles from './RemainingDisplayWidget.css';
-import { TimerValue } from '~utils/components';
-import useSplitTime from '~utils/hooks/useSplitTime';
-import { getFormattedTokenValue } from '~utils/tokens';
 
 export enum DataDisplayType {
   Time = 'Time',
@@ -116,7 +117,7 @@ const RemainingDisplayWidget = ({
     if (displayType === DataDisplayType.Time && splitTime) {
       return <TimerValue splitTime={splitTime} />;
     }
-    if (periodTokens && displayType !== DataDisplayType.Time) {
+    if (periodTokens && displayType === DataDisplayType.Tokens) {
       const { soldPeriodTokens, decimals, maxPeriodTokens } = periodTokens;
 
       if (soldPeriodTokens.gte(maxPeriodTokens)) {
@@ -124,7 +125,7 @@ const RemainingDisplayWidget = ({
       }
 
       return `${getFormattedTokenValue(
-        soldPeriodTokens,
+        maxPeriodTokens.sub(soldPeriodTokens),
         decimals,
       )}/${getFormattedTokenValue(maxPeriodTokens, decimals)}`;
     }
