@@ -2,6 +2,7 @@ import { ClientType, getLogs, getBlockTime } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { bigNumberify } from 'ethers/utils';
 
+import { bigNumberify } from 'ethers/utils';
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 
@@ -176,6 +177,8 @@ export const coinMachineResolvers = ({
     },
     async currentPeriodTokens(_, { colonyAddress }) {
       try {
+        const { networkClient } = colonyManager;
+
         const coinMachineClient = await colonyManager.getClient(
           ClientType.CoinMachineClient,
           colonyAddress,
@@ -184,13 +187,22 @@ export const coinMachineResolvers = ({
         const maxPerPeriodTokens = await coinMachineClient.getMaxPerPeriod();
 
         const activeSoldTokens = await coinMachineClient.getActiveSold();
+        const activePeriod = await coinMachineClient.getActivePeriod();
+        const blockTime = await getBlockTime(networkClient.provider, 'latest');
+
+        const periodLength = await coinMachineClient.getPeriodLength();
+
+        const currentPeriod = Math.floor(
+          bigNumberify(blockTime).div(periodLength.mul(1000)).toNumber(),
+        );
 
         // eslint-disable-next-line max-len
         const targetPerPeriodTokens = await coinMachineClient.getTargetPerPeriod();
 
         return {
           maxPerPeriodTokens: maxPerPeriodTokens.toString(),
-          activeSoldTokens: activeSoldTokens.toString(),
+          activeSoldTokens:
+            activePeriod === currentPeriod ? activeSoldTokens.toString() : '',
           targetPerPeriodTokens: targetPerPeriodTokens.toString(),
         };
       } catch (error) {
