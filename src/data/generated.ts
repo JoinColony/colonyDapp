@@ -338,7 +338,7 @@ export type QueryActionsThatNeedAttentionArgs = {
 
 export type QueryCoinMachineBoughtTokensArgs = {
   colonyAddress: Scalars['String'];
-  walletAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
 };
 
 
@@ -2059,7 +2059,7 @@ export type CoinMachineCurrentPeriodPriceQuery = Pick<Query, 'coinMachineCurrent
 
 export type CoinMachineBoughtTokensQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
-  walletAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
 }>;
 
 
@@ -5399,8 +5399,8 @@ export type CoinMachineCurrentPeriodPriceQueryHookResult = ReturnType<typeof use
 export type CoinMachineCurrentPeriodPriceLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceLazyQuery>;
 export type CoinMachineCurrentPeriodPriceQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>;
 export const CoinMachineBoughtTokensDocument = gql`
-    query CoinMachineBoughtTokens($colonyAddress: String!, $walletAddress: String!) {
-  coinMachineBoughtTokens(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+    query CoinMachineBoughtTokens($colonyAddress: String!, $transactionHash: String!) {
+  coinMachineBoughtTokens(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client {
     numTokens
     totalCost
   }
@@ -5420,7 +5420,7 @@ export const CoinMachineBoughtTokensDocument = gql`
  * const { data, loading, error } = useCoinMachineBoughtTokensQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
- *      walletAddress: // value for 'walletAddress'
+ *      transactionHash: // value for 'transactionHash'
  *   },
  * });
  */
