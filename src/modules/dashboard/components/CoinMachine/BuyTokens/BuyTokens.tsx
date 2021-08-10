@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
@@ -27,7 +28,7 @@ import {
 import { ActionTypes } from '~redux/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
-import { mapPayload } from '~utils/actions';
+import { mapPayload, withMeta, pipe } from '~utils/actions';
 
 import styles from './BuyTokens.css';
 
@@ -103,8 +104,9 @@ const validationSchema = (userBalance: number) =>
     amount: yup.number().moreThan(0).max(userBalance),
   });
 
-const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
+const BuyTokens = ({ colony: { colonyAddress, colonyName }, disabled }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
+  const history = useHistory();
 
   const {
     data: saleTokensData,
@@ -127,7 +129,7 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
 
   const isUserApproved = whitelistPolicyData?.whitelistPolicy?.userIsApproved;
   /* Wire in is sale started logic */
-  const isSale = false;
+  const isSale = true;
   const { data: userTokenData, loading: loadingUserToken } = useUserTokensQuery(
     {
       variables: { address: walletAddress },
@@ -222,10 +224,14 @@ const BuyTokens = ({ colony: { colonyAddress }, disabled }: Props) => {
   const handleFormReset = useCallback((resetForm) => resetForm(), []);
 
   const transform = useCallback(
-    mapPayload(({ amount }) => ({
-      colonyAddress,
-      amount,
-    })),
+    pipe(
+      mapPayload(({ amount }) => ({
+        colonyAddress,
+        amount,
+        colonyName,
+      })),
+      withMeta({ history }),
+    ),
     [],
   );
 
