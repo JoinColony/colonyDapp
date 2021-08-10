@@ -58,7 +58,7 @@ const CoinMachine = ({
   colony,
 }: Props) => {
   /* To add proper states later */
-  const isSale = false;
+  const isSale = true;
 
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
