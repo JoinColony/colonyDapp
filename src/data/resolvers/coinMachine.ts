@@ -116,11 +116,17 @@ export const coinMachineResolvers = ({
           colonyAddress,
         );
         const transaction = await provider.getTransaction(transactionHash);
-
+        const transactionReceipt = await provider.getTransactionReceipt(
+          transactionHash,
+        );
         const actionValues = coinMachineClient.interface.parseTransaction({
           data: transaction.data,
         });
-        return actionValues?.args[0].toString() || "0";
+
+        return {
+          transactionAmount: actionValues?.args[0].toString() || "0",
+          transactionStatus: !!transactionReceipt.status
+        }
       } catch (error) {
         console.error(error);
         return null;
