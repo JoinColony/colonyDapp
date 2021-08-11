@@ -4,8 +4,10 @@ import { bigNumberify } from 'ethers/utils';
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
+import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 
 import { getToken } from './token';
+import { ProcessedEvent } from './colonyActions';
 
 export const coinMachineResolvers = ({
   colonyManager,
@@ -220,6 +222,73 @@ export const coinMachineResolvers = ({
         const tokenBalance = await coinMachineClient.getTokenBalance();
 
         return tokenBalance.toString();
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
+    async coinMachineTokenSales(_, { colonyAddress }) {
+      try {
+        const { networkClient } = colonyManager;
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+
+        const periodLength = await coinMachineClient.getPeriodLength();
+        const blockTime = await getBlockTime(networkClient.provider, 'latest');
+        const periodLengthInMs = periodLength.mul(1000);
+        const latestSalePeriodRemainder = bigNumberify(blockTime).mod(
+          periodLengthInMs,
+        );
+        const latestSalePeriodEnd = bigNumberify(blockTime).sub(
+          latestSalePeriodRemainder,
+        );
+        const tokensBoughtLogs = await getLogs(
+          coinMachineClient,
+          coinMachineClient.filters.TokensBought(null, null, null),
+        );
+
+        const parsedTokensBoughtEvents = await Promise.all(
+          tokensBoughtLogs.map(async (log) => {
+            const parsedLog = coinMachineClient.interface.parseLog(log);
+            const { address, blockHash, blockNumber, transactionHash } = log;
+            const { name, values } = parsedLog;
+            return {
+              type: ActionsPageFeedType.NetworkEvent,
+              name,
+              values,
+              createdAt: blockHash
+                ? await getBlockTime(coinMachineClient.provider, blockHash)
+                : 0,
+              emmitedBy: ClientType.CoinMachineClient,
+              address,
+              blockNumber,
+              transactionHash,
+            } as ProcessedEvent;
+          }),
+        );
+
+        const previousSales: {
+          saleEndedAt: string;
+          tokensBoughtEvents: ProcessedEvent[];
+        }[] = [];
+        for (let i = 0; i < 6; i + 1) {
+          const saleEndedAt = latestSalePeriodEnd.sub(periodLengthInMs.mul(i));
+          const previousSaleEndedAt = latestSalePeriodEnd.sub(
+            periodLengthInMs.mul(i + 1),
+          );
+          previousSales.push({
+            saleEndedAt: saleEndedAt.toString(),
+            tokensBoughtEvents: parsedTokensBoughtEvents.filter(
+              (event) =>
+                saleEndedAt.gt(event.createdAt) &&
+                previousSaleEndedAt.lt(event.createdAt),
+            ),
+          });
+        }
+
+        return previousSales;
       } catch (error) {
         console.error(error);
         return null;
