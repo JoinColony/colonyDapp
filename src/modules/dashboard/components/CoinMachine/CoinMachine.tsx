@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
@@ -184,9 +184,9 @@ const CoinMachine = ({
               <BuyTokens
                 colony={colony}
                 /*
-                * @TODO Determine if the sale is currently ongoing
-                * And only disable it if it insn't
-                */
+                 * @TODO Determine if the sale is currently ongoing
+                 * And only disable it if it insn't
+                 */
                 disabled={false}
               />
             </div>
