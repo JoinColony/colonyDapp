@@ -806,13 +806,13 @@ export type LoggedInUser = {
 };
 
 export type ParsedEvent = {
-  blockNumber?: Maybe<Scalars['Int']>;
+  type: Scalars['String'];
+  name: Scalars['String'];
+  values: Scalars['String'];
   createdAt: Scalars['Int'];
   emmitedBy: Scalars['String'];
-  name: Scalars['String'];
+  blockNumber?: Maybe<Scalars['Int']>;
   transactionHash: Scalars['String'];
-  type: Scalars['String'];
-  values: Scalars['String'];
 };
 
 export type SystemMessage = {
@@ -1235,9 +1235,15 @@ export type TrannsactionAmount = {
   transactionSucceed: Scalars['Boolean'];
 }
 
+export type ParsedTokenBoughtEvent = {
+  numTokens: Scalars['String'];
+  totalCost: Scalars['String'];
+  createdAt: Scalars['Int'];
+};
+
 export type PreviousPeriods = {
   saleEndedAt: Scalars['String'];
-  tokensBoughtEvents: Array<ParsedEvent>;
+  tokensBought: Array<ParsedTokenBoughtEvent>;
 };
 
 export type ActionsFilter = {
@@ -5662,14 +5668,10 @@ export const CoinMachineTokenSalesDocument = gql`
     query CoinMachineTokenSales($colonyAddress: String!) {
   coinMachineTokenSales(colonyAddress: $colonyAddress) @client {
     saleEndedAt
-    tokensBoughtEvents {
-      type
-      name
-      values
+    tokensBought {
+      numTokens
+      totalCost
       createdAt
-      emmitedBy
-      blockNumber
-      transactionHash
     }
   }
 }
