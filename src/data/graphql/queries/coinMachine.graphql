@@ -59,3 +59,18 @@ query CurrentPeriodTokens($colonyAddress: String!) {
 query CoinMachineTokenBalance($colonyAddress: String!) {
   coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
 }
+
+query CoinMachineTokenSales($colonyAddress: String!) {
+  coinMachineTokenSales(colonyAddress: $colonyAddress) @client {
+    saleEndedAt
+    tokensBoughtEvents {
+      type
+      name
+      values
+      createdAt
+      emmitedBy
+      blockNumber
+      transactionHash
+    }
+  }
+}
