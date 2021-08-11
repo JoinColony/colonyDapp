@@ -63,14 +63,10 @@ query CoinMachineTokenBalance($colonyAddress: String!) {
 query CoinMachineTokenSales($colonyAddress: String!) {
   coinMachineTokenSales(colonyAddress: $colonyAddress) @client {
     saleEndedAt
-    tokensBoughtEvents {
-      type
-      name
-      values
+    tokensBought {
+      numTokens
+      totalCost
       createdAt
-      emmitedBy
-      blockNumber
-      transactionHash
     }
   }
 }
