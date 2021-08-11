@@ -17,7 +17,7 @@ export default gql`
     periodLength: String!
     timeRemaining: String!
   }
-  
+
   type BoughtTokens {
     numTokens: String!
     totalCost: String!
@@ -25,7 +25,7 @@ export default gql`
 
   type TrannsactionAmount {
     transactionAmount: String!
-    transactionStatus: Boolean!
+    transactionSucceed: Boolean!
   }
 
   extend type Query {

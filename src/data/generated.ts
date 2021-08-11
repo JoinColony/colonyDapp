@@ -1197,7 +1197,7 @@ export type BoughtTokens = {
 
 export type TrannsactionAmount = {
   transactionAmount: Scalars['String'];
-  transactionStatus: Scalars['Boolean'];
+  transactionSucceed: Scalars['Boolean'];
 };
 
 export type ActionsFilter = {
@@ -2083,7 +2083,7 @@ export type CoinMachineTransactionAmountQueryVariables = Exact<{
 }>;
 
 
-export type CoinMachineTransactionAmountQuery = { coinMachineTransactionAmount: Pick<TrannsactionAmount, 'transactionAmount' | 'transactionStatus'> };
+export type CoinMachineTransactionAmountQuery = { coinMachineTransactionAmount: Pick<TrannsactionAmount, 'transactionAmount' | 'transactionSucceed'> };
 
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables = Exact<{
   userAddress: Scalars['String'];
@@ -5457,7 +5457,7 @@ export const CoinMachineTransactionAmountDocument = gql`
     query CoinMachineTransactionAmount($colonyAddress: String!, $transactionHash: String!) {
   coinMachineTransactionAmount(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client {
     transactionAmount
-    transactionStatus
+    transactionSucceed
   }
 }
     `;
