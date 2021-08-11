@@ -274,7 +274,7 @@ export type Query = {
   coinMachineCurrentPeriodPrice: Scalars['String'];
   coinMachineSalePeriod: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
-  coinMachineTransactionAmount: Scalars['String'];
+  coinMachineTransactionAmount: TrannsactionAmount;
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
@@ -1195,6 +1195,11 @@ export type BoughtTokens = {
   totalCost: Scalars['String'];
 };
 
+export type TrannsactionAmount = {
+  transactionAmount: Scalars['String'];
+  transactionStatus: Scalars['Boolean'];
+};
+
 export type ActionsFilter = {
   payment_contains?: Maybe<Scalars['String']>;
 };
@@ -2078,7 +2083,7 @@ export type CoinMachineTransactionAmountQueryVariables = Exact<{
 }>;
 
 
-export type CoinMachineTransactionAmountQuery = Pick<Query, 'coinMachineTransactionAmount'>;
+export type CoinMachineTransactionAmountQuery = { coinMachineTransactionAmount: Pick<TrannsactionAmount, 'transactionAmount' | 'transactionStatus'> };
 
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables = Exact<{
   userAddress: Scalars['String'];
@@ -5450,7 +5455,10 @@ export type CoinMachineBoughtTokensLazyQueryHookResult = ReturnType<typeof useCo
 export type CoinMachineBoughtTokensQueryResult = Apollo.QueryResult<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>;
 export const CoinMachineTransactionAmountDocument = gql`
     query CoinMachineTransactionAmount($colonyAddress: String!, $transactionHash: String!) {
-  coinMachineTransactionAmount(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client
+  coinMachineTransactionAmount(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client {
+    transactionAmount
+    transactionStatus
+  }
 }
     `;
 
