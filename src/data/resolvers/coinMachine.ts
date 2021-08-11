@@ -62,7 +62,7 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
-    async coinMachineBoughtTokens(_, { colonyAddress, walletAddress }) {
+    async coinMachineBoughtTokens(_, { colonyAddress, transactionHash }) {
       const { provider } = colonyManager.networkClient;
       try {
         const coinMachineClient = await colonyManager.getClient(
@@ -84,9 +84,10 @@ export const coinMachineResolvers = ({
         const boughtTokensEvents = await Promise.all(
           boughtTokensLogs.map(async (log) => {
             const parsedLog = coinMachineClient.interface.parseLog(log);
-            const { blockHash } = log;
+            const { blockHash, transactionHash } = log;
             return {
               ...parsedLog,
+              transactionHash,
               createdAt: blockHash
                 ? await getBlockTime(provider, blockHash)
                 : 0,
@@ -96,12 +97,30 @@ export const coinMachineResolvers = ({
         const lastBoughtTokensEvent = boughtTokensEvents.sort(
           (firstEvent, secondEvent) =>
             secondEvent.createdAt - firstEvent.createdAt,
-        ).find((event) => event.values.buyer === walletAddress);
+        ).find((event) => event.transactionHash === transactionHash);
 
         return {
-          numTokens: lastBoughtTokensEvent?.values.numTokens.toString() || "0",
-          totalCost: lastBoughtTokensEvent?.values.totalCost.toString() || "0",
+          numTokens: lastBoughtTokensEvent?.values.numTokens?.toString() || "0",
+          totalCost: lastBoughtTokensEvent?.values.totalCost?.toString() || "0",
         }
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
+    async coinMachineTransactionAmount(_, { colonyAddress, transactionHash }) {
+      const { provider } = colonyManager.networkClient;
+      try {
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+        const transaction = await provider.getTransaction(transactionHash);
+
+        const actionValues = coinMachineClient.interface.parseTransaction({
+          data: transaction.data,
+        });
+        return actionValues?.args[0].toString() || "0";
       } catch (error) {
         console.error(error);
         return null;
