@@ -104,7 +104,10 @@ const validationSchema = (userBalance: number) =>
     amount: yup.number().moreThan(0).max(userBalance),
   });
 
-const BuyTokens = ({ colony: { colonyAddress, colonyName }, disabled }: Props) => {
+const BuyTokens = ({
+  colony: { colonyAddress, colonyName },
+  disabled,
+}: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
   const history = useHistory();
 

@@ -31,8 +31,14 @@ export default gql`
   extend type Query {
     coinMachineSaleTokens(colonyAddress: String!): SaleTokens!
     coinMachineCurrentPeriodPrice(colonyAddress: String!): String!
-    coinMachineBoughtTokens(colonyAddress: String!, transactionHash: String!): BoughtTokens!
-    coinMachineTransactionAmount(colonyAddress: String!, transactionHash: String!): TrannsactionAmount!
+    coinMachineBoughtTokens(
+      colonyAddress: String!
+      transactionHash: String!
+    ): BoughtTokens!
+    coinMachineTransactionAmount(
+      colonyAddress: String!
+      transactionHash: String!
+    ): TrannsactionAmount!
     coinMachineCurrentPeriodMaxUserPurchase(
       userAddress: String!
       colonyAddress: String!
