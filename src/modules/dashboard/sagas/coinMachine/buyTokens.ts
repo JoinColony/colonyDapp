@@ -175,7 +175,10 @@ function* buyTokens({
     });
 
     if (colonyName) {
-      yield routeRedirect(`/colony/${colonyName}/buy-tokens/${txHash}`, history);
+      yield routeRedirect(
+        `/colony/${colonyName}/buy-tokens/${txHash}`,
+        history,
+      );
     }
   } catch (caughtError) {
     putError(ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR, caughtError, meta);

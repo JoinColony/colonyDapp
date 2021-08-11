@@ -1,8 +1,4 @@
-import { 
-  ClientType,
-  getLogs,
-  getBlockTime
-} from '@colony/colony-js';
+import { ClientType, getLogs, getBlockTime } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { bigNumberify } from 'ethers/utils';
 
@@ -84,25 +80,30 @@ export const coinMachineResolvers = ({
         const boughtTokensEvents = await Promise.all(
           boughtTokensLogs.map(async (log) => {
             const parsedLog = coinMachineClient.interface.parseLog(log);
-            const { blockHash, transactionHash } = log;
+            const {
+              blockHash,
+              transactionHash: currentLogTransactionHash,
+            } = log;
             return {
               ...parsedLog,
-              transactionHash,
+              transactionHash: currentLogTransactionHash,
               createdAt: blockHash
                 ? await getBlockTime(provider, blockHash)
                 : 0,
             };
           }),
         );
-        const lastBoughtTokensEvent = boughtTokensEvents.sort(
-          (firstEvent, secondEvent) =>
-            secondEvent.createdAt - firstEvent.createdAt,
-        ).find((event) => event.transactionHash === transactionHash);
+        const lastBoughtTokensEvent = boughtTokensEvents
+          .sort(
+            (firstEvent, secondEvent) =>
+              secondEvent.createdAt - firstEvent.createdAt,
+          )
+          .find((event) => event.transactionHash === transactionHash);
 
         return {
-          numTokens: lastBoughtTokensEvent?.values.numTokens?.toString() || "0",
-          totalCost: lastBoughtTokensEvent?.values.totalCost?.toString() || "0",
-        }
+          numTokens: lastBoughtTokensEvent?.values.numTokens?.toString() || '0',
+          totalCost: lastBoughtTokensEvent?.values.totalCost?.toString() || '0',
+        };
       } catch (error) {
         console.error(error);
         return null;
@@ -124,9 +125,9 @@ export const coinMachineResolvers = ({
         });
 
         return {
-          transactionAmount: actionValues?.args[0].toString() || "0",
-          transactionStatus: !!transactionReceipt.status
-        }
+          transactionAmount: actionValues?.args[0].toString() || '0',
+          transactionStatus: !!transactionReceipt.status,
+        };
       } catch (error) {
         console.error(error);
         return null;
