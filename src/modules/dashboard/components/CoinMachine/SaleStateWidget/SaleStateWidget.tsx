@@ -5,6 +5,7 @@ import Heading from '~core/Heading';
 import TransactionLink from '~core/TransactionLink';
 import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
+import { bigNumberify } from 'ethers/utils';
 
 import { TokenInfoQuery } from '~data/index';
 import { Address } from '~types/index';
@@ -160,6 +161,8 @@ const SaleStateWidget = ({
   transactionHash
 }: Props) => {
   const [state, setState] = useState<SaleState | null>(SaleState.Loading);
+  const [decimalAmount, setDecimalAmount] = useState<string>('0');
+  const [cost, setCost] = useState<string>('0');
 
   const showTimeCountdown =
     state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
@@ -199,6 +202,33 @@ const SaleStateWidget = ({
     }
   }, [state, splitTime]);
 
+  useEffect(() => {
+    if (!salePriceData) return;
+    
+    const decimalSalePrice = getFormattedTokenValue(salePriceData?.coinMachineCurrentPeriodPrice, sellableToken?.decimals);
+
+    if (boughtTokensData && transactionAmountData) {
+      const { transactionAmount, transactionStatus } = transactionAmountData.coinMachineTransactionAmount;
+      let decimalAmount = getFormattedTokenValue(transactionAmount, sellableToken?.decimals);
+      let cost = (parseFloat(decimalAmount) * parseFloat(decimalSalePrice)).toFixed(2);
+      const {numTokens, totalCost} = boughtTokensData.coinMachineBoughtTokens;
+      if (!transactionStatus) {
+        setState(SaleState.TransactionFailed)
+      }
+      else if (bigNumberify(numTokens).isZero()) {
+        setState(SaleState.SaleFailed);
+      } else if (bigNumberify(transactionAmount).gt(numTokens)) {
+        decimalAmount = getFormattedTokenValue(numTokens, sellableToken?.decimals);
+        cost = getFormattedTokenValue(totalCost, purchaseToken?.decimals);
+        setState(SaleState.PartialSuccess);
+      } else {
+        setState(SaleState.Success);
+      }
+      setDecimalAmount(decimalAmount);
+      setCost(cost);
+    }
+  }, [boughtTokensData, transactionAmountData, salePriceData]);
+
   if (
     transactionAmountLoading ||
     loadingSalePrice
@@ -209,20 +239,6 @@ const SaleStateWidget = ({
       </div>
     );
   }
-
-  const decimalAmount = getFormattedTokenValue(transactionAmountData?.coinMachineTransactionAmount || '0', sellableToken?.decimals);
-  const decimalSalePrice = getFormattedTokenValue(salePriceData?.coinMachineCurrentPeriodPrice, sellableToken?.decimals);
-  const cost = (parseFloat(decimalAmount) * parseFloat(decimalSalePrice)).toFixed(2);
-
-  // useEffect(() => {
-  //   if (!boughtTokensData) {
-  //     setState(SaleState.TransactionFailed);
-  //   }
-  //   else if (boughtTokensData) {
-
-  //   }
-  // }, [boughtTokensData]);
-
 
   return (
     <div className={styles.container}>
