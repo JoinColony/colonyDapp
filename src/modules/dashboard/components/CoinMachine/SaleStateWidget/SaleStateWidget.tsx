@@ -210,7 +210,7 @@ const SaleStateWidget = ({
     if (boughtTokensData && transactionAmountData) {
       const {
         transactionAmount,
-        transactionStatus,
+        transactionSucceed,
       } = transactionAmountData.coinMachineTransactionAmount;
       let amount = getFormattedTokenValue(
         transactionAmount,
@@ -220,7 +220,7 @@ const SaleStateWidget = ({
         2,
       );
       const { numTokens, totalCost } = boughtTokensData.coinMachineBoughtTokens;
-      if (!transactionStatus) {
+      if (!transactionSucceed) {
         setState(SaleState.TransactionFailed);
       } else if (bigNumberify(numTokens).isZero()) {
         setState(SaleState.SaleFailed);
