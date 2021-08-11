@@ -25,13 +25,16 @@ query CoinMachineCurrentPeriodPrice($colonyAddress: String!) {
 
 query CoinMachineBoughtTokens($colonyAddress: String!, $transactionHash: String!) {
   coinMachineBoughtTokens(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client {
-    numTokens,
+    numTokens
     totalCost
   }
 }
 
 query CoinMachineTransactionAmount($colonyAddress: String!, $transactionHash: String!) {
-  coinMachineTransactionAmount(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client
+  coinMachineTransactionAmount(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client {
+    transactionAmount
+    transactionStatus
+  }
 }
 
 query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
