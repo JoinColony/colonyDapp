@@ -4,10 +4,8 @@ import { bigNumberify } from 'ethers/utils';
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
-import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
 
 import { getToken } from './token';
-import { ProcessedEvent } from './colonyActions';
 
 export const coinMachineResolvers = ({
   colonyManager,
@@ -252,35 +250,34 @@ export const coinMachineResolvers = ({
         const parsedTokensBoughtEvents = await Promise.all(
           tokensBoughtLogs.map(async (log) => {
             const parsedLog = coinMachineClient.interface.parseLog(log);
-            const { address, blockHash, blockNumber, transactionHash } = log;
-            const { name, values } = parsedLog;
+            const { blockHash } = log;
+            const { values } = parsedLog;
             return {
-              type: ActionsPageFeedType.NetworkEvent,
-              name,
-              values,
               createdAt: blockHash
                 ? await getBlockTime(coinMachineClient.provider, blockHash)
                 : 0,
-              emmitedBy: ClientType.CoinMachineClient,
-              address,
-              blockNumber,
-              transactionHash,
-            } as ProcessedEvent;
+              numTokens: values.numTokens?.toString() || '0',
+              totalCost: values.totalCost?.toString() || '0',
+            };
           }),
         );
 
         const previousSales: {
           saleEndedAt: string;
-          tokensBoughtEvents: ProcessedEvent[];
+          tokensBought: {
+            createdAt: number;
+            numTokens: string;
+            totalCost: string;
+          }[];
         }[] = [];
-        for (let i = 0; i < 6; i + 1) {
+        for (let i = 0; i < 6; i += 1) {
           const saleEndedAt = latestSalePeriodEnd.sub(periodLengthInMs.mul(i));
           const previousSaleEndedAt = latestSalePeriodEnd.sub(
             periodLengthInMs.mul(i + 1),
           );
           previousSales.push({
             saleEndedAt: saleEndedAt.toString(),
-            tokensBoughtEvents: parsedTokensBoughtEvents.filter(
+            tokensBought: parsedTokensBoughtEvents.filter(
               (event) =>
                 saleEndedAt.gt(event.createdAt) &&
                 previousSaleEndedAt.lt(event.createdAt),

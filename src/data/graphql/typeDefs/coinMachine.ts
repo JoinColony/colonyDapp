@@ -33,19 +33,15 @@ export default gql`
     transactionSucceed: Boolean!
   }
 
-  type ParsedEvent {
-    type: String!
-    name: String!
-    values: String!
+  type ParsedTokenBoughtEvent {
+    numTokens: String!
+    totalCost: String!
     createdAt: Int!
-    emmitedBy: String!
-    blockNumber: Int
-    transactionHash: String!
   }
 
   type PreviousPeriods {
     saleEndedAt: String!
-    tokensBoughtEvents: [ParsedEvent!]!
+    tokensBought: [ParsedTokenBoughtEvent!]!
   }
 
   extend type Query {
