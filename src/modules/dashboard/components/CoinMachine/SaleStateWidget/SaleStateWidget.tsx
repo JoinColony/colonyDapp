@@ -1,24 +1,23 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { bigNumberify } from 'ethers/utils';
 import Heading from '~core/Heading';
 import TransactionLink from '~core/TransactionLink';
 import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
-import { bigNumberify } from 'ethers/utils';
-
-import { TokenInfoQuery } from '~data/index';
-import { getFormattedTokenValue } from '~utils/tokens';
-import useSplitTime from '~utils/hooks/useSplitTime';
-import { SpinnerLoader } from '~core/Preloaders';
 import {
+  TokenInfoQuery,
   useCoinMachineBoughtTokensQuery,
   useCoinMachineCurrentPeriodPriceQuery,
   useCoinMachineTransactionAmountQuery,
   Colony,
 } from '~data/index';
-
+import { getFormattedTokenValue } from '~utils/tokens';
+import { SpinnerLoader } from '~core/Preloaders';
 import { TimerValue } from '~utils/components';
+
+import useSplitTime from '~utils/hooks/useSplitTime';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
@@ -158,7 +157,7 @@ const SaleStateWidget = ({
   purchaseToken,
   timeLeftToNextSale,
   colony: { colonyAddress, colonyName },
-  transactionHash
+  transactionHash,
 }: Props) => {
   const [state, setState] = useState<SaleState | null>(SaleState.Loading);
   const [decimalAmount, setDecimalAmount] = useState<string>('0');
@@ -182,9 +181,7 @@ const SaleStateWidget = ({
     variables: { colonyAddress },
   });
 
-  const {
-    data: boughtTokensData,
-  } = useCoinMachineBoughtTokensQuery({
+  const { data: boughtTokensData } = useCoinMachineBoughtTokensQuery({
     variables: { colonyAddress, transactionHash },
   });
 
@@ -204,35 +201,48 @@ const SaleStateWidget = ({
 
   useEffect(() => {
     if (!salePriceData) return;
-    
-    const decimalSalePrice = getFormattedTokenValue(salePriceData?.coinMachineCurrentPeriodPrice, sellableToken?.decimals);
+
+    const decimalSalePrice = getFormattedTokenValue(
+      salePriceData?.coinMachineCurrentPeriodPrice,
+      sellableToken?.decimals,
+    );
 
     if (boughtTokensData && transactionAmountData) {
-      const { transactionAmount, transactionStatus } = transactionAmountData.coinMachineTransactionAmount;
-      let decimalAmount = getFormattedTokenValue(transactionAmount, sellableToken?.decimals);
-      let cost = (parseFloat(decimalAmount) * parseFloat(decimalSalePrice)).toFixed(2);
-      const {numTokens, totalCost} = boughtTokensData.coinMachineBoughtTokens;
+      const {
+        transactionAmount,
+        transactionStatus,
+      } = transactionAmountData.coinMachineTransactionAmount;
+      let amount = getFormattedTokenValue(
+        transactionAmount,
+        sellableToken?.decimals,
+      );
+      let price = (parseFloat(amount) * parseFloat(decimalSalePrice)).toFixed(
+        2,
+      );
+      const { numTokens, totalCost } = boughtTokensData.coinMachineBoughtTokens;
       if (!transactionStatus) {
-        setState(SaleState.TransactionFailed)
-      }
-      else if (bigNumberify(numTokens).isZero()) {
+        setState(SaleState.TransactionFailed);
+      } else if (bigNumberify(numTokens).isZero()) {
         setState(SaleState.SaleFailed);
       } else if (bigNumberify(transactionAmount).gt(numTokens)) {
-        decimalAmount = getFormattedTokenValue(numTokens, sellableToken?.decimals);
-        cost = getFormattedTokenValue(totalCost, purchaseToken?.decimals);
+        amount = getFormattedTokenValue(numTokens, sellableToken?.decimals);
+        price = getFormattedTokenValue(totalCost, purchaseToken?.decimals);
         setState(SaleState.PartialSuccess);
       } else {
         setState(SaleState.Success);
       }
-      setDecimalAmount(decimalAmount);
-      setCost(cost);
+      setDecimalAmount(amount);
+      setCost(price);
     }
-  }, [boughtTokensData, transactionAmountData, salePriceData]);
+  }, [
+    boughtTokensData,
+    transactionAmountData,
+    salePriceData,
+    purchaseToken,
+    sellableToken,
+  ]);
 
-  if (
-    transactionAmountLoading ||
-    loadingSalePrice
-  ) {
+  if (transactionAmountLoading || loadingSalePrice) {
     return (
       <div>
         <SpinnerLoader appearance={{ size: 'huge', theme: 'primary' }} />
