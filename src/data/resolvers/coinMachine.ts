@@ -126,7 +126,7 @@ export const coinMachineResolvers = ({
 
         return {
           transactionAmount: actionValues?.args[0].toString() || '0',
-          transactionStatus: !!transactionReceipt.status,
+          transactionSucceed: !!transactionReceipt.status,
         };
       } catch (error) {
         console.error(error);
