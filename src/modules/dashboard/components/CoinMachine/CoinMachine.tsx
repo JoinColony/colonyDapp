@@ -168,7 +168,7 @@ const CoinMachine = ({
         {(transactionHash && (
           <div className={styles.saleStarted}>
             <SaleStateWidget
-              colonyAddress={colonyAddress}
+              colony={colony}
               timeLeftToNextSale={864000}
               sellableToken={saleToken}
               timeLeftToNextSale={timeRemaining}
