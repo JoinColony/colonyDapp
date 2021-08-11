@@ -8,7 +8,6 @@ import ExternalLink from '~core/ExternalLink';
 import { bigNumberify } from 'ethers/utils';
 
 import { TokenInfoQuery } from '~data/index';
-import { Address } from '~types/index';
 import { getFormattedTokenValue } from '~utils/tokens';
 import useSplitTime from '~utils/hooks/useSplitTime';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -16,6 +15,7 @@ import {
   useCoinMachineBoughtTokensQuery,
   useCoinMachineCurrentPeriodPriceQuery,
   useCoinMachineTransactionAmountQuery,
+  Colony,
 } from '~data/index';
 
 import { TimerValue } from '~utils/components';
@@ -36,7 +36,7 @@ interface Props {
   timeLeftToNextSale: number;
   sellableToken?: TokenInfoQuery['tokenInfo'];
   purchaseToken?: TokenInfoQuery['tokenInfo'];
-  colonyAddress: Address;
+  colony: Colony;
   transactionHash: string;
 }
 
@@ -157,7 +157,7 @@ const SaleStateWidget = ({
   sellableToken,
   purchaseToken,
   timeLeftToNextSale,
-  colonyAddress,
+  colony: { colonyAddress, colonyName },
   transactionHash
 }: Props) => {
   const [state, setState] = useState<SaleState | null>(SaleState.Loading);
@@ -249,7 +249,7 @@ const SaleStateWidget = ({
         />
         <TransactionLink
           className={styles.blockExplorer}
-          hash=""
+          hash={transactionHash}
           text={MSG.blockExplorer}
           textValues={{
             blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
@@ -304,6 +304,7 @@ const SaleStateWidget = ({
               size: 'large',
             }}
             loading={state === SaleState.Loading}
+            linkTo={`/colony/${colonyName}/buy-tokens/`}
           >
             {buttonText()}
           </Button>
