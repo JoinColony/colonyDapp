@@ -276,6 +276,7 @@ export type Query = {
   coinMachineSaleTokens: SaleTokens;
   coinMachineTokenBalance: Scalars['String'];
   coinMachineTransactionAmount: TrannsactionAmount;
+  coinMachineTokenSales: Array<PreviousPeriods>;
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
@@ -375,6 +376,11 @@ export type QueryCoinMachineTokenBalanceArgs = {
 export type QueryCoinMachineTransactionAmountArgs = {
   colonyAddress: Scalars['String'];
   transactionHash: Scalars['String'];
+};
+
+
+export type QueryCoinMachineTokenSalesArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -800,13 +806,13 @@ export type LoggedInUser = {
 };
 
 export type ParsedEvent = {
-  type: Scalars['String'];
-  name: Scalars['String'];
-  values: Scalars['String'];
+  blockNumber?: Maybe<Scalars['Int']>;
   createdAt: Scalars['Int'];
   emmitedBy: Scalars['String'];
-  blockNumber?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
   transactionHash: Scalars['String'];
+  type: Scalars['String'];
+  values: Scalars['String'];
 };
 
 export type SystemMessage = {
@@ -1227,6 +1233,11 @@ export type BoughtTokens = {
 export type TrannsactionAmount = {
   transactionAmount: Scalars['String'];
   transactionSucceed: Scalars['Boolean'];
+}
+
+export type PreviousPeriods = {
+  saleEndedAt: Scalars['String'];
+  tokensBoughtEvents: Array<ParsedEvent>;
 };
 
 export type ActionsFilter = {
@@ -5644,6 +5655,22 @@ export const CurrentPeriodTokensDocument = gql`
     maxPerPeriodTokens
     activeSoldTokens
     targetPerPeriodTokens
+  }
+}
+
+export const CoinMachineTokenSalesDocument = gql`
+    query CoinMachineTokenSales($colonyAddress: String!) {
+  coinMachineTokenSales(colonyAddress: $colonyAddress) @client {
+    saleEndedAt
+    tokensBoughtEvents {
+      type
+      name
+      values
+      createdAt
+      emmitedBy
+      blockNumber
+      transactionHash
+    }
   }
 }
     `;
