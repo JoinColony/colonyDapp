@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
@@ -7,8 +7,15 @@ import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
 
 import { TokenInfoQuery } from '~data/index';
+import { Address } from '~types/index';
 import { getFormattedTokenValue } from '~utils/tokens';
 import useSplitTime from '~utils/hooks/useSplitTime';
+import { SpinnerLoader } from '~core/Preloaders';
+import {
+  useCoinMachineBoughtTokensQuery,
+  useCoinMachineCurrentPeriodPriceQuery,
+  useCoinMachineTransactionAmountQuery,
+} from '~data/index';
 
 import { TimerValue } from '~utils/components';
 
@@ -25,12 +32,11 @@ export enum SaleState {
 }
 
 interface Props {
-  state: SaleState;
-  amount: string;
-  price: string;
   timeLeftToNextSale: number;
   sellableToken?: TokenInfoQuery['tokenInfo'];
   purchaseToken?: TokenInfoQuery['tokenInfo'];
+  colonyAddress: Address;
+  transactionHash: string;
 }
 
 const MSG = defineMessages({
@@ -147,19 +153,37 @@ const ACTIVATE_LINK =
   'https://colony.gitbook.io/colony/key-concepts/token-activation';
 
 const SaleStateWidget = ({
-  state,
-  amount,
-  price,
   sellableToken,
   purchaseToken,
   timeLeftToNextSale,
+  colonyAddress,
+  transactionHash
 }: Props) => {
+  const [state, setState] = useState<SaleState | null>(SaleState.Loading);
+
   const showTimeCountdown =
     state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
   const { splitTime } = useSplitTime(timeLeftToNextSale, showTimeCountdown);
 
-  const decimalAmount = getFormattedTokenValue(amount, sellableToken?.decimals);
-  const decimalPrice = getFormattedTokenValue(price, purchaseToken?.decimals);
+  const {
+    data: transactionAmountData,
+    loading: transactionAmountLoading,
+  } = useCoinMachineTransactionAmountQuery({
+    variables: { colonyAddress, transactionHash },
+  });
+
+  const {
+    data: salePriceData,
+    loading: loadingSalePrice,
+  } = useCoinMachineCurrentPeriodPriceQuery({
+    variables: { colonyAddress },
+  });
+
+  const {
+    data: boughtTokensData,
+  } = useCoinMachineBoughtTokensQuery({
+    variables: { colonyAddress, transactionHash },
+  });
 
   const buttonText = useCallback(() => {
     switch (state) {
@@ -174,6 +198,31 @@ const SaleStateWidget = ({
         return <FormattedMessage {...MSG.buyAgain} />;
     }
   }, [state, splitTime]);
+
+  if (
+    transactionAmountLoading ||
+    loadingSalePrice
+  ) {
+    return (
+      <div>
+        <SpinnerLoader appearance={{ size: 'huge', theme: 'primary' }} />
+      </div>
+    );
+  }
+
+  const decimalAmount = getFormattedTokenValue(transactionAmountData?.coinMachineTransactionAmount || '0', sellableToken?.decimals);
+  const decimalSalePrice = getFormattedTokenValue(salePriceData?.coinMachineCurrentPeriodPrice, sellableToken?.decimals);
+  const cost = (parseFloat(decimalAmount) * parseFloat(decimalSalePrice)).toFixed(2);
+
+  // useEffect(() => {
+  //   if (!boughtTokensData) {
+  //     setState(SaleState.TransactionFailed);
+  //   }
+  //   else if (boughtTokensData) {
+
+  //   }
+  // }, [boughtTokensData]);
+
 
   return (
     <div className={styles.container}>
@@ -205,7 +254,7 @@ const SaleStateWidget = ({
             <FormattedMessage {...MSG.for} />
           </div>
           <div className={styles.value}>
-            {decimalPrice} {purchaseToken?.symbol || '???'}
+            {cost} {purchaseToken?.symbol || '???'}
           </div>
         </div>
       </div>
