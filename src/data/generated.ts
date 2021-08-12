@@ -272,11 +272,11 @@ export type Query = {
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
+  coinMachinePreviousSales: Array<PreviousPeriods>;
   coinMachineSalePeriod: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
   coinMachineTokenBalance: Scalars['String'];
   coinMachineTransactionAmount: TrannsactionAmount;
-  coinMachineTokenSales: Array<PreviousPeriods>;
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
@@ -358,12 +358,12 @@ export type QueryCoinMachineCurrentPeriodPriceArgs = {
 };
 
 
-export type QueryCoinMachineSalePeriodArgs = {
+export type QueryCoinMachinePreviousSalesArgs = {
   colonyAddress: Scalars['String'];
 };
 
 
-export type QueryCoinMachineSaleTokensArgs = {
+export type QueryCoinMachineSalePeriodArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -379,7 +379,7 @@ export type QueryCoinMachineTransactionAmountArgs = {
 };
 
 
-export type QueryCoinMachineTokenSalesArgs = {
+export type QueryCoinMachineSaleTokensArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -1235,15 +1235,10 @@ export type TrannsactionAmount = {
   transactionSucceed: Scalars['Boolean'];
 }
 
-export type ParsedTokenBoughtEvent = {
-  numTokens: Scalars['String'];
-  totalCost: Scalars['String'];
-  createdAt: Scalars['Int'];
-};
-
 export type PreviousPeriods = {
-  saleEndedAt: Scalars['String'];
-  tokensBought: Array<ParsedTokenBoughtEvent>;
+  saleEndedAt: Scalars['Int'];
+  tokensBought: Scalars['String'];
+  totalPrice: Scalars['String'];
 };
 
 export type ActionsFilter = {
@@ -5668,11 +5663,8 @@ export const CoinMachineTokenSalesDocument = gql`
     query CoinMachineTokenSales($colonyAddress: String!) {
   coinMachineTokenSales(colonyAddress: $colonyAddress) @client {
     saleEndedAt
-    tokensBought {
-      numTokens
-      totalCost
-      createdAt
-    }
+    tokensBought
+    totalPrice
   }
 }
     `;
