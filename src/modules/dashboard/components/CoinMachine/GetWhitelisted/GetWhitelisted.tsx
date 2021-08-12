@@ -11,6 +11,7 @@ import {
 
 import { useDialog } from '~core/Dialog';
 import AgreementDialog from '~dashboard/Whitelist/AgreementDialog';
+import CompleteKYCDialog from '../CompleteKYCDialog';
 
 const MSG = defineMessages({
   getWhitelisted: {
@@ -33,10 +34,17 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
   });
 
   const openAgreementDialog = useDialog(AgreementDialog);
+  const openCompleteKYCDialog = useDialog(CompleteKYCDialog);
+
   const signatureRequired =
     !disabled &&
     whitelistPolicyData?.whitelistPolicy.agreementRequired &&
     !userStatus?.userSignedAgreement;
+
+  const isKYCRequired =
+    !disabled &&
+    whitelistPolicyData?.whitelistPolicy.kycRequired &&
+    !userStatus?.userIsApproved;
 
   const { data: agreementHashData } = useWhitelistAgreementHashQuery({
     variables: { colonyAddress },
@@ -55,8 +63,22 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
     [agreementHashData, openAgreementDialog, colonyAddress],
   );
 
+  const openKYCDialog = useCallback(
+    () =>
+      openCompleteKYCDialog({
+        isKYCRequired,
+        signatureRequired,
+        isWhitelisted: userStatus?.userIsWhitelisted,
+        back: () => {},
+      }),
+    [isKYCRequired, signatureRequired],
+  );
+
   useEffect(() => {
-    if (signatureRequired) {
+    if (isKYCRequired) {
+      openKYCDialog()
+    }
+    else if (signatureRequired) {
       openDialog();
     }
   }, [openDialog, signatureRequired]);
