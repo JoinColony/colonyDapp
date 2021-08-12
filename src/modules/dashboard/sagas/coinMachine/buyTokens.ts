@@ -188,8 +188,6 @@ function* buyTokens({
       );
     }
   } catch (caughtError) {
-    yield;
-
     putError(ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR, caughtError, meta);
   } finally {
     yield apolloClient.query<
