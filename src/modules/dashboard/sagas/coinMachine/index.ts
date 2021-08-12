@@ -4,6 +4,5 @@ import buyTokensSaga from './buyTokens';
 import updatePeriodSaga from './updatePeriod';
 
 export default function* coinMachineSagas() {
-  yield all([call(buyTokensSaga)]);
-  yield all([call(updatePeriodSaga)]);
+  yield all([call(buyTokensSaga), call(updatePeriodSaga)]);
 }
