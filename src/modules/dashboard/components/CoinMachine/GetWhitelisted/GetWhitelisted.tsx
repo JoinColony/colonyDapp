@@ -66,9 +66,6 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
   const openKYCDialog = useCallback(
     () =>
       openCompleteKYCDialog({
-        isKYCRequired,
-        signatureRequired,
-        isWhitelisted: userStatus?.userIsWhitelisted,
         back: () => {},
       }),
     [isKYCRequired, signatureRequired],
