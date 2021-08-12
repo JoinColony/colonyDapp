@@ -1,11 +1,9 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
-import Heading from '~core/Heading';
-
 
 const MSG = defineMessages({
   buttonText: {
@@ -17,17 +15,14 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CoinMachine.SynapsKYCDialog';
 
 const SynapsKYCDialog = ({ cancel }: DialogProps) => {
-
   return (
     <Dialog cancel={cancel}>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-
-      </DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }} />
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
-            appearance={{ theme: 'primary', size: 'large' }}
-            text={MSG.buttonText}
-          />
+          appearance={{ theme: 'primary', size: 'large' }}
+          text={MSG.buttonText}
+        />
       </DialogSection>
     </Dialog>
   );
