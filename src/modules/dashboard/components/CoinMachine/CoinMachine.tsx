@@ -11,7 +11,6 @@ import {
   useColonyExtensionsQuery,
   useCoinMachineSaleTokensQuery,
   Colony,
-  useWhitelistAgreementHashQuery,
   useCoinMachineSalePeriodQuery,
 } from '~data/index';
 
