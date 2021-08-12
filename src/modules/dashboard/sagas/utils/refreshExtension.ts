@@ -13,6 +13,9 @@ import {
   WhitelistedUsersDocument,
   WhitelistedUsersQuery,
   WhitelistedUsersQueryVariables,
+  WhitelistPolicyQuery,
+  WhitelistPolicyQueryVariables,
+  WhitelistPolicyDocument,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
@@ -25,6 +28,16 @@ export function* refreshExtension(colonyAddress: string, extensionId: string) {
       WhitelistedUsersQueryVariables
     >({
       query: WhitelistedUsersDocument,
+      variables: {
+        colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+    yield apolloClient.query<
+      WhitelistPolicyQuery,
+      WhitelistPolicyQueryVariables
+    >({
+      query: WhitelistPolicyDocument,
       variables: {
         colonyAddress,
       },
