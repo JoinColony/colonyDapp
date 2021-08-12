@@ -205,6 +205,7 @@ const CoinMachine = ({
                 appearance={{ theme: tokensRemaining > 0 ? 'white' : 'danger' }}
                 value={timeRemaining}
                 periodLength={periodLength}
+                colonyAddress={colonyAddress}
               />
             </div>
             <div className={styles.tokensRemaining}>
