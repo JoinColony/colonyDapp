@@ -1,6 +1,8 @@
 import { ClientType, getLogs, getBlockTime } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { bigNumberify } from 'ethers/utils';
+import isEmpty from 'lodash/isEmpty';
+import Decimal from 'decimal.js';
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
@@ -234,7 +236,11 @@ export const coinMachineResolvers = ({
         );
 
         const periodLength = await coinMachineClient.getPeriodLength();
+        const windowSize = await coinMachineClient.getPeriodLength();
+        const activeIntake = await coinMachineClient.getActiveIntake();
+        const newIntake = await coinMachineClient.getEMAIntake();
         const blockTime = await getBlockTime(networkClient.provider, 'latest');
+
         const periodLengthInMs = periodLength.mul(1000);
         const latestSalePeriodRemainder = bigNumberify(blockTime).mod(
           periodLengthInMs,
@@ -263,25 +269,52 @@ export const coinMachineResolvers = ({
         );
 
         const previousSales: {
-          saleEndedAt: string;
-          tokensBought: {
-            createdAt: number;
-            numTokens: string;
-            totalCost: string;
-          }[];
+          saleEndedAt: number;
+          tokensBought: string;
+          totalPrice: string;
         }[] = [];
         for (let i = 0; i < 6; i += 1) {
           const saleEndedAt = latestSalePeriodEnd.sub(periodLengthInMs.mul(i));
           const previousSaleEndedAt = latestSalePeriodEnd.sub(
             periodLengthInMs.mul(i + 1),
           );
+          const tokensBoughtEvents = parsedTokensBoughtEvents.filter(
+            (event) =>
+              saleEndedAt.gt(event.createdAt) &&
+              previousSaleEndedAt.lt(event.createdAt),
+          );
+
+          let tokensBought = '0';
+          let totalPrice = '0';
+
+          if (isEmpty(tokensBoughtEvents)) {
+            const alpha = new Decimal(10)
+              .pow(18)
+              .mul(2 / (windowSize.toNumber() + 1))
+              .floor()
+              .toString();
+
+            totalPrice = bigNumberify(10)
+              .pow(18)
+              .sub(alpha)
+              .mul(newIntake)
+              .add(bigNumberify(alpha).mul(activeIntake))
+              .div(bigNumberify(10).pow(18))
+              .toString();
+          } else {
+            parsedTokensBoughtEvents.forEach((event) => {
+              tokensBought = bigNumberify(event.numTokens)
+                .add(tokensBought)
+                .toString();
+              totalPrice = bigNumberify(event.totalCost)
+                .add(totalPrice)
+                .toString();
+            });
+          }
           previousSales.push({
-            saleEndedAt: saleEndedAt.toString(),
-            tokensBought: parsedTokensBoughtEvents.filter(
-              (event) =>
-                saleEndedAt.gt(event.createdAt) &&
-                previousSaleEndedAt.lt(event.createdAt),
-            ),
+            saleEndedAt: saleEndedAt.toNumber(),
+            tokensBought,
+            totalPrice,
           });
         }
 
