@@ -201,7 +201,9 @@ export const coinMachineResolvers = ({
         return {
           maxPerPeriodTokens: maxPerPeriodTokens.toString(),
           activeSoldTokens:
-            activePeriod === currentPeriod ? activeSoldTokens.toString() : '',
+            activePeriod.toNumber() === currentPeriod
+              ? activeSoldTokens.toString()
+              : '',
           targetPerPeriodTokens: targetPerPeriodTokens.toString(),
         };
       } catch (error) {
