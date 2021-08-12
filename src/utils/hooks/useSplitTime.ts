@@ -24,9 +24,7 @@ const useSplitTime = (
 
   const splitTime = splitTimeLeft(timeLeft);
 
-  return {
-    splitTime,
-  };
+  return { timeLeft, splitTime };
 };
 
 export default useSplitTime;
