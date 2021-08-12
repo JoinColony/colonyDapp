@@ -20,52 +20,21 @@ const MSG = defineMessages({
   },
   buttonText: {
     id: 'dashboard.CoinMachine.CompleteKYCDialog.buttonText',
-    defaultMessage: 'Proceed',
-  },
-  descriptionKYCWhitelistedBuy: {
-    id: 'dashboard.CoinMachine.CompleteKYCDialog.descriptionWhitelistedBuy',
-    defaultMessage: `Your address has been added to the whitelist. Please proceed to buy tokens.`,
-  },
-  descriptionKYCWhitelistedAgreement: {
-    id: `dashboard.CoinMachine.CompleteKYCDialog.descriptionKYCWhitelistedAgreement`,
-    defaultMessage: `Your address has been added to the whitelist. Please proceed to sign the sale agreement.`,
+    defaultMessage: 'Close',
   },
 });
 
 const displayName = 'dashboard.CoinMachine.CompleteKYCDialog';
 
-interface Props extends DialogProps {
-  isKYCRequired: boolean;
-  signatureRequired: boolean;
-  isWhitelisted: boolean;
-}
-
-const CompleteKYCDialog = ({ cancel, isKYCRequired, signatureRequired, isWhitelisted }: Props) => {
-  const descriptionText = useMemo(() => {
-    if (isWhitelisted) {
-      return MSG.descriptionKYCWhitelistedBuy;
-    }
-    if (isKYCRequired) {
-      return MSG.description;
-    }
-    if (signatureRequired) {
-      return MSG.descriptionKYCWhitelistedAgreement;
-    }
-
-    return null;
-  }, [isWhitelisted, isKYCRequired, signatureRequired]);
+const CompleteKYCDialog = ({ cancel }: DialogProps) => {
   return (
     <Dialog cancel={cancel}>
       <div
-        className={classnames(styles.container, {
-          [styles.KYCContainer]: !isKYCRequired,
-        })}
+        className={styles.container}
       >
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div
-            className={classnames(styles.modalHeading, {
-              [styles.KYCHeading]: !isKYCRequired,
-            })}
+            className={styles.modalHeading}
           >
             <Heading
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
@@ -73,11 +42,9 @@ const CompleteKYCDialog = ({ cancel, isKYCRequired, signatureRequired, isWhiteli
             />
           </div>
           <div
-            className={classnames(styles.modalContent, {
-              [styles.KYCContent]: !isKYCRequired,
-            })}
+            className={styles.modalContent}
           >
-            <FormattedMessage {...descriptionText} />
+            <FormattedMessage {...MSG.description} />
           </div>
         </DialogSection>
       </div>
@@ -87,7 +54,6 @@ const CompleteKYCDialog = ({ cancel, isKYCRequired, signatureRequired, isWhiteli
             appearance={{ theme: 'primary', size: 'large' }}
             text={MSG.buttonText}
             onClick={cancel}
-            disabled={!isWhitelisted}
           />
         </div>
       </DialogSection>
