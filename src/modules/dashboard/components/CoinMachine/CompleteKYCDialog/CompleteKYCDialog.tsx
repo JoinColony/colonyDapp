@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { FormattedMessage, defineMessages } from 'react-intl';
-import classnames from 'classnames';
 
 import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
@@ -29,21 +28,15 @@ const displayName = 'dashboard.CoinMachine.CompleteKYCDialog';
 const CompleteKYCDialog = ({ cancel }: DialogProps) => {
   return (
     <Dialog cancel={cancel}>
-      <div
-        className={styles.container}
-      >
+      <div className={styles.container}>
         <DialogSection appearance={{ theme: 'sidePadding' }}>
-          <div
-            className={styles.modalHeading}
-          >
+          <div className={styles.modalHeading}>
             <Heading
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
               text={MSG.title}
             />
           </div>
-          <div
-            className={styles.modalContent}
-          >
+          <div className={styles.modalContent}>
             <FormattedMessage {...MSG.description} />
           </div>
         </DialogSection>
