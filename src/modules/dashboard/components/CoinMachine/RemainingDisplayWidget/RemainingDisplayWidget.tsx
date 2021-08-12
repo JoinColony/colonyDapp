@@ -1,11 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import { useDispatch } from 'redux-react-hook';
 import classnames from 'classnames';
 import { BigNumber } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
+import { ActionTypes } from '~redux/index';
+import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
 import { TimerValue } from '~utils/components';
 import useSplitTime from '~utils/hooks/useSplitTime';
@@ -27,6 +30,7 @@ type Appearance = {
 };
 
 type Props = {
+  colonyAddress?: Address;
   displayType: DataDisplayType;
   value?: string | number | null;
   appearance?: Appearance;
@@ -86,7 +90,10 @@ const RemainingDisplayWidget = ({
   value,
   periodLength,
   periodTokens,
+  colonyAddress,
 }: Props) => {
+  const dispatch = useDispatch();
+
   const displaysTimer = displayType === DataDisplayType.Time;
   const { splitTime, timeLeft } = useSplitTime(
     displaysTimer && typeof value === 'number' ? value : 0,
@@ -178,6 +185,15 @@ const RemainingDisplayWidget = ({
 
     return false;
   }, [periodTokens]);
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      dispatch({
+        type: ActionTypes.COIN_MACHINE_PERIOD_UPDATE,
+        payload: { colonyAddress },
+      });
+    }
+  }, [timeLeft, colonyAddress, dispatch]);
 
   return (
     <div className={getMainClasses(appearance, styles)}>
