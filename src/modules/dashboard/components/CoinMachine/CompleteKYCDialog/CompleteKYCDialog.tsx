@@ -22,11 +22,6 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.CompleteKYCDialog.buttonText',
     defaultMessage: 'Proceed',
   },
-  descriptionWhitelistedAgreement: {
-    id:
-      'dashboard.CoinMachine.CompleteKYCDialog.descriptionWhitelistedAgreement',
-    defaultMessage: `Your address has been added to the whitelist. Please proceed to sign the sale agreement.`,
-  },
   descriptionKYCWhitelistedBuy: {
     id: 'dashboard.CoinMachine.CompleteKYCDialog.descriptionWhitelistedBuy',
     defaultMessage: `Your address has been added to the whitelist. Please proceed to buy tokens.`,
@@ -39,40 +34,37 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.CoinMachine.CompleteKYCDialog';
 
-const CompleteKYCDialog = ({ cancel }: DialogProps) => {
-  // @TODO: Add logic to actually determine all of those bools
-  const isWhitelisted = false;
-  const hasAgreement = false;
-  const hasSignedAgreement = false;
-  const hasKYCVerification = false;
+interface Props extends DialogProps {
+  isKYCRequired: boolean;
+  signatureRequired: boolean;
+  isWhitelisted: boolean;
+}
+
+const CompleteKYCDialog = ({ cancel, isKYCRequired, signatureRequired, isWhitelisted }: Props) => {
   const descriptionText = useMemo(() => {
-    if (!hasKYCVerification) {
-      if (!isWhitelisted) {
-        return MSG.description;
-      }
-      if (!hasSignedAgreement) {
-        return MSG.descriptionWhitelistedAgreement;
-      }
-    } else if (isWhitelisted && hasKYCVerification) {
-      if (hasAgreement && !hasSignedAgreement) {
-        return MSG.descriptionKYCWhitelistedAgreement;
-      }
+    if (isWhitelisted) {
       return MSG.descriptionKYCWhitelistedBuy;
+    }
+    if (isKYCRequired) {
+      return MSG.description;
+    }
+    if (signatureRequired) {
+      return MSG.descriptionKYCWhitelistedAgreement;
     }
 
     return null;
-  }, [isWhitelisted, hasAgreement, hasSignedAgreement, hasKYCVerification]);
+  }, [isWhitelisted, isKYCRequired, signatureRequired]);
   return (
     <Dialog cancel={cancel}>
       <div
         className={classnames(styles.container, {
-          [styles.KYCContainer]: hasKYCVerification,
+          [styles.KYCContainer]: !isKYCRequired,
         })}
       >
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div
             className={classnames(styles.modalHeading, {
-              [styles.KYCHeading]: hasKYCVerification,
+              [styles.KYCHeading]: !isKYCRequired,
             })}
           >
             <Heading
@@ -82,7 +74,7 @@ const CompleteKYCDialog = ({ cancel }: DialogProps) => {
           </div>
           <div
             className={classnames(styles.modalContent, {
-              [styles.KYCContent]: hasKYCVerification,
+              [styles.KYCContent]: !isKYCRequired,
             })}
           >
             <FormattedMessage {...descriptionText} />
