@@ -88,11 +88,12 @@ const RemainingDisplayWidget = ({
   periodTokens,
 }: Props) => {
   const displaysTimer = displayType === DataDisplayType.Time;
-  const { splitTime } = useSplitTime(
+  const { splitTime, timeLeft } = useSplitTime(
     displaysTimer && typeof value === 'number' ? value : 0,
     displaysTimer,
     periodLength,
   );
+
   const widgetText = useMemo(() => {
     if (displayType === DataDisplayType.Time) {
       return {
@@ -163,22 +164,20 @@ const RemainingDisplayWidget = ({
     return undefined;
   }, [displayType, periodTokens]);
 
-  const isValueWarning = useMemo(() => {
-    if (displayType === DataDisplayType.Time) {
-      return (
-        appearance.theme !== 'danger' &&
-        typeof value === 'number' &&
-        periodLength &&
-        ((value / 1000) * 100) / periodLength <= 10
-      );
-    }
+  const showValueWarning =
+    displayType === DataDisplayType.Time &&
+    appearance.theme !== 'danger' &&
+    typeof value === 'number' &&
+    periodLength &&
+    (timeLeft * 100) / periodLength <= 10;
 
+  const isValueWarning = useMemo(() => {
     if (periodTokens?.soldPeriodTokens.gte(periodTokens?.maxPeriodTokens)) {
       return true;
     }
 
     return false;
-  }, [periodTokens, displayType, appearance, value, periodLength]);
+  }, [periodTokens]);
 
   return (
     <div className={getMainClasses(appearance, styles)}>
@@ -199,7 +198,7 @@ const RemainingDisplayWidget = ({
       </div>
       <p
         className={classnames(styles.value, {
-          [styles.valueWarning]: isValueWarning,
+          [styles.valueWarning]: isValueWarning || showValueWarning,
         })}
       >
         {displayedValue}
