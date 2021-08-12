@@ -1,8 +1,8 @@
-import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useMemo } from 'react';
+import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
 import classnames from 'classnames';
-
 import isEmpty from 'lodash/isEmpty';
+
 import Heading from '~core/Heading';
 import {
   Table,
@@ -12,9 +12,13 @@ import {
   TableHeaderCell,
   TableRow,
 } from '~core/Table';
+import { getFormattedTokenValue } from '~utils/tokens';
+
+import TokenPriceStatusIcon, {
+  TokenPriceStatuses,
+} from '../TokenPriceStatusIcon';
 
 import styles from './TokenSalesTable.css';
-import TokenPriceStatusIcon from '../TokenPriceStatusIcon';
 
 const MSG = defineMessages({
   tableTitle: {
@@ -67,6 +71,16 @@ const TABLE_HEADERS = [
 ];
 
 const TokenSalesTable = ({ tableData = [] }: Props) => {
+  const formattedData = useMemo(() => {
+    return tableData.map((data) => {
+      return {
+        saleEndedAt: new Date(data.saleEndedAt),
+        tokensRemaining: `${getFormattedTokenValue(data.tokensBought, 18)}/100`,
+        price: getFormattedTokenValue(data.totalPrice, 18),
+        priceStatus: TokenPriceStatuses.PRICE_UP,
+      };
+    });
+  }, [tableData]);
   return (
     <div className={styles.container}>
       <Heading
@@ -94,27 +108,37 @@ const TokenSalesTable = ({ tableData = [] }: Props) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {/* @TODO: Wire up actual data structure from where these values will come from */}
-            {tableData.map(({ saleEnd, amount, price, priceStatus }) => (
-              <TableRow
-                className={styles.tableRow}
-                key={`${saleEnd} ${amount}`}
-              >
-                <TableCell className={styles.cellData}>{saleEnd}</TableCell>
-                <TableCell
-                  className={classnames(styles.cellData, {
-                    // @TODO: Add proper logic to determine when to use the danger color
-                    [styles.cellDataDanger]: amount === 'SOLD OUT',
-                  })}
+            {formattedData.map(
+              ({ saleEndedAt, tokensRemaining, price, priceStatus }) => (
+                <TableRow
+                  className={styles.tableRow}
+                  key={saleEndedAt.getTime()}
                 >
-                  {amount}
-                </TableCell>
-                <TableCell className={styles.cellData}>
-                  {price}
-                  <TokenPriceStatusIcon status={priceStatus} />
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell className={styles.cellData}>
+                    <FormattedDate
+                      value={saleEndedAt}
+                      month="2-digit"
+                      day="2-digit"
+                      hour12={false}
+                      hour="2-digit"
+                      minute="2-digit"
+                    />
+                  </TableCell>
+                  <TableCell
+                    className={classnames(styles.cellData, {
+                      // @TODO: Add proper logic to determine when to use the danger color
+                      [styles.cellDataDanger]: tokensRemaining === 'SOLD OUT',
+                    })}
+                  >
+                    {tokensRemaining}
+                  </TableCell>
+                  <TableCell className={styles.cellData}>
+                    {price}
+                    <TokenPriceStatusIcon status={priceStatus} />
+                  </TableCell>
+                </TableRow>
+              ),
+            )}
           </TableBody>
         </Table>
         {isEmpty(tableData) && (
