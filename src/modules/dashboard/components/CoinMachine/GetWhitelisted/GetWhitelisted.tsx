@@ -68,12 +68,20 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
   ]);
 
   useEffect(() => {
+    if (!userStatus || !whitelistPolicyData) return;
     if (isKYCRequired) {
       openKYCDialog();
     } else if (signatureRequired) {
       openDialog();
     }
-  }, [isKYCRequired, signatureRequired, openKYCDialog, openDialog]);
+  }, [
+    isKYCRequired,
+    signatureRequired,
+    openKYCDialog,
+    openDialog,
+    userStatus,
+    whitelistPolicyData,
+  ]);
 
   const showWhitelistModal = useCallback(() => {
     if (isKYCRequired) {

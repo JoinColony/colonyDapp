@@ -17,7 +17,7 @@ import {
   WhitelistPolicyQueryVariables,
   WhitelistPolicyDocument,
   getLoggedInUser,
-  UserWhitelistStatusQuery, 
+  UserWhitelistStatusQuery,
   UserWhitelistStatusQueryVariables,
   UserWhitelistStatusDocument,
 } from '~data/index';
