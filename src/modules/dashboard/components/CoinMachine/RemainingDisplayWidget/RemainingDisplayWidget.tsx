@@ -79,7 +79,7 @@ const MSG = defineMessages({
     defaultMessage: 'Come back in...',
   },
   soldOut: {
-    id: 'dashboard.CoinMachine.RemainingDisplayWidget.tokensTypeFooterText',
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.soldOut',
     defaultMessage: 'SOLD OUT',
   },
 });
