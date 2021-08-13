@@ -187,7 +187,7 @@ const RemainingDisplayWidget = ({
   }, [periodTokens]);
 
   useEffect(() => {
-    if (timeLeft === 0) {
+    if (timeLeft === 0 && colonyAddress !== undefined) {
       dispatch({
         type: ActionTypes.COIN_MACHINE_PERIOD_UPDATE,
         payload: { colonyAddress },
