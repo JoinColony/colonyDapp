@@ -16,6 +16,10 @@ import {
   WhitelistPolicyQuery,
   WhitelistPolicyQueryVariables,
   WhitelistPolicyDocument,
+  getLoggedInUser,
+  UserWhitelistStatusQuery, 
+  UserWhitelistStatusQueryVariables,
+  UserWhitelistStatusDocument,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
@@ -23,6 +27,8 @@ export function* refreshExtension(colonyAddress: string, extensionId: string) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
   if (extensionId === Extension.Whitelist) {
+    const { walletAddress } = yield getLoggedInUser();
+
     yield apolloClient.query<
       WhitelistedUsersQuery,
       WhitelistedUsersQueryVariables
@@ -40,6 +46,17 @@ export function* refreshExtension(colonyAddress: string, extensionId: string) {
       query: WhitelistPolicyDocument,
       variables: {
         colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+    yield apolloClient.query<
+      UserWhitelistStatusQuery,
+      UserWhitelistStatusQueryVariables
+    >({
+      query: UserWhitelistStatusDocument,
+      variables: {
+        colonyAddress,
+        userAddress: walletAddress,
       },
       fetchPolicy: 'network-only',
     });
