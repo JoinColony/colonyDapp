@@ -282,6 +282,7 @@ export type Query = {
   eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
+  hasKycPolicy: Scalars['Boolean'];
   historicColonyRoles: Array<ProcessedRoles>;
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
@@ -402,6 +403,11 @@ export type QueryGetRecoveryRequiredApprovalsArgs = {
 export type QueryGetRecoveryStorageSlotArgs = {
   colonyAddress: Scalars['String'];
   storageSlot: Scalars['String'];
+};
+
+
+export type QueryHasKycPolicyArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1967,6 +1973,13 @@ export type WhitelistAgreementHashQueryVariables = Exact<{
 
 
 export type WhitelistAgreementHashQuery = Pick<Query, 'whitelistAgreementHash'>;
+
+export type HasKycPolicyQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type HasKycPolicyQuery = Pick<Query, 'hasKycPolicy'>;
 
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
@@ -5175,6 +5188,37 @@ export function useWhitelistAgreementHashLazyQuery(baseOptions?: Apollo.LazyQuer
 export type WhitelistAgreementHashQueryHookResult = ReturnType<typeof useWhitelistAgreementHashQuery>;
 export type WhitelistAgreementHashLazyQueryHookResult = ReturnType<typeof useWhitelistAgreementHashLazyQuery>;
 export type WhitelistAgreementHashQueryResult = Apollo.QueryResult<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>;
+export const HasKycPolicyDocument = gql`
+    query HasKycPolicy($colonyAddress: String!) {
+  hasKycPolicy(colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useHasKycPolicyQuery__
+ *
+ * To run a query within a React component, call `useHasKycPolicyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useHasKycPolicyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useHasKycPolicyQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useHasKycPolicyQuery(baseOptions?: Apollo.QueryHookOptions<HasKycPolicyQuery, HasKycPolicyQueryVariables>) {
+        return Apollo.useQuery<HasKycPolicyQuery, HasKycPolicyQueryVariables>(HasKycPolicyDocument, baseOptions);
+      }
+export function useHasKycPolicyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HasKycPolicyQuery, HasKycPolicyQueryVariables>) {
+          return Apollo.useLazyQuery<HasKycPolicyQuery, HasKycPolicyQueryVariables>(HasKycPolicyDocument, baseOptions);
+        }
+export type HasKycPolicyQueryHookResult = ReturnType<typeof useHasKycPolicyQuery>;
+export type HasKycPolicyLazyQueryHookResult = ReturnType<typeof useHasKycPolicyLazyQuery>;
+export type HasKycPolicyQueryResult = Apollo.QueryResult<HasKycPolicyQuery, HasKycPolicyQueryVariables>;
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {

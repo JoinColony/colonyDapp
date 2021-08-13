@@ -1,27 +1,23 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import Dialog, { DialogSection } from '~core/Dialog';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-import { SpinnerLoader } from '~core/Preloaders';
 
 import { useWhitelistAgreementQuery } from '~data/index';
 
+import AgreementContainer from './AgreementContainer';
 import styles from './AgreementDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.title',
+    id: 'dashboard.Extensions.Whitelist.AgreementDialog.title',
     defaultMessage: 'Sale agreement',
   },
   gotItButton: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.gotItButton',
+    id: 'dashboard.Extensions.Whitelist.AgreementDialog.gotItButton',
     defaultMessage: 'Got it',
-  },
-  ipfsError: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.ipfsError',
-    defaultMessage: `Failed to retrieve data from IPFS. Please try again.`,
   },
 });
 
@@ -47,17 +43,7 @@ const AgreementDialog = ({ cancel, close, agreementHash }: Props) => {
         />
       </DialogSection>
       <DialogSection>
-        {loading ? (
-          <SpinnerLoader appearance={{ size: 'huge', theme: 'primary' }} />
-        ) : (
-          <div className={styles.agreementContainer}>
-            {data?.whitelistAgreement || (
-              <div className={styles.error}>
-                <FormattedMessage {...MSG.ipfsError} />
-              </div>
-            )}
-          </div>
-        )}
+        <AgreementContainer loading={loading} text={data?.whitelistAgreement} />
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
