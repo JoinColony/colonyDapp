@@ -19,10 +19,6 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.Whitelist.AgreementDialog.gotItButton',
     defaultMessage: 'Got it',
   },
-  ipfsError: {
-    id: 'dashboard.Extensions.WhitelisExtension.AgreementDialog.ipfsError',
-    defaultMessage: `Failed to retrieve data from IPFS. Please try again.`,
-  },
 });
 
 interface Props {

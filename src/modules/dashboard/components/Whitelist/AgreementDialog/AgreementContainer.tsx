@@ -18,7 +18,7 @@ const MSG = defineMessages({
   },
   ipfsError: {
     id: `dashboard.Extensions.Whitelist.AgreementDialog.AgreementContainer.ipfsError`,
-    defaultMessage: `There is a problem loading the agreement. Please, try again or contact colony admins.`,
+    defaultMessage: `Failed to retrieve data from IPFS. Please try again.`,
   },
 });
 
