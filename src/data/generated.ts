@@ -269,10 +269,12 @@ export type MutationUnsubscribeFromColonyArgs = {
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
+  coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
   coinMachineSalePeriod: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
+  coinMachineTransactionAmount: TrannsactionAmount;
   colonies: Array<SubgraphColony>;
   colony: SubgraphColony;
   colonyAction: ColonyAction;
@@ -335,6 +337,12 @@ export type QueryActionsThatNeedAttentionArgs = {
 };
 
 
+export type QueryCoinMachineBoughtTokensArgs = {
+  colonyAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
+};
+
+
 export type QueryCoinMachineCurrentPeriodMaxUserPurchaseArgs = {
   userAddress: Scalars['String'];
   colonyAddress: Scalars['String'];
@@ -353,6 +361,12 @@ export type QueryCoinMachineSalePeriodArgs = {
 
 export type QueryCoinMachineSaleTokensArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryCoinMachineTransactionAmountArgs = {
+  colonyAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
 };
 
 
@@ -1174,6 +1188,16 @@ export type SaleTokens = {
 export type SalePeriod = {
   periodLength: Scalars['String'];
   timeRemaining: Scalars['String'];
+};
+
+export type BoughtTokens = {
+  numTokens: Scalars['String'];
+  totalCost: Scalars['String'];
+};
+
+export type TrannsactionAmount = {
+  transactionAmount: Scalars['String'];
+  transactionSucceed: Scalars['Boolean'];
 };
 
 export type ActionsFilter = {
@@ -2044,6 +2068,22 @@ export type CoinMachineCurrentPeriodPriceQueryVariables = Exact<{
 
 
 export type CoinMachineCurrentPeriodPriceQuery = Pick<Query, 'coinMachineCurrentPeriodPrice'>;
+
+export type CoinMachineBoughtTokensQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
+}>;
+
+
+export type CoinMachineBoughtTokensQuery = { coinMachineBoughtTokens: Pick<BoughtTokens, 'numTokens' | 'totalCost'> };
+
+export type CoinMachineTransactionAmountQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
+}>;
+
+
+export type CoinMachineTransactionAmountQuery = { coinMachineTransactionAmount: Pick<TrannsactionAmount, 'transactionAmount' | 'transactionSucceed'> };
 
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables = Exact<{
   userAddress: Scalars['String'];
@@ -5378,6 +5418,76 @@ export function useCoinMachineCurrentPeriodPriceLazyQuery(baseOptions?: Apollo.L
 export type CoinMachineCurrentPeriodPriceQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceQuery>;
 export type CoinMachineCurrentPeriodPriceLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodPriceLazyQuery>;
 export type CoinMachineCurrentPeriodPriceQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodPriceQuery, CoinMachineCurrentPeriodPriceQueryVariables>;
+export const CoinMachineBoughtTokensDocument = gql`
+    query CoinMachineBoughtTokens($colonyAddress: String!, $transactionHash: String!) {
+  coinMachineBoughtTokens(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client {
+    numTokens
+    totalCost
+  }
+}
+    `;
+
+/**
+ * __useCoinMachineBoughtTokensQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineBoughtTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineBoughtTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineBoughtTokensQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      transactionHash: // value for 'transactionHash'
+ *   },
+ * });
+ */
+export function useCoinMachineBoughtTokensQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>) {
+        return Apollo.useQuery<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>(CoinMachineBoughtTokensDocument, baseOptions);
+      }
+export function useCoinMachineBoughtTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>(CoinMachineBoughtTokensDocument, baseOptions);
+        }
+export type CoinMachineBoughtTokensQueryHookResult = ReturnType<typeof useCoinMachineBoughtTokensQuery>;
+export type CoinMachineBoughtTokensLazyQueryHookResult = ReturnType<typeof useCoinMachineBoughtTokensLazyQuery>;
+export type CoinMachineBoughtTokensQueryResult = Apollo.QueryResult<CoinMachineBoughtTokensQuery, CoinMachineBoughtTokensQueryVariables>;
+export const CoinMachineTransactionAmountDocument = gql`
+    query CoinMachineTransactionAmount($colonyAddress: String!, $transactionHash: String!) {
+  coinMachineTransactionAmount(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client {
+    transactionAmount
+    transactionSucceed
+  }
+}
+    `;
+
+/**
+ * __useCoinMachineTransactionAmountQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineTransactionAmountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineTransactionAmountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineTransactionAmountQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      transactionHash: // value for 'transactionHash'
+ *   },
+ * });
+ */
+export function useCoinMachineTransactionAmountQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineTransactionAmountQuery, CoinMachineTransactionAmountQueryVariables>) {
+        return Apollo.useQuery<CoinMachineTransactionAmountQuery, CoinMachineTransactionAmountQueryVariables>(CoinMachineTransactionAmountDocument, baseOptions);
+      }
+export function useCoinMachineTransactionAmountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineTransactionAmountQuery, CoinMachineTransactionAmountQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineTransactionAmountQuery, CoinMachineTransactionAmountQueryVariables>(CoinMachineTransactionAmountDocument, baseOptions);
+        }
+export type CoinMachineTransactionAmountQueryHookResult = ReturnType<typeof useCoinMachineTransactionAmountQuery>;
+export type CoinMachineTransactionAmountLazyQueryHookResult = ReturnType<typeof useCoinMachineTransactionAmountLazyQuery>;
+export type CoinMachineTransactionAmountQueryResult = Apollo.QueryResult<CoinMachineTransactionAmountQuery, CoinMachineTransactionAmountQueryVariables>;
 export const CoinMachineCurrentPeriodMaxUserPurchaseDocument = gql`
     query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
   coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client

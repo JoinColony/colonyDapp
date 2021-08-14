@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Redirect } from 'react-router-dom';
+import React, { useEffect, useCallback } from 'react';
+import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
 import ExternalLink from '~core/ExternalLink';
@@ -18,7 +18,7 @@ import {
 } from '~data/index';
 
 import Chat from './Chat';
-import SaleStateWidget, { SaleState } from './SaleStateWidget';
+import SaleStateWidget from './SaleStateWidget';
 import BuyTokens from './BuyTokens';
 import TokenSalesTable from './TokenSalesTable';
 import RemainingDisplayWidget, {
@@ -98,7 +98,9 @@ const CoinMachine = ({
     fetchPolicy: 'network-only',
   });
 
-  const [saleStarted] = useState<boolean>(false);
+  const { transactionHash } = useParams<{
+    transactionHash: string;
+  }>();
 
   if (
     loading ||
@@ -163,14 +165,13 @@ const CoinMachine = ({
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
       <div className={styles.grid}>
-        {(saleStarted && (
+        {(transactionHash && (
           <div className={styles.saleStarted}>
             <SaleStateWidget
-              state={SaleState.Success}
-              price="1234234340000000"
-              amount="123423434000000000000"
-              timeLeftToNextSale={timeRemaining}
+              colony={colony}
               sellableToken={saleToken}
+              timeLeftToNextSale={timeRemaining}
+              transactionHash={transactionHash}
               purchaseToken={
                 saleTokensData?.coinMachineSaleTokens?.purchaseToken
               }
