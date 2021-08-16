@@ -84,7 +84,6 @@ const TELL_ME_MORE_LINK = '';
 
 type Props = {
   colony: Colony;
-  userHasProfile: boolean;
   /*
    * @NOTE This acts like an indicator that the sale is not currently active
    */

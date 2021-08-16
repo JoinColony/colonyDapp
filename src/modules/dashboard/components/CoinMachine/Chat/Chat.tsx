@@ -5,7 +5,11 @@ import Comment from '~core/Comment';
 import CommentInput from '~core/CommentInput';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
-import { Colony, useTransactionMessagesQuery } from '~data/index';
+import {
+  Colony,
+  useTransactionMessagesQuery,
+  useLoggedInUser,
+} from '~data/index';
 
 import styles from './Chat.css';
 
@@ -31,17 +35,15 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   transactionHash: string;
-  userHasProfile: boolean;
 }
 
 const displayName = 'dashboard.CoinMachine.Chat';
 
-const Chat = ({
-  colony: { colonyAddress },
-  transactionHash,
-  userHasProfile,
-}: Props) => {
+const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
   const scrollElmRef = useRef<HTMLDivElement | null>(null);
+
+  const { username, ethereal } = useLoggedInUser();
+  const userHasProfile = !!username && !ethereal;
 
   /*
    * @NOTE This is needed in order to make the scroll effect trigger after
