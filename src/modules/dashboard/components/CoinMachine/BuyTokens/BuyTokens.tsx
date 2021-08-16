@@ -27,7 +27,6 @@ import {
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { getMainClasses } from '~utils/css';
 import { mapPayload, withMeta, pipe } from '~utils/actions';
 
 import GetWhitelisted from '../GetWhitelisted';
@@ -253,11 +252,7 @@ const BuyTokens = ({
   }
 
   return (
-    <div
-      className={getMainClasses({}, styles, {
-        disabled: globalDisable,
-      })}
-    >
+    <div className={styles.main}>
       <div className={styles.heading}>
         <Heading
           appearance={{
