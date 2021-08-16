@@ -46,7 +46,7 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
     whitelistPolicyData?.whitelistPolicy.kycRequired &&
     !userStatus?.userIsApproved;
 
-  const { data: agreementHashData } = useWhitelistAgreementHashQuery({
+  const { data: agreementHashData, loading } = useWhitelistAgreementHashQuery({
     variables: { colonyAddress },
     skip: !signatureRequired,
   });
@@ -68,7 +68,7 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
   ]);
 
   useEffect(() => {
-    if (!userStatus || !whitelistPolicyData) return;
+    if (!userStatus || !whitelistPolicyData || loading) return;
     if (isKYCRequired) {
       openKYCDialog();
     } else if (signatureRequired) {
@@ -81,6 +81,7 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
     openDialog,
     userStatus,
     whitelistPolicyData,
+    loading,
   ]);
 
   const showWhitelistModal = useCallback(() => {
