@@ -168,7 +168,7 @@ const CoinMachine = ({
     </div>,
   ];
   // @TODO: Remove once the tokens remaining logic is wired in.
-  const tokensRemaining = 10;
+  const isSoldOut = false;
   return (
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
@@ -195,13 +195,13 @@ const CoinMachine = ({
                  * And only disable it if it insn't
                  */
                 isCurrentlyOnSale
-                isSoldOut={false}
+                isSoldOut={isSoldOut}
               />
             </div>
             <div className={styles.timeRemaining}>
               <RemainingDisplayWidget
                 displayType={DataDisplayType.Time}
-                appearance={{ theme: tokensRemaining > 0 ? 'white' : 'danger' }}
+                appearance={{ theme: !isSoldOut ? 'white' : 'danger' }}
                 value={timeRemaining}
                 periodLength={periodLength}
                 colonyAddress={colonyAddress}
