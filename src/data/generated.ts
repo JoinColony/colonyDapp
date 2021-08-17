@@ -373,14 +373,14 @@ export type QueryCoinMachineTokenBalanceArgs = {
 };
 
 
-export type QueryCoinMachineTransactionAmountArgs = {
+export type QueryCoinMachineSaleTokensArgs = {
   colonyAddress: Scalars['String'];
-  transactionHash: Scalars['String'];
 };
 
 
-export type QueryCoinMachineSaleTokensArgs = {
+export type QueryCoinMachineTransactionAmountArgs = {
   colonyAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
 };
 
 
@@ -1233,7 +1233,7 @@ export type BoughtTokens = {
 export type TrannsactionAmount = {
   transactionAmount: Scalars['String'];
   transactionSucceed: Scalars['Boolean'];
-}
+};
 
 export type PreviousPeriods = {
   saleEndedAt: Scalars['Int'];
