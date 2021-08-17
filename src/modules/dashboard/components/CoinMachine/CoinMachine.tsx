@@ -195,6 +195,7 @@ const CoinMachine = ({
                  * And only disable it if it insn't
                  */
                 isCurrentlyOnSale
+                isSoldOut={false}
               />
             </div>
             <div className={styles.timeRemaining}>
