@@ -11,6 +11,12 @@
 
 .tableContainer {
   padding: 0 25px 5px 25px;
+  height: 250px;
+  overflow: auto;
+}
+
+.tableContainerOverflow {
+  padding: 0 10px 5px 25px;
 }
 
 .table {
