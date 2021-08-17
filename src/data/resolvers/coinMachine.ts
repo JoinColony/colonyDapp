@@ -1,7 +1,6 @@
 import { ClientType, getLogs, getBlockTime } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { bigNumberify } from 'ethers/utils';
-import isEmpty from 'lodash/isEmpty';
 import Decimal from 'decimal.js';
 
 import { Context } from '~context/index';
@@ -237,8 +236,7 @@ export const coinMachineResolvers = ({
 
         const periodLength = await coinMachineClient.getPeriodLength();
         const windowSize = await coinMachineClient.getPeriodLength();
-        const activeIntake = await coinMachineClient.getActiveIntake();
-        const newIntake = await coinMachineClient.getEMAIntake();
+        const targetPerPeriod = await coinMachineClient.getTargetPerPeriod();
         const blockTime = await getBlockTime(networkClient.provider, 'latest');
 
         const periodLengthInMs = periodLength.mul(1000);
@@ -248,10 +246,32 @@ export const coinMachineResolvers = ({
         const latestSalePeriodEnd = bigNumberify(blockTime).sub(
           latestSalePeriodRemainder,
         );
+
         const tokensBoughtLogs = await getLogs(
           coinMachineClient,
           coinMachineClient.filters.TokensBought(null, null, null),
         );
+        const extensionInitialisedLogs = await getLogs(
+          coinMachineClient,
+          coinMachineClient.filters.ExtensionInitialised(),
+        );
+        // eslint-disable-next-line max-len
+        const extensionInitialisedTransaction = await networkClient.provider.getTransaction(
+          extensionInitialisedLogs[0].transactionHash || '',
+        );
+        // eslint-disable-next-line max-len
+        const parsedExtensionInitialisedTransaction = coinMachineClient.interface.parseTransaction(
+          extensionInitialisedTransaction,
+        );
+
+        // eslint-disable-next-line max-len
+        const extensionStartingPrice = parsedExtensionInitialisedTransaction.args[7].toString();
+        const extensionInitialisedAt = extensionInitialisedLogs[0].blockHash
+          ? await getBlockTime(
+              coinMachineClient.provider,
+              extensionInitialisedLogs[0].blockHash,
+            )
+          : 0;
 
         const parsedTokensBoughtEvents = await Promise.all(
           tokensBoughtLogs.map(async (log) => {
@@ -268,57 +288,70 @@ export const coinMachineResolvers = ({
           }),
         );
 
-        const previousSales: {
+        const tokensBoughtEventFilter = (saleEndedAt, previousSaleEndedAt) => {
+          return (event) => {
+            return (
+              saleEndedAt.gt(event.createdAt) &&
+              previousSaleEndedAt.lt(event.createdAt)
+            );
+          };
+        };
+
+        const partialPreviousSales: {
           saleEndedAt: number;
           tokensBought: string;
-          totalPrice: string;
         }[] = [];
-        for (let i = 0; i < 6; i += 1) {
-          const saleEndedAt = latestSalePeriodEnd.sub(periodLengthInMs.mul(i));
-          const previousSaleEndedAt = latestSalePeriodEnd.sub(
-            periodLengthInMs.mul(i + 1),
-          );
+        let saleEndedAt = latestSalePeriodEnd;
+
+        while (saleEndedAt.gt(extensionInitialisedAt)) {
+          const previousSaleEndedAt = saleEndedAt.sub(periodLengthInMs);
+
           const tokensBoughtEvents = parsedTokensBoughtEvents.filter(
-            (event) =>
-              saleEndedAt.gt(event.createdAt) &&
-              previousSaleEndedAt.lt(event.createdAt),
+            tokensBoughtEventFilter(saleEndedAt, previousSaleEndedAt),
           );
 
           let tokensBought = '0';
-          let totalPrice = '0';
 
-          if (isEmpty(tokensBoughtEvents)) {
-            const alpha = new Decimal(10)
-              .pow(18)
-              .mul(2 / (windowSize.toNumber() + 1))
-              .floor()
+          tokensBoughtEvents.forEach((event) => {
+            tokensBought = bigNumberify(event.numTokens)
+              .add(tokensBought)
               .toString();
+          });
 
-            totalPrice = bigNumberify(10)
-              .pow(18)
-              .sub(alpha)
-              .mul(newIntake)
-              .add(bigNumberify(alpha).mul(activeIntake))
-              .div(bigNumberify(10).pow(18))
-              .toString();
-          } else {
-            parsedTokensBoughtEvents.forEach((event) => {
-              tokensBought = bigNumberify(event.numTokens)
-                .add(tokensBought)
-                .toString();
-              totalPrice = bigNumberify(event.totalCost)
-                .add(totalPrice)
-                .toString();
-            });
-          }
-          previousSales.push({
+          partialPreviousSales.push({
             saleEndedAt: saleEndedAt.toNumber(),
             tokensBought,
-            totalPrice,
           });
+
+          saleEndedAt = previousSaleEndedAt;
         }
 
-        return previousSales;
+        const alpha = new Decimal(10)
+          .pow(18)
+          .mul(2 / (windowSize.toNumber() + 1))
+          .floor()
+          .toString();
+        let newIntake = targetPerPeriod.mul(extensionStartingPrice);
+        let activeIntake = '0';
+        const previousSales = partialPreviousSales.reverse().map((sale) => {
+          newIntake = bigNumberify(10)
+            .pow(18)
+            .sub(alpha)
+            .mul(newIntake)
+            .add(bigNumberify(alpha).mul(activeIntake))
+            .div(bigNumberify(10).pow(18));
+          activeIntake = sale.tokensBought;
+
+          return {
+            ...sale,
+            totalPrice: new Decimal(newIntake.toString())
+              .div(targetPerPeriod.toString())
+              .floor()
+              .toString(),
+          };
+        });
+
+        return previousSales.reverse();
       } catch (error) {
         console.error(error);
         return null;
