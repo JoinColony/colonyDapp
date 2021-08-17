@@ -365,7 +365,7 @@ const BuyTokens = ({
                       <FormattedMessage {...MSG.priceLabel} />
                     </div>
                     <div className={styles.amountsValues}>
-                      <div>{currentSalePrice}</div>
+                      <div>{isCurrentlyOnSale ? currentSalePrice : 'N/A'}</div>
                       {
                         /*
                          * @NOTE only show the exchange rate if the token is XDAI/ETH
@@ -382,7 +382,9 @@ const BuyTokens = ({
                                  * Just entering the decimal point will pass it through to EthUsd
                                  * and that will try to fetch the balance for, which, obviously, will fail
                                  */
-                                parseFloat(currentSalePrice)
+                                isCurrentlyOnSale
+                                  ? parseFloat(currentSalePrice)
+                                  : 0
                               }
                             />
                           </div>
@@ -400,14 +402,18 @@ const BuyTokens = ({
                       <FormattedMessage {...MSG.costLabel} />
                     </div>
                     <div className={styles.amountsValues}>
-                      <div>
-                        {values.amount
-                          ? (
-                              parseInt(values.amount, 10) *
-                              parseFloat(currentSalePrice)
-                            ).toFixed(2)
-                          : ''}
-                      </div>
+                      {isCurrentlyOnSale ? (
+                        <div>
+                          {values.amount
+                            ? (
+                                parseInt(values.amount, 10) *
+                                parseFloat(currentSalePrice)
+                              ).toFixed(2)
+                            : ''}
+                        </div>
+                      ) : (
+                        <div>N/A</div>
+                      )}
                       {
                         /*
                          * @NOTE only show the exchange rate if the token is XDAI/ETH
