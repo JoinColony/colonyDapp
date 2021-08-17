@@ -24,7 +24,7 @@ const MSG = defineMessages({
   },
 });
 
-const UnclaimedTransfers = ({ colony: { colonyAddress }, colony }: Props) => {
+const UnclaimedTransfers = ({ colony: { colonyAddress } }: Props) => {
   const { data, error, loading } = useColonyTransfersQuery({
     variables: { address: colonyAddress },
   });
@@ -51,7 +51,6 @@ const UnclaimedTransfers = ({ colony: { colonyAddress }, colony }: Props) => {
               <UnclaimedTransfersItem
                 transaction={transaction}
                 key={transaction.hash}
-                colony={colony}
               />
             ))}
           </ul>
