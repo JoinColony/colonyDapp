@@ -90,7 +90,11 @@ const TokenSalesTable = ({ tableData = [] }: Props) => {
           theme: 'dark',
         }}
       />
-      <div className={styles.tableContainer}>
+      <div
+        className={classnames(styles.tableContainer, {
+          [styles.tableContainerOverflow]: formattedData.length > 6,
+        })}
+      >
         <Table className={styles.table} appearance={{ separators: 'none' }}>
           <TableHeader className={styles.tableHeader}>
             <TableRow>
