@@ -237,6 +237,8 @@ const CoinMachine = ({
         <div className={styles.sales}>
           <TokenSalesTable
             tableData={previousSalesData?.coinMachinePreviousSales || []}
+            sellableToken={saleToken}
+            periodTokens={periodTokens}
           />
         </div>
         <div className={styles.comments}>
