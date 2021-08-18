@@ -214,12 +214,14 @@ const CoinMachine = ({
                 value={saleStarted ? timeRemaining : null}
                 periodLength={periodLength}
                 colonyAddress={colonyAddress}
+                saleStarted={saleStarted}
               />
             </div>
             <div className={styles.tokensRemaining}>
               <RemainingDisplayWidget
                 displayType={DataDisplayType.Tokens}
                 periodTokens={periodTokens}
+                saleStarted={saleStarted}
               />
             </div>
           </>
