@@ -2,6 +2,10 @@
   max-width: 600px;
 }
 
+.extensionDescription {
+  white-space: pre-line;
+}
+
 .input {
   margin-top: 50px;
   max-width: 450px;
