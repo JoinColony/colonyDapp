@@ -12,11 +12,12 @@ import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
 import { TimerValue } from '~utils/components';
 import useSplitTime from '~utils/hooks/useSplitTime';
-import { getFormattedTokenValue } from '~utils/tokens';
+import {
+  getFormattedTokensRemaining,
+  getPriceStatus,
+} from '~utils/colonyCoinMachine';
 
-import TokenPriceStatusIcon, {
-  TokenPriceStatuses,
-} from '../TokenPriceStatusIcon/TokenPriceStatusIcon';
+import TokenPriceStatusIcon from '../TokenPriceStatusIcon/TokenPriceStatusIcon';
 
 import styles from './RemainingDisplayWidget.css';
 
@@ -24,6 +25,13 @@ export enum DataDisplayType {
   Time = 'Time',
   Tokens = ' Tokens',
 }
+
+export type PeriodTokens = {
+  decimals: number;
+  soldPeriodTokens: BigNumber;
+  maxPeriodTokens: BigNumber;
+  targetPeriodTokens: BigNumber;
+};
 
 type Appearance = {
   theme?: 'white' | 'danger';
@@ -35,12 +43,7 @@ type Props = {
   value?: string | number | null;
   appearance?: Appearance;
   periodLength?: number;
-  periodTokens?: {
-    decimals: number;
-    soldPeriodTokens: BigNumber;
-    maxPeriodTokens: BigNumber;
-    targetPeriodTokens: BigNumber;
-  };
+  periodTokens?: PeriodTokens;
 };
 
 const displayName = 'dashboard.CoinMachine.RemainingDisplayWidget';
@@ -126,16 +129,10 @@ const RemainingDisplayWidget = ({
       return <TimerValue splitTime={splitTime} />;
     }
     if (periodTokens && displayType === DataDisplayType.Tokens) {
-      const { soldPeriodTokens, decimals, maxPeriodTokens } = periodTokens;
-
-      if (soldPeriodTokens.gte(maxPeriodTokens)) {
-        return <FormattedMessage {...MSG.soldOut} />;
-      }
-
-      return `${getFormattedTokenValue(
-        maxPeriodTokens.sub(soldPeriodTokens),
-        decimals,
-      )}/${getFormattedTokenValue(maxPeriodTokens, decimals)}`;
+      return getFormattedTokensRemaining(
+        periodTokens,
+        periodTokens.soldPeriodTokens,
+      );
     }
 
     return <FormattedMessage {...widgetText.placeholder} />;
@@ -145,30 +142,7 @@ const RemainingDisplayWidget = ({
     if (!periodTokens || displayType === DataDisplayType.Time) {
       return undefined;
     }
-
-    const {
-      soldPeriodTokens,
-      maxPeriodTokens,
-      targetPeriodTokens,
-    } = periodTokens;
-
-    if (soldPeriodTokens.gte(maxPeriodTokens)) {
-      return TokenPriceStatuses.PRICE_SOLD_OUT;
-    }
-
-    if (soldPeriodTokens.eq(targetPeriodTokens)) {
-      return TokenPriceStatuses.PRICE_NO_CHANGES;
-    }
-
-    if (soldPeriodTokens.lt(targetPeriodTokens)) {
-      return TokenPriceStatuses.PRICE_DOWN;
-    }
-
-    if (soldPeriodTokens.gt(targetPeriodTokens)) {
-      return TokenPriceStatuses.PRICE_UP;
-    }
-
-    return undefined;
+    return getPriceStatus(periodTokens, periodTokens.soldPeriodTokens);
   }, [displayType, periodTokens]);
 
   const showValueWarning =
