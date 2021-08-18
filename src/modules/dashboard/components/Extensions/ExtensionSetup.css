@@ -42,3 +42,16 @@
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
 }
+
+.tokenSelector {
+  margin-top: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--temp-grey-blue-7);
+}
+
+.tokenSelectorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 42px;
+}

@@ -10,10 +10,12 @@ import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
 import { IconButton, ActionButton } from '~core/Button';
-import { Input, ActionForm, Textarea } from '~core/Fields';
+import { Input, ActionForm, Textarea, TokenSymbolSelector } from '~core/Fields';
 import Heading from '~core/Heading';
+import MaskedAddress from '~core/MaskedAddress';
+
 import { ActionTypes } from '~redux/index';
-import { ColonyExtension } from '~data/index';
+import { Colony, ColonyExtension } from '~data/index';
 
 import {
   ExtensionData,
@@ -60,18 +62,19 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
   extension: ExtensionData;
   installedExtension: ColonyExtension;
   nativeTokenAddress: Address;
 }
 const ExtensionSetup = ({
-  colonyAddress,
+  colony: { colonyAddress, tokens },
   extension: {
     initializationParams,
     descriptionExtended,
     descriptionLink1,
     descriptionLink2,
+    tokenContractAddress,
   },
   installedExtension,
   nativeTokenAddress,
@@ -218,7 +221,15 @@ const ExtensionSetup = ({
           )}
           <div className={styles.inputContainer}>
             {initializationParams.map(
-              ({ paramName, title, description, type, options, disabled }) => (
+              ({
+                paramName,
+                title,
+                fieldName,
+                description,
+                type,
+                options,
+                disabled,
+              }) => (
                 <div key={paramName}>
                   {type === ExtensionParamType.Input && (
                     <div className={styles.input}>
@@ -270,6 +281,33 @@ const ExtensionSetup = ({
                       title={title}
                       options={options || []}
                     />
+                  )}
+                  {type === ExtensionParamType.TokenSymbolSelector && (
+                    <div className={styles.tokenSelector}>
+                      <div className={styles.tokenSelectorContainer}>
+                        {fieldName && (
+                          <div>
+                            <FormattedMessage {...fieldName} />
+                          </div>
+                        )}
+                        <TokenSymbolSelector
+                          tokens={tokens}
+                          name={paramName}
+                          appearance={{ alignOptions: 'right', theme: 'grey' }}
+                          elementOnly
+                          label={paramName}
+                        />
+                      </div>
+                      <p>{tokenContractAddress}</p>
+                      <p>
+                        <MaskedAddress address={nativeTokenAddress} full />
+                      </p>
+                      {description && (
+                        <p>
+                          <FormattedMessage {...description} />
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               ),
