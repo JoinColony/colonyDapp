@@ -16,15 +16,11 @@ import {
   ColonyTransaction,
   useUsernameQuery,
   useLoggedInUser,
-  Colony,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
-import { useTransformer } from '~utils/hooks';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { tokenIsETH } from '../../../core/checks';
-import { hasRoot } from '../../../users/checks';
-import { getAllUserRoles } from '../../../transformers';
 
 import { ALLOWED_NETWORKS } from '~constants';
 
@@ -45,7 +41,6 @@ const MSG = defineMessages({
 
 interface Props {
   transaction: ColonyTransaction;
-  colony: Colony;
 }
 
 const UnclaimedTransfersItem = ({
@@ -56,9 +51,10 @@ const UnclaimedTransfersItem = ({
     token: tokenAddress,
     from: senderAddress,
   },
-  colony,
 }: Props) => {
-  const { username, walletAddress, networkId, ethereal } = useLoggedInUser();
+  const { networkId, ethereal, username } = useLoggedInUser();
+
+  const hasRegisteredProfile = !!username && !ethereal;
 
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },
@@ -75,10 +71,6 @@ const UnclaimedTransfersItem = ({
 
   const senderUsername = usernameData && usernameData.username;
   const description = null; // Will be support after network upgrade to v5
-
-  const hasRegisteredProfile = !!username && !ethereal;
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-  const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
 
   const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
 
@@ -136,7 +128,7 @@ const UnclaimedTransfersItem = ({
           error={ActionTypes.COLONY_CLAIM_TOKEN_ERROR}
           success={ActionTypes.COLONY_CLAIM_TOKEN_SUCCESS}
           transform={transform}
-          disabled={!userHasPermission || !isNetworkAllowed}
+          disabled={!isNetworkAllowed || !hasRegisteredProfile}
         />
       </div>
     </li>
