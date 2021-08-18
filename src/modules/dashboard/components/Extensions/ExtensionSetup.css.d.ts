@@ -6,3 +6,5 @@ export const complementaryLabel: string;
 export const descriptionExample: string;
 export const textArea: string;
 export const textAreaDescription: string;
+export const tokenSelector: string;
+export const tokenSelectorContainer: string;
