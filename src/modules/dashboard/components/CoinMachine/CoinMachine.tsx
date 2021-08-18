@@ -57,7 +57,7 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
-  /* To add proper states later */
+  /* To add proper logic later */
   const isSale = true;
 
   const { data, loading } = useColonyExtensionsQuery({
@@ -200,7 +200,7 @@ const CoinMachine = ({
                  * @TODO Determine if the sale is currently ongoing
                  * And only disable it if it insn't
                  */
-                isCurrentlyOnSale
+                isCurrentlyOnSale={isSale}
                 isSoldOut={isSoldOut}
               />
             </div>
