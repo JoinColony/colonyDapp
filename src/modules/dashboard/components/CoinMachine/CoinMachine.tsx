@@ -109,6 +109,13 @@ const CoinMachine = ({
     };
   }, [periodTokensData, saleTokensData, isSale]);
 
+  const isSoldOut = useMemo(
+    () =>
+      periodTokens !== undefined &&
+      periodTokens.soldPeriodTokens.gte(periodTokens.maxPeriodTokens),
+    [periodTokens],
+  );
+
   if (
     loading ||
     saleTokensLoading ||
@@ -167,8 +174,7 @@ const CoinMachine = ({
       />
     </div>,
   ];
-  // @TODO: Remove once the tokens remaining logic is wired in.
-  const isSoldOut = false;
+
   return (
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
