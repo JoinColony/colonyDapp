@@ -32,6 +32,7 @@ type Appearance = {
 type Props = {
   colonyAddress?: Address;
   displayType: DataDisplayType;
+  saleStarted: boolean;
   value?: string | number | null;
   appearance?: Appearance;
   periodLength?: number;
@@ -91,6 +92,7 @@ const RemainingDisplayWidget = ({
   periodLength,
   periodTokens,
   colonyAddress,
+  saleStarted,
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -217,9 +219,13 @@ const RemainingDisplayWidget = ({
           [styles.valueWarning]: isValueWarning || showValueWarning,
         })}
       >
-        {displayedValue}
+        {saleStarted ? (
+          displayedValue
+        ) : (
+          <FormattedMessage {...widgetText.placeholder} />
+        )}
       </p>
-      {periodTokens && widgetText.footerText && (
+      {saleStarted && periodTokens && widgetText.footerText && (
         <div className={styles.footer}>
           <p className={styles.footerText}>
             <FormattedMessage {...widgetText.footerText} />
