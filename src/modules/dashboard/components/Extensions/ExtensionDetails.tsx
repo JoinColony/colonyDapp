@@ -399,7 +399,7 @@ const ExtensionDetails = ({
                   <ExtensionSetup
                     extension={extension}
                     installedExtension={installedExtension}
-                    colonyAddress={colonyAddress}
+                    colony={colony}
                     nativeTokenAddress={nativeTokenAddress}
                   />
                 ) : (
