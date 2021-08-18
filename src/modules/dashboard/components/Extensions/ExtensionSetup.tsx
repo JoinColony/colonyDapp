@@ -67,7 +67,12 @@ interface Props {
 }
 const ExtensionSetup = ({
   colonyAddress,
-  extension: { initializationParams },
+  extension: {
+    initializationParams,
+    descriptionExtended,
+    descriptionLink1,
+    descriptionLink2,
+  },
   installedExtension,
   nativeTokenAddress,
 }: Props) => {
@@ -200,6 +205,17 @@ const ExtensionSetup = ({
             text={MSG.title}
           />
           <FormattedMessage {...MSG.description} />
+          {descriptionExtended && (
+            <div className={styles.extensionDescription}>
+              <FormattedMessage
+                {...descriptionExtended}
+                values={{
+                  link1: descriptionLink1,
+                  link2: descriptionLink2,
+                }}
+              />
+            </div>
+          )}
           <div className={styles.inputContainer}>
             {initializationParams.map(
               ({ paramName, title, description, type, options, disabled }) => (
