@@ -1,1 +1,5 @@
-export { default, DataDisplayType } from './RemainingDisplayWidget';
+export {
+  default,
+  DataDisplayType,
+  PeriodTokens as PeriodTokensType,
+} from './RemainingDisplayWidget';
