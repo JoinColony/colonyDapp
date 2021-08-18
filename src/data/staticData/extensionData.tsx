@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode, ReactElement } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
@@ -7,6 +7,7 @@ import * as yup from 'yup';
 import Whitelist from '~dashboard/Whitelist';
 import { Address } from '~types/index';
 import { CustomRadioProps } from '~core/Fields';
+import ExternalLink from '~core/ExternalLink';
 import { Colony } from '~data/index';
 
 export interface ExtensionBodyProps {
@@ -18,6 +19,7 @@ export enum ExtensionParamType {
   Radio = 'Radio',
   Textarea = 'Textarea',
   ColonyPolicySelector = 'ColonyPolicySelector',
+  TokenSymbolSelector = 'TokenSymbolSelector',
 }
 
 export enum PolicyType {
@@ -28,6 +30,7 @@ export enum PolicyType {
 
 export interface ExtensionInitParams {
   title: string | MessageDescriptor;
+  fieldName?: string | MessageDescriptor;
   description?: string | MessageDescriptor;
   defaultValue: string | number;
   paramName: string;
@@ -44,6 +47,9 @@ export interface ExtensionData {
   header?: string | MessageDescriptor;
   descriptionShort: string | MessageDescriptor;
   descriptionLong: string | MessageDescriptor;
+  descriptionExtended?: string | MessageDescriptor;
+  descriptionLink1?: ReactElement;
+  descriptionLink2?: ReactElement;
   info?: string | MessageDescriptor;
   termsCondition?: string | MessageDescriptor;
   currentVersion: number;
@@ -80,6 +86,10 @@ const oneTransactionPaymentMessages = {
   },
 };
 
+// to add a more detailed link
+const COIN_MACHINE_DESCRIPTION_LINK = 'https://colony.gitbook.io/colony/';
+const COIN_MACHINE_GOOGLE_SHEET_LINK = `https://docs.google.com/spreadsheets/d/1ZCuFcwqI4S6ZK5OwTl1yN7AK8mjv5d_V3g-_kMen01Y/edit#gid=2013814210`;
+
 const coinMachineMessages = {
   coinMachineName: {
     id: 'extensions.CoinMachine.name',
@@ -93,22 +103,41 @@ const coinMachineMessages = {
     id: 'extensions.CoinMachine.descriptionLong',
     defaultMessage: 'A simple way to continually sell tokens.',
   },
+  coinMachineDescriptionExtended: {
+    id: 'extensions.CoinMachine.descriptionExtended',
+    defaultMessage: `\nAfter enabling Coin Machine, to start your sale simply send the quantity of the token you wish to sell to your Coin Machine’s “Contract address” (available on the right side of this screen) and the sale will start immediately. The sale will end once either all the tokens are sold, or the extension is deprecated.\n\nTo better understand how the following parameters will affect your token sale, you may copy and experiment with this {link1} to model your own sale.\n\nTo learn more about Coin Machine, please see {link2}.`,
+  },
+  coinMachineDescriptionGoogleSheetLink: {
+    id: 'extensions.CoinMachine.coinMachineDescriptionLink',
+    defaultMessage: 'Google Sheet',
+  },
+  coinMachineDescriptionHereLink: {
+    id: 'extensions.CoinMachine.coinMachineDescriptionLink',
+    defaultMessage: 'here',
+  },
   coinMachinePurchaseTokenTitle: {
     id: 'extensions.CoinMachine.param.purchaseToken.title',
     defaultMessage: 'Purchase Token',
   },
+  coinMachinePurchaseTokenFieldName: {
+    id: 'extensions.CoinMachine.param.purchaseToken.fieldName',
+    defaultMessage: `Select the token you wish to receive in exchange for the token you are selling.`,
+  },
   coinMachinePurchaseTokenDescription: {
     id: 'extensions.CoinMachine.param.purchaseToken.description',
-    defaultMessage: 'The token to receive payments in. Use 0x0 for ether',
+    defaultMessage: `If the token is not in this list, you must add it to your colony by going to New Action / Manage Funds / Manage tokens.`,
   },
   coinMachineTokenToBeSoldTitle: {
     id: 'extensions.CoinMachine.param.tokenToBeSold.title',
     defaultMessage: 'Token To Be Sold',
   },
+  coinMachineTokenToBeSoldFieldName: {
+    id: 'extensions.CoinMachine.param.tokenToBeSold.fieldName',
+    defaultMessage: 'TSelect the token you wish to sell.',
+  },
   coinMachineTokenToBeSoldDescription: {
     id: 'extensions.CoinMachine.param.tokenToBeSold.description',
-    defaultMessage:
-      'The token address of the token that is going to be auctioned off',
+    defaultMessage: `If the token is not in this list, you must add it to your colony by going to New Action / Manage Funds / Manage tokens.`,
   },
   coinMachinePeriodLengthTitle: {
     id: 'extensions.CoinMachine.param.periodLength.title',
@@ -116,7 +145,7 @@ const coinMachineMessages = {
   },
   coinMachinePeriodLengthDescription: {
     id: 'extensions.CoinMachine.param.periodLength.description',
-    defaultMessage: 'How long in seconds each period of the sale should last',
+    defaultMessage: 'How long in hours each period of the sale should last.',
   },
   coinMachineWindowSizeTitle: {
     id: 'extensions.CoinMachine.param.windowSize.title',
@@ -124,7 +153,7 @@ const coinMachineMessages = {
   },
   coinMachineWindowSizeDescription: {
     id: 'extensions.CoinMachine.param.windowSize.description',
-    defaultMessage: `Characteristic number of periods that should be used for the moving average. In the long-term, 86% of the weighting will be in this window size. The higher the number, the slower the price will be to adjust`,
+    defaultMessage: `This is the number of periods over which the moving average of your token’s price will be calculated. In the long term, 86% of the weighting will be in this window size. The higher the number, the slower the price will be to adjust.`,
   },
   coinMachineTargetPerPeriodTitle: {
     id: 'extensions.CoinMachine.param.targetPerPeriod.title',
@@ -132,7 +161,7 @@ const coinMachineMessages = {
   },
   coinMachineTargetPerPeriodDescription: {
     id: 'extensions.CoinMachine.param.targetPerPeriod.description',
-    defaultMessage: 'The number of tokens to aim to sell per period',
+    defaultMessage: `The number of tokens to aim to sell per period. If this target is not met, the price in the next period will be lower. If this target is exceeded, the price in the next period will be higher.`,
   },
   coinMachineMaxPerPeriodTitle: {
     id: 'extensions.CoinMachine.param.maxPerPeriod.title',
@@ -140,15 +169,15 @@ const coinMachineMessages = {
   },
   coinMachineMaxPerPeriodDescription: {
     id: 'extensions.CoinMachine.param.maxPerPeriod.description',
-    defaultMessage: 'The maximum number of tokens that can be sold per period',
+    defaultMessage: `The number of tokens to aim to sell per period. If this target is not met, the price in the next period will be lower. If this target is exceeded, the price in the next period will be higher.`,
   },
   coinMachineUserLimitFractionTitle: {
     id: 'extensions.CoinMachine.param.userLimitFraction.title',
-    defaultMessage: 'User Limit Fraction',
+    defaultMessage: 'Per user purchase limit',
   },
   coinMachineUserLimitFractionDescription: {
     id: 'extensions.CoinMachine.param.userLimitFraction.description',
-    defaultMessage: `Limits the maximum amount of tokens a single address can buy.`,
+    defaultMessage: `The maximum number of tokens a single account can purchase.`,
   },
   coinMachineStartingPriceTitle: {
     id: 'extensions.CoinMachine.param.startingPriceTitle.title',
@@ -156,7 +185,7 @@ const coinMachineMessages = {
   },
   coinMachineStartingPriceDescription: {
     id: 'extensions.CoinMachine.param.startingPriceTitle.description',
-    defaultMessage: `The sale price to start at, expressed in units of the Purchase Token per token being sold, as a WAD`,
+    defaultMessage: `The price at which the first period’s tokens will be sold.`,
   },
   coinMachineWhitelistAddressTitle: {
     id: 'extensions.CoinMachine.param.whitelistAddress.title',
@@ -164,7 +193,7 @@ const coinMachineMessages = {
   },
   coinMachineWhitelistAddressDescription: {
     id: 'extensions.CoinMachine.param.whitelistAddress.description',
-    defaultMessage: `The address of the Whitelist Extension which the current instance of Coin Machine should use`,
+    defaultMessage: `If you are using Colony’s whitelist extension to control which accounts are permitted to purchase tokens, please enter the contract address here.`,
   },
 };
 
@@ -339,25 +368,48 @@ const extensions: { [key: string]: ExtensionData } = {
     name: MSG.coinMachineName,
     descriptionShort: MSG.coinMachineDescriptionShort,
     descriptionLong: MSG.coinMachineDescriptionLong,
+    descriptionExtended: MSG.coinMachineDescriptionExtended,
+    descriptionLink1: (
+      <ExternalLink
+        text={MSG.coinMachineDescriptionGoogleSheetLink}
+        href={COIN_MACHINE_GOOGLE_SHEET_LINK}
+      />
+    ),
+    descriptionLink2: (
+      <ExternalLink
+        text={MSG.coinMachineDescriptionHereLink}
+        href={COIN_MACHINE_DESCRIPTION_LINK}
+      />
+    ),
     currentVersion: 1,
     createdAt: 1603915271852,
     neededColonyPermissions: [ColonyRole.Root],
     initializationParams: [
       {
+        paramName: 'whitelistAddress',
+        validation: yup.string().required(),
+        defaultValue: AddressZero,
+        title: MSG.coinMachineWhitelistAddressTitle,
+        description: MSG.coinMachineWhitelistAddressDescription,
+        type: ExtensionParamType.Input,
+      },
+      {
         paramName: 'tokenToBeSold',
         validation: yup.string().required(),
         defaultValue: AddressZero,
         title: MSG.coinMachineTokenToBeSoldTitle,
+        fieldName: MSG.coinMachineTokenToBeSoldFieldName,
         description: MSG.coinMachineTokenToBeSoldDescription,
-        type: ExtensionParamType.Input,
+        type: ExtensionParamType.TokenSymbolSelector,
       },
       {
         paramName: 'purchaseToken',
         validation: yup.string().required(),
         defaultValue: AddressZero,
         title: MSG.coinMachinePurchaseTokenTitle,
+        fieldName: MSG.coinMachinePurchaseTokenFieldName,
         description: MSG.coinMachinePurchaseTokenDescription,
-        type: ExtensionParamType.Input,
+        type: ExtensionParamType.TokenSymbolSelector,
       },
       {
         paramName: 'periodLength',
@@ -405,14 +457,6 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
         defaultValue: `10000000000000000`,
-        type: ExtensionParamType.Input,
-      },
-      {
-        paramName: 'whitelistAddress',
-        validation: yup.string().required(),
-        defaultValue: AddressZero,
-        title: MSG.coinMachineWhitelistAddressTitle,
-        description: MSG.coinMachineWhitelistAddressDescription,
         type: ExtensionParamType.Input,
       },
     ],
