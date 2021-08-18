@@ -1,4 +1,5 @@
 export const main: string;
+export const extensionDescription: string;
 export const input: string;
 export const inputContainer: string;
 export const complementaryLabel: string;
