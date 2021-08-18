@@ -5658,15 +5658,6 @@ export const CurrentPeriodTokensDocument = gql`
     targetPerPeriodTokens
   }
 }
-
-export const CoinMachineTokenSalesDocument = gql`
-    query CoinMachineTokenSales($colonyAddress: String!) {
-  coinMachineTokenSales(colonyAddress: $colonyAddress) @client {
-    saleEndedAt
-    tokensBought
-    totalPrice
-  }
-}
     `;
 
 /**
