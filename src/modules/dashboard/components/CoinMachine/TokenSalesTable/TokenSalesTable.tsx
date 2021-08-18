@@ -13,10 +13,14 @@ import {
   TableRow,
 } from '~core/Table';
 import { getFormattedTokenValue } from '~utils/tokens';
+import { CoinMachinePreviousSalesQuery, TokenInfoQuery } from '~data/generated';
+import {
+  getFormattedTokensRemaining,
+  getPriceStatus,
+} from '~utils/colonyCoinMachine';
 
-import TokenPriceStatusIcon, {
-  TokenPriceStatuses,
-} from '../TokenPriceStatusIcon';
+import TokenPriceStatusIcon from '../TokenPriceStatusIcon';
+import { PeriodTokensType } from '../RemainingDisplayWidget';
 
 import styles from './TokenSalesTable.css';
 
@@ -44,43 +48,50 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  // @TODO: Add correct type for table data
-  tableData: any[];
+  tableData?: CoinMachinePreviousSalesQuery['coinMachinePreviousSales'];
+  periodTokens?: PeriodTokensType;
+  sellableToken?: TokenInfoQuery['tokenInfo'];
 }
 
 const displayName = 'dashboard.CoinMachine.TokenSalesTable';
 
-const TABLE_HEADERS = [
-  {
-    text: MSG.saleColumnTitle,
-  },
-  {
-    text: MSG.amountColumnTitle,
-    textValues: {
-      // @TODO: Plug in dynamic native token symbol
-      nativeTokenSymbol: 'CLNY',
-      span: (chunks) => <span className={styles.tokenSymbol}>{chunks}</span>,
+const TokenSalesTable = ({
+  tableData = [],
+  periodTokens,
+  sellableToken,
+}: Props) => {
+  const TABLE_HEADERS = [
+    {
+      text: MSG.saleColumnTitle,
     },
-  },
-  {
-    text: MSG.priceColumnTitle,
-    textValues: {
-      span: (chunks) => <span className={styles.tokenSymbol}>{chunks}</span>,
+    {
+      text: MSG.amountColumnTitle,
+      textValues: {
+        nativeTokenSymbol: sellableToken?.symbol,
+        span: (chunks) => <span className={styles.tokenSymbol}>{chunks}</span>,
+      },
     },
-  },
-];
+    {
+      text: MSG.priceColumnTitle,
+      textValues: {
+        span: (chunks) => <span className={styles.tokenSymbol}>{chunks}</span>,
+      },
+    },
+  ];
 
-const TokenSalesTable = ({ tableData = [] }: Props) => {
   const formattedData = useMemo(() => {
     return tableData.map((data) => {
       return {
         saleEndedAt: new Date(data.saleEndedAt),
-        tokensRemaining: `${getFormattedTokenValue(data.tokensBought, 18)}/100`,
+        tokensRemaining: periodTokens
+          ? getFormattedTokensRemaining(periodTokens, data.tokensBought)
+          : '???',
         price: getFormattedTokenValue(data.totalPrice, 18),
-        priceStatus: TokenPriceStatuses.PRICE_UP,
+        priceStatus:
+          periodTokens && getPriceStatus(periodTokens, data.tokensBought),
       };
     });
-  }, [tableData]);
+  }, [tableData, periodTokens]);
   return (
     <div className={styles.container}>
       <Heading
@@ -130,15 +141,18 @@ const TokenSalesTable = ({ tableData = [] }: Props) => {
                   </TableCell>
                   <TableCell
                     className={classnames(styles.cellData, {
-                      // @TODO: Add proper logic to determine when to use the danger color
-                      [styles.cellDataDanger]: tokensRemaining === 'SOLD OUT',
+                      // eslint-disable-next-line max-len
+                      [styles.cellDataDanger]:
+                        typeof tokensRemaining !== 'string',
                     })}
                   >
                     {tokensRemaining}
                   </TableCell>
                   <TableCell className={styles.cellData}>
                     {price}
-                    <TokenPriceStatusIcon status={priceStatus} />
+                    {priceStatus && (
+                      <TokenPriceStatusIcon status={priceStatus} />
+                    )}
                   </TableCell>
                 </TableRow>
               ),
