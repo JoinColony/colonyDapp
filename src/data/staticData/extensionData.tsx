@@ -1,5 +1,9 @@
 import React, { ReactNode, ReactElement } from 'react';
-import { defineMessages, MessageDescriptor } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
@@ -50,6 +54,7 @@ export interface ExtensionData {
   descriptionExtended?: string | MessageDescriptor;
   descriptionLink1?: ReactElement;
   descriptionLink2?: ReactElement;
+  tokenContractAddress?: ReactElement;
   info?: string | MessageDescriptor;
   termsCondition?: string | MessageDescriptor;
   currentVersion: number;
@@ -89,6 +94,7 @@ const oneTransactionPaymentMessages = {
 // to add a more detailed link
 const COIN_MACHINE_DESCRIPTION_LINK = 'https://colony.gitbook.io/colony/';
 const COIN_MACHINE_GOOGLE_SHEET_LINK = `https://docs.google.com/spreadsheets/d/1ZCuFcwqI4S6ZK5OwTl1yN7AK8mjv5d_V3g-_kMen01Y/edit#gid=2013814210`;
+const BLOCKSCOUT_LINK = 'https://blockscout.com';
 
 const coinMachineMessages = {
   coinMachineName: {
@@ -115,6 +121,10 @@ const coinMachineMessages = {
     id: 'extensions.CoinMachine.coinMachineDescriptionLink',
     defaultMessage: 'here',
   },
+  coinMachineTokenContractAddress: {
+    id: 'extensions.CoinMachine.tokenContractAddress',
+    defaultMessage: 'Token contract address {link}',
+  },
   coinMachinePurchaseTokenTitle: {
     id: 'extensions.CoinMachine.param.purchaseToken.title',
     defaultMessage: 'Purchase Token',
@@ -133,7 +143,7 @@ const coinMachineMessages = {
   },
   coinMachineTokenToBeSoldFieldName: {
     id: 'extensions.CoinMachine.param.tokenToBeSold.fieldName',
-    defaultMessage: 'TSelect the token you wish to sell.',
+    defaultMessage: 'Select the token you wish to sell.',
   },
   coinMachineTokenToBeSoldDescription: {
     id: 'extensions.CoinMachine.param.tokenToBeSold.description',
@@ -384,6 +394,14 @@ const extensions: { [key: string]: ExtensionData } = {
     currentVersion: 1,
     createdAt: 1603915271852,
     neededColonyPermissions: [ColonyRole.Root],
+    tokenContractAddress: (
+      <FormattedMessage
+        {...MSG.coinMachineTokenContractAddress}
+        values={{
+          link: <ExternalLink href={BLOCKSCOUT_LINK} text="Blockscout" />,
+        }}
+      />
+    ),
     initializationParams: [
       {
         paramName: 'whitelistAddress',
