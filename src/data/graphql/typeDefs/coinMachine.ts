@@ -17,6 +17,11 @@ export default gql`
     periodLength: String!
     timeRemaining: String!
   }
+  type CurrentPeriodTokens {
+    maxPerPeriodTokens: String!
+    activeSoldTokens: String!
+    targetPerPeriodTokens: String!
+  }
 
   type BoughtTokens {
     numTokens: String!
@@ -44,5 +49,6 @@ export default gql`
       colonyAddress: String!
     ): String!
     coinMachineSalePeriod(colonyAddress: String!): SalePeriod!
+    currentPeriodTokens(colonyAddress: String!): CurrentPeriodTokens!
   }
 `;

@@ -1,18 +1,24 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import { useDispatch } from 'redux-react-hook';
 import classnames from 'classnames';
+import { BigNumber } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
+
+import { ActionTypes } from '~redux/index';
+import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
+import { TimerValue } from '~utils/components';
+import useSplitTime from '~utils/hooks/useSplitTime';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import TokenPriceStatusIcon, {
   TokenPriceStatuses,
 } from '../TokenPriceStatusIcon/TokenPriceStatusIcon';
 
 import styles from './RemainingDisplayWidget.css';
-import { TimerValue } from '~utils/components';
-import useSplitTime from '~utils/hooks/useSplitTime';
 
 export enum DataDisplayType {
   Time = 'Time',
@@ -24,11 +30,17 @@ type Appearance = {
 };
 
 type Props = {
+  colonyAddress?: Address;
   displayType: DataDisplayType;
-  value: string | number | null;
+  value?: string | number | null;
   appearance?: Appearance;
-  tokenPriceStatus?: TokenPriceStatuses;
   periodLength?: number;
+  periodTokens?: {
+    decimals: number;
+    soldPeriodTokens: BigNumber;
+    maxPeriodTokens: BigNumber;
+    targetPeriodTokens: BigNumber;
+  };
 };
 
 const displayName = 'dashboard.CoinMachine.RemainingDisplayWidget';
@@ -66,21 +78,29 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.RemainingDisplayWidget.comeBackTitle',
     defaultMessage: 'Come back in...',
   },
+  soldOut: {
+    id: 'dashboard.CoinMachine.RemainingDisplayWidget.soldOut',
+    defaultMessage: 'SOLD OUT',
+  },
 });
 
 const RemainingDisplayWidget = ({
   displayType,
   appearance = { theme: 'white' },
   value,
-  tokenPriceStatus,
   periodLength,
+  periodTokens,
+  colonyAddress,
 }: Props) => {
+  const dispatch = useDispatch();
+
   const displaysTimer = displayType === DataDisplayType.Time;
-  const { splitTime } = useSplitTime(
+  const { splitTime, timeLeft } = useSplitTime(
     displaysTimer && typeof value === 'number' ? value : 0,
     displaysTimer,
     periodLength,
   );
+
   const widgetText = useMemo(() => {
     if (displayType === DataDisplayType.Time) {
       return {
@@ -105,17 +125,76 @@ const RemainingDisplayWidget = ({
     if (displayType === DataDisplayType.Time && splitTime) {
       return <TimerValue splitTime={splitTime} />;
     }
-    if (value && displayType !== DataDisplayType.Time) {
-      return value;
+    if (periodTokens && displayType === DataDisplayType.Tokens) {
+      const { soldPeriodTokens, decimals, maxPeriodTokens } = periodTokens;
+
+      if (soldPeriodTokens.gte(maxPeriodTokens)) {
+        return <FormattedMessage {...MSG.soldOut} />;
+      }
+
+      return `${getFormattedTokenValue(
+        maxPeriodTokens.sub(soldPeriodTokens),
+        decimals,
+      )}/${getFormattedTokenValue(maxPeriodTokens, decimals)}`;
     }
 
     return <FormattedMessage {...widgetText.placeholder} />;
-  }, [displayType, splitTime, value, widgetText]);
+  }, [displayType, splitTime, widgetText, periodTokens]);
+
+  const priceStatus = useMemo(() => {
+    if (!periodTokens || displayType === DataDisplayType.Time) {
+      return undefined;
+    }
+
+    const {
+      soldPeriodTokens,
+      maxPeriodTokens,
+      targetPeriodTokens,
+    } = periodTokens;
+
+    if (soldPeriodTokens.gte(maxPeriodTokens)) {
+      return TokenPriceStatuses.PRICE_SOLD_OUT;
+    }
+
+    if (soldPeriodTokens.eq(targetPeriodTokens)) {
+      return TokenPriceStatuses.PRICE_NO_CHANGES;
+    }
+
+    if (soldPeriodTokens.lt(targetPeriodTokens)) {
+      return TokenPriceStatuses.PRICE_DOWN;
+    }
+
+    if (soldPeriodTokens.gt(targetPeriodTokens)) {
+      return TokenPriceStatuses.PRICE_UP;
+    }
+
+    return undefined;
+  }, [displayType, periodTokens]);
+
   const showValueWarning =
+    displayType === DataDisplayType.Time &&
     appearance.theme !== 'danger' &&
     typeof value === 'number' &&
     periodLength &&
-    ((value / 1000) * 100) / periodLength <= 10;
+    (timeLeft * 100) / periodLength <= 10;
+
+  const isValueWarning = useMemo(() => {
+    if (periodTokens?.soldPeriodTokens.gte(periodTokens?.maxPeriodTokens)) {
+      return true;
+    }
+
+    return false;
+  }, [periodTokens]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && colonyAddress !== undefined) {
+      dispatch({
+        type: ActionTypes.COIN_MACHINE_PERIOD_UPDATE,
+        payload: { colonyAddress },
+      });
+    }
+  }, [timeLeft, colonyAddress, dispatch]);
+
   return (
     <div className={getMainClasses(appearance, styles)}>
       <div className={styles.header}>
@@ -135,19 +214,17 @@ const RemainingDisplayWidget = ({
       </div>
       <p
         className={classnames(styles.value, {
-          [styles.valueWarning]: showValueWarning,
+          [styles.valueWarning]: isValueWarning || showValueWarning,
         })}
       >
         {displayedValue}
       </p>
-      {widgetText.footerText && value && (
+      {periodTokens && widgetText.footerText && (
         <div className={styles.footer}>
           <p className={styles.footerText}>
             <FormattedMessage {...widgetText.footerText} />
           </p>
-          {tokenPriceStatus && (
-            <TokenPriceStatusIcon status={tokenPriceStatus} />
-          )}
+          {priceStatus && <TokenPriceStatusIcon status={priceStatus} />}
         </div>
       )}
     </div>

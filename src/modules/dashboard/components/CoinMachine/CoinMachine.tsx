@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
-import ExternalLink from '~core/ExternalLink';
+import { bigNumberify } from 'ethers/utils';
 
+import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 
 import {
   useColonyExtensionsQuery,
   useCoinMachineSaleTokensQuery,
+  useCurrentPeriodTokensQuery,
   Colony,
   useCoinMachineSalePeriodQuery,
 } from '~data/index';
@@ -55,6 +57,9 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
+  /* To add proper states later */
+  const isSale = true;
+
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
@@ -78,11 +83,38 @@ const CoinMachine = ({
     transactionHash: string;
   }>();
 
+  const {
+    data: periodTokensData,
+    loading: periodTokensLoading,
+  } = useCurrentPeriodTokensQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+  });
+
+  const periodTokens = useMemo(() => {
+    if (!saleTokensData || !periodTokensData || !isSale) {
+      return undefined;
+    }
+    return {
+      decimals: saleTokensData.coinMachineSaleTokens.sellableToken.decimals,
+      soldPeriodTokens: bigNumberify(
+        periodTokensData.currentPeriodTokens.activeSoldTokens,
+      ),
+      maxPeriodTokens: bigNumberify(
+        periodTokensData.currentPeriodTokens.maxPerPeriodTokens,
+      ),
+      targetPeriodTokens: bigNumberify(
+        periodTokensData.currentPeriodTokens.targetPerPeriodTokens,
+      ),
+    };
+  }, [periodTokensData, saleTokensData, isSale]);
+
   if (
     loading ||
     saleTokensLoading ||
     salePeriodLoading ||
-    !data?.processedColony?.installedExtensions
+    !data?.processedColony?.installedExtensions ||
+    periodTokensLoading
   ) {
     return (
       <div className={styles.loadingSpinner}>
@@ -171,13 +203,13 @@ const CoinMachine = ({
                 appearance={{ theme: tokensRemaining > 0 ? 'white' : 'danger' }}
                 value={timeRemaining}
                 periodLength={periodLength}
+                colonyAddress={colonyAddress}
               />
             </div>
             <div className={styles.tokensRemaining}>
               <RemainingDisplayWidget
                 displayType={DataDisplayType.Tokens}
-                // @TODO: Add real value
-                value={null}
+                periodTokens={periodTokens}
               />
             </div>
           </>

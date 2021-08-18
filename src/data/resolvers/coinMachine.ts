@@ -174,5 +174,42 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
+    async currentPeriodTokens(_, { colonyAddress }) {
+      try {
+        const { networkClient } = colonyManager;
+
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+
+        const maxPerPeriodTokens = await coinMachineClient.getMaxPerPeriod();
+
+        const activeSoldTokens = await coinMachineClient.getActiveSold();
+        const activePeriod = await coinMachineClient.getActivePeriod();
+        const blockTime = await getBlockTime(networkClient.provider, 'latest');
+
+        const periodLength = await coinMachineClient.getPeriodLength();
+
+        const currentPeriod = Math.floor(
+          bigNumberify(blockTime).div(periodLength.mul(1000)).toNumber(),
+        );
+
+        // eslint-disable-next-line max-len
+        const targetPerPeriodTokens = await coinMachineClient.getTargetPerPeriod();
+
+        return {
+          maxPerPeriodTokens: maxPerPeriodTokens.toString(),
+          activeSoldTokens:
+            activePeriod.toNumber() === currentPeriod
+              ? activeSoldTokens.toString()
+              : '',
+          targetPerPeriodTokens: targetPerPeriodTokens.toString(),
+        };
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
   },
 });
