@@ -23,12 +23,14 @@ import {
   useCoinMachineCurrentPeriodPriceQuery,
   useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
   useUserTokensQuery,
-  useWhitelistPolicyQuery,
+  useUserWhitelistStatusQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
 import { mapPayload, withMeta, pipe } from '~utils/actions';
+
+import GetWhitelisted from '../GetWhitelisted';
 
 import styles from './BuyTokens.css';
 
@@ -72,10 +74,6 @@ const MSG = defineMessages({
   tellMore: {
     id: 'dashbord.CoinMachine.BuyWidget.tellMore',
     defaultMessage: 'Tell me more',
-  },
-  getWhitelisted: {
-    id: 'dashbord.CoinMachine.BuyWidget.getWhitelisted',
-    defaultMessage: 'Get whitelisted',
   },
   accountWhitelisted: {
     id: 'dashbord.CoinMachine.BuyWidget.accountWhitelisted',
@@ -123,14 +121,15 @@ const BuyTokens = ({
   });
 
   const {
-    data: whitelistPolicyData,
-    loading: whitelistLoading,
-  } = useWhitelistPolicyQuery({
+    data: userWhitelistStatusData,
+    loading: userStatusLoading,
+  } = useUserWhitelistStatusQuery({
     variables: { colonyAddress, userAddress: walletAddress },
     skip: !isWhitelistExtensionEnabled,
   });
 
-  const isUserApproved = whitelistPolicyData?.whitelistPolicy?.userIsApproved;
+  const isUserWhitelisted =
+    userWhitelistStatusData?.userWhitelistStatus?.userIsWhitelisted;
   /* Wire in is sale started logic */
   const isSale = true;
   const { data: userTokenData, loading: loadingUserToken } = useUserTokensQuery(
@@ -242,7 +241,7 @@ const BuyTokens = ({
     loadingSaleTokens &&
     loadingUserToken &&
     loadingSalePrice &&
-    whitelistLoading &&
+    userStatusLoading &&
     loadingMaxUserPurchase
   ) {
     return (
@@ -450,11 +449,11 @@ const BuyTokens = ({
                   >{`${purchaseToken?.symbol}`}</div>
                 </div>
                 <div className={styles.controls}>
-                  {isWhitelistExtensionEnabled && !isUserApproved ? (
-                    <Button
-                      text={MSG.getWhitelisted}
-                      appearance={{ theme: 'primary', size: 'large' }}
+                  {isWhitelistExtensionEnabled && !isUserWhitelisted ? (
+                    <GetWhitelisted
                       disabled={globalDisable}
+                      colonyAddress={colonyAddress}
+                      userStatus={userWhitelistStatusData?.userWhitelistStatus}
                     />
                   ) : (
                     <Button
@@ -490,10 +489,11 @@ const BuyTokens = ({
           <div className={styles.accountStatus}>
             {isWhitelistExtensionEnabled && (
               <>
-                {!isUserApproved ? (
-                  <Button
-                    appearance={{ size: 'large', theme: 'primary' }}
-                    text={MSG.getWhitelisted}
+                {!isUserWhitelisted ? (
+                  <GetWhitelisted
+                    disabled={globalDisable}
+                    colonyAddress={colonyAddress}
+                    userStatus={userWhitelistStatusData?.userWhitelistStatus}
                   />
                 ) : (
                   <div className={styles.statusMessage}>

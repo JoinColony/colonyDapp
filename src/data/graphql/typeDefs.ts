@@ -268,9 +268,14 @@ export default gql`
   }
 
   type WhitelistPolicy {
-    userIsApproved: Boolean!
     kycRequired: Boolean!
     agreementRequired: Boolean!
+  }
+
+  type UserWhitelistStatus {
+    userIsApproved: Boolean!
+    userIsWhitelisted: Boolean!
+    userSignedAgreement: Boolean!
   }
 
   extend type Query {
@@ -389,10 +394,11 @@ export default gql`
     motionStatus(motionId: Int!, colonyAddress: String!): String!
     whitelistAgreement(agreementHash: String!): String!
     whitelistAgreementHash(colonyAddress: String!): String
-    whitelistPolicy(
+    whitelistPolicy(colonyAddress: String!): WhitelistPolicy!
+    userWhitelistStatus(
       colonyAddress: String!
       userAddress: String!
-    ): WhitelistPolicy
+    ): UserWhitelistStatus!
   }
 
   extend type Mutation {

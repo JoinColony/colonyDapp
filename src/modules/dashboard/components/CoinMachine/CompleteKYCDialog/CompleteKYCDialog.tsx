@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { FormattedMessage, defineMessages } from 'react-intl';
-import classnames from 'classnames';
 
 import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
@@ -20,72 +19,25 @@ const MSG = defineMessages({
   },
   buttonText: {
     id: 'dashboard.CoinMachine.CompleteKYCDialog.buttonText',
-    defaultMessage: 'Proceed',
-  },
-  descriptionWhitelistedAgreement: {
-    id:
-      'dashboard.CoinMachine.CompleteKYCDialog.descriptionWhitelistedAgreement',
-    defaultMessage: `Your address has been added to the whitelist. Please proceed to sign the sale agreement.`,
-  },
-  descriptionKYCWhitelistedBuy: {
-    id: 'dashboard.CoinMachine.CompleteKYCDialog.descriptionWhitelistedBuy',
-    defaultMessage: `Your address has been added to the whitelist. Please proceed to buy tokens.`,
-  },
-  descriptionKYCWhitelistedAgreement: {
-    id: `dashboard.CoinMachine.CompleteKYCDialog.descriptionKYCWhitelistedAgreement`,
-    defaultMessage: `Your address has been added to the whitelist. Please proceed to sign the sale agreement.`,
+    defaultMessage: 'Close',
   },
 });
 
 const displayName = 'dashboard.CoinMachine.CompleteKYCDialog';
 
 const CompleteKYCDialog = ({ cancel }: DialogProps) => {
-  // @TODO: Add logic to actually determine all of those bools
-  const isWhitelisted = false;
-  const hasAgreement = false;
-  const hasSignedAgreement = false;
-  const hasKYCVerification = false;
-  const descriptionText = useMemo(() => {
-    if (!hasKYCVerification) {
-      if (!isWhitelisted) {
-        return MSG.description;
-      }
-      if (!hasSignedAgreement) {
-        return MSG.descriptionWhitelistedAgreement;
-      }
-    } else if (isWhitelisted && hasKYCVerification) {
-      if (hasAgreement && !hasSignedAgreement) {
-        return MSG.descriptionKYCWhitelistedAgreement;
-      }
-      return MSG.descriptionKYCWhitelistedBuy;
-    }
-
-    return null;
-  }, [isWhitelisted, hasAgreement, hasSignedAgreement, hasKYCVerification]);
   return (
     <Dialog cancel={cancel}>
-      <div
-        className={classnames(styles.container, {
-          [styles.KYCContainer]: hasKYCVerification,
-        })}
-      >
+      <div className={styles.container}>
         <DialogSection appearance={{ theme: 'sidePadding' }}>
-          <div
-            className={classnames(styles.modalHeading, {
-              [styles.KYCHeading]: hasKYCVerification,
-            })}
-          >
+          <div className={styles.modalHeading}>
             <Heading
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
               text={MSG.title}
             />
           </div>
-          <div
-            className={classnames(styles.modalContent, {
-              [styles.KYCContent]: hasKYCVerification,
-            })}
-          >
-            <FormattedMessage {...descriptionText} />
+          <div className={styles.modalContent}>
+            <FormattedMessage {...MSG.description} />
           </div>
         </DialogSection>
       </div>
@@ -95,7 +47,6 @@ const CompleteKYCDialog = ({ cancel }: DialogProps) => {
             appearance={{ theme: 'primary', size: 'large' }}
             text={MSG.buttonText}
             onClick={cancel}
-            disabled={!isWhitelisted}
           />
         </div>
       </DialogSection>

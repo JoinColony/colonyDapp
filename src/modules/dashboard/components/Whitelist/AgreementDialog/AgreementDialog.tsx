@@ -1,12 +1,15 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Dialog, { DialogSection } from '~core/Dialog';
-import Button from '~core/Button';
+import Button, { ActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
+import { mapPayload } from '~utils/actions';
+import { ActionTypes } from '~redux/index';
+import { Address } from '~types/index';
 
-import { useWhitelistAgreementQuery } from '~data/index';
+import { useWhitelistAgreementQuery, useLoggedInUser } from '~data/index';
 
 import styles from './AgreementDialog.css';
 
@@ -47,6 +50,7 @@ interface Props {
   agreementHash: string;
   back?: () => void;
   isSignable?: boolean;
+  colonyAddress?: Address;
 }
 
 const AgreementDialog = ({
@@ -55,8 +59,10 @@ const AgreementDialog = ({
   agreementHash,
   isSignable = false,
   back,
+  colonyAddress,
 }: Props) => {
   const [hasBeenScrolled, setHasBeenScrolled] = useState(false);
+  const { walletAddress } = useLoggedInUser();
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -82,6 +88,15 @@ const AgreementDialog = ({
       setHasBeenScrolled(true);
     }
   }, [data]);
+
+  const signAgreementTransform = useCallback(
+    mapPayload(() => ({
+      agreementHash,
+      colonyAddress,
+      userAddress: walletAddress,
+    })),
+    [],
+  );
 
   return (
     <Dialog cancel={cancel}>
@@ -134,14 +149,25 @@ const AgreementDialog = ({
             text={{ id: 'button.back' }}
           />
         )}
-        <Button
-          appearance={{ theme: 'primary', size: 'large' }}
-          onClick={close}
-          text={isSignable ? MSG.iAgreeButton : MSG.gotItButton}
-          {...(isSignable
-            ? { disabled: !data?.whitelistAgreement || !hasBeenScrolled }
-            : {})}
-        />
+        {isSignable ? (
+          <ActionButton
+            appearance={{ theme: 'primary', size: 'large' }}
+            submit={ActionTypes.WHITELIST_SIGN_AGREEMENT}
+            error={ActionTypes.WHITELIST_SIGN_AGREEMENT_ERROR}
+            success={ActionTypes.WHITELIST_SIGN_AGREEMENT_SUCCESS}
+            onSuccess={close}
+            transform={signAgreementTransform}
+            text={MSG.iAgreeButton}
+            disabled={!data?.whitelistAgreement || !hasBeenScrolled}
+          />
+        ) : (
+          <Button
+            appearance={{ theme: 'primary', size: 'large' }}
+            onClick={close}
+            text={MSG.gotItButton}
+            disabled={!hasBeenScrolled}
+          />
+        )}
       </DialogSection>
     </Dialog>
   );

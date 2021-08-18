@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
@@ -6,14 +6,11 @@ import ExternalLink from '~core/ExternalLink';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
-import { useDialog } from '~core/Dialog';
-import AgreementDialog from '~dashboard/Whitelist/AgreementDialog';
 
 import {
   useColonyExtensionsQuery,
   useCoinMachineSaleTokensQuery,
   Colony,
-  useWhitelistAgreementHashQuery,
   useCoinMachineSalePeriodQuery,
 } from '~data/index';
 
@@ -58,27 +55,6 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
-  const openAgreementDialog = useDialog(AgreementDialog);
-
-  const { data: agreementHashData } = useWhitelistAgreementHashQuery({
-    variables: { colonyAddress },
-  });
-
-  const openDialog = useCallback(
-    () =>
-      agreementHashData?.whitelistAgreementHash &&
-      openAgreementDialog({
-        agreementHash: agreementHashData?.whitelistAgreementHash,
-        isSignable: true,
-        back: () => {},
-      }),
-    [agreementHashData, openAgreementDialog],
-  );
-
-  useEffect(() => {
-    openDialog();
-  }, [openDialog]);
-
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
