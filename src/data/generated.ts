@@ -45,7 +45,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
   }
 };
       export default result;
-
+    
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -1205,6 +1205,12 @@ export type SaleTokens = {
 export type SalePeriod = {
   periodLength: Scalars['String'];
   timeRemaining: Scalars['String'];
+};
+
+export type CurrentPeriodTokens = {
+  maxPerPeriodTokens: Scalars['String'];
+  activeSoldTokens: Scalars['String'];
+  targetPerPeriodTokens: Scalars['String'];
 };
 
 export type BoughtTokens = {

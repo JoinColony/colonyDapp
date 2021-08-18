@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
@@ -90,8 +90,6 @@ const CoinMachine = ({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
   });
-
-  const [saleStarted] = useState<boolean>(false);
 
   const periodTokens = useMemo(() => {
     if (!saleTokensData || !periodTokensData || !isSale) {
