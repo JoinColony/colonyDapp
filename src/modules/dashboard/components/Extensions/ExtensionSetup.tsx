@@ -59,6 +59,10 @@ const MSG = defineMessages({
       other { }
     }`,
   },
+  initParams: {
+    id: 'dashboard.Extensions.ExtensionSetup.initParams',
+    defaultMessage: 'Initialization parameters',
+  },
 });
 
 interface Props {
@@ -71,6 +75,7 @@ const ExtensionSetup = ({
   colony: { colonyAddress, tokens },
   extension: {
     initializationParams,
+    extraInitParams,
     descriptionExtended,
     descriptionLink1,
     descriptionLink2,
@@ -186,6 +191,101 @@ const ExtensionSetup = ({
 
   if (!initializationParams) return null;
 
+  const displayParams = (params, values) =>
+    params.map(
+      ({
+        paramName,
+        title,
+        fieldName,
+        description,
+        type,
+        options,
+        disabled,
+      }) => (
+        <div key={paramName}>
+          {type === ExtensionParamType.Input && (
+            <div className={styles.input}>
+              <Input
+                appearance={{ size: 'medium', theme: 'minimal' }}
+                label={title}
+                name={paramName}
+              />
+              <FormattedMessage
+                {...description}
+                values={{
+                  span: (chunks) => (
+                    <span className={styles.descriptionExample}>{chunks}</span>
+                  ),
+                }}
+              />
+              {extensionId === Extension.VotingReputation && (
+                <span className={styles.complementaryLabel}>
+                  <FormattedMessage
+                    {...MSG.complementaryLabel}
+                    values={{
+                      isPeriod: endsWith(paramName, 'Period'),
+                    }}
+                  />
+                </span>
+              )}
+            </div>
+          )}
+          {type === ExtensionParamType.Textarea && (
+            <div className={styles.textArea}>
+              <Textarea
+                appearance={{ colorSchema: 'grey' }}
+                label={title}
+                name={paramName}
+                disabled={disabled && disabled(values)}
+              />
+              {description && (
+                <p className={styles.textAreaDescription}>
+                  <FormattedMessage {...description} />
+                </p>
+              )}
+            </div>
+          )}
+          {type === ExtensionParamType.ColonyPolicySelector && (
+            <ColonyPolicySelector
+              name={paramName}
+              title={title}
+              options={options || []}
+            />
+          )}
+          {type === ExtensionParamType.TokenSymbolSelector && (
+            <div className={styles.tokenSelector}>
+              <div>
+                <FormattedMessage {...title} />
+              </div>
+              <div className={styles.tokenSelectorContainer}>
+                {fieldName && (
+                  <div>
+                    <FormattedMessage {...fieldName} />
+                  </div>
+                )}
+                <TokenSymbolSelector
+                  tokens={tokens}
+                  name={paramName}
+                  appearance={{ alignOptions: 'right', theme: 'grey' }}
+                  elementOnly
+                  label={paramName}
+                />
+              </div>
+              <p>{tokenContractAddress}</p>
+              <p>
+                <MaskedAddress address={nativeTokenAddress} full />
+              </p>
+              {description && (
+                <p>
+                  <FormattedMessage {...description} />
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      ),
+    );
+
   return (
     <ActionForm
       initialValues={initialValues}
@@ -219,99 +319,14 @@ const ExtensionSetup = ({
               />
             </div>
           )}
+          {extraInitParams && (
+            <div className={styles.inputContainer}>
+              {displayParams(extraInitParams, values)}
+              <FormattedMessage {...MSG.initParams} />
+            </div>
+          )}
           <div className={styles.inputContainer}>
-            {initializationParams.map(
-              ({
-                paramName,
-                title,
-                fieldName,
-                description,
-                type,
-                options,
-                disabled,
-              }) => (
-                <div key={paramName}>
-                  {type === ExtensionParamType.Input && (
-                    <div className={styles.input}>
-                      <Input
-                        appearance={{ size: 'medium', theme: 'minimal' }}
-                        label={title}
-                        name={paramName}
-                      />
-                      <FormattedMessage
-                        {...description}
-                        values={{
-                          span: (chunks) => (
-                            <span className={styles.descriptionExample}>
-                              {chunks}
-                            </span>
-                          ),
-                        }}
-                      />
-                      {extensionId === Extension.VotingReputation && (
-                        <span className={styles.complementaryLabel}>
-                          <FormattedMessage
-                            {...MSG.complementaryLabel}
-                            values={{
-                              isPeriod: endsWith(paramName, 'Period'),
-                            }}
-                          />
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  {type === ExtensionParamType.Textarea && (
-                    <div className={styles.textArea}>
-                      <Textarea
-                        appearance={{ colorSchema: 'grey' }}
-                        label={title}
-                        name={paramName}
-                        disabled={disabled && disabled(values)}
-                      />
-                      {description && (
-                        <p className={styles.textAreaDescription}>
-                          <FormattedMessage {...description} />
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  {type === ExtensionParamType.ColonyPolicySelector && (
-                    <ColonyPolicySelector
-                      name={paramName}
-                      title={title}
-                      options={options || []}
-                    />
-                  )}
-                  {type === ExtensionParamType.TokenSymbolSelector && (
-                    <div className={styles.tokenSelector}>
-                      <div className={styles.tokenSelectorContainer}>
-                        {fieldName && (
-                          <div>
-                            <FormattedMessage {...fieldName} />
-                          </div>
-                        )}
-                        <TokenSymbolSelector
-                          tokens={tokens}
-                          name={paramName}
-                          appearance={{ alignOptions: 'right', theme: 'grey' }}
-                          elementOnly
-                          label={paramName}
-                        />
-                      </div>
-                      <p>{tokenContractAddress}</p>
-                      <p>
-                        <MaskedAddress address={nativeTokenAddress} full />
-                      </p>
-                      {description && (
-                        <p>
-                          <FormattedMessage {...description} />
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ),
-            )}
+            {displayParams(initializationParams, values)}
           </div>
           <IconButton
             appearance={{ theme: 'primary', size: 'large' }}
