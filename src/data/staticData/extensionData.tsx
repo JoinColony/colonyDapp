@@ -61,6 +61,7 @@ export interface ExtensionData {
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
   initializationParams?: ExtensionInitParams[];
+  extraInitParams?: ExtensionInitParams[];
   uninstallable: boolean;
   enabledExtensionBody?: (props: ExtensionBodyProps) => ReactNode;
 }
@@ -402,7 +403,7 @@ const extensions: { [key: string]: ExtensionData } = {
         }}
       />
     ),
-    initializationParams: [
+    extraInitParams: [
       {
         paramName: 'whitelistAddress',
         validation: yup.string().required(),
@@ -429,6 +430,8 @@ const extensions: { [key: string]: ExtensionData } = {
         description: MSG.coinMachinePurchaseTokenDescription,
         type: ExtensionParamType.TokenSymbolSelector,
       },
+    ],
+    initializationParams: [
       {
         paramName: 'periodLength',
         validation: yup.number().required(),
