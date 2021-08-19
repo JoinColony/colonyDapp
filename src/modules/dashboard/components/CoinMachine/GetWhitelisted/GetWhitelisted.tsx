@@ -7,11 +7,13 @@ import {
   useWhitelistPolicyQuery,
   UserWhitelistStatus,
   useWhitelistAgreementHashQuery,
+  useMetaColonyQuery,
 } from '~data/index';
 
 import { useDialog } from '~core/Dialog';
 import AgreementDialog from '~dashboard/Whitelist/AgreementDialog';
 import CompleteKYCDialog from '../CompleteKYCDialog';
+import SynapsKYCDialog from '../SynapsKYCDialog';
 
 const MSG = defineMessages({
   getWhitelisted: {
@@ -32,9 +34,11 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
   const { data: whitelistPolicyData } = useWhitelistPolicyQuery({
     variables: { colonyAddress },
   });
+  const { data } = useMetaColonyQuery();
 
   const openAgreementDialog = useDialog(AgreementDialog);
   const openCompleteKYCDialog = useDialog(CompleteKYCDialog);
+  const openSynapsDialog = useDialog(SynapsKYCDialog);
 
   const signatureRequired =
     !disabled &&
@@ -63,9 +67,11 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
     [agreementHashData, openAgreementDialog, colonyAddress],
   );
 
-  const openKYCDialog = useCallback(() => openCompleteKYCDialog(), [
-    openCompleteKYCDialog,
-  ]);
+  const openKYCDialog = useCallback(() => {
+    return data?.processedMetaColony
+      ? openSynapsDialog({ colonyAddress })
+      : openCompleteKYCDialog();
+  }, [openCompleteKYCDialog, openSynapsDialog, data]);
 
   useEffect(() => {
     if (!userStatus || !whitelistPolicyData || loading) return;
