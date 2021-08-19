@@ -5,8 +5,9 @@ import { log } from '~utils/debug';
 
 const TOKEN_STORAGE = 'colony-server-token';
 
-const postRequest = async (path: string, data: object) => {
-  const response = await fetch(`${process.env.SERVER_ENDPOINT}${path}`, {
+const postRequest = async (path: string, data: object, kyc = false) => {
+  const URL = kyc ? process.env.KYC_ORACLE_ENDPOINT : process.env.SERVER_ENDPOINT;
+  const response = await fetch(`${URL}${path}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -91,4 +92,16 @@ export const authenticate = async (wallet) => {
   });
   setToken(wallet.address, refreshedToken);
   return refreshedToken;
+};
+
+export const authenticateKYC = async (wallet) => {
+  const { challenge } = await postRequest('/auth/challenge', {
+    address: wallet.address,
+  }, true);
+  const signature = await wallet.signMessage({ message: challenge });
+  const { sessionId } = await postRequest('/auth/token', {
+    challenge,
+    signature,
+  }, true);
+  return sessionId;
 };
