@@ -79,16 +79,21 @@ const MSG = defineMessages({
     id: 'dashbord.CoinMachine.BuyWidget.accountWhitelisted',
     defaultMessage: 'Your account is whitelisted. 😎',
   },
+  soldOut: {
+    id: 'dashbord.CoinMachine.BuyWidget.soldOut',
+    defaultMessage: 'Sold Out',
+  },
 });
 
 const TELL_ME_MORE_LINK = '';
 
 type Props = {
   colony: Colony;
+  isSoldOut: boolean;
   /*
    * @NOTE This acts like an indicator that the sale is not currently active
    */
-  disabled?: boolean;
+  isCurrentlyOnSale: boolean;
 };
 
 interface FormValues {
@@ -104,10 +109,13 @@ const validationSchema = (userBalance: number) =>
 
 const BuyTokens = ({
   colony: { colonyAddress, colonyName },
-  disabled,
+  isCurrentlyOnSale,
+  isSoldOut,
 }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
   const history = useHistory();
+
+  const userHasProfile = !!username && !ethereal;
 
   const {
     data: saleTokensData,
@@ -130,8 +138,6 @@ const BuyTokens = ({
 
   const isUserWhitelisted =
     userWhitelistStatusData?.userWhitelistStatus?.userIsWhitelisted;
-  /* Wire in is sale started logic */
-  const isSale = true;
   const { data: userTokenData, loading: loadingUserToken } = useUserTokensQuery(
     {
       variables: { address: walletAddress },
@@ -169,7 +175,7 @@ const BuyTokens = ({
     salePriceData?.coinMachineCurrentPeriodPrice || '0',
   );
 
-  const globalDisable = disabled || !username || ethereal;
+  const globalDisable = !isCurrentlyOnSale || !userHasProfile;
 
   const handleInputFocus = useCallback(
     ({ amount }, setFieldValue) => {
@@ -254,7 +260,7 @@ const BuyTokens = ({
   return (
     <div
       className={getMainClasses({}, styles, {
-        disabled: globalDisable,
+        disabled: isSoldOut,
       })}
     >
       <div className={styles.heading}>
@@ -277,7 +283,7 @@ const BuyTokens = ({
         }}
         tooltipClassName={styles.tooltip}
       />
-      {isSale ? (
+      {isCurrentlyOnSale ? (
         <div className={styles.form}>
           <ActionForm
             initialValues={{
@@ -323,7 +329,7 @@ const BuyTokens = ({
                       }}
                       label={MSG.amountLabel}
                       name="amount"
-                      disabled={globalDisable}
+                      disabled={globalDisable || isSoldOut}
                       elementOnly
                     />
                     {errors?.amount && (
@@ -353,6 +359,7 @@ const BuyTokens = ({
                           onClick={(event) =>
                             handleSetMaxAmount(event, setFieldValue)
                           }
+                          disabled={isSoldOut}
                         />
                       </div>
                     )}
@@ -370,7 +377,7 @@ const BuyTokens = ({
                       <FormattedMessage {...MSG.priceLabel} />
                     </div>
                     <div className={styles.amountsValues}>
-                      <div>{!disabled ? currentSalePrice : 'N/A'}</div>
+                      <div>{!isSoldOut ? currentSalePrice : 'N/A'}</div>
                       {
                         /*
                          * @NOTE only show the exchange rate if the token is XDAI/ETH
@@ -387,7 +394,7 @@ const BuyTokens = ({
                                  * Just entering the decimal point will pass it through to EthUsd
                                  * and that will try to fetch the balance for, which, obviously, will fail
                                  */
-                                !disabled ? parseFloat(currentSalePrice) : 0
+                                !isSoldOut ? parseFloat(currentSalePrice) : 0
                               }
                             />
                           </div>
@@ -405,7 +412,7 @@ const BuyTokens = ({
                       <FormattedMessage {...MSG.costLabel} />
                     </div>
                     <div className={styles.amountsValues}>
-                      {!disabled ? (
+                      {!isSoldOut ? (
                         <div>
                           {values.amount
                             ? (
@@ -458,12 +465,13 @@ const BuyTokens = ({
                   ) : (
                     <Button
                       type="submit"
-                      text={MSG.buyLabel}
+                      text={isSoldOut ? MSG.soldOut : MSG.buyLabel}
                       appearance={{ theme: 'primary', size: 'large' }}
                       onClick={() => handleSubmit()}
                       loading={isSubmitting}
                       disabled={
                         globalDisable ||
+                        isSoldOut ||
                         !isValid ||
                         parseFloat(values.amount) <= 0
                       }

@@ -57,7 +57,7 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
-  /* To add proper states later */
+  /* To add proper logic later */
   const isSale = true;
 
   const { data, loading } = useColonyExtensionsQuery({
@@ -108,6 +108,13 @@ const CoinMachine = ({
       ),
     };
   }, [periodTokensData, saleTokensData, isSale]);
+
+  const isSoldOut = useMemo(
+    () =>
+      periodTokens !== undefined &&
+      periodTokens.soldPeriodTokens.gte(periodTokens.maxPeriodTokens),
+    [periodTokens],
+  );
 
   if (
     loading ||
@@ -167,8 +174,7 @@ const CoinMachine = ({
       />
     </div>,
   ];
-  // @TODO: Remove once the tokens remaining logic is wired in.
-  const tokensRemaining = 10;
+
   return (
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
@@ -194,13 +200,14 @@ const CoinMachine = ({
                  * @TODO Determine if the sale is currently ongoing
                  * And only disable it if it insn't
                  */
-                disabled={false}
+                isCurrentlyOnSale={isSale}
+                isSoldOut={isSoldOut}
               />
             </div>
             <div className={styles.timeRemaining}>
               <RemainingDisplayWidget
                 displayType={DataDisplayType.Time}
-                appearance={{ theme: tokensRemaining > 0 ? 'white' : 'danger' }}
+                appearance={{ theme: !isSoldOut ? 'white' : 'danger' }}
                 value={timeRemaining}
                 periodLength={periodLength}
                 colonyAddress={colonyAddress}

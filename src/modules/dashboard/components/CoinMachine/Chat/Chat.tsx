@@ -6,9 +6,9 @@ import CommentInput from '~core/CommentInput';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
 import {
-  useLoggedInUser,
   Colony,
   useTransactionMessagesQuery,
+  useLoggedInUser,
 } from '~data/index';
 
 import styles from './Chat.css';
@@ -40,8 +40,10 @@ interface Props {
 const displayName = 'dashboard.CoinMachine.Chat';
 
 const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
-  const { username, ethereal } = useLoggedInUser();
   const scrollElmRef = useRef<HTMLDivElement | null>(null);
+
+  const { username, ethereal } = useLoggedInUser();
+  const userHasProfile = !!username && !ethereal;
 
   /*
    * @NOTE This is needed in order to make the scroll effect trigger after
@@ -111,13 +113,13 @@ const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
         <div ref={scrollElmRef} />
       </div>
       <div className={styles.inputBox}>
-        {username && !ethereal && (
-          <CommentInput
-            colonyAddress={colonyAddress}
-            transactionHash={transactionHash}
-            callback={scrollComments}
-          />
-        )}
+        <CommentInput
+          colonyAddress={colonyAddress}
+          transactionHash={transactionHash}
+          callback={scrollComments}
+          disabled={!userHasProfile}
+          disabledInputPlaceholder
+        />
       </div>
     </div>
   );
