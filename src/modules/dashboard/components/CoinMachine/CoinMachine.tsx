@@ -57,9 +57,6 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
-  /* To add proper logic later */
-  const isSale = true;
-
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
@@ -91,7 +88,7 @@ const CoinMachine = ({
     fetchPolicy: 'network-only',
   });
   const saleStarted = !bigNumberify(
-    periodTokensData?.currentPeriodTokens.tokenPeriodBalance || 0
+    periodTokensData?.currentPeriodTokens.tokenPeriodBalance || 0,
   ).isZero();
 
   const periodTokens = useMemo(() => {
@@ -114,7 +111,6 @@ const CoinMachine = ({
       ),
     };
   }, [periodTokensData, saleTokensData, saleStarted]);
-
 
   const isSoldOut = useMemo(
     () =>
