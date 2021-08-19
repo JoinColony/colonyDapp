@@ -4,6 +4,7 @@ import CopyableAddress from '~core/CopyableAddress';
 import Heading from '~core/Heading';
 import UserMention from '~core/UserMention';
 import { AnyUser } from '~data/index';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import styles from './InfoPopover.css';
 
@@ -13,12 +14,16 @@ interface Props {
 
 const displayName = 'InfoPopover.UserInfo';
 
+const UserAvatar = HookedUserAvatar();
+
 const UserInfo = ({
   user: {
     profile: { displayName: userDisplayName, username, walletAddress },
   },
+  user,
 }: Props) => (
   <>
+    <UserAvatar size="s" address={walletAddress} user={user} notSet={false} />
     {userDisplayName && (
       <Heading
         appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
