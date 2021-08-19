@@ -1,0 +1,20 @@
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 730px;
+}
+
+.synaps {
+  min-height: 690px;
+  width: 100%;
+}
+
+.synaps iframe {
+  min-height: 690px;
+}
+
+.verified {
+  font-size: var(--size-normal);
+  color: var(--dark);
+}

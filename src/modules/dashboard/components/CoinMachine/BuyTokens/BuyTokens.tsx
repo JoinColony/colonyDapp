@@ -488,7 +488,6 @@ const BuyTokens = ({
                 <div className={styles.controls}>
                   {isWhitelistExtensionEnabled && !isUserWhitelisted ? (
                     <GetWhitelisted
-                      disabled={globalDisable}
                       colonyAddress={colonyAddress}
                       userStatus={userWhitelistStatusData?.userWhitelistStatus}
                     />
@@ -529,7 +528,6 @@ const BuyTokens = ({
               <>
                 {!isUserWhitelisted ? (
                   <GetWhitelisted
-                    disabled={globalDisable}
                     colonyAddress={colonyAddress}
                     userStatus={userWhitelistStatusData?.userWhitelistStatus}
                   />
