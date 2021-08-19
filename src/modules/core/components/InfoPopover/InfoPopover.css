@@ -45,16 +45,17 @@
 
 .userName {
   composes: inlineEllipsis from '~styles/text.css';
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 
 .userName a {
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
 
-.address {
-  margin-bottom: 6px;
+.address span {
+  font-size: var(--size-smallish);
 }
 
 .address button {
