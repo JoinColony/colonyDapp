@@ -7,11 +7,14 @@ import {
   useWhitelistPolicyQuery,
   UserWhitelistStatus,
   useWhitelistAgreementHashQuery,
+  useMetaColonyQuery,
+  useLoggedInUser,
 } from '~data/index';
 
 import { useDialog } from '~core/Dialog';
 import AgreementDialog from '~dashboard/Whitelist/AgreementDialog';
 import CompleteKYCDialog from '../CompleteKYCDialog';
+import SynapsKYCDialog from '../SynapsKYCDialog';
 
 const MSG = defineMessages({
   getWhitelisted: {
@@ -21,28 +24,32 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  disabled: boolean;
   colonyAddress: Address;
   userStatus?: UserWhitelistStatus;
 };
 
 const displayName = 'dashboard.CoinMachine.GetWhitelisted';
 
-const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
+const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
   const { data: whitelistPolicyData } = useWhitelistPolicyQuery({
     variables: { colonyAddress },
   });
+  const { data } = useMetaColonyQuery();
+  const { username, ethereal } = useLoggedInUser();
+
+  const userHasProfile = !!username && !ethereal;
 
   const openAgreementDialog = useDialog(AgreementDialog);
   const openCompleteKYCDialog = useDialog(CompleteKYCDialog);
+  const openSynapsDialog = useDialog(SynapsKYCDialog);
 
   const signatureRequired =
-    !disabled &&
+    userHasProfile &&
     whitelistPolicyData?.whitelistPolicy.agreementRequired &&
     !userStatus?.userSignedAgreement;
 
   const isKYCRequired =
-    !disabled &&
+    userHasProfile &&
     whitelistPolicyData?.whitelistPolicy.kycRequired &&
     !userStatus?.userIsApproved;
 
@@ -63,7 +70,11 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
     [agreementHashData, openAgreementDialog, colonyAddress],
   );
 
-  const openKYCDialog = useCallback(() => openCompleteKYCDialog(), []);
+  const openKYCDialog = useCallback(() => {
+    return data?.processedMetaColony
+      ? openSynapsDialog({ colonyAddress })
+      : openCompleteKYCDialog();
+  }, [openCompleteKYCDialog, openSynapsDialog, data, colonyAddress]);
 
   useEffect(() => {
     if (!userStatus || !whitelistPolicyData || loading) return;
@@ -94,7 +105,7 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
     <Button
       text={MSG.getWhitelisted}
       appearance={{ theme: 'primary', size: 'large' }}
-      disabled={disabled}
+      disabled={!userHasProfile}
       onClick={showWhitelistModal}
     />
   );
