@@ -1,0 +1,42 @@
+.main {
+  padding: 20px;
+  width: 460px;
+}
+
+.section {
+  margin-left: -2px;
+  padding: 14px 0;
+}
+
+.section:first-of-type {
+  padding-top: 0;
+  padding-bottom: 18px;
+}
+
+.section:last-of-type {
+  padding-bottom: 0;
+}
+
+.section + .section {
+  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.reputation {
+  display: flex;
+  align-items: baseline;
+}
+
+.reputationHeading {
+  margin-right: 8px;
+}
+
+.reputationError {
+  color: var(--danger);
+}
+
+.loadingSpinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}

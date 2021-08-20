@@ -62,15 +62,6 @@
   height: auto;
 }
 
-.reputation {
-  display: flex;
-  align-items: baseline;
-}
-
-.reputationHeading {
-  margin-right: 8px;
-}
-
 .reputationHeading h4 {
   color: var(--temp-grey-blue-7);
 }
@@ -96,11 +87,18 @@
   margin-top: 6px;
 }
 
-.reputationError {
-  color: var(--danger);
-}
-
 .etherscanLink {
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
+}
+
+.container {
+  display: flex;
+}
+
+.textContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-left: 12px;
 }
