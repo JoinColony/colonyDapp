@@ -22,28 +22,30 @@ const UserInfo = ({
   },
   user,
 }: Props) => (
-  <>
+  <div className={styles.container}>
     <UserAvatar size="s" address={walletAddress} user={user} notSet={false} />
-    {userDisplayName && (
-      <Heading
-        appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
-        text={userDisplayName}
-      />
-    )}
-    {username && (
-      /*
-       * @NOTE Potential recurrsion loop here.
-       *
-       * Never pass `showInfo` to this instance of UserMention, otherwise you'll trigger it
-       */
-      <p className={styles.userName}>
-        <UserMention username={username} hasLink />
-      </p>
-    )}
-    <div className={styles.address}>
-      <CopyableAddress full>{walletAddress}</CopyableAddress>
+    <div className={styles.textContainer}>
+      {userDisplayName && (
+        <Heading
+          appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
+          text={userDisplayName}
+        />
+      )}
+      {username && (
+        /*
+         * @NOTE Potential recurrsion loop here.
+         *
+         * Never pass `showInfo` to this instance of UserMention, otherwise you'll trigger it
+         */
+        <p className={styles.userName}>
+          <UserMention username={username} hasLink />
+        </p>
+      )}
+      <div className={styles.address}>
+        <CopyableAddress full>{walletAddress}</CopyableAddress>
+      </div>
     </div>
-  </>
+  </div>
 );
 
 UserInfo.displayName = displayName;
