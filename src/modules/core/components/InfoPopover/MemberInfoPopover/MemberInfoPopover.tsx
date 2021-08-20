@@ -12,9 +12,9 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 
-import UserInfo from './UserInfo';
+import UserInfo from '../UserInfo';
 
-import styles from './InfoPopover.css';
+import styles from './MemberInfoPopover.css';
 
 interface Props {
   colonyAddress: Address;
@@ -24,22 +24,22 @@ interface Props {
 
 const MSG = defineMessages({
   headingReputation: {
-    id: 'InfoPopover.MemberInfoPopover.MemberInfo.headingReputation',
+    id: 'InfoPopover.MemberInfoPopover.headingReputation',
     defaultMessage: 'Reputation',
   },
   descriptionReputation: {
-    id: 'InfoPopover.MemberInfoPopover.MemberInfo.descriptionReputation',
+    id: 'InfoPopover.MemberInfoPopover.descriptionReputation',
     defaultMessage: 'earned for tasks paid in native tokens',
   },
   errorReputation: {
-    id: 'InfoPopover.MemberInfoPopover.MemberInfo.errorReputation',
+    id: 'InfoPopover.MemberInfoPopover.errorReputation',
     defaultMessage: 'We had a problem loading the data',
   },
 });
 
-const displayName = 'InfoPopover.MemberInfoPopover.MemberInfo';
+const displayName = 'InfoPopover.MemberInfoPopover';
 
-const MemberInfo = ({
+const MemberInfoPopover = ({
   colonyAddress,
   domainId,
   user = { id: '', profile: { walletAddress: '' } },
@@ -76,6 +76,20 @@ const MemberInfo = ({
       fetchTokenInfo({ variables: { address: nativeTokenAddress } });
     }
   }, [fetchTokenInfo, nativeTokenAddressData]);
+
+  if (loadingNativeTokenAddress || loadingUserReputation) {
+    return (
+      <div className={`${styles.main} ${styles.loadingSpinnerContainer}`}>
+        <SpinnerLoader
+          appearance={{
+            theme: 'primary',
+            size: 'medium',
+            layout: 'horizontal',
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.main}>
@@ -123,6 +137,6 @@ const MemberInfo = ({
   );
 };
 
-MemberInfo.displayName = displayName;
+MemberInfoPopover.displayName = displayName;
 
-export default MemberInfo;
+export default MemberInfoPopover;
