@@ -14,6 +14,7 @@ import {
   useCurrentPeriodTokensQuery,
   Colony,
   useCoinMachineSalePeriodQuery,
+  useCoinMachineTokenBalanceQuery,
 } from '~data/index';
 
 import Chat from './Chat';
@@ -87,8 +88,17 @@ const CoinMachine = ({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
   });
+
+  const {
+    data: coinMachineTokenBalanceData,
+    loading: coinMachineTokenBalanceLoading,
+  } = useCoinMachineTokenBalanceQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+  });
+
   const hasSaleStarted = !bigNumberify(
-    periodTokensData?.currentPeriodTokens.tokenPeriodBalance || 0,
+    coinMachineTokenBalanceData?.coinMachineTokenBalance || 0,
   ).isZero();
 
   const periodTokens = useMemo(() => {
@@ -106,9 +116,6 @@ const CoinMachine = ({
       targetPeriodTokens: bigNumberify(
         periodTokensData.currentPeriodTokens.targetPerPeriodTokens,
       ),
-      tokenPeriodBalance: bigNumberify(
-        periodTokensData.currentPeriodTokens.tokenPeriodBalance,
-      ),
     };
   }, [periodTokensData, saleTokensData, hasSaleStarted]);
 
@@ -124,7 +131,8 @@ const CoinMachine = ({
     saleTokensLoading ||
     salePeriodLoading ||
     !data?.processedColony?.installedExtensions ||
-    periodTokensLoading
+    periodTokensLoading ||
+    coinMachineTokenBalanceLoading
   ) {
     return (
       <div className={styles.loadingSpinner}>
