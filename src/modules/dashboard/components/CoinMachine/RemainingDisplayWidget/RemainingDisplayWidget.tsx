@@ -193,7 +193,7 @@ const RemainingDisplayWidget = ({
         payload: { colonyAddress },
       });
     }
-  }, [timeLeft, colonyAddress, dispatch]);
+  }, [timeLeft, colonyAddress, dispatch, value]);
 
   return (
     <div className={getMainClasses(appearance, styles)}>

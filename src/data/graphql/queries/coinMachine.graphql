@@ -53,6 +53,9 @@ query CurrentPeriodTokens($colonyAddress: String!) {
     maxPerPeriodTokens
     activeSoldTokens
     targetPerPeriodTokens
-    tokenPeriodBalance
   }
+}
+
+query CoinMachineTokenBalance($colonyAddress: String!) {
+  coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
 }
