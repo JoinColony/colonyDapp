@@ -10,7 +10,13 @@ import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
 import { IconButton, ActionButton } from '~core/Button';
-import { Input, ActionForm, Textarea, TokenSymbolSelector } from '~core/Fields';
+import {
+  Input,
+  ActionForm,
+  Textarea,
+  TokenSymbolSelector,
+  InputLabel,
+} from '~core/Fields';
 import Heading from '~core/Heading';
 import MaskedAddress from '~core/MaskedAddress';
 
@@ -175,7 +181,6 @@ const ExtensionSetup = ({
           text={MSG.title}
         />
         <FormattedMessage {...MSG.descriptionMissingPermissions} />
-
         <div className={styles.inputContainer}>
           <ActionButton
             submit={ActionTypes.COLONY_EXTENSION_ENABLE}
@@ -191,7 +196,7 @@ const ExtensionSetup = ({
 
   if (!initializationParams) return null;
 
-  const displayParams = (params, values) =>
+  const displayParams = (params, values, isExtraParams) =>
     params.map(
       ({
         paramName,
@@ -202,7 +207,10 @@ const ExtensionSetup = ({
         options,
         disabled,
       }) => (
-        <div key={paramName}>
+        <div
+          key={paramName}
+          className={isExtraParams ? styles.extraParams : ''}
+        >
           {type === ExtensionParamType.Input && (
             <div className={styles.input}>
               <Input
@@ -253,15 +261,19 @@ const ExtensionSetup = ({
             />
           )}
           {type === ExtensionParamType.TokenSymbolSelector && (
-            <div className={styles.tokenSelector}>
-              <div>
-                <FormattedMessage {...title} />
-              </div>
+            <div>
+              <InputLabel
+                label={title}
+                appearance={{
+                  theme: 'minimal',
+                  size: 'medium',
+                }}
+              />
               <div className={styles.tokenSelectorContainer}>
                 {fieldName && (
-                  <div>
+                  <p>
                     <FormattedMessage {...fieldName} />
-                  </div>
+                  </p>
                 )}
                 <TokenSymbolSelector
                   tokens={tokens}
@@ -271,12 +283,14 @@ const ExtensionSetup = ({
                   label={paramName}
                 />
               </div>
-              <p>{tokenContractAddress}</p>
-              <p>
-                <MaskedAddress address={nativeTokenAddress} full />
+              <p className={styles.tokenAddessLink}>
+                {tokenContractAddress}
+                <p>
+                  <MaskedAddress address={nativeTokenAddress} full />
+                </p>
               </p>
               {description && (
-                <p>
+                <p className={styles.tokenSelectorDescription}>
                   <FormattedMessage {...description} />
                 </p>
               )}
@@ -307,9 +321,11 @@ const ExtensionSetup = ({
             appearance={{ size: 'medium', margin: 'none' }}
             text={MSG.title}
           />
-          <FormattedMessage {...MSG.description} />
+          <div className={styles.extensionDescription}>
+            <FormattedMessage {...MSG.description} />
+          </div>
           {descriptionExtended && (
-            <div className={styles.extensionDescription}>
+            <div className={styles.descriptionExtended}>
               <FormattedMessage
                 {...descriptionExtended}
                 values={{
@@ -321,12 +337,15 @@ const ExtensionSetup = ({
           )}
           {extraInitParams && (
             <div className={styles.inputContainer}>
-              {displayParams(extraInitParams, values)}
-              <FormattedMessage {...MSG.initParams} />
+              {displayParams(extraInitParams, values, true)}
+              <Heading
+                appearance={{ size: 'medium', margin: 'none' }}
+                text={MSG.initParams}
+              />
             </div>
           )}
           <div className={styles.inputContainer}>
-            {displayParams(initializationParams, values)}
+            {displayParams(initializationParams, values, false)}
           </div>
           <IconButton
             appearance={{ theme: 'primary', size: 'large' }}
@@ -340,6 +359,5 @@ const ExtensionSetup = ({
     </ActionForm>
   );
 };
-ExtensionSetup.displayName = 'dashboard.Extensions.ExtensionSetup';
 
 export default ExtensionSetup;
