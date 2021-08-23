@@ -87,12 +87,12 @@ const CoinMachine = ({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
   });
-  const saleStarted = !bigNumberify(
+  const hasSaleStarted = !bigNumberify(
     periodTokensData?.currentPeriodTokens.tokenPeriodBalance || 0,
   ).isZero();
 
   const periodTokens = useMemo(() => {
-    if (!saleTokensData || !periodTokensData || !saleStarted) {
+    if (!saleTokensData || !periodTokensData || !hasSaleStarted) {
       return undefined;
     }
     return {
@@ -110,7 +110,7 @@ const CoinMachine = ({
         periodTokensData.currentPeriodTokens.tokenPeriodBalance,
       ),
     };
-  }, [periodTokensData, saleTokensData, saleStarted]);
+  }, [periodTokensData, saleTokensData, hasSaleStarted]);
 
   const isSoldOut = useMemo(
     () =>
@@ -199,7 +199,7 @@ const CoinMachine = ({
             <div className={styles.buy}>
               <BuyTokens
                 colony={colony}
-                isCurrentlyOnSale={saleStarted}
+                isCurrentlyOnSale={hasSaleStarted}
                 isSoldOut={isSoldOut}
               />
             </div>
@@ -207,17 +207,15 @@ const CoinMachine = ({
               <RemainingDisplayWidget
                 displayType={DataDisplayType.Time}
                 appearance={{ theme: !isSoldOut ? 'white' : 'danger' }}
-                value={saleStarted ? timeRemaining : null}
+                value={hasSaleStarted ? timeRemaining : null}
                 periodLength={periodLength}
                 colonyAddress={colonyAddress}
-                saleStarted={saleStarted}
               />
             </div>
             <div className={styles.tokensRemaining}>
               <RemainingDisplayWidget
                 displayType={DataDisplayType.Tokens}
                 periodTokens={periodTokens}
-                saleStarted={saleStarted}
               />
             </div>
           </>
