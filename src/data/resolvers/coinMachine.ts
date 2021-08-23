@@ -235,7 +235,7 @@ export const coinMachineResolvers = ({
         );
 
         const periodLength = await coinMachineClient.getPeriodLength();
-        const windowSize = await coinMachineClient.getPeriodLength();
+        const windowSize = await coinMachineClient.getWindowSize();
         const targetPerPeriod = await coinMachineClient.getTargetPerPeriod();
         const blockTime = await getBlockTime(networkClient.provider, 'latest');
 
