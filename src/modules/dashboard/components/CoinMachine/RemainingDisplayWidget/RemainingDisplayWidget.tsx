@@ -32,7 +32,6 @@ type Appearance = {
 type Props = {
   colonyAddress?: Address;
   displayType: DataDisplayType;
-  saleStarted: boolean;
   value?: string | number | null;
   appearance?: Appearance;
   periodLength?: number;
@@ -92,13 +91,12 @@ const RemainingDisplayWidget = ({
   periodLength,
   periodTokens,
   colonyAddress,
-  saleStarted,
 }: Props) => {
   const dispatch = useDispatch();
 
   const displaysTimer = displayType === DataDisplayType.Time;
   const { splitTime, timeLeft } = useSplitTime(
-    displaysTimer && typeof value === 'number' ? value : 0,
+    displaysTimer && typeof value === 'number' ? value : -1,
     displaysTimer,
     periodLength,
   );
@@ -189,7 +187,7 @@ const RemainingDisplayWidget = ({
   }, [periodTokens]);
 
   useEffect(() => {
-    if (timeLeft <= 0 && colonyAddress !== undefined) {
+    if (value && timeLeft <= 0 && colonyAddress !== undefined) {
       dispatch({
         type: ActionTypes.COIN_MACHINE_PERIOD_UPDATE,
         payload: { colonyAddress },
@@ -219,13 +217,9 @@ const RemainingDisplayWidget = ({
           [styles.valueWarning]: isValueWarning || showValueWarning,
         })}
       >
-        {saleStarted ? (
-          displayedValue
-        ) : (
-          <FormattedMessage {...widgetText.placeholder} />
-        )}
+        {displayedValue}
       </p>
-      {saleStarted && periodTokens && widgetText.footerText && (
+      {periodTokens && widgetText.footerText && (
         <div className={styles.footer}>
           <p className={styles.footerText}>
             <FormattedMessage {...widgetText.footerText} />
