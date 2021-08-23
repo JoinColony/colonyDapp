@@ -3,6 +3,10 @@
 }
 
 .extensionDescription {
+  margin-top: 30px;
+}
+
+.descriptionExtended {
   white-space: pre-line;
 }
 
@@ -43,15 +47,31 @@
   color: var(--temp-grey-blue-7);
 }
 
-.tokenSelector {
-  margin-top: 25px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--temp-grey-blue-7);
-}
-
 .tokenSelectorContainer {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
   height: 42px;
+}
+
+.tokenAddessLink {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.tokenAddessLink > p {
+  margin-bottom: 20px;
+}
+
+.tokenSelectorContainer > p {
+  composes: tokenAddessLink;
+  width: 280px;
+}
+
+.extraParams {
+  margin-bottom: 25px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--temp-grey-blue-7);
 }
