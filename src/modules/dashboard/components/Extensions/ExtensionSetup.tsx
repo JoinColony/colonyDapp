@@ -57,13 +57,17 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionSetup.setPermissions',
     defaultMessage: 'Set permissions',
   },
-  complementaryLabel: {
-    id: 'dashboard.Extensions.ExtensionSetup.complementaryLabel',
-    defaultMessage: `{isPeriod, select,
-      true {hours}
-      false {%}
-      other { }
-    }`,
+  hours: {
+    id: 'dashboard.Extensions.ExtensionSetup.hours',
+    defaultMessage: 'hours',
+  },
+  periods: {
+    id: 'dashboard.Extensions.ExtensionSetup.periods',
+    defaultMessage: 'periods',
+  },
+  percent: {
+    id: 'dashboard.Extensions.ExtensionSetup.percent',
+    defaultMessage: '%',
   },
   initParams: {
     id: 'dashboard.Extensions.ExtensionSetup.initParams',
@@ -165,6 +169,11 @@ const ExtensionSetup = ({
     whitelistAddress,
   ]);
 
+  const getTokenLabel = useCallback(
+    (address) => tokens.find((token) => token.address === address)?.symbol,
+    [tokens],
+  );
+
   if (
     installedExtension.details.deprecated ||
     (installedExtension.details.initialized &&
@@ -211,6 +220,8 @@ const ExtensionSetup = ({
         type,
         options,
         disabled,
+        complementaryLabel,
+        tokenLabel,
       }) => (
         <div
           key={paramName}
@@ -231,14 +242,13 @@ const ExtensionSetup = ({
                   ),
                 }}
               />
-              {extensionId === Extension.VotingReputation && (
+              {(complementaryLabel || tokenLabel) && (
                 <span className={styles.complementaryLabel}>
-                  <FormattedMessage
-                    {...MSG.complementaryLabel}
-                    values={{
-                      isPeriod: endsWith(paramName, 'Period'),
-                    }}
-                  />
+                  {complementaryLabel ? (
+                    <FormattedMessage {...MSG[complementaryLabel]} />
+                  ) : (
+                    getTokenLabel(values[tokenLabel])
+                  )}
                 </span>
               )}
             </div>
