@@ -10,4 +10,3 @@ export const textAreaDescription: string;
 export const tokenSelectorContainer: string;
 export const tokenAddessLink: string;
 export const extraParams: string;
-export const tokenSelectorDescription: string;
