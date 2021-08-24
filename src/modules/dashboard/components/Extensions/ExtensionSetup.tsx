@@ -2,6 +2,7 @@ import { FormikProps } from 'formik';
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
+import moveDecimal from 'move-decimal-point';
 
 import { endsWith } from 'lodash';
 import { Extension } from '@colony/colony-js';
@@ -100,6 +101,11 @@ const ExtensionSetup = ({
   }>();
   const history = useHistory();
 
+  const getToken = useCallback(
+    (address) => tokens.find((token) => token.address === address),
+    [tokens],
+  );
+
   const handleFormSuccess = useCallback(() => {
     history.replace(`/colony/${colonyName}/extensions/${extensionId}`);
   }, [history, colonyName, extensionId]);
@@ -123,9 +129,39 @@ const ExtensionSetup = ({
           return formattedPayload;
         }
         if (extensionId === Extension.CoinMachine) {
+          const {
+            targetPerPeriod,
+            tokenToBeSold,
+            maxPerPeriod,
+            userLimitFraction,
+            startingPrice,
+            purchaseToken,
+            periodLength,
+          } = payload;
+
+          const soldTokenDecimals = getToken(tokenToBeSold)?.decimals;
+          console.log(
+            '🚀 ~ file: ExtensionSetup.tsx ~ line 145 ~ mapPayload ~ getToken(tokenToBeSold)?.decimals',
+            getToken(tokenToBeSold)?.decimals,
+          );
+
           return {
             ...payload,
-            userLimitFraction: bigNumberify(payload.userLimitFraction),
+            targetPerPeriod: bigNumberify(
+              moveDecimal(targetPerPeriod, soldTokenDecimals),
+            ),
+            maxPerPeriod: bigNumberify(
+              moveDecimal(maxPerPeriod, soldTokenDecimals),
+            ),
+            userLimitFraction: bigNumberify(
+              moveDecimal(userLimitFraction, soldTokenDecimals),
+            ),
+            startingPrice: bigNumberify(
+              moveDecimal(startingPrice, getToken(purchaseToken)?.decimals),
+            ),
+            perdiodLength: new Decimal(periodLength)
+              .mul(3600) // Seconds in 1 hour
+              .toFixed(0, Decimal.ROUND_HALF_UP),
           };
         }
         return payload;
@@ -168,11 +204,6 @@ const ExtensionSetup = ({
     isWhitelistExtensionEnabled,
     whitelistAddress,
   ]);
-
-  const getTokenLabel = useCallback(
-    (address) => tokens.find((token) => token.address === address)?.symbol,
-    [tokens],
-  );
 
   if (
     installedExtension.details.deprecated ||
@@ -247,7 +278,7 @@ const ExtensionSetup = ({
                   {complementaryLabel ? (
                     <FormattedMessage {...MSG[complementaryLabel]} />
                   ) : (
-                    getTokenLabel(values[tokenLabel])
+                    getToken(values[tokenLabel])?.symbol
                   )}
                 </span>
               )}
