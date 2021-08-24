@@ -61,13 +61,8 @@
   color: var(--dark);
 }
 
-.tokenAddessLink > p {
+.tokenAddessLink > div {
   margin-bottom: 20px;
-}
-
-.tokenSelectorContainer > p {
-  composes: tokenAddessLink;
-  width: 280px;
 }
 
 .extraParams {
