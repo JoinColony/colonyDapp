@@ -42,6 +42,8 @@ export interface ExtensionInitParams {
   type: ExtensionParamType;
   options?: CustomRadioProps[];
   disabled?: (props: any) => boolean;
+  complementaryLabel?: 'hours' | 'periods' | 'percent';
+  tokenLabel?: 'tokenToBeSold' | 'purchaseToken';
 }
 
 export interface ExtensionData {
@@ -439,6 +441,7 @@ const extensions: { [key: string]: ExtensionData } = {
         description: MSG.coinMachinePeriodLengthDescription,
         defaultValue: 3600,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'hours',
       },
       {
         paramName: 'windowSize',
@@ -447,38 +450,43 @@ const extensions: { [key: string]: ExtensionData } = {
         description: MSG.coinMachineWindowSizeDescription,
         defaultValue: 8,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'periods',
       },
       {
         paramName: 'targetPerPeriod',
         validation: yup.number().required(),
         title: MSG.coinMachineTargetPerPeriodTitle,
         description: MSG.coinMachineTargetPerPeriodDescription,
-        defaultValue: 10,
+        defaultValue: 200000,
         type: ExtensionParamType.Input,
+        tokenLabel: 'tokenToBeSold',
       },
       {
         paramName: 'maxPerPeriod',
         validation: yup.number().required(),
         title: MSG.coinMachineMaxPerPeriodTitle,
         description: MSG.coinMachineMaxPerPeriodDescription,
-        defaultValue: `100000000000000000000`,
+        defaultValue: 400000,
         type: ExtensionParamType.Input,
+        tokenLabel: 'tokenToBeSold',
       },
       {
         paramName: 'userLimitFraction',
         validation: yup.string().required(),
         title: MSG.coinMachineUserLimitFractionTitle,
         description: MSG.coinMachineUserLimitFractionDescription,
-        defaultValue: `1000000000000000000`,
+        defaultValue: 200000,
         type: ExtensionParamType.Input,
+        tokenLabel: 'tokenToBeSold',
       },
       {
         paramName: 'startingPrice',
         validation: yup.number().required(),
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
-        defaultValue: `10000000000000000`,
+        defaultValue: 0.1,
         type: ExtensionParamType.Input,
+        tokenLabel: 'purchaseToken',
       },
     ],
     uninstallable: true,
@@ -509,6 +517,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.votingReputationTotalStakeFractionTitle,
         description: MSG.votingReputationTotalStakeFractionDescription,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'percent',
       },
       {
         paramName: 'voterRewardFraction',
@@ -521,6 +530,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.votingReputationVoterRewardFractionTitle,
         description: MSG.votingReputationVoterRewardFractionDescription,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'percent',
       },
       {
         paramName: 'userMinStakeFraction',
@@ -533,6 +543,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.votingReputationUserMinStakeFractionTitle,
         description: MSG.votingReputationUserMinStakeFractionDescription,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'percent',
       },
       {
         paramName: 'maxVoteFraction',
@@ -545,6 +556,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.votingReputationMaxVoteFractionTitle,
         description: MSG.votingReputationMaxVoteFractionDescription,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'percent',
       },
       {
         paramName: 'stakePeriod',
@@ -557,6 +569,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.votingReputationStakePeriodTitle,
         description: MSG.votingReputationStakePeriodDescription,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'hours',
       },
       {
         paramName: 'submitPeriod',
@@ -569,6 +582,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.votingReputationSubmitPeriodTitle,
         description: MSG.votingReputationSubmitPeriodDescription,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'hours',
       },
       {
         paramName: 'revealPeriod',
@@ -581,6 +595,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.votingReputationRevealPeriodTitle,
         description: MSG.votingReputationRevealPeriodDescription,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'hours',
       },
       {
         paramName: 'escalationPeriod',
@@ -593,6 +608,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.votingReputationEscalationPeriodTitle,
         description: MSG.votingReputationEscalationPeriodDescription,
         type: ExtensionParamType.Input,
+        complementaryLabel: 'hours',
       },
     ],
     uninstallable: true,
