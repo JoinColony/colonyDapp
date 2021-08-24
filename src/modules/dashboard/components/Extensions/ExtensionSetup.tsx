@@ -143,9 +143,13 @@ const ExtensionSetup = ({
       return {};
     }
     const defaultValues = createExtensionDefaultValues(initializationParams);
+    const extraParamsDefaultValues =
+      extraInitParams && createExtensionDefaultValues(extraInitParams);
+
     if (extensionId === Extension.CoinMachine) {
       return {
         ...defaultValues,
+        ...extraParamsDefaultValues,
         whitelistAddress:
           (isWhitelistExtensionEnabled && whitelistAddress) || AddressZero,
         tokenToBeSold: nativeTokenAddress,
@@ -154,6 +158,7 @@ const ExtensionSetup = ({
     return defaultValues;
   }, [
     extensionId,
+    extraInitParams,
     initializationParams,
     nativeTokenAddress,
     isWhitelistExtensionEnabled,
@@ -285,15 +290,11 @@ const ExtensionSetup = ({
               </div>
               <p className={styles.tokenAddessLink}>
                 {tokenContractAddress}
-                <p>
+                <div>
                   <MaskedAddress address={nativeTokenAddress} full />
-                </p>
+                </div>
               </p>
-              {description && (
-                <p className={styles.tokenSelectorDescription}>
-                  <FormattedMessage {...description} />
-                </p>
-              )}
+              {description && <FormattedMessage {...description} />}
             </div>
           )}
         </div>
@@ -321,7 +322,9 @@ const ExtensionSetup = ({
             appearance={{ size: 'medium', margin: 'none' }}
             text={MSG.title}
           />
-          <div className={styles.extensionDescription}>
+          <div
+            className={descriptionExtended ? styles.extensionDescription : ''}
+          >
             <FormattedMessage {...MSG.description} />
           </div>
           {descriptionExtended && (
