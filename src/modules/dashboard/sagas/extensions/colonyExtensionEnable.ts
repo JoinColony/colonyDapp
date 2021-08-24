@@ -30,6 +30,10 @@ function* colonyExtensionEnable({
   meta,
   payload: { colonyAddress, extensionId, ...payload },
 }: Action<ActionTypes.COLONY_EXTENSION_ENABLE>) {
+  console.log(
+    '🚀 ~ file: colonyExtensionEnable.ts ~ line 33 ~ payload',
+    payload,
+  );
   const extension = extensionData[extensionId];
   const initChannelName = `${meta.id}-initialise`;
   const setPermissionChannelName = `${meta.id}-setUserRoles`;
@@ -87,6 +91,14 @@ function* colonyExtensionEnable({
       details: { initialized, missingPermissions },
     } = data.colonyExtension;
 
+    const modifyParams = (params) =>
+      params.map(({ paramName }) => {
+        if (typeof payload[paramName] === 'number') {
+          return bigNumberify(String(payload[paramName]));
+        }
+        return payload[paramName];
+      });
+
     if (!initialized && extension.initializationParams) {
       let initParams = [] as any[];
 
@@ -95,14 +107,21 @@ function* colonyExtensionEnable({
           payload?.policy !== PolicyType.AgreementOnly,
           agreementHash,
         ];
+      } else if (extensionId === Extension.CoinMachine) {
+        const params = [
+          ...extension.initializationParams,
+          ...(extension.extraInitParams ? extension.extraInitParams : []),
+        ].sort((a, b) => a.orderNumber - b.orderNumber);
+
+        initParams = modifyParams(params);
       } else {
-        initParams = extension.initializationParams.map(({ paramName }) => {
-          if (typeof payload[paramName] === 'number') {
-            return bigNumberify(String(payload[paramName]));
-          }
-          return payload[paramName];
-        });
+        initParams = modifyParams(extension.initializationParams);
       }
+
+      console.log(
+        '🚀 ~ file: colonyExtensionEnable.ts ~ line 92 ~ initParams',
+        initParams,
+      );
 
       yield fork(createTransaction, initChannelName, {
         context: `${extensionId}Client`,

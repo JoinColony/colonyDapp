@@ -44,6 +44,7 @@ export interface ExtensionInitParams {
   disabled?: (props: any) => boolean;
   complementaryLabel?: 'hours' | 'periods' | 'percent';
   tokenLabel?: 'tokenToBeSold' | 'purchaseToken';
+  orderNumber?: number;
 }
 
 export interface ExtensionData {
@@ -413,6 +414,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineWhitelistAddressTitle,
         description: MSG.coinMachineWhitelistAddressDescription,
         type: ExtensionParamType.Input,
+        orderNumber: 9,
       },
       {
         paramName: 'tokenToBeSold',
@@ -422,6 +424,7 @@ const extensions: { [key: string]: ExtensionData } = {
         fieldName: MSG.coinMachineTokenToBeSoldFieldName,
         description: MSG.coinMachineTokenToBeSoldDescription,
         type: ExtensionParamType.TokenSymbolSelector,
+        orderNumber: 1,
       },
       {
         paramName: 'purchaseToken',
@@ -431,6 +434,7 @@ const extensions: { [key: string]: ExtensionData } = {
         fieldName: MSG.coinMachinePurchaseTokenFieldName,
         description: MSG.coinMachinePurchaseTokenDescription,
         type: ExtensionParamType.TokenSymbolSelector,
+        orderNumber: 2,
       },
     ],
     initializationParams: [
@@ -442,6 +446,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 1,
         type: ExtensionParamType.Input,
         complementaryLabel: 'hours',
+        orderNumber: 3,
       },
       {
         paramName: 'windowSize',
@@ -451,6 +456,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 24,
         type: ExtensionParamType.Input,
         complementaryLabel: 'periods',
+        orderNumber: 4,
       },
       {
         paramName: 'targetPerPeriod',
@@ -460,6 +466,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 200000,
         type: ExtensionParamType.Input,
         tokenLabel: 'tokenToBeSold',
+        orderNumber: 5,
       },
       {
         paramName: 'maxPerPeriod',
@@ -469,6 +476,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 400000,
         type: ExtensionParamType.Input,
         tokenLabel: 'tokenToBeSold',
+        orderNumber: 6,
       },
       {
         paramName: 'userLimitFraction',
@@ -478,6 +486,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 200000,
         type: ExtensionParamType.Input,
         tokenLabel: 'tokenToBeSold',
+        orderNumber: 7,
       },
       {
         paramName: 'startingPrice',
@@ -487,6 +496,7 @@ const extensions: { [key: string]: ExtensionData } = {
         defaultValue: 0.1,
         type: ExtensionParamType.Input,
         tokenLabel: 'purchaseToken',
+        orderNumber: 8,
       },
     ],
     uninstallable: true,
