@@ -8,6 +8,7 @@ import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import { useLoggedInUser } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { SpinnerLoader } from '~core/Preloaders';
+import { getKycStatus } from './kycApi';
 import { authenticateKYC } from '../../../../../api';
 
 import styles from './SynapsKYCDialog.css';
@@ -21,17 +22,14 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.CoinMachine.SynapsKYCDialog';
 
-const KYC_ORACLE_ENDPOINT = 'http://localhost:3003/status/session';
-const STATUS_UPDATE_QUERY = `${KYC_ORACLE_ENDPOINT}/info`;
-const KYC_DETAILS = `${KYC_ORACLE_ENDPOINT}/details`;
-
 const SynapsKYCDialog = ({ cancel }: DialogProps) => {
   const [kycDetails, setKycDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const { walletAddress } = useLoggedInUser();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const initSynaps = async () => {
       setIsLoading(true);
       const wallet = TEMP_getContext(ContextModule.Wallet);
       const sessionId = await authenticateKYC(wallet);
@@ -39,10 +37,16 @@ const SynapsKYCDialog = ({ cancel }: DialogProps) => {
       Synaps.init({
         type: 'embed',
       });
+      Synaps.on('finish', async () => {
+        const data = await getKycStatus(sessionId);
+        if (data?.status === 'VERIFIED') {
+          setIsValid(true);
+        }
+    });
       setIsLoading(false);
     };
     if (!walletAddress) return;
-    fetchData();
+    initSynaps();
   }, [walletAddress]);
 
   return (
@@ -56,6 +60,8 @@ const SynapsKYCDialog = ({ cancel }: DialogProps) => {
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.buttonText}
+          disabled={!isValid}
+          onClick={cancel}
         />
       </DialogSection>
     </Dialog>
