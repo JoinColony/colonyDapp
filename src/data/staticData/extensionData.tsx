@@ -55,11 +55,9 @@ export interface ExtensionData {
   descriptionShort: string | MessageDescriptor;
   descriptionLong: string | MessageDescriptor;
   descriptionExtended?: string | MessageDescriptor;
-  descriptionLink1?: ReactElement;
-  descriptionLink2?: ReactElement;
+  descriptionLinks?: ReactElement[];
   tokenContractAddress?: ReactElement;
   info?: string | MessageDescriptor;
-  termsCondition?: string | MessageDescriptor;
   currentVersion: number;
   createdAt: number;
   neededColonyPermissions: ColonyRole[];
@@ -95,9 +93,10 @@ const oneTransactionPaymentMessages = {
   },
 };
 
+const COIN_MACHINE_BLOG_POST_LINK = `https://blog.colony.io/introducing-coin-machine/`;
+const COIN_MACHINE_GOOGLE_SHEET_LINK = `https://docs.google.com/spreadsheets/d/1ZCuFcwqI4S6ZK5OwTl1yN7AK8mjv5d_V3g-_kMen01Y/edit#gid=2013814210`;
 // to add a more detailed link
 const COIN_MACHINE_DESCRIPTION_LINK = 'https://colony.gitbook.io/colony/';
-const COIN_MACHINE_GOOGLE_SHEET_LINK = `https://docs.google.com/spreadsheets/d/1ZCuFcwqI4S6ZK5OwTl1yN7AK8mjv5d_V3g-_kMen01Y/edit#gid=2013814210`;
 const BLOCKSCOUT_LINK = 'https://blockscout.com';
 
 const coinMachineMessages = {
@@ -111,11 +110,15 @@ const coinMachineMessages = {
   },
   coinMachineDescriptionLong: {
     id: 'extensions.CoinMachine.descriptionLong',
-    defaultMessage: 'A simple way to continually sell tokens.',
+    defaultMessage: `Coin Machine is a simple way to sell your Colony’s token.\n\nCoin Machine sells limited amounts of tokens in fixed-price batches, adjusting prices up or down in between sale periods based on recent demand.\n\nThink of it like a series of hard-capped micro-ICOs in which token price is determined by performance in prior sales: if demand for the token is high, then the price will increase, if demand decreases as price increases, then price will decrease to attract more buyers.\n\nCoin Machine sacrifices continual availability and real-time price adjustment for the simplicity of fixed price and fixed supply, thereby also sidestepping the challenges of price manipulation, volatility, and front-running.\n\nRaised funds are deposited directly to your Colony’s working capital, and therefore immediately available for your DAO to use.\n\nUse alongside Colony’s Whitelist extension to permission participation in your Coin Machine sale using your own KYC/AML process, and / or Agreement signing.\n\nFor more detail on Coin Machine, please read this introductory blog post: {link0}`,
   },
   coinMachineDescriptionExtended: {
     id: 'extensions.CoinMachine.descriptionExtended',
     defaultMessage: `\nAfter enabling Coin Machine, to start your sale simply send the quantity of the token you wish to sell to your Coin Machine’s “Contract address” (available on the right side of this screen) and the sale will start immediately. The sale will end once either all the tokens are sold, or the extension is deprecated.\n\nTo better understand how the following parameters will affect your token sale, you may copy and experiment with this {link1} to model your own sale.\n\nTo learn more about Coin Machine, please see {link2}.`,
+  },
+  coinMachineDescriptionBlogPostLink: {
+    id: 'extensions.CoinMachine.coinMachineDescriptionBlogPostLink',
+    defaultMessage: 'A simple way to sell tokens',
   },
   coinMachineDescriptionGoogleSheetLink: {
     id: 'extensions.CoinMachine.coinMachineDescriptionLink',
@@ -191,7 +194,7 @@ const coinMachineMessages = {
   },
   coinMachineUserLimitFractionDescription: {
     id: 'extensions.CoinMachine.param.userLimitFraction.description',
-    defaultMessage: `The maximum number of tokens a single account can purchase.`,
+    defaultMessage: `The maximum percent of the total tokens that a single account can purchase.`,
   },
   coinMachineStartingPriceTitle: {
     id: 'extensions.CoinMachine.param.startingPriceTitle.title',
@@ -306,6 +309,8 @@ const votingReputationMessages = {
   },
 };
 
+const WHITELIST_TERMS_AND_CONDITIONS_LINK = 'https://colony.io/pdf/terms.pdf';
+
 const whitelistMessages = {
   whitelistName: {
     id: 'extensions.whitelist.name',
@@ -329,7 +334,7 @@ const whitelistMessages = {
   },
   whitelistInfo: {
     id: 'extensions.whitelist.info',
-    defaultMessage: `The responsibility is on the issuer to ensure being compliant with the local rules. {link}`,
+    defaultMessage: `The responsibility is on the issuer to ensure being compliant with the local rules. {link0}`,
   },
   agreementTitle: {
     id: 'extensions.whitelist.param.agreement.title',
@@ -383,18 +388,20 @@ const extensions: { [key: string]: ExtensionData } = {
     descriptionShort: MSG.coinMachineDescriptionShort,
     descriptionLong: MSG.coinMachineDescriptionLong,
     descriptionExtended: MSG.coinMachineDescriptionExtended,
-    descriptionLink1: (
+    descriptionLinks: [
+      <ExternalLink
+        text={MSG.coinMachineDescriptionBlogPostLink}
+        href={COIN_MACHINE_BLOG_POST_LINK}
+      />,
       <ExternalLink
         text={MSG.coinMachineDescriptionGoogleSheetLink}
         href={COIN_MACHINE_GOOGLE_SHEET_LINK}
-      />
-    ),
-    descriptionLink2: (
+      />,
       <ExternalLink
         text={MSG.coinMachineDescriptionHereLink}
         href={COIN_MACHINE_DESCRIPTION_LINK}
-      />
-    ),
+      />,
+    ],
     currentVersion: 1,
     createdAt: 1603915271852,
     neededColonyPermissions: [ColonyRole.Root],
@@ -480,12 +487,15 @@ const extensions: { [key: string]: ExtensionData } = {
       },
       {
         paramName: 'userLimitFraction',
-        validation: yup.string().required(),
+        validation: yup
+          .string()
+          .required()
+          .max(100, () => MSG.votingReputationLessThan100Error),
         title: MSG.coinMachineUserLimitFractionTitle,
         description: MSG.coinMachineUserLimitFractionDescription,
-        defaultValue: 200000,
+        defaultValue: 100,
         type: ExtensionParamType.Input,
-        tokenLabel: 'tokenToBeSold',
+        complementaryLabel: 'percent',
         orderNumber: 7,
       },
       {
@@ -630,7 +640,12 @@ const extensions: { [key: string]: ExtensionData } = {
     descriptionShort: MSG.whitelistDescriptionShort,
     descriptionLong: MSG.whitelistDescriptionLong,
     info: MSG.whitelistInfo,
-    termsCondition: MSG.whitelistTermsCondition,
+    descriptionLinks: [
+      <ExternalLink
+        text={MSG.whitelistTermsCondition}
+        href={WHITELIST_TERMS_AND_CONDITIONS_LINK}
+      />,
+    ],
     currentVersion: 1,
     createdAt: 1603915271852,
     neededColonyPermissions: [
