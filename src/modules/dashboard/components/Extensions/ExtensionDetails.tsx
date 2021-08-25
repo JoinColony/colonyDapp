@@ -56,8 +56,6 @@ import ExtensionUpgrade from './ExtensionUpgrade';
 import ExtensionUninstallConfirmDialog from './ExtensionUninstallConfirmDialog';
 import { ExtensionsMSG } from './extensionsMSG';
 
-const TERMS_AND_CONDITIONS_LINK = 'https://colony.io/pdf/terms.pdf';
-
 const MSG = defineMessages({
   title: {
     id: 'dashboard.Extensions.ExtensionDetails.title',
@@ -361,6 +359,7 @@ const ExtensionDetails = ({
                           text={chunks}
                         />
                       ),
+                      link0: extension.descriptionLinks?.[0],
                     }}
                   />
                   {extension.info && (
@@ -368,12 +367,7 @@ const ExtensionDetails = ({
                       <FormattedMessage
                         {...extension.info}
                         values={{
-                          link: (
-                            <ExternalLink
-                              text={extension.termsCondition}
-                              href={TERMS_AND_CONDITIONS_LINK}
-                            />
-                          ),
+                          link0: extension.descriptionLinks?.[0],
                         }}
                       />
                     </div>
