@@ -30,10 +30,6 @@ function* colonyExtensionEnable({
   meta,
   payload: { colonyAddress, extensionId, ...payload },
 }: Action<ActionTypes.COLONY_EXTENSION_ENABLE>) {
-  console.log(
-    '🚀 ~ file: colonyExtensionEnable.ts ~ line 33 ~ payload',
-    payload,
-  );
   const extension = extensionData[extensionId];
   const initChannelName = `${meta.id}-initialise`;
   const setPermissionChannelName = `${meta.id}-setUserRoles`;
@@ -111,17 +107,15 @@ function* colonyExtensionEnable({
         const params = [
           ...extension.initializationParams,
           ...(extension.extraInitParams ? extension.extraInitParams : []),
-        ].sort((a, b) => a.orderNumber - b.orderNumber);
+        ].sort((a, b) =>
+          /* need this logic check for types */
+          a.orderNumber && b.orderNumber ? a.orderNumber - b.orderNumber : 1,
+        );
 
         initParams = modifyParams(params);
       } else {
         initParams = modifyParams(extension.initializationParams);
       }
-
-      console.log(
-        '🚀 ~ file: colonyExtensionEnable.ts ~ line 92 ~ initParams',
-        initParams,
-      );
 
       yield fork(createTransaction, initChannelName, {
         context: `${extensionId}Client`,
