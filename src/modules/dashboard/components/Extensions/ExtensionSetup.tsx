@@ -88,8 +88,7 @@ const ExtensionSetup = ({
     initializationParams,
     extraInitParams,
     descriptionExtended,
-    descriptionLink1,
-    descriptionLink2,
+    descriptionLinks,
     tokenContractAddress,
   },
   installedExtension,
@@ -140,10 +139,6 @@ const ExtensionSetup = ({
           } = payload;
 
           const soldTokenDecimals = getToken(tokenToBeSold)?.decimals;
-          console.log(
-            '🚀 ~ file: ExtensionSetup.tsx ~ line 145 ~ mapPayload ~ getToken(tokenToBeSold)?.decimals',
-            getToken(tokenToBeSold)?.decimals,
-          );
 
           return {
             ...payload,
@@ -154,12 +149,13 @@ const ExtensionSetup = ({
               moveDecimal(maxPerPeriod, soldTokenDecimals),
             ),
             userLimitFraction: bigNumberify(
-              moveDecimal(userLimitFraction, soldTokenDecimals),
+              /* to be interpreted as a fixed point float with 18 digits after the decimal point */
+              moveDecimal(userLimitFraction / 100, 18),
             ),
             startingPrice: bigNumberify(
               moveDecimal(startingPrice, getToken(purchaseToken)?.decimals),
             ),
-            perdiodLength: new Decimal(periodLength)
+            periodLength: new Decimal(periodLength)
               .mul(3600) // Seconds in 1 hour
               .toFixed(0, Decimal.ROUND_HALF_UP),
           };
@@ -373,8 +369,8 @@ const ExtensionSetup = ({
               <FormattedMessage
                 {...descriptionExtended}
                 values={{
-                  link1: descriptionLink1,
-                  link2: descriptionLink2,
+                  link1: descriptionLinks?.[1],
+                  link2: descriptionLinks?.[2],
                 }}
               />
             </div>
