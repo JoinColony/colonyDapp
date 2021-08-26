@@ -215,6 +215,11 @@ const BuyTokens = ({
 
       const maxUserBalancePurchase = userTokenBalance
         .div(currentPrice)
+        /*
+        when we divide by a number with moved decimal our final number
+        gets smaller by the '10 * the number of 0 that are added'
+        so we need to counteract it by multiplying it back
+         */
         .mul(
           bigNumberify(10).pow(
             getTokenDecimalsWithFallback(purchaseToken.decimals),
