@@ -23,7 +23,7 @@ export enum ExtensionParamType {
   Radio = 'Radio',
   Textarea = 'Textarea',
   ColonyPolicySelector = 'ColonyPolicySelector',
-  TokenSymbolSelector = 'TokenSymbolSelector',
+  TokenSelector = 'TokenSelector',
 }
 
 export enum PolicyType {
@@ -430,7 +430,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachineTokenToBeSoldTitle,
         fieldName: MSG.coinMachineTokenToBeSoldFieldName,
         description: MSG.coinMachineTokenToBeSoldDescription,
-        type: ExtensionParamType.TokenSymbolSelector,
+        type: ExtensionParamType.TokenSelector,
         orderNumber: 1,
       },
       {
@@ -440,7 +440,7 @@ const extensions: { [key: string]: ExtensionData } = {
         title: MSG.coinMachinePurchaseTokenTitle,
         fieldName: MSG.coinMachinePurchaseTokenFieldName,
         description: MSG.coinMachinePurchaseTokenDescription,
-        type: ExtensionParamType.TokenSymbolSelector,
+        type: ExtensionParamType.TokenSelector,
         orderNumber: 2,
       },
     ],
