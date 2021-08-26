@@ -199,20 +199,29 @@ const BuyTokens = ({
     if (
       maxUserPurchaseData?.coinMachineCurrentPeriodMaxUserPurchase &&
       salePriceData?.coinMachineCurrentPeriodPrice &&
-      userPurchaseToken?.balance
+      userPurchaseToken?.balance &&
+      purchaseToken
     ) {
       const userTokenBalance = bigNumberify(userPurchaseToken.balance);
-      const maxPurchase =
+      const maxContractPurchase =
         maxUserPurchaseData.coinMachineCurrentPeriodMaxUserPurchase;
+
       const currentPrice = salePriceData.coinMachineCurrentPeriodPrice;
-      const maxPurchaseCost = bigNumberify(maxPurchase).mul(currentPrice);
-      if (maxPurchaseCost.gt(userTokenBalance)) {
-        return userTokenBalance;
+
+      const maxUserBalancePurchase = userTokenBalance
+        .div(currentPrice)
+        .mul(
+          bigNumberify(10).pow(
+            getTokenDecimalsWithFallback(purchaseToken.decimals),
+          ),
+        );
+      if (maxUserBalancePurchase.gt(maxContractPurchase)) {
+        return maxContractPurchase;
       }
-      return maxPurchaseCost;
+      return maxUserBalancePurchase;
     }
     return bigNumberify(0);
-  }, [maxUserPurchaseData, salePriceData, userPurchaseToken]);
+  }, [maxUserPurchaseData, salePriceData, userPurchaseToken, purchaseToken]);
 
   const handleSetMaxAmount = useCallback(
     (event, setFieldValue) => {
