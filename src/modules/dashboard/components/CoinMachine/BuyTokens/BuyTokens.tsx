@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
-import { formatEther, bigNumberify } from 'ethers/utils';
+import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -26,7 +26,10 @@ import {
   useUserWhitelistStatusQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  getTokenDecimalsWithFallback,
+  getFormattedTokenValue,
+} from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
 import { mapPayload, withMeta, pipe } from '~utils/actions';
 
@@ -167,12 +170,14 @@ const BuyTokens = ({
     ({ address: userTokenAddress }) =>
       userTokenAddress === purchaseToken?.address,
   );
-  const userPurchaseTokenBalance = formatEther(
+  const userPurchaseTokenBalance = getFormattedTokenValue(
     userPurchaseToken?.balance || '0',
+    purchaseToken?.decimals || 18,
   );
 
-  const currentSalePrice = formatEther(
+  const currentSalePrice = getFormattedTokenValue(
     salePriceData?.coinMachineCurrentPeriodPrice || '0',
+    purchaseToken?.decimals || 18,
   );
 
   const globalDisable = !isCurrentlyOnSale || !userHasProfile;
@@ -233,10 +238,16 @@ const BuyTokens = ({
          * Either the max tokens available this period, or the user's total purchase
          * tokens balance, whichever is smaller
          */
-        setFieldValue('amount', formatEther(maxUserPurchase));
+        setFieldValue(
+          'amount',
+          getFormattedTokenValue(
+            maxUserPurchase,
+            sellableToken?.decimals || 18,
+          ),
+        );
       }
     },
-    [globalDisable, maxUserPurchase],
+    [globalDisable, maxUserPurchase, sellableToken],
   );
   const handleFormReset = useCallback((resetForm) => resetForm(), []);
 
@@ -299,7 +310,12 @@ const BuyTokens = ({
               amount: '0',
             }}
             validationSchema={validationSchema(
-              parseFloat(formatEther(maxUserPurchase)),
+              parseFloat(
+                getFormattedTokenValue(
+                  maxUserPurchase,
+                  sellableToken?.decimals || 18,
+                ),
+              ),
             )}
             submit={ActionTypes.COIN_MACHINE_BUY_TOKENS}
             error={ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR}
