@@ -22,9 +22,7 @@ import Chat from './Chat';
 import SaleStateWidget from './SaleStateWidget';
 import BuyTokens from './BuyTokens';
 import TokenSalesTable from './TokenSalesTable';
-import RemainingDisplayWidget, {
-  DataDisplayType,
-} from './RemainingDisplayWidget';
+import { RemainingTime, RemainingTokens } from './RemainingDisplayWidgets';
 
 import styles from './CoinMachine.css';
 
@@ -220,8 +218,7 @@ const CoinMachine = ({
               />
             </div>
             <div className={styles.timeRemaining}>
-              <RemainingDisplayWidget
-                displayType={DataDisplayType.Time}
+              <RemainingTime
                 appearance={{ theme: !isSoldOut ? 'white' : 'danger' }}
                 value={hasSaleStarted ? timeRemaining : null}
                 periodLength={periodLength}
@@ -229,10 +226,7 @@ const CoinMachine = ({
               />
             </div>
             <div className={styles.tokensRemaining}>
-              <RemainingDisplayWidget
-                displayType={DataDisplayType.Tokens}
-                periodTokens={periodTokens}
-              />
+              <RemainingTokens periodTokens={periodTokens} />
             </div>
           </>
         )}
