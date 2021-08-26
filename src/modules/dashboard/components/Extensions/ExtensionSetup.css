@@ -55,6 +55,10 @@
   height: 42px;
 }
 
+.tokenSelectorContainer > p {
+  max-width: 280px;
+}
+
 .tokenAddessLink {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
