@@ -325,12 +325,12 @@ const ExtensionSetup = ({
                   label={paramName}
                 />
               </div>
-              <p className={styles.tokenAddessLink}>
+              <div className={styles.tokenAddessLink}>
                 {tokenContractAddress}
                 <div>
                   <MaskedAddress address={nativeTokenAddress} full />
                 </div>
-              </p>
+              </div>
               {description && <FormattedMessage {...description} />}
             </div>
           )}
