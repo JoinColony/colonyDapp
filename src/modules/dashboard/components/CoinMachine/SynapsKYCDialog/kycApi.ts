@@ -1,4 +1,3 @@
-
 const STATUS_UPDATE_QUERY = `/status/session/info`;
 const KYC_DETAILS = `/status/session/details`;
 

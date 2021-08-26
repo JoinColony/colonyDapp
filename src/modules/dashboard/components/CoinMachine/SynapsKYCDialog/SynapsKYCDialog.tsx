@@ -23,7 +23,6 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CoinMachine.SynapsKYCDialog';
 
 const SynapsKYCDialog = ({ cancel }: DialogProps) => {
-  const [kycDetails, setKycDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const { walletAddress } = useLoggedInUser();
@@ -38,11 +37,14 @@ const SynapsKYCDialog = ({ cancel }: DialogProps) => {
         type: 'embed',
       });
       Synaps.on('finish', async () => {
-        const data = await getKycStatus(sessionId);
-        if (data?.status === 'VERIFIED') {
-          setIsValid(true);
-        }
-    });
+        const id = setInterval(async () => {
+          const data = await getKycStatus(sessionId);
+          if (data?.status === 'VERIFIED') {
+            setIsValid(true);
+          }
+        }, 1000);
+        return () => clearInterval(id);
+      });
       setIsLoading(false);
     };
     if (!walletAddress) return;
