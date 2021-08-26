@@ -302,7 +302,7 @@ const ExtensionSetup = ({
               options={options || []}
             />
           )}
-          {type === ExtensionParamType.TokenSymbolSelector && (
+          {type === ExtensionParamType.TokenSelector && (
             <div>
               <InputLabel
                 label={title}
