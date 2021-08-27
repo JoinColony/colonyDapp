@@ -34,9 +34,13 @@ export default gql`
   }
 
   type PreviousPeriods {
-    saleEndedAt: Int!
+    saleEndedAt: String!
     tokensBought: String!
-    totalPrice: String!
+    price: String!
+  }
+
+  input ByColonyFilter {
+    colonyAddress: String!
   }
 
   extend type Query {
@@ -57,6 +61,11 @@ export default gql`
     coinMachineSalePeriod(colonyAddress: String!): SalePeriod!
     currentPeriodTokens(colonyAddress: String!): CurrentPeriodTokens!
     coinMachineTokenBalance(colonyAddress: String!): String!
-    coinMachineTokenSales(colonyAddress: String!): [PreviousPeriods!]!
+    coinMachinePeriods(
+      skip: Int!
+      where: ByColonyFilter
+      orderBy: String!
+      orderDirection: String!
+    ): [PreviousPeriods!]!
   }
 `;

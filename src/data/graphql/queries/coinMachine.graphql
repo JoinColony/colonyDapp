@@ -60,10 +60,15 @@ query CoinMachineTokenBalance($colonyAddress: String!) {
   coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
 }
 
-query CoinMachineTokenSales($colonyAddress: String!) {
-  coinMachineTokenSales(colonyAddress: $colonyAddress) @client {
+query SubgraphCoinMachinePeriods($colonyAddress: String!) {
+  coinMachinePeriods(
+    where: { colonyAddress: $colonyAddress },
+    skip: 1,
+    orderBy: "saleEndedAt",
+    orderDirection: "desc"
+  ) {
     saleEndedAt
     tokensBought
-    totalPrice
+    price
   }
 }
