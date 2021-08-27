@@ -1,5 +1,5 @@
-import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import React, { ReactElement } from 'react';
+import { FormattedMessage, MessageDescriptor } from 'react-intl';
 import classnames from 'classnames';
 
 import Heading from '~core/Heading';
@@ -7,7 +7,9 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { getMainClasses } from '~utils/css';
 
-import TokenPriceStatusIcon from '../TokenPriceStatusIcon/TokenPriceStatusIcon';
+import TokenPriceStatusIcon, {
+  TokenPriceStatuses,
+} from '../TokenPriceStatusIcon';
 
 import styles from './RemainingDisplayWidget.css';
 
@@ -22,10 +24,15 @@ type Appearance = {
 
 type Props = {
   appearance?: Appearance;
-  widgetText: any;
-  isWarning: any;
-  displayedValue: any;
-  priceStatus?: any;
+  widgetText: {
+    title: MessageDescriptor;
+    placeholder: MessageDescriptor;
+    tooltipText: MessageDescriptor;
+    footerText?: MessageDescriptor;
+  };
+  isWarning: boolean;
+  displayedValue: string | ReactElement;
+  priceStatus?: TokenPriceStatuses;
 };
 
 const displayName = 'dashboard.CoinMachine.RemainingDisplayWidget';
@@ -61,17 +68,14 @@ const RemainingDisplayWidget = ({
       >
         {displayedValue}
       </p>
-      {
-        // periodTokens &&
-        widgetText.footerText && (
-          <div className={styles.footer}>
-            <p className={styles.footerText}>
-              <FormattedMessage {...widgetText.footerText} />
-            </p>
-            {priceStatus && <TokenPriceStatusIcon status={priceStatus} />}
-          </div>
-        )
-      }
+      {widgetText.footerText && (
+        <div className={styles.footer}>
+          <p className={styles.footerText}>
+            <FormattedMessage {...widgetText.footerText} />
+          </p>
+          {priceStatus && <TokenPriceStatusIcon status={priceStatus} />}
+        </div>
+      )}
     </div>
   );
 };

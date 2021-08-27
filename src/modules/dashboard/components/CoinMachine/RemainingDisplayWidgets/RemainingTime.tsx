@@ -83,7 +83,7 @@ const RemainingTime = ({
   const showValueWarning =
     appearance.theme !== 'danger' &&
     typeof value === 'number' &&
-    periodLength &&
+    periodLength !== undefined &&
     (timeLeft * 100) / periodLength <= 10;
 
   useEffect(() => {
