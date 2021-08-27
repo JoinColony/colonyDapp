@@ -13,7 +13,10 @@ import {
   TableRow,
 } from '~core/Table';
 import { getFormattedTokenValue } from '~utils/tokens';
-import { CoinMachinePreviousSalesQuery, TokenInfoQuery } from '~data/generated';
+import {
+  SubgraphCoinMachinePeriodsQuery,
+  TokenInfoQuery,
+} from '~data/generated';
 import {
   getFormattedTokensRemaining,
   getPriceStatus,
@@ -48,7 +51,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  tableData?: CoinMachinePreviousSalesQuery['coinMachinePreviousSales'];
+  tableData?: SubgraphCoinMachinePeriodsQuery['coinMachinePeriods'];
   periodTokens?: PeriodTokensType;
   sellableToken?: TokenInfoQuery['tokenInfo'];
 }
@@ -82,11 +85,11 @@ const TokenSalesTable = ({
   const formattedData = useMemo(() => {
     return tableData.map((data) => {
       return {
-        saleEndedAt: new Date(data.saleEndedAt),
+        saleEndedAt: new Date(parseInt(data.saleEndedAt, 10)),
         tokensRemaining: periodTokens
           ? getFormattedTokensRemaining(periodTokens, data.tokensBought)
           : '???',
-        price: getFormattedTokenValue(data.totalPrice, 18),
+        price: getFormattedTokenValue(data.price, 18),
         priceStatus:
           periodTokens && getPriceStatus(periodTokens, data.tokensBought),
       };
