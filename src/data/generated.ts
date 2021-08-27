@@ -272,7 +272,7 @@ export type Query = {
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
-  coinMachinePreviousSales: Array<PreviousPeriods>;
+  coinMachinePeriods: Array<PreviousPeriods>;
   coinMachineSalePeriod: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
   coinMachineTokenBalance: Scalars['String'];
@@ -358,8 +358,11 @@ export type QueryCoinMachineCurrentPeriodPriceArgs = {
 };
 
 
-export type QueryCoinMachinePreviousSalesArgs = {
-  colonyAddress: Scalars['String'];
+export type QueryCoinMachinePeriodsArgs = {
+  skip: Scalars['Int'];
+  where?: Maybe<ByColonyFilter>;
+  orderBy: Scalars['String'];
+  orderDirection: Scalars['String'];
 };
 
 
@@ -1236,9 +1239,9 @@ export type TrannsactionAmount = {
 };
 
 export type PreviousPeriods = {
-  saleEndedAt: Scalars['Int'];
+  saleEndedAt: Scalars['String'];
   tokensBought: Scalars['String'];
-  totalPrice: Scalars['String'];
+  price: Scalars['String'];
 };
 
 export type ActionsFilter = {
