@@ -17,7 +17,7 @@ import {
   AnyUser,
   Colony,
   useColonyMembersWithReputationQuery,
-  useColonyMembersSubscription,
+  useMembersSubscription,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -98,7 +98,7 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
   const {
     data: allMembers,
     loading: loadingAllMembers,
-  } = useColonyMembersSubscription({
+  } = useMembersSubscription({
     variables: {
       colonyAddress,
     },

@@ -9,7 +9,7 @@ import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 import {
   Colony,
   useColonyMembersWithReputationQuery,
-  useColonyMembersSubscription,
+  useMembersSubscription,
 } from '~data/index';
 import { Address } from '~types/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -59,10 +59,7 @@ const ColonyMembers = ({
     },
   });
 
-  const {
-    data: members,
-    loading: loadingMembers,
-  } = useColonyMembersSubscription({
+  const { data: members, loading: loadingMembers } = useMembersSubscription({
     variables: {
       colonyAddress,
     },
