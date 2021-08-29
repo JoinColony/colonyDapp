@@ -1,0 +1,11 @@
+subscription ColonyMembers($colonyAddress: String!) {
+  subscribedUsers(colonyAddress: $colonyAddress) {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}

@@ -681,18 +681,6 @@ query ColonyProfile($address: String!) {
   }
 }
 
-query ColonySubscribedUsers($colonyAddress: String!) {
-  subscribedUsers(colonyAddress: $colonyAddress) {
-    id
-    profile {
-      avatarHash
-      displayName
-      username
-      walletAddress
-    }
-  }
-}
-
 query ColonyMembersWithReputation($colonyAddress: String!, $domainId: Int) {
   colonyMembersWithReputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
 }
