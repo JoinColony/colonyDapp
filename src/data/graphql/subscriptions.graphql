@@ -1,4 +1,4 @@
-subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
+subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: { associatedColony: $colonyAddress }) {
     id
     address
@@ -23,7 +23,7 @@ subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddres
   }
 }
 
-subscription SubscriptionSubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
+subscription SubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
   oneTxPayments(skip: $skip, first: $first, where: { payment_contains: $colonyAddress }) {
     id
     agent
@@ -55,7 +55,7 @@ subscription SubscriptionSubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress
   }
 }
 
-subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
+subscription SubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(
     skip: $skip,
     first: $first,
@@ -113,7 +113,7 @@ subscription SubscriptionSubgraphEventsThatAreActions($skip: Int!, $first: Int!,
   }
 }
 
-subscription SubscriptionsMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
+subscription SubraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
   motions(
     skip: $skip,
     first: $first,
