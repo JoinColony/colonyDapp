@@ -1567,23 +1567,6 @@ export type ColonyActionQuery = { colonyAction: (
     & { events: Array<Pick<ParsedEvent, 'type' | 'name' | 'values' | 'createdAt' | 'emmitedBy' | 'transactionHash'>>, roles: Array<Pick<ColonyActionRoles, 'id' | 'setTo'>> }
   ) };
 
-export type TransactionMessagesQueryVariables = Exact<{
-  transactionHash: Scalars['String'];
-}>;
-
-
-export type TransactionMessagesQuery = { transactionMessages: (
-    Pick<TransactionMessages, 'transactionHash'>
-    & { messages: Array<TransactionMessageFragment> }
-  ) };
-
-export type TransactionMessagesCountQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
-
 export type MetaColonyQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1999,6 +1982,23 @@ export type HasKycPolicyQueryVariables = Exact<{
 
 export type HasKycPolicyQuery = Pick<Query, 'hasKycPolicy'>;
 
+export type TransactionMessagesQueryVariables = Exact<{
+  transactionHash: Scalars['String'];
+}>;
+
+
+export type TransactionMessagesQuery = { transactionMessages: (
+    Pick<TransactionMessages, 'transactionHash'>
+    & { messages: Array<TransactionMessageFragment> }
+  ) };
+
+export type TransactionMessagesCountQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
+
 export type SubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -2098,6 +2098,23 @@ export type SubraphMotionsSubscription = { motions: Array<(
       ) }
     ), timeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> }
   )> };
+
+export type CommentCountSubscriptionVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type CommentCountSubscription = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
+
+export type CommentsSubscriptionVariables = Exact<{
+  transactionHash: Scalars['String'];
+}>;
+
+
+export type CommentsSubscription = { transactionMessages: (
+    Pick<TransactionMessages, 'transactionHash'>
+    & { messages: Array<TransactionMessageFragment> }
+  ) };
 
 export const ColonyProfileFragmentDoc = gql`
     fragment ColonyProfile on ProcessedColony {
@@ -3455,78 +3472,6 @@ export function useColonyActionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type ColonyActionQueryHookResult = ReturnType<typeof useColonyActionQuery>;
 export type ColonyActionLazyQueryHookResult = ReturnType<typeof useColonyActionLazyQuery>;
 export type ColonyActionQueryResult = Apollo.QueryResult<ColonyActionQuery, ColonyActionQueryVariables>;
-export const TransactionMessagesDocument = gql`
-    query TransactionMessages($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
-    transactionHash
-    messages {
-      ...TransactionMessage
-    }
-  }
-}
-    ${TransactionMessageFragmentDoc}`;
-
-/**
- * __useTransactionMessagesQuery__
- *
- * To run a query within a React component, call `useTransactionMessagesQuery` and pass it any options that fit your needs.
- * When your component renders, `useTransactionMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTransactionMessagesQuery({
- *   variables: {
- *      transactionHash: // value for 'transactionHash'
- *   },
- * });
- */
-export function useTransactionMessagesQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
-        return Apollo.useQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
-      }
-export function useTransactionMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
-          return Apollo.useLazyQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
-        }
-export type TransactionMessagesQueryHookResult = ReturnType<typeof useTransactionMessagesQuery>;
-export type TransactionMessagesLazyQueryHookResult = ReturnType<typeof useTransactionMessagesLazyQuery>;
-export type TransactionMessagesQueryResult = Apollo.QueryResult<TransactionMessagesQuery, TransactionMessagesQueryVariables>;
-export const TransactionMessagesCountDocument = gql`
-    query TransactionMessagesCount($colonyAddress: String!) {
-  transactionMessagesCount(colonyAddress: $colonyAddress) {
-    colonyTransactionMessages {
-      transactionHash
-      count
-    }
-  }
-}
-    `;
-
-/**
- * __useTransactionMessagesCountQuery__
- *
- * To run a query within a React component, call `useTransactionMessagesCountQuery` and pass it any options that fit your needs.
- * When your component renders, `useTransactionMessagesCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTransactionMessagesCountQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useTransactionMessagesCountQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
-        return Apollo.useQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
-      }
-export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
-          return Apollo.useLazyQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
-        }
-export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
-export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
-export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
 export const MetaColonyDocument = gql`
     query MetaColony {
   processedMetaColony @client {
@@ -5237,6 +5182,78 @@ export function useHasKycPolicyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type HasKycPolicyQueryHookResult = ReturnType<typeof useHasKycPolicyQuery>;
 export type HasKycPolicyLazyQueryHookResult = ReturnType<typeof useHasKycPolicyLazyQuery>;
 export type HasKycPolicyQueryResult = Apollo.QueryResult<HasKycPolicyQuery, HasKycPolicyQueryVariables>;
+export const TransactionMessagesDocument = gql`
+    query TransactionMessages($transactionHash: String!) {
+  transactionMessages(transactionHash: $transactionHash) {
+    transactionHash
+    messages {
+      ...TransactionMessage
+    }
+  }
+}
+    ${TransactionMessageFragmentDoc}`;
+
+/**
+ * __useTransactionMessagesQuery__
+ *
+ * To run a query within a React component, call `useTransactionMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionMessagesQuery({
+ *   variables: {
+ *      transactionHash: // value for 'transactionHash'
+ *   },
+ * });
+ */
+export function useTransactionMessagesQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
+        return Apollo.useQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
+      }
+export function useTransactionMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesQuery, TransactionMessagesQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionMessagesQuery, TransactionMessagesQueryVariables>(TransactionMessagesDocument, baseOptions);
+        }
+export type TransactionMessagesQueryHookResult = ReturnType<typeof useTransactionMessagesQuery>;
+export type TransactionMessagesLazyQueryHookResult = ReturnType<typeof useTransactionMessagesLazyQuery>;
+export type TransactionMessagesQueryResult = Apollo.QueryResult<TransactionMessagesQuery, TransactionMessagesQueryVariables>;
+export const TransactionMessagesCountDocument = gql`
+    query TransactionMessagesCount($colonyAddress: String!) {
+  transactionMessagesCount(colonyAddress: $colonyAddress) {
+    colonyTransactionMessages {
+      transactionHash
+      count
+    }
+  }
+}
+    `;
+
+/**
+ * __useTransactionMessagesCountQuery__
+ *
+ * To run a query within a React component, call `useTransactionMessagesCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTransactionMessagesCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTransactionMessagesCountQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useTransactionMessagesCountQuery(baseOptions?: Apollo.QueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
+        return Apollo.useQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
+      }
+export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>) {
+          return Apollo.useLazyQuery<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>(TransactionMessagesCountDocument, baseOptions);
+        }
+export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
+export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
+export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
 export const SubgraphEventsDocument = gql`
     subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
@@ -5486,3 +5503,67 @@ export function useSubraphMotionsSubscription(baseOptions?: Apollo.SubscriptionH
       }
 export type SubraphMotionsSubscriptionHookResult = ReturnType<typeof useSubraphMotionsSubscription>;
 export type SubraphMotionsSubscriptionResult = Apollo.SubscriptionResult<SubraphMotionsSubscription>;
+export const CommentCountDocument = gql`
+    subscription CommentCount($colonyAddress: String!) {
+  transactionMessagesCount(colonyAddress: $colonyAddress) {
+    colonyTransactionMessages {
+      transactionHash
+      count
+    }
+  }
+}
+    `;
+
+/**
+ * __useCommentCountSubscription__
+ *
+ * To run a query within a React component, call `useCommentCountSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useCommentCountSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCommentCountSubscription({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useCommentCountSubscription(baseOptions?: Apollo.SubscriptionHookOptions<CommentCountSubscription, CommentCountSubscriptionVariables>) {
+        return Apollo.useSubscription<CommentCountSubscription, CommentCountSubscriptionVariables>(CommentCountDocument, baseOptions);
+      }
+export type CommentCountSubscriptionHookResult = ReturnType<typeof useCommentCountSubscription>;
+export type CommentCountSubscriptionResult = Apollo.SubscriptionResult<CommentCountSubscription>;
+export const CommentsDocument = gql`
+    subscription Comments($transactionHash: String!) {
+  transactionMessages(transactionHash: $transactionHash) {
+    transactionHash
+    messages {
+      ...TransactionMessage
+    }
+  }
+}
+    ${TransactionMessageFragmentDoc}`;
+
+/**
+ * __useCommentsSubscription__
+ *
+ * To run a query within a React component, call `useCommentsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useCommentsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCommentsSubscription({
+ *   variables: {
+ *      transactionHash: // value for 'transactionHash'
+ *   },
+ * });
+ */
+export function useCommentsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<CommentsSubscription, CommentsSubscriptionVariables>) {
+        return Apollo.useSubscription<CommentsSubscription, CommentsSubscriptionVariables>(CommentsDocument, baseOptions);
+      }
+export type CommentsSubscriptionHookResult = ReturnType<typeof useCommentsSubscription>;
+export type CommentsSubscriptionResult = Apollo.SubscriptionResult<CommentsSubscription>;

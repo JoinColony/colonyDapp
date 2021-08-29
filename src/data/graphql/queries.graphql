@@ -273,24 +273,6 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
   }
 }
 
-query TransactionMessages($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
-    transactionHash
-    messages {
-    	...TransactionMessage
-    }
-  }
-}
-
-query TransactionMessagesCount($colonyAddress: String!) {
-  transactionMessagesCount(colonyAddress: $colonyAddress) {
-    colonyTransactionMessages {
-      transactionHash
-      count
-    }
-  }
-}
-
 query MetaColony {
   processedMetaColony @client {
     id

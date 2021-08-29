@@ -1,0 +1,24 @@
+
+#
+# @NOTE Queries need to be declared, even though we only use the subscriptions,
+# otherwise it will cause an invariant violation (due to the way the auto-generator
+# generates the hooks)
+#
+
+query TransactionMessages($transactionHash: String!) {
+  transactionMessages(transactionHash: $transactionHash) {
+    transactionHash
+    messages {
+    	...TransactionMessage
+    }
+  }
+}
+
+query TransactionMessagesCount($colonyAddress: String!) {
+  transactionMessagesCount(colonyAddress: $colonyAddress) {
+    colonyTransactionMessages {
+      transactionHash
+      count
+    }
+  }
+}

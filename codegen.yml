@@ -6,6 +6,7 @@ schema:
 documents:
   - 'src/data/graphql/*.graphql'
   - 'src/data/graphql/queries/*.graphql'
+  - 'src/data/graphql/subscriptions/*.graphql'
 generates:
   src/data/generated.ts:
     schema:
