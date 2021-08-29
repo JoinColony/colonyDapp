@@ -5,11 +5,7 @@ import Comment from '~core/Comment';
 import CommentInput from '~core/CommentInput';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
-import {
-  Colony,
-  useTransactionMessagesQuery,
-  useLoggedInUser,
-} from '~data/index';
+import { Colony, useCommentsSubscription, useLoggedInUser } from '~data/index';
 
 import styles from './Chat.css';
 
@@ -65,7 +61,7 @@ const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
     setTimeout(scrollComments, 0);
   }, [scrollComments]);
 
-  const { data, loading } = useTransactionMessagesQuery({
+  const { data, loading } = useCommentsSubscription({
     variables: { transactionHash },
   });
 
