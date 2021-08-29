@@ -1989,6 +1989,16 @@ export type TransactionMessagesCountQueryVariables = Exact<{
 
 export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
 
+export type ColonyMembersQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type ColonyMembersQuery = { subscribedUsers: Array<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+  )> };
+
 export type SubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -2106,12 +2116,12 @@ export type CommentsSubscription = { transactionMessages: (
     & { messages: Array<TransactionMessageFragment> }
   ) };
 
-export type ColonyMembersSubscriptionVariables = Exact<{
+export type MembersSubscriptionVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type ColonyMembersSubscription = { subscribedUsers: Array<(
+export type MembersSubscription = { subscribedUsers: Array<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
   )> };
@@ -5215,6 +5225,45 @@ export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQu
 export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
 export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
 export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
+export const ColonyMembersDocument = gql`
+    query ColonyMembers($colonyAddress: String!) {
+  subscribedUsers(colonyAddress: $colonyAddress) {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyMembersQuery__
+ *
+ * To run a query within a React component, call `useColonyMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyMembersQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useColonyMembersQuery(baseOptions?: Apollo.QueryHookOptions<ColonyMembersQuery, ColonyMembersQueryVariables>) {
+        return Apollo.useQuery<ColonyMembersQuery, ColonyMembersQueryVariables>(ColonyMembersDocument, baseOptions);
+      }
+export function useColonyMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColonyMembersQuery, ColonyMembersQueryVariables>) {
+          return Apollo.useLazyQuery<ColonyMembersQuery, ColonyMembersQueryVariables>(ColonyMembersDocument, baseOptions);
+        }
+export type ColonyMembersQueryHookResult = ReturnType<typeof useColonyMembersQuery>;
+export type ColonyMembersLazyQueryHookResult = ReturnType<typeof useColonyMembersLazyQuery>;
+export type ColonyMembersQueryResult = Apollo.QueryResult<ColonyMembersQuery, ColonyMembersQueryVariables>;
 export const SubgraphEventsDocument = gql`
     subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
@@ -5528,8 +5577,8 @@ export function useCommentsSubscription(baseOptions?: Apollo.SubscriptionHookOpt
       }
 export type CommentsSubscriptionHookResult = ReturnType<typeof useCommentsSubscription>;
 export type CommentsSubscriptionResult = Apollo.SubscriptionResult<CommentsSubscription>;
-export const ColonyMembersDocument = gql`
-    subscription ColonyMembers($colonyAddress: String!) {
+export const MembersDocument = gql`
+    subscription Members($colonyAddress: String!) {
   subscribedUsers(colonyAddress: $colonyAddress) {
     id
     profile {
@@ -5543,23 +5592,23 @@ export const ColonyMembersDocument = gql`
     `;
 
 /**
- * __useColonyMembersSubscription__
+ * __useMembersSubscription__
  *
- * To run a query within a React component, call `useColonyMembersSubscription` and pass it any options that fit your needs.
- * When your component renders, `useColonyMembersSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMembersSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMembersSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useColonyMembersSubscription({
+ * const { data, loading, error } = useMembersSubscription({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-export function useColonyMembersSubscription(baseOptions?: Apollo.SubscriptionHookOptions<ColonyMembersSubscription, ColonyMembersSubscriptionVariables>) {
-        return Apollo.useSubscription<ColonyMembersSubscription, ColonyMembersSubscriptionVariables>(ColonyMembersDocument, baseOptions);
+export function useMembersSubscription(baseOptions?: Apollo.SubscriptionHookOptions<MembersSubscription, MembersSubscriptionVariables>) {
+        return Apollo.useSubscription<MembersSubscription, MembersSubscriptionVariables>(MembersDocument, baseOptions);
       }
-export type ColonyMembersSubscriptionHookResult = ReturnType<typeof useColonyMembersSubscription>;
-export type ColonyMembersSubscriptionResult = Apollo.SubscriptionResult<ColonyMembersSubscription>;
+export type MembersSubscriptionHookResult = ReturnType<typeof useMembersSubscription>;
+export type MembersSubscriptionResult = Apollo.SubscriptionResult<MembersSubscription>;

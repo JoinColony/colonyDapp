@@ -18,9 +18,9 @@ import {
   RecoveryEventsForSessionQuery,
   RecoveryEventsForSessionQueryVariables,
   RecoveryEventsForSessionDocument,
-  ColonySubscribedUsersQuery,
-  ColonySubscribedUsersQueryVariables,
-  ColonySubscribedUsersDocument,
+  ColonyMembersQuery,
+  ColonyMembersQueryVariables,
+  ColonyMembersDocument,
   RecoveryRolesUsersQuery,
   RecoveryRolesUsersQueryVariables,
   RecoveryRolesUsersDocument,
@@ -273,10 +273,10 @@ export const recoveryModeResolvers = ({
     async recoveryRolesUsers(_, { colonyAddress, endBlockNumber }) {
       try {
         const subscribedUsers = await apolloClient.query<
-          ColonySubscribedUsersQuery,
-          ColonySubscribedUsersQueryVariables
+          ColonyMembersQuery,
+          ColonyMembersQueryVariables
         >({
-          query: ColonySubscribedUsersDocument,
+          query: ColonyMembersDocument,
           variables: {
             colonyAddress,
           },

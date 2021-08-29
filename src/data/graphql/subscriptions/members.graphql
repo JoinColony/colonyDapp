@@ -1,4 +1,4 @@
-subscription ColonyMembers($colonyAddress: String!) {
+subscription Members($colonyAddress: String!) {
   subscribedUsers(colonyAddress: $colonyAddress) {
     id
     profile {
