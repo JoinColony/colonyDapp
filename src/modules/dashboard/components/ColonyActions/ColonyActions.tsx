@@ -12,14 +12,14 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 import {
   Colony,
-  useTransactionMessagesCountQuery,
-  useSubscriptionSubgraphOneTxSubscription,
-  useSubscriptionSubgraphEventsThatAreActionsSubscription,
+  useSubgraphOneTxSubscription,
+  useSubgraphEventsThatAreActionsSubscription,
   useActionsThatNeedAttentionQuery,
   useLoggedInUser,
   ActionThatNeedsAttention,
-  useSubscriptionsMotionsSubscription,
+  useSubgraphMotionsSubscription,
   useColonyExtensionsQuery,
+  useCommentCountSubscription,
 } from '~data/index';
 import { SortOptions, SortSelectOptions } from '../shared/sortOptions';
 import { getActionsListData } from '../../transformers';
@@ -89,7 +89,7 @@ const ColonyActions = ({
   const {
     data: oneTxActions,
     loading: oneTxActionsLoading,
-  } = useSubscriptionSubgraphOneTxSubscription({
+  } = useSubgraphOneTxSubscription({
     variables: {
       skip: 0,
       first: 100,
@@ -100,7 +100,7 @@ const ColonyActions = ({
   const {
     data: eventsActions,
     loading: eventsActionsLoading,
-  } = useSubscriptionSubgraphEventsThatAreActionsSubscription({
+  } = useSubgraphEventsThatAreActionsSubscription({
     variables: {
       skip: 0,
       first: 100,
@@ -111,7 +111,7 @@ const ColonyActions = ({
   const {
     data: commentCount,
     loading: commentCountLoading,
-  } = useTransactionMessagesCountQuery({
+  } = useCommentCountSubscription({
     variables: { colonyAddress },
   });
 
@@ -137,7 +137,7 @@ const ColonyActions = ({
     ({ extensionId }) => extensionId === Extension.VotingReputation,
   );
 
-  const { data: motions } = useSubscriptionsMotionsSubscription({
+  const { data: motions } = useSubgraphMotionsSubscription({
     variables: {
       skip: 0,
       first: 100,
