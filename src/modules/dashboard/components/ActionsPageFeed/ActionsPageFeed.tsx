@@ -9,7 +9,7 @@ import { MiniSpinnerLoader } from '~core/Preloaders';
 import { getEventsForActions } from '~utils/events';
 
 import {
-  useTransactionMessagesQuery,
+  useCommentsSubscription,
   AnyUser,
   OneDomain,
   ColonyAction,
@@ -112,7 +112,7 @@ const ActionsPageFeed = ({
     data: serverComments,
     loading: loadingServerComments,
     error,
-  } = useTransactionMessagesQuery({
+  } = useCommentsSubscription({
     variables: { transactionHash },
   });
 
