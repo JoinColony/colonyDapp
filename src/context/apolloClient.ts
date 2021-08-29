@@ -1,6 +1,7 @@
-import { ApolloClient, createHttpLink, ApolloLink } from '@apollo/client';
+import { ApolloClient, createHttpLink, split } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { WebSocketLink } from '@apollo/client/link/ws';
+import { getMainDefinition } from '@apollo/client/utilities';
 
 import { cache, typeDefs } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -36,24 +37,62 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+const webSocketLink = new WebSocketLink({
+  uri: `${process.env.SERVER_WS_ENDPOINT}/graphql`,
+  options: {
+    reconnect: true,
+    connectionParams: () => {
+      const wallet = TEMP_getContext(ContextModule.Wallet);
+      if (!wallet) return {};
+
+      // get the authentication token from local storage if it exists
+      const token = getToken(wallet.address);
+
+      return {
+        authorization: token ? `Bearer ${token}` : '',
+      };
+    },
+  },
+});
+
 export default new ApolloClient({
-  link: ApolloLink.split(
+  link: split(
     /*
      * If the operation starts with subscription, redirect to the web socket link
      */
-    ({ operationName }) => operationName.startsWith('Subscription'),
-    subgraphWebSocketLink,
+    ({ query }) => {
+      const definition = getMainDefinition(query);
+      return (
+        definition.kind === 'OperationDefinition' &&
+        definition.operation === 'subscription'
+      );
+    },
     /*
-     * Otherwise, redirect to one of our two http links: the subgraph server or
-     * our own metadata server
+     * If it's a subscription
      */
-    ApolloLink.split(
-      /*
-       * Only send the queries that start with 'Subgraph' to
-       * the `subgraphHttpLink` endpoint
-       */
+    split(
       ({ operationName }) => operationName.startsWith('Subgraph'),
+      /*
+       * If it's name starts with Subgraph go to The Graph's WS endpoint
+       */
+      subgraphWebSocketLink,
+      /*
+       * Otherwise go to our server's WS endpoint
+       */
+      webSocketLink,
+    ),
+    /*
+     * Else if it's a query (or mutation)
+     */
+    split(
+      ({ operationName }) => operationName.startsWith('Subgraph'),
+      /*
+       * If it's name starts with Subgraph go to The Graph's HTTP endpoint
+       */
       subgraphHttpLink,
+      /*
+       * Otherwise go to our server's HTTP endpoint
+       */
       authLink.concat(httpLink),
     ),
   ),
