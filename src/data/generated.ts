@@ -2068,7 +2068,7 @@ export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
     ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
   )> };
 
-export type SubraphMotionsSubscriptionVariables = Exact<{
+export type SubgraphMotionsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
   colonyAddress: Scalars['String'];
@@ -2076,7 +2076,7 @@ export type SubraphMotionsSubscriptionVariables = Exact<{
 }>;
 
 
-export type SubraphMotionsSubscription = { motions: Array<(
+export type SubgraphMotionsSubscription = { motions: Array<(
     Pick<SubscriptionMotion, 'id' | 'fundamentalChainId' | 'extensionAddress' | 'agent' | 'stakes' | 'requiredStake' | 'escalated' | 'action' | 'state' | 'type'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
@@ -5428,8 +5428,8 @@ export function useSubgraphEventsThatAreActionsSubscription(baseOptions?: Apollo
       }
 export type SubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubgraphEventsThatAreActionsSubscription>;
 export type SubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphEventsThatAreActionsSubscription>;
-export const SubraphMotionsDocument = gql`
-    subscription SubraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
+export const SubgraphMotionsDocument = gql`
+    subscription SubgraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
   motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
     id
     fundamentalChainId
@@ -5480,16 +5480,16 @@ export const SubraphMotionsDocument = gql`
     `;
 
 /**
- * __useSubraphMotionsSubscription__
+ * __useSubgraphMotionsSubscription__
  *
- * To run a query within a React component, call `useSubraphMotionsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useSubraphMotionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubgraphMotionsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphMotionsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubraphMotionsSubscription({
+ * const { data, loading, error } = useSubgraphMotionsSubscription({
  *   variables: {
  *      skip: // value for 'skip'
  *      first: // value for 'first'
@@ -5498,11 +5498,11 @@ export const SubraphMotionsDocument = gql`
  *   },
  * });
  */
-export function useSubraphMotionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubraphMotionsSubscription, SubraphMotionsSubscriptionVariables>) {
-        return Apollo.useSubscription<SubraphMotionsSubscription, SubraphMotionsSubscriptionVariables>(SubraphMotionsDocument, baseOptions);
+export function useSubgraphMotionsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubgraphMotionsSubscription, SubgraphMotionsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubgraphMotionsSubscription, SubgraphMotionsSubscriptionVariables>(SubgraphMotionsDocument, baseOptions);
       }
-export type SubraphMotionsSubscriptionHookResult = ReturnType<typeof useSubraphMotionsSubscription>;
-export type SubraphMotionsSubscriptionResult = Apollo.SubscriptionResult<SubraphMotionsSubscription>;
+export type SubgraphMotionsSubscriptionHookResult = ReturnType<typeof useSubgraphMotionsSubscription>;
+export type SubgraphMotionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphMotionsSubscription>;
 export const CommentCountDocument = gql`
     subscription CommentCount($colonyAddress: String!) {
   transactionMessagesCount(colonyAddress: $colonyAddress) {

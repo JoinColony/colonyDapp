@@ -113,7 +113,7 @@ subscription SubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddr
   }
 }
 
-subscription SubraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
+subscription SubgraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
   motions(
     skip: $skip,
     first: $first,
