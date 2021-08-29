@@ -9,7 +9,7 @@ import LoadMoreButton from '~core/LoadMoreButton';
 
 import { SortOptions, SortSelectOptions } from '../shared/sortOptions';
 import { immutableSort } from '~utils/arrays';
-import { Colony, useSubscriptionSubgraphEventsSubscription } from '~data/index';
+import { Colony, useSubgraphEventsSubscription } from '~data/index';
 import { getEventsListData } from '../../transformers';
 import { useTransformer } from '~utils/hooks';
 
@@ -46,7 +46,7 @@ const ColonyEvents = ({
     data,
     loading: subgraphEventsLoading,
     error,
-  } = useSubscriptionSubgraphEventsSubscription({
+  } = useSubgraphEventsSubscription({
     variables: {
       skip: 0,
       first: 100,
