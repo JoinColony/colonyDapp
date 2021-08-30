@@ -10,12 +10,9 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
-import { TimerValue } from '~utils/components';
+import { TimerValue, RemainingTokensValue } from '~utils/components';
 import useSplitTime from '~utils/hooks/useSplitTime';
-import {
-  getFormattedTokensRemaining,
-  getPriceStatus,
-} from '~utils/colonyCoinMachine';
+import { getPriceStatus } from '~utils/colonyCoinMachine';
 
 import TokenPriceStatusIcon from '../TokenPriceStatusIcon/TokenPriceStatusIcon';
 
@@ -129,9 +126,11 @@ const RemainingDisplayWidget = ({
       return <TimerValue splitTime={splitTime} />;
     }
     if (periodTokens && displayType === DataDisplayType.Tokens) {
-      return getFormattedTokensRemaining(
-        periodTokens,
-        periodTokens.soldPeriodTokens,
+      return (
+        <RemainingTokensValue
+          periodTokens={periodTokens}
+          tokensBought={periodTokens.soldPeriodTokens}
+        />
       );
     }
 
