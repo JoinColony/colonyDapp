@@ -17,10 +17,8 @@ import {
   SubgraphCoinMachinePeriodsQuery,
   TokenInfoQuery,
 } from '~data/generated';
-import {
-  getFormattedTokensRemaining,
-  getPriceStatus,
-} from '~utils/colonyCoinMachine';
+import { getPriceStatus } from '~utils/colonyCoinMachine';
+import { RemainingTokensValue } from '~utils/components';
 
 import TokenPriceStatusIcon from '../TokenPriceStatusIcon';
 import { PeriodTokensType } from '../RemainingDisplayWidget';
@@ -86,9 +84,15 @@ const TokenSalesTable = ({
     return tableData.map((data) => {
       return {
         saleEndedAt: new Date(parseInt(data.saleEndedAt, 10)),
-        tokensRemaining: periodTokens
-          ? getFormattedTokensRemaining(periodTokens, data.tokensBought)
-          : '???',
+        tokensRemaining: periodTokens ? (
+          <RemainingTokensValue
+            periodTokens={periodTokens}
+            tokensBought={data.tokensBought}
+          />
+        ) : (
+          '???'
+        ),
+        hasSoldOut: periodTokens?.maxPeriodTokens.eq(data.tokensBought),
         price: getFormattedTokenValue(data.price, 18),
         priceStatus:
           periodTokens && getPriceStatus(periodTokens, data.tokensBought),
@@ -127,7 +131,13 @@ const TokenSalesTable = ({
           </TableHeader>
           <TableBody>
             {formattedData.map(
-              ({ saleEndedAt, tokensRemaining, price, priceStatus }) => (
+              ({
+                saleEndedAt,
+                tokensRemaining,
+                hasSoldOut,
+                price,
+                priceStatus,
+              }) => (
                 <TableRow
                   className={styles.tableRow}
                   key={saleEndedAt.getTime()}
@@ -144,9 +154,7 @@ const TokenSalesTable = ({
                   </TableCell>
                   <TableCell
                     className={classnames(styles.cellData, {
-                      // eslint-disable-next-line max-len
-                      [styles.cellDataDanger]:
-                        typeof tokensRemaining !== 'string',
+                      [styles.cellDataDanger]: hasSoldOut,
                     })}
                   >
                     {tokensRemaining}
