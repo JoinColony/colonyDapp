@@ -50,6 +50,10 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.BuyTokens.amountLabel',
     defaultMessage: 'Amount',
   },
+  errorTooltip: {
+    id: 'dashboard.CoinMachine.BuyTokens.errorTooltip',
+    defaultMessage: `The maximum amount is determined by lesser of the 2 numbers: user limit at the time of the transaction or purchase token balance.`,
+  },
   userBalanceLabel: {
     id: 'dashboard.CoinMachine.BuyTokens.userBalanceLabel',
     defaultMessage: 'Balance {amount}',
@@ -365,6 +369,12 @@ const BuyTokens = ({
                     {errors?.amount && (
                       <div className={styles.fieldError}>
                         <InputStatus error={errors.amount} />
+                        {values.amount !== '0' && (
+                          <QuestionMarkTooltip
+                            tooltipText={MSG.errorTooltip}
+                            className={styles.errorTooltip}
+                          />
+                        )}
                       </div>
                     )}
                     {!globalDisable && (
