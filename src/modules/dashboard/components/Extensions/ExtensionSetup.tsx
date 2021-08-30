@@ -326,7 +326,8 @@ const ExtensionSetup = ({
                 />
               </div>
               <div className={styles.tokenAddessLink}>
-                {tokenContractAddress}
+                {tokenContractAddress &&
+                  tokenContractAddress(values[paramName])}
                 <div>
                   <MaskedAddress address={nativeTokenAddress} full />
                 </div>
