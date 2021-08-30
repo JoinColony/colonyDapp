@@ -60,6 +60,7 @@
 
 .sales {
   composes: container;
+  min-height: 100%;
   grid-column: buy / comments;
   grid-row: sales / last-line;
 }
