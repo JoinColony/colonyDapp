@@ -4,7 +4,7 @@ import {
   FormattedMessage,
   MessageDescriptor,
 } from 'react-intl';
-import { ColonyRole, Extension } from '@colony/colony-js';
+import { ColonyRole, Extension, Network } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
 
@@ -13,6 +13,8 @@ import { Address } from '~types/index';
 import { CustomRadioProps } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
 import { Colony } from '~data/index';
+import { getBlockExplorerLink } from '~utils/external';
+import { DEFAULT_NETWORK } from '~constants';
 
 export interface ExtensionBodyProps {
   colony: Colony;
@@ -56,7 +58,7 @@ export interface ExtensionData {
   descriptionLong: string | MessageDescriptor;
   descriptionExtended?: string | MessageDescriptor;
   descriptionLinks?: ReactElement[];
-  tokenContractAddress?: ReactElement;
+  tokenContractAddress?: (address: string) => ReactElement;
   info?: string | MessageDescriptor;
   currentVersion: number;
   createdAt: number;
@@ -97,7 +99,6 @@ const COIN_MACHINE_BLOG_POST_LINK = `https://blog.colony.io/introducing-coin-mac
 const COIN_MACHINE_GOOGLE_SHEET_LINK = `https://docs.google.com/spreadsheets/d/1ZCuFcwqI4S6ZK5OwTl1yN7AK8mjv5d_V3g-_kMen01Y/edit#gid=2013814210`;
 // to add a more detailed link
 const COIN_MACHINE_DESCRIPTION_LINK = 'https://colony.gitbook.io/colony/';
-const BLOCKSCOUT_LINK = 'https://blockscout.com';
 
 const coinMachineMessages = {
   coinMachineName: {
@@ -405,11 +406,24 @@ const extensions: { [key: string]: ExtensionData } = {
     currentVersion: 1,
     createdAt: 1603915271852,
     neededColonyPermissions: [ColonyRole.Root],
-    tokenContractAddress: (
+    tokenContractAddress: (tokenAddress) => (
       <FormattedMessage
         {...MSG.coinMachineTokenContractAddress}
         values={{
-          link: <ExternalLink href={BLOCKSCOUT_LINK} text="Blockscout" />,
+          link: (
+            <ExternalLink
+              href={getBlockExplorerLink({
+                linkType: 'token',
+                addressOrHash: tokenAddress,
+              })}
+              text={
+                DEFAULT_NETWORK === Network.Xdai ||
+                DEFAULT_NETWORK === Network.XdaiFork
+                  ? 'Blockscout'
+                  : 'Etherscan'
+              }
+            />
+          ),
         }}
       />
     ),
