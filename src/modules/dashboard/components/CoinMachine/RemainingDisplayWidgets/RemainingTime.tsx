@@ -9,20 +9,15 @@ import useSplitTime from '~utils/hooks/useSplitTime';
 
 import RemainingDisplayWidget from './RemainingDisplayWidget';
 
-export enum DataDisplayType {
-  Time = 'Time',
-  Tokens = ' Tokens',
-}
-
 type Appearance = {
   theme?: 'white' | 'danger';
 };
 
 type Props = {
   colonyAddress: Address;
-  value?: string | number | null;
+  value: number | null;
   appearance?: Appearance;
-  periodLength?: number;
+  periodLength: number;
 };
 
 const displayName =
