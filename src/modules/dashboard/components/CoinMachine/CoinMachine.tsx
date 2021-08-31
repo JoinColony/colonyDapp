@@ -15,6 +15,7 @@ import {
   Colony,
   useCoinMachineSalePeriodQuery,
   useCoinMachineTokenBalanceQuery,
+  useSubgraphCoinMachinePeriodsQuery,
 } from '~data/index';
 
 import Chat from './Chat';
@@ -80,6 +81,12 @@ const CoinMachine = ({
   const { transactionHash } = useParams<{
     transactionHash: string;
   }>();
+  const {
+    data: salePeriodsData,
+    loading: salePeriodsLoading,
+  } = useSubgraphCoinMachinePeriodsQuery({
+    variables: { colonyAddress: colonyAddress.toLowerCase() },
+  });
 
   const {
     data: periodTokensData,
@@ -132,7 +139,8 @@ const CoinMachine = ({
     salePeriodLoading ||
     !data?.processedColony?.installedExtensions ||
     periodTokensLoading ||
-    coinMachineTokenBalanceLoading
+    coinMachineTokenBalanceLoading ||
+    salePeriodsLoading
   ) {
     return (
       <div className={styles.loadingSpinner}>
@@ -229,8 +237,11 @@ const CoinMachine = ({
           </>
         )}
         <div className={styles.sales}>
-          {/* @TODO: Connect real tableData to TokenSalesTable */}
-          <TokenSalesTable tableData={[]} />
+          <TokenSalesTable
+            tableData={salePeriodsData?.coinMachinePeriods || []}
+            sellableToken={saleToken}
+            periodTokens={periodTokens}
+          />
         </div>
         <div className={styles.comments}>
           <Chat

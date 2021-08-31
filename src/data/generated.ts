@@ -272,6 +272,7 @@ export type Query = {
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
+  coinMachinePeriods: Array<PreviousPeriods>;
   coinMachineSalePeriod: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
   coinMachineTokenBalance: Scalars['String'];
@@ -354,6 +355,14 @@ export type QueryCoinMachineCurrentPeriodMaxUserPurchaseArgs = {
 
 export type QueryCoinMachineCurrentPeriodPriceArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryCoinMachinePeriodsArgs = {
+  skip: Scalars['Int'];
+  where?: Maybe<ByColonyFilter>;
+  orderBy: Scalars['String'];
+  orderDirection: Scalars['String'];
 };
 
 
@@ -1227,6 +1236,12 @@ export type BoughtTokens = {
 export type TrannsactionAmount = {
   transactionAmount: Scalars['String'];
   transactionSucceed: Scalars['Boolean'];
+};
+
+export type PreviousPeriods = {
+  saleEndedAt: Scalars['String'];
+  tokensBought: Scalars['String'];
+  price: Scalars['String'];
 };
 
 export type ActionsFilter = {
@@ -2149,6 +2164,13 @@ export type CoinMachineTokenBalanceQueryVariables = Exact<{
 
 
 export type CoinMachineTokenBalanceQuery = Pick<Query, 'coinMachineTokenBalance'>;
+
+export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<PreviousPeriods, 'saleEndedAt' | 'tokensBought' | 'price'>> };
 
 export type SubscriptionSubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
@@ -5704,6 +5726,41 @@ export function useCoinMachineTokenBalanceLazyQuery(baseOptions?: Apollo.LazyQue
 export type CoinMachineTokenBalanceQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceQuery>;
 export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceLazyQuery>;
 export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
+export const SubgraphCoinMachinePeriodsDocument = gql`
+    query SubgraphCoinMachinePeriods($colonyAddress: String!) {
+  coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 1, orderBy: "saleEndedAt", orderDirection: "desc") {
+    saleEndedAt
+    tokensBought
+    price
+  }
+}
+    `;
+
+/**
+ * __useSubgraphCoinMachinePeriodsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphCoinMachinePeriodsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphCoinMachinePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphCoinMachinePeriodsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useSubgraphCoinMachinePeriodsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphCoinMachinePeriodsQuery, SubgraphCoinMachinePeriodsQueryVariables>) {
+        return Apollo.useQuery<SubgraphCoinMachinePeriodsQuery, SubgraphCoinMachinePeriodsQueryVariables>(SubgraphCoinMachinePeriodsDocument, baseOptions);
+      }
+export function useSubgraphCoinMachinePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphCoinMachinePeriodsQuery, SubgraphCoinMachinePeriodsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphCoinMachinePeriodsQuery, SubgraphCoinMachinePeriodsQueryVariables>(SubgraphCoinMachinePeriodsDocument, baseOptions);
+        }
+export type SubgraphCoinMachinePeriodsQueryHookResult = ReturnType<typeof useSubgraphCoinMachinePeriodsQuery>;
+export type SubgraphCoinMachinePeriodsLazyQueryHookResult = ReturnType<typeof useSubgraphCoinMachinePeriodsLazyQuery>;
+export type SubgraphCoinMachinePeriodsQueryResult = Apollo.QueryResult<SubgraphCoinMachinePeriodsQuery, SubgraphCoinMachinePeriodsQueryVariables>;
 export const SubscriptionSubgraphEventsDocument = gql`
     subscription SubscriptionSubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
