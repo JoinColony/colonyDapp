@@ -96,7 +96,7 @@ const RemainingDisplayWidget = ({
 
   const displaysTimer = displayType === DataDisplayType.Time;
   const { splitTime, timeLeft } = useSplitTime(
-    displaysTimer && typeof value === 'number' ? value : 0,
+    displaysTimer && typeof value === 'number' ? value : -1,
     displaysTimer,
     periodLength,
   );
@@ -187,13 +187,13 @@ const RemainingDisplayWidget = ({
   }, [periodTokens]);
 
   useEffect(() => {
-    if (timeLeft <= 0 && colonyAddress !== undefined) {
+    if (value && timeLeft <= 0 && colonyAddress !== undefined) {
       dispatch({
         type: ActionTypes.COIN_MACHINE_PERIOD_UPDATE,
         payload: { colonyAddress },
       });
     }
-  }, [timeLeft, colonyAddress, dispatch]);
+  }, [timeLeft, colonyAddress, dispatch, value]);
 
   return (
     <div className={getMainClasses(appearance, styles)}>

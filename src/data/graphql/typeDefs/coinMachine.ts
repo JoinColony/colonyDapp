@@ -50,5 +50,6 @@ export default gql`
     ): String!
     coinMachineSalePeriod(colonyAddress: String!): SalePeriod!
     currentPeriodTokens(colonyAddress: String!): CurrentPeriodTokens!
+    coinMachineTokenBalance(colonyAddress: String!): String!
   }
 `;

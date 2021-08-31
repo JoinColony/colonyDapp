@@ -14,6 +14,7 @@ import {
   useCurrentPeriodTokensQuery,
   Colony,
   useCoinMachineSalePeriodQuery,
+  useCoinMachineTokenBalanceQuery,
 } from '~data/index';
 
 import Chat from './Chat';
@@ -57,9 +58,6 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
-  /* To add proper logic later */
-  const isSale = true;
-
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
@@ -91,8 +89,20 @@ const CoinMachine = ({
     fetchPolicy: 'network-only',
   });
 
+  const {
+    data: coinMachineTokenBalanceData,
+    loading: coinMachineTokenBalanceLoading,
+  } = useCoinMachineTokenBalanceQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+  });
+
+  const hasSaleStarted = !bigNumberify(
+    coinMachineTokenBalanceData?.coinMachineTokenBalance || 0,
+  ).isZero();
+
   const periodTokens = useMemo(() => {
-    if (!saleTokensData || !periodTokensData || !isSale) {
+    if (!saleTokensData || !periodTokensData || !hasSaleStarted) {
       return undefined;
     }
     return {
@@ -107,7 +117,7 @@ const CoinMachine = ({
         periodTokensData.currentPeriodTokens.targetPerPeriodTokens,
       ),
     };
-  }, [periodTokensData, saleTokensData, isSale]);
+  }, [periodTokensData, saleTokensData, hasSaleStarted]);
 
   const isSoldOut = useMemo(
     () =>
@@ -121,7 +131,8 @@ const CoinMachine = ({
     saleTokensLoading ||
     salePeriodLoading ||
     !data?.processedColony?.installedExtensions ||
-    periodTokensLoading
+    periodTokensLoading ||
+    coinMachineTokenBalanceLoading
   ) {
     return (
       <div className={styles.loadingSpinner}>
@@ -196,11 +207,7 @@ const CoinMachine = ({
             <div className={styles.buy}>
               <BuyTokens
                 colony={colony}
-                /*
-                 * @TODO Determine if the sale is currently ongoing
-                 * And only disable it if it insn't
-                 */
-                isCurrentlyOnSale={isSale}
+                isCurrentlyOnSale={hasSaleStarted}
                 isSoldOut={isSoldOut}
               />
             </div>
@@ -208,7 +215,7 @@ const CoinMachine = ({
               <RemainingDisplayWidget
                 displayType={DataDisplayType.Time}
                 appearance={{ theme: !isSoldOut ? 'white' : 'danger' }}
-                value={timeRemaining}
+                value={hasSaleStarted ? timeRemaining : null}
                 periodLength={periodLength}
                 colonyAddress={colonyAddress}
               />

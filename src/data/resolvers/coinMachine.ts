@@ -211,5 +211,19 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
+    async coinMachineTokenBalance(_, { colonyAddress }) {
+      try {
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+        const tokenBalance = await coinMachineClient.getTokenBalance();
+
+        return tokenBalance.toString();
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
   },
 });

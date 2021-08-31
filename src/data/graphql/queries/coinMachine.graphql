@@ -55,3 +55,7 @@ query CurrentPeriodTokens($colonyAddress: String!) {
     targetPerPeriodTokens
   }
 }
+
+query CoinMachineTokenBalance($colonyAddress: String!) {
+  coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
+}
