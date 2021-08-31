@@ -163,6 +163,7 @@
     "graphql-tag": "^2.10.1",
     "immutable": "^4.0.0-rc.12",
     "ipfs": "^0.43.1",
+    "is-relative-url": "^3.0.0",
     "jwt-decode": "^2.2.0",
     "linkify-it": "^3.0.0",
     "localforage": "^1.7.3",
