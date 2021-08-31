@@ -8,11 +8,6 @@ import { TokenPriceStatuses } from '../TokenPriceStatusIcon/TokenPriceStatusIcon
 
 import RemainingWidget from './RemainingDisplayWidget';
 
-export enum DataDisplayType {
-  Time = 'Time',
-  Tokens = ' Tokens',
-}
-
 type Appearance = {
   theme?: 'white' | 'danger';
 };
