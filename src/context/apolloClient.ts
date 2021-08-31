@@ -2,14 +2,41 @@ import { ApolloClient, createHttpLink, split } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
+import isRelativeUrl from 'is-relative-url';
 
 import { cache, typeDefs } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
 import { getToken } from '../api/auth';
 
+const currentHost = window.location.hostname || 'localhost';
+const currentProtocol = window.location.protocol || 'http:';
+const currentWebsocketProtocol = currentProtocol === 'http:' ? 'ws:' : 'wss:';
+
 const httpLink = createHttpLink({
-  uri: `${process.env.SERVER_ENDPOINT}/graphql`,
+  uri: isRelativeUrl(process.env.SERVER_ENDPOINT as string)
+    ? `${currentProtocol}//${currentHost}/${process.env.SERVER_ENDPOINT}/graphql`
+    : `${process.env.SERVER_ENDPOINT}/graphql`,
+});
+
+const webSocketLink = new WebSocketLink({
+  uri: isRelativeUrl(process.env.SERVER_ENDPOINT as string)
+    ? `${currentWebsocketProtocol}//${currentHost}/${process.env.SERVER_ENDPOINT}/graphql`
+    : `${process.env.SERVER_ENDPOINT}/graphql`,
+  options: {
+    reconnect: true,
+    connectionParams: () => {
+      const wallet = TEMP_getContext(ContextModule.Wallet);
+      if (!wallet) return {};
+
+      // get the authentication token from local storage if it exists
+      const token = getToken(wallet.address);
+
+      return {
+        authorization: token ? `Bearer ${token}` : '',
+      };
+    },
+  },
 });
 
 const subgraphHttpLink = createHttpLink({
@@ -35,24 +62,6 @@ const authLink = setContext((_, { headers }) => {
       authorization: token ? `Bearer ${token}` : '',
     },
   };
-});
-
-const webSocketLink = new WebSocketLink({
-  uri: `${process.env.SERVER_WS_ENDPOINT}/graphql`,
-  options: {
-    reconnect: true,
-    connectionParams: () => {
-      const wallet = TEMP_getContext(ContextModule.Wallet);
-      if (!wallet) return {};
-
-      // get the authentication token from local storage if it exists
-      const token = getToken(wallet.address);
-
-      return {
-        authorization: token ? `Bearer ${token}` : '',
-      };
-    },
-  },
 });
 
 export default new ApolloClient({
