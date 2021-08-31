@@ -2,6 +2,14 @@
   max-width: 600px;
 }
 
+.extensionDescription {
+  margin-top: 30px;
+}
+
+.descriptionExtended {
+  white-space: pre-line;
+}
+
 .input {
   margin-top: 50px;
   max-width: 450px;
@@ -37,4 +45,32 @@
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
+}
+
+.tokenSelectorContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  height: 42px;
+}
+
+.tokenSelectorContainer > p {
+  max-width: 280px;
+}
+
+.tokenAddessLink {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.tokenAddessLink > div {
+  margin-bottom: 20px;
+}
+
+.extraParams {
+  margin-bottom: 25px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--temp-grey-blue-7);
 }

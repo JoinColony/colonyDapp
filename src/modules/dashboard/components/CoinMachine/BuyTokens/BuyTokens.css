@@ -67,7 +67,14 @@
 }
 
 .fieldError {
+  display: flex;
   margin: -15px 0 12px;
+}
+
+.errorTooltip {
+  margin-left: 5px;
+  position: relative;
+  top: 4px;
 }
 
 .nativeToken {

@@ -87,6 +87,14 @@ function* colonyExtensionEnable({
       details: { initialized, missingPermissions },
     } = data.colonyExtension;
 
+    const modifyParams = (params) =>
+      params.map(({ paramName }) => {
+        if (typeof payload[paramName] === 'number') {
+          return bigNumberify(String(payload[paramName]));
+        }
+        return payload[paramName];
+      });
+
     if (!initialized && extension.initializationParams) {
       let initParams = [] as any[];
 
@@ -95,13 +103,18 @@ function* colonyExtensionEnable({
           payload?.policy !== PolicyType.AgreementOnly,
           agreementHash,
         ];
+      } else if (extensionId === Extension.CoinMachine) {
+        const params = [
+          ...extension.initializationParams,
+          ...(extension.extraInitParams ? extension.extraInitParams : []),
+        ].sort((a, b) =>
+          /* need this logic check for types */
+          a.orderNumber && b.orderNumber ? a.orderNumber - b.orderNumber : 1,
+        );
+
+        initParams = modifyParams(params);
       } else {
-        initParams = extension.initializationParams.map(({ paramName }) => {
-          if (typeof payload[paramName] === 'number') {
-            return bigNumberify(String(payload[paramName]));
-          }
-          return payload[paramName];
-        });
+        initParams = modifyParams(extension.initializationParams);
       }
 
       yield fork(createTransaction, initChannelName, {

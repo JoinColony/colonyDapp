@@ -2,6 +2,7 @@ import { FormikProps } from 'formik';
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
+import moveDecimal from 'move-decimal-point';
 
 import { endsWith } from 'lodash';
 import { Extension } from '@colony/colony-js';
@@ -10,10 +11,18 @@ import { bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
 import { IconButton, ActionButton } from '~core/Button';
-import { Input, ActionForm, Textarea } from '~core/Fields';
+import {
+  Input,
+  ActionForm,
+  Textarea,
+  TokenSymbolSelector,
+  InputLabel,
+} from '~core/Fields';
 import Heading from '~core/Heading';
+import MaskedAddress from '~core/MaskedAddress';
+
 import { ActionTypes } from '~redux/index';
-import { ColonyExtension } from '~data/index';
+import { Colony, ColonyExtension } from '~data/index';
 
 import {
   ExtensionData,
@@ -49,25 +58,39 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionSetup.setPermissions',
     defaultMessage: 'Set permissions',
   },
-  complementaryLabel: {
-    id: 'dashboard.Extensions.ExtensionSetup.complementaryLabel',
-    defaultMessage: `{isPeriod, select,
-      true {hours}
-      false {%}
-      other { }
-    }`,
+  hours: {
+    id: 'dashboard.Extensions.ExtensionSetup.hours',
+    defaultMessage: 'hours',
+  },
+  periods: {
+    id: 'dashboard.Extensions.ExtensionSetup.periods',
+    defaultMessage: 'periods',
+  },
+  percent: {
+    id: 'dashboard.Extensions.ExtensionSetup.percent',
+    defaultMessage: '%',
+  },
+  initParams: {
+    id: 'dashboard.Extensions.ExtensionSetup.initParams',
+    defaultMessage: 'Initialization parameters',
   },
 });
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
   extension: ExtensionData;
   installedExtension: ColonyExtension;
   nativeTokenAddress: Address;
 }
 const ExtensionSetup = ({
-  colonyAddress,
-  extension: { initializationParams },
+  colony: { colonyAddress, tokens },
+  extension: {
+    initializationParams,
+    extraInitParams,
+    descriptionExtended,
+    descriptionLinks,
+    tokenContractAddress,
+  },
   installedExtension,
   nativeTokenAddress,
 }: Props) => {
@@ -76,6 +99,11 @@ const ExtensionSetup = ({
     extensionId: string;
   }>();
   const history = useHistory();
+
+  const getToken = useCallback(
+    (address) => tokens.find((token) => token.address === address),
+    [tokens],
+  );
 
   const handleFormSuccess = useCallback(() => {
     history.replace(`/colony/${colonyName}/extensions/${extensionId}`);
@@ -100,9 +128,36 @@ const ExtensionSetup = ({
           return formattedPayload;
         }
         if (extensionId === Extension.CoinMachine) {
+          const {
+            targetPerPeriod,
+            tokenToBeSold,
+            maxPerPeriod,
+            userLimitFraction,
+            startingPrice,
+            purchaseToken,
+            periodLength,
+          } = payload;
+
+          const soldTokenDecimals = getToken(tokenToBeSold)?.decimals;
+
           return {
             ...payload,
-            userLimitFraction: bigNumberify(payload.userLimitFraction),
+            targetPerPeriod: bigNumberify(
+              moveDecimal(targetPerPeriod, soldTokenDecimals),
+            ),
+            maxPerPeriod: bigNumberify(
+              moveDecimal(maxPerPeriod, soldTokenDecimals),
+            ),
+            userLimitFraction: bigNumberify(
+              /* to be interpreted as a fixed point float with 18 digits after the decimal point */
+              moveDecimal(userLimitFraction / 100, 18),
+            ),
+            startingPrice: bigNumberify(
+              moveDecimal(startingPrice, getToken(purchaseToken)?.decimals),
+            ),
+            periodLength: new Decimal(periodLength)
+              .mul(3600) // Seconds in 1 hour
+              .toFixed(0, Decimal.ROUND_HALF_UP),
           };
         }
         return payload;
@@ -124,9 +179,13 @@ const ExtensionSetup = ({
       return {};
     }
     const defaultValues = createExtensionDefaultValues(initializationParams);
+    const extraParamsDefaultValues =
+      extraInitParams && createExtensionDefaultValues(extraInitParams);
+
     if (extensionId === Extension.CoinMachine) {
       return {
         ...defaultValues,
+        ...extraParamsDefaultValues,
         whitelistAddress:
           (isWhitelistExtensionEnabled && whitelistAddress) || AddressZero,
         tokenToBeSold: nativeTokenAddress,
@@ -135,6 +194,7 @@ const ExtensionSetup = ({
     return defaultValues;
   }, [
     extensionId,
+    extraInitParams,
     initializationParams,
     nativeTokenAddress,
     isWhitelistExtensionEnabled,
@@ -162,7 +222,6 @@ const ExtensionSetup = ({
           text={MSG.title}
         />
         <FormattedMessage {...MSG.descriptionMissingPermissions} />
-
         <div className={styles.inputContainer}>
           <ActionButton
             submit={ActionTypes.COLONY_EXTENSION_ENABLE}
@@ -177,6 +236,108 @@ const ExtensionSetup = ({
   }
 
   if (!initializationParams) return null;
+
+  const displayParams = (params, values, isExtraParams) =>
+    params.map(
+      ({
+        paramName,
+        title,
+        fieldName,
+        description,
+        type,
+        options,
+        disabled,
+        complementaryLabel,
+        tokenLabel,
+      }) => (
+        <div
+          key={paramName}
+          className={isExtraParams ? styles.extraParams : ''}
+        >
+          {type === ExtensionParamType.Input && (
+            <div className={styles.input}>
+              <Input
+                appearance={{ size: 'medium', theme: 'minimal' }}
+                label={title}
+                name={paramName}
+              />
+              <FormattedMessage
+                {...description}
+                values={{
+                  span: (chunks) => (
+                    <span className={styles.descriptionExample}>{chunks}</span>
+                  ),
+                }}
+              />
+              {(complementaryLabel || tokenLabel) && (
+                <span className={styles.complementaryLabel}>
+                  {complementaryLabel ? (
+                    <FormattedMessage {...MSG[complementaryLabel]} />
+                  ) : (
+                    getToken(values[tokenLabel])?.symbol
+                  )}
+                </span>
+              )}
+            </div>
+          )}
+          {type === ExtensionParamType.Textarea && (
+            <div className={styles.textArea}>
+              <Textarea
+                appearance={{ colorSchema: 'grey' }}
+                label={title}
+                name={paramName}
+                disabled={disabled && disabled(values)}
+              />
+              {description && (
+                <p className={styles.textAreaDescription}>
+                  <FormattedMessage {...description} />
+                </p>
+              )}
+            </div>
+          )}
+          {type === ExtensionParamType.ColonyPolicySelector && (
+            <ColonyPolicySelector
+              name={paramName}
+              title={title}
+              options={options || []}
+            />
+          )}
+          {type === ExtensionParamType.TokenSelector && (
+            <div>
+              <InputLabel
+                label={title}
+                appearance={{
+                  theme: 'minimal',
+                  size: 'medium',
+                }}
+              />
+              <div className={styles.tokenSelectorContainer}>
+                {fieldName && (
+                  <p>
+                    <FormattedMessage {...fieldName} />
+                  </p>
+                )}
+                <TokenSymbolSelector
+                  tokens={tokens}
+                  name={paramName}
+                  appearance={{ alignOptions: 'right', theme: 'grey' }}
+                  elementOnly
+                  label={paramName}
+                />
+              </div>
+              <div className={styles.tokenAddessLink}>
+                {tokenContractAddress &&
+                  tokenContractAddress(values[paramName])}
+                <div>
+                  <MaskedAddress address={nativeTokenAddress} full />
+                </div>
+              </div>
+              {description && <FormattedMessage {...description} />}
+            </div>
+          )}
+        </div>
+      ),
+    );
 
   return (
     <ActionForm
@@ -199,65 +360,33 @@ const ExtensionSetup = ({
             appearance={{ size: 'medium', margin: 'none' }}
             text={MSG.title}
           />
-          <FormattedMessage {...MSG.description} />
+          <div
+            className={descriptionExtended ? styles.extensionDescription : ''}
+          >
+            <FormattedMessage {...MSG.description} />
+          </div>
+          {descriptionExtended && (
+            <div className={styles.descriptionExtended}>
+              <FormattedMessage
+                {...descriptionExtended}
+                values={{
+                  link1: descriptionLinks?.[1],
+                  link2: descriptionLinks?.[2],
+                }}
+              />
+            </div>
+          )}
+          {extraInitParams && (
+            <div className={styles.inputContainer}>
+              {displayParams(extraInitParams, values, true)}
+              <Heading
+                appearance={{ size: 'medium', margin: 'none' }}
+                text={MSG.initParams}
+              />
+            </div>
+          )}
           <div className={styles.inputContainer}>
-            {initializationParams.map(
-              ({ paramName, title, description, type, options, disabled }) => (
-                <div key={paramName}>
-                  {type === ExtensionParamType.Input && (
-                    <div className={styles.input}>
-                      <Input
-                        appearance={{ size: 'medium', theme: 'minimal' }}
-                        label={title}
-                        name={paramName}
-                      />
-                      <FormattedMessage
-                        {...description}
-                        values={{
-                          span: (chunks) => (
-                            <span className={styles.descriptionExample}>
-                              {chunks}
-                            </span>
-                          ),
-                        }}
-                      />
-                      {extensionId === Extension.VotingReputation && (
-                        <span className={styles.complementaryLabel}>
-                          <FormattedMessage
-                            {...MSG.complementaryLabel}
-                            values={{
-                              isPeriod: endsWith(paramName, 'Period'),
-                            }}
-                          />
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  {type === ExtensionParamType.Textarea && (
-                    <div className={styles.textArea}>
-                      <Textarea
-                        appearance={{ colorSchema: 'grey' }}
-                        label={title}
-                        name={paramName}
-                        disabled={disabled && disabled(values)}
-                      />
-                      {description && (
-                        <p className={styles.textAreaDescription}>
-                          <FormattedMessage {...description} />
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  {type === ExtensionParamType.ColonyPolicySelector && (
-                    <ColonyPolicySelector
-                      name={paramName}
-                      title={title}
-                      options={options || []}
-                    />
-                  )}
-                </div>
-              ),
-            )}
+            {displayParams(initializationParams, values, false)}
           </div>
           <IconButton
             appearance={{ theme: 'primary', size: 'large' }}
@@ -271,6 +400,5 @@ const ExtensionSetup = ({
     </ActionForm>
   );
 };
-ExtensionSetup.displayName = 'dashboard.Extensions.ExtensionSetup';
 
 export default ExtensionSetup;

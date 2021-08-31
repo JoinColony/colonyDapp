@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
-import { formatEther, bigNumberify } from 'ethers/utils';
+import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -26,7 +26,10 @@ import {
   useUserWhitelistStatusQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  getTokenDecimalsWithFallback,
+  getFormattedTokenValue,
+} from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
 import { mapPayload, withMeta, pipe } from '~utils/actions';
 
@@ -46,6 +49,10 @@ const MSG = defineMessages({
   amountLabel: {
     id: 'dashboard.CoinMachine.BuyTokens.amountLabel',
     defaultMessage: 'Amount',
+  },
+  errorTooltip: {
+    id: 'dashboard.CoinMachine.BuyTokens.errorTooltip',
+    defaultMessage: `The maximum amount is determined by lesser of the 2 numbers: user limit at the time of the transaction or purchase token balance.`,
   },
   userBalanceLabel: {
     id: 'dashboard.CoinMachine.BuyTokens.userBalanceLabel',
@@ -167,12 +174,14 @@ const BuyTokens = ({
     ({ address: userTokenAddress }) =>
       userTokenAddress === purchaseToken?.address,
   );
-  const userPurchaseTokenBalance = formatEther(
+  const userPurchaseTokenBalance = getFormattedTokenValue(
     userPurchaseToken?.balance || '0',
+    purchaseToken?.decimals || 18,
   );
 
-  const currentSalePrice = formatEther(
+  const currentSalePrice = getFormattedTokenValue(
     salePriceData?.coinMachineCurrentPeriodPrice || '0',
+    purchaseToken?.decimals || 18,
   );
 
   const globalDisable = !isCurrentlyOnSale || !userHasProfile;
@@ -199,20 +208,34 @@ const BuyTokens = ({
     if (
       maxUserPurchaseData?.coinMachineCurrentPeriodMaxUserPurchase &&
       salePriceData?.coinMachineCurrentPeriodPrice &&
-      userPurchaseToken?.balance
+      userPurchaseToken?.balance &&
+      purchaseToken
     ) {
       const userTokenBalance = bigNumberify(userPurchaseToken.balance);
-      const maxPurchase =
+      const maxContractPurchase =
         maxUserPurchaseData.coinMachineCurrentPeriodMaxUserPurchase;
+
       const currentPrice = salePriceData.coinMachineCurrentPeriodPrice;
-      const maxPurchaseCost = bigNumberify(maxPurchase).mul(currentPrice);
-      if (maxPurchaseCost.gt(userTokenBalance)) {
-        return userTokenBalance;
+
+      const maxUserBalancePurchase = userTokenBalance
+        .div(currentPrice)
+        /*
+        when we divide by a number with moved decimal our final number
+        gets smaller by the '10 * the number of 0 that are added'
+        so we need to counteract it by multiplying it back
+         */
+        .mul(
+          bigNumberify(10).pow(
+            getTokenDecimalsWithFallback(purchaseToken.decimals),
+          ),
+        );
+      if (maxUserBalancePurchase.gt(maxContractPurchase)) {
+        return maxContractPurchase;
       }
-      return maxPurchaseCost;
+      return maxUserBalancePurchase;
     }
     return bigNumberify(0);
-  }, [maxUserPurchaseData, salePriceData, userPurchaseToken]);
+  }, [maxUserPurchaseData, salePriceData, userPurchaseToken, purchaseToken]);
 
   const handleSetMaxAmount = useCallback(
     (event, setFieldValue) => {
@@ -224,10 +247,16 @@ const BuyTokens = ({
          * Either the max tokens available this period, or the user's total purchase
          * tokens balance, whichever is smaller
          */
-        setFieldValue('amount', formatEther(maxUserPurchase));
+        setFieldValue(
+          'amount',
+          getFormattedTokenValue(
+            maxUserPurchase,
+            sellableToken?.decimals || 18,
+          ),
+        );
       }
     },
-    [globalDisable, maxUserPurchase],
+    [globalDisable, maxUserPurchase, sellableToken],
   );
   const handleFormReset = useCallback((resetForm) => resetForm(), []);
 
@@ -290,7 +319,12 @@ const BuyTokens = ({
               amount: '0',
             }}
             validationSchema={validationSchema(
-              parseFloat(formatEther(maxUserPurchase)),
+              parseFloat(
+                getFormattedTokenValue(
+                  maxUserPurchase,
+                  sellableToken?.decimals || 18,
+                ),
+              ),
             )}
             submit={ActionTypes.COIN_MACHINE_BUY_TOKENS}
             error={ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR}
@@ -335,6 +369,12 @@ const BuyTokens = ({
                     {errors?.amount && (
                       <div className={styles.fieldError}>
                         <InputStatus error={errors.amount} />
+                        {values.amount !== '0' && (
+                          <QuestionMarkTooltip
+                            tooltipText={MSG.errorTooltip}
+                            className={styles.errorTooltip}
+                          />
+                        )}
                       </div>
                     )}
                     {!globalDisable && (
