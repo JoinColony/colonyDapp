@@ -2,27 +2,30 @@ import { ApolloClient, createHttpLink, split } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
-import isRelativeUrl from 'is-relative-url';
 
 import { cache, typeDefs } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
 import { getToken } from '../api/auth';
 
-const currentHost = window.location.hostname || 'localhost';
-const currentProtocol = window.location.protocol || 'http:';
-const currentWebsocketProtocol = currentProtocol === 'http:' ? 'ws:' : 'wss:';
+const getApolloUri = (
+  url: string = process.env.SERVER_ENDPOINT || '',
+  useWebsocket = false,
+): string => {
+  const apolloServerUrl = new URL(url, window.location.origin);
+  if (useWebsocket && !apolloServerUrl.protocol.includes('ws')) {
+    apolloServerUrl.protocol =
+      apolloServerUrl.protocol === 'http:' ? 'ws:' : 'wss:';
+  }
+  return apolloServerUrl.href;
+};
 
 const httpLink = createHttpLink({
-  uri: isRelativeUrl(process.env.SERVER_ENDPOINT as string)
-    ? `${currentProtocol}//${currentHost}/${process.env.SERVER_ENDPOINT}/graphql`
-    : `${process.env.SERVER_ENDPOINT}/graphql`,
+  uri: getApolloUri(`${process.env.SERVER_ENDPOINT}/graphql`),
 });
 
 const webSocketLink = new WebSocketLink({
-  uri: isRelativeUrl(process.env.SERVER_ENDPOINT as string)
-    ? `${currentWebsocketProtocol}//${currentHost}/${process.env.SERVER_ENDPOINT}/graphql`
-    : `${process.env.SERVER_ENDPOINT}/graphql`,
+  uri: getApolloUri(`${process.env.SERVER_ENDPOINT}/graphql`, true),
   options: {
     reconnect: true,
     connectionParams: () => {
@@ -40,11 +43,14 @@ const webSocketLink = new WebSocketLink({
 });
 
 const subgraphHttpLink = createHttpLink({
-  uri: process.env.SUBGRAPH_ENDPOINT,
+  uri: getApolloUri(process.env.SUBGRAPH_ENDPOINT),
 });
 
 const subgraphWebSocketLink = new WebSocketLink({
-  uri: process.env.SUBGRAPH_WS_ENDPOINT as string,
+  uri: getApolloUri(
+    process.env.SUBGRAPH_WS_ENDPOINT || process.env.SUBGRAPH_ENDPOINT,
+    true,
+  ),
   options: {
     reconnect: true,
   },
