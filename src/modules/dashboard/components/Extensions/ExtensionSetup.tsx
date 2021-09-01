@@ -255,20 +255,28 @@ const ExtensionSetup = ({
           className={isExtraParams ? styles.extraParams : ''}
         >
           {type === ExtensionParamType.Input && (
-            <div className={styles.input}>
+            <div
+              className={`${styles.input} ${
+                paramName.endsWith('Address') ? styles.addressInput : ''
+              }`}
+            >
               <Input
                 appearance={{ size: 'medium', theme: 'minimal' }}
                 label={title}
                 name={paramName}
               />
-              <FormattedMessage
-                {...description}
-                values={{
-                  span: (chunks) => (
-                    <span className={styles.descriptionExample}>{chunks}</span>
-                  ),
-                }}
-              />
+              <p className={styles.inputsDescription}>
+                <FormattedMessage
+                  {...description}
+                  values={{
+                    span: (chunks) => (
+                      <span className={styles.descriptionExample}>
+                        {chunks}
+                      </span>
+                    ),
+                  }}
+                />
+              </p>
               {(complementaryLabel || tokenLabel) && (
                 <span className={styles.complementaryLabel}>
                   {complementaryLabel ? (
@@ -332,7 +340,11 @@ const ExtensionSetup = ({
                   <MaskedAddress address={nativeTokenAddress} full />
                 </div>
               </div>
-              {description && <FormattedMessage {...description} />}
+              {description && (
+                <p className={styles.inputsDescription}>
+                  <FormattedMessage {...description} />
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -380,7 +392,7 @@ const ExtensionSetup = ({
             <div className={styles.inputContainer}>
               {displayParams(extraInitParams, values, true)}
               <Heading
-                appearance={{ size: 'medium', margin: 'none' }}
+                appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
                 text={MSG.initParams}
               />
             </div>
@@ -388,6 +400,7 @@ const ExtensionSetup = ({
           <div className={styles.inputContainer}>
             {displayParams(initializationParams, values, false)}
           </div>
+          {extraInitParams && <div className={styles.divider} />}
           <IconButton
             appearance={{ theme: 'primary', size: 'large' }}
             onClick={() => handleSubmit()}
