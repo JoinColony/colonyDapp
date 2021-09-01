@@ -40,6 +40,11 @@
   color: var(--temp-grey-11);
 }
 
+.themeGrey {
+  composes: main;
+  color: var(--temp-grey-blue-7);
+}
+
 /*
  * Margins
  *
