@@ -7,3 +7,5 @@ export const loadingSpinnerContainer: string;
 export const permissionsContainer: string;
 export const roleList: string;
 export const roleListItem: string;
+export const tokensContainer: string;
+export const tokenAmount: string;
