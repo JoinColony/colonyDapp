@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import NavLink from '~core/NavLink';
@@ -6,7 +6,11 @@ import Heading from '~core/Heading';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
-import { Colony, useColonyMembersWithReputationQuery } from '~data/index';
+import {
+  Colony,
+  useColonyMembersWithReputationQuery,
+  useMembersSubscription,
+} from '~data/index';
 import { Address } from '~types/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
@@ -46,7 +50,7 @@ const ColonyMembers = ({
   maxAvatars = 15,
 }: Props) => {
   const {
-    data: members,
+    data: membersWithReputation,
     loading: loadingColonyMembersWithReputation,
   } = useColonyMembersWithReputationQuery({
     variables: {
@@ -55,14 +59,25 @@ const ColonyMembers = ({
     },
   });
 
+  const { data: members, loading: loadingMembers } = useMembersSubscription({
+    variables: {
+      colonyAddress,
+    },
+  });
+
+  const colonyMembers = useMemo(() => {
+    if (currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
+      return members?.subscribedUsers?.map(
+        ({ profile: { walletAddress } }) => walletAddress,
+      );
+    }
+    return membersWithReputation?.colonyMembersWithReputation;
+  }, [members, membersWithReputation, currentDomainId]);
+
   const {
     avatarsDisplaySplitRules,
     remainingAvatarsCount,
-  } = useAvatarDisplayCounter(
-    maxAvatars,
-    members?.colonyMembersWithReputation,
-    false,
-  );
+  } = useAvatarDisplayCounter(maxAvatars, colonyMembers, false);
 
   const BASE_MEMBERS_ROUTE = `/colony/${colonyName}/members`;
   const membersPageRoute =
@@ -70,7 +85,7 @@ const ColonyMembers = ({
       ? BASE_MEMBERS_ROUTE
       : `${BASE_MEMBERS_ROUTE}/${currentDomainId}`;
 
-  if (loadingColonyMembersWithReputation) {
+  if (loadingColonyMembersWithReputation || loadingMembers) {
     return (
       <MiniSpinnerLoader
         className={styles.main}
@@ -81,7 +96,7 @@ const ColonyMembers = ({
     );
   }
 
-  if (!members || !members.colonyMembersWithReputation) {
+  if (!colonyMembers) {
     return (
       <div className={styles.main}>
         <Heading
@@ -96,8 +111,6 @@ const ColonyMembers = ({
     );
   }
 
-  const { colonyMembersWithReputation } = members;
-
   return (
     <div className={styles.main}>
       <NavLink to={membersPageRoute}>
@@ -105,13 +118,13 @@ const ColonyMembers = ({
           appearance={{ size: 'normal', weight: 'bold' }}
           text={MSG.title}
           textValues={{
-            count: colonyMembersWithReputation.length,
+            count: colonyMembers.length,
             hasCounter: true,
           }}
         />
       </NavLink>
       <ul className={styles.userAvatars}>
-        {(colonyMembersWithReputation as Address[])
+        {(colonyMembers as Address[])
           .slice(0, avatarsDisplaySplitRules)
           .map((userAddress: Address) => (
             <li className={styles.userAvatar} key={userAddress}>

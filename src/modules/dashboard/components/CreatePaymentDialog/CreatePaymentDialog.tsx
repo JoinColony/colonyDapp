@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
-import { useQuery } from '@apollo/client';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { ActionForm } from '~core/Fields';
 
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { ColonySubscribedUsersDocument } from '~data/index';
+import { useMembersSubscription } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
@@ -88,10 +87,9 @@ const CreatePaymentDialog = ({
     motionDomainId: yup.number(),
   });
 
-  const { data: subscribedUsersData } = useQuery(
-    ColonySubscribedUsersDocument,
-    { variables: { colonyAddress } },
-  );
+  const { data: colonyMembers } = useMembersSubscription({
+    variables: { colonyAddress },
+  });
 
   const transform = useCallback(
     pipe(
@@ -165,7 +163,7 @@ const CreatePaymentDialog = ({
               colony={colony}
               isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
-              subscribedUsers={subscribedUsersData.subscribedUsers}
+              subscribedUsers={colonyMembers?.subscribedUsers || []}
               ethDomainId={ethDomainId}
             />
           </Dialog>

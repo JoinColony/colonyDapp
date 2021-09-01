@@ -17,6 +17,7 @@ import {
   AnyUser,
   Colony,
   useColonyMembersWithReputationQuery,
+  useMembersSubscription,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -95,8 +96,17 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
     selectedDomain || {};
 
   const {
-    data,
-    loading: loadingColonyMembers,
+    data: allMembers,
+    loading: loadingAllMembers,
+  } = useMembersSubscription({
+    variables: {
+      colonyAddress,
+    },
+  });
+
+  const {
+    data: membersWithReputation,
+    loading: loadingColonyMembersWithReputation,
   } = useColonyMembersWithReputationQuery({
     variables: {
       colonyAddress,
@@ -120,14 +130,19 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
    * or cannot be subscribers to the colony).
    */
   const skelethonUsers = useMemo(() => {
-    if (!data || !data.colonyMembersWithReputation) {
-      return [];
+    let displayMembers =
+      allMembers?.subscribedUsers.map(
+        ({ profile: { walletAddress } }) => walletAddress,
+      ) || [];
+    if (currentDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID) {
+      displayMembers = membersWithReputation?.colonyMembersWithReputation || [];
     }
-    return data.colonyMembersWithReputation.map((walletAddress) => ({
+
+    return displayMembers.map((walletAddress) => ({
       id: walletAddress,
       profile: { walletAddress },
     }));
-  }, [data]);
+  }, [allMembers, membersWithReputation, currentDomainId]);
 
   const domainRoles = useTransformer(getAllUserRolesForDomain, [
     colony,
@@ -196,7 +211,7 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
       });
   }, [directDomainRoles, domainRoles, inheritedDomainRoles]);
 
-  if (loadingColonyMembers) {
+  if (loadingAllMembers || loadingColonyMembersWithReputation) {
     return (
       <div className={styles.main}>
         <SpinnerLoader

@@ -19,9 +19,6 @@ import { Address } from '~types/index';
 import { Context, IpfsWithFallbackSkeleton } from '~context/index';
 import {
   Transfer,
-  ColonySubscribedUsersQuery,
-  ColonySubscribedUsersQueryVariables,
-  ColonySubscribedUsersDocument,
   SubgraphDomainsQuery,
   SubgraphDomainsQueryVariables,
   SubgraphDomainsDocument,
@@ -32,7 +29,6 @@ import {
   SubgraphColonyQueryVariables,
   SubgraphColonyDocument,
 } from '~data/index';
-import ColonyManager from '~lib/ColonyManager';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createAddress } from '~utils/web3';
@@ -45,22 +41,6 @@ import {
   getPayoutClaimedTransfers,
   getColonyUnclaimedTransfers,
 } from './transactions';
-
-type ReputationOracleAddresses = Address[];
-
-const getColonyMembersWithReputation = async (
-  colonyManager: ColonyManager,
-  colonyAddress: Address,
-  domainId: number,
-): Promise<ReputationOracleAddresses> => {
-  const colonyClient = await colonyManager.getClient(
-    ClientType.ColonyClient,
-    colonyAddress,
-  );
-  const { skillId } = await colonyClient.getDomain(domainId);
-  const { addresses } = await colonyClient.getMembersReputation(skillId);
-  return addresses || [];
-};
 
 export const getProcessedColony = async (
   subgraphColony,
@@ -291,42 +271,13 @@ export const colonyResolvers = ({
         domainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
       }: { colonyAddress: Address; domainId: number },
     ) {
-      if (domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
-        const subscribedMembers = await apolloClient.query<
-          ColonySubscribedUsersQuery,
-          ColonySubscribedUsersQueryVariables
-        >({
-          query: ColonySubscribedUsersDocument,
-          variables: {
-            colonyAddress,
-          },
-        });
-        return subscribedMembers.data?.subscribedUsers.map(
-          /*
-           * The profile object exists and it's even defined in the types
-           * Just TS deciding to be a jerk
-           */
-          // @ts-ignore
-          ({ profile: { walletAddress } }) => walletAddress,
-        );
-      }
-      /*
-       * @NOTE About zero reputation an decay
-       *
-       * Initially a user has 0 reputation in the colony.
-       * By default that user won't be returned in the below query.
-       *
-       * Let say that then, a user aquires some reputation, which, after a time, decays back to zero.
-       * That user will be returned in the below query.
-       *
-       * Maybe at some point we want to consider filtering them out.
-       * But that's for another time.
-       */
-      return getColonyMembersWithReputation(
-        colonyManager,
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
         colonyAddress,
-        domainId,
       );
+      const { skillId } = await colonyClient.getDomain(domainId);
+      const { addresses } = await colonyClient.getMembersReputation(skillId);
+      return addresses || [];
     },
     async colonyDomain(_, { colonyAddress, domainId }) {
       const { data } = await apolloClient.query<

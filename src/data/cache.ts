@@ -48,9 +48,6 @@ export default new InMemoryCache({
     },
     Query: {
       fields: {
-        subscribedUsers: {
-          merge: false,
-        },
         colonyMembersWithReputation: {
           merge: false,
         },
@@ -65,6 +62,13 @@ export default new InMemoryCache({
     Event: {
       fields: {
         associatedColony: {
+          merge: false,
+        },
+      },
+    },
+    Subscription: {
+      fields: {
+        subscribedUsers: {
           merge: false,
         },
       },
