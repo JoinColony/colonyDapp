@@ -7,19 +7,21 @@ import { getPriceStatus } from '~utils/colonyCoinMachine';
 
 import RemainingWidget from './RemainingDisplayWidget';
 
-type Appearance = {
+interface Appearance {
   theme?: 'white' | 'danger';
-};
+}
 
-type Props = {
+export interface PeriodTokensType {
+  decimals: number;
+  soldPeriodTokens: BigNumber;
+  maxPeriodTokens: BigNumber;
+  targetPeriodTokens: BigNumber;
+}
+
+interface Props {
   appearance?: Appearance;
-  periodTokens?: {
-    decimals: number;
-    soldPeriodTokens: BigNumber;
-    maxPeriodTokens: BigNumber;
-    targetPeriodTokens: BigNumber;
-  };
-};
+  periodTokens?: PeriodTokensType;
+}
 
 const displayName =
   'dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokens';
