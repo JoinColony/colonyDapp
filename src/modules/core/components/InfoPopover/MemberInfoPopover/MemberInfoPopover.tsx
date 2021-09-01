@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import isEmpty from 'lodash/isEmpty';
 
+import { bigNumberify } from 'ethers/utils';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -11,12 +12,15 @@ import {
   useColonyNativeTokenQuery,
   useTokenInfoLazyQuery,
   Colony,
+  useUserBalanceWithLockQuery,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 
 import { getAllUserRoles } from '../../../../transformers';
 import UserInfo from '../UserInfo';
 import UserPermissions from './UserPermissions';
+
+import UserTokens from './UserTokens';
 
 import styles from './MemberInfoPopover.css';
 
@@ -74,6 +78,29 @@ const MemberInfoPopover = ({
   });
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const {
+    data: userBalanceData,
+    loading: loadingUserBalance,
+  } = useUserBalanceWithLockQuery({
+    variables: {
+      address: walletAddress,
+      tokenAddress:
+        nativeTokenAddressData?.processedColony.nativeTokenAddress || '',
+      colonyAddress,
+    },
+    /* 
+      The fetchPolicy here is "no-cache" because otherwise the result would be stored 
+      in the cache and then the current user's balance would change (in the other instances 
+      where the current user balance is obtained using this query) to the one that it's being 
+      displayed in the popover.
+
+      It could also happen in reverse, the current user's balance could show up here instead
+      of the balance of a "second person" user.
+
+      Basically, all sorts of shenanigans happen when this result is stored on the cache.
+    */
+    fetchPolicy: 'no-cache',
+  });
 
   useEffect(() => {
     if (nativeTokenAddressData) {
@@ -84,7 +111,11 @@ const MemberInfoPopover = ({
     }
   }, [fetchTokenInfo, nativeTokenAddressData]);
 
-  if (loadingNativeTokenAddress || loadingUserReputation) {
+  if (
+    loadingNativeTokenAddress ||
+    loadingUserReputation ||
+    loadingUserBalance
+  ) {
     return (
       <div className={`${styles.main} ${styles.loadingSpinnerContainer}`}>
         <SpinnerLoader
@@ -97,6 +128,13 @@ const MemberInfoPopover = ({
       </div>
     );
   }
+  const nativeToken = userBalanceData?.user.userLock.nativeToken;
+  const userLock = userBalanceData?.user.userLock;
+  const inactiveBalance = bigNumberify(userLock?.nativeToken?.balance || 0);
+  const lockedBalance = bigNumberify(userLock?.totalObligation || 0);
+  const activeBalance = bigNumberify(userLock?.activeTokens || 0);
+
+  const totalBalance = inactiveBalance.add(activeBalance).add(lockedBalance);
 
   return (
     <div className={styles.main}>
@@ -140,6 +178,11 @@ const MemberInfoPopover = ({
           </p>
         )}
       </div>
+      {!totalBalance.isZero() && nativeToken && (
+        <div className={styles.section}>
+          <UserTokens totalBalance={totalBalance} nativeToken={nativeToken} />
+        </div>
+      )}
       {!isEmpty(allUserRoles) && (
         <div className={styles.section}>
           <UserPermissions roles={allUserRoles} />
