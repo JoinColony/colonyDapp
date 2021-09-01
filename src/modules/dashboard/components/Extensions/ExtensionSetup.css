@@ -2,6 +2,10 @@
   max-width: 600px;
 }
 
+.main label {
+  color: var(--dark);
+}
+
 .extensionDescription {
   margin-top: 30px;
 }
@@ -11,20 +15,46 @@
 }
 
 .input {
-  margin-top: 50px;
-  max-width: 450px;
+  margin-top: 40px;
+  max-width: 340px;
   position: relative;
   white-space: pre-line;
 }
 
+.input label {
+  font-size: var(--size-smallish);
+}
+
+.input input {
+  font-size: 14px;
+  font-weight: var(--weight-normal);
+  text-align: right;
+  color: var(--grey-2);
+}
+
+.addressInput input {
+  font-size: 13px;
+}
+
+.inputsDescription {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
 .inputContainer {
-  margin-bottom: 50px;
+  margin-bottom: 40px;
+}
+
+.inputContainer > div > div > :nth-child(1) {
+  margin-bottom: 0;
 }
 
 .complementaryLabel {
   position: absolute;
-  top: 30px;
-  right: 5px;
+  top: 26px;
+  left: 360px;
+  color: var(--grey-2);
 }
 
 .descriptionExample {
@@ -40,11 +70,9 @@
 }
 
 .textAreaDescription {
+  composes: inputsDescription;
   margin-top: -15px;
   margin-left: 4px;
-  font-size: var(--size-tiny);
-  font-weight: var(--weight-bold);
-  color: var(--temp-grey-blue-7);
 }
 
 .tokenSelectorContainer {
@@ -72,5 +100,10 @@
 .extraParams {
   margin-bottom: 25px;
   padding-bottom: 30px;
-  border-bottom: 1px solid var(--temp-grey-blue-7);
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.divider {
+  margin-bottom: 30px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
