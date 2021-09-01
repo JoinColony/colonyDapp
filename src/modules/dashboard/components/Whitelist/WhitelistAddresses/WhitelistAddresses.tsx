@@ -2,7 +2,7 @@ import React from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
 
-import { AnyUser } from '~data/index';
+import { AnyUser, Colony } from '~data/index';
 import MembersList from '~core/MembersList';
 import WhitelistMembersListExtraContent from './WhitelistMembersListExtraContent';
 
@@ -10,7 +10,7 @@ import styles from './WhitelistAddresses.css';
 import Heading from '~core/Heading';
 
 interface Props {
-  colonyAddress: string;
+  colony: Colony;
   users: AnyUser[];
 }
 
@@ -23,7 +23,7 @@ const MSG = defineMessages({
   },
 });
 
-const WhitelistAddresses = ({ colonyAddress, users }: Props) => {
+const WhitelistAddresses = ({ colony, users }: Props) => {
   return (
     <div className={styles.main}>
       <Heading
@@ -31,7 +31,7 @@ const WhitelistAddresses = ({ colonyAddress, users }: Props) => {
         appearance={{ margin: 'small', theme: 'dark', size: 'normal' }}
       />
       <MembersList
-        colonyAddress={colonyAddress}
+        colony={colony}
         domainId={ROOT_DOMAIN_ID}
         users={users}
         showUserReputation={false}
@@ -39,7 +39,7 @@ const WhitelistAddresses = ({ colonyAddress, users }: Props) => {
           return (
             <WhitelistMembersListExtraContent
               userAddress={props.id}
-              colonyAddress={colonyAddress}
+              colonyAddress={colony.colonyAddress}
             />
           );
         }}

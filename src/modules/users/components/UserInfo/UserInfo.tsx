@@ -6,7 +6,7 @@ import {
 } from 'react-intl';
 
 import { Address } from '~types/index';
-import { AnyUser } from '~data/index';
+import { AnyUser, Colony } from '~data/index';
 import Icon from '~core/Icon';
 import MaskedAddress from '~core/MaskedAddress';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -29,12 +29,12 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const defaultRenderAvatar = (
   address: Address,
   user?: AnyUser,
-  colonyAddress?: Address,
+  colony?: Colony,
   domainId?: number,
 ) => (
   <UserAvatar
     address={address}
-    colonyAddress={colonyAddress}
+    colony={colony}
     domainId={domainId}
     user={user}
     showInfo
@@ -45,14 +45,14 @@ const defaultRenderAvatar = (
 
 interface Props {
   children?: ReactNode;
-  colonyAddress: Address;
+  colony: Colony;
   placeholder?: MessageDescriptor;
   user?: AnyUser;
   userAddress?: Address;
   renderAvatar?: (
     address: Address,
     user?: AnyUser,
-    colonyAddress?: Address,
+    colonyAddress?: Colony,
     domainId?: number,
   ) => ReactNode;
   domainId?: number;
@@ -60,7 +60,7 @@ interface Props {
 
 const UserInfo = ({
   children,
-  colonyAddress,
+  colony,
   placeholder = MSG.placeholder,
   user,
   userAddress,
@@ -80,7 +80,7 @@ const UserInfo = ({
     <div className={styles.main}>
       {userAddress ? (
         <div className={styles.avatarContainer}>
-          {renderAvatar(userAddress, user, colonyAddress, domainId)}
+          {renderAvatar(userAddress, user, colony, domainId)}
         </div>
       ) : (
         <Icon
