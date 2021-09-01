@@ -58,3 +58,20 @@
 .roleListItem + .roleListItem {
   margin-top: 4px;
 }
+
+.tokensContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tokensContainer h4 {
+  font-size: var(--size-smallish);
+  color: var(--temp-grey-blue-7);
+}
+
+.tokenAmount {
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
