@@ -2,9 +2,8 @@ import React, { useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
-import { getFormattedTokenValue } from '~utils/tokens';
-
-import { TokenPriceStatuses } from '../TokenPriceStatusIcon/TokenPriceStatusIcon';
+import { RemainingTokensValue } from '~utils/components';
+import { getPriceStatus } from '~utils/colonyCoinMachine';
 
 import RemainingWidget from './RemainingDisplayWidget';
 
@@ -63,16 +62,12 @@ const RemainingTokens = ({
 
   const displayedValue = useMemo(() => {
     if (periodTokens) {
-      const { soldPeriodTokens, decimals, maxPeriodTokens } = periodTokens;
-
-      if (soldPeriodTokens.gte(maxPeriodTokens)) {
-        return <FormattedMessage {...MSG.soldOut} />;
-      }
-
-      return `${getFormattedTokenValue(
-        maxPeriodTokens.sub(soldPeriodTokens),
-        decimals,
-      )}/${getFormattedTokenValue(maxPeriodTokens, decimals)}`;
+      return (
+        <RemainingTokensValue
+          periodTokens={periodTokens}
+          tokensBought={periodTokens.soldPeriodTokens}
+        />
+      );
     }
 
     return <FormattedMessage {...widgetText.placeholder} />;
@@ -83,29 +78,7 @@ const RemainingTokens = ({
       return undefined;
     }
 
-    const {
-      soldPeriodTokens,
-      maxPeriodTokens,
-      targetPeriodTokens,
-    } = periodTokens;
-
-    if (soldPeriodTokens.gte(maxPeriodTokens)) {
-      return TokenPriceStatuses.PRICE_SOLD_OUT;
-    }
-
-    if (soldPeriodTokens.eq(targetPeriodTokens)) {
-      return TokenPriceStatuses.PRICE_NO_CHANGES;
-    }
-
-    if (soldPeriodTokens.lt(targetPeriodTokens)) {
-      return TokenPriceStatuses.PRICE_DOWN;
-    }
-
-    if (soldPeriodTokens.gt(targetPeriodTokens)) {
-      return TokenPriceStatuses.PRICE_UP;
-    }
-
-    return undefined;
+    return getPriceStatus(periodTokens, periodTokens.soldPeriodTokens);
   }, [periodTokens]);
 
   const showValueWarning = useMemo(() => {
