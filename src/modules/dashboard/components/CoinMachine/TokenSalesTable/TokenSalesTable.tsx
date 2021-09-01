@@ -21,7 +21,7 @@ import { getPriceStatus } from '~utils/colonyCoinMachine';
 import { RemainingTokensValue } from '~utils/components';
 
 import TokenPriceStatusIcon from '../TokenPriceStatusIcon';
-import { PeriodTokensType } from '../RemainingDisplayWidget';
+import { PeriodTokensType } from '../RemainingDisplayWidgets';
 
 import styles from './TokenSalesTable.css';
 
