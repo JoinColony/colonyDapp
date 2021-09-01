@@ -2,7 +2,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import React from 'react';
 import { bigNumberify, BigNumberish } from 'ethers/utils';
 
-import { PeriodTokensType } from '~dashboard/CoinMachine/RemainingDisplayWidget';
+import { PeriodTokensType } from '~dashboard/CoinMachine/RemainingDisplayWidgets';
 import { getFormattedTokenValue } from '~utils/tokens';
 
 const MSG = defineMessages({
