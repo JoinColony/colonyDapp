@@ -1,0 +1,18 @@
+
+#
+# @NOTE Queries need to be declared, even though we only use the subscriptions,
+# otherwise it will cause an invariant violation (due to the way the auto-generator
+# generates the hooks)
+#
+
+query ColonyMembers($colonyAddress: String!) {
+  subscribedUsers(colonyAddress: $colonyAddress) {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}

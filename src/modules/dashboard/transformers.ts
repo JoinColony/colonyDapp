@@ -3,10 +3,10 @@ import { bigNumberify } from 'ethers/utils';
 
 import {
   TransactionsMessagesCount,
-  SubscriptionSubgraphOneTxSubscription,
-  SubscriptionSubgraphEventsThatAreActionsSubscription,
-  SubscriptionSubgraphEventsSubscription,
-  SubscriptionsMotionsSubscription,
+  SubgraphOneTxSubscription,
+  SubgraphEventsThatAreActionsSubscription,
+  SubgraphEventsSubscription,
+  SubgraphMotionsSubscription,
 } from '~data/index';
 import {
   Address,
@@ -42,9 +42,9 @@ interface ActionsTransformerMetadata {
 
 export const getActionsListData = (
   unformattedActions?: {
-    oneTxPayments?: SubscriptionSubgraphOneTxSubscription['oneTxPayments'];
-    events?: SubscriptionSubgraphEventsThatAreActionsSubscription['events'];
-    motions?: SubscriptionsMotionsSubscription['motions'];
+    oneTxPayments?: SubgraphOneTxSubscription['oneTxPayments'];
+    events?: SubgraphEventsThatAreActionsSubscription['events'];
+    motions?: SubgraphMotionsSubscription['motions'];
   },
   transactionsCommentsCount?: TransactionsMessagesCount,
   {
@@ -384,7 +384,7 @@ export const getActionsListData = (
 };
 
 export const getEventsListData = (
-  unformattedEvents?: SubscriptionSubgraphEventsSubscription,
+  unformattedEvents?: SubgraphEventsSubscription,
 ): FormattedEvent[] | undefined =>
   unformattedEvents?.events?.reduce((processedEvents, event) => {
     if (!event) {

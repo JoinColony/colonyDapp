@@ -16,7 +16,7 @@ import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { Address } from '~types/index';
-import { useColonySubscribedUsersQuery, AnyUser, Colony } from '~data/index';
+import { useMembersSubscription, AnyUser, Colony } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRolesForDomain } from '../../../transformers';
 import { availableRoles } from './constants';
@@ -93,7 +93,7 @@ const PermissionManagementForm = ({
   onChangeSelectedUser,
   values,
 }: Props & FormikProps<FormValues>) => {
-  const { data: colonySubscribedUsers } = useColonySubscribedUsersQuery({
+  const { data: colonyMembers } = useMembersSubscription({
     variables: {
       colonyAddress,
     },
@@ -183,9 +183,7 @@ const PermissionManagementForm = ({
     [directDomainRoles, domainRoles],
   );
 
-  const subscribedUsers = colonySubscribedUsers?.subscribedUsers || [];
-
-  const members = subscribedUsers.map((user) => {
+  const members = (colonyMembers?.subscribedUsers || []).map((user) => {
     const {
       profile: { walletAddress },
     } = user;

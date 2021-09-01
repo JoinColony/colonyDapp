@@ -1,4 +1,8 @@
 
+#
+# @TODO Split file into own /queries/*.graphql file based on purpouse
+#
+
 query LoggedInUser {
   loggedInUser @client {
     walletAddress
@@ -266,24 +270,6 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     }
     blockNumber
     rootHash
-  }
-}
-
-query TransactionMessages($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
-    transactionHash
-    messages {
-    	...TransactionMessage
-    }
-  }
-}
-
-query TransactionMessagesCount($colonyAddress: String!) {
-  transactionMessagesCount(colonyAddress: $colonyAddress) {
-    colonyTransactionMessages {
-      transactionHash
-      count
-    }
   }
 }
 
@@ -692,18 +678,6 @@ query ColonyTransfers($address: String!) {
 query ColonyProfile($address: String!) {
   processedColony(address: $address) @client {
     ...ColonyProfile
-  }
-}
-
-query ColonySubscribedUsers($colonyAddress: String!) {
-  subscribedUsers(colonyAddress: $colonyAddress) {
-    id
-    profile {
-      avatarHash
-      displayName
-      username
-      walletAddress
-    }
   }
 }
 

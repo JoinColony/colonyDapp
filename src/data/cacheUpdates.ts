@@ -5,12 +5,6 @@ import { Address } from '~types/index';
 import { log } from '~utils/debug';
 import apolloCache from './cache';
 import {
-  ColonySubscribedUsersDocument,
-  ColonySubscribedUsersQuery,
-  ColonySubscribedUsersQueryVariables,
-  UserDocument,
-  UserQuery,
-  UserQueryVariables,
   UnsubscribeFromColonyMutationResult,
   SubscribeToColonyMutationResult,
   UserColoniesQuery,
@@ -123,58 +117,6 @@ const cacheUpdates = {
               },
             });
           }
-        }
-      } catch (e) {
-        log.verbose(e);
-        log.verbose(
-          'Cannot update the colony subscriptions cache - not loaded yet',
-        );
-      }
-      /*
-       * Update the list of colony subscribed users
-       * This is in use in the User Picker (right now we're only using that in
-       * the permissions Dialog)
-       */
-      try {
-        const cacheData = cache.readQuery<
-          ColonySubscribedUsersQuery,
-          ColonySubscribedUsersQueryVariables
-        >({
-          query: ColonySubscribedUsersDocument,
-          variables: {
-            colonyAddress,
-          },
-        });
-        if (cacheData && data && data.unsubscribeFromColony) {
-          const {
-            id: unsubscribedUserWalletAddress,
-          } = data.unsubscribeFromColony;
-          const { subscribedUsers } = cacheData;
-          const updatedColonySubscription = subscribedUsers.filter(
-            /*
-             * Prop `id` does exist, it's just that TS doesn't recognize for
-             * some reason
-             */
-            // @ts-ignore
-            ({ id: userWalletAddress }) =>
-              /*
-               * Remove the unsubscribed user from the subscribers array
-               */
-              userWalletAddress !== unsubscribedUserWalletAddress,
-          );
-          cache.writeQuery<
-            ColonySubscribedUsersQuery,
-            ColonySubscribedUsersQueryVariables
-          >({
-            query: ColonySubscribedUsersDocument,
-            data: {
-              ...cacheData,
-              subscribedUsers: updatedColonySubscription,
-            },
-            variables: {
-              colonyAddress,
-            },
-          });
         }
       } catch (e) {
         log.verbose(e);
@@ -300,59 +242,6 @@ const cacheUpdates = {
                 },
               });
             }
-          }
-        }
-      } catch (e) {
-        log.verbose(e);
-        log.verbose(
-          'Cannot update the colony subscriptions cache - not loaded yet',
-        );
-      }
-      /*
-       * Update the list of colony subscribed users
-       * This is in use in the User Picker (right now we're only using that in
-       * the permissions Dialog)
-       */
-      try {
-        const cacheData = cache.readQuery<
-          ColonySubscribedUsersQuery,
-          ColonySubscribedUsersQueryVariables
-        >({
-          query: ColonySubscribedUsersDocument,
-          variables: {
-            colonyAddress,
-          },
-        });
-        if (cacheData && data && data.subscribeToColony) {
-          const { id: subscribedUserAddress } = data.subscribeToColony;
-          const { subscribedUsers } = cacheData;
-          const newlySubscribedUser = cache.readQuery<
-            UserQuery,
-            UserQueryVariables
-          >({
-            query: UserDocument,
-            variables: {
-              address: subscribedUserAddress,
-            },
-          });
-          if (newlySubscribedUser?.user) {
-            const updatedSubscribedUsers = [
-              ...subscribedUsers,
-              newlySubscribedUser.user,
-            ];
-            cache.writeQuery<
-              ColonySubscribedUsersQuery,
-              ColonySubscribedUsersQueryVariables
-            >({
-              query: ColonySubscribedUsersDocument,
-              data: {
-                ...cacheData,
-                subscribedUsers: updatedSubscribedUsers,
-              },
-              variables: {
-                colonyAddress,
-              },
-            });
           }
         }
       } catch (e) {
