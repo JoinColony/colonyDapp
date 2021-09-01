@@ -5,7 +5,15 @@
   justify-content: center;
 }
 
-.content iframe {
+.synaps iframe {
   min-height: 400px;
 }
 
+.synaps {
+  min-height: 400px;
+}
+
+.verified {
+  font-size: var(--size-normal);
+  color: var(--dark);
+}
