@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import isEmpty from 'lodash/isEmpty';
 
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
@@ -9,15 +10,18 @@ import {
   useUserReputationQuery,
   useColonyNativeTokenQuery,
   useTokenInfoLazyQuery,
+  Colony,
 } from '~data/index';
-import { Address } from '~types/index';
+import { useTransformer } from '~utils/hooks';
 
+import { getAllUserRoles } from '../../../../transformers';
 import UserInfo from '../UserInfo';
+import UserPermissions from './UserPermissions';
 
 import styles from './MemberInfoPopover.css';
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
   domainId?: number;
   user?: AnyUser;
 }
@@ -40,7 +44,8 @@ const MSG = defineMessages({
 const displayName = 'InfoPopover.MemberInfoPopover';
 
 const MemberInfoPopover = ({
-  colonyAddress,
+  colony: { colonyAddress },
+  colony,
   domainId,
   user = { id: '', profile: { walletAddress: '' } },
 }: Props) => {
@@ -67,6 +72,8 @@ const MemberInfoPopover = ({
   } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId },
   });
+
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   useEffect(() => {
     if (nativeTokenAddressData) {
@@ -133,6 +140,11 @@ const MemberInfoPopover = ({
           </p>
         )}
       </div>
+      {!isEmpty(allUserRoles) && (
+        <div className={styles.section}>
+          <UserPermissions roles={allUserRoles} />
+        </div>
+      )}
     </div>
   );
 };
