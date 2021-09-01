@@ -46,6 +46,7 @@ const displayName = 'dashboard.ColonyHome.ColonyMembers';
 
 const ColonyMembers = ({
   colony: { colonyAddress, colonyName },
+  colony,
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
   maxAvatars = 15,
 }: Props) => {
@@ -130,7 +131,7 @@ const ColonyMembers = ({
             <li className={styles.userAvatar} key={userAddress}>
               <UserAvatar
                 size="xs"
-                colonyAddress={colonyAddress}
+                colony={colony}
                 address={userAddress}
                 showInfo
                 notSet={false}

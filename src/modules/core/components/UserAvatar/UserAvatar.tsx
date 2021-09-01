@@ -5,7 +5,7 @@ import Avatar from '~core/Avatar';
 import InfoPopover, { Props as InfoPopoverProps } from '~core/InfoPopover';
 import Link from '~core/NavLink';
 import { Address } from '~types/index';
-import { AnyUser } from '~data/index';
+import { AnyUser, Colony } from '~data/index';
 
 import { getUsername } from '../../../users/transformers';
 
@@ -43,7 +43,7 @@ interface BaseProps {
 
 /** Used for the infopopover */
 interface PropsForReputation extends BaseProps {
-  colonyAddress?: Address;
+  colony?: Colony;
   domainId?: number;
 }
 
@@ -73,11 +73,11 @@ const UserAvatar = ({
     user,
     showArrow: popperProps && popperProps.showArrow,
   };
-  if ('colonyAddress' in rest) {
-    const { colonyAddress, domainId } = rest;
+  if ('colony' in rest) {
+    const { colony, domainId } = rest;
     popoverProps = {
       ...popoverProps,
-      colonyAddress,
+      colony,
       domainId,
     };
   }

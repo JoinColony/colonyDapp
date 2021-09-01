@@ -268,7 +268,7 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
       </div>
       {skelethonUsers.length ? (
         <MembersList<Member>
-          colonyAddress={colony.colonyAddress}
+          colony={colony}
           extraItemContent={({ roles, directRoles }) => (
             <UserPermissions roles={roles} directRoles={directRoles} />
           )}

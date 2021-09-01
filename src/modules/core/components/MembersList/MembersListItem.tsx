@@ -5,8 +5,8 @@ import { createAddress } from '~utils/web3';
 import UserMention from '~core/UserMention';
 import { ListGroupItem } from '~core/ListGroup';
 import CopyableAddress from '~core/CopyableAddress';
-import { AnyUser, useUser } from '~data/index';
-import { Address, ENTER } from '~types/index';
+import { AnyUser, Colony, useUser } from '~data/index';
+import { ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
 import MemberReputation from '~core/MemberReputation';
@@ -15,7 +15,7 @@ import styles from './MembersListItem.css';
 
 interface Props<U> {
   extraItemContent?: (user: U) => ReactNode;
-  colonyAddress: Address;
+  colony: Colony;
   onRowClick?: (user: U) => void;
   showUserInfo: boolean;
   showUserReputation: boolean;
@@ -29,7 +29,7 @@ const componentDisplayName = 'MembersList.MembersListItem';
 
 const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
   const {
-    colonyAddress,
+    colony,
     domainId,
     extraItemContent,
     onRowClick,
@@ -83,7 +83,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
           <div className={styles.reputationSection}>
             <MemberReputation
               walletAddress={walletAddress}
-              colonyAddress={colonyAddress}
+              colonyAddress={colony.colonyAddress}
               domainId={domainId}
             />
           </div>
@@ -91,7 +91,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
         <div className={styles.section}>
           <UserAvatar
             size="s"
-            colonyAddress={colonyAddress}
+            colony={colony}
             address={walletAddress}
             user={userProfile}
             showInfo={!onRowClick || showUserInfo}

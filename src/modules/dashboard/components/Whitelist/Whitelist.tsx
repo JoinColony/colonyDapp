@@ -63,7 +63,7 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
       {usersLoading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
       {(usersData?.whitelistedUsers?.length && !usersLoading && (
         <WhitelistAddresses
-          colonyAddress={colonyAddress}
+          colony={colony}
           users={usersData.whitelistedUsers}
         />
       )) ||
