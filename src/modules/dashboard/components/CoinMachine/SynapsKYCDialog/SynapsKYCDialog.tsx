@@ -38,9 +38,7 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
   const [isValid, setIsValid] = useState(false);
   const { walletAddress } = useLoggedInUser();
 
-  const {
-    refetch
-  } = useUserWhitelistStatusQuery({
+  const { refetch } = useUserWhitelistStatusQuery({
     variables: { colonyAddress, userAddress: walletAddress },
   });
 
@@ -77,16 +75,22 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
   const onProceed = () => {
     refetch();
     cancel();
-  }
+  };
 
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
-          <div className={styles.content}>
-            {isLoading && <SpinnerLoader appearance={{ size: 'large' }} />}
-            {!isLoading && isValid && <div className={styles.verified}><FormattedMessage {...MSG.verified} /></div>}
-            {!isLoading && !isValid && <div className={styles.synaps} id="synaps-embed"/>}
-          </div>
+        <div className={styles.content}>
+          {isLoading && <SpinnerLoader appearance={{ size: 'large' }} />}
+          {!isLoading && isValid && (
+            <div className={styles.verified}>
+              <FormattedMessage {...MSG.verified} />
+            </div>
+          )}
+          {!isLoading && !isValid && (
+            <div className={styles.synaps} id="synaps-embed" />
+          )}
+        </div>
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button

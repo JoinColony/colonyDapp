@@ -1,8 +1,8 @@
 .content {
-  min-height: 400px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  min-height: 400px;
 }
 
 .synaps iframe {
