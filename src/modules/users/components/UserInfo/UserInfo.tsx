@@ -52,7 +52,7 @@ interface Props {
   renderAvatar?: (
     address: Address,
     user?: AnyUser,
-    colonyAddress?: Colony,
+    colony?: Colony,
     domainId?: number,
   ) => ReactNode;
   domainId?: number;
