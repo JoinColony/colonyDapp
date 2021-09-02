@@ -41,12 +41,13 @@
   height: 100px;
 }
 
-.permissionsContainer {
+.sectionContainer {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
 }
 
-.permissionsContainer h4 {
+.sectionContainer h4 {
   font-size: var(--size-smallish);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
@@ -57,17 +58,6 @@
 
 .roleListItem + .roleListItem {
   margin-top: 4px;
-}
-
-.tokensContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tokensContainer h4 {
-  font-size: var(--size-smallish);
-  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .tokenAmount {
