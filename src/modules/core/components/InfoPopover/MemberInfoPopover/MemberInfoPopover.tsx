@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
 import isEmpty from 'lodash/isEmpty';
-
 import { bigNumberify } from 'ethers/utils';
-import Heading from '~core/Heading';
-import Numeral from '~core/Numeral';
+
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   AnyUser,
@@ -18,32 +15,19 @@ import { useTransformer } from '~utils/hooks';
 
 import { getAllUserRoles } from '../../../../transformers';
 import UserInfo from '../UserInfo';
-import UserPermissions from './UserPermissions';
 
+import UserPermissions from './UserPermissions';
 import UserTokens from './UserTokens';
+import UserReputation from './UserReputation';
 
 import styles from './MemberInfoPopover.css';
+
 
 interface Props {
   colony: Colony;
   domainId?: number;
   user?: AnyUser;
 }
-
-const MSG = defineMessages({
-  headingReputation: {
-    id: 'InfoPopover.MemberInfoPopover.headingReputation',
-    defaultMessage: 'Reputation',
-  },
-  descriptionReputation: {
-    id: 'InfoPopover.MemberInfoPopover.descriptionReputation',
-    defaultMessage: 'earned for tasks paid in native tokens',
-  },
-  errorReputation: {
-    id: 'InfoPopover.MemberInfoPopover.errorReputation',
-    defaultMessage: 'We had a problem loading the data',
-  },
-});
 
 const displayName = 'InfoPopover.MemberInfoPopover';
 
@@ -144,39 +128,10 @@ const MemberInfoPopover = ({
         </div>
       )}
       <div className={styles.section}>
-        <div className={styles.reputation}>
-          <div className={styles.reputationHeading}>
-            <Heading
-              appearance={{
-                margin: 'none',
-                size: 'normal',
-                theme: 'grey',
-                weight: 'bold',
-              }}
-              text={MSG.headingReputation}
-            />
-          </div>
-          {userReputationData && tokenInfoData && (
-            <Numeral
-              appearance={{ theme: 'blue', weight: 'medium' }}
-              value={userReputationData.userReputation}
-              unit={tokenInfoData.tokenInfo.decimals}
-            />
-          )}
-        </div>
-        {(loadingUserReputation ||
-          loadingNativeTokenAddress ||
-          loadingTokenInfoData) && <SpinnerLoader />}
-        {userReputationData && tokenInfoData && (
-          <>
-            <FormattedMessage tagName="b" {...MSG.descriptionReputation} />
-          </>
-        )}
-        {errorReputation && (
-          <p className={styles.reputationError}>
-            <FormattedMessage {...MSG.errorReputation} />
-          </p>
-        )}
+        <UserReputation
+          walletAddress={walletAddress}
+          colonyAddress={colonyAddress}
+        />
       </div>
       {!totalBalance.isZero() && nativeToken && (
         <div className={styles.section}>
