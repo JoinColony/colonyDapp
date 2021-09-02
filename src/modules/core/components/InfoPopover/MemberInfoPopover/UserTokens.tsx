@@ -30,7 +30,7 @@ const UserTokens = ({ totalBalance, nativeToken }: Props) => {
   );
 
   return (
-    <div className={styles.tokensContainer}>
+    <div className={styles.sectionContainer}>
       <Heading
         appearance={{
           size: 'normal',

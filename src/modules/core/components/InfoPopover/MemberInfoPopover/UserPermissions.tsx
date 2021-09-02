@@ -22,7 +22,7 @@ const MSG = defineMessages({
 
 const UserPermissions = ({ roles }: Props) => {
   return (
-    <div className={styles.permissionsContainer}>
+    <div className={styles.sectionContainer}>
       <Heading
         appearance={{
           size: 'normal',
