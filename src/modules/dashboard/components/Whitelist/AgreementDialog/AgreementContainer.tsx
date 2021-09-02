@@ -16,8 +16,8 @@ const MSG = defineMessages({
 interface Props {
   loading: boolean;
   text?: string;
-  handleScroll: (e: any) => void;
-  containerRef: React.Ref<HTMLDivElement>;
+  handleScroll?: (e: any) => void;
+  containerRef?: React.Ref<HTMLDivElement>;
 }
 
 const AgreementContainer = ({
