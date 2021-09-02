@@ -47,7 +47,8 @@
 }
 
 .permissionsContainer h4 {
-  color: var(--temp-grey-blue-7);
+  font-size: var(--size-smallish);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .roleList {
@@ -55,5 +56,5 @@
 }
 
 .roleListItem + .roleListItem {
-  margin-top: 3px;
+  margin-top: 4px;
 }
