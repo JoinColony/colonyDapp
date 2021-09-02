@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react';
 
 import ListGroup, { ListGroupAppearance } from '~core/ListGroup';
-import { AnyUser } from '~data/index';
-import { Address } from '~types/index';
+import { AnyUser, Colony } from '~data/index';
+
 import MembersListItem from './MembersListItem';
 
 interface Props<U> {
-  colonyAddress: Address;
+  colony: Colony;
   extraItemContent?: (user: U) => ReactNode;
   onRowClick?: (user: U) => void;
   showUserInfo?: boolean;
@@ -19,7 +19,7 @@ interface Props<U> {
 const displayName = 'MembersList';
 
 const MembersList = <U extends AnyUser = AnyUser>({
-  colonyAddress,
+  colony,
   extraItemContent,
   onRowClick,
   showUserInfo = true,
@@ -31,7 +31,7 @@ const MembersList = <U extends AnyUser = AnyUser>({
   <ListGroup appearance={listGroupAppearance}>
     {users.map((user) => (
       <MembersListItem<U>
-        colonyAddress={colonyAddress}
+        colony={colony}
         extraItemContent={extraItemContent}
         key={user.id}
         onRowClick={onRowClick}

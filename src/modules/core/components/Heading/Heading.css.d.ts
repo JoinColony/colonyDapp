@@ -3,6 +3,7 @@ export const themePrimary: string;
 export const themeDark: string;
 export const themeInvert: string;
 export const themeUppercase: string;
+export const themeGrey: string;
 export const marginNone: string;
 export const marginSmall: string;
 export const marginDouble: string;

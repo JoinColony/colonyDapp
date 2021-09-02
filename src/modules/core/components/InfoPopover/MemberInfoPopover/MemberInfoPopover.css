@@ -40,3 +40,21 @@
   align-items: center;
   height: 100px;
 }
+
+.permissionsContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.permissionsContainer h4 {
+  font-size: var(--size-smallish);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
+}
+
+.roleList {
+  text-align: right;
+}
+
+.roleListItem + .roleListItem {
+  margin-top: 4px;
+}
