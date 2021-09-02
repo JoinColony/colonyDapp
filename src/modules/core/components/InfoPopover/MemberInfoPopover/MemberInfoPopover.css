@@ -65,3 +65,32 @@
   font-weight: var(--weight-bold);
   color: var(--dark);
 }
+
+.reputationContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.reputationContainer h4 {
+  font-size: var(--size-smallish);
+  color: var(--temp-grey-blue-7);
+}
+
+.domainName {
+  margin-right: 16px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.domainReputationItem {
+  display: flex;
+  align-items: center;
+}
+
+.noReputationDescription {
+  margin-top: 5px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+}
