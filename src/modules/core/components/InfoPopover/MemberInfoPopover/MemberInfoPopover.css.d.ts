@@ -8,3 +8,7 @@ export const sectionContainer: string;
 export const roleList: string;
 export const roleListItem: string;
 export const tokenAmount: string;
+export const reputationContainer: string;
+export const domainName: string;
+export const domainReputationItem: string;
+export const noReputationDescription: string;
