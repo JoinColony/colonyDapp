@@ -67,7 +67,7 @@
 
 .tokensContainer h4 {
   font-size: var(--size-smallish);
-  color: var(--temp-grey-blue-7);
+  color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .tokenAmount {
