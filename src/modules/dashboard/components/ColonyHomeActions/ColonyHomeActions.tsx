@@ -8,6 +8,7 @@ import ExpendituresDialog from '~dashboard/ExpendituresDialog';
 import CreateDomainDialog from '~dashboard/CreateDomainDialog';
 import EditDomainDialog from '~dashboard/EditDomainDialog';
 import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
+import SmiteDialog from '~dashboard/SmiteDialog';
 import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
 import UnlockTokenDialog from '~dashboard/UnlockTokenDialog';
@@ -66,12 +67,21 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepManageFunds: 'dashboard.ManageFundsDialog',
         nextStepManageDomains: 'dashboard.ManageDomainsDialog',
         nextStepAdvanced: 'dashboard.AdvancedDialog',
+        nextStepSmite: 'dashboard.SmiteDialog',
       },
     },
     {
       component: ExpendituresDialog,
       props: {
         nextStep: 'dashboard.CreatePaymentDialog',
+        prevStep: 'dashboard.ColonyActionsDialog',
+        colony,
+        isVotingExtensionEnabled,
+      },
+    },
+    {
+      component: SmiteDialog,
+      props: {
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
         isVotingExtensionEnabled,
