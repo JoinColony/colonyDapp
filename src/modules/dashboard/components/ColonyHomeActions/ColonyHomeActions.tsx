@@ -92,12 +92,21 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepManageFunds: 'dashboard.ManageFundsDialog',
         nextStepManageDomains: 'dashboard.ManageDomainsDialog',
         nextStepAdvanced: 'dashboard.AdvancedDialog',
+        nextStepSmite: 'dashboard.SmiteDialog',
       },
     },
     {
       component: ExpendituresDialog,
       props: {
         nextStep: 'dashboard.CreatePaymentDialog',
+        prevStep: 'dashboard.ColonyActionsDialog',
+        colony,
+        isVotingExtensionEnabled,
+      },
+    },
+    {
+      component: SmiteDialog,
+      props: {
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
         isVotingExtensionEnabled,

@@ -59,6 +59,7 @@ interface CustomWizardDialogProps {
   nextStepManageFunds: string;
   nextStepManageDomains: string;
   nextStepAdvanced: string;
+  nextStepSmite: string;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -73,6 +74,7 @@ const ColonyActionsDialog = ({
   nextStepManageFunds,
   nextStepManageDomains,
   nextStepAdvanced,
+  nextStepSmite,
 }: Props) => {
   const items = [
     {
@@ -97,6 +99,7 @@ const ColonyActionsDialog = ({
       title: MSG.smite,
       description: MSG.smiteDesc,
       icon: 'emoji-firebolt',
+      onClick: () => callStep(nextStepSmite),
     },
     {
       title: MSG.advanced,
