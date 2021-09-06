@@ -2,6 +2,11 @@
   max-width: 600px;
 }
 
+.main a {
+  font-weight: var(--weight-normal);
+  color: var(--colony-blue);
+}
+
 .main label {
   color: var(--dark);
 }
@@ -39,6 +44,7 @@
 .inputsDescription {
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
+  line-height: 18px;
   color: var(--temp-grey-blue-7);
 }
 
@@ -81,6 +87,8 @@
   align-items: center;
   margin-bottom: 20px;
   height: 42px;
+  line-height: 18px;
+  color: var(--dark);
 }
 
 .tokenSelectorContainer > p {
@@ -90,7 +98,12 @@
 .tokenAddessLink {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
+  line-height: 18px;
   color: var(--dark);
+}
+
+.tokenAddessLink > a {
+  margin-left: 5px;
 }
 
 .tokenAddessLink > div {
