@@ -58,3 +58,11 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.inputText {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+  margin-top: 5px;
+  float: right;
+}
