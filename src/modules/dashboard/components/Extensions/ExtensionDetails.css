@@ -4,6 +4,10 @@
   grid-template-columns: minmax(460px, 2fr) minmax(340px, 1fr);
 }
 
+.main a {
+  color: var(--colony-blue);
+}
+
 .headerLine {
   margin: 20px 0 12px 0;
 }
