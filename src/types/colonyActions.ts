@@ -19,6 +19,7 @@ export enum ColonyActions {
   ColonyEdit = 'ColonyEdit',
   EditDomain = 'EditDomain',
   SetUserRoles = 'SetUserRoles',
+  EmitDomainReputationPenalty = 'EmitDomainReputationPenalty',
 }
 
 export enum ColonyAndExtensionsEvents {

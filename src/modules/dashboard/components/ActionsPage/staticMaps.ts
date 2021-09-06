@@ -77,6 +77,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyActions.ColonyEdit]: 'emoji-edit-tools',
   [ColonyActions.EditDomain]: 'emoji-pencil-note',
   [ColonyActions.SetUserRoles]: 'emoji-crane',
+  [ColonyActions.EmitDomainReputationPenalty]: 'emoji-firebolt',
   [ColonyMotions.MintTokensMotion]: 'emoji-seed-sprout',
   [ColonyMotions.PaymentMotion]: 'emoji-dollar-stack',
   [ColonyMotions.MoveFundsMotion]: 'emoji-world-globe',
