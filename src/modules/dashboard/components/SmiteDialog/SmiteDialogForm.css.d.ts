@@ -5,3 +5,4 @@ export const singleUserContainer: string;
 export const noPermissionFromMessage: string;
 export const modalHeading: string;
 export const headingContainer: string;
+export const inputText: string;
