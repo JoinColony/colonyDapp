@@ -85,6 +85,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 5px;
   margin-bottom: 20px;
   height: 42px;
   line-height: 18px;
