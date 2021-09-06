@@ -71,7 +71,7 @@ const GetWhitelisted = ({ disabled, colonyAddress, userStatus }: Props) => {
     return data?.processedMetaColony
       ? openSynapsDialog({ colonyAddress })
       : openCompleteKYCDialog();
-  }, [openCompleteKYCDialog, openSynapsDialog, data]);
+  }, [openCompleteKYCDialog, openSynapsDialog, data, colonyAddress]);
 
   useEffect(() => {
     if (!userStatus || !whitelistPolicyData || loading) return;
