@@ -137,6 +137,7 @@ const SmiteDialogForm = ({
               setFieldValue,
             }}
           />
+          <p className={styles.inputText}>max: 10.1%</p>
         </div>
       </DialogSection>
       <DialogSection>
