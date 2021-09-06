@@ -2,14 +2,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 400px;
-}
-
-.synaps iframe {
-  min-height: 400px;
+  height: 730px;
 }
 
 .synaps {
+  width: 100%;
+  min-height: 690px;
+}
+
+.synaps iframe {
   min-height: 400px;
 }
 
