@@ -6,12 +6,12 @@
 }
 
 .synaps {
-  width: 100%;
   min-height: 690px;
+  width: 100%;
 }
 
 .synaps iframe {
-  min-height: 400px;
+  min-height: 690px;
 }
 
 .verified {
