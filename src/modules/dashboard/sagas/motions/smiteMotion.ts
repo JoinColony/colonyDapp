@@ -43,7 +43,7 @@ function* smiteMotion({
     if (!domainId) {
       throw new Error('Domain id not set for Smite transaction');
     }
-    if (amount) {
+    if (!amount) {
       throw new Error('Amount not set for Smite transaction');
     }
 
