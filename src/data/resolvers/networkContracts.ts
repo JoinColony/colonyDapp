@@ -1,4 +1,5 @@
 import { Resolvers } from '@apollo/client';
+import { CurrentColonyVersion } from '@colony/colony-js';
 
 import { Context } from '~context/index';
 import { NetworkContractsDocument } from '../generated';
@@ -24,7 +25,18 @@ export const networkContractsResolvers = ({
       const changedData = {
         networkContracts: {
           ...networkContracts,
-          version: version.toString(),
+          version:
+            /*
+             * @NOTE Always return the version of the colony contracts that is
+             * supported by colonyJS (otherwise the app breaks)
+             *
+             * So if the version from the network resolver is greater than the
+             * current colonyJS supported version, limit it to the version
+             * returned by colonyJS
+             */
+            version.toNumber() <= CurrentColonyVersion
+              ? version.toString()
+              : String(CurrentColonyVersion),
           /*
            * Network fee inverse as defined by the ColonyNetwork contract.
            * If the current fee is 1%, this will be `100`.
