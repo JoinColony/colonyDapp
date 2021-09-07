@@ -8,4 +8,4 @@ export {
   setupEnablingGroupTransactions,
   Channel,
 } from './enableExtensionHelpers';
-export { updateUserReputation } from './updateUserReputation';
+export { updateDomainReputation } from './updateDomainReputation';
