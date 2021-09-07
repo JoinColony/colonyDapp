@@ -24,6 +24,7 @@ import {
   NetworkExtensionVersionQuery,
   NetworkExtensionVersionQueryVariables,
   NetworkExtensionVersionDocument,
+  getNetworkContracts,
 } from '~data/index';
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
@@ -311,7 +312,7 @@ function* colonyCreate({
         );
       }
 
-      const latestVersion = yield networkClient.getCurrentColonyVersion();
+      const { version: latestVersion } = yield getNetworkContracts();
 
       yield put(
         transactionAddParams(createColony.id, [
