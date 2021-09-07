@@ -238,4 +238,22 @@ export type MotionActionTypes =
   | ActionTypeWithMeta<
       ActionTypes.COLONY_MOTION_ESCALATE_SUCCESS,
       MetaWithHistory<object>
+    >
+  | UniqueActionType<
+      ActionTypes.COLONY_MOTION_SMITE,
+      {
+        colonyAddress: Address;
+        colonyName?: string;
+        domainId: number;
+        userAddress: Address;
+        amount: BigNumber;
+        annotationMessage?: string;
+        motionDomainId: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_MOTION_SMITE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_MOTION_SMITE_SUCCESS,
+      MetaWithHistory<object>
     >;
