@@ -126,8 +126,7 @@ function* moveFundsMotion({
       parseInt(version, 10) <= ColonyVersion.CeruleanLightweightSpaceship;
     const encodedAction = colonyClient.interface.functions[
       isOldVersion
-        ? // eslint-disable-next-line max-len
-          'moveFundsBetweenPots(uint256,uint256,uint256,uint256,uint256,uint256,address)'
+        ? `moveFundsBetweenPots(uint256,uint256,uint256,uint256,uint256,uint256,address)`
         : 'moveFundsBetweenPots'
     ].encode([
       ...(isOldVersion ? [] : [permissionDomainId, MaxUint256]),
