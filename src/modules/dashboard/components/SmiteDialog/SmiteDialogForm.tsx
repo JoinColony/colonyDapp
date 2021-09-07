@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback, ReactNode } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
@@ -7,15 +7,16 @@ import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
-import { Select, Input, Annotations } from '~core/Fields';
+import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 
 import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { AnyUser } from '~data/index';
+import { AnyUser, OneDomain } from '~data/index';
 
 import { FormValues } from './SmiteDialog';
+import TeamDropdownItem from './TeamDropdownItem';
 
 import styles from './SmiteDialogForm.css';
 
@@ -38,7 +39,7 @@ const MSG = defineMessages({
   },
   annotation: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.annotation',
-    defaultMessage: 'Explain why you’re making this payment (optional)',
+    defaultMessage: 'Explain why you are smiting the user (optional)',
   },
   userPickerPlaceholder: {
     id: 'SingleUserPicker.userPickerPlaceholder',
@@ -58,24 +59,54 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
 
 const SmiteDialogForm = ({
   back,
-  colony: { domains },
+  colony: { domains, colonyAddress },
+  colony,
   subscribedUsers,
   handleSubmit,
   setFieldValue,
   isSubmitting,
   isValid,
+  values,
 }: Props & FormikProps<FormValues>) => {
   const domainOptions = useMemo(
     () =>
       sortBy(
-        domains.map(({ name, ethDomainId }) => ({
-          value: ethDomainId.toString(),
-          label: name,
+        domains.map((domain) => ({
+          children: (
+            <TeamDropdownItem
+              domain={domain as OneDomain}
+              colonyAddress={colonyAddress}
+              user={(values.user as any) as AnyUser}
+            />
+          ),
+          value: domain.ethDomainId.toString(),
+          label: domain.name,
         })),
         ['value'],
       ),
 
-    [domains],
+    [domains, values, colonyAddress],
+  );
+
+  const renderActiveOption = useCallback<
+    (option: SelectOption | undefined) => ReactNode
+  >(
+    (option) => {
+      const value = option ? option.value : undefined;
+      const domain = colony.domains.find(
+        ({ ethDomainId }) => Number(value) === ethDomainId,
+      ) as OneDomain;
+      return (
+        <div className={styles.activeItem}>
+          <TeamDropdownItem
+            domain={domain}
+            colonyAddress={colonyAddress}
+            user={(values.user as any) as AnyUser}
+          />
+        </div>
+      );
+    },
+    [values, colonyAddress, colony.domains],
   );
 
   return (
@@ -111,6 +142,7 @@ const SmiteDialogForm = ({
               label={MSG.team}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
+              renderActiveOption={renderActiveOption}
             />
           </div>
         </div>
