@@ -27,7 +27,7 @@ export function* colonyExtensionInstall({
 
   try {
     /*
-     * Get the latest extension version that's deployed to the network
+     * Get the latest extension version that's supported by colonyJS
      */
     const {
       data: { networkExtensionVersion },
