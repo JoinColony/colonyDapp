@@ -97,7 +97,6 @@ const ColonyActionsDialog = ({
       title: MSG.smite,
       description: MSG.smiteDesc,
       icon: 'emoji-firebolt',
-      comingSoon: true,
     },
     {
       title: MSG.advanced,
