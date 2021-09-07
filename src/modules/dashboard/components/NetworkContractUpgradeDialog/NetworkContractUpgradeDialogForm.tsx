@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { FormikProps } from 'formik';
-import { ColonyRole, ColonyVersion } from '@colony/colony-js';
+import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { ActionDialogProps } from '~core/Dialog';
@@ -57,10 +57,6 @@ const MSG = defineMessages({
     id: `dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.legacyPermissionsWarningTitle`,
     defaultMessage: `Upgrade to the next colony version is prevented while more than one colony member has the {recoveryRole} role.`,
   },
-  upgradeVersionNotSupported: {
-    id: `dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.upgradeVersionNotSupported`,
-    defaultMessage: `The newly deployed version of the contract is not yet supported by the Dapp`,
-  },
   legacyPermissionsWarningDescription: {
     id: `dashboard.NetworkContractUpgradeDialog.NetworkContractUpgradeDialogForm.legacyPermissionsWarningDescription`,
     defaultMessage: `
@@ -109,7 +105,6 @@ const NetworkContractUpgradeDialogForm = ({
 
   const { version: newVersion } = useNetworkContracts();
 
-  const networkVersionIsSupported = !!ColonyVersion[newVersion as string];
   const currentVersion = parseInt(version, 10);
   const nextVersion = currentVersion + 1;
   const networkVersion = parseInt(newVersion || '1', 10);
@@ -123,9 +118,7 @@ const NetworkContractUpgradeDialogForm = ({
     values.forceAction,
   );
   const canUpgradeVersion =
-    networkVersionIsSupported &&
-    userHasPermission &&
-    !!colonyCanBeUpgraded(colony, newVersion as string);
+    userHasPermission && !!colonyCanBeUpgraded(colony, newVersion as string);
 
   const inputDisabled = !canUpgradeVersion || onlyForceAction;
 
@@ -256,13 +249,6 @@ const NetworkContractUpgradeDialogForm = ({
                 ),
               }}
             />
-          </div>
-        </DialogSection>
-      )}
-      {networkVersion > currentVersion && !networkVersionIsSupported && (
-        <DialogSection appearance={{ theme: 'sidePadding' }}>
-          <div className={styles.noPermissionMessage}>
-            <FormattedMessage {...MSG.upgradeVersionNotSupported} />
           </div>
         </DialogSection>
       )}
