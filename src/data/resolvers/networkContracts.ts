@@ -15,16 +15,6 @@ export const networkContractsResolvers = ({
   colonyManager: { networkClient },
 }: Required<Context>): Resolvers => ({
   Mutation: {
-    async setNetworkContracts(_root, { input }, { cache }) {
-      const { networkContracts } = cache.readQuery({
-        query: NetworkContractsDocument,
-      });
-      const changedData = {
-        networkContracts: { ...networkContracts, ...input },
-      };
-      cache.writeQuery({ query: NetworkContractsDocument, data: changedData });
-      return changedData.networkContracts;
-    },
     async updateNetworkContracts(_root, _, { cache }) {
       const { networkContracts } = cache.readQuery({
         query: NetworkContractsDocument,
