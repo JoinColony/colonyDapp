@@ -17,7 +17,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateUserReputation } from '../utils';
+import { updateDomainReputation } from '../utils';
 
 function* smiteMotion({
   payload: {
@@ -171,7 +171,7 @@ function* smiteMotion({
     /*
      * Refesh the user reputation
      */
-    yield fork(updateUserReputation, colonyAddress, userAddress, domainId);
+    yield fork(updateDomainReputation, colonyAddress, userAddress, domainId);
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_MOTION_SMITE_SUCCESS,
