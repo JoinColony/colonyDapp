@@ -22,6 +22,9 @@ import {
   SubscribeToColonyMutation,
   SubscribeToColonyMutationVariables,
   SubscribeToColonyDocument,
+  NetworkExtensionVersionQuery,
+  NetworkExtensionVersionQueryVariables,
+  NetworkExtensionVersionDocument,
   cacheUpdates,
 } from '~data/index';
 import { ActionTypes, Action, AllActions } from '~redux/index';
@@ -297,14 +300,27 @@ function* colonyRestartDeployment({
       yield takeFrom(setOwner.channel, ActionTypes.TRANSACTION_SUCCEEDED);
     }
 
+    /*
+     * Deploy OneTx
+     */
     if (deployOneTx) {
-      /*
-       * Deploy OneTx
-       */
+      const {
+        data: { networkExtensionVersion },
+      } = yield apolloClient.query<
+        NetworkExtensionVersionQuery,
+        NetworkExtensionVersionQueryVariables
+      >({
+        query: NetworkExtensionVersionDocument,
+        variables: {
+          extensionId: Extension.OneTxPayment,
+        },
+        fetchPolicy: 'network-only',
+      });
+
       yield put(
         transactionAddParams(deployOneTx.id, [
           getExtensionHash(Extension.OneTxPayment),
-          1,
+          networkExtensionVersion,
         ]),
       );
       yield put(transactionReady(deployOneTx.id));

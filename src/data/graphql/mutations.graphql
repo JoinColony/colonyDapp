@@ -76,13 +76,6 @@ mutation SendTransactionMessage($input: SendTransactionMessageInput!) {
 
 # Network Contracts
 
-mutation SetNetworkContracts($input: NetworkContractsInput!) {
-  setNetworkContracts(input: $input) @client {
-    version
-    feeInverse
-  }
-}
-
 mutation UpdateNetworkContracts {
   updateNetworkContracts @client {
     version

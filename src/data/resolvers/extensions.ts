@@ -8,7 +8,9 @@ import {
   getLogs,
   getBlockTime,
   ROOT_DOMAIN_ID,
+  Extension,
 } from '@colony/colony-js';
+import * as colonyJSVersionExports from '@colony/colony-js/lib/versions';
 
 import { Context } from '~context/index';
 import { getMinimalUser } from '~data/index';
@@ -20,7 +22,10 @@ export const extensionsResolvers = ({
   colonyManager,
 }: Required<Context>): Resolvers => ({
   Query: {
-    async networkExtensionVersion(_, { extensionId }) {
+    async networkExtensionVersion(
+      _,
+      { extensionId }: { extensionId: Extension },
+    ) {
       /*
        * Prettier is being stupid again
        */
@@ -42,8 +47,12 @@ export const extensionsResolvers = ({
             ) => firstVersion.toNumber() - secondVersion.toNumber(),
           )
           .pop();
-        const version = latestEvent?.values?.version;
-        return version.toNumber();
+        const version = latestEvent?.values?.version?.toNumber();
+        const latestSupportedVersion =
+          colonyJSVersionExports[`Current${extensionId}Version`];
+        return version <= latestSupportedVersion
+          ? version
+          : latestSupportedVersion;
       }
       return 0;
     },

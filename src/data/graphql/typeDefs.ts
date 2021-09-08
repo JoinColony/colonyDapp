@@ -389,7 +389,6 @@ export default gql`
   extend type Mutation {
     setLoggedInUser(input: LoggedInUserInput): LoggedInUser!
     clearLoggedInUser: LoggedInUser!
-    setNetworkContracts(input: NetworkContractsInput): NetworkContracts!
     updateNetworkContracts: NetworkContracts!
   }
 

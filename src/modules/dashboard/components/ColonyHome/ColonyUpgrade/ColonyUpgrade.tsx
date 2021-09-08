@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ColonyVersion } from '@colony/colony-js';
 
 import { useDialog } from '~core/Dialog';
 import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
@@ -64,13 +63,11 @@ const ColonyUpgrade = ({ colony }: Props) => {
   const hasRegisteredProfile = !!username && !ethereal;
   const canUpgradeColony = hasRegisteredProfile && hasRoot(allUserRoles);
 
-  const networkVersionIsSupported = !!ColonyVersion[networkVersion as string];
-  const mustUpgrade =
-    networkVersionIsSupported &&
-    colonyMustBeUpgraded(colony, networkVersion as string);
-  const shouldUpdgrade =
-    networkVersionIsSupported &&
-    colonyShouldBeUpgraded(colony, networkVersion as string);
+  const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
+  const shouldUpdgrade = colonyShouldBeUpgraded(
+    colony,
+    networkVersion as string,
+  );
 
   if (mustUpgrade) {
     return (
