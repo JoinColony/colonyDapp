@@ -1,5 +1,10 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType, getChildIndex } from '@colony/colony-js';
+import {
+  ClientType,
+  getChildIndex,
+  getPermissionProofs,
+  ColonyRole,
+} from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -53,6 +58,19 @@ function* smiteMotion({
       colonyAddress,
     );
 
+    const votingReputationClient = yield context.getClient(
+      ClientType.VotingReputationClient,
+      colonyAddress,
+    );
+
+    const [permissionDomainId, childSkillIndex] = yield call(
+      getPermissionProofs,
+      colonyClient,
+      domainId,
+      ColonyRole.Architecture,
+      votingReputationClient.address,
+    );
+
     const motionChildSkillIndex = yield call(
       getChildIndex,
       colonyClient,
@@ -85,8 +103,8 @@ function* smiteMotion({
     ]);
 
     // eslint-disable-next-line max-len
-    const encodedAction = colonyClient.interface.functions.emitSkillReputationPenalty.encode(
-      [skillId, userAddress, amount],
+    const encodedAction = colonyClient.interface.functions.emitDomainReputationPenalty.encode(
+      [permissionDomainId, childSkillIndex, domainId, userAddress, amount],
     );
 
     // create transactions
