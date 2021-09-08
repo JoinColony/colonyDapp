@@ -187,7 +187,7 @@ function* smiteMotion({
     }
 
     /*
-     * Refesh the user reputation
+     * Refesh the user & colony reputation
      */
     yield fork(updateDomainReputation, colonyAddress, userAddress, domainId);
 
