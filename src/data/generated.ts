@@ -194,7 +194,6 @@ export type Mutation = {
   removeUpvoteFromSuggestion?: Maybe<Suggestion>;
   sendTransactionMessage: Scalars['Boolean'];
   setLoggedInUser: LoggedInUser;
-  setNetworkContracts: NetworkContracts;
   setSuggestionStatus?: Maybe<Suggestion>;
   setUserTokens?: Maybe<User>;
   subscribeToColony?: Maybe<User>;
@@ -240,11 +239,6 @@ export type MutationSendTransactionMessageArgs = {
 
 export type MutationSetLoggedInUserArgs = {
   input?: Maybe<LoggedInUserInput>;
-};
-
-
-export type MutationSetNetworkContractsArgs = {
-  input?: Maybe<NetworkContractsInput>;
 };
 
 
@@ -1474,13 +1468,6 @@ export type SendTransactionMessageMutationVariables = Exact<{
 
 
 export type SendTransactionMessageMutation = Pick<Mutation, 'sendTransactionMessage'>;
-
-export type SetNetworkContractsMutationVariables = Exact<{
-  input: NetworkContractsInput;
-}>;
-
-
-export type SetNetworkContractsMutation = { setNetworkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
 
 export type UpdateNetworkContractsMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2756,39 +2743,6 @@ export function useSendTransactionMessageMutation(baseOptions?: Apollo.MutationH
 export type SendTransactionMessageMutationHookResult = ReturnType<typeof useSendTransactionMessageMutation>;
 export type SendTransactionMessageMutationResult = Apollo.MutationResult<SendTransactionMessageMutation>;
 export type SendTransactionMessageMutationOptions = Apollo.BaseMutationOptions<SendTransactionMessageMutation, SendTransactionMessageMutationVariables>;
-export const SetNetworkContractsDocument = gql`
-    mutation SetNetworkContracts($input: NetworkContractsInput!) {
-  setNetworkContracts(input: $input) @client {
-    version
-    feeInverse
-  }
-}
-    `;
-export type SetNetworkContractsMutationFn = Apollo.MutationFunction<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>;
-
-/**
- * __useSetNetworkContractsMutation__
- *
- * To run a mutation, you first call `useSetNetworkContractsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSetNetworkContractsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [setNetworkContractsMutation, { data, loading, error }] = useSetNetworkContractsMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSetNetworkContractsMutation(baseOptions?: Apollo.MutationHookOptions<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>) {
-        return Apollo.useMutation<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>(SetNetworkContractsDocument, baseOptions);
-      }
-export type SetNetworkContractsMutationHookResult = ReturnType<typeof useSetNetworkContractsMutation>;
-export type SetNetworkContractsMutationResult = Apollo.MutationResult<SetNetworkContractsMutation>;
-export type SetNetworkContractsMutationOptions = Apollo.BaseMutationOptions<SetNetworkContractsMutation, SetNetworkContractsMutationVariables>;
 export const UpdateNetworkContractsDocument = gql`
     mutation UpdateNetworkContracts {
   updateNetworkContracts @client {
