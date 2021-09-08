@@ -1,13 +1,6 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType } from '@colony/colony-js';
-import { AddressZero } from 'ethers/constants';
 
-import { ContextModule, TEMP_getContext } from '~context/index';
-import {
-  UserReputationQuery,
-  UserReputationQueryVariables,
-  UserReputationDocument,
-} from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
@@ -22,6 +15,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
+import { updateDomainReputation } from '../utils';
 
 function* smiteAction({
   payload: {
@@ -37,8 +31,6 @@ function* smiteAction({
 }: Action<ActionTypes.COLONY_ACTION_SMITE>) {
   let txChannel;
   try {
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-
     if (!userAddress) {
       throw new Error(
         'User address not set for emitDomainReputationPenalty transaction',
@@ -148,29 +140,10 @@ function* smiteAction({
       );
     }
 
-    yield apolloClient.query<UserReputationQuery, UserReputationQueryVariables>(
-      {
-        query: UserReputationDocument,
-        variables: {
-          colonyAddress,
-          address: userAddress,
-          domainId,
-        },
-        fetchPolicy: 'network-only',
-      },
-    );
-
-    yield apolloClient.query<UserReputationQuery, UserReputationQueryVariables>(
-      {
-        query: UserReputationDocument,
-        variables: {
-          colonyAddress,
-          address: AddressZero,
-          domainId,
-        },
-        fetchPolicy: 'network-only',
-      },
-    );
+    /*
+     * Refesh the user & colony reputation
+     */
+    yield fork(updateDomainReputation, colonyAddress, userAddress, domainId);
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_SMITE_SUCCESS,
