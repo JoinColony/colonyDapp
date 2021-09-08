@@ -4,10 +4,6 @@
   grid-template-columns: minmax(460px, 2fr) minmax(340px, 1fr);
 }
 
-.main a {
-  color: var(--colony-blue);
-}
-
 .headerLine {
   margin: 20px 0 12px 0;
 }
@@ -15,6 +11,11 @@
 .extensionText {
   padding-top: 24px;
   white-space: pre-line;
+}
+
+.extensionText a {
+  font-weight: var(--weight-normal);
+  color: var(--colony-blue);
 }
 
 .extensionSubtext {
