@@ -3,9 +3,8 @@ import { Redirect } from 'react-router-dom';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { useUserLazyQuery } from '~data/index';
+import { useUserLazyQuery, useUserAddressQuery } from '~data/index';
 
-import { useUserAddressFetcher } from '../../hooks';
 import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
 import UserColonies from './UserColonies';
@@ -20,21 +19,23 @@ const UserProfile = ({
     params: { username },
   },
 }: Props) => {
-  const { userAddress, error: userAddressError } = useUserAddressFetcher(
-    username,
-  );
+  const { data: userAddressData, error } = useUserAddressQuery({
+    variables: {
+      name: username || '',
+    },
+  });
 
   const [loadUser, { data }] = useUserLazyQuery();
 
   useEffect(() => {
-    if (userAddress) {
+    if (userAddressData?.userAddress) {
       loadUser({
-        variables: { address: userAddress },
+        variables: { address: userAddressData?.userAddress },
       });
     }
-  }, [loadUser, userAddress]);
+  }, [loadUser, userAddressData]);
 
-  if (userAddressError) {
+  if (error) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
