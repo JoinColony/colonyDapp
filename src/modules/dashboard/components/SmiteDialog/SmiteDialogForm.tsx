@@ -11,7 +11,6 @@ import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
-import { calculatePercentageReputation } from '~core/MemberReputation';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import Toggle from '~core/Fields/Toggle';
@@ -29,7 +28,10 @@ import {
 } from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
-
+import {
+  calculatePercentageReputation,
+  DECIMAL_PLACES,
+} from '~utils/reputation';
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
@@ -80,8 +82,6 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
-
-const DECIMAL_PLACES = 2;
 
 const SmiteDialogForm = ({
   back,
@@ -148,8 +148,8 @@ const SmiteDialogForm = ({
 
   const userPercentageReputation = calculatePercentageReputation(
     DECIMAL_PLACES,
-    userReputationData,
-    totalReputationData,
+    userReputationData?.userReputation,
+    totalReputationData?.userReputation,
   );
 
   const domainOptions = useMemo(
