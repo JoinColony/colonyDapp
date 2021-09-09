@@ -1,14 +1,17 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
-import { bigNumberify } from 'ethers/utils';
 
 import { useUserReputationQuery } from '~data/index';
 import { Address } from '~types/index';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
+import {
+  calculatePercentageReputation,
+  DECIMAL_PLACES,
+  ZeroValue,
+} from '~utils/reputation';
 
 import styles from './MemberReputation.css';
 
@@ -29,46 +32,6 @@ interface Props {
   domainId?: number;
   rootHash?: string;
 }
-
-interface Reputation {
-  userReputation: string;
-}
-
-enum ZeroValue {
-  Zero = '0',
-  NearZero = '~0',
-}
-
-type PercentageReputationType = ZeroValue | number | null;
-
-export const calculatePercentageReputation = (
-  decimalPlaces: number,
-  userReputation?: Reputation,
-  totalReputation?: Reputation,
-): PercentageReputationType => {
-  if (!userReputation || !totalReputation) return null;
-  const userReputationNumber = bigNumberify(userReputation.userReputation);
-  const totalReputationNumber = bigNumberify(totalReputation.userReputation);
-
-  const reputationSafeguard = bigNumberify(100).pow(decimalPlaces);
-
-  if (userReputationNumber.isZero()) {
-    return ZeroValue.Zero;
-  }
-
-  if (userReputationNumber.mul(reputationSafeguard).lt(totalReputationNumber)) {
-    return ZeroValue.NearZero;
-  }
-
-  const reputation = userReputationNumber
-    .mul(reputationSafeguard)
-    .div(totalReputationNumber)
-    .toNumber();
-
-  return reputation / 10 ** decimalPlaces;
-};
-
-const DECIMAL_PLACES = 2;
 
 const displayName = 'MemberReputation';
 
@@ -94,8 +57,8 @@ const MemberReputation = ({
 
   const userPercentageReputation = calculatePercentageReputation(
     DECIMAL_PLACES,
-    userReputationData,
-    totalReputation,
+    userReputationData?.userReputation,
+    totalReputation?.userReputation,
   );
   return (
     <div>
