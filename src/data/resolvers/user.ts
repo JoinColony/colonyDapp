@@ -8,12 +8,18 @@ import {
 } from '@colony/colony-js';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { AddressZero, HashZero } from 'ethers/constants';
+import Decimal from 'decimal.js';
 
 import { Context } from '~context/index';
 import ENS from '~lib/ENS';
 import ColonyManager from '~lib/ColonyManager';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
+import {
+  calculatePercentageReputation,
+  DECIMAL_PLACES,
+  ZeroValue,
+} from '~utils/reputation';
 import {
   Transfer,
   SubgraphColoniesQuery,
@@ -209,6 +215,79 @@ export const userResolvers = ({
         rootHash,
       );
       return reputation.toString();
+    },
+    async userReputationForTopDomains(_, { address, colonyAddress }) {
+      try {
+        const colonyClient = await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        );
+
+        // eslint-disable-next-line max-len
+        const userReputationForAllDomains: {
+          reputationAmount?: BigNumber;
+          domainId: number;
+          skillId: number;
+        }[] = await colonyClient.getReputationAcrossDomains(address);
+
+        // Extract only the relevant data and
+        // transform the user reputation amount on each domain to percentage
+        const formattedUserReputations = userReputationForAllDomains.map(
+          async (userReputation) => {
+            const totalColonyReputation = await getUserReputation(
+              colonyManager,
+              AddressZero,
+              colonyAddress,
+              userReputation.domainId,
+            );
+            const reputationPercentage = calculatePercentageReputation(
+              DECIMAL_PLACES,
+              userReputation.reputationAmount?.toString(),
+              totalColonyReputation.toString(),
+            );
+            return {
+              reputationPercentage,
+              domainId: userReputation.domainId,
+            };
+          },
+        );
+        const formattedUserReputationsResult = await Promise.all(
+          formattedUserReputations,
+        );
+
+        // Filter out the reputation percentages that are 0
+        const filteredUserReputations = formattedUserReputationsResult.filter(
+          (userReputation) =>
+            userReputation.reputationPercentage &&
+            userReputation.reputationPercentage !== ZeroValue.Zero,
+        );
+
+        // Sort out the percentages from highest to lowest
+        // and extract up to 3 reputations from the array
+        const topUserReputations = [...filteredUserReputations]
+          .sort((reputationA, reputationB) => {
+            const safeReputationA = new Decimal(
+              reputationA.reputationPercentage || 0,
+            );
+            const safeReputationB = new Decimal(
+              reputationB.reputationPercentage || 0,
+            );
+
+            if (safeReputationB.eq(safeReputationA)) {
+              return 0;
+            }
+            if (safeReputationB.lt(safeReputationA)) {
+              return -1;
+            }
+            return 1;
+          })
+          .slice(0, 3);
+
+        return topUserReputations;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
     },
     async username(_, { address }): Promise<string> {
       const domain = await ens.getDomain(address, networkClient);
