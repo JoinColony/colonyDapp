@@ -1,15 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { bigNumberify } from 'ethers/utils';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   AnyUser,
-  useUserReputationQuery,
   useColonyNativeTokenQuery,
-  useTokenInfoLazyQuery,
   Colony,
   useUserBalanceWithLockQuery,
+  useUserReputationForTopDomainsQuery,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 
@@ -22,7 +21,6 @@ import UserReputation from './UserReputation';
 
 import styles from './MemberInfoPopover.css';
 
-
 interface Props {
   colony: Colony;
   domainId?: number;
@@ -34,7 +32,6 @@ const displayName = 'InfoPopover.MemberInfoPopover';
 const MemberInfoPopover = ({
   colony: { colonyAddress },
   colony,
-  domainId,
   user = { id: '', profile: { walletAddress: '' } },
 }: Props) => {
   const {
@@ -48,17 +45,11 @@ const MemberInfoPopover = ({
     variables: { address: colonyAddress },
   });
 
-  const [
-    fetchTokenInfo,
-    { data: tokenInfoData, loading: loadingTokenInfoData },
-  ] = useTokenInfoLazyQuery();
-
   const {
     data: userReputationData,
     loading: loadingUserReputation,
-    error: errorReputation,
-  } = useUserReputationQuery({
-    variables: { address: walletAddress, colonyAddress, domainId },
+  } = useUserReputationForTopDomainsQuery({
+    variables: { address: walletAddress, colonyAddress },
   });
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
@@ -85,15 +76,6 @@ const MemberInfoPopover = ({
     */
     fetchPolicy: 'no-cache',
   });
-
-  useEffect(() => {
-    if (nativeTokenAddressData) {
-      const {
-        processedColony: { nativeTokenAddress },
-      } = nativeTokenAddressData;
-      fetchTokenInfo({ variables: { address: nativeTokenAddress } });
-    }
-  }, [fetchTokenInfo, nativeTokenAddressData]);
 
   if (
     loadingNativeTokenAddress ||
@@ -127,12 +109,16 @@ const MemberInfoPopover = ({
           <UserInfo user={user} />
         </div>
       )}
-      <div className={styles.section}>
-        <UserReputation
-          walletAddress={walletAddress}
-          colonyAddress={colonyAddress}
-        />
-      </div>
+      {userReputationData && (
+        <div className={styles.section}>
+          <UserReputation
+            colony={colony}
+            userReputationForTopDomains={
+              userReputationData.userReputationForTopDomains
+            }
+          />
+        </div>
+      )}
       {!totalBalance.isZero() && nativeToken && (
         <div className={styles.section}>
           <UserTokens totalBalance={totalBalance} nativeToken={nativeToken} />
