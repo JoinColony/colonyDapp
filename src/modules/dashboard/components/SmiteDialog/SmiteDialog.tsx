@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
+import { useHistory } from 'react-router-dom';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -22,6 +23,7 @@ const MSG = defineMessages({
 });
 
 export interface FormValues {
+  forceAction: boolean;
   domainId: string;
   user: Address;
   amount: string;
@@ -46,6 +48,20 @@ const SmiteDialog = ({
   close,
   ethDomainId,
 }: Props) => {
+  const [isForce, setIsForce] = useState(false);
+  const history = useHistory();
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_MOTION_SMITE${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_SMITE${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
+
   const validationSchema = yup.object().shape({
     domainId: yup.number().required(),
     user: yup.object().shape({
@@ -75,13 +91,16 @@ const SmiteDialog = ({
         amount: undefined,
         annotation: undefined,
       }}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
       validationSchema={validationSchema}
       onSuccess={close}
     >
       {(formValues: FormikProps<FormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
         return (
           <Dialog cancel={cancel}>
             <DialogForm
