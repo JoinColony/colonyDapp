@@ -1,3 +1,5 @@
+@value reputationColor: rgb(255, 176, 0);
+
 .main {
   padding: 20px;
   width: 460px;
@@ -21,19 +23,6 @@
   border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
-.reputation {
-  display: flex;
-  align-items: baseline;
-}
-
-.reputationHeading {
-  margin-right: 8px;
-}
-
-.reputationError {
-  color: var(--danger);
-}
-
 .loadingSpinnerContainer {
   display: flex;
   justify-content: center;
@@ -45,6 +34,10 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+
+.noReputationContainer {
+  flex-direction: column;
 }
 
 .sectionContainer h4 {
@@ -66,18 +59,7 @@
   color: var(--dark);
 }
 
-.reputationContainer {
-  display: flex;
-  justify-content: space-between;
-}
-
-.reputationContainer h4 {
-  font-size: var(--size-smallish);
-  color: var(--temp-grey-blue-7);
-}
-
 .domainName {
-  margin-right: 16px;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: color-mod(var(--dark) alpha(85%));
@@ -86,11 +68,45 @@
 .domainReputationItem {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+}
+
+.domainReputationItem + .domainReputationItem {
+  margin-top: 5px;
 }
 
 .noReputationDescription {
   margin-top: 5px;
-  font-size: var(--size-small);
+  font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
   line-height: 18px;
+  white-space: pre-line;
+  color: color-mod(var(--dark) alpha(85%));
+}
+
+.reputationContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: 8px;
+  width: 64px;
+}
+
+.reputation {
+  display: inline-block;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: reputationColor;
+}
+
+.icon {
+  display: inline-block;
+  margin-left: 6px;
+  height: 11px;
+  width: 11px;
+}
+
+.icon svg {
+  fill: transparent;
+  stroke-width: 3px;
+  stroke: reputationColor;
 }
