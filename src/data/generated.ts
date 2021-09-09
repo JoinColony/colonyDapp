@@ -312,6 +312,7 @@ export type Query = {
   user: User;
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
+  userReputationForTopDomains: Array<UserDomainReputation>;
   username: Scalars['String'];
   votingState: VotingState;
   whitelistAgreement: Scalars['String'];
@@ -588,6 +589,12 @@ export type QueryUserReputationArgs = {
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
   rootHash?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryUserReputationForTopDomainsArgs = {
+  address: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -1039,6 +1046,11 @@ export type MotionVoterReward = {
   maxReward: Scalars['String'];
 };
 
+export type UserDomainReputation = {
+  domainId: Scalars['Int'];
+  reputationPercentage: Scalars['String'];
+};
+
 export type ByColonyFilter = {
   colonyAddress: Scalars['String'];
   domainChainId?: Maybe<Scalars['Int']>;
@@ -1410,6 +1422,14 @@ export type UserReputationQueryVariables = Exact<{
 
 
 export type UserReputationQuery = Pick<Query, 'userReputation'>;
+
+export type UserReputationForTopDomainsQueryVariables = Exact<{
+  address: Scalars['String'];
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type UserReputationForTopDomainsQuery = { userReputationForTopDomains: Array<Pick<UserDomainReputation, 'domainId' | 'reputationPercentage'>> };
 
 export type UserTokensQueryVariables = Exact<{
   address: Scalars['String'];
@@ -2923,6 +2943,41 @@ export function useUserReputationLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type UserReputationQueryHookResult = ReturnType<typeof useUserReputationQuery>;
 export type UserReputationLazyQueryHookResult = ReturnType<typeof useUserReputationLazyQuery>;
 export type UserReputationQueryResult = Apollo.QueryResult<UserReputationQuery, UserReputationQueryVariables>;
+export const UserReputationForTopDomainsDocument = gql`
+    query UserReputationForTopDomains($address: String!, $colonyAddress: String!) {
+  userReputationForTopDomains(address: $address, colonyAddress: $colonyAddress) @client {
+    domainId
+    reputationPercentage
+  }
+}
+    `;
+
+/**
+ * __useUserReputationForTopDomainsQuery__
+ *
+ * To run a query within a React component, call `useUserReputationForTopDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserReputationForTopDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserReputationForTopDomainsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useUserReputationForTopDomainsQuery(baseOptions?: Apollo.QueryHookOptions<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>) {
+        return Apollo.useQuery<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>(UserReputationForTopDomainsDocument, baseOptions);
+      }
+export function useUserReputationForTopDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>) {
+          return Apollo.useLazyQuery<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>(UserReputationForTopDomainsDocument, baseOptions);
+        }
+export type UserReputationForTopDomainsQueryHookResult = ReturnType<typeof useUserReputationForTopDomainsQuery>;
+export type UserReputationForTopDomainsLazyQueryHookResult = ReturnType<typeof useUserReputationForTopDomainsLazyQuery>;
+export type UserReputationForTopDomainsQueryResult = Apollo.QueryResult<UserReputationForTopDomainsQuery, UserReputationForTopDomainsQueryVariables>;
 export const UserTokensDocument = gql`
     query UserTokens($address: String!) {
   user(address: $address) {

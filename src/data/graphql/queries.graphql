@@ -51,6 +51,13 @@ query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int,
   userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId, rootHash: $rootHash) @client
 }
 
+query UserReputationForTopDomains($address: String!, $colonyAddress: String!) {
+  userReputationForTopDomains(address: $address, colonyAddress: $colonyAddress) @client {
+    domainId
+    reputationPercentage
+  }
+}
+
 query UserTokens($address: String!) {
   user(address: $address) {
     id
