@@ -2,6 +2,7 @@ import React, { useMemo, useCallback, ReactNode } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
+import { AddressZero } from 'ethers/constants';
 
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
@@ -9,11 +10,17 @@ import { ActionDialogProps } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
+import { calculatePercentageReputation } from '~core/MemberReputation';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 
 import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { AnyUser, OneDomain } from '~data/index';
+import {
+  AnyUser,
+  OneDomain,
+  useUserReputationQuery,
+  useLoggedInUser,
+} from '~data/index';
 
 import { FormValues } from './SmiteDialog';
 import TeamDropdownItem from './TeamDropdownItem';
@@ -57,6 +64,8 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
 
+const DECIMAL_PLACES = 2;
+
 const SmiteDialogForm = ({
   back,
   colony: { domains, colonyAddress },
@@ -68,6 +77,32 @@ const SmiteDialogForm = ({
   isValid,
   values,
 }: Props & FormikProps<FormValues>) => {
+  const { walletAddress } = useLoggedInUser();
+
+  const { data: userReputationData } = useUserReputationQuery({
+    variables: {
+      address: walletAddress,
+      colonyAddress,
+      domainId: Number(values.domainId),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const { data: totalReputation } = useUserReputationQuery({
+    variables: {
+      address: AddressZero,
+      colonyAddress,
+      domainId: Number(values.domainId),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const userPercentageReputation = calculatePercentageReputation(
+    DECIMAL_PLACES,
+    userReputationData,
+    totalReputation,
+  );
+
   const domainOptions = useMemo(
     () =>
       sortBy(
@@ -165,11 +200,13 @@ const SmiteDialogForm = ({
             elementOnly
             maxButtonParams={{
               fieldName: 'amount',
-              maxAmount: '10',
+              maxAmount: userPercentageReputation?.toString() || '0',
               setFieldValue,
             }}
           />
-          <p className={styles.inputText}>max: 10.1%</p>
+          <p
+            className={styles.inputText}
+          >{`max: ${userPercentageReputation}%`}</p>
         </div>
       </DialogSection>
       <DialogSection>
