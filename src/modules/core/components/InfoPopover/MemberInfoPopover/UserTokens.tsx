@@ -5,9 +5,11 @@ import { BigNumberish } from 'ethers/utils';
 import Heading from '~core/Heading';
 import { getFormattedTokenValue } from '~utils/tokens';
 
-import styles from './MemberInfoPopover.css';
 import Numeral from '~core/Numeral';
 import { UserToken } from '~data/generated';
+import TokenIcon from '~dashboard/HookedTokenIcon';
+
+import styles from './MemberInfoPopover.css';
 
 const displayName = `InfoPopover.MemberInfoPopover.UserTokens`;
 
@@ -34,18 +36,18 @@ const UserTokens = ({ totalBalance, nativeToken }: Props) => {
       <Heading
         appearance={{
           size: 'normal',
-          margin: 'none',
           theme: 'grey',
           weight: 'bold',
         }}
         text={MSG.labelText}
       />
-      <p className={styles.tokenAmount}>
+      <div className={styles.tokenAmount}>
+        <TokenIcon token={nativeToken} name={nativeToken.name} size="xxs" />
         <Numeral
           suffix={` ${nativeToken.symbol} `}
           value={formattedTotalBalance}
         />
-      </p>
+      </div>
     </div>
   );
 };
