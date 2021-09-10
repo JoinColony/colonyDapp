@@ -26,7 +26,6 @@ const UserPermissions = ({ roles }: Props) => {
       <Heading
         appearance={{
           size: 'normal',
-          margin: 'none',
           theme: 'grey',
           weight: 'bold',
         }}
