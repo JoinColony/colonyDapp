@@ -4,8 +4,7 @@ import { PopperProps } from 'react-popper';
 import Link from '~core/Link';
 import InfoPopover, { Props as InfoPopoverProps } from '~core/InfoPopover';
 
-import { useUserAddressFetcher } from '../../../users/hooks';
-import { useUserQuery } from '~data/index';
+import { useUserQuery, useUserAddressQuery } from '~data/index';
 
 import styles from './UserMention.css';
 
@@ -44,10 +43,14 @@ const UserMention = ({
     showArrow: popperProps && popperProps.showArrow,
   };
 
-  const { userAddress } = useUserAddressFetcher(username);
+  const { data: userAddressData } = useUserAddressQuery({
+    variables: {
+      name: username || '',
+    },
+  });
 
   const { data } = useUserQuery({
-    variables: { address: userAddress || '' },
+    variables: { address: userAddressData?.userAddress || '' },
   });
 
   const renderUserMention = () =>
