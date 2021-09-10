@@ -1,8 +1,9 @@
-import React, { useMemo, useCallback, ReactNode } from 'react';
+import React, { useMemo, useCallback, useEffect, ReactNode } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { AddressZero } from 'ethers/constants';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
@@ -12,6 +13,7 @@ import { Select, Input, Annotations, SelectOption } from '~core/Fields';
 import Heading from '~core/Heading';
 import { calculatePercentageReputation } from '~core/MemberReputation';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -56,6 +58,8 @@ const MSG = defineMessages({
 interface Props extends ActionDialogProps {
   subscribedUsers: AnyUser[];
   ethDomainId?: number;
+  updateReputation: (data?: string) => void;
+  isVotingExtensionEnabled: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -76,8 +80,20 @@ const SmiteDialogForm = ({
   isSubmitting,
   isValid,
   values,
+  updateReputation,
+  ethDomainId: preselectedDomainId,
+  isVotingExtensionEnabled,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress } = useLoggedInUser();
+
+  const selectedDomain =
+    preselectedDomainId === 0 || preselectedDomainId === undefined
+      ? ROOT_DOMAIN_ID
+      : preselectedDomainId;
+
+  const domainId = values.domainId
+    ? parseInt(values.domainId, 10)
+    : selectedDomain;
 
   const { data: userReputationData } = useUserReputationQuery({
     variables: {
@@ -88,7 +104,7 @@ const SmiteDialogForm = ({
     fetchPolicy: 'network-only',
   });
 
-  const { data: totalReputation } = useUserReputationQuery({
+  const { data: totalReputationData } = useUserReputationQuery({
     variables: {
       address: AddressZero,
       colonyAddress,
@@ -100,7 +116,7 @@ const SmiteDialogForm = ({
   const userPercentageReputation = calculatePercentageReputation(
     DECIMAL_PLACES,
     userReputationData,
-    totalReputation,
+    totalReputationData,
   );
 
   const domainOptions = useMemo(
@@ -144,10 +160,45 @@ const SmiteDialogForm = ({
     [values, colonyAddress, colony.domains],
   );
 
+  useEffect(() => {
+    updateReputation(totalReputationData?.userReputation);
+  }, [totalReputationData, updateReputation]);
+
+  const handleFilterMotionDomains = useCallback(
+    (optionDomain) => {
+      const optionDomainId = parseInt(optionDomain.value, 10);
+      if (domainId === ROOT_DOMAIN_ID) {
+        return optionDomainId === ROOT_DOMAIN_ID;
+      }
+      return optionDomainId === domainId || optionDomainId === ROOT_DOMAIN_ID;
+    },
+    [domainId],
+  );
+
+  const handleMotionDomainChange = useCallback(
+    (motionDomainId) => setFieldValue('motionDomainId', motionDomainId),
+    [setFieldValue],
+  );
+
   return (
     <>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                onDomainChange={handleMotionDomainChange}
+                disabled={values.forceAction}
+                /*
+                 * @NOTE We can only create a motion to vote in a subdomain if we
+                 * create a payment from that subdomain
+                 */
+                filterDomains={handleFilterMotionDomains}
+                initialSelectedDomain={domainId}
+              />
+            </div>
+          )}
           <div className={styles.headingContainer}>
             <Heading
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
