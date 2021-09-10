@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
+import { bigNumberify } from 'ethers/utils';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -11,6 +12,7 @@ import { ActionForm } from '~core/Fields';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import { useMembersSubscription } from '~data/index';
+import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
 
 import DialogForm from './SmiteDialogForm';
@@ -28,6 +30,7 @@ export interface FormValues {
   user: Address;
   amount: string;
   annotation: string;
+  motionDomainId: string;
 }
 
 type Props = Required<DialogProps> &
@@ -39,7 +42,7 @@ type Props = Required<DialogProps> &
 const displayName = 'dashboard.SmiteDialog';
 
 const SmiteDialog = ({
-  colony: { colonyAddress },
+  colony: { colonyAddress, colonyName },
   colony,
   isVotingExtensionEnabled,
   callStep,
@@ -49,7 +52,12 @@ const SmiteDialog = ({
   ethDomainId,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
+  const [totalReputationData, setTotalReputation] = useState<
+    string | undefined
+  >(undefined);
   const history = useHistory();
+
+  const updateReputationCallback = (data?: string) => setTotalReputation(data);
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -74,11 +82,37 @@ const SmiteDialog = ({
       .required()
       .moreThan(0, () => MSG.amountZero),
     annotation: yup.string().max(4000),
+    forceAction: yup.boolean(),
+    motionDomainId: yup.number(),
   });
 
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
+
+  const transform = useCallback(
+    pipe(
+      mapPayload(({ amount, domainId, annotation, user, motionDomainId }) => {
+        const totalReputation = bigNumberify(totalReputationData || '0');
+
+        const repuationChangeAmount = !totalReputation.isZero
+          ? totalReputation.mul(Number(amount) / 100)
+          : totalReputation;
+
+        return {
+          colonyAddress,
+          colonyName,
+          domainId,
+          userAddress: user.profile.walletAddress,
+          annotationMessage: annotation,
+          amount: `-${repuationChangeAmount.toString}`,
+          motionDomainId,
+        };
+      }),
+      withMeta({ history }),
+    ),
+    [totalReputationData],
+  );
 
   return (
     <ActionForm
@@ -90,12 +124,14 @@ const SmiteDialog = ({
         user: undefined,
         amount: undefined,
         annotation: undefined,
+        motionDomainId: ROOT_DOMAIN_ID,
       }}
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
       success={getFormAction('SUCCESS')}
       validationSchema={validationSchema}
       onSuccess={close}
+      transform={transform}
     >
       {(formValues: FormikProps<FormValues>) => {
         if (formValues.values.forceAction !== isForce) {
@@ -110,6 +146,7 @@ const SmiteDialog = ({
               back={() => callStep(prevStep)}
               subscribedUsers={colonyMembers?.subscribedUsers || []}
               ethDomainId={ethDomainId}
+              updateReputation={updateReputationCallback}
             />
           </Dialog>
         );
