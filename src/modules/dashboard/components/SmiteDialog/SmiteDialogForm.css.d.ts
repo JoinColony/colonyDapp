@@ -7,3 +7,4 @@ export const modalHeading: string;
 export const headingContainer: string;
 export const inputText: string;
 export const activeItem: string;
+export const motionVoteDomain: string;
