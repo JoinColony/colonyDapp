@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import isEmpty from 'lodash/isEmpty';
-import classnames from 'classnames';
 
 import Heading from '~core/Heading';
 import { UserReputationForTopDomainsQuery } from '~data/generated';
@@ -49,15 +48,10 @@ const UserReputation = ({ colony, userReputationForTopDomains }: Props) => {
   );
 
   return (
-    <div
-      className={classnames(styles.sectionContainer, {
-        [styles.noReputationContainer]: isEmpty(formattedUserReputations),
-      })}
-    >
+    <div className={styles.sectionContainer}>
       <Heading
         appearance={{
           size: 'normal',
-          margin: 'none',
           theme: 'grey',
           weight: 'bold',
         }}
