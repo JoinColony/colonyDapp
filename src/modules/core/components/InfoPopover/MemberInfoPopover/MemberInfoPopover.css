@@ -1,26 +1,22 @@
 @value reputationColor: rgb(255, 176, 0);
 
 .main {
-  padding: 20px;
+  padding: 20px 25px 25px 25px;
   width: 460px;
 }
 
 .section {
-  margin-left: -2px;
-  padding: 14px 0;
+  padding: 18px 0 0 0;
 }
 
 .section:first-of-type {
   padding-top: 0;
   padding-bottom: 18px;
+  border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .section:last-of-type {
   padding-bottom: 0;
-}
-
-.section + .section {
-  border-top: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
 .loadingSpinnerContainer {
@@ -32,31 +28,34 @@
 
 .sectionContainer {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.noReputationContainer {
   flex-direction: column;
 }
 
 .sectionContainer h4 {
-  font-size: var(--size-smallish);
+  margin-bottom: 18px;
+  font-size: var(--size-tiny);
   color: color-mod(var(--temp-grey-blue-7) alpha(85%));
 }
 
 .roleList {
-  text-align: right;
-}
-
-.roleListItem + .roleListItem {
-  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
 }
 
 .tokenAmount {
-  font-size: var(--size-smallish);
+  display: flex;
+  align-items: center;
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.tokenAmount span {
+  font-size: var(--size-smallish);
+}
+
+.tokenAmount figure {
+  margin-right: 6px;
 }
 
 .domainName {
@@ -68,7 +67,7 @@
 .domainReputationItem {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .domainReputationItem + .domainReputationItem {
