@@ -1,9 +1,9 @@
 import React, { useMemo, useCallback, useEffect, ReactNode } from 'react';
 import { FormikProps } from 'formik';
-import { defineMessages } from 'react-intl';
+import { FormattedMessage, defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { AddressZero } from 'ethers/constants';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
@@ -14,6 +14,10 @@ import Heading from '~core/Heading';
 import { calculatePercentageReputation } from '~core/MemberReputation';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+import Toggle from '~core/Fields/Toggle';
+import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import PermissionsLabel from '~core/PermissionsLabel';
 
 import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -23,6 +27,11 @@ import {
   useUserReputationQuery,
   useLoggedInUser,
 } from '~data/index';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+import { useTransformer } from '~utils/hooks';
+
+import { getUserRolesForDomain } from '../../../transformers';
+import { userHasRole } from '../../../users/checks';
 
 import { FormValues } from './SmiteDialog';
 import TeamDropdownItem from './TeamDropdownItem';
@@ -51,8 +60,12 @@ const MSG = defineMessages({
     defaultMessage: 'Explain why you are smiting the user (optional)',
   },
   userPickerPlaceholder: {
-    id: 'SingleUserPicker.userPickerPlaceholder',
+    id: 'SmiteDialog.SmiteDialogForm.userPickerPlaceholder',
     defaultMessage: 'Search for a user or paste wallet address',
+  },
+  noPermission: {
+    id: `dashboard.SmiteDialog.SmiteDialogForm.noPermission`,
+    defaultMessage: `You need the {roleRequired} permission in {domain} to take this action.`,
   },
 });
 interface Props extends ActionDialogProps {
@@ -84,7 +97,8 @@ const SmiteDialogForm = ({
   ethDomainId: preselectedDomainId,
   isVotingExtensionEnabled,
 }: Props & FormikProps<FormValues>) => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const hasRegisteredProfile = !!username && !ethereal;
 
   const selectedDomain =
     preselectedDomainId === 0 || preselectedDomainId === undefined
@@ -94,6 +108,25 @@ const SmiteDialogForm = ({
   const domainId = values.domainId
     ? parseInt(values.domainId, 10)
     : selectedDomain;
+
+  const domainRoles = useTransformer(getUserRolesForDomain, [
+    colony,
+    walletAddress,
+    domainId,
+  ]);
+
+  const hasRoles =
+    hasRegisteredProfile && userHasRole(domainRoles, ColonyRole.Arbitration);
+
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    hasRoles,
+    isVotingExtensionEnabled,
+    values.forceAction,
+    domainId,
+  );
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
 
   const { data: userReputationData } = useUserReputationQuery({
     variables: {
@@ -137,6 +170,11 @@ const SmiteDialogForm = ({
       ),
 
     [domains, values, colonyAddress],
+  );
+
+  const domainName = useMemo(
+    () => domains.filter((domain) => domain.id === domainId.toString())[0].name,
+    [domains, domainId],
   );
 
   const renderActiveOption = useCallback<
@@ -204,9 +242,21 @@ const SmiteDialogForm = ({
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
               text={MSG.title}
             />
+            {hasRoles && isVotingExtensionEnabled && (
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={!userHasPermission}
+              />
+            )}
           </div>
         </div>
       </DialogSection>
+      {!userHasPermission && (
+        <DialogSection>
+          <PermissionRequiredInfo requiredRoles={[ColonyRole.Arbitration]} />
+        </DialogSection>
+      )}
       <DialogSection>
         <div className={styles.singleUserContainer}>
           <SingleUserPicker
@@ -217,6 +267,7 @@ const SmiteDialogForm = ({
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
             placeholder={MSG.userPickerPlaceholder}
+            disabled={inputDisabled}
           />
         </div>
       </DialogSection>
@@ -229,6 +280,7 @@ const SmiteDialogForm = ({
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
               renderActiveOption={renderActiveOption}
+              disabled={inputDisabled}
             />
           </div>
         </div>
@@ -254,6 +306,7 @@ const SmiteDialogForm = ({
               maxAmount: userPercentageReputation?.toString() || '0',
               setFieldValue,
             }}
+            disabled={inputDisabled}
           />
           <p
             className={styles.inputText}
@@ -261,8 +314,36 @@ const SmiteDialogForm = ({
         </div>
       </DialogSection>
       <DialogSection>
-        <Annotations label={MSG.annotation} name="annotation" />
+        <Annotations
+          label={MSG.annotation}
+          name="annotation"
+          disabled={inputDisabled}
+        />
       </DialogSection>
+      {!userHasPermission && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.noPermissionFromMessage}>
+            <FormattedMessage
+              {...MSG.noPermission}
+              values={{
+                roleRequired: (
+                  <PermissionsLabel
+                    permission={ColonyRole.Architecture}
+                    name={{ id: `role.${ColonyRole.Architecture}` }}
+                  />
+                ),
+                domain: domainName,
+              }}
+            />
+          </div>
+        </DialogSection>
+      )}
+      {onlyForceAction && (
+        <NotEnoughReputation
+          appearance={{ marginTop: 'negative' }}
+          domainId={Number(domainId)}
+        />
+      )}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -274,7 +355,7 @@ const SmiteDialogForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid}
+          disabled={!isValid || inputDisabled}
           style={{ width: styles.wideButton }}
         />
       </DialogSection>
