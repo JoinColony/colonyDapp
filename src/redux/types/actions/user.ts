@@ -32,17 +32,6 @@ export type UserActionTypes =
       },
       object
     >
-  | UniqueActionType<
-      ActionTypes.USER_ADDRESS_FETCH,
-      { username: string },
-      object
-    >
-  | ErrorActionType<ActionTypes.USER_ADDRESS_FETCH_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.USER_ADDRESS_FETCH_SUCCESS,
-      { userAddress: string },
-      object
-    >
   | ActionType<ActionTypes.USER_LOGOUT>
   | ErrorActionType<ActionTypes.USER_LOGOUT_ERROR, object>
   | ActionType<ActionTypes.USER_LOGOUT_SUCCESS>

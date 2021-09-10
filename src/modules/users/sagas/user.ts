@@ -1,4 +1,4 @@
-import { call, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, fork, put, takeLatest } from 'redux-saga/effects';
 import { ClientType, TokenLockingClient } from '@colony/colony-js';
 import { BigNumber } from 'ethers/utils';
 
@@ -9,7 +9,6 @@ import {
   TEMP_removeContext,
 } from '~context/index';
 import ENS from '~lib/ENS';
-import { createAddress } from '~utils/web3';
 import {
   getLoggedInUser,
   refetchUserNotifications,
@@ -40,30 +39,6 @@ import {
   getTxChannel,
 } from '../../core/sagas/transactions';
 import { clearLastWallet } from '~utils/autoLogin';
-
-function* userAddressFetch({
-  payload: { username },
-  meta,
-}: Action<ActionTypes.USER_ADDRESS_FETCH>) {
-  try {
-    const ens = TEMP_getContext(ContextModule.ENS);
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-
-    const address = yield ens.getAddress(
-      ENS.getFullDomain('user', username),
-      colonyManager.networkClient,
-    );
-
-    yield put({
-      type: ActionTypes.USER_ADDRESS_FETCH_SUCCESS,
-      payload: { userAddress: createAddress(address) },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_ADDRESS_FETCH_ERROR, error, meta);
-  }
-  return null;
-}
 
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
@@ -367,7 +342,6 @@ function* userWithdrawToken({
 }
 
 export function* setupUsersSagas() {
-  yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);

@@ -43,7 +43,7 @@ const UserMention = ({
     showArrow: popperProps && popperProps.showArrow,
   };
 
-  const { data: userAddressData, error } = useUserAddressQuery({
+  const { data: userAddressData } = useUserAddressQuery({
     variables: {
       name: username || '',
     },
