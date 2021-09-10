@@ -276,7 +276,10 @@ export const userResolvers = ({
             if (safeReputationB.eq(safeReputationA)) {
               return 0;
             }
-            if (safeReputationB.lt(safeReputationA)) {
+            if (
+              safeReputationB.lt(safeReputationA) &&
+              reputationB.domainId !== ROOT_DOMAIN_ID
+            ) {
               return -1;
             }
             return 1;
