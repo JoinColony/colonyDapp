@@ -33,7 +33,7 @@ const UserPermissions = ({ roles }: Props) => {
       />
       <ul className={styles.roleList}>
         {roles.map((role) => (
-          <li key={role} className={styles.roleListItem}>
+          <li key={role}>
             <PermissionsLabel permission={role} />
           </li>
         ))}
