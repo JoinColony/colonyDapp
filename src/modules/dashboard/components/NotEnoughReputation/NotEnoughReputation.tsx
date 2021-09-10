@@ -26,7 +26,7 @@ const MSG = defineMessage({
   },
   description: {
     id: 'NotEnoughReputation.description',
-    defaultMessage: `If you have the necessary permissions to take this action, please toggle the "Force" switch in the top right corner of this modal.`,
+    defaultMessage: `Please create the motion in a parent of this domain where there is reputation. Alternatively, if you have the necessary permissions to take this action, you may toggle the "Force" switch in the top right corner of this modal to bypass the governance process.`,
   },
 });
 
