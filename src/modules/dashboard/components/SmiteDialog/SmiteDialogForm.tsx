@@ -231,7 +231,7 @@ const SmiteDialogForm = ({
                 disabled={values.forceAction}
                 /*
                  * @NOTE We can only create a motion to vote in a subdomain if we
-                 * create a payment from that subdomain
+                 * change reputation in that subdomain
                  */
                 filterDomains={handleFilterMotionDomains}
                 initialSelectedDomain={domainId}
@@ -297,7 +297,6 @@ const SmiteDialogForm = ({
             }}
             formattingOptions={{
               numeral: true,
-              // prefix: '%',
               // @ts-ignore
               tailPrefix: true,
             }}
@@ -309,6 +308,7 @@ const SmiteDialogForm = ({
             }}
             disabled={inputDisabled}
           />
+          <div className={styles.percentageSign}>%</div>
           <p
             className={styles.inputText}
           >{`max: ${userPercentageReputation}%`}</p>
