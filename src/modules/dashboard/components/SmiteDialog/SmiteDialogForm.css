@@ -1,6 +1,12 @@
 
 @value wideButton: 160px;
 
+.inputContainer {
+  margin-bottom: 20px;
+  width: 320px;
+  position: relative;
+}
+
 .inputContainer label,
 .domainSelects label {
   font-size: var(--size-smallish);
@@ -15,13 +21,9 @@
 }
 
 .inputContainer input {
+  padding-right: 15px;
   font-weight: var(--weight-normal);
   color: var(--dark);
-}
-
-.inputContainer {
-  margin-bottom: 20px;
-  width: 320px;
 }
 
 .inputContainer button {
@@ -73,4 +75,12 @@
 
 .motionVoteDomain {
   margin: 6px 0;
+}
+
+.percentageSign {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  font-size: var(--size-medium);
+  color: var(--dark);
 }
