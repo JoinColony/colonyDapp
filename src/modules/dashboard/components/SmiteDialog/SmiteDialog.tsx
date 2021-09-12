@@ -27,8 +27,8 @@ const MSG = defineMessages({
 export interface FormValues {
   forceAction: boolean;
   domainId: string;
-  user: Address;
-  amount: string;
+  user: { profile: { walletAddress: Address } };
+  amount: number;
   annotation: string;
   motionDomainId: string;
 }
@@ -94,10 +94,7 @@ const SmiteDialog = ({
     pipe(
       mapPayload(({ amount, domainId, annotation, user, motionDomainId }) => {
         const totalReputation = bigNumberify(totalReputationData || '0');
-
-        const repuationChangeAmount = !totalReputation.isZero
-          ? totalReputation.mul(Number(amount) / 100)
-          : totalReputation;
+        const repuationChangeAmount = totalReputation.mul(amount).div(100);
 
         return {
           colonyAddress,
@@ -105,7 +102,7 @@ const SmiteDialog = ({
           domainId,
           userAddress: user.profile.walletAddress,
           annotationMessage: annotation,
-          amount: `-${repuationChangeAmount.toString}`,
+          amount: `-${repuationChangeAmount.toString()}`,
           motionDomainId,
         };
       }),
@@ -117,6 +114,7 @@ const SmiteDialog = ({
   return (
     <ActionForm
       initialValues={{
+        forceAction: false,
         domainId: (ethDomainId === 0 || ethDomainId === undefined
           ? ROOT_DOMAIN_ID
           : ethDomainId
