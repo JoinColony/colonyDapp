@@ -130,7 +130,7 @@ const SmiteDialogForm = ({
 
   const { data: userReputationData } = useUserReputationQuery({
     variables: {
-      address: walletAddress,
+      address: values.user?.profile.walletAddress,
       colonyAddress,
       domainId: Number(values.domainId),
     },
@@ -173,7 +173,8 @@ const SmiteDialogForm = ({
   );
 
   const domainName = useMemo(
-    () => domains.filter((domain) => domain.id === domainId.toString())[0].name,
+    () =>
+      domains.filter((domain) => domain.id === domainId.toString())[0]?.name,
     [domains, domainId],
   );
 
@@ -296,14 +297,14 @@ const SmiteDialogForm = ({
             }}
             formattingOptions={{
               numeral: true,
-              prefix: '%',
+              // prefix: '%',
               // @ts-ignore
               tailPrefix: true,
             }}
             elementOnly
             maxButtonParams={{
               fieldName: 'amount',
-              maxAmount: userPercentageReputation?.toString() || '0',
+              maxAmount: userPercentageReputation || 0,
               setFieldValue,
             }}
             disabled={inputDisabled}
