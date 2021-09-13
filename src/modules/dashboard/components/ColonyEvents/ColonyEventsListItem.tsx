@@ -13,6 +13,7 @@ import Numeral from '~core/Numeral';
 import FriendlyName from '~core/FriendlyName';
 import { Tooltip } from '~core/Popover';
 
+import { DEFAULT_NETWORK_INFO } from '~constants';
 import { removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useUser, Colony } from '~data/index';
@@ -24,6 +25,7 @@ import styles, {
   popoverWidth,
   popoverDistance,
 } from './ColonyEventsListItem.css';
+import TransactionLink from '~core/TransactionLink';
 
 const displayName = 'dashboard.ColonyEvents.ColonyEventsListItem';
 
@@ -42,6 +44,10 @@ const MSG = defineMessages({
       1 {staked}
       other {supported}
     }`,
+  },
+  blockExplorer: {
+    id: 'dashboard.ColonyEvents.ColonyEventsListItem.blockExplorer',
+    defaultMessage: '{blockExplorerName}',
   },
 });
 
@@ -253,6 +259,16 @@ const ColonyEventsListItem = ({
                   />
                 )}
               </span>
+            )}
+            {transactionHash && (
+              <TransactionLink
+                className={styles.blockscoutLink}
+                hash={transactionHash}
+                text={MSG.blockExplorer}
+                textValues={{
+                  blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
+                }}
+              />
             )}
           </div>
         </div>
