@@ -32,6 +32,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.fromDomain',
     defaultMessage: 'From',
   },
+  motionDomain: {
+    id: 'dashboard.ActionsPage.DetailsWidget.motionDomain',
+    defaultMessage: 'Motion created in',
+  },
   toRecipient: {
     id: 'dashboard.ActionsPage.DetailsWidget.toRecipient',
     defaultMessage: 'To',
@@ -125,6 +129,16 @@ const DetailsWidget = ({
           />
         </div>
       </div>
+      {values?.motionDomain && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.motionDomain} />
+          </div>
+          <div className={styles.value}>
+            <DetailsWidgetTeam domain={values.motionDomain} />
+          </div>
+        </div>
+      )}
       {detailsForAction.FromDomain && values?.fromDomain && (
         <div className={styles.item}>
           <div className={styles.label}>

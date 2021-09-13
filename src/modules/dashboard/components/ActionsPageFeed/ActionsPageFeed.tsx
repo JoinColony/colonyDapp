@@ -42,6 +42,7 @@ export interface EventValues {
   decimals?: number;
   fromDomain?: OneDomain;
   toDomain?: OneDomain;
+  motionDomain?: OneDomain;
   oldVersion?: string;
   newVersion?: string;
   colonyName?: string | ReactElement;
