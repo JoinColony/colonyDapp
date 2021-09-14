@@ -92,7 +92,7 @@ const MSG = defineMessages({
   },
 });
 
-const TELL_ME_MORE_LINK = '';
+const TELL_ME_MORE_LINK = `https://colony.gitbook.io/colony/extensions/coin-machine`;
 
 type Props = {
   colony: Colony;
