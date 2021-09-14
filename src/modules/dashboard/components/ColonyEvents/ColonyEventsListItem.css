@@ -113,3 +113,10 @@
   vertical-align: text-top;
   font-size: var(--size-tiny);
 }
+
+.blockscoutLink {
+  composes: separator;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: color-mod(var(--action-secondary) alpha(85%));
+}

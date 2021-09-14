@@ -14,3 +14,4 @@ export const commentCountIcon: string;
 export const userMention: string;
 export const titleDecoration: string;
 export const tooltip: string;
+export const blockscoutLink: string;
