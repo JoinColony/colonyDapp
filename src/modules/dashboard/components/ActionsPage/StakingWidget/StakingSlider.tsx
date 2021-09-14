@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Decimal } from 'decimal.js';
+import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import Slider, { Appearance } from '~core/Slider';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
-import { Colony } from '~data/index';
+import { Colony, useLoggedInUser } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
@@ -66,10 +67,11 @@ const StakingSlider = ({
   userActivatedTokens,
   isObjection,
 }: Props) => {
-  const [showError, setShowError] = useState(false);
+  const [limitExceeded, setLimitExceeded] = useState(false);
+  const { ethereal } = useLoggedInUser();
 
-  const exceedLimit = (isLimitExceeded: boolean) =>
-    setShowError(isLimitExceeded);
+  const onLimitExceeded = (isLimitExceeded: boolean) =>
+    setLimitExceeded(isLimitExceeded);
 
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
@@ -100,16 +102,42 @@ const StakingSlider = ({
   );
 
   const errorStakeType = useMemo(() => {
-    if (remainingToStake.lte(minUserStake)) {
-      return 'cantStakeMore';
-    }
+    if (!ethereal) {
+      const enoughTokens = userActivatedTokens.gte(minUserStake);
+      const enoughReputation =
+        bigNumberify(maxUserStake).gt(0) &&
+        bigNumberify(maxUserStake).gte(bigNumberify(minUserStake));
 
-    if (userActivatedTokens.gt(maxStake)) {
-      return 'stakeMoreReputation';
-    }
+      if (!enoughReputation) {
+        return 'reputation';
+      }
 
-    return 'stakeMoreTokens';
-  }, [remainingToStake, minUserStake, maxStake, userActivatedTokens]);
+      if (!enoughTokens) {
+        return 'tokens';
+      }
+
+      if (remainingToStake.lte(minUserStake)) {
+        return 'cantStakeMore';
+      }
+
+      if (userActivatedTokens.gt(maxStake)) {
+        return 'stakeMoreReputation';
+      }
+
+      if (limitExceeded) {
+        return 'stakeMoreTokens';
+      }
+    }
+    return null;
+  }, [
+    remainingToStake,
+    minUserStake,
+    maxStake,
+    userActivatedTokens,
+    ethereal,
+    limitExceeded,
+    maxUserStake,
+  ]);
 
   return (
     <>
@@ -138,10 +166,29 @@ const StakingSlider = ({
           max={100}
           disabled={!canUserStake}
           appearance={appearance}
-          exceedLimit={exceedLimit}
+          handleLimitExceeded={onLimitExceeded}
         />
       </div>
-      {showError && <StakingValidationError stakeType={errorStakeType} />}
+      {errorStakeType && (
+        <StakingValidationError
+          stakeType={errorStakeType}
+          errorValues={{
+            minimumStake: `${displayStake} ${nativeToken?.symbol}`,
+            userActiveTokens: `${getFormattedTokenValue(
+              userActivatedTokens.toString(),
+              nativeToken?.decimals,
+            )} ${nativeToken?.symbol}`,
+            minimumReputation: `${getFormattedTokenValue(
+              minUserStake.toString(),
+              nativeToken?.decimals,
+            )}`,
+            userReputation: `${getFormattedTokenValue(
+              maxUserStake.toString(),
+              nativeToken?.decimals,
+            )}`,
+          }}
+        />
+      )}
     </>
   );
 };
