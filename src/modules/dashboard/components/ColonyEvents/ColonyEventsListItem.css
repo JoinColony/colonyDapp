@@ -118,5 +118,5 @@
   composes: separator;
   font-size: var(--size-tiny);
   font-weight: var(--weight-bold);
-  color: color-mod(var(--action-secondary), alpha(85%));
+  color: color-mod(var(--action-secondary) alpha(85%));
 }
