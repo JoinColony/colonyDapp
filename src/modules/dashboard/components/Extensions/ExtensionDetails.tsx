@@ -43,6 +43,7 @@ import {
   COLONY_EXTENSION_SETUP_ROUTE,
 } from '~routes/index';
 import { DEFAULT_NETWORK_INFO, ALLOWED_NETWORKS } from '~constants';
+import ClipboardCopy from '~core/ClipboardCopy';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -258,11 +259,18 @@ const ExtensionDetails = ({
       {
         label: MSG.contractAddress,
         value: (
-          <ExternalLink
-            href={`${contractAddressLink}/${installedExtension.address}`}
-          >
-            <MaskedAddress address={installedExtension.address} />
-          </ExternalLink>
+          <div className={styles.contractAddressContainer}>
+            <ExternalLink
+              href={`${contractAddressLink}/${installedExtension.address}`}
+            >
+              <MaskedAddress address={installedExtension.address} />
+            </ExternalLink>
+            {installedExtension.extensionId === Extension.CoinMachine && (
+              <span className={styles.copyButton}>
+                <ClipboardCopy value={installedExtension.address} />
+              </span>
+            )}
+          </div>
         ),
       },
       {
