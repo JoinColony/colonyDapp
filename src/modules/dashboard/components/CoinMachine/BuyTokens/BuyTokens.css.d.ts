@@ -1,7 +1,9 @@
 export const main: string;
 export const stateDisabled: string;
+export const heading: string;
 export const help: string;
 export const tooltip: string;
+export const form: string;
 export const inputContainer: string;
 export const inputComponent: string;
 export const fieldError: string;
@@ -14,3 +16,7 @@ export const amountsValues: string;
 export const symbols: string;
 export const controls: string;
 export const loader: string;
+export const mainMessage: string;
+export const link: string;
+export const accountStatus: string;
+export const statusMessage: string;
