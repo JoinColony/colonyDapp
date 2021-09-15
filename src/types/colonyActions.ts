@@ -126,6 +126,7 @@ export interface FormattedAction {
   recipient: Address;
   amount: string;
   tokenAddress: Address;
+  transactionTokenAddress?: Address;
   symbol: string;
   decimals: string;
   fromDomain: string;
