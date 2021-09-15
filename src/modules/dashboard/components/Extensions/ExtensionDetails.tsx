@@ -265,11 +265,9 @@ const ExtensionDetails = ({
             >
               <MaskedAddress address={installedExtension.address} />
             </ExternalLink>
-            {installedExtension.extensionId === Extension.CoinMachine && (
-              <span className={styles.copyButton}>
-                <ClipboardCopy value={installedExtension.address} />
-              </span>
-            )}
+            <span className={styles.copyButton}>
+              <ClipboardCopy value={installedExtension.address} />
+            </span>
           </div>
         ),
       },
