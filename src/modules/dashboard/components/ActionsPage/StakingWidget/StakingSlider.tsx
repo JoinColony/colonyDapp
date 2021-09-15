@@ -116,7 +116,7 @@ const StakingSlider = ({
         return 'tokens';
       }
 
-      if (remainingToStake.lte(minUserStake)) {
+      if (remainingToStake.lte(minUserStake) && !remainingToStake.isZero()) {
         return 'cantStakeMore';
       }
 
