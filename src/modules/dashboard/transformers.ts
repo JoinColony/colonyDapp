@@ -41,6 +41,7 @@ interface ActionsTransformerMetadata {
 }
 
 export const getActionsListData = (
+  installedExtensionsAddresses: Address[],
   unformattedActions?: {
     oneTxPayments?: SubgraphOneTxSubscription['oneTxPayments'];
     events?: SubgraphEventsThatAreActionsSubscription['events'];
@@ -64,7 +65,17 @@ export const getActionsListData = (
    */
 
   const filteredUnformattedActions = {
-    oneTxPayments: unformattedActions?.oneTxPayments || [],
+    oneTxPayments:
+      unformattedActions?.oneTxPayments?.reduce((acc, action) => {
+        if (
+          installedExtensionsAddresses?.find(
+            (extensionAddress) => extensionAddress === action?.agent,
+          )
+        ) {
+          return acc;
+        }
+        return [...acc, action];
+      }, []) || [],
     events:
       unformattedActions?.events?.reduce((acc, event) => {
         if (

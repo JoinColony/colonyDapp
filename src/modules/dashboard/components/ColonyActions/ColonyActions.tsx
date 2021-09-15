@@ -9,6 +9,7 @@ import ActionsList, {
 import { Select, Form } from '~core/Fields';
 import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import {
   Colony,
@@ -86,6 +87,10 @@ const ColonyActions = ({
 
   const history = useHistory();
 
+  const { installedExtensionsAddresses } = useEnabledExtensions({
+    colonyAddress,
+  });
+
   const {
     data: oneTxActions,
     loading: oneTxActionsLoading,
@@ -147,6 +152,7 @@ const ColonyActions = ({
   });
 
   const actions = useTransformer(getActionsListData, [
+    installedExtensionsAddresses,
     { ...oneTxActions, ...eventsActions, ...motions },
     commentCount?.transactionMessagesCount,
     {

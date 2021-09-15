@@ -30,8 +30,13 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
     !installedOneTxPaymentExtension.details.deprecated
   );
 
+  const installedExtensionsAddresses = installedExtensions.map((extension) =>
+    extension.address?.toLowerCase(),
+  );
+
   return {
     isVotingExtensionEnabled,
     isOneTxPaymentExtensionEnabled,
+    installedExtensionsAddresses,
   };
 };
