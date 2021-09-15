@@ -93,12 +93,8 @@
   cursor: pointer;
 }
 
-.contractAddressContainer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
 .copyButton {
-  margin: -3px 0 0 5px;
+  margin-left: 5px;
+  position: relative;
+  top: -1px;
 }

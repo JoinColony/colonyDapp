@@ -262,7 +262,7 @@ const ExtensionDetails = ({
       {
         label: MSG.contractAddress,
         value: (
-          <div className={styles.contractAddressContainer}>
+          <>
             <ExternalLink
               href={`${contractAddressLink}/${installedExtension.address}`}
             >
@@ -271,7 +271,7 @@ const ExtensionDetails = ({
             <span className={styles.copyButton}>
               <ClipboardCopy value={installedExtension.address} />
             </span>
-          </div>
+          </>
         ),
       },
       {
