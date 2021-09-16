@@ -28,10 +28,7 @@ import {
 } from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
-import {
-  calculatePercentageReputation,
-  DECIMAL_PLACES,
-} from '~utils/reputation';
+import { calculatePercentageReputation } from '~utils/reputation';
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
@@ -147,7 +144,6 @@ const SmiteDialogForm = ({
   });
 
   const userPercentageReputation = calculatePercentageReputation(
-    DECIMAL_PLACES,
     userReputationData?.userReputation,
     totalReputationData?.userReputation,
   );
@@ -303,7 +299,7 @@ const SmiteDialogForm = ({
             elementOnly
             maxButtonParams={{
               fieldName: 'amount',
-              maxAmount: userPercentageReputation || 0,
+              maxAmount: String(userPercentageReputation || 0),
               setFieldValue,
             }}
             disabled={inputDisabled}

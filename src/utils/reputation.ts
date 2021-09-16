@@ -7,10 +7,12 @@ export enum ZeroValue {
 
 export type PercentageReputationType = ZeroValue | number | null;
 
+export const DECIMAL_PLACES = 2;
+
 export const calculatePercentageReputation = (
-  decimalPlaces: number,
   userReputation?: string,
   totalReputation?: string,
+  decimalPlaces = DECIMAL_PLACES,
 ): PercentageReputationType => {
   if (!userReputation || !totalReputation) return null;
   const userReputationNumber = bigNumberify(userReputation);
@@ -33,5 +35,3 @@ export const calculatePercentageReputation = (
 
   return reputation / 10 ** decimalPlaces;
 };
-
-export const DECIMAL_PLACES = 2;
