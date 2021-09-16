@@ -37,7 +37,7 @@ type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
 interface MaxButtonParams {
   setFieldValue: (field, value) => void;
-  maxAmount: string | number;
+  maxAmount: string;
   fieldName: string;
 }
 
