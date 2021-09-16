@@ -9,7 +9,6 @@ import Button from '~core/Button';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { useDialog } from '~core/Dialog';
 import RaiseObjectionDialog from '~dashboard/RaiseObjectionDialog';
-import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import {
   useLoggedInUser,
@@ -285,12 +284,6 @@ const StakingWidget = ({
                 )}
               </span>
             </div>
-            {!ethereal && !enoughReputation && (
-              <StakingValidationError stakeType="reputation" />
-            )}
-            {!ethereal && !enoughTokens && (
-              <StakingValidationError stakeType="tokens" />
-            )}
           </div>
         )}
       </ActionForm>

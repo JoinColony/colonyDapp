@@ -264,6 +264,9 @@ const DefaultMotion = ({
     toDomain: domains.find(
       ({ ethDomainId }) => ethDomainId === toDomain,
     ) as OneDomain,
+    motionDomain: domains.find(
+      ({ ethDomainId }) => ethDomainId === motionDomain,
+    ) as OneDomain,
     roles: updatedRoles,
     recipient: (
       <span className={styles.titleDecoration}>
