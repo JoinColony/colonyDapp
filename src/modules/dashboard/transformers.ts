@@ -158,6 +158,7 @@ export const getActionsListData = (
             motionState: undefined,
             motionId: undefined,
             timeoutPeriods: undefined,
+            transactionTokenAddress: undefined,
             blockNumber: 0,
             totalNayStake: '0',
             requiredStake: '0',
@@ -208,6 +209,7 @@ export const getActionsListData = (
                   },
                 },
               } = unformattedAction;
+
               formatedAction.actionType = ColonyActions.Payment;
               formatedAction.recipient = recipient;
               formatedAction.fromDomain = ethDomainId;
@@ -217,6 +219,9 @@ export const getActionsListData = (
               formatedAction.decimals = decimals;
               if (unformattedAction?.agent) {
                 formatedAction.initiator = unformattedAction.agent;
+              }
+              if (tokenAddress === AddressZero) {
+                formatedAction.transactionTokenAddress = tokenAddress;
               }
             } catch (error) {
               log.verbose(
