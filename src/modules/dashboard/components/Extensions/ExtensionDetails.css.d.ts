@@ -11,4 +11,4 @@ export const installedByAddress: string;
 export const permissions: string;
 export const buttonUninstall: string;
 export const iconWrapper: string;
-export const copyButton: string;
+export const contractAddress: string;

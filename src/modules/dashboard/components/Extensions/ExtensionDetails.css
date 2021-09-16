@@ -93,8 +93,7 @@
   cursor: pointer;
 }
 
-.copyButton {
-  margin-left: 5px;
-  position: relative;
-  top: -1px;
+.contractAddress {
+  font-size: var(--size-smallish);
+  cursor: pointer;
 }
