@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
+import isNil from 'lodash/isNil';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -109,10 +110,23 @@ interface FormValues {
 
 const displayName = 'dashboard.CoinMachine.BuyTokens';
 
-const validationSchema = (userBalance: number) =>
-  yup.object().shape({
-    amount: yup.number().moreThan(0).max(userBalance),
+const validationSchema = (userBalance: string, tokenDecimals: number) => {
+  let amountFieldValidation = yup
+    .number()
+    .moreThan(0)
+    .max(
+      parseFloat(userBalance),
+      `The amount must be less or equal to ${userBalance}`,
+    );
+
+  if (tokenDecimals === 0) {
+    amountFieldValidation = amountFieldValidation.integer();
+  }
+
+  return yup.object().shape({
+    amount: amountFieldValidation,
   });
+};
 
 const BuyTokens = ({
   colony: { colonyAddress, colonyName },
@@ -286,6 +300,10 @@ const BuyTokens = ({
     );
   }
 
+  const sellableTokenDecimals = !isNil(sellableToken)
+    ? sellableToken.decimals
+    : 18;
+
   return (
     <div
       className={getMainClasses({}, styles, {
@@ -319,12 +337,8 @@ const BuyTokens = ({
               amount: '0',
             }}
             validationSchema={validationSchema(
-              parseFloat(
-                getFormattedTokenValue(
-                  maxUserPurchase,
-                  sellableToken?.decimals || 18,
-                ),
-              ),
+              getFormattedTokenValue(maxUserPurchase, sellableTokenDecimals),
+              sellableTokenDecimals,
             )}
             submit={ActionTypes.COIN_MACHINE_BUY_TOKENS}
             error={ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR}
