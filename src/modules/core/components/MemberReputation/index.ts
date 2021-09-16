@@ -1,1 +1,1 @@
-export { default, calculatePercentageReputation } from './MemberReputation';
+export { default } from './MemberReputation';
