@@ -102,7 +102,7 @@ const SmiteDialog = ({
           domainId,
           userAddress: user.profile.walletAddress,
           annotationMessage: annotation,
-          amount: `-${repuationChangeAmount.toString()}`,
+          amount: String(repuationChangeAmount.mul(-1)),
           motionDomainId,
         };
       }),
