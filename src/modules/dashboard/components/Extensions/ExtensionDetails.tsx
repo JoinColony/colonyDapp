@@ -36,14 +36,13 @@ import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
 
 import PermissionsLabel from '~core/PermissionsLabel';
-import ExternalLink from '~core/ExternalLink';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import {
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
 } from '~routes/index';
-import { DEFAULT_NETWORK_INFO, ALLOWED_NETWORKS } from '~constants';
-import ClipboardCopy from '~core/ClipboardCopy';
+import { ALLOWED_NETWORKS } from '~constants';
+import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -177,8 +176,6 @@ const ExtensionDetails = ({
   const latestNetworkExtensionVersion =
     networkExtension?.networkExtensionVersion || 0;
 
-  const { contractAddressLink } = DEFAULT_NETWORK_INFO;
-
   const hasRegisteredProfile = !!username && !ethereal;
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const isSupportedColonyVersion =
@@ -259,16 +256,11 @@ const ExtensionDetails = ({
       {
         label: MSG.contractAddress,
         value: (
-          <>
-            <ExternalLink
-              href={`${contractAddressLink}/${installedExtension.address}`}
-            >
+          <InvisibleCopyableAddress address={installedExtension.address}>
+            <span className={styles.contractAddress}>
               <MaskedAddress address={installedExtension.address} />
-            </ExternalLink>
-            <span className={styles.copyButton}>
-              <ClipboardCopy value={installedExtension.address} />
             </span>
-          </>
+          </InvisibleCopyableAddress>
         ),
       },
       {
