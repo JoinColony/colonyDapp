@@ -337,7 +337,7 @@ const ExtensionSetup = ({
                 {tokenContractAddress &&
                   tokenContractAddress(values[paramName])}
                 <div>
-                  <MaskedAddress address={nativeTokenAddress} full />
+                  <MaskedAddress address={values[paramName]} full />
                 </div>
               </div>
               {description && (
