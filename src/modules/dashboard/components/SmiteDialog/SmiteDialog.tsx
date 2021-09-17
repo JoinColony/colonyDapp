@@ -52,12 +52,19 @@ const SmiteDialog = ({
   ethDomainId,
 }: Props) => {
   const [isForce, setIsForce] = useState(false);
-  const [totalReputationData, setTotalReputation] = useState<
+  const [totalReputationData, setTotalReputationData] = useState<
     string | undefined
   >(undefined);
+  const [userReputation, setUserReputation] = useState(0);
   const history = useHistory();
 
-  const updateReputationCallback = (data?: string) => setTotalReputation(data);
+  const updateReputationCallback = (
+    userRepPercentage: number,
+    totalRep?: string,
+  ) => {
+    setTotalReputationData(totalRep);
+    setUserReputation(userRepPercentage);
+  };
 
   const getFormAction = useCallback(
     (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
@@ -80,7 +87,8 @@ const SmiteDialog = ({
     amount: yup
       .number()
       .required()
-      .moreThan(0, () => MSG.amountZero),
+      .moreThan(0, () => MSG.amountZero)
+      .max(userReputation),
     annotation: yup.string().max(4000),
     forceAction: yup.boolean(),
     motionDomainId: yup.number(),
@@ -94,7 +102,9 @@ const SmiteDialog = ({
     pipe(
       mapPayload(({ amount, domainId, annotation, user, motionDomainId }) => {
         const totalReputation = bigNumberify(totalReputationData || '0');
-        const repuationChangeAmount = totalReputation.mul(amount).div(100);
+        const reputationChangeAmount = totalReputation
+          .mul(amount * 100)
+          .div(10000);
 
         return {
           colonyAddress,
@@ -102,7 +112,7 @@ const SmiteDialog = ({
           domainId,
           userAddress: user.profile.walletAddress,
           annotationMessage: annotation,
-          amount: String(repuationChangeAmount.mul(-1)),
+          amount: String(reputationChangeAmount.mul(-1)),
           motionDomainId,
         };
       }),
