@@ -28,7 +28,7 @@ import {
 } from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
-import { calculatePercentageReputation } from '~utils/reputation';
+import { calculatePercentageReputation, ZeroValue } from '~utils/reputation';
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
@@ -59,18 +59,21 @@ const MSG = defineMessages({
     defaultMessage: 'Explain why you are smiting the user (optional)',
   },
   userPickerPlaceholder: {
-    id: 'SmiteDialog.SmiteDialogForm.userPickerPlaceholder',
+    id: 'dashboard.SmiteDialog.SmiteDialogForm.userPickerPlaceholder',
     defaultMessage: 'Search for a user or paste wallet address',
   },
   noPermission: {
-    id: `dashboard.SmiteDialog.SmiteDialogForm.noPermission`,
+    id: 'dashboard.SmiteDialog.SmiteDialogForm.noPermission',
     defaultMessage: `You need the {roleRequired} permission in {domain} to take this action.`,
   },
 });
 interface Props extends ActionDialogProps {
   subscribedUsers: AnyUser[];
   ethDomainId?: number;
-  updateReputation: (data?: string) => void;
+  updateReputation: (
+    userPercentageReputation: number,
+    totalRep?: string,
+  ) => void;
   isVotingExtensionEnabled: boolean;
 }
 
@@ -196,8 +199,15 @@ const SmiteDialogForm = ({
   );
 
   useEffect(() => {
-    updateReputation(totalReputationData?.userReputation);
-  }, [totalReputationData, updateReputation]);
+    updateReputation(
+      userPercentageReputation === ZeroValue.Zero ||
+        userPercentageReputation === ZeroValue.NearZero ||
+        userPercentageReputation === null
+        ? 0
+        : userPercentageReputation,
+      totalReputationData?.userReputation,
+    );
+  }, [totalReputationData, updateReputation, userPercentageReputation]);
 
   const handleFilterMotionDomains = useCallback(
     (optionDomain) => {
@@ -305,9 +315,9 @@ const SmiteDialogForm = ({
             disabled={inputDisabled}
           />
           <div className={styles.percentageSign}>%</div>
-          <p
-            className={styles.inputText}
-          >{`max: ${userPercentageReputation}%`}</p>
+          <p className={styles.inputText}>{`max: ${
+            userPercentageReputation === null ? 0 : userPercentageReputation
+          }%`}</p>
         </div>
       </DialogSection>
       <DialogSection>
