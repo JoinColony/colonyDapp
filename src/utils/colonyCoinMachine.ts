@@ -19,7 +19,7 @@ export const getPriceStatus = (
   }
 
   if (
-    !isOnlyHigherNeeded &&
+    isOnlyHigherNeeded &&
     (bigNumberify(tokensBought).eq(targetPeriodTokens) ||
       bigNumberify(tokensBought).lt(targetPeriodTokens))
   ) {
