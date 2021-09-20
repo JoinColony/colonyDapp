@@ -5,9 +5,7 @@ import { bigNumberify } from 'ethers/utils';
 import { Address } from '~types/index';
 import useWindowSize from '~utils/hooks/useWindowSize';
 
-import {
-  useCurrentPeriodTokensQuery,
-} from '~data/index';
+import { useCurrentPeriodTokensQuery } from '~data/index';
 
 type Props = {
   colonyAddress: Address;
@@ -19,10 +17,7 @@ const Confetti = ({ colonyAddress }: Props) => {
   const [show, setShow] = useState<boolean>(false);
   const dimensions = useWindowSize();
 
-  const {
-    data: periodTokensData,
-    refetch,
-  } = useCurrentPeriodTokensQuery({
+  const { data: periodTokensData, refetch } = useCurrentPeriodTokensQuery({
     variables: { colonyAddress },
   });
 
@@ -48,17 +43,15 @@ const Confetti = ({ colonyAddress }: Props) => {
         setShow(true);
         setTimeout(() => setShow(false), 1000 * 20);
       }
-
     }
   }, [periodTokensData]);
 
   return (
-    <>{show && (
-      <ReactConfetti
-        width={dimensions?.width}
-        height={dimensions?.height}
-      />
-    )}</>
+    <>
+      {show && (
+        <ReactConfetti width={dimensions?.width} height={dimensions?.height} />
+      )}
+    </>
   );
 };
 
