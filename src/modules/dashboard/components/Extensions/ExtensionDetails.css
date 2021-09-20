@@ -92,3 +92,8 @@
   stroke: none;
   cursor: pointer;
 }
+
+.contractAddress {
+  font-size: var(--size-smallish);
+  cursor: pointer;
+}
