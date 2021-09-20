@@ -6,11 +6,24 @@ import { TokenPriceStatuses } from '~dashboard/CoinMachine/TokenPriceStatusIcon'
 export const getPriceStatus = (
   periodTokens: PeriodTokensType,
   tokensBought: BigNumberish,
+  isOnlyHigherNeeded = false,
 ) => {
   const { maxPeriodTokens, targetPeriodTokens } = periodTokens;
 
   if (bigNumberify(tokensBought).gte(maxPeriodTokens)) {
     return TokenPriceStatuses.PRICE_SOLD_OUT;
+  }
+
+  if (bigNumberify(tokensBought).gt(targetPeriodTokens)) {
+    return TokenPriceStatuses.PRICE_UP;
+  }
+
+  if (
+    isOnlyHigherNeeded &&
+    (bigNumberify(tokensBought).eq(targetPeriodTokens) ||
+      bigNumberify(tokensBought).lt(targetPeriodTokens))
+  ) {
+    return undefined;
   }
 
   if (bigNumberify(tokensBought).eq(targetPeriodTokens)) {
@@ -19,10 +32,6 @@ export const getPriceStatus = (
 
   if (bigNumberify(tokensBought).lt(targetPeriodTokens)) {
     return TokenPriceStatuses.PRICE_DOWN;
-  }
-
-  if (bigNumberify(tokensBought).gt(targetPeriodTokens)) {
-    return TokenPriceStatuses.PRICE_UP;
   }
 
   return undefined;

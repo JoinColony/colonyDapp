@@ -53,14 +53,22 @@ const RemainingTokens = ({
   appearance = { theme: 'white' },
   periodTokens,
 }: Props) => {
+  const priceStatus = useMemo(() => {
+    if (!periodTokens) {
+      return undefined;
+    }
+
+    return getPriceStatus(periodTokens, periodTokens.soldPeriodTokens, true);
+  }, [periodTokens]);
+
   const widgetText = useMemo(() => {
     return {
       title: MSG.tokensRemainingTitle,
       placeholder: MSG.tokensTypePlaceholder,
       tooltipText: MSG.tokensRemainingTooltip,
-      footerText: MSG.tokensTypeFooterText,
+      footerText: priceStatus && MSG.tokensTypeFooterText,
     };
-  }, []);
+  }, [priceStatus]);
 
   const displayedValue = useMemo(() => {
     if (periodTokens) {
@@ -74,14 +82,6 @@ const RemainingTokens = ({
 
     return <FormattedMessage {...widgetText.placeholder} />;
   }, [widgetText, periodTokens]);
-
-  const priceStatus = useMemo(() => {
-    if (!periodTokens) {
-      return undefined;
-    }
-
-    return getPriceStatus(periodTokens, periodTokens.soldPeriodTokens);
-  }, [periodTokens]);
 
   const showValueWarning = useMemo(() => {
     if (periodTokens?.soldPeriodTokens.gte(periodTokens?.maxPeriodTokens)) {
