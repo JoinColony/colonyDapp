@@ -5,7 +5,6 @@ import * as yup from 'yup';
 import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
-import isNil from 'lodash/isNil';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -33,6 +32,7 @@ import {
 } from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
 import { mapPayload, withMeta, pipe } from '~utils/actions';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 import GetWhitelisted from '../GetWhitelisted';
 
@@ -296,9 +296,9 @@ const BuyTokens = ({
     );
   }
 
-  const sellableTokenDecimals = !isNil(sellableToken)
+  const sellableTokenDecimals = sellableToken
     ? sellableToken.decimals
-    : 18;
+    : DEFAULT_TOKEN_DECIMALS;
 
   return (
     <div
