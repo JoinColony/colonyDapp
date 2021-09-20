@@ -80,7 +80,7 @@ const RemainingTokens = ({
       return undefined;
     }
 
-    return getPriceStatus(periodTokens, periodTokens.soldPeriodTokens);
+    return getPriceStatus(periodTokens, periodTokens.soldPeriodTokens, true);
   }, [periodTokens]);
 
   const showValueWarning = useMemo(() => {
