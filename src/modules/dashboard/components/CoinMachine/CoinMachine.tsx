@@ -7,8 +7,6 @@ import { bigNumberify } from 'ethers/utils';
 import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
-import useWindowSize from '~utils/hooks/useWindowSize';
-import Confetti from 'react-confetti'
 
 import {
   useColonyExtensionsQuery,
@@ -23,6 +21,7 @@ import {
 import Chat from './Chat';
 import SaleStateWidget from './SaleStateWidget';
 import BuyTokens from './BuyTokens';
+import Confetti from './Confetti';
 import TokenSalesTable from './TokenSalesTable';
 import { RemainingTime, RemainingTokens } from './RemainingDisplayWidgets';
 
@@ -133,8 +132,6 @@ const CoinMachine = ({
     [periodTokens],
   );
 
-  const dimensions = useWindowSize();
-
   if (
     loading ||
     saleTokensLoading ||
@@ -198,11 +195,8 @@ const CoinMachine = ({
 
   return (
     <div className={styles.main}>
-      <Confetti
-        width={dimensions?.width}
-        height={dimensions?.height}
-      />
       <BreadCrumb elements={breadCrumbs} />
+      {!transactionHash && <Confetti colonyAddress={colonyAddress} />}
       <div className={styles.grid}>
         {(transactionHash && (
           <div className={styles.saleStarted}>
