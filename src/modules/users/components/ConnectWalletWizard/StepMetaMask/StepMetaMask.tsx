@@ -31,10 +31,9 @@ const MSG = defineMessages({
   errorHeading: {
     id: 'users.ConnectWalletWizard.StepMetaMask.errorHeading',
     defaultMessage: `{metamaskError, select,
-      notAuthorized {MetaMask is not authorized to access this domain.}
-      cancelSign {Signing of the MetaMask authorization message was cancelled.}
-      notAvailable {The MetaMask extension is not available.}
-      other {Oops! We were unable to detect MetaMask.}
+      notAuthorized {MetaMask is not authorized to access this domain}
+      cancelSign {Signing of the MetaMask authorization message was cancelled}
+      other {Metamask is locked. Please unlock it from the UI before proceeding}
     }`,
   },
   errorOpenMetamask: {
@@ -102,7 +101,7 @@ const MetaMask = ({
         mmError = 'cancelSign';
       }
       if (error.message.includes(metamaskNotAvailable)) {
-        mmError = 'notAvailable';
+        mmError = 'notUnlocked';
       }
     }
     setIsValid(!mmError || !!(wallet && wallet.ensAddress));
