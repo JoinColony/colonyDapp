@@ -407,7 +407,7 @@ const extensions: { [key: string]: ExtensionData } = {
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(50, () => MSG.votingReputationLessThan50Error),
-        defaultValue: 5,
+        defaultValue: 1,
         title: MSG.votingReputationTotalStakeFractionTitle,
         description: MSG.votingReputationTotalStakeFractionDescription,
         type: ExtensionParamType.Input,
@@ -431,7 +431,7 @@ const extensions: { [key: string]: ExtensionData } = {
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(100, () => MSG.votingReputationLessThan100Error),
-        defaultValue: 10,
+        defaultValue: 1,
         title: MSG.votingReputationUserMinStakeFractionTitle,
         description: MSG.votingReputationUserMinStakeFractionDescription,
         type: ExtensionParamType.Input,
