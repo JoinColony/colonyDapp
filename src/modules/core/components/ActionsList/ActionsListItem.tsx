@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { bigNumberify } from 'ethers/utils';
 import {
   FormattedDateParts,
@@ -18,7 +18,12 @@ import CountDownTimer from '~dashboard/ActionsPage/CountDownTimer';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { useUser, Colony, useColonyHistoricRolesQuery } from '~data/index';
+import {
+  useUser,
+  Colony,
+  useColonyHistoricRolesQuery,
+  useTokenInfoLazyQuery,
+} from '~data/index';
 import { createAddress } from '~utils/web3';
 import { FormattedAction, ColonyActions, ColonyMotions } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
@@ -76,8 +81,8 @@ const ActionsListItem = ({
     initiator,
     recipient,
     amount,
-    symbol,
-    decimals,
+    symbol: colonyTokenSymbol,
+    decimals: colonyTokenDecimals,
     fromDomain: fromDomainId,
     toDomain: toDomainId,
     transactionHash,
@@ -92,6 +97,7 @@ const ActionsListItem = ({
     blockNumber,
     totalNayStake,
     requiredStake,
+    transactionTokenAddress,
   },
   colony,
   handleOnClick,
@@ -113,6 +119,14 @@ const ActionsListItem = ({
       blockNumber,
     },
   });
+
+  const [fetchTokenInfo, { data: tokenData }] = useTokenInfoLazyQuery();
+
+  useEffect(() => {
+    if (transactionTokenAddress) {
+      fetchTokenInfo({ variables: { address: transactionTokenAddress } });
+    }
+  }, [fetchTokenInfo, transactionTokenAddress]);
 
   const initiatorUserProfile = useUser(createAddress(initiator || AddressZero));
   const recipientAddress = createAddress(recipient);
@@ -172,6 +186,9 @@ const ActionsListItem = ({
           MotionState.Forced) ||
         MotionState.Invalid
     ];
+
+  const decimals = tokenData?.tokenInfo?.decimals || colonyTokenDecimals;
+  const symbol = tokenData?.tokenInfo?.symbol || colonyTokenSymbol;
 
   return (
     <li>

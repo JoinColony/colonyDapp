@@ -79,6 +79,7 @@ export const getValuesForActionType = (
           fromDomain: values.fromDomain,
           toDomain: values.toDomain,
           initiator: values.agent,
+          transactionTokenAddress: values.token,
         };
       }
       case ColonyActions.EditDomain: {
