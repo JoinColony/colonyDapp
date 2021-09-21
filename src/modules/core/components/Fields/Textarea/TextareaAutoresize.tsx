@@ -110,7 +110,7 @@ const TextareaAutoresize = ({
     maxRows,
     minRows,
     placeholder,
-    ref: innerRef,
+    inputRef: innerRef,
     title:
       typeof label === 'object' ? formatMessage(label, labelValues) : label,
     ...rest,
