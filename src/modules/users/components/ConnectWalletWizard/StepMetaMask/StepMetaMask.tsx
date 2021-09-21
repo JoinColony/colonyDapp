@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { defineMessages } from 'react-intl';
 import { messages as metaMaskMessages, open } from '@purser/metamask';
+import { useDispatch } from 'redux-react-hook';
 
 import { WizardProps } from '~core/Wizard';
 import { mergePayload } from '~utils/actions';
@@ -77,6 +78,7 @@ const MetaMask = ({
   simplified = false,
 }: Props) => {
   const timerHandle = useRef<number>();
+  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -104,10 +106,17 @@ const MetaMask = ({
         mmError = 'notUnlocked';
       }
     }
-    setIsValid(!mmError || !!(wallet && wallet.ensAddress));
+    const validState = !mmError || !!(wallet && wallet.ensAddress);
+    setIsValid(validState);
     setIsLoading(false);
     setMetamaskError(mmError);
-  }, []);
+    if (validState) {
+      dispatch({
+        type: ActionTypes.WALLET_CREATE,
+        payload: wizardValues,
+      });
+    }
+  }, [dispatch, wizardValues]);
 
   const handleRetryClick = useCallback(
     (evt: SyntheticEvent<HTMLButtonElement>) => {
