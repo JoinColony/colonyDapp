@@ -21,6 +21,7 @@ import {
 import Chat from './Chat';
 import SaleStateWidget from './SaleStateWidget';
 import BuyTokens from './BuyTokens';
+import Confetti from './Confetti';
 import TokenSalesTable from './TokenSalesTable';
 import { RemainingTime, RemainingTokens } from './RemainingDisplayWidgets';
 
@@ -195,6 +196,7 @@ const CoinMachine = ({
   return (
     <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
+      {!transactionHash && <Confetti colonyAddress={colonyAddress} />}
       <div className={styles.grid}>
         {(transactionHash && (
           <div className={styles.saleStarted}>
