@@ -87,14 +87,17 @@ const InputStorageWidget = ({
    * component doesn't give us access to the native React ones :(
    */
   const handleStorageSlotLocationBlur = useCallback(
-    (textarea, currentValue, fieldError, updateValues) => {
-      if (textarea?._ref) {
-        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
-        const autoResizeTextareaComponent = textarea?._ref;
+    (
+      autoResizeTextarea: HTMLElement | null,
+      currentValue,
+      fieldError,
+      updateValues,
+    ) => {
+      if (autoResizeTextarea) {
         /*
          * Add 0x prefix on blur and set the storage slot in state
          */
-        autoResizeTextareaComponent.onblur = () => {
+        const handleOnBlur = () => {
           if (!fieldError && currentValue) {
             const normalizedStorageSlot = ensureHexPrefix(currentValue);
             updateValues('storageSlotLocation', normalizedStorageSlot);
@@ -104,6 +107,7 @@ const InputStorageWidget = ({
             setStorageSlot('');
           }
         };
+        autoResizeTextarea.addEventListener('blur', handleOnBlur);
         /*
          * Prevent entering a new line
          *
@@ -114,11 +118,12 @@ const InputStorageWidget = ({
          * While we're at it we also disable the space bar, since no value
          * that can be entered requires a space (it's just a litte nice-to-have)
          */
-        autoResizeTextareaComponent.onkeypress = (event) => {
+        const handleOnKeyDown = (event) => {
           if (event.key === ENTER || event.code === SPACE) {
             event.preventDefault();
           }
         };
+        autoResizeTextarea.addEventListener('keydown', handleOnKeyDown);
       }
     },
     [],
@@ -129,14 +134,17 @@ const InputStorageWidget = ({
    * component doesn't give us access to the native React ones :(
    */
   const handleNewStorageSlotValueBlur = useCallback(
-    (textarea, currentValue, fieldError, updateValues) => {
-      if (textarea?._ref) {
-        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
-        const autoResizeTextareaComponent = textarea?._ref;
+    (
+      autoResizeTextarea: HTMLElement | null,
+      currentValue,
+      fieldError,
+      updateValues,
+    ) => {
+      if (autoResizeTextarea) {
         /*
          * Add 0x prefix on blur and set the storage slot in state
          */
-        autoResizeTextareaComponent.onblur = () => {
+        const handleOnBlur = () => {
           if (!fieldError && currentValue) {
             const noPrefixValue = currentValue.startsWith('0x')
               ? currentValue.slice(2)
@@ -145,6 +153,7 @@ const InputStorageWidget = ({
             updateValues('newStorageSlotValue', ensureHexPrefix(paddedValue));
           }
         };
+        autoResizeTextarea.addEventListener('blur', handleOnBlur);
         /*
          * Prevent entering a new line
          *
@@ -155,11 +164,12 @@ const InputStorageWidget = ({
          * While we're at it we also disable the space bar, since no value
          * that can be entered requires a space (it's just a litte nice-to-have)
          */
-        autoResizeTextareaComponent.onkeypress = (event) => {
+        const handleOnKeyDown = (event) => {
           if (event.key === ENTER || event.code === SPACE) {
             event.preventDefault();
           }
         };
+        autoResizeTextarea.addEventListener('keydown', handleOnKeyDown);
       }
     },
     [],
