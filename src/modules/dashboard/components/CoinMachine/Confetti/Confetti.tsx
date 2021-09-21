@@ -29,7 +29,7 @@ const Confetti = ({ colonyAddress }: Props) => {
       clearInterval(timer);
     }
     return () => clearInterval(timer);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (periodTokensData) {
