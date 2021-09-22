@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { defineMessages } from 'react-intl';
 import { messages as metaMaskMessages, open } from '@purser/metamask';
+import { useDispatch } from 'redux-react-hook';
 
 import { WizardProps } from '~core/Wizard';
 import { mergePayload } from '~utils/actions';
@@ -31,10 +32,9 @@ const MSG = defineMessages({
   errorHeading: {
     id: 'users.ConnectWalletWizard.StepMetaMask.errorHeading',
     defaultMessage: `{metamaskError, select,
-      notAuthorized {MetaMask is not authorized to access this domain.}
-      cancelSign {Signing of the MetaMask authorization message was cancelled.}
-      notAvailable {The MetaMask extension is not available.}
-      other {Oops! We were unable to detect MetaMask.}
+      notAuthorized {MetaMask is not authorized to access this domain}
+      cancelSign {Signing of the MetaMask authorization message was cancelled}
+      other {Metamask is locked. Please unlock it from the UI before proceeding}
     }`,
   },
   errorOpenMetamask: {
@@ -78,6 +78,7 @@ const MetaMask = ({
   simplified = false,
 }: Props) => {
   const timerHandle = useRef<number>();
+  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -102,13 +103,20 @@ const MetaMask = ({
         mmError = 'cancelSign';
       }
       if (error.message.includes(metamaskNotAvailable)) {
-        mmError = 'notAvailable';
+        mmError = 'notUnlocked';
       }
     }
-    setIsValid(!mmError || !!(wallet && wallet.ensAddress));
+    const validState = !mmError || !!(wallet && wallet.ensAddress);
+    setIsValid(validState);
     setIsLoading(false);
     setMetamaskError(mmError);
-  }, []);
+    if (validState) {
+      dispatch({
+        type: ActionTypes.WALLET_CREATE,
+        payload: wizardValues,
+      });
+    }
+  }, [dispatch, wizardValues]);
 
   const handleRetryClick = useCallback(
     (evt: SyntheticEvent<HTMLButtonElement>) => {
