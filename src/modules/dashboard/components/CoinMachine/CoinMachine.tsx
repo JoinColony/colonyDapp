@@ -52,7 +52,8 @@ type Props = {
 
 const displayName = 'dashboard.CoinMachine';
 
-const LEARN_MORE_LINK = '';
+const LEARN_MORE_LINK =
+  'https://colony.gitbook.io/colony/extensions/coin-machine';
 
 const CoinMachine = ({
   colony: { colonyAddress, colonyName },
