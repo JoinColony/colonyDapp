@@ -108,6 +108,7 @@ const DefaultMotion = ({
     fromDomain,
     toDomain,
     blockNumber,
+    newVersion,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -256,6 +257,7 @@ const DefaultMotion = ({
   const decimalAmount = getFormattedTokenValue(amount, decimals);
   const actionAndEventValues = {
     actionType,
+    newVersion,
     fromDomain:
       (actionType === ColonyMotions.CreateDomainMotion && domainMetadata) ||
       (domains.find(
