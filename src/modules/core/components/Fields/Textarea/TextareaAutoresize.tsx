@@ -1,5 +1,5 @@
-import React, { ReactNode, HTMLAttributes } from 'react';
-import Textarea from 'react-textarea-autosize';
+import React, { ReactNode } from 'react';
+import Textarea, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import { useField } from 'formik';
 import { MessageDescriptor, useIntl } from 'react-intl';
 
@@ -21,16 +21,9 @@ type Appearance = {
   size?: 'small';
 };
 
-interface Props
-  extends Omit<HTMLAttributes<HTMLTextAreaElement>, 'placeholder'> {
+interface Props extends Omit<TextareaAutosizeProps, 'placeholder'> {
   /** Appearance object */
   appearance?: Appearance;
-
-  /** If set, it will allow the element to be focused when mounted */
-  autoFocus?: boolean;
-
-  /** Is the input disabled */
-  disabled?: boolean;
 
   /** Should the element render with its label or not */
   elementOnly?: boolean;
@@ -44,9 +37,6 @@ interface Props
   /** Help text values for intl interpolation  */
   helpValues?: SimpleMessageValues;
 
-  /** Input id */
-  id?: string;
-
   /** Pass a ref to the `<textarea>` element */
   innerRef?: (ref: HTMLElement | null) => void;
 
@@ -55,12 +45,6 @@ interface Props
 
   /** Label text values for intl interpolation  */
   labelValues?: SimpleMessageValues;
-
-  /** The maximum number of rows to resize to, before the scrollbar shows up */
-  maxRows?: number;
-
-  /** The minimum number of rows to show (css height can interfere with this) */
-  minRows?: number;
 
   /** Html input `name` attribute */
   name: string;
@@ -103,8 +87,10 @@ const TextareaAutoresize = ({
       ? formatMessage(placeholderProp)
       : placeholderProp;
 
-  const inputProps = {
-    'aria-invalid': error ? true : null,
+  const inputProps: TextareaAutosizeProps & {
+    ref: ((ref: HTMLElement | null) => void) | undefined;
+  } = {
+    'aria-invalid': error ? 'true' : undefined,
     className: getMainClasses(appearance, styles),
     id,
     maxRows,

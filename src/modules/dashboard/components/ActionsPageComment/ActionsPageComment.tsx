@@ -3,6 +3,7 @@ import React, {
   KeyboardEvent,
   SyntheticEvent,
   useRef,
+  useState,
 } from 'react';
 import * as yup from 'yup';
 import { FormikProps, FormikBag } from 'formik';
@@ -82,6 +83,10 @@ const handleKeyboardSubmit = (
 
 const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
   const commentBoxRef = useRef<HTMLInputElement>(null);
+  const [
+    commentBoxInputRef,
+    setCommentBoxInputRef,
+  ] = useState<HTMLElement | null>(null);
 
   const [sendTransactionMessage] = useSendTransactionMessageMutation();
 
@@ -116,9 +121,15 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
          */
         resetForm({});
         setFieldError('messsage', '');
+        commentBoxInputRef?.focus();
         commentBoxRef?.current?.scrollIntoView({ behavior: 'smooth' });
       }),
-    [transactionHash, colonyAddress, sendTransactionMessage],
+    [
+      transactionHash,
+      colonyAddress,
+      sendTransactionMessage,
+      commentBoxInputRef,
+    ],
   );
 
   return (
@@ -141,6 +152,7 @@ const ActionsPageComment = ({ transactionHash, colonyAddress }: Props) => {
               maxRows={6}
               onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
               disabled={isSubmitting}
+              innerRef={(ref) => setCommentBoxInputRef(ref)}
             />
             {isSubmitting && (
               <div className={styles.submitting}>

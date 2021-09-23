@@ -83,87 +83,78 @@ const InputStorageWidget = ({
   }, [storageSlot, colonyAddress, fetchStorageSlotValue]);
 
   /*
-   * We need to handle these manually using a ref, since the TextAreaAutoresize
-   * component doesn't give us access to the native React ones :(
+   * Prevent entering a new line
+   *
+   * Based on specs we need to **fake** a multi-line input, but one
+   * you can't actually create a new line manully, just if the text
+   * overflows...
+   *
+   * While we're at it we also disable the space bar, since no value
+   * that can be entered requires a space (it's just a litte nice-to-have)
    */
-  const handleStorageSlotLocationBlur = useCallback(
-    (textarea, currentValue, fieldError, updateValues) => {
-      if (textarea?._ref) {
-        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
-        const autoResizeTextareaComponent = textarea?._ref;
-        /*
-         * Add 0x prefix on blur and set the storage slot in state
-         */
-        autoResizeTextareaComponent.onblur = () => {
-          if (!fieldError && currentValue) {
-            const normalizedStorageSlot = ensureHexPrefix(currentValue);
-            updateValues('storageSlotLocation', normalizedStorageSlot);
-            setStorageSlot(normalizedStorageSlot);
-          }
-          if (!currentValue) {
-            setStorageSlot('');
-          }
-        };
-        /*
-         * Prevent entering a new line
-         *
-         * Based on specs we need to **fake** a multi-line input, but one
-         * you can't actually create a new line manully, just if the text
-         * overflows...
-         *
-         * While we're at it we also disable the space bar, since no value
-         * that can be entered requires a space (it's just a litte nice-to-have)
-         */
-        autoResizeTextareaComponent.onkeypress = (event) => {
-          if (event.key === ENTER || event.code === SPACE) {
-            event.preventDefault();
-          }
-        };
-      }
-    },
-    [],
-  );
+  const handleOnKeyDown = useCallback((event) => {
+    if (event.key === ENTER || event.code === SPACE) {
+      event.preventDefault();
+    }
+  }, []);
 
   /*
    * We need to handle these manually using a ref, since the TextAreaAutoresize
    * component doesn't give us access to the native React ones :(
    */
-  const handleNewStorageSlotValueBlur = useCallback(
-    (textarea, currentValue, fieldError, updateValues) => {
-      if (textarea?._ref) {
-        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
-        const autoResizeTextareaComponent = textarea?._ref;
-        /*
-         * Add 0x prefix on blur and set the storage slot in state
-         */
-        autoResizeTextareaComponent.onblur = () => {
-          if (!fieldError && currentValue) {
-            const noPrefixValue = currentValue.startsWith('0x')
-              ? currentValue.slice(2)
-              : currentValue;
-            const paddedValue = noPrefixValue.padStart(64, '0');
-            updateValues('newStorageSlotValue', ensureHexPrefix(paddedValue));
-          }
-        };
-        /*
-         * Prevent entering a new line
-         *
-         * Based on specs we need to **fake** a multi-line input, but one
-         * you can't actually create a new line manully, just if the text
-         * overflows...
-         *
-         * While we're at it we also disable the space bar, since no value
-         * that can be entered requires a space (it's just a litte nice-to-have)
-         */
-        autoResizeTextareaComponent.onkeypress = (event) => {
-          if (event.key === ENTER || event.code === SPACE) {
-            event.preventDefault();
-          }
-        };
-      }
-    },
-    [],
-  );
+  const handleStorageSlotLocationBlur = (
+    autoResizeTextarea: HTMLElement | null,
+    currentValue,
+    fieldError,
+    updateValues,
+  ) => {
+    if (autoResizeTextarea) {
+      /*
+       * Add 0x prefix on blur and set the storage slot in state
+       */
+      // eslint-disable-next-line no-param-reassign
+      autoResizeTextarea.onblur = () => {
+        if (!fieldError && currentValue) {
+          const normalizedStorageSlot = ensureHexPrefix(currentValue);
+          updateValues('storageSlotLocation', normalizedStorageSlot);
+          setStorageSlot(normalizedStorageSlot);
+        }
+        if (!currentValue) {
+          setStorageSlot('');
+        }
+      };
+
+      autoResizeTextarea.addEventListener('keydown', handleOnKeyDown);
+    }
+  };
+  /*
+   * We need to handle these manually using a ref, since the TextAreaAutoresize
+   * component doesn't give us access to the native React ones :(
+   */
+  const handleNewStorageSlotValueBlur = (
+    autoResizeTextarea: HTMLElement | null,
+    currentValue,
+    fieldError,
+    updateValues,
+  ) => {
+    if (autoResizeTextarea) {
+      /*
+       * Add 0x prefix on blur and set the storage slot in state
+       */
+      // eslint-disable-next-line no-param-reassign
+      autoResizeTextarea.onblur = () => {
+        if (!fieldError && currentValue) {
+          const noPrefixValue = currentValue.startsWith('0x')
+            ? currentValue.slice(2)
+            : currentValue;
+          const paddedValue = noPrefixValue.padStart(64, '0');
+          updateValues('newStorageSlotValue', ensureHexPrefix(paddedValue));
+        }
+      };
+
+      autoResizeTextarea.addEventListener('keydown', handleOnKeyDown);
+    }
+  };
 
   const handleSubmitSuccess = useCallback(
     (_, { resetForm }) => {
