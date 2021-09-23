@@ -205,6 +205,51 @@ const getPaymentActionValues = async (
   return paymentActionValues;
 };
 
+const getDomainValuesFromIPFS = async (ipfsHash: string) => {
+  let ipfsMetadata: any = null;
+  let domainName = null;
+  let domainColor = null;
+  let domainPurpose = null;
+
+  try {
+    ipfsMetadata = await ipfs.getString(ipfsHash);
+  } catch (error) {
+    log.verbose(
+      'Could not fetch IPFS metadata for domain with hash:',
+      ipfsHash,
+    );
+  }
+
+  try {
+    if (ipfsMetadata) {
+      const domainMetadata = JSON.parse(ipfsMetadata);
+
+      domainName = domainMetadata.domainName;
+      domainColor = domainMetadata.domainColor || null;
+      domainPurpose = domainMetadata.domainPurpose || null;
+    }
+  } catch (error) {
+    log.verbose(
+      `Could not parse IPFS metadata for domain, using hash:`,
+      ipfsHash,
+      'with object:',
+      ipfsMetadata,
+    );
+  }
+
+  const domainValues: {
+    domainName: string | null;
+    domainColor: number | null;
+    domainPurpose: string | null;
+  } = {
+    domainName,
+    domainColor,
+    domainPurpose,
+  };
+
+  return domainValues;
+};
+
 const getMoveFundsActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -423,26 +468,19 @@ const getEditDomainActionValues = async (
     values: { agent, domainId, metadata },
   } = domainMetadataEvent;
 
-  const ipfsData = await ipfs.getString(metadata);
-  const {
-    domainName = null,
-    domainPurpose = null,
-    domainColor = null,
-  } = JSON.parse(ipfsData);
+  const domainValues = await getDomainValuesFromIPFS(metadata);
 
   const domainMetadataValues: {
     address: Address;
     fromDomain: number;
     actionInitiator?: string;
-    domainPurpose?: string;
-    domainName: string;
-    domainColor?: string;
+    domainName: string | null;
+    domainColor: number | null;
+    domainPurpose: string | null;
   } = {
+    ...domainValues,
     address,
     fromDomain: parseInt(domainId.toString(), 10),
-    domainName,
-    domainPurpose,
-    domainColor,
   };
   if (agent) {
     domainMetadataValues.actionInitiator = agent;
@@ -647,37 +685,7 @@ const getCreateDomainMotionValues = async (
     votingClient,
     colonyClient,
   );
-
-  let ipfsMetadata: any = null;
-  let domainName = null;
-  let domainColor = null;
-  let domainPurpose = null;
-
-  try {
-    ipfsMetadata = await ipfs.getString(values.args[3]);
-  } catch (error) {
-    log.verbose(
-      'Could not fetch IPFS metadata for domain with hash:',
-      values.args[3],
-    );
-  }
-
-  try {
-    if (ipfsMetadata) {
-      const domainMetadata = JSON.parse(ipfsMetadata);
-
-      domainName = domainMetadata.domainName;
-      domainColor = domainMetadata.domainColor || null;
-      domainPurpose = domainMetadata.domainPurpose || null;
-    }
-  } catch (error) {
-    log.verbose(
-      `Could not parse IPFS metadata for domain, using hash:`,
-      values.args[3],
-      'with object:',
-      ipfsMetadata,
-    );
-  }
+  const domainValues = await getDomainValuesFromIPFS(values.args[3]);
 
   const createDomainMotionValues: {
     domainName: string | null;
@@ -685,9 +693,7 @@ const getCreateDomainMotionValues = async (
     domainPurpose: string | null;
   } = {
     ...motionDefaultValues,
-    domainColor,
-    domainName,
-    domainPurpose,
+    ...domainValues,
   };
 
   return createDomainMotionValues;
@@ -748,37 +754,7 @@ const getEditDomainMotionValues = async (
     votingClient,
     colonyClient,
   );
-
-  let ipfsMetadata: any = null;
-  let domainName = null;
-  let domainColor = null;
-  let domainPurpose = null;
-
-  try {
-    ipfsMetadata = await ipfs.getString(values.args[3]);
-  } catch (error) {
-    log.verbose(
-      'Could not fetch IPFS metadata for domain with hash:',
-      values.args[3],
-    );
-  }
-
-  try {
-    if (ipfsMetadata) {
-      const domainMetadata = JSON.parse(ipfsMetadata);
-
-      domainName = domainMetadata.domainName;
-      domainColor = domainMetadata.domainColor || null;
-      domainPurpose = domainMetadata.domainPurpose || null;
-    }
-  } catch (error) {
-    log.verbose(
-      `Could not parse IPFS metadata for domain, using hash:`,
-      values.args[3],
-      'with object:',
-      ipfsMetadata,
-    );
-  }
+  const domainValues = await getDomainValuesFromIPFS(values.args[3]);
 
   const editDomainMotionValues: {
     domainName: string | null;
@@ -787,9 +763,7 @@ const getEditDomainMotionValues = async (
     fromDomain: number;
   } = {
     ...motionDefaultValues,
-    domainName,
-    domainColor,
-    domainPurpose,
+    ...domainValues,
     fromDomain: parseInt(values.args[2].toString(), 10),
   };
 
