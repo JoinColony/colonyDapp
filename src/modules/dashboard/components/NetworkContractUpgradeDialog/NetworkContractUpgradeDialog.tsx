@@ -50,7 +50,8 @@ const NetworkContractUpgradeDialog = ({
     },
     [isVotingExtensionEnabled, isForce],
   );
-
+  const currentVersion = parseInt(version, 10);
+  const nextVersion = currentVersion + 1;
   const transform = useCallback(
     pipe(
       mapPayload(({ annotation: annotationMessage }) => {
@@ -59,7 +60,7 @@ const NetworkContractUpgradeDialog = ({
           colonyAddress,
           colonyName,
           version,
-          motionParams: [version],
+          motionParams: [nextVersion],
           annotationMessage,
         };
       }),

@@ -923,9 +923,8 @@ const getVersionUpgradeMotionValues = async (
     votingClient,
     colonyClient,
   );
-  console.log(values.args)
+
   const versionUpgradeMotionValues: {
-    address: Address;
     newVersion: string;
   } = {
     ...motionDefaultValues,
