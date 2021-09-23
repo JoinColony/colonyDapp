@@ -7,6 +7,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.EditDomainMotion} {Edit {fromDomainName} team details}
       ${ColonyMotions.ColonyEditMotion} {Change colony details}
       ${ColonyMotions.PaymentMotion} {Pay {recipient} {amount} {tokenSymbol}}
+      ${ColonyMotions.VersionUpgradeMotion} {Upgrade Colony to Version {newVersion}!}
       ${ColonyMotions.MoveFundsMotion}
         {Move {amount} {tokenSymbol} from {fromDomainName} to {toDomainName}}
       other {Generic motion we don't have information about}
