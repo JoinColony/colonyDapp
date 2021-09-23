@@ -12,9 +12,12 @@ const useSplitTime = (
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (activeTimer) {
-      timer = setInterval(() => {
-        setTimeLeft(timeLeft - 1);
-      }, 1000);
+      if (timeLeft > 0) {
+        timer = setInterval(() => {
+          setTimeLeft(timeLeft - 1);
+        }, 1000);
+      }
+
       if (timeLeft === 0 && periodLength) {
         setTimeLeft(periodLength);
       }
