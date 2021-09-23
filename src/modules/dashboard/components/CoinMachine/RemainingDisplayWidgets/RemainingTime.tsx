@@ -51,7 +51,7 @@ const RemainingTime = ({
   const dispatch = useDispatch();
 
   const { splitTime, timeLeft } = useSplitTime(
-    typeof value === 'number' ? value : 0,
+    typeof value === 'number' ? value : -1,
     true,
     periodLength,
   );
