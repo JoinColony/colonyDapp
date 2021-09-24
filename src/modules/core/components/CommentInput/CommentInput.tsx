@@ -42,13 +42,6 @@ const MSG = defineMessages({
   },
 });
 
-/*
- * This a poor man's way of detecting the Mac os platform (even though
- * it has a bit of future proofing baked in), but it's a good alternative for
- * now, until we have time to come back and make a proper detector.
- */
-const isMac: boolean = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-
 const validationSchema = yup.object().shape({
   message: yup.string().trim().min(3).required(),
 });
@@ -189,10 +182,7 @@ const CommentInput = ({
                   ),
                   newLineCombo: (
                     <b>
-                      <FormattedMessage
-                        {...MSG.newLineCombo}
-                        values={{ isMac }}
-                      />
+                      <FormattedMessage {...MSG.newLineCombo} />
                     </b>
                   ),
                 }}
