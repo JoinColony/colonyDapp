@@ -1,6 +1,6 @@
 import React, {
   useCallback,
-  KeyboardEvent,
+  KeyboardEvent as KeyboardEventType,
   SyntheticEvent,
   useRef,
   useState,
@@ -32,15 +32,12 @@ const MSG = defineMessages({
     id: 'CommentInput.commentInstuctions',
     defaultMessage: `{sendCombo} to send {newLineCombo} for a new line`,
   },
-  sendCombo: {
-    id: 'CommentInput.sendCombo',
-    defaultMessage: `{isMac, select,
-      true {⌘}
-      other {Ctrl}
-    }+Return`,
-  },
   newLineCombo: {
     id: 'CommentInput.newLineCombo',
+    defaultMessage: 'Shift+Return',
+  },
+  sendCombo: {
+    id: 'CommentInput.sendCombo',
     defaultMessage: 'Return',
   },
 });
@@ -69,18 +66,19 @@ interface Props {
 }
 
 const handleKeyboardSubmit = (
-  capturedEvent: KeyboardEvent<any>,
+  capturedEvent: KeyboardEventType<any>,
   callback: (e: SyntheticEvent<any>) => any,
 ) => {
-  const { key, ctrlKey, metaKey } = capturedEvent;
+  const { key, shiftKey } = capturedEvent;
 
   /*
    * The meta key is interpreted on MacOS as the command ⌘ key
    */
-  if ((ctrlKey || metaKey) && key === ENTER) {
+  if (!shiftKey && key === ENTER) {
     capturedEvent.preventDefault();
     return callback(capturedEvent);
   }
+
   return false;
 };
 
@@ -186,12 +184,15 @@ const CommentInput = ({
                 values={{
                   sendCombo: (
                     <b>
-                      <FormattedMessage {...MSG.sendCombo} values={{ isMac }} />
+                      <FormattedMessage {...MSG.sendCombo} />
                     </b>
                   ),
                   newLineCombo: (
                     <b>
-                      <FormattedMessage {...MSG.newLineCombo} />
+                      <FormattedMessage
+                        {...MSG.newLineCombo}
+                        values={{ isMac }}
+                      />
                     </b>
                   ),
                 }}
