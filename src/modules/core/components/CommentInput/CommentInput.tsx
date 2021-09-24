@@ -1,6 +1,6 @@
 import React, {
   useCallback,
-  KeyboardEvent as KeyboardEventType,
+  KeyboardEvent,
   SyntheticEvent,
   useRef,
   useState,
@@ -66,7 +66,7 @@ interface Props {
 }
 
 const handleKeyboardSubmit = (
-  capturedEvent: KeyboardEventType<any>,
+  capturedEvent: KeyboardEvent<any>,
   callback: (e: SyntheticEvent<any>) => any,
 ) => {
   const { key, shiftKey } = capturedEvent;
