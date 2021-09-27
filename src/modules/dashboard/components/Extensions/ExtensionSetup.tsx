@@ -1,5 +1,5 @@
-import { FormikProps } from 'formik';
 import React, { useCallback, useMemo } from 'react';
+import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
 import moveDecimal from 'move-decimal-point';
@@ -201,6 +201,17 @@ const ExtensionSetup = ({
     whitelistAddress,
   ]);
 
+  const showWhitelistAddressField = useCallback(
+    (paramName) => {
+      return (
+        paramName !== 'whitelistAddress' ||
+        // @ts-ignore
+        initialValues?.whitelistAddress !== AddressZero
+      );
+    },
+    [initialValues],
+  );
+
   if (
     installedExtension.details.deprecated ||
     (installedExtension.details.initialized &&
@@ -254,40 +265,41 @@ const ExtensionSetup = ({
           key={paramName}
           className={isExtraParams ? styles.extraParams : ''}
         >
-          {type === ExtensionParamType.Input && (
-            <div
-              className={`${styles.input} ${
-                paramName.endsWith('Address') ? styles.addressInput : ''
-              }`}
-            >
-              <Input
-                appearance={{ size: 'medium', theme: 'minimal' }}
-                label={title}
-                name={paramName}
-              />
-              <p className={styles.inputsDescription}>
-                <FormattedMessage
-                  {...description}
-                  values={{
-                    span: (chunks) => (
-                      <span className={styles.descriptionExample}>
-                        {chunks}
-                      </span>
-                    ),
-                  }}
+          {type === ExtensionParamType.Input &&
+            showWhitelistAddressField(paramName) && (
+              <div
+                className={`${styles.input} ${
+                  paramName.endsWith('Address') ? styles.addressInput : ''
+                }`}
+              >
+                <Input
+                  appearance={{ size: 'medium', theme: 'minimal' }}
+                  label={title}
+                  name={paramName}
                 />
-              </p>
-              {(complementaryLabel || tokenLabel) && (
-                <span className={styles.complementaryLabel}>
-                  {complementaryLabel ? (
-                    <FormattedMessage {...MSG[complementaryLabel]} />
-                  ) : (
-                    getToken(values[tokenLabel])?.symbol
-                  )}
-                </span>
-              )}
-            </div>
-          )}
+                <p className={styles.inputsDescription}>
+                  <FormattedMessage
+                    {...description}
+                    values={{
+                      span: (chunks) => (
+                        <span className={styles.descriptionExample}>
+                          {chunks}
+                        </span>
+                      ),
+                    }}
+                  />
+                </p>
+                {(complementaryLabel || tokenLabel) && (
+                  <span className={styles.complementaryLabel}>
+                    {complementaryLabel ? (
+                      <FormattedMessage {...MSG[complementaryLabel]} />
+                    ) : (
+                      getToken(values[tokenLabel])?.symbol
+                    )}
+                  </span>
+                )}
+              </div>
+            )}
           {type === ExtensionParamType.Textarea && (
             <div className={styles.textArea}>
               <Textarea
