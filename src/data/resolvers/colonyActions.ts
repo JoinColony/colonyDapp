@@ -43,6 +43,7 @@ export interface EventValue {
   role: ColonyRole;
   setTo: boolean;
   vote: BigNumber;
+  skillId: BigNumberish;
 }
 
 export interface ProcessedEvent {
