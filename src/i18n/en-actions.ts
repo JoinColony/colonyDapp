@@ -14,6 +14,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.CreateDomain} {New team: {fromDomain}}
       ${ColonyMotions.CreateDomainMotion} {New team: {fromDomain}}
       ${ColonyActions.VersionUpgrade} {Upgrade Colony to Version {newVersion}!}
+      ${ColonyMotions.VersionUpgradeMotion} {Upgrade Colony to Version {newVersion}!}
       ${ColonyActions.ColonyEdit} {Colony details changed}
       ${ColonyMotions.ColonyEditMotion} {Change colony details}
       ${ColonyActions.EditDomain} {{fromDomain} team details edited}

@@ -907,6 +907,33 @@ const getMoveFundsMotionValues = async (
   return moveFundsMotionValues;
 };
 
+const getVersionUpgradeMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  const motionCreatedEvent = processedEvents[0];
+  const motionId = motionCreatedEvent.values.motionId.toString();
+  const motion = await votingClient.getMotion(motionId);
+  const values = colonyClient.interface.parseTransaction({
+    data: motion.action,
+  });
+  const motionDefaultValues = await getMotionValues(
+    processedEvents,
+    votingClient,
+    colonyClient,
+  );
+
+  const versionUpgradeMotionValues: {
+    newVersion: string;
+  } = {
+    ...motionDefaultValues,
+    newVersion: bigNumberify(values.args[0].toString() || '0').toString(),
+  };
+
+  return versionUpgradeMotionValues;
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -925,6 +952,7 @@ export const getActionValues = async (
     address: AddressZero,
     roles: [{ id: 0, setTo: false }],
   };
+
   switch (actionType) {
     case ColonyActions.Payment: {
       const paymentActionValues = await getPaymentActionValues(
@@ -1086,6 +1114,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...paymentValues,
+      };
+    }
+    case ColonyMotions.VersionUpgradeMotion: {
+      const versionUpgradeMotionValues = await getVersionUpgradeMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...versionUpgradeMotionValues,
       };
     }
     default: {
