@@ -58,6 +58,7 @@ export enum ColonyAndExtensionsEvents {
   PaymentRecipientSet = 'PaymentRecipientSet',
   PaymentFinalized = 'PaymentFinalized',
   TokensBurned = 'TokensBurned',
+  ArbitraryReputationUpdate = 'ArbitraryReputationUpdate',
   /*
    * Network events
    */
