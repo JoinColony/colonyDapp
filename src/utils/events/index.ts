@@ -3,6 +3,7 @@ import {
   ClientType,
   ExtensionClient,
   MotionState as NetworkMotionState,
+  getEvents,
 } from '@colony/colony-js';
 import { bigNumberify, BigNumberish, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
@@ -556,6 +557,57 @@ const getRecoveryActionValues = async (
   return recoveryAction;
 };
 
+const getEmitDomainReputationPenaltyValues = async (
+  processedEvents: ProcessedEvent[],
+  colonyClient: ColonyClient,
+): Promise<Partial<ActionValues>> => {
+  const domainReputationPenalty = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
+  ) as ProcessedEvent;
+
+  const domainAddedFilter = colonyClient.filters.DomainAdded(null, null);
+  const domainAddedEvents = await getEvents(colonyClient, domainAddedFilter);
+
+  const colonyDomains = await Promise.all(
+    domainAddedEvents.map(async (domain) => {
+      const domainId = parseInt(domain.values.domainId.toString(), 10);
+      const { skillId } = await colonyClient.getDomain(domainId);
+      return {
+        skillId,
+        domainId,
+      };
+    }),
+  );
+
+  const {
+    address,
+    values: { agent, user, amount, skillId },
+  } = domainReputationPenalty;
+
+  const penaltyDomain = colonyDomains.find((domain) =>
+    domain.skillId.eq(skillId),
+  );
+
+  const domainReputationPenaltyAction: {
+    address: Address;
+    recipient: Address;
+    reputationPenalty: BigNumberish;
+    fromDomain?: number;
+    actionInitiator?: string;
+  } = {
+    address,
+    recipient: user,
+    reputationPenalty: amount.toString(),
+    fromDomain: penaltyDomain?.domainId,
+  };
+
+  if (agent) {
+    domainReputationPenaltyAction.actionInitiator = agent;
+  }
+
+  return domainReputationPenaltyAction;
+};
+
 // Motions
 export const getMotionState = async (
   motionNetworkState: NetworkMotionState,
@@ -1054,6 +1106,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...recoveryActionValues,
+      };
+    }
+    case ColonyActions.EmitDomainReputationPenalty: {
+      // eslint-disable-next-line max-len
+      const emitDomainReputationPenaltyActionValues = await getEmitDomainReputationPenaltyValues(
+        processedEvents,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...emitDomainReputationPenaltyActionValues,
       };
     }
     case ColonyMotions.MintTokensMotion: {
