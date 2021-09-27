@@ -201,7 +201,7 @@ const ExtensionSetup = ({
     whitelistAddress,
   ]);
 
-  const showWhitelistAddressField = useCallback(
+  const showInputField = useCallback(
     (paramName) => {
       return (
         paramName !== 'whitelistAddress' ||
@@ -265,41 +265,40 @@ const ExtensionSetup = ({
           key={paramName}
           className={isExtraParams ? styles.extraParams : ''}
         >
-          {type === ExtensionParamType.Input &&
-            showWhitelistAddressField(paramName) && (
-              <div
-                className={`${styles.input} ${
-                  paramName.endsWith('Address') ? styles.addressInput : ''
-                }`}
-              >
-                <Input
-                  appearance={{ size: 'medium', theme: 'minimal' }}
-                  label={title}
-                  name={paramName}
+          {type === ExtensionParamType.Input && showInputField(paramName) && (
+            <div
+              className={`${styles.input} ${
+                paramName.endsWith('Address') ? styles.addressInput : ''
+              }`}
+            >
+              <Input
+                appearance={{ size: 'medium', theme: 'minimal' }}
+                label={title}
+                name={paramName}
+              />
+              <p className={styles.inputsDescription}>
+                <FormattedMessage
+                  {...description}
+                  values={{
+                    span: (chunks) => (
+                      <span className={styles.descriptionExample}>
+                        {chunks}
+                      </span>
+                    ),
+                  }}
                 />
-                <p className={styles.inputsDescription}>
-                  <FormattedMessage
-                    {...description}
-                    values={{
-                      span: (chunks) => (
-                        <span className={styles.descriptionExample}>
-                          {chunks}
-                        </span>
-                      ),
-                    }}
-                  />
-                </p>
-                {(complementaryLabel || tokenLabel) && (
-                  <span className={styles.complementaryLabel}>
-                    {complementaryLabel ? (
-                      <FormattedMessage {...MSG[complementaryLabel]} />
-                    ) : (
-                      getToken(values[tokenLabel])?.symbol
-                    )}
-                  </span>
-                )}
-              </div>
-            )}
+              </p>
+              {(complementaryLabel || tokenLabel) && (
+                <span className={styles.complementaryLabel}>
+                  {complementaryLabel ? (
+                    <FormattedMessage {...MSG[complementaryLabel]} />
+                  ) : (
+                    getToken(values[tokenLabel])?.symbol
+                  )}
+                </span>
+              )}
+            </div>
+          )}
           {type === ExtensionParamType.Textarea && (
             <div className={styles.textArea}>
               <Textarea
