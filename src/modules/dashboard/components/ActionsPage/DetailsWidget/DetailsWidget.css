@@ -31,6 +31,10 @@
   color: color-mod(var(--dark) alpha(85%));
 }
 
+.penaltyValue {
+  color: var(--danger);
+}
+
 .descriptionValue {
   composes: value;
   white-space: pre-line;
