@@ -16,6 +16,7 @@ export enum ActionPageDetails {
   Description = 'Description',
   Name = 'Name',
   Permissions = 'Permissions',
+  ReputationPenalty = 'ReputationPenalty',
 }
 
 type EventRolesMap = Partial<
@@ -58,6 +59,9 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.RecoveryStorageSlotSet]: [ColonyRole.Recovery],
   [ColonyAndExtensionsEvents.RecoveryModeExitApproved]: [ColonyRole.Recovery],
   [ColonyAndExtensionsEvents.RecoveryModeExited]: [ColonyRole.Recovery],
+  [ColonyAndExtensionsEvents.ArbitraryReputationUpdate]: [
+    ColonyRole.Arbitration,
+  ],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -127,6 +131,9 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.RecoveryModeExitApproved,
     ColonyAndExtensionsEvents.RecoveryModeExited,
   ],
+  [ColonyActions.EmitDomainReputationPenalty]: [
+    ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
+  ],
   [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
   [ColonyMotions.CreateDomainMotion]: MOTION_EVENTS,
   [ColonyMotions.EditDomainMotion]: MOTION_EVENTS,
@@ -170,6 +177,9 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
   [ColonyActions.SetUserRoles]: [ColonyAndExtensionsEvents.ColonyRoleSet],
   [ColonyActions.Recovery]: [ColonyAndExtensionsEvents.RecoveryModeEntered],
+  [ColonyActions.EmitDomainReputationPenalty]: [
+    ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
+  ],
 };
 
 /*
@@ -203,6 +213,11 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Permissions,
   ],
   [ColonyActions.Recovery]: [],
+  [ColonyActions.EmitDomainReputationPenalty]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.ReputationPenalty,
+  ],
   [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
   [ColonyMotions.PaymentMotion]: [
     ActionPageDetails.FromDomain,
