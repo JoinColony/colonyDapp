@@ -21,7 +21,7 @@
 }
 
 .inputContainer input {
-  padding-right: 15px;
+  padding-right: 30px;
   font-weight: var(--weight-normal);
   color: var(--dark);
 }
