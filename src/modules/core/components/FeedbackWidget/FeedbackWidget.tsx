@@ -12,7 +12,7 @@ const MSG = {
   },
 };
 
-const FEEDBACK_LINK = `https://colony.canny.io`;
+const FEEDBACK_LINK = `https://portal.productboard.com/colony/1-colony-portal/tabs/4-bugs`;
 
 const FeedbackWidget = () => (
   <div className={styles.main}>
