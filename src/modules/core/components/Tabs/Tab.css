@@ -4,7 +4,7 @@
   border-bottom: 1px solid transparent;
   font-size: var(--size-normal);
   font-weight: var(--weight-bold);
-  color: var(--colony-black);
+  color: var(--dark);
   cursor: pointer;
 
   &:hover {
