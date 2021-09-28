@@ -1021,6 +1021,7 @@ export const getActionValues = async (
     oldVersion: '0',
     address: AddressZero,
     roles: [{ id: 0, setTo: false }],
+    reputationPenalty: '0',
   };
 
   switch (actionType) {
