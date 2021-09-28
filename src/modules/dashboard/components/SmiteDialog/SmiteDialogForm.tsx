@@ -4,6 +4,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { AddressZero } from 'ethers/constants';
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
+import Decimal from 'decimal.js';
 
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
@@ -28,7 +29,7 @@ import {
 } from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
-import { calculatePercentageReputation, ZeroValue } from '~utils/reputation';
+import { getFormattedTokenValue } from '~utils/tokens';
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
@@ -75,6 +76,7 @@ interface Props extends ActionDialogProps {
     totalRep?: string,
   ) => void;
   isVotingExtensionEnabled: boolean;
+  nativeTokenDecimals: number;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -96,6 +98,7 @@ const SmiteDialogForm = ({
   updateReputation,
   ethDomainId: preselectedDomainId,
   isVotingExtensionEnabled,
+  nativeTokenDecimals,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
@@ -146,9 +149,14 @@ const SmiteDialogForm = ({
     fetchPolicy: 'network-only',
   });
 
-  const userPercentageReputation = calculatePercentageReputation(
-    userReputationData?.userReputation,
-    totalReputationData?.userReputation,
+  const unformattedUserReputationAmount = new Decimal(
+    userReputationData?.userReputation || 0,
+  )
+    .div(nativeTokenDecimals)
+    .toNumber();
+  const formattedUserReputationAmount = getFormattedTokenValue(
+    userReputationData?.userReputation || 0,
+    nativeTokenDecimals,
   );
 
   const domainOptions = useMemo(
@@ -200,14 +208,10 @@ const SmiteDialogForm = ({
 
   useEffect(() => {
     updateReputation(
-      userPercentageReputation === ZeroValue.Zero ||
-        userPercentageReputation === ZeroValue.NearZero ||
-        userPercentageReputation === null
-        ? 0
-        : userPercentageReputation,
+      unformattedUserReputationAmount,
       totalReputationData?.userReputation,
     );
-  }, [totalReputationData, updateReputation, userPercentageReputation]);
+  }, [totalReputationData, updateReputation, unformattedUserReputationAmount]);
 
   const handleFilterMotionDomains = useCallback(
     (optionDomain) => {
@@ -309,15 +313,15 @@ const SmiteDialogForm = ({
             elementOnly
             maxButtonParams={{
               fieldName: 'amount',
-              maxAmount: String(userPercentageReputation || 0),
+              maxAmount: String(unformattedUserReputationAmount),
               setFieldValue,
             }}
             disabled={inputDisabled}
           />
-          <div className={styles.percentageSign}>%</div>
-          <p className={styles.inputText}>{`max: ${
-            userPercentageReputation === null ? 0 : userPercentageReputation
-          }%`}</p>
+          <div className={styles.percentageSign}>pts</div>
+          <p
+            className={styles.inputText}
+          >{`max: ${formattedUserReputationAmount} pts`}</p>
         </div>
       </DialogSection>
       <DialogSection>
