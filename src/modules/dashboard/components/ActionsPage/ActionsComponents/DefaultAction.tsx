@@ -1,6 +1,5 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { AddressZero } from 'ethers/constants';
 import Decimal from 'decimal.js';
 
 import Tag, { Appearance as TagAppareance } from '~core/Tag';
@@ -17,7 +16,6 @@ import {
   useLoggedInUser,
   OneDomain,
   useColonySingleDomainQuery,
-  useUserReputationQuery,
   Colony,
   ColonyActionQuery,
   TokenInfoQuery,
@@ -127,22 +125,6 @@ const DefaultAction = ({
     },
   });
 
-  const { data: totalDomainReputation } = useUserReputationQuery({
-    variables: {
-      address: AddressZero,
-      colonyAddress,
-      domainId: fromDomain,
-    },
-  });
-
-  const getFormattedDomainPenalty = useCallback(() => {
-    return `${new Decimal(reputationPenalty)
-      .mul(100)
-      .div(totalDomainReputation?.userReputation || 0)
-      .toSD(2, Decimal.ROUND_DOWN)
-      .toString()}%`;
-  }, [reputationPenalty, totalDomainReputation]);
-
   const decimalAmount = getFormattedTokenValue(amount, decimals);
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
@@ -188,7 +170,10 @@ const DefaultAction = ({
       />
     ),
     roles,
-    reputationPenalty: getFormattedDomainPenalty(),
+    reputationPenalty: `${getFormattedTokenValue(
+      new Decimal(reputationPenalty).mul(-1).toString(),
+      decimals,
+    )} pts`,
   };
 
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];

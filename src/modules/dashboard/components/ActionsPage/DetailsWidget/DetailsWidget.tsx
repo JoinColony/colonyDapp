@@ -211,9 +211,7 @@ const DetailsWidget = ({
           <div className={styles.label}>
             <FormattedMessage {...MSG.reputationPenalty} />
           </div>
-          <div className={`${styles.value} ${styles.penaltyValue}`}>
-            {values?.reputationPenalty}
-          </div>
+          <div className={styles.value}>{values?.reputationPenalty}</div>
         </div>
       )}
       {detailsForAction.Permissions && (
