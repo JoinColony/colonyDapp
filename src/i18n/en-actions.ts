@@ -20,7 +20,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.EditDomain} {{fromDomain} team details edited}
       ${ColonyMotions.EditDomainMotion} {Edit {fromDomain} team details}
       ${ColonyActions.Recovery} {Recovery mode activated by {initiator}}
-      ${ColonyActions.EmitDomainReputationPenalty} {Smite {recipient} with {reputationPenalty} reputation penalty}
+      ${ColonyActions.EmitDomainReputationPenalty} {Smite {recipient} with a {reputationPenalty} reputation penalty}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
