@@ -4,11 +4,12 @@ import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
-import { bigNumberify } from 'ethers/utils';
+import Decimal from 'decimal.js';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import { useMembersSubscription } from '~data/index';
@@ -42,7 +43,7 @@ type Props = Required<DialogProps> &
 const displayName = 'dashboard.SmiteDialog';
 
 const SmiteDialog = ({
-  colony: { colonyAddress, colonyName },
+  colony: { colonyAddress, colonyName, tokens, nativeTokenAddress },
   colony,
   isVotingExtensionEnabled,
   callStep,
@@ -98,13 +99,17 @@ const SmiteDialog = ({
     variables: { colonyAddress },
   });
 
+  const nativeToken = tokens.find(
+    (token) => token.address === nativeTokenAddress,
+  );
+  const nativeTokenDecimals = nativeToken?.decimals || DEFAULT_TOKEN_DECIMALS;
+
   const transform = useCallback(
     pipe(
       mapPayload(({ amount, domainId, annotation, user, motionDomainId }) => {
-        const totalReputation = bigNumberify(totalReputationData || '0');
-        const reputationChangeAmount = totalReputation
-          .mul(amount * 100)
-          .div(10000);
+        const reputationChangeAmount = new Decimal(amount)
+          .mul(nativeTokenDecimals)
+          .mul(-1);
 
         return {
           colonyAddress,
@@ -112,7 +117,7 @@ const SmiteDialog = ({
           domainId,
           userAddress: user.profile.walletAddress,
           annotationMessage: annotation,
-          amount: String(reputationChangeAmount.mul(-1)),
+          amount: reputationChangeAmount.toString(),
           motionDomainId,
         };
       }),
@@ -150,6 +155,7 @@ const SmiteDialog = ({
             <DialogForm
               {...formValues}
               colony={colony}
+              nativeTokenDecimals={nativeTokenDecimals}
               isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
               subscribedUsers={colonyMembers?.subscribedUsers || []}
