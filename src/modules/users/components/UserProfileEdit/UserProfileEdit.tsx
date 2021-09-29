@@ -24,6 +24,7 @@ import { LANDING_PAGE_ROUTE } from '~routes/index';
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
 import Sidebar from './Sidebar';
 import UserMainSettings from './UserMainSettings';
+import UserAdvanceSettings from './UserAdvanceSettings';
 import styles from './UserProfileEdit.css';
 
 const MSG = defineMessages({
@@ -74,7 +75,7 @@ const UserProfileEdit = () => {
           <UserMainSettings user={user} />
         </TabPanel>
         <TabPanel>
-          <h2>Any content 2</h2>
+          <UserAdvanceSettings user={user} />
         </TabPanel>
       </Tabs>
     </ProfileTemplate>
