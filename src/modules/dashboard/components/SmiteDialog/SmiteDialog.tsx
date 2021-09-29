@@ -108,7 +108,7 @@ const SmiteDialog = ({
     pipe(
       mapPayload(({ amount, domainId, annotation, user, motionDomainId }) => {
         const reputationChangeAmount = new Decimal(amount)
-          .mul(nativeTokenDecimals)
+          .mul(new Decimal(10).pow(nativeTokenDecimals))
           .mul(-1);
 
         return {
