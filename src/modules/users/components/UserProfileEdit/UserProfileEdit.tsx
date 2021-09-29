@@ -1,31 +1,17 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import * as yup from 'yup';
 import { Redirect } from 'react-router-dom';
 
-import CopyableAddress from '~core/CopyableAddress';
-import UserMention from '~core/UserMention';
-import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
 
-import {
-  FieldSet,
-  Form,
-  FormStatus,
-  Input,
-  InputLabel,
-  Textarea,
-} from '~core/Fields';
-import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { useLoggedInUser, useUser, useEditUserMutation } from '~data/index';
+import { useLoggedInUser, useUser } from '~data/index';
 import { LANDING_PAGE_ROUTE } from '~routes/index';
 
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
 import Sidebar from './Sidebar';
 import UserMainSettings from './UserMainSettings';
 import UserAdvanceSettings from './UserAdvanceSettings';
-import styles from './UserProfileEdit.css';
 
 const MSG = defineMessages({
   headingMain: {
@@ -59,16 +45,12 @@ const UserProfileEdit = () => {
       asideContent={<Sidebar user={user} />}
     >
       <Tabs>
-        <TabList >
+        <TabList>
           <Tab>
-            <FormattedMessage
-              {...MSG.headingMain}
-            />
+            <FormattedMessage {...MSG.headingMain} />
           </Tab>
           <Tab>
-            <FormattedMessage
-              {...MSG.headingAdvance}
-            />
+            <FormattedMessage {...MSG.headingAdvance} />
           </Tab>
         </TabList>
         <TabPanel>

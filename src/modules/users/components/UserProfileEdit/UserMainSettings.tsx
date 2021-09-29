@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
-import { Redirect } from 'react-router-dom';
 import { isConfusing } from '@colony/unicode-confusables-noascii';
 
 import Snackbar, { SnackbarType } from '~core/Snackbar';
@@ -18,60 +17,61 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ConfusableWarning from '~core/ConfusableWarning';
-import ProfileTemplate from '~pages/ProfileTemplate';
-import { useLoggedInUser, useUser, useEditUserMutation } from '~data/index';
-import { LANDING_PAGE_ROUTE } from '~routes/index';
 
-import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
-import Sidebar from './Sidebar';
+import { useLoggedInUser, useUser, useEditUserMutation, AnyUser } from '~data/index';
+
 import styles from './UserProfileEdit.css';
 
 const MSG = defineMessages({
   heading: {
-    id: 'users.UserProfileEdit.heading',
+    id: 'users.UserProfileEdit.UserMainSettings.heading',
     defaultMessage: 'Profile',
   },
   labelWallet: {
-    id: 'users.UserProfileEdit.labelWallet',
+    id: 'users.UserProfileEdit.UserMainSettings.labelWallet',
     defaultMessage: 'Your Wallet',
   },
   labelUsername: {
-    id: 'users.UserProfileEdit.labelUsername',
+    id: 'users.UserProfileEdit.UserMainSettings.labelUsername',
     defaultMessage: 'Unique Username',
   },
   labelName: {
-    id: 'users.UserProfileEdit.labelName',
+    id: 'users.UserProfileEdit.UserMainSettings.labelName',
     defaultMessage: 'Name',
   },
   labelBio: {
-    id: 'users.UserProfileEdit.labelBio',
+    id: 'users.UserProfileEdit.UserMainSettings.labelBio',
     defaultMessage: 'Bio',
   },
   labelWebsite: {
-    id: 'users.UserProfileEdit.labelWebsite',
+    id: 'users.UserProfileEdit.UserMainSettings.labelWebsite',
     defaultMessage: 'Website',
   },
   labelLocation: {
-    id: 'users.UserProfileEdit.labelLocation',
+    id: 'users.UserProfileEdit.UserMainSettings.labelLocation',
     defaultMessage: 'Location',
   },
   snackbarSuccess: {
-    id: 'users.UserProfileEdit.snackbarSuccess',
+    id: 'users.UserProfileEdit.UserMainSettings.snackbarSuccess',
     defaultMessage: 'Profile settings have been updated.',
   },
   snackbarError: {
-    id: 'users.UserProfileEdit.snackbarError',
+    id: 'users.UserProfileEdit.UserMainSettings.snackbarError',
     defaultMessage: 'Profile settings were not able to be updated. Try again.',
   },
 });
 
-const displayName = 'users.UserProfileEdit';
+const displayName = 'users.UserProfileEdit.UserMainSettings';
 
 interface FormValues {
   displayName?: string;
   bio?: string;
   website?: string;
   location?: string;
+}
+
+interface Props {
+  user: AnyUser;
 }
 
 const validationSchema = yup.object({
@@ -81,7 +81,7 @@ const validationSchema = yup.object({
   website: yup.string().url().nullable(),
 });
 
-const UserProfileEdit = () => {
+const UserProfileEdit = ({ user }: Props) => {
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
   useEffect(() => {
     if (showSnackbar) {
@@ -101,21 +101,8 @@ const UserProfileEdit = () => {
     [editUser],
   );
 
-  const user = useUser(walletAddress);
-
-  if (!user) {
-    return <UserProfileSpinner />;
-  }
-
-  if (ethereal) {
-    return <Redirect to={LANDING_PAGE_ROUTE} />;
-  }
-
   return (
-    <ProfileTemplate
-      appearance={{ theme: 'alt' }}
-      asideContent={<Sidebar user={user} />}
-    >
+    <>
       <Heading
         appearance={{ theme: 'dark', size: 'medium' }}
         text={MSG.heading}
@@ -193,10 +180,10 @@ const UserProfileEdit = () => {
           </div>
         )}
       </Form>
-    </ProfileTemplate>
+    </>
   );
 };
 
-UserProfileEdit.displayName = displayName;
+UserMainSettings.displayName = displayName;
 
-export default UserProfileEdit;
+export default UserMainSettings;
