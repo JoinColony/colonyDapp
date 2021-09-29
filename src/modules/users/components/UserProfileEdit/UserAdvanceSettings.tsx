@@ -103,6 +103,7 @@ const UserAdvanceSettings = ({ user }: Props) => {
         ipfs: undefined,
       }}
       validationSchema={validationSchema}
+      onSubmit={() => {}}
     >
       {({ status, isSubmitting }) => (
         <div className={styles.main}>
