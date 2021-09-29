@@ -152,7 +152,7 @@ const SmiteDialogForm = ({
   const unformattedUserReputationAmount = new Decimal(
     userReputationData?.userReputation || 0,
   )
-    .div(nativeTokenDecimals)
+    .div(new Decimal(10).pow(nativeTokenDecimals))
     .toNumber();
   const formattedUserReputationAmount = getFormattedTokenValue(
     userReputationData?.userReputation || 0,
