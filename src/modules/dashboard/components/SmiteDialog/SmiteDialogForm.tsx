@@ -45,19 +45,19 @@ const MSG = defineMessages({
   },
   team: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.team',
-    defaultMessage: 'Select Team in which punishment should happen',
+    defaultMessage: 'Team in which Reputation should be deducted',
   },
-  who: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.who',
-    defaultMessage: 'Pick who is the target',
+  recipient: {
+    id: 'dashboard.SmiteDialog.SmiteDialogForm.recipient',
+    defaultMessage: 'Recipient',
   },
   amount: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.amount',
-    defaultMessage: 'Amount of reputation to deduct',
+    defaultMessage: 'Amount of reputation points to deduct',
   },
   annotation: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.annotation',
-    defaultMessage: 'Explain why you are smiting the user (optional)',
+    defaultMessage: "Explain why you're smiting the user (optional)",
   },
   userPickerPlaceholder: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.userPickerPlaceholder',
@@ -273,7 +273,7 @@ const SmiteDialogForm = ({
           <SingleUserPicker
             appearance={{ width: 'wide' }}
             data={subscribedUsers}
-            label={MSG.who}
+            label={MSG.recipient}
             name="user"
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
