@@ -8,6 +8,7 @@ import ExpendituresDialog from '~dashboard/ExpendituresDialog';
 import CreateDomainDialog from '~dashboard/CreateDomainDialog';
 import EditDomainDialog from '~dashboard/EditDomainDialog';
 import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
+import ManageReputationDialog from '~dashboard/ManageReputationDialog';
 import SmiteDialog from '~dashboard/SmiteDialog';
 import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
@@ -67,7 +68,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepManageFunds: 'dashboard.ManageFundsDialog',
         nextStepManageDomains: 'dashboard.ManageDomainsDialog',
         nextStepAdvanced: 'dashboard.AdvancedDialog',
-        nextStepSmite: 'dashboard.SmiteDialog',
+        nextStepManageReputation: 'dashboard.ManageReputationDialog',
       },
     },
     {
@@ -77,15 +78,6 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
         isVotingExtensionEnabled,
-      },
-    },
-    {
-      component: SmiteDialog,
-      props: {
-        prevStep: 'dashboard.ColonyActionsDialog',
-        colony,
-        isVotingExtensionEnabled,
-        ethDomainId,
       },
     },
     {
@@ -148,6 +140,24 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       component: EditDomainDialog,
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
+        colony,
+        isVotingExtensionEnabled,
+        ethDomainId,
+      },
+    },
+    {
+      component: ManageReputationDialog,
+      props: {
+        nextStep: 'dashboard.SmiteDialog',
+        prevStep: 'dashboard.ColonyActionsDialog',
+        colony,
+        isVotingExtensionEnabled,
+      },
+    },
+    {
+      component: SmiteDialog,
+      props: {
+        prevStep: 'dashboard.ManageReputationDialog',
         colony,
         isVotingExtensionEnabled,
         ethDomainId,
