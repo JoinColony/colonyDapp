@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Alert from '~core/Alert';
 import ClipboardCopy from '~core/ClipboardCopy';
+import { Tooltip } from '~core/Popover';
 
 import styles from './StakeRequiredBanner.css';
 
@@ -14,6 +15,10 @@ const MSG = defineMessages({
   shareUrl: {
     id: `dashboard.ActionsPage.StakeRequiredBanner.shareUrl`,
     defaultMessage: `Share URL`,
+  },
+  copyURLTooltip: {
+    id: `dashboard.ActionsPage.StakeRequiredBanner.copyURLTooltip`,
+    defaultMessage: `URL copied to clipboard`,
   },
 });
 
@@ -35,9 +40,26 @@ const StakeRequiredBanner = ({ stakeRequired }: Props) => {
       >
         <div className={styles.stakeRequiredBanner}>
           <FormattedMessage {...MSG.stakeRequired} />
-          <span className={styles.share}>
-            <ClipboardCopy value={window.location.href} text={MSG.shareUrl} />
-          </span>
+          <Tooltip
+            appearance={{ size: 'medium' }}
+            placement="right"
+            trigger="click"
+            content={<FormattedMessage {...MSG.copyURLTooltip} />}
+            popperProps={{
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [15, 10],
+                  },
+                },
+              ],
+            }}
+          >
+            <span className={styles.share}>
+              <ClipboardCopy value={window.location.href} text={MSG.shareUrl} />
+            </span>
+          </Tooltip>
         </div>
       </Alert>
     </div>
