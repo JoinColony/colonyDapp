@@ -30,6 +30,8 @@ import {
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
 import { getFormattedTokenValue } from '~utils/tokens';
+import { calculatePercentageReputation } from '~utils/reputation';
+
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
@@ -149,6 +151,10 @@ const SmiteDialogForm = ({
     fetchPolicy: 'network-only',
   });
 
+  const userPercentageReputation = calculatePercentageReputation(
+    userReputationData?.userReputation,
+    totalReputationData?.userReputation,
+  );
   const unformattedUserReputationAmount = new Decimal(
     userReputationData?.userReputation || 0,
   )
@@ -321,7 +327,9 @@ const SmiteDialogForm = ({
           <div className={styles.percentageSign}>pts</div>
           <p
             className={styles.inputText}
-          >{`max: ${formattedUserReputationAmount} pts`}</p>
+          >{`max: ${formattedUserReputationAmount} pts (${
+            userPercentageReputation === null ? 0 : userPercentageReputation
+          }%)`}</p>
         </div>
       </DialogSection>
       <DialogSection>
