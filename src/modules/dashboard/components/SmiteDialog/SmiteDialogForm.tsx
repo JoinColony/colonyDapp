@@ -69,6 +69,11 @@ const MSG = defineMessages({
     id: 'dashboard.SmiteDialog.SmiteDialogForm.noPermission',
     defaultMessage: `You need the {roleRequired} permission in {domain} to take this action.`,
   },
+  maxReputation: {
+    id: 'dashboard.SmiteDialog.SmiteDialogForm.maxReputation',
+    defaultMessage:
+      'max: {userReputationAmount} pts ({userPercentageReputation}%)',
+  },
 });
 interface Props extends ActionDialogProps {
   subscribedUsers: AnyUser[];
@@ -325,11 +330,18 @@ const SmiteDialogForm = ({
             disabled={inputDisabled}
           />
           <div className={styles.percentageSign}>pts</div>
-          <p
-            className={styles.inputText}
-          >{`max: ${formattedUserReputationAmount} pts (${
-            userPercentageReputation === null ? 0 : userPercentageReputation
-          }%)`}</p>
+          <p className={styles.inputText}>
+            <FormattedMessage
+              {...MSG.maxReputation}
+              values={{
+                userReputationAmount: formattedUserReputationAmount,
+                userPercentageReputation:
+                  userPercentageReputation === null
+                    ? 0
+                    : userPercentageReputation,
+              }}
+            />
+          </p>
         </div>
       </DialogSection>
       <DialogSection>
