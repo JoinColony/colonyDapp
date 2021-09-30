@@ -59,7 +59,8 @@ const MSG = defineMessages({
     defaultMessage: `Metatransactions are turned on by default. 
     If you would rather connect directly to xDai chain,
     and pay for your own transactions, you can turn them off 
-    by switching the toggle at any time. {br}{br} Please note, this setting is stored locally in your browser, 
+    by switching the toggle at any time. {br}{br} Please note,
+    this setting is stored locally in your browser,
     if you clear your cache you will need to turn Metatransactions off again.`,
   },
   tokensLink: {
@@ -91,16 +92,16 @@ const validationSchema = yup.object({
 });
 
 const UserAdvanceSettings = ({ user }: Props) => {
-  const tokensLink = (link) => (<div className={stylesAdvance.linkWrapper}><FormattedMessage
-    {...MSG.tokensLink}
-    values={{
-      link: (
-        <ExternalLink
-          href={link}
-        />
-      ),
-    }}
-  /></div>)
+  const tokensLink = (link) => (
+    <div className={stylesAdvance.linkWrapper}>
+      <FormattedMessage
+        {...MSG.tokensLink}
+        values={{
+          link: <ExternalLink href={link} />,
+        }}
+      />
+    </div>
+  );
   return (
     <>
       <Form<FormValues>
@@ -128,7 +129,7 @@ const UserAdvanceSettings = ({ user }: Props) => {
               />
               <QuestionMarkTooltip
                 tooltipText={MSG.tooltip}
-                tooltipTextValues={{br: <br/>}}
+                tooltipTextValues={{ br: <br /> }}
                 className={stylesAdvance.tooltipContainer}
                 tooltipClassName={stylesAdvance.tooltipContent}
                 tooltipPopperProps={{
@@ -152,25 +153,29 @@ const UserAdvanceSettings = ({ user }: Props) => {
                 name="ethereumRPC"
                 appearance={{ colorSchema: 'grey' }}
               />
-              {DEFAULT_NETWORK_INFO.tokenExplorerLink && tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
+              {DEFAULT_NETWORK_INFO.tokenExplorerLink &&
+                tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
               <Input
                 label={MSG.labelGraph}
                 appearance={{ colorSchema: 'grey' }}
                 name="graph"
               />
-              {DEFAULT_NETWORK_INFO.tokenExplorerLink && tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
+              {DEFAULT_NETWORK_INFO.tokenExplorerLink &&
+                tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
               <Input
                 label={MSG.labelReputationOracle}
                 appearance={{ colorSchema: 'grey' }}
                 name="reputationOracle"
               />
-              {DEFAULT_NETWORK_INFO.tokenExplorerLink && tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
+              {DEFAULT_NETWORK_INFO.tokenExplorerLink &&
+                tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
               <Input
                 label={MSG.labelIPFS}
                 appearance={{ colorSchema: 'grey' }}
                 name="ipfs"
               />
-              {DEFAULT_NETWORK_INFO.tokenExplorerLink && tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
+              {DEFAULT_NETWORK_INFO.tokenExplorerLink &&
+                tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
             </FieldSet>
             <Button
               type="submit"

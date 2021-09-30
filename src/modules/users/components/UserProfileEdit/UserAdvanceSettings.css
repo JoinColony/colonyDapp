@@ -32,8 +32,8 @@
   margin-top: -28px;
   margin-bottom: 28px;
   font-size: var(--size-tiny);
-  color: var(--dark);
   font-weight: var(--weight-bold);
+  color: var(--dark);
 }
 
 .linkWrapper a {
