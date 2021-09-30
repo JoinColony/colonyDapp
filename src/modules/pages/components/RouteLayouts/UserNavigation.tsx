@@ -104,7 +104,11 @@ const UserNavigation = () => {
       {userCanNavigate && (
         <div
           className={styles.networkInfo}
-          title={isNetworkAllowed && SUPPORTED_NETWORKS[networkId || 1].name}
+          title={
+            isNetworkAllowed
+              ? SUPPORTED_NETWORKS[networkId || 1].name
+              : undefined
+          }
         >
           {isNetworkAllowed && SUPPORTED_NETWORKS[networkId || 1].shortName}
         </div>
