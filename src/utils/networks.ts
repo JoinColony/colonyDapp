@@ -10,7 +10,8 @@ export const checkIfNetworkIsAllowed = (
   const currentNetworkData =
     NETWORK_DATA[process.env.NETWORK || DEFAULT_NETWORK];
   return (
-    walletSupportedNetwork?.chainId === currentNetworkData.chainId ||
-    (onLocalDevEnvironment && walletSupportedNetwork)
+    walletSupportedNetwork &&
+    (walletSupportedNetwork.chainId === currentNetworkData.chainId ||
+      onLocalDevEnvironment)
   );
 };
