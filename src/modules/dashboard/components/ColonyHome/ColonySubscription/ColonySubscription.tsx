@@ -14,7 +14,7 @@ import {
   cacheUpdates,
   Colony,
 } from '~data/index';
-import { ALLOWED_NETWORKS } from '~constants';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 import { CREATE_USER_ROUTE } from '~routes/index';
 
 import ColonySubscriptionInfoPopover from './ColonySubscriptionInfoPopover';
@@ -62,7 +62,7 @@ const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
     colonyAddress,
   );
 
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   return (
     <div className={styles.main}>

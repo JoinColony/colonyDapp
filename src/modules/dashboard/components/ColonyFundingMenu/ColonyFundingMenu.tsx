@@ -17,11 +17,11 @@ import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
 import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useTransformer } from '~utils/hooks';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 import { oneTxMustBeUpgraded } from '../../../dashboard/checks';
-import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './ColonyFundingMenu.css';
 
@@ -53,7 +53,7 @@ const ColonyFundingMenu = ({
   selectedDomainId,
 }: Props) => {
   const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const { isVotingExtensionEnabled } = useEnabledExtensions({ colonyAddress });
   const { data } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },

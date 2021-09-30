@@ -18,9 +18,10 @@ import {
   useColonyExtensionsQuery,
 } from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
-import { oneTxMustBeUpgraded } from '../../../dashboard/checks';
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { ALLOWED_NETWORKS } from '~constants';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
+
+import { oneTxMustBeUpgraded } from '../../../dashboard/checks';
 
 import styles from './ColonyMembers.css';
 
@@ -39,7 +40,7 @@ const MSG = defineMessages({
 
 const ColonyMembers = () => {
   const { networkId, username, ethereal } = useLoggedInUser();
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
 
   const { colonyName } = useParams<{

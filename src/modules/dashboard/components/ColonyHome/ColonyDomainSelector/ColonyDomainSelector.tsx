@@ -8,8 +8,10 @@ import { useDialog } from '~core/Dialog';
 import EditDomainDialog from '~dashboard/EditDomainDialog';
 
 import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
-import { ALLOWED_NETWORKS, COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
+
 import { oneTxMustBeUpgraded } from '../../../checks';
 
 import CreateDomainButton from './CreateDomainButton';
@@ -97,7 +99,7 @@ const ColonyDomainSelector = ({
   );
   const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
 
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const isSupportedColonyVersion =
     parseInt(colony.version, 10) >= ColonyVersion.LightweightSpaceship;
   const hasRegisteredProfile = !!username && !ethereal;

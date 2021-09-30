@@ -8,7 +8,7 @@ import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 
 import { useLoggedInUser, useUserColoniesQuery } from '~data/index';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { ALLOWED_NETWORKS } from '~constants';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './SubscribedColoniesList.css';
 
@@ -29,7 +29,7 @@ const SubscribedColoniesList = () => {
     variables: { address: walletAddress },
   });
 
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   return (
     <div className={styles.main}>

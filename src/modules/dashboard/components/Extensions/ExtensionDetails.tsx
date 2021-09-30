@@ -42,7 +42,8 @@ import {
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
 } from '~routes/index';
-import { DEFAULT_NETWORK_INFO, ALLOWED_NETWORKS } from '~constants';
+import { DEFAULT_NETWORK_INFO } from '~constants';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -151,7 +152,7 @@ const ExtensionDetails = ({
   const match = useRouteMatch();
   const onSetupRoute = useRouteMatch(COLONY_EXTENSION_SETUP_ROUTE);
   const { walletAddress, username, ethereal, networkId } = useLoggedInUser();
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   const openUpgradeVersionDialog = useDialog(NetworkContractUpgradeDialog);
 

@@ -15,7 +15,8 @@ import {
   UserAddressQueryVariables,
   useLoggedInUser,
 } from '~data/index';
-import { DEFAULT_NETWORK_INFO, ALLOWED_NETWORKS } from '~constants';
+import { DEFAULT_NETWORK_INFO } from '~constants';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './StepUserName.css';
 
@@ -110,7 +111,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
     [checkDomainTaken],
   );
 
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   return (
     <ActionForm

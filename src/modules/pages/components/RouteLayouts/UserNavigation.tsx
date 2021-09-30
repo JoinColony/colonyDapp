@@ -22,8 +22,10 @@ import {
 } from '~data/index';
 import { useSelector } from '~utils/hooks';
 import { useAutoLogin, getLastWallet } from '~utils/autoLogin';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
+import { SUPPORTED_NETWORKS } from '~constants';
+
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
-import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './UserNavigation.css';
 
@@ -87,7 +89,7 @@ const UserNavigation = () => {
     [transactionAndMessageGroups],
   );
 
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const userCanNavigate = !ethereal && isNetworkAllowed;
 
   const userLock = userData?.user.userLock;
@@ -102,9 +104,9 @@ const UserNavigation = () => {
       {userCanNavigate && (
         <div
           className={styles.networkInfo}
-          title={isNetworkAllowed && ALLOWED_NETWORKS[networkId || 1].name}
+          title={isNetworkAllowed && SUPPORTED_NETWORKS[networkId || 1].name}
         >
-          {isNetworkAllowed && ALLOWED_NETWORKS[networkId || 1].shortName}
+          {isNetworkAllowed && SUPPORTED_NETWORKS[networkId || 1].shortName}
         </div>
       )}
       {!ethereal && !isNetworkAllowed && (

@@ -20,9 +20,9 @@ import {
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { tokenIsETH } from '../../../core/checks';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
-import { ALLOWED_NETWORKS } from '~constants';
+import { tokenIsETH } from '../../../core/checks';
 
 import styles from './UnclaimedTransfersItem.css';
 
@@ -72,7 +72,7 @@ const UnclaimedTransfersItem = ({
   const senderUsername = usernameData && usernameData.username;
   const description = null; // Will be support after network upgrade to v5
 
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   if (!tokenData) return null;
 

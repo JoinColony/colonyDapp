@@ -8,8 +8,9 @@ import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
 import { HistoryNavigation } from '~pages/RouteLayouts';
 import { useLoggedInUser } from '~data/index';
-import { DEFAULT_NETWORK_TOKEN, ALLOWED_NETWORKS } from '~constants';
+import { DEFAULT_NETWORK_TOKEN } from '~constants';
 import { LANDING_PAGE_ROUTE } from '~routes/index';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './WizardTemplateColony.css';
 
@@ -36,7 +37,7 @@ const WizardTemplateColony = ({
   const { balance, walletAddress, networkId } = useLoggedInUser();
   const customHandler = useCallback(() => previousStep(), [previousStep]);
   const ethBalance = parseEther(balance);
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   if (!isNetworkAllowed) {
     return <Redirect to={LANDING_PAGE_ROUTE} />;

@@ -6,6 +6,9 @@ import ColonyDomainSelector from '~dashboard/ColonyHome/ColonyDomainSelector';
 import ColonyHomeActions from '~dashboard/ColonyHomeActions';
 import ColonyTotalFunds from '~dashboard/ColonyTotalFunds';
 
+import { Colony, useLoggedInUser } from '~data/index';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
+
 import ColonyFunding from './ColonyFunding';
 import ColonyTitle from './ColonyTitle';
 import ColonyNavigation from './ColonyNavigation';
@@ -16,9 +19,6 @@ import ColonyUpgrade from './ColonyUpgrade';
 import ColonyFinishDeployment from './ColonyFinishDeployment';
 import ExtensionUpgrade from './ExtensionUpgrade';
 import WrongNetworkDialog from './WrongNetworkDialog';
-
-import { Colony, useLoggedInUser } from '~data/index';
-import { ALLOWED_NETWORKS } from '~constants';
 
 import styles from './ColonyHomeLayout.css';
 
@@ -52,7 +52,7 @@ const ColonyHomeLayout = ({
   ethDomainId,
 }: Props) => {
   const { ethereal, networkId } = useLoggedInUser();
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
 
   useEffect(() => {

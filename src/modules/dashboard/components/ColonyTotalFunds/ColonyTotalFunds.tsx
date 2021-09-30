@@ -13,7 +13,8 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ALLOWED_NETWORKS } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import ColonyTotalFundsPopover from './ColonyTotalFundsPopover';
 
@@ -85,7 +86,7 @@ const ColonyTotalFunds = ({
 
   const isSupportedColonyVersion =
     parseInt(version, 10) >= ColonyVersion.LightweightSpaceship;
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   if (!data || !currentToken || isLoadingTokenBalances) {
     return (
