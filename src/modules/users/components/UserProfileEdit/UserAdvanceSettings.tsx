@@ -8,6 +8,8 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import { FieldSet, Form, FormStatus, Input, Toggle } from '~core/Fields';
 import Button from '~core/Button';
 import { AnyUser } from '~data/index';
+import ExternalLink from '~core/ExternalLink';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 import styles from './UserProfileEdit.css';
 import stylesAdvance from './UserAdvanceSettings.css';
 
@@ -60,6 +62,10 @@ const MSG = defineMessages({
     by switching the toggle at any time. {br}{br} Please note, this setting is stored locally in your browser, 
     if you clear your cache you will need to turn Metatransactions off again.`,
   },
+  tokensLink: {
+    id: 'users.UserProfileEdit.UserAdvanceSettings.tokensLink',
+    defaultMessage: 'Microcopy: {link}',
+  },
 });
 
 const displayName = 'users.UserProfileEdit.UserAdvanceSettings';
@@ -85,6 +91,16 @@ const validationSchema = yup.object({
 });
 
 const UserAdvanceSettings = ({ user }: Props) => {
+  const tokensLink = (link) => (<div className={stylesAdvance.linkWrapper}><FormattedMessage
+    {...MSG.tokensLink}
+    values={{
+      link: (
+        <ExternalLink
+          href={link}
+        />
+      ),
+    }}
+  /></div>)
   return (
     <>
       <Form<FormValues>
@@ -136,29 +152,31 @@ const UserAdvanceSettings = ({ user }: Props) => {
                 name="ethereumRPC"
                 appearance={{ colorSchema: 'grey' }}
               />
+              {DEFAULT_NETWORK_INFO.tokenExplorerLink && tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
               <Input
                 label={MSG.labelGraph}
                 appearance={{ colorSchema: 'grey' }}
                 name="graph"
               />
+              {DEFAULT_NETWORK_INFO.tokenExplorerLink && tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
               <Input
                 label={MSG.labelReputationOracle}
                 appearance={{ colorSchema: 'grey' }}
                 name="reputationOracle"
               />
+              {DEFAULT_NETWORK_INFO.tokenExplorerLink && tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
               <Input
                 label={MSG.labelIPFS}
                 appearance={{ colorSchema: 'grey' }}
                 name="ipfs"
               />
+              {DEFAULT_NETWORK_INFO.tokenExplorerLink && tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
             </FieldSet>
-            <FieldSet>
-              <Button
-                type="submit"
-                text={{ id: 'button.save' }}
-                loading={isSubmitting}
-              />
-            </FieldSet>
+            <Button
+              type="submit"
+              text={{ id: 'button.save' }}
+              loading={isSubmitting}
+            />
             <FormStatus status={status} />
           </div>
         )}
