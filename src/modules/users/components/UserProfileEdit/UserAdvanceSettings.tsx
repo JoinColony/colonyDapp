@@ -1,11 +1,14 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { Network } from '@colony/colony-js';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { Form, Toggle } from '~core/Fields';
+import { DEFAULT_NETWORK } from '~constants';
+import { setUserSettings, getUserSettings } from './settingsStore';
 import styles from './UserProfileEdit.css';
 import stylesAdvance from './UserAdvanceSettings.css';
 
@@ -47,11 +50,22 @@ const validationSchema = yup.object({
 const displayName = 'users.UserProfileEdit.UserAdvanceSettings';
 
 const UserAdvanceSettings = () => {
+  const network = DEFAULT_NETWORK as Network;
+  const onChange = (oldValue) => {
+    setUserSettings({ metatransactions: !oldValue });
+  };
+
+  const userSettings = getUserSettings();
+
+  const metatransactionsOn =
+    userSettings && network !== Network.Xdai
+      ? userSettings.metatransactions
+      : network !== Network.Xdai;
   return (
     <>
       <Form<FormValues>
         initialValues={{
-          metatransactions: true,
+          metatransactions: metatransactionsOn,
         }}
         validationSchema={validationSchema}
         onSubmit={() => {}}
@@ -67,6 +81,8 @@ const UserAdvanceSettings = () => {
                 label={MSG.labelMetaTx}
                 labelValues={{ isOn: false }}
                 name="metatransactions"
+                disabled={network === Network.Xdai}
+                onChange={onChange}
               />
               <QuestionMarkTooltip
                 tooltipText={MSG.tooltip}
