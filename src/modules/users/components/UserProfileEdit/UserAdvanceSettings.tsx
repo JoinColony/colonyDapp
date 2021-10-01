@@ -5,11 +5,7 @@ import * as yup from 'yup';
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
-import { FieldSet, Form, FormStatus, Input, Toggle } from '~core/Fields';
-import Button from '~core/Button';
-import { AnyUser } from '~data/index';
-import ExternalLink from '~core/ExternalLink';
-import { DEFAULT_NETWORK_INFO } from '~constants';
+import { Form, Toggle } from '~core/Fields';
 import styles from './UserProfileEdit.css';
 import stylesAdvance from './UserAdvanceSettings.css';
 
@@ -22,37 +18,12 @@ const MSG = defineMessages({
     id: 'users.UserProfileEdit.UserAdvanceSettings.metaDesc',
     defaultMessage: `You have turned off metatransactions. Please, make sure to switch to xDai RPC in your Metamask.`,
   },
-  headingEndpoints: {
-    id: 'users.UserProfileEdit.UserAdvanceSettings.headingEndpoints',
-    defaultMessage: 'Endpoints (optional)',
-  },
-  endpointsDesc: {
-    id: 'users.UserProfileEdit.UserAdvanceSettings.endpointsDesc',
-    defaultMessage:
-      'Specify your own endpoints for interacting with 3rd party services.',
-  },
   labelMetaTx: {
     id: 'users.UserProfileEdit.UserAdvanceSettings.labelMetaTx',
     defaultMessage: `Metatransactions ({isOn, select,
       true {off}
       false {on}
     })`,
-  },
-  labelRPC: {
-    id: 'users.UserProfileEdit.UserAdvanceSettings.labelRPC',
-    defaultMessage: 'Ethereum RPC',
-  },
-  labelGraph: {
-    id: 'users.UserProfileEdit.UserAdvanceSettings.labelGraph',
-    defaultMessage: 'The Graph',
-  },
-  labelReputationOracle: {
-    id: 'users.UserProfileEdit.UserAdvanceSettings.labelReputationOracle',
-    defaultMessage: 'Reputation Oracle',
-  },
-  labelIPFS: {
-    id: 'users.UserProfileEdit.UserAdvanceSettings.labelIPFS',
-    defaultMessage: 'IPFS',
   },
   tooltip: {
     id: 'users.UserProfileEdit.UserAdvanceSettings.tooltip',
@@ -63,59 +34,29 @@ const MSG = defineMessages({
     this setting is stored locally in your browser,
     if you clear your cache you will need to turn Metatransactions off again.`,
   },
-  tokensLink: {
-    id: 'users.UserProfileEdit.UserAdvanceSettings.tokensLink',
-    defaultMessage: 'Microcopy: {link}',
-  },
+});
+
+interface FormValues {
+  metatransactions: boolean;
+}
+
+const validationSchema = yup.object({
+  metatransactions: yup.bool(),
 });
 
 const displayName = 'users.UserProfileEdit.UserAdvanceSettings';
 
-interface FormValues {
-  metatransactions: boolean;
-  ethereumRPC?: string;
-  graph?: string;
-  reputationOracle?: string;
-  ipfs?: string;
-}
-
-interface Props {
-  user: AnyUser;
-}
-
-const validationSchema = yup.object({
-  metatransactions: yup.boolean(),
-  ethereumRPC: yup.string().nullable(),
-  graph: yup.string().nullable(),
-  reputationOracle: yup.string().nullable(),
-  ipfs: yup.string().url().nullable(),
-});
-
-const UserAdvanceSettings = ({ user }: Props) => {
-  const tokensLink = (link) => (
-    <div className={stylesAdvance.linkWrapper}>
-      <FormattedMessage
-        {...MSG.tokensLink}
-        values={{
-          link: <ExternalLink href={link} />,
-        }}
-      />
-    </div>
-  );
+const UserAdvanceSettings = () => {
   return (
     <>
       <Form<FormValues>
         initialValues={{
           metatransactions: true,
-          ethereumRPC: user.profile.username || undefined,
-          graph: undefined,
-          reputationOracle: undefined,
-          ipfs: undefined,
         }}
         validationSchema={validationSchema}
         onSubmit={() => {}}
       >
-        {({ status, isSubmitting }) => (
+        {({ values }) => (
           <div className={styles.main}>
             <Heading
               appearance={{ theme: 'dark', size: 'medium' }}
@@ -137,52 +78,11 @@ const UserAdvanceSettings = ({ user }: Props) => {
                 }}
               />
             </div>
-            <div className={stylesAdvance.metaDesc}>
-              <FormattedMessage {...MSG.metaDesc} />
-            </div>
-            <Heading
-              appearance={{ theme: 'dark', size: 'medium' }}
-              text={MSG.headingEndpoints}
-            />
-            <div className={stylesAdvance.endpointsDesc}>
-              <FormattedMessage {...MSG.endpointsDesc} />
-            </div>
-            <FieldSet className={styles.inputFieldSet}>
-              <Input
-                label={MSG.labelRPC}
-                name="ethereumRPC"
-                appearance={{ colorSchema: 'grey' }}
-              />
-              {DEFAULT_NETWORK_INFO.tokenExplorerLink &&
-                tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
-              <Input
-                label={MSG.labelGraph}
-                appearance={{ colorSchema: 'grey' }}
-                name="graph"
-              />
-              {DEFAULT_NETWORK_INFO.tokenExplorerLink &&
-                tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
-              <Input
-                label={MSG.labelReputationOracle}
-                appearance={{ colorSchema: 'grey' }}
-                name="reputationOracle"
-              />
-              {DEFAULT_NETWORK_INFO.tokenExplorerLink &&
-                tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
-              <Input
-                label={MSG.labelIPFS}
-                appearance={{ colorSchema: 'grey' }}
-                name="ipfs"
-              />
-              {DEFAULT_NETWORK_INFO.tokenExplorerLink &&
-                tokensLink(DEFAULT_NETWORK_INFO.tokenExplorerLink)}
-            </FieldSet>
-            <Button
-              type="submit"
-              text={{ id: 'button.save' }}
-              loading={isSubmitting}
-            />
-            <FormStatus status={status} />
+            {!values.metatransactions && (
+              <div className={stylesAdvance.metaDesc}>
+                <FormattedMessage {...MSG.metaDesc} />
+              </div>
+            )}
           </div>
         )}
       </Form>
