@@ -1,3 +1,4 @@
+import { Network } from '@colony/colony-js';
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { DEFAULT_NETWORK, NETWORK_DATA } from '~constants';
@@ -21,11 +22,12 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.ColonyHome.WrongNetworkDialog';
 
-const WRONG_NETWORK_HELP_LINK =
+const WRONG_NETWORK_XDAI_HELP_LINK =
   'https://colony.gitbook.io/colony/get-started/connect-metamask-to-xdai';
 
 const WrongNetworkDialog = ({ cancel }: DialogProps) => {
   const networkName = NETWORK_DATA[process.env.NETWORK || DEFAULT_NETWORK].name;
+
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -42,9 +44,14 @@ const WrongNetworkDialog = ({ cancel }: DialogProps) => {
             {...MSG.description}
             values={{
               a: (chunks) => (
-                <ExternalLink href={WRONG_NETWORK_HELP_LINK}>
-                  {chunks}
-                </ExternalLink>
+                <>
+                  {process.env.NETWORK === Network.Xdai ||
+                    (process.env.NETWORK === Network.XdaiFork && (
+                      <ExternalLink href={WRONG_NETWORK_XDAI_HELP_LINK}>
+                        {chunks}
+                      </ExternalLink>
+                    ))}
+                </>
               ),
               networkName,
             }}
