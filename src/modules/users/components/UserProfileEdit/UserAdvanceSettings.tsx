@@ -8,7 +8,7 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { Form, Toggle } from '~core/Fields';
 import { DEFAULT_NETWORK } from '~constants';
-import { setUserSettings, getUserSettings } from './settingsStore';
+import { setUserSettings, getUserSettings } from '~utils/settingsStore';
 import styles from './UserProfileEdit.css';
 import stylesAdvance from './UserAdvanceSettings.css';
 
