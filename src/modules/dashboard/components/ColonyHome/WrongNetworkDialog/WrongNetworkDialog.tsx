@@ -1,5 +1,6 @@
 import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
+import { DEFAULT_NETWORK, NETWORK_DATA } from '~constants';
 
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
@@ -14,7 +15,7 @@ const MSG = defineMessages({
   },
   description: {
     id: 'dashboard.ColonyHome.WrongNetworkDialog.description',
-    defaultMessage: 'Please connect to xDai chain. <a>Learn more.</a>',
+    defaultMessage: 'Please connect to {networkName}. <a>Learn more.</a>',
   },
 });
 
@@ -24,6 +25,7 @@ const WRONG_NETWORK_HELP_LINK =
   'https://colony.gitbook.io/colony/get-started/connect-metamask-to-xdai';
 
 const WrongNetworkDialog = ({ cancel }: DialogProps) => {
+  const networkName = NETWORK_DATA[process.env.NETWORK || DEFAULT_NETWORK].name;
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -44,6 +46,7 @@ const WrongNetworkDialog = ({ cancel }: DialogProps) => {
                   {chunks}
                 </ExternalLink>
               ),
+              networkName,
             }}
           />
         </div>
