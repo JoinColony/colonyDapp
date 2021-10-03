@@ -36,11 +36,11 @@ const MSG = defineMessages({
   },
   amountColumnTitle: {
     id: `dashboard.CoinMachine.TokenSalesTable.amountColumnTitle`,
-    defaultMessage: 'Amount <span>{nativeTokenSymbol}</span>',
+    defaultMessage: 'Amount {nativeTokenSymbol}',
   },
   priceColumnTitle: {
     id: `dashboard.CoinMachine.TokenSalesTable.priceColumnTitle`,
-    defaultMessage: 'Price <span>ETH</span>',
+    defaultMessage: 'Price ETH',
   },
   noTableData: {
     id: 'dashboard.CoinMachine.TokenSalesTable.noTableData',
