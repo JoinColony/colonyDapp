@@ -152,7 +152,7 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
-    async coinMachineSalePeriod(_, { colonyAddress }) {
+    async coinMachineCurrentSalePeriod(_, { colonyAddress }) {
       try {
         const { networkClient } = colonyManager;
         const coinMachineClient = await colonyManager.getClient(
