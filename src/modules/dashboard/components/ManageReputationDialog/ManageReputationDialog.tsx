@@ -41,7 +41,8 @@ const MSG = defineMessages({
 });
 
 interface CustomWizardDialogProps extends ActionDialogProps {
-  nextStep: string;
+  nextStepSmiteReputation: string;
+  nextStepAwardReputation: string;
   prevStep: string;
   colony: Colony;
 }
@@ -57,14 +58,15 @@ const ManageReputation = ({
   prevStep,
   colony,
   isVotingExtensionEnabled,
-  nextStep,
+  nextStepSmiteReputation,
+  nextStepAwardReputation,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canSmiteUsers =
+  const canManageReputation =
     hasRegisteredProfile &&
     (userHasRole(allUserRoles, ColonyRole.Arbitration) ||
       isVotingExtensionEnabled);
@@ -74,15 +76,17 @@ const ManageReputation = ({
       title: MSG.awardReputationTitle,
       description: MSG.awardReputationDescription,
       icon: 'emoji-shooting-star',
-      comingSoon: true,
+      permissionRequired: !canManageReputation,
+      permissionInfoText: MSG.permissionText,
+      onClick: () => callStep(nextStepAwardReputation),
     },
     {
       title: MSG.smiteReputationTitle,
       description: MSG.smiteReputationDescription,
       icon: 'emoji-firebolt',
-      permissionRequired: !canSmiteUsers,
+      permissionRequired: !canManageReputation,
       permissionInfoText: MSG.permissionText,
-      onClick: () => callStep(nextStep),
+      onClick: () => callStep(nextStepSmiteReputation),
     },
   ];
   return (
