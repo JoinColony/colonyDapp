@@ -13,7 +13,7 @@ export default gql`
     purchaseToken: SaleToken!
   }
 
-  type SalePeriod {
+  type CurrentSalePeriod {
     periodLength: String!
     timeRemaining: String!
   }
@@ -58,7 +58,7 @@ export default gql`
       userAddress: String!
       colonyAddress: String!
     ): String!
-    coinMachineSalePeriod(colonyAddress: String!): SalePeriod!
+    coinMachineCurrentSalePeriod(colonyAddress: String!): CurrentSalePeriod!
     currentPeriodTokens(colonyAddress: String!): CurrentPeriodTokens!
     coinMachineTokenBalance(colonyAddress: String!): String!
     coinMachinePeriods(

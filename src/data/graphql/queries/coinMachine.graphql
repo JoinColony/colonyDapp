@@ -41,8 +41,8 @@ query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddr
   coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
 }
 
-query CoinMachineSalePeriod($colonyAddress: String!) {
-  coinMachineSalePeriod(colonyAddress: $colonyAddress) @client {
+query CoinMachineCurrentSalePeriod($colonyAddress: String!) {
+  coinMachineCurrentSalePeriod(colonyAddress: $colonyAddress) @client {
     periodLength
     timeRemaining
   }
