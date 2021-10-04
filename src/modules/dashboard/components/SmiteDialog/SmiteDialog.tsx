@@ -6,40 +6,55 @@ import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 import Decimal from 'decimal.js';
 
-import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
+import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
-import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { useMembersSubscription } from '~data/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
-import { WizardDialogType } from '~utils/hooks';
 import { useSelectedUser } from '~utils/hooks/useSelectedUser';
 
-import DialogForm from './SmiteDialogForm';
+import DialogForm, {
+  AwardAndSmiteDialogProps,
+  AwardAndSmiteDialogFormValues,
+  AwardAndSmiteFormValidationSchema,
+} from '../AwardAndSmiteDialogForm';
 
 const MSG = defineMessages({
-  amountZero: {
-    id: 'dashboard.SmiteDialog.amountZero',
-    defaultMessage: 'Amount must be greater than zero',
+  title: {
+    id: 'dashboard.SmiteDialog.title',
+    defaultMessage: 'Smite',
+  },
+  team: {
+    id: 'dashboard.SmiteDialog.team',
+    defaultMessage: 'Team in which Reputation should be deducted',
+  },
+  recipient: {
+    id: 'dashboard.SmiteDialog.recipient',
+    defaultMessage: 'Recipient',
+  },
+  amount: {
+    id: 'dashboard.SmiteDialog.amount',
+    defaultMessage: 'Amount of reputation points to deduct',
+  },
+  annotation: {
+    id: 'dashboard.SmiteDialog.annotation',
+    defaultMessage: "Explain why you're smiting the user (optional)",
+  },
+  userPickerPlaceholder: {
+    id: 'dashboard.SmiteDialog.userPickerPlaceholder',
+    defaultMessage: 'Search for a user or paste wallet address',
+  },
+  noPermission: {
+    id: 'dashboard.SmiteDialog.noPermission',
+    defaultMessage: `You need the {roleRequired} permission in {domain} to take this action.`,
+  },
+  maxReputation: {
+    id: 'dashboard.SmiteDialog.maxReputation',
+    defaultMessage:
+      'max: {userReputationAmount} pts ({userPercentageReputation}%)',
   },
 });
-
-export interface FormValues {
-  forceAction: boolean;
-  domainId: string;
-  user: { profile: { walletAddress: Address } };
-  amount: number;
-  annotation: string;
-  motionDomainId: string;
-}
-
-type Props = Required<DialogProps> &
-  WizardDialogType<object> &
-  ActionDialogProps & {
-    ethDomainId?: number;
-  };
 
 const displayName = 'dashboard.SmiteDialog';
 
@@ -52,7 +67,7 @@ const SmiteDialog = ({
   cancel,
   close,
   ethDomainId,
-}: Props) => {
+}: AwardAndSmiteDialogProps) => {
   const [isForce, setIsForce] = useState(false);
   const [totalReputationData, setTotalReputationData] = useState<
     string | undefined
@@ -79,26 +94,13 @@ const SmiteDialog = ({
     [isVotingExtensionEnabled, isForce],
   );
 
-  const validationSchema = yup.object().shape({
-    domainId: yup.number().required(),
-    user: yup.object().shape({
-      profile: yup.object().shape({
-        walletAddress: yup.string().address().required(),
-      }),
-    }),
-    amount: yup
-      .number()
-      .required()
-      .moreThan(0, () => MSG.amountZero)
-      .max(userReputation),
-    annotation: yup.string().max(4000),
-    forceAction: yup.boolean(),
-    motionDomainId: yup.number(),
-  });
-
-  const { data: colonyMembers } = useMembersSubscription({
-    variables: { colonyAddress },
-  });
+  const smiteAmountSchema = yup
+    .object()
+    .shape({ amount: yup.number().max(userReputation) })
+    .required();
+  const validationSchema = AwardAndSmiteFormValidationSchema.concat(
+    smiteAmountSchema,
+  );
 
   const nativeToken = tokens.find(
     (token) => token.address === nativeTokenAddress,
@@ -151,7 +153,7 @@ const SmiteDialog = ({
       onSuccess={close}
       transform={transform}
     >
-      {(formValues: FormikProps<FormValues>) => {
+      {(formValues: FormikProps<AwardAndSmiteDialogFormValues>) => {
         if (formValues.values.forceAction !== isForce) {
           setIsForce(formValues.values.forceAction);
         }
@@ -163,9 +165,9 @@ const SmiteDialog = ({
               nativeTokenDecimals={nativeTokenDecimals}
               isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
-              subscribedUsers={colonyMembers?.subscribedUsers || []}
               ethDomainId={ethDomainId}
               updateReputation={updateReputationCallback}
+              formMSG={MSG}
             />
           </Dialog>
         );
