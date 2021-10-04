@@ -1,0 +1,19 @@
+.main {
+  display: flex;
+  padding: 10px 0;
+  pointer-events: auto;
+}
+
+.headingWrapper {
+  margin-right: 10px;
+}
+
+.headingWrapper h4 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.color {
+  margin-right: 15px;
+}
