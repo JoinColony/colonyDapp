@@ -69,6 +69,7 @@ export default gql`
     motionState: String
     motionDomain: Int!
     rootHash: String
+    reputationPenalty: String!
   }
 
   input NetworkContractsInput {
