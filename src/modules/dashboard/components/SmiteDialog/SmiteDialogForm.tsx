@@ -4,6 +4,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { AddressZero } from 'ethers/constants';
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
+import Decimal from 'decimal.js';
 
 import Button from '~core/Button';
 import { ItemDataType } from '~core/OmniPicker';
@@ -28,7 +29,9 @@ import {
 } from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
-import { calculatePercentageReputation, ZeroValue } from '~utils/reputation';
+import { getFormattedTokenValue } from '~utils/tokens';
+import { calculatePercentageReputation } from '~utils/reputation';
+
 import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
@@ -44,19 +47,19 @@ const MSG = defineMessages({
   },
   team: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.team',
-    defaultMessage: 'Select Team in which punishment should happen',
+    defaultMessage: 'Team in which Reputation should be deducted',
   },
-  who: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.who',
-    defaultMessage: 'Pick who is the target',
+  recipient: {
+    id: 'dashboard.SmiteDialog.SmiteDialogForm.recipient',
+    defaultMessage: 'Recipient',
   },
   amount: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.amount',
-    defaultMessage: 'Amount of reputation to deduct',
+    defaultMessage: 'Amount of reputation points to deduct',
   },
   annotation: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.annotation',
-    defaultMessage: 'Explain why you are smiting the user (optional)',
+    defaultMessage: "Explain why you're smiting the user (optional)",
   },
   userPickerPlaceholder: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.userPickerPlaceholder',
@@ -65,6 +68,11 @@ const MSG = defineMessages({
   noPermission: {
     id: 'dashboard.SmiteDialog.SmiteDialogForm.noPermission',
     defaultMessage: `You need the {roleRequired} permission in {domain} to take this action.`,
+  },
+  maxReputation: {
+    id: 'dashboard.SmiteDialog.SmiteDialogForm.maxReputation',
+    defaultMessage:
+      'max: {userReputationAmount} pts ({userPercentageReputation}%)',
   },
 });
 interface Props extends ActionDialogProps {
@@ -75,6 +83,7 @@ interface Props extends ActionDialogProps {
     totalRep?: string,
   ) => void;
   isVotingExtensionEnabled: boolean;
+  nativeTokenDecimals: number;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -96,6 +105,7 @@ const SmiteDialogForm = ({
   updateReputation,
   ethDomainId: preselectedDomainId,
   isVotingExtensionEnabled,
+  nativeTokenDecimals,
 }: Props & FormikProps<FormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
@@ -150,6 +160,15 @@ const SmiteDialogForm = ({
     userReputationData?.userReputation,
     totalReputationData?.userReputation,
   );
+  const unformattedUserReputationAmount = new Decimal(
+    userReputationData?.userReputation || 0,
+  )
+    .div(new Decimal(10).pow(nativeTokenDecimals))
+    .toNumber();
+  const formattedUserReputationAmount = getFormattedTokenValue(
+    userReputationData?.userReputation || 0,
+    nativeTokenDecimals,
+  );
 
   const domainOptions = useMemo(
     () =>
@@ -200,14 +219,10 @@ const SmiteDialogForm = ({
 
   useEffect(() => {
     updateReputation(
-      userPercentageReputation === ZeroValue.Zero ||
-        userPercentageReputation === ZeroValue.NearZero ||
-        userPercentageReputation === null
-        ? 0
-        : userPercentageReputation,
+      unformattedUserReputationAmount,
       totalReputationData?.userReputation,
     );
-  }, [totalReputationData, updateReputation, userPercentageReputation]);
+  }, [totalReputationData, updateReputation, unformattedUserReputationAmount]);
 
   const handleFilterMotionDomains = useCallback(
     (optionDomain) => {
@@ -269,7 +284,7 @@ const SmiteDialogForm = ({
           <SingleUserPicker
             appearance={{ width: 'wide' }}
             data={subscribedUsers}
-            label={MSG.who}
+            label={MSG.recipient}
             name="user"
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
@@ -309,15 +324,24 @@ const SmiteDialogForm = ({
             elementOnly
             maxButtonParams={{
               fieldName: 'amount',
-              maxAmount: String(userPercentageReputation || 0),
+              maxAmount: String(unformattedUserReputationAmount),
               setFieldValue,
             }}
             disabled={inputDisabled}
           />
-          <div className={styles.percentageSign}>%</div>
-          <p className={styles.inputText}>{`max: ${
-            userPercentageReputation === null ? 0 : userPercentageReputation
-          }%`}</p>
+          <div className={styles.percentageSign}>pts</div>
+          <p className={styles.inputText}>
+            <FormattedMessage
+              {...MSG.maxReputation}
+              values={{
+                userReputationAmount: formattedUserReputationAmount,
+                userPercentageReputation:
+                  userPercentageReputation === null
+                    ? 0
+                    : userPercentageReputation,
+              }}
+            />
+          </p>
         </div>
       </DialogSection>
       <DialogSection>
