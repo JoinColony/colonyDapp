@@ -14,7 +14,7 @@ import {
   useCoinMachineSaleTokensQuery,
   useCurrentPeriodTokensQuery,
   Colony,
-  useCoinMachineSalePeriodQuery,
+  useCoinMachineCurrentSalePeriodQuery,
   useCoinMachineTokenBalanceQuery,
   useSubgraphCoinMachinePeriodsQuery,
   useSubgraphTokenBoughtEventsSubscription,
@@ -91,7 +91,7 @@ const CoinMachine = ({
   const {
     data: salePeriodData,
     loading: salePeriodLoading,
-  } = useCoinMachineSalePeriodQuery({
+  } = useCoinMachineCurrentSalePeriodQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
   });
