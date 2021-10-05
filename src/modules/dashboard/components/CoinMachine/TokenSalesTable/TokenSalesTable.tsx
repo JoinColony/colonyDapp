@@ -136,6 +136,8 @@ const TokenSalesTable = ({
         refetchSalePeriodsData(salePeriodQueryVariables);
         startPollingSalePeriodsData(periodLength * 1000);
       }, periodRemainingTime);
+    } else {
+      startPollingSalePeriodsData(periodLength * 1000);
     }
     return () => stopPollingSalePeriodsData();
   }, [
