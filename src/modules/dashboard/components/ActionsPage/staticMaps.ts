@@ -90,6 +90,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.ColonyEditMotion]: 'emoji-edit-tools',
   [ColonyMotions.EditDomainMotion]: 'emoji-pencil-note',
   [ColonyMotions.SetUserRolesMotion]: 'emoji-crane',
+  [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
