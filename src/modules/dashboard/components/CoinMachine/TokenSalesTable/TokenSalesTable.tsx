@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
 import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
@@ -14,9 +14,11 @@ import {
 } from '~core/Table';
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
-  SubgraphCoinMachinePeriodsQuery,
   TokenInfoQuery,
-} from '~data/generated';
+  useCoinMachineSalePeriodsQuery,
+  SalePeriod,
+} from '~data/index';
+import { Address } from '~types/index';
 import { getPriceStatus } from '~utils/colonyCoinMachine';
 import { RemainingTokensValue } from '~utils/components';
 
@@ -49,18 +51,33 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  tableData?: SubgraphCoinMachinePeriodsQuery['coinMachinePeriods'];
   periodTokens?: PeriodTokensType;
   sellableToken?: TokenInfoQuery['tokenInfo'];
+  colonyAddress: Address;
+  periodLength: number;
+  periodRemainingTime: number;
 }
 
 const displayName = 'dashboard.CoinMachine.TokenSalesTable';
 
 const TokenSalesTable = ({
-  tableData = [],
   periodTokens,
   sellableToken,
+  colonyAddress,
+  periodLength,
+  periodRemainingTime,
 }: Props) => {
+  const salePeriodQueryVariables = { colonyAddress, limit: 50 };
+  const {
+    data: salePeriodsData,
+    loading: salePeriodsLoading,
+    refetch: refetchSalePeriodsData,
+    startPolling: startPollingSalePeriodsData,
+    stopPolling: stopPollingSalePeriodsData,
+  } = useCoinMachineSalePeriodsQuery({
+    variables: salePeriodQueryVariables,
+  });
+
   const TABLE_HEADERS = [
     {
       text: MSG.saleColumnTitle,
@@ -80,6 +97,10 @@ const TokenSalesTable = ({
     },
   ];
 
+  const tableData =
+    ((salePeriodsData?.coinMachineSalePeriods as unknown) as SalePeriod[]) ||
+    [];
+
   const formattedData = useMemo(() => {
     return tableData.map((data) => {
       return {
@@ -98,7 +119,41 @@ const TokenSalesTable = ({
           periodTokens && getPriceStatus(periodTokens, data.tokensBought),
       };
     });
-  }, [tableData, periodTokens]);
+  }, [periodTokens, tableData]);
+
+  /*
+   * Manually update the sale table the first time around, if the remaining
+   * time in the period is less than the period leght
+   *
+   * This is for cases where you load the page in the middle of period
+   */
+  useEffect(() => {
+    if (
+      periodRemainingTime > 1000 &&
+      periodRemainingTime < periodLength * 1000
+    ) {
+      setTimeout(() => {
+        refetchSalePeriodsData(salePeriodQueryVariables);
+        startPollingSalePeriodsData(periodLength * 1000);
+      }, periodRemainingTime);
+    }
+    return () => stopPollingSalePeriodsData();
+  }, [
+    periodLength,
+    periodRemainingTime,
+    refetchSalePeriodsData,
+    salePeriodQueryVariables,
+    startPollingSalePeriodsData,
+    stopPollingSalePeriodsData,
+  ]);
+
+  /*
+   * @TODO Add proper loading component
+   */
+  if (salePeriodsLoading) {
+    return <span>Loading</span>;
+  }
+
   return (
     <div className={styles.container}>
       <Heading
