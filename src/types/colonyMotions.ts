@@ -11,7 +11,7 @@ export enum ColonyMotions {
   SetUserRolesMotion = 'SetUserRolesMotion',
   MoveFundsMotion = 'MoveFundsMotion',
   VersionUpgradeMotion = 'VersionUpgradeMotion',
-  EmitDomainReputationPenalty = 'EmitDomainReputationPenalty',
+  EmitDomainReputationPenaltyMotion = 'EmitDomainReputationPenaltyMotion',
 }
 
 export const motionNameMapping = {
@@ -23,5 +23,5 @@ export const motionNameMapping = {
   setUserRoles: ColonyMotions.SetUserRolesMotion,
   moveFundsBetweenPots: ColonyMotions.MoveFundsMotion,
   upgrade: ColonyMotions.VersionUpgradeMotion,
-  emitDomainReputationPenalty: ColonyMotions.EmitDomainReputationPenalty,
+  emitDomainReputationPenalty: ColonyMotions.EmitDomainReputationPenaltyMotion,
 };
