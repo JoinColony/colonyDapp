@@ -267,7 +267,8 @@ export type Query = {
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
   coinMachineCurrentSalePeriod: CurrentSalePeriod;
-  coinMachinePeriods: Array<PreviousPeriods>;
+  coinMachinePeriods: Array<SalePeriod>;
+  coinMachineSalePeriods: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
   coinMachineTokenBalance: Scalars['String'];
   coinMachineTransactionAmount: TrannsactionAmount;
@@ -363,6 +364,12 @@ export type QueryCoinMachinePeriodsArgs = {
   where?: Maybe<ByColonyFilter>;
   orderBy: Scalars['String'];
   orderDirection: Scalars['String'];
+};
+
+
+export type QueryCoinMachineSalePeriodsArgs = {
+  colonyAddress: Scalars['String'];
+  limit: Scalars['Int'];
 };
 
 
@@ -1289,7 +1296,7 @@ export type TrannsactionAmount = {
   transactionSucceed: Scalars['Boolean'];
 };
 
-export type PreviousPeriods = {
+export type SalePeriod = {
   saleEndedAt: Scalars['String'];
   tokensBought: Scalars['String'];
   price: Scalars['String'];
@@ -2169,7 +2176,15 @@ export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<PreviousPeriods, 'saleEndedAt' | 'tokensBought' | 'price'>> };
+export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'>> };
+
+export type CoinMachineSalePeriodsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  limit: Scalars['Int'];
+}>;
+
+
+export type CoinMachineSalePeriodsQuery = { coinMachineSalePeriods: Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'> };
 
 export type TransactionMessagesQueryVariables = Exact<{
   transactionHash: Scalars['String'];
@@ -5718,6 +5733,42 @@ export function useSubgraphCoinMachinePeriodsLazyQuery(baseOptions?: Apollo.Lazy
 export type SubgraphCoinMachinePeriodsQueryHookResult = ReturnType<typeof useSubgraphCoinMachinePeriodsQuery>;
 export type SubgraphCoinMachinePeriodsLazyQueryHookResult = ReturnType<typeof useSubgraphCoinMachinePeriodsLazyQuery>;
 export type SubgraphCoinMachinePeriodsQueryResult = Apollo.QueryResult<SubgraphCoinMachinePeriodsQuery, SubgraphCoinMachinePeriodsQueryVariables>;
+export const CoinMachineSalePeriodsDocument = gql`
+    query CoinMachineSalePeriods($colonyAddress: String!, $limit: Int!) {
+  coinMachineSalePeriods(colonyAddress: $colonyAddress, limit: $limit) @client {
+    saleEndedAt
+    tokensBought
+    price
+  }
+}
+    `;
+
+/**
+ * __useCoinMachineSalePeriodsQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineSalePeriodsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineSalePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineSalePeriodsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useCoinMachineSalePeriodsQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>) {
+        return Apollo.useQuery<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>(CoinMachineSalePeriodsDocument, baseOptions);
+      }
+export function useCoinMachineSalePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>(CoinMachineSalePeriodsDocument, baseOptions);
+        }
+export type CoinMachineSalePeriodsQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodsQuery>;
+export type CoinMachineSalePeriodsLazyQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodsLazyQuery>;
+export type CoinMachineSalePeriodsQueryResult = Apollo.QueryResult<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>;
 export const TransactionMessagesDocument = gql`
     query TransactionMessages($transactionHash: String!) {
   transactionMessages(transactionHash: $transactionHash) {
