@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useCallback } from 'react';
 import { bigNumberify } from 'ethers/utils';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import classnames from 'classnames';
+import Decimal from 'decimal.js';
 
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 import Heading from '~core/Heading';
@@ -109,6 +110,7 @@ const DefaultMotion = ({
     toDomain,
     blockNumber,
     newVersion,
+    reputationPenalty,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -316,6 +318,10 @@ const DefaultMotion = ({
       </div>
     ),
     spaceBreak: <br />,
+    reputationPenalty: `${getFormattedTokenValue(
+      new Decimal(reputationPenalty).mul(-1).toString(),
+      decimals,
+    )} pts`,
   };
 
   const motionState = motionStatusData?.motionStatus;
