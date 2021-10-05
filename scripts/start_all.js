@@ -84,6 +84,30 @@ addProcess('reputationMonitor', async () => {
   return monitorProcess;
 });
 
+addProcess('metatransactionBroadcaster', async () => {
+  const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
+  const metatransactionProcess = spawn('node', ['../colonyDapp/src/lib/colonyNetwork/packages/metatransaction-broadcaster/bin/index.js', '--privateKey', '0x0355596cdb5e5242ad082c4fe3f8bbe48c9dba843fe1f99dd8272f487e70efae', '--gasPrice', '1', '--colonyNetworkAddress', networkAddress, '--port', '3004'], {
+    cwd: path.resolve(__dirname, '..'),
+    stdio: 'pipe',
+  });
+
+  if (args.foreground) {
+    metatransactionProcess.stdout.pipe(process.stdout);
+    metatransactionProcess.stderr.pipe(process.stderr);
+  }
+  metatransactionProcess.on('error', error => {
+    metatransactionProcess.kill();
+    /*
+     * @NOTE Just stop the startup orchestration process is something goes wrong
+     */
+    console.error(error);
+    process.exit(1);
+  });
+  await waitOn({ resources: ['tcp:8545'] });
+
+  return metatransactionProcess;
+});
+
 addProcess('db', async () => {
   const dbProcess = spawn('npm', ['run', 'db:start'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
