@@ -1012,9 +1012,11 @@ const getEmitDomainReputationPenaltyMotionValues = async (
 
   const domainReputationPenaltyAction: {
     reputationPenalty: BigNumberish;
+    recipient: Address;
   } = {
     ...motionDefaultValues,
     reputationPenalty: values.args[4].toString(),
+    recipient: values.args[3],
   };
 
   return domainReputationPenaltyAction;
