@@ -16,7 +16,6 @@ import {
   Colony,
   useCoinMachineCurrentSalePeriodQuery,
   useCoinMachineTokenBalanceQuery,
-  useSubgraphCoinMachinePeriodsQuery,
   useSubgraphTokenBoughtEventsSubscription,
 } from '~data/index';
 
@@ -61,6 +60,9 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
+  const { transactionHash } = useParams<{
+    transactionHash: string;
+  }>();
   const [tokenBoughtEventsCounter, setTokenBoughtEventsCounter] = useState(0);
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
@@ -89,21 +91,11 @@ const CoinMachine = ({
   });
 
   const {
-    data: salePeriodData,
-    loading: salePeriodLoading,
+    data: currentSalePeriodData,
+    loading: currentSalePeriodLoading,
   } = useCoinMachineCurrentSalePeriodQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
-  });
-
-  const { transactionHash } = useParams<{
-    transactionHash: string;
-  }>();
-  const {
-    data: salePeriodsData,
-    loading: salePeriodsLoading,
-  } = useSubgraphCoinMachinePeriodsQuery({
-    variables: { colonyAddress: colonyAddress.toLowerCase() },
   });
 
   const {
@@ -201,11 +193,10 @@ const CoinMachine = ({
   if (
     loading ||
     saleTokensLoading ||
-    salePeriodLoading ||
+    currentSalePeriodLoading ||
     !data?.processedColony?.installedExtensions ||
     periodTokensLoading ||
     coinMachineTokenBalanceLoading ||
-    salePeriodsLoading ||
     loadingTokenBoughtEventsData
   ) {
     return (
@@ -290,7 +281,9 @@ const CoinMachine = ({
         )}
         <div className={styles.sales}>
           <TokenSalesTable
-            tableData={salePeriodsData?.coinMachinePeriods || []}
+            colonyAddress={colonyAddress}
+            periodLength={periodLength}
+            periodRemainingTime={timeRemaining}
             sellableToken={saleToken}
             periodTokens={periodTokens}
           />
