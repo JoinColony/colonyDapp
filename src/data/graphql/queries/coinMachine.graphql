@@ -72,3 +72,12 @@ query SubgraphCoinMachinePeriods($colonyAddress: String!) {
     price
   }
 }
+
+query CoinMachineSalePeriods($colonyAddress: String!, $limit: Int!) {
+  coinMachineSalePeriods(colonyAddress: $colonyAddress, limit: $limit) @client {
+    saleEndedAt
+    tokensBought
+    price
+  }
+}
+
