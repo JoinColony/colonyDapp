@@ -120,7 +120,7 @@ const StakingSlider = ({
         return 'cantStakeMore';
       }
 
-      if (userActivatedTokens.gt(maxStake)) {
+      if (userActivatedTokens.gt(maxStake) && maxStake.lt(remainingToStake)) {
         return 'stakeMoreReputation';
       }
 
