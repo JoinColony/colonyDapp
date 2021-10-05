@@ -142,6 +142,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyMotions.SetUserRolesMotion]: MOTION_EVENTS,
   [ColonyMotions.PaymentMotion]: MOTION_EVENTS,
   [ColonyMotions.MoveFundsMotion]: MOTION_EVENTS,
+  [ColonyMotions.EmitDomainReputationPenaltyMotion]: MOTION_EVENTS,
 };
 
 /*
@@ -244,5 +245,10 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Domain,
     ActionPageDetails.ToRecipient,
     ActionPageDetails.Permissions,
+  ],
+  [ColonyMotions.EmitDomainReputationPenaltyMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.ReputationPenalty,
   ],
 };
