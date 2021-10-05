@@ -43,6 +43,7 @@ interface ActionValues {
   newVersion: string;
   address: Address;
   roles: ActionUserRoles[];
+  reputationPenalty: BigNumberish;
 }
 
 interface MotionValues extends ActionValues {
@@ -990,7 +991,7 @@ const getEmitDomainReputationPenaltyMotionValues = async (
   processedEvents: ProcessedEvent[],
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
-): Promise<Partial<ActionValues>> => {
+): Promise<Partial<MotionValues>> => {
   const motionCreatedEvent = processedEvents[0];
   const motionId = motionCreatedEvent.values.motionId.toString();
   const motion = await votingClient.getMotion(motionId);
@@ -1004,14 +1005,10 @@ const getEmitDomainReputationPenaltyMotionValues = async (
   );
 
   const domainReputationPenaltyAction: {
-    address: Address;
-    recipient: Address;
-    domainReputationPenalty: BigNumberish;
-    fromDomain?: number;
-    actionInitiator?: string;
+    reputationPenalty: BigNumberish;
   } = {
     ...motionDefaultValues,
-    domainReputationPenalty: values.args[4].toString(),
+    reputationPenalty: values.args[4].toString(),
   };
 
   return domainReputationPenaltyAction;
@@ -1222,7 +1219,7 @@ export const getActionValues = async (
         ...versionUpgradeMotionValues,
       };
     }
-    case ColonyMotions.EmitDomainReputationPenalty: {
+    case ColonyMotions.EmitDomainReputationPenaltyMotion: {
       // eslint-disable-next-line max-len
       const emitDomainReputationPenaltyMotionValues = await getEmitDomainReputationPenaltyMotionValues(
         processedEvents,
