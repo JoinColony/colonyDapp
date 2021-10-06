@@ -17,48 +17,45 @@ import {
 } from '../../../core/actionCreators';
 import { updateDomainReputation } from '../utils';
 
-function* smiteAction({
+function* manageReputationAction({
   payload: {
     colonyAddress,
     colonyName,
     domainId,
     userAddress,
     amount,
+    isSmitingReputation,
     annotationMessage,
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_ACTION_SMITE>) {
+}: Action<ActionTypes.COLONY_ACTION_MANAGE_REPUTATION>) {
   let txChannel;
   try {
+    const batchKey = isSmitingReputation
+      ? 'emitDomainReputationPenalty'
+      : 'emitDomainReputationReward';
+
     if (!userAddress) {
-      throw new Error(
-        'User address not set for emitDomainReputationPenalty transaction',
-      );
+      throw new Error(`User address not set for ${batchKey} transaction`);
     }
 
     if (!domainId) {
-      throw new Error(
-        'Domain id not set for emitDomainReputationPenalty transaction',
-      );
+      throw new Error(`Domain id not set for ${batchKey} transaction`);
     }
 
     if (!colonyAddress) {
-      throw new Error(
-        'Colony address not set for emitDomainReputationPenalty transaction',
-      );
+      throw new Error(`Colony address not set for ${batchKey} transaction`);
     }
 
     txChannel = yield call(getTxChannel, metaId);
 
-    const batchKey = 'emitDomainReputationPenalty';
-
     const {
-      emitDomainReputationPenalty,
-      annotateEmitDomainReputationPenalty,
+      manageReputation,
+      annotateManageReputation,
     } = yield createTransactionChannels(metaId, [
-      'emitDomainReputationPenalty',
-      'annotateEmitDomainReputationPenalty',
+      'manageReputation',
+      'annotateManageReputation',
     ]);
 
     const createGroupTransaction = ({ id, index }, config) =>
@@ -71,16 +68,18 @@ function* smiteAction({
         },
       });
 
-    yield createGroupTransaction(emitDomainReputationPenalty, {
+    yield createGroupTransaction(manageReputation, {
       context: ClientType.ColonyClient,
-      methodName: 'emitDomainReputationPenaltyWithProofs',
+      methodName: isSmitingReputation
+        ? 'emitDomainReputationPenaltyWithProofs'
+        : 'emitDomainReputationReward',
       identifier: colonyAddress,
       params: [domainId, userAddress, amount],
       ready: false,
     });
 
     if (annotationMessage) {
-      yield createGroupTransaction(annotateEmitDomainReputationPenalty, {
+      yield createGroupTransaction(annotateManageReputation, {
         context: ClientType.ColonyClient,
         methodName: 'annotateTransaction',
         identifier: colonyAddress,
@@ -89,33 +88,27 @@ function* smiteAction({
       });
     }
 
-    yield takeFrom(
-      emitDomainReputationPenalty.channel,
-      ActionTypes.TRANSACTION_CREATED,
-    );
+    yield takeFrom(manageReputation.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
-        annotateEmitDomainReputationPenalty.channel,
+        annotateManageReputation.channel,
         ActionTypes.TRANSACTION_CREATED,
       );
     }
 
-    yield put(transactionReady(emitDomainReputationPenalty.id));
+    yield put(transactionReady(manageReputation.id));
 
     const {
       payload: { hash: txHash },
     } = yield takeFrom(
-      emitDomainReputationPenalty.channel,
+      manageReputation.channel,
       ActionTypes.TRANSACTION_HASH_RECEIVED,
     );
 
-    yield takeFrom(
-      emitDomainReputationPenalty.channel,
-      ActionTypes.TRANSACTION_SUCCEEDED,
-    );
+    yield takeFrom(manageReputation.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      yield put(transactionPending(annotateEmitDomainReputationPenalty.id));
+      yield put(transactionPending(annotateManageReputation.id));
 
       let annotationMessageIpfsHash = null;
       annotationMessageIpfsHash = yield call(
@@ -126,16 +119,16 @@ function* smiteAction({
       );
 
       yield put(
-        transactionAddParams(annotateEmitDomainReputationPenalty.id, [
+        transactionAddParams(annotateManageReputation.id, [
           txHash,
           annotationMessageIpfsHash,
         ]),
       );
 
-      yield put(transactionReady(annotateEmitDomainReputationPenalty.id));
+      yield put(transactionReady(annotateManageReputation.id));
 
       yield takeFrom(
-        annotateEmitDomainReputationPenalty.channel,
+        annotateManageReputation.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
@@ -146,7 +139,7 @@ function* smiteAction({
     yield fork(updateDomainReputation, colonyAddress, userAddress, domainId);
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_ACTION_SMITE_SUCCESS,
+      type: ActionTypes.COLONY_ACTION_MANAGE_REPUTATION_SUCCESS,
       meta,
     });
 
@@ -154,13 +147,20 @@ function* smiteAction({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (error) {
-    return yield putError(ActionTypes.COLONY_ACTION_SMITE_ERROR, error, meta);
+    return yield putError(
+      ActionTypes.COLONY_ACTION_MANAGE_REPUTATION_ERROR,
+      error,
+      meta,
+    );
   } finally {
     txChannel.close();
   }
   return null;
 }
 
-export default function* smiteActionSaga() {
-  yield takeEvery(ActionTypes.COLONY_ACTION_SMITE, smiteAction);
+export default function* manageReputationActionSaga() {
+  yield takeEvery(
+    ActionTypes.COLONY_ACTION_MANAGE_REPUTATION,
+    manageReputationAction,
+  );
 }
