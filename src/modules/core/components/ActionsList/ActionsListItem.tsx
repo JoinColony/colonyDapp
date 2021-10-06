@@ -9,6 +9,7 @@ import {
 import { ColonyRoles } from '@colony/colony-js';
 
 import { AddressZero } from 'ethers/constants';
+import Decimal from 'decimal.js';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import Numeral, { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
@@ -17,7 +18,10 @@ import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import CountDownTimer from '~dashboard/ActionsPage/CountDownTimer';
 
 import { getMainClasses, removeValueUnits } from '~utils/css';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  getFormattedTokenValue,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
 import {
   useUser,
   Colony,
@@ -98,6 +102,7 @@ const ActionsListItem = ({
     totalNayStake,
     requiredStake,
     transactionTokenAddress,
+    reputationPenalty,
   },
   colony,
   handleOnClick,
@@ -295,6 +300,10 @@ const ActionsListItem = ({
                   toDomain: toDomain?.name || '',
                   roles: roleTitle,
                   newVersion: newVersion || '0',
+                  reputationPenalty: `${getFormattedTokenValue(
+                    new Decimal(reputationPenalty || '0').mul(-1).toString(),
+                    decimals,
+                  )} pts`,
                 }}
               />
             </span>
