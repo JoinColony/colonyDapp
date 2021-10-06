@@ -114,6 +114,12 @@ export const getValuesForActionType = (
           initiator: values?.user || colonyAddress,
         };
       }
+      case ColonyActions.EmitDomainReputationPenalty: {
+        return {
+          recipient: values.user,
+          reputationPenalty: values.amount,
+        };
+      }
       default: {
         return {};
       }
