@@ -10,6 +10,7 @@ import { useDispatch } from 'redux-react-hook';
 import { bigNumberify } from 'ethers/utils';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import TimerValue from '~core/TimerValue';
 
 import {
   useMotionTimeoutPeriodsQuery,
@@ -19,7 +20,6 @@ import {
 import { splitTimeLeft } from '~utils/time';
 import { MotionState } from '~utils/colonyMotions';
 import { ActionTypes } from '~redux/index';
-import { TimerValue } from '~utils/components';
 
 import styles from './CountDownTimer.css';
 
