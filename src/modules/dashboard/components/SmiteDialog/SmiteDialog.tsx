@@ -72,8 +72,8 @@ const SmiteDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_SMITE${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_SMITE${actionEnd}`];
+        ? ActionTypes[`COLONY_MOTION_MANAGE_REPUTATION${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_MANAGE_REPUTATION${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );
@@ -107,9 +107,9 @@ const SmiteDialog = ({
   const transform = useCallback(
     pipe(
       mapPayload(({ amount, domainId, annotation, user, motionDomainId }) => {
-        const reputationChangeAmount = new Decimal(amount)
-          .mul(new Decimal(10).pow(nativeTokenDecimals))
-          .mul(-1);
+        const reputationChangeAmount = new Decimal(amount).mul(
+          new Decimal(10).pow(nativeTokenDecimals),
+        );
 
         return {
           colonyAddress,
@@ -119,6 +119,7 @@ const SmiteDialog = ({
           annotationMessage: annotation,
           amount: reputationChangeAmount.toString(),
           motionDomainId,
+          isSmitingReputation: false,
         };
       }),
       withMeta({ history }),
