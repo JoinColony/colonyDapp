@@ -2,9 +2,10 @@ import React, { useEffect, useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
+import TimerValue from '~core/TimerValue';
+
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
-import { TimerValue } from '~utils/components';
 import useSplitTime from '~utils/hooks/useSplitTime';
 
 import RemainingDisplayWidget from './RemainingDisplayWidget';

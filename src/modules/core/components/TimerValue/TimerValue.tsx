@@ -24,7 +24,9 @@ interface Props {
   splitTime: any;
 }
 
-export const TimerValue = ({ splitTime }: Props) => {
+const displayName = 'TimerValue';
+
+const TimerValue = ({ splitTime }: Props) => {
   if (splitTime === undefined) {
     return null;
   }
@@ -50,3 +52,7 @@ export const TimerValue = ({ splitTime }: Props) => {
     </>
   );
 };
+
+TimerValue.displayName = displayName;
+
+export default TimerValue;
