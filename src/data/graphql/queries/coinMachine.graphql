@@ -81,6 +81,7 @@ query CoinMachineSalePeriods($colonyAddress: String!, $limit: Int!) {
   coinMachineSalePeriods(colonyAddress: $colonyAddress, limit: $limit) @client {
     saleEndedAt
     tokensBought
+    tokensAvailable
     price
   }
 }

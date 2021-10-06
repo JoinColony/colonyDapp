@@ -1293,6 +1293,7 @@ export type TrannsactionAmount = {
 export type SalePeriod = {
   saleEndedAt: Scalars['String'];
   tokensBought: Scalars['String'];
+  tokensAvailable: Scalars['String'];
   price: Scalars['String'];
 };
 
@@ -2181,7 +2182,7 @@ export type CoinMachineSalePeriodsQueryVariables = Exact<{
 }>;
 
 
-export type CoinMachineSalePeriodsQuery = { coinMachineSalePeriods: Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'> };
+export type CoinMachineSalePeriodsQuery = { coinMachineSalePeriods: Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'tokensAvailable' | 'price'> };
 
 export type TransactionMessagesQueryVariables = Exact<{
   transactionHash: Scalars['String'];
@@ -5723,6 +5724,7 @@ export const CoinMachineSalePeriodsDocument = gql`
   coinMachineSalePeriods(colonyAddress: $colonyAddress, limit: $limit) @client {
     saleEndedAt
     tokensBought
+    tokensAvailable
     price
   }
 }
