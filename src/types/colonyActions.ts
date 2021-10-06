@@ -146,6 +146,7 @@ export interface FormattedAction {
   blockNumber: number;
   totalNayStake?: string;
   requiredStake?: string;
+  reputationPenalty?: string;
 }
 
 export interface FormattedEvent {
