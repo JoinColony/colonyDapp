@@ -70,7 +70,8 @@ subscription SubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddr
         "ColonyRoleSet(address,address,uint256,uint8,bool)",
         "ColonyUpgraded(address,uint256,uint256)",
         "ColonyUpgraded(uint256,uint256)",
-        "RecoveryModeEntered(address)"
+        "RecoveryModeEntered(address)",
+        "ArbitraryReputationUpdate(address,address,uint256,int256)",
       ]
     }) {
     id
