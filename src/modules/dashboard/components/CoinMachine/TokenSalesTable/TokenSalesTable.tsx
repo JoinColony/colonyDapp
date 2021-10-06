@@ -20,10 +20,10 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 import { getPriceStatus } from '~utils/colonyCoinMachine';
-import { RemainingTokensValue } from '~utils/components';
 
 import TokenPriceStatusIcon from '../TokenPriceStatusIcon';
 import { PeriodTokensType } from '../RemainingDisplayWidgets';
+import SoldTokensWidget from './SoldTokensWidget';
 
 import styles from './TokenSalesTable.css';
 
@@ -102,23 +102,26 @@ const TokenSalesTable = ({
     [];
 
   const formattedData = useMemo(() => {
-    return tableData.map((data) => {
-      return {
-        saleEndedAt: new Date(parseInt(data.saleEndedAt, 10)),
-        tokensRemaining: periodTokens ? (
-          <RemainingTokensValue
-            periodTokens={periodTokens}
-            tokensBought={data.tokensBought}
-          />
-        ) : (
-          '???'
-        ),
-        hasSoldOut: periodTokens?.maxPeriodTokens.eq(data.tokensBought),
-        price: getFormattedTokenValue(data.price, 18),
-        priceStatus:
-          periodTokens && getPriceStatus(periodTokens, data.tokensBought),
-      };
-    });
+    return tableData.map(
+      ({ saleEndedAt, tokensAvailable, tokensBought, price }) => {
+        return {
+          saleEndedAt: new Date(parseInt(saleEndedAt, 10)),
+          tokensRemaining: periodTokens ? (
+            <SoldTokensWidget
+              periodTokens={periodTokens}
+              tokensBought={tokensBought}
+              tokensAvailable={tokensAvailable}
+            />
+          ) : (
+            '0/0'
+          ),
+          hasSoldOut: periodTokens?.maxPeriodTokens.lte(tokensBought),
+          price: getFormattedTokenValue(price, 18),
+          priceStatus:
+            periodTokens && getPriceStatus(periodTokens, tokensBought),
+        };
+      },
+    );
   }, [periodTokens, tableData]);
 
   /*
@@ -126,6 +129,10 @@ const TokenSalesTable = ({
    * time in the period is less than the period leght
    *
    * This is for cases where you load the page in the middle of period
+   *
+   * @TODO List
+   * - Only start if the sale is started
+   * - Add message if number of sale periods exceeds <limit>
    */
   useEffect(() => {
     if (
