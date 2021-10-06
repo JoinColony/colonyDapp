@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
-import { RemainingTokensValue } from '~utils/components';
 import { getPriceStatus } from '~utils/colonyCoinMachine';
 
+import RemainingTokensValue from './RemainingTokensValue';
 import RemainingWidget from './RemainingDisplayWidget';
 
 interface Appearance {
