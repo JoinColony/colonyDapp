@@ -1,8 +1,13 @@
 import { ClientType, getLogs, getBlockTime } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
-import { bigNumberify } from 'ethers/utils';
+import { BigNumber, bigNumberify, BigNumberish } from 'ethers/utils';
 
 import { Context } from '~context/index';
+import {
+  SubgraphCoinMachinePeriodsQuery,
+  SubgraphCoinMachinePeriodsQueryVariables,
+  SubgraphCoinMachinePeriodsDocument,
+} from '~data/index';
 import { createAddress } from '~utils/web3';
 
 import { getToken } from './token';
@@ -220,6 +225,94 @@ export const coinMachineResolvers = ({
         const tokenBalance = await coinMachineClient.getTokenBalance();
 
         return tokenBalance.toString();
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
+    async coinMachineSalePeriods(_, { colonyAddress, limit }) {
+      console.log('<--- fetching periods ---->');
+      try {
+        const activeSalesData = await apolloClient.query<
+          SubgraphCoinMachinePeriodsQuery,
+          SubgraphCoinMachinePeriodsQueryVariables
+        >({
+          query: SubgraphCoinMachinePeriodsDocument,
+          variables: {
+            colonyAddress: colonyAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        const { networkClient } = colonyManager;
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+        const periodLength = (await coinMachineClient.getPeriodLength()).mul(
+          1000,
+        );
+
+        const currentBlockTime = await getBlockTime(
+          networkClient.provider,
+          'latest',
+        );
+
+        console.log('CURRENT BLOCK TIME', currentBlockTime);
+        console.log('PERIOD LENGTH', periodLength.toNumber());
+
+        const stalePeriods: Array<{
+          saleEndedAt: number;
+          tokensBought: BigNumberish | null;
+          price: BigNumberish | null;
+        }> = [];
+
+        // console.log('ALL SALE PERIODS');
+        /*
+         * @TODO List
+         * -
+         */
+
+        let latestPeriodStart = currentBlockTime;
+        while (latestPeriodStart % periodLength !== 0) {
+          latestPeriodStart -= 1000;
+        }
+        let latestPeriodEnd = latestPeriodStart;
+
+        for (let index = 0; index < limit; index += 1) {
+          stalePeriods.push({
+            saleEndedAt: latestPeriodEnd,
+            tokensBought: bigNumberify(0),
+            price: bigNumberify(0),
+          });
+          latestPeriodEnd -= periodLength.toNumber();
+        }
+
+        const activeSales = activeSalesData?.data?.coinMachinePeriods || [];
+        const aggregatedPeriods = stalePeriods
+          /*
+           * Only return up to the <limit> number of periods
+           */
+          .map((staleSale) => {
+            const { saleEndedAt: staleSaleEndedAt } = staleSale;
+            const existingActiveSale = activeSales.find(
+              ({ saleEndedAt: activeSaleEndedAt }) =>
+                activeSaleEndedAt === String(staleSaleEndedAt),
+            );
+            return existingActiveSale || staleSale;
+          })
+          /*
+           * Filter out
+           * - sale periods that end in the future
+           */
+          .filter(({ saleEndedAt }) => saleEndedAt <= currentBlockTime);
+
+        console.log('ACTIVE', activeSalesData?.data?.coinMachinePeriods || []);
+        console.log('STALE', stalePeriods);
+        console.log('ALL', aggregatedPeriods);
+
+        console.log('<--- fetched new periods ---->');
+        return aggregatedPeriods;
       } catch (error) {
         console.error(error);
         return null;
