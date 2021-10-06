@@ -78,6 +78,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.MotionRewardClaimed} {{agent} claimed their stake in motion {motionId}}
       ${ColonyAndExtensionsEvents.MotionEventSet} {Motion {motionId} fast-forwarded to the next lifecycle}
       ${ColonyAndExtensionsEvents.AgreementSigned} {User {agent} signed the whitelist agreement}
+      ${ColonyAndExtensionsEvents.ArbitraryReputationUpdate} {{agent} smote {recipient} with a {reputationPenalty} reputation penalty}
       other {{eventName} emmited with values: {displayValues}}
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,
