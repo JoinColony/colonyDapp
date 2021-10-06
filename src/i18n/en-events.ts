@@ -73,6 +73,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.MotionEscalated} {{agent} escalated motion {motionId} from {domain} to {newDomain}}
       ${ColonyAndExtensionsEvents.MotionRewardClaimed} {{agent} claimed their stake in motion {motionId}}
       ${ColonyAndExtensionsEvents.MotionEventSet} {Motion {motionId} fast-forwarded to the next lifecycle}
+      ${ColonyAndExtensionsEvents.ArbitraryReputationUpdate} {{agent} smote {recipient} with a {reputationPenalty} reputation penalty}
       other {{eventName} emmited with values: {displayValues}}
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,

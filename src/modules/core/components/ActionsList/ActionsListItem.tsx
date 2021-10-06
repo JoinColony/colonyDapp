@@ -7,9 +7,9 @@ import {
   useIntl,
 } from 'react-intl';
 import { ColonyRoles } from '@colony/colony-js';
-
-import { AddressZero } from 'ethers/constants';
 import Decimal from 'decimal.js';
+import { AddressZero } from 'ethers/constants';
+
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import Numeral, { AbbreviatedNumeral } from '~core/Numeral';
 import Icon from '~core/Icon';
