@@ -10,7 +10,7 @@ import editColonyActionSaga from './editColony';
 import managePermissionsActionSaga from './managePermissions';
 import unlockTokenActionSaga from './unlockToken';
 import enterRecoveryActionSaga from './enterRecovery';
-import smiteActionSaga from './smite';
+import manageReputationActionSaga from './manageReputation';
 
 export default function* actionsSagas() {
   yield all([
@@ -24,6 +24,6 @@ export default function* actionsSagas() {
     call(managePermissionsActionSaga),
     call(unlockTokenActionSaga),
     call(enterRecoveryActionSaga),
-    call(smiteActionSaga),
+    call(manageReputationActionSaga),
   ]);
 }
