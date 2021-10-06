@@ -7,7 +7,7 @@ import { getFormattedTokenValue } from '~utils/tokens';
 
 const MSG = defineMessages({
   soldOut: {
-    id: `dashboard.CoinMachine.RemainingDisplayWidgetsRemainingTokensValue.soldOut`,
+    id: `dashboard.CoinMachine.RemainingDisplayWidgetsRemaining.TokensValue.soldOut`,
     defaultMessage: 'SOLD OUT',
   },
 });
@@ -17,7 +17,7 @@ interface Props {
   tokensBought: BigNumberish;
 }
 
-const displayedName = `dashboard.CoinMachine.RemainingDisplayWidgetsRemainingTokensValue`;
+const displayedName = `dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokensValue`;
 
 const RemainingTokensValue = ({ periodTokens, tokensBought }: Props) => {
   const { maxPeriodTokens, decimals } = periodTokens;
