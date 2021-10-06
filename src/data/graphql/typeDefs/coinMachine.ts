@@ -36,6 +36,7 @@ export default gql`
   type SalePeriod {
     saleEndedAt: String!
     tokensBought: String!
+    tokensAvailable: String!
     price: String!
   }
 
