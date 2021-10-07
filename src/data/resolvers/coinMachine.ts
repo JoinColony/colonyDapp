@@ -18,6 +18,33 @@ import { createAddress, getAverageBlockPeriod } from '~utils/web3';
 
 import { getToken } from './token';
 
+/*
+ * Small helper to replay TokensBought / Transfer events over a reversed
+ * period array in order to generate a historic available tokens total
+ *
+ * @TODO Add enum types for the Event names
+ */
+const replayBalanceEvents = (
+  {
+    name,
+    values,
+  }: { name: string; values: { wad: BigNumber; numTokens: BigNumber } },
+  total: BigNumber,
+): BigNumber => {
+  let aggregator = total;
+  if (name === 'Transfer') {
+    // eslint-disable-next-line no-param-reassign
+    aggregator = aggregator.sub(bigNumberify(values.wad.toString()));
+  }
+  if (name === 'TokensBought') {
+    // console.log('added', agreggator.toString(), bigNumberify(values.numTokens).div(bigNumberify(10).pow(18)).toString());
+    // eslint-disable-next-line no-param-reassign, @typescript-eslint/no-unused-vars
+    aggregator = aggregator.add(bigNumberify(values.numTokens.toString()));
+    // console.log('after adding', agreggator, agreggator.toString())
+  }
+  return aggregator;
+};
+
 export const coinMachineResolvers = ({
   colonyManager,
   apolloClient,
@@ -236,29 +263,39 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
+    /*
+     * WARNING!
+     *
+     * This is one of the most complicated client resolver we have to date
+     * As it attempts to replicate a bunch of on-chain logic and functionality
+     * This is due to the graph not supporting block handlers (in a production
+     * environment) forcing us to simulate period updates and state reconciliation
+     * in the client
+     */
     async coinMachineSalePeriods(_, { colonyAddress, limit }) {
       console.log('<--- fetching periods ---->');
       try {
-        const activeSalesData = await apolloClient.query<
+        const { networkClient } = colonyManager;
+        const coinMachineClient = (await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        )) as CoinMachineClientV2;
+        // const colonyClient = await colonyManager.getClient(
+        //   ClientType.ColonyClient,
+        //   colonyAddress,
+        // );
+
+        const subgraphData = await apolloClient.query<
           SubgraphCoinMachinePeriodsQuery,
           SubgraphCoinMachinePeriodsQueryVariables
         >({
           query: SubgraphCoinMachinePeriodsDocument,
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
+            extensionAddress: coinMachineClient.address.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
-
-        const { networkClient } = colonyManager;
-        const coinMachineClient = (await colonyManager.getClient(
-          ClientType.CoinMachineClient,
-          colonyAddress,
-        )) as CoinMachineClientV2;
-        const colonyClient = await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
-        );
 
         const extensionInitialisedLogs = await getLogs(
           coinMachineClient,
@@ -272,12 +309,12 @@ export const coinMachineResolvers = ({
           1000,
         );
         const availableTokens = await coinMachineClient.getTokenBalance();
-        const blockPeriod =
-          (await getAverageBlockPeriod(
-            networkClient.provider,
-            'latest',
-            extensionInitialisedLogs[0].blockNumber,
-          )) || 1000;
+        // const blockPeriod =
+        //   (await getAverageBlockPeriod(
+        //     networkClient.provider,
+        //     'latest',
+        //     extensionInitialisedLogs[0].blockNumber,
+        //   )) || 1000;
         const currentBlock = await networkClient.provider.getBlock('latest');
         const currentBlockTime = currentBlock.timestamp * 1000;
 
@@ -300,13 +337,13 @@ export const coinMachineResolvers = ({
         /*
          * @NOTE This is an approximation
          */
-        const blockNumberForOldestPeriod = Math.floor(
-          currentBlock.number - (limit * periodLength.toNumber()) / blockPeriod,
-        );
-        const blockNumberForOldestPeriodNormalized =
-          blockNumberForOldestPeriod <= extensionInitialisedAt.number
-            ? extensionInitialisedAt.number
-            : blockNumberForOldestPeriod;
+        // const blockNumberForOldestPeriod = Math.floor(
+        //   currentBlock.number - (limit * periodLength.toNumber()) / blockPeriod,
+        // );
+        // const blockNumberForOldestPeriodNormalized =
+        //   blockNumberForOldestPeriod <= extensionInitialisedAt.number
+        //     ? extensionInitialisedAt.number
+        //     : blockNumberForOldestPeriod;
         // console.log(
         //   'BLOCK TO START LOOKING FOR EVENTS',
         //   blockNumberForOldestPeriod,
@@ -317,116 +354,121 @@ export const coinMachineResolvers = ({
         /*
          * Fetch Coin Machine TokensBought, both logs and events and merge them into a single object
          */
-        const coinMachineTokenBoughtEvents = (
-          await getLogs(
-            coinMachineClient,
-            coinMachineClient.filters.TokensBought(null, null, null),
-            {
-              fromBlock: blockNumberForOldestPeriodNormalized,
-              toBlock: currentBlock.number,
-            },
-          )
-        )
-          .reverse()
-          .map((log) => ({
-            ...log,
-            ...coinMachineClient.interface.parseLog(log),
-          }));
+        // const coinMachineTokenBoughtEvents = (
+        //   await getLogs(
+        //     coinMachineClient,
+        //     coinMachineClient.filters.TokensBought(null, null, null),
+        //     {
+        //       fromBlock: blockNumberForOldestPeriodNormalized,
+        //       toBlock: currentBlock.number,
+        //     },
+        //   )
+        // )
+        //   .reverse()
+        //   .map((log) => ({
+        //     ...log,
+        //     ...coinMachineClient.interface.parseLog(log),
+        //   }));
         /*
          * Fetch Token Client Transfer, both logs and events and merge them into a single object
          */
-        const coinMachineFundedEvents = (
-          await getLogs(
-            colonyClient.tokenClient,
-            colonyClient.tokenClient.filters.Transfer(
-              null,
-              coinMachineClient.address,
-              null,
-            ),
-            {
-              fromBlock: blockNumberForOldestPeriodNormalized,
-              toBlock: currentBlock.number,
-            },
-          )
-        )
-          .reverse()
-          .map((log) => ({
-            ...log,
-            ...colonyClient.tokenClient.interface.parseLog(log),
-          }));
+        // const coinMachineFundedEvents = (
+        //   await getLogs(
+        //     colonyClient.tokenClient,
+        //     colonyClient.tokenClient.filters.Transfer(
+        //       null,
+        //       coinMachineClient.address,
+        //       null,
+        //     ),
+        //     {
+        //       fromBlock: blockNumberForOldestPeriodNormalized,
+        //       toBlock: currentBlock.number,
+        //     },
+        //   )
+        // )
+        //   .reverse()
+        //   .map((log) => ({
+        //     ...log,
+        //     ...colonyClient.tokenClient.interface.parseLog(log),
+        //   }));
         // console.log(
         //   'EVENTS',
         //   coinMachineTokenBoughtEvents,
         //   coinMachineFundedEvents,
         // );
 
+        // await Promise.all(coinMachineTokenBoughtEvents.concat(coinMachineFundedEvents).map(async ({ blockNumber, name }) => {
+        //   const block = await networkClient.provider.getBlock(blockNumber || 'latest');
+        //   console.log(block.number, block.timestamp * 1000, name);
+        // }));
+
         /*
          * Reconstruct a token history walking back block numbers
          * This also aproximates the block timestamp by using the block period
          * we've gotten earlier
          */
-        const reconstructedTokenAvailability = [
-          {
-            number: currentBlock.number,
-            timestamp: currentBlockTime,
-            availableTokens: bigNumberify(availableTokens.toString()),
-          },
-        ];
-        for (
-          let index = currentBlock.number - 1;
-          index >= blockNumberForOldestPeriodNormalized;
-          index -= 1
-        ) {
-          const {
-            timestamp: prevTimestamp,
-            availableTokens: prevAvailableTokens,
-          } = reconstructedTokenAvailability.find(
-            ({ number: blockNumber }) => blockNumber === index + 1,
-          ) || {
-            timestamp: 0,
-            availableTokens: bigNumberify(0),
-          };
-          let currentAvailableTokens = prevAvailableTokens;
-          /*
-           * Walk back events and reconcile them
-           */
-          coinMachineFundedEvents
-            .concat(coinMachineTokenBoughtEvents)
-            /*
-             * Find all events that match this block number (both TokensBought and Transfer)
-             * We're basically using this as an findAll() if that were a thing...
-             */
-            .filter(
-              ({ blockNumber: eventBlockNumber }) => eventBlockNumber === index,
-            )
-            /*
-             * Based on the found events, do local token accounting. Since we are going in reverse:
-             * - Transfers will remove tokens
-             * - TokensBought will add them
-             */
-            .map(({ name, values }) => {
-              if (name === 'Transfer') {
-                currentAvailableTokens = currentAvailableTokens.sub(
-                  bigNumberify(values.wad.toString()),
-                );
-              }
-              if (name === 'TokensBought') {
-                currentAvailableTokens = currentAvailableTokens.add(
-                  bigNumberify(values.numTokens.toString()),
-                );
-              }
-              return null;
-            });
-          reconstructedTokenAvailability.push({
-            number: index,
-            timestamp: prevTimestamp - blockPeriod,
-            availableTokens: currentAvailableTokens.lt(0)
-              ? bigNumberify(0)
-              : currentAvailableTokens,
-          });
-        }
+        // const reconstructedTokenAvailability = [
+        //   {
+        //     number: currentBlock.number,
+        //     timestamp: currentBlockTime,
+        //     availableTokens: bigNumberify(availableTokens.toString()),
+        //   },
+        // ];
+        // for (
+        //   let index = currentBlock.number - 1;
+        //   index >= blockNumberForOldestPeriodNormalized;
+        //   index -= 1
+        // ) {
+        //   const {
+        //     timestamp: prevTimestamp,
+        //     availableTokens: prevAvailableTokens,
+        //   } = reconstructedTokenAvailability.find(
+        //     ({ number: blockNumber }) => blockNumber === index + 1,
+        //   ) || {
+        //     timestamp: 0,
+        //     availableTokens: bigNumberify(0),
+        //   };
+        //   let currentAvailableTokens = prevAvailableTokens;
+        //   /*
+        //    * Walk back events and reconcile them
+        //    */
+        //   coinMachineFundedEvents
+        //     .concat(coinMachineTokenBoughtEvents)
+        //     /*
+        //      * Find all events that match this block number (both TokensBought and Transfer)
+        //      * We're basically using this as an findAll() if that were a thing...
+        //      */
+        //     .filter(
+        //       ({ blockNumber: eventBlockNumber }) => eventBlockNumber === index,
+        //     )
+        //     /*
+        //      * Based on the found events, do local token accounting. Since we are going in reverse:
+        //      * - Transfers will remove tokens
+        //      * - TokensBought will add them
+        //      */
+        //     .map(({ name, values }) => {
+        //       if (name === 'Transfer') {
+        //         currentAvailableTokens = currentAvailableTokens.sub(
+        //           bigNumberify(values.wad.toString()),
+        //         );
+        //       }
+        //       if (name === 'TokensBought') {
+        //         currentAvailableTokens = currentAvailableTokens.add(
+        //           bigNumberify(values.numTokens.toString()),
+        //         );
+        //       }
+        //       return null;
+        //     });
+        //   reconstructedTokenAvailability.push({
+        //     number: index,
+        //     timestamp: prevTimestamp - blockPeriod,
+        //     availableTokens: currentAvailableTokens.lt(0)
+        //       ? bigNumberify(0)
+        //       : currentAvailableTokens,
+        //   });
+        // }
 
-        // console.log('TOKEN AVAILABILITY', reconstructedTokenAvailability);
+        // console.log('TOKEN AVAILABILITY', reconstructedTokenAvailability.map(log => ({ ...log, hr: log.availableTokens.toString()})));
 
         const stalePeriods: Array<{
           saleEndedAt: number;
@@ -451,46 +493,131 @@ export const coinMachineResolvers = ({
           latestPeriodEnd -= periodLength.toNumber();
         }
 
-        const activeSales = activeSalesData?.data?.coinMachinePeriods || [];
+        const activeSales = subgraphData?.data?.coinMachinePeriods || [];
+        const tokensBoughtEvents = subgraphData?.data?.tokenBoughtEvents || [];
+        const transferEvents = subgraphData?.data?.transferEvents || [];
+        const historicAvailableTokensEvents = [
+          ...tokensBoughtEvents,
+          ...transferEvents,
+        ]
+          .map(
+            ({
+              name,
+              args,
+              transaction: {
+                transactionHash,
+                block: { number: blockId, timestamp: blockTimestamp },
+              },
+            }) => ({
+              signature: name,
+              name: name.substring(0, name.indexOf('(')),
+              values: { ...JSON.parse(args) },
+              block: parseInt(blockId.replace('block_', ''), 10),
+              timestamp: parseInt(blockTimestamp, 10) * 1000,
+              hash: transactionHash,
+            }),
+          )
+          .sort(
+            ({ block: lowBlock }, { block: highBlock }) => highBlock - lowBlock,
+          );
+        // console.log('SUBGRAPH EVENTS', historicAvailableTokensEvents);
+
+        /*
+         * Generate the starting available tokens value (for the last period)
+         * By getting the current available tokens and processing all events
+         * that happened in the current, ongoing period
+         * (events that are not included in any historic period that we are displaying)
+         */
+        let lastPeriodAvailableTokens = bigNumberify(
+          availableTokens.toString(),
+        );
+        historicAvailableTokensEvents
+          .filter(
+            ({ timestamp: eventTimestamp }) =>
+              eventTimestamp > stalePeriods[0].saleEndedAt,
+          )
+          .map((event) => {
+            lastPeriodAvailableTokens = replayBalanceEvents(
+              event,
+              lastPeriodAvailableTokens,
+            );
+            return lastPeriodAvailableTokens;
+          });
+        // console.log(
+        //   'EVENTS TO FILTER OUT INITIALLY',
+        //   historicAvailableTokensEvents.filter(
+        //     ({ timestamp: eventTimestamp }) =>
+        //       eventTimestamp > stalePeriods[0].saleEndedAt,
+        //   ),
+        // );
+        // console.log('INITIAL AVAILABLE TKNS', availableTokens.toString());
+        // console.log(
+        //   'LAST PERIOOD AVAILABLE TKNS',
+        //   lastPeriodAvailableTokens.toString(),
+        // );
         /*
          * Merge both active and stale periods into one data source
-         * This also adds a token availability value, based on the nearest block
-         * from the approximated token availability history array
+         * This also adds a token availability value, based on replaying the
+         * token bought / transfer events
          */
         const aggregatedPeriods = stalePeriods
-          .map((staleSale) => {
-            const {
+          .map(
+            ({
               saleEndedAt: staleSaleEndedAt,
               tokensBought,
               price: stalePrice,
-            } = staleSale;
-            const existingActiveSale = activeSales.find(
-              ({ saleEndedAt: activeSaleEndedAt }) =>
-                activeSaleEndedAt === String(staleSaleEndedAt),
-            );
-            const nearestBlockTokenInfo = reconstructedTokenAvailability.find(
-              ({ timestamp: nearestTimestamp }) =>
-                staleSaleEndedAt >= nearestTimestamp,
-            );
-            return existingActiveSale
-              ? {
-                  saleEndedAt: existingActiveSale.saleEndedAt,
-                  tokensBought: existingActiveSale.tokensBought,
-                  price: existingActiveSale.price,
-                  tokensAvailable: nearestBlockTokenInfo
-                    ? nearestBlockTokenInfo.availableTokens.toString()
-                    : bigNumberify(availableTokens.toString()).toString(),
-                }
-              : {
-                  ...staleSale,
-                  saleEndedAt: String(staleSaleEndedAt),
-                  tokensBought: tokensBought.toString(),
-                  price: stalePrice.toString(),
-                  tokensAvailable: nearestBlockTokenInfo
-                    ? nearestBlockTokenInfo.availableTokens.toString()
-                    : bigNumberify(0).toString(),
-                };
-          })
+            }) => {
+              /*
+               * This is actually equal to the previous period's end time
+               */
+              const saleStartedAt = staleSaleEndedAt - periodLength.toNumber();
+              /*
+               * Find all the events that happened within this period and
+               * replay them onto the current available tokens.
+               * Since we are going in reverse:
+               * - if tokens were bought we add to to the count
+               * - if tokens were transfered into the coin machine we subtract from the count
+               */
+              historicAvailableTokensEvents
+                .filter(
+                  ({ timestamp: eventTimestamp }) =>
+                    eventTimestamp >= saleStartedAt &&
+                    eventTimestamp <= staleSaleEndedAt,
+                )
+                .map((event) => {
+                  lastPeriodAvailableTokens = replayBalanceEvents(
+                    event,
+                    lastPeriodAvailableTokens,
+                  );
+                  return lastPeriodAvailableTokens;
+                });
+
+              // const nearestBlockTokenInfo = reconstructedTokenAvailability.find(
+              //   ({ timestamp: nearestTimestamp }) =>
+              //     staleSaleEndedAt >= nearestTimestamp,
+              // );
+              const existingActiveSale = activeSales.find(
+                ({ saleEndedAt: activeSaleEndedAt }) =>
+                  activeSaleEndedAt === String(staleSaleEndedAt),
+              );
+              const tokensAvailable = lastPeriodAvailableTokens.lt(0)
+                ? bigNumberify(0)
+                : lastPeriodAvailableTokens;
+              return existingActiveSale
+                ? {
+                    saleEndedAt: existingActiveSale.saleEndedAt,
+                    tokensBought: existingActiveSale.tokensBought,
+                    price: existingActiveSale.price,
+                    tokensAvailable: tokensAvailable.toString(),
+                  }
+                : {
+                    saleEndedAt: String(staleSaleEndedAt),
+                    tokensBought: tokensBought.toString(),
+                    price: stalePrice.toString(),
+                    tokensAvailable: tokensAvailable.toString(),
+                  };
+            },
+          )
           /*
            * Filter out
            * - sale periods that end in the future
@@ -504,9 +631,24 @@ export const coinMachineResolvers = ({
                 extensionInitialisedAt.timestamp * 1000,
           );
 
-        // console.log('ACTIVE', activeSalesData?.data?.coinMachinePeriods || []);
+        // console.log('ACTIVE', subgraphData?.data?.coinMachinePeriods || []);
         // console.log('STALE', stalePeriods);
         console.log('ALL', aggregatedPeriods);
+        // console.log(
+        //   'ALL',
+        //   aggregatedPeriods.map(({ saleEndedAt }) => {
+        //     const saleEnd = parseInt(saleEndedAt, 10);
+        //     const saleStart = saleEnd - periodLength.toNumber();
+        //     const eventsInPeriod = historicAvailableTokensEvents.filter(
+        //       ({ timestamp: ttt }) => ttt >= saleStart && ttt <= saleEnd,
+        //     );
+        //     return {
+        //       saleStart,
+        //       saleEnd,
+        //       events: eventsInPeriod.map(({ block }) => block),
+        //     };
+        //   }),
+        // );
 
         console.log('<--- fetched new periods ---->');
         return aggregatedPeriods;
