@@ -28,7 +28,8 @@ import {
   useNetworkContracts,
   useColonyExtensionsQuery,
 } from '~data/index';
-import { ALLOWED_NETWORKS } from '~constants';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
+
 import { colonyMustBeUpgraded, oneTxMustBeUpgraded } from '../../checks';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
@@ -214,7 +215,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
   );
   const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
   const hasRegisteredProfile = !!username && !ethereal;
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
 
   return (

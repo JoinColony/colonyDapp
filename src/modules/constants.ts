@@ -116,7 +116,7 @@ export const TOKEN_DATA = {
   [Network.Mainnet]: ETHER_TOKEN,
 };
 
-export const ALLOWED_NETWORKS = {
+export const SUPPORTED_NETWORKS = {
   [XDAI_NETWORK.chainId]: XDAI_NETWORK,
   [ETHEREUM_NETWORK.chainId]: ETHEREUM_NETWORK,
   [GOERLI_NETWORK.chainId]: GOERLI_NETWORK,

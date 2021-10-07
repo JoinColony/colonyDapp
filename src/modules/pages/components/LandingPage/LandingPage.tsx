@@ -9,7 +9,8 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 import { CREATE_COLONY_ROUTE } from '~routes/index';
 import { useLoggedInUser, useMetaColonyQuery } from '~data/index';
-import { METACOLONY_ENS, ALLOWED_NETWORKS } from '~constants';
+import { METACOLONY_ENS } from '~constants';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './LandingPage.css';
 
@@ -41,7 +42,7 @@ const LandingPage = () => {
 
   const { data, loading } = useMetaColonyQuery();
 
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   return (
     <div className={styles.main}>

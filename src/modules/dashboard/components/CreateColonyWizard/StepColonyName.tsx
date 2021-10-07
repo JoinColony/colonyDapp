@@ -17,7 +17,8 @@ import {
   ColonyAddressQuery,
   ColonyAddressQueryVariables,
 } from '~data/index';
-import { DEFAULT_NETWORK_INFO, ALLOWED_NETWORKS } from '~constants';
+import { DEFAULT_NETWORK_INFO } from '~constants';
+import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './StepColonyName.css';
 
@@ -149,7 +150,7 @@ const StepColonyName = ({
     [checkDomainTaken, currentENSName, setCurrentENSName],
   );
 
-  const isNetworkAllowed = !!ALLOWED_NETWORKS[networkId || 1];
+  const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
 
   return (
     <Form
