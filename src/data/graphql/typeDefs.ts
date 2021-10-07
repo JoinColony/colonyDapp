@@ -13,6 +13,15 @@ export default gql`
     networkId: Int
   }
 
+  input EventsFilter {
+    associatedColony_contains: String
+    associatedColony: String
+    name_in: [String!]
+    name_contains: String
+    args_contains: String
+    address: String
+  }
+
   type LoggedInUser {
     id: String!
     balance: String!
@@ -20,6 +29,36 @@ export default gql`
     walletAddress: String!
     ethereal: Boolean!
     networkId: Int
+  }
+
+  type SugraphEventProcessedValues {
+    agent: String!
+    who: String!
+    fromPot: String!
+    fromDomain: String!
+    toPot: String!
+    toDomain: String!
+    domainId: String!
+    amount: String!
+    token: String!
+    metadata: String!
+    user: String!
+    role: String!
+    setTo: String!
+    oldVersion: String!
+    newVersion: String!
+    storageSlot: String!
+    storageSlotValue: String!
+  }
+
+  type SubgraphEvent {
+    id: String!
+    transaction: SubgraphTransaction!
+    address: String!
+    name: String!
+    args: String!
+    associatedColony: SubgraphColony!
+    processedValues: SugraphEventProcessedValues!
   }
 
   type ParsedEvent {
