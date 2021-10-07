@@ -64,7 +64,7 @@ query CoinMachineTokenBalance($colonyAddress: String!) {
 # @TODO List
 # - Only fetch up to the number of <limit>
 #
-query SubgraphCoinMachinePeriods($colonyAddress: String!) {
+query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!) {
   coinMachinePeriods(
     where: { colonyAddress: $colonyAddress },
     skip: 0,
@@ -74,6 +74,42 @@ query SubgraphCoinMachinePeriods($colonyAddress: String!) {
     saleEndedAt
     tokensBought
     price
+  }
+  transferEvents: events(
+    where: {
+      name_contains: "Transfer"
+      args_contains: $extensionAddress
+    }
+    orderDirection: "desc"
+  ) {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+  tokenBoughtEvents: events(
+    where: {
+      name_contains: "TokensBought"
+      address: $extensionAddress
+    }
+		orderDirection: "desc"
+  ) {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
   }
 }
 

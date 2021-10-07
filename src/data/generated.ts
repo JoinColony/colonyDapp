@@ -283,6 +283,7 @@ export type Query = {
   colonyReputation?: Maybe<Scalars['String']>;
   currentPeriodTokens: CurrentPeriodTokens;
   domains: Array<SubgraphDomain>;
+  events: Array<SubgraphEvent>;
   eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
@@ -447,6 +448,14 @@ export type QueryCurrentPeriodTokensArgs = {
 
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
+};
+
+
+export type QueryEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  where?: Maybe<EventsFilter>;
+  orderDirection?: Maybe<Scalars['String']>;
 };
 
 
@@ -682,7 +691,7 @@ export type QueryWhitelistedUsersArgs = {
 };
 
 export type Subscription = {
-  events: Array<SubscriptionEvent>;
+  events: Array<SubgraphEvent>;
   motions: Array<SubscriptionMotion>;
   oneTxPayments: Array<OneTxPayment>;
   subscribedUsers: Array<User>;
@@ -851,6 +860,15 @@ export type LoggedInUserInput = {
   networkId?: Maybe<Scalars['Int']>;
 };
 
+export type EventsFilter = {
+  associatedColony_contains?: Maybe<Scalars['String']>;
+  associatedColony?: Maybe<Scalars['String']>;
+  name_in?: Maybe<Array<Scalars['String']>>;
+  name_contains?: Maybe<Scalars['String']>;
+  args_contains?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+};
+
 export type LoggedInUser = {
   id: Scalars['String'];
   balance: Scalars['String'];
@@ -858,6 +876,36 @@ export type LoggedInUser = {
   walletAddress: Scalars['String'];
   ethereal: Scalars['Boolean'];
   networkId?: Maybe<Scalars['Int']>;
+};
+
+export type SugraphEventProcessedValues = {
+  agent: Scalars['String'];
+  who: Scalars['String'];
+  fromPot: Scalars['String'];
+  fromDomain: Scalars['String'];
+  toPot: Scalars['String'];
+  toDomain: Scalars['String'];
+  domainId: Scalars['String'];
+  amount: Scalars['String'];
+  token: Scalars['String'];
+  metadata: Scalars['String'];
+  user: Scalars['String'];
+  role: Scalars['String'];
+  setTo: Scalars['String'];
+  oldVersion: Scalars['String'];
+  newVersion: Scalars['String'];
+  storageSlot: Scalars['String'];
+  storageSlotValue: Scalars['String'];
+};
+
+export type SubgraphEvent = {
+  id: Scalars['String'];
+  transaction: SubgraphTransaction;
+  address: Scalars['String'];
+  name: Scalars['String'];
+  args: Scalars['String'];
+  associatedColony: SubgraphColony;
+  processedValues: SugraphEventProcessedValues;
 };
 
 export type ParsedEvent = {
@@ -1301,6 +1349,7 @@ export type ActionsFilter = {
   payment_contains?: Maybe<Scalars['String']>;
 };
 
+<<<<<<< HEAD
 export type EventsFilter = {
   associatedColony_contains?: Maybe<Scalars['String']>;
   associatedColony?: Maybe<Scalars['String']>;
@@ -1309,6 +1358,8 @@ export type EventsFilter = {
   address?: Maybe<Scalars['String']>;
 };
 
+=======
+>>>>>>> Add: extend `SubgraphCoinMachinePeriods` query
 export type MotionsFilter = {
   associatedColony?: Maybe<Scalars['String']>;
   extensionAddress?: Maybe<Scalars['String']>;
@@ -1319,36 +1370,6 @@ export type OneTxPayment = {
   agent: Scalars['String'];
   transaction: SubgraphTransaction;
   payment: SubgraphPayment;
-};
-
-export type EventProcessedValues = {
-  agent: Scalars['String'];
-  who: Scalars['String'];
-  fromPot: Scalars['String'];
-  fromDomain: Scalars['String'];
-  toPot: Scalars['String'];
-  toDomain: Scalars['String'];
-  domainId: Scalars['String'];
-  amount: Scalars['String'];
-  token: Scalars['String'];
-  metadata: Scalars['String'];
-  user: Scalars['String'];
-  role: Scalars['String'];
-  setTo: Scalars['String'];
-  oldVersion: Scalars['String'];
-  newVersion: Scalars['String'];
-  storageSlot: Scalars['String'];
-  storageSlotValue: Scalars['String'];
-};
-
-export type SubscriptionEvent = {
-  id: Scalars['String'];
-  transaction: SubgraphTransaction;
-  address: Scalars['String'];
-  name: Scalars['String'];
-  args: Scalars['String'];
-  associatedColony: SubgraphColony;
-  processedValues: EventProcessedValues;
 };
 
 export type SubscriptionMotion = {
@@ -2174,10 +2195,29 @@ export type CoinMachineTokenBalanceQuery = Pick<Query, 'coinMachineTokenBalance'
 
 export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
 }>;
 
 
-export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'>> };
+export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'>>, transferEvents: Array<(
+    Pick<SubgraphEvent, 'address' | 'name' | 'args'>
+    & { transaction: (
+      { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )>, tokenBoughtEvents: Array<(
+    Pick<SubgraphEvent, 'address' | 'name' | 'args'>
+    & { transaction: (
+      { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
 
 export type CoinMachineSalePeriodsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -2212,7 +2252,7 @@ export type SubgraphEventsSubscriptionVariables = Exact<{
 
 
 export type SubgraphEventsSubscription = { events: Array<(
-    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -2260,7 +2300,7 @@ export type SubgraphEventsThatAreActionsSubscriptionVariables = Exact<{
 
 
 export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
-    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -2270,7 +2310,7 @@ export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
-    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
+    ), processedValues: Pick<SugraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
   )> };
 
 export type SubgraphMotionsSubscriptionVariables = Exact<{
@@ -5688,11 +5728,35 @@ export type CoinMachineTokenBalanceQueryHookResult = ReturnType<typeof useCoinMa
 export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceLazyQuery>;
 export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
 export const SubgraphCoinMachinePeriodsDocument = gql`
-    query SubgraphCoinMachinePeriods($colonyAddress: String!) {
+    query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!) {
   coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 0, orderBy: "saleEndedAt", orderDirection: "desc") {
     saleEndedAt
     tokensBought
     price
+  }
+  transferEvents: events(where: {name_contains: "Transfer", args_contains: $extensionAddress}, orderDirection: "desc") {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+  tokenBoughtEvents: events(where: {name_contains: "TokensBought", address: $extensionAddress}, orderDirection: "desc") {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
   }
 }
     `;
@@ -5710,6 +5774,7 @@ export const SubgraphCoinMachinePeriodsDocument = gql`
  * const { data, loading, error } = useSubgraphCoinMachinePeriodsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
+ *      extensionAddress: // value for 'extensionAddress'
  *   },
  * });
  */
