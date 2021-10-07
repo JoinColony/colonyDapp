@@ -9,7 +9,7 @@ import {
   FormattedAction,
   Address,
 } from '~types/index';
-import { ColonyAction, EventProcessedValues } from '~data/index';
+import { ColonyAction, SugraphEventProcessedValues } from '~data/index';
 
 import {
   DETAILS_FOR_ACTION,
@@ -49,7 +49,7 @@ export const getDetailsForAction = (
  * Get values for action type based on action type
  */
 export const getValuesForActionType = (
-  values: EventProcessedValues,
+  values: SugraphEventProcessedValues,
   actionType: ColonyActions,
   colonyAddress: Address,
 ): ValuesForActionTypesMap => {
