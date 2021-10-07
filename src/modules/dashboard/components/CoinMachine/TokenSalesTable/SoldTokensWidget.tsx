@@ -31,7 +31,7 @@ const SoldTokensWidget = ({
     ? bigNumberify(tokensAvailable)
     : maxPeriodTokens;
 
-  if (bigNumberify(tokensBought).gte(upperLimit)) {
+  if (bigNumberify(tokensBought).gte(upperLimit) && upperLimit.gt(0)) {
     return <FormattedMessage {...MSG.soldOut} />;
   }
 
