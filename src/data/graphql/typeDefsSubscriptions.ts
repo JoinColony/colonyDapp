@@ -58,12 +58,12 @@ export default gql`
       first: Int!
       where: ActionsFilter!
     ): [OneTxPayment!]!
-    events(skip: Int, first: Int, where: EventsFilter): [SubscriptionEvent!]!
+    events(skip: Int, first: Int, where: EventsFilter): [SubgraphEvent!]!
     motions(
       skip: Int!
       first: Int!
       where: MotionsFilter!
     ): [SubscriptionMotion!]!
-    tokenBoughtEvents(where: EventsFilter): [SubscriptionEvent!]!
+    tokenBoughtEvents(where: EventsFilter): [SubgraphEvent!]!
   }
 `;
