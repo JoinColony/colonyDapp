@@ -1958,7 +1958,10 @@ export type SubgraphColonyQuery = { colony: (
     & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
-    ), extensions?: Maybe<Array<Pick<SubgraphColonyExtension, 'address' | 'hash'>>> }
+    ), extensions?: Maybe<Array<(
+      Pick<SubgraphColonyExtension, 'hash'>
+      & { id: SubgraphColonyExtension['address'] }
+    )>> }
   ) };
 
 export type SubgraphColoniesQueryVariables = Exact<{
@@ -4774,7 +4777,7 @@ export const SubgraphColonyDocument = gql`
       symbol
     }
     extensions {
-      address
+      id: address
       hash
     }
   }
@@ -5701,7 +5704,7 @@ export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCo
 export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
 export const SubgraphCoinMachinePeriodsDocument = gql`
     query SubgraphCoinMachinePeriods($colonyAddress: String!) {
-  coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 1, orderBy: "saleEndedAt", orderDirection: "desc") {
+  coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 0, orderBy: "saleEndedAt", orderDirection: "desc") {
     saleEndedAt
     tokensBought
     price

@@ -563,7 +563,7 @@ query SubgraphColony($address: String!) {
       symbol
     }
     extensions {
-      address
+      id: address
       hash
     }
   }
