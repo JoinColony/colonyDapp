@@ -35,6 +35,36 @@ export default gql`
     networkId: Int
   }
 
+  type SugraphEventProcessedValues {
+    agent: String!
+    who: String!
+    fromPot: String!
+    fromDomain: String!
+    toPot: String!
+    toDomain: String!
+    domainId: String!
+    amount: String!
+    token: String!
+    metadata: String!
+    user: String!
+    role: String!
+    setTo: String!
+    oldVersion: String!
+    newVersion: String!
+    storageSlot: String!
+    storageSlotValue: String!
+  }
+
+  type SubgraphEvent {
+    id: String!
+    transaction: SubgraphTransaction!
+    address: String!
+    name: String!
+    args: String!
+    associatedColony: SubgraphColony!
+    processedValues: SugraphEventProcessedValues!
+  }
+
   type ParsedEvent {
     type: String!
     name: String!
