@@ -120,7 +120,7 @@ const SmiteDialog = ({
           annotationMessage: annotation,
           amount: reputationChangeAmount.toString(),
           motionDomainId,
-          isSmitingReputation: false,
+          isSmitingReputation: true,
         };
       }),
       withMeta({ history }),
