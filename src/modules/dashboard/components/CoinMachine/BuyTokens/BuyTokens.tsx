@@ -225,10 +225,12 @@ const BuyTokens = ({
       const maxContractPurchase =
         maxUserPurchaseData.coinMachineCurrentPeriodMaxUserPurchase;
 
-      const currentPrice =
-        parseInt(salePriceData.coinMachineCurrentPeriodPrice, 10) > 0
-          ? parseInt(salePriceData.coinMachineCurrentPeriodPrice, 10)
-          : 1;
+      const currentPeriodPrice = bigNumberify(
+        salePriceData?.coinMachineCurrentPeriodPrice || 0,
+      );
+      const currentPrice = currentPeriodPrice.gt(0)
+        ? currentPeriodPrice
+        : bigNumberify(1);
 
       const maxUserBalancePurchase = userTokenBalance
         .div(currentPrice)
