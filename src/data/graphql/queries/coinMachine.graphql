@@ -67,7 +67,7 @@ query CoinMachineTokenBalance($colonyAddress: String!) {
 query SubgraphCoinMachinePeriods($colonyAddress: String!) {
   coinMachinePeriods(
     where: { colonyAddress: $colonyAddress },
-    skip: 1,
+    skip: 0,
     orderBy: "saleEndedAt",
     orderDirection: "desc"
   ) {
