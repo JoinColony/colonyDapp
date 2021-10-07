@@ -24,7 +24,7 @@ import {
 } from '../../../core/actionCreators';
 import { updateDomainReputation } from '../utils';
 
-function* smiteMotion({
+function* manageReputationMotion({
   payload: {
     colonyAddress,
     colonyName,
@@ -33,23 +33,28 @@ function* smiteMotion({
     amount,
     annotationMessage,
     motionDomainId,
+    isSmitingReputation,
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_MOTION_SMITE>) {
+}: Action<ActionTypes.COLONY_MOTION_MANAGE_REPUTATION>) {
   let txChannel;
   try {
     /*
      * Validate the required values
      */
     if (!userAddress) {
-      throw new Error('A user address is required to smite this user');
+      throw new Error(
+        'A user address is required to manage the reputation this user',
+      );
     }
     if (!domainId) {
-      throw new Error('Domain id not set for Smite transaction');
+      throw new Error(
+        'Domain id not set for manage the reputation transaction',
+      );
     }
     if (!amount) {
-      throw new Error('Amount not set for Smite transaction');
+      throw new Error('Amount not set for manage the reputation transaction');
     }
 
     const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -96,16 +101,25 @@ function* smiteMotion({
 
     const {
       createMotion,
-      annotateSmiteMotion,
+      annotateManageReputationMotion,
     } = yield createTransactionChannels(metaId, [
       'createMotion',
-      'annotateSmiteMotion',
+      'annotateManageReputationMotion',
     ]);
 
-    // eslint-disable-next-line max-len
-    const encodedAction = colonyClient.interface.functions.emitDomainReputationPenalty.encode(
-      [permissionDomainId, childSkillIndex, domainId, userAddress, amount],
-    );
+    let encodedAction;
+
+    if (isSmitingReputation) {
+      // eslint-disable-next-line max-len
+      encodedAction = colonyClient.interface.functions.emitDomainReputationPenalty.encode(
+        [permissionDomainId, childSkillIndex, domainId, userAddress, amount],
+      );
+    } else {
+      // eslint-disable-next-line max-len
+      encodedAction = colonyClient.interface.functions.emitDomainReputationReward.encode(
+        [domainId, userAddress, amount],
+      );
+    }
 
     // create transactions
     yield fork(createTransaction, createMotion.id, {
@@ -131,7 +145,7 @@ function* smiteMotion({
     });
 
     if (annotationMessage) {
-      yield fork(createTransaction, annotateSmiteMotion.id, {
+      yield fork(createTransaction, annotateManageReputationMotion.id, {
         context: ClientType.ColonyClient,
         methodName: 'annotateTransaction',
         identifier: colonyAddress,
@@ -148,7 +162,7 @@ function* smiteMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
-        annotateSmiteMotion.channel,
+        annotateManageReputationMotion.channel,
         ActionTypes.TRANSACTION_CREATED,
       );
     }
@@ -172,16 +186,19 @@ function* smiteMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      yield put(transactionPending(annotateSmiteMotion.id));
+      yield put(transactionPending(annotateManageReputationMotion.id));
 
       yield put(
-        transactionAddParams(annotateSmiteMotion.id, [txHash, ipfsHash]),
+        transactionAddParams(annotateManageReputationMotion.id, [
+          txHash,
+          ipfsHash,
+        ]),
       );
 
-      yield put(transactionReady(annotateSmiteMotion.id));
+      yield put(transactionReady(annotateManageReputationMotion.id));
 
       yield takeFrom(
-        annotateSmiteMotion.channel,
+        annotateManageReputationMotion.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
@@ -192,7 +209,7 @@ function* smiteMotion({
     yield fork(updateDomainReputation, colonyAddress, userAddress, domainId);
 
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_SMITE_SUCCESS,
+      type: ActionTypes.COLONY_MOTION_MANAGE_REPUTATION_SUCCESS,
       meta,
     });
 
@@ -200,12 +217,15 @@ function* smiteMotion({
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
   } catch (error) {
-    putError(ActionTypes.COLONY_MOTION_SMITE_ERROR, error, meta);
+    putError(ActionTypes.COLONY_MOTION_MANAGE_REPUTATION_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
 }
 
-export default function* smiteMotionSage() {
-  yield takeEvery(ActionTypes.COLONY_MOTION_SMITE, smiteMotion);
+export default function* manageReputationMotionSage() {
+  yield takeEvery(
+    ActionTypes.COLONY_MOTION_MANAGE_REPUTATION,
+    manageReputationMotion,
+  );
 }
