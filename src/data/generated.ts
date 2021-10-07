@@ -1218,7 +1218,6 @@ export type SubgraphColonyMetadata = {
 
 export type SubgraphColonyExtension = {
   id: Scalars['String'];
-  address: Scalars['String'];
   hash: Scalars['String'];
 };
 
@@ -1975,7 +1974,7 @@ export type SubgraphColonyQuery = { colony: (
       & { tokenAddress: SubgraphToken['id'] }
     ), extensions?: Maybe<Array<(
       Pick<SubgraphColonyExtension, 'hash'>
-      & { id: SubgraphColonyExtension['address'] }
+      & { address: SubgraphColonyExtension['id'] }
     )>> }
   ) };
 
@@ -4794,7 +4793,7 @@ export const SubgraphColonyDocument = gql`
       symbol
     }
     extensions {
-      id: address
+      address: id
       hash
     }
   }
