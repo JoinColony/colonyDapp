@@ -15,6 +15,7 @@ import {
   SubgraphCoinMachinePeriodsDocument,
 } from '~data/index';
 import { createAddress, getAverageBlockPeriod } from '~utils/web3';
+import { parseSubgraphEvent } from '~utils/events';
 
 import { getToken } from './token';
 
@@ -358,10 +359,10 @@ export const coinMachineResolvers = ({
         //   await getLogs(
         //     coinMachineClient,
         //     coinMachineClient.filters.TokensBought(null, null, null),
-        //     {
-        //       fromBlock: blockNumberForOldestPeriodNormalized,
-        //       toBlock: currentBlock.number,
-        //     },
+        //     // {
+        //     //   fromBlock: blockNumberForOldestPeriodNormalized,
+        //     //   toBlock: currentBlock.number,
+        //     // },
         //   )
         // )
         //   .reverse()
@@ -394,7 +395,7 @@ export const coinMachineResolvers = ({
         // console.log(
         //   'EVENTS',
         //   coinMachineTokenBoughtEvents,
-        //   coinMachineFundedEvents,
+        //   // coinMachineFundedEvents,
         // );
 
         // await Promise.all(coinMachineTokenBoughtEvents.concat(coinMachineFundedEvents).map(async ({ blockNumber, name }) => {
@@ -500,23 +501,7 @@ export const coinMachineResolvers = ({
           ...tokensBoughtEvents,
           ...transferEvents,
         ]
-          .map(
-            ({
-              name,
-              args,
-              transaction: {
-                transactionHash,
-                block: { number: blockId, timestamp: blockTimestamp },
-              },
-            }) => ({
-              signature: name,
-              name: name.substring(0, name.indexOf('(')),
-              values: { ...JSON.parse(args) },
-              block: parseInt(blockId.replace('block_', ''), 10),
-              timestamp: parseInt(blockTimestamp, 10) * 1000,
-              hash: transactionHash,
-            }),
-          )
+          .map(parseSubgraphEvent)
           .sort(
             ({ block: lowBlock }, { block: highBlock }) => highBlock - lowBlock,
           );
