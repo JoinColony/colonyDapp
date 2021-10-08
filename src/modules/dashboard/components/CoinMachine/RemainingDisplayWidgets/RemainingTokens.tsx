@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
-import { getPriceStatus } from '~utils/colonyCoinMachine';
+import { getPriceStatus } from '../utils';
 
 import RemainingTokensValue from './RemainingTokensValue';
 import RemainingWidget from './RemainingDisplayWidget';
