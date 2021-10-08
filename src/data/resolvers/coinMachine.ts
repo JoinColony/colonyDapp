@@ -16,14 +16,13 @@ import {
 import { createAddress } from '~utils/web3';
 import { parseSubgraphEvent } from '~utils/events';
 import { getCoinMachinePeriodPrice } from '~utils/contracts';
+import { ColonyAndExtensionsEvents } from '~types/colonyActions';
 
 import { getToken } from './token';
 
 /*
  * Small helper to replay TokensBought / Transfer events over a reversed
  * period array in order to generate a historic available tokens total
- *
- * @TODO Add enum types for the Event names
  */
 const replayBalanceEvents = (
   {
@@ -33,15 +32,11 @@ const replayBalanceEvents = (
   total: BigNumber,
 ): BigNumber => {
   let aggregator = total;
-  if (name === 'Transfer') {
-    // eslint-disable-next-line no-param-reassign
+  if (name === ColonyAndExtensionsEvents.Transfer) {
     aggregator = aggregator.sub(bigNumberify(values.wad.toString()));
   }
-  if (name === 'TokensBought') {
-    // console.log('added', agreggator.toString(), bigNumberify(values.numTokens).div(bigNumberify(10).pow(18)).toString());
-    // eslint-disable-next-line no-param-reassign, @typescript-eslint/no-unused-vars
+  if (name === ColonyAndExtensionsEvents.TokensBought) {
     aggregator = aggregator.add(bigNumberify(values.numTokens.toString()));
-    // console.log('after adding', agreggator, agreggator.toString())
   }
   return aggregator;
 };
