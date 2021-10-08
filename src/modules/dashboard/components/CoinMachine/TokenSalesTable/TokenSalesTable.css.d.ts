@@ -10,3 +10,4 @@ export const cellDataDanger: string;
 export const tokenSymbol: string;
 export const noDataMessage: string;
 export const hiddenDataMessage: string;
+export const loading: string;

@@ -83,3 +83,15 @@
 .hiddenDataMessage a {
   font-weight: var(--weight-normal);
 }
+
+.loading {
+  margin: 18px 0 0 0;
+  font-weight: var(--weight-normal);
+}
+
+.loading span {
+  /*
+   * In order to better align the spinner with the text
+   */
+  margin-top: -9px;
+}
