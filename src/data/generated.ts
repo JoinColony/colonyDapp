@@ -361,6 +361,7 @@ export type QueryCoinMachineCurrentSalePeriodArgs = {
 
 export type QueryCoinMachinePeriodsArgs = {
   skip: Scalars['Int'];
+  first: Scalars['Int'];
   where?: Maybe<ByColonyFilter>;
   orderBy: Scalars['String'];
   orderDirection: Scalars['String'];
@@ -2195,6 +2196,7 @@ export type CoinMachineTokenBalanceQuery = Pick<Query, 'coinMachineTokenBalance'
 export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
+  limit: Scalars['Int'];
 }>;
 
 
@@ -5727,8 +5729,8 @@ export type CoinMachineTokenBalanceQueryHookResult = ReturnType<typeof useCoinMa
 export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceLazyQuery>;
 export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
 export const SubgraphCoinMachinePeriodsDocument = gql`
-    query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!) {
-  coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 0, orderBy: "saleEndedAt", orderDirection: "desc") {
+    query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
+  coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 0, first: $limit, orderBy: "saleEndedAt", orderDirection: "desc") {
     saleEndedAt
     tokensBought
     price
@@ -5774,6 +5776,7 @@ export const SubgraphCoinMachinePeriodsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
+ *      limit: // value for 'limit'
  *   },
  * });
  */
