@@ -12,6 +12,8 @@ import {
   TableHeaderCell,
   TableRow,
 } from '~core/Table';
+import ExternalLink from '~core/ExternalLink';
+
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   TokenInfoQuery,
@@ -20,6 +22,8 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 import { getPriceStatus } from '~utils/colonyCoinMachine';
+import { getBlockExplorerLink } from '~utils/external';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import TokenPriceStatusIcon from '../TokenPriceStatusIcon';
 import { PeriodTokensType } from '../RemainingDisplayWidgets';
@@ -48,6 +52,12 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.TokenSalesTable.noTableData',
     defaultMessage: 'No sales have completed yet.',
   },
+  olderPeriodsHidden: {
+    id: 'dashboard.CoinMachine.TokenSalesTable.olderPeriodsHidden',
+    defaultMessage: `
+      The previous sales table has been truncated due to performance reasons.
+      You can view older entries manually using {blockExplorerLink}`,
+  },
 });
 
 interface Props {
@@ -56,6 +66,7 @@ interface Props {
   colonyAddress: Address;
   periodLength: number;
   periodRemainingTime: number;
+  extensionAddress?: Address;
 }
 
 const displayName = 'dashboard.CoinMachine.TokenSalesTable';
@@ -66,8 +77,11 @@ const TokenSalesTable = ({
   colonyAddress,
   periodLength,
   periodRemainingTime,
+  extensionAddress,
 }: Props) => {
-  const salePeriodQueryVariables = { colonyAddress, limit: 50 };
+  const PREV_PERIODS_LIMIT = 100;
+  const salePeriodQueryVariables = { colonyAddress, limit: PREV_PERIODS_LIMIT };
+
   const {
     data: salePeriodsData,
     loading: salePeriodsLoading,
@@ -131,7 +145,6 @@ const TokenSalesTable = ({
    * This is for cases where you load the page in the middle of period
    *
    * @TODO List
-   * - Only start if the sale is started
    * - Add message if number of sale periods exceeds <limit>
    */
   useEffect(() => {
@@ -233,6 +246,23 @@ const TokenSalesTable = ({
         {isEmpty(tableData) && (
           <p className={styles.noDataMessage}>
             <FormattedMessage {...MSG.noTableData} />
+          </p>
+        )}
+        {formattedData.length >= PREV_PERIODS_LIMIT && (
+          <p className={styles.hiddenDataMessage}>
+            <FormattedMessage
+              {...MSG.olderPeriodsHidden}
+              values={{
+                blockExplorerLink: (
+                  <ExternalLink
+                    href={getBlockExplorerLink({
+                      addressOrHash: extensionAddress || '0x',
+                    })}
+                    text={DEFAULT_NETWORK_INFO.blockExplorerName}
+                  />
+                ),
+              }}
+            />
           </p>
         )}
       </div>
