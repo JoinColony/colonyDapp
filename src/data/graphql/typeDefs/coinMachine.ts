@@ -64,6 +64,7 @@ export default gql`
     coinMachineTokenBalance(colonyAddress: String!): String!
     coinMachinePeriods(
       skip: Int!
+      first: Int!
       where: ByColonyFilter
       orderBy: String!
       orderDirection: String!
