@@ -1,5 +1,6 @@
 export const container: string;
 export const tableContainer: string;
+export const tableContainerOverflow: string;
 export const table: string;
 export const tableHeader: string;
 export const tableHeaderCell: string;
@@ -8,3 +9,5 @@ export const cellData: string;
 export const cellDataDanger: string;
 export const tokenSymbol: string;
 export const noDataMessage: string;
+export const hiddenDataMessage: string;
+export const loading: string;

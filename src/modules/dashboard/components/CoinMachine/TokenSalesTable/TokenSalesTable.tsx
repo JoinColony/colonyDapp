@@ -12,6 +12,9 @@ import {
   TableHeaderCell,
   TableRow,
 } from '~core/Table';
+import ExternalLink from '~core/ExternalLink';
+import { MiniSpinnerLoader } from '~core/Preloaders';
+
 import { getFormattedTokenValue } from '~utils/tokens';
 import {
   TokenInfoQuery,
@@ -19,11 +22,14 @@ import {
   SalePeriod,
 } from '~data/index';
 import { Address } from '~types/index';
-import { getPriceStatus } from '~utils/colonyCoinMachine';
+import { getBlockExplorerLink } from '~utils/external';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import TokenPriceStatusIcon from '../TokenPriceStatusIcon';
 import { PeriodTokensType } from '../RemainingDisplayWidgets';
 import SoldTokensWidget from './SoldTokensWidget';
+
+import { getPriceStatus } from '../utils';
 
 import styles from './TokenSalesTable.css';
 
@@ -48,6 +54,16 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.TokenSalesTable.noTableData',
     defaultMessage: 'No sales have completed yet.',
   },
+  olderPeriodsHidden: {
+    id: 'dashboard.CoinMachine.TokenSalesTable.olderPeriodsHidden',
+    defaultMessage: `
+      The previous sales table has been truncated due to performance reasons.
+      You can view older entries manually using {blockExplorerLink}`,
+  },
+  loading: {
+    id: 'dashboard.CoinMachine.TokenSalesTable.loading',
+    defaultMessage: 'Loading previous sales table entries...',
+  },
 });
 
 interface Props {
@@ -56,6 +72,7 @@ interface Props {
   colonyAddress: Address;
   periodLength: number;
   periodRemainingTime: number;
+  extensionAddress?: Address;
 }
 
 const displayName = 'dashboard.CoinMachine.TokenSalesTable';
@@ -66,8 +83,11 @@ const TokenSalesTable = ({
   colonyAddress,
   periodLength,
   periodRemainingTime,
+  extensionAddress,
 }: Props) => {
-  const salePeriodQueryVariables = { colonyAddress, limit: 50 };
+  const PREV_PERIODS_LIMIT = 100;
+  const salePeriodQueryVariables = { colonyAddress, limit: PREV_PERIODS_LIMIT };
+
   const {
     data: salePeriodsData,
     loading: salePeriodsLoading,
@@ -125,14 +145,11 @@ const TokenSalesTable = ({
   }, [periodTokens, tableData]);
 
   /*
-   * Manually update the sale table the first time around, if the remaining
-   * time in the period is less than the period leght
-   *
-   * This is for cases where you load the page in the middle of period
-   *
-   * @TODO List
-   * - Only start if the sale is started
-   * - Add message if number of sale periods exceeds <limit>
+   * Manually update the sale table with new data.
+   * We do this for two cases:
+   * - When each period ticks over
+   * - The first time, up to when the period is supposed to finish, in cases
+   * where we load the page in the middle of the period
    */
   useEffect(() => {
     if (
@@ -155,13 +172,6 @@ const TokenSalesTable = ({
     startPollingSalePeriodsData,
     stopPollingSalePeriodsData,
   ]);
-
-  /*
-   * @TODO Add proper loading component
-   */
-  if (salePeriodsLoading) {
-    return <span>Loading</span>;
-  }
 
   return (
     <div className={styles.container}>
@@ -190,50 +200,74 @@ const TokenSalesTable = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {formattedData.map(
-              ({
-                saleEndedAt,
-                tokensRemaining,
-                hasSoldOut,
-                price,
-                priceStatus,
-              }) => (
-                <TableRow
-                  className={styles.tableRow}
-                  key={saleEndedAt.getTime()}
-                >
-                  <TableCell className={styles.cellData}>
-                    <FormattedDate
-                      value={saleEndedAt}
-                      month="2-digit"
-                      day="2-digit"
-                      hour12={false}
-                      hour="2-digit"
-                      minute="2-digit"
-                    />
-                  </TableCell>
-                  <TableCell
-                    className={classnames(styles.cellData, {
-                      [styles.cellDataDanger]: hasSoldOut,
-                    })}
+            {!salePeriodsLoading &&
+              formattedData.map(
+                ({
+                  saleEndedAt,
+                  tokensRemaining,
+                  hasSoldOut,
+                  price,
+                  priceStatus,
+                }) => (
+                  <TableRow
+                    className={styles.tableRow}
+                    key={saleEndedAt.getTime()}
                   >
-                    {tokensRemaining}
-                  </TableCell>
-                  <TableCell className={styles.cellData}>
-                    {price}
-                    {priceStatus && (
-                      <TokenPriceStatusIcon status={priceStatus} />
-                    )}
-                  </TableCell>
-                </TableRow>
-              ),
-            )}
+                    <TableCell className={styles.cellData}>
+                      <FormattedDate
+                        value={saleEndedAt}
+                        month="2-digit"
+                        day="2-digit"
+                        hour12={false}
+                        hour="2-digit"
+                        minute="2-digit"
+                      />
+                    </TableCell>
+                    <TableCell
+                      className={classnames(styles.cellData, {
+                        [styles.cellDataDanger]: hasSoldOut,
+                      })}
+                    >
+                      {tokensRemaining}
+                    </TableCell>
+                    <TableCell className={styles.cellData}>
+                      {price}
+                      {priceStatus && (
+                        <TokenPriceStatusIcon status={priceStatus} />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ),
+              )}
           </TableBody>
         </Table>
-        {isEmpty(tableData) && (
+        {!salePeriodsLoading && isEmpty(tableData) && (
           <p className={styles.noDataMessage}>
             <FormattedMessage {...MSG.noTableData} />
           </p>
+        )}
+        {!salePeriodsLoading && formattedData.length >= PREV_PERIODS_LIMIT && (
+          <p className={styles.hiddenDataMessage}>
+            <FormattedMessage
+              {...MSG.olderPeriodsHidden}
+              values={{
+                blockExplorerLink: (
+                  <ExternalLink
+                    href={getBlockExplorerLink({
+                      addressOrHash: extensionAddress || '0x',
+                    })}
+                    text={DEFAULT_NETWORK_INFO.blockExplorerName}
+                  />
+                ),
+              }}
+            />
+          </p>
+        )}
+        {salePeriodsLoading && (
+          <MiniSpinnerLoader
+            className={styles.loading}
+            loadingText={MSG.loading}
+          />
         )}
       </div>
     </div>
