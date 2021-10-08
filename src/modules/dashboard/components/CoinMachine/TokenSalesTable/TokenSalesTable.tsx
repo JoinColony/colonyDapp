@@ -22,13 +22,14 @@ import {
   SalePeriod,
 } from '~data/index';
 import { Address } from '~types/index';
-import { getPriceStatus } from '~utils/colonyCoinMachine';
 import { getBlockExplorerLink } from '~utils/external';
 import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import TokenPriceStatusIcon from '../TokenPriceStatusIcon';
 import { PeriodTokensType } from '../RemainingDisplayWidgets';
 import SoldTokensWidget from './SoldTokensWidget';
+
+import { getPriceStatus } from '../utils';
 
 import styles from './TokenSalesTable.css';
 
