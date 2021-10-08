@@ -71,3 +71,15 @@
   font-size: var(--size-normal);
   color: var(--temp-grey-blue-7);
 }
+
+.hiddenDataMessage {
+  margin: 10px 0 8px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-normal);
+  white-space: pre-line;
+  color: var(--temp-grey-4);
+}
+
+.hiddenDataMessage a {
+  font-weight: var(--weight-normal);
+}

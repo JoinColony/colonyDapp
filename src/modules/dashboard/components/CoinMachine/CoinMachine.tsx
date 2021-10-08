@@ -68,7 +68,15 @@ const CoinMachine = ({
     variables: { address: colonyAddress },
   });
 
-  const coinMachineExtension = data?.processedColony.installedExtensions.find(
+  const {
+    data: extensionsData,
+    loading: loadingExtensionsData,
+  } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
+  });
+
+  const { installedExtensions } = extensionsData?.processedColony;
+  const coinMachineExtension = installedExtensions?.find(
     ({ extensionId }) => extensionId === Extension.CoinMachine,
   );
 
@@ -191,10 +199,10 @@ const CoinMachine = ({
   ]);
 
   if (
-    loading ||
+    loadingExtensionsData ||
     saleTokensLoading ||
     currentSalePeriodLoading ||
-    !data?.processedColony?.installedExtensions ||
+    !extensionsData?.processedColony?.installedExtensions ||
     periodTokensLoading ||
     coinMachineTokenBalanceLoading ||
     loadingTokenBoughtEventsData
@@ -286,6 +294,7 @@ const CoinMachine = ({
             periodRemainingTime={timeRemaining}
             sellableToken={saleToken}
             periodTokens={periodTokens}
+            extensionAddress={coinMachineExtension?.address}
           />
         </div>
         <div className={styles.comments}>
