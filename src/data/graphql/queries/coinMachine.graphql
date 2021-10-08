@@ -60,14 +60,11 @@ query CoinMachineTokenBalance($colonyAddress: String!) {
   coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
 }
 
-#
-# @TODO List
-# - Only fetch up to the number of <limit>
-#
-query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!) {
+query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
   coinMachinePeriods(
     where: { colonyAddress: $colonyAddress },
     skip: 0,
+    first: $limit
     orderBy: "saleEndedAt",
     orderDirection: "desc"
   ) {

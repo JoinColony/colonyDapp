@@ -284,6 +284,7 @@ export const coinMachineResolvers = ({
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
             extensionAddress: coinMachineClient.address.toLowerCase(),
+            limit,
           },
           fetchPolicy: 'network-only',
         });
