@@ -1,7 +1,7 @@
 import { bigNumberify, BigNumberish } from 'ethers/utils';
 
-import { PeriodTokensType } from '~dashboard/CoinMachine/RemainingDisplayWidgets';
-import { TokenPriceStatuses } from '~dashboard/CoinMachine/TokenPriceStatusIcon';
+import { PeriodTokensType } from './RemainingDisplayWidgets';
+import { TokenPriceStatuses } from './TokenPriceStatusIcon';
 
 export const getPriceStatus = (
   periodTokens: PeriodTokensType,
