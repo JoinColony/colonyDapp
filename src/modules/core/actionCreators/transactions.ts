@@ -5,7 +5,6 @@ import { MethodParams, TxConfig } from '~types/index';
 import {
   GasPricesProps,
   TransactionError,
-  TransactionMultisig,
   TRANSACTION_STATUSES,
   TRANSACTION_ERRORS,
 } from '~immutable/index';
@@ -19,15 +18,12 @@ export const createTxAction = (
     identifier,
     methodContext,
     methodName,
-    multisig: multisigConfig,
     options,
     params = [],
     ready,
   }: TxConfig,
 ) => ({
-  type: multisigConfig
-    ? ActionTypes.MULTISIG_TRANSACTION_CREATED
-    : ActionTypes.TRANSACTION_CREATED,
+  type: ActionTypes.TRANSACTION_CREATED,
   payload: {
     context,
     createdAt: new Date(),
@@ -36,7 +32,6 @@ export const createTxAction = (
     identifier,
     methodContext,
     methodName,
-    multisig: typeof multisigConfig === 'boolean' ? {} : multisigConfig,
     options,
     params,
     status:
@@ -87,50 +82,6 @@ export const transactionUnsuccessfulError = transactionError.bind(
   null,
   TRANSACTION_ERRORS.UNSUCCESSFUL,
 );
-
-export const multisigTransactionRefreshError = transactionError.bind(
-  null,
-  TRANSACTION_ERRORS.MULTISIG_REFRESH,
-);
-
-export const multisigTransactionNonceError = transactionError.bind(
-  null,
-  TRANSACTION_ERRORS.MULTISIG_NONCE,
-);
-
-export const multisigTransactionSignError = transactionError.bind(
-  null,
-  TRANSACTION_ERRORS.MULTISIG_SIGN,
-);
-
-export const multisigTransactionRejectError = transactionError.bind(
-  null,
-  TRANSACTION_ERRORS.MULTISIG_REJECT,
-);
-
-export const multisigTransactionRefreshed = (
-  id: string,
-  multisig: TransactionMultisig,
-): AllActions => ({
-  type: ActionTypes.MULTISIG_TRANSACTION_REFRESHED,
-  payload: { multisig },
-  meta: { id },
-});
-
-export const multisigTransactionSign = (id: string): AllActions => ({
-  type: ActionTypes.MULTISIG_TRANSACTION_SIGN,
-  meta: { id },
-});
-
-export const multisigTransactionSigned = (id: string): AllActions => ({
-  type: ActionTypes.MULTISIG_TRANSACTION_SIGNED,
-  meta: { id },
-});
-
-export const multisigTransactionReject = (id: string): AllActions => ({
-  type: ActionTypes.MULTISIG_TRANSACTION_REJECT,
-  meta: { id },
-});
 
 export const transactionReceiptReceived = (
   id: string,

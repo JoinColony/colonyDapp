@@ -28,8 +28,7 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
   action,
 ) => {
   switch (action.type) {
-    case ActionTypes.TRANSACTION_CREATED:
-    case ActionTypes.MULTISIG_TRANSACTION_CREATED: {
+    case ActionTypes.TRANSACTION_CREATED: {
       const {
         meta: { id },
         payload: {
@@ -40,7 +39,6 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
           identifier,
           methodContext,
           methodName,
-          multisig,
           options,
           params,
           status,
@@ -58,7 +56,6 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
         identifier,
         methodContext,
         methodName,
-        multisig,
         options,
         params,
         status,
@@ -70,13 +67,6 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
         [CORE_TRANSACTIONS_LIST, id],
         tx.set('group', transactionGroup(tx)),
       );
-    }
-    case ActionTypes.MULTISIG_TRANSACTION_REFRESHED: {
-      const {
-        meta: { id },
-        payload,
-      } = action;
-      return state.mergeIn([CORE_TRANSACTIONS_LIST, id], payload);
     }
     case ActionTypes.TRANSACTION_ADD_IDENTIFIER: {
       const {

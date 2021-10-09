@@ -4,7 +4,6 @@ import { TransactionReceipt } from 'ethers/providers';
 import { ClientType, TransactionOverrides } from '@colony/colony-js';
 
 import {
-  Address,
   AddressOrENSName,
   DefaultValues,
   MethodParams,
@@ -14,10 +13,6 @@ import {
 export enum TRANSACTION_ERRORS {
   ESTIMATE = 'ESTIMATE',
   EVENT_DATA = 'EVENT_DATA',
-  MULTISIG_NONCE = 'MULTISIG_NONCE',
-  MULTISIG_REFRESH = 'MULTISIG_REFRESH',
-  MULTISIG_REJECT = 'MULTISIG_REJECT',
-  MULTISIG_SIGN = 'MULTISIG_SIGN',
   RECEIPT = 'RECEIPT',
   SEND = 'SEND',
   UNSUCCESSFUL = 'UNSUCCESSFUL',
@@ -28,7 +23,6 @@ export enum TRANSACTION_STATUSES {
   READY = 'READY',
   PENDING = 'PENDING',
   FAILED = 'FAILED',
-  MULTISIG = 'MULTISIG',
   SUCCEEDED = 'SUCCEEDED',
 }
 
@@ -38,14 +32,6 @@ export interface TransactionError {
 }
 
 export type TransactionId = string;
-
-export interface TransactionMultisig {
-  missingSignees?: Address[];
-  nonce?: number;
-  payload?: object;
-  requiredSignees?: Address[];
-  signers?: object[];
-}
 
 export interface TransactionRecordProps {
   context: ClientType;
@@ -66,7 +52,6 @@ export interface TransactionRecordProps {
   identifier?: AddressOrENSName;
   methodContext?: string; // Context in which method is used e.g. setOneTxRole
   methodName: string;
-  multisig?: TransactionMultisig; // Indicates tx is multisig if set
   options: TransactionOverrides;
   params: MethodParams;
   receipt?: TransactionReceipt;
@@ -92,7 +77,6 @@ const defaultValues: DefaultValues<TransactionRecordProps> = {
   identifier: undefined,
   methodContext: undefined,
   methodName: undefined,
-  multisig: undefined,
   options: {},
   params: {},
   receipt: undefined,

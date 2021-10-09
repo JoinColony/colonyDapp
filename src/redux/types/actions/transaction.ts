@@ -34,7 +34,6 @@ export type TransactionActionTypes =
         | 'identifier'
         | 'methodContext'
         | 'methodName'
-        | 'multisig'
         | 'options'
         | 'params'
         | 'gasPrice'

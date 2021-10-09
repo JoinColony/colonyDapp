@@ -2,7 +2,6 @@ export const main: string;
 export const mainStatusReady: string;
 export const counter: string;
 export const completed: string;
-export const multisig: string;
 export const failed: string;
 export const interaction: string;
 export const tooltip: string;
