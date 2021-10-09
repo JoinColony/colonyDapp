@@ -116,9 +116,6 @@ const TransactionStatus = ({
             <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
           </div>
         )}
-        {status === TRANSACTION_STATUSES.MULTISIG && (
-          <span className={styles.multisig} />
-        )}
         {status === TRANSACTION_STATUSES.FAILED && (
           <span className={styles.failed}>!</span>
         )}

@@ -5,7 +5,6 @@ import { ColonyMetaActionsActionTypes } from './colonyMetaActions';
 import { MotionActionTypes } from './motion';
 import { GasPricesActionTypes } from './gasPrices';
 import { IpfsActionTypes } from './ipfs';
-import { MultisigActionTypes } from './multisig';
 import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
@@ -102,7 +101,6 @@ export type AllActions =
   | ColonyMetaActionsActionTypes
   | GasPricesActionTypes
   | IpfsActionTypes
-  | MultisigActionTypes
   | TransactionActionTypes
   | MessageActionTypes
   | UserActionTypes

@@ -79,12 +79,6 @@ export const getGroupStatus = (txGroup: TransactionOrMessageGroup) => {
   if (txGroup.some((tx) => tx.status === TRANSACTION_STATUSES.FAILED))
     return TRANSACTION_STATUSES.FAILED;
 
-  /**
-   * @todo Identify waiting multisig transactions (gas station tx group).
-   * @body This might not be how we identify a waiting mulitsig tx
-   */
-  if (txGroup.some((tx) => tx.status === TRANSACTION_STATUSES.MULTISIG))
-    return TRANSACTION_STATUSES.MULTISIG;
   if (txGroup.some((tx) => tx.status === TRANSACTION_STATUSES.PENDING))
     return TRANSACTION_STATUSES.PENDING;
   if (txGroup.every((tx) => tx.status === TRANSACTION_STATUSES.SUCCEEDED))
