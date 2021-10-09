@@ -4,8 +4,6 @@ import createSagaMiddleware from 'redux-saga';
 import setupSagas from '../modules/core/sagas';
 import reduxPromiseListener from './createPromiseListener';
 import createRootReducer from './createRootReducer';
-import { createSubscriberMiddleware } from './createSubscriberMiddleware';
-import { ActionTypes } from './actionTypes';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -16,14 +14,6 @@ const sagaMiddleware = createSagaMiddleware();
  * more proper solutions.
  */
 
-// Allows useDataSubsctiber to always dispatch, and prevents those actions from
-// propagating while something is already being subscribed to, or other
-// instances of useDataSubscriber are still reliant on a subscription.
-const subscriberMiddleware = createSubscriberMiddleware([
-  ActionTypes.CONNECTION_STATS_SUB_START,
-  ActionTypes.CONNECTION_STATS_SUB_STOP,
-]);
-
 const composeEnhancer =
   // @ts-ignore
   // eslint-disable-next-line no-underscore-dangle
@@ -32,11 +22,7 @@ const composeEnhancer =
 const store = createStore(
   createRootReducer(),
   composeEnhancer(
-    applyMiddleware(
-      subscriberMiddleware,
-      sagaMiddleware,
-      reduxPromiseListener.middleware,
-    ),
+    applyMiddleware(sagaMiddleware, reduxPromiseListener.middleware),
   ),
 );
 
