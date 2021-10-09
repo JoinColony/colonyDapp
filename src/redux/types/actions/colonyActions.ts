@@ -11,7 +11,6 @@ import {
   UniqueActionType,
   ActionTypeWithMeta,
   MetaWithHistory,
-  ActionType,
 } from './index';
 
 /*
@@ -55,9 +54,6 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_DOMAIN_EDIT_SUCCESS,
       MetaWithHistory<object>
     >
-  | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC>
-  | ActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_SUCCESS>
-  | ErrorActionType<typeof ActionTypes.COLONY_ACTION_GENERIC_ERROR, object>
   | UniqueActionType<
       ActionTypes.COLONY_ACTION_EXPENDITURE_PAYMENT,
       {
