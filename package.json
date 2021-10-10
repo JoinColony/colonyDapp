@@ -2,7 +2,8 @@
   "name": "colony-dapp",
   "private": true,
   "engines": {
-    "node": "14.18"
+    "node": "14.18",
+    "npm": "^8"
   },
   "version": "4.2.1",
   "description": "",

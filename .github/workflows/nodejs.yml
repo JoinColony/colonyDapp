@@ -38,6 +38,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
+    - name: npm
+      run: npm i -g npm@8 --registry=https://registry.npmjs.org
+
     - run: npm install
     - run: npm run typecheck
     - run: npm run lint:ci
