@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.19.0]
+        node-version: [14.18.0]
 
     steps:
     - uses: actions/checkout@v2
@@ -25,7 +25,7 @@ jobs:
       id: npm-cache
       run: |
         echo "::set-output name=dir::$(npm config get cache)"
-  
+
     - name: Cache node modules
       uses: actions/cache@v1
       with:
@@ -38,6 +38,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
+    - name: npm
+      run: npm i -g npm@8 --registry=https://registry.npmjs.org
+
     - run: npm install
     - run: npm run typecheck
     - run: npm run lint:ci

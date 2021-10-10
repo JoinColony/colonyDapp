@@ -1,7 +1,8 @@
 # Colony Dapp
 
 ## Prerequisites
-* `node` (Best use [nvm](https://github.com/nvm-sh/nvm))
+* `node` `v14.18.x` (Best use [nvm](https://github.com/nvm-sh/nvm))
+* `npm` `v8.x.x`
 * `docker` (See [install instructions](https://docs.docker.com/engine/install/))
 * `docker-compose` (See [install instructions](https://docs.docker.com/compose/install/))
 * `jq` (See [install instructions](https://github.com/stedolan/jq/wiki/Installation))
