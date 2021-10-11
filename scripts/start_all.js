@@ -103,7 +103,7 @@ addProcess('metatransactionBroadcaster', async () => {
     console.error(error);
     process.exit(1);
   });
-  await waitOn({ resources: ['tcp:8545'] });
+  await waitOn({ resources: ['tcp:3004'] });
 
   return metatransactionProcess;
 });
