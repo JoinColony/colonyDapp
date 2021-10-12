@@ -148,6 +148,7 @@
     "@purser/signer-ethers": "^1.0.3",
     "@purser/software": "^2.0.0",
     "@types/papaparse": "^5.2.6",
+    "axios": "^0.22.0",
     "bn.js": "^5.1.1",
     "camelcase": "^6.0.0",
     "classnames": "^2.2.6",
@@ -202,6 +203,7 @@
     "scroll-into-view-if-needed": "^2.2.16",
     "subscriptions-transport-ws": "^0.9.18",
     "utility-types": "^3.7.0",
+    "web3": "^1.6.0",
     "web3-eth-abi": "1.3.0",
     "web3-utils": "^1.3.5",
     "yup": "^0.29.0"
