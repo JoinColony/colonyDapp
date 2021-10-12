@@ -12,7 +12,8 @@
 .notificationsIcon {
   flex-grow: 0;
   margin-right: 15px;
-  padding: 7px 9px 9px;
+  padding: 9px;
+  height: 36px;
   width: 36px;
   border-radius: 38px;
   text-align: center;
@@ -96,7 +97,8 @@
 }
 
 .walletAddress {
-  padding: 2px 9px 3px;
+  margin: 0 2px;
+  padding: 0 9px;
 
   /*
    * @NOTE We need to do border sizing shenanigans due to how the border color
@@ -108,7 +110,9 @@
    * active class (the one that has a different colored border), we remove the extra padding
    * and set the border
    */
-  height: 100%;
+  height: 22px;
+  position: relative;
+  top: -0.1px;
   border: none;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
@@ -116,9 +120,9 @@
   cursor: pointer;
 }
 
-.walletAddress span {
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
+.walletAddress > span {
+  position: relative;
+  top: -0.5px;
 }
 
 .walletAddress:hover {
@@ -135,7 +139,6 @@
 
 .buttonsWrapper {
   margin-right: 12px;
-  padding: 2px;
   height: 26px;
   position: relative;
   border-radius: var(--radius-normal);
