@@ -1,10 +1,13 @@
 const path = require('path');
 const fs = require('fs');
 const PATHS = require('./paths');
+const Dotenv = require('dotenv-webpack');
 
 const { readdirSync } = fs;
-const { DAPP_MODULES, COMPONENTS_FOLDER } = PATHS;
-
+const { DAPP_MODULES, COMPONENTS_FOLDER, NODE_ENV_OBJECT_PATH } = PATHS;
+const envs = new Dotenv({
+  systemvars: !!process.env.CI || !!process.env.DEV,
+});
 
 /**
  * Helper method to generate a specific webpack alias format entry object
@@ -112,8 +115,31 @@ const getStaticDevResource = (processName) => {
   }
 };
 
+/*
+ * Load variables declared inside the `.env` file and inject them into `process.env`.
+ * This util is to be used in places outside of the `webpack` loader since it will
+ * loaded the environemnt variables itself. A good place to use this is the `start_all`
+ * script since that is the one that orchestrates everything.
+ *
+ * If a `filter` argument is provided, only that environment variable will be loaded
+ */
+const injectEnvironmentVariables = (filter) => {
+  const hasFilter = !!filter && typeof filter === 'string';
+  if (hasFilter) {
+    const value = envs.definitions[`${NODE_ENV_OBJECT_PATH}${filter}`]?.replace(/\"/g, '');
+    process.env[filter] = !value ? '' : value;
+  } else {
+    Object.keys(envs.definitions)?.map(varFullLabel => {
+      const varLabel = varFullLabel?.replace(NODE_ENV_OBJECT_PATH, '');
+      const value = envs.definitions[`${NODE_ENV_OBJECT_PATH}${varLabel}`]?.replace(/\"/g, '');
+      process.env[varLabel] = !value ? '' : value;
+    });
+  }
+};
+
 module.exports = {
   generateWebpackAlias,
   getDappModules,
   getStaticDevResource,
+  injectEnvironmentVariables,
 };

@@ -6,6 +6,8 @@ const MODULES_FOLDER = 'modules';
 const COMPONENTS_FOLDER = 'components';
 const NETWORK_FOLDER = 'colonyNetwork'
 
+const NODE_ENV_OBJECT_PATH = 'process.env.';
+
 const DAPP_ROOT = path.resolve(ROOT_PATH, 'src');
 const DAPP_MODULES = path.resolve(DAPP_ROOT, MODULES_FOLDER);
 const NETWORK_ROOT = path.resolve(DAPP_ROOT, 'lib', NETWORK_FOLDER);
@@ -25,4 +27,5 @@ module.exports = {
   DAPP_MODULES,
   NETWORK_ROOT,
   PID_FILE,
+  NODE_ENV_OBJECT_PATH,
 };
