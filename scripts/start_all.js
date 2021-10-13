@@ -13,7 +13,9 @@ const startGanache = require('./start_ganache');
 const deployContracts = require('./deploy_contracts');
 
 const { PID_FILE } = require('./paths');
-const { getStaticDevResource } = require('./utils');
+const { getStaticDevResource, injectEnvironmentVariables } = require('./utils');
+
+injectEnvironmentVariables('NODE_ENV');
 
 const processes = [];
 
