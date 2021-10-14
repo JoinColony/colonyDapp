@@ -1,4 +1,4 @@
-import { call, fork, takeEvery } from 'redux-saga/effects';
+import { call, fork, takeEvery, put, all } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID, Extension } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 
@@ -14,25 +14,29 @@ import {
   TEMP_getContext,
   TEMP_setContext,
 } from '~context/index';
-import { putError } from '~utils/saga/effects';
+import { putError, takeFrom } from '~utils/saga/effects';
 import { intArrayToBytes32 } from '~utils/web3';
 
 import {
   createTransaction,
   getTxChannel,
-  waitForTxResult,
+  createTransactionChannels,
 } from '../../../core/sagas';
+import {
+  transactionReady,
+  transactionAddParams,
+} from '../../../core/actionCreators';
 import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 import { refreshExtension } from '../utils';
 
 function* colonyExtensionEnable({
+  meta: { id: metaId },
   meta,
   payload: { colonyAddress, extensionId, ...payload },
 }: Action<ActionTypes.COLONY_EXTENSION_ENABLE>) {
   const extension = extensionData[extensionId];
   const initChannelName = `${meta.id}-initialise`;
-  const setPermissionChannelName = `${meta.id}-setUserRoles`;
   const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
   if (!extension) {
@@ -45,10 +49,7 @@ function* colonyExtensionEnable({
   TEMP_setContext(ContextModule.ColonyManager, colonyManager);
 
   const initChannel = yield call(getTxChannel, initChannelName);
-  const setPermissionChannel = yield call(
-    getTxChannel,
-    setPermissionChannelName,
-  );
+
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
   try {
@@ -117,36 +118,117 @@ function* colonyExtensionEnable({
         initParams = modifyParams(extension.initializationParams);
       }
 
-      yield fork(createTransaction, initChannelName, {
+      const batchKey = 'enableExtension';
+
+      const channelNames = ['initialise'];
+
+      if (missingPermissions.length) {
+        channelNames.push('setUserRolesWithProofs');
+      }
+
+      if (extensionId === Extension.CoinMachine) {
+        channelNames.push('deployTokenAuthority');
+        channelNames.push('makeArbitraryTransaction');
+      }
+
+      const channels = yield createTransactionChannels(metaId, channelNames);
+      const {
+        initialise,
+        setUserRolesWithProofs,
+        deployTokenAuthority,
+        makeArbitraryTransaction,
+      } = channels;
+
+      const createGroupTransaction = ({ id, index }, config) =>
+        fork(createTransaction, id, {
+          ...config,
+          group: {
+            key: batchKey,
+            id: metaId,
+            index,
+          },
+        });
+
+      yield createGroupTransaction(initialise, {
         context: `${extensionId}Client`,
         methodName: 'initialise',
         identifier: colonyAddress,
         params: initParams,
-        group: {
-          key: 'enableExtension',
-          id: meta.id,
-          index: 0,
-        },
       });
-    }
 
-    if (missingPermissions.length) {
-      const bytes32Roles = intArrayToBytes32(missingPermissions);
-      yield fork(createTransaction, setPermissionChannelName, {
-        context: ClientType.ColonyClient,
-        methodName: 'setUserRolesWithProofs',
-        identifier: colonyAddress,
-        params: [address, ROOT_DOMAIN_ID, bytes32Roles],
-        group: {
-          key: 'enableExtension',
-          id: meta.id,
-          index: 1,
-        },
-      });
-    }
+      if (setUserRolesWithProofs) {
+        const bytes32Roles = intArrayToBytes32(missingPermissions);
+        yield createGroupTransaction(setUserRolesWithProofs, {
+          context: ClientType.ColonyClient,
+          methodName: 'setUserRolesWithProofs',
+          identifier: colonyAddress,
+          params: [address, ROOT_DOMAIN_ID, bytes32Roles],
+        });
+      }
 
-    yield waitForTxResult(initChannel);
-    yield waitForTxResult(setPermissionChannel);
+      if (extensionId === Extension.CoinMachine) {
+        yield createGroupTransaction(deployTokenAuthority, {
+          context: ClientType.ColonyClient,
+          methodName: 'deployTokenAuthority',
+          identifier: colonyAddress,
+          params: [payload.tokenToBeSold, [address]],
+        });
+
+        yield createGroupTransaction(makeArbitraryTransaction, {
+          context: ClientType.ColonyClient,
+          methodName: 'makeArbitraryTransaction',
+          identifier: colonyAddress,
+          ready: false,
+        });
+      }
+
+      yield all(
+        Object.keys(channels).map((id) =>
+          takeFrom(channels[id].channel, ActionTypes.TRANSACTION_CREATED),
+        ),
+      );
+
+      yield takeFrom(initialise.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+      if (setUserRolesWithProofs) {
+        yield takeFrom(
+          setUserRolesWithProofs.channel,
+          ActionTypes.TRANSACTION_SUCCEEDED,
+        );
+      }
+
+      if (extensionId === Extension.CoinMachine) {
+        const {
+          payload: { deployedContractAddress },
+        } = yield takeFrom(
+          deployTokenAuthority.channel,
+          ActionTypes.TRANSACTION_SUCCEEDED,
+        );
+
+        const tokenClient = yield colonyManager.getTokenClient(
+          payload.tokenToBeSold,
+        );
+
+        // eslint-disable-next-line max-len
+        const encodedAction = tokenClient.interface.functions.setAuthority.encode(
+          [deployedContractAddress],
+        );
+
+        yield put(
+          transactionAddParams(makeArbitraryTransaction.id, [
+            payload.tokenToBeSold,
+            encodedAction,
+          ]),
+        );
+
+        yield put(transactionReady(makeArbitraryTransaction.id));
+
+        yield takeFrom(
+          makeArbitraryTransaction.channel,
+          ActionTypes.TRANSACTION_SUCCEEDED,
+        );
+      }
+    }
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_EXTENSION_ENABLE_ERROR,
@@ -165,7 +247,6 @@ function* colonyExtensionEnable({
     }
     yield call(refreshExtension, colonyAddress, extensionId);
     initChannel.close();
-    setPermissionChannel.close();
   }
   return null;
 }
