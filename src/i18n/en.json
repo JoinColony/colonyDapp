@@ -86,6 +86,8 @@
     "transaction.ColonyClient.registerColonyLabel.description": "Create Colony Name",
     "transaction.ColonyClient.deployTokenAuthority.title": "Deploy Token Authority",
     "transaction.ColonyClient.deployTokenAuthority.description": "Deploy Token Authority",
+    "transaction.ColonyClient.makeArbitraryTransaction.title": "Make arbitrary transaction",
+    "transaction.ColonyClient.makeArbitraryTransaction.description": "Make arbitrary transaction",
     "transaction.ColonyClient.installExtension.title": "Add Extension to Colony",
     "transaction.ColonyClient.installExtension.description": "Add Extension to Colony",
     "transaction.TokenClient.setAuthority.title": "Set Token Authority",
