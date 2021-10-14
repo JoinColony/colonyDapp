@@ -10,3 +10,4 @@ export const tooltip: string;
 export const voteResults: string;
 export const outcome: string;
 export const loading: string;
+export const finalizeError: string;

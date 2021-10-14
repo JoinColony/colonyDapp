@@ -109,6 +109,7 @@ const DefaultMotion = ({
     toDomain,
     blockNumber,
     newVersion,
+    tokenAddress,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -519,6 +520,9 @@ const DefaultMotion = ({
               motionId={motionId}
               scrollToRef={bottomElementRef}
               motionState={motionState}
+              fromDomain={fromDomain}
+              motionAmount={amount}
+              tokenAddress={tokenAddress}
             />
           )}
           <DetailsWidget
