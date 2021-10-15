@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Extension } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 
+import { AddressZero } from 'ethers/constants';
 import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
@@ -16,6 +17,7 @@ import {
   useCoinMachineSalePeriodQuery,
   useCoinMachineTokenBalanceQuery,
   useSubgraphCoinMachinePeriodsQuery,
+  useSubgraphTokenBoughtEventsSubscription,
 } from '~data/index';
 
 import Chat from './Chat';
@@ -59,8 +61,24 @@ const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
 }: Props) => {
+  const [tokenBoughtEventsCounter, setTokenBoughtEventsCounter] = useState(0);
   const { data, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
+  });
+
+  const coinMachineExtension = data?.processedColony.installedExtensions.find(
+    ({ extensionId }) => extensionId === Extension.CoinMachine,
+  );
+
+  const {
+    data: tokenBoughtEventsData,
+    loading: loadingTokenBoughtEventsData,
+  } = useSubgraphTokenBoughtEventsSubscription({
+    variables: {
+      colonyAddress,
+      extensionAddress:
+        coinMachineExtension?.address.toLowerCase() || AddressZero,
+    },
   });
 
   const {
@@ -90,6 +108,9 @@ const CoinMachine = ({
 
   const {
     data: periodTokensData,
+    refetch: refetchCurrentPeriodTokensData,
+    startPolling: startPollingCurrentPeriodTokensData,
+    stopPolling: stopPollingCurrentPeriodTokensData,
     loading: periodTokensLoading,
   } = useCurrentPeriodTokensQuery({
     variables: { colonyAddress },
@@ -133,6 +154,50 @@ const CoinMachine = ({
     [periodTokens],
   );
 
+  const timeRemaining = parseInt(
+    salePeriodData?.coinMachineSalePeriod?.timeRemaining || '0',
+    10,
+  );
+
+  const periodLength = parseInt(
+    salePeriodData?.coinMachineSalePeriod?.periodLength || '0',
+    10,
+  );
+
+  useEffect(() => {
+    const tokenBoughtEventsLength =
+      tokenBoughtEventsData?.tokenBoughtEvents.length || 0;
+    if (tokenBoughtEventsCounter < tokenBoughtEventsLength) {
+      refetchCurrentPeriodTokensData({ colonyAddress });
+      setTokenBoughtEventsCounter(tokenBoughtEventsLength);
+    }
+  }, [
+    colonyAddress,
+    tokenBoughtEventsData,
+    tokenBoughtEventsCounter,
+    setTokenBoughtEventsCounter,
+    refetchCurrentPeriodTokensData,
+  ]);
+
+  useEffect(() => {
+    if (timeRemaining > 1000 && timeRemaining < periodLength * 1000) {
+      setTimeout(() => {
+        refetchCurrentPeriodTokensData({ colonyAddress });
+        startPollingCurrentPeriodTokensData(periodLength * 1000);
+      }, timeRemaining);
+    } else {
+      startPollingCurrentPeriodTokensData(periodLength * 1000);
+    }
+    return () => stopPollingCurrentPeriodTokensData();
+  }, [
+    colonyAddress,
+    periodLength,
+    timeRemaining,
+    refetchCurrentPeriodTokensData,
+    startPollingCurrentPeriodTokensData,
+    stopPollingCurrentPeriodTokensData,
+  ]);
+
   if (
     loading ||
     saleTokensLoading ||
@@ -140,7 +205,8 @@ const CoinMachine = ({
     !data?.processedColony?.installedExtensions ||
     periodTokensLoading ||
     coinMachineTokenBalanceLoading ||
-    salePeriodsLoading
+    salePeriodsLoading ||
+    loadingTokenBoughtEventsData
   ) {
     return (
       <div className={styles.loadingSpinner}>
@@ -152,10 +218,6 @@ const CoinMachine = ({
     );
   }
 
-  const { installedExtensions } = data.processedColony;
-  const coinMachineExtension = installedExtensions.find(
-    ({ extensionId }) => extensionId === Extension.CoinMachine,
-  );
   /*
    * Only allow access to the Coin Machine page, if the extension is:
    * - installed
@@ -171,14 +233,7 @@ const CoinMachine = ({
   }
 
   const saleToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
-  const timeRemaining = parseInt(
-    salePeriodData?.coinMachineSalePeriod?.timeRemaining || '0',
-    10,
-  );
-  const periodLength = parseInt(
-    salePeriodData?.coinMachineSalePeriod?.periodLength || '0',
-    10,
-  );
+
   const breadCrumbs: Crumb[] = [
     MSG.title,
     <div>
