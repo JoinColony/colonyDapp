@@ -1,0 +1,38 @@
+query SubgraphRoleEvents($colonyAddress: String!) {
+  colonyRoleSetEvents: events(
+    where: {
+      name_contains: "ColonyRoleSet"
+      address: $colonyAddress
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+  }
+  recoveryRoleSetEvents: events(
+    where: {
+      name_contains: "RecoveryRoleSet"
+      address: $colonyAddress
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+  }
+}
