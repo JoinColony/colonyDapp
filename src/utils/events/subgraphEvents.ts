@@ -11,9 +11,9 @@ import { createAddress } from '../web3';
  * information related to the transaction and block
  */
 export type ExtendedLogDescription = Omit<LogDescription, 'decode'> & {
-  timestamp: number;
-  block: number;
-  hash: string;
+  timestamp?: number;
+  block?: number;
+  hash?: string;
 };
 
 /*
@@ -21,10 +21,10 @@ export type ExtendedLogDescription = Omit<LogDescription, 'decode'> & {
  * renaming in the queries, so they still expect there old names
  */
 export type NormalizedSubgraphEvent = SubgraphEvent & {
-  transaction: SubgraphTransaction & {
-    transactionHash: string;
-    block: SubgraphBlock & {
-      number: string;
+  transaction?: SubgraphTransaction & {
+    transactionHash?: string;
+    block?: SubgraphBlock & {
+      number?: string;
     };
   };
 };
@@ -108,13 +108,10 @@ const roleArgumentParser = (values: {
 export const parseSubgraphEvent = ({
   name,
   args,
-  transaction: {
-    transactionHash,
-    block: { number: blockId, timestamp: blockTimestamp },
-  },
+  transaction,
 }: NormalizedSubgraphEvent): ExtendedLogDescription => {
   const parsedArguments = JSON.parse(args);
-  return {
+  let parsedEvent: ExtendedLogDescription = {
     name: name.substring(0, name.indexOf('(')),
     signature: name,
     topic: topicId(name),
@@ -123,8 +120,19 @@ export const parseSubgraphEvent = ({
       ...roleArgumentParser(parsedArguments),
       ...addressArgumentParser(parsedArguments),
     },
-    block: parseInt(blockId.replace('block_', ''), 10),
-    timestamp: parseInt(blockTimestamp, 10) * 1000,
-    hash: transactionHash,
   };
+  if (transaction) {
+    const { transactionHash, block } = transaction;
+    parsedEvent = {
+      ...parsedEvent,
+      ...(transactionHash && { hash: transactionHash }),
+      ...(block?.number && {
+        block: parseInt(block.number.replace('block_', ''), 10),
+      }),
+      ...(block?.timestamp && {
+        timestamp: parseInt(block.timestamp, 10) * 1000,
+      }),
+    };
+  }
+  return parsedEvent;
 };
