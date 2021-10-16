@@ -273,6 +273,7 @@ export type Query = {
   colonyName: Scalars['String'];
   colonyReputation?: Maybe<Scalars['String']>;
   domains: Array<SubgraphDomain>;
+  events: Array<SubgraphEvent>;
   eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
@@ -379,6 +380,14 @@ export type QueryColonyReputationArgs = {
 
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
+};
+
+
+export type QueryEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  where?: Maybe<EventsFilter>;
+  orderDirection?: Maybe<Scalars['String']>;
 };
 
 
@@ -608,7 +617,7 @@ export type QueryWhitelistedUsersArgs = {
 };
 
 export type Subscription = {
-  events: Array<SubscriptionEvent>;
+  events: Array<SubgraphEvent>;
   motions: Array<SubscriptionMotion>;
   oneTxPayments: Array<OneTxPayment>;
   subscribedUsers: Array<User>;
@@ -618,9 +627,9 @@ export type Subscription = {
 
 
 export type SubscriptionEventsArgs = {
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
-  where: EventsFilter;
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  where?: Maybe<EventsFilter>;
 };
 
 
@@ -771,6 +780,15 @@ export type LoggedInUserInput = {
   networkId?: Maybe<Scalars['Int']>;
 };
 
+export type EventsFilter = {
+  associatedColony_contains?: Maybe<Scalars['String']>;
+  associatedColony?: Maybe<Scalars['String']>;
+  name_in?: Maybe<Array<Scalars['String']>>;
+  name_contains?: Maybe<Scalars['String']>;
+  args_contains?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+};
+
 export type LoggedInUser = {
   id: Scalars['String'];
   balance: Scalars['String'];
@@ -778,6 +796,36 @@ export type LoggedInUser = {
   walletAddress: Scalars['String'];
   ethereal: Scalars['Boolean'];
   networkId?: Maybe<Scalars['Int']>;
+};
+
+export type SugraphEventProcessedValues = {
+  agent: Scalars['String'];
+  who: Scalars['String'];
+  fromPot: Scalars['String'];
+  fromDomain: Scalars['String'];
+  toPot: Scalars['String'];
+  toDomain: Scalars['String'];
+  domainId: Scalars['String'];
+  amount: Scalars['String'];
+  token: Scalars['String'];
+  metadata: Scalars['String'];
+  user: Scalars['String'];
+  role: Scalars['String'];
+  setTo: Scalars['String'];
+  oldVersion: Scalars['String'];
+  newVersion: Scalars['String'];
+  storageSlot: Scalars['String'];
+  storageSlotValue: Scalars['String'];
+};
+
+export type SubgraphEvent = {
+  id: Scalars['String'];
+  transaction: SubgraphTransaction;
+  address: Scalars['String'];
+  name: Scalars['String'];
+  args: Scalars['String'];
+  associatedColony: SubgraphColony;
+  processedValues: SugraphEventProcessedValues;
 };
 
 export type ParsedEvent = {
@@ -1170,12 +1218,6 @@ export type ActionsFilter = {
   payment_contains?: Maybe<Scalars['String']>;
 };
 
-export type EventsFilter = {
-  associatedColony_contains?: Maybe<Scalars['String']>;
-  associatedColony?: Maybe<Scalars['String']>;
-  name_in?: Maybe<Array<Scalars['String']>>;
-};
-
 export type MotionsFilter = {
   associatedColony?: Maybe<Scalars['String']>;
   extensionAddress?: Maybe<Scalars['String']>;
@@ -1186,36 +1228,6 @@ export type OneTxPayment = {
   agent: Scalars['String'];
   transaction: SubgraphTransaction;
   payment: SubgraphPayment;
-};
-
-export type EventProcessedValues = {
-  agent: Scalars['String'];
-  who: Scalars['String'];
-  fromPot: Scalars['String'];
-  fromDomain: Scalars['String'];
-  toPot: Scalars['String'];
-  toDomain: Scalars['String'];
-  domainId: Scalars['String'];
-  amount: Scalars['String'];
-  token: Scalars['String'];
-  metadata: Scalars['String'];
-  user: Scalars['String'];
-  role: Scalars['String'];
-  setTo: Scalars['String'];
-  oldVersion: Scalars['String'];
-  newVersion: Scalars['String'];
-  storageSlot: Scalars['String'];
-  storageSlotValue: Scalars['String'];
-};
-
-export type SubscriptionEvent = {
-  id: Scalars['String'];
-  transaction: SubgraphTransaction;
-  address: Scalars['String'];
-  name: Scalars['String'];
-  args: Scalars['String'];
-  associatedColony: SubgraphColony;
-  processedValues: EventProcessedValues;
 };
 
 export type SubscriptionMotion = {
@@ -1986,6 +1998,31 @@ export type ColonyMembersQuery = { subscribedUsers: Array<(
     & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
   )> };
 
+export type SubgraphRoleEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphRoleEventsQuery = { colonyRoleSetEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )>, recoveryRoleSetEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
 export type SubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -1994,7 +2031,7 @@ export type SubgraphEventsSubscriptionVariables = Exact<{
 
 
 export type SubgraphEventsSubscription = { events: Array<(
-    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -2042,7 +2079,7 @@ export type SubgraphEventsThatAreActionsSubscriptionVariables = Exact<{
 
 
 export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
-    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -2052,7 +2089,7 @@ export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
-    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
+    ), processedValues: Pick<SugraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
   )> };
 
 export type SubgraphMotionsSubscriptionVariables = Exact<{
@@ -5218,6 +5255,62 @@ export function useColonyMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type ColonyMembersQueryHookResult = ReturnType<typeof useColonyMembersQuery>;
 export type ColonyMembersLazyQueryHookResult = ReturnType<typeof useColonyMembersLazyQuery>;
 export type ColonyMembersQueryResult = Apollo.QueryResult<ColonyMembersQuery, ColonyMembersQueryVariables>;
+export const SubgraphRoleEventsDocument = gql`
+    query SubgraphRoleEvents($colonyAddress: String!) {
+  colonyRoleSetEvents: events(where: {name_contains: "ColonyRoleSet", address: $colonyAddress}) {
+    id
+    address
+    name
+    args
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+  }
+  recoveryRoleSetEvents: events(where: {name_contains: "RecoveryRoleSet", address: $colonyAddress}) {
+    id
+    address
+    name
+    args
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphRoleEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphRoleEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphRoleEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphRoleEventsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useSubgraphRoleEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>(SubgraphRoleEventsDocument, baseOptions);
+      }
+export function useSubgraphRoleEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>(SubgraphRoleEventsDocument, baseOptions);
+        }
+export type SubgraphRoleEventsQueryHookResult = ReturnType<typeof useSubgraphRoleEventsQuery>;
+export type SubgraphRoleEventsLazyQueryHookResult = ReturnType<typeof useSubgraphRoleEventsLazyQuery>;
+export type SubgraphRoleEventsQueryResult = Apollo.QueryResult<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>;
 export const SubgraphEventsDocument = gql`
     subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
