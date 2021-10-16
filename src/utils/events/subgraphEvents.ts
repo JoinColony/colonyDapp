@@ -1,10 +1,11 @@
-import { LogDescription, id as topicId } from 'ethers/utils';
+import { LogDescription, id as topicId, bigNumberify } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
 import { SubgraphEvent, SubgraphTransaction, SubgraphBlock } from '~data/index';
-import { Address } from '~types/index';
+import { Address, SortDirection } from '~types/index';
 
 import { createAddress } from '../web3';
+import { log } from '../debug';
 
 /*
  * Needed to omit the unused `decode()` function as well as add
@@ -164,4 +165,27 @@ export const parseSubgraphEvent = ({
     };
   }
   return parsedEvent;
+};
+
+export const sortSubgraphEventByIndex = (
+  firstEvent: ExtendedLogDescription,
+  secondEvent: ExtendedLogDescription,
+  direction: SortDirection = SortDirection.ASC,
+): number => {
+  if (!firstEvent?.index || !secondEvent?.index) {
+    log.verbose(
+      `Subgraph events intended for sorting do not contain an index. Sort function will return untrustworthy positioning`,
+      `Event: ${firstEvent?.name},`,
+      `Index: ${firstEvent?.index},`,
+      `Event: ${secondEvent?.name},`,
+      `Index: ${secondEvent?.index},`,
+    );
+    return 0;
+  }
+  const firstIndex = bigNumberify(firstEvent.index);
+  const secondIndex = bigNumberify(secondEvent.index);
+  if (direction === SortDirection.ASC) {
+    return firstIndex.sub(secondIndex).toNumber();
+  }
+  return secondIndex.sub(firstIndex).toNumber();
 };
