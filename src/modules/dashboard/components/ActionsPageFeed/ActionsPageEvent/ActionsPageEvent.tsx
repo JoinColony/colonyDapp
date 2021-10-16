@@ -26,7 +26,7 @@ import {
   parseDomainMetadata,
   getColonyMetadataMessageDescriptorsIds,
   getDomainMetadataMessageDescriptorsIds,
-  getColonyRoleSetMessageDescriptorsIds,
+  getRoleEventDescriptorsIds,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
 import { getFormattedTokenValue } from '~utils/tokens';
@@ -291,10 +291,11 @@ const ActionsPageEvent = ({
           getDomainMetadataChecks,
         );
       case ColonyAndExtensionsEvents.ColonyRoleSet:
-        return getColonyRoleSetMessageDescriptorsIds(
+        return getRoleEventDescriptorsIds(
           values?.roles &&
             values?.roles[eventIndex] &&
             values?.roles[eventIndex]?.setTo,
+          ColonyAndExtensionsEvents.ColonyRoleSet,
           'event',
         );
       default:
