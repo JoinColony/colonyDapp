@@ -14,6 +14,7 @@ export type ExtendedLogDescription = Omit<LogDescription, 'decode'> & {
   timestamp?: number;
   block?: number;
   hash?: string;
+  index?: string;
 };
 
 /*
@@ -109,26 +110,54 @@ export const parseSubgraphEvent = ({
   name,
   args,
   transaction,
+  id,
 }: NormalizedSubgraphEvent): ExtendedLogDescription => {
+  const blockNumber =
+    transaction?.block?.number &&
+    parseInt(transaction.block.number.replace('block_', ''), 10);
   const parsedArguments = JSON.parse(args);
   let parsedEvent: ExtendedLogDescription = {
     name: name.substring(0, name.indexOf('(')),
     signature: name,
     topic: topicId(name),
+    ...(blockNumber && { blockNumber }),
+    /*
+     * Parse the normal values, and any specialized parsers we might have
+     */
     values: {
       ...parsedArguments,
       ...roleArgumentParser(parsedArguments),
       ...addressArgumentParser(parsedArguments),
     },
   };
+  /*
+   * If we fetched the id in the subgraph query, then we can also construct
+   * a unique event id (blockNumber + logIndex) which can be used to sort
+   * the events historically.
+   *
+   * This is needed since multiple events can be emmited inside a since block,
+   * meaning we can't just go by block number or timestamp alone
+   */
+  if (blockNumber && id) {
+    /*
+     * `lastIndexOf` gets the start of the occurance, and 6 is the length of
+     * the keyword occurence
+     *
+     * Padding with 7 zeros is a bit overkill, but we ensure that can support
+     * up to a million events happen inside a block
+     */
+    const logIndex = id.slice(id.lastIndexOf('event_') + 6).padStart(7, '0');
+    parsedEvent.index = `${blockNumber}${logIndex}`;
+  }
+  /*
+   * If we also fetched transaction values, parse them as well
+   * Note that we attempt to parse the block number earlier in this function
+   */
   if (transaction) {
     const { transactionHash, block } = transaction;
     parsedEvent = {
       ...parsedEvent,
       ...(transactionHash && { hash: transactionHash }),
-      ...(block?.number && {
-        block: parseInt(block.number.replace('block_', ''), 10),
-      }),
       ...(block?.timestamp && {
         timestamp: parseInt(block.timestamp, 10) * 1000,
       }),
