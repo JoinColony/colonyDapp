@@ -108,7 +108,8 @@ const ColonyEventsListItem = ({
   );
 
   const getEventListTitleMessageDescriptor = useMemo(() => {
-    return eventName === ColonyAndExtensionsEvents.ColonyRoleSet
+    return eventName === ColonyAndExtensionsEvents.ColonyRoleSet ||
+      eventName === ColonyAndExtensionsEvents.RecoveryRoleSet
       ? getRoleEventDescriptorsIds(setTo, eventName)
       : 'eventList.event';
   }, [eventName, setTo]);
