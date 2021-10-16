@@ -173,13 +173,18 @@ export const getDomainMetadataMessageDescriptorsIds = (
   return `event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`;
 };
 
-export const getColonyRoleSetMessageDescriptorsIds = (
+export const getRoleEventDescriptorsIds = (
   roleSetTo: boolean | undefined,
-  eventMessageType: string,
+  /*
+   * prettier is being a uncooperative again
+   */
+  // eslint-disable-next-line max-len
+  eventName: ColonyAndExtensionsEvents = ColonyAndExtensionsEvents.ColonyRoleSet,
+  eventMessageType = 'eventList',
 ) => {
   return roleSetTo
-    ? `${eventMessageType}.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`
-    : `${eventMessageType}.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`;
+    ? `${eventMessageType}.${eventName}.assign`
+    : `${eventMessageType}.${eventName}.remove`;
 };
 
 export const parseColonyMetadata = (
