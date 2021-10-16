@@ -1,5 +1,10 @@
 import { LogDescription, id as topicId } from 'ethers/utils';
+import { ColonyRole } from '@colony/colony-js';
+
 import { SubgraphEvent, SubgraphTransaction, SubgraphBlock } from '~data/index';
+import { Address } from '~types/index';
+
+import { createAddress } from '../web3';
 
 /*
  * Needed to omit the unused `decode()` function as well as add
@@ -25,6 +30,78 @@ export type NormalizedSubgraphEvent = SubgraphEvent & {
 };
 
 /*
+ * @NOTE Only use internally
+ *
+ * Specific function to parse known, expected, values
+ * This parses values for any known addresses
+ */
+const addressArgumentParser = (values: {
+  user?: string;
+  agent?: string;
+  creator?: string;
+  staker?: string;
+  escalator?: string;
+  recipient?: string;
+}): {
+  user?: Address;
+  agent?: Address;
+  creator?: Address;
+  staker?: Address;
+  escalator?: Address;
+  recipient?: Address;
+} => {
+  const parsedValues: {
+    user?: Address;
+    agent?: Address;
+    creator?: Address;
+    staker?: Address;
+    escalator?: Address;
+    recipient?: Address;
+  } = {};
+  ['user', 'agent', 'creator', 'staker', 'escalator', 'recipient'].map(
+    (propName) => {
+      if (values[propName]) {
+        parsedValues[propName] = createAddress(values[propName]);
+      }
+      return null;
+    },
+  );
+  return parsedValues;
+};
+
+/*
+ * @NOTE Only use internally
+ *
+ * Specific function to parse known, expected, values
+ * This parses values for the ColonyRoleSet and RecoveryRoleSet events
+ */
+const roleArgumentParser = (values: {
+  domainId?: string;
+  role?: string;
+  setTo?: string;
+}): {
+  domainId?: number;
+  role?: ColonyRole;
+  setTo?: boolean;
+} => {
+  const parsedValues: {
+    domainId?: number;
+    role?: ColonyRole;
+    setTo?: boolean;
+  } = {};
+  if (values?.domainId) {
+    parsedValues.domainId = parseInt(values.domainId, 10);
+  }
+  if (values?.role) {
+    parsedValues.role = parseInt(values.role, 10);
+  }
+  if (values?.setTo) {
+    parsedValues.setTo = Boolean(values.setTo);
+  }
+  return parsedValues;
+};
+
+/*
  * Utility to parse events that come from the subgraph handler
  * into events that resemble the Log format that we get directly from the chain
  */
@@ -35,12 +112,19 @@ export const parseSubgraphEvent = ({
     transactionHash,
     block: { number: blockId, timestamp: blockTimestamp },
   },
-}: NormalizedSubgraphEvent): ExtendedLogDescription => ({
-  name: name.substring(0, name.indexOf('(')),
-  signature: name,
-  topic: topicId(name),
-  values: { ...JSON.parse(args) },
-  block: parseInt(blockId.replace('block_', ''), 10),
-  timestamp: parseInt(blockTimestamp, 10) * 1000,
-  hash: transactionHash,
-});
+}: NormalizedSubgraphEvent): ExtendedLogDescription => {
+  const parsedArguments = JSON.parse(args);
+  return {
+    name: name.substring(0, name.indexOf('(')),
+    signature: name,
+    topic: topicId(name),
+    values: {
+      ...parsedArguments,
+      ...roleArgumentParser(parsedArguments),
+      ...addressArgumentParser(parsedArguments),
+    },
+    block: parseInt(blockId.replace('block_', ''), 10),
+    timestamp: parseInt(blockTimestamp, 10) * 1000,
+    hash: transactionHash,
+  };
+};
