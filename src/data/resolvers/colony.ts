@@ -475,6 +475,11 @@ export const colonyResolvers = ({
             recoveryRoleSetEvents: recoveryRoleSetSubgraphEvents,
           } = data;
 
+          /*
+           * Parse and sort events coming from the subgraph
+           * Note that if the query doesn't have the blockNumber and event Id
+           * then the sort will be unreliable
+           */
           const colonyRoleEvents = colonyRoleSetSubgraphEvents
             .map(parseSubgraphEvent)
             .sort(sortSubgraphEventByIndex);
