@@ -2006,18 +2006,20 @@ export type SubgraphRoleEventsQueryVariables = Exact<{
 export type SubgraphRoleEventsQuery = { colonyRoleSetEvents: Array<(
     Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
     & { transaction: (
-      { transactionHash: SubgraphTransaction['id'] }
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
       & { block: (
-        Pick<SubgraphBlock, 'timestamp'>
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
         & { number: SubgraphBlock['id'] }
       ) }
     ) }
   )>, recoveryRoleSetEvents: Array<(
     Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
     & { transaction: (
-      { transactionHash: SubgraphTransaction['id'] }
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
       & { block: (
-        Pick<SubgraphBlock, 'timestamp'>
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
         & { number: SubgraphBlock['id'] }
       ) }
     ) }
@@ -5263,8 +5265,10 @@ export const SubgraphRoleEventsDocument = gql`
     name
     args
     transaction {
+      id
       transactionHash: id
       block {
+        id
         number: id
         timestamp
       }
@@ -5276,8 +5280,10 @@ export const SubgraphRoleEventsDocument = gql`
     name
     args
     transaction {
+      id
       transactionHash: id
       block {
+        id
         number: id
         timestamp
       }
