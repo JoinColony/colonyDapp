@@ -107,6 +107,26 @@ const roleArgumentParser = (values: {
 };
 
 /*
+ * @NOTE Only use internally
+ *
+ * Specific function to parse known, expected, values
+ * This parses values for the Extension-related events
+ */
+const extensionArgumentParser = (values: {
+  version?: string;
+}): {
+  version?: number;
+} => {
+  const parsedValues: {
+    version?: number;
+  } = {};
+  if (values?.version) {
+    parsedValues.version = parseInt(values.version, 10);
+  }
+  return parsedValues;
+};
+
+/*
  * Utility to parse events that come from the subgraph handler
  * into events that resemble the Log format that we get directly from the chain
  */
@@ -131,6 +151,7 @@ export const parseSubgraphEvent = ({
     values: {
       ...parsedArguments,
       ...roleArgumentParser(parsedArguments),
+      ...extensionArgumentParser(parsedArguments),
       ...addressArgumentParser(parsedArguments),
     },
   };
