@@ -24,6 +24,7 @@ export function* colonyExtensionInstall({
 }: Action<ActionTypes.COLONY_EXTENSION_INSTALL>) {
   const txChannel = yield call(getTxChannel, meta.id);
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
 
   try {
     /*
@@ -69,7 +70,11 @@ export function* colonyExtensionInstall({
       meta,
     );
   } finally {
-    yield call(refreshExtension, colonyAddress, extensionId);
+    const extensionAddress = yield networkClient.getExtensionInstallation(
+      getExtensionHash(extensionId),
+      colonyAddress,
+    );
+    yield call(refreshExtension, colonyAddress, extensionId, extensionAddress);
 
     txChannel.close();
   }
