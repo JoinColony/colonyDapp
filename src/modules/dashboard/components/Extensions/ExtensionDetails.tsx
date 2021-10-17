@@ -176,7 +176,8 @@ const ExtensionDetails = ({
   const { data: networkExtensionData } = useNetworkExtensionVersionQuery({
     variables: { extensionId },
   });
-  const networkExtension = networkExtensionData?.networkExtensionVersion?.[0];
+  const [networkExtension] =
+    networkExtensionData?.networkExtensionVersion || [];
 
   const latestNetworkExtensionVersion = networkExtension?.version || 0;
 
