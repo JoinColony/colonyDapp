@@ -316,11 +316,12 @@ function* colonyRestartDeployment({
         },
         fetchPolicy: 'network-only',
       });
+      const [latestOneTxDepoyment] = networkExtensionVersion;
 
       yield put(
         transactionAddParams(deployOneTx.id, [
           getExtensionHash(Extension.OneTxPayment),
-          networkExtensionVersion,
+          latestOneTxDepoyment?.version || 0,
         ]),
       );
       yield put(transactionReady(deployOneTx.id));
