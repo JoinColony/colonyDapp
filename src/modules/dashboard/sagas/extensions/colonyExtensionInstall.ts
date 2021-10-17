@@ -41,12 +41,16 @@ export function* colonyExtensionInstall({
       },
       fetchPolicy: 'network-only',
     });
+    const [latestExtensionDepoyment] = networkExtensionVersion;
 
     yield fork(createTransaction, meta.id, {
       context: ClientType.ColonyClient,
       methodName: 'installExtension',
       identifier: colonyAddress,
-      params: [getExtensionHash(extensionId), networkExtensionVersion],
+      params: [
+        getExtensionHash(extensionId),
+        latestExtensionDepoyment?.version || 0,
+      ],
     });
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
