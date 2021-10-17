@@ -2008,6 +2008,35 @@ export type SubgraphExtensionVersionDeployedEventsQuery = { extensionVersionDepl
     ) }
   )> };
 
+export type SubgraphExtensionEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
+  extensionId: Scalars['String'];
+}>;
+
+
+export type SubgraphExtensionEventsQuery = { extensionInstalledEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )>, extensionInitialisedEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
 export type ColonyMembersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -5282,6 +5311,68 @@ export function useSubgraphExtensionVersionDeployedEventsLazyQuery(baseOptions?:
 export type SubgraphExtensionVersionDeployedEventsQueryHookResult = ReturnType<typeof useSubgraphExtensionVersionDeployedEventsQuery>;
 export type SubgraphExtensionVersionDeployedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphExtensionVersionDeployedEventsLazyQuery>;
 export type SubgraphExtensionVersionDeployedEventsQueryResult = Apollo.QueryResult<SubgraphExtensionVersionDeployedEventsQuery, SubgraphExtensionVersionDeployedEventsQueryVariables>;
+export const SubgraphExtensionEventsDocument = gql`
+    query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!, $extensionId: String!) {
+  extensionInstalledEvents: events(where: {name_contains: "ExtensionInstalled", args_contains: $colonyAddress, args_contains: $extensionId}) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+  extensionInitialisedEvents: events(where: {name_contains: "ExtensionInitialised", address: $extensionAddress}) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphExtensionEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphExtensionEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphExtensionEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphExtensionEventsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      extensionAddress: // value for 'extensionAddress'
+ *      extensionId: // value for 'extensionId'
+ *   },
+ * });
+ */
+export function useSubgraphExtensionEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>(SubgraphExtensionEventsDocument, baseOptions);
+      }
+export function useSubgraphExtensionEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>(SubgraphExtensionEventsDocument, baseOptions);
+        }
+export type SubgraphExtensionEventsQueryHookResult = ReturnType<typeof useSubgraphExtensionEventsQuery>;
+export type SubgraphExtensionEventsLazyQueryHookResult = ReturnType<typeof useSubgraphExtensionEventsLazyQuery>;
+export type SubgraphExtensionEventsQueryResult = Apollo.QueryResult<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>;
 export const ColonyMembersDocument = gql`
     query ColonyMembers($colonyAddress: String!) {
   subscribedUsers(colonyAddress: $colonyAddress) {
