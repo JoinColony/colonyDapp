@@ -10,51 +10,81 @@ import {
   ROOT_DOMAIN_ID,
   Extension,
 } from '@colony/colony-js';
-import * as colonyJSVersionExports from '@colony/colony-js/lib/versions';
 
 import { Context } from '~context/index';
-import { getMinimalUser } from '~data/index';
-
+import {
+  getMinimalUser,
+  SubgraphExtensionVersionDeployedEventsQuery,
+  SubgraphExtensionVersionDeployedEventsQueryVariables,
+  SubgraphExtensionVersionDeployedEventsDocument,
+} from '~data/index';
 import extensionData from '~data/staticData/extensionData';
+import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
 
 export const extensionsResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
+  apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
     async networkExtensionVersion(
       _,
+      /*
+       * @NOTE That the extension parameter in this case is optional
+       */
       { extensionId }: { extensionId: Extension },
     ) {
-      /*
-       * Prettier is being stupid again
-       */
-      // eslint-disable-next-line max-len
-      const extensionAddedToNetworkFilter = networkClient.filters.ExtensionAddedToNetwork(
-        getExtensionHash(extensionId),
-        null,
-      );
-      const extensionAddedEvents = await getEvents(
-        networkClient,
-        extensionAddedToNetworkFilter,
-      );
-      if (extensionAddedEvents.length) {
-        const latestEvent = extensionAddedEvents
-          .sort(
-            (
-              { values: { version: firstVersion } },
-              { values: { version: secondVersion } },
-            ) => firstVersion.toNumber() - secondVersion.toNumber(),
-          )
-          .pop();
-        const version = latestEvent?.values?.version?.toNumber();
-        const latestSupportedVersion =
-          colonyJSVersionExports[`Current${extensionId}Version`];
-        return version <= latestSupportedVersion
-          ? version
-          : latestSupportedVersion;
+      try {
+        const { data: subgraphEvents } = await apolloClient.query<
+          SubgraphExtensionVersionDeployedEventsQuery,
+          SubgraphExtensionVersionDeployedEventsQueryVariables
+        >({
+          query: SubgraphExtensionVersionDeployedEventsDocument,
+        });
+
+        if (subgraphEvents?.extensionVersionDeployedEvents) {
+          const { extensionVersionDeployedEvents } = subgraphEvents;
+          const extensionAddedEvents = extensionVersionDeployedEvents
+            .map(parseSubgraphEvent)
+            .sort(sortSubgraphEventByIndex);
+
+          const extensionsVersions: Array<{
+            extensionHash: string;
+            version: number;
+          }> = [];
+          extensionAddedEvents.map(
+            ({ values: { extensionId: extensionHash, version } }) => {
+              const existingExtensionIndex = extensionsVersions.findIndex(
+                ({ extensionHash: existingExtensionHash }) =>
+                  existingExtensionHash === extensionHash,
+              );
+              const currentDeployedExtension = {
+                extensionHash,
+                version,
+              };
+              if (existingExtensionIndex >= 0) {
+                extensionsVersions[
+                  existingExtensionIndex
+                ] = currentDeployedExtension;
+              }
+              extensionsVersions.push(currentDeployedExtension);
+              return null;
+            },
+          );
+
+          if (extensionId) {
+            return extensionsVersions.filter(
+              ({ extensionHash }) =>
+                extensionHash === getExtensionHash(extensionId),
+            );
+          }
+          return extensionsVersions;
+        }
+        return [];
+      } catch (error) {
+        console.error(error);
+        return [];
       }
-      return 0;
     },
     async whitelistedUsers(_, { colonyAddress }) {
       const { provider } = networkClient;
@@ -64,6 +94,14 @@ export const extensionsResolvers = ({
           colonyAddress,
         );
 
+        /*
+         * @TODO Fetch whitelist users from events coming from the subgraph
+         * Better yet, refactor this to keep user addresses directly on a subgraph
+         * as entities, at which point we could just fetch them directly
+         *
+         * This will simplify a lot of logic we are using below regarding
+         * filtering, sorting, parsing and ensuring they are unique
+         */
         const userApprovedFilter = whitelistClient.filters.UserApproved(
           null,
           null,
