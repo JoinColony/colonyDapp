@@ -59,3 +59,47 @@ query SubgraphExtensionVersionDeployedEvents {
     }
   }
 }
+
+query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!, $extensionId: String!) {
+  extensionInstalledEvents: events(
+    where: {
+      name_contains: "ExtensionInstalled",
+      args_contains: $colonyAddress,
+      args_contains: $extensionId
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+  extensionInitialisedEvents: events(
+    where: {
+      name_contains: "ExtensionInitialised",
+      address: $extensionAddress
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
