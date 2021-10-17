@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { extensions, Extension } from '@colony/colony-js';
+import { extensions, Extension, getExtensionHash } from '@colony/colony-js';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import {
   useColonyExtensionsQuery,
-  useNetworkExtensionVersionLazyQuery,
+  useNetworkExtensionVersionQuery,
 } from '~data/index';
 import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -48,10 +48,7 @@ const Extensions = ({ colonyAddress }: Props) => {
     variables: { address: colonyAddress },
   });
 
-  const [
-    fetchNetworkExtensionVersion,
-    { data: networkExtension },
-  ] = useNetworkExtensionVersionLazyQuery();
+  const { data: networkExtensionData } = useNetworkExtensionVersionQuery();
 
   const installedExtensionsData = useMemo(() => {
     if (data?.processedColony?.installedExtensions) {
@@ -82,15 +79,20 @@ const Extensions = ({ colonyAddress }: Props) => {
         const installedExtension = installedExtensions.find(
           ({ extensionId }) => extensionName === extensionId,
         );
-        if (!installedExtension) {
-          fetchNetworkExtensionVersion({
-            variables: { extensionId: extensionName },
-          });
+        if (
+          !installedExtension &&
+          networkExtensionData?.networkExtensionVersion
+        ) {
+          const { networkExtensionVersion } = networkExtensionData;
+          const networkExtension = networkExtensionVersion?.find(
+            (extension) =>
+              extension?.extensionHash === getExtensionHash(extensionName),
+          );
           return [
             ...availableExtensions,
             {
               ...extensionData[extensionName],
-              currentVersion: networkExtension?.networkExtensionVersion || 0,
+              currentVersion: networkExtension?.version || 0,
             },
           ];
         }
@@ -98,7 +100,7 @@ const Extensions = ({ colonyAddress }: Props) => {
       }, []);
     }
     return [];
-  }, [data, fetchNetworkExtensionVersion, networkExtension]);
+  }, [data, networkExtensionData]);
 
   if (loading) {
     return (
