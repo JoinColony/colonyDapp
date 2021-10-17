@@ -427,13 +427,14 @@ function* colonyCreate({
         },
         fetchPolicy: 'network-only',
       });
+      const [latestOneTxDepoyment] = networkExtensionVersion;
       /*
        * Deploy OneTx
        */
       yield put(
         transactionAddParams(deployOneTx.id, [
           getExtensionHash(Extension.OneTxPayment),
-          networkExtensionVersion,
+          latestOneTxDepoyment?.version || 0,
         ]),
       );
       yield put(transactionReady(deployOneTx.id));
