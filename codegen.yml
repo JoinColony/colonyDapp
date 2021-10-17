@@ -19,3 +19,8 @@ generates:
       - 'typescript'
       - 'typescript-operations'
       - 'typescript-react-apollo'
+config:
+  skipDocumentsValidation:
+    ignore: [
+      'UniqueInputFieldNamesRule'
+    ]
