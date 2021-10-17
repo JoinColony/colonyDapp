@@ -171,22 +171,6 @@ export default gql`
     domainId: String
   }
 
-  type ColonyExtension {
-    address: String!
-    id: String!
-    extensionId: String!
-    details(colonyAddress: String!): ColonyExtensionDetails!
-  }
-
-  type ColonyExtensionDetails {
-    deprecated: Boolean!
-    initialized: Boolean!
-    installedBy: String!
-    installedAt: Int!
-    missingPermissions: [Int!]!
-    version: Int!
-  }
-
   type UserToken {
     address: String!
     decimals: Int!
@@ -309,10 +293,6 @@ export default gql`
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
-    colonyExtension(
-      colonyAddress: String!
-      extensionId: String!
-    ): ColonyExtension
     colonyName(address: String!): String!
     colonyReputation(address: String!, domainId: Int): String
     colonyMembersWithReputation(
@@ -368,7 +348,6 @@ export default gql`
     ): Int!
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
-    networkExtensionVersion(extensionId: String!): Int!
     whitelistedUsers(colonyAddress: String!): [User!]!
     motionTimeoutPeriods(
       motionId: Int!
@@ -497,12 +476,6 @@ export default gql`
     id: String!
     metadata: String!
     transaction: SubgraphTransaction!
-  }
-
-  type SubgraphColonyExtension {
-    id: String!
-    address: String!
-    hash: String!
   }
 
   type SubgraphColony {
