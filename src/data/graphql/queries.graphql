@@ -95,46 +95,6 @@ query UserAddress($name: String!) {
   userAddress(name: $name) @client
 }
 
-query ColonyExtensions($address: String!) {
-  processedColony(address: $address) @client {
-    id
-    colonyAddress
-    installedExtensions @client {
-      id
-      extensionId
-      address
-      details(colonyAddress: $address) {
-        deprecated
-        initialized
-        installedBy
-        installedAt
-        missingPermissions
-        version
-      }
-    }
-  }
-}
-
-query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
-  colonyExtension(colonyAddress: $colonyAddress, extensionId: $extensionId) @client {
-    id
-    address
-    extensionId
-    details(colonyAddress: $colonyAddress) {
-      deprecated
-      initialized
-      installedBy
-      installedAt
-      missingPermissions
-      version
-    }
-  }
-}
-
-query NetworkExtensionVersion($extensionId: String!) {
-  networkExtensionVersion(extensionId: $extensionId) @client
-}
-
 query WhitelistedUsers($colonyAddress: String!) {
    whitelistedUsers(colonyAddress: $colonyAddress) @client {
     id
