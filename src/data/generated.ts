@@ -2125,6 +2125,24 @@ export type SubgraphMotionsSubscription = { motions: Array<(
     ), timeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> }
   )> };
 
+export type SubgraphAnnotationEventsQueryVariables = Exact<{
+  userAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
+}>;
+
+
+export type SubgraphAnnotationEventsQuery = { annotationEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
 export type CommentCountSubscriptionVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -5566,6 +5584,52 @@ export function useSubgraphMotionsSubscription(baseOptions?: Apollo.Subscription
       }
 export type SubgraphMotionsSubscriptionHookResult = ReturnType<typeof useSubgraphMotionsSubscription>;
 export type SubgraphMotionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphMotionsSubscription>;
+export const SubgraphAnnotationEventsDocument = gql`
+    query SubgraphAnnotationEvents($userAddress: String!, $transactionHash: String!) {
+  annotationEvents: events(where: {name_contains: "Annotation", args_contains: $userAddress, args_contains: $transactionHash}) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphAnnotationEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphAnnotationEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphAnnotationEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphAnnotationEventsQuery({
+ *   variables: {
+ *      userAddress: // value for 'userAddress'
+ *      transactionHash: // value for 'transactionHash'
+ *   },
+ * });
+ */
+export function useSubgraphAnnotationEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
+      }
+export function useSubgraphAnnotationEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
+        }
+export type SubgraphAnnotationEventsQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsQuery>;
+export type SubgraphAnnotationEventsLazyQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsLazyQuery>;
+export type SubgraphAnnotationEventsQueryResult = Apollo.QueryResult<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>;
 export const CommentCountDocument = gql`
     subscription CommentCount($colonyAddress: String!) {
   transactionMessagesCount(colonyAddress: $colonyAddress) {
