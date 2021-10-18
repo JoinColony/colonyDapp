@@ -60,12 +60,11 @@ query SubgraphExtensionVersionDeployedEvents {
   }
 }
 
-query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!, $extensionId: String!) {
+query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!) {
   extensionInstalledEvents: events(
     where: {
       name_contains: "ExtensionInstalled",
       args_contains: $colonyAddress,
-      args_contains: $extensionId
     }
   ) {
     id

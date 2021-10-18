@@ -154,6 +154,8 @@ export const extensionsResolvers = ({
   ColonyExtension: {
     async details({ address, extensionId }, { colonyAddress }) {
       try {
+        const extensionHash = getExtensionHash(extensionId);
+
         const { data: subgraphEvents } = await apolloClient.query<
           SubgraphExtensionEventsQuery,
           SubgraphExtensionEventsQueryVariables
@@ -162,7 +164,7 @@ export const extensionsResolvers = ({
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
             extensionAddress: address.toLowerCase(),
-            extensionId: getExtensionHash(extensionId),
+            extensionId: extensionHash,
           },
           fetchPolicy: 'network-only',
         });
@@ -193,6 +195,9 @@ export const extensionsResolvers = ({
         const [latestInstall] =
           subgraphEvents?.extensionInstalledEvents
             .map(parseSubgraphEvent)
+            .filter(({ values: { extensionId: currentExtensionHash } }) => {
+              return currentExtensionHash === extensionHash;
+            })
             .sort((firstEvent, secondEvent) =>
               sortSubgraphEventByIndex(
                 firstEvent,

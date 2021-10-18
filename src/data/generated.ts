@@ -5331,7 +5331,7 @@ export type SubgraphExtensionVersionDeployedEventsLazyQueryHookResult = ReturnTy
 export type SubgraphExtensionVersionDeployedEventsQueryResult = Apollo.QueryResult<SubgraphExtensionVersionDeployedEventsQuery, SubgraphExtensionVersionDeployedEventsQueryVariables>;
 export const SubgraphExtensionEventsDocument = gql`
     query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!, $extensionId: String!) {
-  extensionInstalledEvents: events(where: {name_contains: "ExtensionInstalled", args_contains: $colonyAddress, args_contains: $extensionId}) {
+  extensionInstalledEvents: events(where: {name_contains: "ExtensionInstalled", args_contains: $colonyAddress}) {
     id
     address
     name
