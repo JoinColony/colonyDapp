@@ -1,0 +1,115 @@
+query SubgraphRecoveryAllEnteredEvents($colonyAddress: String!) {
+  recoveryAllEnteredEvents: events(
+    where: {
+      name_contains: "RecoveryModeEntered"
+      address: $colonyAddress
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
+query SubgraphRecoveryModeExitedEvents($colonyAddress: String!) {
+  recoveryModeExitedEvents: events(
+    where: {
+      name_contains: "RecoveryModeExited"
+      address: $colonyAddress
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
+
+query SubgraphRecoveryRoleSetEvents($colonyAddress: String!, $toBlock: Int) {
+  recoveryRoleSetEvents: events(
+    where: {
+      name_contains: "RecoveryRoleSet"
+      address: $colonyAddress
+      block: { number: $toBlock }
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
+query SubgraphSessionRecoveryEvents($colonyAddress: String!, $toBlock: Int) {
+  storageSlotSetEvents: events(
+    where: {
+      name_contains: "RecoveryStorageSlotSet"
+      address: $colonyAddress
+      block: { number: $toBlock }
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+  recoveryModeExitApprovedEvents: events(
+    where: {
+      name_contains: "RecoveryModeExitApproved"
+      address: $colonyAddress
+      block: { number: $toBlock }
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
