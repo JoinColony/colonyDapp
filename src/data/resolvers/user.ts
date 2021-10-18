@@ -5,7 +5,6 @@ import {
   ROOT_DOMAIN_ID,
   getBlockTime,
   getLogs,
-  getEvents,
 } from '@colony/colony-js';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { AddressZero, HashZero } from 'ethers/constants';
@@ -24,6 +23,15 @@ import {
   UserToken,
 } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import {
+  SubgraphMotionRewardClaimedEventsDocument,
+  SubgraphMotionRewardClaimedEventsQuery,
+  SubgraphMotionRewardClaimedEventsQueryVariables,
+  SubgraphMotionStakedEventsDocument,
+  SubgraphMotionStakedEventsQuery,
+  SubgraphMotionStakedEventsQueryVariables,
+} from '~data/generated';
+import { parseSubgraphEvent } from '~utils/events';
 
 import { getToken } from './token';
 import { getProcessedColony } from './colony';
@@ -55,64 +63,60 @@ const getUserReputation = async (
 };
 
 const getUserStakedBalance = async (
-  colonyManager: ColonyManager,
-  colonyAddress: Address,
+  apolloClient: ApolloClient<object>,
   walletAddress: Address,
 ): Promise<BigNumber> => {
-  let votingReputationClient;
-
-  try {
-    votingReputationClient = await colonyManager.getClient(
-      ClientType.VotingReputationClient,
-      colonyAddress,
-    );
-  } catch (error) {
-    return bigNumberify(0);
-  }
   /**
    * @NOTE If there will be more staking events
    * on reputation voting extension we need to remember to filter them out
    * in here for correct value of staked tokens.
    */
-  // @ts-ignore
-  // eslint-disable-next-line max-len
-  const motionStakeFilter = votingReputationClient.filters.MotionStaked(
-    null,
-    walletAddress,
-    null,
-    null,
-  );
-  const motionStakeEvents = await getEvents(
-    votingReputationClient,
-    motionStakeFilter,
-  );
-  const groupedMotionStakeEvents = motionStakeEvents.reduce((acc, event) => {
-    const { vote, motionId } = event.values;
-    const key = `${motionId.toString()}-${vote.toString()}`;
-    if (!acc[key]) {
-      acc[key] = [event];
-    } else {
-      acc[key].push(event);
-    }
-    return acc;
-  }, {});
+  const { data: motionStakedEventsData } = await apolloClient.query<
+    SubgraphMotionStakedEventsQuery,
+    SubgraphMotionStakedEventsQueryVariables
+  >({
+    query: SubgraphMotionStakedEventsDocument,
+    fetchPolicy: 'network-only',
+    variables: {
+      walletAddress: walletAddress.toLowerCase(),
+    },
+  });
+  const motionStakedEvents = motionStakedEventsData?.motionStakedEvents || [];
+  const parsedMotionStakedEvents = motionStakedEvents.map(parseSubgraphEvent);
 
-  // @ts-ignore
-  // eslint-disable-next-line max-len
-  const motionRewardClaimedFilter = votingReputationClient.filters.MotionRewardClaimed(
-    null,
-    walletAddress,
-    null,
-    null,
+  const groupedMotionStakeEvents = parsedMotionStakedEvents.reduce(
+    (acc, event) => {
+      const { vote, motionId } = event.values;
+      const key = `${motionId.toString()}-${vote.toString()}`;
+      if (!acc[key]) {
+        acc[key] = [event];
+      } else {
+        acc[key].push(event);
+      }
+      return acc;
+    },
+    {},
   );
-  const motionRewardClaimedEvents = await getEvents(
-    votingReputationClient,
-    motionRewardClaimedFilter,
+
+  const { data: motionRewardClaimedEventsData } = await apolloClient.query<
+    SubgraphMotionRewardClaimedEventsQuery,
+    SubgraphMotionRewardClaimedEventsQueryVariables
+  >({
+    query: SubgraphMotionRewardClaimedEventsDocument,
+    fetchPolicy: 'network-only',
+    variables: {
+      walletAddress: walletAddress.toLowerCase(),
+    },
+  });
+  const motionRewardClaimedEvents =
+    motionRewardClaimedEventsData?.motionRewardClaimedEvents || [];
+  const parsedMotionRewardClaimedEvents = motionRewardClaimedEvents.map(
+    parseSubgraphEvent,
   );
 
   const filteredKeys = Object.keys(groupedMotionStakeEvents).filter((key) => {
     const { motionId, vote } = groupedMotionStakeEvents[key][0].values;
-    const mappedMotionRewardClaimedEvent = motionRewardClaimedEvents.find(
+    const mappedMotionRewardClaimedEvent = parsedMotionRewardClaimedEvents.find(
       (claimedEvent) =>
         claimedEvent.values.motionId.toString() === motionId.toString() &&
         claimedEvent.values.vote.toString() === vote.toString(),
@@ -152,11 +156,7 @@ const getUserLock = async (
     tokenAddress,
   );
 
-  const stakedTokens = await getUserStakedBalance(
-    colonyManager,
-    colonyAddress,
-    walletAddress,
-  );
+  const stakedTokens = await getUserStakedBalance(apolloClient, walletAddress);
 
   const nativeToken = (await getToken(
     { colonyManager, client: apolloClient },
