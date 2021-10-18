@@ -1,0 +1,43 @@
+query SubgraphMotionStakedEvents($walletAddress: String!) {
+  motionStakedEvents: events(
+    where: {
+      name_contains: "MotionStaked"
+      args_contains: $walletAddress,
+    }
+  ) {
+    id
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
+query SubgraphMotionRewardClaimedEvents($walletAddress: String!) {
+  motionRewardClaimedEvents: events(
+    where: {
+      name_contains: "MotionRewardClaimed"
+      args_contains: $walletAddress,
+    }
+  ) {
+    id
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
