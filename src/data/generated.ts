@@ -2011,7 +2011,6 @@ export type SubgraphExtensionVersionDeployedEventsQuery = { extensionVersionDepl
 export type SubgraphExtensionEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
-  extensionId: Scalars['String'];
 }>;
 
 
@@ -2175,7 +2174,6 @@ export type SubgraphMotionsSubscription = { motions: Array<(
   )> };
 
 export type SubgraphAnnotationEventsQueryVariables = Exact<{
-  userAddress: Scalars['String'];
   transactionHash: Scalars['String'];
 }>;
 
@@ -5330,7 +5328,7 @@ export type SubgraphExtensionVersionDeployedEventsQueryHookResult = ReturnType<t
 export type SubgraphExtensionVersionDeployedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphExtensionVersionDeployedEventsLazyQuery>;
 export type SubgraphExtensionVersionDeployedEventsQueryResult = Apollo.QueryResult<SubgraphExtensionVersionDeployedEventsQuery, SubgraphExtensionVersionDeployedEventsQueryVariables>;
 export const SubgraphExtensionEventsDocument = gql`
-    query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!, $extensionId: String!) {
+    query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!) {
   extensionInstalledEvents: events(where: {name_contains: "ExtensionInstalled", args_contains: $colonyAddress}) {
     id
     address
@@ -5378,7 +5376,6 @@ export const SubgraphExtensionEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
- *      extensionId: // value for 'extensionId'
  *   },
  * });
  */
@@ -5740,8 +5737,8 @@ export function useSubgraphMotionsSubscription(baseOptions?: Apollo.Subscription
 export type SubgraphMotionsSubscriptionHookResult = ReturnType<typeof useSubgraphMotionsSubscription>;
 export type SubgraphMotionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphMotionsSubscription>;
 export const SubgraphAnnotationEventsDocument = gql`
-    query SubgraphAnnotationEvents($userAddress: String!, $transactionHash: String!) {
-  annotationEvents: events(where: {name_contains: "Annotation", args_contains: $userAddress, args_contains: $transactionHash}) {
+    query SubgraphAnnotationEvents($transactionHash: String!) {
+  annotationEvents: events(where: {name_contains: "Annotation", args_contains: $transactionHash}) {
     id
     address
     name
@@ -5771,7 +5768,6 @@ export const SubgraphAnnotationEventsDocument = gql`
  * @example
  * const { data, loading, error } = useSubgraphAnnotationEventsQuery({
  *   variables: {
- *      userAddress: // value for 'userAddress'
  *      transactionHash: // value for 'transactionHash'
  *   },
  * });

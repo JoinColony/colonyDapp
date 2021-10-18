@@ -1,8 +1,7 @@
-query SubgraphAnnotationEvents($userAddress: String!, $transactionHash: String!) {
+query SubgraphAnnotationEvents($transactionHash: String!) {
   annotationEvents: events(
     where: {
       name_contains: "Annotation",
-      args_contains: $userAddress,
       args_contains: $transactionHash
     }
   ) {

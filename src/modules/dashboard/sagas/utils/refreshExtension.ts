@@ -1,4 +1,4 @@
-import { Extension, getExtensionHash } from '@colony/colony-js';
+import { Extension } from '@colony/colony-js';
 
 import {
   ColonyExtensionQuery,
@@ -76,7 +76,6 @@ export function* refreshExtension(
     query: SubgraphExtensionEventsDocument,
     variables: {
       colonyAddress: colonyAddress.toLowerCase(),
-      extensionId: getExtensionHash(extensionId),
       extensionAddress: extensionAddress?.toLowerCase() || '',
     },
     fetchPolicy: 'network-only',

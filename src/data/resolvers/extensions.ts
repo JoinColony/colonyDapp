@@ -164,7 +164,6 @@ export const extensionsResolvers = ({
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
             extensionAddress: address.toLowerCase(),
-            extensionId: extensionHash,
           },
           fetchPolicy: 'network-only',
         });

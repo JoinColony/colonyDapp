@@ -20,10 +20,6 @@ export const getAnnotationFromSubgraph = async (
   >({
     query: SubgraphAnnotationEventsDocument,
     variables: {
-      /*
-       * Subgraph addresses are not checksummed
-       */
-      userAddress: userAddress.toLowerCase(),
       transactionHash,
     },
   });
@@ -31,6 +27,7 @@ export const getAnnotationFromSubgraph = async (
   const [mostRecentAnnotation] =
     subgraphEvents?.annotationEvents
       .map(parseSubgraphEvent)
+      .filter(({ values: { agent } }) => agent === userAddress)
       .sort((firstEvent, secondEvent) =>
         sortSubgraphEventByIndex(firstEvent, secondEvent, SortDirection.DESC),
       ) || [];
