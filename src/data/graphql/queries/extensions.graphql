@@ -1,0 +1,105 @@
+query ColonyExtensions($address: String!) {
+  processedColony(address: $address) @client {
+    id
+    colonyAddress
+    installedExtensions @client {
+      id
+      extensionId
+      address
+      details(colonyAddress: $address) {
+        deprecated
+        initialized
+        installedBy
+        installedAt
+        missingPermissions
+        version
+      }
+    }
+  }
+}
+
+query ColonyExtension($colonyAddress: String!, $extensionId: String!) {
+  colonyExtension(colonyAddress: $colonyAddress, extensionId: $extensionId) @client {
+    id
+    address
+    extensionId
+    details(colonyAddress: $colonyAddress) {
+      deprecated
+      initialized
+      installedBy
+      installedAt
+      missingPermissions
+      version
+    }
+  }
+}
+
+query NetworkExtensionVersion($extensionId: String) {
+  networkExtensionVersion(extensionId: $extensionId) @client
+}
+
+query SubgraphExtensionVersionDeployedEvents {
+  extensionVersionDeployedEvents: events(
+    where: {
+      name_contains: "ExtensionAddedToNetwork"
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
+query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!, $extensionId: String!) {
+  extensionInstalledEvents: events(
+    where: {
+      name_contains: "ExtensionInstalled",
+      args_contains: $colonyAddress,
+      args_contains: $extensionId
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+  extensionInitialisedEvents: events(
+    where: {
+      name_contains: "ExtensionInitialised",
+      address: $extensionAddress
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}

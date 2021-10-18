@@ -1,4 +1,4 @@
-import { Extension } from '@colony/colony-js';
+import { Extension, getExtensionHash } from '@colony/colony-js';
 
 import {
   ColonyExtensionQuery,
@@ -13,10 +13,17 @@ import {
   WhitelistedUsersDocument,
   WhitelistedUsersQuery,
   WhitelistedUsersQueryVariables,
+  SubgraphExtensionEventsQuery,
+  SubgraphExtensionEventsQueryVariables,
+  SubgraphExtensionEventsDocument,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
-export function* refreshExtension(colonyAddress: string, extensionId: string) {
+export function* refreshExtension(
+  colonyAddress: string,
+  extensionId: string,
+  extensionAddress?: string,
+) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
   if (extensionId === Extension.Whitelist) {
@@ -61,4 +68,17 @@ export function* refreshExtension(colonyAddress: string, extensionId: string) {
       fetchPolicy: 'network-only',
     },
   );
+
+  yield apolloClient.query<
+    SubgraphExtensionEventsQuery,
+    SubgraphExtensionEventsQueryVariables
+  >({
+    query: SubgraphExtensionEventsDocument,
+    variables: {
+      colonyAddress: colonyAddress.toLowerCase(),
+      extensionId: getExtensionHash(extensionId),
+      extensionAddress: extensionAddress?.toLowerCase() || '',
+    },
+    fetchPolicy: 'network-only',
+  });
 }

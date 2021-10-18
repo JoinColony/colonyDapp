@@ -2,7 +2,6 @@ import {
   ColonyClient,
   getBlockTime,
   ClientType,
-  ColonyClientV5,
   ColonyVersion,
   ColonyRole,
   ExtensionClient,
@@ -14,7 +13,7 @@ import { Resolvers } from '@apollo/client';
 import {
   getActionType,
   getActionValues,
-  getAnnotation,
+  getAnnotationFromSubgraph,
   getMotionActionType,
 } from '~utils/events';
 import { Context } from '~context/index';
@@ -104,12 +103,12 @@ export const colonyActionsResolvers = ({
 
       if (transactionReceipt) {
         const {
-          transactionHash: hash,
+          transactionHash: hash = '',
           status,
           logs,
           blockHash,
           blockNumber,
-          from,
+          from = '',
         } = transactionReceipt;
 
         /*
@@ -220,11 +219,7 @@ export const colonyActionsResolvers = ({
         const clientVersion = await colonyClient?.version();
         let annotation;
         if (clientVersion.toNumber() >= ColonyVersion.LightweightSpaceship) {
-          annotation = await getAnnotation(
-            from as string,
-            hash as string,
-            colonyClient as ColonyClientV5,
-          );
+          annotation = await getAnnotationFromSubgraph(from, hash);
         }
 
         return {

@@ -173,11 +173,13 @@ const ExtensionDetails = ({
     variables: { colonyAddress, extensionId },
   });
 
-  const { data: networkExtension } = useNetworkExtensionVersionQuery({
+  const { data: networkExtensionData } = useNetworkExtensionVersionQuery({
     variables: { extensionId },
   });
-  const latestNetworkExtensionVersion =
-    networkExtension?.networkExtensionVersion || 0;
+  const [networkExtension] =
+    networkExtensionData?.networkExtensionVersion || [];
+
+  const latestNetworkExtensionVersion = networkExtension?.version || 0;
 
   const { contractAddressLink } = DEFAULT_NETWORK_INFO;
 

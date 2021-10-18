@@ -9,7 +9,7 @@ import {
   FormattedAction,
   Address,
 } from '~types/index';
-import { ColonyAction, EventProcessedValues } from '~data/index';
+import { ColonyAction, SugraphEventProcessedValues } from '~data/index';
 
 import {
   DETAILS_FOR_ACTION,
@@ -49,7 +49,7 @@ export const getDetailsForAction = (
  * Get values for action type based on action type
  */
 export const getValuesForActionType = (
-  values: EventProcessedValues,
+  values: SugraphEventProcessedValues,
   actionType: ColonyActions,
   colonyAddress: Address,
 ): ValuesForActionTypesMap => {
@@ -173,13 +173,18 @@ export const getDomainMetadataMessageDescriptorsIds = (
   return `event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`;
 };
 
-export const getColonyRoleSetMessageDescriptorsIds = (
+export const getRoleEventDescriptorsIds = (
   roleSetTo: boolean | undefined,
-  eventMessageType: string,
+  /*
+   * prettier is being uncooperative again
+   */
+  // eslint-disable-next-line max-len
+  eventName: ColonyAndExtensionsEvents = ColonyAndExtensionsEvents.ColonyRoleSet,
+  eventMessageType = 'eventList',
 ) => {
   return roleSetTo
-    ? `${eventMessageType}.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`
-    : `${eventMessageType}.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`;
+    ? `${eventMessageType}.${eventName}.assign`
+    : `${eventMessageType}.${eventName}.remove`;
 };
 
 export const parseColonyMetadata = (

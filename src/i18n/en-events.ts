@@ -76,6 +76,8 @@ const eventsMessageDescriptors = {
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`]: `{agent} removed the {role} permission in the {domain} team from {recipient}`,
+  [`eventList.${ColonyAndExtensionsEvents.RecoveryRoleSet}.assign`]: `The Recovery role was assigned to {recipient}`,
+  [`eventList.${ColonyAndExtensionsEvents.RecoveryRoleSet}.remove`]: `The Recovery role was removed from {recipient}`,
 };
 
 export default eventsMessageDescriptors;

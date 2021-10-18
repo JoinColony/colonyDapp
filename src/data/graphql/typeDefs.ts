@@ -13,6 +13,15 @@ export default gql`
     networkId: Int
   }
 
+  input EventsFilter {
+    associatedColony_contains: String
+    associatedColony: String
+    name_in: [String!]
+    name_contains: String
+    args_contains: String
+    address: String
+  }
+
   type LoggedInUser {
     id: String!
     balance: String!
@@ -20,6 +29,36 @@ export default gql`
     walletAddress: String!
     ethereal: Boolean!
     networkId: Int
+  }
+
+  type SugraphEventProcessedValues {
+    agent: String!
+    who: String!
+    fromPot: String!
+    fromDomain: String!
+    toPot: String!
+    toDomain: String!
+    domainId: String!
+    amount: String!
+    token: String!
+    metadata: String!
+    user: String!
+    role: String!
+    setTo: String!
+    oldVersion: String!
+    newVersion: String!
+    storageSlot: String!
+    storageSlotValue: String!
+  }
+
+  type SubgraphEvent {
+    id: String!
+    transaction: SubgraphTransaction!
+    address: String!
+    name: String!
+    args: String!
+    associatedColony: SubgraphColony!
+    processedValues: SugraphEventProcessedValues!
   }
 
   type ParsedEvent {
@@ -130,22 +169,6 @@ export default gql`
     topic: String
     userAddress: String
     domainId: String
-  }
-
-  type ColonyExtension {
-    address: String!
-    id: String!
-    extensionId: String!
-    details(colonyAddress: String!): ColonyExtensionDetails!
-  }
-
-  type ColonyExtensionDetails {
-    deprecated: Boolean!
-    initialized: Boolean!
-    installedBy: String!
-    installedAt: Int!
-    missingPermissions: [Int!]!
-    version: Int!
   }
 
   type UserToken {
@@ -270,10 +293,6 @@ export default gql`
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
-    colonyExtension(
-      colonyAddress: String!
-      extensionId: String!
-    ): ColonyExtension
     colonyName(address: String!): String!
     colonyReputation(address: String!, domainId: Int): String
     colonyMembersWithReputation(
@@ -329,7 +348,6 @@ export default gql`
     ): Int!
     recoveryAllEnteredEvents(colonyAddress: String!): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
-    networkExtensionVersion(extensionId: String!): Int!
     whitelistedUsers(colonyAddress: String!): [User!]!
     motionTimeoutPeriods(
       motionId: Int!
@@ -458,12 +476,6 @@ export default gql`
     id: String!
     metadata: String!
     transaction: SubgraphTransaction!
-  }
-
-  type SubgraphColonyExtension {
-    id: String!
-    address: String!
-    hash: String!
   }
 
   type SubgraphColony {

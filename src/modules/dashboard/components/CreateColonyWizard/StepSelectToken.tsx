@@ -88,7 +88,7 @@ export const validationSchema = (addressZeroErrorMessage) =>
         addressZeroErrorMessage,
         (value) => value !== AddressZero,
       ),
-    tokenSymbol: yup.string().max(5),
+    tokenSymbol: yup.string().max(10),
     tokenName: yup.string().max(256),
   });
 

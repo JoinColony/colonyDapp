@@ -1,21 +1,22 @@
 import { Resolvers } from '@apollo/client';
 import { AddressZero, HashZero } from 'ethers/constants';
-import { bigNumberify } from 'ethers/utils';
+import { bigNumberify, LogDescription } from 'ethers/utils';
 import {
   ClientType,
   ColonyVersion,
   Extension,
-  getColonyRoles,
   TokenClientType,
   extensions,
   getExtensionHash,
   ColonyClientV5,
   ROOT_DOMAIN_ID,
   getHistoricColonyRoles,
+  formatColonyRoles,
 } from '@colony/colony-js';
 
+import { Color } from '~core/ColorTag';
+
 import ENS from '~lib/ENS';
-import { Address } from '~types/index';
 import { Context, IpfsWithFallbackSkeleton } from '~context/index';
 import {
   Transfer,
@@ -28,12 +29,17 @@ import {
   SubgraphColonyQuery,
   SubgraphColonyQueryVariables,
   SubgraphColonyDocument,
+  SubgraphRoleEventsQuery,
+  SubgraphRoleEventsQueryVariables,
+  SubgraphRoleEventsDocument,
 } from '~data/index';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
-import { Color } from '~core/ColorTag';
+import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
+import { Address } from '~types/index';
+
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import { getToken } from './token';
 import {
@@ -440,22 +446,66 @@ export const colonyResolvers = ({
       return true;
     },
     async roles({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-      if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
-        throw new Error(`Not supported in this version of Colony`);
+      try {
+        const colonyClient = await colonyManager.getClient(
+          ClientType.ColonyClient,
+          colonyAddress,
+        );
+        if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
+          throw new Error(`Not supported in this version of Colony`);
+        }
+
+        const { data } = await apolloClient.query<
+          SubgraphRoleEventsQuery,
+          SubgraphRoleEventsQueryVariables
+        >({
+          query: SubgraphRoleEventsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        if (data?.colonyRoleSetEvents && data?.recoveryRoleSetEvents) {
+          const {
+            colonyRoleSetEvents: colonyRoleSetSubgraphEvents,
+            recoveryRoleSetEvents: recoveryRoleSetSubgraphEvents,
+          } = data;
+
+          /*
+           * Parse and sort events coming from the subgraph
+           * Note that if the query doesn't have the blockNumber and event Id
+           * then the sort will be unreliable
+           */
+          const colonyRoleEvents = colonyRoleSetSubgraphEvents
+            .map(parseSubgraphEvent)
+            .sort(sortSubgraphEventByIndex);
+          const recoveryRoleEvents = recoveryRoleSetSubgraphEvents
+            .map(parseSubgraphEvent)
+            .sort(sortSubgraphEventByIndex);
+
+          const roles = await formatColonyRoles(
+            colonyRoleEvents as LogDescription[],
+            recoveryRoleEvents as LogDescription[],
+          );
+
+          return roles.map((userRoles) => ({
+            ...userRoles,
+            domains: userRoles.domains.map((domainRoles) => ({
+              ...domainRoles,
+              __typename: 'DomainRoles',
+            })),
+            __typename: 'UserRoles',
+          }));
+        }
+        return [];
+      } catch (error) {
+        console.error(error);
+        return [];
       }
-      const roles = await getColonyRoles(colonyClient);
-      return roles.map((userRoles) => ({
-        ...userRoles,
-        domains: userRoles.domains.map((domainRoles) => ({
-          ...domainRoles,
-          __typename: 'DomainRoles',
-        })),
-        __typename: 'UserRoles',
-      }));
     },
     async transfers({ colonyAddress }): Promise<Transfer[]> {
       const colonyClient = await colonyManager.getClient(
