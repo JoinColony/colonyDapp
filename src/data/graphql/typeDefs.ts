@@ -13,6 +13,10 @@ export default gql`
     networkId: Int
   }
 
+  input FromBlock {
+    number: Int
+  }
+
   input EventsFilter {
     associatedColony_contains: String
     associatedColony: String
@@ -20,6 +24,7 @@ export default gql`
     name_contains: String
     args_contains: String
     address: String
+    block: FromBlock
   }
 
   type LoggedInUser {
