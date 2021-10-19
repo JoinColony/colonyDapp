@@ -191,7 +191,9 @@ export const motionsResolvers = ({
           rootHash,
         } = await votingReputationClient.getMotion(motionId);
         const { skillId } = await colonyClient.getDomain(domainId);
-        const { reputationAmount } = await colonyClient.getReputation(
+        const {
+          reputationAmount,
+        } = await colonyClient.getReputationWithoutProofs(
           skillId,
           userAddress,
           rootHash,
