@@ -11,18 +11,25 @@ import {
 } from '@colony/colony-js';
 import { bigNumberify, LogDescription, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
-import { Resolvers } from '@apollo/client';
+import { Resolvers, ApolloClient } from '@apollo/client';
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
-import { getMotionActionType, getMotionState } from '~utils/events';
+import {
+  getMotionActionType,
+  getMotionState,
+  parseSubgraphEvent,
+} from '~utils/events';
 import {
   MotionVote,
   getMotionRequiredStake,
   getEarlierEventTimestamp,
 } from '~utils/colonyMotions';
-import { ColonyAndExtensionsEvents } from '~types/index';
+import { ColonyAndExtensionsEvents, Address } from '~types/index';
 import {
+  SubgraphMotionEventsQuery,
+  SubgraphMotionEventsQueryVariables,
+  SubgraphMotionEventsDocument,
   UserReputationQuery,
   UserReputationQueryVariables,
   UserReputationDocument,
@@ -39,97 +46,82 @@ import { DEFAULT_NETWORK_TOKEN } from '~constants';
 import { ProcessedEvent } from './colonyActions';
 
 const getMotionEvents = async (
-  votingReputationClient: ExtensionClient,
+  apolloClient: ApolloClient<object>,
+  colonyAddress: Address,
   motionId: string,
 ) => {
-  const motionStakedLogs = await getLogs(
-    votingReputationClient,
-    // @TODO Add missing types to colonyjs
-    // @ts-ignore
-    votingReputationClient.filters.MotionStaked(motionId, null, null, null),
-  );
+  const { data } = await apolloClient.query<
+    SubgraphMotionEventsQuery,
+    SubgraphMotionEventsQueryVariables
+  >({
+    query: SubgraphMotionEventsDocument,
+    variables: {
+      /*
+       * Subgraph addresses are not checksummed
+       */
+      colonyAddress: colonyAddress.toLowerCase(),
+      motionId: motionId.toString(),
+    },
+  });
 
-  const motionFinalizedLogs = await getLogs(
-    votingReputationClient,
-    // @TODO Add missing types to colonyjs
-    // @ts-ignore
-    votingReputationClient.filters.MotionFinalized(motionId, null, null),
-  );
+  if (data?.motionEvents) {
+    const sortedMotionEvents = data?.motionEvents
+      .map(parseSubgraphEvent)
+      .map((event) => {
+        const { hash, timestamp } = event;
+        return {
+          ...event,
+          values: {
+            ...event.values,
+            vote: Number(event.values.vote),
+          },
+          type: ActionsPageFeedType.NetworkEvent,
+          createdAt: timestamp,
+          emmitedBy: ClientType.VotingReputationClient,
+          transactionHash: hash,
+        };
+      })
+      .sort(
+        (firstEvent, secondEvent) =>
+          (firstEvent?.createdAt as number) -
+          (secondEvent?.createdAt as number),
+      );
 
-  const motionStakeClaimedLogs = await getLogs(
-    votingReputationClient,
-    // @TODO Add missing types to colonyjs
-    // @ts-ignore
-    votingReputationClient.filters.MotionRewardClaimed(motionId, null, null),
-  );
+    const firstMotionStakedNAYEvent = sortedMotionEvents.find(
+      (event) =>
+        event.name === ColonyAndExtensionsEvents.MotionStaked &&
+        event.values.vote === MotionVote.Nay,
+    );
 
-  const parsedMotionEvents = await Promise.all(
-    [
-      ...motionStakedLogs,
-      ...motionFinalizedLogs,
-      ...motionStakeClaimedLogs,
-    ].map(async (log) => {
-      const parsedLog = votingReputationClient.interface.parseLog(log);
-      const { address, blockHash, blockNumber, transactionHash } = log;
+    if (firstMotionStakedNAYEvent) {
       const {
-        name,
-        values: { amount, ...rest },
-      } = parsedLog;
-      const stakeAmount =
-        name === ColonyAndExtensionsEvents.MotionStaked ? amount : null;
-
-      return {
-        type: ActionsPageFeedType.NetworkEvent,
-        name,
-        values: {
-          ...rest,
-          stakeAmount,
-        },
-        createdAt: blockHash
-          ? await getBlockTime(votingReputationClient.provider, blockHash)
-          : 0,
-        emmitedBy: ClientType.VotingReputationClient,
-        address,
+        values,
+        // @ts-ignore
         blockNumber,
         transactionHash,
-      } as ProcessedEvent;
-    }),
-  );
+      } = firstMotionStakedNAYEvent;
+      sortedMotionEvents.push({
+        type: ActionsPageFeedType.NetworkEvent,
+        name: ColonyAndExtensionsEvents.ObjectionRaised,
+        /*
+         * @NOTE: I substract 1 second out of the timestamp
+         * to make the event appear before the first NAY stake
+         */
+        createdAt: getEarlierEventTimestamp(
+          firstMotionStakedNAYEvent.createdAt || 0,
+        ),
+        values,
+        emmitedBy: ClientType.VotingReputationClient,
+        // @ts-ignore
+        blockNumber,
+        transactionHash,
+      });
+    }
 
-  const sortedMotionEvents = parsedMotionEvents.sort(
-    (firstEvent, secondEvent) => firstEvent.createdAt - secondEvent.createdAt,
-  );
-
-  const firstMotionStakedNAYEvent = sortedMotionEvents.find(
-    (event) =>
-      event.name === ColonyAndExtensionsEvents.MotionStaked &&
-      event.values.vote.eq(MotionVote.Nay),
-  );
-
-  if (firstMotionStakedNAYEvent) {
-    const {
-      values,
-      address,
-      blockNumber,
-      transactionHash,
-    } = firstMotionStakedNAYEvent;
-    sortedMotionEvents.push({
-      type: ActionsPageFeedType.NetworkEvent,
-      name: ColonyAndExtensionsEvents.ObjectionRaised,
-      /*
-       * @NOTE: I substract 1 second out of the timestamp
-       * to make the event appear before the first NAY stake
-       */
-      createdAt: getEarlierEventTimestamp(firstMotionStakedNAYEvent.createdAt),
-      values,
-      emmitedBy: ClientType.VotingReputationClient,
-      address,
-      blockNumber,
-      transactionHash,
-    });
+    return sortedMotionEvents;
   }
 
-  return sortedMotionEvents;
+  return [];
 };
 
 const getTimeoutPeriods = async (colonyManager, colonyAddress, motionId) => {
@@ -568,12 +560,7 @@ export const motionsResolvers = ({
     },
     async eventsForMotion(_, { motionId, colonyAddress }) {
       try {
-        const votingReputationClient = (await colonyManager.getClient(
-          ClientType.VotingReputationClient,
-          colonyAddress,
-        )) as ExtensionClient;
-
-        return await getMotionEvents(votingReputationClient, motionId);
+        return await getMotionEvents(apolloClient, colonyAddress, motionId);
       } catch (error) {
         console.error(error);
         return [];
