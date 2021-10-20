@@ -7,7 +7,6 @@ import {
   ColonyRole,
   ColonyVersion,
 } from '@colony/colony-js';
-import { LogDescription } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 
 import { Context } from '~context/index';
@@ -41,8 +40,11 @@ import {
   SubgraphRecoveryModeEventsDocument,
   SubgraphRecoveryModeEventsQuery,
   SubgraphRecoveryModeEventsQueryVariables,
+  SubgraphRoleEventsDocument,
+  SubgraphRoleEventsQuery,
+  SubgraphRoleEventsQueryVariables,
 } from '~data/generated';
-import { parseSubgraphEvent } from '~utils/events';
+import { ExtendedLogDescription, parseSubgraphEvent } from '~utils/events';
 
 const getSessionRecoveryEvents = async (
   apolloClient: ApolloClient<object>,
@@ -143,7 +145,9 @@ const getSessionRecoveryEvents = async (
   return sortedRecoveryEvents;
 };
 
-const getUsersWithRecoveryRoles = (recoveryRoleSetEvents: LogDescription[]) => {
+const getUsersWithRecoveryRoles = (
+  recoveryRoleSetEvents: ExtendedLogDescription[],
+) => {
   const userAddresses: Record<string, boolean> = {};
   recoveryRoleSetEvents.map(({ values: { user, setTo } }) => {
     if (setTo) {
@@ -341,20 +345,34 @@ export const recoveryModeResolvers = ({
           filterOptions.toBlock = endBlockNumber;
         }
 
-        const colonyClient = (await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
-        )) as ColonyClientV6;
+        const { data } = await apolloClient.query<
+          SubgraphRoleEventsQuery,
+          SubgraphRoleEventsQueryVariables
+        >({
+          query: SubgraphRoleEventsDocument,
+          variables: {
+            colonyAddress: colonyAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
 
-        const recoveryRolesSet = await getMultipleEvents(
-          colonyClient,
-          [colonyClient.filters.RecoveryRoleSet(null, null)],
-          filterOptions,
-        );
+        const recoveryRoleSetEvents = data?.recoveryRoleSetEvents || [];
+
+        const parsedRecoveryRoleSetEvents = recoveryRoleSetEvents
+          .map(parseSubgraphEvent)
+          .filter((event) => {
+            const eventBlockNumber = event.block || event.blockNumber || 0;
+            const isOnToBlockRange = filterOptions.toBlock
+              ? eventBlockNumber <= filterOptions.toBlock
+              : true;
+            return (
+              eventBlockNumber >= filterOptions.fromBlock && isOnToBlockRange
+            );
+          });
 
         const allUsers = subscribedUsers?.data?.subscribedUsers || [];
         const userWithRecoveryRoles = getUsersWithRecoveryRoles(
-          recoveryRolesSet,
+          parsedRecoveryRoleSetEvents,
         );
 
         return userWithRecoveryRoles.map((userAddress) => {
