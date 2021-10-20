@@ -2,6 +2,7 @@ import React, { useState, useMemo, ReactNode } from 'react';
 import { useIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { nanoid } from 'nanoid';
 import findLastIndex from 'lodash/findLastIndex';
+import { hexlify } from 'ethers/utils';
 
 import PermissionsLabel from '~core/PermissionsLabel';
 import { TransactionMeta, TransactionStatus } from '~dashboard/ActionsPage';
@@ -363,7 +364,7 @@ const ActionsPageEvent = ({
                     <FriendlyName user={initiator} autoShrinkAddress />
                   </span>
                 ),
-                storageSlot: values?.slot?.toHexString(),
+                storageSlot: hexlify(parseInt(values?.slot || '0', 10)),
                 amountTag: (
                   <div className={styles.amountTag}>
                     <Tag
