@@ -1,8 +1,6 @@
 import { ApolloClient, Resolvers } from '@apollo/client';
 import {
   ClientType,
-  getBlockTime,
-  getLogs,
   ColonyClientV5,
   ColonyClientV6,
   getMultipleEvents,
@@ -116,23 +114,21 @@ const getSessionRecoveryEvents = async (
     recoveryModeEvents.push(mostRecentExitRecoveryEvent);
   }
 
-  const parsedRecoveryEvents = await Promise.all(
-    [...recoveryModeEvents].map(async (event) => {
-      const parsedEvent = parseSubgraphEvent(event);
-      const { address } = event;
-      const { name, values, blockNumber, hash, timestamp } = parsedEvent;
-      return {
-        type: ActionsPageFeedType.NetworkEvent,
-        name,
-        values,
-        createdAt: timestamp,
-        emmitedBy: ClientType.ColonyClient,
-        address,
-        blockNumber,
-        transactionHash: hash,
-      } as ProcessedEvent;
-    }),
-  );
+  const parsedRecoveryEvents = recoveryModeEvents.map((event) => {
+    const parsedEvent = parseSubgraphEvent(event);
+    const { address } = event;
+    const { name, values, blockNumber, hash, timestamp } = parsedEvent;
+    return {
+      type: ActionsPageFeedType.NetworkEvent,
+      name,
+      values,
+      createdAt: timestamp,
+      emmitedBy: ClientType.ColonyClient,
+      address,
+      blockNumber,
+      transactionHash: hash,
+    } as ProcessedEvent;
+  });
 
   /*
    * Mayyyybe? this can work if we just use reverse() -- going by the logic
@@ -185,35 +181,40 @@ export const recoveryModeResolvers = ({
     },
     async recoveryAllEnteredEvents(_, { colonyAddress }) {
       try {
-        const colonyClient = (await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
-        )) as ColonyClientV6;
+        const { data: recoveryModeEventsData } = await apolloClient.query<
+          SubgraphRecoveryModeEventsQuery,
+          SubgraphRecoveryModeEventsQueryVariables
+        >({
+          query: SubgraphRecoveryModeEventsDocument,
+          variables: {
+            colonyAddress: colonyAddress.toLowerCase(),
+          },
+        });
+        const enterRecoveryEvents =
+          recoveryModeEventsData?.recoveryModeEnteredEvents || [];
 
-        const enterRecoveryLogs = await getLogs(
-          colonyClient,
-          colonyClient.filters.RecoveryModeEntered(null),
+        const parsedEnterRecoveryEvents = enterRecoveryEvents.map((event) => {
+          const parsedEvent = parseSubgraphEvent(event);
+          const { address } = event;
+          const { name, values, blockNumber, hash, timestamp } = parsedEvent;
+          return {
+            type: ActionsPageFeedType.NetworkEvent,
+            name,
+            values,
+            createdAt: timestamp,
+            emmitedBy: ClientType.ColonyClient,
+            address,
+            blockNumber,
+            transactionHash: hash,
+          } as ProcessedEvent;
+        });
+
+        const sortedEnterRecoveryEvents = parsedEnterRecoveryEvents.sort(
+          (firstEvent, secondEvent) =>
+            firstEvent.createdAt - secondEvent.createdAt,
         );
 
-        return Promise.all(
-          enterRecoveryLogs.map(async (log) => {
-            const potentialParsedLog = colonyClient.interface.parseLog(log);
-            const { address, blockHash, blockNumber, transactionHash } = log;
-            const { name, values } = potentialParsedLog;
-            return {
-              type: ActionsPageFeedType.NetworkEvent,
-              name,
-              values,
-              createdAt: blockHash
-                ? await getBlockTime(colonyClient.provider, blockHash)
-                : 0,
-              emmitedBy: ClientType.ColonyClient,
-              address,
-              blockNumber,
-              transactionHash,
-            } as ProcessedEvent;
-          }),
-        );
+        return sortedEnterRecoveryEvents;
       } catch (error) {
         console.error(error);
         return [];
