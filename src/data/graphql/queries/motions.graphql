@@ -26,6 +26,34 @@ query SubgraphMotionEvents($colonyAddress: String!, $motionId: String!) {
   }
 }
 
+query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!) {
+  motionSystemEvents: events(
+    where: {
+      name_in: [
+        "MotionStaked(uint256,address,uint256,uint256)",
+        "MotionVoteSubmitted(uint256,address)",
+        "MotionVoteRevealed(uint256,address,uint256)",
+      ]
+      associatedColony: $colonyAddress
+      args_contains: $motionId
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
 query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!) {
   motionStakedEvents: events(
     where: {

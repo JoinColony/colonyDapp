@@ -2110,6 +2110,24 @@ export type SubgraphMotionEventsQuery = { motionEvents: Array<(
     ) }
   )> };
 
+export type SubgraphMotionSystemEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  motionId: Scalars['String'];
+}>;
+
+
+export type SubgraphMotionSystemEventsQuery = { motionSystemEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
 export type SubgraphMotionStakedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
@@ -5711,6 +5729,52 @@ export function useSubgraphMotionEventsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type SubgraphMotionEventsQueryHookResult = ReturnType<typeof useSubgraphMotionEventsQuery>;
 export type SubgraphMotionEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionEventsLazyQuery>;
 export type SubgraphMotionEventsQueryResult = Apollo.QueryResult<SubgraphMotionEventsQuery, SubgraphMotionEventsQueryVariables>;
+export const SubgraphMotionSystemEventsDocument = gql`
+    query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!) {
+  motionSystemEvents: events(where: {name_in: ["MotionStaked(uint256,address,uint256,uint256)", "MotionVoteSubmitted(uint256,address)", "MotionVoteRevealed(uint256,address,uint256)"], associatedColony: $colonyAddress, args_contains: $motionId}) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphMotionSystemEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphMotionSystemEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphMotionSystemEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphMotionSystemEventsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      motionId: // value for 'motionId'
+ *   },
+ * });
+ */
+export function useSubgraphMotionSystemEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>(SubgraphMotionSystemEventsDocument, baseOptions);
+      }
+export function useSubgraphMotionSystemEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>(SubgraphMotionSystemEventsDocument, baseOptions);
+        }
+export type SubgraphMotionSystemEventsQueryHookResult = ReturnType<typeof useSubgraphMotionSystemEventsQuery>;
+export type SubgraphMotionSystemEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionSystemEventsLazyQuery>;
+export type SubgraphMotionSystemEventsQueryResult = Apollo.QueryResult<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>;
 export const SubgraphMotionStakedEventsDocument = gql`
     query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!) {
   motionStakedEvents: events(where: {name_contains: "MotionStaked", associatedColony: $colonyAddress, args_contains: $motionId}) {
