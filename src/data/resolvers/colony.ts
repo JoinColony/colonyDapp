@@ -263,10 +263,9 @@ export const colonyResolvers = ({
         domainId || ROOT_DOMAIN_ID,
       );
 
-      const { reputationAmount } = await colonyClient.getReputation(
-        skillId,
-        AddressZero,
-      );
+      const {
+        reputationAmount,
+      } = await colonyClient.getReputationWithoutProofs(skillId, AddressZero);
 
       return reputationAmount.toString();
     },

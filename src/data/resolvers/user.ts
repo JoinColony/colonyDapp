@@ -46,7 +46,7 @@ const getUserReputation = async (
      */
     domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? ROOT_DOMAIN_ID : domainId,
   );
-  const { reputationAmount } = await colonyClient.getReputation(
+  const { reputationAmount } = await colonyClient.getReputationWithoutProofs(
     skillId,
     address,
     rootHash,
