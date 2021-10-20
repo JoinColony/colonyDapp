@@ -1,4 +1,4 @@
-query SubgraphMotionStakedEvents($walletAddress: String!) {
+query SubgraphUserMotionStakedEvents($walletAddress: String!) {
   motionStakedEvents: events(
     where: {
       name_contains: "MotionStaked"
@@ -8,6 +8,7 @@ query SubgraphMotionStakedEvents($walletAddress: String!) {
     id
     name
     args
+    address
     transaction {
       id
       transactionHash: id
@@ -30,6 +31,7 @@ query SubgraphMotionRewardClaimedEvents($walletAddress: String!) {
     id
     name
     args
+    address
     transaction {
       id
       transactionHash: id

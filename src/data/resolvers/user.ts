@@ -27,9 +27,9 @@ import {
   SubgraphMotionRewardClaimedEventsDocument,
   SubgraphMotionRewardClaimedEventsQuery,
   SubgraphMotionRewardClaimedEventsQueryVariables,
-  SubgraphMotionStakedEventsDocument,
-  SubgraphMotionStakedEventsQuery,
-  SubgraphMotionStakedEventsQueryVariables,
+  SubgraphUserMotionStakedEventsDocument,
+  SubgraphUserMotionStakedEventsQuery,
+  SubgraphUserMotionStakedEventsQueryVariables,
 } from '~data/generated';
 import { parseSubgraphEvent } from '~utils/events';
 
@@ -72,10 +72,10 @@ const getUserStakedBalance = async (
    * in here for correct value of staked tokens.
    */
   const { data: motionStakedEventsData } = await apolloClient.query<
-    SubgraphMotionStakedEventsQuery,
-    SubgraphMotionStakedEventsQueryVariables
+    SubgraphUserMotionStakedEventsQuery,
+    SubgraphUserMotionStakedEventsQueryVariables
   >({
-    query: SubgraphMotionStakedEventsDocument,
+    query: SubgraphUserMotionStakedEventsDocument,
     fetchPolicy: 'network-only',
     variables: {
       walletAddress: walletAddress.toLowerCase(),
