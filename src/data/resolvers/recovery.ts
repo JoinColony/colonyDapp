@@ -3,7 +3,6 @@ import {
   ClientType,
   ColonyClientV5,
   ColonyClientV6,
-  getMultipleEvents,
   ColonyRole,
   ColonyVersion,
 } from '@colony/colony-js';
@@ -584,20 +583,32 @@ export const recoveryModeResolvers = ({
          * @NOTE We don't care about colonies that are newer than v6
          */
         if (colonyVersion.toNumber() === ColonyVersion.LightweightSpaceship) {
-          const allRolesSet = await getMultipleEvents(colonyClient, [
-            colonyClient.filters.ColonyRoleSet(null, null, null, null, null),
-          ]);
+          const { data } = await apolloClient.query<
+            SubgraphRoleEventsQuery,
+            SubgraphRoleEventsQueryVariables
+          >({
+            query: SubgraphRoleEventsDocument,
+            variables: {
+              colonyAddress: colonyAddress.toLowerCase(),
+            },
+          });
+
+          const allRoleSetEvents = data?.colonyRoleSetEvents || [];
+          const parsedAllRoleSetEvents = allRoleSetEvents.map(
+            parseSubgraphEvent,
+          );
           const filteredAllRoles = getUsersWithRecoveryRoles(
-            allRolesSet?.filter(
+            parsedAllRoleSetEvents?.filter(
               ({ values }) => values?.role === ColonyRole.Recovery,
             ) || [],
           );
 
-          const recoveryRolesSet = await getMultipleEvents(colonyClient, [
-            colonyClient.filters.RecoveryRoleSet(null, null),
-          ]);
+          const recoveryRoleSetEvents = data?.recoveryRoleSetEvents || [];
+          const parsedRecoveryRoleSetEvents = recoveryRoleSetEvents.map(
+            parseSubgraphEvent,
+          );
           const filteredRecoveryRoles = getUsersWithRecoveryRoles(
-            recoveryRolesSet,
+            parsedRecoveryRoleSetEvents,
           );
 
           return [...filteredAllRoles, ...filteredRecoveryRoles].length;
