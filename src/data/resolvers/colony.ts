@@ -513,6 +513,7 @@ export const colonyResolvers = ({
       );
       // eslint-disable-next-line max-len
       const colonyFundsClaimedTransactions = await getColonyFundsClaimedTransfers(
+        apolloClient,
         colonyClient,
       );
       const payoutClaimedTransactions = await getPayoutClaimedTransfers(

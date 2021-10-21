@@ -7,47 +7,57 @@ import {
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { HashZero } from 'ethers/constants';
+import { ApolloClient } from '@apollo/client';
 
-import { Transfer } from '~data/index';
+import {
+  Transfer,
+  SubgraphColonyFundsClaimedEventsQuery,
+  SubgraphColonyFundsClaimedEventsQueryVariables,
+  SubgraphColonyFundsClaimedEventsDocument,
+} from '~data/index';
 import { notUndefined } from '~utils/arrays';
+import { parseSubgraphEvent } from '~utils/events';
 
 export const getColonyFundsClaimedTransfers = async (
+  apolloClient: ApolloClient<object>,
   colonyClient: ColonyClient,
 ): Promise<Transfer[]> => {
   const { provider } = colonyClient;
 
-  const filter = colonyClient.filters.ColonyFundsClaimed(
-    null,
-    null,
-    null,
-    null,
-  );
-  const logs = await getLogs(colonyClient, filter);
+  const { data: colonyFundsClaimedEventsData } = await apolloClient.query<
+    SubgraphColonyFundsClaimedEventsQuery,
+    SubgraphColonyFundsClaimedEventsQueryVariables
+  >({
+    query: SubgraphColonyFundsClaimedEventsDocument,
+    fetchPolicy: 'network-only',
+    variables: {
+      colonyAddress: colonyClient.address.toLowerCase(),
+    },
+  });
+  const colonyFundsClaimedEvents =
+    colonyFundsClaimedEventsData?.colonyFundsClaimedEvents || [];
 
   const transfers = await Promise.all(
-    logs.map(async (log) => {
-      const event = colonyClient.interface.parseLog(log);
-      const date = log.blockHash
-        ? await getBlockTime(provider, log.blockHash)
-        : 0;
+    colonyFundsClaimedEvents.map(async (event) => {
+      const parsedEvent = parseSubgraphEvent(event);
       const {
         values: { token, payoutRemainder },
-      } = event;
+        hash,
+        timestamp,
+      } = parsedEvent;
 
-      const tx = log.transactionHash
-        ? await provider.getTransaction(log.transactionHash)
-        : undefined;
+      const tx = hash ? await provider.getTransaction(hash) : undefined;
 
       // Don't show claims of zero
-      if (!payoutRemainder.gt(bigNumberify(0))) return undefined;
+      if (!bigNumberify(payoutRemainder).gt(bigNumberify(0))) return undefined;
 
       return {
         __typename: 'Transfer',
         amount: payoutRemainder.toString(),
         colonyAddress: colonyClient.address,
-        date,
+        date: timestamp || 0,
         from: (tx && tx.from) || null,
-        hash: log.transactionHash || HashZero,
+        hash: hash || HashZero,
         incoming: true,
         to: colonyClient.address,
         token,
