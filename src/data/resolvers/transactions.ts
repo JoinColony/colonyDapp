@@ -122,24 +122,27 @@ export const getPayoutClaimedTransfers = async (
 };
 
 export const getColonyUnclaimedTransfers = async (
+  apolloClient: ApolloClient<object>,
   colonyClient: ColonyClient,
   networkClient: ColonyNetworkClient,
 ): Promise<Transfer[]> => {
   const { provider } = colonyClient;
   const { tokenClient } = colonyClient;
-  const claimedTransferFilter = colonyClient.filters.ColonyFundsClaimed(
-    null,
-    null,
-    null,
-    null,
-  );
 
-  const claimedTransferLogs = await getLogs(
-    colonyClient,
-    claimedTransferFilter,
-  );
-  const claimedTransferEvents = claimedTransferLogs.map((log) =>
-    colonyClient.interface.parseLog(log),
+  const { data: colonyFundsClaimedEventsData } = await apolloClient.query<
+    SubgraphColonyFundsClaimedEventsQuery,
+    SubgraphColonyFundsClaimedEventsQueryVariables
+  >({
+    query: SubgraphColonyFundsClaimedEventsDocument,
+    variables: {
+      colonyAddress: colonyClient.address.toLowerCase(),
+    },
+  });
+  const colonyFundsClaimedEvents =
+    colonyFundsClaimedEventsData?.colonyFundsClaimedEvents || [];
+
+  const parsedClaimedTransferEvents = colonyFundsClaimedEvents.map((event) =>
+    parseSubgraphEvent(event),
   );
 
   // Get logs & events for token transfer to this colony
@@ -192,16 +195,12 @@ export const getColonyUnclaimedTransfers = async (
 
       const { blockNumber } = transferLog;
 
-      const transferClaimed = !!claimedTransferEvents.find(
-        ({ values: { token } }, i) =>
-          token === transferLog.address &&
+      const transferClaimed = !!parsedClaimedTransferEvents.find(
+        ({ values: { token }, blockNumber: eventBlockNumber }) =>
+          token === transferLog.address.toLowerCase() &&
           blockNumber &&
-          claimedTransferLogs &&
-          claimedTransferLogs[i] &&
-          claimedTransferLogs[i].blockNumber &&
-          // blockNumber is defined (we just checked that), only TS doesn't know that for some reason
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          claimedTransferLogs[i].blockNumber! > blockNumber,
+          eventBlockNumber &&
+          eventBlockNumber > blockNumber,
       );
 
       if (!transferClaimed && !isMiningCycleTransfer) {

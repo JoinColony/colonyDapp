@@ -532,6 +532,7 @@ export const colonyResolvers = ({
       );
       // eslint-disable-next-line max-len
       const colonyUnclaimedTransfers = await getColonyUnclaimedTransfers(
+        apolloClient,
         colonyClient,
         networkClient,
       );
