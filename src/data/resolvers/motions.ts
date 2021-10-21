@@ -34,6 +34,9 @@ import {
   SubgraphMotionSystemEventsQuery,
   SubgraphMotionSystemEventsQueryVariables,
   SubgraphMotionSystemEventsDocument,
+  SubgraphMotionVoteSubmittedEventsQuery,
+  SubgraphMotionVoteSubmittedEventsQueryVariables,
+  SubgraphMotionVoteSubmittedEventsDocument,
   UserReputationQuery,
   UserReputationQueryVariables,
   UserReputationDocument,
@@ -498,11 +501,6 @@ export const motionsResolvers = ({
           false,
           data?.motionEvents,
         );
-        //  await getMotionEvents(
-        //   apolloClient,
-        //   colonyAddress,
-        //   motionId,
-        // );
 
         const firstMotionStakedNAYEvent = sortedMotionEvents.find(
           (event) =>
@@ -542,21 +540,26 @@ export const motionsResolvers = ({
     },
     async motionCurrentUserVoted(_, { motionId, colonyAddress, userAddress }) {
       try {
-        const votingReputationClient = await colonyManager.getClient(
-          ClientType.VotingReputationClient,
-          colonyAddress,
+        const { data } = await apolloClient.query<
+          SubgraphMotionVoteSubmittedEventsQuery,
+          SubgraphMotionVoteSubmittedEventsQueryVariables
+        >({
+          query: SubgraphMotionVoteSubmittedEventsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+            motionId: motionId.toString(),
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        const hasCurrentUserVoted = !!data?.motionVoteSubmittedEvents.filter(
+          (event) => event.args.includes(userAddress),
         );
-        // @ts-ignore
-        // eslint-disable-next-line max-len
-        const motionVoteFilter = votingReputationClient.filters.MotionVoteSubmitted(
-          bigNumberify(motionId),
-          userAddress,
-        );
-        const voteSubmittedEvents = await getEvents(
-          votingReputationClient,
-          motionVoteFilter,
-        );
-        return !!voteSubmittedEvents.length;
+
+        return hasCurrentUserVoted;
       } catch (error) {
         console.error('Could not fetch current user vote status');
         console.error(error);
