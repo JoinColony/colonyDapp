@@ -11,7 +11,7 @@ import {
 } from '@colony/colony-js';
 import { bigNumberify, LogDescription, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
-import { Resolvers, ApolloClient } from '@apollo/client';
+import { Resolvers } from '@apollo/client';
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
@@ -19,17 +19,21 @@ import {
   getMotionActionType,
   getMotionState,
   parseSubgraphEvent,
+  NormalizedSubgraphEvent,
 } from '~utils/events';
 import {
   MotionVote,
   getMotionRequiredStake,
   getEarlierEventTimestamp,
 } from '~utils/colonyMotions';
-import { ColonyAndExtensionsEvents, Address } from '~types/index';
+import { ColonyAndExtensionsEvents } from '~types/index';
 import {
   SubgraphMotionEventsQuery,
   SubgraphMotionEventsQueryVariables,
   SubgraphMotionEventsDocument,
+  SubgraphMotionSystemEventsQuery,
+  SubgraphMotionSystemEventsQueryVariables,
+  SubgraphMotionSystemEventsDocument,
   UserReputationQuery,
   UserReputationQueryVariables,
   UserReputationDocument,
@@ -45,27 +49,12 @@ import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import { ProcessedEvent } from './colonyActions';
 
-const getMotionEvents = async (
-  apolloClient: ApolloClient<object>,
-  colonyAddress: Address,
-  motionId: string,
-) => {
-  const { data } = await apolloClient.query<
-    SubgraphMotionEventsQuery,
-    SubgraphMotionEventsQueryVariables
-  >({
-    query: SubgraphMotionEventsDocument,
-    variables: {
-      /*
-       * Subgraph addresses are not checksummed
-       */
-      colonyAddress: colonyAddress.toLowerCase(),
-      motionId: motionId.toString(),
-    },
-  });
-
-  if (data?.motionEvents) {
-    const sortedMotionEvents = data?.motionEvents
+const getMotionEvents = (
+  isSystemEvents: boolean,
+  motionEvents?: NormalizedSubgraphEvent[],
+): ProcessedEvent[] => {
+  if (motionEvents) {
+    const sortedMotionEvents = motionEvents
       .map(parseSubgraphEvent)
       .map((event) => {
         const { hash, timestamp } = event;
@@ -74,49 +63,20 @@ const getMotionEvents = async (
           values: {
             ...event.values,
             vote: Number(event.values.vote),
+            stakeAmount: event.values.amount,
           },
           type: ActionsPageFeedType.NetworkEvent,
           createdAt: timestamp,
-          emmitedBy: ClientType.VotingReputationClient,
+          emmitedBy: isSystemEvents
+            ? ClientType.ColonyClient
+            : ClientType.VotingReputationClient,
           transactionHash: hash,
         };
       })
       .sort(
         (firstEvent, secondEvent) =>
-          (firstEvent?.createdAt as number) -
-          (secondEvent?.createdAt as number),
+          firstEvent.createdAt - secondEvent.createdAt,
       );
-
-    const firstMotionStakedNAYEvent = sortedMotionEvents.find(
-      (event) =>
-        event.name === ColonyAndExtensionsEvents.MotionStaked &&
-        event.values.vote === MotionVote.Nay,
-    );
-
-    if (firstMotionStakedNAYEvent) {
-      const {
-        values,
-        // @ts-ignore
-        blockNumber,
-        transactionHash,
-      } = firstMotionStakedNAYEvent;
-      sortedMotionEvents.push({
-        type: ActionsPageFeedType.NetworkEvent,
-        name: ColonyAndExtensionsEvents.ObjectionRaised,
-        /*
-         * @NOTE: I substract 1 second out of the timestamp
-         * to make the event appear before the first NAY stake
-         */
-        createdAt: getEarlierEventTimestamp(
-          firstMotionStakedNAYEvent.createdAt || 0,
-        ),
-        values,
-        emmitedBy: ClientType.VotingReputationClient,
-        // @ts-ignore
-        blockNumber,
-        transactionHash,
-      });
-    }
 
     return sortedMotionEvents;
   }
@@ -230,7 +190,6 @@ export const motionsResolvers = ({
       }
     },
     async motionsSystemMessages(_, { motionId, colonyAddress }) {
-      const { provider } = networkClient;
       const votingReputationClient = (await colonyManager.getClient(
         ClientType.VotingReputationClient,
         colonyAddress,
@@ -242,66 +201,26 @@ export const motionsResolvers = ({
       const { domainId: motionDomainId } = motion;
       const systemMessages: SystemMessage[] = [];
 
-      // @TODO Add missing types to colonyjs
-      // @ts-ignore
-      const motionStakedFilter = votingReputationClient.filters.MotionStaked(
-        motionId,
-        null,
-        null,
-        null,
-      );
-      const motionStakedLogs = await getLogs(
-        votingReputationClient,
-        motionStakedFilter,
-      );
-      // @ts-ignore
-      // eslint-disable-next-line max-len
-      const motionVoteSubmittedFilter = votingReputationClient.filters.MotionVoteSubmitted(
-        motionId,
-        null,
-      );
-      const motionVoteSubmittedLogs = await getLogs(
-        votingReputationClient,
-        motionVoteSubmittedFilter,
-      );
-      // @ts-ignore
-      // eslint-disable-next-line max-len
-      const motionVoteRevealedFilter = votingReputationClient.filters.MotionVoteRevealed(
-        motionId,
-        null,
-        null,
-      );
-      const motionVoteRevealedLogs = await getLogs(
-        votingReputationClient,
-        motionVoteRevealedFilter,
+      const { data } = await apolloClient.query<
+        SubgraphMotionSystemEventsQuery,
+        SubgraphMotionSystemEventsQueryVariables
+      >({
+        query: SubgraphMotionSystemEventsDocument,
+        variables: {
+          /*
+           * Subgraph addresses are not checksummed
+           */
+          colonyAddress: colonyAddress.toLowerCase(),
+          motionId: motionId.toString(),
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      const sortedEvents = await getMotionEvents(
+        true,
+        data?.motionSystemEvents,
       );
 
-      const parsedEvents = await Promise.all(
-        [
-          ...motionStakedLogs,
-          ...motionVoteRevealedLogs,
-          ...motionVoteSubmittedLogs,
-        ].map(async (log) => {
-          const parsedLog = votingReputationClient.interface.parseLog(log);
-          const { address, blockHash, blockNumber, transactionHash } = log;
-          const { name, values } = parsedLog;
-          return {
-            type: ActionsPageFeedType.NetworkEvent,
-            name,
-            values,
-            createdAt: blockHash ? await getBlockTime(provider, blockHash) : 0,
-            emmitedBy: ClientType.ColonyClient,
-            address,
-            blockNumber,
-            transactionHash,
-          } as ProcessedEvent;
-        }),
-      );
-
-      const sortedEvents = parsedEvents.sort(
-        (firstEvent, secondEvent) =>
-          secondEvent.createdAt - firstEvent.createdAt,
-      );
       const blocktime = await getBlockTime(networkClient.provider, 'latest');
 
       const timeToSubmitMS = motion.events[1].toNumber() * 1000;
@@ -321,13 +240,13 @@ export const motionsResolvers = ({
       const latestMotionStakedYAYEvent = sortedEvents.find(
         (event) =>
           event.name === ColonyAndExtensionsEvents.MotionStaked &&
-          event.values.vote.eq(MotionVote.Yay),
+          event.values.vote === MotionVote.Yay,
       );
 
       const latestMotionStakedNAYEvent = sortedEvents.find(
         (event) =>
           event.name === ColonyAndExtensionsEvents.MotionStaked &&
-          event.values.vote.eq(MotionVote.Nay),
+          event.values.vote === MotionVote.Nay,
       );
 
       if (latestMotionStakedNAYEvent) {
@@ -335,8 +254,8 @@ export const motionsResolvers = ({
           if (
             (motion.stakes[MotionVote.Yay].eq(motion.stakes[MotionVote.Nay]) &&
               latestMotionStakedYAYEvent &&
-              latestMotionStakedNAYEvent.createdAt <
-                latestMotionStakedYAYEvent.createdAt) ||
+              latestMotionStakedNAYEvent?.createdAt <
+                latestMotionStakedYAYEvent?.createdAt) ||
             motion.stakes[MotionVote.Nay].gt(motion.stakes[MotionVote.Yay])
           ) {
             systemMessages.push({
@@ -353,8 +272,8 @@ export const motionsResolvers = ({
           if (
             motion.stakes[MotionVote.Yay].eq(motion.stakes[MotionVote.Nay]) &&
             latestMotionStakedNAYEvent &&
-            latestMotionStakedNAYEvent.createdAt <
-              latestMotionStakedYAYEvent.createdAt
+            latestMotionStakedNAYEvent?.createdAt <
+              latestMotionStakedYAYEvent?.createdAt
           ) {
             systemMessages.push({
               type: ActionsPageFeedType.SystemMessage,
@@ -560,7 +479,62 @@ export const motionsResolvers = ({
     },
     async eventsForMotion(_, { motionId, colonyAddress }) {
       try {
-        return await getMotionEvents(apolloClient, colonyAddress, motionId);
+        const { data } = await apolloClient.query<
+          SubgraphMotionEventsQuery,
+          SubgraphMotionEventsQueryVariables
+        >({
+          query: SubgraphMotionEventsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+            motionId: motionId.toString(),
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        const sortedMotionEvents = await getMotionEvents(
+          false,
+          data?.motionEvents,
+        );
+        //  await getMotionEvents(
+        //   apolloClient,
+        //   colonyAddress,
+        //   motionId,
+        // );
+
+        const firstMotionStakedNAYEvent = sortedMotionEvents.find(
+          (event) =>
+            event.name === ColonyAndExtensionsEvents.MotionStaked &&
+            event.values.vote === MotionVote.Nay,
+        );
+
+        if (firstMotionStakedNAYEvent) {
+          const {
+            values,
+            blockNumber,
+            transactionHash,
+            address,
+          } = firstMotionStakedNAYEvent;
+          sortedMotionEvents.push({
+            type: ActionsPageFeedType.NetworkEvent,
+            name: ColonyAndExtensionsEvents.ObjectionRaised,
+            /*
+             * @NOTE: I substract 1 second out of the timestamp
+             * to make the event appear before the first NAY stake
+             */
+            createdAt: getEarlierEventTimestamp(
+              firstMotionStakedNAYEvent.createdAt || 0,
+            ),
+            values,
+            emmitedBy: ClientType.VotingReputationClient,
+            blockNumber,
+            transactionHash,
+            address,
+          });
+        }
+        return sortedMotionEvents;
       } catch (error) {
         console.error(error);
         return [];
