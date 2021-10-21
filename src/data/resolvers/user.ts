@@ -30,9 +30,9 @@ import {
 } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import {
-  SubgraphMotionRewardClaimedEventsDocument,
-  SubgraphMotionRewardClaimedEventsQuery,
-  SubgraphMotionRewardClaimedEventsQueryVariables,
+  SubgraphUserMotionRewardClaimedEventsDocument,
+  SubgraphUserMotionRewardClaimedEventsQuery,
+  SubgraphUserMotionRewardClaimedEventsQueryVariables,
   SubgraphUserMotionStakedEventsDocument,
   SubgraphUserMotionStakedEventsQuery,
   SubgraphUserMotionStakedEventsQueryVariables,
@@ -105,10 +105,10 @@ const getUserStakedBalance = async (
   );
 
   const { data: motionRewardClaimedEventsData } = await apolloClient.query<
-    SubgraphMotionRewardClaimedEventsQuery,
-    SubgraphMotionRewardClaimedEventsQueryVariables
+    SubgraphUserMotionRewardClaimedEventsQuery,
+    SubgraphUserMotionRewardClaimedEventsQueryVariables
   >({
-    query: SubgraphMotionRewardClaimedEventsDocument,
+    query: SubgraphUserMotionRewardClaimedEventsDocument,
     fetchPolicy: 'network-only',
     variables: {
       walletAddress: walletAddress.toLowerCase(),
