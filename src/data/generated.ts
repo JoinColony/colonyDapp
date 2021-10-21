@@ -2107,6 +2107,40 @@ export type SubgraphRoleEventsQuery = { colonyRoleSetEvents: Array<(
     ) }
   )> };
 
+export type SubgraphColonyFundsClaimedEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphColonyFundsClaimedEventsQuery = { colonyFundsClaimedEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
+export type SubgraphPayoutClaimedEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphPayoutClaimedEventsQuery = { payoutClaimedEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
 export type SubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
   first: Scalars['Int'];
@@ -5611,6 +5645,96 @@ export function useSubgraphRoleEventsLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type SubgraphRoleEventsQueryHookResult = ReturnType<typeof useSubgraphRoleEventsQuery>;
 export type SubgraphRoleEventsLazyQueryHookResult = ReturnType<typeof useSubgraphRoleEventsLazyQuery>;
 export type SubgraphRoleEventsQueryResult = Apollo.QueryResult<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>;
+export const SubgraphColonyFundsClaimedEventsDocument = gql`
+    query SubgraphColonyFundsClaimedEvents($colonyAddress: String!) {
+  colonyFundsClaimedEvents: events(where: {name_contains: "ColonyFundsClaimed", address: $colonyAddress}) {
+    id
+    name
+    args
+    address
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphColonyFundsClaimedEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphColonyFundsClaimedEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphColonyFundsClaimedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphColonyFundsClaimedEventsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useSubgraphColonyFundsClaimedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>(SubgraphColonyFundsClaimedEventsDocument, baseOptions);
+      }
+export function useSubgraphColonyFundsClaimedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>(SubgraphColonyFundsClaimedEventsDocument, baseOptions);
+        }
+export type SubgraphColonyFundsClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphColonyFundsClaimedEventsQuery>;
+export type SubgraphColonyFundsClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphColonyFundsClaimedEventsLazyQuery>;
+export type SubgraphColonyFundsClaimedEventsQueryResult = Apollo.QueryResult<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>;
+export const SubgraphPayoutClaimedEventsDocument = gql`
+    query SubgraphPayoutClaimedEvents($colonyAddress: String!) {
+  payoutClaimedEvents: events(where: {name_contains: "PayoutClaimed", address: $colonyAddress}) {
+    id
+    name
+    args
+    address
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphPayoutClaimedEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphPayoutClaimedEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphPayoutClaimedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphPayoutClaimedEventsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useSubgraphPayoutClaimedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>(SubgraphPayoutClaimedEventsDocument, baseOptions);
+      }
+export function useSubgraphPayoutClaimedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>(SubgraphPayoutClaimedEventsDocument, baseOptions);
+        }
+export type SubgraphPayoutClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsQuery>;
+export type SubgraphPayoutClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsLazyQuery>;
+export type SubgraphPayoutClaimedEventsQueryResult = Apollo.QueryResult<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>;
 export const SubgraphEventsDocument = gql`
     subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {
