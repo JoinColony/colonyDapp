@@ -4,7 +4,6 @@ import {
   ColonyClientV6,
   getBlockTime,
   MotionState as NetworkMotionState,
-  getMultipleEvents,
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
 import { bigNumberify, hexStripZeros } from 'ethers/utils';
@@ -48,6 +47,12 @@ import {
   SubgraphAnnotationEventsQuery,
   SubgraphAnnotationEventsQueryVariables,
   SubgraphAnnotationEventsDocument,
+  SubgraphUserMotionStakedEventsQuery,
+  SubgraphUserMotionStakedEventsQueryVariables,
+  SubgraphUserMotionStakedEventsDocument,
+  SubgraphUserMotionRewardClaimedEventsQuery,
+  SubgraphUserMotionRewardClaimedEventsQueryVariables,
+  SubgraphUserMotionRewardClaimedEventsDocument,
   UserReputationQuery,
   UserReputationQueryVariables,
   UserReputationDocument,
@@ -777,36 +782,56 @@ export const motionsResolvers = ({
           stakesNay: null,
           claimedReward: null,
         };
+
+        const { data: stakeEventsData } = await apolloClient.query<
+          SubgraphUserMotionStakedEventsQuery,
+          SubgraphUserMotionStakedEventsQueryVariables
+        >({
+          query: SubgraphUserMotionStakedEventsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+            motionId: motionId.toString(),
+            walletAddress: userAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        const { data: rewardsEventsData } = await apolloClient.query<
+          SubgraphUserMotionRewardClaimedEventsQuery,
+          SubgraphUserMotionRewardClaimedEventsQueryVariables
+        >({
+          query: SubgraphUserMotionRewardClaimedEventsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+            motionId: motionId.toString(),
+            walletAddress: userAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        const userStakeEvents = stakeEventsData?.motionStakedEvents
+          ? stakeEventsData?.motionStakedEvents.map(parseSubgraphEvent)
+          : [];
+
+        const rewardClaimedEvents = rewardsEventsData?.motionRewardClaimedEvents
+          ? rewardsEventsData?.motionRewardClaimedEvents.map(parseSubgraphEvent)
+          : [];
+
         const votingReputationClient = await colonyManager.getClient(
           ClientType.VotingReputationClient,
           colonyAddress,
         );
-        const motionStakedFilter = votingReputationClient.filters.MotionStaked(
-          bigNumberify(motionId),
-          userAddress.toLowerCase(),
-          null,
-        );
-        // eslint-disable-next-line max-len
-        const stakeClaimedFilter = votingReputationClient.filters.MotionRewardClaimed(
-          bigNumberify(motionId),
-          userAddress.toLowerCase(),
-          null,
-          null,
-        );
-        const events = await getMultipleEvents(votingReputationClient, [
-          motionStakedFilter,
-          stakeClaimedFilter,
-        ]);
-        const userStakeEvents = events.filter(
-          ({ name }) => name === ColonyAndExtensionsEvents.MotionStaked,
-        );
-        const rewardClaimedEvents = events.filter(
-          ({ name }) => name === ColonyAndExtensionsEvents.MotionRewardClaimed,
-        );
+
         let stakesYay = bigNumberify(0);
         let stakesNay = bigNumberify(0);
         userStakeEvents.map(({ values: { amount, vote } }) => {
-          if (vote.toNumber() === 1) {
+          if (Number(vote) === 1) {
             stakesYay = stakesYay.add(amount);
             return stakesYay;
           }
@@ -861,7 +886,7 @@ export const motionsResolvers = ({
          * parse the claim reward events
          */
         rewardClaimedEvents.map(({ values: { amount, vote } }) => {
-          if (vote.toNumber() === 1) {
+          if (Number(vote.toNumber) === 1) {
             stakingRewardYay = amount;
             return stakingRewardYay;
           }

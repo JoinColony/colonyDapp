@@ -2192,26 +2192,10 @@ export type SubgraphMotionStakedEventsQuery = { motionStakedEvents: Array<(
     ) }
   )> };
 
-export type SubgraphMotionRewardClaimedEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  motionId: Scalars['String'];
-}>;
-
-
-export type SubgraphMotionRewardClaimedEventsQuery = { motionRewardClaimedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
 export type SubgraphUserMotionStakedEventsQueryVariables = Exact<{
   walletAddress: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+  motionId?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2229,6 +2213,8 @@ export type SubgraphUserMotionStakedEventsQuery = { motionStakedEvents: Array<(
 
 export type SubgraphUserMotionRewardClaimedEventsQueryVariables = Exact<{
   walletAddress: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+  motionId?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -6004,55 +5990,9 @@ export function useSubgraphMotionStakedEventsLazyQuery(baseOptions?: Apollo.Lazy
 export type SubgraphMotionStakedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionStakedEventsQuery>;
 export type SubgraphMotionStakedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionStakedEventsLazyQuery>;
 export type SubgraphMotionStakedEventsQueryResult = Apollo.QueryResult<SubgraphMotionStakedEventsQuery, SubgraphMotionStakedEventsQueryVariables>;
-export const SubgraphMotionRewardClaimedEventsDocument = gql`
-    query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!) {
-  motionRewardClaimedEvents: events(where: {name_contains: "MotionRewardClaimed", associatedColony: $colonyAddress, args_contains: $motionId}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphMotionRewardClaimedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphMotionRewardClaimedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphMotionRewardClaimedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphMotionRewardClaimedEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
- *   },
- * });
- */
-export function useSubgraphMotionRewardClaimedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>(SubgraphMotionRewardClaimedEventsDocument, baseOptions);
-      }
-export function useSubgraphMotionRewardClaimedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>(SubgraphMotionRewardClaimedEventsDocument, baseOptions);
-        }
-export type SubgraphMotionRewardClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsQuery>;
-export type SubgraphMotionRewardClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsLazyQuery>;
-export type SubgraphMotionRewardClaimedEventsQueryResult = Apollo.QueryResult<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>;
 export const SubgraphUserMotionStakedEventsDocument = gql`
-    query SubgraphUserMotionStakedEvents($walletAddress: String!) {
-  motionStakedEvents: events(where: {name_contains: "MotionStaked", args_contains: $walletAddress}) {
+    query SubgraphUserMotionStakedEvents($walletAddress: String!, $colonyAddress: String, $motionId: String) {
+  motionStakedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionStaked", args_contains: $walletAddress, args_contains: $motionId}) {
     id
     name
     args
@@ -6083,6 +6023,8 @@ export const SubgraphUserMotionStakedEventsDocument = gql`
  * const { data, loading, error } = useSubgraphUserMotionStakedEventsQuery({
  *   variables: {
  *      walletAddress: // value for 'walletAddress'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      motionId: // value for 'motionId'
  *   },
  * });
  */
@@ -6096,8 +6038,8 @@ export type SubgraphUserMotionStakedEventsQueryHookResult = ReturnType<typeof us
 export type SubgraphUserMotionStakedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphUserMotionStakedEventsLazyQuery>;
 export type SubgraphUserMotionStakedEventsQueryResult = Apollo.QueryResult<SubgraphUserMotionStakedEventsQuery, SubgraphUserMotionStakedEventsQueryVariables>;
 export const SubgraphUserMotionRewardClaimedEventsDocument = gql`
-    query SubgraphUserMotionRewardClaimedEvents($walletAddress: String!) {
-  motionRewardClaimedEvents: events(where: {name_contains: "MotionRewardClaimed", args_contains: $walletAddress}) {
+    query SubgraphUserMotionRewardClaimedEvents($walletAddress: String!, $colonyAddress: String, $motionId: String) {
+  motionRewardClaimedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", args_contains: $walletAddress, args_contains: $motionId}) {
     id
     name
     args
@@ -6128,6 +6070,8 @@ export const SubgraphUserMotionRewardClaimedEventsDocument = gql`
  * const { data, loading, error } = useSubgraphUserMotionRewardClaimedEventsQuery({
  *   variables: {
  *      walletAddress: // value for 'walletAddress'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      motionId: // value for 'motionId'
  *   },
  * });
  */
