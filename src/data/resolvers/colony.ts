@@ -517,6 +517,7 @@ export const colonyResolvers = ({
         colonyClient,
       );
       const payoutClaimedTransactions = await getPayoutClaimedTransfers(
+        apolloClient,
         colonyClient,
       );
       return [

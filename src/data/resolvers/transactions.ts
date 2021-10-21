@@ -14,6 +14,9 @@ import {
   SubgraphColonyFundsClaimedEventsQuery,
   SubgraphColonyFundsClaimedEventsQueryVariables,
   SubgraphColonyFundsClaimedEventsDocument,
+  SubgraphPayoutClaimedEventsDocument,
+  SubgraphPayoutClaimedEventsQuery,
+  SubgraphPayoutClaimedEventsQueryVariables,
 } from '~data/index';
 import { notUndefined } from '~utils/arrays';
 import { parseSubgraphEvent } from '~utils/events';
@@ -29,7 +32,6 @@ export const getColonyFundsClaimedTransfers = async (
     SubgraphColonyFundsClaimedEventsQueryVariables
   >({
     query: SubgraphColonyFundsClaimedEventsDocument,
-    fetchPolicy: 'network-only',
     variables: {
       colonyAddress: colonyClient.address.toLowerCase(),
     },
@@ -69,21 +71,29 @@ export const getColonyFundsClaimedTransfers = async (
 };
 
 export const getPayoutClaimedTransfers = async (
+  apolloClient: ApolloClient<object>,
   colonyClient: ColonyClient,
 ): Promise<Transfer[]> => {
-  const { provider } = colonyClient;
-  const filter = colonyClient.filters.PayoutClaimed(null, null, null, null);
-  const logs = await getLogs(colonyClient, filter);
+  const { data: colonyPayoutClaimedEventsData } = await apolloClient.query<
+    SubgraphPayoutClaimedEventsQuery,
+    SubgraphPayoutClaimedEventsQueryVariables
+  >({
+    query: SubgraphPayoutClaimedEventsDocument,
+    variables: {
+      colonyAddress: colonyClient.address.toLowerCase(),
+    },
+  });
+  const colonyPayoutClaimedEvents =
+    colonyPayoutClaimedEventsData?.payoutClaimedEvents || [];
 
   const transfers = await Promise.all(
-    logs.map(async (log) => {
-      const event = colonyClient.interface.parseLog(log);
-      const date = log.blockHash
-        ? await getBlockTime(provider, log.blockHash)
-        : 0;
+    colonyPayoutClaimedEvents.map(async (event) => {
+      const parsedEvent = parseSubgraphEvent(event);
       const {
         values: { fundingPotId, token, amount },
-      } = event;
+        hash,
+        timestamp,
+      } = parsedEvent;
 
       const {
         associatedType,
@@ -96,11 +106,11 @@ export const getPayoutClaimedTransfers = async (
 
       return {
         __typename: 'Transfer',
-        amount: amount.toString(),
+        amount,
         colonyAddress: colonyClient.address,
-        date,
+        date: timestamp || 0,
         from: null,
-        hash: log.transactionHash || HashZero,
+        hash: hash || HashZero,
         incoming: false,
         to,
         token,
