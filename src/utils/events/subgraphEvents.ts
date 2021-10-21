@@ -2,7 +2,11 @@ import { LogDescription, id as topicId, bigNumberify } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
 import { SubgraphEvent, SubgraphTransaction, SubgraphBlock } from '~data/index';
-import { Address, SortDirection } from '~types/index';
+import {
+  Address,
+  SortDirection,
+  ColonyAndExtensionsEvents,
+} from '~types/index';
 
 import { createAddress } from '../web3';
 import { log } from '../debug';
@@ -16,6 +20,8 @@ export type ExtendedLogDescription = Omit<LogDescription, 'decode'> & {
   blockNumber?: number;
   hash?: string;
   index?: string;
+  name: ColonyAndExtensionsEvents;
+  address: Address;
 };
 
 /*
@@ -135,15 +141,21 @@ export const parseSubgraphEvent = ({
   args,
   transaction,
   id,
-}: NormalizedSubgraphEvent): ExtendedLogDescription => {
+  address,
+}: NormalizedSubgraphEvent): Required<ExtendedLogDescription> => {
   const blockNumber =
     transaction?.block?.number &&
     parseInt(transaction.block.number.replace('block_', ''), 10);
   const parsedArguments = JSON.parse(args);
-  let parsedEvent: ExtendedLogDescription = {
-    name: name.substring(0, name.indexOf('(')),
+  let parsedEvent: Required<ExtendedLogDescription> = {
+    name: name.substring(0, name.indexOf('(')) as ColonyAndExtensionsEvents,
+    timestamp: 0,
+    blockNumber: 0,
+    hash: '',
+    index: '',
     signature: name,
     topic: topicId(name),
+    address,
     ...(blockNumber && { blockNumber }),
     /*
      * Parse the normal values, and any specialized parsers we might have
@@ -183,9 +195,7 @@ export const parseSubgraphEvent = ({
     parsedEvent = {
       ...parsedEvent,
       ...(transactionHash && { hash: transactionHash }),
-      ...(block?.timestamp && {
-        timestamp: parseInt(block.timestamp, 10) * 1000,
-      }),
+      timestamp: block?.timestamp ? parseInt(block.timestamp, 10) * 1000 : 0,
     };
   }
   return parsedEvent;
