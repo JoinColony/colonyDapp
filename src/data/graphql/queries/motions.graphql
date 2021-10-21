@@ -54,10 +54,10 @@ query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!) {
   }
 }
 
-query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!) {
-  motionStakedEvents: events(
+query SubgraphMotionVoteSubmittedEvents($colonyAddress: String!, $motionId: String!) {
+  motionVoteSubmittedEvents: events(
     where: {
-      name_contains: "MotionStaked"
+      name_contains: "MotionVoteSubmitted"
       associatedColony: $colonyAddress
       args_contains: $motionId
     }
@@ -78,10 +78,34 @@ query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!) {
   }
 }
 
-query SubgraphMotionFinalizedEvents($colonyAddress: String!, $motionId: String!) {
-  motionFinalizedEvents: events(
+query SubgraphMotionVoteRevealedEvents($colonyAddress: String!, $motionId: String!) {
+  motionVoteRevealedEvents: events(
     where: {
-      name_contains: "MotionFinalized"
+      name_contains: "MotionVoteRevealed"
+      associatedColony: $colonyAddress
+      args_contains: $motionId
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
+query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!) {
+  motionStakedEvents: events(
+    where: {
+      name_contains: "MotionStaked"
       associatedColony: $colonyAddress
       args_contains: $motionId
     }
