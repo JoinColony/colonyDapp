@@ -685,15 +685,16 @@ export type Subscription = {
   motions: Array<SubscriptionMotion>;
   oneTxPayments: Array<OneTxPayment>;
   subscribedUsers: Array<User>;
+  tokenBoughtEvents: Array<SubscriptionEvent>;
   transactionMessages: TransactionMessages;
   transactionMessagesCount: TransactionMessagesCount;
 };
 
 
 export type SubscriptionEventsArgs = {
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
-  where: EventsFilter;
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  where?: Maybe<EventsFilter>;
 };
 
 
@@ -713,6 +714,11 @@ export type SubscriptionOneTxPaymentsArgs = {
 
 export type SubscriptionSubscribedUsersArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type SubscriptionTokenBoughtEventsArgs = {
+  where?: Maybe<EventsFilter>;
 };
 
 
@@ -1297,6 +1303,8 @@ export type EventsFilter = {
   associatedColony_contains?: Maybe<Scalars['String']>;
   associatedColony?: Maybe<Scalars['String']>;
   name_in?: Maybe<Array<Scalars['String']>>;
+  name_contains?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
 };
 
 export type MotionsFilter = {
@@ -2288,6 +2296,23 @@ export type SubgraphMotionsSubscription = { motions: Array<(
         & { address: SubgraphToken['id'] }
       ) }
     ), timeoutPeriods: Pick<MotionTimeoutPeriods, 'timeLeftToStake' | 'timeLeftToSubmit' | 'timeLeftToReveal' | 'timeLeftToEscalate'> }
+  )> };
+
+export type SubgraphTokenBoughtEventsSubscriptionVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphTokenBoughtEventsSubscription = { tokenBoughtEvents: Array<(
+    Pick<SubscriptionEvent, 'address' | 'name' | 'args'>
+    & { transaction: (
+      { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
   )> };
 
 export type CommentCountSubscriptionVariables = Exact<{
@@ -6053,6 +6078,45 @@ export function useSubgraphMotionsSubscription(baseOptions?: Apollo.Subscription
       }
 export type SubgraphMotionsSubscriptionHookResult = ReturnType<typeof useSubgraphMotionsSubscription>;
 export type SubgraphMotionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphMotionsSubscription>;
+export const SubgraphTokenBoughtEventsDocument = gql`
+    subscription SubgraphTokenBoughtEvents($colonyAddress: String!, $extensionAddress: String!) {
+  tokenBoughtEvents: events(where: {name_contains: "TokensBought", address: $extensionAddress}) {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+}
+    `;
+
+/**
+ * __useSubgraphTokenBoughtEventsSubscription__
+ *
+ * To run a query within a React component, call `useSubgraphTokenBoughtEventsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphTokenBoughtEventsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphTokenBoughtEventsSubscription({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      extensionAddress: // value for 'extensionAddress'
+ *   },
+ * });
+ */
+export function useSubgraphTokenBoughtEventsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubgraphTokenBoughtEventsSubscription, SubgraphTokenBoughtEventsSubscriptionVariables>) {
+        return Apollo.useSubscription<SubgraphTokenBoughtEventsSubscription, SubgraphTokenBoughtEventsSubscriptionVariables>(SubgraphTokenBoughtEventsDocument, baseOptions);
+      }
+export type SubgraphTokenBoughtEventsSubscriptionHookResult = ReturnType<typeof useSubgraphTokenBoughtEventsSubscription>;
+export type SubgraphTokenBoughtEventsSubscriptionResult = Apollo.SubscriptionResult<SubgraphTokenBoughtEventsSubscription>;
 export const CommentCountDocument = gql`
     subscription CommentCount($colonyAddress: String!) {
   transactionMessagesCount(colonyAddress: $colonyAddress) {
