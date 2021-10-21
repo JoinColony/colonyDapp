@@ -2,14 +2,12 @@ import {
   ClientType,
   ExtensionClient,
   ColonyClientV6,
-  getLogs,
   getBlockTime,
   MotionState as NetworkMotionState,
-  getEvents,
   getMultipleEvents,
   ROOT_DOMAIN_ID,
 } from '@colony/colony-js';
-import { bigNumberify, LogDescription, hexStripZeros } from 'ethers/utils';
+import { bigNumberify, hexStripZeros } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
@@ -20,6 +18,7 @@ import {
   getMotionState,
   parseSubgraphEvent,
   NormalizedSubgraphEvent,
+  ExtendedLogDescription,
 } from '~utils/events';
 import {
   MotionVote,
@@ -43,6 +42,12 @@ import {
   SubgraphMotionVoteRevealedEventsQuery,
   SubgraphMotionVoteRevealedEventsQueryVariables,
   SubgraphMotionVoteRevealedEventsDocument,
+  SubgraphMotionStakedEventsQuery,
+  SubgraphMotionStakedEventsQueryVariables,
+  SubgraphMotionStakedEventsDocument,
+  SubgraphAnnotationEventsQuery,
+  SubgraphAnnotationEventsQueryVariables,
+  SubgraphAnnotationEventsDocument,
   UserReputationQuery,
   UserReputationQueryVariables,
   UserReputationDocument,
@@ -883,42 +888,56 @@ export const motionsResolvers = ({
         metadata: null,
       };
       try {
-        const colonyClient = await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
-        );
-        const votingReputationClient = await colonyManager.getClient(
-          ClientType.VotingReputationClient,
-          colonyAddress,
-        );
-        const nayStakedFilter = votingReputationClient.filters.MotionStaked(
-          bigNumberify(motionId),
-          null,
-          bigNumberify(0),
-          null,
-        );
-        const nayStakeEvents = await getLogs(
-          votingReputationClient,
-          nayStakedFilter,
-        );
+        const { data } = await apolloClient.query<
+          SubgraphMotionStakedEventsQuery,
+          SubgraphMotionStakedEventsQueryVariables
+        >({
+          query: SubgraphMotionStakedEventsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+            motionId: motionId.toString(),
+          },
+          fetchPolicy: 'network-only',
+        });
 
-        let annotationEvents: LogDescription[] = [];
-        await Promise.all(
-          nayStakeEvents.map(async ({ transactionHash }) => {
-            const events = await getEvents(
-              colonyClient,
-              colonyClient.filters.Annotation(null, transactionHash, null),
-            );
-            annotationEvents = [...annotationEvents, ...events];
-          }),
-        );
+        if (data?.motionStakedEvents) {
+          const nayStakeEvents = data?.motionStakedEvents
+            .map(parseSubgraphEvent)
+            .filter((event) => Number(event.values.vote) === MotionVote.Nay);
 
-        if (annotationEvents.length) {
-          const [latestAnnotatedNayStake] = annotationEvents;
-          objectionAnnotation = {
-            address: latestAnnotatedNayStake.values.agent,
-            metadata: latestAnnotatedNayStake.values.metadata,
-          };
+          let annotationEvents: ExtendedLogDescription[] = [];
+          await Promise.all(
+            nayStakeEvents.map(async ({ hash }) => {
+              const { data: annotationData } = await apolloClient.query<
+                SubgraphAnnotationEventsQuery,
+                SubgraphAnnotationEventsQueryVariables
+              >({
+                query: SubgraphAnnotationEventsDocument,
+                variables: {
+                  userAddress: '',
+                  transactionHash: hash,
+                },
+              });
+              if (annotationData?.annotationEvents) {
+                const parsedEvents = annotationData?.annotationEvents.map(
+                  parseSubgraphEvent,
+                );
+
+                annotationEvents = [...annotationEvents, ...parsedEvents];
+              }
+            }),
+          );
+
+          if (annotationEvents.length) {
+            const [latestAnnotatedNayStake] = annotationEvents;
+            objectionAnnotation = {
+              address: latestAnnotatedNayStake.values.agent,
+              metadata: latestAnnotatedNayStake.values.metadata,
+            };
+          }
         }
         return objectionAnnotation;
       } catch (error) {
