@@ -97,6 +97,7 @@ function* colonyExtensionEnable({
       });
 
     if (!initialized && extension.initializationParams) {
+      let shouldSetNewTokenAuthority = false;
       let initParams = [] as any[];
 
       if (extensionId === Extension.Whitelist) {
@@ -105,6 +106,15 @@ function* colonyExtensionEnable({
           agreementHash,
         ];
       } else if (extensionId === Extension.CoinMachine) {
+        const tokenClient = yield colonyManager.getTokenClient(
+          payload.tokenToBeSold,
+        );
+        const isSoldTokenLocked = yield tokenClient.locked();
+
+        if (isSoldTokenLocked) {
+          shouldSetNewTokenAuthority = true;
+        }
+
         const params = [
           ...extension.initializationParams,
           ...(extension.extraInitParams ? extension.extraInitParams : []),
@@ -126,7 +136,7 @@ function* colonyExtensionEnable({
         channelNames.push('setUserRolesWithProofs');
       }
 
-      if (extensionId === Extension.CoinMachine) {
+      if (shouldSetNewTokenAuthority) {
         channelNames.push('deployTokenAuthority');
         channelNames.push('makeArbitraryTransaction');
       }
@@ -166,7 +176,7 @@ function* colonyExtensionEnable({
         });
       }
 
-      if (extensionId === Extension.CoinMachine) {
+      if (shouldSetNewTokenAuthority) {
         yield createGroupTransaction(deployTokenAuthority, {
           context: ClientType.ColonyClient,
           methodName: 'deployTokenAuthority',
@@ -197,7 +207,7 @@ function* colonyExtensionEnable({
         );
       }
 
-      if (extensionId === Extension.CoinMachine) {
+      if (shouldSetNewTokenAuthority) {
         const {
           payload: { deployedContractAddress },
         } = yield takeFrom(
