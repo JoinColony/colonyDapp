@@ -917,7 +917,6 @@ export const motionsResolvers = ({
               >({
                 query: SubgraphAnnotationEventsDocument,
                 variables: {
-                  userAddress: '',
                   transactionHash: hash,
                 },
               });
