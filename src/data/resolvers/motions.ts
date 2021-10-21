@@ -37,6 +37,9 @@ import {
   SubgraphMotionVoteSubmittedEventsQuery,
   SubgraphMotionVoteSubmittedEventsQueryVariables,
   SubgraphMotionVoteSubmittedEventsDocument,
+  SubgraphMotionUserVoteRevealedEventsQuery,
+  SubgraphMotionUserVoteRevealedEventsQueryVariables,
+  SubgraphMotionUserVoteRevealedEventsDocument,
   UserReputationQuery,
   UserReputationQueryVariables,
   UserReputationDocument,
@@ -568,29 +571,37 @@ export const motionsResolvers = ({
     },
     async motionUserVoteRevealed(_, { motionId, colonyAddress, userAddress }) {
       try {
-        let userVote = {
+        let userVote: {
+          revealed: boolean;
+          vote: null | number;
+        } = {
           revealed: false,
           vote: null,
         };
-        const votingReputationClient = await colonyManager.getClient(
-          ClientType.VotingReputationClient,
-          colonyAddress,
-        );
-        // @ts-ignore
-        // eslint-disable-next-line max-len
-        const motionVoteRevealedFilter = votingReputationClient.filters.MotionVoteRevealed(
-          bigNumberify(motionId),
-          userAddress,
-          null,
-        );
-        const [userReveal] = await getEvents(
-          votingReputationClient,
-          motionVoteRevealedFilter,
-        );
-        if (userReveal) {
+
+        const { data } = await apolloClient.query<
+          SubgraphMotionUserVoteRevealedEventsQuery,
+          SubgraphMotionUserVoteRevealedEventsQueryVariables
+        >({
+          query: SubgraphMotionUserVoteRevealedEventsDocument,
+          variables: {
+            /*
+             * Subgraph addresses are not checksummed
+             */
+            colonyAddress: colonyAddress.toLowerCase(),
+            motionId: motionId.toString(),
+            walletAddress: userAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        if (data?.motionVoteRevealedEvents) {
+          const parsedEvent = parseSubgraphEvent(
+            data?.motionVoteRevealedEvents[0],
+          );
           userVote = {
             revealed: true,
-            vote: userReveal.values.vote.toNumber(),
+            vote: Number(parsedEvent.values.vote),
           };
         }
         return userVote;

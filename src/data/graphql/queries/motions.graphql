@@ -78,6 +78,31 @@ query SubgraphMotionVoteSubmittedEvents($colonyAddress: String!, $motionId: Stri
   }
 }
 
+query SubgraphMotionUserVoteRevealedEvents($colonyAddress: String!, $motionId: String!, $walletAddress: String!) {
+  motionVoteRevealedEvents: events(
+    where: {
+      name_contains: "MotionVoteRevealed"
+      associatedColony: $colonyAddress
+      args_contains: $motionId
+      args_contains: $walletAddress
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
 query SubgraphMotionVoteRevealedEvents($colonyAddress: String!, $motionId: String!) {
   motionVoteRevealedEvents: events(
     where: {
