@@ -702,7 +702,7 @@ export type Subscription = {
   motions: Array<SubscriptionMotion>;
   oneTxPayments: Array<OneTxPayment>;
   subscribedUsers: Array<User>;
-  tokenBoughtEvents: Array<SubscriptionEvent>;
+  tokenBoughtEvents: Array<SubgraphEvent>;
   transactionMessages: TransactionMessages;
   transactionMessagesCount: TransactionMessagesCount;
 };
@@ -1355,17 +1355,6 @@ export type ActionsFilter = {
   payment_contains?: Maybe<Scalars['String']>;
 };
 
-<<<<<<< HEAD
-export type EventsFilter = {
-  associatedColony_contains?: Maybe<Scalars['String']>;
-  associatedColony?: Maybe<Scalars['String']>;
-  name_in?: Maybe<Array<Scalars['String']>>;
-  name_contains?: Maybe<Scalars['String']>;
-  address?: Maybe<Scalars['String']>;
-};
-
-=======
->>>>>>> Add: extend `SubgraphCoinMachinePeriods` query
 export type MotionsFilter = {
   associatedColony?: Maybe<Scalars['String']>;
   extensionAddress?: Maybe<Scalars['String']>;
@@ -2365,7 +2354,7 @@ export type SubgraphTokenBoughtEventsSubscriptionVariables = Exact<{
 
 
 export type SubgraphTokenBoughtEventsSubscription = { tokenBoughtEvents: Array<(
-    Pick<SubscriptionEvent, 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'address' | 'name' | 'args'>
     & { transaction: (
       { transactionHash: SubgraphTransaction['id'] }
       & { block: (
