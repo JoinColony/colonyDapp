@@ -6,7 +6,7 @@ import {
   ColonyRole,
   ExtensionClient,
 } from '@colony/colony-js';
-import { BigNumber, BigNumberish } from 'ethers/utils';
+import { BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
@@ -41,7 +41,7 @@ export interface EventValue {
   creator: Address;
   role: ColonyRole;
   setTo: boolean;
-  vote: BigNumber;
+  vote: number;
 }
 
 export interface ProcessedEvent {
