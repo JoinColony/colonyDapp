@@ -346,8 +346,6 @@ export const coinMachineResolvers = ({
           .sort(
             ({ block: lowBlock }, { block: highBlock }) => highBlock - lowBlock,
           );
-        // console.log('SUBGRAPH EVENTS', historicAvailableTokensEvents);
-
         /*
          * Generate the starting available tokens value (for the last period)
          * By getting the current available tokens and processing all events
