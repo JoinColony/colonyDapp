@@ -64,9 +64,6 @@ const CoinMachine = ({
     transactionHash: string;
   }>();
   const [tokenBoughtEventsCounter, setTokenBoughtEventsCounter] = useState(0);
-  const { data, loading } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
 
   const {
     data: extensionsData,
@@ -75,7 +72,7 @@ const CoinMachine = ({
     variables: { address: colonyAddress },
   });
 
-  const { installedExtensions } = extensionsData?.processedColony;
+  const { installedExtensions = [] } = extensionsData?.processedColony || {};
   const coinMachineExtension = installedExtensions?.find(
     ({ extensionId }) => extensionId === Extension.CoinMachine,
   );
@@ -155,12 +152,12 @@ const CoinMachine = ({
   );
 
   const timeRemaining = parseInt(
-    salePeriodData?.coinMachineSalePeriod?.timeRemaining || '0',
+    currentSalePeriodData?.coinMachineCurrentSalePeriod?.timeRemaining || '0',
     10,
   );
 
   const periodLength = parseInt(
-    salePeriodData?.coinMachineSalePeriod?.periodLength || '0',
+    currentSalePeriodData?.coinMachineCurrentSalePeriod?.periodLength || '0',
     10,
   );
 
