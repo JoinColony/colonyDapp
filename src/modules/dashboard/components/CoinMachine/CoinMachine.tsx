@@ -17,6 +17,9 @@ import {
   useCoinMachineCurrentSalePeriodQuery,
   useCoinMachineTokenBalanceQuery,
   useSubgraphTokenBoughtEventsSubscription,
+  useCoinMachineCurrentPeriodPriceQuery,
+  useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
+  useLoggedInUser,
 } from '~data/index';
 
 import Chat from './Chat';
@@ -64,11 +67,18 @@ const CoinMachine = ({
     transactionHash: string;
   }>();
   const [tokenBoughtEventsCounter, setTokenBoughtEventsCounter] = useState(0);
-  const { data, loading } = useColonyExtensionsQuery({
+
+  const { walletAddress } = useLoggedInUser();
+
+  const {
+    data: extensionsData,
+    loading: loadingExtensionsData,
+  } = useColonyExtensionsQuery({
     variables: { address: colonyAddress },
   });
 
-  const coinMachineExtension = data?.processedColony.installedExtensions.find(
+  const { installedExtensions = [] } = extensionsData?.processedColony || {};
+  const coinMachineExtension = installedExtensions?.find(
     ({ extensionId }) => extensionId === Extension.CoinMachine,
   );
 
@@ -117,6 +127,28 @@ const CoinMachine = ({
     fetchPolicy: 'network-only',
   });
 
+  const {
+    data: salePriceData,
+    loading: loadingSalePrice,
+    refetch: refetchCurrentPeriodPrice,
+    startPolling: startPollingCurrentPeriodPrice,
+    stopPolling: stopPollingCurrentPeriodPrice,
+  } = useCoinMachineCurrentPeriodPriceQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+  });
+
+  const {
+    data: maxUserPurchaseData,
+    loading: loadingMaxUserPurchase,
+    refetch: refetchCurrentPeriodMaxUserPurchase,
+    startPolling: startPollingCurrentPeriodMaxUserPurchase,
+    stopPolling: stopPollingCurrentPeriodMaxUserPurchase,
+  } = useCoinMachineCurrentPeriodMaxUserPurchaseQuery({
+    variables: { colonyAddress, userAddress: walletAddress },
+    fetchPolicy: 'network-only',
+  });
+
   const hasSaleStarted = !bigNumberify(
     coinMachineTokenBalanceData?.coinMachineTokenBalance || 0,
   ).isZero();
@@ -147,12 +179,12 @@ const CoinMachine = ({
   );
 
   const timeRemaining = parseInt(
-    salePeriodData?.coinMachineSalePeriod?.timeRemaining || '0',
+    currentSalePeriodData?.coinMachineCurrentSalePeriod?.timeRemaining || '0',
     10,
   );
 
   const periodLength = parseInt(
-    salePeriodData?.coinMachineSalePeriod?.periodLength || '0',
+    currentSalePeriodData?.coinMachineCurrentSalePeriod?.periodLength || '0',
     10,
   );
 
@@ -162,6 +194,8 @@ const CoinMachine = ({
     if (tokenBoughtEventsCounter < tokenBoughtEventsLength) {
       refetchCurrentPeriodTokensData({ colonyAddress });
       setTokenBoughtEventsCounter(tokenBoughtEventsLength);
+      refetchCurrentPeriodPrice();
+      refetchCurrentPeriodMaxUserPurchase();
     }
   }, [
     colonyAddress,
@@ -169,6 +203,8 @@ const CoinMachine = ({
     tokenBoughtEventsCounter,
     setTokenBoughtEventsCounter,
     refetchCurrentPeriodTokensData,
+    refetchCurrentPeriodPrice,
+    refetchCurrentPeriodMaxUserPurchase,
   ]);
 
   useEffect(() => {
@@ -176,11 +212,21 @@ const CoinMachine = ({
       setTimeout(() => {
         refetchCurrentPeriodTokensData({ colonyAddress });
         startPollingCurrentPeriodTokensData(periodLength * 1000);
+        refetchCurrentPeriodPrice();
+        startPollingCurrentPeriodPrice(periodLength * 1000);
+        refetchCurrentPeriodMaxUserPurchase();
+        startPollingCurrentPeriodMaxUserPurchase(periodLength * 1000);
       }, timeRemaining);
     } else {
       startPollingCurrentPeriodTokensData(periodLength * 1000);
+      startPollingCurrentPeriodPrice(periodLength * 1000);
+      startPollingCurrentPeriodMaxUserPurchase(periodLength * 1000);
     }
-    return () => stopPollingCurrentPeriodTokensData();
+    return () => {
+      stopPollingCurrentPeriodPrice();
+      stopPollingCurrentPeriodTokensData();
+      stopPollingCurrentPeriodMaxUserPurchase();
+    };
   }, [
     colonyAddress,
     periodLength,
@@ -188,13 +234,19 @@ const CoinMachine = ({
     refetchCurrentPeriodTokensData,
     startPollingCurrentPeriodTokensData,
     stopPollingCurrentPeriodTokensData,
+    stopPollingCurrentPeriodPrice,
+    refetchCurrentPeriodPrice,
+    startPollingCurrentPeriodPrice,
+    refetchCurrentPeriodMaxUserPurchase,
+    startPollingCurrentPeriodMaxUserPurchase,
+    stopPollingCurrentPeriodMaxUserPurchase,
   ]);
 
   if (
-    loading ||
+    loadingExtensionsData ||
     saleTokensLoading ||
     currentSalePeriodLoading ||
-    !data?.processedColony?.installedExtensions ||
+    !extensionsData?.processedColony?.installedExtensions ||
     periodTokensLoading ||
     coinMachineTokenBalanceLoading ||
     loadingTokenBoughtEventsData
@@ -264,6 +316,10 @@ const CoinMachine = ({
                 colony={colony}
                 isCurrentlyOnSale={hasSaleStarted}
                 isSoldOut={isSoldOut}
+                salePriceData={salePriceData}
+                maxUserPurchaseData={maxUserPurchaseData}
+                loadingSalePrice={loadingSalePrice}
+                loadingMaxUserPurchase={loadingMaxUserPurchase}
               />
             </div>
             <div className={styles.timeRemaining}>
@@ -286,6 +342,7 @@ const CoinMachine = ({
             periodRemainingTime={timeRemaining}
             sellableToken={saleToken}
             periodTokens={periodTokens}
+            extensionAddress={coinMachineExtension?.address}
           />
         </div>
         <div className={styles.comments}>
