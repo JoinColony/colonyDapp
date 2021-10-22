@@ -13,7 +13,6 @@ import { log } from '../debug';
  */
 export type ExtendedLogDescription = Omit<LogDescription, 'decode'> & {
   timestamp?: number;
-  block?: number;
   blockNumber?: number;
   hash?: string;
   index?: string;
