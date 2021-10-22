@@ -343,6 +343,12 @@ export const coinMachineResolvers = ({
           ...transferEvents,
         ]
           .map(parseSubgraphEvent)
+          /*
+           * @TODO We have a purpouse built sorting util for this, already in `master`
+           * but apparently it didn't make it's way downstream yet.
+           *
+           * Please refactor this to use `sortSubgraphEventByIndex` once you get a chance
+           */
           .sort(
             ({ block: lowBlock }, { block: highBlock }) => highBlock - lowBlock,
           );
@@ -372,6 +378,17 @@ export const coinMachineResolvers = ({
             );
             return lastPeriodAvailableTokens;
           });
+
+        /*
+         * Get the first ever Transfer token even (the one that added the initial
+         * tokens to the Coin Machine)
+         *
+         * We use as a fallback if there is a sale in the first period that the
+         * transfer also happened
+         */
+        const firstTokenTransfer = historicAvailableTokensEvents
+          .reverse()
+          .find(({ name }) => name === ColonyAndExtensionsEvents.Transfer);
 
         /*
          * Keep an external counter of the previous price value
@@ -424,18 +441,35 @@ export const coinMachineResolvers = ({
                 const tokensAvailable = lastPeriodAvailableTokens.lt(0)
                   ? bigNumberify(0)
                   : lastPeriodAvailableTokens;
+
+                /*
+                 * If there's a sale in the same period as there was the first
+                 * token transfer into Coin Machine, make sure to fetch that
+                 * value first and display it _(and not wait for the `replayBalanceEvents` logic)_
+                 *
+                 * This way we cover the edge case for a first sale in the same period
+                 * as tokens coming, to prevent showing something like 1000/0 tokens bought
+                 */
+                const tokensAvailableWithFallback =
+                  existingActiveSale &&
+                  tokensAvailable.lte(0) &&
+                  lastPeriodAvailableTokens.lte(0) &&
+                  firstTokenTransfer
+                    ? firstTokenTransfer.values.wad
+                    : tokensAvailable;
+
                 return existingActiveSale
                   ? {
                       saleEndedAt: existingActiveSale.saleEndedAt,
                       tokensBought: existingActiveSale.tokensBought,
                       price: existingActiveSale.price,
-                      tokensAvailable: tokensAvailable.toString(),
+                      tokensAvailable: tokensAvailableWithFallback.toString(),
                     }
                   : {
                       saleEndedAt: String(staleSaleEndedAt),
                       tokensBought: tokensBought.toString(),
                       price: stalePrice.toString(),
-                      tokensAvailable: tokensAvailable.toString(),
+                      tokensAvailable: tokensAvailableWithFallback.toString(),
                     };
               },
             )
