@@ -1,4 +1,9 @@
-import { LogDescription, id as topicId, bigNumberify } from 'ethers/utils';
+import {
+  LogDescription,
+  id as topicId,
+  bigNumberify,
+  hexlify,
+} from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
 import { SubgraphEvent, SubgraphTransaction, SubgraphBlock } from '~data/index';
@@ -143,6 +148,22 @@ const motionArgumentparser = ({ amount, vote }) => {
 };
 
 /*
+ * @NOTE Only use internally
+ *
+ * Specific function to parse known, expected, values
+ * This parses values for any event with storage slots
+ */
+const storageSlotArgumentParser = (values: {
+  slot?: string;
+}): {
+  slot?: string;
+} => {
+  return {
+    slot: hexlify(parseInt(values.slot || '0', 10)),
+  };
+};
+
+/*
  * Utility to parse events that come from the subgraph handler
  * into events that resemble the Log format that we get directly from the chain
  */
@@ -172,6 +193,7 @@ export const parseSubgraphEvent = ({
       ...extensionArgumentParser(parsedArguments),
       ...addressArgumentParser(parsedArguments),
       ...motionArgumentparser(parsedArguments),
+      ...storageSlotArgumentParser(parsedArguments),
     },
   };
   /*
