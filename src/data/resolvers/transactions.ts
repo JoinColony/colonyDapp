@@ -23,49 +23,43 @@ import { parseSubgraphEvent } from '~utils/events';
 
 export const getColonyFundsClaimedTransfers = async (
   apolloClient: ApolloClient<object>,
-  colonyClient: ColonyClient,
+  colonyAddress: string,
 ): Promise<Transfer[]> => {
-  const { provider } = colonyClient;
-
   const { data: colonyFundsClaimedEventsData } = await apolloClient.query<
     SubgraphColonyFundsClaimedEventsQuery,
     SubgraphColonyFundsClaimedEventsQueryVariables
   >({
     query: SubgraphColonyFundsClaimedEventsDocument,
     variables: {
-      colonyAddress: colonyClient.address.toLowerCase(),
+      colonyAddress: colonyAddress.toLowerCase(),
     },
   });
   const colonyFundsClaimedEvents =
     colonyFundsClaimedEventsData?.colonyFundsClaimedEvents || [];
 
-  const transfers = await Promise.all(
-    colonyFundsClaimedEvents.map(async (event) => {
-      const parsedEvent = parseSubgraphEvent(event);
-      const {
-        values: { token, payoutRemainder },
-        hash,
-        timestamp,
-      } = parsedEvent;
+  const transfers = colonyFundsClaimedEvents.map((event) => {
+    const parsedEvent = parseSubgraphEvent(event);
+    const {
+      values: { token, payoutRemainder, agent },
+      hash,
+      timestamp,
+    } = parsedEvent;
 
-      const tx = hash ? await provider.getTransaction(hash) : undefined;
+    // Don't show claims of zero
+    if (!bigNumberify(payoutRemainder).gt(bigNumberify(0))) return undefined;
 
-      // Don't show claims of zero
-      if (!bigNumberify(payoutRemainder).gt(bigNumberify(0))) return undefined;
-
-      return {
-        __typename: 'Transfer',
-        amount: payoutRemainder.toString(),
-        colonyAddress: colonyClient.address,
-        date: timestamp || 0,
-        from: (tx && tx.from) || null,
-        hash: hash || HashZero,
-        incoming: true,
-        to: colonyClient.address,
-        token,
-      };
-    }),
-  );
+    return {
+      __typename: 'Transfer',
+      amount: payoutRemainder.toString(),
+      colonyAddress,
+      date: timestamp || 0,
+      from: agent || null,
+      hash: hash || HashZero,
+      incoming: true,
+      to: colonyAddress,
+      token,
+    };
+  });
 
   return transfers.filter(notUndefined);
 };
