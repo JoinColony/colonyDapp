@@ -72,24 +72,6 @@ query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: Str
     tokensBought
     price
   }
-  transferEvents: events(
-    where: {
-      name_contains: "Transfer"
-      args_contains: $extensionAddress
-    }
-    orderDirection: "desc"
-  ) {
-    transaction {
-      transactionHash: id
-      block {
-        number: id
-        timestamp
-      }
-    }
-    address
-    name
-    args
-  }
   tokenBoughtEvents: events(
     where: {
       name_contains: "TokensBought"
