@@ -2192,7 +2192,16 @@ export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'>>, tokenBoughtEvents: Array<(
+export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'>>, extensionInitialisedEvents: Array<(
+    Pick<SubgraphEvent, 'address' | 'name' | 'args'>
+    & { transaction: (
+      { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )>, tokenBoughtEvents: Array<(
     Pick<SubgraphEvent, 'address' | 'name' | 'args'>
     & { transaction: (
       { transactionHash: SubgraphTransaction['id'] }
@@ -5730,7 +5739,19 @@ export const SubgraphCoinMachinePeriodsDocument = gql`
     tokensBought
     price
   }
-  tokenBoughtEvents: events(where: {name_contains: "TokensBought", address: $extensionAddress}, orderDirection: "desc") {
+  extensionInitialisedEvents: events(where: {name_contains: "ExtensionInitialised", address: $extensionAddress}) {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+  tokenBoughtEvents: events(where: {name_contains: "TokensBought", address: $extensionAddress}) {
     transaction {
       transactionHash: id
       block {
