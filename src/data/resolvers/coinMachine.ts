@@ -294,13 +294,10 @@ export const coinMachineResolvers = ({
           fetchPolicy: 'network-only',
         });
 
-        const extensionInitialisedLogs = await getLogs(
-          coinMachineClient,
-          coinMachineClient.filters.ExtensionInitialised(),
-        );
-        const extensionInitialisedAt = await networkClient.provider.getBlock(
-          extensionInitialisedLogs[0].blockNumber || '',
-        );
+        const [extensionInitialised] = (
+          subgraphData?.data?.extensionInitialisedEvents || []
+        ).map(parseSubgraphEvent);
+
         /*
          * We use the `FromChain` suffix to make these events more easily
          * recognizable when reading the code
@@ -309,7 +306,7 @@ export const coinMachineResolvers = ({
           tokenClient,
           tokenClient.filters.Transfer(null, coinMachineClient.address, null),
           {
-            fromBlock: extensionInitialisedLogs[0].blockNumber,
+            fromBlock: extensionInitialised?.block,
           },
         );
         /*
@@ -509,8 +506,7 @@ export const coinMachineResolvers = ({
             .filter(
               ({ saleEndedAt }) =>
                 parseInt(saleEndedAt, 10) <= currentBlockTime &&
-                parseInt(saleEndedAt, 10) >=
-                  extensionInitialisedAt.timestamp * 1000,
+                parseInt(saleEndedAt, 10) >= extensionInitialised.timestamp,
             )
             /*
              * Price evolution calculations require us to go for oldest sale period
