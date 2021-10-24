@@ -58,10 +58,8 @@ export const eventsResolvers = ({
 
         const colonyInRecoveryMode = await colonyClient.isInRecoveryMode();
 
-        const enterRecoveryEvents = await getLogs(
-          colonyClient,
-          colonyClient.filters.RecoveryModeEntered(null),
-        );
+        const enterRecoveryEvents = recoveryStartedEvents?.data?.recoveryAllEnteredEvents || [];
+
         const [mostRecentRecoveryStarted] = enterRecoveryEvents.reverse();
 
         const recoveryApprovalsForCurrentSession = await apolloClient.query<

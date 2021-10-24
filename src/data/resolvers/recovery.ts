@@ -1,4 +1,4 @@
-import { Resolvers } from '@apollo/client';
+import { Resolvers, ApolloClient } from '@apollo/client';
 import {
   ClientType,
   getBlockTime,
@@ -12,6 +12,8 @@ import {
 import { Log } from 'ethers/providers';
 import { LogDescription } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
+import { Address } from '~types/index';
+import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
 
 import { Context } from '~context/index';
 import {
@@ -29,6 +31,9 @@ import {
   GetRecoveryRequiredApprovalsQuery,
   GetRecoveryRequiredApprovalsQueryVariables,
   GetRecoveryRequiredApprovalsDocument,
+  SubgraphRecoveryAllEnteredEventsQuery,
+  SubgraphRecoveryAllEnteredEventsQueryVariables,
+  SubgraphRecoveryAllEnteredEventsDocument,
 } from '~data/index';
 
 import { ProcessedEvent } from './colonyActions';
@@ -44,6 +49,8 @@ import { ColonyAndExtensionsEvents } from '~types/index';
 const getSessionRecoveryEvents = async (
   colonyClient: ColonyClientV6,
   startBlock = 1,
+  colonyAddress: Address,
+  apolloClient: ApolloClient<object>
 ) => {
   const blockFilter: {
     fromBlock: number;
@@ -157,30 +164,33 @@ export const recoveryModeResolvers = ({
           colonyAddress,
         )) as ColonyClientV6;
 
-        const enterRecoveryLogs = await getLogs(
-          colonyClient,
-          colonyClient.filters.RecoveryModeEntered(null),
-        );
+        const enterRecoveryEventsData = await apolloClient.query<
+          SubgraphRecoveryAllEnteredEventsQuery,
+          SubgraphRecoveryAllEnteredEventsQueryVariables
+        >({
+          query: SubgraphRecoveryAllEnteredEventsDocument,
+          variables: {
+            colonyAddress: colonyAddress.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+        const enterRecoveryEvents = enterRecoveryEventsData?.data?.recoveryAllEnteredEvents || [];
 
-        return Promise.all(
-          enterRecoveryLogs.map(async (log) => {
-            const potentialParsedLog = colonyClient.interface.parseLog(log);
-            const { address, blockHash, blockNumber, transactionHash } = log;
-            const { name, values } = potentialParsedLog;
-            return {
-              type: ActionsPageFeedType.NetworkEvent,
-              name,
-              values,
-              createdAt: blockHash
-                ? await getBlockTime(colonyClient.provider, blockHash)
-                : 0,
-              emmitedBy: ClientType.ColonyClient,
-              address,
-              blockNumber,
-              transactionHash,
-            } as ProcessedEvent;
-          }),
-        );
+        return  enterRecoveryEvents.map((log) => {
+          const {name, values, blockNumber, timestamp, hash, address, index} = parseSubgraphEvent(log);
+          return {
+            type: ActionsPageFeedType.NetworkEvent,
+            name,
+            values,
+            createdAt: timestamp,
+            emmitedBy: ClientType.ColonyClient,
+            address,
+            blockNumber,
+            transactionHash: hash,
+            index,
+          } as ProcessedEvent;
+        }).sort(sortSubgraphEventByIndex)
+
       } catch (error) {
         console.error(error);
         return [];
