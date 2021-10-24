@@ -3,6 +3,7 @@ import {
   getLogs,
   getBlockTime,
   CoinMachineClientV2,
+  TokenClient,
 } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { BigNumber, bigNumberify, BigNumberish } from 'ethers/utils';
@@ -14,7 +15,7 @@ import {
   SubgraphCoinMachinePeriodsDocument,
 } from '~data/index';
 import { createAddress } from '~utils/web3';
-import { parseSubgraphEvent } from '~utils/events';
+import { ExtendedLogDescription, parseSubgraphEvent } from '~utils/events';
 import { getCoinMachinePeriodPrice } from '~utils/contracts';
 import { ColonyAndExtensionsEvents } from '~types/colonyActions';
 
@@ -270,11 +271,15 @@ export const coinMachineResolvers = ({
      */
     async coinMachineSalePeriods(_, { colonyAddress, limit }) {
       try {
-        const { networkClient } = colonyManager;
+        const { networkClient, provider } = colonyManager;
         const coinMachineClient = (await colonyManager.getClient(
           ClientType.CoinMachineClient,
           colonyAddress,
         )) as CoinMachineClientV2;
+        const tokenClient = (await colonyManager.getClient(
+          ClientType.TokenClient,
+          colonyAddress,
+        )) as TokenClient;
 
         const subgraphData = await apolloClient.query<
           SubgraphCoinMachinePeriodsQuery,
@@ -295,6 +300,29 @@ export const coinMachineResolvers = ({
         );
         const extensionInitialisedAt = await networkClient.provider.getBlock(
           extensionInitialisedLogs[0].blockNumber || '',
+        );
+        /*
+         * We use the `FromChain` suffix to make these events more easily
+         * recognizable when reading the code
+         */
+        const transferLogsFromChain = await getLogs(
+          tokenClient,
+          tokenClient.filters.Transfer(null, coinMachineClient.address, null),
+          {
+            fromBlock: extensionInitialisedLogs[0].blockNumber,
+          },
+        );
+        /*
+         * Format the `Transfer` events so they resemble events fetched
+         * from the subgraph
+         * This way we can more easily combine them
+         */
+        const transferEventsFromChain = await Promise.all(
+          transferLogsFromChain.map(async (log) => ({
+            ...tokenClient.interface.parseLog(log),
+            timestamp: await getBlockTime(provider, log.blockHash || ''),
+            index: `${log.blockNumber}${String(log.logIndex).padStart(7, '0')}`,
+          })),
         );
 
         const periodLength = (await coinMachineClient.getPeriodLength()).mul(
@@ -337,12 +365,11 @@ export const coinMachineResolvers = ({
 
         const activeSales = subgraphData?.data?.coinMachinePeriods || [];
         const tokensBoughtEvents = subgraphData?.data?.tokenBoughtEvents || [];
-        const transferEvents = subgraphData?.data?.transferEvents || [];
-        const historicAvailableTokensEvents = [
-          ...tokensBoughtEvents,
-          ...transferEvents,
-        ]
+        const historicAvailableTokensEvents = tokensBoughtEvents
           .map(parseSubgraphEvent)
+          .concat(
+            (transferEventsFromChain as unknown) as ExtendedLogDescription,
+          )
           /*
            * @TODO We have a purpouse built sorting util for this, already in `master`
            * but apparently it didn't make it's way downstream yet.
