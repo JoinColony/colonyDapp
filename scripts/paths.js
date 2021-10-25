@@ -11,6 +11,7 @@ const NODE_ENV_OBJECT_PATH = 'process.env.';
 const DAPP_ROOT = path.resolve(ROOT_PATH, 'src');
 const DAPP_MODULES = path.resolve(DAPP_ROOT, MODULES_FOLDER);
 const NETWORK_ROOT = path.resolve(DAPP_ROOT, 'lib', NETWORK_FOLDER);
+const NETWORK_PACKAGES = path.resolve(NETWORK_ROOT, 'packages');
 const PID_FILE = path.resolve(ROOT_PATH, '.dappPids.json');
 
 exports.MODULES_FOLDER = MODULES_FOLDER;
@@ -18,6 +19,7 @@ exports.COMPONENTS_FOLDER = COMPONENTS_FOLDER;
 exports.DAPP_ROOT = DAPP_ROOT;
 exports.DAPP_MODULES = DAPP_MODULES;
 exports.NETWORK_ROOT = NETWORK_ROOT;
+exports.NETWORK_PACKAGES = NETWORK_PACKAGES;
 exports.PID_FILE = PID_FILE;
 
 module.exports = {
@@ -26,6 +28,7 @@ module.exports = {
   DAPP_ROOT,
   DAPP_MODULES,
   NETWORK_ROOT,
+  NETWORK_PACKAGES,
   PID_FILE,
   NODE_ENV_OBJECT_PATH,
 };

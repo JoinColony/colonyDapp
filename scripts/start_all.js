@@ -12,8 +12,14 @@ const fetchRetry = require('@adobe/node-fetch-retry');
 const startGanache = require('./start_ganache');
 const deployContracts = require('./deploy_contracts');
 
-const { PID_FILE } = require('./paths');
+const { PID_FILE, NETWORK_PACKAGES, NETWORK_ROOT } = require('./paths');
 const { getStaticDevResource, injectEnvironmentVariables } = require('./utils');
+const { private_keys: ganacheAccounts } = require(
+  path.resolve(NETWORK_ROOT, 'ganache-accounts.json'),
+);
+const { etherRouterAddress: networkAddress } = require(
+  path.resolve(NETWORK_ROOT, 'etherrouter-address.json'),
+);
 
 injectEnvironmentVariables('NODE_ENV');
 
@@ -38,7 +44,6 @@ addProcess('truffle', () =>
 );
 
 addProcess('oracle', async () => {
-  const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
   const minerProcess = spawn('node', ['node_modules/.bin/babel-node', '--presets', '@babel/preset-env', 'src/lib/colonyNetwork/packages/reputation-miner/bin/index.js', '--minerAddress', '0x3a965407cEd5E62C5aD71dE491Ce7B23DA5331A4', '--syncFrom', '1', '--colonyNetworkAddress', networkAddress, '--oracle', '--auto', '--dbPath', 'src/lib/colonyNetwork/packages/reputation-miner/reputationStates.sqlite', '--oraclePort', '3002', '--processingDelay', '1'], {
     cwd: path.resolve(__dirname, '..'),
     stdio: 'pipe',
@@ -61,7 +66,6 @@ addProcess('oracle', async () => {
 });
 
 addProcess('reputationMonitor', async () => {
-  const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
   const monitorProcess = spawn('node', ['src/lib/reputationMonitor/index.js', networkAddress], {
     cwd: path.resolve(__dirname, '..'),
     stdio: 'pipe',
@@ -84,10 +88,20 @@ addProcess('reputationMonitor', async () => {
   return monitorProcess;
 });
 
-addProcess('metatransactionBroadcaster', async () => {
-  const networkAddress = require('../src/lib/colonyNetwork/etherrouter-address.json').etherRouterAddress;
-  const metatransactionProcess = spawn('node', ['../colonyDapp/src/lib/colonyNetwork/packages/metatransaction-broadcaster/bin/index.js', '--privateKey', '0x0355596cdb5e5242ad082c4fe3f8bbe48c9dba843fe1f99dd8272f487e70efae', '--gasPrice', '1', '--colonyNetworkAddress', networkAddress, '--port', '3004'], {
-    cwd: path.resolve(__dirname, '..'),
+addProcess('metaTxBroadcast', async () => {
+  /*
+   * Use the last ganache account for sending metatransactions
+   */
+  const privateKey = ganacheAccounts[Object.keys(ganacheAccounts).pop()];
+  const metatransactionProcess = spawn('node',
+    [
+      './metatransaction-broadcaster/bin/index.js',
+      '--privateKey', privateKey,
+      '--gasPrice', 1,
+      '--colonyNetworkAddress', networkAddress,
+      '--port', 3004
+    ], {
+    cwd: NETWORK_PACKAGES,
     stdio: 'pipe',
   });
 
