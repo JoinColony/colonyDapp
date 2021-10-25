@@ -44,8 +44,22 @@ addProcess('truffle', () =>
 );
 
 addProcess('oracle', async () => {
-  const minerProcess = spawn('node', ['node_modules/.bin/babel-node', '--presets', '@babel/preset-env', 'src/lib/colonyNetwork/packages/reputation-miner/bin/index.js', '--minerAddress', '0x3a965407cEd5E62C5aD71dE491Ce7B23DA5331A4', '--syncFrom', '1', '--colonyNetworkAddress', networkAddress, '--oracle', '--auto', '--dbPath', 'src/lib/colonyNetwork/packages/reputation-miner/reputationStates.sqlite', '--oraclePort', '3002', '--processingDelay', '1'], {
-    cwd: path.resolve(__dirname, '..'),
+  /*
+   * Same account network uses for their end to end tests
+   */
+  const minerAccount = Object.keys(ganacheAccounts)[5];
+  const minerProcess = spawn('babel-node', [
+    '--presets', '@babel/preset-env',
+    './reputation-miner/bin/index.js',
+    '--minerAddress', minerAccount,
+    '--syncFrom', 1,
+    '--colonyNetworkAddress', networkAddress,
+    '--oracle',
+    '--auto',
+    '--oraclePort', 3002,
+    '--processingDelay', 1,
+  ], {
+    cwd: NETWORK_PACKAGES,
     stdio: 'pipe',
   });
 
