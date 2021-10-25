@@ -1,6 +1,7 @@
 import { CoinMachineActionTypes } from './coinMachine';
 import { ColonyActionTypes } from './colony';
 import { ColonyActionsActionTypes } from './colonyActions';
+import { ColonyMetaActionsActionTypes } from './colonyMetaActions';
 import { ConnectionActionTypes } from './connection';
 import { MotionActionTypes } from './motion';
 import { GasPricesActionTypes } from './gasPrices';
@@ -99,6 +100,7 @@ export type AllActions =
   | CoinMachineActionTypes
   | ColonyActionTypes
   | ColonyActionsActionTypes
+  | ColonyMetaActionsActionTypes
   | ConnectionActionTypes
   | GasPricesActionTypes
   | IpfsActionTypes
