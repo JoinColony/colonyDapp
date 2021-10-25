@@ -56,6 +56,7 @@ addProcess('oracle', async () => {
     '--colonyNetworkAddress', networkAddress,
     '--oracle',
     '--auto',
+    '--dbPath', './reputation-miner/reputationStates.sqlite',
     '--oraclePort', 3002,
     '--processingDelay', 1,
   ], {
