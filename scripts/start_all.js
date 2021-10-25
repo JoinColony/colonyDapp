@@ -12,7 +12,7 @@ const fetchRetry = require('@adobe/node-fetch-retry');
 const startGanache = require('./start_ganache');
 const deployContracts = require('./deploy_contracts');
 
-const { PID_FILE, NETWORK_PACKAGES, NETWORK_ROOT } = require('./paths');
+const { PID_FILE, NETWORK_PACKAGES, NETWORK_ROOT, DAPP_LIBS } = require('./paths');
 const { getStaticDevResource, injectEnvironmentVariables } = require('./utils');
 const { private_keys: ganacheAccounts } = require(
   path.resolve(NETWORK_ROOT, 'ganache-accounts.json'),
@@ -80,8 +80,8 @@ addProcess('oracle', async () => {
 });
 
 addProcess('reputationMonitor', async () => {
-  const monitorProcess = spawn('node', ['src/lib/reputationMonitor/index.js', networkAddress], {
-    cwd: path.resolve(__dirname, '..'),
+  const monitorProcess = spawn('node', ['./reputationMonitor/index.js', networkAddress], {
+    cwd: DAPP_LIBS,
     stdio: 'pipe',
   });
 
