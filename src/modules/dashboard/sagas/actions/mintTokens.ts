@@ -1,5 +1,5 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType, getPermissionProofs, ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ClientType } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -21,30 +21,6 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { soliditySha3, toChecksumAddress } from 'web3-utils';
-import Web3 from 'web3';
-import { getAccounts } from '~users/ConnectWalletWizard/StepGanache';
-import axios from 'axios';
-
-
-export async function getMetaTransactionParameters(txData, key, targetAddress) {
-  const provider = new Web3.providers.HttpProvider('http://localhost:8545');
-  console.log(provider)
-  const web3 = new Web3(provider);
-  const chainId = await web3.eth.getChainId();
-  console.log(chainId);
-  // Sign data
-  const msg = soliditySha3(
-    { t: "uint256", v: '0' },
-    { t: "address", v: targetAddress },
-    { t: "uint256", v: chainId },
-    { t: "bytes", v: txData }
-  );
-
-  const {v, r, s} = await web3.eth.accounts.sign(msg, key);
-
-  return { r, s, v };
-}
 
 function* createMintTokensAction({
   payload: {
@@ -60,57 +36,13 @@ function* createMintTokensAction({
   let txChannel;
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-    const context = TEMP_getContext(ContextModule.ColonyManager);
-    const colonyClient = yield context.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
-    );
+
     if (!amount) {
       throw new Error('Amount to mint not set for mintTokens transaction');
     }
 
     txChannel = yield call(getTxChannel, metaId);
 
-    const votingReputationClient = yield context.getClient(
-      ClientType.VotingReputationClient,
-      colonyAddress,
-    );
-
-    const [permissionDomainId, childSkillIndex] = yield call(
-      getPermissionProofs,
-      colonyClient,
-      ROOT_DOMAIN_ID,
-      ColonyRole.Architecture,
-      votingReputationClient.address,
-    );
-
-    const txData = colonyClient.interface.functions.addDomain.encode([
-      permissionDomainId, childSkillIndex, ROOT_DOMAIN_ID]);
-
-    const ganacheAccounts = getAccounts();
-    const key = ganacheAccounts[0].value;
-    const u = ganacheAccounts[0].label;
-    console.log(u);
-    const { r, s, v } = yield getMetaTransactionParameters(txData, key, colonyClient.address);
-    console.log(r, s, v, txData);
-
-    const jsonData = {
-      target: colonyClient.address,
-      payload: txData,
-      userAddress: u,
-      r,
-      s,
-      v,
-    };
-
-    const res = yield axios.post("http://127.0.0.1:3004/broadcast", jsonData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    debugger;
-    console.log(res);
-  
     // setup batch ids and channels
     const batchKey = 'mintTokens';
 
