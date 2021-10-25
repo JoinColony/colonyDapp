@@ -103,6 +103,7 @@ const getStaticDevResource = (processName) => {
     case 'reputationMonitor': {
       return [
         { desc: 'Reputation Monitor', res: 'http://0.0.0.0:3001/reputation' },
+        { desc: 'Reputation Monitor Toggle On/Off', res: 'http://0.0.0.0:3001/reputation/monitor/toggle' },
       ];
     }
     case 'metaTxBroadcast': {
