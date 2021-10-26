@@ -207,9 +207,10 @@
     "transaction.VotingReputationClient.escalateMotionWithProofs.title": "Escalate Motion",
     "transaction.VotingReputationClient.escalateMotionWithProofs.description": "Escalate Motion",
 
-
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
+    "message.metaMintTokens.title": "Mint Tokens Signature",
+    "message.metaMintTokens.description": "Sign this message to mint tokens via Metatransactions",
     "message.motionVote.title": "Sign message to vote",
     "message.motionVote.description": "Sign message to vote",
     "message.motionRevealVote.title": "Sign message to reveal vote",

@@ -62,21 +62,19 @@ function* createMintTokensMetaAction({
       chainId = 1;
     }
 
-    const metatransactionMessage = hexSequenceNormalizer(
-      soliditySha3(
-        { t: 'uint256', v: currentNonce.toString() },
-        { t: 'address', v: colonyClient.address },
-        { t: 'uint256', v: chainId },
-        { t: 'bytes', v: encodedTransaction },
-      ) as string,
-      false,
-    );
+    const metatransactionMessage = soliditySha3(
+      { t: 'uint256', v: currentNonce.toString() },
+      { t: 'address', v: colonyClient.address },
+      { t: 'uint256', v: chainId },
+      { t: 'bytes', v: encodedTransaction },
+    ) as string;
 
     // eslint-disable-next-line no-console
     console.log('Transaction message', metatransactionMessage);
 
     const metatransactionMessageBuffer = Buffer.from(
-      metatransactionMessage,
+      // metatransactionMessage.replace('0x', ''),
+      hexSequenceNormalizer(metatransactionMessage, false),
       'hex',
     );
 
@@ -91,7 +89,7 @@ function* createMintTokensMetaAction({
     );
 
     const metatransactionSignature = yield signMessage(
-      'generic',
+      'metaMintTokens',
       convertedBufferMetatransactionMessage,
     );
 
@@ -102,7 +100,7 @@ function* createMintTokensMetaAction({
 
     const broadcastData = JSON.stringify({
       target: colonyClient.address,
-      payload: `encodedTransaction`,
+      payload: encodedTransaction,
       userAddress,
       r,
       s,
