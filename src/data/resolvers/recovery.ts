@@ -37,6 +37,9 @@ import {
   SubgraphBlockDocument,
   SubgraphBlockQuery,
   SubgraphBlockQueryVariables,
+  SubgraphRoleEventsByBlockDocument,
+  SubgraphRoleEventsByBlockQuery,
+  SubgraphRoleEventsByBlockQueryVariables,
 } from '~data/index';
 
 import {
@@ -355,37 +358,27 @@ export const recoveryModeResolvers = ({
          * recovery session start, as roles cannot be changed once the recovery
          * session starts)
          */
-        const filterOptions: { fromBlock: number; toBlock?: number } = {
-          fromBlock: 0,
-        };
+        let toBlockNumber = await provider.getBlockNumber();
         if (endBlockNumber) {
-          filterOptions.toBlock = endBlockNumber;
+          toBlockNumber = endBlockNumber;
         }
 
         const { data } = await apolloClient.query<
-          SubgraphRoleEventsQuery,
-          SubgraphRoleEventsQueryVariables
+          SubgraphRoleEventsByBlockQuery,
+          SubgraphRoleEventsByBlockQueryVariables
         >({
-          query: SubgraphRoleEventsDocument,
+          query: SubgraphRoleEventsByBlockDocument,
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
+            toBlock: toBlockNumber,
           },
-          fetchPolicy: 'network-only',
         });
 
         const recoveryRoleSetEvents = data?.recoveryRoleSetEvents || [];
 
-        const parsedRecoveryRoleSetEvents = recoveryRoleSetEvents
-          .map(parseSubgraphEvent)
-          .filter((event) => {
-            const eventBlockNumber = event.blockNumber || 0;
-            const isOnToBlockRange = filterOptions.toBlock
-              ? eventBlockNumber <= filterOptions.toBlock
-              : true;
-            return (
-              eventBlockNumber >= filterOptions.fromBlock && isOnToBlockRange
-            );
-          });
+        const parsedRecoveryRoleSetEvents = recoveryRoleSetEvents.map(
+          parseSubgraphEvent,
+        );
 
         const allUsers = subscribedUsers?.data?.subscribedUsers || [];
         const userWithRecoveryRoles = getUsersWithRecoveryRoles(
