@@ -327,8 +327,8 @@ query GetRecoveryRequiredApprovals($blockNumber: Int!,$colonyAddress: String!) {
   getRecoveryRequiredApprovals(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client
 }
 
-query RecoveryAllEnteredEvents($colonyAddress: String!) {
-  recoveryAllEnteredEvents(colonyAddress: $colonyAddress) @client {
+query RecoveryAllEnteredEvents($colonyAddress: String!, $currentBlock: Int!) {
+  recoveryAllEnteredEvents(colonyAddress: $colonyAddress, currentBlock: $currentBlock) @client {
     type
     name
     values
