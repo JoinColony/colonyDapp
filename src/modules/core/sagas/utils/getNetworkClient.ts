@@ -47,10 +47,7 @@ export default function* getNetworkClient() {
 
   let reputationOracleUrl = new URL(`/reputation`, window.location.origin);
 
-  if (
-    process.env.NODE_ENV === 'development' &&
-    DEFAULT_NETWORK === Network.Local
-  ) {
+  if (DEFAULT_NETWORK === Network.Local) {
     reputationOracleUrl = new URL(`/reputation`, 'http://localhost:3001');
     return yield call(getColonyNetworkClient, network, signer, {
       networkAddress: getLocalContractAddress('EtherRouter'),
