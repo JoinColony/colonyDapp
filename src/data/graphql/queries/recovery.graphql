@@ -1,25 +1,6 @@
-query SubgraphRecoveryModeEvents($colonyAddress: String!) {
-  recoveryModeExitedEvents: events(
-    where: {
-      name_contains: "RecoveryModeExited"
-      address: $colonyAddress
-    }
-  ) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
+query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
   recoveryStorageSlotSetEvents: events(
+    block: { number: $toBlock }
     where: {
       name_contains: "RecoveryStorageSlotSet"
       address: $colonyAddress
@@ -40,6 +21,7 @@ query SubgraphRecoveryModeEvents($colonyAddress: String!) {
     }
   }
   recoveryModeExitApprovedEvents: events(
+    block: { number: $toBlock }
     where: {
       name_contains: "RecoveryModeExitApproved"
       address: $colonyAddress
@@ -60,8 +42,32 @@ query SubgraphRecoveryModeEvents($colonyAddress: String!) {
     }
   }
   recoveryModeEnteredEvents: events(
+    block: { number: $toBlock }
     where: {
       name_contains: "RecoveryModeEntered"
+      address: $colonyAddress
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
+query SubgraphRecoveryModeExitedEvents($colonyAddress: String!) {
+  recoveryModeExitedEvents: events(
+    where: {
+      name_contains: "RecoveryModeExited"
       address: $colonyAddress
     }
   ) {
