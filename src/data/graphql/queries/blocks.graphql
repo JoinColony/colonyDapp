@@ -1,0 +1,6 @@
+query SubgraphBlock($blockId: ID!) {
+  block(id: $blockId) {
+    id
+    timestamp
+  }
+}
