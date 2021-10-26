@@ -112,13 +112,16 @@ function* createMintTokensMetaAction({
     // eslint-disable-next-line no-console
     console.log('Broadcast data', broadcastData);
 
-    const response = yield fetch('http://127.0.0.1:3004/broadcast', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = yield fetch(
+      `${process.env.BROADCASTER_ENDPOINT}/broadcast`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: broadcastData,
       },
-      body: broadcastData,
-    });
+    );
     const responseData = yield response.json();
 
     // eslint-disable-next-line no-console
