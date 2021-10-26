@@ -1,12 +1,15 @@
 import { nanoid } from 'nanoid';
 import { call, put, race, take } from 'redux-saga/effects';
+import { Arrayish } from 'ethers/utils';
+import { isArrayish } from 'ethers/utils/bytes';
+import { SignMessageData } from '@purser/core';
 
 import { putError } from '~utils/saga/effects';
 import { ActionTypes } from '~redux/index';
 import { AllActions } from '~redux/types/actions';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
-export function* signMessage(purpose, message) {
+export function* signMessage(purpose: string, message: Arrayish) {
   const wallet = TEMP_getContext(ContextModule.Wallet);
 
   if (!wallet) throw new Error('Could not get wallet');
@@ -15,13 +18,12 @@ export function* signMessage(purpose, message) {
   /*
    * @NOTE Initiate the message signing process
    */
-  const messageString = JSON.stringify(message);
   yield put<AllActions>({
     type: ActionTypes.MESSAGE_CREATED,
     payload: {
       id: messageId,
       purpose,
-      message: messageString,
+      message: JSON.stringify(message),
       createdAt: new Date(),
     },
   });
@@ -50,9 +52,12 @@ export function* signMessage(purpose, message) {
   } = signAction;
 
   try {
-    const signature = yield call([wallet, wallet.signMessage], {
-      message: messageString,
-    });
+    const signature = yield call(
+      [wallet, wallet.signMessage],
+      (isArrayish(message)
+        ? { messageData: message }
+        : { message }) as SignMessageData,
+    );
 
     yield put<AllActions>({
       type: ActionTypes.MESSAGE_SIGNED,
