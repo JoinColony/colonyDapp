@@ -7,6 +7,7 @@ import {
   ColonyVersion,
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
+import { Provider } from 'ethers/providers';
 
 import { Context } from '~context/index';
 import {
@@ -24,9 +25,20 @@ import {
   GetRecoveryRequiredApprovalsQuery,
   GetRecoveryRequiredApprovalsQueryVariables,
   GetRecoveryRequiredApprovalsDocument,
+  SubgraphRecoveryModeEventsDocument,
+  SubgraphRecoveryModeEventsQuery,
+  SubgraphRecoveryModeEventsQueryVariables,
+  SubgraphRecoveryModeExitedEventsDocument,
+  SubgraphRecoveryModeExitedEventsQuery,
+  SubgraphRecoveryModeExitedEventsQueryVariables,
+  SubgraphRoleEventsDocument,
+  SubgraphRoleEventsQuery,
+  SubgraphRoleEventsQueryVariables,
+  SubgraphBlockDocument,
+  SubgraphBlockQuery,
+  SubgraphBlockQueryVariables,
 } from '~data/index';
 
-import { ProcessedEvent } from './colonyActions';
 import {
   ActionsPageFeedType,
   SystemMessage,
@@ -36,26 +48,73 @@ import { ensureHexPrefix } from '~utils/strings';
 import { halfPlusOne } from '~utils/numbers';
 import { ColonyAndExtensionsEvents } from '~types/index';
 import {
-  SubgraphRecoveryModeEventsDocument,
-  SubgraphRecoveryModeEventsQuery,
-  SubgraphRecoveryModeEventsQueryVariables,
-  SubgraphRoleEventsDocument,
-  SubgraphRoleEventsQuery,
-  SubgraphRoleEventsQueryVariables,
-} from '~data/generated';
-import { ExtendedLogDescription, parseSubgraphEvent } from '~utils/events';
+  ExtendedLogDescription,
+  parseSubgraphEvent,
+  sortSubgraphEventByIndex,
+  waitForBlockToExist,
+} from '~utils/events';
+import { log } from '~utils/debug';
+
+import { ProcessedEvent } from './colonyActions';
 
 const getSessionRecoveryEvents = async (
   apolloClient: ApolloClient<object>,
+  provider: Provider,
   colonyAddress: string,
   startBlock = 1,
 ) => {
+  const currentBlock = await provider.getBlockNumber();
   const blockFilter: {
     fromBlock: number;
-    toBlock?: number;
+    toBlock: number;
   } = {
     fromBlock: startBlock,
+    toBlock: currentBlock,
   };
+
+  const blockWatchQuery = apolloClient.watchQuery<
+    SubgraphBlockQuery,
+    SubgraphBlockQueryVariables
+  >({
+    query: SubgraphBlockDocument,
+    variables: {
+      blockId: `block_${blockFilter.toBlock}`,
+    },
+  });
+
+  try {
+    const blockQueryResult = await blockWatchQuery.result();
+
+    if (!blockQueryResult.data?.block) {
+      const handleBlockRefetch = () => blockWatchQuery.refetch();
+      await waitForBlockToExist(handleBlockRefetch);
+    }
+  } catch (error) {
+    log.verbose(error);
+  }
+
+  const { data: recoveryModeExitedEventsData } = await apolloClient.query<
+    SubgraphRecoveryModeExitedEventsQuery,
+    SubgraphRecoveryModeExitedEventsQueryVariables
+  >({
+    query: SubgraphRecoveryModeExitedEventsDocument,
+    variables: {
+      colonyAddress: colonyAddress.toLowerCase(),
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const recoveryModeExitedEvents =
+    recoveryModeExitedEventsData?.recoveryModeExitedEvents || [];
+
+  const [mostRecentExitRecoveryEvent] = recoveryModeExitedEvents
+    .map(parseSubgraphEvent)
+    .filter((event) => (event.blockNumber || 0) >= blockFilter.fromBlock)
+    .sort(sortSubgraphEventByIndex);
+
+  if (mostRecentExitRecoveryEvent) {
+    blockFilter.toBlock = mostRecentExitRecoveryEvent.blockNumber || 0;
+  }
 
   const { data: recoveryModeEventsData } = await apolloClient.query<
     SubgraphRecoveryModeEventsQuery,
@@ -64,68 +123,34 @@ const getSessionRecoveryEvents = async (
     query: SubgraphRecoveryModeEventsDocument,
     variables: {
       colonyAddress: colonyAddress.toLowerCase(),
+      toBlock: blockFilter.toBlock,
     },
-    fetchPolicy: 'network-only',
   });
-
   const storageSlotSetEvents =
     recoveryModeEventsData?.recoveryStorageSlotSetEvents || [];
   const recoveryModeExitApprovedEvents =
     recoveryModeEventsData?.recoveryModeExitApprovedEvents || [];
-  const recoveryModeExitedEvents =
-    recoveryModeEventsData?.recoveryModeExitedEvents || [];
-
-  const [mostRecentExitRecoveryEvent] = recoveryModeExitedEvents
-    .filter(
-      (event) =>
-        parseInt(event.transaction.block.number.replace('block_', ''), 10) >=
-        blockFilter.fromBlock,
-    )
-    .sort(
-      (firstEvent, secondEvent) =>
-        parseInt(firstEvent.transaction.block.timestamp, 10) -
-        parseInt(secondEvent.transaction.block.timestamp, 10),
-    );
-
-  if (mostRecentExitRecoveryEvent) {
-    blockFilter.toBlock = parseInt(
-      mostRecentExitRecoveryEvent.transaction.block.number.replace(
-        'block_',
-        '',
-      ),
-      10,
-    );
-  }
 
   const recoveryModeEvents = [
     ...storageSlotSetEvents,
     ...recoveryModeExitApprovedEvents,
-  ].filter((event) => {
-    const eventBlockNumber = parseInt(
-      event.transaction.block.number.replace('block_', ''),
-      10,
-    );
-    const isOnToBlockRange = blockFilter.toBlock
-      ? eventBlockNumber <= blockFilter.toBlock
-      : true;
-    return eventBlockNumber >= blockFilter.fromBlock && isOnToBlockRange;
-  });
+  ]
+    .map(parseSubgraphEvent)
+    .filter((event) => (event.blockNumber || 0) >= blockFilter.fromBlock);
 
   if (mostRecentExitRecoveryEvent) {
     recoveryModeEvents.push(mostRecentExitRecoveryEvent);
   }
 
   const parsedRecoveryEvents = recoveryModeEvents.map((event) => {
-    const parsedEvent = parseSubgraphEvent(event);
-    const { address } = event;
-    const { name, values, blockNumber, hash, timestamp } = parsedEvent;
+    const { name, values, blockNumber, hash, timestamp } = event;
     return {
       type: ActionsPageFeedType.NetworkEvent,
       name,
       values,
       createdAt: timestamp,
       emmitedBy: ClientType.ColonyClient,
-      address,
+      address: colonyAddress,
       blockNumber,
       transactionHash: hash,
     } as ProcessedEvent;
@@ -174,6 +199,7 @@ export const recoveryModeResolvers = ({
       try {
         return await getSessionRecoveryEvents(
           apolloClient,
+          provider,
           colonyAddress,
           blockNumber,
         );
@@ -182,7 +208,7 @@ export const recoveryModeResolvers = ({
         return [];
       }
     },
-    async recoveryAllEnteredEvents(_, { colonyAddress }) {
+    async recoveryAllEnteredEvents(_, { colonyAddress, currentBlock }) {
       try {
         const { data: recoveryModeEventsData } = await apolloClient.query<
           SubgraphRecoveryModeEventsQuery,
@@ -191,7 +217,9 @@ export const recoveryModeResolvers = ({
           query: SubgraphRecoveryModeEventsDocument,
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
+            toBlock: currentBlock,
           },
+          fetchPolicy: 'network-only',
         });
         const enterRecoveryEvents =
           recoveryModeEventsData?.recoveryModeEnteredEvents || [];
@@ -360,7 +388,7 @@ export const recoveryModeResolvers = ({
         const parsedRecoveryRoleSetEvents = recoveryRoleSetEvents
           .map(parseSubgraphEvent)
           .filter((event) => {
-            const eventBlockNumber = event.block || event.blockNumber || 0;
+            const eventBlockNumber = event.blockNumber || 0;
             const isOnToBlockRange = filterOptions.toBlock
               ? eventBlockNumber <= filterOptions.toBlock
               : true;
