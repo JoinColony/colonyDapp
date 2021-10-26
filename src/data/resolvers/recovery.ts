@@ -224,28 +224,26 @@ export const recoveryModeResolvers = ({
         const enterRecoveryEvents =
           recoveryModeEventsData?.recoveryModeEnteredEvents || [];
 
-        const parsedEnterRecoveryEvents = enterRecoveryEvents.map((event) => {
-          const parsedEvent = parseSubgraphEvent(event);
-          const { address } = event;
-          const { name, values, blockNumber, hash, timestamp } = parsedEvent;
-          return {
-            type: ActionsPageFeedType.NetworkEvent,
-            name,
-            values,
-            createdAt: timestamp,
-            emmitedBy: ClientType.ColonyClient,
-            address,
-            blockNumber,
-            transactionHash: hash,
-          } as ProcessedEvent;
-        });
-
-        const sortedEnterRecoveryEvents = parsedEnterRecoveryEvents.sort(
-          (firstEvent, secondEvent) =>
-            firstEvent.createdAt - secondEvent.createdAt,
+        const parsedEnterRecoveryEvents = enterRecoveryEvents
+          .map(parseSubgraphEvent)
+          .sort(sortSubgraphEventByIndex);
+        const processedEnterRecoveryEvents = parsedEnterRecoveryEvents.map(
+          (event) => {
+            const { name, values, blockNumber, hash, timestamp } = event;
+            return {
+              type: ActionsPageFeedType.NetworkEvent,
+              name,
+              values,
+              createdAt: timestamp,
+              emmitedBy: ClientType.ColonyClient,
+              address: colonyAddress,
+              blockNumber,
+              transactionHash: hash,
+            } as ProcessedEvent;
+          },
         );
 
-        return sortedEnterRecoveryEvents;
+        return processedEnterRecoveryEvents;
       } catch (error) {
         console.error(error);
         return [];
