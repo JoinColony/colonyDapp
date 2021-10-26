@@ -5,6 +5,7 @@ import {
   hexlify,
 } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
+import { ApolloQueryResult } from '@apollo/client';
 
 import { SubgraphEvent, SubgraphTransaction, SubgraphBlock } from '~data/index';
 import {
@@ -251,4 +252,19 @@ export const sortSubgraphEventByIndex = (
     return firstIndex.sub(secondIndex).toNumber();
   }
   return secondIndex.sub(firstIndex).toNumber();
+};
+
+/* Needed to handle cases where the block may not exist
+   on the subgraph yet and we need the events within it */
+export const waitForBlockToExist = (
+  handleRefetch: () => Promise<ApolloQueryResult<any>>,
+) => {
+  return new Promise((resolve) =>
+    setTimeout(async () => {
+      const { data } = await handleRefetch();
+      if (data) {
+        resolve(true);
+      }
+    }, 1000),
+  );
 };
