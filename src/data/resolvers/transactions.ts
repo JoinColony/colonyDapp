@@ -7,73 +7,87 @@ import {
 } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { HashZero } from 'ethers/constants';
+import { ApolloClient } from '@apollo/client';
 
-import { Transfer } from '~data/index';
+import {
+  Transfer,
+  SubgraphColonyFundsClaimedEventsQuery,
+  SubgraphColonyFundsClaimedEventsQueryVariables,
+  SubgraphColonyFundsClaimedEventsDocument,
+  SubgraphPayoutClaimedEventsDocument,
+  SubgraphPayoutClaimedEventsQuery,
+  SubgraphPayoutClaimedEventsQueryVariables,
+} from '~data/index';
 import { notUndefined } from '~utils/arrays';
+import { parseSubgraphEvent } from '~utils/events';
 
 export const getColonyFundsClaimedTransfers = async (
-  colonyClient: ColonyClient,
+  apolloClient: ApolloClient<object>,
+  colonyAddress: string,
 ): Promise<Transfer[]> => {
-  const { provider } = colonyClient;
+  const { data: colonyFundsClaimedEventsData } = await apolloClient.query<
+    SubgraphColonyFundsClaimedEventsQuery,
+    SubgraphColonyFundsClaimedEventsQueryVariables
+  >({
+    query: SubgraphColonyFundsClaimedEventsDocument,
+    variables: {
+      colonyAddress: colonyAddress.toLowerCase(),
+    },
+  });
+  const colonyFundsClaimedEvents =
+    colonyFundsClaimedEventsData?.colonyFundsClaimedEvents || [];
 
-  const filter = colonyClient.filters.ColonyFundsClaimed(
-    null,
-    null,
-    null,
-    null,
-  );
-  const logs = await getLogs(colonyClient, filter);
+  const transfers = colonyFundsClaimedEvents.map((event) => {
+    const parsedEvent = parseSubgraphEvent(event);
+    const {
+      values: { token, payoutRemainder, agent },
+      hash,
+      timestamp,
+    } = parsedEvent;
 
-  const transfers = await Promise.all(
-    logs.map(async (log) => {
-      const event = colonyClient.interface.parseLog(log);
-      const date = log.blockHash
-        ? await getBlockTime(provider, log.blockHash)
-        : 0;
-      const {
-        values: { token, payoutRemainder },
-      } = event;
+    // Don't show claims of zero
+    if (!bigNumberify(payoutRemainder).gt(bigNumberify(0))) return undefined;
 
-      const tx = log.transactionHash
-        ? await provider.getTransaction(log.transactionHash)
-        : undefined;
-
-      // Don't show claims of zero
-      if (!payoutRemainder.gt(bigNumberify(0))) return undefined;
-
-      return {
-        __typename: 'Transfer',
-        amount: payoutRemainder.toString(),
-        colonyAddress: colonyClient.address,
-        date,
-        from: (tx && tx.from) || null,
-        hash: log.transactionHash || HashZero,
-        incoming: true,
-        to: colonyClient.address,
-        token,
-      };
-    }),
-  );
+    return {
+      __typename: 'Transfer',
+      amount: payoutRemainder.toString(),
+      colonyAddress,
+      date: timestamp || 0,
+      from: agent || null,
+      hash: hash || HashZero,
+      incoming: true,
+      to: colonyAddress,
+      token,
+    };
+  });
 
   return transfers.filter(notUndefined);
 };
 
 export const getPayoutClaimedTransfers = async (
+  apolloClient: ApolloClient<object>,
   colonyClient: ColonyClient,
 ): Promise<Transfer[]> => {
-  const { provider } = colonyClient;
-  const filter = colonyClient.filters.PayoutClaimed(null, null, null, null);
-  const logs = await getLogs(colonyClient, filter);
+  const { data: colonyPayoutClaimedEventsData } = await apolloClient.query<
+    SubgraphPayoutClaimedEventsQuery,
+    SubgraphPayoutClaimedEventsQueryVariables
+  >({
+    query: SubgraphPayoutClaimedEventsDocument,
+    variables: {
+      colonyAddress: colonyClient.address.toLowerCase(),
+    },
+  });
+  const colonyPayoutClaimedEvents =
+    colonyPayoutClaimedEventsData?.payoutClaimedEvents || [];
 
   const transfers = await Promise.all(
-    logs.map(async (log) => {
-      const event = colonyClient.interface.parseLog(log);
-      const date = log.blockHash
-        ? await getBlockTime(provider, log.blockHash)
-        : 0;
+    colonyPayoutClaimedEvents.map(async (event) => {
+      const parsedEvent = parseSubgraphEvent(event);
       const {
         values: { fundingPotId, token, amount },
-      } = event;
+        hash,
+        timestamp,
+      } = parsedEvent;
 
       const {
         associatedType,
@@ -86,11 +100,11 @@ export const getPayoutClaimedTransfers = async (
 
       return {
         __typename: 'Transfer',
-        amount: amount.toString(),
+        amount,
         colonyAddress: colonyClient.address,
-        date,
+        date: timestamp || 0,
         from: null,
-        hash: log.transactionHash || HashZero,
+        hash: hash || HashZero,
         incoming: false,
         to,
         token,
@@ -102,24 +116,27 @@ export const getPayoutClaimedTransfers = async (
 };
 
 export const getColonyUnclaimedTransfers = async (
+  apolloClient: ApolloClient<object>,
   colonyClient: ColonyClient,
   networkClient: ColonyNetworkClient,
 ): Promise<Transfer[]> => {
   const { provider } = colonyClient;
   const { tokenClient } = colonyClient;
-  const claimedTransferFilter = colonyClient.filters.ColonyFundsClaimed(
-    null,
-    null,
-    null,
-    null,
-  );
 
-  const claimedTransferLogs = await getLogs(
-    colonyClient,
-    claimedTransferFilter,
-  );
-  const claimedTransferEvents = claimedTransferLogs.map((log) =>
-    colonyClient.interface.parseLog(log),
+  const { data: colonyFundsClaimedEventsData } = await apolloClient.query<
+    SubgraphColonyFundsClaimedEventsQuery,
+    SubgraphColonyFundsClaimedEventsQueryVariables
+  >({
+    query: SubgraphColonyFundsClaimedEventsDocument,
+    variables: {
+      colonyAddress: colonyClient.address.toLowerCase(),
+    },
+  });
+  const colonyFundsClaimedEvents =
+    colonyFundsClaimedEventsData?.colonyFundsClaimedEvents || [];
+
+  const parsedClaimedTransferEvents = colonyFundsClaimedEvents.map((event) =>
+    parseSubgraphEvent(event),
   );
 
   // Get logs & events for token transfer to this colony
@@ -172,16 +189,12 @@ export const getColonyUnclaimedTransfers = async (
 
       const { blockNumber } = transferLog;
 
-      const transferClaimed = !!claimedTransferEvents.find(
-        ({ values: { token } }, i) =>
-          token === transferLog.address &&
+      const transferClaimed = !!parsedClaimedTransferEvents.find(
+        ({ values: { token }, blockNumber: eventBlockNumber }) =>
+          token === transferLog.address.toLowerCase() &&
           blockNumber &&
-          claimedTransferLogs &&
-          claimedTransferLogs[i] &&
-          claimedTransferLogs[i].blockNumber &&
-          // blockNumber is defined (we just checked that), only TS doesn't know that for some reason
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          claimedTransferLogs[i].blockNumber! > blockNumber,
+          eventBlockNumber &&
+          eventBlockNumber > blockNumber,
       );
 
       if (!transferClaimed && !isMiningCycleTransfer) {

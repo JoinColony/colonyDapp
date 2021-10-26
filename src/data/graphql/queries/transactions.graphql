@@ -1,0 +1,45 @@
+query SubgraphColonyFundsClaimedEvents($colonyAddress: String!) {
+  colonyFundsClaimedEvents: events(
+    where: {
+      name_contains: "ColonyFundsClaimed"
+      address: $colonyAddress,
+    }
+  ) {
+    id
+    name
+    args
+    address
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
+query SubgraphPayoutClaimedEvents($colonyAddress: String!) {
+  payoutClaimedEvents: events(
+    where: {
+      name_contains: "PayoutClaimed"
+      address: $colonyAddress,
+    }
+  ) {
+    id
+    name
+    args
+    address
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
