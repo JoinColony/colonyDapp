@@ -1,6 +1,7 @@
 import { all, call, fork, put } from 'redux-saga/effects';
 import { formatEther } from 'ethers/utils';
 import userflow from 'userflow.js';
+import { Network } from '@colony/colony-js';
 
 import { WalletMethod } from '~immutable/index';
 import { createAddress } from '~utils/web3';
@@ -35,6 +36,7 @@ import { createUserWithSecondAttempt } from '../../users/sagas/utils';
 import { getGasPrices, reinitializeColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
+import { GANACHE_NETWORK, DEFAULT_NETWORK } from '~constants';
 
 function* setupContextDependentSagas() {
   const appLoadingState: typeof AppLoadingState = AppLoadingState;
@@ -96,20 +98,12 @@ export default function* setupUserContext(
       walletNetworkId = window.ethereum.networkVersion;
     }
     /*
-     * @NOTE Detecting Ganache via it's network id is a bit iffy
-     * It's randomized on start so we can reliably count on it.
-     *
-     * For that, if the chainId is bigger then 10k, we assume we're on
-     * ganache (on dev mode only), and set our own chainId to `13131313`
-     *
-     * We really need a better way of detecting ganache here, it will have to do
-     * for now
+     * We manually set the chain to this value when ganache starts
+     * So for the purpouses of our development environment, the local network's
+     * id is 1337 (the default chainId ganache sets)
      */
-    if (
-      process.env.NODE_ENV === 'development' &&
-      parseInt(walletNetworkId, 10) > 10000
-    ) {
-      walletNetworkId = '13131313';
+    if (DEFAULT_NETWORK === Network.Local) {
+      walletNetworkId = String(GANACHE_NETWORK.chainId);
     }
 
     TEMP_setContext(ContextModule.Wallet, wallet);
