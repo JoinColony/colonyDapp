@@ -131,7 +131,7 @@ const getSessionRecoveryEvents = async (
   const recoveryModeExitApprovedEvents =
     recoveryModeEventsData?.recoveryModeExitApprovedEvents || [];
 
-  const recoveryModeEvents = [
+  const parsedRecoveryModeEvents = [
     ...storageSlotSetEvents,
     ...recoveryModeExitApprovedEvents,
   ]
@@ -139,34 +139,26 @@ const getSessionRecoveryEvents = async (
     .filter((event) => (event.blockNumber || 0) >= blockFilter.fromBlock);
 
   if (mostRecentExitRecoveryEvent) {
-    recoveryModeEvents.push(mostRecentExitRecoveryEvent);
+    parsedRecoveryModeEvents.push(mostRecentExitRecoveryEvent);
   }
 
-  const parsedRecoveryEvents = recoveryModeEvents.map((event) => {
-    const { name, values, blockNumber, hash, timestamp } = event;
-    return {
-      type: ActionsPageFeedType.NetworkEvent,
-      name,
-      values,
-      createdAt: timestamp,
-      emmitedBy: ClientType.ColonyClient,
-      address: colonyAddress,
-      blockNumber,
-      transactionHash: hash,
-    } as ProcessedEvent;
-  });
+  const processedRecoveryEvents = parsedRecoveryModeEvents
+    .sort(sortSubgraphEventByIndex)
+    .map((event) => {
+      const { name, values, blockNumber, hash, timestamp } = event;
+      return {
+        type: ActionsPageFeedType.NetworkEvent,
+        name,
+        values,
+        createdAt: timestamp,
+        emmitedBy: ClientType.ColonyClient,
+        address: colonyAddress,
+        blockNumber,
+        transactionHash: hash,
+      } as ProcessedEvent;
+    });
 
-  /*
-   * Mayyyybe? this can work if we just use reverse() -- going by the logic
-   * that all events come in order from the chain?
-   *
-   * Unless the RPC provider screws us over that is...
-   */
-  const sortedRecoveryEvents = parsedRecoveryEvents.sort(
-    (firstEvent, secondEvent) => firstEvent.createdAt - secondEvent.createdAt,
-  );
-
-  return sortedRecoveryEvents;
+  return processedRecoveryEvents;
 };
 
 const getUsersWithRecoveryRoles = (
