@@ -402,7 +402,6 @@ export const coinMachineResolvers = ({
             );
             return lastPeriodAvailableTokens;
           });
-
         /*
          * Get the first ever Transfer token even (the one that added the initial
          * tokens to the Coin Machine)
@@ -475,10 +474,10 @@ export const coinMachineResolvers = ({
                  * as tokens coming, to prevent showing something like 1000/0 tokens bought
                  */
                 const tokensAvailableWithFallback =
-                  existingActiveSale &&
                   tokensAvailable.lte(0) &&
                   lastPeriodAvailableTokens.lte(0) &&
-                  firstTokenTransfer
+                  firstTokenTransfer &&
+                  firstTokenTransfer.timestamp <= staleSaleEndedAt
                     ? firstTokenTransfer.values.wad
                     : tokensAvailable;
 
