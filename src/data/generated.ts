@@ -2137,25 +2137,6 @@ export type SubgraphMotionVoteSubmittedEventsQuery = { motionVoteSubmittedEvents
     ) }
   )> };
 
-export type SubgraphMotionUserVoteRevealedEventsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  motionId: Scalars['String'];
-  walletAddress: Scalars['String'];
-}>;
-
-
-export type SubgraphMotionUserVoteRevealedEventsQuery = { motionVoteRevealedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
 export type SubgraphMotionVoteRevealedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
@@ -2194,13 +2175,11 @@ export type SubgraphMotionStakedEventsQuery = { motionStakedEvents: Array<(
 
 export type SubgraphUserMotionStakedEventsQueryVariables = Exact<{
   walletAddress: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-  motionId?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphUserMotionStakedEventsQuery = { motionStakedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2213,12 +2192,28 @@ export type SubgraphUserMotionStakedEventsQuery = { motionStakedEvents: Array<(
 
 export type SubgraphUserMotionRewardClaimedEventsQueryVariables = Exact<{
   walletAddress: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-  motionId?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphUserMotionRewardClaimedEventsQuery = { motionRewardClaimedEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
+export type SubgraphMotionRewardClaimedEventsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  motionId: Scalars['String'];
+}>;
+
+
+export type SubgraphMotionRewardClaimedEventsQuery = { motionRewardClaimedEvents: Array<(
     Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
@@ -5851,53 +5846,6 @@ export function useSubgraphMotionVoteSubmittedEventsLazyQuery(baseOptions?: Apol
 export type SubgraphMotionVoteSubmittedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionVoteSubmittedEventsQuery>;
 export type SubgraphMotionVoteSubmittedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionVoteSubmittedEventsLazyQuery>;
 export type SubgraphMotionVoteSubmittedEventsQueryResult = Apollo.QueryResult<SubgraphMotionVoteSubmittedEventsQuery, SubgraphMotionVoteSubmittedEventsQueryVariables>;
-export const SubgraphMotionUserVoteRevealedEventsDocument = gql`
-    query SubgraphMotionUserVoteRevealedEvents($colonyAddress: String!, $motionId: String!, $walletAddress: String!) {
-  motionVoteRevealedEvents: events(where: {name_contains: "MotionVoteRevealed", associatedColony: $colonyAddress, args_contains: $motionId, args_contains: $walletAddress}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphMotionUserVoteRevealedEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphMotionUserVoteRevealedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphMotionUserVoteRevealedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphMotionUserVoteRevealedEventsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
- *      walletAddress: // value for 'walletAddress'
- *   },
- * });
- */
-export function useSubgraphMotionUserVoteRevealedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionUserVoteRevealedEventsQuery, SubgraphMotionUserVoteRevealedEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphMotionUserVoteRevealedEventsQuery, SubgraphMotionUserVoteRevealedEventsQueryVariables>(SubgraphMotionUserVoteRevealedEventsDocument, baseOptions);
-      }
-export function useSubgraphMotionUserVoteRevealedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionUserVoteRevealedEventsQuery, SubgraphMotionUserVoteRevealedEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphMotionUserVoteRevealedEventsQuery, SubgraphMotionUserVoteRevealedEventsQueryVariables>(SubgraphMotionUserVoteRevealedEventsDocument, baseOptions);
-        }
-export type SubgraphMotionUserVoteRevealedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionUserVoteRevealedEventsQuery>;
-export type SubgraphMotionUserVoteRevealedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionUserVoteRevealedEventsLazyQuery>;
-export type SubgraphMotionUserVoteRevealedEventsQueryResult = Apollo.QueryResult<SubgraphMotionUserVoteRevealedEventsQuery, SubgraphMotionUserVoteRevealedEventsQueryVariables>;
 export const SubgraphMotionVoteRevealedEventsDocument = gql`
     query SubgraphMotionVoteRevealedEvents($colonyAddress: String!, $motionId: String!) {
   motionVoteRevealedEvents: events(where: {name_contains: "MotionVoteRevealed", associatedColony: $colonyAddress, args_contains: $motionId}) {
@@ -5991,12 +5939,12 @@ export type SubgraphMotionStakedEventsQueryHookResult = ReturnType<typeof useSub
 export type SubgraphMotionStakedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionStakedEventsLazyQuery>;
 export type SubgraphMotionStakedEventsQueryResult = Apollo.QueryResult<SubgraphMotionStakedEventsQuery, SubgraphMotionStakedEventsQueryVariables>;
 export const SubgraphUserMotionStakedEventsDocument = gql`
-    query SubgraphUserMotionStakedEvents($walletAddress: String!, $colonyAddress: String, $motionId: String) {
-  motionStakedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionStaked", args_contains: $walletAddress, args_contains: $motionId}) {
+    query SubgraphUserMotionStakedEvents($walletAddress: String!) {
+  motionStakedEvents: events(where: {name_contains: "MotionStaked", args_contains: $walletAddress}) {
     id
+    address
     name
     args
-    address
     transaction {
       id
       transactionHash: id
@@ -6023,8 +5971,6 @@ export const SubgraphUserMotionStakedEventsDocument = gql`
  * const { data, loading, error } = useSubgraphUserMotionStakedEventsQuery({
  *   variables: {
  *      walletAddress: // value for 'walletAddress'
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
  *   },
  * });
  */
@@ -6038,8 +5984,8 @@ export type SubgraphUserMotionStakedEventsQueryHookResult = ReturnType<typeof us
 export type SubgraphUserMotionStakedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphUserMotionStakedEventsLazyQuery>;
 export type SubgraphUserMotionStakedEventsQueryResult = Apollo.QueryResult<SubgraphUserMotionStakedEventsQuery, SubgraphUserMotionStakedEventsQueryVariables>;
 export const SubgraphUserMotionRewardClaimedEventsDocument = gql`
-    query SubgraphUserMotionRewardClaimedEvents($walletAddress: String!, $colonyAddress: String, $motionId: String) {
-  motionRewardClaimedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", args_contains: $walletAddress, args_contains: $motionId}) {
+    query SubgraphUserMotionRewardClaimedEvents($walletAddress: String!) {
+  motionRewardClaimedEvents: events(where: {name_contains: "MotionRewardClaimed", args_contains: $walletAddress}) {
     id
     name
     args
@@ -6070,8 +6016,6 @@ export const SubgraphUserMotionRewardClaimedEventsDocument = gql`
  * const { data, loading, error } = useSubgraphUserMotionRewardClaimedEventsQuery({
  *   variables: {
  *      walletAddress: // value for 'walletAddress'
- *      colonyAddress: // value for 'colonyAddress'
- *      motionId: // value for 'motionId'
  *   },
  * });
  */
@@ -6084,6 +6028,52 @@ export function useSubgraphUserMotionRewardClaimedEventsLazyQuery(baseOptions?: 
 export type SubgraphUserMotionRewardClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphUserMotionRewardClaimedEventsQuery>;
 export type SubgraphUserMotionRewardClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphUserMotionRewardClaimedEventsLazyQuery>;
 export type SubgraphUserMotionRewardClaimedEventsQueryResult = Apollo.QueryResult<SubgraphUserMotionRewardClaimedEventsQuery, SubgraphUserMotionRewardClaimedEventsQueryVariables>;
+export const SubgraphMotionRewardClaimedEventsDocument = gql`
+    query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!) {
+  motionRewardClaimedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", args_contains: $motionId}) {
+    id
+    name
+    args
+    address
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphMotionRewardClaimedEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphMotionRewardClaimedEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphMotionRewardClaimedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphMotionRewardClaimedEventsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      motionId: // value for 'motionId'
+ *   },
+ * });
+ */
+export function useSubgraphMotionRewardClaimedEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>(SubgraphMotionRewardClaimedEventsDocument, baseOptions);
+      }
+export function useSubgraphMotionRewardClaimedEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>(SubgraphMotionRewardClaimedEventsDocument, baseOptions);
+        }
+export type SubgraphMotionRewardClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsQuery>;
+export type SubgraphMotionRewardClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsLazyQuery>;
+export type SubgraphMotionRewardClaimedEventsQueryResult = Apollo.QueryResult<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>;
 export const SubgraphRoleEventsDocument = gql`
     query SubgraphRoleEvents($colonyAddress: String!) {
   colonyRoleSetEvents: events(where: {name_contains: "ColonyRoleSet", address: $colonyAddress}) {

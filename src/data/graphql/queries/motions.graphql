@@ -78,31 +78,6 @@ query SubgraphMotionVoteSubmittedEvents($colonyAddress: String!, $motionId: Stri
   }
 }
 
-query SubgraphMotionUserVoteRevealedEvents($colonyAddress: String!, $motionId: String!, $walletAddress: String!) {
-  motionVoteRevealedEvents: events(
-    where: {
-      name_contains: "MotionVoteRevealed"
-      associatedColony: $colonyAddress
-      args_contains: $motionId
-      args_contains: $walletAddress
-    }
-  ) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-
 query SubgraphMotionVoteRevealedEvents($colonyAddress: String!, $motionId: String!) {
   motionVoteRevealedEvents: events(
     where: {
@@ -151,13 +126,34 @@ query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!) {
   }
 }
 
-query SubgraphUserMotionStakedEvents($walletAddress: String!, $colonyAddress: String, $motionId: String) {
+query SubgraphUserMotionStakedEvents($walletAddress: String!) {
   motionStakedEvents: events(
     where: {
-      associatedColony: $colonyAddress
       name_contains: "MotionStaked"
       args_contains: $walletAddress,
-      args_contains: $motionId
+    }
+  ) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+
+query SubgraphUserMotionRewardClaimedEvents($walletAddress: String!) {
+  motionRewardClaimedEvents: events(
+    where: {
+      name_contains: "MotionRewardClaimed"
+      args_contains: $walletAddress,
     }
   ) {
     id
@@ -176,13 +172,12 @@ query SubgraphUserMotionStakedEvents($walletAddress: String!, $colonyAddress: St
   }
 }
 
-query SubgraphUserMotionRewardClaimedEvents($walletAddress: String!, $colonyAddress: String, $motionId: String) {
+query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!) {
   motionRewardClaimedEvents: events(
     where: {
       associatedColony: $colonyAddress
       name_contains: "MotionRewardClaimed"
-      args_contains: $walletAddress,
-      args_contains: $motionId
+      args_contains: $motionId,
     }
   ) {
     id
