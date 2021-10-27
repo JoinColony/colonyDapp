@@ -27,11 +27,11 @@ const MSG = defineMessages({
   },
   noReputationDescription: {
     id: 'InfoPopover.MemberInfoPopover.UserReputation.noReputationDescription',
-    defaultMessage: `This user doesn’t have any reputation now.\nTo earn reputation they need to contribute to the colony.`,
+    defaultMessage: `This user doesn’t have any reputation yet.\nTo earn reputation they need to contribute to the colony.`,
   },
   noCurrentUserReputationDescription: {
     id: `InfoPopover.MemberInfoPopover.UserReputation.noCurrentUserReputationDescription`,
-    defaultMessage: `You don’t have any reputation right now.\nTo earn reputation you need to contribute to the colony.`,
+    defaultMessage: `You don’t have any reputation yet.\nTo earn reputation you need to contribute to the colony.`,
   },
   starReputationTitle: {
     id: 'InfoPopover.MemberInfoPopover.UserReputation.starReputationTitle',
