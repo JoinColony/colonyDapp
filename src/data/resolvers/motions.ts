@@ -16,6 +16,7 @@ import {
   getMotionActionType,
   getMotionState,
   parseSubgraphEvent,
+  sortSubgraphEventByIndex,
   NormalizedSubgraphEvent,
   ExtendedLogDescription,
 } from '~utils/events';
@@ -24,7 +25,7 @@ import {
   getMotionRequiredStake,
   getEarlierEventTimestamp,
 } from '~utils/colonyMotions';
-import { ColonyAndExtensionsEvents } from '~types/index';
+import { ColonyAndExtensionsEvents, SortDirection } from '~types/index';
 import {
   SubgraphMotionEventsQuery,
   SubgraphMotionEventsQueryVariables,
@@ -85,10 +86,6 @@ const getMotionEvents = (
           transactionHash: hash,
         };
       });
-    // .sort(
-    //   (firstEvent, secondEvent) =>
-    //     firstEvent.createdAt - secondEvent.createdAt,
-    // );
 
     return parsedMotionEvents;
   }
@@ -228,9 +225,11 @@ export const motionsResolvers = ({
         fetchPolicy: 'network-only',
       });
 
-      const sortedEvents = getMotionEvents(true, data?.motionSystemEvents).sort(
-        (firstEvent, secondEvent) =>
-          secondEvent.createdAt - firstEvent.createdAt,
+      const sortedEvents = getMotionEvents(
+        true,
+        data?.motionSystemEvents,
+      ).sort((firstEvent, secondEvent) =>
+        sortSubgraphEventByIndex(firstEvent, secondEvent, SortDirection.DESC),
       );
 
       const blocktime = await getBlockTime(networkClient.provider, 'latest');
@@ -509,9 +508,8 @@ export const motionsResolvers = ({
         const sortedMotionEvents = getMotionEvents(
           false,
           data?.motionEvents,
-        ).sort(
-          (firstEvent, secondEvent) =>
-            firstEvent.createdAt - secondEvent.createdAt,
+        ).sort((firstEvent, secondEvent) =>
+          sortSubgraphEventByIndex(firstEvent, secondEvent),
         );
 
         const firstMotionStakedNAYEvent = sortedMotionEvents.find(
