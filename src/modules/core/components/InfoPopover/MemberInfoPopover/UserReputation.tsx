@@ -17,6 +17,7 @@ interface Props {
   colony: Colony;
   // eslint-disable-next-line max-len
   userReputationForTopDomains: UserReputationForTopDomainsQuery['userReputationForTopDomains'];
+  isCurrentUserReputation: boolean;
 }
 
 const MSG = defineMessages({
@@ -25,8 +26,12 @@ const MSG = defineMessages({
     defaultMessage: 'Reputation',
   },
   noReputationDescription: {
-    id: 'InfoPopover.MemberInfoPopover.UserReputation.descriptionReputation',
+    id: 'InfoPopover.MemberInfoPopover.UserReputation.noReputationDescription',
     defaultMessage: `This user doesn’t have any reputation now.\nTo earn reputation they need to contribute to the colony.`,
+  },
+  noCurrentUserReputationDescription: {
+    id: `InfoPopover.MemberInfoPopover.UserReputation.noCurrentUserReputationDescription`,
+    defaultMessage: `You don’t have any reputation right now.\nTo earn reputation you need to contribute to the colony.`,
   },
   starReputationTitle: {
     id: 'InfoPopover.MemberInfoPopover.UserReputation.starReputationTitle',
@@ -34,7 +39,11 @@ const MSG = defineMessages({
   },
 });
 
-const UserReputation = ({ colony, userReputationForTopDomains }: Props) => {
+const UserReputation = ({
+  colony,
+  userReputationForTopDomains,
+  isCurrentUserReputation,
+}: Props) => {
   const formattedUserReputations = userReputationForTopDomains.map(
     ({ domainId, ...rest }) => {
       const reputationDomain = colony.domains.find(
@@ -46,6 +55,9 @@ const UserReputation = ({ colony, userReputationForTopDomains }: Props) => {
       };
     },
   );
+  const noReputationMessage = isCurrentUserReputation
+    ? MSG.noCurrentUserReputationDescription
+    : MSG.noReputationDescription;
 
   return (
     <div className={styles.sectionContainer}>
@@ -59,7 +71,7 @@ const UserReputation = ({ colony, userReputationForTopDomains }: Props) => {
       />
       {isEmpty(formattedUserReputations) ? (
         <p className={styles.noReputationDescription}>
-          <FormattedMessage {...MSG.noReputationDescription} />
+          <FormattedMessage {...noReputationMessage} />
         </p>
       ) : (
         <ul>
