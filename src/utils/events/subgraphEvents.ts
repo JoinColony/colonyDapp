@@ -10,6 +10,7 @@ import {
 
 import { createAddress } from '../web3';
 import { log } from '../debug';
+import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 /*
  * Needed to omit the unused `decode()` function as well as add
@@ -142,17 +143,13 @@ export const parseSubgraphEvent = ({
   transaction,
   id,
   address,
-}: NormalizedSubgraphEvent): Required<ExtendedLogDescription> => {
+}: NormalizedSubgraphEvent): ExtendedLogDescription => {
   const blockNumber =
     transaction?.block?.number &&
     parseInt(transaction.block.number.replace('block_', ''), 10);
   const parsedArguments = JSON.parse(args);
-  let parsedEvent: Required<ExtendedLogDescription> = {
+  let parsedEvent: ExtendedLogDescription = {
     name: name.substring(0, name.indexOf('(')) as ColonyAndExtensionsEvents,
-    timestamp: 0,
-    blockNumber: 0,
-    hash: '',
-    index: '',
     signature: name,
     topic: topicId(name),
     address,
@@ -203,8 +200,8 @@ export const parseSubgraphEvent = ({
 };
 
 export const sortSubgraphEventByIndex = (
-  firstEvent: ExtendedLogDescription,
-  secondEvent: ExtendedLogDescription,
+  firstEvent: ExtendedLogDescription | ProcessedEvent,
+  secondEvent: ExtendedLogDescription | ProcessedEvent,
   direction: SortDirection = SortDirection.ASC,
 ): number => {
   if (!firstEvent?.index || !secondEvent?.index) {

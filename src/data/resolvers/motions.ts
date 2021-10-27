@@ -71,7 +71,7 @@ const getMotionEvents = (
     const parsedMotionEvents = motionEvents
       .map(parseSubgraphEvent)
       .map((event) => {
-        const { hash, timestamp } = event;
+        const { hash, timestamp, blockNumber } = event;
         return {
           ...event,
           values: {
@@ -79,11 +79,12 @@ const getMotionEvents = (
             stakeAmount: event.values.amount,
           },
           type: ActionsPageFeedType.NetworkEvent,
-          createdAt: timestamp,
+          createdAt: timestamp || 0,
+          blockNumber: blockNumber || 0,
           emmitedBy: isSystemEvents
             ? ClientType.ColonyClient
             : ClientType.VotingReputationClient,
-          transactionHash: hash,
+          transactionHash: hash || '',
         };
       });
 
@@ -944,7 +945,7 @@ export const motionsResolvers = ({
               >({
                 query: SubgraphAnnotationEventsDocument,
                 variables: {
-                  transactionHash: hash,
+                  transactionHash: hash || '',
                 },
               });
               if (annotationData?.annotationEvents) {
