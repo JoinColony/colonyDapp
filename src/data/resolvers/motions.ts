@@ -935,7 +935,7 @@ export const motionsResolvers = ({
             .map(parseSubgraphEvent)
             .filter((event) => event.values.vote === MotionVote.Nay);
 
-          let annotationEvents: ExtendedLogDescription[] = [];
+          let parsedEvents: ExtendedLogDescription[] = [];
           await Promise.all(
             nayStakeEvents.map(async ({ hash }) => {
               const { data: annotationData } = await apolloClient.query<
@@ -948,17 +948,15 @@ export const motionsResolvers = ({
                 },
               });
               if (annotationData?.annotationEvents) {
-                const parsedEvents = annotationData?.annotationEvents.map(
+                parsedEvents = annotationData?.annotationEvents.map(
                   parseSubgraphEvent,
                 );
-
-                annotationEvents = [...annotationEvents, ...parsedEvents];
               }
             }),
           );
 
-          if (annotationEvents.length) {
-            const [latestAnnotatedNayStake] = annotationEvents;
+          if (parsedEvents.length) {
+            const [latestAnnotatedNayStake] = parsedEvents;
             objectionAnnotation = {
               address: latestAnnotatedNayStake.values.agent,
               metadata: latestAnnotatedNayStake.values.metadata,
