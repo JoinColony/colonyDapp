@@ -162,6 +162,7 @@ export const parseSubgraphEvent = ({
      */
     values: {
       ...parsedArguments,
+      ...(parsedArguments.vote ? { vote: Number(parsedArguments.vote) } : {}),
       ...roleArgumentParser(parsedArguments),
       ...extensionArgumentParser(parsedArguments),
       ...addressArgumentParser(parsedArguments),

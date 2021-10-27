@@ -75,7 +75,6 @@ const getMotionEvents = (
           ...event,
           values: {
             ...event.values,
-            vote: Number(event.values.vote),
             stakeAmount: event.values.amount,
           },
           type: ActionsPageFeedType.NetworkEvent,
@@ -583,7 +582,7 @@ export const motionsResolvers = ({
       try {
         let userVote: {
           revealed: boolean;
-          vote: null | number;
+          vote: MotionVote | null;
         } = {
           revealed: false,
           vote: null,
@@ -612,7 +611,7 @@ export const motionsResolvers = ({
           const parsedEvent = parseSubgraphEvent(userEvents[0]);
           userVote = {
             revealed: true,
-            vote: Number(parsedEvent.values.vote),
+            vote: parsedEvent.values.vote,
           };
         }
         return userVote;
@@ -676,7 +675,7 @@ export const motionsResolvers = ({
              */
             const arrayMethod = currentUserVoted ? 'unshift' : 'push';
             if (currentUserVoted) {
-              voteResult.currentUserVoteSide = Number(vote);
+              voteResult.currentUserVoteSide = vote;
             }
             if (Number(vote) === MotionVote.Yay) {
               voteResult.yayVoters[arrayMethod](createAddress(voter));
@@ -836,7 +835,7 @@ export const motionsResolvers = ({
         let stakesYay = bigNumberify(0);
         let stakesNay = bigNumberify(0);
         userStakeParsedEvents.map(({ values: { amount, vote } }) => {
-          if (Number(vote) === 1) {
+          if (Number(vote) === MotionVote.Yay) {
             stakesYay = stakesYay.add(amount);
             return stakesYay;
           }
@@ -891,7 +890,7 @@ export const motionsResolvers = ({
          * parse the claim reward events
          */
         userRewardClaimedParsedEvents.map(({ values: { amount, vote } }) => {
-          if (Number(vote.toNumber) === 1) {
+          if (Number(vote.toNumber) === MotionVote.Yay) {
             stakingRewardYay = amount;
             return stakingRewardYay;
           }
@@ -936,7 +935,7 @@ export const motionsResolvers = ({
         if (data?.motionStakedEvents) {
           const nayStakeEvents = data?.motionStakedEvents
             .map(parseSubgraphEvent)
-            .filter((event) => Number(event.values.vote) === MotionVote.Nay);
+            .filter((event) => event.values.vote === MotionVote.Nay);
 
           let annotationEvents: ExtendedLogDescription[] = [];
           await Promise.all(
