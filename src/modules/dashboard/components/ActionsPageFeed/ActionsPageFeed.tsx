@@ -17,13 +17,13 @@ import {
   ParsedEvent,
 } from '~data/index';
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
-import { ActionsPageFeedType, SystemInfo, SystemMessage } from './types';
+import { MotionVote } from '~utils/colonyMotions';
 
 import ActionsPageFeedItem from './ActionsPageFeedItem';
 import ActionsPageEvent from './ActionsPageEvent';
 import ActionsPageSystemInfo from './ActionsPageSystemInfo';
 import ActionsPageSystemMessage from './ActionsPageSystemMessage';
-
+import { ActionsPageFeedType, SystemInfo, SystemMessage } from './types';
 import styles from './ActionsPageFeed.css';
 
 const displayName = 'dashboard.ActionsPageFeed';
@@ -56,7 +56,7 @@ export interface EventValues {
   initiator?: string | ReactElement;
   staker?: string;
   stakeAmount?: BigNumber;
-  vote?: 1 | 0;
+  vote?: MotionVote;
   voter?: Address;
   motionTag?: ReactElement;
   objectionTag?: ReactElement;

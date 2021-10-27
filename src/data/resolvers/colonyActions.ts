@@ -23,6 +23,7 @@ import {
   Address,
 } from '~types/index';
 import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
+import { MotionVote } from '~utils/colonyMotions';
 
 export interface EventValue {
   agent: Address;
@@ -41,7 +42,7 @@ export interface EventValue {
   creator: Address;
   role: ColonyRole;
   setTo: boolean;
-  vote: number;
+  vote: MotionVote;
 }
 
 export interface ProcessedEvent {
