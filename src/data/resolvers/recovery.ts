@@ -63,14 +63,7 @@ const getSessionRecoveryEvents = async (
   colonyAddress: string,
   startBlock = 1,
 ) => {
-  const latestBlockNumber = await provider.getBlockNumber();
-  const blockFilter: {
-    fromBlock: number;
-    toBlock: number;
-  } = {
-    fromBlock: startBlock,
-    toBlock: latestBlockNumber,
-  };
+  let toBlockNumber = await provider.getBlockNumber();
 
   const blockWatchQuery = apolloClient.watchQuery<
     SubgraphBlockQuery,
@@ -78,7 +71,7 @@ const getSessionRecoveryEvents = async (
   >({
     query: SubgraphBlockDocument,
     variables: {
-      blockId: `block_${latestBlockNumber}`,
+      blockId: `block_${toBlockNumber}`,
     },
   });
 
@@ -109,11 +102,11 @@ const getSessionRecoveryEvents = async (
 
   const [mostRecentExitRecoveryEvent] = recoveryModeExitedEvents
     .map(parseSubgraphEvent)
-    .filter((event) => (event.blockNumber || 0) >= blockFilter.fromBlock)
+    .filter((event) => (event.blockNumber || 0) >= startBlock)
     .sort(sortSubgraphEventByIndex);
 
   if (mostRecentExitRecoveryEvent) {
-    blockFilter.toBlock = mostRecentExitRecoveryEvent.blockNumber || 0;
+    toBlockNumber = mostRecentExitRecoveryEvent.blockNumber || 0;
   }
 
   const { data: recoveryModeEventsData } = await apolloClient.query<
@@ -123,7 +116,7 @@ const getSessionRecoveryEvents = async (
     query: SubgraphRecoveryModeEventsDocument,
     variables: {
       colonyAddress: colonyAddress.toLowerCase(),
-      toBlock: blockFilter.toBlock,
+      toBlock: toBlockNumber,
     },
   });
   const storageSlotSetEvents =
@@ -136,7 +129,7 @@ const getSessionRecoveryEvents = async (
     ...recoveryModeExitApprovedEvents,
   ]
     .map(parseSubgraphEvent)
-    .filter((event) => (event.blockNumber || 0) >= blockFilter.fromBlock);
+    .filter((event) => (event.blockNumber || 0) >= startBlock);
 
   if (mostRecentExitRecoveryEvent) {
     parsedRecoveryModeEvents.push(mostRecentExitRecoveryEvent);
