@@ -27,11 +27,11 @@ const MSG = defineMessages({
   },
   noReputationDescription: {
     id: 'InfoPopover.MemberInfoPopover.UserReputation.noReputationDescription',
-    defaultMessage: `This user doesn’t have any reputation yet.\nTo earn reputation they need to contribute to the colony.`,
-  },
-  noCurrentUserReputationDescription: {
-    id: `InfoPopover.MemberInfoPopover.UserReputation.noCurrentUserReputationDescription`,
-    defaultMessage: `You don’t have any reputation yet.\nTo earn reputation you need to contribute to the colony.`,
+    defaultMessage: `{isCurrentUserReputation, select,
+      true {You don’t have any reputation yet.\nTo earn reputation you}
+      other {This user doesn’t have any reputation yet.
+            To earn reputation they}
+    } need to contribute to the colony`,
   },
   starReputationTitle: {
     id: 'InfoPopover.MemberInfoPopover.UserReputation.starReputationTitle',
@@ -55,9 +55,6 @@ const UserReputation = ({
       };
     },
   );
-  const noReputationMessage = isCurrentUserReputation
-    ? MSG.noCurrentUserReputationDescription
-    : MSG.noReputationDescription;
 
   return (
     <div className={styles.sectionContainer}>
@@ -71,7 +68,10 @@ const UserReputation = ({
       />
       {isEmpty(formattedUserReputations) ? (
         <p className={styles.noReputationDescription}>
-          <FormattedMessage {...noReputationMessage} />
+          <FormattedMessage
+            {...MSG.noReputationDescription}
+            values={{ isCurrentUserReputation }}
+          />
         </p>
       ) : (
         <ul>
