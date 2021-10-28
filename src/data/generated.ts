@@ -2302,6 +2302,7 @@ export type SubgraphRecoveryModeExitedEventsQuery = { recoveryModeExitedEvents: 
 
 export type SubgraphRoleEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
+  toBlock: Scalars['Int'];
 }>;
 
 
