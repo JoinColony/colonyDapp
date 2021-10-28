@@ -158,11 +158,9 @@ const storageSlotArgumentParser = (values: {
   slot?: string;
 }): {
   slot?: string;
-} => {
-  return {
-    slot: hexlify(parseInt(values.slot || '0', 10)),
-  };
-};
+} => ({
+  slot: hexlify(parseInt(values.slot || '0', 10)),
+});
 
 /*
  * Utility to parse events that come from the subgraph handler
