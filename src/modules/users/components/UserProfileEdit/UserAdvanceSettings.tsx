@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import { Network } from '@colony/colony-js';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-
 import { Form, Toggle } from '~core/Fields';
-import { DEFAULT_NETWORK } from '~constants';
-import { setUserSettings, getUserSettings } from '~utils/settingsStore';
+
+import { useUserSettings, SlotKey } from '~utils/hooks/useUserSettings';
+import { useLoggedInUser } from '~data/helpers';
+import { canUseMetatransactions } from '../../checks';
+
 import styles from './UserProfileEdit.css';
 import stylesAdvance from './UserAdvanceSettings.css';
 
@@ -24,8 +25,8 @@ const MSG = defineMessages({
   labelMetaTx: {
     id: 'users.UserProfileEdit.UserAdvanceSettings.labelMetaTx',
     defaultMessage: `Metatransactions ({isOn, select,
-      true {off}
-      false {on}
+      true {on}
+      other {off}
     })`,
   },
   tooltip: {
@@ -50,22 +51,36 @@ const validationSchema = yup.object({
 const displayName = 'users.UserProfileEdit.UserAdvanceSettings';
 
 const UserAdvanceSettings = () => {
-  const network = DEFAULT_NETWORK as Network;
-  const onChange = (oldValue) => {
-    setUserSettings({ metatransactions: !oldValue });
-  };
+  const { networkId: userWalletNetworkId } = useLoggedInUser();
 
-  const userSettings = getUserSettings();
+  const {
+    settings: { metatransactions: metatransactionsSetting },
+    setSettingsKey,
+  } = useUserSettings();
 
-  const metatransactionsOn =
-    userSettings && network !== Network.Xdai
-      ? userSettings.metatransactions
-      : network !== Network.Xdai;
+  const [metatransactionsToggle, setMetatransactionsToggle] = useState<boolean>(
+    metatransactionsSetting,
+  );
+
+  const onChange = useCallback(
+    (oldValue) => {
+      setSettingsKey(SlotKey.Metatransactions, !oldValue);
+      setMetatransactionsToggle(!oldValue);
+    },
+    [setSettingsKey],
+  );
+
+  const metatransasctionsAvailable = canUseMetatransactions(
+    userWalletNetworkId as number,
+  );
+
   return (
     <>
       <Form<FormValues>
         initialValues={{
-          metatransactions: metatransactionsOn,
+          metatransactions: metatransasctionsAvailable
+            ? metatransactionsSetting
+            : false,
         }}
         validationSchema={validationSchema}
         onSubmit={() => {}}
@@ -79,9 +94,13 @@ const UserAdvanceSettings = () => {
             <div className={stylesAdvance.toggleContainer}>
               <Toggle
                 label={MSG.labelMetaTx}
-                labelValues={{ isOn: false }}
+                labelValues={{
+                  isOn: metatransasctionsAvailable
+                    ? metatransactionsToggle
+                    : false,
+                }}
                 name="metatransactions"
-                disabled={network === Network.Xdai}
+                disabled={!metatransasctionsAvailable}
                 onChange={onChange}
               />
               <QuestionMarkTooltip
