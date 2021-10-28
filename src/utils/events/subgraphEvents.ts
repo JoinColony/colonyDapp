@@ -260,12 +260,13 @@ export const waitForBlockToExist = (
   handleRefetch: () => Promise<ApolloQueryResult<any>>,
   waitingTime = 1000,
 ) => {
-  return new Promise((resolve) =>
-    setTimeout(async () => {
+  return new Promise((resolve) => {
+    const timeoutId = setTimeout(async () => {
       const { data } = await handleRefetch();
       if (data) {
+        clearTimeout(timeoutId);
         resolve(true);
       }
-    }, waitingTime),
-  );
+    }, waitingTime);
+  });
 };
