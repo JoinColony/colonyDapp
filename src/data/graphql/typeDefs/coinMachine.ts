@@ -13,7 +13,7 @@ export default gql`
     purchaseToken: SaleToken!
   }
 
-  type SalePeriod {
+  type CurrentSalePeriod {
     periodLength: String!
     timeRemaining: String!
   }
@@ -33,9 +33,10 @@ export default gql`
     transactionSucceed: Boolean!
   }
 
-  type PreviousPeriods {
+  type SalePeriod {
     saleEndedAt: String!
     tokensBought: String!
+    tokensAvailable: String!
     price: String!
   }
 
@@ -58,14 +59,22 @@ export default gql`
       userAddress: String!
       colonyAddress: String!
     ): String!
-    coinMachineSalePeriod(colonyAddress: String!): SalePeriod!
+    coinMachineCurrentSalePeriod(colonyAddress: String!): CurrentSalePeriod!
     currentPeriodTokens(colonyAddress: String!): CurrentPeriodTokens!
     coinMachineTokenBalance(colonyAddress: String!): String!
     coinMachinePeriods(
       skip: Int!
+      first: Int!
       where: ByColonyFilter
       orderBy: String!
       orderDirection: String!
-    ): [PreviousPeriods!]!
+    ): [SalePeriod!]!
+    coinMachineSalePeriods(colonyAddress: String!, limit: Int!): SalePeriod!
+    events(
+      skip: Int
+      first: Int
+      where: EventsFilter
+      orderDirection: String
+    ): [SubgraphEvent!]!
   }
 `;

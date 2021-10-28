@@ -266,8 +266,9 @@ export type Query = {
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
-  coinMachinePeriods: Array<PreviousPeriods>;
-  coinMachineSalePeriod: SalePeriod;
+  coinMachineCurrentSalePeriod: CurrentSalePeriod;
+  coinMachinePeriods: Array<SalePeriod>;
+  coinMachineSalePeriods: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
   coinMachineTokenBalance: Scalars['String'];
   coinMachineTransactionAmount: TrannsactionAmount;
@@ -282,6 +283,7 @@ export type Query = {
   colonyReputation?: Maybe<Scalars['String']>;
   currentPeriodTokens: CurrentPeriodTokens;
   domains: Array<SubgraphDomain>;
+  events: Array<SubgraphEvent>;
   eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
@@ -353,16 +355,23 @@ export type QueryCoinMachineCurrentPeriodPriceArgs = {
 };
 
 
+export type QueryCoinMachineCurrentSalePeriodArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+
 export type QueryCoinMachinePeriodsArgs = {
   skip: Scalars['Int'];
+  first: Scalars['Int'];
   where?: Maybe<ByColonyFilter>;
   orderBy: Scalars['String'];
   orderDirection: Scalars['String'];
 };
 
 
-export type QueryCoinMachineSalePeriodArgs = {
+export type QueryCoinMachineSalePeriodsArgs = {
   colonyAddress: Scalars['String'];
+  limit: Scalars['Int'];
 };
 
 
@@ -441,6 +450,14 @@ export type QueryCurrentPeriodTokensArgs = {
 
 export type QueryDomainsArgs = {
   where: ByColonyFilter;
+};
+
+
+export type QueryEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  where?: Maybe<EventsFilter>;
+  orderDirection?: Maybe<Scalars['String']>;
 };
 
 
@@ -681,11 +698,11 @@ export type QueryWhitelistedUsersArgs = {
 };
 
 export type Subscription = {
-  events: Array<SubscriptionEvent>;
+  events: Array<SubgraphEvent>;
   motions: Array<SubscriptionMotion>;
   oneTxPayments: Array<OneTxPayment>;
   subscribedUsers: Array<User>;
-  tokenBoughtEvents: Array<SubscriptionEvent>;
+  tokenBoughtEvents: Array<SubgraphEvent>;
   transactionMessages: TransactionMessages;
   transactionMessagesCount: TransactionMessagesCount;
 };
@@ -850,6 +867,15 @@ export type LoggedInUserInput = {
   networkId?: Maybe<Scalars['Int']>;
 };
 
+export type EventsFilter = {
+  associatedColony_contains?: Maybe<Scalars['String']>;
+  associatedColony?: Maybe<Scalars['String']>;
+  name_in?: Maybe<Array<Scalars['String']>>;
+  name_contains?: Maybe<Scalars['String']>;
+  args_contains?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['String']>;
+};
+
 export type LoggedInUser = {
   id: Scalars['String'];
   balance: Scalars['String'];
@@ -857,6 +883,36 @@ export type LoggedInUser = {
   walletAddress: Scalars['String'];
   ethereal: Scalars['Boolean'];
   networkId?: Maybe<Scalars['Int']>;
+};
+
+export type SugraphEventProcessedValues = {
+  agent: Scalars['String'];
+  who: Scalars['String'];
+  fromPot: Scalars['String'];
+  fromDomain: Scalars['String'];
+  toPot: Scalars['String'];
+  toDomain: Scalars['String'];
+  domainId: Scalars['String'];
+  amount: Scalars['String'];
+  token: Scalars['String'];
+  metadata: Scalars['String'];
+  user: Scalars['String'];
+  role: Scalars['String'];
+  setTo: Scalars['String'];
+  oldVersion: Scalars['String'];
+  newVersion: Scalars['String'];
+  storageSlot: Scalars['String'];
+  storageSlotValue: Scalars['String'];
+};
+
+export type SubgraphEvent = {
+  id: Scalars['String'];
+  transaction: SubgraphTransaction;
+  address: Scalars['String'];
+  name: Scalars['String'];
+  args: Scalars['String'];
+  associatedColony: SubgraphColony;
+  processedValues: SugraphEventProcessedValues;
 };
 
 export type ParsedEvent = {
@@ -1169,7 +1225,6 @@ export type SubgraphColonyMetadata = {
 
 export type SubgraphColonyExtension = {
   id: Scalars['String'];
-  address: Scalars['String'];
   hash: Scalars['String'];
 };
 
@@ -1268,7 +1323,7 @@ export type SaleTokens = {
   purchaseToken: SaleToken;
 };
 
-export type SalePeriod = {
+export type CurrentSalePeriod = {
   periodLength: Scalars['String'];
   timeRemaining: Scalars['String'];
 };
@@ -1289,22 +1344,15 @@ export type TrannsactionAmount = {
   transactionSucceed: Scalars['Boolean'];
 };
 
-export type PreviousPeriods = {
+export type SalePeriod = {
   saleEndedAt: Scalars['String'];
   tokensBought: Scalars['String'];
+  tokensAvailable: Scalars['String'];
   price: Scalars['String'];
 };
 
 export type ActionsFilter = {
   payment_contains?: Maybe<Scalars['String']>;
-};
-
-export type EventsFilter = {
-  associatedColony_contains?: Maybe<Scalars['String']>;
-  associatedColony?: Maybe<Scalars['String']>;
-  name_in?: Maybe<Array<Scalars['String']>>;
-  name_contains?: Maybe<Scalars['String']>;
-  address?: Maybe<Scalars['String']>;
 };
 
 export type MotionsFilter = {
@@ -1317,36 +1365,6 @@ export type OneTxPayment = {
   agent: Scalars['String'];
   transaction: SubgraphTransaction;
   payment: SubgraphPayment;
-};
-
-export type EventProcessedValues = {
-  agent: Scalars['String'];
-  who: Scalars['String'];
-  fromPot: Scalars['String'];
-  fromDomain: Scalars['String'];
-  toPot: Scalars['String'];
-  toDomain: Scalars['String'];
-  domainId: Scalars['String'];
-  amount: Scalars['String'];
-  token: Scalars['String'];
-  metadata: Scalars['String'];
-  user: Scalars['String'];
-  role: Scalars['String'];
-  setTo: Scalars['String'];
-  oldVersion: Scalars['String'];
-  newVersion: Scalars['String'];
-  storageSlot: Scalars['String'];
-  storageSlotValue: Scalars['String'];
-};
-
-export type SubscriptionEvent = {
-  id: Scalars['String'];
-  transaction: SubgraphTransaction;
-  address: Scalars['String'];
-  name: Scalars['String'];
-  args: Scalars['String'];
-  associatedColony: SubgraphColony;
-  processedValues: EventProcessedValues;
 };
 
 export type SubscriptionMotion = {
@@ -1950,7 +1968,10 @@ export type SubgraphColonyQuery = { colony: (
     & { metadataHistory: Array<Pick<SubgraphColonyMetadata, 'id' | 'metadata'>>, token: (
       Pick<SubgraphToken, 'decimals' | 'symbol'>
       & { tokenAddress: SubgraphToken['id'] }
-    ), extensions?: Maybe<Array<Pick<SubgraphColonyExtension, 'address' | 'hash'>>> }
+    ), extensions?: Maybe<Array<(
+      Pick<SubgraphColonyExtension, 'hash'>
+      & { address: SubgraphColonyExtension['id'] }
+    )>> }
   ) };
 
 export type SubgraphColoniesQueryVariables = Exact<{
@@ -2143,12 +2164,12 @@ export type CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables = Exact<{
 
 export type CoinMachineCurrentPeriodMaxUserPurchaseQuery = Pick<Query, 'coinMachineCurrentPeriodMaxUserPurchase'>;
 
-export type CoinMachineSalePeriodQueryVariables = Exact<{
+export type CoinMachineCurrentSalePeriodQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type CoinMachineSalePeriodQuery = { coinMachineSalePeriod: Pick<SalePeriod, 'periodLength' | 'timeRemaining'> };
+export type CoinMachineCurrentSalePeriodQuery = { coinMachineCurrentSalePeriod: Pick<CurrentSalePeriod, 'periodLength' | 'timeRemaining'> };
 
 export type CurrentPeriodTokensQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -2166,10 +2187,38 @@ export type CoinMachineTokenBalanceQuery = Pick<Query, 'coinMachineTokenBalance'
 
 export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
+  limit: Scalars['Int'];
 }>;
 
 
-export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<PreviousPeriods, 'saleEndedAt' | 'tokensBought' | 'price'>> };
+export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'>>, extensionInitialisedEvents: Array<(
+    Pick<SubgraphEvent, 'address' | 'name' | 'args'>
+    & { transaction: (
+      { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )>, tokenBoughtEvents: Array<(
+    Pick<SubgraphEvent, 'address' | 'name' | 'args'>
+    & { transaction: (
+      { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
+export type CoinMachineSalePeriodsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  limit: Scalars['Int'];
+}>;
+
+
+export type CoinMachineSalePeriodsQuery = { coinMachineSalePeriods: Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'tokensAvailable' | 'price'> };
 
 export type TransactionMessagesQueryVariables = Exact<{
   transactionHash: Scalars['String'];
@@ -2206,7 +2255,7 @@ export type SubgraphEventsSubscriptionVariables = Exact<{
 
 
 export type SubgraphEventsSubscription = { events: Array<(
-    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -2254,7 +2303,7 @@ export type SubgraphEventsThatAreActionsSubscriptionVariables = Exact<{
 
 
 export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
-    Pick<SubscriptionEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
     & { associatedColony: (
       { colonyAddress: SubgraphColony['id'], id: SubgraphColony['colonyChainId'] }
       & { token: (
@@ -2264,7 +2313,7 @@ export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
     ), transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
-    ), processedValues: Pick<EventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
+    ), processedValues: Pick<SugraphEventProcessedValues, 'agent' | 'who' | 'fromPot' | 'fromDomain' | 'toPot' | 'toDomain' | 'domainId' | 'amount' | 'token' | 'metadata' | 'user' | 'oldVersion' | 'newVersion' | 'storageSlot' | 'storageSlotValue'> }
   )> };
 
 export type SubgraphMotionsSubscriptionVariables = Exact<{
@@ -2305,7 +2354,7 @@ export type SubgraphTokenBoughtEventsSubscriptionVariables = Exact<{
 
 
 export type SubgraphTokenBoughtEventsSubscription = { tokenBoughtEvents: Array<(
-    Pick<SubscriptionEvent, 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'address' | 'name' | 'args'>
     & { transaction: (
       { transactionHash: SubgraphTransaction['id'] }
       & { block: (
@@ -4758,7 +4807,7 @@ export const SubgraphColonyDocument = gql`
       symbol
     }
     extensions {
-      address
+      address: id
       hash
     }
   }
@@ -5583,9 +5632,9 @@ export function useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery(baseOptions?
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseQuery>;
 export type CoinMachineCurrentPeriodMaxUserPurchaseLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentPeriodMaxUserPurchaseLazyQuery>;
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryResult = Apollo.QueryResult<CoinMachineCurrentPeriodMaxUserPurchaseQuery, CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables>;
-export const CoinMachineSalePeriodDocument = gql`
-    query CoinMachineSalePeriod($colonyAddress: String!) {
-  coinMachineSalePeriod(colonyAddress: $colonyAddress) @client {
+export const CoinMachineCurrentSalePeriodDocument = gql`
+    query CoinMachineCurrentSalePeriod($colonyAddress: String!) {
+  coinMachineCurrentSalePeriod(colonyAddress: $colonyAddress) @client {
     periodLength
     timeRemaining
   }
@@ -5593,30 +5642,30 @@ export const CoinMachineSalePeriodDocument = gql`
     `;
 
 /**
- * __useCoinMachineSalePeriodQuery__
+ * __useCoinMachineCurrentSalePeriodQuery__
  *
- * To run a query within a React component, call `useCoinMachineSalePeriodQuery` and pass it any options that fit your needs.
- * When your component renders, `useCoinMachineSalePeriodQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCoinMachineCurrentSalePeriodQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineCurrentSalePeriodQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useCoinMachineSalePeriodQuery({
+ * const { data, loading, error } = useCoinMachineCurrentSalePeriodQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-export function useCoinMachineSalePeriodQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>) {
-        return Apollo.useQuery<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>(CoinMachineSalePeriodDocument, baseOptions);
+export function useCoinMachineCurrentSalePeriodQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineCurrentSalePeriodQuery, CoinMachineCurrentSalePeriodQueryVariables>) {
+        return Apollo.useQuery<CoinMachineCurrentSalePeriodQuery, CoinMachineCurrentSalePeriodQueryVariables>(CoinMachineCurrentSalePeriodDocument, baseOptions);
       }
-export function useCoinMachineSalePeriodLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>) {
-          return Apollo.useLazyQuery<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>(CoinMachineSalePeriodDocument, baseOptions);
+export function useCoinMachineCurrentSalePeriodLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineCurrentSalePeriodQuery, CoinMachineCurrentSalePeriodQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineCurrentSalePeriodQuery, CoinMachineCurrentSalePeriodQueryVariables>(CoinMachineCurrentSalePeriodDocument, baseOptions);
         }
-export type CoinMachineSalePeriodQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodQuery>;
-export type CoinMachineSalePeriodLazyQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodLazyQuery>;
-export type CoinMachineSalePeriodQueryResult = Apollo.QueryResult<CoinMachineSalePeriodQuery, CoinMachineSalePeriodQueryVariables>;
+export type CoinMachineCurrentSalePeriodQueryHookResult = ReturnType<typeof useCoinMachineCurrentSalePeriodQuery>;
+export type CoinMachineCurrentSalePeriodLazyQueryHookResult = ReturnType<typeof useCoinMachineCurrentSalePeriodLazyQuery>;
+export type CoinMachineCurrentSalePeriodQueryResult = Apollo.QueryResult<CoinMachineCurrentSalePeriodQuery, CoinMachineCurrentSalePeriodQueryVariables>;
 export const CurrentPeriodTokensDocument = gql`
     query CurrentPeriodTokens($colonyAddress: String!) {
   currentPeriodTokens(colonyAddress: $colonyAddress) @client {
@@ -5684,11 +5733,35 @@ export type CoinMachineTokenBalanceQueryHookResult = ReturnType<typeof useCoinMa
 export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceLazyQuery>;
 export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
 export const SubgraphCoinMachinePeriodsDocument = gql`
-    query SubgraphCoinMachinePeriods($colonyAddress: String!) {
-  coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 1, orderBy: "saleEndedAt", orderDirection: "desc") {
+    query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
+  coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 0, first: $limit, orderBy: "saleEndedAt", orderDirection: "desc") {
     saleEndedAt
     tokensBought
     price
+  }
+  extensionInitialisedEvents: events(where: {name_contains: "ExtensionInitialised", address: $extensionAddress}) {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+  tokenBoughtEvents: events(where: {name_contains: "TokensBought", address: $extensionAddress}) {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
   }
 }
     `;
@@ -5706,6 +5779,8 @@ export const SubgraphCoinMachinePeriodsDocument = gql`
  * const { data, loading, error } = useSubgraphCoinMachinePeriodsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
+ *      extensionAddress: // value for 'extensionAddress'
+ *      limit: // value for 'limit'
  *   },
  * });
  */
@@ -5718,6 +5793,43 @@ export function useSubgraphCoinMachinePeriodsLazyQuery(baseOptions?: Apollo.Lazy
 export type SubgraphCoinMachinePeriodsQueryHookResult = ReturnType<typeof useSubgraphCoinMachinePeriodsQuery>;
 export type SubgraphCoinMachinePeriodsLazyQueryHookResult = ReturnType<typeof useSubgraphCoinMachinePeriodsLazyQuery>;
 export type SubgraphCoinMachinePeriodsQueryResult = Apollo.QueryResult<SubgraphCoinMachinePeriodsQuery, SubgraphCoinMachinePeriodsQueryVariables>;
+export const CoinMachineSalePeriodsDocument = gql`
+    query CoinMachineSalePeriods($colonyAddress: String!, $limit: Int!) {
+  coinMachineSalePeriods(colonyAddress: $colonyAddress, limit: $limit) @client {
+    saleEndedAt
+    tokensBought
+    tokensAvailable
+    price
+  }
+}
+    `;
+
+/**
+ * __useCoinMachineSalePeriodsQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineSalePeriodsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineSalePeriodsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineSalePeriodsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useCoinMachineSalePeriodsQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>) {
+        return Apollo.useQuery<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>(CoinMachineSalePeriodsDocument, baseOptions);
+      }
+export function useCoinMachineSalePeriodsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>(CoinMachineSalePeriodsDocument, baseOptions);
+        }
+export type CoinMachineSalePeriodsQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodsQuery>;
+export type CoinMachineSalePeriodsLazyQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodsLazyQuery>;
+export type CoinMachineSalePeriodsQueryResult = Apollo.QueryResult<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>;
 export const TransactionMessagesDocument = gql`
     query TransactionMessages($transactionHash: String!) {
   transactionMessages(transactionHash: $transactionHash) {

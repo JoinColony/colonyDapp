@@ -41,8 +41,8 @@ query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddr
   coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
 }
 
-query CoinMachineSalePeriod($colonyAddress: String!) {
-  coinMachineSalePeriod(colonyAddress: $colonyAddress) @client {
+query CoinMachineCurrentSalePeriod($colonyAddress: String!) {
+  coinMachineCurrentSalePeriod(colonyAddress: $colonyAddress) @client {
     periodLength
     timeRemaining
   }
@@ -60,10 +60,11 @@ query CoinMachineTokenBalance($colonyAddress: String!) {
   coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
 }
 
-query SubgraphCoinMachinePeriods($colonyAddress: String!) {
+query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
   coinMachinePeriods(
     where: { colonyAddress: $colonyAddress },
-    skip: 1,
+    skip: 0,
+    first: $limit
     orderBy: "saleEndedAt",
     orderDirection: "desc"
   ) {
@@ -71,4 +72,48 @@ query SubgraphCoinMachinePeriods($colonyAddress: String!) {
     tokensBought
     price
   }
+  extensionInitialisedEvents: events(
+    where: {
+      name_contains: "ExtensionInitialised",
+      address: $extensionAddress
+    }
+  ) {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+  tokenBoughtEvents: events(
+    where: {
+      name_contains: "TokensBought"
+      address: $extensionAddress
+    }
+  ) {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
 }
+
+query CoinMachineSalePeriods($colonyAddress: String!, $limit: Int!) {
+  coinMachineSalePeriods(colonyAddress: $colonyAddress, limit: $limit) @client {
+    saleEndedAt
+    tokensBought
+    tokensAvailable
+    price
+  }
+}
+

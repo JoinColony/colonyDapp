@@ -1,11 +1,14 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-
 import { bigNumberify } from 'ethers/utils';
+
 import Heading from '~core/Heading';
 import TransactionLink from '~core/TransactionLink';
 import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
+import TimerValue from '~core/TimerValue';
+import { SpinnerLoader } from '~core/Preloaders';
+
 import {
   TokenInfoQuery,
   useCoinMachineBoughtTokensQuery,
@@ -14,9 +17,6 @@ import {
   Colony,
 } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
-import { SpinnerLoader } from '~core/Preloaders';
-import { TimerValue } from '~utils/components';
-
 import useSplitTime from '~utils/hooks/useSplitTime';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';

@@ -55,6 +55,13 @@ interface MotionValues extends ActionValues {
   domainPurpose: string | null;
 }
 
+export * from './subgraphEvents';
+
+/*
+ * @TODO Helpers in here need to be refactored so bad...
+ * Hope we can get a break at some point and tackle this type of stuff
+ */
+
 /*
  * Main logic for detecting a action type based on an array of "required" events
  */
