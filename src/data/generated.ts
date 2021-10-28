@@ -1995,13 +1995,6 @@ export type HasKycPolicyQueryVariables = Exact<{
 
 export type HasKycPolicyQuery = Pick<Query, 'hasKycPolicy'>;
 
-export type SubgraphBlockQueryVariables = Exact<{
-  blockId: Scalars['ID'];
-}>;
-
-
-export type SubgraphBlockQuery = { block?: Maybe<Pick<SubgraphBlock, 'id' | 'timestamp'>> };
-
 export type TransactionMessagesQueryVariables = Exact<{
   transactionHash: Scalars['String'];
 }>;
@@ -2244,6 +2237,13 @@ export type SubgraphMotionRewardClaimedEventsQuery = { motionRewardClaimedEvents
       ) }
     ) }
   )> };
+
+export type SubgraphBlockQueryVariables = Exact<{
+  blockId: Scalars['ID'];
+}>;
+
+
+export type SubgraphBlockQuery = { block?: Maybe<Pick<SubgraphBlock, 'id' | 'timestamp'>> };
 
 export type SubgraphRecoveryModeEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -5446,40 +5446,6 @@ export function useHasKycPolicyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type HasKycPolicyQueryHookResult = ReturnType<typeof useHasKycPolicyQuery>;
 export type HasKycPolicyLazyQueryHookResult = ReturnType<typeof useHasKycPolicyLazyQuery>;
 export type HasKycPolicyQueryResult = Apollo.QueryResult<HasKycPolicyQuery, HasKycPolicyQueryVariables>;
-export const SubgraphBlockDocument = gql`
-    query SubgraphBlock($blockId: ID!) {
-  block(id: $blockId) {
-    id
-    timestamp
-  }
-}
-    `;
-
-/**
- * __useSubgraphBlockQuery__
- *
- * To run a query within a React component, call `useSubgraphBlockQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphBlockQuery({
- *   variables: {
- *      blockId: // value for 'blockId'
- *   },
- * });
- */
-export function useSubgraphBlockQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphBlockQuery, SubgraphBlockQueryVariables>) {
-        return Apollo.useQuery<SubgraphBlockQuery, SubgraphBlockQueryVariables>(SubgraphBlockDocument, baseOptions);
-      }
-export function useSubgraphBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphBlockQuery, SubgraphBlockQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphBlockQuery, SubgraphBlockQueryVariables>(SubgraphBlockDocument, baseOptions);
-        }
-export type SubgraphBlockQueryHookResult = ReturnType<typeof useSubgraphBlockQuery>;
-export type SubgraphBlockLazyQueryHookResult = ReturnType<typeof useSubgraphBlockLazyQuery>;
-export type SubgraphBlockQueryResult = Apollo.QueryResult<SubgraphBlockQuery, SubgraphBlockQueryVariables>;
 export const TransactionMessagesDocument = gql`
     query TransactionMessages($transactionHash: String!) {
   transactionMessages(transactionHash: $transactionHash) {
@@ -6184,6 +6150,40 @@ export function useSubgraphMotionRewardClaimedEventsLazyQuery(baseOptions?: Apol
 export type SubgraphMotionRewardClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsQuery>;
 export type SubgraphMotionRewardClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsLazyQuery>;
 export type SubgraphMotionRewardClaimedEventsQueryResult = Apollo.QueryResult<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>;
+export const SubgraphBlockDocument = gql`
+    query SubgraphBlock($blockId: ID!) {
+  block(id: $blockId) {
+    id
+    timestamp
+  }
+}
+    `;
+
+/**
+ * __useSubgraphBlockQuery__
+ *
+ * To run a query within a React component, call `useSubgraphBlockQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphBlockQuery({
+ *   variables: {
+ *      blockId: // value for 'blockId'
+ *   },
+ * });
+ */
+export function useSubgraphBlockQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphBlockQuery, SubgraphBlockQueryVariables>) {
+        return Apollo.useQuery<SubgraphBlockQuery, SubgraphBlockQueryVariables>(SubgraphBlockDocument, baseOptions);
+      }
+export function useSubgraphBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphBlockQuery, SubgraphBlockQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphBlockQuery, SubgraphBlockQueryVariables>(SubgraphBlockDocument, baseOptions);
+        }
+export type SubgraphBlockQueryHookResult = ReturnType<typeof useSubgraphBlockQuery>;
+export type SubgraphBlockLazyQueryHookResult = ReturnType<typeof useSubgraphBlockLazyQuery>;
+export type SubgraphBlockQueryResult = Apollo.QueryResult<SubgraphBlockQuery, SubgraphBlockQueryVariables>;
 export const SubgraphRecoveryModeEventsDocument = gql`
     query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
   recoveryStorageSlotSetEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryStorageSlotSet", address: $colonyAddress}) {
@@ -6306,8 +6306,8 @@ export type SubgraphRecoveryModeExitedEventsQueryHookResult = ReturnType<typeof 
 export type SubgraphRecoveryModeExitedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphRecoveryModeExitedEventsLazyQuery>;
 export type SubgraphRecoveryModeExitedEventsQueryResult = Apollo.QueryResult<SubgraphRecoveryModeExitedEventsQuery, SubgraphRecoveryModeExitedEventsQueryVariables>;
 export const SubgraphRoleEventsDocument = gql`
-    query SubgraphRoleEvents($colonyAddress: String!) {
-  colonyRoleSetEvents: events(where: {name_contains: "ColonyRoleSet", address: $colonyAddress}) {
+    query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!) {
+  colonyRoleSetEvents: events(block: {number: $toBlock}, where: {name_contains: "ColonyRoleSet", address: $colonyAddress}) {
     id
     address
     name
@@ -6322,7 +6322,7 @@ export const SubgraphRoleEventsDocument = gql`
       }
     }
   }
-  recoveryRoleSetEvents: events(where: {name_contains: "RecoveryRoleSet", address: $colonyAddress}) {
+  recoveryRoleSetEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryRoleSet", address: $colonyAddress}) {
     id
     address
     name
@@ -6353,6 +6353,7 @@ export const SubgraphRoleEventsDocument = gql`
  * const { data, loading, error } = useSubgraphRoleEventsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
+ *      toBlock: // value for 'toBlock'
  *   },
  * });
  */
