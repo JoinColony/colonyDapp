@@ -37,9 +37,6 @@ import {
   SubgraphBlockDocument,
   SubgraphBlockQuery,
   SubgraphBlockQueryVariables,
-  SubgraphRoleEventsByBlockDocument,
-  SubgraphRoleEventsByBlockQuery,
-  SubgraphRoleEventsByBlockQueryVariables,
 } from '~data/index';
 
 import {
@@ -66,13 +63,13 @@ const getSessionRecoveryEvents = async (
   colonyAddress: string,
   startBlock = 1,
 ) => {
-  const currentBlock = await provider.getBlockNumber();
+  const latestBlockNumber = await provider.getBlockNumber();
   const blockFilter: {
     fromBlock: number;
     toBlock: number;
   } = {
     fromBlock: startBlock,
-    toBlock: currentBlock,
+    toBlock: latestBlockNumber,
   };
 
   const blockWatchQuery = apolloClient.watchQuery<
@@ -81,7 +78,7 @@ const getSessionRecoveryEvents = async (
   >({
     query: SubgraphBlockDocument,
     variables: {
-      blockId: `block_${blockFilter.toBlock}`,
+      blockId: `block_${latestBlockNumber}`,
     },
   });
 
@@ -363,11 +360,31 @@ export const recoveryModeResolvers = ({
           toBlockNumber = endBlockNumber;
         }
 
-        const { data } = await apolloClient.query<
-          SubgraphRoleEventsByBlockQuery,
-          SubgraphRoleEventsByBlockQueryVariables
+        const blockWatchQuery = apolloClient.watchQuery<
+          SubgraphBlockQuery,
+          SubgraphBlockQueryVariables
         >({
-          query: SubgraphRoleEventsByBlockDocument,
+          query: SubgraphBlockDocument,
+          variables: {
+            blockId: `block_${toBlockNumber}`,
+          },
+        });
+
+        try {
+          const blockQueryResult = await blockWatchQuery.result();
+          if (!blockQueryResult.data?.block) {
+            const handleBlockRefetch = () => blockWatchQuery.refetch();
+            await waitForBlockToExist(handleBlockRefetch);
+          }
+        } catch (error) {
+          log.verbose(error);
+        }
+
+        const { data } = await apolloClient.query<
+          SubgraphRoleEventsQuery,
+          SubgraphRoleEventsQueryVariables
+        >({
+          query: SubgraphRoleEventsDocument,
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
             toBlock: toBlockNumber,
@@ -587,8 +604,28 @@ export const recoveryModeResolvers = ({
           ClientType.ColonyClient,
           colonyAddress,
         )) as ColonyClientV5;
-
+        const latestBlockNumber = await provider.getBlockNumber();
         const colonyVersion = await colonyClient.version();
+
+        const blockWatchQuery = apolloClient.watchQuery<
+          SubgraphBlockQuery,
+          SubgraphBlockQueryVariables
+        >({
+          query: SubgraphBlockDocument,
+          variables: {
+            blockId: `block_${latestBlockNumber}`,
+          },
+        });
+
+        try {
+          const blockQueryResult = await blockWatchQuery.result();
+          if (!blockQueryResult.data?.block) {
+            const handleBlockRefetch = () => blockWatchQuery.refetch();
+            await waitForBlockToExist(handleBlockRefetch);
+          }
+        } catch (error) {
+          log.verbose(error);
+        }
 
         /*
          * @NOTE We don't care about colonies that are newer than v6
@@ -601,6 +638,7 @@ export const recoveryModeResolvers = ({
             query: SubgraphRoleEventsDocument,
             variables: {
               colonyAddress: colonyAddress.toLowerCase(),
+              toBlock: latestBlockNumber,
             },
           });
 

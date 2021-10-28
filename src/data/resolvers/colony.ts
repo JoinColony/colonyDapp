@@ -32,11 +32,18 @@ import {
   SubgraphRoleEventsQuery,
   SubgraphRoleEventsQueryVariables,
   SubgraphRoleEventsDocument,
+  SubgraphBlockDocument,
+  SubgraphBlockQuery,
+  SubgraphBlockQueryVariables,
 } from '~data/index';
 
 import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
-import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
+import {
+  parseSubgraphEvent,
+  sortSubgraphEventByIndex,
+  waitForBlockToExist,
+} from '~utils/events';
 import { Address } from '~types/index';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -450,6 +457,29 @@ export const colonyResolvers = ({
           ClientType.ColonyClient,
           colonyAddress,
         );
+        const latestBlockNumber = await colonyClient.provider.getBlockNumber();
+
+        const blockWatchQuery = apolloClient.watchQuery<
+          SubgraphBlockQuery,
+          SubgraphBlockQueryVariables
+        >({
+          query: SubgraphBlockDocument,
+          variables: {
+            blockId: `block_${latestBlockNumber}`,
+          },
+        });
+
+        try {
+          const blockQueryResult = await blockWatchQuery.result();
+
+          if (!blockQueryResult.data?.block) {
+            const handleBlockRefetch = () => blockWatchQuery.refetch();
+            await waitForBlockToExist(handleBlockRefetch);
+          }
+        } catch (error) {
+          log.verbose(error);
+        }
+
         if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
           throw new Error(`Not supported in this version of Colony`);
         }
@@ -464,6 +494,7 @@ export const colonyResolvers = ({
              * Subgraph addresses are not checksummed
              */
             colonyAddress: colonyAddress.toLowerCase(),
+            toBlock: latestBlockNumber,
           },
           fetchPolicy: 'network-only',
         });
