@@ -63,95 +63,100 @@ const getSessionRecoveryEvents = async (
   colonyAddress: string,
   startBlock = 1,
 ) => {
-  let toBlockNumber = await provider.getBlockNumber();
-
-  const blockWatchQuery = apolloClient.watchQuery<
-    SubgraphBlockQuery,
-    SubgraphBlockQueryVariables
-  >({
-    query: SubgraphBlockDocument,
-    variables: {
-      blockId: `block_${toBlockNumber}`,
-    },
-  });
-
   try {
-    const blockQueryResult = await blockWatchQuery.result();
+    let toBlockNumber = await provider.getBlockNumber();
 
-    if (!blockQueryResult.data?.block) {
-      const handleBlockRefetch = () => blockWatchQuery.refetch();
-      await waitForBlockToExist(handleBlockRefetch);
-    }
-  } catch (error) {
-    log.verbose(error);
-  }
-
-  const { data: recoveryModeExitedEventsData } = await apolloClient.query<
-    SubgraphRecoveryModeExitedEventsQuery,
-    SubgraphRecoveryModeExitedEventsQueryVariables
-  >({
-    query: SubgraphRecoveryModeExitedEventsDocument,
-    variables: {
-      colonyAddress: colonyAddress.toLowerCase(),
-    },
-    fetchPolicy: 'network-only',
-  });
-
-  const recoveryModeExitedEvents =
-    recoveryModeExitedEventsData?.recoveryModeExitedEvents || [];
-
-  const [mostRecentExitRecoveryEvent] = recoveryModeExitedEvents
-    .map(parseSubgraphEvent)
-    .filter((event) => (event.blockNumber || 0) >= startBlock)
-    .sort(sortSubgraphEventByIndex);
-
-  if (mostRecentExitRecoveryEvent) {
-    toBlockNumber = mostRecentExitRecoveryEvent.blockNumber || 0;
-  }
-
-  const { data: recoveryModeEventsData } = await apolloClient.query<
-    SubgraphRecoveryModeEventsQuery,
-    SubgraphRecoveryModeEventsQueryVariables
-  >({
-    query: SubgraphRecoveryModeEventsDocument,
-    variables: {
-      colonyAddress: colonyAddress.toLowerCase(),
-      toBlock: toBlockNumber,
-    },
-  });
-  const storageSlotSetEvents =
-    recoveryModeEventsData?.recoveryStorageSlotSetEvents || [];
-  const recoveryModeExitApprovedEvents =
-    recoveryModeEventsData?.recoveryModeExitApprovedEvents || [];
-
-  const parsedRecoveryModeEvents = [
-    ...storageSlotSetEvents,
-    ...recoveryModeExitApprovedEvents,
-  ]
-    .map(parseSubgraphEvent)
-    .filter((event) => (event.blockNumber || 0) >= startBlock);
-
-  if (mostRecentExitRecoveryEvent) {
-    parsedRecoveryModeEvents.push(mostRecentExitRecoveryEvent);
-  }
-
-  const processedRecoveryEvents = parsedRecoveryModeEvents
-    .sort(sortSubgraphEventByIndex)
-    .map((event) => {
-      const { name, values, blockNumber, hash, timestamp } = event;
-      return {
-        type: ActionsPageFeedType.NetworkEvent,
-        name,
-        values,
-        createdAt: timestamp,
-        emmitedBy: ClientType.ColonyClient,
-        address: colonyAddress,
-        blockNumber,
-        transactionHash: hash,
-      } as ProcessedEvent;
+    const blockWatchQuery = apolloClient.watchQuery<
+      SubgraphBlockQuery,
+      SubgraphBlockQueryVariables
+    >({
+      query: SubgraphBlockDocument,
+      variables: {
+        blockId: `block_${toBlockNumber}`,
+      },
     });
 
-  return processedRecoveryEvents;
+    try {
+      const blockQueryResult = await blockWatchQuery.result();
+
+      if (!blockQueryResult.data?.block) {
+        const handleBlockRefetch = () => blockWatchQuery.refetch();
+        await waitForBlockToExist(handleBlockRefetch);
+      }
+    } catch (error) {
+      log.verbose(error);
+    }
+
+    const { data: recoveryModeExitedEventsData } = await apolloClient.query<
+      SubgraphRecoveryModeExitedEventsQuery,
+      SubgraphRecoveryModeExitedEventsQueryVariables
+    >({
+      query: SubgraphRecoveryModeExitedEventsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLowerCase(),
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    const recoveryModeExitedEvents =
+      recoveryModeExitedEventsData?.recoveryModeExitedEvents || [];
+
+    const [mostRecentExitRecoveryEvent] = recoveryModeExitedEvents
+      .map(parseSubgraphEvent)
+      .filter((event) => (event.blockNumber || 0) >= startBlock)
+      .sort(sortSubgraphEventByIndex);
+
+    if (mostRecentExitRecoveryEvent) {
+      toBlockNumber = mostRecentExitRecoveryEvent.blockNumber || 0;
+    }
+
+    const { data: recoveryModeEventsData } = await apolloClient.query<
+      SubgraphRecoveryModeEventsQuery,
+      SubgraphRecoveryModeEventsQueryVariables
+    >({
+      query: SubgraphRecoveryModeEventsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLowerCase(),
+        toBlock: toBlockNumber,
+      },
+    });
+    const storageSlotSetEvents =
+      recoveryModeEventsData?.recoveryStorageSlotSetEvents || [];
+    const recoveryModeExitApprovedEvents =
+      recoveryModeEventsData?.recoveryModeExitApprovedEvents || [];
+
+    const parsedRecoveryModeEvents = [
+      ...storageSlotSetEvents,
+      ...recoveryModeExitApprovedEvents,
+    ]
+      .map(parseSubgraphEvent)
+      .filter((event) => (event.blockNumber || 0) >= startBlock);
+
+    if (mostRecentExitRecoveryEvent) {
+      parsedRecoveryModeEvents.push(mostRecentExitRecoveryEvent);
+    }
+
+    const processedRecoveryEvents = parsedRecoveryModeEvents
+      .sort(sortSubgraphEventByIndex)
+      .map((event) => {
+        const { name, values, blockNumber, hash, timestamp } = event;
+        return {
+          type: ActionsPageFeedType.NetworkEvent,
+          name,
+          values,
+          createdAt: timestamp,
+          emmitedBy: ClientType.ColonyClient,
+          address: colonyAddress,
+          blockNumber,
+          transactionHash: hash,
+        } as ProcessedEvent;
+      });
+
+    return processedRecoveryEvents;
+  } catch (error) {
+    log.verbose(error);
+    return [];
+  }
 };
 
 const getUsersWithRecoveryRoles = (
