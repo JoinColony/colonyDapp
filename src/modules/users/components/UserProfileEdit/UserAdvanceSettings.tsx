@@ -70,17 +70,19 @@ const UserAdvanceSettings = () => {
     [setSettingsKey],
   );
 
-  const metatransasctionsAvailable = canUseMetatransactions(
+  const metatransasctionsToggleAvailable = canUseMetatransactions(
     userWalletNetworkId as number,
   );
+
+  const metatransasctionsAvailable = metatransasctionsToggleAvailable
+    ? metatransactionsToggle
+    : false;
 
   return (
     <>
       <Form<FormValues>
         initialValues={{
-          metatransactions: metatransasctionsAvailable
-            ? metatransactionsSetting
-            : false,
+          metatransactions: metatransasctionsAvailable,
         }}
         validationSchema={validationSchema}
         onSubmit={() => {}}
@@ -95,12 +97,10 @@ const UserAdvanceSettings = () => {
               <Toggle
                 label={MSG.labelMetaTx}
                 labelValues={{
-                  isOn: metatransasctionsAvailable
-                    ? metatransactionsToggle
-                    : false,
+                  isOn: metatransasctionsAvailable,
                 }}
                 name="metatransactions"
-                disabled={!metatransasctionsAvailable}
+                disabled={!metatransasctionsToggleAvailable}
                 onChange={onChange}
               />
               <QuestionMarkTooltip
