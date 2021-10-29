@@ -1,9 +1,17 @@
 import { call, put, take } from 'redux-saga/effects';
-import { TransactionResponse } from 'ethers/providers';
-import type { ContractClient, TransactionOverrides } from '@colony/colony-js';
-import { ClientType } from '@colony/colony-js';
 import { Contract } from 'ethers';
+import { TransactionResponse } from 'ethers/providers';
+import { BigNumber, splitSignature } from 'ethers/utils';
+import { soliditySha3 } from 'web3-utils';
+import {
+  ContractClient,
+  TransactionOverrides,
+  ClientType,
+  ColonyClient,
+  Network,
+} from '@colony/colony-js';
 import abis from '@colony/colony-js/lib-esm/abis';
+import { hexSequenceNormalizer } from '@purser/core';
 
 import { ActionTypes } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -12,6 +20,7 @@ import { TRANSACTION_STATUSES, TransactionRecord } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action } from '~redux/types/actions';
 import { ExtendedReduxContext } from '~types/index';
+import { DEFAULT_NETWORK } from '~constants';
 
 import { transactionSendError } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
@@ -48,27 +57,130 @@ async function getMethodTransactionPromise(
 
 async function getMetatransactionMethodPromise(
   client: ContractClient,
-  tx: TransactionRecord,
+  { methodName, params }: TransactionRecord,
 ): Promise<TransactionResponse> {
-  // const {
-  //   methodName,
-  //   options: {
-  //     gasLimit: gasLimitOverride,
-  //     gasPrice: gasPriceOverride,
-  //     ...restOptions
-  //   },
-  //   params,
-  //   gasLimit,
-  //   gasPrice,
-  // } = tx;
-  // const sendOptions: TransactionOverrides = {
-  //   gasLimit: gasLimitOverride || gasLimit,
-  //   gasPrice: gasPriceOverride || gasPrice,
-  //   ...restOptions,
-  // };
-  // return client[methodName](...[...params, sendOptions]);
+  let availableNonce: BigNumber;
+  const wallet = TEMP_getContext(ContextModule.Wallet);
+  const { provider } = client;
+
+  if (client.clientType !== ClientType.ColonyClient) {
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+
+    const colonyAddress: string = await client.getColony();
+    const colonyClient: ColonyClient = await colonyManager.getClient(
+      ClientType.ColonyClient,
+      colonyAddress,
+    );
+    availableNonce = await colonyClient.getMetatransactionNonce(wallet.address);
+  } else {
+    availableNonce = await client.getMetatransactionNonce(wallet.address);
+  }
+
+  // eslint-disable-next-line no-console
+  console.log('Transaction to send', client.clientType, methodName, params);
+
+  /*
+   * All the 'WithProofs' helpers don't really exist on chain, so we have to
+   * make sure we are calling the on-chain method, rather than our own helper
+   *
+   * @TODO This needs to handle cases where the method is "withProofs", but
+   * since we can't encode with that helper, we'll have to either find a way around this
+   * or just re-provide proofs (none of which is ideal)
+   */
+  const normalizedMethodName = methodName.replace('WithProofs', '');
+  const encodedTransaction = client.interface.functions[
+    normalizedMethodName
+  ].encode([...params]);
+
+  // eslint-disable-next-line no-console
+  console.log('Encoded transaction', encodedTransaction);
+
+  const { chainId: currentNetworkChainId } = await provider.getNetwork();
+  let chainId = currentNetworkChainId;
+  if (DEFAULT_NETWORK === Network.Local) {
+    /*
+     * Due to ganache internals shannanigans, when on the local ganache network
+     * we must use chainId 1, otherwise the broadcaster (and the underlying contracts)
+     * wont't be able to verify the signature (due to a chainId miss-match)
+     *
+     * This issue is only valid for ganache networks, as in production the chain id
+     * is returned properly
+     */
+    chainId = 1;
+  }
+
+  const message = soliditySha3(
+    { t: 'uint256', v: availableNonce.toString() },
+    { t: 'address', v: client.address },
+    { t: 'uint256', v: chainId },
+    { t: 'bytes', v: encodedTransaction },
+  ) as string;
+
+  // eslint-disable-next-line no-console
+  console.log('Transaction message', message);
+
+  const messageBuffer = Buffer.from(
+    // metatransactionMessage.replace('0x', ''),
+    hexSequenceNormalizer(message, false),
+    'hex',
+  );
+
+  const convertedBufferMessage = Array.from(messageBuffer);
+
+  // eslint-disable-next-line no-console
+  console.log('Actual signature converted Buffer', convertedBufferMessage);
+
+  const metatransactionSignature = await wallet.signMessage({
+    messageData: (convertedBufferMessage as unknown) as Uint8Array,
+  });
+
+  // eslint-disable-next-line no-console
+  console.log('Signature', metatransactionSignature);
+
+  const { r, s, v } = splitSignature(metatransactionSignature);
+
+  const broadcastData = JSON.stringify({
+    target: client.address,
+    payload: encodedTransaction,
+    userAddress: wallet.address,
+    r,
+    s,
+    v,
+  });
+
+  // eslint-disable-next-line no-console
+  console.log('Broadcast data', broadcastData);
+
+  const response = await fetch(
+    `${process.env.BROADCASTER_ENDPOINT}/broadcast`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: broadcastData,
+    },
+  );
+  const {
+    message: responseErrorMessage,
+    status: reponseStatus,
+    data: responseData,
+  } = await response.json();
+
+  // eslint-disable-next-line no-console
+  console.log(
+    'Response data',
+    responseErrorMessage,
+    reponseStatus,
+    responseData,
+  );
+
+  if (reponseStatus !== 'success') {
+    throw new Error(responseErrorMessage.reason);
+  }
+
   return {
-    hash: '0x937552ec0dc00db2c263817faff8e11fff8f76b25ee5293833b5eee4a903bede',
+    hash: responseData.txHash,
   } as TransactionResponse;
 }
 
