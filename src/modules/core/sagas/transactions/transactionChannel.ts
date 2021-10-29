@@ -60,12 +60,15 @@ const channelSendTransaction = async (
   try {
     emit(transactionSent(id));
     const transaction = await txPromise;
+
     const { hash, blockNumber = 0, blockHash = '' } = transaction;
     if (!hash) {
       emit(transactionSendError(id, new Error('No tx hash found')));
       return null;
     }
+
     emit(transactionHashReceived(id, { hash, blockNumber, blockHash, params }));
+
     return transaction as TransactionResponseWithHash;
   } catch (caughtError) {
     console.error(caughtError);
