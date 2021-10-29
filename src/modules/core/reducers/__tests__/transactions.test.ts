@@ -7,7 +7,7 @@ import reducer from '../transactions';
 import { CoreTransactions, TransactionsListMap } from '../../state/index';
 
 import {
-  createTxAction,
+  createTransactionAction,
   transactionSent,
   transactionHashReceived,
   transactionEstimateError,
@@ -56,13 +56,14 @@ describe(`core: reducers (transactions)`, () => {
         options,
         params,
         status: TRANSACTION_STATUSES.READY,
+        metatransaction: false,
       }),
     }) as TransactionsListMap,
   });
 
   // Actions
 
-  const createdTx = createTxAction(id, from, {
+  const createdTx = createTransactionAction(id, from, {
     context,
     methodName,
     options,
@@ -130,6 +131,7 @@ describe(`core: reducers (transactions)`, () => {
                * Initial status is set to `READY`
                */
               status: 'READY',
+              metatransaction: false,
             });
           },
         ],
@@ -166,6 +168,7 @@ describe(`core: reducers (transactions)`, () => {
                * During sending the transaction is set to 'PENDING'
                */
               status: 'PENDING',
+              metatransaction: false,
             });
           },
         ],
@@ -202,6 +205,7 @@ describe(`core: reducers (transactions)`, () => {
                * During sending the transaction is set to 'PENDING'
                */
               status: 'PENDING',
+              metatransaction: false,
             });
           },
         ],
@@ -234,6 +238,7 @@ describe(`core: reducers (transactions)`, () => {
               params,
               receipt: expect.any(Object), // should have been set
               status: 'PENDING',
+              metatransaction: false,
             });
           },
         ],
@@ -270,6 +275,7 @@ describe(`core: reducers (transactions)`, () => {
                * If it went through successfully, it's set to `SUCCEEDED`
                */
               status: 'SUCCEEDED',
+              metatransaction: false,
             });
           },
         ],
@@ -318,6 +324,7 @@ describe(`core: reducers (transactions)`, () => {
                * If it failed, it's set to `failed`... obviously
                */
               status: 'FAILED',
+              metatransaction: false,
             });
           },
         ],
@@ -368,6 +375,7 @@ describe(`core: reducers (transactions)`, () => {
                * If it failed, it's set to `failed`... obviously
                */
               status: 'FAILED',
+              metatransaction: false,
             });
           },
         ],
@@ -419,6 +427,7 @@ describe(`core: reducers (transactions)`, () => {
                * If it failed, it's set to `failed`... obviously
                */
               status: 'FAILED',
+              metatransaction: false,
             });
           },
         ],
