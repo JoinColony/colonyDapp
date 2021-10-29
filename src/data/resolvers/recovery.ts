@@ -333,6 +333,7 @@ export const recoveryModeResolvers = ({
           variables: {
             colonyAddress,
           },
+          fetchPolicy: 'network-only',
         });
 
         /*
@@ -447,10 +448,6 @@ export const recoveryModeResolvers = ({
           ({ name }) => name === ColonyAndExtensionsEvents.RecoveryModeExited,
         );
 
-        /*
-         * @NOTE Leveraging apollo's internal cache yet again, so we don't
-         * re-fetch and re-parse both the server user and the recovery role events
-         */
         const usersWithRecoveryRoles = await apolloClient.query<
           RecoveryRolesUsersQuery,
           RecoveryRolesUsersQueryVariables
@@ -460,6 +457,7 @@ export const recoveryModeResolvers = ({
             colonyAddress,
             endBlockNumber: potentialExitEvent?.blockNumber,
           },
+          fetchPolicy: 'network-only',
         });
 
         if (usersWithRecoveryRoles?.data?.recoveryRolesUsers?.length) {
