@@ -14,16 +14,30 @@ import { filterUniqueAction } from '~utils/actions';
 import { getLoggedInUser } from '~data/index';
 import { takeFrom } from '~utils/saga/effects';
 import { TxConfig } from '~types/index';
-import { createTxAction } from '../../actionCreators';
+import { ContextModule, TEMP_getContext } from '~context/index';
+import { SlotKey } from '~context/userSettings';
+
+import { canUseMetatransactions } from '../../../users/checks';
+import { createTransactionAction } from '../../actionCreators';
 import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';
+import sendMetatransaction from './sendMetatransaction';
 
 export function* createTransaction(id: string, config: TxConfig) {
-  const { walletAddress } = yield getLoggedInUser();
+  const {
+    walletAddress,
+    networkId: userWalletNetworkId,
+  } = yield getLoggedInUser();
+  const userSettings = yield TEMP_getContext(ContextModule.UserSettings);
 
   if (!walletAddress) {
     throw new Error(
       'Could not create transaction. No current user address available',
+    );
+  }
+  if (!userWalletNetworkId) {
+    throw new Error(
+      `Could not create transaction. Cannot access the user's network from the wallet`,
     );
   }
 
@@ -31,16 +45,50 @@ export function* createTransaction(id: string, config: TxConfig) {
     throw new Error('Could not create transaction. No transaction id provided');
   }
 
-  yield put(createTxAction(id, walletAddress, config));
+  const metatransactionEnabled = userSettings.getSlotStorageAtKey(
+    SlotKey.Metatransactions,
+  );
+  const metatransactionsAvailable = canUseMetatransactions(userWalletNetworkId);
+  const shouldSendMetatransaction =
+    metatransactionsAvailable && metatransactionEnabled;
+
+  if (shouldSendMetatransaction) {
+    yield put(
+      createTransactionAction(id, walletAddress, {
+        ...config,
+        metatransaction:
+          /*
+           * This allows us to manually "force" a transaction to never be executed
+           * as a Metatransaction
+           *
+           * This is useful in places where we have transactions we don't want to
+           * pay for ourselves.
+           *
+           * However this is VERY DANGEROUS, so must be treated with the utmost care
+           * as it has very serious gas cost implications if the user is not aware
+           * they are sending a transaction on mainnet !!!
+           */
+          typeof config.metatransaction === 'boolean'
+            ? config.metatransaction
+            : true,
+      }),
+    );
+  } else {
+    yield put(createTransactionAction(id, walletAddress, config));
+  }
 
   // Create tasks for estimating and sending; the actions may be taken multiple times
-  const estimateGasTask = yield takeEvery(
-    filterUniqueAction(id, ActionTypes.TRANSACTION_ESTIMATE_GAS),
-    estimateGasCost,
-  );
-  const sendTask = yield takeEvery(
+  let estimateGasTask;
+  if (!shouldSendMetatransaction) {
+    estimateGasTask = yield takeEvery(
+      filterUniqueAction(id, ActionTypes.TRANSACTION_ESTIMATE_GAS),
+      estimateGasCost,
+    );
+  }
+
+  const sendTransactionTask = yield takeEvery(
     filterUniqueAction(id, ActionTypes.TRANSACTION_SEND),
-    sendTransaction,
+    shouldSendMetatransaction ? sendMetatransaction : sendTransaction,
   );
 
   // Wait for a success or cancel action before cancelling the tasks
@@ -50,7 +98,13 @@ export function* createTransaction(id: string, config: TxConfig) {
         action.type === ActionTypes.TRANSACTION_CANCEL) &&
       action.meta.id === id,
   );
-  yield cancel([estimateGasTask, sendTask]);
+
+  const tasks = [sendTransactionTask];
+  if (estimateGasTask) {
+    tasks.push(estimateGasCost);
+  }
+
+  yield cancel(tasks);
 }
 
 export function* getTxChannel(id: string) {
