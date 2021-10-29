@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { SlotKey, UserSettingsSlot } from '~context/userSettings';
 
@@ -14,15 +15,28 @@ export { SlotKey };
 
 export const useUserSettings = (): UserSettingsHook => {
   const userSettings = TEMP_getContext(ContextModule.UserSettings);
+
+  const [settingsState, updateSettingsState] = useState<UserSettingsSlot>(
+    userSettings.getStorageSlot() as UserSettingsSlot,
+  );
+
   const setSettingsKey = <K extends SlotKey>(
     key: K,
     value: UserSettingsSlot[K],
-  ): UserSettingsSlot[K] =>
-    userSettings.setSlotStorageAtKey(key, value) as UserSettingsSlot[K];
+  ): UserSettingsSlot[K] => {
+    const settingsKeyUpdate = userSettings.setSlotStorageAtKey(
+      key,
+      value,
+    ) as UserSettingsSlot[K];
+    updateSettingsState(userSettings.getStorageSlot() as UserSettingsSlot);
+    return settingsKeyUpdate;
+  };
+
   const getSettingsKey = <K extends SlotKey>(key: K): UserSettingsSlot[K] =>
-    userSettings.getSlotStorageAtKey(key) as UserSettingsSlot[K];
+    settingsState[key];
+
   return {
-    settings: userSettings.getStorageSlot() as UserSettingsSlot,
+    settings: settingsState,
     setSettingsKey,
     getSettingsKey,
   };
