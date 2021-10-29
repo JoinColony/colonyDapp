@@ -74,10 +74,6 @@ const getMotionEvents = (
         const { hash, timestamp, blockNumber } = event;
         return {
           ...event,
-          values: {
-            ...event.values,
-            stakeAmount: event.values.amount,
-          },
           type: ActionsPageFeedType.NetworkEvent,
           createdAt: timestamp || 0,
           blockNumber: blockNumber || 0,
@@ -603,14 +599,16 @@ export const motionsResolvers = ({
         });
 
         const userEvents = data?.motionVoteRevealedEvents.filter((event) =>
-          event.args.includes(userAddress.toLowerCase),
+          event.args.includes(userAddress.toLowerCase()),
         );
 
         if (userEvents?.length) {
-          const parsedEvent = parseSubgraphEvent(userEvents[0]);
+          const {
+            values: { vote },
+          } = parseSubgraphEvent(userEvents[0]);
           userVote = {
             revealed: true,
-            vote: parsedEvent.values.vote,
+            vote,
           };
         }
         return userVote;
@@ -665,8 +663,7 @@ export const motionsResolvers = ({
           );
 
           parsedEvents?.map(({ values: { vote, voter } }) => {
-            const currentUserVoted =
-              createAddress(voter) === createAddress(userAddress);
+            const currentUserVoted = voter === createAddress(userAddress);
             /*
              * @NOTE We're using this little hack in order to ensure, that if
              * the currently logged in user was one of the voters, that
@@ -676,16 +673,16 @@ export const motionsResolvers = ({
             if (currentUserVoted) {
               voteResult.currentUserVoteSide = vote;
             }
-            if (Number(vote) === MotionVote.Yay) {
-              voteResult.yayVoters[arrayMethod](createAddress(voter));
+            if (vote === MotionVote.Yay) {
+              voteResult.yayVoters[arrayMethod](voter);
             }
             /*
              * @NOTE We expressly declare NAY rather then using "else" to prevent
              * any other *unexpected* values coming from the chain messing up our
              * data (eg if vote was 2 due to weird issues)
              */
-            if (Number(vote) === MotionVote.Nay) {
-              voteResult.nayVoters[arrayMethod](createAddress(voter));
+            if (vote === MotionVote.Nay) {
+              voteResult.nayVoters[arrayMethod](voter);
             }
           });
         }
@@ -834,7 +831,7 @@ export const motionsResolvers = ({
         let stakesYay = bigNumberify(0);
         let stakesNay = bigNumberify(0);
         userStakeParsedEvents.map(({ values: { amount, vote } }) => {
-          if (Number(vote) === MotionVote.Yay) {
+          if (vote === MotionVote.Yay) {
             stakesYay = stakesYay.add(amount);
             return stakesYay;
           }
@@ -889,7 +886,7 @@ export const motionsResolvers = ({
          * parse the claim reward events
          */
         userRewardClaimedParsedEvents.map(({ values: { amount, vote } }) => {
-          if (Number(vote.toNumber) === MotionVote.Yay) {
+          if (vote === MotionVote.Yay) {
             stakingRewardYay = amount;
             return stakingRewardYay;
           }

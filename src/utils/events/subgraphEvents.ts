@@ -54,6 +54,7 @@ const addressArgumentParser = (values: {
   staker?: string;
   escalator?: string;
   recipient?: string;
+  voter?: string;
 }): {
   user?: Address;
   agent?: Address;
@@ -61,6 +62,7 @@ const addressArgumentParser = (values: {
   staker?: Address;
   escalator?: Address;
   recipient?: Address;
+  voter?: Address;
 } => {
   const parsedValues: {
     user?: Address;
@@ -70,7 +72,7 @@ const addressArgumentParser = (values: {
     escalator?: Address;
     recipient?: Address;
   } = {};
-  ['user', 'agent', 'creator', 'staker', 'escalator', 'recipient'].map(
+  ['user', 'agent', 'creator', 'staker', 'escalator', 'recipient', 'voter'].map(
     (propName) => {
       if (values[propName]) {
         parsedValues[propName] = createAddress(values[propName]);
@@ -133,6 +135,13 @@ const extensionArgumentParser = (values: {
   return parsedValues;
 };
 
+const motionArgumentparser = ({ amount, vote }) => {
+  return {
+    ...(amount ? { stakeAmount: bigNumberify(amount) } : {}),
+    ...(vote ? { vote: Number(vote) } : {}),
+  };
+};
+
 /*
  * Utility to parse events that come from the subgraph handler
  * into events that resemble the Log format that we get directly from the chain
@@ -159,10 +168,10 @@ export const parseSubgraphEvent = ({
      */
     values: {
       ...parsedArguments,
-      ...(parsedArguments.vote ? { vote: Number(parsedArguments.vote) } : {}),
       ...roleArgumentParser(parsedArguments),
       ...extensionArgumentParser(parsedArguments),
       ...addressArgumentParser(parsedArguments),
+      ...motionArgumentparser(parsedArguments),
     },
   };
   /*
@@ -193,7 +202,7 @@ export const parseSubgraphEvent = ({
     parsedEvent = {
       ...parsedEvent,
       ...(transactionHash && { hash: transactionHash }),
-      timestamp: block?.timestamp ? parseInt(block.timestamp, 10) * 1000 : 0,
+      timestamp: parseInt(block?.timestamp, 10) * 1000,
     };
   }
   return parsedEvent;
