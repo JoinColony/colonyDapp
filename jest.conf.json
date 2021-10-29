@@ -57,6 +57,14 @@
         "src/lib/subgraph",
         "src/lib/graph-node"
     ],
+    "watchPathIgnorePatterns": [
+        "node_modules",
+        "src/lib/colonyNetwork",
+        "src/lib/colonyServer",
+        "src/lib/mock-oracle",
+        "src/lib/subgraph",
+        "src/lib/graph-node"
+    ],
     "globals": {
         "ts-jest": {
             "diagnostics": false,
