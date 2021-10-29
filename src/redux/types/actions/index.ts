@@ -1,6 +1,9 @@
 import { CoinMachineActionTypes } from './coinMachine';
 import { ColonyActionTypes } from './colony';
 import { ColonyActionsActionTypes } from './colonyActions';
+/*
+ * @TODO REMOVE
+ */
 import { ColonyMetaActionsActionTypes } from './colonyMetaActions';
 import { MotionActionTypes } from './motion';
 import { GasPricesActionTypes } from './gasPrices';

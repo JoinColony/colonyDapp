@@ -39,6 +39,7 @@ export type TransactionActionTypes =
         | 'gasPrice'
         | 'gasLimit'
         | 'status'
+        | 'metatransaction'
       >,
       WithId
     >

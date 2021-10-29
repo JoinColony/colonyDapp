@@ -9,7 +9,7 @@ import {
   TRANSACTION_ERRORS,
 } from '~immutable/index';
 
-export const createTxAction = (
+export const createTransactionAction = (
   id: string,
   from: string,
   {
@@ -38,6 +38,7 @@ export const createTxAction = (
       ready === false
         ? TRANSACTION_STATUSES.CREATED
         : TRANSACTION_STATUSES.READY,
+    metatransaction: false,
   },
   meta: { id },
 });

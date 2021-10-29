@@ -44,6 +44,7 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
           status,
           gasPrice,
           gasLimit,
+          metatransaction,
         },
       } = action;
 
@@ -61,6 +62,7 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
         status,
         gasLimit,
         gasPrice,
+        metatransaction,
       } as TransactionRecordProps);
 
       return state.setIn(
