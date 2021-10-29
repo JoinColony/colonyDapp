@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -58,14 +58,9 @@ const UserAdvanceSettings = () => {
     setSettingsKey,
   } = useUserSettings();
 
-  const [metatransactionsToggle, setMetatransactionsToggle] = useState<boolean>(
-    metatransactionsSetting,
-  );
-
   const onChange = useCallback(
     (oldValue) => {
       setSettingsKey(SlotKey.Metatransactions, !oldValue);
-      setMetatransactionsToggle(!oldValue);
     },
     [setSettingsKey],
   );
@@ -75,7 +70,7 @@ const UserAdvanceSettings = () => {
   );
 
   const metatransasctionsAvailable = metatransasctionsToggleAvailable
-    ? metatransactionsToggle
+    ? metatransactionsSetting
     : false;
 
   return (
