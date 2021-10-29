@@ -21,11 +21,18 @@ export const hasRoot = (userRoles: ColonyRole[]) =>
 export const canArchitect = (userRoles: ColonyRole[]) =>
   userHasRole(userRoles, ColonyRole.Architecture);
 
+/*
+ * There's two conditions for the user to actually send metatransactions, rather
+ * than "normal" ones, besides the user actually turning them on/off
+ * 1. App needs to be deployed to Xdai, that's the only place the Broadcaster works
+ * (We also add QA Xdai, and if started in dev mode, the local Ganache network)
+ * 2. The wallet is connected to mainnet
+ */
 export const canUseMetatransactions = (userNetworkId: number): boolean => {
-  const isDeployedToUnsupportedNetwork =
+  const isDeployedToSupportedNetwork =
     DEFAULT_NETWORK === Network.Xdai ||
     DEFAULT_NETWORK === Network.XdaiFork ||
     (isDev && DEFAULT_NETWORK === Network.Local);
   const isUserWalletOnMainenet = userNetworkId === ETHEREUM_NETWORK.chainId;
-  return isDeployedToUnsupportedNetwork && isUserWalletOnMainenet;
+  return isDeployedToSupportedNetwork && isUserWalletOnMainenet;
 };
