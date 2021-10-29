@@ -21,7 +21,6 @@ import { canUseMetatransactions } from '../../../users/checks';
 import { createTransactionAction } from '../../actionCreators';
 import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';
-import sendMetatransaction from './sendMetatransaction';
 
 export function* createTransaction(id: string, config: TxConfig) {
   const {
@@ -88,7 +87,7 @@ export function* createTransaction(id: string, config: TxConfig) {
 
   const sendTransactionTask = yield takeEvery(
     filterUniqueAction(id, ActionTypes.TRANSACTION_SEND),
-    shouldSendMetatransaction ? sendMetatransaction : sendTransaction,
+    sendTransaction,
   );
 
   // Wait for a success or cancel action before cancelling the tasks
@@ -101,7 +100,7 @@ export function* createTransaction(id: string, config: TxConfig) {
 
   const tasks = [sendTransactionTask];
   if (estimateGasTask) {
-    tasks.push(estimateGasCost);
+    tasks.push(estimateGasTask);
   }
 
   yield cancel(tasks);
