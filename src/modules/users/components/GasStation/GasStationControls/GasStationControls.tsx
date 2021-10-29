@@ -9,7 +9,10 @@ import { ActionTypes } from '~redux/index';
 import { IconButton } from '~core/Button';
 import { ActionForm } from '~core/Fields';
 
-import { transactionEstimateGas } from '../../../../core/actionCreators';
+import {
+  transactionEstimateGas,
+  transactionSend,
+} from '../../../../core/actionCreators';
 
 import styles from './GasStationControls.css';
 
@@ -27,7 +30,9 @@ const validationSchema = yup.object().shape({
 
 const displayName = 'users.GasStation.GasStationControls';
 
-const GasStationControls = ({ transaction: { id, error } }: Props) => {
+const GasStationControls = ({
+  transaction: { id, error, metatransaction },
+}: Props) => {
   const dispatch = useDispatch();
   const transform = useCallback(withId(id), [id]);
 
@@ -42,9 +47,13 @@ const GasStationControls = ({ transaction: { id, error } }: Props) => {
    */
   useEffect(() => {
     if (!error) {
-      dispatch(transactionEstimateGas(id));
+      if (metatransaction) {
+        dispatch(transactionSend(id));
+      } else {
+        dispatch(transactionEstimateGas(id));
+      }
     }
-  }, [dispatch, id, error]);
+  }, [dispatch, id, error, metatransaction]);
 
   const initialFormValues: FormValues = { id };
 
