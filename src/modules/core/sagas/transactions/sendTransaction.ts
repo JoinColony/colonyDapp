@@ -120,12 +120,22 @@ async function getMetatransactionMethodPromise(
   console.log('Transaction message', message);
 
   const messageBuffer = Buffer.from(
-    // metatransactionMessage.replace('0x', ''),
     hexSequenceNormalizer(message, false),
     'hex',
   );
 
   const convertedBufferMessage = Array.from(messageBuffer);
+  /*
+   * Purser validator expects either a string or a Uint8Array. We convert this
+   * to a an array to make Metamask happy when signing the buffer.
+   *
+   * So in order to actually pass validation, both for Software and Metamask
+   * wallets we need to "fake" the array as actually being a Uint.
+   *
+   * Note this not affect the format of the data passed in to be signed,
+   * or the signature.
+   */
+  convertedBufferMessage.constructor = Uint8Array;
 
   // eslint-disable-next-line no-console
   console.log('Actual signature converted Buffer', convertedBufferMessage);
