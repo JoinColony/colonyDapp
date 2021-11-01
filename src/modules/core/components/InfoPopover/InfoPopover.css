@@ -1,5 +1,5 @@
 .main {
-  max-width: 430px;
+  max-width: 480px;
   font-size: var(--size-small);
 }
 
@@ -20,7 +20,6 @@
 }
 
 .displayName {
-  composes: inlineEllipsis from '~styles/text.css';
   margin: 0 0 6px 0;
   font-weight: var(--weight-bold);
   color: var(--colony-black);
@@ -44,30 +43,23 @@
 }
 
 .userName {
-  composes: inlineEllipsis from '~styles/text.css';
-  margin-bottom: 6px;
+  composes: inlineEllipsis from "~styles/text.css";
+  margin-bottom: 2px;
+  width: 100%;
 }
 
 .userName a {
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--pink);
 }
 
-.address {
-  margin-bottom: 6px;
+.address span {
+  font-size: var(--size-smallish);
 }
 
 .address button {
   height: auto;
-}
-
-.reputation {
-  display: flex;
-  align-items: baseline;
-}
-
-.reputationHeading {
-  margin-right: 8px;
 }
 
 .reputationHeading h4 {
@@ -95,11 +87,21 @@
   margin-top: 6px;
 }
 
-.reputationError {
-  color: var(--danger);
-}
-
 .etherscanLink {
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
+}
+
+.container {
+  display: flex;
+}
+
+.textContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  margin-left: 12px;
+  width: 100%;
+  overflow: hidden;
 }

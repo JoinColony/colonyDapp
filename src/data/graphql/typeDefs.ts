@@ -290,6 +290,11 @@ export default gql`
     maxReward: String!
   }
 
+  type UserDomainReputation {
+    domainId: Int!
+    reputationPercentage: String!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -313,6 +318,10 @@ export default gql`
       domainId: Int
       rootHash: String
     ): String!
+    userReputationForTopDomains(
+      address: String!
+      colonyAddress: String!
+    ): [UserDomainReputation!]!
     username(address: String!): String!
     networkContracts: NetworkContracts!
     colonyAction(

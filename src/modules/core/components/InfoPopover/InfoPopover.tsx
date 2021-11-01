@@ -2,8 +2,7 @@ import React, { ReactNode, useMemo } from 'react';
 import { PopperProps } from 'react-popper';
 
 import Popover from '~core/Popover';
-import { AnyUser, AnyToken } from '~data/index';
-import { Address } from '~types/index';
+import { AnyUser, AnyToken, Colony } from '~data/index';
 
 import MemberInfoPopover from './MemberInfoPopover';
 import TokenInfoPopover from './TokenInfoPopover';
@@ -19,7 +18,7 @@ interface BasicUserContentProps {
 }
 
 interface MemberContentProps {
-  colonyAddress?: Address;
+  colony?: Colony;
   domainId?: number | undefined;
   user?: AnyUser;
 }
@@ -51,16 +50,12 @@ const InfoPopover = ({
 }: Props) => {
   const renderContent = useMemo(() => {
     if (
-      'colonyAddress' in contentProps &&
-      typeof contentProps.colonyAddress !== 'undefined'
+      'colony' in contentProps &&
+      typeof contentProps.colony !== 'undefined'
     ) {
-      const { colonyAddress, domainId, user } = contentProps;
+      const { colony, domainId, user } = contentProps;
       return (
-        <MemberInfoPopover
-          colonyAddress={colonyAddress}
-          domainId={domainId}
-          user={user}
-        />
+        <MemberInfoPopover colony={colony} domainId={domainId} user={user} />
       );
     }
     if ('token' in contentProps && typeof contentProps.token !== 'undefined') {
