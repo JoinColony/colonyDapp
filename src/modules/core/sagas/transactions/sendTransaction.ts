@@ -1,13 +1,11 @@
 import { call, put, take } from 'redux-saga/effects';
 import { Contract } from 'ethers';
 import { TransactionResponse } from 'ethers/providers';
-import { BigNumber, splitSignature } from 'ethers/utils';
+import { splitSignature } from 'ethers/utils';
 import { soliditySha3 } from 'web3-utils';
 import {
   ContractClient,
   TransactionOverrides,
-  ClientType,
-  ColonyClient,
   Network,
 } from '@colony/colony-js';
 import abis from '@colony/colony-js/lib-esm/abis';
@@ -59,22 +57,10 @@ async function getMetatransactionMethodPromise(
   client: ContractClient,
   { methodName, params }: TransactionRecord,
 ): Promise<TransactionResponse> {
-  let availableNonce: BigNumber;
   const wallet = TEMP_getContext(ContextModule.Wallet);
   const { provider } = client;
 
-  if (client.clientType !== ClientType.ColonyClient) {
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-
-    const colonyAddress: string = await client.getColony();
-    const colonyClient: ColonyClient = await colonyManager.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
-    );
-    availableNonce = await colonyClient.getMetatransactionNonce(wallet.address);
-  } else {
-    availableNonce = await client.getMetatransactionNonce(wallet.address);
-  }
+  const availableNonce = await client.getMetatransactionNonce(wallet.address);
 
   // eslint-disable-next-line no-console
   console.log('Transaction to send', client.clientType, methodName, params);
