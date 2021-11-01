@@ -11,8 +11,9 @@ export interface UserSettingsSlot {
 }
 
 const defaultSlotValues: UserSettingsSlot = {
-  metatransactions: false,
+  metatransactions: true,
 };
+
 /**
  * @class UserSettings
  *
