@@ -27,7 +27,7 @@ const MSG = defineMessages({
   },
   team: {
     id: 'dashboard.AwardDialog.team',
-    defaultMessage: 'Team in which Reputation should be rewarded',
+    defaultMessage: 'Team in which Reputation should be awarded',
   },
   recipient: {
     id: 'dashboard.AwardDialog.recipient',
@@ -35,11 +35,11 @@ const MSG = defineMessages({
   },
   amount: {
     id: 'dashboard.AwardDialog.amount',
-    defaultMessage: 'Amount of reputation points to reward',
+    defaultMessage: 'Amount of reputation points to award',
   },
   annotation: {
     id: 'dashboard.AwardDialog.annotation',
-    defaultMessage: "Explain why you're rewarding the user (optional)",
+    defaultMessage: "Explain why you're awarding the user (optional)",
   },
   userPickerPlaceholder: {
     id: 'dashboard.AwardDialog.userPickerPlaceholder',
