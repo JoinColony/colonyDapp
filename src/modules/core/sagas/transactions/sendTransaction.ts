@@ -73,9 +73,8 @@ async function getMetatransactionMethodPromise(
    * since we can't encode with that helper, we'll have to either find a way around this
    * or just re-provide proofs (none of which is ideal)
    */
-  const normalizedMethodName = methodName.replace('WithProofs', '');
-  const encodedTransaction = client.interface.functions[
-    normalizedMethodName
+  const encodedTransaction = await client.interface.functions[
+    methodName
   ].encode([...params]);
 
   // eslint-disable-next-line no-console
