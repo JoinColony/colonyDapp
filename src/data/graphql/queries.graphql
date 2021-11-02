@@ -126,6 +126,10 @@ query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!
   }
 }
 
+query DomainBalance($colonyAddress: String!, $tokenAddress: String!, $domainId: Int!) {
+  domainBalance(colonyAddress: $colonyAddress, tokenAddress: $tokenAddress, domainId: $domainId) @client
+}
+
 query UserColonies($address: String!) {
   user(address: $address) {
     id

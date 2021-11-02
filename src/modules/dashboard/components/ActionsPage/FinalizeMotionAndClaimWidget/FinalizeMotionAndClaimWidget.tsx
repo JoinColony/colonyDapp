@@ -18,6 +18,7 @@ import {
   useMotionCurrentUserVotedQuery,
   useMotionFinalizedQuery,
   useMotionStakerRewardQuery,
+  useDomainBalanceQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { ColonyMotions } from '~types/index';
@@ -35,6 +36,9 @@ interface Props {
   actionType: string;
   scrollToRef?: RefObject<HTMLInputElement>;
   motionState: MotionState;
+  fromDomain: number;
+  motionAmount: string;
+  tokenAddress: string;
 }
 
 export const MSG = defineMessages({
@@ -111,6 +115,10 @@ export const MSG = defineMessages({
     id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.loading',
     defaultMessage: 'Loading motion rewards ...',
   },
+  finalizeError: {
+    id: 'dashboard.ActionsPage.FinalizeMotionAndClaimWidget.finalizeError',
+    defaultMessage: `There are insufficient funds in the domain to finalize this transaction. Please add more tokens and try again.`,
+  },
 });
 
 const FinalizeMotionAndClaimWidget = ({
@@ -120,6 +128,9 @@ const FinalizeMotionAndClaimWidget = ({
   actionType,
   scrollToRef,
   motionState,
+  fromDomain,
+  motionAmount,
+  tokenAddress,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const {
@@ -167,6 +178,29 @@ const FinalizeMotionAndClaimWidget = ({
     },
     fetchPolicy: 'network-only',
   });
+
+  const { data: domainBalanceData } = useDomainBalanceQuery({
+    variables: {
+      colonyAddress,
+      tokenAddress,
+      domainId: fromDomain,
+    },
+  });
+
+  const isFinalizable = useMemo(() => {
+    const domainBalance = bigNumberify(domainBalanceData?.domainBalance || '0');
+
+    if (
+      domainBalanceData !== undefined &&
+      fromDomain !== undefined &&
+      motionAmount !== undefined &&
+      domainBalance.lt(bigNumberify(motionAmount || '0'))
+    ) {
+      return false;
+    }
+
+    return true;
+  }, [domainBalanceData, motionAmount, fromDomain]);
 
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
@@ -273,30 +307,37 @@ const FinalizeMotionAndClaimWidget = ({
           onSuccess={handleSuccess}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
-            <div className={styles.itemWithForcedBorder}>
-              <div className={styles.label}>
-                <div>
-                  <FormattedMessage {...MSG.finalizeLabel} />
-                  <QuestionMarkTooltip
-                    tooltipText={MSG.finalizeTooltip}
-                    className={styles.help}
-                    tooltipClassName={styles.tooltip}
-                    tooltipPopperProps={{
-                      placement: 'right',
-                    }}
+            <>
+              <div className={styles.itemWithForcedBorder}>
+                <div className={styles.label}>
+                  <div>
+                    <FormattedMessage {...MSG.finalizeLabel} />
+                    <QuestionMarkTooltip
+                      tooltipText={MSG.finalizeTooltip}
+                      className={styles.help}
+                      tooltipClassName={styles.tooltip}
+                      tooltipPopperProps={{
+                        placement: 'right',
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className={styles.value}>
+                  <Button
+                    appearance={{ theme: 'primary', size: 'medium' }}
+                    text={MSG.finalizeButton}
+                    disabled={!hasRegisteredProfile || !isFinalizable}
+                    onClick={() => handleSubmit()}
+                    loading={isSubmitting}
                   />
                 </div>
               </div>
-              <div className={styles.value}>
-                <Button
-                  appearance={{ theme: 'primary', size: 'medium' }}
-                  text={MSG.finalizeButton}
-                  disabled={!hasRegisteredProfile}
-                  onClick={() => handleSubmit()}
-                  loading={isSubmitting}
-                />
-              </div>
-            </div>
+              {!isFinalizable && (
+                <div className={styles.finalizeError}>
+                  <FormattedMessage {...MSG.finalizeError} />
+                </div>
+              )}
+            </>
           )}
         </ActionForm>
       )}
@@ -429,8 +470,5 @@ const FinalizeMotionAndClaimWidget = ({
     </div>
   );
 };
-
-FinalizeMotionAndClaimWidget.displayName =
-  'dashboard.ActionsPage.FinalizeMotionAndClaimWidget';
 
 export default FinalizeMotionAndClaimWidget;
