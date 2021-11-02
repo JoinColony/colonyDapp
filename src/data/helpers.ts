@@ -23,9 +23,18 @@ import {
   UpdateNetworkContractsDocument,
 } from './index';
 
-export const getMinimalUser = (address: string): UserQuery['user'] => ({
+export const getMinimalUser = (
+  address: string,
+): UserQuery['user'] & {
+  __typename: string;
+  profile: { __typename: string };
+} => ({
+  __typename: 'User',
   id: address,
-  profile: { walletAddress: address },
+  profile: {
+    __typename: 'UserProfile',
+    walletAddress: address,
+  },
 });
 
 export const useUser = (address: Address) => {
