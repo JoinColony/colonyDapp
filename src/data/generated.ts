@@ -272,6 +272,7 @@ export type Query = {
   colonyMembersWithReputation?: Maybe<Array<Scalars['String']>>;
   colonyName: Scalars['String'];
   colonyReputation?: Maybe<Scalars['String']>;
+  domainBalance: Scalars['String'];
   domains: Array<SubgraphDomain>;
   events: Array<SubgraphEvent>;
   eventsForMotion: Array<ParsedEvent>;
@@ -376,6 +377,13 @@ export type QueryColonyNameArgs = {
 export type QueryColonyReputationArgs = {
   address: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryDomainBalanceArgs = {
+  colonyAddress: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  domainId: Scalars['Int'];
 };
 
 
@@ -1491,6 +1499,15 @@ export type TokenBalancesForDomainsQuery = { tokens: Array<(
     Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
     & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
   )> };
+
+export type DomainBalanceQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  domainId: Scalars['Int'];
+}>;
+
+
+export type DomainBalanceQuery = Pick<Query, 'domainBalance'>;
 
 export type UserColoniesQueryVariables = Exact<{
   address: Scalars['String'];
@@ -3212,6 +3229,39 @@ export function useTokenBalancesForDomainsLazyQuery(baseOptions?: Apollo.LazyQue
 export type TokenBalancesForDomainsQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsQuery>;
 export type TokenBalancesForDomainsLazyQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsLazyQuery>;
 export type TokenBalancesForDomainsQueryResult = Apollo.QueryResult<TokenBalancesForDomainsQuery, TokenBalancesForDomainsQueryVariables>;
+export const DomainBalanceDocument = gql`
+    query DomainBalance($colonyAddress: String!, $tokenAddress: String!, $domainId: Int!) {
+  domainBalance(colonyAddress: $colonyAddress, tokenAddress: $tokenAddress, domainId: $domainId) @client
+}
+    `;
+
+/**
+ * __useDomainBalanceQuery__
+ *
+ * To run a query within a React component, call `useDomainBalanceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDomainBalanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDomainBalanceQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      tokenAddress: // value for 'tokenAddress'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useDomainBalanceQuery(baseOptions?: Apollo.QueryHookOptions<DomainBalanceQuery, DomainBalanceQueryVariables>) {
+        return Apollo.useQuery<DomainBalanceQuery, DomainBalanceQueryVariables>(DomainBalanceDocument, baseOptions);
+      }
+export function useDomainBalanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DomainBalanceQuery, DomainBalanceQueryVariables>) {
+          return Apollo.useLazyQuery<DomainBalanceQuery, DomainBalanceQueryVariables>(DomainBalanceDocument, baseOptions);
+        }
+export type DomainBalanceQueryHookResult = ReturnType<typeof useDomainBalanceQuery>;
+export type DomainBalanceLazyQueryHookResult = ReturnType<typeof useDomainBalanceLazyQuery>;
+export type DomainBalanceQueryResult = Apollo.QueryResult<DomainBalanceQuery, DomainBalanceQueryVariables>;
 export const UserColoniesDocument = gql`
     query UserColonies($address: String!) {
   user(address: $address) {
