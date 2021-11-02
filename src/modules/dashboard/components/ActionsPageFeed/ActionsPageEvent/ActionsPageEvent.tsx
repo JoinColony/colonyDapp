@@ -395,12 +395,13 @@ const ActionsPageEvent = ({
                     </div>
                   </>
                 ),
-                backedSideTag: values?.vote?.eq(MotionVote.Yay)
-                  ? values.motionTag
-                  : values?.objectionTag,
+                backedSideTag:
+                  values?.vote === MotionVote.Yay
+                    ? values?.motionTag
+                    : values?.objectionTag,
                 voteSide: (
                   <FormattedMessage
-                    {...(values?.vote?.eq(MotionVote.Yay)
+                    {...(values?.vote === MotionVote.Yay
                       ? MSG.voteYes
                       : MSG.voteNo)}
                   />

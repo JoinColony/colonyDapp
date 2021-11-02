@@ -6,7 +6,7 @@ import {
   ColonyRole,
   ExtensionClient,
 } from '@colony/colony-js';
-import { BigNumber, BigNumberish } from 'ethers/utils';
+import { BigNumberish } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
@@ -23,6 +23,7 @@ import {
   Address,
 } from '~types/index';
 import { ActionsPageFeedType } from '~dashboard/ActionsPageFeed';
+import { MotionVote } from '~utils/colonyMotions';
 
 export interface EventValue {
   agent: Address;
@@ -41,7 +42,7 @@ export interface EventValue {
   creator: Address;
   role: ColonyRole;
   setTo: boolean;
-  vote: BigNumber;
+  vote: MotionVote;
 }
 
 export interface ProcessedEvent {
@@ -53,6 +54,7 @@ export interface ProcessedEvent {
   emmitedBy: ClientType;
   address: Address;
   transactionHash: string;
+  index?: string;
 }
 
 export const colonyActionsResolvers = ({
