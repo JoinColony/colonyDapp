@@ -2,10 +2,15 @@ import { LogDescription, id as topicId, bigNumberify } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
 import { SubgraphEvent, SubgraphTransaction, SubgraphBlock } from '~data/index';
-import { Address, SortDirection } from '~types/index';
+import {
+  Address,
+  SortDirection,
+  ColonyAndExtensionsEvents,
+} from '~types/index';
 
 import { createAddress } from '../web3';
 import { log } from '../debug';
+import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 /*
  * Needed to omit the unused `decode()` function as well as add
@@ -16,6 +21,8 @@ export type ExtendedLogDescription = Omit<LogDescription, 'decode'> & {
   blockNumber?: number;
   hash?: string;
   index?: string;
+  name: ColonyAndExtensionsEvents;
+  address: Address;
 };
 
 /*
@@ -47,6 +54,7 @@ const addressArgumentParser = (values: {
   staker?: string;
   escalator?: string;
   recipient?: string;
+  voter?: string;
 }): {
   user?: Address;
   agent?: Address;
@@ -54,6 +62,7 @@ const addressArgumentParser = (values: {
   staker?: Address;
   escalator?: Address;
   recipient?: Address;
+  voter?: Address;
 } => {
   const parsedValues: {
     user?: Address;
@@ -63,7 +72,7 @@ const addressArgumentParser = (values: {
     escalator?: Address;
     recipient?: Address;
   } = {};
-  ['user', 'agent', 'creator', 'staker', 'escalator', 'recipient'].map(
+  ['user', 'agent', 'creator', 'staker', 'escalator', 'recipient', 'voter'].map(
     (propName) => {
       if (values[propName]) {
         parsedValues[propName] = createAddress(values[propName]);
@@ -126,6 +135,13 @@ const extensionArgumentParser = (values: {
   return parsedValues;
 };
 
+const motionArgumentparser = ({ amount, vote }) => {
+  return {
+    ...(amount ? { stakeAmount: bigNumberify(amount) } : {}),
+    ...(vote ? { vote: Number(vote) } : {}),
+  };
+};
+
 /*
  * Utility to parse events that come from the subgraph handler
  * into events that resemble the Log format that we get directly from the chain
@@ -135,15 +151,17 @@ export const parseSubgraphEvent = ({
   args,
   transaction,
   id,
+  address,
 }: NormalizedSubgraphEvent): ExtendedLogDescription => {
   const blockNumber =
     transaction?.block?.number &&
     parseInt(transaction.block.number.replace('block_', ''), 10);
   const parsedArguments = JSON.parse(args);
   let parsedEvent: ExtendedLogDescription = {
-    name: name.substring(0, name.indexOf('(')),
+    name: name.substring(0, name.indexOf('(')) as ColonyAndExtensionsEvents,
     signature: name,
     topic: topicId(name),
+    address,
     ...(blockNumber && { blockNumber }),
     /*
      * Parse the normal values, and any specialized parsers we might have
@@ -153,6 +171,7 @@ export const parseSubgraphEvent = ({
       ...roleArgumentParser(parsedArguments),
       ...extensionArgumentParser(parsedArguments),
       ...addressArgumentParser(parsedArguments),
+      ...motionArgumentparser(parsedArguments),
     },
   };
   /*
@@ -183,17 +202,15 @@ export const parseSubgraphEvent = ({
     parsedEvent = {
       ...parsedEvent,
       ...(transactionHash && { hash: transactionHash }),
-      ...(block?.timestamp && {
-        timestamp: parseInt(block.timestamp, 10) * 1000,
-      }),
+      timestamp: parseInt(block?.timestamp, 10) * 1000,
     };
   }
   return parsedEvent;
 };
 
 export const sortSubgraphEventByIndex = (
-  firstEvent: ExtendedLogDescription,
-  secondEvent: ExtendedLogDescription,
+  firstEvent: ExtendedLogDescription | ProcessedEvent,
+  secondEvent: ExtendedLogDescription | ProcessedEvent,
   direction: SortDirection = SortDirection.ASC,
 ): number => {
   if (!firstEvent?.index || !secondEvent?.index) {

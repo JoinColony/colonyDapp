@@ -487,8 +487,8 @@ export const colonyResolvers = ({
             .sort(sortSubgraphEventByIndex);
 
           const roles = await formatColonyRoles(
-            colonyRoleEvents as LogDescription[],
-            recoveryRoleEvents as LogDescription[],
+            (colonyRoleEvents as unknown) as LogDescription[],
+            (recoveryRoleEvents as unknown) as LogDescription[],
           );
 
           return roles.map((userRoles) => ({
