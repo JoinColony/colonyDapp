@@ -1,6 +1,6 @@
 .container {
   padding: 5px 10px;
   font-size: var(--size-tiny);
-  line-height: 18px;
+  line-height: 16px;
   letter-spacing: 0.5px;
 }
