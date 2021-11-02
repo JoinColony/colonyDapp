@@ -3229,130 +3229,6 @@ export function useTokenBalancesForDomainsLazyQuery(baseOptions?: Apollo.LazyQue
 export type TokenBalancesForDomainsQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsQuery>;
 export type TokenBalancesForDomainsLazyQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsLazyQuery>;
 export type TokenBalancesForDomainsQueryResult = Apollo.QueryResult<TokenBalancesForDomainsQuery, TokenBalancesForDomainsQueryVariables>;
-export const UserColoniesDocument = gql`
-    query UserColonies($address: String!) {
-  user(address: $address) {
-    id
-    processedColonies @client {
-      id
-      avatarHash
-      avatarURL
-      colonyAddress
-      colonyName
-      displayName
-    }
-    colonyAddresses
-  }
-}
-    `;
-
-/**
- * __useUserColoniesQuery__
- *
-<<<<<<< HEAD
-=======
- * To run a query within a React component, call `useNetworkExtensionVersionQuery` and pass it any options that fit your needs.
- * When your component renders, `useNetworkExtensionVersionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNetworkExtensionVersionQuery({
- *   variables: {
- *      extensionId: // value for 'extensionId'
- *   },
- * });
- */
-export function useNetworkExtensionVersionQuery(baseOptions?: Apollo.QueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
-        return Apollo.useQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
-      }
-export function useNetworkExtensionVersionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>) {
-          return Apollo.useLazyQuery<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>(NetworkExtensionVersionDocument, baseOptions);
-        }
-export type NetworkExtensionVersionQueryHookResult = ReturnType<typeof useNetworkExtensionVersionQuery>;
-export type NetworkExtensionVersionLazyQueryHookResult = ReturnType<typeof useNetworkExtensionVersionLazyQuery>;
-export type NetworkExtensionVersionQueryResult = Apollo.QueryResult<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>;
-export const WhitelistedUsersDocument = gql`
-    query WhitelistedUsers($colonyAddress: String!) {
-  whitelistedUsers(colonyAddress: $colonyAddress) @client {
-    id
-    profile {
-      walletAddress
-    }
-  }
-}
-    `;
-
-/**
- * __useWhitelistedUsersQuery__
- *
- * To run a query within a React component, call `useWhitelistedUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useWhitelistedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useWhitelistedUsersQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useWhitelistedUsersQuery(baseOptions?: Apollo.QueryHookOptions<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>) {
-        return Apollo.useQuery<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>(WhitelistedUsersDocument, baseOptions);
-      }
-export function useWhitelistedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>) {
-          return Apollo.useLazyQuery<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>(WhitelistedUsersDocument, baseOptions);
-        }
-export type WhitelistedUsersQueryHookResult = ReturnType<typeof useWhitelistedUsersQuery>;
-export type WhitelistedUsersLazyQueryHookResult = ReturnType<typeof useWhitelistedUsersLazyQuery>;
-export type WhitelistedUsersQueryResult = Apollo.QueryResult<WhitelistedUsersQuery, WhitelistedUsersQueryVariables>;
-export const TokenBalancesForDomainsDocument = gql`
-    query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
-  tokens(addresses: $tokenAddresses) @client {
-    id
-    address
-    iconHash
-    decimals
-    name
-    symbol
-    balances(colonyAddress: $colonyAddress, domainIds: $domainIds) {
-      domainId
-      amount
-    }
-  }
-}
-    `;
-
-/**
- * __useTokenBalancesForDomainsQuery__
- *
- * To run a query within a React component, call `useTokenBalancesForDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTokenBalancesForDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTokenBalancesForDomainsQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *      tokenAddresses: // value for 'tokenAddresses'
- *      domainIds: // value for 'domainIds'
- *   },
- * });
- */
-export function useTokenBalancesForDomainsQuery(baseOptions?: Apollo.QueryHookOptions<TokenBalancesForDomainsQuery, TokenBalancesForDomainsQueryVariables>) {
-        return Apollo.useQuery<TokenBalancesForDomainsQuery, TokenBalancesForDomainsQueryVariables>(TokenBalancesForDomainsDocument, baseOptions);
-      }
-export function useTokenBalancesForDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenBalancesForDomainsQuery, TokenBalancesForDomainsQueryVariables>) {
-          return Apollo.useLazyQuery<TokenBalancesForDomainsQuery, TokenBalancesForDomainsQueryVariables>(TokenBalancesForDomainsDocument, baseOptions);
-        }
-export type TokenBalancesForDomainsQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsQuery>;
-export type TokenBalancesForDomainsLazyQueryHookResult = ReturnType<typeof useTokenBalancesForDomainsLazyQuery>;
-export type TokenBalancesForDomainsQueryResult = Apollo.QueryResult<TokenBalancesForDomainsQuery, TokenBalancesForDomainsQueryVariables>;
 export const DomainBalanceDocument = gql`
     query DomainBalance($colonyAddress: String!, $tokenAddress: String!, $domainId: Int!) {
   domainBalance(colonyAddress: $colonyAddress, tokenAddress: $tokenAddress, domainId: $domainId) @client
@@ -3406,7 +3282,6 @@ export const UserColoniesDocument = gql`
 /**
  * __useUserColoniesQuery__
  *
->>>>>>> Feat: add `DomainBalance` query, types & resolver
  * To run a query within a React component, call `useUserColoniesQuery` and pass it any options that fit your needs.
  * When your component renders, `useUserColoniesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
