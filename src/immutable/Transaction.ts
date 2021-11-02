@@ -26,6 +26,11 @@ export enum TRANSACTION_STATUSES {
   SUCCEEDED = 'SUCCEEDED',
 }
 
+export enum TRANSACTION_METHODS {
+  DeployToken = 'deployToken',
+  DeployTokenViaNetwork = 'deployTokenViaNetwork',
+}
+
 export interface TransactionError {
   type: TRANSACTION_ERRORS;
   message: string;
