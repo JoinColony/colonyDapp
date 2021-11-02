@@ -169,11 +169,14 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
     }
     case ActionTypes.TRANSACTION_SUCCEEDED: {
       const {
-        meta: { id },
+        meta: { id, metatransaction },
         payload: { eventData, deployedContractAddress },
       } = action;
       return state.mergeIn([CORE_TRANSACTIONS_LIST, id], {
-        deployedContractAddress,
+        deployedContractAddress: metatransaction
+          ? (eventData as { TokenDeployed: { tokenAddress: string } })
+              .TokenDeployed.tokenAddress
+          : deployedContractAddress,
         eventData,
         status: TRANSACTION_STATUSES.SUCCEEDED,
       });
