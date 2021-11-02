@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { DataValue, graphql } from '@apollo/client/react/hoc';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
+import { SlotKey } from '~context/userSettings';
 import { Address } from '~types/index';
 
 import {
@@ -22,6 +23,8 @@ import {
   UpdateNetworkContractsMutationVariables,
   UpdateNetworkContractsDocument,
 } from './index';
+
+import { canUseMetatransactions } from '../modules/users/checks';
 
 export const getMinimalUser = (
   address: string,
@@ -160,4 +163,24 @@ export function* updateNetworkContracts() {
     };
   };
   return networkContracts;
+}
+
+// Meant to be used as a saga in a proper context
+export function* getCanUserSendMetatransactions() {
+  const { networkId: userWalletNetworkId } = yield getLoggedInUser();
+
+  if (!userWalletNetworkId) {
+    throw new Error(
+      `Could not get user's metatransactions prefference. Cannot access the user's network from the wallet`,
+    );
+  }
+
+  const userSettings = yield TEMP_getContext(ContextModule.UserSettings);
+  const metatransactionEnabled = userSettings.getSlotStorageAtKey(
+    SlotKey.Metatransactions,
+  );
+
+  const metatransactionsAvailable = canUseMetatransactions(userWalletNetworkId);
+
+  return metatransactionsAvailable && metatransactionEnabled;
 }
