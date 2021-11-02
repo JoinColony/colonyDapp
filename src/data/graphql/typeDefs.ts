@@ -411,6 +411,11 @@ export default gql`
     whitelistAgreement(agreementHash: String!): String!
     whitelistAgreementHash(colonyAddress: String!): String
     hasKycPolicy(colonyAddress: String!): Boolean!
+    domainBalance(
+      colonyAddress: String!
+      tokenAddress: String!
+      domainId: Int!
+    ): String!
   }
 
   extend type Mutation {

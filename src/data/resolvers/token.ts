@@ -171,6 +171,20 @@ export const tokenResolvers = ({
       );
       return tokens.filter((token) => !!token);
     },
+    async domainBalance(_, { colonyAddress, tokenAddress, domainId }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+
+      const balance = await getBalanceForTokenAndDomain(
+        colonyClient,
+        tokenAddress,
+        domainId,
+      );
+
+      return balance.toString();
+    },
   },
   Token: {
     async balances(
