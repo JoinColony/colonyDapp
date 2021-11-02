@@ -11,45 +11,27 @@ import {
 
 import { ActionTypes } from '~redux/index';
 import { filterUniqueAction } from '~utils/actions';
-import { getLoggedInUser } from '~data/index';
+import { getLoggedInUser, getCanUserSendMetatransactions } from '~data/index';
 import { takeFrom } from '~utils/saga/effects';
 import { TxConfig } from '~types/index';
-import { ContextModule, TEMP_getContext } from '~context/index';
-import { SlotKey } from '~context/userSettings';
 
-import { canUseMetatransactions } from '../../../users/checks';
 import { createTransactionAction } from '../../actionCreators';
 import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';
 
 export function* createTransaction(id: string, config: TxConfig) {
-  const {
-    walletAddress,
-    networkId: userWalletNetworkId,
-  } = yield getLoggedInUser();
-  const userSettings = yield TEMP_getContext(ContextModule.UserSettings);
+  const { walletAddress } = yield getLoggedInUser();
+  const shouldSendMetatransaction = yield getCanUserSendMetatransactions();
 
   if (!walletAddress) {
     throw new Error(
       'Could not create transaction. No current user address available',
     );
   }
-  if (!userWalletNetworkId) {
-    throw new Error(
-      `Could not create transaction. Cannot access the user's network from the wallet`,
-    );
-  }
 
   if (!id) {
     throw new Error('Could not create transaction. No transaction id provided');
   }
-
-  const metatransactionEnabled = userSettings.getSlotStorageAtKey(
-    SlotKey.Metatransactions,
-  );
-  const metatransactionsAvailable = canUseMetatransactions(userWalletNetworkId);
-  const shouldSendMetatransaction =
-    metatransactionsAvailable && metatransactionEnabled;
 
   if (shouldSendMetatransaction) {
     yield put(
