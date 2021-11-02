@@ -82,6 +82,8 @@
     "transaction.group.restartColonyDeployment.setOneTxRoles.description": "Set OneTxPayment Extension Roles",
     "transaction.NetworkClient.deployToken.title": "Create Token",
     "transaction.NetworkClient.deployToken.description": "Create Token",
+    "transaction.NetworkClient.deployTokenViaNetwork.title": "Create Token",
+    "transaction.NetworkClient.deployTokenViaNetwork.description": "Create Token",
     "transaction.NetworkClient.createColony(address,uint256,string).title": "Create Colony",
     "transaction.NetworkClient.createColony(address,uint256,string).description": "Create Colony",
     "transaction.NetworkClient.createColony(address,uint256,string,string).title": "Create Colony",
