@@ -121,10 +121,11 @@ export const transactionSucceeded = (
     receipt: TransactionReceipt;
     deployedContractAddress?: string;
   },
+  metatransaction = false,
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_SUCCEEDED,
   payload,
-  meta: { id },
+  meta: { id, metatransaction },
 });
 
 export const transactionAddIdentifier = (
