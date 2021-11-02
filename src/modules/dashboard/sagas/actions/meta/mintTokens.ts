@@ -81,6 +81,17 @@ function* createMintTokensMetaAction({
     const convertedBufferMetatransactionMessage = Array.from(
       metatransactionMessageBuffer,
     );
+    /*
+     * Purser validator expects either a string or a Uint8Array. We convert this
+     * to a an array to make Metamask happy when signing the buffer.
+     *
+     * So in order to actually pass validation, both for Software and Metamask
+     * wallets we need to "fake" the array as actually being a Uint.
+     *
+     * Note this not affect the format of the data passed in to be signed,
+     * or the signature.
+     */
+    convertedBufferMetatransactionMessage.constructor = Uint8Array;
 
     // eslint-disable-next-line no-console
     console.log(
