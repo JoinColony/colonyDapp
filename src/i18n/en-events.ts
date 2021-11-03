@@ -10,9 +10,9 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.DomainAdded} {{initiator} added Team: {fromDomain}}
       ${ColonyAndExtensionsEvents.ColonyUpgraded} {This colony has upgraded to {newVersion}}
       ${ColonyAndExtensionsEvents.RecoveryModeEntered} {{initiator} activated Recovery Mode}
-      ${ColonyAndExtensionsEvents.RecoveryStorageSlotSet} {{initiator} submitted new value for slot {storageSlot}}
-      ${ColonyAndExtensionsEvents.RecoveryModeExitApproved} {{initiator} approved exiting}
-      ${ColonyAndExtensionsEvents.RecoveryModeExited} {{initiator} exited Recovery Mode}
+      ${ColonyAndExtensionsEvents.RecoveryStorageSlotSet} {{user} submitted new value for slot {storageSlot}}
+      ${ColonyAndExtensionsEvents.RecoveryModeExitApproved} {{user} approved exiting}
+      ${ColonyAndExtensionsEvents.RecoveryModeExited} {{user} exited Recovery Mode}
       ${ColonyAndExtensionsEvents.MotionCreated} {{initiator} created a {motionTag}}
       ${ColonyAndExtensionsEvents.MotionStaked} {{staker} backed the {backedSideTag} by staking {amountTag}}
       ${ColonyAndExtensionsEvents.MotionFinalized} {{motionTag} was finalized. Stakes may be claimed.}
