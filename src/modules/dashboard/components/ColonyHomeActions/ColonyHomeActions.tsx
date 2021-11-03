@@ -22,7 +22,7 @@ import NetworkContractUpgradeDialog from '~dialogs/NetworkContractUpgradeDialog'
 import EditColonyDetailsDialog from '~dialogs/EditColonyDetailsDialog';
 import ManageReputationDialog from '~dialogs/ManageReputationDialog';
 import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
-import SmiteDialog from '~dialogs/SmiteDialog';
+import { SmiteDialog, AwardDialog } from '~dashboard/AwardAndSmiteDialogs';
 
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
@@ -175,10 +175,20 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
     {
       component: ManageReputationDialog,
       props: {
-        nextStep: 'dashboard.SmiteDialog',
+        nextStepAwardReputation: 'dashboard.AwardDialog',
+        nextStepSmiteReputation: 'dashboard.SmiteDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
         isVotingExtensionEnabled,
+      },
+    },
+    {
+      component: AwardDialog,
+      props: {
+        prevStep: 'dashboard.ManageReputationDialog',
+        colony,
+        isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {
