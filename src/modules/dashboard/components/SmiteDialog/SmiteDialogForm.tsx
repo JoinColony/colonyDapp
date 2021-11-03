@@ -129,7 +129,7 @@ const SmiteDialogForm = ({
     hasRegisteredProfile && userHasRole(domainRoles, ColonyRole.Arbitration);
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
-    colony.colonyAddress,
+    colonyAddress,
     hasRoles,
     isVotingExtensionEnabled,
     values.forceAction,
@@ -201,7 +201,7 @@ const SmiteDialogForm = ({
   >(
     (option) => {
       const value = option ? option.value : undefined;
-      const domain = colony.domains.find(
+      const domain = domains.find(
         ({ ethDomainId }) => Number(value) === ethDomainId,
       ) as OneDomain;
       return (
@@ -214,7 +214,7 @@ const SmiteDialogForm = ({
         </div>
       );
     },
-    [values, colonyAddress, colony.domains],
+    [values, colonyAddress, domains],
   );
 
   useEffect(() => {
