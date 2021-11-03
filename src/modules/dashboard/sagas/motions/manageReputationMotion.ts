@@ -45,16 +45,18 @@ function* manageReputationMotion({
      */
     if (!userAddress) {
       throw new Error(
-        'A user address is required to manage the reputation this user',
+        'A user address is required to manage the reputation of the user',
       );
     }
     if (!domainId) {
       throw new Error(
-        'Domain id not set for manage the reputation transaction',
+        'A domain id is required to manage the reputation of the user',
       );
     }
     if (!amount) {
-      throw new Error('Amount not set for manage the reputation transaction');
+      throw new Error(
+        'A reputation amount is required to manage the reputation of the user',
+      );
     }
 
     const context = TEMP_getContext(ContextModule.ColonyManager);
