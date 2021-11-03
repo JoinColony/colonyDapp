@@ -1,12 +1,13 @@
 import { call, put, take } from 'redux-saga/effects';
 import { Contract } from 'ethers';
 import { TransactionResponse } from 'ethers/providers';
-import { splitSignature } from 'ethers/utils';
+import { BigNumberish, splitSignature } from 'ethers/utils';
 import { soliditySha3 } from 'web3-utils';
 import {
   ContractClient,
   TransactionOverrides,
   Network,
+  ClientType,
 } from '@colony/colony-js';
 import abis from '@colony/colony-js/lib-esm/abis';
 import { hexSequenceNormalizer } from '@purser/core';
@@ -60,10 +61,12 @@ async function getMethodTransactionPromise(
 
 async function getMetatransactionMethodPromise(
   client: ContractClient,
-  { methodName, params, identifier }: TransactionRecord,
+  { methodName, params, identifier: colonyAddress }: TransactionRecord,
 ): Promise<TransactionResponse> {
   const wallet = TEMP_getContext(ContextModule.Wallet);
-  const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
+  const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+  const { networkClient } = colonyManager;
+  const { address: userAddress } = wallet;
 
   let normalizedMethodName: string = methodName;
   let normalizedClient: ContractClient = client;
@@ -86,7 +89,7 @@ async function getMetatransactionMethodPromise(
       const [tokenAddress, allowedToTransfer] = params;
       normalizedParams = [
         tokenAddress,
-        identifier as string,
+        colonyAddress as string,
         allowedToTransfer,
       ];
       break;
@@ -96,9 +99,27 @@ async function getMetatransactionMethodPromise(
   }
 
   const { provider } = normalizedClient;
-  const availableNonce = await normalizedClient.getMetatransactionNonce(
-    wallet.address,
-  );
+
+  /*
+   * If we're using a contract that's not really a contract, like TokenClient
+   * (which is a client we added in colonyJS), which doesn't have a getMetatransactionNonce call
+   * we need to make sure to always get a nonce.
+   *
+   * For this, if the client we're going to query doesn't have such a call, then we
+   * fall back to fetching that value from the colony client
+   */
+  let availableNonce: BigNumberish;
+  try {
+    availableNonce = await normalizedClient.getMetatransactionNonce(
+      userAddress,
+    );
+  } catch (error) {
+    const colonyClient = await colonyManager.getClient(
+      ClientType.ColonyClient,
+      colonyAddress,
+    );
+    availableNonce = await colonyClient.getMetatransactionNonce(userAddress);
+  }
 
   // eslint-disable-next-line no-console
   console.log(
@@ -180,7 +201,7 @@ async function getMetatransactionMethodPromise(
   const broadcastData = JSON.stringify({
     target: normalizedClient.address,
     payload: encodedTransaction,
-    userAddress: wallet.address,
+    userAddress,
     r,
     s,
     v,
