@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -12,7 +12,7 @@ import { ActionForm } from '~core/Fields';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { useMembersSubscription } from '~data/index';
+import { useMembersSubscription, useLoggedInUser } from '~data/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
 
@@ -126,6 +126,22 @@ const SmiteDialog = ({
     [totalReputationData],
   );
 
+  const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
+
+  const selectedUser = useMemo(() => {
+    if (!colonyMembers) {
+      return undefined;
+    }
+
+    if (colonyMembers.subscribedUsers.length === 1) {
+      return colonyMembers.subscribedUsers[0];
+    }
+
+    return colonyMembers.subscribedUsers[0].id === loggedInUserWalletAddress
+      ? colonyMembers.subscribedUsers[1]
+      : colonyMembers.subscribedUsers[0];
+  }, [colonyMembers, loggedInUserWalletAddress]);
+
   return (
     <ActionForm
       initialValues={{
@@ -134,11 +150,12 @@ const SmiteDialog = ({
           ? ROOT_DOMAIN_ID
           : ethDomainId
         ).toString(),
-        user: undefined,
+        user: selectedUser,
         amount: undefined,
         annotation: undefined,
         motionDomainId: ROOT_DOMAIN_ID,
       }}
+      enableReinitialize
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
       success={getFormAction('SUCCESS')}
