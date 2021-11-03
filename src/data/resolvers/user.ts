@@ -15,11 +15,7 @@ import ENS from '~lib/ENS';
 import ColonyManager from '~lib/ColonyManager';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
-import {
-  calculatePercentageReputation,
-  DECIMAL_PLACES,
-  ZeroValue,
-} from '~utils/reputation';
+import { calculatePercentageReputation, ZeroValue } from '~utils/reputation';
 import {
   Transfer,
   SubgraphColoniesQuery,
@@ -251,7 +247,6 @@ export const userResolvers = ({
               userReputation.domainId,
             );
             const reputationPercentage = calculatePercentageReputation(
-              DECIMAL_PLACES,
               userReputation.reputationAmount?.toString(),
               totalColonyReputation.toString(),
             );
