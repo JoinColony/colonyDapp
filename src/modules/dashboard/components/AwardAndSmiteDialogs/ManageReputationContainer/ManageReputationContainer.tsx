@@ -1,0 +1,180 @@
+import React, { useCallback, useState } from 'react';
+import { FormikProps } from 'formik';
+import * as yup from 'yup';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { useHistory } from 'react-router-dom';
+import Decimal from 'decimal.js';
+import { defineMessages } from 'react-intl';
+
+import Dialog from '~core/Dialog';
+import { ActionForm } from '~core/Fields';
+
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { ActionTypes } from '~redux/index';
+import { useMembersSubscription } from '~data/index';
+import { pipe, withMeta, mapPayload } from '~utils/actions';
+import { useSelectedUser } from '~utils/hooks/useSelectedUser';
+
+import DialogForm, {
+  AwardAndSmiteDialogProps,
+  AwardAndSmiteDialogFormValues,
+} from '../AwardAndSmiteDialogForm';
+
+const displayName = 'dashboard.ManageReputationContainer';
+
+const MSG = defineMessages({
+  amountZero: {
+    id: 'dashboard.ManageReputationContainer.amountZero',
+    defaultMessage: 'Amount must be greater than zero',
+  },
+});
+
+const ManageReputationContainer = ({
+  colony: { colonyAddress, colonyName, tokens, nativeTokenAddress },
+  colony,
+  isVotingExtensionEnabled,
+  callStep,
+  prevStep,
+  cancel,
+  close,
+  ethDomainId,
+  formMSG,
+  isSmitingReputation,
+}: AwardAndSmiteDialogProps) => {
+  const [isForce, setIsForce] = useState(false);
+  const [totalReputationData, setTotalReputationData] = useState<
+    string | undefined
+  >(undefined);
+  const [userReputation, setUserReputation] = useState(0);
+  const history = useHistory();
+
+  const { data: colonyMembers } = useMembersSubscription({
+    variables: { colonyAddress },
+  });
+
+  const updateReputationCallback = (
+    userRepPercentage: number,
+    totalRep?: string,
+  ) => {
+    setTotalReputationData(totalRep);
+    setUserReputation(userRepPercentage);
+  };
+
+  const getFormAction = useCallback(
+    (actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS') => {
+      const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+
+      return isVotingExtensionEnabled && !isForce
+        ? ActionTypes[`COLONY_MOTION_MANAGE_REPUTATION${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_MANAGE_REPUTATION${actionEnd}`];
+    },
+    [isVotingExtensionEnabled, isForce],
+  );
+
+  const defaultValidationSchema = yup.object().shape({
+    domainId: yup.number().required(),
+    user: yup.object().shape({
+      profile: yup.object().shape({
+        walletAddress: yup.string().address().required(),
+      }),
+    }),
+    amount: yup
+      .number()
+      .required()
+      .moreThan(0, () => MSG.amountZero),
+    annotation: yup.string().max(4000),
+    forceAction: yup.boolean(),
+    motionDomainId: yup.number(),
+  });
+  let smiteValidationSchema;
+
+  if (isSmitingReputation) {
+    const amountValidationSchema = yup
+      .object()
+      .shape({ amount: yup.number().max(userReputation) })
+      .required();
+    smiteValidationSchema = defaultValidationSchema.concat(
+      amountValidationSchema,
+    );
+  }
+
+  const nativeToken = tokens.find(
+    (token) => token.address === nativeTokenAddress,
+  );
+  const nativeTokenDecimals = nativeToken?.decimals || DEFAULT_TOKEN_DECIMALS;
+
+  const transform = useCallback(
+    pipe(
+      mapPayload(({ amount, domainId, annotation, user, motionDomainId }) => {
+        const reputationChangeAmount = new Decimal(amount)
+          .mul(new Decimal(10).pow(nativeTokenDecimals))
+          // Smite amount needs to be negative, otherwise leave it as it is
+          .mul(isSmitingReputation ? -1 : 1);
+
+        return {
+          colonyAddress,
+          colonyName,
+          domainId,
+          userAddress: user.profile.walletAddress,
+          annotationMessage: annotation,
+          amount: reputationChangeAmount.toString(),
+          motionDomainId,
+        };
+      }),
+      withMeta({ history }),
+    ),
+    [totalReputationData, isSmitingReputation],
+  );
+
+  const selectedUser = useSelectedUser(colonyMembers);
+
+  return (
+    <ActionForm
+      initialValues={{
+        forceAction: false,
+        domainId: (ethDomainId === 0 || ethDomainId === undefined
+          ? ROOT_DOMAIN_ID
+          : ethDomainId
+        ).toString(),
+        user: selectedUser,
+        amount: undefined,
+        annotation: undefined,
+        motionDomainId: ROOT_DOMAIN_ID,
+      }}
+      enableReinitialize
+      submit={getFormAction('SUBMIT')}
+      error={getFormAction('ERROR')}
+      success={getFormAction('SUCCESS')}
+      validationSchema={smiteValidationSchema || defaultValidationSchema}
+      onSuccess={close}
+      transform={transform}
+    >
+      {(formValues: FormikProps<AwardAndSmiteDialogFormValues>) => {
+        if (formValues.values.forceAction !== isForce) {
+          setIsForce(formValues.values.forceAction);
+        }
+        return (
+          <Dialog cancel={cancel}>
+            <DialogForm
+              {...formValues}
+              colony={colony}
+              nativeTokenDecimals={nativeTokenDecimals}
+              isVotingExtensionEnabled={isVotingExtensionEnabled}
+              back={() => callStep(prevStep)}
+              ethDomainId={ethDomainId}
+              updateReputation={
+                isSmitingReputation ? updateReputationCallback : undefined
+              }
+              formMSG={formMSG}
+              isSmitingReputation={isSmitingReputation}
+            />
+          </Dialog>
+        );
+      }}
+    </ActionForm>
+  );
+};
+
+ManageReputationContainer.displayName = displayName;
+
+export default ManageReputationContainer;
