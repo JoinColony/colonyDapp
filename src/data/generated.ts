@@ -1322,6 +1322,7 @@ export type ColonyExtensionDetails = {
 
 export type SubgraphColonyExtension = {
   id: Scalars['String'];
+<<<<<<< HEAD
   hash: Scalars['String'];
 };
 
@@ -1388,6 +1389,8 @@ export type ParsedMotionStakedEventValues = {
 export type ParsedMotionStakedEvent = {
   address: Scalars['String'];
   blockNumber: Scalars['Int'];
+=======
+>>>>>>> Fix: SubgraphColonyExtension query types
   hash: Scalars['String'];
   index: Scalars['String'];
   name: Scalars['String'];
@@ -6775,12 +6778,39 @@ export function useVotingStateQuery(baseOptions?: Apollo.QueryHookOptions<Voting
 export function useVotingStateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VotingStateQuery, VotingStateQueryVariables>) {
           return Apollo.useLazyQuery<VotingStateQuery, VotingStateQueryVariables>(VotingStateDocument, baseOptions);
         }
+<<<<<<< HEAD
 export type VotingStateQueryHookResult = ReturnType<typeof useVotingStateQuery>;
 export type VotingStateLazyQueryHookResult = ReturnType<typeof useVotingStateLazyQuery>;
 export type VotingStateQueryResult = Apollo.QueryResult<VotingStateQuery, VotingStateQueryVariables>;
 export const MotionCurrentUserVotedDocument = gql`
     query MotionCurrentUserVoted($motionId: Int!, $colonyAddress: String!, $userAddress: String!) {
   motionCurrentUserVoted(motionId: $motionId, colonyAddress: $colonyAddress, userAddress: $userAddress) @client
+=======
+export type ColonyAddressQueryHookResult = ReturnType<typeof useColonyAddressQuery>;
+export type ColonyAddressLazyQueryHookResult = ReturnType<typeof useColonyAddressLazyQuery>;
+export type ColonyAddressQueryResult = Apollo.QueryResult<ColonyAddressQuery, ColonyAddressQueryVariables>;
+export const SubgraphColonyDocument = gql`
+    query SubgraphColony($address: String!) {
+  colony(id: $address) {
+    id
+    colonyChainId
+    ensName
+    metadata
+    metadataHistory {
+      id
+      metadata
+    }
+    token {
+      tokenAddress: id
+      decimals
+      symbol
+    }
+    extensions {
+      address: id
+      hash
+    }
+  }
+>>>>>>> Fix: SubgraphColonyExtension query types
 }
     `;
 
