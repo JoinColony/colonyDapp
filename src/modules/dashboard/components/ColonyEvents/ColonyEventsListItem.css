@@ -110,7 +110,6 @@
 }
 
 .tooltip span {
-  vertical-align: text-top;
   font-size: var(--size-tiny);
 }
 
