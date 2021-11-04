@@ -50,7 +50,7 @@ interface Props extends ActionDialogProps {
     userPercentageReputation: number,
     totalRep?: string,
   ) => void;
-  isAwardingReputation?: boolean;
+  isSmitingReputation?: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -73,7 +73,7 @@ const SmiteDialogForm = ({
   isVotingExtensionEnabled,
   nativeTokenDecimals,
   formMSG,
-  isAwardingReputation,
+  isSmitingReputation,
 }: Props & FormikProps<AwardAndSmiteDialogFormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
@@ -297,7 +297,7 @@ const SmiteDialogForm = ({
             }}
             elementOnly
             maxButtonParams={
-              !isAwardingReputation
+              isSmitingReputation
                 ? {
                     fieldName: 'amount',
                     maxAmount: String(unformattedUserReputationAmount),
