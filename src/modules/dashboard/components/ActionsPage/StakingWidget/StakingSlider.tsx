@@ -84,7 +84,7 @@ const StakingSlider = ({
   const maxStake = new Decimal(maxUserStake);
 
   const userStakeLimitPercentage = remainingToStake.lte(minUserStake)
-    ? 0
+    ? new Decimal(0)
     : (maxStake.gte(userActivatedTokens) ? userActivatedTokens : maxStake)
         .minus(minUserStake)
         .div(remainingToStake.minus(minUserStake));
@@ -160,7 +160,7 @@ const StakingSlider = ({
         <Slider
           name="amount"
           value={values.amount}
-          limit={parseFloat(userStakeLimitPercentage.toFixed(5))}
+          limit={userStakeLimitPercentage}
           step={0.01}
           min={0}
           max={100}
