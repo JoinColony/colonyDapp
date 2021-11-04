@@ -272,10 +272,16 @@ export const userResolvers = ({
         const topUserReputations = [...filteredUserReputations]
           .sort((reputationA, reputationB) => {
             const safeReputationA = new Decimal(
-              reputationA.reputationPercentage || 0,
+              reputationA?.reputationPercentage &&
+              reputationA?.reputationPercentage !== ZeroValue.NearZero
+                ? reputationA.reputationPercentage
+                : 0,
             );
             const safeReputationB = new Decimal(
-              reputationB.reputationPercentage || 0,
+              reputationB?.reputationPercentage &&
+              reputationB?.reputationPercentage !== ZeroValue.NearZero
+                ? reputationB.reputationPercentage
+                : 0,
             );
 
             if (safeReputationB.eq(safeReputationA)) {
