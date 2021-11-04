@@ -24,7 +24,6 @@ export default gql`
 
   type SubgraphColonyExtension {
     id: String!
-    address: String!
     hash: String!
   }
 
