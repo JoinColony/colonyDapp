@@ -52,11 +52,19 @@
 
 .rightArrowDisplay {
   display: inline-block;
-  margin: -11px 3px -6px 15px;
+  margin: -11px 3px -3px 15px;
   vertical-align: middle;
   font-size: var(--size-medium);
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+  only screen and (min-resolution: 192dpi),
+only screen and (min-resolution: 2dppx) {
+  .rightArrowDisplay {
+    margin: -11px 3px -6px 15px;
+  }
 }
 
 .caretIcon {
