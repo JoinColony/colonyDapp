@@ -52,7 +52,7 @@
 
 .rightArrowDisplay {
   display: inline-block;
-  margin: -11px 3px 0 15px;
+  margin: -11px 3px -6px 15px;
   vertical-align: middle;
   font-size: var(--size-medium);
   font-weight: var(--weight-bold);
