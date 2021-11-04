@@ -10,7 +10,8 @@ export const useSelectedUser = (colonyMembers) => {
       return undefined;
     }
 
-    const [firstSubscriber, secondSubscriber] = colonyMembers?.subscribedUsers;
+    const [firstSubscriber, secondSubscriber] =
+      colonyMembers?.subscribedUsers || [];
 
     if (!secondSubscriber) {
       return firstSubscriber;
