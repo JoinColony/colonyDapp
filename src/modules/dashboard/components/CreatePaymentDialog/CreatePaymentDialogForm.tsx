@@ -437,7 +437,6 @@ const CreatePaymentDialogForm = ({
                 label={MSG.token}
                 tokens={tokens}
                 name="tokenAddress"
-                ß
                 elementOnly
                 appearance={{ alignOptions: 'right', theme: 'grey' }}
                 disabled={inputDisabled}
