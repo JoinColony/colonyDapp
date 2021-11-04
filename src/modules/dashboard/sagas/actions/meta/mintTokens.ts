@@ -13,7 +13,7 @@ import { signMessage } from '../../../../core/sagas/messages';
 
 /*
  * @TODO This is not a real action saga... yet
- * It's just being used as an example to be able generate a basic metatransactions
+ * It's just being used as an example to be able generate a basic metatransaction
  *
  * The rest of the content for this saga will be added by
  * https://github.com/JoinColony/colonyDapp/pull/2779 which will also add a bunch
