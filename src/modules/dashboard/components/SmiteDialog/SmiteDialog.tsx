@@ -133,13 +133,15 @@ const SmiteDialog = ({
       return undefined;
     }
 
-    if (colonyMembers.subscribedUsers.length === 1) {
-      return colonyMembers.subscribedUsers[0];
+    const [firstSubscriber, secondSubscriber] = colonyMembers?.subscribedUsers;
+
+    if (!secondSubscriber) {
+      return firstSubscriber;
     }
 
-    return colonyMembers.subscribedUsers[0].id === loggedInUserWalletAddress
-      ? colonyMembers.subscribedUsers[1]
-      : colonyMembers.subscribedUsers[0];
+    return firstSubscriber.profile.walletAddress === loggedInUserWalletAddress
+      ? secondSubscriber
+      : firstSubscriber;
   }, [colonyMembers, loggedInUserWalletAddress]);
 
   return (
