@@ -124,7 +124,7 @@ const MemberInfoPopover = ({
             <UserReputation
               colony={colony}
               userReputationForTopDomains={
-                userReputationData.userReputationForTopDomains
+                userReputationData?.userReputationForTopDomains || []
               }
               isCurrentUserReputation={
                 currentUserWalletAddress === walletAddress
