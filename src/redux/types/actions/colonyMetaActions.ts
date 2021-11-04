@@ -14,7 +14,7 @@ import {
  * @NOTE About naming
  * I couldn't come up with anything better, as we already have ColonyActionTypes :(
  */
-export type ColonyMetaActionsActionTypes =
+export type ColonyMetaActionTypes =
   | UniqueActionType<
       ActionTypes.META_MINT_TOKENS,
       {
