@@ -4,7 +4,7 @@ import { WizardDialogType } from '~utils/hooks';
 import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { Address } from '~types/index';
 
-export interface AwardAndSmiteDialogFormValues {
+export interface ManageReputationDialogFormValues {
   forceAction: boolean;
   domainId: string;
   user: { profile: { walletAddress: Address } };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { AwardAndSmiteDialogProps } from '../AwardAndSmiteDialogForm';
+import { AwardAndSmiteDialogProps } from '../types';
 import ManageReputationContainer from '../ManageReputationContainer';
 
 const displayName = 'dashboard.AwardDialog';
