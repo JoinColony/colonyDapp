@@ -7,6 +7,7 @@ export default gql`
       first: Int
       where: EventsFilter
       orderDirection: String
+      block: ToBlockInput
     ): [SubgraphEvent!]!
   }
 `;

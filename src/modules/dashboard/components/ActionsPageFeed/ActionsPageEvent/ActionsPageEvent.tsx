@@ -363,7 +363,12 @@ const ActionsPageEvent = ({
                     <FriendlyName user={initiator} autoShrinkAddress />
                   </span>
                 ),
-                storageSlot: values?.slot?.toHexString(),
+                user: (
+                  <span className={styles.userDecoration}>
+                    <FriendlyName user={initiator} autoShrinkAddress />
+                  </span>
+                ),
+                storageSlot: values?.slot,
                 amountTag: (
                   <div className={styles.amountTag}>
                     <Tag

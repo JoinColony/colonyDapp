@@ -1,5 +1,6 @@
-query SubgraphRoleEvents($colonyAddress: String!) {
+query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!) {
   colonyRoleSetEvents: events(
+    block: { number: $toBlock }
     where: {
       name_contains: "ColonyRoleSet"
       address: $colonyAddress
@@ -20,6 +21,7 @@ query SubgraphRoleEvents($colonyAddress: String!) {
     }
   }
   recoveryRoleSetEvents: events(
+    block: { number: $toBlock }
     where: {
       name_contains: "RecoveryRoleSet"
       address: $colonyAddress

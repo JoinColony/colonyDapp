@@ -1,17 +1,13 @@
-import { Resolvers } from '@apollo/client';
+import { ApolloClient, Resolvers } from '@apollo/client';
 import {
   ClientType,
-  getBlockTime,
-  getLogs,
   ColonyClientV5,
   ColonyClientV6,
-  getMultipleEvents,
   ColonyRole,
   ColonyVersion,
 } from '@colony/colony-js';
-import { Log } from 'ethers/providers';
-import { LogDescription } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
+import { Provider } from 'ethers/providers';
 
 import { Context } from '~context/index';
 import {
@@ -29,9 +25,20 @@ import {
   GetRecoveryRequiredApprovalsQuery,
   GetRecoveryRequiredApprovalsQueryVariables,
   GetRecoveryRequiredApprovalsDocument,
+  SubgraphRecoveryModeEventsDocument,
+  SubgraphRecoveryModeEventsQuery,
+  SubgraphRecoveryModeEventsQueryVariables,
+  SubgraphRecoveryModeExitedEventsDocument,
+  SubgraphRecoveryModeExitedEventsQuery,
+  SubgraphRecoveryModeExitedEventsQueryVariables,
+  SubgraphRoleEventsDocument,
+  SubgraphRoleEventsQuery,
+  SubgraphRoleEventsQueryVariables,
+  SubgraphBlockDocument,
+  SubgraphBlockQuery,
+  SubgraphBlockQueryVariables,
 } from '~data/index';
 
-import { ProcessedEvent } from './colonyActions';
 import {
   ActionsPageFeedType,
   SystemMessage,
@@ -40,80 +47,121 @@ import {
 import { ensureHexPrefix } from '~utils/strings';
 import { halfPlusOne } from '~utils/numbers';
 import { ColonyAndExtensionsEvents } from '~types/index';
+import {
+  ExtendedLogDescription,
+  parseSubgraphEvent,
+  sortSubgraphEventByIndex,
+  waitForBlockToExist,
+} from '~utils/events';
+import { log } from '~utils/debug';
+
+import { ProcessedEvent } from './colonyActions';
 
 const getSessionRecoveryEvents = async (
-  colonyClient: ColonyClientV6,
+  apolloClient: ApolloClient<object>,
+  provider: Provider,
+  colonyAddress: string,
   startBlock = 1,
 ) => {
-  const blockFilter: {
-    fromBlock: number;
-    toBlock?: number;
-  } = {
-    fromBlock: startBlock,
-  };
-  const recoveryModeLogs: Log[] = [];
+  try {
+    let toBlockNumber = await provider.getBlockNumber();
 
-  const [mostRecentExitRecovery] = await getLogs(
-    colonyClient,
-    colonyClient.filters.RecoveryModeExited(null),
-    {
-      fromBlock: startBlock,
-    },
-  );
+    const blockWatchQuery = apolloClient.watchQuery<
+      SubgraphBlockQuery,
+      SubgraphBlockQueryVariables
+    >({
+      query: SubgraphBlockDocument,
+      variables: {
+        blockId: `block_${toBlockNumber}`,
+      },
+    });
 
-  if (mostRecentExitRecovery) {
-    blockFilter.toBlock = mostRecentExitRecovery?.blockNumber;
-    recoveryModeLogs.push(mostRecentExitRecovery);
-  }
+    try {
+      const blockQueryResult = await blockWatchQuery.result();
 
-  const storageSlotSetLogs = await getLogs(
-    colonyClient,
-    colonyClient.filters.RecoveryStorageSlotSet(null, null, null, null),
-    blockFilter,
-  );
+      if (!blockQueryResult.data?.block) {
+        const handleBlockRefetch = () => blockWatchQuery.refetch();
+        await waitForBlockToExist(handleBlockRefetch);
+      }
+    } catch (error) {
+      log.verbose(error);
+    }
 
-  const exitApprovedLogs = await getLogs(
-    colonyClient,
-    colonyClient.filters.RecoveryModeExitApproved(null),
-    blockFilter,
-  );
+    const { data: recoveryModeExitedEventsData } = await apolloClient.query<
+      SubgraphRecoveryModeExitedEventsQuery,
+      SubgraphRecoveryModeExitedEventsQueryVariables
+    >({
+      query: SubgraphRecoveryModeExitedEventsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLowerCase(),
+      },
+      fetchPolicy: 'network-only',
+    });
 
-  const parsedRecoveryEvents = await Promise.all(
-    [...recoveryModeLogs, ...storageSlotSetLogs, ...exitApprovedLogs].map(
-      async (log) => {
-        const potentialParsedLog = colonyClient.interface.parseLog(log);
-        const { address, blockHash, blockNumber, transactionHash } = log;
-        const { name, values } = potentialParsedLog;
+    const recoveryModeExitedEvents =
+      recoveryModeExitedEventsData?.recoveryModeExitedEvents || [];
+
+    const [mostRecentExitRecoveryEvent] = recoveryModeExitedEvents
+      .map(parseSubgraphEvent)
+      .filter((event) => (event.blockNumber || 0) >= startBlock)
+      .sort(sortSubgraphEventByIndex);
+
+    if (mostRecentExitRecoveryEvent) {
+      toBlockNumber = mostRecentExitRecoveryEvent.blockNumber || 0;
+    }
+
+    const { data: recoveryModeEventsData } = await apolloClient.query<
+      SubgraphRecoveryModeEventsQuery,
+      SubgraphRecoveryModeEventsQueryVariables
+    >({
+      query: SubgraphRecoveryModeEventsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLowerCase(),
+        toBlock: toBlockNumber,
+      },
+    });
+    const storageSlotSetEvents =
+      recoveryModeEventsData?.recoveryStorageSlotSetEvents || [];
+    const recoveryModeExitApprovedEvents =
+      recoveryModeEventsData?.recoveryModeExitApprovedEvents || [];
+
+    const parsedRecoveryModeEvents = [
+      ...storageSlotSetEvents,
+      ...recoveryModeExitApprovedEvents,
+    ]
+      .map(parseSubgraphEvent)
+      .filter((event) => (event.blockNumber || 0) >= startBlock);
+
+    if (mostRecentExitRecoveryEvent) {
+      parsedRecoveryModeEvents.push(mostRecentExitRecoveryEvent);
+    }
+
+    const processedRecoveryEvents = parsedRecoveryModeEvents
+      .sort(sortSubgraphEventByIndex)
+      .map((event) => {
+        const { name, values, blockNumber, hash, timestamp } = event;
         return {
           type: ActionsPageFeedType.NetworkEvent,
           name,
           values,
-          createdAt: blockHash
-            ? await getBlockTime(colonyClient.provider, blockHash)
-            : 0,
+          createdAt: timestamp,
           emmitedBy: ClientType.ColonyClient,
-          address,
+          address: colonyAddress,
           blockNumber,
-          transactionHash,
+          transactionHash: hash,
         } as ProcessedEvent;
-      },
-    ),
-  );
+      });
 
-  /*
-   * Mayyyybe? this can work if we just use reverse() -- going by the logic
-   * that all events come in order from the chain?
-   *
-   * Unless the RPC provider screws us over that is...
-   */
-  const sortedRecoveryEvents = parsedRecoveryEvents.sort(
-    (firstEvent, secondEvent) => firstEvent.createdAt - secondEvent.createdAt,
-  );
-
-  return sortedRecoveryEvents;
+    return processedRecoveryEvents;
+  } catch (error) {
+    log.verbose(error);
+    return [];
+  }
 };
 
-const getUsersWithRecoveryRoles = (recoveryRoleSetEvents: LogDescription[]) => {
+const getUsersWithRecoveryRoles = (
+  recoveryRoleSetEvents: ExtendedLogDescription[],
+) => {
   const userAddresses: Record<string, boolean> = {};
   recoveryRoleSetEvents.map(({ values: { user, setTo } }) => {
     if (setTo) {
@@ -139,48 +187,53 @@ export const recoveryModeResolvers = ({
   Query: {
     async recoveryEventsForSession(_, { blockNumber, colonyAddress }) {
       try {
-        const colonyClient = (await colonyManager.getClient(
-          ClientType.ColonyClient,
+        return await getSessionRecoveryEvents(
+          apolloClient,
+          provider,
           colonyAddress,
-        )) as ColonyClientV6;
-
-        return await getSessionRecoveryEvents(colonyClient, blockNumber);
+          blockNumber,
+        );
       } catch (error) {
         console.error(error);
         return [];
       }
     },
-    async recoveryAllEnteredEvents(_, { colonyAddress }) {
+    async recoveryAllEnteredEvents(_, { colonyAddress, currentBlock }) {
       try {
-        const colonyClient = (await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
-        )) as ColonyClientV6;
+        const { data: recoveryModeEventsData } = await apolloClient.query<
+          SubgraphRecoveryModeEventsQuery,
+          SubgraphRecoveryModeEventsQueryVariables
+        >({
+          query: SubgraphRecoveryModeEventsDocument,
+          variables: {
+            colonyAddress: colonyAddress.toLowerCase(),
+            toBlock: currentBlock,
+          },
+          fetchPolicy: 'network-only',
+        });
+        const enterRecoveryEvents =
+          recoveryModeEventsData?.recoveryModeEnteredEvents || [];
 
-        const enterRecoveryLogs = await getLogs(
-          colonyClient,
-          colonyClient.filters.RecoveryModeEntered(null),
-        );
-
-        return Promise.all(
-          enterRecoveryLogs.map(async (log) => {
-            const potentialParsedLog = colonyClient.interface.parseLog(log);
-            const { address, blockHash, blockNumber, transactionHash } = log;
-            const { name, values } = potentialParsedLog;
+        const parsedEnterRecoveryEvents = enterRecoveryEvents
+          .map(parseSubgraphEvent)
+          .sort(sortSubgraphEventByIndex);
+        const processedEnterRecoveryEvents = parsedEnterRecoveryEvents.map(
+          (event) => {
+            const { name, values, blockNumber, hash, timestamp } = event;
             return {
               type: ActionsPageFeedType.NetworkEvent,
               name,
               values,
-              createdAt: blockHash
-                ? await getBlockTime(colonyClient.provider, blockHash)
-                : 0,
+              createdAt: timestamp,
               emmitedBy: ClientType.ColonyClient,
-              address,
+              address: colonyAddress,
               blockNumber,
-              transactionHash,
+              transactionHash: hash,
             } as ProcessedEvent;
-          }),
+          },
         );
+
+        return processedEnterRecoveryEvents;
       } catch (error) {
         console.error(error);
         return [];
@@ -280,6 +333,7 @@ export const recoveryModeResolvers = ({
           variables: {
             colonyAddress,
           },
+          fetchPolicy: 'network-only',
         });
 
         /*
@@ -300,27 +354,51 @@ export const recoveryModeResolvers = ({
          * recovery session start, as roles cannot be changed once the recovery
          * session starts)
          */
-        const filterOptions: { fromBlock: number; toBlock?: number } = {
-          fromBlock: 0,
-        };
+        let toBlockNumber = await provider.getBlockNumber();
         if (endBlockNumber) {
-          filterOptions.toBlock = endBlockNumber;
+          toBlockNumber = endBlockNumber;
         }
 
-        const colonyClient = (await colonyManager.getClient(
-          ClientType.ColonyClient,
-          colonyAddress,
-        )) as ColonyClientV6;
+        const blockWatchQuery = apolloClient.watchQuery<
+          SubgraphBlockQuery,
+          SubgraphBlockQueryVariables
+        >({
+          query: SubgraphBlockDocument,
+          variables: {
+            blockId: `block_${toBlockNumber}`,
+          },
+        });
 
-        const recoveryRolesSet = await getMultipleEvents(
-          colonyClient,
-          [colonyClient.filters.RecoveryRoleSet(null, null)],
-          filterOptions,
+        try {
+          const blockQueryResult = await blockWatchQuery.result();
+          if (!blockQueryResult.data?.block) {
+            const handleBlockRefetch = () => blockWatchQuery.refetch();
+            await waitForBlockToExist(handleBlockRefetch);
+          }
+        } catch (error) {
+          log.verbose(error);
+        }
+
+        const { data } = await apolloClient.query<
+          SubgraphRoleEventsQuery,
+          SubgraphRoleEventsQueryVariables
+        >({
+          query: SubgraphRoleEventsDocument,
+          variables: {
+            colonyAddress: colonyAddress.toLowerCase(),
+            toBlock: toBlockNumber,
+          },
+        });
+
+        const recoveryRoleSetEvents = data?.recoveryRoleSetEvents || [];
+
+        const parsedRecoveryRoleSetEvents = recoveryRoleSetEvents.map(
+          parseSubgraphEvent,
         );
 
         const allUsers = subscribedUsers?.data?.subscribedUsers || [];
         const userWithRecoveryRoles = getUsersWithRecoveryRoles(
-          recoveryRolesSet,
+          parsedRecoveryRoleSetEvents,
         );
 
         return userWithRecoveryRoles.map((userAddress) => {
@@ -370,10 +448,6 @@ export const recoveryModeResolvers = ({
           ({ name }) => name === ColonyAndExtensionsEvents.RecoveryModeExited,
         );
 
-        /*
-         * @NOTE Leveraging apollo's internal cache yet again, so we don't
-         * re-fetch and re-parse both the server user and the recovery role events
-         */
         const usersWithRecoveryRoles = await apolloClient.query<
           RecoveryRolesUsersQuery,
           RecoveryRolesUsersQueryVariables
@@ -383,6 +457,7 @@ export const recoveryModeResolvers = ({
             colonyAddress,
             endBlockNumber: potentialExitEvent?.blockNumber,
           },
+          fetchPolicy: 'network-only',
         });
 
         if (usersWithRecoveryRoles?.data?.recoveryRolesUsers?.length) {
@@ -525,27 +600,60 @@ export const recoveryModeResolvers = ({
           ClientType.ColonyClient,
           colonyAddress,
         )) as ColonyClientV5;
-
+        const latestBlockNumber = await provider.getBlockNumber();
         const colonyVersion = await colonyClient.version();
+
+        const blockWatchQuery = apolloClient.watchQuery<
+          SubgraphBlockQuery,
+          SubgraphBlockQueryVariables
+        >({
+          query: SubgraphBlockDocument,
+          variables: {
+            blockId: `block_${latestBlockNumber}`,
+          },
+        });
+
+        try {
+          const blockQueryResult = await blockWatchQuery.result();
+          if (!blockQueryResult.data?.block) {
+            const handleBlockRefetch = () => blockWatchQuery.refetch();
+            await waitForBlockToExist(handleBlockRefetch);
+          }
+        } catch (error) {
+          log.verbose(error);
+        }
 
         /*
          * @NOTE We don't care about colonies that are newer than v6
          */
         if (colonyVersion.toNumber() === ColonyVersion.LightweightSpaceship) {
-          const allRolesSet = await getMultipleEvents(colonyClient, [
-            colonyClient.filters.ColonyRoleSet(null, null, null, null, null),
-          ]);
+          const { data } = await apolloClient.query<
+            SubgraphRoleEventsQuery,
+            SubgraphRoleEventsQueryVariables
+          >({
+            query: SubgraphRoleEventsDocument,
+            variables: {
+              colonyAddress: colonyAddress.toLowerCase(),
+              toBlock: latestBlockNumber,
+            },
+          });
+
+          const allRoleSetEvents = data?.colonyRoleSetEvents || [];
+          const parsedAllRoleSetEvents = allRoleSetEvents.map(
+            parseSubgraphEvent,
+          );
           const filteredAllRoles = getUsersWithRecoveryRoles(
-            allRolesSet?.filter(
+            parsedAllRoleSetEvents?.filter(
               ({ values }) => values?.role === ColonyRole.Recovery,
             ) || [],
           );
 
-          const recoveryRolesSet = await getMultipleEvents(colonyClient, [
-            colonyClient.filters.RecoveryRoleSet(null, null),
-          ]);
+          const recoveryRoleSetEvents = data?.recoveryRoleSetEvents || [];
+          const parsedRecoveryRoleSetEvents = recoveryRoleSetEvents.map(
+            parseSubgraphEvent,
+          );
           const filteredRecoveryRoles = getUsersWithRecoveryRoles(
-            recoveryRolesSet,
+            parsedRecoveryRoleSetEvents,
           );
 
           return [...filteredAllRoles, ...filteredRecoveryRoles].length;

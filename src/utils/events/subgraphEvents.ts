@@ -1,5 +1,11 @@
-import { LogDescription, id as topicId, bigNumberify } from 'ethers/utils';
+import {
+  LogDescription,
+  id as topicId,
+  bigNumberify,
+  hexlify,
+} from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
+import { ApolloQueryResult } from '@apollo/client';
 
 import { SubgraphEvent, SubgraphTransaction, SubgraphBlock } from '~data/index';
 import {
@@ -143,6 +149,20 @@ const motionArgumentparser = ({ amount, vote }) => {
 };
 
 /*
+ * @NOTE Only use internally
+ *
+ * Specific function to parse known, expected, values
+ * This parses values for any event with storage slots
+ */
+const storageSlotArgumentParser = (values: {
+  slot?: string;
+}): {
+  slot?: string;
+} => ({
+  slot: hexlify(parseInt(values.slot || '0', 10)),
+});
+
+/*
  * Utility to parse events that come from the subgraph handler
  * into events that resemble the Log format that we get directly from the chain
  */
@@ -172,6 +192,7 @@ export const parseSubgraphEvent = ({
       ...extensionArgumentParser(parsedArguments),
       ...addressArgumentParser(parsedArguments),
       ...motionArgumentparser(parsedArguments),
+      ...storageSlotArgumentParser(parsedArguments),
     },
   };
   /*
@@ -229,4 +250,21 @@ export const sortSubgraphEventByIndex = (
     return firstIndex.sub(secondIndex).toNumber();
   }
   return secondIndex.sub(firstIndex).toNumber();
+};
+
+/* Needed to handle cases where the block may not exist
+   on the subgraph yet and we need the events within it */
+export const waitForBlockToExist = (
+  handleRefetch: () => Promise<ApolloQueryResult<any>>,
+  waitingTime = 1000,
+) => {
+  return new Promise((resolve) => {
+    const timeoutId = setTimeout(async () => {
+      const { data } = await handleRefetch();
+      if (data) {
+        clearTimeout(timeoutId);
+        resolve(true);
+      }
+    }, waitingTime);
+  });
 };

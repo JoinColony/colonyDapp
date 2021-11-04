@@ -50,7 +50,7 @@ export interface EventValues {
   user?: Address;
   agent?: Address;
   creator?: Address;
-  slot?: Record<string, any>;
+  slot?: string;
   toValue?: string;
   fromValue?: string;
   initiator?: string | ReactElement;

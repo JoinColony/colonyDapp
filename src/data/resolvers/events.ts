@@ -47,6 +47,7 @@ export const eventsResolvers = ({
           query: RecoveryAllEnteredEventsDocument,
           variables: {
             colonyAddress,
+            currentBlock,
           },
           fetchPolicy: 'network-only',
         });
