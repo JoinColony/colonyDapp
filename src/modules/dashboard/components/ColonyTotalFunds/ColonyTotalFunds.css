@@ -61,7 +61,7 @@
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
   only screen and (min-resolution: 192dpi),
-only screen and (min-resolution: 2dppx) {
+  only screen and (min-resolution: 2dppx) {
   .rightArrowDisplay {
     margin: -11px 3px -6px 15px;
   }
