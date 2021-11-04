@@ -15,10 +15,11 @@ import { useMembersSubscription } from '~data/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { useSelectedUser } from '~utils/hooks/useSelectedUser';
 
-import DialogForm, {
+import DialogForm from '../ManageReputationDialogForm';
+import {
   AwardAndSmiteDialogProps,
-  AwardAndSmiteDialogFormValues,
-} from '../AwardAndSmiteDialogForm';
+  ManageReputationDialogFormValues,
+} from '../types';
 
 const displayName = 'dashboard.ManageReputationContainer';
 
@@ -68,7 +69,7 @@ const ManageReputationContainer = ({
         ? ActionTypes[`COLONY_MOTION_MANAGE_REPUTATION${actionEnd}`]
         : ActionTypes[`COLONY_ACTION_MANAGE_REPUTATION${actionEnd}`];
     },
-    [isVotingExtensionEnabled, isForce],
+    [isVotingExtensionEnabled, isForce, isSmitingReputation],
   );
 
   const defaultValidationSchema = yup.object().shape({
@@ -149,7 +150,7 @@ const ManageReputationContainer = ({
       onSuccess={close}
       transform={transform}
     >
-      {(formValues: FormikProps<AwardAndSmiteDialogFormValues>) => {
+      {(formValues: FormikProps<ManageReputationDialogFormValues>) => {
         if (formValues.values.forceAction !== isForce) {
           setIsForce(formValues.values.forceAction);
         }

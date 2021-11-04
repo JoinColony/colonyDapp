@@ -36,10 +36,10 @@ import { calculatePercentageReputation } from '~utils/reputation';
 import { getUserRolesForDomain } from '../../../../transformers';
 import { userHasRole } from '../../../../users/checks';
 
-import { AwardAndSmiteDialogFormValues } from './types';
+import { ManageReputationDialogFormValues } from '../types';
 import TeamDropdownItem from './TeamDropdownItem';
 
-import styles from './AwardAndSmiteDialogForm.css';
+import styles from './ManageReputationDialogForm.css';
 
 interface Props extends ActionDialogProps {
   isVotingExtensionEnabled: boolean;
@@ -59,7 +59,7 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
 
-const SmiteDialogForm = ({
+const ManageReputationDialogForm = ({
   back,
   colony: { domains, colonyAddress },
   colony,
@@ -74,7 +74,7 @@ const SmiteDialogForm = ({
   nativeTokenDecimals,
   formMSG,
   isSmitingReputation,
-}: Props & FormikProps<AwardAndSmiteDialogFormValues>) => {
+}: Props & FormikProps<ManageReputationDialogFormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
 
@@ -372,6 +372,7 @@ const SmiteDialogForm = ({
   );
 };
 
-SmiteDialogForm.displayName = 'dashboard.SmiteDialog.SmiteDialogForm';
+ManageReputationDialogForm.displayName =
+  'dashboard.ManageReputationContainer.ManageReputationDialogForm';
 
-export default SmiteDialogForm;
+export default ManageReputationDialogForm;
