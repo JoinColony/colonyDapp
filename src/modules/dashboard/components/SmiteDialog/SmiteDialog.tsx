@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -12,9 +12,10 @@ import { ActionForm } from '~core/Fields';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
-import { useMembersSubscription, useLoggedInUser } from '~data/index';
+import { useMembersSubscription } from '~data/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
+import { useSelectedUser } from '~utils/hooks/useSelectedUser';
 
 import DialogForm from './SmiteDialogForm';
 
@@ -126,23 +127,7 @@ const SmiteDialog = ({
     [totalReputationData],
   );
 
-  const { walletAddress: loggedInUserWalletAddress } = useLoggedInUser();
-
-  const selectedUser = useMemo(() => {
-    if (!colonyMembers) {
-      return undefined;
-    }
-
-    const [firstSubscriber, secondSubscriber] = colonyMembers?.subscribedUsers;
-
-    if (!secondSubscriber) {
-      return firstSubscriber;
-    }
-
-    return firstSubscriber.profile.walletAddress === loggedInUserWalletAddress
-      ? secondSubscriber
-      : firstSubscriber;
-  }, [colonyMembers, loggedInUserWalletAddress]);
+  const selectedUser = useSelectedUser(colonyMembers);
 
   return (
     <ActionForm
