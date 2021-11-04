@@ -15,6 +15,7 @@ import { ActionTypes } from '~redux/index';
 import { useMembersSubscription } from '~data/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
 import { WizardDialogType } from '~utils/hooks';
+import { useSelectedUser } from '~utils/hooks/useSelectedUser';
 
 import DialogForm from './SmiteDialogForm';
 
@@ -126,6 +127,8 @@ const SmiteDialog = ({
     [totalReputationData],
   );
 
+  const selectedUser = useSelectedUser(colonyMembers);
+
   return (
     <ActionForm
       initialValues={{
@@ -134,11 +137,12 @@ const SmiteDialog = ({
           ? ROOT_DOMAIN_ID
           : ethDomainId
         ).toString(),
-        user: undefined,
+        user: selectedUser,
         amount: undefined,
         annotation: undefined,
         motionDomainId: ROOT_DOMAIN_ID,
       }}
+      enableReinitialize
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
       success={getFormAction('SUCCESS')}
