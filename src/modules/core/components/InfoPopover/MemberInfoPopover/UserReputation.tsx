@@ -44,7 +44,7 @@ const UserReputation = ({
   userReputationForTopDomains,
   isCurrentUserReputation,
 }: Props) => {
-  const formattedUserReputations = userReputationForTopDomains.map(
+  const formattedUserReputations = userReputationForTopDomains?.map(
     ({ domainId, ...rest }) => {
       const reputationDomain = colony.domains.find(
         (domain) => domain.ethDomainId === domainId,

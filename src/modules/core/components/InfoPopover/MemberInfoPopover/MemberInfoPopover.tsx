@@ -65,10 +65,10 @@ const MemberInfoPopover = ({
         nativeTokenAddressData?.processedColony.nativeTokenAddress || '',
       colonyAddress,
     },
-    /* 
-      The fetchPolicy here is "no-cache" because otherwise the result would be stored 
-      in the cache and then the current user's balance would change (in the other instances 
-      where the current user balance is obtained using this query) to the one that it's being 
+    /*
+      The fetchPolicy here is "no-cache" because otherwise the result would be stored
+      in the cache and then the current user's balance would change (in the other instances
+      where the current user balance is obtained using this query) to the one that it's being
       displayed in the popover.
 
       It could also happen in reverse, the current user's balance could show up here instead
@@ -116,7 +116,7 @@ const MemberInfoPopover = ({
           <UserReputation
             colony={colony}
             userReputationForTopDomains={
-              userReputationData.userReputationForTopDomains
+              userReputationData?.userReputationForTopDomains || []
             }
             isCurrentUserReputation={currentUserWalletAddress === walletAddress}
           />
