@@ -1,6 +1,5 @@
 .main {
   composes: inlineEllipsis from '~styles/text.css';
-  display: inline-block;
+  display: contents;
   max-width: 150px;
-  vertical-align: text-bottom;
 }
