@@ -149,9 +149,7 @@ const UserNavigation = () => {
           <MiniSpinnerLoader title={MSG.walletAutologin} />
         </div>
       ) : (
-        <div
-          className={styles.buttonsWrapper}
-        >
+        <div className={styles.buttonsWrapper}>
           {userCanNavigate && nativeToken && userLock && (
             <UserTokenActivationButton
               nativeToken={nativeToken}
