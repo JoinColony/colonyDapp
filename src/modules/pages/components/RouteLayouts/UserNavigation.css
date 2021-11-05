@@ -138,6 +138,10 @@
 }
 
 .buttonsWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   margin-right: 12px;
   padding: 1px;
   height: 26px;
