@@ -97,7 +97,7 @@
 }
 
 .walletAddress {
-  margin: 0 2px;
+  margin: 0;
   padding: 0 9px;
 
   /*
@@ -110,12 +110,12 @@
    * active class (the one that has a different colored border), we remove the extra padding
    * and set the border
    */
-  height: 22px;
+  height: 100%;
   position: relative;
-  top: -0.1px;
   border: none;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  line-height: 1;
   color: var(--temp-grey-blue-7);
   cursor: pointer;
 }
@@ -138,7 +138,12 @@
 }
 
 .buttonsWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   margin-right: 12px;
+  padding: 1px;
   height: 26px;
   position: relative;
   border-radius: var(--radius-normal);
