@@ -28,7 +28,6 @@ import { SUPPORTED_NETWORKS } from '~constants';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 
 import styles from './UserNavigation.css';
-import stylesLayout from '../../../../styles/shared/layout.css';
 
 const MSG = defineMessages({
   inboxTitle: {
@@ -151,12 +150,7 @@ const UserNavigation = () => {
         </div>
       ) : (
         <div
-          className={`
-            ${styles.buttonsWrapper}
-            ${stylesLayout.flexContainerRow}
-            ${stylesLayout.flexJustifyCenter}
-            ${stylesLayout.flexAlignCenter}
-          `}
+          className={styles.buttonsWrapper}
         >
           {userCanNavigate && nativeToken && userLock && (
             <UserTokenActivationButton
