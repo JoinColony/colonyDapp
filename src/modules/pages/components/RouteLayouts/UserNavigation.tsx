@@ -28,6 +28,7 @@ import { SUPPORTED_NETWORKS } from '~constants';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 
 import styles from './UserNavigation.css';
+import stylesLayout from '../../../../styles/shared/layout.css';
 
 const MSG = defineMessages({
   inboxTitle: {
@@ -149,7 +150,14 @@ const UserNavigation = () => {
           <MiniSpinnerLoader title={MSG.walletAutologin} />
         </div>
       ) : (
-        <div className={styles.buttonsWrapper}>
+        <div
+          className={`
+            ${styles.buttonsWrapper}
+            ${stylesLayout.flexContainerRow}
+            ${stylesLayout.flexJustifyCenter}
+            ${stylesLayout.flexAlignCenter}
+          `}
+        >
           {userCanNavigate && nativeToken && userLock && (
             <UserTokenActivationButton
               nativeToken={nativeToken}
