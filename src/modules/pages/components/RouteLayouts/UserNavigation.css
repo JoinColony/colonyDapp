@@ -115,7 +115,6 @@
   border: none;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
-  line-height: 1;
   color: var(--temp-grey-blue-7);
   cursor: pointer;
 }
