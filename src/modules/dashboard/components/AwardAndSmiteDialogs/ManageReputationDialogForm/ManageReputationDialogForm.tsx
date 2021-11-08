@@ -142,7 +142,11 @@ const ManageReputationDialogForm = ({
   ]);
 
   const hasRoles =
-    hasRegisteredProfile && userHasRole(domainRoles, ColonyRole.Arbitration);
+    hasRegisteredProfile &&
+    userHasRole(
+      domainRoles,
+      isSmiteAction ? ColonyRole.Arbitration : ColonyRole.Root,
+    );
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colonyAddress,
