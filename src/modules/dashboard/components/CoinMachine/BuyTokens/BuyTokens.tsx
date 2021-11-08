@@ -20,8 +20,6 @@ import {
   Colony,
   useLoggedInUser,
   useCoinMachineSaleTokensQuery,
-  useCoinMachineCurrentPeriodPriceQuery,
-  useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
   useUserTokensQuery,
   useUserWhitelistStatusQuery,
 } from '~data/index';
@@ -94,6 +92,10 @@ const TELL_ME_MORE_LINK = `https://colony.gitbook.io/colony/extensions/coin-mach
 type Props = {
   colony: Colony;
   isSoldOut: boolean;
+  salePriceData?: any;
+  maxUserPurchaseData?: any;
+  loadingSalePrice: boolean;
+  loadingMaxUserPurchase: boolean;
   /*
    * @NOTE This acts like an indicator that the sale is not currently active
    */
@@ -128,6 +130,10 @@ const BuyTokens = ({
   colony: { colonyAddress, colonyName },
   isCurrentlyOnSale,
   isSoldOut,
+  salePriceData,
+  maxUserPurchaseData,
+  loadingSalePrice,
+  loadingMaxUserPurchase,
 }: Props) => {
   const { username, ethereal, walletAddress } = useLoggedInUser();
   const history = useHistory();
@@ -160,22 +166,6 @@ const BuyTokens = ({
       variables: { address: walletAddress },
     },
   );
-
-  const {
-    data: salePriceData,
-    loading: loadingSalePrice,
-  } = useCoinMachineCurrentPeriodPriceQuery({
-    variables: { colonyAddress },
-    fetchPolicy: 'network-only',
-  });
-
-  const {
-    data: maxUserPurchaseData,
-    loading: loadingMaxUserPurchase,
-  } = useCoinMachineCurrentPeriodMaxUserPurchaseQuery({
-    variables: { colonyAddress, userAddress: walletAddress },
-    fetchPolicy: 'network-only',
-  });
 
   const sellableToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
   const purchaseToken = saleTokensData?.coinMachineSaleTokens?.purchaseToken;
