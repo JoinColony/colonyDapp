@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useEffect, ReactNode } from 'react';
 import { FormikProps } from 'formik';
-import { FormattedMessage, MessageDescriptor } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { AddressZero } from 'ethers/constants';
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
@@ -41,16 +41,65 @@ import TeamDropdownItem from './TeamDropdownItem';
 
 import styles from './ManageReputationDialogForm.css';
 
+const MSG = defineMessages({
+  title: {
+    id: 'dashboard.ManageReputationContainer.ManageReputationDialogForm.title',
+    defaultMessage: `{isSmiteAction, select, 
+      true {Smite}
+      false {Award} 
+    }`,
+  },
+  team: {
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.team`,
+    defaultMessage: `Team in which Reputation should be {isSmiteAction, select, 
+      true {deducted}
+      false {awarded}
+    }`,
+  },
+  recipient: {
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.recipient`,
+    defaultMessage: 'Recipient',
+  },
+  amount: {
+    id: 'dashboard.ManageReputationContainer.ManageReputationDialogForm.amount',
+    defaultMessage: `Amount of reputation points to {isSmiteAction, select, 
+      true {deduct}
+      false {award}
+    }`,
+  },
+  annotation: {
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.annotation`,
+    defaultMessage: `Explain why you're {isSmiteAction, select,
+      true {smiting}
+      false {awarding}
+    } the user (optional)`,
+  },
+  userPickerPlaceholder: {
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.userPickerPlaceholder`,
+    defaultMessage: 'Search for a user or paste wallet address',
+  },
+  noPermission: {
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.noPermission`,
+    defaultMessage: `You need the {roleRequired} permission in {domain} to take this action.`,
+  },
+  maxReputation: {
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.maxReputation`,
+    defaultMessage: `{isSmiteAction, select,
+      true {max: }
+      false {}
+    }{userReputationAmount} pts ({userPercentageReputation}%)`,
+  },
+});
+
 interface Props extends ActionDialogProps {
   isVotingExtensionEnabled: boolean;
   nativeTokenDecimals: number;
-  formMSG: Record<string, MessageDescriptor>;
   ethDomainId?: number;
   updateReputation?: (
     userPercentageReputation: number,
     totalRep?: string,
   ) => void;
-  isSmitingReputation?: boolean;
+  isSmiteAction?: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -72,8 +121,7 @@ const ManageReputationDialogForm = ({
   ethDomainId: preselectedDomainId,
   isVotingExtensionEnabled,
   nativeTokenDecimals,
-  formMSG,
-  isSmitingReputation,
+  isSmiteAction = false,
 }: Props & FormikProps<ManageReputationDialogFormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
@@ -236,7 +284,10 @@ const ManageReputationDialogForm = ({
           <div className={styles.headingContainer}>
             <Heading
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-              text={formMSG.title}
+              text={MSG.title}
+              textValues={{
+                isSmiteAction,
+              }}
             />
             {hasRoles && isVotingExtensionEnabled && (
               <Toggle
@@ -258,11 +309,11 @@ const ManageReputationDialogForm = ({
           <SingleUserPicker
             appearance={{ width: 'wide' }}
             data={colonyMembers?.subscribedUsers || []}
-            label={formMSG.recipient}
+            label={MSG.recipient}
             name="user"
             filter={filterUserSelection}
             renderAvatar={supRenderAvatar}
-            placeholder={formMSG.userPickerPlaceholder}
+            placeholder={MSG.userPickerPlaceholder}
             disabled={inputDisabled}
           />
         </div>
@@ -272,7 +323,10 @@ const ManageReputationDialogForm = ({
           <div>
             <Select
               options={domainOptions}
-              label={formMSG.team}
+              label={MSG.team}
+              labelValues={{
+                isSmiteAction,
+              }}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
               renderActiveOption={renderActiveOption}
@@ -285,7 +339,8 @@ const ManageReputationDialogForm = ({
         <div className={styles.inputContainer}>
           <Input
             name="amount"
-            label={formMSG.amount}
+            label={MSG.amount}
+            labelValues={{ isSmiteAction }}
             appearance={{
               theme: 'minimal',
               align: 'right',
@@ -297,7 +352,7 @@ const ManageReputationDialogForm = ({
             }}
             elementOnly
             maxButtonParams={
-              isSmitingReputation
+              isSmiteAction
                 ? {
                     fieldName: 'amount',
                     maxAmount: String(unformattedUserReputationAmount),
@@ -310,8 +365,9 @@ const ManageReputationDialogForm = ({
           <div className={styles.percentageSign}>pts</div>
           <p className={styles.inputText}>
             <FormattedMessage
-              {...formMSG.maxReputation}
+              {...MSG.maxReputation}
               values={{
+                isSmiteAction,
                 userReputationAmount: formattedUserReputationAmount,
                 userPercentageReputation:
                   userPercentageReputation === null
@@ -324,7 +380,10 @@ const ManageReputationDialogForm = ({
       </DialogSection>
       <DialogSection>
         <Annotations
-          label={formMSG.annotation}
+          label={MSG.annotation}
+          labelValues={{
+            isSmiteAction,
+          }}
           name="annotation"
           disabled={inputDisabled}
         />
@@ -333,7 +392,7 @@ const ManageReputationDialogForm = ({
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionFromMessage}>
             <FormattedMessage
-              {...formMSG.noPermission}
+              {...MSG.noPermission}
               values={{
                 roleRequired: (
                   <PermissionsLabel
