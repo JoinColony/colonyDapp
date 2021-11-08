@@ -99,20 +99,9 @@
 .walletAddress {
   margin: 0;
   padding: 0 9px;
-
-  /*
-   * @NOTE We need to do border sizing shenanigans due to how the border color
-   * is required by spec to have opacity.
-   *
-   * Otherwise, the two colors will overlap and it will lead to an unexpected border color.
-   *
-   * For this, we remove the border (and compensate the size with padding), while in the
-   * active class (the one that has a different colored border), we remove the extra padding
-   * and set the border
-   */
   height: 100%;
   position: relative;
-  border: none;
+  border: 1px solid transparent;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
   color: var(--temp-grey-blue-7);
@@ -121,7 +110,7 @@
 
 .walletAddress > span {
   position: relative;
-  top: -0.5px;
+  line-height: 24px;
 }
 
 .walletAddress:hover {
@@ -131,7 +120,6 @@
 
 .walletAddressActive {
   composes: walletAddress;
-  padding: 1px 8px 2px;
   border: 1px solid var(--colony-blue);
   color: var(--colony-blue);
 }
