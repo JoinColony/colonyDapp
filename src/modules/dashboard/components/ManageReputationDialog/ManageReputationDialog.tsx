@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
 import { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
   permissionText: {
     id: 'dashboard.ManageReputationDialog.permissionsText',
-    defaultMessage: `You must have the arbitration permission in the
+    defaultMessage: `You must have the {permission} permission in the
       relevant teams, in order to take this action`,
   },
   smiteReputationTitle: {
@@ -62,30 +62,45 @@ const ManageReputation = ({
   nextStepAwardReputation,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { formatMessage } = useIntl();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canManageReputation =
+  const canSmiteReputation =
     hasRegisteredProfile &&
     (userHasRole(allUserRoles, ColonyRole.Arbitration) ||
       isVotingExtensionEnabled);
+
+  const canRootReputation =
+    hasRegisteredProfile &&
+    (userHasRole(allUserRoles, ColonyRole.Root) || isVotingExtensionEnabled);
 
   const items = [
     {
       title: MSG.awardReputationTitle,
       description: MSG.awardReputationDescription,
       icon: 'emoji-shooting-star',
-      permissionRequired: !canManageReputation,
+      permissionRequired: !canRootReputation,
       permissionInfoText: MSG.permissionText,
+      permissionInfoTextValues: {
+        permission: formatMessage({
+          id: `role.${ColonyRole.Root}`,
+        }).toLowerCase(),
+      },
       onClick: () => callStep(nextStepAwardReputation),
     },
     {
       title: MSG.smiteReputationTitle,
       description: MSG.smiteReputationDescription,
       icon: 'emoji-firebolt',
-      permissionRequired: !canManageReputation,
+      permissionRequired: !canSmiteReputation,
       permissionInfoText: MSG.permissionText,
+      permissionInfoTextValues: {
+        permission: formatMessage({
+          id: `role.${ColonyRole.Arbitration}`,
+        }).toLowerCase(),
+      },
       onClick: () => callStep(nextStepSmiteReputation),
     },
   ];
