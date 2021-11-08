@@ -29,9 +29,7 @@
 }
 
 .address {
-  display: flex;
-  justify-content: space-between;
-  width: 185px;
+  composes: flexContainerRow flexAlignStart from '~styles/layout.css';
   position: relative;
   font-weight: var(--weight-bold);
 }
@@ -54,7 +52,7 @@
   height: 8px;
   width: 8px;
   position: relative;
-  top: 5px;
+  top: 6px;
   border-radius: 50%;
   background-color: var(--danger);
   content: '';
@@ -71,11 +69,10 @@
 }
 
 .hello {
-  margin-top: -3px;
   font-weight: var(--weight-normal);
+  line-height: 17px;
 }
 
 .copy {
-  margin-left: 40px;
-  position: absolute;
+  margin-left: 8px;
 }
