@@ -39,7 +39,7 @@ const ManageReputationContainer = ({
   cancel,
   close,
   ethDomainId,
-  isSmiteAction,
+  isSmiteAction = false,
 }: AwardAndSmiteDialogProps) => {
   const [isForce, setIsForce] = useState(false);
   const [totalReputationData, setTotalReputationData] = useState<
@@ -119,6 +119,7 @@ const ManageReputationContainer = ({
           annotationMessage: annotation,
           amount: reputationChangeAmount.toString(),
           motionDomainId,
+          isSmitingReputation: isSmiteAction,
         };
       }),
       withMeta({ history }),
