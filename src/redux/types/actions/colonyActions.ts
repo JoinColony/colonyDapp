@@ -237,19 +237,20 @@ export type ColonyActionsActionTypes =
   | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_ERROR, object>
   | ActionTypeWithMeta<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_SUCCESS, object>
   | UniqueActionType<
-      ActionTypes.COLONY_ACTION_SMITE,
+      ActionTypes.COLONY_ACTION_MANAGE_REPUTATION,
       {
         colonyAddress: Address;
         colonyName: string;
         domainId: number;
         userAddress: Address;
         amount: BigNumber;
+        isSmitingReputation?: boolean;
         annotationMessage?: string;
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_ACTION_SMITE_ERROR, object>
+  | ErrorActionType<ActionTypes.COLONY_ACTION_MANAGE_REPUTATION_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_ACTION_SMITE_SUCCESS,
+      ActionTypes.COLONY_ACTION_MANAGE_REPUTATION_SUCCESS,
       MetaWithHistory<object>
     >;

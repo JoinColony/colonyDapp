@@ -13,7 +13,7 @@ import editColonyMotionSaga from './editColonyMotion';
 import updateMotionStateSaga from './updateState';
 import paymentMotionSaga from './paymentMotion';
 import escalateMotionSaga from './escalateMotion';
-import smiteMotionSaga from './smiteMotion';
+import manageReputationMotionSaga from './manageReputationMotion';
 
 export default function* actionsSagas() {
   yield all([
@@ -30,6 +30,6 @@ export default function* actionsSagas() {
     call(updateMotionStateSaga),
     call(paymentMotionSaga),
     call(escalateMotionSaga),
-    call(smiteMotionSaga),
+    call(manageReputationMotionSaga),
   ]);
 }

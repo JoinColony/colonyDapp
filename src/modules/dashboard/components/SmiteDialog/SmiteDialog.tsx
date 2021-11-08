@@ -73,8 +73,8 @@ const SmiteDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_SMITE${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_SMITE${actionEnd}`];
+        ? ActionTypes[`COLONY_MOTION_MANAGE_REPUTATION${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_MANAGE_REPUTATION${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );
@@ -120,6 +120,7 @@ const SmiteDialog = ({
           annotationMessage: annotation,
           amount: reputationChangeAmount.toString(),
           motionDomainId,
+          isSmitingReputation: true,
         };
       }),
       withMeta({ history }),
