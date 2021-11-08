@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import { ColonyRole } from '@colony/colony-js';
 
 import { DialogProps, ActionDialogProps } from '~core/Dialog';
@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
   permissionText: {
     id: 'dashboard.ManageReputationDialog.permissionsText',
-    defaultMessage: `You must have the arbitration permission in the
+    defaultMessage: `You must have the {permission} permission in the
       relevant teams, in order to take this action`,
   },
   smiteReputationTitle: {
@@ -41,7 +41,8 @@ const MSG = defineMessages({
 });
 
 interface CustomWizardDialogProps extends ActionDialogProps {
-  nextStep: string;
+  nextStepSmiteReputation: string;
+  nextStepAwardReputation: string;
   prevStep: string;
   colony: Colony;
 }
@@ -57,32 +58,50 @@ const ManageReputation = ({
   prevStep,
   colony,
   isVotingExtensionEnabled,
-  nextStep,
+  nextStepSmiteReputation,
+  nextStepAwardReputation,
 }: Props) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { formatMessage } = useIntl();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRegisteredProfile = !!username && !ethereal;
-  const canSmiteUsers =
+  const canSmiteReputation =
     hasRegisteredProfile &&
     (userHasRole(allUserRoles, ColonyRole.Arbitration) ||
       isVotingExtensionEnabled);
+
+  const canRootReputation =
+    hasRegisteredProfile &&
+    (userHasRole(allUserRoles, ColonyRole.Root) || isVotingExtensionEnabled);
 
   const items = [
     {
       title: MSG.awardReputationTitle,
       description: MSG.awardReputationDescription,
       icon: 'emoji-shooting-star',
-      comingSoon: true,
+      permissionRequired: !canRootReputation,
+      permissionInfoText: MSG.permissionText,
+      permissionInfoTextValues: {
+        permission: formatMessage({
+          id: `role.${ColonyRole.Root}`,
+        }).toLowerCase(),
+      },
+      onClick: () => callStep(nextStepAwardReputation),
     },
     {
       title: MSG.smiteReputationTitle,
       description: MSG.smiteReputationDescription,
       icon: 'emoji-firebolt',
-      permissionRequired: !canSmiteUsers,
+      permissionRequired: !canSmiteReputation,
       permissionInfoText: MSG.permissionText,
-      onClick: () => callStep(nextStep),
+      permissionInfoTextValues: {
+        permission: formatMessage({
+          id: `role.${ColonyRole.Arbitration}`,
+        }).toLowerCase(),
+      },
+      onClick: () => callStep(nextStepSmiteReputation),
     },
   ];
   return (

@@ -9,7 +9,7 @@ import CreateDomainDialog from '~dashboard/CreateDomainDialog';
 import EditDomainDialog from '~dashboard/EditDomainDialog';
 import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
 import ManageReputationDialog from '~dashboard/ManageReputationDialog';
-import SmiteDialog from '~dashboard/SmiteDialog';
+import { SmiteDialog, AwardDialog } from '~dashboard/AwardAndSmiteDialogs';
 import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
 import ManageFundsDialog from '~dashboard/ManageFundsDialog';
 import UnlockTokenDialog from '~dashboard/UnlockTokenDialog';
@@ -148,10 +148,20 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
     {
       component: ManageReputationDialog,
       props: {
-        nextStep: 'dashboard.SmiteDialog',
+        nextStepAwardReputation: 'dashboard.AwardDialog',
+        nextStepSmiteReputation: 'dashboard.SmiteDialog',
         prevStep: 'dashboard.ColonyActionsDialog',
         colony,
         isVotingExtensionEnabled,
+      },
+    },
+    {
+      component: AwardDialog,
+      props: {
+        prevStep: 'dashboard.ManageReputationDialog',
+        colony,
+        isVotingExtensionEnabled,
+        ethDomainId,
       },
     },
     {
