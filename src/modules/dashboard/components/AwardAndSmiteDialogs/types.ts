@@ -1,5 +1,3 @@
-import { MessageDescriptor } from 'react-intl';
-
 import { WizardDialogType } from '~utils/hooks';
 import { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { Address } from '~types/index';
@@ -16,7 +14,6 @@ export interface ManageReputationDialogFormValues {
 export type AwardAndSmiteDialogProps = Required<DialogProps> &
   WizardDialogType<object> &
   ActionDialogProps & {
-    formMSG: Record<string, MessageDescriptor>;
-    isSmitingReputation: boolean;
+    isSmiteAction: boolean;
     ethDomainId?: number;
   };

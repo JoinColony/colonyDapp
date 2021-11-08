@@ -39,8 +39,7 @@ const ManageReputationContainer = ({
   cancel,
   close,
   ethDomainId,
-  formMSG,
-  isSmitingReputation,
+  isSmiteAction,
 }: AwardAndSmiteDialogProps) => {
   const [isForce, setIsForce] = useState(false);
   const [totalReputationData, setTotalReputationData] = useState<
@@ -69,7 +68,7 @@ const ManageReputationContainer = ({
         ? ActionTypes[`COLONY_MOTION_MANAGE_REPUTATION${actionEnd}`]
         : ActionTypes[`COLONY_ACTION_MANAGE_REPUTATION${actionEnd}`];
     },
-    [isVotingExtensionEnabled, isForce, isSmitingReputation],
+    [isVotingExtensionEnabled, isForce],
   );
 
   const defaultValidationSchema = yup.object().shape({
@@ -89,7 +88,7 @@ const ManageReputationContainer = ({
   });
   let smiteValidationSchema;
 
-  if (isSmitingReputation) {
+  if (isSmiteAction) {
     const amountValidationSchema = yup
       .object()
       .shape({ amount: yup.number().max(userReputation) })
@@ -110,7 +109,7 @@ const ManageReputationContainer = ({
         const reputationChangeAmount = new Decimal(amount)
           .mul(new Decimal(10).pow(nativeTokenDecimals))
           // Smite amount needs to be negative, otherwise leave it as it is
-          .mul(isSmitingReputation ? -1 : 1);
+          .mul(isSmiteAction ? -1 : 1);
 
         return {
           colonyAddress,
@@ -124,7 +123,7 @@ const ManageReputationContainer = ({
       }),
       withMeta({ history }),
     ),
-    [totalReputationData, isSmitingReputation],
+    [totalReputationData, isSmiteAction],
   );
 
   const selectedUser = useSelectedUser(colonyMembers);
@@ -164,10 +163,9 @@ const ManageReputationContainer = ({
               back={() => callStep(prevStep)}
               ethDomainId={ethDomainId}
               updateReputation={
-                isSmitingReputation ? updateReputationCallback : undefined
+                isSmiteAction ? updateReputationCallback : undefined
               }
-              formMSG={formMSG}
-              isSmitingReputation={isSmitingReputation}
+              isSmiteAction={isSmiteAction}
             />
           </Dialog>
         );
