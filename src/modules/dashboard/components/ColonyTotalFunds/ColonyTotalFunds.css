@@ -55,10 +55,6 @@
 
 .rightArrowDisplay {
   display: contents;
-
-  /* // margin: -11px 3px -3px 15px; */
-
-  /* vertical-align: middle; */
   font-size: var(--size-medium);
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
