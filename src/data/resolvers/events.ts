@@ -1,4 +1,4 @@
-import { ClientType, ColonyClientV6, getLogs } from '@colony/colony-js';
+import { ClientType, ColonyClientV6 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import { Resolvers } from '@apollo/client';
 
@@ -58,12 +58,10 @@ export const eventsResolvers = ({
         )) as ColonyClientV6;
 
         const colonyInRecoveryMode = await colonyClient.isInRecoveryMode();
+        const enterRecoveryEvents =
+          recoveryStartedEvents?.data?.recoveryAllEnteredEvents || [];
 
-        const enterRecoveryEvents = await getLogs(
-          colonyClient,
-          colonyClient.filters.RecoveryModeEntered(null),
-        );
-        const [mostRecentRecoveryStarted] = enterRecoveryEvents.reverse();
+        const [mostRecentRecoveryStarted] = [...enterRecoveryEvents].reverse();
 
         const recoveryApprovalsForCurrentSession = await apolloClient.query<
           RecoveryRolesAndApprovalsForSessionQuery,
@@ -91,6 +89,7 @@ export const eventsResolvers = ({
         const {
           recoveryRolesAndApprovalsForSession: approvalsForSession,
         } = recoveryApprovalsForCurrentSession.data;
+
         const currentUserNeedsToApprove = approvalsForSession.find(
           ({ id: userWalletAddress, approvedRecoveryExit }) =>
             !approvedRecoveryExit &&
