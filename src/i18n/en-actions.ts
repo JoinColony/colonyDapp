@@ -20,8 +20,10 @@ const actionsMessageDescriptors = {
       ${ColonyActions.EditDomain} {{fromDomain} team details edited}
       ${ColonyMotions.EditDomainMotion} {Edit {fromDomain} team details}
       ${ColonyActions.Recovery} {Recovery mode activated by {initiator}}
-      ${ColonyActions.EmitDomainReputationPenalty} {Smite {recipient} with a {reputationPenalty} reputation penalty}
-      ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationPenalty} reputation penalty}
+      ${ColonyActions.EmitDomainReputationPenalty} {Smite {recipient} with a {reputationChange} reputation penalty}
+      ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationChange} reputation penalty}
+      ${ColonyActions.EmitDomainReputationReward} {Award {recipient} with a {reputationChange} reputation reward}
+      ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChange} reputation reward}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,
@@ -42,6 +44,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.SetUserRoles} {Permission Management}
       ${ColonyActions.Recovery} {Recovery}
       ${ColonyActions.EmitDomainReputationPenalty} {Smite}
+      ${ColonyActions.EmitDomainReputationReward} {Award}
       other {Generic}
     }`,
 };
