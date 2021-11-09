@@ -94,7 +94,35 @@ export const getActionType = (
             /*
              * Check the correct position in the events chain
              */
-            return filteredParsedEvents[eventIndex].name === eventName;
+            const isEventInPosition =
+              filteredParsedEvents[eventIndex].name === eventName;
+
+            /*
+             *  Check if the event is a reputation change
+             *  Then check if the change is a reward or penalty
+             */
+            if (
+              filteredParsedEvents[eventIndex].name ===
+              ColonyAndExtensionsEvents.ArbitraryReputationUpdate
+            ) {
+              const isReputationChangePositive = bigNumberify(
+                filteredParsedEvents[eventIndex].values.amount,
+              ).gt(0);
+              if (
+                Object.keys(EVENTS_REQUIRED_FOR_ACTION)[index] ===
+                ColonyActions.EmitDomainReputationReward
+              ) {
+                return isEventInPosition && isReputationChangePositive;
+              }
+              if (
+                Object.keys(EVENTS_REQUIRED_FOR_ACTION)[index] ===
+                ColonyActions.EmitDomainReputationPenalty
+              ) {
+                return isEventInPosition && !isReputationChangePositive;
+              }
+            }
+
+            return isEventInPosition;
           }
           return false;
         })
@@ -558,11 +586,11 @@ const getRecoveryActionValues = async (
   return recoveryAction;
 };
 
-const getEmitDomainReputationPenaltyValues = async (
+const getEmitDomainReputationPenaltyAndRewardValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
 ): Promise<Partial<ActionValues>> => {
-  const domainReputationPenalty = processedEvents.find(
+  const domainReputationChange = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ) as ProcessedEvent;
 
@@ -583,30 +611,30 @@ const getEmitDomainReputationPenaltyValues = async (
   const {
     address,
     values: { agent, user, amount, skillId },
-  } = domainReputationPenalty;
+  } = domainReputationChange;
 
-  const penaltyDomain = colonyDomains.find((domain) =>
+  const changeDomain = colonyDomains.find((domain) =>
     domain.skillId.eq(skillId),
   );
 
-  const domainReputationPenaltyAction: {
+  const domainReputationChangeAction: {
     address: Address;
     recipient: Address;
-    reputationPenalty: BigNumberish;
+    reputationChange: BigNumberish;
     fromDomain?: number;
     actionInitiator?: string;
   } = {
     address,
     recipient: user,
-    reputationPenalty: amount.toString(),
-    fromDomain: penaltyDomain?.domainId,
+    reputationChange: amount.toString(),
+    fromDomain: changeDomain?.domainId,
   };
 
   if (agent) {
-    domainReputationPenaltyAction.actionInitiator = agent;
+    domainReputationChangeAction.actionInitiator = agent;
   }
 
-  return domainReputationPenaltyAction;
+  return domainReputationChangeAction;
 };
 
 // Motions
@@ -1139,15 +1167,16 @@ export const getActionValues = async (
         ...recoveryActionValues,
       };
     }
+    case ColonyActions.EmitDomainReputationReward:
     case ColonyActions.EmitDomainReputationPenalty: {
       // eslint-disable-next-line max-len
-      const emitDomainReputationPenaltyActionValues = await getEmitDomainReputationPenaltyValues(
+      const emitDomainReputationPenaltyAndRewardActionValues = await getEmitDomainReputationPenaltyAndRewardValues(
         processedEvents,
         colonyClient,
       );
       return {
         ...fallbackValues,
-        ...emitDomainReputationPenaltyActionValues,
+        ...emitDomainReputationPenaltyAndRewardActionValues,
       };
     }
     case ColonyMotions.MintTokensMotion: {
