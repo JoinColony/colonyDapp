@@ -64,9 +64,12 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.colonyName',
     defaultMessage: 'Name',
   },
-  reputationPenalty: {
-    id: 'dashboard.ActionsPage.DetailsWidget.reputationPenalty',
-    defaultMessage: 'Reputation penalty',
+  reputationChange: {
+    id: 'dashboard.ActionsPage.DetailsWidget.reputationChange',
+    defaultMessage: `Reputation {isSmiteAction, select,
+      true {penalty}
+      false {reward}
+    }`,
   },
 });
 
@@ -192,12 +195,15 @@ const DetailsWidget = ({
           </div>
         </div>
       )}
-      {detailsForAction.ReputationPenalty && (
+      {detailsForAction.ReputationChange && (
         <div className={styles.item}>
           <div className={styles.label}>
-            <FormattedMessage {...MSG.reputationPenalty} />
+            <FormattedMessage
+              {...MSG.reputationChange}
+              values={{ isSmiteAction: values?.isSmiteAction }}
+            />
           </div>
-          <div className={styles.value}>{values?.reputationPenalty}</div>
+          <div className={styles.value}>{values?.reputationChange}</div>
         </div>
       )}
       {detailsForAction.Permissions && (
