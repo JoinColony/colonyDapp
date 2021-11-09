@@ -241,7 +241,7 @@ query ColonyAction($transactionHash: String!, $colonyAddress: String!) {
     }
     blockNumber
     rootHash
-    reputationPenalty
+    reputationChange
   }
 }
 
