@@ -68,7 +68,8 @@ export interface EventValues {
   voter?: Address;
   motionTag?: ReactElement;
   objectionTag?: ReactElement;
-  reputationPenalty?: string;
+  reputationChange?: string;
+  isSmiteAction?: boolean;
 }
 
 export type FeedItemWithId<T> = T & { uniqueId: string };
