@@ -102,7 +102,7 @@ const ActionsListItem = ({
     totalNayStake,
     requiredStake,
     transactionTokenAddress,
-    reputationPenalty,
+    reputationChange,
   },
   colony,
   handleOnClick,
@@ -282,8 +282,8 @@ const ActionsListItem = ({
                   toDomain: toDomain?.name || '',
                   roles: roleTitle,
                   newVersion: newVersion || '0',
-                  reputationPenalty: `${getFormattedTokenValue(
-                    new Decimal(reputationPenalty || '0').mul(-1).toString(),
+                  reputationChange: `${getFormattedTokenValue(
+                    new Decimal(reputationChange || '0').mul(-1).toString(),
                     decimals,
                   )} pts`,
                 }}
