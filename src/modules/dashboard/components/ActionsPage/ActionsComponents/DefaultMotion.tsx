@@ -111,7 +111,7 @@ const DefaultMotion = ({
     blockNumber,
     newVersion,
     tokenAddress,
-    reputationPenalty,
+    reputationChange,
   },
   colonyAction,
   token: { decimals, symbol },
@@ -319,10 +319,11 @@ const DefaultMotion = ({
       </div>
     ),
     spaceBreak: <br />,
-    reputationPenalty: `${getFormattedTokenValue(
-      new Decimal(reputationPenalty).mul(-1).toString(),
+    reputationChange: `${getFormattedTokenValue(
+      new Decimal(reputationChange).abs().toString(),
       decimals,
     )} pts`,
+    isSmiteAction: new Decimal(reputationChange).isNegative(),
   };
 
   const motionState = motionStatusData?.motionStatus;
