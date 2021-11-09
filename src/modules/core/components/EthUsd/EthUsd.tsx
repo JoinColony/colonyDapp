@@ -17,7 +17,7 @@ const MSG = defineMessages({
 
 interface Appearance {
   theme: 'primary' | 'grey' | 'dark';
-  size: 'medium' | 'large' | 'small';
+  size?: 'medium' | 'large' | 'small';
 }
 
 interface Props extends NumeralProps {
