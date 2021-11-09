@@ -13,6 +13,8 @@ const motionsMessageDescriptors = {
         {Move {amount} {tokenSymbol} from {fromDomainName} to {toDomainName}}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion}
         {Smite {recipient} with a {reputationChange} reputation penalty}
+      ${ColonyMotions.EmitDomainReputationRewardMotion}
+        {Award {recipient} with a {reputationChange} reputation reward}
         other {Generic motion we don't have information about}
     }`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {fromDomainName} to {recipient}`,
@@ -28,6 +30,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.MoveFundsMotion} {Move Funds}
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
+      ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
       other {Generic}
     }`,
 };
