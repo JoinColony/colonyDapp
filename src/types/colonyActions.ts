@@ -20,6 +20,7 @@ export enum ColonyActions {
   EditDomain = 'EditDomain',
   SetUserRoles = 'SetUserRoles',
   EmitDomainReputationPenalty = 'EmitDomainReputationPenalty',
+  EmitDomainReputationReward = 'EmitDomainReputationReward',
 }
 
 export enum ColonyAndExtensionsEvents {
@@ -146,7 +147,7 @@ export interface FormattedAction {
   blockNumber: number;
   totalNayStake?: string;
   requiredStake?: string;
-  reputationPenalty?: string;
+  reputationChange?: string;
 }
 
 export interface FormattedEvent {

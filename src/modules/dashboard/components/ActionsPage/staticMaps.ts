@@ -16,7 +16,7 @@ export enum ActionPageDetails {
   Description = 'Description',
   Name = 'Name',
   Permissions = 'Permissions',
-  ReputationPenalty = 'ReputationPenalty',
+  ReputationChange = 'ReputationChange',
 }
 
 type EventRolesMap = Partial<
@@ -60,6 +60,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.RecoveryModeExitApproved]: [ColonyRole.Recovery],
   [ColonyAndExtensionsEvents.RecoveryModeExited]: [ColonyRole.Recovery],
   [ColonyAndExtensionsEvents.ArbitraryReputationUpdate]: [
+    ColonyRole.Root,
     ColonyRole.Arbitration,
   ],
   [ColonyAndExtensionsEvents.Generic]: [],
@@ -82,6 +83,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyActions.EditDomain]: 'emoji-pencil-note',
   [ColonyActions.SetUserRoles]: 'emoji-crane',
   [ColonyActions.EmitDomainReputationPenalty]: 'emoji-firebolt',
+  [ColonyActions.EmitDomainReputationReward]: 'emoji-shooting-star',
   [ColonyMotions.MintTokensMotion]: 'emoji-seed-sprout',
   [ColonyMotions.PaymentMotion]: 'emoji-dollar-stack',
   [ColonyMotions.MoveFundsMotion]: 'emoji-world-globe',
@@ -91,6 +93,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.EditDomainMotion]: 'emoji-pencil-note',
   [ColonyMotions.SetUserRolesMotion]: 'emoji-crane',
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
+  [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -135,6 +138,9 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.EmitDomainReputationPenalty]: [
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ],
+  [ColonyActions.EmitDomainReputationReward]: [
+    ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
+  ],
   [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
   [ColonyMotions.CreateDomainMotion]: MOTION_EVENTS,
   [ColonyMotions.EditDomainMotion]: MOTION_EVENTS,
@@ -143,6 +149,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyMotions.PaymentMotion]: MOTION_EVENTS,
   [ColonyMotions.MoveFundsMotion]: MOTION_EVENTS,
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: MOTION_EVENTS,
+  [ColonyMotions.EmitDomainReputationRewardMotion]: MOTION_EVENTS,
 };
 
 /*
@@ -182,6 +189,9 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.EmitDomainReputationPenalty]: [
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ],
+  [ColonyActions.EmitDomainReputationReward]: [
+    ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
+  ],
 };
 
 /*
@@ -218,7 +228,12 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   [ColonyActions.EmitDomainReputationPenalty]: [
     ActionPageDetails.Domain,
     ActionPageDetails.ToRecipient,
-    ActionPageDetails.ReputationPenalty,
+    ActionPageDetails.ReputationChange,
+  ],
+  [ColonyActions.EmitDomainReputationReward]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.ReputationChange,
   ],
   [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
   [ColonyMotions.PaymentMotion]: [
@@ -249,6 +264,11 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: [
     ActionPageDetails.Domain,
     ActionPageDetails.ToRecipient,
-    ActionPageDetails.ReputationPenalty,
+    ActionPageDetails.ReputationChange,
+  ],
+  [ColonyMotions.EmitDomainReputationRewardMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.ReputationChange,
   ],
 };
