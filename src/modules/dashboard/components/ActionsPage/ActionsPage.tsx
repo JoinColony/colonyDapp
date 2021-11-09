@@ -277,6 +277,7 @@ const ActionsPage = () => {
     case ColonyMotions.MintTokensMotion:
     case ColonyMotions.VersionUpgradeMotion:
     case ColonyMotions.EmitDomainReputationPenaltyMotion:
+    case ColonyMotions.EmitDomainReputationRewardMotion:
       return (
         <DefaultMotion
           colony={colonyData?.processedColony}
