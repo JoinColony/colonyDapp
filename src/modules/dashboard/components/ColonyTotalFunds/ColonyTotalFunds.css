@@ -36,10 +36,13 @@
 }
 
 .totalBalanceCopy {
+  display: flex;
+  align-items: center;
   margin-top: 12px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
   color: var(--temp-grey-blue-7);
+  gap: 15px;
 }
 
 .totalBalanceCopy button {
@@ -51,9 +54,7 @@
 }
 
 .rightArrowDisplay {
-  display: inline-block;
-  margin: -11px 3px 0 15px;
-  vertical-align: middle;
+  display: contents;
   font-size: var(--size-medium);
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
