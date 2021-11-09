@@ -1033,7 +1033,7 @@ const getVersionUpgradeMotionValues = async (
   return versionUpgradeMotionValues;
 };
 
-const getEmitDomainReputationPenaltyMotionValues = async (
+const getEmitDomainReputationPenaltyAndRewardMotionValues = async (
   processedEvents: ProcessedEvent[],
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
@@ -1050,16 +1050,19 @@ const getEmitDomainReputationPenaltyMotionValues = async (
     colonyClient,
   );
 
-  const domainReputationPenaltyAction: {
-    reputationPenalty: BigNumberish;
+  const reputationChange = (values.args[4] || values.args[2]).toString();
+  const recipient = values.args[3] || values.args[1];
+
+  const domainReputationChangeAction: {
+    reputationChange: BigNumberish;
     recipient: Address;
   } = {
     ...motionDefaultValues,
-    reputationPenalty: values.args[4].toString(),
-    recipient: values.args[3],
+    reputationChange,
+    recipient,
   };
 
-  return domainReputationPenaltyAction;
+  return domainReputationChangeAction;
 };
 
 export const getActionValues = async (
@@ -1268,16 +1271,17 @@ export const getActionValues = async (
         ...versionUpgradeMotionValues,
       };
     }
+    case ColonyMotions.EmitDomainReputationRewardMotion:
     case ColonyMotions.EmitDomainReputationPenaltyMotion: {
       // eslint-disable-next-line max-len
-      const emitDomainReputationPenaltyMotionValues = await getEmitDomainReputationPenaltyMotionValues(
+      const emitDomainReputationPenaltyAndRewardMotionValues = await getEmitDomainReputationPenaltyAndRewardMotionValues(
         processedEvents,
         votingClient,
         colonyClient,
       );
       return {
         ...fallbackValues,
-        ...emitDomainReputationPenaltyMotionValues,
+        ...emitDomainReputationPenaltyAndRewardMotionValues,
       };
     }
     default: {
