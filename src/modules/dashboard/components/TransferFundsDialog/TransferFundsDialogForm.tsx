@@ -370,31 +370,33 @@ const TransferFundsDialogForm = ({
               onChange={() => validateForm()}
             />
           </div>
-          <div className={styles.tokenAmountSelect}>
-            <TokenSymbolSelector
-              label={MSG.token}
-              tokens={tokens}
-              name="tokenAddress"
-              elementOnly
-              appearance={{ alignOptions: 'right', theme: 'grey' }}
-              disabled={inputDisabled}
-            />
-          </div>
-          {values.tokenAddress === AddressZero && (
-            <div className={styles.tokenAmountUsd}>
-              <EthUsd
-                appearance={{ theme: 'grey', size: 'small' }}
-                value={
-                  /*
-                   * @NOTE Set value to 0 if amount is only the decimal point
-                   * Just entering the decimal point will pass it through to EthUsd
-                   * and that will try to fetch the balance for, which, obviously, will fail
-                   */
-                  values.amount && values.amount !== '.' ? values.amount : '0'
-                }
+          <div className={styles.tokenAmountContainer}>
+            <div className={styles.tokenAmountSelect}>
+              <TokenSymbolSelector
+                label={MSG.token}
+                tokens={tokens}
+                name="tokenAddress"
+                elementOnly
+                appearance={{ alignOptions: 'right', theme: 'grey' }}
+                disabled={inputDisabled}
               />
             </div>
-          )}
+            {values.tokenAddress === AddressZero && (
+              <div className={styles.tokenAmountUsd}>
+                <EthUsd
+                  appearance={{ theme: 'grey', size: 'small' }}
+                  value={
+                    /*
+                     * @NOTE Set value to 0 if amount is only the decimal point
+                     * Just entering the decimal point will pass it through to EthUsd
+                     * and that will try to fetch the balance for, which, obviously, will fail
+                     */
+                    values.amount && values.amount !== '.' ? values.amount : '0'
+                  }
+                />
+              </div>
+            )}
+          </div>
         </div>
       </DialogSection>
       <DialogSection>

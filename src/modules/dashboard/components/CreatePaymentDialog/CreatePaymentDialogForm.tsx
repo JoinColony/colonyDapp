@@ -445,7 +445,7 @@ const CreatePaymentDialogForm = ({
             {values.tokenAddress === AddressZero && (
               <div className={styles.tokenAmountUsd}>
                 <EthUsd
-                  appearance={{ theme: 'grey', size: 'small' }}
+                  appearance={{ theme: 'grey' }}
                   value={
                     /*
                      * @NOTE Set value to 0 if amount is only the decimal point
