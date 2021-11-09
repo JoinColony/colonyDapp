@@ -19,6 +19,8 @@
 
 .tokenAmountUsd {
   width: 100%;
+  font-size: 11px !important;
+  font-weight: 700;
   text-align: right;
 }
 
