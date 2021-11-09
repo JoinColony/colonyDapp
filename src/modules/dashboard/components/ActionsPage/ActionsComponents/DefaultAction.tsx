@@ -63,7 +63,7 @@ const DefaultAction = ({
     oldVersion,
     colonyDisplayName,
     roles,
-    reputationPenalty,
+    reputationChange,
   },
   colonyAction,
   transactionHash,
@@ -168,10 +168,11 @@ const DefaultAction = ({
       />
     ),
     roles,
-    reputationPenalty: `${getFormattedTokenValue(
-      new Decimal(reputationPenalty).mul(-1).toString(),
+    reputationChange: `${getFormattedTokenValue(
+      new Decimal(reputationChange).abs().toString(),
       decimals,
     )} pts`,
+    isSmiteAction: new Decimal(reputationChange).isNegative(),
   };
 
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];
