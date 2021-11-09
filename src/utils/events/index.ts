@@ -41,7 +41,7 @@ interface ActionValues {
   newVersion: string;
   address: Address;
   roles: ActionUserRoles[];
-  reputationPenalty: BigNumberish;
+  reputationChange: BigNumberish;
 }
 
 interface MotionValues extends ActionValues {
@@ -1067,7 +1067,7 @@ export const getActionValues = async (
     oldVersion: '0',
     address: AddressZero,
     roles: [{ id: 0, setTo: false }],
-    reputationPenalty: '0',
+    reputationChange: '0',
   };
 
   switch (actionType) {
