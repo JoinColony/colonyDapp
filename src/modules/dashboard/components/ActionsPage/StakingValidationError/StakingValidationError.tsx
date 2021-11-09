@@ -26,11 +26,11 @@ const stakeValidationMSG = defineMessage({
   },
   stakeMoreTokens: {
     id: 'dashboard.ActionsPage.StakingValidationError.stakeMore',
-    defaultMessage: 'You do not have enough active tokens to stake more.',
+    defaultMessage: `Oops! You don't have enough active tokens. To stake more than this, please activate more tokens.`,
   },
   stakeMoreReputation: {
     id: 'dashboard.ActionsPage.StakingValidationError.reputation',
-    defaultMessage: 'You do not have enough reputation to stake more.',
+    defaultMessage: `Oops! Your ability to stake is limited by the amount of Reputation you have. To be able to stake more, you'll need to earn more Reputation.`,
   },
   cantStakeMore: {
     id: 'dashboard.ActionsPage.StakingValidationError.stakeMore',
