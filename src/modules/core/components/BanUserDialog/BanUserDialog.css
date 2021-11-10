@@ -1,0 +1,80 @@
+.container {
+  padding: 34px 0 20px 0;
+}
+
+.modalHeading {
+  margin-bottom: 20px;
+}
+
+.modalContent {
+  white-space: pre-line;
+  color: var(--dark);
+}
+
+.modalContent > h5 {
+  font-size: var(--size-smallish);
+}
+
+.userInfoContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  padding: 18px 15px 20px 15px;
+  border-radius: 5px;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.note {
+  margin-bottom: 10px;
+  font-size: var(--size-tiny);
+  line-height: 18px;
+  color: var(--temp-grey-blue-7);
+}
+
+.commentContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  padding: 8px 70px 10px 15px;
+  border-radius: 5px;
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}
+
+.userNameAndWallet {
+  display: flex;
+  flex-direction: column;
+  margin-left: 12px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.cancelButtonContainer > button {
+  margin-right: 10px;
+  font-size: var(--size-normal);
+  color: color-mod(var(--dark) alpha(65%));
+}
+
+.confirmButtonContainer > button {
+  width: 160px;
+}
+
+.KYCContainer {
+  height: 488px;
+}
+
+.KYCContent {
+  padding: 0 80px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  color: var(--danger);
+}
+
+.KYCHeading {
+  margin-bottom: 75px;
+}
