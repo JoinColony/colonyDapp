@@ -4,6 +4,7 @@ import { BigNumber, bigNumberify } from 'ethers/utils';
 import { FormikProps } from 'formik';
 import moveDecimal from 'move-decimal-point';
 import * as yup from 'yup';
+import Decimal from 'decimal.js';
 
 import Button from '~core/Button';
 import { ActionForm, Input } from '~core/Fields';
@@ -241,7 +242,7 @@ const ChangeTokenStateForm = ({
               disabled={
                 !isValid ||
                 values.amount === undefined ||
-                values.amount > unformattedTokenBalance
+                new Decimal(unformattedTokenBalance).lt(values.amount || 0)
               }
             />
           </div>

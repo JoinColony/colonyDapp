@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import ReactSlider from 'rc-slider';
 import { useField } from 'formik';
+import Decimal from 'decimal.js';
 
 import 'rc-slider/assets/index.css';
 
@@ -15,7 +16,7 @@ interface Props {
   value: number;
   max?: number;
   min?: number;
-  limit?: number;
+  limit?: Decimal;
   appearance?: Appearance;
   onChange?: (val: any) => void;
   name: string;
@@ -53,18 +54,18 @@ const Slider = ({
   }, [sliderValue, value, setSliderValue]);
 
   const limitValue = useMemo(() => {
-    return limit ? limit * 100 : 0;
+    return limit ? limit.times(100) : new Decimal(0);
   }, [limit]);
 
   const gradientPercentage = useMemo(
-    () => (limitValue >= 100 ? 100 : limitValue),
+    () => (limitValue.gte(100) ? new Decimal(100) : limitValue),
     [limitValue],
   );
 
   const onSliderChange = useCallback(
     (val): void => {
       if (
-        (limit !== undefined && sliderValue < limitValue) ||
+        (limit !== undefined && limitValue.gt(sliderValue)) ||
         val < sliderValue ||
         !limitValue
       ) {
@@ -79,13 +80,13 @@ const Slider = ({
       }
       if (
         limit !== undefined &&
-        (sliderValue > limitValue || val > limitValue)
+        (limitValue.lt(sliderValue) || val > limitValue)
       ) {
-        setSliderValue(limitValue);
-        setValue(limitValue);
+        setSliderValue(limitValue.toNumber());
+        setValue(limitValue.toString());
 
         if (onChange) {
-          onChange(limitValue);
+          onChange(limitValue.toString());
         }
         if (handleLimitExceeded) {
           handleLimitExceeded(true);
@@ -98,8 +99,8 @@ const Slider = ({
 
   const marks = {};
 
-  if (limit && limit < max) {
-    marks[limit] = {};
+  if (limit && limit.lt(max)) {
+    marks[limit.toNumber()] = {};
   }
 
   const SliderColorsObject = {
@@ -155,7 +156,9 @@ const Slider = ({
         }}
         dotStyle={{
           display:
-            gradientPercentage === 100 || gradientPercentage <= 0 ? 'none' : '',
+            gradientPercentage.eq(100) || gradientPercentage.lte(0)
+              ? 'none'
+              : '',
           height: sizes.markHeight,
           width: sizes.markWidth,
           backgroundColor: '#76748B',
