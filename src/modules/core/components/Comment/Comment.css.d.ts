@@ -3,6 +3,7 @@ export const stateAnnotation: string;
 export const avatar: string;
 export const details: string;
 export const content: string;
+export const options: string;
 export const text: string;
 export const username: string;
 export const themePrimary: string;

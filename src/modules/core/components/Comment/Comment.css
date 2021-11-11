@@ -7,6 +7,10 @@
   border-radius: var(--radius-large);
 }
 
+.main:hover {
+  background-color: color-mod(var(--action-secondary) alpha(6%));
+}
+
 .stateAnnotation {
   background-color: color-mod(var(--primary) alpha(6%));
 }
@@ -33,6 +37,10 @@
 
 .content ul {
   margin-top: -2px;
+}
+
+.options {
+  width: 10px;
 }
 
 .text {
