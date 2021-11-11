@@ -62,19 +62,3 @@
 .confirmButtonContainer > button {
   width: 160px;
 }
-
-.KYCContainer {
-  height: 488px;
-}
-
-.KYCContent {
-  padding: 0 80px;
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-  text-align: center;
-  color: var(--danger);
-}
-
-.KYCHeading {
-  margin-bottom: 75px;
-}
