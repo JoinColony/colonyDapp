@@ -10,6 +10,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
 import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
 import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
+import ToggleBanningAddressDialog from '~dashboard/ToggleBanningAddressDialog';
 
 import {
   useColonyFromNameQuery,
@@ -18,10 +19,10 @@ import {
   useBannedUsersQuery,
   useLoggedInUser,
 } from '~data/index';
+import { useTransformer } from '~utils/hooks';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
-import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot, canAdminister } from '../../../users/checks';
 import { oneTxMustBeUpgraded } from '../../../dashboard/checks';
@@ -35,12 +36,12 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyMembers.editPermissions',
     defaultMessage: 'Edit permissions',
   },
-  banUser: {
-    id: 'dashboard.ColonyMembers.banUser',
+  banAddress: {
+    id: 'dashboard.ColonyMembers.banAddress',
     defaultMessage: 'Ban address',
   },
-  unbanUser: {
-    id: 'dashboard.ColonyMembers.unbanUser',
+  unbanAddress: {
+    id: 'dashboard.ColonyMembers.unbanAddress',
     defaultMessage: 'Unban address',
   },
   loadingText: {
@@ -60,6 +61,7 @@ const ColonyMembers = () => {
   const hasRegisteredProfile = !!username && !ethereal;
 
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
+  const openToggleBanningDialog = useDialog(ToggleBanningAddressDialog);
 
   const { colonyName } = useParams<{
     colonyName: string;
@@ -169,7 +171,6 @@ const ColonyMembers = () => {
           )}
         </div>
         <aside className={styles.rightAside}>
-          {}
           {!controlsDisabled && (
             <ul className={styles.controls}>
               <li>
@@ -188,21 +189,29 @@ const ColonyMembers = () => {
               </li>
               {canAdministerComments && (
                 <>
-                  {/*
-                   * @TODO Add proper modals
-                   */}
                   <li>
                     <Button
                       appearance={{ theme: 'blue' }}
-                      text={MSG.banUser}
-                      onClick={handlePermissionManagementDialog}
+                      text={MSG.banAddress}
+                      onClick={() =>
+                        openToggleBanningDialog({
+                          colonyAddress:
+                            colonyData?.processedColony?.colonyAddress,
+                        })
+                      }
                     />
                   </li>
                   <li>
                     <Button
                       appearance={{ theme: 'blue' }}
-                      text={MSG.unbanUser}
-                      onClick={handlePermissionManagementDialog}
+                      text={MSG.unbanAddress}
+                      onClick={() =>
+                        openToggleBanningDialog({
+                          isBanning: false,
+                          colonyAddress:
+                            colonyData?.processedColony?.colonyAddress,
+                        })
+                      }
                     />
                   </li>
                 </>
