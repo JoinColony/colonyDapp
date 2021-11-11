@@ -3,8 +3,8 @@ import React from 'react';
 import CopyableAddress from '~core/CopyableAddress';
 import Heading from '~core/Heading';
 import UserMention from '~core/UserMention';
+import UserAvatar from '~core/UserAvatar';
 import { AnyUser } from '~data/index';
-import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import styles from './InfoPopover.css';
 
@@ -13,8 +13,6 @@ interface Props {
 }
 
 const displayName = 'InfoPopover.UserInfo';
-
-const UserAvatar = HookedUserAvatar();
 
 const UserInfo = ({
   user: {
