@@ -8,6 +8,7 @@
   --dark-blue: rgb(69, 85, 230);
   --sky-blue: rgb(90, 145, 255);
   --danger: rgb(248, 43, 101); /* user mentions color */
+  --banned: rgb(248, 43, 101, 0.2); /* user mentions color */
   --violet: rgb(89, 100, 240);
   --pink: rgb(254, 94, 124);
   --golden: rgba(255, 176, 0); /* Think pending states (golden yellow) */
