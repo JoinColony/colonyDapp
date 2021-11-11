@@ -78,9 +78,12 @@ query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: Str
       address: $extensionAddress
     }
   ) {
+    id
     transaction {
+      id
       transactionHash: id
       block {
+        id
         number: id
         timestamp
       }
@@ -95,9 +98,12 @@ query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: Str
       address: $extensionAddress
     }
   ) {
+    id
     transaction {
+      id
       transactionHash: id
       block {
+        id
         number: id
         timestamp
       }
