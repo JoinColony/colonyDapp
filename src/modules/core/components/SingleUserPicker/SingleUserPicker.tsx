@@ -17,7 +17,7 @@ import { Props as WithOmnipickerInProps } from '../OmniPicker/withOmniPicker';
 import { InputLabel } from '../Fields';
 import Icon from '../Icon';
 import Button from '../Button';
-import UserAvatar from '../UserAvatar';
+import UserAvatar from '~core/UserAvatar';
 import ItemDefault from './ItemDefault';
 
 import styles from './SingleUserPicker.css';
