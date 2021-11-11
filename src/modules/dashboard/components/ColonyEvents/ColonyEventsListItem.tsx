@@ -166,7 +166,7 @@ const ColonyEventsListItem = ({
     storageSlotValue,
     motionId,
     voteSide: <FormattedMessage {...MSG.voteSide} values={{ vote }} />,
-    reputationPenalty: `${getFormattedTokenValue(
+    reputationChange: `${getFormattedTokenValue(
       new Decimal(amount || '0').mul(-1).toString(),
       decimals,
     )} pts`,

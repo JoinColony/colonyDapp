@@ -1198,7 +1198,7 @@ export const motionsResolvers = ({
         'emitDomainReputationPenalty(uint256,uint256,uint256,address,int256)'
       ) {
         return {
-          reputationPenalty: actionValues?.args[4].toString(),
+          reputationChange: actionValues?.args[4].toString(),
           recipient: actionValues?.args[3],
         };
       }
