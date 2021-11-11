@@ -60,6 +60,7 @@ export interface ProcessedEvent {
 export const colonyActionsResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
+  apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
     async colonyAction(_, { transactionHash, colonyAddress }) {
@@ -221,7 +222,11 @@ export const colonyActionsResolvers = ({
         const clientVersion = await colonyClient?.version();
         let annotation;
         if (clientVersion.toNumber() >= ColonyVersion.LightweightSpaceship) {
-          annotation = await getAnnotationFromSubgraph(from, hash);
+          annotation = await getAnnotationFromSubgraph(
+            from,
+            hash,
+            apolloClient,
+          );
         }
 
         return {
