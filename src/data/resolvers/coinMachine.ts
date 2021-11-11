@@ -306,7 +306,7 @@ export const coinMachineResolvers = ({
           tokenClient,
           tokenClient.filters.Transfer(null, coinMachineClient.address, null),
           {
-            fromBlock: extensionInitialised?.block,
+            fromBlock: extensionInitialised?.blockNumber,
           },
         );
         /*
@@ -374,7 +374,8 @@ export const coinMachineResolvers = ({
            * Please refactor this to use `sortSubgraphEventByIndex` once you get a chance
            */
           .sort(
-            ({ block: lowBlock }, { block: highBlock }) => highBlock - lowBlock,
+            ({ blockNumber: lowBlock = 0 }, { blockNumber: highBlock = 0 }) =>
+              highBlock - lowBlock,
           );
         /*
          * Generate the starting available tokens value (for the last period)
@@ -392,7 +393,7 @@ export const coinMachineResolvers = ({
            * "active" sale period
            */
           .filter(
-            ({ timestamp: eventTimestamp }) =>
+            ({ timestamp: eventTimestamp = 0 }) =>
               eventTimestamp > stalePeriods[0].saleEndedAt,
           )
           .map((event) => {
@@ -445,7 +446,7 @@ export const coinMachineResolvers = ({
                  */
                 historicAvailableTokensEvents
                   .filter(
-                    ({ timestamp: eventTimestamp }) =>
+                    ({ timestamp: eventTimestamp = 0 }) =>
                       eventTimestamp >= saleStartedAt &&
                       eventTimestamp <= staleSaleEndedAt,
                   )
@@ -477,6 +478,7 @@ export const coinMachineResolvers = ({
                   tokensAvailable.lte(0) &&
                   lastPeriodAvailableTokens.lte(0) &&
                   firstTokenTransfer &&
+                  firstTokenTransfer.timestamp &&
                   firstTokenTransfer.timestamp <= staleSaleEndedAt
                     ? firstTokenTransfer.values.wad
                     : tokensAvailable;
@@ -505,7 +507,8 @@ export const coinMachineResolvers = ({
             .filter(
               ({ saleEndedAt }) =>
                 parseInt(saleEndedAt, 10) <= currentBlockTime &&
-                parseInt(saleEndedAt, 10) >= extensionInitialised.timestamp,
+                parseInt(saleEndedAt, 10) >=
+                  (extensionInitialised.timestamp || 0),
             )
             /*
              * Price evolution calculations require us to go for oldest sale period
