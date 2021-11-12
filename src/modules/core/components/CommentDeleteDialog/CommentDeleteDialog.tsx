@@ -7,34 +7,34 @@ import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 import Comment, { Props as CommentProps } from '~core/Comment';
 
-import styles from './DeleteCommentDialog.css';
+import styles from './CommentDeleteDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.CoinMachine.DeleteCommentDialog.title',
+    id: 'CommentDeleteDialog.title',
     defaultMessage: 'Delete comment',
   },
   question: {
-    id: 'dashboard.CoinMachine.DeleteCommentDialog.question',
+    id: 'CommentDeleteDialog.question',
     defaultMessage: `Are you sure you want to delete this message?`,
   },
   buttonCancel: {
-    id: 'dashboard.CoinMachine.DeleteCommentDialog.buttonCancel',
+    id: 'CommentDeleteDialog.buttonCancel',
     defaultMessage: 'Cancel',
   },
   buttonDelete: {
-    id: 'dashboard.CoinMachine.DeleteCommentDialog.buttonDelete',
+    id: 'CommentDeleteDialog.buttonDelete',
     defaultMessage: 'Delete',
   },
 });
 
-const displayName = 'dashboard.CoinMachine.DeleteCommentDialog';
+const displayName = 'CommentDeleteDialog';
 
 interface Props extends DialogProps {
   comment: CommentProps;
 }
 
-const DeleteCommentDialog = ({ cancel, comment }: Props) => {
+const CommentDeleteDialog = ({ cancel, comment }: Props) => {
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -69,6 +69,6 @@ const DeleteCommentDialog = ({ cancel, comment }: Props) => {
   );
 };
 
-DeleteCommentDialog.displayName = displayName;
+CommentDeleteDialog.displayName = displayName;
 
-export default DeleteCommentDialog;
+export default CommentDeleteDialog;
