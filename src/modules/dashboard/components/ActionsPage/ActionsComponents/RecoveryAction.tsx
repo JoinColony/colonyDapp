@@ -116,6 +116,7 @@ const RecoveryAction = ({
       blockNumber,
       colonyAddress,
     },
+    pollInterval: 1000,
   });
 
   const {
@@ -126,6 +127,7 @@ const RecoveryAction = ({
       blockNumber,
       colonyAddress,
     },
+    pollInterval: 1000,
   });
 
   const isInRecoveryMode = useMemo(() => {

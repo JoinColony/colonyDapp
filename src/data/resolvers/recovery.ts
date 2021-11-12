@@ -7,7 +7,6 @@ import {
   ColonyVersion,
 } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
-import { Provider } from 'ethers/providers';
 
 import { Context } from '~context/index';
 import {
@@ -34,9 +33,6 @@ import {
   SubgraphRoleEventsDocument,
   SubgraphRoleEventsQuery,
   SubgraphRoleEventsQueryVariables,
-  SubgraphBlockDocument,
-  SubgraphBlockQuery,
-  SubgraphBlockQueryVariables,
 } from '~data/index';
 
 import {
@@ -51,41 +47,19 @@ import {
   ExtendedLogDescription,
   parseSubgraphEvent,
   sortSubgraphEventByIndex,
-  waitForBlockToExist,
 } from '~utils/events';
 import { log } from '~utils/debug';
 
 import { ProcessedEvent } from './colonyActions';
+import { getLatestSubgraphBlock } from './colony';
 
 const getSessionRecoveryEvents = async (
   apolloClient: ApolloClient<object>,
-  provider: Provider,
   colonyAddress: string,
   startBlock = 1,
 ) => {
   try {
-    let toBlockNumber = await provider.getBlockNumber();
-
-    const blockWatchQuery = apolloClient.watchQuery<
-      SubgraphBlockQuery,
-      SubgraphBlockQueryVariables
-    >({
-      query: SubgraphBlockDocument,
-      variables: {
-        blockId: `block_${toBlockNumber}`,
-      },
-    });
-
-    try {
-      const blockQueryResult = await blockWatchQuery.result();
-
-      if (!blockQueryResult.data?.block) {
-        const handleBlockRefetch = () => blockWatchQuery.refetch();
-        await waitForBlockToExist(handleBlockRefetch);
-      }
-    } catch (error) {
-      log.verbose(error);
-    }
+    let toBlockNumber = await getLatestSubgraphBlock(apolloClient);
 
     const { data: recoveryModeExitedEventsData } = await apolloClient.query<
       SubgraphRecoveryModeExitedEventsQuery,
@@ -106,6 +80,8 @@ const getSessionRecoveryEvents = async (
       .filter((event) => (event.blockNumber || 0) >= startBlock)
       .sort(sortSubgraphEventByIndex);
 
+    // console.log(mostRecentExitRecoveryEvent);
+
     if (mostRecentExitRecoveryEvent) {
       toBlockNumber = mostRecentExitRecoveryEvent.blockNumber || 0;
     }
@@ -120,6 +96,7 @@ const getSessionRecoveryEvents = async (
         toBlock: toBlockNumber,
       },
     });
+
     const storageSlotSetEvents =
       recoveryModeEventsData?.recoveryStorageSlotSetEvents || [];
     const recoveryModeExitApprovedEvents =
@@ -189,7 +166,6 @@ export const recoveryModeResolvers = ({
       try {
         return await getSessionRecoveryEvents(
           apolloClient,
-          provider,
           colonyAddress,
           blockNumber,
         );
@@ -354,29 +330,9 @@ export const recoveryModeResolvers = ({
          * recovery session start, as roles cannot be changed once the recovery
          * session starts)
          */
-        let toBlockNumber = await provider.getBlockNumber();
+        let toBlockNumber = await getLatestSubgraphBlock(apolloClient);
         if (endBlockNumber) {
           toBlockNumber = endBlockNumber;
-        }
-
-        const blockWatchQuery = apolloClient.watchQuery<
-          SubgraphBlockQuery,
-          SubgraphBlockQueryVariables
-        >({
-          query: SubgraphBlockDocument,
-          variables: {
-            blockId: `block_${toBlockNumber}`,
-          },
-        });
-
-        try {
-          const blockQueryResult = await blockWatchQuery.result();
-          if (!blockQueryResult.data?.block) {
-            const handleBlockRefetch = () => blockWatchQuery.refetch();
-            await waitForBlockToExist(handleBlockRefetch);
-          }
-        } catch (error) {
-          log.verbose(error);
         }
 
         const { data } = await apolloClient.query<
@@ -600,28 +556,8 @@ export const recoveryModeResolvers = ({
           ClientType.ColonyClient,
           colonyAddress,
         )) as ColonyClientV5;
-        const latestBlockNumber = await provider.getBlockNumber();
+        const latestBlockNumber = await getLatestSubgraphBlock(apolloClient);
         const colonyVersion = await colonyClient.version();
-
-        const blockWatchQuery = apolloClient.watchQuery<
-          SubgraphBlockQuery,
-          SubgraphBlockQueryVariables
-        >({
-          query: SubgraphBlockDocument,
-          variables: {
-            blockId: `block_${latestBlockNumber}`,
-          },
-        });
-
-        try {
-          const blockQueryResult = await blockWatchQuery.result();
-          if (!blockQueryResult.data?.block) {
-            const handleBlockRefetch = () => blockWatchQuery.refetch();
-            await waitForBlockToExist(handleBlockRefetch);
-          }
-        } catch (error) {
-          log.verbose(error);
-        }
 
         /*
          * @NOTE We don't care about colonies that are newer than v6
