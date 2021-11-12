@@ -9,7 +9,6 @@ import styles from './BannedTag.css';
 const displayName = 'BannedTag';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
-  /** Appearance object */
   /** Text to display in the tag */
   text?: MessageDescriptor | string;
   /** Text values for intl interpolation */
