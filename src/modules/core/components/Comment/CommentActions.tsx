@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import Icon from '~core/Icon';
 import Popover from '~core/Popover';
 import { AnyUser } from '~data/index';
-import { Address } from '~types/index';
+import { COMMENT_MODERATION } from '~immutable/index';
 
 import CommentActionsPopover from './CommentActionsPopover';
 
@@ -20,7 +20,6 @@ const MSG = defineMessages({
 
 interface Props {
   user: AnyUser | null;
-  walletAddress: Address;
   permission: string;
   comment?: string;
   hoverState?: boolean;
@@ -32,9 +31,18 @@ const CommentActions = ({
   user,
   permission,
   comment,
-  walletAddress,
   hoverState
 }: Props) => {
+
+  /*
+   * @NOTE Offset Calculations
+   * This is dependant on the number of actions, may need to be adjusted
+   * if more actions are added
+   */
+  let popoverOffset = [21, 8];
+  if (permission === COMMENT_MODERATION.CAN_EDIT) {
+    popoverOffset = [0, 8];
+  }
 
   return (
     <Popover
@@ -55,7 +63,7 @@ const CommentActions = ({
           {
             name: 'offset',
             options: {
-              offset: [21, 8],
+              offset: popoverOffset,
             },
           },
         ],
