@@ -15,9 +15,14 @@ import {
   SubgraphCoinMachinePeriodsDocument,
 } from '~data/index';
 import { createAddress } from '~utils/web3';
-import { ExtendedLogDescription, parseSubgraphEvent } from '~utils/events';
+import {
+  ExtendedLogDescription,
+  parseSubgraphEvent,
+  sortSubgraphEventByIndex,
+} from '~utils/events';
 import { getCoinMachinePeriodPrice } from '~utils/contracts';
 import { ColonyAndExtensionsEvents } from '~types/colonyActions';
+import { SortDirection } from '~types/index';
 
 import { getToken } from './token';
 
@@ -93,47 +98,41 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
-    async coinMachineBoughtTokens(_, { colonyAddress, transactionHash }) {
-      const { provider } = colonyManager.networkClient;
+    async coinMachineBoughtTokens(_, { colonyAddress }) {
       try {
         const coinMachineClient = await colonyManager.getClient(
           ClientType.CoinMachineClient,
           colonyAddress,
         );
 
-        const boughtTokensFilter = coinMachineClient.filters.TokensBought(
-          null,
-          null,
-          null,
-        );
+        const subgraphData = await apolloClient.query<
+          SubgraphCoinMachinePeriodsQuery,
+          SubgraphCoinMachinePeriodsQueryVariables
+        >({
+          query: SubgraphCoinMachinePeriodsDocument,
+          variables: {
+            colonyAddress: colonyAddress.toLowerCase(),
+            extensionAddress: coinMachineClient.address.toLowerCase(),
+            /*
+             * The limit doesn't matter in this case as we're not using that data,
+             * we're just interested in the TokensBought events
+             */
+            limit: 1,
+          },
+          fetchPolicy: 'network-only',
+        });
 
-        const boughtTokensLogs = await getLogs(
-          coinMachineClient,
-          boughtTokensFilter,
-        );
-
-        const boughtTokensEvents = await Promise.all(
-          boughtTokensLogs.map(async (log) => {
-            const parsedLog = coinMachineClient.interface.parseLog(log);
-            const {
-              blockHash,
-              transactionHash: currentLogTransactionHash,
-            } = log;
-            return {
-              ...parsedLog,
-              transactionHash: currentLogTransactionHash,
-              createdAt: blockHash
-                ? await getBlockTime(provider, blockHash)
-                : 0,
-            };
-          }),
-        );
-        const lastBoughtTokensEvent = boughtTokensEvents
-          .sort(
-            (firstEvent, secondEvent) =>
-              secondEvent.createdAt - firstEvent.createdAt,
-          )
-          .find((event) => event.transactionHash === transactionHash);
+        const [lastBoughtTokensEvent] = (
+          subgraphData?.data?.tokenBoughtEvents || []
+        )
+          .map(parseSubgraphEvent)
+          .sort((firstEvent, secondEvent) =>
+            sortSubgraphEventByIndex(
+              firstEvent,
+              secondEvent,
+              SortDirection.DESC,
+            ),
+          );
 
         return {
           numTokens: lastBoughtTokensEvent?.values.numTokens?.toString() || '0',
