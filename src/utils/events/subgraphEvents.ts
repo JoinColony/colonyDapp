@@ -116,7 +116,10 @@ const roleArgumentParser = (values: {
     parsedValues.role = parseInt(values.role, 10);
   }
   if (values?.setTo) {
-    parsedValues.setTo = Boolean(values.setTo);
+    /*
+     * Apparently there's no better way to parse a boolean value from string...
+     */
+    parsedValues.setTo = values.setTo === 'true';
   }
   return parsedValues;
 };
