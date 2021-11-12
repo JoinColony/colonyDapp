@@ -1178,16 +1178,6 @@ export type ByColoniesAddressesFilter = {
   id_in: Array<Scalars['String']>;
 };
 
-export type SubgraphBlock = {
-  id: Scalars['String'];
-  timestamp: Scalars['String'];
-};
-
-export type SubgraphTransaction = {
-  id: Scalars['String'];
-  block: SubgraphBlock;
-};
-
 export type SubgraphToken = {
   id: Scalars['String'];
   symbol: Scalars['String'];
@@ -1386,6 +1376,16 @@ export type ColonyExtensionDetails = {
 export type SubgraphColonyExtension = {
   id: Scalars['String'];
   hash: Scalars['String'];
+};
+
+export type SubgraphBlock = {
+  id: Scalars['String'];
+  timestamp: Scalars['String'];
+};
+
+export type SubgraphTransaction = {
+  id: Scalars['String'];
+  block: SubgraphBlock;
 };
 
 export type ActionsFilter = {
