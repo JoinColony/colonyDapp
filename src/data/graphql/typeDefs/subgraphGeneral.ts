@@ -27,7 +27,6 @@ export default gql`
       orderDirection: String
       block: ToBlockInput
     ): [SubgraphEvent!]!
-    block(id: String!): SubgraphBlock
     domain(id: Int!, block: SubgraphMetaBlock): SubgraphUnusedDomain!
   }
 `;
