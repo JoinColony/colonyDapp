@@ -35,7 +35,7 @@ interface Props {
 
 const displayName = 'dashboard.CoinMachine.Chat';
 
-const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
+const Chat = ({ colony, transactionHash }: Props) => {
   const scrollElmRef = useRef<HTMLDivElement | null>(null);
 
   const { username, ethereal } = useLoggedInUser();
@@ -97,6 +97,7 @@ const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
                   createdAt={createdAt}
                   comment={context.message}
                   user={initiator}
+                  colony={colony}
                 />
               ),
             )
@@ -110,7 +111,7 @@ const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
       </div>
       <div className={styles.inputBox}>
         <CommentInput
-          colonyAddress={colonyAddress}
+          colonyAddress={colony.colonyAddress}
           transactionHash={transactionHash}
           callback={scrollComments}
           disabled={!userHasProfile}
