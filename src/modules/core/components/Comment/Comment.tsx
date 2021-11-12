@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import {
-  ColonyRole,
-  ROOT_DOMAIN_ID
-} from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { getMainClasses } from '~utils/css';
 import { useTransformer } from '~utils/hooks';
@@ -110,7 +107,6 @@ const Comment = ({
             permission={permission}
             user={user}
             comment={comment}
-            walletAddress={walletAddress}
             hoverState={hoverState}
           />
         )}

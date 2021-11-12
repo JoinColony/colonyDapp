@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import DropdownMenu, {
@@ -45,12 +45,12 @@ const CommentActionsPopover = ({
     if (!hoverState) {
       closePopover();
     }
-  }, [hoverState]);
+  }, [hoverState, closePopover]);
 
   const renderUserActions = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
-        <Button 
+        <Button
           appearance={{ theme: 'no-style' }}
           onClick={() => closePopover()}
         >
@@ -66,7 +66,7 @@ const CommentActionsPopover = ({
   const renderModeratorOptions = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
-        <Button 
+        <Button
           appearance={{ theme: 'no-style' }}
           onClick={() => closePopover()}
         >
@@ -75,7 +75,7 @@ const CommentActionsPopover = ({
             <FormattedMessage {...MSG.deleteComment} />
           </div>
         </Button>
-        <Button 
+        <Button
           appearance={{ theme: 'no-style' }}
           onClick={() => closePopover()}
         >
