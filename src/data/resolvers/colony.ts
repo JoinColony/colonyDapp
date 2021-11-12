@@ -1,4 +1,5 @@
-import { Resolvers } from '@apollo/client';
+import { Resolvers, ApolloClient } from '@apollo/client';
+import gql from 'graphql-tag';
 import { AddressZero, HashZero } from 'ethers/constants';
 import { bigNumberify, LogDescription } from 'ethers/utils';
 import {
@@ -32,18 +33,11 @@ import {
   SubgraphRoleEventsQuery,
   SubgraphRoleEventsQueryVariables,
   SubgraphRoleEventsDocument,
-  SubgraphBlockDocument,
-  SubgraphBlockQuery,
-  SubgraphBlockQueryVariables,
 } from '~data/index';
 
 import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
-import {
-  parseSubgraphEvent,
-  sortSubgraphEventByIndex,
-  waitForBlockToExist,
-} from '~utils/events';
+import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
 import { Address } from '~types/index';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -54,6 +48,27 @@ import {
   getPayoutClaimedTransfers,
   getColonyUnclaimedTransfers,
 } from './transactions';
+
+export const getLatestSubgraphBlock = async (
+  apolloClient: ApolloClient<object>,
+): Promise<{
+  hash: string;
+  number: number;
+}> => {
+  const { data } = await apolloClient.query({
+    query: gql`
+      query SubgraphLatestTrackedBlock {
+        _meta {
+          block {
+            hash
+            number
+          }
+        }
+      }
+    `,
+  });
+  return data?._meta?.block || {};
+};
 
 export const getProcessedColony = async (
   subgraphColony,
@@ -457,28 +472,9 @@ export const colonyResolvers = ({
           ClientType.ColonyClient,
           colonyAddress,
         );
-        const latestBlockNumber = await colonyClient.provider.getBlockNumber();
-
-        const blockWatchQuery = apolloClient.watchQuery<
-          SubgraphBlockQuery,
-          SubgraphBlockQueryVariables
-        >({
-          query: SubgraphBlockDocument,
-          variables: {
-            blockId: `block_${latestBlockNumber}`,
-          },
-        });
-
-        try {
-          const blockQueryResult = await blockWatchQuery.result();
-
-          if (!blockQueryResult.data?.block) {
-            const handleBlockRefetch = () => blockWatchQuery.refetch();
-            await waitForBlockToExist(handleBlockRefetch);
-          }
-        } catch (error) {
-          log.verbose(error);
-        }
+        const { number: latestBlockNumber } = await getLatestSubgraphBlock(
+          apolloClient,
+        );
 
         if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
           throw new Error(`Not supported in this version of Colony`);
