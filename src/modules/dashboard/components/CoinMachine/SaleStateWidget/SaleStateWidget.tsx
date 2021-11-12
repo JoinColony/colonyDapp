@@ -182,7 +182,9 @@ const SaleStateWidget = ({
   });
 
   const { data: boughtTokensData } = useCoinMachineBoughtTokensQuery({
-    variables: { colonyAddress, transactionHash },
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+    pollInterval: 1000,
   });
 
   const buttonText = useCallback(() => {

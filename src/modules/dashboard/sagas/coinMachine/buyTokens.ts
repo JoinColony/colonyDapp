@@ -15,6 +15,9 @@ import {
   CurrentPeriodTokensDocument,
   CurrentPeriodTokensQuery,
   CurrentPeriodTokensQueryVariables,
+  SubgraphCoinMachinePeriodsQuery,
+  SubgraphCoinMachinePeriodsQueryVariables,
+  SubgraphCoinMachinePeriodsDocument,
 } from '~data/index';
 
 import {
@@ -190,6 +193,12 @@ function* buyTokens({
   } catch (caughtError) {
     putError(ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR, caughtError, meta);
   } finally {
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+    const coinMachineClient = yield colonyManager.getClient(
+      ClientType.CoinMachineClient,
+      colonyAddress,
+    );
+
     yield apolloClient.query<
       CurrentPeriodTokensQuery,
       CurrentPeriodTokensQueryVariables
@@ -198,6 +207,20 @@ function* buyTokens({
       variables: { colonyAddress },
       fetchPolicy: 'network-only',
     });
+
+    yield apolloClient.query<
+      SubgraphCoinMachinePeriodsQuery,
+      SubgraphCoinMachinePeriodsQueryVariables
+    >({
+      query: SubgraphCoinMachinePeriodsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLowerCase(),
+        extensionAddress: coinMachineClient.address.toLowerCase(),
+        limit: 1,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     txChannel.close();
   }
 }
