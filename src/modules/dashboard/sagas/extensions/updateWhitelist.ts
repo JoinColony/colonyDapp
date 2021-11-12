@@ -112,6 +112,10 @@ export function* updateWhitelist({
       fetchPolicy: 'network-only',
     });
 
+    /*
+     * @TODO This should be improved, as we can update the cache by calling this
+     * query a single time, no need to call it for each individual user
+     */
     yield all(
       userAddresses.map((userAddress) =>
         apolloClient.query<
