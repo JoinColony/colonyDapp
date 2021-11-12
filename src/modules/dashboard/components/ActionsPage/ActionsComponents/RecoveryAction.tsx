@@ -218,6 +218,7 @@ const RecoveryAction = ({
           {annotationHash && (
             <ActionsPageFeedItemWithIPFS
               createdAt={actionCreatedAt}
+              colony={colony}
               user={initiator}
               annotation
               hash={annotationHash}
@@ -332,6 +333,7 @@ const RecoveryAction = ({
                     <Comment
                       key={uniqueId}
                       createdAt={createdAt}
+                      colony={colony}
                       comment={message}
                       user={messageInitiator}
                     />

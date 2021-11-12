@@ -1,23 +1,16 @@
 import React, { ReactNode, useEffect } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import {
-  ColonyRole,
-  ROOT_DOMAIN_ID,
-  ColonyVersion,
-  Extension,
-} from '@colony/colony-js';
 
-import { useTransformer } from '~utils/hooks';
 import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
 } from '~core/DropdownMenu';
 import Button from '~core/Button';
-import { AnyUser, useLoggedInUser } from '~data/index';
 import Icon from '~core/Icon';
+import { AnyUser } from '~data/index';
+import { COMMENT_MODERATION } from '~immutable/index';
+
 import styles from './CommentActionsPopover.css';
-import { userHasRole } from '../../../users/checks';
-import { getUserRolesForDomain } from '../../../transformers';
 
 const MSG = defineMessages({
   deleteComment: {
@@ -33,8 +26,8 @@ const MSG = defineMessages({
 interface Props {
   closePopover: () => void;
   user: AnyUser | null;
+  permission: string;
   comment?: string;
-  children?: ReactNode;
   hoverState?: boolean;
 }
 
@@ -43,33 +36,10 @@ const displayName = 'core.Comment.CommentActionsPopover';
 const CommentActionsPopover = ({
   closePopover,
   user,
+  permission,
   comment,
   hoverState,
-  children,
 }: Props) => {
-
-  const { walletAddress, networkId, ethereal, username } = useLoggedInUser();
-  // const rootRoles = useTransformer(getUserRolesForDomain, [
-  //   colony,
-  //   walletAddress,
-  //   ROOT_DOMAIN_ID,
-  // ]);
-
-  // Check for permissions to moderate
-  // const canModerate =
-  //   userHasRole(rootRoles, ColonyRole.Root) ||
-  //   userHasRole(rootRoles, ColonyRole.Administration);
-  const canModerate = true;
-
-  // // Check for permissions to moderate
-  // const canEdit =
-  //   userHasRole(rootRoles, ColonyRole.Root) ||
-  //   userHasRole(rootRoles, ColonyRole.Administration);
-  const canEdit = false;
-
-
-    user?.profile.walletAddress
-
   // Hide the action popover on mouseLeave comment
   useEffect(() => {
     if (!hoverState) {
@@ -77,7 +47,7 @@ const CommentActionsPopover = ({
     }
   }, [hoverState]);
 
-  const renderUserSection = () => (
+  const renderUserActions = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
         <Button 
@@ -93,9 +63,18 @@ const CommentActionsPopover = ({
     </DropdownMenuSection>
   );
 
-  const renderColonySection = () => (
+  const renderModeratorOptions = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
+        <Button 
+          appearance={{ theme: 'no-style' }}
+          onClick={() => closePopover()}
+        >
+          <div className={styles.actionButton}>
+            <Icon name="trash" title={MSG.deleteComment} />
+            <FormattedMessage {...MSG.deleteComment} />
+          </div>
+        </Button>
         <Button 
           appearance={{ theme: 'no-style' }}
           onClick={() => closePopover()}
@@ -111,21 +90,12 @@ const CommentActionsPopover = ({
 
   return (
     <DropdownMenu onClick={closePopover}>
-      {canModerate ? (
-        <>
-          {renderUserSection()}
-          {renderColonySection()}
-        </>
-      ) : (
-        null
-      )}
-      {canEdit ? (
-        <>
-          {renderUserSection()}
-        </>
-      ) : (
-        null
-      )}
+      {permission === COMMENT_MODERATION.CAN_MODERATE ? (
+        <>{renderModeratorOptions()}</>
+      ) : null}
+      {permission === COMMENT_MODERATION.CAN_EDIT ? (
+        <>{renderUserActions()}</>
+      ) : null}
     </DropdownMenu>
   );
 };

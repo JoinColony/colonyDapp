@@ -256,6 +256,7 @@ const ActionsPageFeed = ({
           <Comment
             key={uniqueId}
             createdAt={createdAt}
+            colony={colony}
             comment={message}
             user={messageInitiator}
           />
