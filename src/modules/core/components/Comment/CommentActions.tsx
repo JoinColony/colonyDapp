@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
-import classnames from 'classnames';
-import Icon from '~core/Icon';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import classnames from 'classnames';
+import Icon from '~core/Icon';
 import Popover from '~core/Popover';
 import { AnyUser } from '~data/index';
+import { Address } from '~types/index';
 
 import CommentActionsPopover from './CommentActionsPopover';
 
@@ -19,6 +20,8 @@ const MSG = defineMessages({
 
 interface Props {
   user: AnyUser | null;
+  walletAddress: Address;
+  permission: string;
   comment?: string;
   hoverState?: boolean;
 }
@@ -27,7 +30,9 @@ const displayName = 'users.CommentActions';
 
 const CommentActions = ({
   user,
+  permission,
   comment,
+  walletAddress,
   hoverState
 }: Props) => {
 
@@ -37,6 +42,7 @@ const CommentActions = ({
         <CommentActionsPopover
           closePopover={close}
           user={user}
+          permission={permission}
           comment={comment}
           hoverState={hoverState}
         />
