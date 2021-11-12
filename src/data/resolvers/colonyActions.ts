@@ -223,7 +223,7 @@ export const colonyActionsResolvers = ({
         let annotation;
         if (clientVersion.toNumber() >= ColonyVersion.LightweightSpaceship) {
           annotation = await getAnnotationFromSubgraph(
-            from,
+            actionValues?.actionInitiator || actionValues?.address || from,
             hash,
             apolloClient,
           );
