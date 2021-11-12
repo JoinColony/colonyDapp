@@ -1,5 +1,4 @@
 import { Resolvers, ApolloClient } from '@apollo/client';
-import gql from 'graphql-tag';
 import { AddressZero, HashZero } from 'ethers/constants';
 import { bigNumberify, LogDescription } from 'ethers/utils';
 import {
@@ -33,6 +32,9 @@ import {
   SubgraphRoleEventsQuery,
   SubgraphRoleEventsQueryVariables,
   SubgraphRoleEventsDocument,
+  SubgraphLatestSyncedBlockQuery,
+  SubgraphLatestSyncedBlockQueryVariables,
+  SubgraphLatestSyncedBlockDocument,
 } from '~data/index';
 
 import { createAddress } from '~utils/web3';
@@ -51,23 +53,27 @@ import {
 
 export const getLatestSubgraphBlock = async (
   apolloClient: ApolloClient<object>,
-): Promise<{
-  hash: string;
-  number: number;
-}> => {
-  const { data } = await apolloClient.query({
-    query: gql`
-      query SubgraphLatestTrackedBlock {
-        _meta {
-          block {
-            hash
-            number
-          }
-        }
-      }
-    `,
-  });
-  return data?._meta?.block || {};
+): Promise<number> => {
+  /*
+   * This magic number is hard coded into the subgraph, you cannot filter higher
+   * than this block number
+   */
+  const MAX_UPPER_BLOCK_LIMIT = 2147483647;
+  try {
+    await apolloClient.query<
+      SubgraphLatestSyncedBlockQuery,
+      SubgraphLatestSyncedBlockQueryVariables
+    >({
+      query: SubgraphLatestSyncedBlockDocument,
+      variables: {
+        blockNumber: MAX_UPPER_BLOCK_LIMIT,
+      },
+    });
+    return MAX_UPPER_BLOCK_LIMIT;
+  } catch (error) {
+    const [, syncedBlockNumber] = error.message.match(/block\snumber\s(\d*)/);
+    return parseInt(syncedBlockNumber, 10);
+  }
 };
 
 export const getProcessedColony = async (
@@ -472,9 +478,7 @@ export const colonyResolvers = ({
           ClientType.ColonyClient,
           colonyAddress,
         );
-        const { number: latestBlockNumber } = await getLatestSubgraphBlock(
-          apolloClient,
-        );
+        const latestBlockNumber = await getLatestSubgraphBlock(apolloClient);
 
         if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
           throw new Error(`Not supported in this version of Colony`);

@@ -283,6 +283,7 @@ export type Query = {
   colonyName: Scalars['String'];
   colonyReputation?: Maybe<Scalars['String']>;
   currentPeriodTokens: CurrentPeriodTokens;
+  domain: SubgraphUnusedDomain;
   domainBalance: Scalars['String'];
   domains: Array<SubgraphDomain>;
   events: Array<SubgraphEvent>;
@@ -453,6 +454,12 @@ export type QueryColonyReputationArgs = {
 
 export type QueryCurrentPeriodTokensArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryDomainArgs = {
+  id: Scalars['Int'];
+  block?: Maybe<SubgraphMetaBlock>;
 };
 
 
@@ -1376,6 +1383,14 @@ export type ColonyExtensionDetails = {
 export type SubgraphColonyExtension = {
   id: Scalars['String'];
   hash: Scalars['String'];
+};
+
+export type SubgraphMetaBlock = {
+  number: Scalars['Int'];
+};
+
+export type SubgraphUnusedDomain = {
+  id: Scalars['String'];
 };
 
 export type SubgraphBlock = {
@@ -2495,6 +2510,13 @@ export type SubgraphBlockQueryVariables = Exact<{
 
 
 export type SubgraphBlockQuery = { block?: Maybe<Pick<SubgraphBlock, 'id' | 'timestamp'>> };
+
+export type SubgraphLatestSyncedBlockQueryVariables = Exact<{
+  blockNumber: Scalars['Int'];
+}>;
+
+
+export type SubgraphLatestSyncedBlockQuery = { domain: Pick<SubgraphUnusedDomain, 'id'> };
 
 export type SubgraphRecoveryModeEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -6904,6 +6926,39 @@ export function useSubgraphBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type SubgraphBlockQueryHookResult = ReturnType<typeof useSubgraphBlockQuery>;
 export type SubgraphBlockLazyQueryHookResult = ReturnType<typeof useSubgraphBlockLazyQuery>;
 export type SubgraphBlockQueryResult = Apollo.QueryResult<SubgraphBlockQuery, SubgraphBlockQueryVariables>;
+export const SubgraphLatestSyncedBlockDocument = gql`
+    query SubgraphLatestSyncedBlock($blockNumber: Int!) {
+  domain(id: 1, block: {number: $blockNumber}) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useSubgraphLatestSyncedBlockQuery__
+ *
+ * To run a query within a React component, call `useSubgraphLatestSyncedBlockQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphLatestSyncedBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphLatestSyncedBlockQuery({
+ *   variables: {
+ *      blockNumber: // value for 'blockNumber'
+ *   },
+ * });
+ */
+export function useSubgraphLatestSyncedBlockQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphLatestSyncedBlockQuery, SubgraphLatestSyncedBlockQueryVariables>) {
+        return Apollo.useQuery<SubgraphLatestSyncedBlockQuery, SubgraphLatestSyncedBlockQueryVariables>(SubgraphLatestSyncedBlockDocument, baseOptions);
+      }
+export function useSubgraphLatestSyncedBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphLatestSyncedBlockQuery, SubgraphLatestSyncedBlockQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphLatestSyncedBlockQuery, SubgraphLatestSyncedBlockQueryVariables>(SubgraphLatestSyncedBlockDocument, baseOptions);
+        }
+export type SubgraphLatestSyncedBlockQueryHookResult = ReturnType<typeof useSubgraphLatestSyncedBlockQuery>;
+export type SubgraphLatestSyncedBlockLazyQueryHookResult = ReturnType<typeof useSubgraphLatestSyncedBlockLazyQuery>;
+export type SubgraphLatestSyncedBlockQueryResult = Apollo.QueryResult<SubgraphLatestSyncedBlockQuery, SubgraphLatestSyncedBlockQueryVariables>;
 export const SubgraphRecoveryModeEventsDocument = gql`
     query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
   recoveryStorageSlotSetEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryStorageSlotSet", address: $colonyAddress}) {
