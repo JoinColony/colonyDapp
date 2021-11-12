@@ -27,13 +27,7 @@ interface Props {
 
 const displayName = 'users.CommentActions';
 
-const CommentActions = ({
-  user,
-  permission,
-  comment,
-  hoverState
-}: Props) => {
-
+const CommentActions = ({ user, permission, comment, hoverState }: Props) => {
   /*
    * @NOTE Offset Calculations
    * This is dependant on the number of actions, may need to be adjusted
