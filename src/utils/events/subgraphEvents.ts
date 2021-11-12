@@ -3,6 +3,7 @@ import {
   id as topicId,
   bigNumberify,
   hexlify,
+  BigNumber,
 } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
@@ -60,6 +61,7 @@ const addressArgumentParser = (values: {
   escalator?: string;
   recipient?: string;
   voter?: string;
+  buyer?: string;
 }): {
   user?: Address;
   agent?: Address;
@@ -68,6 +70,7 @@ const addressArgumentParser = (values: {
   escalator?: Address;
   recipient?: Address;
   voter?: Address;
+  buyer?: Address;
 } => {
   const parsedValues: {
     user?: Address;
@@ -76,15 +79,24 @@ const addressArgumentParser = (values: {
     staker?: Address;
     escalator?: Address;
     recipient?: Address;
+    voter?: Address;
+    buyer?: Address;
   } = {};
-  ['user', 'agent', 'creator', 'staker', 'escalator', 'recipient', 'voter'].map(
-    (propName) => {
-      if (values[propName]) {
-        parsedValues[propName] = createAddress(values[propName]);
-      }
-      return null;
-    },
-  );
+  [
+    'user',
+    'agent',
+    'creator',
+    'staker',
+    'escalator',
+    'recipient',
+    'voter',
+    'buyer',
+  ].map((propName) => {
+    if (values[propName]) {
+      parsedValues[propName] = createAddress(values[propName]);
+    }
+    return null;
+  });
   return parsedValues;
 };
 
@@ -160,9 +172,41 @@ const storageSlotArgumentParser = (values: {
   slot?: string;
 }): {
   slot?: string;
-} => ({
-  slot: hexlify(parseInt(values.slot || '0', 10)),
-});
+} => {
+  const parsedValues: {
+    slot?: string;
+  } = {};
+  if (values?.slot) {
+    parsedValues.slot = hexlify(parseInt(values.slot || '0', 10));
+  }
+  return parsedValues;
+};
+
+/*
+ * @NOTE Only use internally
+ *
+ * Specific function to parse known, expected, values
+ * This parses values for any event with storage slots
+ */
+const coinMachineEventsArgumentParser = (values: {
+  numTokens?: string;
+  totalCost?: string;
+}): {
+  numTokens?: BigNumber;
+  totalCost?: BigNumber;
+} => {
+  const parsedValues: {
+    numTokens?: BigNumber;
+    totalCost?: BigNumber;
+  } = {};
+  if (values?.numTokens) {
+    parsedValues.numTokens = bigNumberify(values.numTokens);
+  }
+  if (values?.totalCost) {
+    parsedValues.totalCost = bigNumberify(values.totalCost);
+  }
+  return parsedValues;
+};
 
 /*
  * Utility to parse events that come from the subgraph handler
@@ -195,6 +239,7 @@ export const parseSubgraphEvent = ({
       ...addressArgumentParser(parsedArguments),
       ...motionArgumentparser(parsedArguments),
       ...storageSlotArgumentParser(parsedArguments),
+      ...coinMachineEventsArgumentParser(parsedArguments),
     },
   };
   /*
