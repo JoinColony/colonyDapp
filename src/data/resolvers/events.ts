@@ -16,8 +16,9 @@ import {
 import { Context } from '~context/index';
 import { ColonyAndExtensionsEvents } from '~types/index';
 
+import { getLatestSubgraphBlock } from './colony';
+
 export const eventsResolvers = ({
-  colonyManager: { provider },
   colonyManager,
   apolloClient,
 }: Required<Context>): Resolvers => ({
@@ -28,7 +29,7 @@ export const eventsResolvers = ({
      */
     async actionsThatNeedAttention(_, { colonyAddress, walletAddress }) {
       try {
-        const currentBlock = await provider.getBlockNumber();
+        const currentBlock = await getLatestSubgraphBlock(apolloClient);
         /*
          * @NOTE Leveraging apollo's internal cache
          *
