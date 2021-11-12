@@ -68,6 +68,7 @@ const ColonyHome = ({ match, location }: Props) => {
   const { data, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
+    pollInterval: 5000,
   });
 
   if (error) console.error(error);
