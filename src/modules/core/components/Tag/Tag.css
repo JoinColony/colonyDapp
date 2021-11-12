@@ -48,7 +48,7 @@
 
 .themeBanned {
   composes: baseStyles;
-  background-color: var(--banned);
+  background-color: color-mod(var(--pink) alpha(20%));
   color: var(--danger);
 }
 
