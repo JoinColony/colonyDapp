@@ -366,15 +366,12 @@ export const coinMachineResolvers = ({
           .concat(
             (transferEventsFromChain as unknown) as ExtendedLogDescription,
           )
-          /*
-           * @TODO We have a purpouse built sorting util for this, already in `master`
-           * but apparently it didn't make it's way downstream yet.
-           *
-           * Please refactor this to use `sortSubgraphEventByIndex` once you get a chance
-           */
-          .sort(
-            ({ blockNumber: lowBlock = 0 }, { blockNumber: highBlock = 0 }) =>
-              highBlock - lowBlock,
+          .sort((firstEvent, secondEvent) =>
+            sortSubgraphEventByIndex(
+              firstEvent,
+              secondEvent,
+              SortDirection.DESC,
+            ),
           );
         /*
          * Generate the starting available tokens value (for the last period)
