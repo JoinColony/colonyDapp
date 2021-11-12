@@ -102,3 +102,14 @@ query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String
     }
   }
 }
+
+query SubgraphKYCAddresses($extensionAddress: String!) {
+    kycaddresses(
+      where: {
+        extension_contains: $extensionAddress,
+        status: true
+      }
+    ) {
+    walletAddress: id
+  }
+}

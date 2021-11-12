@@ -291,6 +291,7 @@ export type Query = {
   getRecoveryStorageSlot: Scalars['String'];
   hasKycPolicy: Scalars['Boolean'];
   historicColonyRoles: Array<ProcessedRoles>;
+  kycaddresses: Array<Maybe<KycAddress>>;
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
@@ -504,6 +505,11 @@ export type QueryHasKycPolicyArgs = {
 export type QueryHistoricColonyRolesArgs = {
   colonyAddress: Scalars['String'];
   blockNumber: Scalars['Int'];
+};
+
+
+export type QueryKycaddressesArgs = {
+  extensionAddress: Scalars['String'];
 };
 
 
@@ -1377,6 +1383,12 @@ export type ColonyExtensionDetails = {
 export type SubgraphColonyExtension = {
   id: Scalars['String'];
   hash: Scalars['String'];
+};
+
+export type KycAddress = {
+  id: Scalars['String'];
+  walletAddress: Scalars['String'];
+  status?: Maybe<Scalars['Boolean']>;
 };
 
 export type SubgraphMetaBlock = {
@@ -2345,6 +2357,13 @@ export type SubgraphExtensionEventsQuery = { extensionInstalledEvents: Array<(
       ) }
     ) }
   )> };
+
+export type SubgraphKycAddressesQueryVariables = Exact<{
+  extensionAddress: Scalars['String'];
+}>;
+
+
+export type SubgraphKycAddressesQuery = { kycaddresses: Array<Maybe<{ walletAddress: KycAddress['id'] }>> };
 
 export type ColonyMembersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -6474,6 +6493,39 @@ export function useSubgraphExtensionEventsLazyQuery(baseOptions?: Apollo.LazyQue
 export type SubgraphExtensionEventsQueryHookResult = ReturnType<typeof useSubgraphExtensionEventsQuery>;
 export type SubgraphExtensionEventsLazyQueryHookResult = ReturnType<typeof useSubgraphExtensionEventsLazyQuery>;
 export type SubgraphExtensionEventsQueryResult = Apollo.QueryResult<SubgraphExtensionEventsQuery, SubgraphExtensionEventsQueryVariables>;
+export const SubgraphKycAddressesDocument = gql`
+    query SubgraphKYCAddresses($extensionAddress: String!) {
+  kycaddresses(where: {extension_contains: $extensionAddress, status: true}) {
+    walletAddress: id
+  }
+}
+    `;
+
+/**
+ * __useSubgraphKycAddressesQuery__
+ *
+ * To run a query within a React component, call `useSubgraphKycAddressesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphKycAddressesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphKycAddressesQuery({
+ *   variables: {
+ *      extensionAddress: // value for 'extensionAddress'
+ *   },
+ * });
+ */
+export function useSubgraphKycAddressesQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>) {
+        return Apollo.useQuery<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>(SubgraphKycAddressesDocument, baseOptions);
+      }
+export function useSubgraphKycAddressesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>(SubgraphKycAddressesDocument, baseOptions);
+        }
+export type SubgraphKycAddressesQueryHookResult = ReturnType<typeof useSubgraphKycAddressesQuery>;
+export type SubgraphKycAddressesLazyQueryHookResult = ReturnType<typeof useSubgraphKycAddressesLazyQuery>;
+export type SubgraphKycAddressesQueryResult = Apollo.QueryResult<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>;
 export const ColonyMembersDocument = gql`
     query ColonyMembers($colonyAddress: String!) {
   subscribedUsers(colonyAddress: $colonyAddress) {
