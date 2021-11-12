@@ -459,16 +459,6 @@ export default gql`
     id_in: [String!]!
   }
 
-  type SubgraphBlock {
-    id: String!
-    timestamp: String!
-  }
-
-  type SubgraphTransaction {
-    id: String!
-    block: SubgraphBlock!
-  }
-
   type SubgraphToken {
     id: String!
     symbol: String!
@@ -536,7 +526,6 @@ export default gql`
       orderDirection: String!
     ): [SubgraphColony!]!
     processedColony(address: String!): ProcessedColony!
-    block(id: String!): SubgraphBlock
   }
 
   #
