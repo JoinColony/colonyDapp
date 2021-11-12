@@ -1,6 +1,14 @@
 import gql from 'graphql-tag';
 
 export default gql`
+  input SubgraphMetaBlock {
+    number: Int!
+  }
+
+  type SubgraphUnusedDomain {
+    id: String!
+  }
+
   type SubgraphBlock {
     id: String!
     timestamp: String!
@@ -20,5 +28,6 @@ export default gql`
       block: ToBlockInput
     ): [SubgraphEvent!]!
     block(id: String!): SubgraphBlock
+    domain(id: Int!, block: SubgraphMetaBlock): SubgraphUnusedDomain!
   }
 `;
