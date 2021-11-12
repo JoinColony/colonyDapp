@@ -1,6 +1,6 @@
 .icon {
   display: inline-block;
-  margin: 0px 6px 0px -4px;
+  margin: 0px 7px 1px -4px;
   height: 12px;
   width: 12px;
 }
@@ -12,7 +12,7 @@
 .baseStyles {
   display: inline-block;
   padding: 0px 8px 2px;
-  border-radius: var(--radius-large);
+  border-radius: var(--radius-normal);
   font-size: 11px;
   font-weight: var(--weight-bold);
   letter-spacing: var(--spacing-medium);
