@@ -41,10 +41,19 @@
   background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
+.commentContainer p {
+  margin-top: 2px;
+  line-height: 18px;
+}
+
 .userNameAndWallet {
   display: flex;
   flex-direction: column;
   margin-left: 12px;
+}
+
+.userNameAndWallet span:last-child {
+  font-weight: var(--weight-medium);
 }
 
 .buttonContainer {
