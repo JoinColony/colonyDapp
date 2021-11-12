@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import Icon from '~core/Icon';
 
 import { getMainClasses } from '~utils/css';
 import TextDecorator from '~lib/TextDecorator';
-import { AnyUser } from '~data/index';
+import { AnyUser, useLoggedInUser } from '~data/index';
 import FriendlyName from '~core/FriendlyName';
+import CommentActions from './CommentActions';
 
 import styles from './Comment.css';
 
@@ -34,6 +36,10 @@ const Comment = ({
   createdAt,
   annotation = false,
 }: Props) => {
+
+  const [hoverState, setHoverState] = useState<boolean>(false);
+  const { username } = useLoggedInUser();
+
   const { Decorate } = new TextDecorator({
     username: (usernameWithAtSign) => (
       <UserMention username={usernameWithAtSign.slice(1)} />
@@ -41,7 +47,11 @@ const Comment = ({
   });
 
   return (
-    <div className={getMainClasses(appearance, styles, { annotation })}>
+    <div
+      className={getMainClasses(appearance, styles, { annotation })}
+      onMouseEnter={() => setHoverState(true)}
+      onMouseLeave={() => setHoverState(false)}
+    >
       <div className={styles.avatar}>
         <UserAvatar
           size="xs"
@@ -61,6 +71,15 @@ const Comment = ({
         <div className={styles.text}>
           <Decorate>{comment}</Decorate>
         </div>
+      </div>
+      <div className={styles.actions}>
+        {username && user && (          
+          <CommentActions
+            user={user}
+            comment={comment}
+            hoverState={hoverState}
+          />
+        )}
       </div>
     </div>
   );
