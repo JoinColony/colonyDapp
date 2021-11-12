@@ -206,6 +206,7 @@ const DefaultAction = ({
           </h1>
           {actionType !== ColonyActions.Generic && annotationHash && (
             <ActionsPageFeedItemWithIPFS
+              colony={colony}
               createdAt={createdAt}
               user={initiator}
               annotation
