@@ -263,7 +263,6 @@ export type MutationUnsubscribeFromColonyArgs = {
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
-  block?: Maybe<SubgraphBlock>;
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
@@ -339,11 +338,6 @@ export type Query = {
 export type QueryActionsThatNeedAttentionArgs = {
   colonyAddress: Scalars['String'];
   walletAddress: Scalars['String'];
-};
-
-
-export type QueryBlockArgs = {
-  id: Scalars['String'];
 };
 
 
@@ -2503,13 +2497,6 @@ export type SubgraphMotionRewardClaimedEventsQuery = { motionRewardClaimedEvents
       ) }
     ) }
   )> };
-
-export type SubgraphBlockQueryVariables = Exact<{
-  blockId: Scalars['ID'];
-}>;
-
-
-export type SubgraphBlockQuery = { block?: Maybe<Pick<SubgraphBlock, 'id' | 'timestamp'>> };
 
 export type SubgraphLatestSyncedBlockQueryVariables = Exact<{
   blockNumber: Scalars['Int'];
@@ -6892,40 +6879,6 @@ export function useSubgraphMotionRewardClaimedEventsLazyQuery(baseOptions?: Apol
 export type SubgraphMotionRewardClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsQuery>;
 export type SubgraphMotionRewardClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionRewardClaimedEventsLazyQuery>;
 export type SubgraphMotionRewardClaimedEventsQueryResult = Apollo.QueryResult<SubgraphMotionRewardClaimedEventsQuery, SubgraphMotionRewardClaimedEventsQueryVariables>;
-export const SubgraphBlockDocument = gql`
-    query SubgraphBlock($blockId: ID!) {
-  block(id: $blockId) {
-    id
-    timestamp
-  }
-}
-    `;
-
-/**
- * __useSubgraphBlockQuery__
- *
- * To run a query within a React component, call `useSubgraphBlockQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphBlockQuery({
- *   variables: {
- *      blockId: // value for 'blockId'
- *   },
- * });
- */
-export function useSubgraphBlockQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphBlockQuery, SubgraphBlockQueryVariables>) {
-        return Apollo.useQuery<SubgraphBlockQuery, SubgraphBlockQueryVariables>(SubgraphBlockDocument, baseOptions);
-      }
-export function useSubgraphBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphBlockQuery, SubgraphBlockQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphBlockQuery, SubgraphBlockQueryVariables>(SubgraphBlockDocument, baseOptions);
-        }
-export type SubgraphBlockQueryHookResult = ReturnType<typeof useSubgraphBlockQuery>;
-export type SubgraphBlockLazyQueryHookResult = ReturnType<typeof useSubgraphBlockLazyQuery>;
-export type SubgraphBlockQueryResult = Apollo.QueryResult<SubgraphBlockQuery, SubgraphBlockQueryVariables>;
 export const SubgraphLatestSyncedBlockDocument = gql`
     query SubgraphLatestSyncedBlock($blockNumber: Int!) {
   domain(id: 1, block: {number: $blockNumber}) {

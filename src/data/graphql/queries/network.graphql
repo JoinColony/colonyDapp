@@ -1,10 +1,3 @@
-query SubgraphBlock($blockId: ID!) {
-  block(id: $blockId) {
-    id
-    timestamp
-  }
-}
-
 #
 # @NOTE This query is not used for it value, but to extract the latest synced
 # block. The query itself doesn't matter, so that's why we chose a simple one
