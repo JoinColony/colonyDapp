@@ -27,7 +27,16 @@ export const getAnnotationFromSubgraph = async (
   const [mostRecentAnnotation] =
     subgraphEvents?.annotationEvents
       .map(parseSubgraphEvent)
-      .filter(({ values: { agent } }) => agent === userAddress)
+      /*
+       * @NOTE Only show annotations from users that created the transaction
+       * This a poor man's spam protenction, but in all fairness we should not
+       * be filtering these out, and show the most recent annotation, no matter
+       * who sent it
+       */
+      .filter(
+        ({ values: { agent, address } }) =>
+          agent === userAddress || address === userAddress,
+      )
       .sort((firstEvent, secondEvent) =>
         sortSubgraphEventByIndex(firstEvent, secondEvent, SortDirection.DESC),
       ) || [];
