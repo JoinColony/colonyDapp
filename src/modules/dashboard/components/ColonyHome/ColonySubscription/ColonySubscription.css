@@ -1,6 +1,6 @@
 .main {
-  display: inline-block;
-  margin-left: -12px;
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+  margin-top: 1px;
 }
 
 .joinColony:hover {
@@ -17,23 +17,38 @@
 }
 
 .menuIconContainer {
-  display: inline-block;
-  margin: 0 0 0 -4px;
+  position: relative;
   vertical-align: bottom;
   cursor: pointer;
+  width: 6px;
+  height: 14px;
+  border-radius: var(--radius-normal);
+}
+
+.menuIconContainer:hover, .menuIconContainer.menuActive {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
 }
 
 .menuIcon {
-  display: block;
-  height: 16px;
-  width: 16px;
-  border-radius: var(--radius-normal);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
   fill: var(--temp-grey-blue-7);
 }
 
-.menuIcon:hover {
-  background-color: color-mod(var(--colony-blue) alpha(10%));
-  fill: var(--colony-blue);
+.menuIconContainer:hover .menuIcon, .menuIconContainer.menuActive .menuIcon {
+  fill: var(--action-secondary);
+}
+
+.menuIcon svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
 }
 
 .createUserRedirect {

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classnames from 'classnames';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
@@ -38,6 +39,7 @@ interface Props {
 
 const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
   const { username, walletAddress, networkId } = useLoggedInUser();
+  const [menuActive, setMenuActive] = useState<boolean>(false);
 
   const { data } = useUserColonyAddressesQuery({
     variables: { address: walletAddress },
@@ -93,13 +95,22 @@ const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
           onUnsubscribe={() => unsubscribe()}
           canUnsubscribe={isNetworkAllowed}
         >
-          <div className={styles.menuIconContainer}>
-            <Icon
-              className={styles.menuIcon}
-              name="three-dots-row"
-              title={MSG.colonyMenuTitle}
-            />
-          </div>
+          {({ isOpen, toggle, ref, id }) => (
+            <div
+              id={id}
+              ref={ref}
+              className={classnames(styles.menuIconContainer, {
+                [styles.menuActive]: isOpen,
+              })}
+              onClick={toggle}
+            >
+              <Icon
+                className={styles.menuIcon}
+                name="three-dots-row"
+                title={MSG.colonyMenuTitle}
+              />
+            </div>
+          )}
         </ColonySubscriptionInfoPopover>
       )}
     </div>
