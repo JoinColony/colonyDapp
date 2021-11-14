@@ -79,6 +79,8 @@ export type TransactionMessageEvent = {
   transactionHash: Scalars['String'];
   message: Scalars['String'];
   colonyAddress: Scalars['String'];
+  deleted?: Maybe<Scalars['Boolean']>;
+  adminDelete?: Maybe<Scalars['Boolean']>;
 };
 
 export type EventContext = CreateDomainEvent | NewUserEvent | TransactionMessageEvent;
@@ -112,25 +114,6 @@ export type EditUserInput = {
   website?: Maybe<Scalars['String']>;
 };
 
-export type CreateWorkRequestInput = {
-  id: Scalars['String'];
-};
-
-export type SendWorkInviteInput = {
-  id: Scalars['String'];
-  workerAddress: Scalars['String'];
-};
-
-export type AssignWorkerInput = {
-  id: Scalars['String'];
-  workerAddress: Scalars['String'];
-};
-
-export type UnassignWorkerInput = {
-  id: Scalars['String'];
-  workerAddress: Scalars['String'];
-};
-
 export type SubscribeToColonyInput = {
   colonyAddress: Scalars['String'];
 };
@@ -143,38 +126,8 @@ export type MarkNotificationAsReadInput = {
   id: Scalars['String'];
 };
 
-export type EditDomainNameInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  name: Scalars['String'];
-};
-
 export type SetUserTokensInput = {
   tokenAddresses: Array<Scalars['String']>;
-};
-
-export type CreateSuggestionInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
-export type SetSuggestionStatusInput = {
-  id: Scalars['String'];
-  status: SuggestionStatus;
-};
-
-export type AddUpvoteToSuggestionInput = {
-  id: Scalars['String'];
-};
-
-export type RemoveUpvoteFromSuggestionInput = {
-  id: Scalars['String'];
-};
-
-export type Payout = {
-  amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
 };
 
 export type SendTransactionMessageInput = {
@@ -183,37 +136,52 @@ export type SendTransactionMessageInput = {
   colonyAddress: Scalars['String'];
 };
 
+export type DeleteTransactionMessageInput = {
+  id: Scalars['String'];
+  colonyAddress: Scalars['String'];
+};
+
+export type BanTransactionMessagesInput = {
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  eventId: Scalars['String'];
+};
+
+export type UnBanTransactionMessagesInput = {
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+};
+
 export type Mutation = {
-  addUpvoteToSuggestion?: Maybe<Suggestion>;
+  banUserTransactionMessages: Scalars['Boolean'];
   clearLoggedInUser: LoggedInUser;
-  createSuggestion?: Maybe<Suggestion>;
   createUser?: Maybe<User>;
+  deleteTransactionMessage: Scalars['Boolean'];
   editUser?: Maybe<User>;
   markAllNotificationsAsRead: Scalars['Boolean'];
   markNotificationAsRead: Scalars['Boolean'];
-  removeUpvoteFromSuggestion?: Maybe<Suggestion>;
   sendTransactionMessage: Scalars['Boolean'];
   setLoggedInUser: LoggedInUser;
-  setSuggestionStatus?: Maybe<Suggestion>;
   setUserTokens?: Maybe<User>;
   subscribeToColony?: Maybe<User>;
+  unbanUserTransactionMessages: Scalars['Boolean'];
   unsubscribeFromColony?: Maybe<User>;
   updateNetworkContracts: NetworkContracts;
 };
 
 
-export type MutationAddUpvoteToSuggestionArgs = {
-  input: AddUpvoteToSuggestionInput;
-};
-
-
-export type MutationCreateSuggestionArgs = {
-  input: CreateSuggestionInput;
+export type MutationBanUserTransactionMessagesArgs = {
+  input: BanTransactionMessagesInput;
 };
 
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteTransactionMessageArgs = {
+  input: DeleteTransactionMessageInput;
 };
 
 
@@ -227,11 +195,6 @@ export type MutationMarkNotificationAsReadArgs = {
 };
 
 
-export type MutationRemoveUpvoteFromSuggestionArgs = {
-  input: RemoveUpvoteFromSuggestionInput;
-};
-
-
 export type MutationSendTransactionMessageArgs = {
   input: SendTransactionMessageInput;
 };
@@ -242,11 +205,6 @@ export type MutationSetLoggedInUserArgs = {
 };
 
 
-export type MutationSetSuggestionStatusArgs = {
-  input: SetSuggestionStatusInput;
-};
-
-
 export type MutationSetUserTokensArgs = {
   input: SetUserTokensInput;
 };
@@ -254,6 +212,11 @@ export type MutationSetUserTokensArgs = {
 
 export type MutationSubscribeToColonyArgs = {
   input: SubscribeToColonyInput;
+};
+
+
+export type MutationUnbanUserTransactionMessagesArgs = {
+  input: UnBanTransactionMessagesInput;
 };
 
 
@@ -775,25 +738,6 @@ export type SubscriptionTransactionMessagesArgs = {
 
 export type SubscriptionTransactionMessagesCountArgs = {
   colonyAddress: Scalars['String'];
-};
-
-export enum SuggestionStatus {
-  Open = 'Open',
-  NotPlanned = 'NotPlanned',
-  Accepted = 'Accepted',
-  Deleted = 'Deleted'
-}
-
-export type Suggestion = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  colonyAddress: Scalars['String'];
-  creatorAddress: Scalars['String'];
-  creator: User;
-  ethDomainId: Scalars['Int'];
-  status: SuggestionStatus;
-  title: Scalars['String'];
-  upvotes: Array<Scalars['String']>;
 };
 
 export type TokenInfo = {
@@ -1481,7 +1425,7 @@ export type EventContextFragment = { context: Pick<CreateDomainEvent, 'type' | '
 
 export type FullNetworkEventFragment = Pick<NetworkEvent, 'fromAddress' | 'toAddress' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domainId'>;
 
-export type TransactionEventContextFragment = { context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress'> };
+export type TransactionEventContextFragment = { context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress' | 'deleted' | 'adminDelete'> };
 
 export type TransactionMessageFragment = (
   EventFieldsFragment
@@ -2912,6 +2856,8 @@ export const TransactionEventContextFragmentDoc = gql`
       transactionHash
       message
       colonyAddress
+      deleted
+      adminDelete
     }
   }
 }
