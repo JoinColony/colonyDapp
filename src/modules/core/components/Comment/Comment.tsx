@@ -8,8 +8,9 @@ import { COMMENT_MODERATION } from '~immutable/index';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import UserMention from '~core/UserMention';
 import FriendlyName from '~core/FriendlyName';
-import { AnyUser, Colony, useLoggedInUser } from '~data/index';
+import Tag from '~core/Tag';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import { AnyUser, Colony, useLoggedInUser } from '~data/index';
 import TextDecorator from '~lib/TextDecorator';
 
 import { userHasRole } from '../../../users/checks';
@@ -66,9 +67,9 @@ const Comment = ({
   let permission = COMMENT_MODERATION.NONE;
 
   // Check for permissions to edit own comment
-  if (user?.profile.walletAddress === walletAddress) {
-    permission = COMMENT_MODERATION.CAN_EDIT;
-  }
+  // if (user?.profile.walletAddress === walletAddress) {
+  //   permission = COMMENT_MODERATION.CAN_EDIT;
+  // }
 
   // Check for permissions to moderate
   if (
@@ -95,7 +96,8 @@ const Comment = ({
           ${getMainClasses(appearance, styles, {
             annotation,
             ghosted: showControls && !!(deleted || adminDelete || userBanned),
-            hideControls: !showControls,
+            hideControls:
+              !showControls || permission === COMMENT_MODERATION.NONE,
           })}
           ${hoverState ? styles.activeActions : ''}
         `}
@@ -115,6 +117,16 @@ const Comment = ({
             <FriendlyName user={user as AnyUser} />
           </span>
           {createdAt && <TransactionMeta createdAt={createdAt} />}
+          {userBanned &&
+            showControls &&
+            permission !== COMMENT_MODERATION.NONE && (
+              /*
+               * @TODO Replace with the actual banned tag
+               */
+              <div className={styles.bannedTag}>
+                <Tag text="Banned" appearance={{ theme: 'pink' }} />
+              </div>
+            )}
         </div>
         <div className={styles.text}>
           <Decorate>{comment}</Decorate>

@@ -16,7 +16,7 @@
   background-color: color-mod(var(--primary) alpha(6%));
 }
 
-.stateGhosted {
+.stateGhosted .avatar, .stateGhosted .text {
   opacity: 0.5;
 }
 
@@ -82,4 +82,9 @@
 
 .themeDanger.stateAnnotation {
   background-color: color-mod(var(--pink) alpha(6%));
+}
+
+.bannedTag {
+  display: inline-block;
+  margin-left: 5px;
 }
