@@ -445,6 +445,7 @@ const DefaultMotion = ({
           {annotationHash && (
             <div className={motionSpecificStyles.annotation}>
               <ActionsPageFeedItemWithIPFS
+                colony={colony}
                 user={initiator}
                 annotation
                 hash={annotationHash}
@@ -453,6 +454,7 @@ const DefaultMotion = ({
           )}
           {objectionAnnotation?.motionObjectionAnnotation?.metadata && (
             <ActionsPageFeedItemWithIPFS
+              colony={colony}
               user={objectionAnnotationUser}
               annotation
               hash={objectionAnnotation.motionObjectionAnnotation.metadata}
