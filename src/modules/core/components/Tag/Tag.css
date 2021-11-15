@@ -42,6 +42,12 @@
   background-color: var(--action-secondary);
 }
 
+.themeBanned {
+  composes: baseStyles;
+  background-color: color-mod(var(--pink) alpha(20%));
+  color: var(--pink);
+}
+
 .themeDangerGhost {
   composes: baseStyles;
 }
