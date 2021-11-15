@@ -109,3 +109,9 @@
   stroke-width: 3px;
   stroke: reputationColor;
 }
+
+.bannedTag {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+}

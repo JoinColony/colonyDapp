@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import { bigNumberify } from 'ethers/utils';
 
 import { SpinnerLoader } from '~core/Preloaders';
+import Tag from '~core/Tag';
 import {
   AnyUser,
   useColonyNativeTokenQuery,
@@ -26,6 +27,7 @@ interface Props {
   colony: Colony;
   domainId?: number;
   user?: AnyUser;
+  banned?: boolean;
 }
 
 const displayName = 'InfoPopover.MemberInfoPopover';
@@ -34,6 +36,7 @@ const MemberInfoPopover = ({
   colony: { colonyAddress },
   colony,
   user = { id: '', profile: { walletAddress: '' } },
+  banned = false,
 }: Props) => {
   const { walletAddress: currentUserWalletAddress } = useLoggedInUser();
   const {
@@ -65,10 +68,10 @@ const MemberInfoPopover = ({
         nativeTokenAddressData?.processedColony.nativeTokenAddress || '',
       colonyAddress,
     },
-    /* 
-      The fetchPolicy here is "no-cache" because otherwise the result would be stored 
-      in the cache and then the current user's balance would change (in the other instances 
-      where the current user balance is obtained using this query) to the one that it's being 
+    /*
+      The fetchPolicy here is "no-cache" because otherwise the result would be stored
+      in the cache and then the current user's balance would change (in the other instances
+      where the current user balance is obtained using this query) to the one that it's being
       displayed in the popover.
 
       It could also happen in reverse, the current user's balance could show up here instead
@@ -105,33 +108,45 @@ const MemberInfoPopover = ({
   const totalBalance = inactiveBalance.add(activeBalance).add(lockedBalance);
 
   return (
-    <div className={styles.main}>
-      {user?.profile?.walletAddress && (
-        <div className={styles.section}>
-          <UserInfo user={user} />
+    <div>
+      {banned && (
+        /*
+         * @TODO Replace with the actual banned tag
+         */
+        <div className={styles.bannedTag}>
+          <Tag text="Banned" appearance={{ theme: 'pink' }} />
         </div>
       )}
-      {userReputationData && (
-        <div className={styles.section}>
-          <UserReputation
-            colony={colony}
-            userReputationForTopDomains={
-              userReputationData.userReputationForTopDomains
-            }
-            isCurrentUserReputation={currentUserWalletAddress === walletAddress}
-          />
-        </div>
-      )}
-      {!totalBalance.isZero() && nativeToken && (
-        <div className={styles.section}>
-          <UserTokens totalBalance={totalBalance} nativeToken={nativeToken} />
-        </div>
-      )}
-      {!isEmpty(allUserRoles) && (
-        <div className={styles.section}>
-          <UserPermissions roles={allUserRoles} />
-        </div>
-      )}
+      <div className={styles.main}>
+        {user?.profile?.walletAddress && (
+          <div className={styles.section}>
+            <UserInfo user={user} />
+          </div>
+        )}
+        {userReputationData && (
+          <div className={styles.section}>
+            <UserReputation
+              colony={colony}
+              userReputationForTopDomains={
+                userReputationData.userReputationForTopDomains
+              }
+              isCurrentUserReputation={
+                currentUserWalletAddress === walletAddress
+              }
+            />
+          </div>
+        )}
+        {!totalBalance.isZero() && nativeToken && (
+          <div className={styles.section}>
+            <UserTokens totalBalance={totalBalance} nativeToken={nativeToken} />
+          </div>
+        )}
+        {!isEmpty(allUserRoles) && (
+          <div className={styles.section}>
+            <UserPermissions roles={allUserRoles} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

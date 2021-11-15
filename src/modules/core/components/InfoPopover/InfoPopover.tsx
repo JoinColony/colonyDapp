@@ -37,6 +37,7 @@ export type Props = ContentProps & {
   trigger?: 'hover' | 'click' | 'disabled';
   /** Show an arrow around on the side of the popover */
   showArrow?: boolean;
+  banned?: boolean;
 };
 
 const displayName = 'InfoPopover';
@@ -46,6 +47,7 @@ const InfoPopover = ({
   popperProps,
   trigger = 'click',
   showArrow = true,
+  banned = false,
   ...contentProps
 }: Props) => {
   const renderContent = useMemo(() => {
@@ -55,7 +57,12 @@ const InfoPopover = ({
     ) {
       const { colony, domainId, user } = contentProps;
       return (
-        <MemberInfoPopover colony={colony} domainId={domainId} user={user} />
+        <MemberInfoPopover
+          colony={colony}
+          domainId={domainId}
+          user={user}
+          banned={banned}
+        />
       );
     }
     if ('token' in contentProps && typeof contentProps.token !== 'undefined') {
@@ -70,7 +77,7 @@ const InfoPopover = ({
       return <UserInfoPopover userNotAvailable />;
     }
     return null;
-  }, [contentProps]);
+  }, [banned, contentProps]);
 
   return (
     <Popover

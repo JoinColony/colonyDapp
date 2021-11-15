@@ -167,6 +167,7 @@ const ColonyMembers = ({
               <UserAvatar
                 size="xs"
                 address={walletAddress}
+                banned={banned}
                 showInfo
                 notSet={false}
                 colony={colony}
