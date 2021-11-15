@@ -71,10 +71,13 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
   );
 
   const openKYCDialog = useCallback(() => {
-    return data?.processedMetaColony
+    /*
+     * @TEMP Enable KYC Oracle for the /rc colony on QA
+     */
+    return colonyAddress === '0xA838cC8a369439091C320bEdFB6E339b66Ae8A6F'
       ? openSynapsDialog({ colonyAddress })
       : openCompleteKYCDialog();
-  }, [openCompleteKYCDialog, openSynapsDialog, data, colonyAddress]);
+  }, [openCompleteKYCDialog, openSynapsDialog, colonyAddress]);
 
   useEffect(() => {
     if (!userStatus || !whitelistPolicyData || loading) return;
