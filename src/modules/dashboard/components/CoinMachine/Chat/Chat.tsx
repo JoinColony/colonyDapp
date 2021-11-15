@@ -1,11 +1,14 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Comment from '~core/Comment';
 import CommentInput from '~core/CommentInput';
 import { MiniSpinnerLoader } from '~core/Preloaders';
-
 import { Colony, useCommentsSubscription, useLoggedInUser } from '~data/index';
+import { useTransformer } from '~utils/hooks';
+import { commentTransformer } from '../../../transformers';
+import { getAllUserRoles } from '../../../../transformers';
+import { hasRoot, canAdminister } from '../../../../users/checks';
 
 import styles from './Chat.css';
 
@@ -38,9 +41,12 @@ const displayName = 'dashboard.CoinMachine.Chat';
 const Chat = ({ colony, transactionHash }: Props) => {
   const scrollElmRef = useRef<HTMLDivElement | null>(null);
 
-  const { username, ethereal } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
   const userHasProfile = !!username && !ethereal;
 
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const canAdministerComments =
+    userHasProfile && (hasRoot(allUserRoles) || canAdminister(allUserRoles));
   /*
    * @NOTE This is needed in order to make the scroll effect trigger after
    * each new comment was made, otherwise it will use React's internal cache
@@ -70,6 +76,11 @@ const Chat = ({ colony, transactionHash }: Props) => {
    */
   useLayoutEffect(scrollComments, [scrollComments]);
 
+  const filteredComments = useMemo(() => {
+    const comments = data?.transactionMessages?.messages || [];
+    return commentTransformer(comments, walletAddress, canAdministerComments);
+  }, [canAdministerComments, data, walletAddress]);
+
   if (loading) {
     return (
       <div className={styles.main}>
@@ -88,18 +99,27 @@ const Chat = ({ colony, transactionHash }: Props) => {
     <div className={styles.main}>
       <div className={styles.messages}>
         <div>
-          {data?.transactionMessages?.messages &&
-          data?.transactionMessages?.messages?.length ? (
-            data?.transactionMessages?.messages.map(
-              ({ createdAt, initiator, context }) => (
-                <Comment
-                  key={`${initiator}.${createdAt}`}
-                  createdAt={createdAt}
-                  comment={context.message}
-                  user={initiator}
-                  colony={colony}
-                />
-              ),
+          {filteredComments?.length ? (
+            filteredComments.map(
+              ({ createdAt, initiator, context, sourceId }) => {
+                const { message, deleted, adminDelete, userBanned } = context;
+                return (
+                  <Comment
+                    key={`${initiator}.${createdAt}`}
+                    createdAt={createdAt}
+                    comment={message}
+                    user={initiator}
+                    colony={colony}
+                    commentMeta={{
+                      id: sourceId,
+                      deleted,
+                      adminDelete,
+                      userBanned,
+                    }}
+                    showControls
+                  />
+                );
+              },
             )
           ) : (
             <div className={styles.empty}>
