@@ -14,7 +14,6 @@ export interface Appearance {
     | 'danger'
     | 'pink'
     | 'blue'
-    | 'banned'
     | 'dangerGhost';
   fontSize?: 'tiny' | 'small';
   /* "fullColor" is default */
