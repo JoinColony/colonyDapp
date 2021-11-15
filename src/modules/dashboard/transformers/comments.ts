@@ -10,11 +10,11 @@ export const commentTransformer = (
     return rawComments;
   }
   return rawComments.filter(
-    ({ initiatorAddress, context: { deleted, adminDelete } }) => {
+    ({ initiatorAddress, context: { deleted, adminDelete, userBanned } }) => {
       if (initiatorAddress === currentUserWalletAddress) {
         return !deleted;
       }
-      if (deleted || adminDelete) {
+      if (deleted || adminDelete || userBanned) {
         return false;
       }
       return true;

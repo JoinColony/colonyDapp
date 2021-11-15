@@ -112,6 +112,7 @@ fragment TransactionEventContext on Event {
       colonyAddress
       deleted
       adminDelete
+      userBanned
     }
   }
 }
