@@ -24,7 +24,7 @@ const MSG = defineMessages({
     defaultMessage: 'Amount must be greater than zero',
   },
   noBalance: {
-    id: 'dashboard.CreatePaymentDialog.TransferFundsDialog.noBalance',
+    id: 'dashboard.TransferFundsDialog.noBalance',
     defaultMessage: 'Insufficient balance in from domain pot',
   },
 });
