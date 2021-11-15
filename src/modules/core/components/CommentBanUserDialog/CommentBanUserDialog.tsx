@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
@@ -7,23 +7,38 @@ import Heading from '~core/Heading';
 import MaskedAddress from '~core/MaskedAddress';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { TransactionMeta } from '~dashboard/ActionsPage';
-import { AnyUser, TransactionMessageFragment } from '~data/index';
+import Comment, { Props as CommentProps } from '~core/Comment';
+import {
+  AnyUser,
+  useBanUserTransactionMessagesMutation,
+  useUnBanUserTransactionMessagesMutation,
+} from '~data/index';
 
 import styles from './CommentBanUserDialog.css';
 
 const MSG = defineMessages({
   title: {
     id: 'CommentBanUserDialog.title',
-    defaultMessage: 'Ban user',
+    defaultMessage: `{unban, select,
+      true {Unban}
+      other {Ban}
+    } user`,
   },
   description: {
     id: 'CommentBanUserDialog.description',
-    defaultMessage: `Are you sure you want to ban this user from chat?`,
+    defaultMessage: `Are you sure you want to {unban, select,
+      true {unban this user and allow them to chat?}
+      other {ban this user from chat?}
+    }`,
   },
   note: {
     id: 'CommentBanUserDialog.note',
-    defaultMessage: `Please note: this only prevents this user from chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.`,
+    /* eslint-disable max-len */
+    defaultMessage: `Please note: {unban, select,
+      true {this only allows this user chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.}
+      other {this only prevents this user from chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.}
+    }`,
+    /* eslint-enable max-len */
   },
   commentLabel: {
     id: 'CommentBanUserDialog.commentLabel',
@@ -31,11 +46,17 @@ const MSG = defineMessages({
   },
   cancelButtonText: {
     id: 'CommentBanUserDialog.cancelButtonText',
-    defaultMessage: 'Let’s give one last chance...',
+    defaultMessage: `{unban, select,
+      true {Cancel}
+      other {Let’s give one last chance...}
+    }`,
   },
   confirmButtonText: {
     id: 'CommentBanUserDialog.confirmButtonText',
-    defaultMessage: 'Ban the troll',
+    defaultMessage: `{unban, select,
+      true {Unban the user}
+      other {Ban the troll}
+    }`,
   },
 });
 
@@ -44,72 +65,108 @@ const displayName = 'CommentBanUserDialog';
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 interface Props extends DialogProps {
-  user: AnyUser;
-  colonyAddress: string;
-  comment: TransactionMessageFragment;
+  comment: CommentProps;
+  unban?: boolean;
 }
 
-const CommentBanUserDialog = ({ cancel, user, comment }: Props) => (
-  <Dialog cancel={cancel}>
-    <div className={styles.container}>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <div className={styles.modalHeading}>
-          <Heading
-            appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-            text={MSG.title}
-          />
-        </div>
-        <div className={styles.modalContent}>
-          <FormattedMessage {...MSG.description} />
-          <div className={styles.userInfoContainer}>
-            <UserAvatar
-              address={user.profile.walletAddress}
-              user={user}
-              size="xs"
-              notSet={false}
+const CommentBanUserDialog = ({
+  cancel,
+  close,
+  comment,
+  comment: { user, colony },
+  unban = false,
+}: Props) => {
+  const updateMutationHook = !unban
+    ? useBanUserTransactionMessagesMutation
+    : useUnBanUserTransactionMessagesMutation;
+  const [updateTransactionMessage, { loading }] = updateMutationHook();
+
+  const handleSubmit = useCallback(
+    () =>
+      (updateTransactionMessage({
+        variables: {
+          input: {
+            colonyAddress: colony.colonyAddress,
+            userAddress: (user as AnyUser).profile.walletAddress,
+            ...(!unban ? { eventId: comment?.commentMeta?.id } : {}),
+          },
+        },
+      }) as Promise<boolean>).then(close),
+    [close, colony, comment, unban, updateTransactionMessage, user],
+  );
+
+  return (
+    <Dialog cancel={cancel}>
+      <div className={styles.container}>
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.modalHeading}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+              textValues={{ unban }}
             />
-            <div className={styles.userNameAndWallet}>
-              {user?.profile?.username && (
-                <UserMention username={user.profile.username} />
-              )}
-              <MaskedAddress address={user.profile.walletAddress} />
-            </div>
           </div>
-          <p className={styles.note}>
-            <FormattedMessage {...MSG.note} />
-          </p>
-        </div>
-        <div className={styles.modalContent}>
-          <Heading
-            appearance={{ size: 'small', margin: 'none', theme: 'dark' }}
-            text={MSG.commentLabel}
-          />
-          <div className={styles.commentContainer}>
-            <TransactionMeta createdAt={new Date(comment.createdAt)} />
-            <p>{comment.context.message}</p>
+          <div className={styles.modalContent}>
+            <FormattedMessage {...MSG.description} values={{ unban }} />
+            <div className={styles.userInfoContainer}>
+              <UserAvatar
+                address={(user as AnyUser).profile.walletAddress}
+                user={user as AnyUser}
+                size="xs"
+                notSet={false}
+              />
+              <div className={styles.userNameAndWallet}>
+                {user?.profile?.username && (
+                  <UserMention username={user.profile.username} />
+                )}
+                <MaskedAddress
+                  address={(user as AnyUser).profile.walletAddress}
+                />
+              </div>
+            </div>
+            <p className={styles.note}>
+              <FormattedMessage {...MSG.note} values={{ unban }} />
+            </p>
+          </div>
+          {!unban && (
+            <div className={styles.modalContent}>
+              <Heading
+                appearance={{ size: 'small', margin: 'none', theme: 'dark' }}
+                text={MSG.commentLabel}
+              />
+              {comment && (
+                <div className={styles.commentContainer}>
+                  <Comment {...comment} />
+                </div>
+              )}
+            </div>
+          )}
+        </DialogSection>
+      </div>
+      <DialogSection appearance={{ theme: 'footer' }}>
+        <div className={styles.buttonContainer}>
+          <div className={styles.cancelButtonContainer}>
+            <Button
+              appearance={{ theme: 'secondary' }}
+              text={MSG.cancelButtonText}
+              textValues={{ unban }}
+              onClick={cancel}
+            />
+          </div>
+          <div className={styles.confirmButtonContainer}>
+            <Button
+              appearance={{ theme: unban ? 'primary' : 'pink', size: 'large' }}
+              text={MSG.confirmButtonText}
+              textValues={{ unban }}
+              loading={loading}
+              onClick={handleSubmit}
+            />
           </div>
         </div>
       </DialogSection>
-    </div>
-    <DialogSection appearance={{ theme: 'footer' }}>
-      <div className={styles.buttonContainer}>
-        <div className={styles.cancelButtonContainer}>
-          <Button
-            appearance={{ theme: 'secondary' }}
-            text={MSG.cancelButtonText}
-            onClick={cancel}
-          />
-        </div>
-        <div className={styles.confirmButtonContainer}>
-          <Button
-            appearance={{ theme: 'danger', size: 'large' }}
-            text={MSG.confirmButtonText}
-          />
-        </div>
-      </div>
-    </DialogSection>
-  </Dialog>
-);
+    </Dialog>
+  );
+};
 
 CommentBanUserDialog.displayName = displayName;
 
