@@ -187,7 +187,7 @@ const coinMachineMessages = {
   },
   coinMachineMaxPerPeriodDescription: {
     id: 'extensions.CoinMachine.param.maxPerPeriod.description',
-    defaultMessage: `The number of tokens to aim to sell per period. If this target is not met, the price in the next period will be lower. If this target is exceeded, the price in the next period will be higher.`,
+    defaultMessage: `The maximum number of tokens that can be sold per period. If this limit is reached, the batch will appear sold out and prospective purchasers will be advised to wait for the next period.`,
   },
   coinMachineUserLimitFractionTitle: {
     id: 'extensions.CoinMachine.param.userLimitFraction.title',
