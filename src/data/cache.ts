@@ -60,6 +60,9 @@ export default new InMemoryCache({
         kycaddresses: {
           merge: false,
         },
+        bannedUsers: {
+          merge: false,
+        },
       },
     },
     Event: {
