@@ -87,6 +87,10 @@ mutation DeleteTransactionMessage($input: DeleteTransactionMessageInput!) {
   deleteTransactionMessage(input: $input)
 }
 
+mutation UndeleteTransactionMessage($input: DeleteTransactionMessageInput!) {
+  undeleteTransactionMessage(input: $input)
+}
+
 mutation BanUserTransactionMessages($input: BanTransactionMessagesInput!) {
   banUserTransactionMessages(input: $input)
 }

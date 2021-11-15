@@ -145,7 +145,7 @@ export type DeleteTransactionMessageInput = {
 export type BanTransactionMessagesInput = {
   colonyAddress: Scalars['String'];
   userAddress: Scalars['String'];
-  eventId: Scalars['String'];
+  eventId?: Maybe<Scalars['String']>;
 };
 
 export type UnBanTransactionMessagesInput = {
@@ -166,6 +166,7 @@ export type Mutation = {
   setUserTokens?: Maybe<User>;
   subscribeToColony?: Maybe<User>;
   unbanUserTransactionMessages: Scalars['Boolean'];
+  undeleteTransactionMessage: Scalars['Boolean'];
   unsubscribeFromColony?: Maybe<User>;
   updateNetworkContracts: NetworkContracts;
 };
@@ -221,12 +222,18 @@ export type MutationUnbanUserTransactionMessagesArgs = {
 };
 
 
+export type MutationUndeleteTransactionMessageArgs = {
+  input: DeleteTransactionMessageInput;
+};
+
+
 export type MutationUnsubscribeFromColonyArgs = {
   input: UnsubscribeFromColonyInput;
 };
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
+  bannedUsers: Array<Maybe<BannedUser>>;
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
@@ -303,6 +310,11 @@ export type Query = {
 export type QueryActionsThatNeedAttentionArgs = {
   colonyAddress: Scalars['String'];
   walletAddress: Scalars['String'];
+};
+
+
+export type QueryBannedUsersArgs = {
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -825,6 +837,14 @@ export type TransactionCount = {
 
 export type TransactionMessagesCount = {
   colonyTransactionMessages: Array<TransactionCount>;
+};
+
+export type BannedUser = {
+  id: Scalars['String'];
+  profile?: Maybe<UserProfile>;
+  eventId?: Maybe<Scalars['String']>;
+  event?: Maybe<Event>;
+  banned: Scalars['Boolean'];
 };
 
 export enum CacheControlScope {
@@ -1514,6 +1534,13 @@ export type DeleteTransactionMessageMutationVariables = Exact<{
 
 
 export type DeleteTransactionMessageMutation = Pick<Mutation, 'deleteTransactionMessage'>;
+
+export type UndeleteTransactionMessageMutationVariables = Exact<{
+  input: DeleteTransactionMessageInput;
+}>;
+
+
+export type UndeleteTransactionMessageMutation = Pick<Mutation, 'undeleteTransactionMessage'>;
 
 export type BanUserTransactionMessagesMutationVariables = Exact<{
   input: BanTransactionMessagesInput;
@@ -3280,6 +3307,36 @@ export function useDeleteTransactionMessageMutation(baseOptions?: Apollo.Mutatio
 export type DeleteTransactionMessageMutationHookResult = ReturnType<typeof useDeleteTransactionMessageMutation>;
 export type DeleteTransactionMessageMutationResult = Apollo.MutationResult<DeleteTransactionMessageMutation>;
 export type DeleteTransactionMessageMutationOptions = Apollo.BaseMutationOptions<DeleteTransactionMessageMutation, DeleteTransactionMessageMutationVariables>;
+export const UndeleteTransactionMessageDocument = gql`
+    mutation UndeleteTransactionMessage($input: DeleteTransactionMessageInput!) {
+  undeleteTransactionMessage(input: $input)
+}
+    `;
+export type UndeleteTransactionMessageMutationFn = Apollo.MutationFunction<UndeleteTransactionMessageMutation, UndeleteTransactionMessageMutationVariables>;
+
+/**
+ * __useUndeleteTransactionMessageMutation__
+ *
+ * To run a mutation, you first call `useUndeleteTransactionMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUndeleteTransactionMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [undeleteTransactionMessageMutation, { data, loading, error }] = useUndeleteTransactionMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUndeleteTransactionMessageMutation(baseOptions?: Apollo.MutationHookOptions<UndeleteTransactionMessageMutation, UndeleteTransactionMessageMutationVariables>) {
+        return Apollo.useMutation<UndeleteTransactionMessageMutation, UndeleteTransactionMessageMutationVariables>(UndeleteTransactionMessageDocument, baseOptions);
+      }
+export type UndeleteTransactionMessageMutationHookResult = ReturnType<typeof useUndeleteTransactionMessageMutation>;
+export type UndeleteTransactionMessageMutationResult = Apollo.MutationResult<UndeleteTransactionMessageMutation>;
+export type UndeleteTransactionMessageMutationOptions = Apollo.BaseMutationOptions<UndeleteTransactionMessageMutation, UndeleteTransactionMessageMutationVariables>;
 export const BanUserTransactionMessagesDocument = gql`
     mutation BanUserTransactionMessages($input: BanTransactionMessagesInput!) {
   banUserTransactionMessages(input: $input)
