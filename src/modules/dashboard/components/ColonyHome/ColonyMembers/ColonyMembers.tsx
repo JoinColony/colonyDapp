@@ -129,7 +129,7 @@ const ColonyMembers = ({
         );
         return {
           walletAddress,
-          banned: canAdministerComments ? !isUserBanned : false,
+          banned: canAdministerComments ? !!isUserBanned : false,
         };
       }),
     [colonyMembers, bannedMembers, canAdministerComments],
