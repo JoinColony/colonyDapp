@@ -11,3 +11,4 @@ export const noReputationDescription: string;
 export const reputationContainer: string;
 export const reputation: string;
 export const icon: string;
+export const bannedTag: string;
