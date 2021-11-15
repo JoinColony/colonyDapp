@@ -46,6 +46,12 @@
   composes: baseStyles;
 }
 
+.themeBanned {
+  composes: baseStyles;
+  background-color: color-mod(var(--pink) alpha(20%));
+  color: var(--pink);
+}
+
 .colorSchemaInverted {
   background-color: transparent;
 }
