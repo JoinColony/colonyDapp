@@ -22,12 +22,13 @@ interface Props {
   user: AnyUser | null;
   permission: string;
   comment?: string;
-  hoverState?: boolean;
+  getHoverState?: boolean;
+  onHoverActiveState?: (hoverState: boolean) => void;
 }
 
 const displayName = 'users.CommentActions';
 
-const CommentActions = ({ user, permission, comment, hoverState }: Props) => {
+const CommentActions = ({user, permission, comment, getHoverState, onHoverActiveState = () => null }: Props) => {
   /*
    * @NOTE Offset Calculations
    * This is dependant on the number of actions, may need to be adjusted
@@ -46,7 +47,6 @@ const CommentActions = ({ user, permission, comment, hoverState }: Props) => {
           user={user}
           permission={permission}
           comment={comment}
-          hoverState={hoverState}
         />
       )}
       trigger="click"
@@ -63,24 +63,28 @@ const CommentActions = ({ user, permission, comment, hoverState }: Props) => {
         ],
       }}
     >
-      {({ isOpen, toggle, ref, id }) => (
-        <button
-          id={id}
-          ref={ref}
-          className={classnames(styles.actionsButton, {
-            [styles.activeDropdown]: isOpen,
-          })}
-          onClick={toggle}
-          type="button"
-          data-test="commentActions"
-        >
-          <Icon
-            className={styles.actionsIcon}
-            name="three-dots-row"
-            title={MSG.commentActionsTitle}
-          />
-        </button>
-      )}
+      {({ isOpen, toggle, ref, id }) => {
+        isOpen ? onHoverActiveState(true) : onHoverActiveState(false);
+
+        return (
+          <button
+            id={id}
+            ref={ref}
+            className={classnames(styles.actionsButton, {
+              [styles.activeDropdown]: isOpen,
+            })}
+            onClick={toggle}
+            type="button"
+            data-test="commentActions"
+          >
+            <Icon
+              className={styles.actionsIcon}
+              name="three-dots-row"
+              title={MSG.commentActionsTitle}
+            />
+          </button>
+        )
+      }}
     </Popover>
   );
 };

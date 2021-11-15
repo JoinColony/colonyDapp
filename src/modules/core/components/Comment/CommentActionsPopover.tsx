@@ -28,7 +28,6 @@ interface Props {
   user: AnyUser | null;
   permission: string;
   comment?: string;
-  hoverState?: boolean;
 }
 
 const displayName = 'core.Comment.CommentActionsPopover';
@@ -38,15 +37,7 @@ const CommentActionsPopover = ({
   user,
   permission,
   comment,
-  hoverState,
 }: Props) => {
-  // Hide the action popover on mouseLeave comment
-  useEffect(() => {
-    if (!hoverState) {
-      closePopover();
-    }
-  }, [hoverState, closePopover]);
-
   const renderUserActions = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
