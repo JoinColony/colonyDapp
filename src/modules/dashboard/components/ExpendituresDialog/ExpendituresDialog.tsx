@@ -40,7 +40,7 @@ const MSG = defineMessages({
   },
   taskTitle: {
     id: 'dashboard.ExpendituresDialog.taskTitle',
-    defaultMessage: 'Task',
+    defaultMessage: 'Streaming',
   },
   taskDescription: {
     id: 'dashboard.ExpendituresDialog.taskDescription',
@@ -48,7 +48,7 @@ const MSG = defineMessages({
   },
   recurringTitle: {
     id: 'dashboard.ExpendituresDialog.recurringTitle',
-    defaultMessage: 'Task',
+    defaultMessage: 'Streaming',
   },
   recurringDescription: {
     id: 'dashboard.ExpendituresDialog.recurringDescription',
