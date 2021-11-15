@@ -81,6 +81,7 @@ export type TransactionMessageEvent = {
   colonyAddress: Scalars['String'];
   deleted?: Maybe<Scalars['Boolean']>;
   adminDelete?: Maybe<Scalars['Boolean']>;
+  userBanned?: Maybe<Scalars['Boolean']>;
 };
 
 export type EventContext = CreateDomainEvent | NewUserEvent | TransactionMessageEvent;
@@ -1425,7 +1426,7 @@ export type EventContextFragment = { context: Pick<CreateDomainEvent, 'type' | '
 
 export type FullNetworkEventFragment = Pick<NetworkEvent, 'fromAddress' | 'toAddress' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domainId'>;
 
-export type TransactionEventContextFragment = { context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress' | 'deleted' | 'adminDelete'> };
+export type TransactionEventContextFragment = { context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress' | 'deleted' | 'adminDelete' | 'userBanned'> };
 
 export type TransactionMessageFragment = (
   EventFieldsFragment
@@ -2114,6 +2115,23 @@ export type UserWhitelistStatusQueryVariables = Exact<{
 
 export type UserWhitelistStatusQuery = { userWhitelistStatus: Pick<UserWhitelistStatus, 'userIsApproved' | 'userIsWhitelisted' | 'userSignedAgreement'> };
 
+export type SubgraphAnnotationEventsQueryVariables = Exact<{
+  transactionHash: Scalars['String'];
+}>;
+
+
+export type SubgraphAnnotationEventsQuery = { annotationEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
 export type CoinMachineSaleTokensQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -2700,23 +2718,6 @@ export type SubgraphTokenBoughtEventsSubscription = { tokenBoughtEvents: Array<(
     ) }
   )> };
 
-export type SubgraphAnnotationEventsQueryVariables = Exact<{
-  transactionHash: Scalars['String'];
-}>;
-
-
-export type SubgraphAnnotationEventsQuery = { annotationEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
 export type CommentCountSubscriptionVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -2858,6 +2859,7 @@ export const TransactionEventContextFragmentDoc = gql`
       colonyAddress
       deleted
       adminDelete
+      userBanned
     }
   }
 }
@@ -5757,6 +5759,51 @@ export function useUserWhitelistStatusLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type UserWhitelistStatusQueryHookResult = ReturnType<typeof useUserWhitelistStatusQuery>;
 export type UserWhitelistStatusLazyQueryHookResult = ReturnType<typeof useUserWhitelistStatusLazyQuery>;
 export type UserWhitelistStatusQueryResult = Apollo.QueryResult<UserWhitelistStatusQuery, UserWhitelistStatusQueryVariables>;
+export const SubgraphAnnotationEventsDocument = gql`
+    query SubgraphAnnotationEvents($transactionHash: String!) {
+  annotationEvents: events(where: {name_contains: "Annotation", args_contains: $transactionHash}) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphAnnotationEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphAnnotationEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphAnnotationEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphAnnotationEventsQuery({
+ *   variables: {
+ *      transactionHash: // value for 'transactionHash'
+ *   },
+ * });
+ */
+export function useSubgraphAnnotationEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
+      }
+export function useSubgraphAnnotationEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
+        }
+export type SubgraphAnnotationEventsQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsQuery>;
+export type SubgraphAnnotationEventsLazyQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsLazyQuery>;
+export type SubgraphAnnotationEventsQueryResult = Apollo.QueryResult<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>;
 export const CoinMachineSaleTokensDocument = gql`
     query CoinMachineSaleTokens($colonyAddress: String!) {
   coinMachineSaleTokens(colonyAddress: $colonyAddress) @client {
@@ -7467,51 +7514,6 @@ export function useSubgraphTokenBoughtEventsSubscription(baseOptions?: Apollo.Su
       }
 export type SubgraphTokenBoughtEventsSubscriptionHookResult = ReturnType<typeof useSubgraphTokenBoughtEventsSubscription>;
 export type SubgraphTokenBoughtEventsSubscriptionResult = Apollo.SubscriptionResult<SubgraphTokenBoughtEventsSubscription>;
-export const SubgraphAnnotationEventsDocument = gql`
-    query SubgraphAnnotationEvents($transactionHash: String!) {
-  annotationEvents: events(where: {name_contains: "Annotation", args_contains: $transactionHash}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphAnnotationEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphAnnotationEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphAnnotationEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphAnnotationEventsQuery({
- *   variables: {
- *      transactionHash: // value for 'transactionHash'
- *   },
- * });
- */
-export function useSubgraphAnnotationEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
-      }
-export function useSubgraphAnnotationEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
-        }
-export type SubgraphAnnotationEventsQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsQuery>;
-export type SubgraphAnnotationEventsLazyQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsLazyQuery>;
-export type SubgraphAnnotationEventsQueryResult = Apollo.QueryResult<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>;
 export const CommentCountDocument = gql`
     subscription CommentCount($colonyAddress: String!) {
   transactionMessagesCount(colonyAddress: $colonyAddress) {
