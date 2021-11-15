@@ -1,4 +1,5 @@
 export const main: string;
+export const activeActions: string;
 export const stateAnnotation: string;
 export const avatar: string;
 export const details: string;
