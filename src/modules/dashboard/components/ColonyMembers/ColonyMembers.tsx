@@ -21,7 +21,9 @@ import {
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
-
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '../../../transformers';
+import { hasRoot, canAdminister } from '../../../users/checks';
 import { oneTxMustBeUpgraded } from '../../../dashboard/checks';
 
 import styles from './ColonyMembers.css';
@@ -33,6 +35,14 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyMembers.editPermissions',
     defaultMessage: 'Edit permissions',
   },
+  banUser: {
+    id: 'dashboard.ColonyMembers.banUser',
+    defaultMessage: 'Ban address',
+  },
+  unbanUser: {
+    id: 'dashboard.ColonyMembers.unbanUser',
+    defaultMessage: 'Unban address',
+  },
   loadingText: {
     id: 'dashboard.ColonyMembers.loadingText',
     defaultMessage: 'Loading Colony',
@@ -40,7 +50,12 @@ const MSG = defineMessages({
 });
 
 const ColonyMembers = () => {
-  const { networkId, username, ethereal } = useLoggedInUser();
+  const {
+    networkId,
+    username,
+    ethereal,
+    walletAddress: currentUserWalletAddress,
+  } = useLoggedInUser();
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const hasRegisteredProfile = !!username && !ethereal;
 
@@ -107,6 +122,21 @@ const ColonyMembers = () => {
     parseInt(colonyData?.processedColony?.version || '1', 10) >=
     ColonyVersion.LightweightSpaceship;
 
+  const currentUserRoles = useTransformer(getAllUserRoles, [
+    colonyData?.processedColony,
+    currentUserWalletAddress,
+  ]);
+  const canAdministerComments =
+    hasRegisteredProfile &&
+    (hasRoot(currentUserRoles) || canAdminister(currentUserRoles));
+
+  const controlsDisabled =
+    !isSupportedColonyVersion ||
+    !isNetworkAllowed ||
+    !hasRegisteredProfile ||
+    !colonyData?.processedColony?.isDeploymentFinished ||
+    mustUpgradeOneTx;
+
   if (
     loading ||
     colonyExtensionLoading ||
@@ -139,18 +169,46 @@ const ColonyMembers = () => {
           )}
         </div>
         <aside className={styles.rightAside}>
-          <Button
-            appearance={{ theme: 'blue' }}
-            text={MSG.editPermissions}
-            onClick={handlePermissionManagementDialog}
-            disabled={
-              !isSupportedColonyVersion ||
-              !isNetworkAllowed ||
-              !hasRegisteredProfile ||
-              !colonyData?.processedColony?.isDeploymentFinished ||
-              mustUpgradeOneTx
-            }
-          />
+          {}
+          {!controlsDisabled && (
+            <ul className={styles.controls}>
+              <li>
+                <Button
+                  appearance={{ theme: 'blue' }}
+                  text={MSG.editPermissions}
+                  onClick={handlePermissionManagementDialog}
+                  disabled={
+                    !isSupportedColonyVersion ||
+                    !isNetworkAllowed ||
+                    !hasRegisteredProfile ||
+                    !colonyData?.processedColony?.isDeploymentFinished ||
+                    mustUpgradeOneTx
+                  }
+                />
+              </li>
+              {canAdministerComments && (
+                <>
+                  {/*
+                   * @TODO Add proper modals
+                   */}
+                  <li>
+                    <Button
+                      appearance={{ theme: 'blue' }}
+                      text={MSG.banUser}
+                      onClick={handlePermissionManagementDialog}
+                    />
+                  </li>
+                  <li>
+                    <Button
+                      appearance={{ theme: 'blue' }}
+                      text={MSG.unbanUser}
+                      onClick={handlePermissionManagementDialog}
+                    />
+                  </li>
+                </>
+              )}
+            </ul>
+          )}
         </aside>
       </div>
     </div>
