@@ -18,34 +18,34 @@ import Button from '~core/Button';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.ToggleBanningAddressDialog.ToggleBanningAddressDialog.title',
+    id: 'dashboard.ToggleBanningAddressDialog.title',
     defaultMessage: `{isBanning, select,
     true {Ban}
     false {Unban}
     } a wallet address from chat`,
   },
   selectUser: {
-    id: `dashboard.ToggleBanningAddressDialog.ToggleBanningAddressDialog.selectUser`,
+    id: 'dashboard.ToggleBanningAddressDialog.selectUser',
     defaultMessage: 'Select user or paste wallet address',
   },
   infoNote: {
-    id: `dashboard.ToggleBanningAddressDialog.ToggleBanningAddressDialog.infoNote`,
-    defaultMessage: `Please note: this only prevents this user from chats in this colony. They will still be able to interact with any smart contracts they have permission to use.`,
+    id: 'dashboard.ToggleBanningAddressDialog.infoNote',
+    defaultMessage: `Please note: this only prevents the user from chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.`,
   },
   banish: {
-    id: `dashboard.ToggleBanningAddressDialog.ToggleBanningAddressDialog.banish`,
+    id: 'dashboard.ToggleBanningAddressDialog.banish',
     defaultMessage: 'Banish them',
   },
   deactivateBan: {
-    id: `dashboard.ToggleBanningAddressDialog.ToggleBanningAddressDialog.deactivateBan`,
+    id: 'dashboard.ToggleBanningAddressDialog.deactivateBan',
     defaultMessage: 'Deactivate ban',
   },
   lastChance: {
-    id: `dashboard.ToggleBanningAddressDialog.ToggleBanningAddressDialog.lastChance`,
+    id: `dashboard.ToggleBanningAddressDialog.lastChance`,
     defaultMessage: 'Let’s give them one last chance...',
   },
   damnedSouls: {
-    id: `dashboard.ToggleBanningAddressDialog.ToggleBanningAddressDialog.damnedSouls`,
+    id: 'dashboard.ToggleBanningAddressDialog.damnedSouls',
     defaultMessage: 'Leave it on the list of damned souls',
   },
 });
@@ -121,20 +121,21 @@ const ToggleBanningAddressDialog = ({
             </div>
           </DialogSection>
           <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
-            <Button
-              appearance={{ theme: 'secondary' }}
-              text={isBanning ? MSG.lastChance : MSG.damnedSouls}
-              style={{ fontWeight: 'bold' }}
-              onClick={close}
-            />
-            <Button
-              appearance={{
-                theme: isBanning ? 'pink' : 'primary',
-                size: 'large',
-              }}
-              text={isBanning ? MSG.banish : MSG.deactivateBan}
-              disabled={!isValid}
-            />
+            <div className={styles.footer}>
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                text={isBanning ? MSG.lastChance : MSG.damnedSouls}
+                onClick={close}
+              />
+              <Button
+                appearance={{
+                  theme: isBanning ? 'pink' : 'primary',
+                  size: 'large',
+                }}
+                text={isBanning ? MSG.banish : MSG.deactivateBan}
+                disabled={!isValid}
+              />
+            </div>
           </DialogSection>
         </Dialog>
       )}
