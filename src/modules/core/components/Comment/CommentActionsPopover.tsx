@@ -17,11 +17,10 @@ import styles from './CommentActionsPopover.css';
 const MSG = defineMessages({
   deleteComment: {
     id: 'core.Comment.CommentActionsPopover.deleteComment',
-    defaultMessage: 'Delete comment',
-  },
-  restoreComment: {
-    id: 'core.Comment.CommentActionsPopover.restoreComment',
-    defaultMessage: 'Restore comment',
+    defaultMessage: `{undelete, select,
+      true {Restore}
+      other {Delete}
+    } comment`,
   },
   banFromChat: {
     id: 'core.Comment.CommentActionsPopover.banFromChat',
@@ -49,12 +48,13 @@ const CommentActionsPopover = ({
   const openDeleteCommentDialog = useDialog(CommentDeleteDialog);
 
   const handleDeleteComment = useCallback(
-    () =>
+    (undelete = false) =>
       openDeleteCommentDialog({
         comment: {
           ...fullComment,
           showControls: false,
         } as CommentProps,
+        undelete,
       }),
     [fullComment, openDeleteCommentDialog],
   );
@@ -75,60 +75,56 @@ const CommentActionsPopover = ({
     </DropdownMenuSection>
   );
 
-  const renderModeratorOptions = () => (
-    <DropdownMenuSection separator>
-      {!fullComment?.commentMeta?.adminDelete ? (
+  const renderModeratorOptions = () => {
+    const commentDeleted = fullComment?.commentMeta?.adminDelete || false;
+    return (
+      <DropdownMenuSection separator>
         <DropdownMenuItem>
           <Button
             appearance={{ theme: 'no-style' }}
-            onClick={handleDeleteComment}
+            onClick={() => handleDeleteComment(commentDeleted)}
           >
             <div className={styles.actionButton}>
-              <Icon name="trash" title={MSG.deleteComment} />
-              <FormattedMessage {...MSG.deleteComment} />
+              <Icon
+                name="trash"
+                title={MSG.deleteComment}
+                titleValues={{ undelete: commentDeleted }}
+              />
+              <FormattedMessage
+                {...MSG.deleteComment}
+                values={{ undelete: commentDeleted }}
+              />
             </div>
           </Button>
         </DropdownMenuItem>
-      ) : (
-        <DropdownMenuItem>
-          <Button
-            appearance={{ theme: 'no-style' }}
-            onClick={() => closePopover()}
-          >
-            <div className={styles.actionButton}>
-              <Icon name="trash" title={MSG.restoreComment} />
-              <FormattedMessage {...MSG.restoreComment} />
-            </div>
-          </Button>
-        </DropdownMenuItem>
-      )}
-      {!fullComment?.commentMeta?.userBanned ? (
-        <DropdownMenuItem>
-          <Button
-            appearance={{ theme: 'no-style' }}
-            onClick={() => closePopover()}
-          >
-            <div className={styles.actionButton}>
-              <Icon name="circle-minus" title={MSG.banFromChat} />
-              <FormattedMessage {...MSG.banFromChat} />
-            </div>
-          </Button>
-        </DropdownMenuItem>
-      ) : (
-        <DropdownMenuItem>
-          <Button
-            appearance={{ theme: 'no-style' }}
-            onClick={() => closePopover()}
-          >
-            <div className={styles.actionButton}>
-              <Icon name="circle-minus" title={MSG.unBanFromChat} />
-              <FormattedMessage {...MSG.unBanFromChat} />
-            </div>
-          </Button>
-        </DropdownMenuItem>
-      )}
-    </DropdownMenuSection>
-  );
+        {!fullComment?.commentMeta?.userBanned ? (
+          <DropdownMenuItem>
+            <Button
+              appearance={{ theme: 'no-style' }}
+              onClick={() => closePopover()}
+            >
+              <div className={styles.actionButton}>
+                <Icon name="circle-minus" title={MSG.banFromChat} />
+                <FormattedMessage {...MSG.banFromChat} />
+              </div>
+            </Button>
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem>
+            <Button
+              appearance={{ theme: 'no-style' }}
+              onClick={() => closePopover()}
+            >
+              <div className={styles.actionButton}>
+                <Icon name="circle-minus" title={MSG.unBanFromChat} />
+                <FormattedMessage {...MSG.unBanFromChat} />
+              </div>
+            </Button>
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuSection>
+    );
+  };
 
   return (
     <DropdownMenu onClick={closePopover}>
