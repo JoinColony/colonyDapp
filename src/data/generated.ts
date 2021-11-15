@@ -1508,6 +1508,27 @@ export type UpdateNetworkContractsMutationVariables = Exact<{ [key: string]: nev
 
 export type UpdateNetworkContractsMutation = { updateNetworkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
 
+export type DeleteTransactionMessageMutationVariables = Exact<{
+  input: DeleteTransactionMessageInput;
+}>;
+
+
+export type DeleteTransactionMessageMutation = Pick<Mutation, 'deleteTransactionMessage'>;
+
+export type BanUserTransactionMessagesMutationVariables = Exact<{
+  input: BanTransactionMessagesInput;
+}>;
+
+
+export type BanUserTransactionMessagesMutation = Pick<Mutation, 'banUserTransactionMessages'>;
+
+export type UnBanUserTransactionMessagesMutationVariables = Exact<{
+  input: UnBanTransactionMessagesInput;
+}>;
+
+
+export type UnBanUserTransactionMessagesMutation = Pick<Mutation, 'unbanUserTransactionMessages'>;
+
 export type LoggedInUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3229,6 +3250,96 @@ export function useUpdateNetworkContractsMutation(baseOptions?: Apollo.MutationH
 export type UpdateNetworkContractsMutationHookResult = ReturnType<typeof useUpdateNetworkContractsMutation>;
 export type UpdateNetworkContractsMutationResult = Apollo.MutationResult<UpdateNetworkContractsMutation>;
 export type UpdateNetworkContractsMutationOptions = Apollo.BaseMutationOptions<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>;
+export const DeleteTransactionMessageDocument = gql`
+    mutation DeleteTransactionMessage($input: DeleteTransactionMessageInput!) {
+  deleteTransactionMessage(input: $input)
+}
+    `;
+export type DeleteTransactionMessageMutationFn = Apollo.MutationFunction<DeleteTransactionMessageMutation, DeleteTransactionMessageMutationVariables>;
+
+/**
+ * __useDeleteTransactionMessageMutation__
+ *
+ * To run a mutation, you first call `useDeleteTransactionMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTransactionMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTransactionMessageMutation, { data, loading, error }] = useDeleteTransactionMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteTransactionMessageMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTransactionMessageMutation, DeleteTransactionMessageMutationVariables>) {
+        return Apollo.useMutation<DeleteTransactionMessageMutation, DeleteTransactionMessageMutationVariables>(DeleteTransactionMessageDocument, baseOptions);
+      }
+export type DeleteTransactionMessageMutationHookResult = ReturnType<typeof useDeleteTransactionMessageMutation>;
+export type DeleteTransactionMessageMutationResult = Apollo.MutationResult<DeleteTransactionMessageMutation>;
+export type DeleteTransactionMessageMutationOptions = Apollo.BaseMutationOptions<DeleteTransactionMessageMutation, DeleteTransactionMessageMutationVariables>;
+export const BanUserTransactionMessagesDocument = gql`
+    mutation BanUserTransactionMessages($input: BanTransactionMessagesInput!) {
+  banUserTransactionMessages(input: $input)
+}
+    `;
+export type BanUserTransactionMessagesMutationFn = Apollo.MutationFunction<BanUserTransactionMessagesMutation, BanUserTransactionMessagesMutationVariables>;
+
+/**
+ * __useBanUserTransactionMessagesMutation__
+ *
+ * To run a mutation, you first call `useBanUserTransactionMessagesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBanUserTransactionMessagesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [banUserTransactionMessagesMutation, { data, loading, error }] = useBanUserTransactionMessagesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBanUserTransactionMessagesMutation(baseOptions?: Apollo.MutationHookOptions<BanUserTransactionMessagesMutation, BanUserTransactionMessagesMutationVariables>) {
+        return Apollo.useMutation<BanUserTransactionMessagesMutation, BanUserTransactionMessagesMutationVariables>(BanUserTransactionMessagesDocument, baseOptions);
+      }
+export type BanUserTransactionMessagesMutationHookResult = ReturnType<typeof useBanUserTransactionMessagesMutation>;
+export type BanUserTransactionMessagesMutationResult = Apollo.MutationResult<BanUserTransactionMessagesMutation>;
+export type BanUserTransactionMessagesMutationOptions = Apollo.BaseMutationOptions<BanUserTransactionMessagesMutation, BanUserTransactionMessagesMutationVariables>;
+export const UnBanUserTransactionMessagesDocument = gql`
+    mutation UnBanUserTransactionMessages($input: UnBanTransactionMessagesInput!) {
+  unbanUserTransactionMessages(input: $input)
+}
+    `;
+export type UnBanUserTransactionMessagesMutationFn = Apollo.MutationFunction<UnBanUserTransactionMessagesMutation, UnBanUserTransactionMessagesMutationVariables>;
+
+/**
+ * __useUnBanUserTransactionMessagesMutation__
+ *
+ * To run a mutation, you first call `useUnBanUserTransactionMessagesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnBanUserTransactionMessagesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unBanUserTransactionMessagesMutation, { data, loading, error }] = useUnBanUserTransactionMessagesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUnBanUserTransactionMessagesMutation(baseOptions?: Apollo.MutationHookOptions<UnBanUserTransactionMessagesMutation, UnBanUserTransactionMessagesMutationVariables>) {
+        return Apollo.useMutation<UnBanUserTransactionMessagesMutation, UnBanUserTransactionMessagesMutationVariables>(UnBanUserTransactionMessagesDocument, baseOptions);
+      }
+export type UnBanUserTransactionMessagesMutationHookResult = ReturnType<typeof useUnBanUserTransactionMessagesMutation>;
+export type UnBanUserTransactionMessagesMutationResult = Apollo.MutationResult<UnBanUserTransactionMessagesMutation>;
+export type UnBanUserTransactionMessagesMutationOptions = Apollo.BaseMutationOptions<UnBanUserTransactionMessagesMutation, UnBanUserTransactionMessagesMutationVariables>;
 export const LoggedInUserDocument = gql`
     query LoggedInUser {
   loggedInUser @client {

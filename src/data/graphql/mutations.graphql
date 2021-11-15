@@ -82,3 +82,15 @@ mutation UpdateNetworkContracts {
     feeInverse
   }
 }
+
+mutation DeleteTransactionMessage($input: DeleteTransactionMessageInput!) {
+  deleteTransactionMessage(input: $input)
+}
+
+mutation BanUserTransactionMessages($input: BanTransactionMessagesInput!) {
+  banUserTransactionMessages(input: $input)
+}
+
+mutation UnBanUserTransactionMessages($input: UnBanTransactionMessagesInput!) {
+  unbanUserTransactionMessages(input: $input)
+}
