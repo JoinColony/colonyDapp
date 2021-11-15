@@ -10,36 +10,36 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import { AnyUser, TransactionMessageFragment } from '~data/index';
 
-import styles from './BanUserDialog.css';
+import styles from './CommentBanUserDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'BanUserDialog.title',
+    id: 'CommentBanUserDialog.title',
     defaultMessage: 'Ban user',
   },
   description: {
-    id: 'BanUserDialog.description',
+    id: 'CommentBanUserDialog.description',
     defaultMessage: `Are you sure you want to ban this user from chat?`,
   },
   note: {
-    id: 'BanUserDialog.note',
+    id: 'CommentBanUserDialog.note',
     defaultMessage: `Please note: this only prevents this user from chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.`,
   },
   commentLabel: {
-    id: 'BanUserDialog.commentLabel',
+    id: 'CommentBanUserDialog.commentLabel',
     defaultMessage: 'The comment',
   },
   cancelButtonText: {
-    id: 'BanUserDialog.cancelButtonText',
+    id: 'CommentBanUserDialog.cancelButtonText',
     defaultMessage: 'Let’s give one last chance...',
   },
   confirmButtonText: {
-    id: 'BanUserDialog.confirmButtonText',
+    id: 'CommentBanUserDialog.confirmButtonText',
     defaultMessage: 'Ban the troll',
   },
 });
 
-const displayName = 'BanUserDialog';
+const displayName = 'CommentBanUserDialog';
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
@@ -49,7 +49,7 @@ interface Props extends DialogProps {
   comment: TransactionMessageFragment;
 }
 
-const BanUserDialog = ({ cancel, user, comment }: Props) => (
+const CommentBanUserDialog = ({ cancel, user, comment }: Props) => (
   <Dialog cancel={cancel}>
     <div className={styles.container}>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -111,6 +111,6 @@ const BanUserDialog = ({ cancel, user, comment }: Props) => (
   </Dialog>
 );
 
-BanUserDialog.displayName = displayName;
+CommentBanUserDialog.displayName = displayName;
 
-export default BanUserDialog;
+export default CommentBanUserDialog;
