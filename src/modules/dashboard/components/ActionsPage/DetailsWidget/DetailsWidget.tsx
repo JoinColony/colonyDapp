@@ -117,16 +117,18 @@ const DetailsWidget = ({
             appearance={{ size: 'small' }}
             name={ACTION_TYPES_ICONS_MAP[actionType]}
           />
-          <FormattedMessage
-            id={messageId}
-            /*
-             * @NOTE We need to use the action type value that was converted to
-             * camelCase since ReactIntl doesn't like keys that are composed
-             * of two separate strings (apparently you can't pass it just a plain
-             * string with spaces...)
-             */
-            values={{ actionType: values?.actionType }}
-          />
+          <div className={styles.text}>
+            <FormattedMessage
+              id={messageId}
+              /*
+               * @NOTE We need to use the action type value that was converted to
+               * camelCase since ReactIntl doesn't like keys that are composed
+               * of two separate strings (apparently you can't pass it just a plain
+               * string with spaces...)
+               */
+              values={{ actionType: values?.actionType }}
+            />
+          </div>
         </div>
       </div>
       {values?.motionDomain && (
