@@ -1,7 +1,7 @@
 .actionButton {
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
-  letter-spacing: var(--spacing-medium);
   color: var(--dark);
+  letter-spacing: var(--spacing-medium);
 }
 
 .actionButton i {
