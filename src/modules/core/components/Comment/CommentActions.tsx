@@ -2,10 +2,10 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import classnames from 'classnames';
+import { COMMENT_MODERATION } from '~immutable/index';
 import Icon from '~core/Icon';
 import Popover from '~core/Popover';
-import { AnyUser } from '~data/index';
-import { COMMENT_MODERATION } from '~immutable/index';
+import { Props as CommentProps } from './Comment';
 
 import CommentActionsPopover from './CommentActionsPopover';
 
@@ -19,16 +19,18 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  user: AnyUser | null;
   permission: string;
-  comment?: string;
-  getHoverState?: boolean;
+  fullComment?: CommentProps;
   onHoverActiveState?: (hoverState: boolean) => void;
 }
 
 const displayName = 'users.CommentActions';
 
-const CommentActions = ({user, permission, comment, getHoverState, onHoverActiveState = () => null }: Props) => {
+const CommentActions = ({
+  permission,
+  fullComment,
+  onHoverActiveState = () => null,
+}: Props) => {
   /*
    * @NOTE Offset Calculations
    * This is dependant on the number of actions, may need to be adjusted
@@ -44,9 +46,8 @@ const CommentActions = ({user, permission, comment, getHoverState, onHoverActive
       content={({ close }) => (
         <CommentActionsPopover
           closePopover={close}
-          user={user}
           permission={permission}
-          comment={comment}
+          fullComment={fullComment}
         />
       )}
       trigger="click"
@@ -64,8 +65,11 @@ const CommentActions = ({user, permission, comment, getHoverState, onHoverActive
       }}
     >
       {({ isOpen, toggle, ref, id }) => {
-        isOpen ? onHoverActiveState(true) : onHoverActiveState(false);
-
+        if (isOpen) {
+          onHoverActiveState(true);
+        } else {
+          onHoverActiveState(false);
+        }
         return (
           <button
             id={id}
@@ -83,7 +87,7 @@ const CommentActions = ({user, permission, comment, getHoverState, onHoverActive
               title={MSG.commentActionsTitle}
             />
           </button>
-        )
+        );
       }}
     </Popover>
   );
