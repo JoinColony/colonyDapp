@@ -7,7 +7,7 @@
   border-radius: var(--radius-large);
 }
 
-.main:hover {
+.main:hover, .main.activeActions {
   background-color: color-mod(var(--action-secondary) alpha(6%));
 }
 
@@ -46,7 +46,7 @@
   position: relative;
 }
 
-.main:hover .actions {
+.main:hover .actions, .main.activeActions .actions {
   opacity: 1;
 }
 

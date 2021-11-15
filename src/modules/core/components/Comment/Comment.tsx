@@ -77,9 +77,12 @@ const Comment = ({
 
   return (
     <div
-      className={getMainClasses(appearance, styles, { annotation })}
-      onMouseEnter={() => setHoverState(true)}
-      onMouseLeave={() => setHoverState(false)}
+      className={
+        `
+          ${getMainClasses(appearance, styles, { annotation })}
+          ${hoverState ? styles.activeActions : ''}
+        `
+      }
     >
       <div className={styles.avatar}>
         <UserAvatar
@@ -107,7 +110,8 @@ const Comment = ({
             permission={permission}
             user={user}
             comment={comment}
-            hoverState={hoverState}
+            getHoverState={hoverState}
+            onHoverActiveState={setHoverState}
           />
         )}
       </div>
