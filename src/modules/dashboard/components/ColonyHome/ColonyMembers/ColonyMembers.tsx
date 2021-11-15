@@ -10,9 +10,10 @@ import {
   Colony,
   useColonyMembersWithReputationQuery,
   useMembersSubscription,
+  useBannedUsersQuery,
 } from '~data/index';
-import { Address } from '~types/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { Address } from '~types/index';
 
 import styles from './ColonyMembers.css';
 
@@ -66,6 +67,15 @@ const ColonyMembers = ({
     },
   });
 
+  const {
+    data: bannedMembers,
+    loading: loadingBannedUsers,
+  } = useBannedUsersQuery({
+    variables: {
+      colonyAddress,
+    },
+  });
+
   const colonyMembers = useMemo(() => {
     if (currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
       return members?.subscribedUsers?.map(
@@ -86,7 +96,32 @@ const ColonyMembers = ({
       ? BASE_MEMBERS_ROUTE
       : `${BASE_MEMBERS_ROUTE}/${currentDomainId}`;
 
-  if (loadingColonyMembersWithReputation || loadingMembers) {
+  const colonyMembersWithBanStatus = useMemo(
+    () =>
+      (colonyMembers || []).map((walletAddress) => {
+        // eslint-disable-next-line max-len
+        const isUserBanned = bannedMembers?.bannedUsers?.find(
+          ({
+            id: bannedUserWalletAddress,
+            banned,
+          }: {
+            id: Address;
+            banned: boolean;
+          }) => banned && bannedUserWalletAddress === walletAddress,
+        );
+        return {
+          walletAddress,
+          banned: !!isUserBanned,
+        };
+      }),
+    [colonyMembers, bannedMembers],
+  );
+
+  if (
+    loadingColonyMembersWithReputation ||
+    loadingMembers ||
+    loadingBannedUsers
+  ) {
     return (
       <MiniSpinnerLoader
         className={styles.main}
@@ -125,16 +160,16 @@ const ColonyMembers = ({
         />
       </NavLink>
       <ul className={styles.userAvatars}>
-        {(colonyMembers as Address[])
+        {colonyMembersWithBanStatus
           .slice(0, avatarsDisplaySplitRules)
-          .map((userAddress: Address) => (
-            <li className={styles.userAvatar} key={userAddress}>
+          .map(({ walletAddress, banned }) => (
+            <li className={styles.userAvatar} key={walletAddress}>
               <UserAvatar
                 size="xs"
-                colony={colony}
-                address={userAddress}
+                address={walletAddress}
                 showInfo
                 notSet={false}
+                colony={colony}
                 popperProps={{
                   placement: 'bottom',
                   showArrow: false,
@@ -155,6 +190,10 @@ const ColonyMembers = ({
                   ],
                 }}
               />
+              {/*
+               * @TODO Replace with proper user banned icon
+               */}
+              {banned && <div className={styles.userBanned} />}
             </li>
           ))}
         {!!remainingAvatarsCount && (

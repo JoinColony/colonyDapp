@@ -2292,6 +2292,16 @@ export type TransactionMessagesCountQueryVariables = Exact<{
 
 export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
 
+export type BannedUsersQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type BannedUsersQuery = { bannedUsers: Array<Maybe<(
+    Pick<BannedUser, 'id' | 'eventId' | 'banned'>
+    & { profile?: Maybe<Pick<UserProfile, 'walletAddress' | 'username' | 'displayName'>>, event?: Maybe<{ context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress' | 'deleted' | 'adminDelete'> }> }
+  )>> };
+
 export type ColonyExtensionsQueryVariables = Exact<{
   address: Scalars['String'];
 }>;
@@ -6424,6 +6434,58 @@ export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQu
 export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
 export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
 export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
+export const BannedUsersDocument = gql`
+    query BannedUsers($colonyAddress: String!) {
+  bannedUsers(colonyAddress: $colonyAddress) {
+    id
+    profile {
+      walletAddress
+      username
+      displayName
+    }
+    eventId
+    event {
+      context {
+        ... on TransactionMessageEvent {
+          type
+          transactionHash
+          message
+          colonyAddress
+          deleted
+          adminDelete
+        }
+      }
+    }
+    banned
+  }
+}
+    `;
+
+/**
+ * __useBannedUsersQuery__
+ *
+ * To run a query within a React component, call `useBannedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBannedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBannedUsersQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useBannedUsersQuery(baseOptions?: Apollo.QueryHookOptions<BannedUsersQuery, BannedUsersQueryVariables>) {
+        return Apollo.useQuery<BannedUsersQuery, BannedUsersQueryVariables>(BannedUsersDocument, baseOptions);
+      }
+export function useBannedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BannedUsersQuery, BannedUsersQueryVariables>) {
+          return Apollo.useLazyQuery<BannedUsersQuery, BannedUsersQueryVariables>(BannedUsersDocument, baseOptions);
+        }
+export type BannedUsersQueryHookResult = ReturnType<typeof useBannedUsersQuery>;
+export type BannedUsersLazyQueryHookResult = ReturnType<typeof useBannedUsersLazyQuery>;
+export type BannedUsersQueryResult = Apollo.QueryResult<BannedUsersQuery, BannedUsersQueryVariables>;
 export const ColonyExtensionsDocument = gql`
     query ColonyExtensions($address: String!) {
   processedColony(address: $address) @client {
