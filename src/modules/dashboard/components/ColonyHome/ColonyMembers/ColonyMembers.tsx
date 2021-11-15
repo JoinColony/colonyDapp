@@ -11,9 +11,13 @@ import {
   useColonyMembersWithReputationQuery,
   useMembersSubscription,
   useBannedUsersQuery,
+  useLoggedInUser,
 } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { Address } from '~types/index';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '../../../../transformers';
+import { hasRoot, canAdminister } from '../../../../users/checks';
 
 import styles from './ColonyMembers.css';
 
@@ -51,6 +55,20 @@ const ColonyMembers = ({
   currentDomainId = COLONY_TOTAL_BALANCE_DOMAIN_ID,
   maxAvatars = 15,
 }: Props) => {
+  const {
+    walletAddress: currentUserWalletAddress,
+    username,
+    ethereal,
+  } = useLoggedInUser();
+  const hasRegisteredProfile = !!username && !ethereal;
+  const allUserRoles = useTransformer(getAllUserRoles, [
+    colony,
+    currentUserWalletAddress,
+  ]);
+  const canAdministerComments =
+    hasRegisteredProfile &&
+    (hasRoot(allUserRoles) || canAdminister(allUserRoles));
+
   const {
     data: membersWithReputation,
     loading: loadingColonyMembersWithReputation,
@@ -111,10 +129,10 @@ const ColonyMembers = ({
         );
         return {
           walletAddress,
-          banned: !!isUserBanned,
+          banned: canAdministerComments ? !isUserBanned : false,
         };
       }),
-    [colonyMembers, bannedMembers],
+    [colonyMembers, bannedMembers, canAdministerComments],
   );
 
   if (
