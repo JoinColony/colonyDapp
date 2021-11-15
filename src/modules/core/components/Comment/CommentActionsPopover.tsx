@@ -10,6 +10,7 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { useDialog } from '~core/Dialog';
 import CommentDeleteDialog from '~core/CommentDeleteDialog';
+import CommentBanUserDialog from '~core/CommentBanUserDialog';
 import { Props as CommentProps } from './Comment';
 
 import styles from './CommentActionsPopover.css';
@@ -24,11 +25,10 @@ const MSG = defineMessages({
   },
   banFromChat: {
     id: 'core.Comment.CommentActionsPopover.banFromChat',
-    defaultMessage: 'Ban from chat',
-  },
-  unBanFromChat: {
-    id: 'core.Comment.CommentActionsPopover.unBanFromChat',
-    defaultMessage: 'Unban from chat',
+    defaultMessage: `{unban, select,
+      true {Unban}
+      other {Ban}
+    } from chat`,
   },
 });
 
@@ -46,6 +46,7 @@ const CommentActionsPopover = ({
   fullComment,
 }: Props) => {
   const openDeleteCommentDialog = useDialog(CommentDeleteDialog);
+  const openBanUserDialog = useDialog(CommentBanUserDialog);
 
   const handleDeleteComment = useCallback(
     (undelete = false) =>
@@ -57,6 +58,18 @@ const CommentActionsPopover = ({
         undelete,
       }),
     [fullComment, openDeleteCommentDialog],
+  );
+
+  const handleBanUser = useCallback(
+    (unban = false) =>
+      openBanUserDialog({
+        comment: {
+          ...fullComment,
+          showControls: false,
+        } as CommentProps,
+        unban,
+      }),
+    [fullComment, openBanUserDialog],
   );
 
   const renderUserActions = () => (
@@ -77,6 +90,7 @@ const CommentActionsPopover = ({
 
   const renderModeratorOptions = () => {
     const commentDeleted = fullComment?.commentMeta?.adminDelete || false;
+    const userBanned = fullComment?.commentMeta?.userBanned || false;
     return (
       <DropdownMenuSection separator>
         <DropdownMenuItem>
@@ -97,31 +111,24 @@ const CommentActionsPopover = ({
             </div>
           </Button>
         </DropdownMenuItem>
-        {!fullComment?.commentMeta?.userBanned ? (
-          <DropdownMenuItem>
-            <Button
-              appearance={{ theme: 'no-style' }}
-              onClick={() => closePopover()}
-            >
-              <div className={styles.actionButton}>
-                <Icon name="circle-minus" title={MSG.banFromChat} />
-                <FormattedMessage {...MSG.banFromChat} />
-              </div>
-            </Button>
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem>
-            <Button
-              appearance={{ theme: 'no-style' }}
-              onClick={() => closePopover()}
-            >
-              <div className={styles.actionButton}>
-                <Icon name="circle-minus" title={MSG.unBanFromChat} />
-                <FormattedMessage {...MSG.unBanFromChat} />
-              </div>
-            </Button>
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem>
+          <Button
+            appearance={{ theme: 'no-style' }}
+            onClick={() => handleBanUser(userBanned)}
+          >
+            <div className={styles.actionButton}>
+              <Icon
+                name="circle-minus"
+                title={MSG.banFromChat}
+                titleValues={{ unban: userBanned }}
+              />
+              <FormattedMessage
+                {...MSG.banFromChat}
+                values={{ unban: userBanned }}
+              />
+            </div>
+          </Button>
+        </DropdownMenuItem>
       </DropdownMenuSection>
     );
   };
