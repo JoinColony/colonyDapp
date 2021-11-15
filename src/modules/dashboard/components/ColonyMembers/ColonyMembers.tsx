@@ -13,9 +13,10 @@ import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
 
 import {
   useColonyFromNameQuery,
-  useLoggedInUser,
   Colony,
   useColonyExtensionsQuery,
+  useBannedUsersQuery,
+  useLoggedInUser,
 } from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { NOT_FOUND_ROUTE } from '~routes/index';
@@ -41,6 +42,8 @@ const MSG = defineMessages({
 const ColonyMembers = () => {
   const { networkId, username, ethereal } = useLoggedInUser();
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
+  const hasRegisteredProfile = !!username && !ethereal;
+
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
 
   const { colonyName } = useParams<{
@@ -51,8 +54,10 @@ const ColonyMembers = () => {
     variables: { name: colonyName, address: '' },
   });
 
+  const colonyAddress = colonyData?.processedColony?.colonyAddress || '';
+
   const { isVotingExtensionEnabled } = useEnabledExtensions({
-    colonyAddress: colonyData?.processedColony?.colonyAddress,
+    colonyAddress,
   });
 
   useEffect(() => {
@@ -65,7 +70,16 @@ const ColonyMembers = () => {
     data: colonyExtensions,
     loading: colonyExtensionLoading,
   } = useColonyExtensionsQuery({
-    variables: { address: colonyData?.processedColony?.colonyAddress || '' },
+    variables: { address: colonyAddress },
+  });
+
+  const {
+    data: bannedMembers,
+    loading: loadingBannedUsers,
+  } = useBannedUsersQuery({
+    variables: {
+      colonyAddress,
+    },
   });
 
   const openPermissionManagementDialog = useDialog(PermissionManagementDialog);
@@ -89,7 +103,6 @@ const ColonyMembers = () => {
   );
   const mustUpgradeOneTx = oneTxMustBeUpgraded(oneTxPaymentExtension);
 
-  const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
     parseInt(colonyData?.processedColony?.version || '1', 10) >=
     ColonyVersion.LightweightSpaceship;
@@ -97,6 +110,7 @@ const ColonyMembers = () => {
   if (
     loading ||
     colonyExtensionLoading ||
+    loadingBannedUsers ||
     (colonyData?.colonyAddress &&
       !colonyData.processedColony &&
       !((colonyData.colonyAddress as any) instanceof Error))
@@ -118,7 +132,10 @@ const ColonyMembers = () => {
       <div className={styles.mainContentGrid}>
         <div className={styles.mainContent}>
           {colonyData && colonyData.processedColony && (
-            <Members colony={colonyData.processedColony} />
+            <Members
+              colony={colonyData.processedColony}
+              bannedUsers={bannedMembers?.bannedUsers || []}
+            />
           )}
         </div>
         <aside className={styles.rightAside}>
