@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
   roleDescription3: {
     id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription3`,
-    defaultMessage: 'Set permissions in any sub-team.',
+    defaultMessage: 'Create teams and manage permissions in sub-teams.',
   },
   // We don't have architecture_subdomain (which would be 4)
   roleDescription5: {
