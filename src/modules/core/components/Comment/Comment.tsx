@@ -22,12 +22,19 @@ import styles from './Comment.css';
 const displayName = 'Comment';
 
 export interface Appearance {
-  theme?: 'primary' | 'danger';
+  theme?: 'primary' | 'danger' | 'ghost';
+}
+
+export interface CommentMeta {
+  deleted?: null | boolean;
+  adminDelete?: null | boolean;
+  userBanned?: null | boolean;
 }
 
 export interface Props {
   appearance?: Appearance;
   comment?: string;
+  commentMeta?: CommentMeta;
   colony: Colony;
   user?: AnyUser | null;
   annotation?: boolean;
@@ -39,6 +46,7 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const Comment = ({
   appearance = { theme: 'primary' },
   comment,
+  commentMeta,
   colony,
   user,
   createdAt,
@@ -75,14 +83,18 @@ const Comment = ({
     ),
   });
 
+  const { deleted = false, adminDelete = false, userBanned = false } =
+    commentMeta || {};
+
   return (
     <div
-      className={
-        `
-          ${getMainClasses(appearance, styles, { annotation })}
+      className={`
+          ${getMainClasses(appearance, styles, {
+            annotation,
+            ghosted: !!(deleted || adminDelete || userBanned),
+          })}
           ${hoverState ? styles.activeActions : ''}
-        `
-      }
+        `}
     >
       <div className={styles.avatar}>
         <UserAvatar
