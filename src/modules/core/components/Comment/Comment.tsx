@@ -95,7 +95,10 @@ const Comment = ({
       className={`
           ${getMainClasses(appearance, styles, {
             annotation,
-            ghosted: showControls && !!(deleted || adminDelete || userBanned),
+            ghosted:
+              showControls &&
+              permission !== COMMENT_MODERATION.NONE &&
+              !!(deleted || adminDelete || userBanned),
             hideControls:
               !showControls || permission === COMMENT_MODERATION.NONE,
           })}
