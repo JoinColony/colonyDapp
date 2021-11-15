@@ -4,6 +4,7 @@ import { isNil } from 'lodash';
 
 import PermissionsLabel from '~core/PermissionsLabel';
 import { permissionsObject } from '~core/PermissionsLabel/permissions';
+import Tag from '~core/Tag';
 import { getMainClasses } from '~utils/css';
 
 import styles from './UserPermissions.css';
@@ -16,11 +17,17 @@ interface Props {
   roles: ColonyRole[];
   directRoles: ColonyRole[];
   appearance?: Appearance;
+  banned?: boolean;
 }
 
 const displayName = 'dashboard.UserPermissions';
 
-const UserPermissions = ({ roles, directRoles, appearance }: Props) => {
+const UserPermissions = ({
+  roles,
+  directRoles,
+  appearance,
+  banned = false,
+}: Props) => {
   const sortedRoles = roles
     .filter(
       (role) =>
@@ -36,6 +43,14 @@ const UserPermissions = ({ roles, directRoles, appearance }: Props) => {
   const [headRole, ...restRoles] = sortedRoles;
   return (
     <div className={getMainClasses(appearance, styles)}>
+      {banned && (
+        /*
+         * @TODO Replace with the actual banned tag
+         */
+        <div className={styles.bannedTag}>
+          <Tag text="Banned" appearance={{ theme: 'pink' }} />
+        </div>
+      )}
       {!isNil(headRole) && (
         <PermissionsLabel
           permission={headRole}
