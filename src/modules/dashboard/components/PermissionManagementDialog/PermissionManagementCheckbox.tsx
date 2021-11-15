@@ -22,7 +22,7 @@ const MSG = defineMessages({
   },
   roleDescription2: {
     id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription2`,
-    defaultMessage: 'Coming soon...',
+    defaultMessage: `Arbitration allows you to resolve disputes, make state changes, and punish bad behavior.`,
   },
   roleDescription3: {
     id: `dashboard.PermissionManagementDialog.PermissionManagementCheckbox.roleDescription3`,
