@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { FormattedMessage, defineMessages } from 'react-intl';
 
@@ -6,6 +6,7 @@ import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 import Comment, { Props as CommentProps } from '~core/Comment';
+import { useDeleteTransactionMessageMutation } from '~data/index';
 
 import styles from './CommentDeleteDialog.css';
 
@@ -34,7 +35,25 @@ interface Props extends DialogProps {
   comment: CommentProps;
 }
 
-const CommentDeleteDialog = ({ cancel, comment }: Props) => {
+const CommentDeleteDialog = ({ cancel, close, comment }: Props) => {
+  const [
+    deleteTransactionMessage,
+    { loading },
+  ] = useDeleteTransactionMessageMutation();
+
+  const handleSubmit = useCallback(
+    () =>
+      deleteTransactionMessage({
+        variables: {
+          input: {
+            colonyAddress: comment.colony.colonyAddress,
+            id: comment?.commentMeta?.id || '',
+          },
+        },
+      }).then(close),
+    [comment, deleteTransactionMessage, close],
+  );
+
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
@@ -63,6 +82,8 @@ const CommentDeleteDialog = ({ cancel, comment }: Props) => {
           appearance={{ theme: 'pink', size: 'large' }}
           text={MSG.buttonDelete}
           style={{ width: styles.wideButton }}
+          loading={loading}
+          onClick={handleSubmit}
         />
       </DialogSection>
     </Dialog>

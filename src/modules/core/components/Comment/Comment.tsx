@@ -29,6 +29,7 @@ export interface CommentMeta {
   deleted?: null | boolean;
   adminDelete?: null | boolean;
   userBanned?: null | boolean;
+  id: null | string;
 }
 
 export interface Props {
@@ -39,6 +40,7 @@ export interface Props {
   user?: AnyUser | null;
   annotation?: boolean;
   createdAt?: Date | number;
+  showControls?: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -51,6 +53,7 @@ const Comment = ({
   user,
   createdAt,
   annotation = false,
+  showControls = false,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const rootRoles = useTransformer(getUserRolesForDomain, [
@@ -91,7 +94,8 @@ const Comment = ({
       className={`
           ${getMainClasses(appearance, styles, {
             annotation,
-            ghosted: !!(deleted || adminDelete || userBanned),
+            ghosted: showControls && !!(deleted || adminDelete || userBanned),
+            hideControls: !showControls,
           })}
           ${hoverState ? styles.activeActions : ''}
         `}
@@ -117,12 +121,19 @@ const Comment = ({
         </div>
       </div>
       <div className={styles.actions}>
-        {permission !== COMMENT_MODERATION.NONE && user && (
+        {showControls && permission !== COMMENT_MODERATION.NONE && user && (
           <CommentActions
             permission={permission}
-            user={user}
-            comment={comment}
-            getHoverState={hoverState}
+            fullComment={{
+              appearance,
+              comment,
+              commentMeta,
+              colony,
+              user,
+              createdAt,
+              annotation,
+              showControls,
+            }}
             onHoverActiveState={setHoverState}
           />
         )}
