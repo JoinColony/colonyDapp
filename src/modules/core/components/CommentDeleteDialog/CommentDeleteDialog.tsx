@@ -6,18 +6,27 @@ import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 import Comment, { Props as CommentProps } from '~core/Comment';
-import { useDeleteTransactionMessageMutation } from '~data/index';
+import {
+  useDeleteTransactionMessageMutation,
+  useUndeleteTransactionMessageMutation,
+} from '~data/index';
 
 import styles from './CommentDeleteDialog.css';
 
 const MSG = defineMessages({
   title: {
     id: 'CommentDeleteDialog.title',
-    defaultMessage: 'Delete comment',
+    defaultMessage: `{undelete, select,
+      true {Restore}
+      other {Delete}
+    } comment`,
   },
   question: {
     id: 'CommentDeleteDialog.question',
-    defaultMessage: `Are you sure you want to delete this message?`,
+    defaultMessage: `Are you sure you want to {undelete, select,
+      true {restore}
+      other {delete}
+    } this message?`,
   },
   buttonCancel: {
     id: 'CommentDeleteDialog.buttonCancel',
@@ -25,7 +34,10 @@ const MSG = defineMessages({
   },
   buttonDelete: {
     id: 'CommentDeleteDialog.buttonDelete',
-    defaultMessage: 'Delete',
+    defaultMessage: `{undelete, select,
+      true {Restore}
+      other {Delete}
+    }`,
   },
 });
 
@@ -33,25 +45,31 @@ const displayName = 'CommentDeleteDialog';
 
 interface Props extends DialogProps {
   comment: CommentProps;
+  undelete?: boolean;
 }
 
-const CommentDeleteDialog = ({ cancel, close, comment }: Props) => {
-  const [
-    deleteTransactionMessage,
-    { loading },
-  ] = useDeleteTransactionMessageMutation();
+const CommentDeleteDialog = ({
+  cancel,
+  close,
+  comment,
+  undelete = false,
+}: Props) => {
+  const updateMutationHook = !undelete
+    ? useDeleteTransactionMessageMutation
+    : useUndeleteTransactionMessageMutation;
+  const [updateTransactionMessage, { loading }] = updateMutationHook();
 
   const handleSubmit = useCallback(
     () =>
-      deleteTransactionMessage({
+      (updateTransactionMessage({
         variables: {
           input: {
             colonyAddress: comment.colony.colonyAddress,
             id: comment?.commentMeta?.id || '',
           },
         },
-      }).then(close),
-    [comment, deleteTransactionMessage, close],
+      }) as Promise<boolean>).then(close),
+    [comment, updateTransactionMessage, close],
   );
 
   return (
@@ -61,10 +79,11 @@ const CommentDeleteDialog = ({ cancel, close, comment }: Props) => {
           <Heading
             appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
             text={MSG.title}
+            textValues={{ undelete }}
           />
         </div>
         <div className={styles.modalContent}>
-          <FormattedMessage {...MSG.question} />
+          <FormattedMessage {...MSG.question} values={{ undelete }} />
         </div>
         {comment && (
           <div className={styles.comment}>
@@ -79,8 +98,9 @@ const CommentDeleteDialog = ({ cancel, close, comment }: Props) => {
           onClick={cancel}
         />
         <Button
-          appearance={{ theme: 'pink', size: 'large' }}
+          appearance={{ theme: undelete ? 'primary' : 'pink', size: 'large' }}
           text={MSG.buttonDelete}
+          textValues={{ undelete }}
           style={{ width: styles.wideButton }}
           loading={loading}
           onClick={handleSubmit}
