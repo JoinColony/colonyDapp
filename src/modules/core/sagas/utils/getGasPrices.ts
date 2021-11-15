@@ -100,12 +100,31 @@ const fetchGasPrices = async (
       // API prices are in Gwei, so they need to be normalised
       const oneGwei = bigNumberify(10 ** 9);
 
+      /*
+       * @NOTE Split the values into integer and remainder
+       * (1.22 becomes 1 and 22)
+       *
+       * The integer part gets multiplied by 1 gwei, while the remainder
+       * gets padded with 9 zeros. Everything will be added together.
+       */
+      const [averageInteger, averageRemainder = 0] = String(data.average).split(
+        '.',
+      );
+      const [slowInteger, slowRemainder = 0] = String(data.slow).split('.');
+      const [fastInteger, fastRemainder = 0] = String(data.fast).split('.');
+
       return {
         ...defaultGasPrices,
 
-        suggested: bigNumberify(Math.round(data.average)).mul(oneGwei),
-        cheaper: bigNumberify(Math.round(data.slow)).mul(oneGwei),
-        faster: bigNumberify(Math.round(data.fast)).mul(oneGwei),
+        suggested: bigNumberify(averageInteger)
+          .mul(oneGwei)
+          .add(String(averageRemainder).padEnd(9, '0')),
+        cheaper: bigNumberify(slowInteger)
+          .mul(oneGwei)
+          .add(String(slowRemainder).padEnd(9, '0')),
+        faster: bigNumberify(fastInteger)
+          .mul(oneGwei)
+          .add(String(fastRemainder).padEnd(9, '0')),
       };
     }
 
