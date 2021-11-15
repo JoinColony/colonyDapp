@@ -9,7 +9,6 @@ import { SpinnerLoader } from '~core/Preloaders';
 import UserPermissions from '~dashboard/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
-
 import { useTransformer } from '~utils/hooks';
 import { createAddress } from '~utils/web3';
 import {
