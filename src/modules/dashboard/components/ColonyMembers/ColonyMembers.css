@@ -27,3 +27,7 @@
   width: calc(100% - 60px);
   position: relative;
 }
+
+.controls li + li {
+  margin: 18px 0 0;
+}
