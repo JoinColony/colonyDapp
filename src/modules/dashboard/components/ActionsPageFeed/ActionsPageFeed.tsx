@@ -251,6 +251,7 @@ const ActionsPageFeed = ({
           createdAt,
           context: { message, deleted, adminDelete, userBanned },
           uniqueId,
+          sourceId,
         } = (feedItem as unknown) as FeedItemWithId<TransactionMessageFragment>;
         return (
           <Comment
@@ -259,11 +260,13 @@ const ActionsPageFeed = ({
             colony={colony}
             comment={message}
             commentMeta={{
+              id: sourceId,
               deleted,
               adminDelete,
               userBanned,
             }}
             user={messageInitiator}
+            showControls
           />
         );
       }
