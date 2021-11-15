@@ -64,3 +64,14 @@
   font-size: var(--size-small);
   letter-spacing: initial;
 }
+
+.userBanned {
+  display: block;
+  margin-top: -6px;
+  height: 7px;
+  width: 7px;
+  position: relative;
+  float: right;
+  border-radius: 50%;
+  background-color: var(--pink);
+}

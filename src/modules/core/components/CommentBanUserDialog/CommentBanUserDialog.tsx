@@ -12,6 +12,7 @@ import {
   AnyUser,
   useBanUserTransactionMessagesMutation,
   useUnBanUserTransactionMessagesMutation,
+  BannedUsersDocument,
 } from '~data/index';
 
 import styles from './CommentBanUserDialog.css';
@@ -91,6 +92,12 @@ const CommentBanUserDialog = ({
             ...(!unban ? { eventId: comment?.commentMeta?.id } : {}),
           },
         },
+        refetchQueries: [
+          {
+            query: BannedUsersDocument,
+            variables: { colonyAddress: colony.colonyAddress },
+          },
+        ],
       }) as Promise<boolean>).then(close),
     [close, colony, comment, unban, updateTransactionMessage, user],
   );
