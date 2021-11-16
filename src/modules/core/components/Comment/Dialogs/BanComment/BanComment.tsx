@@ -19,21 +19,21 @@ import styles from './BanComment.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'BanComment.title',
+    id: 'core.Comment.BanComment.title',
     defaultMessage: `{unban, select,
       true {Unban}
       other {Ban}
     } user`,
   },
   description: {
-    id: 'BanComment.description',
+    id: 'core.Comment.BanComment.description',
     defaultMessage: `Are you sure you want to {unban, select,
       true {unban this user and allow them to chat?}
       other {ban this user from chat?}
     }`,
   },
   note: {
-    id: 'BanComment.note',
+    id: 'core.Comment.BanComment.note',
     /* eslint-disable max-len */
     defaultMessage: `Please note: {unban, select,
       true {this only allows this user chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.}
@@ -42,18 +42,18 @@ const MSG = defineMessages({
     /* eslint-enable max-len */
   },
   commentLabel: {
-    id: 'BanComment.commentLabel',
+    id: 'core.Comment.BanComment.commentLabel',
     defaultMessage: 'The comment',
   },
   cancelButtonText: {
-    id: 'BanComment.cancelButtonText',
+    id: 'core.Comment.BanComment.cancelButtonText',
     defaultMessage: `{unban, select,
       true {Cancel}
       other {Let’s give one last chance...}
     }`,
   },
   confirmButtonText: {
-    id: 'BanComment.confirmButtonText',
+    id: 'core.Comment.BanComment.confirmButtonText',
     defaultMessage: `{unban, select,
       true {Unban the user}
       other {Ban the troll}
@@ -61,7 +61,7 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'BanComment';
+const displayName = 'core.Comment.BanComment';
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 

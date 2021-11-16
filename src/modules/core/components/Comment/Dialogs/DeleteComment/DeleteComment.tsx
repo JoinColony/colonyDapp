@@ -15,25 +15,25 @@ import styles from './DeleteComment.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'DeleteComment.title',
+    id: 'core.Comment.DeleteComment.title',
     defaultMessage: `{undelete, select,
       true {Restore}
       other {Delete}
     } comment`,
   },
   question: {
-    id: 'DeleteComment.question',
+    id: 'core.Comment.DeleteComment.question',
     defaultMessage: `Are you sure you want to {undelete, select,
       true {restore}
       other {delete}
     } this message?`,
   },
   buttonCancel: {
-    id: 'DeleteComment.buttonCancel',
+    id: 'core.Comment.DeleteComment.buttonCancel',
     defaultMessage: 'Cancel',
   },
   buttonDelete: {
-    id: 'DeleteComment.buttonDelete',
+    id: 'core.Comment.DeleteComment.buttonDelete',
     defaultMessage: `{undelete, select,
       true {Restore}
       other {Delete}
@@ -41,7 +41,7 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'DeleteComment';
+const displayName = 'core.Comment.DeleteComment';
 
 interface Props extends DialogProps {
   comment: CommentProps;

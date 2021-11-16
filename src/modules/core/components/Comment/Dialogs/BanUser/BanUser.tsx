@@ -13,39 +13,39 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useMembersSubscription, AnyUser } from '~data/index';
 import { Address } from '~types/index';
 
-import styles from './ToggleBanningAddressDialog.css';
+import styles from './BanUser.css';
 import Button from '~core/Button';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.ToggleBanningAddressDialog.title',
+    id: 'core.Comment.BanUser.title',
     defaultMessage: `{isBanning, select,
     true {Ban}
     false {Unban}
     } a wallet address from chat`,
   },
   selectUser: {
-    id: 'dashboard.ToggleBanningAddressDialog.selectUser',
+    id: 'core.Comment.BanUser.selectUser',
     defaultMessage: 'Select user or paste wallet address',
   },
   infoNote: {
-    id: 'dashboard.ToggleBanningAddressDialog.infoNote',
+    id: 'core.Comment.BanUser.infoNote',
     defaultMessage: `Please note: this only prevents the user from chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.`,
   },
   banish: {
-    id: 'dashboard.ToggleBanningAddressDialog.banish',
+    id: 'core.Comment.BanUser.banish',
     defaultMessage: 'Banish them',
   },
   deactivateBan: {
-    id: 'dashboard.ToggleBanningAddressDialog.deactivateBan',
+    id: 'core.Comment.BanUser.deactivateBan',
     defaultMessage: 'Deactivate ban',
   },
   lastChance: {
-    id: `dashboard.ToggleBanningAddressDialog.lastChance`,
+    id: `core.Comment.BanUser.lastChance`,
     defaultMessage: 'Let’s give them one last chance...',
   },
   damnedSouls: {
-    id: 'dashboard.ToggleBanningAddressDialog.damnedSouls',
+    id: 'core.Comment.BanUser.damnedSouls',
     defaultMessage: 'Leave it on the list of damned souls',
   },
 });
@@ -54,7 +54,7 @@ export interface FormValues {
   userAddress: Address;
 }
 
-const displayName = 'dashboard.ToggleBanningAddressDialog';
+const displayName = 'core.Comment.BanUser';
 
 interface Props extends DialogProps {
   colonyAddress: Address;
@@ -75,12 +75,7 @@ const validationSchema = yup.object().shape({
   }),
 });
 
-const ToggleBanningAddressDialog = ({
-  colonyAddress,
-  cancel,
-  close,
-  isBanning = true,
-}: Props) => {
+const BanUser = ({ colonyAddress, cancel, close, isBanning = true }: Props) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: { colonyAddress },
   });
@@ -143,6 +138,6 @@ const ToggleBanningAddressDialog = ({
   );
 };
 
-ToggleBanningAddressDialog.displayName = displayName;
+BanUser.displayName = displayName;
 
-export default ToggleBanningAddressDialog;
+export default BanUser;
