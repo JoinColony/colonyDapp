@@ -15,25 +15,25 @@ import {
   BannedUsersDocument,
 } from '~data/index';
 
-import styles from './CommentBanCommentDialog.css';
+import styles from './BanComment.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'CommentBanCommentDialog.title',
+    id: 'BanComment.title',
     defaultMessage: `{unban, select,
       true {Unban}
       other {Ban}
     } user`,
   },
   description: {
-    id: 'CommentBanCommentDialog.description',
+    id: 'BanComment.description',
     defaultMessage: `Are you sure you want to {unban, select,
       true {unban this user and allow them to chat?}
       other {ban this user from chat?}
     }`,
   },
   note: {
-    id: 'CommentBanCommentDialog.note',
+    id: 'BanComment.note',
     /* eslint-disable max-len */
     defaultMessage: `Please note: {unban, select,
       true {this only allows this user chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.}
@@ -42,18 +42,18 @@ const MSG = defineMessages({
     /* eslint-enable max-len */
   },
   commentLabel: {
-    id: 'CommentBanCommentDialog.commentLabel',
+    id: 'BanComment.commentLabel',
     defaultMessage: 'The comment',
   },
   cancelButtonText: {
-    id: 'CommentBanCommentDialog.cancelButtonText',
+    id: 'BanComment.cancelButtonText',
     defaultMessage: `{unban, select,
       true {Cancel}
       other {Let’s give one last chance...}
     }`,
   },
   confirmButtonText: {
-    id: 'CommentBanCommentDialog.confirmButtonText',
+    id: 'BanComment.confirmButtonText',
     defaultMessage: `{unban, select,
       true {Unban the user}
       other {Ban the troll}
@@ -61,7 +61,7 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'CommentBanCommentDialog';
+const displayName = 'BanComment';
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
@@ -70,7 +70,7 @@ interface Props extends DialogProps {
   unban?: boolean;
 }
 
-const CommentBanCommentDialog = ({
+const BanComment = ({
   cancel,
   close,
   comment,
@@ -175,6 +175,6 @@ const CommentBanCommentDialog = ({
   );
 };
 
-CommentBanCommentDialog.displayName = displayName;
+BanComment.displayName = displayName;
 
-export default CommentBanCommentDialog;
+export default BanComment;

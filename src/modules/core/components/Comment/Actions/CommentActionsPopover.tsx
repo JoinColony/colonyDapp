@@ -10,8 +10,8 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { useDialog } from '~core/Dialog';
 import CommentDeleteDialog from '~core/CommentDeleteDialog';
-import CommentBanCommentDialog from '~core/CommentBanCommentDialog';
 
+import { BanCommentDialog } from '../Dialogs';
 import { Props as CommentProps } from '../Comment';
 
 import styles from './CommentActionsPopover.css';
@@ -47,7 +47,7 @@ const CommentActionsPopover = ({
   fullComment,
 }: Props) => {
   const openDeleteCommentDialog = useDialog(CommentDeleteDialog);
-  const openBanUserDialog = useDialog(CommentBanCommentDialog);
+  const openBanUserDialog = useDialog(BanCommentDialog);
 
   const handleDeleteComment = useCallback(
     (undelete = false) =>
