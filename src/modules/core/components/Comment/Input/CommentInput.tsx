@@ -21,23 +21,23 @@ import { Address, ENTER } from '~types/index';
 
 import styles from './CommentInput.css';
 
-const displayName = 'CommentInput';
+const displayName = 'core.Comment.CommentInput';
 
 const MSG = defineMessages({
   commentInputPlaceholder: {
-    id: 'CommentInput.commentInputPlaceholder',
+    id: 'core.Comment.CommentInput.commentInputPlaceholder',
     defaultMessage: 'What would you like to say?',
   },
   commentInstuctions: {
-    id: 'CommentInput.commentInstuctions',
+    id: 'core.Comment.CommentInput.commentInstuctions',
     defaultMessage: `{sendCombo} to send {newLineCombo} for a new line`,
   },
   newLineCombo: {
-    id: 'CommentInput.newLineCombo',
+    id: 'core.Comment.CommentInput.newLineCombo',
     defaultMessage: 'Shift+Return',
   },
   sendCombo: {
-    id: 'CommentInput.sendCombo',
+    id: 'core.Comment.CommentInput.sendCombo',
     defaultMessage: 'Return',
   },
 });

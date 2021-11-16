@@ -5,12 +5,12 @@ import { ColonyVersion, Extension } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
+import { BanUserDialog } from '~core/Comment';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
 import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
 import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
-import ToggleBanningAddressDialog from '~dashboard/ToggleBanningAddressDialog';
 
 import {
   useColonyFromNameQuery,
@@ -61,7 +61,7 @@ const ColonyMembers = () => {
   const hasRegisteredProfile = !!username && !ethereal;
 
   const openWrongNetworkDialog = useDialog(WrongNetworkDialog);
-  const openToggleBanningDialog = useDialog(ToggleBanningAddressDialog);
+  const openToggleBanningDialog = useDialog(BanUserDialog);
 
   const { colonyName } = useParams<{
     colonyName: string;

@@ -14,7 +14,7 @@ import styles from './CommentActions.css';
 
 const MSG = defineMessages({
   commentActionsTitle: {
-    id: 'core.Comment.commentActionTitle',
+    id: 'core.Comment.CommentActions.commentActionTitle',
     defaultMessage: 'Comment Actions',
   },
 });
@@ -25,7 +25,7 @@ interface Props {
   onHoverActiveState?: (hoverState: boolean) => void;
 }
 
-const displayName = 'users.CommentActions';
+const displayName = 'core.Comment.CommentActions';
 
 const CommentActions = ({
   permission,
