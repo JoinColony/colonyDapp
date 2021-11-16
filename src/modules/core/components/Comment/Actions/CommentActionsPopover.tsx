@@ -11,7 +11,8 @@ import Icon from '~core/Icon';
 import { useDialog } from '~core/Dialog';
 import CommentDeleteDialog from '~core/CommentDeleteDialog';
 import CommentBanCommentDialog from '~core/CommentBanCommentDialog';
-import { Props as CommentProps } from './Comment';
+
+import { Props as CommentProps } from '../Comment';
 
 import styles from './CommentActionsPopover.css';
 

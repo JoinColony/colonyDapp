@@ -16,7 +16,7 @@ import TextDecorator from '~lib/TextDecorator';
 import { userHasRole } from '../../../users/checks';
 import { getUserRolesForDomain } from '../../../transformers';
 
-import CommentActions from './CommentActions';
+import CommentActions from './Actions';
 
 import styles from './Comment.css';
 
