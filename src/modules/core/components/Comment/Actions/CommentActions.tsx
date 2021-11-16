@@ -5,7 +5,8 @@ import classnames from 'classnames';
 import { COMMENT_MODERATION } from '~immutable/index';
 import Icon from '~core/Icon';
 import Popover from '~core/Popover';
-import { Props as CommentProps } from './Comment';
+
+import { Props as CommentProps } from '../Comment';
 
 import CommentActionsPopover from './CommentActionsPopover';
 
