@@ -56,6 +56,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
       domainIds: [currentDomainId],
       tokenAddresses: colonyTokens.map(({ address }) => address),
     },
+    fetchPolicy: 'network-only',
   });
 
   return (
