@@ -9,9 +9,8 @@ import DropdownMenu, {
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { useDialog } from '~core/Dialog';
-import CommentDeleteDialog from '~core/CommentDeleteDialog';
 
-import { BanCommentDialog } from '../Dialogs';
+import { BanCommentDialog, DeleteCommentDialog } from '../Dialogs';
 import { Props as CommentProps } from '../Comment';
 
 import styles from './CommentActionsPopover.css';
@@ -46,7 +45,7 @@ const CommentActionsPopover = ({
   permission,
   fullComment,
 }: Props) => {
-  const openDeleteCommentDialog = useDialog(CommentDeleteDialog);
+  const openDeleteCommentDialog = useDialog(DeleteCommentDialog);
   const openBanUserDialog = useDialog(BanCommentDialog);
 
   const handleDeleteComment = useCallback(
