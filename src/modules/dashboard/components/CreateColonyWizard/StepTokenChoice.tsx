@@ -27,9 +27,9 @@ const MSG = defineMessages({
   },
   subtitleWithExample: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.subtitleWithExample',
-    defaultMessage: `Example: Leia completes a task for 5 DAI. If the colony\
-      uses DAI as its native token, she also earns 5 reputation in that\
-      colony.`,
+    defaultMessage: `Leia completes a task for 5 FOX in the ShapeShift colony.
+    Because FOX is the native token of the ShapeShift colony,
+    she also earns 5 reputation in that colony.`,
   },
   button: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.button',
@@ -57,7 +57,7 @@ const MSG = defineMessages({
   },
   selectTokenSubtitle: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.existingTokenSubtitle',
-    defaultMessage: 'For example: DAI, EOS, SNT, etc',
+    defaultMessage: 'Add in the list of examples: UNI, SUSHI, & AAVE',
   },
   tooltipCreate: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.tooltipCreate',

@@ -41,7 +41,7 @@ const MSG = defineMessages({
   },
   annotation: {
     id: 'dashboard.CreateDomainDialog.CreateDomainDialogForm.annotation',
-    defaultMessage: 'Explain why you’re creating this team',
+    defaultMessage: 'Explain why you’re creating this team (optional)',
   },
   noPermission: {
     id:
