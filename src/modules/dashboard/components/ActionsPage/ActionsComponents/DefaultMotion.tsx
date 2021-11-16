@@ -4,7 +4,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import classnames from 'classnames';
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 
-import CommentInput from '~core/CommentInput';
+import { CommentInput } from '~core/Comment';
 import Heading from '~core/Heading';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
