@@ -11,29 +11,29 @@ import {
   useUndeleteTransactionMessageMutation,
 } from '~data/index';
 
-import styles from './CommentDeleteDialog.css';
+import styles from './DeleteComment.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'CommentDeleteDialog.title',
+    id: 'DeleteComment.title',
     defaultMessage: `{undelete, select,
       true {Restore}
       other {Delete}
     } comment`,
   },
   question: {
-    id: 'CommentDeleteDialog.question',
+    id: 'DeleteComment.question',
     defaultMessage: `Are you sure you want to {undelete, select,
       true {restore}
       other {delete}
     } this message?`,
   },
   buttonCancel: {
-    id: 'CommentDeleteDialog.buttonCancel',
+    id: 'DeleteComment.buttonCancel',
     defaultMessage: 'Cancel',
   },
   buttonDelete: {
-    id: 'CommentDeleteDialog.buttonDelete',
+    id: 'DeleteComment.buttonDelete',
     defaultMessage: `{undelete, select,
       true {Restore}
       other {Delete}
@@ -41,19 +41,14 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'CommentDeleteDialog';
+const displayName = 'DeleteComment';
 
 interface Props extends DialogProps {
   comment: CommentProps;
   undelete?: boolean;
 }
 
-const CommentDeleteDialog = ({
-  cancel,
-  close,
-  comment,
-  undelete = false,
-}: Props) => {
+const DeleteComment = ({ cancel, close, comment, undelete = false }: Props) => {
   const updateMutationHook = !undelete
     ? useDeleteTransactionMessageMutation
     : useUndeleteTransactionMessageMutation;
@@ -110,6 +105,6 @@ const CommentDeleteDialog = ({
   );
 };
 
-CommentDeleteDialog.displayName = displayName;
+DeleteComment.displayName = displayName;
 
-export default CommentDeleteDialog;
+export default DeleteComment;
