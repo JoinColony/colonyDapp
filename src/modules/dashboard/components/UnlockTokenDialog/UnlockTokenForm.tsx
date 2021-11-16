@@ -91,7 +91,7 @@ const UnlockTokenForm = ({
           <ExternalLink
             className={styles.learnMoreLink}
             text={MSG.learnMore}
-            href=""
+            href="https://colony.gitbook.io/colony/manage-funds/unlock-token"
           />
         </div>
       </DialogSection>
