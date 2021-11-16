@@ -2,6 +2,7 @@ export const wideButton: string;
 export const tokenAmount: string;
 export const amountContainer: string;
 export const tokenAmountSelect: string;
+export const tokenAmountContainer: string;
 export const tokenAmountUsd: string;
 export const domainPotBalance: string;
 export const domainSelects: string;
