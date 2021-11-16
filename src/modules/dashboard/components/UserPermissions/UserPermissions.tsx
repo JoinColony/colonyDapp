@@ -48,7 +48,7 @@ const UserPermissions = ({
          * @TODO Replace with the actual banned tag
          */
         <div className={styles.bannedTag}>
-          <Tag text="Banned" appearance={{ theme: 'pink' }} />
+          <Tag text={{ id: 'label.banned' }} appearance={{ theme: 'pink' }} />
         </div>
       )}
       {!isNil(headRole) && (
