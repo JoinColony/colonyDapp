@@ -1,2 +1,2 @@
 export const icon: string;
-export const baseStyles: string;
+export const textSyles: string;

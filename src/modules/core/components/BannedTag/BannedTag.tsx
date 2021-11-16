@@ -9,24 +9,20 @@ import styles from './BannedTag.css';
 const displayName = 'BannedTag';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
-  /** Text to display in the tag */
   text?: MessageDescriptor | string;
-  /** Text values for intl interpolation */
 }
 
 const BannedTag = ({ text = 'Banned' }: Props) => {
   return (
-    <span className={styles.baseStyles}>
-      <Tag appearance={{ fontSize: 'small', theme: 'banned', margin: 'none' }}>
-        <Icon
-          title="banned"
-          name="emoji-goblin"
-          appearance={{ size: 'extraTiny' }}
-          className={styles.icon}
-        />
-        {text}
-      </Tag>
-    </span>
+    <Tag appearance={{ fontSize: 'small', theme: 'banned', margin: 'none' }}>
+      <Icon
+        title="banned"
+        name="emoji-goblin"
+        appearance={{ size: 'normal' }}
+        className={styles.icon}
+      />
+      <div className={styles.textSyles}>{text}</div>
+    </Tag>
   );
 };
 
