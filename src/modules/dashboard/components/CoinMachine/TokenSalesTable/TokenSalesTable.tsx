@@ -65,6 +65,10 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.TokenSalesTable.loading',
     defaultMessage: 'Loading previous sales table entries...',
   },
+  priceNextSale: {
+    id: `dashboard.CoinMachine.TokenSalesTable.priceNextSale`,
+    defaultMessage: 'Price next batch',
+  },
 });
 
 interface PeriodInfo {
@@ -98,6 +102,14 @@ const TokenSalesTable = ({
 }: Props) => {
   const PREV_PERIODS_LIMIT = 100;
   const salePeriodQueryVariables = { colonyAddress, limit: PREV_PERIODS_LIMIT };
+
+  const priceStatusHeading = useMemo(() => {
+    if (!periodTokens) {
+      return undefined;
+    }
+
+    return getPriceStatus(periodTokens, periodTokens.soldPeriodTokens, true);
+  }, [periodTokens]);
 
   const {
     data: salePeriodsData,
@@ -187,13 +199,25 @@ const TokenSalesTable = ({
 
   return (
     <div className={styles.container}>
-      <Heading
-        text={MSG.tableTitle}
-        appearance={{
-          size: 'small',
-          theme: 'dark',
-        }}
-      />
+      <div>
+        <Heading
+          text={MSG.tableTitle}
+          appearance={{
+            size: 'small',
+            theme: 'dark',
+          }}
+        />
+        {priceStatusHeading && (
+          <div className={styles.priceStatusHeading}>
+            <p className={styles.priceStatusHeadingText}>
+              <FormattedMessage {...MSG.priceNextSale} />
+            </p>
+            {priceStatusHeading && (
+              <TokenPriceStatusIcon status={priceStatusHeading} />
+            )}
+          </div>
+        )}
+      </div>
       <div className={styles.tableContainer}>
         <Table className={styles.table} appearance={{ separators: 'none' }}>
           <TableHeader className={styles.tableHeader}>

@@ -91,3 +91,16 @@
    */
   margin-top: -9px;
 }
+
+.priceStatusHeading {
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+
+.priceStatusHeadingText {
+  margin-right: 8px;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}

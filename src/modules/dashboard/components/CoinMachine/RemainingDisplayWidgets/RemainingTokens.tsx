@@ -2,8 +2,6 @@ import React, { useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { BigNumber } from 'ethers/utils';
 
-import { getPriceStatus } from '../utils';
-
 import RemainingTokensValue from './RemainingTokensValue';
 import RemainingWidget from './RemainingDisplayWidget';
 
@@ -19,6 +17,7 @@ export interface PeriodTokensType {
 }
 
 interface Props {
+  isTotalSale: boolean;
   appearance?: Appearance;
   periodTokens?: PeriodTokensType;
 }
@@ -29,19 +28,21 @@ const displayName =
 const MSG = defineMessages({
   tokensRemainingTitle: {
     id: 'dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokens.title',
-    defaultMessage: 'Tokens remaining',
+    defaultMessage: `{isTotalSale, select,
+      true {Total}
+      false {Batch}
+    } sold vs available`,
   },
   tokensRemainingTooltip: {
     id: 'dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokens.tooltip',
-    defaultMessage: `This is the number of tokens remaining in the current batch.`,
+    // eslint-disable-next-line max-len
+    defaultMessage: `This is the number of tokens remaining in the {isTotalSale, select,
+      true {sale.}
+      false {current batch.}}`,
   },
   tokensTypePlaceholder: {
     id: 'dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokens.title',
     defaultMessage: '0',
-  },
-  tokensTypeFooterText: {
-    id: `dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokens.footerText`,
-    defaultMessage: 'Price next sale',
   },
   soldOut: {
     id: 'dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokens.soldOut',
@@ -50,25 +51,17 @@ const MSG = defineMessages({
 });
 
 const RemainingTokens = ({
+  isTotalSale,
   appearance = { theme: 'white' },
   periodTokens,
 }: Props) => {
-  const priceStatus = useMemo(() => {
-    if (!periodTokens) {
-      return undefined;
-    }
-
-    return getPriceStatus(periodTokens, periodTokens.soldPeriodTokens, true);
-  }, [periodTokens]);
-
   const widgetText = useMemo(() => {
     return {
       title: MSG.tokensRemainingTitle,
       placeholder: MSG.tokensTypePlaceholder,
       tooltipText: MSG.tokensRemainingTooltip,
-      footerText: priceStatus && MSG.tokensTypeFooterText,
     };
-  }, [priceStatus]);
+  }, []);
 
   const displayedValue = useMemo(() => {
     if (periodTokens) {
@@ -97,7 +90,7 @@ const RemainingTokens = ({
       appearance={appearance}
       isWarning={showValueWarning}
       displayedValue={displayedValue}
-      priceStatus={periodTokens && priceStatus}
+      isTotalSale={isTotalSale}
     />
   );
 };

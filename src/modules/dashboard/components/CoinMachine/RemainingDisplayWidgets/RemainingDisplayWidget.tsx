@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { FormattedMessage, MessageDescriptor } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 import classnames from 'classnames';
 
 import Heading from '~core/Heading';
@@ -7,10 +7,6 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { getMainClasses } from '~utils/css';
 import { ComplexMessageValues } from '~types/index';
-
-import TokenPriceStatusIcon, {
-  TokenPriceStatuses,
-} from '../TokenPriceStatusIcon';
 
 import styles from './RemainingDisplayWidget.css';
 
@@ -31,7 +27,7 @@ type Props = {
   widgetText: WidgetText;
   isWarning: boolean;
   displayedValue: string | ReactElement;
-  priceStatus?: TokenPriceStatuses;
+  isTotalSale?: boolean;
 };
 
 const displayName = 'dashboard.CoinMachine.RemainingDisplayWidget';
@@ -41,13 +37,14 @@ const RemainingDisplayWidget = ({
   appearance = { theme: 'white' },
   isWarning,
   displayedValue,
-  priceStatus,
+  isTotalSale,
 }: Props) => {
   return (
     <div className={getMainClasses(appearance, styles)}>
       <div className={styles.header}>
         <Heading
           text={widgetText.title}
+          textValues={{ isTotalSale }}
           appearance={{
             size: 'small',
             theme: appearance.theme === 'danger' ? 'invert' : 'dark',
@@ -58,6 +55,7 @@ const RemainingDisplayWidget = ({
           tooltipText={widgetText.tooltipText}
           invertedIcon={appearance.theme === 'danger'}
           tooltipClassName={styles.tooltip}
+          tooltipTextValues={{ isTotalSale }}
         />
       </div>
       <div
@@ -67,14 +65,14 @@ const RemainingDisplayWidget = ({
       >
         {displayedValue}
       </div>
-      {widgetText.footerText && (
+      {/* {widgetText.footerText && (
         <div className={styles.footer}>
           <p className={styles.footerText}>
             <FormattedMessage {...widgetText.footerText} />
           </p>
           {priceStatus && <TokenPriceStatusIcon status={priceStatus} />}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

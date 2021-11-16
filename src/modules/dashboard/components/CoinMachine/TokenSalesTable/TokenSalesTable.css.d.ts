@@ -10,3 +10,5 @@ export const tokenSymbol: string;
 export const noDataMessage: string;
 export const hiddenDataMessage: string;
 export const loading: string;
+export const priceStatusHeading: string;
+export const priceStatusHeadingText: string;

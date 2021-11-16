@@ -295,7 +295,13 @@ const CoinMachine = ({
               />
             </div>
             <div className={styles.tokensRemaining}>
-              <RemainingTokens periodTokens={periodTokens} />
+              <RemainingTokens
+                periodTokens={periodTokens}
+                isTotalSale={false}
+              />
+            </div>
+            <div className={styles.tokensTotals}>
+              <RemainingTokens periodTokens={periodTokens} isTotalSale />
             </div>
           </>
         )}
