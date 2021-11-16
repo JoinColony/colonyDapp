@@ -148,11 +148,6 @@ export type BanTransactionMessagesInput = {
   eventId?: Maybe<Scalars['String']>;
 };
 
-export type UnBanTransactionMessagesInput = {
-  colonyAddress: Scalars['String'];
-  userAddress: Scalars['String'];
-};
-
 export type Mutation = {
   banUserTransactionMessages: Scalars['Boolean'];
   clearLoggedInUser: LoggedInUser;
@@ -218,7 +213,7 @@ export type MutationSubscribeToColonyArgs = {
 
 
 export type MutationUnbanUserTransactionMessagesArgs = {
-  input: UnBanTransactionMessagesInput;
+  input: BanTransactionMessagesInput;
 };
 
 
@@ -1550,7 +1545,7 @@ export type BanUserTransactionMessagesMutationVariables = Exact<{
 export type BanUserTransactionMessagesMutation = Pick<Mutation, 'banUserTransactionMessages'>;
 
 export type UnBanUserTransactionMessagesMutationVariables = Exact<{
-  input: UnBanTransactionMessagesInput;
+  input: BanTransactionMessagesInput;
 }>;
 
 
@@ -3378,7 +3373,7 @@ export type BanUserTransactionMessagesMutationHookResult = ReturnType<typeof use
 export type BanUserTransactionMessagesMutationResult = Apollo.MutationResult<BanUserTransactionMessagesMutation>;
 export type BanUserTransactionMessagesMutationOptions = Apollo.BaseMutationOptions<BanUserTransactionMessagesMutation, BanUserTransactionMessagesMutationVariables>;
 export const UnBanUserTransactionMessagesDocument = gql`
-    mutation UnBanUserTransactionMessages($input: UnBanTransactionMessagesInput!) {
+    mutation UnBanUserTransactionMessages($input: BanTransactionMessagesInput!) {
   unbanUserTransactionMessages(input: $input)
 }
     `;
