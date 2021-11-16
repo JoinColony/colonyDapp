@@ -43,7 +43,7 @@ const ColonyTitle = ({
             text={colonyDisplayName || colonyName || MSG.fallbackColonyName}
           />
         </div>
-        <div>
+        <div className={styles.colonyMenu}>
           {colonyAddress && (
             <InvisibleCopyableAddress
               address={colonyAddress}
