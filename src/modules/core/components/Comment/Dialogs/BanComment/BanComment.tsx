@@ -89,7 +89,7 @@ const BanComment = ({
           input: {
             colonyAddress: colony.colonyAddress,
             userAddress: (user as AnyUser).profile.walletAddress,
-            ...(!unban ? { eventId: comment?.commentMeta?.id } : {}),
+            eventId: comment?.commentMeta?.id,
           },
         },
         refetchQueries: [
@@ -99,7 +99,7 @@ const BanComment = ({
           },
         ],
       }) as Promise<boolean>).then(close),
-    [close, colony, comment, unban, updateTransactionMessage, user],
+    [close, colony, comment, updateTransactionMessage, user],
   );
 
   return (
