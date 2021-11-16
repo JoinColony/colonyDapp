@@ -9,7 +9,7 @@ import { parseDomainMetadata } from '~utils/colonyActions';
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
 } from '~dashboard/ActionsPageFeed';
-import CommentInput from '~core/CommentInput';
+import { CommentInput } from '~core/Comment';
 
 import {
   useLoggedInUser,

@@ -1,8 +1,7 @@
 import React, { useLayoutEffect, useRef, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Comment from '~core/Comment';
-import CommentInput from '~core/CommentInput';
+import Comment, { CommentInput } from '~core/Comment';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { Colony, useCommentsSubscription, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
