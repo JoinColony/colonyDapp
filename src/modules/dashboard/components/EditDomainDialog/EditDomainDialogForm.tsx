@@ -46,7 +46,7 @@ const MSG = defineMessages({
   },
   annotation: {
     id: 'dashboard.EditDomainDialog.EditDomainDialogForm.annotation',
-    defaultMessage: 'Explain why you’re editing this team',
+    defaultMessage: 'Explain why you’re editing this team (optional)',
   },
   noPermission: {
     id:
