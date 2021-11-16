@@ -5,6 +5,7 @@ import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import Icon from '~core/Icon';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 import {
   Colony,
@@ -212,7 +213,15 @@ const ColonyMembers = ({
               {/*
                * @TODO Replace with proper user banned icon
                */}
-              {banned && <div className={styles.userBanned} />}
+              {banned && (
+                <div className={styles.userBanned}>
+                  <Icon
+                    appearance={{ size: 'extraTiny' }}
+                    name="shield-pink"
+                    title={{ id: 'label.banned' }}
+                  />
+                </div>
+              )}
             </li>
           ))}
         {!!remainingAvatarsCount && (

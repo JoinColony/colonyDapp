@@ -66,12 +66,11 @@
 }
 
 .userBanned {
+  /*
+   * @NOTE There's a lot of negative spacing required to make this render properly
+   */
   display: block;
-  margin-top: -6px;
-  height: 7px;
-  width: 7px;
+  margin: -12px -4px -8px 0;
   position: relative;
   float: right;
-  border-radius: 50%;
-  background-color: var(--pink);
 }
