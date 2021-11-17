@@ -15,7 +15,7 @@ import { isAddress } from '~utils/web3';
 import { useTransformer } from '~utils/hooks';
 
 import { getAllUserRoles } from '../../../../transformers';
-import { hasRoot } from '../../../../users/checks';
+import { canAdminister } from '../../../../users/checks';
 
 import AgreementDialog from '../AgreementDialog';
 
@@ -104,7 +104,7 @@ const UploadAddressesWidget = ({
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-  const userHasPermission = hasRegisteredProfile && hasRoot(allUserRoles);
+  const userHasPermission = hasRegisteredProfile && canAdminister(allUserRoles);
 
   const openAgreementDialog = useDialog(AgreementDialog);
 

@@ -2,12 +2,16 @@ import React from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
 
-import { AnyUser, Colony } from '~data/index';
+import Heading from '~core/Heading';
 import MembersList from '~core/MembersList';
+import { AnyUser, Colony, useLoggedInUser } from '~data/index';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '../../../../transformers';
+import { canAdminister } from '../../../../users/checks';
+
 import WhitelistMembersListExtraContent from './WhitelistMembersListExtraContent';
 
 import styles from './WhitelistAddresses.css';
-import Heading from '~core/Heading';
 
 interface Props {
   colony: Colony;
@@ -24,6 +28,12 @@ const MSG = defineMessages({
 });
 
 const WhitelistAddresses = ({ colony, users }: Props) => {
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const userHasProfile = !!username && !ethereal;
+
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const canAdministerWhitelist = userHasProfile && canAdminister(allUserRoles);
+
   return (
     <div className={styles.main}>
       <Heading
@@ -36,12 +46,12 @@ const WhitelistAddresses = ({ colony, users }: Props) => {
         users={users}
         showUserReputation={false}
         extraItemContent={(props) => {
-          return (
+          return canAdministerWhitelist ? (
             <WhitelistMembersListExtraContent
               userAddress={props.id}
               colonyAddress={colony.colonyAddress}
             />
-          );
+          ) : null;
         }}
         listGroupAppearance={{ hoverColor: 'dark' }}
       />
