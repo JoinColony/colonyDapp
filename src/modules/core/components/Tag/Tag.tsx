@@ -1,6 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
+import Icon from '~core/Icon';
 import { useMainClasses } from '~utils/hooks';
 
 import styles from './Tag.css';
@@ -14,7 +15,8 @@ export interface Appearance {
     | 'danger'
     | 'pink'
     | 'blue'
-    | 'dangerGhost';
+    | 'dangerGhost'
+    | 'banned';
   fontSize?: 'tiny' | 'small';
   /* "fullColor" is default */
   colorSchema?: 'fullColor' | 'inverted' | 'plain';
@@ -43,6 +45,14 @@ const Tag = ({
   const classNames = useMainClasses(appearance, styles, className);
   return (
     <span className={classNames} {...rest}>
+      {appearance?.theme === 'banned' && (
+        <Icon
+          title={text || ''}
+          name="emoji-goblin"
+          appearance={{ size: 'normal' }}
+          className={styles.icon}
+        />
+      )}
       {text ? (
         <>
           {typeof text === 'string' ? (

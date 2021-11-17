@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import { bigNumberify } from 'ethers/utils';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import BannedTag from '~core/BannedTag';
+import Tag from '~core/Tag';
 import {
   AnyUser,
   useColonyNativeTokenQuery,
@@ -111,7 +111,7 @@ const MemberInfoPopover = ({
     <div>
       {banned && (
         <div className={styles.bannedTag}>
-          <BannedTag text={{ id: 'label.banned' }} />
+          <Tag text={{ id: 'label.banned' }} appearance={{ theme: 'banned' }} />
         </div>
       )}
       <div className={styles.main}>
