@@ -3,6 +3,7 @@
     "active-task",
     "archive",
     "arrow-wallet",
+    "arrow-rotate-ccw",
     "at-sign-circle",
     "attachment",
     "bell",
@@ -88,6 +89,7 @@
     "three-dots-row",
     "triangle-warning",
     "unlock",
+    "user-plus",
     "wallet"
   ],
   "multiColorIcons": [
