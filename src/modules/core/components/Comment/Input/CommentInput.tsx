@@ -7,7 +7,11 @@ import React, {
 } from 'react';
 import * as yup from 'yup';
 import { FormikProps, FormikBag } from 'formik';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 
 import { Form, TextareaAutoresize } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -55,7 +59,7 @@ interface Props {
   colonyAddress: Address;
   disabled?: boolean;
   callback?: (message: string) => void;
-  disabledInputPlaceholder?: boolean;
+  disabledInputPlaceholder?: MessageDescriptor | string;
 }
 
 const handleKeyboardSubmit = (
@@ -152,7 +156,7 @@ const CommentInput = ({
               label={MSG.commentInputPlaceholder}
               name="message"
               placeholder={
-                disabledInputPlaceholder ? '' : MSG.commentInputPlaceholder
+                disabledInputPlaceholder || MSG.commentInputPlaceholder
               }
               minRows={1}
               maxRows={6}

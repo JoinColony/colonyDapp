@@ -24,7 +24,7 @@ const MSG = defineMessages({
   },
   disabledText: {
     id: 'dashboard.CoinMachine.Chat.disabledText',
-    defaultMessage: 'Chat is disabled until the Token Sale is planned to start',
+    defaultMessage: 'Chat is disabled until the Token Sale is ready to start',
   },
   labelLeaveComment: {
     id: 'dashboard.CoinMachine.Chat.labelLeaveComment',
@@ -37,6 +37,10 @@ const MSG = defineMessages({
   loading: {
     id: 'dashboard.CoinMachine.Chat.loading',
     defaultMessage: 'Loading messages',
+  },
+  mustWhitelistToComment: {
+    id: 'dashboard.CoinMachine.Chat.mustWhitelistToComment',
+    defaultMessage: 'You must be whitelisted to chat',
   },
 });
 
@@ -175,7 +179,9 @@ const Chat = ({
             transactionHash={transactionHash}
             callback={scrollComments}
             disabled={disabled || !userHasProfile || !isUserWhitelisted}
-            disabledInputPlaceholder
+            disabledInputPlaceholder={
+              !isUserWhitelisted ? MSG.mustWhitelistToComment : undefined
+            }
           />
         </div>
       )}
