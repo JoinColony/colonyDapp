@@ -8,7 +8,7 @@ import { COMMENT_MODERATION } from '~immutable/index';
 import { TransactionMeta } from '~dashboard/ActionsPage';
 import UserMention from '~core/UserMention';
 import FriendlyName from '~core/FriendlyName';
-import Tag from '~core/Tag';
+import BannedTag from '~core/BannedTag';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { AnyUser, Colony, useLoggedInUser } from '~data/index';
 import TextDecorator from '~lib/TextDecorator';
@@ -123,14 +123,8 @@ const Comment = ({
           {userBanned &&
             showControls &&
             permission !== COMMENT_MODERATION.NONE && (
-              /*
-               * @TODO Replace with the actual banned tag
-               */
               <div className={styles.bannedTag}>
-                <Tag
-                  text={{ id: 'label.banned' }}
-                  appearance={{ theme: 'pink' }}
-                />
+                <BannedTag text={{ id: 'label.banned' }} />
               </div>
             )}
         </div>

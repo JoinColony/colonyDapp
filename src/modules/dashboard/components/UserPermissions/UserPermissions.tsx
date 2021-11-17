@@ -4,7 +4,7 @@ import { isNil } from 'lodash';
 
 import PermissionsLabel from '~core/PermissionsLabel';
 import { permissionsObject } from '~core/PermissionsLabel/permissions';
-import Tag from '~core/Tag';
+import BannedTag from '~core/BannedTag';
 import { getMainClasses } from '~utils/css';
 
 import styles from './UserPermissions.css';
@@ -44,11 +44,8 @@ const UserPermissions = ({
   return (
     <div className={getMainClasses(appearance, styles)}>
       {banned && (
-        /*
-         * @TODO Replace with the actual banned tag
-         */
         <div className={styles.bannedTag}>
-          <Tag text={{ id: 'label.banned' }} appearance={{ theme: 'pink' }} />
+          <BannedTag text={{ id: 'label.banned' }} />
         </div>
       )}
       {!isNil(headRole) && (
