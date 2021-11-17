@@ -2,7 +2,6 @@ import React, { HTMLAttributes } from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
 import Icon from '~core/Icon';
-import Tag from '~core/Tag';
 
 import styles from './BannedTag.css';
 
@@ -15,7 +14,7 @@ interface Props extends HTMLAttributes<HTMLSpanElement> {
 
 const BannedTag = ({ children, text, textValues, ...rest }: Props) => {
   return (
-    <Tag appearance={{ fontSize: 'small', theme: 'banned', margin: 'none' }}>
+    <span className={styles.themeBanned} {...rest}>
       <Icon
         title={{ id: 'label.banned' }}
         name="emoji-goblin"
@@ -35,7 +34,7 @@ const BannedTag = ({ children, text, textValues, ...rest }: Props) => {
           children
         )}
       </div>
-    </Tag>
+    </span>
   );
 };
 

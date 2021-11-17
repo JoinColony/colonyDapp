@@ -5,7 +5,6 @@ export const themeGolden: string;
 export const themeDanger: string;
 export const themePink: string;
 export const themeBlue: string;
-export const themeBanned: string;
 export const themeDangerGhost: string;
 export const colorSchemaInverted: string;
 export const colorSchemaPlain: string;

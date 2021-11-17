@@ -16,3 +16,22 @@
   display: inline-flex;
   vertical-align: text-top;
 }
+
+.baseStyles {
+  display: inline-block;
+  padding: 2px 8px 2px;
+  border-radius: var(--radius-large);
+  font-size: 0.8rem;
+  font-weight: var(--weight-bold);
+  color: var(--colony-white);
+}
+
+.baseStyles + .baseStyles {
+  margin-left: 10px;
+}
+
+.themeBanned {
+  composes: baseStyles;
+  background-color: color-mod(var(--pink) alpha(20%));
+  color: var(--pink);
+}
