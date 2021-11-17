@@ -306,12 +306,14 @@ const ExtensionSetup = ({
                 label={title}
                 name={paramName}
                 disabled={disabled && disabled(values)}
+                extra={
+                  description && (
+                    <p className={styles.textAreaDescription}>
+                      <FormattedMessage {...description} />
+                    </p>
+                  )
+                }
               />
-              {description && (
-                <p className={styles.textAreaDescription}>
-                  <FormattedMessage {...description} />
-                </p>
-              )}
             </div>
           )}
           {type === ExtensionParamType.ColonyPolicySelector && (
