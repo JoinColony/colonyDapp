@@ -11,9 +11,7 @@ import ENS from '~lib/ENS';
 
 import styles from './StepTokenChoice.css';
 
-const LEARN_MORE_URL =
-  // eslint-disable-next-line max-len
-  'https://help.colony.io/hc/en-us/articles/360024589073-How-to-choose-a-native-token';
+const LEARN_MORE_URL = `https://colony.gitbook.io/colony/create-a-colony/select-native-token`;
 
 const MSG = defineMessages({
   heading: {
