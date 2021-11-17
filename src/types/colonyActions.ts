@@ -116,6 +116,10 @@ export enum ColonyAndExtensionsEvents {
   MotionRewardClaimed = 'MotionRewardClaimed',
   MotionEventSet = 'MotionEventSet',
   ObjectionRaised = 'ObjectionRaised',
+  /*
+   * Extension: Whitelist events
+   */
+  UserApproved = 'UserApproved',
 }
 
 export interface FormattedAction {
@@ -174,4 +178,5 @@ export interface FormattedEvent {
   storageSlotValue?: string;
   motionId?: string;
   vote?: string;
+  whiteListStatus?: boolean;
 }
