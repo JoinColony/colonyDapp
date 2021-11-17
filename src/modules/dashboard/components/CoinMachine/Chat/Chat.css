@@ -29,6 +29,10 @@
   padding: 16px;
 }
 
+.empty {
+  color: color-mod(var(--text) alpha(60%));
+}
+
 .loaderMessage {
   display: inline-block;
   margin-left: 10px;

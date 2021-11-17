@@ -59,6 +59,11 @@ const displayName = 'dashboard.CoinMachine';
 const LEARN_MORE_LINK =
   'https://colony.gitbook.io/colony/extensions/coin-machine';
 
+/*
+ * @TEMP This is temporary while we get ready for the token sale
+ */
+const DISABLE_CHAT_UTIL_SALE = false;
+
 const CoinMachine = ({
   colony: { colonyAddress, colonyName },
   colony,
@@ -349,6 +354,7 @@ const CoinMachine = ({
           <Chat
             colony={colony}
             transactionHash={coinMachineExtension.address}
+            disabled={DISABLE_CHAT_UTIL_SALE}
           />
         </div>
       </div>
