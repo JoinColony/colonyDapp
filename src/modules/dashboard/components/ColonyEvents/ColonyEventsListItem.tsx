@@ -19,7 +19,7 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useUser, Colony } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { FormattedEvent, ColonyAndExtensionsEvents } from '~types/index';
-import { getRoleEventDescriptorsIds } from '~utils/colonyActions';
+import { getAssignmentEventDescriptorsIds } from '~utils/colonyActions';
 
 import styles, {
   popoverWidth,
@@ -83,6 +83,7 @@ const ColonyEventsListItem = ({
     storageSlotValue,
     motionId,
     vote,
+    whiteListStatus,
   },
   colony: { tokens, nativeTokenAddress },
   colony,
@@ -108,11 +109,21 @@ const ColonyEventsListItem = ({
   );
 
   const getEventListTitleMessageDescriptor = useMemo(() => {
-    return eventName === ColonyAndExtensionsEvents.ColonyRoleSet ||
+    if (
+      eventName === ColonyAndExtensionsEvents.ColonyRoleSet ||
       eventName === ColonyAndExtensionsEvents.RecoveryRoleSet
-      ? getRoleEventDescriptorsIds(setTo, eventName)
-      : 'eventList.event';
-  }, [eventName, setTo]);
+    ) {
+      return getAssignmentEventDescriptorsIds(setTo, eventName);
+    }
+    if (eventName === ColonyAndExtensionsEvents.UserApproved) {
+      return getAssignmentEventDescriptorsIds(
+        whiteListStatus,
+        eventName,
+        'event',
+      );
+    }
+    return 'eventList.event';
+  }, [eventName, setTo, whiteListStatus]);
 
   const roleNameMessage = { id: `role.${role}` };
   const getFormattedRole = () => formatMessage(roleNameMessage).toLowerCase();
