@@ -18,6 +18,10 @@ import {
   SubgraphCoinMachinePeriodsQuery,
   SubgraphCoinMachinePeriodsQueryVariables,
   SubgraphCoinMachinePeriodsDocument,
+  getLoggedInUser,
+  UserBalanceWithLockQuery,
+  UserBalanceWithLockQueryVariables,
+  UserBalanceWithLockDocument,
 } from '~data/index';
 
 import {
@@ -32,6 +36,7 @@ function* buyTokens({
   meta: { id: metaId, history },
   meta,
 }: Action<ActionTypes.COIN_MACHINE_BUY_TOKENS>) {
+  const { walletAddress } = yield getLoggedInUser();
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
   let txChannel;
@@ -190,15 +195,10 @@ function* buyTokens({
         history,
       );
     }
-  } catch (caughtError) {
-    putError(ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR, caughtError, meta);
-  } finally {
-    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-    const coinMachineClient = yield colonyManager.getClient(
-      ClientType.CoinMachineClient,
-      colonyAddress,
-    );
 
+    /*
+     * Resover updates
+     */
     yield apolloClient.query<
       CurrentPeriodTokensQuery,
       CurrentPeriodTokensQueryVariables
@@ -221,6 +221,21 @@ function* buyTokens({
       fetchPolicy: 'network-only',
     });
 
+    yield apolloClient.query<
+      UserBalanceWithLockQuery,
+      UserBalanceWithLockQueryVariables
+    >({
+      query: UserBalanceWithLockDocument,
+      variables: {
+        address: walletAddress,
+        tokenAddress: sellableTokenAddress,
+        colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+  } catch (caughtError) {
+    putError(ActionTypes.COIN_MACHINE_BUY_TOKENS_ERROR, caughtError, meta);
+  } finally {
     txChannel.close();
   }
 }
