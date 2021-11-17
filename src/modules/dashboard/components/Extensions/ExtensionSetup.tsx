@@ -77,6 +77,14 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionSetup.tokenValidationError',
     defaultMessage: `Error: The Token to be sold needs to be different from the purchase Token.`,
   },
+  targetPerPeriodError: {
+    id: 'dashboard.Extensions.ExtensionSetup.targetPerPeriodError',
+    defaultMessage: `Error: Target per period value cannot exceed the Maximum per period value.`,
+  },
+  maxPerPeriodError: {
+    id: 'dashboard.Extensions.ExtensionSetup.maxPerPeriodError',
+    defaultMessage: `Error: Maximum per period value cannot be lower than then Target per period value.`,
+  },
 });
 
 interface Props {
@@ -136,6 +144,51 @@ const ExtensionSetup = ({
               ...status,
               ...defaultStatus,
               purchaseTokenError: true,
+            });
+          } else {
+            setStatus({
+              ...status,
+              ...defaultStatus,
+            });
+          }
+        }
+      }
+    },
+    [extensionId],
+  );
+
+  const handleCoinMachineTargetValidation = useCallback(
+    (fieldName, event, { values, status, setStatus }) => {
+      if (extensionId === Extension.CoinMachine) {
+        const newValue =
+          typeof event.target.value === 'string'
+            ? parseInt(event.target.value, 10)
+            : event.target.value;
+        const defaultStatus = {
+          targetPerPeriod: false,
+          maxPerPeriod: false,
+        };
+        if (fieldName === 'targetPerPeriod') {
+          if (newValue > values.maxPerPeriod) {
+            setStatus({
+              ...status,
+              ...defaultStatus,
+              targetPerPeriod: true,
+            });
+          } else {
+            setStatus({
+              ...status,
+              ...defaultStatus,
+            });
+          }
+          return;
+        }
+        if (fieldName === 'maxPerPeriod') {
+          if (newValue < values.targetPerPeriod) {
+            setStatus({
+              ...status,
+              ...defaultStatus,
+              maxPerPeriod: true,
             });
           } else {
             setStatus({
@@ -319,6 +372,18 @@ const ExtensionSetup = ({
                 appearance={{ size: 'medium', theme: 'minimal' }}
                 label={title}
                 name={paramName}
+                onChange={(newValue) =>
+                  handleCoinMachineTargetValidation(
+                    paramName,
+                    newValue,
+                    formikBag,
+                  )
+                }
+                forcedFieldError={
+                  formikBag?.status?.[paramName]
+                    ? MSG[`${paramName}Error`]
+                    : undefined
+                }
               />
               <p className={styles.inputsDescription}>
                 <FormattedMessage
