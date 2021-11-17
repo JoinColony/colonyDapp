@@ -3,7 +3,13 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Comment, { CommentInput } from '~core/Comment';
 import { MiniSpinnerLoader } from '~core/Preloaders';
-import { Colony, useCommentsSubscription, useLoggedInUser } from '~data/index';
+import {
+  Colony,
+  useCommentsSubscription,
+  useLoggedInUser,
+  useCoinMachineHasWhitelistQuery,
+  useUserWhitelistStatusQuery,
+} from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { commentTransformer } from '../../../transformers';
 import { getAllUserRoles } from '../../../../transformers';
@@ -15,6 +21,10 @@ const MSG = defineMessages({
   emptyText: {
     id: 'dashboard.CoinMachine.Chat.emptyText',
     defaultMessage: 'Nobody’s said anything yet... 😢',
+  },
+  disabledText: {
+    id: 'dashboard.CoinMachine.Chat.disabledText',
+    defaultMessage: 'Chat is disabled until the Token Sale is planned to start',
   },
   labelLeaveComment: {
     id: 'dashboard.CoinMachine.Chat.labelLeaveComment',
@@ -33,15 +43,41 @@ const MSG = defineMessages({
 interface Props {
   colony: Colony;
   transactionHash: string;
+  disabled?: boolean;
 }
 
 const displayName = 'dashboard.CoinMachine.Chat';
 
-const Chat = ({ colony, transactionHash }: Props) => {
+const Chat = ({
+  colony,
+  colony: { colonyAddress },
+  transactionHash,
+  disabled,
+}: Props) => {
   const scrollElmRef = useRef<HTMLDivElement | null>(null);
 
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const userHasProfile = !!username && !ethereal;
+
+  const {
+    data: whitelistState,
+    loading: loadingCoinMachineWhitelistState,
+  } = useCoinMachineHasWhitelistQuery({
+    variables: { colonyAddress },
+  });
+  const isWhitelistExtensionEnabled =
+    whitelistState?.coinMachineHasWhitelist || false;
+
+  const {
+    data: userWhitelistStatusData,
+    loading: userStatusLoading,
+  } = useUserWhitelistStatusQuery({
+    variables: { colonyAddress, userAddress: walletAddress },
+    skip: !isWhitelistExtensionEnabled,
+  });
+
+  const isUserWhitelisted =
+    userWhitelistStatusData?.userWhitelistStatus?.userIsWhitelisted;
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const canAdministerComments =
@@ -80,7 +116,7 @@ const Chat = ({ colony, transactionHash }: Props) => {
     return commentTransformer(comments, walletAddress, canAdministerComments);
   }, [canAdministerComments, data, walletAddress]);
 
-  if (loading) {
+  if (loading || loadingCoinMachineWhitelistState || userStatusLoading) {
     return (
       <div className={styles.main}>
         <div className={styles.messages}>
@@ -122,21 +158,27 @@ const Chat = ({ colony, transactionHash }: Props) => {
             )
           ) : (
             <div className={styles.empty}>
-              <FormattedMessage {...MSG.emptyText} />
+              {disabled ? (
+                <FormattedMessage {...MSG.disabledText} />
+              ) : (
+                <FormattedMessage {...MSG.emptyText} />
+              )}
             </div>
           )}
         </div>
         <div ref={scrollElmRef} />
       </div>
-      <div className={styles.inputBox}>
-        <CommentInput
-          colonyAddress={colony.colonyAddress}
-          transactionHash={transactionHash}
-          callback={scrollComments}
-          disabled={!userHasProfile}
-          disabledInputPlaceholder
-        />
-      </div>
+      {!disabled && (
+        <div className={styles.inputBox}>
+          <CommentInput
+            colonyAddress={colony.colonyAddress}
+            transactionHash={transactionHash}
+            callback={scrollComments}
+            disabled={disabled || !userHasProfile || !isUserWhitelisted}
+            disabledInputPlaceholder
+          />
+        </div>
+      )}
     </div>
   );
 };
