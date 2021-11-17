@@ -9,7 +9,6 @@ import { MiniSpinnerLoader } from '~core/Preloaders';
 import { getEventsForActions } from '~utils/events';
 
 import {
-  useCommentsSubscription,
   AnyUser,
   OneDomain,
   ColonyAction,
@@ -21,6 +20,7 @@ import {
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { MotionVote } from '~utils/colonyMotions';
 import { useTransformer } from '~utils/hooks';
+import { useCurrentComments } from '~utils/hooks/useCurrentComments';
 import { commentTransformer } from '../../transformers';
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot, canAdminister } from '../../../users/checks';
@@ -131,12 +131,10 @@ const ActionsPageFeed = ({
     (hasRoot(allUserRoles) || canAdminister(allUserRoles));
 
   const {
-    data: serverComments,
-    loading: loadingServerComments,
+    currentComments,
+    loading: loadingCurrentComments,
     error,
-  } = useCommentsSubscription({
-    variables: { transactionHash },
-  });
+  } = useCurrentComments(transactionHash);
 
   const filteredEvents = useMemo(() => {
     if (networkEvents) {
@@ -146,9 +144,8 @@ const ActionsPageFeed = ({
   }, [actionType, networkEvents]);
 
   const filteredComments = useMemo(() => {
-    const comments = serverComments?.transactionMessages?.messages || [];
-    return commentTransformer(comments, walletAddress, canAdministerComments);
-  }, [canAdministerComments, serverComments, walletAddress]);
+    return commentTransformer(currentComments, walletAddress, canAdministerComments);
+  }, [canAdministerComments, currentComments, walletAddress]);
 
   const sortedFeed = useMemo(() => {
     const feedItems: FeedItems = [
@@ -312,7 +309,7 @@ const ActionsPageFeed = ({
   return (
     <>
       <ul className={styles.main}>{customRenderWithFallback()}</ul>
-      {(loadingServerComments || extenalLoadingState) && (
+      {(loadingCurrentComments || extenalLoadingState) && (
         <MiniSpinnerLoader
           className={styles.loading}
           loadingTextClassName={styles.loaderMessage}
