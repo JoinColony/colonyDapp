@@ -1,6 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
-
+import { SimpleMessageValues } from '~types/index';
 import Icon from '~core/Icon';
 
 import styles from './BannedTag.css';
@@ -9,10 +9,15 @@ const displayName = 'BannedTag';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
   text?: MessageDescriptor | string;
-  textValues?: { [key: string]: string };
+  textValues?: SimpleMessageValues };
 }
 
-const BannedTag = ({ children, text, textValues, ...rest }: Props) => {
+const BannedTag = ({
+  children,
+  text = { id: 'label.banned' },
+  textValues,
+  ...rest
+}: Props) => {
   return (
     <span className={styles.themeBanned} {...rest}>
       <Icon
