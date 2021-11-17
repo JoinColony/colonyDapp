@@ -1,8 +1,6 @@
 .icon {
   display: inline-block;
-  margin-top: -4px;
-  margin-right: 4px;
-  margin-left: -4px;
+  margin: -4px 4px -4px 0;
   height: 12px;
   width: 12px;
   vertical-align: middle;
