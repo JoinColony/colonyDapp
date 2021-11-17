@@ -39,6 +39,9 @@ interface BaseProps {
 
   /** The corresponding user object if available */
   user?: AnyUser;
+
+  /** Banned comment status */
+  banned?: boolean;
 }
 
 /** Used for the infopopover */
@@ -60,6 +63,7 @@ const UserAvatar = ({
   notSet,
   popperProps,
   size,
+  banned = false,
   user = {
     id: address,
     profile: { walletAddress: address },
@@ -77,6 +81,7 @@ const UserAvatar = ({
     const { colony, domainId } = rest;
     popoverProps = {
       ...popoverProps,
+      banned,
       colony,
       domainId,
     };

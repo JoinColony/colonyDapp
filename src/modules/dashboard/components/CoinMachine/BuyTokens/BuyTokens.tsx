@@ -14,7 +14,6 @@ import Numeral from '~core/Numeral';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import {
   Colony,
@@ -22,6 +21,7 @@ import {
   useCoinMachineSaleTokensQuery,
   useUserTokensQuery,
   useUserWhitelistStatusQuery,
+  useCoinMachineHasWhitelistQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import {
@@ -147,9 +147,14 @@ const BuyTokens = ({
     variables: { colonyAddress },
   });
 
-  const { isWhitelistExtensionEnabled } = useEnabledExtensions({
-    colonyAddress,
+  const {
+    data: whitelistState,
+    loading: loadingCoinMachineWhitelistState,
+  } = useCoinMachineHasWhitelistQuery({
+    variables: { colonyAddress },
   });
+  const isWhitelistExtensionEnabled =
+    whitelistState?.coinMachineHasWhitelist || false;
 
   const {
     data: userWhitelistStatusData,
@@ -184,7 +189,8 @@ const BuyTokens = ({
     purchaseToken?.decimals || 18,
   );
 
-  const globalDisable = !isCurrentlyOnSale || !userHasProfile;
+  const globalDisable =
+    !isCurrentlyOnSale || !userHasProfile || !isUserWhitelisted;
 
   const handleInputFocus = useCallback(
     ({ amount }, setFieldValue) => {
@@ -282,6 +288,7 @@ const BuyTokens = ({
     loadingUserToken &&
     loadingSalePrice &&
     userStatusLoading &&
+    loadingCoinMachineWhitelistState &&
     loadingMaxUserPurchase
   ) {
     return (

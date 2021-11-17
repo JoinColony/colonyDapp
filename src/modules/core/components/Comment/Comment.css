@@ -2,13 +2,42 @@
 .main {
   display: flex;
   align-items: flex-start;
-  padding: 11px 16px 11px 0;
+  padding: 11px 0 11px 0;
   width: 100%;
   border-radius: var(--radius-large);
 }
 
+.main:hover, .main.activeActions {
+  background-color: color-mod(var(--action-secondary) alpha(6%));
+  opacity: 1;
+}
+
 .stateAnnotation {
   background-color: color-mod(var(--primary) alpha(6%));
+}
+
+.stateGhosted .avatar, .stateGhosted .text {
+  /* opacity: 0.5; */
+}
+
+.stateGhosted .avatar > div::before {
+  display: block;
+  margin-bottom: -26px;
+  height: 26px;
+  width: 26px;
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+  background-color: color-mod(white alpha(50%));
+  content: '';
+}
+
+.stateGhosted .text {
+  color: color-mod(var(--temp-grey-blue-7) alpha(80%));
+}
+
+.stateHideControls:hover {
+  background-color: transparent;
 }
 
 .avatar {
@@ -35,6 +64,17 @@
   margin-top: -2px;
 }
 
+.actions {
+  composes: flexContainerRow flexJustifyCenter from '~styles/layout.css';
+  width: 24px;
+  position: relative;
+  opacity: 0;
+}
+
+.main:hover .actions, .main.activeActions .actions {
+  opacity: 1;
+}
+
 .text {
   font-size: var(--size-normal);
   white-space: pre-wrap;
@@ -58,4 +98,9 @@
 
 .themeDanger.stateAnnotation {
   background-color: color-mod(var(--pink) alpha(6%));
+}
+
+.bannedTag {
+  display: inline-block;
+  margin-left: 5px;
 }

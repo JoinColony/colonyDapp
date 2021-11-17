@@ -11,7 +11,8 @@
 .messages {
   flex: 1 0 0;
   margin-bottom: 20px;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .inputBox {
@@ -26,6 +27,10 @@
 
 .loading, .empty {
   padding: 16px;
+}
+
+.empty {
+  color: color-mod(var(--text) alpha(60%));
 }
 
 .loaderMessage {

@@ -560,5 +560,18 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
+    async coinMachineHasWhitelist(_, { colonyAddress }) {
+      try {
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+        const coinMachineWhitelist = await coinMachineClient.getWhitelist();
+        return !!coinMachineWhitelist;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
   },
 });

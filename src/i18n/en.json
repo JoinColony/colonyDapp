@@ -46,6 +46,7 @@
     "label.email": "Email address",
     "label.password": "Password",
     "label.force": "Force",
+    "label.banned": "Banned",
     "placeholder.email": "handle@domain.com",
     "placeholder.password": "Password",
 

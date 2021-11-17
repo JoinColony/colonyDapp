@@ -79,6 +79,9 @@ export type TransactionMessageEvent = {
   transactionHash: Scalars['String'];
   message: Scalars['String'];
   colonyAddress: Scalars['String'];
+  deleted?: Maybe<Scalars['Boolean']>;
+  adminDelete?: Maybe<Scalars['Boolean']>;
+  userBanned?: Maybe<Scalars['Boolean']>;
 };
 
 export type EventContext = CreateDomainEvent | NewUserEvent | TransactionMessageEvent;
@@ -112,25 +115,6 @@ export type EditUserInput = {
   website?: Maybe<Scalars['String']>;
 };
 
-export type CreateWorkRequestInput = {
-  id: Scalars['String'];
-};
-
-export type SendWorkInviteInput = {
-  id: Scalars['String'];
-  workerAddress: Scalars['String'];
-};
-
-export type AssignWorkerInput = {
-  id: Scalars['String'];
-  workerAddress: Scalars['String'];
-};
-
-export type UnassignWorkerInput = {
-  id: Scalars['String'];
-  workerAddress: Scalars['String'];
-};
-
 export type SubscribeToColonyInput = {
   colonyAddress: Scalars['String'];
 };
@@ -143,38 +127,8 @@ export type MarkNotificationAsReadInput = {
   id: Scalars['String'];
 };
 
-export type EditDomainNameInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  name: Scalars['String'];
-};
-
 export type SetUserTokensInput = {
   tokenAddresses: Array<Scalars['String']>;
-};
-
-export type CreateSuggestionInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
-export type SetSuggestionStatusInput = {
-  id: Scalars['String'];
-  status: SuggestionStatus;
-};
-
-export type AddUpvoteToSuggestionInput = {
-  id: Scalars['String'];
-};
-
-export type RemoveUpvoteFromSuggestionInput = {
-  id: Scalars['String'];
-};
-
-export type Payout = {
-  amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
 };
 
 export type SendTransactionMessageInput = {
@@ -183,37 +137,48 @@ export type SendTransactionMessageInput = {
   colonyAddress: Scalars['String'];
 };
 
+export type DeleteTransactionMessageInput = {
+  id: Scalars['String'];
+  colonyAddress: Scalars['String'];
+};
+
+export type BanTransactionMessagesInput = {
+  colonyAddress: Scalars['String'];
+  userAddress: Scalars['String'];
+  eventId?: Maybe<Scalars['String']>;
+};
+
 export type Mutation = {
-  addUpvoteToSuggestion?: Maybe<Suggestion>;
+  banUserTransactionMessages: Scalars['Boolean'];
   clearLoggedInUser: LoggedInUser;
-  createSuggestion?: Maybe<Suggestion>;
   createUser?: Maybe<User>;
+  deleteTransactionMessage: Scalars['Boolean'];
   editUser?: Maybe<User>;
   markAllNotificationsAsRead: Scalars['Boolean'];
   markNotificationAsRead: Scalars['Boolean'];
-  removeUpvoteFromSuggestion?: Maybe<Suggestion>;
   sendTransactionMessage: Scalars['Boolean'];
   setLoggedInUser: LoggedInUser;
-  setSuggestionStatus?: Maybe<Suggestion>;
   setUserTokens?: Maybe<User>;
   subscribeToColony?: Maybe<User>;
+  unbanUserTransactionMessages: Scalars['Boolean'];
+  undeleteTransactionMessage: Scalars['Boolean'];
   unsubscribeFromColony?: Maybe<User>;
   updateNetworkContracts: NetworkContracts;
 };
 
 
-export type MutationAddUpvoteToSuggestionArgs = {
-  input: AddUpvoteToSuggestionInput;
-};
-
-
-export type MutationCreateSuggestionArgs = {
-  input: CreateSuggestionInput;
+export type MutationBanUserTransactionMessagesArgs = {
+  input: BanTransactionMessagesInput;
 };
 
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteTransactionMessageArgs = {
+  input: DeleteTransactionMessageInput;
 };
 
 
@@ -227,11 +192,6 @@ export type MutationMarkNotificationAsReadArgs = {
 };
 
 
-export type MutationRemoveUpvoteFromSuggestionArgs = {
-  input: RemoveUpvoteFromSuggestionInput;
-};
-
-
 export type MutationSendTransactionMessageArgs = {
   input: SendTransactionMessageInput;
 };
@@ -239,11 +199,6 @@ export type MutationSendTransactionMessageArgs = {
 
 export type MutationSetLoggedInUserArgs = {
   input?: Maybe<LoggedInUserInput>;
-};
-
-
-export type MutationSetSuggestionStatusArgs = {
-  input: SetSuggestionStatusInput;
 };
 
 
@@ -257,16 +212,28 @@ export type MutationSubscribeToColonyArgs = {
 };
 
 
+export type MutationUnbanUserTransactionMessagesArgs = {
+  input: BanTransactionMessagesInput;
+};
+
+
+export type MutationUndeleteTransactionMessageArgs = {
+  input: DeleteTransactionMessageInput;
+};
+
+
 export type MutationUnsubscribeFromColonyArgs = {
   input: UnsubscribeFromColonyInput;
 };
 
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
+  bannedUsers: Array<Maybe<BannedUser>>;
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
   coinMachineCurrentSalePeriod: CurrentSalePeriod;
+  coinMachineHasWhitelist: Scalars['Boolean'];
   coinMachinePeriods: Array<SalePeriod>;
   coinMachineSalePeriods: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
@@ -342,6 +309,11 @@ export type QueryActionsThatNeedAttentionArgs = {
 };
 
 
+export type QueryBannedUsersArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+
 export type QueryCoinMachineBoughtTokensArgs = {
   colonyAddress: Scalars['String'];
 };
@@ -359,6 +331,11 @@ export type QueryCoinMachineCurrentPeriodPriceArgs = {
 
 
 export type QueryCoinMachineCurrentSalePeriodArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryCoinMachineHasWhitelistArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -777,25 +754,6 @@ export type SubscriptionTransactionMessagesCountArgs = {
   colonyAddress: Scalars['String'];
 };
 
-export enum SuggestionStatus {
-  Open = 'Open',
-  NotPlanned = 'NotPlanned',
-  Accepted = 'Accepted',
-  Deleted = 'Deleted'
-}
-
-export type Suggestion = {
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  colonyAddress: Scalars['String'];
-  creatorAddress: Scalars['String'];
-  creator: User;
-  ethDomainId: Scalars['Int'];
-  status: SuggestionStatus;
-  title: Scalars['String'];
-  upvotes: Array<Scalars['String']>;
-};
-
 export type TokenInfo = {
   id: Scalars['String'];
   address: Scalars['String'];
@@ -880,6 +838,14 @@ export type TransactionCount = {
 
 export type TransactionMessagesCount = {
   colonyTransactionMessages: Array<TransactionCount>;
+};
+
+export type BannedUser = {
+  id: Scalars['String'];
+  profile?: Maybe<UserProfile>;
+  eventId?: Maybe<Scalars['String']>;
+  event?: Maybe<Event>;
+  banned: Scalars['Boolean'];
 };
 
 export enum CacheControlScope {
@@ -1481,7 +1447,7 @@ export type EventContextFragment = { context: Pick<CreateDomainEvent, 'type' | '
 
 export type FullNetworkEventFragment = Pick<NetworkEvent, 'fromAddress' | 'toAddress' | 'createdAt' | 'name' | 'hash' | 'topic' | 'userAddress' | 'domainId'>;
 
-export type TransactionEventContextFragment = { context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress'> };
+export type TransactionEventContextFragment = { context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress' | 'deleted' | 'adminDelete' | 'userBanned'> };
 
 export type TransactionMessageFragment = (
   EventFieldsFragment
@@ -1562,6 +1528,34 @@ export type UpdateNetworkContractsMutationVariables = Exact<{ [key: string]: nev
 
 
 export type UpdateNetworkContractsMutation = { updateNetworkContracts: Pick<NetworkContracts, 'version' | 'feeInverse'> };
+
+export type DeleteTransactionMessageMutationVariables = Exact<{
+  input: DeleteTransactionMessageInput;
+}>;
+
+
+export type DeleteTransactionMessageMutation = Pick<Mutation, 'deleteTransactionMessage'>;
+
+export type UndeleteTransactionMessageMutationVariables = Exact<{
+  input: DeleteTransactionMessageInput;
+}>;
+
+
+export type UndeleteTransactionMessageMutation = Pick<Mutation, 'undeleteTransactionMessage'>;
+
+export type BanUserTransactionMessagesMutationVariables = Exact<{
+  input: BanTransactionMessagesInput;
+}>;
+
+
+export type BanUserTransactionMessagesMutation = Pick<Mutation, 'banUserTransactionMessages'>;
+
+export type UnBanUserTransactionMessagesMutationVariables = Exact<{
+  input: BanTransactionMessagesInput;
+}>;
+
+
+export type UnBanUserTransactionMessagesMutation = Pick<Mutation, 'unbanUserTransactionMessages'>;
 
 export type LoggedInUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2170,6 +2164,23 @@ export type UserWhitelistStatusQueryVariables = Exact<{
 
 export type UserWhitelistStatusQuery = { userWhitelistStatus: Pick<UserWhitelistStatus, 'userIsApproved' | 'userIsWhitelisted' | 'userSignedAgreement'> };
 
+export type SubgraphAnnotationEventsQueryVariables = Exact<{
+  transactionHash: Scalars['String'];
+}>;
+
+
+export type SubgraphAnnotationEventsQuery = { annotationEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
+
 export type CoinMachineSaleTokensQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -2228,6 +2239,13 @@ export type CoinMachineTokenBalanceQueryVariables = Exact<{
 
 export type CoinMachineTokenBalanceQuery = Pick<Query, 'coinMachineTokenBalance'>;
 
+export type CoinMachineHasWhitelistQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type CoinMachineHasWhitelistQuery = Pick<Query, 'coinMachineHasWhitelist'>;
+
 export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
@@ -2281,6 +2299,16 @@ export type TransactionMessagesCountQueryVariables = Exact<{
 
 
 export type TransactionMessagesCountQuery = { transactionMessagesCount: { colonyTransactionMessages: Array<Pick<TransactionCount, 'transactionHash' | 'count'>> } };
+
+export type BannedUsersQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type BannedUsersQuery = { bannedUsers: Array<Maybe<(
+    Pick<BannedUser, 'id' | 'eventId' | 'banned'>
+    & { profile?: Maybe<Pick<UserProfile, 'walletAddress' | 'username' | 'displayName'>>, event?: Maybe<{ context: Pick<TransactionMessageEvent, 'type' | 'transactionHash' | 'message' | 'colonyAddress' | 'deleted' | 'adminDelete'> }> }
+  )>> };
 
 export type ColonyExtensionsQueryVariables = Exact<{
   address: Scalars['String'];
@@ -2756,23 +2784,6 @@ export type SubgraphTokenBoughtEventsSubscription = { tokenBoughtEvents: Array<(
     ) }
   )> };
 
-export type SubgraphAnnotationEventsQueryVariables = Exact<{
-  transactionHash: Scalars['String'];
-}>;
-
-
-export type SubgraphAnnotationEventsQuery = { annotationEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
-    & { transaction: (
-      Pick<SubgraphTransaction, 'id'>
-      & { transactionHash: SubgraphTransaction['id'] }
-      & { block: (
-        Pick<SubgraphBlock, 'id' | 'timestamp'>
-        & { number: SubgraphBlock['id'] }
-      ) }
-    ) }
-  )> };
-
 export type CommentCountSubscriptionVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
@@ -2912,6 +2923,9 @@ export const TransactionEventContextFragmentDoc = gql`
       transactionHash
       message
       colonyAddress
+      deleted
+      adminDelete
+      userBanned
     }
   }
 }
@@ -3281,6 +3295,126 @@ export function useUpdateNetworkContractsMutation(baseOptions?: Apollo.MutationH
 export type UpdateNetworkContractsMutationHookResult = ReturnType<typeof useUpdateNetworkContractsMutation>;
 export type UpdateNetworkContractsMutationResult = Apollo.MutationResult<UpdateNetworkContractsMutation>;
 export type UpdateNetworkContractsMutationOptions = Apollo.BaseMutationOptions<UpdateNetworkContractsMutation, UpdateNetworkContractsMutationVariables>;
+export const DeleteTransactionMessageDocument = gql`
+    mutation DeleteTransactionMessage($input: DeleteTransactionMessageInput!) {
+  deleteTransactionMessage(input: $input)
+}
+    `;
+export type DeleteTransactionMessageMutationFn = Apollo.MutationFunction<DeleteTransactionMessageMutation, DeleteTransactionMessageMutationVariables>;
+
+/**
+ * __useDeleteTransactionMessageMutation__
+ *
+ * To run a mutation, you first call `useDeleteTransactionMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTransactionMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTransactionMessageMutation, { data, loading, error }] = useDeleteTransactionMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteTransactionMessageMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTransactionMessageMutation, DeleteTransactionMessageMutationVariables>) {
+        return Apollo.useMutation<DeleteTransactionMessageMutation, DeleteTransactionMessageMutationVariables>(DeleteTransactionMessageDocument, baseOptions);
+      }
+export type DeleteTransactionMessageMutationHookResult = ReturnType<typeof useDeleteTransactionMessageMutation>;
+export type DeleteTransactionMessageMutationResult = Apollo.MutationResult<DeleteTransactionMessageMutation>;
+export type DeleteTransactionMessageMutationOptions = Apollo.BaseMutationOptions<DeleteTransactionMessageMutation, DeleteTransactionMessageMutationVariables>;
+export const UndeleteTransactionMessageDocument = gql`
+    mutation UndeleteTransactionMessage($input: DeleteTransactionMessageInput!) {
+  undeleteTransactionMessage(input: $input)
+}
+    `;
+export type UndeleteTransactionMessageMutationFn = Apollo.MutationFunction<UndeleteTransactionMessageMutation, UndeleteTransactionMessageMutationVariables>;
+
+/**
+ * __useUndeleteTransactionMessageMutation__
+ *
+ * To run a mutation, you first call `useUndeleteTransactionMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUndeleteTransactionMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [undeleteTransactionMessageMutation, { data, loading, error }] = useUndeleteTransactionMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUndeleteTransactionMessageMutation(baseOptions?: Apollo.MutationHookOptions<UndeleteTransactionMessageMutation, UndeleteTransactionMessageMutationVariables>) {
+        return Apollo.useMutation<UndeleteTransactionMessageMutation, UndeleteTransactionMessageMutationVariables>(UndeleteTransactionMessageDocument, baseOptions);
+      }
+export type UndeleteTransactionMessageMutationHookResult = ReturnType<typeof useUndeleteTransactionMessageMutation>;
+export type UndeleteTransactionMessageMutationResult = Apollo.MutationResult<UndeleteTransactionMessageMutation>;
+export type UndeleteTransactionMessageMutationOptions = Apollo.BaseMutationOptions<UndeleteTransactionMessageMutation, UndeleteTransactionMessageMutationVariables>;
+export const BanUserTransactionMessagesDocument = gql`
+    mutation BanUserTransactionMessages($input: BanTransactionMessagesInput!) {
+  banUserTransactionMessages(input: $input)
+}
+    `;
+export type BanUserTransactionMessagesMutationFn = Apollo.MutationFunction<BanUserTransactionMessagesMutation, BanUserTransactionMessagesMutationVariables>;
+
+/**
+ * __useBanUserTransactionMessagesMutation__
+ *
+ * To run a mutation, you first call `useBanUserTransactionMessagesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBanUserTransactionMessagesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [banUserTransactionMessagesMutation, { data, loading, error }] = useBanUserTransactionMessagesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBanUserTransactionMessagesMutation(baseOptions?: Apollo.MutationHookOptions<BanUserTransactionMessagesMutation, BanUserTransactionMessagesMutationVariables>) {
+        return Apollo.useMutation<BanUserTransactionMessagesMutation, BanUserTransactionMessagesMutationVariables>(BanUserTransactionMessagesDocument, baseOptions);
+      }
+export type BanUserTransactionMessagesMutationHookResult = ReturnType<typeof useBanUserTransactionMessagesMutation>;
+export type BanUserTransactionMessagesMutationResult = Apollo.MutationResult<BanUserTransactionMessagesMutation>;
+export type BanUserTransactionMessagesMutationOptions = Apollo.BaseMutationOptions<BanUserTransactionMessagesMutation, BanUserTransactionMessagesMutationVariables>;
+export const UnBanUserTransactionMessagesDocument = gql`
+    mutation UnBanUserTransactionMessages($input: BanTransactionMessagesInput!) {
+  unbanUserTransactionMessages(input: $input)
+}
+    `;
+export type UnBanUserTransactionMessagesMutationFn = Apollo.MutationFunction<UnBanUserTransactionMessagesMutation, UnBanUserTransactionMessagesMutationVariables>;
+
+/**
+ * __useUnBanUserTransactionMessagesMutation__
+ *
+ * To run a mutation, you first call `useUnBanUserTransactionMessagesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnBanUserTransactionMessagesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unBanUserTransactionMessagesMutation, { data, loading, error }] = useUnBanUserTransactionMessagesMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUnBanUserTransactionMessagesMutation(baseOptions?: Apollo.MutationHookOptions<UnBanUserTransactionMessagesMutation, UnBanUserTransactionMessagesMutationVariables>) {
+        return Apollo.useMutation<UnBanUserTransactionMessagesMutation, UnBanUserTransactionMessagesMutationVariables>(UnBanUserTransactionMessagesDocument, baseOptions);
+      }
+export type UnBanUserTransactionMessagesMutationHookResult = ReturnType<typeof useUnBanUserTransactionMessagesMutation>;
+export type UnBanUserTransactionMessagesMutationResult = Apollo.MutationResult<UnBanUserTransactionMessagesMutation>;
+export type UnBanUserTransactionMessagesMutationOptions = Apollo.BaseMutationOptions<UnBanUserTransactionMessagesMutation, UnBanUserTransactionMessagesMutationVariables>;
 export const LoggedInUserDocument = gql`
     query LoggedInUser {
   loggedInUser @client {
@@ -5811,6 +5945,51 @@ export function useUserWhitelistStatusLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type UserWhitelistStatusQueryHookResult = ReturnType<typeof useUserWhitelistStatusQuery>;
 export type UserWhitelistStatusLazyQueryHookResult = ReturnType<typeof useUserWhitelistStatusLazyQuery>;
 export type UserWhitelistStatusQueryResult = Apollo.QueryResult<UserWhitelistStatusQuery, UserWhitelistStatusQueryVariables>;
+export const SubgraphAnnotationEventsDocument = gql`
+    query SubgraphAnnotationEvents($transactionHash: String!) {
+  annotationEvents: events(where: {name_contains: "Annotation", args_contains: $transactionHash}) {
+    id
+    address
+    name
+    args
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSubgraphAnnotationEventsQuery__
+ *
+ * To run a query within a React component, call `useSubgraphAnnotationEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphAnnotationEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphAnnotationEventsQuery({
+ *   variables: {
+ *      transactionHash: // value for 'transactionHash'
+ *   },
+ * });
+ */
+export function useSubgraphAnnotationEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
+      }
+export function useSubgraphAnnotationEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
+        }
+export type SubgraphAnnotationEventsQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsQuery>;
+export type SubgraphAnnotationEventsLazyQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsLazyQuery>;
+export type SubgraphAnnotationEventsQueryResult = Apollo.QueryResult<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>;
 export const CoinMachineSaleTokensDocument = gql`
     query CoinMachineSaleTokens($colonyAddress: String!) {
   coinMachineSaleTokens(colonyAddress: $colonyAddress) @client {
@@ -6087,6 +6266,37 @@ export function useCoinMachineTokenBalanceLazyQuery(baseOptions?: Apollo.LazyQue
 export type CoinMachineTokenBalanceQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceQuery>;
 export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceLazyQuery>;
 export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
+export const CoinMachineHasWhitelistDocument = gql`
+    query CoinMachineHasWhitelist($colonyAddress: String!) {
+  coinMachineHasWhitelist(colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useCoinMachineHasWhitelistQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineHasWhitelistQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineHasWhitelistQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineHasWhitelistQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useCoinMachineHasWhitelistQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>) {
+        return Apollo.useQuery<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>(CoinMachineHasWhitelistDocument, baseOptions);
+      }
+export function useCoinMachineHasWhitelistLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>(CoinMachineHasWhitelistDocument, baseOptions);
+        }
+export type CoinMachineHasWhitelistQueryHookResult = ReturnType<typeof useCoinMachineHasWhitelistQuery>;
+export type CoinMachineHasWhitelistLazyQueryHookResult = ReturnType<typeof useCoinMachineHasWhitelistLazyQuery>;
+export type CoinMachineHasWhitelistQueryResult = Apollo.QueryResult<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>;
 export const SubgraphCoinMachinePeriodsDocument = gql`
     query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
   coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 0, first: $limit, orderBy: "saleEndedAt", orderDirection: "desc") {
@@ -6263,6 +6473,58 @@ export function useTransactionMessagesCountLazyQuery(baseOptions?: Apollo.LazyQu
 export type TransactionMessagesCountQueryHookResult = ReturnType<typeof useTransactionMessagesCountQuery>;
 export type TransactionMessagesCountLazyQueryHookResult = ReturnType<typeof useTransactionMessagesCountLazyQuery>;
 export type TransactionMessagesCountQueryResult = Apollo.QueryResult<TransactionMessagesCountQuery, TransactionMessagesCountQueryVariables>;
+export const BannedUsersDocument = gql`
+    query BannedUsers($colonyAddress: String!) {
+  bannedUsers(colonyAddress: $colonyAddress) {
+    id
+    profile {
+      walletAddress
+      username
+      displayName
+    }
+    eventId
+    event {
+      context {
+        ... on TransactionMessageEvent {
+          type
+          transactionHash
+          message
+          colonyAddress
+          deleted
+          adminDelete
+        }
+      }
+    }
+    banned
+  }
+}
+    `;
+
+/**
+ * __useBannedUsersQuery__
+ *
+ * To run a query within a React component, call `useBannedUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBannedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBannedUsersQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useBannedUsersQuery(baseOptions?: Apollo.QueryHookOptions<BannedUsersQuery, BannedUsersQueryVariables>) {
+        return Apollo.useQuery<BannedUsersQuery, BannedUsersQueryVariables>(BannedUsersDocument, baseOptions);
+      }
+export function useBannedUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BannedUsersQuery, BannedUsersQueryVariables>) {
+          return Apollo.useLazyQuery<BannedUsersQuery, BannedUsersQueryVariables>(BannedUsersDocument, baseOptions);
+        }
+export type BannedUsersQueryHookResult = ReturnType<typeof useBannedUsersQuery>;
+export type BannedUsersLazyQueryHookResult = ReturnType<typeof useBannedUsersLazyQuery>;
+export type BannedUsersQueryResult = Apollo.QueryResult<BannedUsersQuery, BannedUsersQueryVariables>;
 export const ColonyExtensionsDocument = gql`
     query ColonyExtensions($address: String!) {
   processedColony(address: $address) @client {
@@ -7521,51 +7783,6 @@ export function useSubgraphTokenBoughtEventsSubscription(baseOptions?: Apollo.Su
       }
 export type SubgraphTokenBoughtEventsSubscriptionHookResult = ReturnType<typeof useSubgraphTokenBoughtEventsSubscription>;
 export type SubgraphTokenBoughtEventsSubscriptionResult = Apollo.SubscriptionResult<SubgraphTokenBoughtEventsSubscription>;
-export const SubgraphAnnotationEventsDocument = gql`
-    query SubgraphAnnotationEvents($transactionHash: String!) {
-  annotationEvents: events(where: {name_contains: "Annotation", args_contains: $transactionHash}) {
-    id
-    address
-    name
-    args
-    transaction {
-      id
-      transactionHash: id
-      block {
-        id
-        number: id
-        timestamp
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useSubgraphAnnotationEventsQuery__
- *
- * To run a query within a React component, call `useSubgraphAnnotationEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphAnnotationEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSubgraphAnnotationEventsQuery({
- *   variables: {
- *      transactionHash: // value for 'transactionHash'
- *   },
- * });
- */
-export function useSubgraphAnnotationEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
-        return Apollo.useQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
-      }
-export function useSubgraphAnnotationEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>(SubgraphAnnotationEventsDocument, baseOptions);
-        }
-export type SubgraphAnnotationEventsQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsQuery>;
-export type SubgraphAnnotationEventsLazyQueryHookResult = ReturnType<typeof useSubgraphAnnotationEventsLazyQuery>;
-export type SubgraphAnnotationEventsQueryResult = Apollo.QueryResult<SubgraphAnnotationEventsQuery, SubgraphAnnotationEventsQueryVariables>;
 export const CommentCountDocument = gql`
     subscription CommentCount($colonyAddress: String!) {
   transactionMessagesCount(colonyAddress: $colonyAddress) {

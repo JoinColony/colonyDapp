@@ -4,7 +4,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import classnames from 'classnames';
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
 
-import CommentInput from '~core/CommentInput';
+import { CommentInput } from '~core/Comment';
 import Heading from '~core/Heading';
 import Tag, { Appearance as TagAppearance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -445,6 +445,7 @@ const DefaultMotion = ({
           {annotationHash && (
             <div className={motionSpecificStyles.annotation}>
               <ActionsPageFeedItemWithIPFS
+                colony={colony}
                 user={initiator}
                 annotation
                 hash={annotationHash}
@@ -453,6 +454,7 @@ const DefaultMotion = ({
           )}
           {objectionAnnotation?.motionObjectionAnnotation?.metadata && (
             <ActionsPageFeedItemWithIPFS
+              colony={colony}
               user={objectionAnnotationUser}
               annotation
               hash={objectionAnnotation.motionObjectionAnnotation.metadata}

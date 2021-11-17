@@ -4,7 +4,7 @@ import { ColonyRole } from '@colony/colony-js';
 
 import FriendlyName from '~core/FriendlyName';
 import PermissionsLabel from '~core/PermissionsLabel';
-import Comment from '~core/Comment';
+import Comment, { CommentInput } from '~core/Comment';
 import ActionsPageFeed, {
   SystemInfo,
   SystemMessage,
@@ -16,7 +16,6 @@ import ActionsPageFeed, {
   ActionsPageSystemInfo,
   ActionsPageSystemMessage,
 } from '~dashboard/ActionsPageFeed';
-import CommentInput from '~core/CommentInput';
 
 import {
   useLoggedInUser,
@@ -218,6 +217,7 @@ const RecoveryAction = ({
           {annotationHash && (
             <ActionsPageFeedItemWithIPFS
               createdAt={actionCreatedAt}
+              colony={colony}
               user={initiator}
               annotation
               hash={annotationHash}
@@ -332,6 +332,7 @@ const RecoveryAction = ({
                     <Comment
                       key={uniqueId}
                       createdAt={createdAt}
+                      colony={colony}
                       comment={message}
                       user={messageInitiator}
                     />

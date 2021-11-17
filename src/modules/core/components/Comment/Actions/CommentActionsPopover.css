@@ -1,0 +1,14 @@
+.actionButton {
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+  color: var(--dark);
+  letter-spacing: var(--spacing-medium);
+}
+
+.actionButton i {
+  margin-right: 12px;
+}
+
+.actionButton i svg {
+  fill: var(--temp-grey-blue-7);
+  stroke: none;
+}

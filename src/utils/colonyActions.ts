@@ -173,7 +173,7 @@ export const getDomainMetadataMessageDescriptorsIds = (
   return `event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`;
 };
 
-export const getRoleEventDescriptorsIds = (
+export const getAssignmentEventDescriptorsIds = (
   roleSetTo: boolean | undefined,
   /*
    * prettier is being uncooperative again

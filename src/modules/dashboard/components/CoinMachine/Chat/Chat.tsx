@@ -1,11 +1,19 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Comment from '~core/Comment';
-import CommentInput from '~core/CommentInput';
+import Comment, { CommentInput } from '~core/Comment';
 import { MiniSpinnerLoader } from '~core/Preloaders';
-
-import { Colony, useCommentsSubscription, useLoggedInUser } from '~data/index';
+import {
+  Colony,
+  useCommentsSubscription,
+  useLoggedInUser,
+  useCoinMachineHasWhitelistQuery,
+  useUserWhitelistStatusQuery,
+} from '~data/index';
+import { useTransformer } from '~utils/hooks';
+import { commentTransformer } from '../../../transformers';
+import { getAllUserRoles } from '../../../../transformers';
+import { hasRoot, canAdminister } from '../../../../users/checks';
 
 import styles from './Chat.css';
 
@@ -13,6 +21,10 @@ const MSG = defineMessages({
   emptyText: {
     id: 'dashboard.CoinMachine.Chat.emptyText',
     defaultMessage: 'Nobody’s said anything yet... 😢',
+  },
+  disabledText: {
+    id: 'dashboard.CoinMachine.Chat.disabledText',
+    defaultMessage: 'Chat is disabled until the Token Sale is ready to start',
   },
   labelLeaveComment: {
     id: 'dashboard.CoinMachine.Chat.labelLeaveComment',
@@ -26,21 +38,54 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.Chat.loading',
     defaultMessage: 'Loading messages',
   },
+  mustWhitelistToComment: {
+    id: 'dashboard.CoinMachine.Chat.mustWhitelistToComment',
+    defaultMessage: 'You must be whitelisted to chat',
+  },
 });
 
 interface Props {
   colony: Colony;
   transactionHash: string;
+  disabled?: boolean;
 }
 
 const displayName = 'dashboard.CoinMachine.Chat';
 
-const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
+const Chat = ({
+  colony,
+  colony: { colonyAddress },
+  transactionHash,
+  disabled,
+}: Props) => {
   const scrollElmRef = useRef<HTMLDivElement | null>(null);
 
-  const { username, ethereal } = useLoggedInUser();
+  const { walletAddress, username, ethereal } = useLoggedInUser();
   const userHasProfile = !!username && !ethereal;
 
+  const {
+    data: whitelistState,
+    loading: loadingCoinMachineWhitelistState,
+  } = useCoinMachineHasWhitelistQuery({
+    variables: { colonyAddress },
+  });
+  const isWhitelistExtensionEnabled =
+    whitelistState?.coinMachineHasWhitelist || false;
+
+  const {
+    data: userWhitelistStatusData,
+    loading: userStatusLoading,
+  } = useUserWhitelistStatusQuery({
+    variables: { colonyAddress, userAddress: walletAddress },
+    skip: !isWhitelistExtensionEnabled,
+  });
+
+  const isUserWhitelisted =
+    userWhitelistStatusData?.userWhitelistStatus?.userIsWhitelisted;
+
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const canAdministerComments =
+    userHasProfile && (hasRoot(allUserRoles) || canAdminister(allUserRoles));
   /*
    * @NOTE This is needed in order to make the scroll effect trigger after
    * each new comment was made, otherwise it will use React's internal cache
@@ -70,7 +115,12 @@ const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
    */
   useLayoutEffect(scrollComments, [scrollComments]);
 
-  if (loading) {
+  const filteredComments = useMemo(() => {
+    const comments = data?.transactionMessages?.messages || [];
+    return commentTransformer(comments, walletAddress, canAdministerComments);
+  }, [canAdministerComments, data, walletAddress]);
+
+  if (loading || loadingCoinMachineWhitelistState || userStatusLoading) {
     return (
       <div className={styles.main}>
         <div className={styles.messages}>
@@ -88,35 +138,53 @@ const Chat = ({ colony: { colonyAddress }, transactionHash }: Props) => {
     <div className={styles.main}>
       <div className={styles.messages}>
         <div>
-          {data?.transactionMessages?.messages &&
-          data?.transactionMessages?.messages?.length ? (
-            data?.transactionMessages?.messages.map(
-              ({ createdAt, initiator, context }) => (
-                <Comment
-                  key={`${initiator}.${createdAt}`}
-                  createdAt={createdAt}
-                  comment={context.message}
-                  user={initiator}
-                />
-              ),
+          {filteredComments?.length ? (
+            filteredComments.map(
+              ({ createdAt, initiator, context, sourceId }) => {
+                const { message, deleted, adminDelete, userBanned } = context;
+                return (
+                  <Comment
+                    key={`${initiator}.${createdAt}`}
+                    createdAt={createdAt}
+                    comment={message}
+                    user={initiator}
+                    colony={colony}
+                    commentMeta={{
+                      id: sourceId,
+                      deleted,
+                      adminDelete,
+                      userBanned,
+                    }}
+                    showControls
+                  />
+                );
+              },
             )
           ) : (
             <div className={styles.empty}>
-              <FormattedMessage {...MSG.emptyText} />
+              {disabled ? (
+                <FormattedMessage {...MSG.disabledText} />
+              ) : (
+                <FormattedMessage {...MSG.emptyText} />
+              )}
             </div>
           )}
         </div>
         <div ref={scrollElmRef} />
       </div>
-      <div className={styles.inputBox}>
-        <CommentInput
-          colonyAddress={colonyAddress}
-          transactionHash={transactionHash}
-          callback={scrollComments}
-          disabled={!userHasProfile}
-          disabledInputPlaceholder
-        />
-      </div>
+      {!disabled && (
+        <div className={styles.inputBox}>
+          <CommentInput
+            colonyAddress={colony.colonyAddress}
+            transactionHash={transactionHash}
+            callback={scrollComments}
+            disabled={disabled || !userHasProfile || !isUserWhitelisted}
+            disabledInputPlaceholder={
+              !isUserWhitelisted ? MSG.mustWhitelistToComment : undefined
+            }
+          />
+        </div>
+      )}
     </div>
   );
 };

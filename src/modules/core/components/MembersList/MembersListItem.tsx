@@ -39,7 +39,8 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
   } = props;
   const {
     profile: { walletAddress },
-  } = user;
+    banned = false,
+  } = user as AnyUser & { banned: boolean };
 
   const userProfile = useUser(createAddress(walletAddress || AddressZero));
 
@@ -97,6 +98,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             showInfo={!onRowClick || showUserInfo}
             domainId={domainId}
             notSet={false}
+            banned={banned}
           />
         </div>
         <div className={styles.usernameSection}>

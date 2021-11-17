@@ -1,0 +1,20 @@
+.userPickerContainer {
+  margin-top: 20px;
+  margin-left: 30px;
+}
+
+.divider {
+  margin-top: 50px;
+}
+
+.infoNote {
+  margin-bottom: 15px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.footer button:first-of-type {
+  margin-right: 20px;
+  padding: 9px 0px;
+}
