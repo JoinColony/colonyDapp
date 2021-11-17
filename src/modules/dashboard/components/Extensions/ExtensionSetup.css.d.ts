@@ -13,3 +13,4 @@ export const tokenSelectorContainer: string;
 export const tokenAddessLink: string;
 export const extraParams: string;
 export const divider: string;
+export const tokenErrors: string;

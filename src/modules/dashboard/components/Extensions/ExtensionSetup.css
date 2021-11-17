@@ -120,3 +120,10 @@
   margin-bottom: 30px;
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
+
+.tokenErrors {
+  margin-top: 10px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--danger);
+}

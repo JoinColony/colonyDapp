@@ -3,7 +3,6 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router';
 import moveDecimal from 'move-decimal-point';
-
 import { endsWith } from 'lodash';
 import { Extension } from '@colony/colony-js';
 import Decimal from 'decimal.js';
@@ -74,6 +73,10 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionSetup.initParams',
     defaultMessage: 'Initialization parameters',
   },
+  tokenValidationError: {
+    id: 'dashboard.Extensions.ExtensionSetup.tokenValidationError',
+    defaultMessage: `Error: The Token to be sold needs to be different from the purchase Token.`,
+  },
 });
 
 interface Props {
@@ -103,6 +106,47 @@ const ExtensionSetup = ({
   const getToken = useCallback(
     (address) => tokens.find((token) => token.address === address),
     [tokens],
+  );
+
+  const handleCoinMachineTokenValidation = useCallback(
+    (fieldName, newValue, { values, status, setStatus }) => {
+      if (extensionId === Extension.CoinMachine) {
+        const defaultStatus = {
+          purchaseTokenError: false,
+          tokenToBeSoldError: false,
+        };
+        if (fieldName === 'tokenToBeSold') {
+          if (newValue === values.purchaseToken) {
+            setStatus({
+              ...status,
+              ...defaultStatus,
+              tokenToBeSoldError: true,
+            });
+          } else {
+            setStatus({
+              ...status,
+              ...defaultStatus,
+            });
+          }
+          return;
+        }
+        if (fieldName === 'purchaseToken') {
+          if (newValue === values.tokenToBeSold) {
+            setStatus({
+              ...status,
+              ...defaultStatus,
+              purchaseTokenError: true,
+            });
+          } else {
+            setStatus({
+              ...status,
+              ...defaultStatus,
+            });
+          }
+        }
+      }
+    },
+    [extensionId],
   );
 
   const handleFormSuccess = useCallback(() => {
@@ -248,7 +292,7 @@ const ExtensionSetup = ({
 
   if (!initializationParams) return null;
 
-  const displayParams = (params, values, isExtraParams) =>
+  const displayParams = (params, formikBag, isExtraParams) =>
     params.map(
       ({
         paramName,
@@ -293,7 +337,7 @@ const ExtensionSetup = ({
                   {complementaryLabel ? (
                     <FormattedMessage {...MSG[complementaryLabel]} />
                   ) : (
-                    getToken(values[tokenLabel])?.symbol
+                    getToken(formikBag.values[tokenLabel])?.symbol
                   )}
                 </span>
               )}
@@ -305,7 +349,7 @@ const ExtensionSetup = ({
                 appearance={{ colorSchema: 'grey' }}
                 label={title}
                 name={paramName}
-                disabled={disabled && disabled(values)}
+                disabled={disabled && disabled(formikBag.values)}
                 extra={
                   description && (
                     <p className={styles.textAreaDescription}>
@@ -344,18 +388,30 @@ const ExtensionSetup = ({
                   appearance={{ alignOptions: 'right', theme: 'grey' }}
                   elementOnly
                   label={paramName}
+                  onChange={(newValue) =>
+                    handleCoinMachineTokenValidation(
+                      paramName,
+                      newValue,
+                      formikBag,
+                    )
+                  }
                 />
               </div>
               <div className={styles.tokenAddessLink}>
                 {tokenContractAddress &&
-                  tokenContractAddress(values[paramName])}
+                  tokenContractAddress(formikBag.values[paramName])}
                 <div>
-                  <MaskedAddress address={values[paramName]} full />
+                  <MaskedAddress address={formikBag.values[paramName]} full />
                 </div>
               </div>
               {description && (
                 <p className={styles.inputsDescription}>
                   <FormattedMessage {...description} />
+                </p>
+              )}
+              {formikBag?.status?.[`${paramName}Error`] && (
+                <p className={styles.tokenErrors}>
+                  <FormattedMessage {...MSG.tokenValidationError} />
                 </p>
               )}
             </div>
@@ -378,7 +434,7 @@ const ExtensionSetup = ({
         handleSubmit,
         isSubmitting,
         isValid,
-        values,
+        ...formikBag
       }: FormikProps<object>) => (
         <div className={styles.main}>
           <Heading
@@ -403,7 +459,7 @@ const ExtensionSetup = ({
           )}
           {extraInitParams && (
             <div className={styles.inputContainer}>
-              {displayParams(extraInitParams, values, true)}
+              {displayParams(extraInitParams, formikBag, true)}
               <Heading
                 appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
                 text={MSG.initParams}
@@ -411,7 +467,7 @@ const ExtensionSetup = ({
             </div>
           )}
           <div className={styles.inputContainer}>
-            {displayParams(initializationParams, values, false)}
+            {displayParams(initializationParams, formikBag, false)}
           </div>
           {extraInitParams && <div className={styles.divider} />}
           <IconButton
@@ -419,7 +475,10 @@ const ExtensionSetup = ({
             onClick={() => handleSubmit()}
             text={{ id: 'button.confirm' }}
             loading={isSubmitting}
-            disabled={!isValid}
+            disabled={
+              !isValid ||
+              Object.values(formikBag?.status || {}).some((value) => !!value)
+            }
           />
         </div>
       )}
