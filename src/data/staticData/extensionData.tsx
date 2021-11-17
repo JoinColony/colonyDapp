@@ -4,7 +4,7 @@ import {
   FormattedMessage,
   MessageDescriptor,
 } from 'react-intl';
-import { ColonyRole, Extension, Network } from '@colony/colony-js';
+import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
 
@@ -14,7 +14,7 @@ import { CustomRadioProps } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
 import { Colony } from '~data/index';
 import { getBlockExplorerLink } from '~utils/external';
-import { DEFAULT_NETWORK } from '~constants';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 export interface ExtensionBodyProps {
   colony: Colony;
@@ -416,12 +416,7 @@ const extensions: { [key: string]: ExtensionData } = {
                 linkType: 'token',
                 addressOrHash: tokenAddress,
               })}
-              text={
-                DEFAULT_NETWORK === Network.Xdai ||
-                DEFAULT_NETWORK === Network.XdaiFork
-                  ? 'Blockscout'
-                  : 'Etherscan'
-              }
+              text={DEFAULT_NETWORK_INFO.blockExplorerName}
             />
           ),
         }}
