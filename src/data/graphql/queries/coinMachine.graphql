@@ -60,6 +60,10 @@ query CoinMachineTokenBalance($colonyAddress: String!) {
   coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
 }
 
+query CoinMachineHasWhitelist($colonyAddress: String!) {
+  coinMachineHasWhitelist(colonyAddress: $colonyAddress) @client
+}
+
 query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
   coinMachinePeriods(
     where: { colonyAddress: $colonyAddress },

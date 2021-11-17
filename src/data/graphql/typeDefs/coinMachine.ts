@@ -73,5 +73,6 @@ export default gql`
       where: EventsFilter
       orderDirection: String
     ): [SubgraphEvent!]!
+    coinMachineHasWhitelist(colonyAddress: String!): Boolean!
   }
 `;

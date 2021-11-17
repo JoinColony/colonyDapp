@@ -233,6 +233,7 @@ export type Query = {
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
   coinMachineCurrentSalePeriod: CurrentSalePeriod;
+  coinMachineHasWhitelist: Scalars['Boolean'];
   coinMachinePeriods: Array<SalePeriod>;
   coinMachineSalePeriods: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
@@ -330,6 +331,11 @@ export type QueryCoinMachineCurrentPeriodPriceArgs = {
 
 
 export type QueryCoinMachineCurrentSalePeriodArgs = {
+  colonyAddress: Scalars['String'];
+};
+
+
+export type QueryCoinMachineHasWhitelistArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -2232,6 +2238,13 @@ export type CoinMachineTokenBalanceQueryVariables = Exact<{
 
 
 export type CoinMachineTokenBalanceQuery = Pick<Query, 'coinMachineTokenBalance'>;
+
+export type CoinMachineHasWhitelistQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+}>;
+
+
+export type CoinMachineHasWhitelistQuery = Pick<Query, 'coinMachineHasWhitelist'>;
 
 export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -6253,6 +6266,37 @@ export function useCoinMachineTokenBalanceLazyQuery(baseOptions?: Apollo.LazyQue
 export type CoinMachineTokenBalanceQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceQuery>;
 export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceLazyQuery>;
 export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
+export const CoinMachineHasWhitelistDocument = gql`
+    query CoinMachineHasWhitelist($colonyAddress: String!) {
+  coinMachineHasWhitelist(colonyAddress: $colonyAddress) @client
+}
+    `;
+
+/**
+ * __useCoinMachineHasWhitelistQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineHasWhitelistQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineHasWhitelistQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineHasWhitelistQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useCoinMachineHasWhitelistQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>) {
+        return Apollo.useQuery<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>(CoinMachineHasWhitelistDocument, baseOptions);
+      }
+export function useCoinMachineHasWhitelistLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>(CoinMachineHasWhitelistDocument, baseOptions);
+        }
+export type CoinMachineHasWhitelistQueryHookResult = ReturnType<typeof useCoinMachineHasWhitelistQuery>;
+export type CoinMachineHasWhitelistLazyQueryHookResult = ReturnType<typeof useCoinMachineHasWhitelistLazyQuery>;
+export type CoinMachineHasWhitelistQueryResult = Apollo.QueryResult<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>;
 export const SubgraphCoinMachinePeriodsDocument = gql`
     query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
   coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 0, first: $limit, orderBy: "saleEndedAt", orderDirection: "desc") {
