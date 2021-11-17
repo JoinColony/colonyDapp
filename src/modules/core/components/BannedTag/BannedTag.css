@@ -1,8 +1,11 @@
 .icon {
   display: inline-block;
-  margin: 2px 7px 1px -4px;
+  margin-top: -4px;
+  margin-right: 4px;
+  margin-left: -4px;
   height: 12px;
   width: 12px;
+  vertical-align: middle;
 }
 
 .icon svg {
@@ -11,6 +14,5 @@
 
 .textSyles {
   display: inline-flex;
-  margin: 0px 3px 8px 0px;
-  vertical-align: middle;
+  vertical-align: text-top;
 }
