@@ -471,7 +471,7 @@ const extensions: { [key: string]: ExtensionData } = {
       },
       {
         paramName: 'windowSize',
-        validation: yup.number().required(),
+        validation: yup.number().integer().required(),
         title: MSG.coinMachineWindowSizeTitle,
         description: MSG.coinMachineWindowSizeDescription,
         defaultValue: 24,
@@ -502,7 +502,7 @@ const extensions: { [key: string]: ExtensionData } = {
       {
         paramName: 'userLimitFraction',
         validation: yup
-          .string()
+          .number()
           .required()
           .max(100, () => MSG.votingReputationLessThan100Error),
         title: MSG.coinMachineUserLimitFractionTitle,
