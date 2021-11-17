@@ -86,6 +86,9 @@ export interface Props extends Omit<InputComponentProps, 'placeholder'> {
    * See: https://github.com/formium/formik/issues/706
    */
   forcedFieldError?: MessageDescriptor | string;
+
+  /** External on change hook */
+  onChange?: (e: React.ChangeEvent<any>) => void;
 }
 
 const Input = ({
@@ -109,6 +112,7 @@ const Input = ({
   forcedFieldError,
   maxLength,
   maxButtonParams,
+  onChange,
 }: Props) => {
   const [id] = useState(idProp || nanoid());
   const { formatMessage } = useIntl();
@@ -131,6 +135,12 @@ const Input = ({
     disabled,
     maxLength,
     maxButtonParams,
+    onChange: (event) => {
+      inputFieldProps.onChange(event);
+      if (onChange) {
+        onChange(event);
+      }
+    },
   };
 
   const extensionStringText: string | undefined =
