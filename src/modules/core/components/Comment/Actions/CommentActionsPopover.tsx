@@ -100,7 +100,7 @@ const CommentActionsPopover = ({
           >
             <div className={styles.actionButton}>
               <Icon
-                name="trash"
+                name={commentDeleted ? 'arrow-rotate-ccw' : 'trash'}
                 title={MSG.deleteComment}
                 titleValues={{ undelete: commentDeleted }}
               />
@@ -118,7 +118,7 @@ const CommentActionsPopover = ({
           >
             <div className={styles.actionButton}>
               <Icon
-                name="circle-minus"
+                name={userBanned ? 'user-plus' : 'circle-minus'}
                 title={MSG.banFromChat}
                 titleValues={{ unban: userBanned }}
               />
