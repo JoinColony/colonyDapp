@@ -1,7 +1,9 @@
 import React, { HTMLAttributes } from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
+
 import { SimpleMessageValues } from '~types/index';
 import Icon from '~core/Icon';
+import Tag from '~core/Tag';
 
 import styles from './BannedTag.css';
 
@@ -9,7 +11,7 @@ const displayName = 'BannedTag';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
   text?: MessageDescriptor | string;
-  textValues?: SimpleMessageValues };
+  textValues?: SimpleMessageValues;
 }
 
 const BannedTag = ({
@@ -19,27 +21,29 @@ const BannedTag = ({
   ...rest
 }: Props) => {
   return (
-    <span className={styles.themeBanned} {...rest}>
+    <Tag
+      className={styles.themeBanned}
+      appearance={{ fontSize: 'small', theme: 'pink' }}
+      {...rest}
+    >
       <Icon
         title={{ id: 'label.banned' }}
         name="emoji-goblin"
         appearance={{ size: 'normal' }}
         className={styles.icon}
       />
-      <div className={styles.textSyles} {...rest}>
-        {text ? (
-          <>
-            {typeof text === 'string' ? (
-              text
-            ) : (
-              <FormattedMessage {...text} values={textValues} />
-            )}
-          </>
-        ) : (
-          children
-        )}
-      </div>
-    </span>
+      {text ? (
+        <>
+          {typeof text === 'string' ? (
+            text
+          ) : (
+            <FormattedMessage {...text} values={textValues} />
+          )}
+        </>
+      ) : (
+        children
+      )}
+    </Tag>
   );
 };
 
