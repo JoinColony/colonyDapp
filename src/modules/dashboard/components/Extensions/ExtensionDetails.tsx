@@ -13,6 +13,7 @@ import {
   Extension,
   extensionsIncompatibilityMap,
 } from '@colony/colony-js';
+import isEmpty from 'lodash/isEmpty';
 
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
@@ -474,16 +475,20 @@ const ExtensionDetails = ({
               />
             </div>
           ) : null}
-          <div className={styles.permissions}>
-            <Heading
-              appearance={{ size: 'normal' }}
-              tagName="h4"
-              text={MSG.permissionsNeeded}
-            />
-            {extension.neededColonyPermissions.map((permission: ColonyRole) => (
-              <PermissionsLabel key={permission} permission={permission} />
-            ))}
-          </div>
+          {!isEmpty(extension.neededColonyPermissions) && (
+            <div className={styles.permissions}>
+              <Heading
+                appearance={{ size: 'normal' }}
+                tagName="h4"
+                text={MSG.permissionsNeeded}
+              />
+              {extension.neededColonyPermissions.map(
+                (permission: ColonyRole) => (
+                  <PermissionsLabel key={permission} permission={permission} />
+                ),
+              )}
+            </div>
+          )}
         </div>
       </aside>
     </div>

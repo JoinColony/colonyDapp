@@ -657,13 +657,7 @@ const extensions: { [key: string]: ExtensionData } = {
     ],
     currentVersion: 1,
     createdAt: 1603915271852,
-    neededColonyPermissions: [
-      ColonyRole.Root,
-      ColonyRole.Administration,
-      ColonyRole.Arbitration,
-      ColonyRole.Architecture,
-      ColonyRole.Funding,
-    ],
+    neededColonyPermissions: [],
     enabledExtensionBody: (props) => Whitelist(props),
     initializationParams: [
       {
