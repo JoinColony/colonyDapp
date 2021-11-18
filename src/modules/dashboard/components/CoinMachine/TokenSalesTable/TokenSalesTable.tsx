@@ -79,6 +79,7 @@ interface PeriodInfo {
 }
 
 interface Props {
+  periodTokens?: Required<PeriodTokensType>;
   colonyAddress: Address;
   extensionAddress?: Address;
   sellableToken?: TokenInfoQuery['tokenInfo'];
@@ -89,6 +90,7 @@ interface Props {
 const displayName = 'dashboard.CoinMachine.TokenSalesTable';
 
 const TokenSalesTable = ({
+  periodTokens,
   colonyAddress,
   extensionAddress,
   sellableToken,
@@ -163,7 +165,7 @@ const TokenSalesTable = ({
             {
               targetPeriodTokens: bigNumberify(targetPerPeriod),
               maxPeriodTokens: bigNumberify(maxPerPeriod),
-            } as PeriodTokensType,
+            } as Required<PeriodTokensType>,
             tokensBought,
           ),
         };
@@ -199,7 +201,7 @@ const TokenSalesTable = ({
 
   return (
     <div className={styles.container}>
-      <div>
+      <div className={styles.headingContainer}>
         <Heading
           text={MSG.tableTitle}
           appearance={{

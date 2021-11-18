@@ -4,7 +4,7 @@
   height: 100%;
 }
 
-.container > h5 {
+.container h5 {
   margin-bottom: 34px;
   font-size: var(--size-smallish);
 }
@@ -90,6 +90,13 @@
    * In order to better align the spinner with the text
    */
   margin-top: -9px;
+}
+
+.headingContainer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-right: 25px;
 }
 
 .priceStatusHeading {
