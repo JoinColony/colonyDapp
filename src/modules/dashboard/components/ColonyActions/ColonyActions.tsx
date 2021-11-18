@@ -154,6 +154,14 @@ const ColonyActions = ({
   const actions = useTransformer(getActionsListData, [
     installedExtensionsAddresses,
     { ...oneTxActions, ...eventsActions, ...motions },
+    /*
+     * @NOTE That due to the way autentication works for us, and that we use
+     * subscriptions, the comment count value is not unreliable since we cannot
+     * filter it out properly
+     * There's two alternatives to this, none of which are pleasant:
+     * - switch back to using queries (and immplement filtering on the server)
+     * - fetch the whole comments, for all actions, filter then and count then locally
+     */
     commentCount?.transactionMessagesCount,
     {
       extensionAddresses: extensionAddresses as Address[],

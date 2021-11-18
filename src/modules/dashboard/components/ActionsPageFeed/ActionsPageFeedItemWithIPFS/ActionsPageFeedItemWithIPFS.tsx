@@ -1,15 +1,13 @@
 import React, { useCallback } from 'react';
 
+import Comment, { Props as CommentProps } from '~core/Comment';
+
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../../core/fetchers';
 
-import ActionsPageFeedItem, {
-  ActionsPageFeedItemProps,
-} from '../ActionsPageFeedItem';
-
 const displayName = 'dashboard.ActionsPageFeed.ActionsPageFeedItemWithIPFS';
 
-interface Props extends ActionsPageFeedItemProps {
+interface Props extends CommentProps {
   hash: string;
 }
 
@@ -46,7 +44,7 @@ const ActionsPageFeedItemWithIPFS = ({
   }
 
   return (
-    <ActionsPageFeedItem
+    <Comment
       {...rest}
       comment={annotation ? annotationMessage : comment}
       annotation={annotation}

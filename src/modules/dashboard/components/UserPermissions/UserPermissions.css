@@ -13,3 +13,7 @@
 .paddingNone {
   padding: 0;
 }
+
+.bannedTag {
+  display: inline-block;
+}

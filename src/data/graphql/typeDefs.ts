@@ -299,6 +299,17 @@ export default gql`
     reputationPercentage: String!
   }
 
+  type WhitelistPolicy {
+    kycRequired: Boolean!
+    agreementRequired: Boolean!
+  }
+
+  type UserWhitelistStatus {
+    userIsApproved: Boolean!
+    userIsWhitelisted: Boolean!
+    userSignedAgreement: Boolean!
+  }
+
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -423,6 +434,11 @@ export default gql`
       tokenAddress: String!
       domainId: Int!
     ): String!
+    whitelistPolicy(colonyAddress: String!): WhitelistPolicy!
+    userWhitelistStatus(
+      colonyAddress: String!
+      userAddress: String!
+    ): UserWhitelistStatus!
   }
 
   extend type Mutation {
@@ -441,16 +457,6 @@ export default gql`
 
   input ByColoniesAddressesFilter {
     id_in: [String!]!
-  }
-
-  type SubgraphBlock {
-    id: String!
-    timestamp: String!
-  }
-
-  type SubgraphTransaction {
-    id: String!
-    block: SubgraphBlock!
   }
 
   type SubgraphToken {
@@ -520,7 +526,6 @@ export default gql`
       orderDirection: String!
     ): [SubgraphColony!]!
     processedColony(address: String!): ProcessedColony!
-    block(id: String!): SubgraphBlock
   }
 
   #

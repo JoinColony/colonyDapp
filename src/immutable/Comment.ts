@@ -1,0 +1,5 @@
+export enum COMMENT_MODERATION {
+  NONE = 'NONE',
+  CAN_EDIT = 'CAN_EDIT',
+  CAN_MODERATE = 'CAN_MODERATE',
+}

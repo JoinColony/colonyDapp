@@ -4,8 +4,6 @@ import {
   ClientType,
   ColonyVersion,
   getExtensionHash,
-  getLogs,
-  getBlockTime,
   ROOT_DOMAIN_ID,
   Extension,
 } from '@colony/colony-js';
@@ -23,6 +21,11 @@ import {
 import extensionData from '~data/staticData/extensionData';
 import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
 import { SortDirection } from '~types/index';
+import {
+  SubgraphKycAddressesDocument,
+  SubgraphKycAddressesQuery,
+  SubgraphKycAddressesQueryVariables,
+} from '~data/generated';
 
 export const extensionsResolvers = ({
   colonyManager: { networkClient },
@@ -90,61 +93,28 @@ export const extensionsResolvers = ({
       }
     },
     async whitelistedUsers(_, { colonyAddress }) {
-      const { provider } = networkClient;
       try {
         const whitelistClient = await colonyManager.getClient(
           ClientType.WhitelistClient,
           colonyAddress,
         );
 
+        const { data: kycAddresesData } = await apolloClient.query<
+          SubgraphKycAddressesQuery,
+          SubgraphKycAddressesQueryVariables
+        >({
+          query: SubgraphKycAddressesDocument,
+          variables: {
+            extensionAddress: whitelistClient.address.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
         /*
-         * @TODO Fetch whitelist users from events coming from the subgraph
-         * Better yet, refactor this to keep user addresses directly on a subgraph
-         * as entities, at which point we could just fetch them directly
-         *
-         * This will simplify a lot of logic we are using below regarding
-         * filtering, sorting, parsing and ensuring they are unique
+         * @NOTE This query handles aggreement signing also
          */
-        const userApprovedFilter = whitelistClient.filters.UserApproved(
-          null,
-          null,
+        return kycAddresesData?.kycaddresses?.map((kycAddress) =>
+          getMinimalUser(kycAddress?.walletAddress || ''),
         );
-
-        const userApprovedLogs = await getLogs(
-          whitelistClient,
-          userApprovedFilter,
-        );
-
-        const userApprovedEvents = await Promise.all(
-          userApprovedLogs.map(async (log) => {
-            const parsedLog = whitelistClient.interface.parseLog(log);
-            const { blockHash } = log;
-            return {
-              ...parsedLog,
-              createdAt: blockHash
-                ? await getBlockTime(provider, blockHash)
-                : 0,
-            };
-          }),
-        );
-        const sortedUserApprovedEvents = userApprovedEvents.sort(
-          (firstEvent, secondEvent) =>
-            secondEvent.createdAt - firstEvent.createdAt,
-        );
-        const uniqeAddresses = [
-          ...new Set(userApprovedEvents.map((event) => event.values._user)), // eslint-disable-line no-underscore-dangle
-        ];
-
-        return uniqeAddresses.reduce((users, userAddress) => {
-          const userLastEvent = sortedUserApprovedEvents.find(
-            (event) => event.values._user === userAddress, // eslint-disable-line no-underscore-dangle
-          );
-          // eslint-disable-next-line no-underscore-dangle
-          if (userLastEvent.values._status) {
-            return [...users, getMinimalUser(userLastEvent.values._user)]; // eslint-disable-line no-underscore-dangle
-          }
-          return users;
-        }, []);
       } catch (error) {
         console.error(error);
         return [];

@@ -366,14 +366,17 @@ function* colonyCreate({
     yield all(
       [
         deployTokenAuthority,
-        setTokenAuthority,
-        setOwner,
         deployOneTx,
         setOneTxRoleAdministration,
         setOneTxRoleFunding,
       ]
         .filter(Boolean)
         .map(({ id }) => put(transactionAddIdentifier(id, colonyAddress))),
+    );
+    yield all(
+      [setTokenAuthority, setOwner]
+        .filter(Boolean)
+        .map(({ id }) => put(transactionAddIdentifier(id, tokenAddress))),
     );
 
     if (deployTokenAuthority) {

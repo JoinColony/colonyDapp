@@ -1,0 +1,19 @@
+@value wideButton: 160px;
+
+.modalHeading {
+  padding: 32px 0 20px;
+}
+
+.modalContent {
+  font-size: var(--size-normal);
+  color: var(--dark);
+}
+
+.comment {
+  margin: 23px 0 36px;
+  padding: 0 20px;
+}
+
+.comment > div, .comment:hover > div {
+  background-color: color-mod(var(--temp-grey-blue-7) alpha(15%));
+}

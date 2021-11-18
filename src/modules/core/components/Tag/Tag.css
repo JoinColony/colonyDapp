@@ -7,6 +7,10 @@
   color: var(--colony-white);
 }
 
+.baseStyles + .baseStyles {
+  margin-left: 10px;
+}
+
 .themePrimary {
   composes: baseStyles;
   background-color: var(--primary);
@@ -40,6 +44,25 @@
 
 .themeDangerGhost {
   composes: baseStyles;
+}
+
+.themeBanned {
+  composes: baseStyles;
+  padding: 2px 8px 2px;
+  background-color: color-mod(var(--pink) alpha(20%));
+  color: var(--pink);
+}
+
+.themeBanned .icon {
+  display: inline-block;
+  margin: -7px 7px -4px -4px;
+  height: 12px;
+  width: 12px;
+  vertical-align: middle;
+}
+
+.themeBanned .icon svg {
+  vertical-align: center;
 }
 
 .colorSchemaInverted {

@@ -5,14 +5,20 @@ import NavLink from '~core/NavLink';
 import Heading from '~core/Heading';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import Icon from '~core/Icon';
 import useAvatarDisplayCounter from '~utils/hooks/useAvatarDisplayCounter';
 import {
   Colony,
   useColonyMembersWithReputationQuery,
   useMembersSubscription,
+  useBannedUsersQuery,
+  useLoggedInUser,
 } from '~data/index';
-import { Address } from '~types/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { Address } from '~types/index';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '../../../../transformers';
+import { hasRoot, canAdminister } from '../../../../users/checks';
 
 import styles from './ColonyMembers.css';
 
@@ -51,6 +57,20 @@ const ColonyMembers = ({
   maxAvatars = 15,
 }: Props) => {
   const {
+    walletAddress: currentUserWalletAddress,
+    username,
+    ethereal,
+  } = useLoggedInUser();
+  const hasRegisteredProfile = !!username && !ethereal;
+  const allUserRoles = useTransformer(getAllUserRoles, [
+    colony,
+    currentUserWalletAddress,
+  ]);
+  const canAdministerComments =
+    hasRegisteredProfile &&
+    (hasRoot(allUserRoles) || canAdminister(allUserRoles));
+
+  const {
     data: membersWithReputation,
     loading: loadingColonyMembersWithReputation,
   } = useColonyMembersWithReputationQuery({
@@ -61,6 +81,15 @@ const ColonyMembers = ({
   });
 
   const { data: members, loading: loadingMembers } = useMembersSubscription({
+    variables: {
+      colonyAddress,
+    },
+  });
+
+  const {
+    data: bannedMembers,
+    loading: loadingBannedUsers,
+  } = useBannedUsersQuery({
     variables: {
       colonyAddress,
     },
@@ -86,7 +115,32 @@ const ColonyMembers = ({
       ? BASE_MEMBERS_ROUTE
       : `${BASE_MEMBERS_ROUTE}/${currentDomainId}`;
 
-  if (loadingColonyMembersWithReputation || loadingMembers) {
+  const colonyMembersWithBanStatus = useMemo(
+    () =>
+      (colonyMembers || []).map((walletAddress) => {
+        // eslint-disable-next-line max-len
+        const isUserBanned = bannedMembers?.bannedUsers?.find(
+          ({
+            id: bannedUserWalletAddress,
+            banned,
+          }: {
+            id: Address;
+            banned: boolean;
+          }) => banned && bannedUserWalletAddress === walletAddress,
+        );
+        return {
+          walletAddress,
+          banned: canAdministerComments ? !!isUserBanned : false,
+        };
+      }),
+    [colonyMembers, bannedMembers, canAdministerComments],
+  );
+
+  if (
+    loadingColonyMembersWithReputation ||
+    loadingMembers ||
+    loadingBannedUsers
+  ) {
     return (
       <MiniSpinnerLoader
         className={styles.main}
@@ -125,16 +179,17 @@ const ColonyMembers = ({
         />
       </NavLink>
       <ul className={styles.userAvatars}>
-        {(colonyMembers as Address[])
+        {colonyMembersWithBanStatus
           .slice(0, avatarsDisplaySplitRules)
-          .map((userAddress: Address) => (
-            <li className={styles.userAvatar} key={userAddress}>
+          .map(({ walletAddress, banned }) => (
+            <li className={styles.userAvatar} key={walletAddress}>
               <UserAvatar
                 size="xs"
-                colony={colony}
-                address={userAddress}
+                address={walletAddress}
+                banned={banned}
                 showInfo
                 notSet={false}
+                colony={colony}
                 popperProps={{
                   placement: 'bottom',
                   showArrow: false,
@@ -155,6 +210,18 @@ const ColonyMembers = ({
                   ],
                 }}
               />
+              {/*
+               * @TODO Replace with proper user banned icon
+               */}
+              {banned && (
+                <div className={styles.userBanned}>
+                  <Icon
+                    appearance={{ size: 'extraTiny' }}
+                    name="shield-pink"
+                    title={{ id: 'label.banned' }}
+                  />
+                </div>
+              )}
             </li>
           ))}
         {!!remainingAvatarsCount && (

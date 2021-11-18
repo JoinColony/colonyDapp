@@ -46,10 +46,13 @@
     "label.email": "Email address",
     "label.password": "Password",
     "label.force": "Force",
+    "label.banned": "Banned",
     "placeholder.email": "handle@domain.com",
     "placeholder.password": "Password",
 
     "wallet.metamask": "MetaMask",
+
+    "text.learnMore": "Learn More",
 
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
@@ -84,6 +87,8 @@
     "transaction.ColonyClient.registerColonyLabel.description": "Create Colony Name",
     "transaction.ColonyClient.deployTokenAuthority.title": "Deploy Token Authority",
     "transaction.ColonyClient.deployTokenAuthority.description": "Deploy Token Authority",
+    "transaction.ColonyClient.makeArbitraryTransaction.title": "Make arbitrary transaction",
+    "transaction.ColonyClient.makeArbitraryTransaction.description": "Make arbitrary transaction",
     "transaction.ColonyClient.installExtension.title": "Add Extension to Colony",
     "transaction.ColonyClient.installExtension.description": "Add Extension to Colony",
     "transaction.TokenClient.setAuthority.title": "Set Token Authority",
@@ -169,6 +174,8 @@
     "transaction.WhitelistClient.approveUsers.title": "Update whitelist users",
     "transaction.group.approveUsers.title": "Update whitelist users",
     "transaction.group.approveUsers.description": "Update whitelist users",
+    "transaction.WhitelistClient.signAgreement.title": "Sign Agreement",
+    "transaction.WhitelistClient.signAgreement.description": "Sign Agreement",
 
     "transaction.VotingReputationClient.createMotion.title": "Create motion",
     "transaction.VotingReputationClient.createMotion.description": "Create motion",
@@ -207,6 +214,10 @@
     "transaction.VotingReputationClient.escalateMotionWithProofs.title": "Escalate Motion",
     "transaction.VotingReputationClient.escalateMotionWithProofs.description": "Escalate Motion",
 
+    "transaction.group.buyTokens.title": "Buy Tokens",
+    "transaction.group.buyTokens.description": "Buy Tokens",
+    "transaction.CoinMachineClient.buyTokens.title": "Buy Tokens",
+    "transaction.CoinMachineClient.buyTokens.description": "Buy Tokens",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",

@@ -1,0 +1,65 @@
+@value inputBackground: rgb(249, 250, 250);
+@value shadow: inset 0px 2px 4px color-mod(black alpha(7%));
+
+.main {
+  display: block;
+  position: relative;
+}
+
+.commentBox textarea {
+  padding: 10px 8px;
+  height: auto;
+  border-radius: var(--radius-tiny);
+  border: 1px solid var(--temp-grey-blue-4);
+  background-color: inputBackground;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-normal);
+  line-height: var(--size-medium-l);
+  box-shadow: shadow;
+}
+
+.commentBox textarea[aria-invalid="true"] {
+  border: 1px solid var(--temp-grey-blue-4);
+}
+
+.commentBox textarea:focus,
+.commentBox textarea:active {
+  border: 1px solid var(--primary);
+}
+
+.commentBox textarea:disabled {
+  border: 1px solid color-mod(var(--temp-grey-4) alpha(50%));
+  background-color: color-mod(var(--temp-grey-4) alpha(10%));
+}
+
+.sendInstructions {
+  margin-top: 5px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  text-align: right;
+  color: var(--temp-grey-0);
+  opacity: 0;
+  transition: opacity 0.2s linear;
+}
+
+.sendInstructions b {
+  font-weight: var(--weight-bold);
+  color: var(--temp-grey-blue-7);
+}
+
+.sendInstructions b:last-child {
+  margin-left: 15px;
+}
+
+.sendInstructionsFadeIn {
+  composes: sendInstructions;
+  opacity: 1;
+}
+
+.submitting {
+  display: inline-block;
+  margin-top: -20px;
+  padding-right: 3px;
+  position: relative;
+  float: right;
+}

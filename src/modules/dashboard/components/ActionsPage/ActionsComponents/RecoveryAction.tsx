@@ -4,11 +4,11 @@ import { ColonyRole } from '@colony/colony-js';
 
 import FriendlyName from '~core/FriendlyName';
 import PermissionsLabel from '~core/PermissionsLabel';
+import Comment, { CommentInput } from '~core/Comment';
 import ActionsPageFeed, {
   SystemInfo,
   SystemMessage,
   ActionsPageFeedType,
-  ActionsPageFeedItem,
   ActionsPageFeedItemWithIPFS,
   ActionsPageEvent,
   EventValues,
@@ -16,7 +16,6 @@ import ActionsPageFeed, {
   ActionsPageSystemInfo,
   ActionsPageSystemMessage,
 } from '~dashboard/ActionsPageFeed';
-import ActionsPageComment from '~dashboard/ActionsPageComment';
 
 import {
   useLoggedInUser,
@@ -116,6 +115,7 @@ const RecoveryAction = ({
       blockNumber,
       colonyAddress,
     },
+    pollInterval: 1000,
   });
 
   const {
@@ -126,6 +126,7 @@ const RecoveryAction = ({
       blockNumber,
       colonyAddress,
     },
+    pollInterval: 1000,
   });
 
   const isInRecoveryMode = useMemo(() => {
@@ -216,6 +217,7 @@ const RecoveryAction = ({
           {annotationHash && (
             <ActionsPageFeedItemWithIPFS
               createdAt={actionCreatedAt}
+              colony={colony}
               user={initiator}
               annotation
               hash={annotationHash}
@@ -327,9 +329,10 @@ const RecoveryAction = ({
                     TransactionMessageFragment
                   >;
                   return (
-                    <ActionsPageFeedItem
+                    <Comment
                       key={uniqueId}
                       createdAt={createdAt}
+                      colony={colony}
                       comment={message}
                       user={messageInitiator}
                     />
@@ -375,8 +378,8 @@ const RecoveryAction = ({
            * and a registered user profile
            */}
           {currentUserName && !ethereal && (
-            <div ref={bottomElementRef}>
-              <ActionsPageComment
+            <div ref={bottomElementRef} className={styles.commentBox}>
+              <CommentInput
                 transactionHash={transactionHash}
                 colonyAddress={colonyAddress}
               />

@@ -2,15 +2,33 @@ import React, { useMemo, useRef, useCallback } from 'react';
 import { bigNumberify } from 'ethers/utils';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import classnames from 'classnames';
-
 import { ROOT_DOMAIN_ID, ColonyRoles } from '@colony/colony-js';
+
+import { CommentInput } from '~core/Comment';
 import Heading from '~core/Heading';
+import Tag, { Appearance as TagAppearance } from '~core/Tag';
+import FriendlyName from '~core/FriendlyName';
+import MemberReputation from '~core/MemberReputation';
+import ProgressBar from '~core/ProgressBar';
+import { ActionButton } from '~core/Button';
+import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
   SystemMessage,
 } from '~dashboard/ActionsPageFeed';
-import ActionsPageComment from '~dashboard/ActionsPageComment';
+
+import { getFormattedTokenValue } from '~utils/tokens';
+import {
+  getUpdatedDecodedMotionRoles,
+  MotionState,
+  MotionValue,
+  MOTION_TAG_MAP,
+  shouldDisplayMotion,
+} from '~utils/colonyMotions';
+import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
+import { mapPayload } from '~utils/actions';
 import { ColonyMotions, ColonyAndExtensionsEvents } from '~types/index';
+import { ActionTypes } from '~redux/index';
 import {
   useLoggedInUser,
   Colony,
@@ -27,23 +45,6 @@ import {
   OneDomain,
   useColonyHistoricRolesQuery,
 } from '~data/index';
-import Tag, { Appearance as TagAppearance } from '~core/Tag';
-import FriendlyName from '~core/FriendlyName';
-import MemberReputation from '~core/MemberReputation';
-import ProgressBar from '~core/ProgressBar';
-import { ActionButton } from '~core/Button';
-import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
-import { getFormattedTokenValue } from '~utils/tokens';
-import {
-  getUpdatedDecodedMotionRoles,
-  MotionState,
-  MotionValue,
-  MOTION_TAG_MAP,
-  shouldDisplayMotion,
-} from '~utils/colonyMotions';
-import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
-import { mapPayload } from '~utils/actions';
-import { ActionTypes } from '~redux/index';
 
 import DetailsWidget from '../DetailsWidget';
 import StakingWidgetFlow from '../StakingWidget';
@@ -444,6 +445,7 @@ const DefaultMotion = ({
           {annotationHash && (
             <div className={motionSpecificStyles.annotation}>
               <ActionsPageFeedItemWithIPFS
+                colony={colony}
                 user={initiator}
                 annotation
                 hash={annotationHash}
@@ -452,6 +454,7 @@ const DefaultMotion = ({
           )}
           {objectionAnnotation?.motionObjectionAnnotation?.metadata && (
             <ActionsPageFeedItemWithIPFS
+              colony={colony}
               user={objectionAnnotationUser}
               annotation
               hash={objectionAnnotation.motionObjectionAnnotation.metadata}
@@ -476,8 +479,8 @@ const DefaultMotion = ({
           />
 
           {userHasProfile && (
-            <div ref={bottomElementRef}>
-              <ActionsPageComment
+            <div ref={bottomElementRef} className={styles.commentBox}>
+              <CommentInput
                 transactionHash={transactionHash}
                 colonyAddress={colony.colonyAddress}
               />

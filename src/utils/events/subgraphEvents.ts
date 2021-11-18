@@ -3,9 +3,9 @@ import {
   id as topicId,
   bigNumberify,
   hexlify,
+  BigNumber,
 } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
-import { ApolloQueryResult } from '@apollo/client';
 
 import { SubgraphEvent, SubgraphTransaction, SubgraphBlock } from '~data/index';
 import {
@@ -61,6 +61,7 @@ const addressArgumentParser = (values: {
   escalator?: string;
   recipient?: string;
   voter?: string;
+  buyer?: string;
 }): {
   user?: Address;
   agent?: Address;
@@ -69,6 +70,7 @@ const addressArgumentParser = (values: {
   escalator?: Address;
   recipient?: Address;
   voter?: Address;
+  buyer?: Address;
 } => {
   const parsedValues: {
     user?: Address;
@@ -77,15 +79,24 @@ const addressArgumentParser = (values: {
     staker?: Address;
     escalator?: Address;
     recipient?: Address;
+    voter?: Address;
+    buyer?: Address;
   } = {};
-  ['user', 'agent', 'creator', 'staker', 'escalator', 'recipient', 'voter'].map(
-    (propName) => {
-      if (values[propName]) {
-        parsedValues[propName] = createAddress(values[propName]);
-      }
-      return null;
-    },
-  );
+  [
+    'user',
+    'agent',
+    'creator',
+    'staker',
+    'escalator',
+    'recipient',
+    'voter',
+    'buyer',
+  ].map((propName) => {
+    if (values[propName]) {
+      parsedValues[propName] = createAddress(values[propName]);
+    }
+    return null;
+  });
   return parsedValues;
 };
 
@@ -116,7 +127,10 @@ const roleArgumentParser = (values: {
     parsedValues.role = parseInt(values.role, 10);
   }
   if (values?.setTo) {
-    parsedValues.setTo = Boolean(values.setTo);
+    /*
+     * Apparently there's no better way to parse a boolean value from string...
+     */
+    parsedValues.setTo = values.setTo === 'true';
   }
   return parsedValues;
 };
@@ -158,9 +172,41 @@ const storageSlotArgumentParser = (values: {
   slot?: string;
 }): {
   slot?: string;
-} => ({
-  slot: hexlify(parseInt(values.slot || '0', 10)),
-});
+} => {
+  const parsedValues: {
+    slot?: string;
+  } = {};
+  if (values?.slot) {
+    parsedValues.slot = hexlify(parseInt(values.slot || '0', 10));
+  }
+  return parsedValues;
+};
+
+/*
+ * @NOTE Only use internally
+ *
+ * Specific function to parse known, expected, values
+ * This parses values for any event with storage slots
+ */
+const coinMachineEventsArgumentParser = (values: {
+  numTokens?: string;
+  totalCost?: string;
+}): {
+  numTokens?: BigNumber;
+  totalCost?: BigNumber;
+} => {
+  const parsedValues: {
+    numTokens?: BigNumber;
+    totalCost?: BigNumber;
+  } = {};
+  if (values?.numTokens) {
+    parsedValues.numTokens = bigNumberify(values.numTokens);
+  }
+  if (values?.totalCost) {
+    parsedValues.totalCost = bigNumberify(values.totalCost);
+  }
+  return parsedValues;
+};
 
 /*
  * Utility to parse events that come from the subgraph handler
@@ -193,6 +239,7 @@ export const parseSubgraphEvent = ({
       ...addressArgumentParser(parsedArguments),
       ...motionArgumentparser(parsedArguments),
       ...storageSlotArgumentParser(parsedArguments),
+      ...coinMachineEventsArgumentParser(parsedArguments),
     },
   };
   /*
@@ -250,21 +297,4 @@ export const sortSubgraphEventByIndex = (
     return firstIndex.sub(secondIndex).toNumber();
   }
   return secondIndex.sub(firstIndex).toNumber();
-};
-
-/* Needed to handle cases where the block may not exist
-   on the subgraph yet and we need the events within it */
-export const waitForBlockToExist = (
-  handleRefetch: () => Promise<ApolloQueryResult<any>>,
-  waitingTime = 1000,
-) => {
-  return new Promise((resolve) => {
-    const timeoutId = setTimeout(async () => {
-      const { data } = await handleRefetch();
-      if (data) {
-        clearTimeout(timeoutId);
-        resolve(true);
-      }
-    }, waitingTime);
-  });
 };

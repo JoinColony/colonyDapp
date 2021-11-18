@@ -57,6 +57,12 @@ export default new InMemoryCache({
         whitelistedUsers: {
           merge: false,
         },
+        kycaddresses: {
+          merge: false,
+        },
+        bannedUsers: {
+          merge: false,
+        },
       },
     },
     Event: {

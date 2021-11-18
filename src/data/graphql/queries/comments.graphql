@@ -22,3 +22,28 @@ query TransactionMessagesCount($colonyAddress: String!) {
     }
   }
 }
+
+query BannedUsers($colonyAddress: String!) {
+  bannedUsers(colonyAddress: $colonyAddress) {
+		id
+    profile {
+      walletAddress
+      username
+      displayName
+    }
+    eventId
+    event {
+      context {
+        ... on TransactionMessageEvent {
+          type
+          transactionHash
+          message
+          colonyAddress
+          deleted
+          adminDelete
+        }
+      }
+    }
+    banned
+  }
+}

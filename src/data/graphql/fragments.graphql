@@ -72,12 +72,12 @@ fragment EventFields on Event {
   type
 }
 
-fragment EventContext on Event {	
+fragment EventContext on Event {
     context {
-    ... on CreateDomainEvent {	
-      type	
-      ethDomainId	
-      colonyAddress	
+    ... on CreateDomainEvent {
+      type
+      ethDomainId
+      colonyAddress
     }
   }
 }
@@ -110,6 +110,9 @@ fragment TransactionEventContext on Event {
       transactionHash
       message
       colonyAddress
+      deleted
+      adminDelete
+      userBanned
     }
   }
 }

@@ -64,3 +64,13 @@
   font-size: var(--size-small);
   letter-spacing: initial;
 }
+
+.userBanned {
+  /*
+   * @NOTE There's a lot of negative spacing required to make this render properly
+   */
+  display: block;
+  margin: -12px -4px -8px 0;
+  position: relative;
+  float: right;
+}

@@ -26,17 +26,13 @@ const MSG = defineMessages({
   description: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.description',
     defaultMessage: `Your colony’s native token is locked and non-transferrable
-     by default. This action allows you to unlock it so that it may be 
+     by default. This action allows you to unlock it so that it may be
      freely transferred between accounts.`,
   },
   note: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.note',
     defaultMessage:
       'Please note: this action is irreversible. Use with caution',
-  },
-  learnMore: {
-    id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.learnMore',
-    defaultMessage: 'Learn more.',
   },
   noPermission: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.noPermission',
@@ -49,6 +45,8 @@ interface Props {
   colony: Colony;
   back?: () => void;
 }
+
+const LEARN_MORE_URL = `https://colony.gitbook.io/colony/manage-funds/unlock-token`;
 
 const UnlockTokenForm = ({
   colony: { isNativeTokenLocked, canUnlockNativeToken },
@@ -90,8 +88,8 @@ const UnlockTokenForm = ({
           <FormattedMessage {...MSG.note} />
           <ExternalLink
             className={styles.learnMoreLink}
-            text={MSG.learnMore}
-            href="https://colony.gitbook.io/colony/manage-funds/unlock-token"
+            text={{ id: 'text.learnMore' }}
+            href={LEARN_MORE_URL}
           />
         </div>
       </DialogSection>

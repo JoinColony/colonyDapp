@@ -3,6 +3,7 @@
     "active-task",
     "archive",
     "arrow-wallet",
+    "arrow-rotate-ccw",
     "at-sign-circle",
     "attachment",
     "bell",
@@ -23,6 +24,7 @@
     "circle-eye",
     "circle-person",
     "circle-plus",
+    "circle-minus",
     "circle-thumbs-down",
     "circle-thumbs-down-grey",
     "circle-thumbs-down-outlined",
@@ -47,6 +49,7 @@
     "emoji-edit-tools",
     "emoji-firebolt",
     "emoji-gold-coin",
+    "emoji-goblin",
     "emoji-judge",
     "emoji-medal",
     "emoji-money-wings",
@@ -68,6 +71,7 @@
     "forbidden-signal",
     "four-square",
     "graph-line",
+    "trash",
     "line-arrow-circle",
     "lock",
     "no-task",
@@ -75,6 +79,7 @@
     "person",
     "phrase",
     "question-mark",
+    "question-mark-inverted",
     "return-arrow",
     "search",
     "settings",
@@ -85,11 +90,13 @@
     "three-dots-row",
     "triangle-warning",
     "unlock",
+    "user-plus",
     "wallet"
   ],
   "multiColorIcons": [
     "circle-check-primary",
-    "metamask"
+    "metamask",
+    "shield-pink"
   ],
   "badges": [
     "Alessandra Aphid",

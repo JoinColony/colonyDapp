@@ -64,5 +64,6 @@ export default gql`
       first: Int!
       where: MotionsFilter!
     ): [SubscriptionMotion!]!
+    tokenBoughtEvents(where: EventsFilter): [SubgraphEvent!]!
   }
 `;

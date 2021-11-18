@@ -40,6 +40,7 @@ interface ActionValues {
   newVersion: string;
   address: Address;
   roles: ActionUserRoles[];
+  actionInitiator?: Address;
 }
 
 interface MotionValues extends ActionValues {

@@ -1,0 +1,129 @@
+# Coin Machine Extension
+#
+#
+
+query CoinMachineSaleTokens($colonyAddress: String!) {
+  coinMachineSaleTokens(colonyAddress: $colonyAddress) @client {
+    sellableToken {
+      address
+      decimals
+      symbol
+      name
+    }
+    purchaseToken {
+      address
+      decimals
+      symbol
+      name
+    }
+  }
+}
+
+query CoinMachineCurrentPeriodPrice($colonyAddress: String!) {
+  coinMachineCurrentPeriodPrice(colonyAddress: $colonyAddress) @client
+}
+
+query CoinMachineBoughtTokens($colonyAddress: String!) {
+  coinMachineBoughtTokens(colonyAddress: $colonyAddress) @client {
+    numTokens
+    totalCost
+  }
+}
+
+query CoinMachineTransactionAmount($colonyAddress: String!, $transactionHash: String!) {
+  coinMachineTransactionAmount(colonyAddress: $colonyAddress, transactionHash: $transactionHash) @client {
+    transactionAmount
+    transactionSucceed
+  }
+}
+
+query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
+  coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
+}
+
+query CoinMachineCurrentSalePeriod($colonyAddress: String!) {
+  coinMachineCurrentSalePeriod(colonyAddress: $colonyAddress) @client {
+    periodLength
+    timeRemaining
+  }
+}
+
+query CurrentPeriodTokens($colonyAddress: String!) {
+  currentPeriodTokens(colonyAddress: $colonyAddress) @client {
+    maxPerPeriodTokens
+    activeSoldTokens
+    targetPerPeriodTokens
+  }
+}
+
+query CoinMachineTokenBalance($colonyAddress: String!) {
+  coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
+}
+
+query CoinMachineHasWhitelist($colonyAddress: String!) {
+  coinMachineHasWhitelist(colonyAddress: $colonyAddress) @client
+}
+
+query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
+  coinMachinePeriods(
+    where: { colonyAddress: $colonyAddress },
+    skip: 0,
+    first: $limit
+    orderBy: "saleEndedAt",
+    orderDirection: "desc"
+  ) {
+    saleEndedAt
+    tokensBought
+    price
+  }
+  extensionInitialisedEvents: events(
+    where: {
+      name_contains: "ExtensionInitialised",
+      address: $extensionAddress
+    }
+  ) {
+    id
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+  tokenBoughtEvents: events(
+    where: {
+      name_contains: "TokensBought"
+      address: $extensionAddress
+    }
+  ) {
+    id
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+}
+
+query CoinMachineSalePeriods($colonyAddress: String!, $limit: Int!) {
+  coinMachineSalePeriods(colonyAddress: $colonyAddress, limit: $limit) @client {
+    saleEndedAt
+    tokensBought
+    tokensAvailable
+    price
+  }
+}
+

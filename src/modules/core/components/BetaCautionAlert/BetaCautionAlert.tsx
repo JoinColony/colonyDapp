@@ -14,10 +14,6 @@ const MSG = {
     id: 'BetaCautionAlert.cautionText',
     defaultMessage: 'Use with caution!',
   },
-  learnMore: {
-    id: 'BetaCautionAlert.learnMore',
-    defaultMessage: 'Learn more',
-  },
 };
 
 const LEARN_MORE_LINK = `https://www.notion.so/colony/Beta-Disclaimer-83a9870fe20e430fa15f1e097a0bc6d8`;
@@ -35,7 +31,7 @@ const BetaCautionAlert = () => {
     >
       {isHovered ? (
         <ExternalLink
-          text={MSG.learnMore}
+          text={{ id: 'text.learnMore' }}
           className={styles.link}
           href={LEARN_MORE_LINK}
         />

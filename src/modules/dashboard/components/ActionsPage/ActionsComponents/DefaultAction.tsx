@@ -9,7 +9,7 @@ import { parseDomainMetadata } from '~utils/colonyActions';
 import ActionsPageFeed, {
   ActionsPageFeedItemWithIPFS,
 } from '~dashboard/ActionsPageFeed';
-import ActionsPageComment from '~dashboard/ActionsPageComment';
+import { CommentInput } from '~core/Comment';
 
 import {
   useLoggedInUser,
@@ -206,6 +206,7 @@ const DefaultAction = ({
           </h1>
           {actionType !== ColonyActions.Generic && annotationHash && (
             <ActionsPageFeedItemWithIPFS
+              colony={colony}
               createdAt={createdAt}
               user={initiator}
               annotation
@@ -225,10 +226,12 @@ const DefaultAction = ({
            * and a registered user profile
            */}
           {currentUserName && !ethereal && (
-            <ActionsPageComment
-              transactionHash={transactionHash}
-              colonyAddress={colonyAddress}
-            />
+            <div className={styles.commentBox}>
+              <CommentInput
+                transactionHash={transactionHash}
+                colonyAddress={colonyAddress}
+              />
+            </div>
           )}
         </div>
         <div className={styles.details}>

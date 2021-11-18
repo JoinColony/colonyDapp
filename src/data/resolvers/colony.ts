@@ -1,4 +1,4 @@
-import { Resolvers } from '@apollo/client';
+import { Resolvers, ApolloClient } from '@apollo/client';
 import { AddressZero, HashZero } from 'ethers/constants';
 import { bigNumberify, LogDescription } from 'ethers/utils';
 import {
@@ -32,18 +32,14 @@ import {
   SubgraphRoleEventsQuery,
   SubgraphRoleEventsQueryVariables,
   SubgraphRoleEventsDocument,
-  SubgraphBlockDocument,
-  SubgraphBlockQuery,
-  SubgraphBlockQueryVariables,
+  SubgraphLatestSyncedBlockQuery,
+  SubgraphLatestSyncedBlockQueryVariables,
+  SubgraphLatestSyncedBlockDocument,
 } from '~data/index';
 
 import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
-import {
-  parseSubgraphEvent,
-  sortSubgraphEventByIndex,
-  waitForBlockToExist,
-} from '~utils/events';
+import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
 import { Address } from '~types/index';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -54,6 +50,31 @@ import {
   getPayoutClaimedTransfers,
   getColonyUnclaimedTransfers,
 } from './transactions';
+
+export const getLatestSubgraphBlock = async (
+  apolloClient: ApolloClient<object>,
+): Promise<number> => {
+  /*
+   * This magic number is hard coded into the subgraph, you cannot filter higher
+   * than this block number
+   */
+  const MAX_UPPER_BLOCK_LIMIT = 2147483647;
+  try {
+    await apolloClient.query<
+      SubgraphLatestSyncedBlockQuery,
+      SubgraphLatestSyncedBlockQueryVariables
+    >({
+      query: SubgraphLatestSyncedBlockDocument,
+      variables: {
+        blockNumber: MAX_UPPER_BLOCK_LIMIT,
+      },
+    });
+    return MAX_UPPER_BLOCK_LIMIT;
+  } catch (error) {
+    const [, syncedBlockNumber] = error.message.match(/block\snumber\s(\d*)/);
+    return parseInt(syncedBlockNumber, 10);
+  }
+};
 
 export const getProcessedColony = async (
   subgraphColony,
@@ -457,28 +478,7 @@ export const colonyResolvers = ({
           ClientType.ColonyClient,
           colonyAddress,
         );
-        const latestBlockNumber = await colonyClient.provider.getBlockNumber();
-
-        const blockWatchQuery = apolloClient.watchQuery<
-          SubgraphBlockQuery,
-          SubgraphBlockQueryVariables
-        >({
-          query: SubgraphBlockDocument,
-          variables: {
-            blockId: `block_${latestBlockNumber}`,
-          },
-        });
-
-        try {
-          const blockQueryResult = await blockWatchQuery.result();
-
-          if (!blockQueryResult.data?.block) {
-            const handleBlockRefetch = () => blockWatchQuery.refetch();
-            await waitForBlockToExist(handleBlockRefetch);
-          }
-        } catch (error) {
-          log.verbose(error);
-        }
+        const latestBlockNumber = await getLatestSubgraphBlock(apolloClient);
 
         if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
           throw new Error(`Not supported in this version of Colony`);

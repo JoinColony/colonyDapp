@@ -36,14 +36,13 @@ import MaskedAddress from '~core/MaskedAddress';
 import { ActionTypes } from '~redux/index';
 
 import PermissionsLabel from '~core/PermissionsLabel';
-import ExternalLink from '~core/ExternalLink';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import {
   COLONY_EXTENSION_DETAILS_ROUTE,
   COLONY_EXTENSION_SETUP_ROUTE,
 } from '~routes/index';
-import { DEFAULT_NETWORK_INFO } from '~constants';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
+import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -55,8 +54,6 @@ import ExtensionStatus from './ExtensionStatus';
 import ExtensionUpgrade from './ExtensionUpgrade';
 import ExtensionUninstallConfirmDialog from './ExtensionUninstallConfirmDialog';
 import { ExtensionsMSG } from './extensionsMSG';
-
-const TERMS_AND_CONDITIONS_LINK = 'https://colony.io/pdf/terms.pdf';
 
 const MSG = defineMessages({
   title: {
@@ -142,7 +139,7 @@ interface Props {
 }
 
 const ExtensionDetails = ({
-  colony: { colonyAddress, version: colonyVersion },
+  colony: { colonyAddress, version: colonyVersion, nativeTokenAddress },
   colony,
 }: Props) => {
   const { colonyName, extensionId } = useParams<{
@@ -180,8 +177,6 @@ const ExtensionDetails = ({
     networkExtensionData?.networkExtensionVersion || [];
 
   const latestNetworkExtensionVersion = networkExtension?.version || 0;
-
-  const { contractAddressLink } = DEFAULT_NETWORK_INFO;
 
   const hasRegisteredProfile = !!username && !ethereal;
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
@@ -263,11 +258,11 @@ const ExtensionDetails = ({
       {
         label: MSG.contractAddress,
         value: (
-          <ExternalLink
-            href={`${contractAddressLink}/${installedExtension.address}`}
-          >
-            <MaskedAddress address={installedExtension.address} />
-          </ExternalLink>
+          <InvisibleCopyableAddress address={installedExtension.address}>
+            <span className={styles.contractAddress}>
+              <MaskedAddress address={installedExtension.address} />
+            </span>
+          </InvisibleCopyableAddress>
         ),
       },
       {
@@ -318,10 +313,6 @@ const ExtensionDetails = ({
       heading: ExtensionsMSG.headingVotingUninstall,
       children: <Warning text={ExtensionsMSG.textVotingUninstall} />,
     },
-    [Extension.OneTxPayment]: {
-      heading: ExtensionsMSG.headingDefaultUninstall,
-      children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
-    },
     DEFAULT: {
       heading: ExtensionsMSG.headingDefaultUninstall,
       children: <FormattedMessage {...ExtensionsMSG.textDefaultUninstall} />,
@@ -367,6 +358,7 @@ const ExtensionDetails = ({
                           text={chunks}
                         />
                       ),
+                      link0: extension.descriptionLinks?.[0],
                     }}
                   />
                   {extension.info && (
@@ -374,12 +366,7 @@ const ExtensionDetails = ({
                       <FormattedMessage
                         {...extension.info}
                         values={{
-                          link: (
-                            <ExternalLink
-                              text={extension.termsCondition}
-                              href={TERMS_AND_CONDITIONS_LINK}
-                            />
-                          ),
+                          link0: extension.descriptionLinks?.[0],
                         }}
                       />
                     </div>
@@ -405,7 +392,8 @@ const ExtensionDetails = ({
                   <ExtensionSetup
                     extension={extension}
                     installedExtension={installedExtension}
-                    colonyAddress={colonyAddress}
+                    colony={colony}
+                    nativeTokenAddress={nativeTokenAddress}
                   />
                 ) : (
                   <Redirect to={extensionUrl} />

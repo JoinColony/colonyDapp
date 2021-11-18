@@ -13,6 +13,11 @@
   white-space: pre-line;
 }
 
+.extensionText a {
+  font-weight: var(--weight-normal);
+  color: var(--colony-blue);
+}
+
 .extensionSubtext {
   display: block;
   margin-top: 38px;
@@ -85,5 +90,10 @@
 .iconWrapper svg {
   fill: var(--golden);
   stroke: none;
+  cursor: pointer;
+}
+
+.contractAddress {
+  font-size: var(--size-smallish);
   cursor: pointer;
 }

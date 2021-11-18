@@ -9,8 +9,6 @@ import { SpinnerLoader } from '~core/Preloaders';
 import UserPermissions from '~dashboard/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
-
-import { getAllUserRolesForDomain } from '../../../transformers';
 import { useTransformer } from '~utils/hooks';
 import { createAddress } from '~utils/web3';
 import {
@@ -18,11 +16,19 @@ import {
   Colony,
   useColonyMembersWithReputationQuery,
   useMembersSubscription,
+  useLoggedInUser,
+  BannedUsersQuery,
 } from '~data/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
   ALLDOMAINS_DOMAIN_SELECTION,
 } from '~constants';
+import { Address } from '~types/index';
+import {
+  getAllUserRolesForDomain,
+  getAllUserRoles,
+} from '../../../transformers';
+import { hasRoot, canAdminister } from '../../../users/checks';
 
 import styles from './Members.css';
 
@@ -50,19 +56,28 @@ const MSG = defineMessages({
 
 interface Props {
   colony: Colony;
+  bannedUsers: BannedUsersQuery['bannedUsers'];
 }
 
 type Member = AnyUser & {
   roles: ColonyRole[];
   directRoles: ColonyRole[];
+  banned: boolean;
 };
 
 const displayName = 'dashboard.Members';
 
-const Members = ({ colony: { colonyAddress }, colony }: Props) => {
+const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
   const { domainId } = useParams<{
     domainId: string;
   }>();
+
+  const {
+    walletAddress: currentUserWalletAddress,
+    username,
+    ethereal,
+  } = useLoggedInUser();
+  const hasRegisteredProfile = !!username && !ethereal;
 
   const [selectedDomainId, setSelectedDomainId] = useState<number>(
     /*
@@ -113,6 +128,14 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
       domainId: currentDomainId,
     },
   });
+
+  const currentUserRoles = useTransformer(getAllUserRoles, [
+    colony,
+    currentUserWalletAddress,
+  ]);
+  const canAdministerComments =
+    hasRegisteredProfile &&
+    (hasRoot(currentUserRoles) || canAdminister(currentUserRoles));
 
   /*
    * @NOTE Skelethon Users Array
@@ -226,6 +249,15 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
     const {
       profile: { walletAddress },
     } = user;
+    const isUserBanned = bannedUsers.find(
+      ({
+        id: bannedUserWalletAddress,
+        banned,
+      }: {
+        id: Address;
+        banned: boolean;
+      }) => banned && bannedUserWalletAddress === walletAddress,
+    );
     const domainRole = domainRolesArray.find(
       (rolesObject) =>
         createAddress(rolesObject.userAddress) === createAddress(walletAddress),
@@ -234,6 +266,7 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
       ...user,
       roles: domainRole ? domainRole.roles : [],
       directRoles: domainRole ? domainRole.directRoles : [],
+      banned: canAdministerComments ? !!isUserBanned : false,
     };
   });
 
@@ -269,8 +302,12 @@ const Members = ({ colony: { colonyAddress }, colony }: Props) => {
       {skelethonUsers.length ? (
         <MembersList<Member>
           colony={colony}
-          extraItemContent={({ roles, directRoles }) => (
-            <UserPermissions roles={roles} directRoles={directRoles} />
+          extraItemContent={({ roles, directRoles, banned }) => (
+            <UserPermissions
+              roles={roles}
+              directRoles={directRoles}
+              banned={banned}
+            />
           )}
           domainId={currentDomainId}
           users={members}

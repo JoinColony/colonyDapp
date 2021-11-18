@@ -68,7 +68,7 @@ const ColonyHomeLayout = ({
       >
         <aside className={styles.leftAside}>
           <ColonyTitle colony={colony} />
-          {showNavigation && <ColonyNavigation />}
+          {showNavigation && <ColonyNavigation colony={colony} />}
         </aside>
         <div className={styles.mainContent}>
           {showControls && (
@@ -93,7 +93,7 @@ const ColonyHomeLayout = ({
           )}
           {children}
         </div>
-        {showSidebar ? (
+        {showSidebar && (
           <aside className={styles.rightAside}>
             <ColonyDomainDescription
               colony={colony}
@@ -103,8 +103,6 @@ const ColonyHomeLayout = ({
             <ColonyMembers colony={colony} currentDomainId={filteredDomainId} />
             <ColonyExtensions colony={colony} />
           </aside>
-        ) : (
-          <aside />
         )}
       </div>
       <ColonyUpgrade colony={colony} />

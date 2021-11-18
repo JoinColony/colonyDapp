@@ -167,3 +167,23 @@ subscription SubgraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!,
     }
   }
 }
+
+subscription SubgraphTokenBoughtEvents($colonyAddress: String!, $extensionAddress: String!) { 
+  tokenBoughtEvents: events( 
+    where: { 
+      name_contains: "TokensBought" 
+      address: $extensionAddress 
+    }
+  ) { 
+    transaction { 
+      transactionHash: id 
+      block { 
+        number: id 
+        timestamp 
+      } 
+    } 
+    address 
+    name 
+    args 
+  } 
+} 

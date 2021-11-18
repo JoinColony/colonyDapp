@@ -10,6 +10,7 @@ import { useDispatch } from 'redux-react-hook';
 import { bigNumberify } from 'ethers/utils';
 
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import TimerValue from '~core/TimerValue';
 
 import {
   useMotionTimeoutPeriodsQuery,
@@ -194,34 +195,11 @@ const CountDownTimer = ({
     );
   }
 
-  if (splitTime === undefined) {
-    return null;
-  }
-
   return (
     <div className={styles.container}>
       <FormattedMessage {...MSG.title} values={{ motionState: state }} />
       <span className={styles.time}>
-        {splitTime.days > 0 && (
-          <FormattedMessage {...MSG.days} values={{ days: splitTime.days }} />
-        )}
-        {(splitTime.days > 0 || splitTime.hours > 0) && (
-          <FormattedMessage
-            {...MSG.hours}
-            values={{ hours: splitTime.hours }}
-          />
-        )}
-        {(splitTime.days > 0 || splitTime.hours > 0 || splitTime.minutes) >
-          0 && (
-          <FormattedMessage
-            {...MSG.minutes}
-            values={{ minutes: splitTime.minutes }}
-          />
-        )}
-        <FormattedMessage
-          {...MSG.seconds}
-          values={{ seconds: splitTime.seconds }}
-        />
+        <TimerValue splitTime={splitTime} />
       </span>
     </div>
   );

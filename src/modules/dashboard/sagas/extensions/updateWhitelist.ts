@@ -7,6 +7,10 @@ import {
   WhitelistedUsersDocument,
   WhitelistedUsersQuery,
   WhitelistedUsersQueryVariables,
+  UserWhitelistStatusQuery,
+  UserWhitelistStatusDocument,
+  UserWhitelistStatusQueryVariables,
+  getLoggedInUser,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -22,6 +26,7 @@ export function* updateWhitelist({
   meta,
   payload: { userAddresses, colonyAddress, status },
 }: Action<ActionTypes.WHITELIST_UPDATE>) {
+  const { walletAddress } = yield getLoggedInUser();
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const requireTransactions = Math.ceil(userAddresses.length / 100);
   const channelNames: string[] = [];
@@ -108,6 +113,23 @@ export function* updateWhitelist({
       },
       fetchPolicy: 'network-only',
     });
+
+    /*
+     * This only needs to update for the current users, not all that were whitelist
+     * since the current session doesn't interact with them in any way
+     */
+    yield apolloClient.query<
+      UserWhitelistStatusQuery,
+      UserWhitelistStatusQueryVariables
+    >({
+      query: UserWhitelistStatusDocument,
+      variables: {
+        colonyAddress,
+        userAddress: walletAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
+
     /*
      * Close all transaction channels.
      */
