@@ -179,4 +179,6 @@ export interface FormattedEvent {
   motionId?: string;
   vote?: string;
   whiteListStatus?: boolean;
+  activePeriod?: string;
+  currentPeriod?: string;
 }
