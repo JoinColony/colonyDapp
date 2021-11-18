@@ -4,7 +4,7 @@ import { PeriodTokensType } from './RemainingDisplayWidgets';
 import { TokenPriceStatuses } from './TokenPriceStatusIcon';
 
 export const getPriceStatus = (
-  periodTokens: PeriodTokensType,
+  periodTokens: Required<PeriodTokensType>,
   tokensBought: BigNumberish,
   isOnlyHigherNeeded = false,
 ) => {

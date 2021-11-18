@@ -13,13 +13,13 @@ export interface PeriodTokensType {
   decimals: number;
   soldPeriodTokens: BigNumber;
   maxPeriodTokens: BigNumber;
-  targetPeriodTokens: BigNumber;
+  targetPeriodTokens?: BigNumber;
 }
 
 interface Props {
   isTotalSale: boolean;
   appearance?: Appearance;
-  periodTokens?: PeriodTokensType;
+  tokenAmounts?: PeriodTokensType;
 }
 
 const displayName =
@@ -53,7 +53,7 @@ const MSG = defineMessages({
 const RemainingTokens = ({
   isTotalSale,
   appearance = { theme: 'white' },
-  periodTokens,
+  tokenAmounts,
 }: Props) => {
   const widgetText = useMemo(() => {
     return {
@@ -64,25 +64,28 @@ const RemainingTokens = ({
   }, []);
 
   const displayedValue = useMemo(() => {
-    if (periodTokens) {
+    if (tokenAmounts) {
       return (
         <RemainingTokensValue
-          periodTokens={periodTokens}
-          tokensBought={periodTokens.soldPeriodTokens}
+          tokenAmounts={tokenAmounts}
+          tokensBought={tokenAmounts.soldPeriodTokens}
         />
       );
     }
 
     return <FormattedMessage {...widgetText.placeholder} />;
-  }, [widgetText, periodTokens]);
+  }, [widgetText, tokenAmounts]);
 
   const showValueWarning = useMemo(() => {
-    if (periodTokens?.soldPeriodTokens.gte(periodTokens?.maxPeriodTokens)) {
+    if (
+      !isTotalSale ||
+      tokenAmounts?.soldPeriodTokens.gte(tokenAmounts?.maxPeriodTokens)
+    ) {
       return true;
     }
 
     return false;
-  }, [periodTokens]);
+  }, [tokenAmounts, isTotalSale]);
 
   return (
     <RemainingWidget

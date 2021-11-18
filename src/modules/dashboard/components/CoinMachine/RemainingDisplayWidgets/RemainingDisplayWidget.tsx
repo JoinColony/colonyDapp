@@ -65,14 +65,6 @@ const RemainingDisplayWidget = ({
       >
         {displayedValue}
       </div>
-      {/* {widgetText.footerText && (
-        <div className={styles.footer}>
-          <p className={styles.footerText}>
-            <FormattedMessage {...widgetText.footerText} />
-          </p>
-          {priceStatus && <TokenPriceStatusIcon status={priceStatus} />}
-        </div>
-      )} */}
     </div>
   );
 };

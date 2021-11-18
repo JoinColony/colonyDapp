@@ -13,14 +13,14 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  periodTokens: PeriodTokensType;
+  tokenAmounts: PeriodTokensType;
   tokensBought: BigNumberish;
 }
 
 const displayedName = `dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokensValue`;
 
-const RemainingTokensValue = ({ periodTokens, tokensBought }: Props) => {
-  const { maxPeriodTokens, decimals } = periodTokens;
+const RemainingTokensValue = ({ tokenAmounts, tokensBought }: Props) => {
+  const { maxPeriodTokens, decimals } = tokenAmounts;
 
   if (bigNumberify(tokensBought).gte(maxPeriodTokens)) {
     return <FormattedMessage {...MSG.soldOut} />;
@@ -28,7 +28,7 @@ const RemainingTokensValue = ({ periodTokens, tokensBought }: Props) => {
 
   return (
     <>
-      {getFormattedTokenValue(maxPeriodTokens.sub(tokensBought), decimals)}/
+      {getFormattedTokenValue(tokensBought, decimals)} /{' '}
       {getFormattedTokenValue(maxPeriodTokens, decimals)}
     </>
   );

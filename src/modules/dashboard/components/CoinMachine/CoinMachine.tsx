@@ -18,6 +18,7 @@ import {
   useCoinMachineTokenBalanceQuery,
   useCoinMachineCurrentPeriodPriceQuery,
   useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
+  useCoinMachineTotalTokensQuery,
   useLoggedInUser,
 } from '~data/index';
 
@@ -124,6 +125,16 @@ const CoinMachine = ({
   });
 
   const {
+    data: totalTokensData,
+    loading: totalTokensDataLoading,
+    stopPolling: stopPollingTotalTokensData,
+  } = useCoinMachineTotalTokensQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+    pollInterval,
+  });
+
+  const {
     data: salePriceData,
     loading: loadingSalePrice,
     stopPolling: stopPollingCurrentPeriodPrice,
@@ -172,6 +183,21 @@ const CoinMachine = ({
     targetPerPeriod,
   ]);
 
+  const totalTokens = useMemo(() => {
+    if (!saleTokensData || !totalTokensData || !hasSaleStarted) {
+      return undefined;
+    }
+    return {
+      decimals: saleTokensData.coinMachineSaleTokens.sellableToken.decimals,
+      soldPeriodTokens: bigNumberify(
+        totalTokensData.coinMachineTotalTokens.totalSoldTokens,
+      ),
+      maxPeriodTokens: bigNumberify(
+        totalTokensData.coinMachineTotalTokens.totalAvailableTokens,
+      ),
+    };
+  }, [totalTokensData, saleTokensData, hasSaleStarted]);
+
   const isSoldOut = useMemo(
     () =>
       periodTokens !== undefined &&
@@ -187,11 +213,13 @@ const CoinMachine = ({
       stopPollingCurrentPeriodPrice();
       stopPollingCurrentPeriodTokensData();
       stopPollingCurrentPeriodMaxUserPurchase();
+      stopPollingTotalTokensData();
     },
     [
       stopPollingCurrentPeriodTokensData,
       stopPollingCurrentPeriodPrice,
       stopPollingCurrentPeriodMaxUserPurchase,
+      stopPollingTotalTokensData,
     ],
   );
 
@@ -211,7 +239,8 @@ const CoinMachine = ({
     currentSalePeriodLoading ||
     !extensionsData?.processedColony?.installedExtensions ||
     periodTokensLoading ||
-    coinMachineTokenBalanceLoading
+    coinMachineTokenBalanceLoading ||
+    totalTokensDataLoading
   ) {
     return (
       <div className={styles.loadingSpinner}>
@@ -296,12 +325,12 @@ const CoinMachine = ({
             </div>
             <div className={styles.tokensRemaining}>
               <RemainingTokens
-                periodTokens={periodTokens}
+                tokenAmounts={periodTokens}
                 isTotalSale={false}
               />
             </div>
             <div className={styles.tokensTotals}>
-              <RemainingTokens periodTokens={periodTokens} isTotalSale />
+              <RemainingTokens tokenAmounts={totalTokens} isTotalSale />
             </div>
           </>
         )}

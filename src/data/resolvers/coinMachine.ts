@@ -262,6 +262,49 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
+    async coinMachineTotalTokens(_, { colonyAddress }) {
+      try {
+        const coinMachineClient = await colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+        const tokenClient = (await colonyManager.getClient(
+          ClientType.TokenClient,
+          colonyAddress,
+        )) as TokenClient;
+
+        const currentTokenBalance = await coinMachineClient.getTokenBalance();
+
+        /*
+         * We use the `FromChain` suffix to make these events more easily
+         * recognizable when reading the code
+         */
+        const transferLogsFromChain = await getLogs(
+          tokenClient,
+          tokenClient.filters.Transfer(null, coinMachineClient.address, null),
+        );
+
+        const transferEventsFromChain = await Promise.all(
+          transferLogsFromChain.map(async (log) =>
+            tokenClient.interface.parseLog(log),
+          ),
+        );
+        const totalAvailableTokens = transferEventsFromChain.reduce(
+          (acc, event) => event.values[2].add(acc),
+          '0',
+        );
+
+        return {
+          totalAvailableTokens: totalAvailableTokens.toString(),
+          totalSoldTokens: totalAvailableTokens
+            .sub(currentTokenBalance)
+            .toString(),
+        };
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
     /*
      * WARNING!
      *

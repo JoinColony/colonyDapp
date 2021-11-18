@@ -44,6 +44,11 @@ export default gql`
     colonyAddress: String!
   }
 
+  type TotalTokens {
+    totalAvailableTokens: String!
+    totalSoldTokens: String!
+  }
+
   extend type Query {
     coinMachineSaleTokens(colonyAddress: String!): SaleTokens!
     coinMachineCurrentPeriodPrice(colonyAddress: String!): String!
@@ -62,6 +67,7 @@ export default gql`
     coinMachineCurrentSalePeriod(colonyAddress: String!): CurrentSalePeriod!
     currentPeriodTokens(colonyAddress: String!): CurrentPeriodTokens!
     coinMachineTokenBalance(colonyAddress: String!): String!
+    coinMachineTotalTokens(colonyAddress: String!): TotalTokens!
     coinMachinePeriods(
       skip: Int!
       first: Int!
