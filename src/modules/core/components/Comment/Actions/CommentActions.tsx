@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 
 import classnames from 'classnames';
@@ -32,6 +32,7 @@ const CommentActions = ({
   fullComment,
   onHoverActiveState = () => null,
 }: Props) => {
+  const [isOpen, setOpen] = useState(false);
   /*
    * @NOTE Offset Calculations
    * This is dependant on the number of actions, may need to be adjusted
@@ -41,6 +42,14 @@ const CommentActions = ({
   if (permission === COMMENT_MODERATION.CAN_EDIT) {
     popoverOffset = [0, 8];
   }
+
+  useEffect(() => {
+    if (isOpen) {
+      onHoverActiveState(true);
+    } else {
+      onHoverActiveState(false);
+    }
+  }, [isOpen, onHoverActiveState]);
 
   return (
     <Popover
@@ -54,6 +63,8 @@ const CommentActions = ({
       trigger="click"
       showArrow={false}
       placement="left"
+      isOpen={isOpen}
+      onClose={() => setOpen(false)}
       popperProps={{
         modifiers: [
           {
@@ -65,31 +76,23 @@ const CommentActions = ({
         ],
       }}
     >
-      {({ isOpen, toggle, ref, id }) => {
-        if (isOpen) {
-          onHoverActiveState(true);
-        } else {
-          onHoverActiveState(false);
-        }
-        return (
-          <button
-            id={id}
-            ref={ref}
-            className={classnames(styles.actionsButton, {
-              [styles.activeDropdown]: isOpen,
-            })}
-            onClick={toggle}
-            type="button"
-            data-test="commentActions"
-          >
-            <Icon
-              className={styles.actionsIcon}
-              name="three-dots-row"
-              title={MSG.commentActionsTitle}
-            />
-          </button>
-        );
-      }}
+      {({ ref, id }) => (
+        <button
+          id={id}
+          ref={ref}
+          className={classnames(styles.actionsButton, {
+            [styles.activeDropdown]: false,
+          })}
+          onClick={() => setOpen(true)}
+          type="button"
+        >
+          <Icon
+            className={styles.actionsIcon}
+            name="three-dots-row"
+            title={MSG.commentActionsTitle}
+          />
+        </button>
+      )}
     </Popover>
   );
 };
