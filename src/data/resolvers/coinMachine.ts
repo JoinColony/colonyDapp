@@ -7,6 +7,7 @@ import {
 } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { BigNumber, bigNumberify, BigNumberish } from 'ethers/utils';
+import { AddressZero } from 'ethers/constants';
 
 import { Context } from '~context/index';
 import {
@@ -567,7 +568,7 @@ export const coinMachineResolvers = ({
           colonyAddress,
         );
         const coinMachineWhitelist = await coinMachineClient.getWhitelist();
-        return !!coinMachineWhitelist;
+        return coinMachineWhitelist !== AddressZero;
       } catch (error) {
         console.error(error);
         return false;

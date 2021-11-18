@@ -82,6 +82,7 @@ const Chat = ({
 
   const isUserWhitelisted =
     userWhitelistStatusData?.userWhitelistStatus?.userIsWhitelisted;
+  const canUserComment = isWhitelistExtensionEnabled ? isUserWhitelisted : true;
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
   const canAdministerComments =
@@ -178,9 +179,9 @@ const Chat = ({
             colonyAddress={colony.colonyAddress}
             transactionHash={transactionHash}
             callback={scrollComments}
-            disabled={disabled || !userHasProfile || !isUserWhitelisted}
+            disabled={disabled || !userHasProfile || !canUserComment}
             disabledInputPlaceholder={
-              !isUserWhitelisted ? MSG.mustWhitelistToComment : undefined
+              !canUserComment ? MSG.mustWhitelistToComment : undefined
             }
           />
         </div>
