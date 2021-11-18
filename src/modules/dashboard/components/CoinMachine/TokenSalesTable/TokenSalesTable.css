@@ -34,11 +34,11 @@
 }
 
 .tableHeaderCell:first-child {
-  width: 16%;
+  width: 17%;
 }
 
 .tableHeaderCell:nth-child(2) {
-  width: 42%;
+  width: 41%;
 }
 
 .tableRow:first-child {
