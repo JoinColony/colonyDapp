@@ -190,7 +190,9 @@ const BuyTokens = ({
   );
 
   const globalDisable =
-    !isCurrentlyOnSale || !userHasProfile || !isUserWhitelisted;
+    !isCurrentlyOnSale ||
+    !userHasProfile ||
+    (isWhitelistExtensionEnabled && !isUserWhitelisted);
 
   const handleInputFocus = useCallback(
     ({ amount }, setFieldValue) => {
