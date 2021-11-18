@@ -84,6 +84,8 @@ const ColonyEventsListItem = ({
     motionId,
     vote,
     whiteListStatus,
+    activePeriod,
+    currentPeriod,
   },
   colony: { tokens, nativeTokenAddress },
   colony,
@@ -173,6 +175,8 @@ const ColonyEventsListItem = ({
     storageSlotValue,
     motionId,
     voteSide: <FormattedMessage {...MSG.voteSide} values={{ vote }} />,
+    activePeriod,
+    currentPeriod,
   };
 
   return (

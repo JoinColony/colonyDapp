@@ -445,6 +445,10 @@ export const getEventsListData = (
         vote,
         _user: whitelistedUserAddress,
         _status: whiteListStatus,
+        buyer,
+        numTokens,
+        activePeriod,
+        currentPeriod,
       } = JSON.parse(args || '{}');
       const checksummedColonyAddress = createAddress(colonyAddress);
       const getRecipient = () => {
@@ -463,7 +467,8 @@ export const getEventsListData = (
           creator ||
           staker ||
           escalator ||
-          whitelistedUserAddress;
+          whitelistedUserAddress ||
+          buyer;
         if (userAddress) {
           return createAddress(userAddress);
         }
@@ -487,7 +492,7 @@ export const getEventsListData = (
           tokenAddress: token ? createAddress(token) : null,
           paymentId,
           decimals: parseInt(decimals, 10),
-          amount: amount || payoutRemainder || '0',
+          amount: amount || payoutRemainder || numTokens || '0',
           role,
           setTo: setTo === 'true',
           extensionHash: extensionId,
@@ -499,6 +504,8 @@ export const getEventsListData = (
           motionId,
           vote,
           whiteListStatus: whiteListStatus === 'true',
+          activePeriod,
+          currentPeriod,
         },
       ];
     } catch (error) {
