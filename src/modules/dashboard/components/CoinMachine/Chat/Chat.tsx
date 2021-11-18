@@ -115,7 +115,11 @@ const Chat = ({
   useLayoutEffect(scrollComments, [scrollComments]);
 
   const filteredComments = useMemo(() => {
-    return commentTransformer(currentComments, walletAddress, canAdministerComments);
+    return commentTransformer(
+      currentComments,
+      walletAddress,
+      canAdministerComments,
+    );
   }, [canAdministerComments, currentComments, walletAddress]);
 
   if (loading || loadingCoinMachineWhitelistState || userStatusLoading) {

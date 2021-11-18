@@ -144,7 +144,11 @@ const ActionsPageFeed = ({
   }, [actionType, networkEvents]);
 
   const filteredComments = useMemo(() => {
-    return commentTransformer(currentComments, walletAddress, canAdministerComments);
+    return commentTransformer(
+      currentComments,
+      walletAddress,
+      canAdministerComments,
+    );
   }, [canAdministerComments, currentComments, walletAddress]);
 
   const sortedFeed = useMemo(() => {
