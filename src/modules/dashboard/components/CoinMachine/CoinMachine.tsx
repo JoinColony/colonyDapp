@@ -108,6 +108,7 @@ const CoinMachine = ({
   const {
     data: currentSalePeriodData,
     loading: currentSalePeriodLoading,
+    stopPolling: stopcurrentSalePeriodPolling,
   } = useCoinMachineCurrentSalePeriodQuery({
     variables: { colonyAddress },
     /*
@@ -243,6 +244,16 @@ const CoinMachine = ({
     startPollingCurrentPeriodMaxUserPurchase,
     stopPollingCurrentPeriodMaxUserPurchase,
   ]);
+
+  /*
+   * Cleanup on component unmount
+   */
+  useEffect(
+    () => () => {
+      stopcurrentSalePeriodPolling();
+    },
+    [stopcurrentSalePeriodPolling],
+  );
 
   if (
     loadingExtensionsData ||
