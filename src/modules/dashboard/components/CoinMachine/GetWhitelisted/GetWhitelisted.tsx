@@ -7,7 +7,7 @@ import {
   useWhitelistPolicyQuery,
   UserWhitelistStatus,
   useWhitelistAgreementHashQuery,
-  // useMetaColonyQuery,
+  useMetaColonyQuery,
   useLoggedInUser,
 } from '~data/index';
 
@@ -35,7 +35,7 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
   const { data: whitelistPolicyData } = useWhitelistPolicyQuery({
     variables: { colonyAddress },
   });
-  // const { data } = useMetaColonyQuery();
+  const { data } = useMetaColonyQuery();
   const { username, ethereal } = useLoggedInUser();
 
   const userHasProfile = !!username && !ethereal;
@@ -72,14 +72,10 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
   );
 
   const openKYCDialog = useCallback(() => {
-    /*
-     * @TEMP Enable KYC Oracle for the /rc colony on QA
-     */
-    return colonyAddress.toLowerCase() ===
-      '0xA838cC8a369439091C320bEdFB6E339b66Ae8A6F'.toLowerCase()
+    return data?.processedMetaColony
       ? openSynapsDialog({ colonyAddress })
       : openCompleteKYCDialog();
-  }, [openCompleteKYCDialog, openSynapsDialog, colonyAddress]);
+  }, [data, openSynapsDialog, colonyAddress, openCompleteKYCDialog]);
 
   useEffect(() => {
     if (!userStatus || !whitelistPolicyData || loading) return;
