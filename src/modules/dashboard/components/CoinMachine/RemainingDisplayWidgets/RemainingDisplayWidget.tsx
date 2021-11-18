@@ -6,6 +6,7 @@ import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 
 import { getMainClasses } from '~utils/css';
+import { ComplexMessageValues } from '~types/index';
 
 import TokenPriceStatusIcon, {
   TokenPriceStatuses,
@@ -17,14 +18,17 @@ type Appearance = {
   theme?: 'white' | 'danger';
 };
 
+interface WidgetText {
+  title: MessageDescriptor;
+  titleValues?: ComplexMessageValues;
+  placeholder: MessageDescriptor;
+  tooltipText: MessageDescriptor;
+  footerText?: MessageDescriptor;
+}
+
 type Props = {
   appearance?: Appearance;
-  widgetText: {
-    title: MessageDescriptor;
-    placeholder: MessageDescriptor;
-    tooltipText: MessageDescriptor;
-    footerText?: MessageDescriptor;
-  };
+  widgetText: WidgetText;
   isWarning: boolean;
   displayedValue: string | ReactElement;
   priceStatus?: TokenPriceStatuses;
