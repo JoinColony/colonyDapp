@@ -2,6 +2,8 @@ import { BigNumber, bigNumberify } from 'ethers/utils';
 import { WeiPerEther } from 'ethers/constants';
 import Decimal from 'decimal.js';
 
+import { WhitelistPolicy } from '~types/index';
+
 let inMemoryEMAIntake: BigNumber | undefined;
 /*
  * Replicates the period price evolution logic that is being done by the
@@ -36,4 +38,18 @@ export const getCoinMachinePeriodPrice = (
     .div(WAD);
 
   return inMemoryEMAIntake.div(targetPerPeriod);
+};
+
+export const getWhitelistPolicy = (
+  useApprovals = false,
+  useAgreements = false,
+): WhitelistPolicy => {
+  let policyType: WhitelistPolicy = WhitelistPolicy.KycOnly;
+  if (useAgreements) {
+    policyType = WhitelistPolicy.AgreementOnly;
+  }
+  if (useApprovals && useAgreements) {
+    policyType = WhitelistPolicy.KycAndAgreement;
+  }
+  return policyType;
 };
