@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Extension } from '@colony/colony-js';
+import { Extension, Network } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 
+import { DEFAULT_NETWORK } from '~constants';
 import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
@@ -78,6 +79,7 @@ const CoinMachine = ({
     variables: { address: colonyAddress },
   });
 
+  const pollInterval = DEFAULT_NETWORK === Network.Mainnet ? 20000 : 5000;
   const { installedExtensions = [] } = extensionsData?.processedColony || {};
   const coinMachineExtension = installedExtensions?.find(
     ({ extensionId }) => extensionId === Extension.CoinMachine,
@@ -110,7 +112,7 @@ const CoinMachine = ({
   } = useCurrentPeriodTokensQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
-    pollInterval: 1000,
+    pollInterval,
   });
 
   const {
@@ -128,7 +130,7 @@ const CoinMachine = ({
   } = useCoinMachineCurrentPeriodPriceQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
-    pollInterval: 1000,
+    pollInterval,
   });
 
   const {
@@ -138,7 +140,7 @@ const CoinMachine = ({
   } = useCoinMachineCurrentPeriodMaxUserPurchaseQuery({
     variables: { colonyAddress, userAddress: walletAddress },
     fetchPolicy: 'network-only',
-    pollInterval: 1000,
+    pollInterval,
   });
 
   const hasSaleStarted = !bigNumberify(
