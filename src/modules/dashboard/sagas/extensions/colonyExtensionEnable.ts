@@ -240,6 +240,7 @@ function* colonyExtensionEnable({
         );
       }
     }
+    yield call(refreshExtension, colonyAddress, extensionId);
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_EXTENSION_ENABLE_ERROR,
@@ -247,16 +248,6 @@ function* colonyExtensionEnable({
       meta,
     );
   } finally {
-    const colonyClient = yield colonyManager.getClient(
-      ClientType.ColonyClient,
-      colonyAddress,
-    );
-    const client = yield colonyClient.getExtensionClient(extensionId);
-    if (client) {
-      colonyManager.extensionClients.set(key, client);
-      TEMP_setContext(ContextModule.ColonyManager, colonyManager);
-    }
-    yield call(refreshExtension, colonyAddress, extensionId);
     initChannel.close();
   }
   return null;

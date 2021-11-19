@@ -46,7 +46,7 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
 
   const { data: usersData, loading: usersLoading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
-    pollInterval: 1000,
+    fetchPolicy: 'network-only',
   });
   const whitelistedUsers = usersData?.whitelistedUsers || [];
 

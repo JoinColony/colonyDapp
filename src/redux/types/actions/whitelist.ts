@@ -14,7 +14,6 @@ export type WhitelistActionTypes =
       {
         agreementHash: string;
         colonyAddress: Address;
-        userAddress: Address;
       },
       MetaWithHistory<object>
     >
