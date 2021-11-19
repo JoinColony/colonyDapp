@@ -258,7 +258,6 @@ export type Query = {
   getRecoveryStorageSlot: Scalars['String'];
   hasKycPolicy: Scalars['Boolean'];
   historicColonyRoles: Array<ProcessedRoles>;
-  kycaddresses: Array<Maybe<KycAddress>>;
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
   motionCurrentUserVoted: Scalars['Boolean'];
@@ -482,11 +481,6 @@ export type QueryHasKycPolicyArgs = {
 export type QueryHistoricColonyRolesArgs = {
   colonyAddress: Scalars['String'];
   blockNumber: Scalars['Int'];
-};
-
-
-export type QueryKycaddressesArgs = {
-  extensionAddress: Scalars['String'];
 };
 
 
@@ -2662,12 +2656,32 @@ export type UserWhitelistStatusQueryVariables = Exact<{
 
 export type UserWhitelistStatusQuery = { userWhitelistStatus: Pick<UserWhitelistStatus, 'userIsApproved' | 'userIsWhitelisted' | 'userSignedAgreement'> };
 
-export type SubgraphKycAddressesQueryVariables = Exact<{
+export type SubgraphWhitelistEventsQueryVariables = Exact<{
   extensionAddress: Scalars['String'];
 }>;
 
 
-export type SubgraphKycAddressesQuery = { kycaddresses: Array<Maybe<{ walletAddress: KycAddress['id'] }>> };
+export type SubgraphWhitelistEventsQuery = { userApprovedEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )>, agreementSignedEvents: Array<(
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    & { transaction: (
+      Pick<SubgraphTransaction, 'id'>
+      & { transactionHash: SubgraphTransaction['id'] }
+      & { block: (
+        Pick<SubgraphBlock, 'id' | 'timestamp'>
+        & { number: SubgraphBlock['id'] }
+      ) }
+    ) }
+  )> };
 
 export type SubgraphEventsSubscriptionVariables = Exact<{
   skip: Scalars['Int'];
@@ -7465,39 +7479,66 @@ export function useUserWhitelistStatusLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type UserWhitelistStatusQueryHookResult = ReturnType<typeof useUserWhitelistStatusQuery>;
 export type UserWhitelistStatusLazyQueryHookResult = ReturnType<typeof useUserWhitelistStatusLazyQuery>;
 export type UserWhitelistStatusQueryResult = Apollo.QueryResult<UserWhitelistStatusQuery, UserWhitelistStatusQueryVariables>;
-export const SubgraphKycAddressesDocument = gql`
-    query SubgraphKYCAddresses($extensionAddress: String!) {
-  kycaddresses(where: {extension_contains: $extensionAddress, status: true}) {
-    walletAddress: id
+export const SubgraphWhitelistEventsDocument = gql`
+    query SubgraphWhitelistEvents($extensionAddress: String!) {
+  userApprovedEvents: events(where: {name_contains: "UserApproved", address: $extensionAddress}) {
+    id
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+  agreementSignedEvents: events(where: {name_contains: "AgreementSigned", address: $extensionAddress}) {
+    id
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
   }
 }
     `;
 
 /**
- * __useSubgraphKycAddressesQuery__
+ * __useSubgraphWhitelistEventsQuery__
  *
- * To run a query within a React component, call `useSubgraphKycAddressesQuery` and pass it any options that fit your needs.
- * When your component renders, `useSubgraphKycAddressesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSubgraphWhitelistEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphWhitelistEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubgraphKycAddressesQuery({
+ * const { data, loading, error } = useSubgraphWhitelistEventsQuery({
  *   variables: {
  *      extensionAddress: // value for 'extensionAddress'
  *   },
  * });
  */
-export function useSubgraphKycAddressesQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>) {
-        return Apollo.useQuery<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>(SubgraphKycAddressesDocument, baseOptions);
+export function useSubgraphWhitelistEventsQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphWhitelistEventsQuery, SubgraphWhitelistEventsQueryVariables>) {
+        return Apollo.useQuery<SubgraphWhitelistEventsQuery, SubgraphWhitelistEventsQueryVariables>(SubgraphWhitelistEventsDocument, baseOptions);
       }
-export function useSubgraphKycAddressesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>) {
-          return Apollo.useLazyQuery<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>(SubgraphKycAddressesDocument, baseOptions);
+export function useSubgraphWhitelistEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphWhitelistEventsQuery, SubgraphWhitelistEventsQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphWhitelistEventsQuery, SubgraphWhitelistEventsQueryVariables>(SubgraphWhitelistEventsDocument, baseOptions);
         }
-export type SubgraphKycAddressesQueryHookResult = ReturnType<typeof useSubgraphKycAddressesQuery>;
-export type SubgraphKycAddressesLazyQueryHookResult = ReturnType<typeof useSubgraphKycAddressesLazyQuery>;
-export type SubgraphKycAddressesQueryResult = Apollo.QueryResult<SubgraphKycAddressesQuery, SubgraphKycAddressesQueryVariables>;
+export type SubgraphWhitelistEventsQueryHookResult = ReturnType<typeof useSubgraphWhitelistEventsQuery>;
+export type SubgraphWhitelistEventsLazyQueryHookResult = ReturnType<typeof useSubgraphWhitelistEventsLazyQuery>;
+export type SubgraphWhitelistEventsQueryResult = Apollo.QueryResult<SubgraphWhitelistEventsQuery, SubgraphWhitelistEventsQueryVariables>;
 export const SubgraphEventsDocument = gql`
     subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
   events(skip: $skip, first: $first, where: {associatedColony: $colonyAddress}) {

@@ -34,13 +34,45 @@ query UserWhitelistStatus($colonyAddress: String!, $userAddress: String!) {
   }
 }
 
-query SubgraphKYCAddresses($extensionAddress: String!) {
-    kycaddresses(
-      where: {
-        extension_contains: $extensionAddress,
-        status: true
+query SubgraphWhitelistEvents($extensionAddress: String!) {
+  userApprovedEvents: events(
+    where: {
+      name_contains: "UserApproved"
+      address: $extensionAddress
+    }
+  ) {
+    id
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
       }
-    ) {
-    walletAddress: id
+    }
+    address
+    name
+    args
+  }
+  agreementSignedEvents: events(
+    where: {
+      name_contains: "AgreementSigned"
+      address: $extensionAddress
+    }
+  ) {
+    id
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
   }
 }

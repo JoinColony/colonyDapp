@@ -39,6 +39,5 @@ export default gql`
       extensionId: String!
     ): ColonyExtension
     networkExtensionVersion(extensionId: String): [ColonyExtensionVersion]!
-    kycaddresses(extensionAddress: String!): [KYCAddress]!
   }
 `;
