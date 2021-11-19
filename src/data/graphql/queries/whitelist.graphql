@@ -1,0 +1,46 @@
+query WhitelistedUsers($colonyAddress: String!) {
+   whitelistedUsers(colonyAddress: $colonyAddress) @client {
+    id
+    profile {
+      walletAddress
+    }
+   }
+}
+
+query WhitelistAgreement($agreementHash: String!) {
+  whitelistAgreement(agreementHash: $agreementHash) @client
+}
+
+query WhitelistAgreementHash($colonyAddress: String!) {
+  whitelistAgreementHash(colonyAddress: $colonyAddress) @client
+}
+
+query HasKycPolicy($colonyAddress: String!) {
+  hasKycPolicy(colonyAddress: $colonyAddress) @client
+}
+
+query WhitelistPolicy($colonyAddress: String!) {
+  whitelistPolicy(colonyAddress: $colonyAddress) @client {
+    kycRequired,
+    agreementRequired,
+  }
+}
+
+query UserWhitelistStatus($colonyAddress: String!, $userAddress: String!) {
+  userWhitelistStatus(colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    userIsApproved,
+    userIsWhitelisted,
+    userSignedAgreement,
+  }
+}
+
+query SubgraphKYCAddresses($extensionAddress: String!) {
+    kycaddresses(
+      where: {
+        extension_contains: $extensionAddress,
+        status: true
+      }
+    ) {
+    walletAddress: id
+  }
+}

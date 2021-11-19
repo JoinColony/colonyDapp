@@ -2,12 +2,19 @@ import { ClientType } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 
 import { Context } from '~context/index';
+import {
+  getMinimalUser,
+  SubgraphKycAddressesDocument,
+  SubgraphKycAddressesQuery,
+  SubgraphKycAddressesQueryVariables,
+} from '~data/index';
 
 import { log } from '~utils/debug';
 
 export const whitelistResolvers = ({
   colonyManager,
   ipfsWithFallback,
+  apolloClient,
 }: Required<Context>): Resolvers => ({
   Query: {
     async whitelistAgreement(_, { agreementHash }) {
@@ -90,6 +97,34 @@ export const whitelistResolvers = ({
       } catch (error) {
         console.error(error);
         return null;
+      }
+    },
+    async whitelistedUsers(_, { colonyAddress }) {
+      try {
+        const whitelistClient = await colonyManager.getClient(
+          ClientType.WhitelistClient,
+          colonyAddress,
+        );
+
+        const { data: kycAddresesData } = await apolloClient.query<
+          SubgraphKycAddressesQuery,
+          SubgraphKycAddressesQueryVariables
+        >({
+          query: SubgraphKycAddressesDocument,
+          variables: {
+            extensionAddress: whitelistClient.address.toLowerCase(),
+          },
+          fetchPolicy: 'network-only',
+        });
+        /*
+         * @NOTE This query handles aggreement signing also
+         */
+        return kycAddresesData?.kycaddresses?.map((kycAddress) =>
+          getMinimalUser(kycAddress?.walletAddress || ''),
+        );
+      } catch (error) {
+        console.error(error);
+        return [];
       }
     },
   },
