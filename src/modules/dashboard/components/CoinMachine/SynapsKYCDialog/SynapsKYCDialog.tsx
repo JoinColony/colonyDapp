@@ -9,6 +9,8 @@ import { Address } from '~types/index';
 import { useLoggedInUser, useUserWhitelistStatusQuery } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { SpinnerLoader } from '~core/Preloaders';
+import Icon from '~core/Icon';
+
 import { getKycStatus } from './kycApi';
 import { authenticateKYC } from '../../../../../api';
 
@@ -21,7 +23,11 @@ const MSG = defineMessages({
   },
   verified: {
     id: 'dashboard.CoinMachine.SynapsKYCDialog.verified',
-    defaultMessage: 'You are verified',
+    defaultMessage: 'You passed KYC!',
+  },
+  verifiedIconTitle: {
+    id: 'dashboard.CoinMachine.SynapsKYCDialog.verifiedIconTitle',
+    defaultMessage: 'You are verified! Congrats',
   },
 });
 
@@ -84,6 +90,7 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
           {isLoading && <SpinnerLoader appearance={{ size: 'large' }} />}
           {!isLoading && isValid && (
             <div className={styles.verified}>
+              <Icon name="emoji-party" title={MSG.verifiedIconTitle} />
               <FormattedMessage {...MSG.verified} />
             </div>
           )}

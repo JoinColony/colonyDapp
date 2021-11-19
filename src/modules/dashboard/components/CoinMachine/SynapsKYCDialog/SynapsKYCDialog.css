@@ -15,6 +15,21 @@
 }
 
 .verified {
-  font-size: var(--size-normal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.verified i {
+  margin-bottom: 20px;
+  height: 36px;
+  width: 36px;
+}
+
+.verified svg {
+  fill: none;
+  stroke: none;
 }
