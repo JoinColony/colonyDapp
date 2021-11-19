@@ -8,7 +8,7 @@ import {
   ColonyExtensionQueryVariables,
   ColonyExtensionDocument,
 } from '~data/index';
-import extensionData, { PolicyType } from '~data/staticData/extensionData';
+import extensionData from '~data/staticData/extensionData';
 import {
   ContextModule,
   TEMP_getContext,
@@ -16,6 +16,7 @@ import {
 } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { intArrayToBytes32 } from '~utils/web3';
+import { WhitelistPolicy } from '~types/index';
 
 import {
   createTransaction,
@@ -74,7 +75,7 @@ function* colonyExtensionEnable({
     let agreementHash = '';
     if (
       extensionId === Extension.Whitelist &&
-      payload?.policy !== PolicyType.KycOnly
+      payload?.policy !== WhitelistPolicy.KycOnly
     ) {
       agreementHash = yield call(
         ipfsUpload,
@@ -102,7 +103,7 @@ function* colonyExtensionEnable({
 
       if (extensionId === Extension.Whitelist) {
         initParams = [
-          payload?.policy !== PolicyType.AgreementOnly,
+          payload?.policy !== WhitelistPolicy.AgreementOnly,
           agreementHash,
         ];
       } else if (extensionId === Extension.CoinMachine) {
