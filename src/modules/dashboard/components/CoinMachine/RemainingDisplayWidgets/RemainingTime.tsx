@@ -3,6 +3,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
 import TimerValue from '~core/TimerValue';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
@@ -19,6 +20,7 @@ type Props = {
   value: number | null;
   appearance?: Appearance;
   periodLength: number;
+  syncing?: boolean;
 };
 
 const displayName =
@@ -48,6 +50,7 @@ const RemainingTime = ({
   value,
   periodLength,
   colonyAddress,
+  syncing = false,
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -70,11 +73,16 @@ const RemainingTime = ({
 
   const displayedValue = useMemo(() => {
     if (splitTime) {
-      return <TimerValue splitTime={splitTime} />;
+      return (
+        <div>
+          {syncing && <SpinnerLoader appearance={{ size: 'small' }} />}
+          <TimerValue splitTime={splitTime} />
+        </div>
+      );
     }
 
     return <FormattedMessage {...widgetText.placeholder} />;
-  }, [splitTime, widgetText]);
+  }, [splitTime, syncing, widgetText]);
 
   const showValueWarning =
     appearance.theme !== 'danger' &&

@@ -14,8 +14,8 @@ export default gql`
   }
 
   type CurrentSalePeriod {
-    periodLength: String!
-    timeRemaining: String!
+    periodLength: Int!
+    timeRemaining: Int!
   }
   type CurrentPeriodTokens {
     maxPerPeriodTokens: String!

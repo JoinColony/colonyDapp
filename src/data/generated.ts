@@ -1292,8 +1292,8 @@ export type SaleTokens = {
 };
 
 export type CurrentSalePeriod = {
-  periodLength: Scalars['String'];
-  timeRemaining: Scalars['String'];
+  periodLength: Scalars['Int'];
+  timeRemaining: Scalars['Int'];
 };
 
 export type CurrentPeriodTokens = {

@@ -108,8 +108,13 @@ const CoinMachine = ({
   const {
     data: currentSalePeriodData,
     loading: currentSalePeriodLoading,
+    stopPolling: stopcurrentSalePeriodPolling,
   } = useCoinMachineCurrentSalePeriodQuery({
     variables: { colonyAddress },
+    /*
+     * Refetch every minute to try and keep the timers in sync with the chain
+     */
+    pollInterval: 60 * 1000,
     fetchPolicy: 'network-only',
   });
 
@@ -183,15 +188,8 @@ const CoinMachine = ({
     [periodTokens],
   );
 
-  const timeRemaining = parseInt(
-    currentSalePeriodData?.coinMachineCurrentSalePeriod?.timeRemaining || '0',
-    10,
-  );
-
-  const periodLength = parseInt(
-    currentSalePeriodData?.coinMachineCurrentSalePeriod?.periodLength || '0',
-    10,
-  );
+  const { timeRemaining = 0, periodLength = 0 } =
+    currentSalePeriodData?.coinMachineCurrentSalePeriod || {};
 
   useEffect(() => {
     const tokenBoughtEventsLength =
@@ -213,19 +211,19 @@ const CoinMachine = ({
   ]);
 
   useEffect(() => {
-    if (timeRemaining > 1000 && timeRemaining < periodLength * 1000) {
+    if (timeRemaining > 1000 && timeRemaining < periodLength) {
       setTimeout(() => {
         refetchCurrentPeriodTokensData({ colonyAddress });
-        startPollingCurrentPeriodTokensData(periodLength * 1000);
+        startPollingCurrentPeriodTokensData(periodLength);
         refetchCurrentPeriodPrice();
-        startPollingCurrentPeriodPrice(periodLength * 1000);
+        startPollingCurrentPeriodPrice(periodLength);
         refetchCurrentPeriodMaxUserPurchase();
-        startPollingCurrentPeriodMaxUserPurchase(periodLength * 1000);
+        startPollingCurrentPeriodMaxUserPurchase(periodLength);
       }, timeRemaining);
     } else {
-      startPollingCurrentPeriodTokensData(periodLength * 1000);
-      startPollingCurrentPeriodPrice(periodLength * 1000);
-      startPollingCurrentPeriodMaxUserPurchase(periodLength * 1000);
+      startPollingCurrentPeriodTokensData(periodLength);
+      startPollingCurrentPeriodPrice(periodLength);
+      startPollingCurrentPeriodMaxUserPurchase(periodLength);
     }
     return () => {
       stopPollingCurrentPeriodPrice();
@@ -246,6 +244,16 @@ const CoinMachine = ({
     startPollingCurrentPeriodMaxUserPurchase,
     stopPollingCurrentPeriodMaxUserPurchase,
   ]);
+
+  /*
+   * Cleanup on component unmount
+   */
+  useEffect(
+    () => () => {
+      stopcurrentSalePeriodPolling();
+    },
+    [stopcurrentSalePeriodPolling],
+  );
 
   if (
     loadingExtensionsData ||
@@ -333,6 +341,7 @@ const CoinMachine = ({
                 value={hasSaleStarted ? timeRemaining : null}
                 periodLength={periodLength}
                 colonyAddress={colonyAddress}
+                syncing={currentSalePeriodLoading}
               />
             </div>
             <div className={styles.tokensRemaining}>

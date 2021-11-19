@@ -201,8 +201,8 @@ export const coinMachineResolvers = ({
           bigNumberify(blockTime).mod(periodLengthInMs),
         );
         return {
-          periodLength: periodLength.toString(),
-          timeRemaining: timeRemaining.toString(),
+          periodLength: periodLengthInMs.toNumber(),
+          timeRemaining: timeRemaining.toNumber(),
         };
       } catch (error) {
         console.error(error);
