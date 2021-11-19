@@ -256,7 +256,6 @@ export type Query = {
   eventsForMotion: Array<ParsedEvent>;
   getRecoveryRequiredApprovals: Scalars['Int'];
   getRecoveryStorageSlot: Scalars['String'];
-  hasKycPolicy: Scalars['Boolean'];
   historicColonyRoles: Array<ProcessedRoles>;
   legacyNumberOfRecoveryRoles: Scalars['Int'];
   loggedInUser: LoggedInUser;
@@ -296,8 +295,7 @@ export type Query = {
   username: Scalars['String'];
   votingState: VotingState;
   whitelistAgreement: Scalars['String'];
-  whitelistAgreementHash?: Maybe<Scalars['String']>;
-  whitelistPolicy: WhitelistPolicy;
+  whitelistPolicies: WhitelistPolicy;
   whitelistedUsers: Array<User>;
 };
 
@@ -447,11 +445,11 @@ export type QueryDomainsArgs = {
 
 
 export type QueryEventsArgs = {
-  block?: Maybe<ToBlockInput>;
-  first?: Maybe<Scalars['Int']>;
-  orderDirection?: Maybe<Scalars['String']>;
   skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
   where?: Maybe<EventsFilter>;
+  orderDirection?: Maybe<Scalars['String']>;
+  block?: Maybe<ToBlockInput>;
 };
 
 
@@ -470,11 +468,6 @@ export type QueryGetRecoveryRequiredApprovalsArgs = {
 export type QueryGetRecoveryStorageSlotArgs = {
   colonyAddress: Scalars['String'];
   storageSlot: Scalars['String'];
-};
-
-
-export type QueryHasKycPolicyArgs = {
-  colonyAddress: Scalars['String'];
 };
 
 
@@ -684,12 +677,7 @@ export type QueryWhitelistAgreementArgs = {
 };
 
 
-export type QueryWhitelistAgreementHashArgs = {
-  colonyAddress: Scalars['String'];
-};
-
-
-export type QueryWhitelistPolicyArgs = {
+export type QueryWhitelistPoliciesArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -1125,17 +1113,6 @@ export type UserDomainReputation = {
   reputationPercentage: Scalars['String'];
 };
 
-export type WhitelistPolicy = {
-  kycRequired: Scalars['Boolean'];
-  agreementRequired: Scalars['Boolean'];
-};
-
-export type UserWhitelistStatus = {
-  userIsApproved: Scalars['Boolean'];
-  userIsWhitelisted: Scalars['Boolean'];
-  userSignedAgreement: Scalars['Boolean'];
-};
-
 export type ByColonyFilter = {
   colonyAddress: Scalars['String'];
   domainChainId?: Maybe<Scalars['Int']>;
@@ -1367,6 +1344,18 @@ export type SubgraphBlock = {
 export type SubgraphTransaction = {
   id: Scalars['String'];
   block: SubgraphBlock;
+};
+
+export type WhitelistPolicy = {
+  useApprovals: Scalars['Boolean'];
+  agreementHash: Scalars['String'];
+  policyType: Scalars['Int'];
+};
+
+export type UserWhitelistStatus = {
+  userIsApproved: Scalars['Boolean'];
+  userIsWhitelisted: Scalars['Boolean'];
+  userSignedAgreement: Scalars['Boolean'];
 };
 
 export type ActionsFilter = {
@@ -2627,26 +2616,12 @@ export type WhitelistAgreementQueryVariables = Exact<{
 
 export type WhitelistAgreementQuery = Pick<Query, 'whitelistAgreement'>;
 
-export type WhitelistAgreementHashQueryVariables = Exact<{
+export type WhitelistPoliciesQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
 }>;
 
 
-export type WhitelistAgreementHashQuery = Pick<Query, 'whitelistAgreementHash'>;
-
-export type HasKycPolicyQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type HasKycPolicyQuery = Pick<Query, 'hasKycPolicy'>;
-
-export type WhitelistPolicyQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type WhitelistPolicyQuery = { whitelistPolicy: Pick<WhitelistPolicy, 'kycRequired' | 'agreementRequired'> };
+export type WhitelistPoliciesQuery = { whitelistPolicies: Pick<WhitelistPolicy, 'useApprovals' | 'agreementHash' | 'policyType'> };
 
 export type UserWhitelistStatusQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -7347,102 +7322,41 @@ export function useWhitelistAgreementLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type WhitelistAgreementQueryHookResult = ReturnType<typeof useWhitelistAgreementQuery>;
 export type WhitelistAgreementLazyQueryHookResult = ReturnType<typeof useWhitelistAgreementLazyQuery>;
 export type WhitelistAgreementQueryResult = Apollo.QueryResult<WhitelistAgreementQuery, WhitelistAgreementQueryVariables>;
-export const WhitelistAgreementHashDocument = gql`
-    query WhitelistAgreementHash($colonyAddress: String!) {
-  whitelistAgreementHash(colonyAddress: $colonyAddress) @client
-}
-    `;
-
-/**
- * __useWhitelistAgreementHashQuery__
- *
- * To run a query within a React component, call `useWhitelistAgreementHashQuery` and pass it any options that fit your needs.
- * When your component renders, `useWhitelistAgreementHashQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useWhitelistAgreementHashQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useWhitelistAgreementHashQuery(baseOptions?: Apollo.QueryHookOptions<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>) {
-        return Apollo.useQuery<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>(WhitelistAgreementHashDocument, baseOptions);
-      }
-export function useWhitelistAgreementHashLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>) {
-          return Apollo.useLazyQuery<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>(WhitelistAgreementHashDocument, baseOptions);
-        }
-export type WhitelistAgreementHashQueryHookResult = ReturnType<typeof useWhitelistAgreementHashQuery>;
-export type WhitelistAgreementHashLazyQueryHookResult = ReturnType<typeof useWhitelistAgreementHashLazyQuery>;
-export type WhitelistAgreementHashQueryResult = Apollo.QueryResult<WhitelistAgreementHashQuery, WhitelistAgreementHashQueryVariables>;
-export const HasKycPolicyDocument = gql`
-    query HasKycPolicy($colonyAddress: String!) {
-  hasKycPolicy(colonyAddress: $colonyAddress) @client
-}
-    `;
-
-/**
- * __useHasKycPolicyQuery__
- *
- * To run a query within a React component, call `useHasKycPolicyQuery` and pass it any options that fit your needs.
- * When your component renders, `useHasKycPolicyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useHasKycPolicyQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useHasKycPolicyQuery(baseOptions?: Apollo.QueryHookOptions<HasKycPolicyQuery, HasKycPolicyQueryVariables>) {
-        return Apollo.useQuery<HasKycPolicyQuery, HasKycPolicyQueryVariables>(HasKycPolicyDocument, baseOptions);
-      }
-export function useHasKycPolicyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HasKycPolicyQuery, HasKycPolicyQueryVariables>) {
-          return Apollo.useLazyQuery<HasKycPolicyQuery, HasKycPolicyQueryVariables>(HasKycPolicyDocument, baseOptions);
-        }
-export type HasKycPolicyQueryHookResult = ReturnType<typeof useHasKycPolicyQuery>;
-export type HasKycPolicyLazyQueryHookResult = ReturnType<typeof useHasKycPolicyLazyQuery>;
-export type HasKycPolicyQueryResult = Apollo.QueryResult<HasKycPolicyQuery, HasKycPolicyQueryVariables>;
-export const WhitelistPolicyDocument = gql`
-    query WhitelistPolicy($colonyAddress: String!) {
-  whitelistPolicy(colonyAddress: $colonyAddress) @client {
-    kycRequired
-    agreementRequired
+export const WhitelistPoliciesDocument = gql`
+    query WhitelistPolicies($colonyAddress: String!) {
+  whitelistPolicies(colonyAddress: $colonyAddress) @client {
+    useApprovals
+    agreementHash
+    policyType
   }
 }
     `;
 
 /**
- * __useWhitelistPolicyQuery__
+ * __useWhitelistPoliciesQuery__
  *
- * To run a query within a React component, call `useWhitelistPolicyQuery` and pass it any options that fit your needs.
- * When your component renders, `useWhitelistPolicyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useWhitelistPoliciesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWhitelistPoliciesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useWhitelistPolicyQuery({
+ * const { data, loading, error } = useWhitelistPoliciesQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */
-export function useWhitelistPolicyQuery(baseOptions?: Apollo.QueryHookOptions<WhitelistPolicyQuery, WhitelistPolicyQueryVariables>) {
-        return Apollo.useQuery<WhitelistPolicyQuery, WhitelistPolicyQueryVariables>(WhitelistPolicyDocument, baseOptions);
+export function useWhitelistPoliciesQuery(baseOptions?: Apollo.QueryHookOptions<WhitelistPoliciesQuery, WhitelistPoliciesQueryVariables>) {
+        return Apollo.useQuery<WhitelistPoliciesQuery, WhitelistPoliciesQueryVariables>(WhitelistPoliciesDocument, baseOptions);
       }
-export function useWhitelistPolicyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WhitelistPolicyQuery, WhitelistPolicyQueryVariables>) {
-          return Apollo.useLazyQuery<WhitelistPolicyQuery, WhitelistPolicyQueryVariables>(WhitelistPolicyDocument, baseOptions);
+export function useWhitelistPoliciesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WhitelistPoliciesQuery, WhitelistPoliciesQueryVariables>) {
+          return Apollo.useLazyQuery<WhitelistPoliciesQuery, WhitelistPoliciesQueryVariables>(WhitelistPoliciesDocument, baseOptions);
         }
-export type WhitelistPolicyQueryHookResult = ReturnType<typeof useWhitelistPolicyQuery>;
-export type WhitelistPolicyLazyQueryHookResult = ReturnType<typeof useWhitelistPolicyLazyQuery>;
-export type WhitelistPolicyQueryResult = Apollo.QueryResult<WhitelistPolicyQuery, WhitelistPolicyQueryVariables>;
+export type WhitelistPoliciesQueryHookResult = ReturnType<typeof useWhitelistPoliciesQuery>;
+export type WhitelistPoliciesLazyQueryHookResult = ReturnType<typeof useWhitelistPoliciesLazyQuery>;
+export type WhitelistPoliciesQueryResult = Apollo.QueryResult<WhitelistPoliciesQuery, WhitelistPoliciesQueryVariables>;
 export const UserWhitelistStatusDocument = gql`
     query UserWhitelistStatus($colonyAddress: String!, $userAddress: String!) {
   userWhitelistStatus(colonyAddress: $colonyAddress, userAddress: $userAddress) @client {

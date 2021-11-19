@@ -299,17 +299,6 @@ export default gql`
     reputationPercentage: String!
   }
 
-  type WhitelistPolicy {
-    kycRequired: Boolean!
-    agreementRequired: Boolean!
-  }
-
-  type UserWhitelistStatus {
-    userIsApproved: Boolean!
-    userIsWhitelisted: Boolean!
-    userSignedAgreement: Boolean!
-  }
-
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
@@ -375,7 +364,6 @@ export default gql`
       currentBlock: Int!
     ): [ParsedEvent!]!
     legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
-    whitelistedUsers(colonyAddress: String!): [User!]!
     motionTimeoutPeriods(
       motionId: Int!
       colonyAddress: String!
@@ -426,19 +414,11 @@ export default gql`
     ): MotionObjectionAnnotation!
     votingState(colonyAddress: String!, motionId: Int!): VotingState!
     motionStatus(motionId: Int!, colonyAddress: String!): String!
-    whitelistAgreement(agreementHash: String!): String!
-    whitelistAgreementHash(colonyAddress: String!): String
-    hasKycPolicy(colonyAddress: String!): Boolean!
     domainBalance(
       colonyAddress: String!
       tokenAddress: String!
       domainId: Int!
     ): String!
-    whitelistPolicy(colonyAddress: String!): WhitelistPolicy!
-    userWhitelistStatus(
-      colonyAddress: String!
-      userAddress: String!
-    ): UserWhitelistStatus!
   }
 
   extend type Mutation {

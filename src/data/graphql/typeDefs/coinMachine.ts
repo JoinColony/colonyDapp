@@ -70,12 +70,12 @@ export default gql`
       orderDirection: String!
     ): [SalePeriod!]!
     coinMachineSalePeriods(colonyAddress: String!, limit: Int!): SalePeriod!
-    events(
-      skip: Int
-      first: Int
-      where: EventsFilter
-      orderDirection: String
-    ): [SubgraphEvent!]!
+    # events(
+    #   skip: Int
+    #   first: Int
+    #   where: EventsFilter
+    #   orderDirection: String
+    # ): [SubgraphEvent!]!
     coinMachineHasWhitelist(colonyAddress: String!): Boolean!
   }
 `;

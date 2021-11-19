@@ -11,18 +11,19 @@ query WhitelistAgreement($agreementHash: String!) {
   whitelistAgreement(agreementHash: $agreementHash) @client
 }
 
-query WhitelistAgreementHash($colonyAddress: String!) {
-  whitelistAgreementHash(colonyAddress: $colonyAddress) @client
-}
+# query WhitelistAgreementHash($colonyAddress: String!) {
+#   whitelistAgreementHash(colonyAddress: $colonyAddress) @client
+# }
 
-query HasKycPolicy($colonyAddress: String!) {
-  hasKycPolicy(colonyAddress: $colonyAddress) @client
-}
+# query HasKycPolicy($colonyAddress: String!) {
+#   hasKycPolicy(colonyAddress: $colonyAddress) @client
+# }
 
-query WhitelistPolicy($colonyAddress: String!) {
-  whitelistPolicy(colonyAddress: $colonyAddress) @client {
-    kycRequired,
-    agreementRequired,
+query WhitelistPolicies($colonyAddress: String!) {
+  whitelistPolicies(colonyAddress: $colonyAddress) @client {
+    useApprovals,
+    agreementHash,
+    policyType,
   }
 }
 

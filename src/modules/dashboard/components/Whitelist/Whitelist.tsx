@@ -1,17 +1,19 @@
 import React from 'react';
 import { defineMessage } from 'react-intl';
 
+import { MiniSpinnerLoader, SpinnerLoader } from '~core/Preloaders';
+
 import {
   useWhitelistedUsersQuery,
-  useHasKycPolicyQuery,
-  useWhitelistAgreementHashQuery,
+  useWhitelistPoliciesQuery,
   Colony,
 } from '~data/index';
-import { MiniSpinnerLoader, SpinnerLoader } from '~core/Preloaders';
+import { WhitelistPolicy } from '~types/index';
 
 import AgreementEmbed from './AgreementEmbed';
 import UploadAddressesWidget from './UploadAddressesWidget';
 import WhitelistAddresses from './WhitelistAddresses';
+
 import styles from './Whitelist.css';
 
 const MSG = defineMessage({
@@ -32,22 +34,17 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
   });
 
   const {
-    data: agreementHashData,
-    loading: agreementHashLoading,
-  } = useWhitelistAgreementHashQuery({
+    data: whitelistPolicies,
+    loading: loadingWhitelistPolicies,
+  } = useWhitelistPoliciesQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
   });
 
-  const {
-    data: kycPolicyData,
-    loading: kycPolicyLoading,
-  } = useHasKycPolicyQuery({
-    variables: { colonyAddress },
-    fetchPolicy: 'network-only',
-  });
+  const { policyType, agreementHash = '' } =
+    whitelistPolicies?.whitelistPolicies || {};
 
-  if (kycPolicyLoading || agreementHashLoading) {
+  if (loadingWhitelistPolicies) {
     return (
       <div className={styles.loaderContainer}>
         <SpinnerLoader appearance={{ size: 'huge', theme: 'primary' }} />
@@ -55,27 +52,30 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
     );
   }
 
-  return kycPolicyData?.hasKycPolicy ? (
+  return (
     <div>
-      <UploadAddressesWidget
-        colony={colony}
-        whitelistAgreementHash={agreementHashData?.whitelistAgreementHash}
-      />
-      {usersLoading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
-      {(usersData?.whitelistedUsers?.length && !usersLoading && (
+      {(policyType === WhitelistPolicy.KycOnly ||
+        policyType === WhitelistPolicy.KycAndAgreement) && (
+        <UploadAddressesWidget
+          colony={colony}
+          whitelistAgreementHash={
+            whitelistPolicies?.whitelistPolicies?.agreementHash
+          }
+        />
+      )}
+      {(policyType === WhitelistPolicy.AgreementOnly ||
+        policyType === WhitelistPolicy.KycAndAgreement) && (
+        <AgreementEmbed agreementHash={agreementHash} />
+      )}
+      {usersLoading ? (
+        <MiniSpinnerLoader loadingText={MSG.loadingText} />
+      ) : (
         <WhitelistAddresses
           colony={colony}
-          users={usersData.whitelistedUsers}
+          users={usersData?.whitelistedUsers || []}
         />
-      )) ||
-        null}
+      )}
     </div>
-  ) : (
-    agreementHashData?.whitelistAgreementHash && (
-      <AgreementEmbed
-        agreementHash={agreementHashData?.whitelistAgreementHash}
-      />
-    )
   );
 };
 
