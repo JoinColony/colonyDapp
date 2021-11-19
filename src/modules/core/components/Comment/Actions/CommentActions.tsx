@@ -81,7 +81,7 @@ const CommentActions = ({
           id={id}
           ref={ref}
           className={classnames(styles.actionsButton, {
-            [styles.activeDropdown]: false,
+            [styles.activeDropdown]: isOpen,
           })}
           onClick={() => setOpen(true)}
           type="button"
