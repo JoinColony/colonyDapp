@@ -102,6 +102,8 @@ export const coinMachineResolvers = ({
     async coinMachineBoughtTokens(_, { colonyAddress, transactionHash }) {
       const { provider } = colonyManager.networkClient;
       try {
+        const { blockHash } = await provider.getTransaction(transactionHash);
+
         const coinMachineClient = await colonyManager.getClient(
           ClientType.CoinMachineClient,
           colonyAddress,
@@ -116,30 +118,20 @@ export const coinMachineResolvers = ({
         const boughtTokensLogs = await getLogs(
           coinMachineClient,
           boughtTokensFilter,
+          { blockHash },
         );
 
         const boughtTokensEvents = await Promise.all(
           boughtTokensLogs.map(async (log) => {
             const parsedLog = coinMachineClient.interface.parseLog(log);
-            const {
-              blockHash,
-              transactionHash: currentLogTransactionHash,
-            } = log;
+            const { transactionHash: currentLogTransactionHash } = log;
             return {
               ...parsedLog,
               transactionHash: currentLogTransactionHash,
-              createdAt: blockHash
-                ? await getBlockTime(provider, blockHash)
-                : 0,
             };
           }),
         );
-        const lastBoughtTokensEvent = boughtTokensEvents
-          .sort(
-            (firstEvent, secondEvent) =>
-              secondEvent.createdAt - firstEvent.createdAt,
-          )
-          .find((event) => event.transactionHash === transactionHash);
+        const [lastBoughtTokensEvent] = boughtTokensEvents.reverse();
 
         return {
           numTokens: lastBoughtTokensEvent?.values.numTokens?.toString() || '0',
