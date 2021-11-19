@@ -193,18 +193,6 @@ export default gql`
     activeTokens: String!
   }
 
-  extend type User {
-    reputation(colonyAddress: String!, domainId: Int): String!
-    tokens(walletAddress: String!): [Token!]!
-    userLock(
-      walletAddress: String!
-      tokenAddress: String!
-      colonyAddress: String!
-    ): UserLock!
-    tokenTransfers: [Transfer!]!
-    processedColonies: [ProcessedColony!]!
-  }
-
   type ProcessedMetaColony {
     id: Int!
     colonyAddress: String!
@@ -232,6 +220,18 @@ export default gql`
   type User {
     id: String!
     profile: UserProfile!
+  }
+
+  extend type User {
+    reputation(colonyAddress: String!, domainId: Int): String!
+    tokens(walletAddress: String!): [Token!]!
+    userLock(
+      walletAddress: String!
+      tokenAddress: String!
+      colonyAddress: String!
+    ): UserLock!
+    tokenTransfers: [Transfer!]!
+    processedColonies: [ProcessedColony!]!
   }
 
   type UsersAndRecoveryApprovals {

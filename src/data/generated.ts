@@ -296,7 +296,7 @@ export type Query = {
   votingState: VotingState;
   whitelistAgreement: Scalars['String'];
   whitelistPolicies: WhitelistPolicy;
-  whitelistedUsers: Array<User>;
+  whitelistedUsers: Array<Maybe<WhitelistedUser>>;
 };
 
 
@@ -1356,6 +1356,13 @@ export type UserWhitelistStatus = {
   userIsApproved: Scalars['Boolean'];
   userIsWhitelisted: Scalars['Boolean'];
   userSignedAgreement: Scalars['Boolean'];
+};
+
+export type WhitelistedUser = {
+  id: Scalars['String'];
+  profile: UserProfile;
+  approved?: Maybe<Scalars['Boolean']>;
+  agreementSigned?: Maybe<Scalars['Boolean']>;
 };
 
 export type ActionsFilter = {
@@ -2604,10 +2611,10 @@ export type WhitelistedUsersQueryVariables = Exact<{
 }>;
 
 
-export type WhitelistedUsersQuery = { whitelistedUsers: Array<(
-    Pick<User, 'id'>
+export type WhitelistedUsersQuery = { whitelistedUsers: Array<Maybe<(
+    Pick<WhitelistedUser, 'id' | 'approved' | 'agreementSigned'>
     & { profile: Pick<UserProfile, 'walletAddress'> }
-  )> };
+  )>> };
 
 export type WhitelistAgreementQueryVariables = Exact<{
   agreementHash: Scalars['String'];
@@ -7262,6 +7269,8 @@ export const WhitelistedUsersDocument = gql`
     profile {
       walletAddress
     }
+    approved
+    agreementSigned
   }
 }
     `;

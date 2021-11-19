@@ -4,6 +4,8 @@ query WhitelistedUsers($colonyAddress: String!) {
     profile {
       walletAddress
     }
+    approved
+    agreementSigned
    }
 }
 

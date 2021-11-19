@@ -13,8 +13,15 @@ export default gql`
     userSignedAgreement: Boolean!
   }
 
+  type WhitelistedUser {
+    id: String!
+    profile: UserProfile!
+    approved: Boolean
+    agreementSigned: Boolean
+  }
+
   extend type Query {
-    whitelistedUsers(colonyAddress: String!): [User!]!
+    whitelistedUsers(colonyAddress: String!): [WhitelistedUser]!
     whitelistAgreement(agreementHash: String!): String!
     whitelistPolicies(colonyAddress: String!): WhitelistPolicy!
     userWhitelistStatus(
