@@ -4,9 +4,9 @@ import { useHistory } from 'react-router-dom';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
-import { bigNumberify } from 'ethers/utils';
-
+import { BigNumber, bigNumberify } from 'ethers/utils';
 import Decimal from 'decimal.js';
+
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import ExternalLink from '~core/ExternalLink';
@@ -110,12 +110,20 @@ interface FormValues {
 const displayName = 'dashboard.CoinMachine.BuyTokens';
 
 const validationSchema = (userBalance: string, tokenDecimals: number) => {
+  const uncappedUserBalance = new Decimal(userBalance).div(
+    new Decimal(10).pow(tokenDecimals),
+  );
+  const formattedUserBalance = getFormattedTokenValue(
+    userBalance,
+    tokenDecimals,
+  );
+
   let amountFieldValidation = yup
     .number()
     .moreThan(0)
     .max(
-      parseFloat(userBalance),
-      `The amount must be less or equal to ${userBalance}`,
+      uncappedUserBalance.toNumber(),
+      `The amount must be less or equal to ${formattedUserBalance}`,
     );
 
   if (tokenDecimals === 0) {
@@ -200,7 +208,7 @@ const BuyTokens = ({
         purchaseToken?.decimals,
       );
     },
-    [salePriceData],
+    [salePriceData, purchaseToken],
   );
 
   const globalDisable =
@@ -226,7 +234,11 @@ const BuyTokens = ({
     [globalDisable],
   );
 
-  const maxUserPurchase = useMemo(() => {
+  const sellableTokenDecimals = sellableToken
+    ? sellableToken.decimals
+    : DEFAULT_TOKEN_DECIMALS;
+
+  const maxUserPurchase: BigNumber = useMemo(() => {
     if (
       maxUserPurchaseData?.coinMachineCurrentPeriodMaxUserPurchase &&
       salePriceData?.coinMachineCurrentPeriodPrice &&
@@ -236,7 +248,6 @@ const BuyTokens = ({
       const userTokenBalance = bigNumberify(userPurchaseToken.balance);
       const maxContractPurchase =
         maxUserPurchaseData.coinMachineCurrentPeriodMaxUserPurchase;
-
       const currentPeriodPrice = bigNumberify(
         salePriceData?.coinMachineCurrentPeriodPrice || 0,
       );
@@ -257,7 +268,7 @@ const BuyTokens = ({
           ),
         );
       if (maxUserBalancePurchase.gt(maxContractPurchase)) {
-        return maxContractPurchase;
+        return bigNumberify(maxContractPurchase);
       }
       return maxUserBalancePurchase;
     }
@@ -269,21 +280,23 @@ const BuyTokens = ({
       if (!globalDisable) {
         event.preventDefault();
         event.stopPropagation();
+
+        const maxAmount = new Decimal(maxUserPurchase.toString())
+          .div(
+            new Decimal(10).pow(
+              getTokenDecimalsWithFallback(sellableTokenDecimals),
+            ),
+          )
+          .toString();
         /*
          * @NOTE This will set the max amount a user can buy
          * Either the max tokens available this period, or the user's total purchase
          * tokens balance, whichever is smaller
          */
-        setFieldValue(
-          'amount',
-          getFormattedTokenValue(
-            maxUserPurchase,
-            sellableToken?.decimals || 18,
-          ),
-        );
+        setFieldValue('amount', maxAmount);
       }
     },
-    [globalDisable, maxUserPurchase, sellableToken],
+    [globalDisable, maxUserPurchase, sellableTokenDecimals],
   );
   const handleFormReset = useCallback((resetForm) => resetForm(), []);
 
@@ -313,10 +326,6 @@ const BuyTokens = ({
       </div>
     );
   }
-
-  const sellableTokenDecimals = sellableToken
-    ? sellableToken.decimals
-    : DEFAULT_TOKEN_DECIMALS;
 
   return (
     <div
@@ -351,7 +360,7 @@ const BuyTokens = ({
               amount: '0',
             }}
             validationSchema={validationSchema(
-              getFormattedTokenValue(maxUserPurchase, sellableTokenDecimals),
+              maxUserPurchase.toString(),
               sellableTokenDecimals,
             )}
             submit={ActionTypes.COIN_MACHINE_BUY_TOKENS}
