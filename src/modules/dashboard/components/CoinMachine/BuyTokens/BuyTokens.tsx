@@ -6,6 +6,7 @@ import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
 
+import Decimal from 'decimal.js';
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import ExternalLink from '~core/ExternalLink';
@@ -187,6 +188,19 @@ const BuyTokens = ({
   const currentSalePrice = getFormattedTokenValue(
     salePriceData?.coinMachineCurrentPeriodPrice || '0',
     purchaseToken?.decimals || 18,
+  );
+
+  const getFormattedCost = useCallback(
+    (amount) => {
+      const decimalCost = new Decimal(amount).times(
+        salePriceData.coinMachineCurrentPeriodPrice,
+      );
+      return getFormattedTokenValue(
+        decimalCost.toString(),
+        purchaseToken?.decimals,
+      );
+    },
+    [salePriceData],
   );
 
   const globalDisable =
@@ -462,12 +476,7 @@ const BuyTokens = ({
                     <div className={styles.amountsValues}>
                       {!isSoldOut ? (
                         <div>
-                          {values.amount
-                            ? (
-                                parseInt(values.amount, 10) *
-                                parseFloat(currentSalePrice)
-                              ).toFixed(2)
-                            : ''}
+                          {values.amount ? getFormattedCost(values.amount) : ''}
                         </div>
                       ) : (
                         <div>N/A</div>
