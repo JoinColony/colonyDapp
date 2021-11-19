@@ -22,9 +22,6 @@ import {
   UserBalanceWithLockQuery,
   UserBalanceWithLockQueryVariables,
   UserBalanceWithLockDocument,
-  CoinMachineBoughtTokensQuery,
-  CoinMachineBoughtTokensQueryVariables,
-  CoinMachineBoughtTokensDocument,
 } from '~data/index';
 
 import {
@@ -232,17 +229,6 @@ function* buyTokens({
       variables: {
         address: walletAddress,
         tokenAddress: sellableTokenAddress,
-        colonyAddress,
-      },
-      fetchPolicy: 'network-only',
-    });
-
-    yield apolloClient.query<
-      CoinMachineBoughtTokensQuery,
-      CoinMachineBoughtTokensQueryVariables
-    >({
-      query: CoinMachineBoughtTokensDocument,
-      variables: {
         colonyAddress,
       },
       fetchPolicy: 'network-only',
