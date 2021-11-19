@@ -2,6 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
 
+import Decimal from 'decimal.js';
 import Heading from '~core/Heading';
 import TransactionLink from '~core/TransactionLink';
 import Button from '~core/Button';
@@ -16,7 +17,10 @@ import {
   useCoinMachineTransactionAmountQuery,
   Colony,
 } from '~data/index';
-import { getFormattedTokenValue } from '~utils/tokens';
+import {
+  getFormattedTokenValue,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
 import useSplitTime from '~utils/hooks/useSplitTime';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
@@ -202,38 +206,48 @@ const SaleStateWidget = ({
 
   useEffect(() => {
     if (!salePriceData) return;
-
-    const decimalSalePrice = getFormattedTokenValue(
-      salePriceData?.coinMachineCurrentPeriodPrice,
-      sellableToken?.decimals,
-    );
-
     if (boughtTokensData && transactionAmountData) {
       const {
         transactionAmount,
         transactionSucceed,
       } = transactionAmountData.coinMachineTransactionAmount;
-      let amount = getFormattedTokenValue(
+      const { numTokens, totalCost } = boughtTokensData.coinMachineBoughtTokens;
+      const decimalPrice = new Decimal(transactionAmount)
+        .times(salePriceData.coinMachineCurrentPeriodPrice)
+        .div(
+          new Decimal(10).pow(
+            getTokenDecimalsWithFallback(purchaseToken?.decimals),
+          ),
+        );
+
+      let formattedAmount = getFormattedTokenValue(
         transactionAmount,
         sellableToken?.decimals,
       );
-      let price = (parseFloat(amount) * parseFloat(decimalSalePrice)).toFixed(
-        2,
+      let formattedPrice = getFormattedTokenValue(
+        decimalPrice.toString(),
+        purchaseToken?.decimals,
       );
-      const { numTokens, totalCost } = boughtTokensData.coinMachineBoughtTokens;
+
       if (!transactionSucceed) {
         setState(SaleState.TransactionFailed);
       } else if (bigNumberify(numTokens).isZero()) {
         setState(SaleState.SaleFailed);
       } else if (bigNumberify(transactionAmount).gt(numTokens)) {
-        amount = getFormattedTokenValue(numTokens, sellableToken?.decimals);
-        price = getFormattedTokenValue(totalCost, purchaseToken?.decimals);
+        formattedAmount = getFormattedTokenValue(
+          numTokens,
+          sellableToken?.decimals,
+        );
+        formattedPrice = getFormattedTokenValue(
+          totalCost,
+          purchaseToken?.decimals,
+        );
         setState(SaleState.PartialSuccess);
       } else {
         setState(SaleState.Success);
       }
-      setDecimalAmount(amount);
-      setCost(price);
+      setDecimalAmount(formattedAmount);
+      setCost(formattedPrice);
     }
   }, [
     boughtTokensData,
