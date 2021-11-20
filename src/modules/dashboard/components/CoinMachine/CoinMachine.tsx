@@ -147,23 +147,30 @@ const CoinMachine = ({
     coinMachineTokenBalanceData?.coinMachineTokenBalance || 0,
   ).isZero();
 
+  const {
+    activeSoldTokens: activeSold = '0',
+    maxPerPeriodTokens: maxPerPeriod = '0',
+    targetPerPeriodTokens: targetPerPeriod = '0',
+  } = periodTokensData?.currentPeriodTokens || {};
+
   const periodTokens = useMemo(() => {
     if (!saleTokensData || !periodTokensData || !hasSaleStarted) {
       return undefined;
     }
     return {
       decimals: saleTokensData.coinMachineSaleTokens.sellableToken.decimals,
-      soldPeriodTokens: bigNumberify(
-        periodTokensData.currentPeriodTokens.activeSoldTokens,
-      ),
-      maxPeriodTokens: bigNumberify(
-        periodTokensData.currentPeriodTokens.maxPerPeriodTokens,
-      ),
-      targetPeriodTokens: bigNumberify(
-        periodTokensData.currentPeriodTokens.targetPerPeriodTokens,
-      ),
+      soldPeriodTokens: bigNumberify(activeSold),
+      maxPeriodTokens: bigNumberify(maxPerPeriod),
+      targetPeriodTokens: bigNumberify(targetPerPeriod),
     };
-  }, [periodTokensData, saleTokensData, hasSaleStarted]);
+  }, [
+    saleTokensData,
+    periodTokensData,
+    hasSaleStarted,
+    activeSold,
+    maxPerPeriod,
+    targetPerPeriod,
+  ]);
 
   const isSoldOut = useMemo(
     () =>
@@ -295,12 +302,15 @@ const CoinMachine = ({
         <div className={styles.sales}>
           <TokenSalesTable
             colonyAddress={colonyAddress}
-            periodLength={periodLength}
-            periodRemainingTime={timeRemaining}
+            extensionAddress={coinMachineExtension?.address}
+            periodInfo={{
+              periodLengthMS: periodLength,
+              periodRemainingMS: timeRemaining,
+              targetPerPeriod,
+              maxPerPeriod,
+            }}
             sellableToken={sellableToken}
             purchaseToken={purchaseToken}
-            periodTokens={periodTokens}
-            extensionAddress={coinMachineExtension?.address}
           />
         </div>
         <div className={styles.comments}>
