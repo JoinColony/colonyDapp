@@ -60,13 +60,13 @@ const RemainingDisplayWidget = ({
           tooltipClassName={styles.tooltip}
         />
       </div>
-      <p
+      <div
         className={classnames(styles.value, {
           [styles.valueWarning]: isWarning,
         })}
       >
         {displayedValue}
-      </p>
+      </div>
       {widgetText.footerText && (
         <div className={styles.footer}>
           <p className={styles.footerText}>

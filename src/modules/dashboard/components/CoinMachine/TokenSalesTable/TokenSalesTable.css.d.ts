@@ -6,7 +6,6 @@ export const tableHeader: string;
 export const tableHeaderCell: string;
 export const tableRow: string;
 export const cellData: string;
-export const cellDataDanger: string;
 export const tokenSymbol: string;
 export const noDataMessage: string;
 export const hiddenDataMessage: string;

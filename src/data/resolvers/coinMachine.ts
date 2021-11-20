@@ -30,6 +30,10 @@ import { getToken } from './token';
 /*
  * Small helper to replay TokensBought / Transfer events over a reversed
  * period array in order to generate a historic available tokens total
+ *
+ * Since we are going in reverse:
+ * - if tokens were bought we add to to the count
+ * - if tokens were transfered into the coin machine we subtract from the count
  */
 const replayBalanceEvents = (
   {
@@ -383,13 +387,13 @@ export const coinMachineResolvers = ({
         );
         historicAvailableTokensEvents
           /*
-           * Only use events that outside of the latest sale period
+           * Only use events that are outside of the latest sale period.
            * Earlier events, basically everything that happened in the current
            * "active" sale period
            */
           .filter(
             ({ timestamp: eventTimestamp = 0 }) =>
-              eventTimestamp > stalePeriods[0].saleEndedAt,
+              eventTimestamp >= stalePeriods[0].saleEndedAt,
           )
           .map((event) => {
             lastPeriodAvailableTokens = replayBalanceEvents(
@@ -435,9 +439,6 @@ export const coinMachineResolvers = ({
                 /*
                  * Find all the events that happened within this period and
                  * replay them onto the current available tokens.
-                 * Since we are going in reverse:
-                 * - if tokens were bought we add to to the count
-                 * - if tokens were transfered into the coin machine we subtract from the count
                  */
                 historicAvailableTokensEvents
                   .filter(
@@ -457,10 +458,12 @@ export const coinMachineResolvers = ({
                   ({ saleEndedAt: activeSaleEndedAt }) =>
                     activeSaleEndedAt === String(staleSaleEndedAt),
                 );
-                const tokensAvailable = lastPeriodAvailableTokens.lt(0)
+                const tokensAvailable = lastPeriodAvailableTokens.lte(0)
                   ? bigNumberify(0)
                   : lastPeriodAvailableTokens;
 
+                const periodTokensBought =
+                  existingActiveSale?.tokensBought || tokensBought.toString();
                 /*
                  * If there's a sale in the same period as there was the first
                  * token transfer into Coin Machine, make sure to fetch that
@@ -470,24 +473,21 @@ export const coinMachineResolvers = ({
                  * as tokens coming, to prevent showing something like 1000/0 tokens bought
                  */
                 const tokensAvailableWithFallback =
-                  tokensAvailable.lte(0) &&
-                  lastPeriodAvailableTokens.lte(0) &&
-                  firstTokenTransfer &&
-                  firstTokenTransfer.timestamp &&
-                  firstTokenTransfer.timestamp <= staleSaleEndedAt
-                    ? firstTokenTransfer.values.wad
+                  bigNumberify(periodTokensBought).gt(tokensAvailable) &&
+                  tokensAvailable.lte(0)
+                    ? firstTokenTransfer?.values?.wad || bigNumberify(0)
                     : tokensAvailable;
 
                 return existingActiveSale
                   ? {
                       saleEndedAt: existingActiveSale.saleEndedAt,
-                      tokensBought: existingActiveSale.tokensBought,
+                      tokensBought: periodTokensBought,
                       price: existingActiveSale.price,
                       tokensAvailable: tokensAvailableWithFallback.toString(),
                     }
                   : {
                       saleEndedAt: String(staleSaleEndedAt),
-                      tokensBought: tokensBought.toString(),
+                      tokensBought: periodTokensBought,
                       price: stalePrice.toString(),
                       tokensAvailable: tokensAvailableWithFallback.toString(),
                     };
@@ -495,15 +495,17 @@ export const coinMachineResolvers = ({
             )
             /*
              * Filter out
+             * - periods with 0 available tokens (coin machine is out of tokens)
              * - sale periods that end in the future
              * - sale periods generated for timestamps starting before
              *  the extension was installed
              */
             .filter(
-              ({ saleEndedAt }) =>
+              ({ saleEndedAt, tokensAvailable }) =>
                 parseInt(saleEndedAt, 10) <= currentBlockTime &&
                 parseInt(saleEndedAt, 10) >=
-                  (extensionInitialised.timestamp || 0),
+                  (extensionInitialised.timestamp || 0) &&
+                bigNumberify(tokensAvailable).gt(0),
             )
             /*
              * Price evolution calculations require us to go for oldest sale period
@@ -529,6 +531,16 @@ export const coinMachineResolvers = ({
               if (bigNumberify(currentPrice).gt(0)) {
                 previousPrice = currentPrice;
                 return period;
+              }
+              /*
+               * If there are no more tokens in the coin machine, the price doesn't
+               * evolve anymore
+               */
+              if (bigNumberify(period.tokensAvailable).isZero()) {
+                return {
+                  ...period,
+                  price: previousPrice.toString(),
+                };
               }
 
               const previousPeriodTokensBought = periodArray[periodIndex - 1]

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
-import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
+import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import {
@@ -20,6 +20,7 @@ import {
   TokenInfoQuery,
   useCoinMachineSalePeriodsQuery,
   SalePeriod,
+  AnyToken,
 } from '~data/index';
 import { Address } from '~types/index';
 import { getBlockExplorerLink } from '~utils/external';
@@ -36,7 +37,7 @@ import styles from './TokenSalesTable.css';
 const MSG = defineMessages({
   tableTitle: {
     id: 'dashboard.CoinMachine.TokenSalesTable.tableTitle',
-    defaultMessage: `Previous Sales`,
+    defaultMessage: `Previous batches`,
   },
   saleColumnTitle: {
     id: `dashboard.CoinMachine.TokenSalesTable.saleColumnTitle`,
@@ -44,11 +45,11 @@ const MSG = defineMessages({
   },
   amountColumnTitle: {
     id: `dashboard.CoinMachine.TokenSalesTable.amountColumnTitle`,
-    defaultMessage: 'Amount {nativeTokenSymbol}',
+    defaultMessage: 'Amount {sellableTokenSymbol}',
   },
   priceColumnTitle: {
     id: `dashboard.CoinMachine.TokenSalesTable.priceColumnTitle`,
-    defaultMessage: 'Price ETH',
+    defaultMessage: 'Price {purchaseTokenSymbol}',
   },
   noTableData: {
     id: 'dashboard.CoinMachine.TokenSalesTable.noTableData',
@@ -66,24 +67,34 @@ const MSG = defineMessages({
   },
 });
 
+interface PeriodInfo {
+  periodLengthMS: number;
+  periodRemainingMS: number;
+  targetPerPeriod: string;
+  maxPerPeriod: string;
+}
+
 interface Props {
-  periodTokens?: PeriodTokensType;
-  sellableToken?: TokenInfoQuery['tokenInfo'];
   colonyAddress: Address;
-  periodLength: number;
-  periodRemainingTime: number;
   extensionAddress?: Address;
+  sellableToken?: TokenInfoQuery['tokenInfo'];
+  purchaseToken?: TokenInfoQuery['tokenInfo'];
+  periodInfo: PeriodInfo;
 }
 
 const displayName = 'dashboard.CoinMachine.TokenSalesTable';
 
 const TokenSalesTable = ({
-  periodTokens,
-  sellableToken,
   colonyAddress,
-  periodLength,
-  periodRemainingTime,
   extensionAddress,
+  sellableToken,
+  purchaseToken,
+  periodInfo: {
+    periodLengthMS,
+    periodRemainingMS,
+    targetPerPeriod,
+    maxPerPeriod,
+  },
 }: Props) => {
   const PREV_PERIODS_LIMIT = 100;
   const salePeriodQueryVariables = { colonyAddress, limit: PREV_PERIODS_LIMIT };
@@ -105,13 +116,14 @@ const TokenSalesTable = ({
     {
       text: MSG.amountColumnTitle,
       textValues: {
-        nativeTokenSymbol: sellableToken?.symbol,
+        sellableTokenSymbol: sellableToken?.symbol,
         span: (chunks) => <span className={styles.tokenSymbol}>{chunks}</span>,
       },
     },
     {
       text: MSG.priceColumnTitle,
       textValues: {
+        purchaseTokenSymbol: purchaseToken?.symbol,
         span: (chunks) => <span className={styles.tokenSymbol}>{chunks}</span>,
       },
     },
@@ -126,23 +138,26 @@ const TokenSalesTable = ({
       ({ saleEndedAt, tokensAvailable, tokensBought, price }) => {
         return {
           saleEndedAt: new Date(parseInt(saleEndedAt, 10)),
-          tokensRemaining: periodTokens ? (
+          tokensRemaining: (
             <SoldTokensWidget
-              periodTokens={periodTokens}
               tokensBought={tokensBought}
               tokensAvailable={tokensAvailable}
+              maxPerPeriod={maxPerPeriod}
+              sellableToken={sellableToken as AnyToken}
             />
-          ) : (
-            '0/0'
           ),
-          hasSoldOut: periodTokens?.maxPeriodTokens.lte(tokensBought),
           price: getFormattedTokenValue(price, 18),
-          priceStatus:
-            periodTokens && getPriceStatus(periodTokens, tokensBought),
+          priceStatus: getPriceStatus(
+            {
+              targetPeriodTokens: bigNumberify(targetPerPeriod),
+              maxPeriodTokens: bigNumberify(maxPerPeriod),
+            } as PeriodTokensType,
+            tokensBought,
+          ),
         };
       },
     );
-  }, [periodTokens, tableData]);
+  }, [maxPerPeriod, sellableToken, tableData, targetPerPeriod]);
 
   /*
    * Manually update the sale table with new data.
@@ -152,21 +167,18 @@ const TokenSalesTable = ({
    * where we load the page in the middle of the period
    */
   useEffect(() => {
-    if (
-      periodRemainingTime > 1000 &&
-      periodRemainingTime < periodLength * 1000
-    ) {
+    if (periodRemainingMS > 1000 && periodRemainingMS < periodLengthMS) {
       setTimeout(() => {
         refetchSalePeriodsData(salePeriodQueryVariables);
-        startPollingSalePeriodsData(periodLength * 1000);
-      }, periodRemainingTime);
+        startPollingSalePeriodsData(periodLengthMS);
+      }, periodRemainingMS);
     } else {
-      startPollingSalePeriodsData(periodLength * 1000);
+      startPollingSalePeriodsData(periodLengthMS);
     }
     return () => stopPollingSalePeriodsData();
   }, [
-    periodLength,
-    periodRemainingTime,
+    periodLengthMS,
+    periodRemainingMS,
     refetchSalePeriodsData,
     salePeriodQueryVariables,
     startPollingSalePeriodsData,
@@ -202,13 +214,7 @@ const TokenSalesTable = ({
           <TableBody>
             {!salePeriodsLoading &&
               formattedData.map(
-                ({
-                  saleEndedAt,
-                  tokensRemaining,
-                  hasSoldOut,
-                  price,
-                  priceStatus,
-                }) => (
+                ({ saleEndedAt, tokensRemaining, price, priceStatus }) => (
                   <TableRow
                     className={styles.tableRow}
                     key={saleEndedAt.getTime()}
@@ -223,11 +229,7 @@ const TokenSalesTable = ({
                         minute="2-digit"
                       />
                     </TableCell>
-                    <TableCell
-                      className={classnames(styles.cellData, {
-                        [styles.cellDataDanger]: hasSoldOut,
-                      })}
-                    >
+                    <TableCell className={styles.cellData}>
                       {tokensRemaining}
                     </TableCell>
                     <TableCell className={styles.cellData}>
