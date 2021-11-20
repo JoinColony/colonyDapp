@@ -531,6 +531,17 @@ export const coinMachineResolvers = ({
                 return period;
               }
 
+              /*
+               * If there are no more tokens in the coin machine, the price doesn't
+               * evolve anymore
+               */
+              if (bigNumberify(period.tokensAvailable).isZero()) {
+                return {
+                  ...period,
+                  price: previousPrice.toString(),
+                };
+              }
+
               const previousPeriodTokensBought = periodArray[periodIndex - 1]
                 ?.tokensBought
                 ? bigNumberify(periodArray[periodIndex - 1]?.tokensBought)
