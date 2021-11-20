@@ -1,45 +1,58 @@
 import { FormattedMessage, defineMessages } from 'react-intl';
 import React from 'react';
-import { bigNumberify, BigNumberish } from 'ethers/utils';
+import { bigNumberify } from 'ethers/utils';
 
-import { PeriodTokensType } from '~dashboard/CoinMachine/RemainingDisplayWidgets';
+import { AnyToken } from '~data/index';
 import { getFormattedTokenValue } from '~utils/tokens';
+
+import styles from './SoldTokensWidget.css';
 
 const MSG = defineMessages({
   soldOut: {
     id: `dashboard.CoinMachine.TokenSalesTable.SoldTokensWidget.soldOut`,
     defaultMessage: 'SOLD OUT',
   },
+  periodTokens: {
+    id: `dashboard.CoinMachine.TokenSalesTable.SoldTokensWidget.periodTokens`,
+    defaultMessage: '{tokensBought}/{tokensAvailable}',
+  },
 });
 
 interface Props {
-  periodTokens: PeriodTokensType;
-  tokensBought: BigNumberish;
-  tokensAvailable: BigNumberish;
+  tokensBought: string;
+  tokensAvailable: string;
+  sellableToken: AnyToken;
 }
 
 const displayedName = `dashboard.CoinMachine.TokenSalesTable.SoldTokensWidget`;
 
 const SoldTokensWidget = ({
-  periodTokens,
   tokensBought,
-  tokensAvailable = 0,
+  tokensAvailable,
+  sellableToken: { decimals = 18 },
 }: Props) => {
-  const { maxPeriodTokens, decimals } = periodTokens;
-
-  const upperLimit = bigNumberify(tokensAvailable).lte(maxPeriodTokens)
-    ? bigNumberify(tokensAvailable)
-    : maxPeriodTokens;
-
-  if (bigNumberify(tokensBought).gte(upperLimit) && upperLimit.gt(0)) {
-    return <FormattedMessage {...MSG.soldOut} />;
+  if (bigNumberify(tokensBought).gte(tokensAvailable)) {
+    return (
+      <span className={styles.soldOut}>
+        <FormattedMessage {...MSG.soldOut} />
+      </span>
+    );
   }
 
   return (
-    <>
-      {getFormattedTokenValue(bigNumberify(tokensBought), decimals)}/
-      {getFormattedTokenValue(upperLimit, decimals)}
-    </>
+    <FormattedMessage
+      {...MSG.periodTokens}
+      values={{
+        tokensBought: getFormattedTokenValue(
+          bigNumberify(tokensBought),
+          decimals,
+        ),
+        tokensAvailable: getFormattedTokenValue(
+          bigNumberify(tokensAvailable),
+          decimals,
+        ),
+      }}
+    />
   );
 };
 
