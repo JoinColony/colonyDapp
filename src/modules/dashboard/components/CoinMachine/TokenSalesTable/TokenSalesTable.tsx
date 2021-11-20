@@ -44,11 +44,11 @@ const MSG = defineMessages({
   },
   amountColumnTitle: {
     id: `dashboard.CoinMachine.TokenSalesTable.amountColumnTitle`,
-    defaultMessage: 'Amount {nativeTokenSymbol}',
+    defaultMessage: 'Amount {sellableTokenSymbol}',
   },
   priceColumnTitle: {
     id: `dashboard.CoinMachine.TokenSalesTable.priceColumnTitle`,
-    defaultMessage: 'Price ETH',
+    defaultMessage: 'Price {purchaseTokenSymbol}',
   },
   noTableData: {
     id: 'dashboard.CoinMachine.TokenSalesTable.noTableData',
@@ -69,6 +69,7 @@ const MSG = defineMessages({
 interface Props {
   periodTokens?: PeriodTokensType;
   sellableToken?: TokenInfoQuery['tokenInfo'];
+  purchaseToken?: TokenInfoQuery['tokenInfo'];
   colonyAddress: Address;
   periodLength: number;
   periodRemainingTime: number;
@@ -80,6 +81,7 @@ const displayName = 'dashboard.CoinMachine.TokenSalesTable';
 const TokenSalesTable = ({
   periodTokens,
   sellableToken,
+  purchaseToken,
   colonyAddress,
   periodLength,
   periodRemainingTime,
@@ -105,13 +107,14 @@ const TokenSalesTable = ({
     {
       text: MSG.amountColumnTitle,
       textValues: {
-        nativeTokenSymbol: sellableToken?.symbol,
+        sellableTokenSymbol: sellableToken?.symbol,
         span: (chunks) => <span className={styles.tokenSymbol}>{chunks}</span>,
       },
     },
     {
       text: MSG.priceColumnTitle,
       textValues: {
+        purchaseTokenSymbol: purchaseToken?.symbol,
         span: (chunks) => <span className={styles.tokenSymbol}>{chunks}</span>,
       },
     },

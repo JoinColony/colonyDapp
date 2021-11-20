@@ -230,14 +230,15 @@ const CoinMachine = ({
     return <Redirect to={`/colony/${colonyName}`} />;
   }
 
-  const saleToken = saleTokensData?.coinMachineSaleTokens?.sellableToken;
+  const { sellableToken, purchaseToken } =
+    saleTokensData?.coinMachineSaleTokens || {};
 
   const breadCrumbs: Crumb[] = [
     MSG.title,
     <div>
       <FormattedMessage
         {...MSG.buyTokens}
-        values={{ symbol: saleToken?.symbol }}
+        values={{ symbol: sellableToken?.symbol }}
       />
       <ExternalLink
         className={styles.learnMore}
@@ -256,7 +257,7 @@ const CoinMachine = ({
           <div className={styles.saleStarted}>
             <SaleStateWidget
               colony={colony}
-              sellableToken={saleToken}
+              sellableToken={sellableToken}
               timeLeftToNextSale={timeRemaining}
               transactionHash={transactionHash}
               purchaseToken={
@@ -296,7 +297,8 @@ const CoinMachine = ({
             colonyAddress={colonyAddress}
             periodLength={periodLength}
             periodRemainingTime={timeRemaining}
-            sellableToken={saleToken}
+            sellableToken={sellableToken}
+            purchaseToken={purchaseToken}
             periodTokens={periodTokens}
             extensionAddress={coinMachineExtension?.address}
           />
