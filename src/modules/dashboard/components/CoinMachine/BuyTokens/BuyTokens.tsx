@@ -200,9 +200,10 @@ const BuyTokens = ({
 
   const getFormattedCost = useCallback(
     (amount) => {
-      const decimalCost = new Decimal(amount).times(
-        salePriceData.coinMachineCurrentPeriodPrice,
-      );
+      const decimalCost = new Decimal(amount)
+        .times(salePriceData.coinMachineCurrentPeriodPrice)
+        .toFixed(0, Decimal.ROUND_HALF_UP);
+
       return getFormattedTokenValue(
         decimalCost.toString(),
         purchaseToken?.decimals,

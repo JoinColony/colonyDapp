@@ -218,7 +218,8 @@ const SaleStateWidget = ({
           new Decimal(10).pow(
             getTokenDecimalsWithFallback(purchaseToken?.decimals),
           ),
-        );
+        )
+        .toFixed(0, Decimal.ROUND_HALF_UP);
 
       let formattedAmount = getFormattedTokenValue(
         transactionAmount,
