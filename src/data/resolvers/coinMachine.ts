@@ -99,41 +99,39 @@ export const coinMachineResolvers = ({
         return null;
       }
     },
-    async coinMachineBoughtTokens(_, { colonyAddress }) {
+    async coinMachineBoughtTokens(_, { colonyAddress, transactionHash }) {
+      const { provider } = colonyManager.networkClient;
       try {
+        const { blockHash } = await provider.getTransaction(transactionHash);
+
         const coinMachineClient = await colonyManager.getClient(
           ClientType.CoinMachineClient,
           colonyAddress,
         );
 
-        const subgraphData = await apolloClient.query<
-          SubgraphCoinMachinePeriodsQuery,
-          SubgraphCoinMachinePeriodsQueryVariables
-        >({
-          query: SubgraphCoinMachinePeriodsDocument,
-          variables: {
-            colonyAddress: colonyAddress.toLowerCase(),
-            extensionAddress: coinMachineClient.address.toLowerCase(),
-            /*
-             * The limit doesn't matter in this case as we're not using that data,
-             * we're just interested in the TokensBought events
-             */
-            limit: 1,
-          },
-          fetchPolicy: 'network-only',
-        });
+        const boughtTokensFilter = coinMachineClient.filters.TokensBought(
+          null,
+          null,
+          null,
+        );
 
-        const [lastBoughtTokensEvent] = (
-          subgraphData?.data?.tokenBoughtEvents || []
-        )
-          .map(parseSubgraphEvent)
-          .sort((firstEvent, secondEvent) =>
-            sortSubgraphEventByIndex(
-              firstEvent,
-              secondEvent,
-              SortDirection.DESC,
-            ),
-          );
+        const boughtTokensLogs = await getLogs(
+          coinMachineClient,
+          boughtTokensFilter,
+          { blockHash },
+        );
+
+        const boughtTokensEvents = await Promise.all(
+          boughtTokensLogs.map(async (log) => {
+            const parsedLog = coinMachineClient.interface.parseLog(log);
+            const { transactionHash: currentLogTransactionHash } = log;
+            return {
+              ...parsedLog,
+              transactionHash: currentLogTransactionHash,
+            };
+          }),
+        );
+        const [lastBoughtTokensEvent] = boughtTokensEvents.reverse();
 
         return {
           numTokens: lastBoughtTokensEvent?.values.numTokens?.toString() || '0',

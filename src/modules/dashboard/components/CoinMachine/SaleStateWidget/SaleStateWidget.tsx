@@ -186,7 +186,7 @@ const SaleStateWidget = ({
   });
 
   const { data: boughtTokensData } = useCoinMachineBoughtTokensQuery({
-    variables: { colonyAddress },
+    variables: { colonyAddress, transactionHash },
     fetchPolicy: 'network-only',
   });
 
