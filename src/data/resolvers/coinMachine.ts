@@ -495,15 +495,17 @@ export const coinMachineResolvers = ({
             )
             /*
              * Filter out
+             * - periods with 0 available tokens (coin machine is out of tokens)
              * - sale periods that end in the future
              * - sale periods generated for timestamps starting before
              *  the extension was installed
              */
             .filter(
-              ({ saleEndedAt }) =>
+              ({ saleEndedAt, tokensAvailable }) =>
                 parseInt(saleEndedAt, 10) <= currentBlockTime &&
                 parseInt(saleEndedAt, 10) >=
-                  (extensionInitialised.timestamp || 0),
+                  (extensionInitialised.timestamp || 0) &&
+                bigNumberify(tokensAvailable).gt(0),
             )
             /*
              * Price evolution calculations require us to go for oldest sale period
@@ -530,7 +532,6 @@ export const coinMachineResolvers = ({
                 previousPrice = currentPrice;
                 return period;
               }
-
               /*
                * If there are no more tokens in the coin machine, the price doesn't
                * evolve anymore
