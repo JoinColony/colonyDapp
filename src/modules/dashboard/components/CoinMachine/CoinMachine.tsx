@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Extension } from '@colony/colony-js';
+import { Extension, Network } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 
-import { AddressZero } from 'ethers/constants';
+import { DEFAULT_NETWORK } from '~constants';
 import ExternalLink from '~core/ExternalLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import BreadCrumb, { Crumb } from '~core/BreadCrumb';
@@ -16,7 +16,6 @@ import {
   Colony,
   useCoinMachineCurrentSalePeriodQuery,
   useCoinMachineTokenBalanceQuery,
-  useSubgraphTokenBoughtEventsSubscription,
   useCoinMachineCurrentPeriodPriceQuery,
   useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
   useLoggedInUser,
@@ -71,8 +70,6 @@ const CoinMachine = ({
   const { transactionHash } = useParams<{
     transactionHash: string;
   }>();
-  const [tokenBoughtEventsCounter, setTokenBoughtEventsCounter] = useState(0);
-
   const { walletAddress } = useLoggedInUser();
 
   const {
@@ -82,21 +79,11 @@ const CoinMachine = ({
     variables: { address: colonyAddress },
   });
 
+  const pollInterval = DEFAULT_NETWORK === Network.Mainnet ? 20000 : 5000;
   const { installedExtensions = [] } = extensionsData?.processedColony || {};
   const coinMachineExtension = installedExtensions?.find(
     ({ extensionId }) => extensionId === Extension.CoinMachine,
   );
-
-  const {
-    data: tokenBoughtEventsData,
-    loading: loadingTokenBoughtEventsData,
-  } = useSubgraphTokenBoughtEventsSubscription({
-    variables: {
-      colonyAddress,
-      extensionAddress:
-        coinMachineExtension?.address.toLowerCase() || AddressZero,
-    },
-  });
 
   const {
     data: saleTokensData,
@@ -120,13 +107,12 @@ const CoinMachine = ({
 
   const {
     data: periodTokensData,
-    refetch: refetchCurrentPeriodTokensData,
-    startPolling: startPollingCurrentPeriodTokensData,
     stopPolling: stopPollingCurrentPeriodTokensData,
     loading: periodTokensLoading,
   } = useCurrentPeriodTokensQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
+    pollInterval,
   });
 
   const {
@@ -140,23 +126,21 @@ const CoinMachine = ({
   const {
     data: salePriceData,
     loading: loadingSalePrice,
-    refetch: refetchCurrentPeriodPrice,
-    startPolling: startPollingCurrentPeriodPrice,
     stopPolling: stopPollingCurrentPeriodPrice,
   } = useCoinMachineCurrentPeriodPriceQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
+    pollInterval,
   });
 
   const {
     data: maxUserPurchaseData,
     loading: loadingMaxUserPurchase,
-    refetch: refetchCurrentPeriodMaxUserPurchase,
-    startPolling: startPollingCurrentPeriodMaxUserPurchase,
     stopPolling: stopPollingCurrentPeriodMaxUserPurchase,
   } = useCoinMachineCurrentPeriodMaxUserPurchaseQuery({
     variables: { colonyAddress, userAddress: walletAddress },
     fetchPolicy: 'network-only',
+    pollInterval,
   });
 
   const hasSaleStarted = !bigNumberify(
@@ -191,59 +175,18 @@ const CoinMachine = ({
   const { timeRemaining = 0, periodLength = 0 } =
     currentSalePeriodData?.coinMachineCurrentSalePeriod || {};
 
-  useEffect(() => {
-    const tokenBoughtEventsLength =
-      tokenBoughtEventsData?.tokenBoughtEvents.length || 0;
-    if (tokenBoughtEventsCounter < tokenBoughtEventsLength) {
-      refetchCurrentPeriodTokensData({ colonyAddress });
-      setTokenBoughtEventsCounter(tokenBoughtEventsLength);
-      refetchCurrentPeriodPrice();
-      refetchCurrentPeriodMaxUserPurchase();
-    }
-  }, [
-    colonyAddress,
-    tokenBoughtEventsData,
-    tokenBoughtEventsCounter,
-    setTokenBoughtEventsCounter,
-    refetchCurrentPeriodTokensData,
-    refetchCurrentPeriodPrice,
-    refetchCurrentPeriodMaxUserPurchase,
-  ]);
-
-  useEffect(() => {
-    if (timeRemaining > 1000 && timeRemaining < periodLength) {
-      setTimeout(() => {
-        refetchCurrentPeriodTokensData({ colonyAddress });
-        startPollingCurrentPeriodTokensData(periodLength);
-        refetchCurrentPeriodPrice();
-        startPollingCurrentPeriodPrice(periodLength);
-        refetchCurrentPeriodMaxUserPurchase();
-        startPollingCurrentPeriodMaxUserPurchase(periodLength);
-      }, timeRemaining);
-    } else {
-      startPollingCurrentPeriodTokensData(periodLength);
-      startPollingCurrentPeriodPrice(periodLength);
-      startPollingCurrentPeriodMaxUserPurchase(periodLength);
-    }
-    return () => {
+  useEffect(
+    () => () => {
       stopPollingCurrentPeriodPrice();
       stopPollingCurrentPeriodTokensData();
       stopPollingCurrentPeriodMaxUserPurchase();
-    };
-  }, [
-    colonyAddress,
-    periodLength,
-    timeRemaining,
-    refetchCurrentPeriodTokensData,
-    startPollingCurrentPeriodTokensData,
-    stopPollingCurrentPeriodTokensData,
-    stopPollingCurrentPeriodPrice,
-    refetchCurrentPeriodPrice,
-    startPollingCurrentPeriodPrice,
-    refetchCurrentPeriodMaxUserPurchase,
-    startPollingCurrentPeriodMaxUserPurchase,
-    stopPollingCurrentPeriodMaxUserPurchase,
-  ]);
+    },
+    [
+      stopPollingCurrentPeriodTokensData,
+      stopPollingCurrentPeriodPrice,
+      stopPollingCurrentPeriodMaxUserPurchase,
+    ],
+  );
 
   /*
    * Cleanup on component unmount
@@ -261,8 +204,7 @@ const CoinMachine = ({
     currentSalePeriodLoading ||
     !extensionsData?.processedColony?.installedExtensions ||
     periodTokensLoading ||
-    coinMachineTokenBalanceLoading ||
-    loadingTokenBoughtEventsData
+    coinMachineTokenBalanceLoading
   ) {
     return (
       <div className={styles.loadingSpinner}>
