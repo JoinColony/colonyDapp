@@ -9,12 +9,12 @@ import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
 
 import Whitelist from '~dashboard/Whitelist';
-import { Address } from '~types/index';
 import { CustomRadioProps } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
 import { Colony } from '~data/index';
 import { getBlockExplorerLink } from '~utils/external';
 import { DEFAULT_NETWORK_INFO } from '~constants';
+import { Address, WhitelistPolicy } from '~types/index';
 
 export interface ExtensionBodyProps {
   colony: Colony;
@@ -26,12 +26,6 @@ export enum ExtensionParamType {
   Textarea = 'Textarea',
   ColonyPolicySelector = 'ColonyPolicySelector',
   TokenSelector = 'TokenSelector',
-}
-
-export enum PolicyType {
-  KycOnly = 0,
-  AgreementOnly = 1,
-  KycAndAgreement = 2,
 }
 
 export interface ExtensionInitParams {
@@ -668,7 +662,7 @@ const extensions: { [key: string]: ExtensionData } = {
         type: ExtensionParamType.ColonyPolicySelector,
         options: [
           {
-            value: PolicyType.AgreementOnly,
+            value: WhitelistPolicy.AgreementOnly,
             label: MSG.whitelistColonyPolicySelectorAgreementOnly,
             name: 'policy',
             appearance: {
@@ -677,7 +671,7 @@ const extensions: { [key: string]: ExtensionData } = {
             checked: false,
           },
           {
-            value: PolicyType.KycOnly,
+            value: WhitelistPolicy.KycOnly,
             label: MSG.whitelistColonyPolicySelectorKYCOnly,
             name: 'policy',
             appearance: {
@@ -686,7 +680,7 @@ const extensions: { [key: string]: ExtensionData } = {
             checked: false,
           },
           {
-            value: PolicyType.KycAndAgreement,
+            value: WhitelistPolicy.KycAndAgreement,
             label: MSG.whitelistColonyPolicySelectorAgreementAndKYC,
             name: 'policy',
             appearance: {
@@ -700,8 +694,8 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'agreement',
         validation: yup.string().when('policy', {
           is: (policy) =>
-            policy === PolicyType.AgreementOnly ||
-            policy === PolicyType.KycAndAgreement,
+            policy === WhitelistPolicy.AgreementOnly ||
+            policy === WhitelistPolicy.KycAndAgreement,
           then: yup.string().required().min(100),
           otherwise: false,
         }),
@@ -710,7 +704,7 @@ const extensions: { [key: string]: ExtensionData } = {
         description: MSG.agreementDescription,
         type: ExtensionParamType.Textarea,
         disabled: (values) =>
-          !values.policy || values.policy === PolicyType.KycOnly,
+          !values.policy || values.policy === WhitelistPolicy.KycOnly,
       },
     ],
     uninstallable: true,

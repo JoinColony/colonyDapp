@@ -16,9 +16,9 @@ import {
   SubgraphExtensionEventsQuery,
   SubgraphExtensionEventsQueryVariables,
   SubgraphExtensionEventsDocument,
-  WhitelistPolicyQuery,
-  WhitelistPolicyQueryVariables,
-  WhitelistPolicyDocument,
+  WhitelistPoliciesQuery,
+  WhitelistPoliciesQueryVariables,
+  WhitelistPoliciesDocument,
   getLoggedInUser,
   UserWhitelistStatusQuery,
   UserWhitelistStatusQueryVariables,
@@ -47,10 +47,10 @@ export function* refreshExtension(
       fetchPolicy: 'network-only',
     });
     yield apolloClient.query<
-      WhitelistPolicyQuery,
-      WhitelistPolicyQueryVariables
+      WhitelistPoliciesQuery,
+      WhitelistPoliciesQueryVariables
     >({
-      query: WhitelistPolicyDocument,
+      query: WhitelistPoliciesDocument,
       variables: {
         colonyAddress,
       },

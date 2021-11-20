@@ -1,13 +1,11 @@
 import React from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { defineMessages } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 
 import Heading from '~core/Heading';
 import MembersList from '~core/MembersList';
-import { AnyUser, Colony, useLoggedInUser } from '~data/index';
-import { useTransformer } from '~utils/hooks';
-import { getAllUserRoles } from '../../../../transformers';
-import { canAdminister } from '../../../../users/checks';
+import { AnyUser, Colony } from '~data/index';
+import { SimpleMessageValues } from '~types/index';
 
 import WhitelistMembersListExtraContent from './WhitelistMembersListExtraContent';
 
@@ -16,6 +14,9 @@ import styles from './WhitelistAddresses.css';
 interface Props {
   colony: Colony;
   users: AnyUser[];
+  canRemoveUser?: boolean;
+  title?: MessageDescriptor;
+  titleValues?: SimpleMessageValues;
 }
 
 const displayName = 'dashboard.Whitelist.WhitelistAddresses';
@@ -27,17 +28,21 @@ const MSG = defineMessages({
   },
 });
 
-const WhitelistAddresses = ({ colony, users }: Props) => {
-  const { walletAddress, username, ethereal } = useLoggedInUser();
-  const userHasProfile = !!username && !ethereal;
-
-  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
-  const canAdministerWhitelist = userHasProfile && canAdminister(allUserRoles);
-
+const WhitelistAddresses = ({
+  colony,
+  users,
+  canRemoveUser = false,
+  title = MSG.title,
+  titleValues,
+}: Props) => {
+  if (!users?.length) {
+    return null;
+  }
   return (
     <div className={styles.main}>
       <Heading
-        text={MSG.title}
+        text={title}
+        textValues={titleValues}
         appearance={{ margin: 'small', theme: 'dark', size: 'normal' }}
       />
       <MembersList
@@ -46,7 +51,7 @@ const WhitelistAddresses = ({ colony, users }: Props) => {
         users={users}
         showUserReputation={false}
         extraItemContent={(props) => {
-          return canAdministerWhitelist ? (
+          return canRemoveUser ? (
             <WhitelistMembersListExtraContent
               userAddress={props.id}
               colonyAddress={colony.colonyAddress}

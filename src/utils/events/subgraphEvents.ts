@@ -55,6 +55,7 @@ export type NormalizedSubgraphEvent = Omit<
  */
 const addressArgumentParser = (values: {
   user?: string;
+  _user?: string;
   agent?: string;
   creator?: string;
   staker?: string;
@@ -64,6 +65,7 @@ const addressArgumentParser = (values: {
   buyer?: string;
 }): {
   user?: Address;
+  _user?: Address;
   agent?: Address;
   creator?: Address;
   staker?: Address;
@@ -74,6 +76,7 @@ const addressArgumentParser = (values: {
 } => {
   const parsedValues: {
     user?: Address;
+    _user?: Address;
     agent?: Address;
     creator?: Address;
     staker?: Address;
@@ -84,6 +87,7 @@ const addressArgumentParser = (values: {
   } = {};
   [
     'user',
+    '_user',
     'agent',
     'creator',
     'staker',
@@ -186,7 +190,7 @@ const storageSlotArgumentParser = (values: {
  * @NOTE Only use internally
  *
  * Specific function to parse known, expected, values
- * This parses values for any event with storage slots
+ * This parses values for coin machine specific events
  */
 const coinMachineEventsArgumentParser = (values: {
   numTokens?: string;
@@ -204,6 +208,27 @@ const coinMachineEventsArgumentParser = (values: {
   }
   if (values?.totalCost) {
     parsedValues.totalCost = bigNumberify(values.totalCost);
+  }
+  return parsedValues;
+};
+
+/*
+ * @NOTE Only use internally
+ *
+ * Specific function to parse known, expected, values
+ * This parses values for whitelist specific events
+ */
+const whitelistEventsArgumentParser = (values: {
+  _status?: string;
+}): {
+  _status?: boolean;
+} => {
+  const parsedValues: {
+    _status?: boolean;
+  } = {};
+  if (values?._status) {
+    // eslint-disable-next-line no-underscore-dangle
+    parsedValues._status = values._status === 'true';
   }
   return parsedValues;
 };
@@ -240,6 +265,7 @@ export const parseSubgraphEvent = ({
       ...motionArgumentparser(parsedArguments),
       ...storageSlotArgumentParser(parsedArguments),
       ...coinMachineEventsArgumentParser(parsedArguments),
+      ...whitelistEventsArgumentParser(parsedArguments),
     },
   };
   /*

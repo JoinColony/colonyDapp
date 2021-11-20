@@ -1,23 +1,34 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessage } from 'react-intl';
+
+import { MiniSpinnerLoader, SpinnerLoader } from '~core/Preloaders';
 
 import {
   useWhitelistedUsersQuery,
-  useHasKycPolicyQuery,
-  useWhitelistAgreementHashQuery,
+  useWhitelistPoliciesQuery,
   Colony,
+  useLoggedInUser,
+  AnyUser,
 } from '~data/index';
-import { MiniSpinnerLoader, SpinnerLoader } from '~core/Preloaders';
+import { useTransformer } from '~utils/hooks';
+import { getAllUserRoles } from '../../../transformers';
+import { canAdminister, hasRoot } from '../../../users/checks';
+import { WhitelistPolicy } from '~types/index';
 
 import AgreementEmbed from './AgreementEmbed';
 import UploadAddressesWidget from './UploadAddressesWidget';
 import WhitelistAddresses from './WhitelistAddresses';
+
 import styles from './Whitelist.css';
 
 const MSG = defineMessage({
   loadingText: {
     id: 'dashboard.Whitelist.loadingText',
     defaultMessage: 'Loading whitelist',
+  },
+  notSignedTitle: {
+    id: 'dashboard.Whitelist.notSignedTitle',
+    defaultMessage: 'Addresses that have yet to sign the Agreement',
   },
 });
 
@@ -26,28 +37,47 @@ interface Props {
 }
 
 const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const userHasProfile = !!username && !ethereal;
+
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+  const canAdministerWhitelist =
+    userHasProfile && canAdminister(allUserRoles) && hasRoot(allUserRoles);
+
   const { data: usersData, loading: usersLoading } = useWhitelistedUsersQuery({
     variables: { colonyAddress },
-    pollInterval: 1000,
+    fetchPolicy: 'network-only',
   });
+  const whitelistedUsers = usersData?.whitelistedUsers || [];
 
   const {
-    data: agreementHashData,
-    loading: agreementHashLoading,
-  } = useWhitelistAgreementHashQuery({
+    data: whitelistPolicies,
+    loading: loadingWhitelistPolicies,
+  } = useWhitelistPoliciesQuery({
     variables: { colonyAddress },
     fetchPolicy: 'network-only',
   });
+  const { policyType, agreementHash = '' } =
+    whitelistPolicies?.whitelistPolicies || {};
 
-  const {
-    data: kycPolicyData,
-    loading: kycPolicyLoading,
-  } = useHasKycPolicyQuery({
-    variables: { colonyAddress },
-    fetchPolicy: 'network-only',
-  });
+  const kycBasedPolicies =
+    policyType === WhitelistPolicy.KycOnly ||
+    policyType === WhitelistPolicy.KycAndAgreement;
 
-  if (kycPolicyLoading || agreementHashLoading) {
+  const usersSignaturesStatus = useMemo(
+    () => ({
+      haveSigned: whitelistedUsers.filter(
+        (whitelistedUser) => whitelistedUser?.agreementSigned,
+      ),
+      notSigned: whitelistedUsers.filter(
+        (whitelistedUser) =>
+          whitelistedUser?.approved && !whitelistedUser?.agreementSigned,
+      ),
+    }),
+    [whitelistedUsers],
+  );
+
+  if (loadingWhitelistPolicies) {
     return (
       <div className={styles.loaderContainer}>
         <SpinnerLoader appearance={{ size: 'huge', theme: 'primary' }} />
@@ -55,28 +85,47 @@ const Whitelist = ({ colony: { colonyAddress }, colony }: Props) => {
     );
   }
 
-  return kycPolicyData?.hasKycPolicy ? (
-    <div>
-      <UploadAddressesWidget
-        colony={colony}
-        whitelistAgreementHash={agreementHashData?.whitelistAgreementHash}
-      />
-      {usersLoading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
-      {(usersData?.whitelistedUsers?.length && !usersLoading && (
-        <WhitelistAddresses
-          colony={colony}
-          users={usersData.whitelistedUsers}
-        />
-      )) ||
-        null}
-    </div>
-  ) : (
-    agreementHashData?.whitelistAgreementHash && (
-      <AgreementEmbed
-        agreementHash={agreementHashData?.whitelistAgreementHash}
-      />
-    )
-  );
+  if (canAdministerWhitelist) {
+    return (
+      <div>
+        {kycBasedPolicies && (
+          <UploadAddressesWidget
+            colony={colony}
+            whitelistAgreementHash={
+              whitelistPolicies?.whitelistPolicies?.agreementHash
+            }
+          />
+        )}
+        {policyType === WhitelistPolicy.AgreementOnly && (
+          <AgreementEmbed agreementHash={agreementHash} />
+        )}
+        {usersLoading && <MiniSpinnerLoader loadingText={MSG.loadingText} />}
+        {!usersLoading && policyType === WhitelistPolicy.KycAndAgreement && (
+          <>
+            <WhitelistAddresses
+              colony={colony}
+              users={usersSignaturesStatus.haveSigned as AnyUser[]}
+              canRemoveUser={kycBasedPolicies}
+            />
+            <WhitelistAddresses
+              colony={colony}
+              users={usersSignaturesStatus.notSigned as AnyUser[]}
+              canRemoveUser={kycBasedPolicies}
+              title={MSG.notSignedTitle}
+            />
+          </>
+        )}
+        {!usersLoading && policyType !== WhitelistPolicy.KycAndAgreement && (
+          <WhitelistAddresses
+            colony={colony}
+            users={whitelistedUsers as AnyUser[]}
+            canRemoveUser={kycBasedPolicies}
+          />
+        )}
+      </div>
+    );
+  }
+  return null;
 };
 
 export default Whitelist;

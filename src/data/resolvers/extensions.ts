@@ -10,7 +10,6 @@ import {
 
 import { Context } from '~context/index';
 import {
-  getMinimalUser,
   SubgraphExtensionVersionDeployedEventsQuery,
   SubgraphExtensionVersionDeployedEventsQueryVariables,
   SubgraphExtensionVersionDeployedEventsDocument,
@@ -21,11 +20,6 @@ import {
 import extensionData from '~data/staticData/extensionData';
 import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
 import { SortDirection } from '~types/index';
-import {
-  SubgraphKycAddressesDocument,
-  SubgraphKycAddressesQuery,
-  SubgraphKycAddressesQueryVariables,
-} from '~data/generated';
 
 export const extensionsResolvers = ({
   colonyManager: { networkClient },
@@ -87,34 +81,6 @@ export const extensionsResolvers = ({
           return extensionsVersions;
         }
         return [];
-      } catch (error) {
-        console.error(error);
-        return [];
-      }
-    },
-    async whitelistedUsers(_, { colonyAddress }) {
-      try {
-        const whitelistClient = await colonyManager.getClient(
-          ClientType.WhitelistClient,
-          colonyAddress,
-        );
-
-        const { data: kycAddresesData } = await apolloClient.query<
-          SubgraphKycAddressesQuery,
-          SubgraphKycAddressesQueryVariables
-        >({
-          query: SubgraphKycAddressesDocument,
-          variables: {
-            extensionAddress: whitelistClient.address.toLowerCase(),
-          },
-          fetchPolicy: 'network-only',
-        });
-        /*
-         * @NOTE This query handles aggreement signing also
-         */
-        return kycAddresesData?.kycaddresses?.map((kycAddress) =>
-          getMinimalUser(kycAddress?.walletAddress || ''),
-        );
       } catch (error) {
         console.error(error);
         return [];

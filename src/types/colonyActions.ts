@@ -120,6 +120,7 @@ export enum ColonyAndExtensionsEvents {
    * Extension: Whitelist events
    */
   UserApproved = 'UserApproved',
+  AgreementSigned = 'AgreementSigned',
 }
 
 export interface FormattedAction {

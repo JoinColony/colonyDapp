@@ -1,0 +1,73 @@
+query WhitelistedUsers($colonyAddress: String!) {
+   whitelistedUsers(colonyAddress: $colonyAddress) @client {
+    id
+    profile {
+      walletAddress
+    }
+    approved
+    agreementSigned
+   }
+}
+
+query WhitelistAgreement($agreementHash: String!) {
+  whitelistAgreement(agreementHash: $agreementHash) @client
+}
+
+query WhitelistPolicies($colonyAddress: String!) {
+  whitelistPolicies(colonyAddress: $colonyAddress) @client {
+    useApprovals,
+    agreementHash,
+    policyType,
+  }
+}
+
+query UserWhitelistStatus($colonyAddress: String!, $userAddress: String!) {
+  userWhitelistStatus(colonyAddress: $colonyAddress, userAddress: $userAddress) @client {
+    userIsApproved,
+    userIsWhitelisted,
+    userSignedAgreement,
+  }
+}
+
+query SubgraphWhitelistEvents($extensionAddress: String!) {
+  userApprovedEvents: events(
+    where: {
+      name_contains: "UserApproved"
+      address: $extensionAddress
+    }
+  ) {
+    id
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+  agreementSignedEvents: events(
+    where: {
+      name_contains: "AgreementSigned"
+      address: $extensionAddress
+    }
+  ) {
+    id
+    transaction {
+      id
+      transactionHash: id
+      block {
+        id
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+  }
+}

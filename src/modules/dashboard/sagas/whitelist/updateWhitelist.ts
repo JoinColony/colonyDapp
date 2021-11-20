@@ -1,5 +1,5 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ClientType } from '@colony/colony-js';
+import { ClientType, Extension } from '@colony/colony-js';
 import { $Values } from 'utility-types';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -7,10 +7,6 @@ import {
   WhitelistedUsersDocument,
   WhitelistedUsersQuery,
   WhitelistedUsersQueryVariables,
-  UserWhitelistStatusQuery,
-  UserWhitelistStatusDocument,
-  UserWhitelistStatusQueryVariables,
-  getLoggedInUser,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -21,12 +17,12 @@ import {
   createTransaction,
   createTransactionChannels,
 } from '../../../core/sagas';
+import { refreshExtension } from '../utils';
 
 export function* updateWhitelist({
   meta,
   payload: { userAddresses, colonyAddress, status },
 }: Action<ActionTypes.WHITELIST_UPDATE>) {
-  const { walletAddress } = yield getLoggedInUser();
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const requireTransactions = Math.ceil(userAddresses.length / 100);
   const channelNames: string[] = [];
@@ -114,21 +110,7 @@ export function* updateWhitelist({
       fetchPolicy: 'network-only',
     });
 
-    /*
-     * This only needs to update for the current users, not all that were whitelist
-     * since the current session doesn't interact with them in any way
-     */
-    yield apolloClient.query<
-      UserWhitelistStatusQuery,
-      UserWhitelistStatusQueryVariables
-    >({
-      query: UserWhitelistStatusDocument,
-      variables: {
-        colonyAddress,
-        userAddress: walletAddress,
-      },
-      fetchPolicy: 'network-only',
-    });
+    yield refreshExtension(colonyAddress, Extension.Whitelist);
 
     /*
      * Close all transaction channels.

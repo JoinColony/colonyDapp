@@ -31,24 +31,42 @@ export function* colonyExtensionUninstall({
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     txChannel = yield call(getTxChannel, metaId);
 
-    let coinMachineClient;
-    let coinMachineDeprecated;
-    try {
-      coinMachineClient = yield colonyManager.getClient(
-        ClientType.CoinMachineClient,
-        colonyAddress,
-      );
-      coinMachineDeprecated = yield coinMachineClient.getDeprecated();
-    } catch (error) {
+    let haveToUpdateCoinMachineWhitelist = false;
+    if (extensionId === Extension.Whitelist) {
+      let coinMachineClient;
+      let coinMachineDeprecated;
       /*
-       * Silent error since we don't really care about it, but it means
-       * that the coin machine client is not installed in the colony
+       * Only re-write the coin machine's whitelist address, if it matches
+       * the address of the whitelist we are uninstalling
+       *
+       * If it does not, it means the user is using and external whitelist
+       * (whitelist from a different colony)
        */
+      let coinmachineWhitelistIsSame = false;
+      try {
+        const whitelistClient = yield colonyManager.getClient(
+          ClientType.WhitelistClient,
+          colonyAddress,
+        );
+        coinMachineClient = yield colonyManager.getClient(
+          ClientType.CoinMachineClient,
+          colonyAddress,
+        );
+        coinMachineDeprecated = yield coinMachineClient.getDeprecated();
+        coinmachineWhitelistIsSame =
+          (yield coinMachineClient.getWhitelist()) === whitelistClient.address;
+      } catch (error) {
+        /*
+         * Silent error since we don't really care about it, but it means
+         * that the coin machine client is not installed in the colony
+         */
+      }
+      haveToUpdateCoinMachineWhitelist =
+        extensionId === Extension.Whitelist &&
+        coinmachineWhitelistIsSame &&
+        !!coinMachineClient &&
+        !coinMachineDeprecated;
     }
-    const haveToUpdateCoinMachineWhitelist =
-      extensionId === Extension.Whitelist &&
-      !!coinMachineClient &&
-      !coinMachineDeprecated;
 
     const batchKey = 'unistallExtensions';
     const {

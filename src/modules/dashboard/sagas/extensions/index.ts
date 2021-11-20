@@ -5,7 +5,6 @@ import colonyExtensionEnableSaga from './colonyExtensionEnable';
 import colonyExtensionDeprecateSaga from './colonyExtensionDeprecate';
 import colonyExtensionUninstallSaga from './colonyExtensionUninstall';
 import colonyExtensionUpgradeSaga from './colonyExtensionUpgrade';
-import updateWhitelistSaga from './updateWhitelist';
 
 export default function* extensionsSagas() {
   yield all([
@@ -14,6 +13,5 @@ export default function* extensionsSagas() {
     call(colonyExtensionInstallSaga),
     call(colonyExtensionEnableSaga),
     call(colonyExtensionDeprecateSaga),
-    call(updateWhitelistSaga),
   ]);
 }

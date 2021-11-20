@@ -4,9 +4,8 @@ import Button from '~core/Button';
 import { Address } from '~types/index';
 
 import {
-  useWhitelistPolicyQuery,
+  useWhitelistPoliciesQuery,
   UserWhitelistStatus,
-  useWhitelistAgreementHashQuery,
   useMetaColonyQuery,
   useLoggedInUser,
 } from '~data/index';
@@ -32,7 +31,10 @@ type Props = {
 const displayName = 'dashboard.CoinMachine.GetWhitelisted';
 
 const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
-  const { data: whitelistPolicyData } = useWhitelistPolicyQuery({
+  const {
+    data: whitelistPolicies,
+    loading: loadingWhitelistPolicies,
+  } = useWhitelistPoliciesQuery({
     variables: { colonyAddress },
   });
   const { data } = useMetaColonyQuery();
@@ -46,29 +48,24 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
 
   const signatureRequired =
     userHasProfile &&
-    whitelistPolicyData?.whitelistPolicy.agreementRequired &&
+    !!whitelistPolicies?.whitelistPolicies?.agreementHash &&
     !userStatus?.userSignedAgreement;
 
   const isKYCRequired =
     userHasProfile &&
-    whitelistPolicyData?.whitelistPolicy.kycRequired &&
+    whitelistPolicies?.whitelistPolicies?.useApprovals &&
     !userStatus?.userIsApproved;
-
-  const { data: agreementHashData, loading } = useWhitelistAgreementHashQuery({
-    variables: { colonyAddress },
-    skip: !signatureRequired,
-  });
 
   const openDialog = useCallback(
     () =>
-      agreementHashData?.whitelistAgreementHash &&
+      whitelistPolicies?.whitelistPolicies?.agreementHash &&
       openAgreementDialog({
-        agreementHash: agreementHashData?.whitelistAgreementHash,
+        agreementHash: whitelistPolicies?.whitelistPolicies?.agreementHash,
         colonyAddress,
         isSignable: true,
         back: () => {},
       }),
-    [agreementHashData, openAgreementDialog, colonyAddress],
+    [whitelistPolicies, openAgreementDialog, colonyAddress],
   );
 
   const openKYCDialog = useCallback(() => {
@@ -78,7 +75,9 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
   }, [data, openSynapsDialog, colonyAddress, openCompleteKYCDialog]);
 
   useEffect(() => {
-    if (!userStatus || !whitelistPolicyData || loading) return;
+    if (!userStatus || !whitelistPolicies || loadingWhitelistPolicies) {
+      return;
+    }
     if (isKYCRequired) {
       openKYCDialog();
     } else if (signatureRequired) {
@@ -90,8 +89,8 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
     openKYCDialog,
     openDialog,
     userStatus,
-    whitelistPolicyData,
-    loading,
+    whitelistPolicies,
+    loadingWhitelistPolicies,
   ]);
 
   const showWhitelistModal = useCallback(() => {

@@ -36,8 +36,8 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.name`]: `{initiator} changed teams's name from {oldName} to {domainName}`,
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.color`]: `{initiator} changed teams's color from {oldColor} to {domainColor}`,
   [`event.${ColonyAndExtensionsEvents.DomainMetadata}.fallback`]: `{initiator} changed this team, but values are the same`,
-  [`event.${ColonyAndExtensionsEvents.UserApproved}.assign`]: `User with account {agent} was approved in the whitelist`,
-  [`event.${ColonyAndExtensionsEvents.UserApproved}.remove`]: `User with account {agent} was removed from the whitelist`,
+  [`event.${ColonyAndExtensionsEvents.UserApproved}.assign`]: `User {agent} got approved in the whitelist`,
+  [`event.${ColonyAndExtensionsEvents.UserApproved}.remove`]: `User {agent} got removed from the whitelist`,
   'eventList.event': `{eventName, select,
       ${ColonyAndExtensionsEvents.DomainAdded} {{agent} added Team: {domain}}
       ${ColonyAndExtensionsEvents.DomainMetadata} {{agent} changed Team {domain} metadata to {metadata}}
@@ -74,6 +74,7 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.MotionEscalated} {{agent} escalated motion {motionId} from {domain} to {newDomain}}
       ${ColonyAndExtensionsEvents.MotionRewardClaimed} {{agent} claimed their stake in motion {motionId}}
       ${ColonyAndExtensionsEvents.MotionEventSet} {Motion {motionId} fast-forwarded to the next lifecycle}
+      ${ColonyAndExtensionsEvents.AgreementSigned} {User {agent} signed the whitelist agreement}
       other {{eventName} emmited with values: {displayValues}}
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,
