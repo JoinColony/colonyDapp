@@ -37,7 +37,7 @@ import styles from './TokenSalesTable.css';
 const MSG = defineMessages({
   tableTitle: {
     id: 'dashboard.CoinMachine.TokenSalesTable.tableTitle',
-    defaultMessage: `Previous Sales`,
+    defaultMessage: `Previous batches`,
   },
   saleColumnTitle: {
     id: `dashboard.CoinMachine.TokenSalesTable.saleColumnTitle`,
