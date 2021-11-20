@@ -21,6 +21,7 @@ const MSG = defineMessages({
 interface Props {
   tokensBought: string;
   tokensAvailable: string;
+  maxPerPeriod: string;
   sellableToken: AnyToken;
 }
 
@@ -29,9 +30,19 @@ const displayedName = `dashboard.CoinMachine.TokenSalesTable.SoldTokensWidget`;
 const SoldTokensWidget = ({
   tokensBought,
   tokensAvailable,
+  maxPerPeriod,
   sellableToken: { decimals = 18 },
 }: Props) => {
-  if (bigNumberify(tokensBought).gte(tokensAvailable)) {
+  const totalAvailable = bigNumberify(tokensAvailable);
+  const maximumPerPeriod = bigNumberify(maxPerPeriod);
+  const lowestUpperLimit = totalAvailable.gt(maximumPerPeriod)
+    ? maximumPerPeriod
+    : totalAvailable;
+
+  if (
+    bigNumberify(tokensBought).gte(lowestUpperLimit) &&
+    lowestUpperLimit.eq(maximumPerPeriod)
+  ) {
     return (
       <span className={styles.soldOut}>
         <FormattedMessage {...MSG.soldOut} />
@@ -47,10 +58,7 @@ const SoldTokensWidget = ({
           bigNumberify(tokensBought),
           decimals,
         ),
-        tokensAvailable: getFormattedTokenValue(
-          bigNumberify(tokensAvailable),
-          decimals,
-        ),
+        tokensAvailable: getFormattedTokenValue(lowestUpperLimit, decimals),
       }}
     />
   );

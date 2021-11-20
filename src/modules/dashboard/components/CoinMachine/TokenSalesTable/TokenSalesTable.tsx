@@ -142,6 +142,7 @@ const TokenSalesTable = ({
             <SoldTokensWidget
               tokensBought={tokensBought}
               tokensAvailable={tokensAvailable}
+              maxPerPeriod={maxPerPeriod}
               sellableToken={sellableToken as AnyToken}
             />
           ),
