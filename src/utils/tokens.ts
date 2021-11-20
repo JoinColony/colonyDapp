@@ -62,8 +62,5 @@ export const getFormattedTokenValue = (
   if (decimalValue.lt(0.00001) && decimalValue.gt(0)) {
     return SMALL_TOKEN_AMOUNT_FORMAT;
   }
-  return new Decimal(bigNumberify(value).toString())
-    .div(safeDecimals)
-    .toDP(5, Decimal.ROUND_DOWN)
-    .toString();
+  return decimalValue.toDP(5, Decimal.ROUND_DOWN).toString();
 };
