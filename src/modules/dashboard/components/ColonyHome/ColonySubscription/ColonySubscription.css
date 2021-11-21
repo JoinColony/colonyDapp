@@ -1,5 +1,6 @@
 .main {
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+  margin-left: 2px;
 }
 
 .joinColony:hover {
