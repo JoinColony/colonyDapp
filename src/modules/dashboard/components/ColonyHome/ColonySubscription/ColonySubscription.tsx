@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import classnames from 'classnames';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
@@ -93,13 +94,25 @@ const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
           onUnsubscribe={() => unsubscribe()}
           canUnsubscribe={isNetworkAllowed}
         >
-          <div className={styles.menuIconContainer}>
-            <Icon
-              className={styles.menuIcon}
-              name="three-dots-row"
-              title={MSG.colonyMenuTitle}
-            />
-          </div>
+          {({ isOpen, toggle, ref, id }) => (
+            <div
+              id={id}
+              ref={ref}
+              className={classnames(styles.menuIconContainer, {
+                [styles.menuActive]: isOpen,
+              })}
+              onClick={toggle}
+              onKeyDown={toggle}
+              role="button"
+              tabIndex={0}
+            >
+              <Icon
+                className={styles.menuIcon}
+                name="three-dots-row"
+                title={MSG.colonyMenuTitle}
+              />
+            </div>
+          )}
         </ColonySubscriptionInfoPopover>
       )}
     </div>

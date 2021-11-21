@@ -28,8 +28,11 @@
   cursor: default;
 }
 
+.colonyMenu {
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+}
+
 .colonyAddress {
-  margin-right: 15px;
   padding: 3px 5px;
   width: 110px;
   border-radius: var(--radius-normal);
