@@ -15,7 +15,7 @@ interface Props extends RouteProps {
 }
 
 // Initiate Userflow
-userflow.init('ct_snrheuld3nbe3exppc4foxcb54');
+userflow.init(process.env.USERFLOW_TOKEN!);
 
 const AlwaysAccesibleRoute = ({
   component: Component,
