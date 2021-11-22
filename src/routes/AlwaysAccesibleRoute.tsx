@@ -1,6 +1,7 @@
 import React, { ComponentType } from 'react';
 import { Route, RouteProps } from 'react-router-dom';
 
+import userflow from 'userflow.js';
 import BetaCautionAlert from '~core/BetaCautionAlert';
 import FeedbackWidget from '~core/FeedbackWidget';
 import { RouteComponentProps } from '~pages/RouteLayouts';
@@ -12,6 +13,9 @@ interface Props extends RouteProps {
   layout: ComponentType<any>;
   routeProps?: RouteComponentProps | routePropsFn;
 }
+
+// Initiate Userflow
+userflow.init('ct_snrheuld3nbe3exppc4foxcb54');
 
 const AlwaysAccesibleRoute = ({
   component: Component,
