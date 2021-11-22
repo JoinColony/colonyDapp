@@ -30,12 +30,9 @@ import {
 } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import {
-  SubgraphUserMotionRewardClaimedEventsDocument,
-  SubgraphUserMotionRewardClaimedEventsQuery,
-  SubgraphUserMotionRewardClaimedEventsQueryVariables,
-  SubgraphUserMotionStakedEventsDocument,
-  SubgraphUserMotionStakedEventsQuery,
-  SubgraphUserMotionStakedEventsQueryVariables,
+  SubgraphUserMotionTokenEventsQuery,
+  SubgraphUserMotionTokenEventsQueryVariables,
+  SubgraphUserMotionTokenEventsDocument,
 } from '~data/generated';
 import { parseSubgraphEvent } from '~utils/events';
 
@@ -71,58 +68,45 @@ const getUserReputation = async (
 const getUserStakedBalance = async (
   apolloClient: ApolloClient<object>,
   walletAddress: Address,
+  colonyAddress: Address,
 ): Promise<BigNumber> => {
   /**
    * @NOTE If there will be more staking events
    * on reputation voting extension we need to remember to filter them out
    * in here for correct value of staked tokens.
    */
-  const { data: motionStakedEventsData } = await apolloClient.query<
-    SubgraphUserMotionStakedEventsQuery,
-    SubgraphUserMotionStakedEventsQueryVariables
+  const { data } = await apolloClient.query<
+    SubgraphUserMotionTokenEventsQuery,
+    SubgraphUserMotionTokenEventsQueryVariables
   >({
-    query: SubgraphUserMotionStakedEventsDocument,
+    query: SubgraphUserMotionTokenEventsDocument,
     fetchPolicy: 'network-only',
     variables: {
       walletAddress: walletAddress.toLowerCase(),
+      colonyAddress: colonyAddress.toLowerCase(),
     },
   });
-  const motionStakedEvents = motionStakedEventsData?.motionStakedEvents || [];
-  const parsedMotionStakedEvents = motionStakedEvents.map(parseSubgraphEvent);
-
-  const groupedMotionStakeEvents = parsedMotionStakedEvents.reduce(
-    (acc, event) => {
-      const { vote, motionId } = event.values;
-      const key = `${motionId.toString()}-${vote.toString()}`;
-      if (!acc[key]) {
-        acc[key] = [event];
-      } else {
-        acc[key].push(event);
-      }
-      return acc;
-    },
-    {},
+  const motionStakedEvents = (data?.motionStakedEvents || []).map(
+    parseSubgraphEvent,
   );
-
-  const { data: motionRewardClaimedEventsData } = await apolloClient.query<
-    SubgraphUserMotionRewardClaimedEventsQuery,
-    SubgraphUserMotionRewardClaimedEventsQueryVariables
-  >({
-    query: SubgraphUserMotionRewardClaimedEventsDocument,
-    fetchPolicy: 'network-only',
-    variables: {
-      walletAddress: walletAddress.toLowerCase(),
-    },
-  });
-  const motionRewardClaimedEvents =
-    motionRewardClaimedEventsData?.motionRewardClaimedEvents || [];
-  const parsedMotionRewardClaimedEvents = motionRewardClaimedEvents.map(
+  const motionRewardClaimedEvents = (data?.motionRewardClaimedEvents || []).map(
     parseSubgraphEvent,
   );
 
+  const groupedMotionStakeEvents = motionStakedEvents.reduce((acc, event) => {
+    const { vote, motionId } = event.values;
+    const key = `${motionId.toString()}-${vote.toString()}`;
+    if (!acc[key]) {
+      acc[key] = [event];
+    } else {
+      acc[key].push(event);
+    }
+    return acc;
+  }, {});
+
   const filteredKeys = Object.keys(groupedMotionStakeEvents).filter((key) => {
     const { motionId, vote } = groupedMotionStakeEvents[key][0].values;
-    const mappedMotionRewardClaimedEvent = parsedMotionRewardClaimedEvents.find(
+    const mappedMotionRewardClaimedEvent = motionRewardClaimedEvents.find(
       (claimedEvent) =>
         claimedEvent.values.motionId.toString() === motionId.toString() &&
         claimedEvent.values.vote.toString() === vote.toString(),
@@ -162,7 +146,11 @@ const getUserLock = async (
     tokenAddress,
   );
 
-  const stakedTokens = await getUserStakedBalance(apolloClient, walletAddress);
+  const stakedTokens = await getUserStakedBalance(
+    apolloClient,
+    walletAddress,
+    colonyAddress,
+  );
 
   const nativeToken = (await getToken(
     { colonyManager, client: apolloClient },
