@@ -26,7 +26,9 @@ export default withHooks<
     result.user && result.user.profile
       ? result.user.profile.avatarHash
       : undefined;
-  const { image } = useUserAvatarImageFromIPFS(avatarHash as string);
-  result.avatarURL = image;
+
+  const imageObject = useUserAvatarImageFromIPFS(avatarHash as string);
+  result.avatarURL = imageObject?.image;
+
   return result;
 })(UserAvatar);
