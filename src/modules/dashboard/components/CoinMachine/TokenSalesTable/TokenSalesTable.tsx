@@ -102,7 +102,6 @@ const TokenSalesTable = ({
   const {
     data: salePeriodsData,
     loading: salePeriodsLoading,
-    refetch: refetchSalePeriodsData,
     startPolling: startPollingSalePeriodsData,
     stopPolling: stopPollingSalePeriodsData,
   } = useCoinMachineSalePeriodsQuery({
@@ -169,7 +168,6 @@ const TokenSalesTable = ({
   useEffect(() => {
     if (periodRemainingMS > 1000 && periodRemainingMS < periodLengthMS) {
       setTimeout(() => {
-        refetchSalePeriodsData(salePeriodQueryVariables);
         startPollingSalePeriodsData(periodLengthMS);
       }, periodRemainingMS);
     } else {
@@ -179,8 +177,6 @@ const TokenSalesTable = ({
   }, [
     periodLengthMS,
     periodRemainingMS,
-    refetchSalePeriodsData,
-    salePeriodQueryVariables,
     startPollingSalePeriodsData,
     stopPollingSalePeriodsData,
   ]);
