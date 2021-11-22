@@ -26,6 +26,8 @@ import {
   UserBalanceWithLockQueryVariables,
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
+import { clearLastWallet } from '~utils/autoLogin';
+import { IPFSAvatarImage } from '~types/index';
 
 import { clearToken } from '../../../api/auth';
 import { ipfsUpload } from '../../core/sagas/ipfs';
@@ -38,7 +40,6 @@ import {
   createTransaction,
   getTxChannel,
 } from '../../core/sagas/transactions';
-import { clearLastWallet } from '~utils/autoLogin';
 
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
@@ -73,7 +74,7 @@ function* userAvatarUpload({
       try {
         ipfsHash = yield call(
           ipfsUpload,
-          JSON.stringify({ image: payload.data }),
+          JSON.stringify({ image: payload.data } as IPFSAvatarImage),
         );
       } catch (error) {
         // silent error
