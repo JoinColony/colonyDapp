@@ -19,7 +19,7 @@ const useSplitTime = (
       }
 
       if (timeLeft === 0 && periodLength) {
-        setTimeLeft(periodLength);
+        setTimeLeft(periodLength / 1000);
       }
     }
     return () => clearInterval(timer);
