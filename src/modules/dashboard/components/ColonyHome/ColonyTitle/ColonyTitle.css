@@ -30,15 +30,14 @@
 
 .colonyMenu {
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
+  margin-top: -3px;
 }
 
 .colonyAddress {
-  padding: 3px 5px;
-  width: 110px;
+  padding: 4px 5px;
   border-radius: var(--radius-normal);
-  font-size: 13px;
-  font-weight: var(--weight-medium);
   text-align: center;
+  line-height: var(--size-smallish);
   color: var(--temp-grey-blue-7);
   cursor: pointer;
   user-select: none;
