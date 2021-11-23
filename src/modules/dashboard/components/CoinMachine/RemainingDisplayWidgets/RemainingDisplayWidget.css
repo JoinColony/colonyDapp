@@ -41,6 +41,10 @@
   width: 190px;
 }
 
+.value span {
+  font-size: unset;
+}
+
 .themeDanger .main {
   color: var(--colony-white);
 }
