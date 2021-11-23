@@ -190,6 +190,10 @@ const ActionsListItem = ({
   const decimals = tokenData?.tokenInfo?.decimals || colonyTokenDecimals;
   const symbol = tokenData?.tokenInfo?.symbol || colonyTokenSymbol;
 
+  const isMotionFinished =
+    motionState === MotionState.Passed ||
+    motionState === MotionState.Failed ||
+    motionState === MotionState.FailedNoFinalizable;
   return (
     <li>
       <div
@@ -344,7 +348,7 @@ const ActionsListItem = ({
             )}
           </div>
         </div>
-        {motionId && (
+        {motionId && !isMotionFinished && (
           <div className={styles.countdownTimerContainer}>
             <CountDownTimer
               colony={colony}
