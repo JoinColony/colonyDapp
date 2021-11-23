@@ -33,7 +33,12 @@
   height: 100%;
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
+  text-align: center;
   color: var(--temp-grey-blue-7);
+}
+
+.value div {
+  width: 190px;
 }
 
 .themeDanger .main {

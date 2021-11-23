@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import classnames from 'classnames';
+import { Textfit } from 'react-textfit';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -28,6 +29,7 @@ type Props = {
   isWarning: boolean;
   displayedValue: string | ReactElement;
   isTotalSale?: boolean;
+  isTokens?: boolean;
 };
 
 const displayName = 'dashboard.CoinMachine.RemainingDisplayWidget';
@@ -38,6 +40,7 @@ const RemainingDisplayWidget = ({
   isWarning,
   displayedValue,
   isTotalSale,
+  isTokens = false,
 }: Props) => {
   return (
     <div className={getMainClasses(appearance, styles)}>
@@ -63,7 +66,14 @@ const RemainingDisplayWidget = ({
           [styles.valueWarning]: isWarning,
         })}
       >
-        {displayedValue}
+        {/* This is to avoid unnecessary calculaitons from Textfit for the timer */}
+        {isTokens ? (
+          <Textfit min={10} max={18} perfectFit={false} mode="single">
+            {displayedValue}
+          </Textfit>
+        ) : (
+          displayedValue
+        )}
       </div>
     </div>
   );
