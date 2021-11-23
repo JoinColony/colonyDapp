@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
-
+import React, { useState, useEffect, useMemo } from 'react';
+import { Network } from '@colony/colony-js';
+import SynapsClient from '@synaps-io/verify.js';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import SynapsClient from '@synaps-io/verify.js';
 import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
-import { Address } from '~types/index';
-import { useLoggedInUser, useUserWhitelistStatusQuery } from '~data/index';
-import { ContextModule, TEMP_getContext } from '~context/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
+import { useLoggedInUser, useUserWhitelistStatusQuery } from '~data/index';
+import { Address } from '~types/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
+import { isDev } from '~utils/debug';
+import { DEFAULT_NETWORK } from '~constants';
 
 import { getKycStatus } from './kycApi';
 import { authenticateKYC } from '../../../../../api';
@@ -48,6 +50,27 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
     variables: { colonyAddress, userAddress: walletAddress },
   });
 
+  const refreshInterval = useMemo(() => {
+    let refreshTimeout = 1000;
+    if (
+      DEFAULT_NETWORK === Network.Xdai ||
+      DEFAULT_NETWORK === Network.XdaiFork
+    ) {
+      refreshTimeout = 5 * 1000; // 5 secs blocktime
+    }
+    if (DEFAULT_NETWORK === Network.Mainnet) {
+      refreshTimeout = 12 * 1000; // 12 secs blocktime for mainnet
+    }
+    /*
+     * Doesn't matter what network you're on, if this is a dev build, set it back
+     * to 1 second
+     */
+    if (isDev) {
+      refreshTimeout = 1000;
+    }
+    return refreshTimeout;
+  }, []);
+
   useEffect(() => {
     const initSynaps = async () => {
       setIsLoading(true);
@@ -69,14 +92,14 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
           if (data?.status === 'VERIFIED') {
             setIsValid(true);
           }
-        }, 1000);
+        }, refreshInterval);
         return () => clearInterval(id);
       });
       setIsLoading(false);
     };
     if (!walletAddress) return;
     initSynaps();
-  }, [walletAddress]);
+  }, [refreshInterval, walletAddress]);
 
   const onProceed = () => {
     refetch();
