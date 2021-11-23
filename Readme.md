@@ -109,6 +109,17 @@ Set the environment variable `VERBOSE` to `true` to enable verbose mode logging 
 If you're brave enough to set the `DEBUG` environment variable, you'll get a lot of logging from modules we're using (e.g. IPFS). To disable this, you'll need to unset the environment variable and then run this in the browser console: `localStorage.setItem('debug', undefined);`.
 
 
+## Additional services
+
+### Reputation
+
+In order for reputation to function within your dev environment, you will need to toggle it on first.
+
+Access the following URL to toggle the reputation monitor auto-mining on or off: `http://127.0.01:3001/reputation/monitor/toggle`
+
+You can also view the status of the reputation monitor using the following URL: `http://127.0.01:3001/reputation/monitor/status`
+
+
 ## Building the bundle locally
 
 If you want to build the bundle locally for inspection, you can do it via:
