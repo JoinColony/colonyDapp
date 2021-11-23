@@ -1,8 +1,8 @@
-import { FormattedMessage, defineMessages, FormattedNumber } from 'react-intl';
-import React, { useCallback, useMemo } from 'react';
+import { FormattedMessage, defineMessages } from 'react-intl';
+import React from 'react';
 import { bigNumberify, BigNumberish } from 'ethers/utils';
-import Decimal from 'decimal.js';
 
+import Numeral from '~core/Numeral';
 import { PeriodTokensType } from '~dashboard/CoinMachine/RemainingDisplayWidgets';
 import { getFormattedTokenValue } from '~utils/tokens';
 
@@ -23,42 +23,14 @@ const displayedName = `dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTo
 const RemainingTokensValue = ({ tokenAmounts, tokensBought }: Props) => {
   const { maxPeriodTokens, decimals } = tokenAmounts;
 
-  const defineIfFiveFiguresOrLarger = useCallback(
-    (value) => value.split('.')[0].length >= 5,
-    [],
-  );
-
-  const boughtTokens = useMemo(
-    () => getFormattedTokenValue(tokensBought, decimals),
-    [tokensBought, decimals],
-  );
-  const availableTokens = useMemo(
-    () => getFormattedTokenValue(maxPeriodTokens, decimals),
-    [maxPeriodTokens, decimals],
-  );
-
-  const displayValue = useCallback(
-    (tokens: string) => {
-      const tokensDecimalValue = new Decimal(tokens);
-      if (defineIfFiveFiguresOrLarger(tokens)) {
-        return tokensDecimalValue.toDP(0).toString().split('.')[0];
-      }
-
-      return tokensDecimalValue.toDP(2).toString();
-    },
-    [defineIfFiveFiguresOrLarger],
-  );
-
   if (bigNumberify(tokensBought).gte(maxPeriodTokens)) {
     return <FormattedMessage {...MSG.soldOut} />;
   }
 
   return (
     <>
-      {/* @ts-ignore */}
-      <FormattedNumber value={displayValue(boughtTokens)} /> /{' '}
-      {/* @ts-ignore */}
-      <FormattedNumber value={displayValue(availableTokens)} />
+      <Numeral value={getFormattedTokenValue(tokensBought, decimals)} /> /{' '}
+      <Numeral value={getFormattedTokenValue(maxPeriodTokens, decimals)} />
     </>
   );
 };
