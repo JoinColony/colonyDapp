@@ -72,11 +72,13 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
   }, []);
 
   useEffect(() => {
+    let refreshStatus;
     const initSynaps = async () => {
       setIsLoading(true);
       const wallet = TEMP_getContext(ContextModule.Wallet);
       const sessionId = await authenticateKYC(wallet);
       const kyc = await getKycStatus(sessionId);
+
       if (kyc?.status === 'VERIFIED') {
         setIsValid(true);
         setIsLoading(false);
@@ -87,18 +89,20 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
         type: 'embed',
       });
       Synaps.on('finish', async () => {
-        const id = setInterval(async () => {
+        refreshStatus = setInterval(async () => {
           const data = await getKycStatus(sessionId);
           if (data?.status === 'VERIFIED') {
             setIsValid(true);
           }
         }, refreshInterval);
-        return () => clearInterval(id);
+        return () => clearInterval(refreshStatus);
       });
       setIsLoading(false);
     };
     if (!walletAddress) return;
     initSynaps();
+    // eslint-disable-next-line consistent-return
+    return () => clearInterval(refreshStatus);
   }, [refreshInterval, walletAddress]);
 
   const onProceed = () => {
