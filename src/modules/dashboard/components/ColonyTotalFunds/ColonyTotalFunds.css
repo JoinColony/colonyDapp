@@ -54,7 +54,11 @@
 }
 
 .rightArrowDisplay {
-  font-size: var(--size-medium);
+  display: inline-block;
+  margin-right: 6px;
+  height: 15px;
+  width: 15px;
+  vertical-align: bottom;
   font-weight: var(--weight-bold);
   color: var(--colony-blue);
 }
