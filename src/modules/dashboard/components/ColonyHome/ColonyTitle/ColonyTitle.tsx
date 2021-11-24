@@ -37,7 +37,7 @@ const ColonyTitle = ({
           <Heading
             appearance={{
               size: 'medium',
-              weight: 'thin',
+              weight: 'medium',
               margin: 'none',
             }}
             text={colonyDisplayName || colonyName || MSG.fallbackColonyName}

@@ -2,7 +2,7 @@
   font-family: var(--family-techie);
   font-size: var(--size-smallish);
   font-weight: 600;
-  color: var(--temp-grey-blue-7);
+  line-height: var(--size-smallish);
 }
 
 .middleSection {
