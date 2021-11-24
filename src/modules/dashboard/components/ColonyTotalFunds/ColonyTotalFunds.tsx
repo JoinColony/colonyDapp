@@ -113,13 +113,11 @@ const ColonyTotalFunds = ({
         >
           <button className={styles.selectedTokenSymbol} type="button">
             {currentToken.symbol}
-            <span className={styles.caretContainer}>
-              <Icon
-                className={styles.caretIcon}
-                name="caret-down-small"
-                title={MSG.tokenSelect}
-              />
-            </span>
+            <Icon
+              className={styles.caretIcon}
+              name="caret-down-small"
+              title={MSG.tokenSelect}
+            />
           </button>
         </ColonyTotalFundsPopover>
       </div>
@@ -130,7 +128,13 @@ const ColonyTotalFunds = ({
             className={styles.manageFundsLink}
             to={`/colony/${colonyName}/funds`}
           >
-            <span className={styles.rightArrowDisplay}>→</span>
+            <Icon
+              className={styles.rightArrowDisplay}
+              name="right-arrow"
+              appearance={{ size: 'small' }}
+              title="Manage Funds"
+            />
+            {/* <span className={styles.rightArrowDisplay}>→</span> */}
             <FormattedMessage {...MSG.manageFundsLink} />
           </Link>
         )}
