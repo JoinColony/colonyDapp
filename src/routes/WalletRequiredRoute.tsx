@@ -5,7 +5,6 @@ import {
   RouteProps,
   RouteComponentProps as ReactRouterComponentProps,
 } from 'react-router-dom';
-import { Location } from 'history';
 import { StaticContext } from 'react-router';
 
 import BetaCautionAlert from '~core/BetaCautionAlert';
@@ -55,7 +54,7 @@ const WalletRequiredRoute = ({
         props: ReactRouterComponentProps<
           {},
           StaticContext,
-          { redirectTo?: Location | string }
+          { redirectTo?: string; colonyURL?: string }
         >,
       ) => {
         /**
@@ -64,6 +63,8 @@ const WalletRequiredRoute = ({
         if (isConnected) {
           const redirectTo =
             props.location.state && props.location.state.redirectTo;
+          const colonyURL =
+            props.location.state && props.location.state.colonyURL;
           /**
            * Has username
            */
@@ -73,7 +74,16 @@ const WalletRequiredRoute = ({
              * connecting the wallet, then redirect back to it
              */
             if (redirectTo) {
-              return <Redirect to={redirectTo} />;
+              return (
+                <Redirect
+                  to={{
+                    pathname: redirectTo,
+                    state: {
+                      colonyURL,
+                    },
+                  }}
+                />
+              );
             }
             /**
              * We've connected, but already have a profile, just redirect to
@@ -165,6 +175,7 @@ const WalletRequiredRoute = ({
               to={{
                 pathname: CONNECT_ROUTE,
                 state: {
+                  ...location?.state,
                   redirectTo: locationPath,
                 },
               }}

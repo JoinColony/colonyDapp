@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import { LANDING_PAGE_ROUTE } from '~routes/index';
 import { useSelector } from '~utils/hooks';
@@ -28,8 +28,14 @@ const displayName = 'dashboard.CreateUserWizard.StepConfirmTransaction';
 const StepConfirmTransaction = () => {
   const { username } = useLoggedInUser();
   const transactionGroups = useSelector(groupedTransactions);
+  const { location } = useHistory<{ colonyURL?: string }>();
 
   if (username) {
+    const { colonyURL } = location.state;
+    if (colonyURL) {
+      return <Redirect to={colonyURL} />;
+    }
+
     return <Redirect to={LANDING_PAGE_ROUTE} />;
   }
 
