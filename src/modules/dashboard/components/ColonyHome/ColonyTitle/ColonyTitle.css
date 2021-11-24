@@ -30,11 +30,12 @@
 
 .colonyMenu {
   composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
-  margin-top: -3px;
+  margin-top: -4px;
 }
 
 .colonyAddress {
   padding: 4px 5px;
+  height: 24px;
   border-radius: var(--radius-normal);
   text-align: center;
   line-height: var(--size-smallish);
