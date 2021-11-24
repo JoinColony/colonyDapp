@@ -54,7 +54,7 @@
 
 .rightArrowDisplay {
   display: inline-block;
-  margin-right: 6px;
+  margin: 0 7px 0 15px;
   height: 15px;
   width: 15px;
   vertical-align: bottom;
