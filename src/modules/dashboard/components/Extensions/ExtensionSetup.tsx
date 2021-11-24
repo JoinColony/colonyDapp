@@ -301,7 +301,8 @@ const ExtensionSetup = ({
   const showInputField = useCallback(
     (paramName) => {
       return (
-        paramName !== 'whitelistAddress' ||
+        (paramName !== 'whitelistAddress' &&
+          paramName !== 'userLimitFraction') ||
         // @ts-ignore
         initialValues?.whitelistAddress !== AddressZero
       );
