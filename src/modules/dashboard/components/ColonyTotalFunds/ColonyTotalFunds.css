@@ -64,3 +64,9 @@
   height: 24px;
   width: 24px;
 }
+
+.caretContainer {
+  display: inline-block;
+  margin: 0 0 2px 3px;
+  vertical-align: middle;
+}
