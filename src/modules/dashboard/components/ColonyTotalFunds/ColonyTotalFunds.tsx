@@ -134,7 +134,7 @@ const ColonyTotalFunds = ({
               className={styles.rightArrowDisplay}
               name="right-arrow"
               appearance={{ size: 'small' }}
-              title="Manage Funds"
+              title={MSG.manageFundsLink}
             />
             <FormattedMessage {...MSG.manageFundsLink} />
           </Link>
