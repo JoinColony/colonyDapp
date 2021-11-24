@@ -153,7 +153,7 @@ const WalletRequiredRoute = ({
                 to={{
                   pathname: CREATE_USER_ROUTE,
                   state: {
-                    redirectTo: locationPath,
+                    redirectTo: colonyURL || locationPath,
                   },
                 }}
               />
