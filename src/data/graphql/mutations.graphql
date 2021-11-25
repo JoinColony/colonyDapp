@@ -16,17 +16,28 @@ mutation ClearLoggedInUser {
 
 mutation CreateUser(
   $createUserInput: CreateUserInput!
-  $loggedInUserInput: LoggedInUserInput!
+  # $loggedInUserInput: LoggedInUserInput!
 ) {
   # Create user on the server
   createUser(input: $createUserInput) {
     id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
   }
   # Set the current user data to the given data
-  setLoggedInUser(input: $loggedInUserInput) @client {
-    id
-  }
+  # setLoggedInUser(input: $loggedInUserInput) @client {
+  #   id
+  # }
 }
+
+# mutation SetLogg
 
 mutation EditUser($input: EditUserInput!) {
   editUser(input: $input) {
