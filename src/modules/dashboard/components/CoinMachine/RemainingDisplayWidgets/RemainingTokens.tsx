@@ -94,7 +94,6 @@ const RemainingTokens = ({
       isWarning={showValueWarning}
       displayedValue={displayedValue}
       isTotalSale={isTotalSale}
-      isTokens
     />
   );
 };
