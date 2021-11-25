@@ -68,7 +68,7 @@ const RemainingDisplayWidget = ({
       >
         {/* This is to avoid unnecessary calculaitons from Textfit for the timer */}
         {isTokens ? (
-          <Textfit min={10} max={18} perfectFit={false} mode="single">
+          <Textfit min={10} max={18} mode="single">
             {displayedValue}
           </Textfit>
         ) : (
