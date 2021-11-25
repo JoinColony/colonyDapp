@@ -55,7 +55,7 @@ const MSG = defineMessages({
   confirmButtonText: {
     id: 'core.Comment.BanComment.confirmButtonText',
     defaultMessage: `{unban, select,
-      true {Unban the user}
+      true {Remove ban}
       other {Ban the troll}
     }`,
   },
@@ -131,9 +131,11 @@ const BanComment = ({
                 />
               </div>
             </div>
-            <p className={styles.note}>
-              <FormattedMessage {...MSG.note} values={{ unban }} />
-            </p>
+            {!unban && (
+              <p className={styles.note}>
+                <FormattedMessage {...MSG.note} values={{ unban }} />
+              </p>
+            )}
           </div>
           {!unban && (
             <div className={styles.modalContent}>
