@@ -14,9 +14,9 @@ import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import {
   getLoggedInUser,
   refetchUserNotifications,
-  CreateUserMutation,
-  CreateUserDocument,
-  CreateUserMutationVariables,
+  SetLoggedInUserMutation,
+  SetLoggedInUserMutationVariables,
+  SetLoggedInUserDocument,
   SubscribeToColonyDocument,
   SubscribeToColonyMutation,
   SubscribeToColonyMutationVariables,
@@ -41,6 +41,7 @@ import {
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
+import { createUserWithSecondAttempt } from '../../users/sagas/utils';
 import { log } from '~utils/debug';
 
 interface ChannelDefinition {
@@ -237,20 +238,26 @@ function* colonyCreate({
       yield takeFrom(createUser.channel, ActionTypes.TRANSACTION_SUCCEEDED);
       yield put<AllActions>(transactionLoadRelated(createUser.id, true));
 
-      yield apolloClient.mutate<
-        CreateUserMutation,
-        CreateUserMutationVariables
-      >({
-        mutation: CreateUserDocument,
-        variables: {
-          createUserInput: { username },
-          loggedInUserInput: { username },
-        },
-      });
+      yield createUserWithSecondAttempt(username);
 
       yield put<AllActions>(transactionLoadRelated(createUser.id, false));
 
       yield refetchUserNotifications(walletAddress);
+
+      /*
+       * Set the logged in user and freshly created one
+       */
+      yield apolloClient.mutate<
+        SetLoggedInUserMutation,
+        SetLoggedInUserMutationVariables
+      >({
+        mutation: SetLoggedInUserDocument,
+        variables: {
+          input: {
+            username,
+          },
+        },
+      });
     }
 
     /*

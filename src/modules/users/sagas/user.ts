@@ -31,7 +31,10 @@ import { IPFSAvatarImage } from '~types/index';
 
 import { clearToken } from '../../../api/auth';
 import { ipfsUpload } from '../../core/sagas/ipfs';
-import { transactionReady } from '../../core/actionCreators';
+import {
+  transactionLoadRelated,
+  transactionReady,
+} from '../../core/actionCreators';
 import {
   createTransactionChannels,
   createTransaction,
@@ -125,7 +128,11 @@ function* usernameCreate({
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
+    yield put(transactionLoadRelated(id, true));
+
     yield createUserWithSecondAttempt(username);
+
+    yield put(transactionLoadRelated(id, false));
 
     yield refetchUserNotifications(walletAddress);
 
