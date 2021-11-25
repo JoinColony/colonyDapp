@@ -35,6 +35,7 @@
 .tooltip {
   padding: 4px;
   width: 250px;
+  font-weight: var(--weight-bold);
 }
 
 .form {
