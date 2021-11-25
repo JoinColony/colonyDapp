@@ -18,7 +18,7 @@ export const calculatePercentageReputation = (
 
   const reputationSafeguard = bigNumberify(100).pow(decimalPlaces);
 
-  if (userReputationNumber.isZero()) {
+  if (userReputationNumber.isZero() || totalReputationNumber.isZero()) {
     return ZeroValue.Zero;
   }
 
