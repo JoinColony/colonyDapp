@@ -37,7 +37,10 @@ interface Props {
   colony: Colony;
 }
 
-const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
+const ColonySubscription = ({
+  colony: { colonyAddress, colonyName },
+  colony,
+}: Props) => {
   const { username, walletAddress, networkId } = useLoggedInUser();
 
   const { data } = useUserColonyAddressesQuery({
@@ -84,7 +87,10 @@ const ColonySubscription = ({ colony: { colonyAddress }, colony }: Props) => {
       {!isSubscribed && !username && (
         <Link
           className={styles.createUserRedirect}
-          to={CREATE_USER_ROUTE}
+          to={{
+            pathname: CREATE_USER_ROUTE,
+            state: { colonyURL: `/colony/${colonyName}` },
+          }}
           text={MSG.joinColony}
         />
       )}
