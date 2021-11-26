@@ -35,10 +35,7 @@ const MSG = defineMessages({
   note: {
     id: 'core.Comment.BanComment.note',
     /* eslint-disable max-len */
-    defaultMessage: `Please note: {unban, select,
-      true {this only allows this user chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.}
-      other {this only prevents this user from chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.}
-    }`,
+    defaultMessage: `Please note: this only prevents this user from chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.`,
     /* eslint-enable max-len */
   },
   commentLabel: {
@@ -133,7 +130,7 @@ const BanComment = ({
             </div>
             {!unban && (
               <p className={styles.note}>
-                <FormattedMessage {...MSG.note} values={{ unban }} />
+                <FormattedMessage {...MSG.note} />
               </p>
             )}
           </div>
