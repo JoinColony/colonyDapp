@@ -275,6 +275,23 @@ export const coinMachineResolvers = ({
 
         const currentTokenBalance = await coinMachineClient.getTokenBalance();
 
+        const subgraphData = await apolloClient.query<
+          SubgraphCoinMachinePeriodsQuery,
+          SubgraphCoinMachinePeriodsQueryVariables
+        >({
+          query: SubgraphCoinMachinePeriodsDocument,
+          variables: {
+            colonyAddress: colonyAddress.toLowerCase(),
+            extensionAddress: coinMachineClient.address.toLowerCase(),
+            limit: 100,
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        const [extensionInitialised] = (
+          subgraphData?.data?.extensionInitialisedEvents || []
+        ).map(parseSubgraphEvent);
+
         /*
          * We use the `FromChain` suffix to make these events more easily
          * recognizable when reading the code
@@ -282,6 +299,9 @@ export const coinMachineResolvers = ({
         const transferLogsFromChain = await getLogs(
           tokenClient,
           tokenClient.filters.Transfer(null, coinMachineClient.address, null),
+          {
+            fromBlock: extensionInitialised?.blockNumber,
+          },
         );
 
         const transferEventsFromChain = await Promise.all(
