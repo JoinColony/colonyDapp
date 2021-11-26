@@ -12,9 +12,9 @@ import ENS from '~lib/ENS';
 import {
   getLoggedInUser,
   refetchUserNotifications,
-  CreateUserDocument,
-  CreateUserMutation,
-  CreateUserMutationVariables,
+  SetLoggedInUserMutation,
+  SetLoggedInUserMutationVariables,
+  SetLoggedInUserDocument,
   EditUserDocument,
   EditUserMutation,
   EditUserMutationVariables,
@@ -26,6 +26,8 @@ import {
   UserBalanceWithLockQueryVariables,
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
+import { clearLastWallet } from '~utils/autoLogin';
+import { IPFSAvatarImage } from '~types/index';
 
 import { clearToken } from '../../../api/auth';
 import { ipfsUpload } from '../../core/sagas/ipfs';
@@ -38,7 +40,7 @@ import {
   createTransaction,
   getTxChannel,
 } from '../../core/sagas/transactions';
-import { clearLastWallet } from '~utils/autoLogin';
+import { createUserWithSecondAttempt } from './utils';
 
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
@@ -73,7 +75,7 @@ function* userAvatarUpload({
       try {
         ipfsHash = yield call(
           ipfsUpload,
-          JSON.stringify({ image: payload.data }),
+          JSON.stringify({ image: payload.data } as IPFSAvatarImage),
         );
       } catch (error) {
         // silent error
@@ -107,6 +109,7 @@ function* usernameCreate({
 }: Action<ActionTypes.USERNAME_CREATE>) {
   const { walletAddress } = yield getLoggedInUser();
   const txChannel = yield call(getTxChannel, id);
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   try {
     // Normalize again, just to be sure
     const username = ENS.normalize(givenUsername);
@@ -123,19 +126,11 @@ function* usernameCreate({
       },
     });
 
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     yield put(transactionLoadRelated(id, true));
 
-    yield apolloClient.mutate<CreateUserMutation, CreateUserMutationVariables>({
-      mutation: CreateUserDocument,
-      variables: {
-        createUserInput: { username },
-        loggedInUserInput: { username },
-      },
-    });
+    yield createUserWithSecondAttempt(username);
 
     yield put(transactionLoadRelated(id, false));
 
@@ -147,6 +142,21 @@ function* usernameCreate({
         username,
       },
       meta,
+    });
+
+    /*
+     * Set the logged in user and freshly created one
+     */
+    yield apolloClient.mutate<
+      SetLoggedInUserMutation,
+      SetLoggedInUserMutationVariables
+    >({
+      mutation: SetLoggedInUserDocument,
+      variables: {
+        input: {
+          username,
+        },
+      },
     });
   } catch (error) {
     return yield putError(ActionTypes.USERNAME_CREATE_ERROR, error, meta);

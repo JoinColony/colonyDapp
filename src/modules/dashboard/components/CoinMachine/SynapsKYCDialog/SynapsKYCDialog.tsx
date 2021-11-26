@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
-
+import React, { useState, useEffect, useMemo } from 'react';
+import { Network } from '@colony/colony-js';
+import SynapsClient from '@synaps-io/verify.js';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import SynapsClient from '@synaps-io/verify.js';
 import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
-import { Address } from '~types/index';
-import { useLoggedInUser, useUserWhitelistStatusQuery } from '~data/index';
-import { ContextModule, TEMP_getContext } from '~context/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
+import { useLoggedInUser, useUserWhitelistStatusQuery } from '~data/index';
+import { Address } from '~types/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
+import { isDev } from '~utils/debug';
+import { DEFAULT_NETWORK } from '~constants';
 
 import { getKycStatus } from './kycApi';
 import { authenticateKYC } from '../../../../../api';
@@ -48,12 +50,35 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
     variables: { colonyAddress, userAddress: walletAddress },
   });
 
+  const refreshInterval = useMemo(() => {
+    let refreshTimeout = 1000;
+    if (
+      DEFAULT_NETWORK === Network.Xdai ||
+      DEFAULT_NETWORK === Network.XdaiFork
+    ) {
+      refreshTimeout = 5 * 1000; // 5 secs blocktime
+    }
+    if (DEFAULT_NETWORK === Network.Mainnet) {
+      refreshTimeout = 12 * 1000; // 12 secs blocktime for mainnet
+    }
+    /*
+     * Doesn't matter what network you're on, if this is a dev build, set it back
+     * to 1 second
+     */
+    if (isDev) {
+      refreshTimeout = 1000;
+    }
+    return refreshTimeout;
+  }, []);
+
   useEffect(() => {
+    let refreshStatus;
     const initSynaps = async () => {
       setIsLoading(true);
       const wallet = TEMP_getContext(ContextModule.Wallet);
       const sessionId = await authenticateKYC(wallet);
       const kyc = await getKycStatus(sessionId);
+
       if (kyc?.status === 'VERIFIED') {
         setIsValid(true);
         setIsLoading(false);
@@ -64,19 +89,21 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
         type: 'embed',
       });
       Synaps.on('finish', async () => {
-        const id = setInterval(async () => {
+        refreshStatus = setInterval(async () => {
           const data = await getKycStatus(sessionId);
           if (data?.status === 'VERIFIED') {
             setIsValid(true);
           }
-        }, 1000);
-        return () => clearInterval(id);
+        }, refreshInterval);
+        return () => clearInterval(refreshStatus);
       });
       setIsLoading(false);
     };
     if (!walletAddress) return;
     initSynaps();
-  }, [walletAddress]);
+    // eslint-disable-next-line consistent-return
+    return () => clearInterval(refreshStatus);
+  }, [refreshInterval, walletAddress]);
 
   const onProceed = () => {
     refetch();

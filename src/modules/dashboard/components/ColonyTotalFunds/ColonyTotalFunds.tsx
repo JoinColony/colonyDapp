@@ -130,7 +130,12 @@ const ColonyTotalFunds = ({
             className={styles.manageFundsLink}
             to={`/colony/${colonyName}/funds`}
           >
-            <span className={styles.rightArrowDisplay}>→</span>
+            <Icon
+              className={styles.rightArrowDisplay}
+              name="arrow-right"
+              appearance={{ size: 'small' }}
+              title={MSG.manageFundsLink}
+            />
             <FormattedMessage {...MSG.manageFundsLink} />
           </Link>
         )}

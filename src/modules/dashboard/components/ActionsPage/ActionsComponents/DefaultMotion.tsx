@@ -167,7 +167,10 @@ const DefaultMotion = ({
     },
   });
 
-  const { data: motionStatusData } = useMotionStatusQuery({
+  const {
+    data: motionStatusData,
+    loading: loadingMotionStatus,
+  } = useMotionStatusQuery({
     variables: {
       colonyAddress: colony.colonyAddress,
       motionId,
@@ -326,6 +329,10 @@ const DefaultMotion = ({
     motionState === MotionState.Staking ||
     motionState === MotionState.Staked ||
     motionState === MotionState.Objection;
+  const isMotionFinished =
+    motionState === MotionState.Passed ||
+    motionState === MotionState.Failed ||
+    motionState === MotionState.FailedNoFinalizable;
 
   const objectionAnnotationUser = useUser(
     objectionAnnotation?.motionObjectionAnnotation?.address || '',
@@ -354,12 +361,14 @@ const DefaultMotion = ({
               motionState === MotionState.Voting && votingStateData,
           })}
         >
-          <CountDownTimer
-            colony={colony}
-            state={motionState as MotionState}
-            motionId={motionId}
-            isFullyNayStaked={isFullyNayStaked}
-          />
+          {!loadingMotionStatus && !isMotionFinished && (
+            <CountDownTimer
+              colony={colony}
+              state={motionState as MotionState}
+              motionId={motionId}
+              isFullyNayStaked={isFullyNayStaked}
+            />
+          )}
           {motionState === MotionState.Voting && votingStateData && (
             <div className={motionSpecificStyles.progressStateContainer}>
               <span className={motionSpecificStyles.text}>
@@ -513,16 +522,13 @@ const DefaultMotion = ({
               motionState={motionState}
             />
           )}
-          {(motionState === MotionState.Failed ||
-            motionState === MotionState.Passed ||
-            motionState === MotionState.Escalation ||
-            motionState === MotionState.FailedNoFinalizable) && (
+          {(isMotionFinished || motionState === MotionState.Escalation) && (
             <FinalizeMotionAndClaimWidget
               colony={colony}
               actionType={actionType}
               motionId={motionId}
               scrollToRef={bottomElementRef}
-              motionState={motionState}
+              motionState={motionState as MotionState}
               fromDomain={fromDomain}
               motionAmount={amount}
               tokenAddress={tokenAddress}

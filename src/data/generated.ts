@@ -1459,11 +1459,13 @@ export type ClearLoggedInUserMutation = { clearLoggedInUser: Pick<LoggedInUser, 
 
 export type CreateUserMutationVariables = Exact<{
   createUserInput: CreateUserInput;
-  loggedInUserInput: LoggedInUserInput;
 }>;
 
 
-export type CreateUserMutation = { createUser?: Maybe<Pick<User, 'id'>>, setLoggedInUser: Pick<LoggedInUser, 'id'> };
+export type CreateUserMutation = { createUser?: Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
+  )> };
 
 export type EditUserMutationVariables = Exact<{
   input: EditUserInput;
@@ -2993,12 +2995,18 @@ export type ClearLoggedInUserMutationHookResult = ReturnType<typeof useClearLogg
 export type ClearLoggedInUserMutationResult = Apollo.MutationResult<ClearLoggedInUserMutation>;
 export type ClearLoggedInUserMutationOptions = Apollo.BaseMutationOptions<ClearLoggedInUserMutation, ClearLoggedInUserMutationVariables>;
 export const CreateUserDocument = gql`
-    mutation CreateUser($createUserInput: CreateUserInput!, $loggedInUserInput: LoggedInUserInput!) {
+    mutation CreateUser($createUserInput: CreateUserInput!) {
   createUser(input: $createUserInput) {
     id
-  }
-  setLoggedInUser(input: $loggedInUserInput) @client {
-    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
   }
 }
     `;
@@ -3018,7 +3026,6 @@ export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, C
  * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
  *   variables: {
  *      createUserInput: // value for 'createUserInput'
- *      loggedInUserInput: // value for 'loggedInUserInput'
  *   },
  * });
  */

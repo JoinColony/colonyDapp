@@ -1,5 +1,10 @@
 import { call, fork, takeEvery, put, all } from 'redux-saga/effects';
-import { ClientType, ROOT_DOMAIN_ID, Extension } from '@colony/colony-js';
+import {
+  ClientType,
+  ROOT_DOMAIN_ID,
+  Extension,
+  TokenClientType,
+} from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 
 import { Action, ActionTypes } from '~redux/index';
@@ -110,10 +115,9 @@ function* colonyExtensionEnable({
         const tokenClient = yield colonyManager.getTokenClient(
           payload.tokenToBeSold,
         );
-        const isSoldTokenLocked = yield tokenClient.locked();
-
-        if (isSoldTokenLocked) {
-          shouldSetNewTokenAuthority = true;
+        if (tokenClient.tokenClientType === TokenClientType.Colony) {
+          const isSoldTokenLocked = yield tokenClient.locked();
+          shouldSetNewTokenAuthority = isSoldTokenLocked;
         }
 
         const params = [
