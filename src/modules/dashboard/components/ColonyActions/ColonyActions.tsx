@@ -97,7 +97,11 @@ const ColonyActions = ({
   } = useSubgraphOneTxSubscription({
     variables: {
       skip: 0,
-      first: 100,
+      /*
+       * @NOTE We always need to fetch one more item so that we know that more
+       * items exist and we show the "load more" button
+       */
+      first: ITEMS_PER_PAGE * dataPage + 1,
       colonyAddress: colonyAddress?.toLowerCase(),
     },
   });
@@ -108,7 +112,11 @@ const ColonyActions = ({
   } = useSubgraphEventsThatAreActionsSubscription({
     variables: {
       skip: 0,
-      first: 100,
+      /*
+       * @NOTE We always need to fetch one more item so that we know that more
+       * items exist and we show the "load more" button
+       */
+      first: ITEMS_PER_PAGE * dataPage + 1,
       colonyAddress: colonyAddress?.toLowerCase(),
     },
   });
@@ -145,7 +153,11 @@ const ColonyActions = ({
   const { data: motions } = useSubgraphMotionsSubscription({
     variables: {
       skip: 0,
-      first: 100,
+      /*
+       * @NOTE We always need to fetch one more item so that we know that more
+       * items exist and we show the "load more" button
+       */
+      first: ITEMS_PER_PAGE * dataPage + 1,
       colonyAddress: colonyAddress?.toLowerCase(),
       extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
     },
