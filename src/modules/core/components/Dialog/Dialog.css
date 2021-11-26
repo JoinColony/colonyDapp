@@ -2,12 +2,14 @@
   max-height: calc(100vh - 28px);
   position: relative;
   z-index: var(--z-index-dialog);
-  overflow-y: auto;
+  overflow: hidden;
   outline: none;
 }
 
 .main {
+  max-height: 85vh;
   width: 500px;
+  overflow-y: auto;
   border-radius: var(--radius-normal);
   background-color: var(--colony-white);
 }
