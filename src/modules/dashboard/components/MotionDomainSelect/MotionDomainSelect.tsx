@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback } from 'react';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { useIntl } from 'react-intl';
+import { useIntl, defineMessages } from 'react-intl';
 
 import { Form, SelectOption } from '~core/Fields';
 import DomainDropdown from '~core/DomainDropdown';
@@ -8,6 +8,13 @@ import DomainDropdown from '~core/DomainDropdown';
 import { Colony } from '~data/index';
 
 import styles from './MotionDomainSelect.css';
+
+const MSG = defineMessages({
+  createDomain: {
+    id: 'dashboard.MotionDomainSelect.createDomain',
+    defaultMessage: 'Create motion in ',
+  },
+});
 
 interface Props {
   colony: Colony;
@@ -39,8 +46,10 @@ const MotionDomainSelect = ({
        */
       let displayLabel =
         parseInt(option?.value || `${ROOT_DOMAIN_ID}`, 10) === ROOT_DOMAIN_ID
-          ? label
-          : `${formatMessage({ id: 'domain.root' })}/${label}`;
+          ? `${formatMessage(MSG.createDomain)} ${label}`
+          : `${formatMessage(MSG.createDomain)} ${formatMessage({
+              id: 'domain.root',
+            })}/${label}`;
       /*
        * @NOTE If the filtering function removed our previously selected option,
        * reset the selection back to Root
