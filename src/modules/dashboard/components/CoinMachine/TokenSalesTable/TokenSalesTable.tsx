@@ -104,6 +104,7 @@ const TokenSalesTable = ({
     loading: salePeriodsLoading,
     startPolling: startPollingSalePeriodsData,
     stopPolling: stopPollingSalePeriodsData,
+    refetch: refetchSalePeriodsData,
   } = useCoinMachineSalePeriodsQuery({
     variables: salePeriodQueryVariables,
   });
@@ -169,6 +170,7 @@ const TokenSalesTable = ({
     if (periodRemainingMS > 1000 && periodRemainingMS < periodLengthMS) {
       setTimeout(() => {
         startPollingSalePeriodsData(periodLengthMS);
+        refetchSalePeriodsData(salePeriodQueryVariables);
       }, periodRemainingMS);
     } else {
       startPollingSalePeriodsData(periodLengthMS);
