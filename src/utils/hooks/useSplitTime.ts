@@ -7,7 +7,7 @@ const useSplitTime = (
   activeTimer: boolean,
   periodLength?: number,
 ) => {
-  const [timeLeft, setTimeLeft] = useState<number>(initialTime / 1000);
+  const [timeLeft, setTimeLeft] = useState<number>(initialTime);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -19,7 +19,7 @@ const useSplitTime = (
       }
 
       if (timeLeft === 0 && periodLength) {
-        setTimeLeft(periodLength / 1000);
+        setTimeLeft(periodLength);
       }
     }
     return () => clearInterval(timer);
