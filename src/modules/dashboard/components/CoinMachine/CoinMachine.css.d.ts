@@ -6,6 +6,7 @@ export const container: string;
 export const buy: string;
 export const timeRemaining: string;
 export const tokensRemaining: string;
+export const tokensTotals: string;
 export const sales: string;
 export const comments: string;
 export const saleStarted: string;

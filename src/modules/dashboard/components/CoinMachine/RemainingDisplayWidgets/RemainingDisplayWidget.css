@@ -1,7 +1,7 @@
 .main {
   display: flex;
   flex-direction: column;
-  padding: 15px;
+  padding: 10px 15px;
   height: 100%;
   border-radius: var(--radius-large);
 }
@@ -33,7 +33,16 @@
   height: 100%;
   font-size: var(--size-medium-l);
   font-weight: var(--weight-bold);
+  text-align: center;
   color: var(--temp-grey-blue-7);
+}
+
+.value div {
+  width: 190px;
+}
+
+.value span {
+  font-size: unset;
 }
 
 .themeDanger .main {
@@ -48,26 +57,13 @@
   color: var(--danger);
 }
 
-.footer {
-  display: flex;
-  align-items: center;
-  height: 20px;
-}
-
-.footerText {
-  margin-right: 8px;
-  font-size: var(--size-smallish);
-  font-weight: var(--weight-bold);
-  color: var(--temp-grey-blue-7);
-}
-
 .themeDanger .footerText {
   color: var(--colony-white);
 }
 
 .tooltipIcon {
   position: relative;
-  top: -5px;
+  top: 2px;
   right: -5px;
 }
 
