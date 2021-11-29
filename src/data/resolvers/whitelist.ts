@@ -9,7 +9,7 @@ import {
   SubgraphWhitelistEventsDocument,
 } from '~data/index';
 import { log } from '~utils/debug';
-import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
+import { parseSubgraphEvent } from '~utils/events';
 import { getWhitelistPolicy } from '~utils/contracts';
 import { WhitelistPolicy, Address } from '~types/index';
 
@@ -159,9 +159,9 @@ export const whitelistResolvers = ({
           fetchPolicy: 'network-only',
         });
 
-        const userApprovedEvents = (data?.userApprovedEvents || [])
-          .map(parseSubgraphEvent)
-          .sort(sortSubgraphEventByIndex);
+        const userApprovedEvents = (data?.userApprovedEvents || []).map(
+          parseSubgraphEvent,
+        );
         const agreementSignedEvents = (data?.agreementSignedEvents || []).map(
           parseSubgraphEvent,
         );
