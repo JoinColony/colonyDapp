@@ -15,6 +15,7 @@ export default gql`
     agent: String!
     transaction: SubgraphTransaction!
     payment: SubgraphPayment!
+    timestamp: String!
   }
 
   type SubscriptionMotion {

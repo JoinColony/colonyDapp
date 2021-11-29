@@ -38,8 +38,10 @@ query NetworkExtensionVersion($extensionId: String) {
   networkExtensionVersion(extensionId: $extensionId) @client
 }
 
-query SubgraphExtensionVersionDeployedEvents {
+query SubgraphExtensionVersionDeployedEvents($sortDirection: String = asc) {
   extensionVersionDeployedEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "ExtensionAddedToNetwork"
     }
@@ -57,11 +59,14 @@ query SubgraphExtensionVersionDeployedEvents {
         timestamp
       }
     }
+    timestamp
   }
 }
 
-query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!) {
+query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!, $sortDirection: String = asc) {
   extensionInstalledEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "ExtensionInstalled",
       args_contains: $colonyAddress,
@@ -80,8 +85,11 @@ query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String
         timestamp
       }
     }
+    timestamp
   }
   extensionInitialisedEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "ExtensionInitialised",
       address: $extensionAddress
@@ -100,5 +108,6 @@ query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String
         timestamp
       }
     }
+    timestamp
   }
 }

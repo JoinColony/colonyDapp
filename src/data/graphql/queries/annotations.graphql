@@ -1,5 +1,7 @@
-query SubgraphAnnotationEvents($transactionHash: String!) {
+query SubgraphAnnotationEvents($transactionHash: String!, $sortDirection: String = asc) {
   annotationEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "Annotation",
       args_contains: $transactionHash
@@ -18,5 +20,6 @@ query SubgraphAnnotationEvents($transactionHash: String!) {
         timestamp
       }
     }
+    timestamp
   }
 }

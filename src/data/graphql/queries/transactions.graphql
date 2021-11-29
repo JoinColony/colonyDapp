@@ -1,5 +1,7 @@
-query SubgraphColonyFundsClaimedEvents($colonyAddress: String!) {
+query SubgraphColonyFundsClaimedEvents($colonyAddress: String!, $sortDirection: String = asc) {
   colonyFundsClaimedEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "ColonyFundsClaimed"
       address: $colonyAddress,
@@ -18,11 +20,14 @@ query SubgraphColonyFundsClaimedEvents($colonyAddress: String!) {
         timestamp
       }
     }
+    timestamp
   }
 }
 
-query SubgraphPayoutClaimedEvents($colonyAddress: String!) {
+query SubgraphPayoutClaimedEvents($colonyAddress: String!, $sortDirection: String = asc) {
   payoutClaimedEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "PayoutClaimed"
       address: $colonyAddress,
@@ -41,5 +46,6 @@ query SubgraphPayoutClaimedEvents($colonyAddress: String!) {
         timestamp
       }
     }
+    timestamp
   }
 }

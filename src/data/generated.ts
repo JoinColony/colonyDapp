@@ -1398,6 +1398,7 @@ export type OneTxPayment = {
   agent: Scalars['String'];
   transaction: SubgraphTransaction;
   payment: SubgraphPayment;
+  timestamp: Scalars['String'];
 };
 
 export type SubscriptionMotion = {
@@ -1941,11 +1942,12 @@ export type ColonyHistoricRolesQuery = { historicColonyRoles: Array<(
 
 export type SubgraphAnnotationEventsQueryVariables = Exact<{
   transactionHash: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphAnnotationEventsQuery = { annotationEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2033,11 +2035,12 @@ export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
   limit: Scalars['Int'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'>>, extensionInitialisedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2047,7 +2050,7 @@ export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<S
       ) }
     ) }
   )>, tokenBoughtEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2124,11 +2127,13 @@ export type NetworkExtensionVersionQueryVariables = Exact<{
 
 export type NetworkExtensionVersionQuery = Pick<Query, 'networkExtensionVersion'>;
 
-export type SubgraphExtensionVersionDeployedEventsQueryVariables = Exact<{ [key: string]: never; }>;
+export type SubgraphExtensionVersionDeployedEventsQueryVariables = Exact<{
+  sortDirection?: Maybe<Scalars['String']>;
+}>;
 
 
 export type SubgraphExtensionVersionDeployedEventsQuery = { extensionVersionDeployedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2142,11 +2147,12 @@ export type SubgraphExtensionVersionDeployedEventsQuery = { extensionVersionDepl
 export type SubgraphExtensionEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphExtensionEventsQuery = { extensionInstalledEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2156,7 +2162,7 @@ export type SubgraphExtensionEventsQuery = { extensionInstalledEvents: Array<(
       ) }
     ) }
   )>, extensionInitialisedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2180,11 +2186,12 @@ export type ColonyMembersQuery = { subscribedUsers: Array<(
 export type SubgraphMotionEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphMotionEventsQuery = { motionEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2198,11 +2205,12 @@ export type SubgraphMotionEventsQuery = { motionEvents: Array<(
 export type SubgraphMotionSystemEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphMotionSystemEventsQuery = { motionSystemEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2216,11 +2224,12 @@ export type SubgraphMotionSystemEventsQuery = { motionSystemEvents: Array<(
 export type SubgraphMotionVoteSubmittedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphMotionVoteSubmittedEventsQuery = { motionVoteSubmittedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2234,11 +2243,12 @@ export type SubgraphMotionVoteSubmittedEventsQuery = { motionVoteSubmittedEvents
 export type SubgraphMotionVoteRevealedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphMotionVoteRevealedEventsQuery = { motionVoteRevealedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2252,11 +2262,12 @@ export type SubgraphMotionVoteRevealedEventsQuery = { motionVoteRevealedEvents: 
 export type SubgraphMotionStakedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphMotionStakedEventsQuery = { motionStakedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2270,11 +2281,12 @@ export type SubgraphMotionStakedEventsQuery = { motionStakedEvents: Array<(
 export type SubgraphUserMotionTokenEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   walletAddress: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphUserMotionTokenEventsQuery = { motionStakedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2284,7 +2296,7 @@ export type SubgraphUserMotionTokenEventsQuery = { motionStakedEvents: Array<(
       ) }
     ) }
   )>, motionRewardClaimedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
+    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2298,11 +2310,12 @@ export type SubgraphUserMotionTokenEventsQuery = { motionStakedEvents: Array<(
 export type SubgraphMotionRewardClaimedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphMotionRewardClaimedEventsQuery = { motionRewardClaimedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
+    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2445,11 +2458,12 @@ export type SubgraphLatestSyncedBlockQuery = { domain: Pick<SubgraphUnusedDomain
 export type SubgraphRecoveryModeEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   toBlock: Scalars['Int'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphRecoveryModeEventsQuery = { recoveryStorageSlotSetEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2459,7 +2473,7 @@ export type SubgraphRecoveryModeEventsQuery = { recoveryStorageSlotSetEvents: Ar
       ) }
     ) }
   )>, recoveryModeExitApprovedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2469,7 +2483,7 @@ export type SubgraphRecoveryModeEventsQuery = { recoveryStorageSlotSetEvents: Ar
       ) }
     ) }
   )>, recoveryModeEnteredEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2482,11 +2496,12 @@ export type SubgraphRecoveryModeEventsQuery = { recoveryStorageSlotSetEvents: Ar
 
 export type SubgraphRecoveryModeExitedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphRecoveryModeExitedEventsQuery = { recoveryModeExitedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2569,11 +2584,12 @@ export type LegacyNumberOfRecoveryRolesQuery = Pick<Query, 'legacyNumberOfRecove
 export type SubgraphRoleEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   toBlock: Scalars['Int'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphRoleEventsQuery = { colonyRoleSetEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2583,7 +2599,7 @@ export type SubgraphRoleEventsQuery = { colonyRoleSetEvents: Array<(
       ) }
     ) }
   )>, recoveryRoleSetEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2596,11 +2612,12 @@ export type SubgraphRoleEventsQuery = { colonyRoleSetEvents: Array<(
 
 export type SubgraphColonyFundsClaimedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphColonyFundsClaimedEventsQuery = { colonyFundsClaimedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
+    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2613,11 +2630,12 @@ export type SubgraphColonyFundsClaimedEventsQuery = { colonyFundsClaimedEvents: 
 
 export type SubgraphPayoutClaimedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphPayoutClaimedEventsQuery = { payoutClaimedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address'>
+    Pick<SubgraphEvent, 'id' | 'name' | 'args' | 'address' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2662,11 +2680,12 @@ export type UserWhitelistStatusQuery = { userWhitelistStatus: Pick<UserWhitelist
 
 export type SubgraphWhitelistEventsQueryVariables = Exact<{
   extensionAddress: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
 export type SubgraphWhitelistEventsQuery = { userApprovedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2676,7 +2695,7 @@ export type SubgraphWhitelistEventsQuery = { userApprovedEvents: Array<(
       ) }
     ) }
   )>, agreementSignedEvents: Array<(
-    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
       & { transactionHash: SubgraphTransaction['id'] }
@@ -2718,7 +2737,7 @@ export type SubgraphOneTxSubscriptionVariables = Exact<{
 
 
 export type SubgraphOneTxSubscription = { oneTxPayments: Array<(
-    Pick<OneTxPayment, 'id' | 'agent'>
+    Pick<OneTxPayment, 'id' | 'agent' | 'timestamp'>
     & { transaction: (
       { hash: SubgraphTransaction['id'] }
       & { block: Pick<SubgraphBlock, 'id' | 'timestamp'> }
@@ -2764,7 +2783,6 @@ export type SubgraphMotionsSubscriptionVariables = Exact<{
   first?: Maybe<Scalars['Int']>;
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
-  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2799,7 +2817,7 @@ export type SubgraphTokenBoughtEventsSubscriptionVariables = Exact<{
 
 
 export type SubgraphTokenBoughtEventsSubscription = { tokenBoughtEvents: Array<(
-    Pick<SubgraphEvent, 'address' | 'name' | 'args'>
+    Pick<SubgraphEvent, 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       { transactionHash: SubgraphTransaction['id'] }
       & { block: (
@@ -4971,8 +4989,8 @@ export type ColonyHistoricRolesQueryHookResult = ReturnType<typeof useColonyHist
 export type ColonyHistoricRolesLazyQueryHookResult = ReturnType<typeof useColonyHistoricRolesLazyQuery>;
 export type ColonyHistoricRolesQueryResult = Apollo.QueryResult<ColonyHistoricRolesQuery, ColonyHistoricRolesQueryVariables>;
 export const SubgraphAnnotationEventsDocument = gql`
-    query SubgraphAnnotationEvents($transactionHash: String!) {
-  annotationEvents: events(where: {name_contains: "Annotation", args_contains: $transactionHash}) {
+    query SubgraphAnnotationEvents($transactionHash: String!, $sortDirection: String = asc) {
+  annotationEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "Annotation", args_contains: $transactionHash}) {
     id
     address
     name
@@ -4986,6 +5004,7 @@ export const SubgraphAnnotationEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -5003,6 +5022,7 @@ export const SubgraphAnnotationEventsDocument = gql`
  * const { data, loading, error } = useSubgraphAnnotationEventsQuery({
  *   variables: {
  *      transactionHash: // value for 'transactionHash'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -5324,13 +5344,13 @@ export type CoinMachineHasWhitelistQueryHookResult = ReturnType<typeof useCoinMa
 export type CoinMachineHasWhitelistLazyQueryHookResult = ReturnType<typeof useCoinMachineHasWhitelistLazyQuery>;
 export type CoinMachineHasWhitelistQueryResult = Apollo.QueryResult<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>;
 export const SubgraphCoinMachinePeriodsDocument = gql`
-    query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
+    query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!, $sortDirection: String = asc) {
   coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 0, first: $limit, orderBy: "saleEndedAt", orderDirection: "desc") {
     saleEndedAt
     tokensBought
     price
   }
-  extensionInitialisedEvents: events(where: {name_contains: "ExtensionInitialised", address: $extensionAddress}) {
+  extensionInitialisedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "ExtensionInitialised", address: $extensionAddress}) {
     id
     transaction {
       id
@@ -5344,8 +5364,9 @@ export const SubgraphCoinMachinePeriodsDocument = gql`
     address
     name
     args
+    timestamp
   }
-  tokenBoughtEvents: events(where: {name_contains: "TokensBought", address: $extensionAddress}) {
+  tokenBoughtEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "TokensBought", address: $extensionAddress}) {
     id
     transaction {
       id
@@ -5359,6 +5380,7 @@ export const SubgraphCoinMachinePeriodsDocument = gql`
     address
     name
     args
+    timestamp
   }
 }
     `;
@@ -5378,6 +5400,7 @@ export const SubgraphCoinMachinePeriodsDocument = gql`
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
  *      limit: // value for 'limit'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -5674,8 +5697,8 @@ export type NetworkExtensionVersionQueryHookResult = ReturnType<typeof useNetwor
 export type NetworkExtensionVersionLazyQueryHookResult = ReturnType<typeof useNetworkExtensionVersionLazyQuery>;
 export type NetworkExtensionVersionQueryResult = Apollo.QueryResult<NetworkExtensionVersionQuery, NetworkExtensionVersionQueryVariables>;
 export const SubgraphExtensionVersionDeployedEventsDocument = gql`
-    query SubgraphExtensionVersionDeployedEvents {
-  extensionVersionDeployedEvents: events(where: {name_contains: "ExtensionAddedToNetwork"}) {
+    query SubgraphExtensionVersionDeployedEvents($sortDirection: String = asc) {
+  extensionVersionDeployedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "ExtensionAddedToNetwork"}) {
     id
     address
     name
@@ -5689,6 +5712,7 @@ export const SubgraphExtensionVersionDeployedEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -5705,6 +5729,7 @@ export const SubgraphExtensionVersionDeployedEventsDocument = gql`
  * @example
  * const { data, loading, error } = useSubgraphExtensionVersionDeployedEventsQuery({
  *   variables: {
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -5718,8 +5743,8 @@ export type SubgraphExtensionVersionDeployedEventsQueryHookResult = ReturnType<t
 export type SubgraphExtensionVersionDeployedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphExtensionVersionDeployedEventsLazyQuery>;
 export type SubgraphExtensionVersionDeployedEventsQueryResult = Apollo.QueryResult<SubgraphExtensionVersionDeployedEventsQuery, SubgraphExtensionVersionDeployedEventsQueryVariables>;
 export const SubgraphExtensionEventsDocument = gql`
-    query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!) {
-  extensionInstalledEvents: events(where: {name_contains: "ExtensionInstalled", args_contains: $colonyAddress}) {
+    query SubgraphExtensionEvents($colonyAddress: String!, $extensionAddress: String!, $sortDirection: String = asc) {
+  extensionInstalledEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "ExtensionInstalled", args_contains: $colonyAddress}) {
     id
     address
     name
@@ -5733,8 +5758,9 @@ export const SubgraphExtensionEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
-  extensionInitialisedEvents: events(where: {name_contains: "ExtensionInitialised", address: $extensionAddress}) {
+  extensionInitialisedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "ExtensionInitialised", address: $extensionAddress}) {
     id
     address
     name
@@ -5748,6 +5774,7 @@ export const SubgraphExtensionEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -5766,6 +5793,7 @@ export const SubgraphExtensionEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -5818,8 +5846,8 @@ export type ColonyMembersQueryHookResult = ReturnType<typeof useColonyMembersQue
 export type ColonyMembersLazyQueryHookResult = ReturnType<typeof useColonyMembersLazyQuery>;
 export type ColonyMembersQueryResult = Apollo.QueryResult<ColonyMembersQuery, ColonyMembersQueryVariables>;
 export const SubgraphMotionEventsDocument = gql`
-    query SubgraphMotionEvents($colonyAddress: String!, $motionId: String!) {
-  motionEvents: events(where: {name_in: ["MotionStaked(uint256,address,uint256,uint256)", "MotionFinalized(uint256,bytes,bool)", "MotionRewardClaimed(uint256,address,uint256,uint256)"], associatedColony: $colonyAddress, args_contains: $motionId}) {
+    query SubgraphMotionEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+  motionEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_in: ["MotionStaked(uint256,address,uint256,uint256)", "MotionFinalized(uint256,bytes,bool)", "MotionRewardClaimed(uint256,address,uint256,uint256)"], associatedColony: $colonyAddress, args_contains: $motionId}) {
     id
     address
     name
@@ -5833,6 +5861,7 @@ export const SubgraphMotionEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -5851,6 +5880,7 @@ export const SubgraphMotionEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      motionId: // value for 'motionId'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -5864,8 +5894,8 @@ export type SubgraphMotionEventsQueryHookResult = ReturnType<typeof useSubgraphM
 export type SubgraphMotionEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionEventsLazyQuery>;
 export type SubgraphMotionEventsQueryResult = Apollo.QueryResult<SubgraphMotionEventsQuery, SubgraphMotionEventsQueryVariables>;
 export const SubgraphMotionSystemEventsDocument = gql`
-    query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!) {
-  motionSystemEvents: events(where: {name_in: ["MotionStaked(uint256,address,uint256,uint256)", "MotionVoteSubmitted(uint256,address)", "MotionVoteRevealed(uint256,address,uint256)"], associatedColony: $colonyAddress, args_contains: $motionId}) {
+    query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+  motionSystemEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_in: ["MotionStaked(uint256,address,uint256,uint256)", "MotionVoteSubmitted(uint256,address)", "MotionVoteRevealed(uint256,address,uint256)"], associatedColony: $colonyAddress, args_contains: $motionId}) {
     id
     address
     name
@@ -5879,6 +5909,7 @@ export const SubgraphMotionSystemEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -5897,6 +5928,7 @@ export const SubgraphMotionSystemEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      motionId: // value for 'motionId'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -5952,8 +5984,8 @@ export type SubgraphMotionSystemEventsQueryHookResult = ReturnType<typeof useSub
 export type SubgraphMotionSystemEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionSystemEventsLazyQuery>;
 export type SubgraphMotionSystemEventsQueryResult = Apollo.QueryResult<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>;
 export const SubgraphMotionVoteSubmittedEventsDocument = gql`
-    query SubgraphMotionVoteSubmittedEvents($colonyAddress: String!, $motionId: String!) {
-  motionVoteSubmittedEvents: events(where: {name_contains: "MotionVoteSubmitted", associatedColony: $colonyAddress, args_contains: $motionId}) {
+    query SubgraphMotionVoteSubmittedEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+  motionVoteSubmittedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "MotionVoteSubmitted", associatedColony: $colonyAddress, args_contains: $motionId}) {
     id
     address
     name
@@ -5967,6 +5999,7 @@ export const SubgraphMotionVoteSubmittedEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 >>>>>>> Chore: separate `motions` queries into own file
 }
@@ -5986,6 +6019,7 @@ export const SubgraphMotionVoteSubmittedEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      motionId: // value for 'motionId'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -5999,8 +6033,8 @@ export type SubgraphMotionVoteSubmittedEventsQueryHookResult = ReturnType<typeof
 export type SubgraphMotionVoteSubmittedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionVoteSubmittedEventsLazyQuery>;
 export type SubgraphMotionVoteSubmittedEventsQueryResult = Apollo.QueryResult<SubgraphMotionVoteSubmittedEventsQuery, SubgraphMotionVoteSubmittedEventsQueryVariables>;
 export const SubgraphMotionVoteRevealedEventsDocument = gql`
-    query SubgraphMotionVoteRevealedEvents($colonyAddress: String!, $motionId: String!) {
-  motionVoteRevealedEvents: events(where: {name_contains: "MotionVoteRevealed", associatedColony: $colonyAddress, args_contains: $motionId}) {
+    query SubgraphMotionVoteRevealedEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+  motionVoteRevealedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "MotionVoteRevealed", associatedColony: $colonyAddress, args_contains: $motionId}) {
     id
     address
     name
@@ -6014,6 +6048,7 @@ export const SubgraphMotionVoteRevealedEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -6032,6 +6067,7 @@ export const SubgraphMotionVoteRevealedEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      motionId: // value for 'motionId'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -6045,8 +6081,8 @@ export type SubgraphMotionVoteRevealedEventsQueryHookResult = ReturnType<typeof 
 export type SubgraphMotionVoteRevealedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionVoteRevealedEventsLazyQuery>;
 export type SubgraphMotionVoteRevealedEventsQueryResult = Apollo.QueryResult<SubgraphMotionVoteRevealedEventsQuery, SubgraphMotionVoteRevealedEventsQueryVariables>;
 export const SubgraphMotionStakedEventsDocument = gql`
-    query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!) {
-  motionStakedEvents: events(where: {name_contains: "MotionStaked", associatedColony: $colonyAddress, args_contains: $motionId}) {
+    query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+  motionStakedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "MotionStaked", associatedColony: $colonyAddress, args_contains: $motionId}) {
     id
     address
     name
@@ -6060,6 +6096,7 @@ export const SubgraphMotionStakedEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -6078,6 +6115,7 @@ export const SubgraphMotionStakedEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      motionId: // value for 'motionId'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -6091,8 +6129,8 @@ export type SubgraphMotionStakedEventsQueryHookResult = ReturnType<typeof useSub
 export type SubgraphMotionStakedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionStakedEventsLazyQuery>;
 export type SubgraphMotionStakedEventsQueryResult = Apollo.QueryResult<SubgraphMotionStakedEventsQuery, SubgraphMotionStakedEventsQueryVariables>;
 export const SubgraphUserMotionTokenEventsDocument = gql`
-    query SubgraphUserMotionTokenEvents($colonyAddress: String!, $walletAddress: String!) {
-  motionStakedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionStaked", args_contains: $walletAddress}) {
+    query SubgraphUserMotionTokenEvents($colonyAddress: String!, $walletAddress: String!, $sortDirection: String = asc) {
+  motionStakedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, name_contains: "MotionStaked", args_contains: $walletAddress}) {
     id
     address
     name
@@ -6106,8 +6144,9 @@ export const SubgraphUserMotionTokenEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
-  motionRewardClaimedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", args_contains: $walletAddress}) {
+  motionRewardClaimedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", args_contains: $walletAddress}) {
     id
     name
     args
@@ -6121,6 +6160,7 @@ export const SubgraphUserMotionTokenEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -6139,6 +6179,7 @@ export const SubgraphUserMotionTokenEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      walletAddress: // value for 'walletAddress'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -6152,7 +6193,7 @@ export type SubgraphUserMotionTokenEventsQueryHookResult = ReturnType<typeof use
 export type SubgraphUserMotionTokenEventsLazyQueryHookResult = ReturnType<typeof useSubgraphUserMotionTokenEventsLazyQuery>;
 export type SubgraphUserMotionTokenEventsQueryResult = Apollo.QueryResult<SubgraphUserMotionTokenEventsQuery, SubgraphUserMotionTokenEventsQueryVariables>;
 export const SubgraphMotionRewardClaimedEventsDocument = gql`
-    query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!) {
+    query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
   motionRewardClaimedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", args_contains: $motionId}) {
     id
     name
@@ -6167,6 +6208,7 @@ export const SubgraphMotionRewardClaimedEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -6185,6 +6227,7 @@ export const SubgraphMotionRewardClaimedEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      motionId: // value for 'motionId'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -6745,8 +6788,8 @@ export type SubgraphLatestSyncedBlockQueryHookResult = ReturnType<typeof useSubg
 export type SubgraphLatestSyncedBlockLazyQueryHookResult = ReturnType<typeof useSubgraphLatestSyncedBlockLazyQuery>;
 export type SubgraphLatestSyncedBlockQueryResult = Apollo.QueryResult<SubgraphLatestSyncedBlockQuery, SubgraphLatestSyncedBlockQueryVariables>;
 export const SubgraphRecoveryModeEventsDocument = gql`
-    query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
-  recoveryStorageSlotSetEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryStorageSlotSet", address: $colonyAddress}) {
+    query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc) {
+  recoveryStorageSlotSetEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "RecoveryStorageSlotSet", address: $colonyAddress}) {
     id
     address
     name
@@ -6760,8 +6803,9 @@ export const SubgraphRecoveryModeEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
-  recoveryModeExitApprovedEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryModeExitApproved", address: $colonyAddress}) {
+  recoveryModeExitApprovedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "RecoveryModeExitApproved", address: $colonyAddress}) {
     id
     address
     name
@@ -6775,8 +6819,9 @@ export const SubgraphRecoveryModeEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
-  recoveryModeEnteredEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryModeEntered", address: $colonyAddress}) {
+  recoveryModeEnteredEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "RecoveryModeEntered", address: $colonyAddress}) {
     id
     address
     name
@@ -6790,6 +6835,7 @@ export const SubgraphRecoveryModeEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -6808,6 +6854,7 @@ export const SubgraphRecoveryModeEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      toBlock: // value for 'toBlock'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -6821,8 +6868,8 @@ export type SubgraphRecoveryModeEventsQueryHookResult = ReturnType<typeof useSub
 export type SubgraphRecoveryModeEventsLazyQueryHookResult = ReturnType<typeof useSubgraphRecoveryModeEventsLazyQuery>;
 export type SubgraphRecoveryModeEventsQueryResult = Apollo.QueryResult<SubgraphRecoveryModeEventsQuery, SubgraphRecoveryModeEventsQueryVariables>;
 export const SubgraphRecoveryModeExitedEventsDocument = gql`
-    query SubgraphRecoveryModeExitedEvents($colonyAddress: String!) {
-  recoveryModeExitedEvents: events(where: {name_contains: "RecoveryModeExited", address: $colonyAddress}) {
+    query SubgraphRecoveryModeExitedEvents($colonyAddress: String!, $sortDirection: String = asc) {
+  recoveryModeExitedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "RecoveryModeExited", address: $colonyAddress}) {
     id
     address
     name
@@ -6836,6 +6883,7 @@ export const SubgraphRecoveryModeExitedEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -6853,6 +6901,7 @@ export const SubgraphRecoveryModeExitedEventsDocument = gql`
  * const { data, loading, error } = useSubgraphRecoveryModeExitedEventsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -7158,8 +7207,8 @@ export type LegacyNumberOfRecoveryRolesQueryHookResult = ReturnType<typeof useLe
 export type LegacyNumberOfRecoveryRolesLazyQueryHookResult = ReturnType<typeof useLegacyNumberOfRecoveryRolesLazyQuery>;
 export type LegacyNumberOfRecoveryRolesQueryResult = Apollo.QueryResult<LegacyNumberOfRecoveryRolesQuery, LegacyNumberOfRecoveryRolesQueryVariables>;
 export const SubgraphRoleEventsDocument = gql`
-    query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!) {
-  colonyRoleSetEvents: events(block: {number: $toBlock}, where: {name_contains: "ColonyRoleSet", address: $colonyAddress}) {
+    query SubgraphRoleEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc) {
+  colonyRoleSetEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "ColonyRoleSet", address: $colonyAddress}) {
     id
     address
     name
@@ -7173,8 +7222,9 @@ export const SubgraphRoleEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
-  recoveryRoleSetEvents: events(block: {number: $toBlock}, where: {name_contains: "RecoveryRoleSet", address: $colonyAddress}) {
+  recoveryRoleSetEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, block: {number: $toBlock}, where: {name_contains: "RecoveryRoleSet", address: $colonyAddress}) {
     id
     address
     name
@@ -7188,6 +7238,7 @@ export const SubgraphRoleEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -7206,6 +7257,7 @@ export const SubgraphRoleEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      toBlock: // value for 'toBlock'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -7219,8 +7271,8 @@ export type SubgraphRoleEventsQueryHookResult = ReturnType<typeof useSubgraphRol
 export type SubgraphRoleEventsLazyQueryHookResult = ReturnType<typeof useSubgraphRoleEventsLazyQuery>;
 export type SubgraphRoleEventsQueryResult = Apollo.QueryResult<SubgraphRoleEventsQuery, SubgraphRoleEventsQueryVariables>;
 export const SubgraphColonyFundsClaimedEventsDocument = gql`
-    query SubgraphColonyFundsClaimedEvents($colonyAddress: String!) {
-  colonyFundsClaimedEvents: events(where: {name_contains: "ColonyFundsClaimed", address: $colonyAddress}) {
+    query SubgraphColonyFundsClaimedEvents($colonyAddress: String!, $sortDirection: String = asc) {
+  colonyFundsClaimedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "ColonyFundsClaimed", address: $colonyAddress}) {
     id
     name
     args
@@ -7234,6 +7286,7 @@ export const SubgraphColonyFundsClaimedEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -7251,6 +7304,7 @@ export const SubgraphColonyFundsClaimedEventsDocument = gql`
  * const { data, loading, error } = useSubgraphColonyFundsClaimedEventsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -7264,8 +7318,8 @@ export type SubgraphColonyFundsClaimedEventsQueryHookResult = ReturnType<typeof 
 export type SubgraphColonyFundsClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphColonyFundsClaimedEventsLazyQuery>;
 export type SubgraphColonyFundsClaimedEventsQueryResult = Apollo.QueryResult<SubgraphColonyFundsClaimedEventsQuery, SubgraphColonyFundsClaimedEventsQueryVariables>;
 export const SubgraphPayoutClaimedEventsDocument = gql`
-    query SubgraphPayoutClaimedEvents($colonyAddress: String!) {
-  payoutClaimedEvents: events(where: {name_contains: "PayoutClaimed", address: $colonyAddress}) {
+    query SubgraphPayoutClaimedEvents($colonyAddress: String!, $sortDirection: String = asc) {
+  payoutClaimedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "PayoutClaimed", address: $colonyAddress}) {
     id
     name
     args
@@ -7279,6 +7333,7 @@ export const SubgraphPayoutClaimedEventsDocument = gql`
         timestamp
       }
     }
+    timestamp
   }
 }
     `;
@@ -7296,6 +7351,7 @@ export const SubgraphPayoutClaimedEventsDocument = gql`
  * const { data, loading, error } = useSubgraphPayoutClaimedEventsQuery({
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -7449,8 +7505,8 @@ export type UserWhitelistStatusQueryHookResult = ReturnType<typeof useUserWhitel
 export type UserWhitelistStatusLazyQueryHookResult = ReturnType<typeof useUserWhitelistStatusLazyQuery>;
 export type UserWhitelistStatusQueryResult = Apollo.QueryResult<UserWhitelistStatusQuery, UserWhitelistStatusQueryVariables>;
 export const SubgraphWhitelistEventsDocument = gql`
-    query SubgraphWhitelistEvents($extensionAddress: String!) {
-  userApprovedEvents: events(where: {name_contains: "UserApproved", address: $extensionAddress}) {
+    query SubgraphWhitelistEvents($extensionAddress: String!, $sortDirection: String = asc) {
+  userApprovedEvents: events(first: $first, orderBy: "timestamp", where: {name_contains: "UserApproved", address: $extensionAddress}) {
     id
     transaction {
       id
@@ -7464,8 +7520,9 @@ export const SubgraphWhitelistEventsDocument = gql`
     address
     name
     args
+    timestamp
   }
-  agreementSignedEvents: events(where: {name_contains: "AgreementSigned", address: $extensionAddress}) {
+  agreementSignedEvents: events(first: $first, orderBy: "timestamp", where: {name_contains: "AgreementSigned", address: $extensionAddress}) {
     id
     transaction {
       id
@@ -7479,6 +7536,7 @@ export const SubgraphWhitelistEventsDocument = gql`
     address
     name
     args
+    timestamp
   }
 }
     `;
@@ -7496,6 +7554,7 @@ export const SubgraphWhitelistEventsDocument = gql`
  * const { data, loading, error } = useSubgraphWhitelistEventsQuery({
  *   variables: {
  *      extensionAddress: // value for 'extensionAddress'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -7590,6 +7649,7 @@ export const SubgraphOneTxDocument = gql`
         }
       }
     }
+    timestamp
   }
 }
     `;
@@ -7688,8 +7748,8 @@ export function useSubgraphEventsThatAreActionsSubscription(baseOptions?: Apollo
 export type SubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubgraphEventsThatAreActionsSubscription>;
 export type SubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphEventsThatAreActionsSubscription>;
 export const SubgraphMotionsDocument = gql`
-    subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $sortDirection: String = asc) {
-  motions(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
+    subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!) {
+  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
     id
     fundamentalChainId
     associatedColony {
@@ -7754,7 +7814,6 @@ export const SubgraphMotionsDocument = gql`
  *      first: // value for 'first'
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
- *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -7776,6 +7835,7 @@ export const SubgraphTokenBoughtEventsDocument = gql`
     address
     name
     args
+    timestamp
   }
 }
     `;

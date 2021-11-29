@@ -71,7 +71,7 @@ query CoinMachineHasWhitelist($colonyAddress: String!) {
   coinMachineHasWhitelist(colonyAddress: $colonyAddress) @client
 }
 
-query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!) {
+query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!, $sortDirection: String = asc) {
   coinMachinePeriods(
     where: { colonyAddress: $colonyAddress },
     skip: 0,
@@ -84,6 +84,8 @@ query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: Str
     price
   }
   extensionInitialisedEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "ExtensionInitialised",
       address: $extensionAddress
@@ -102,8 +104,11 @@ query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: Str
     address
     name
     args
+    timestamp
   }
   tokenBoughtEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "TokensBought"
       address: $extensionAddress
@@ -122,6 +127,7 @@ query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: Str
     address
     name
     args
+    timestamp
   }
 }
 

@@ -1,5 +1,7 @@
-query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
+query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc) {
   recoveryStorageSlotSetEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     block: { number: $toBlock }
     where: {
       name_contains: "RecoveryStorageSlotSet"
@@ -19,8 +21,11 @@ query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
         timestamp
       }
     }
+    timestamp
   }
   recoveryModeExitApprovedEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     block: { number: $toBlock }
     where: {
       name_contains: "RecoveryModeExitApproved"
@@ -40,8 +45,11 @@ query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
         timestamp
       }
     }
+    timestamp
   }
   recoveryModeEnteredEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     block: { number: $toBlock }
     where: {
       name_contains: "RecoveryModeEntered"
@@ -61,11 +69,14 @@ query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
         timestamp
       }
     }
+    timestamp
   }
 }
 
-query SubgraphRecoveryModeExitedEvents($colonyAddress: String!) {
+query SubgraphRecoveryModeExitedEvents($colonyAddress: String!, $sortDirection: String = asc) {
   recoveryModeExitedEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "RecoveryModeExited"
       address: $colonyAddress
@@ -84,6 +95,7 @@ query SubgraphRecoveryModeExitedEvents($colonyAddress: String!) {
         timestamp
       }
     }
+    timestamp
   }
 }
 
