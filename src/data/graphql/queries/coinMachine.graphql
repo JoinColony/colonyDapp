@@ -60,6 +60,13 @@ query CoinMachineTokenBalance($colonyAddress: String!) {
   coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
 }
 
+query CoinMachineTotalTokens($colonyAddress: String!) {
+  coinMachineTotalTokens(colonyAddress: $colonyAddress) @client {
+    totalAvailableTokens
+    totalSoldTokens
+  }
+}
+
 query CoinMachineHasWhitelist($colonyAddress: String!) {
   coinMachineHasWhitelist(colonyAddress: $colonyAddress) @client
 }

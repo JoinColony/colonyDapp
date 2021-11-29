@@ -18,6 +18,7 @@ import {
   useCoinMachineTokenBalanceQuery,
   useCoinMachineCurrentPeriodPriceQuery,
   useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
+  useCoinMachineTotalTokensQuery,
   useLoggedInUser,
 } from '~data/index';
 
@@ -124,6 +125,16 @@ const CoinMachine = ({
   });
 
   const {
+    data: totalTokensData,
+    loading: totalTokensDataLoading,
+    stopPolling: stopPollingTotalTokensData,
+  } = useCoinMachineTotalTokensQuery({
+    variables: { colonyAddress },
+    fetchPolicy: 'network-only',
+    pollInterval,
+  });
+
+  const {
     data: salePriceData,
     loading: loadingSalePrice,
     stopPolling: stopPollingCurrentPeriodPrice,
@@ -157,10 +168,17 @@ const CoinMachine = ({
     if (!saleTokensData || !periodTokensData || !hasSaleStarted) {
       return undefined;
     }
+    const maxPerPeriodTokens = bigNumberify(maxPerPeriod);
+    const leftAvailableTokens = bigNumberify(
+      coinMachineTokenBalanceData?.coinMachineTokenBalance || '0',
+    );
+
     return {
       decimals: saleTokensData.coinMachineSaleTokens.sellableToken.decimals,
       soldPeriodTokens: bigNumberify(activeSold),
-      maxPeriodTokens: bigNumberify(maxPerPeriod),
+      maxPeriodTokens: maxPerPeriodTokens.gt(leftAvailableTokens)
+        ? leftAvailableTokens
+        : bigNumberify(maxPerPeriod),
       targetPeriodTokens: bigNumberify(targetPerPeriod),
     };
   }, [
@@ -170,7 +188,23 @@ const CoinMachine = ({
     activeSold,
     maxPerPeriod,
     targetPerPeriod,
+    coinMachineTokenBalanceData,
   ]);
+
+  const totalTokens = useMemo(() => {
+    if (!saleTokensData || !totalTokensData || !hasSaleStarted) {
+      return undefined;
+    }
+    return {
+      decimals: saleTokensData.coinMachineSaleTokens.sellableToken.decimals,
+      soldPeriodTokens: bigNumberify(
+        totalTokensData.coinMachineTotalTokens.totalSoldTokens,
+      ),
+      maxPeriodTokens: bigNumberify(
+        totalTokensData.coinMachineTotalTokens.totalAvailableTokens,
+      ),
+    };
+  }, [totalTokensData, saleTokensData, hasSaleStarted]);
 
   const isSoldOut = useMemo(
     () =>
@@ -187,11 +221,13 @@ const CoinMachine = ({
       stopPollingCurrentPeriodPrice();
       stopPollingCurrentPeriodTokensData();
       stopPollingCurrentPeriodMaxUserPurchase();
+      stopPollingTotalTokensData();
     },
     [
       stopPollingCurrentPeriodTokensData,
       stopPollingCurrentPeriodPrice,
       stopPollingCurrentPeriodMaxUserPurchase,
+      stopPollingTotalTokensData,
     ],
   );
 
@@ -211,7 +247,8 @@ const CoinMachine = ({
     currentSalePeriodLoading ||
     !extensionsData?.processedColony?.installedExtensions ||
     periodTokensLoading ||
-    coinMachineTokenBalanceLoading
+    coinMachineTokenBalanceLoading ||
+    totalTokensDataLoading
   ) {
     return (
       <div className={styles.loadingSpinner}>
@@ -295,7 +332,13 @@ const CoinMachine = ({
               />
             </div>
             <div className={styles.tokensRemaining}>
-              <RemainingTokens periodTokens={periodTokens} />
+              <RemainingTokens
+                tokenAmounts={periodTokens}
+                isTotalSale={false}
+              />
+            </div>
+            <div className={styles.tokensTotals}>
+              <RemainingTokens tokenAmounts={totalTokens} isTotalSale />
             </div>
           </>
         )}
@@ -311,6 +354,7 @@ const CoinMachine = ({
             }}
             sellableToken={sellableToken}
             purchaseToken={purchaseToken}
+            periodTokens={periodTokens}
           />
         </div>
         <div className={styles.comments}>

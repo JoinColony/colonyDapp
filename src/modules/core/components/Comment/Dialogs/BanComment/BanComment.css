@@ -68,6 +68,6 @@
   color: color-mod(var(--dark) alpha(65%));
 }
 
-.confirmButtonContainer > button {
-  width: 160px;
+.confirmButtonContainer {
+  max-width: 100%;
 }
