@@ -88,6 +88,7 @@ interface Props {
 }
 
 const displayName = 'dashboard.CoinMachine.TokenSalesTable';
+export const PREV_PERIODS_LIMIT = 100;
 
 const TokenSalesTable = ({
   periodTokens,
@@ -102,7 +103,6 @@ const TokenSalesTable = ({
     maxPerPeriod,
   },
 }: Props) => {
-  const PREV_PERIODS_LIMIT = 100;
   const salePeriodQueryVariables = { colonyAddress, limit: PREV_PERIODS_LIMIT };
 
   const priceStatusHeading = useMemo(() => {
