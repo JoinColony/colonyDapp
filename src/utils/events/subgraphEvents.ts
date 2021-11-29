@@ -243,6 +243,7 @@ export const parseSubgraphEvent = ({
   transaction,
   id,
   address,
+  timestamp,
 }: NormalizedSubgraphEvent): ExtendedLogDescription => {
   const blockNumber =
     transaction?.block?.number &&
@@ -254,6 +255,7 @@ export const parseSubgraphEvent = ({
     topic: topicId(name),
     address,
     ...(blockNumber && { blockNumber }),
+    ...(timestamp && { timestamp: parseInt(timestamp, 10) }),
     /*
      * Parse the normal values, and any specialized parsers we might have
      */
@@ -292,11 +294,10 @@ export const parseSubgraphEvent = ({
    * Note that we attempt to parse the block number earlier in this function
    */
   if (transaction) {
-    const { transactionHash, block } = transaction;
+    const { transactionHash } = transaction;
     parsedEvent = {
       ...parsedEvent,
       ...(transactionHash && { hash: transactionHash }),
-      timestamp: parseInt(block?.timestamp, 10) * 1000,
     };
   }
   return parsedEvent;
