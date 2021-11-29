@@ -9,7 +9,6 @@ import ActionsList, {
 import { Select, Form } from '~core/Fields';
 import LoadMoreButton from '~core/LoadMoreButton';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import {
   Colony,
@@ -63,7 +62,6 @@ type Props = {
   colony: Colony;
   /*
    * @NOTE Needed for filtering based on domain
-   * Via the domains dropdown from #2288
    */
   ethDomainId?: number;
 };
@@ -75,34 +73,31 @@ const ColonyActions = ({
   colony,
   ethDomainId,
 }: Props) => {
-  const { walletAddress } = useLoggedInUser();
+  const ITEMS_PER_PAGE = 10;
 
   const [actionsSortOption, setActionsSortOption] = useState<string>(
     SortOptions.NEWEST,
   );
-
   const [dataPage, setDataPage] = useState<number>(1);
 
-  const ITEMS_PER_PAGE = 10;
-
+  const { walletAddress } = useLoggedInUser();
   const history = useHistory();
-
-  const { installedExtensionsAddresses } = useEnabledExtensions({
-    colonyAddress,
+  const { data: extensions } = useColonyExtensionsQuery({
+    variables: { address: colonyAddress },
   });
+  const { installedExtensions } = extensions?.processedColony || {};
 
   const {
     data: oneTxActions,
     loading: oneTxActionsLoading,
   } = useSubgraphOneTxSubscription({
     variables: {
-      skip: 0,
       /*
        * @NOTE We always need to fetch one more item so that we know that more
        * items exist and we show the "load more" button
        */
-      first: ITEMS_PER_PAGE * dataPage + 1,
       colonyAddress: colonyAddress?.toLowerCase(),
+      sortDirection: 'desc',
     },
   });
 
@@ -111,13 +106,12 @@ const ColonyActions = ({
     loading: eventsActionsLoading,
   } = useSubgraphEventsThatAreActionsSubscription({
     variables: {
-      skip: 0,
       /*
        * @NOTE We always need to fetch one more item so that we know that more
        * items exist and we show the "load more" button
        */
-      first: ITEMS_PER_PAGE * dataPage + 1,
       colonyAddress: colonyAddress?.toLowerCase(),
+      sortDirection: 'desc',
     },
   });
 
@@ -138,40 +132,31 @@ const ColonyActions = ({
     },
   });
 
-  const { data: extensions } = useColonyExtensionsQuery({
-    variables: { address: colonyAddress },
-  });
-
-  /*
-   * @NOTE Prettier is being stupid
-   */
-  // eslint-disable-next-line max-len
-  const votingReputationExtension = extensions?.processedColony?.installedExtensions.find(
+  const votingReputationExtension = installedExtensions?.find(
     ({ extensionId }) => extensionId === Extension.VotingReputation,
   );
 
   const { data: motions } = useSubgraphMotionsSubscription({
     variables: {
-      skip: 0,
       /*
        * @NOTE We always need to fetch one more item so that we know that more
        * items exist and we show the "load more" button
        */
-      first: ITEMS_PER_PAGE * dataPage + 1,
       colonyAddress: colonyAddress?.toLowerCase(),
       extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
+      sortDirection: 'desc',
     },
   });
 
   const actions = useTransformer(getActionsListData, [
-    installedExtensionsAddresses,
+    installedExtensions?.map(({ address }) => address) as string[],
     { ...oneTxActions, ...eventsActions, ...motions },
     /*
      * @NOTE That due to the way autentication works for us, and that we use
-     * subscriptions, the comment count value is not unreliable since we cannot
+     * subscriptions, the comment count value is unreliable since we cannot
      * filter it out properly
      * There's two alternatives to this, none of which are pleasant:
-     * - switch back to using queries (and immplement filtering on the server)
+     * - switch back to using queries (and implement filtering on the server)
      * - fetch the whole comments, for all actions, filter then and count then locally
      */
     commentCount?.transactionMessagesCount,
