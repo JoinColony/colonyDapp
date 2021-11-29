@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 import { StaticContext } from 'react-router';
 
-import userflow from 'userflow.js';
 import BetaCautionAlert from '~core/BetaCautionAlert';
 import FeedbackWidget from '~core/FeedbackWidget';
 import { RouteComponentProps } from '~pages/RouteLayouts';
@@ -30,11 +29,6 @@ interface Props extends RouteProps {
   isConnected?: boolean;
   routeProps?: RouteComponentProps;
   path?: string;
-}
-
-// Initiate Userflow
-if (process.env.USERFLOW_TOKEN) {
-  userflow.init(process.env.USERFLOW_TOKEN);
 }
 
 const WalletRequiredRoute = ({
