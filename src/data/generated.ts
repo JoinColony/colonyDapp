@@ -5312,6 +5312,40 @@ export function useCoinMachineTokenBalanceLazyQuery(baseOptions?: Apollo.LazyQue
 export type CoinMachineTokenBalanceQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceQuery>;
 export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceLazyQuery>;
 export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
+export const CoinMachineTotalTokensDocument = gql`
+    query CoinMachineTotalTokens($colonyAddress: String!) {
+  coinMachineTotalTokens(colonyAddress: $colonyAddress) @client {
+    totalAvailableTokens
+    totalSoldTokens
+  }
+}
+    `;
+
+/**
+ * __useCoinMachineTotalTokensQuery__
+ *
+ * To run a query within a React component, call `useCoinMachineTotalTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCoinMachineTotalTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCoinMachineTotalTokensQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useCoinMachineTotalTokensQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>) {
+        return Apollo.useQuery<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>(CoinMachineTotalTokensDocument, baseOptions);
+      }
+export function useCoinMachineTotalTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>) {
+          return Apollo.useLazyQuery<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>(CoinMachineTotalTokensDocument, baseOptions);
+        }
+export type CoinMachineTotalTokensQueryHookResult = ReturnType<typeof useCoinMachineTotalTokensQuery>;
+export type CoinMachineTotalTokensLazyQueryHookResult = ReturnType<typeof useCoinMachineTotalTokensLazyQuery>;
+export type CoinMachineTotalTokensQueryResult = Apollo.QueryResult<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>;
 export const CoinMachineHasWhitelistDocument = gql`
     query CoinMachineHasWhitelist($colonyAddress: String!) {
   coinMachineHasWhitelist(colonyAddress: $colonyAddress) @client
@@ -5938,48 +5972,6 @@ export function useSubgraphMotionSystemEventsQuery(baseOptions?: Apollo.QueryHoo
 export function useSubgraphMotionSystemEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>) {
           return Apollo.useLazyQuery<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>(SubgraphMotionSystemEventsDocument, baseOptions);
         }
-<<<<<<< HEAD
-export type CoinMachineTokenBalanceQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceQuery>;
-export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceLazyQuery>;
-export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
-export const CoinMachineTotalTokensDocument = gql`
-    query CoinMachineTotalTokens($colonyAddress: String!) {
-  coinMachineTotalTokens(colonyAddress: $colonyAddress) @client {
-    totalAvailableTokens
-    totalSoldTokens
-  }
-}
-    `;
-
-/**
- * __useCoinMachineTotalTokensQuery__
- *
- * To run a query within a React component, call `useCoinMachineTotalTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useCoinMachineTotalTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCoinMachineTotalTokensQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useCoinMachineTotalTokensQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>) {
-        return Apollo.useQuery<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>(CoinMachineTotalTokensDocument, baseOptions);
-      }
-export function useCoinMachineTotalTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>) {
-          return Apollo.useLazyQuery<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>(CoinMachineTotalTokensDocument, baseOptions);
-        }
-export type CoinMachineTotalTokensQueryHookResult = ReturnType<typeof useCoinMachineTotalTokensQuery>;
-export type CoinMachineTotalTokensLazyQueryHookResult = ReturnType<typeof useCoinMachineTotalTokensLazyQuery>;
-export type CoinMachineTotalTokensQueryResult = Apollo.QueryResult<CoinMachineTotalTokensQuery, CoinMachineTotalTokensQueryVariables>;
-export const CoinMachineHasWhitelistDocument = gql`
-    query CoinMachineHasWhitelist($colonyAddress: String!) {
-  coinMachineHasWhitelist(colonyAddress: $colonyAddress) @client
-=======
 export type SubgraphMotionSystemEventsQueryHookResult = ReturnType<typeof useSubgraphMotionSystemEventsQuery>;
 export type SubgraphMotionSystemEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionSystemEventsLazyQuery>;
 export type SubgraphMotionSystemEventsQueryResult = Apollo.QueryResult<SubgraphMotionSystemEventsQuery, SubgraphMotionSystemEventsQueryVariables>;
@@ -6001,7 +5993,6 @@ export const SubgraphMotionVoteSubmittedEventsDocument = gql`
     }
     timestamp
   }
->>>>>>> Chore: separate `motions` queries into own file
 }
     `;
 
