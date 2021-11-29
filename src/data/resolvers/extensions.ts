@@ -18,8 +18,7 @@ import {
   SubgraphExtensionEventsDocument,
 } from '~data/index';
 import extensionData from '~data/staticData/extensionData';
-import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
-import { SortDirection } from '~types/index';
+import { parseSubgraphEvent } from '~utils/events';
 
 export const extensionsResolvers = ({
   colonyManager: { networkClient },
@@ -44,9 +43,9 @@ export const extensionsResolvers = ({
 
         if (subgraphEvents?.extensionVersionDeployedEvents) {
           const { extensionVersionDeployedEvents } = subgraphEvents;
-          const extensionAddedEvents = extensionVersionDeployedEvents
-            .map(parseSubgraphEvent)
-            .sort(sortSubgraphEventByIndex);
+          const extensionAddedEvents = extensionVersionDeployedEvents.map(
+            parseSubgraphEvent,
+          );
 
           const extensionsVersions: Array<{
             extensionHash: string;
@@ -100,6 +99,7 @@ export const extensionsResolvers = ({
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
             extensionAddress: address.toLowerCase(),
+            sortDirection: 'desc',
           },
           fetchPolicy: 'network-only',
         });
@@ -132,14 +132,7 @@ export const extensionsResolvers = ({
             .map(parseSubgraphEvent)
             .filter(({ values: { extensionId: currentExtensionHash } }) => {
               return currentExtensionHash === extensionHash;
-            })
-            .sort((firstEvent, secondEvent) =>
-              sortSubgraphEventByIndex(
-                firstEvent,
-                secondEvent,
-                SortDirection.DESC,
-              ),
-            ) || [];
+            }) || [];
 
         let installedBy = AddressZero;
         let installedAt = 0;
