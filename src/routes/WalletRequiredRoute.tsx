@@ -33,7 +33,9 @@ interface Props extends RouteProps {
 }
 
 // Initiate Userflow
-userflow.init(process.env.USERFLOW_TOKEN!);
+if (process.env.USERFLOW_TOKEN) {
+  userflow.init(process.env.USERFLOW_TOKEN);
+}
 
 const WalletRequiredRoute = ({
   component: Component,
