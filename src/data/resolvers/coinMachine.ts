@@ -427,7 +427,8 @@ export const coinMachineResolvers = ({
           .map(parseSubgraphEvent)
           .concat(
             (transferEventsFromChain as unknown) as ExtendedLogDescription,
-          );
+          )
+          .reverse();
         /*
          * Generate the starting available tokens value (for the last period)
          * By getting the current available tokens and processing all events
