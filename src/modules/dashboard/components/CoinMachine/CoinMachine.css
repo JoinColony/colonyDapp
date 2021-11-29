@@ -24,7 +24,7 @@
   min-height: 600px;
   width: 1030px;
   grid-template-columns: [buy] 340px [remaining] 220px [comments] auto;
-  grid-template-rows: [time] 180px [tokens] 180px [sales] 315px;
+  grid-template-rows: [time] 113px [tokens] 113px [totals] 113px [sales] 315px;
   column-gap: 20px;
   row-gap: 20px;
 }
@@ -55,7 +55,14 @@
   composes: container;
   padding: 0;
   grid-column: remaining / comments;
-  grid-row: tokens / sales;
+  grid-row: tokens / totals;
+}
+
+.tokensTotals {
+  composes: container;
+  padding: 0;
+  grid-column: remaining / comments;
+  grid-row: totals / sales;
 }
 
 .sales {

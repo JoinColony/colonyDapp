@@ -35,10 +35,7 @@ const MSG = defineMessages({
   note: {
     id: 'core.Comment.BanComment.note',
     /* eslint-disable max-len */
-    defaultMessage: `Please note: {unban, select,
-      true {this only allows this user chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.}
-      other {this only prevents this user from chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.}
-    }`,
+    defaultMessage: `Please note: this only prevents this user from chatting in this colony. They will still be able to interact with any smart contracts they have permission to use.`,
     /* eslint-enable max-len */
   },
   commentLabel: {
@@ -55,7 +52,7 @@ const MSG = defineMessages({
   confirmButtonText: {
     id: 'core.Comment.BanComment.confirmButtonText',
     defaultMessage: `{unban, select,
-      true {Unban the user}
+      true {Remove ban}
       other {Ban the troll}
     }`,
   },
@@ -131,9 +128,11 @@ const BanComment = ({
                 />
               </div>
             </div>
-            <p className={styles.note}>
-              <FormattedMessage {...MSG.note} values={{ unban }} />
-            </p>
+            {!unban && (
+              <p className={styles.note}>
+                <FormattedMessage {...MSG.note} />
+              </p>
+            )}
           </div>
           {!unban && (
             <div className={styles.modalContent}>
