@@ -181,6 +181,7 @@ const TokenSalesTable = ({
     periodRemainingMS,
     startPollingSalePeriodsData,
     stopPollingSalePeriodsData,
+    refetchSalePeriodsData,
   ]);
 
   return (
