@@ -454,6 +454,7 @@ export type QueryEventsArgs = {
   skip?: Maybe<Scalars['Int']>;
   first?: Maybe<Scalars['Int']>;
   where?: Maybe<EventsFilter>;
+  orderBy?: Maybe<Scalars['String']>;
   orderDirection?: Maybe<Scalars['String']>;
   block?: Maybe<ToBlockInput>;
 };
@@ -713,15 +714,19 @@ export type SubscriptionEventsArgs = {
 
 
 export type SubscriptionMotionsArgs = {
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Scalars['String']>;
+  orderDirection?: Maybe<Scalars['String']>;
   where: MotionsFilter;
 };
 
 
 export type SubscriptionOneTxPaymentsArgs = {
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Scalars['String']>;
+  orderDirection?: Maybe<Scalars['String']>;
   where: ActionsFilter;
 };
 
@@ -2683,8 +2688,8 @@ export type SubgraphWhitelistEventsQuery = { userApprovedEvents: Array<(
   )> };
 
 export type SubgraphEventsSubscriptionVariables = Exact<{
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
   colonyAddress: Scalars['String'];
   sortDirection?: Maybe<Scalars['String']>;
 }>;
@@ -2705,9 +2710,10 @@ export type SubgraphEventsSubscription = { events: Array<(
   )> };
 
 export type SubgraphOneTxSubscriptionVariables = Exact<{
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
   colonyAddress: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -2732,8 +2738,8 @@ export type SubgraphOneTxSubscription = { oneTxPayments: Array<(
   )> };
 
 export type SubgraphEventsThatAreActionsSubscriptionVariables = Exact<{
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
   colonyAddress: Scalars['String'];
   sortDirection?: Maybe<Scalars['String']>;
 }>;
@@ -2754,10 +2760,11 @@ export type SubgraphEventsThatAreActionsSubscription = { events: Array<(
   )> };
 
 export type SubgraphMotionsSubscriptionVariables = Exact<{
-  skip: Scalars['Int'];
-  first: Scalars['Int'];
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
   colonyAddress: Scalars['String'];
   extensionAddress: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -7493,7 +7500,7 @@ export type SubgraphWhitelistEventsQueryHookResult = ReturnType<typeof useSubgra
 export type SubgraphWhitelistEventsLazyQueryHookResult = ReturnType<typeof useSubgraphWhitelistEventsLazyQuery>;
 export type SubgraphWhitelistEventsQueryResult = Apollo.QueryResult<SubgraphWhitelistEventsQuery, SubgraphWhitelistEventsQueryVariables>;
 export const SubgraphEventsDocument = gql`
-    subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!, $sortDirection: String = asc) {
+    subscription SubgraphEvents($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
   events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress}) {
     id
     address
@@ -7545,8 +7552,8 @@ export function useSubgraphEventsSubscription(baseOptions?: Apollo.SubscriptionH
 export type SubgraphEventsSubscriptionHookResult = ReturnType<typeof useSubgraphEventsSubscription>;
 export type SubgraphEventsSubscriptionResult = Apollo.SubscriptionResult<SubgraphEventsSubscription>;
 export const SubgraphOneTxDocument = gql`
-    subscription SubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
-  oneTxPayments(skip: $skip, first: $first, where: {payment_contains: $colonyAddress}) {
+    subscription SubgraphOneTx($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
+  oneTxPayments(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {payment_contains: $colonyAddress}) {
     id
     agent
     transaction {
@@ -7603,7 +7610,7 @@ export function useSubgraphOneTxSubscription(baseOptions?: Apollo.SubscriptionHo
 export type SubgraphOneTxSubscriptionHookResult = ReturnType<typeof useSubgraphOneTxSubscription>;
 export type SubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubgraphOneTxSubscription>;
 export const SubgraphEventsThatAreActionsDocument = gql`
-    subscription SubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!, $sortDirection: String = asc) {
+    subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
   events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)"]}) {
     id
     address
@@ -7662,6 +7669,7 @@ export const SubgraphEventsThatAreActionsDocument = gql`
  *      skip: // value for 'skip'
  *      first: // value for 'first'
  *      colonyAddress: // value for 'colonyAddress'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */
@@ -7671,8 +7679,8 @@ export function useSubgraphEventsThatAreActionsSubscription(baseOptions?: Apollo
 export type SubgraphEventsThatAreActionsSubscriptionHookResult = ReturnType<typeof useSubgraphEventsThatAreActionsSubscription>;
 export type SubgraphEventsThatAreActionsSubscriptionResult = Apollo.SubscriptionResult<SubgraphEventsThatAreActionsSubscription>;
 export const SubgraphMotionsDocument = gql`
-    subscription SubgraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
-  motions(skip: $skip, first: $first, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
+    subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!, $sortDirection: String = asc) {
+  motions(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, extensionAddress: $extensionAddress}) {
     id
     fundamentalChainId
     associatedColony {
@@ -7737,6 +7745,7 @@ export const SubgraphMotionsDocument = gql`
  *      first: // value for 'first'
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
+ *      sortDirection: // value for 'sortDirection'
  *   },
  * });
  */

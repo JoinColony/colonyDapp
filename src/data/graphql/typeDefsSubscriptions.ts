@@ -54,8 +54,10 @@ export default gql`
   #
   extend type Subscription {
     oneTxPayments(
-      skip: Int!
-      first: Int!
+      skip: Int
+      first: Int
+      orderBy: String
+      orderDirection: String
       where: ActionsFilter!
     ): [OneTxPayment!]!
     events(
@@ -66,8 +68,10 @@ export default gql`
       where: EventsFilter
     ): [SubgraphEvent!]!
     motions(
-      skip: Int!
-      first: Int!
+      skip: Int
+      first: Int
+      orderBy: String
+      orderDirection: String
       where: MotionsFilter!
     ): [SubscriptionMotion!]!
     tokenBoughtEvents(where: EventsFilter): [SubgraphEvent!]!

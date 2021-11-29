@@ -48,6 +48,11 @@ const ColonyEvents = ({
     SubgraphEventsSubscription['events']
   >([]);
 
+  /*
+   * @NOTE This would be better served as a query
+   * As it stands, this would be better if we converted it back to being a query
+   * with a proper cache update policy, rather than a more, expensive, subscription
+   */
   const {
     data,
     loading: subgraphEventsLoading,

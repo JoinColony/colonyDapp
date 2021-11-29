@@ -24,6 +24,7 @@ export default gql`
       skip: Int
       first: Int
       where: EventsFilter
+      orderBy: String
       orderDirection: String
       block: ToBlockInput
     ): [SubgraphEvent!]!
