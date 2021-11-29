@@ -61,6 +61,7 @@ export default gql`
     address: String!
     name: String!
     args: String!
+    timestamp: String!
     associatedColony: SubgraphColony!
     processedValues: SugraphEventProcessedValues!
   }

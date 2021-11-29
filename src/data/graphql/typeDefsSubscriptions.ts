@@ -58,7 +58,13 @@ export default gql`
       first: Int!
       where: ActionsFilter!
     ): [OneTxPayment!]!
-    events(skip: Int, first: Int, where: EventsFilter): [SubgraphEvent!]!
+    events(
+      skip: Int
+      first: Int
+      orderBy: String
+      orderDirection: String
+      where: EventsFilter
+    ): [SubgraphEvent!]!
     motions(
       skip: Int!
       first: Int!
