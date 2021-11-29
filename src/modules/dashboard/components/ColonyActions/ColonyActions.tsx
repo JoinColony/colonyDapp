@@ -144,7 +144,6 @@ const ColonyActions = ({
        */
       colonyAddress: colonyAddress?.toLowerCase(),
       extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
-      sortDirection: 'desc',
     },
   });
 
