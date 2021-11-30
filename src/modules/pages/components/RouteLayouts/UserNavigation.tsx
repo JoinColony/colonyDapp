@@ -207,7 +207,10 @@ const UserNavigation = () => {
           )}
         </InboxPopover>
       )}
-      <AvatarDropdown onlyLogout={!isNetworkAllowed} />
+      <AvatarDropdown
+        onlyLogout={!isNetworkAllowed}
+        colony={colonyData?.processedColony}
+      />
     </div>
   );
 };

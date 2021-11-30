@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import Popover from '~core/Popover';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useLoggedInUser } from '~data/index';
+import { useLoggedInUser, Colony } from '~data/index';
 import { removeValueUnits } from '~utils/css';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover';
@@ -18,11 +18,12 @@ const UserAvatar = HookedUserAvatar();
 
 interface Props {
   onlyLogout?: boolean;
+  colony: Colony;
 }
 
 const displayName = 'users.AvatarDropdown';
 
-const AvatarDropdown = ({ onlyLogout = false }: Props) => {
+const AvatarDropdown = ({ onlyLogout = false, colony }: Props) => {
   const { username, walletAddress, ethereal } = useLoggedInUser();
 
   /*
@@ -52,6 +53,7 @@ const AvatarDropdown = ({ onlyLogout = false }: Props) => {
           username={username}
           walletConnected={!!walletAddress && !ethereal}
           onlyLogout={onlyLogout}
+          colony={colony}
         />
       )}
       trigger="click"

@@ -2,18 +2,21 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { ActionButton } from '~core/Button';
+import NavLink from '~core/NavLink';
+import ExternalLink from '~core/ExternalLink';
+
+import { Colony } from '~data/index';
+import DropdownMenu, {
+  DropdownMenuSection,
+  DropdownMenuItem,
+} from '~core/DropdownMenu';
 import { ActionTypes } from '~redux/index';
 import {
   USER_EDIT_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
 } from '~routes/index';
-import DropdownMenu, {
-  DropdownMenuSection,
-  DropdownMenuItem,
-} from '~core/DropdownMenu';
-import NavLink from '~core/NavLink';
-import ExternalLink from '~core/ExternalLink';
+
 import styles from './AvatarDropdownPopover.css';
 
 const MSG = defineMessages({
@@ -56,6 +59,7 @@ interface Props {
   username?: string | null;
   walletConnected?: boolean;
   onlyLogout?: boolean;
+  colony: Colony;
 }
 
 const displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
@@ -65,13 +69,20 @@ const AvatarDropdownPopover = ({
   username,
   walletConnected = false,
   onlyLogout = false,
+  colony,
 }: Props) => {
   const renderUserSection = useCallback(() => {
     return (
       <DropdownMenuSection separator>
         {!username && (
           <DropdownMenuItem>
-            <NavLink to={CREATE_USER_ROUTE} text={MSG.buttonGetStarted} />
+            <NavLink
+              to={{
+                pathname: CREATE_USER_ROUTE,
+                state: { colonyURL: `/colony/${colony.colonyName}` },
+              }}
+              text={MSG.buttonGetStarted}
+            />
           </DropdownMenuItem>
         )}
         {username && (
@@ -94,7 +105,7 @@ const AvatarDropdownPopover = ({
         )}
       </DropdownMenuSection>
     );
-  }, [username]);
+  }, [colony, username]);
 
   const renderColonySection = () => (
     <DropdownMenuSection separator>
