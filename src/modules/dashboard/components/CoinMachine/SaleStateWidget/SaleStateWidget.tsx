@@ -169,7 +169,10 @@ const SaleStateWidget = ({
 
   const showTimeCountdown =
     state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
-  const { splitTime } = useSplitTime(timeLeftToNextSale, showTimeCountdown);
+  const { splitTime } = useSplitTime(
+    timeLeftToNextSale / 1000,
+    showTimeCountdown,
+  );
 
   const {
     data: transactionAmountData,

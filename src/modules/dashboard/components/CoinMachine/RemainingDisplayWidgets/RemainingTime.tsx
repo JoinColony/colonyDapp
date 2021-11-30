@@ -55,9 +55,9 @@ const RemainingTime = ({
   const dispatch = useDispatch();
 
   const { splitTime, timeLeft } = useSplitTime(
-    typeof value === 'number' ? value : -1,
+    typeof value === 'number' ? value / 1000 : -1,
     true,
-    periodLength,
+    periodLength / 1000,
   );
 
   const widgetText = useMemo(() => {
