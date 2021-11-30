@@ -69,7 +69,7 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
   );
 
   const openKYCDialog = useCallback(() => {
-    return data?.processedMetaColony
+    return data?.processedMetaColony?.colonyAddress === colonyAddress
       ? openSynapsDialog({ colonyAddress })
       : openCompleteKYCDialog();
   }, [data, openSynapsDialog, colonyAddress, openCompleteKYCDialog]);
