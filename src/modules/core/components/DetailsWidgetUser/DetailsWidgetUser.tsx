@@ -11,10 +11,11 @@ import styles from './DetailsWidgetUser.css';
 const displayName = 'DetailsWidgetUser';
 
 interface Props {
+  colony?: Colony;
   walletAddress: Address;
 }
 
-const DetailsWidgetUser = ({ walletAddress }: Props) => {
+const DetailsWidgetUser = ({ colony, walletAddress }: Props) => {
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
   const userProfile = useUser(walletAddress);
   const userDisplayName = userProfile?.profile?.displayName;
@@ -23,11 +24,16 @@ const DetailsWidgetUser = ({ walletAddress }: Props) => {
   return (
     <div className={styles.main}>
       <UserAvatar
+        colony={colony}
         size="s"
         notSet={false}
         user={userProfile}
         address={walletAddress || ''}
         showInfo
+        popperProps={{
+          showArrow: false,
+          placement: 'top',
+        }}
       />
       {(userDisplayName || username) && (
         <div className={styles.username}>
