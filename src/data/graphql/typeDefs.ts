@@ -421,7 +421,8 @@ export default gql`
     roles: [ProcessedRoles!]!
     tokens: [ProcessedTokens!]!
     version: String!
-    canMintNativeToken: Boolean!
+    canUserMintNativeToken: Boolean!
+    canColonyMintNativeToken: Boolean!
     canUnlockNativeToken: Boolean!
     isInRecoveryMode: Boolean!
     isNativeTokenLocked: Boolean!

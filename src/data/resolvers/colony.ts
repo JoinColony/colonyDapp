@@ -13,6 +13,8 @@ import {
   getHistoricColonyRoles,
   formatColonyRoles,
 } from '@colony/colony-js';
+import { Contract } from 'ethers';
+import { abi as tokenAuthorityABI } from '@colony/colony-js/lib-esm/contracts/deploy/TokenAuthority.json';
 
 import { Color } from '~core/ColorTag';
 
@@ -404,7 +406,34 @@ export const colonyResolvers = ({
         return null;
       }
     },
-    async canMintNativeToken({ colonyAddress }) {
+    async canColonyMintNativeToken({ colonyAddress }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      const { tokenClient } = colonyClient;
+      const tokenAuthorityAddress = tokenClient.authority();
+      const tokenAuthorityContract = new Contract(
+        tokenAuthorityAddress,
+        tokenAuthorityABI,
+        colonyManager.signer,
+      );
+      const mintSighash = tokenClient.interface.functions.mint.sighash;
+
+      // fetch whether the colony is allowed to mint tokens
+      let canMintNativeToken = true;
+      try {
+        canMintNativeToken = await tokenAuthorityContract.canCall(
+          colonyAddress,
+          tokenClient.address,
+          mintSighash,
+        );
+      } catch (error) {
+        canMintNativeToken = false;
+      }
+      return canMintNativeToken;
+    },
+    async canUserMintNativeToken({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,

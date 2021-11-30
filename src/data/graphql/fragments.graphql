@@ -48,7 +48,8 @@ fragment FullColony on ProcessedColony {
     }
   }
   version @client
-  canMintNativeToken @client
+  canUserMintNativeToken @client
+  canColonyMintNativeToken @client
   canUnlockNativeToken @client
   isInRecoveryMode @client
   isNativeTokenLocked @client
