@@ -10,13 +10,16 @@ import { StaticContext } from 'react-router';
 import BetaCautionAlert from '~core/BetaCautionAlert';
 import FeedbackWidget from '~core/FeedbackWidget';
 import { RouteComponentProps } from '~pages/RouteLayouts';
+import { METACOLONY_ENS } from '~constants';
 
 import {
   CREATE_USER_ROUTE,
   LANDING_PAGE_ROUTE,
   CONNECT_ROUTE,
   CREATE_COLONY_ROUTE,
+  NOT_FOUND_ROUTE,
 } from './routeConstants';
+import { CLAIM_TOKEN_ROUTE, UNWRAP_TOKEN_ROUTE } from '.';
 
 interface ComponentProps extends RouteProps {
   routeProps?: RouteComponentProps;
@@ -50,13 +53,22 @@ const WalletRequiredRoute = ({
   const locationPath = location && `${location.pathname}${location.search}`;
   return (
     <Route
+      path={path}
       render={(
         props: ReactRouterComponentProps<
-          {},
+          { colonyName?: string },
           StaticContext,
-          { redirectTo?: string; colonyURL?: string }
+          {
+            redirectTo?: string;
+            colonyURL?: string;
+            isMetaColonyExclusive?: boolean;
+          }
         >,
       ) => {
+        const isMetaColonyExclusive =
+          props.match.path === CLAIM_TOKEN_ROUTE ||
+          props.match.path === UNWRAP_TOKEN_ROUTE;
+
         /**
          * Connected
          */
@@ -80,6 +92,7 @@ const WalletRequiredRoute = ({
                     pathname: redirectTo,
                     state: {
                       colonyURL,
+                      isMetaColonyExclusive,
                     },
                   }}
                 />
@@ -153,7 +166,8 @@ const WalletRequiredRoute = ({
                 to={{
                   pathname: CREATE_USER_ROUTE,
                   state: {
-                    redirectTo: colonyURL || locationPath,
+                    ...props.location.state,
+                    redirectTo: colonyURL || redirectTo || locationPath,
                   },
                 }}
               />
@@ -177,11 +191,25 @@ const WalletRequiredRoute = ({
                 state: {
                   ...location?.state,
                   redirectTo: locationPath,
+                  isMetaColonyExclusive,
                 },
               }}
             />
           );
         }
+
+        /*
+         * Redirect user to the 404 page if the page is exclusive to the meta colony
+         * and the colony used in the URL isn't it.
+         */
+        if (
+          (isMetaColonyExclusive ||
+            props.location.state.isMetaColonyExclusive) &&
+          props.match.params.colonyName !== METACOLONY_ENS
+        ) {
+          return <Redirect to={NOT_FOUND_ROUTE} />;
+        }
+
         /**
          * Catch all component render
          *
