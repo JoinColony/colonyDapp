@@ -1,4 +1,5 @@
 import { eventChannel } from 'redux-saga';
+import { Network } from '@colony/colony-js';
 
 import { call, put, spawn, take } from 'redux-saga/effects';
 
@@ -11,11 +12,13 @@ import {
   accountChangeHook,
   chainChangeHook,
 } from '@purser/metamask';
+import { addChain } from '@purser/metamask/lib-esm/helpers';
 
 import { WalletMethod } from '~immutable/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
+import { DEFAULT_NETWORK, NETWORK_DATA, TOKEN_DATA } from '~constants';
 
 /**
  * Watch for changes in Metamask account, and log the user out when they happen.
@@ -53,6 +56,7 @@ function* metaMaskWatch(walletAddress: Address) {
 function* openMetamaskWallet() {
   const wallet = yield call(purserOpenMetaMaskWallet);
   yield spawn(metaMaskWatch, createAddress(wallet.address));
+  yield spawn(metamaskSwitchNetwork);
   return wallet;
 }
 

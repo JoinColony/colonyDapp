@@ -18,6 +18,7 @@ export type NetworkInfo = {
    * Used just to display references to the current networks's
    */
   blockExplorerName?: string;
+  blockExplorerUrl?: string;
   /**
    * Link to a token list from the current network's block explorer.
    * This will just be used for information messages and tooltips.
@@ -26,6 +27,10 @@ export type NetworkInfo = {
    */
   tokenExplorerLink?: string;
   contractAddressLink: string;
+  /*
+   * Used when adding the network to Metamask
+   */
+  rpcUrl?: string;
 };
 
 export const DEFAULT_NETWORK = process.env.NETWORK || Network.Goerli;
@@ -39,8 +44,14 @@ export enum ROLES_COMMUNITY {
 }
 
 const XDAI_TOKEN: TokenInfo = {
-  name: 'XDAI Token',
-  symbol: 'XDAI',
+  /*
+   * Needs to be this exact name, otherwise Metamask marks it as "not valid" when adding it
+   */
+  name: 'xDAI Token', //
+  /*
+   * Needs to be this exact name, otherwise Metamask marks it as "not valid" when adding it
+   */
+  symbol: 'xDAI',
   decimals: 18,
 };
 
@@ -57,13 +68,18 @@ const GOERLI_TOKEN: TokenInfo = {
 };
 
 const XDAI_NETWORK: NetworkInfo = {
-  name: 'xDai Chain',
+  /*
+   * Needs to be this exact name, otherwise Metamask marks it as "not valid" when adding it
+   */
+  name: 'xDAI Chain',
   chainId: 100,
   shortName: 'xDai',
   displayENSDomain: 'joincolony.colonyxdai',
   blockExplorerName: 'Blockscout',
+  blockExplorerUrl: 'https://blockscout.com/poa/xdai',
   tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
   contractAddressLink: 'https://blockscout.com/poa/xdai/address',
+  rpcUrl: 'https://rpc.xdaichain.com',
 };
 
 const ETHEREUM_NETWORK: NetworkInfo = {
@@ -71,9 +87,11 @@ const ETHEREUM_NETWORK: NetworkInfo = {
   chainId: 1,
   shortName: 'ETH',
   blockExplorerName: 'Etherscan',
+  blockExplorerUrl: 'https://etherscan.io',
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://etherscan.io/tokens',
   contractAddressLink: 'https://etherscan.io/address',
+  rpcUrl: 'https://mainnet.infura.io/v3',
 };
 
 const GOERLI_NETWORK: NetworkInfo = {
@@ -81,9 +99,11 @@ const GOERLI_NETWORK: NetworkInfo = {
   chainId: 5,
   shortName: 'GTH',
   blockExplorerName: 'Etherscan',
+  blockExplorerUrl: 'https://goerli.etherscan.io',
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'https://goerli.etherscan.io/tokens',
   contractAddressLink: 'https://goerli.etherscan.io/address',
+  rpcUrl: 'https://goerli.infura.io/v3',
 };
 
 /*
@@ -95,9 +115,11 @@ const GANACHE_NETWORK: NetworkInfo = {
   chainId: 13131313,
   shortName: 'Ganache',
   blockExplorerName: 'Noexplorer',
+  blockExplorerUrl: 'http://localhost',
   displayENSDomain: 'joincolony.eth',
   tokenExplorerLink: 'http://localhost',
   contractAddressLink: 'http://localhost',
+  rpcUrl: 'http://localhost:8545',
 };
 
 export const NETWORK_DATA: { [key: string]: NetworkInfo } = {
