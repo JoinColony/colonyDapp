@@ -194,6 +194,8 @@ const ActionsListItem = ({
     motionState === MotionState.Passed ||
     motionState === MotionState.Failed ||
     motionState === MotionState.FailedNoFinalizable;
+
+  const stopPropagation = (event) => event.stopPropagation();
   return (
     <li>
       <div
@@ -219,9 +221,16 @@ const ActionsListItem = ({
         onClick={handleSyntheticEvent}
         onKeyPress={handleSyntheticEvent}
       >
-        <div className={styles.avatar}>
+        <div
+          onClick={stopPropagation}
+          onKeyPress={stopPropagation}
+          role="button"
+          tabIndex={0}
+          className={styles.avatar}
+        >
           {initiator && (
             <UserAvatar
+              colony={colony}
               size="s"
               address={initiator}
               user={initiatorUserProfile}
