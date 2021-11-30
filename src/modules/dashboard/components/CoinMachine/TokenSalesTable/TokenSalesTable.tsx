@@ -196,6 +196,7 @@ const TokenSalesTable = ({
     startPollingSalePeriodsData,
     stopPollingSalePeriodsData,
     refetchSalePeriodsData,
+    salePeriodQueryVariables,
   ]);
 
   return (
