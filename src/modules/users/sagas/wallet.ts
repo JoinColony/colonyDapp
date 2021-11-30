@@ -53,6 +53,39 @@ function* metaMaskWatch(walletAddress: Address) {
   }
 }
 
+function* metamaskSwitchNetwork() {
+  if (
+    DEFAULT_NETWORK === Network.Xdai ||
+    DEFAULT_NETWORK === Network.XdaiFork
+  ) {
+    const {
+      name: chainName,
+      chainId,
+      blockExplorerUrl = '',
+      rpcUrl = '',
+    } = NETWORK_DATA[Network.Xdai];
+    const { name, symbol, decimals } = TOKEN_DATA[Network.Xdai];
+    /*
+     * @NOTE This method adds a new network to metamask and then switches to it
+     * (or tries to anyway)
+     *
+     * If it exists already (it matches the chainId), then it will just
+     * attempt to switch to it
+     */
+    yield addChain({
+      chainId,
+      chainName,
+      nativeCurrency: {
+        name,
+        symbol,
+        decimals,
+      },
+      blockExplorerUrls: [blockExplorerUrl],
+      rpcUrls: [rpcUrl],
+    });
+  }
+}
+
 function* openMetamaskWallet() {
   const wallet = yield call(purserOpenMetaMaskWallet);
   yield spawn(metaMaskWatch, createAddress(wallet.address));
