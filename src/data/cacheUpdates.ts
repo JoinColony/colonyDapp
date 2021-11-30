@@ -292,7 +292,7 @@ const cacheUpdates = {
             cache.modify({
               id: cache.identify(data.processedColony),
               fields: {
-                canMintNativeToken: () => canMintNativeToken,
+                canUserMintNativeToken: () => canMintNativeToken,
                 canUnlockNativeToken: () => canUnlockNativeToken,
               },
             });

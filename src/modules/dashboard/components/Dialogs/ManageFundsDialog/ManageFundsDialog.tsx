@@ -113,9 +113,9 @@ const ManageFundsDialog = ({
 
   const hasRegisteredProfile = !!username && !ethereal;
   const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
-  const canMintNativeToken = isVotingExtensionEnabled
-    ? colony.canMintNativeToken
-    : colony.canMintNativeToken && hasRoot(allUserRoles);
+  const canUserMintNativeToken = isVotingExtensionEnabled
+    ? colony.canColonyMintNativeToken
+    : colony.canUserMintNativeToken;
   const canUnlockToken = isVotingExtensionEnabled
     ? colony.canUnlockNativeToken
     : colony.canUnlockNativeToken && hasRoot(allUserRoles);
@@ -138,7 +138,7 @@ const ManageFundsDialog = ({
       title: MSG.mintTokensTitle,
       description: MSG.mintTokensDescription,
       icon: 'emoji-seed-sprout',
-      permissionRequired: !canMintNativeToken,
+      permissionRequired: !canUserMintNativeToken,
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
@@ -187,7 +187,7 @@ const ManageFundsDialog = ({
     },
   ];
   const filteredItems = useMemo(() => {
-    return colony.canMintNativeToken
+    return colony.canColonyMintNativeToken
       ? items
       : items.filter(
           ({ icon }) =>
