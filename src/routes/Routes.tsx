@@ -19,11 +19,14 @@ import { ColonyBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
+import ClaimTokensPage from '~dashboard/ClaimTokensPage';
+import UnwrapTokensPage from '~dashboard/UnwrapTokensPage';
 
 import appLoadingContext from '~context/appLoadingState';
 import ColonyFunding from '~dashboard/ColonyFunding';
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
+import { METACOLONY_ENS } from '~constants';
 
 import {
   COLONY_EVENTS_ROUTE,
@@ -44,6 +47,8 @@ import {
   MEMBERS_ROUTE,
   ACTIONS_PAGE_ROUTE,
   COIN_MACHINE_ROUTE,
+  UNWRAP_TOKEN_ROUTE,
+  CLAIM_TOKEN_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -58,6 +63,10 @@ const MSG = defineMessages({
   loadingAppMessage: {
     id: 'routes.Routes.loadingAppMessage',
     defaultMessage: 'Loading App',
+  },
+  backToMetacolony: {
+    id: 'routes.Routes.backToMetacolony',
+    defaultMessage: 'Back to The Metacolony',
   },
 });
 
@@ -146,6 +155,28 @@ const Routes = () => {
           layout={SimpleNav}
           routeProps={{
             hasBackLink: false,
+          }}
+        />
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={UNWRAP_TOKEN_ROUTE}
+          component={UnwrapTokensPage}
+          layout={NavBar}
+          routeProps={{
+            backText: MSG.backToMetacolony,
+            backRoute: `/colony/${METACOLONY_ENS}`,
+          }}
+        />
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={CLAIM_TOKEN_ROUTE}
+          component={ClaimTokensPage}
+          layout={NavBar}
+          routeProps={{
+            backText: MSG.backToMetacolony,
+            backRoute: `/colony/${METACOLONY_ENS}`,
           }}
         />
 
