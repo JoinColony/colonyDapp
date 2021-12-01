@@ -19,6 +19,7 @@ import {
   useLoggedInUser,
   useUserBalanceWithLockQuery,
   useColonyFromNameQuery,
+  Colony,
 } from '~data/index';
 import { useSelector } from '~utils/hooks';
 import { useAutoLogin, getLastWallet } from '~utils/autoLogin';
@@ -207,7 +208,10 @@ const UserNavigation = () => {
           )}
         </InboxPopover>
       )}
-      <AvatarDropdown onlyLogout={!isNetworkAllowed} />
+      <AvatarDropdown
+        onlyLogout={!isNetworkAllowed}
+        colony={colonyData?.processedColony as Colony}
+      />
     </div>
   );
 };

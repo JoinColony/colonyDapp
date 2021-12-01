@@ -31,9 +31,8 @@ const StepConfirmTransaction = () => {
   const { location } = useHistory<{ colonyURL?: string }>();
 
   if (username) {
-    const { colonyURL } = location.state;
-    if (colonyURL) {
-      return <Redirect to={colonyURL} />;
+    if (location?.state?.colonyURL) {
+      return <Redirect to={location.state.colonyURL} />;
     }
 
     return <Redirect to={LANDING_PAGE_ROUTE} />;

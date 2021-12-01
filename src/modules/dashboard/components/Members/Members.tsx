@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
+import LoadMoreButton from '~core/LoadMoreButton';
 import UserPermissions from '~dashboard/UserPermissions';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
@@ -67,6 +68,8 @@ type Member = AnyUser & {
 
 const displayName = 'dashboard.Members';
 
+const ITEMS_PER_PAGE = 30;
+
 const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
   const { domainId } = useParams<{
     domainId: string;
@@ -93,6 +96,7 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
      */
     parseInt(domainId, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
+  const [dataPage, setDataPage] = useState<number>(1);
 
   const selectedDomain = colony.domains.find(
     ({ ethDomainId }) => ethDomainId === selectedDomainId,
@@ -209,6 +213,10 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
     [setSelectedDomainId],
   );
 
+  const handleDataPagination = useCallback(() => {
+    setDataPage(dataPage + 1);
+  }, [dataPage]);
+
   const domainRolesArray = useMemo(() => {
     return domainRoles
       .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
@@ -245,7 +253,23 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
     );
   }
 
-  const members: Member[] = skelethonUsers.map((user) => {
+  /*
+   * @NOTE Poor man's pagination
+   *
+   * We're not really doing proper pagination like we do for say... `ColonyEvents`,
+   * because our metadata server doesn't support skip, first, more, next, etc...
+   * query filters
+   *
+   * A proper solution for this would be to teach the server to return just part
+   * of the results, with the next waiting in line for a callback, but the current
+   * timeframe doesn't allow for this, so I guess this is the "best" we can do for now
+   */
+  const paginatedSkelethonUsers = skelethonUsers.slice(
+    0,
+    ITEMS_PER_PAGE * dataPage,
+  );
+
+  const members: Member[] = paginatedSkelethonUsers.map((user) => {
     const {
       profile: { walletAddress },
     } = user;
@@ -314,6 +338,14 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
         />
       ) : (
         <FormattedMessage {...MSG.failedToFetch} />
+      )}
+      {ITEMS_PER_PAGE * dataPage < skelethonUsers.length && (
+        <LoadMoreButton
+          onClick={handleDataPagination}
+          isLoadingData={
+            loadingAllMembers || loadingColonyMembersWithReputation
+          }
+        />
       )}
     </div>
   );
