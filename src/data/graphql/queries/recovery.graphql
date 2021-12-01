@@ -1,5 +1,7 @@
-query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
+query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!, $sortDirection: String = asc) {
   recoveryStorageSlotSetEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     block: { number: $toBlock }
     where: {
       name_contains: "RecoveryStorageSlotSet"
@@ -19,8 +21,11 @@ query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
         timestamp
       }
     }
+    timestamp
   }
   recoveryModeExitApprovedEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     block: { number: $toBlock }
     where: {
       name_contains: "RecoveryModeExitApproved"
@@ -40,8 +45,11 @@ query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
         timestamp
       }
     }
+    timestamp
   }
   recoveryModeEnteredEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     block: { number: $toBlock }
     where: {
       name_contains: "RecoveryModeEntered"
@@ -61,11 +69,14 @@ query SubgraphRecoveryModeEvents($colonyAddress: String!, $toBlock: Int!) {
         timestamp
       }
     }
+    timestamp
   }
 }
 
-query SubgraphRecoveryModeExitedEvents($colonyAddress: String!) {
+query SubgraphRecoveryModeExitedEvents($colonyAddress: String!, $sortDirection: String = asc) {
   recoveryModeExitedEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       name_contains: "RecoveryModeExited"
       address: $colonyAddress
@@ -84,5 +95,75 @@ query SubgraphRecoveryModeExitedEvents($colonyAddress: String!) {
         timestamp
       }
     }
+    timestamp
   }
+}
+
+query RecoveryEventsForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoveryEventsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
+  }
+}
+
+query RecoverySystemMessagesForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoverySystemMessagesForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    type
+    name
+    createdAt
+  }
+}
+
+query GetRecoveryStorageSlot($colonyAddress: String!, $storageSlot: String!) {
+  getRecoveryStorageSlot(colonyAddress: $colonyAddress, storageSlot: $storageSlot) @client
+}
+
+query RecoveryRolesUsers($colonyAddress: String!, $endBlockNumber: Int) {
+  recoveryRolesUsers(colonyAddress: $colonyAddress, endBlockNumber: $endBlockNumber) @client {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+}
+
+query RecoveryRolesAndApprovalsForSession($blockNumber: Int!, $colonyAddress: String!) {
+  recoveryRolesAndApprovalsForSession(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+    approvedRecoveryExit
+  }
+}
+
+query GetRecoveryRequiredApprovals($blockNumber: Int!,$colonyAddress: String!) {
+  getRecoveryRequiredApprovals(blockNumber: $blockNumber, colonyAddress: $colonyAddress) @client
+}
+
+query RecoveryAllEnteredEvents($colonyAddress: String!, $currentBlock: Int!) {
+  recoveryAllEnteredEvents(colonyAddress: $colonyAddress, currentBlock: $currentBlock) @client {
+    type
+    name
+    values
+    createdAt
+    emmitedBy
+    blockNumber
+    transactionHash
+  }
+}
+
+query LegacyNumberOfRecoveryRoles($colonyAddress: String!) {
+  legacyNumberOfRecoveryRoles(colonyAddress: $colonyAddress) @client
 }

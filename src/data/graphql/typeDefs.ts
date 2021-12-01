@@ -61,6 +61,7 @@ export default gql`
     address: String!
     name: String!
     args: String!
+    timestamp: String!
     associatedColony: SubgraphColony!
     processedValues: SugraphEventProcessedValues!
   }
@@ -202,14 +203,6 @@ export default gql`
     avatarURL: String
   }
 
-  type MotionStakes {
-    totalNAYStakes: String!
-    remainingToFullyYayStaked: String!
-    remainingToFullyNayStaked: String!
-    maxUserStake: String!
-    minUserStake: String!
-  }
-
   type UserProfile {
     avatarHash: String
     displayName: String
@@ -234,64 +227,9 @@ export default gql`
     processedColonies: [ProcessedColony!]!
   }
 
-  type UsersAndRecoveryApprovals {
-    id: String!
-    profile: UserProfile!
-    approvedRecoveryExit: Boolean!
-  }
-
   type ActionThatNeedsAttention {
     transactionHash: String!
     needsAction: Boolean!
-  }
-
-  type MotionVoteReveal {
-    revealed: Boolean!
-    vote: Int!
-  }
-
-  type MotionVoteResults {
-    currentUserVoteSide: Int!
-    yayVotes: String!
-    yayVoters: [String!]!
-    nayVotes: String!
-    nayVoters: [String!]!
-  }
-
-  type MotionStakerRewards {
-    stakingRewardYay: String!
-    stakingRewardNay: String!
-    stakesYay: String!
-    stakesNay: String!
-    claimedReward: Boolean!
-  }
-
-  type StakeSidesAmounts {
-    YAY: String!
-    NAY: String!
-  }
-
-  type StakeAmounts {
-    totalStaked: StakeSidesAmounts!
-    userStake: StakeSidesAmounts!
-    requiredStake: String!
-  }
-
-  type MotionObjectionAnnotation {
-    address: String!
-    metadata: String!
-  }
-
-  type VotingState {
-    thresholdValue: String!
-    totalVotedReputation: String!
-    skillRep: String!
-  }
-
-  type MotionVoterReward {
-    reward: String!
-    minReward: String!
-    maxReward: String!
   }
 
   type UserDomainReputation {
@@ -337,83 +275,6 @@ export default gql`
       colonyAddress: String!
       walletAddress: String!
     ): [ActionThatNeedsAttention]!
-    eventsForMotion(motionId: Int!, colonyAddress: String!): [ParsedEvent!]!
-    recoveryEventsForSession(
-      blockNumber: Int!
-      colonyAddress: String!
-    ): [ParsedEvent!]!
-    recoverySystemMessagesForSession(
-      blockNumber: Int!
-      colonyAddress: String!
-    ): [SystemMessage!]!
-    recoveryRolesUsers(colonyAddress: String!, endBlockNumber: Int): [User!]!
-    getRecoveryStorageSlot(
-      colonyAddress: String!
-      storageSlot: String!
-    ): String!
-    recoveryRolesAndApprovalsForSession(
-      blockNumber: Int!
-      colonyAddress: String!
-    ): [UsersAndRecoveryApprovals!]!
-    getRecoveryRequiredApprovals(
-      blockNumber: Int!
-      colonyAddress: String!
-    ): Int!
-    recoveryAllEnteredEvents(
-      colonyAddress: String!
-      currentBlock: Int!
-    ): [ParsedEvent!]!
-    legacyNumberOfRecoveryRoles(colonyAddress: String!): Int!
-    motionTimeoutPeriods(
-      motionId: Int!
-      colonyAddress: String!
-    ): MotionTimeoutPeriods!
-    motionStakes(
-      colonyAddress: String!
-      userAddress: String!
-      motionId: Int!
-    ): MotionStakes!
-    motionsSystemMessages(
-      motionId: Int!
-      colonyAddress: String!
-    ): [SystemMessage!]!
-    motionVoterReward(
-      motionId: Int!
-      colonyAddress: String!
-      userAddress: String!
-    ): MotionVoterReward!
-    motionUserVoteRevealed(
-      motionId: Int!
-      colonyAddress: String!
-      userAddress: String!
-    ): MotionVoteReveal!
-    motionCurrentUserVoted(
-      motionId: Int!
-      colonyAddress: String!
-      userAddress: String!
-    ): Boolean!
-    motionVoteResults(
-      motionId: Int!
-      colonyAddress: String!
-      userAddress: String!
-    ): MotionVoteResults!
-    motionFinalized(motionId: Int!, colonyAddress: String!): Boolean!
-    motionStakerReward(
-      motionId: Int!
-      colonyAddress: String!
-      userAddress: String!
-    ): MotionStakerRewards!
-    stakeAmountsForMotion(
-      colonyAddress: String!
-      userAddress: String!
-      motionId: Int!
-    ): StakeAmounts!
-    motionObjectionAnnotation(
-      motionId: Int!
-      colonyAddress: String!
-    ): MotionObjectionAnnotation!
-    votingState(colonyAddress: String!, motionId: Int!): VotingState!
-    motionStatus(motionId: Int!, colonyAddress: String!): String!
     domainBalance(
       colonyAddress: String!
       tokenAddress: String!
@@ -569,12 +430,5 @@ export default gql`
     events: [NetworkEvent!]!
     isDeploymentFinished: Boolean!
     installedExtensions: [ColonyExtension!]!
-  }
-
-  type MotionTimeoutPeriods {
-    timeLeftToStake: Int!
-    timeLeftToSubmit: Int!
-    timeLeftToReveal: Int!
-    timeLeftToEscalate: Int!
   }
 `;

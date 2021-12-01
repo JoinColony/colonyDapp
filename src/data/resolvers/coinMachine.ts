@@ -16,14 +16,9 @@ import {
   SubgraphCoinMachinePeriodsDocument,
 } from '~data/index';
 import { createAddress } from '~utils/web3';
-import {
-  ExtendedLogDescription,
-  parseSubgraphEvent,
-  sortSubgraphEventByIndex,
-} from '~utils/events';
+import { ExtendedLogDescription, parseSubgraphEvent } from '~utils/events';
 import { getCoinMachinePeriodPrice } from '~utils/contracts';
 import { ColonyAndExtensionsEvents } from '~types/colonyActions';
-import { SortDirection } from '~types/index';
 
 import { getToken } from './token';
 
@@ -354,6 +349,7 @@ export const coinMachineResolvers = ({
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
             extensionAddress: coinMachineClient.address.toLowerCase(),
+            sortDirection: 'desc',
             limit,
           },
           fetchPolicy: 'network-only',
@@ -432,13 +428,7 @@ export const coinMachineResolvers = ({
           .concat(
             (transferEventsFromChain as unknown) as ExtendedLogDescription,
           )
-          .sort((firstEvent, secondEvent) =>
-            sortSubgraphEventByIndex(
-              firstEvent,
-              secondEvent,
-              SortDirection.DESC,
-            ),
-          );
+          .reverse();
         /*
          * Generate the starting available tokens value (for the last period)
          * By getting the current available tokens and processing all events

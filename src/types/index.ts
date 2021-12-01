@@ -66,11 +66,6 @@ export type UniversalMessageValues = Record<string, PrimitiveType | ReactNode>;
 export type MethodParam = string | BigNumberish | boolean;
 export type MethodParams = (MethodParam | MethodParam[])[];
 
-export enum SortDirection {
-  ASC = 'ascending',
-  DESC = 'descending',
-}
-
 export type ActionUserRoles = {
   id: ColonyRole;
   setTo: boolean;

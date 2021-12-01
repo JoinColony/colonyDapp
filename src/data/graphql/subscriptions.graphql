@@ -1,5 +1,13 @@
-subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) {
-  events(skip: $skip, first: $first, where: { associatedColony: $colonyAddress }) {
+subscription SubgraphEvents($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
+  events(
+    skip: $skip,
+    first: $first,
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
+    where: {
+      associatedColony: $colonyAddress
+    }
+  ) {
     id
     address
     associatedColony {
@@ -20,11 +28,18 @@ subscription SubgraphEvents($skip: Int!, $first: Int!, $colonyAddress: String!) 
     }
     name
     args
+    timestamp
   }
 }
 
-subscription SubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
-  oneTxPayments(skip: $skip, first: $first, where: { payment_contains: $colonyAddress }) {
+subscription SubgraphOneTx($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
+  oneTxPayments(
+    skip: $skip,
+    first: $first,
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
+    where: { payment_contains: $colonyAddress }
+  ) {
     id
     agent
     transaction {
@@ -52,13 +67,16 @@ subscription SubgraphOneTx($skip: Int!, $first: Int!, $colonyAddress: String!) {
         }
       }
     }
+    timestamp
   }
 }
 
-subscription SubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddress: String!) {
+subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
   events(
     skip: $skip,
     first: $first,
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
     where: {
       associatedColony_contains: $colonyAddress,
       name_in: [
@@ -93,6 +111,7 @@ subscription SubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddr
     }
     name
     args
+    timestamp
     processedValues @client {
       agent
       who
@@ -113,14 +132,14 @@ subscription SubgraphEventsThatAreActions($skip: Int!, $first: Int!, $colonyAddr
   }
 }
 
-subscription SubgraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!, $extensionAddress: String!) {
+subscription SubgraphMotions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $extensionAddress: String!) {
   motions(
     skip: $skip,
     first: $first,
     where: {
       associatedColony: $colonyAddress,
       extensionAddress: $extensionAddress,
-    }) {
+  }) {
     id
     fundamentalChainId
     associatedColony {
@@ -168,22 +187,25 @@ subscription SubgraphMotions($skip: Int!, $first: Int!, $colonyAddress: String!,
   }
 }
 
-subscription SubgraphTokenBoughtEvents($colonyAddress: String!, $extensionAddress: String!) { 
-  tokenBoughtEvents: events( 
-    where: { 
-      name_contains: "TokensBought" 
-      address: $extensionAddress 
+subscription SubgraphTokenBoughtEvents($colonyAddress: String!, $extensionAddress: String!, $sortDirection: String = asc) {
+  tokenBoughtEvents: events(
+    orderBy: "timestamp",
+    orderDirection: $sortDirection,
+    where: {
+      name_contains: "TokensBought"
+      address: $extensionAddress
     }
-  ) { 
-    transaction { 
-      transactionHash: id 
-      block { 
-        number: id 
-        timestamp 
-      } 
-    } 
-    address 
-    name 
-    args 
-  } 
-} 
+  ) {
+    transaction {
+      transactionHash: id
+      block {
+        number: id
+        timestamp
+      }
+    }
+    address
+    name
+    args
+    timestamp
+  }
+}

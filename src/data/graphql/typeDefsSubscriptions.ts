@@ -15,6 +15,7 @@ export default gql`
     agent: String!
     transaction: SubgraphTransaction!
     payment: SubgraphPayment!
+    timestamp: String!
   }
 
   type SubscriptionMotion {
@@ -54,14 +55,24 @@ export default gql`
   #
   extend type Subscription {
     oneTxPayments(
-      skip: Int!
-      first: Int!
+      skip: Int
+      first: Int
+      orderBy: String
+      orderDirection: String
       where: ActionsFilter!
     ): [OneTxPayment!]!
-    events(skip: Int, first: Int, where: EventsFilter): [SubgraphEvent!]!
+    events(
+      skip: Int
+      first: Int
+      orderBy: String
+      orderDirection: String
+      where: EventsFilter
+    ): [SubgraphEvent!]!
     motions(
-      skip: Int!
-      first: Int!
+      skip: Int
+      first: Int
+      orderBy: String
+      orderDirection: String
       where: MotionsFilter!
     ): [SubscriptionMotion!]!
     tokenBoughtEvents(where: EventsFilter): [SubgraphEvent!]!

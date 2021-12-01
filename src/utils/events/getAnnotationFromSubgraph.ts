@@ -5,9 +5,9 @@ import {
   SubgraphAnnotationEventsQueryVariables,
   SubgraphAnnotationEventsDocument,
 } from '~data/index';
-import { Address, SortDirection } from '~types/index';
+import { Address } from '~types/index';
 
-import { parseSubgraphEvent, sortSubgraphEventByIndex } from './subgraphEvents';
+import { parseSubgraphEvent } from './subgraphEvents';
 
 export const getAnnotationFromSubgraph = async (
   userAddress: Address,
@@ -21,6 +21,7 @@ export const getAnnotationFromSubgraph = async (
     query: SubgraphAnnotationEventsDocument,
     variables: {
       transactionHash,
+      sortDirection: 'desc',
     },
   });
 
@@ -36,9 +37,6 @@ export const getAnnotationFromSubgraph = async (
       .filter(
         ({ values: { agent, address } }) =>
           agent === userAddress || address === userAddress,
-      )
-      .sort((firstEvent, secondEvent) =>
-        sortSubgraphEventByIndex(firstEvent, secondEvent, SortDirection.DESC),
       ) || [];
 
   return mostRecentAnnotation;

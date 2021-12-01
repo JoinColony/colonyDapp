@@ -9,7 +9,11 @@ import LoadMoreButton from '~core/LoadMoreButton';
 
 import { SortOptions, SortSelectOptions } from '../shared/sortOptions';
 import { immutableSort } from '~utils/arrays';
-import { Colony, useSubgraphEventsSubscription } from '~data/index';
+import {
+  Colony,
+  useSubgraphEventsSubscription,
+  SubgraphEventsSubscription,
+} from '~data/index';
 import { getEventsListData } from '../../transformers';
 import { useTransformer } from '~utils/hooks';
 
@@ -36,27 +40,41 @@ const ColonyEvents = ({
   colony,
   ethDomainId,
 }: Props) => {
-  const [eventsSort, setEventsSort] = useState<string>(SortOptions.NEWEST);
-
-  const [dataPage, setDataPage] = useState<number>(1);
-
   const ITEMS_PER_PAGE = 10;
 
+  const [eventsSort, setEventsSort] = useState<string>(SortOptions.NEWEST);
+  const [dataPage, setDataPage] = useState<number>(1);
+  const [streamedEvents, setstreamedEvents] = useState<
+    SubgraphEventsSubscription['events']
+  >([]);
+
+  /*
+   * @NOTE This would be better served as a query
+   * As it stands, this would be better if we converted it back to being a query
+   * with a proper cache update policy, rather than a more, expensive, subscription
+   */
   const {
     data,
     loading: subgraphEventsLoading,
     error,
   } = useSubgraphEventsSubscription({
     variables: {
-      skip: 0,
-      first: 100,
+      skip: dataPage === 1 ? 0 : ITEMS_PER_PAGE * dataPage,
+      first: ITEMS_PER_PAGE,
       colonyAddress: colonyAddress.toLowerCase(),
+      sortDirection: 'desc',
     },
+    onSubscriptionData: ({ subscriptionData: { data: newSubscriptionData } }) =>
+      setstreamedEvents([
+        ...streamedEvents,
+        ...(newSubscriptionData?.events || []),
+      ]),
   });
 
   if (error) console.error(error);
 
-  const events = useTransformer(getEventsListData, [data]) || [];
+  const events =
+    useTransformer(getEventsListData, [{ events: streamedEvents }]) || [];
 
   const sort = useCallback(
     (first: any, second: any) => {
@@ -73,14 +91,12 @@ const ColonyEvents = ({
     setDataPage(dataPage + 1);
   }, [dataPage]);
 
-  /* Needs to be tested when all event types are wirde up & reflected in the list */
   const filteredEvents = useMemo(
     () =>
       !ethDomainId
         ? events
-        : events.filter(
+        : events?.filter(
             (event) =>
-              // Number(event.fundingPot) === ethDomainId ||
               Number(event.domainId) === ethDomainId ||
               /* when no specific domain in the event it is displayed in Root */
               (ethDomainId === 1 &&
@@ -100,8 +116,6 @@ const ColonyEvents = ({
       }),
     [filteredEvents, sort],
   );
-
-  const paginatedEvents = sortedEvents.slice(0, ITEMS_PER_PAGE * dataPage);
 
   return (
     <div>
@@ -126,12 +140,12 @@ const ColonyEvents = ({
         <SpinnerLoader />
       ) : (
         <ActionsList
-          items={paginatedEvents}
+          items={sortedEvents}
           colony={colony}
           itemComponent={ColonyEventsListItem}
         />
       )}
-      {ITEMS_PER_PAGE * dataPage < sortedEvents.length && (
+      {!!data?.events?.length && (
         <LoadMoreButton
           onClick={handleDataPagination}
           isLoadingData={subgraphEventsLoading}

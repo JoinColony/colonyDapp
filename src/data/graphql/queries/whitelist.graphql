@@ -29,8 +29,10 @@ query UserWhitelistStatus($colonyAddress: String!, $userAddress: String!) {
   }
 }
 
-query SubgraphWhitelistEvents($extensionAddress: String!) {
+query SubgraphWhitelistEvents($extensionAddress: String!, $sortDirection: String = asc) {
   userApprovedEvents: events(
+    first: $first,
+    orderBy: "timestamp",
     where: {
       name_contains: "UserApproved"
       address: $extensionAddress
@@ -49,8 +51,11 @@ query SubgraphWhitelistEvents($extensionAddress: String!) {
     address
     name
     args
+    timestamp
   }
   agreementSignedEvents: events(
+    first: $first,
+    orderBy: "timestamp",
     where: {
       name_contains: "AgreementSigned"
       address: $extensionAddress
@@ -69,5 +74,6 @@ query SubgraphWhitelistEvents($extensionAddress: String!) {
     address
     name
     args
+    timestamp
   }
 }

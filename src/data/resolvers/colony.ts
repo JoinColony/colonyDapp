@@ -39,7 +39,7 @@ import {
 
 import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
-import { parseSubgraphEvent, sortSubgraphEventByIndex } from '~utils/events';
+import { parseSubgraphEvent } from '~utils/events';
 import { Address } from '~types/index';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -506,16 +506,14 @@ export const colonyResolvers = ({
           } = data;
 
           /*
-           * Parse and sort events coming from the subgraph
-           * Note that if the query doesn't have the blockNumber and event Id
-           * then the sort will be unreliable
+           * Parse events coming from the subgraph
            */
-          const colonyRoleEvents = colonyRoleSetSubgraphEvents
-            .map(parseSubgraphEvent)
-            .sort(sortSubgraphEventByIndex);
-          const recoveryRoleEvents = recoveryRoleSetSubgraphEvents
-            .map(parseSubgraphEvent)
-            .sort(sortSubgraphEventByIndex);
+          const colonyRoleEvents = colonyRoleSetSubgraphEvents.map(
+            parseSubgraphEvent,
+          );
+          const recoveryRoleEvents = recoveryRoleSetSubgraphEvents.map(
+            parseSubgraphEvent,
+          );
 
           const roles = await formatColonyRoles(
             (colonyRoleEvents as unknown) as LogDescription[],

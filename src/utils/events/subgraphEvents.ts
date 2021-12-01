@@ -8,15 +8,9 @@ import {
 import { ColonyRole } from '@colony/colony-js';
 
 import { SubgraphEvent, SubgraphTransaction, SubgraphBlock } from '~data/index';
-import {
-  Address,
-  SortDirection,
-  ColonyAndExtensionsEvents,
-} from '~types/index';
+import { Address, ColonyAndExtensionsEvents } from '~types/index';
 
 import { createAddress } from '../web3';
-import { log } from '../debug';
-import { ProcessedEvent } from '~data/resolvers/colonyActions';
 
 /*
  * Needed to omit the unused `decode()` function as well as add
@@ -243,6 +237,7 @@ export const parseSubgraphEvent = ({
   transaction,
   id,
   address,
+  timestamp,
 }: NormalizedSubgraphEvent): ExtendedLogDescription => {
   const blockNumber =
     transaction?.block?.number &&
@@ -254,6 +249,7 @@ export const parseSubgraphEvent = ({
     topic: topicId(name),
     address,
     ...(blockNumber && { blockNumber }),
+    ...(timestamp && { timestamp: parseInt(timestamp, 10) }),
     /*
      * Parse the normal values, and any specialized parsers we might have
      */
@@ -292,35 +288,11 @@ export const parseSubgraphEvent = ({
    * Note that we attempt to parse the block number earlier in this function
    */
   if (transaction) {
-    const { transactionHash, block } = transaction;
+    const { transactionHash } = transaction;
     parsedEvent = {
       ...parsedEvent,
       ...(transactionHash && { hash: transactionHash }),
-      timestamp: parseInt(block?.timestamp, 10) * 1000,
     };
   }
   return parsedEvent;
-};
-
-export const sortSubgraphEventByIndex = (
-  firstEvent: ExtendedLogDescription | ProcessedEvent,
-  secondEvent: ExtendedLogDescription | ProcessedEvent,
-  direction: SortDirection = SortDirection.ASC,
-): number => {
-  if (!firstEvent?.index || !secondEvent?.index) {
-    log.verbose(
-      `Subgraph events intended for sorting do not contain an index. Sort function will return untrustworthy positioning`,
-      `Event: ${firstEvent?.name},`,
-      `Index: ${firstEvent?.index},`,
-      `Event: ${secondEvent?.name},`,
-      `Index: ${secondEvent?.index},`,
-    );
-    return 0;
-  }
-  const firstIndex = bigNumberify(firstEvent.index);
-  const secondIndex = bigNumberify(secondEvent.index);
-  if (direction === SortDirection.ASC) {
-    return firstIndex.sub(secondIndex).toNumber();
-  }
-  return secondIndex.sub(firstIndex).toNumber();
 };

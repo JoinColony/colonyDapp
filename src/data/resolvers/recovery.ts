@@ -43,11 +43,7 @@ import {
 import { ensureHexPrefix } from '~utils/strings';
 import { halfPlusOne } from '~utils/numbers';
 import { ColonyAndExtensionsEvents } from '~types/index';
-import {
-  ExtendedLogDescription,
-  parseSubgraphEvent,
-  sortSubgraphEventByIndex,
-} from '~utils/events';
+import { ExtendedLogDescription, parseSubgraphEvent } from '~utils/events';
 import { log } from '~utils/debug';
 
 import { ProcessedEvent } from './colonyActions';
@@ -77,10 +73,7 @@ const getSessionRecoveryEvents = async (
 
     const [mostRecentExitRecoveryEvent] = recoveryModeExitedEvents
       .map(parseSubgraphEvent)
-      .filter((event) => (event.blockNumber || 0) >= startBlock)
-      .sort(sortSubgraphEventByIndex);
-
-    // console.log(mostRecentExitRecoveryEvent);
+      .filter((event) => (event.blockNumber || 0) >= startBlock);
 
     if (mostRecentExitRecoveryEvent) {
       toBlockNumber = mostRecentExitRecoveryEvent.blockNumber || 0;
@@ -113,21 +106,19 @@ const getSessionRecoveryEvents = async (
       parsedRecoveryModeEvents.push(mostRecentExitRecoveryEvent);
     }
 
-    const processedRecoveryEvents = parsedRecoveryModeEvents
-      .sort(sortSubgraphEventByIndex)
-      .map((event) => {
-        const { name, values, blockNumber, hash, timestamp } = event;
-        return {
-          type: ActionsPageFeedType.NetworkEvent,
-          name,
-          values,
-          createdAt: timestamp,
-          emmitedBy: ClientType.ColonyClient,
-          address: colonyAddress,
-          blockNumber,
-          transactionHash: hash,
-        } as ProcessedEvent;
-      });
+    const processedRecoveryEvents = parsedRecoveryModeEvents.map((event) => {
+      const { name, values, blockNumber, hash, timestamp } = event;
+      return {
+        type: ActionsPageFeedType.NetworkEvent,
+        name,
+        values,
+        createdAt: timestamp,
+        emmitedBy: ClientType.ColonyClient,
+        address: colonyAddress,
+        blockNumber,
+        transactionHash: hash,
+      } as ProcessedEvent;
+    });
 
     return processedRecoveryEvents;
   } catch (error) {
@@ -190,9 +181,9 @@ export const recoveryModeResolvers = ({
         const enterRecoveryEvents =
           recoveryModeEventsData?.recoveryModeEnteredEvents || [];
 
-        const parsedEnterRecoveryEvents = enterRecoveryEvents
-          .map(parseSubgraphEvent)
-          .sort(sortSubgraphEventByIndex);
+        const parsedEnterRecoveryEvents = enterRecoveryEvents.map(
+          parseSubgraphEvent,
+        );
         const processedEnterRecoveryEvents = parsedEnterRecoveryEvents.map(
           (event) => {
             const { name, values, blockNumber, hash, timestamp } = event;
