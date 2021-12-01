@@ -1,5 +1,14 @@
 .main {
   display: block;
+  margin: 0 0 20px 20px;
+  height: 100%;
+  width: calc(100% + 360px);
+}
+
+@media (max-height: 1024px) {
+  .main {
+    margin-bottom: 20%;
+  }
 }
 
 .loadingSpinner {
