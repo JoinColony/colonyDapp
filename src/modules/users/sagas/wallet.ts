@@ -1,4 +1,5 @@
 import { eventChannel } from 'redux-saga';
+import { Network } from '@colony/colony-js';
 
 import { call, put, spawn, take } from 'redux-saga/effects';
 
@@ -11,11 +12,13 @@ import {
   accountChangeHook,
   chainChangeHook,
 } from '@purser/metamask';
+import { addChain } from '@purser/metamask/lib-esm/helpers';
 
 import { WalletMethod } from '~immutable/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
+import { DEFAULT_NETWORK, NETWORK_DATA, TOKEN_DATA } from '~constants';
 
 /**
  * Watch for changes in Metamask account, and log the user out when they happen.
@@ -50,9 +53,43 @@ function* metaMaskWatch(walletAddress: Address) {
   }
 }
 
+function* metamaskSwitchNetwork() {
+  if (
+    DEFAULT_NETWORK === Network.Xdai ||
+    DEFAULT_NETWORK === Network.XdaiFork
+  ) {
+    const {
+      name: chainName,
+      chainId,
+      blockExplorerUrl = '',
+      rpcUrl = '',
+    } = NETWORK_DATA[Network.Xdai];
+    const { name, symbol, decimals } = TOKEN_DATA[Network.Xdai];
+    /*
+     * @NOTE This method adds a new network to metamask and then switches to it
+     * (or tries to anyway)
+     *
+     * If it exists already (it matches the chainId), then it will just
+     * attempt to switch to it
+     */
+    yield addChain({
+      chainId,
+      chainName,
+      nativeCurrency: {
+        name,
+        symbol,
+        decimals,
+      },
+      blockExplorerUrls: [blockExplorerUrl],
+      rpcUrls: [rpcUrl],
+    });
+  }
+}
+
 function* openMetamaskWallet() {
   const wallet = yield call(purserOpenMetaMaskWallet);
   yield spawn(metaMaskWatch, createAddress(wallet.address));
+  yield spawn(metamaskSwitchNetwork);
   return wallet;
 }
 
