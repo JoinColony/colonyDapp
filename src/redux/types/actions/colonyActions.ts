@@ -171,6 +171,7 @@ export type ColonyActionsActionTypes =
       ActionTypes.COLONY_ACTION_UNLOCK_TOKEN,
       {
         colonyAddress: Address;
+        annotationMessage?: string;
       },
       MetaWithHistory<object>
     >

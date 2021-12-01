@@ -17,6 +17,7 @@ import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
 
 import styles from './UnlockTokenForm.css';
+import { Annotations } from '~core/Fields';
 
 const MSG = defineMessages({
   title: {
@@ -38,6 +39,10 @@ const MSG = defineMessages({
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.noPermission',
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
+  },
+  annotation: {
+    id: `dashboard.UnlockTokenDialog.UnlockTokenForm.annotation`,
+    defaultMessage: 'Explain why you’re making these changes (optional)',
   },
 });
 
@@ -92,6 +97,11 @@ const UnlockTokenForm = ({
             href={LEARN_MORE_URL}
           />
         </div>
+        <Annotations
+          label={MSG.annotation}
+          name="annotationMessage"
+          disabled={!userHasPermissions}
+        />
       </DialogSection>
       {!hasRootPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
