@@ -16,11 +16,12 @@ import {
   TransactionMessageFragment,
   ParsedEvent,
   useLoggedInUser,
+  useCommentsSubscription,
 } from '~data/index';
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { MotionVote } from '~utils/colonyMotions';
 import { useTransformer } from '~utils/hooks';
-import { useCurrentComments } from '~utils/hooks/useCurrentComments';
+
 import { commentTransformer } from '../../transformers';
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot, canAdminister } from '../../../users/checks';
@@ -131,10 +132,12 @@ const ActionsPageFeed = ({
     (hasRoot(allUserRoles) || canAdminister(allUserRoles));
 
   const {
-    currentComments,
-    loading: loadingCurrentComments,
+    data: serverComments,
+    loading: loadingServerComments,
     error,
-  } = useCurrentComments(transactionHash);
+  } = useCommentsSubscription({
+    variables: { transactionHash },
+  });
 
   const filteredEvents = useMemo(() => {
     if (networkEvents) {
@@ -144,12 +147,9 @@ const ActionsPageFeed = ({
   }, [actionType, networkEvents]);
 
   const filteredComments = useMemo(() => {
-    return commentTransformer(
-      currentComments,
-      walletAddress,
-      canAdministerComments,
-    );
-  }, [canAdministerComments, currentComments, walletAddress]);
+    const comments = serverComments?.transactionMessages?.messages || [];
+    return commentTransformer(comments, walletAddress, canAdministerComments);
+  }, [canAdministerComments, serverComments, walletAddress]);
 
   const sortedFeed = useMemo(() => {
     const feedItems: FeedItems = [
@@ -313,7 +313,7 @@ const ActionsPageFeed = ({
   return (
     <>
       <ul className={styles.main}>{customRenderWithFallback()}</ul>
-      {(loadingCurrentComments || extenalLoadingState) && (
+      {(loadingServerComments || extenalLoadingState) && (
         <MiniSpinnerLoader
           className={styles.loading}
           loadingTextClassName={styles.loaderMessage}
