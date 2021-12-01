@@ -143,7 +143,10 @@ const CreatePaymentDialog = ({
         amount: undefined,
         tokenAddress: nativeTokenAddress,
         annotation: undefined,
-        motionDomainId: ROOT_DOMAIN_ID,
+        motionDomainId: (ethDomainId === 0 || ethDomainId === undefined
+          ? ROOT_DOMAIN_ID
+          : ethDomainId
+        ).toString(),
       }}
       validationSchema={validationSchema}
       submit={getFormAction('SUBMIT')}
