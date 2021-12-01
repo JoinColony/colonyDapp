@@ -18,6 +18,7 @@ import { hasRoot } from '~modules/users/checks';
 import { TOKEN_UNLOCK_INFO } from '~externalUrls';
 
 import styles from './UnlockTokenForm.css';
+import { Annotations } from '~core/Fields';
 
 const MSG = defineMessages({
   title: {
@@ -47,6 +48,10 @@ const MSG = defineMessages({
   unlockedDescription: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.unlockedDescription',
     defaultMessage: `Your colony’s native token has already been unlocked.`,
+  },
+  annotation: {
+    id: `dashboard.UnlockTokenDialog.UnlockTokenForm.annotation`,
+    defaultMessage: 'Explain why you’re making these changes (optional)',
   },
 });
 
@@ -96,6 +101,22 @@ const UnlockTokenForm = ({
             <FormattedMessage {...MSG.unlockedDescription} />
           </div>
         )}
+        <FormattedMessage {...MSG.description} />
+      </DialogSection>
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.note}>
+          <FormattedMessage {...MSG.note} />
+          <ExternalLink
+            className={styles.learnMoreLink}
+            text={{ id: 'text.learnMore' }}
+            href={TOKEN_UNLOCK_INFO}
+          />
+        </div>
+        <Annotations
+          label={MSG.annotation}
+          name="annotationMessage"
+          disabled={!canUserUnlockNativeToken}
+        />
       </DialogSection>
       {colony.isNativeTokenLocked && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>

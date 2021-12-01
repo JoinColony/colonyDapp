@@ -5,7 +5,13 @@ import { useHistory } from 'react-router-dom';
 import Dialog, { DialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
-import { pipe, mergePayload, withMeta } from '~utils/actions';
+import {
+  pipe,
+  mergePayload,
+  withMeta,
+  withKey,
+  mapPayload,
+} from '~utils/actions';
 import { Colony } from '~data/index';
 import { WizardDialogType } from '~utils/hooks';
 
@@ -34,6 +40,10 @@ const UnlockTokenDialog = ({
 
   const transform = useCallback(
     pipe(
+      withKey(colonyAddress),
+      mapPayload(({ annotationMessage }) => ({
+        annotationMessage,
+      })),
       mergePayload({
         colonyAddress,
       }),
@@ -44,7 +54,9 @@ const UnlockTokenDialog = ({
 
   return (
     <ActionForm
-      initialValues={{}}
+      initialValues={{
+        annotationMessage: undefined,
+      }}
       submit={ActionTypes.COLONY_ACTION_UNLOCK_TOKEN}
       error={ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR}
       success={ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS}
