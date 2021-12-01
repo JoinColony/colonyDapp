@@ -439,13 +439,12 @@ export const colonyResolvers = ({
         colonyAddress,
       );
       // fetch whether the user is allowed to mint tokens via the colony
-      let canMintNativeToken = true;
       try {
         await colonyClient.estimate.mintTokens(bigNumberify(1));
       } catch (error) {
-        canMintNativeToken = false;
+        return false;
       }
-      return canMintNativeToken;
+      return true;
     },
     async isInRecoveryMode({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(

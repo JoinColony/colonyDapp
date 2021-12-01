@@ -116,9 +116,6 @@ const ManageFundsDialog = ({
   const canUserMintNativeToken = isVotingExtensionEnabled
     ? colony.canColonyMintNativeToken
     : colony.canUserMintNativeToken;
-  const canUnlockToken = isVotingExtensionEnabled
-    ? colony.canUnlockNativeToken
-    : colony.canUnlockNativeToken && hasRoot(allUserRoles);
 
   const canManageTokens = hasRegisteredProfile && hasRoot(allUserRoles);
 
@@ -177,7 +174,7 @@ const ManageFundsDialog = ({
       description: MSG.unlockTokensDescription,
       icon: 'emoji-padlock',
       onClick: () => callStep(nextStepUnlockToken),
-      permissionRequired: !canUnlockToken,
+      permissionRequired: !colony.canUnlockNativeToken,
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
