@@ -118,8 +118,10 @@
     "transaction.ColonyClient.exitRecoveryMode.title": "Exit Recovery Mode",
     "transaction.ColonyClient.exitRecoveryMode.description": "Exit Recovery Mode",
 
-    "transaction.ColonyClient.unlockToken.title": "Unlock Token",
-    "transaction.ColonyClient.unlockToken.description": "Unlock Token",
+    "transaction.group.tokenUnlockAction.title": "Unlock Token",
+    "transaction.group.tokenUnlockAction.description": "Unlocking native Token",
+    "transaction.ColonyClient.unlockToken.title": "Unlocking Token",
+    "transaction.ColonyClient.unlockToken.description": "Unlocking Token",
 
     "transaction.group.paymentAction.title": "Expenditure Payment",
     "transaction.group.paymentAction.description": "Expenditure Payment",
