@@ -32,7 +32,7 @@ const DetailsWidgetUser = ({ colony, walletAddress }: Props) => {
         showInfo
         popperProps={{
           showArrow: false,
-          placement: 'top',
+          placement: 'bottom',
         }}
       />
       {(userDisplayName || username) && (
