@@ -5,12 +5,13 @@ import Comment, { CommentInput } from '~core/Comment';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import {
   Colony,
+  useCommentsSubscription,
   useLoggedInUser,
   useCoinMachineHasWhitelistQuery,
   useUserWhitelistStatusQuery,
 } from '~data/index';
-import { useCurrentComments } from '~utils/hooks/useCurrentComments';
 import { useTransformer } from '~utils/hooks';
+
 import { commentTransformer } from '../../../transformers';
 import { getAllUserRoles } from '../../../../transformers';
 import { hasRoot, canAdminister } from '../../../../users/checks';
@@ -107,7 +108,9 @@ const Chat = ({
     setTimeout(scrollComments, 0);
   }, [scrollComments]);
 
-  const { currentComments, loading } = useCurrentComments(transactionHash);
+  const { data, loading } = useCommentsSubscription({
+    variables: { transactionHash },
+  });
 
   /*
    * This triggers after every new comment was made
@@ -115,12 +118,9 @@ const Chat = ({
   useLayoutEffect(scrollComments, [scrollComments]);
 
   const filteredComments = useMemo(() => {
-    return commentTransformer(
-      currentComments,
-      walletAddress,
-      canAdministerComments,
-    );
-  }, [canAdministerComments, currentComments, walletAddress]);
+    const comments = data?.transactionMessages?.messages || [];
+    return commentTransformer(comments, walletAddress, canAdministerComments);
+  }, [canAdministerComments, data, walletAddress]);
 
   if (loading || loadingCoinMachineWhitelistState || userStatusLoading) {
     return (
