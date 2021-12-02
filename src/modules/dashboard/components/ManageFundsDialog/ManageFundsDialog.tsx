@@ -118,9 +118,7 @@ const ManageFundsDialog = ({
     : colony.canMintNativeToken && hasRoot(allUserRoles);
   const canUnlockToken = isVotingExtensionEnabled
     ? colony.isNativeTokenLocked && colony.canUnlockNativeToken
-    : colony.isNativeTokenLocked &&
-      colony.canUnlockNativeToken &&
-      hasRoot(allUserRoles);
+    : colony.canUnlockNativeToken && hasRoot(allUserRoles);
 
   const canManageTokens = hasRegisteredProfile && hasRoot(allUserRoles);
 

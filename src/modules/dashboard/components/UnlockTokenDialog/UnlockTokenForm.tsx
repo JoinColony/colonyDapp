@@ -26,8 +26,8 @@ const MSG = defineMessages({
   description: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.description',
     defaultMessage: `Your colony’s native token is locked and non-transferrable
-     by default. This action allows you to unlock it so that it may be
-     freely transferred between accounts.`,
+    by default. This action allows you to unlock it so that it may be
+    freely transferred between accounts.`,
   },
   note: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.note',
@@ -38,6 +38,14 @@ const MSG = defineMessages({
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.noPermission',
     defaultMessage: `You do not have the {roleRequired} permission required
       to take this action.`,
+  },
+  unlockedTitle: {
+    id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.dialogunlockedTitle',
+    defaultMessage: 'Token  Unlocked',
+  },
+  unlockedDescription: {
+    id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.unlockedDescription',
+    defaultMessage: `Your colony’s native token has already been unlocked.`,
   },
 });
 
@@ -57,7 +65,6 @@ const UnlockTokenForm = ({
   handleSubmit,
 }: Props & FormikProps<any>) => {
   const { walletAddress } = useLoggedInUser();
-
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRootPermission = hasRoot(allUserRoles);
@@ -70,7 +77,7 @@ const UnlockTokenForm = ({
       <DialogSection appearance={{ theme: 'heading' }}>
         <Heading
           appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-          text={MSG.title}
+          text={colony.isNativeTokenLocked ? MSG.title : MSG.unlockedTitle}
         />
       </DialogSection>
       {!hasRootPermission && (
@@ -81,7 +88,11 @@ const UnlockTokenForm = ({
         </DialogSection>
       )}
       <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <FormattedMessage {...MSG.description} />
+        {colony.isNativeTokenLocked ? (
+          <FormattedMessage {...MSG.description} />
+        ) : (
+          <FormattedMessage {...MSG.unlockedDescription} />
+        )}
       </DialogSection>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.note}>
