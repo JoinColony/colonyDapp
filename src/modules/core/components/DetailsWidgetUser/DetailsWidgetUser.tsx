@@ -3,7 +3,7 @@ import React from 'react';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
-import { useUser } from '~data/index';
+import { useUser, Colony } from '~data/index';
 import { Address } from '~types/index';
 
 import styles from './DetailsWidgetUser.css';
