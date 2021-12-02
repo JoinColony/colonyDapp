@@ -26,7 +26,6 @@ import appLoadingContext from '~context/appLoadingState';
 import ColonyFunding from '~dashboard/ColonyFunding';
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { METACOLONY_ENS } from '~constants';
 
 import {
   COLONY_EVENTS_ROUTE,
@@ -157,28 +156,6 @@ const Routes = () => {
             hasBackLink: false,
           }}
         />
-        <WalletRequiredRoute
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
-          path={UNWRAP_TOKEN_ROUTE}
-          component={UnwrapTokensPage}
-          layout={NavBar}
-          routeProps={{
-            backText: MSG.backToMetacolony,
-            backRoute: `/colony/${METACOLONY_ENS}`,
-          }}
-        />
-        <WalletRequiredRoute
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
-          path={CLAIM_TOKEN_ROUTE}
-          component={ClaimTokensPage}
-          layout={NavBar}
-          routeProps={{
-            backText: MSG.backToMetacolony,
-            backRoute: `/colony/${METACOLONY_ENS}`,
-          }}
-        />
 
         <AlwaysAccesibleRoute
           path={LANDING_PAGE_ROUTE}
@@ -256,6 +233,24 @@ const Routes = () => {
           component={ColonyHome}
           layout={Default}
           routeProps={{ hasBackLink: false }}
+        />
+        <AlwaysAccesibleRoute
+          path={UNWRAP_TOKEN_ROUTE}
+          component={UnwrapTokensPage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+          })}
+        />
+        <AlwaysAccesibleRoute
+          path={CLAIM_TOKEN_ROUTE}
+          component={ClaimTokensPage}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+          })}
         />
 
         {/*
