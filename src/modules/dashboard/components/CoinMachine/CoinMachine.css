@@ -5,7 +5,7 @@
   width: calc(100% + 360px);
 }
 
-@media (max-height: 1024px) {
+@media (max-height: 960px) {
   .main {
     margin-bottom: 20%;
   }
