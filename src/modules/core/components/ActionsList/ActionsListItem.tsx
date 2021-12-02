@@ -222,6 +222,11 @@ const ActionsListItem = ({
         onKeyPress={handleSyntheticEvent}
       >
         <div
+          /*
+           * Clicking on UserAvatar would redirect to Actions page and stop
+           * interaction with popover.
+           * stopPropagation prevents event being inherited by child
+           */
           onClick={stopPropagation}
           onKeyPress={stopPropagation}
           role="button"

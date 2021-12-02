@@ -29,6 +29,7 @@
 .avatar {
   margin-top: -2px;
   padding-right: 15px;
+  cursor: pointer;
 }
 
 .avatar > div > figure {

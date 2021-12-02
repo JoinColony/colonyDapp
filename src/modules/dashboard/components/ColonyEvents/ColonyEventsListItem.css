@@ -27,6 +27,7 @@
 .avatar {
   margin-top: -2px;
   padding-right: 15px;
+  cursor: pointer;
 }
 
 .avatar > div > figure {
@@ -34,7 +35,6 @@
   width: 41px;
   border: 2px solid transparent;
   border-radius: 100%;
-  cursor: pointer;
 }
 
 .avatar:hover figure {
