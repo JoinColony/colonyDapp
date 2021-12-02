@@ -12,6 +12,8 @@ import {
 } from '~users/GasStation/transactionGroup';
 import Heading from '~core/Heading';
 import GasStationContent from '~users/GasStation/GasStationContent';
+import { LANDING_PAGE_ROUTE } from '~routes/routeConstants';
+
 import styles from './StepConfirmTransaction.css';
 
 const MSG = defineMessages({
@@ -40,7 +42,7 @@ const StepConfirmTransaction = () => {
     return (
       <Redirect
         to={{
-          pathname: location.state.redirectTo,
+          pathname: location.state.redirectTo || LANDING_PAGE_ROUTE,
           state: {
             ...location.state,
           },
