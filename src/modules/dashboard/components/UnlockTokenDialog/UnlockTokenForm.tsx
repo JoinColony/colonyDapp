@@ -26,8 +26,8 @@ const MSG = defineMessages({
   description: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.description',
     defaultMessage: `Your colony’s native token is locked and non-transferrable
-    by default. This action allows you to unlock it so that it may be
-    freely transferred between accounts.`,
+     by default. This action allows you to unlock it so that it may be
+     freely transferred between accounts.`,
   },
   note: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.note',
