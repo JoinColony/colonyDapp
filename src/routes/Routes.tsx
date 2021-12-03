@@ -63,10 +63,6 @@ const MSG = defineMessages({
     id: 'routes.Routes.loadingAppMessage',
     defaultMessage: 'Loading App',
   },
-  backToMetacolony: {
-    id: 'routes.Routes.backToMetacolony',
-    defaultMessage: 'Back to The Metacolony',
-  },
 });
 
 const Routes = () => {
