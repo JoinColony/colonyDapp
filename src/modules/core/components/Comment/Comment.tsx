@@ -107,6 +107,7 @@ const Comment = ({
     >
       <div className={styles.avatar}>
         <UserAvatar
+          colony={colony}
           size="xs"
           address={user?.profile.walletAddress || ''}
           user={user as AnyUser}
