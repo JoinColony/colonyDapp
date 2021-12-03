@@ -93,6 +93,7 @@
 }
 
 .container {
+  composes: flexContainerRow flexAlignCenter from '~styles/layout.css';
   display: flex;
 }
 
