@@ -1,6 +1,6 @@
 .stakeRequiredBannerContainer {
   width: 100%;
-  position: fixed;
+  position: static;
   top: 70px;
   left: 0;
   z-index: 1;
