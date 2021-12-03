@@ -74,7 +74,7 @@ const EditDomainDialog = ({
     domainName: yup.string().max(20).required(),
     domainId: yup.number().required(),
     domainColor: yup.string(),
-    domainPurpose: yup.string().max(90),
+    domainPurpose: yup.string().nullable().max(90),
     annotationMessage: yup.string().max(4000),
     motionDomainId: yup.number(),
   });
