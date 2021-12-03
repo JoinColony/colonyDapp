@@ -40,8 +40,8 @@ const MSG = defineMessages({
       to take this action.`,
   },
   unlockedTitle: {
-    id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.dialogunlockedTitle',
-    defaultMessage: 'Token  Unlocked',
+    id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.unlockedTitle',
+    defaultMessage: 'Token Unlocked',
   },
   unlockedDescription: {
     id: 'dashboard.UnlockTokenDialog.UnlockTokenForm.unlockedDescription',
