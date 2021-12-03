@@ -113,6 +113,10 @@ const Comment = ({
           user={user as AnyUser}
           showInfo
           notSet={false}
+          popperProps={{
+            showArrow: false,
+            placement: 'bottom',
+          }}
         />
       </div>
       <div className={styles.content}>
