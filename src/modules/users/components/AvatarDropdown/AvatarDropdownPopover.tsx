@@ -119,7 +119,7 @@ const AvatarDropdownPopover = ({
     <DropdownMenuSection separator>
       <DropdownMenuItem>
         <ExternalLink
-          href="https://colony.canny.io"
+          href="https://portal.productboard.com/colony/1-colony-portal/tabs/4-bugs"
           text={MSG.reportBugs}
           className={styles.externalLink}
         />
