@@ -4,6 +4,7 @@ import { defineMessages } from 'react-intl';
 import { ActionButton } from '~core/Button';
 import NavLink from '~core/NavLink';
 import ExternalLink from '~core/ExternalLink';
+import { FEEDBACK_LINK } from '~constants';
 
 import { Colony } from '~data/index';
 import DropdownMenu, {
@@ -119,7 +120,7 @@ const AvatarDropdownPopover = ({
     <DropdownMenuSection separator>
       <DropdownMenuItem>
         <ExternalLink
-          href="https://portal.productboard.com/colony/1-colony-portal/tabs/4-bugs"
+          href={FEEDBACK_LINK}
           text={MSG.reportBugs}
           className={styles.externalLink}
         />
