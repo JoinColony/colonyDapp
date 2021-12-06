@@ -1,5 +1,4 @@
 .main {
-  padding-bottom: 50px;
   height: 100%;
   width: 100%;
   background-color: white;
@@ -50,6 +49,7 @@
 .upperContainer {
   composes: container;
   align-items: baseline;
+  padding-top: 90px;
 }
 
 .heading {
