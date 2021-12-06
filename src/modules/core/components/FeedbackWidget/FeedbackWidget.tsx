@@ -2,6 +2,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import ExternalLink from '~core/ExternalLink';
+import { FEEDBACK_LINK } from '~constants';
 
 import styles from './FeedbackWidget.css';
 
@@ -11,8 +12,6 @@ const MSG = {
     defaultMessage: 'We {heart} feedback!',
   },
 };
-
-const FEEDBACK_LINK = `https://portal.productboard.com/colony/1-colony-portal/tabs/4-bugs`;
 
 const FeedbackWidget = () => (
   <div className={styles.main}>
