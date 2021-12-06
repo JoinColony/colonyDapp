@@ -8,7 +8,7 @@ import VestingPageLayout from './VestingPageLayout';
 const MSG = defineMessage({
   title: {
     id: 'dashboard.Vesting.ClaimTokensPage.title',
-    defaultMessage: 'Claim {tokenName}',
+    defaultMessage: 'Claim {tokenSymbol}',
   },
   totalAllocation: {
     id: 'dashboard.Vesting.ClaimTokensPage.totalAllocation',
@@ -41,66 +41,12 @@ const ClaimTokensPage = () => {
   };
 
   return (
-    // <div className={styles.main}>
-    //   <Heading
-    //     appearance={{ size: 'medium', theme: 'dark' }}
-    //     text={MSG.title}
-    //     textValues={{ tokenName: token?.symbol }}
-    //   />
-    //   <div className={styles.table}>
-    //     <div className={styles.item}>
-    //       <div className={styles.label}>
-    //         <FormattedMessage {...MSG.totalAllocation} />
-    //       </div>
-    //       <div className={styles.value}>
-    //         <Numeral
-    //           value={getFormattedTokenValue(
-    //             token.totalAllocation,
-    //             token.decimals,
-    //           )}
-    //         />
-    //       </div>
-    //     </div>
-    //     <div className={styles.item}>
-    //       <div className={styles.label}>
-    //         <FormattedMessage {...MSG.claimable} />
-    //       </div>
-    //       <div className={styles.value}>
-    //         <Numeral
-    //           value={getFormattedTokenValue(
-    //             token.totalAllocation,
-    //             token.decimals,
-    //           )}
-    //         />
-    //       </div>
-    //     </div>
-    //     <div className={styles.item}>
-    //       <div className={styles.label}>
-    //         <FormattedMessage {...MSG.claimed} />
-    //       </div>
-    //       <div className={styles.value}>
-    //         <Numeral
-    //           value={getFormattedTokenValue(
-    //             token.totalAllocation,
-    //             token.decimals,
-    //           )}
-    //         />
-    //       </div>
-    //     </div>
-    //     <div className={styles.value}>
-    //       <Button
-    //         appearance={{ theme: 'primary', size: 'large' }}
-    //         text={MSG.buttonClaim}
-    //       />
-    //     </div>
-    //   </div>
-    // </div>
     <VestingPageLayout
       title={
         <Heading
           appearance={{ size: 'medium', theme: 'dark' }}
           text={MSG.title}
-          textValues={{ tokenName: token?.symbol }}
+          textValues={{ tokenSymbol: token?.symbol }}
         />
       }
       tableValues={[

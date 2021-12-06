@@ -19,8 +19,7 @@ import { ColonyBackText } from '~pages/BackTexts';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import LadingPage from '~pages/LandingPage';
 import ActionsPage from '~dashboard/ActionsPage';
-import { ClaimTokensPage } from '~dashboard/Vesting';
-import UnwrapTokensPage from '~dashboard/UnwrapTokensPage';
+import { ClaimTokensPage, UnwrapTokensPage } from '~dashboard/Vesting';
 
 import appLoadingContext from '~context/appLoadingState';
 import ColonyFunding from '~dashboard/ColonyFunding';
