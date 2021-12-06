@@ -3,6 +3,7 @@ import { MessageDescriptor } from 'react-intl';
 import Button from '~core/Button';
 
 import Numeral from '~core/Numeral';
+import { SimpleMessageValues } from '~types/index';
 import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './Vesting.css';
@@ -12,6 +13,7 @@ const displayName = 'dashboard.Vesting.VestingPageLayout';
 interface Props {
   title: JSX.Element;
   buttonText: MessageDescriptor | string;
+  buttonTextValues?: SimpleMessageValues;
   tableValues: {
     label: JSX.Element;
     value: string;
@@ -24,6 +26,7 @@ const VestingPageLayout = ({
   tableValues,
   buttonText,
   tokenDecimals,
+  buttonTextValues,
 }: Props) => {
   return (
     <div className={styles.main}>
@@ -42,6 +45,7 @@ const VestingPageLayout = ({
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={buttonText}
+          textValues={buttonTextValues}
         />
       </div>
     </div>
