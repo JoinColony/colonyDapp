@@ -343,8 +343,9 @@ const DefaultMotion = ({
     <div className={styles.main}>
       <StakeRequiredBanner stakeRequired={hasBanner} />
       <div
-        className={styles.upperContainer}
-        style={{ ...(hasBanner ? { paddingTop: '41px' } : {}) }}
+        className={`${styles.upperContainer} ${
+          hasBanner && styles.bannerPadding
+        }`}
       >
         {motionState && (
           <p className={styles.tagWrapper}>

@@ -52,6 +52,10 @@
   padding-top: 90px;
 }
 
+.bannerPadding {
+  padding-top: 41px;
+}
+
 .heading {
   margin-bottom: 20px;
   font-size: var(--size-medium-l);

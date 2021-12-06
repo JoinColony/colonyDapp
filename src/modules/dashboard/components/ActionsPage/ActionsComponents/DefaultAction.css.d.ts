@@ -4,6 +4,7 @@ export const setMarginWidth: string;
 export const dividerTop: string;
 export const container: string;
 export const upperContainer: string;
+export const bannerPadding: string;
 export const heading: string;
 export const content: string;
 export const details: string;
