@@ -230,6 +230,7 @@ const SingleUserPicker = ({
             </div>
             {(!value || (value && !isResettable)) && (
               <Icon
+                onClick={openOmniPicker}
                 className={classnames(styles.arrowIcon, {
                   [styles.arrowIconActive]: omniPickerIsOpen,
                 })}
