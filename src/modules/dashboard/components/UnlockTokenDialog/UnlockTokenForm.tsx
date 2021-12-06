@@ -91,19 +91,23 @@ const UnlockTokenForm = ({
         {colony.isNativeTokenLocked ? (
           <FormattedMessage {...MSG.description} />
         ) : (
-          <FormattedMessage {...MSG.unlockedDescription} />
+          <div className={styles.unlocked}>
+            <FormattedMessage {...MSG.unlockedDescription} />
+          </div>
         )}
       </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <div className={styles.note}>
-          <FormattedMessage {...MSG.note} />
-          <ExternalLink
-            className={styles.learnMoreLink}
-            text={{ id: 'text.learnMore' }}
-            href={LEARN_MORE_URL}
-          />
-        </div>
-      </DialogSection>
+      {colony.isNativeTokenLocked && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <div className={styles.note}>
+            <FormattedMessage {...MSG.note} />
+            <ExternalLink
+              className={styles.learnMoreLink}
+              text={{ id: 'text.learnMore' }}
+              href={LEARN_MORE_URL}
+            />
+          </div>
+        </DialogSection>
+      )}
       {!hasRootPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>

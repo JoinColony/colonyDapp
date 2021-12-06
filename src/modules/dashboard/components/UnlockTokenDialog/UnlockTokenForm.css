@@ -27,6 +27,10 @@
   color: color-mod(var(--sky-blue) alpha(90%));
 }
 
+.unlocked {
+  margin-bottom: 20px;
+}
+
 .wrapper {
   margin-bottom: 20px;
 }
