@@ -79,6 +79,7 @@ const DetailsWidget = ({
   recipient,
   values,
   transactionHash,
+  colony,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -162,6 +163,7 @@ const DetailsWidget = ({
             )}
             {recipient && detailsForAction.ToRecipient && (
               <DetailsWidgetUser
+                colony={colony}
                 walletAddress={recipient?.profile.walletAddress as string}
               />
             )}

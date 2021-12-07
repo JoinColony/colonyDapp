@@ -3,7 +3,7 @@ import React from 'react';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import MaskedAddress from '~core/MaskedAddress';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
-import { useUser } from '~data/index';
+import { useUser, Colony } from '~data/index';
 import { Address } from '~types/index';
 
 import styles from './DetailsWidgetUser.css';
@@ -11,10 +11,11 @@ import styles from './DetailsWidgetUser.css';
 const displayName = 'DetailsWidgetUser';
 
 interface Props {
+  colony?: Colony;
   walletAddress: Address;
 }
 
-const DetailsWidgetUser = ({ walletAddress }: Props) => {
+const DetailsWidgetUser = ({ colony, walletAddress }: Props) => {
   const UserAvatar = HookedUserAvatar({ fetchUser: false });
   const userProfile = useUser(walletAddress);
   const userDisplayName = userProfile?.profile?.displayName;
@@ -23,11 +24,24 @@ const DetailsWidgetUser = ({ walletAddress }: Props) => {
   return (
     <div className={styles.main}>
       <UserAvatar
+        colony={colony}
         size="s"
         notSet={false}
         user={userProfile}
         address={walletAddress || ''}
         showInfo
+        popperProps={{
+          showArrow: false,
+          placement: 'left',
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [0, 10],
+              },
+            },
+          ],
+        }}
       />
       <div className={styles.textContainer}>
         {(userDisplayName || username) && (

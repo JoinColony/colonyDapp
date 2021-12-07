@@ -2,7 +2,10 @@
 
 .main {
   padding: 20px 25px 25px 25px;
-  width: 470px;
+  width: 480px;
+  text-align: left;
+  letter-spacing: normal;
+  cursor: auto;
 }
 
 .section {
