@@ -7,6 +7,6 @@
 }
 
 .usernameContainer {
-  composes: multiLineEllipsis from '~styles/text.css';
+  composes: inlineEllipsis from '~styles/text.css';
   margin: 15px 0;
 }

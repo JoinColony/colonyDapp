@@ -54,7 +54,7 @@ const ItemDefault = ({
     {renderAvatar(userAddress, itemData)}
     <span className={styles.dataContainer}>
       {displayName && (
-        <span>
+        <span className={styles.displayName}>
           {displayName}
           {walletAddress === userAddress && (
             <span className={styles.thatsYou}>
