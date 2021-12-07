@@ -280,7 +280,7 @@ const SaleStateWidget = ({
           appearance={{ size: 'medium', theme: 'dark', margin: 'none' }}
           text={MSG[`${state}Title`]}
           textValues={{
-            token: sellableToken?.symbol || '???',
+            token: sellableToken?.symbol || '',
           }}
         />
         <TransactionLink
