@@ -14,6 +14,7 @@
 
 .usernameSection {
   composes: section;
+  composes: inlineEllipsis from '~styles/text.css';
   flex-grow: 1;
 }
 

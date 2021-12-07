@@ -17,7 +17,8 @@
 }
 
 .usernameContainer {
-  composes: multiLineEllipsis from '~styles/text.css';
+  composes: inlineEllipsis from '~styles/text.css';
+  display: flex;
 }
 
 .bioContainer {

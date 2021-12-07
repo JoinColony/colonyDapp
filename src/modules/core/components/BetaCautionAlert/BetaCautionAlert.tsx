@@ -16,7 +16,7 @@ const MSG = {
   },
 };
 
-const LEARN_MORE_LINK = `https://www.notion.so/colony/Beta-Disclaimer-83a9870fe20e430fa15f1e097a0bc6d8`;
+const LEARN_MORE_LINK = `https://colony.gitbook.io/colony/disclaimers/beta`;
 
 const BetaCautionAlert = () => {
   const [isHovered, setIsHovered] = useState(false);
