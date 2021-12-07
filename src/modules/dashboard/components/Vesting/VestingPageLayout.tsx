@@ -1,12 +1,20 @@
 import React from 'react';
-import { MessageDescriptor } from 'react-intl';
+import { MessageDescriptor, defineMessage } from 'react-intl';
 import Button from '~core/Button';
 
 import Numeral from '~core/Numeral';
+import { SpinnerLoader } from '~core/Preloaders';
 import { SimpleMessageValues } from '~types/index';
 import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './Vesting.css';
+
+const MSG = defineMessage({
+  loading: {
+    id: 'dashboard.Vesting.VestingPageLayout.loading',
+    defaultMessage: 'Loading',
+  },
+});
 
 const displayName = 'dashboard.Vesting.VestingPageLayout';
 
@@ -19,6 +27,7 @@ interface Props {
     value: string;
   }[];
   tokenDecimals: number;
+  isLoading: boolean;
 }
 
 const VestingPageLayout = ({
@@ -27,8 +36,16 @@ const VestingPageLayout = ({
   buttonText,
   tokenDecimals,
   buttonTextValues,
+  isLoading,
 }: Props) => {
-  return (
+  return isLoading ? (
+    <div className={styles.loader}>
+      <SpinnerLoader
+        loadingText={MSG.loading}
+        appearance={{ theme: 'primary', size: 'massive' }}
+      />
+    </div>
+  ) : (
     <div className={styles.main}>
       {title}
       <div className={styles.table}>

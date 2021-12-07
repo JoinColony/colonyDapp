@@ -37,6 +37,8 @@ const UnwrapTokensPage = () => {
 
   return (
     <VestingPageLayout
+      // Add proper loading state when connected to queries
+      isLoading={false}
       title={
         <Heading
           appearance={{ size: 'medium', theme: 'dark' }}
