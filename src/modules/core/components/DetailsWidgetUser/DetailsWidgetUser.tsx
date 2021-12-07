@@ -43,16 +43,18 @@ const DetailsWidgetUser = ({ colony, walletAddress }: Props) => {
           ],
         }}
       />
-      {(userDisplayName || username) && (
-        <div className={styles.username}>
-          {userDisplayName || `@${username}`}
-        </div>
-      )}
-      <InvisibleCopyableAddress address={walletAddress}>
-        <div className={styles.address}>
-          <MaskedAddress address={walletAddress} />
-        </div>
-      </InvisibleCopyableAddress>
+      <div className={styles.textContainer}>
+        {(userDisplayName || username) && (
+          <div className={styles.username}>
+            {userDisplayName || `@${username}`}
+          </div>
+        )}
+        <InvisibleCopyableAddress address={walletAddress}>
+          <div className={styles.address}>
+            <MaskedAddress address={walletAddress} />
+          </div>
+        </InvisibleCopyableAddress>
+      </div>
     </div>
   );
 };

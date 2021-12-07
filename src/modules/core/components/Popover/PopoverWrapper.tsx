@@ -63,10 +63,13 @@ const PopoverWrapper = ({
   }, [close, content, contentValues, formatMessage]);
   return (
     <div
-      className={getMainClasses(appearance, styles, {
-        hideArrow: !showArrow,
-        showArrow,
-      })}
+      className={`
+        popoverWrapper
+        ${getMainClasses(appearance, styles, {
+          hideArrow: !showArrow,
+          showArrow,
+        })}
+      `}
       onFocus={onFocus}
       ref={contentRef}
       role="tooltip"

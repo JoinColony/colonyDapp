@@ -92,13 +92,15 @@ const FriendlyName = ({
     (isEmpty(user) && !isEmpty(colony));
   return (
     <div className={styles.main}>
-      {userDisplay || (isColony && colonyDisplay) || (
-        <MaskedAddress
-          address={userDisplayAddress || colonyDisplayAddress}
-          full={!maskedAddress}
-          ref={addressRef}
-        />
-      )}
+      <div className={styles.name}>
+        {userDisplay || (isColony && colonyDisplay) || (
+          <MaskedAddress
+            address={userDisplayAddress || colonyDisplayAddress}
+            full={!maskedAddress}
+            ref={addressRef}
+          />
+        )}
+      </div>
     </div>
   );
 };

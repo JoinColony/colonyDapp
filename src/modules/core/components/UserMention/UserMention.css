@@ -1,4 +1,6 @@
 .mention {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: block;
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--pink);
