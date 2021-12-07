@@ -1,4 +1,5 @@
 export const main: string;
+export const loader: string;
 export const table: string;
 export const item: string;
 export const value: string;
