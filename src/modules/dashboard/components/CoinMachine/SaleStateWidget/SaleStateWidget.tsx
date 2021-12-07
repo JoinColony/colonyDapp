@@ -66,7 +66,7 @@ const MSG = defineMessages({
   },
   saleFailedTitle: {
     id: 'dashboard.CoinMachine.SaleStateWidget.saleFailedTitle',
-    defaultMessage: `You didn't get any CLNY this time`,
+    defaultMessage: `You didn't get any {token} this time`,
   },
   saleFailedAmountLabel: {
     id: 'dashboard.CoinMachine.SaleStateWidget.saleFailedAmountLabel',
@@ -78,7 +78,7 @@ const MSG = defineMessages({
   },
   saleFailedSubtext: {
     id: 'dashboard.CoinMachine.SaleStateWidget.saleFailedSubtext',
-    defaultMessage: 'Don’t worry, you can try again in...',
+    defaultMessage: 'Please try again, if there is still time and tokens left.',
   },
   loadingTitle: {
     id: 'dashboard.CoinMachine.SaleStateWidget.loadingTitle',
@@ -197,7 +197,11 @@ const SaleStateWidget = ({
     switch (state) {
       case SaleState.PartialSuccess:
       case SaleState.SaleFailed:
-        return <TimerValue splitTime={splitTime} />;
+        if (showTimeCountdown && timeLeftToNextSale > 0) {
+          return <TimerValue splitTime={splitTime} />;
+        }
+        return <FormattedMessage {...MSG.tryAgain} />;
+
       case SaleState.TransactionFailed:
         return <FormattedMessage {...MSG.tryAgain} />;
       case SaleState.Success:
@@ -275,6 +279,9 @@ const SaleStateWidget = ({
         <Heading
           appearance={{ size: 'medium', theme: 'dark', margin: 'none' }}
           text={MSG[`${state}Title`]}
+          textValues={{
+            token: sellableToken?.symbol || '???',
+          }}
         />
         <TransactionLink
           className={styles.blockExplorer}
@@ -321,7 +328,7 @@ const SaleStateWidget = ({
         />
       </div>
       <div className={styles.footer}>
-        {showTimeCountdown ? (
+        {showTimeCountdown && timeLeftToNextSale > 0 ? (
           <div className={styles.nextSale}>
             <FormattedMessage {...MSG.nextSale} />
           </div>
