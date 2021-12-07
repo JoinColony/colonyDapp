@@ -338,12 +338,15 @@ const DefaultMotion = ({
     objectionAnnotation?.motionObjectionAnnotation?.address || '',
   );
 
+  const hasBanner = !shouldDisplayMotion(currentStake, requiredStake);
   return (
     <div className={styles.main}>
-      <StakeRequiredBanner
-        stakeRequired={!shouldDisplayMotion(currentStake, requiredStake)}
-      />
-      <div className={styles.upperContainer}>
+      <StakeRequiredBanner stakeRequired={hasBanner} />
+      <div
+        className={`${styles.upperContainer} ${
+          hasBanner && styles.bannerPadding
+        }`}
+      >
         {motionState && (
           <p className={styles.tagWrapper}>
             <Tag

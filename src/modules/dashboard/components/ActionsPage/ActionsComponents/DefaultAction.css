@@ -1,5 +1,4 @@
 .main {
-  padding: 90px 0;
   height: 100%;
   width: 100%;
   background-color: white;
@@ -50,6 +49,11 @@
 .upperContainer {
   composes: container;
   align-items: baseline;
+  padding-top: 90px;
+}
+
+.bannerPadding {
+  padding-top: 41px;
 }
 
 .heading {
