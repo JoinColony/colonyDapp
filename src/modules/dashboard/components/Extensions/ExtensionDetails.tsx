@@ -243,6 +243,7 @@ const ExtensionDetails = ({
         value: (
           <span className={styles.installedBy}>
             <DetailsWidgetUser
+              colony={colony}
               walletAddress={installedExtension.details.installedBy}
             />
           </span>

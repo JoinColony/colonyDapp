@@ -202,6 +202,7 @@ const ColonyEventsListItem = ({
         <div className={styles.avatar}>
           {agent && (
             <UserAvatar
+              colony={colony}
               size="s"
               address={agent}
               user={agentUserProfile}

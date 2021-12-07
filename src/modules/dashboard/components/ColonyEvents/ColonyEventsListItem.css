@@ -30,7 +30,7 @@
   cursor: pointer;
 }
 
-.avatar figure {
+.avatar > div > figure {
   height: 41px;
   width: 41px;
   border: 2px solid transparent;

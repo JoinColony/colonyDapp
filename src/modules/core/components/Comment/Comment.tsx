@@ -107,11 +107,16 @@ const Comment = ({
     >
       <div className={styles.avatar}>
         <UserAvatar
+          colony={colony}
           size="xs"
           address={user?.profile.walletAddress || ''}
           user={user as AnyUser}
           showInfo
           notSet={false}
+          popperProps={{
+            showArrow: false,
+            placement: 'bottom',
+          }}
         />
       </div>
       <div className={styles.content}>
