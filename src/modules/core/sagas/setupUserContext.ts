@@ -1,5 +1,6 @@
 import { all, call, fork, put } from 'redux-saga/effects';
 import { formatEther } from 'ethers/utils';
+import userflow from 'userflow.js';
 
 import { WalletMethod } from '~immutable/index';
 import { createAddress } from '~utils/web3';
@@ -125,6 +126,10 @@ export default function* setupUserContext(
     yield call(setLastWallet, method, walletAddress);
 
     const colonyManager = yield call(reinitializeColonyManager);
+
+    if (method !== WalletMethod.Ethereal) {
+      yield userflow.identify(walletAddress);
+    }
 
     yield call(getGasPrices);
 
