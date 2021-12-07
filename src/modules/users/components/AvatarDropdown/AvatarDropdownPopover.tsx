@@ -80,7 +80,7 @@ const AvatarDropdownPopover = ({
             <NavLink
               to={{
                 pathname: CREATE_USER_ROUTE,
-                state: { colonyURL: `/colony/${colony.colonyName}` },
+                state: { colonyURL: `/colony/${colony?.colonyName}` },
               }}
               text={MSG.buttonGetStarted}
             />
