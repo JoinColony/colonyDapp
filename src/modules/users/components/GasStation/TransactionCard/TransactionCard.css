@@ -1,4 +1,5 @@
 .main {
+  composes: inlineEllipsis from '~styles/text.css';
   padding: 0;
 }
 
@@ -34,5 +35,6 @@
 }
 
 .description {
+  composes: inlineEllipsis from '~styles/text.css';
   flex: 1 1 auto;
 }
