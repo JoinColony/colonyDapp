@@ -17,7 +17,10 @@ import {
 } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { ExtendedLogDescription, parseSubgraphEvent } from '~utils/events';
-import { getCoinMachinePeriodPrice } from '~utils/contracts';
+import {
+  getCoinMachinePeriodPrice,
+  getCoinMachinePreDecayPeriodPrice,
+} from '~utils/contracts';
 import { ColonyAndExtensionsEvents } from '~types/colonyActions';
 
 import { getToken } from './token';
@@ -471,6 +474,7 @@ export const coinMachineResolvers = ({
          * To help with price evolution calculations
          */
         let previousPrice = bigNumberify(0);
+        let nextPrice = bigNumberify(0);
         /*
          * Merge both active and stale periods into one data source
          * This also adds a token availability value, based on replaying the
@@ -576,18 +580,27 @@ export const coinMachineResolvers = ({
              * Calculate price evolution based on the existing active period prices
              */
             .map((period, periodIndex, periodArray) => {
+              // Skip first periods, until we find a period with a sale and we know a historical price
+
               let currentPrice = bigNumberify(period.price);
+              if (currentPrice.eq(0) && previousPrice.eq(0)) {
+                return period;
+              }
+
               /*
                * Current price is greater than 0, meaning it's already an active
-               * period, so we already got the correct price, not need to re-calculate it
+               * period, so we already got the correct price, no need to re-calculate it
+               * Set previous price to this value.
                */
-              if (bigNumberify(currentPrice).gt(0)) {
+              if (currentPrice.gt(0)) {
                 previousPrice = currentPrice;
                 return period;
               }
+
               /*
                * If there are no more tokens in the coin machine, the price doesn't
                * evolve anymore
+               * Previous price remains the same
                */
               if (bigNumberify(period.tokensAvailable).isZero()) {
                 return {
@@ -608,6 +621,8 @@ export const coinMachineResolvers = ({
                 previousPeriodTokensBought,
               );
 
+              previousPrice = currentPrice;
+
               return {
                 ...period,
                 price: currentPrice.toString(),
@@ -618,6 +633,44 @@ export const coinMachineResolvers = ({
              * ended sale period as the first entry in the table
              */
             .reverse()
+            /* We now run through the array again, and will fill in the price for periods before the first
+             * token was sold.
+             */
+            .map((period) => {
+              // Skip periods with known price
+              let currentPrice = bigNumberify(period.price);
+              if (currentPrice.gt(0)) {
+                nextPrice = currentPrice;
+                return period;
+              }
+
+              /*
+               * If there are no more tokens in the coin machine, the price doesn't
+               * evolve anymore
+               * Nextprice remains the same
+               */
+              if (bigNumberify(period.tokensAvailable).isZero()) {
+                return {
+                  ...period,
+                  price: nextPrice.toString(),
+                };
+              }
+
+              /* The price in this period is the one that decays to nextPrice if
+               * no tokens are bought
+               */
+              currentPrice = getCoinMachinePreDecayPeriodPrice(
+                windowSize.toNumber(),
+                nextPrice,
+              );
+
+              nextPrice = currentPrice;
+
+              return {
+                ...period,
+                price: currentPrice.toString(),
+              };
+            })
         );
       } catch (error) {
         console.error(error);
