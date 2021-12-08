@@ -35,7 +35,9 @@ const TransactionMeta = ({ createdAt, transactionHash, status }: Props) => (
   <ul className={styles.main}>
     {createdAt && (
       <li className={styles.items}>
-        <TimeRelative value={new Date(createdAt)} />
+        <TimeRelative
+          value={new Date(Number(createdAt.toString().substr(0, 10)) * 1000)}
+        />
       </li>
     )}
     {transactionHash && (

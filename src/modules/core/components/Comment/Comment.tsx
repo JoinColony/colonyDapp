@@ -40,7 +40,7 @@ export interface Props {
   colony: Colony;
   user?: AnyUser | null;
   annotation?: boolean;
-  createdAt?: Date | number;
+  createdAt?: number;
   showControls?: boolean;
 }
 

@@ -76,7 +76,7 @@ interface Props {
   eventName?: string;
   eventValues?: Record<string, any>;
   transactionHash: string;
-  createdAt: Date;
+  createdAt: Date | number;
   values?: EventValues;
   emmitedBy?: string;
   actionData: ColonyAction;

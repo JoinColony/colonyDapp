@@ -5,7 +5,7 @@ interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** Time in seconds to update */
   updateInterval?: number;
   /** Datetime to calculate relative/difference from. */
-  value: Date;
+  value: Date | number;
 }
 
 const nearestIntervalOf = (value: number, increment: number) =>

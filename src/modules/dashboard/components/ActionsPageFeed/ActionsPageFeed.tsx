@@ -229,7 +229,7 @@ const ActionsPageFeed = ({
           <ActionsPageEvent
             key={uniqueId}
             eventIndex={index}
-            createdAt={new Date(createdAt)}
+            createdAt={createdAt}
             transactionHash={eventTransactionHash}
             eventName={name}
             actionData={actionData}
