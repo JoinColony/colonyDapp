@@ -209,7 +209,7 @@ const SaleStateWidget = ({
       default:
         return <FormattedMessage {...MSG.buyAgain} />;
     }
-  }, [state, splitTime]);
+  }, [state, splitTime, showTimeCountdown, timeLeftToNextSale]);
 
   useEffect(() => {
     if (!salePriceData) return;
