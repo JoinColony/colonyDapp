@@ -81,7 +81,7 @@ const RemainingTokens = ({
     }
 
     return false;
-  }, [tokenAmounts, isTotalSale]);
+  }, [tokenAmounts]);
 
   return (
     <RemainingWidget
