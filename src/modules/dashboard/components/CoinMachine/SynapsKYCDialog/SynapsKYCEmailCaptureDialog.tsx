@@ -145,7 +145,6 @@ const SynapsKYCEmailCaptureDialog = ({
               text={{ id: 'button.next' }}
               onClick={handleOpenSynapseKYCDialog}
               disabled={!isValid}
-              // type="submit"
             />
           </DialogSection>
         </Dialog>
