@@ -37,11 +37,12 @@ const displayName = 'dashboard.CoinMachine.SynapsKYCDialog';
 
 interface CustomDialogProps {
   colonyAddress: Address;
+  emailAddress?: string;
 }
 
 type Props = DialogProps & CustomDialogProps;
 
-const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
+const SynapsKYCDialog = ({ cancel, colonyAddress, emailAddress }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const { walletAddress } = useLoggedInUser();
@@ -76,7 +77,7 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
     const initSynaps = async () => {
       setIsLoading(true);
       const wallet = TEMP_getContext(ContextModule.Wallet);
-      const sessionId = await authenticateKYC(wallet);
+      const sessionId = await authenticateKYC(wallet, emailAddress);
       const kyc = await getKycStatus(sessionId);
 
       if (kyc?.status === 'VERIFIED') {
@@ -103,7 +104,7 @@ const SynapsKYCDialog = ({ cancel, colonyAddress }: Props) => {
     initSynaps();
     // eslint-disable-next-line consistent-return
     return () => clearInterval(refreshStatus);
-  }, [refreshInterval, walletAddress]);
+  }, [emailAddress, refreshInterval, walletAddress]);
 
   const onProceed = () => {
     refetch();

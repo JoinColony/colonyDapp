@@ -15,6 +15,7 @@ import AgreementDialog from '~dashboard/Whitelist/AgreementDialog';
 
 import CompleteKYCDialog from '../CompleteKYCDialog';
 import SynapsKYCDialog from '../SynapsKYCDialog';
+import SynapsKYCEmailCaptureDialog from '../SynapsKYCDialog/SynapsKYCEmailCaptureDialog';
 
 const MSG = defineMessages({
   getWhitelisted: {
@@ -44,6 +45,7 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
 
   const openAgreementDialog = useDialog(AgreementDialog);
   const openCompleteKYCDialog = useDialog(CompleteKYCDialog);
+  const openSynapsEmailDialog = useDialog(SynapsKYCEmailCaptureDialog);
   const openSynapsDialog = useDialog(SynapsKYCDialog);
 
   const signatureRequired =
@@ -70,17 +72,21 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
 
   const openKYCDialog = useCallback(() => {
     return data?.processedMetaColony?.colonyAddress === colonyAddress
-      ? openSynapsDialog({ colonyAddress })
+      ? openSynapsEmailDialog({ colonyAddress, onClose: openSynapsDialog })
       : openCompleteKYCDialog();
-  }, [data, openSynapsDialog, colonyAddress, openCompleteKYCDialog]);
+  }, [
+    data,
+    colonyAddress,
+    openSynapsEmailDialog,
+    openSynapsDialog,
+    openCompleteKYCDialog,
+  ]);
 
   useEffect(() => {
     if (!userStatus || !whitelistPolicies || loadingWhitelistPolicies) {
       return;
     }
-    if (isKYCRequired) {
-      openKYCDialog();
-    } else if (signatureRequired) {
+    if (signatureRequired) {
       openDialog();
     }
   }, [

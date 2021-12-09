@@ -33,3 +33,25 @@
   fill: none;
   stroke: none;
 }
+
+.emailContent {
+  padding: 40px 20px 80px;
+}
+
+.emailContent input::placeholder {
+  font-weight: var(--weight-normal);
+}
+
+.emailDescription {
+  margin-bottom: 40px;
+}
+
+.emailNote {
+  margin-top: 10px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+}
+
+.modalHeading {
+  padding: 32px 0 20px;
+}
