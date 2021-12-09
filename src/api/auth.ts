@@ -96,7 +96,7 @@ export const authenticate = async (wallet) => {
   return refreshedToken;
 };
 
-export const authenticateKYC = async (wallet) => {
+export const authenticateKYC = async (wallet, email = '') => {
   const { challenge } = await postRequest(
     '/auth/challenge',
     {
@@ -104,12 +104,16 @@ export const authenticateKYC = async (wallet) => {
     },
     true,
   );
-  const signature = await wallet.signMessage({ message: challenge });
+  const signature = await wallet.signMessage({
+    // message: `${challenge}${email}`,
+    message: challenge,
+  });
   const { sessionId } = await postRequest(
     '/auth/token',
     {
       challenge,
       signature,
+      email,
     },
     true,
   );
