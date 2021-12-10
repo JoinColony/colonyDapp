@@ -25,6 +25,7 @@ interface Props {
   tableValues: {
     label: JSX.Element;
     value: string;
+    id: number;
   }[];
   tokenDecimals: number;
   isLoading: boolean;
@@ -50,7 +51,7 @@ const VestingPageLayout = ({
       {title}
       <div className={styles.table}>
         {tableValues.map(({ label, value }) => (
-          <div className={styles.item}>
+          <div className={styles.item} key={value}>
             <div className={styles.label}>{label}</div>
             <div className={styles.value}>
               <Numeral value={getFormattedTokenValue(value, tokenDecimals)} />
