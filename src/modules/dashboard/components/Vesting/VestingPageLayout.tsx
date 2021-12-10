@@ -1,6 +1,7 @@
 import { FormikProps } from 'formik';
 import React from 'react';
 import { MessageDescriptor, defineMessage } from 'react-intl';
+import { nanoid } from 'nanoid';
 import Button from '~core/Button';
 
 import Numeral from '~core/Numeral';
@@ -26,7 +27,6 @@ interface Props {
   tableValues: {
     label: JSX.Element;
     value: string;
-    id: number;
   }[];
   tokenDecimals: number;
   isLoading: boolean;
@@ -54,7 +54,7 @@ const VestingPageLayout = ({
       {title}
       <div className={styles.table}>
         {tableValues.map(({ label, value }) => (
-          <div className={styles.item} key={value}>
+          <div className={styles.item} key={nanoid()}>
             <div className={styles.label}>{label}</div>
             <div className={styles.value}>
               <Numeral value={getFormattedTokenValue(value, tokenDecimals)} />
