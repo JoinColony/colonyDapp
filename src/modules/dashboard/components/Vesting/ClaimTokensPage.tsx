@@ -1,7 +1,10 @@
 import React from 'react';
+import { FormikProps } from 'formik';
 import { defineMessage, FormattedMessage } from 'react-intl';
 
+import { ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
+import { ActionTypes } from '~redux/actionTypes';
 
 import VestingPageLayout from './VestingPageLayout';
 
@@ -41,36 +44,46 @@ const ClaimTokensPage = () => {
   };
 
   return (
-    <VestingPageLayout
-      // Add proper loading state when connected to queries
-      isLoading={false}
-      title={
-        <Heading
-          appearance={{ size: 'medium', theme: 'dark' }}
-          text={MSG.title}
-          textValues={{ tokenSymbol: token?.symbol }}
+    <ActionForm
+      initialValues={{}}
+      submit={ActionTypes.COLONY_ACTION_GENERIC}
+      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+    >
+      {(formValues: FormikProps<{}>) => (
+        <VestingPageLayout
+          {...formValues}
+          // Add proper loading state when connected to queries
+          isLoading={false}
+          title={
+            <Heading
+              appearance={{ size: 'medium', theme: 'dark' }}
+              text={MSG.title}
+              textValues={{ tokenSymbol: token?.symbol }}
+            />
+          }
+          tableValues={[
+            {
+              label: <FormattedMessage {...MSG.totalAllocation} />,
+              value: token.totalAllocation,
+              id: 1,
+            },
+            {
+              label: <FormattedMessage {...MSG.claimable} />,
+              value: token.claimable,
+              id: 2,
+            },
+            {
+              label: <FormattedMessage {...MSG.claimed} />,
+              value: token.claimed,
+              id: 3,
+            },
+          ]}
+          buttonText={MSG.buttonClaim}
+          tokenDecimals={token.decimals}
         />
-      }
-      tableValues={[
-        {
-          label: <FormattedMessage {...MSG.totalAllocation} />,
-          value: token.totalAllocation,
-          id: 1,
-        },
-        {
-          label: <FormattedMessage {...MSG.claimable} />,
-          value: token.claimable,
-          id: 2,
-        },
-        {
-          label: <FormattedMessage {...MSG.claimed} />,
-          value: token.claimed,
-          id: 3,
-        },
-      ]}
-      buttonText={MSG.buttonClaim}
-      tokenDecimals={token.decimals}
-    />
+      )}
+    </ActionForm>
   );
 };
 
