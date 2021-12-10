@@ -88,7 +88,7 @@ const RemainingTime = ({
     appearance.theme !== 'danger' &&
     typeof value === 'number' &&
     periodLength !== undefined &&
-    (timeLeft * 100) / periodLength <= 10;
+    (timeLeft * 1000 * 100) / periodLength <= 10;
 
   useEffect(() => {
     if (timeLeft <= 0 && colonyAddress !== undefined) {

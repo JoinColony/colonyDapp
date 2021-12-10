@@ -65,12 +65,7 @@ const RemainingTokens = ({
 
   const displayedValue = useMemo(() => {
     if (tokenAmounts) {
-      return (
-        <RemainingTokensValue
-          tokenAmounts={tokenAmounts}
-          tokensBought={tokenAmounts.soldPeriodTokens}
-        />
-      );
+      return <RemainingTokensValue tokenAmounts={tokenAmounts} />;
     }
 
     return <FormattedMessage {...widgetText.placeholder} />;
@@ -78,14 +73,15 @@ const RemainingTokens = ({
 
   const showValueWarning = useMemo(() => {
     if (
-      !isTotalSale ||
-      tokenAmounts?.soldPeriodTokens.gte(tokenAmounts?.maxPeriodTokens)
+      tokenAmounts?.soldPeriodTokens.gt(
+        tokenAmounts?.maxPeriodTokens.mul(90).div(100),
+      )
     ) {
       return true;
     }
 
     return false;
-  }, [tokenAmounts, isTotalSale]);
+  }, [tokenAmounts]);
 
   return (
     <RemainingWidget
