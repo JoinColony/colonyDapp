@@ -1,7 +1,10 @@
 import React from 'react';
+import { FormikProps } from 'formik';
 import { defineMessage, FormattedMessage } from 'react-intl';
 
+import { ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
+import { ActionTypes } from '~redux/actionTypes';
 
 import VestingPageLayout from './VestingPageLayout';
 
@@ -36,42 +39,52 @@ const UnwrapTokensPage = () => {
   };
 
   return (
-    <VestingPageLayout
-      // Add proper loading state when connected to queries
-      isLoading={false}
-      title={
-        <Heading
-          appearance={{ size: 'medium', theme: 'dark' }}
-          text={MSG.title}
-          textValues={{ tokenSymbol: token?.symbol }}
+    <ActionForm
+      initialValues={{}}
+      submit={ActionTypes.COLONY_ACTION_GENERIC}
+      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
+      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+    >
+      {(formValues: FormikProps<{}>) => (
+        <VestingPageLayout
+          {...formValues}
+          // Add proper loading state when connected to queries
+          isLoading={false}
+          title={
+            <Heading
+              appearance={{ size: 'medium', theme: 'dark' }}
+              text={MSG.title}
+              textValues={{ tokenSymbol: token?.symbol }}
+            />
+          }
+          tableValues={[
+            {
+              label: (
+                <FormattedMessage
+                  {...MSG.wrappedBalance}
+                  values={{ tokenSymbol: token?.symbol }}
+                />
+              ),
+              value: token.wrappedBalance,
+              id: 1,
+            },
+            {
+              label: (
+                <FormattedMessage
+                  {...MSG.balance}
+                  values={{ tokenSymbol: token?.symbol }}
+                />
+              ),
+              value: token.balance,
+              id: 2,
+            },
+          ]}
+          buttonText={MSG.buttonUnwrap}
+          buttonTextValues={{ tokenSymbol: token?.symbol }}
+          tokenDecimals={token.decimals}
         />
-      }
-      tableValues={[
-        {
-          label: (
-            <FormattedMessage
-              {...MSG.wrappedBalance}
-              values={{ tokenSymbol: token?.symbol }}
-            />
-          ),
-          value: token.wrappedBalance,
-          id: 1,
-        },
-        {
-          label: (
-            <FormattedMessage
-              {...MSG.balance}
-              values={{ tokenSymbol: token?.symbol }}
-            />
-          ),
-          value: token.balance,
-          id: 2,
-        },
-      ]}
-      buttonText={MSG.buttonUnwrap}
-      buttonTextValues={{ tokenSymbol: token?.symbol }}
-      tokenDecimals={token.decimals}
-    />
+      )}
+    </ActionForm>
   );
 };
 

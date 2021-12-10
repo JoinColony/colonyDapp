@@ -1,3 +1,4 @@
+import { FormikProps } from 'formik';
 import React from 'react';
 import { MessageDescriptor, defineMessage } from 'react-intl';
 import Button from '~core/Button';
@@ -38,7 +39,9 @@ const VestingPageLayout = ({
   tokenDecimals,
   buttonTextValues,
   isLoading,
-}: Props) => {
+  isSubmitting,
+  handleSubmit,
+}: Props & FormikProps<{}>) => {
   return isLoading ? (
     <div className={styles.loader}>
       <SpinnerLoader
@@ -64,6 +67,8 @@ const VestingPageLayout = ({
           appearance={{ theme: 'primary', size: 'large' }}
           text={buttonText}
           textValues={buttonTextValues}
+          onClick={() => handleSubmit()}
+          loading={isSubmitting}
         />
       </div>
     </div>
