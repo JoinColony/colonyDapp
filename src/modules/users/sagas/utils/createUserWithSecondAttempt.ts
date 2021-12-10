@@ -9,30 +9,64 @@ import {
   MetaColonyQuery,
   MetaColonyQueryVariables,
   MetaColonyDocument,
+  UserAddressQuery,
+  UserAddressQueryVariables,
+  UserAddressDocument,
+  UserQuery,
+  UserQueryVariables,
+  UserDocument,
 } from '~data/index';
 import { log } from '~utils/debug';
 
-export function* createUserWithSecondAttempt(username: string) {
+export function* createUserWithSecondAttempt(
+  username: string,
+  reattempt = false,
+) {
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
+  if (!username) {
+    return undefined;
+  }
+
   try {
     let user;
-    /*
-     * Create an entry for the user in the database
-     */
-    const { data: userData } = yield apolloClient.mutate<
-      CreateUserMutation,
-      CreateUserMutationVariables
-    >({
-      mutation: CreateUserDocument,
-      variables: {
-        createUserInput: { username },
-      },
-    });
 
-    user = userData?.createUser;
+    if (reattempt) {
+      try {
+        const { data: userAddressData } = yield apolloClient.query<
+          UserAddressQuery,
+          UserAddressQueryVariables
+        >({
+          query: UserAddressDocument,
+          variables: {
+            name: username,
+          },
+        });
 
-    if (!userData?.createUser?.profile?.username) {
-      const { data: userDataSecondAttempt } = yield apolloClient.mutate<
+        const { data: potentialUserData } = yield apolloClient.query<
+          UserQuery,
+          UserQueryVariables
+        >({
+          query: UserDocument,
+          variables: {
+            address: userAddressData?.userAddress,
+          },
+        });
+
+        user = potentialUserData?.user;
+      } catch (error) {
+        log.verbose(
+          `User with username ${username} was not found, attempting to create a new entry`,
+          error.message,
+        );
+      }
+    }
+
+    if (!user?.profile?.username) {
+      /*
+       * Create an entry for the user in the database
+       */
+      const { data: userData } = yield apolloClient.mutate<
         CreateUserMutation,
         CreateUserMutationVariables
       >({
@@ -42,32 +76,46 @@ export function* createUserWithSecondAttempt(username: string) {
         },
       });
 
-      if (!userDataSecondAttempt?.createUser?.profile?.username) {
-        throw new Error(`Apollo 'CreateUser' mutation failed`);
+      user = userData?.createUser;
+
+      if (!userData?.createUser?.profile?.username) {
+        const { data: userDataSecondAttempt } = yield apolloClient.mutate<
+          CreateUserMutation,
+          CreateUserMutationVariables
+        >({
+          mutation: CreateUserDocument,
+          variables: {
+            createUserInput: { username },
+          },
+        });
+
+        if (!userDataSecondAttempt?.createUser?.profile?.username) {
+          throw new Error(`Apollo 'CreateUser' mutation failed`);
+        }
+
+        user = userDataSecondAttempt.createUser;
       }
 
-      user = userDataSecondAttempt.createUser;
-    }
-
-    const { data: metaColonyData } = yield apolloClient.query<
-      MetaColonyQuery,
-      MetaColonyQueryVariables
-    >({
-      query: MetaColonyDocument,
-    });
-
-    if (metaColonyData?.processedMetaColony?.colonyName) {
-      yield apolloClient.mutate<
-        SubscribeToColonyMutation,
-        SubscribeToColonyMutationVariables
+      const { data: metaColonyData } = yield apolloClient.query<
+        MetaColonyQuery,
+        MetaColonyQueryVariables
       >({
-        mutation: SubscribeToColonyDocument,
-        variables: {
-          input: {
-            colonyAddress: metaColonyData.processedMetaColony.colonyAddress,
-          },
-        },
+        query: MetaColonyDocument,
       });
+
+      if (metaColonyData?.processedMetaColony?.colonyName) {
+        yield apolloClient.mutate<
+          SubscribeToColonyMutation,
+          SubscribeToColonyMutationVariables
+        >({
+          mutation: SubscribeToColonyDocument,
+          variables: {
+            input: {
+              colonyAddress: metaColonyData.processedMetaColony.colonyAddress,
+            },
+          },
+        });
+      }
     }
     return user;
   } catch (error) {

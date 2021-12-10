@@ -31,7 +31,8 @@ import { authenticate, clearToken } from '../../../api';
 
 import ENS from '../../../lib/ENS';
 import setupDashboardSagas from '../../dashboard/sagas';
-import { getWallet, setupUsersSagas } from '../../users/sagas/index';
+import { getWallet, setupUsersSagas } from '../../users/sagas';
+import { createUserWithSecondAttempt } from '../../users/sagas/utils';
 import { getGasPrices, reinitializeColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
@@ -172,6 +173,8 @@ export default function* setupUserContext(
       ipfsWithFallback,
     };
     yield setupResolvers(apolloClient, userContext);
+
+    yield createUserWithSecondAttempt(username, true);
 
     yield apolloClient.mutate<
       SetLoggedInUserMutation,
