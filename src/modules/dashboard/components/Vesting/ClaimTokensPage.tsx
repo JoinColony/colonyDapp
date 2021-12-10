@@ -66,17 +66,14 @@ const ClaimTokensPage = () => {
             {
               label: <FormattedMessage {...MSG.totalAllocation} />,
               value: token.totalAllocation,
-              id: 1,
             },
             {
               label: <FormattedMessage {...MSG.claimable} />,
               value: token.claimable,
-              id: 2,
             },
             {
               label: <FormattedMessage {...MSG.claimed} />,
               value: token.claimed,
-              id: 3,
             },
           ]}
           buttonText={MSG.buttonClaim}

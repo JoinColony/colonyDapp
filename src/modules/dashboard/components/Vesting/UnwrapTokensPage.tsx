@@ -66,7 +66,6 @@ const UnwrapTokensPage = () => {
                 />
               ),
               value: token.wrappedBalance,
-              id: 1,
             },
             {
               label: (
@@ -76,7 +75,6 @@ const UnwrapTokensPage = () => {
                 />
               ),
               value: token.balance,
-              id: 2,
             },
           ]}
           buttonText={MSG.buttonUnwrap}
