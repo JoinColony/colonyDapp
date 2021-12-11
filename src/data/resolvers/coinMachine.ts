@@ -387,6 +387,7 @@ export const coinMachineResolvers = ({
         const availableTokens = await coinMachineClient.getTokenBalance();
         const targetPerPeriod = await coinMachineClient.getTargetPerPeriod();
         const windowSize = await coinMachineClient.getWindowSize();
+        const currentPeriodPrice = await coinMachineClient.getCurrentPrice();
         const currentBlock = await networkClient.provider.getBlock('latest');
         const currentBlockTime = currentBlock.timestamp * 1000;
 
@@ -653,13 +654,17 @@ export const coinMachineResolvers = ({
             .map((period) => {
               // Skip periods with known price
               let currentPrice = bigNumberify(period.price);
-              // currentprice === 0 then {
-              // nextPrice = current price of coin machine;
-              // return {
-              //   ...period,
-              //   price: nextPrice.toString(),
-              // };
-              // }
+              /*
+               * @TODO While this works, we need the initial price that Coin Machine started with,
+               * and not the current coin machine prioce
+               */
+              if (currentPrice.isZero()) {
+                nextPrice = currentPeriodPrice;
+                return {
+                  ...period,
+                  price: nextPrice.toString(),
+                };
+              }
               if (currentPrice.gt(0)) {
                 nextPrice = currentPrice;
                 return period;
