@@ -3,7 +3,6 @@ import {
   getLogs,
   getBlockTime,
   CoinMachineClientV2,
-  TokenClient,
 } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { BigNumber, bigNumberify, BigNumberish } from 'ethers/utils';
@@ -266,10 +265,8 @@ export const coinMachineResolvers = ({
           ClientType.CoinMachineClient,
           colonyAddress,
         );
-        const tokenClient = (await colonyManager.getClient(
-          ClientType.TokenClient,
-          colonyAddress,
-        )) as TokenClient;
+        const tokenAddress = await coinMachineClient.getToken();
+        const tokenClient = await colonyManager.getTokenClient(tokenAddress);
 
         const currentTokenBalance = await coinMachineClient.getTokenBalance();
 
@@ -339,10 +336,8 @@ export const coinMachineResolvers = ({
           ClientType.CoinMachineClient,
           colonyAddress,
         )) as CoinMachineClientV2;
-        const tokenClient = (await colonyManager.getClient(
-          ClientType.TokenClient,
-          colonyAddress,
-        )) as TokenClient;
+        const tokenAddress = await coinMachineClient.getToken();
+        const tokenClient = await colonyManager.getTokenClient(tokenAddress);
 
         const subgraphData = await apolloClient.query<
           SubgraphCoinMachinePeriodsQuery,
@@ -639,6 +634,13 @@ export const coinMachineResolvers = ({
             .map((period) => {
               // Skip periods with known price
               let currentPrice = bigNumberify(period.price);
+              // currentprice === 0 then {
+              // nextPrice = current price of coin machine;
+              // return {
+              //   ...period,
+              //   price: nextPrice.toString(),
+              // };
+              // }
               if (currentPrice.gt(0)) {
                 nextPrice = currentPrice;
                 return period;
