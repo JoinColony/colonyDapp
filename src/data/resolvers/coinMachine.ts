@@ -419,7 +419,26 @@ export const coinMachineResolvers = ({
           latestPeriodEnd -= periodLength.toNumber();
         }
 
-        const activeSales = subgraphData?.data?.coinMachinePeriods || [];
+        /*
+         * @NOTE We could potentially fiter on the server side while making the query
+         * However, the query itself also brings in the Coin Machine initialization event,
+         * which we need to key off to able to only fetch the required periods.
+         *
+         * There's an argument that we can refactor and split that query out, so first you
+         * make the initialization events query, and after the periods query. That could
+         * potentially work, however the tradeoff is that you're gaining not having to
+         * filter on the client, but loosing having to do an extra request
+         *
+         * A final note of WARNING, as this filter will become obsolete, and will cause
+         * problems once multiple extension instances are implemented
+         */
+        const activeSales = (
+          subgraphData?.data?.coinMachinePeriods || []
+        ).filter(
+          ({ saleEndedAt }) =>
+            parseInt(saleEndedAt, 10) >=
+            (extensionInitialised?.timestamp || 1) * 1000,
+        );
         const tokensBoughtEvents = subgraphData?.data?.tokenBoughtEvents || [];
         const historicAvailableTokensEvents = tokensBoughtEvents
           .map(parseSubgraphEvent)
