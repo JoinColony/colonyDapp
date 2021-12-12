@@ -23,7 +23,7 @@ import {
   useMetaColonyQuery,
 } from '~data/index';
 
-import { CM_LEARN_MORE_LINK, CM_GET_WHITELISTED } from '~externalUrls';
+import { CM_LEARN_MORE, CM_GET_WHITELISTED } from '~externalUrls';
 
 import Chat from './Chat';
 import SaleStateWidget from './SaleStateWidget';
@@ -296,7 +296,7 @@ const CoinMachine = ({
         <ExternalLink
           className={styles.learnMore}
           text={{ id: 'text.learnMore' }}
-          href={CM_LEARN_MORE_LINK}
+          href={CM_LEARN_MORE}
         />
       )}
     </div>,

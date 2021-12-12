@@ -25,6 +25,7 @@ import {
 import useSplitTime from '~utils/hooks/useSplitTime';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
+import { TOKEN_ACTIVATION_INFO } from '~externalUrls';
 
 import styles from './SaleStateWidget.css';
 
@@ -156,9 +157,6 @@ const MSG = defineMessages({
     defaultMessage: `Success! I just bought {amount} {tokenSymbol} via`,
   },
 });
-
-const ACTIVATE_LINK =
-  'https://colony.gitbook.io/colony/key-concepts/token-activation';
 
 const SaleStateWidget = ({
   sellableToken,
@@ -326,7 +324,7 @@ const SaleStateWidget = ({
               <ExternalLink
                 text={MSG.activate}
                 className={styles.blockExplorer}
-                href={ACTIVATE_LINK}
+                href={TOKEN_ACTIVATION_INFO}
               />
             ),
           }}

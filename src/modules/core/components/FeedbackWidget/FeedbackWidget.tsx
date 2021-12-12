@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import ExternalLink from '~core/ExternalLink';
-import { FEEDBACK_LINK } from '~externalUrls';
+import { FEEDBACK } from '~externalUrls';
 
 import styles from './FeedbackWidget.css';
 
@@ -15,7 +15,7 @@ const MSG = {
 
 const FeedbackWidget = () => (
   <div className={styles.main}>
-    <ExternalLink className={styles.link} href={FEEDBACK_LINK}>
+    <ExternalLink className={styles.link} href={FEEDBACK}>
       <FormattedMessage
         {...MSG.loveFeedback}
         values={{

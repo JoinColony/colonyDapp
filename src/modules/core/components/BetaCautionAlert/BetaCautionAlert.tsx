@@ -3,6 +3,8 @@ import { FormattedMessage } from 'react-intl';
 
 import ExternalLink from '~core/ExternalLink';
 
+import { BETA_DISCLAIMER } from '~externalUrls';
+
 import styles from './BetaCautionAlert.css';
 
 const MSG = {
@@ -15,8 +17,6 @@ const MSG = {
     defaultMessage: 'Use with caution!',
   },
 };
-
-const LEARN_MORE_LINK = `https://colony.gitbook.io/colony/disclaimers/beta`;
 
 const BetaCautionAlert = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -33,7 +33,7 @@ const BetaCautionAlert = () => {
         <ExternalLink
           text={{ id: 'text.learnMore' }}
           className={styles.link}
-          href={LEARN_MORE_LINK}
+          href={BETA_DISCLAIMER}
         />
       ) : (
         <>
