@@ -154,7 +154,7 @@ const MSG = defineMessages({
   },
   shareMessage: {
     id: 'dashboard.CoinMachine.SaleStateWidget.shareLabel',
-    defaultMessage: `Success! I just bought {amount} {tokenSymbol} via`,
+    defaultMessage: `Success! I just used @joincolony #CoinMachine to buy {amount} {tokenSymbol} from`,
   },
 });
 
@@ -347,7 +347,7 @@ const SaleStateWidget = ({
                     options={{
                       text: formatMessage(MSG.shareMessage, {
                         amount: decimalAmount,
-                        tokenSymbol: sellableToken?.symbol || '???',
+                        tokenSymbol: `$${sellableToken?.symbol || '???'}`,
                       }),
                       dnt: true,
                     }}
