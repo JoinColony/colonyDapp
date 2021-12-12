@@ -2031,15 +2031,13 @@ export type CoinMachineHasWhitelistQueryVariables = Exact<{
 
 export type CoinMachineHasWhitelistQuery = Pick<Query, 'coinMachineHasWhitelist'>;
 
-export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-  extensionAddress: Scalars['String'];
-  limit: Scalars['Int'];
+export type SubgraphCoinMachineExtensionInstalledQueryVariables = Exact<{
+  argumentsFilter: Scalars['String'];
   sortDirection?: Maybe<Scalars['String']>;
 }>;
 
 
-export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'>>, extensionInitialisedEvents: Array<(
+export type SubgraphCoinMachineExtensionInstalledQuery = { extensionInstalledEvents: Array<(
     Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
@@ -2049,7 +2047,18 @@ export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<S
         & { number: SubgraphBlock['id'] }
       ) }
     ) }
-  )>, tokenBoughtEvents: Array<(
+  )> };
+
+export type SubgraphCoinMachinePeriodsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
+  limit: Scalars['Int'];
+  periodsCreatedAfter: Scalars['String'];
+  sortDirection?: Maybe<Scalars['String']>;
+}>;
+
+
+export type SubgraphCoinMachinePeriodsQuery = { coinMachinePeriods: Array<Pick<SalePeriod, 'saleEndedAt' | 'tokensBought' | 'price'>>, tokenBoughtEvents: Array<(
     Pick<SubgraphEvent, 'id' | 'address' | 'name' | 'args' | 'timestamp'>
     & { transaction: (
       Pick<SubgraphTransaction, 'id'>
@@ -5377,14 +5386,9 @@ export function useCoinMachineHasWhitelistLazyQuery(baseOptions?: Apollo.LazyQue
 export type CoinMachineHasWhitelistQueryHookResult = ReturnType<typeof useCoinMachineHasWhitelistQuery>;
 export type CoinMachineHasWhitelistLazyQueryHookResult = ReturnType<typeof useCoinMachineHasWhitelistLazyQuery>;
 export type CoinMachineHasWhitelistQueryResult = Apollo.QueryResult<CoinMachineHasWhitelistQuery, CoinMachineHasWhitelistQueryVariables>;
-export const SubgraphCoinMachinePeriodsDocument = gql`
-    query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!, $sortDirection: String = asc) {
-  coinMachinePeriods(where: {colonyAddress: $colonyAddress}, skip: 0, first: $limit, orderBy: "saleEndedAt", orderDirection: "desc") {
-    saleEndedAt
-    tokensBought
-    price
-  }
-  extensionInitialisedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "ExtensionInitialised", address: $extensionAddress}) {
+export const SubgraphCoinMachineExtensionInstalledDocument = gql`
+    query SubgraphCoinMachineExtensionInstalled($argumentsFilter: String!, $sortDirection: String = desc) {
+  extensionInstalledEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "ExtensionInstalled", args_contains: $argumentsFilter}) {
     id
     transaction {
       id
@@ -5399,6 +5403,42 @@ export const SubgraphCoinMachinePeriodsDocument = gql`
     name
     args
     timestamp
+  }
+}
+    `;
+
+/**
+ * __useSubgraphCoinMachineExtensionInstalledQuery__
+ *
+ * To run a query within a React component, call `useSubgraphCoinMachineExtensionInstalledQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSubgraphCoinMachineExtensionInstalledQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubgraphCoinMachineExtensionInstalledQuery({
+ *   variables: {
+ *      argumentsFilter: // value for 'argumentsFilter'
+ *      sortDirection: // value for 'sortDirection'
+ *   },
+ * });
+ */
+export function useSubgraphCoinMachineExtensionInstalledQuery(baseOptions?: Apollo.QueryHookOptions<SubgraphCoinMachineExtensionInstalledQuery, SubgraphCoinMachineExtensionInstalledQueryVariables>) {
+        return Apollo.useQuery<SubgraphCoinMachineExtensionInstalledQuery, SubgraphCoinMachineExtensionInstalledQueryVariables>(SubgraphCoinMachineExtensionInstalledDocument, baseOptions);
+      }
+export function useSubgraphCoinMachineExtensionInstalledLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubgraphCoinMachineExtensionInstalledQuery, SubgraphCoinMachineExtensionInstalledQueryVariables>) {
+          return Apollo.useLazyQuery<SubgraphCoinMachineExtensionInstalledQuery, SubgraphCoinMachineExtensionInstalledQueryVariables>(SubgraphCoinMachineExtensionInstalledDocument, baseOptions);
+        }
+export type SubgraphCoinMachineExtensionInstalledQueryHookResult = ReturnType<typeof useSubgraphCoinMachineExtensionInstalledQuery>;
+export type SubgraphCoinMachineExtensionInstalledLazyQueryHookResult = ReturnType<typeof useSubgraphCoinMachineExtensionInstalledLazyQuery>;
+export type SubgraphCoinMachineExtensionInstalledQueryResult = Apollo.QueryResult<SubgraphCoinMachineExtensionInstalledQuery, SubgraphCoinMachineExtensionInstalledQueryVariables>;
+export const SubgraphCoinMachinePeriodsDocument = gql`
+    query SubgraphCoinMachinePeriods($colonyAddress: String!, $extensionAddress: String!, $limit: Int!, $periodsCreatedAfter: String!, $sortDirection: String = asc) {
+  coinMachinePeriods(where: {colonyAddress: $colonyAddress, saleEndedAt_gte: $periodsCreatedAfter}, skip: 0, first: $limit, orderBy: "saleEndedAt", orderDirection: "desc") {
+    saleEndedAt
+    tokensBought
+    price
   }
   tokenBoughtEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "TokensBought", address: $extensionAddress}) {
     id
@@ -5434,6 +5474,7 @@ export const SubgraphCoinMachinePeriodsDocument = gql`
  *      colonyAddress: // value for 'colonyAddress'
  *      extensionAddress: // value for 'extensionAddress'
  *      limit: // value for 'limit'
+ *      periodsCreatedAfter: // value for 'periodsCreatedAfter'
  *      sortDirection: // value for 'sortDirection'
  *   },
  * });

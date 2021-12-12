@@ -98,8 +98,6 @@ const StepCreateToken = ({
         to be parallel to this one after the wizard steps diverge,
         while making sure that the data form the previous wizard steps
         doesn't get lost
-        TODO: there will be smoother solution or this:
-        https://github.com/JoinColony/colonyDapp/issues/1057
       */
     const wizardValuesCopy = { ...wizardValues };
     previousStep();

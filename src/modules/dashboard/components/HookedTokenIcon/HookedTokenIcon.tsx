@@ -9,7 +9,8 @@ import { Address } from '~types/index';
 import Icon from '~core/Icon';
 import { getBase64image } from '~utils/dataReader';
 
-import { TOKEN_LOGOS_REPO_URL, DEFAULT_NETWORK } from '~constants';
+import { DEFAULT_NETWORK } from '~constants';
+import { TOKEN_LOGOS_REPO } from '~externalUrls';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
@@ -44,9 +45,9 @@ const ICON_STORAGE = 'tokenImages';
 const loadTokenImages = async (address: Address): Promise<Response> => {
   const network =
     DEFAULT_NETWORK === Network.Mainnet ? 'ethereum' : DEFAULT_NETWORK;
-  let tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}/${network}/${address}/logo.png`;
+  let tokenImageUrl = `${TOKEN_LOGOS_REPO}/${network}/${address}/logo.png`;
   if (address === AddressZero) {
-    tokenImageUrl = `${TOKEN_LOGOS_REPO_URL}/${network}/info/logo.png`;
+    tokenImageUrl = `${TOKEN_LOGOS_REPO}/${network}/info/logo.png`;
   }
   return fetch(tokenImageUrl);
 };

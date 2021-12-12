@@ -14,6 +14,7 @@ import {
 } from '~dashboard/ActionsPage/StakingWidget';
 
 import { Colony } from '~data/index';
+import { MD_OBJECTIONS_HELP } from '~externalUrls';
 
 import { FormValues } from './RaiseObjectionDialog';
 import styles from './RaiseObjectionDialogForm.css';
@@ -39,8 +40,6 @@ const MSG = defineMessages({
     defaultMessage: 'Stake',
   },
 });
-
-const OBJECTION_HELP_LINK = `https://colony.io/dev/docs/colonynetwork/whitepaper-tldr-objections-and-disputes#objections`;
 
 export interface Props extends StakingAmounts {
   colony: Colony;
@@ -79,7 +78,7 @@ const RaiseObjectionDialogForm = ({
           {...MSG.objectionDescription}
           values={{
             a: (chunks) => (
-              <ExternalLink href={OBJECTION_HELP_LINK} className={styles.link}>
+              <ExternalLink href={MD_OBJECTIONS_HELP} className={styles.link}>
                 {chunks}
               </ExternalLink>
             ),

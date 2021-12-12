@@ -1,4 +1,5 @@
 .stakeRequiredBannerContainer {
+  margin-top: -90px;
   width: 100%;
   position: static;
   font-size: var(--size-normal);

@@ -7,5 +7,7 @@ export const label: string;
 export const content: string;
 export const text: string;
 export const footer: string;
+export const footerSmall: string;
 export const nextSale: string;
 export const buttonWrapper: string;
+export const share: string;

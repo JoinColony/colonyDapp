@@ -6,6 +6,7 @@ import { GasPricesProps } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { log } from '~utils/debug';
 import { DEFAULT_NETWORK } from '~constants';
+import { ETH_GAS_STATION, XDAI_GAS_STATION } from '~externalUrls';
 
 import { gasPrices as gasPricesSelector } from '../../selectors';
 import { updateGasPrices } from '../../actionCreators';
@@ -31,10 +32,6 @@ interface BlockscoutGasStationAPIResponse {
   slow: number;
 }
 
-const ETH_GAS_STATION_ENDPOINT =
-  'https://ethgasstation.info/json/ethgasAPI.json';
-const BLOCKSCOUNT_GAS_STATION_ENDPOINT =
-  'https://blockscout.com/xdai/mainnet/api/v1/gas-price-oracle';
 const DEFAULT_GAS_PRICE = bigNumberify('1000000000');
 
 const fetchGasPrices = async (
@@ -61,13 +58,13 @@ const fetchGasPrices = async (
     let response;
 
     if (DEFAULT_NETWORK === Network.Mainnet) {
-      response = await fetch(ETH_GAS_STATION_ENDPOINT);
+      response = await fetch(ETH_GAS_STATION);
     }
     if (
       DEFAULT_NETWORK === Network.Xdai ||
       DEFAULT_NETWORK === Network.XdaiFork
     ) {
-      response = await fetch(BLOCKSCOUNT_GAS_STATION_ENDPOINT);
+      response = await fetch(XDAI_GAS_STATION);
     }
 
     if (!response.ok) {

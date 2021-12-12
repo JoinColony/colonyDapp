@@ -32,6 +32,7 @@ import {
 import { getMainClasses } from '~utils/css';
 import { mapPayload, withMeta, pipe } from '~utils/actions';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { CM_LEARN_MORE } from '~externalUrls';
 
 import GetWhitelisted from '../GetWhitelisted';
 
@@ -87,8 +88,6 @@ const MSG = defineMessages({
     defaultMessage: 'Sold Out',
   },
 });
-
-const TELL_ME_MORE_LINK = `https://colony.gitbook.io/colony/extensions/coin-machine`;
 
 type Props = {
   colony: Colony;
@@ -556,7 +555,7 @@ const BuyTokens = ({
               <ExternalLink
                 className={styles.link}
                 text={MSG.tellMore}
-                href={TELL_ME_MORE_LINK}
+                href={CM_LEARN_MORE}
               />
             </div>
           </div>

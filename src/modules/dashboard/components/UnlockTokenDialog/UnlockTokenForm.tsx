@@ -16,6 +16,8 @@ import PermissionsLabel from '~core/PermissionsLabel';
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
 
+import { TOKEN_UNLOCK_INFO } from '~externalUrls';
+
 import styles from './UnlockTokenForm.css';
 
 const MSG = defineMessages({
@@ -53,8 +55,6 @@ interface Props {
   colony: Colony;
   back?: () => void;
 }
-
-const LEARN_MORE_URL = `https://colony.gitbook.io/colony/manage-funds/unlock-token`;
 
 const UnlockTokenForm = ({
   colony: { isNativeTokenLocked, canUnlockNativeToken },
@@ -103,7 +103,7 @@ const UnlockTokenForm = ({
             <ExternalLink
               className={styles.learnMoreLink}
               text={{ id: 'text.learnMore' }}
-              href={LEARN_MORE_URL}
+              href={TOKEN_UNLOCK_INFO}
             />
           </div>
         </DialogSection>

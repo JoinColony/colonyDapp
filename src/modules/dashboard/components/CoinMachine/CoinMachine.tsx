@@ -20,7 +20,10 @@ import {
   useCoinMachineCurrentPeriodMaxUserPurchaseQuery,
   useCoinMachineTotalTokensQuery,
   useLoggedInUser,
+  useMetaColonyQuery,
 } from '~data/index';
+
+import { CM_LEARN_MORE, CM_GET_WHITELISTED } from '~externalUrls';
 
 import Chat from './Chat';
 import SaleStateWidget from './SaleStateWidget';
@@ -44,9 +47,9 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.buyTokens',
     defaultMessage: 'Buy {symbol}',
   },
-  learnMore: {
-    id: 'dashboard.CoinMachine.learnMore',
-    defaultMessage: 'Learn More',
+  getWhitelisted: {
+    id: 'dashboard.CoinMachine.getWhitelisted',
+    defaultMessage: 'How to get whitelisted',
   },
 });
 
@@ -56,13 +59,11 @@ type Props = {
 
 const displayName = 'dashboard.CoinMachine';
 
-const LEARN_MORE_LINK =
-  'https://colony.gitbook.io/colony/extensions/coin-machine';
-
 /*
  * @TEMP This is temporary while we get ready for the token sale
  */
 const DISABLE_CHAT_UTIL_SALE = false;
+const SHARE_ENABLED = true;
 
 const CoinMachine = ({
   colony: { colonyAddress, colonyName },
@@ -72,6 +73,7 @@ const CoinMachine = ({
     transactionHash: string;
   }>();
   const { walletAddress } = useLoggedInUser();
+  const { data: metaColonyData } = useMetaColonyQuery();
 
   const {
     data: extensionsData,
@@ -284,11 +286,19 @@ const CoinMachine = ({
         {...MSG.buyTokens}
         values={{ symbol: sellableToken?.symbol }}
       />
-      <ExternalLink
-        className={styles.learnMore}
-        text={{ id: 'text.learnMore' }}
-        href={LEARN_MORE_LINK}
-      />
+      {metaColonyData?.processedMetaColony?.colonyAddress === colonyAddress ? (
+        <ExternalLink
+          className={styles.learnMore}
+          text={MSG.getWhitelisted}
+          href={CM_GET_WHITELISTED}
+        />
+      ) : (
+        <ExternalLink
+          className={styles.learnMore}
+          text={{ id: 'text.learnMore' }}
+          href={CM_LEARN_MORE}
+        />
+      )}
     </div>,
   ];
 
@@ -307,6 +317,7 @@ const CoinMachine = ({
               purchaseToken={
                 saleTokensData?.coinMachineSaleTokens?.purchaseToken
               }
+              canShare={SHARE_ENABLED}
             />
           </div>
         )) || (

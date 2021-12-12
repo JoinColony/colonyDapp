@@ -47,6 +47,8 @@
     "label.password": "Password",
     "label.force": "Force",
     "label.banned": "Banned",
+    "label.loading": "Loading",
+    "label.waiting": "Waiting",
     "placeholder.email": "handle@domain.com",
     "placeholder.password": "Password",
 

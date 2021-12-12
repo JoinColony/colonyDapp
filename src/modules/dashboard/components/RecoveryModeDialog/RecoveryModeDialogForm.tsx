@@ -16,6 +16,8 @@ import { useTransformer } from '~utils/hooks';
 import { getAllUserRoles } from '../../../transformers';
 import { canEnterRecoveryMode } from '../../../users/checks';
 
+import { RECOVERY_HELP } from '~externalUrls';
+
 import { FormValues } from './RecoveryModeDialog';
 import styles from './RecoveryModeDialogForm.css';
 
@@ -52,8 +54,6 @@ interface Props {
   back: () => void;
   colony: Colony;
 }
-
-const RECOVERY_MODE_HELP_LINK = `https://help.colony.io/docs/en/how-to-turn-off-recovery-mode`;
 
 const RecoveryModeDialogForm = ({
   back,
@@ -102,7 +102,7 @@ const RecoveryModeDialogForm = ({
               ),
               a: (chunks) => (
                 <a
-                  href={RECOVERY_MODE_HELP_LINK}
+                  href={RECOVERY_HELP}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.link}
