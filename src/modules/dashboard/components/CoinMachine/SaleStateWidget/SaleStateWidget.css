@@ -48,6 +48,7 @@
 
 .text {
   margin-bottom: 22px;
+  padding-right: 50px;
   font-size: var(--size-normal);
   font-weight: var(--weight-normal);
   line-height: 18px;
@@ -62,6 +63,11 @@
   position: relative;
 }
 
+.footerSmall {
+  composes: footer;
+  margin-top: 25px;
+}
+
 .nextSale {
   position: absolute;
   left: 0;
@@ -72,4 +78,33 @@
 
 .buttonWrapper button {
   width: 160px;
+}
+
+.share {
+  /*
+   * @NOTE Negative margin to compensate for the buttons high top margin
+   * when interpolating this message
+   */
+  margin-bottom: -32px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-normal);
+  line-height: 18px;
+  color: var(--dark);
+}
+
+.share span {
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+/*
+ * @NOTE Overrides to make the twitter share widget properly aligned with the
+ * inline text
+ */
+.share div {
+  display: inline;
+}
+
+.share div div {
+  display: inline;
 }

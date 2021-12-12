@@ -63,6 +63,7 @@ const LEARN_MORE_LINK =
  * @TEMP This is temporary while we get ready for the token sale
  */
 const DISABLE_CHAT_UTIL_SALE = false;
+const SHARE_ENABLED = true;
 
 const CoinMachine = ({
   colony: { colonyAddress, colonyName },
@@ -307,6 +308,7 @@ const CoinMachine = ({
               purchaseToken={
                 saleTokensData?.coinMachineSaleTokens?.purchaseToken
               }
+              canShare={SHARE_ENABLED}
             />
           </div>
         )) || (
