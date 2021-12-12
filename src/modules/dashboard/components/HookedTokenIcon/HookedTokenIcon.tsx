@@ -9,7 +9,8 @@ import { Address } from '~types/index';
 import Icon from '~core/Icon';
 import { getBase64image } from '~utils/dataReader';
 
-import { TOKEN_LOGOS_REPO_URL, DEFAULT_NETWORK } from '~constants';
+import { DEFAULT_NETWORK } from '~constants';
+import { TOKEN_LOGOS_REPO_URL } from '~externalUrls';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 

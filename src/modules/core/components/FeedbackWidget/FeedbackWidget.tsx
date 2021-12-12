@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import ExternalLink from '~core/ExternalLink';
-import { FEEDBACK_LINK } from '~constants';
+import { FEEDBACK_LINK } from '~externalUrls';
 
 import styles from './FeedbackWidget.css';
 

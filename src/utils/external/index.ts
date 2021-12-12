@@ -1,7 +1,8 @@
 import { BigNumber, formatUnits } from 'ethers/utils';
 import { Network, ColonyVersion, releaseMap } from '@colony/colony-js';
 
-import { DEFAULT_NETWORK, NETWORK_RELEASES_URL } from '~constants';
+import { DEFAULT_NETWORK } from '~constants';
+import { NETWORK_RELEASES_URL } from '~externalUrls';
 
 interface EthUsdResponse {
   status: string;

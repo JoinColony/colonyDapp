@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl';
 import { ActionButton } from '~core/Button';
 import NavLink from '~core/NavLink';
 import ExternalLink from '~core/ExternalLink';
-import { FEEDBACK_LINK } from '~constants';
+import { FEEDBACK_LINK } from '~externalUrls';
 
 import { Colony } from '~data/index';
 import DropdownMenu, {

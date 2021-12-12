@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "paths": {
       "~constants": ["src/modules/constants.ts"],
+      "~externalUrls": ["src/modules/externalUrls.ts"],
       "~admin/*": ["src/modules/admin/components/*"],
       "~context/*": ["src/context/*"],
       "~core/*": ["src/modules/core/components/*"],
