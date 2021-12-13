@@ -22,7 +22,7 @@ const stakeValidationMSG = defineMessage({
   },
   reputation: {
     id: 'dashboard.ActionsPage.StakingValidationError.reputation',
-    defaultMessage: `The minimum reputation requirement to stake a motion in this team is {minimumReputation} points. You only have {userReputation} points and therefore do not meet the minimum Reputation requirement to be permitted to stake.`,
+    defaultMessage: `The minimum reputation required to stake in this team is {minimumReputation} points. When this motion was created you only had {userReputation} points, so you can't stake on this motion. If you now have more than {minimumReputation} Reputation points, you will be able to stake on future motions.`,
   },
   stakeMoreTokens: {
     id: 'dashboard.ActionsPage.StakingValidationError.stakeMore',
