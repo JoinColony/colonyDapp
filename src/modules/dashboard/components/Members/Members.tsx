@@ -282,7 +282,7 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
         banned: boolean;
       }) =>
         banned &&
-        bannedUserWalletAddress.toLowerCase() === walletAddress.toLowerCase(),
+        createAddress(bannedUserWalletAddress) === createAddress(walletAddress),
     );
     const domainRole = domainRolesArray.find(
       (rolesObject) =>
