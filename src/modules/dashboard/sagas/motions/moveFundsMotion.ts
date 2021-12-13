@@ -145,7 +145,7 @@ function* moveFundsMotion({
       methodName: 'createMotion',
       identifier: colonyAddress,
       params: [
-        fromDomainId,
+        ROOT_DOMAIN_ID,
         motionChildSkillIndex,
         AddressZero,
         encodedAction,
