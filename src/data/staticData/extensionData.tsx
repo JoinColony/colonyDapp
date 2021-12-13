@@ -450,6 +450,7 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup
           .number()
           .transform((value) => toFinite(value))
+          .positive()
           .required(),
         title: MSG.coinMachinePeriodLengthTitle,
         description: MSG.coinMachinePeriodLengthDescription,
@@ -463,7 +464,7 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup
           .number()
           .transform((value) => toFinite(value))
-          .integer()
+          .positive()
           .required(),
         title: MSG.coinMachineWindowSizeTitle,
         description: MSG.coinMachineWindowSizeDescription,
@@ -477,6 +478,7 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup
           .number()
           .transform((value) => toFinite(value))
+          .positive()
           .required(),
         title: MSG.coinMachineTargetPerPeriodTitle,
         description: MSG.coinMachineTargetPerPeriodDescription,
@@ -490,6 +492,7 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup
           .number()
           .transform((value) => toFinite(value))
+          .positive()
           .required(),
         title: MSG.coinMachineMaxPerPeriodTitle,
         description: MSG.coinMachineMaxPerPeriodDescription,
@@ -503,6 +506,7 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup
           .number()
           .transform((value) => toFinite(value))
+          .positive()
           .required()
           .max(100, () => MSG.votingReputationLessThan100Error),
         title: MSG.coinMachineUserLimitFractionTitle,
@@ -517,6 +521,7 @@ const extensions: { [key: string]: ExtensionData } = {
         validation: yup
           .number()
           .transform((value) => toFinite(value))
+          .min(0)
           .required(),
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
