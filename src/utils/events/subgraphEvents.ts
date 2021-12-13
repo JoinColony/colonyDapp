@@ -249,7 +249,7 @@ export const parseSubgraphEvent = ({
     topic: topicId(name),
     address,
     ...(blockNumber && { blockNumber }),
-    ...(timestamp && { timestamp: parseInt(timestamp, 10) }),
+    ...(timestamp && { timestamp: parseInt(timestamp, 10) * 1000 }),
     /*
      * Parse the normal values, and any specialized parsers we might have
      */

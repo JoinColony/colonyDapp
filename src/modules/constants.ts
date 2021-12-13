@@ -160,11 +160,4 @@ export const ALLDOMAINS_DOMAIN_SELECTION = {
   description: '',
 };
 
-export const TOKEN_LOGOS_REPO_URL = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains`;
-
-export const NETWORK_RELEASES_URL = `https://github.com/JoinColony/colonyNetwork/releases/tag`;
-
 export const SMALL_TOKEN_AMOUNT_FORMAT = '0.00000...';
-
-export const FEEDBACK_LINK =
-  'https://portal.productboard.com/colony/1-colony-portal/tabs/4-bugs';

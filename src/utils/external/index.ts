@@ -1,7 +1,8 @@
 import { BigNumber, formatUnits } from 'ethers/utils';
 import { Network, ColonyVersion, releaseMap } from '@colony/colony-js';
 
-import { DEFAULT_NETWORK, NETWORK_RELEASES_URL } from '~constants';
+import { DEFAULT_NETWORK } from '~constants';
+import { NETWORK_RELEASES, ETHERSCAN_CONVERSION_RATE } from '~externalUrls';
 
 interface EthUsdResponse {
   status: string;
@@ -28,9 +29,6 @@ interface BlockExplorerLinkProps {
 export const getEthToUsd = (ethValue: BigNumber): Promise<number | void> => {
   const ETH_USD_KEY = 'ethUsd';
   const ETH_USD_TIMESTAMP_KEY = 'ethUsdTimestamp';
-
-  const conversionRateEndpoint =
-    'https://api.etherscan.io/api?module=stats&action=ethprice';
 
   const cachedEthUsd = localStorage.getItem(ETH_USD_KEY) || null;
   const cachedEthUsdTimestamp =
@@ -63,7 +61,7 @@ export const getEthToUsd = (ethValue: BigNumber): Promise<number | void> => {
     }
   }
 
-  return fetch(conversionRateEndpoint)
+  return fetch(ETHERSCAN_CONVERSION_RATE)
     .then((response) => {
       if (!response.ok) {
         throw Error(response.statusText);
@@ -112,4 +110,4 @@ export const getBlockExplorerLink = ({
 };
 
 export const getNetworkRelaseLink = (version: ColonyVersion) =>
-  `${NETWORK_RELEASES_URL}/${releaseMap[version]}`;
+  `${NETWORK_RELEASES}/${releaseMap[version]}`;

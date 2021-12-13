@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { bigNumberify } from 'ethers/utils';
+import { Share } from 'react-twitter-widgets';
 
 import Decimal from 'decimal.js';
 import Heading from '~core/Heading';
@@ -24,6 +25,7 @@ import {
 import useSplitTime from '~utils/hooks/useSplitTime';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
+import { TOKEN_ACTIVATION_INFO } from '~externalUrls';
 
 import styles from './SaleStateWidget.css';
 
@@ -41,6 +43,7 @@ interface Props {
   purchaseToken?: TokenInfoQuery['tokenInfo'];
   colony: Colony;
   transactionHash: string;
+  canShare?: boolean;
 }
 
 const MSG = defineMessages({
@@ -90,11 +93,11 @@ const MSG = defineMessages({
   },
   loadingText: {
     id: 'dashboard.CoinMachine.SaleStateWidget.loadingText',
-    defaultMessage: 'Please don’t leave this screen.',
+    defaultMessage: `Please don't leave this screen.`,
   },
   loadingSubtext: {
     id: 'dashboard.CoinMachine.SaleStateWidget.loadingSubtext',
-    defaultMessage: 'We’re waiting for your transaction to be confirmed.',
+    defaultMessage: `We're waiting for your transaction to be confirmed.`,
   },
   transactionFailedTitle: {
     id: 'dashboard.CoinMachine.SaleStateWidget.transactionFailedTitle',
@@ -123,16 +126,11 @@ const MSG = defineMessages({
   },
   successText: {
     id: 'dashboard.CoinMachine.SaleStateWidget.successText',
-    defaultMessage:
-      'Congratulations! You have made a considerably wise purchase.',
-  },
-  successSubtext: {
-    id: 'dashboard.CoinMachine.SaleStateWidget.successSubtext',
-    defaultMessage: `Now {link} them so they're ready to use.`,
+    defaultMessage: `Congratulations! You have made a considerably wise purchase. Please {activateLink} your tokens so they're ready to use.`,
   },
   activate: {
     id: 'dashboard.CoinMachine.SaleStateWidget.activate',
-    defaultMessage: `**Activate**`,
+    defaultMessage: `activate`,
   },
   partialSuccessTitle: {
     id: 'dashboard.CoinMachine.SaleStateWidget.partialSuccessTitle',
@@ -144,17 +142,21 @@ const MSG = defineMessages({
   },
   partialSuccessText: {
     id: 'dashboard.CoinMachine.SaleStateWidget.partialSuccessText',
-    defaultMessage:
-      'Unfortunately, you didn’t get quite as many tokens as you wanted. 😢 ',
+    defaultMessage: `Unfortunately, you didn't get quite as many tokens as you wanted. 😢`,
   },
   partialSuccessSubtext: {
     id: 'dashboard.CoinMachine.SaleStateWidget.partialSuccessSubtext',
     defaultMessage: 'Better luck next time!',
   },
+  shareLabel: {
+    id: 'dashboard.CoinMachine.SaleStateWidget.shareLabel',
+    defaultMessage: `Now share the good news {shareButton}`,
+  },
+  shareMessage: {
+    id: 'dashboard.CoinMachine.SaleStateWidget.shareLabel',
+    defaultMessage: `Success! I just used @joincolony #CoinMachine to buy {amount} {tokenSymbol} from`,
+  },
 });
-
-const ACTIVATE_LINK =
-  'https://colony.gitbook.io/colony/key-concepts/token-activation';
 
 const SaleStateWidget = ({
   sellableToken,
@@ -162,10 +164,14 @@ const SaleStateWidget = ({
   timeLeftToNextSale,
   colony: { colonyAddress, colonyName },
   transactionHash,
+  canShare = false,
 }: Props) => {
   const [state, setState] = useState<SaleState | null>(SaleState.Loading);
   const [decimalAmount, setDecimalAmount] = useState<string>('0');
   const [cost, setCost] = useState<string>('0');
+  const { formatMessage } = useIntl();
+
+  const BUY_TOKENS_ROUTE = `/colony/${colonyName}/buy-tokens`;
 
   const showTimeCountdown =
     state === SaleState.PartialSuccess || state === SaleState.SaleFailed;
@@ -311,39 +317,81 @@ const SaleStateWidget = ({
         </div>
       </div>
       <div className={styles.text}>
-        <FormattedMessage {...MSG[`${state}Text`]} />
-      </div>
-      <div className={styles.text}>
         <FormattedMessage
-          {...MSG[`${state}Subtext`]}
+          {...MSG[`${state}Text`]}
           values={{
-            link: (
+            activateLink: (
               <ExternalLink
                 text={MSG.activate}
                 className={styles.blockExplorer}
-                href={ACTIVATE_LINK}
+                href={TOKEN_ACTIVATION_INFO}
               />
             ),
           }}
         />
       </div>
-      <div className={styles.footer}>
+      {MSG?.[`${state}Subtext`] && (
+        <div className={styles.text}>
+          <FormattedMessage {...MSG[`${state}Subtext`]} />
+        </div>
+      )}
+      {state === SaleState.Success && canShare && (
+        <div className={styles.share}>
+          <FormattedMessage
+            {...MSG.shareLabel}
+            values={{
+              shareButton: (
+                <span>
+                  <Share
+                    url={`${window.location.host}${BUY_TOKENS_ROUTE}`}
+                    options={{
+                      text: formatMessage(MSG.shareMessage, {
+                        amount: decimalAmount,
+                        tokenSymbol: `$${sellableToken?.symbol || '???'}`,
+                      }),
+                      dnt: true,
+                    }}
+                  />
+                </span>
+              ),
+            }}
+          />
+        </div>
+      )}
+      <div
+        className={
+          state === SaleState.TransactionFailed ||
+          state === SaleState.PartialSuccess
+            ? styles.footerSmall
+            : styles.footer
+        }
+      >
         {showTimeCountdown && timeLeftToNextSale > 0 ? (
           <div className={styles.nextSale}>
             <FormattedMessage {...MSG.nextSale} />
           </div>
         ) : null}
         <div className={styles.buttonWrapper}>
-          <Button
-            appearance={{
-              theme: showTimeCountdown ? 'pink' : 'primary',
-              size: 'large',
-            }}
-            loading={state === SaleState.Loading}
-            linkTo={`/colony/${colonyName}/buy-tokens/`}
-          >
-            {buttonText()}
-          </Button>
+          {state === SaleState.Loading ? (
+            <Button
+              text={{ id: 'label.waiting' }}
+              appearance={{
+                theme: 'primary',
+                size: 'large',
+              }}
+              loading
+            />
+          ) : (
+            <Button
+              appearance={{
+                theme: showTimeCountdown ? 'pink' : 'primary',
+                size: 'large',
+              }}
+              linkTo={BUY_TOKENS_ROUTE}
+            >
+              {buttonText()}
+            </Button>
+          )}
         </div>
       </div>
     </div>

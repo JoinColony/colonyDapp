@@ -12,6 +12,7 @@ import styles from './StepStart.css';
 import { useAutoLogin } from '~utils/autoLogin';
 import { SpinnerLoader } from '~core/Preloaders';
 import { DEFAULT_NETWORK_INFO } from '~constants';
+import { TERMS_AND_CONDITIONS } from '~externalUrls';
 
 const MSG = defineMessages({
   heading: {
@@ -80,10 +81,7 @@ type Props = {
 const StepStart = ({ nextStep, wizardValues, simplified = false }: Props) => {
   const attemptingAutoLogin = useAutoLogin();
   const tos = (
-    <ExternalLink
-      text={MSG.termsOfService}
-      href="https://colony.io/pdf/terms.pdf"
-    />
+    <ExternalLink text={MSG.termsOfService} href={TERMS_AND_CONDITIONS} />
   );
   return (
     <Form onSubmit={nextStep} initialValues={wizardValues}>

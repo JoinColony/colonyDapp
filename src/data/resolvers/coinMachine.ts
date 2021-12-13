@@ -3,7 +3,8 @@ import {
   getLogs,
   getBlockTime,
   CoinMachineClientV2,
-  TokenClient,
+  Extension,
+  getExtensionHash,
 } from '@colony/colony-js';
 import { Resolvers } from '@apollo/client';
 import { BigNumber, bigNumberify, BigNumberish } from 'ethers/utils';
@@ -14,10 +15,16 @@ import {
   SubgraphCoinMachinePeriodsQuery,
   SubgraphCoinMachinePeriodsQueryVariables,
   SubgraphCoinMachinePeriodsDocument,
+  SubgraphCoinMachineExtensionInstalledQuery,
+  SubgraphCoinMachineExtensionInstalledQueryVariables,
+  SubgraphCoinMachineExtensionInstalledDocument,
 } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { ExtendedLogDescription, parseSubgraphEvent } from '~utils/events';
-import { getCoinMachinePeriodPrice } from '~utils/contracts';
+import {
+  getCoinMachinePeriodPrice,
+  getCoinMachinePreDecayPeriodPrice,
+} from '~utils/contracts';
 import { ColonyAndExtensionsEvents } from '~types/colonyActions';
 
 import { getToken } from './token';
@@ -263,28 +270,34 @@ export const coinMachineResolvers = ({
           ClientType.CoinMachineClient,
           colonyAddress,
         );
-        const tokenClient = (await colonyManager.getClient(
-          ClientType.TokenClient,
-          colonyAddress,
-        )) as TokenClient;
+        const tokenAddress = await coinMachineClient.getToken();
+        const tokenClient = await colonyManager.getTokenClient(tokenAddress);
 
         const currentTokenBalance = await coinMachineClient.getTokenBalance();
 
+        /* eslint-disable no-useless-escape */
         const subgraphData = await apolloClient.query<
-          SubgraphCoinMachinePeriodsQuery,
-          SubgraphCoinMachinePeriodsQueryVariables
+          SubgraphCoinMachineExtensionInstalledQuery,
+          SubgraphCoinMachineExtensionInstalledQueryVariables
         >({
-          query: SubgraphCoinMachinePeriodsDocument,
+          query: SubgraphCoinMachineExtensionInstalledDocument,
           variables: {
-            colonyAddress: colonyAddress.toLowerCase(),
-            extensionAddress: coinMachineClient.address.toLowerCase(),
-            limit: 100,
+            /*
+             * @NOTE This is required since we have to filter by both extension
+             * name and colony address within the events arguments
+             *
+             * It's not pretty and sadly we don't have a better solution
+             */
+            argumentsFilter: `\"extensionId\":\"${getExtensionHash(
+              Extension.CoinMachine,
+            )}\",\"colony\":\"${colonyAddress.toLowerCase()}\"`,
           },
           fetchPolicy: 'network-only',
         });
+        /* eslint-enable no-useless-escape */
 
-        const [extensionInitialised] = (
-          subgraphData?.data?.extensionInitialisedEvents || []
+        const [extensionInstalled] = (
+          subgraphData?.data?.extensionInstalledEvents || []
         ).map(parseSubgraphEvent);
 
         /*
@@ -295,7 +308,7 @@ export const coinMachineResolvers = ({
           tokenClient,
           tokenClient.filters.Transfer(null, coinMachineClient.address, null),
           {
-            fromBlock: extensionInitialised?.blockNumber,
+            fromBlock: extensionInstalled?.blockNumber,
           },
         );
 
@@ -336,10 +349,37 @@ export const coinMachineResolvers = ({
           ClientType.CoinMachineClient,
           colonyAddress,
         )) as CoinMachineClientV2;
-        const tokenClient = (await colonyManager.getClient(
-          ClientType.TokenClient,
-          colonyAddress,
-        )) as TokenClient;
+
+        const currentBlock = await networkClient.provider.getBlock('latest');
+        const currentBlockTime = currentBlock.timestamp * 1000;
+
+        const tokenAddress = await coinMachineClient.getToken();
+        const tokenClient = await colonyManager.getTokenClient(tokenAddress);
+
+        /* eslint-disable no-useless-escape */
+        const extensionData = await apolloClient.query<
+          SubgraphCoinMachineExtensionInstalledQuery,
+          SubgraphCoinMachineExtensionInstalledQueryVariables
+        >({
+          query: SubgraphCoinMachineExtensionInstalledDocument,
+          variables: {
+            /*
+             * @NOTE This is required since we have to filter by both extension
+             * name and colony address within the events arguments
+             *
+             * It's not pretty and sadly we don't have a better solution
+             */
+            argumentsFilter: `\"extensionId\":\"${getExtensionHash(
+              Extension.CoinMachine,
+            )}\",\"colony\":\"${colonyAddress.toLowerCase()}\"`,
+          },
+          fetchPolicy: 'network-only',
+        });
+        /* eslint-enable no-useless-escape */
+
+        const [extensionInstalled] = (
+          extensionData?.data?.extensionInstalledEvents || []
+        ).map(parseSubgraphEvent);
 
         const subgraphData = await apolloClient.query<
           SubgraphCoinMachinePeriodsQuery,
@@ -349,15 +389,14 @@ export const coinMachineResolvers = ({
           variables: {
             colonyAddress: colonyAddress.toLowerCase(),
             extensionAddress: coinMachineClient.address.toLowerCase(),
+            periodsCreatedAfter: String(
+              extensionInstalled?.timestamp || currentBlockTime,
+            ),
             sortDirection: 'desc',
             limit,
           },
           fetchPolicy: 'network-only',
         });
-
-        const [extensionInitialised] = (
-          subgraphData?.data?.extensionInitialisedEvents || []
-        ).map(parseSubgraphEvent);
 
         /*
          * We use the `FromChain` suffix to make these events more easily
@@ -367,7 +406,7 @@ export const coinMachineResolvers = ({
           tokenClient,
           tokenClient.filters.Transfer(null, coinMachineClient.address, null),
           {
-            fromBlock: extensionInitialised?.blockNumber,
+            fromBlock: extensionInstalled?.blockNumber,
           },
         );
         /*
@@ -389,8 +428,7 @@ export const coinMachineResolvers = ({
         const availableTokens = await coinMachineClient.getTokenBalance();
         const targetPerPeriod = await coinMachineClient.getTargetPerPeriod();
         const windowSize = await coinMachineClient.getWindowSize();
-        const currentBlock = await networkClient.provider.getBlock('latest');
-        const currentBlockTime = currentBlock.timestamp * 1000;
+        const currentPeriodPrice = await coinMachineClient.getCurrentPrice();
 
         let latestPeriodStart = currentBlockTime;
         while (latestPeriodStart % periodLength.toNumber() !== 0) {
@@ -471,6 +509,7 @@ export const coinMachineResolvers = ({
          * To help with price evolution calculations
          */
         let previousPrice = bigNumberify(0);
+        let nextPrice = bigNumberify(0);
         /*
          * Merge both active and stale periods into one data source
          * This also adds a token availability value, based on replaying the
@@ -557,7 +596,7 @@ export const coinMachineResolvers = ({
               ({ saleEndedAt, tokensAvailable }) =>
                 parseInt(saleEndedAt, 10) <= currentBlockTime &&
                 parseInt(saleEndedAt, 10) >=
-                  (extensionInitialised.timestamp || 0) &&
+                  (extensionInstalled.timestamp || 1000) &&
                 bigNumberify(tokensAvailable).gt(0),
             )
             /*
@@ -576,18 +615,27 @@ export const coinMachineResolvers = ({
              * Calculate price evolution based on the existing active period prices
              */
             .map((period, periodIndex, periodArray) => {
+              // Skip first periods, until we find a period with a sale and we know a historical price
+
               let currentPrice = bigNumberify(period.price);
+              if (currentPrice.eq(0) && previousPrice.eq(0)) {
+                return period;
+              }
+
               /*
                * Current price is greater than 0, meaning it's already an active
-               * period, so we already got the correct price, not need to re-calculate it
+               * period, so we already got the correct price, no need to re-calculate it
+               * Set previous price to this value.
                */
-              if (bigNumberify(currentPrice).gt(0)) {
+              if (currentPrice.gt(0)) {
                 previousPrice = currentPrice;
                 return period;
               }
+
               /*
                * If there are no more tokens in the coin machine, the price doesn't
                * evolve anymore
+               * Previous price remains the same
                */
               if (bigNumberify(period.tokensAvailable).isZero()) {
                 return {
@@ -608,6 +656,8 @@ export const coinMachineResolvers = ({
                 previousPeriodTokensBought,
               );
 
+              previousPrice = currentPrice;
+
               return {
                 ...period,
                 price: currentPrice.toString(),
@@ -618,6 +668,58 @@ export const coinMachineResolvers = ({
              * ended sale period as the first entry in the table
              */
             .reverse()
+            /* We now run through the array again, and will fill in the price for periods before the first
+             * token was sold.
+             */
+            .map((period, index) => {
+              // Skip periods with known price
+              let currentPrice = bigNumberify(period.price);
+              /*
+               * @TODO While this works, we need the initial price that Coin Machine started with,
+               * and not the current coin machine prioce
+               */
+              if (currentPrice.isZero() && index === 0) {
+                nextPrice = getCoinMachinePreDecayPeriodPrice(
+                  windowSize.toNumber(),
+                  currentPeriodPrice,
+                );
+                return {
+                  ...period,
+                  price: nextPrice.toString(),
+                };
+              }
+              if (currentPrice.gt(0)) {
+                nextPrice = currentPrice;
+                return period;
+              }
+
+              /*
+               * If there are no more tokens in the coin machine, the price doesn't
+               * evolve anymore
+               * Nextprice remains the same
+               */
+              if (bigNumberify(period.tokensAvailable).isZero()) {
+                return {
+                  ...period,
+                  price: nextPrice.toString(),
+                };
+              }
+
+              /* The price in this period is the one that decays to nextPrice if
+               * no tokens are bought
+               */
+              currentPrice = getCoinMachinePreDecayPeriodPrice(
+                windowSize.toNumber(),
+                nextPrice,
+              );
+
+              nextPrice = currentPrice;
+
+              return {
+                ...period,
+                price: currentPrice.toString(),
+              };
+            })
         );
       } catch (error) {
         console.error(error);

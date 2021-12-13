@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import { bigNumberify, BigNumberish } from 'ethers/utils';
 import { Textfit } from 'react-textfit';
 
 import Numeral from '~core/Numeral';
@@ -16,17 +15,16 @@ const MSG = defineMessages({
 
 interface Props {
   tokenAmounts: PeriodTokensType;
-  tokensBought: BigNumberish;
 }
 
 const displayedName = `dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokensValue`;
 
-const RemainingTokensValue = ({ tokenAmounts, tokensBought }: Props) => {
-  const { maxPeriodTokens, decimals } = tokenAmounts;
+const RemainingTokensValue = ({ tokenAmounts }: Props) => {
+  const { maxPeriodTokens, decimals, soldPeriodTokens } = tokenAmounts;
 
   const boughtTokens = useMemo(
-    () => getFormattedTokenValue(tokensBought, decimals),
-    [tokensBought, decimals],
+    () => getFormattedTokenValue(soldPeriodTokens, decimals),
+    [soldPeriodTokens, decimals],
   );
 
   const totalTokens = useMemo(
@@ -43,7 +41,7 @@ const RemainingTokensValue = ({ tokenAmounts, tokensBought }: Props) => {
     return combinedStringLength.length > maxCharactersOnOneLine;
   }, [totalTokens, boughtTokens]);
 
-  if (bigNumberify(tokensBought).gte(maxPeriodTokens)) {
+  if (soldPeriodTokens.gte(maxPeriodTokens)) {
     return <FormattedMessage {...MSG.soldOut} />;
   }
 

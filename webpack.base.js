@@ -38,6 +38,7 @@ const config = {
       {},
       {
         '~constants': path.resolve(__dirname, 'src/modules/constants'),
+        '~externalUrls': path.resolve(__dirname, 'src/modules/externalUrls'),
         '~context': path.resolve(__dirname, 'src/context'),
         '~lib': path.resolve(__dirname, 'src/lib'),
         '~data': path.resolve(__dirname, 'src/data'),

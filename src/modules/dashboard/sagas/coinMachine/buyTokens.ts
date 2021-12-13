@@ -217,6 +217,7 @@ function* buyTokens({
         colonyAddress: colonyAddress.toLowerCase(),
         extensionAddress: coinMachineClient.address.toLowerCase(),
         limit: 1,
+        periodsCreatedAfter: '1000',
       },
       fetchPolicy: 'network-only',
     });

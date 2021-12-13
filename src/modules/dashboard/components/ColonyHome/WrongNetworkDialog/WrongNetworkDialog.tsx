@@ -7,6 +7,8 @@ import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
 import Heading from '~core/Heading';
 
+import { WALLET_CONNECT_XDAI } from '~externalUrls';
+
 import styles from './WrongNetworkDialog.css';
 
 const MSG = defineMessages({
@@ -21,9 +23,6 @@ const MSG = defineMessages({
 });
 
 const displayName = 'dashboard.ColonyHome.WrongNetworkDialog';
-
-const WRONG_NETWORK_XDAI_HELP_LINK =
-  'https://colony.gitbook.io/colony/get-started/connect-metamask-to-xdai';
 
 const WrongNetworkDialog = ({ cancel }: DialogProps) => {
   const networkName = NETWORK_DATA[process.env.NETWORK || DEFAULT_NETWORK].name;
@@ -47,7 +46,7 @@ const WrongNetworkDialog = ({ cancel }: DialogProps) => {
                 <>
                   {process.env.NETWORK === Network.Xdai ||
                     (process.env.NETWORK === Network.XdaiFork && (
-                      <ExternalLink href={WRONG_NETWORK_XDAI_HELP_LINK}>
+                      <ExternalLink href={WALLET_CONNECT_XDAI}>
                         {chunks}
                       </ExternalLink>
                     ))}

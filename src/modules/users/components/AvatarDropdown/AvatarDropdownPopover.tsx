@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl';
 import { ActionButton } from '~core/Button';
 import NavLink from '~core/NavLink';
 import ExternalLink from '~core/ExternalLink';
-import { FEEDBACK_LINK } from '~constants';
+import { FEEDBACK, HELP } from '~externalUrls';
 
 import { Colony } from '~data/index';
 import DropdownMenu, {
@@ -122,14 +122,14 @@ const AvatarDropdownPopover = ({
     <DropdownMenuSection separator>
       <DropdownMenuItem>
         <ExternalLink
-          href={FEEDBACK_LINK}
+          href={FEEDBACK}
           text={MSG.reportBugs}
           className={styles.externalLink}
         />
       </DropdownMenuItem>
       <DropdownMenuItem>
         <ExternalLink
-          href="https://colony.gitbook.io/colony"
+          href={HELP}
           text={MSG.helpCenter}
           className={styles.externalLink}
         />

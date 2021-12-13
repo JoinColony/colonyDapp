@@ -86,7 +86,7 @@ const GetWhitelisted = ({ colonyAddress, userStatus }: Props) => {
     if (!userStatus || !whitelistPolicies || loadingWhitelistPolicies) {
       return;
     }
-    if (signatureRequired) {
+    if (!isKYCRequired && signatureRequired) {
       openDialog();
     }
   }, [

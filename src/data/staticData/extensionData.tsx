@@ -15,6 +15,7 @@ import { Colony } from '~data/index';
 import { getBlockExplorerLink } from '~utils/external';
 import { DEFAULT_NETWORK_INFO } from '~constants';
 import { Address, WhitelistPolicy } from '~types/index';
+import { CM_BLOG_POST, CM_GOOGLE_SHEET, CM_DESCRIPTION } from '~externalUrls';
 
 export interface ExtensionBodyProps {
   colony: Colony;
@@ -88,11 +89,6 @@ const oneTransactionPaymentMessages = {
     defaultMessage: 'Pay a single account one type of token.',
   },
 };
-
-const COIN_MACHINE_BLOG_POST_LINK = `https://blog.colony.io/introducing-coin-machine/`;
-const COIN_MACHINE_GOOGLE_SHEET_LINK = `https://docs.google.com/spreadsheets/d/1ZCuFcwqI4S6ZK5OwTl1yN7AK8mjv5d_V3g-_kMen01Y/edit#gid=2013814210`;
-// to add a more detailed link
-const COIN_MACHINE_DESCRIPTION_LINK = 'https://colony.gitbook.io/colony/';
 
 const coinMachineMessages = {
   coinMachineName: {
@@ -386,15 +382,15 @@ const extensions: { [key: string]: ExtensionData } = {
     descriptionLinks: [
       <ExternalLink
         text={MSG.coinMachineDescriptionBlogPostLink}
-        href={COIN_MACHINE_BLOG_POST_LINK}
+        href={CM_BLOG_POST}
       />,
       <ExternalLink
         text={MSG.coinMachineDescriptionGoogleSheetLink}
-        href={COIN_MACHINE_GOOGLE_SHEET_LINK}
+        href={CM_GOOGLE_SHEET}
       />,
       <ExternalLink
         text={MSG.coinMachineDescriptionHereLink}
-        href={COIN_MACHINE_DESCRIPTION_LINK}
+        href={CM_DESCRIPTION}
       />,
     ],
     currentVersion: 1,
