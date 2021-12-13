@@ -129,7 +129,10 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
   } = useColonyMembersWithReputationQuery({
     variables: {
       colonyAddress,
-      domainId: currentDomainId,
+      domainId:
+        currentDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID
+          ? currentDomainId
+          : ROOT_DOMAIN_ID,
     },
   });
 
@@ -158,11 +161,17 @@ const Members = ({ colony: { colonyAddress }, colony, bannedUsers }: Props) => {
    */
   const skelethonUsers = useMemo(() => {
     let displayMembers =
-      allMembers?.subscribedUsers.map(
-        ({ profile: { walletAddress } }) => walletAddress,
+      membersWithReputation?.colonyMembersWithReputation?.map((walletAddress) =>
+        createAddress(walletAddress),
       ) || [];
-    if (currentDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID) {
-      displayMembers = membersWithReputation?.colonyMembersWithReputation || [];
+    if (currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
+      const membersWithoutReputation =
+        allMembers?.subscribedUsers.map(({ profile: { walletAddress } }) =>
+          createAddress(walletAddress),
+        ) || [];
+      displayMembers = [
+        ...new Set([...displayMembers, ...membersWithoutReputation]),
+      ];
     }
 
     return displayMembers.map((walletAddress) => ({
