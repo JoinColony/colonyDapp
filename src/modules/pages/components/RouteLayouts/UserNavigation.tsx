@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import Icon from '~core/Icon';
 import MaskedAddress from '~core/MaskedAddress';
@@ -56,6 +57,7 @@ const UserNavigation = () => {
   const { colonyName } = useParams<{
     colonyName: string;
   }>();
+  const dispatch = useDispatch();
 
   const { data: colonyData } = useColonyFromNameQuery({
     variables: { name: colonyName, address: '' },
@@ -99,6 +101,12 @@ const UserNavigation = () => {
   const { type: lastWalletType, address: lastWalletAddress } = getLastWallet();
   const attemptingAutoLogin = useAutoLogin();
   const previousWalletConnected = lastWalletType && lastWalletAddress;
+
+  useEffect(() => {
+    if (!userDataLoading && userLock) {
+      dispatch({ type: 'USER_CONNECTED', payload: { isUserConnected: true } });
+    }
+  }, [userDataLoading, userLock]);
 
   return (
     <div className={styles.main}>
