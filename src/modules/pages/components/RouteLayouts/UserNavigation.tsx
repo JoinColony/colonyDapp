@@ -106,7 +106,7 @@ const UserNavigation = () => {
     if (!userDataLoading && userLock) {
       dispatch({ type: 'USER_CONNECTED', payload: { isUserConnected: true } });
     }
-  }, [userDataLoading, userLock]);
+  }, [userDataLoading, userLock, dispatch]);
 
   return (
     <div className={styles.main}>

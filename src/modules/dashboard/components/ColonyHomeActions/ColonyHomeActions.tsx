@@ -64,7 +64,10 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
 
   const [isLoadingUser, setIsLoadingUser] = useState<boolean>(!ethereal);
 
-  const { isVotingExtensionEnabled } = useEnabledExtensions({
+  const {
+    isVotingExtensionEnabled,
+    isLoadingExtensions,
+  } = useEnabledExtensions({
     colonyAddress: colony.colonyAddress,
   });
 
@@ -238,11 +241,12 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
   const hasRegisteredProfile = !!username && !ethereal;
   const isNetworkAllowed = checkIfNetworkIsAllowed(networkId);
   const mustUpgrade = colonyMustBeUpgraded(colony, networkVersion as string);
+  const isLoadingData = isLoadingExtensions || isLoadingUser;
 
   return (
     <>
-      {isLoadingUser && <SpinnerLoader appearance={{ size: 'medium' }} />}
-      {!isLoadingUser && (
+      {isLoadingData && <SpinnerLoader appearance={{ size: 'medium' }} />}
+      {!isLoadingData && (
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.newAction}
