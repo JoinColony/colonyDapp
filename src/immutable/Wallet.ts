@@ -15,6 +15,7 @@ export enum WalletMethod {
 export interface WalletProps {
   currentAddress?: Address;
   isLoading?: boolean;
+  isUserConnected?: boolean;
   walletType?: WalletMethod;
 }
 
@@ -23,6 +24,7 @@ export type WalletType = Readonly<WalletProps>;
 const defaultValues: DefaultValues<WalletProps> = {
   currentAddress: undefined,
   isLoading: false,
+  isUserConnected: false,
   walletType: WalletMethod.MetaMask,
 };
 
