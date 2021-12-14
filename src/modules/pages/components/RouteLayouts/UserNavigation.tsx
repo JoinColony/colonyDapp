@@ -103,7 +103,7 @@ const UserNavigation = () => {
   const previousWalletConnected = lastWalletType && lastWalletAddress;
 
   useEffect(() => {
-    if (!userDataLoading && userLock) {
+    if (!userDataLoading) {
       dispatch({ type: 'USER_CONNECTED', payload: { isUserConnected: true } });
     }
   }, [userDataLoading, userLock, dispatch]);
