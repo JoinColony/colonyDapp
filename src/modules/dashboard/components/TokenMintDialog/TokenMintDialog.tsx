@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
+import toFinite from 'lodash/toFinite';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -45,6 +46,7 @@ const validationSchema = yup.object().shape({
   annotation: yup.string().max(4000),
   mintAmount: yup
     .number()
+    .transform((value) => toFinite(value))
     .required(() => MSG.errorAmountRequired)
     .moreThan(0, () => MSG.errorAmountMin),
 });

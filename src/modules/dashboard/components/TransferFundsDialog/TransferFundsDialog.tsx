@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import toFinite from 'lodash/toFinite';
 
 import { pipe, mapPayload, withMeta } from '~utils/actions';
 import { Address } from '~types/index';
@@ -84,6 +85,7 @@ const TransferFundsDialog = ({
     toDomain: yup.number().required(),
     amount: yup
       .number()
+      .transform((value) => toFinite(value))
       .required()
       .moreThan(0, () => MSG.amountZero),
     tokenAddress: yup.string().address().required(),

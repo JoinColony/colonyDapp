@@ -5,6 +5,7 @@ import { FormikProps } from 'formik';
 import moveDecimal from 'move-decimal-point';
 import * as yup from 'yup';
 import Decimal from 'decimal.js';
+import toFinite from 'lodash/toFinite';
 
 import Button from '~core/Button';
 import { ActionForm, Input } from '~core/Fields';
@@ -53,7 +54,11 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object({
-  amount: yup.number().required().moreThan(0),
+  amount: yup
+    .number()
+    .transform((value) => toFinite(value))
+    .required()
+    .moreThan(0),
 });
 
 type FormValues = {
@@ -242,7 +247,7 @@ const ChangeTokenStateForm = ({
               disabled={
                 !isValid ||
                 values.amount === undefined ||
-                new Decimal(unformattedTokenBalance).lt(values.amount || 0)
+                new Decimal(unformattedTokenBalance).lt(toFinite(values.amount))
               }
             />
           </div>

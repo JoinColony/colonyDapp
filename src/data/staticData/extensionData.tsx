@@ -7,6 +7,7 @@ import {
 import { ColonyRole, Extension } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 import * as yup from 'yup';
+import toFinite from 'lodash/toFinite';
 
 import Whitelist from '~dashboard/Whitelist';
 import { CustomRadioProps } from '~core/Fields';
@@ -446,7 +447,11 @@ const extensions: { [key: string]: ExtensionData } = {
     initializationParams: [
       {
         paramName: 'periodLength',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .positive()
+          .required(),
         title: MSG.coinMachinePeriodLengthTitle,
         description: MSG.coinMachinePeriodLengthDescription,
         defaultValue: 1,
@@ -456,7 +461,11 @@ const extensions: { [key: string]: ExtensionData } = {
       },
       {
         paramName: 'windowSize',
-        validation: yup.number().integer().required(),
+        validation: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .positive()
+          .required(),
         title: MSG.coinMachineWindowSizeTitle,
         description: MSG.coinMachineWindowSizeDescription,
         defaultValue: 24,
@@ -466,7 +475,11 @@ const extensions: { [key: string]: ExtensionData } = {
       },
       {
         paramName: 'targetPerPeriod',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .positive()
+          .required(),
         title: MSG.coinMachineTargetPerPeriodTitle,
         description: MSG.coinMachineTargetPerPeriodDescription,
         defaultValue: 200000,
@@ -476,7 +489,11 @@ const extensions: { [key: string]: ExtensionData } = {
       },
       {
         paramName: 'maxPerPeriod',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .positive()
+          .required(),
         title: MSG.coinMachineMaxPerPeriodTitle,
         description: MSG.coinMachineMaxPerPeriodDescription,
         defaultValue: 400000,
@@ -488,6 +505,8 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'userLimitFraction',
         validation: yup
           .number()
+          .transform((value) => toFinite(value))
+          .positive()
           .required()
           .max(100, () => MSG.votingReputationLessThan100Error),
         title: MSG.coinMachineUserLimitFractionTitle,
@@ -499,7 +518,11 @@ const extensions: { [key: string]: ExtensionData } = {
       },
       {
         paramName: 'startingPrice',
-        validation: yup.number().required(),
+        validation: yup
+          .number()
+          .transform((value) => toFinite(value))
+          .min(0)
+          .required(),
         title: MSG.coinMachineStartingPriceTitle,
         description: MSG.coinMachineStartingPriceDescription,
         defaultValue: 0.1,
@@ -529,6 +552,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'totalStakeFraction',
         validation: yup
           .number()
+          .transform((value) => toFinite(value))
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(50, () => MSG.votingReputationLessThan50Error),
@@ -542,6 +566,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'voterRewardFraction',
         validation: yup
           .number()
+          .transform((value) => toFinite(value))
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(50, () => MSG.votingReputationLessThan50Error),
@@ -555,6 +580,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'userMinStakeFraction',
         validation: yup
           .number()
+          .transform((value) => toFinite(value))
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(100, () => MSG.votingReputationLessThan100Error),
@@ -568,6 +594,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'maxVoteFraction',
         validation: yup
           .number()
+          .transform((value) => toFinite(value))
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(100, () => MSG.votingReputationLessThan100Error),
@@ -581,6 +608,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'stakePeriod',
         validation: yup
           .number()
+          .transform((value) => toFinite(value))
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
@@ -594,6 +622,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'submitPeriod',
         validation: yup
           .number()
+          .transform((value) => toFinite(value))
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
@@ -607,6 +636,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'revealPeriod',
         validation: yup
           .number()
+          .transform((value) => toFinite(value))
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),
@@ -620,6 +650,7 @@ const extensions: { [key: string]: ExtensionData } = {
         paramName: 'escalationPeriod',
         validation: yup
           .number()
+          .transform((value) => toFinite(value))
           .positive()
           .required(() => MSG.votingReputationRequiredError)
           .max(8760, () => MSG.votingReputationLessThan1YearError),

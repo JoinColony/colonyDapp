@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
+import toFinite from 'lodash/toFinite';
 
 import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
@@ -79,6 +80,7 @@ const CreatePaymentDialog = ({
     }),
     amount: yup
       .number()
+      .transform((value) => toFinite(value))
       .required()
       .moreThan(0, () => MSG.amountZero),
     tokenAddress: yup.string().address().required(),
