@@ -62,12 +62,6 @@ type Props = {
   simplified?: boolean;
 } & WizardProps<FormValues>;
 
-interface State {
-  isLoading: boolean;
-  isValid: boolean;
-  metamaskError: string | null;
-}
-
 const displayName = 'users.ConnectWalletWizard.StepMetaMask';
 
 const MetaMask = ({
