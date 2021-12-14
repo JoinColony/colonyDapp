@@ -5,3 +5,5 @@ export const displayName: string;
 export const username: string;
 export const address: string;
 export const reputationSection: string;
+export const stateHasReputation: string;
+export const stateReputationLoaded: string;
