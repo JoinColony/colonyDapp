@@ -630,6 +630,7 @@ export type QueryTokensArgs = {
 
 export type QueryTransactionMessagesArgs = {
   transactionHash: Scalars['String'];
+  limit?: Maybe<Scalars['Int']>;
 };
 
 
@@ -743,6 +744,7 @@ export type SubscriptionTokenBoughtEventsArgs = {
 
 export type SubscriptionTransactionMessagesArgs = {
   transactionHash: Scalars['String'];
+  limit?: Maybe<Scalars['Int']>;
 };
 
 
@@ -2080,6 +2082,7 @@ export type CoinMachineSalePeriodsQuery = { coinMachineSalePeriods: Pick<SalePer
 
 export type TransactionMessagesQueryVariables = Exact<{
   transactionHash: Scalars['String'];
+  limit?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -2845,6 +2848,7 @@ export type CommentCountSubscription = { transactionMessagesCount: { colonyTrans
 
 export type CommentsSubscriptionVariables = Exact<{
   transactionHash: Scalars['String'];
+  limit?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -5526,8 +5530,8 @@ export type CoinMachineSalePeriodsQueryHookResult = ReturnType<typeof useCoinMac
 export type CoinMachineSalePeriodsLazyQueryHookResult = ReturnType<typeof useCoinMachineSalePeriodsLazyQuery>;
 export type CoinMachineSalePeriodsQueryResult = Apollo.QueryResult<CoinMachineSalePeriodsQuery, CoinMachineSalePeriodsQueryVariables>;
 export const TransactionMessagesDocument = gql`
-    query TransactionMessages($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
+    query TransactionMessages($transactionHash: String!, $limit: Int = 1000) {
+  transactionMessages(transactionHash: $transactionHash, limit: $limit) {
     transactionHash
     messages {
       ...TransactionMessage
@@ -5549,6 +5553,7 @@ export const TransactionMessagesDocument = gql`
  * const { data, loading, error } = useTransactionMessagesQuery({
  *   variables: {
  *      transactionHash: // value for 'transactionHash'
+ *      limit: // value for 'limit'
  *   },
  * });
  */
@@ -7928,8 +7933,8 @@ export function useCommentCountSubscription(baseOptions?: Apollo.SubscriptionHoo
 export type CommentCountSubscriptionHookResult = ReturnType<typeof useCommentCountSubscription>;
 export type CommentCountSubscriptionResult = Apollo.SubscriptionResult<CommentCountSubscription>;
 export const CommentsDocument = gql`
-    subscription Comments($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
+    subscription Comments($transactionHash: String!, $limit: Int = 1000) {
+  transactionMessages(transactionHash: $transactionHash, limit: $limit) {
     transactionHash
     messages {
       ...TransactionMessage
@@ -7951,6 +7956,7 @@ export const CommentsDocument = gql`
  * const { data, loading, error } = useCommentsSubscription({
  *   variables: {
  *      transactionHash: // value for 'transactionHash'
+ *      limit: // value for 'limit'
  *   },
  * });
  */

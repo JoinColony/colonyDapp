@@ -59,10 +59,7 @@ type Props = {
 
 const displayName = 'dashboard.CoinMachine';
 
-/*
- * @TEMP This is temporary while we get ready for the token sale
- */
-const DISABLE_CHAT_UTIL_SALE = false;
+const DISABLE_CHAT = false;
 const SHARE_ENABLED = true;
 
 const CoinMachine = ({
@@ -372,7 +369,8 @@ const CoinMachine = ({
           <Chat
             colony={colony}
             transactionHash={coinMachineExtension.address}
-            disabled={DISABLE_CHAT_UTIL_SALE}
+            disabled={DISABLE_CHAT}
+            limit={100}
           />
         </div>
       </div>

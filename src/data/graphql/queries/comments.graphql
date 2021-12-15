@@ -5,8 +5,8 @@
 # generates the hooks)
 #
 
-query TransactionMessages($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
+query TransactionMessages($transactionHash: String!, $limit: Int = 1000) {
+  transactionMessages(transactionHash: $transactionHash, limit: $limit) {
     transactionHash
     messages {
     	...TransactionMessage
