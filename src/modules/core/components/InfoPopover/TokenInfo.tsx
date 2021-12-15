@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { addToken } from '@purser/metamask/lib-esm/helpers';
+import { AddressZero } from 'ethers/constants';
 
 import CopyableAddress from '~core/CopyableAddress';
 import TokenLink from '~core/TokenLink';
+import Button from '~core/Button';
+
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyToken } from '~data/index';
 import { DEFAULT_NETWORK_INFO } from '~constants';
@@ -18,6 +22,10 @@ const MSG = defineMessages({
     id: 'InfoPopover.TokenInfoPopover.TokenInfo.viewOnEtherscan',
     defaultMessage: 'View on {blockExplorerName}',
   },
+  addToWallet: {
+    id: 'InfoPopover.TokenInfoPopover.TokenInfo.addToWallet',
+    defaultMessage: 'Add token to Metamask',
+  },
 });
 
 interface Props {
@@ -28,7 +36,18 @@ interface Props {
 const displayName = 'InfoPopover.TokenInfoPopover.TokenInfo';
 
 const TokenInfo = ({ token, isTokenNative }: Props) => {
-  const { name, symbol, address } = token;
+  const { name, symbol, address, decimals } = token;
+
+  const handleAddAssetToMetamask = useCallback(
+    () =>
+      addToken({
+        address,
+        symbol,
+        decimals,
+      }),
+    [address, symbol, decimals],
+  );
+
   return (
     <div className={styles.main}>
       <div className={styles.section}>
@@ -65,6 +84,15 @@ const TokenInfo = ({ token, isTokenNative }: Props) => {
             blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
           }}
         />
+        {address !== AddressZero && (
+          <span className={styles.addToWallet}>
+            <Button
+              appearance={{ theme: 'blue' }}
+              text={MSG.addToWallet}
+              onClick={handleAddAssetToMetamask}
+            />
+          </span>
+        )}
       </div>
     </div>
   );

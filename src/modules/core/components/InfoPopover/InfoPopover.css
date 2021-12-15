@@ -106,3 +106,7 @@
   width: 100%;
   overflow: hidden;
 }
+
+.addToWallet {
+  float: right;
+}

@@ -10,3 +10,4 @@ export const nativeTokenMessage: string;
 export const etherscanLink: string;
 export const container: string;
 export const textContainer: string;
+export const addToWallet: string;
