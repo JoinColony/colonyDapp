@@ -72,6 +72,7 @@ const MotionDomainSelect = ({
       initialValues={{
         motionDomainId: String(initialSelectedDomain),
       }}
+      enableReinitialize
       onSubmit={() => {}}
     >
       <div className={styles.main}>
