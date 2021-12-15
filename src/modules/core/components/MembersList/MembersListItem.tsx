@@ -83,8 +83,8 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
       <div
         className={getMainClasses({}, styles, {
           hasCallbackFn: !!onRowClick,
-          hasReputation: !!showUserReputation,
-          reputationLoaded: !!reputationLoaded,
+          hasReputation: showUserReputation,
+          reputationLoaded,
         })}
         onClick={onRowClick ? handleRowClick : undefined}
         onKeyDown={onRowClick ? handleRowKeydown : undefined}

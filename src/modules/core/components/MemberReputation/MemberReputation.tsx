@@ -63,29 +63,26 @@ const MemberReputation = ({
   );
 
   useEffect(() => {
-    if (userReputationData) {
-      onReputationLoaded(true);
-    } else {
-      onReputationLoaded(false);
-    }
+    onReputationLoaded(!!userReputationData);
   }, [userReputationData, onReputationLoaded]);
 
   return (
     <div>
-      {userPercentageReputation && (
-        <Icon
-          name="star"
-          appearance={{ size: 'extraTiny' }}
-          className={styles.icon}
-          title={
-            userPercentageReputation
-              ? MSG.starReputationTitle
-              : MSG.starNoReputationTitle
-          }
-          titleValues={{
-            reputation: userPercentageReputation,
-          }}
-        />
+      <Icon
+        name="star"
+        appearance={{ size: 'extraTiny' }}
+        className={styles.icon}
+        title={
+          userPercentageReputation
+            ? MSG.starReputationTitle
+            : MSG.starNoReputationTitle
+        }
+        titleValues={{
+          reputation: userPercentageReputation,
+        }}
+      />
+      {!userPercentageReputation && (
+        <div className={styles.reputation}>— %</div>
       )}
       {userPercentageReputation === ZeroValue.NearZero && (
         <div className={styles.reputation}>{userPercentageReputation}</div>
