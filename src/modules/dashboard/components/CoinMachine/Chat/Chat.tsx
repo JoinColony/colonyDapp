@@ -49,6 +49,7 @@ interface Props {
   colony: Colony;
   transactionHash: string;
   disabled?: boolean;
+  limit?: number;
 }
 
 const displayName = 'dashboard.CoinMachine.Chat';
@@ -58,6 +59,7 @@ const Chat = ({
   colony: { colonyAddress },
   transactionHash,
   disabled,
+  limit = 100,
 }: Props) => {
   const scrollElmRef = useRef<HTMLDivElement | null>(null);
 
@@ -109,7 +111,7 @@ const Chat = ({
   }, [scrollComments]);
 
   const { data, loading } = useCommentsSubscription({
-    variables: { transactionHash },
+    variables: { transactionHash, limit },
   });
 
   /*
@@ -119,8 +121,12 @@ const Chat = ({
 
   const filteredComments = useMemo(() => {
     const comments = data?.transactionMessages?.messages || [];
-    return commentTransformer(comments, walletAddress, canAdministerComments);
-  }, [canAdministerComments, data, walletAddress]);
+    return commentTransformer(
+      comments.slice(comments.length - limit),
+      walletAddress,
+      canAdministerComments,
+    );
+  }, [canAdministerComments, data, limit, walletAddress]);
 
   if (loading || loadingCoinMachineWhitelistState || userStatusLoading) {
     return (

@@ -7,8 +7,8 @@ subscription CommentCount($colonyAddress: String!) {
   }
 }
 
-subscription Comments($transactionHash: String!) {
-  transactionMessages(transactionHash: $transactionHash) {
+subscription Comments($transactionHash: String!, $limit: Int = 100) {
+  transactionMessages(transactionHash: $transactionHash, limit: $limit) {
     transactionHash
     messages {
     	...TransactionMessage
