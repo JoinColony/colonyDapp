@@ -6,6 +6,7 @@ import { FormikProps } from 'formik';
 import { AddressZero } from 'ethers/constants';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import Decimal from 'decimal.js';
+import toFinite from 'lodash/toFinite';
 
 import Heading from '~core/Heading';
 import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
@@ -119,6 +120,7 @@ const validationSchema = (userBalance: string, tokenDecimals: number) => {
 
   let amountFieldValidation = yup
     .number()
+    .transform((value) => toFinite(value))
     .moreThan(0)
     .max(
       uncappedUserBalance.toNumber(),
@@ -199,7 +201,7 @@ const BuyTokens = ({
 
   const getFormattedCost = useCallback(
     (amount) => {
-      const decimalCost = new Decimal(amount)
+      const decimalCost = new Decimal(toFinite(amount))
         .times(salePriceData?.coinMachineCurrentPeriodPrice || '0')
         .toFixed(0, Decimal.ROUND_HALF_UP);
 
@@ -507,7 +509,7 @@ const BuyTokens = ({
                                  * and that will try to fetch the balance for, which, obviously, will fail
                                  */
                                 values.amount
-                                  ? parseInt(values.amount, 10) *
+                                  ? toFinite(values.amount) *
                                     parseFloat(currentSalePrice)
                                   : '0'
                               }
@@ -538,7 +540,7 @@ const BuyTokens = ({
                         globalDisable ||
                         isSoldOut ||
                         !isValid ||
-                        parseFloat(values.amount) <= 0
+                        toFinite(values.amount) <= 0
                       }
                     />
                   )}
