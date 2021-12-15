@@ -44,7 +44,7 @@ const ColonyEvents = ({
 
   const [eventsSort, setEventsSort] = useState<string>(SortOptions.NEWEST);
   const [dataPage, setDataPage] = useState<number>(1);
-  const [streamedEvents, setstreamedEvents] = useState<
+  const [streamedEvents, setStreamedEvents] = useState<
     SubgraphEventsSubscription['events']
   >([]);
 
@@ -65,9 +65,8 @@ const ColonyEvents = ({
       sortDirection: 'desc',
     },
     onSubscriptionData: ({ subscriptionData: { data: newSubscriptionData } }) =>
-      setstreamedEvents([
-        ...streamedEvents,
-        ...(newSubscriptionData?.events || []),
+      setStreamedEvents([
+        ...new Set([...streamedEvents, ...(newSubscriptionData?.events || [])]),
       ]),
   });
 
