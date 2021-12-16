@@ -185,7 +185,12 @@ const CoinMachine = ({
   ]);
 
   const totalTokens = useMemo(() => {
-    if (!saleTokensData || !totalTokensData || !hasSaleStarted) {
+    if (
+      !saleTokensData ||
+      !totalTokensData ||
+      !totalTokensData.coinMachineTotalTokens ||
+      !hasSaleStarted
+    ) {
       return undefined;
     }
     return {
