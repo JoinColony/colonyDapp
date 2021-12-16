@@ -16,7 +16,7 @@ interface Props {
 const MSG = defineMessages({
   title: {
     id: 'dashboard.UnclaimedTransfers.title',
-    defaultMessage: 'Incoming funds',
+    defaultMessage: 'Incoming funds for {colony}',
   },
   loadingData: {
     id: 'dashboard.UnclaimedTransfers.title',
@@ -24,9 +24,9 @@ const MSG = defineMessages({
   },
 });
 
-const UnclaimedTransfers = ({ colony: { colonyAddress } }: Props) => {
+const UnclaimedTransfers = ({ colony }: Props) => {
   const { data, error, loading } = useColonyTransfersQuery({
-    variables: { address: colonyAddress },
+    variables: { address: colony.colonyAddress },
   });
   if (error) console.warn(error);
 
@@ -44,7 +44,12 @@ const UnclaimedTransfers = ({ colony: { colonyAddress } }: Props) => {
       {data && data.processedColony.unclaimedTransfers.length ? (
         <div className={styles.main}>
           <div className={styles.title}>
-            <FormattedMessage {...MSG.title} />
+            <FormattedMessage
+              {...MSG.title}
+              values={{
+                colony: colony.displayName || 'colony',
+              }}
+            />
           </div>
           <ul>
             {data.processedColony.unclaimedTransfers.map((transaction) => (

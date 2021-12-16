@@ -31,7 +31,7 @@ const displayName = 'UnclaimedTransfers.UnclaimedTransfersItem';
 const MSG = defineMessages({
   buttonClaim: {
     id: 'dashboard.UnclaimedTransfers.UnclaimedTransfersItem.buttonClaim',
-    defaultMessage: 'Claim',
+    defaultMessage: 'Claim for colony',
   },
   from: {
     id: 'dashboard.UnclaimedTransfers.UnclaimedTransfersItem.from',
