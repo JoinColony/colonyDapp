@@ -11,6 +11,7 @@ import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
 import { WalletActionTypes } from './wallet';
 import { WhitelistActionTypes } from './whitelist';
+import { MetacolonyVestingTypes } from './vesting';
 
 export { RootMotionOperationNames } from './motion';
 
@@ -107,7 +108,8 @@ export type AllActions =
   | UserActionTypes
   | WalletActionTypes
   | WhitelistActionTypes
-  | MotionActionTypes;
+  | MotionActionTypes
+  | MetacolonyVestingTypes;
 
 export type Action<T extends AllActions['type']> = Extract<
   AllActions,

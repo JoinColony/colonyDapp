@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessage, FormattedMessage } from 'react-intl';
 import { Redirect, RouteChildrenProps, useParams } from 'react-router-dom';
@@ -11,6 +11,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import { useColonyFromNameQuery, useMetaColonyQuery } from '~data/index';
 import { ActionTypes } from '~redux/actionTypes';
 import { NOT_FOUND_ROUTE } from '~routes/index';
+import { pipe, mapPayload } from '~utils/actions';
 
 import VestingPageLayout from './VestingPageLayout';
 
@@ -77,6 +78,18 @@ const ClaimTokensPage = ({ match }: Props) => {
     decimals: 18,
   };
 
+  const transform = useCallback(
+    pipe(
+      mapPayload((payload) => {
+        return {
+          ...payload,
+          colonyAddress: data?.processedColony?.colonyAddress,
+        };
+      }),
+    ),
+    [data],
+  );
+
   if (
     loading ||
     (data?.processedColony && data.processedColony.colonyName !== colonyName) ||
@@ -111,9 +124,10 @@ const ClaimTokensPage = ({ match }: Props) => {
   return (
     <ActionForm
       initialValues={{}}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+      submit={ActionTypes.META_CLAIM_ALLOCATION}
+      success={ActionTypes.META_CLAIM_ALLOCATION_SUCCESS}
+      error={ActionTypes.META_CLAIM_ALLOCATION_ERROR}
+      transform={transform}
     >
       {(formValues: FormikProps<{}>) => (
         <VestingPageLayout
