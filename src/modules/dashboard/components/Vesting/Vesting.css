@@ -45,3 +45,8 @@
 .buttonContainer > button {
   width: 160px;
 }
+
+.loadingWrapper {
+  height: 100%;
+  position: relative;
+}
