@@ -235,6 +235,9 @@
     "transaction.ColonyClient.emitDomainReputationReward.title": "Awarding user",
     "transaction.ColonyClient.emitDomainReputationReward.description": "Awarding user",
 
+    "transaction.WrappedToken.withdraw.title": "Unwrap Token",
+    "transaction.WrappedToken.withdraw.description": "Unwrap Token",
+
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
     "message.motionVote.title": "Sign message to vote",

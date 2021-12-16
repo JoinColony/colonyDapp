@@ -5,6 +5,15 @@ export type MetacolonyVestingTypes =
   | UniqueActionType<ActionTypes.META_CLAIM_ALLOCATION, {}, object>
   | ErrorActionType<ActionTypes.META_CLAIM_ALLOCATION_ERROR, object>
   | UniqueActionType<ActionTypes.META_CLAIM_ALLOCATION_SUCCESS, object, object>
-  | UniqueActionType<ActionTypes.META_UNWRAP_TOKEN, {}, object>
+  | UniqueActionType<
+      ActionTypes.META_UNWRAP_TOKEN,
+      {
+        amount: string;
+        userAddress: string;
+        colonyAddress: string;
+        unwrappedTokenAddress: string;
+      },
+      object
+    >
   | ErrorActionType<ActionTypes.META_UNWRAP_TOKEN_ERROR, object>
   | UniqueActionType<ActionTypes.META_UNWRAP_TOKEN_SUCCESS, object, object>;

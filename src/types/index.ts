@@ -112,3 +112,8 @@ export interface FixedToken {
   decimals?: number;
   iconHash?: string;
 }
+
+export enum ExtendedReduxContext {
+  WrappedToken = 'WrappedToken',
+  VestingSimple = 'VestingSimple',
+}
