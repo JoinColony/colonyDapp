@@ -153,7 +153,6 @@ const Extensions = ({ colonyAddress }: Props) => {
           </div>
         ) : null}
       </div>
-      <div className={styles.sidebar} />
     </div>
   );
 };

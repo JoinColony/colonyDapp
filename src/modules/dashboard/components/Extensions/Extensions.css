@@ -23,14 +23,6 @@
   display: block;
 }
 
-/*
- * @NOTE We don't realy use the sidebar here, it's just easier this way
- * to properly align the grid with the one on the details page
- */
-.sidebar {
-  display: block;
-}
-
 .availableExtensionsWrapper {
   margin-top: 40px;
 }
