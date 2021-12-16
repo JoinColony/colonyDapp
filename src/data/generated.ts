@@ -290,6 +290,7 @@ export type Query = {
   tokens: Array<Token>;
   transactionMessages: TransactionMessages;
   transactionMessagesCount: TransactionMessagesCount;
+  unwrapTokenForMetacolony: TokenUnwrapping;
   user: User;
   userAddress: Scalars['String'];
   userReputation: Scalars['String'];
@@ -654,6 +655,11 @@ export type QueryTransactionMessagesArgs = {
 
 export type QueryTransactionMessagesCountArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryUnwrapTokenForMetacolonyArgs = {
+  userAddress: Scalars['String'];
 };
 
 
@@ -1428,6 +1434,11 @@ export type SubgraphBlock = {
 export type SubgraphTransaction = {
   id: Scalars['String'];
   block: SubgraphBlock;
+};
+
+export type TokenUnwrapping = {
+  wrappedToken: UserToken;
+  unwrappedToken: UserToken;
 };
 
 export type WhitelistPolicy = {
@@ -2750,6 +2761,13 @@ export type SubgraphPayoutClaimedEventsQuery = { payoutClaimedEvents: Array<(
       ) }
     ) }
   )> };
+
+export type UnwrapTokenForMetacolonyQueryVariables = Exact<{
+  userAddress: Scalars['String'];
+}>;
+
+
+export type UnwrapTokenForMetacolonyQuery = { unwrapTokenForMetacolony: { wrappedToken: Pick<UserToken, 'address' | 'decimals' | 'name' | 'symbol' | 'balance'>, unwrappedToken: Pick<UserToken, 'address' | 'decimals' | 'name' | 'symbol' | 'balance'> } };
 
 export type WhitelistedUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -7579,6 +7597,52 @@ export function useSubgraphPayoutClaimedEventsLazyQuery(baseOptions?: Apollo.Laz
 export type SubgraphPayoutClaimedEventsQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsQuery>;
 export type SubgraphPayoutClaimedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphPayoutClaimedEventsLazyQuery>;
 export type SubgraphPayoutClaimedEventsQueryResult = Apollo.QueryResult<SubgraphPayoutClaimedEventsQuery, SubgraphPayoutClaimedEventsQueryVariables>;
+export const UnwrapTokenForMetacolonyDocument = gql`
+    query UnwrapTokenForMetacolony($userAddress: String!) {
+  unwrapTokenForMetacolony(userAddress: $userAddress) @client {
+    wrappedToken {
+      address
+      decimals
+      name
+      symbol
+      balance
+    }
+    unwrappedToken {
+      address
+      decimals
+      name
+      symbol
+      balance
+    }
+  }
+}
+    `;
+
+/**
+ * __useUnwrapTokenForMetacolonyQuery__
+ *
+ * To run a query within a React component, call `useUnwrapTokenForMetacolonyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUnwrapTokenForMetacolonyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUnwrapTokenForMetacolonyQuery({
+ *   variables: {
+ *      userAddress: // value for 'userAddress'
+ *   },
+ * });
+ */
+export function useUnwrapTokenForMetacolonyQuery(baseOptions?: Apollo.QueryHookOptions<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>) {
+        return Apollo.useQuery<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>(UnwrapTokenForMetacolonyDocument, baseOptions);
+      }
+export function useUnwrapTokenForMetacolonyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>) {
+          return Apollo.useLazyQuery<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>(UnwrapTokenForMetacolonyDocument, baseOptions);
+        }
+export type UnwrapTokenForMetacolonyQueryHookResult = ReturnType<typeof useUnwrapTokenForMetacolonyQuery>;
+export type UnwrapTokenForMetacolonyLazyQueryHookResult = ReturnType<typeof useUnwrapTokenForMetacolonyLazyQuery>;
+export type UnwrapTokenForMetacolonyQueryResult = Apollo.QueryResult<UnwrapTokenForMetacolonyQuery, UnwrapTokenForMetacolonyQueryVariables>;
 export const WhitelistedUsersDocument = gql`
     query WhitelistedUsers($colonyAddress: String!) {
   whitelistedUsers(colonyAddress: $colonyAddress) @client {
@@ -8111,8 +8175,18 @@ export function useCommentCountSubscription(baseOptions?: Apollo.SubscriptionHoo
 export type CommentCountSubscriptionHookResult = ReturnType<typeof useCommentCountSubscription>;
 export type CommentCountSubscriptionResult = Apollo.SubscriptionResult<CommentCountSubscription>;
 export const CommentsDocument = gql`
+<<<<<<< HEAD
     subscription Comments($transactionHash: String!, $limit: Int = 100) {
   transactionMessages(transactionHash: $transactionHash, limit: $limit) {
+=======
+<<<<<<< HEAD
+    subscription Comments($transactionHash: String!) {
+  transactionMessages(transactionHash: $transactionHash) {
+=======
+    subscription Comments($transactionHash: String!, $limit: Int = 100) {
+  transactionMessages(transactionHash: $transactionHash, limit: $limit) {
+>>>>>>> a9f43a385... Add: `unwrapTokenForMetacolony` vesting query
+>>>>>>> Add: `unwrapTokenForMetacolony` vesting query
     transactionHash
     messages {
       ...TransactionMessage
