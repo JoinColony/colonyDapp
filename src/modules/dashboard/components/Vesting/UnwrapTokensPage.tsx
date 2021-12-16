@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessage, FormattedMessage } from 'react-intl';
 import { Redirect, RouteChildrenProps, useParams } from 'react-router-dom';
@@ -11,6 +11,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import { useColonyFromNameQuery, useMetaColonyQuery } from '~data/index';
 import { ActionTypes } from '~redux/actionTypes';
 import { NOT_FOUND_ROUTE } from '~routes/index';
+import { pipe, mapPayload } from '~utils/actions';
 
 import VestingPageLayout from './VestingPageLayout';
 
@@ -72,6 +73,18 @@ const UnwrapTokensPage = ({ match }: Props) => {
     decimals: 18,
   };
 
+  const transform = useCallback(
+    pipe(
+      mapPayload((payload) => {
+        return {
+          ...payload,
+          colonyAddress: data?.processedColony?.colonyAddress,
+        };
+      }),
+    ),
+    [data],
+  );
+
   if (
     loading ||
     (data?.processedColony && data.processedColony.colonyName !== colonyName) ||
@@ -106,9 +119,10 @@ const UnwrapTokensPage = ({ match }: Props) => {
   return (
     <ActionForm
       initialValues={{}}
-      submit={ActionTypes.COLONY_ACTION_GENERIC}
-      success={ActionTypes.COLONY_ACTION_GENERIC_SUCCESS}
-      error={ActionTypes.COLONY_ACTION_GENERIC_ERROR}
+      submit={ActionTypes.META_UNWRAP_TOKEN}
+      success={ActionTypes.META_UNWRAP_TOKEN_SUCCESS}
+      error={ActionTypes.META_UNWRAP_TOKEN_ERROR}
+      transform={transform}
     >
       {(formValues: FormikProps<{}>) => (
         <VestingPageLayout
