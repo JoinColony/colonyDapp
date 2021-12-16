@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
@@ -31,6 +31,7 @@ interface Props {
   colonyAddress: Address;
   domainId?: number;
   rootHash?: string;
+  onReputationLoaded?: (reputationLoaded: boolean) => void;
 }
 
 const displayName = 'MemberReputation';
@@ -40,6 +41,7 @@ const MemberReputation = ({
   colonyAddress,
   domainId = ROOT_DOMAIN_ID,
   rootHash,
+  onReputationLoaded = () => null,
 }: Props) => {
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId, rootHash },
@@ -59,6 +61,11 @@ const MemberReputation = ({
     userReputationData?.userReputation,
     totalReputation?.userReputation,
   );
+
+  useEffect(() => {
+    onReputationLoaded(!!userReputationData);
+  }, [userReputationData, onReputationLoaded]);
+
   return (
     <div>
       <Icon

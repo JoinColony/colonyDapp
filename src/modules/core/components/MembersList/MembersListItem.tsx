@@ -1,4 +1,10 @@
-import React, { KeyboardEvent, ReactNode, useCallback, useMemo } from 'react';
+import React, {
+  KeyboardEvent,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { AddressZero } from 'ethers/constants';
 
 import { createAddress } from '~utils/web3';
@@ -44,6 +50,9 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
 
   const userProfile = useUser(createAddress(walletAddress || AddressZero));
 
+  // Determine when reputation has loaded
+  const [reputationLoaded, setReputationLoaded] = useState<boolean>(false);
+
   const handleRowClick = useCallback(() => {
     if (onRowClick) {
       onRowClick(user);
@@ -72,7 +81,11 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
       {/* Disable, as `role` is conditional */}
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
-        className={getMainClasses({}, styles, { hasCallbackFn: !!onRowClick })}
+        className={getMainClasses({}, styles, {
+          hasCallbackFn: !!onRowClick,
+          hasReputation: showUserReputation,
+          reputationLoaded,
+        })}
         onClick={onRowClick ? handleRowClick : undefined}
         onKeyDown={onRowClick ? handleRowKeydown : undefined}
         role={onRowClick ? 'button' : undefined}
@@ -86,6 +99,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
               walletAddress={walletAddress}
               colonyAddress={colony.colonyAddress}
               domainId={domainId}
+              onReputationLoaded={setReputationLoaded}
             />
           </div>
         )}
