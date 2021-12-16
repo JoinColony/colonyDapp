@@ -9,7 +9,6 @@ import { SpinnerLoader } from '~core/Preloaders';
 
 import { CREATE_COLONY_ROUTE } from '~routes/index';
 import { useLoggedInUser, useMetaColonyQuery } from '~data/index';
-import { METACOLONY_ENS } from '~constants';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
 import styles from './LandingPage.css';
@@ -21,7 +20,7 @@ const MSG = defineMessages({
   },
   wrongNetwork: {
     id: 'pages.LandingPage.wrongNetwork',
-    defaultMessage: `You’re connected to the wrong network. Please connect to the appriopriate Ethereum network.`,
+    defaultMessage: `You're connected to the wrong network. Please connect to the appriopriate Ethereum network.`,
   },
   createColony: {
     id: 'pages.LandingPage.createColony',
@@ -84,7 +83,7 @@ const LandingPage = () => {
           {data?.processedMetaColony && (
             <li className={styles.item}>
               <NavLink
-                to={`/colony/${METACOLONY_ENS}`}
+                to={`/colony/${data?.processedMetaColony.colonyName}`}
                 className={styles.itemLink}
               >
                 <ColonyAvatar
