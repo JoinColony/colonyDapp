@@ -237,7 +237,6 @@ export type Query = {
   coinMachinePeriods: Array<SalePeriod>;
   coinMachineSalePeriods: SalePeriod;
   coinMachineSaleTokens: SaleTokens;
-  coinMachineTokenBalance: Scalars['String'];
   coinMachineTotalTokens: TotalTokens;
   coinMachineTransactionAmount: TrannsactionAmount;
   colonies: Array<SubgraphColony>;
@@ -355,11 +354,6 @@ export type QueryCoinMachineSalePeriodsArgs = {
 
 
 export type QueryCoinMachineSaleTokensArgs = {
-  colonyAddress: Scalars['String'];
-};
-
-
-export type QueryCoinMachineTokenBalanceArgs = {
   colonyAddress: Scalars['String'];
 };
 
@@ -1218,6 +1212,7 @@ export type CurrentPeriodTokens = {
   maxPerPeriodTokens: Scalars['String'];
   activeSoldTokens: Scalars['String'];
   targetPerPeriodTokens: Scalars['String'];
+  tokenBalance: Scalars['String'];
 };
 
 export type BoughtTokens = {
@@ -2010,14 +2005,7 @@ export type CurrentPeriodTokensQueryVariables = Exact<{
 }>;
 
 
-export type CurrentPeriodTokensQuery = { currentPeriodTokens: Pick<CurrentPeriodTokens, 'maxPerPeriodTokens' | 'activeSoldTokens' | 'targetPerPeriodTokens'> };
-
-export type CoinMachineTokenBalanceQueryVariables = Exact<{
-  colonyAddress: Scalars['String'];
-}>;
-
-
-export type CoinMachineTokenBalanceQuery = Pick<Query, 'coinMachineTokenBalance'>;
+export type CurrentPeriodTokensQuery = { currentPeriodTokens: Pick<CurrentPeriodTokens, 'maxPerPeriodTokens' | 'activeSoldTokens' | 'targetPerPeriodTokens' | 'tokenBalance'> };
 
 export type CoinMachineTotalTokensQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
@@ -5265,6 +5253,7 @@ export const CurrentPeriodTokensDocument = gql`
     maxPerPeriodTokens
     activeSoldTokens
     targetPerPeriodTokens
+    tokenBalance
   }
 }
     `;
@@ -5294,37 +5283,6 @@ export function useCurrentPeriodTokensLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type CurrentPeriodTokensQueryHookResult = ReturnType<typeof useCurrentPeriodTokensQuery>;
 export type CurrentPeriodTokensLazyQueryHookResult = ReturnType<typeof useCurrentPeriodTokensLazyQuery>;
 export type CurrentPeriodTokensQueryResult = Apollo.QueryResult<CurrentPeriodTokensQuery, CurrentPeriodTokensQueryVariables>;
-export const CoinMachineTokenBalanceDocument = gql`
-    query CoinMachineTokenBalance($colonyAddress: String!) {
-  coinMachineTokenBalance(colonyAddress: $colonyAddress) @client
-}
-    `;
-
-/**
- * __useCoinMachineTokenBalanceQuery__
- *
- * To run a query within a React component, call `useCoinMachineTokenBalanceQuery` and pass it any options that fit your needs.
- * When your component renders, `useCoinMachineTokenBalanceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCoinMachineTokenBalanceQuery({
- *   variables: {
- *      colonyAddress: // value for 'colonyAddress'
- *   },
- * });
- */
-export function useCoinMachineTokenBalanceQuery(baseOptions?: Apollo.QueryHookOptions<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>) {
-        return Apollo.useQuery<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>(CoinMachineTokenBalanceDocument, baseOptions);
-      }
-export function useCoinMachineTokenBalanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>) {
-          return Apollo.useLazyQuery<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>(CoinMachineTokenBalanceDocument, baseOptions);
-        }
-export type CoinMachineTokenBalanceQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceQuery>;
-export type CoinMachineTokenBalanceLazyQueryHookResult = ReturnType<typeof useCoinMachineTokenBalanceLazyQuery>;
-export type CoinMachineTokenBalanceQueryResult = Apollo.QueryResult<CoinMachineTokenBalanceQuery, CoinMachineTokenBalanceQueryVariables>;
 export const CoinMachineTotalTokensDocument = gql`
     query CoinMachineTotalTokens($colonyAddress: String!) {
   coinMachineTotalTokens(colonyAddress: $colonyAddress) @client {

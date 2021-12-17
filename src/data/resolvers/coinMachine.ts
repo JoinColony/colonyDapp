@@ -224,6 +224,8 @@ export const coinMachineResolvers = ({
 
         const maxPerPeriodTokens = await coinMachineClient.getMaxPerPeriod();
 
+        const tokenBalance = await coinMachineClient.getTokenBalance();
+
         const activeSoldTokens = await coinMachineClient.getActiveSold();
         const activePeriod = await coinMachineClient.getActivePeriod();
         const blockTime = await getBlockTime(networkClient.provider, 'latest');
@@ -244,21 +246,8 @@ export const coinMachineResolvers = ({
               ? activeSoldTokens.toString()
               : '',
           targetPerPeriodTokens: targetPerPeriodTokens.toString(),
+          tokenBalance: tokenBalance.toString(),
         };
-      } catch (error) {
-        console.error(error);
-        return null;
-      }
-    },
-    async coinMachineTokenBalance(_, { colonyAddress }) {
-      try {
-        const coinMachineClient = await colonyManager.getClient(
-          ClientType.CoinMachineClient,
-          colonyAddress,
-        );
-        const tokenBalance = await coinMachineClient.getTokenBalance();
-
-        return tokenBalance.toString();
       } catch (error) {
         console.error(error);
         return null;
