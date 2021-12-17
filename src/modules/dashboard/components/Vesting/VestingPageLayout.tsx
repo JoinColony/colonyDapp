@@ -33,6 +33,7 @@ interface Props {
   tokenDecimals: number;
   isLoading: boolean;
   buttonDisabled?: boolean;
+  looadingText?: MessageDescriptor | string;
 }
 
 const VestingPageLayout = ({
@@ -45,13 +46,14 @@ const VestingPageLayout = ({
   isSubmitting,
   handleSubmit,
   buttonDisabled = false,
+  looadingText = MSG.loading,
 }: Props & FormikProps<{}>) => {
   const { username: currentUserName, ethereal } = useLoggedInUser();
 
   return isLoading ? (
     <div className={styles.loader}>
       <SpinnerLoader
-        loadingText={MSG.loading}
+        loadingText={looadingText}
         appearance={{ theme: 'primary', size: 'massive' }}
       />
     </div>

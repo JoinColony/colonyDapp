@@ -45,9 +45,13 @@ const MSG = defineMessage({
     id: 'dashboard.Vesting.ClaimTokensPage.buttonClaim',
     defaultMessage: 'Claim',
   },
-  loadingText: {
-    id: 'dashboard.Vesting.ClaimTokensPage.loadingText',
+  loadingColonyText: {
+    id: 'dashboard.Vesting.ClaimTokensPage.loadingColonyText',
     defaultMessage: 'Loading Colony',
+  },
+  loadingGrantsText: {
+    id: 'dashboard.Vesting.ClaimTokensPage.loadingGrantsText',
+    defaultMessage: 'Loading Grants',
   },
 });
 
@@ -110,7 +114,7 @@ const ClaimTokensPage = ({ match }: Props) => {
   ) {
     return (
       <div className={styles.loadingWrapper}>
-        <LoadingTemplate loadingText={MSG.loadingText} />
+        <LoadingTemplate loadingText={MSG.loadingColonyText} />
       </div>
     );
   }
@@ -144,6 +148,7 @@ const ClaimTokensPage = ({ match }: Props) => {
         <VestingPageLayout
           {...formValues}
           isLoading={loadingclaimTokensData}
+          looadingText={MSG.loadingGrantsText}
           title={
             <Heading
               appearance={{ size: 'medium', theme: 'dark' }}

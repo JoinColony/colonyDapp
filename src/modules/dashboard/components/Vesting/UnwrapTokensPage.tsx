@@ -41,9 +41,13 @@ const MSG = defineMessage({
     id: 'dashboard.Vesting.UnwrapTokensPage.buttonUnwrap',
     defaultMessage: 'Unwrap {tokenSymbol}',
   },
-  loadingText: {
-    id: 'dashboard.Vesting.ClaimTokensPage.loadingText',
+  loadingColonyText: {
+    id: 'dashboard.Vesting.ClaimTokensPage.loadingColonyText',
     defaultMessage: 'Loading Colony',
+  },
+  loadingTokensText: {
+    id: 'dashboard.Vesting.ClaimTokensPage.loadingTokensText',
+    defaultMessage: 'Loading Tokens',
   },
 });
 
@@ -106,7 +110,7 @@ const UnwrapTokensPage = ({ match }: Props) => {
   ) {
     return (
       <div className={styles.loadingWrapper}>
-        <LoadingTemplate loadingText={MSG.loadingText} />
+        <LoadingTemplate loadingText={MSG.loadingColonyText} />
       </div>
     );
   }
@@ -140,6 +144,7 @@ const UnwrapTokensPage = ({ match }: Props) => {
         <VestingPageLayout
           {...formValues}
           isLoading={loadingWrappedTokenData}
+          looadingText={MSG.loadingTokensText}
           title={
             <Heading
               appearance={{ size: 'medium', theme: 'dark' }}
