@@ -108,9 +108,7 @@ export const vestingResolvers = ({
           grantsToken: {
             ...userTokenBasics,
             ...vestingTokenInfo,
-            address: process.env.META_WRAPPED_TOKEN_ADDRESS
-              ? createAddress(process.env.META_WRAPPED_TOKEN_ADDRESS)
-              : AddressZero,
+            address: createAddress(vestingToken.address),
             balance: vestingTokenUserBalance.toString(),
           },
           grants: {

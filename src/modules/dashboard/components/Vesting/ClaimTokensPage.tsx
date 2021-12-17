@@ -17,7 +17,7 @@ import {
 } from '~data/index';
 import { ActionTypes } from '~redux/actionTypes';
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { pipe, mapPayload } from '~utils/actions';
+import { mapPayload } from '~utils/actions';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import VestingPageLayout from './VestingPageLayout';
@@ -89,15 +89,15 @@ const ClaimTokensPage = ({ match }: Props) => {
 
   const { grantsToken, grants } =
     claimTokensData?.claimTokensFromMetacolony || {};
+
   const transform = useCallback(
-    pipe(
-      mapPayload((payload) => {
-        return {
-          ...payload,
-          colonyAddress: data?.processedColony?.colonyAddress,
-        };
-      }),
-    ),
+    mapPayload(() => {
+      return {
+        userAddress: walletAddress,
+        colonyAddress: data?.processedColony?.colonyAddress,
+        grantsTokenAddress: grantsToken?.address,
+      };
+    }),
     [data],
   );
 
