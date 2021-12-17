@@ -2,16 +2,23 @@ import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessage, FormattedMessage } from 'react-intl';
 import { Redirect, RouteChildrenProps, useParams } from 'react-router-dom';
+import { bigNumberify } from 'ethers/utils';
 
 import { ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
 
-import { useColonyFromNameQuery, useMetaColonyQuery } from '~data/index';
+import {
+  useColonyFromNameQuery,
+  useMetaColonyQuery,
+  useClaimTokensFromMetacolonyQuery,
+  useLoggedInUser,
+} from '~data/index';
 import { ActionTypes } from '~redux/actionTypes';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { pipe, mapPayload } from '~utils/actions';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import VestingPageLayout from './VestingPageLayout';
 
@@ -59,6 +66,8 @@ const ClaimTokensPage = ({ match }: Props) => {
     colonyName: string;
   }>();
 
+  const { walletAddress } = useLoggedInUser();
+
   const { data, error, loading } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
@@ -69,15 +78,17 @@ const ClaimTokensPage = ({ match }: Props) => {
 
   const { data: metaColonyData } = useMetaColonyQuery();
 
-  // replace with a query later
-  const token = {
-    symbol: 'CLNY',
-    totalAllocation: '1000000000000000000000000',
-    claimable: '50000000000000000000000',
-    claimed: '300000000000000000000',
-    decimals: 18,
-  };
+  const {
+    data: claimTokensData,
+    loading: loadingclaimTokensData,
+  } = useClaimTokensFromMetacolonyQuery({
+    variables: {
+      userAddress: walletAddress,
+    },
+  });
 
+  const { grantsToken, grants } =
+    claimTokensData?.claimTokensFromMetacolony || {};
   const transform = useCallback(
     pipe(
       mapPayload((payload) => {
@@ -132,31 +143,31 @@ const ClaimTokensPage = ({ match }: Props) => {
       {(formValues: FormikProps<{}>) => (
         <VestingPageLayout
           {...formValues}
-          // Add proper loading state when connected to queries
-          isLoading={false}
+          isLoading={loadingclaimTokensData}
           title={
             <Heading
               appearance={{ size: 'medium', theme: 'dark' }}
               text={MSG.title}
-              textValues={{ tokenSymbol: token?.symbol }}
+              textValues={{ tokenSymbol: grantsToken?.symbol }}
             />
           }
           tableValues={[
             {
               label: <FormattedMessage {...MSG.totalAllocation} />,
-              value: token.totalAllocation,
+              value: grants?.totalAllocation || '0',
             },
             {
               label: <FormattedMessage {...MSG.claimable} />,
-              value: token.claimable,
+              value: grants?.claimable || '0',
             },
             {
               label: <FormattedMessage {...MSG.claimed} />,
-              value: token.claimed,
+              value: grants?.claimed || '0',
             },
           ]}
           buttonText={MSG.buttonClaim}
-          tokenDecimals={token.decimals}
+          tokenDecimals={getTokenDecimalsWithFallback(grantsToken?.decimals)}
+          buttonDisabled={bigNumberify(grants?.claimable || 0).isZero()}
         />
       )}
     </ActionForm>

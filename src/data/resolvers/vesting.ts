@@ -69,5 +69,60 @@ export const vestingResolvers = ({
         return null;
       }
     },
+    async claimTokensFromMetacolony(_, { userAddress }) {
+      // @ts-ignore
+      const vestingContractAbi = abis.vestingSimple.default.abi;
+      try {
+        const userTokenBasics = {
+          iconHash: undefined,
+          verified: true,
+          balance: '0',
+        };
+        const vestingContract = new Contract(
+          process.env.META_VESTING_CONTRACT_ADDRESS || '',
+          vestingContractAbi,
+          signer,
+        );
+
+        const vestingTokenAddress = await vestingContract.token();
+        const vestingToken = await colonyManager.getTokenClient(
+          vestingTokenAddress,
+        );
+        const vestingTokenInfo = await vestingToken.getTokenInfo();
+
+        let vestingTokenUserBalance = bigNumberify(0);
+        if (userAddress) {
+          vestingTokenUserBalance = await vestingToken.balanceOf(userAddress);
+        }
+
+        const userGrants = await vestingContract.grants(userAddress);
+
+        const [
+          amount = bigNumberify(0),
+          claimed = bigNumberify(0),
+        ] = userGrants;
+
+        const claimable = await vestingContract.getClaimable(amount);
+
+        return {
+          grantsToken: {
+            ...userTokenBasics,
+            ...vestingTokenInfo,
+            address: process.env.META_WRAPPED_TOKEN_ADDRESS
+              ? createAddress(process.env.META_WRAPPED_TOKEN_ADDRESS)
+              : AddressZero,
+            balance: vestingTokenUserBalance.toString(),
+          },
+          grants: {
+            totalAllocation: amount.toString(),
+            claimable: claimable.sub(claimed).toString(),
+            claimed: claimed.toString(),
+          },
+        };
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    },
   },
 });

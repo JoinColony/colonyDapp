@@ -16,3 +16,20 @@ query UnwrapTokenForMetacolony($userAddress: String!) {
     }
   }
 }
+
+query ClaimTokensFromMetacolony($userAddress: String!) {
+  claimTokensFromMetacolony(userAddress: $userAddress) @client {
+    grantsToken {
+      address,
+      decimals,
+      name,
+      symbol,
+      balance,
+    }
+    grants {
+      totalAllocation
+      claimable
+      claimed
+    }
+  }
+}

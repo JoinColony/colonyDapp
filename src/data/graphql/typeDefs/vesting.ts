@@ -6,7 +6,19 @@ export default gql`
     unwrappedToken: UserToken!
   }
 
+  type Grants {
+    totalAllocation: String!
+    claimable: String!
+    claimed: String!
+  }
+
+  type GrantsAllocation {
+    grantsToken: UserToken!
+    grants: Grants!
+  }
+
   extend type Query {
     unwrapTokenForMetacolony(userAddress: String!): TokenUnwrapping!
+    claimTokensFromMetacolony(userAddress: String!): GrantsAllocation!
   }
 `;
