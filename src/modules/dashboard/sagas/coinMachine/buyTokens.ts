@@ -12,9 +12,6 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import { getToken } from '~data/resolvers/token';
 import { TxConfig } from '~types/index';
 import {
-  CoinMachineTokenBalanceDocument,
-  CoinMachineTokenBalanceQuery,
-  CoinMachineTokenBalanceQueryVariables,
   CurrentPeriodTokensDocument,
   CurrentPeriodTokensQuery,
   CurrentPeriodTokensQueryVariables,
@@ -235,15 +232,6 @@ function* buyTokens({
         tokenAddress: sellableTokenAddress,
         colonyAddress,
       },
-      fetchPolicy: 'network-only',
-    });
-
-    yield apolloClient.query<
-      CoinMachineTokenBalanceQuery,
-      CoinMachineTokenBalanceQueryVariables
-    >({
-      query: CoinMachineTokenBalanceDocument,
-      variables: { colonyAddress },
       fetchPolicy: 'network-only',
     });
   } catch (caughtError) {
