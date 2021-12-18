@@ -7,9 +7,9 @@
 	url = https://github.com/JoinColony/colonyServer.git
 [submodule "src/lib/subgraph"]
 	path = src/lib/subgraph
-	url = git@github.com:JoinColony/subgraph.git
+	url = https://github.com/JoinColony/subgraph.git
 	ignore = dirty
 [submodule "src/lib/graph-node"]
 	path = src/lib/graph-node
-	url = git@github.com:graphprotocol/graph-node.git
+	url = https://github.com/graphprotocol/graph-node.git
 	ignore = dirty
