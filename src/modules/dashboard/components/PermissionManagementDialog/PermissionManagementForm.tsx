@@ -253,7 +253,7 @@ const PermissionManagementForm = ({
                  * create a payment from that subdomain
                  */
                 filterDomains={handleFilterMotionDomains}
-                initialSelectedDomain={parseInt(values.motionDomainId, 10)}
+                initialSelectedDomain={parseInt(values.domainId, 10)}
               />
             </div>
           )}
