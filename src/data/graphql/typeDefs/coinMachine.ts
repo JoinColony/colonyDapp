@@ -21,6 +21,7 @@ export default gql`
     maxPerPeriodTokens: String!
     activeSoldTokens: String!
     targetPerPeriodTokens: String!
+    tokenBalance: String!
   }
 
   type BoughtTokens {
@@ -66,7 +67,6 @@ export default gql`
     ): String!
     coinMachineCurrentSalePeriod(colonyAddress: String!): CurrentSalePeriod!
     currentPeriodTokens(colonyAddress: String!): CurrentPeriodTokens!
-    coinMachineTokenBalance(colonyAddress: String!): String!
     coinMachineTotalTokens(colonyAddress: String!): TotalTokens!
     coinMachinePeriods(
       skip: Int!

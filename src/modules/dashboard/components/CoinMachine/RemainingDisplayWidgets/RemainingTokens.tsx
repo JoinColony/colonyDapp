@@ -44,10 +44,6 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokens.title',
     defaultMessage: '0',
   },
-  soldOut: {
-    id: 'dashboard.CoinMachine.RemainingDisplayWidgets.RemainingTokens.soldOut',
-    defaultMessage: 'SOLD OUT',
-  },
 });
 
 const RemainingTokens = ({
