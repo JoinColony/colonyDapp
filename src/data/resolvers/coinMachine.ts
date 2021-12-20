@@ -18,9 +18,17 @@ import {
   SubgraphCoinMachineExtensionInstalledQuery,
   SubgraphCoinMachineExtensionInstalledQueryVariables,
   SubgraphCoinMachineExtensionInstalledDocument,
+  UserTokensQuery,
+  UserTokensQueryVariables,
+  UserTokensDocument,
+  CoinMachineSaleTokensQuery,
+  CoinMachineSaleTokensQueryVariables,
+  CoinMachineSaleTokensDocument,
 } from '~data/index';
 import { createAddress } from '~utils/web3';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { ExtendedLogDescription, parseSubgraphEvent } from '~utils/events';
+
 import {
   getCoinMachinePeriodPrice,
   getCoinMachinePreDecayPeriodPrice,
@@ -182,10 +190,76 @@ export const coinMachineResolvers = ({
           colonyAddress,
         );
 
-        const maxUserPurchase = await coinMachineClient.getMaxPurchase(
+        const { data } = await apolloClient.query<
+          UserTokensQuery,
+          UserTokensQueryVariables
+        >({
+          query: UserTokensDocument,
+          variables: {
+            address: userAddress,
+          },
+        });
+
+        const { data: saleTokensData } = await apolloClient.query<
+          CoinMachineSaleTokensQuery,
+          CoinMachineSaleTokensQueryVariables
+        >({
+          query: CoinMachineSaleTokensDocument,
+          variables: {
+            colonyAddress,
+          },
+        });
+
+        const purchaseToken =
+          saleTokensData?.coinMachineSaleTokens?.purchaseToken;
+
+        const userPurchaseToken = data?.user?.tokens.find(
+          ({ address: userTokenAddress }) =>
+            userTokenAddress === purchaseToken?.address,
+        );
+
+        const maxContractPurchase = await coinMachineClient.getMaxPurchase(
           userAddress,
         );
-        return maxUserPurchase.toString();
+
+        const userTokenBalance = bigNumberify(userPurchaseToken?.balance || 0);
+
+        const currentPeriodPrice = await coinMachineClient.getCurrentPrice();
+        const currentPrice = currentPeriodPrice.gt(0)
+          ? currentPeriodPrice
+          : bigNumberify(1);
+
+        const maxUserBalancePurchase = userTokenBalance
+          .div(currentPrice)
+          /*
+          when we divide by a number with moved decimal our final number
+          gets smaller by the '10 * the number of 0 that are added'
+          so we need to counteract it by multiplying it back
+           */
+          .mul(
+            bigNumberify(10).pow(
+              getTokenDecimalsWithFallback(purchaseToken?.decimals || 18),
+            ),
+          );
+
+        const purchaseCost = maxUserBalancePurchase
+          .mul(currentPrice)
+          .div(bigNumberify(10).pow(purchaseToken?.decimals || 18));
+
+        // mul by 10%
+        const gasEstimate = await coinMachineClient.estimate.buyTokens(
+          maxUserBalancePurchase,
+          { value: purchaseCost },
+        );
+        let maxPurchase = maxUserBalancePurchase;
+        if (maxPurchase.gt(maxContractPurchase)) {
+          maxPurchase = bigNumberify(maxContractPurchase);
+        }
+        if (maxPurchase.lte(bigNumberify('100000000000000'))) {
+          return bigNumberify(0).toString();
+        }
+
+        return maxPurchase.sub(gasEstimate.mul(11).div(10)).toString();
       } catch (error) {
         console.error(error);
         return null;

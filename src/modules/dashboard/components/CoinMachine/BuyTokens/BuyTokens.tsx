@@ -241,48 +241,19 @@ const BuyTokens = ({
     : DEFAULT_TOKEN_DECIMALS;
 
   const maxUserPurchase: BigNumber = useMemo(() => {
-    if (
-      maxUserPurchaseData?.coinMachineCurrentPeriodMaxUserPurchase &&
-      salePriceData?.coinMachineCurrentPeriodPrice &&
-      userPurchaseToken?.balance &&
-      purchaseToken
-    ) {
-      const userTokenBalance = bigNumberify(userPurchaseToken.balance);
-      const maxContractPurchase =
-        maxUserPurchaseData.coinMachineCurrentPeriodMaxUserPurchase;
-      const currentPeriodPrice = bigNumberify(
-        salePriceData?.coinMachineCurrentPeriodPrice || 0,
+    if (maxUserPurchaseData?.coinMachineCurrentPeriodMaxUserPurchase) {
+      return bigNumberify(
+        maxUserPurchaseData.coinMachineCurrentPeriodMaxUserPurchase,
       );
-      const currentPrice = currentPeriodPrice.gt(0)
-        ? currentPeriodPrice
-        : bigNumberify(1);
-
-      const maxUserBalancePurchase = userTokenBalance
-        .div(currentPrice)
-        /*
-        when we divide by a number with moved decimal our final number
-        gets smaller by the '10 * the number of 0 that are added'
-        so we need to counteract it by multiplying it back
-         */
-        .mul(
-          bigNumberify(10).pow(
-            getTokenDecimalsWithFallback(purchaseToken.decimals),
-          ),
-        );
-      if (maxUserBalancePurchase.gt(maxContractPurchase)) {
-        return bigNumberify(maxContractPurchase);
-      }
-      return maxUserBalancePurchase;
     }
     return bigNumberify(0);
-  }, [maxUserPurchaseData, salePriceData, userPurchaseToken, purchaseToken]);
+  }, [maxUserPurchaseData]);
 
   const handleSetMaxAmount = useCallback(
     (event, setFieldValue) => {
       if (!globalDisable) {
         event.preventDefault();
         event.stopPropagation();
-
         const maxAmount = new Decimal(maxUserPurchase.toString())
           .div(
             new Decimal(10).pow(
