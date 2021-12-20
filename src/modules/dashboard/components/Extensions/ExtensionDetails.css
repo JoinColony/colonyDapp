@@ -76,7 +76,9 @@
   margin-right: 0px;
 }
 
-.buttonUninstall {
+.actionButtons {
+  display: flex;
+  justify-content: flex-end;
   margin-top: 10px;
   text-align: right;
 }

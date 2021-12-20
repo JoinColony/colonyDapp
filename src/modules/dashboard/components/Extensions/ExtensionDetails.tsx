@@ -109,6 +109,10 @@ const MSG = defineMessages({
     id: 'dashboard.Extensions.ExtensionDetails.buttonDeprecate',
     defaultMessage: 'Deprecate',
   },
+  buttonReEnable: {
+    id: 'dashboard.Extensions.ExtensionDetails.buttonReEnable',
+    defaultMessage: 'Re-enable',
+  },
   headingDeprecate: {
     id: 'dashboard.Extensions.ExtensionDetails.headingDeprecate',
     defaultMessage: 'Deprecate extension',
@@ -116,6 +120,14 @@ const MSG = defineMessages({
   textDeprecate: {
     id: 'dashboard.Extensions.ExtensionDetails.textDeprecate',
     defaultMessage: `This extension must first be deprecated if you wish to uninstall it. After deprecation, any actions using this extension already ongoing may be completed, but it will no longer be possible to create new actions requiring this extension. Are you sure you wish to proceed?`,
+  },
+  headingReEnable: {
+    id: 'dashboard.Extensions.ExtensionDetails.headingReEnable',
+    defaultMessage: 'Re-enable extension',
+  },
+  textReEnable: {
+    id: 'dashboard.Extensions.ExtensionDetails.textDeprecate',
+    defaultMessage: `The extension will be re-enabled with the same parameters. Are you sure you wish to proceed?`,
   },
   headingUninstall: {
     id: 'dashboard.Extensions.ExtensionDetails.headingUninstall',
@@ -441,7 +453,7 @@ const ExtensionDetails = ({
             </TableBody>
           </Table>
           {extesionCanBeDeprecated ? (
-            <div className={styles.buttonUninstall}>
+            <div className={styles.actionButtons}>
               <DialogActionButton
                 dialog={ConfirmDialog}
                 dialogProps={{
@@ -453,13 +465,27 @@ const ExtensionDetails = ({
                 error={ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR}
                 success={ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS}
                 text={MSG.buttonDeprecate}
-                values={{ colonyAddress, extensionId }}
+                values={{ colonyAddress, extensionId, isToDeprecate: true }}
                 disabled={!isSupportedColonyVersion || !isNetworkAllowed}
               />
             </div>
           ) : null}
           {extesionCanBeUninstalled ? (
-            <div className={styles.buttonUninstall}>
+            <div className={styles.actionButtons}>
+              <DialogActionButton
+                dialog={ConfirmDialog}
+                dialogProps={{
+                  heading: MSG.headingReEnable,
+                  children: <FormattedMessage {...MSG.textReEnable} />,
+                }}
+                appearance={{ theme: 'blue' }}
+                submit={ActionTypes.COLONY_EXTENSION_DEPRECATE}
+                error={ActionTypes.COLONY_EXTENSION_DEPRECATE_ERROR}
+                success={ActionTypes.COLONY_EXTENSION_DEPRECATE_SUCCESS}
+                text={MSG.buttonReEnable}
+                values={{ colonyAddress, extensionId, isToDeprecate: false }}
+                disabled={!isSupportedColonyVersion || !isNetworkAllowed}
+              />
               <DialogActionButton
                 dialog={ExtensionUninstallConfirmDialog}
                 dialogProps={
