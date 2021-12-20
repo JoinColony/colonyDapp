@@ -8247,6 +8247,7 @@ export type CommentCountSubscriptionHookResult = ReturnType<typeof useCommentCou
 export type CommentCountSubscriptionResult = Apollo.SubscriptionResult<CommentCountSubscription>;
 export const CommentsDocument = gql`
 <<<<<<< HEAD
+<<<<<<< HEAD
     subscription Comments($transactionHash: String!, $limit: Int = 100) {
   transactionMessages(transactionHash: $transactionHash, limit: $limit) {
 =======
@@ -8258,6 +8259,10 @@ export const CommentsDocument = gql`
   transactionMessages(transactionHash: $transactionHash, limit: $limit) {
 >>>>>>> a9f43a385... Add: `unwrapTokenForMetacolony` vesting query
 >>>>>>> Add: `unwrapTokenForMetacolony` vesting query
+=======
+    subscription Comments($transactionHash: String!) {
+  transactionMessages(transactionHash: $transactionHash) {
+>>>>>>> Chore: re-generate graphql hooks after cherry-pick
     transactionHash
     messages {
       ...TransactionMessage
