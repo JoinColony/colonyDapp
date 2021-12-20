@@ -31,6 +31,10 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.SynapsKYCDialog.verifiedIconTitle',
     defaultMessage: 'You are verified! Congrats',
   },
+  loadingText: {
+    id: 'dashboard.CoinMachine.SynapsKYCDialog.loadingText',
+    defaultMesage: 'Sign transaction with your wallet',
+  },
 });
 
 const displayName = 'dashboard.CoinMachine.SynapsKYCDialog';
@@ -115,7 +119,12 @@ const SynapsKYCDialog = ({ cancel, colonyAddress, emailAddress }: Props) => {
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.content}>
-          {isLoading && <SpinnerLoader appearance={{ size: 'large' }} />}
+          {isLoading && (
+            <SpinnerLoader
+              loadingText={MSG.loadingText.defaultMesage}
+              appearance={{ size: 'large' }}
+            />
+          )}
           {!isLoading && isValid && (
             <div className={styles.verified}>
               <Icon name="emoji-party" title={MSG.verifiedIconTitle} />

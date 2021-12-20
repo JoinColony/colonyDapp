@@ -34,7 +34,7 @@ const SpinnerLoader = ({
       <div className={styles.loader} />
       {loadingText && (
         <div className={styles.loadingTextContainer}>
-          <div>
+          <div className={styles.loadingText}>
             {typeof loadingText === 'string'
               ? loadingText
               : formatMessage(loadingText, textValues)}

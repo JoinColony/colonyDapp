@@ -87,3 +87,7 @@
 .layoutHorizontal .loader {
   margin: 0 10px 0 0;
 }
+
+.loadingText {
+  padding-top: 30px;
+}
