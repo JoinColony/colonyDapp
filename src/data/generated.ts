@@ -7933,7 +7933,7 @@ export function useCommentCountSubscription(baseOptions?: Apollo.SubscriptionHoo
 export type CommentCountSubscriptionHookResult = ReturnType<typeof useCommentCountSubscription>;
 export type CommentCountSubscriptionResult = Apollo.SubscriptionResult<CommentCountSubscription>;
 export const CommentsDocument = gql`
-    subscription Comments($transactionHash: String!, $limit: Int = 1000) {
+    subscription Comments($transactionHash: String!, $limit: Int = 100) {
   transactionMessages(transactionHash: $transactionHash, limit: $limit) {
     transactionHash
     messages {
