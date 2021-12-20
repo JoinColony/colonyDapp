@@ -1,4 +1,5 @@
 @value headerFooterHeights: 35px;
+@value lockIconSize: 12px;
 
 .main {
   display: flex;
@@ -25,11 +26,42 @@
   max-width: 36px;
 }
 
+.tooltipClassName {
+  width: 250px;
+}
+
 .tokenSymbol {
+  composes: flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
   margin-left: 15px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
   color: var(--grey-dark);
+}
+
+.tokenLockContainer {
+  display: block;
+  margin: 0 3px;
+  height: lockIconSize;
+  width: lockIconSize;
+  position: relative;
+}
+
+.tokenLockIcon {
+  height: lockIconSize;
+  width: lockIconSize;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tokenLockIcon svg {
+  height: lockIconSize;
+  width: lockIconSize;
+  position: absolute;
+  top: 0;
+  left: 0;
+  fill: var(--grey-3);
 }
 
 .nativeTokenText {

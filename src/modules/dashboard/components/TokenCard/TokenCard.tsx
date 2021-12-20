@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import Icon from '~core/Icon';
 import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
@@ -23,6 +24,7 @@ interface Props {
   domainId: number | string;
   nativeTokenAddress?: Address;
   token: ColonyTokens[0] | UserTokens[0];
+  nativeTokenLocked?: boolean;
 }
 
 const displayName = 'dashboard.TokenCard';
@@ -36,9 +38,22 @@ const MSG = defineMessages({
     id: 'dashboard.TokenCard.unknownToken',
     defaultMessage: 'Unknown Token',
   },
+  lockedToken: {
+    id: 'dashboard.TokenCard.lockedToken',
+    defaultMessage: 'Locked Token',
+  },
+  lockedTokenTooltip: {
+    id: 'dashboard.TokenCard.lockedTokenTooltip',
+    defaultMessage: `This token is locked. Colony native tokens are locked and non-transferrable by default to avoid unwanted project token transfer outside of the colony.`,
+  },
 });
 
-const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
+const TokenCard = ({
+  domainId,
+  nativeTokenAddress,
+  token,
+  nativeTokenLocked = true,
+}: Props) => {
   const balance = getBalanceFromToken(token, parseInt(domainId as string, 10));
 
   return (
