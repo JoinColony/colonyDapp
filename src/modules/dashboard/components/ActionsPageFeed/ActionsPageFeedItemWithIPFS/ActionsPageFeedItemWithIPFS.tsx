@@ -48,6 +48,7 @@ const ActionsPageFeedItemWithIPFS = ({
       {...rest}
       comment={annotation ? annotationMessage : comment}
       annotation={annotation}
+      disableHover
     />
   );
 };

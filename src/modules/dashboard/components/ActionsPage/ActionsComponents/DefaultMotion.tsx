@@ -465,13 +465,15 @@ const DefaultMotion = ({
             </div>
           )}
           {objectionAnnotation?.motionObjectionAnnotation?.metadata && (
-            <ActionsPageFeedItemWithIPFS
-              colony={colony}
-              user={objectionAnnotationUser}
-              annotation
-              hash={objectionAnnotation.motionObjectionAnnotation.metadata}
-              appearance={{ theme: 'danger' }}
-            />
+            <div className={motionSpecificStyles.annotation}>
+              <ActionsPageFeedItemWithIPFS
+                colony={colony}
+                user={objectionAnnotationUser}
+                annotation
+                hash={objectionAnnotation.motionObjectionAnnotation.metadata}
+                appearance={{ theme: 'danger' }}
+              />
+            </div>
           )}
           <ActionsPageFeed
             actionType={actionType}
