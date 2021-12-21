@@ -1,4 +1,4 @@
-query SubgraphMotionEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+query SubgraphMotionEvents($colonyAddress: String!, $motionId: String!, $extensionAddress: String!, $sortDirection: String = asc) {
   motionEvents: events(
     orderBy: "timestamp",
     orderDirection: $sortDirection,
@@ -9,6 +9,7 @@ query SubgraphMotionEvents($colonyAddress: String!, $motionId: String!, $sortDir
         "MotionRewardClaimed(uint256,address,uint256,uint256)",
       ]
       associatedColony: $colonyAddress
+      address: $extensionAddress
       args_contains: $motionId
     }
   ) {
