@@ -1,0 +1,30 @@
+@value iconSize: 16px;
+
+.main {
+  display: block;
+  height: iconSize;
+  width: iconSize;
+  position: relative;
+}
+
+.icon {
+  height: iconSize;
+  width: iconSize;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.icon svg {
+  height: iconSize;
+  width: iconSize;
+  position: absolute;
+  top: 0;
+  left: 0;
+  fill: var(--grey-3);
+}
+
+.tooltipWrapper {
+  width: 250px;
+}

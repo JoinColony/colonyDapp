@@ -38,9 +38,9 @@
   color: var(--grey-dark);
 }
 
-.tokenLockContainer {
+.tokenLockWrapper {
   display: block;
-  margin: 0 3px;
+  margin-left: 3px;
   height: lockIconSize;
   width: lockIconSize;
   position: relative;
@@ -65,6 +65,7 @@
 }
 
 .nativeTokenText {
+  margin-left: 3px;
   color: var(--grey-3);
 }
 

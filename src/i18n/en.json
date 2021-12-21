@@ -237,5 +237,7 @@
     "permission.3": "Architecture",
     "permission.5": "Funding",
     "permission.0": "Recovery",
-    "permission.1": "Root"
+    "permission.1": "Root",
+
+    "dashboard.lockedTokenTooltip": "This token is locked. Colony native tokens are locked and non-transferrable by default to avoid unwanted project token transfer outside of the colony."
   }

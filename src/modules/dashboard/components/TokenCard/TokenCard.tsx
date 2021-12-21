@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Icon from '~core/Icon';
 import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
@@ -18,6 +17,7 @@ import {
 import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
 
 import styles from './TokenCard.css';
+import IconTooltip from '~core/IconTooltip';
 
 interface Props {
   // @todo use string or number (not both) everywhere for `domainId`
@@ -37,14 +37,6 @@ const MSG = defineMessages({
   unknownToken: {
     id: 'dashboard.TokenCard.unknownToken',
     defaultMessage: 'Unknown Token',
-  },
-  lockedToken: {
-    id: 'dashboard.TokenCard.lockedToken',
-    defaultMessage: 'Locked Token',
-  },
-  lockedTokenTooltip: {
-    id: 'dashboard.TokenCard.lockedTokenTooltip',
-    defaultMessage: `This token is locked. Colony native tokens are locked and non-transferrable by default to avoid unwanted project token transfer outside of the colony.`,
   },
 });
 
@@ -72,6 +64,14 @@ const TokenCard = ({
                 <FormattedMessage {...MSG.unknownToken} />
                 <CopyableAddress>{token.address}</CopyableAddress>
               </>
+            )}
+            {token.address === nativeTokenAddress && nativeTokenLocked && (
+              <IconTooltip
+                icon="lock"
+                tooltipText={{ id: 'dashboard.lockedTokenTooltip' }}
+                className={styles.tokenLockWrapper}
+                iconClassName={styles.tokenLockIcon}
+              />
             )}
             {token.address === nativeTokenAddress && (
               <span className={styles.nativeTokenText}>

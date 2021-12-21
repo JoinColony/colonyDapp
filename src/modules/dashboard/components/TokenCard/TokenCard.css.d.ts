@@ -5,7 +5,7 @@ export const cardHeading: string;
 export const iconContainer: string;
 export const tooltipClassName: string;
 export const tokenSymbol: string;
-export const tokenLockContainer: string;
+export const tokenLockWrapper: string;
 export const tokenLockIcon: string;
 export const nativeTokenText: string;
 export const balanceContent: string;
