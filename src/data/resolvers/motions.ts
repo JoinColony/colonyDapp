@@ -772,6 +772,11 @@ export const motionsResolvers = ({
           claimedReward: null,
         };
 
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
         const { data: stakeEventsData } = await apolloClient.query<
           SubgraphMotionStakedEventsQuery,
           SubgraphMotionStakedEventsQueryVariables
@@ -782,6 +787,7 @@ export const motionsResolvers = ({
              * Subgraph addresses are not checksummed
              */
             colonyAddress: colonyAddress.toLowerCase(),
+            extensionAddress: votingReputationClient.address.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
           },
           fetchPolicy: 'network-only',
@@ -818,11 +824,6 @@ export const motionsResolvers = ({
         const userRewardClaimedParsedEvents = userRewardClaimedEvents
           ? userRewardClaimedEvents.map(parseSubgraphEvent)
           : [];
-
-        const votingReputationClient = await colonyManager.getClient(
-          ClientType.VotingReputationClient,
-          colonyAddress,
-        );
 
         let stakesYay = bigNumberify(0);
         let stakesNay = bigNumberify(0);
@@ -909,6 +910,11 @@ export const motionsResolvers = ({
         metadata: null,
       };
       try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
         const { data } = await apolloClient.query<
           SubgraphMotionStakedEventsQuery,
           SubgraphMotionStakedEventsQueryVariables
@@ -919,6 +925,7 @@ export const motionsResolvers = ({
              * Subgraph addresses are not checksummed
              */
             colonyAddress: colonyAddress.toLowerCase(),
+            extensionAddress: votingReputationClient.address.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
           },
           fetchPolicy: 'network-only',

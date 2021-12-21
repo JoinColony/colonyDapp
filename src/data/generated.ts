@@ -2263,6 +2263,7 @@ export type SubgraphMotionVoteRevealedEventsQuery = { motionVoteRevealedEvents: 
 export type SubgraphMotionStakedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
+  extensionAddress: Scalars['String'];
   sortDirection?: Maybe<Scalars['String']>;
 }>;
 
@@ -6078,8 +6079,8 @@ export type SubgraphMotionVoteRevealedEventsQueryHookResult = ReturnType<typeof 
 export type SubgraphMotionVoteRevealedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionVoteRevealedEventsLazyQuery>;
 export type SubgraphMotionVoteRevealedEventsQueryResult = Apollo.QueryResult<SubgraphMotionVoteRevealedEventsQuery, SubgraphMotionVoteRevealedEventsQueryVariables>;
 export const SubgraphMotionStakedEventsDocument = gql`
-    query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
-  motionStakedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "MotionStaked", associatedColony: $colonyAddress, args_contains: $motionId}) {
+    query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!, $extensionAddress: String!, $sortDirection: String = asc) {
+  motionStakedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {name_contains: "MotionStaked", associatedColony: $colonyAddress, address: $extensionAddress, args_contains: $motionId}) {
     id
     address
     name
@@ -6112,6 +6113,7 @@ export const SubgraphMotionStakedEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      motionId: // value for 'motionId'
+ *      extensionAddress: // value for 'extensionAddress'
  *      sortDirection: // value for 'sortDirection'
  *   },
  * });

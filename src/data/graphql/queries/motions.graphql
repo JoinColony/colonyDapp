@@ -115,13 +115,14 @@ query SubgraphMotionVoteRevealedEvents($colonyAddress: String!, $motionId: Strin
   }
 }
 
-query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!, $extensionAddress: String!, $sortDirection: String = asc) {
   motionStakedEvents: events(
     orderBy: "timestamp",
     orderDirection: $sortDirection,
     where: {
       name_contains: "MotionStaked"
       associatedColony: $colonyAddress
+      address: $extensionAddress
       args_contains: $motionId
     }
   ) {
