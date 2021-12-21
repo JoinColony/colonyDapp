@@ -544,6 +544,11 @@ export const motionsResolvers = ({
     },
     async motionCurrentUserVoted(_, { motionId, colonyAddress, userAddress }) {
       try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
         const { data } = await apolloClient.query<
           SubgraphMotionVoteSubmittedEventsQuery,
           SubgraphMotionVoteSubmittedEventsQueryVariables
@@ -554,6 +559,7 @@ export const motionsResolvers = ({
              * Subgraph addresses are not checksummed
              */
             colonyAddress: colonyAddress.toLowerCase(),
+            extensionAddress: votingReputationClient.address.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
           },
           fetchPolicy: 'network-only',

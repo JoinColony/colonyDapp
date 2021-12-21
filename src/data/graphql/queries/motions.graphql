@@ -62,13 +62,14 @@ query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!, $e
   }
 }
 
-query SubgraphMotionVoteSubmittedEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+query SubgraphMotionVoteSubmittedEvents($colonyAddress: String!, $motionId: String!, $extensionAddress: String!, $sortDirection: String = asc) {
   motionVoteSubmittedEvents: events(
     orderBy: "timestamp",
     orderDirection: $sortDirection,
     where: {
       name_contains: "MotionVoteSubmitted"
       associatedColony: $colonyAddress
+      address: $extensionAddress
       args_contains: $motionId
     }
   ) {
