@@ -200,12 +200,13 @@ query SubgraphUserMotionTokenEvents($colonyAddress: String!, $walletAddress: Str
 }
 
 
-query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!, $extensionAddress: String!, $sortDirection: String = asc) {
   motionRewardClaimedEvents: events(
     where: {
       associatedColony: $colonyAddress
       name_contains: "MotionRewardClaimed"
-      args_contains: $motionId,
+      address: $extensionAddress
+      args_contains: $motionId
     }
   ) {
     id

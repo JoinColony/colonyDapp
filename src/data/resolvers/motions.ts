@@ -818,6 +818,7 @@ export const motionsResolvers = ({
              */
             colonyAddress: colonyAddress.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });

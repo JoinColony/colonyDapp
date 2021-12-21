@@ -2316,6 +2316,7 @@ export type SubgraphUserMotionTokenEventsQuery = { motionStakedEvents: Array<(
 export type SubgraphMotionRewardClaimedEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   motionId: Scalars['String'];
+  extensionAddress: Scalars['String'];
   sortDirection?: Maybe<Scalars['String']>;
 }>;
 
@@ -6200,8 +6201,8 @@ export type SubgraphUserMotionTokenEventsQueryHookResult = ReturnType<typeof use
 export type SubgraphUserMotionTokenEventsLazyQueryHookResult = ReturnType<typeof useSubgraphUserMotionTokenEventsLazyQuery>;
 export type SubgraphUserMotionTokenEventsQueryResult = Apollo.QueryResult<SubgraphUserMotionTokenEventsQuery, SubgraphUserMotionTokenEventsQueryVariables>;
 export const SubgraphMotionRewardClaimedEventsDocument = gql`
-    query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
-  motionRewardClaimedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", args_contains: $motionId}) {
+    query SubgraphMotionRewardClaimedEvents($colonyAddress: String!, $motionId: String!, $extensionAddress: String!, $sortDirection: String = asc) {
+  motionRewardClaimedEvents: events(where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", address: $extensionAddress, args_contains: $motionId}) {
     id
     name
     args
@@ -6234,6 +6235,7 @@ export const SubgraphMotionRewardClaimedEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      motionId: // value for 'motionId'
+ *      extensionAddress: // value for 'extensionAddress'
  *      sortDirection: // value for 'sortDirection'
  *   },
  * });
