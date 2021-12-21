@@ -144,14 +144,15 @@ query SubgraphMotionStakedEvents($colonyAddress: String!, $motionId: String!, $e
   }
 }
 
-query SubgraphUserMotionTokenEvents($colonyAddress: String!, $walletAddress: String!, $sortDirection: String = asc) {
+query SubgraphUserMotionTokenEvents($colonyAddress: String!, $walletAddress: String!, $extensionAddress: String!, $sortDirection: String = asc) {
   motionStakedEvents: events(
     orderBy: "timestamp",
     orderDirection: $sortDirection,
     where: {
       associatedColony: $colonyAddress
       name_contains: "MotionStaked"
-      args_contains: $walletAddress,
+      address: $extensionAddress
+      args_contains: $walletAddress
     }
   ) {
     id
@@ -175,7 +176,8 @@ query SubgraphUserMotionTokenEvents($colonyAddress: String!, $walletAddress: Str
     where: {
       associatedColony: $colonyAddress
       name_contains: "MotionRewardClaimed"
-      args_contains: $walletAddress,
+      address: $extensionAddress
+      args_contains: $walletAddress
     }
   ) {
     id

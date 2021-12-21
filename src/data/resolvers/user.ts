@@ -69,6 +69,7 @@ const getUserStakedBalance = async (
   apolloClient: ApolloClient<object>,
   walletAddress: Address,
   colonyAddress: Address,
+  extensionAddress: Address,
 ): Promise<BigNumber> => {
   /**
    * @NOTE If there will be more staking events
@@ -84,8 +85,10 @@ const getUserStakedBalance = async (
     variables: {
       walletAddress: walletAddress.toLowerCase(),
       colonyAddress: colonyAddress.toLowerCase(),
+      extensionAddress: extensionAddress.toLowerCase(),
     },
   });
+
   const motionStakedEvents = (data?.motionStakedEvents || []).map(
     parseSubgraphEvent,
   );
@@ -137,6 +140,11 @@ const getUserLock = async (
     ClientType.TokenLockingClient,
     colonyAddress,
   );
+  const votingReputationClient = await colonyManager.getClient(
+    ClientType.VotingReputationClient,
+    colonyAddress,
+  );
+
   const userLock = await tokenLockingClient.getUserLock(
     tokenAddress,
     walletAddress,
@@ -150,6 +158,7 @@ const getUserLock = async (
     apolloClient,
     walletAddress,
     colonyAddress,
+    votingReputationClient.address,
   );
 
   const nativeToken = (await getToken(

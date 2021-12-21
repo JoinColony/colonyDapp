@@ -2284,6 +2284,7 @@ export type SubgraphMotionStakedEventsQuery = { motionStakedEvents: Array<(
 export type SubgraphUserMotionTokenEventsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   walletAddress: Scalars['String'];
+  extensionAddress: Scalars['String'];
   sortDirection?: Maybe<Scalars['String']>;
 }>;
 
@@ -6130,8 +6131,8 @@ export type SubgraphMotionStakedEventsQueryHookResult = ReturnType<typeof useSub
 export type SubgraphMotionStakedEventsLazyQueryHookResult = ReturnType<typeof useSubgraphMotionStakedEventsLazyQuery>;
 export type SubgraphMotionStakedEventsQueryResult = Apollo.QueryResult<SubgraphMotionStakedEventsQuery, SubgraphMotionStakedEventsQueryVariables>;
 export const SubgraphUserMotionTokenEventsDocument = gql`
-    query SubgraphUserMotionTokenEvents($colonyAddress: String!, $walletAddress: String!, $sortDirection: String = asc) {
-  motionStakedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, name_contains: "MotionStaked", args_contains: $walletAddress}) {
+    query SubgraphUserMotionTokenEvents($colonyAddress: String!, $walletAddress: String!, $extensionAddress: String!, $sortDirection: String = asc) {
+  motionStakedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, name_contains: "MotionStaked", address: $extensionAddress, args_contains: $walletAddress}) {
     id
     address
     name
@@ -6147,7 +6148,7 @@ export const SubgraphUserMotionTokenEventsDocument = gql`
     }
     timestamp
   }
-  motionRewardClaimedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", args_contains: $walletAddress}) {
+  motionRewardClaimedEvents: events(orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony: $colonyAddress, name_contains: "MotionRewardClaimed", address: $extensionAddress, args_contains: $walletAddress}) {
     id
     name
     args
@@ -6180,6 +6181,7 @@ export const SubgraphUserMotionTokenEventsDocument = gql`
  *   variables: {
  *      colonyAddress: // value for 'colonyAddress'
  *      walletAddress: // value for 'walletAddress'
+ *      extensionAddress: // value for 'extensionAddress'
  *      sortDirection: // value for 'sortDirection'
  *   },
  * });
