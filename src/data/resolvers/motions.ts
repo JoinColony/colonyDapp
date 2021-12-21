@@ -586,6 +586,11 @@ export const motionsResolvers = ({
           vote: null,
         };
 
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
         const { data } = await apolloClient.query<
           SubgraphMotionVoteRevealedEventsQuery,
           SubgraphMotionVoteRevealedEventsQueryVariables
@@ -597,6 +602,7 @@ export const motionsResolvers = ({
              */
             colonyAddress: colonyAddress.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
@@ -656,6 +662,7 @@ export const motionsResolvers = ({
              */
             colonyAddress: colonyAddress.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
