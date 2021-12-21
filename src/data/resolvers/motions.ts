@@ -216,6 +216,7 @@ export const motionsResolvers = ({
            * Subgraph addresses are not checksummed
            */
           colonyAddress: colonyAddress.toLowerCase(),
+          extensionAddress: votingReputationClient.address.toLowerCase(),
           motionId: `"motionId":"${motionId}"`,
           sortDirection: 'desc',
         },

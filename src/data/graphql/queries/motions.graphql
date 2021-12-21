@@ -30,7 +30,7 @@ query SubgraphMotionEvents($colonyAddress: String!, $motionId: String!, $extensi
   }
 }
 
-query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!, $sortDirection: String = asc) {
+query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!, $extensionAddress: String!, $sortDirection: String = asc) {
   motionSystemEvents: events(
     orderBy: "timestamp",
     orderDirection: $sortDirection,
@@ -41,6 +41,7 @@ query SubgraphMotionSystemEvents($colonyAddress: String!, $motionId: String!, $s
         "MotionVoteRevealed(uint256,address,uint256)",
       ]
       associatedColony: $colonyAddress
+      address: $extensionAddress
       args_contains: $motionId
     }
   ) {
