@@ -13,3 +13,18 @@
   display: inline-block;
   cursor: pointer;
 }
+
+.tokenItem {
+  composes: flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
+}
+
+.tokenLockWrapper {
+  display: block;
+  margin-left: 3px;
+  margin-top: 2px;
+  position: relative;
+}
+
+.tokenLockWrapper svg {
+  fill: var(--grey-3);
+}

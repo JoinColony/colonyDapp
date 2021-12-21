@@ -1,15 +1,15 @@
-@value iconSize: 16px;
+@value normalIcon: 14px;
 
 .main {
   display: block;
-  height: iconSize;
-  width: iconSize;
+  height: normalIcon;
+  width: normalIcon;
   position: relative;
 }
 
 .icon {
-  height: iconSize;
-  width: iconSize;
+  height: normalIcon;
+  width: normalIcon;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -17,12 +17,11 @@
 }
 
 .icon svg {
-  height: iconSize;
-  width: iconSize;
+  height: inherit;
+  width: inherit;
   position: absolute;
   top: 0;
   left: 0;
-  fill: var(--grey-3);
 }
 
 .tooltipWrapper {

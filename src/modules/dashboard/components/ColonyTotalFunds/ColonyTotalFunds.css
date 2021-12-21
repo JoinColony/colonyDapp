@@ -11,7 +11,6 @@
 }
 
 .selectedToken {
-  display: block;
   color: var(--dark);
 }
 
@@ -22,6 +21,8 @@
 
 .selectedTokenSymbol {
   composes: button from '~styles/reset.css';
+  display: inline-flex;
+  align-items: center;
   margin-left: 13px;
   font-size: tokenDisplaySymbolFontSize;
   font-weight: var(--weight-normal);
@@ -70,6 +71,16 @@
 
 .caretContainer {
   display: inline-block;
-  margin: 0 0 2px 3px;
+  margin: 0 0 0 3px;
   vertical-align: middle;
+}
+
+.tokenLockWrapper {
+  display: block;
+  margin-left: 5px;
+  position: relative;
+}
+
+.tokenLockWrapper svg {
+  fill: var(--grey-3);
 }

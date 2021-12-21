@@ -70,7 +70,7 @@ const TokenCard = ({
                 icon="lock"
                 tooltipText={{ id: 'dashboard.lockedTokenTooltip' }}
                 className={styles.tokenLockWrapper}
-                iconClassName={styles.tokenLockIcon}
+                iconSize="12px"
               />
             )}
             {token.address === nativeTokenAddress && (

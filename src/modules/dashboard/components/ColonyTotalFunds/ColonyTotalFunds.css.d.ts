@@ -9,3 +9,4 @@ export const manageFundsLink: string;
 export const rightArrowDisplay: string;
 export const caretIcon: string;
 export const caretContainer: string;
+export const tokenLockWrapper: string;

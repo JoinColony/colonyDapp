@@ -1,5 +1,4 @@
 @value headerFooterHeights: 35px;
-@value lockIconSize: 12px;
 
 .main {
   display: flex;
@@ -41,26 +40,10 @@
 .tokenLockWrapper {
   display: block;
   margin-left: 3px;
-  height: lockIconSize;
-  width: lockIconSize;
   position: relative;
 }
 
-.tokenLockIcon {
-  height: lockIconSize;
-  width: lockIconSize;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.tokenLockIcon svg {
-  height: lockIconSize;
-  width: lockIconSize;
-  position: absolute;
-  top: 0;
-  left: 0;
+.tokenLockWrapper svg {
   fill: var(--grey-3);
 }
 

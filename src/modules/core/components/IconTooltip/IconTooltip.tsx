@@ -11,6 +11,7 @@ import styles from './IconTooltip.css';
 
 interface Props {
   icon: string;
+  iconSize?: string;
   iconClassName?: string;
   /** Customise the tooltip message */
   tooltipText: string | MessageDescriptor;
@@ -27,6 +28,7 @@ const displayName = 'IconTooltip';
 
 const IconTooltip = ({
   icon,
+  iconSize = styles.normalIcon,
   iconClassName = styles.icon,
   tooltipText,
   tooltipTextValues,
@@ -36,7 +38,7 @@ const IconTooltip = ({
       {
         name: 'offset',
         options: {
-          offset: [123, 10],
+          offset: [122, 15],
         },
       },
     ],
@@ -46,7 +48,10 @@ const IconTooltip = ({
   showArrow,
 }: Props) => (
   <>
-    <div className={className || getMainClasses({}, styles)}>
+    <div
+      className={className || getMainClasses({}, styles)}
+      style={{ width: iconSize, height: iconSize }}
+    >
       <Tooltip
         appearance={{ theme: 'dark', size: 'medium' }}
         content={
@@ -63,7 +68,12 @@ const IconTooltip = ({
         popperProps={tooltipPopperProps}
       >
         <div>
-          <Icon className={iconClassName} name={icon} title="" />
+          <Icon
+            className={iconClassName}
+            name={icon}
+            title=""
+            style={{ width: iconSize, height: iconSize }}
+          />
         </div>
       </Tooltip>
     </div>

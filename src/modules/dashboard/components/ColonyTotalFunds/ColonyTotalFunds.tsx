@@ -19,6 +19,7 @@ import { checkIfNetworkIsAllowed } from '~utils/networks';
 import ColonyTotalFundsPopover from './ColonyTotalFundsPopover';
 
 import styles from './ColonyTotalFunds.css';
+import IconTooltip from '~core/IconTooltip';
 
 const MSG = defineMessages({
   totalBalance: {
@@ -52,6 +53,7 @@ const ColonyTotalFunds = ({
     tokens: colonyTokens,
     nativeTokenAddress,
     version,
+    isNativeTokenLocked,
   },
 }: Props) => {
   const { networkId } = useLoggedInUser();
@@ -113,6 +115,15 @@ const ColonyTotalFunds = ({
         >
           <button className={styles.selectedTokenSymbol} type="button">
             {currentToken.symbol}
+            {currentTokenAddress === nativeTokenAddress &&
+              isNativeTokenLocked && (
+                <IconTooltip
+                  icon="lock"
+                  tooltipText={{ id: 'dashboard.lockedTokenTooltip' }}
+                  className={styles.tokenLockWrapper}
+                  iconSize="14px"
+                />
+              )}
             <span className={styles.caretContainer}>
               <Icon
                 className={styles.caretIcon}

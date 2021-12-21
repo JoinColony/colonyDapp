@@ -45,6 +45,7 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
     tokens: colonyTokens,
     nativeTokenAddress,
     colonyName,
+    isNativeTokenLocked,
   } = colony;
 
   const {
@@ -79,7 +80,12 @@ const ColonyFunding = ({ colony, currentDomainId }: Props) => {
                 isTokenNative={token.address === nativeTokenAddress}
               >
                 <div className={styles.tokenBalance}>
-                  <TokenItem currentDomainId={currentDomainId} token={token} />
+                  <TokenItem
+                    currentDomainId={currentDomainId}
+                    token={token}
+                    isTokenNative={token.address === nativeTokenAddress}
+                    isNativeTokenLocked={isNativeTokenLocked}
+                  />
                 </div>
               </InfoPopover>
             </li>
