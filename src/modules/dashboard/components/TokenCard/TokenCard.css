@@ -11,6 +11,7 @@
   display: flex;
   align-items: center;
   height: headerFooterHeights;
+  cursor: pointer;
 }
 
 .iconContainer {

@@ -4,6 +4,7 @@ import { BigNumber } from 'ethers/utils';
 
 import { SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
 import Icon from '~core/Icon';
+import InfoPopover from '~core/InfoPopover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import { UserToken } from '~data/generated';
@@ -119,30 +120,32 @@ const TokensTab = ({
 
   return (
     <>
-      <div className={styles.totalTokensContainer}>
-        <div
-          className={
-            totalTokensWidth <= widthLimit
-              ? styles.tokenSymbol
-              : styles.tokenSymbolSmall
-          }
-        >
-          <TokenIcon
-            token={token || {}}
-            size={totalTokensWidth <= widthLimit ? 'xs' : 'xxs'}
-          />
+      <InfoPopover token={token} isTokenNative>
+        <div className={styles.totalTokensContainer}>
+          <div
+            className={
+              totalTokensWidth <= widthLimit
+                ? styles.tokenSymbol
+                : styles.tokenSymbolSmall
+            }
+          >
+            <TokenIcon
+              token={token || {}}
+              size={totalTokensWidth <= widthLimit ? 'xs' : 'xxs'}
+            />
+          </div>
+          <p
+            ref={targetRef}
+            className={
+              totalTokensWidth <= widthLimit
+                ? styles.totalTokens
+                : styles.totalTokensSmall
+            }
+          >
+            {formattedTotalAmount} <span>{token?.symbol}</span>
+          </p>
         </div>
-        <p
-          ref={targetRef}
-          className={
-            totalTokensWidth <= widthLimit
-              ? styles.totalTokens
-              : styles.totalTokensSmall
-          }
-        >
-          {formattedTotalAmount} <span>{token?.symbol}</span>
-        </p>
-      </div>
+      </InfoPopover>
       <div className={styles.tokensDetailsContainer}>
         <ul>
           <li>

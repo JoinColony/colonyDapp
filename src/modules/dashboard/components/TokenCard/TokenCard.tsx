@@ -5,6 +5,7 @@ import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import CopyableAddress from '~core/CopyableAddress';
+import InfoPopover from '~core/InfoPopover';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Address } from '~types/index';
 import { ColonyTokens, UserTokens } from '~data/index';
@@ -42,24 +43,29 @@ const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
 
   return (
     <Card key={token.address} className={styles.main}>
-      <div className={styles.cardHeading}>
-        <TokenIcon token={token} name={token.name || undefined} size="xs" />
-        <div className={styles.tokenSymbol}>
-          {token.symbol ? (
-            token.symbol
-          ) : (
-            <>
-              <FormattedMessage {...MSG.unknownToken} />
-              <CopyableAddress>{token.address}</CopyableAddress>
-            </>
-          )}
-          {token.address === nativeTokenAddress && (
-            <span className={styles.nativeTokenText}>
-              <FormattedMessage {...MSG.nativeToken} />
-            </span>
-          )}
+      <InfoPopover
+        token={token}
+        isTokenNative={token.address === nativeTokenAddress}
+      >
+        <div className={styles.cardHeading}>
+          <TokenIcon token={token} name={token.name || undefined} size="xs" />
+          <div className={styles.tokenSymbol}>
+            {token.symbol ? (
+              token.symbol
+            ) : (
+              <>
+                <FormattedMessage {...MSG.unknownToken} />
+                <CopyableAddress>{token.address}</CopyableAddress>
+              </>
+            )}
+            {token.address === nativeTokenAddress && (
+              <span className={styles.nativeTokenText}>
+                <FormattedMessage {...MSG.nativeToken} />
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      </InfoPopover>
       <div
         className={
           tokenBalanceIsNotPositive(token, parseInt(domainId as string, 10))
