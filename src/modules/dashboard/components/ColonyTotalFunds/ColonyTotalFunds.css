@@ -26,6 +26,7 @@
   margin-left: 13px;
   font-size: tokenDisplaySymbolFontSize;
   font-weight: var(--weight-normal);
+  line-height: tokenDisplaySymbolFontSize;
   letter-spacing: 0.25px;
   cursor: pointer;
   user-select: none;
@@ -78,9 +79,14 @@
 .tokenLockWrapper {
   display: block;
   margin-left: 5px;
+  margin-top: 1px;
   position: relative;
 }
 
 .tokenLockWrapper svg {
   fill: var(--grey-3);
+}
+
+.selectedTokenSymbol:hover .tokenLockWrapper svg {
+  fill: var(--colony-blue);
 }

@@ -4,7 +4,7 @@
 ```jsx
 <IconTooltip 
   icon="lock"
-  tooltipText={{ id: 'dashboard.lockedTokenTooltip' }}
+  tooltipText={{ id: 'tooltip.lockedToken' }}
   className={styles.tokenLockWrapper}
 />
 ```

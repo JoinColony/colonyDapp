@@ -189,7 +189,7 @@ const Popover = ({
         ...(trigger
           ? {
               hover: {
-                onMouseEnter: requestOpen,
+                onMouseOver: requestOpen,
                 /*
                  * Current version of React (16.11.0 as of now) does not call `onMouseLeave` for
                  * `disabled` buttons. Thus, we use a native event listener in `componentDidUpdate`.
@@ -222,7 +222,7 @@ const Popover = ({
      * See: https://github.com/facebook/react/issues/4251
      */
     if (referenceElement) {
-      referenceElement.addEventListener('mouseleave', handleMouseLeave, true);
+      referenceElement.addEventListener('mouseout', handleMouseLeave, true);
     }
     return () => {
       if (referenceElement) {

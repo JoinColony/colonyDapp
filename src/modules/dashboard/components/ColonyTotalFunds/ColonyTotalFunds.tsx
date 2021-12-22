@@ -114,14 +114,14 @@ const ColonyTotalFunds = ({
           currentTokenAddress={currentTokenAddress}
         >
           <button className={styles.selectedTokenSymbol} type="button">
-            {currentToken.symbol}
+            <span>{currentToken.symbol}</span>
             {currentTokenAddress === nativeTokenAddress &&
               isNativeTokenLocked && (
                 <IconTooltip
                   icon="lock"
-                  tooltipText={{ id: 'dashboard.lockedTokenTooltip' }}
+                  tooltipText={{ id: 'tooltip.lockedToken' }}
                   className={styles.tokenLockWrapper}
-                  iconSize="14px"
+                  iconSize="15px"
                 />
               )}
             <span className={styles.caretContainer}>

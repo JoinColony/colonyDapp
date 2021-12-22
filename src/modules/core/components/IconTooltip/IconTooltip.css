@@ -7,6 +7,15 @@
   position: relative;
 }
 
+.iconWrap {
+  margin-top: -10px;
+
+  /*
+   * Needed to make the tooltip align better and offset while maintiaing arrow alignment
+   */
+  width: 0;
+}
+
 .icon {
   height: normalIcon;
   width: normalIcon;
@@ -26,4 +35,5 @@
 
 .tooltipWrapper {
   width: 250px;
+  text-align: left;
 }

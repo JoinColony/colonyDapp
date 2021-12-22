@@ -34,12 +34,14 @@
   margin-left: 15px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
+  line-height: var(--size-small);
   color: var(--grey-dark);
 }
 
 .tokenLockWrapper {
   display: block;
   margin-left: 3px;
+  margin-top: 1px;
   position: relative;
 }
 

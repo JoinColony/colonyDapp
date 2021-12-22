@@ -58,7 +58,7 @@ const TokenCard = ({
           <TokenIcon token={token} name={token.name || undefined} size="xs" />
           <div className={styles.tokenSymbol}>
             {token.symbol ? (
-              token.symbol
+              <span>{token.symbol}</span>
             ) : (
               <>
                 <FormattedMessage {...MSG.unknownToken} />
@@ -68,9 +68,9 @@ const TokenCard = ({
             {token.address === nativeTokenAddress && nativeTokenLocked && (
               <IconTooltip
                 icon="lock"
-                tooltipText={{ id: 'dashboard.lockedTokenTooltip' }}
+                tooltipText={{ id: 'tooltip.lockedToken' }}
                 className={styles.tokenLockWrapper}
-                iconSize="12px"
+                iconSize="11px"
               />
             )}
             {token.address === nativeTokenAddress && (

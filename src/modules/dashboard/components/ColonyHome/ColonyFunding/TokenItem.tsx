@@ -29,19 +29,23 @@ const TokenItem = ({
 
   return typeof balance === 'undefined' ? null : (
     <div className={styles.tokenItem}>
-      <Numeral
-        unit={getTokenDecimalsWithFallback(decimals)}
-        value={balance}
-        suffix={` ${symbol}`}
-      />
-      {isTokenNative && isNativeTokenLocked && (
-        <IconTooltip
-          icon="lock"
-          tooltipText={{ id: 'dashboard.lockedTokenTooltip' }}
-          className={styles.tokenLockWrapper}
-          iconSize="12px"
+      <span className={styles.tokenValue}>
+        <Numeral
+          unit={getTokenDecimalsWithFallback(decimals)}
+          value={balance}
         />
-      )}
+      </span>
+      <span className={styles.tokenSymbol}>
+        <span>{symbol}</span>
+        {isTokenNative && isNativeTokenLocked && (
+          <IconTooltip
+            icon="lock"
+            tooltipText={{ id: 'tooltip.lockedToken' }}
+            className={styles.tokenLockWrapper}
+            iconSize="12px"
+          />
+        )}
+      </span>
     </div>
   );
 };
