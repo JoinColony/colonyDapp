@@ -216,6 +216,7 @@ export const motionsResolvers = ({
            * Subgraph addresses are not checksummed
            */
           colonyAddress: colonyAddress.toLowerCase(),
+          extensionAddress: votingReputationClient.address.toLowerCase(),
           motionId: `"motionId":"${motionId}"`,
           sortDirection: 'desc',
         },
@@ -482,6 +483,11 @@ export const motionsResolvers = ({
     },
     async eventsForMotion(_, { motionId, colonyAddress }) {
       try {
+        const votingReputationClient = (await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        )) as ExtensionClient;
+
         const { data } = await apolloClient.query<
           SubgraphMotionEventsQuery,
           SubgraphMotionEventsQueryVariables
@@ -493,6 +499,7 @@ export const motionsResolvers = ({
              */
             colonyAddress: colonyAddress.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
@@ -537,6 +544,11 @@ export const motionsResolvers = ({
     },
     async motionCurrentUserVoted(_, { motionId, colonyAddress, userAddress }) {
       try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
         const { data } = await apolloClient.query<
           SubgraphMotionVoteSubmittedEventsQuery,
           SubgraphMotionVoteSubmittedEventsQueryVariables
@@ -547,6 +559,7 @@ export const motionsResolvers = ({
              * Subgraph addresses are not checksummed
              */
             colonyAddress: colonyAddress.toLowerCase(),
+            extensionAddress: votingReputationClient.address.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
           },
           fetchPolicy: 'network-only',
@@ -573,6 +586,11 @@ export const motionsResolvers = ({
           vote: null,
         };
 
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
         const { data } = await apolloClient.query<
           SubgraphMotionVoteRevealedEventsQuery,
           SubgraphMotionVoteRevealedEventsQueryVariables
@@ -584,6 +602,7 @@ export const motionsResolvers = ({
              */
             colonyAddress: colonyAddress.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
@@ -643,6 +662,7 @@ export const motionsResolvers = ({
              */
             colonyAddress: colonyAddress.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
@@ -766,6 +786,11 @@ export const motionsResolvers = ({
           claimedReward: null,
         };
 
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
         const { data: stakeEventsData } = await apolloClient.query<
           SubgraphMotionStakedEventsQuery,
           SubgraphMotionStakedEventsQueryVariables
@@ -776,6 +801,7 @@ export const motionsResolvers = ({
              * Subgraph addresses are not checksummed
              */
             colonyAddress: colonyAddress.toLowerCase(),
+            extensionAddress: votingReputationClient.address.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
           },
           fetchPolicy: 'network-only',
@@ -792,6 +818,7 @@ export const motionsResolvers = ({
              */
             colonyAddress: colonyAddress.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
+            extensionAddress: votingReputationClient.address.toLowerCase(),
           },
           fetchPolicy: 'network-only',
         });
@@ -812,11 +839,6 @@ export const motionsResolvers = ({
         const userRewardClaimedParsedEvents = userRewardClaimedEvents
           ? userRewardClaimedEvents.map(parseSubgraphEvent)
           : [];
-
-        const votingReputationClient = await colonyManager.getClient(
-          ClientType.VotingReputationClient,
-          colonyAddress,
-        );
 
         let stakesYay = bigNumberify(0);
         let stakesNay = bigNumberify(0);
@@ -903,6 +925,11 @@ export const motionsResolvers = ({
         metadata: null,
       };
       try {
+        const votingReputationClient = await colonyManager.getClient(
+          ClientType.VotingReputationClient,
+          colonyAddress,
+        );
+
         const { data } = await apolloClient.query<
           SubgraphMotionStakedEventsQuery,
           SubgraphMotionStakedEventsQueryVariables
@@ -913,6 +940,7 @@ export const motionsResolvers = ({
              * Subgraph addresses are not checksummed
              */
             colonyAddress: colonyAddress.toLowerCase(),
+            extensionAddress: votingReputationClient.address.toLowerCase(),
             motionId: `"motionId":"${motionId}"`,
           },
           fetchPolicy: 'network-only',
