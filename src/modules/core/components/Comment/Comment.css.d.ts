@@ -1,5 +1,6 @@
 export const main: string;
-export const activeActions: string;
+export const stateDisableHover: string;
+export const stateActiveActions: string;
 export const stateAnnotation: string;
 export const stateGhosted: string;
 export const avatar: string;

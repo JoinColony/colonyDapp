@@ -7,7 +7,7 @@
   border-radius: var(--radius-large);
 }
 
-.main:hover, .main.activeActions {
+.main:not(.stateDisableHover):hover, .main.stateActiveActions:not(.stateDisableHover) {
   background-color: color-mod(var(--action-secondary) alpha(6%));
   opacity: 1;
 }
@@ -36,7 +36,7 @@
   color: color-mod(var(--temp-grey-blue-7) alpha(80%));
 }
 
-.stateHideControls:hover {
+.stateHideControls:not(.stateDisableHover):hover {
   background-color: transparent;
 }
 
@@ -71,7 +71,7 @@
   opacity: 0;
 }
 
-.main:hover .actions, .main.activeActions .actions {
+.main:hover .actions, .main.stateActiveActions .actions {
   opacity: 1;
 }
 

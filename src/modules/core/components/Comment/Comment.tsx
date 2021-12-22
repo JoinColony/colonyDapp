@@ -42,6 +42,7 @@ export interface Props {
   annotation?: boolean;
   createdAt?: Date | number;
   showControls?: boolean;
+  disableHover?: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -55,6 +56,7 @@ const Comment = ({
   createdAt,
   annotation = false,
   showControls = false,
+  disableHover = false,
 }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const rootRoles = useTransformer(getUserRolesForDomain, [
@@ -92,18 +94,16 @@ const Comment = ({
 
   return (
     <div
-      className={`
-          ${getMainClasses(appearance, styles, {
-            annotation,
-            ghosted:
-              showControls &&
-              permission !== COMMENT_MODERATION.NONE &&
-              !!(deleted || adminDelete || userBanned),
-            hideControls:
-              !showControls || permission === COMMENT_MODERATION.NONE,
-          })}
-          ${hoverState ? styles.activeActions : ''}
-        `}
+      className={getMainClasses(appearance, styles, {
+        annotation,
+        ghosted:
+          showControls &&
+          permission !== COMMENT_MODERATION.NONE &&
+          !!(deleted || adminDelete || userBanned),
+        hideControls: !showControls || permission === COMMENT_MODERATION.NONE,
+        activeActions: hoverState,
+        disableHover,
+      })}
     >
       <div className={styles.avatar}>
         <UserAvatar
