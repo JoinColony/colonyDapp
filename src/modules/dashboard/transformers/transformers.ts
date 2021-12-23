@@ -278,42 +278,51 @@ export const getActionsListData = (
             }
           }
           if (subgraphActionType === FilteredUnformattedAction.Motions) {
-            const {
-              args,
-              agent,
-              type,
-              state,
-              fundamentalChainId,
-              timeoutPeriods,
-              stakes,
-              requiredStake,
-            } = unformattedAction;
-
-            if (args?.token) {
+            try {
               const {
-                args: {
-                  token: { address: tokenAddress, symbol, decimals },
-                },
+                args,
+                agent,
+                type,
+                state,
+                fundamentalChainId,
+                domain: { ethDomainId },
+                timeoutPeriods,
+                stakes,
+                requiredStake,
               } = unformattedAction;
 
-              formatedAction.tokenAddress = tokenAddress;
-              formatedAction.symbol = symbol;
-              formatedAction.decimals = decimals;
-            }
-            formatedAction.initiator = agent;
-            formatedAction.actionType = type;
-            formatedAction.motionState = state;
-            formatedAction.motionId = fundamentalChainId;
-            formatedAction.timeoutPeriods = timeoutPeriods;
-            formatedAction.totalNayStake = bigNumberify(
-              stakes[0] || 0,
-            ).toString();
-            formatedAction.requiredStake = requiredStake;
-            if (args) {
-              const actionTypeKeys = Object.keys(args);
-              actionTypeKeys.forEach((key) => {
-                formatedAction[key] = args[key];
-              });
+              if (args?.token) {
+                const {
+                  args: {
+                    token: { address: tokenAddress, symbol, decimals },
+                  },
+                } = unformattedAction;
+
+                formatedAction.tokenAddress = tokenAddress;
+                formatedAction.symbol = symbol;
+                formatedAction.decimals = decimals;
+              }
+              formatedAction.initiator = agent;
+              formatedAction.actionType = type;
+              formatedAction.motionState = state;
+              formatedAction.fromDomain = ethDomainId;
+              formatedAction.motionId = fundamentalChainId;
+              formatedAction.timeoutPeriods = timeoutPeriods;
+              formatedAction.totalNayStake = bigNumberify(
+                stakes[0] || 0,
+              ).toString();
+              formatedAction.requiredStake = requiredStake;
+              if (args) {
+                const actionTypeKeys = Object.keys(args);
+                actionTypeKeys.forEach((key) => {
+                  formatedAction[key] = args[key];
+                });
+              }
+            } catch (error) {
+              log.verbose(
+                'Could not deconstruct the subgraph motion event object',
+              );
+              log.verbose(error);
             }
           }
           formatedAction.transactionHash = hash;
