@@ -75,7 +75,7 @@ export type ColonyActionTypes =
   | ErrorActionType<ActionTypes.COLONY_EXTENSION_ENABLE_ERROR, object>
   | UniqueActionType<
       ActionTypes.COLONY_EXTENSION_DEPRECATE,
-      { colonyAddress: Address; extensionId: string },
+      { colonyAddress: Address; extensionId: string; isToDeprecate: boolean },
       WithKey
     >
   | UniqueActionType<

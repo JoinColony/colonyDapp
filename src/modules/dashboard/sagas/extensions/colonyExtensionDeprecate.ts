@@ -14,7 +14,7 @@ import { refreshExtension } from '../utils';
 
 function* colonyExtensionDeprecate({
   meta,
-  payload: { colonyAddress, extensionId },
+  payload: { colonyAddress, extensionId, isToDeprecate },
 }: Action<ActionTypes.COLONY_EXTENSION_DEPRECATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
 
@@ -23,7 +23,7 @@ function* colonyExtensionDeprecate({
       context: ClientType.ColonyClient,
       methodName: 'deprecateExtension',
       identifier: colonyAddress,
-      params: [getExtensionHash(extensionId), true],
+      params: [getExtensionHash(extensionId), isToDeprecate],
     });
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);
