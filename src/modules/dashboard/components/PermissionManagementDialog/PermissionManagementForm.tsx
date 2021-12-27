@@ -202,10 +202,7 @@ const PermissionManagementForm = ({
       const fromDomainId = parseInt(domainValue, 10);
       const selectedMotionDomainId = parseInt(values.motionDomainId, 10);
       onDomainSelected(fromDomainId);
-      if (
-        selectedMotionDomainId !== ROOT_DOMAIN_ID &&
-        selectedMotionDomainId !== fromDomainId
-      ) {
+      if (selectedMotionDomainId !== fromDomainId) {
         onMotionDomainChange(fromDomainId);
       }
     },
