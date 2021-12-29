@@ -152,13 +152,27 @@ function* editColonyAction({
       /*
        * Upload annotation metadata to IPFS
        */
-      let annotationMessageIpfsHash = null;
+      let annotationMessageIpfsHash: null | string = null;
       annotationMessageIpfsHash = yield call(
         ipfsUpload,
         JSON.stringify({
           annotationMessage,
         }),
       );
+
+      /* If the ipfs upload failed we try again, then if it fails again we just assign
+      an empty string so that the `transactionAddParams` won't fail */
+      if (!annotationMessageIpfsHash) {
+        annotationMessageIpfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({
+            annotationMessage,
+          }),
+        );
+        if (!annotationMessageIpfsHash) {
+          annotationMessageIpfsHash = '';
+        }
+      }
 
       yield put(
         transactionAddParams(annotateEditColony.id, [

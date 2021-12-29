@@ -124,13 +124,27 @@ function* managePermissionsAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateSetUserRoles.id));
 
-      let annotationMessageIpfsHash = null;
+      let annotationMessageIpfsHash: null | string = null;
       annotationMessageIpfsHash = yield call(
         ipfsUpload,
         JSON.stringify({
           annotationMessage,
         }),
       );
+
+      /* If the ipfs upload failed we try again, then if it fails again we just assign
+      an empty string so that the `transactionAddParams` won't fail */
+      if (!annotationMessageIpfsHash) {
+        annotationMessageIpfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({
+            annotationMessage,
+          }),
+        );
+        if (!annotationMessageIpfsHash) {
+          annotationMessageIpfsHash = '';
+        }
+      }
 
       yield put(
         transactionAddParams(annotateSetUserRoles.id, [

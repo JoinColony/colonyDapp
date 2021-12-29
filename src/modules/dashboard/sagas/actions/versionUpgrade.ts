@@ -96,13 +96,27 @@ function* createVersionUpgradeAction({
     if (supportAnnotation) {
       yield put(transactionPending(annotateUpgrade.id));
 
-      let ipfsHash = null;
+      let ipfsHash: string | null = null;
       ipfsHash = yield call(
         ipfsUpload,
         JSON.stringify({
           annotationMessage,
         }),
       );
+
+      /* If the ipfs upload failed we try again, then if it fails again we just assign
+      an empty string so that the `transactionAddParams` won't fail */
+      if (!ipfsHash) {
+        ipfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({
+            annotationMessage,
+          }),
+        );
+        if (!ipfsHash) {
+          ipfsHash = '';
+        }
+      }
 
       yield put(transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]));
 
