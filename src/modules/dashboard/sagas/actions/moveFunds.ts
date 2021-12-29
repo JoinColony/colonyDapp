@@ -9,12 +9,13 @@ import {
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
+
+import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -149,27 +150,7 @@ function* createMoveFundsAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateMoveFunds.id));
 
-      let ipfsHash: string | null = null;
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-
-      /* If the ipfs upload failed we try again, then if it fails again we just assign
-      an empty string so that the `transactionAddParams` won't fail */
-      if (!ipfsHash) {
-        ipfsHash = yield call(
-          ipfsUpload,
-          JSON.stringify({
-            annotationMessage,
-          }),
-        );
-        if (!ipfsHash) {
-          ipfsHash = '';
-        }
-      }
+      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
 
       yield put(transactionAddParams(annotateMoveFunds.id, [txHash, ipfsHash]));
 

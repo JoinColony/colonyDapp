@@ -10,12 +10,13 @@ import {
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
+
+import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -124,27 +125,10 @@ function* managePermissionsAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateSetUserRoles.id));
 
-      let annotationMessageIpfsHash: null | string = null;
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
+      const annotationMessageIpfsHash = yield call(
+        uploadIfpsAnnotation,
+        annotationMessage,
       );
-
-      /* If the ipfs upload failed we try again, then if it fails again we just assign
-      an empty string so that the `transactionAddParams` won't fail */
-      if (!annotationMessageIpfsHash) {
-        annotationMessageIpfsHash = yield call(
-          ipfsUpload,
-          JSON.stringify({
-            annotationMessage,
-          }),
-        );
-        if (!annotationMessageIpfsHash) {
-          annotationMessageIpfsHash = '';
-        }
-      }
 
       yield put(
         transactionAddParams(annotateSetUserRoles.id, [

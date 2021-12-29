@@ -24,6 +24,8 @@ import {
   RecoveryRolesUsersDocument,
 } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
+
+import { uploadIfpsAnnotation } from '../utils';
 import {
   transactionReady,
   transactionPending,
@@ -34,7 +36,6 @@ import {
   getTxChannel,
   createTransactionChannels,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 function* enterRecoveryAction({
   payload: { colonyAddress, walletAddress, colonyName, annotationMessage },
@@ -105,27 +106,7 @@ function* enterRecoveryAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateRecoveryAction.id));
 
-      let ipfsHash: string | null = null;
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
-
-      /* If the ipfs upload failed we try again, then if it fails again we just assign
-      an empty string so that the `transactionAddParams` won't fail */
-      if (!ipfsHash) {
-        ipfsHash = yield call(
-          ipfsUpload,
-          JSON.stringify({
-            annotationMessage,
-          }),
-        );
-        if (!ipfsHash) {
-          ipfsHash = '';
-        }
-      }
+      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
 
       yield put(
         transactionAddParams(annotateRecoveryAction.id, [txHash, ipfsHash]),
