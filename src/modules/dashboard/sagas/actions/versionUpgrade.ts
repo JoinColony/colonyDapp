@@ -11,7 +11,6 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -22,6 +21,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
+import { ipfsUpload } from '../../../core/sagas/ipfs';
 
 function* createVersionUpgradeAction({
   payload: { colonyAddress, colonyName, version, annotationMessage },
@@ -97,7 +97,27 @@ function* createVersionUpgradeAction({
     if (supportAnnotation) {
       yield put(transactionPending(annotateUpgrade.id));
 
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
+      let ipfsHash: string | null = null;
+      ipfsHash = yield call(
+        ipfsUpload,
+        JSON.stringify({
+          annotationMessage,
+        }),
+      );
+
+      /* If the ipfs upload failed we try again, then if it fails again we just assign
+      an empty string so that the `transactionAddParams` won't fail */
+      if (!ipfsHash) {
+        ipfsHash = yield call(
+          ipfsUpload,
+          JSON.stringify({
+            annotationMessage,
+          }),
+        );
+        if (!ipfsHash) {
+          ipfsHash = '';
+        }
+      }
 
       yield put(transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]));
 
