@@ -49,6 +49,7 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots]: [
     ColonyRole.Funding,
   ],
+  [ColonyAndExtensionsEvents.TokenUnlocked]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.TokensMinted]: [ColonyRole.Root],
   [ColonyAndExtensionsEvents.DomainAdded]: [ColonyRole.Architecture],
   [ColonyAndExtensionsEvents.ColonyUpgraded]: [ColonyRole.Root],
@@ -76,6 +77,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyActions.Payment]: 'emoji-dollar-stack',
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
   [ColonyActions.MoveFunds]: 'emoji-world-globe',
+  [ColonyActions.UnlockToken]: 'emoji-padlock',
   [ColonyActions.MintTokens]: 'emoji-seed-sprout',
   [ColonyActions.CreateDomain]: 'emoji-crane',
   [ColonyActions.VersionUpgrade]: 'emoji-strong-person',
@@ -123,6 +125,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.MoveFunds]: [
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
+  [ColonyActions.UnlockToken]: [ColonyAndExtensionsEvents.TokenUnlocked],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
   [ColonyActions.CreateDomain]: [ColonyAndExtensionsEvents.DomainAdded],
   [ColonyActions.VersionUpgrade]: [ColonyAndExtensionsEvents.ColonyUpgraded],
@@ -167,6 +170,7 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.MoveFunds]: [
     ColonyAndExtensionsEvents.ColonyFundsMovedBetweenFundingPots,
   ],
+  [ColonyActions.UnlockToken]: [ColonyAndExtensionsEvents.TokenUnlocked],
   [ColonyActions.MintTokens]: [ColonyAndExtensionsEvents.TokensMinted],
   /*
    * We track both configurations of this action (with metadata and without)
