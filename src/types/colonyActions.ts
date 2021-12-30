@@ -30,6 +30,7 @@ export enum ColonyAndExtensionsEvents {
   FundingPotAdded = 'FundingPotAdded',
   PaymentAdded = 'PaymentAdded',
   PayoutClaimed = 'PayoutClaimed',
+  TokenUnlocked = 'TokenUnlocked',
   TokensMinted = 'TokensMinted',
   SkillAdded = 'SkillAdded',
   DomainAdded = 'DomainAdded',
