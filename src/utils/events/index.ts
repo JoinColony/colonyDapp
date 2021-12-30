@@ -306,6 +306,28 @@ const getMoveFundsActionValues = async (
   return moveFundsActionValues;
 };
 
+const getTokenUnlockedActionValues = async (
+  processedEvents: ProcessedEvent[],
+  colonyClient: ColonyClient,
+): Promise<Partial<ActionValues>> => {
+  const tokenUnlockedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.TokenUnlocked,
+  ) as ProcessedEvent;
+
+  const tokenAddress = await colonyClient.getToken();
+
+  const { address } = tokenUnlockedEvent;
+
+  const tokenUnlockedValues: {
+    tokenAddress: Address;
+    address: Address;
+  } = {
+    tokenAddress,
+    address,
+  };
+  return tokenUnlockedValues;
+};
+
 const getMintTokensActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -990,6 +1012,16 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...moveFundsActionValues,
+      };
+    }
+    case ColonyActions.UnlockToken: {
+      const unlockTokenActionValues = await getTokenUnlockedActionValues(
+        processedEvents,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...unlockTokenActionValues,
       };
     }
     case ColonyActions.MintTokens: {
