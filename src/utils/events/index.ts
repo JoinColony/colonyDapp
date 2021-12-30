@@ -591,22 +591,11 @@ export const getMotionState = async (
     18,
   );
   switch (motionNetworkState) {
-    case NetworkMotionState.Staking: {
-      const [nayStakes, yayStakes] = motion.stakes;
-      if (
-        bigNumberify(yayStakes).gte(bigNumberify(requiredStakes)) &&
-        bigNumberify(nayStakes).lt(bigNumberify(requiredStakes))
-      ) {
-        return MotionState.Staked;
-      }
-      if (
-        bigNumberify(nayStakes).gte(bigNumberify(requiredStakes)) &&
-        bigNumberify(yayStakes).lt(bigNumberify(requiredStakes))
-      ) {
-        return MotionState.Objection;
-      }
-      return MotionState.Staking;
-    }
+    case NetworkMotionState.Staking:
+      return bigNumberify(motion.stakes[1]).gte(bigNumberify(requiredStakes)) &&
+        bigNumberify(motion.stakes[0]).isZero()
+        ? MotionState.Staked
+        : MotionState.Staking;
     case NetworkMotionState.Submit:
       return MotionState.Voting;
     case NetworkMotionState.Reveal:
