@@ -47,7 +47,6 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.FundingPotAdded} {Funding pot {fundingPot} added}
       ${ColonyAndExtensionsEvents.ColonyInitialised} {{agent} created a colony with token {tokenSymbol} at address {tokenAddress}}
       ${ColonyAndExtensionsEvents.OneTxPaymentMade} {{agent} created an OneTx payment}
-      ${ColonyAndExtensionsEvents.TokenUnlocked} {Unlocked the native token {tokenSymbol}}
       ${ColonyAndExtensionsEvents.TokensMinted} {{agent} minted {amount} {tokenSymbol}}
       ${ColonyAndExtensionsEvents.ColonyFundsClaimed} {{agent} claimed {amount} {tokenSymbol} for colony}
       ${ColonyAndExtensionsEvents.PaymentAdded} {{agent} added payment with id {paymentId}}
