@@ -306,6 +306,28 @@ const getMoveFundsActionValues = async (
   return moveFundsActionValues;
 };
 
+const getTokenUnlockedActionValues = async (
+  processedEvents: ProcessedEvent[],
+  colonyClient: ColonyClient,
+): Promise<Partial<ActionValues>> => {
+  const tokenUnlockedEvent = processedEvents.find(
+    ({ name }) => name === ColonyAndExtensionsEvents.TokenUnlocked,
+  ) as ProcessedEvent;
+
+  const tokenAddress = await colonyClient.getToken();
+
+  const { address } = tokenUnlockedEvent;
+
+  const tokenUnlockedValues: {
+    tokenAddress: Address;
+    address: Address;
+  } = {
+    tokenAddress,
+    address,
+  };
+  return tokenUnlockedValues;
+};
+
 const getMintTokensActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -569,11 +591,22 @@ export const getMotionState = async (
     18,
   );
   switch (motionNetworkState) {
-    case NetworkMotionState.Staking:
-      return bigNumberify(motion.stakes[1]).gte(bigNumberify(requiredStakes)) &&
-        bigNumberify(motion.stakes[0]).isZero()
-        ? MotionState.Staked
-        : MotionState.Staking;
+    case NetworkMotionState.Staking: {
+      const [nayStakes, yayStakes] = motion.stakes;
+      if (
+        bigNumberify(yayStakes).gte(bigNumberify(requiredStakes)) &&
+        bigNumberify(nayStakes).lt(bigNumberify(requiredStakes))
+      ) {
+        return MotionState.Staked;
+      }
+      if (
+        bigNumberify(nayStakes).gte(bigNumberify(requiredStakes)) &&
+        bigNumberify(yayStakes).lt(bigNumberify(requiredStakes))
+      ) {
+        return MotionState.Objection;
+      }
+      return MotionState.Staking;
+    }
     case NetworkMotionState.Submit:
       return MotionState.Voting;
     case NetworkMotionState.Reveal:
@@ -979,6 +1012,16 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...moveFundsActionValues,
+      };
+    }
+    case ColonyActions.UnlockToken: {
+      const unlockTokenActionValues = await getTokenUnlockedActionValues(
+        processedEvents,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...unlockTokenActionValues,
       };
     }
     case ColonyActions.MintTokens: {
