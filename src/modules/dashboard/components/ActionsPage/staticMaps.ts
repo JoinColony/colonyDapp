@@ -213,6 +213,7 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ToDomain,
     ActionPageDetails.Amount,
   ],
+  [ColonyActions.UnlockToken]: [ActionPageDetails.Domain],
   [ColonyActions.MintTokens]: [ActionPageDetails.Amount],
   [ColonyActions.CreateDomain]: [
     ActionPageDetails.Domain,
