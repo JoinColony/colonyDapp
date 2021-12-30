@@ -13,6 +13,7 @@ export enum ColonyActions {
   Payment = 'Payment',
   Recovery = 'Recovery',
   MoveFunds = 'MoveFunds',
+  UnlockToken = 'UnlockToken',
   MintTokens = 'MintTokens',
   CreateDomain = 'CreateDomain',
   VersionUpgrade = 'VersionUpgrade',
