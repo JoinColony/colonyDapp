@@ -7,8 +7,8 @@ import {
   ProcessedColonyQueryVariables,
   ProcessedColonyDocument,
 } from '~data/index';
-import { Action, ActionTypes } from '~redux/index';
-import { putError, takeFrom } from '~utils/saga/effects';
+import { Action, ActionTypes, AllActions } from '~redux/index';
+import { putError, routeRedirect, takeFrom } from '~utils/saga/effects';
 import {
   createTransaction,
   createTransactionChannels,
@@ -23,8 +23,8 @@ import {
 
 function* tokenUnlockAction({
   meta,
-  meta: { id: metaId },
-  payload: { colonyAddress, annotationMessage },
+  meta: { id: metaId, history },
+  payload: { colonyAddress, annotationMessage, colonyName },
 }: Action<ActionTypes.COLONY_ACTION_UNLOCK_TOKEN>) {
   let txChannel;
 
@@ -148,20 +148,19 @@ function* tokenUnlockAction({
       fetchPolicy: 'network-only',
     });
 
-    yield put({
+    yield put<AllActions>({
       type: ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_SUCCESS,
       meta,
     });
+
+    if (colonyName) {
+      yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
+    }
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR,
-      error,
-      meta,
-    );
+    putError(ActionTypes.COLONY_ACTION_UNLOCK_TOKEN_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
-  return null;
 }
 
 export default function* unlockTokenActionSaga() {
