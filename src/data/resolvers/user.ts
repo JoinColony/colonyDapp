@@ -148,7 +148,11 @@ const getUserLock = async (
       colonyAddress,
     );
   } catch (error) {
-    console.error(error);
+    /*
+     * We don't care to catch the error as the value depending on the extension
+     * will jsut default to 0
+     */
+    // silent error
   }
 
   const userLock = await tokenLockingClient.getUserLock(
