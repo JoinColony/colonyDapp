@@ -247,7 +247,9 @@ const ChangeTokenStateForm = ({
               disabled={
                 !isValid ||
                 values.amount === undefined ||
-                new Decimal(unformattedTokenBalance).lt(values.amount || '0')
+                new Decimal(unformattedTokenBalance).lt(
+                  Number(values.amount) || 0,
+                )
               }
             />
           </div>
