@@ -276,6 +276,7 @@ const ActionsPage = () => {
     case ColonyMotions.EditDomainMotion:
     case ColonyMotions.MintTokensMotion:
     case ColonyMotions.VersionUpgradeMotion:
+    case ColonyMotions.UnlockTokenMotion:
       return (
         <DefaultMotion
           colony={colonyData?.processedColony}

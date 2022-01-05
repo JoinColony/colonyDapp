@@ -11,6 +11,7 @@ export enum ColonyMotions {
   SetUserRolesMotion = 'SetUserRolesMotion',
   MoveFundsMotion = 'MoveFundsMotion',
   VersionUpgradeMotion = 'VersionUpgradeMotion',
+  UnlockTokenMotion = 'UnlockTokenMotion',
 }
 
 export const motionNameMapping = {
@@ -22,4 +23,5 @@ export const motionNameMapping = {
   setUserRoles: ColonyMotions.SetUserRolesMotion,
   moveFundsBetweenPots: ColonyMotions.MoveFundsMotion,
   upgrade: ColonyMotions.VersionUpgradeMotion,
+  unlockToken: ColonyMotions.UnlockTokenMotion,
 };
