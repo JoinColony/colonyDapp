@@ -248,7 +248,8 @@ const ChangeTokenStateForm = ({
                 !isValid ||
                 values.amount === undefined ||
                 new Decimal(unformattedTokenBalance).lt(
-                  Number(values.amount) || 0,
+                  /* a bit hacky way of doing the check but nothing else seems to be working */
+                  values.amount.toString() === '.' ? 0 : values.amount || 0,
                 )
               }
             />
