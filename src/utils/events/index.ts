@@ -1076,6 +1076,14 @@ const getEmitDomainReputationPenaltyAndRewardMotionValues = async (
   return domainReputationChangeAction;
 };
 
+const getUnlockTokenMotionValues = async (
+  processedEvents: ProcessedEvent[],
+  votingClient: ExtensionClient,
+  colonyClient: ColonyClient,
+): Promise<Partial<MotionValues>> => {
+  return getMotionValues(processedEvents, votingClient, colonyClient);
+};
+
 export const getActionValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
@@ -1303,6 +1311,17 @@ export const getActionValues = async (
       return {
         ...fallbackValues,
         ...emitDomainReputationPenaltyAndRewardMotionValues,
+      };
+    }
+    case ColonyMotions.UnlockTokenMotion: {
+      const unlockTokenMotionValues = await getUnlockTokenMotionValues(
+        processedEvents,
+        votingClient,
+        colonyClient,
+      );
+      return {
+        ...fallbackValues,
+        ...unlockTokenMotionValues,
       };
     }
     default: {

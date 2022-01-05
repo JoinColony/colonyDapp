@@ -5,6 +5,7 @@ export enum ColonyMotions {
   */
   MintTokensMotion = 'MintTokensMotion',
   PaymentMotion = 'PaymentMotion',
+  UnlockTokenMotion = 'UnlockTokenMotion',
   CreateDomainMotion = 'CreateDomainMotion',
   EditDomainMotion = 'EditDomainMotion',
   ColonyEditMotion = 'ColonyEditMotion',
@@ -18,6 +19,7 @@ export enum ColonyMotions {
 export const motionNameMapping = {
   mintTokens: ColonyMotions.MintTokensMotion,
   makePaymentFundedFromDomain: ColonyMotions.PaymentMotion,
+  unlockToken: ColonyMotions.UnlockTokenMotion,
   addDomain: ColonyMotions.CreateDomainMotion,
   editDomain: ColonyMotions.EditDomainMotion,
   editColony: ColonyMotions.ColonyEditMotion,

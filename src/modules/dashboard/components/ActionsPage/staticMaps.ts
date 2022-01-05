@@ -96,6 +96,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.SetUserRolesMotion]: 'emoji-crane',
   [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyMotions.EmitDomainReputationRewardMotion]: 'emoji-shooting-star',
+  [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -144,6 +145,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyActions.EmitDomainReputationReward]: [
     ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ],
+  [ColonyMotions.UnlockTokenMotion]: MOTION_EVENTS,
   [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
   [ColonyMotions.CreateDomainMotion]: MOTION_EVENTS,
   [ColonyMotions.EditDomainMotion]: MOTION_EVENTS,
@@ -276,4 +278,5 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.ToRecipient,
     ActionPageDetails.ReputationChange,
   ],
+  [ColonyMotions.UnlockTokenMotion]: [],
 };

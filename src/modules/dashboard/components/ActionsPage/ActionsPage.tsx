@@ -269,6 +269,7 @@ const ActionsPage = () => {
         />
       );
     case ColonyMotions.PaymentMotion:
+    case ColonyMotions.UnlockTokenMotion:
     case ColonyMotions.ColonyEditMotion:
     case ColonyMotions.MoveFundsMotion:
     case ColonyMotions.SetUserRolesMotion:

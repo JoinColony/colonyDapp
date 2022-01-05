@@ -45,6 +45,7 @@ const MSG = defineMessages({
     defaultMessage: `Should "{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint tokens}
       ${ColonyMotions.PaymentMotion} {Payment}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock token}
       ${ColonyMotions.CreateDomainMotion} {Create Team}
       ${ColonyMotions.EditDomainMotion} {Edit Team}
       ${ColonyMotions.ColonyEditMotion} {Colony Edit}

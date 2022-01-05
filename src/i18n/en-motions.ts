@@ -22,6 +22,8 @@ const motionsMessageDescriptors = {
           other {pts}
         } reputation reward}
         other {Generic motion we don't have information about}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
+      other {Generic motion we don't have information about}
     }`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {fromDomainName} to {recipient}`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.remove`]: `Remove the {roles} in {fromDomainName} from {recipient}`,
@@ -29,6 +31,7 @@ const motionsMessageDescriptors = {
   'motion.type': `{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint Tokens}
       ${ColonyMotions.PaymentMotion} {Payment}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock Token}
       ${ColonyMotions.CreateDomainMotion} {Create Team}
       ${ColonyMotions.EditDomainMotion} {Edit Team}
       ${ColonyMotions.ColonyEditMotion} {Colony Edit}

@@ -10,6 +10,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.MoveFunds} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
       ${ColonyMotions.MoveFundsMotion} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
       ${ColonyActions.UnlockToken} {Unlock native token {tokenSymbol}}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock Token}
       ${ColonyActions.MintTokens} {Mint {amount} {tokenSymbol}}
       ${ColonyMotions.MintTokensMotion} {Mint {amount} {tokenSymbol}}
       ${ColonyActions.CreateDomain} {New team: {fromDomain}}
