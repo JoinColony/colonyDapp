@@ -405,14 +405,23 @@ export const colonyResolvers = ({
       }
     },
     async canMintNativeToken({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
+      // const colonyClient = await colonyManager.getClient(
+      //   ClientType.ColonyClient,
+      //   colonyAddress,
+      // );
+
+      const tokenClient = await colonyManager.getTokenClient(
+        '0x3Fe98e1e643c3f78aCF72B7FC4A68B5A737CD274',
       );
+
       // fetch whether the user is allowed to mint tokens via the colony
       let canMintNativeToken = true;
       try {
-        await colonyClient.estimate.mintTokens(bigNumberify(1));
+        // await colonyClient.estimate.mintTokens(bigNumberify(1));
+
+        await tokenClient.estimate.mint(colonyAddress, bigNumberify(1), {
+          from: colonyAddress,
+        });
       } catch (error) {
         canMintNativeToken = false;
       }
