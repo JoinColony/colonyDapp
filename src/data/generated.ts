@@ -1701,7 +1701,7 @@ export type TokenInfoQueryVariables = Exact<{
 }>;
 
 
-export type TokenInfoQuery = { tokenInfo: Pick<TokenInfo, 'decimals' | 'name' | 'symbol' | 'iconHash'> };
+export type TokenInfoQuery = { tokenInfo: Pick<TokenInfo, 'decimals' | 'name' | 'symbol' | 'iconHash' | 'address'> };
 
 export type UserNotificationsQueryVariables = Exact<{
   address: Scalars['String'];
@@ -4015,6 +4015,7 @@ export const TokenInfoDocument = gql`
     name
     symbol
     iconHash
+    address
   }
 }
     `;

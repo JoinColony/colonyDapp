@@ -160,6 +160,7 @@ query TokenInfo($address: String!) {
     name
     symbol
     iconHash
+    address
   }
 }
 
