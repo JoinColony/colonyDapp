@@ -177,15 +177,13 @@ const DetailsWidget = ({
             <FormattedMessage {...MSG.value} />
           </div>
           <div className={styles.tokenContainer}>
-            <div className={styles.icon}>
-              {values.token && (
-                <TokenIcon
-                  token={values.token}
-                  name={values.token.name || undefined}
-                  size="xs"
-                />
-              )}
-            </div>
+            {values.token && (
+              <TokenIcon
+                token={values.token}
+                name={values.token.name || undefined}
+                size="xs"
+              />
+            )}
             <div className={styles.value}>
               <Amount /> <Symbol />
             </div>
