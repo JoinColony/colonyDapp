@@ -1,4 +1,3 @@
-
 .item {
   display: flex;
   justify-content: space-between;
@@ -7,7 +6,18 @@
   border-bottom: 1px solid color-mod(var(--temp-grey-blue-7) alpha(15%));
 }
 
-.value, .label {
+.tokenContainer {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  margin-right: 7px;
+  height: 26px;
+}
+
+.value,
+.label {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   letter-spacing: var(--spacing-medium);

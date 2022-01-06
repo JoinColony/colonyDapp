@@ -5,6 +5,7 @@ import Icon from '~core/Icon';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
 import TransactionLink from '~core/TransactionLink';
 
+import TokenIcon from '~dashboard/HookedTokenIcon';
 import { AnyUser, Colony } from '~data/index';
 import { ColonyActions, ColonyMotions } from '~types/index';
 import { splitTransactionHash } from '~utils/strings';
@@ -175,8 +176,19 @@ const DetailsWidget = ({
           <div className={styles.label}>
             <FormattedMessage {...MSG.value} />
           </div>
-          <div className={styles.value}>
-            <Amount /> <Symbol />
+          <div className={styles.tokenContainer}>
+            <div className={styles.icon}>
+              {values.token && (
+                <TokenIcon
+                  token={values.token}
+                  name={values.token.name || undefined}
+                  size="xs"
+                />
+              )}
+            </div>
+            <div className={styles.value}>
+              <Amount /> <Symbol />
+            </div>
           </div>
         </div>
       )}

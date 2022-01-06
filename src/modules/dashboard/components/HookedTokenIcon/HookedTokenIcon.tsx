@@ -4,7 +4,7 @@ import { AddressZero } from 'ethers/constants';
 
 import Avatar from '~core/Avatar';
 import { useDataFetcher } from '~utils/hooks';
-import { AnyToken } from '~data/index';
+import { AnyToken, TokenInfoQuery } from '~data/index';
 import { Address } from '~types/index';
 import Icon from '~core/Icon';
 import { getBase64image } from '~utils/dataReader';
@@ -22,7 +22,7 @@ interface Response {
 
 interface Props {
   /** Token reference to display */
-  token: AnyToken;
+  token: AnyToken | TokenInfoQuery['tokenInfo'];
 
   /** Is passed through to Avatar */
   className?: string;
