@@ -11,6 +11,7 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
 import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
 import { useLoggedInUser } from '~data/index';
@@ -47,7 +48,7 @@ const MSG = defineMessages({
   },
   annotation: {
     id: `dashboard.UnlockTokenDialog.UnlockTokenForm.annotation`,
-    defaultMessage: 'Explain why you’re making these changes (optional)',
+    defaultMessage: "Explain why you're unlocking the native token (optional)",
   },
 });
 
@@ -150,6 +151,7 @@ const UnlockTokenForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
