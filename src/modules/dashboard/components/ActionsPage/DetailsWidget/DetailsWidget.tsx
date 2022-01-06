@@ -181,7 +181,7 @@ const DetailsWidget = ({
               <TokenIcon
                 token={values.token}
                 name={values.token.name || undefined}
-                size="xs"
+                size="xxs"
               />
             )}
             <div className={styles.value}>
