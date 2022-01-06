@@ -16,8 +16,7 @@
   height: 26px;
 }
 
-.value,
-.label {
+.value, .label {
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   letter-spacing: var(--spacing-medium);
