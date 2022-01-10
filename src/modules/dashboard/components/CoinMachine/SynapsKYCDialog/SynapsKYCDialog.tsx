@@ -120,10 +120,12 @@ const SynapsKYCDialog = ({ cancel, colonyAddress, emailAddress }: Props) => {
       <DialogSection appearance={{ theme: 'sidePadding' }}>
         <div className={styles.content}>
           {isLoading && (
-            <SpinnerLoader
-              loadingText={MSG.loadingText}
-              appearance={{ size: 'large' }}
-            />
+            <div className={styles.spinnerLoader}>
+              <SpinnerLoader
+                loadingText={MSG.loadingText}
+                appearance={{ size: 'large' }}
+              />
+            </div>
           )}
           {!isLoading && isValid && (
             <div className={styles.verified}>

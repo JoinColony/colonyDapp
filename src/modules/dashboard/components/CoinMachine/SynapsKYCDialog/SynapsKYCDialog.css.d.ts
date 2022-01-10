@@ -1,4 +1,5 @@
 export const content: string;
+export const spinnerLoader: string;
 export const synaps: string;
 export const verified: string;
 export const emailContent: string;
