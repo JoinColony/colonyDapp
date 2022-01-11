@@ -31,6 +31,7 @@ import {
 } from '~types/index';
 
 import styles from './ColonyActions.css';
+import { createAddress } from '~utils/web3';
 
 const MSG = defineMessages({
   labelFilter: {
@@ -173,21 +174,37 @@ const ColonyActions = ({
   ]);
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */
-  const filteredActions = useMemo(
-    () =>
-      !ethDomainId
-        ? actions
-        : actions.filter(
-            (action) =>
-              Number(action.fromDomain) === ethDomainId ||
-              /* when no specific domain in the action it is displayed in Root */
-              (ethDomainId === 1 && action.fromDomain === undefined) ||
-              /* when transfering funds the list shows both sender & recipient */
-              (action.actionType === ColonyActionTypes.MoveFunds &&
-                Number(action.toDomain) === ethDomainId),
-          ),
-    [ethDomainId, actions],
-  );
+  const filteredActions = useMemo(() => {
+    let filterActions = actions;
+    filterActions = !ethDomainId
+      ? actions
+      : actions.filter(
+          (action) =>
+            Number(action.fromDomain) === ethDomainId ||
+            /* when no specific domain in the action it is displayed in Root */
+            (ethDomainId === 1 && action.fromDomain === undefined) ||
+            /* when transfering funds the list shows both sender & recipient */
+            (action.actionType === ColonyActionTypes.MoveFunds &&
+              Number(action.toDomain) === ethDomainId),
+        );
+
+    /* filter out duplicate action items on passed motions */
+    if (motions && motions.motions?.length > 0) {
+      const motionExtensionAddresses =
+        motions.motions
+          .filter((motion) => motion.extensionAddress)
+          .map((motion) => createAddress(motion.extensionAddress)) || [];
+      if (motionExtensionAddresses.length > 0) {
+        filterActions = actions.filter((action) => {
+          return !motionExtensionAddresses.includes(
+            createAddress(action.initiator),
+          );
+        });
+      }
+    }
+
+    return filterActions;
+  }, [ethDomainId, actions, motions]);
 
   const handleDataPagination = useCallback(() => {
     setDataPage(dataPage + 1);
