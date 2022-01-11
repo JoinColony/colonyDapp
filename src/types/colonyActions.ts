@@ -97,6 +97,7 @@ export enum ColonyAndExtensionsEvents {
   LogSetOwner = 'LogSetOwner',
   Approval = 'Approval',
   Transfer = 'Transfer',
+  Unlock = 'Unlock',
   /*
    * Extension: One Tx Payment events
    */

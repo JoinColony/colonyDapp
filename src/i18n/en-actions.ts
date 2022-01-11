@@ -9,6 +9,7 @@ const actionsMessageDescriptors = {
       ${ColonyMotions.PaymentMotion} {Pay {recipient} {amount} {tokenSymbol}}
       ${ColonyActions.MoveFunds} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
       ${ColonyMotions.MoveFundsMotion} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
+      ${ColonyActions.UnlockToken} {Unlock native token {tokenSymbol}}
       ${ColonyActions.MintTokens} {Mint {amount} {tokenSymbol}}
       ${ColonyMotions.MintTokensMotion} {Mint {amount} {tokenSymbol}}
       ${ColonyActions.CreateDomain} {New team: {fromDomain}}
@@ -32,6 +33,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.WrongColony} {Not part of the Colony}
       ${ColonyActions.Payment} {Payment}
       ${ColonyActions.MoveFunds} {Move Funds}
+      ${ColonyActions.UnlockToken} {Unlock Token}
       ${ColonyActions.MintTokens} {Mint Tokens}
       ${ColonyActions.CreateDomain} {Create Team}
       ${ColonyActions.VersionUpgrade} {Version Upgrade}
