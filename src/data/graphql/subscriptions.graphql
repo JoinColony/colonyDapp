@@ -88,7 +88,8 @@ subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $c
         "ColonyRoleSet(address,address,uint256,uint8,bool)",
         "ColonyUpgraded(address,uint256,uint256)",
         "ColonyUpgraded(uint256,uint256)",
-        "RecoveryModeEntered(address)"
+        "RecoveryModeEntered(address)",
+        "TokenUnlocked()"
       ]
     }) {
     id
