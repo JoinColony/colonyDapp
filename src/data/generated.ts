@@ -7671,7 +7671,7 @@ export type SubgraphOneTxSubscriptionHookResult = ReturnType<typeof useSubgraphO
 export type SubgraphOneTxSubscriptionResult = Apollo.SubscriptionResult<SubgraphOneTxSubscription>;
 export const SubgraphEventsThatAreActionsDocument = gql`
     subscription SubgraphEventsThatAreActions($skip: Int = 0, $first: Int = 1000, $colonyAddress: String!, $sortDirection: String = asc) {
-  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)"]}) {
+  events(skip: $skip, first: $first, orderBy: "timestamp", orderDirection: $sortDirection, where: {associatedColony_contains: $colonyAddress, name_in: ["TokensMinted(address,address,uint256)", "DomainAdded(address,uint256)", "ColonyMetadata(address,string)", "ColonyFundsMovedBetweenFundingPots(address,uint256,uint256,uint256,address)", "DomainMetadata(address,uint256,string)", "ColonyRoleSet(address,address,uint256,uint8,bool)", "ColonyUpgraded(address,uint256,uint256)", "ColonyUpgraded(uint256,uint256)", "RecoveryModeEntered(address)", "TokenUnlocked()"]}) {
     id
     address
     associatedColony {
