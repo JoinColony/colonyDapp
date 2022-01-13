@@ -216,6 +216,9 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
       }
       return state.deleteIn([CORE_TRANSACTIONS_LIST, id]);
     }
+    case ActionTypes.USER_LOGOUT: {
+      return state.delete(CORE_TRANSACTIONS_LIST);
+    }
     default:
       return state;
   }
