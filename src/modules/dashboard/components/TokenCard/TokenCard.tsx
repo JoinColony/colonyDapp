@@ -17,12 +17,14 @@ import {
 import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
 
 import styles from './TokenCard.css';
+import IconTooltip from '~core/IconTooltip';
 
 interface Props {
   // @todo use string or number (not both) everywhere for `domainId`
   domainId: number | string;
   nativeTokenAddress?: Address;
   token: ColonyTokens[0] | UserTokens[0];
+  nativeTokenLocked?: boolean;
 }
 
 const displayName = 'dashboard.TokenCard';
@@ -38,7 +40,12 @@ const MSG = defineMessages({
   },
 });
 
-const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
+const TokenCard = ({
+  domainId,
+  nativeTokenAddress,
+  token,
+  nativeTokenLocked = true,
+}: Props) => {
   const balance = getBalanceFromToken(token, parseInt(domainId as string, 10));
 
   return (
@@ -51,12 +58,20 @@ const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
           <TokenIcon token={token} name={token.name || undefined} size="xs" />
           <div className={styles.tokenSymbol}>
             {token.symbol ? (
-              token.symbol
+              <span>{token.symbol}</span>
             ) : (
               <>
                 <FormattedMessage {...MSG.unknownToken} />
                 <CopyableAddress>{token.address}</CopyableAddress>
               </>
+            )}
+            {token.address === nativeTokenAddress && nativeTokenLocked && (
+              <IconTooltip
+                icon="lock"
+                tooltipText={{ id: 'tooltip.lockedToken' }}
+                className={styles.tokenLockWrapper}
+                iconSize="11px"
+              />
             )}
             {token.address === nativeTokenAddress && (
               <span className={styles.nativeTokenText}>

@@ -139,6 +139,7 @@ const ColonyFunding = ({ match }: Props) => {
             appearance={{ numCols: '3' }}
             nativeTokenAddress={colony.nativeTokenAddress}
             tokens={colony.tokens}
+            nativeTokenLocked={colony.isNativeTokenLocked}
             domainId={selectedDomainId}
           />
         </div>

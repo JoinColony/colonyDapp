@@ -1,0 +1,39 @@
+@value normalIcon: 14px;
+
+.main {
+  display: block;
+  height: normalIcon;
+  width: normalIcon;
+  position: relative;
+}
+
+.iconWrap {
+  margin-top: -10px;
+
+  /*
+   * Needed to make the tooltip align better and offset while maintiaing arrow alignment
+   */
+  width: 0;
+}
+
+.icon {
+  height: normalIcon;
+  width: normalIcon;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.icon svg {
+  height: inherit;
+  width: inherit;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.tooltipWrapper {
+  width: 250px;
+  text-align: left;
+}

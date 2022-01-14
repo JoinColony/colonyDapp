@@ -1,12 +1,17 @@
 import React from 'react';
 
 import Numeral from '~core/Numeral';
+import IconTooltip from '~core/IconTooltip';
 import { TokenBalancesForDomainsQuery } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
+import styles from './ColonyFunding.css';
 
 interface Props {
   currentDomainId: number;
   token: TokenBalancesForDomainsQuery['tokens'][0];
+  isTokenNative?: boolean;
+  isNativeTokenLocked?: boolean;
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyFunding.TokenItem';
@@ -14,17 +19,34 @@ const displayName = 'dashboard.ColonyHome.ColonyFunding.TokenItem';
 const TokenItem = ({
   currentDomainId,
   token: { balances, decimals, symbol },
+  isTokenNative,
+  isNativeTokenLocked,
 }: Props) => {
   const domainBalance = balances.find(
     ({ domainId }) => domainId === currentDomainId,
   );
   const balance = domainBalance && domainBalance.amount;
+
   return typeof balance === 'undefined' ? null : (
-    <Numeral
-      unit={getTokenDecimalsWithFallback(decimals)}
-      value={balance}
-      suffix={` ${symbol}`}
-    />
+    <div className={styles.tokenItem}>
+      <span className={styles.tokenValue}>
+        <Numeral
+          unit={getTokenDecimalsWithFallback(decimals)}
+          value={balance}
+        />
+      </span>
+      <span className={styles.tokenSymbol}>
+        <span>{symbol}</span>
+        {isTokenNative && isNativeTokenLocked && (
+          <IconTooltip
+            icon="lock"
+            tooltipText={{ id: 'tooltip.lockedToken' }}
+            className={styles.tokenLockWrapper}
+            iconSize="12px"
+          />
+        )}
+      </span>
+    </div>
   );
 };
 

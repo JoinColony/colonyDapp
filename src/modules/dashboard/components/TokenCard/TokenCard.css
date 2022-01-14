@@ -25,14 +25,32 @@
   max-width: 36px;
 }
 
+.tooltipClassName {
+  width: 250px;
+}
+
 .tokenSymbol {
+  composes: flexContainerRow flexAlignCenter flexJustifyCenter from '~styles/layout.css';
   margin-left: 15px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
+  line-height: var(--size-small);
   color: var(--grey-dark);
 }
 
+.tokenLockWrapper {
+  display: block;
+  margin-left: 3px;
+  margin-top: 1px;
+  position: relative;
+}
+
+.tokenLockWrapper svg {
+  fill: var(--grey-3);
+}
+
 .nativeTokenText {
+  margin-left: 3px;
   color: var(--grey-3);
 }
 

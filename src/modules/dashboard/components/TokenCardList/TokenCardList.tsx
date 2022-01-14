@@ -23,6 +23,7 @@ interface Props {
   domainId?: number | string;
   nativeTokenAddress?: Address;
   tokens: ColonyOrUserToken[];
+  nativeTokenLocked?: boolean;
 }
 
 const displayName = 'dashboard.TokenCardList';
@@ -32,6 +33,7 @@ const TokenCardList = ({
   domainId = ROOT_DOMAIN_ID,
   nativeTokenAddress,
   tokens,
+  nativeTokenLocked,
 }: Props) => (
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
@@ -42,6 +44,7 @@ const TokenCardList = ({
               domainId={domainId}
               nativeTokenAddress={nativeTokenAddress}
               token={token}
+              nativeTokenLocked={nativeTokenLocked}
             />
           )}
           {'balances' in token && (
@@ -49,10 +52,15 @@ const TokenCardList = ({
               domainId={domainId}
               nativeTokenAddress={nativeTokenAddress}
               token={token}
+              nativeTokenLocked={nativeTokenLocked}
             />
           )}
           {'balance' in token && (
-            <TokenCard domainId={domainId} token={token} />
+            <TokenCard
+              domainId={domainId}
+              token={token}
+              nativeTokenLocked={nativeTokenLocked}
+            />
           )}
         </div>
       ))}
