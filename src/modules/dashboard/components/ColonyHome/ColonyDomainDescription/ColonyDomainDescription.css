@@ -18,7 +18,7 @@
   margin-top: 15px;
   width: 220px;
   font-size: var(--size-normal);
-  word-break: break-all;
+  word-break: break-word;
   color: var(--dark: rgb(60, 68, 77));
   -webkit-line-clamp: 5;
 }
