@@ -16,12 +16,13 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+
+import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -160,13 +161,7 @@ function* createPaymentAction({
     if (annotationMessage) {
       yield put(transactionPending(annotatePaymentAction.id));
 
-      let ipfsHash = null;
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
+      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
 
       yield put(
         transactionAddParams(annotatePaymentAction.id, [txHash, ipfsHash]),

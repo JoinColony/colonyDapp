@@ -12,12 +12,13 @@ import { hexlify, hexZeroPad } from 'ethers/utils';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
+
+import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -169,14 +170,6 @@ function* managePermissionsMotion({
       );
     }
 
-    let ipfsHash = null;
-    ipfsHash = yield call(
-      ipfsUpload,
-      JSON.stringify({
-        annotationMessage,
-      }),
-    );
-
     yield put(transactionReady(createMotion.id));
 
     const {
@@ -188,6 +181,7 @@ function* managePermissionsMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
+      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
       yield put(transactionPending(annotateSetUserRolesMotion.id));
 
       yield put(

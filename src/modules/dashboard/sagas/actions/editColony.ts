@@ -9,6 +9,7 @@ import {
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
+
 import {
   createTransaction,
   createTransactionChannels,
@@ -20,7 +21,7 @@ import {
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
-import { updateColonyDisplayCache } from '../utils';
+import { updateColonyDisplayCache, uploadIfpsAnnotation } from '../utils';
 
 function* editColonyAction({
   payload: {
@@ -152,12 +153,9 @@ function* editColonyAction({
       /*
        * Upload annotation metadata to IPFS
        */
-      let annotationMessageIpfsHash = null;
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
+      const annotationMessageIpfsHash = yield call(
+        uploadIfpsAnnotation,
+        annotationMessage,
       );
 
       yield put(

@@ -9,6 +9,8 @@ import {
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
+
+import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
@@ -129,12 +131,9 @@ function* createDomainAction({
       /*
        * Upload domain metadata to IPFS
        */
-      let annotationMessageIpfsHash = null;
-      annotationMessageIpfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
+      const annotationMessageIpfsHash = yield call(
+        uploadIfpsAnnotation,
+        annotationMessage,
       );
 
       yield put(
