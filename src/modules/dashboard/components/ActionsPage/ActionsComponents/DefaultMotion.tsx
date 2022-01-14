@@ -113,6 +113,7 @@ const DefaultMotion = ({
     tokenAddress,
   },
   colonyAction,
+  token,
   token: { decimals, symbol },
   transactionHash,
   recipient,
@@ -281,6 +282,7 @@ const DefaultMotion = ({
       </span>
     ),
     amount: decimalAmount,
+    token,
     tokenSymbol: <span>{symbol || '???'}</span>,
     initiator: (
       <>

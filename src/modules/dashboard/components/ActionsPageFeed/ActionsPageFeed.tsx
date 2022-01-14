@@ -17,6 +17,7 @@ import {
   ParsedEvent,
   useLoggedInUser,
   useCommentsSubscription,
+  TokenInfoQuery,
 } from '~data/index';
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { MotionVote } from '~utils/colonyMotions';
@@ -44,6 +45,7 @@ const MSG = defineMessages({
 export interface EventValues {
   actionType: string;
   amount?: string | ReactElement;
+  token?: TokenInfoQuery['tokenInfo'];
   tokenSymbol?: string | ReactElement;
   decimals?: number;
   fromDomain?: OneDomain;

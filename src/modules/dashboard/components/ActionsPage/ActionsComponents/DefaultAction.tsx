@@ -49,6 +49,7 @@ interface Props {
 const DefaultAction = ({
   colony,
   colony: { colonyAddress, domains },
+  token,
   token: { decimals, symbol },
   colonyAction: {
     events = [],
@@ -142,6 +143,7 @@ const DefaultAction = ({
       </span>
     ),
     amount: decimalAmount,
+    token,
     tokenSymbol: <span>{symbol || '???'}</span>,
     decimals: getTokenDecimalsWithFallback(decimals),
     fromDomain:
