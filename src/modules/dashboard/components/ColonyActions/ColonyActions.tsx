@@ -24,6 +24,7 @@ import {
 import { SortOptions, SortSelectOptions } from '../shared/sortOptions';
 import { getActionsListData } from '../../transformers';
 import { useTransformer } from '~utils/hooks';
+import { createAddress } from '~utils/web3';
 import {
   ColonyActions as ColonyActionTypes,
   FormattedAction,
@@ -31,7 +32,6 @@ import {
 } from '~types/index';
 
 import styles from './ColonyActions.css';
-import { createAddress } from '~utils/web3';
 
 const MSG = defineMessages({
   labelFilter: {
@@ -175,8 +175,7 @@ const ColonyActions = ({
 
   /* Needs to be tested when all action types are wirde up & reflected in the list */
   const filteredActions = useMemo(() => {
-    let filterActions = actions;
-    filterActions = !ethDomainId
+    const filterActions = !ethDomainId
       ? actions
       : actions.filter(
           (action) =>
@@ -195,7 +194,7 @@ const ColonyActions = ({
           .filter((motion) => motion.extensionAddress)
           .map((motion) => createAddress(motion.extensionAddress)) || [];
       if (motionExtensionAddresses.length > 0) {
-        filterActions = actions.filter((action) => {
+        return filterActions.filter((action) => {
           return !motionExtensionAddresses.includes(
             createAddress(action.initiator),
           );
