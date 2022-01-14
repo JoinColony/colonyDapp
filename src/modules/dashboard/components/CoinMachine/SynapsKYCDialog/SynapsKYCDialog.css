@@ -5,6 +5,10 @@
   height: 730px;
 }
 
+.spinnerLoader > div > div {
+  margin-bottom: 30px;
+}
+
 .synaps {
   min-height: 690px;
   width: 100%;
