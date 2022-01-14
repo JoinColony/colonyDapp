@@ -57,8 +57,8 @@ const ColonyDomainSelector = ({
 
   const getDomainColor = useCallback<(domainId: string | undefined) => Color>(
     (domainId) => {
-      const rootDomainColor: Color = Color.Yellow;
-      const defaultColor: Color = Color.LightPink;
+      const rootDomainColor: Color = Color.LightPink;
+      const defaultColor: Color = Color.Yellow;
       if (domainId === String(ROOT_DOMAIN_ID)) {
         return rootDomainColor;
       }
