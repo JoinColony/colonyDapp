@@ -20,7 +20,7 @@ const displayName = 'users.GasStation.TransactionBackToList';
 const TransactionBackToList = ({ onClose }: Props) => (
   <button type="button" className={styles.returnToSummary} onClick={onClose}>
     <Icon
-      appearance={{ size: 'small' }}
+      appearance={{ size: 'normal' }}
       name="caret-left"
       title={MSG.returnToSummary}
     />
