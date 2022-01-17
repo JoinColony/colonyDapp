@@ -17,3 +17,11 @@
   color: var(--text);
   cursor: pointer;
 }
+
+.returnToSummary svg {
+  /*
+   * NOTE Using this to override Icon.css's vertical-align property
+   * which might be being used elsewhere.
+   */
+  vertical-align: -5px;
+}
