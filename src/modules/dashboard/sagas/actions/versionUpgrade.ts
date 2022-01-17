@@ -10,12 +10,13 @@ import {
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
+
+import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -93,16 +94,11 @@ function* createVersionUpgradeAction({
 
     yield takeFrom(upgrade.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    if (supportAnnotation) {
+    /* need to check for annotaiton message here again because there is a TS error when pushing */
+    if (annotationMessage && supportAnnotation) {
       yield put(transactionPending(annotateUpgrade.id));
 
-      let ipfsHash = null;
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
+      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
 
       yield put(transactionAddParams(annotateUpgrade.id, [txHash, ipfsHash]));
 

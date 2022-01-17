@@ -9,12 +9,13 @@ import {
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
+
+import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
-import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
@@ -120,13 +121,7 @@ function* createMintTokensAction({
     if (annotationMessage) {
       yield put(transactionPending(annotateMintTokens.id));
 
-      let ipfsHash = null;
-      ipfsHash = yield call(
-        ipfsUpload,
-        JSON.stringify({
-          annotationMessage,
-        }),
-      );
+      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
 
       yield put(
         transactionAddParams(annotateMintTokens.id, [txHash, ipfsHash]),

@@ -140,10 +140,20 @@ const getUserLock = async (
     ClientType.TokenLockingClient,
     colonyAddress,
   );
-  const votingReputationClient = await colonyManager.getClient(
-    ClientType.VotingReputationClient,
-    colonyAddress,
-  );
+  let votingReputationClient;
+
+  try {
+    votingReputationClient = await colonyManager.getClient(
+      ClientType.VotingReputationClient,
+      colonyAddress,
+    );
+  } catch (error) {
+    /*
+     * We don't care to catch the error as the value depending on the extension
+     * will jsut default to 0
+     */
+    // silent error
+  }
 
   const userLock = await tokenLockingClient.getUserLock(
     tokenAddress,
@@ -154,12 +164,15 @@ const getUserLock = async (
     tokenAddress,
   );
 
-  const stakedTokens = await getUserStakedBalance(
-    apolloClient,
-    walletAddress,
-    colonyAddress,
-    votingReputationClient.address,
-  );
+  const stakedTokens =
+    votingReputationClient === undefined
+      ? 0
+      : await getUserStakedBalance(
+          apolloClient,
+          walletAddress,
+          colonyAddress,
+          votingReputationClient.address,
+        );
 
   const nativeToken = (await getToken(
     { colonyManager, client: apolloClient },
