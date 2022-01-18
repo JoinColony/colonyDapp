@@ -181,7 +181,7 @@ const ColonyEventsListItem = ({
     voteSide: <FormattedMessage {...MSG.voteSide} values={{ vote }} />,
     activePeriod,
     currentPeriod,
-    reputationPenalty: `${getFormattedTokenValue(
+    reputationChange: `${getFormattedTokenValue(
       new Decimal(amount || '0').mul(-1).toString(),
       decimals,
     )} pts`,

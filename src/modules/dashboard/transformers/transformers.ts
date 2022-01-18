@@ -162,7 +162,7 @@ export const getActionsListData = (
             blockNumber: 0,
             totalNayStake: '0',
             requiredStake: '0',
-            reputationPenalty: '0',
+            reputationChange: '0',
           };
           let hash;
           let timestamp;
