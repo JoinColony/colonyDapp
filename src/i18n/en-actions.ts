@@ -26,6 +26,9 @@ const actionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation penalty}
       ${ColonyActions.EmitDomainReputationReward} {Award {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation reward}
+      ${ColonyActions.EmitDomainReputationPenalty} {Smite {recipient} with a {reputationPenalty} reputation penalty}
+      ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationPenalty} reputation penalty}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,

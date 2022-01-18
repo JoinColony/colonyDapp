@@ -40,6 +40,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
       other {Generic}
     }`,
 };
