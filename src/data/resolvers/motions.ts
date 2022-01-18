@@ -1221,6 +1221,16 @@ export const motionsResolvers = ({
         };
       }
 
+      if (
+        actionValues.signature ===
+        'emitDomainReputationReward(uint256,address,int256)'
+      ) {
+        return {
+          reputationChange: actionValues?.args[2].toString(),
+          recipient: actionValues?.args[1],
+        };
+      }
+
       // MintTokenMotion - default
       return {
         amount: bigNumberify(actionValues?.args[0] || '0').toString(),
