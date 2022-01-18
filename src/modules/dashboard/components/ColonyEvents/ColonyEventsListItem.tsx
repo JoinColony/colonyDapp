@@ -128,6 +128,9 @@ const ColonyEventsListItem = ({
         'event',
       );
     }
+    if (eventName === ColonyAndExtensionsEvents.ArbitraryReputationUpdate) {
+      return `eventList.${eventName}.title`;
+    }
     return 'eventList.event';
   }, [eventName, setTo, whiteListStatus]);
 
@@ -182,9 +185,10 @@ const ColonyEventsListItem = ({
     activePeriod,
     currentPeriod,
     reputationChange: `${getFormattedTokenValue(
-      new Decimal(amount || '0').mul(-1).toString(),
+      new Decimal(amount || '0').abs().toString(),
       decimals,
     )} pts`,
+    isSmiteAction: new Decimal(amount).isNegative(),
   };
 
   return (

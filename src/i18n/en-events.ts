@@ -84,13 +84,19 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.MotionRewardClaimed} {{agent} claimed their stake in motion {motionId}}
       ${ColonyAndExtensionsEvents.MotionEventSet} {Motion {motionId} fast-forwarded to the next lifecycle}
       ${ColonyAndExtensionsEvents.AgreementSigned} {User {agent} signed the whitelist agreement}
-      ${ColonyAndExtensionsEvents.ArbitraryReputationUpdate} {{agent} smote {recipient} with a {reputationChange} reputation penalty}
       other {{eventName} emmited with values: {displayValues}}
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`]: `{agent} removed the {role} permission in the {domain} team from {recipient}`,
   [`eventList.${ColonyAndExtensionsEvents.RecoveryRoleSet}.assign`]: `The Recovery role was assigned to {recipient}`,
   [`eventList.${ColonyAndExtensionsEvents.RecoveryRoleSet}.remove`]: `The Recovery role was removed from {recipient}`,
+  [`eventList.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`]: `{agent} {isSmiteAction, select,
+    true {smote}
+    false {awarded}
+  } {recipient} with a {reputationChange} reputation {isSmiteAction, select,
+    true {penalty}
+    false {reward}
+  }`,
 };
 
 export default eventsMessageDescriptors;
