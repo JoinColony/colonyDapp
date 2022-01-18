@@ -16,10 +16,11 @@ import { Tooltip } from '~core/Popover';
 import { DEFAULT_NETWORK_INFO } from '~constants';
 import { removeValueUnits } from '~utils/css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
-import { useUser, Colony } from '~data/index';
+import { useUser, Colony, useCoinMachineSaleTokensQuery } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { FormattedEvent, ColonyAndExtensionsEvents } from '~types/index';
 import { getAssignmentEventDescriptorsIds } from '~utils/colonyActions';
+import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import styles, {
   popoverWidth,
@@ -110,6 +111,29 @@ const ColonyEventsListItem = ({
     ({ address }) => address === nativeTokenAddress,
   );
 
+  /*
+   * Need to check which token the coinMachine is selling, as TokenBought event does not emit it.
+   */
+  const { isCoinMachineExtensionEnabled } = useEnabledExtensions({
+    colonyAddress: colony.colonyAddress,
+  });
+
+  const { data: saleTokensData } = useCoinMachineSaleTokensQuery({
+    variables: { colonyAddress },
+  });
+
+  const getSellableToken = useMemo(() => {
+    if (
+      isCoinMachineExtensionEnabled &&
+      saleTokensData &&
+      saleTokensData?.coinMachineSaleTokens &&
+      eventName === ColonyAndExtensionsEvents.TokensBought
+    ) {
+      return saleTokensData?.coinMachineSaleTokens?.sellableToken;
+    }
+    return null;
+  }, [isCoinMachineExtensionEnabled, saleTokensData, eventName]);
+
   const getEventListTitleMessageDescriptor = useMemo(() => {
     if (
       eventName === ColonyAndExtensionsEvents.ColonyRoleSet ||
@@ -157,7 +181,8 @@ const ColonyEventsListItem = ({
         unit={getTokenDecimalsWithFallback(decimals || token?.decimals)}
       />
     ),
-    tokenSymbol: token?.symbol || colonyNativeToken?.symbol,
+    tokenSymbol:
+      token?.symbol || getSellableToken?.symbol || colonyNativeToken?.symbol,
     domain: domain?.name || '',
     newDomain: newDomain?.name || '',
     transactionHash,

@@ -19,6 +19,9 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
   const installedOneTxPaymentExtension = installedExtensions.find(
     ({ extensionId }) => extensionId === Extension.OneTxPayment,
   );
+  const installedCoinMachineExtension = installedExtensions.find(
+    ({ extensionId }) => extensionId === Extension.CoinMachine,
+  );
 
   const installedWhitelistExtension = installedExtensions.find(
     ({ extensionId }) => extensionId === Extension.Whitelist,
@@ -34,6 +37,11 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
     installedOneTxPaymentExtension.details.initialized &&
     !installedOneTxPaymentExtension.details.deprecated
   );
+  const isCoinMachineExtensionEnabled = !!(
+    installedCoinMachineExtension &&
+    installedCoinMachineExtension.details.initialized &&
+    !installedCoinMachineExtension.details.deprecated
+  );
 
   const installedExtensionsAddresses = installedExtensions.map((extension) =>
     extension.address?.toLowerCase(),
@@ -47,6 +55,7 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
   return {
     isVotingExtensionEnabled,
     isOneTxPaymentExtensionEnabled,
+    isCoinMachineExtensionEnabled,
     installedExtensionsAddresses,
     isWhitelistExtensionEnabled,
     whitelistAddress: installedWhitelistExtension?.address,
