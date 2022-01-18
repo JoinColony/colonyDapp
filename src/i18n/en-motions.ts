@@ -26,7 +26,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.SetUserRolesMotion} {Permission Management}
       ${ColonyMotions.MoveFundsMotion} {Move Funds}
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
-      ${ColonyMotions.UnlockTokenMotion} {Unlock Token}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
       other {Generic}
     }`,
 };
