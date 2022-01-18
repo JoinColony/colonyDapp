@@ -6,7 +6,7 @@ import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
-import DialogSection from '~core/Dialog/DialogSection';
+import { DialogSection, ActionDialogProps } from '~core/Dialog';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
@@ -23,7 +23,6 @@ import { hasRoot } from '../../../users/checks';
 
 import styles from './UnlockTokenForm.css';
 import { Annotations } from '~core/Fields';
-import { ActionDialogProps } from '~core/Dialog';
 
 const MSG = defineMessages({
   title: {
