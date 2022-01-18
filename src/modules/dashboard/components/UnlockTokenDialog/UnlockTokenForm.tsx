@@ -6,12 +6,17 @@ import { ColonyRole } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
-import { Colony, useLoggedInUser } from '~data/index';
-import DialogSection from '~core/Dialog/DialogSection';
-import { useTransformer } from '~utils/hooks';
+import { DialogSection, ActionDialogProps } from '~core/Dialog';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
+import Toggle from '~core/Fields/Toggle';
+import NotEnoughReputation from '~dashboard/NotEnoughReputation';
+import MotionDomainSelect from '~dashboard/MotionDomainSelect';
+
+import { useLoggedInUser } from '~data/index';
+import { useTransformer } from '~utils/hooks';
+import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
 import { getAllUserRoles } from '../../../transformers';
 import { hasRoot } from '../../../users/checks';
@@ -42,46 +47,69 @@ const MSG = defineMessages({
   },
   annotation: {
     id: `dashboard.UnlockTokenDialog.UnlockTokenForm.annotation`,
-    defaultMessage: 'Explain why you’re making these changes (optional)',
+    defaultMessage: "Explain why you're unlocking the native token (optional)",
   },
 });
-
-interface Props {
-  colony: Colony;
-  back?: () => void;
-}
 
 const LEARN_MORE_URL = `https://colony.gitbook.io/colony/manage-funds/unlock-token`;
 
 const UnlockTokenForm = ({
   colony: { isNativeTokenLocked, canUnlockNativeToken },
   colony,
+  isVotingExtensionEnabled,
   back,
   isSubmitting,
   isValid,
   handleSubmit,
-}: Props & FormikProps<any>) => {
+  values,
+}: ActionDialogProps & FormikProps<any>) => {
   const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
+    colony.colonyAddress,
+    canUnlockNativeToken && isNativeTokenLocked,
+    isVotingExtensionEnabled,
+    values.forceAction,
+  );
+
+  const inputDisabled = !userHasPermission || onlyForceAction;
+
   const hasRootPermission = hasRoot(allUserRoles);
-  const userHasPermissions =
-    canUnlockNativeToken && isNativeTokenLocked && hasRootPermission;
-  const requiredRoles: ColonyRole[] = [ColonyRole.Root];
+  const canUnlockToken =
+    isNativeTokenLocked && canUnlockNativeToken && hasRootPermission;
 
   return (
     <>
-      <DialogSection appearance={{ theme: 'heading' }}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
-          text={MSG.title}
-        />
+      <DialogSection appearance={{ theme: 'sidePadding' }}>
+        <div className={styles.modalHeading}>
+          {isVotingExtensionEnabled && (
+            <div className={styles.motionVoteDomain}>
+              <MotionDomainSelect
+                colony={colony}
+                /*
+                 * @NOTE Always disabled since you can only create this motion in root
+                 */
+                disabled
+              />
+            </div>
+          )}
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
+              text={MSG.title}
+            />
+            {canUnlockToken && isVotingExtensionEnabled && (
+              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+            )}
+          </div>
+        </div>
       </DialogSection>
-      {!hasRootPermission && (
+      {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.wrapper}>
-            <PermissionRequiredInfo requiredRoles={requiredRoles} />
+            <PermissionRequiredInfo requiredRoles={[ColonyRole.Root]} />
           </div>
         </DialogSection>
       )}
@@ -100,10 +128,10 @@ const UnlockTokenForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotationMessage"
-          disabled={!userHasPermissions}
+          disabled={inputDisabled}
         />
       </DialogSection>
-      {!hasRootPermission && (
+      {!userHasPermission && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>
             <FormattedMessage
@@ -122,6 +150,7 @@ const UnlockTokenForm = ({
           </div>
         </DialogSection>
       )}
+      {onlyForceAction && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -133,7 +162,7 @@ const UnlockTokenForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !userHasPermissions}
+          disabled={!isValid || inputDisabled}
         />
       </DialogSection>
     </>

@@ -16,6 +16,7 @@ import {
 export enum RootMotionOperationNames {
   MINT_TOKENS = 'mintTokens',
   UPGRADE = 'upgrade',
+  UNLOCK_TOKEN = 'unlockToken',
 }
 
 export type MotionActionTypes =
