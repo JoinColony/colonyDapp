@@ -174,7 +174,7 @@ const ManageFundsDialog = ({
       description: MSG.unlockTokensDescription,
       icon: 'emoji-padlock',
       onClick: () => callStep(nextStepUnlockToken),
-      permissionRequired: !colony.canUnlockNativeToken,
+      permissionRequired: !colony.canUserUnlockNativeToken,
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
@@ -184,12 +184,16 @@ const ManageFundsDialog = ({
     },
   ];
   const filteredItems = useMemo(() => {
-    return colony.canColonyMintNativeToken
+    return colony.canColonyMintNativeToken && colony.canColonyUnlockNativeToken
       ? items
-      : items.filter(
-          ({ icon }) =>
-            icon !== 'emoji-padlock' && icon !== 'emoji-seed-sprout',
-        );
+      : items.filter(({ icon }) => {
+          if (icon === 'emoji-padlock' && !colony.canColonyUnlockNativeToken) {
+            return false;
+          }
+          return !(
+            icon === 'emoji-seed-sprout' && !colony.canColonyMintNativeToken
+          );
+        });
   }, [colony, items]);
   return (
     <IndexModal

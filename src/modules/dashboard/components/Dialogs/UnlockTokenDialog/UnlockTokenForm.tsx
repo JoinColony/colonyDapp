@@ -56,7 +56,7 @@ interface Props {
 }
 
 const UnlockTokenForm = ({
-  colony: { isNativeTokenLocked, canUnlockNativeToken },
+  colony: { isNativeTokenLocked, canUserUnlockNativeToken },
   colony,
   back,
   isSubmitting,
@@ -67,8 +67,7 @@ const UnlockTokenForm = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRootPermission = hasRoot(allUserRoles);
-  const userHasPermissions =
-    canUnlockNativeToken && isNativeTokenLocked && hasRootPermission;
+  const userHasPermissions = canUserUnlockNativeToken && isNativeTokenLocked;
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
   return (

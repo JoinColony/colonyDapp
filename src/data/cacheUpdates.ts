@@ -271,11 +271,11 @@ const cacheUpdates = {
             canMintNativeToken = false;
           }
 
-          let canUnlockNativeToken = true;
+          let canUserUnlockNativeToken = true;
           try {
             await colonyClient.estimate.unlockToken();
           } catch (error) {
-            canUnlockNativeToken = false;
+            canUserUnlockNativeToken = false;
           }
 
           const data = cache.readQuery<
@@ -293,7 +293,7 @@ const cacheUpdates = {
               id: cache.identify(data.processedColony),
               fields: {
                 canUserMintNativeToken: () => canMintNativeToken,
-                canUnlockNativeToken: () => canUnlockNativeToken,
+                canUserUnlockNativeToken: () => canUserUnlockNativeToken,
               },
             });
           }
