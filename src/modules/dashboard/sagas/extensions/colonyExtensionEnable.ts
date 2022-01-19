@@ -182,11 +182,14 @@ function* colonyExtensionEnable({
       }
 
       if (shouldSetNewTokenAuthority) {
+        const { networkClient } = colonyManager;
+        const tokenLockingAddress = yield networkClient.getTokenLocking();
+
         yield createGroupTransaction(deployTokenAuthority, {
           context: ClientType.ColonyClient,
           methodName: 'deployTokenAuthority',
           identifier: colonyAddress,
-          params: [payload.tokenToBeSold, [address]],
+          params: [payload.tokenToBeSold, [address, tokenLockingAddress]],
         });
 
         yield createGroupTransaction(makeArbitraryTransaction, {
