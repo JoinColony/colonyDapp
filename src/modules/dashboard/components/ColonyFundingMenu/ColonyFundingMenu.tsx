@@ -9,9 +9,9 @@ import {
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
-import TransferFundsDialog from '~dashboard/TransferFundsDialog';
-import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
-import TokenMintDialog from '~dashboard/TokenMintDialog';
+import TransferFundsDialog from '~dialogs/TransferFundsDialog';
+import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
+import TokenMintDialog from '~dialogs/TokenMintDialog';
 import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
 
 import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
@@ -19,9 +19,9 @@ import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useTransformer } from '~utils/hooks';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 
-import { getUserRolesForDomain } from '../../../transformers';
-import { userHasRole } from '../../../users/checks';
-import { oneTxMustBeUpgraded } from '../../../dashboard/checks';
+import { getUserRolesForDomain } from '~modules/transformers';
+import { userHasRole } from '~modules/users/checks';
+import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
 
 import styles from './ColonyFundingMenu.css';
 

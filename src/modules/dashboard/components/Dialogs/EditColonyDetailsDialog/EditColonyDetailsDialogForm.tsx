@@ -23,8 +23,8 @@ import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
-import { getAllUserRoles } from '../../../transformers';
-import { hasRoot } from '../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot } from '~modules/users/checks';
 
 import { FormValues } from './EditColonyDetailsDialog';
 import styles from './EditColonyDetailsDialogForm.css';

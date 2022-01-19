@@ -4,7 +4,7 @@ import { Decimal } from 'decimal.js';
 import { isNil } from 'lodash';
 import { ColonyRoles } from '@colony/colony-js';
 
-import { getRolesForUserAndDomain } from '../modules/transformers';
+import { getRolesForUserAndDomain } from '~modules/transformers';
 import { AnyUser } from '~data/index';
 import { ActionUserRoles } from '~types/index';
 

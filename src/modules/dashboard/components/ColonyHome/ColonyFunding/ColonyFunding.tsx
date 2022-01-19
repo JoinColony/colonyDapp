@@ -12,8 +12,8 @@ import {
   useTokenBalancesForDomainsQuery,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
-import { canFund } from '../../../../users/checks';
-import { getAllUserRoles } from '../../../../transformers';
+import { canFund } from '~modules/users/checks';
+import { getAllUserRoles } from '~modules/transformers';
 
 import TokenItem from './TokenItem';
 

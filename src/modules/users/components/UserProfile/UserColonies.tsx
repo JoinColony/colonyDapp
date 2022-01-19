@@ -10,7 +10,7 @@ import {
   useUserColonyAddressesQuery,
 } from '~data/index';
 
-import { getFriendlyName } from '../../transformers';
+import { getFriendlyName } from '~modules/users/transformers';
 import styles from './UserColonies.css';
 
 interface Props {

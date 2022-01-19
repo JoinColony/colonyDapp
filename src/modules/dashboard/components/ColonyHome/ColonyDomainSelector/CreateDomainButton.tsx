@@ -4,7 +4,7 @@ import { defineMessages, useIntl } from 'react-intl';
 import Icon from '~core/Icon';
 import { useDialog } from '~core/Dialog';
 
-import CreateDomainDialog from '~dashboard/CreateDomainDialog';
+import CreateDomainDialog from '~dialogs/CreateDomainDialog';
 
 import { Colony } from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';

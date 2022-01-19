@@ -14,8 +14,8 @@ import { pipe, mapPayload } from '~utils/actions';
 import { isAddress } from '~utils/web3';
 import { useTransformer } from '~utils/hooks';
 
-import { getAllUserRoles } from '../../../../transformers';
-import { canAdminister } from '../../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { canAdminister } from '~modules/users/checks';
 
 import AgreementDialog from '../AgreementDialog';
 

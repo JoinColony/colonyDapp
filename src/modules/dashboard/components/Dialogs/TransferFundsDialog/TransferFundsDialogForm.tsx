@@ -35,8 +35,8 @@ import {
 } from '~utils/tokens';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
-import { getUserRolesForDomain } from '../../../transformers';
-import { userHasRole } from '../../../users/checks';
+import { getUserRolesForDomain } from '~modules/transformers';
+import { userHasRole } from '~modules/users/checks';
 
 import styles from './TransferFundsDialogForm.css';
 import { FormValues } from './TransferFundsDialog';

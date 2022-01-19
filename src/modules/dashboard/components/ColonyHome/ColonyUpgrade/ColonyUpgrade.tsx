@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDialog } from '~core/Dialog';
-import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
+import NetworkContractUpgradeDialog from '~dialogs/NetworkContractUpgradeDialog';
 import Alert from '~core/Alert';
 import Button from '~core/Button';
 import ExternalLink from '~core/ExternalLink';
@@ -13,9 +13,12 @@ import { useTransformer } from '~utils/hooks';
 import { getNetworkRelaseLink } from '~utils/external';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
-import { colonyMustBeUpgraded, colonyShouldBeUpgraded } from '../../../checks';
-import { hasRoot } from '../../../../users/checks';
-import { getAllUserRoles } from '../../../../transformers';
+import {
+  colonyMustBeUpgraded,
+  colonyShouldBeUpgraded,
+} from '~modules/dashboard/checks';
+import { hasRoot } from '~modules/users/checks';
+import { getAllUserRoles } from '~modules/transformers';
 
 import styles from './ColonyUpgrade.css';
 

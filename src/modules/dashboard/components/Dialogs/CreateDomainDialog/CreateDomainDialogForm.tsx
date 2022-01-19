@@ -20,8 +20,8 @@ import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
-import { getAllUserRoles } from '../../../transformers';
-import { canArchitect } from '../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { canArchitect } from '~modules/users/checks';
 
 import { FormValues } from './CreateDomainDialog';
 import styles from './CreateDomainDialogForm.css';

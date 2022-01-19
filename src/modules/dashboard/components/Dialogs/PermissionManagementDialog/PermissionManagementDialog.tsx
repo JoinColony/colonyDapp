@@ -31,7 +31,7 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 import {
   getUserRolesForDomain,
   getAllRootAccounts,
-} from '../../../transformers';
+} from '~modules/transformers';
 import { availableRoles } from './constants';
 import { Address } from '~types/index';
 

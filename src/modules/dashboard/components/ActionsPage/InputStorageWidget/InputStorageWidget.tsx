@@ -18,8 +18,8 @@ import { ensureHexPrefix } from '~utils/strings';
 import { ENTER, SPACE } from '~types/index';
 import { mapPayload } from '~utils/actions';
 import { useTransformer } from '~utils/hooks';
-import { getAllUserRoles } from '../../../../transformers';
-import { userHasRole } from '../../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { userHasRole } from '~modules/users/checks';
 
 import styles from './InputStorageWidget.css';
 

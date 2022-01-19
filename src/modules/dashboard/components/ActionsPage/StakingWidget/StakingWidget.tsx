@@ -8,7 +8,7 @@ import { ActionForm } from '~core/Fields';
 import Button from '~core/Button';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 import { useDialog } from '~core/Dialog';
-import RaiseObjectionDialog from '~dashboard/RaiseObjectionDialog';
+import RaiseObjectionDialog from '~dialogs/RaiseObjectionDialog';
 
 import {
   useLoggedInUser,

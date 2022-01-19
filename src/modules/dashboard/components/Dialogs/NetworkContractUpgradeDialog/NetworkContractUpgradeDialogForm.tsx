@@ -23,9 +23,9 @@ import {
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
-import { getAllUserRoles } from '../../../transformers';
-import { hasRoot } from '../../../users/checks';
-import { colonyCanBeUpgraded } from '../../../dashboard/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot } from '~modules/users/checks';
+import { colonyCanBeUpgraded } from '~modules/dashboard/checks';
 
 import { FormValues } from './NetworkContractUpgradeDialog';
 

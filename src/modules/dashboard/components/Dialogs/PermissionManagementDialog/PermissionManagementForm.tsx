@@ -18,7 +18,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { Address } from '~types/index';
 import { useMembersSubscription, AnyUser, Colony } from '~data/index';
 import { useTransformer } from '~utils/hooks';
-import { getAllUserRolesForDomain } from '../../../transformers';
+import { getAllUserRolesForDomain } from '~modules/transformers';
 import { availableRoles } from './constants';
 
 import { FormValues } from './PermissionManagementDialog';

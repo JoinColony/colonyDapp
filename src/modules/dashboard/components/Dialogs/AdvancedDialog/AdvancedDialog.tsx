@@ -8,12 +8,12 @@ import IndexModal from '~core/IndexModal';
 import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { useLoggedInUser, Colony } from '~data/index';
 
-import { getAllUserRoles } from '../../../transformers';
+import { getAllUserRoles } from '~modules/transformers';
 import {
   canEnterRecoveryMode,
   hasRoot,
   canArchitect,
-} from '../../../users/checks';
+} from '~modules/users/checks';
 
 const MSG = defineMessages({
   dialogHeader: {

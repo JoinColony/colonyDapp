@@ -13,8 +13,8 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import { useLoggedInUser, Colony } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 
-import { getAllUserRoles } from '../../../transformers';
-import { canEnterRecoveryMode } from '../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { canEnterRecoveryMode } from '~modules/users/checks';
 
 import { RECOVERY_HELP } from '~externalUrls';
 

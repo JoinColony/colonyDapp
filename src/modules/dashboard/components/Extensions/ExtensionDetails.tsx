@@ -19,7 +19,7 @@ import BreadCrumb, { Crumb } from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import Warning from '~core/Warning';
 import Icon from '~core/Icon';
-import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
+import NetworkContractUpgradeDialog from '~dialogs/NetworkContractUpgradeDialog';
 import { useDialog, ConfirmDialog } from '~core/Dialog';
 import {
   Colony,
@@ -45,8 +45,8 @@ import {
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
 
-import { getAllUserRoles } from '../../../transformers';
-import { hasRoot } from '../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot } from '~modules/users/checks';
 
 import styles from './ExtensionDetails.css';
 import ExtensionActionButton from './ExtensionActionButton';

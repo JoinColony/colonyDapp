@@ -11,8 +11,8 @@ import {
   AnyUser,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
-import { getAllUserRoles } from '../../../transformers';
-import { canAdminister, hasRoot } from '../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { canAdminister, hasRoot } from '~modules/users/checks';
 import { WhitelistPolicy } from '~types/index';
 
 import AgreementEmbed from './AgreementEmbed';
