@@ -41,6 +41,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
       ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock token}
       other {Generic}
     }`,
 };
