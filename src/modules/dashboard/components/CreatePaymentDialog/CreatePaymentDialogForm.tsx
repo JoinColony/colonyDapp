@@ -284,10 +284,7 @@ const CreatePaymentDialogForm = ({
       } else {
         setCurrentFromDomain(ROOT_DOMAIN_ID);
       }
-      if (
-        selectedMotionDomainId !== ROOT_DOMAIN_ID &&
-        selectedMotionDomainId !== fromDomainId
-      ) {
+      if (selectedMotionDomainId !== fromDomainId) {
         setFieldValue('motionDomainId', fromDomainId);
       }
     },
