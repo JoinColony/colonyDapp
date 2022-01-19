@@ -423,7 +423,8 @@ export default gql`
     version: String!
     canUserMintNativeToken: Boolean!
     canColonyMintNativeToken: Boolean!
-    canUnlockNativeToken: Boolean!
+    canUserUnlockNativeToken: Boolean!
+    canColonyUnlockNativeToken: Boolean!
     isInRecoveryMode: Boolean!
     isNativeTokenLocked: Boolean!
     transfers: [Transfer!]!

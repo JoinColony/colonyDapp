@@ -488,7 +488,30 @@ export const colonyResolvers = ({
       );
       return tokens.filter((token) => !!token);
     },
-    async canUnlockNativeToken({ colonyAddress }) {
+    async canColonyUnlockNativeToken({ colonyAddress }) {
+      const { provider } = colonyManager;
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+      const { tokenClient } = colonyClient;
+
+      /*
+       * Fetch whether the colony can unlock their token by estimating
+       * the gas to do so. If it throws an error, it can't
+       */
+      try {
+        await provider.estimateGas({
+          from: colonyAddress,
+          to: tokenClient.address,
+          data: tokenClient.interface.functions.unlock.sighash,
+        });
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    async canUserUnlockNativeToken({ colonyAddress }) {
       const colonyClient = (await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
