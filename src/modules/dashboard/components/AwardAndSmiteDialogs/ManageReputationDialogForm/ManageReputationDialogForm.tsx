@@ -356,6 +356,7 @@ const ManageReputationDialogForm = ({
               numeral: true,
               // @ts-ignore
               tailPrefix: true,
+              numeralDecimalScale: 10,
             }}
             elementOnly
             maxButtonParams={
