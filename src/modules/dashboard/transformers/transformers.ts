@@ -258,7 +258,7 @@ export const getActionsListData = (
               let actionEvent;
 
               if (
-                name.split('(')[0] ===
+                formatEventName(name) ===
                 ColonyAndExtensionsEvents.ArbitraryReputationUpdate
               ) {
                 const isSmiteAction = new Decimal(
@@ -273,7 +273,7 @@ export const getActionsListData = (
                 );
               } else {
                 actionEvent = Object.entries(ACTIONS_EVENTS).find((el) =>
-                  el[1]?.includes(name.split('(')[0]),
+                  el[1]?.includes(formatEventName(name)),
                 );
               }
 
