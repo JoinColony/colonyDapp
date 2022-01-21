@@ -51,10 +51,16 @@ const CreateDomainButton = ({ colony }: Props) => {
 
   return (
     <button className={styles.main} onClick={handleClick} type="button">
-      <div className={`${styles.buttonPartIcon} ${styles.buttonPart}`}>
-        <Icon name="circle-plus" title={text} />
+      <div className={styles.buttonAndText}>
+        <div className={styles.buttonIcon}>
+          <Icon
+            name="circle-plus"
+            title={text}
+            appearance={{ size: 'medium' }}
+          />
+        </div>
+        <div>{text}</div>
       </div>
-      <div className={styles.buttonPart}>{text}</div>
     </button>
   );
 };

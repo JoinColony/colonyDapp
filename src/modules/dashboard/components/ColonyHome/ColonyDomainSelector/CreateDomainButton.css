@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 15px 0;
+  padding: 5px 0;
   width: 100%;
   border-top: 1px solid var(--grey-blue-0);
   font-size: var(--size-small);
@@ -15,11 +15,23 @@
   outline: var(--colony-blue) auto 1px;
 }
 
-.buttonPartIcon {
-  /* Fixes vertical alignment - without this, the icon's parent is too tall, resulting in a top-aligned icon */
-  height: 18px;
+.buttonAndText {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  width: 199px;
+  border-radius: 15px;
 }
 
-.buttonPart {
-  margin: 0px 5px;
+.buttonAndText:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  color: var(--colony-blue);
+
+  /* Makes the SVG icon fill with color, dependent on the entire button hover state. */
+  fill: var(--colony-blue);
+}
+
+.buttonIcon {
+  margin-left: 5px;
+  margin-right: 14px;
 }

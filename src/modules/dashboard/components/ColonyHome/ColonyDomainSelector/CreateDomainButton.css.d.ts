@@ -1,3 +1,3 @@
 export const main: string;
-export const buttonPartIcon: string;
-export const buttonPart: string;
+export const buttonAndText: string;
+export const buttonIcon: string;
