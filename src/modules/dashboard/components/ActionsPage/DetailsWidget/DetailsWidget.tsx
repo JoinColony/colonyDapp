@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
+import Decimal from 'decimal.js';
 
 import Icon from '~core/Icon';
 import DetailsWidgetUser from '~core/DetailsWidgetUser';
@@ -217,7 +218,10 @@ const DetailsWidget = ({
               values={{ isSmiteAction: values?.isSmiteAction }}
             />
           </div>
-          <div className={styles.value}>{values?.reputationChange}</div>
+          <div className={styles.value}>
+            {values?.reputationChange}{' '}
+            {new Decimal(values?.reputationChange || '0').eq(1) ? 'pt' : 'pts'}
+          </div>
         </div>
       )}
       {detailsForAction.Permissions && (

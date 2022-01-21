@@ -43,7 +43,7 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`]: `{initiator} {isSmiteAction, select,
     true {smote}
     false {awarded}
-  } {recipient} with a {reputationChange} reputation {isSmiteAction, select,
+  } {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation {isSmiteAction, select,
     true {penalty}
     false {reward}
   }`,
@@ -93,7 +93,7 @@ const eventsMessageDescriptors = {
   [`eventList.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`]: `{agent} {isSmiteAction, select,
     true {smote}
     false {awarded}
-  } {recipient} with a {reputationChange} reputation {isSmiteAction, select,
+  } {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation {isSmiteAction, select,
     true {penalty}
     false {reward}
   }`,

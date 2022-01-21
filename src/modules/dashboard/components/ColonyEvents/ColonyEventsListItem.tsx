@@ -184,10 +184,10 @@ const ColonyEventsListItem = ({
     voteSide: <FormattedMessage {...MSG.voteSide} values={{ vote }} />,
     activePeriod,
     currentPeriod,
-    reputationChange: `${getFormattedTokenValue(
+    reputationChange: getFormattedTokenValue(
       new Decimal(amount || '0').abs().toString(),
       decimals,
-    )} pts`,
+    ),
     isSmiteAction: new Decimal(amount).isNegative(),
   };
 
