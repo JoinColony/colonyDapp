@@ -170,10 +170,10 @@ const DefaultAction = ({
       />
     ),
     roles,
-    reputationChange: `${getFormattedTokenValue(
+    reputationChange: getFormattedTokenValue(
       new Decimal(reputationChange).abs().toString(),
       decimals,
-    )} pts`,
+    ),
     isSmiteAction: new Decimal(reputationChange).isNegative(),
   };
 

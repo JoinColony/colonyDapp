@@ -300,10 +300,10 @@ const ActionsListItem = ({
                   toDomain: toDomain?.name || '',
                   roles: roleTitle,
                   newVersion: newVersion || '0',
-                  reputationChange: `${getFormattedTokenValue(
+                  reputationChange: getFormattedTokenValue(
                     new Decimal(reputationChange || '0').abs().toString(),
                     decimals,
-                  )} pts`,
+                  ),
                 }}
               />
             </span>
