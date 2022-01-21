@@ -28,8 +28,8 @@ import { Address } from '~types/index';
 import {
   getAllUserRolesForDomain,
   getAllUserRoles,
-} from '../../../transformers';
-import { hasRoot, canAdminister } from '../../../users/checks';
+} from '~modules/transformers';
+import { hasRoot, canAdminister } from '~modules/users/checks';
 
 import styles from './Members.css';
 

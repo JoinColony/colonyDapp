@@ -3,22 +3,22 @@ import { defineMessages } from 'react-intl';
 import { Extension } from '@colony/colony-js';
 
 import Button from '~core/Button';
-import ColonyActionsDialog from '~dashboard/ColonyActionsDialog';
-import ExpendituresDialog from '~dashboard/ExpendituresDialog';
-import CreateDomainDialog from '~dashboard/CreateDomainDialog';
-import EditDomainDialog from '~dashboard/EditDomainDialog';
-import CreatePaymentDialog from '~dashboard/CreatePaymentDialog';
-import ManageDomainsDialog from '~dashboard/ManageDomainsDialog';
-import ManageFundsDialog from '~dashboard/ManageFundsDialog';
-import UnlockTokenDialog from '~dashboard/UnlockTokenDialog';
-import TransferFundsDialog from '~dashboard/TransferFundsDialog';
-import AdvancedDialog from '~dashboard/AdvancedDialog';
-import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
-import RecoveryModeDialog from '~dashboard/RecoveryModeDialog';
-import TokenMintDialog from '~dashboard/TokenMintDialog';
-import NetworkContractUpgradeDialog from '~dashboard/NetworkContractUpgradeDialog';
-import EditColonyDetailsDialog from '~dashboard/EditColonyDetailsDialog';
-import ColonyTokenManagementDialog from '~dashboard/ColonyTokenManagementDialog';
+import ColonyActionsDialog from '~dialogs/ColonyActionsDialog';
+import ExpendituresDialog from '~dialogs/ExpendituresDialog';
+import CreateDomainDialog from '~dialogs/CreateDomainDialog';
+import EditDomainDialog from '~dialogs/EditDomainDialog';
+import CreatePaymentDialog from '~dialogs/CreatePaymentDialog';
+import ManageDomainsDialog from '~dialogs/ManageDomainsDialog';
+import ManageFundsDialog from '~dialogs/ManageFundsDialog';
+import UnlockTokenDialog from '~dialogs/UnlockTokenDialog';
+import TransferFundsDialog from '~dialogs/TransferFundsDialog';
+import AdvancedDialog from '~dialogs/AdvancedDialog';
+import PermissionManagementDialog from '~dialogs/PermissionManagementDialog';
+import RecoveryModeDialog from '~dialogs/RecoveryModeDialog';
+import TokenMintDialog from '~dialogs/TokenMintDialog';
+import NetworkContractUpgradeDialog from '~dialogs/NetworkContractUpgradeDialog';
+import EditColonyDetailsDialog from '~dialogs/EditColonyDetailsDialog';
+import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
@@ -29,8 +29,10 @@ import {
   useColonyExtensionsQuery,
 } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
-
-import { colonyMustBeUpgraded, oneTxMustBeUpgraded } from '../../checks';
+import {
+  colonyMustBeUpgraded,
+  oneTxMustBeUpgraded,
+} from '~modules/dashboard/checks';
 
 const displayName = 'dashboard.ColonyHomeCreateActionsButton';
 

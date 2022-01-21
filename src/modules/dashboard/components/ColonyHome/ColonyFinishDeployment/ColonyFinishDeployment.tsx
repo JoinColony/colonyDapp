@@ -9,9 +9,9 @@ import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { mapPayload } from '~utils/actions';
-import { colonyCanBeUpgraded } from '../../../checks';
-import { hasRoot, canEnterRecoveryMode } from '../../../../users/checks';
-import { getAllUserRoles } from '../../../../transformers';
+import { colonyCanBeUpgraded } from '~modules/dashboard/checks';
+import { hasRoot, canEnterRecoveryMode } from '~modules/users/checks';
+import { getAllUserRoles } from '~modules/transformers';
 
 import styles from './ColonyFinishDeployment.css';
 

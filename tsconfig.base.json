@@ -9,6 +9,7 @@
       "~core/*": ["src/modules/core/components/*"],
       "~dashboard/*": ["src/modules/dashboard/components/*"],
       "~data/*": ["src/data/*"],
+      "~dialogs/*": ["src/modules/dashboard/components/Dialogs/*"],
       "~immutable/*": ["src/immutable/*"],
       "~lib/*": ["src/lib/*"],
       "~pages/*": ["src/modules/pages/components/*"],
@@ -16,6 +17,7 @@
       "~routes/*": ["src/routes/*"],
       "~styles/*": ["src/styles/shared/*"],
       "~testutils": ["src/__tests__/utils.ts"],
+      "~modules/*": ["src/modules/*"],
       "~types/*": ["src/types/*"],
       "~users/*": ["src/modules/users/components/*"],
       "~utils/*": ["src/utils/*"]
@@ -24,10 +26,7 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "jsx": "react",
-    "lib": [
-      "dom",
-      "es2019",
-    ],
+    "lib": ["dom", "es2019"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": true,

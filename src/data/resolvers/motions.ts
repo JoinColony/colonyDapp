@@ -57,7 +57,7 @@ import {
   SystemMessage,
   SystemMessagesName,
 } from '~dashboard/ActionsPageFeed';
-import { availableRoles } from '~dashboard/PermissionManagementDialog';
+import { availableRoles } from '~dialogs/PermissionManagementDialog';
 import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import { ProcessedEvent } from './colonyActions';

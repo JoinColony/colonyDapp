@@ -49,6 +49,8 @@ const config = {
         '~testutils': path.resolve(__dirname, 'src/__tests__/utils.ts'),
         '~types': path.resolve(__dirname, 'src/types'),
         '~immutable': path.resolve(__dirname, 'src/immutable'),
+        '~modules': path.resolve(__dirname, 'src/modules'),
+        '~dialogs': path.resolve(__dirname, 'src/modules/dashboard/components/Dialogs')
       },
       generateModulesAliases(),
     ),

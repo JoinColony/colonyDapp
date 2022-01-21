@@ -7,8 +7,8 @@ import IndexModal from '~core/IndexModal';
 import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useLoggedInUser, Colony } from '~data/index';
-import { getAllUserRoles } from '../../../transformers';
-import { canAdminister, canFund } from '../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { canAdminister, canFund } from '~modules/users/checks';
 
 const MSG = defineMessages({
   dialogHeader: {

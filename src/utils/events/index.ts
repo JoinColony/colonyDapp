@@ -28,7 +28,7 @@ import ipfs from '~context/ipfsWithFallbackContext';
 import { log } from '~utils/debug';
 
 import { getMotionRequiredStake, MotionState } from '../colonyMotions';
-import { availableRoles } from '~dashboard/PermissionManagementDialog';
+import { availableRoles } from '~dialogs/PermissionManagementDialog';
 
 interface ActionValues {
   recipient: Address;

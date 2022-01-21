@@ -17,8 +17,8 @@ import {
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { Address } from '~types/index';
 import { useTransformer } from '~utils/hooks';
-import { getAllUserRoles } from '../../../../transformers';
-import { hasRoot, canAdminister } from '../../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot, canAdminister } from '~modules/users/checks';
 
 import styles from './ColonyMembers.css';
 

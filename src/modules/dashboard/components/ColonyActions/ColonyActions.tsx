@@ -22,7 +22,7 @@ import {
   useCommentCountSubscription,
 } from '~data/index';
 import { SortOptions, SortSelectOptions } from '../shared/sortOptions';
-import { getActionsListData } from '../../transformers';
+import { getActionsListData } from '~modules/dashboard/transformers';
 import { useTransformer } from '~utils/hooks';
 import { createAddress } from '~utils/web3';
 import {

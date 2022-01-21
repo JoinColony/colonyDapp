@@ -18,8 +18,8 @@ import {
   OneNotification,
   UserNotificationsDocument,
 } from '~data/index';
+import { getFriendlyName, getUsername } from '~modules/users/transformers';
 
-import { getFriendlyName, getUsername } from '../../../transformers';
 import { transformNotificationEventNames } from '../events';
 
 import styles from './InboxItem.css';

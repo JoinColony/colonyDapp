@@ -11,10 +11,9 @@ import {
   useUserWhitelistStatusQuery,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
-
-import { commentTransformer } from '../../../transformers';
-import { getAllUserRoles } from '../../../../transformers';
-import { hasRoot, canAdminister } from '../../../../users/checks';
+import { commentTransformer } from '~modules/dashboard/transformers';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot, canAdminister } from '~modules/users/checks';
 
 import styles from './Chat.css';
 

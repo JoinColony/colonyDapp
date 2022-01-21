@@ -22,10 +22,9 @@ import {
 import { ActionUserRoles, ColonyActions, Address } from '~types/index';
 import { MotionVote } from '~utils/colonyMotions';
 import { useTransformer } from '~utils/hooks';
-
-import { commentTransformer } from '../../transformers';
-import { getAllUserRoles } from '../../../transformers';
-import { hasRoot, canAdminister } from '../../../users/checks';
+import { commentTransformer } from '~modules/dashboard/transformers';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot, canAdminister } from '~modules/users/checks';
 
 import ActionsPageEvent from './ActionsPageEvent';
 import ActionsPageSystemInfo from './ActionsPageSystemInfo';

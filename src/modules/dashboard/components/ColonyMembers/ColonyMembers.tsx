@@ -9,7 +9,7 @@ import { BanUserDialog } from '~core/Comment';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Members from '~dashboard/Members';
-import PermissionManagementDialog from '~dashboard/PermissionManagementDialog';
+import PermissionManagementDialog from '~dialogs/PermissionManagementDialog';
 import WrongNetworkDialog from '~dashboard/ColonyHome/WrongNetworkDialog';
 
 import {
@@ -23,9 +23,9 @@ import { useTransformer } from '~utils/hooks';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
-import { getAllUserRoles } from '../../../transformers';
-import { hasRoot, canAdminister } from '../../../users/checks';
-import { oneTxMustBeUpgraded } from '../../../dashboard/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot, canAdminister } from '~modules/users/checks';
+import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
 
 import styles from './ColonyMembers.css';
 

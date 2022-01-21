@@ -5,7 +5,7 @@ import {
 } from '@colony/colony-js';
 
 import { Colony, ColonyExtension } from '~data/index';
-import { hasRoot } from '../users/checks';
+import { hasRoot } from '~modules/users/checks';
 
 /*
  * Colony

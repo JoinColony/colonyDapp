@@ -13,8 +13,7 @@ import {
   useLoggedInUser,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
-
-import { getAllUserRoles } from '../../../../transformers';
+import { getAllUserRoles } from '~modules/transformers';
 import UserInfo from '../UserInfo';
 
 import UserPermissions from './UserPermissions';

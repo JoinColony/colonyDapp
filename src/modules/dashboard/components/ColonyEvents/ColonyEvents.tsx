@@ -14,7 +14,7 @@ import {
   useSubgraphEventsSubscription,
   SubgraphEventsSubscription,
 } from '~data/index';
-import { getEventsListData } from '../../transformers';
+import { getEventsListData } from '~modules/dashboard/transformers';
 import { useTransformer } from '~utils/hooks';
 
 import ColonyEventsListItem from './ColonyEventsListItem';

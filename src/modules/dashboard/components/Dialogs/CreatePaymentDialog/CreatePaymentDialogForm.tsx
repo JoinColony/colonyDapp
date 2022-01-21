@@ -40,9 +40,8 @@ import {
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
-
-import { getUserRolesForDomain } from '../../../transformers';
-import { userHasRole } from '../../../users/checks';
+import { getUserRolesForDomain } from '~modules/transformers';
+import { userHasRole } from '~modules/users/checks';
 
 import { FormValues } from './CreatePaymentDialog';
 
