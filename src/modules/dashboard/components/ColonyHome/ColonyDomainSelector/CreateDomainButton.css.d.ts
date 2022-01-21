@@ -1,3 +1,3 @@
+export const container: string;
 export const main: string;
-export const buttonPartIcon: string;
-export const buttonPart: string;
+export const buttonIcon: string;

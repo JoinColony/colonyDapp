@@ -1,12 +1,19 @@
-
-.main {
-  composes: button from '~styles/reset.css';
+.container {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 15px 0;
-  width: 100%;
+  padding: 5px 0;
   border-top: 1px solid var(--grey-blue-0);
+}
+
+.main {
+  composes: button from "~styles/reset.css";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  width: 199px;
+  border-radius: 15px;
   font-size: var(--size-small);
   font-weight: var(--weight-bold);
 }
@@ -15,11 +22,16 @@
   outline: var(--colony-blue) auto 1px;
 }
 
-.buttonPartIcon {
-  /* Fixes vertical alignment - without this, the icon's parent is too tall, resulting in a top-aligned icon */
-  height: 18px;
+.main:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  color: var(--colony-blue);
+
+  /* Makes the SVG icon fill with color, dependent on the entire button hover state. */
+  fill: var(--colony-blue);
 }
 
-.buttonPart {
-  margin: 0px 5px;
+.buttonIcon {
+  position: absolute;
+  bottom: 10px;
+  left: 66px;
 }
