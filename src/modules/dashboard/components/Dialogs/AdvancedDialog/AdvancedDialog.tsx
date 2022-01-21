@@ -7,7 +7,6 @@ import IndexModal from '~core/IndexModal';
 
 import { WizardDialogType, useTransformer } from '~utils/hooks';
 import { useLoggedInUser, Colony } from '~data/index';
-
 import { getAllUserRoles } from '~modules/transformers';
 import {
   canEnterRecoveryMode,

@@ -5,7 +5,6 @@ import { SpinnerLoader } from '~core/Preloaders';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
 import NavLink from '~core/NavLink';
-
 import {
   useLoggedInUser,
   Colony,

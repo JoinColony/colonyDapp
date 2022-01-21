@@ -12,7 +12,6 @@ import Tag from '~core/Tag';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { AnyUser, Colony, useLoggedInUser } from '~data/index';
 import TextDecorator from '~lib/TextDecorator';
-
 import { userHasRole } from '~modules/users/checks';
 import { getUserRolesForDomain } from '~modules/transformers';
 

@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { defineMessage } from 'react-intl';
 
 import { MiniSpinnerLoader, SpinnerLoader } from '~core/Preloaders';
-
 import {
   useWhitelistedUsersQuery,
   useWhitelistPoliciesQuery,

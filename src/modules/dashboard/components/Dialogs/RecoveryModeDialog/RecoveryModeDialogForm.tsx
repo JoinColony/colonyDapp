@@ -12,7 +12,6 @@ import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 
 import { useLoggedInUser, Colony } from '~data/index';
 import { useTransformer } from '~utils/hooks';
-
 import { getAllUserRoles } from '~modules/transformers';
 import { canEnterRecoveryMode } from '~modules/users/checks';
 

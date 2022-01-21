@@ -20,13 +20,11 @@ import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import { AnyToken, OneToken, useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
-
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
+import { FormValues } from '~dialogs/ColonyTokenManagementDialog/ColonyTokenManagementDialog';
 
 import TokenItem from './TokenItem/index';
-
-import { FormValues } from '~dialogs/ColonyTokenManagementDialog/ColonyTokenManagementDialog';
 import styles from './TokenEditDialog.css';
 
 const MSG = defineMessages({

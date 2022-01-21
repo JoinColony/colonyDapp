@@ -5,7 +5,6 @@ import { useParams } from 'react-router';
 
 import Alert from '~core/Alert';
 import Button from '~core/Button';
-
 import { Colony, useColonyExtensionsQuery } from '~data/index';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
 

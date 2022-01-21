@@ -19,7 +19,6 @@ import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 import { useLoggedInUser } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
-
 import { getAllUserRoles } from '~modules/transformers';
 import { canArchitect } from '~modules/users/checks';
 

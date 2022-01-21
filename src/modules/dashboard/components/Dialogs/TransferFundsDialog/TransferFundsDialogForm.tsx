@@ -19,7 +19,6 @@ import {
 import Heading from '~core/Heading';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import PermissionsLabel from '~core/PermissionsLabel';
-
 import {
   useLoggedInUser,
   useTokenBalancesForDomainsLazyQuery,
@@ -34,7 +33,6 @@ import {
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
-
 import { getUserRolesForDomain } from '~modules/transformers';
 import { userHasRole } from '~modules/users/checks';
 

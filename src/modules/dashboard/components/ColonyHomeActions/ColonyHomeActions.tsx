@@ -29,7 +29,6 @@ import {
   useColonyExtensionsQuery,
 } from '~data/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
-
 import {
   colonyMustBeUpgraded,
   oneTxMustBeUpgraded,

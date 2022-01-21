@@ -27,14 +27,13 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { useLoggedInUser, useUser, AnyUser } from '~data/index';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
-
 import {
   getUserRolesForDomain,
   getAllRootAccounts,
 } from '~modules/transformers';
-import { availableRoles } from './constants';
 import { Address } from '~types/index';
 
+import { availableRoles } from './constants';
 import PermissionManagementForm from './PermissionManagementForm';
 
 import styles from './PermissionManagementDialog.css';

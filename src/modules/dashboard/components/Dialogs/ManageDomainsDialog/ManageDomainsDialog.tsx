@@ -6,7 +6,6 @@ import IndexModal from '~core/IndexModal';
 
 import { Colony, useLoggedInUser } from '~data/index';
 import { WizardDialogType, useTransformer } from '~utils/hooks';
-
 import { getAllUserRoles } from '~modules/transformers';
 import { canArchitect } from '~modules/users/checks';
 

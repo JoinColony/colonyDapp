@@ -12,7 +12,6 @@ import { useLoggedInUser } from '~data/helpers';
 import { useTransformer } from '~utils/hooks';
 import { getNetworkRelaseLink } from '~utils/external';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
-
 import {
   colonyMustBeUpgraded,
   colonyShouldBeUpgraded,

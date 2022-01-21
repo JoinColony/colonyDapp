@@ -11,7 +11,6 @@ import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
-
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';
 
 import CreateDomainButton from './CreateDomainButton';

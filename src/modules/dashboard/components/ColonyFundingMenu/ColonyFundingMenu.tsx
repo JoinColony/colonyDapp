@@ -18,7 +18,6 @@ import { Colony, useLoggedInUser, useColonyExtensionsQuery } from '~data/index';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import { useTransformer } from '~utils/hooks';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
-
 import { getUserRolesForDomain } from '~modules/transformers';
 import { userHasRole } from '~modules/users/checks';
 import { oneTxMustBeUpgraded } from '~modules/dashboard/checks';

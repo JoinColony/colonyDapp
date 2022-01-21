@@ -19,8 +19,8 @@ import { Address } from '~types/index';
 import { useMembersSubscription, AnyUser, Colony } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 import { getAllUserRolesForDomain } from '~modules/transformers';
-import { availableRoles } from './constants';
 
+import { availableRoles } from './constants';
 import { FormValues } from './PermissionManagementDialog';
 import PermissionManagementCheckbox from './PermissionManagementCheckbox';
 

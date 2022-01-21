@@ -7,13 +7,11 @@ import { ActionForm, InputLabel, Input } from '~core/Fields';
 import Button from '~core/Button';
 import CSVUploader from '~core/CSVUploader';
 import { useDialog } from '~core/Dialog';
-
 import { Colony, useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, mapPayload } from '~utils/actions';
 import { isAddress } from '~utils/web3';
 import { useTransformer } from '~utils/hooks';
-
 import { getAllUserRoles } from '~modules/transformers';
 import { canAdminister } from '~modules/users/checks';
 

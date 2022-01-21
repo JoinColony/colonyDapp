@@ -6,7 +6,6 @@ import InfoPopover, { Props as InfoPopoverProps } from '~core/InfoPopover';
 import Link from '~core/NavLink';
 import { Address } from '~types/index';
 import { AnyUser, Colony } from '~data/index';
-
 import { getUsername } from '~modules/users/transformers';
 
 import styles from './UserAvatar.css';

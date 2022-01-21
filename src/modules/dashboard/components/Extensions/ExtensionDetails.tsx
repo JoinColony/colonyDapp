@@ -44,7 +44,6 @@ import {
 } from '~routes/index';
 import { checkIfNetworkIsAllowed } from '~utils/networks';
 import InvisibleCopyableAddress from '~core/InvisibleCopyableAddress';
-
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
 
