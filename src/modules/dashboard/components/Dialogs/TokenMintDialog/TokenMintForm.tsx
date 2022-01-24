@@ -20,8 +20,8 @@ import { useTransformer } from '~utils/hooks';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 
-import { getAllUserRoles } from '../../../transformers';
-import { hasRoot } from '../../../users/checks';
+import { getAllUserRoles } from '~modules/transformers';
+import { hasRoot } from '~modules/users/checks';
 
 import { FormValues } from './TokenMintDialog';
 
