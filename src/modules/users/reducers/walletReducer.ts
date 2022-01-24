@@ -12,6 +12,9 @@ const walletReducer: ReducerType<WalletRecord> = (state = Wallet(), action) => {
       const { isUserConnected } = action.payload;
       return state.set('isUserConnected', isUserConnected);
     }
+    case ActionTypes.USER_LOGOUT: {
+      return state.set('isUserConnected', false);
+    }
     default:
       return state;
   }
