@@ -26,4 +26,8 @@ export type WalletActionTypes =
       }
     >
   | ErrorActionType<ActionTypes.WALLET_CREATE_ERROR, object>
-  | ActionType<ActionTypes.USER_CONTEXT_SETUP_SUCCESS>;
+  | ActionType<ActionTypes.USER_CONTEXT_SETUP_SUCCESS>
+  | ActionTypeWithPayload<
+      ActionTypes.USER_CONNECTED,
+      { isUserConnected: boolean }
+    >;

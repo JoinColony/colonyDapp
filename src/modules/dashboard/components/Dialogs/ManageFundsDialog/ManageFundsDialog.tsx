@@ -107,20 +107,19 @@ const ManageFundsDialog = ({
   nextStepUnlockToken,
   isVotingExtensionEnabled,
 }: Props) => {
-  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
-  const hasRegisteredProfile = !!username && !ethereal;
-  const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
-  const canMintNativeToken = isVotingExtensionEnabled
-    ? colony.canMintNativeToken
-    : colony.canMintNativeToken && hasRoot(allUserRoles);
-  const canUnlockToken = isVotingExtensionEnabled
-    ? colony.canUnlockNativeToken
-    : colony.canUnlockNativeToken && hasRoot(allUserRoles);
+  const canMoveFunds = canFund(allUserRoles);
+  const canUserMintNativeToken = isVotingExtensionEnabled
+    ? colony.canColonyMintNativeToken
+    : hasRoot(allUserRoles) && colony.canColonyMintNativeToken;
+  const canUserUnlockNativeToken = isVotingExtensionEnabled
+    ? colony.canColonyUnlockNativeToken
+    : hasRoot(allUserRoles) && colony.canColonyUnlockNativeToken;
 
-  const canManageTokens = hasRegisteredProfile && hasRoot(allUserRoles);
+  const canManageTokens = hasRoot(allUserRoles);
 
   const items = [
     {
@@ -138,7 +137,7 @@ const ManageFundsDialog = ({
       title: MSG.mintTokensTitle,
       description: MSG.mintTokensDescription,
       icon: 'emoji-seed-sprout',
-      permissionRequired: !canMintNativeToken,
+      permissionRequired: !canUserMintNativeToken,
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
@@ -177,7 +176,7 @@ const ManageFundsDialog = ({
       description: MSG.unlockTokensDescription,
       icon: 'emoji-padlock',
       onClick: () => callStep(nextStepUnlockToken),
-      permissionRequired: !canUnlockToken,
+      permissionRequired: !canUserUnlockNativeToken,
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (
@@ -187,12 +186,16 @@ const ManageFundsDialog = ({
     },
   ];
   const filteredItems = useMemo(() => {
-    return colony.canMintNativeToken
+    return colony.canColonyMintNativeToken && colony.canColonyUnlockNativeToken
       ? items
-      : items.filter(
-          ({ icon }) =>
-            icon !== 'emoji-padlock' && icon !== 'emoji-seed-sprout',
-        );
+      : items.filter(({ icon }) => {
+          if (icon === 'emoji-padlock' && !colony.canColonyUnlockNativeToken) {
+            return false;
+          }
+          return !(
+            icon === 'emoji-seed-sprout' && !colony.canColonyMintNativeToken
+          );
+        });
   }, [colony, items]);
   return (
     <IndexModal

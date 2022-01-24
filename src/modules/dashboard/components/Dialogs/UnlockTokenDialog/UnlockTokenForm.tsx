@@ -56,7 +56,7 @@ interface Props {
 }
 
 const UnlockTokenForm = ({
-  colony: { isNativeTokenLocked, canUnlockNativeToken },
+  colony: { isNativeTokenLocked },
   colony,
   back,
   isSubmitting,
@@ -67,8 +67,10 @@ const UnlockTokenForm = ({
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
   const hasRootPermission = hasRoot(allUserRoles);
-  const userHasPermissions =
-    canUnlockNativeToken && isNativeTokenLocked && hasRootPermission;
+  const canUserUnlockNativeToken =
+    hasRoot(allUserRoles) &&
+    colony.canColonyUnlockNativeToken &&
+    isNativeTokenLocked;
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
   return (
@@ -137,7 +139,7 @@ const UnlockTokenForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !userHasPermissions}
+          disabled={!isValid || !canUserUnlockNativeToken}
         />
       </DialogSection>
     </>

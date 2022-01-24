@@ -1180,8 +1180,8 @@ export type ProcessedColony = {
   roles: Array<ProcessedRoles>;
   tokens: Array<ProcessedTokens>;
   version: Scalars['String'];
-  canMintNativeToken: Scalars['Boolean'];
-  canUnlockNativeToken: Scalars['Boolean'];
+  canColonyMintNativeToken: Scalars['Boolean'];
+  canColonyUnlockNativeToken: Scalars['Boolean'];
   isInRecoveryMode: Scalars['Boolean'];
   isNativeTokenLocked: Scalars['Boolean'];
   transfers: Array<Transfer>;
@@ -1434,7 +1434,7 @@ export type DomainFieldsFragment = Pick<ProcessedDomain, 'id' | 'color' | 'descr
 export type ColonyProfileFragment = Pick<ProcessedColony, 'id' | 'colonyAddress' | 'colonyName' | 'displayName' | 'avatarHash' | 'avatarURL' | 'extensionAddresses'>;
 
 export type FullColonyFragment = (
-  Pick<ProcessedColony, 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'isDeploymentFinished'>
+  Pick<ProcessedColony, 'version' | 'canColonyMintNativeToken' | 'canColonyUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked' | 'isDeploymentFinished'>
   & { domains: Array<DomainFieldsFragment>, roles: Array<(
     Pick<ProcessedRoles, 'address'>
     & { domains: Array<Pick<ProcessedRoleDomain, 'domainId' | 'roles'>> }
@@ -2916,8 +2916,8 @@ export const FullColonyFragmentDoc = gql`
     }
   }
   version @client
-  canMintNativeToken @client
-  canUnlockNativeToken @client
+  canColonyMintNativeToken @client
+  canColonyUnlockNativeToken @client
   isInRecoveryMode @client
   isNativeTokenLocked @client
   isDeploymentFinished @client

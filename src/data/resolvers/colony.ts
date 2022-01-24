@@ -1,6 +1,6 @@
 import { Resolvers, ApolloClient } from '@apollo/client';
 import { AddressZero, HashZero } from 'ethers/constants';
-import { bigNumberify, LogDescription } from 'ethers/utils';
+import { LogDescription } from 'ethers/utils';
 import {
   ClientType,
   ColonyVersion,
@@ -8,11 +8,12 @@ import {
   TokenClientType,
   extensions,
   getExtensionHash,
-  ColonyClientV5,
   ROOT_DOMAIN_ID,
   getHistoricColonyRoles,
   formatColonyRoles,
 } from '@colony/colony-js';
+import { Contract } from 'ethers';
+import { abi as tokenAuthorityABI } from '@colony/colony-js/lib-esm/contracts/deploy/TokenAuthority.json';
 
 import { Color } from '~core/ColorTag';
 
@@ -404,15 +405,28 @@ export const colonyResolvers = ({
         return null;
       }
     },
-    async canMintNativeToken({ colonyAddress }) {
+    async canColonyMintNativeToken({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
       );
-      // fetch whether the user is allowed to mint tokens via the colony
+      const { tokenClient } = colonyClient;
+      const tokenAuthorityAddress = tokenClient.authority();
+      const tokenAuthorityContract = new Contract(
+        tokenAuthorityAddress,
+        tokenAuthorityABI,
+        colonyManager.signer,
+      );
+      const mintSighash = tokenClient.interface.functions.mint.sighash;
+
+      // fetch whether the colony is allowed to mint tokens
       let canMintNativeToken = true;
       try {
-        await colonyClient.estimate.mintTokens(bigNumberify(1));
+        canMintNativeToken = await tokenAuthorityContract.canCall(
+          colonyAddress,
+          tokenClient.address,
+          mintSighash,
+        );
       } catch (error) {
         canMintNativeToken = false;
       }
@@ -460,17 +474,28 @@ export const colonyResolvers = ({
       );
       return tokens.filter((token) => !!token);
     },
-    async canUnlockNativeToken({ colonyAddress }) {
-      const colonyClient = (await colonyManager.getClient(
+    async canColonyUnlockNativeToken({ colonyAddress }) {
+      const { provider } = colonyManager;
+      const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
-      )) as ColonyClientV5;
+      );
+      const { tokenClient } = colonyClient;
+
+      /*
+       * Fetch whether the colony can unlock their token by estimating
+       * the gas to do so. If it throws an error, it can't
+       */
       try {
-        await colonyClient.estimate.unlockToken();
+        await provider.estimateGas({
+          from: colonyAddress,
+          to: tokenClient.address,
+          data: tokenClient.interface.functions.unlock.sighash,
+        });
+        return true;
       } catch (error) {
         return false;
       }
-      return true;
     },
     async roles({ colonyAddress }) {
       try {

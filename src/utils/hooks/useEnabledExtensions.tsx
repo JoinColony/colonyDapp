@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const useEnabledExtensions = ({ colonyAddress }: Props) => {
-  const { data: colonyExtensionsData } = useColonyExtensionsQuery({
+  const { data: colonyExtensionsData, loading } = useColonyExtensionsQuery({
     variables: { address: colonyAddress || '' },
   });
   const installedExtensions =
@@ -50,5 +50,6 @@ export const useEnabledExtensions = ({ colonyAddress }: Props) => {
     installedExtensionsAddresses,
     isWhitelistExtensionEnabled,
     whitelistAddress: installedWhitelistExtension?.address,
+    isLoadingExtensions: loading,
   };
 };
