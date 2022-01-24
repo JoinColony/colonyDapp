@@ -103,10 +103,10 @@ const UserNavigation = () => {
   const previousWalletConnected = lastWalletType && lastWalletAddress;
 
   useEffect(() => {
-    if (!userDataLoading) {
+    if (!userDataLoading && !ethereal) {
       dispatch({ type: 'USER_CONNECTED', payload: { isUserConnected: true } });
     }
-  }, [userDataLoading, userLock, dispatch]);
+  }, [userDataLoading, userLock, dispatch, ethereal]);
 
   return (
     <div className={styles.main}>
