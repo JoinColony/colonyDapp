@@ -1,5 +1,5 @@
 import { ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Address, WithKey } from '~types/index';
 
 import {
   ErrorActionType,
@@ -9,6 +9,9 @@ import {
 } from './index';
 
 export type WhitelistActionTypes =
+  | UniqueActionType<ActionTypes.WHITELIST_ENABLE, any, WithKey>
+  | UniqueActionType<ActionTypes.WHITELIST_ENABLE_SUCCESS, object, object>
+  | ErrorActionType<ActionTypes.WHITELIST_ENABLE_ERROR, object>
   | UniqueActionType<
       ActionTypes.WHITELIST_SIGN_AGREEMENT,
       {

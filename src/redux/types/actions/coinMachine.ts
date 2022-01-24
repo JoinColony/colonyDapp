@@ -1,5 +1,5 @@
 import { ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Address, WithKey } from '~types/index';
 
 import {
   ErrorActionType,
@@ -24,6 +24,9 @@ export type CoinMachineActionTypes =
       ActionTypes.COIN_MACHINE_BUY_TOKENS_SUCCESS,
       MetaWithHistory<object>
     >
+  | UniqueActionType<ActionTypes.COIN_MACHINE_ENABLE, any, WithKey>
+  | UniqueActionType<ActionTypes.COIN_MACHINE_ENABLE_SUCCESS, object, object>
+  | ErrorActionType<ActionTypes.COIN_MACHINE_ENABLE_ERROR, object>
   | UniqueActionType<
       ActionTypes.COIN_MACHINE_PERIOD_UPDATE,
       {
