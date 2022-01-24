@@ -77,8 +77,10 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
 
   useSelector((state: RootState) => {
     const { isUserConnected } = state.users.wallet;
-    if (isUserConnected && isLoadingUser) {
+    if (!ethereal && isUserConnected && isLoadingUser) {
       setIsLoadingUser(false);
+    } else if (ethereal && isUserConnected && !isLoadingUser) {
+      setIsLoadingUser(true);
     }
   });
 
