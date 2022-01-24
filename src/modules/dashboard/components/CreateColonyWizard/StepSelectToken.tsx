@@ -172,11 +172,16 @@ const StepSelectToken = ({
                   <FormattedMessage {...MSG.link} />
                 </button>
               }
+              appearance={{ theme: 'fat' }}
             />
             {values.tokenAddress && !tokenData && (
               <>
                 <div className={styles.tokenDetails}>
-                  <Input name="tokenName" label={MSG.tokenName} />
+                  <Input
+                    name="tokenName"
+                    label={MSG.tokenName}
+                    appearance={{ theme: 'fat' }}
+                  />
                 </div>
                 <div className={styles.tokenDetails}>
                   <Input
@@ -184,6 +189,7 @@ const StepSelectToken = ({
                     label={MSG.tokenSymbol}
                     help={MSG.symbolHint}
                     formattingOptions={{ uppercase: true, blocks: [5] }}
+                    appearance={{ theme: 'fat' }}
                   />
                 </div>
               </>
