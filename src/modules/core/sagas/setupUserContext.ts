@@ -22,7 +22,6 @@ import {
   LoggedInUserQueryVariables,
   LoggedInUserDocument,
   updateNetworkContracts,
-  cacheUpdates,
 } from '~data/index';
 
 import setupResolvers from '~context/setupResolvers';
@@ -190,12 +189,6 @@ export default function* setupUserContext(
           networkId: parseInt(walletNetworkId, 10),
         },
       },
-      /*
-       * For some reason TS doesn't like that we don't pass any arguments
-       * to the cache update function
-       */
-      // @ts-ignore
-      update: cacheUpdates.setNativeTokenPermissions(),
     });
 
     /*

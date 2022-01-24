@@ -1,6 +1,6 @@
 import { Resolvers, ApolloClient } from '@apollo/client';
 import { AddressZero, HashZero } from 'ethers/constants';
-import { bigNumberify, LogDescription } from 'ethers/utils';
+import { LogDescription } from 'ethers/utils';
 import {
   ClientType,
   ColonyVersion,
@@ -8,7 +8,6 @@ import {
   TokenClientType,
   extensions,
   getExtensionHash,
-  ColonyClientV5,
   ROOT_DOMAIN_ID,
   getHistoricColonyRoles,
   formatColonyRoles,
@@ -433,19 +432,6 @@ export const colonyResolvers = ({
       }
       return canMintNativeToken;
     },
-    async canUserMintNativeToken({ colonyAddress }) {
-      const colonyClient = await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      );
-      // fetch whether the user is allowed to mint tokens via the colony
-      try {
-        await colonyClient.estimate.mintTokens(bigNumberify(1));
-      } catch (error) {
-        return false;
-      }
-      return true;
-    },
     async isInRecoveryMode({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
@@ -510,18 +496,6 @@ export const colonyResolvers = ({
       } catch (error) {
         return false;
       }
-    },
-    async canUserUnlockNativeToken({ colonyAddress }) {
-      const colonyClient = (await colonyManager.getClient(
-        ClientType.ColonyClient,
-        colonyAddress,
-      )) as ColonyClientV5;
-      try {
-        await colonyClient.estimate.unlockToken();
-      } catch (error) {
-        return false;
-      }
-      return true;
     },
     async roles({ colonyAddress }) {
       try {

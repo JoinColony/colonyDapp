@@ -1,6 +1,3 @@
-import { bigNumberify } from 'ethers/utils';
-import { ClientType, ColonyClientV5 } from '@colony/colony-js';
-
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
 import apolloCache from './cache';
@@ -248,60 +245,6 @@ const cacheUpdates = {
         log.verbose(e);
         log.verbose(
           'Cannot update the colony subscriptions cache - not loaded yet',
-        );
-      }
-    };
-  },
-  setNativeTokenPermissions() {
-    return async (cache: Cache) => {
-      try {
-        const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-        if (colonyManager?.colonyClients?.entries()?.next()?.value) {
-          const [
-            colonyAddress,
-          ] = colonyManager.colonyClients.entries().next().value;
-          const colonyClient = (await colonyManager.getClient(
-            ClientType.ColonyClient,
-            colonyAddress,
-          )) as ColonyClientV5;
-          let canMintNativeToken = true;
-          try {
-            await colonyClient.estimate.mintTokens(bigNumberify(1));
-          } catch (error) {
-            canMintNativeToken = false;
-          }
-
-          let canUserUnlockNativeToken = true;
-          try {
-            await colonyClient.estimate.unlockToken();
-          } catch (error) {
-            canUserUnlockNativeToken = false;
-          }
-
-          const data = cache.readQuery<
-            ProcessedColonyQuery,
-            ProcessedColonyQueryVariables
-          >({
-            query: ProcessedColonyDocument,
-            variables: {
-              address: colonyAddress,
-            },
-          });
-
-          if (data?.processedColony) {
-            cache.modify({
-              id: cache.identify(data.processedColony),
-              fields: {
-                canUserMintNativeToken: () => canMintNativeToken,
-                canUserUnlockNativeToken: () => canUserUnlockNativeToken,
-              },
-            });
-          }
-        }
-      } catch (e) {
-        log.verbose(e);
-        log.verbose(
-          'Not updating store - cannot set mint native tokens caches',
         );
       }
     };
