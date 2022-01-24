@@ -107,17 +107,19 @@ const ManageFundsDialog = ({
   nextStepUnlockToken,
   isVotingExtensionEnabled,
 }: Props) => {
-  const { walletAddress, username, ethereal } = useLoggedInUser();
+  const { walletAddress } = useLoggedInUser();
 
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
-  const hasRegisteredProfile = !!username && !ethereal;
-  const canMoveFunds = hasRegisteredProfile && canFund(allUserRoles);
+  const canMoveFunds = canFund(allUserRoles);
   const canUserMintNativeToken = isVotingExtensionEnabled
     ? colony.canColonyMintNativeToken
-    : colony.canUserMintNativeToken;
+    : hasRoot(allUserRoles) && colony.canColonyMintNativeToken;
+  const canUserUnlockNativeToken = isVotingExtensionEnabled
+    ? colony.canColonyUnlockNativeToken
+    : hasRoot(allUserRoles) && colony.canColonyUnlockNativeToken;
 
-  const canManageTokens = hasRegisteredProfile && hasRoot(allUserRoles);
+  const canManageTokens = hasRoot(allUserRoles);
 
   const items = [
     {
@@ -174,7 +176,7 @@ const ManageFundsDialog = ({
       description: MSG.unlockTokensDescription,
       icon: 'emoji-padlock',
       onClick: () => callStep(nextStepUnlockToken),
-      permissionRequired: !colony.canUserUnlockNativeToken,
+      permissionRequired: !canUserUnlockNativeToken,
       permissionInfoText: MSG.permissionsListText,
       permissionInfoTextValues: {
         permissionsList: (

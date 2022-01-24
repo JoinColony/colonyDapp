@@ -15,9 +15,13 @@ import Toggle from '~core/Fields/Toggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
-import { ColonyTokens, OneToken } from '~data/index';
+import { ColonyTokens, OneToken, useLoggedInUser } from '~data/index';
+import { useTransformer } from '~utils/hooks';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
+
+import { getAllUserRoles } from '../../../transformers';
+import { hasRoot } from '../../../users/checks';
 
 import { FormValues } from './TokenMintDialog';
 
@@ -48,7 +52,6 @@ interface Props extends ActionDialogProps {
 }
 
 const TokenMintForm = ({
-  colony: { canUserMintNativeToken },
   colony,
   isVotingExtensionEnabled,
   back,
@@ -59,6 +62,12 @@ const TokenMintForm = ({
   values,
 }: Props & FormikProps<FormValues>) => {
   const requiredRoles: ColonyRole[] = [ColonyRole.Root];
+  const { walletAddress } = useLoggedInUser();
+  const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
+
+  const canUserMintNativeToken = isVotingExtensionEnabled
+    ? colony.canColonyMintNativeToken
+    : hasRoot(allUserRoles) && colony.canColonyMintNativeToken;
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,

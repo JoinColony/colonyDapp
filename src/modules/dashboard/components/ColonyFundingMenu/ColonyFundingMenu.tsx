@@ -47,12 +47,7 @@ interface Props {
 const displayName = 'dashboard.ColonyFundingMenu';
 
 const ColonyFundingMenu = ({
-  colony: {
-    canUserMintNativeToken,
-    version,
-    isDeploymentFinished,
-    colonyAddress,
-  },
+  colony: { version, isDeploymentFinished, colonyAddress },
   colony,
   selectedDomainId,
 }: Props) => {
@@ -119,6 +114,10 @@ const ColonyFundingMenu = ({
     userHasRole(rootRoles, ColonyRole.Root) ||
     userHasRole(rootRoles, ColonyRole.Administration);
   const canMoveTokens = userHasRole(rootRoles, ColonyRole.Funding);
+  const canUserMintNativeToken = isVotingExtensionEnabled
+    ? colony.canColonyMintNativeToken
+    : userHasRole(rootRoles, ColonyRole.Root) &&
+      colony.canColonyMintNativeToken;
 
   const hasRegisteredProfile = !!username && !ethereal;
   const isSupportedColonyVersion =
