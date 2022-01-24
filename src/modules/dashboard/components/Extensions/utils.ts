@@ -1,6 +1,8 @@
+import { Extension } from '@colony/colony-js';
 import * as yup from 'yup';
 
 import { ExtensionInitParams } from '~data/staticData/extensionData';
+import { ActionTypes } from '~redux/actionTypes';
 
 export const createExtensionInitValidation = (
   initializationParams: ExtensionInitParams[],
@@ -27,4 +29,20 @@ export const createExtensionDefaultValues = (
     defaultValues[param.paramName] = param.defaultValue;
     return defaultValues;
   }, {});
+};
+
+export const getButtonAction = (
+  actionType: 'SUBMIT' | 'ERROR' | 'SUCCESS',
+  extensionId: string,
+) => {
+  const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
+  let actionBeginning = 'COLONY_EXTENSION';
+
+  if (extensionId === Extension.CoinMachine) {
+    actionBeginning = 'COIN_MACHINE';
+  } else if (extensionId === Extension.Whitelist) {
+    actionBeginning = 'WHITELIST';
+  }
+
+  return ActionTypes[`${actionBeginning}_ENABLE${actionEnd}`];
 };

@@ -38,6 +38,7 @@ import styles from './ExtensionSetup.css';
 import {
   createExtensionInitValidation,
   createExtensionDefaultValues,
+  getButtonAction,
 } from './utils';
 
 const MSG = defineMessages({
@@ -333,9 +334,9 @@ const ExtensionSetup = ({
         <FormattedMessage {...MSG.descriptionMissingPermissions} />
         <div className={styles.inputContainer}>
           <ActionButton
-            submit={ActionTypes.COLONY_EXTENSION_ENABLE}
-            error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
-            success={ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS}
+            submit={getButtonAction('SUBMIT', installedExtension.id)}
+            error={getButtonAction('ERROR', installedExtension.id)}
+            success={getButtonAction('SUCCESS', installedExtension.id)}
             transform={transform}
             text={MSG.setPermissions}
           />

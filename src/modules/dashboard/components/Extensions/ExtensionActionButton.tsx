@@ -9,6 +9,8 @@ import { ExtensionData } from '~data/staticData/extensionData';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 
+import { getButtonAction } from './utils';
+
 const MSG = defineMessages({
   enable: {
     id: 'Extensions.ExtensionActionButton.enable',
@@ -84,9 +86,9 @@ const ExtensionActionButton = ({
     return (
       <ActionButton
         button={IconButton}
-        submit={ActionTypes.COLONY_EXTENSION_ENABLE}
-        error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
-        success={ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS}
+        submit={getButtonAction('SUBMIT', extension.extensionId)}
+        error={getButtonAction('ERROR', extension.extensionId)}
+        success={getButtonAction('SUCCESS', extension.extensionId)}
         values={{
           colonyAddress,
           extensionId: extension.extensionId,
