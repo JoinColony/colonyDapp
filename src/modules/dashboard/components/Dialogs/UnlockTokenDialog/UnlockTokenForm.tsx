@@ -10,9 +10,10 @@ import { DialogSection, ActionDialogProps } from '~core/Dialog';
 import PermissionRequiredInfo from '~core/PermissionRequiredInfo';
 import Heading from '~core/Heading';
 import PermissionsLabel from '~core/PermissionsLabel';
+import Toggle from '~core/Fields/Toggle';
+import { Annotations } from '~core/Fields';
 import { getAllUserRoles } from '~modules/transformers';
 import { hasRoot } from '~modules/users/checks';
-import Toggle from '~core/Fields/Toggle';
 import NotEnoughReputation from '~dashboard/NotEnoughReputation';
 import MotionDomainSelect from '~dashboard/MotionDomainSelect';
 
@@ -23,7 +24,6 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 import { TOKEN_UNLOCK_INFO } from '~externalUrls';
 
 import styles from './UnlockTokenForm.css';
-import { Annotations } from '~core/Fields';
 
 const MSG = defineMessages({
   title: {
@@ -78,13 +78,17 @@ const UnlockTokenForm = ({
     hasRoot(allUserRoles) &&
     colony.canColonyUnlockNativeToken &&
     isNativeTokenLocked;
+  const requiredRoles: ColonyRole[] = [ColonyRole.Root];
 
-  const [userHasPermission] = useDialogActionPermissions(
+  const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
-    canUserUnlockNativeToken && isNativeTokenLocked,
+    canUserUnlockNativeToken,
     isVotingExtensionEnabled,
     values.forceAction,
   );
+
+  const inputDisabled =
+    !userHasPermission || onlyForceAction || !isNativeTokenLocked;
 
   return (
     <>
@@ -112,10 +116,10 @@ const UnlockTokenForm = ({
           </div>
         </div>
       </DialogSection>
-      {!userHasPermission && (
+      {!userHasPermission && isNativeTokenLocked && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.wrapper}>
-            <PermissionRequiredInfo requiredRoles={[ColonyRole.Root]} />
+            <PermissionRequiredInfo requiredRoles={requiredRoles} />
           </div>
         </DialogSection>
       )}
@@ -127,24 +131,8 @@ const UnlockTokenForm = ({
             <FormattedMessage {...MSG.unlockedDescription} />
           </div>
         )}
-        <FormattedMessage {...MSG.description} />
       </DialogSection>
-      <DialogSection appearance={{ theme: 'sidePadding' }}>
-        <div className={styles.note}>
-          <FormattedMessage {...MSG.note} />
-          <ExternalLink
-            className={styles.learnMoreLink}
-            text={{ id: 'text.learnMore' }}
-            href={TOKEN_UNLOCK_INFO}
-          />
-        </div>
-        <Annotations
-          label={MSG.annotation}
-          name="annotationMessage"
-          disabled={!canUserUnlockNativeToken}
-        />
-      </DialogSection>
-      {colony.isNativeTokenLocked && (
+      {isNativeTokenLocked && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.note}>
             <FormattedMessage {...MSG.note} />
@@ -156,7 +144,16 @@ const UnlockTokenForm = ({
           </div>
         </DialogSection>
       )}
-      {!hasRootPermission && (
+      {isNativeTokenLocked && (
+        <DialogSection appearance={{ theme: 'sidePadding' }}>
+          <Annotations
+            label={MSG.annotation}
+            name="annotationMessage"
+            disabled={inputDisabled}
+          />
+        </DialogSection>
+      )}
+      {!hasRootPermission && isNativeTokenLocked && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>
             <FormattedMessage
@@ -175,7 +172,7 @@ const UnlockTokenForm = ({
           </div>
         </DialogSection>
       )}
-      {onlyForceAction && <NotEnoughReputation />}
+      {onlyForceAction && isNativeTokenLocked && <NotEnoughReputation />}
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
         <Button
           appearance={{ theme: 'secondary', size: 'large' }}
@@ -187,7 +184,7 @@ const UnlockTokenForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !canUserUnlockNativeToken || isSubmitting}
+          disabled={!isValid || inputDisabled}
         />
       </DialogSection>
     </>
