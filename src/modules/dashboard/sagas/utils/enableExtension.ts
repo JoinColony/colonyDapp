@@ -1,14 +1,12 @@
-import { fork, all } from 'redux-saga/effects';
+import { fork } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
 
 import { TxConfig } from '~types/index';
-import { ActionTypes } from '~redux/index';
 import {
   ContextModule,
   TEMP_getContext,
   TEMP_setContext,
 } from '~context/index';
-import { takeFrom } from '~utils/saga/effects';
 
 import {
   createTransaction,
@@ -37,53 +35,42 @@ export const modifyParams = (params, payload) =>
 
 export function* setupEnablingGroupTransactions(
   metaId: string,
-  colonyAddress: string,
   initParams: any[],
   extensionId: string,
   additionalChannels?: {
     [index: string]: Channel | undefined;
   },
 ) {
-  const channels = {
-    initialise: {
-      context: `${extensionId}Client`,
-      params: initParams,
-    },
-    ...additionalChannels,
-  };
-
-  const transactionChannels = yield createTransactionChannels(
-    metaId,
-    Object.keys(channels),
-  );
-  const createGroupTransaction = ({ id, index }, config) =>
-    fork(createTransaction, id, {
-      ...config,
-      group: {
-        key: 'enableExtension',
-        id: metaId,
-        index,
+  try {
+    const channels = {
+      initialise: {
+        context: `${extensionId}Client`,
+        params: initParams,
       },
-    });
+      ...additionalChannels,
+    };
 
-  yield all(
-    Object.keys(channels).map((channelName) =>
-      createGroupTransaction(transactionChannels[channelName], {
-        identifier: colonyAddress,
-        methodName: channelName,
-        ...channels[channelName],
-      }),
-    ),
-  );
+    const transactionChannels = yield createTransactionChannels(
+      metaId,
+      Object.keys(channels),
+    );
+    const createGroupTransaction = ({ id, index }, config) =>
+      fork(createTransaction, id, {
+        ...config,
+        group: {
+          key: 'enableExtension',
+          id: metaId,
+          index,
+        },
+      });
 
-  yield all(
-    Object.keys(transactionChannels).map((id) =>
-      takeFrom(
-        transactionChannels[id].channel,
-        ActionTypes.TRANSACTION_CREATED,
-      ),
-    ),
-  );
-
-  return transactionChannels;
+    return {
+      channels,
+      transactionChannels,
+      createGroupTransaction,
+    };
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
 }
