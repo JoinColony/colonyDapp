@@ -7,7 +7,6 @@ import ExternalLink from '~core/ExternalLink';
 import DecisionHub from '~core/DecisionHub';
 import { Form } from '~core/Fields';
 import { multiLineTextEllipsis } from '~utils/strings';
-import ENS from '~lib/ENS';
 
 import styles from './StepTokenChoice.css';
 
@@ -87,6 +86,7 @@ const options = [
 interface FormValues {
   tokenChoice: string;
   colonyName: string;
+  displayName: string;
 }
 
 type Props = WizardProps<FormValues>;
@@ -107,11 +107,8 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
                * inside a sentence that does not
                */
               colony: (
-                <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
-                  {multiLineTextEllipsis(
-                    ENS.normalizeAsText(wizardValues.colonyName),
-                    29,
-                  )}
+                <span title={wizardValues.displayName}>
+                  {multiLineTextEllipsis(wizardValues.displayName, 29)}
                 </span>
               ),
             }}

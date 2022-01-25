@@ -7,7 +7,6 @@ import { Form, FormStatus, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { multiLineTextEllipsis } from '~utils/strings';
-import ENS from '~lib/ENS';
 import styles from './StepCreateToken.css';
 
 const MSG = defineMessages({
@@ -82,6 +81,7 @@ type FormValues = {
   tokenAddress: string;
   colonyName: string;
   tokenChoice: string;
+  displayName: string;
 };
 
 type Props = WizardProps<FormValues>;
@@ -135,11 +135,8 @@ const StepCreateToken = ({
                    * inside a sentence that does not
                    */
                   colony: (
-                    <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
-                      {multiLineTextEllipsis(
-                        ENS.normalizeAsText(wizardValues.colonyName),
-                        40,
-                      )}
+                    <span title={wizardValues.displayName}>
+                      {multiLineTextEllipsis(wizardValues.displayName, 40)}
                     </span>
                   ),
                 }}

@@ -11,7 +11,6 @@ import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { multiLineTextEllipsis } from '~utils/strings';
-import ENS from '~lib/ENS';
 import { OneToken } from '~data/index';
 
 import TokenSelector from './TokenSelector';
@@ -26,6 +25,7 @@ interface FormValues {
   tokenIcon?: string;
   tokenData: OneToken | null;
   colonyName: string;
+  displayName: string;
 }
 
 type Bag = FormikBag<object, FormValues>;
@@ -146,11 +146,8 @@ const StepSelectToken = ({
                * inside a sentence that does not
                */
               colony: (
-                <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
-                  {multiLineTextEllipsis(
-                    ENS.normalizeAsText(wizardValues.colonyName),
-                    38,
-                  )}
+                <span title={wizardValues.displayName}>
+                  {multiLineTextEllipsis(wizardValues.displayName, 38)}
                 </span>
               ),
             }}
