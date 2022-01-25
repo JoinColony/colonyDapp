@@ -1,4 +1,4 @@
-import { call, takeEvery } from 'redux-saga/effects';
+import { all, call, takeEvery } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Action, ActionTypes } from '~redux/index';
@@ -24,7 +24,7 @@ import {
   Channel,
 } from '../utils';
 
-function* whitelistExtensionEnable({
+function* extensionEnable({
   meta: { id: metaId },
   meta,
   payload: { colonyAddress, extensionId, ...payload },
@@ -90,14 +90,34 @@ function* whitelistExtensionEnable({
       }
 
       const {
-        initialise,
-        setUserRolesWithProofs,
+        channels,
+        transactionChannels,
+        transactionChannels: { initialise, setUserRolesWithProofs },
+        createGroupTransaction,
       } = yield setupEnablingGroupTransactions(
         metaId,
-        colonyAddress,
         initParams,
         extensionId,
         additionalChannels,
+      );
+
+      yield all(
+        Object.keys(channels).map((channelName) =>
+          createGroupTransaction(transactionChannels[channelName], {
+            identifier: colonyAddress,
+            methodName: channelName,
+            ...channels[channelName],
+          }),
+        ),
+      );
+
+      yield all(
+        Object.keys(transactionChannels).map((id) =>
+          takeFrom(
+            transactionChannels[id].channel,
+            ActionTypes.TRANSACTION_CREATED,
+          ),
+        ),
       );
 
       yield takeFrom(initialise.channel, ActionTypes.TRANSACTION_SUCCEEDED);
@@ -119,5 +139,5 @@ function* whitelistExtensionEnable({
 }
 
 export default function* colonyExtensionEnableSaga() {
-  yield takeEvery(ActionTypes.WHITELIST_ENABLE, whitelistExtensionEnable);
+  yield takeEvery(ActionTypes.WHITELIST_ENABLE, extensionEnable);
 }

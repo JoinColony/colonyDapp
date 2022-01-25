@@ -1,4 +1,4 @@
-import { call, takeEvery, put } from 'redux-saga/effects';
+import { call, takeEvery, put, all } from 'redux-saga/effects';
 import { ClientType, ROOT_DOMAIN_ID, TokenClientType } from '@colony/colony-js';
 
 import { Action, ActionTypes } from '~redux/index';
@@ -26,7 +26,7 @@ import {
   Channel,
 } from '../utils';
 
-function* coinMachineExtensionEnable({
+function* extensionEnable({
   meta: { id: metaId },
   meta,
   payload: { colonyAddress, extensionId, ...payload },
@@ -112,22 +112,43 @@ function* coinMachineExtensionEnable({
 
         additionalChannels.makeArbitraryTransaction = {
           context: ClientType.ColonyClient,
-          params: [payload.tokenToBeSold, [address, tokenLockingAddress]],
           ready: false,
         };
       }
-
       const {
-        initialise,
-        setUserRolesWithProofs,
-        deployTokenAuthority,
-        makeArbitraryTransaction,
+        channels,
+        transactionChannels,
+        transactionChannels: {
+          initialise,
+          setUserRolesWithProofs,
+          deployTokenAuthority,
+          makeArbitraryTransaction,
+        },
+        createGroupTransaction,
       } = yield setupEnablingGroupTransactions(
         metaId,
-        colonyAddress,
         initParams,
         extensionId,
         additionalChannels,
+      );
+
+      yield all(
+        Object.keys(channels).map((channelName) =>
+          createGroupTransaction(transactionChannels[channelName], {
+            identifier: colonyAddress,
+            methodName: channelName,
+            ...channels[channelName],
+          }),
+        ),
+      );
+
+      yield all(
+        Object.keys(transactionChannels).map((id) =>
+          takeFrom(
+            transactionChannels[id].channel,
+            ActionTypes.TRANSACTION_CREATED,
+          ),
+        ),
       );
 
       yield takeFrom(initialise.channel, ActionTypes.TRANSACTION_SUCCEEDED);
@@ -176,6 +197,6 @@ function* coinMachineExtensionEnable({
   return null;
 }
 
-export default function* coinMachineExtensionEnableSaga() {
-  yield takeEvery(ActionTypes.COIN_MACHINE_ENABLE, coinMachineExtensionEnable);
+export default function* extensionEnableSaga() {
+  yield takeEvery(ActionTypes.COIN_MACHINE_ENABLE, extensionEnable);
 }
