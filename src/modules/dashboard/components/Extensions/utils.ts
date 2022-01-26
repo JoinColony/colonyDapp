@@ -36,12 +36,19 @@ export const getButtonAction = (
   extensionId: string,
 ) => {
   const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
-  let actionBeginning = 'COLONY_EXTENSION';
+  let actionBeginning: string;
 
-  if (extensionId === Extension.CoinMachine) {
-    actionBeginning = 'COIN_MACHINE';
-  } else if (extensionId === Extension.Whitelist) {
-    actionBeginning = 'WHITELIST';
+  switch (extensionId) {
+    case Extension.CoinMachine: {
+      actionBeginning = 'COIN_MACHINE';
+      break;
+    }
+    case Extension.Whitelist: {
+      actionBeginning = 'WHITELIST';
+      break;
+    }
+    default:
+      actionBeginning = 'COLONY_EXTENSION';
   }
 
   return ActionTypes[`${actionBeginning}_ENABLE${actionEnd}`];
