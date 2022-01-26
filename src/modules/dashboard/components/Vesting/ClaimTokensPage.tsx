@@ -164,7 +164,7 @@ const ClaimTokensPage = ({ match }: Props) => {
                 <Heading
                   appearance={{ size: 'medium', theme: 'dark' }}
                   text={MSG.title}
-                  textValues={{ tokenSymbol: 'TOK' }}
+                  textValues={{ tokenSymbol: grantsToken?.symbol }}
                 />
               </div>
             </InfoPopover>

@@ -6,6 +6,7 @@ import { bigNumberify } from 'ethers/utils';
 
 import { ActionForm } from '~core/Fields';
 import Heading from '~core/Heading';
+import InfoPopover from '~core/InfoPopover';
 
 import LoadingTemplate from '~pages/LoadingTemplate';
 
@@ -146,13 +147,26 @@ const UnwrapTokensPage = ({ match }: Props) => {
           isLoading={loadingWrappedTokenData}
           looadingText={MSG.loadingTokensText}
           title={
-            <Heading
-              appearance={{ size: 'medium', theme: 'dark' }}
-              text={MSG.title}
-              textValues={{
-                tokenSymbol: wrappedToken?.symbol || UNKNOWN_TOKEN_SYMBOL,
+            <InfoPopover
+              token={wrappedToken}
+              isTokenNative={
+                wrappedToken?.address ===
+                data?.processedColony?.nativeTokenAddress
+              }
+              popperProps={{
+                placement: 'bottom',
               }}
-            />
+            >
+              <div className={styles.popoverWrapper}>
+                <Heading
+                  appearance={{ size: 'medium', theme: 'dark' }}
+                  text={MSG.title}
+                  textValues={{
+                    tokenSymbol: wrappedToken?.symbol || UNKNOWN_TOKEN_SYMBOL,
+                  }}
+                />
+              </div>
+            </InfoPopover>
           }
           tableValues={[
             {
