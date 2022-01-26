@@ -3,6 +3,10 @@
   width: 340px;
 }
 
+.main h3 {
+  cursor: pointer;
+}
+
 .loader {
   margin-top: 150px;
 }
@@ -49,4 +53,9 @@
 .loadingWrapper {
   height: 100%;
   position: relative;
+}
+
+.popoverWrapper {
+  display: inline-block;
+  margin-bottom: -10px;
 }
