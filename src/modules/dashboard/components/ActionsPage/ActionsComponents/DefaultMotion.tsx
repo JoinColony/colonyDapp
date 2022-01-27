@@ -19,7 +19,7 @@ import ActionsPageFeed, {
   SystemMessage,
 } from '~dashboard/ActionsPageFeed';
 
-import { getFormattedTokenValue } from '~utils/tokens';
+import { getStdFormattedTokenValue } from '~utils/tokens';
 import {
   getUpdatedDecodedMotionRoles,
   MotionState,
@@ -266,7 +266,7 @@ const DefaultMotion = ({
     color: domainColor,
     description: domainPurpose,
   };
-  const decimalAmount = getFormattedTokenValue(amount, decimals);
+  const decimalAmount = getStdFormattedTokenValue(amount, decimals);
   const actionAndEventValues = {
     actionType,
     newVersion,

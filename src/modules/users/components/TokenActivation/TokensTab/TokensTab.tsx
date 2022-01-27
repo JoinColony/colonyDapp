@@ -11,7 +11,7 @@ import { FullColonyFragment } from '~data/index';
 import { UserToken } from '~data/generated';
 import { Address } from '~types/index';
 import {
-  getFormattedTokenValue,
+  getStdFormattedTokenValue,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 
@@ -103,19 +103,19 @@ const TokensTab = ({
     [token],
   );
 
-  const formattedTotalAmount = getFormattedTokenValue(
+  const formattedTotalAmount = getStdFormattedTokenValue(
     totalTokens,
     token.decimals,
   );
-  const formattedLockedTokens = getFormattedTokenValue(
+  const formattedLockedTokens = getStdFormattedTokenValue(
     lockedTokens,
     token.decimals,
   );
-  const formattedActiveTokens = getFormattedTokenValue(
+  const formattedActiveTokens = getStdFormattedTokenValue(
     activeTokens,
     token.decimals,
   );
-  const formattedInactiveTokens = getFormattedTokenValue(
+  const formattedInactiveTokens = getStdFormattedTokenValue(
     inactiveTokens,
     token.decimals,
   );

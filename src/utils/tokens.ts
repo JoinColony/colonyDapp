@@ -1,6 +1,7 @@
 import { bigNumberify, BigNumberish } from 'ethers/utils';
 import Decimal from 'decimal.js';
 
+import { stdNumberFormatter } from '~utils/numbers';
 import { TokenWithBalances } from '~data/index';
 import { DEFAULT_TOKEN_DECIMALS, SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
 
@@ -63,4 +64,22 @@ export const getFormattedTokenValue = (
     return SMALL_TOKEN_AMOUNT_FORMAT;
   }
   return decimalValue.toDP(5, Decimal.ROUND_DOWN).toString();
+};
+
+export const getStdFormattedTokenValue = (
+  value: BigNumberish,
+  decimals: any,
+): string => {
+  const safeDecimals = bigNumberify(10)
+    .pow(getTokenDecimalsWithFallback(decimals))
+    .toString();
+  const decimalValue = new Decimal(bigNumberify(value).toString())
+    .div(safeDecimals)
+    .toString();
+
+  return stdNumberFormatter({
+    abreviateOverMillion: false,
+    suffix: '',
+    value: decimalValue,
+  });
 };

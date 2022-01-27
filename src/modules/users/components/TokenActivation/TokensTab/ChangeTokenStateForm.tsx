@@ -17,7 +17,7 @@ import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { pipe, mapPayload } from '~utils/actions';
-import { getFormattedTokenValue } from '~utils/tokens';
+import { getStdFormattedTokenValue } from '~utils/tokens';
 
 import styles from './TokensTab.css';
 
@@ -88,15 +88,15 @@ const ChangeTokenStateForm = ({
 
   const { walletAddress } = useLoggedInUser();
 
-  const formattedActiveTokens = getFormattedTokenValue(
+  const formattedActiveTokens = getStdFormattedTokenValue(
     activeTokens,
     token.decimals,
   );
-  const formattedInactiveTokens = getFormattedTokenValue(
+  const formattedInactiveTokens = getStdFormattedTokenValue(
     inactiveTokens,
     token.decimals,
   );
-  const formattedLockedTokens = getFormattedTokenValue(
+  const formattedLockedTokens = getStdFormattedTokenValue(
     lockedTokens,
     token.decimals,
   );

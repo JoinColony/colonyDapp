@@ -19,7 +19,7 @@ import {
   Colony,
 } from '~data/index';
 import {
-  getFormattedTokenValue,
+  getStdFormattedTokenValue,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 import useSplitTime from '~utils/hooks/useSplitTime';
@@ -234,11 +234,11 @@ const SaleStateWidget = ({
         )
         .toFixed(0, Decimal.ROUND_HALF_UP);
 
-      let formattedAmount = getFormattedTokenValue(
+      let formattedAmount = getStdFormattedTokenValue(
         transactionAmount,
         sellableToken?.decimals,
       );
-      let formattedPrice = getFormattedTokenValue(
+      let formattedPrice = getStdFormattedTokenValue(
         decimalPrice.toString(),
         purchaseToken?.decimals,
       );
@@ -248,11 +248,11 @@ const SaleStateWidget = ({
       } else if (bigNumberify(numTokens).isZero()) {
         setState(SaleState.SaleFailed);
       } else if (bigNumberify(transactionAmount).gt(numTokens)) {
-        formattedAmount = getFormattedTokenValue(
+        formattedAmount = getStdFormattedTokenValue(
           numTokens,
           sellableToken?.decimals,
         );
-        formattedPrice = getFormattedTokenValue(
+        formattedPrice = getStdFormattedTokenValue(
           totalCost,
           purchaseToken?.decimals,
         );
