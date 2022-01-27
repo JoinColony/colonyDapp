@@ -3,7 +3,7 @@ import { bigNumberify } from 'ethers/utils';
 
 import { TokenActivationPopover } from '~users/TokenActivation';
 
-import { getFormattedTokenValue } from '~utils/tokens';
+import { getStdFormattedTokenValue } from '~utils/tokens';
 import Numeral from '~core/Numeral';
 
 import { UserLock, UserToken } from '~data/index';
@@ -33,7 +33,7 @@ const UserTokenActivationButton = ({
     userLock?.pendingBalance || 0,
   ).isZero();
 
-  const formattedTotalBalance = getFormattedTokenValue(
+  const formattedTotalBalance = getStdFormattedTokenValue(
     totalBalance,
     nativeToken.decimals,
   );

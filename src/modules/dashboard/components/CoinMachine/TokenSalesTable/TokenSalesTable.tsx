@@ -15,7 +15,7 @@ import {
 import ExternalLink from '~core/ExternalLink';
 import { MiniSpinnerLoader } from '~core/Preloaders';
 
-import { getFormattedTokenValue } from '~utils/tokens';
+import { getStdFormattedTokenValue } from '~utils/tokens';
 import {
   TokenInfoQuery,
   useCoinMachineSalePeriodsQuery,
@@ -160,7 +160,7 @@ const TokenSalesTable = ({
               sellableToken={sellableToken as AnyToken}
             />
           ),
-          price: getFormattedTokenValue(price, 18),
+          price: getStdFormattedTokenValue(price, 18),
           priceStatus: getPriceStatus(
             {
               targetPeriodTokens: bigNumberify(targetPerPeriod),

@@ -28,7 +28,7 @@ import {
 import { ActionTypes } from '~redux/index';
 import {
   getTokenDecimalsWithFallback,
-  getFormattedTokenValue,
+  getStdFormattedTokenValue,
 } from '~utils/tokens';
 import { getMainClasses } from '~utils/css';
 import { mapPayload, withMeta, pipe } from '~utils/actions';
@@ -113,7 +113,7 @@ const validationSchema = (userBalance: string, tokenDecimals: number) => {
   const uncappedUserBalance = new Decimal(userBalance).div(
     new Decimal(10).pow(tokenDecimals),
   );
-  const formattedUserBalance = getFormattedTokenValue(
+  const formattedUserBalance = getStdFormattedTokenValue(
     userBalance,
     tokenDecimals,
   );
@@ -189,12 +189,12 @@ const BuyTokens = ({
     ({ address: userTokenAddress }) =>
       userTokenAddress === purchaseToken?.address,
   );
-  const userPurchaseTokenBalance = getFormattedTokenValue(
+  const userPurchaseTokenBalance = getStdFormattedTokenValue(
     userPurchaseToken?.balance || '0',
     purchaseToken?.decimals || 18,
   );
 
-  const currentSalePrice = getFormattedTokenValue(
+  const currentSalePrice = getStdFormattedTokenValue(
     salePriceData?.coinMachineCurrentPeriodPrice || '0',
     purchaseToken?.decimals || 18,
   );
@@ -205,7 +205,7 @@ const BuyTokens = ({
         .times(salePriceData?.coinMachineCurrentPeriodPrice || '0')
         .toFixed(0, Decimal.ROUND_HALF_UP);
 
-      return getFormattedTokenValue(
+      return getStdFormattedTokenValue(
         decimalCost.toString(),
         purchaseToken?.decimals,
       );

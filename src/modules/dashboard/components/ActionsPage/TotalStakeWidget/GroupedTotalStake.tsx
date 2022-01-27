@@ -10,7 +10,7 @@ import QuestionMarkTooltip from '~core/QuestionMarkTooltip';
 import Icon from '~core/Icon';
 import Button from '~core/Button';
 
-import { getFormattedTokenValue } from '~utils/tokens';
+import { getStdFormattedTokenValue } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
 
@@ -81,7 +81,7 @@ const GroupedTotalStake = ({
   const validationSchema = yup.object().shape({
     stakeSide: yup.string().required(),
   });
-  const formattedRequiredStake = getFormattedTokenValue(
+  const formattedRequiredStake = getStdFormattedTokenValue(
     requiredStake,
     tokenDecimals,
   );

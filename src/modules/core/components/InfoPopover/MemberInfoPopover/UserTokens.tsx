@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 import { BigNumberish } from 'ethers/utils';
 
 import Heading from '~core/Heading';
-import { getFormattedTokenValue } from '~utils/tokens';
+import { getStdFormattedTokenValue } from '~utils/tokens';
 
 import Numeral from '~core/Numeral';
 import { UserToken } from '~data/generated';
@@ -26,7 +26,7 @@ const MSG = defineMessages({
 });
 
 const UserTokens = ({ totalBalance, nativeToken }: Props) => {
-  const formattedTotalBalance = getFormattedTokenValue(
+  const formattedTotalBalance = getStdFormattedTokenValue(
     totalBalance,
     nativeToken.decimals,
   );
