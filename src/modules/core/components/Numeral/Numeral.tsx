@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import { BigNumber } from 'ethers/utils';
 
 import { getMainClasses } from '~utils/css';
-import { formatTokenValue } from '~utils/numbers';
+import { stdNumberFormatter } from '~utils/numbers';
 
 import styles from './Numeral.css';
 
@@ -18,9 +18,6 @@ export interface Props extends HTMLAttributes<HTMLSpanElement> {
 
   /** Optional custom className, will overwrite appearance */
   className?: string;
-
-  /** Separator for thousands (e.g. ',') */
-  integerSeparator?: string;
 
   /** Prefix the value with this string */
   prefix?: string;
@@ -44,7 +41,6 @@ export interface Props extends HTMLAttributes<HTMLSpanElement> {
 const Numeral = ({
   appearance,
   className,
-  integerSeparator = ',',
   prefix,
   suffix,
   truncate,
@@ -53,12 +49,11 @@ const Numeral = ({
   reducedOutput = true,
   ...props
 }: Props) => {
-  const formattedNumber = formatTokenValue({
+  const formattedNumber = stdNumberFormatter({
     unit,
     value,
     prefix,
     suffix,
-    integerSeparator,
     truncate,
     reducedOutput,
   });
