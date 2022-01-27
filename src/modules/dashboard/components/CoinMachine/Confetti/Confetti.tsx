@@ -32,7 +32,7 @@ const Confetti = ({ colonyAddress }: Props) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (periodTokensData) {
+    if (periodTokensData && periodTokensData.currentPeriodTokens) {
       const soldPeriodTokens = bigNumberify(
         periodTokensData.currentPeriodTokens.activeSoldTokens,
       );
