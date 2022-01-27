@@ -13,7 +13,7 @@ import {
   useMotionVoterRewardQuery,
   AnyToken,
 } from '~data/index';
-import { getFormattedTokenValue } from '~utils/tokens';
+import { getStdFormattedTokenValue } from '~utils/tokens';
 import { MotionState } from '~utils/colonyMotions';
 
 import styles from './VoteWidget.css';
@@ -183,7 +183,7 @@ const VoteDetails = ({
                       {voterReward.motionVoterReward.minReward ===
                       voterReward.motionVoterReward.maxReward ? (
                         <Numeral
-                          value={getFormattedTokenValue(
+                          value={getStdFormattedTokenValue(
                             voterReward.motionVoterReward.minReward,
                             nativeToken?.decimals,
                           )}
@@ -193,7 +193,7 @@ const VoteDetails = ({
                       ) : (
                         <>
                           <Numeral
-                            value={getFormattedTokenValue(
+                            value={getStdFormattedTokenValue(
                               voterReward.motionVoterReward.minReward,
                               nativeToken?.decimals,
                             )}
@@ -201,7 +201,7 @@ const VoteDetails = ({
                           />
                           <div className={styles.range} />
                           <Numeral
-                            value={getFormattedTokenValue(
+                            value={getStdFormattedTokenValue(
                               voterReward.motionVoterReward.maxReward,
                               nativeToken?.decimals,
                             )}
@@ -221,7 +221,7 @@ const VoteDetails = ({
                         size="xxs"
                       />
                       <Numeral
-                        value={getFormattedTokenValue(
+                        value={getStdFormattedTokenValue(
                           voterReward.motionVoterReward.reward,
                           nativeToken?.decimals,
                         )}

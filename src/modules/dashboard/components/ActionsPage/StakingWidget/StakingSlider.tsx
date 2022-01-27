@@ -8,7 +8,7 @@ import Slider, { Appearance } from '~core/Slider';
 import StakingValidationError from '~dashboard/ActionsPage/StakingValidationError';
 
 import { Colony, useLoggedInUser } from '~data/index';
-import { getFormattedTokenValue } from '~utils/tokens';
+import { getStdFormattedTokenValue } from '~utils/tokens';
 
 import styles from './StakingWidget.css';
 
@@ -96,7 +96,7 @@ const StakingSlider = ({
   const stakeWithMin = new Decimal(minUserStake).gte(stake)
     ? new Decimal(minUserStake)
     : stake;
-  const displayStake = getFormattedTokenValue(
+  const displayStake = getStdFormattedTokenValue(
     stakeWithMin.round().toString(),
     nativeToken?.decimals,
   );
@@ -174,15 +174,15 @@ const StakingSlider = ({
           stakeType={errorStakeType}
           errorValues={{
             minimumStake: `${displayStake} ${nativeToken?.symbol}`,
-            userActiveTokens: `${getFormattedTokenValue(
+            userActiveTokens: `${getStdFormattedTokenValue(
               userActivatedTokens.toString(),
               nativeToken?.decimals,
             )} ${nativeToken?.symbol}`,
-            minimumReputation: `${getFormattedTokenValue(
+            minimumReputation: `${getStdFormattedTokenValue(
               minUserStake.toString(),
               nativeToken?.decimals,
             )}`,
-            userReputation: `${getFormattedTokenValue(
+            userReputation: `${getStdFormattedTokenValue(
               maxUserStake.toString(),
               nativeToken?.decimals,
             )}`,
