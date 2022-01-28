@@ -88,6 +88,12 @@
   cursor: default;
 }
 
+.networkInfo:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  color: var(--colony-blue);
+  cursor: pointer;
+}
+
 .wrongNetwork {
   composes: networkInfo;
   padding: 4px 10px;
