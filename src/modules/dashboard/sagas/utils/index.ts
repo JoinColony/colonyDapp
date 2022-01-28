@@ -7,4 +7,4 @@ export {
   removeOldExtensionClients,
   setupEnablingGroupTransactions,
   Channel,
-} from './enableExtension';
+} from './enableExtensionHelpers';
