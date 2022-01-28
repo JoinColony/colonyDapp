@@ -161,6 +161,22 @@
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
 }
 
+.reputation:hover {
+  background-color: color-mod(var(--colony-blue) alpha(10%));
+  cursor: pointer;
+}
+
+/* The first selector is for the reputation value text when reputation shows `- %`
+ * in the create colony wizard. The second one is for other reputation value texts.
+*/
+.reputation:hover div, .reputation:hover span {
+  color: var(--colony-blue);
+}
+
+.reputation:hover svg {
+  stroke: var(--colony-blue);
+}
+
 .walletAutoLogin {
   margin-right: 12px;
   padding: 4px 10px 0;
