@@ -20,7 +20,6 @@ import {
 import Heading from '~core/Heading';
 import MaskedAddress from '~core/MaskedAddress';
 
-import { ActionTypes } from '~redux/index';
 import { Colony, ColonyExtension } from '~data/index';
 
 import {
@@ -38,6 +37,7 @@ import styles from './ExtensionSetup.css';
 import {
   createExtensionInitValidation,
   createExtensionDefaultValues,
+  getButtonAction,
 } from './utils';
 
 const MSG = defineMessages({
@@ -333,9 +333,9 @@ const ExtensionSetup = ({
         <FormattedMessage {...MSG.descriptionMissingPermissions} />
         <div className={styles.inputContainer}>
           <ActionButton
-            submit={ActionTypes.COLONY_EXTENSION_ENABLE}
-            error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
-            success={ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS}
+            submit={getButtonAction('SUBMIT', extensionId)}
+            error={getButtonAction('ERROR', extensionId)}
+            success={getButtonAction('SUCCESS', extensionId)}
             transform={transform}
             text={MSG.setPermissions}
           />
@@ -490,9 +490,9 @@ const ExtensionSetup = ({
     <ActionForm
       initialValues={initialValues}
       validationSchema={createExtensionInitValidation(initializationParams)}
-      submit={ActionTypes.COLONY_EXTENSION_ENABLE}
-      error={ActionTypes.COLONY_EXTENSION_ENABLE_ERROR}
-      success={ActionTypes.COLONY_EXTENSION_ENABLE_SUCCESS}
+      submit={getButtonAction('SUBMIT', extensionId)}
+      error={getButtonAction('ERROR', extensionId)}
+      success={getButtonAction('SUCCESS', extensionId)}
       onSuccess={handleFormSuccess}
       transform={transform}
     >

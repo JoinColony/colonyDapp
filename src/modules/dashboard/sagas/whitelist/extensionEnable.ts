@@ -11,30 +11,31 @@ import extensionData from '~data/staticData/extensionData';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { intArrayToBytes32 } from '~utils/web3';
+import { WhitelistPolicy } from '~types/index';
 
 import { getTxChannel } from '../../../core/sagas';
 
+import { ipfsUpload } from '../../../core/sagas/ipfs';
+
 import {
   refreshExtension,
-  modifyParams,
   removeOldExtensionClients,
   setupEnablingGroupTransactions,
   Channel,
 } from '../utils';
 
-function* colonyExtensionEnable({
+function* extensionEnable({
   meta: { id: metaId },
   meta,
   payload: { colonyAddress, extensionId, ...payload },
-}: Action<ActionTypes.COLONY_EXTENSION_ENABLE>) {
+}: Action<ActionTypes.WHITELIST_ENABLE>) {
   const extension = extensionData[extensionId];
   const initChannelName = `${meta.id}-initialise`;
-
-  yield removeOldExtensionClients(colonyAddress, extensionId);
-
   if (!extension) {
     throw new Error(`Extension with id ${extensionId} does not exist!`);
   }
+
+  yield removeOldExtensionClients(colonyAddress, extensionId);
 
   const initChannel = yield call(getTxChannel, initChannelName);
 
@@ -56,13 +57,26 @@ function* colonyExtensionEnable({
       throw new Error('Extension not installed');
     }
 
+    /*
+     * Upload whitelist policy to IPFS
+     */
+    const agreementHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        agreement: payload.agreement,
+      }),
+    );
+
     const {
       address,
       details: { initialized, missingPermissions },
     } = data.colonyExtension;
 
     if (!initialized && extension.initializationParams) {
-      const initParams = modifyParams(extension.initializationParams, payload);
+      const initParams = [
+        payload?.policy !== WhitelistPolicy.AgreementOnly,
+        agreementHash,
+      ];
 
       const additionalChannels: {
         setUserRolesWithProofs?: Channel;
@@ -117,11 +131,7 @@ function* colonyExtensionEnable({
     }
     yield call(refreshExtension, colonyAddress, extensionId);
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_EXTENSION_ENABLE_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.WHITELIST_ENABLE_ERROR, error, meta);
   } finally {
     initChannel.close();
   }
@@ -129,5 +139,5 @@ function* colonyExtensionEnable({
 }
 
 export default function* colonyExtensionEnableSaga() {
-  yield takeEvery(ActionTypes.COLONY_EXTENSION_ENABLE, colonyExtensionEnable);
+  yield takeEvery(ActionTypes.WHITELIST_ENABLE, extensionEnable);
 }

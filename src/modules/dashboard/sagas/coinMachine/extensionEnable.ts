@@ -1,5 +1,5 @@
-import { all, call, takeEvery } from 'redux-saga/effects';
-import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { call, takeEvery, put, all } from 'redux-saga/effects';
+import { ClientType, ROOT_DOMAIN_ID, TokenClientType } from '@colony/colony-js';
 
 import { Action, ActionTypes } from '~redux/index';
 import {
@@ -13,6 +13,10 @@ import { putError, takeFrom } from '~utils/saga/effects';
 import { intArrayToBytes32 } from '~utils/web3';
 
 import { getTxChannel } from '../../../core/sagas';
+import {
+  transactionReady,
+  transactionAddParams,
+} from '../../../core/actionCreators';
 
 import {
   refreshExtension,
@@ -22,13 +26,14 @@ import {
   Channel,
 } from '../utils';
 
-function* colonyExtensionEnable({
+function* extensionEnable({
   meta: { id: metaId },
   meta,
   payload: { colonyAddress, extensionId, ...payload },
-}: Action<ActionTypes.COLONY_EXTENSION_ENABLE>) {
+}: Action<ActionTypes.COIN_MACHINE_ENABLE>) {
   const extension = extensionData[extensionId];
   const initChannelName = `${meta.id}-initialise`;
+  const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
   yield removeOldExtensionClients(colonyAddress, extensionId);
 
@@ -62,10 +67,31 @@ function* colonyExtensionEnable({
     } = data.colonyExtension;
 
     if (!initialized && extension.initializationParams) {
-      const initParams = modifyParams(extension.initializationParams, payload);
+      let shouldSetNewTokenAuthority = false;
+      let initParams = [] as any[];
+
+      const tokenClient = yield colonyManager.getTokenClient(
+        payload.tokenToBeSold,
+      );
+      if (tokenClient.tokenClientType === TokenClientType.Colony) {
+        const isSoldTokenLocked = yield tokenClient.locked();
+        shouldSetNewTokenAuthority = isSoldTokenLocked;
+      }
+
+      const params = [
+        ...extension.initializationParams,
+        ...(extension.extraInitParams ? extension.extraInitParams : []),
+      ].sort((a, b) =>
+        /* need this logic check for types */
+        a.orderNumber && b.orderNumber ? a.orderNumber - b.orderNumber : 1,
+      );
+
+      initParams = modifyParams(params, payload);
 
       const additionalChannels: {
         setUserRolesWithProofs?: Channel;
+        deployTokenAuthority?: Channel;
+        makeArbitraryTransaction?: Channel;
       } = {};
       if (missingPermissions.length) {
         const bytes32Roles = intArrayToBytes32(missingPermissions);
@@ -75,10 +101,29 @@ function* colonyExtensionEnable({
         };
       }
 
+      if (shouldSetNewTokenAuthority) {
+        const { networkClient } = colonyManager;
+        const tokenLockingAddress = yield networkClient.getTokenLocking();
+
+        additionalChannels.deployTokenAuthority = {
+          context: ClientType.ColonyClient,
+          params: [payload.tokenToBeSold, [address, tokenLockingAddress]],
+        };
+
+        additionalChannels.makeArbitraryTransaction = {
+          context: ClientType.ColonyClient,
+          ready: false,
+        };
+      }
       const {
         channels,
         transactionChannels,
-        transactionChannels: { initialise, setUserRolesWithProofs },
+        transactionChannels: {
+          initialise,
+          setUserRolesWithProofs,
+          deployTokenAuthority,
+          makeArbitraryTransaction,
+        },
         createGroupTransaction,
       } = yield setupEnablingGroupTransactions(
         metaId,
@@ -114,20 +159,44 @@ function* colonyExtensionEnable({
           ActionTypes.TRANSACTION_SUCCEEDED,
         );
       }
+
+      if (shouldSetNewTokenAuthority) {
+        const {
+          payload: { deployedContractAddress },
+        } = yield takeFrom(
+          deployTokenAuthority.channel,
+          ActionTypes.TRANSACTION_SUCCEEDED,
+        );
+
+        // eslint-disable-next-line max-len
+        const encodedAction = tokenClient.interface.functions.setAuthority.encode(
+          [deployedContractAddress],
+        );
+
+        yield put(
+          transactionAddParams(makeArbitraryTransaction.id, [
+            payload.tokenToBeSold,
+            encodedAction,
+          ]),
+        );
+
+        yield put(transactionReady(makeArbitraryTransaction.id));
+
+        yield takeFrom(
+          makeArbitraryTransaction.channel,
+          ActionTypes.TRANSACTION_SUCCEEDED,
+        );
+      }
     }
     yield call(refreshExtension, colonyAddress, extensionId);
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_EXTENSION_ENABLE_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ActionTypes.COIN_MACHINE_ENABLE_ERROR, error, meta);
   } finally {
     initChannel.close();
   }
   return null;
 }
 
-export default function* colonyExtensionEnableSaga() {
-  yield takeEvery(ActionTypes.COLONY_EXTENSION_ENABLE, colonyExtensionEnable);
+export default function* extensionEnableSaga() {
+  yield takeEvery(ActionTypes.COIN_MACHINE_ENABLE, extensionEnable);
 }
