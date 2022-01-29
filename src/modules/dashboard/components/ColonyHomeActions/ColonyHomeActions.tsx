@@ -20,7 +20,10 @@ import RecoveryModeDialog from '~dialogs/RecoveryModeDialog';
 import TokenMintDialog from '~dialogs/TokenMintDialog';
 import NetworkContractUpgradeDialog from '~dialogs/NetworkContractUpgradeDialog';
 import EditColonyDetailsDialog from '~dialogs/EditColonyDetailsDialog';
+import ManageReputationDialog from '~dialogs/ManageReputationDialog';
 import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
+import SmiteDialog from '~dialogs/SmiteDialog';
+
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';

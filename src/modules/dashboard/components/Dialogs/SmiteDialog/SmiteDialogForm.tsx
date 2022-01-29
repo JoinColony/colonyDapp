@@ -31,9 +31,8 @@ import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissi
 import { useTransformer } from '~utils/hooks';
 import { getFormattedTokenValue } from '~utils/tokens';
 import { calculatePercentageReputation } from '~utils/reputation';
-
-import { getUserRolesForDomain } from '../../../transformers';
-import { userHasRole } from '../../../users/checks';
+import { getUserRolesForDomain } from '~modules/transformers';
+import { userHasRole } from '~modules/users/checks';
 
 import { FormValues } from './SmiteDialog';
 import TeamDropdownItem from './TeamDropdownItem';
