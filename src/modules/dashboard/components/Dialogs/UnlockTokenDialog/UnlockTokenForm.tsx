@@ -61,7 +61,7 @@ const MSG = defineMessages({
 });
 
 const UnlockTokenForm = ({
-  colony: { isNativeTokenLocked },
+  colony: { isNativeTokenLocked, canColonyUnlockNativeToken },
   colony,
   isVotingExtensionEnabled,
   back,
@@ -75,10 +75,7 @@ const UnlockTokenForm = ({
 
   const hasRootPermission = hasRoot(allUserRoles);
   const canUserUnlockNativeToken =
-    hasRoot(allUserRoles) &&
-    colony.canColonyUnlockNativeToken &&
-    isNativeTokenLocked;
-  const requiredRoles: ColonyRole[] = [ColonyRole.Root];
+    hasRootPermission && canColonyUnlockNativeToken && isNativeTokenLocked;
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
@@ -119,7 +116,7 @@ const UnlockTokenForm = ({
       {!userHasPermission && isNativeTokenLocked && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.wrapper}>
-            <PermissionRequiredInfo requiredRoles={requiredRoles} />
+            <PermissionRequiredInfo requiredRoles={[ColonyRole.Root]} />
           </div>
         </DialogSection>
       )}
@@ -153,7 +150,9 @@ const UnlockTokenForm = ({
           />
         </DialogSection>
       )}
-      {!hasRootPermission && isNativeTokenLocked && (
+      {/* tslint being stupid */}
+      {/* eslint-disable-next-line max-len */}
+      {!(hasRootPermission || isVotingExtensionEnabled) && isNativeTokenLocked && (
         <DialogSection appearance={{ theme: 'sidePadding' }}>
           <div className={styles.noPermissionMessage}>
             <FormattedMessage
