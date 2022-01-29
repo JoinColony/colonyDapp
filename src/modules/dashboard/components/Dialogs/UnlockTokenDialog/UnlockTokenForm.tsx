@@ -61,7 +61,7 @@ const MSG = defineMessages({
 });
 
 const UnlockTokenForm = ({
-  colony: { isNativeTokenLocked, canColonyUnlockNativeToken },
+  colony: { isNativeTokenLocked, canColonyUnlockNativeToken, colonyAddress },
   colony,
   isVotingExtensionEnabled,
   back,
@@ -78,7 +78,7 @@ const UnlockTokenForm = ({
     hasRootPermission && canColonyUnlockNativeToken && isNativeTokenLocked;
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
-    colony.colonyAddress,
+    colonyAddress,
     canUserUnlockNativeToken,
     isVotingExtensionEnabled,
     values.forceAction,
@@ -121,7 +121,7 @@ const UnlockTokenForm = ({
         </DialogSection>
       )}
       <DialogSection appearance={{ theme: 'sidePadding' }}>
-        {colony.isNativeTokenLocked ? (
+        {isNativeTokenLocked ? (
           <FormattedMessage {...MSG.description} />
         ) : (
           <div className={styles.unlocked}>
