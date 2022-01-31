@@ -33,3 +33,4 @@ export const balanceInfoWithdraw: string;
 export const balanceInfoWithdrawLocked: string;
 export const balanceAmount: string;
 export const claimsContainer: string;
+export const noClaims: string;
