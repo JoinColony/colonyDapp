@@ -19,6 +19,7 @@ export enum ColonyActions {
   ColonyEdit = 'ColonyEdit',
   EditDomain = 'EditDomain',
   SetUserRoles = 'SetUserRoles',
+  EmitDomainReputationPenalty = 'EmitDomainReputationPenalty',
 }
 
 export enum ColonyAndExtensionsEvents {
@@ -57,6 +58,7 @@ export enum ColonyAndExtensionsEvents {
   PaymentRecipientSet = 'PaymentRecipientSet',
   PaymentFinalized = 'PaymentFinalized',
   TokensBurned = 'TokensBurned',
+  ArbitraryReputationUpdate = 'ArbitraryReputationUpdate',
   /*
    * Network events
    */
@@ -149,6 +151,7 @@ export interface FormattedAction {
   blockNumber: number;
   totalNayStake?: string;
   requiredStake?: string;
+  reputationPenalty?: string;
 }
 
 export interface FormattedEvent {

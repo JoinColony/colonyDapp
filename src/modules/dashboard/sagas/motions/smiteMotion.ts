@@ -1,67 +1,55 @@
-import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import {
   ClientType,
-  ColonyVersion,
-  getMoveFundsPermissionProofs,
   getChildIndex,
-  ROOT_DOMAIN_ID,
+  getPermissionProofs,
+  ColonyRole,
 } from '@colony/colony-js';
-import { AddressZero, MaxUint256 } from 'ethers/constants';
+import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, routeRedirect } from '~utils/saga/effects';
 
-import { uploadIfpsAnnotation } from '../utils';
 import {
   createTransaction,
   createTransactionChannels,
   getTxChannel,
 } from '../../../core/sagas';
+import { ipfsUpload } from '../../../core/sagas/ipfs';
 import {
   transactionReady,
   transactionPending,
   transactionAddParams,
 } from '../../../core/actionCreators';
+import { updateDomainReputation } from '../utils';
 
-function* moveFundsMotion({
+function* smiteMotion({
   payload: {
     colonyAddress,
     colonyName,
-    version,
-    fromDomainId,
-    toDomainId,
+    domainId,
+    userAddress,
     amount,
-    tokenAddress,
     annotationMessage,
+    motionDomainId,
   },
   meta: { id: metaId, history },
   meta,
-}: Action<ActionTypes.COLONY_MOTION_MOVE_FUNDS>) {
+}: Action<ActionTypes.COLONY_MOTION_SMITE>) {
   let txChannel;
   try {
     /*
      * Validate the required values
      */
-    if (!fromDomainId) {
-      throw new Error(
-        'Source domain not set for oveFundsBetweenPots transaction',
-      );
+    if (!userAddress) {
+      throw new Error('A user address is required to smite this user');
     }
-    if (!toDomainId) {
-      throw new Error(
-        'Recipient domain not set for MoveFundsBetweenPots transaction',
-      );
+    if (!domainId) {
+      throw new Error('Domain id not set for Smite transaction');
     }
     if (!amount) {
-      throw new Error(
-        'Payment amount not set for MoveFundsBetweenPots transaction',
-      );
-    }
-    if (!tokenAddress) {
-      throw new Error(
-        'Payment token not set for MoveFundsBetweenPots transaction',
-      );
+      throw new Error('Amount not set for Smite transaction');
     }
 
     const context = TEMP_getContext(ContextModule.ColonyManager);
@@ -69,38 +57,30 @@ function* moveFundsMotion({
       ClientType.ColonyClient,
       colonyAddress,
     );
+
     const votingReputationClient = yield context.getClient(
       ClientType.VotingReputationClient,
       colonyAddress,
     );
 
-    const [{ fundingPotId: fromPot }, { fundingPotId: toPot }] = yield all([
-      call([colonyClient, colonyClient.getDomain], fromDomainId),
-      call([colonyClient, colonyClient.getDomain], toDomainId),
-    ]);
-
-    const [
-      permissionDomainId,
-      fromChildSkillIndex,
-      toChildSkillIndex,
-    ] = yield call(
-      getMoveFundsPermissionProofs,
+    const [permissionDomainId, childSkillIndex] = yield call(
+      getPermissionProofs,
       colonyClient,
-      fromPot,
-      toPot,
+      domainId,
+      ColonyRole.Architecture,
       votingReputationClient.address,
     );
 
     const motionChildSkillIndex = yield call(
       getChildIndex,
       colonyClient,
-      ROOT_DOMAIN_ID,
-      ROOT_DOMAIN_ID,
+      motionDomainId,
+      domainId,
     );
 
     const { skillId } = yield call(
       [colonyClient, colonyClient.getDomain],
-      ROOT_DOMAIN_ID,
+      motionDomainId,
     );
 
     const { key, value, branchMask, siblings } = yield call(
@@ -116,28 +96,16 @@ function* moveFundsMotion({
 
     const {
       createMotion,
-      annotateMoveFundsMotion,
+      annotateSmiteMotion,
     } = yield createTransactionChannels(metaId, [
       'createMotion',
-      'annotateMoveFundsMotion',
+      'annotateSmiteMotion',
     ]);
 
-    const isOldVersion =
-      parseInt(version, 10) <= ColonyVersion.CeruleanLightweightSpaceship;
-    const encodedAction = colonyClient.interface.functions[
-      isOldVersion
-        ? `moveFundsBetweenPots(uint256,uint256,uint256,uint256,uint256,uint256,address)`
-        : 'moveFundsBetweenPots'
-    ].encode([
-      ...(isOldVersion ? [] : [permissionDomainId, MaxUint256]),
-      permissionDomainId,
-      fromChildSkillIndex,
-      toChildSkillIndex,
-      fromPot,
-      toPot,
-      amount,
-      tokenAddress,
-    ]);
+    // eslint-disable-next-line max-len
+    const encodedAction = colonyClient.interface.functions.emitDomainReputationPenalty.encode(
+      [permissionDomainId, childSkillIndex, domainId, userAddress, amount],
+    );
 
     // create transactions
     yield fork(createTransaction, createMotion.id, {
@@ -145,7 +113,7 @@ function* moveFundsMotion({
       methodName: 'createMotion',
       identifier: colonyAddress,
       params: [
-        ROOT_DOMAIN_ID,
+        motionDomainId,
         motionChildSkillIndex,
         AddressZero,
         encodedAction,
@@ -163,7 +131,7 @@ function* moveFundsMotion({
     });
 
     if (annotationMessage) {
-      yield fork(createTransaction, annotateMoveFundsMotion.id, {
+      yield fork(createTransaction, annotateSmiteMotion.id, {
         context: ClientType.ColonyClient,
         methodName: 'annotateTransaction',
         identifier: colonyAddress,
@@ -180,10 +148,18 @@ function* moveFundsMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_CREATED);
     if (annotationMessage) {
       yield takeFrom(
-        annotateMoveFundsMotion.channel,
+        annotateSmiteMotion.channel,
         ActionTypes.TRANSACTION_CREATED,
       );
     }
+
+    let ipfsHash = null;
+    ipfsHash = yield call(
+      ipfsUpload,
+      JSON.stringify({
+        annotationMessage,
+      }),
+    );
 
     yield put(transactionReady(createMotion.id));
 
@@ -196,35 +172,40 @@ function* moveFundsMotion({
     yield takeFrom(createMotion.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (annotationMessage) {
-      const ipfsHash = yield call(uploadIfpsAnnotation, annotationMessage);
-      yield put(transactionPending(annotateMoveFundsMotion.id));
+      yield put(transactionPending(annotateSmiteMotion.id));
 
       yield put(
-        transactionAddParams(annotateMoveFundsMotion.id, [txHash, ipfsHash]),
+        transactionAddParams(annotateSmiteMotion.id, [txHash, ipfsHash]),
       );
 
-      yield put(transactionReady(annotateMoveFundsMotion.id));
+      yield put(transactionReady(annotateSmiteMotion.id));
 
       yield takeFrom(
-        annotateMoveFundsMotion.channel,
+        annotateSmiteMotion.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
+
+    /*
+     * Refesh the user & colony reputation
+     */
+    yield fork(updateDomainReputation, colonyAddress, userAddress, domainId);
+
     yield put<AllActions>({
-      type: ActionTypes.COLONY_MOTION_MOVE_FUNDS_SUCCESS,
+      type: ActionTypes.COLONY_MOTION_SMITE_SUCCESS,
       meta,
     });
 
     if (colonyName) {
       yield routeRedirect(`/colony/${colonyName}/tx/${txHash}`, history);
     }
-  } catch (caughtError) {
-    putError(ActionTypes.COLONY_MOTION_MOVE_FUNDS_ERROR, caughtError, meta);
+  } catch (error) {
+    putError(ActionTypes.COLONY_MOTION_SMITE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
 }
 
-export default function* moveFundsMotionSaga() {
-  yield takeEvery(ActionTypes.COLONY_MOTION_MOVE_FUNDS, moveFundsMotion);
+export default function* smiteMotionSage() {
+  yield takeEvery(ActionTypes.COLONY_MOTION_SMITE, smiteMotion);
 }

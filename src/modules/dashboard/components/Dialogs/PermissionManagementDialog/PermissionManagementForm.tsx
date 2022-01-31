@@ -119,9 +119,8 @@ const PermissionManagementForm = ({
   const canRoleBeSet = useCallback(
     (role: ColonyRole) => {
       switch (role) {
-        // Can't set arbitration at all yet
         case ColonyRole.Arbitration:
-          return false;
+          return true;
 
         // Can only be set by root and in root domain (and only unset if other root accounts exist)
         case ColonyRole.Root:
@@ -308,9 +307,7 @@ const PermissionManagementForm = ({
               <PermissionManagementCheckbox
                 key={role}
                 disabled={
-                  !isVotingExtensionEnabled
-                    ? inputDisabled || !canRoleBeSet(role) || roleIsInherited
-                    : false
+                  inputDisabled || !canRoleBeSet(role) || roleIsInherited
                 }
                 role={role}
                 asterisk={roleIsInherited}

@@ -1211,7 +1211,17 @@ export const motionsResolvers = ({
         };
       }
 
-      /* MintTokenMotion - default */
+      if (
+        actionValues.signature ===
+        'emitDomainReputationPenalty(uint256,uint256,uint256,address,int256)'
+      ) {
+        return {
+          reputationPenalty: actionValues?.args[4].toString(),
+          recipient: actionValues?.args[3],
+        };
+      }
+
+      // MintTokenMotion - default
       return {
         amount: bigNumberify(actionValues?.args[0] || '0').toString(),
         token: {

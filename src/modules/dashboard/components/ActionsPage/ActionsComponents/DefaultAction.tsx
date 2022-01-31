@@ -1,5 +1,6 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
+import Decimal from 'decimal.js';
 
 import Tag, { Appearance as TagAppareance } from '~core/Tag';
 import FriendlyName from '~core/FriendlyName';
@@ -63,6 +64,7 @@ const DefaultAction = ({
     oldVersion,
     colonyDisplayName,
     roles,
+    reputationPenalty,
   },
   colonyAction,
   transactionHash,
@@ -168,6 +170,10 @@ const DefaultAction = ({
       />
     ),
     roles,
+    reputationPenalty: `${getFormattedTokenValue(
+      new Decimal(reputationPenalty).mul(-1).toString(),
+      decimals,
+    )} pts`,
   };
 
   const motionStyles = MOTION_TAG_MAP[MotionState.Forced];

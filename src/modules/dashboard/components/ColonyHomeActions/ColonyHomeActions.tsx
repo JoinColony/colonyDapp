@@ -20,7 +20,10 @@ import RecoveryModeDialog from '~dialogs/RecoveryModeDialog';
 import TokenMintDialog from '~dialogs/TokenMintDialog';
 import NetworkContractUpgradeDialog from '~dialogs/NetworkContractUpgradeDialog';
 import EditColonyDetailsDialog from '~dialogs/EditColonyDetailsDialog';
+import ManageReputationDialog from '~dialogs/ManageReputationDialog';
 import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
+import SmiteDialog from '~dialogs/SmiteDialog';
+
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
 import { useNaiveBranchingDialogWizard } from '~utils/hooks';
@@ -92,6 +95,7 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
         nextStepManageFunds: 'dashboard.ManageFundsDialog',
         nextStepManageDomains: 'dashboard.ManageDomainsDialog',
         nextStepAdvanced: 'dashboard.AdvancedDialog',
+        nextStepManageReputation: 'dashboard.ManageReputationDialog',
       },
     },
     {
@@ -163,6 +167,24 @@ const ColonyHomeActions = ({ colony, ethDomainId }: Props) => {
       component: EditDomainDialog,
       props: {
         prevStep: 'dashboard.ManageDomainsDialog',
+        colony,
+        isVotingExtensionEnabled,
+        ethDomainId,
+      },
+    },
+    {
+      component: ManageReputationDialog,
+      props: {
+        nextStep: 'dashboard.SmiteDialog',
+        prevStep: 'dashboard.ColonyActionsDialog',
+        colony,
+        isVotingExtensionEnabled,
+      },
+    },
+    {
+      component: SmiteDialog,
+      props: {
+        prevStep: 'dashboard.ManageReputationDialog',
         colony,
         isVotingExtensionEnabled,
         ethDomainId,
