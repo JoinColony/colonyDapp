@@ -74,14 +74,19 @@ const UserTokenEditDialogForm = ({
 
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
   const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
-    false,
+    true,
   );
+  const [isCheckingAddress, setIsCheckingAddress] = useState<boolean>(false);
   const { formatMessage } = useIntl();
 
   const sortedTokenIds = useMemo(
     () => tokensList.map((token) => token.id).sort(),
     [tokensList],
   );
+
+  const handleCheckingAddress = (isChecking: boolean) => {
+    setIsCheckingAddress(isChecking);
+  };
 
   const handleTokenSelect = (token: OneToken) => {
     setTokenData(token);
@@ -179,6 +184,7 @@ const UserTokenEditDialogForm = ({
                 tokenAddress={values.tokenAddress as string}
                 onTokenSelect={(token: OneToken) => handleTokenSelect(token)}
                 onTokenSelectError={handleTokenSelectError}
+                onCheckingAddress={handleCheckingAddress}
                 tokenData={tokenData}
                 label={MSG.fieldLabel}
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}
@@ -207,7 +213,8 @@ const UserTokenEditDialogForm = ({
                   !isValid ||
                   !hasRegisteredProfile ||
                   !hasTokensListChanged(values) ||
-                  isSubmitting
+                  isSubmitting ||
+                  isCheckingAddress
                 }
                 type="submit"
                 style={{ width: styles.wideButton }}

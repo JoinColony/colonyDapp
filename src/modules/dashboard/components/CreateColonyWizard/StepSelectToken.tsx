@@ -101,6 +101,14 @@ const StepSelectToken = ({
 }: Props) => {
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
   const { formatMessage } = useIntl();
+  const [isCheckingAddress, setIsCheckingAddress] = useState<boolean>(false);
+  const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
+    true,
+  );
+
+  const handleCheckingAddress = (isChecking: boolean) => {
+    setIsCheckingAddress(isChecking);
+  };
 
   const handleTokenSelect = (token: OneToken, setFieldValue: SetFieldValue) => {
     setTokenData(token);
@@ -108,6 +116,10 @@ const StepSelectToken = ({
       setFieldValue('tokenName', token.name);
       setFieldValue('tokenSymbol', token.symbol);
     }
+  };
+
+  const handleTokenSelectError = (hasError: boolean) => {
+    setTokenSelectorHasError(hasError);
   };
 
   const goToTokenCreate = useCallback(() => {
@@ -161,6 +173,8 @@ const StepSelectToken = ({
               onTokenSelect={(token: OneToken) =>
                 handleTokenSelect(token, setFieldValue)
               }
+              onTokenSelectError={handleTokenSelectError}
+              onCheckingAddress={handleCheckingAddress}
               tokenData={tokenData}
               extra={
                 <button
@@ -198,8 +212,13 @@ const StepSelectToken = ({
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
                 type="submit"
-                disabled={!isValid || (!dirty && !stepCompleted)}
                 text={MSG.continue}
+                disabled={
+                  tokenSelectorHasError ||
+                  !isValid ||
+                  (!dirty && !stepCompleted) ||
+                  isCheckingAddress
+                }
               />
             </div>
           </div>
