@@ -4,6 +4,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
 import TokensTab, { TokensTabProps } from './TokensTab';
+import ClaimsTab from './ClaimsTab';
 import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
@@ -11,9 +12,9 @@ const MSG = defineMessages({
     id: 'users.TokenActivation.TokenActivationContent.yourTokens',
     defaultMessage: 'Your tokens',
   },
-  claims: {
-    id: 'users.TokenActivation.TokenActivationContent.claims',
-    defaultMessage: 'Claims',
+  stakes: {
+    id: 'users.TokenActivation.TokenActivationContent.stakes',
+    defaultMessage: 'Stakes',
   },
 });
 
@@ -32,22 +33,19 @@ const TokenActivationContent = (props: TokensTabProps) => {
           className={styles.tabsList}
           containerClassName={styles.tabsListContainer}
         >
-          <Tab
-            //  selectedClassName={styles.tabSelected}
-            className={styles.tab}
-          >
+          <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
             <FormattedMessage {...MSG.yourTokens} />
           </Tab>
-          {/* <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
-            <FormattedMessage {...MSG.claims} />
-          </Tab> */}
+          <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
+            <FormattedMessage {...MSG.stakes} />
+          </Tab>
         </TabList>
         <TabPanel className={styles.tabContainer}>
           <TokensTab {...props} />
         </TabPanel>
-        {/* <TabPanel className={styles.tabContainer}>
+        <TabPanel className={styles.tabContainer}>
           <ClaimsTab />
-        </TabPanel> */}
+        </TabPanel>
       </Tabs>
     </div>
   );
