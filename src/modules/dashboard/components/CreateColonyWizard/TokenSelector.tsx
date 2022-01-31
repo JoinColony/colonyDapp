@@ -36,14 +36,16 @@ const MSG = defineMessages({
   },
   statusNotFound: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.statusNotFound',
-    defaultMessage: 'Token data not found. Please type in token details',
+    defaultMessage:
+      'Token data not found. Please check the token contract address.',
   },
 });
 
 interface Props {
   tokenAddress: string;
-  onTokenSelect: (arg0: OneToken | null | void) => any;
-  onTokenSelectError?: (arg: boolean) => any;
+  onTokenSelect: (arg0: OneToken | null | void) => void;
+  onTokenSelectError?: (arg: boolean) => void;
+  onCheckingAddress: (arg: boolean) => void;
   tokenData?: OneToken;
   label?: string | MessageDescriptor;
   appearance?: Appearance;
@@ -76,6 +78,7 @@ const TokenSelector = ({
   tokenAddress,
   onTokenSelect,
   onTokenSelectError,
+  onCheckingAddress,
   tokenData,
   extra,
   label,
@@ -98,6 +101,8 @@ const TokenSelector = ({
     (token: OneToken) => {
       const { name, symbol } = token;
       setLoading(false);
+      onCheckingAddress(false);
+
       if (!name || !symbol) {
         onTokenSelect(null);
         return;
@@ -107,19 +112,21 @@ const TokenSelector = ({
         onTokenSelectError(false);
       }
     },
-    [onTokenSelect, onTokenSelectError],
+    [onTokenSelect, onTokenSelectError, onCheckingAddress],
   );
 
   const handleGetTokenError = useCallback(
     (error: Error) => {
       setLoading(false);
+      onCheckingAddress(false);
+
       onTokenSelect(null);
       if (onTokenSelectError) {
         onTokenSelectError(true);
       }
       log.error(error);
     },
-    [onTokenSelect, onTokenSelectError],
+    [onTokenSelect, onTokenSelectError, onCheckingAddress],
   );
 
   const prevTokenAddress = usePrevious(tokenAddress);
@@ -137,6 +144,7 @@ const TokenSelector = ({
     // generally a bad idea, but we are guarding against it by checking the
     // state first.
     setLoading(true);
+    onCheckingAddress(true);
     onTokenSelect();
 
     // Get the token address and handle success/error
@@ -151,6 +159,7 @@ const TokenSelector = ({
     prevTokenAddress,
     handleGetTokenSuccess,
     handleGetTokenError,
+    onCheckingAddress,
   ]);
 
   const labelText =
