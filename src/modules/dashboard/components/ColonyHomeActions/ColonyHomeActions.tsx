@@ -22,7 +22,7 @@ import NetworkContractUpgradeDialog from '~dialogs/NetworkContractUpgradeDialog'
 import EditColonyDetailsDialog from '~dialogs/EditColonyDetailsDialog';
 import ManageReputationDialog from '~dialogs/ManageReputationDialog';
 import ColonyTokenManagementDialog from '~dialogs/ColonyTokenManagementDialog';
-import { SmiteDialog, AwardDialog } from '~dashboard/AwardAndSmiteDialogs';
+import { SmiteDialog, AwardDialog } from '~dialogs/AwardAndSmiteDialogs';
 
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 
