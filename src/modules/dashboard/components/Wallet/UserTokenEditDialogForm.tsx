@@ -84,12 +84,9 @@ const UserTokenEditDialogForm = ({
     [tokensList],
   );
 
-  const handleCheckingAddress = (isChecking: boolean) => {
-    setIsCheckingAddress(isChecking);
-  };
-
-  const handleTokenSelect = (token: OneToken) => {
+  const handleTokenSelect = (checkingAddress: boolean, token: OneToken) => {
     setTokenData(token);
+    setIsCheckingAddress(checkingAddress);
   };
 
   const handleTokenSelectError = (hasError: boolean) => {
@@ -182,9 +179,8 @@ const UserTokenEditDialogForm = ({
               </Paragraph>
               <TokenSelector
                 tokenAddress={values.tokenAddress as string}
-                onTokenSelect={(token: OneToken) => handleTokenSelect(token)}
+                onTokenSelect={handleTokenSelect}
                 onTokenSelectError={handleTokenSelectError}
-                onCheckingAddress={handleCheckingAddress}
                 tokenData={tokenData}
                 label={MSG.fieldLabel}
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}

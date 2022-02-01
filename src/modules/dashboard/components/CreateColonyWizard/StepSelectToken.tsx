@@ -106,16 +106,16 @@ const StepSelectToken = ({
     true,
   );
 
-  const handleCheckingAddress = (isChecking: boolean) => {
-    setIsCheckingAddress(isChecking);
-  };
-
-  const handleTokenSelect = (token: OneToken, setFieldValue: SetFieldValue) => {
+  const handleTokenSelect = (
+    checkingAddress: boolean,
+    token: OneToken,
+    setFieldValue: SetFieldValue,
+  ) => {
     setTokenData(token);
-    if (token) {
-      setFieldValue('tokenName', token.name);
-      setFieldValue('tokenSymbol', token.symbol);
-    }
+    setIsCheckingAddress(checkingAddress);
+
+    setFieldValue('tokenName', token ? token.name : '');
+    setFieldValue('tokenSymbol', token ? token.symbol : '');
   };
 
   const handleTokenSelectError = (hasError: boolean) => {
@@ -170,11 +170,10 @@ const StepSelectToken = ({
           <div>
             <TokenSelector
               tokenAddress={values.tokenAddress}
-              onTokenSelect={(token: OneToken) =>
-                handleTokenSelect(token, setFieldValue)
-              }
+              onTokenSelect={(checkingAddress: boolean, token: OneToken) => {
+                handleTokenSelect(checkingAddress, token, setFieldValue);
+              }}
               onTokenSelectError={handleTokenSelectError}
-              onCheckingAddress={handleCheckingAddress}
               tokenData={tokenData}
               extra={
                 <button

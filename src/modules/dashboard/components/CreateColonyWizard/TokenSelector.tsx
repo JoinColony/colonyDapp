@@ -43,9 +43,8 @@ const MSG = defineMessages({
 
 interface Props {
   tokenAddress: string;
-  onTokenSelect: (arg0: OneToken | null | void) => void;
-  onTokenSelectError?: (arg: boolean) => void;
-  onCheckingAddress: (arg: boolean) => void;
+  onTokenSelect: (checkingAddress: boolean, token?: OneToken | null) => void;
+  onTokenSelectError: (arg: boolean) => void;
   tokenData?: OneToken;
   label?: string | MessageDescriptor;
   appearance?: Appearance;
@@ -78,7 +77,6 @@ const TokenSelector = ({
   tokenAddress,
   onTokenSelect,
   onTokenSelectError,
-  onCheckingAddress,
   tokenData,
   extra,
   label,
@@ -99,34 +97,33 @@ const TokenSelector = ({
 
   const handleGetTokenSuccess = useCallback(
     (token: OneToken) => {
-      const { name, symbol } = token;
+      const { name, symbol } = token || {};
       setLoading(false);
-      onCheckingAddress(false);
 
       if (!name || !symbol) {
-        onTokenSelect(null);
+        onTokenSelect(false, null);
+        onTokenSelectError(true);
         return;
       }
-      onTokenSelect(token);
+      onTokenSelect(false, token);
       if (onTokenSelectError) {
         onTokenSelectError(false);
       }
     },
-    [onTokenSelect, onTokenSelectError, onCheckingAddress],
+    [onTokenSelect, onTokenSelectError],
   );
 
   const handleGetTokenError = useCallback(
     (error: Error) => {
       setLoading(false);
-      onCheckingAddress(false);
+      onTokenSelect(false, null);
 
-      onTokenSelect(null);
       if (onTokenSelectError) {
         onTokenSelectError(true);
       }
       log.error(error);
     },
-    [onTokenSelect, onTokenSelectError, onCheckingAddress],
+    [onTokenSelect, onTokenSelectError],
   );
 
   const prevTokenAddress = usePrevious(tokenAddress);
@@ -136,7 +133,7 @@ const TokenSelector = ({
     // or if the form is submitting or loading.
     if (tokenAddress === prevTokenAddress || isLoading) return;
     if (!tokenAddress || !tokenAddress.length || !isAddress(tokenAddress)) {
-      onTokenSelect();
+      onTokenSelect(false);
       return;
     }
     // For a valid address, attempt to load token info.
@@ -144,8 +141,7 @@ const TokenSelector = ({
     // generally a bad idea, but we are guarding against it by checking the
     // state first.
     setLoading(true);
-    onCheckingAddress(true);
-    onTokenSelect();
+    onTokenSelect(true);
 
     // Get the token address and handle success/error
     getToken()
@@ -159,7 +155,6 @@ const TokenSelector = ({
     prevTokenAddress,
     handleGetTokenSuccess,
     handleGetTokenError,
-    onCheckingAddress,
   ]);
 
   const labelText =
