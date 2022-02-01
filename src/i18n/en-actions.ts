@@ -10,7 +10,7 @@ const actionsMessageDescriptors = {
       ${ColonyActions.MoveFunds} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
       ${ColonyMotions.MoveFundsMotion} {Move {amount} {tokenSymbol} from {fromDomain} to {toDomain}}
       ${ColonyActions.UnlockToken} {Unlock native token {tokenSymbol}}
-      ${ColonyMotions.UnlockTokenMotion} {Unlock Token}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
       ${ColonyActions.MintTokens} {Mint {amount} {tokenSymbol}}
       ${ColonyMotions.MintTokensMotion} {Mint {amount} {tokenSymbol}}
       ${ColonyActions.CreateDomain} {New team: {fromDomain}}
@@ -28,7 +28,6 @@ const actionsMessageDescriptors = {
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation reward}
       ${ColonyActions.EmitDomainReputationPenalty} {Smite {recipient} with a {reputationPenalty} reputation penalty}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite {recipient} with a {reputationPenalty} reputation penalty}
-      ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
       other {Generic action we don't have information about}
     }`,
   [`action.${ColonyActions.SetUserRoles}.assign`]: `Assign the {roles} in {fromDomain} to {recipient}`,

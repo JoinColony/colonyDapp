@@ -22,6 +22,7 @@ const motionsMessageDescriptors = {
           other {pts}
         } reputation reward}
         other {Generic motion we don't have information about}
+        {Smite {recipient} with a {reputationPenalty} reputation penalty}
       ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
       other {Generic motion we don't have information about}
     }`,
@@ -31,7 +32,6 @@ const motionsMessageDescriptors = {
   'motion.type': `{actionType, select,
       ${ColonyMotions.MintTokensMotion} {Mint Tokens}
       ${ColonyMotions.PaymentMotion} {Payment}
-      ${ColonyMotions.UnlockTokenMotion} {Unlock Token}
       ${ColonyMotions.CreateDomainMotion} {Create Team}
       ${ColonyMotions.EditDomainMotion} {Edit Team}
       ${ColonyMotions.ColonyEditMotion} {Colony Edit}
@@ -40,8 +40,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
-      ${ColonyMotions.UnlockTokenMotion} {Unlock native token {tokenSymbol}}
-      ${ColonyMotions.UnlockTokenMotion} {Unlock token}
+      ${ColonyMotions.UnlockTokenMotion} {Unlock Token}
       other {Generic}
     }`,
 };

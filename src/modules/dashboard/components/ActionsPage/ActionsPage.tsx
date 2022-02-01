@@ -269,7 +269,6 @@ const ActionsPage = () => {
         />
       );
     case ColonyMotions.PaymentMotion:
-    case ColonyMotions.UnlockTokenMotion:
     case ColonyMotions.ColonyEditMotion:
     case ColonyMotions.MoveFundsMotion:
     case ColonyMotions.SetUserRolesMotion:
@@ -279,6 +278,7 @@ const ActionsPage = () => {
     case ColonyMotions.VersionUpgradeMotion:
     case ColonyMotions.EmitDomainReputationPenaltyMotion:
     case ColonyMotions.EmitDomainReputationRewardMotion:
+    case ColonyMotions.UnlockTokenMotion:
       return (
         <DefaultMotion
           colony={colonyData?.processedColony}

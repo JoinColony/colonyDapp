@@ -78,6 +78,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyActions.Recovery]: 'emoji-alarm-lamp',
   [ColonyActions.MoveFunds]: 'emoji-world-globe',
   [ColonyActions.UnlockToken]: 'emoji-padlock',
+  [ColonyMotions.UnlockTokenMotion]: 'emoji-padlock',
   [ColonyActions.MintTokens]: 'emoji-seed-sprout',
   [ColonyActions.CreateDomain]: 'emoji-crane',
   [ColonyActions.VersionUpgrade]: 'emoji-strong-person',
