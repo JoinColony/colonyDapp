@@ -147,13 +147,15 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                     normalized,
                   }}
                   formattingOptions={{ lowercase: true, blocks: [100] }}
-                  disabled={!isNetworkAllowed}
+                  disabled={!isNetworkAllowed || isSubmitting}
                 />
                 <div className={styles.buttons}>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
                     type="submit"
-                    disabled={!isNetworkAllowed || !isValid || !dirty}
+                    disabled={
+                      !isNetworkAllowed || !isValid || !dirty || isSubmitting
+                    }
                     loading={isSubmitting}
                     text={MSG.continue}
                     data-test="claimUsernameConfirm"

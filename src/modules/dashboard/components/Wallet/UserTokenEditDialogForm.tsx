@@ -182,7 +182,7 @@ const UserTokenEditDialogForm = ({
                 tokenData={tokenData}
                 label={MSG.fieldLabel}
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}
-                disabled={!hasRegisteredProfile}
+                disabled={!hasRegisteredProfile || isSubmitting}
               />
             </DialogSection>
             {!hasRegisteredProfile && (
@@ -206,7 +206,8 @@ const UserTokenEditDialogForm = ({
                   tokenSelectorHasError ||
                   !isValid ||
                   !hasRegisteredProfile ||
-                  !hasTokensListChanged(values)
+                  !hasTokensListChanged(values) ||
+                  isSubmitting
                 }
                 type="submit"
                 style={{ width: styles.wideButton }}

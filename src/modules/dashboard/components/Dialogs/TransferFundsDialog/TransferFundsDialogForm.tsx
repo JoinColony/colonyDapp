@@ -150,7 +150,7 @@ const TransferFundsDialogForm = ({
     values.forceAction,
   );
 
-  const inputDisabled = !userHasPermission || onlyForceAction;
+  const inputDisabled = !userHasPermission || onlyForceAction || isSubmitting;
 
   const [
     loadTokenBalances,

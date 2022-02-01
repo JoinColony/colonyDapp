@@ -230,7 +230,7 @@ const PermissionManagementDialog = ({
                   onDomainSelected={setSelectedDomainId}
                   onMotionDomainChange={setSelectedMoitonDomainId}
                   onChangeSelectedUser={setSelectedUser}
-                  inputDisabled={inputDisabled}
+                  inputDisabled={inputDisabled || isSubmitting}
                   userHasPermission={userHasPermission}
                   isVotingExtensionEnabled={isVotingExtensionEnabled}
                 />
@@ -278,7 +278,11 @@ const PermissionManagementDialog = ({
                     disabled={
                       inputDisabled ||
                       !isValid ||
-                      isEqual(sortBy(values.roles), sortBy(initialValues.roles))
+                      isEqual(
+                        sortBy(values.roles),
+                        sortBy(initialValues.roles),
+                      ) ||
+                      isSubmitting
                     }
                   />
                 </DialogSection>

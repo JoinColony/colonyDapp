@@ -112,7 +112,7 @@ const EditDomainDialogForm = ({
   const canEditDomain =
     userHasPermission && Object.keys(domainOptions).length > 0;
 
-  const inputDisabled = !canEditDomain || onlyForceAction;
+  const inputDisabled = !canEditDomain || onlyForceAction || isSubmitting;
 
   const handleDomainChange = useCallback(
     (selectedDomainValue) => {
@@ -223,6 +223,7 @@ const EditDomainDialogForm = ({
               onChange={handleDomainChange}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
+              disabled={isSubmitting}
             />
           </div>
           <ColorSelect

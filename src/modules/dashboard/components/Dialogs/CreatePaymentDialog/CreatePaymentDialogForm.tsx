@@ -311,7 +311,7 @@ const CreatePaymentDialogForm = ({
 
   const canMakePayment = userHasPermission && isOneTxPaymentExtensionEnabled;
 
-  const inputDisabled = !canMakePayment || onlyForceAction;
+  const inputDisabled = !canMakePayment || onlyForceAction || isSubmitting;
 
   return (
     <>
@@ -322,7 +322,7 @@ const CreatePaymentDialogForm = ({
               <MotionDomainSelect
                 colony={colony}
                 onDomainChange={handleMotionDomainChange}
-                disabled={values.forceAction}
+                disabled={values.forceAction || isSubmitting}
                 /*
                  * @NOTE We can only create a motion to vote in a subdomain if we
                  * create a payment from that subdomain
@@ -361,6 +361,7 @@ const CreatePaymentDialogForm = ({
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
               onChange={handleFromDomainChange}
+              disabled={isSubmitting}
             />
             {!!tokenAddress && (
               <div className={styles.domainPotBalance}>

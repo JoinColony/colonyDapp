@@ -128,6 +128,7 @@ const StepGanache = ({
               name="privateKey"
               onChange={(value) => setPrivateKey(value)}
               options={accounts}
+              disabled={isSubmitting}
             />
           </div>
           <div className={styles.actions}>

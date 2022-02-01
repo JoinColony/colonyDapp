@@ -327,7 +327,9 @@ const FinalizeMotionAndClaimWidget = ({
                   <Button
                     appearance={{ theme: 'primary', size: 'medium' }}
                     text={MSG.finalizeButton}
-                    disabled={!hasRegisteredProfile || !isFinalizable}
+                    disabled={
+                      !hasRegisteredProfile || !isFinalizable || isSubmitting
+                    }
                     onClick={() => handleSubmit()}
                     loading={isSubmitting}
                   />
@@ -370,7 +372,8 @@ const FinalizeMotionAndClaimWidget = ({
                     disabled={
                       !hasRegisteredProfile ||
                       !canClaimStakes ||
-                      stakerRewards?.motionStakerReward?.claimedReward
+                      stakerRewards?.motionStakerReward?.claimedReward ||
+                      isSubmitting
                     }
                     onClick={() => handleSubmit()}
                     loading={isSubmitting}

@@ -117,7 +117,7 @@ const RecoveryModeDialogForm = ({
         <Annotations
           label={MSG.annotation}
           name="annotation"
-          disabled={!userHasPermission}
+          disabled={!userHasPermission || isSubmitting}
         />
       </DialogSection>
       {!userHasPermission && (
@@ -150,7 +150,7 @@ const RecoveryModeDialogForm = ({
           text={{ id: 'button.confirm' }}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
-          disabled={!userHasPermission}
+          disabled={!userHasPermission || isSubmitting}
         />
       </DialogSection>
     </>

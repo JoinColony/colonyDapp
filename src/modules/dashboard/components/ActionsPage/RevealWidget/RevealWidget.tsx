@@ -178,7 +178,8 @@ const RevealWidget = ({
                 disabled={
                   !hasRegisteredProfile ||
                   revealed ||
-                  !userVoted?.motionCurrentUserVoted
+                  !userVoted?.motionCurrentUserVoted ||
+                  isSubmitting
                 }
                 onClick={() => handleSubmit()}
                 loading={isSubmitting}

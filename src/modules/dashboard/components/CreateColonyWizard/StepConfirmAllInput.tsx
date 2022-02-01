@@ -112,6 +112,7 @@ const StepConfirmAllInput = ({
               data-test="userInputConfirm"
               text={MSG.continue}
               loading={isSubmitting}
+              disabled={isSubmitting}
             />
           </div>
         </section>

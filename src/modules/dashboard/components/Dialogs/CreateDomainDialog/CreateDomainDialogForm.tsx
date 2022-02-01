@@ -82,7 +82,7 @@ const CreateDomainDialogForm = ({
     values.forceAction,
   );
 
-  const inputDisabled = !userHasPermission || onlyForceAction;
+  const inputDisabled = !userHasPermission || onlyForceAction || isSubmitting;
 
   return (
     <>

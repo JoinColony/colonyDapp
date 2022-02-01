@@ -91,7 +91,7 @@ const EditColonyDetailsDialogForm = ({
     forceAction,
   );
 
-  const inputDisabled = !userHasPermission || onlyForceAction;
+  const inputDisabled = !userHasPermission || onlyForceAction || isSubmitting;
 
   /*
    * Note that these threee methods just read the file locally, they don't actually
@@ -279,7 +279,11 @@ const EditColonyDetailsDialogForm = ({
           onClick={() => handleSubmit()}
           loading={isSubmitting}
           disabled={
-            inputDisabled || !isValid || avatarFileError || !canValuesBeUpdate
+            inputDisabled ||
+            !isValid ||
+            avatarFileError ||
+            !canValuesBeUpdate ||
+            isSubmitting
           }
         />
       </DialogSection>

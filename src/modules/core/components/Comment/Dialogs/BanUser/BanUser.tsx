@@ -170,7 +170,9 @@ const BanUser = ({ colonyAddress, cancel, close, isBanning = true }: Props) => {
                 name="userAddress"
                 filter={filterUserSelection}
                 renderAvatar={supRenderAvatar}
-                disabled={loadingBannedUsers || loadingBanAction}
+                disabled={
+                  loadingBannedUsers || loadingBanAction || isSubmitting
+                }
               />
             </div>
           </DialogSection>
@@ -194,7 +196,7 @@ const BanUser = ({ colonyAddress, cancel, close, isBanning = true }: Props) => {
                   size: 'large',
                 }}
                 text={isBanning ? MSG.banish : MSG.deactivateBan}
-                disabled={!isValid}
+                disabled={!isValid || isSubmitting}
                 loading={loadingBanAction || isSubmitting}
                 onClick={submitForm}
               />

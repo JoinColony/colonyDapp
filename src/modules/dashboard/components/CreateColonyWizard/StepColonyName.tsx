@@ -200,7 +200,7 @@ const StepColonyName = ({
                 name="displayName"
                 data-test="claimColonyDisplayNameInput"
                 label={MSG.labelDisplay}
-                disabled={!isNetworkAllowed}
+                disabled={!isNetworkAllowed || isSubmitting}
               />
               <Input
                 appearance={{ theme: 'fat' }}
@@ -212,7 +212,7 @@ const StepColonyName = ({
                 status={normalized !== colonyName ? MSG.statusText : undefined}
                 formattingOptions={{ lowercase: true, blocks: [256] }}
                 statusValues={{ normalized }}
-                disabled={!isNetworkAllowed}
+                disabled={!isNetworkAllowed || isSubmitting}
                 extra={
                   <QuestionMarkTooltip
                     iconTitle="helper"
@@ -231,7 +231,10 @@ const StepColonyName = ({
                   type="submit"
                   data-test="claimColonyNameConfirm"
                   disabled={
-                    !isNetworkAllowed || !isValid || (!dirty && !stepCompleted)
+                    !isNetworkAllowed ||
+                    !isValid ||
+                    (!dirty && !stepCompleted) ||
+                    isSubmitting
                   }
                   loading={isSubmitting}
                   text={MSG.continue}

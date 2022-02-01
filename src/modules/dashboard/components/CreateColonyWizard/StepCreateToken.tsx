@@ -154,6 +154,7 @@ const StepCreateToken = ({
                 label={MSG.labelTokenName}
                 help={MSG.helpTokenName}
                 data-test="defineTokenName"
+                disabled={isSubmitting}
                 extra={
                   <button
                     type="button"
@@ -175,6 +176,7 @@ const StepCreateToken = ({
                 formattingOptions={{ uppercase: true, blocks: [5] }}
                 label={MSG.labelTokenSymbol}
                 help={MSG.helpTokenSymbol}
+                disabled={isSubmitting}
               />
             </div>
           </section>
@@ -185,7 +187,7 @@ const StepCreateToken = ({
               text={MSG.nextButton}
               type="submit"
               data-test="definedTokenConfirm"
-              disabled={!isValid || (!dirty && !stepCompleted)}
+              disabled={!isValid || (!dirty && !stepCompleted) || isSubmitting}
               loading={isSubmitting}
             />
           </section>

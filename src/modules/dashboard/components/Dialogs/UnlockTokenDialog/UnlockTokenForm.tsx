@@ -139,7 +139,7 @@ const UnlockTokenForm = ({
           onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
-          disabled={!isValid || !canUserUnlockNativeToken}
+          disabled={!isValid || !canUserUnlockNativeToken || isSubmitting}
         />
       </DialogSection>
     </>

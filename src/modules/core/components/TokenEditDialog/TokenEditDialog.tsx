@@ -111,7 +111,7 @@ const TokenEditDialog = ({
     values.forceAction,
   );
 
-  const inputDisabled = !userHasPermission || onlyForceAction;
+  const inputDisabled = !userHasPermission || onlyForceAction || isSubmitting;
 
   const allTokens = useMemo(() => {
     return [...tokens, ...(canEditTokens ? tokensList : [])].filter(

@@ -385,6 +385,7 @@ const ExtensionSetup = ({
                     ? MSG[`${paramName}Error`]
                     : undefined
                 }
+                disabled={formikBag.isSubmitting}
               />
               <p className={styles.inputsDescription}>
                 <FormattedMessage
@@ -415,7 +416,10 @@ const ExtensionSetup = ({
                 appearance={{ colorSchema: 'grey' }}
                 label={title}
                 name={paramName}
-                disabled={disabled && disabled(formikBag.values)}
+                disabled={
+                  (disabled && disabled(formikBag.values)) ||
+                  formikBag.isSubmitting
+                }
                 extra={
                   description && (
                     <p className={styles.textAreaDescription}>
@@ -461,6 +465,7 @@ const ExtensionSetup = ({
                       formikBag,
                     )
                   }
+                  disabled={formikBag.isSubmitting}
                 />
               </div>
               <div className={styles.tokenAddessLink}>
@@ -533,7 +538,11 @@ const ExtensionSetup = ({
             </div>
           )}
           <div className={styles.inputContainer}>
-            {displayParams(initializationParams, formikBag, false)}
+            {displayParams(
+              initializationParams,
+              { ...formikBag, isSubmitting },
+              false,
+            )}
           </div>
           {extraInitParams && <div className={styles.divider} />}
           <IconButton
@@ -543,7 +552,8 @@ const ExtensionSetup = ({
             loading={isSubmitting}
             disabled={
               !isValid ||
-              Object.values(formikBag?.status || {}).some((value) => !!value)
+              Object.values(formikBag?.status || {}).some((value) => !!value) ||
+              isSubmitting
             }
           />
         </div>
