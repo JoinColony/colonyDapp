@@ -54,7 +54,15 @@ interface Props {
   disabled?: boolean;
 }
 
-const getStatusText = (isLoading: boolean, tokenData?: OneToken) => {
+const getStatusText = (
+  hasError: boolean,
+  isLoading: boolean,
+  tokenData?: OneToken,
+) => {
+  if (hasError) {
+    return {};
+  }
+
   if (isLoading) {
     return { status: MSG.statusLoading };
   }
@@ -94,6 +102,7 @@ const TokenSelector = ({
   }, [apolloClient, tokenAddress]);
 
   const [isLoading, setLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const handleGetTokenSuccess = useCallback(
     (token: OneToken) => {
@@ -102,6 +111,7 @@ const TokenSelector = ({
 
       if (!name || !symbol) {
         onTokenSelect(false, null);
+        setHasError(true);
         onTokenSelectError(true);
         return;
       }
@@ -119,6 +129,7 @@ const TokenSelector = ({
       onTokenSelect(false, null);
 
       if (onTokenSelectError) {
+        setHasError(true);
         onTokenSelectError(true);
       }
       log.error(error);
@@ -141,8 +152,8 @@ const TokenSelector = ({
     // generally a bad idea, but we are guarding against it by checking the
     // state first.
     setLoading(true);
+    setHasError(false);
     onTokenSelect(true);
-
     // Get the token address and handle success/error
     getToken()
       .then((token: OneToken) => handleGetTokenSuccess(token))
@@ -169,9 +180,10 @@ const TokenSelector = ({
         name="tokenAddress"
         label={labelText || MSG.inputLabel}
         extra={extra}
-        {...getStatusText(isLoading, tokenData)}
+        {...getStatusText(hasError, isLoading, tokenData)}
         appearance={appearance}
         disabled={disabled}
+        forcedFieldError={hasError ? MSG.statusNotFound : undefined}
       />
     </div>
   );
