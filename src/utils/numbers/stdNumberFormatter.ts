@@ -39,20 +39,12 @@ export const stdNumberFormatter = ({
   abreviateOverMillion = true,
 }: FunctionArgs): string => {
   const defaultFormat = {
-    // forceAverage: 'million',
-    // totalLength: 6, // reducedOutput ? 5 : 0,
     trimMantissa: true,
     optionalMantissa: true,
     mantissa: truncate != null ? truncate : 5,
     spaceSeparated: false,
     thousandSeparated: useSeparator,
     average: false,
-    // abbreviations: {
-    //   thousand: 'k',
-    //   million: 'M',
-    //   billion: 'B',
-    //   trillion: 'T',
-    // },
   };
 
   const aboveMillionFormat = {
