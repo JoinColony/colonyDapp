@@ -3,7 +3,7 @@ import Decimal from 'decimal.js';
 
 import { stdNumberFormatter } from '~utils/numbers';
 import { TokenWithBalances } from '~data/index';
-import { DEFAULT_TOKEN_DECIMALS, SMALL_TOKEN_AMOUNT_FORMAT } from '~constants';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 export const getBalanceFromToken = (
   token: TokenWithBalances | undefined,
@@ -47,23 +47,6 @@ export const getTokenDecimalsWithFallback = (
     return fallbackDecimals;
   }
   return DEFAULT_TOKEN_DECIMALS;
-};
-
-export const getFormattedTokenValue = (
-  value: BigNumberish,
-  decimals: any,
-): string => {
-  const safeDecimals = bigNumberify(10)
-    .pow(getTokenDecimalsWithFallback(decimals))
-    .toString();
-  const decimalValue = new Decimal(bigNumberify(value).toString()).div(
-    safeDecimals,
-  );
-
-  if (decimalValue.lt(0.00001) && decimalValue.gt(0)) {
-    return SMALL_TOKEN_AMOUNT_FORMAT;
-  }
-  return decimalValue.toDP(5, Decimal.ROUND_DOWN).toString();
 };
 
 export const getStdFormattedTokenValue = (
