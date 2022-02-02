@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, ReactNode } from 'react';
+import React, { useCallback, useEffect, ReactNode } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { useApolloClient } from '@apollo/client';
 
@@ -45,6 +45,8 @@ interface Props {
   tokenAddress: string;
   onTokenSelect: (checkingAddress: boolean, token?: OneToken | null) => void;
   onTokenSelectError: (arg: boolean) => void;
+  tokenSelectorHasError: boolean;
+  isLoadingAddress: boolean;
   tokenData?: OneToken;
   label?: string | MessageDescriptor;
   appearance?: Appearance;
@@ -56,14 +58,13 @@ interface Props {
 
 const getStatusText = (
   hasError: boolean,
-  isLoading: boolean,
+  isLoadingAddress: boolean,
   tokenData?: OneToken,
 ) => {
   if (hasError) {
     return {};
   }
-
-  if (isLoading) {
+  if (isLoadingAddress) {
     return { status: MSG.statusLoading };
   }
   if (tokenData === null) {
@@ -85,6 +86,8 @@ const TokenSelector = ({
   tokenAddress,
   onTokenSelect,
   onTokenSelectError,
+  tokenSelectorHasError,
+  isLoadingAddress,
   tokenData,
   extra,
   label,
@@ -101,37 +104,23 @@ const TokenSelector = ({
     return data && data.token;
   }, [apolloClient, tokenAddress]);
 
-  const [isLoading, setLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
-
   const handleGetTokenSuccess = useCallback(
     (token: OneToken) => {
       const { name, symbol } = token || {};
-      setLoading(false);
-
       if (!name || !symbol) {
         onTokenSelect(false, null);
-        setHasError(true);
         onTokenSelectError(true);
         return;
       }
       onTokenSelect(false, token);
-      if (onTokenSelectError) {
-        onTokenSelectError(false);
-      }
     },
     [onTokenSelect, onTokenSelectError],
   );
 
   const handleGetTokenError = useCallback(
     (error: Error) => {
-      setLoading(false);
       onTokenSelect(false, null);
-
-      if (onTokenSelectError) {
-        setHasError(true);
-        onTokenSelectError(true);
-      }
+      onTokenSelectError(true);
       log.error(error);
     },
     [onTokenSelect, onTokenSelectError],
@@ -142,7 +131,7 @@ const TokenSelector = ({
   useEffect(() => {
     // Guard against updates that don't include a new, valid `tokenAddress`,
     // or if the form is submitting or loading.
-    if (tokenAddress === prevTokenAddress || isLoading) return;
+    if (tokenAddress === prevTokenAddress || isLoadingAddress) return;
     if (!tokenAddress || !tokenAddress.length || !isAddress(tokenAddress)) {
       onTokenSelect(false);
       return;
@@ -151,8 +140,7 @@ const TokenSelector = ({
     // This is setting state during `componentDidUpdate`, which is
     // generally a bad idea, but we are guarding against it by checking the
     // state first.
-    setLoading(true);
-    setHasError(false);
+    onTokenSelectError(false);
     onTokenSelect(true);
     // Get the token address and handle success/error
     getToken()
@@ -161,8 +149,9 @@ const TokenSelector = ({
   }, [
     tokenAddress,
     getToken,
-    isLoading,
+    isLoadingAddress,
     onTokenSelect,
+    onTokenSelectError,
     prevTokenAddress,
     handleGetTokenSuccess,
     handleGetTokenError,
@@ -180,10 +169,12 @@ const TokenSelector = ({
         name="tokenAddress"
         label={labelText || MSG.inputLabel}
         extra={extra}
-        {...getStatusText(hasError, isLoading, tokenData)}
+        {...getStatusText(tokenSelectorHasError, isLoadingAddress, tokenData)}
         appearance={appearance}
         disabled={disabled}
-        forcedFieldError={hasError ? MSG.statusNotFound : undefined}
+        forcedFieldError={
+          tokenSelectorHasError ? MSG.statusNotFound : undefined
+        }
       />
     </div>
   );

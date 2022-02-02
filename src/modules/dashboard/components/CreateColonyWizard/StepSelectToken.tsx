@@ -101,9 +101,9 @@ const StepSelectToken = ({
 }: Props) => {
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
   const { formatMessage } = useIntl();
-  const [isCheckingAddress, setIsCheckingAddress] = useState<boolean>(false);
+  const [isLoadingAddress, setisLoadingAddress] = useState<boolean>(false);
   const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
-    true,
+    false,
   );
 
   const handleTokenSelect = (
@@ -112,7 +112,7 @@ const StepSelectToken = ({
     setFieldValue: SetFieldValue,
   ) => {
     setTokenData(token);
-    setIsCheckingAddress(checkingAddress);
+    setisLoadingAddress(checkingAddress);
 
     setFieldValue('tokenName', token ? token.name : '');
     setFieldValue('tokenSymbol', token ? token.symbol : '');
@@ -174,6 +174,8 @@ const StepSelectToken = ({
                 handleTokenSelect(checkingAddress, token, setFieldValue);
               }}
               onTokenSelectError={handleTokenSelectError}
+              tokenSelectorHasError={tokenSelectorHasError}
+              isLoadingAddress={isLoadingAddress}
               tokenData={tokenData}
               extra={
                 <button
@@ -216,7 +218,7 @@ const StepSelectToken = ({
                   tokenSelectorHasError ||
                   !isValid ||
                   (!dirty && !stepCompleted) ||
-                  isCheckingAddress
+                  isLoadingAddress
                 }
               />
             </div>

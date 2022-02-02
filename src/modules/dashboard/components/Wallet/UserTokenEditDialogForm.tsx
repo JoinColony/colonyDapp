@@ -74,9 +74,9 @@ const UserTokenEditDialogForm = ({
 
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
   const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
-    true,
+    false,
   );
-  const [isCheckingAddress, setIsCheckingAddress] = useState<boolean>(false);
+  const [isLoadingAddress, setisLoadingAddress] = useState<boolean>(false);
   const { formatMessage } = useIntl();
 
   const sortedTokenIds = useMemo(
@@ -86,7 +86,7 @@ const UserTokenEditDialogForm = ({
 
   const handleTokenSelect = (checkingAddress: boolean, token: OneToken) => {
     setTokenData(token);
-    setIsCheckingAddress(checkingAddress);
+    setisLoadingAddress(checkingAddress);
   };
 
   const handleTokenSelectError = (hasError: boolean) => {
@@ -181,6 +181,8 @@ const UserTokenEditDialogForm = ({
                 tokenAddress={values.tokenAddress as string}
                 onTokenSelect={handleTokenSelect}
                 onTokenSelectError={handleTokenSelectError}
+                tokenSelectorHasError={tokenSelectorHasError}
+                isLoadingAddress={isLoadingAddress}
                 tokenData={tokenData}
                 label={MSG.fieldLabel}
                 appearance={{ colorSchema: 'grey', theme: 'fat' }}
@@ -210,7 +212,7 @@ const UserTokenEditDialogForm = ({
                   !hasRegisteredProfile ||
                   !hasTokensListChanged(values) ||
                   isSubmitting ||
-                  isCheckingAddress
+                  isLoadingAddress
                 }
                 type="submit"
                 style={{ width: styles.wideButton }}

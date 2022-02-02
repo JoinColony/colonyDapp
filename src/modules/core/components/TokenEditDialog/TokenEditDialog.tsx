@@ -79,11 +79,11 @@ const TokenEditDialog = ({
   const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
     false,
   );
-  const [isCheckingAddress, setIsCheckingAddress] = useState<boolean>(false);
+  const [isLoadingAddress, setisLoadingAddress] = useState<boolean>(false);
 
   const handleTokenSelect = (checkingAddress: boolean, token: OneToken) => {
     setTokenData(token);
-    setIsCheckingAddress(checkingAddress);
+    setisLoadingAddress(checkingAddress);
   };
 
   const handleTokenSelectError = (hasError: boolean) => {
@@ -188,6 +188,8 @@ const TokenEditDialog = ({
           tokenAddress={values.tokenAddress as string}
           onTokenSelect={handleTokenSelect}
           onTokenSelectError={handleTokenSelectError}
+          tokenSelectorHasError={tokenSelectorHasError}
+          isLoadingAddress={isLoadingAddress}
           tokenData={tokenData}
           label={MSG.fieldLabel}
           appearance={{ colorSchema: 'grey', theme: 'fat' }}
@@ -241,7 +243,7 @@ const TokenEditDialog = ({
             !isValid ||
             inputDisabled ||
             !hasTokensListChanged(values) ||
-            isCheckingAddress
+            isLoadingAddress
           }
           type="submit"
           style={{ width: styles.wideButton }}
