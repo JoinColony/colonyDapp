@@ -114,8 +114,8 @@ const StepSelectToken = ({
     setTokenData(token);
     setisLoadingAddress(checkingAddress);
 
-    setFieldValue('tokenName', token ? token.name : '');
-    setFieldValue('tokenSymbol', token ? token.symbol : '');
+    setFieldValue('tokenName', token?.name || '');
+    setFieldValue('tokenSymbol', token?.symbol || '');
   };
 
   const handleTokenSelectError = (hasError: boolean) => {
