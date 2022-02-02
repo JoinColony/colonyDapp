@@ -65,9 +65,8 @@ const TokenMintForm = ({
   const { walletAddress } = useLoggedInUser();
   const allUserRoles = useTransformer(getAllUserRoles, [colony, walletAddress]);
 
-  const canUserMintNativeToken = !isVotingExtensionEnabled
-    ? colony.canColonyMintNativeToken
-    : hasRoot(allUserRoles) && colony.canColonyMintNativeToken;
+  const canUserMintNativeToken =
+    hasRoot(allUserRoles) && colony.canColonyMintNativeToken;
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colony.colonyAddress,
