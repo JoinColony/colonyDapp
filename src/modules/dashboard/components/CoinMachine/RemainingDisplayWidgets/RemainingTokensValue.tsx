@@ -4,7 +4,7 @@ import { Textfit } from 'react-textfit';
 
 import Numeral from '~core/Numeral';
 import { PeriodTokensType } from '~dashboard/CoinMachine/RemainingDisplayWidgets';
-import { getStdFormattedTokenValue } from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 const MSG = defineMessages({
   soldOut: {
@@ -23,12 +23,12 @@ const RemainingTokensValue = ({ tokenAmounts }: Props) => {
   const { maxPeriodTokens, decimals, soldPeriodTokens } = tokenAmounts;
 
   const boughtTokens = useMemo(
-    () => getStdFormattedTokenValue(soldPeriodTokens, decimals),
+    () => getFormattedTokenValue(soldPeriodTokens, decimals),
     [soldPeriodTokens, decimals],
   );
 
   const totalTokens = useMemo(
-    () => getStdFormattedTokenValue(maxPeriodTokens, decimals),
+    () => getFormattedTokenValue(maxPeriodTokens, decimals),
     [maxPeriodTokens, decimals],
   );
 
