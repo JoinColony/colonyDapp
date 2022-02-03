@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import { BigNumber } from 'ethers/utils';
 
 import { getMainClasses } from '~utils/css';
-import { stdNumberFormatter } from '~utils/numbers';
+import { numberFormatter } from '~utils/numbers';
 
 import styles from './Numeral.css';
 
@@ -49,7 +49,7 @@ const Numeral = ({
   reducedOutput = true,
   ...props
 }: Props) => {
-  const formattedNumber = stdNumberFormatter({
+  const formattedNumber = numberFormatter({
     unit,
     value,
     prefix,

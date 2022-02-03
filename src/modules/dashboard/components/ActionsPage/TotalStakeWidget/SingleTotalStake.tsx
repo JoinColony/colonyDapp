@@ -5,7 +5,7 @@ import { bigNumberify } from 'ethers/utils';
 
 import Heading from '~core/Heading';
 import ProgressBar from '~core/ProgressBar';
-import { getStdFormattedTokenValue } from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './TotalStakeWidget.css';
 
@@ -56,11 +56,11 @@ const SingleTotalStake = ({
     truncate: 2,
   })(userStakePercentage);
 
-  const requiredStakeDisplay = getStdFormattedTokenValue(
+  const requiredStakeDisplay = getFormattedTokenValue(
     requiredStake,
     tokenDecimals,
   );
-  const userStakeDisplay = getStdFormattedTokenValue(
+  const userStakeDisplay = getFormattedTokenValue(
     userStake || 0,
     tokenDecimals,
   );
