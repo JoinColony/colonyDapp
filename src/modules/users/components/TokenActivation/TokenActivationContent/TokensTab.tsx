@@ -10,7 +10,7 @@ import TokenIcon from '~dashboard/HookedTokenIcon';
 import { UserToken } from '~data/generated';
 import { Address } from '~types/index';
 import {
-  getStdFormattedTokenValue,
+  getFormattedTokenValue,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 
@@ -101,19 +101,19 @@ const TokensTab = ({
     [token],
   );
 
-  const formattedTotalAmount = getStdFormattedTokenValue(
+  const formattedTotalAmount = getFormattedTokenValue(
     totalTokens,
     token.decimals,
   );
-  const formattedLockedTokens = getStdFormattedTokenValue(
+  const formattedLockedTokens = getFormattedTokenValue(
     lockedTokens,
     token.decimals,
   );
-  const formattedActiveTokens = getStdFormattedTokenValue(
+  const formattedActiveTokens = getFormattedTokenValue(
     activeTokens,
     token.decimals,
   );
-  const formattedInactiveTokens = getStdFormattedTokenValue(
+  const formattedInactiveTokens = getFormattedTokenValue(
     inactiveTokens,
     token.decimals,
   );

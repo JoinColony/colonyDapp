@@ -1,5 +1,6 @@
 import numbro from 'numbro';
 import moveDecimal from 'move-decimal-point';
+
 import { BigNumber, formatUnits } from 'ethers/utils';
 
 export interface FunctionArgs {
@@ -28,20 +29,21 @@ export interface FunctionArgs {
   abreviateOverMillion?: boolean;
 }
 
-export const stdNumberFormatter = ({
+export const numberFormatter = ({
   unit,
   value,
   prefix,
   suffix,
-  truncate,
+  truncate = 18,
   useSeparator = true,
   // reducedOutput = true,
   abreviateOverMillion = true,
 }: FunctionArgs): string => {
   const defaultFormat = {
+    // totalLength: reducedOutput ? 5 : 0,
     trimMantissa: true,
     optionalMantissa: true,
-    mantissa: truncate != null ? truncate : 5,
+    mantissa: truncate,
     spaceSeparated: false,
     thousandSeparated: useSeparator,
     average: false,
