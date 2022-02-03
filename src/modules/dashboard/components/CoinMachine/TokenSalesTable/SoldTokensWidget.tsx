@@ -3,7 +3,7 @@ import React from 'react';
 import { bigNumberify } from 'ethers/utils';
 
 import { AnyToken } from '~data/index';
-import { getStdFormattedTokenValue } from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 
 import styles from './SoldTokensWidget.css';
 
@@ -54,11 +54,11 @@ const SoldTokensWidget = ({
     <FormattedMessage
       {...MSG.periodTokens}
       values={{
-        tokensBought: getStdFormattedTokenValue(
+        tokensBought: getFormattedTokenValue(
           bigNumberify(tokensBought),
           decimals,
         ),
-        tokensAvailable: getStdFormattedTokenValue(lowestUpperLimit, decimals),
+        tokensAvailable: getFormattedTokenValue(lowestUpperLimit, decimals),
       }}
     />
   );

@@ -1,9 +1,12 @@
 import { bigNumberify, BigNumberish } from 'ethers/utils';
 import Decimal from 'decimal.js';
 
-import { stdNumberFormatter } from '~utils/numbers';
+import { numberFormatter } from '~utils/numbers';
 import { TokenWithBalances } from '~data/index';
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import {
+  DEFAULT_TOKEN_DECIMALS,
+  // SMALL_TOKEN_AMOUNT_FORMAT,
+} from '~constants';
 
 export const getBalanceFromToken = (
   token: TokenWithBalances | undefined,
@@ -49,20 +52,26 @@ export const getTokenDecimalsWithFallback = (
   return DEFAULT_TOKEN_DECIMALS;
 };
 
-export const getStdFormattedTokenValue = (
+export const getFormattedTokenValue = (
   value: BigNumberish,
   decimals: any,
 ): string => {
   const safeDecimals = bigNumberify(10)
     .pow(getTokenDecimalsWithFallback(decimals))
     .toString();
-  const decimalValue = new Decimal(bigNumberify(value).toString())
-    .div(safeDecimals)
-    .toString();
+  const decimalValue = new Decimal(bigNumberify(value).toString()).div(
+    safeDecimals,
+  );
 
-  return stdNumberFormatter({
+  // Testing Dev: add/remove to catch small numbers here
+  // or let numbro handle it in numberFormatter.
+  // if (decimalValue.lt(0.00001) && decimalValue.gt(0)) {
+  //   return SMALL_TOKEN_AMOUNT_FORMAT;
+  // }
+
+  return numberFormatter({
     abreviateOverMillion: false,
     suffix: '',
-    value: decimalValue,
+    value: decimalValue.toString(),
   });
 };

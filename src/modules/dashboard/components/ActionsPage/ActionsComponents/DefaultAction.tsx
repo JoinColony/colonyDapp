@@ -25,7 +25,7 @@ import { ColonyActions, ColonyAndExtensionsEvents } from '~types/index';
 import { useFormatRolesTitle } from '~utils/hooks/useFormatRolesTitle';
 import { useEnabledExtensions } from '~utils/hooks/useEnabledExtensions';
 import {
-  getStdFormattedTokenValue,
+  getFormattedTokenValue,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 import { useDataFetcher } from '~utils/hooks';
@@ -126,7 +126,7 @@ const DefaultAction = ({
     },
   });
 
-  const decimalAmount = getStdFormattedTokenValue(amount, decimals);
+  const decimalAmount = getFormattedTokenValue(amount, decimals);
   /*
    * @NOTE We need to convert the action type name into a forced camel-case string
    *

@@ -30,7 +30,7 @@ import {
   getAssignmentEventDescriptorsIds,
 } from '~utils/colonyActions';
 import { useDataFetcher } from '~utils/hooks';
-import { getStdFormattedTokenValue } from '~utils/tokens';
+import { getFormattedTokenValue } from '~utils/tokens';
 import { MotionVote } from '~utils/colonyMotions';
 
 import { ipfsDataFetcher } from '../../../../core/fetchers';
@@ -323,7 +323,7 @@ const ActionsPageEvent = ({
   const colonyNativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
-  const decimalStakeAmount = getStdFormattedTokenValue(
+  const decimalStakeAmount = getFormattedTokenValue(
     values?.stakeAmount || 0,
     colonyNativeToken?.decimals,
   );
