@@ -17,12 +17,14 @@ interface Props {
   userLock: UserLock;
   nativeToken: UserToken;
   colonyAddress: Address;
+  walletAddress: Address;
 }
 
 const UserTokenActivationButton = ({
   nativeToken,
   userLock,
   colonyAddress,
+  walletAddress,
 }: Props) => {
   const inactiveBalance = bigNumberify(nativeToken?.balance || 0);
 
@@ -46,6 +48,7 @@ const UserTokenActivationButton = ({
       lockedTokens={lockedBalance}
       token={nativeToken}
       colonyAddress={colonyAddress}
+      walletAddress={walletAddress}
       isPendingBalanceZero={isPendingBalanceZero}
     >
       {({ toggle, ref }) => (
