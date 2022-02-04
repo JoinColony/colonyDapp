@@ -53,6 +53,7 @@
     "@graphql-codegen/typescript-operations": "^1.17.8",
     "@graphql-codegen/typescript-react-apollo": "^2.0.6",
     "@svgr/webpack": "^5.4.0",
+    "@testing-library/cypress": "^8.0.2",
     "@types/cleave.js": "^1.4.1",
     "@types/enzyme": "^3.10.3",
     "@types/jest": "^26.0.0",
