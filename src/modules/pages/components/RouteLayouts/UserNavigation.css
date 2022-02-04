@@ -83,6 +83,7 @@
   padding: 2px 7px 4px;
   border-radius: 4px;
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+  font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--grey-1);
   cursor: default;
@@ -132,6 +133,10 @@
   position: relative;
   border-radius: var(--radius-normal);
   background-color: color-mod(var(--temp-grey-blue-7) alpha(10%));
+}
+
+.buttonsWrapper span {
+  font-size: var(--size-smallish);
 }
 
 .readyTransactionsCount {
