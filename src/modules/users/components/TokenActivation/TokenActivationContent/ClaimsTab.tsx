@@ -42,6 +42,7 @@ const ClaimsTab = ({ colonyAddress, walletAddress }: ClaimsTabProps) => {
       colonyAddress: colonyAddress?.toLowerCase(),
       walletAddress: walletAddress?.toLowerCase(),
       extensionAddress: votingReputationExtension?.address?.toLowerCase() || '',
+      sortDirection: 'desc',
     },
   });
 
