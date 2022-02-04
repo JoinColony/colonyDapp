@@ -71,6 +71,7 @@ export interface TokensTabProps {
   isPendingBalanceZero: boolean;
   token: UserToken;
   colonyAddress: Address;
+  walletAddress: Address;
 }
 
 const TokensTab = ({

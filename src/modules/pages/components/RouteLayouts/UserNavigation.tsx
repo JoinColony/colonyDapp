@@ -187,6 +187,7 @@ const UserNavigation = () => {
               nativeToken={nativeToken}
               userLock={userLock}
               colonyAddress={colonyData?.colonyAddress || ''}
+              walletAddress={walletAddress}
             />
           )}
           {userCanNavigate && (

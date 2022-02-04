@@ -20,6 +20,7 @@ const MSG = defineMessages({
 
 const TokenActivationContent = (props: TokensTabProps) => {
   const [tabIndex, setTabIndex] = useState<number>(0);
+  const { colonyAddress, walletAddress } = props;
 
   return (
     <div className={styles.main}>
@@ -44,7 +45,12 @@ const TokenActivationContent = (props: TokensTabProps) => {
           <TokensTab {...props} />
         </TabPanel>
         <TabPanel className={styles.tabContainer}>
-          <ClaimsTab />
+          <ClaimsTab
+            {...{
+              colonyAddress,
+              walletAddress,
+            }}
+          />
         </TabPanel>
       </Tabs>
     </div>
