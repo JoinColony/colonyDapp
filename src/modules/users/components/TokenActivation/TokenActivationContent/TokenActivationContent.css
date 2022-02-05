@@ -23,17 +23,14 @@
   padding: 11px 0;
   width: 50%;
   border: none;
+  border-bottom: 1px solid var(--temp-grey-13);
   background-color: inherit;
   font-weight: var(--weight-bold);
   text-align: center;
 
-  /* when `ClaimsTab` is added remove dark color & uncomment the last 2 lines */
-  color: var(--dark);
+  /* color: var(--dark); */
+  color: var(--temp-grey-blue-7);
   outline: none;
-
-  /* color: var(--temp-grey-blue-7); */
-
-  /* border-bottom: 1px solid var(--temp-grey-13); */
 }
 
 .tabSelected {
@@ -278,4 +275,22 @@
   font-size: var(--size-smallish);
   font-weight: var(--weight-bold);
   color: var(--dark);
+}
+
+.stakesTabTitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 21px;
+  padding-left: 30px;
+  width: 100%;
+}
+
+.dot {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: var(--pink);
+  color: var(--text-invert);
 }
