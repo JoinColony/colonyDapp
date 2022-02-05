@@ -36,3 +36,5 @@ export const claimsContainer: string;
 export const noClaims: string;
 export const claimsContent: string;
 export const claimAllButtonSection: string;
+export const stakesTabTitle: string;
+export const dot: string;
