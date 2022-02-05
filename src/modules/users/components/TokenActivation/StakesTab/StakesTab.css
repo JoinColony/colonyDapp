@@ -1,0 +1,74 @@
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  align-items: center;
+  height: 442px;
+  width: 100%;
+  font-size: var(--size-smallish);
+  font-weight: var(--weight-bold);
+  color: var(--dark);
+}
+
+.container > form {
+  width: 100%;
+}
+
+.mainDivider {
+  border-bottom: 1px solid var(--temp-grey-13);
+}
+
+.claimStakesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 16px;
+  padding-right: 12px;
+  height: 63px;
+  width: 100%;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  white-space: nowrap;
+  color: var(--dark);
+}
+
+.stakesList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--grey-blue-2);
+}
+
+.stakesListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 12px;
+  padding-left: 16px;
+  height: 63px;
+  width: 100%;
+  border: 1px solid var(--drop-shadow);
+  border-radius: var(--radius-normal);
+  background: var(--colony-light-blue);
+  font-size: var(--size-normal);
+  font-weight: var(--weight-bold);
+  box-shadow: var(--box-shadow-medium);
+}
+
+.link {
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  color: var(--dark-blue);
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--dark-blue);
+  }
+}
+
+.stakesListItem:hover {
+  background: var(--drop-shadow);
+  cursor: pointer;
+}
