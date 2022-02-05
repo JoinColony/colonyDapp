@@ -55,6 +55,7 @@ const TokenActivationContent = (props: TokensTabProps) => {
               walletAddress,
             }}
           />
+          <StakesTab />
         </TabPanel>
       </Tabs>
     </div>
