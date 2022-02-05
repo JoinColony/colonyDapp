@@ -224,6 +224,10 @@
     "transaction.group.buyTokens.description": "Buy Tokens",
     "transaction.CoinMachineClient.buyTokens.title": "Buy Tokens",
     "transaction.CoinMachineClient.buyTokens.description": "Buy Tokens",
+    "transaction.group.emitDomainReputationPenalty.title": "Smiting user",
+    "transaction.group.emitDomainReputationPenalty.description": "Smiting user",
+    "transaction.ColonyClient.emitDomainReputationPenaltyWithProofs.title": "Smiting user",
+    "transaction.ColonyClient.emitDomainReputationPenaltyWithProofs.description": "Smiting user",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",

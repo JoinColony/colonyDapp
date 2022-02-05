@@ -60,6 +60,7 @@ export const MSG = defineMessages({
       ${ColonyMotions.SetUserRolesMotion} {Permission Management}
       ${ColonyMotions.MoveFundsMotion} {Move Funds}
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
+      ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       other {Generic Action}
     }" be approved?`,
   },

@@ -235,4 +235,21 @@ export type ColonyActionsActionTypes =
       WithKey
     >
   | ErrorActionType<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_ERROR, object>
-  | ActionTypeWithMeta<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_SUCCESS, object>;
+  | ActionTypeWithMeta<ActionTypes.COLONY_ACTION_RECOVERY_EXIT_SUCCESS, object>
+  | UniqueActionType<
+      ActionTypes.COLONY_ACTION_SMITE,
+      {
+        colonyAddress: Address;
+        colonyName: string;
+        domainId: number;
+        userAddress: Address;
+        amount: BigNumber;
+        annotationMessage?: string;
+      },
+      MetaWithHistory<object>
+    >
+  | ErrorActionType<ActionTypes.COLONY_ACTION_SMITE_ERROR, object>
+  | ActionTypeWithMeta<
+      ActionTypes.COLONY_ACTION_SMITE_SUCCESS,
+      MetaWithHistory<object>
+    >;

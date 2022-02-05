@@ -35,13 +35,13 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyActionsDialog.manageDomainsDesc',
     defaultMessage: 'Need more structure? Need to change a team name?',
   },
-  smite: {
-    id: 'dashboard.ColonyActionsDialog.smite',
-    defaultMessage: 'Smite',
+  manageReputation: {
+    id: 'dashboard.ColonyActionsDialog.manageReputation',
+    defaultMessage: 'Manage Reputation',
   },
-  smiteDesc: {
-    id: 'dashboard.ColonyActionsDialog.smiteDesc',
-    defaultMessage: 'Punish bad behaviour by penalising Reputation.',
+  manageReputationDesc: {
+    id: 'dashboard.ColonyActionsDialog.manageReputationDesc',
+    defaultMessage: 'Award the worthy; Smite the unworthy.',
   },
   advanced: {
     id: 'dashboard.ColonyActionsDialog.advanced',
@@ -59,6 +59,7 @@ interface CustomWizardDialogProps {
   nextStepManageFunds: string;
   nextStepManageDomains: string;
   nextStepAdvanced: string;
+  nextStepManageReputation: string;
 }
 
 type Props = DialogProps & WizardDialogType<object> & CustomWizardDialogProps;
@@ -73,6 +74,7 @@ const ColonyActionsDialog = ({
   nextStepManageFunds,
   nextStepManageDomains,
   nextStepAdvanced,
+  nextStepManageReputation,
 }: Props) => {
   const items = [
     {
@@ -94,10 +96,10 @@ const ColonyActionsDialog = ({
       onClick: () => callStep(nextStepManageDomains),
     },
     {
-      title: MSG.smite,
-      description: MSG.smiteDesc,
+      title: MSG.manageReputation,
+      description: MSG.manageReputationDesc,
       icon: 'emoji-firebolt',
-      comingSoon: true,
+      onClick: () => callStep(nextStepManageReputation),
     },
     {
       title: MSG.advanced,

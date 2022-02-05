@@ -116,19 +116,7 @@ const PermissionManagementCheckbox = ({
           name={formattedRole}
           inherited={asterisk}
         />
-        <span
-          className={
-            /*
-             * If the roles cannot be set, show the description faded out.
-             *
-             * Currently applicable for:
-             * - Arbitration
-             */
-            role === ColonyRole.Arbitration ? styles.permissionNotAvailable : ''
-          }
-        >
-          <FormattedMessage {...roleDescriptionMessage} />
-        </span>
+        <FormattedMessage {...roleDescriptionMessage} />
       </span>
     </Checkbox>
   );

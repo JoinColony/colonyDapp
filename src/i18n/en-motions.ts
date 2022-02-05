@@ -11,7 +11,9 @@ const motionsMessageDescriptors = {
         {Upgrade Colony to Version {newVersion}!}
       ${ColonyMotions.MoveFundsMotion}
         {Move {amount} {tokenSymbol} from {fromDomainName} to {toDomainName}}
-      other {Generic motion we don't have information about}
+      ${ColonyMotions.EmitDomainReputationPenaltyMotion}
+        {Smite {recipient} with a {reputationPenalty} reputation penalty}
+        other {Generic motion we don't have information about}
     }`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.assign`]: `Assign the {roles} in {fromDomainName} to {recipient}`,
   [`motion.${ColonyMotions.SetUserRolesMotion}.remove`]: `Remove the {roles} in {fromDomainName} from {recipient}`,
@@ -25,6 +27,7 @@ const motionsMessageDescriptors = {
       ${ColonyMotions.SetUserRolesMotion} {Permission Management}
       ${ColonyMotions.MoveFundsMotion} {Move Funds}
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
+      ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
       other {Generic}
     }`,
 };

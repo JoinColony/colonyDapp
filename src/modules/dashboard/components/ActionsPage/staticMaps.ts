@@ -16,6 +16,7 @@ export enum ActionPageDetails {
   Description = 'Description',
   Name = 'Name',
   Permissions = 'Permissions',
+  ReputationPenalty = 'ReputationPenalty',
 }
 
 type EventRolesMap = Partial<
@@ -58,6 +59,9 @@ export const EVENT_ROLES_MAP: EventRolesMap = {
   [ColonyAndExtensionsEvents.RecoveryStorageSlotSet]: [ColonyRole.Recovery],
   [ColonyAndExtensionsEvents.RecoveryModeExitApproved]: [ColonyRole.Recovery],
   [ColonyAndExtensionsEvents.RecoveryModeExited]: [ColonyRole.Recovery],
+  [ColonyAndExtensionsEvents.ArbitraryReputationUpdate]: [
+    ColonyRole.Arbitration,
+  ],
   [ColonyAndExtensionsEvents.Generic]: [],
 };
 
@@ -77,6 +81,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyActions.ColonyEdit]: 'emoji-edit-tools',
   [ColonyActions.EditDomain]: 'emoji-pencil-note',
   [ColonyActions.SetUserRoles]: 'emoji-crane',
+  [ColonyActions.EmitDomainReputationPenalty]: 'emoji-firebolt',
   [ColonyMotions.MintTokensMotion]: 'emoji-seed-sprout',
   [ColonyMotions.PaymentMotion]: 'emoji-dollar-stack',
   [ColonyMotions.MoveFundsMotion]: 'emoji-world-globe',
@@ -85,6 +90,7 @@ export const ACTION_TYPES_ICONS_MAP: {
   [ColonyMotions.ColonyEditMotion]: 'emoji-edit-tools',
   [ColonyMotions.EditDomainMotion]: 'emoji-pencil-note',
   [ColonyMotions.SetUserRolesMotion]: 'emoji-crane',
+  [ColonyMotions.EmitDomainReputationPenaltyMotion]: 'emoji-firebolt',
   [ColonyActions.Generic]: 'circle-check-primary',
 };
 
@@ -126,6 +132,9 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
     ColonyAndExtensionsEvents.RecoveryModeExitApproved,
     ColonyAndExtensionsEvents.RecoveryModeExited,
   ],
+  [ColonyActions.EmitDomainReputationPenalty]: [
+    ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
+  ],
   [ColonyMotions.MintTokensMotion]: MOTION_EVENTS,
   [ColonyMotions.CreateDomainMotion]: MOTION_EVENTS,
   [ColonyMotions.EditDomainMotion]: MOTION_EVENTS,
@@ -133,6 +142,7 @@ export const ACTIONS_EVENTS: ActionsEventsMap = {
   [ColonyMotions.SetUserRolesMotion]: MOTION_EVENTS,
   [ColonyMotions.PaymentMotion]: MOTION_EVENTS,
   [ColonyMotions.MoveFundsMotion]: MOTION_EVENTS,
+  [ColonyMotions.EmitDomainReputationPenaltyMotion]: MOTION_EVENTS,
 };
 
 /*
@@ -169,6 +179,9 @@ export const EVENTS_REQUIRED_FOR_ACTION: ActionsEventsMap = {
   [ColonyActions.EditDomain]: [ColonyAndExtensionsEvents.DomainMetadata],
   [ColonyActions.SetUserRoles]: [ColonyAndExtensionsEvents.ColonyRoleSet],
   [ColonyActions.Recovery]: [ColonyAndExtensionsEvents.RecoveryModeEntered],
+  [ColonyActions.EmitDomainReputationPenalty]: [
+    ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
+  ],
 };
 
 /*
@@ -202,6 +215,11 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Permissions,
   ],
   [ColonyActions.Recovery]: [],
+  [ColonyActions.EmitDomainReputationPenalty]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.ReputationPenalty,
+  ],
   [ColonyMotions.MintTokensMotion]: [ActionPageDetails.Amount],
   [ColonyMotions.PaymentMotion]: [
     ActionPageDetails.FromDomain,
@@ -227,5 +245,10 @@ export const DETAILS_FOR_ACTION: ActionsDetailsMap = {
     ActionPageDetails.Domain,
     ActionPageDetails.ToRecipient,
     ActionPageDetails.Permissions,
+  ],
+  [ColonyMotions.EmitDomainReputationPenaltyMotion]: [
+    ActionPageDetails.Domain,
+    ActionPageDetails.ToRecipient,
+    ActionPageDetails.ReputationPenalty,
   ],
 };

@@ -5,6 +5,7 @@ import {
   defineMessages,
   useIntl,
 } from 'react-intl';
+import Decimal from 'decimal.js';
 
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
@@ -15,7 +16,10 @@ import { Tooltip } from '~core/Popover';
 
 import { DEFAULT_NETWORK_INFO } from '~constants';
 import { removeValueUnits } from '~utils/css';
-import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import {
+  getTokenDecimalsWithFallback,
+  getFormattedTokenValue,
+} from '~utils/tokens';
 import { useUser, Colony } from '~data/index';
 import { createAddress } from '~utils/web3';
 import { FormattedEvent, ColonyAndExtensionsEvents } from '~types/index';
@@ -177,6 +181,10 @@ const ColonyEventsListItem = ({
     voteSide: <FormattedMessage {...MSG.voteSide} values={{ vote }} />,
     activePeriod,
     currentPeriod,
+    reputationPenalty: `${getFormattedTokenValue(
+      new Decimal(amount || '0').mul(-1).toString(),
+      decimals,
+    )} pts`,
   };
 
   return (

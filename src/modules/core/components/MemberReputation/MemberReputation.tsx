@@ -7,11 +7,7 @@ import { useUserReputationQuery } from '~data/index';
 import { Address } from '~types/index';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
-import {
-  calculatePercentageReputation,
-  DECIMAL_PLACES,
-  ZeroValue,
-} from '~utils/reputation';
+import { calculatePercentageReputation, ZeroValue } from '~utils/reputation';
 
 import styles from './MemberReputation.css';
 
@@ -45,6 +41,7 @@ const MemberReputation = ({
 }: Props) => {
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId, rootHash },
+    fetchPolicy: 'network-only',
   });
 
   const { data: totalReputation } = useUserReputationQuery({
@@ -52,12 +49,11 @@ const MemberReputation = ({
       address: AddressZero,
       colonyAddress,
       domainId,
-      rootHash,
     },
+    fetchPolicy: 'network-only',
   });
 
   const userPercentageReputation = calculatePercentageReputation(
-    DECIMAL_PLACES,
     userReputationData?.userReputation,
     totalReputation?.userReputation,
   );

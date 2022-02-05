@@ -65,6 +65,10 @@ const MSG = defineMessages({
     id: 'dashboard.ActionsPage.DetailsWidget.colonyName',
     defaultMessage: 'Name',
   },
+  reputationPenalty: {
+    id: 'dashboard.ActionsPage.DetailsWidget.reputationPenalty',
+    defaultMessage: 'Reputation penalty',
+  },
 });
 
 interface Props {
@@ -200,6 +204,14 @@ const DetailsWidget = ({
               <DetailsWidgetTeam domain={values.fromDomain} />
             )}
           </div>
+        </div>
+      )}
+      {detailsForAction.ReputationPenalty && (
+        <div className={styles.item}>
+          <div className={styles.label}>
+            <FormattedMessage {...MSG.reputationPenalty} />
+          </div>
+          <div className={styles.value}>{values?.reputationPenalty}</div>
         </div>
       )}
       {detailsForAction.Permissions && (
