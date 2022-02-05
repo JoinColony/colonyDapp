@@ -4,7 +4,8 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
 import TokensTab, { TokensTabProps } from './TokensTab';
-import StakesTab from './StakesTab';
+import StakesTab from '../StakesTab/StakesTab';
+
 import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
@@ -38,7 +39,10 @@ const TokenActivationContent = (props: TokensTabProps) => {
             <FormattedMessage {...MSG.yourTokens} />
           </Tab>
           <Tab selectedClassName={styles.tabSelected} className={styles.tab}>
-            <FormattedMessage {...MSG.stakes} />
+            <div className={styles.stakesTabTitle}>
+              <FormattedMessage {...MSG.stakes} />
+              <div className={styles.dot}>4</div>
+            </div>
           </Tab>
         </TabList>
         <TabPanel className={styles.tabContainer}>
