@@ -34,7 +34,7 @@ export const numberFormatter = ({
   value,
   prefix,
   suffix,
-  truncate = 18,
+  truncate = 5,
   useSeparator = true,
   // reducedOutput = true,
   abreviateOverMillion = true,
@@ -55,6 +55,7 @@ export const numberFormatter = ({
     average: true,
     lowPrecision: true,
     totalLength: 2,
+    spaceSeparated: false,
   };
 
   const convertedNum =
