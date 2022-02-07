@@ -8,7 +8,7 @@
   cursor: pointer;
 }
 
-.main[aria-selected="true"] {
+.main:hover {
   background-color: var(--grey-blue-0);
   outline: none;
 }
