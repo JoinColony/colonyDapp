@@ -47,6 +47,10 @@ export default gql`
     requiredStake: String!
   }
 
+  type ClaimableMotions {
+    motionIds: [Int!]!
+  }
+
   type MotionObjectionAnnotation {
     address: String!
     metadata: String!
@@ -108,6 +112,7 @@ export default gql`
       userAddress: String!
       motionId: Int!
     ): StakeAmounts!
+    claimableStakedMotions(motionIds: [Int!]!): ClaimableMotions!
     motionObjectionAnnotation(
       motionId: Int!
       colonyAddress: String!
