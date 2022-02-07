@@ -203,7 +203,7 @@ const EditDomainDialogForm = ({
               <Toggle
                 label={{ id: 'label.force' }}
                 name="forceAction"
-                disabled={!canEditDomain}
+                disabled={!canEditDomain || isSubmitting}
               />
             )}
           </div>

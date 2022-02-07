@@ -152,7 +152,11 @@ const NetworkContractUpgradeDialogForm = ({
               text={MSG.title}
             />
             {canUpgradeVersion && isVotingExtensionEnabled && (
-              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={isSubmitting}
+              />
             )}
           </div>
         </div>

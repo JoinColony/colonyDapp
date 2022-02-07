@@ -259,7 +259,11 @@ const TransferFundsDialogForm = ({
               text={MSG.title}
             />
             {canTransferFunds && isVotingExtensionEnabled && (
-              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={isSubmitting}
+              />
             )}
           </div>
         </div>

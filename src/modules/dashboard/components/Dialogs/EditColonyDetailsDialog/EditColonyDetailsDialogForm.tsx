@@ -157,7 +157,11 @@ const EditColonyDetailsDialogForm = ({
               text={MSG.title}
             />
             {canEdit && isVotingExtensionEnabled && (
-              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={isSubmitting}
+              />
             )}
           </div>
         </div>

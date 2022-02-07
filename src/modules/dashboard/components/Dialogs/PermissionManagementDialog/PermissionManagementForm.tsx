@@ -92,6 +92,7 @@ const PermissionManagementForm = ({
   onMotionDomainChange,
   onChangeSelectedUser,
   values,
+  isSubmitting,
 }: Props & FormikProps<FormValues>) => {
   const { data: colonyMembers } = useMembersSubscription({
     variables: {
@@ -260,7 +261,11 @@ const PermissionManagementForm = ({
               textValues={{ domain: domain?.name }}
             />
             {canEditPermissions && isVotingExtensionEnabled && (
-              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={isSubmitting}
+              />
             )}
           </div>
         </div>

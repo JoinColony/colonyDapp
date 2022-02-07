@@ -267,7 +267,7 @@ const SmiteDialogForm = ({
               <Toggle
                 label={{ id: 'label.force' }}
                 name="forceAction"
-                disabled={!userHasPermission}
+                disabled={!userHasPermission || isSubmitting}
               />
             )}
           </div>

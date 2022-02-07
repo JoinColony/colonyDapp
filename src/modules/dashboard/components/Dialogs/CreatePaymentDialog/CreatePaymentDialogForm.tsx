@@ -341,7 +341,7 @@ const CreatePaymentDialogForm = ({
               <Toggle
                 label={{ id: 'label.force' }}
                 name="forceAction"
-                disabled={!canMakePayment}
+                disabled={!canMakePayment || isSubmitting}
               />
             )}
           </div>

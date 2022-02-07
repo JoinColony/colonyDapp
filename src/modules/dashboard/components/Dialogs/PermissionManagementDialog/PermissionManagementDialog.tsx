@@ -231,6 +231,7 @@ const PermissionManagementDialog = ({
                   onMotionDomainChange={setSelectedMoitonDomainId}
                   onChangeSelectedUser={setSelectedUser}
                   inputDisabled={inputDisabled || isSubmitting}
+                  isSubmitting={isSubmitting}
                   userHasPermission={userHasPermission}
                   isVotingExtensionEnabled={isVotingExtensionEnabled}
                 />
