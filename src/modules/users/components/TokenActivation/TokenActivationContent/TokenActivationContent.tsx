@@ -4,7 +4,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 
 import TokensTab, { TokensTabProps } from './TokensTab';
-import ClaimsTab from './ClaimsTab';
+import StakesTab from './StakesTab';
 import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
@@ -45,7 +45,7 @@ const TokenActivationContent = (props: TokensTabProps) => {
           <TokensTab {...props} />
         </TabPanel>
         <TabPanel className={styles.tabContainer}>
-          <ClaimsTab
+          <StakesTab
             {...{
               colonyAddress,
               walletAddress,
