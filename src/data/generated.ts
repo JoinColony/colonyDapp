@@ -229,6 +229,7 @@ export type MutationUnsubscribeFromColonyArgs = {
 export type Query = {
   actionsThatNeedAttention: Array<Maybe<ActionThatNeedsAttention>>;
   bannedUsers: Array<Maybe<BannedUser>>;
+  claimableStakedMotions: ClaimableMotions;
   coinMachineBoughtTokens: BoughtTokens;
   coinMachineCurrentPeriodMaxUserPurchase: Scalars['String'];
   coinMachineCurrentPeriodPrice: Scalars['String'];
@@ -308,6 +309,11 @@ export type QueryActionsThatNeedAttentionArgs = {
 
 export type QueryBannedUsersArgs = {
   colonyAddress: Scalars['String'];
+};
+
+
+export type QueryClaimableStakedMotionsArgs = {
+  motionIds: Array<Scalars['Int']>;
 };
 
 
@@ -1318,6 +1324,10 @@ export type StakeAmounts = {
   totalStaked: StakeSidesAmounts;
   userStake: StakeSidesAmounts;
   requiredStake: Scalars['String'];
+};
+
+export type ClaimableMotions = {
+  motionIds: Array<Scalars['Int']>;
 };
 
 export type MotionObjectionAnnotation = {
@@ -2430,6 +2440,14 @@ export type StakeAmountsForMotionQuery = { stakeAmountsForMotion: (
     Pick<StakeAmounts, 'requiredStake'>
     & { totalStaked: Pick<StakeSidesAmounts, 'YAY' | 'NAY'>, userStake: Pick<StakeSidesAmounts, 'YAY' | 'NAY'> }
   ) };
+
+export type ClaimableStakedMotionsQueryVariables = Exact<{
+  colonyAddress: Scalars['String'];
+  walletAddress: Scalars['String'];
+}>;
+
+
+export type ClaimableStakedMotionsQuery = { claimableStakedMotions: Pick<ClaimableMotions, 'motionIds'> };
 
 export type MotionObjectionAnnotationQueryVariables = Exact<{
   motionId: Scalars['Int'];
@@ -6660,6 +6678,40 @@ export function useStakeAmountsForMotionLazyQuery(baseOptions?: Apollo.LazyQuery
 export type StakeAmountsForMotionQueryHookResult = ReturnType<typeof useStakeAmountsForMotionQuery>;
 export type StakeAmountsForMotionLazyQueryHookResult = ReturnType<typeof useStakeAmountsForMotionLazyQuery>;
 export type StakeAmountsForMotionQueryResult = Apollo.QueryResult<StakeAmountsForMotionQuery, StakeAmountsForMotionQueryVariables>;
+export const ClaimableStakedMotionsDocument = gql`
+    query ClaimableStakedMotions($colonyAddress: String!, $walletAddress: String!) {
+  claimableStakedMotions(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+    motionIds
+  }
+}
+    `;
+
+/**
+ * __useClaimableStakedMotionsQuery__
+ *
+ * To run a query within a React component, call `useClaimableStakedMotionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClaimableStakedMotionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClaimableStakedMotionsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      walletAddress: // value for 'walletAddress'
+ *   },
+ * });
+ */
+export function useClaimableStakedMotionsQuery(baseOptions?: Apollo.QueryHookOptions<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>) {
+        return Apollo.useQuery<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>(ClaimableStakedMotionsDocument, baseOptions);
+      }
+export function useClaimableStakedMotionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>) {
+          return Apollo.useLazyQuery<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>(ClaimableStakedMotionsDocument, baseOptions);
+        }
+export type ClaimableStakedMotionsQueryHookResult = ReturnType<typeof useClaimableStakedMotionsQuery>;
+export type ClaimableStakedMotionsLazyQueryHookResult = ReturnType<typeof useClaimableStakedMotionsLazyQuery>;
+export type ClaimableStakedMotionsQueryResult = Apollo.QueryResult<ClaimableStakedMotionsQuery, ClaimableStakedMotionsQueryVariables>;
 export const MotionObjectionAnnotationDocument = gql`
     query MotionObjectionAnnotation($motionId: Int!, $colonyAddress: String!) {
   motionObjectionAnnotation(motionId: $motionId, colonyAddress: $colonyAddress) @client {

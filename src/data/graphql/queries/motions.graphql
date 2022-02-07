@@ -321,6 +321,12 @@ query StakeAmountsForMotion($colonyAddress: String!, $userAddress: String!, $mot
   }
 }
 
+query ClaimableStakedMotions($colonyAddress: String!, $walletAddress: String!) {
+  claimableStakedMotions(colonyAddress: $colonyAddress, walletAddress: $walletAddress) @client {
+    motionIds
+  }
+}
+
 query MotionObjectionAnnotation($motionId: Int!, $colonyAddress: String!) {
   motionObjectionAnnotation(motionId: $motionId, colonyAddress: $colonyAddress) @client {
     address
