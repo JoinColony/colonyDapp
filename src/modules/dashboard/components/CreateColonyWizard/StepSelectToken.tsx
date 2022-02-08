@@ -101,13 +101,25 @@ const StepSelectToken = ({
 }: Props) => {
   const [tokenData, setTokenData] = useState<OneToken | undefined>();
   const { formatMessage } = useIntl();
+  const [isLoadingAddress, setisLoadingAddress] = useState<boolean>(false);
+  const [tokenSelectorHasError, setTokenSelectorHasError] = useState<boolean>(
+    false,
+  );
 
-  const handleTokenSelect = (token: OneToken, setFieldValue: SetFieldValue) => {
+  const handleTokenSelect = (
+    checkingAddress: boolean,
+    token: OneToken,
+    setFieldValue: SetFieldValue,
+  ) => {
     setTokenData(token);
-    if (token) {
-      setFieldValue('tokenName', token.name);
-      setFieldValue('tokenSymbol', token.symbol);
-    }
+    setisLoadingAddress(checkingAddress);
+
+    setFieldValue('tokenName', token?.name || '');
+    setFieldValue('tokenSymbol', token?.symbol || '');
+  };
+
+  const handleTokenSelectError = (hasError: boolean) => {
+    setTokenSelectorHasError(hasError);
   };
 
   const goToTokenCreate = useCallback(() => {
@@ -158,9 +170,12 @@ const StepSelectToken = ({
           <div>
             <TokenSelector
               tokenAddress={values.tokenAddress}
-              onTokenSelect={(token: OneToken) =>
-                handleTokenSelect(token, setFieldValue)
-              }
+              onTokenSelect={(checkingAddress: boolean, token: OneToken) => {
+                handleTokenSelect(checkingAddress, token, setFieldValue);
+              }}
+              onTokenSelectError={handleTokenSelectError}
+              tokenSelectorHasError={tokenSelectorHasError}
+              isLoadingAddress={isLoadingAddress}
               tokenData={tokenData}
               extra={
                 <button
@@ -198,8 +213,13 @@ const StepSelectToken = ({
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
                 type="submit"
-                disabled={!isValid || (!dirty && !stepCompleted)}
                 text={MSG.continue}
+                disabled={
+                  tokenSelectorHasError ||
+                  !isValid ||
+                  (!dirty && !stepCompleted) ||
+                  isLoadingAddress
+                }
               />
             </div>
           </div>

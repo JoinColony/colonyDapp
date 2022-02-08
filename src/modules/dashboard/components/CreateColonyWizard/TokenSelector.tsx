@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, ReactNode } from 'react';
+import React, { useCallback, useEffect, ReactNode } from 'react';
 import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import { useApolloClient } from '@apollo/client';
 
@@ -36,14 +36,17 @@ const MSG = defineMessages({
   },
   statusNotFound: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.statusNotFound',
-    defaultMessage: 'Token data not found. Please type in token details',
+    defaultMessage:
+      'Token data not found. Please check the token contract address.',
   },
 });
 
 interface Props {
   tokenAddress: string;
-  onTokenSelect: (arg0: OneToken | null | void) => any;
-  onTokenSelectError?: (arg: boolean) => any;
+  onTokenSelect: (checkingAddress: boolean, token?: OneToken | null) => void;
+  onTokenSelectError: (arg: boolean) => void;
+  tokenSelectorHasError: boolean;
+  isLoadingAddress: boolean;
   tokenData?: OneToken;
   label?: string | MessageDescriptor;
   appearance?: Appearance;
@@ -53,8 +56,15 @@ interface Props {
   disabled?: boolean;
 }
 
-const getStatusText = (isLoading: boolean, tokenData?: OneToken) => {
-  if (isLoading) {
+const getStatusText = (
+  hasError: boolean,
+  isLoadingAddress: boolean,
+  tokenData?: OneToken,
+) => {
+  if (hasError) {
+    return {};
+  }
+  if (isLoadingAddress) {
     return { status: MSG.statusLoading };
   }
   if (tokenData === null) {
@@ -76,6 +86,8 @@ const TokenSelector = ({
   tokenAddress,
   onTokenSelect,
   onTokenSelectError,
+  tokenSelectorHasError,
+  isLoadingAddress,
   tokenData,
   extra,
   label,
@@ -92,31 +104,23 @@ const TokenSelector = ({
     return data && data.token;
   }, [apolloClient, tokenAddress]);
 
-  const [isLoading, setLoading] = useState(false);
-
   const handleGetTokenSuccess = useCallback(
     (token: OneToken) => {
-      const { name, symbol } = token;
-      setLoading(false);
+      const { name, symbol } = token || {};
       if (!name || !symbol) {
-        onTokenSelect(null);
+        onTokenSelect(false, null);
+        onTokenSelectError(true);
         return;
       }
-      onTokenSelect(token);
-      if (onTokenSelectError) {
-        onTokenSelectError(false);
-      }
+      onTokenSelect(false, token);
     },
     [onTokenSelect, onTokenSelectError],
   );
 
   const handleGetTokenError = useCallback(
     (error: Error) => {
-      setLoading(false);
-      onTokenSelect(null);
-      if (onTokenSelectError) {
-        onTokenSelectError(true);
-      }
+      onTokenSelect(false, null);
+      onTokenSelectError(true);
       log.error(error);
     },
     [onTokenSelect, onTokenSelectError],
@@ -127,18 +131,17 @@ const TokenSelector = ({
   useEffect(() => {
     // Guard against updates that don't include a new, valid `tokenAddress`,
     // or if the form is submitting or loading.
-    if (tokenAddress === prevTokenAddress || isLoading) return;
+    if (tokenAddress === prevTokenAddress || isLoadingAddress) return;
     if (!tokenAddress || !tokenAddress.length || !isAddress(tokenAddress)) {
-      onTokenSelect();
+      onTokenSelect(false);
       return;
     }
     // For a valid address, attempt to load token info.
     // This is setting state during `componentDidUpdate`, which is
     // generally a bad idea, but we are guarding against it by checking the
     // state first.
-    setLoading(true);
-    onTokenSelect();
-
+    onTokenSelectError(false);
+    onTokenSelect(true);
     // Get the token address and handle success/error
     getToken()
       .then((token: OneToken) => handleGetTokenSuccess(token))
@@ -146,8 +149,9 @@ const TokenSelector = ({
   }, [
     tokenAddress,
     getToken,
-    isLoading,
+    isLoadingAddress,
     onTokenSelect,
+    onTokenSelectError,
     prevTokenAddress,
     handleGetTokenSuccess,
     handleGetTokenError,
@@ -165,9 +169,12 @@ const TokenSelector = ({
         name="tokenAddress"
         label={labelText || MSG.inputLabel}
         extra={extra}
-        {...getStatusText(isLoading, tokenData)}
+        {...getStatusText(tokenSelectorHasError, isLoadingAddress, tokenData)}
         appearance={appearance}
         disabled={disabled}
+        forcedFieldError={
+          tokenSelectorHasError ? MSG.statusNotFound : undefined
+        }
       />
     </div>
   );
