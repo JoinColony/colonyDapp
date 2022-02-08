@@ -89,7 +89,7 @@ const RaiseObjectionDialogForm = ({
         <div className={styles.slider}>
           <StakingSlider
             colony={colony}
-            canUserStake={canUserStake}
+            canUserStake={canUserStake && !isSubmitting}
             values={values}
             appearance={{ theme: 'danger', size: 'thick' }}
             isObjection
@@ -105,7 +105,7 @@ const RaiseObjectionDialogForm = ({
           label={MSG.annotation}
           name="annotation"
           maxLength={4000}
-          disabled={!canUserStake}
+          disabled={!canUserStake || isSubmitting}
         />
       </DialogSection>
       <DialogSection appearance={{ align: 'right', theme: 'footer' }}>
@@ -121,7 +121,11 @@ const RaiseObjectionDialogForm = ({
             onClick={() => handleSubmit()}
             type="submit"
             loading={isSubmitting}
-            disabled={!canUserStake || userActivatedTokens.lt(decimalAmount)}
+            disabled={
+              !canUserStake ||
+              userActivatedTokens.lt(decimalAmount) ||
+              isSubmitting
+            }
           />
         </span>
       </DialogSection>

@@ -68,7 +68,7 @@
  * Disabled styles via `disabled` attribute
  */
 
-.main[disabled]:not([aria-busy="true"]) {
+.main[disabled] {
   border-color: disabledBackground;
   background-color: disabledBackground;
   color: disabledColor;

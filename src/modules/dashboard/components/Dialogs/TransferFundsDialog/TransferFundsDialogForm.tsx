@@ -150,7 +150,7 @@ const TransferFundsDialogForm = ({
     values.forceAction,
   );
 
-  const inputDisabled = !userHasPermission || onlyForceAction;
+  const inputDisabled = !userHasPermission || onlyForceAction || isSubmitting;
 
   const [
     loadTokenBalances,
@@ -259,7 +259,11 @@ const TransferFundsDialogForm = ({
               text={MSG.title}
             />
             {canTransferFunds && isVotingExtensionEnabled && (
-              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={isSubmitting}
+              />
             )}
           </div>
         </div>

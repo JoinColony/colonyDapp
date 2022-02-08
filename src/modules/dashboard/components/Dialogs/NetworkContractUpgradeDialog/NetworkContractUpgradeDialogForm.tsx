@@ -119,7 +119,7 @@ const NetworkContractUpgradeDialogForm = ({
   const canUpgradeVersion =
     userHasPermission && !!colonyCanBeUpgraded(colony, newVersion as string);
 
-  const inputDisabled = !canUpgradeVersion || onlyForceAction;
+  const inputDisabled = !canUpgradeVersion || onlyForceAction || isSubmitting;
 
   const PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES =
     /*
@@ -152,7 +152,11 @@ const NetworkContractUpgradeDialogForm = ({
               text={MSG.title}
             />
             {canUpgradeVersion && isVotingExtensionEnabled && (
-              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={isSubmitting}
+              />
             )}
           </div>
         </div>
@@ -263,7 +267,11 @@ const NetworkContractUpgradeDialogForm = ({
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
           text={{ id: 'button.confirm' }}
-          disabled={inputDisabled || PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES}
+          disabled={
+            inputDisabled ||
+            PREVENT_UPGRADE_IF_LEGACY_RECOVERY_ROLES ||
+            isSubmitting
+          }
           onClick={() => handleSubmit()}
           loading={isSubmitting || loadingLegacyRecoveyRole}
         />

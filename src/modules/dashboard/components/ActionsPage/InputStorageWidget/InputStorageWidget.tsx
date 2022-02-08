@@ -233,7 +233,7 @@ const InputStorageWidget = ({
                 theme: 'fat',
                 colorSchema: 'grey',
               }}
-              disabled={!hasRegisteredProfile}
+              disabled={!hasRegisteredProfile || isSubmitting}
             />
             {storageSlotLocationError && (
               <span className={styles.inputValidationError}>
@@ -273,7 +273,9 @@ const InputStorageWidget = ({
                 theme: 'fat',
                 colorSchema: 'grey',
               }}
-              disabled={!hasRegisteredProfile || !userHasPermission}
+              disabled={
+                !hasRegisteredProfile || !userHasPermission || isSubmitting
+              }
             />
             {newStorageSlotValueError && (
               <span className={styles.inputValidationError}>
@@ -290,7 +292,8 @@ const InputStorageWidget = ({
                   disabled={
                     !isValid ||
                     !storageSlotLocationValue ||
-                    !newStorageSlotValue
+                    !newStorageSlotValue ||
+                    isSubmitting
                   }
                 />
               </div>

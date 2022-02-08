@@ -111,7 +111,7 @@ const TokenEditDialog = ({
     values.forceAction,
   );
 
-  const inputDisabled = !userHasPermission || onlyForceAction;
+  const inputDisabled = !userHasPermission || onlyForceAction || isSubmitting;
 
   const allTokens = useMemo(() => {
     return [...tokens, ...(canEditTokens ? tokensList : [])].filter(
@@ -144,7 +144,11 @@ const TokenEditDialog = ({
               text={MSG.title}
             />
             {canEditTokens && isVotingExtensionEnabled && (
-              <Toggle label={{ id: 'label.force' }} name="forceAction" />
+              <Toggle
+                label={{ id: 'label.force' }}
+                name="forceAction"
+                disabled={isSubmitting}
+              />
             )}
           </div>
         </div>

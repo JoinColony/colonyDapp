@@ -402,7 +402,7 @@ const BuyTokens = ({
                       }}
                       label={MSG.amountLabel}
                       name="amount"
-                      disabled={globalDisable || isSoldOut}
+                      disabled={globalDisable || isSoldOut || isSubmitting}
                       elementOnly
                     />
                     {errors?.amount && (
@@ -432,7 +432,7 @@ const BuyTokens = ({
                           onClick={(event) =>
                             handleSetMaxAmount(event, setFieldValue)
                           }
-                          disabled={isSoldOut}
+                          disabled={isSoldOut || isSubmitting}
                         />
                       </div>
                     )}
@@ -540,7 +540,8 @@ const BuyTokens = ({
                         globalDisable ||
                         isSoldOut ||
                         !isValid ||
-                        toFinite(values.amount) <= 0
+                        toFinite(values.amount) <= 0 ||
+                        isSubmitting
                       }
                     />
                   )}

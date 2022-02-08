@@ -155,7 +155,7 @@ const UploadAddressesWidget = ({
                 appearance={{ theme: 'blue' }}
                 text={showInput ? MSG.upload : MSG.input}
                 onClick={toggleShowInput}
-                disabled={processingCSVData}
+                disabled={processingCSVData || isSubmitting}
               />
             </div>
           </div>

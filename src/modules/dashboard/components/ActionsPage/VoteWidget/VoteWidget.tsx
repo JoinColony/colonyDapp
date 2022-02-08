@@ -169,7 +169,7 @@ const VoteWidget = ({
             options={options(values.vote)}
             currentlyCheckedValue={values.vote}
             name="vote"
-            disabled={inputDisabled}
+            disabled={inputDisabled || isSubmitting}
           />
           <VoteDetails
             colony={colony}
@@ -184,7 +184,8 @@ const VoteWidget = ({
                   !isValid ||
                   !hasRegisteredProfile ||
                   !values.vote ||
-                  !hasReputationToVote
+                  !hasReputationToVote ||
+                  isSubmitting
                 }
                 onClick={() => handleSubmit()}
                 loading={isSubmitting}

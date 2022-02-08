@@ -145,7 +145,7 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                   }}
                   formattingOptions={{ lowercase: true, blocks: [100] }}
                   data-test="claimUsernameInput"
-                  disabled={!isNetworkAllowed}
+                  disabled={!isNetworkAllowed || isSubmitting}
                 />
                 <div className={styles.buttons}>
                   <p className={styles.reminder}>
@@ -163,7 +163,8 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                     disabled={
                       !isNetworkAllowed ||
                       !isValid ||
-                      (!dirty && !stepCompleted)
+                      (!dirty && !stepCompleted) ||
+                      isSubmitting
                     }
                     loading={isSubmitting}
                     text={MSG.continue}
