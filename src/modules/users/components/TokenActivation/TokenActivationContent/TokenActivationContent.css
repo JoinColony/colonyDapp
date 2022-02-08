@@ -270,7 +270,7 @@
 .claimsContainer {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   height: 442px;
   width: 100%;
   font-size: var(--size-smallish);
@@ -280,5 +280,28 @@
 
 .noClaims {
   padding: 18px 16px 19px 16px;
+  text-align: center;
+}
+
+.claimsContent {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 15px 0;
+  width: 100%;
+}
+
+.claimAllButtonContainer {
+  align-self: flex-end;
+  margin-right: 12px;
+  margin-bottom: 20px;
+}
+
+.claimAllButtonContainer button {
+  width: 100px;
+  font-size: 12px;
+}
+
+.claimsContent span {
   text-align: center;
 }
