@@ -149,11 +149,14 @@ const UserNavigation = () => {
             ],
           }}
         >
-          <div className={styles.reputation}>
-            <MemberReputation
-              walletAddress={walletAddress}
-              colonyAddress={colonyData?.colonyAddress}
-            />
+          <div>
+            <div className={styles.reputation}>
+              <MemberReputation
+                walletAddress={walletAddress}
+                colonyAddress={colonyData?.colonyAddress}
+                showIconTitle={false}
+              />
+            </div>
           </div>
         </Tooltip>
       )}
