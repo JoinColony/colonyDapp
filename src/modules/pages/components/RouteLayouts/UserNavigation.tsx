@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -7,6 +7,7 @@ import Icon from '~core/Icon';
 import MaskedAddress from '~core/MaskedAddress';
 import MemberReputation from '~core/MemberReputation';
 import { MiniSpinnerLoader } from '~core/Preloaders';
+import { Tooltip } from '~core/Popover';
 
 import { GasStationPopover } from '~users/GasStation';
 import UserTokenActivationButton from '~users/UserTokenActivationButton';
@@ -47,6 +48,10 @@ const MSG = defineMessages({
   walletAutologin: {
     id: 'pages.NavigationWrapper.UserNavigation.walletAutologin',
     defaultMessage: 'Connecting wallet...',
+  },
+  userReputationTooltip: {
+    id: 'pages.NavigationWrapper.UserNavigation.userReputationTooltip',
+    defaultMessage: 'This is your share of the reputation in this colony',
   },
 });
 
@@ -102,6 +107,8 @@ const UserNavigation = () => {
   const attemptingAutoLogin = useAutoLogin();
   const previousWalletConnected = lastWalletType && lastWalletAddress;
 
+  const { formatMessage } = useIntl();
+
   useEffect(() => {
     if (!userDataLoading && !ethereal) {
       dispatch({ type: 'USER_CONNECTED', payload: { isUserConnected: true } });
@@ -128,12 +135,30 @@ const UserNavigation = () => {
         </div>
       )}
       {userCanNavigate && colonyData?.colonyAddress && (
-        <div className={styles.reputation}>
-          <MemberReputation
-            walletAddress={walletAddress}
-            colonyAddress={colonyData?.colonyAddress}
-          />
-        </div>
+        <Tooltip
+          content={formatMessage(MSG.userReputationTooltip)}
+          placement="bottom-start"
+          popperProps={{
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 8],
+                },
+              },
+            ],
+          }}
+        >
+          <div>
+            <div className={styles.reputation}>
+              <MemberReputation
+                walletAddress={walletAddress}
+                colonyAddress={colonyData?.colonyAddress}
+                showIconTitle={false}
+              />
+            </div>
+          </div>
+        </Tooltip>
       )}
       {ethereal && (
         <ConnectWalletPopover>

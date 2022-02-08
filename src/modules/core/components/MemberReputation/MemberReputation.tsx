@@ -28,6 +28,7 @@ interface Props {
   domainId?: number;
   rootHash?: string;
   onReputationLoaded?: (reputationLoaded: boolean) => void;
+  showIconTitle?: boolean;
 }
 
 const displayName = 'MemberReputation';
@@ -38,10 +39,11 @@ const MemberReputation = ({
   domainId = ROOT_DOMAIN_ID,
   rootHash,
   onReputationLoaded = () => null,
+  showIconTitle = true,
 }: Props) => {
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId, rootHash },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   });
 
   const { data: totalReputation } = useUserReputationQuery({
@@ -50,7 +52,7 @@ const MemberReputation = ({
       colonyAddress,
       domainId,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   });
 
   const userPercentageReputation = calculatePercentageReputation(
@@ -62,21 +64,18 @@ const MemberReputation = ({
     onReputationLoaded(!!userReputationData);
   }, [userReputationData, onReputationLoaded]);
 
+  /* Doing this cause Eslint yells at me if I use nested ternary */
+  let iconTitle;
+  if (!showIconTitle) {
+    iconTitle = undefined;
+  } else {
+    iconTitle = userPercentageReputation
+      ? MSG.starReputationTitle
+      : MSG.starNoReputationTitle;
+  }
+
   return (
     <div>
-      <Icon
-        name="star"
-        appearance={{ size: 'extraTiny' }}
-        className={styles.icon}
-        title={
-          userPercentageReputation
-            ? MSG.starReputationTitle
-            : MSG.starNoReputationTitle
-        }
-        titleValues={{
-          reputation: userPercentageReputation,
-        }}
-      />
       {!userPercentageReputation && (
         <div className={styles.reputation}>— %</div>
       )}
@@ -92,6 +91,19 @@ const MemberReputation = ({
             suffix="%"
           />
         )}
+      <Icon
+        name="star"
+        appearance={{ size: 'extraTiny' }}
+        className={styles.icon}
+        title={iconTitle}
+        titleValues={
+          showIconTitle
+            ? {
+                reputation: userPercentageReputation,
+              }
+            : undefined
+        }
+      />
     </div>
   );
 };

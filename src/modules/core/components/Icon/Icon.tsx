@@ -38,7 +38,7 @@ interface Props extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
   name: string;
 
   /** Html title for the icon element */
-  title: string | MessageDescriptor;
+  title?: string | MessageDescriptor;
 
   /** Values for html title (react-intl interpolation) */
   titleValues?: SimpleMessageValues;
@@ -77,7 +77,7 @@ const Icon = ({
     typeof title === 'object' ? formatMessage(title, titleValues) : title;
   return (
     <i
-      title={iconTitle}
+      title={title ? iconTitle : undefined}
       className={
         className || getMainClasses(multiColorAppearance || appearance, styles)
       }
