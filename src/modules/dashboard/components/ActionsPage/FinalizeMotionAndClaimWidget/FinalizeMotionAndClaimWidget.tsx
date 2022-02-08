@@ -209,11 +209,20 @@ const FinalizeMotionAndClaimWidget = ({
     ({ address }) => address === nativeTokenAddress,
   );
 
-  const transform = useCallback(
+  const finalizeTransform = useCallback(
     mapPayload(() => ({
       colonyAddress,
       userAddress: walletAddress,
       motionId,
+    })),
+    [walletAddress],
+  );
+
+  const claimTransform = useCallback(
+    mapPayload(() => ({
+      colonyAddress,
+      userAddress: walletAddress,
+      motionIds: [bigNumberify(motionId)],
     })),
     [walletAddress],
   );
@@ -306,7 +315,7 @@ const FinalizeMotionAndClaimWidget = ({
           submit={ActionTypes.COLONY_MOTION_FINALIZE}
           error={ActionTypes.COLONY_MOTION_FINALIZE_ERROR}
           success={ActionTypes.COLONY_MOTION_FINALIZE_SUCCESS}
-          transform={transform}
+          transform={finalizeTransform}
           onSuccess={handleSuccess}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
@@ -352,7 +361,7 @@ const FinalizeMotionAndClaimWidget = ({
           submit={ActionTypes.COLONY_MOTION_CLAIM}
           error={ActionTypes.COLONY_MOTION_CLAIM_ERROR}
           success={ActionTypes.COLONY_MOTION_CLAIM_SUCCESS}
-          transform={transform}
+          transform={claimTransform}
           onSuccess={handleSuccess}
         >
           {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
