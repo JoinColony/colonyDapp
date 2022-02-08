@@ -43,7 +43,7 @@ const MemberReputation = ({
 }: Props) => {
   const { data: userReputationData } = useUserReputationQuery({
     variables: { address: walletAddress, colonyAddress, domainId, rootHash },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   });
 
   const { data: totalReputation } = useUserReputationQuery({
@@ -52,7 +52,7 @@ const MemberReputation = ({
       colonyAddress,
       domainId,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   });
 
   const userPercentageReputation = calculatePercentageReputation(
