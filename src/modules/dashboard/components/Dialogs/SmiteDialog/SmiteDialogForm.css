@@ -27,6 +27,7 @@
 }
 
 .inputContainer button {
+  right: auto;
   left: -6px;
 }
 
