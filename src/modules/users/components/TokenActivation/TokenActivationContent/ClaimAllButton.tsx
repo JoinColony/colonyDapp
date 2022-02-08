@@ -45,7 +45,7 @@ const ClaimAllButton = ({ motionIds, userAddress, colonyAddress }: Props) => {
     >
       {({ handleSubmit, isSubmitting }: FormikProps<{}>) => (
         <Button
-          appearance={{ theme: 'primary', size: 'large' }}
+          appearance={{ theme: 'primary', size: 'medium' }}
           text={MSG.claimAll}
           onClick={() => handleSubmit()}
           loading={isSubmitting}
