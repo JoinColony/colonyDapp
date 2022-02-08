@@ -4,12 +4,17 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Address } from '~types/index';
 import { useClaimableStakedMotionsQuery } from '~data/generated';
+import Heading from '~core/Heading';
 
 import ClaimAllButton from './ClaimAllButton';
 
 import styles from './TokenActivationContent.css';
 
 const MSG = defineMessages({
+  tabTitle: {
+    id: 'users.TokenActivation.TokenActivationContent.ClaimsTab.noClaims',
+    defaultMessage: 'Your stakes',
+  },
   noClaims: {
     id: 'users.TokenActivation.TokenActivationContent.ClaimsTab.noClaims',
     defaultMessage: 'There are no stakes to claim.',
@@ -39,7 +44,11 @@ const StakesTab = ({ colonyAddress, walletAddress }: StakesTabProps) => {
           {unclaimedMotions &&
           unclaimedMotions.claimableStakedMotions?.motionIds.length > 0 ? (
             <div className={styles.claimsContent}>
-              <div className={styles.claimAllButtonContainer}>
+              <div className={styles.claimAllButtonSection}>
+                <Heading
+                  appearance={{ size: 'normal', margin: 'none', theme: 'dark' }}
+                  text={MSG.tabTitle}
+                />
                 <ClaimAllButton
                   motionIds={unclaimedMotions.claimableStakedMotions.motionIds}
                   userAddress={walletAddress}
