@@ -12,6 +12,10 @@
   font-weight: var(--weight-bold);
 }
 
+.title span {
+  word-break: break-word;
+}
+
 .subtitle {
   margin-bottom: -7px;
   font-size: 14px;

@@ -18,6 +18,10 @@
   font-weight: var(--weight-bold);
 }
 
+.title span {
+  word-break: break-word;
+}
+
 .tokenDetails {
   margin-top: 50px;
 }
