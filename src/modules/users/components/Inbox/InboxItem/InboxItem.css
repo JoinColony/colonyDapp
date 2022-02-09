@@ -29,11 +29,6 @@
 }
 
 .inboxAction {
-  /*
-   * @NOTE Netative margins used to better align
-   * the event's copy with the user's avatar
-   */
-  margin-top: -5px;
   overflow: hidden;
   font-weight: 400;
   text-overflow: ellipsis;
@@ -115,4 +110,5 @@
 .avatarWrapper {
   display: inline-block;
   margin-right: 10px;
+  vertical-align: 8%;
 }
