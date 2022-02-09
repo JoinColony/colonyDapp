@@ -136,7 +136,7 @@ const StepCreateToken = ({
                    */
                   colony: (
                     <span title={wizardValues.displayName}>
-                      {multiLineTextEllipsis(wizardValues.displayName, 40)}
+                      {multiLineTextEllipsis(wizardValues.displayName, 120)}
                     </span>
                   ),
                 }}

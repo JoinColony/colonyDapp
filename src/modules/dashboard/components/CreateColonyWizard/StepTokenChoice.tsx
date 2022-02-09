@@ -108,7 +108,7 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
                */
               colony: (
                 <span title={wizardValues.displayName}>
-                  {multiLineTextEllipsis(wizardValues.displayName, 29)}
+                  {multiLineTextEllipsis(wizardValues.displayName, 120)}
                 </span>
               ),
             }}
