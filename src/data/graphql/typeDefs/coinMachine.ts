@@ -64,6 +64,7 @@ export default gql`
     coinMachineCurrentPeriodMaxUserPurchase(
       userAddress: String!
       colonyAddress: String!
+      gasPrice: String!
     ): String!
     coinMachineCurrentSalePeriod(colonyAddress: String!): CurrentSalePeriod!
     currentPeriodTokens(colonyAddress: String!): CurrentPeriodTokens!

@@ -37,8 +37,8 @@ query CoinMachineTransactionAmount($colonyAddress: String!, $transactionHash: St
   }
 }
 
-query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
-  coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
+query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!, $gasPrice: String!) {
+  coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress, gasPrice: $gasPrice) @client
 }
 
 query CoinMachineCurrentSalePeriod($colonyAddress: String!) {

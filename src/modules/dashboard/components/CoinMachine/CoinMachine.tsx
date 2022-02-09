@@ -21,6 +21,7 @@ import {
   useLoggedInUser,
   useMetaColonyQuery,
 } from '~data/index';
+import { useSelector } from '~utils/hooks';
 
 import { CM_LEARN_MORE, CM_GET_WHITELISTED } from '~externalUrls';
 
@@ -30,6 +31,8 @@ import BuyTokens from './BuyTokens';
 import Confetti from './Confetti';
 import TokenSalesTable from './TokenSalesTable';
 import { RemainingTime, RemainingTokens } from './RemainingDisplayWidgets';
+
+import { gasPrices } from '../../../core/selectors';
 
 import styles from './CoinMachine.css';
 
@@ -70,6 +73,7 @@ const CoinMachine = ({
   }>();
   const { walletAddress } = useLoggedInUser();
   const { data: metaColonyData } = useMetaColonyQuery();
+  const gasPricesData = useSelector(gasPrices);
 
   const {
     data: extensionsData,
@@ -139,7 +143,11 @@ const CoinMachine = ({
     loading: loadingMaxUserPurchase,
     stopPolling: stopPollingCurrentPeriodMaxUserPurchase,
   } = useCoinMachineCurrentPeriodMaxUserPurchaseQuery({
-    variables: { colonyAddress, userAddress: walletAddress },
+    variables: {
+      colonyAddress,
+      userAddress: walletAddress,
+      gasPrice: gasPricesData?.faster.toString(),
+    },
     fetchPolicy: 'network-only',
     pollInterval,
   });

@@ -320,6 +320,7 @@ export type QueryCoinMachineBoughtTokensArgs = {
 export type QueryCoinMachineCurrentPeriodMaxUserPurchaseArgs = {
   userAddress: Scalars['String'];
   colonyAddress: Scalars['String'];
+  gasPrice: Scalars['String'];
 };
 
 
@@ -1988,6 +1989,7 @@ export type CoinMachineTransactionAmountQuery = { coinMachineTransactionAmount: 
 export type CoinMachineCurrentPeriodMaxUserPurchaseQueryVariables = Exact<{
   userAddress: Scalars['String'];
   colonyAddress: Scalars['String'];
+  gasPrice: Scalars['String'];
 }>;
 
 
@@ -5189,8 +5191,8 @@ export type CoinMachineTransactionAmountQueryHookResult = ReturnType<typeof useC
 export type CoinMachineTransactionAmountLazyQueryHookResult = ReturnType<typeof useCoinMachineTransactionAmountLazyQuery>;
 export type CoinMachineTransactionAmountQueryResult = Apollo.QueryResult<CoinMachineTransactionAmountQuery, CoinMachineTransactionAmountQueryVariables>;
 export const CoinMachineCurrentPeriodMaxUserPurchaseDocument = gql`
-    query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!) {
-  coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress) @client
+    query CoinMachineCurrentPeriodMaxUserPurchase($userAddress: String!, $colonyAddress: String!, $gasPrice: String!) {
+  coinMachineCurrentPeriodMaxUserPurchase(userAddress: $userAddress, colonyAddress: $colonyAddress, gasPrice: $gasPrice) @client
 }
     `;
 
@@ -5208,6 +5210,7 @@ export const CoinMachineCurrentPeriodMaxUserPurchaseDocument = gql`
  *   variables: {
  *      userAddress: // value for 'userAddress'
  *      colonyAddress: // value for 'colonyAddress'
+ *      gasPrice: // value for 'gasPrice'
  *   },
  * });
  */

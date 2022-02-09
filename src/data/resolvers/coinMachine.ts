@@ -182,7 +182,7 @@ export const coinMachineResolvers = ({
     },
     async coinMachineCurrentPeriodMaxUserPurchase(
       _,
-      { userAddress, colonyAddress },
+      { userAddress, colonyAddress, gasPrice },
     ) {
       try {
         const coinMachineClient = await colonyManager.getClient(
@@ -199,7 +199,6 @@ export const coinMachineResolvers = ({
             address: userAddress,
           },
         });
-
         const { data: saleTokensData } = await apolloClient.query<
           CoinMachineSaleTokensQuery,
           CoinMachineSaleTokensQueryVariables
@@ -229,37 +228,32 @@ export const coinMachineResolvers = ({
           ? currentPeriodPrice
           : bigNumberify(1);
 
-        const maxUserBalancePurchase = userTokenBalance
-          .div(currentPrice)
-          /*
-          when we divide by a number with moved decimal our final number
-          gets smaller by the '10 * the number of 0 that are added'
-          so we need to counteract it by multiplying it back
-           */
-          .mul(
-            bigNumberify(10).pow(
-              getTokenDecimalsWithFallback(purchaseToken?.decimals || 18),
-            ),
-          );
+        const maxUserBalancePurchase = userTokenBalance.div(currentPrice);
 
         const purchaseCost = maxUserBalancePurchase
           .mul(currentPrice)
           .div(bigNumberify(10).pow(purchaseToken?.decimals || 18));
 
-        // mul by 10%
+        // mul by 15%
         const gasEstimate = await coinMachineClient.estimate.buyTokens(
           maxUserBalancePurchase,
           { value: purchaseCost },
         );
-        let maxPurchase = maxUserBalancePurchase;
+
+        const gasEstimateSafeValue = gasEstimate.mul(10);
+
+        let maxPurchase = maxUserBalancePurchase.mul(
+          bigNumberify(10).pow(purchaseToken?.decimals || 18),
+        );
         if (maxPurchase.gt(maxContractPurchase)) {
           maxPurchase = bigNumberify(maxContractPurchase);
         }
         if (maxPurchase.lte(bigNumberify('100000000000000'))) {
           return bigNumberify(0).toString();
         }
-
-        return maxPurchase.sub(gasEstimate.mul(11).div(10)).toString();
+        return maxPurchase
+          .sub(gasEstimateSafeValue.mul(bigNumberify(gasPrice)))
+          .toString();
       } catch (error) {
         console.error(error);
         return null;
