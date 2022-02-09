@@ -304,11 +304,11 @@
 
 .claimAllButtonSection button {
   width: 100px;
-  font-size: --size-small;
+  font-size: var(--size-small);
 }
 
 .claimAllButtonSection h4 {
-  font-size: --size-smallish;
+  font-size: var(--size-smallish);
 }
 
 .claimsContent span {
