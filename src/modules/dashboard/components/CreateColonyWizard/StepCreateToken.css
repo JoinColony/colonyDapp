@@ -6,6 +6,10 @@
   margin-top: 180px;
 }
 
+.titleSection span {
+  word-break: break-word;
+}
+
 .inputFields {
   margin-top: 40px;
 }
