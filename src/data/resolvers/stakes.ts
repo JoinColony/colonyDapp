@@ -7,7 +7,11 @@ import {
   SubgraphUserMotionTokenEventsDocument,
   SubgraphUserMotionTokenEventsQuery,
   SubgraphUserMotionTokenEventsQueryVariables,
+  MotionFinalizedDocument,
+  MotionFinalizedQuery,
+  MotionFinalizedQueryVariables,
 } from '~data/generated';
+import { parseSubgraphEvent } from '~utils/events';
 
 export const stakesResolvers = ({
   colonyManager,
@@ -75,7 +79,8 @@ export const stakesResolvers = ({
           Extension.VotingReputation,
         );
 
-        const { data: userStakedMotions } = await apolloClient.query<
+        /* Query staked motion events and claimed motion events */
+        const { data } = await apolloClient.query<
           SubgraphUserMotionTokenEventsQuery,
           SubgraphUserMotionTokenEventsQueryVariables
         >({
@@ -90,31 +95,62 @@ export const stakesResolvers = ({
           fetchPolicy: 'network-only',
         });
 
-        /* Get array of already claimed motionIds within argument string */
-        const alreadyClaimedMotions =
-          userStakedMotions?.motionRewardClaimedEvents.map((event) => {
-            return JSON.parse(event.args).motionId;
-          }) || [];
+        const motionStakedEvents = (data?.motionStakedEvents || []).map(
+          parseSubgraphEvent,
+        );
+        const motionRewardClaimedEvents = (
+          data?.motionRewardClaimedEvents || []
+        ).map(parseSubgraphEvent);
 
         /* Get array of claimable motionIds */
-        let unclaimedMotions;
-        if (
-          userStakedMotions?.motionStakedEvents &&
-          userStakedMotions.motionStakedEvents?.length > 0
-        ) {
-          unclaimedMotions = userStakedMotions.motionStakedEvents
-            /* Map event motionIds */
-            .map((event) => JSON.parse(event.args).motionId)
-            /* Filter out already claimed motions */
-            .filter((motionId) => !alreadyClaimedMotions.includes(motionId))
-            /* Remove duplicate motionIds */
-            .filter((motionId, index, arr) => arr.indexOf(motionId) === index);
-        } else {
-          unclaimedMotions = [];
-        }
+        /* Remove duplicate motionIds */
+        const mappedMotionIds = motionStakedEvents?.map(
+          (event) => event.values?.motionId,
+        );
+        const mappedClaimedIds = motionRewardClaimedEvents?.map(
+          (event) => event.values?.motionId,
+        );
+
+        const unclaimedMotions =
+          motionStakedEvents
+            ?.filter(
+              (event, index) =>
+                mappedMotionIds.indexOf(event.values?.motionId) === index,
+            )
+            /* Filter out claimed motions */
+            .filter(
+              (event) => !mappedClaimedIds.includes(event.values?.motionId),
+            ) || [];
+
+        /* Get the status of unclaimed motions */
+        const getFinalizedUnclaimedMotions = await Promise.all(
+          unclaimedMotions.map(async (motion) => {
+            const { data: finalizedUnclaimedMotion } = await apolloClient.query<
+              MotionFinalizedQuery,
+              MotionFinalizedQueryVariables
+            >({
+              query: MotionFinalizedDocument,
+              variables: {
+                colonyAddress: colonyAddress?.toLowerCase(),
+                motionId: motion.values.motionId,
+              },
+              fetchPolicy: 'network-only',
+            });
+            if (finalizedUnclaimedMotion?.motionFinalized) {
+              return motion.values.motionId;
+            }
+            return '';
+          }),
+        );
+
+        /* Filter out unfinalized motions */
+        const finalizedUnclaimedMotions =
+          motionStakedEvents?.filter((event) =>
+            getFinalizedUnclaimedMotions.includes(event.values?.motionId),
+          ) || [];
 
         return {
-          motionIds: unclaimedMotions,
+          motionIds: finalizedUnclaimedMotions,
         };
       } catch (error) {
         console.error(error);
