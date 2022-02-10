@@ -3,6 +3,7 @@
 
 .container {
   display: flex;
+  position: relative;
 }
 
 .container label {
