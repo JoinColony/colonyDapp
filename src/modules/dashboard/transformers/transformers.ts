@@ -1,5 +1,6 @@
 import { AddressZero, HashZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
+import Decimal from 'decimal.js';
 
 import {
   TransactionsMessagesCount,
@@ -162,7 +163,7 @@ export const getActionsListData = (
             blockNumber: 0,
             totalNayStake: '0',
             requiredStake: '0',
-            reputationPenalty: '0',
+            reputationChange: '0',
           };
           let hash;
           let timestamp;
@@ -253,9 +254,29 @@ export const getActionsListData = (
                 },
                 name,
               } = unformattedAction;
-              const actionEvent = Object.entries(ACTIONS_EVENTS).find((el) =>
-                el[1]?.includes(name.split('(')[0]),
-              );
+
+              let actionEvent;
+
+              if (
+                formatEventName(name) ===
+                ColonyAndExtensionsEvents.ArbitraryReputationUpdate
+              ) {
+                const isSmiteAction = new Decimal(
+                  processedValues.amount,
+                ).isNegative();
+                actionEvent = Object.entries(ACTIONS_EVENTS).find(
+                  (el) =>
+                    (isSmiteAction &&
+                      el[0] === ColonyActions.EmitDomainReputationPenalty) ||
+                    (!isSmiteAction &&
+                      el[0] === ColonyActions.EmitDomainReputationReward),
+                );
+              } else {
+                actionEvent = Object.entries(ACTIONS_EVENTS).find((el) =>
+                  el[1]?.includes(formatEventName(name)),
+                );
+              }
+
               const checksummedColonyAddress = createAddress(colonyAddress);
               const actionType =
                 (actionEvent && (actionEvent[0] as ColonyActions)) ||

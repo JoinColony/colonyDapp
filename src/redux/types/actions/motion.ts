@@ -240,20 +240,21 @@ export type MotionActionTypes =
       MetaWithHistory<object>
     >
   | UniqueActionType<
-      ActionTypes.COLONY_MOTION_SMITE,
+      ActionTypes.COLONY_MOTION_MANAGE_REPUTATION,
       {
         colonyAddress: Address;
         colonyName?: string;
         domainId: number;
         userAddress: Address;
         amount: BigNumber;
-        annotationMessage?: string;
         motionDomainId: string;
+        annotationMessage?: string;
+        isSmitingReputation?: boolean;
       },
       MetaWithHistory<object>
     >
-  | ErrorActionType<ActionTypes.COLONY_MOTION_SMITE_ERROR, object>
+  | ErrorActionType<ActionTypes.COLONY_MOTION_MANAGE_REPUTATION_ERROR, object>
   | ActionTypeWithMeta<
-      ActionTypes.COLONY_MOTION_SMITE_SUCCESS,
+      ActionTypes.COLONY_MOTION_MANAGE_REPUTATION_SUCCESS,
       MetaWithHistory<object>
     >;

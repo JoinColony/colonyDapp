@@ -228,6 +228,10 @@
     "transaction.group.emitDomainReputationPenalty.description": "Smiting user",
     "transaction.ColonyClient.emitDomainReputationPenaltyWithProofs.title": "Smiting user",
     "transaction.ColonyClient.emitDomainReputationPenaltyWithProofs.description": "Smiting user",
+    "transaction.group.emitDomainReputationReward.title": "Awarding user",
+    "transaction.group.emitDomainReputationReward.description": "Awarding user",
+    "transaction.ColonyClient.emitDomainReputationReward.title": "Awarding user",
+    "transaction.ColonyClient.emitDomainReputationReward.description": "Awarding user",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",

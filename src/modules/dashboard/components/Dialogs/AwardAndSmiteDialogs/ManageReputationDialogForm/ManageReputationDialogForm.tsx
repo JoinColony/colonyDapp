@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useEffect, ReactNode } from 'react';
 import { FormikProps } from 'formik';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { AddressZero } from 'ethers/constants';
 import { ROOT_DOMAIN_ID, ColonyRole } from '@colony/colony-js';
@@ -26,63 +26,83 @@ import {
   OneDomain,
   useUserReputationQuery,
   useLoggedInUser,
+  useMembersSubscription,
 } from '~data/index';
 import { useDialogActionPermissions } from '~utils/hooks/useDialogActionPermissions';
 import { useTransformer } from '~utils/hooks';
 import { getFormattedTokenValue } from '~utils/tokens';
 import { calculatePercentageReputation } from '~utils/reputation';
+
 import { getUserRolesForDomain } from '~modules/transformers';
 import { userHasRole } from '~modules/users/checks';
 
-import { FormValues } from './SmiteDialog';
+import { ManageReputationDialogFormValues } from '../types';
 import TeamDropdownItem from './TeamDropdownItem';
 
-import styles from './SmiteDialogForm.css';
+import styles from './ManageReputationDialogForm.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.title',
-    defaultMessage: 'Smite',
+    id: 'dashboard.ManageReputationContainer.ManageReputationDialogForm.title',
+    defaultMessage: `{isSmiteAction, select, 
+      true {Smite}
+      false {Award} 
+    }`,
   },
   team: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.team',
-    defaultMessage: 'Team in which Reputation should be deducted',
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.team`,
+    defaultMessage: `Team in which Reputation should be {isSmiteAction, select, 
+      true {deducted}
+      false {awarded}
+    }`,
   },
   recipient: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.recipient',
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.recipient`,
     defaultMessage: 'Recipient',
   },
   amount: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.amount',
-    defaultMessage: 'Amount of reputation points to deduct',
+    id: 'dashboard.ManageReputationContainer.ManageReputationDialogForm.amount',
+    defaultMessage: `Amount of reputation points to {isSmiteAction, select, 
+      true {deduct}
+      false {award}
+    }`,
   },
   annotation: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.annotation',
-    defaultMessage: "Explain why you're smiting the user (optional)",
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.annotation`,
+    defaultMessage: `Explain why you're {isSmiteAction, select,
+      true {smiting}
+      false {awarding}
+    } the user (optional)`,
   },
   userPickerPlaceholder: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.userPickerPlaceholder',
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.userPickerPlaceholder`,
     defaultMessage: 'Search for a user or paste wallet address',
   },
   noPermission: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.noPermission',
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.noPermission`,
     defaultMessage: `You need the {roleRequired} permission in {domain} to take this action.`,
   },
   maxReputation: {
-    id: 'dashboard.SmiteDialog.SmiteDialogForm.maxReputation',
-    defaultMessage:
-      'max: {userReputationAmount} pts ({userPercentageReputation}%)',
+    id: `dashboard.ManageReputationContainer.ManageReputationDialogForm.maxReputation`,
+    defaultMessage: `{isSmiteAction, select,
+      true {max: }
+      false {}
+    }{userReputationAmount} {userReputationAmount, plural,
+      one {pt}
+      other {pts}
+    } ({userPercentageReputation}%)`,
   },
 });
+
 interface Props extends ActionDialogProps {
-  subscribedUsers: AnyUser[];
+  isVotingExtensionEnabled: boolean;
+  nativeTokenDecimals: number;
   ethDomainId?: number;
-  updateReputation: (
+  updateReputation?: (
     userPercentageReputation: number,
     totalRep?: string,
   ) => void;
-  isVotingExtensionEnabled: boolean;
-  nativeTokenDecimals: number;
+  isSmiteAction?: boolean;
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -91,11 +111,10 @@ const supRenderAvatar = (address: Address, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
 
-const SmiteDialogForm = ({
+const ManageReputationDialogForm = ({
   back,
   colony: { domains, colonyAddress },
   colony,
-  subscribedUsers,
   handleSubmit,
   setFieldValue,
   isSubmitting,
@@ -105,7 +124,8 @@ const SmiteDialogForm = ({
   ethDomainId: preselectedDomainId,
   isVotingExtensionEnabled,
   nativeTokenDecimals,
-}: Props & FormikProps<FormValues>) => {
+  isSmiteAction = false,
+}: Props & FormikProps<ManageReputationDialogFormValues>) => {
   const { walletAddress, username, ethereal } = useLoggedInUser();
   const hasRegisteredProfile = !!username && !ethereal;
 
@@ -125,7 +145,11 @@ const SmiteDialogForm = ({
   ]);
 
   const hasRoles =
-    hasRegisteredProfile && userHasRole(domainRoles, ColonyRole.Arbitration);
+    hasRegisteredProfile &&
+    userHasRole(
+      domainRoles,
+      isSmiteAction ? ColonyRole.Arbitration : ColonyRole.Root,
+    );
 
   const [userHasPermission, onlyForceAction] = useDialogActionPermissions(
     colonyAddress,
@@ -136,6 +160,10 @@ const SmiteDialogForm = ({
   );
 
   const inputDisabled = !userHasPermission || onlyForceAction;
+
+  const { data: colonyMembers } = useMembersSubscription({
+    variables: { colonyAddress },
+  });
 
   const { data: userReputationData } = useUserReputationQuery({
     variables: {
@@ -217,10 +245,12 @@ const SmiteDialogForm = ({
   );
 
   useEffect(() => {
-    updateReputation(
-      unformattedUserReputationAmount,
-      totalReputationData?.userReputation,
-    );
+    if (updateReputation) {
+      updateReputation(
+        unformattedUserReputationAmount,
+        totalReputationData?.userReputation,
+      );
+    }
   }, [totalReputationData, updateReputation, unformattedUserReputationAmount]);
 
   const handleFilterMotionDomains = useCallback(
@@ -262,6 +292,9 @@ const SmiteDialogForm = ({
             <Heading
               appearance={{ size: 'medium', margin: 'none', theme: 'dark' }}
               text={MSG.title}
+              textValues={{
+                isSmiteAction,
+              }}
             />
             {hasRoles && isVotingExtensionEnabled && (
               <Toggle
@@ -282,7 +315,7 @@ const SmiteDialogForm = ({
         <div className={styles.singleUserContainer}>
           <SingleUserPicker
             appearance={{ width: 'wide' }}
-            data={subscribedUsers}
+            data={colonyMembers?.subscribedUsers || []}
             label={MSG.recipient}
             name="user"
             filter={filterUserSelection}
@@ -298,6 +331,9 @@ const SmiteDialogForm = ({
             <Select
               options={domainOptions}
               label={MSG.team}
+              labelValues={{
+                isSmiteAction,
+              }}
               name="domainId"
               appearance={{ theme: 'grey', width: 'fluid' }}
               renderActiveOption={renderActiveOption}
@@ -311,6 +347,7 @@ const SmiteDialogForm = ({
           <Input
             name="amount"
             label={MSG.amount}
+            labelValues={{ isSmiteAction }}
             appearance={{
               theme: 'minimal',
               align: 'right',
@@ -319,13 +356,18 @@ const SmiteDialogForm = ({
               numeral: true,
               // @ts-ignore
               tailPrefix: true,
+              numeralDecimalScale: 10,
             }}
             elementOnly
-            maxButtonParams={{
-              fieldName: 'amount',
-              maxAmount: String(unformattedUserReputationAmount),
-              setFieldValue,
-            }}
+            maxButtonParams={
+              isSmiteAction
+                ? {
+                    fieldName: 'amount',
+                    maxAmount: String(unformattedUserReputationAmount),
+                    setFieldValue,
+                  }
+                : undefined
+            }
             disabled={inputDisabled}
           />
           <div className={styles.percentageSign}>pts</div>
@@ -333,6 +375,7 @@ const SmiteDialogForm = ({
             <FormattedMessage
               {...MSG.maxReputation}
               values={{
+                isSmiteAction,
                 userReputationAmount: formattedUserReputationAmount,
                 userPercentageReputation:
                   userPercentageReputation === null
@@ -346,6 +389,9 @@ const SmiteDialogForm = ({
       <DialogSection>
         <Annotations
           label={MSG.annotation}
+          labelValues={{
+            isSmiteAction,
+          }}
           name="annotation"
           disabled={inputDisabled}
         />
@@ -393,6 +439,7 @@ const SmiteDialogForm = ({
   );
 };
 
-SmiteDialogForm.displayName = 'dashboard.SmiteDialog.SmiteDialogForm';
+ManageReputationDialogForm.displayName =
+  'dashboard.ManageReputationContainer.ManageReputationDialogForm';
 
-export default SmiteDialogForm;
+export default ManageReputationDialogForm;

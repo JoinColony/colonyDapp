@@ -2,48 +2,35 @@ import React, { useCallback, useState } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
-import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 import Decimal from 'decimal.js';
+import { defineMessages } from 'react-intl';
 
-import Dialog, { DialogProps, ActionDialogProps } from '~core/Dialog';
+import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
-import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import { useMembersSubscription } from '~data/index';
 import { pipe, withMeta, mapPayload } from '~utils/actions';
-import { WizardDialogType } from '~utils/hooks';
 import { useSelectedUser } from '~utils/hooks/useSelectedUser';
 
-import DialogForm from './SmiteDialogForm';
+import DialogForm from '../ManageReputationDialogForm';
+import {
+  AwardAndSmiteDialogProps,
+  ManageReputationDialogFormValues,
+} from '../types';
+
+const displayName = 'dashboard.ManageReputationContainer';
 
 const MSG = defineMessages({
   amountZero: {
-    id: 'dashboard.SmiteDialog.amountZero',
+    id: 'dashboard.ManageReputationContainer.amountZero',
     defaultMessage: 'Amount must be greater than zero',
   },
 });
 
-export interface FormValues {
-  forceAction: boolean;
-  domainId: string;
-  user: { profile: { walletAddress: Address } };
-  amount: number;
-  annotation: string;
-  motionDomainId: string;
-}
-
-type Props = Required<DialogProps> &
-  WizardDialogType<object> &
-  ActionDialogProps & {
-    ethDomainId?: number;
-  };
-
-const displayName = 'dashboard.SmiteDialog';
-
-const SmiteDialog = ({
+const ManageReputationContainer = ({
   colony: { colonyAddress, colonyName, tokens, nativeTokenAddress },
   colony,
   isVotingExtensionEnabled,
@@ -52,13 +39,18 @@ const SmiteDialog = ({
   cancel,
   close,
   ethDomainId,
-}: Props) => {
+  isSmiteAction = false,
+}: AwardAndSmiteDialogProps) => {
   const [isForce, setIsForce] = useState(false);
   const [totalReputationData, setTotalReputationData] = useState<
     string | undefined
   >(undefined);
   const [userReputation, setUserReputation] = useState(0);
   const history = useHistory();
+
+  const { data: colonyMembers } = useMembersSubscription({
+    variables: { colonyAddress },
+  });
 
   const updateReputationCallback = (
     userRepPercentage: number,
@@ -73,13 +65,13 @@ const SmiteDialog = ({
       const actionEnd = actionType === 'SUBMIT' ? '' : `_${actionType}`;
 
       return isVotingExtensionEnabled && !isForce
-        ? ActionTypes[`COLONY_MOTION_SMITE${actionEnd}`]
-        : ActionTypes[`COLONY_ACTION_SMITE${actionEnd}`];
+        ? ActionTypes[`COLONY_MOTION_MANAGE_REPUTATION${actionEnd}`]
+        : ActionTypes[`COLONY_ACTION_MANAGE_REPUTATION${actionEnd}`];
     },
     [isVotingExtensionEnabled, isForce],
   );
 
-  const validationSchema = yup.object().shape({
+  const defaultValidationSchema = yup.object().shape({
     domainId: yup.number().required(),
     user: yup.object().shape({
       profile: yup.object().shape({
@@ -89,16 +81,22 @@ const SmiteDialog = ({
     amount: yup
       .number()
       .required()
-      .moreThan(0, () => MSG.amountZero)
-      .max(userReputation),
+      .moreThan(0, () => MSG.amountZero),
     annotation: yup.string().max(4000),
     forceAction: yup.boolean(),
     motionDomainId: yup.number(),
   });
+  let smiteValidationSchema;
 
-  const { data: colonyMembers } = useMembersSubscription({
-    variables: { colonyAddress },
-  });
+  if (isSmiteAction) {
+    const amountValidationSchema = yup
+      .object()
+      .shape({ amount: yup.number().max(userReputation) })
+      .required();
+    smiteValidationSchema = defaultValidationSchema.concat(
+      amountValidationSchema,
+    );
+  }
 
   const nativeToken = tokens.find(
     (token) => token.address === nativeTokenAddress,
@@ -110,7 +108,8 @@ const SmiteDialog = ({
       mapPayload(({ amount, domainId, annotation, user, motionDomainId }) => {
         const reputationChangeAmount = new Decimal(amount)
           .mul(new Decimal(10).pow(nativeTokenDecimals))
-          .mul(-1);
+          // Smite amount needs to be negative, otherwise leave it as it is
+          .mul(isSmiteAction ? -1 : 1);
 
         return {
           colonyAddress,
@@ -120,11 +119,12 @@ const SmiteDialog = ({
           annotationMessage: annotation,
           amount: reputationChangeAmount.toString(),
           motionDomainId,
+          isSmitingReputation: isSmiteAction,
         };
       }),
       withMeta({ history }),
     ),
-    [totalReputationData],
+    [totalReputationData, isSmiteAction],
   );
 
   const selectedUser = useSelectedUser(colonyMembers);
@@ -146,11 +146,11 @@ const SmiteDialog = ({
       submit={getFormAction('SUBMIT')}
       error={getFormAction('ERROR')}
       success={getFormAction('SUCCESS')}
-      validationSchema={validationSchema}
+      validationSchema={smiteValidationSchema || defaultValidationSchema}
       onSuccess={close}
       transform={transform}
     >
-      {(formValues: FormikProps<FormValues>) => {
+      {(formValues: FormikProps<ManageReputationDialogFormValues>) => {
         if (formValues.values.forceAction !== isForce) {
           setIsForce(formValues.values.forceAction);
         }
@@ -162,9 +162,11 @@ const SmiteDialog = ({
               nativeTokenDecimals={nativeTokenDecimals}
               isVotingExtensionEnabled={isVotingExtensionEnabled}
               back={() => callStep(prevStep)}
-              subscribedUsers={colonyMembers?.subscribedUsers || []}
               ethDomainId={ethDomainId}
-              updateReputation={updateReputationCallback}
+              updateReputation={
+                isSmiteAction ? updateReputationCallback : undefined
+              }
+              isSmiteAction={isSmiteAction}
             />
           </Dialog>
         );
@@ -173,6 +175,6 @@ const SmiteDialog = ({
   );
 };
 
-SmiteDialog.displayName = displayName;
+ManageReputationContainer.displayName = displayName;
 
-export default SmiteDialog;
+export default ManageReputationContainer;

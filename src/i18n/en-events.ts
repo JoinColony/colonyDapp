@@ -18,7 +18,6 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.MotionFinalized} {{motionTag} was finalized. Stakes may be claimed.}
       ${ColonyAndExtensionsEvents.ObjectionRaised} {{staker} raised an {objectionTag}}
       ${ColonyAndExtensionsEvents.MotionRewardClaimed} {{staker} claimed their stake.}
-      ${ColonyAndExtensionsEvents.ArbitraryReputationUpdate} {{initiator} smote {recipient} with a {reputationPenalty} reputation penalty}
       other {{eventNameDecorated} emmited by {clientOrExtensionType}}
     }`,
   /*
@@ -41,6 +40,13 @@ const eventsMessageDescriptors = {
   [`event.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`]: `{initiator} removed the {role} permission in the {fromDomain} team from {recipient}`,
   [`event.${ColonyAndExtensionsEvents.UserApproved}.assign`]: `User {agent} got approved in the whitelist`,
   [`event.${ColonyAndExtensionsEvents.UserApproved}.remove`]: `User {agent} got removed from the whitelist`,
+  [`event.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`]: `{initiator} {isSmiteAction, select,
+    true {smote}
+    false {awarded}
+  } {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation {isSmiteAction, select,
+    true {penalty}
+    false {reward}
+  }`,
   'eventList.event': `{eventName, select,
       ${ColonyAndExtensionsEvents.DomainAdded} {{agent} added Team: {domain}}
       ${ColonyAndExtensionsEvents.DomainMetadata} {{agent} changed Team {domain} metadata to {metadata}}
@@ -78,13 +84,19 @@ const eventsMessageDescriptors = {
       ${ColonyAndExtensionsEvents.MotionRewardClaimed} {{agent} claimed their stake in motion {motionId}}
       ${ColonyAndExtensionsEvents.MotionEventSet} {Motion {motionId} fast-forwarded to the next lifecycle}
       ${ColonyAndExtensionsEvents.AgreementSigned} {User {agent} signed the whitelist agreement}
-      ${ColonyAndExtensionsEvents.ArbitraryReputationUpdate} {{agent} smote {recipient} with a {reputationPenalty} reputation penalty}
       other {{eventName} emmited with values: {displayValues}}
     }`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.assign`]: `{agent} assigned the {role} permission in the {domain} team to {recipient}`,
   [`eventList.${ColonyAndExtensionsEvents.ColonyRoleSet}.remove`]: `{agent} removed the {role} permission in the {domain} team from {recipient}`,
   [`eventList.${ColonyAndExtensionsEvents.RecoveryRoleSet}.assign`]: `The Recovery role was assigned to {recipient}`,
   [`eventList.${ColonyAndExtensionsEvents.RecoveryRoleSet}.remove`]: `The Recovery role was removed from {recipient}`,
+  [`eventList.${ColonyAndExtensionsEvents.ArbitraryReputationUpdate}.title`]: `{agent} {isSmiteAction, select,
+    true {smote}
+    false {awarded}
+  } {recipient} with a {reputationChange} {reputationChange, plural, one {pt} other {pts}} reputation {isSmiteAction, select,
+    true {penalty}
+    false {reward}
+  }`,
 };
 
 export default eventsMessageDescriptors;

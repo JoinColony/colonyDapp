@@ -1216,8 +1216,18 @@ export const motionsResolvers = ({
         'emitDomainReputationPenalty(uint256,uint256,uint256,address,int256)'
       ) {
         return {
-          reputationPenalty: actionValues?.args[4].toString(),
+          reputationChange: actionValues?.args[4].toString(),
           recipient: actionValues?.args[3],
+        };
+      }
+
+      if (
+        actionValues.signature ===
+        'emitDomainReputationReward(uint256,address,int256)'
+      ) {
+        return {
+          reputationChange: actionValues?.args[2].toString(),
+          recipient: actionValues?.args[1],
         };
       }
 

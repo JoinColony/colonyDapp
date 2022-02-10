@@ -61,6 +61,7 @@ export const MSG = defineMessages({
       ${ColonyMotions.MoveFundsMotion} {Move Funds}
       ${ColonyMotions.VersionUpgradeMotion} {Version Upgrade}
       ${ColonyMotions.EmitDomainReputationPenaltyMotion} {Smite}
+      ${ColonyMotions.EmitDomainReputationRewardMotion} {Award}
       other {Generic Action}
     }" be approved?`,
   },

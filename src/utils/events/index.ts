@@ -41,8 +41,8 @@ interface ActionValues {
   newVersion: string;
   address: Address;
   roles: ActionUserRoles[];
+  reputationChange: BigNumberish;
   actionInitiator?: Address;
-  reputationPenalty: BigNumberish;
 }
 
 interface MotionValues extends ActionValues {
@@ -94,7 +94,35 @@ export const getActionType = (
             /*
              * Check the correct position in the events chain
              */
-            return filteredParsedEvents[eventIndex].name === eventName;
+            const isEventInPosition =
+              filteredParsedEvents[eventIndex].name === eventName;
+
+            /*
+             *  Check if the event is a reputation change
+             *  Then check if the change is a reward or penalty
+             */
+            if (
+              filteredParsedEvents[eventIndex].name ===
+              ColonyAndExtensionsEvents.ArbitraryReputationUpdate
+            ) {
+              const isReputationChangePositive = bigNumberify(
+                filteredParsedEvents[eventIndex].values.amount,
+              ).gt(0);
+              if (
+                Object.keys(EVENTS_REQUIRED_FOR_ACTION)[index] ===
+                ColonyActions.EmitDomainReputationReward
+              ) {
+                return isEventInPosition && isReputationChangePositive;
+              }
+              if (
+                Object.keys(EVENTS_REQUIRED_FOR_ACTION)[index] ===
+                ColonyActions.EmitDomainReputationPenalty
+              ) {
+                return isEventInPosition && !isReputationChangePositive;
+              }
+            }
+
+            return isEventInPosition;
           }
           return false;
         })
@@ -558,11 +586,11 @@ const getRecoveryActionValues = async (
   return recoveryAction;
 };
 
-const getEmitDomainReputationPenaltyValues = async (
+const getEmitDomainReputationPenaltyAndRewardValues = async (
   processedEvents: ProcessedEvent[],
   colonyClient: ColonyClient,
 ): Promise<Partial<ActionValues>> => {
-  const domainReputationPenalty = processedEvents.find(
+  const domainReputationChange = processedEvents.find(
     ({ name }) => name === ColonyAndExtensionsEvents.ArbitraryReputationUpdate,
   ) as ProcessedEvent;
 
@@ -583,30 +611,30 @@ const getEmitDomainReputationPenaltyValues = async (
   const {
     address,
     values: { agent, user, amount, skillId },
-  } = domainReputationPenalty;
+  } = domainReputationChange;
 
-  const penaltyDomain = colonyDomains.find((domain) =>
+  const changeDomain = colonyDomains.find((domain) =>
     domain.skillId.eq(skillId),
   );
 
-  const domainReputationPenaltyAction: {
+  const domainReputationChangeAction: {
     address: Address;
     recipient: Address;
-    reputationPenalty: BigNumberish;
+    reputationChange: BigNumberish;
     fromDomain?: number;
     actionInitiator?: string;
   } = {
     address,
     recipient: user,
-    reputationPenalty: amount.toString(),
-    fromDomain: penaltyDomain?.domainId,
+    reputationChange: amount.toString(),
+    fromDomain: changeDomain?.domainId,
   };
 
   if (agent) {
-    domainReputationPenaltyAction.actionInitiator = agent;
+    domainReputationChangeAction.actionInitiator = agent;
   }
 
-  return domainReputationPenaltyAction;
+  return domainReputationChangeAction;
 };
 
 // Motions
@@ -1005,7 +1033,7 @@ const getVersionUpgradeMotionValues = async (
   return versionUpgradeMotionValues;
 };
 
-const getEmitDomainReputationPenaltyMotionValues = async (
+const getEmitDomainReputationPenaltyAndRewardMotionValues = async (
   processedEvents: ProcessedEvent[],
   votingClient: ExtensionClient,
   colonyClient: ColonyClient,
@@ -1022,16 +1050,19 @@ const getEmitDomainReputationPenaltyMotionValues = async (
     colonyClient,
   );
 
-  const domainReputationPenaltyAction: {
-    reputationPenalty: BigNumberish;
+  const reputationChange = (values.args[4] || values.args[2]).toString();
+  const recipient = values.args[3] || values.args[1];
+
+  const domainReputationChangeAction: {
+    reputationChange: BigNumberish;
     recipient: Address;
   } = {
     ...motionDefaultValues,
-    reputationPenalty: values.args[4].toString(),
-    recipient: values.args[3],
+    reputationChange,
+    recipient,
   };
 
-  return domainReputationPenaltyAction;
+  return domainReputationChangeAction;
 };
 
 export const getActionValues = async (
@@ -1051,7 +1082,7 @@ export const getActionValues = async (
     oldVersion: '0',
     address: AddressZero,
     roles: [{ id: 0, setTo: false }],
-    reputationPenalty: '0',
+    reputationChange: '0',
   };
 
   switch (actionType) {
@@ -1139,15 +1170,16 @@ export const getActionValues = async (
         ...recoveryActionValues,
       };
     }
+    case ColonyActions.EmitDomainReputationReward:
     case ColonyActions.EmitDomainReputationPenalty: {
       // eslint-disable-next-line max-len
-      const emitDomainReputationPenaltyActionValues = await getEmitDomainReputationPenaltyValues(
+      const emitDomainReputationPenaltyAndRewardActionValues = await getEmitDomainReputationPenaltyAndRewardValues(
         processedEvents,
         colonyClient,
       );
       return {
         ...fallbackValues,
-        ...emitDomainReputationPenaltyActionValues,
+        ...emitDomainReputationPenaltyAndRewardActionValues,
       };
     }
     case ColonyMotions.MintTokensMotion: {
@@ -1239,16 +1271,17 @@ export const getActionValues = async (
         ...versionUpgradeMotionValues,
       };
     }
+    case ColonyMotions.EmitDomainReputationRewardMotion:
     case ColonyMotions.EmitDomainReputationPenaltyMotion: {
       // eslint-disable-next-line max-len
-      const emitDomainReputationPenaltyMotionValues = await getEmitDomainReputationPenaltyMotionValues(
+      const emitDomainReputationPenaltyAndRewardMotionValues = await getEmitDomainReputationPenaltyAndRewardMotionValues(
         processedEvents,
         votingClient,
         colonyClient,
       );
       return {
         ...fallbackValues,
-        ...emitDomainReputationPenaltyMotionValues,
+        ...emitDomainReputationPenaltyAndRewardMotionValues,
       };
     }
     default: {

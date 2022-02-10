@@ -114,10 +114,11 @@ export const getValuesForActionType = (
           initiator: values?.user || colonyAddress,
         };
       }
+      case ColonyActions.EmitDomainReputationReward:
       case ColonyActions.EmitDomainReputationPenalty: {
         return {
           recipient: values.user,
-          reputationPenalty: values.amount,
+          reputationChange: values.amount,
         };
       }
       default: {
