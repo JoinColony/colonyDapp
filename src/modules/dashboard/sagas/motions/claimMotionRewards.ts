@@ -2,11 +2,17 @@ import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { ClientType, ExtensionClient } from '@colony/colony-js';
 import { $Values } from 'utility-types';
 import { BigNumber } from 'ethers/utils';
+import { isEmpty } from 'lodash';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { TEMP_getContext, ContextModule } from '~context/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { TxConfig } from '~types/index';
+import {
+  ClaimableStakedMotionsDocument,
+  ClaimableStakedMotionsQuery,
+  ClaimableStakedMotionsQueryVariables,
+} from '~data/generated';
 
 import {
   ChannelDefinition,
@@ -22,6 +28,8 @@ function* claimMotionRewards({
   payload: { userAddress, colonyAddress, motionIds },
 }: Action<ActionTypes.COLONY_MOTION_CLAIM>) {
   const txChannel = yield call(getTxChannel, meta.id);
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+
   try {
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
     // @NOTE This line exceeds the max-len but there's no prettier solution
@@ -89,6 +97,11 @@ function* claimMotionRewards({
     );
 
     const allMotionClaims = motionWithYAYClaims.concat(motionWithNAYClaims);
+
+    if (isEmpty(allMotionClaims)) {
+      throw new Error('A motion with claims needs to be provided');
+    }
+
     const channelNames: string[] = [];
 
     for (let index = 0; index < allMotionClaims.length; index += 1) {
@@ -148,6 +161,18 @@ function* claimMotionRewards({
         fork(updateMotionValues, colonyAddress, userAddress, motionId),
       ),
     );
+
+    yield apolloClient.query<
+      ClaimableStakedMotionsQuery,
+      ClaimableStakedMotionsQueryVariables
+    >({
+      query: ClaimableStakedMotionsDocument,
+      variables: {
+        colonyAddress: colonyAddress.toLowerCase(),
+        walletAddress: userAddress.toLowerCase(),
+      },
+      fetchPolicy: 'network-only',
+    });
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_MOTION_CLAIM_SUCCESS,
