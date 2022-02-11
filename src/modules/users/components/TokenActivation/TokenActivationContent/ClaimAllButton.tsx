@@ -5,6 +5,7 @@ import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
 import { ActionForm } from '~core/Fields';
+import { ParsedMotionStakedEvent } from '~data/generated';
 import { ActionTypes } from '~redux/actionTypes';
 import { Address } from '~types/index';
 import { mapPayload } from '~utils/actions';
@@ -20,17 +21,24 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  motionIds: number[];
+  unclaimedMotionStakeEvents: ParsedMotionStakedEvent[];
   colonyAddress: Address;
   userAddress: Address;
 }
 
-const ClaimAllButton = ({ motionIds, userAddress, colonyAddress }: Props) => {
+const ClaimAllButton = ({
+  unclaimedMotionStakeEvents,
+  userAddress,
+  colonyAddress,
+}: Props) => {
+  const motionIds = unclaimedMotionStakeEvents.map((motionStakeEvent) =>
+    bigNumberify(motionStakeEvent.values.motionId),
+  );
   const transform = useCallback(
     mapPayload(() => ({
       colonyAddress,
       userAddress,
-      motionIds: motionIds.map((motionId) => bigNumberify(motionId)),
+      motionIds: [...new Set([...motionIds])],
     })),
     [],
   );

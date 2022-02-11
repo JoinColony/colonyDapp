@@ -27,7 +27,7 @@ export interface StakesTabProps {
 }
 
 const StakesTab = ({ colonyAddress, walletAddress }: StakesTabProps) => {
-  const { data: unclaimedMotions, loading } = useClaimableStakedMotionsQuery({
+  const { data, loading } = useClaimableStakedMotionsQuery({
     variables: {
       colonyAddress: colonyAddress?.toLowerCase(),
       walletAddress: walletAddress?.toLowerCase(),
@@ -41,8 +41,8 @@ const StakesTab = ({ colonyAddress, walletAddress }: StakesTabProps) => {
         <SpinnerLoader appearance={{ size: 'medium' }} />
       ) : (
         <>
-          {unclaimedMotions &&
-          unclaimedMotions.claimableStakedMotions?.motionIds.length > 0 ? (
+          {data &&
+          data.claimableStakedMotions?.unclaimedMotionStakeEvents.length > 0 ? (
             <div className={styles.claimsContent}>
               <div className={styles.claimAllButtonSection}>
                 <Heading
@@ -50,7 +50,9 @@ const StakesTab = ({ colonyAddress, walletAddress }: StakesTabProps) => {
                   text={MSG.tabTitle}
                 />
                 <ClaimAllButton
-                  motionIds={unclaimedMotions.claimableStakedMotions.motionIds}
+                  unclaimedMotionStakeEvents={
+                    data.claimableStakedMotions.unclaimedMotionStakeEvents
+                  }
                   userAddress={walletAddress}
                   colonyAddress={colonyAddress}
                 />
