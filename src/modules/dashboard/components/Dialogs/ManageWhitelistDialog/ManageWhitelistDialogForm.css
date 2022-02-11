@@ -1,0 +1,8 @@
+.noPermissionMessage {
+  vertical-align: bottom;
+  margin-bottom: 20px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-bold);
+  line-height: 18px;
+  color: var(--danger);
+}
